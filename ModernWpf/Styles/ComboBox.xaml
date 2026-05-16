@@ -197,7 +197,40 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TextBox">
-                    <Grid SnapsToDevicePixels="True">
+                    <Grid x:Name="ComboBoxTextBoxRoot" SnapsToDevicePixels="True">
+                        <VisualStateManager.CustomVisualStateManager>
+                            <root:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <root:VisualStateEx x:Name="Disabled">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="BorderElement.Background" Value="{DynamicResource TextControlBackgroundDisabled}" />
+                                        <root:VisualStateSetter Target="BorderElement.BorderBrush" Value="{DynamicResource TextControlBorderBrushDisabled}" />
+                                        <root:VisualStateSetter Target="PART_ContentHost.Foreground" Value="{DynamicResource TextControlForegroundDisabled}" />
+                                        <root:VisualStateSetter Target="PlaceholderTextContentPresenter.Foreground" Value="{DynamicResource TextControlPlaceholderForegroundDisabled}" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="PointerOver">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="BorderElement.Background" Value="{DynamicResource TextControlBackgroundPointerOver}" />
+                                        <root:VisualStateSetter Target="BorderElement.BorderBrush" Value="{DynamicResource TextControlBorderBrushPointerOver}" />
+                                        <root:VisualStateSetter Target="PART_ContentHost.Foreground" Value="{DynamicResource TextControlForegroundPointerOver}" />
+                                        <root:VisualStateSetter Target="PlaceholderTextContentPresenter.Foreground" Value="{DynamicResource TextControlPlaceholderForegroundPointerOver}" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="Focused">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="BorderElement.Background" Value="{DynamicResource TextControlBackgroundFocused}" />
+                                        <root:VisualStateSetter Target="BorderElement.BorderBrush" Value="{DynamicResource TextControlBorderBrushFocused}" />
+                                        <root:VisualStateSetter Target="BorderElement.BorderThickness" Value="{DynamicResource TextControlBorderThemeThicknessFocused}" />
+                                        <root:VisualStateSetter Target="PART_ContentHost.Foreground" Value="{DynamicResource TextControlForegroundFocused}" />
+                                        <root:VisualStateSetter Target="PlaceholderTextContentPresenter.Foreground" Value="{DynamicResource TextControlPlaceholderForegroundFocused}" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                         <Border
                             x:Name="BorderElement"
                             Background="{TemplateBinding Background}"

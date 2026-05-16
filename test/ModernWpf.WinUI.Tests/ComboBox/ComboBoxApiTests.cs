@@ -175,6 +175,62 @@ public class ComboBoxApiTests
     }
 
     [TestMethod]
+    public void EditableTextBoxCommonStatesUseVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var comboBox = CreateComboBox();
+            comboBox.IsEditable = true;
+
+            using var host = new TestWindowHost(comboBox);
+            host.UpdateLayout();
+
+            var editableTextBox = FindTemplateChild<TextBox>(comboBox, "PART_EditableTextBox");
+            editableTextBox.ApplyTemplate();
+
+            var textBoxRoot = FindTemplateChild<FrameworkElement>(editableTextBox, "ComboBoxTextBoxRoot");
+            var border = FindTemplateChild<Border>(editableTextBox, "BorderElement");
+            var contentHost = FindTemplateChild<ScrollViewer>(editableTextBox, "PART_ContentHost");
+            var placeholder = FindTemplateChild<TextBlock>(editableTextBox, "PlaceholderTextContentPresenter");
+
+            AssertStateSetter(textBoxRoot, "CommonStates", "Disabled", "BorderElement.Background");
+            AssertStateSetter(textBoxRoot, "CommonStates", "Disabled", "BorderElement.BorderBrush");
+            AssertStateSetter(textBoxRoot, "CommonStates", "Disabled", "PART_ContentHost.Foreground");
+            AssertStateSetter(textBoxRoot, "CommonStates", "Disabled", "PlaceholderTextContentPresenter.Foreground");
+            AssertStateSetter(textBoxRoot, "CommonStates", "PointerOver", "BorderElement.Background");
+            AssertStateSetter(textBoxRoot, "CommonStates", "PointerOver", "BorderElement.BorderBrush");
+            AssertStateSetter(textBoxRoot, "CommonStates", "PointerOver", "PART_ContentHost.Foreground");
+            AssertStateSetter(textBoxRoot, "CommonStates", "PointerOver", "PlaceholderTextContentPresenter.Foreground");
+            AssertStateSetter(textBoxRoot, "CommonStates", "Focused", "BorderElement.Background");
+            AssertStateSetter(textBoxRoot, "CommonStates", "Focused", "BorderElement.BorderBrush");
+            AssertStateSetter(textBoxRoot, "CommonStates", "Focused", "BorderElement.BorderThickness");
+            AssertStateSetter(textBoxRoot, "CommonStates", "Focused", "PART_ContentHost.Foreground");
+            AssertStateSetter(textBoxRoot, "CommonStates", "Focused", "PlaceholderTextContentPresenter.Foreground");
+
+            Assert.IsTrue(VisualStateManager.GoToState(editableTextBox, "PointerOver", false));
+            Assert.AreSame(editableTextBox.TryFindResource("TextControlBackgroundPointerOver"), border.Background);
+            Assert.AreSame(editableTextBox.TryFindResource("TextControlBorderBrushPointerOver"), border.BorderBrush);
+            Assert.AreSame(editableTextBox.TryFindResource("TextControlForegroundPointerOver"), contentHost.Foreground);
+            Assert.AreSame(editableTextBox.TryFindResource("TextControlPlaceholderForegroundPointerOver"), placeholder.Foreground);
+
+            Assert.IsTrue(VisualStateManager.GoToState(editableTextBox, "Focused", false));
+            Assert.AreSame(editableTextBox.TryFindResource("TextControlBackgroundFocused"), border.Background);
+            Assert.AreSame(editableTextBox.TryFindResource("TextControlBorderBrushFocused"), border.BorderBrush);
+            Assert.AreEqual(editableTextBox.TryFindResource("TextControlBorderThemeThicknessFocused"), border.BorderThickness);
+            Assert.AreSame(editableTextBox.TryFindResource("TextControlForegroundFocused"), contentHost.Foreground);
+            Assert.AreSame(editableTextBox.TryFindResource("TextControlPlaceholderForegroundFocused"), placeholder.Foreground);
+
+            Assert.IsTrue(VisualStateManager.GoToState(editableTextBox, "Disabled", false));
+            Assert.AreSame(editableTextBox.TryFindResource("TextControlBackgroundDisabled"), border.Background);
+            Assert.AreSame(editableTextBox.TryFindResource("TextControlBorderBrushDisabled"), border.BorderBrush);
+            Assert.AreSame(editableTextBox.TryFindResource("TextControlForegroundDisabled"), contentHost.Foreground);
+            Assert.AreSame(editableTextBox.TryFindResource("TextControlPlaceholderForegroundDisabled"), placeholder.Foreground);
+        });
+    }
+
+    [TestMethod]
     public void CommonStatesUseVisualStateSettersForDropDownGlyphAnimatedIconState()
     {
         WpfTestHost.Run(() =>
