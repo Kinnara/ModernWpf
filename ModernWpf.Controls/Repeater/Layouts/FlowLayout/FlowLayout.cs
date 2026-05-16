@@ -31,6 +31,32 @@ namespace ModernWpf.Controls
             set => SetValue(LineAlignmentProperty, value);
         }
 
+        public static readonly DependencyProperty LineSpacingProperty =
+            DependencyProperty.Register(
+                nameof(LineSpacing),
+                typeof(double),
+                typeof(FlowLayout),
+                new PropertyMetadata(0.0, OnPropertyChanged));
+
+        public double LineSpacing
+        {
+            get => (double)GetValue(LineSpacingProperty);
+            set => SetValue(LineSpacingProperty, value);
+        }
+
+        public static readonly DependencyProperty MinItemSpacingProperty =
+            DependencyProperty.Register(
+                nameof(MinItemSpacing),
+                typeof(double),
+                typeof(FlowLayout),
+                new PropertyMetadata(0.0, OnPropertyChanged));
+
+        public double MinItemSpacing
+        {
+            get => (double)GetValue(MinItemSpacingProperty);
+            set => SetValue(MinItemSpacingProperty, value);
+        }
+
         public static readonly DependencyProperty MinColumnSpacingProperty =
             DependencyProperty.Register(
                 nameof(MinColumnSpacing),
@@ -117,8 +143,8 @@ namespace ModernWpf.Controls
                 availableSize,
                 context,
                 true, /* isWrapping*/
-                MinItemSpacing,
-                LineSpacing,
+                EffectiveMinItemSpacing,
+                EffectiveLineSpacing,
                 uint.MaxValue /* maxItemsPerLine */,
                 OM.ScrollOrientation,
                 false /* disableVirtualization */,
@@ -192,7 +218,7 @@ namespace ModernWpf.Controls
                 var lastExtent = flowState.FlowAlgorithm.LastExtent;
 
                 double averageItemsPerLine = 0;
-                double averageLineSize = GetAverageLineInfo(availableSize, context, flowState, ref averageItemsPerLine) + LineSpacing;
+                double averageLineSize = GetAverageLineInfo(availableSize, context, flowState, ref averageItemsPerLine) + EffectiveLineSpacing;
                 Debug.Assert(averageItemsPerLine != 0);
 
                 double extentMajorSize = OM.MajorSize(lastExtent) == 0 ? (itemsCount / averageItemsPerLine) * averageLineSize : OM.MajorSize(lastExtent);
@@ -228,7 +254,7 @@ namespace ModernWpf.Controls
                 var state = context.LayoutState;
                 var flowState = GetAsFlowState(state);
                 double averageItemsPerLine = 0;
-                double averageLineSize = GetAverageLineInfo(availableSize, context, flowState, ref averageItemsPerLine) + LineSpacing;
+                double averageLineSize = GetAverageLineInfo(availableSize, context, flowState, ref averageItemsPerLine) + EffectiveLineSpacing;
                 int lineIndex = (int)(targetIndex / averageItemsPerLine);
                 offset = lineIndex * averageLineSize + OM.MajorStart(flowState.FlowAlgorithm.LastExtent);
             }
@@ -258,7 +284,7 @@ namespace ModernWpf.Controls
                 var state = context.LayoutState;
                 var flowState = GetAsFlowState(state);
                 double averageItemsPerLine = 0;
-                double averageLineSize = GetAverageLineInfo(availableSize, context, flowState, ref averageItemsPerLine) + LineSpacing;
+                double averageLineSize = GetAverageLineInfo(availableSize, context, flowState, ref averageItemsPerLine) + EffectiveLineSpacing;
 
                 Debug.Assert(averageItemsPerLine != 0);
                 if (firstRealized != null)
@@ -282,8 +308,8 @@ namespace ModernWpf.Controls
                 }
                 else
                 {
-                    var lineSpacing = LineSpacing;
-                    var minItemSpacing = MinItemSpacing;
+                    var lineSpacing = EffectiveLineSpacing;
+                    var minItemSpacing = EffectiveMinItemSpacing;
                     // We dont have anything realized. make an educated guess.
                     int numLines = (int)Math.Ceiling(itemsCount / averageItemsPerLine);
                     extent =
@@ -491,9 +517,20 @@ namespace ModernWpf.Controls
             return OM.MajorEnd(realizationWindow) >= OM.MajorStart(extent) && OM.MajorStart(realizationWindow) <= OM.MajorEnd(extent);
         }
 
-        private double LineSpacing => OM.ScrollOrientation == ScrollOrientation.Vertical ? m_minRowSpacing : m_minColumnSpacing;
+        private double EffectiveLineSpacing =>
+            HasNonDefaultValue(LineSpacingProperty) ?
+                LineSpacing :
+                OM.ScrollOrientation == ScrollOrientation.Vertical ? m_minRowSpacing : m_minColumnSpacing;
 
-        private double MinItemSpacing => OM.ScrollOrientation == ScrollOrientation.Vertical ? m_minColumnSpacing : m_minRowSpacing;
+        private double EffectiveMinItemSpacing =>
+            HasNonDefaultValue(MinItemSpacingProperty) ?
+                MinItemSpacing :
+                OM.ScrollOrientation == ScrollOrientation.Vertical ? m_minColumnSpacing : m_minRowSpacing;
+
+        private bool HasNonDefaultValue(DependencyProperty property)
+        {
+            return DependencyPropertyHelper.GetValueSource(this, property).BaseValueSource != BaseValueSource.Default;
+        }
 
         // Fields
         private double m_minRowSpacing;

@@ -217,6 +217,58 @@ public class RepeaterLayoutTests
     }
 
     [TestMethod]
+    public void FlowLayoutUsesWinUISpacingPropertySurface()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var layout = new FlowLayout();
+
+            Assert.AreEqual(Orientation.Horizontal, layout.Orientation);
+            Assert.AreEqual(0.0, layout.LineSpacing);
+            Assert.AreEqual(0.0, layout.MinItemSpacing);
+            Assert.AreEqual(FlowLayoutLineAlignment.Start, layout.LineAlignment);
+            Assert.IsNotNull(FlowLayout.LineSpacingProperty);
+            Assert.IsNotNull(FlowLayout.MinItemSpacingProperty);
+            Assert.IsNotNull(FlowLayout.LineAlignmentProperty);
+
+            var parsed = (FlowLayout)XamlReader.Parse(
+                "<controls:FlowLayout " +
+                "xmlns:controls=\"clr-namespace:ModernWpf.Controls;assembly=ModernWpf.Controls\" " +
+                "MinItemSpacing=\"10\" LineSpacing=\"5\" LineAlignment=\"End\" />");
+
+            Assert.AreEqual(10.0, parsed.MinItemSpacing);
+            Assert.AreEqual(5.0, parsed.LineSpacing);
+            Assert.AreEqual(FlowLayoutLineAlignment.End, parsed.LineAlignment);
+
+            var repeater = new ItemsRepeater
+            {
+                Layout = new FlowLayout
+                {
+                    MinColumnSpacing = 40,
+                    MinRowSpacing = 40,
+                    MinItemSpacing = 10,
+                    LineSpacing = 5
+                },
+                ItemsSource = Enumerable.Range(0, 4),
+                ItemTemplate = CreateButtonTemplate(width: 100, height: 50)
+            };
+            var scrollViewer = new ScrollViewer
+            {
+                Width = 250,
+                Height = 140,
+                Content = repeater
+            };
+
+            using var host = new TestWindowHost(scrollViewer, width: 310, height: 220);
+
+            AssertLayoutSlot((FrameworkElement)repeater.TryGetElement(0)!, new Rect(0, 0, 100, 50));
+            AssertLayoutSlot((FrameworkElement)repeater.TryGetElement(1)!, new Rect(110, 0, 100, 50));
+            AssertLayoutSlot((FrameworkElement)repeater.TryGetElement(2)!, new Rect(0, 55, 100, 50));
+            AssertLayoutSlot((FrameworkElement)repeater.TryGetElement(3)!, new Rect(110, 55, 100, 50));
+        });
+    }
+
+    [TestMethod]
     public void ItemsRepeaterScrollHostUsesVerticalAnchorRatioForAnchorCandidates()
     {
         WpfTestHost.Run(() =>

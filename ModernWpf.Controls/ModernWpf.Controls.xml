@@ -1005,11 +1005,27 @@
     </member>
     <member name="P:ModernWpf.Controls.FlowLayout.LineAlignment">
       <summary>Gets or sets a value that indicates how items are aligned on the non-scrolling or non-virtualizing axis.</summary>
-      <returns>An enumeration value that indicates how items are aligned. The default is Near.</returns>
+      <returns>An enumeration value that indicates how items are aligned. The default is Start.</returns>
     </member>
     <member name="F:ModernWpf.Controls.FlowLayout.LineAlignmentProperty">
       <summary>Identifies the <see cref="ModernWpf.Controls.FlowLayout.LineAlignment?text=LineAlignment" /> dependency property.</summary>
       <returns>The identifier for the <see cref="ModernWpf.Controls.FlowLayout.LineAlignment?text=LineAlignment" /> dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.FlowLayout.LineSpacing">
+      <summary>Gets or sets the minimum space between lines of items.</summary>
+      <returns>The minimum space (in pixels) between lines of items. The default is 0.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.FlowLayout.LineSpacingProperty">
+      <summary>Identifies the <see cref="ModernWpf.Controls.FlowLayout.LineSpacing?text=LineSpacing" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="ModernWpf.Controls.FlowLayout.LineSpacing?text=LineSpacing" /> dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.FlowLayout.MinItemSpacing">
+      <summary>Gets or sets the minimum space between items in a line.</summary>
+      <returns>The minimum space (in pixels) between items in a line. The default is 0.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.FlowLayout.MinItemSpacingProperty">
+      <summary>Identifies the <see cref="ModernWpf.Controls.FlowLayout.MinItemSpacing?text=MinItemSpacing" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="ModernWpf.Controls.FlowLayout.MinItemSpacing?text=MinItemSpacing" /> dependency property.</returns>
     </member>
     <member name="P:ModernWpf.Controls.FlowLayout.MinColumnSpacing">
       <summary>Gets or sets the minimum space between items on the horizontal axis.</summary>
@@ -1046,7 +1062,7 @@
     </member>
     <member name="P:ModernWpf.Controls.FlowLayout.Orientation">
       <summary>Gets or sets the axis along which items are laid out.</summary>
-      <returns>One of the enumeration values that specifies the axis along which items are laid out. The default is Vertical.</returns>
+      <returns>One of the enumeration values that specifies the axis along which items are laid out. The default is Horizontal.</returns>
     </member>
     <member name="F:ModernWpf.Controls.FlowLayout.OrientationProperty">
       <summary>Identifies the <see cref="ModernWpf.Controls.FlowLayout.Orientation?text=Orientation" /> dependency property.</summary>
