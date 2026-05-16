@@ -14,6 +14,7 @@ namespace ModernWpf.Controls
         public StackLayout()
         {
             LayoutId = "StackLayout";
+            UpdateIndexBasedLayoutOrientation(Orientation.Vertical);
         }
 
         #region Properties
@@ -356,6 +357,8 @@ namespace ModernWpf.Controls
                 //Horizontal Orientation means we have a Horizontal ScrollOrientation.
                 ScrollOrientation scrollOrientation = (orientation == Orientation.Horizontal) ? ScrollOrientation.Horizontal : ScrollOrientation.Vertical;
                 OM.ScrollOrientation = scrollOrientation;
+
+                UpdateIndexBasedLayoutOrientation(orientation);
             }
             else if (property == SpacingProperty)
             {
@@ -409,6 +412,13 @@ namespace ModernWpf.Controls
         private FlowLayoutAlgorithm GetFlowAlgorithm(VirtualizingLayoutContext context)
         {
             return GetAsStackState(context.LayoutState).FlowAlgorithm;
+        }
+
+        private void UpdateIndexBasedLayoutOrientation(Orientation orientation)
+        {
+            SetIndexBasedLayoutOrientation(orientation == Orientation.Horizontal ?
+                IndexBasedLayoutOrientation.LeftToRight :
+                IndexBasedLayoutOrientation.TopToBottom);
         }
 
         private double m_itemSpacing;

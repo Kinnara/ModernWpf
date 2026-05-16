@@ -11,6 +11,8 @@ namespace ModernWpf.Controls
         // For debugging purposes only.
         public string LayoutId { get; set; }
 
+        public IndexBasedLayoutOrientation IndexBasedLayoutOrientation => m_indexBasedLayoutOrientation;
+
         private VirtualizingLayoutContext GetVirtualizingLayoutContext(LayoutContext context)
         {
             if (context is VirtualizingLayoutContext virtualizingContext)
@@ -130,5 +132,19 @@ namespace ModernWpf.Controls
         {
             ArrangeInvalidated?.Invoke(this, null);
         }
+
+        protected void SetIndexBasedLayoutOrientation(IndexBasedLayoutOrientation orientation)
+        {
+            m_indexBasedLayoutOrientation = orientation;
+        }
+
+        private IndexBasedLayoutOrientation m_indexBasedLayoutOrientation = IndexBasedLayoutOrientation.None;
+    }
+
+    public enum IndexBasedLayoutOrientation
+    {
+        None = 0,
+        TopToBottom = 1,
+        LeftToRight = 2
     }
 }

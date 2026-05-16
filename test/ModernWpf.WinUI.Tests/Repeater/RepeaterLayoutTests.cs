@@ -125,6 +125,36 @@ public class RepeaterLayoutTests
     }
 
     [TestMethod]
+    public void LayoutsUseWinUIIndexBasedOrientationSurface()
+    {
+        WpfTestHost.Run(() =>
+        {
+            Assert.AreEqual(IndexBasedLayoutOrientation.None, new Layout().IndexBasedLayoutOrientation);
+
+            var stackLayout = new StackLayout();
+            Assert.AreEqual(IndexBasedLayoutOrientation.TopToBottom, stackLayout.IndexBasedLayoutOrientation);
+
+            stackLayout.Orientation = Orientation.Horizontal;
+            Assert.AreEqual(IndexBasedLayoutOrientation.LeftToRight, stackLayout.IndexBasedLayoutOrientation);
+
+            stackLayout.Orientation = Orientation.Vertical;
+            Assert.AreEqual(IndexBasedLayoutOrientation.TopToBottom, stackLayout.IndexBasedLayoutOrientation);
+
+            var flowLayout = new FlowLayout();
+            Assert.AreEqual(IndexBasedLayoutOrientation.LeftToRight, flowLayout.IndexBasedLayoutOrientation);
+
+            flowLayout.Orientation = Orientation.Vertical;
+            Assert.AreEqual(IndexBasedLayoutOrientation.TopToBottom, flowLayout.IndexBasedLayoutOrientation);
+
+            var uniformGridLayout = new UniformGridLayout();
+            Assert.AreEqual(IndexBasedLayoutOrientation.LeftToRight, uniformGridLayout.IndexBasedLayoutOrientation);
+
+            uniformGridLayout.Orientation = Orientation.Vertical;
+            Assert.AreEqual(IndexBasedLayoutOrientation.TopToBottom, uniformGridLayout.IndexBasedLayoutOrientation);
+        });
+    }
+
+    [TestMethod]
     public void StackLayoutKeepsFractionalAverageForRegularElementsLikeWinUI()
     {
         WpfTestHost.Run(() =>

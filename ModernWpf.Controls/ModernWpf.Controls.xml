@@ -1408,6 +1408,18 @@ Use the ItemsRepeaterScrollHost if your app will run on versions of Windows prio
       <param name="index">The index of the item to get the key for.</param>
       <returns>The unique identifier (key) for the item at the specified index.</returns>
     </member>
+    <member name="T:ModernWpf.Controls.IndexBasedLayoutOrientation">
+      <summary>Defines constants that specify whether a layout's item indices map to a stable layout direction.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.IndexBasedLayoutOrientation.LeftToRight">
+      <summary>Item indices increase from left to right.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.IndexBasedLayoutOrientation.None">
+      <summary>No index-based layout orientation is specified.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.IndexBasedLayoutOrientation.TopToBottom">
+      <summary>Item indices increase from top to bottom.</summary>
+    </member>
     <member name="T:ModernWpf.Controls.Layout">
       <summary>Represents the base class for an object that sizes and arranges child elements for a host.</summary>
     </member>
@@ -1419,6 +1431,10 @@ Use the ItemsRepeaterScrollHost if your app will run on versions of Windows prio
     </member>
     <member name="E:ModernWpf.Controls.Layout.ArrangeInvalidated">
       <summary>Occurs when the arrange state (layout) has been invalidated.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.Layout.IndexBasedLayoutOrientation">
+      <summary>Gets the direction in which item indices increase for this layout.</summary>
+      <returns>An enumeration value that indicates the direction in which item indices increase. The default is None.</returns>
     </member>
     <member name="M:ModernWpf.Controls.Layout.InitializeForContext(ModernWpf.Controls.LayoutContext)">
       <summary>Initializes any per-container state the layout requires when it is attached to a UIElement container.</summary>
@@ -1438,6 +1454,10 @@ Use the ItemsRepeaterScrollHost if your app will run on versions of Windows prio
     </member>
     <member name="E:ModernWpf.Controls.Layout.MeasureInvalidated">
       <summary>Occurs when the measurement state (layout) has been invalidated.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.Layout.SetIndexBasedLayoutOrientation(ModernWpf.Controls.IndexBasedLayoutOrientation)">
+      <summary>Sets the direction in which item indices increase for this layout.</summary>
+      <param name="orientation">The direction in which item indices increase.</param>
     </member>
     <member name="M:ModernWpf.Controls.Layout.UninitializeForContext(ModernWpf.Controls.LayoutContext)">
       <summary>Removes any state the layout previously stored on the UIElement container.</summary>

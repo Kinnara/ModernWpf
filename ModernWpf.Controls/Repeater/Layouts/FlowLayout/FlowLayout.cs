@@ -14,6 +14,7 @@ namespace ModernWpf.Controls
         public FlowLayout()
         {
             LayoutId = "FlowLayout";
+            UpdateIndexBasedLayoutOrientation(Orientation.Horizontal);
         }
 
         #region Properties
@@ -452,6 +453,8 @@ namespace ModernWpf.Controls
                 //i.e. the properties are the inverse of each other.
                 ScrollOrientation scrollOrientation = (orientation == Orientation.Horizontal) ? ScrollOrientation.Vertical : ScrollOrientation.Horizontal;
                 OM.ScrollOrientation = scrollOrientation;
+
+                UpdateIndexBasedLayoutOrientation(orientation);
             }
             else if (property == MinColumnSpacingProperty)
             {
@@ -530,6 +533,13 @@ namespace ModernWpf.Controls
         private bool HasNonDefaultValue(DependencyProperty property)
         {
             return DependencyPropertyHelper.GetValueSource(this, property).BaseValueSource != BaseValueSource.Default;
+        }
+
+        private void UpdateIndexBasedLayoutOrientation(Orientation orientation)
+        {
+            SetIndexBasedLayoutOrientation(orientation == Orientation.Horizontal ?
+                IndexBasedLayoutOrientation.LeftToRight :
+                IndexBasedLayoutOrientation.TopToBottom);
         }
 
         // Fields
