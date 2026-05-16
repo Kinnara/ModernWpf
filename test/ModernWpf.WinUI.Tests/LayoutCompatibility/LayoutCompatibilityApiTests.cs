@@ -1243,6 +1243,53 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
+    public void LayoutChromeCornerRadiusChangeRefreshesChildClip()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var border = new BorderEx
+            {
+                Width = 30,
+                Height = 30,
+                Child = CreateRedChildBox()
+            };
+            AssertDynamicRoundedChildClip(border, value => border.CornerRadius = value);
+
+            var presenter = new ContentPresenterEx
+            {
+                Width = 30,
+                Height = 30,
+                Content = CreateRedChildBox()
+            };
+            AssertDynamicRoundedChildClip(presenter, value => presenter.CornerRadius = value);
+
+            var stackPanel = new ModernStackPanelEx
+            {
+                Width = 30,
+                Height = 30
+            };
+            stackPanel.Children.Add(CreateRedChildBox());
+            AssertDynamicRoundedChildClip(stackPanel, value => stackPanel.CornerRadius = value);
+
+            var grid = new ModernGridEx
+            {
+                Width = 30,
+                Height = 30
+            };
+            grid.Children.Add(CreateRedChildBox());
+            AssertDynamicRoundedChildClip(grid, value => grid.CornerRadius = value);
+
+            var relativePanel = new ModernRelativePanel
+            {
+                Width = 30,
+                Height = 30
+            };
+            relativePanel.Children.Add(CreateRedChildBox());
+            AssertDynamicRoundedChildClip(relativePanel, value => relativePanel.CornerRadius = value);
+        });
+    }
+
+    [TestMethod]
     public void BorderExHitTestUsesRoundedChromeClip()
     {
         WpfTestHost.Run(() =>
@@ -3202,12 +3249,32 @@ public class LayoutCompatibilityApiTests
         Assert.IsTrue(center.R > 200 && center.A > 200, $"Expected child content to render inside the rounded clip. Pixel={center}");
     }
 
+    private static void AssertDynamicRoundedChildClip(FrameworkElement element, Action<CornerRadius> setCornerRadius)
+    {
+        setCornerRadius(new CornerRadius());
+        using var host = new TestWindowHost(element, width: 120, height: 90);
+
+        var squareCorner = RenderCurrentElementPixel(element, 1, 1, 30, 30);
+        Assert.IsTrue(squareCorner.R > 200 && squareCorner.A > 200, $"Expected square corner content before radius change. Pixel={squareCorner}");
+
+        setCornerRadius(new CornerRadius(12, 0, 0, 0));
+        host.UpdateLayout();
+
+        var clippedCorner = RenderCurrentElementPixel(element, 1, 1, 30, 30);
+        Assert.IsTrue(clippedCorner.A < 30, $"Expected rounded corner clip to refresh after CornerRadius change. Pixel={clippedCorner}");
+    }
+
     private static Color RenderElementPixel(FrameworkElement element, int x, int y, int width, int height)
     {
         element.Measure(new Size(width, height));
         element.Arrange(new Rect(0, 0, width, height));
         element.UpdateLayout();
 
+        return RenderCurrentElementPixel(element, x, y, width, height);
+    }
+
+    private static Color RenderCurrentElementPixel(FrameworkElement element, int x, int y, int width, int height)
+    {
         var bitmap = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
         bitmap.Render(element);
 
