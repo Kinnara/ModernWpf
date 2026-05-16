@@ -26,6 +26,7 @@ namespace ModernWpf.Controls
         private const string TopItemsPanelName = "PART_TopItemsPanel";
         private const string BottomItemsPanelName = "PART_BottomItemsPanel";
         private const string ContentTransformName = "PART_ContentTransform";
+        private const string SwipeItemStyleKey = "SwipeItemStyle";
 
         static SwipeControl()
         {
@@ -673,13 +674,20 @@ namespace ModernWpf.Controls
             var button = new Button
             {
                 Tag = item,
-                Content = CreateButtonContent(item),
-                MinWidth = 68,
-                MinHeight = 44,
-                Padding = new Thickness(8, 4, 8, 4),
-                Background = item.Background,
-                Foreground = item.Foreground
+                Content = CreateButtonContent(item)
             };
+
+            button.SetResourceReference(StyleProperty, SwipeItemStyleKey);
+
+            if (item.Background != null)
+            {
+                button.Background = item.Background;
+            }
+
+            if (item.Foreground != null)
+            {
+                button.Foreground = item.Foreground;
+            }
 
             AutomationProperties.SetName(button, item.Text ?? string.Empty);
 

@@ -94,6 +94,7 @@ public class TemplateParityTests
             Path.Combine("ModernWpf.Controls", "RadioButtons", "RadioButtons.xaml"),
             Path.Combine("ModernWpf.Controls", "RatingControl", "RatingControl.xaml"),
             Path.Combine("ModernWpf.Controls", "SplitView", "SplitView.xaml"),
+            Path.Combine("ModernWpf.Controls", "SwipeControl", "SwipeControl.xaml"),
             Path.Combine("ModernWpf.Controls", "ToggleSwitch", "ToggleSwitch.xaml"),
             Path.Combine("ModernWpf.Controls", "TwoPaneView", "TwoPaneView.xaml")
         };

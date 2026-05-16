@@ -7,6 +7,7 @@ using System.Windows.Input;
 using System.Windows.Markup;
 using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ModernWpf;
 using ModernWpf.Controls;
 using ModernWpf.Media.Animation;
 using ModernWpf.WinUI.TestInfra;
@@ -271,6 +272,56 @@ public class SwipeControlApiTests
     }
 
     [TestMethod]
+    public void SwipeItemStylePressedStateUsesVisualStateSetter()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var swipeItem = new SwipeItem { Text = "Delete" };
+            var swipeControl = new ModernWpf.Controls.SwipeControl
+            {
+                Content = new TextBlock { Text = "Item" },
+                RightItems = new SwipeItems { swipeItem }
+            };
+
+            using var host = new TestWindowHost(swipeControl, width: 240, height: 120);
+
+            var button = VisualTreeTestHelper
+                .EnumerateDescendants(swipeControl)
+                .OfType<Button>()
+                .FirstOrDefault(candidate => candidate.Tag == swipeItem);
+
+            Assert.IsNotNull(button);
+            Assert.IsNotNull(button!.Style);
+
+            button.ApplyTemplate();
+            host.UpdateLayout();
+
+            var root = VisualTreeTestHelper
+                .EnumerateDescendants(button)
+                .OfType<Border>()
+                .FirstOrDefault(candidate => candidate.Name == "Root");
+            Assert.IsNotNull(root);
+
+            var commonStates = VisualStateManager.GetVisualStateGroups(root)
+                .OfType<VisualStateGroup>()
+                .Single(group => group.Name == "CommonStates");
+            var pressedState = commonStates.States
+                .Cast<VisualState>()
+                .Single(state => state.Name == "Pressed");
+            Assert.IsInstanceOfType(pressedState, typeof(VisualStateEx));
+
+            var stateEx = (VisualStateEx)pressedState;
+            Assert.AreEqual(1, stateEx.Setters.Count);
+            Assert.AreEqual("Root.Background", stateEx.Setters[0].Target);
+
+            Assert.IsTrue(VisualStateManager.GoToState(button, "Pressed", false));
+            host.UpdateLayout();
+
+            AssertBrushEquals((Brush)root!.TryFindResource("SwipeItemBackgroundPressed"), root.Background);
+        });
+    }
+
+    [TestMethod]
     public void DragRevealsRightItemsAndCloseResetsOffset()
     {
         WpfTestHost.Run(() =>
@@ -429,5 +480,20 @@ public class SwipeControlApiTests
             ExecutedParameter = parameter;
             CanExecuteChanged?.Invoke(this, EventArgs.Empty);
         }
+    }
+
+    private static void AssertBrushEquals(Brush expected, Brush actual)
+    {
+        Assert.IsNotNull(expected);
+        Assert.IsNotNull(actual);
+
+        if (expected is SolidColorBrush expectedSolid && actual is SolidColorBrush actualSolid)
+        {
+            Assert.AreEqual(expectedSolid.Color, actualSolid.Color);
+            Assert.AreEqual(expectedSolid.Opacity, actualSolid.Opacity);
+            return;
+        }
+
+        Assert.AreEqual(expected.ToString(), actual.ToString());
     }
 }
