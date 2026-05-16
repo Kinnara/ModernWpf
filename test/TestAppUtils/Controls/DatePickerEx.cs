@@ -28,6 +28,18 @@ namespace System.Windows.Controls
 
         #endregion
 
+        #region HeaderPlacement
+
+        public static readonly DependencyProperty HeaderPlacementProperty = DatePickerHelper.HeaderPlacementProperty.AddOwner(typeof(DatePickerEx));
+
+        public DatePickerHeaderPlacement HeaderPlacement
+        {
+            get => (DatePickerHeaderPlacement)GetValue(HeaderPlacementProperty);
+            set => SetValue(HeaderPlacementProperty, value);
+        }
+
+        #endregion
+
         protected override void OnInitialized(EventArgs e)
         {
             base.OnInitialized(e);
