@@ -276,6 +276,44 @@ public class CommandBarApiTests
     }
 
     [TestMethod]
+    public void AppBarToggleButtonTemplateUsesVisualStateSettersForWinUIStateParity()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleButton = new AppBarToggleButton
+            {
+                Icon = new SymbolIcon(Symbol.Accept),
+                Label = "Pin",
+                InputGestureText = "Ctrl+P",
+                IsChecked = true
+            };
+
+            using var host = new TestWindowHost(toggleButton, width: 180, height: 120);
+            host.UpdateLayout();
+
+            var root = FindTemplateChild<Border>(toggleButton, "Root");
+
+            AssertStateSetter(root, "ApplicationViewStates", "Compact", "AppBarToggleButtonInnerBorder.Margin");
+            AssertStateSetter(root, "ApplicationViewStates", "LabelOnRight", "TextLabel.(Grid.Column)");
+            AssertStateSetter(root, "ApplicationViewStates", "LabelOnRight", null, "Width");
+            AssertStateSetter(root, "ApplicationViewStates", "Overflow", "OverflowCheckGlyph.Visibility");
+            AssertStateSetter(root, "ApplicationViewStates", "OverflowWithMenuIcons", "ContentViewbox.MaxWidth");
+
+            AssertStateSetter(root, "CommonStates", "PointerOver", "AppBarToggleButtonInnerBorder.Background");
+            AssertStateSetter(root, "CommonStates", "Checked", "AppBarToggleButtonInnerBorder.BackgroundSizing");
+            AssertStateSetter(root, "CommonStates", "CheckedPointerOver", "OverflowCheckGlyph.Opacity");
+            AssertStateSetter(root, "CommonStates", "CheckedDisabled", "KeyboardAcceleratorTextLabel.Foreground");
+            AssertStateSetter(root, "CommonStates", "OverflowPointerOver", "OverflowCheckGlyph.Foreground");
+            AssertStateSetter(root, "CommonStates", "OverflowCheckedPointerOver", "AppBarToggleButtonInnerBorder.Background");
+            AssertStateSetter(root, "CommonStates", "OverflowCheckedPressed", "Content.Foreground");
+
+            AssertStateSetter(root, "KeyboardAcceleratorTextVisibility", "KeyboardAcceleratorTextVisible", "KeyboardAcceleratorTextLabel.Visibility");
+        });
+    }
+
+    [TestMethod]
     public void AppBarElementContainerTemplateUsesWinUIContentPresenter()
     {
         WpfTestHost.Run(() =>
