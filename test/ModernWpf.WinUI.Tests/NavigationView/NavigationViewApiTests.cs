@@ -829,6 +829,43 @@ public class NavigationViewApiTests
     }
 
     [TestMethod]
+    public void NavigationViewItemSeparatorUsesWinUIVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var separator = new ModernWpf.Controls.NavigationViewItemSeparator();
+
+            using var host = new TestWindowHost(separator, width: 180, height: 80);
+
+            var root = FindNamedDescendant<Grid>(separator, "NavigationViewItemSeparatorRootGrid");
+            var line = FindNamedDescendant<Rectangle>(separator, "SeparatorLine");
+
+            AssertStateSetter(root, "NavigationSeparatorLineStates", "HorizontalLineCompact",
+                "SeparatorLine.Margin");
+            AssertStateSetter(root, "NavigationSeparatorLineStates", "VerticalLine",
+                "SeparatorLine.Height",
+                "SeparatorLine.Width",
+                "SeparatorLine.Margin",
+                "SeparatorLine.VerticalAlignment",
+                "SeparatorLine.Fill");
+
+            Assert.IsTrue(VisualStateManager.GoToState(separator, "VerticalLine", false));
+            AssertCurrentState(root, "NavigationSeparatorLineStates", "VerticalLine");
+            Assert.AreEqual(24.0, line.Height);
+            Assert.AreEqual(line.TryFindResource("TopNavigationViewItemSeparatorWidth"), line.Width);
+            Assert.AreEqual(line.TryFindResource("TopNavigationViewItemSeparatorMargin"), line.Margin);
+            Assert.AreEqual(VerticalAlignment.Center, line.VerticalAlignment);
+            Assert.AreSame(line.TryFindResource("TopNavigationViewItemSeparatorForeground"), line.Fill);
+
+            Assert.IsTrue(VisualStateManager.GoToState(separator, "HorizontalLineCompact", false));
+            AssertCurrentState(root, "NavigationSeparatorLineStates", "HorizontalLineCompact");
+            Assert.AreEqual(line.TryFindResource("NavigationViewCompactItemSeparatorMargin"), line.Margin);
+        });
+    }
+
+    [TestMethod]
     public void VerifyOverflowButtonToolTip()
     {
         WpfTestHost.Run(() =>
@@ -973,6 +1010,29 @@ public class NavigationViewApiTests
 
         Assert.Fail($"Could not find descendant named '{name}'.");
         throw new InvalidOperationException();
+    }
+
+    private static void AssertStateSetter(FrameworkElement stateGroupsRoot, string groupName, string stateName, params string[] expectedTargets)
+    {
+        var group = FindVisualStateGroup(stateGroupsRoot, groupName);
+        var state = group.States.OfType<VisualStateEx>().Single(item => item.Name == stateName);
+        var actualTargets = state.Setters
+            .Select(setter => string.IsNullOrEmpty(setter.Target) ? setter.Property : setter.Target)
+            .ToArray();
+
+        CollectionAssert.IsSubsetOf(expectedTargets, actualTargets);
+    }
+
+    private static void AssertCurrentState(FrameworkElement stateGroupsRoot, string groupName, string expectedStateName)
+    {
+        Assert.AreEqual(expectedStateName, FindVisualStateGroup(stateGroupsRoot, groupName).CurrentState?.Name);
+    }
+
+    private static VisualStateGroup FindVisualStateGroup(FrameworkElement stateGroupsRoot, string groupName)
+    {
+        return VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
+            .OfType<VisualStateGroup>()
+            .Single(item => item.Name == groupName);
     }
 
     private static TestWindowHost CreateNavigationViewHost(

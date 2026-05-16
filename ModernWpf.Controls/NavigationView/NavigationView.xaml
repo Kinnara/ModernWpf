@@ -1640,14 +1640,26 @@
             <Setter.Value>
                 <ControlTemplate>
                     <Grid x:Name="NavigationViewItemSeparatorRootGrid">
+                        <VisualStateManager.CustomVisualStateManager>
+                            <ui:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="NavigationSeparatorLineStates">
-                                <ui:VisualStateGroupListener.Listener>
-                                    <ui:VisualStateGroupListener x:Name="NavigationSeparatorLineStatesListener" />
-                                </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="HorizontalLine" />
-                                <VisualState x:Name="HorizontalLineCompact" />
-                                <VisualState x:Name="VerticalLine" />
+                                <ui:VisualStateEx x:Name="HorizontalLineCompact">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="SeparatorLine.Margin" Value="{DynamicResource NavigationViewCompactItemSeparatorMargin}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="VerticalLine">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="SeparatorLine.Height" Value="24" />
+                                        <ui:VisualStateSetter Target="SeparatorLine.Width" Value="{DynamicResource TopNavigationViewItemSeparatorWidth}" />
+                                        <ui:VisualStateSetter Target="SeparatorLine.Margin" Value="{DynamicResource TopNavigationViewItemSeparatorMargin}" />
+                                        <ui:VisualStateSetter Target="SeparatorLine.VerticalAlignment" Value="Center" />
+                                        <ui:VisualStateSetter Target="SeparatorLine.Fill" Value="{DynamicResource TopNavigationViewItemSeparatorForeground}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Rectangle
@@ -1656,20 +1668,6 @@
                             Margin="{DynamicResource NavigationViewItemSeparatorMargin}"
                             Fill="{DynamicResource NavigationViewItemSeparatorForeground}" />
                     </Grid>
-                    <ControlTemplate.Triggers>
-                        <!-- HorizontalLineCompact -->
-                        <Trigger SourceName="NavigationSeparatorLineStatesListener" Property="CurrentStateName" Value="HorizontalLineCompact">
-                            <Setter TargetName="SeparatorLine" Property="Margin" Value="{DynamicResource NavigationViewCompactItemSeparatorMargin}" />
-                        </Trigger>
-                        <!-- VerticalLine -->
-                        <Trigger SourceName="NavigationSeparatorLineStatesListener" Property="CurrentStateName" Value="VerticalLine">
-                            <Setter TargetName="SeparatorLine" Property="Height" Value="24" />
-                            <Setter TargetName="SeparatorLine" Property="Width" Value="{DynamicResource TopNavigationViewItemSeparatorWidth}" />
-                            <Setter TargetName="SeparatorLine" Property="Margin" Value="{DynamicResource TopNavigationViewItemSeparatorMargin}" />
-                            <Setter TargetName="SeparatorLine" Property="VerticalAlignment" Value="Center" />
-                            <Setter TargetName="SeparatorLine" Property="Fill" Value="{DynamicResource TopNavigationViewItemSeparatorForeground}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
