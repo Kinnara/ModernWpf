@@ -307,7 +307,7 @@
                             </Storyboard>
                         </Border.Resources>
                         <VisualStateManager.CustomVisualStateManager>
-                            <root:SimpleVisualStateManager />
+                            <root:ModernVisualStateManager />
                         </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="ConsciousStates">
@@ -513,7 +513,7 @@
                                     </Storyboard>
                                 </Border.Resources>
                                 <VisualStateManager.CustomVisualStateManager>
-                                    <root:SimpleVisualStateManager />
+                                    <root:ModernVisualStateManager />
                                 </VisualStateManager.CustomVisualStateManager>
                                 <VisualStateManager.VisualStateGroups>
                                     <VisualStateGroup x:Name="ConsciousStates">

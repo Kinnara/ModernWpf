@@ -54,6 +54,27 @@ public class TemplateParityTests
     }
 
     [TestMethod]
+    public void ProductTemplatesDoNotContainRawWinUIVisualStateSetters()
+    {
+        var repoRoot = FindRepoRoot();
+        var productTemplateRoots = new[]
+        {
+            Path.Combine(repoRoot, "ModernWpf"),
+            Path.Combine(repoRoot, "ModernWpf.Controls")
+        };
+
+        var offenders = productTemplateRoots
+            .Where(Directory.Exists)
+            .SelectMany(root => Directory.EnumerateFiles(root, "*.xaml", SearchOption.AllDirectories))
+            .SelectMany(path => FindRawWinUIVisualStateSetterUses(repoRoot, path))
+            .ToArray();
+
+        Assert.IsFalse(
+            offenders.Any(),
+            "Raw WinUI <VisualState.Setters> syntax does not parse in WPF; use ui:VisualStateEx.Setters after normalization. Offenders: " + string.Join("; ", offenders));
+    }
+
+    [TestMethod]
     public void BatchedSourceBackedPresenterSlotsDoNotUsePlainContentPresenter()
     {
         var repoRoot = FindRepoRoot();
@@ -358,6 +379,19 @@ public class TemplateParityTests
                 Attribute: Regex.Match(match.Groups["body"].Value, attributePattern).Groups["attribute"].Value))
             .Where(match => !string.IsNullOrEmpty(match.Attribute))
             .Select(match => $"{relativePath}:{match.LineNumber} {element}.{match.Attribute}")
+            .ToArray();
+    }
+
+    private static string[] FindRawWinUIVisualStateSetterUses(string repoRoot, string path)
+    {
+        var relativePath = Path.GetRelativePath(repoRoot, path);
+        var lines = File.ReadAllLines(path);
+
+        return lines
+            .Select((line, index) => (Line: line, LineNumber: index + 1))
+            .Where(entry => entry.Line.Contains("<VisualState.Setters", StringComparison.Ordinal) ||
+                entry.Line.Contains("</VisualState.Setters", StringComparison.Ordinal))
+            .Select(entry => $"{relativePath}:{entry.LineNumber}")
             .ToArray();
     }
 }

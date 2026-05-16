@@ -488,7 +488,7 @@
                         </Grid.Resources>
 
                         <VisualStateManager.CustomVisualStateManager>
-                            <ui:SimpleVisualStateManager />
+                            <ui:ModernVisualStateManager />
                         </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="DisplayModeStates">
