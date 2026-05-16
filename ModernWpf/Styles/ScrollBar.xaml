@@ -317,10 +317,34 @@
                                 <VisualStateGroup.Transitions>
                                     <VisualTransition From="Expanded" To="Collapsed" Storyboard="{StaticResource ExpandedToCollapsedStoryboard}" />
                                 </VisualStateGroup.Transitions>
-                                <VisualState x:Name="Collapsed" />
-                                <VisualState x:Name="Expanded" Storyboard="{StaticResource ExpandedStoryboard}" />
-                                <VisualState x:Name="ExpandedWithoutAnimation" Storyboard="{StaticResource ExpandedWithoutAnimationStoryboard}" />
-                                <VisualState x:Name="CollapsedWithoutAnimation" Storyboard="{StaticResource CollapsedWithoutAnimationStoryboard}" />
+                                <root:VisualStateEx x:Name="Collapsed">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="VerticalThumb.Background" Value="{DynamicResource ScrollBarPanningThumbBackground}" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="Expanded" Storyboard="{StaticResource ExpandedStoryboard}">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="Root.Background" Value="{DynamicResource ScrollBarBackgroundPointerOver}" />
+                                        <root:VisualStateSetter Target="Root.BorderBrush" Value="{DynamicResource ScrollBarBorderBrushPointerOver}" />
+                                        <root:VisualStateSetter Target="VerticalTrackRect.Stroke" Value="{DynamicResource ScrollBarTrackStrokePointerOver}" />
+                                        <root:VisualStateSetter Target="VerticalTrackRect.Fill" Value="{DynamicResource ScrollBarTrackFillPointerOver}" />
+                                        <root:VisualStateSetter Target="VerticalThumb.Background" Value="{DynamicResource ScrollBarThumbBackground}" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="ExpandedWithoutAnimation" Storyboard="{StaticResource ExpandedWithoutAnimationStoryboard}">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="Root.Background" Value="{DynamicResource ScrollBarBackgroundPointerOver}" />
+                                        <root:VisualStateSetter Target="Root.BorderBrush" Value="{DynamicResource ScrollBarBorderBrushPointerOver}" />
+                                        <root:VisualStateSetter Target="VerticalTrackRect.Stroke" Value="{DynamicResource ScrollBarTrackStrokePointerOver}" />
+                                        <root:VisualStateSetter Target="VerticalTrackRect.Fill" Value="{DynamicResource ScrollBarTrackFillPointerOver}" />
+                                        <root:VisualStateSetter Target="VerticalThumb.Background" Value="{DynamicResource ScrollBarThumbBackground}" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="CollapsedWithoutAnimation" Storyboard="{StaticResource CollapsedWithoutAnimationStoryboard}">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="VerticalThumb.Background" Value="{DynamicResource ScrollBarPanningThumbBackground}" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Grid>
@@ -406,20 +430,6 @@
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
-                        <Trigger SourceName="ConsciousStatesListener" Property="CurrentStateName" Value="Expanded">
-                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource ScrollBarBackgroundPointerOver}" />
-                            <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource ScrollBarBorderBrushPointerOver}" />
-                            <Setter TargetName="VerticalTrackRect" Property="Stroke" Value="{DynamicResource ScrollBarTrackStrokePointerOver}" />
-                            <Setter TargetName="VerticalTrackRect" Property="Fill" Value="{DynamicResource ScrollBarTrackFillPointerOver}" />
-                            <Setter TargetName="VerticalThumb" Property="Background" Value="{DynamicResource ScrollBarThumbBackground}" />
-                        </Trigger>
-                        <Trigger SourceName="ConsciousStatesListener" Property="CurrentStateName" Value="ExpandedWithoutAnimation">
-                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource ScrollBarBackgroundPointerOver}" />
-                            <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource ScrollBarBorderBrushPointerOver}" />
-                            <Setter TargetName="VerticalTrackRect" Property="Stroke" Value="{DynamicResource ScrollBarTrackStrokePointerOver}" />
-                            <Setter TargetName="VerticalTrackRect" Property="Fill" Value="{DynamicResource ScrollBarTrackFillPointerOver}" />
-                            <Setter TargetName="VerticalThumb" Property="Background" Value="{DynamicResource ScrollBarThumbBackground}" />
-                        </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource ScrollBarBackgroundDisabled}" />
                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource ScrollBarBorderBrushDisabled}" />
@@ -523,10 +533,34 @@
                                         <VisualStateGroup.Transitions>
                                             <VisualTransition From="Expanded" To="Collapsed" Storyboard="{StaticResource ExpandedToCollapsedStoryboard}" />
                                         </VisualStateGroup.Transitions>
-                                        <VisualState x:Name="Collapsed" />
-                                        <VisualState x:Name="Expanded" Storyboard="{StaticResource ExpandedStoryboard}" />
-                                        <VisualState x:Name="ExpandedWithoutAnimation" Storyboard="{StaticResource ExpandedWithoutAnimationStoryboard}" />
-                                        <VisualState x:Name="CollapsedWithoutAnimation" Storyboard="{StaticResource CollapsedWithoutAnimationStoryboard}" />
+                                        <root:VisualStateEx x:Name="Collapsed">
+                                            <root:VisualStateEx.Setters>
+                                                <root:VisualStateSetter Target="HorizontalThumb.Background" Value="{DynamicResource ScrollBarPanningThumbBackground}" />
+                                            </root:VisualStateEx.Setters>
+                                        </root:VisualStateEx>
+                                        <root:VisualStateEx x:Name="Expanded" Storyboard="{StaticResource ExpandedStoryboard}">
+                                            <root:VisualStateEx.Setters>
+                                                <root:VisualStateSetter Target="Root.Background" Value="{DynamicResource ScrollBarBackgroundPointerOver}" />
+                                                <root:VisualStateSetter Target="Root.BorderBrush" Value="{DynamicResource ScrollBarBorderBrushPointerOver}" />
+                                                <root:VisualStateSetter Target="HorizontalTrackRect.Stroke" Value="{DynamicResource ScrollBarTrackStrokePointerOver}" />
+                                                <root:VisualStateSetter Target="HorizontalTrackRect.Fill" Value="{DynamicResource ScrollBarTrackFillPointerOver}" />
+                                                <root:VisualStateSetter Target="HorizontalThumb.Background" Value="{DynamicResource ScrollBarThumbBackground}" />
+                                            </root:VisualStateEx.Setters>
+                                        </root:VisualStateEx>
+                                        <root:VisualStateEx x:Name="ExpandedWithoutAnimation" Storyboard="{StaticResource ExpandedWithoutAnimationStoryboard}">
+                                            <root:VisualStateEx.Setters>
+                                                <root:VisualStateSetter Target="Root.Background" Value="{DynamicResource ScrollBarBackgroundPointerOver}" />
+                                                <root:VisualStateSetter Target="Root.BorderBrush" Value="{DynamicResource ScrollBarBorderBrushPointerOver}" />
+                                                <root:VisualStateSetter Target="HorizontalTrackRect.Stroke" Value="{DynamicResource ScrollBarTrackStrokePointerOver}" />
+                                                <root:VisualStateSetter Target="HorizontalTrackRect.Fill" Value="{DynamicResource ScrollBarTrackFillPointerOver}" />
+                                                <root:VisualStateSetter Target="HorizontalThumb.Background" Value="{DynamicResource ScrollBarThumbBackground}" />
+                                            </root:VisualStateEx.Setters>
+                                        </root:VisualStateEx>
+                                        <root:VisualStateEx x:Name="CollapsedWithoutAnimation" Storyboard="{StaticResource CollapsedWithoutAnimationStoryboard}">
+                                            <root:VisualStateEx.Setters>
+                                                <root:VisualStateSetter Target="HorizontalThumb.Background" Value="{DynamicResource ScrollBarPanningThumbBackground}" />
+                                            </root:VisualStateEx.Setters>
+                                        </root:VisualStateEx>
                                     </VisualStateGroup>
                                 </VisualStateManager.VisualStateGroups>
                                 <Grid>
@@ -611,20 +645,6 @@
                                 </Grid>
                             </Border>
                             <ControlTemplate.Triggers>
-                                <Trigger SourceName="ConsciousStatesListener" Property="CurrentStateName" Value="Expanded">
-                                    <Setter TargetName="Root" Property="Background" Value="{DynamicResource ScrollBarBackgroundPointerOver}" />
-                                    <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource ScrollBarBorderBrushPointerOver}" />
-                                    <Setter TargetName="HorizontalTrackRect" Property="Stroke" Value="{DynamicResource ScrollBarTrackStrokePointerOver}" />
-                                    <Setter TargetName="HorizontalTrackRect" Property="Fill" Value="{DynamicResource ScrollBarTrackFillPointerOver}" />
-                                    <Setter TargetName="HorizontalThumb" Property="Background" Value="{DynamicResource ScrollBarThumbBackground}" />
-                                </Trigger>
-                                <Trigger SourceName="ConsciousStatesListener" Property="CurrentStateName" Value="ExpandedWithoutAnimation">
-                                    <Setter TargetName="Root" Property="Background" Value="{DynamicResource ScrollBarBackgroundPointerOver}" />
-                                    <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource ScrollBarBorderBrushPointerOver}" />
-                                    <Setter TargetName="HorizontalTrackRect" Property="Stroke" Value="{DynamicResource ScrollBarTrackStrokePointerOver}" />
-                                    <Setter TargetName="HorizontalTrackRect" Property="Fill" Value="{DynamicResource ScrollBarTrackFillPointerOver}" />
-                                    <Setter TargetName="HorizontalThumb" Property="Background" Value="{DynamicResource ScrollBarThumbBackground}" />
-                                </Trigger>
                                 <Trigger Property="IsEnabled" Value="False">
                                     <Setter TargetName="Root" Property="Background" Value="{DynamicResource ScrollBarBackgroundDisabled}" />
                                     <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource ScrollBarBorderBrushDisabled}" />
