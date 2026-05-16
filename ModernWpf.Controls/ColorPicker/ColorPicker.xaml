@@ -34,8 +34,6 @@
                 <ControlTemplate TargetType="primitives:ColorSpectrum">
                     <Border
                         x:Name="LayoutRoot"
-                        BorderBrush="{DynamicResource ColorPickerBorderBrush}"
-                        BorderThickness="2"
                         CornerRadius="{StaticResource ColorPickerSliderCornerRadius}"
                         ClipToBounds="True">
                         <VisualStateManager.CustomVisualStateManager>
@@ -72,8 +70,10 @@
                                     <ui:VisualStateEx.Setters>
                                         <ui:VisualStateSetter Target="SpectrumRectangle.Visibility" Value="Collapsed" />
                                         <ui:VisualStateSetter Target="SpectrumOverlayRectangle.Visibility" Value="Collapsed" />
+                                        <ui:VisualStateSetter Target="RectangleBorder.Visibility" Value="Collapsed" />
                                         <ui:VisualStateSetter Target="SpectrumEllipse.Visibility" Value="Visible" />
                                         <ui:VisualStateSetter Target="SpectrumOverlayEllipse.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="EllipseBorder.Visibility" Value="Visible" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                             </VisualStateGroup>
@@ -147,6 +147,19 @@
                                     Stroke="White"
                                     StrokeThickness="2" />
                             </Grid>
+                            <Rectangle
+                                x:Name="RectangleBorder"
+                                Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualWidth}"
+                                Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualHeight}"
+                                Style="{StaticResource ColorPickerBorderStyle}"
+                                IsHitTestVisible="False" />
+                            <Ellipse
+                                x:Name="EllipseBorder"
+                                Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualWidth}"
+                                Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualHeight}"
+                                Style="{StaticResource ColorPickerBorderStyle}"
+                                IsHitTestVisible="False"
+                                Visibility="Collapsed" />
                         </Canvas>
                     </Border>
                 </ControlTemplate>

@@ -252,6 +252,8 @@ public class ColorPickerApiTests
 
             var spectrumRectangle = FindNamedDescendant<Rectangle>(colorSpectrum, "SpectrumRectangle");
             var spectrumEllipse = FindNamedDescendant<Ellipse>(colorSpectrum, "SpectrumEllipse");
+            var rectangleBorder = FindNamedDescendant<Rectangle>(colorSpectrum, "RectangleBorder");
+            var ellipseBorder = FindNamedDescendant<Ellipse>(colorSpectrum, "EllipseBorder");
             var layoutRoot = FindNamedDescendant<Border>(colorSpectrum, "LayoutRoot");
             AssertStateSetter(
                 layoutRoot,
@@ -259,16 +261,22 @@ public class ColorPickerApiTests
                 "RingSelected",
                 "SpectrumRectangle.Visibility",
                 "SpectrumOverlayRectangle.Visibility",
+                "RectangleBorder.Visibility",
                 "SpectrumEllipse.Visibility",
-                "SpectrumOverlayEllipse.Visibility");
+                "SpectrumOverlayEllipse.Visibility",
+                "EllipseBorder.Visibility");
 
             Assert.IsNotNull(spectrumRectangle.Fill);
+            Assert.AreEqual(Visibility.Visible, rectangleBorder.Visibility);
+            Assert.AreEqual(Visibility.Collapsed, ellipseBorder.Visibility);
 
             colorSpectrum.Shape = ColorSpectrumShape.Ring;
             host.UpdateLayout();
 
             Assert.AreEqual(Visibility.Collapsed, spectrumRectangle.Visibility);
             Assert.AreEqual(Visibility.Visible, spectrumEllipse.Visibility);
+            Assert.AreEqual(Visibility.Collapsed, rectangleBorder.Visibility);
+            Assert.AreEqual(Visibility.Visible, ellipseBorder.Visibility);
         });
     }
 
