@@ -907,11 +907,17 @@
                             </VisualStateGroup>
 
                             <VisualStateGroup x:Name="PaneStateListSizeGroup">
-                                <ui:VisualStateGroupListener.Listener>
-                                    <ui:VisualStateGroupListener x:Name="PaneStateListSizeGroupListener" />
-                                </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="ListSizeFull"/>
-                                <VisualState x:Name="ListSizeCompact"/>
+                                <ui:VisualStateEx x:Name="ListSizeCompact">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PaneContentGrid.Width" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=CompactPaneLength}" />
+                                        <ui:VisualStateSetter Target="PaneTitleTextBlock.Visibility" Value="Collapsed" />
+                                        <ui:VisualStateSetter Target="PaneHeaderContentBorder.Visibility" Value="Collapsed" />
+                                        <ui:VisualStateSetter Target="PaneContentGrid.HorizontalAlignment" Value="Left" />
+                                        <ui:VisualStateSetter Target="PaneCustomContentBorder.HorizontalAlignment" Value="Left" />
+                                        <ui:VisualStateSetter Target="FooterContentBorder.HorizontalAlignment" Value="Left" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
 
                             <VisualStateGroup x:Name="PaneOverlayGroup">
@@ -1385,14 +1391,6 @@
                         </Trigger>
                         <Trigger SourceName="DisplayModeGroupListener" Property="CurrentStateName" Value="MinimalWithBackButton">
                             <Setter TargetName="HeaderContent" Property="Margin" Value="{DynamicResource NavigationViewMinimalHeaderMargin}" />
-                        </Trigger>
-
-                        <Trigger SourceName="PaneStateListSizeGroupListener" Property="CurrentStateName" Value="ListSizeCompact">
-                            <Setter TargetName="PaneContentGrid" Property="Width" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=CompactPaneLength}" />
-                            <Setter TargetName="PaneTitleTextBlock" Property="Visibility" Value="Collapsed" />
-                            <Setter TargetName="PaneHeaderContentBorder" Property="Visibility" Value="Collapsed" />
-                            <Setter TargetName="PaneCustomContentBorder" Property="HorizontalAlignment" Value="Left" />
-                            <Setter TargetName="FooterContentBorder" Property="HorizontalAlignment" Value="Left" />
                         </Trigger>
 
                         <Trigger SourceName="PaneOverlayGroupListener" Property="CurrentStateName" Value="PaneNotOverlaying">

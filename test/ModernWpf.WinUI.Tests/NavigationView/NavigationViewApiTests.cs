@@ -1039,6 +1039,55 @@ public class NavigationViewApiTests
     }
 
     [TestMethod]
+    public void NavigationViewListSizeCompactStateUsesWinUIVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var navView = new ModernWpf.Controls.NavigationView
+            {
+                CompactPaneLength = 72.0,
+                IsPaneOpen = true,
+                PaneTitle = "Menu",
+                MenuItems =
+                {
+                    new ModernWpf.Controls.NavigationViewItem
+                    {
+                        Content = "Home"
+                    }
+                }
+            };
+
+            using var host = new TestWindowHost(navView);
+
+            var root = FindNamedDescendant<Grid>(navView, "RootGrid");
+            var paneContentGrid = FindNamedDescendant<FrameworkElement>(navView, "PaneContentGrid");
+            var paneTitleTextBlock = FindNamedDescendant<FrameworkElement>(navView, "PaneTitleTextBlock");
+            var paneHeaderContentBorder = FindNamedDescendant<FrameworkElement>(navView, "PaneHeaderContentBorder");
+            var paneCustomContentBorder = FindNamedDescendant<FrameworkElement>(navView, "PaneCustomContentBorder");
+            var footerContentBorder = FindNamedDescendant<FrameworkElement>(navView, "FooterContentBorder");
+
+            AssertStateSetter(root, "PaneStateListSizeGroup", "ListSizeCompact",
+                "PaneContentGrid.Width",
+                "PaneTitleTextBlock.Visibility",
+                "PaneHeaderContentBorder.Visibility",
+                "PaneContentGrid.HorizontalAlignment",
+                "PaneCustomContentBorder.HorizontalAlignment",
+                "FooterContentBorder.HorizontalAlignment");
+
+            Assert.IsTrue(VisualStateManager.GoToState(navView, "ListSizeCompact", false));
+            AssertCurrentState(root, "PaneStateListSizeGroup", "ListSizeCompact");
+            Assert.AreEqual(72.0, paneContentGrid.Width);
+            Assert.AreEqual(Visibility.Collapsed, paneTitleTextBlock.Visibility);
+            Assert.AreEqual(Visibility.Collapsed, paneHeaderContentBorder.Visibility);
+            Assert.AreEqual(HorizontalAlignment.Left, paneContentGrid.HorizontalAlignment);
+            Assert.AreEqual(HorizontalAlignment.Left, paneCustomContentBorder.HorizontalAlignment);
+            Assert.AreEqual(HorizontalAlignment.Left, footerContentBorder.HorizontalAlignment);
+        });
+    }
+
+    [TestMethod]
     public void VerifyOverflowButtonToolTip()
     {
         WpfTestHost.Run(() =>
