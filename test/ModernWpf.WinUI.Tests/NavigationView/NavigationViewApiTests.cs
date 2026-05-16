@@ -902,6 +902,38 @@ public class NavigationViewApiTests
     }
 
     [TestMethod]
+    public void NavigationViewPaneSeparatorUsesWinUIVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var navView = new ModernWpf.Controls.NavigationView
+            {
+                MenuItems =
+                {
+                    new ModernWpf.Controls.NavigationViewItem
+                    {
+                        Content = "Home"
+                    }
+                }
+            };
+
+            using var host = new TestWindowHost(navView);
+
+            var root = FindNamedDescendant<Grid>(navView, "RootGrid");
+            var separator = FindNamedDescendant<FrameworkElement>(navView, "VisualItemsSeparator");
+
+            AssertStateSetter(root, "PaneSeparatorStates", "SeparatorVisible",
+                "VisualItemsSeparator.Visibility");
+
+            Assert.IsTrue(VisualStateManager.GoToState(navView, "SeparatorVisible", false));
+            AssertCurrentState(root, "PaneSeparatorStates", "SeparatorVisible");
+            Assert.AreEqual(Visibility.Visible, separator.Visibility);
+        });
+    }
+
+    [TestMethod]
     public void VerifyOverflowButtonToolTip()
     {
         WpfTestHost.Run(() =>

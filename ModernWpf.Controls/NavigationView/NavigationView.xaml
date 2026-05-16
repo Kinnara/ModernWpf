@@ -979,13 +979,11 @@
 
                             <VisualStateGroup x:Name="PaneSeparatorStates">
                                 <VisualState x:Name="SeparatorCollapsed"/>
-                                <VisualState x:Name="SeparatorVisible">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VisualItemsSeparator" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
+                                <ui:VisualStateEx x:Name="SeparatorVisible">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="VisualItemsSeparator.Visibility" Value="Visible"/>
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
 
