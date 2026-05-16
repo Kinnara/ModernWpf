@@ -943,17 +943,11 @@
 
                             <VisualStateGroup x:Name="BackButtonGroup">
                                 <VisualState x:Name="BackButtonVisible" />
-                                <VisualState x:Name="BackButtonCollapsed">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackButtonPlaceholderOnTopNav" Storyboard.TargetProperty="Width">
-                                            <DiscreteObjectKeyFrame KeyTime="0">
-                                                <DiscreteObjectKeyFrame.Value>
-                                                    <GridLength>0</GridLength>
-                                                </DiscreteObjectKeyFrame.Value>
-                                            </DiscreteObjectKeyFrame>
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
+                                <ui:VisualStateEx x:Name="BackButtonCollapsed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="BackButtonPlaceholderOnTopNav.Width" Value="0" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
 
                             <VisualStateGroup x:Name="PaneVisibilityGroup">

@@ -969,6 +969,40 @@ public class NavigationViewApiTests
     }
 
     [TestMethod]
+    public void NavigationViewBackButtonCollapsedStateUsesWinUIVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var navView = new ModernWpf.Controls.NavigationView
+            {
+                PaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode.Top,
+                MenuItems =
+                {
+                    new ModernWpf.Controls.NavigationViewItem
+                    {
+                        Content = "Home"
+                    }
+                }
+            };
+
+            using var host = new TestWindowHost(navView);
+
+            var root = FindNamedDescendant<Grid>(navView, "RootGrid");
+            var placeholder = navView.Template.FindName("BackButtonPlaceholderOnTopNav", navView) as ColumnDefinition;
+
+            Assert.IsNotNull(placeholder);
+            AssertStateSetter(root, "BackButtonGroup", "BackButtonCollapsed",
+                "BackButtonPlaceholderOnTopNav.Width");
+
+            Assert.IsTrue(VisualStateManager.GoToState(navView, "BackButtonCollapsed", false));
+            AssertCurrentState(root, "BackButtonGroup", "BackButtonCollapsed");
+            Assert.AreEqual(new GridLength(0), placeholder!.Width);
+        });
+    }
+
+    [TestMethod]
     public void VerifyOverflowButtonToolTip()
     {
         WpfTestHost.Run(() =>
