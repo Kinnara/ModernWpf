@@ -17,6 +17,15 @@ namespace ModernWpf.Controls.Primitives
         private const string SpectrumOverlayEllipseName = "SpectrumOverlayEllipse";
         private const string SelectionEllipsePanelName = "SelectionEllipsePanel";
         private const string SelectionEllipseName = "SelectionEllipse";
+        private const string NormalState = "Normal";
+        private const string PointerOverState = "PointerOver";
+        private const string PressedLargeState = "PressedLarge";
+        private const string BoxSelectedState = "BoxSelected";
+        private const string RingSelectedState = "RingSelected";
+        private const string SelectionEllipseLightState = "SelectionEllipseLight";
+        private const string SelectionEllipseDarkState = "SelectionEllipseDark";
+        private const string FocusedState = "Focused";
+        private const string UnfocusedState = "Unfocused";
 
         static ColorSpectrum()
         {
@@ -177,8 +186,8 @@ namespace ModernWpf.Controls.Primitives
             HookSpectrumInput(_spectrumRectangle);
             HookSpectrumInput(_spectrumEllipse);
 
-            UpdateShapeVisibility();
             UpdateSelection();
+            UpdateVisualStates();
         }
 
         internal void SetColorFromPointForTesting(Point point)
@@ -211,6 +220,7 @@ namespace ModernWpf.Controls.Primitives
             }
 
             colorSpectrum.UpdateSelection();
+            colorSpectrum.UpdateVisualStates();
 
             if (oldColor != newColor)
             {
@@ -224,6 +234,7 @@ namespace ModernWpf.Controls.Primitives
             if (colorSpectrum._updatingHsvFromColor)
             {
                 colorSpectrum.UpdateSelection();
+                colorSpectrum.UpdateVisualStates();
                 return;
             }
 
@@ -238,6 +249,7 @@ namespace ModernWpf.Controls.Primitives
             }
 
             colorSpectrum.UpdateSelection();
+            colorSpectrum.UpdateVisualStates();
         }
 
         private static void OnHueRangePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -255,8 +267,32 @@ namespace ModernWpf.Controls.Primitives
         private static void OnTemplatePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var colorSpectrum = (ColorSpectrum)d;
-            colorSpectrum.UpdateShapeVisibility();
             colorSpectrum.UpdateSelection();
+            colorSpectrum.UpdateVisualStates();
+        }
+
+        protected override void OnMouseEnter(MouseEventArgs e)
+        {
+            base.OnMouseEnter(e);
+            UpdateVisualStates();
+        }
+
+        protected override void OnMouseLeave(MouseEventArgs e)
+        {
+            base.OnMouseLeave(e);
+            UpdateVisualStates();
+        }
+
+        protected override void OnGotKeyboardFocus(KeyboardFocusChangedEventArgs e)
+        {
+            base.OnGotKeyboardFocus(e);
+            UpdateVisualStates();
+        }
+
+        protected override void OnLostKeyboardFocus(KeyboardFocusChangedEventArgs e)
+        {
+            base.OnLostKeyboardFocus(e);
+            UpdateVisualStates();
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
@@ -292,6 +328,7 @@ namespace ModernWpf.Controls.Primitives
             if (element != null)
             {
                 element.MouseLeftButtonDown += OnSpectrumMouseLeftButtonDown;
+                element.MouseLeftButtonUp += OnSpectrumMouseLeftButtonUp;
                 element.MouseMove += OnSpectrumMouseMove;
             }
         }
@@ -301,6 +338,7 @@ namespace ModernWpf.Controls.Primitives
             if (element != null)
             {
                 element.MouseLeftButtonDown -= OnSpectrumMouseLeftButtonDown;
+                element.MouseLeftButtonUp -= OnSpectrumMouseLeftButtonUp;
                 element.MouseMove -= OnSpectrumMouseMove;
             }
         }
@@ -314,8 +352,21 @@ namespace ModernWpf.Controls.Primitives
 
             Focus();
             source.CaptureMouse();
+            _isPointerPressed = true;
             SetColorFromPoint(e.GetPosition(source), source);
+            UpdateVisualStates();
             e.Handled = true;
+        }
+
+        private void OnSpectrumMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is FrameworkElement source && source.IsMouseCaptured)
+            {
+                source.ReleaseMouseCapture();
+            }
+
+            _isPointerPressed = false;
+            UpdateVisualStates();
         }
 
         private void OnSpectrumMouseMove(object sender, MouseEventArgs e)
@@ -333,6 +384,8 @@ namespace ModernWpf.Controls.Primitives
             else if (source.IsMouseCaptured)
             {
                 source.ReleaseMouseCapture();
+                _isPointerPressed = false;
+                UpdateVisualStates();
             }
         }
 
@@ -546,12 +599,46 @@ namespace ModernWpf.Controls.Primitives
             }
         }
 
-        private void UpdateShapeVisibility()
+        private void UpdateVisualStates()
         {
             VisualStateManager.GoToState(
                 this,
-                Shape == ColorSpectrumShape.Box ? "BoxSelected" : "RingSelected",
+                _isPointerPressed ? PressedLargeState : IsMouseOver ? PointerOverState : NormalState,
                 false);
+            VisualStateManager.GoToState(
+                this,
+                Shape == ColorSpectrumShape.Box ? BoxSelectedState : RingSelectedState,
+                false);
+            VisualStateManager.GoToState(
+                this,
+                SelectionEllipseShouldBeLight() ? SelectionEllipseLightState : SelectionEllipseDarkState,
+                false);
+            VisualStateManager.GoToState(
+                this,
+                IsKeyboardFocusWithin ? FocusedState : UnfocusedState,
+                false);
+        }
+
+        private bool SelectionEllipseShouldBeLight()
+        {
+            Color displayedColor;
+            if (Components == ColorSpectrumComponents.HueSaturation ||
+                Components == ColorSpectrumComponents.SaturationHue)
+            {
+                var hsv = HsvColor;
+                hsv.Z = 1;
+                displayedColor = ColorConversion.HsvToRgb(hsv);
+            }
+            else
+            {
+                displayedColor = Color;
+            }
+
+            double rg = displayedColor.R <= 10 ? displayedColor.R / 3294.0 : Math.Pow(displayedColor.R / 269.0 + 0.0513, 2.4);
+            double gg = displayedColor.G <= 10 ? displayedColor.G / 3294.0 : Math.Pow(displayedColor.G / 269.0 + 0.0513, 2.4);
+            double bg = displayedColor.B <= 10 ? displayedColor.B / 3294.0 : Math.Pow(displayedColor.B / 269.0 + 0.0513, 2.4);
+
+            return 0.2126 * rg + 0.7152 * gg + 0.0722 * bg <= 0.5;
         }
 
         private static double Clamp01(double value)
@@ -567,6 +654,7 @@ namespace ModernWpf.Controls.Primitives
         private Ellipse _spectrumOverlayEllipse;
         private FrameworkElement _selectionEllipsePanel;
         private Ellipse _selectionEllipse;
+        private bool _isPointerPressed;
 
         private enum HsvComponent
         {

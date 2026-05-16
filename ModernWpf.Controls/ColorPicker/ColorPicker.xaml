@@ -42,6 +42,30 @@
                             <ui:VisualStateManagerEx />
                         </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <ui:VisualStateEx x:Name="Normal" />
+                                <ui:VisualStateEx x:Name="PointerOver">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="SelectionEllipse.Opacity" Value="0.8" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="Pressed" />
+                                <ui:VisualStateEx x:Name="PressedLarge">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="SelectionEllipsePanel.Width" Value="48" />
+                                        <ui:VisualStateSetter Target="SelectionEllipsePanel.Height" Value="48" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="SelectionEllipseColor">
+                                <ui:VisualStateEx x:Name="SelectionEllipseLight" />
+                                <ui:VisualStateEx x:Name="SelectionEllipseDark">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="FocusEllipse.Stroke" Value="White" />
+                                        <ui:VisualStateSetter Target="SelectionEllipse.Stroke" Value="Black" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
                             <VisualStateGroup x:Name="ShapeSelected">
                                 <ui:VisualStateEx x:Name="BoxSelected" />
                                 <ui:VisualStateEx x:Name="RingSelected">
@@ -50,6 +74,14 @@
                                         <ui:VisualStateSetter Target="SpectrumOverlayRectangle.Visibility" Value="Collapsed" />
                                         <ui:VisualStateSetter Target="SpectrumEllipse.Visibility" Value="Visible" />
                                         <ui:VisualStateSetter Target="SpectrumOverlayEllipse.Visibility" Value="Visible" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="FocusStates">
+                                <ui:VisualStateEx x:Name="Unfocused" />
+                                <ui:VisualStateEx x:Name="Focused">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="FocusEllipse.Visibility" Value="Visible" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                             </VisualStateGroup>
@@ -97,6 +129,13 @@
                                 x:Name="SelectionEllipsePanel"
                                 Width="18"
                                 Height="18">
+                                <Ellipse
+                                    x:Name="FocusEllipse"
+                                    Fill="Transparent"
+                                    Stroke="Black"
+                                    StrokeThickness="2"
+                                    Margin="-2"
+                                    Visibility="Collapsed" />
                                 <Ellipse
                                     x:Name="SelectionEllipseOuter"
                                     Fill="Transparent"

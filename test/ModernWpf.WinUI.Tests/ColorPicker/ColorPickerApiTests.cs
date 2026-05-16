@@ -349,6 +349,49 @@ public class ColorPickerApiTests
     }
 
     [TestMethod]
+    public void ColorSpectrumInputAndFocusStatesUseVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var colorSpectrum = new ColorSpectrum
+            {
+                Width = 200,
+                Height = 200,
+                Color = Colors.White
+            };
+
+            using var host = new TestWindowHost(colorSpectrum, width: 260, height: 260);
+
+            var layoutRoot = FindNamedDescendant<Border>(colorSpectrum, "LayoutRoot");
+            var focusEllipse = FindNamedDescendant<Ellipse>(colorSpectrum, "FocusEllipse");
+            var selectionEllipse = FindNamedDescendant<Ellipse>(colorSpectrum, "SelectionEllipse");
+
+            AssertStateSetter(layoutRoot, "CommonStates", "PointerOver", "SelectionEllipse.Opacity");
+            AssertStateSetter(layoutRoot, "CommonStates", "PressedLarge", "SelectionEllipsePanel.Width", "SelectionEllipsePanel.Height");
+            AssertStateSetter(layoutRoot, "SelectionEllipseColor", "SelectionEllipseDark", "FocusEllipse.Stroke", "SelectionEllipse.Stroke");
+            AssertStateSetter(layoutRoot, "FocusStates", "Focused", "FocusEllipse.Visibility");
+
+            Assert.AreEqual("SelectionEllipseDark", GetCurrentStateName(layoutRoot, "SelectionEllipseColor"));
+            Assert.AreEqual(Colors.Black, ((SolidColorBrush)selectionEllipse.Stroke).Color);
+
+            colorSpectrum.Color = Colors.Blue;
+            host.UpdateLayout();
+
+            Assert.AreEqual("SelectionEllipseLight", GetCurrentStateName(layoutRoot, "SelectionEllipseColor"));
+            Assert.AreEqual(Colors.White, ((SolidColorBrush)selectionEllipse.Stroke).Color);
+
+            Assert.AreEqual(Visibility.Collapsed, focusEllipse.Visibility);
+            colorSpectrum.Focus();
+            host.UpdateLayout();
+
+            Assert.AreEqual("Focused", GetCurrentStateName(layoutRoot, "FocusStates"));
+            Assert.AreEqual(Visibility.Visible, focusEllipse.Visibility);
+        });
+    }
+
+    [TestMethod]
     public void ClearingTextInputFieldsDoesNotCrash()
     {
         WpfTestHost.Run(() =>
@@ -558,6 +601,15 @@ public class ColorPickerApiTests
         var stateEx = (VisualStateEx)state;
         CollectionAssert.AreEquivalent(expectedTargets, stateEx.Setters.Select(setter => setter.Target).ToArray());
         return stateEx;
+    }
+
+    private static string GetCurrentStateName(FrameworkElement stateGroupsRoot, string groupName)
+    {
+        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
+            .OfType<VisualStateGroup>()
+            .Single(candidate => candidate.Name == groupName);
+        Assert.IsNotNull(group.CurrentState);
+        return group.CurrentState.Name;
     }
 
     private static T FindNamedDescendant<T>(DependencyObject root, string name)
