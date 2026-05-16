@@ -135,6 +135,41 @@ public class TemplateParityTests
     }
 
     [TestMethod]
+    public void VisualStateSetterAuditUsesExplicitStatusBuckets()
+    {
+        var repoRoot = FindRepoRoot();
+        var auditFile = Path.Combine(repoRoot, "docs", "winui-visualstate-setters-audit.md");
+        var allowedStatuses = new[]
+        {
+            "Converted",
+            "StructuralGap",
+            "RuntimeGap",
+            "Pending",
+            "Unsupported",
+            "Excluded"
+        };
+        var rowPattern = new Regex(@"^\|\s+`dev\\[^`]+`\s+\|\s+\d+\s+\|[^|]+\|\s+(?<status>[A-Za-z]+)\s+\|");
+
+        var statuses = File.ReadAllLines(auditFile)
+            .Select((line, index) => (
+                LineNumber: index + 1,
+                Status: rowPattern.Match(line).Groups["status"].Value))
+            .Where(entry => !string.IsNullOrEmpty(entry.Status))
+            .ToArray();
+
+        Assert.IsTrue(statuses.Any(), "The WinUI VisualState.Setters audit should contain source-mapped status rows.");
+
+        var offenders = statuses
+            .Where(entry => entry.Status == "Partial" || !allowedStatuses.Contains(entry.Status, StringComparer.Ordinal))
+            .Select(entry => $"docs{Path.DirectorySeparatorChar}winui-visualstate-setters-audit.md:{entry.LineNumber} {entry.Status}")
+            .ToArray();
+
+        Assert.IsFalse(
+            offenders.Any(),
+            "VisualState setter audit rows should use explicit actionable statuses, not the ambiguous Partial bucket. Offenders: " + string.Join("; ", offenders));
+    }
+
+    [TestMethod]
     public void BatchedSourceBackedPresenterSlotsDoNotUsePlainContentPresenter()
     {
         var repoRoot = FindRepoRoot();
