@@ -7,7 +7,9 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ModernWpf;
 using ModernWpf.Controls;
+using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
 
 namespace ModernWpf.WinUI.Tests.ContentDialogs;
@@ -153,6 +155,85 @@ public class ContentDialogApiTests
             AssertResource(resources, "ContentDialogTitleMargin", new Thickness(0, 0, 0, 12));
             AssertResource(resources, "ContentDialogPadding", new Thickness(24));
             AssertResource(resources, "ContentDialogSeparatorThickness", new Thickness(0, 0, 0, 1));
+        });
+    }
+
+    [TestMethod]
+    public void TemplateUsesVisualStateSettersForWinUIStateParity()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var dialog = CreateDialog();
+            using var host = CreateInPlaceHost(dialog);
+            host.UpdateLayout();
+
+            var root = GetTemplateChild<FrameworkElement>(dialog, "Container");
+
+            AssertStateSetter(root, "DialogShowingStates", "DialogShowing", "PrimaryButton.IsTabStop");
+            AssertStateSetter(root, "DialogShowingStates", "DialogShowing", "SecondaryButton.IsTabStop");
+            AssertStateSetter(root, "DialogShowingStates", "DialogShowing", "CloseButton.IsTabStop");
+            AssertStateSetter(root, "DialogShowingStates", "DialogShowing", "LayoutRoot.Visibility");
+            AssertStateSetter(root, "DialogShowingStates", "DialogShowing", "BackgroundElement.(KeyboardNavigation.TabNavigation)");
+            AssertStateSetter(root, "DialogShowingStates", "DialogShowingWithoutSmokeLayer", "PrimaryButton.IsTabStop");
+            AssertStateSetter(root, "DialogShowingStates", "DialogShowingWithoutSmokeLayer", "SecondaryButton.IsTabStop");
+            AssertStateSetter(root, "DialogShowingStates", "DialogShowingWithoutSmokeLayer", "CloseButton.IsTabStop");
+            AssertStateSetter(root, "DialogShowingStates", "DialogShowingWithoutSmokeLayer", "LayoutRoot.Visibility");
+            AssertStateSetter(root, "DialogShowingStates", "DialogShowingWithoutSmokeLayer", "LayoutRoot.Background");
+            AssertStateSetter(root, "DialogSizingStates", "FullDialogSizing", "BackgroundElement.VerticalAlignment");
+            AssertStateSetter(root, "ButtonsVisibilityStates", "AllVisible", "FirstSpacer.Width");
+            AssertStateSetter(root, "ButtonsVisibilityStates", "AllVisible", "SecondaryColumn.Width");
+            AssertStateSetter(root, "ButtonsVisibilityStates", "AllVisible", "SecondaryButton.(Grid.Column)");
+            AssertStateSetter(root, "ButtonsVisibilityStates", "NoneVisible", "CommandSpace.Visibility");
+            AssertStateSetter(root, "ButtonsVisibilityStates", "PrimaryVisible", "PrimaryButton.(Grid.Column)");
+            AssertStateSetter(root, "ButtonsVisibilityStates", "PrimaryVisible", "SecondaryButton.Visibility");
+            AssertStateSetter(root, "ButtonsVisibilityStates", "PrimaryVisible", "CloseButton.Visibility");
+            AssertStateSetter(root, "ButtonsVisibilityStates", "SecondaryVisible", "SecondaryButton.(Grid.Column)");
+            AssertStateSetter(root, "ButtonsVisibilityStates", "SecondaryVisible", "PrimaryButton.Visibility");
+            AssertStateSetter(root, "ButtonsVisibilityStates", "SecondaryVisible", "CloseButton.Visibility");
+            AssertStateSetter(root, "ButtonsVisibilityStates", "CloseVisible", "PrimaryButton.Visibility");
+            AssertStateSetter(root, "ButtonsVisibilityStates", "CloseVisible", "SecondaryButton.Visibility");
+            AssertStateSetter(root, "ButtonsVisibilityStates", "PrimaryAndSecondaryVisible", "SecondaryButton.(Grid.Column)");
+            AssertStateSetter(root, "ButtonsVisibilityStates", "PrimaryAndSecondaryVisible", "CloseButton.Visibility");
+            AssertStateSetter(root, "ButtonsVisibilityStates", "PrimaryAndCloseVisible", "SecondaryButton.Visibility");
+            AssertStateSetter(root, "ButtonsVisibilityStates", "SecondaryAndCloseVisible", "PrimaryButton.Visibility");
+            AssertStateSetter(root, "DefaultButtonStates", "PrimaryAsDefaultButton", "PrimaryButton.Style");
+            AssertStateSetter(root, "DefaultButtonStates", "SecondaryAsDefaultButton", "SecondaryButton.Style");
+            AssertStateSetter(root, "DefaultButtonStates", "CloseAsDefaultButton", "CloseButton.Style");
+            AssertStateSetter(root, "DialogBorderStates", "AccentColorBorder", "BackgroundElement.BorderBrush");
+        });
+    }
+
+    [TestMethod]
+    public void DefaultButtonVisualStatesApplyAccentStyle()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var dialog = CreateDialog();
+            using var host = CreateInPlaceHost(dialog);
+            host.UpdateLayout();
+
+            var primaryButton = GetTemplateButton(dialog, "PrimaryButton");
+            var secondaryButton = GetTemplateButton(dialog, "SecondaryButton");
+            var normalPrimaryStyle = primaryButton.Style;
+            var accentButtonStyle = dialog.TryFindResource("AccentButtonStyle") as Style
+                ?? throw new AssertFailedException("Expected AccentButtonStyle resource.");
+
+            dialog.DefaultButton = ContentDialogButton.Primary;
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            Assert.AreSame(accentButtonStyle, primaryButton.Style);
+
+            dialog.DefaultButton = ContentDialogButton.Secondary;
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            Assert.AreSame(normalPrimaryStyle, primaryButton.Style);
+            Assert.AreSame(accentButtonStyle, secondaryButton.Style);
         });
     }
 
@@ -387,6 +468,16 @@ public class ContentDialogApiTests
         return new TestWindowHost(root, width: 640, height: 480);
     }
 
+    private static T GetTemplateChild<T>(ContentDialog dialog, string name)
+        where T : FrameworkElement
+    {
+        dialog.ApplyTemplate();
+        WpfTestHost.DoEvents();
+
+        return dialog.Template?.FindName(name, dialog) as T
+            ?? throw new AssertFailedException($"Expected ContentDialog template child '{name}'.");
+    }
+
     private static Task<ContentDialogResult> ShowInPlace(ContentDialog dialog)
     {
         var task = dialog.ShowAsync(ContentDialogPlacement.InPlace);
@@ -461,6 +552,27 @@ public class ContentDialogApiTests
     private static void AssertResource<T>(ResourceDictionary resources, object key, T expected)
     {
         Assert.AreEqual(expected, resources[key]);
+    }
+
+    private static void AssertStateSetter(
+        FrameworkElement stateGroupsRoot,
+        string groupName,
+        string stateName,
+        string setterTarget)
+    {
+        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
+            .OfType<VisualStateGroup>()
+            .Single(item => item.Name == groupName);
+        var state = group.States
+            .Cast<VisualState>()
+            .Single(item => item.Name == stateName);
+
+        Assert.IsInstanceOfType(state, typeof(VisualStateEx));
+
+        var stateEx = (VisualStateEx)state;
+        Assert.IsTrue(
+            stateEx.Setters.Any(setter => setter.Target == setterTarget),
+            $"{groupName}.{stateName} should set {setterTarget}.");
     }
 
     private sealed class RecordingCommand : ICommand
