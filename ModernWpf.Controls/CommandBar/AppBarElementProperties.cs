@@ -67,6 +67,22 @@ namespace ModernWpf.Controls
 
         #endregion
 
+        #region DefaultLabelPosition
+
+        internal static readonly DependencyProperty DefaultLabelPositionProperty =
+            DependencyProperty.RegisterAttached(
+                "DefaultLabelPosition",
+                typeof(CommandBarDefaultLabelPosition),
+                typeof(AppBarElementProperties),
+                new PropertyMetadata(CommandBarDefaultLabelPosition.Right, OnDefaultLabelPositionChanged));
+
+        private static void OnDefaultLabelPositionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            (d as IAppBarElement)?.UpdateApplicationViewState();
+        }
+
+        #endregion
+
         #region LabelPosition
 
         public static readonly DependencyProperty LabelPositionProperty =
@@ -121,6 +137,11 @@ namespace ModernWpf.Controls
         internal static void UpdateIsInOverflow(DependencyObject element)
         {
             bool value = ToolBar.GetIsOverflowItem(element) || ToolBar.GetOverflowMode(element) == OverflowMode.Always;
+            element.SetValue(IsInOverflowPropertyKey, value);
+        }
+
+        internal static void SetIsInOverflow(DependencyObject element, bool value)
+        {
             element.SetValue(IsInOverflowPropertyKey, value);
         }
 

@@ -1,9 +1,11 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
@@ -18,7 +20,7 @@ namespace ModernWpf.Controls
     {
         public CommandBarFlyout()
         {
-            //AreOpenCloseAnimationsEnabled = false;
+            AreOpenCloseAnimationsEnabled = false;
 
             PrimaryCommands = new ObservableCollection<ICommandBarElement>();
             SecondaryCommands = new ObservableCollection<ICommandBarElement>();
@@ -47,75 +49,50 @@ namespace ModernWpf.Controls
                     // do anything.
                     RoutedEventHandler closeFlyoutFunc = delegate { Hide(); };
 
-                    // TODO: WPF
                     switch (args.Action)
                     {
                         case NotifyCollectionChangedAction.Replace:
                             {
-                                var element = (ICommandBarElement)args.NewItems[0];
-                                var oldElement = (ICommandBarElement)args.OldItems[0];
-                                var button = element as AppBarButton;
-                                var toggleButton = element as AppBarToggleButton;
-
-                                RevokeAndRemove(m_secondaryButtonClickRevokerByElementMap, oldElement);
-                                RevokeAndRemove(m_secondaryToggleButtonCheckedRevokerByElementMap, oldElement);
-                                RevokeAndRemove(m_secondaryToggleButtonUncheckedRevokerByElementMap, oldElement);
-
-                                if (button != null && button.Flyout == null)
+                                foreach (ICommandBarElement oldElement in args.OldItems)
                                 {
-                                    m_secondaryButtonClickRevokerByElementMap[element] = new RoutedEventHandlerRevoker(
-                                        button, ButtonBase.ClickEvent, closeFlyoutFunc);
-                                    RevokeAndRemove(m_secondaryToggleButtonCheckedRevokerByElementMap, element);
-                                    RevokeAndRemove(m_secondaryToggleButtonUncheckedRevokerByElementMap, element);
+                                    UnhookCommandBarElementDependencyPropertyChanges(oldElement);
+                                    RevokeAndRemove(m_secondaryButtonClickRevokerByElementMap, oldElement);
+                                    RevokeAndRemove(m_secondaryToggleButtonCheckedRevokerByElementMap, oldElement);
+                                    RevokeAndRemove(m_secondaryToggleButtonUncheckedRevokerByElementMap, oldElement);
                                 }
-                                else if (toggleButton != null)
+
+                                foreach (ICommandBarElement element in args.NewItems)
                                 {
-                                    RevokeAndRemove(m_secondaryButtonClickRevokerByElementMap, element);
-                                    m_secondaryToggleButtonCheckedRevokerByElementMap[element] = new RoutedEventHandlerRevoker(
-                                        toggleButton, ToggleButton.CheckedEvent, closeFlyoutFunc);
-                                    m_secondaryToggleButtonUncheckedRevokerByElementMap[element] = new RoutedEventHandlerRevoker(
-                                        toggleButton, ToggleButton.UncheckedEvent, closeFlyoutFunc);
-                                }
-                                else
-                                {
-                                    RevokeAndRemove(m_secondaryButtonClickRevokerByElementMap, element);
-                                    RevokeAndRemove(m_secondaryToggleButtonCheckedRevokerByElementMap, element);
-                                    RevokeAndRemove(m_secondaryToggleButtonUncheckedRevokerByElementMap, element);
+                                    HookCommandBarElementDependencyPropertyChanges(element);
+                                    HookSecondaryCommandCloseHandlers(element, closeFlyoutFunc);
                                 }
                                 break;
                             }
                         case NotifyCollectionChangedAction.Add:
                             {
-                                var element = (ICommandBarElement)args.NewItems[0];
-                                var button = element as AppBarButton;
-                                var toggleButton = element as AppBarToggleButton;
-
-                                if (button != null && button.Flyout == null)
+                                foreach (ICommandBarElement element in args.NewItems)
                                 {
-                                    m_secondaryButtonClickRevokerByElementMap[element] = new RoutedEventHandlerRevoker(
-                                        button, ButtonBase.ClickEvent, closeFlyoutFunc);
-                                }
-                                else if (toggleButton != null)
-                                {
-                                    m_secondaryToggleButtonCheckedRevokerByElementMap[element] = new RoutedEventHandlerRevoker(
-                                        toggleButton, ToggleButton.CheckedEvent, closeFlyoutFunc);
-                                    m_secondaryToggleButtonUncheckedRevokerByElementMap[element] = new RoutedEventHandlerRevoker(
-                                        toggleButton, ToggleButton.UncheckedEvent, closeFlyoutFunc);
+                                    HookCommandBarElementDependencyPropertyChanges(element);
+                                    HookSecondaryCommandCloseHandlers(element, closeFlyoutFunc);
                                 }
                                 break;
                             }
                         case NotifyCollectionChangedAction.Remove:
                             {
-                                var element = (ICommandBarElement)args.OldItems[0];
-                                RevokeAndRemove(m_secondaryButtonClickRevokerByElementMap, element);
-                                RevokeAndRemove(m_secondaryToggleButtonCheckedRevokerByElementMap, element);
-                                RevokeAndRemove(m_secondaryToggleButtonUncheckedRevokerByElementMap, element);
+                                foreach (ICommandBarElement element in args.OldItems)
+                                {
+                                    UnhookCommandBarElementDependencyPropertyChanges(element);
+                                    RevokeAndRemove(m_secondaryButtonClickRevokerByElementMap, element);
+                                    RevokeAndRemove(m_secondaryToggleButtonCheckedRevokerByElementMap, element);
+                                    RevokeAndRemove(m_secondaryToggleButtonUncheckedRevokerByElementMap, element);
+                                }
                                 break;
                             }
                         case NotifyCollectionChangedAction.Move:
                             break;
                         case NotifyCollectionChangedAction.Reset:
                             SetSecondaryCommandsToCloseWhenExecuted();
+                            HookAllCommandBarElementDependencyPropertyChanges();
                             break;
                         default:
                             Debug.Assert(false);
@@ -138,6 +115,7 @@ namespace ModernWpf.Controls
                     // When CommandBarFlyout is in AlwaysOpen state, don't show the overflow button
                     if (AlwaysExpanded)
                     {
+                        SetCurrentValue(ShowModeProperty, FlyoutShowMode.Standard);
                         commandBar.IsOpen = true;
                         commandBar.OverflowButtonVisibility = CommandBarOverflowButtonVisibility.Collapsed;
                     }
@@ -208,11 +186,13 @@ namespace ModernWpf.Controls
         protected override Control CreatePresenter()
         {
             var commandBar = new CommandBarFlyoutCommandBar();
+            m_commandBar = commandBar;
 
             SharedHelpers.CopyList(PrimaryCommands, commandBar.PrimaryCommands);
             SharedHelpers.CopyList(SecondaryCommands, commandBar.SecondaryCommands);
 
             SetSecondaryCommandsToCloseWhenExecuted();
+            HookAllCommandBarElementDependencyPropertyChanges();
 
             FlyoutPresenter presenter = new FlyoutPresenter
             {
@@ -238,8 +218,6 @@ namespace ModernWpf.Controls
             };
 
             commandBar.SetOwningFlyout(this);
-
-            m_commandBar = commandBar;
             return presenter;
         }
 
@@ -272,9 +250,107 @@ namespace ModernWpf.Controls
             }
         }
 
+        private void HookSecondaryCommandCloseHandlers(
+            ICommandBarElement element,
+            RoutedEventHandler closeFlyoutFunc)
+        {
+            var button = element as AppBarButton;
+            var toggleButton = element as AppBarToggleButton;
+
+            if (button != null && button.Flyout == null)
+            {
+                m_secondaryButtonClickRevokerByElementMap[element] = new RoutedEventHandlerRevoker(
+                    button, ButtonBase.ClickEvent, closeFlyoutFunc);
+                RevokeAndRemove(m_secondaryToggleButtonCheckedRevokerByElementMap, element);
+                RevokeAndRemove(m_secondaryToggleButtonUncheckedRevokerByElementMap, element);
+            }
+            else if (toggleButton != null)
+            {
+                RevokeAndRemove(m_secondaryButtonClickRevokerByElementMap, element);
+                m_secondaryToggleButtonCheckedRevokerByElementMap[element] = new RoutedEventHandlerRevoker(
+                    toggleButton, ToggleButton.CheckedEvent, closeFlyoutFunc);
+                m_secondaryToggleButtonUncheckedRevokerByElementMap[element] = new RoutedEventHandlerRevoker(
+                    toggleButton, ToggleButton.UncheckedEvent, closeFlyoutFunc);
+            }
+            else
+            {
+                RevokeAndRemove(m_secondaryButtonClickRevokerByElementMap, element);
+                RevokeAndRemove(m_secondaryToggleButtonCheckedRevokerByElementMap, element);
+                RevokeAndRemove(m_secondaryToggleButtonUncheckedRevokerByElementMap, element);
+            }
+        }
+
         internal FlyoutPresenter GetPresenter()
         {
             return m_presenter;
+        }
+
+        private void HookAllCommandBarElementDependencyPropertyChanges()
+        {
+            UnhookAllCommandBarElementDependencyPropertyChanges();
+
+            foreach (var element in SecondaryCommands)
+            {
+                HookCommandBarElementDependencyPropertyChanges(element);
+            }
+        }
+
+        private void HookCommandBarElementDependencyPropertyChanges(ICommandBarElement element)
+        {
+            if (m_commandBar == null)
+            {
+                return;
+            }
+
+            UnhookCommandBarElementDependencyPropertyChanges(element);
+
+            if (element is AppBarButton button)
+            {
+                m_propertyChangedRevokersByElementMap[element] = new List<DependencyPropertyChangedRevoker>
+                {
+                    new(button, AppBarButton.IconProperty, OnCommandBarElementDependencyPropertyChanged),
+                    new(button, AppBarButton.LabelProperty, OnCommandBarElementDependencyPropertyChanged)
+                };
+            }
+            else if (element is AppBarToggleButton toggleButton)
+            {
+                m_propertyChangedRevokersByElementMap[element] = new List<DependencyPropertyChangedRevoker>
+                {
+                    new(toggleButton, AppBarToggleButton.IconProperty, OnCommandBarElementDependencyPropertyChanged),
+                    new(toggleButton, AppBarToggleButton.LabelProperty, OnCommandBarElementDependencyPropertyChanged)
+                };
+            }
+        }
+
+        private void UnhookCommandBarElementDependencyPropertyChanges(ICommandBarElement element)
+        {
+            if (m_propertyChangedRevokersByElementMap.TryGetValue(element, out var revokers))
+            {
+                foreach (var revoker in revokers)
+                {
+                    revoker.Revoke();
+                }
+
+                m_propertyChangedRevokersByElementMap.Remove(element);
+            }
+        }
+
+        private void UnhookAllCommandBarElementDependencyPropertyChanges()
+        {
+            foreach (var revokers in m_propertyChangedRevokersByElementMap.Values)
+            {
+                foreach (var revoker in revokers)
+                {
+                    revoker.Revoke();
+                }
+            }
+
+            m_propertyChangedRevokersByElementMap.Clear();
+        }
+
+        private void OnCommandBarElementDependencyPropertyChanged(object sender, EventArgs args)
+        {
+            m_commandBar?.OnCommandBarElementDependencyPropertyChanged();
         }
 
         private static void RevokeAndRemove(IDictionary<ICommandBarElement, RoutedEventHandlerRevoker> map, ICommandBarElement element)
@@ -303,9 +379,40 @@ namespace ModernWpf.Controls
             new Dictionary<ICommandBarElement, RoutedEventHandlerRevoker>();
         Dictionary<ICommandBarElement, RoutedEventHandlerRevoker> m_secondaryToggleButtonUncheckedRevokerByElementMap =
             new Dictionary<ICommandBarElement, RoutedEventHandlerRevoker>();
+        Dictionary<ICommandBarElement, List<DependencyPropertyChangedRevoker>> m_propertyChangedRevokersByElementMap =
+            new Dictionary<ICommandBarElement, List<DependencyPropertyChangedRevoker>>();
 
         FlyoutPresenter m_presenter;
 
         bool m_isClosingAfterCloseAnimation;
+
+        private sealed class DependencyPropertyChangedRevoker
+        {
+            public DependencyPropertyChangedRevoker(
+                DependencyObject source,
+                DependencyProperty property,
+                EventHandler handler)
+            {
+                _source = source;
+                _handler = handler;
+                _descriptor = DependencyPropertyDescriptor.FromProperty(property, source.GetType());
+                _descriptor?.AddValueChanged(source, handler);
+            }
+
+            public void Revoke()
+            {
+                if (_descriptor != null && _source != null && _handler != null)
+                {
+                    _descriptor.RemoveValueChanged(_source, _handler);
+                    _source = null;
+                    _handler = null;
+                    _descriptor = null;
+                }
+            }
+
+            private DependencyObject _source;
+            private EventHandler _handler;
+            private DependencyPropertyDescriptor _descriptor;
+        }
     }
 }

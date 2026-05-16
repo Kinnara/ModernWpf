@@ -74,6 +74,11 @@ namespace ModernWpf.Controls.Primitives
                 var verticalOffset = popupTop.Y;
                 return verticalOffset > 0;
             }
+            else if (TemplatedParent is CommandBarFlyoutCommandBar commandBarFlyoutCommandBar)
+            {
+                return commandBarFlyoutCommandBar.IsOverflowPopupOpenDown();
+            }
+
             return true;
         }
     }

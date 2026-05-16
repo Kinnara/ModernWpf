@@ -27,7 +27,7 @@ namespace ModernWpf.Controls
             ToolBar.OverflowModeProperty.OverrideMetadata(typeof(AppBarToggleButton),
                 new FrameworkPropertyMetadata(OnOverflowModePropertyChanged));
 
-            CommandBarToolBar.DefaultLabelPositionProperty.OverrideMetadata(typeof(AppBarToggleButton),
+            AppBarElementProperties.DefaultLabelPositionProperty.OverrideMetadata(typeof(AppBarToggleButton),
                 new FrameworkPropertyMetadata(OnDefaultLabelPositionPropertyChanged));
 
             AppBarElementProperties.IsInOverflowPropertyKey.OverrideMetadata(typeof(AppBarToggleButton),
@@ -186,9 +186,9 @@ namespace ModernWpf.Controls
             {
                 CommandBarDefaultLabelPosition defaultLabelPosition;
 
-                if (VisualParent is ToolBarPanel)
+                if (ReadLocalValue(AppBarElementProperties.DefaultLabelPositionProperty) != DependencyProperty.UnsetValue)
                 {
-                    defaultLabelPosition = (CommandBarDefaultLabelPosition)GetValue(CommandBarToolBar.DefaultLabelPositionProperty);
+                    defaultLabelPosition = (CommandBarDefaultLabelPosition)GetValue(AppBarElementProperties.DefaultLabelPositionProperty);
                 }
                 else
                 {

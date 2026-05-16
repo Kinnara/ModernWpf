@@ -252,7 +252,7 @@
             </Setter.Value>
         </Setter>
         <Style.Triggers>
-            <Trigger Property="ToolBar.IsOverflowItem" Value="True">
+            <Trigger Property="IsInOverflow" Value="True">
                 <Setter Property="HorizontalAlignment" Value="Stretch" />
                 <Setter Property="Width" Value="NaN" />
                 <Setter Property="Height" Value="32" />
@@ -516,7 +516,7 @@
             </Setter.Value>
         </Setter>
         <Style.Triggers>
-            <Trigger Property="ToolBar.IsOverflowItem" Value="True">
+            <Trigger Property="IsInOverflow" Value="True">
                 <Setter Property="HorizontalAlignment" Value="Stretch" />
                 <Setter Property="Width" Value="NaN" />
                 <Setter Property="Height" Value="32" />
@@ -567,10 +567,26 @@
         </Setter>
     </Style>
 
-    <Style TargetType="primitives:CommandBarFlyoutToolBar">
+    <Style TargetType="primitives:CommandBarFlyoutCommandBar">
+        <Setter Property="Background" Value="{DynamicResource CommandBarFlyoutBackground}" />
+        <Setter Property="Foreground" Value="{DynamicResource CommandBarFlyoutForeground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource CommandBarFlyoutBorderBrush}" />
+        <Setter Property="BorderThickness" Value="{DynamicResource CommandBarFlyoutBorderThemeThickness}" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="VerticalContentAlignment" Value="Top" />
+        <Setter Property="DefaultLabelPosition" Value="Collapsed" />
+        <Setter Property="MaxWidth" Value="440" />
+        <Setter Property="Height" Value="48" />
+        <Setter Property="IsDynamicOverflowEnabled" Value="False" />
+        <Setter Property="CommandBarOverflowPresenterStyle" Value="{StaticResource CommandBarFlyoutCommandBarOverflowPresenterStyle}" />
+        <Setter Property="OverflowPresenterStyle" Value="{StaticResource CommandBarFlyoutCommandBarOverflowPresenterStyle}" />
+        <Setter Property="CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="primitives:CommandBarFlyoutToolBar">
+                <ControlTemplate TargetType="primitives:CommandBarFlyoutCommandBar">
                     <ControlTemplate.Resources>
                         <StreamGeometry x:Key="More">M 2.5 8.75 C 2.675781 8.75 2.838542 8.782553 2.988281 8.847656 C 3.138021 8.912761 3.269857 9 3.383789 9.116211 C 3.497721 9.230144 3.58724 9.361979 3.652344 9.511719 C 3.717448 9.661459 3.75 9.824219 3.75 10 C 3.75 10.175781 3.717448 10.338542 3.652344 10.488281 C 3.58724 10.638021 3.497721 10.769857 3.383789 10.883789 C 3.269857 11 3.138021 11.08724 2.988281 11.152344 C 2.838542 11.217448 2.675781 11.25 2.5 11.25 C 2.324219 11.25 2.161458 11.217448 2.011719 11.152344 C 1.861979 11.08724 1.730143 11 1.616211 10.883789 C 1.502279 10.769857 1.41276 10.638021 1.347656 10.488281 C 1.282552 10.338542 1.25 10.175781 1.25 10 C 1.25 9.824219 1.282552 9.661459 1.347656 9.511719 C 1.41276 9.361979 1.502279 9.230144 1.616211 9.116211 C 1.730143 9 1.861979 8.912761 2.011719 8.847656 C 2.161458 8.782553 2.324219 8.75 2.5 8.75 Z M 10 8.75 C 10.175781 8.75 10.338541 8.782553 10.488281 8.847656 C 10.638021 8.912761 10.769856 9 10.883789 9.116211 C 11 9.230144 11.087239 9.361979 11.152344 9.511719 C 11.217447 9.661459 11.25 9.824219 11.25 10 C 11.25 10.175781 11.217447 10.338542 11.152344 10.488281 C 11.087239 10.638021 11 10.769857 10.883789 10.883789 C 10.769856 11 10.638021 11.08724 10.488281 11.152344 C 10.338541 11.217448 10.175781 11.25 10 11.25 C 9.824219 11.25 9.661458 11.217448 9.511719 11.152344 C 9.361979 11.08724 9.230143 11 9.116211 10.883789 C 9 10.769857 8.91276 10.638021 8.847656 10.488281 C 8.782552 10.338542 8.75 10.175781 8.75 10 C 8.75 9.824219 8.782552 9.661459 8.847656 9.511719 C 8.91276 9.361979 9 9.230144 9.116211 9.116211 C 9.230143 9 9.361979 8.912761 9.511719 8.847656 C 9.661458 8.782553 9.824219 8.75 10 8.75 Z M 17.5 8.75 C 17.675781 8.75 17.838541 8.782553 17.988281 8.847656 C 18.13802 8.912761 18.269855 9 18.383789 9.116211 C 18.497721 9.230144 18.587238 9.361979 18.652344 9.511719 C 18.717447 9.661459 18.75 9.824219 18.75 10 C 18.75 10.175781 18.717447 10.338542 18.652344 10.488281 C 18.587238 10.638021 18.497721 10.769857 18.383789 10.883789 C 18.269855 11 18.13802 11.08724 17.988281 11.152344 C 17.838541 11.217448 17.675781 11.25 17.5 11.25 C 17.324219 11.25 17.161457 11.217448 17.011719 11.152344 C 16.861979 11.08724 16.730143 11 16.616211 10.883789 C 16.502277 10.769857 16.41276 10.638021 16.347656 10.488281 C 16.282551 10.338542 16.25 10.175781 16.25 10 C 16.25 9.824219 16.282551 9.661459 16.347656 9.511719 C 16.41276 9.361979 16.502277 9.230144 16.616211 9.116211 C 16.730143 9 16.861979 8.912761 17.011719 8.847656 C 17.161457 8.782553 17.324219 8.75 17.5 8.75 Z</StreamGeometry>
                     </ControlTemplate.Resources>
@@ -816,7 +832,7 @@
                                     <ui:VisualStateEx.Setters>
                                         <ui:VisualStateSetter Target="PrimaryItemsRoot.Visibility" Value="Collapsed" />
                                         <ui:VisualStateSetter Target="OverflowPopup.Placement" Value="{x:Static PlacementMode.Relative}" />
-                                        <ui:VisualStateSetter Target="PART_ToolBarOverflowPanel.Focusable" Value="True" />
+                                        <ui:VisualStateSetter Target="SecondaryItemsPanel.Focusable" Value="True" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                             </VisualStateGroup>
@@ -909,13 +925,13 @@
                                             <ColumnDefinition Width="*" />
                                             <ColumnDefinition Width="Auto" MinWidth="3"/>
                                         </Grid.ColumnDefinitions>
-                                        <primitives:CommandBarPanel
-                                            x:Name="PART_ToolBarPanel"
+                                        <StackPanel
+                                            x:Name="PrimaryItemsPanel"
                                             Height="40"
                                             Margin="3,3,0,3"
                                             Grid.Column="0"
+                                            Orientation="Horizontal"
                                             HorizontalAlignment="Left"
-                                            IsItemsHost="true"
                                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                                         <ToggleButton
                                             x:Name="MoreButton"
@@ -926,7 +942,7 @@
                                             IsTabStop="False"
                                             ui:ControlHelper.CornerRadius="{TemplateBinding CornerRadius}"
                                             Visibility="{TemplateBinding EffectiveOverflowButtonVisibility}"
-                                            IsChecked="{Binding Path=IsOverflowOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                            IsChecked="{Binding Path=IsOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
                                             ClickMode="Press"
                                             ui:FocusVisualHelper.FocusVisualMargin="0,0,0,2">
                                             <ToggleButton.RenderTransform>
@@ -946,7 +962,8 @@
                                     x:Name="OverflowPopup"
                                     AllowsTransparency="true"
                                     Placement="Bottom"
-                                    IsOpen="{Binding Path=IsOverflowOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                                    PlacementTarget="{Binding ElementName=PrimaryItemsRoot}"
+                                    IsOpen="{Binding Path=IsOpen, RelativeSource={RelativeSource TemplatedParent}}"
                                     StaysOpen="false"
                                     Focusable="false"
                                     PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}">
@@ -999,7 +1016,7 @@
                                                     BorderThickness="{DynamicResource CommandBarFlyoutBorderThemeThickness}"
                                                     IsTabStop="False">
                                                     <primitives:CommandBarOverflowPanel
-                                                        x:Name="PART_ToolBarOverflowPanel"
+                                                        x:Name="SecondaryItemsPanel"
                                                         Focusable="False"
                                                         FocusVisualStyle="{x:Null}"
                                                         KeyboardNavigation.TabNavigation="Once"
@@ -1019,49 +1036,6 @@
                             <Setter TargetName="EllipsisIcon" Property="Foreground" Value="{DynamicResource CommandBarEllipsisIconForegroundDisabled}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style TargetType="primitives:CommandBarFlyoutCommandBar">
-        <Setter Property="Background" Value="{DynamicResource CommandBarFlyoutBackground}" />
-        <Setter Property="Foreground" Value="{DynamicResource CommandBarFlyoutForeground}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource CommandBarFlyoutBorderBrush}" />
-        <Setter Property="BorderThickness" Value="{DynamicResource CommandBarFlyoutBorderThemeThickness}" />
-        <Setter Property="IsTabStop" Value="False" />
-        <Setter Property="VerticalAlignment" Value="Top" />
-        <Setter Property="HorizontalAlignment" Value="Left" />
-        <Setter Property="HorizontalContentAlignment" Value="Left" />
-        <Setter Property="VerticalContentAlignment" Value="Top" />
-        <Setter Property="DefaultLabelPosition" Value="Collapsed" />
-        <Setter Property="MaxWidth" Value="440" />
-        <Setter Property="Height" Value="48" />
-        <Setter Property="IsDynamicOverflowEnabled" Value="False" />
-        <Setter Property="CommandBarOverflowPresenterStyle" Value="{StaticResource CommandBarFlyoutCommandBarOverflowPresenterStyle}" />
-        <Setter Property="CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="primitives:CommandBarFlyoutCommandBar">
-                    <primitives:CommandBarFlyoutToolBar
-                        x:Name="PART_ToolBar"
-                        Background="{TemplateBinding Background}"
-                        Foreground="{TemplateBinding Foreground}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        IsTabStop="{TemplateBinding IsTabStop}"
-                        VerticalAlignment="{TemplateBinding VerticalAlignment}"
-                        HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
-                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                        DefaultLabelPosition="{TemplateBinding DefaultLabelPosition}"
-                        MaxWidth="{TemplateBinding MaxWidth}"
-                        Height="{TemplateBinding Height}"
-                        IsDynamicOverflowEnabled="{TemplateBinding IsDynamicOverflowEnabled}"
-                        OverflowButtonVisibility="{TemplateBinding OverflowButtonVisibility}"
-                        OverflowPresenterStyle="{TemplateBinding CommandBarOverflowPresenterStyle}"
-                        CornerRadius="{TemplateBinding CornerRadius}"
-                        IsOverflowOpen="{Binding IsOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Threading;
+using ModernWpf.Controls;
 
 namespace ModernWpf.Controls.Primitives
 {
@@ -45,11 +46,7 @@ namespace ModernWpf.Controls.Primitives
         #region DefaultLabelPosition
 
         public static readonly DependencyProperty DefaultLabelPositionProperty =
-            DependencyProperty.RegisterAttached(
-                nameof(DefaultLabelPosition),
-                typeof(CommandBarDefaultLabelPosition),
-                typeof(CommandBarToolBar),
-                new PropertyMetadata(CommandBarDefaultLabelPosition.Right));
+            AppBarElementProperties.DefaultLabelPositionProperty.AddOwner(typeof(CommandBarToolBar));
 
         public CommandBarDefaultLabelPosition DefaultLabelPosition
         {

@@ -1,5 +1,7 @@
 # WinUI 2.8.7 Sync Matrix
 
+This is now a legacy/reference matrix. Current parity work targets WinUI 3 source behavior for existing ModernWpf controls; see `docs/winui3-source-parity.md`.
+
 Source of truth: `D:\repos\microsoft-ui-xaml-v2.8.7`, a detached worktree at tag `v2.8.7`
 
 Verified tag:
