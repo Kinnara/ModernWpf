@@ -333,6 +333,30 @@ public class CommandBarFlyoutApiTests
         });
     }
 
+    [TestMethod]
+    public void FlyoutAppBarButtonCommonStatesUseVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var resources = CreateCommandBarFlyoutResources();
+            var button = new AppBarButton
+            {
+                Style = (Style)resources["CommandBarFlyoutAppBarButtonStyle"],
+                Icon = new SymbolIcon(Symbol.Accept),
+                Label = "Accept",
+                InputGestureText = "Ctrl+A"
+            };
+
+            var rootHost = CreateTemplateHost(button, resources);
+            using var host = new TestWindowHost(rootHost, width: 220, height: 120);
+            host.UpdateLayout();
+
+            VerifyAppBarButtonCommonStates(button);
+        });
+    }
+
     private static CommandBarFlyoutCommandBar GetCommandBar(CommandBarFlyout commandBarFlyout)
     {
         var presenter = commandBarFlyout.GetPresenter();
@@ -631,6 +655,67 @@ public class CommandBarFlyoutApiTests
         Assert.IsTrue(double.IsPositiveInfinity(contentViewbox.MaxWidth));
         Assert.AreEqual(Visibility.Collapsed, overflowCheckGlyph.Visibility);
         Assert.AreEqual(Visibility.Collapsed, overflowTextLabel.Visibility);
+    }
+
+    private static void VerifyAppBarButtonCommonStates(AppBarButton button)
+    {
+        var root = FindTemplateChild<System.Windows.Controls.Grid>(button, "Root");
+        var innerBorder = FindTemplateChild<BorderEx>(button, "AppBarButtonInnerBorder");
+        var content = FindTemplateChild<ContentPresenterEx>(button, "Content");
+        var overflowTextLabel = FindTemplateChild<System.Windows.Controls.TextBlock>(button, "OverflowTextLabel");
+        var keyboardAcceleratorTextLabel = FindTemplateChild<System.Windows.Controls.TextBlock>(button, "KeyboardAcceleratorTextLabel");
+
+        AssertStateSetter(
+            root,
+            "CommonStates",
+            "PointerOver",
+            "AppBarButtonInnerBorder.Background",
+            "Content.Foreground");
+        AssertStateSetter(
+            root,
+            "CommonStates",
+            "Pressed",
+            "AppBarButtonInnerBorder.Background",
+            "Content.Foreground");
+        AssertStateSetter(
+            root,
+            "CommonStates",
+            "Disabled",
+            "AppBarButtonInnerBorder.Background",
+            "Content.Foreground",
+            "OverflowTextLabel.Foreground",
+            "KeyboardAcceleratorTextLabel.Foreground");
+        AssertStateSetter(
+            root,
+            "CommonStates",
+            "OverflowPointerOver",
+            "AppBarButtonInnerBorder.Background",
+            "Content.Foreground",
+            "OverflowTextLabel.Foreground",
+            "KeyboardAcceleratorTextLabel.Foreground");
+        AssertStateSetter(
+            root,
+            "CommonStates",
+            "OverflowPressed",
+            "AppBarButtonInnerBorder.Background",
+            "Content.Foreground",
+            "OverflowTextLabel.Foreground",
+            "KeyboardAcceleratorTextLabel.Foreground");
+
+        Assert.AreSame(button.Background, innerBorder.Background);
+        Assert.AreSame(button.Foreground, content.Foreground);
+
+        button.IsEnabled = false;
+
+        Assert.AreSame(button.TryFindResource("CommandBarFlyoutAppBarButtonBackgroundDisabled"), innerBorder.Background);
+        Assert.AreSame(button.TryFindResource("CommandBarFlyoutAppBarButtonForegroundDisabled"), content.Foreground);
+        Assert.AreSame(button.TryFindResource("CommandBarFlyoutAppBarButtonForegroundDisabled"), overflowTextLabel.Foreground);
+        Assert.AreSame(button.TryFindResource("CommandBarFlyoutAppBarButtonForegroundDisabled"), keyboardAcceleratorTextLabel.Foreground);
+
+        button.IsEnabled = true;
+
+        Assert.AreSame(button.Background, innerBorder.Background);
+        Assert.AreSame(button.Foreground, content.Foreground);
     }
 
     private static VisualStateEx AssertStateSetter(
