@@ -124,6 +124,94 @@
                         Orientation="{TemplateBinding Orientation}"
                         MinWidth="{StaticResource ColorPickerVerticalOrientationMinWidth}"
                         MaxWidth="{StaticResource ColorPickerVerticalOrientationMaxWidth}">
+                        <VisualStateManager.CustomVisualStateManager>
+                            <ui:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="ColorSpectrumVisibility">
+                                <ui:VisualStateEx x:Name="ColorSpectrumVisible" />
+                                <ui:VisualStateEx x:Name="ColorSpectrumCollapsed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ColorSpectrum.Visibility" Value="Collapsed" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="ColorPreviewVisibility">
+                                <ui:VisualStateEx x:Name="ColorPreviewVisible" />
+                                <ui:VisualStateEx x:Name="ColorPreviewCollapsed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PreviewGrid.Visibility" Value="Collapsed" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="PreviousColorVisibility">
+                                <ui:VisualStateEx x:Name="PreviousColorCollapsedVertical" />
+                                <ui:VisualStateEx x:Name="PreviousColorVisibleVertical">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PreviousColorRectangle.Visibility" Value="Visible" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="PreviousColorCollapsedHorizontal" />
+                                <ui:VisualStateEx x:Name="PreviousColorVisibleHorizontal">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PreviousColorRectangle.Visibility" Value="Visible" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="ThirdDimensionSliderVisibility">
+                                <ui:VisualStateEx x:Name="ThirdDimensionSliderVisible" />
+                                <ui:VisualStateEx x:Name="ThirdDimensionSliderCollapsed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ThirdDimensionSlider.Visibility" Value="Collapsed" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="AlphaSliderVisibility">
+                                <ui:VisualStateEx x:Name="AlphaSliderVisible" />
+                                <ui:VisualStateEx x:Name="AlphaSliderCollapsed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="AlphaSlider.Visibility" Value="Collapsed" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="MoreButtonVisibility">
+                                <ui:VisualStateEx x:Name="MoreButtonVisible" />
+                                <ui:VisualStateEx x:Name="MoreButtonCollapsed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="MoreButton.Visibility" Value="Collapsed" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="ColorChannelTextInputVisibility">
+                                <ui:VisualStateEx x:Name="ColorChannelTextInputVisible" />
+                                <ui:VisualStateEx x:Name="ColorChannelTextInputCollapsed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="RedTextBox.Visibility" Value="Collapsed" />
+                                        <ui:VisualStateSetter Target="GreenTextBox.Visibility" Value="Collapsed" />
+                                        <ui:VisualStateSetter Target="BlueTextBox.Visibility" Value="Collapsed" />
+                                        <ui:VisualStateSetter Target="HueTextBox.Visibility" Value="Collapsed" />
+                                        <ui:VisualStateSetter Target="SaturationTextBox.Visibility" Value="Collapsed" />
+                                        <ui:VisualStateSetter Target="ValueTextBox.Visibility" Value="Collapsed" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="AlphaTextInputVisibility">
+                                <ui:VisualStateEx x:Name="AlphaTextInputVisible" />
+                                <ui:VisualStateEx x:Name="AlphaTextInputCollapsed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="AlphaTextBox.Visibility" Value="Collapsed" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="HexInputVisibility">
+                                <ui:VisualStateEx x:Name="HexInputVisible" />
+                                <ui:VisualStateEx x:Name="HexInputCollapsed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="HexTextBox.Visibility" Value="Collapsed" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                         <primitives:ColorSpectrum
                             x:Name="ColorSpectrum"
                             MinHue="{TemplateBinding MinHue}"
@@ -169,8 +257,7 @@
                             Height="32"
                             Margin="0,8,0,0"
                             Content="..."
-                            HorizontalAlignment="Left"
-                            Visibility="Collapsed" />
+                            HorizontalAlignment="Left" />
 
                         <Grid x:Name="TextInputGrid" Margin="0,12,0,0">
                             <Grid.ColumnDefinitions>

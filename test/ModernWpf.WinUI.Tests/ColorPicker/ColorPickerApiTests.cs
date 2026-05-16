@@ -398,14 +398,47 @@ public class ColorPickerApiTests
             using var host = new TestWindowHost(colorPicker, width: 420, height: 520);
 
             Assert.AreEqual(Visibility.Collapsed, FindNamedDescendant<ColorSpectrum>(colorPicker, "ColorSpectrum").Visibility);
-            Assert.AreEqual(Visibility.Collapsed, FindNamedDescendant<Rectangle>(colorPicker, "ColorPreviewRectangle").Visibility);
-            Assert.AreEqual(Visibility.Collapsed, FindNamedDescendant<Rectangle>(colorPicker, "PreviousColorRectangle").Visibility);
+            Assert.AreEqual(Visibility.Collapsed, FindNamedDescendant<Grid>(colorPicker, "PreviewGrid").Visibility);
             Assert.AreEqual(Visibility.Collapsed, FindNamedDescendant<ColorPickerSlider>(colorPicker, "ThirdDimensionSlider").Visibility);
             Assert.AreEqual(Visibility.Collapsed, FindNamedDescendant<ColorPickerSlider>(colorPicker, "AlphaSlider").Visibility);
             Assert.AreEqual(Visibility.Visible, FindNamedDescendant<ToggleButton>(colorPicker, "MoreButton").Visibility);
             Assert.AreEqual(Visibility.Collapsed, FindNamedDescendant<TextBox>(colorPicker, "RedTextBox").Visibility);
             Assert.AreEqual(Visibility.Collapsed, FindNamedDescendant<TextBox>(colorPicker, "AlphaTextBox").Visibility);
             Assert.AreEqual(Visibility.Collapsed, FindNamedDescendant<TextBox>(colorPicker, "HexTextBox").Visibility);
+        });
+    }
+
+    [TestMethod]
+    public void ColorPickerTemplateVisibilityUsesVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var colorPicker = new ColorPickerControl();
+            using var host = new TestWindowHost(colorPicker, width: 420, height: 520);
+
+            var rootPanel = FindNamedDescendant<StackPanel>(colorPicker, "RootPanel");
+
+            AssertStateSetter(rootPanel, "ColorSpectrumVisibility", "ColorSpectrumCollapsed", "ColorSpectrum.Visibility");
+            AssertStateSetter(rootPanel, "ColorPreviewVisibility", "ColorPreviewCollapsed", "PreviewGrid.Visibility");
+            AssertStateSetter(rootPanel, "PreviousColorVisibility", "PreviousColorVisibleVertical", "PreviousColorRectangle.Visibility");
+            AssertStateSetter(rootPanel, "PreviousColorVisibility", "PreviousColorVisibleHorizontal", "PreviousColorRectangle.Visibility");
+            AssertStateSetter(rootPanel, "ThirdDimensionSliderVisibility", "ThirdDimensionSliderCollapsed", "ThirdDimensionSlider.Visibility");
+            AssertStateSetter(rootPanel, "AlphaSliderVisibility", "AlphaSliderCollapsed", "AlphaSlider.Visibility");
+            AssertStateSetter(rootPanel, "MoreButtonVisibility", "MoreButtonCollapsed", "MoreButton.Visibility");
+            AssertStateSetter(
+                rootPanel,
+                "ColorChannelTextInputVisibility",
+                "ColorChannelTextInputCollapsed",
+                "RedTextBox.Visibility",
+                "GreenTextBox.Visibility",
+                "BlueTextBox.Visibility",
+                "HueTextBox.Visibility",
+                "SaturationTextBox.Visibility",
+                "ValueTextBox.Visibility");
+            AssertStateSetter(rootPanel, "AlphaTextInputVisibility", "AlphaTextInputCollapsed", "AlphaTextBox.Visibility");
+            AssertStateSetter(rootPanel, "HexInputVisibility", "HexInputCollapsed", "HexTextBox.Visibility");
         });
     }
 

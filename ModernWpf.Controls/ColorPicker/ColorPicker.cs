@@ -2,7 +2,6 @@ using System;
 using System.Numerics;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using ModernWpf.Controls.Primitives;
@@ -16,7 +15,6 @@ namespace ModernWpf.Controls
         private const string AlphaSliderName = "AlphaSlider";
         private const string ColorPreviewRectangleName = "ColorPreviewRectangle";
         private const string PreviousColorRectangleName = "PreviousColorRectangle";
-        private const string MoreButtonName = "MoreButton";
         private const string HexTextBoxName = "HexTextBox";
         private const string AlphaTextBoxName = "AlphaTextBox";
         private const string RedTextBoxName = "RedTextBox";
@@ -304,7 +302,6 @@ namespace ModernWpf.Controls
             _alphaSlider = GetTemplateChild(AlphaSliderName) as ColorPickerSlider;
             _previewRectangle = GetTemplateChild(ColorPreviewRectangleName) as Rectangle;
             _previousColorRectangle = GetTemplateChild(PreviousColorRectangleName) as Rectangle;
-            _moreButton = GetTemplateChild(MoreButtonName) as ButtonBase;
             _hexTextBox = GetTemplateChild(HexTextBoxName) as TextBox;
             _alphaTextBox = GetTemplateChild(AlphaTextBoxName) as TextBox;
             _redTextBox = GetTemplateChild(RedTextBoxName) as TextBox;
@@ -457,38 +454,29 @@ namespace ModernWpf.Controls
                     _colorSpectrum.MaxValue = MaxValue;
                     _colorSpectrum.Shape = ColorSpectrumShape;
                     _colorSpectrum.Components = ColorSpectrumComponents;
-                    _colorSpectrum.Visibility = ToVisibility(IsColorSpectrumVisible);
                 }
 
                 if (_thirdDimensionSlider != null)
                 {
                     _thirdDimensionSlider.Value = hsv.Z * 100;
-                    _thirdDimensionSlider.Visibility = ToVisibility(IsColorSliderVisible);
                 }
 
                 if (_alphaSlider != null)
                 {
                     _alphaSlider.Value = Color.A / 255.0 * 100;
-                    _alphaSlider.Visibility = ToVisibility(IsAlphaEnabled && IsAlphaSliderVisible);
                 }
 
                 if (_previewRectangle != null)
                 {
                     _previewRectangle.Fill = new SolidColorBrush(Color);
-                    _previewRectangle.Visibility = ToVisibility(IsColorPreviewVisible);
                 }
 
                 if (_previousColorRectangle != null)
                 {
                     _previousColorRectangle.Fill = PreviousColor.HasValue ? new SolidColorBrush(PreviousColor.Value) : Brushes.Transparent;
-                    _previousColorRectangle.Visibility = ToVisibility(IsColorPreviewVisible && PreviousColor.HasValue);
                 }
 
-                if (_moreButton != null)
-                {
-                    _moreButton.Visibility = ToVisibility(IsMoreButtonVisible);
-                }
-
+                UpdateVisualStates();
                 UpdateTextBoxes(hsv);
             }
             finally
@@ -497,19 +485,45 @@ namespace ModernWpf.Controls
             }
         }
 
-        private void UpdateTextBoxes(Vector4 hsv)
+        private void UpdateVisualStates()
         {
-            SetText(_hexTextBox, ToHex(Color), IsHexInputVisible);
-            SetText(_alphaTextBox, Math.Round(Color.A / 255.0 * 100).ToString("0"), IsAlphaEnabled && IsAlphaTextInputVisible);
-            SetText(_redTextBox, Color.R.ToString(), IsColorChannelTextInputVisible);
-            SetText(_greenTextBox, Color.G.ToString(), IsColorChannelTextInputVisible);
-            SetText(_blueTextBox, Color.B.ToString(), IsColorChannelTextInputVisible);
-            SetText(_hueTextBox, Math.Round(hsv.X).ToString("0"), IsColorChannelTextInputVisible);
-            SetText(_saturationTextBox, Math.Round(hsv.Y * 100).ToString("0"), IsColorChannelTextInputVisible);
-            SetText(_valueTextBox, Math.Round(hsv.Z * 100).ToString("0"), IsColorChannelTextInputVisible);
+            bool isColorSpectrumVisible = IsColorSpectrumVisible;
+            bool isVerticalOrientation = Orientation == Orientation.Vertical;
+            string previousColorStateName;
+
+            if (isColorSpectrumVisible)
+            {
+                previousColorStateName = PreviousColor.HasValue ? "PreviousColorVisibleVertical" : "PreviousColorCollapsedVertical";
+            }
+            else
+            {
+                previousColorStateName = PreviousColor.HasValue ? "PreviousColorVisibleHorizontal" : "PreviousColorCollapsedHorizontal";
+            }
+
+            VisualStateManager.GoToState(this, isColorSpectrumVisible ? "ColorSpectrumVisible" : "ColorSpectrumCollapsed", false);
+            VisualStateManager.GoToState(this, previousColorStateName, false);
+            VisualStateManager.GoToState(this, IsColorPreviewVisible ? "ColorPreviewVisible" : "ColorPreviewCollapsed", false);
+            VisualStateManager.GoToState(this, IsColorSliderVisible ? "ThirdDimensionSliderVisible" : "ThirdDimensionSliderCollapsed", false);
+            VisualStateManager.GoToState(this, IsAlphaEnabled && IsAlphaSliderVisible ? "AlphaSliderVisible" : "AlphaSliderCollapsed", false);
+            VisualStateManager.GoToState(this, IsMoreButtonVisible && isVerticalOrientation ? "MoreButtonVisible" : "MoreButtonCollapsed", false);
+            VisualStateManager.GoToState(this, IsColorChannelTextInputVisible ? "ColorChannelTextInputVisible" : "ColorChannelTextInputCollapsed", false);
+            VisualStateManager.GoToState(this, IsAlphaEnabled && IsAlphaTextInputVisible ? "AlphaTextInputVisible" : "AlphaTextInputCollapsed", false);
+            VisualStateManager.GoToState(this, IsHexInputVisible ? "HexInputVisible" : "HexInputCollapsed", false);
         }
 
-        private static void SetText(TextBox textBox, string text, bool visible)
+        private void UpdateTextBoxes(Vector4 hsv)
+        {
+            SetText(_hexTextBox, ToHex(Color));
+            SetText(_alphaTextBox, Math.Round(Color.A / 255.0 * 100).ToString("0"));
+            SetText(_redTextBox, Color.R.ToString());
+            SetText(_greenTextBox, Color.G.ToString());
+            SetText(_blueTextBox, Color.B.ToString());
+            SetText(_hueTextBox, Math.Round(hsv.X).ToString("0"));
+            SetText(_saturationTextBox, Math.Round(hsv.Y * 100).ToString("0"));
+            SetText(_valueTextBox, Math.Round(hsv.Z * 100).ToString("0"));
+        }
+
+        private static void SetText(TextBox textBox, string text)
         {
             if (textBox == null)
             {
@@ -517,17 +531,11 @@ namespace ModernWpf.Controls
             }
 
             textBox.Text = text;
-            textBox.Visibility = ToVisibility(visible);
         }
 
         private static string ToHex(Color color)
         {
             return color.A.ToString("X2") + color.R.ToString("X2") + color.G.ToString("X2") + color.B.ToString("X2");
-        }
-
-        private static Visibility ToVisibility(bool visible)
-        {
-            return visible ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private bool _updatingTemplate;
@@ -536,7 +544,6 @@ namespace ModernWpf.Controls
         private ColorPickerSlider _alphaSlider;
         private Rectangle _previewRectangle;
         private Rectangle _previousColorRectangle;
-        private ButtonBase _moreButton;
         private TextBox _hexTextBox;
         private TextBox _alphaTextBox;
         private TextBox _redTextBox;
