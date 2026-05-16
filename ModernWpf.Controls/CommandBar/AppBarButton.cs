@@ -106,11 +106,29 @@ namespace ModernWpf.Controls
 
         private static void OnFlyoutChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((AppBarButton)d).OnFlyoutChanged();
+            ((AppBarButton)d).OnFlyoutChanged(e);
         }
 
-        private void OnFlyoutChanged()
+        private void OnFlyoutChanged(DependencyPropertyChangedEventArgs e)
         {
+            if (e.OldValue is FlyoutBase oldFlyout)
+            {
+                oldFlyout.Opened -= OnFlyoutOpened;
+                oldFlyout.Closed -= OnFlyoutClosed;
+            }
+
+            if (e.NewValue is FlyoutBase newFlyout)
+            {
+                newFlyout.Opened += OnFlyoutOpened;
+                newFlyout.Closed += OnFlyoutClosed;
+                m_isFlyoutOpen = newFlyout.IsOpen;
+            }
+            else
+            {
+                m_isFlyoutOpen = false;
+            }
+
+            UpdateCommonState();
             UpdateVisualState();
         }
 
@@ -383,6 +401,10 @@ namespace ModernWpf.Controls
             {
                 stateName = "Disabled";
             }
+            else if (m_isFlyoutOpen && IsInOverflow)
+            {
+                stateName = "OverflowSubMenuOpened";
+            }
             else
             {
                 if (IsPressed)
@@ -409,6 +431,18 @@ namespace ModernWpf.Controls
             _vsm.CanChangeCommonState = false;
         }
 
+        private void OnFlyoutOpened(object sender, object e)
+        {
+            m_isFlyoutOpen = true;
+            UpdateCommonState();
+        }
+
+        private void OnFlyoutClosed(object sender, object e)
+        {
+            m_isFlyoutOpen = false;
+            UpdateCommonState();
+        }
+
         private void UpdateKeyboardAcceleratorTextVisibility(bool useTransitions = true)
         {
             string stateName = AppBarElementProperties.GetShowKeyboardAcceleratorText(this) ?
@@ -419,10 +453,11 @@ namespace ModernWpf.Controls
 
         private void UpdateFlyoutState(bool useTransitions = true)
         {
-            bool hasFlyout = Flyout != null && !ToolBar.GetIsOverflowItem(this);
+            bool hasFlyout = Flyout != null;
             VisualStateManager.GoToState(this, hasFlyout ? "HasFlyout" : "NoFlyout", useTransitions);
         }
 
         private AppBarElementVisualStateManager _vsm;
+        private bool m_isFlyoutOpen;
     }
 }

@@ -225,12 +225,13 @@ public class CommandBarApiTests
         {
             TestApplication.EnsureInitialized();
 
+            var flyout = new MenuFlyout();
             var button = new AppBarButton
             {
                 Icon = new SymbolIcon(Symbol.Accept),
                 Label = "Accept",
                 InputGestureText = "Ctrl+A",
-                Flyout = new MenuFlyout()
+                Flyout = flyout
             };
 
             using var host = new TestWindowHost(button, width: 180, height: 120);
@@ -282,6 +283,20 @@ public class CommandBarApiTests
 
             Assert.IsTrue(VisualStateManager.GoToState(button, "LabelOnRight", false));
             Assert.AreEqual((Thickness)button.TryFindResource("AppBarButtonSubItemChevronLabelOnRightMargin"), subItemChevron.Margin);
+
+            ToolBar.SetOverflowMode(button, OverflowMode.Always);
+            Assert.IsTrue(button.IsInOverflow);
+            AssertVisualState(root, "CommonStates", "OverflowNormal");
+            Assert.AreEqual(Visibility.Collapsed, subItemChevron.Visibility);
+            Assert.AreEqual(Visibility.Visible, overflowSubItemChevron.Visibility);
+
+            flyout.OnOpened();
+            AssertVisualState(root, "CommonStates", "OverflowSubMenuOpened");
+            Assert.AreEqual(Visibility.Collapsed, subItemChevron.Visibility);
+            Assert.AreEqual(Visibility.Visible, overflowSubItemChevron.Visibility);
+
+            flyout.OnClosed();
+            AssertVisualState(root, "CommonStates", "OverflowNormal");
         });
     }
 
