@@ -952,19 +952,13 @@
 
                             <VisualStateGroup x:Name="PaneVisibilityGroup">
                                 <VisualState x:Name="PaneVisible" />
-                                <VisualState x:Name="PaneCollapsed">
-                                    <Storyboard>
-                                        <!-- Note that RootSplitView.DisplayMode is set in code so we don't want to -->
-                                        <!-- write it here and interfere. But these values work together to hide -->
-                                        <!-- the left pane. -->
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RootSplitView" Storyboard.TargetProperty="CompactPaneLength">
-                                            <DiscreteDoubleKeyFrame KeyTime="0" Value="0"/>
-                                        </DoubleAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PaneToggleButtonGrid" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
+                                <ui:VisualStateEx x:Name="PaneCollapsed">
+                                    <ui:VisualStateEx.Setters>
+                                        <!-- RootSplitView.DisplayMode is set in code; these values work together to hide the left pane. -->
+                                        <ui:VisualStateSetter Target="RootSplitView.CompactPaneLength" Value="0" />
+                                        <ui:VisualStateSetter Target="PaneToggleButtonGrid.Visibility" Value="Collapsed" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
 
                             <VisualStateGroup x:Name="PaneSeparatorStates">

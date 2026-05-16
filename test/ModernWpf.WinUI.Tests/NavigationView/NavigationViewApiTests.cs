@@ -1003,6 +1003,42 @@ public class NavigationViewApiTests
     }
 
     [TestMethod]
+    public void NavigationViewPaneCollapsedStateUsesWinUIVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var navView = new ModernWpf.Controls.NavigationView
+            {
+                IsPaneOpen = true,
+                MenuItems =
+                {
+                    new ModernWpf.Controls.NavigationViewItem
+                    {
+                        Content = "Home"
+                    }
+                }
+            };
+
+            using var host = new TestWindowHost(navView);
+
+            var root = FindNamedDescendant<Grid>(navView, "RootGrid");
+            var splitView = FindNamedDescendant<ModernWpf.Controls.SplitView>(navView, "RootSplitView");
+            var paneToggleButtonGrid = FindNamedDescendant<FrameworkElement>(navView, "PaneToggleButtonGrid");
+
+            AssertStateSetter(root, "PaneVisibilityGroup", "PaneCollapsed",
+                "RootSplitView.CompactPaneLength",
+                "PaneToggleButtonGrid.Visibility");
+
+            Assert.IsTrue(VisualStateManager.GoToState(navView, "PaneCollapsed", false));
+            AssertCurrentState(root, "PaneVisibilityGroup", "PaneCollapsed");
+            Assert.AreEqual(0.0, splitView.CompactPaneLength);
+            Assert.AreEqual(Visibility.Collapsed, paneToggleButtonGrid.Visibility);
+        });
+    }
+
+    [TestMethod]
     public void VerifyOverflowButtonToolTip()
     {
         WpfTestHost.Run(() =>
