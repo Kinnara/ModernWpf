@@ -1158,6 +1158,56 @@ public class NavigationViewApiTests
     }
 
     [TestMethod]
+    public void NavigationViewDisplayModeStatesUseWinUIVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            using var host = CreateNavigationViewHost(out var navView);
+
+            var root = FindNamedDescendant<Grid>(navView, "RootGrid");
+            var headerContent = (FrameworkElement)navView.Template.FindName("HeaderContent", navView);
+            var backButton = (Button)navView.Template.FindName("NavigationViewBackButton", navView);
+            var contentGrid = (Border)navView.Template.FindName("ContentGrid", navView);
+            Assert.IsNotNull(headerContent);
+            Assert.IsNotNull(backButton);
+            Assert.IsNotNull(contentGrid);
+
+            AssertStateSetter(root, "DisplayModeGroup", "Minimal",
+                "HeaderContent.Margin",
+                "NavigationViewBackButton.Style",
+                "ContentGrid.BorderThickness",
+                "ContentGrid.CornerRadius",
+                "ContentGrid.Margin");
+            AssertStateSetter(root, "DisplayModeGroup", "TopNavigationMinimal",
+                "ContentGrid.BorderThickness",
+                "ContentGrid.CornerRadius",
+                "ContentGrid.Margin");
+            AssertStateSetter(root, "DisplayModeGroup", "MinimalWithBackButton",
+                "HeaderContent.Margin",
+                "NavigationViewBackButton.Style",
+                "ContentGrid.BorderThickness",
+                "ContentGrid.CornerRadius",
+                "ContentGrid.Margin");
+
+            Assert.IsTrue(VisualStateManager.GoToState(navView, "MinimalWithBackButton", false));
+            AssertCurrentState(root, "DisplayModeGroup", "MinimalWithBackButton");
+            Assert.AreEqual(new Thickness(-24, 44, 0, 0), headerContent.Margin);
+            Assert.AreSame(navView.FindResource("NavigationBackButtonSmallStyle"), backButton.Style);
+            Assert.AreEqual(new Thickness(0, 1, 0, 0), contentGrid.BorderThickness);
+            Assert.AreEqual(new CornerRadius(0), contentGrid.CornerRadius);
+            Assert.AreEqual(new Thickness(0), contentGrid.Margin);
+
+            Assert.IsTrue(VisualStateManager.GoToState(navView, "TopNavigationMinimal", false));
+            AssertCurrentState(root, "DisplayModeGroup", "TopNavigationMinimal");
+            Assert.AreEqual(new Thickness(0, 1, 0, 0), contentGrid.BorderThickness);
+            Assert.AreEqual(new CornerRadius(0), contentGrid.CornerRadius);
+            Assert.AreEqual(new Thickness(0), contentGrid.Margin);
+        });
+    }
+
+    [TestMethod]
     public void NavigationViewTitleBarCollapsedStateUsesWinUIVisualStateSetters()
     {
         WpfTestHost.Run(() =>

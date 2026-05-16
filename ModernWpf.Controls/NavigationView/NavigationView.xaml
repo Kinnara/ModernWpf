@@ -859,9 +859,31 @@
                                 </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="Compact" />
                                 <VisualState x:Name="Expanded" />
-                                <VisualState x:Name="Minimal" />
-                                <VisualState x:Name="TopNavigationMinimal" />
-                                <VisualState x:Name="MinimalWithBackButton" />
+                                <ui:VisualStateEx x:Name="Minimal">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="HeaderContent.Margin" Value="{DynamicResource NavigationViewMinimalHeaderMargin}" />
+                                        <ui:VisualStateSetter Target="NavigationViewBackButton.Style" Value="{DynamicResource NavigationBackButtonSmallStyle}" />
+                                        <ui:VisualStateSetter Target="ContentGrid.BorderThickness" Value="{DynamicResource NavigationViewMinimalContentGridBorderThickness}" />
+                                        <ui:VisualStateSetter Target="ContentGrid.CornerRadius" Value="{DynamicResource NavigationViewMinimalContentGridCornerRadius}" />
+                                        <ui:VisualStateSetter Target="ContentGrid.Margin" Value="{DynamicResource NavigationViewMinimalContentMargin}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="TopNavigationMinimal">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ContentGrid.BorderThickness" Value="{DynamicResource TopNavigationViewContentGridBorderThickness}" />
+                                        <ui:VisualStateSetter Target="ContentGrid.CornerRadius" Value="{DynamicResource TopNavigationViewContentGridCornerRadius}" />
+                                        <ui:VisualStateSetter Target="ContentGrid.Margin" Value="{DynamicResource TopNavigationViewContentMargin}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="MinimalWithBackButton">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="HeaderContent.Margin" Value="{DynamicResource NavigationViewMinimalHeaderMargin}" />
+                                        <ui:VisualStateSetter Target="NavigationViewBackButton.Style" Value="{DynamicResource NavigationBackButtonSmallStyle}" />
+                                        <ui:VisualStateSetter Target="ContentGrid.BorderThickness" Value="{DynamicResource NavigationViewMinimalContentGridBorderThickness}" />
+                                        <ui:VisualStateSetter Target="ContentGrid.CornerRadius" Value="{DynamicResource NavigationViewMinimalContentGridCornerRadius}" />
+                                        <ui:VisualStateSetter Target="ContentGrid.Margin" Value="{DynamicResource NavigationViewMinimalContentMargin}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
 
                             <VisualStateGroup x:Name="TogglePaneGroup">
@@ -1339,41 +1361,49 @@
                                 </local:SplitView.Pane>
 
                                 <local:SplitView.Content>
-                                    <Grid x:Name="ContentGrid" Background="{DynamicResource NavigationViewContentBackground}">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto" />
-                                            <RowDefinition Height="Auto" />
-                                            <RowDefinition Height="*" />
-                                        </Grid.RowDefinitions>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="*"/>
-                                        </Grid.ColumnDefinitions>
+                                    <Border
+                                        x:Name="ContentGrid"
+                                        BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                                        BorderThickness="{DynamicResource NavigationViewContentGridBorderThickness}"
+                                        Background="{DynamicResource NavigationViewContentBackground}"
+                                        Margin="{DynamicResource NavigationViewContentMargin}"
+                                        CornerRadius="{DynamicResource NavigationViewContentGridCornerRadius}">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="*" />
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
 
-                                        <Grid x:Name="ContentTopPadding"
-                                              Grid.ColumnSpan="2"
-                                              Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.TopPadding}"
-                                              Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.LeftPaneVisibility}"/>
+                                            <Grid x:Name="ContentTopPadding"
+                                                  Grid.ColumnSpan="2"
+                                                  Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.TopPadding}"
+                                                  Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.LeftPaneVisibility}"/>
 
-                                        <Grid x:Name="ContentLeftPadding" Grid.Row="1"/>
+                                            <Grid x:Name="ContentLeftPadding" Grid.Row="1"/>
 
-                                        <ContentControl
-                                            x:Name="HeaderContent"
-                                            Grid.Row="1"
-                                            Grid.Column="1"
-                                            MinHeight="{DynamicResource PaneToggleButtonHeight}"
-                                            IsTabStop="False"
-                                            Content="{TemplateBinding Header}"
-                                            ContentTemplate="{TemplateBinding HeaderTemplate}"
-                                            VerticalContentAlignment="Stretch"
-                                            HorizontalContentAlignment="Stretch"
-                                            Style="{DynamicResource NavigationViewTitleHeaderContentControlTextStyle}"/>
+                                            <ContentControl
+                                                x:Name="HeaderContent"
+                                                Grid.Row="1"
+                                                Grid.Column="1"
+                                                MinHeight="{DynamicResource PaneToggleButtonHeight}"
+                                                IsTabStop="False"
+                                                Content="{TemplateBinding Header}"
+                                                ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                                VerticalContentAlignment="Stretch"
+                                                HorizontalContentAlignment="Stretch"
+                                                Style="{DynamicResource NavigationViewTitleHeaderContentControlTextStyle}"/>
 
-                                        <ui:ContentPresenterEx
-                                            Grid.Row="2"
-                                            Grid.ColumnSpan="2"
-                                            Content="{TemplateBinding Content}"/>
-                                    </Grid>
+                                            <ui:ContentPresenterEx
+                                                Grid.Row="2"
+                                                Grid.ColumnSpan="2"
+                                                Content="{TemplateBinding Content}"/>
+                                        </Grid>
+                                    </Border>
                                 </local:SplitView.Content>
                             </local:SplitView>
 
@@ -1384,13 +1414,6 @@
                         <Trigger SourceName="DisplayModeGroupListener" Property="CurrentStateName" Value="Expanded">
                             <Setter TargetName="RootSplitView" Property="PaneBackground" Value="{DynamicResource NavigationViewExpandedPaneBackground}" />
                         </Trigger>
-                        <Trigger SourceName="DisplayModeGroupListener" Property="CurrentStateName" Value="Minimal">
-                            <Setter TargetName="HeaderContent" Property="Margin" Value="{DynamicResource NavigationViewMinimalHeaderMargin}" />
-                        </Trigger>
-                        <Trigger SourceName="DisplayModeGroupListener" Property="CurrentStateName" Value="MinimalWithBackButton">
-                            <Setter TargetName="HeaderContent" Property="Margin" Value="{DynamicResource NavigationViewMinimalHeaderMargin}" />
-                        </Trigger>
-
                         <Trigger SourceName="PaneOverlayGroupListener" Property="CurrentStateName" Value="PaneNotOverlaying">
                             <Setter TargetName="RootSplitView" Property="CornerRadius" Value="0" />
                             <Setter TargetName="RootSplitView" Property="BorderThickness" Value="0" />
