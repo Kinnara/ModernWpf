@@ -7,6 +7,7 @@
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives">
 
     <Style x:Key="ExpanderDownHeaderStyle" TargetType="ToggleButton">
+        <Setter Property="primitives:ToggleButtonHelper.VisualStateSettersEnabled" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ToggleButton">
@@ -32,6 +33,15 @@
                                         <root:VisualStateSetter Property="Foreground" Value="{DynamicResource ExpanderHeaderForegroundPointerOver}" />
                                         <root:VisualStateSetter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderPointerOverBrush}" />
                                         <root:VisualStateSetter Target="arrow.Foreground" Value="{DynamicResource ExpanderChevronPointerOverForeground}" />
+                                        <root:VisualStateSetter Target="arrow.(local:AnimatedIcon.State)" Value="PointerOverOff" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="PointerOver">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Property="Foreground" Value="{DynamicResource ExpanderHeaderForegroundPointerOver}" />
+                                        <root:VisualStateSetter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderPointerOverBrush}" />
+                                        <root:VisualStateSetter Target="arrow.Foreground" Value="{DynamicResource ExpanderChevronPointerOverForeground}" />
+                                        <root:VisualStateSetter Target="arrow.(local:AnimatedIcon.State)" Value="PointerOverOff" />
                                     </root:VisualStateEx.Setters>
                                 </root:VisualStateEx>
                                 <root:VisualStateEx x:Name="Pressed">
@@ -39,6 +49,7 @@
                                         <root:VisualStateSetter Property="Foreground" Value="{DynamicResource ExpanderHeaderForegroundPressed}" />
                                         <root:VisualStateSetter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderPressedBrush}" />
                                         <root:VisualStateSetter Target="arrow.Foreground" Value="{DynamicResource ExpanderChevronPressedForeground}" />
+                                        <root:VisualStateSetter Target="arrow.(local:AnimatedIcon.State)" Value="PressedOff" />
                                     </root:VisualStateEx.Setters>
                                 </root:VisualStateEx>
                                 <root:VisualStateEx x:Name="Disabled">
@@ -50,12 +61,37 @@
                                 </root:VisualStateEx>
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="CheckStates">
-                                <VisualState x:Name="Unchecked" />
+                                <root:VisualStateEx x:Name="Unchecked">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="arrow.Data" Value="{StaticResource ChevronDown}" />
+                                        <root:VisualStateSetter Target="arrow.(local:AnimatedIcon.State)" Value="NormalOff" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
                                 <root:VisualStateEx x:Name="Checked">
                                     <root:VisualStateEx.Setters>
                                         <root:VisualStateSetter Target="arrow.Data" Value="{StaticResource ChevronUp}" />
+                                        <root:VisualStateSetter Target="arrow.(local:AnimatedIcon.State)" Value="NormalOn" />
                                     </root:VisualStateEx.Setters>
                                 </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="CheckedPointerOver">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="arrow.Data" Value="{StaticResource ChevronUp}" />
+                                        <root:VisualStateSetter Target="arrow.(local:AnimatedIcon.State)" Value="PointerOverOn" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="CheckedPressed">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="arrow.Data" Value="{StaticResource ChevronUp}" />
+                                        <root:VisualStateSetter Target="arrow.(local:AnimatedIcon.State)" Value="PressedOn" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="CheckedDisabled">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="arrow.Data" Value="{StaticResource ChevronUp}" />
+                                        <root:VisualStateSetter Target="arrow.(local:AnimatedIcon.State)" Value="NormalOn" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <VisualState x:Name="Indeterminate" />
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Grid
@@ -72,6 +108,7 @@
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 FontSize="{DynamicResource ExpanderChevronGlyphSize}"
                                 Data="{StaticResource ChevronDown}"
+                                local:AnimatedIcon.State="NormalOff"
                                 SnapsToDevicePixels="false"
                                 Foreground="{DynamicResource ExpanderChevronForeground}" />
                             <local:ContentPresenterEx
@@ -117,6 +154,7 @@
     </Style>
 
     <Style x:Key="ExpanderUpHeaderStyle" TargetType="ToggleButton">
+        <Setter Property="primitives:ToggleButtonHelper.VisualStateSettersEnabled" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ToggleButton">
@@ -142,6 +180,15 @@
                                         <root:VisualStateSetter Property="Foreground" Value="{DynamicResource ExpanderHeaderForegroundPointerOver}" />
                                         <root:VisualStateSetter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderPointerOverBrush}" />
                                         <root:VisualStateSetter Target="arrow.Foreground" Value="{DynamicResource ExpanderChevronPointerOverForeground}" />
+                                        <root:VisualStateSetter Target="arrow.(local:AnimatedIcon.State)" Value="PointerOverOff" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="PointerOver">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Property="Foreground" Value="{DynamicResource ExpanderHeaderForegroundPointerOver}" />
+                                        <root:VisualStateSetter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderPointerOverBrush}" />
+                                        <root:VisualStateSetter Target="arrow.Foreground" Value="{DynamicResource ExpanderChevronPointerOverForeground}" />
+                                        <root:VisualStateSetter Target="arrow.(local:AnimatedIcon.State)" Value="PointerOverOff" />
                                     </root:VisualStateEx.Setters>
                                 </root:VisualStateEx>
                                 <root:VisualStateEx x:Name="Pressed">
@@ -149,6 +196,7 @@
                                         <root:VisualStateSetter Property="Foreground" Value="{DynamicResource ExpanderHeaderForegroundPressed}" />
                                         <root:VisualStateSetter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderPressedBrush}" />
                                         <root:VisualStateSetter Target="arrow.Foreground" Value="{DynamicResource ExpanderChevronPressedForeground}" />
+                                        <root:VisualStateSetter Target="arrow.(local:AnimatedIcon.State)" Value="PressedOff" />
                                     </root:VisualStateEx.Setters>
                                 </root:VisualStateEx>
                                 <root:VisualStateEx x:Name="Disabled">
@@ -160,12 +208,37 @@
                                 </root:VisualStateEx>
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="CheckStates">
-                                <VisualState x:Name="Unchecked" />
+                                <root:VisualStateEx x:Name="Unchecked">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="arrow.Data" Value="{StaticResource ChevronDown}" />
+                                        <root:VisualStateSetter Target="arrow.(local:AnimatedIcon.State)" Value="NormalOff" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
                                 <root:VisualStateEx x:Name="Checked">
                                     <root:VisualStateEx.Setters>
                                         <root:VisualStateSetter Target="arrow.Data" Value="{StaticResource ChevronUp}" />
+                                        <root:VisualStateSetter Target="arrow.(local:AnimatedIcon.State)" Value="NormalOn" />
                                     </root:VisualStateEx.Setters>
                                 </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="CheckedPointerOver">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="arrow.Data" Value="{StaticResource ChevronUp}" />
+                                        <root:VisualStateSetter Target="arrow.(local:AnimatedIcon.State)" Value="PointerOverOn" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="CheckedPressed">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="arrow.Data" Value="{StaticResource ChevronUp}" />
+                                        <root:VisualStateSetter Target="arrow.(local:AnimatedIcon.State)" Value="PressedOn" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="CheckedDisabled">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="arrow.Data" Value="{StaticResource ChevronUp}" />
+                                        <root:VisualStateSetter Target="arrow.(local:AnimatedIcon.State)" Value="NormalOn" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <VisualState x:Name="Indeterminate" />
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Grid
@@ -189,11 +262,12 @@
                                     x:Name="arrow"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
-                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                    FontSize="{DynamicResource ExpanderChevronGlyphSize}"
-                                    Data="{StaticResource ChevronDown}"
-                                    SnapsToDevicePixels="false"
-                                    Foreground="{DynamicResource ExpanderChevronForeground}" />
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                FontSize="{DynamicResource ExpanderChevronGlyphSize}"
+                                Data="{StaticResource ChevronDown}"
+                                local:AnimatedIcon.State="NormalOff"
+                                SnapsToDevicePixels="false"
+                                Foreground="{DynamicResource ExpanderChevronForeground}" />
                             </Grid>
                             <local:ContentPresenterEx
                                 Grid.Column="1"
@@ -238,6 +312,7 @@
     </Style>
 
     <Style x:Key="ExpanderLeftHeaderStyle" TargetType="ToggleButton">
+        <Setter Property="primitives:ToggleButtonHelper.VisualStateSettersEnabled" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ToggleButton">
@@ -263,6 +338,15 @@
                                         <root:VisualStateSetter Property="Foreground" Value="{DynamicResource ExpanderHeaderForegroundPointerOver}" />
                                         <root:VisualStateSetter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderPointerOverBrush}" />
                                         <root:VisualStateSetter Target="arrow.Foreground" Value="{DynamicResource ExpanderChevronPointerOverForeground}" />
+                                        <root:VisualStateSetter Target="arrow.(local:AnimatedIcon.State)" Value="PointerOverOff" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="PointerOver">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Property="Foreground" Value="{DynamicResource ExpanderHeaderForegroundPointerOver}" />
+                                        <root:VisualStateSetter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderPointerOverBrush}" />
+                                        <root:VisualStateSetter Target="arrow.Foreground" Value="{DynamicResource ExpanderChevronPointerOverForeground}" />
+                                        <root:VisualStateSetter Target="arrow.(local:AnimatedIcon.State)" Value="PointerOverOff" />
                                     </root:VisualStateEx.Setters>
                                 </root:VisualStateEx>
                                 <root:VisualStateEx x:Name="Pressed">
@@ -270,6 +354,7 @@
                                         <root:VisualStateSetter Property="Foreground" Value="{DynamicResource ExpanderHeaderForegroundPressed}" />
                                         <root:VisualStateSetter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderPressedBrush}" />
                                         <root:VisualStateSetter Target="arrow.Foreground" Value="{DynamicResource ExpanderChevronPressedForeground}" />
+                                        <root:VisualStateSetter Target="arrow.(local:AnimatedIcon.State)" Value="PressedOff" />
                                     </root:VisualStateEx.Setters>
                                 </root:VisualStateEx>
                                 <root:VisualStateEx x:Name="Disabled">
@@ -281,12 +366,37 @@
                                 </root:VisualStateEx>
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="CheckStates">
-                                <VisualState x:Name="Unchecked" />
+                                <root:VisualStateEx x:Name="Unchecked">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="arrow.Data" Value="{StaticResource ChevronDown}" />
+                                        <root:VisualStateSetter Target="arrow.(local:AnimatedIcon.State)" Value="NormalOff" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
                                 <root:VisualStateEx x:Name="Checked">
                                     <root:VisualStateEx.Setters>
                                         <root:VisualStateSetter Target="arrow.Data" Value="{StaticResource ChevronUp}" />
+                                        <root:VisualStateSetter Target="arrow.(local:AnimatedIcon.State)" Value="NormalOn" />
                                     </root:VisualStateEx.Setters>
                                 </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="CheckedPointerOver">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="arrow.Data" Value="{StaticResource ChevronUp}" />
+                                        <root:VisualStateSetter Target="arrow.(local:AnimatedIcon.State)" Value="PointerOverOn" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="CheckedPressed">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="arrow.Data" Value="{StaticResource ChevronUp}" />
+                                        <root:VisualStateSetter Target="arrow.(local:AnimatedIcon.State)" Value="PressedOn" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="CheckedDisabled">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="arrow.Data" Value="{StaticResource ChevronUp}" />
+                                        <root:VisualStateSetter Target="arrow.(local:AnimatedIcon.State)" Value="NormalOn" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <VisualState x:Name="Indeterminate" />
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Grid
@@ -313,6 +423,7 @@
                                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                     FontSize="{DynamicResource ExpanderChevronGlyphSize}"
                                     Data="{StaticResource ChevronDown}"
+                                    local:AnimatedIcon.State="NormalOff"
                                     SnapsToDevicePixels="false"
                                     Foreground="{DynamicResource ExpanderChevronForeground}" />
                             </Grid>
@@ -359,6 +470,7 @@
     </Style>
 
     <Style x:Key="ExpanderRightHeaderStyle" TargetType="ToggleButton">
+        <Setter Property="primitives:ToggleButtonHelper.VisualStateSettersEnabled" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ToggleButton">
@@ -384,6 +496,15 @@
                                         <root:VisualStateSetter Property="Foreground" Value="{DynamicResource ExpanderHeaderForegroundPointerOver}" />
                                         <root:VisualStateSetter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderPointerOverBrush}" />
                                         <root:VisualStateSetter Target="arrow.Foreground" Value="{DynamicResource ExpanderChevronPointerOverForeground}" />
+                                        <root:VisualStateSetter Target="arrow.(local:AnimatedIcon.State)" Value="PointerOverOff" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="PointerOver">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Property="Foreground" Value="{DynamicResource ExpanderHeaderForegroundPointerOver}" />
+                                        <root:VisualStateSetter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderPointerOverBrush}" />
+                                        <root:VisualStateSetter Target="arrow.Foreground" Value="{DynamicResource ExpanderChevronPointerOverForeground}" />
+                                        <root:VisualStateSetter Target="arrow.(local:AnimatedIcon.State)" Value="PointerOverOff" />
                                     </root:VisualStateEx.Setters>
                                 </root:VisualStateEx>
                                 <root:VisualStateEx x:Name="Pressed">
@@ -391,6 +512,7 @@
                                         <root:VisualStateSetter Property="Foreground" Value="{DynamicResource ExpanderHeaderForegroundPressed}" />
                                         <root:VisualStateSetter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderPressedBrush}" />
                                         <root:VisualStateSetter Target="arrow.Foreground" Value="{DynamicResource ExpanderChevronPressedForeground}" />
+                                        <root:VisualStateSetter Target="arrow.(local:AnimatedIcon.State)" Value="PressedOff" />
                                     </root:VisualStateEx.Setters>
                                 </root:VisualStateEx>
                                 <root:VisualStateEx x:Name="Disabled">
@@ -402,12 +524,37 @@
                                 </root:VisualStateEx>
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="CheckStates">
-                                <VisualState x:Name="Unchecked" />
+                                <root:VisualStateEx x:Name="Unchecked">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="arrow.Data" Value="{StaticResource ChevronDown}" />
+                                        <root:VisualStateSetter Target="arrow.(local:AnimatedIcon.State)" Value="NormalOff" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
                                 <root:VisualStateEx x:Name="Checked">
                                     <root:VisualStateEx.Setters>
                                         <root:VisualStateSetter Target="arrow.Data" Value="{StaticResource ChevronUp}" />
+                                        <root:VisualStateSetter Target="arrow.(local:AnimatedIcon.State)" Value="NormalOn" />
                                     </root:VisualStateEx.Setters>
                                 </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="CheckedPointerOver">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="arrow.Data" Value="{StaticResource ChevronUp}" />
+                                        <root:VisualStateSetter Target="arrow.(local:AnimatedIcon.State)" Value="PointerOverOn" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="CheckedPressed">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="arrow.Data" Value="{StaticResource ChevronUp}" />
+                                        <root:VisualStateSetter Target="arrow.(local:AnimatedIcon.State)" Value="PressedOn" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="CheckedDisabled">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="arrow.Data" Value="{StaticResource ChevronUp}" />
+                                        <root:VisualStateSetter Target="arrow.(local:AnimatedIcon.State)" Value="NormalOn" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <VisualState x:Name="Indeterminate" />
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Grid
@@ -434,6 +581,7 @@
                                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                     FontSize="{DynamicResource ExpanderChevronGlyphSize}"
                                     Data="{StaticResource ChevronDown}"
+                                    local:AnimatedIcon.State="NormalOff"
                                     SnapsToDevicePixels="false"
                                     Foreground="{DynamicResource ExpanderChevronForeground}" />
                             </Grid>

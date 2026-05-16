@@ -284,8 +284,11 @@ public class ExpanderApiTests
 
     private static void AssertHeaderToggleVisualStateSetters(ToggleButton headerSite)
     {
+        Assert.IsTrue(ToggleButtonHelper.GetVisualStateSettersEnabled(headerSite));
+
         headerSite.ApplyTemplate();
         var headerRoot = FindTemplateChild<FrameworkElement>(headerSite, "HeaderRoot");
+        var arrow = FindTemplateChild<FontIconFallback>(headerSite, "arrow");
 
         AssertStateSetter(
             headerRoot,
@@ -293,14 +296,24 @@ public class ExpanderApiTests
             "MouseOver",
             "Foreground",
             "BorderBrush",
-            "arrow.Foreground");
+            "arrow.Foreground",
+            "arrow.(local:AnimatedIcon.State)");
+        AssertStateSetter(
+            headerRoot,
+            "CommonStates",
+            "PointerOver",
+            "Foreground",
+            "BorderBrush",
+            "arrow.Foreground",
+            "arrow.(local:AnimatedIcon.State)");
         AssertStateSetter(
             headerRoot,
             "CommonStates",
             "Pressed",
             "Foreground",
             "BorderBrush",
-            "arrow.Foreground");
+            "arrow.Foreground",
+            "arrow.(local:AnimatedIcon.State)");
         AssertStateSetter(
             headerRoot,
             "CommonStates",
@@ -308,7 +321,28 @@ public class ExpanderApiTests
             "Foreground",
             "BorderBrush",
             "arrow.Foreground");
-        AssertStateSetter(headerRoot, "CheckStates", "Checked", "arrow.Data");
+        AssertStateSetter(headerRoot, "CheckStates", "Unchecked", "arrow.Data", "arrow.(local:AnimatedIcon.State)");
+        AssertStateSetter(headerRoot, "CheckStates", "Checked", "arrow.Data", "arrow.(local:AnimatedIcon.State)");
+        AssertStateSetter(headerRoot, "CheckStates", "CheckedPointerOver", "arrow.Data", "arrow.(local:AnimatedIcon.State)");
+        AssertStateSetter(headerRoot, "CheckStates", "CheckedPressed", "arrow.Data", "arrow.(local:AnimatedIcon.State)");
+        AssertStateSetter(headerRoot, "CheckStates", "CheckedDisabled", "arrow.Data", "arrow.(local:AnimatedIcon.State)");
+
+        AssertStateSetterValue(headerRoot, "CommonStates", "PointerOver", "arrow.(local:AnimatedIcon.State)", "PointerOverOff");
+        AssertStateSetterValue(headerRoot, "CommonStates", "Pressed", "arrow.(local:AnimatedIcon.State)", "PressedOff");
+        AssertStateSetterValue(headerRoot, "CheckStates", "Unchecked", "arrow.(local:AnimatedIcon.State)", "NormalOff");
+        AssertStateSetterValue(headerRoot, "CheckStates", "Checked", "arrow.(local:AnimatedIcon.State)", "NormalOn");
+        AssertStateSetterValue(headerRoot, "CheckStates", "CheckedPointerOver", "arrow.(local:AnimatedIcon.State)", "PointerOverOn");
+        AssertStateSetterValue(headerRoot, "CheckStates", "CheckedPressed", "arrow.(local:AnimatedIcon.State)", "PressedOn");
+        AssertStateSetterValue(headerRoot, "CheckStates", "CheckedDisabled", "arrow.(local:AnimatedIcon.State)", "NormalOn");
+
+        Assert.AreEqual(headerSite.IsChecked == true ? "NormalOn" : "NormalOff", AnimatedIcon.GetState(arrow));
+        AssertAnimatedIconStateTransition(headerSite, arrow, "Unchecked", "NormalOff");
+        AssertAnimatedIconStateTransition(headerSite, arrow, "PointerOver", "PointerOverOff");
+        AssertAnimatedIconStateTransition(headerSite, arrow, "Pressed", "PressedOff");
+        AssertAnimatedIconStateTransition(headerSite, arrow, "Checked", "NormalOn");
+        AssertAnimatedIconStateTransition(headerSite, arrow, "CheckedPointerOver", "PointerOverOn");
+        AssertAnimatedIconStateTransition(headerSite, arrow, "CheckedPressed", "PressedOn");
+        AssertAnimatedIconStateTransition(headerSite, arrow, "CheckedDisabled", "NormalOn");
     }
 
     private static VisualStateEx AssertStateSetter(
@@ -329,6 +363,37 @@ public class ExpanderApiTests
         var stateEx = (VisualStateEx)state;
         CollectionAssert.AreEquivalent(expectedTargets, stateEx.Setters.Select(setter => setter.Target ?? setter.Property).ToArray());
         return stateEx;
+    }
+
+    private static void AssertStateSetterValue(
+        FrameworkElement stateGroupsRoot,
+        string groupName,
+        string stateName,
+        string target,
+        object expectedValue)
+    {
+        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
+            .OfType<VisualStateGroup>()
+            .Single(candidate => candidate.Name == groupName);
+        var state = group.States
+            .OfType<VisualState>()
+            .Single(candidate => candidate.Name == stateName);
+
+        Assert.IsInstanceOfType(state, typeof(VisualStateEx));
+
+        var stateEx = (VisualStateEx)state;
+        var setter = stateEx.Setters.Single(candidate => candidate.Target == target);
+        Assert.AreEqual(expectedValue, setter.Value);
+    }
+
+    private static void AssertAnimatedIconStateTransition(
+        ToggleButton headerSite,
+        DependencyObject arrow,
+        string stateName,
+        string expectedState)
+    {
+        Assert.IsTrue(VisualStateManager.GoToState(headerSite, stateName, false), stateName);
+        Assert.AreEqual(expectedState, AnimatedIcon.GetState(arrow), stateName);
     }
 
     private static void AssertThemeResourceReference(string themeName, string resourceKey, string expectedResourceKey)
