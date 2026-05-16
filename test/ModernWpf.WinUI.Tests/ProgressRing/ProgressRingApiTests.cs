@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
@@ -89,6 +90,36 @@ public class ProgressRingApiTests
         });
     }
 
+    [TestMethod]
+    public void InactiveStateUsesVisualStateSettersAndAutomationPeerFallback()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var progressRing = new ModernWpf.Controls.ProgressRing
+            {
+                IsActive = true
+            };
+
+            using var host = new TestWindowHost(progressRing, width: 240, height: 180);
+            host.UpdateLayout();
+
+            var ring = FindNamedDescendant<Border>(progressRing, "Ring");
+            AssertStateSetter(ring, "ActiveStates", "Inactive", "Ring.Opacity");
+
+            var peer = FrameworkElementAutomationPeer.CreatePeerForElement(progressRing);
+            Assert.IsTrue(peer.IsControlElement());
+
+            progressRing.IsActive = false;
+            host.UpdateLayout();
+
+            AssertCurrentState(ring, "ActiveStates", "Inactive");
+            Assert.AreEqual(0.0, ring.Opacity);
+            Assert.IsFalse(peer.IsControlElement());
+        });
+    }
+
     private static void AssertThemeResourceReference(string themeName, string resourceKey, object expectedResourceKey)
     {
         var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
@@ -117,6 +148,29 @@ public class ProgressRingApiTests
         }
 
         Assert.AreEqual(expected.ToString(), actual.ToString());
+    }
+
+    private static void AssertStateSetter(FrameworkElement stateGroupsRoot, string groupName, string stateName, params string[] expectedTargets)
+    {
+        var group = FindVisualStateGroup(stateGroupsRoot, groupName);
+        var state = group.States.OfType<VisualStateEx>().Single(item => item.Name == stateName);
+        var actualTargets = state.Setters
+            .Select(setter => string.IsNullOrEmpty(setter.Target) ? setter.Property : setter.Target)
+            .ToArray();
+
+        CollectionAssert.IsSubsetOf(expectedTargets, actualTargets);
+    }
+
+    private static void AssertCurrentState(FrameworkElement stateGroupsRoot, string groupName, string expectedStateName)
+    {
+        Assert.AreEqual(expectedStateName, FindVisualStateGroup(stateGroupsRoot, groupName).CurrentState?.Name);
+    }
+
+    private static VisualStateGroup FindVisualStateGroup(FrameworkElement stateGroupsRoot, string groupName)
+    {
+        return VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
+            .OfType<VisualStateGroup>()
+            .Single(item => item.Name == groupName);
     }
 
     private static T FindNamedDescendant<T>(DependencyObject root, string name)
