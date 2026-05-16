@@ -38,6 +38,9 @@
                         x:Name="Root"
                         MinWidth="{TemplateBinding MinWidth}"
                         MaxWidth="{TemplateBinding MaxWidth}">
+                        <VisualStateManager.CustomVisualStateManager>
+                            <ui:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="ApplicationViewStates">
                                 <ui:VisualStateGroupListener.Listener>
@@ -70,7 +73,11 @@
                                     <ui:VisualStateGroupListener x:Name="KeyboardAcceleratorTextVisibilityListener" />
                                 </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="KeyboardAcceleratorTextCollapsed" />
-                                <VisualState x:Name="KeyboardAcceleratorTextVisible" />
+                                <ui:VisualStateEx x:Name="KeyboardAcceleratorTextVisible">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="KeyboardAcceleratorTextLabel.Visibility" Value="Visible" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
 
@@ -223,9 +230,6 @@
                         </Trigger>-->
                         <!--#endregion-->
                         <!-- KeyboardAcceleratorTextVisible -->
-                        <Trigger SourceName="KeyboardAcceleratorTextVisibilityListener" Property="CurrentStateName" Value="KeyboardAcceleratorTextVisible">
-                            <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Visibility" Value="Visible" />
-                        </Trigger>
                         <!-- HasFlyout -->
                         <!--<Trigger>
                         <Setter TargetName="SubItemChevron" Property="Visibility" Value="Visible" />
@@ -270,6 +274,9 @@
                         x:Name="Root"
                         MinWidth="{TemplateBinding MinWidth}"
                         MaxWidth="{TemplateBinding MaxWidth}">
+                        <VisualStateManager.CustomVisualStateManager>
+                            <ui:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="ApplicationViewStates">
                                 <ui:VisualStateGroupListener.Listener>
@@ -306,7 +313,11 @@
                                     <ui:VisualStateGroupListener x:Name="KeyboardAcceleratorTextVisibilityListener" />
                                 </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="KeyboardAcceleratorTextCollapsed" />
-                                <VisualState x:Name="KeyboardAcceleratorTextVisible" />
+                                <ui:VisualStateEx x:Name="KeyboardAcceleratorTextVisible">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="KeyboardAcceleratorTextLabel.Visibility" Value="Visible" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
 
@@ -479,9 +490,6 @@
                         </Trigger>
                         <!--#endregion-->
                         <!-- KeyboardAcceleratorTextVisible -->
-                        <Trigger SourceName="KeyboardAcceleratorTextVisibilityListener" Property="CurrentStateName" Value="KeyboardAcceleratorTextVisible">
-                            <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Visibility" Value="Visible" />
-                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

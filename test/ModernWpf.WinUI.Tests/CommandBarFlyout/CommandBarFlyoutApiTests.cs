@@ -263,6 +263,42 @@ public class CommandBarFlyoutApiTests
         });
     }
 
+    [TestMethod]
+    public void FlyoutButtonKeyboardAcceleratorVisibilityUsesVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var resources = CreateCommandBarFlyoutResources();
+            var button = new AppBarButton
+            {
+                Style = (Style)resources["CommandBarFlyoutAppBarButtonStyle"],
+                Icon = new SymbolIcon(Symbol.Accept),
+                Label = "Accept",
+                InputGestureText = "Ctrl+A"
+            };
+            var toggleButton = new AppBarToggleButton
+            {
+                Style = (Style)resources["CommandBarFlyoutAppBarToggleButtonStyle"],
+                Icon = new SymbolIcon(Symbol.Accept),
+                Label = "Accept",
+                InputGestureText = "Ctrl+A"
+            };
+
+            var root = new System.Windows.Controls.StackPanel();
+            root.Resources.MergedDictionaries.Add(resources);
+            root.Children.Add(button);
+            root.Children.Add(toggleButton);
+
+            using var host = new TestWindowHost(root, width: 220, height: 180);
+            host.UpdateLayout();
+
+            VerifyKeyboardAcceleratorVisibilityState(button);
+            VerifyKeyboardAcceleratorVisibilityState(toggleButton);
+        });
+    }
+
     private static CommandBarFlyoutCommandBar GetCommandBar(CommandBarFlyout commandBarFlyout)
     {
         var presenter = commandBarFlyout.GetPresenter();
@@ -410,6 +446,44 @@ public class CommandBarFlyoutApiTests
         root.Resources.MergedDictionaries.Add(resources);
         root.Children.Add(child);
         return root;
+    }
+
+    private static void VerifyKeyboardAcceleratorVisibilityState(System.Windows.Controls.Control control)
+    {
+        var root = FindTemplateChild<System.Windows.Controls.Grid>(control, "Root");
+        var label = FindTemplateChild<System.Windows.Controls.TextBlock>(control, "KeyboardAcceleratorTextLabel");
+
+        AssertStateSetter(
+            root,
+            "KeyboardAcceleratorTextVisibility",
+            "KeyboardAcceleratorTextVisible",
+            "KeyboardAcceleratorTextLabel.Visibility");
+
+        Assert.AreEqual(Visibility.Collapsed, label.Visibility);
+        Assert.IsTrue(VisualStateManager.GoToState(control, "KeyboardAcceleratorTextVisible", false));
+        Assert.AreEqual(Visibility.Visible, label.Visibility);
+        Assert.IsTrue(VisualStateManager.GoToState(control, "KeyboardAcceleratorTextCollapsed", false));
+        Assert.AreEqual(Visibility.Collapsed, label.Visibility);
+    }
+
+    private static VisualStateEx AssertStateSetter(
+        FrameworkElement stateGroupsRoot,
+        string groupName,
+        string stateName,
+        params string[] expectedTargets)
+    {
+        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
+            .OfType<VisualStateGroup>()
+            .Single(candidate => candidate.Name == groupName);
+        var state = group.States
+            .OfType<VisualState>()
+            .Single(candidate => candidate.Name == stateName);
+
+        Assert.IsInstanceOfType(state, typeof(VisualStateEx));
+
+        var stateEx = (VisualStateEx)state;
+        CollectionAssert.AreEquivalent(expectedTargets, stateEx.Setters.Select(setter => setter.Target).ToArray());
+        return stateEx;
     }
 
     private static T FindTemplateChild<T>(System.Windows.Controls.Control control, string name)
