@@ -178,9 +178,11 @@ namespace ModernWpf.Controls
         {
             AppBarElementApplicationViewState value;
 
-            if (IsInOverflow && IsVisible && VisualParent is CommandBarOverflowPanel overflow)
+            if (IsInOverflow &&
+                IsVisible &&
+                AppBarElementProperties.TryGetOverflowState(VisualParent, out _, out bool hasMenuIcon))
             {
-                value = ComputeApplicationViewStateInOverflow(overflow.HasMenuIcon);
+                value = ComputeApplicationViewStateInOverflow(hasMenuIcon);
             }
             else
             {

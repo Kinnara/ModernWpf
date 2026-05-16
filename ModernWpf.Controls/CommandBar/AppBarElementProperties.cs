@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
 {
@@ -143,6 +144,30 @@ namespace ModernWpf.Controls
         internal static void SetIsInOverflow(DependencyObject element, bool value)
         {
             element.SetValue(IsInOverflowPropertyKey, value);
+        }
+
+        internal static bool TryGetOverflowState(
+            DependencyObject parent,
+            out bool hasToggleButton,
+            out bool hasMenuIcon)
+        {
+            switch (parent)
+            {
+                case CommandBarOverflowPanel overflowPanel:
+                    hasToggleButton = overflowPanel.HasToggleButton;
+                    hasMenuIcon = overflowPanel.HasMenuIcon;
+                    return true;
+
+                case CommandBarFlyoutOverflowPanel flyoutOverflowPanel:
+                    hasToggleButton = flyoutOverflowPanel.HasToggleButton;
+                    hasMenuIcon = flyoutOverflowPanel.HasMenuIcon;
+                    return true;
+
+                default:
+                    hasToggleButton = false;
+                    hasMenuIcon = false;
+                    return false;
+            }
         }
 
         #endregion

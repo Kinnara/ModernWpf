@@ -503,6 +503,115 @@ public class CommandBarFlyoutApiTests
         });
     }
 
+    [TestMethod]
+    public void FlyoutCommandBarSecondaryPanelDoesNotUseWpfToolBarPanel()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var resources = CreateCommandBarFlyoutResources();
+            var plainButton = new AppBarButton
+            {
+                Style = (Style)resources["CommandBarFlyoutAppBarButtonStyle"],
+                Label = "Undo"
+            };
+            var toggleButton = new AppBarToggleButton
+            {
+                Style = (Style)resources["CommandBarFlyoutAppBarToggleButtonStyle"],
+                Label = "Pin"
+            };
+            var iconButton = new AppBarButton
+            {
+                Style = (Style)resources["CommandBarFlyoutAppBarButtonStyle"],
+                Icon = new SymbolIcon(Symbol.Accept),
+                Label = "Accept"
+            };
+            var commandBar = new CommandBarFlyoutCommandBar
+            {
+                CommandBarOverflowPresenterStyle = (Style)resources["CommandBarFlyoutCommandBarOverflowPresenterStyle"],
+                Width = 220
+            };
+            commandBar.SecondaryCommands.Add(plainButton);
+            commandBar.SecondaryCommands.Add(toggleButton);
+            commandBar.SecondaryCommands.Add(iconButton);
+
+            var rootHost = CreateTemplateHost(commandBar, resources);
+            using var host = new TestWindowHost(rootHost, width: 260, height: 180);
+            host.UpdateLayout();
+
+            var secondaryPanel = FindTemplateChild<CommandBarFlyoutOverflowPanel>(commandBar, "SecondaryItemsPanel");
+
+            AssertTypeHierarchyDoesNotContain(secondaryPanel, "ToolBarOverflowPanel");
+            Assert.AreEqual(3, secondaryPanel.Children.Count);
+            Assert.AreSame(plainButton, secondaryPanel.Children[0]);
+            Assert.AreSame(toggleButton, secondaryPanel.Children[1]);
+            Assert.AreSame(iconButton, secondaryPanel.Children[2]);
+            Assert.IsTrue(plainButton.IsInOverflow);
+            Assert.IsTrue(toggleButton.IsInOverflow);
+            Assert.IsTrue(iconButton.IsInOverflow);
+        });
+    }
+
+    [TestMethod]
+    public void FlyoutOverflowPanelComputesOverflowApplicationViewStates()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var resources = CreateCommandBarFlyoutResources();
+            var plainButton = new AppBarButton
+            {
+                Style = (Style)resources["CommandBarFlyoutAppBarButtonStyle"],
+                Label = "Undo"
+            };
+            var toggleButton = new AppBarToggleButton
+            {
+                Style = (Style)resources["CommandBarFlyoutAppBarToggleButtonStyle"],
+                Label = "Pin"
+            };
+            var iconButton = new AppBarButton
+            {
+                Style = (Style)resources["CommandBarFlyoutAppBarButtonStyle"],
+                Icon = new SymbolIcon(Symbol.Accept),
+                Label = "Accept"
+            };
+            AppBarElementProperties.SetIsInOverflow(plainButton, true);
+            AppBarElementProperties.SetIsInOverflow(toggleButton, true);
+            AppBarElementProperties.SetIsInOverflow(iconButton, true);
+
+            var overflowPanel = new CommandBarFlyoutOverflowPanel();
+            overflowPanel.Children.Add(plainButton);
+            overflowPanel.Children.Add(toggleButton);
+            overflowPanel.Children.Add(iconButton);
+
+            var rootHost = CreateTemplateHost(overflowPanel, resources);
+            using var host = new TestWindowHost(rootHost, width: 260, height: 180);
+            host.UpdateLayout();
+
+            overflowPanel.UpdateChildrenApplicationViewState();
+
+            Assert.AreEqual(
+                AppBarElementApplicationViewState.OverflowWithToggleButtonsAndMenuIcons,
+                plainButton.GetValue(AppBarElementProperties.ApplicationViewStateProperty));
+            Assert.AreEqual(
+                AppBarElementApplicationViewState.OverflowWithMenuIcons,
+                toggleButton.GetValue(AppBarElementProperties.ApplicationViewStateProperty));
+            Assert.AreEqual(
+                AppBarElementApplicationViewState.OverflowWithToggleButtonsAndMenuIcons,
+                iconButton.GetValue(AppBarElementProperties.ApplicationViewStateProperty));
+        });
+    }
+
+    private static void AssertTypeHierarchyDoesNotContain(object value, string typeName)
+    {
+        for (var type = value.GetType(); type != null; type = type.BaseType)
+        {
+            Assert.AreNotEqual(typeName, type.Name);
+        }
+    }
+
     private static CommandBarFlyoutCommandBar GetCommandBar(CommandBarFlyout commandBarFlyout)
     {
         var presenter = commandBarFlyout.GetPresenter();
@@ -1042,7 +1151,7 @@ public class CommandBarFlyoutApiTests
         var outerOverflowContentRoot = FindTemplateChild<System.Windows.Controls.Border>(commandBar, "OuterOverflowContentRoot");
         var overflowContentRoot = FindTemplateChild<System.Windows.Controls.Border>(commandBar, "OverflowContentRoot");
         var secondaryItemsControl = FindTemplateChild<CommandBarOverflowPresenter>(commandBar, "SecondaryItemsControl");
-        var overflowPanel = FindTemplateChild<CommandBarOverflowPanel>(commandBar, "SecondaryItemsPanel");
+        var overflowPanel = FindTemplateChild<CommandBarFlyoutOverflowPanel>(commandBar, "SecondaryItemsPanel");
 
         AssertStateSetter(
             layoutRoot,

@@ -1015,7 +1015,7 @@
                                                     BorderBrush="{TemplateBinding BorderBrush}"
                                                     BorderThickness="{DynamicResource CommandBarFlyoutBorderThemeThickness}"
                                                     IsTabStop="False">
-                                                    <primitives:CommandBarOverflowPanel
+                                                    <primitives:CommandBarFlyoutOverflowPanel
                                                         x:Name="SecondaryItemsPanel"
                                                         Focusable="False"
                                                         FocusVisualStyle="{x:Null}"
