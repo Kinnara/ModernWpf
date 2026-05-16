@@ -327,6 +327,20 @@
                                 </root:VisualStateEx>
                                 <VisualState x:Name="TextBoxUnfocused" />
                             </VisualStateGroup>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <root:VisualStateEx x:Name="PointerOver">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="DropDownGlyph.(local:AnimatedIcon.State)" Value="PointerOver" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="Pressed">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="DropDownGlyph.(local:AnimatedIcon.State)" Value="Pressed" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <VisualState x:Name="Disabled" />
+                            </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Grid.Resources>
                             <Storyboard x:Key="OverlayOpeningAnimation">
@@ -474,6 +488,7 @@
                             Height="16"
                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
                             FontSize="12"
+                            local:AnimatedIcon.State="Normal"
                             Data="{StaticResource ChevronDown}" />
                         <local:ContentPresenterEx
                             x:Name="DescriptionPresenter"

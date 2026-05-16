@@ -174,6 +174,38 @@ public class ComboBoxApiTests
         });
     }
 
+    [TestMethod]
+    public void CommonStatesUseVisualStateSettersForDropDownGlyphAnimatedIconState()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var comboBox = CreateComboBox();
+
+            using var host = new TestWindowHost(comboBox);
+            host.UpdateLayout();
+
+            var layoutRoot = FindTemplateChild<FrameworkElement>(comboBox, "LayoutRoot");
+            var glyph = FindTemplateChild<FontIconFallback>(comboBox, "DropDownGlyph");
+
+            Assert.IsTrue(ComboBoxHelper.GetVisualStateSettersEnabled(comboBox));
+            AssertStateSetter(layoutRoot, "CommonStates", "PointerOver", "DropDownGlyph.(local:AnimatedIcon.State)");
+            AssertStateSetter(layoutRoot, "CommonStates", "Pressed", "DropDownGlyph.(local:AnimatedIcon.State)");
+            Assert.AreEqual("Normal", GetCurrentStateName(layoutRoot, "CommonStates"));
+            Assert.AreEqual("Normal", AnimatedIcon.GetState(glyph));
+
+            Assert.IsTrue(VisualStateManager.GoToState(comboBox, "PointerOver", false));
+            Assert.AreEqual("PointerOver", AnimatedIcon.GetState(glyph));
+            Assert.IsTrue(VisualStateManager.GoToState(comboBox, "Pressed", false));
+            Assert.AreEqual("Pressed", AnimatedIcon.GetState(glyph));
+            Assert.IsTrue(VisualStateManager.GoToState(comboBox, "Disabled", false));
+            Assert.AreEqual("Normal", AnimatedIcon.GetState(glyph));
+            Assert.IsTrue(VisualStateManager.GoToState(comboBox, "Normal", false));
+            Assert.AreEqual("Normal", AnimatedIcon.GetState(glyph));
+        });
+    }
+
     private static WpfComboBox CreateComboBox()
     {
         var comboBox = new WpfComboBox();
@@ -205,9 +237,18 @@ public class ComboBoxApiTests
         string stateName,
         string setterTarget)
     {
+        AssertStateSetter(stateGroupsRoot, "EditableModeStates", stateName, setterTarget);
+    }
+
+    private static void AssertStateSetter(
+        FrameworkElement stateGroupsRoot,
+        string groupName,
+        string stateName,
+        string setterTarget)
+    {
         var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
             .OfType<VisualStateGroup>()
-            .Single(item => item.Name == "EditableModeStates");
+            .Single(item => item.Name == groupName);
         var state = group.States
             .Cast<VisualState>()
             .Single(item => item.Name == stateName);
@@ -217,7 +258,7 @@ public class ComboBoxApiTests
         var stateEx = (VisualStateEx)state;
         Assert.IsTrue(
             stateEx.Setters.Any(setter => setter.Target == setterTarget),
-            $"EditableModeStates.{stateName} should set {setterTarget}.");
+            $"{groupName}.{stateName} should set {setterTarget}.");
     }
 
     private static string GetCurrentStateName(FrameworkElement stateGroupsRoot, string groupName)

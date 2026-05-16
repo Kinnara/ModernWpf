@@ -18,6 +18,7 @@ namespace ModernWpf.Controls.Primitives
         //private const string c_editableTextBorderName = "BorderElement";
         private const string c_backgroundName = "Background";
         private const string c_highlightBackgroundName = "HighlightBackground";
+        private const string c_toggleButtonName = "ToggleButton";
         private const string c_dropDownOverlayName = "DropDownOverlay";
         //private const string c_controlCornerRadiusKey = "ControlCornerRadius";
         private const string c_overlayCornerRadiusKey = "OverlayCornerRadius";
@@ -259,6 +260,8 @@ namespace ModernWpf.Controls.Primitives
                 _comboBox.Loaded += OnLoaded;
                 _comboBox.Unloaded += OnUnloaded;
                 _comboBox.IsEnabledChanged += OnComboBoxStateChanged;
+                _comboBox.MouseEnter += OnInputStateChanged;
+                _comboBox.MouseLeave += OnInputStateChanged;
                 _comboBox.DropDownOpened += OnComboBoxDropDownChanged;
                 _comboBox.DropDownClosed += OnComboBoxDropDownChanged;
                 IsEditablePropertyDescriptor.AddValueChanged(_comboBox, OnDependencyStateChanged);
@@ -278,6 +281,8 @@ namespace ModernWpf.Controls.Primitives
                 IsEditablePropertyDescriptor.RemoveValueChanged(_comboBox, OnDependencyStateChanged);
                 _comboBox.DropDownClosed -= OnComboBoxDropDownChanged;
                 _comboBox.DropDownOpened -= OnComboBoxDropDownChanged;
+                _comboBox.MouseLeave -= OnInputStateChanged;
+                _comboBox.MouseEnter -= OnInputStateChanged;
                 _comboBox.IsEnabledChanged -= OnComboBoxStateChanged;
                 _comboBox.Unloaded -= OnUnloaded;
                 _comboBox.Loaded -= OnLoaded;
@@ -300,6 +305,7 @@ namespace ModernWpf.Controls.Primitives
                 DetachTemplateParts();
 
                 _editableTextBox = GetTemplateChild<TextBox>(c_editableTextName, _comboBox);
+                _toggleButton = GetTemplateChild<ToggleButton>(c_toggleButtonName, _comboBox);
                 _dropDownOverlay = GetTemplateChild<ToggleButton>(c_dropDownOverlayName, _comboBox);
 
                 if (_editableTextBox != null)
@@ -309,6 +315,16 @@ namespace ModernWpf.Controls.Primitives
                     _editableTextBox.MouseEnter += OnInputStateChanged;
                     _editableTextBox.MouseLeave += OnInputStateChanged;
                     IsSelectionActivePropertyDescriptor.AddValueChanged(_editableTextBox, OnDependencyStateChanged);
+                }
+
+                if (_toggleButton != null)
+                {
+                    _toggleButton.MouseEnter += OnInputStateChanged;
+                    _toggleButton.MouseLeave += OnInputStateChanged;
+                    _toggleButton.PreviewMouseDown += OnInputButtonStateChanged;
+                    _toggleButton.PreviewMouseUp += OnInputButtonStateChanged;
+                    _toggleButton.LostMouseCapture += OnInputStateChanged;
+                    ToggleButtonIsPressedPropertyDescriptor.AddValueChanged(_toggleButton, OnDependencyStateChanged);
                 }
 
                 if (_dropDownOverlay != null)
@@ -332,6 +348,17 @@ namespace ModernWpf.Controls.Primitives
                     _editableTextBox.LostKeyboardFocus -= OnInputStateChanged;
                     _editableTextBox.GotKeyboardFocus -= OnInputStateChanged;
                     _editableTextBox = null;
+                }
+
+                if (_toggleButton != null)
+                {
+                    ToggleButtonIsPressedPropertyDescriptor.RemoveValueChanged(_toggleButton, OnDependencyStateChanged);
+                    _toggleButton.LostMouseCapture -= OnInputStateChanged;
+                    _toggleButton.PreviewMouseUp -= OnInputButtonStateChanged;
+                    _toggleButton.PreviewMouseDown -= OnInputButtonStateChanged;
+                    _toggleButton.MouseLeave -= OnInputStateChanged;
+                    _toggleButton.MouseEnter -= OnInputStateChanged;
+                    _toggleButton = null;
                 }
 
                 if (_dropDownOverlay != null)
@@ -386,7 +413,31 @@ namespace ModernWpf.Controls.Primitives
 
             private void UpdateVisualStates(bool useTransitions)
             {
+                VisualStateManager.GoToState(_comboBox, GetCommonStateName(), useTransitions);
                 VisualStateManager.GoToState(_comboBox, GetEditableModeStateName(), useTransitions);
+            }
+
+            private string GetCommonStateName()
+            {
+                if (!_comboBox.IsEnabled)
+                {
+                    return "Disabled";
+                }
+
+                if (_toggleButton?.IsPressed == true ||
+                    _dropDownOverlay?.IsPressed == true)
+                {
+                    return "Pressed";
+                }
+
+                if (_comboBox.IsMouseOver ||
+                    _toggleButton?.IsMouseOver == true ||
+                    _dropDownOverlay?.IsMouseOver == true)
+                {
+                    return "PointerOver";
+                }
+
+                return "Normal";
             }
 
             private string GetEditableModeStateName()
@@ -431,6 +482,7 @@ namespace ModernWpf.Controls.Primitives
             private readonly ComboBox _comboBox;
             private bool _isAttached;
             private TextBox _editableTextBox;
+            private ToggleButton _toggleButton;
             private ToggleButton _dropDownOverlay;
         }
     }
