@@ -120,6 +120,11 @@ namespace ModernWpf.Controls
                 {
                     m_repeater = repeater;
 
+                    if (repeater.Layout is StackLayout stackLayout)
+                    {
+                        stackLayout.DisableVirtualization = true;
+                    }
+
                     // Primary element setup happens in NavigationView
                     m_repeaterElementPreparedRevoker = new ItemsRepeaterElementPreparedRevoker(repeater, nvImpl.OnRepeaterElementPrepared);
                     m_repeaterElementClearingRevoker = new ItemsRepeaterElementClearingRevoker(repeater, nvImpl.OnRepeaterElementClearing);

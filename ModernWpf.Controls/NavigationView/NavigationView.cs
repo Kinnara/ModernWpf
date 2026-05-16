@@ -150,6 +150,8 @@ namespace ModernWpf.Controls
 
             m_itemsContainerSizeChangedRevoker?.Revoke();
 
+            m_itemsContainer = null;
+
             if (m_paneTitleHolderFrameworkElement != null)
             {
                 m_paneTitleHolderFrameworkElement.SizeChanged -= OnPaneTitleHolderSizeChanged;
@@ -718,6 +720,7 @@ namespace ModernWpf.Controls
             m_itemsContainerSizeChangedRevoker?.Revoke();
             if (GetTemplateChildT<FrameworkElement>(c_itemsContainer, controlProtected) is { } itemsContainer)
             {
+                m_itemsContainer = itemsContainer;
                 m_itemsContainerSizeChangedRevoker = new FrameworkElementSizeChangedRevoker(itemsContainer, OnItemsContainerSizeChanged);
             }
 
@@ -961,7 +964,16 @@ namespace ModernWpf.Controls
 
                 if (m_settingsItem is { } settings)
                 {
-                    settings.BringIntoView();
+                    if (SharedHelpers.GetAncestorOfType<ItemsRepeaterScrollHost>(VisualTreeHelper.GetParent(settings)) is { } scrollHost)
+                    {
+                        scrollHost.StartBringIntoView(
+                            settings,
+                            0.0 /* alignmentX */,
+                            1.0 /* alignmentY */,
+                            0.0 /* offsetX */,
+                            0.0 /* offsetY */,
+                            false /* animate */);
+                    }
                 }
             }
         }
@@ -1573,24 +1585,6 @@ namespace ModernWpf.Controls
                         }
                         var availableHeight = paneContentRow.ActualHeight - itemsContainerMargin;
 
-                        // The c_paneItemsSeparatorHeight is to account for the 9px separator height that we need to subtract.
-                        if (PaneFooter is { })
-                        {
-                            availableHeight -= c_paneItemsSeparatorHeight;
-                            if (m_leftNavFooterContentBorder is { } paneFooter)
-                            {
-                                availableHeight -= paneFooter.ActualHeight;
-                            }
-                        }
-                        else if (IsSettingsVisible)
-                        {
-                            availableHeight -= c_paneItemsSeparatorHeight;
-                        }
-                        else if (m_footerItemsSource is { } && m_menuItemsSource is { } && m_footerItemsSource.Count * m_menuItemsSource.Count > 0)
-                        {
-                            availableHeight -= c_paneItemsSeparatorHeight;
-                        }
-
                         return availableHeight;
                     }
                     return 0.0;
@@ -1614,8 +1608,54 @@ namespace ModernWpf.Controls
                                     // We know the actual height of footer items, so use that to determine how to split pane.
                                     if (m_leftNavRepeater is { } menuItems)
                                     {
-                                        var footersActualHeight = footerItemsRepeater.ActualHeight;
-                                        var menuItemsActualHeight = menuItems.ActualHeight;
+                                        var footersDesiredHeight = FooterItemsDesiredHeight();
+                                        double FooterItemsDesiredHeight()
+                                        {
+                                            double footerItemsRepeaterTopBottomMargin = 0.0;
+                                            if (footerItemsRepeater.Visibility == Visibility.Visible)
+                                            {
+                                                var footerItemsRepeaterMargin = footerItemsRepeater.Margin;
+                                                footerItemsRepeaterTopBottomMargin = footerItemsRepeaterMargin.Top + footerItemsRepeaterMargin.Bottom;
+                                            }
+
+                                            var footerItemsDesiredHeight = LayoutUtils.MeasureAndGetDesiredHeightFor(footerItemsRepeater, c_infSize);
+                                            return footerItemsDesiredHeight + footerItemsRepeaterTopBottomMargin;
+                                        }
+
+                                        var paneFooterActualHeight = PaneFooterActualHeight();
+                                        double PaneFooterActualHeight()
+                                        {
+                                            if (m_leftNavFooterContentBorder is { } paneFooter)
+                                            {
+                                                double paneFooterTopBottomMargin = 0.0;
+                                                if (paneFooter.Visibility == Visibility.Visible)
+                                                {
+                                                    var paneFooterMargin = paneFooter.Margin;
+                                                    paneFooterTopBottomMargin = paneFooterMargin.Top + paneFooterMargin.Bottom;
+                                                }
+
+                                                return paneFooter.ActualHeight + paneFooterTopBottomMargin;
+                                            }
+                                            return 0.0;
+                                        }
+
+                                        // DesiredSize is from the measure pass and is the stable partition input.
+                                        var menuItemsDesiredHeight = menuItems.DesiredSize.Height;
+
+                                        var menuItemsActualHeight = MenuItemsActualHeight();
+                                        double MenuItemsActualHeight()
+                                        {
+                                            double menuItemsTopBottomMargin = 0.0;
+                                            if (menuItems.Visibility == Visibility.Visible)
+                                            {
+                                                var menuItemsMargin = menuItems.Margin;
+                                                menuItemsTopBottomMargin = menuItemsMargin.Top + menuItemsMargin.Bottom;
+                                            }
+
+                                            return menuItems.ActualHeight + menuItemsTopBottomMargin;
+                                        }
+
+                                        var footerGroupDesiredHeight = footersDesiredHeight + paneFooterActualHeight;
 
                                         if (m_footerItemsSource.Count == 0 && !IsSettingsVisible)
                                         {
@@ -1628,26 +1668,26 @@ namespace ModernWpf.Controls
                                             VisualStateManager.GoToState(this, c_separatorCollapsedStateName, false);
                                             return 0.0;
                                         }
-                                        else if (totalAvailableHeight > menuItemsActualHeight + footersActualHeight)
+                                        else if (totalAvailableHeight >= menuItemsDesiredHeight + footerGroupDesiredHeight)
                                         {
                                             // We have enough space for two so let everyone get as much as they need.
-                                            footerItemsScrollViewer.MaxHeight = footersActualHeight;
+                                            footerItemsScrollViewer.MaxHeight = footersDesiredHeight;
                                             VisualStateManager.GoToState(this, c_separatorCollapsedStateName, false);
-                                            return totalAvailableHeight - footersActualHeight;
+                                            return totalAvailableHeight - footerGroupDesiredHeight;
                                         }
-                                        else if (menuItemsActualHeight <= totalAvailableHeightHalf)
+                                        else if (menuItemsDesiredHeight <= totalAvailableHeightHalf)
                                         {
                                             // Footer items exceed over the half, so let's limit them.
                                             footerItemsScrollViewer.MaxHeight = totalAvailableHeight - menuItemsActualHeight;
                                             VisualStateManager.GoToState(this, c_separatorVisibleStateName, false);
                                             return menuItemsActualHeight;
                                         }
-                                        else if (footersActualHeight <= totalAvailableHeightHalf)
+                                        else if (footerGroupDesiredHeight <= totalAvailableHeightHalf)
                                         {
                                             // Menu items exceed over the half, so let's limit them.
-                                            footerItemsScrollViewer.MaxHeight = footersActualHeight;
+                                            footerItemsScrollViewer.MaxHeight = footersDesiredHeight;
                                             VisualStateManager.GoToState(this, c_separatorVisibleStateName, false);
-                                            return totalAvailableHeight - footersActualHeight;
+                                            return totalAvailableHeight - footerGroupDesiredHeight;
                                         }
                                         else
                                         {

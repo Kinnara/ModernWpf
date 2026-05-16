@@ -48,6 +48,17 @@ namespace ModernWpf.Controls
             return desiredWidth;
         }
 
+        public static double MeasureAndGetDesiredHeightFor(UIElement element, Size availableSize)
+        {
+            double desiredHeight = 0;
+            if (element != null)
+            {
+                element.Measure(availableSize);
+                desiredHeight = element.DesiredSize.Height;
+            }
+            return desiredHeight;
+        }
+
         public static double GetActualWidthFor(FrameworkElement element)
         {
             return (element != null ? element.ActualWidth : 0);

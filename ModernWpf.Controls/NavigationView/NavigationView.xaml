@@ -214,27 +214,12 @@
                             </VisualStateGroup>
 
                             <VisualStateGroup x:Name="ChevronStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="ChevronStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="ChevronHidden"/>
-                                <VisualState x:Name="ChevronVisibleOpen">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevron" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevronRotateTransform" Storyboard.TargetProperty="Angle">
-                                            <DiscreteDoubleKeyFrame KeyTime="0" Value="180" />
-                                        </DoubleAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="ChevronVisibleClosed">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevron" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevronRotateTransform" Storyboard.TargetProperty="Angle">
-                                            <DiscreteDoubleKeyFrame KeyTime="0" Value="0" />
-                                        </DoubleAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
+                                <VisualState x:Name="ChevronVisibleOpen"/>
+                                <VisualState x:Name="ChevronVisibleClosed"/>
                             </VisualStateGroup>
 
                             <VisualStateGroup x:Name="PaneAndTopLevelItemStates">
@@ -357,6 +342,12 @@
 
                         <Trigger SourceName="PaneAndTopLevelItemStatesListener" Property="CurrentStateName" Value="ClosedCompactAndTopLevelItem">
                             <Setter TargetName="ContentPresenter" Property="Margin" Value="{DynamicResource NavigationViewCompactItemContentPresenterMargin}" />
+                        </Trigger>
+                        <Trigger SourceName="ChevronStatesListener" Property="CurrentStateName" Value="ChevronVisibleOpen">
+                            <Setter TargetName="ExpandCollapseChevron" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger SourceName="ChevronStatesListener" Property="CurrentStateName" Value="ChevronVisibleClosed">
+                            <Setter TargetName="ExpandCollapseChevron" Property="Visibility" Value="Visible" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -523,27 +514,12 @@
                                 <VisualState x:Name="ContentOnly" />
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="ChevronStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="ChevronStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="ChevronHidden"/>
-                                <VisualState x:Name="ChevronVisibleOpen">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevron" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevronRotateTransform" Storyboard.TargetProperty="Angle">
-                                            <DiscreteDoubleKeyFrame KeyTime="0" Value="180" />
-                                        </DoubleAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="ChevronVisibleClosed">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevron" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevronRotateTransform" Storyboard.TargetProperty="Angle">
-                                            <DiscreteDoubleKeyFrame KeyTime="0" Value="0" />
-                                        </DoubleAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
+                                <VisualState x:Name="ChevronVisibleOpen"/>
+                                <VisualState x:Name="ChevronVisibleClosed"/>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Grid>
@@ -671,6 +647,12 @@
                             <Setter TargetName="SelectionIndicatorGrid" Property="Margin" Value="12,0,12,4" />
                             <Setter TargetName="ExpandCollapseChevron" Property="Margin" Value="{DynamicResource TopNavigationViewItemContentOnlyExpandChevronMargin}" />
                         </Trigger>
+                        <Trigger SourceName="ChevronStatesListener" Property="CurrentStateName" Value="ChevronVisibleOpen">
+                            <Setter TargetName="ExpandCollapseChevron" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger SourceName="ChevronStatesListener" Property="CurrentStateName" Value="ChevronVisibleClosed">
+                            <Setter TargetName="ExpandCollapseChevron" Property="Visibility" Value="Visible" />
+                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
@@ -729,21 +711,12 @@
                                 <VisualState x:Name="ContentOnly" />
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="ChevronStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="ChevronStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="ChevronHidden"/>
-                                <VisualState x:Name="ChevronVisibleOpen">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevron" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="ChevronVisibleClosed">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevron" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
+                                <VisualState x:Name="ChevronVisibleOpen"/>
+                                <VisualState x:Name="ChevronVisibleClosed"/>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Grid x:Name="PresenterContentRootGrid">
@@ -853,6 +826,12 @@
                         <Trigger SourceName="NavigationViewIconPositionStatesListener" Property="CurrentStateName" Value="ContentOnly">
                             <Setter TargetName="IconBox" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="ContentPresenter" Property="Margin" Value="{DynamicResource TopNavigationViewItemOnOverflowNoIconContentPresenterMargin}" />
+                        </Trigger>
+                        <Trigger SourceName="ChevronStatesListener" Property="CurrentStateName" Value="ChevronVisibleOpen">
+                            <Setter TargetName="ExpandCollapseChevron" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger SourceName="ChevronStatesListener" Property="CurrentStateName" Value="ChevronVisibleClosed">
+                            <Setter TargetName="ExpandCollapseChevron" Property="Visibility" Value="Visible" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -1328,8 +1307,8 @@
                                             <!-- "Non header" content -->
                                             <Grid x:Name="ItemsContainerGrid" Grid.Row="6" Margin="0,0,0,8">
                                                 <Grid.RowDefinitions>
-                                                    <RowDefinition Height="Auto"/> <!-- MenuItems -->
-                                                    <RowDefinition Height="*"/> <!-- Fill spacing -->
+                                                    <RowDefinition Height="*"/> <!-- MenuItems -->
+                                                    <RowDefinition Height="Auto"/> <!-- Separator -->
                                                     <RowDefinition Height="Auto" /> <!-- PaneFooter -->
                                                     <RowDefinition Height="Auto"/> <!-- FooterItems -->
                                                 </Grid.RowDefinitions>
