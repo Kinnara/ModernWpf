@@ -211,6 +211,14 @@
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                             </VisualStateGroup>
+                            <VisualStateGroup x:Name="AlphaEnabledState">
+                                <ui:VisualStateEx x:Name="AlphaDisabled" />
+                                <ui:VisualStateEx x:Name="AlphaEnabled">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="HexTextBox.MaxLength" Value="9" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <primitives:ColorSpectrum
                             x:Name="ColorSpectrum"
@@ -281,7 +289,7 @@
                             <TextBox x:Name="SaturationTextBox" Grid.Row="1" Grid.Column="1" Margin="0,0,4,4" />
                             <TextBox x:Name="ValueTextBox" Grid.Row="1" Grid.Column="2" Margin="0,0,4,4" />
 
-                            <TextBox x:Name="HexTextBox" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" />
+                            <TextBox x:Name="HexTextBox" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" MaxLength="7" />
                         </Grid>
                     </StackPanel>
                 </ControlTemplate>

@@ -409,6 +409,38 @@ public class ColorPickerApiTests
     }
 
     [TestMethod]
+    public void HexTextBoxFollowsAlphaEnabledState()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var colorPicker = new ColorPickerControl
+            {
+                Color = Color.FromArgb(0x80, 0x01, 0x02, 0x03)
+            };
+
+            using var host = new TestWindowHost(colorPicker, width: 420, height: 520);
+            var hexTextBox = FindNamedDescendant<TextBox>(colorPicker, "HexTextBox");
+
+            Assert.AreEqual("#010203", hexTextBox.Text);
+            Assert.AreEqual(7, hexTextBox.MaxLength);
+
+            colorPicker.IsAlphaEnabled = true;
+            host.UpdateLayout();
+
+            Assert.AreEqual("#80010203", hexTextBox.Text);
+            Assert.AreEqual(9, hexTextBox.MaxLength);
+
+            colorPicker.IsAlphaEnabled = false;
+            host.UpdateLayout();
+
+            Assert.AreEqual("#010203", hexTextBox.Text);
+            Assert.AreEqual(7, hexTextBox.MaxLength);
+        });
+    }
+
+    [TestMethod]
     public void ColorPickerTemplateVisibilityUsesVisualStateSetters()
     {
         WpfTestHost.Run(() =>
@@ -439,6 +471,7 @@ public class ColorPickerApiTests
                 "ValueTextBox.Visibility");
             AssertStateSetter(rootPanel, "AlphaTextInputVisibility", "AlphaTextInputCollapsed", "AlphaTextBox.Visibility");
             AssertStateSetter(rootPanel, "HexInputVisibility", "HexInputCollapsed", "HexTextBox.Visibility");
+            AssertStateSetter(rootPanel, "AlphaEnabledState", "AlphaEnabled", "HexTextBox.MaxLength");
         });
     }
 

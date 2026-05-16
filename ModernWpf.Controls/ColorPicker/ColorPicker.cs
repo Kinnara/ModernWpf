@@ -509,11 +509,12 @@ namespace ModernWpf.Controls
             VisualStateManager.GoToState(this, IsColorChannelTextInputVisible ? "ColorChannelTextInputVisible" : "ColorChannelTextInputCollapsed", false);
             VisualStateManager.GoToState(this, IsAlphaEnabled && IsAlphaTextInputVisible ? "AlphaTextInputVisible" : "AlphaTextInputCollapsed", false);
             VisualStateManager.GoToState(this, IsHexInputVisible ? "HexInputVisible" : "HexInputCollapsed", false);
+            VisualStateManager.GoToState(this, IsAlphaEnabled ? "AlphaEnabled" : "AlphaDisabled", false);
         }
 
         private void UpdateTextBoxes(Vector4 hsv)
         {
-            SetText(_hexTextBox, ToHex(Color));
+            SetText(_hexTextBox, ToHex(Color, IsAlphaEnabled));
             SetText(_alphaTextBox, Math.Round(Color.A / 255.0 * 100).ToString("0"));
             SetText(_redTextBox, Color.R.ToString());
             SetText(_greenTextBox, Color.G.ToString());
@@ -533,9 +534,10 @@ namespace ModernWpf.Controls
             textBox.Text = text;
         }
 
-        private static string ToHex(Color color)
+        private static string ToHex(Color color, bool includeAlpha)
         {
-            return color.A.ToString("X2") + color.R.ToString("X2") + color.G.ToString("X2") + color.B.ToString("X2");
+            string rgb = color.R.ToString("X2") + color.G.ToString("X2") + color.B.ToString("X2");
+            return includeAlpha ? "#" + color.A.ToString("X2") + rgb : "#" + rgb;
         }
 
         private bool _updatingTemplate;
