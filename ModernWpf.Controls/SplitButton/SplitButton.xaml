@@ -56,6 +56,7 @@
                                 <Setter Property="Foreground" Value="{DynamicResource SplitButtonForeground}" />
                                 <Setter Property="BorderBrush" Value="Transparent" />
                                 <Setter Property="BorderThickness" Value="{DynamicResource SplitButtonBorderThemeThickness}" />
+                                <Setter Property="ui:ButtonHelper.VisualStateSettersEnabled" Value="True" />
                                 <Setter Property="HorizontalAlignment" Value="Left" />
                                 <Setter Property="VerticalAlignment" Value="Center" />
                                 <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
@@ -77,6 +78,16 @@
                                                 <VisualStateManager.VisualStateGroups>
                                                     <VisualStateGroup x:Name="CommonStates">
                                                         <VisualState x:Name="Normal" />
+                                                        <ui:VisualStateEx x:Name="PointerOver">
+                                                            <ui:VisualStateEx.Setters>
+                                                                <ui:VisualStateSetter Target="ContentPresenter.(ui:AnimatedIcon.State)" Value="PointerOver" />
+                                                            </ui:VisualStateEx.Setters>
+                                                        </ui:VisualStateEx>
+                                                        <ui:VisualStateEx x:Name="Pressed">
+                                                            <ui:VisualStateEx.Setters>
+                                                                <ui:VisualStateSetter Target="ContentPresenter.(ui:AnimatedIcon.State)" Value="Pressed" />
+                                                            </ui:VisualStateEx.Setters>
+                                                        </ui:VisualStateEx>
                                                         <ui:VisualStateEx x:Name="Disabled">
                                                             <ui:VisualStateEx.Setters>
                                                                 <ui:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource SplitButtonForegroundDisabled}" />
@@ -100,6 +111,7 @@
                                                     HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                                     VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                                                     Focusable="False"
+                                                    ui:AnimatedIcon.State="Normal"
                                                     RecognizesAccessKey="True"
                                                     SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                                             </Grid>

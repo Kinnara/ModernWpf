@@ -1,9 +1,12 @@
 using System;
+using System.Linq;
 using System.Windows;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf;
 using ModernWpf.Controls;
+using ModernWpf.Controls.Primitives;
 using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
 
@@ -178,10 +181,23 @@ public class SplitButtonApiTests
             var primaryButton = FindTemplatePart<System.Windows.Controls.Button>(splitButton, "PrimaryButton");
             var presenter = VisualTreeTestHelper.FindDescendant<ContentPresenterEx>(primaryButton)
                 ?? throw new AssertFailedException("Expected SplitButton primary button template to use ContentPresenterEx.");
+            var primaryButtonRoot = GetButtonTemplateRoot(primaryButton);
 
             Assert.AreEqual("Split", presenter.Content);
             Assert.AreSame(transitions, presenter.ContentTransitions);
             Assert.IsNull(VisualTreeTestHelper.FindDescendant<ContentControlEx>(primaryButton));
+            Assert.IsTrue(ButtonHelper.GetVisualStateSettersEnabled(primaryButton));
+            AssertAnimatedIconStateSetters(primaryButtonRoot);
+            AssertAnimatedIconStateTransitions(primaryButton, presenter);
+
+            var secondaryButton = FindTemplatePart<System.Windows.Controls.Button>(splitButton, "SecondaryButton");
+            var secondaryPresenter = VisualTreeTestHelper.FindDescendant<ContentPresenterEx>(secondaryButton)
+                ?? throw new AssertFailedException("Expected SplitButton secondary button template to use ContentPresenterEx.");
+            var secondaryButtonRoot = GetButtonTemplateRoot(secondaryButton);
+
+            Assert.IsTrue(ButtonHelper.GetVisualStateSettersEnabled(secondaryButton));
+            AssertAnimatedIconStateSetters(secondaryButtonRoot);
+            AssertAnimatedIconStateTransitions(secondaryButton, secondaryPresenter);
         });
     }
 
@@ -224,9 +240,10 @@ public class SplitButtonApiTests
 
             var primaryButton = FindTemplatePart<System.Windows.Controls.Button>(splitButton, "PrimaryButton");
             primaryButton.ApplyTemplate();
-            var primaryButtonRoot = primaryButton.Template?.FindName("RootGrid", primaryButton) as FrameworkElement
-                ?? throw new AssertFailedException("Expected SplitButton primary button template root.");
+            var primaryButtonRoot = GetButtonTemplateRoot(primaryButton);
 
+            AssertStateSetter(primaryButtonRoot, "CommonStates", "PointerOver", "ContentPresenter.(ui:AnimatedIcon.State)");
+            AssertStateSetter(primaryButtonRoot, "CommonStates", "Pressed", "ContentPresenter.(ui:AnimatedIcon.State)");
             AssertStateSetter(primaryButtonRoot, "CommonStates", "Disabled", "ContentPresenter.Foreground");
             AssertStateSetter(primaryButtonRoot, "CommonStates", "Disabled", "RootGrid.Background");
             AssertStateSetter(primaryButtonRoot, "CommonStates", "Disabled", "ContentPresenter.BorderBrush");
@@ -315,6 +332,51 @@ public class SplitButtonApiTests
         }
 
         return null;
+    }
+
+    private static FrameworkElement GetButtonTemplateRoot(System.Windows.Controls.Button button)
+    {
+        button.ApplyTemplate();
+
+        return button.Template?.FindName("RootGrid", button) as FrameworkElement
+            ?? throw new AssertFailedException("Expected SplitButton inner button template root.");
+    }
+
+    private static void AssertAnimatedIconStateSetters(FrameworkElement stateGroupsRoot)
+    {
+        AssertAnimatedIconStateSetter(stateGroupsRoot, "PointerOver", "PointerOver");
+        AssertAnimatedIconStateSetter(stateGroupsRoot, "Pressed", "Pressed");
+    }
+
+    private static void AssertAnimatedIconStateSetter(
+        FrameworkElement stateGroupsRoot,
+        string stateName,
+        string expectedValue)
+    {
+        var group = FindVisualStateGroup(stateGroupsRoot, "CommonStates");
+        Assert.IsNotNull(group, "Expected visual state group 'CommonStates'.");
+
+        var state = FindVisualState(group!, stateName);
+        Assert.IsNotNull(state, $"Expected visual state 'CommonStates.{stateName}'.");
+        Assert.IsInstanceOfType(state, typeof(VisualStateEx));
+
+        var stateEx = (VisualStateEx)state!;
+        var setter = stateEx.Setters.Single(item => item.Target == "ContentPresenter.(ui:AnimatedIcon.State)");
+
+        Assert.AreEqual(expectedValue, setter.Value);
+    }
+
+    private static void AssertAnimatedIconStateTransitions(ButtonBase button, DependencyObject stateTarget)
+    {
+        Assert.AreEqual("Normal", AnimatedIcon.GetState(stateTarget));
+        Assert.IsTrue(VisualStateManager.GoToState(button, "PointerOver", false));
+        Assert.AreEqual("PointerOver", AnimatedIcon.GetState(stateTarget));
+        Assert.IsTrue(VisualStateManager.GoToState(button, "Pressed", false));
+        Assert.AreEqual("Pressed", AnimatedIcon.GetState(stateTarget));
+        Assert.IsTrue(VisualStateManager.GoToState(button, "Disabled", false));
+        Assert.AreEqual("Normal", AnimatedIcon.GetState(stateTarget));
+        Assert.IsTrue(VisualStateManager.GoToState(button, "Normal", false));
+        Assert.AreEqual("Normal", AnimatedIcon.GetState(stateTarget));
     }
 
     private static void AssertThemeResourceReference(string themeName, string resourceKey, string expectedResourceKey)
