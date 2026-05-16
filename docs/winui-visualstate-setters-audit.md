@@ -43,7 +43,7 @@ newer deltas, but the repo-wide sync matrix is still anchored on WinUI 2.8.7.
 | `dev\Breadcrumb\BreadcrumbBar.xaml` | 16 | `ModernWpf.Controls\BreadcrumbBar\BreadcrumbBar.xaml` | Pending | Audit generated item/ellipsis state setters. |
 | `dev\ColorPicker\ColorPicker.xaml` | 20 | `ModernWpf.Controls\ColorPicker\ColorPicker.xaml` | Pending | Audit slider/preview visibility and layout setters; skip WinUI-only spectrum rendering. |
 | `dev\ColorPicker\ColorSpectrum.xaml` | 5 | `ModernWpf.Controls\ColorPicker\ColorPicker.xaml` | Pending | Map only the WPF-owned spectrum template pieces. |
-| `dev\ComboBox\ComboBox_themeresources.xaml` | 10 | `ModernWpf\Styles\ComboBox.xaml` | Pending | Audit popup/open/disabled setter groups. |
+| `dev\ComboBox\ComboBox_themeresources.xaml` | 10 | `ModernWpf\Styles\ComboBox.xaml` | Partial | Editable overlay states now use `VisualStateEx.Setters` driven by `ComboBoxHelper.VisualStateSettersEnabled`. The `AnimatedIcon.State` common-state setters and inner editable TextBox setter blocks remain represented by ModernWpf's static glyph and WPF-native TextBox triggers. |
 | `dev\CommandBarFlyout\CommandBarFlyout_themeresources.xaml` | 41 | `ModernWpf.Controls\CommandBarFlyout\CommandBarFlyout.xaml` | Pending | Large visual-state matrix; convert direct layout/visibility setters after dynamic-resource support is settled. |
 | `dev\CommonStyles\AppBarButton_themeresources.xaml` | 16 | `ModernWpf.Controls\CommandBar\AppBarButton.xaml` | Pending | Audit direct state setters; animated icon state remains unsupported. |
 | `dev\CommonStyles\AppBarToggleButton_themeresources.xaml` | 18 | `ModernWpf.Controls\CommandBar\AppBarToggleButton.xaml` | Pending | Audit checked/common state setters; animated icon state remains unsupported. |

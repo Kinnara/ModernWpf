@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -147,6 +148,32 @@ public class ComboBoxApiTests
         });
     }
 
+    [TestMethod]
+    public void EditableModeStatesUseVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var comboBox = CreateComboBox();
+            comboBox.IsEditable = true;
+
+            using var host = new TestWindowHost(comboBox);
+            host.UpdateLayout();
+
+            var layoutRoot = FindTemplateChild<FrameworkElement>(comboBox, "LayoutRoot");
+
+            AssertStateSetter(layoutRoot, "TextBoxFocused", "DropDownGlyph.Foreground");
+            AssertStateSetter(layoutRoot, "TextBoxFocusedOverlayPointerOver", "DropDownGlyph.Foreground");
+            AssertStateSetter(layoutRoot, "TextBoxFocusedOverlayPointerOver", "DropDownOverlay.Background");
+            AssertStateSetter(layoutRoot, "TextBoxFocusedOverlayPressed", "DropDownGlyph.Foreground");
+            AssertStateSetter(layoutRoot, "TextBoxFocusedOverlayPressed", "DropDownOverlay.Background");
+            AssertStateSetter(layoutRoot, "TextBoxOverlayPointerOver", "DropDownOverlay.Background");
+            AssertStateSetter(layoutRoot, "TextBoxOverlayPressed", "DropDownOverlay.Background");
+            Assert.AreEqual("TextBoxUnfocused", GetCurrentStateName(layoutRoot, "EditableModeStates"));
+        });
+    }
+
     private static WpfComboBox CreateComboBox()
     {
         var comboBox = new WpfComboBox();
@@ -171,6 +198,35 @@ public class ComboBoxApiTests
     {
         return control.Template?.FindName(name, control) as T
             ?? throw new InvalidOperationException($"Could not find template child '{name}'.");
+    }
+
+    private static void AssertStateSetter(
+        FrameworkElement stateGroupsRoot,
+        string stateName,
+        string setterTarget)
+    {
+        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
+            .OfType<VisualStateGroup>()
+            .Single(item => item.Name == "EditableModeStates");
+        var state = group.States
+            .Cast<VisualState>()
+            .Single(item => item.Name == stateName);
+
+        Assert.IsInstanceOfType(state, typeof(VisualStateEx));
+
+        var stateEx = (VisualStateEx)state;
+        Assert.IsTrue(
+            stateEx.Setters.Any(setter => setter.Target == setterTarget),
+            $"EditableModeStates.{stateName} should set {setterTarget}.");
+    }
+
+    private static string GetCurrentStateName(FrameworkElement stateGroupsRoot, string groupName)
+    {
+        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
+            .OfType<VisualStateGroup>()
+            .Single(item => item.Name == groupName);
+        Assert.IsNotNull(group.CurrentState);
+        return group.CurrentState.Name;
     }
 
     private static void AssertThemeResourceReference(string themeName, string resourceKey, string expectedResourceKey)

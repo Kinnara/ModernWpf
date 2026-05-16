@@ -2,6 +2,7 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:root="clr-namespace:ModernWpf"
     xmlns:local="clr-namespace:ModernWpf.Controls"
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
@@ -279,6 +280,7 @@
         <Setter Property="primitives:FocusVisualHelper.UseSystemFocusVisuals" Value="{DynamicResource IsApplicationFocusVisualKindReveal}" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
         <Setter Property="primitives:ComboBoxHelper.KeepInteriorCornersSquare" Value="True" />
+        <Setter Property="primitives:ComboBoxHelper.VisualStateSettersEnabled" Value="True" />
         <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="Validation.ErrorTemplate" Value="{DynamicResource TextControlValidationErrorTemplate}" />
         <Setter Property="Template">
@@ -291,6 +293,41 @@
                     <Grid
                         x:Name="LayoutRoot"
                         SnapsToDevicePixels="True">
+                        <VisualStateManager.CustomVisualStateManager>
+                            <root:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="EditableModeStates">
+                                <root:VisualStateEx x:Name="TextBoxFocused">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="DropDownGlyph.Foreground" Value="{DynamicResource ComboBoxEditableDropDownGlyphForeground}" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="TextBoxFocusedOverlayPointerOver">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="DropDownGlyph.Foreground" Value="{DynamicResource ComboBoxEditableDropDownGlyphForeground}" />
+                                        <root:VisualStateSetter Target="DropDownOverlay.Background" Value="{DynamicResource ComboBoxDropDownBackgroundPointerOver}" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="TextBoxFocusedOverlayPressed">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="DropDownGlyph.Foreground" Value="{DynamicResource ComboBoxEditableDropDownGlyphForeground}" />
+                                        <root:VisualStateSetter Target="DropDownOverlay.Background" Value="{DynamicResource ComboBoxFocusedDropDownBackgroundPointerPressed}" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="TextBoxOverlayPointerOver">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="DropDownOverlay.Background" Value="{DynamicResource ComboBoxDropDownBackgroundPointerOver}" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="TextBoxOverlayPressed">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="DropDownOverlay.Background" Value="{DynamicResource ComboBoxDropDownBackgroundPointerPressed}" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <VisualState x:Name="TextBoxUnfocused" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                         <Grid.Resources>
                             <Storyboard x:Key="OverlayOpeningAnimation">
                                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Shdw" Storyboard.TargetProperty="Opacity">
@@ -562,49 +599,13 @@
                             <Setter TargetName="PlaceholderTextBlock" Property="Visibility" Value="Visible" />
                         </MultiTrigger>
 
-                        <!-- TextBoxFocused -->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition SourceName="PART_EditableTextBox" Property="IsSelectionActive" Value="True" />
-                                <Condition SourceName="DropDownOverlay" Property="IsMouseOver" Value="False" />
-                                <Condition SourceName="DropDownOverlay" Property="IsPressed" Value="False" />
-                            </MultiTrigger.Conditions>
-                            <Setter TargetName="DropDownGlyph" Property="Foreground" Value="{DynamicResource ComboBoxEditableDropDownGlyphForeground}" />
-                        </MultiTrigger>
-                        <!-- TextBoxFocusedOverlayPointerOver -->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition SourceName="PART_EditableTextBox" Property="IsSelectionActive" Value="True" />
-                                <Condition SourceName="DropDownOverlay" Property="IsMouseOver" Value="True" />
-                            </MultiTrigger.Conditions>
-                            <Setter TargetName="DropDownGlyph" Property="Foreground" Value="{DynamicResource ComboBoxEditableDropDownGlyphForeground}" />
-                            <Setter TargetName="DropDownOverlay" Property="Background" Value="{DynamicResource ComboBoxDropDownBackgroundPointerOver}" />
-                        </MultiTrigger>
                         <!-- TextBoxFocusedOverlayPressed -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition SourceName="PART_EditableTextBox" Property="IsSelectionActive" Value="True" />
                                 <Condition SourceName="DropDownOverlay" Property="IsPressed" Value="True" />
                             </MultiTrigger.Conditions>
-                            <Setter TargetName="DropDownGlyph" Property="Foreground" Value="{DynamicResource ComboBoxEditableDropDownGlyphForeground}" />
-                            <Setter TargetName="DropDownOverlay" Property="Background" Value="{DynamicResource ComboBoxFocusedDropDownBackgroundPointerPressed}" />
                             <Setter TargetName="DropDownOverlay" Property="Margin" Value="0,2,2,2" />
-                        </MultiTrigger>
-                        <!-- TextBoxOverlayPointerOver -->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition SourceName="PART_EditableTextBox" Property="IsSelectionActive" Value="False" />
-                                <Condition SourceName="DropDownOverlay" Property="IsMouseOver" Value="True" />
-                            </MultiTrigger.Conditions>
-                            <Setter TargetName="DropDownOverlay" Property="Background" Value="{DynamicResource ComboBoxDropDownBackgroundPointerOver}" />
-                        </MultiTrigger>
-                        <!-- TextBoxOverlayPressed -->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition SourceName="PART_EditableTextBox" Property="IsSelectionActive" Value="False" />
-                                <Condition SourceName="DropDownOverlay" Property="IsPressed" Value="True" />
-                            </MultiTrigger.Conditions>
-                            <Setter TargetName="DropDownOverlay" Property="Background" Value="{DynamicResource ComboBoxDropDownBackgroundPointerPressed}" />
                         </MultiTrigger>
 
                         <MultiTrigger>
