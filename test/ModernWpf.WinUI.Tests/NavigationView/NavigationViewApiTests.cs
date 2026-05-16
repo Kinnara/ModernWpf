@@ -787,6 +787,80 @@ public class NavigationViewApiTests
     }
 
     [TestMethod]
+    public void NavigationViewLeftPaneItemPresenterStatesUseWinUIVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var menuItem = new ModernWpf.Controls.NavigationViewItem
+            {
+                Content = "Home",
+                Icon = new ModernWpf.Controls.SymbolIcon { Symbol = ModernWpf.Controls.Symbol.Home }
+            };
+            var navView = new ModernWpf.Controls.NavigationView
+            {
+                IsSettingsVisible = false
+            };
+            navView.MenuItems.Add(menuItem);
+
+            using var host = new TestWindowHost(navView);
+
+            var presenter = VisualTreeTestHelper.FindDescendant<ModernWpf.Controls.Primitives.NavigationViewItemPresenter>(menuItem);
+            Assert.IsNotNull(presenter);
+            var itemPresenter = presenter!;
+            var layoutRoot = (Border)VisualTreeHelper.GetChild(itemPresenter, 0);
+            var icon = FindNamedDescendant<ModernWpf.Controls.ContentPresenterEx>(itemPresenter, "Icon");
+            var contentPresenter = FindNamedDescendant<ModernWpf.Controls.ContentPresenterEx>(itemPresenter, "ContentPresenter");
+            var iconBox = FindNamedDescendant<FrameworkElement>(itemPresenter, "IconBox");
+            var iconColumn = FindNamedDescendant<Border>(itemPresenter, "IconColumn");
+            var chevron = FindNamedDescendant<FrameworkElement>(itemPresenter, "ExpandCollapseChevron");
+            var contentGrid = FindNamedDescendant<Grid>(itemPresenter, "ContentGrid");
+
+            AssertStateSetter(layoutRoot, "PointerStates", "PointerOver",
+                "LayoutRoot.Background",
+                "Icon.Foreground",
+                "ContentPresenter.Foreground");
+            AssertStateSetter(layoutRoot, "DisabledStates", "Disabled",
+                "LayoutRoot.Opacity");
+            AssertStateSetter(layoutRoot, "IconStates", "IconCollapsed",
+                "IconBox.Visibility",
+                "IconColumn.Width");
+            AssertStateSetter(layoutRoot, "ChevronStates", "ChevronVisibleOpen",
+                "ExpandCollapseChevron.Visibility",
+                "ExpandCollapseChevronIcon.Visibility",
+                "ExpandCollapseChevronRotateTransform.Angle");
+            AssertStateSetter(layoutRoot, "PaneAndTopLevelItemStates", "ClosedCompactAndTopLevelItem",
+                "ContentPresenter.Margin",
+                "ContentGrid.Margin");
+
+            Assert.IsTrue(VisualStateManager.GoToState(itemPresenter, "PointerOver", false));
+            AssertCurrentState(layoutRoot, "PointerStates", "PointerOver");
+            Assert.AreSame(itemPresenter.TryFindResource("NavigationViewItemBackgroundPointerOver"), layoutRoot.Background);
+            Assert.AreSame(itemPresenter.TryFindResource("NavigationViewItemForegroundPointerOver"), icon.Foreground);
+            Assert.AreSame(itemPresenter.TryFindResource("NavigationViewItemForegroundPointerOver"), contentPresenter.Foreground);
+
+            Assert.IsTrue(VisualStateManager.GoToState(itemPresenter, "Disabled", false));
+            AssertCurrentState(layoutRoot, "DisabledStates", "Disabled");
+            Assert.AreEqual(itemPresenter.TryFindResource("ListViewItemDisabledThemeOpacity"), layoutRoot.Opacity);
+
+            Assert.IsTrue(VisualStateManager.GoToState(itemPresenter, "IconCollapsed", false));
+            AssertCurrentState(layoutRoot, "IconStates", "IconCollapsed");
+            Assert.AreEqual(Visibility.Collapsed, iconBox.Visibility);
+            Assert.AreEqual(8.0, iconColumn.Width);
+
+            Assert.IsTrue(VisualStateManager.GoToState(itemPresenter, "ChevronVisibleOpen", false));
+            AssertCurrentState(layoutRoot, "ChevronStates", "ChevronVisibleOpen");
+            Assert.AreEqual(Visibility.Visible, chevron.Visibility);
+
+            Assert.IsTrue(VisualStateManager.GoToState(itemPresenter, "ClosedCompactAndTopLevelItem", false));
+            AssertCurrentState(layoutRoot, "PaneAndTopLevelItemStates", "ClosedCompactAndTopLevelItem");
+            Assert.AreEqual(itemPresenter.TryFindResource("NavigationViewCompactItemContentPresenterMargin"), contentPresenter.Margin);
+            Assert.AreEqual(new Thickness(0), contentGrid.Margin);
+        });
+    }
+
+    [TestMethod]
     public void NavigationViewPaneToggleButtonTemplateUsesWinUIPresenterSlot()
     {
         WpfTestHost.Run(() =>
