@@ -939,6 +939,61 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
+    public void CorePivotHeaderItemSelectionStatesUseVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var selectedItem = new TabItem
+            {
+                Header = "Selected",
+                Content = "Selected content"
+            };
+            var unselectedItem = new TabItem
+            {
+                Header = "Unselected",
+                Content = "Unselected content"
+            };
+            var pivot = new TabControl
+            {
+                Style = FindStyleResource("TabControlPivotStyle"),
+                Width = 320,
+                Height = 160
+            };
+            pivot.Items.Add(selectedItem);
+            pivot.Items.Add(unselectedItem);
+            pivot.SelectedItem = selectedItem;
+
+            using var host = new TestWindowHost(pivot, width: 380, height: 220);
+            host.UpdateLayout();
+
+            var root = FindTemplateChild<FrameworkElement>(unselectedItem, "Border");
+            var selectedPipe = FindTemplateChild<FrameworkElement>(unselectedItem, "SelectedPipe");
+
+            AssertStateSetter(root, "Disabled", "SelectedPipe.Visibility");
+            AssertStateSetter(root, "Unselected", "SelectedPipe.Visibility");
+            AssertStateSetter(root, "UnselectedLocked", "SelectedPipe.Visibility");
+            AssertStateSetter(root, "UnselectedPointerOver", "SelectedPipe.Visibility");
+            AssertStateSetter(root, "UnselectedPressed", "SelectedPipe.Visibility");
+            Assert.AreEqual("Unselected", GetCurrentStateName(root, "SelectionStates"));
+            Assert.AreEqual(Visibility.Collapsed, selectedPipe.Visibility);
+
+            pivot.SelectedItem = unselectedItem;
+            host.UpdateLayout();
+
+            Assert.AreEqual("Selected", GetCurrentStateName(root, "SelectionStates"));
+            Assert.AreEqual(Visibility.Visible, selectedPipe.Visibility);
+
+            unselectedItem.IsEnabled = false;
+            host.UpdateLayout();
+
+            Assert.AreEqual("Disabled", GetCurrentStateName(root, "SelectionStates"));
+            Assert.AreEqual(Visibility.Collapsed, selectedPipe.Visibility);
+        });
+    }
+
+    [TestMethod]
     public void CoreResidualTemplatesUseWinUIPresenterSlots()
     {
         WpfTestHost.Run(() =>
@@ -3010,6 +3065,35 @@ public class LayoutCompatibilityApiTests
         control.ApplyTemplate();
         return control.Template?.FindName(name, control) as T
             ?? throw new AssertFailedException($"Expected template child '{name}' on {control.GetType().Name}.");
+    }
+
+    private static void AssertStateSetter(
+        FrameworkElement stateGroupsRoot,
+        string stateName,
+        string setterTarget)
+    {
+        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
+            .OfType<VisualStateGroup>()
+            .Single(item => item.Name == "SelectionStates");
+        var state = group.States
+            .Cast<VisualState>()
+            .Single(item => item.Name == stateName);
+
+        Assert.IsInstanceOfType(state, typeof(VisualStateEx));
+
+        var stateEx = (VisualStateEx)state;
+        Assert.IsTrue(
+            stateEx.Setters.Any(setter => setter.Target == setterTarget),
+            $"SelectionStates.{stateName} should set {setterTarget}.");
+    }
+
+    private static string GetCurrentStateName(FrameworkElement stateGroupsRoot, string groupName)
+    {
+        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
+            .OfType<VisualStateGroup>()
+            .Single(item => item.Name == groupName);
+        Assert.IsNotNull(group.CurrentState);
+        return group.CurrentState.Name;
     }
 
     private static MenuItem CreateMenuItemWithTemplate(string templateResourceId, object header, object? icon, bool isEnabled)
