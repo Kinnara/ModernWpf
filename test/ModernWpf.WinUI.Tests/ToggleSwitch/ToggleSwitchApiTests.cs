@@ -93,6 +93,52 @@ public class ToggleSwitchApiTests
     }
 
     [TestMethod]
+    public void DisabledStateUsesWinUIVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch
+            {
+                Header = "Header text",
+                OffContent = "Off text",
+                OnContent = "On text"
+            };
+            using var host = new TestWindowHost(toggleSwitch, width: 260, height: 120);
+            host.UpdateLayout();
+
+            var stateGroupsRoot = FindStateGroupsRoot(toggleSwitch);
+            var disabledState = FindVisualStateEx(stateGroupsRoot, "CommonStates", "Disabled");
+            AssertStateSetter(disabledState, "HeaderContentPresenter.Foreground");
+            AssertStateSetter(disabledState, "OffContentPresenter.Foreground");
+            AssertStateSetter(disabledState, "OnContentPresenter.Foreground");
+            AssertStateSetter(disabledState, "SwitchKnobBounds.Fill");
+            AssertStateSetter(disabledState, "SwitchKnobBounds.Stroke");
+            AssertStateSetter(disabledState, "SwitchKnobOff.Fill");
+            AssertStateSetter(disabledState, "SwitchKnobOn.Background");
+
+            var headerPresenter = FindNamedDescendant<ContentPresenterEx>(toggleSwitch, "HeaderContentPresenter");
+            var offPresenter = FindNamedDescendant<ContentPresenterEx>(toggleSwitch, "OffContentPresenter");
+            var onPresenter = FindNamedDescendant<ContentPresenterEx>(toggleSwitch, "OnContentPresenter");
+            var switchKnobBounds = FindNamedDescendant<Rectangle>(toggleSwitch, "SwitchKnobBounds");
+            var switchKnobOff = FindNamedDescendant<Rectangle>(toggleSwitch, "SwitchKnobOff");
+            var switchKnobOn = FindNamedDescendant<Border>(toggleSwitch, "SwitchKnobOn");
+
+            toggleSwitch.IsEnabled = false;
+            host.UpdateLayout();
+
+            AssertBrushEquals((Brush)headerPresenter.TryFindResource("ToggleSwitchHeaderForegroundDisabled"), headerPresenter.Foreground);
+            AssertBrushEquals((Brush)offPresenter.TryFindResource("ToggleSwitchContentForegroundDisabled"), offPresenter.Foreground);
+            AssertBrushEquals((Brush)onPresenter.TryFindResource("ToggleSwitchContentForegroundDisabled"), onPresenter.Foreground);
+            AssertBrushEquals((Brush)switchKnobBounds.TryFindResource("ToggleSwitchFillOnDisabled"), switchKnobBounds.Fill);
+            AssertBrushEquals((Brush)switchKnobBounds.TryFindResource("ToggleSwitchStrokeOnDisabled"), switchKnobBounds.Stroke);
+            AssertBrushEquals((Brush)switchKnobOff.TryFindResource("ToggleSwitchKnobFillOffDisabled"), switchKnobOff.Fill);
+            AssertBrushEquals((Brush)switchKnobOn.TryFindResource("ToggleSwitchKnobFillOnDisabled"), switchKnobOn.Background);
+        });
+    }
+
+    [TestMethod]
     public void TemplateSettingsTrackWinUIKnobOffsets()
     {
         WpfTestHost.Run(() =>
@@ -527,6 +573,28 @@ public class ToggleSwitchApiTests
             .Single(item => item.Name == groupName);
         Assert.IsNotNull(group.CurrentState);
         return group.CurrentState.Name;
+    }
+
+    private static global::ModernWpf.VisualStateEx FindVisualStateEx(
+        FrameworkElement stateGroupsRoot,
+        string groupName,
+        string stateName)
+    {
+        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
+            .OfType<VisualStateGroup>()
+            .Single(item => item.Name == groupName);
+        var state = group.States
+            .OfType<VisualState>()
+            .Single(item => item.Name == stateName);
+        Assert.IsInstanceOfType(state, typeof(global::ModernWpf.VisualStateEx));
+        return (global::ModernWpf.VisualStateEx)state;
+    }
+
+    private static void AssertStateSetter(global::ModernWpf.VisualStateEx state, string target)
+    {
+        Assert.IsTrue(
+            state.Setters.Any(setter => setter.Target == target),
+            $"Expected VisualStateEx setter target '{target}'.");
     }
 
     private static ToggleSwitchAutomationPeer CreatePeer(ModernWpf.Controls.ToggleSwitch toggleSwitch)

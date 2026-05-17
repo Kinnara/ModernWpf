@@ -1741,7 +1741,7 @@
     <m:StaticResource x:Key="ToggleSwitchKnobFillOn" ResourceKey="SystemControlHighlightAltChromeWhiteBrush" />
     <m:StaticResource x:Key="ToggleSwitchKnobFillOnPointerOver" ResourceKey="SystemColorButtonTextColorBrush" />
     <m:StaticResource x:Key="ToggleSwitchKnobFillOnPressed" ResourceKey="SystemChromeWhiteColor" />
-    <m:StaticResource x:Key="ToggleSwitchKnobFillOnDisabled" ResourceKey="SystemBaseLowColor" />
+    <m:StaticResource x:Key="ToggleSwitchKnobFillOnDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
     <m:StaticResource x:Key="ToggleSwitchKnobStrokeOn" ResourceKey="SystemControlTransparentBrush" />
 
     <!-- Resources for ToolTip -->

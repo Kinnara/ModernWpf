@@ -1751,19 +1751,19 @@
     <m:StaticResource x:Key="ToggleSwitchFillOn" ResourceKey="AccentFillColorDefaultBrush" />
     <m:StaticResource x:Key="ToggleSwitchFillOnPointerOver" ResourceKey="AccentFillColorSecondaryBrush" />
     <m:StaticResource x:Key="ToggleSwitchFillOnPressed" ResourceKey="AccentFillColorTertiaryBrush" />
-    <m:StaticResource x:Key="ToggleSwitchFillOnDisabled" ResourceKey="AccentFillColorDefaultBrush" />
+    <m:StaticResource x:Key="ToggleSwitchFillOnDisabled" ResourceKey="AccentFillColorDisabledBrush" />
     <m:StaticResource x:Key="ToggleSwitchStrokeOn" ResourceKey="AccentFillColorDefaultBrush" />
     <m:StaticResource x:Key="ToggleSwitchStrokeOnPointerOver" ResourceKey="AccentFillColorSecondaryBrush" />
     <m:StaticResource x:Key="ToggleSwitchStrokeOnPressed" ResourceKey="AccentFillColorTertiaryBrush" />
-    <m:StaticResource x:Key="ToggleSwitchStrokeOnDisabled" ResourceKey="AccentFillColorDefaultBrush" />
+    <m:StaticResource x:Key="ToggleSwitchStrokeOnDisabled" ResourceKey="AccentFillColorDisabledBrush" />
     <m:StaticResource x:Key="ToggleSwitchKnobFillOff" ResourceKey="TextFillColorSecondaryBrush" />
     <m:StaticResource x:Key="ToggleSwitchKnobFillOffPointerOver" ResourceKey="TextFillColorSecondary" />
     <m:StaticResource x:Key="ToggleSwitchKnobFillOffPressed" ResourceKey="TextFillColorSecondary" />
-    <m:StaticResource x:Key="ToggleSwitchKnobFillOffDisabled" ResourceKey="TextFillColorDisabled" />
+    <m:StaticResource x:Key="ToggleSwitchKnobFillOffDisabled" ResourceKey="TextFillColorDisabledBrush" />
     <m:StaticResource x:Key="ToggleSwitchKnobFillOn" ResourceKey="TextOnAccentFillColorPrimaryBrush" />
     <m:StaticResource x:Key="ToggleSwitchKnobFillOnPointerOver" ResourceKey="TextOnAccentAAFillColorPrimary" />
     <m:StaticResource x:Key="ToggleSwitchKnobFillOnPressed" ResourceKey="TextOnAccentAAFillColorPrimary" />
-    <m:StaticResource x:Key="ToggleSwitchKnobFillOnDisabled" ResourceKey="TextOnAccentAAFillColorDisabled" />
+    <m:StaticResource x:Key="ToggleSwitchKnobFillOnDisabled" ResourceKey="TextOnAccentFillColorDisabledBrush" />
     <m:StaticResource x:Key="ToggleSwitchKnobStrokeOn" ResourceKey="CircleElevationBorderBrush" />
 
     <!-- Resources for ToolTip -->
