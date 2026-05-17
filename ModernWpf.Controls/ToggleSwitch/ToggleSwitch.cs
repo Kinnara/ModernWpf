@@ -101,7 +101,10 @@ namespace ModernWpf.Controls
         public static readonly DependencyProperty HeaderProperty =
             ControlHelper.HeaderProperty.AddOwner(
                 typeof(ToggleSwitch),
-                new FrameworkPropertyMetadata(OnHeaderChanged));
+                new FrameworkPropertyMetadata(
+                    null,
+                    FrameworkPropertyMetadataOptions.AffectsMeasure,
+                    OnHeaderChanged));
 
         private static void OnHeaderChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -127,7 +130,10 @@ namespace ModernWpf.Controls
         public static readonly DependencyProperty HeaderTemplateProperty =
             ControlHelper.HeaderTemplateProperty.AddOwner(
                 typeof(ToggleSwitch),
-                new FrameworkPropertyMetadata(OnHeaderTemplateChanged));
+                new FrameworkPropertyMetadata(
+                    null,
+                    FrameworkPropertyMetadataOptions.AffectsMeasure,
+                    OnHeaderTemplateChanged));
 
         private static void OnHeaderTemplateChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -175,7 +181,9 @@ namespace ModernWpf.Controls
                 typeof(ToggleSwitch),
                 new FrameworkPropertyMetadata(
                     false,
-                    FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.Journal,
+                    FrameworkPropertyMetadataOptions.AffectsMeasure |
+                    FrameworkPropertyMetadataOptions.BindsTwoWayByDefault |
+                    FrameworkPropertyMetadataOptions.Journal,
                     OnIsOnChanged));
 
         private static void OnIsOnChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -198,7 +206,10 @@ namespace ModernWpf.Controls
                 nameof(OffContent),
                 typeof(object),
                 typeof(ToggleSwitch),
-                new FrameworkPropertyMetadata(Strings.ToggleSwitchOff, OnOffContentChanged));
+                new FrameworkPropertyMetadata(
+                    Strings.ToggleSwitchOff,
+                    FrameworkPropertyMetadataOptions.AffectsMeasure,
+                    OnOffContentChanged));
 
         private static void OnOffContentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -224,7 +235,9 @@ namespace ModernWpf.Controls
                 nameof(OffContentTemplate),
                 typeof(DataTemplate),
                 typeof(ToggleSwitch),
-                null);
+                new FrameworkPropertyMetadata(
+                    null,
+                    FrameworkPropertyMetadataOptions.AffectsMeasure));
 
         #endregion
 
@@ -267,7 +280,9 @@ namespace ModernWpf.Controls
                 nameof(OnContentTemplate),
                 typeof(DataTemplate),
                 typeof(ToggleSwitch),
-                null);
+                new FrameworkPropertyMetadata(
+                    null,
+                    FrameworkPropertyMetadataOptions.AffectsMeasure));
 
         #endregion
 

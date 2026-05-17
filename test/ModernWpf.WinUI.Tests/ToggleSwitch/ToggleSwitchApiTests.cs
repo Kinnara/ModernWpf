@@ -356,6 +356,20 @@ public class ToggleSwitchApiTests
     }
 
     [TestMethod]
+    public void DependencyPropertyMetadataMatchesWinUIAffectsMeasureFlags()
+    {
+        var ownerType = typeof(ModernWpf.Controls.ToggleSwitch);
+
+        AssertAffectsMeasure(ModernWpf.Controls.ToggleSwitch.IsOnProperty, ownerType, expected: true);
+        AssertAffectsMeasure(ModernWpf.Controls.ToggleSwitch.HeaderProperty, ownerType, expected: true);
+        AssertAffectsMeasure(ModernWpf.Controls.ToggleSwitch.HeaderTemplateProperty, ownerType, expected: true);
+        AssertAffectsMeasure(ModernWpf.Controls.ToggleSwitch.OnContentProperty, ownerType, expected: false);
+        AssertAffectsMeasure(ModernWpf.Controls.ToggleSwitch.OnContentTemplateProperty, ownerType, expected: true);
+        AssertAffectsMeasure(ModernWpf.Controls.ToggleSwitch.OffContentProperty, ownerType, expected: true);
+        AssertAffectsMeasure(ModernWpf.Controls.ToggleSwitch.OffContentTemplateProperty, ownerType, expected: true);
+    }
+
+    [TestMethod]
     public void TemplateSettingsTrackWinUIKnobOffsets()
     {
         WpfTestHost.Run(() =>
@@ -693,23 +707,50 @@ public class ToggleSwitchApiTests
     }
 
     [TestMethod]
-    public void OnContentChangeRaisesOnContentCallback()
+    public void GeneratedProtectedCallbacksMatchWinUIModel()
     {
         WpfTestHost.Run(() =>
         {
             TestApplication.EnsureInitialized();
 
             var toggleSwitch = new CallbackToggleSwitch();
+            int initialHeaderChanges = toggleSwitch.HeaderChanges;
             int initialOnContentChanges = toggleSwitch.OnContentChanges;
             int initialOffContentChanges = toggleSwitch.OffContentChanges;
+            int initialToggleChanges = toggleSwitch.ToggleChanges;
 
+            Assert.AreEqual(0, initialHeaderChanges);
             Assert.AreEqual(0, initialOnContentChanges);
             Assert.AreEqual(0, initialOffContentChanges);
+            Assert.AreEqual(0, initialToggleChanges);
+
+            toggleSwitch.Header = "Label";
+
+            Assert.AreEqual(initialHeaderChanges + 1, toggleSwitch.HeaderChanges);
+            Assert.AreEqual(initialOnContentChanges, toggleSwitch.OnContentChanges);
+            Assert.AreEqual(initialOffContentChanges, toggleSwitch.OffContentChanges);
+            Assert.AreEqual(initialToggleChanges, toggleSwitch.ToggleChanges);
+
+            toggleSwitch.OffContent = "Disabled";
+
+            Assert.AreEqual(initialHeaderChanges + 1, toggleSwitch.HeaderChanges);
+            Assert.AreEqual(initialOnContentChanges, toggleSwitch.OnContentChanges);
+            Assert.AreEqual(initialOffContentChanges + 1, toggleSwitch.OffContentChanges);
+            Assert.AreEqual(initialToggleChanges, toggleSwitch.ToggleChanges);
 
             toggleSwitch.OnContent = "Enabled";
 
+            Assert.AreEqual(initialHeaderChanges + 1, toggleSwitch.HeaderChanges);
             Assert.AreEqual(initialOnContentChanges + 1, toggleSwitch.OnContentChanges);
-            Assert.AreEqual(initialOffContentChanges, toggleSwitch.OffContentChanges);
+            Assert.AreEqual(initialOffContentChanges + 1, toggleSwitch.OffContentChanges);
+            Assert.AreEqual(initialToggleChanges, toggleSwitch.ToggleChanges);
+
+            toggleSwitch.IsOn = true;
+
+            Assert.AreEqual(initialHeaderChanges + 1, toggleSwitch.HeaderChanges);
+            Assert.AreEqual(initialOnContentChanges + 1, toggleSwitch.OnContentChanges);
+            Assert.AreEqual(initialOffContentChanges + 1, toggleSwitch.OffContentChanges);
+            Assert.AreEqual(initialToggleChanges + 1, toggleSwitch.ToggleChanges);
         });
     }
 
@@ -935,6 +976,12 @@ public class ToggleSwitchApiTests
             $"Expected VisualStateEx setter target '{target}'.");
     }
 
+    private static void AssertAffectsMeasure(DependencyProperty property, Type ownerType, bool expected)
+    {
+        var metadata = (FrameworkPropertyMetadata)property.GetMetadata(ownerType);
+        Assert.AreEqual(expected, metadata.AffectsMeasure, $"{property.Name}.AffectsMeasure");
+    }
+
     private static void AssertThemeResourceReference(string themeName, string resourceKey, object expectedResourceKey)
     {
         var themeDictionary = global::ModernWpf.ThemeResources.Current.GetThemeDictionary(themeName);
@@ -959,9 +1006,18 @@ public class ToggleSwitchApiTests
 
     private sealed class CallbackToggleSwitch : ModernWpf.Controls.ToggleSwitch
     {
+        public int HeaderChanges { get; private set; }
+
         public int OffContentChanges { get; private set; }
 
         public int OnContentChanges { get; private set; }
+
+        public int ToggleChanges { get; private set; }
+
+        protected override void OnHeaderChanged(object oldContent, object newContent)
+        {
+            HeaderChanges++;
+        }
 
         protected override void OnOffContentChanged(object oldContent, object newContent)
         {
@@ -971,6 +1027,12 @@ public class ToggleSwitchApiTests
         protected override void OnOnContentChanged(object oldContent, object newContent)
         {
             OnContentChanges++;
+        }
+
+        protected override void OnToggled()
+        {
+            ToggleChanges++;
+            base.OnToggled();
         }
     }
 }
