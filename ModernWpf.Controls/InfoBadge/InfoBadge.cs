@@ -120,7 +120,7 @@ namespace ModernWpf.Controls
                 stateName = "Dot";
             }
 
-            VisualStateManager.GoToState(this, stateName, false);
+            VisualStateManager.GoToState(this, stateName, true);
         }
 
         private void UpdateCornerRadius()

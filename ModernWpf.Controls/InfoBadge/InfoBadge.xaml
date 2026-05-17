@@ -6,17 +6,17 @@
     xmlns:mux="clr-namespace:ModernWpf.Controls;assembly=ModernWpf">
 
     <Style TargetType="local:InfoBadge" x:Key="DefaultInfoBadgeStyle">
-        <Setter Property="MinHeight" Value="4" />
-        <Setter Property="MinWidth" Value="4" />
-        <Setter Property="MaxHeight" Value="16" />
-        <Setter Property="Background" Value="{DynamicResource AccentFillColorDefaultBrush}" />
-        <Setter Property="Foreground" Value="{DynamicResource TextOnAccentFillColorPrimaryBrush}" />
-        <Setter Property="Padding" Value="0" />
+        <Setter Property="MinHeight" Value="{DynamicResource InfoBadgeMinHeight}" />
+        <Setter Property="MinWidth" Value="{DynamicResource InfoBadgeMinWidth}" />
+        <Setter Property="MaxHeight" Value="{DynamicResource InfoBadgeMaxHeight}" />
+        <Setter Property="Background" Value="{DynamicResource InfoBadgeBackground}" />
+        <Setter Property="Foreground" Value="{DynamicResource InfoBadgeForeground}" />
+        <Setter Property="Padding" Value="{DynamicResource InfoBadgePadding}" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:InfoBadge">
-                    <Border
+                    <ui:GridEx
                         x:Name="RootGrid"
                         Background="{TemplateBinding Background}"
                         CornerRadius="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.InfoBadgeCornerRadius}"
@@ -30,41 +30,38 @@
                                 <ui:VisualStateEx x:Name="Icon">
                                     <ui:VisualStateEx.Setters>
                                         <ui:VisualStateSetter Target="IconPresenter.Visibility" Value="Visible" />
-                                        <ui:VisualStateSetter Target="IconPresenter.Margin" Value="4,4,4,4" />
+                                        <ui:VisualStateSetter Target="IconPresenter.Margin" Value="{DynamicResource IconInfoBadgeIconMargin}" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                                 <ui:VisualStateEx x:Name="FontIcon">
                                     <ui:VisualStateEx.Setters>
                                         <ui:VisualStateSetter Target="IconPresenter.Visibility" Value="Visible" />
-                                        <ui:VisualStateSetter Target="IconPresenter.Margin" Value="4,0,4,2" />
+                                        <ui:VisualStateSetter Target="IconPresenter.Margin" Value="{DynamicResource IconInfoBadgeFontIconMargin}" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                                 <ui:VisualStateEx x:Name="Value">
                                     <ui:VisualStateEx.Setters>
                                         <ui:VisualStateSetter Target="ValueTextBlock.Visibility" Value="Visible" />
-                                        <ui:VisualStateSetter Target="ValueTextBlock.Margin" Value="4,0,4,2" />
+                                        <ui:VisualStateSetter Target="ValueTextBlock.Margin" Value="{DynamicResource ValueInfoBadgeTextMargin}" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <Grid>
-                            <TextBlock
-                                x:Name="ValueTextBlock"
-                                Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Value}"
-                                FontSize="11"
-                                Foreground="{TemplateBinding Foreground}"
-                                Visibility="Collapsed"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center" />
-                            <Viewbox
-                                x:Name="IconPresenter"
-                                Visibility="Collapsed"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Stretch">
-                                <ui:ContentPresenterEx Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.IconElement}" />
-                            </Viewbox>
-                        </Grid>
-                    </Border>
+                        <TextBlock
+                            x:Name="ValueTextBlock"
+                            Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Value, Mode=OneWay}"
+                            FontSize="{DynamicResource InfoBadgeValueFontSize}"
+                            Visibility="Collapsed"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
+                        <Viewbox
+                            x:Name="IconPresenter"
+                            Visibility="Collapsed"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Stretch">
+                            <ui:ContentPresenterEx Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.IconElement}" />
+                        </Viewbox>
+                    </ui:GridEx>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -85,7 +82,9 @@
         </Setter>
     </Style>
 
-    <Style TargetType="local:InfoBadge" x:Key="InformationalDotInfoBadgeStyle" BasedOn="{StaticResource DefaultInfoBadgeStyle}" />
+    <Style TargetType="local:InfoBadge" x:Key="InformationalDotInfoBadgeStyle" BasedOn="{StaticResource DefaultInfoBadgeStyle}">
+        <Setter Property="Background" Value="{DynamicResource SystemFillColorSolidNeutralBrush}" />
+    </Style>
     <Style TargetType="local:InfoBadge" x:Key="InformationalValueInfoBadgeStyle" BasedOn="{StaticResource InformationalDotInfoBadgeStyle}" />
     <Style TargetType="local:InfoBadge" x:Key="InformationalIconInfoBadgeStyle" BasedOn="{StaticResource InformationalDotInfoBadgeStyle}">
         <Setter Property="Padding" Value="0,4,0,2" />

@@ -3,7 +3,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ModernWpf;
 using ModernWpf.Controls;
+using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
 
 namespace ModernWpf.WinUI.Tests.InfoBadge;
@@ -111,9 +113,66 @@ public class InfoBadgeApiTests
 
             using var host = new TestWindowHost(infoBadge, width: 100, height: 100);
 
+            var rootGrid = FindNamedDescendant<GridEx>(infoBadge, "RootGrid");
             var presenter = FindContentPresenter(infoBadge, infoBadge.TemplateSettings.IconElement);
+
+            Assert.AreEqual(infoBadge.Background, rootGrid.Background);
+            Assert.AreEqual(infoBadge.Padding, rootGrid.Padding);
             Assert.IsInstanceOfType(presenter.Content, typeof(SymbolIcon));
             Assert.IsFalse(ContainsPlainContentPresenter(infoBadge));
+        });
+    }
+
+    [TestMethod]
+    public void InfoBadgeUsesWinUI3ThemeResources()
+    {
+        foreach (var themeName in new[] { "Light", "Dark" })
+        {
+            AssertThemeResourceReference(themeName, "InfoBadgeForeground", "TextOnAccentFillColorPrimaryBrush");
+            AssertThemeResourceReference(themeName, "InfoBadgeBackground", "AccentFillColorDefaultBrush");
+            AssertThemeResourceValue(themeName, "InfoBadgeMinHeight", 4.0);
+            AssertThemeResourceValue(themeName, "InfoBadgeMinWidth", 4.0);
+            AssertThemeResourceValue(themeName, "InfoBadgeMaxHeight", 16.0);
+            AssertThemeResourceValue(themeName, "InfoBadgeValueFontSize", 11.0);
+            AssertThemeResourceValue(themeName, "InfoBadgeIconWidth", 12.0);
+            AssertThemeResourceValue(themeName, "InfoBadgePadding", new Thickness(0));
+            AssertThemeResourceValue(themeName, "IconInfoBadgeFontIconMargin", new Thickness(4, 0, 4, 2));
+            AssertThemeResourceValue(themeName, "ValueInfoBadgeTextMargin", new Thickness(4, 0, 4, 2));
+            AssertThemeResourceValue(themeName, "IconInfoBadgeIconMargin", new Thickness(4));
+        }
+
+        AssertThemeResourceValue("Light", "InfoBadgeIconHeight", 9.0);
+        AssertThemeResourceValue("Dark", "InfoBadgeIconHeight", 8.0);
+        AssertThemeResourceValue("Light", "SystemFillColorSolidNeutral", Color.FromRgb(0x8A, 0x8A, 0x8A));
+        AssertThemeResourceValue("Dark", "SystemFillColorSolidNeutral", Color.FromRgb(0x9D, 0x9D, 0x9D));
+        AssertThemeBrushColor("Light", "SystemFillColorSolidNeutralBrush", Color.FromRgb(0x8A, 0x8A, 0x8A));
+        AssertThemeBrushColor("Dark", "SystemFillColorSolidNeutralBrush", Color.FromRgb(0x9D, 0x9D, 0x9D));
+
+        AssertThemeResourceReference("HighContrast", "InfoBadgeForeground", "SystemControlHighlightAltChromeWhiteBrush");
+        AssertThemeResourceReference("HighContrast", "InfoBadgeBackground", "SystemControlHighlightAccentBrush");
+        AssertThemeResourceValue("HighContrast", "InfoBadgeIconHeight", 9.0);
+        AssertThemeResourceExists("HighContrast", "SystemFillColorSolidNeutralBrush");
+    }
+
+    [TestMethod]
+    public void InformationalInfoBadgeUsesWinUI3SolidNeutralBackground()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var resources = (ResourceDictionary)Application.LoadComponent(
+                new Uri("/ModernWpf.Controls;component/InfoBadge/InfoBadge.xaml", UriKind.Relative));
+            var style = (Style)resources["InformationalDotInfoBadgeStyle"];
+
+            var infoBadge = new ModernWpf.Controls.InfoBadge
+            {
+                Style = style
+            };
+            using var host = new TestWindowHost(infoBadge, width: 100, height: 100);
+            host.UpdateLayout();
+
+            Assert.AreSame(infoBadge.TryFindResource("SystemFillColorSolidNeutralBrush"), infoBadge.Background);
         });
     }
 
@@ -176,5 +235,35 @@ public class InfoBadgeApiTests
         }
 
         return false;
+    }
+
+    private static void AssertThemeResourceReference(string themeName, string resourceKey, object expectedResourceKey)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.IsTrue(themeDictionary.Contains(expectedResourceKey), $"{themeName} is missing {expectedResourceKey}.");
+        Assert.AreSame(themeDictionary[expectedResourceKey], themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
+    }
+
+    private static void AssertThemeResourceValue<T>(string themeName, string resourceKey, T expectedValue)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.AreEqual(expectedValue, themeDictionary[resourceKey]);
+    }
+
+    private static void AssertThemeResourceExists(string themeName, string resourceKey)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+    }
+
+    private static void AssertThemeBrushColor(string themeName, string resourceKey, Color expectedColor)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        var brush = themeDictionary[resourceKey] as SolidColorBrush;
+        Assert.IsNotNull(brush, $"{themeName}:{resourceKey} should be a SolidColorBrush.");
+        Assert.AreEqual(expectedColor, brush!.Color);
     }
 }

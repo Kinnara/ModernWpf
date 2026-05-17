@@ -290,6 +290,7 @@
     <Color x:Key="SystemFillColorCaution">#9D5D00</Color>
     <Color x:Key="SystemFillColorCritical">#C42B1C</Color>
     <Color x:Key="SystemFillColorNeutral">#72000000</Color>
+    <Color x:Key="SystemFillColorSolidNeutral">#8A8A8A</Color>
     <Color x:Key="SystemFillColorAttentionBackground">#80F6F6F6</Color>
     <Color x:Key="SystemFillColorSuccessBackground">#DFF6DD</Color>
     <Color x:Key="SystemFillColorCautionBackground">#FFF4CE</Color>
@@ -396,6 +397,7 @@
     <SolidColorBrush x:Key="SystemFillColorCautionBrush" Color="{StaticResource SystemFillColorCaution}" />
     <SolidColorBrush x:Key="SystemFillColorCriticalBrush" Color="{StaticResource SystemFillColorCritical}" />
     <SolidColorBrush x:Key="SystemFillColorNeutralBrush" Color="{StaticResource SystemFillColorNeutral}" />
+    <SolidColorBrush x:Key="SystemFillColorSolidNeutralBrush" Color="{StaticResource SystemFillColorSolidNeutral}" />
     <SolidColorBrush x:Key="SystemFillColorAttentionBackgroundBrush" Color="{StaticResource SystemFillColorAttentionBackground}" />
     <SolidColorBrush x:Key="SystemFillColorSuccessBackgroundBrush" Color="{StaticResource SystemFillColorSuccessBackground}" />
     <SolidColorBrush x:Key="SystemFillColorCautionBackgroundBrush" Color="{StaticResource SystemFillColorCautionBackground}" />
@@ -1933,6 +1935,20 @@
     <sys:Double x:Key="TitleBarExpandedHeight">48</sys:Double>
     <SolidColorBrush x:Key="TitleBarButtonBackground" Color="Transparent" />
     <SolidColorBrush x:Key="TitleBarButtonBackgroundInactive" Color="Transparent" />
+
+    <!-- Resources for InfoBadge -->
+    <m:StaticResource x:Key="InfoBadgeForeground" ResourceKey="TextOnAccentFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="InfoBadgeBackground" ResourceKey="AccentFillColorDefaultBrush" />
+    <sys:Double x:Key="InfoBadgeMinHeight">4</sys:Double>
+    <sys:Double x:Key="InfoBadgeMinWidth">4</sys:Double>
+    <sys:Double x:Key="InfoBadgeMaxHeight">16</sys:Double>
+    <sys:Double x:Key="InfoBadgeValueFontSize">11</sys:Double>
+    <sys:Double x:Key="InfoBadgeIconHeight">9</sys:Double>
+    <sys:Double x:Key="InfoBadgeIconWidth">12</sys:Double>
+    <Thickness x:Key="InfoBadgePadding">0,0,0,0</Thickness>
+    <Thickness x:Key="IconInfoBadgeFontIconMargin">4,0,4,2</Thickness>
+    <Thickness x:Key="ValueInfoBadgeTextMargin">4,0,4,2</Thickness>
+    <Thickness x:Key="IconInfoBadgeIconMargin">4,4,4,4</Thickness>
 
     <!-- Resources for DropDownButton -->
     <m:StaticResource x:Key="DropDownButtonForegroundSecondary" ResourceKey="TextFillColorSecondaryBrush" />

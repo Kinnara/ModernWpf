@@ -259,6 +259,7 @@
     <SolidColorBrush x:Key="SystemFillColorCautionBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
     <SolidColorBrush x:Key="SystemFillColorCriticalBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
     <SolidColorBrush x:Key="SystemFillColorNeutralBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
+    <SolidColorBrush x:Key="SystemFillColorSolidNeutralBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
     <SolidColorBrush x:Key="SystemFillColorAttentionBackgroundBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
     <SolidColorBrush x:Key="SystemFillColorSuccessBackgroundBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
     <SolidColorBrush x:Key="SystemFillColorCautionBackgroundBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
@@ -1908,6 +1909,20 @@
     <sys:Double x:Key="TitleBarExpandedHeight">48</sys:Double>
     <SolidColorBrush x:Key="TitleBarButtonBackground" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
     <SolidColorBrush x:Key="TitleBarButtonBackgroundInactive" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+
+    <!-- Resources for InfoBadge -->
+    <m:StaticResource x:Key="InfoBadgeForeground" ResourceKey="SystemControlHighlightAltChromeWhiteBrush" />
+    <m:StaticResource x:Key="InfoBadgeBackground" ResourceKey="SystemControlHighlightAccentBrush" />
+    <sys:Double x:Key="InfoBadgeMinHeight">4</sys:Double>
+    <sys:Double x:Key="InfoBadgeMinWidth">4</sys:Double>
+    <sys:Double x:Key="InfoBadgeMaxHeight">16</sys:Double>
+    <sys:Double x:Key="InfoBadgeValueFontSize">11</sys:Double>
+    <sys:Double x:Key="InfoBadgeIconHeight">9</sys:Double>
+    <sys:Double x:Key="InfoBadgeIconWidth">12</sys:Double>
+    <Thickness x:Key="InfoBadgePadding">0,0,0,0</Thickness>
+    <Thickness x:Key="IconInfoBadgeFontIconMargin">4,0,4,2</Thickness>
+    <Thickness x:Key="ValueInfoBadgeTextMargin">4,0,4,2</Thickness>
+    <Thickness x:Key="IconInfoBadgeIconMargin">4,4,4,4</Thickness>
 
     <!-- Resources for DropDownButton -->
     <m:StaticResource x:Key="DropDownButtonForegroundSecondary" ResourceKey="SystemColorButtonTextColorBrush" />
