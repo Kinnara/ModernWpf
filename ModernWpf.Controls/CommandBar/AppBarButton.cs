@@ -28,6 +28,13 @@ namespace ModernWpf.Controls
             ToolTipProperty.OverrideMetadata(typeof(AppBarButton),
                 new FrameworkPropertyMetadata { CoerceValueCallback = AppBarElementProperties.CoerceToolTip });
 
+            WidthProperty.OverrideMetadata(typeof(AppBarButton),
+                new FrameworkPropertyMetadata(
+                    double.NaN,
+                    FrameworkPropertyMetadataOptions.AffectsMeasure,
+                    null,
+                    CoerceWidthForLabelOnRightStyle));
+
             AppBarElementProperties.DefaultLabelPositionProperty.OverrideMetadata(typeof(AppBarButton),
                 new FrameworkPropertyMetadata(OnDefaultLabelPositionPropertyChanged));
 
@@ -212,6 +219,8 @@ namespace ModernWpf.Controls
 
         private void UpdateApplicationViewState()
         {
+            CoerceValue(WidthProperty);
+
             string stateName;
 
             if (UseOverflowStyle && IsVisible)
@@ -440,6 +449,24 @@ namespace ModernWpf.Controls
         private static void OnVisibilityChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((AppBarButton)d).OnVisibilityChanged();
+        }
+
+        private static object CoerceWidthForLabelOnRightStyle(DependencyObject d, object baseValue)
+        {
+            var button = (AppBarButton)d;
+            if (button.ShouldApplyLabelOnRightWidthAdjustment() &&
+                button.ReadLocalValue(WidthProperty) == DependencyProperty.UnsetValue)
+            {
+                return double.NaN;
+            }
+
+            return baseValue;
+        }
+
+        private bool ShouldApplyLabelOnRightWidthAdjustment()
+        {
+            return GetEffectiveLabelPosition() == CommandBarDefaultLabelPosition.Right &&
+                   !UseOverflowStyle;
         }
 
         private void OnVisibilityChanged()

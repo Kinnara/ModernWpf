@@ -50,7 +50,6 @@
                                         <ui:VisualStateSetter Target="TextLabel.(Grid.Column)" Value="1" />
                                         <ui:VisualStateSetter Target="TextLabel.TextAlignment" Value="Left" />
                                         <ui:VisualStateSetter Target="TextLabel.Margin" Value="{DynamicResource AppBarToggleButtonTextLabelOnRightMargin}" />
-                                        <ui:VisualStateSetter Property="Width" Value="NaN" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                                 <ui:VisualStateEx x:Name="LabelCollapsed">

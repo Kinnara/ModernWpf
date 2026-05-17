@@ -51,7 +51,6 @@
                                         <ui:VisualStateSetter Target="TextLabel.TextAlignment" Value="Left" />
                                         <ui:VisualStateSetter Target="TextLabel.Margin" Value="{DynamicResource AppBarButtonTextLabelOnRightMargin}" />
                                         <ui:VisualStateSetter Target="SubItemChevron.Margin" Value="{DynamicResource AppBarButtonSubItemChevronLabelOnRightMargin}" />
-                                        <ui:VisualStateSetter Property="Width" Value="NaN" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                                 <ui:VisualStateEx x:Name="LabelCollapsed">

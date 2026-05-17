@@ -588,7 +588,7 @@ public class CommandBarApiTests
             AssertStateSetter(root, "ApplicationViewStates", "Compact", "AppBarButtonInnerBorder.Margin");
             AssertStateSetter(root, "ApplicationViewStates", "LabelOnRight", "TextLabel.(Grid.Row)");
             AssertStateSetter(root, "ApplicationViewStates", "LabelOnRight", "SubItemChevron.Margin");
-            AssertStateSetter(root, "ApplicationViewStates", "LabelOnRight", null, "Width");
+            AssertStateSetterAbsent(root, "ApplicationViewStates", "LabelOnRight", null, "Width");
             AssertStateSetter(root, "ApplicationViewStates", "Overflow", "OverflowTextLabel.Visibility");
             AssertStateSetter(root, "ApplicationViewStates", "OverflowWithMenuIcons", "ContentViewbox.Width");
             AssertStateSetter(root, "ApplicationViewStates", "OverflowWithToggleButtonsAndMenuIcons", "OverflowTextLabel.Margin");
@@ -690,6 +690,63 @@ public class CommandBarApiTests
 
             AssertVisualState(buttonRoot, "ApplicationViewStates", "LabelCollapsed");
             AssertVisualState(toggleRoot, "ApplicationViewStates", "LabelCollapsed");
+        });
+    }
+
+    [TestMethod]
+    public void AppBarLabelOnRightWidthAdjustmentRespectsLocalWidthLikeWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var autoButton = new AppBarButton
+            {
+                Icon = new SymbolIcon(Symbol.Accept),
+                Label = "Accept"
+            };
+            var fixedButton = new AppBarButton
+            {
+                Icon = new SymbolIcon(Symbol.Add),
+                Label = "Add",
+                Width = 120
+            };
+            var autoToggleButton = new AppBarToggleButton
+            {
+                Icon = new SymbolIcon(Symbol.Pin),
+                Label = "Pin"
+            };
+            var fixedToggleButton = new AppBarToggleButton
+            {
+                Icon = new SymbolIcon(Symbol.Setting),
+                Label = "Settings",
+                Width = 132
+            };
+            var commandBar = new ModernWpf.Controls.CommandBar
+            {
+                DefaultLabelPosition = CommandBarDefaultLabelPosition.Right,
+                IsDynamicOverflowEnabled = false
+            };
+            commandBar.PrimaryCommands.Add(autoButton);
+            commandBar.PrimaryCommands.Add(fixedButton);
+            commandBar.PrimaryCommands.Add(autoToggleButton);
+            commandBar.PrimaryCommands.Add(fixedToggleButton);
+
+            using var host = new TestWindowHost(commandBar, width: 640, height: 120);
+            host.UpdateLayout();
+
+            Assert.IsTrue(double.IsNaN(autoButton.Width));
+            Assert.AreEqual(120d, fixedButton.Width);
+            Assert.IsTrue(double.IsNaN(autoToggleButton.Width));
+            Assert.AreEqual(132d, fixedToggleButton.Width);
+
+            commandBar.DefaultLabelPosition = CommandBarDefaultLabelPosition.Bottom;
+            host.UpdateLayout();
+
+            Assert.AreEqual(68d, autoButton.Width);
+            Assert.AreEqual(120d, fixedButton.Width);
+            Assert.AreEqual(68d, autoToggleButton.Width);
+            Assert.AreEqual(132d, fixedToggleButton.Width);
         });
     }
 
@@ -912,7 +969,7 @@ public class CommandBarApiTests
 
             AssertStateSetter(root, "ApplicationViewStates", "Compact", "AppBarToggleButtonInnerBorder.Margin");
             AssertStateSetter(root, "ApplicationViewStates", "LabelOnRight", "TextLabel.(Grid.Column)");
-            AssertStateSetter(root, "ApplicationViewStates", "LabelOnRight", null, "Width");
+            AssertStateSetterAbsent(root, "ApplicationViewStates", "LabelOnRight", null, "Width");
             AssertStateSetter(root, "ApplicationViewStates", "Overflow", "OverflowCheckGlyph.Visibility");
             AssertStateSetter(root, "ApplicationViewStates", "OverflowWithMenuIcons", "ContentViewbox.MaxWidth");
 
@@ -1204,6 +1261,38 @@ public class CommandBarApiTests
 
         Assert.Fail(
             $"Expected visual state '{groupName}.{stateName}' to contain setter '{expectedTarget ?? expectedProperty}'.");
+    }
+
+    private static void AssertStateSetterAbsent(
+        FrameworkElement stateGroupsRoot,
+        string groupName,
+        string stateName,
+        string? expectedTarget,
+        string? expectedProperty = null)
+    {
+        var group = FindVisualStateGroup(stateGroupsRoot, groupName);
+        Assert.IsNotNull(group, $"Expected visual state group '{groupName}'.");
+
+        var state = FindVisualState(group!, stateName);
+        Assert.IsNotNull(state, $"Expected visual state '{groupName}.{stateName}'.");
+        Assert.IsInstanceOfType(state, typeof(VisualStateEx));
+
+        var stateEx = (VisualStateEx)state!;
+        foreach (VisualStateSetter setter in stateEx.Setters)
+        {
+            bool targetMatches = expectedTarget is null ?
+                string.IsNullOrEmpty(setter.Target) :
+                setter.Target == expectedTarget;
+            bool propertyMatches = expectedProperty is null ?
+                string.IsNullOrEmpty(setter.Property) :
+                setter.Property == expectedProperty;
+
+            if (targetMatches && propertyMatches)
+            {
+                Assert.Fail(
+                    $"Expected visual state '{groupName}.{stateName}' not to contain setter '{expectedTarget ?? expectedProperty}'.");
+            }
+        }
     }
 
     private static void AssertVisualState(FrameworkElement stateGroupsRoot, string groupName, string expectedStateName)
