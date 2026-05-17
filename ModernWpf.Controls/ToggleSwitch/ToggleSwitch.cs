@@ -410,7 +410,6 @@ namespace ModernWpf.Controls
                 SwitchKnobBounds.SizeChanged += OnSwitchPartSizeChanged;
             }
 
-            UpdateTranslationBounds();
             UpdateHeaderContentPresenterVisibility();
             UpdateVisualStates(false);
         }
@@ -452,13 +451,6 @@ namespace ModernWpf.Controls
 
                 UpdateVisualStates();
             }
-        }
-
-        protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
-        {
-            base.OnRenderSizeChanged(sizeInfo);
-
-            UpdateTranslationBounds();
         }
 
         protected override void OnKeyUp(KeyEventArgs e)

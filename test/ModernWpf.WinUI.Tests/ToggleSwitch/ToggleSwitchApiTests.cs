@@ -482,7 +482,7 @@ public class ToggleSwitchApiTests
     }
 
     [TestMethod]
-    public void TemplateSettingsTrackWinUIKnobOffsets()
+    public void TemplateSettingsTrackWinUISizeChangedKnobOffsets()
     {
         WpfTestHost.Run(() =>
         {
@@ -496,6 +496,25 @@ public class ToggleSwitchApiTests
             Assert.IsNotNull(settings);
             Assert.AreEqual(-20d, settings.KnobOffToOnOffset, 0.1);
             Assert.AreEqual(20d, settings.KnobOnToOffOffset, 0.1);
+
+            var knob = FindNamedDescendant<FrameworkElement>(toggleSwitch, "SwitchKnob");
+            var knobBounds = FindNamedDescendant<FrameworkElement>(toggleSwitch, "SwitchKnobBounds");
+            knobBounds.Width = knobBounds.ActualWidth + 12d;
+            host.UpdateLayout();
+
+            double expectedKnobTranslation = knobBounds.ActualWidth - knob.ActualWidth;
+            if (knob.Margin.Left < 0)
+            {
+                expectedKnobTranslation -= knob.Margin.Left;
+            }
+
+            if (knob.Margin.Right < 0)
+            {
+                expectedKnobTranslation -= knob.Margin.Right;
+            }
+
+            Assert.AreEqual(-expectedKnobTranslation, settings.KnobOffToOnOffset, 0.1);
+            Assert.AreEqual(expectedKnobTranslation, settings.KnobOnToOffOffset, 0.1);
 
             var initiallyOnToggleSwitch = new ModernWpf.Controls.ToggleSwitch
             {
@@ -512,7 +531,7 @@ public class ToggleSwitchApiTests
             RaiseDragDelta(thumb, 6);
 
             Assert.AreEqual(6d, settings.KnobCurrentToOffOffset, 0.1);
-            Assert.AreEqual(-14d, settings.KnobCurrentToOnOffset, 0.1);
+            Assert.AreEqual(6d - expectedKnobTranslation, settings.KnobCurrentToOnOffset, 0.1);
         });
     }
 
