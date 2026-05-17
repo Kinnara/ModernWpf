@@ -92,6 +92,54 @@ public class ToggleSwitchApiTests
     }
 
     [TestMethod]
+    public void DragRoutedEventsRemainUnhandledLikeWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var root = new StackPanel();
+            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch();
+            root.Children.Add(toggleSwitch);
+            using var host = new TestWindowHost(root, width: 260, height: 120);
+            host.UpdateLayout();
+
+            var thumb = FindNamedDescendant<Thumb>(toggleSwitch, "SwitchThumb");
+            int startedCount = 0;
+            int deltaCount = 0;
+            int completedCount = 0;
+
+            root.AddHandler(Thumb.DragStartedEvent, new DragStartedEventHandler((sender, args) =>
+            {
+                startedCount++;
+                Assert.IsFalse(args.Handled);
+            }));
+            root.AddHandler(Thumb.DragDeltaEvent, new DragDeltaEventHandler((sender, args) =>
+            {
+                deltaCount++;
+                Assert.IsFalse(args.Handled);
+            }));
+            root.AddHandler(Thumb.DragCompletedEvent, new DragCompletedEventHandler((sender, args) =>
+            {
+                completedCount++;
+                Assert.IsFalse(args.Handled);
+            }));
+
+            var started = RaiseDragStarted(thumb);
+            var delta = RaiseDragDelta(thumb, 3);
+            var completed = RaiseDragCompleted(thumb);
+
+            Assert.IsFalse(started.Handled);
+            Assert.IsFalse(delta.Handled);
+            Assert.IsFalse(completed.Handled);
+            Assert.AreEqual(1, startedCount);
+            Assert.AreEqual(1, deltaCount);
+            Assert.AreEqual(1, completedCount);
+            Assert.IsFalse(toggleSwitch.IsOn);
+        });
+    }
+
+    [TestMethod]
     public void NormalStateUsesWinUIVisualStateSetters()
     {
         WpfTestHost.Run(() =>
@@ -1021,28 +1069,37 @@ public class ToggleSwitchApiTests
         });
     }
 
-    private static void RaiseDragStarted(Thumb thumb)
+    private static DragStartedEventArgs RaiseDragStarted(Thumb thumb)
     {
-        thumb.RaiseEvent(new DragStartedEventArgs(0, 0)
+        var args = new DragStartedEventArgs(0, 0)
         {
             RoutedEvent = Thumb.DragStartedEvent
-        });
+        };
+
+        thumb.RaiseEvent(args);
+        return args;
     }
 
-    private static void RaiseDragDelta(Thumb thumb, double horizontalChange, double verticalChange = 0)
+    private static DragDeltaEventArgs RaiseDragDelta(Thumb thumb, double horizontalChange, double verticalChange = 0)
     {
-        thumb.RaiseEvent(new DragDeltaEventArgs(horizontalChange, verticalChange)
+        var args = new DragDeltaEventArgs(horizontalChange, verticalChange)
         {
             RoutedEvent = Thumb.DragDeltaEvent
-        });
+        };
+
+        thumb.RaiseEvent(args);
+        return args;
     }
 
-    private static void RaiseDragCompleted(Thumb thumb)
+    private static DragCompletedEventArgs RaiseDragCompleted(Thumb thumb)
     {
-        thumb.RaiseEvent(new DragCompletedEventArgs(0, 0, false)
+        var args = new DragCompletedEventArgs(0, 0, false)
         {
             RoutedEvent = Thumb.DragCompletedEvent
-        });
+        };
+
+        thumb.RaiseEvent(args);
+        return args;
     }
 
     private static void RaiseThumbPreviewMouseLeftButtonUp(Thumb thumb)

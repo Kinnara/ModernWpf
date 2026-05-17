@@ -564,7 +564,6 @@ namespace ModernWpf.Controls
 
         private void OnSwitchThumbDragStarted(object sender, DragStartedEventArgs e)
         {
-            e.Handled = true;
             _isDragging = true;
             _wasDragged = false;
 
@@ -577,7 +576,6 @@ namespace ModernWpf.Controls
 
         private void OnSwitchThumbDragDelta(object sender, DragDeltaEventArgs e)
         {
-            e.Handled = true;
             if (e.HorizontalChange != 0)
             {
                 _wasDragged = true;
@@ -587,8 +585,6 @@ namespace ModernWpf.Controls
 
         private void OnSwitchThumbDragCompleted(object sender, DragCompletedEventArgs e)
         {
-            e.Handled = true;
-
             if (e.Canceled)
             {
                 _isDragging = false;
