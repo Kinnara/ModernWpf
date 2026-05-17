@@ -68,6 +68,35 @@ public class ToggleSwitchApiTests
     }
 
     [TestMethod]
+    public void HorizontalDragTogglesOnAndOffLikeWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch();
+            using var host = new TestWindowHost(toggleSwitch, width: 260, height: 120);
+            host.UpdateLayout();
+
+            var thumb = FindNamedDescendant<Thumb>(toggleSwitch, "SwitchThumb");
+
+            RaiseDragStarted(thumb);
+            RaiseDragDelta(thumb, 12);
+            RaiseDragCompleted(thumb);
+            host.UpdateLayout();
+
+            Assert.IsTrue(toggleSwitch.IsOn);
+
+            RaiseDragStarted(thumb);
+            RaiseDragDelta(thumb, -12);
+            RaiseDragCompleted(thumb);
+            host.UpdateLayout();
+
+            Assert.IsFalse(toggleSwitch.IsOn);
+        });
+    }
+
+    [TestMethod]
     public void VerticalDragDeltaDoesNotMarkDragAsMoved()
     {
         WpfTestHost.Run(() =>
@@ -845,6 +874,49 @@ public class ToggleSwitchApiTests
 
             toggleSwitch.OnContent = "Connected";
             Assert.AreEqual("Wi-Fi Connected", CreatePeer(toggleSwitch).GetName());
+        });
+    }
+
+    [TestMethod]
+    public void AutomationNameMatchesWinUIExplicitAndStyledContentCases()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var style = new Style(typeof(ModernWpf.Controls.ToggleSwitch));
+            style.Setters.Add(new Setter(ModernWpf.Controls.ToggleSwitch.OnContentProperty, "Yes"));
+            style.Setters.Add(new Setter(ModernWpf.Controls.ToggleSwitch.OffContentProperty, "No"));
+
+            var toggleSwitchWithAutomationName = new ModernWpf.Controls.ToggleSwitch
+            {
+                Header = "Header",
+                OnContent = "Yes",
+                OffContent = "No"
+            };
+            AutomationProperties.SetName(toggleSwitchWithAutomationName, "APName");
+
+            var toggleSwitchStyled = new ModernWpf.Controls.ToggleSwitch
+            {
+                Header = "Header",
+                Style = style
+            };
+
+            var root = new StackPanel();
+            root.Children.Add(toggleSwitchWithAutomationName);
+            root.Children.Add(toggleSwitchStyled);
+            using var host = new TestWindowHost(root, width: 260, height: 160);
+            host.UpdateLayout();
+
+            Assert.AreEqual("APName", CreatePeer(toggleSwitchWithAutomationName).GetName());
+            Assert.AreEqual("Header No", CreatePeer(toggleSwitchStyled).GetName());
+
+            toggleSwitchWithAutomationName.IsOn = true;
+            toggleSwitchStyled.IsOn = true;
+            host.UpdateLayout();
+
+            Assert.AreEqual("APName", CreatePeer(toggleSwitchWithAutomationName).GetName());
+            Assert.AreEqual("Header Yes", CreatePeer(toggleSwitchStyled).GetName());
         });
     }
 
