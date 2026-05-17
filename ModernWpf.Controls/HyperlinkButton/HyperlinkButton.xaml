@@ -4,15 +4,13 @@
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:local="clr-namespace:ModernWpf.Controls">
 
-    <Thickness x:Key="HyperlinkButtonPadding">0,6,0,7</Thickness>
-
     <Style TargetType="local:HyperlinkButton">
         <Setter Property="Background" Value="{DynamicResource HyperlinkButtonBackground}" />
         <Setter Property="ui:ControlHelper.BackgroundSizing" Value="OuterBorderEdge" />
         <Setter Property="Foreground" Value="{DynamicResource HyperlinkButtonForeground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource HyperlinkButtonBorderBrush}" />
         <Setter Property="BorderThickness" Value="{DynamicResource HyperlinkButtonBorderThemeThickness}" />
-        <Setter Property="Padding" Value="{StaticResource HyperlinkButtonPadding}" />
+        <Setter Property="Padding" Value="{DynamicResource ButtonPadding}" />
         <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
@@ -55,16 +53,25 @@
                                 <ui:VisualStateEx x:Name="PointerOver">
                                     <ui:VisualStateEx.Setters>
                                         <ui:VisualStateSetter Target="ContentPresenter.(ui:AnimatedIcon.State)" Value="PointerOver" />
+                                        <ui:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource HyperlinkButtonForegroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="ContentPresenter.Background" Value="{DynamicResource HyperlinkButtonBackgroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="ContentPresenter.BorderBrush" Value="{DynamicResource HyperlinkButtonBorderBrushPointerOver}" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                                 <ui:VisualStateEx x:Name="Pressed">
                                     <ui:VisualStateEx.Setters>
                                         <ui:VisualStateSetter Target="ContentPresenter.(ui:AnimatedIcon.State)" Value="Pressed" />
+                                        <ui:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource HyperlinkButtonForegroundPressed}" />
+                                        <ui:VisualStateSetter Target="ContentPresenter.Background" Value="{DynamicResource HyperlinkButtonBackgroundPressed}" />
+                                        <ui:VisualStateSetter Target="ContentPresenter.BorderBrush" Value="{DynamicResource HyperlinkButtonBorderBrushPressed}" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                                 <ui:VisualStateEx x:Name="Disabled">
                                     <ui:VisualStateEx.Setters>
                                         <ui:VisualStateSetter Target="ContentPresenter.(ui:AnimatedIcon.State)" Value="Normal" />
+                                        <ui:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource HyperlinkButtonForegroundDisabled}" />
+                                        <ui:VisualStateSetter Target="ContentPresenter.Background" Value="{DynamicResource HyperlinkButtonBackgroundDisabled}" />
+                                        <ui:VisualStateSetter Target="ContentPresenter.BorderBrush" Value="{DynamicResource HyperlinkButtonBorderBrushDisabled}" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                             </VisualStateGroup>
@@ -73,23 +80,6 @@
                             <ui:BrushTransition Duration="0:0:0.083" />
                         </ui:ContentPresenterEx.BackgroundTransition>
                     </ui:ContentPresenterEx>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource HyperlinkButtonForegroundPointerOver}" />
-                            <Setter TargetName="ContentPresenter" Property="Background" Value="{DynamicResource HyperlinkButtonBackgroundPointerOver}" />
-                            <Setter TargetName="ContentPresenter" Property="BorderBrush" Value="{DynamicResource HyperlinkButtonBorderBrushPointerOver}" />
-                        </Trigger>
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource HyperlinkButtonForegroundPressed}" />
-                            <Setter TargetName="ContentPresenter" Property="Background" Value="{DynamicResource HyperlinkButtonBackgroundPressed}" />
-                            <Setter TargetName="ContentPresenter" Property="BorderBrush" Value="{DynamicResource HyperlinkButtonBorderBrushPressed}" />
-                        </Trigger>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource HyperlinkButtonForegroundDisabled}" />
-                            <Setter TargetName="ContentPresenter" Property="Background" Value="{DynamicResource HyperlinkButtonBackgroundDisabled}" />
-                            <Setter TargetName="ContentPresenter" Property="BorderBrush" Value="{DynamicResource HyperlinkButtonBorderBrushDisabled}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
