@@ -342,6 +342,20 @@ namespace ModernWpf.Controls
             }
         }
 
+        internal static void ClosePeerSubMenusOnPointerEntered(DependencyObject element, AppBarButton menuToLeaveOpen)
+        {
+            if (FindParentCommandBarForElement(element) is { } commandBar)
+            {
+                commandBar.CloseSubMenus(menuToLeaveOpen);
+                return;
+            }
+
+            if (SharedHelpers.GetAncestorOfType<CommandBarFlyoutCommandBar>(element) is { } flyoutCommandBar)
+            {
+                flyoutCommandBar.CloseSubMenus(menuToLeaveOpen);
+            }
+        }
+
         internal static CommandBar FindParentCommandBarForElement(DependencyObject element)
         {
             if (GetParentCommandBar(element) is { } ownerCommandBar &&
@@ -374,6 +388,23 @@ namespace ModernWpf.Controls
             }
 
             return null;
+        }
+
+        private void CloseSubMenus(AppBarButton menuToLeaveOpen)
+        {
+            CloseSubMenus(PrimaryCommands, menuToLeaveOpen);
+            CloseSubMenus(SecondaryCommands, menuToLeaveOpen);
+        }
+
+        private static void CloseSubMenus(IEnumerable<ICommandBarElement> commands, AppBarButton menuToLeaveOpen)
+        {
+            foreach (var command in commands)
+            {
+                if (command is AppBarButton appBarButton && !ReferenceEquals(appBarButton, menuToLeaveOpen))
+                {
+                    appBarButton.CloseSubMenuTree();
+                }
+            }
         }
 
         private void SetParentCommandBarForCommands(IEnumerable<DependencyObject> elements)

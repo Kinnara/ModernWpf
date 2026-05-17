@@ -319,7 +319,7 @@ public class CommandBarApiTests
             Assert.IsTrue(flyout.IsOpen);
             Assert.AreSame(button, flyout.Target);
             Assert.AreEqual(FlyoutPlacementMode.RightEdgeAlignedTop, flyout.GetEffectivePlacement());
-            Assert.AreEqual(new Rect(button.ActualWidth, 0, 0, 0), flyout.InternalPopup.PlacementRectangle);
+            AssertOverflowFlyoutPlacementRectangle(button, flyout);
 
             var peer = FrameworkElementAutomationPeer.CreatePeerForElement(button);
             var provider = (IExpandCollapseProvider)peer.GetPattern(PatternInterface.ExpandCollapse);
@@ -335,9 +335,90 @@ public class CommandBarApiTests
 
             Assert.IsTrue(flyout.IsOpen);
             Assert.AreEqual(FlyoutPlacementMode.RightEdgeAlignedTop, flyout.GetEffectivePlacement());
-            Assert.AreEqual(new Rect(button.ActualWidth, 0, 0, 0), flyout.InternalPopup.PlacementRectangle);
+            AssertOverflowFlyoutPlacementRectangle(button, flyout);
 
             flyout.Hide();
+        });
+    }
+
+    [TestMethod]
+    public void AppBarOverflowPointerEnterClosesPeerSubMenusLikeWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var firstFlyout = new Flyout
+            {
+                Content = new Border
+                {
+                    Width = 24,
+                    Height = 24
+                }
+            };
+            var secondFlyout = new Flyout
+            {
+                Content = new Border
+                {
+                    Width = 24,
+                    Height = 24
+                }
+            };
+            var firstButton = new TestAppBarButton
+            {
+                Label = "First",
+                Flyout = firstFlyout
+            };
+            var secondButton = new TestAppBarButton
+            {
+                Label = "Second",
+                Flyout = secondFlyout
+            };
+            var toggleButton = new TestAppBarToggleButton
+            {
+                Label = "Toggle"
+            };
+            var commandBar = new ModernWpf.Controls.CommandBar();
+            commandBar.SecondaryCommands.Add(firstButton);
+            commandBar.SecondaryCommands.Add(secondButton);
+            commandBar.SecondaryCommands.Add(toggleButton);
+
+            using var host = new TestWindowHost(commandBar, width: 320, height: 160);
+            host.UpdateLayout();
+
+            AppBarElementProperties.SetUseOverflowStyle(firstButton, true);
+            AppBarElementProperties.SetUseOverflowStyle(secondButton, true);
+            AppBarElementProperties.SetUseOverflowStyle(toggleButton, true);
+
+            firstButton.InvokeClick();
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            Assert.IsTrue(firstFlyout.IsOpen);
+
+            secondButton.InvokeMouseEnter(CreateMouseEnterArgs(secondButton));
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            Assert.IsFalse(firstFlyout.IsOpen);
+
+            secondButton.InvokeClick();
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            Assert.IsTrue(secondFlyout.IsOpen);
+
+            secondButton.InvokeMouseEnter(CreateMouseEnterArgs(secondButton));
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            Assert.IsTrue(secondFlyout.IsOpen);
+
+            toggleButton.InvokeMouseEnter(CreateMouseEnterArgs(toggleButton));
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            Assert.IsFalse(secondFlyout.IsOpen);
         });
     }
 
@@ -1288,6 +1369,34 @@ public class CommandBarApiTests
         };
     }
 
+    private static MouseEventArgs CreateMouseEnterArgs(UIElement source)
+    {
+        return new MouseEventArgs(Mouse.PrimaryDevice, Environment.TickCount)
+        {
+            RoutedEvent = UIElement.MouseEnterEvent,
+            Source = source
+        };
+    }
+
+    private static void AssertOverflowFlyoutPlacementRectangle(AppBarButton button, Flyout flyout)
+    {
+        var placementRectangle = flyout.InternalPopup.PlacementRectangle;
+
+        bool hasTargetPointRect =
+            Math.Abs(placementRectangle.X - button.ActualWidth) <= 0.1 &&
+            placementRectangle.Width == 0 &&
+            placementRectangle.Height == 0;
+        bool hasExclusionRect =
+            Math.Abs(placementRectangle.Right - button.ActualWidth) <= 0.1 &&
+            placementRectangle.Left <= 0.1 &&
+            placementRectangle.Top <= 0 &&
+            placementRectangle.Bottom >= button.ActualHeight;
+
+        Assert.IsTrue(
+            hasTargetPointRect || hasExclusionRect,
+            $"Expected an overflow target-point or exclusion rectangle for width {button.ActualWidth}; actual {placementRectangle}.");
+    }
+
     private static T FindTemplateChild<T>(Control control, string name)
         where T : DependencyObject
     {
@@ -1459,6 +1568,11 @@ public class CommandBarApiTests
             OnMouseLeftButtonDown(e);
         }
 
+        public void InvokeMouseEnter(MouseEventArgs e)
+        {
+            OnMouseEnter(e);
+        }
+
         public void InvokeClick()
         {
             OnClick();
@@ -1470,6 +1584,11 @@ public class CommandBarApiTests
         public void InvokeMouseLeftButtonDown(MouseButtonEventArgs e)
         {
             OnMouseLeftButtonDown(e);
+        }
+
+        public void InvokeMouseEnter(MouseEventArgs e)
+        {
+            OnMouseEnter(e);
         }
 
         public void InvokeClick()

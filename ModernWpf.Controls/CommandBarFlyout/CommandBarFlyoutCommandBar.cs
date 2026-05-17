@@ -585,6 +585,23 @@ namespace ModernWpf.Controls.Primitives
             }
         }
 
+        internal void CloseSubMenus(AppBarButton menuToLeaveOpen)
+        {
+            CloseSubMenus(PrimaryCommands, menuToLeaveOpen);
+            CloseSubMenus(SecondaryCommands, menuToLeaveOpen);
+        }
+
+        private static void CloseSubMenus(IEnumerable<ICommandBarElement> commands, AppBarButton menuToLeaveOpen)
+        {
+            foreach (var command in commands)
+            {
+                if (command is AppBarButton appBarButton && !ReferenceEquals(appBarButton, menuToLeaveOpen))
+                {
+                    appBarButton.CloseSubMenuTree();
+                }
+            }
+        }
+
         internal bool HasOpenAnimation()
         {
             return m_openingStoryboard != null && SharedHelpers.IsAnimationsEnabled;

@@ -315,6 +315,16 @@ namespace ModernWpf.Controls
             }
         }
 
+        protected override void OnMouseEnter(MouseEventArgs e)
+        {
+            base.OnMouseEnter(e);
+
+            if (IsInOverflow)
+            {
+                CommandBar.ClosePeerSubMenusOnPointerEntered(this, null);
+            }
+        }
+
         protected override void OnPreviewGotKeyboardFocus(KeyboardFocusChangedEventArgs e)
         {
             if (m_isPointerFocusSuppressed && ReferenceEquals(e.NewFocus, this))

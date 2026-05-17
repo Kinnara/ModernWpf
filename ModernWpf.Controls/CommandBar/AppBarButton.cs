@@ -369,6 +369,16 @@ namespace ModernWpf.Controls
             }
         }
 
+        protected override void OnMouseEnter(MouseEventArgs e)
+        {
+            base.OnMouseEnter(e);
+
+            if (IsInOverflow)
+            {
+                CommandBar.ClosePeerSubMenusOnPointerEntered(this, this);
+            }
+        }
+
         protected override void OnPreviewGotKeyboardFocus(KeyboardFocusChangedEventArgs e)
         {
             if (m_isPointerFocusSuppressed && ReferenceEquals(e.NewFocus, this))
@@ -432,6 +442,14 @@ namespace ModernWpf.Controls
                 ExclusionRect = new Rect(overlap, 0, Math.Max(0, position.X - overlap), itemHeight),
                 Position = position
             };
+        }
+
+        internal void CloseSubMenuTree()
+        {
+            if (Flyout?.IsOpen == true)
+            {
+                Flyout.Hide();
+            }
         }
 
         protected override void OnVisualParentChanged(DependencyObject oldParent)
