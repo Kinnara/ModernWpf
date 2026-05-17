@@ -10,6 +10,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls;
+using ModernWpf.Controls.Primitives;
 using ModernWpf.WinUI.TestInfra;
 
 namespace ModernWpf.WinUI.Tests.SplitButton;
@@ -40,6 +41,7 @@ public class SplitButtonInteractionTests
             Assert.AreEqual(1, flyout.OpenedCount);
             Assert.AreEqual(0, flyout.ClosedCount);
             Assert.IsTrue(flyout.Flyout.IsOpen);
+            Assert.AreEqual(FlyoutPlacementMode.BottomEdgeAlignedLeft, flyout.Flyout.GetEffectivePlacement());
 
             GetExpandCollapseProvider(splitButton).Collapse();
             WpfTestHost.DoEvents();
@@ -124,6 +126,8 @@ public class SplitButtonInteractionTests
             var splitButton = CreateSplitButton();
             var flyout = CreateCountingFlyout("TestFlyout");
             splitButton.Flyout = flyout.Flyout;
+            var command = new TestCommand();
+            splitButton.Command = command;
 
             var clickCount = 0;
             splitButton.Click += (sender, args) => clickCount++;
@@ -134,11 +138,13 @@ public class SplitButtonInteractionTests
             RaiseKey(splitButton, Keyboard.KeyDownEvent, Key.Space);
             RaiseKey(splitButton, Keyboard.KeyUpEvent, Key.Space);
             Assert.AreEqual(1, clickCount);
+            Assert.AreEqual(1, command.ExecuteCount);
 
             RaiseKey(splitButton, Keyboard.KeyUpEvent, Key.F4);
             WpfTestHost.DoEvents();
             Assert.AreEqual(1, flyout.OpenedCount);
             Assert.IsTrue(flyout.Flyout.IsOpen);
+            Assert.AreEqual(FlyoutPlacementMode.BottomEdgeAlignedLeft, flyout.Flyout.GetEffectivePlacement());
 
             GetExpandCollapseProvider(splitButton).Collapse();
             WpfTestHost.DoEvents();

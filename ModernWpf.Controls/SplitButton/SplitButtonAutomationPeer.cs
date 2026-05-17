@@ -96,7 +96,7 @@ namespace ModernWpf.Automation.Peers
             var splitButton = GetImpl();
             if (splitButton != null)
             {
-                splitButton.OnClickPrimary(null, null);
+                splitButton.Invoke();
             }
         }
     }

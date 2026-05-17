@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -40,7 +41,7 @@ public class SplitButtonApiTests
             Assert.AreEqual(VerticalAlignment.Center, splitButton.VerticalAlignment);
             Assert.AreEqual(HorizontalAlignment.Center, splitButton.HorizontalContentAlignment);
             Assert.AreEqual(VerticalAlignment.Center, splitButton.VerticalContentAlignment);
-            Assert.AreEqual(splitButton.TryFindResource("ButtonPadding"), splitButton.Padding);
+            Assert.AreEqual(new Thickness(11, 6, 11, 7), splitButton.Padding);
             Assert.AreEqual(splitButton.TryFindResource("ControlCornerRadius"), splitButton.CornerRadius);
             Assert.IsTrue(splitButton.UseSystemFocusVisuals);
             Assert.AreEqual(new Thickness(-1), splitButton.FocusVisualMargin);
@@ -49,6 +50,9 @@ public class SplitButtonApiTests
             var secondaryButton = FindTemplatePart<System.Windows.Controls.Button>(splitButton, "SecondaryButton");
             var primaryColumn = FindTemplatePart<System.Windows.Controls.ColumnDefinition>(splitButton, "PrimaryButtonColumn");
             var secondaryColumn = FindTemplatePart<System.Windows.Controls.ColumnDefinition>(splitButton, "SecondaryButtonColumn");
+            var primaryBackground = FindTemplatePart<Grid>(splitButton, "PrimaryBackgroundGrid");
+            var primaryButtonBorder = FindTemplatePart<GridEx>(splitButton, "PrimaryButtonBorder");
+            var secondaryButtonBorder = FindTemplatePart<GridEx>(splitButton, "SecondaryButtonBorder");
             var rootGrid = VisualTreeTestHelper.FindDescendant<GridEx>(splitButton)
                 ?? throw new AssertFailedException("Expected SplitButton template root to use GridEx chrome.");
 
@@ -59,6 +63,12 @@ public class SplitButtonApiTests
             Assert.AreEqual(35d, primaryColumn.MinWidth);
             Assert.AreEqual(new GridLength(35d), secondaryColumn.Width);
             Assert.AreEqual(splitButton.CornerRadius, rootGrid.CornerRadius);
+            Assert.AreEqual(new Thickness(1, 1, 0, 1), primaryButtonBorder.BorderThickness);
+            Assert.AreEqual(new CornerRadius(4, 0, 0, 4), primaryButtonBorder.CornerRadius);
+            Assert.AreEqual(new Thickness(0, 1, 1, 1), secondaryButtonBorder.BorderThickness);
+            Assert.AreEqual(new CornerRadius(0, 4, 4, 0), secondaryButtonBorder.CornerRadius);
+            Assert.AreEqual(2, Grid.GetColumnSpan(primaryBackground));
+            Assert.IsNull(splitButton.Template?.FindName("Border", splitButton));
 
             foreach (var themeName in new[] { "Light", "Dark" })
             {
@@ -82,7 +92,7 @@ public class SplitButtonApiTests
                 AssertThemeResourceReference(themeName, "SplitButtonForegroundSecondaryPressed", "TextFillColorTertiaryBrush");
                 AssertThemeResourceReference(themeName, "SplitButtonBorderBrush", "ControlElevationBorderBrush");
                 AssertThemeResourceReference(themeName, "SplitButtonBorderBrushPointerOver", "ControlElevationBorderBrush");
-                AssertThemeResourceReference(themeName, "SplitButtonBorderBrushPressed", "ControlElevationBorderBrush");
+                AssertThemeResourceReference(themeName, "SplitButtonBorderBrushPressed", "ControlStrokeColorDefaultBrush");
                 AssertThemeResourceReference(themeName, "SplitButtonBorderBrushDisabled", "ControlStrokeColorDefaultBrush");
                 AssertThemeResourceReference(themeName, "SplitButtonBorderBrushDivider", "ControlStrokeColorDefaultBrush");
                 AssertThemeResourceReference(themeName, "SplitButtonBorderBrushChecked", "AccentControlElevationBorderBrush");
@@ -114,7 +124,7 @@ public class SplitButtonApiTests
             AssertThemeResourceReference("HighContrast", "SplitButtonForegroundSecondaryPressed", "SystemColorHighlightColorBrush");
             AssertThemeResourceReference("HighContrast", "SplitButtonBorderBrush", "SystemControlForegroundTransparentBrush");
             AssertThemeResourceReference("HighContrast", "SplitButtonBorderBrushPointerOver", "SystemColorHighlightColorBrush");
-            AssertThemeResourceReference("HighContrast", "SplitButtonBorderBrushPressed", "SystemColorButtonTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "SplitButtonBorderBrushPressed", "SystemColorHighlightTextColorBrush");
             AssertThemeResourceReference("HighContrast", "SplitButtonBorderBrushDisabled", "SystemControlDisabledTransparentBrush");
             AssertThemeResourceReference("HighContrast", "SplitButtonBorderBrushDivider", "SystemControlDisabledBaseMediumLowBrush");
             AssertThemeResourceReference("HighContrast", "SplitButtonBorderBrushChecked", "SystemColorButtonTextColorBrush");
@@ -221,20 +231,30 @@ public class SplitButtonApiTests
 
             var root = FindTemplatePart<GridEx>(splitButton, "RootGrid");
 
-            AssertStateSetter(root, "CommonStates", "Disabled", "Border.BorderBrush");
+            AssertStateSetter(root, "CommonStates", "Disabled", "PrimaryButtonBorder.BorderBrush");
+            AssertStateSetter(root, "CommonStates", "Disabled", "SecondaryButtonBorder.BorderBrush");
             AssertStateSetter(root, "CommonStates", "FlyoutOpen", "PrimaryBackgroundGrid.Background");
+            AssertStateSetter(root, "CommonStates", "FlyoutOpen", "SecondaryButtonBorder.BorderBrush");
             AssertStateSetter(root, "CommonStates", "TouchPressed", "SecondaryButton.Foreground");
+            AssertStateSetter(root, "CommonStates", "TouchPressed", "PrimaryButtonBorder.BorderBrush");
             AssertStateSetter(root, "CommonStates", "PrimaryPointerOver", "PrimaryButton.Foreground");
             AssertStateSetter(root, "CommonStates", "PrimaryPressed", "PrimaryBackgroundGrid.Background");
-            AssertStateSetter(root, "CommonStates", "SecondaryPointerOver", "DividerBackgroundGrid.Background");
+            AssertStateSetter(root, "CommonStates", "PrimaryPressed", "PrimaryButtonBorder.BorderBrush");
+            AssertStateSetter(root, "CommonStates", "SecondaryPointerOver", "SecondaryButton.BorderBrush");
             AssertStateSetter(root, "CommonStates", "SecondaryPressed", "SecondaryButton.Foreground");
+            AssertStateSetter(root, "CommonStates", "SecondaryPressed", "SecondaryButtonBorder.BorderBrush");
             AssertStateSetter(root, "CommonStates", "Checked", "DividerBackgroundGrid.Background");
-            AssertStateSetter(root, "CommonStates", "CheckedFlyoutOpen", null, "Foreground");
-            AssertStateSetter(root, "CommonStates", "CheckedTouchPressed", "Border.BorderBrush");
+            AssertStateSetter(root, "CommonStates", "Checked", "PrimaryButtonBorder.BorderBrush");
+            AssertStateSetter(root, "CommonStates", "CheckedFlyoutOpen", "SecondaryButtonBorder.BorderBrush");
+            AssertStateSetter(root, "CommonStates", "CheckedTouchPressed", "PrimaryButtonBorder.BorderBrush");
             AssertStateSetter(root, "CommonStates", "CheckedPrimaryPointerOver", "PrimaryBackgroundGrid.Background");
+            AssertStateSetter(root, "CommonStates", "CheckedPrimaryPointerOver", "SecondaryButtonBorder.BorderBrush");
             AssertStateSetter(root, "CommonStates", "CheckedPrimaryPressed", "PrimaryButton.Foreground");
+            AssertStateSetter(root, "CommonStates", "CheckedPrimaryPressed", "PrimaryButtonBorder.BorderBrush");
             AssertStateSetter(root, "CommonStates", "CheckedSecondaryPointerOver", "SecondaryButton.Foreground");
+            AssertStateSetter(root, "CommonStates", "CheckedSecondaryPointerOver", "SecondaryButtonBorder.BorderBrush");
             AssertStateSetter(root, "CommonStates", "CheckedSecondaryPressed", "SecondaryBackgroundGrid.Background");
+            AssertStateSetter(root, "CommonStates", "CheckedSecondaryPressed", "SecondaryButtonBorder.BorderBrush");
             AssertStateSetter(root, "SecondaryButtonPlacementStates", "SecondaryButtonSpan", "SecondaryButton.(Grid.Column)");
             AssertStateSetter(root, "SecondaryButtonPlacementStates", "SecondaryButtonSpan", "SecondaryButton.(Grid.ColumnSpan)");
 
