@@ -13,7 +13,7 @@
 
     <Style x:Key="DefaultDatePickerTextBoxStyle" TargetType="DatePickerTextBox">
         <Setter Property="OverridesDefaultStyle" Value="True" />
-        <Setter Property="Foreground" Value="{DynamicResource CalendarDatePickerTextForegroundSelected}" />
+        <Setter Property="Foreground" Value="{DynamicResource CalendarDatePickerTextForeground}" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="ScrollViewer.PanningMode" Value="VerticalFirst" />
         <Setter Property="Stylus.IsFlicksEnabled" Value="False" />
@@ -94,7 +94,7 @@
 
     <Style x:Key="DefaultDatePickerStyle" TargetType="DatePicker">
         <Setter Property="OverridesDefaultStyle" Value="True" />
-        <Setter Property="Foreground" Value="{DynamicResource CalendarDatePickerForeground}" />
+        <Setter Property="Foreground" Value="{DynamicResource CalendarDatePickerTextForeground}" />
         <Setter Property="IsTodayHighlighted" Value="True" />
         <Setter Property="SelectedDateFormat" Value="Short" />
         <Setter Property="CalendarStyle" Value="{DynamicResource DatePickerCalendarStyle}" />
@@ -123,11 +123,45 @@
                             <root:VisualStateManagerEx />
                         </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="HasDateStates">
-                                <VisualState x:Name="HasDate" />
-                                <root:VisualStateEx x:Name="HasNoDate">
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <root:VisualStateEx x:Name="PointerOver">
                                     <root:VisualStateEx.Setters>
-                                        <root:VisualStateSetter Target="PART_Button.Foreground" Value="{DynamicResource CalendarDatePickerCalendarGlyphForeground}" />
+                                        <root:VisualStateSetter Target="Background.Background" Value="{DynamicResource CalendarDatePickerBackgroundPointerOver}" />
+                                        <root:VisualStateSetter Target="Background.BorderBrush" Value="{DynamicResource CalendarDatePickerBorderBrushPointerOver}" />
+                                        <root:VisualStateSetter Target="PART_TextBox.Foreground" Value="{DynamicResource CalendarDatePickerTextForegroundPointerOver}" />
+                                        <root:VisualStateSetter Target="PART_Button.Foreground" Value="{DynamicResource CalendarDatePickerCalendarGlyphForegroundPointerOver}" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="Pressed">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="Background.Background" Value="{DynamicResource CalendarDatePickerBackgroundPressed}" />
+                                        <root:VisualStateSetter Target="Background.BorderBrush" Value="{DynamicResource CalendarDatePickerBorderBrushPressed}" />
+                                        <root:VisualStateSetter Target="PART_TextBox.Foreground" Value="{DynamicResource CalendarDatePickerTextForegroundPressed}" />
+                                        <root:VisualStateSetter Target="PART_Button.Foreground" Value="{DynamicResource CalendarDatePickerCalendarGlyphForegroundPressed}" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="Disabled">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="Background.Background" Value="{DynamicResource CalendarDatePickerBackgroundDisabled}" />
+                                        <root:VisualStateSetter Target="Background.BorderBrush" Value="{DynamicResource CalendarDatePickerBorderBrushDisabled}" />
+                                        <root:VisualStateSetter Target="HeaderContentPresenter.Foreground" Value="{DynamicResource CalendarDatePickerHeaderForegroundDisabled}" />
+                                        <root:VisualStateSetter Target="PART_TextBox.Foreground" Value="{DynamicResource CalendarDatePickerTextForegroundDisabled}" />
+                                        <root:VisualStateSetter Target="PART_Button.Foreground" Value="{DynamicResource CalendarDatePickerCalendarGlyphForegroundDisabled}" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="FocusStates">
+                                <VisualState x:Name="Unfocused" />
+                                <VisualState x:Name="PointerFocused" />
+                                <VisualState x:Name="Focused" />
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="SelectionStates">
+                                <VisualState x:Name="Unselected" />
+                                <root:VisualStateEx x:Name="Selected">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="PART_TextBox.Foreground" Value="{DynamicResource CalendarDatePickerTextForegroundSelected}" />
+                                        <root:VisualStateSetter Target="PART_Button.Foreground" Value="{DynamicResource CalendarDatePickerTextForegroundSelected}" />
                                     </root:VisualStateEx.Setters>
                                 </root:VisualStateEx>
                             </VisualStateGroup>
@@ -161,6 +195,7 @@
                             Visibility="{TemplateBinding primitives:ControlHelper.HeaderVisibility}"
                             Content="{TemplateBinding primitives:ControlHelper.Header}"
                             ContentTemplate="{TemplateBinding primitives:ControlHelper.HeaderTemplate}"
+                            Foreground="{DynamicResource CalendarDatePickerHeaderForeground}"
                             Margin="{StaticResource CalendarDatePickerTopHeaderMargin}"
                             TextWrapping="Wrap"
                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
@@ -194,6 +229,7 @@
                                 MinHeight="{DynamicResource ComboBoxMinHeight}" />
                             <DatePickerTextBox
                                 x:Name="PART_TextBox"
+                                Foreground="{TemplateBinding Foreground}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 Padding="{DynamicResource ComboBoxEditableTextPadding}"
                                 HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
@@ -204,7 +240,7 @@
                                 x:Name="PART_Button"
                                 Focusable="False"
                                 Background="Transparent"
-                                Foreground="{TemplateBinding Foreground}"
+                                Foreground="{DynamicResource CalendarDatePickerCalendarGlyphForeground}"
                                 Width="30"
                                 Padding="0,1,1,1"
                                 HorizontalAlignment="Right"
@@ -236,67 +272,6 @@
                             Foreground="{DynamicResource SystemControlDescriptionTextForegroundBrush}"
                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                     </Grid>
-                    <ControlTemplate.Triggers>
-                        <Trigger SourceName="PART_Root" Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Background" Property="Background" Value="{DynamicResource CalendarDatePickerBackgroundPointerOver}" />
-                            <Setter TargetName="Background" Property="BorderBrush" Value="{DynamicResource CalendarDatePickerBorderBrushPointerOver}" />
-                        </Trigger>
-
-                        <!-- TextBoxFocused -->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition SourceName="PART_TextBox" Property="IsSelectionActive" Value="True" />
-                                <Condition SourceName="PART_Button" Property="IsMouseOver" Value="False" />
-                                <Condition SourceName="PART_Button" Property="IsPressed" Value="False" />
-                            </MultiTrigger.Conditions>
-                            <Setter TargetName="PART_Button" Property="Foreground" Value="{DynamicResource ComboBoxEditableDropDownGlyphForeground}" />
-                            <Setter TargetName="PART_Button" Property="Padding" Value="0,2,2,2" />
-                        </MultiTrigger>
-                        <!-- TextBoxFocusedOverlayPointerOver -->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition SourceName="PART_TextBox" Property="IsSelectionActive" Value="True" />
-                                <Condition SourceName="PART_Button" Property="IsMouseOver" Value="True" />
-                            </MultiTrigger.Conditions>
-                            <Setter TargetName="PART_Button" Property="Foreground" Value="{DynamicResource ComboBoxEditableDropDownGlyphForeground}" />
-                            <Setter TargetName="PART_Button" Property="Background" Value="{DynamicResource ComboBoxFocusedDropDownBackgroundPointerOver}" />
-                            <Setter TargetName="PART_Button" Property="Padding" Value="0,2,2,2" />
-                        </MultiTrigger>
-                        <!-- TextBoxFocusedOverlayPressed -->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition SourceName="PART_TextBox" Property="IsSelectionActive" Value="True" />
-                                <Condition SourceName="PART_Button" Property="IsPressed" Value="True" />
-                            </MultiTrigger.Conditions>
-                            <Setter TargetName="PART_Button" Property="Foreground" Value="{DynamicResource ComboBoxEditableDropDownGlyphForeground}" />
-                            <Setter TargetName="PART_Button" Property="Background" Value="{DynamicResource ComboBoxFocusedDropDownBackgroundPointerPressed}" />
-                            <Setter TargetName="PART_Button" Property="Padding" Value="0,2,2,2" />
-                        </MultiTrigger>
-                        <!-- TextBoxOverlayPointerOver -->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition SourceName="PART_TextBox" Property="IsSelectionActive" Value="False" />
-                                <Condition SourceName="PART_Button" Property="IsMouseOver" Value="True" />
-                            </MultiTrigger.Conditions>
-                            <Setter TargetName="PART_Button" Property="Background" Value="{DynamicResource ComboBoxDropDownBackgroundPointerOver}" />
-                        </MultiTrigger>
-                        <!-- TextBoxOverlayPressed -->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition SourceName="PART_TextBox" Property="IsSelectionActive" Value="False" />
-                                <Condition SourceName="PART_Button" Property="IsPressed" Value="True" />
-                            </MultiTrigger.Conditions>
-                            <Setter TargetName="PART_Button" Property="Background" Value="{DynamicResource ComboBoxDropDownBackgroundPointerPressed}" />
-                        </MultiTrigger>
-
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="Background" Property="Background" Value="{DynamicResource CalendarDatePickerBackgroundDisabled}" />
-                            <Setter TargetName="Background" Property="BorderBrush" Value="{DynamicResource CalendarDatePickerBorderBrushDisabled}" />
-                            <Setter TargetName="HeaderContentPresenter" Property="Foreground" Value="{DynamicResource CalendarDatePickerHeaderForegroundDisabled}" />
-                            <Setter TargetName="PART_TextBox" Property="Foreground" Value="{DynamicResource CalendarDatePickerTextForegroundDisabled}" />
-                            <Setter TargetName="PART_Button" Property="Foreground" Value="{DynamicResource CalendarDatePickerCalendarGlyphForegroundDisabled}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

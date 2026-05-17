@@ -7,6 +7,7 @@ using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
 using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
+using WpfDatePickerTextBox = System.Windows.Controls.Primitives.DatePickerTextBox;
 
 namespace ModernWpf.WinUI.Tests.CommonStyles;
 
@@ -14,7 +15,7 @@ namespace ModernWpf.WinUI.Tests.CommonStyles;
 public class DatePickerVisualStateTests
 {
     [TestMethod]
-    public void HasDateStatesUseVisualStateSetters()
+    public void CalendarDatePickerCommonStatesUseSourceVisualStateSetters()
     {
         WpfTestHost.Run(() =>
         {
@@ -26,17 +27,60 @@ public class DatePickerVisualStateTests
             host.UpdateLayout();
 
             var root = FindTemplatePart<FrameworkElement>(datePicker, "Root");
+            var background = FindTemplatePart<Border>(datePicker, "Background");
+            var textBox = FindTemplatePart<WpfDatePickerTextBox>(datePicker, "PART_TextBox");
             var button = FindTemplatePart<Button>(datePicker, "PART_Button");
 
-            AssertStateSetter(root, "HasDateStates", "HasNoDate", "PART_Button.Foreground");
-            Assert.AreEqual("HasNoDate", GetCurrentStateName(root, "HasDateStates"));
+            AssertStateSetter(root, "CommonStates", "PointerOver", "Background.Background");
+            AssertStateSetter(root, "CommonStates", "PointerOver", "Background.BorderBrush");
+            AssertStateSetter(root, "CommonStates", "PointerOver", "PART_TextBox.Foreground");
+            AssertStateSetter(root, "CommonStates", "PointerOver", "PART_Button.Foreground");
+            AssertStateSetter(root, "CommonStates", "Pressed", "Background.Background");
+            AssertStateSetter(root, "CommonStates", "Disabled", "HeaderContentPresenter.Foreground");
+
+            Assert.IsTrue(VisualStateManager.GoToState(datePicker, "PointerOver", false));
+            Assert.AreEqual("PointerOver", GetCurrentStateName(root, "CommonStates"));
+            Assert.AreSame(datePicker.TryFindResource("CalendarDatePickerBackgroundPointerOver"), background.Background);
+            Assert.AreSame(datePicker.TryFindResource("CalendarDatePickerBorderBrushPointerOver"), background.BorderBrush);
+            Assert.AreSame(datePicker.TryFindResource("CalendarDatePickerTextForegroundPointerOver"), textBox.Foreground);
+            Assert.AreSame(datePicker.TryFindResource("CalendarDatePickerCalendarGlyphForegroundPointerOver"), button.Foreground);
+
+            Assert.IsTrue(VisualStateManager.GoToState(datePicker, "Pressed", false));
+            Assert.AreEqual("Pressed", GetCurrentStateName(root, "CommonStates"));
+            Assert.AreSame(datePicker.TryFindResource("CalendarDatePickerBackgroundPressed"), background.Background);
+            Assert.AreSame(datePicker.TryFindResource("CalendarDatePickerBorderBrushPressed"), background.BorderBrush);
+            Assert.AreSame(datePicker.TryFindResource("CalendarDatePickerTextForegroundPressed"), textBox.Foreground);
+            Assert.AreSame(datePicker.TryFindResource("CalendarDatePickerCalendarGlyphForegroundPressed"), button.Foreground);
+        });
+    }
+
+    [TestMethod]
+    public void CalendarDatePickerSelectionStatesUseSourceVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var datePicker = new DatePicker();
+
+            using var host = new TestWindowHost(datePicker, width: 240, height: 120);
+            host.UpdateLayout();
+
+            var root = FindTemplatePart<FrameworkElement>(datePicker, "Root");
+            var textBox = FindTemplatePart<WpfDatePickerTextBox>(datePicker, "PART_TextBox");
+            var button = FindTemplatePart<Button>(datePicker, "PART_Button");
+
+            AssertStateSetter(root, "SelectionStates", "Selected", "PART_TextBox.Foreground");
+            AssertStateSetter(root, "SelectionStates", "Selected", "PART_Button.Foreground");
+            Assert.AreEqual("Unselected", GetCurrentStateName(root, "SelectionStates"));
             Assert.AreSame(datePicker.TryFindResource("CalendarDatePickerCalendarGlyphForeground"), button.Foreground);
 
             datePicker.SelectedDate = new DateTime(2026, 5, 16);
             host.UpdateLayout();
 
-            Assert.AreEqual("HasDate", GetCurrentStateName(root, "HasDateStates"));
-            Assert.AreSame(datePicker.Foreground, button.Foreground);
+            Assert.AreEqual("Selected", GetCurrentStateName(root, "SelectionStates"));
+            Assert.AreSame(datePicker.TryFindResource("CalendarDatePickerTextForegroundSelected"), textBox.Foreground);
+            Assert.AreSame(datePicker.TryFindResource("CalendarDatePickerTextForegroundSelected"), button.Foreground);
         });
     }
 

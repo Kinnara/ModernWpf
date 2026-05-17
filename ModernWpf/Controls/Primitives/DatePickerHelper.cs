@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
+using System.Windows.Input;
 
 namespace ModernWpf.Controls.Primitives
 {
@@ -37,9 +38,21 @@ namespace ModernWpf.Controls.Primitives
             {
                 datePicker.Loaded -= OnLoaded;
                 datePicker.SelectedDateChanged -= OnSelectedDateChanged;
+                datePicker.IsEnabledChanged -= OnIsEnabledChanged;
+                datePicker.MouseEnter -= OnPointerStateChanged;
+                datePicker.MouseLeave -= OnPointerStateChanged;
+                datePicker.PreviewMouseLeftButtonDown -= OnPreviewMouseLeftButtonDown;
+                datePicker.PreviewMouseLeftButtonUp -= OnPreviewMouseLeftButtonUp;
+                datePicker.LostMouseCapture -= OnLostMouseCapture;
 
                 datePicker.Loaded += OnLoaded;
                 datePicker.SelectedDateChanged += OnSelectedDateChanged;
+                datePicker.IsEnabledChanged += OnIsEnabledChanged;
+                datePicker.MouseEnter += OnPointerStateChanged;
+                datePicker.MouseLeave += OnPointerStateChanged;
+                datePicker.PreviewMouseLeftButtonDown += OnPreviewMouseLeftButtonDown;
+                datePicker.PreviewMouseLeftButtonUp += OnPreviewMouseLeftButtonUp;
+                datePicker.LostMouseCapture += OnLostMouseCapture;
 
                 if (datePicker.IsLoaded)
                 {
@@ -50,6 +63,13 @@ namespace ModernWpf.Controls.Primitives
             {
                 datePicker.Loaded -= OnLoaded;
                 datePicker.SelectedDateChanged -= OnSelectedDateChanged;
+                datePicker.IsEnabledChanged -= OnIsEnabledChanged;
+                datePicker.MouseEnter -= OnPointerStateChanged;
+                datePicker.MouseLeave -= OnPointerStateChanged;
+                datePicker.PreviewMouseLeftButtonDown -= OnPreviewMouseLeftButtonDown;
+                datePicker.PreviewMouseLeftButtonUp -= OnPreviewMouseLeftButtonUp;
+                datePicker.LostMouseCapture -= OnLostMouseCapture;
+                SetIsPressed(datePicker, false);
             }
         }
 
@@ -151,13 +171,87 @@ namespace ModernWpf.Controls.Primitives
         {
             VisualStateManager.GoToState(
                 datePicker,
-                datePicker.SelectedDate.HasValue ? "HasDate" : "HasNoDate",
+                GetCommonStateName(datePicker),
+                useTransitions);
+
+            VisualStateManager.GoToState(
+                datePicker,
+                datePicker.SelectedDate.HasValue ? "Selected" : "Unselected",
                 useTransitions);
 
             VisualStateManager.GoToState(
                 datePicker,
                 GetHeaderPlacement(datePicker) == DatePickerHeaderPlacement.Left ? "LeftHeader" : "TopHeader",
                 useTransitions);
+        }
+
+        private static string GetCommonStateName(DatePicker datePicker)
+        {
+            if (!datePicker.IsEnabled)
+            {
+                return "Disabled";
+            }
+
+            if (GetIsPressed(datePicker))
+            {
+                return "Pressed";
+            }
+
+            return datePicker.IsMouseOver ? "PointerOver" : "Normal";
+        }
+
+        private static void OnIsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            var datePicker = (DatePicker)sender;
+            if (!datePicker.IsEnabled)
+            {
+                SetIsPressed(datePicker, false);
+            }
+
+            UpdateVisualStates(datePicker, true);
+        }
+
+        private static void OnPointerStateChanged(object sender, RoutedEventArgs e)
+        {
+            UpdateVisualStates((DatePicker)sender, true);
+        }
+
+        private static void OnPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            var datePicker = (DatePicker)sender;
+            SetIsPressed(datePicker, true);
+            UpdateVisualStates(datePicker, true);
+        }
+
+        private static void OnPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            var datePicker = (DatePicker)sender;
+            SetIsPressed(datePicker, false);
+            UpdateVisualStates(datePicker, true);
+        }
+
+        private static void OnLostMouseCapture(object sender, MouseEventArgs e)
+        {
+            var datePicker = (DatePicker)sender;
+            SetIsPressed(datePicker, false);
+            UpdateVisualStates(datePicker, true);
+        }
+
+        private static readonly DependencyProperty IsPressedProperty =
+            DependencyProperty.RegisterAttached(
+                "IsPressed",
+                typeof(bool),
+                typeof(DatePickerHelper),
+                new PropertyMetadata(false));
+
+        private static bool GetIsPressed(DatePicker datePicker)
+        {
+            return (bool)datePicker.GetValue(IsPressedProperty);
+        }
+
+        private static void SetIsPressed(DatePicker datePicker, bool value)
+        {
+            datePicker.SetValue(IsPressedProperty, value);
         }
 
         private class FirstNotNullOrEmptyConverter : IMultiValueConverter
@@ -184,7 +278,13 @@ namespace ModernWpf.Controls.Primitives
 
             public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
             {
-                throw new NotImplementedException();
+                var result = new object[targetTypes.Length];
+                for (var i = 0; i < result.Length; i++)
+                {
+                    result[i] = Binding.DoNothing;
+                }
+
+                return result;
             }
         }
     }
