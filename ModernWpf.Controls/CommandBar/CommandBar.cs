@@ -100,13 +100,20 @@ namespace ModernWpf.Controls
 
         private void PrimaryCommands_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
+            if (e.OldItems != null)
+            {
+                ClearParentCommandBarForCommands(e.OldItems.OfType<DependencyObject>());
+            }
+
             if (e.NewItems != null)
             {
-                UpdateOverflowModeForPrimaryCommands(e.NewItems.OfType<DependencyObject>());
+                var newItems = e.NewItems.OfType<DependencyObject>().ToArray();
+                SetParentCommandBarForCommands(newItems);
+                UpdateOverflowModeForPrimaryCommands(newItems);
             }
-        }
 
-        private bool HasPrimaryCommands => m_toolBar != null && m_toolBar.HasPrimaryCommands;
+            UpdateVisualState();
+        }
 
         #endregion
 
@@ -116,13 +123,20 @@ namespace ModernWpf.Controls
 
         private void SecondaryCommands_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
+            if (e.OldItems != null)
+            {
+                ClearParentCommandBarForCommands(e.OldItems.OfType<DependencyObject>());
+            }
+
             if (e.NewItems != null)
             {
-                UpdateOverflowModeForSecondaryCommands(e.NewItems.OfType<DependencyObject>());
+                var newItems = e.NewItems.OfType<DependencyObject>().ToArray();
+                SetParentCommandBarForCommands(newItems);
+                UpdateOverflowModeForSecondaryCommands(newItems);
             }
-        }
 
-        private bool HasSecondaryCommands => m_toolBar != null && m_toolBar.HasOverflowItems;
+            UpdateVisualState();
+        }
 
         #endregion
 
@@ -274,11 +288,14 @@ namespace ModernWpf.Controls
             {
                 string stateName;
 
-                if (HasPrimaryCommands && HasSecondaryCommands)
+                bool hasVisiblePrimaryCommands = HasVisibleElements(PrimaryCommands);
+                bool hasVisibleSecondaryCommands = HasVisibleElements(SecondaryCommands);
+
+                if (hasVisiblePrimaryCommands && hasVisibleSecondaryCommands)
                 {
                     stateName = "BothCommands";
                 }
-                else if (HasSecondaryCommands)
+                else if (hasVisibleSecondaryCommands)
                 {
                     stateName = "SecondaryCommandsOnly";
                 }
@@ -291,6 +308,20 @@ namespace ModernWpf.Controls
             }
         }
 
+        private static bool HasVisibleElements(IEnumerable<ICommandBarElement> elements)
+        {
+            foreach (var element in elements)
+            {
+                if (element is UIElement uiElement &&
+                    uiElement.Visibility == Visibility.Visible)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         internal static void OnCommandExecutionStatic(ICommandBarElement element)
         {
             if (element is DependencyObject dependencyObject &&
@@ -300,8 +331,25 @@ namespace ModernWpf.Controls
             }
         }
 
+        internal static void OnCommandBarElementVisibilityChanged(ICommandBarElement element)
+        {
+            if (element is DependencyObject dependencyObject &&
+                FindParentCommandBarForElement(dependencyObject) is { } commandBar)
+            {
+                CommandBarToolBar.InvalidateCommandBarElementLayout(dependencyObject);
+                commandBar.m_toolBar?.InvalidateCommandBarElementLayout();
+                commandBar.UpdateVisualState();
+            }
+        }
+
         private static CommandBar FindParentCommandBarForElement(DependencyObject element)
         {
+            if (GetParentCommandBar(element) is { } ownerCommandBar &&
+                ownerCommandBar.ContainsCommandElement(element))
+            {
+                return ownerCommandBar;
+            }
+
             if (ItemsControl.ItemsControlFromItemContainer(element) is CommandBarToolBar itemToolBar &&
                 itemToolBar.TemplatedParent is CommandBar itemCommandBar)
             {
@@ -327,6 +375,48 @@ namespace ModernWpf.Controls
 
             return null;
         }
+
+        private void SetParentCommandBarForCommands(IEnumerable<DependencyObject> elements)
+        {
+            foreach (var element in elements)
+            {
+                SetParentCommandBar(element, this);
+            }
+        }
+
+        private void ClearParentCommandBarForCommands(IEnumerable<DependencyObject> elements)
+        {
+            foreach (var element in elements)
+            {
+                if (GetParentCommandBar(element) == this)
+                {
+                    element.ClearValue(ParentCommandBarProperty);
+                }
+            }
+        }
+
+        private bool ContainsCommandElement(DependencyObject element)
+        {
+            return element is ICommandBarElement commandBarElement &&
+                   (PrimaryCommands.Contains(commandBarElement) || SecondaryCommands.Contains(commandBarElement));
+        }
+
+        private static CommandBar GetParentCommandBar(DependencyObject element)
+        {
+            return (CommandBar)element.GetValue(ParentCommandBarProperty);
+        }
+
+        private static void SetParentCommandBar(DependencyObject element, CommandBar commandBar)
+        {
+            element.SetValue(ParentCommandBarProperty, commandBar);
+        }
+
+        private static readonly DependencyProperty ParentCommandBarProperty =
+            DependencyProperty.RegisterAttached(
+                "ParentCommandBar",
+                typeof(CommandBar),
+                typeof(CommandBar),
+                new PropertyMetadata(null));
 
         private CommandBarToolBar m_toolBar;
 

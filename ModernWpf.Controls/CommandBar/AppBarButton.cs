@@ -16,6 +16,9 @@ namespace ModernWpf.Controls
             DefaultStyleKeyProperty.OverrideMetadata(typeof(AppBarButton),
                 new FrameworkPropertyMetadata(typeof(AppBarButton)));
 
+            VisibilityProperty.OverrideMetadata(typeof(AppBarButton),
+                new FrameworkPropertyMetadata(Visibility.Visible, OnVisibilityChanged));
+
             IsEnabledProperty.OverrideMetadata(typeof(AppBarButton),
                 new FrameworkPropertyMetadata(OnIsEnabledChanged));
 
@@ -38,7 +41,6 @@ namespace ModernWpf.Controls
         public AppBarButton()
         {
             SetValue(TemplateSettingsPropertyKey, new AppBarButtonTemplateSettings());
-            IsVisibleChanged += OnIsVisibleChanged;
         }
 
         #region UseSystemFocusVisuals
@@ -435,9 +437,15 @@ namespace ModernWpf.Controls
             ((AppBarButton)d).UpdateKeyboardAcceleratorTextVisibility();
         }
 
-        private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private static void OnVisibilityChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((AppBarButton)d).OnVisibilityChanged();
+        }
+
+        private void OnVisibilityChanged()
         {
             UpdateApplicationViewState();
+            CommandBar.OnCommandBarElementVisibilityChanged(this);
         }
 
         private void UpdateVisualState(bool useTransitions = true)

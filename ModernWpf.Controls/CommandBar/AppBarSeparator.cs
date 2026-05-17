@@ -12,11 +12,9 @@ namespace ModernWpf.Controls
 
             FocusableProperty.OverrideMetadata(typeof(AppBarSeparator),
                 new FrameworkPropertyMetadata(false));
-        }
 
-        public AppBarSeparator()
-        {
-            IsVisibleChanged += OnIsVisibleChanged;
+            VisibilityProperty.OverrideMetadata(typeof(AppBarSeparator),
+                new FrameworkPropertyMetadata(Visibility.Visible, OnVisibilityChanged));
         }
 
         #region IsCompact
@@ -71,9 +69,15 @@ namespace ModernWpf.Controls
             UpdateVisualState(false);
         }
 
-        private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private static void OnVisibilityChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((AppBarSeparator)d).OnVisibilityChanged();
+        }
+
+        private void OnVisibilityChanged()
         {
             UpdateVisualState();
+            CommandBar.OnCommandBarElementVisibilityChanged(this);
         }
 
         private void UpdateVisualState(bool useTransitions = true)

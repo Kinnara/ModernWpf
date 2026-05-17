@@ -378,6 +378,61 @@ public class CommandBarApiTests
     }
 
     [TestMethod]
+    public void CommandBarAvailableCommandsStatesUseVisibleCommandsLikeWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var primaryButton = new AppBarButton { Label = "Copy" };
+            var secondaryButton = new AppBarToggleButton { Label = "Pin" };
+            var secondarySeparator = new AppBarSeparator();
+            var commandBar = new ModernWpf.Controls.CommandBar
+            {
+                IsDynamicOverflowEnabled = false
+            };
+            commandBar.PrimaryCommands.Add(primaryButton);
+            commandBar.SecondaryCommands.Add(secondarySeparator);
+            commandBar.SecondaryCommands.Add(secondaryButton);
+
+            using var host = new TestWindowHost(commandBar, width: 320, height: 160);
+            host.UpdateLayout();
+
+            var toolBar = FindTemplateChild<CommandBarToolBar>(commandBar, "PART_ToolBar");
+            var layoutRoot = FindTemplateChild<Grid>(toolBar, "LayoutRoot");
+
+            AssertVisualState(layoutRoot, "AvailableCommandsStates", "BothCommands");
+
+            secondaryButton.Visibility = Visibility.Collapsed;
+            host.UpdateLayout();
+
+            AssertVisualState(layoutRoot, "AvailableCommandsStates", "BothCommands");
+
+            secondarySeparator.Visibility = Visibility.Collapsed;
+            host.UpdateLayout();
+
+            AssertVisualState(layoutRoot, "AvailableCommandsStates", "PrimaryCommandsOnly");
+
+            primaryButton.Visibility = Visibility.Collapsed;
+            secondaryButton.Visibility = Visibility.Visible;
+            host.UpdateLayout();
+
+            AssertVisualState(layoutRoot, "AvailableCommandsStates", "SecondaryCommandsOnly");
+
+            secondaryButton.Visibility = Visibility.Collapsed;
+            host.UpdateLayout();
+
+            AssertVisualState(layoutRoot, "AvailableCommandsStates", "PrimaryCommandsOnly");
+
+            primaryButton.Visibility = Visibility.Visible;
+            secondarySeparator.Visibility = Visibility.Visible;
+            host.UpdateLayout();
+
+            AssertVisualState(layoutRoot, "AvailableCommandsStates", "BothCommands");
+        });
+    }
+
+    [TestMethod]
     public void AppBarToggleButtonAutomationPeerMatchesWinUISourceShape()
     {
         WpfTestHost.Run(() =>

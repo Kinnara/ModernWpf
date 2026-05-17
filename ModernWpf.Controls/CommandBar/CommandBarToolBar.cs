@@ -430,7 +430,12 @@ namespace ModernWpf.Controls.Primitives
         {
             var toolBar = ItemsControl.ItemsControlFromItemContainer(element) as CommandBarToolBar ??
                           FindAncestorCommandBarToolBar(element);
-            toolBar?.UpdateEffectiveOverflowButtonVisibility();
+            toolBar?.InvalidateCommandBarElementLayout();
+        }
+
+        internal void InvalidateCommandBarElementLayout()
+        {
+            UpdateEffectiveOverflowButtonVisibility();
         }
 
         private static CommandBarToolBar FindAncestorCommandBarToolBar(DependencyObject element)
