@@ -16,8 +16,6 @@ namespace ModernWpf.Controls.Primitives
         private const string c_popupBorderName = "PopupBorder";
         private const string c_editableTextName = "PART_EditableTextBox";
         //private const string c_editableTextBorderName = "BorderElement";
-        private const string c_backgroundName = "Background";
-        private const string c_highlightBackgroundName = "HighlightBackground";
         private const string c_toggleButtonName = "ToggleButton";
         private const string c_dropDownOverlayName = "DropDownOverlay";
         //private const string c_controlCornerRadiusKey = "ControlCornerRadius";
@@ -144,6 +142,11 @@ namespace ModernWpf.Controls.Primitives
 
         private static void UpdateCornerRadius(ComboBox comboBox, bool isDropDownOpen)
         {
+            if (!comboBox.IsEditable)
+            {
+                return;
+            }
+
             var textBoxRadius = ControlHelper.GetCornerRadius(comboBox);
             var popupRadius = (CornerRadius)ResourceLookup(comboBox, c_overlayCornerRadiusKey);
 
@@ -164,24 +167,9 @@ namespace ModernWpf.Controls.Primitives
                 popupBorder.CornerRadius = popupRadius;
             }
 
-            if (comboBox.IsEditable)
+            if (GetTemplateChild<TextBox>(c_editableTextName, comboBox) is TextBox textBox)
             {
-                if (GetTemplateChild<TextBox>(c_editableTextName, comboBox) is TextBox textBox)
-                {
-                    ControlHelper.SetCornerRadius(textBox, textBoxRadius);
-                }
-            }
-            else
-            {
-                if (GetTemplateChild<Border>(c_backgroundName, comboBox) is Border background)
-                {
-                    background.CornerRadius = textBoxRadius;
-                }
-
-                if (GetTemplateChild<Border>(c_highlightBackgroundName, comboBox) is Border highlightBackground)
-                {
-                    highlightBackground.CornerRadius = textBoxRadius;
-                }
+                ControlHelper.SetCornerRadius(textBox, textBoxRadius);
             }
         }
 

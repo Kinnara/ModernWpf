@@ -88,7 +88,7 @@ public class ComboBoxApiTests
     }
 
     [TestMethod]
-    public void VerifyComboBoxOverlayCornerRadius()
+    public void NonEditableComboBoxKeepsSourceOverlayCornerRadius()
     {
         WpfTestHost.Run(() =>
         {
@@ -103,17 +103,11 @@ public class ComboBoxApiTests
             FlushLayout(host);
 
             var background = FindTemplateChild<Border>(comboBox, "Background");
-            AssertCornerRadiusMatchesOpenDirection(
-                background.CornerRadius,
-                new CornerRadius(2, 2, 0, 0),
-                new CornerRadius(0, 0, 2, 2));
+            Assert.AreEqual(new CornerRadius(2), background.CornerRadius);
 
             var overlayCornerRadius = GetOverlayCornerRadius(comboBox);
             var popupBorder = FindTemplateChild<Border>(comboBox, "PopupBorder");
-            AssertCornerRadiusMatchesOpenDirection(
-                popupBorder.CornerRadius,
-                new CornerRadius(0, 0, overlayCornerRadius.BottomRight, overlayCornerRadius.BottomLeft),
-                new CornerRadius(overlayCornerRadius.TopRight, overlayCornerRadius.TopLeft, 0, 0));
+            Assert.AreEqual(overlayCornerRadius, popupBorder.CornerRadius);
         });
     }
 
