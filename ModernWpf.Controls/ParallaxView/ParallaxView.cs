@@ -205,12 +205,18 @@ namespace ModernWpf.Controls
 
         public void RefreshAutomaticHorizontalOffsets()
         {
-            InvalidateArrange();
+            if (HorizontalSourceOffsetKind == ParallaxSourceOffsetKind.Relative && Math.Abs(HorizontalShift) > Epsilon)
+            {
+                InvalidateArrange();
+            }
         }
 
         public void RefreshAutomaticVerticalOffsets()
         {
-            InvalidateArrange();
+            if (VerticalSourceOffsetKind == ParallaxSourceOffsetKind.Relative && Math.Abs(VerticalShift) > Epsilon)
+            {
+                InvalidateArrange();
+            }
         }
 
         protected override Size MeasureOverride(Size constraint)
@@ -242,7 +248,18 @@ namespace ModernWpf.Controls
                 child.Arrange(childRect);
             }
 
-            Clip = new RectangleGeometry(new Rect(arrangeSize));
+            if (Clip is not RectangleGeometry rectangleGeometry)
+            {
+                rectangleGeometry = new RectangleGeometry();
+                Clip = rectangleGeometry;
+            }
+
+            var clipRect = new Rect(arrangeSize);
+            if (rectangleGeometry.Rect != clipRect)
+            {
+                rectangleGeometry.Rect = clipRect;
+            }
+
             return arrangeSize;
         }
 

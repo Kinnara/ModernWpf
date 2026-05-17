@@ -109,6 +109,78 @@ public class ParallaxViewApiTests
     }
 
     [TestMethod]
+    public void ArrangeReusesSourceClipGeometry()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var child = new Border
+            {
+                Width = 40,
+                Height = 40
+            };
+            var parallaxView = new ModernWpf.Controls.ParallaxView
+            {
+                Width = 100,
+                Height = 80,
+                Child = child
+            };
+
+            using var host = new TestWindowHost(parallaxView, width: 200, height: 160);
+
+            var clip = parallaxView.Clip;
+            Assert.IsInstanceOfType(clip, typeof(RectangleGeometry));
+            Assert.AreEqual(new Rect(0, 0, 100, 80), ((RectangleGeometry)clip).Rect);
+
+            parallaxView.Width = 120;
+            parallaxView.Height = 90;
+            host.UpdateLayout();
+
+            Assert.AreSame(clip, parallaxView.Clip);
+            Assert.AreEqual(new Rect(0, 0, 120, 90), ((RectangleGeometry)parallaxView.Clip).Rect);
+        });
+    }
+
+    [TestMethod]
+    public void RefreshAutomaticOffsetsFollowSourceGuards()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var parallaxView = new CountingParallaxView
+            {
+                Width = 100,
+                Height = 80,
+                Child = new Border { Width = 40, Height = 40 },
+                HorizontalShift = 20,
+                VerticalShift = 20,
+                HorizontalSourceOffsetKind = ParallaxSourceOffsetKind.Absolute,
+                VerticalSourceOffsetKind = ParallaxSourceOffsetKind.Absolute
+            };
+
+            using var host = new TestWindowHost(parallaxView, width: 200, height: 160);
+
+            parallaxView.ArrangeCount = 0;
+            parallaxView.RefreshAutomaticHorizontalOffsets();
+            parallaxView.RefreshAutomaticVerticalOffsets();
+            host.UpdateLayout();
+            Assert.AreEqual(0, parallaxView.ArrangeCount);
+
+            parallaxView.HorizontalSourceOffsetKind = ParallaxSourceOffsetKind.Relative;
+            parallaxView.VerticalSourceOffsetKind = ParallaxSourceOffsetKind.Relative;
+            host.UpdateLayout();
+
+            parallaxView.ArrangeCount = 0;
+            parallaxView.RefreshAutomaticHorizontalOffsets();
+            host.UpdateLayout();
+            Assert.IsTrue(parallaxView.ArrangeCount > 0);
+
+            parallaxView.ArrangeCount = 0;
+            parallaxView.RefreshAutomaticVerticalOffsets();
+            host.UpdateLayout();
+            Assert.IsTrue(parallaxView.ArrangeCount > 0);
+        });
+    }
+
+    [TestMethod]
     public void ScrollViewerRelativeParallaxOffsetsChild()
     {
         WpfTestHost.Run(() =>
@@ -278,5 +350,16 @@ public class ParallaxViewApiTests
         }
 
         return Math.Min(maxRatio, shift / (startOffset - endOffset)) * (sourceOffset - endOffset);
+    }
+
+    private sealed class CountingParallaxView : ModernWpf.Controls.ParallaxView
+    {
+        public int ArrangeCount { get; set; }
+
+        protected override Size ArrangeOverride(Size arrangeSize)
+        {
+            ArrangeCount++;
+            return base.ArrangeOverride(arrangeSize);
+        }
     }
 }
