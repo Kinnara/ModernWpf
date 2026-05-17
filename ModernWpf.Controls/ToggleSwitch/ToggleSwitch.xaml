@@ -57,7 +57,13 @@
                         </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal">
+                                <ui:VisualStateEx x:Name="Normal">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="SwitchKnobOff.Fill" Value="{DynamicResource ToggleSwitchKnobFillOff}" />
+                                        <ui:VisualStateSetter Target="SwitchKnobOn.Background" Value="{DynamicResource ToggleSwitchKnobFillOn}" />
+                                        <ui:VisualStateSetter Target="SwitchKnobBounds.Fill" Value="{DynamicResource ToggleSwitchFillOn}" />
+                                        <ui:VisualStateSetter Target="SwitchKnobBounds.Stroke" Value="{DynamicResource ToggleSwitchStrokeOn}" />
+                                    </ui:VisualStateEx.Setters>
                                     <Storyboard>
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOn" Storyboard.TargetProperty="Width">
                                             <SplineDoubleKeyFrame KeyTime="{StaticResource ControlFasterAnimationDuration}" KeySpline="{StaticResource ControlFastOutSlowInKeySpline}" Value="12" />
@@ -72,7 +78,7 @@
                                             <SplineDoubleKeyFrame KeyTime="{StaticResource ControlFasterAnimationDuration}" KeySpline="{StaticResource ControlFastOutSlowInKeySpline}" Value="12" />
                                         </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>
-                                </VisualState>
+                                </ui:VisualStateEx>
                                 <ui:VisualStateEx x:Name="PointerOver">
                                     <ui:VisualStateEx.Setters>
                                         <ui:VisualStateSetter Target="SwitchKnobBounds.Fill" Value="{DynamicResource ToggleSwitchFillOnPointerOver}" />

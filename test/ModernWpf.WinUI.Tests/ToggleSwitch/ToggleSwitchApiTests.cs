@@ -66,6 +66,40 @@ public class ToggleSwitchApiTests
     }
 
     [TestMethod]
+    public void NormalStateUsesWinUIVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch();
+            using var host = new TestWindowHost(toggleSwitch, width: 260, height: 120);
+            host.UpdateLayout();
+
+            var stateGroupsRoot = FindStateGroupsRoot(toggleSwitch);
+            var normalState = FindVisualStateEx(stateGroupsRoot, "CommonStates", "Normal");
+            AssertStateSetter(normalState, "SwitchKnobOff.Fill");
+            AssertStateSetter(normalState, "SwitchKnobOn.Background");
+            AssertStateSetter(normalState, "SwitchKnobBounds.Fill");
+            AssertStateSetter(normalState, "SwitchKnobBounds.Stroke");
+
+            var switchKnobBounds = FindNamedDescendant<Rectangle>(toggleSwitch, "SwitchKnobBounds");
+            var switchKnobOff = FindNamedDescendant<Rectangle>(toggleSwitch, "SwitchKnobOff");
+            var switchKnobOn = FindNamedDescendant<Border>(toggleSwitch, "SwitchKnobOn");
+
+            Assert.IsTrue(System.Windows.VisualStateManager.GoToState(toggleSwitch, "PointerOver", false));
+            host.UpdateLayout();
+            Assert.IsTrue(System.Windows.VisualStateManager.GoToState(toggleSwitch, "Normal", false));
+            host.UpdateLayout();
+
+            AssertBrushEquals((Brush)switchKnobOff.TryFindResource("ToggleSwitchKnobFillOff"), switchKnobOff.Fill);
+            AssertBrushEquals((Brush)switchKnobOn.TryFindResource("ToggleSwitchKnobFillOn"), switchKnobOn.Background);
+            AssertBrushEquals((Brush)switchKnobBounds.TryFindResource("ToggleSwitchFillOn"), switchKnobBounds.Fill);
+            AssertBrushEquals((Brush)switchKnobBounds.TryFindResource("ToggleSwitchStrokeOn"), switchKnobBounds.Stroke);
+        });
+    }
+
+    [TestMethod]
     public void PressedStateUsesWinUIVisualStateSetters()
     {
         WpfTestHost.Run(() =>
