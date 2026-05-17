@@ -1,7 +1,9 @@
 using System;
 using System.Linq;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Automation.Peers;
+using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
@@ -755,6 +757,44 @@ public class ToggleSwitchApiTests
 
             Assert.AreEqual(expected.X, actual.X, 0.1);
             Assert.AreEqual(expected.Y, actual.Y, 0.1);
+        });
+    }
+
+    [TestMethod]
+    public void AutomationPeerMatchesWinUISourceShape()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch
+            {
+                Header = "Header",
+                OnContent = "Yes",
+                OffContent = "No"
+            };
+            using var host = new TestWindowHost(toggleSwitch, width: 260, height: 120);
+            host.UpdateLayout();
+
+            var peer = CreatePeer(toggleSwitch);
+
+            Assert.AreEqual(nameof(ModernWpf.Controls.ToggleSwitch), peer.GetClassName());
+            Assert.AreEqual(AutomationControlType.Button, peer.GetAutomationControlType());
+            Assert.AreEqual("toggle switch", peer.GetLocalizedControlType());
+            Assert.AreEqual(0, peer.GetChildren()?.Count ?? 0);
+
+            var toggleProvider = (IToggleProvider)peer.GetPattern(PatternInterface.Toggle);
+            Assert.AreEqual(ToggleState.Off, toggleProvider.ToggleState);
+
+            toggleProvider.Toggle();
+
+            Assert.IsTrue(toggleSwitch.IsOn);
+            Assert.AreEqual(ToggleState.On, toggleProvider.ToggleState);
+
+            toggleSwitch.IsEnabled = false;
+
+            Assert.ThrowsException<ElementNotEnabledException>(() => toggleProvider.Toggle());
+            Assert.IsTrue(toggleSwitch.IsOn);
         });
     }
 
