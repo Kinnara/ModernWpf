@@ -3,11 +3,11 @@
 Date: 2026-05-17
 
 This audit treats the local WinUI 3 checkout at `D:\repos\microsoft-ui-xaml`
-as the behavioral source of truth for the existing ModernWpf `ToggleSwitch`.
-It is an evidence map, not a completed source replacement. ToggleSwitch still
-counts as guessed implementation debt until the control is replaced/adapted as
-a whole-control WinUI 3 port; this note only identifies the source-aligned
-pieces, WPF substitutions, and platform gaps known so far.
+as the behavioral source of truth for the ModernWpf `ToggleSwitch` port. The
+old guessed implementation has been replaced/adapted as a whole-control WinUI 3
+port across the control implementation, automation peer, template settings,
+CommonStyles-derived template/resources, and focused WPF tests. This note maps
+the resulting source-backed implementation and the remaining WPF substitutions.
 
 ## WinUI 3 Source Inputs
 
@@ -65,11 +65,11 @@ pieces, WPF substitutions, and platform gaps known so far.
 
 ## Current Validation
 
-Run after this audit:
+Run after ToggleSwitch changes:
 
 ```powershell
 dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --filter "FullyQualifiedName~ToggleSwitchApiTests" --no-restore
 dotnet build .\ModernWpf.Controls\ModernWpf.Controls.csproj --no-restore
 ```
 
-Latest verified result on 2026-05-17: ToggleSwitch API tests passed 52/52.
+Latest verified result on 2026-05-17: ToggleSwitch API tests passed 53/53.

@@ -160,7 +160,7 @@ namespace ModernWpf.Controls
 
         private static void OnHeaderPlacementChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((ToggleSwitch)d).UpdateVisualStates();
+            ((ToggleSwitch)d).ChangeVisualState();
         }
 
         #endregion
@@ -363,21 +363,21 @@ namespace ModernWpf.Controls
         {
             if (SwitchThumb != null)
             {
-                SwitchThumb.DragStarted -= OnSwitchThumbDragStarted;
-                SwitchThumb.DragDelta -= OnSwitchThumbDragDelta;
-                SwitchThumb.DragCompleted -= OnSwitchThumbDragCompleted;
-                SwitchThumb.LostMouseCapture -= OnSwitchThumbLostMouseCapture;
-                SwitchThumb.RemoveHandler(MouseLeftButtonUpEvent, new MouseButtonEventHandler(OnSwitchThumbMouseLeftButtonUp));
+                SwitchThumb.DragStarted -= DragStartedHandler;
+                SwitchThumb.DragDelta -= DragDeltaHandler;
+                SwitchThumb.DragCompleted -= DragCompletedHandler;
+                SwitchThumb.LostMouseCapture -= PointerCaptureLostHandler;
+                SwitchThumb.RemoveHandler(MouseLeftButtonUpEvent, new MouseButtonEventHandler(TapHandler));
             }
 
             if (SwitchKnob != null)
             {
-                SwitchKnob.SizeChanged -= OnSwitchPartSizeChanged;
+                SwitchKnob.SizeChanged -= SizeChangedHandler;
             }
 
             if (SwitchKnobBounds != null)
             {
-                SwitchKnobBounds.SizeChanged -= OnSwitchPartSizeChanged;
+                SwitchKnobBounds.SizeChanged -= SizeChangedHandler;
             }
 
             base.OnApplyTemplate();
@@ -394,25 +394,25 @@ namespace ModernWpf.Controls
 
             if (SwitchThumb != null)
             {
-                SwitchThumb.DragStarted += OnSwitchThumbDragStarted;
-                SwitchThumb.DragDelta += OnSwitchThumbDragDelta;
-                SwitchThumb.DragCompleted += OnSwitchThumbDragCompleted;
-                SwitchThumb.LostMouseCapture += OnSwitchThumbLostMouseCapture;
-                SwitchThumb.AddHandler(MouseLeftButtonUpEvent, new MouseButtonEventHandler(OnSwitchThumbMouseLeftButtonUp), true);
+                SwitchThumb.DragStarted += DragStartedHandler;
+                SwitchThumb.DragDelta += DragDeltaHandler;
+                SwitchThumb.DragCompleted += DragCompletedHandler;
+                SwitchThumb.LostMouseCapture += PointerCaptureLostHandler;
+                SwitchThumb.AddHandler(MouseLeftButtonUpEvent, new MouseButtonEventHandler(TapHandler), true);
             }
 
             if (SwitchKnob != null)
             {
-                SwitchKnob.SizeChanged += OnSwitchPartSizeChanged;
+                SwitchKnob.SizeChanged += SizeChangedHandler;
             }
 
             if (SwitchKnobBounds != null)
             {
-                SwitchKnobBounds.SizeChanged += OnSwitchPartSizeChanged;
+                SwitchKnobBounds.SizeChanged += SizeChangedHandler;
             }
 
             UpdateHeaderContentPresenterVisibility();
-            UpdateVisualStates(false);
+            ChangeVisualState(false);
         }
 
         protected override AutomationPeer OnCreateAutomationPeer()
@@ -438,7 +438,7 @@ namespace ModernWpf.Controls
 
             if (!_isDragging)
             {
-                UpdateVisualStates(true);
+                ChangeVisualState(true);
             }
         }
 
@@ -454,7 +454,7 @@ namespace ModernWpf.Controls
                     _isPointerOver = false;
                 }
 
-                UpdateVisualStates();
+                ChangeVisualState();
             }
         }
 
@@ -487,7 +487,7 @@ namespace ModernWpf.Controls
             base.OnMouseEnter(e);
 
             _isPointerOver = true;
-            UpdateVisualStates(true);
+            ChangeVisualState(true);
         }
 
         protected override void OnMouseLeave(MouseEventArgs e)
@@ -495,14 +495,14 @@ namespace ModernWpf.Controls
             base.OnMouseLeave(e);
 
             _isPointerOver = false;
-            UpdateVisualStates(true);
+            ChangeVisualState(true);
         }
 
         protected override void OnLostMouseCapture(MouseEventArgs e)
         {
             base.OnLostMouseCapture(e);
 
-            OnPointerCaptureLostSubstitute();
+            OnPointerCaptureLostHandler();
         }
 
         protected override void OnManipulationStarting(ManipulationStartingEventArgs e)
@@ -523,7 +523,7 @@ namespace ModernWpf.Controls
             FocusFromPointer();
 
             GetTranslations();
-            UpdateVisualStates(true);
+            ChangeVisualState(true);
             SetTranslations();
         }
 
@@ -552,26 +552,26 @@ namespace ModernWpf.Controls
             }
         }
 
-        private void OnSwitchThumbLostMouseCapture(object sender, MouseEventArgs e)
+        private void PointerCaptureLostHandler(object sender, MouseEventArgs e)
         {
-            OnPointerCaptureLostSubstitute();
+            OnPointerCaptureLostHandler();
         }
 
-        private void OnPointerCaptureLostSubstitute()
+        private void OnPointerCaptureLostHandler()
         {
             if (!_isDragging)
             {
                 _isPointerOver = false;
             }
 
-            UpdateVisualStates(true);
+            ChangeVisualState(true);
         }
 
         protected override void OnGotFocus(RoutedEventArgs e)
         {
             base.OnGotFocus(e);
 
-            UpdateVisualStates(true);
+            ChangeVisualState(true);
         }
 
         protected override void OnLostFocus(RoutedEventArgs e)
@@ -579,7 +579,7 @@ namespace ModernWpf.Controls
             base.OnLostFocus(e);
 
             _isPointerFocused = false;
-            UpdateVisualStates(true);
+            ChangeVisualState(true);
         }
 
         private static void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -593,11 +593,11 @@ namespace ModernWpf.Controls
             else
             {
                 toggle._isPointerFocused = true;
-                toggle.UpdateVisualStates(true);
+                toggle.ChangeVisualState(true);
             }
         }
 
-        private void OnSwitchThumbDragStarted(object sender, DragStartedEventArgs e)
+        private void DragStartedHandler(object sender, DragStartedEventArgs e)
         {
             _isDragging = true;
             _wasDragged = false;
@@ -605,11 +605,11 @@ namespace ModernWpf.Controls
             FocusFromPointer();
 
             GetTranslations();
-            UpdateVisualStates(true);
+            ChangeVisualState(true);
             SetTranslations();
         }
 
-        private void OnSwitchThumbDragDelta(object sender, DragDeltaEventArgs e)
+        private void DragDeltaHandler(object sender, DragDeltaEventArgs e)
         {
             if (e.HorizontalChange != 0)
             {
@@ -618,7 +618,7 @@ namespace ModernWpf.Controls
             }
         }
 
-        private void OnSwitchThumbDragCompleted(object sender, DragCompletedEventArgs e)
+        private void DragCompletedHandler(object sender, DragCompletedEventArgs e)
         {
             if (e.Canceled)
             {
@@ -629,7 +629,7 @@ namespace ModernWpf.Controls
             MoveCompleted(_wasDragged);
         }
 
-        private void OnSwitchThumbMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void TapHandler(object sender, MouseButtonEventArgs e)
         {
             // WPF Thumb handles MouseLeftButtonUp before this instance handler runs; this is the
             // closest substitute for WinUI's Thumb.Tapped event, which runs after drag cleanup.
@@ -649,7 +649,7 @@ namespace ModernWpf.Controls
             e.Handled = true;
         }
 
-        private void OnSwitchPartSizeChanged(object sender, SizeChangedEventArgs e)
+        private void SizeChangedHandler(object sender, SizeChangedEventArgs e)
         {
             UpdateTranslationBounds();
         }
@@ -662,7 +662,7 @@ namespace ModernWpf.Controls
                 _isPointerOver = false;
             }
 
-            UpdateVisualStates();
+            ChangeVisualState();
         }
 
         private void GetTranslations()
@@ -741,7 +741,7 @@ namespace ModernWpf.Controls
             }
             else
             {
-                UpdateVisualStates(true);
+                ChangeVisualState(true);
             }
         }
 
@@ -933,7 +933,7 @@ namespace ModernWpf.Controls
             }
         }
 
-        private void UpdateVisualStates(bool useTransitions = true)
+        private void ChangeVisualState(bool useTransitions = true)
         {
             string stateName;
 
