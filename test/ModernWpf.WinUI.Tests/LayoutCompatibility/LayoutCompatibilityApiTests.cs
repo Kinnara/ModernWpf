@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Documents;
 using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -1834,41 +1835,36 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
-    public void ButtonTemplateForwardsControlHelperLayoutSurface()
+    public void ButtonTemplateUsesOfficialWpfFluentPresenterSlot()
     {
         WpfTestHost.Run(() =>
         {
-            var transitions = new ModernWpf.Media.Animation.TransitionCollection();
             var button = new Button
             {
                 Width = 100,
                 Height = 40,
-                Content = "Button"
+                Content = "Button",
+                Foreground = Brushes.Red
             };
-            ControlHelper.SetBackgroundSizing(button, BackgroundSizing.OuterBorderEdge);
-            ControlHelper.SetCharacterSpacing(button, 18);
-            ControlHelper.SetContentTransitions(button, transitions);
-            ControlHelper.SetIsTextScaleFactorEnabled(button, false);
+            ControlHelper.SetCornerRadius(button, new CornerRadius(6));
 
             using var host = new TestWindowHost(button, width: 140, height: 80);
 
-            var presenter = FindVisualChild<ContentPresenterEx>(button)
-                ?? throw new AssertFailedException("Expected Button template to use ContentPresenterEx directly.");
+            var border = FindTemplateChild<Border>(button, "ContentBorder");
+            var presenter = FindTemplateChild<ContentPresenter>(button, "ContentPresenter");
+
+            Assert.AreEqual(button.Content, presenter.Content);
+            Assert.AreSame(button.Foreground, TextElement.GetForeground(presenter));
+            Assert.AreEqual(ControlHelper.GetCornerRadius(button), border.CornerRadius);
+            Assert.IsNull(FindVisualChild<ContentPresenterEx>(button));
             Assert.IsNull(FindVisualChild<ModernContentControlEx>(button));
-            Assert.AreEqual(BackgroundSizing.OuterBorderEdge, presenter.BackgroundSizing);
-            Assert.AreEqual(18, presenter.CharacterSpacing);
-            Assert.AreSame(transitions, presenter.ContentTransitions);
-            Assert.IsFalse(presenter.IsTextScaleFactorEnabled);
-            Assert.IsNotNull(presenter.BackgroundTransition);
-            Assert.AreEqual(TimeSpan.FromMilliseconds(83), presenter.BackgroundTransition.Duration);
-            Assert.IsTrue(ButtonHelper.GetVisualStateSettersEnabled(button));
-            AssertAnimatedIconStateSetters(presenter, "ContentPresenter.(local:AnimatedIcon.State)");
-            AssertAnimatedIconStateTransitions(button, presenter);
+            Assert.IsFalse(ButtonHelper.GetVisualStateSettersEnabled(button));
+            Assert.AreEqual(3, button.Template.Triggers.OfType<Trigger>().Count());
         });
     }
 
     [TestMethod]
-    public void AccentButtonStyleUsesOuterBackgroundSizing()
+    public void AccentButtonStyleUsesOfficialWpfFluentPresenterSlot()
     {
         WpfTestHost.Run(() =>
         {
@@ -1877,17 +1873,23 @@ public class LayoutCompatibilityApiTests
                 Width = 100,
                 Height = 40,
                 Content = "Accent",
+                Foreground = Brushes.Blue,
                 Style = (Style)Application.Current.FindResource("AccentButtonStyle")
             };
+            ControlHelper.SetCornerRadius(button, new CornerRadius(8));
 
             using var host = new TestWindowHost(button, width: 140, height: 80);
 
-            var presenter = FindVisualChild<ContentPresenterEx>(button)
-                ?? throw new AssertFailedException("Expected AccentButtonStyle to use ContentPresenterEx directly.");
+            var border = FindTemplateChild<Border>(button, "ContentBorder");
+            var presenter = FindTemplateChild<ContentPresenter>(button, "ContentPresenter");
+
+            Assert.AreEqual(button.Content, presenter.Content);
+            Assert.AreSame(button.Foreground, TextElement.GetForeground(presenter));
+            Assert.AreEqual(ControlHelper.GetCornerRadius(button), border.CornerRadius);
+            Assert.IsNull(FindVisualChild<ContentPresenterEx>(button));
             Assert.IsNull(FindVisualChild<ModernContentControlEx>(button));
-            Assert.AreEqual(BackgroundSizing.OuterBorderEdge, presenter.BackgroundSizing);
-            Assert.IsTrue(ButtonHelper.GetVisualStateSettersEnabled(button));
-            Assert.IsNull(AnimatedIcon.GetState(presenter));
+            Assert.IsFalse(ButtonHelper.GetVisualStateSettersEnabled(button));
+            Assert.AreEqual(3, button.Template.Triggers.OfType<Trigger>().Count());
         });
     }
 

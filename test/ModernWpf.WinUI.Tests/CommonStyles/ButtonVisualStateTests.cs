@@ -1,8 +1,10 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Documents;
+using System.Windows.Markup;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
 using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
@@ -13,83 +15,104 @@ namespace ModernWpf.WinUI.Tests.CommonStyles;
 public class ButtonVisualStateTests
 {
     [TestMethod]
-    public void DefaultButtonStyleUsesSourceVisualStateSetters()
+    public void DefaultButtonStyleUsesOfficialWpfFluentTriggerShape()
     {
         WpfTestHost.Run(() =>
         {
             TestApplication.EnsureInitialized();
+
+            var defaultStyle = (Style)Application.Current.FindResource("DefaultButtonStyle");
+            var implicitButtonStyle = (Style)Application.Current.FindResource(typeof(Button));
+            Assert.AreEqual(typeof(ButtonBase), defaultStyle.TargetType);
+            Assert.AreEqual(typeof(Button), implicitButtonStyle.TargetType);
+            Assert.AreSame(defaultStyle, implicitButtonStyle.BasedOn);
 
             var button = CreateButton("Default");
             using var host = new TestWindowHost(button, width: 140, height: 80);
 
-            var presenter = GetContentPresenter(button);
-
-            Assert.AreEqual(0, button.Template.Triggers.Count);
-            Assert.IsTrue(ButtonHelper.GetVisualStateSettersEnabled(button));
-            AssertStateSetters(presenter, "PointerOver", includeAnimatedIconState: true);
-            AssertStateSetters(presenter, "Pressed", includeAnimatedIconState: true);
-            AssertStateSetters(presenter, "Disabled", includeAnimatedIconState: true);
-            AssertVisualStateAppliesResources(button, presenter, "PointerOver", "ButtonBackgroundPointerOver", "ButtonBorderBrushPointerOver", "ButtonForegroundPointerOver");
-            AssertVisualStateAppliesResources(button, presenter, "Pressed", "ButtonBackgroundPressed", "ButtonBorderBrushPressed", "ButtonForegroundPressed");
-            AssertVisualStateAppliesResources(button, presenter, "Disabled", "ButtonBackgroundDisabled", "ButtonBorderBrushDisabled", "ButtonForegroundDisabled");
-            AssertAnimatedIconStateTransitions(button, presenter);
+            AssertTemplateUsesOfficialWpfPresenter(button, recognizesAccessKey: true);
+            Assert.IsFalse(ButtonHelper.GetVisualStateSettersEnabled(button));
+            AssertOfficialTriggerShape(
+                button.Template,
+                "ButtonBackgroundPointerOver",
+                "ButtonBorderBrushPointerOver",
+                "ButtonForegroundPointerOver",
+                "ButtonBackgroundPressed",
+                "ButtonBorderBrushPressed",
+                "ButtonForegroundPressed",
+                "ButtonBackgroundDisabled",
+                "ButtonBorderBrushDisabled",
+                "ButtonForegroundDisabled");
+            AssertDisabledTriggerAppliesResources(button, "ButtonBackgroundDisabled", "ButtonBorderBrushDisabled", "ButtonForegroundDisabled");
         });
     }
 
     [TestMethod]
-    public void AccentButtonStyleUsesSourceVisualStateSettersWithoutAnimatedIconState()
+    public void AccentButtonStyleUsesOfficialWpfFluentTriggerShape()
     {
         WpfTestHost.Run(() =>
         {
             TestApplication.EnsureInitialized();
+
+            var style = (Style)Application.Current.FindResource("AccentButtonStyle");
+            Assert.AreEqual(typeof(Button), style.TargetType);
+            Assert.IsNull(style.BasedOn);
 
             var button = CreateButton("Accent");
-            button.Style = (Style)Application.Current.FindResource("AccentButtonStyle");
+            button.Style = style;
             using var host = new TestWindowHost(button, width: 140, height: 80);
 
-            var presenter = GetContentPresenter(button);
-
-            Assert.AreEqual(0, button.Template.Triggers.Count);
-            Assert.IsTrue(ButtonHelper.GetVisualStateSettersEnabled(button));
-            Assert.AreEqual(BackgroundSizing.OuterBorderEdge, presenter.BackgroundSizing);
-            AssertStateSetters(presenter, "PointerOver", includeAnimatedIconState: false);
-            AssertStateSetters(presenter, "Pressed", includeAnimatedIconState: false);
-            AssertStateSetters(presenter, "Disabled", includeAnimatedIconState: false);
-            AssertVisualStateAppliesResources(button, presenter, "PointerOver", "AccentButtonBackgroundPointerOver", "AccentButtonBorderBrushPointerOver", "AccentButtonForegroundPointerOver");
-            AssertVisualStateAppliesResources(button, presenter, "Pressed", "AccentButtonBackgroundPressed", "AccentButtonBorderBrushPressed", "AccentButtonForegroundPressed");
-            AssertVisualStateAppliesResources(button, presenter, "Disabled", "AccentButtonBackgroundDisabled", "AccentButtonBorderBrushDisabled", "AccentButtonForegroundDisabled");
-            Assert.IsNull(AnimatedIcon.GetState(presenter));
+            AssertTemplateUsesOfficialWpfPresenter(button, recognizesAccessKey: false);
+            Assert.IsFalse(ButtonHelper.GetVisualStateSettersEnabled(button));
+            AssertOfficialTriggerShape(
+                button.Template,
+                "AccentButtonBackgroundPointerOver",
+                "AccentButtonBorderBrushPointerOver",
+                "AccentButtonForegroundPointerOver",
+                "AccentButtonBackgroundPressed",
+                "AccentButtonBorderBrushPressed",
+                "AccentButtonForegroundPressed",
+                "AccentButtonBackgroundDisabled",
+                "AccentButtonBorderBrushDisabled",
+                "AccentButtonForegroundDisabled");
+            AssertDisabledTriggerAppliesResources(button, "AccentButtonBackgroundDisabled", "AccentButtonBorderBrushDisabled", "AccentButtonForegroundDisabled");
         });
     }
 
     [TestMethod]
-    public void SubtleButtonStyleIsSourceBacked()
+    public void SubtleButtonStyleUsesOfficialWpfFluentTriggerShape()
     {
         WpfTestHost.Run(() =>
         {
             TestApplication.EnsureInitialized();
 
+            var style = (Style)Application.Current.FindResource("SubtleButtonStyle");
+            Assert.AreEqual(typeof(Button), style.TargetType);
+            Assert.IsNull(style.BasedOn);
+
             var button = CreateButton("Subtle");
-            button.Style = (Style)Application.Current.FindResource("SubtleButtonStyle");
+            button.Style = style;
             using var host = new TestWindowHost(button, width: 140, height: 80);
 
-            var presenter = GetContentPresenter(button);
-
-            Assert.AreEqual(0, button.Template.Triggers.Count);
-            Assert.IsTrue(ButtonHelper.GetVisualStateSettersEnabled(button));
-            Assert.AreEqual(BackgroundSizing.InnerBorderEdge, presenter.BackgroundSizing);
-            AssertStateSetters(presenter, "PointerOver", includeAnimatedIconState: true);
-            AssertStateSetters(presenter, "Pressed", includeAnimatedIconState: true);
-            AssertStateSetters(presenter, "Disabled", includeAnimatedIconState: true);
-            AssertVisualStateAppliesResources(button, presenter, "PointerOver", "SubtleButtonBackgroundPointerOver", "SubtleButtonBorderBrushPointerOver", "SubtleButtonForegroundPointerOver");
-            AssertVisualStateAppliesResources(button, presenter, "Pressed", "SubtleButtonBackgroundPressed", "SubtleButtonBorderBrushPressed", "SubtleButtonForegroundPressed");
-            AssertVisualStateAppliesResources(button, presenter, "Disabled", "SubtleButtonBackgroundDisabled", "SubtleButtonBorderBrushDisabled", "SubtleButtonForegroundDisabled");
-            AssertAnimatedIconStateTransitions(button, presenter);
+            AssertTemplateUsesOfficialWpfPresenter(button, recognizesAccessKey: true);
+            Assert.IsFalse(ButtonHelper.GetVisualStateSettersEnabled(button));
+            AssertOfficialTriggerShape(
+                button.Template,
+                "SubtleButtonBackgroundPointerOver",
+                "SubtleButtonBorderBrushPointerOver",
+                "SubtleButtonForegroundPointerOver",
+                "SubtleButtonBackgroundPressed",
+                "SubtleButtonBorderBrushPressed",
+                "SubtleButtonForegroundPressed",
+                "SubtleButtonBackgroundDisabled",
+                "SubtleButtonBorderBrushDisabled",
+                "SubtleButtonForegroundDisabled");
+            AssertDisabledTriggerAppliesResources(button, "SubtleButtonBackgroundDisabled", "SubtleButtonBorderBrushDisabled", "SubtleButtonForegroundDisabled");
         });
     }
 
     [TestMethod]
-    public void SubtleButtonThemeResourcesMatchWinUISource()
+    public void SubtleButtonThemeResourcesRemainWinUISourceAliases()
     {
         WpfTestHost.Run(() =>
         {
@@ -147,80 +170,86 @@ public class ButtonVisualStateTests
         };
     }
 
-    private static ContentPresenterEx GetContentPresenter(Button button)
+    private static void AssertTemplateUsesOfficialWpfPresenter(Button button, bool recognizesAccessKey)
     {
         button.ApplyTemplate();
-        return button.Template.FindName("ContentPresenter", button) as ContentPresenterEx
-            ?? throw new AssertFailedException("Expected Button template to use ContentPresenterEx directly.");
+
+        var contentBorder = GetTemplateChild<Border>(button, "ContentBorder");
+        var contentPresenter = GetTemplateChild<ContentPresenter>(button, "ContentPresenter");
+
+        Assert.AreEqual(button.Content, contentPresenter.Content);
+        Assert.AreEqual(recognizesAccessKey, contentPresenter.RecognizesAccessKey);
+        Assert.AreSame(button.Foreground, TextElement.GetForeground(contentPresenter));
+        Assert.AreEqual(ControlHelper.GetCornerRadius(button), contentBorder.CornerRadius);
+        Assert.AreEqual(0, VisualStateManager.GetVisualStateGroups(contentBorder).Count);
     }
 
-    private static void AssertStateSetters(
-        FrameworkElement stateGroupsRoot,
-        string stateName,
-        bool includeAnimatedIconState)
+    private static void AssertOfficialTriggerShape(
+        ControlTemplate template,
+        string pointerOverBackground,
+        string pointerOverBorderBrush,
+        string pointerOverForeground,
+        string pressedBackground,
+        string pressedBorderBrush,
+        string pressedForeground,
+        string disabledBackground,
+        string disabledBorderBrush,
+        string disabledForeground)
     {
-        var stateEx = GetCommonState(stateGroupsRoot, stateName);
-        AssertStateSetter(stateEx, "ContentPresenter.Background");
-        AssertStateSetter(stateEx, "ContentPresenter.BorderBrush");
-        AssertStateSetter(stateEx, "ContentPresenter.Foreground");
+        var triggers = template.Triggers.OfType<Trigger>().ToArray();
+        Assert.AreEqual(3, triggers.Length);
 
-        var animatedIconSetter = stateEx.Setters.SingleOrDefault(setter => setter.Target == "ContentPresenter.(local:AnimatedIcon.State)");
-        if (includeAnimatedIconState)
-        {
-            Assert.IsNotNull(animatedIconSetter, $"CommonStates.{stateName} should set AnimatedIcon.State.");
-        }
-        else
-        {
-            Assert.IsNull(animatedIconSetter, $"CommonStates.{stateName} should not set AnimatedIcon.State.");
-        }
+        AssertTrigger(triggers, "IsMouseOver", true, pointerOverBackground, pointerOverBorderBrush, pointerOverForeground);
+        AssertTrigger(triggers, "IsPressed", true, pressedBackground, pressedBorderBrush, pressedForeground);
+        AssertTrigger(triggers, "IsEnabled", false, disabledBackground, disabledBorderBrush, disabledForeground);
     }
 
-    private static void AssertStateSetter(VisualStateEx stateEx, string target)
-    {
-        Assert.IsTrue(
-            stateEx.Setters.Any(item => item.Target == target),
-            $"{stateEx.Name} should set {target}.");
-    }
-
-    private static VisualStateEx GetCommonState(FrameworkElement stateGroupsRoot, string stateName)
-    {
-        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
-            .OfType<VisualStateGroup>()
-            .Single(item => item.Name == "CommonStates");
-        var state = group.States
-            .Cast<VisualState>()
-            .Single(item => item.Name == stateName);
-
-        Assert.IsInstanceOfType(state, typeof(VisualStateEx));
-        return (VisualStateEx)state;
-    }
-
-    private static void AssertVisualStateAppliesResources(
-        Button button,
-        ContentPresenterEx presenter,
-        string stateName,
+    private static void AssertTrigger(
+        Trigger[] triggers,
+        string propertyName,
+        object value,
         string backgroundKey,
         string borderBrushKey,
         string foregroundKey)
     {
-        Assert.IsTrue(VisualStateManager.GoToState(button, stateName, false));
-        Assert.AreSame(presenter.TryFindResource(backgroundKey), presenter.Background);
-        Assert.AreSame(presenter.TryFindResource(borderBrushKey), presenter.BorderBrush);
-        Assert.AreSame(presenter.TryFindResource(foregroundKey), presenter.Foreground);
+        var trigger = triggers.Single(item => item.Property.Name == propertyName && Equals(item.Value, value));
+        var setters = trigger.Setters.OfType<Setter>().ToArray();
+
+        Assert.AreEqual(3, setters.Length);
+        AssertSetter(setters, "ContentBorder", "Background", backgroundKey);
+        AssertSetter(setters, "ContentBorder", "BorderBrush", borderBrushKey);
+        AssertSetter(setters, "ContentPresenter", "Foreground", foregroundKey);
     }
 
-    private static void AssertAnimatedIconStateTransitions(Button button, DependencyObject stateTarget)
+    private static void AssertSetter(Setter[] setters, string targetName, string propertyName, string resourceKey)
     {
-        Assert.AreEqual("Normal", AnimatedIcon.GetState(stateTarget));
+        var setter = setters.Single(item =>
+            item.TargetName == targetName &&
+            item.Property.Name == propertyName);
 
-        Assert.IsTrue(VisualStateManager.GoToState(button, "PointerOver", false));
-        Assert.AreEqual("PointerOver", AnimatedIcon.GetState(stateTarget));
+        Assert.IsInstanceOfType(setter.Value, typeof(DynamicResourceExtension));
+        var resource = (DynamicResourceExtension)setter.Value;
+        Assert.AreEqual(resourceKey, resource.ResourceKey);
+    }
 
-        Assert.IsTrue(VisualStateManager.GoToState(button, "Pressed", false));
-        Assert.AreEqual("Pressed", AnimatedIcon.GetState(stateTarget));
+    private static void AssertDisabledTriggerAppliesResources(Button button, string backgroundKey, string borderBrushKey, string foregroundKey)
+    {
+        var contentBorder = GetTemplateChild<Border>(button, "ContentBorder");
+        var contentPresenter = GetTemplateChild<ContentPresenter>(button, "ContentPresenter");
 
-        Assert.IsTrue(VisualStateManager.GoToState(button, "Disabled", false));
-        Assert.AreEqual("Normal", AnimatedIcon.GetState(stateTarget));
+        button.IsEnabled = false;
+        button.UpdateLayout();
+
+        Assert.AreSame(contentBorder.TryFindResource(backgroundKey), contentBorder.Background);
+        Assert.AreSame(contentBorder.TryFindResource(borderBrushKey), contentBorder.BorderBrush);
+        Assert.AreSame(contentPresenter.TryFindResource(foregroundKey), TextElement.GetForeground(contentPresenter));
+    }
+
+    private static T GetTemplateChild<T>(Control control, string name)
+        where T : DependencyObject
+    {
+        return control.Template.FindName(name, control) as T
+            ?? throw new AssertFailedException($"Expected {control.GetType().Name} template child '{name}' to be a {typeof(T).Name}.");
     }
 
     private static void AssertSubtleTheme(

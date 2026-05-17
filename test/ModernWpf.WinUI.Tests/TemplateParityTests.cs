@@ -83,7 +83,6 @@ public class TemplateParityTests
             Path.Combine("ModernWpf", "ProgressBar", "ProgressBar.xaml"),
             Path.Combine("ModernWpf", "Styles", "AutoSuggestBox.xaml"),
             Path.Combine("ModernWpf", "Styles", "Calendar.xaml"),
-            Path.Combine("ModernWpf", "Styles", "Button.xaml"),
             Path.Combine("ModernWpf", "Styles", "CheckBox.xaml"),
             Path.Combine("ModernWpf", "Styles", "ComboBox.xaml"),
             Path.Combine("ModernWpf", "Styles", "DatePicker.xaml"),
@@ -133,6 +132,27 @@ public class TemplateParityTests
         Assert.IsFalse(
             offenders.Any(),
             "Templates with converted WinUI VisualState.Setters should keep using VisualStateEx.Setters. Offenders: " + string.Join("; ", offenders));
+    }
+
+    [TestMethod]
+    public void OfficialWpfFluentStockTemplatesDoNotUseVisualStateEx()
+    {
+        var repoRoot = FindRepoRoot();
+        var officialWpfFluentTemplateFiles = new[]
+        {
+            Path.Combine("ModernWpf", "Styles", "Button.xaml"),
+            Path.Combine("ModernWpf", "Styles", "Slider.xaml")
+        };
+
+        var offenders = officialWpfFluentTemplateFiles
+            .Select(path => Path.Combine(repoRoot, path))
+            .Where(path => File.ReadAllText(path).Contains("VisualStateEx", StringComparison.Ordinal))
+            .Select(path => Path.GetRelativePath(repoRoot, path))
+            .ToArray();
+
+        Assert.IsFalse(
+            offenders.Any(),
+            "Stock controls aligned to official WPF Fluent should use WPF template mechanisms instead of VisualStateEx. Offenders: " + string.Join("; ", offenders));
     }
 
     [TestMethod]
