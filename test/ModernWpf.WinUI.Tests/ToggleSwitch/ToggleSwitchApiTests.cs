@@ -8,6 +8,7 @@ using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
@@ -18,6 +19,7 @@ using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
 using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
+using WpfAutomation = System.Windows.Automation.Automation;
 
 namespace ModernWpf.WinUI.Tests.ToggleSwitchControl;
 
@@ -1487,6 +1489,46 @@ public class ToggleSwitchApiTests
     }
 
     [TestMethod]
+    public void ToggleStateAutomationNotificationCreatesPeerWhenListenerExistsLikeWinUI()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleSwitch = new AutomationPeerCreationProbeToggleSwitch();
+
+            Assert.IsNull(UIElementAutomationPeer.FromElement(toggleSwitch));
+
+            using var host = new TestWindowHost(new Grid(), width: 100, height: 100);
+            var rootElement = AutomationElement.FromHandle(new WindowInteropHelper(host.Window).Handle);
+            AutomationPropertyChangedEventHandler handler = (sender, args) => { };
+
+            WpfAutomation.AddAutomationPropertyChangedEventHandler(
+                rootElement,
+                TreeScope.Descendants,
+                handler,
+                TogglePatternIdentifiers.ToggleStateProperty);
+
+            try
+            {
+                WpfTestHost.DoEvents();
+                Assert.IsTrue(AutomationPeer.ListenerExists(AutomationEvents.PropertyChanged));
+
+                toggleSwitch.IsOn = true;
+
+                Assert.AreEqual(1, toggleSwitch.AutomationPeerCreations);
+                Assert.IsInstanceOfType(
+                    UIElementAutomationPeer.FromElement(toggleSwitch),
+                    typeof(ToggleSwitchAutomationPeer));
+            }
+            finally
+            {
+                WpfAutomation.RemoveAutomationPropertyChangedEventHandler(rootElement, handler);
+            }
+        });
+    }
+
+    [TestMethod]
     public void GeneratedProtectedCallbacksMatchWinUIModel()
     {
         WpfTestHost.Run(() =>
@@ -2118,6 +2160,17 @@ public class ToggleSwitchApiTests
         public override string ToString()
         {
             return "ShouldNotAppearInAutomationName";
+        }
+    }
+
+    private sealed class AutomationPeerCreationProbeToggleSwitch : ModernWpf.Controls.ToggleSwitch
+    {
+        public int AutomationPeerCreations { get; private set; }
+
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            AutomationPeerCreations++;
+            return base.OnCreateAutomationPeer();
         }
     }
 

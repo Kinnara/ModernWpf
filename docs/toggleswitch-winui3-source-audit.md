@@ -41,7 +41,7 @@ pieces, WPF substitutions, and platform gaps known so far.
 | `PrepareState` creates read-only `ToggleSwitchTemplateSettings`. | Matched by constructor initialization and read-only WPF dependency property. |
 | XamlOM property surface: `IsOn`, `Header`, `HeaderTemplate`, `OnContent`, `OnContentTemplate`, `OffContent`, `OffContentTemplate`, `TemplateSettings`, `HeaderPlacement`, `Toggled`, and protected callback hooks. | Matched with WPF dependency properties, routed `Toggled`, and protected virtual callbacks. |
 | `GetDefaultValue2` supplies localized On/Off defaults while preserving default-value detection. | Matched with resource-backed default values and tests for default-vs-custom automation naming. |
-| `OnPropertyChanged2` updates visual state, header visibility, protected callbacks, and automation toggle-state notifications. | Matched through WPF property callbacks and automation peer notification path. |
+| `OnPropertyChanged2` updates visual state, header visibility, protected callbacks, and automation toggle-state notifications; the `IsOn` path checks for a property-changed automation listener before calling `GetOrCreateAutomationPeer` and raising `ToggleState`. | Matched through WPF property callbacks, protected callbacks, and a listener-first/get-or-create WPF automation peer notification path. |
 | `ChangeVisualState` selects Common, Focus, Toggle, Content, and Header visual states from source state fields. | Matched with WPF `VisualStateManager.GoToState`; owner focus state is used rather than child focus. |
 | `OnIsEnabledChanged` and `OnVisibilityChanged` clear dragging and pointer-over state before refreshing visual states. | Matched with WPF property-change paths; the WPF pointer-focus substitute is left to real focus transitions rather than these source reset paths. |
 | Template part discovery, drag/tap hookup, part size updates, and header presenter visibility. | Matched with WPF template parts, `Thumb` drag events, a bubbling mouse-up tap bridge, part `SizeChanged`, and null/header-template visibility rules. |
@@ -70,3 +70,5 @@ Run after this audit:
 dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --filter "FullyQualifiedName~ToggleSwitchApiTests" --no-restore
 dotnet build .\ModernWpf.Controls\ModernWpf.Controls.csproj --no-restore
 ```
+
+Latest verified result on 2026-05-17: ToggleSwitch API tests passed 51/51.

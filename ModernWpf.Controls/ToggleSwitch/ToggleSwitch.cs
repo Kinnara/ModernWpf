@@ -425,11 +425,16 @@ namespace ModernWpf.Controls
         {
             RaiseEvent(new RoutedEventArgs(ToggledEvent));
 
-            if (UIElementAutomationPeer.FromElement(this) is { } peer)
+            if (AutomationPeer.ListenerExists(AutomationEvents.PropertyChanged))
             {
-                var newValue = IsOn ? ToggleState.On : ToggleState.Off;
-                var oldValue = (newValue == ToggleState.On) ? ToggleState.Off : ToggleState.On;
-                peer.RaisePropertyChangedEvent(TogglePatternIdentifiers.ToggleStateProperty, oldValue, newValue);
+                var peer = UIElementAutomationPeer.FromElement(this) ??
+                           UIElementAutomationPeer.CreatePeerForElement(this);
+                if (peer != null)
+                {
+                    var newValue = IsOn ? ToggleState.On : ToggleState.Off;
+                    var oldValue = (newValue == ToggleState.On) ? ToggleState.Off : ToggleState.On;
+                    peer.RaisePropertyChangedEvent(TogglePatternIdentifiers.ToggleStateProperty, oldValue, newValue);
+                }
             }
 
             if (!_isDragging)
