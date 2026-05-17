@@ -566,6 +566,25 @@ public class ToggleSwitchApiTests
     }
 
     [TestMethod]
+    public void SwitchAreaGridColorAnimationsTargetWpfBorderSubstitute()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch();
+            using var host = new TestWindowHost(toggleSwitch, width: 260, height: 120);
+            host.UpdateLayout();
+
+            var stateGroupsRoot = FindStateGroupsRoot(toggleSwitch);
+            foreach (var stateName in new[] { "Normal", "PointerOver", "Pressed", "Disabled" })
+            {
+                AssertSwitchAreaGridBackgroundColorAnimation(FindVisualState(stateGroupsRoot, "CommonStates", stateName));
+            }
+        });
+    }
+
+    [TestMethod]
     public void TemplateGeometryMatchesWinUICommonStylesSource()
     {
         WpfTestHost.Run(() =>
@@ -2027,6 +2046,17 @@ public class ToggleSwitchApiTests
         Assert.IsTrue(
             state.Setters.Any(setter => setter.Target == target),
             $"Expected VisualStateEx setter target '{target}'.");
+    }
+
+    private static void AssertSwitchAreaGridBackgroundColorAnimation(VisualState state)
+    {
+        var animation = state.Storyboard.Children
+            .OfType<ColorAnimationUsingKeyFrames>()
+            .Single(item => Storyboard.GetTargetName(item) == "SwitchAreaGrid");
+        var targetProperty = Storyboard.GetTargetProperty(animation);
+
+        Assert.AreSame(Border.BackgroundProperty, targetProperty.PathParameters[0], state.Name);
+        Assert.AreSame(SolidColorBrush.ColorProperty, targetProperty.PathParameters[1], state.Name);
     }
 
     private static void AssertKnobSizeAnimations(VisualState state, double expectedWidth, double expectedHeight)
