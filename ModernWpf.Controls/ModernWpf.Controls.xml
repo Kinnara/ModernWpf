@@ -2416,6 +2416,41 @@ Use the ItemsRepeaterScrollHost if your app will run on versions of Windows prio
       <summary>Gets a value calculated by subtracting the CompactPaneLength value from the OpenPaneLength value.</summary>
       <returns>The value calculated by subtracting the CompactPaneLength value from the OpenPaneLength value.</returns>
     </member>
+    <member name="T:ModernWpf.Controls.Primitives.ToggleSwitchTemplateSettings">
+      <summary>Provides calculated values that can be referenced as **TemplatedParent** sources when defining templates for a ToggleSwitch control. Not intended for general use.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.Primitives.ToggleSwitchTemplateSettings.CurtainCurrentToOffOffset">
+      <summary>Gets the current curtain offset from the Off position.</summary>
+      <returns>The current curtain offset from the Off position, in pixels.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.Primitives.ToggleSwitchTemplateSettings.CurtainCurrentToOnOffset">
+      <summary>Gets the current curtain offset from the On position.</summary>
+      <returns>The current curtain offset from the On position, in pixels.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.Primitives.ToggleSwitchTemplateSettings.CurtainOffToOnOffset">
+      <summary>Gets the curtain offset used when transitioning from Off to On.</summary>
+      <returns>The curtain offset used when transitioning from Off to On, in pixels.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.Primitives.ToggleSwitchTemplateSettings.CurtainOnToOffOffset">
+      <summary>Gets the curtain offset used when transitioning from On to Off.</summary>
+      <returns>The curtain offset used when transitioning from On to Off, in pixels.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.Primitives.ToggleSwitchTemplateSettings.KnobCurrentToOffOffset">
+      <summary>Gets the current knob offset from the Off position.</summary>
+      <returns>The current knob offset from the Off position, in pixels.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.Primitives.ToggleSwitchTemplateSettings.KnobCurrentToOnOffset">
+      <summary>Gets the current knob offset from the On position.</summary>
+      <returns>The current knob offset from the On position, in pixels.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.Primitives.ToggleSwitchTemplateSettings.KnobOffToOnOffset">
+      <summary>Gets the knob offset used when transitioning from Off to On.</summary>
+      <returns>The knob offset used when transitioning from Off to On, in pixels.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.Primitives.ToggleSwitchTemplateSettings.KnobOnToOffOffset">
+      <summary>Gets the knob offset used when transitioning from On to Off.</summary>
+      <returns>The knob offset used when transitioning from On to Off, in pixels.</returns>
+    </member>
     <member name="T:ModernWpf.Controls.RadioButtons" />
     <member name="M:ModernWpf.Controls.RadioButtons.#ctor">
       <summary>Initializes a new instance of the <see cref="ModernWpf.Controls.RadioButtons?text=RadioButtons" /> class.</summary>

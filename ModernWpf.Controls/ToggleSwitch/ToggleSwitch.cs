@@ -14,14 +14,20 @@ namespace ModernWpf.Controls
 {
     [ContentProperty(nameof(Header))]
     [TemplatePart(Name = nameof(HeaderContentPresenter), Type = typeof(ContentPresenter))]
+    [TemplatePart(Name = nameof(SwitchCurtain), Type = typeof(FrameworkElement))]
+    [TemplatePart(Name = nameof(SwitchCurtainBounds), Type = typeof(FrameworkElement))]
+    [TemplatePart(Name = nameof(SwitchCurtainClip), Type = typeof(UIElement))]
     [TemplatePart(Name = nameof(SwitchKnobBounds), Type = typeof(FrameworkElement))]
     [TemplatePart(Name = nameof(SwitchKnob), Type = typeof(FrameworkElement))]
     [TemplatePart(Name = nameof(KnobTranslateTransform), Type = typeof(TranslateTransform))]
     [TemplatePart(Name = nameof(SwitchThumb), Type = typeof(Thumb))]
     [TemplateVisualState(GroupName = VisualStates.GroupCommon, Name = VisualStates.StateNormal)]
-    [TemplateVisualState(GroupName = VisualStates.GroupCommon, Name = VisualStates.StateMouseOver)]
+    [TemplateVisualState(GroupName = VisualStates.GroupCommon, Name = PointerOverState)]
     [TemplateVisualState(GroupName = VisualStates.GroupCommon, Name = VisualStates.StatePressed)]
     [TemplateVisualState(GroupName = VisualStates.GroupCommon, Name = VisualStates.StateDisabled)]
+    [TemplateVisualState(GroupName = FocusStatesGroup, Name = PointerFocusedState)]
+    [TemplateVisualState(GroupName = FocusStatesGroup, Name = FocusedState)]
+    [TemplateVisualState(GroupName = FocusStatesGroup, Name = UnfocusedState)]
     [TemplateVisualState(GroupName = ContentStatesGroup, Name = OffContentState)]
     [TemplateVisualState(GroupName = ContentStatesGroup, Name = OnContentState)]
     [TemplateVisualState(GroupName = ToggleStatesGroup, Name = DraggingState)]
@@ -29,6 +35,11 @@ namespace ModernWpf.Controls
     [TemplateVisualState(GroupName = ToggleStatesGroup, Name = OnState)]
     public class ToggleSwitch : Control
     {
+        private const string PointerOverState = "PointerOver";
+        private const string FocusStatesGroup = "FocusStates";
+        private const string PointerFocusedState = "PointerFocused";
+        private const string FocusedState = "Focused";
+        private const string UnfocusedState = "Unfocused";
         private const string ContentStatesGroup = "ContentStates";
         private const string OffContentState = "OffContent";
         private const string OnContentState = "OnContent";
@@ -37,10 +48,18 @@ namespace ModernWpf.Controls
         private const string OffState = "Off";
         private const string OnState = "On";
 
-        private const double _offTranslation = 0;
-        private double _onTranslation;
-        private double _startTranslation;
+        private bool _isPointerOver;
+        private bool _isDragging;
         private bool _wasDragged;
+        private bool _handledKeyDown;
+
+        private double _curtainTranslation;
+        private double _minCurtainTranslation;
+        private double _maxCurtainTranslation;
+
+        private double _knobTranslation;
+        private double _minKnobTranslation;
+        private double _maxKnobTranslation;
 
         private BitmapCache _bitmapCache;
 
@@ -53,6 +72,7 @@ namespace ModernWpf.Controls
 
         public ToggleSwitch()
         {
+            SetValue(TemplateSettingsPropertyKey, new ToggleSwitchTemplateSettings());
             SetCurrentValue(OffContentProperty, Strings.ToggleSwitchOff);
             SetCurrentValue(OnContentProperty, Strings.ToggleSwitchOn);
 
@@ -133,9 +153,7 @@ namespace ModernWpf.Controls
 
         private static void OnIsOnChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var control = (ToggleSwitch)d;
-            control.OnToggled();
-            control.UpdateVisualStates(true);
+            ((ToggleSwitch)d).OnToggled();
         }
 
         #endregion
@@ -200,7 +218,7 @@ namespace ModernWpf.Controls
 
         private static void OnOnContentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((ToggleSwitch)d).OnOffContentChanged(e.OldValue, e.NewValue);
+            ((ToggleSwitch)d).OnOnContentChanged(e.OldValue, e.NewValue);
         }
 
         protected virtual void OnOnContentChanged(object oldContent, object newContent)
@@ -265,7 +283,32 @@ namespace ModernWpf.Controls
 
         #endregion
 
+        #region TemplateSettings
+
+        private static readonly DependencyPropertyKey TemplateSettingsPropertyKey =
+            DependencyProperty.RegisterReadOnly(
+                nameof(TemplateSettings),
+                typeof(ToggleSwitchTemplateSettings),
+                typeof(ToggleSwitch),
+                new PropertyMetadata(null));
+
+        public static readonly DependencyProperty TemplateSettingsProperty =
+            TemplateSettingsPropertyKey.DependencyProperty;
+
+        public ToggleSwitchTemplateSettings TemplateSettings =>
+            (ToggleSwitchTemplateSettings)GetValue(TemplateSettingsProperty);
+
+        #endregion
+
         private ContentPresenter HeaderContentPresenter { get; set; }
+
+        private FrameworkElement SwitchCurtain { get; set; }
+
+        private FrameworkElement SwitchCurtainBounds { get; set; }
+
+        private UIElement SwitchCurtainClip { get; set; }
+
+        private TranslateTransform CurtainTranslateTransform { get; set; }
 
         private FrameworkElement SwitchKnobBounds { get; set; }
 
@@ -277,33 +320,43 @@ namespace ModernWpf.Controls
 
         public override void OnApplyTemplate()
         {
-            if (SwitchKnobBounds != null &&
-                SwitchKnob != null &&
-                KnobTranslateTransform != null &&
-                SwitchThumb != null)
+            if (SwitchThumb != null)
             {
                 SwitchThumb.DragStarted -= OnSwitchThumbDragStarted;
                 SwitchThumb.DragDelta -= OnSwitchThumbDragDelta;
                 SwitchThumb.DragCompleted -= OnSwitchThumbDragCompleted;
+                SwitchThumb.RemoveHandler(PreviewMouseLeftButtonUpEvent, new MouseButtonEventHandler(OnSwitchThumbPreviewMouseLeftButtonUp));
                 SwitchThumb.ClearValue(CacheModeProperty);
+            }
+
+            if (SwitchKnob != null)
+            {
+                SwitchKnob.SizeChanged -= OnSwitchPartSizeChanged;
+            }
+
+            if (SwitchKnobBounds != null)
+            {
+                SwitchKnobBounds.SizeChanged -= OnSwitchPartSizeChanged;
             }
 
             base.OnApplyTemplate();
 
             HeaderContentPresenter = GetTemplateChild(nameof(HeaderContentPresenter)) as ContentPresenter;
+            SwitchCurtain = GetTemplateChild(nameof(SwitchCurtain)) as FrameworkElement;
+            SwitchCurtainBounds = GetTemplateChild(nameof(SwitchCurtainBounds)) as FrameworkElement;
+            SwitchCurtainClip = GetTemplateChild(nameof(SwitchCurtainClip)) as UIElement;
             SwitchKnobBounds = GetTemplateChild(nameof(SwitchKnobBounds)) as FrameworkElement;
             SwitchKnob = GetTemplateChild(nameof(SwitchKnob)) as FrameworkElement;
             KnobTranslateTransform = GetTemplateChild(nameof(KnobTranslateTransform)) as TranslateTransform;
             SwitchThumb = GetTemplateChild(nameof(SwitchThumb)) as Thumb;
+            CurtainTranslateTransform = SwitchCurtain?.RenderTransform as TranslateTransform;
 
-            if (SwitchKnobBounds != null &&
-                SwitchKnob != null &&
-                KnobTranslateTransform != null &&
-                SwitchThumb != null)
+            if (SwitchThumb != null)
             {
                 SwitchThumb.DragStarted += OnSwitchThumbDragStarted;
                 SwitchThumb.DragDelta += OnSwitchThumbDragDelta;
                 SwitchThumb.DragCompleted += OnSwitchThumbDragCompleted;
+                SwitchThumb.AddHandler(PreviewMouseLeftButtonUpEvent, new MouseButtonEventHandler(OnSwitchThumbPreviewMouseLeftButtonUp), true);
 
                 if (_bitmapCache == null)
                 {
@@ -317,6 +370,17 @@ namespace ModernWpf.Controls
                 SwitchThumb.CacheMode = _bitmapCache;
             }
 
+            if (SwitchKnob != null)
+            {
+                SwitchKnob.SizeChanged += OnSwitchPartSizeChanged;
+            }
+
+            if (SwitchKnobBounds != null)
+            {
+                SwitchKnobBounds.SizeChanged += OnSwitchPartSizeChanged;
+            }
+
+            UpdateTranslationBounds();
             UpdateHeaderContentPresenterVisibility();
             UpdateVisualStates(false);
         }
@@ -336,15 +400,26 @@ namespace ModernWpf.Controls
                 var oldValue = (newValue == ToggleState.On) ? ToggleState.Off : ToggleState.On;
                 peer.RaisePropertyChangedEvent(TogglePatternIdentifiers.ToggleStateProperty, oldValue, newValue);
             }
+
+            if (!_isDragging)
+            {
+                UpdateVisualStates(true);
+            }
         }
 
         protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
         {
             base.OnPropertyChanged(e);
 
-            if (e.Property == IsMouseOverProperty)
+            if (e.Property == VisibilityProperty)
             {
-                UpdateVisualStates(true);
+                if (Visibility != Visibility.Visible)
+                {
+                    _isDragging = false;
+                    _isPointerOver = false;
+                }
+
+                UpdateVisualStates();
             }
         }
 
@@ -352,10 +427,7 @@ namespace ModernWpf.Controls
         {
             base.OnRenderSizeChanged(sizeInfo);
 
-            if (SwitchKnobBounds != null && SwitchKnob != null)
-            {
-                _onTranslation = SwitchKnobBounds.ActualWidth - SwitchKnob.ActualWidth - SwitchKnob.Margin.Left - SwitchKnob.Margin.Right;
-            }
+            UpdateTranslationBounds();
         }
 
 #if NET462_OR_NEWER
@@ -372,13 +444,78 @@ namespace ModernWpf.Controls
 
         protected override void OnKeyUp(KeyEventArgs e)
         {
-            if (e.Key == Key.Space)
+            if (HandlesKey(e.Key))
             {
+                bool handledKeyDown = _handledKeyDown;
+                _handledKeyDown = false;
+
+                if (handledKeyDown && !e.Handled && !_isDragging)
+                {
+                    Toggle();
+                }
+
                 e.Handled = true;
-                Toggle();
             }
 
             base.OnKeyUp(e);
+        }
+
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+
+            if (e.Handled || _isDragging)
+            {
+                return;
+            }
+
+            if (HandlesKey(e.Key))
+            {
+                e.Handled = true;
+                _handledKeyDown = true;
+            }
+        }
+
+        protected override void OnMouseEnter(MouseEventArgs e)
+        {
+            base.OnMouseEnter(e);
+
+            _isPointerOver = true;
+            UpdateVisualStates(true);
+        }
+
+        protected override void OnMouseLeave(MouseEventArgs e)
+        {
+            base.OnMouseLeave(e);
+
+            _isPointerOver = false;
+            UpdateVisualStates(true);
+        }
+
+        protected override void OnLostMouseCapture(MouseEventArgs e)
+        {
+            base.OnLostMouseCapture(e);
+
+            if (!_isDragging)
+            {
+                _isPointerOver = false;
+            }
+
+            UpdateVisualStates(true);
+        }
+
+        protected override void OnGotFocus(RoutedEventArgs e)
+        {
+            base.OnGotFocus(e);
+
+            UpdateVisualStates(true);
+        }
+
+        protected override void OnLostFocus(RoutedEventArgs e)
+        {
+            base.OnLostFocus(e);
+
+            UpdateVisualStates(true);
         }
 
         private static void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -394,17 +531,17 @@ namespace ModernWpf.Controls
         private void OnSwitchThumbDragStarted(object sender, DragStartedEventArgs e)
         {
             e.Handled = true;
+            _isDragging = true;
             _wasDragged = false;
-            _startTranslation = KnobTranslateTransform.X;
 
             if (!IsKeyboardFocusWithin)
             {
                 Focus();
             }
 
+            GetTranslations();
             UpdateVisualStates(true);
-            StopKnobTranslationAnimation();
-            KnobTranslateTransform.X = _startTranslation;
+            SetTranslations();
         }
 
         private void OnSwitchThumbDragDelta(object sender, DragDeltaEventArgs e)
@@ -413,8 +550,7 @@ namespace ModernWpf.Controls
             if (e.HorizontalChange != 0)
             {
                 _wasDragged = true;
-                double dragTranslation = KnobTranslateTransform.X + e.HorizontalChange;
-                KnobTranslateTransform.X = Math.Max(_offTranslation, Math.Min(_onTranslation, dragTranslation));
+                MoveDelta(e.HorizontalChange);
             }
         }
 
@@ -424,29 +560,122 @@ namespace ModernWpf.Controls
 
             if (e.Canceled)
             {
+                _isDragging = false;
                 _wasDragged = false;
-                ClearKnobTranslation();
+                ClearTranslations();
                 UpdateVisualStates(true);
                 return;
             }
 
-            bool shouldToggle = false;
+            _isDragging = false;
+            MoveCompleted(_wasDragged);
+        }
+
+        private void OnSwitchThumbPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (e.Handled || _isDragging)
+            {
+                return;
+            }
+
             if (_wasDragged)
             {
-                double halfOfTranslationRange = (_onTranslation - _offTranslation) / 2;
-                shouldToggle = IsOn
-                    ? KnobTranslateTransform.X <= halfOfTranslationRange
-                    : KnobTranslateTransform.X >= halfOfTranslationRange;
+                _wasDragged = false;
+                e.Handled = true;
+                return;
             }
-            else
+
+            Toggle();
+            e.Handled = true;
+        }
+
+        private void OnSwitchPartSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            UpdateTranslationBounds();
+        }
+
+        private void OnIsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (!IsEnabled)
             {
-                shouldToggle = true;
+                _isDragging = false;
+                _isPointerOver = false;
             }
 
-            _wasDragged = false;
-            ClearKnobTranslation();
+            UpdateVisualStates();
+        }
 
-            if (shouldToggle)
+        private void GetTranslations()
+        {
+            if (KnobTranslateTransform != null)
+            {
+                _knobTranslation = KnobTranslateTransform.X;
+            }
+
+            if (CurtainTranslateTransform != null)
+            {
+                _curtainTranslation = CurtainTranslateTransform.X;
+            }
+        }
+
+        private void SetTranslations()
+        {
+            var templateSettings = TemplateSettings;
+
+            if (KnobTranslateTransform != null)
+            {
+                double translation = Math.Min(_knobTranslation, _maxKnobTranslation);
+                translation = Math.Max(translation, _minKnobTranslation);
+
+                StopTranslationAnimation(KnobTranslateTransform);
+                KnobTranslateTransform.X = translation;
+
+                templateSettings.KnobCurrentToOffOffset = translation - _minKnobTranslation;
+                templateSettings.KnobCurrentToOnOffset = translation - _maxKnobTranslation;
+            }
+
+            if (CurtainTranslateTransform != null)
+            {
+                double translation = Math.Min(_curtainTranslation, _maxCurtainTranslation);
+                translation = Math.Max(translation, _minCurtainTranslation);
+
+                StopTranslationAnimation(CurtainTranslateTransform);
+                CurtainTranslateTransform.X = translation;
+
+                templateSettings.CurtainCurrentToOffOffset = translation - _minCurtainTranslation;
+                templateSettings.CurtainCurrentToOnOffset = translation - _maxCurtainTranslation;
+            }
+        }
+
+        private void ClearTranslations()
+        {
+            ClearTranslation(KnobTranslateTransform);
+            ClearTranslation(CurtainTranslateTransform);
+        }
+
+        private void MoveDelta(double translationDelta)
+        {
+            _curtainTranslation += translationDelta;
+            _knobTranslation += translationDelta;
+
+            SetTranslations();
+        }
+
+        private void MoveCompleted(bool wasMoved)
+        {
+            bool wasToggled = false;
+
+            if (wasMoved)
+            {
+                double halfOfTranslationRange = (_maxKnobTranslation - _minKnobTranslation) / 2;
+                wasToggled = IsOn
+                    ? _knobTranslation <= halfOfTranslationRange
+                    : _knobTranslation >= halfOfTranslationRange;
+            }
+
+            ClearTranslations();
+
+            if (wasToggled)
             {
                 Toggle();
             }
@@ -456,21 +685,91 @@ namespace ModernWpf.Controls
             }
         }
 
-        private void ClearKnobTranslation()
+        private void UpdateTranslationBounds()
         {
-            StopKnobTranslationAnimation();
-            KnobTranslateTransform?.ClearValue(TranslateTransform.XProperty);
-            _startTranslation = 0;
+            double curtainBoundsWidth = 0;
+
+            if (SwitchCurtainBounds != null)
+            {
+                curtainBoundsWidth = SwitchCurtainBounds.ActualWidth;
+
+                if (SwitchCurtainClip != null)
+                {
+                    SwitchCurtainClip.Clip = new RectangleGeometry(
+                        new Rect(0, 0, curtainBoundsWidth, SwitchCurtainBounds.ActualHeight));
+                }
+            }
+
+            if (SwitchKnob != null &&
+                SwitchKnobBounds != null &&
+                KnobTranslateTransform != null)
+            {
+                double knobTranslation = KnobTranslateTransform.X;
+                double knobBoundsWidth = SwitchKnobBounds.ActualWidth;
+                double knobWidth = SwitchKnob.ActualWidth;
+
+                if (IsOn)
+                {
+                    _maxKnobTranslation = knobTranslation;
+                    _minKnobTranslation = _maxKnobTranslation - knobBoundsWidth + knobWidth;
+                }
+                else
+                {
+                    _minKnobTranslation = knobTranslation;
+                    _maxKnobTranslation = _minKnobTranslation + knobBoundsWidth - knobWidth;
+                }
+
+                if (SwitchKnob.Margin.Left < 0)
+                {
+                    _maxKnobTranslation -= SwitchKnob.Margin.Left;
+                }
+
+                if (SwitchKnob.Margin.Right < 0)
+                {
+                    _maxKnobTranslation -= SwitchKnob.Margin.Right;
+                }
+            }
+
+            if (SwitchCurtainBounds != null && CurtainTranslateTransform != null)
+            {
+                double curtainTranslation = CurtainTranslateTransform.X;
+
+                if (IsOn)
+                {
+                    _maxCurtainTranslation = curtainTranslation;
+                    _minCurtainTranslation = _maxCurtainTranslation - curtainBoundsWidth;
+                }
+                else
+                {
+                    _minCurtainTranslation = curtainTranslation;
+                    _maxCurtainTranslation = _minCurtainTranslation + curtainBoundsWidth;
+                }
+            }
+
+            var templateSettings = TemplateSettings;
+            templateSettings.KnobOffToOnOffset = _minKnobTranslation - _maxKnobTranslation;
+            templateSettings.KnobOnToOffOffset = _maxKnobTranslation - _minKnobTranslation;
+            templateSettings.CurtainOffToOnOffset = _minCurtainTranslation - _maxCurtainTranslation;
+            templateSettings.CurtainOnToOffOffset = _maxCurtainTranslation - _minCurtainTranslation;
         }
 
-        private void StopKnobTranslationAnimation()
+        private static void ClearTranslation(TranslateTransform transform)
         {
-            KnobTranslateTransform?.BeginAnimation(TranslateTransform.XProperty, null);
+            if (transform != null)
+            {
+                StopTranslationAnimation(transform);
+                transform.ClearValue(TranslateTransform.XProperty);
+            }
         }
 
-        private void OnIsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private static void StopTranslationAnimation(TranslateTransform transform)
         {
-            UpdateVisualStates(true);
+            transform.BeginAnimation(TranslateTransform.XProperty, null);
+        }
+
+        private static bool HandlesKey(Key key)
+        {
+            return key == Key.Space;
         }
 
         private void UpdateHeaderContentPresenterVisibility()
@@ -482,7 +781,7 @@ namespace ModernWpf.Controls
             }
         }
 
-        private void UpdateVisualStates(bool useTransitions)
+        private void UpdateVisualStates(bool useTransitions = true)
         {
             string stateName;
 
@@ -490,9 +789,13 @@ namespace ModernWpf.Controls
             {
                 stateName = VisualStates.StateDisabled;
             }
-            else if (IsMouseOver)
+            else if (_isDragging)
             {
-                stateName = VisualStates.StateMouseOver;
+                stateName = VisualStates.StatePressed;
+            }
+            else if (_isPointerOver)
+            {
+                stateName = PointerOverState;
             }
             else
             {
@@ -500,7 +803,16 @@ namespace ModernWpf.Controls
             }
             VisualStateManager.GoToState(this, stateName, useTransitions);
 
-            if (SwitchThumb != null && SwitchThumb.IsDragging)
+            if (IsEnabled)
+            {
+                VisualStateManager.GoToState(this, IsKeyboardFocusWithin ? FocusedState : UnfocusedState, useTransitions);
+            }
+            else
+            {
+                VisualStateManager.GoToState(this, UnfocusedState, useTransitions);
+            }
+
+            if (_isDragging)
             {
                 stateName = DraggingState;
             }

@@ -2,11 +2,14 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using ModernWpf.Automation.Peers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls;
+using ModernWpf.Controls.Primitives;
 using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
 
@@ -61,7 +64,7 @@ public class ToggleSwitchApiTests
     }
 
     [TestMethod]
-    public void DraggingStateUsesVisualStateSetters()
+    public void PressedStateUsesWinUIVisualStateSetters()
     {
         WpfTestHost.Run(() =>
         {
@@ -75,7 +78,7 @@ public class ToggleSwitchApiTests
             var switchKnobOff = FindNamedDescendant<Rectangle>(toggleSwitch, "SwitchKnobOff");
             var switchKnobBounds = FindNamedDescendant<Rectangle>(toggleSwitch, "SwitchKnobBounds");
 
-            Assert.IsTrue(System.Windows.VisualStateManager.GoToState(toggleSwitch, "Dragging", false));
+            Assert.IsTrue(System.Windows.VisualStateManager.GoToState(toggleSwitch, "Pressed", false));
             host.UpdateLayout();
 
             Assert.AreEqual(HorizontalAlignment.Right, switchKnobOn.HorizontalAlignment);
@@ -84,6 +87,133 @@ public class ToggleSwitchApiTests
             Assert.AreEqual(new Thickness(3, 0, 0, 0), switchKnobOff.Margin);
             AssertBrushEquals((Brush)switchKnobBounds.TryFindResource("ToggleSwitchFillOnPressed"), switchKnobBounds.Fill);
             AssertBrushEquals((Brush)switchKnobBounds.TryFindResource("ToggleSwitchStrokeOnPressed"), switchKnobBounds.Stroke);
+        });
+    }
+
+    [TestMethod]
+    public void TemplateSettingsTrackWinUIKnobOffsets()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch();
+            using var host = new TestWindowHost(toggleSwitch, width: 260, height: 120);
+            host.UpdateLayout();
+
+            ToggleSwitchTemplateSettings settings = toggleSwitch.TemplateSettings;
+            Assert.IsNotNull(settings);
+            Assert.AreEqual(-20d, settings.KnobOffToOnOffset, 0.1);
+            Assert.AreEqual(20d, settings.KnobOnToOffOffset, 0.1);
+
+            var initiallyOnToggleSwitch = new ModernWpf.Controls.ToggleSwitch
+            {
+                IsOn = true
+            };
+            using var initiallyOnHost = new TestWindowHost(initiallyOnToggleSwitch, width: 260, height: 120);
+            initiallyOnHost.UpdateLayout();
+
+            Assert.AreEqual(-20d, initiallyOnToggleSwitch.TemplateSettings.KnobOffToOnOffset, 0.1);
+            Assert.AreEqual(20d, initiallyOnToggleSwitch.TemplateSettings.KnobOnToOffOffset, 0.1);
+
+            var thumb = FindNamedDescendant<Thumb>(toggleSwitch, "SwitchThumb");
+            RaiseDragStarted(thumb);
+            RaiseDragDelta(thumb, 6);
+
+            Assert.AreEqual(6d, settings.KnobCurrentToOffOffset, 0.1);
+            Assert.AreEqual(-14d, settings.KnobCurrentToOnOffset, 0.1);
+        });
+    }
+
+    [TestMethod]
+    public void TapAndDragCompletionFollowWinUISplitHandlers()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch();
+            using var host = new TestWindowHost(toggleSwitch, width: 260, height: 120);
+            host.UpdateLayout();
+
+            var thumb = FindNamedDescendant<Thumb>(toggleSwitch, "SwitchThumb");
+
+            RaiseDragStarted(thumb);
+            RaiseDragCompleted(thumb);
+            host.UpdateLayout();
+
+            Assert.IsFalse(toggleSwitch.IsOn, "DragCompleted without movement should not toggle; WinUI toggles taps through the tap handler.");
+
+            RaiseThumbPreviewMouseLeftButtonUp(thumb);
+            host.UpdateLayout();
+
+            Assert.IsTrue(toggleSwitch.IsOn);
+        });
+    }
+
+    [TestMethod]
+    public void SpaceKeyHandlesDownAndTogglesOnUp()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch();
+            using var host = new TestWindowHost(toggleSwitch, width: 260, height: 120);
+            host.UpdateLayout();
+
+            var keyDown = RaiseKey(toggleSwitch, Keyboard.KeyDownEvent, Key.Space);
+            Assert.IsTrue(keyDown.Handled);
+            Assert.IsFalse(toggleSwitch.IsOn);
+
+            var keyUp = RaiseKey(toggleSwitch, Keyboard.KeyUpEvent, Key.Space);
+            Assert.IsTrue(keyUp.Handled);
+            Assert.IsTrue(toggleSwitch.IsOn);
+        });
+    }
+
+    [TestMethod]
+    public void AutomationNameOmitsDefaultOnOffContent()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch
+            {
+                Header = "Wi-Fi"
+            };
+            using var host = new TestWindowHost(toggleSwitch, width: 260, height: 120);
+            host.UpdateLayout();
+
+            Assert.AreEqual("Wi-Fi", CreatePeer(toggleSwitch).GetName());
+
+            toggleSwitch.OffContent = "Disconnected";
+            Assert.AreEqual("Wi-Fi Disconnected", CreatePeer(toggleSwitch).GetName());
+
+            toggleSwitch.IsOn = true;
+            Assert.AreEqual("Wi-Fi", CreatePeer(toggleSwitch).GetName());
+
+            toggleSwitch.OnContent = "Connected";
+            Assert.AreEqual("Wi-Fi Connected", CreatePeer(toggleSwitch).GetName());
+        });
+    }
+
+    [TestMethod]
+    public void OnContentChangeRaisesOnContentCallback()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleSwitch = new CallbackToggleSwitch();
+            int initialOnContentChanges = toggleSwitch.OnContentChanges;
+            int initialOffContentChanges = toggleSwitch.OffContentChanges;
+
+            toggleSwitch.OnContent = "Enabled";
+
+            Assert.AreEqual(initialOnContentChanges + 1, toggleSwitch.OnContentChanges);
+            Assert.AreEqual(initialOffContentChanges, toggleSwitch.OffContentChanges);
         });
     }
 
@@ -159,6 +289,32 @@ public class ToggleSwitchApiTests
         });
     }
 
+    private static void RaiseThumbPreviewMouseLeftButtonUp(Thumb thumb)
+    {
+        thumb.RaiseEvent(new MouseButtonEventArgs(
+            Mouse.PrimaryDevice,
+            Environment.TickCount,
+            MouseButton.Left)
+        {
+            RoutedEvent = UIElement.PreviewMouseLeftButtonUpEvent
+        });
+    }
+
+    private static KeyEventArgs RaiseKey(UIElement element, RoutedEvent routedEvent, Key key)
+    {
+        var args = new KeyEventArgs(
+            Keyboard.PrimaryDevice,
+            PresentationSource.FromVisual(element),
+            Environment.TickCount,
+            key)
+        {
+            RoutedEvent = routedEvent
+        };
+
+        element.RaiseEvent(args);
+        return args;
+    }
+
     private static DataTemplate CreateTextTemplate()
     {
         return (DataTemplate)XamlReader.Parse(
@@ -194,5 +350,27 @@ public class ToggleSwitchApiTests
         }
 
         throw new InvalidOperationException($"Could not find descendant named '{name}'.");
+    }
+
+    private static ToggleSwitchAutomationPeer CreatePeer(ModernWpf.Controls.ToggleSwitch toggleSwitch)
+    {
+        return new ToggleSwitchAutomationPeer(toggleSwitch);
+    }
+
+    private sealed class CallbackToggleSwitch : ModernWpf.Controls.ToggleSwitch
+    {
+        public int OffContentChanges { get; private set; }
+
+        public int OnContentChanges { get; private set; }
+
+        protected override void OnOffContentChanged(object oldContent, object newContent)
+        {
+            OffContentChanges++;
+        }
+
+        protected override void OnOnContentChanged(object oldContent, object newContent)
+        {
+            OnContentChanges++;
+        }
     }
 }

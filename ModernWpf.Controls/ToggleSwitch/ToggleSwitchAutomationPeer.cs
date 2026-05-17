@@ -1,4 +1,5 @@
-﻿using System.Windows.Automation;
+using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using ModernWpf.Controls;
@@ -40,7 +41,7 @@ namespace ModernWpf.Automation.Peers
                     name = header;
                 }
 
-                var content = (owner.IsOn ? owner.OnContent : owner.OffContent)?.ToString();
+                var content = GetOnOffContentForName(owner)?.ToString();
                 if (!string.IsNullOrEmpty(content))
                 {
                     if (!string.IsNullOrEmpty(name))
@@ -80,6 +81,22 @@ namespace ModernWpf.Automation.Peers
         private ToggleSwitch GetImpl()
         {
             return (ToggleSwitch)Owner;
+        }
+
+        private static object GetOnOffContentForName(ToggleSwitch owner)
+        {
+            var contentProperty = owner.IsOn
+                ? ToggleSwitch.OnContentProperty
+                : ToggleSwitch.OffContentProperty;
+
+            return HasCustomValue(owner, contentProperty)
+                ? owner.GetValue(contentProperty)
+                : null;
+        }
+
+        private static bool HasCustomValue(DependencyObject owner, DependencyProperty property)
+        {
+            return DependencyPropertyHelper.GetValueSource(owner, property).BaseValueSource != BaseValueSource.Default;
         }
     }
 }
