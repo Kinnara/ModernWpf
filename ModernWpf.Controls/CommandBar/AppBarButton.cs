@@ -376,6 +376,11 @@ namespace ModernWpf.Controls
 
         protected override void OnClick()
         {
+            if (Flyout == null)
+            {
+                CommandBar.OnCommandExecutionStatic(this);
+            }
+
             base.OnClick();
 
             if (Flyout is { } flyout)

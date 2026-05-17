@@ -568,6 +568,12 @@ namespace ModernWpf.Controls
             OnClick();
         }
 
+        protected override void OnClick()
+        {
+            CommandBar.OnCommandExecutionStatic(this);
+            base.OnClick();
+        }
+
         private AppBarElementVisualStateManager _vsm;
         private TextBlock _keyboardAcceleratorTextLabel;
         private bool m_isWithIcons;

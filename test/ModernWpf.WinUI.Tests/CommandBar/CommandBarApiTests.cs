@@ -281,6 +281,103 @@ public class CommandBarApiTests
     }
 
     [TestMethod]
+    public void AppBarButtonClickClosesParentCommandBarUnlessItHasFlyoutLikeWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var command = new RecordingCommand();
+            var commandButton = new TestAppBarButton
+            {
+                Label = "Copy",
+                Command = command
+            };
+            var flyout = new Flyout
+            {
+                Content = new Border
+                {
+                    Width = 24,
+                    Height = 24
+                }
+            };
+            var flyoutButton = new TestAppBarButton
+            {
+                Label = "More",
+                Flyout = flyout
+            };
+            var commandBar = new ModernWpf.Controls.CommandBar();
+            commandBar.SecondaryCommands.Add(commandButton);
+            commandBar.SecondaryCommands.Add(flyoutButton);
+
+            using var host = new TestWindowHost(commandBar, width: 320, height: 160);
+            host.UpdateLayout();
+
+            commandBar.IsOpen = true;
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            Assert.IsTrue(commandBar.IsOpen);
+
+            commandButton.InvokeClick();
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            Assert.IsFalse(commandBar.IsOpen);
+            Assert.AreEqual(1, command.ExecuteCount);
+
+            commandBar.IsOpen = true;
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            flyoutButton.InvokeClick();
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            Assert.IsTrue(commandBar.IsOpen);
+            Assert.IsTrue(flyout.IsOpen);
+            Assert.AreSame(flyoutButton, flyout.Target);
+
+            flyout.Hide();
+        });
+    }
+
+    [TestMethod]
+    public void AppBarToggleButtonClickClosesParentCommandBarLikeWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var command = new RecordingCommand();
+            var toggleButton = new TestAppBarToggleButton
+            {
+                Label = "Pin",
+                Command = command
+            };
+            var commandBar = new ModernWpf.Controls.CommandBar();
+            commandBar.SecondaryCommands.Add(toggleButton);
+
+            using var host = new TestWindowHost(commandBar, width: 320, height: 160);
+            host.UpdateLayout();
+
+            commandBar.IsOpen = true;
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            Assert.IsTrue(commandBar.IsOpen);
+
+            toggleButton.InvokeClick();
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            Assert.IsFalse(commandBar.IsOpen);
+            Assert.AreEqual(true, toggleButton.IsChecked);
+            Assert.AreEqual(1, command.ExecuteCount);
+        });
+    }
+
+    [TestMethod]
     public void AppBarToggleButtonAutomationPeerMatchesWinUISourceShape()
     {
         WpfTestHost.Run(() =>
@@ -1012,6 +1109,11 @@ public class CommandBarApiTests
         public void InvokeMouseLeftButtonDown(MouseButtonEventArgs e)
         {
             OnMouseLeftButtonDown(e);
+        }
+
+        public void InvokeClick()
+        {
+            OnClick();
         }
     }
 

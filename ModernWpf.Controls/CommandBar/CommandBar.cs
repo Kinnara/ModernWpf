@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Markup;
+using System.Windows.Media;
 using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
@@ -288,6 +289,43 @@ namespace ModernWpf.Controls
 
                 VisualStateManager.GoToState(m_toolBar, stateName, useTransitions);
             }
+        }
+
+        internal static void OnCommandExecutionStatic(ICommandBarElement element)
+        {
+            if (element is DependencyObject dependencyObject &&
+                FindParentCommandBarForElement(dependencyObject) is { } commandBar)
+            {
+                commandBar.SetCurrentValue(IsOpenProperty, false);
+            }
+        }
+
+        private static CommandBar FindParentCommandBarForElement(DependencyObject element)
+        {
+            if (ItemsControl.ItemsControlFromItemContainer(element) is CommandBarToolBar itemToolBar &&
+                itemToolBar.TemplatedParent is CommandBar itemCommandBar)
+            {
+                return itemCommandBar;
+            }
+
+            var current = element;
+            while (current != null)
+            {
+                if (current is CommandBar commandBar)
+                {
+                    return commandBar;
+                }
+
+                if (current is CommandBarToolBar toolBar &&
+                    toolBar.TemplatedParent is CommandBar templatedCommandBar)
+                {
+                    return templatedCommandBar;
+                }
+
+                current = VisualTreeHelper.GetParent(current) ?? LogicalTreeHelper.GetParent(current);
+            }
+
+            return null;
         }
 
         private CommandBarToolBar m_toolBar;
