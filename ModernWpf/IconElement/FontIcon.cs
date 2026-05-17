@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
 {
@@ -176,6 +177,50 @@ namespace ModernWpf.Controls
             }
         }
 
+        /// <summary>
+        /// Identifies the IsTextScaleFactorEnabled dependency property.
+        /// </summary>
+        public static readonly DependencyProperty IsTextScaleFactorEnabledProperty =
+            ControlHelper.IsTextScaleFactorEnabledProperty.AddOwner(typeof(FontIcon));
+
+        /// <summary>
+        /// Gets or sets a value that indicates whether automatic text enlargement reflects the system text size setting.
+        /// </summary>
+        /// <returns><see langword="true"/> if text scale factor is enabled; otherwise, <see langword="false"/>. The default is <see langword="true"/>.</returns>
+        public bool IsTextScaleFactorEnabled
+        {
+            get => (bool)GetValue(IsTextScaleFactorEnabledProperty);
+            set => SetValue(IsTextScaleFactorEnabledProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the MirroredWhenRightToLeft dependency property.
+        /// </summary>
+        public static readonly DependencyProperty MirroredWhenRightToLeftProperty =
+            DependencyProperty.Register(
+                nameof(MirroredWhenRightToLeft),
+                typeof(bool),
+                typeof(FontIcon),
+                new FrameworkPropertyMetadata(
+                    false,
+                    FrameworkPropertyMetadataOptions.AffectsRender,
+                    OnMirroredWhenRightToLeftChanged));
+
+        /// <summary>
+        /// Gets or sets a value that indicates whether the glyph is mirrored when the flow direction is right-to-left.
+        /// </summary>
+        /// <returns><see langword="true"/> to mirror the glyph in right-to-left flow; otherwise, <see langword="false"/>. The default is <see langword="false"/>.</returns>
+        public bool MirroredWhenRightToLeft
+        {
+            get => (bool)GetValue(MirroredWhenRightToLeftProperty);
+            set => SetValue(MirroredWhenRightToLeftProperty, value);
+        }
+
+        private static void OnMirroredWhenRightToLeftChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((FontIcon)d).ApplyMirroredWhenRightToLeft();
+        }
+
         private protected override void InitializeChildren()
         {
             _textBlock = new TextBlock
@@ -196,7 +241,19 @@ namespace ModernWpf.Controls
                 _textBlock.Foreground = VisualParentForeground;
             }
 
+            ApplyMirroredWhenRightToLeft();
+
             Children.Add(_textBlock);
+        }
+
+        protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
+        {
+            base.OnPropertyChanged(e);
+
+            if (e.Property == FlowDirectionProperty)
+            {
+                ApplyMirroredWhenRightToLeft();
+            }
         }
 
         private protected override void OnShouldInheritForegroundFromVisualParentChanged()
@@ -219,6 +276,23 @@ namespace ModernWpf.Controls
             if (ShouldInheritForegroundFromVisualParent && _textBlock != null)
             {
                 _textBlock.Foreground = (Brush)args.NewValue;
+            }
+        }
+
+        private void ApplyMirroredWhenRightToLeft()
+        {
+            if (_textBlock != null)
+            {
+                if (MirroredWhenRightToLeft && FlowDirection == FlowDirection.RightToLeft)
+                {
+                    _textBlock.RenderTransformOrigin = new Point(0.5, 0.5);
+                    _textBlock.RenderTransform = new ScaleTransform(-1, 1);
+                }
+                else
+                {
+                    _textBlock.ClearValue(RenderTransformProperty);
+                    _textBlock.ClearValue(RenderTransformOriginProperty);
+                }
             }
         }
 

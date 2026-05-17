@@ -56,6 +56,10 @@ public class IconSourceApiTests
             Assert.AreEqual(fontIcon.FontWeight, iconSource.FontWeight);
             Assert.AreEqual(icon.FontFamily.Source, iconSource.FontFamily.Source);
             Assert.AreEqual(fontIcon.FontFamily.Source, iconSource.FontFamily.Source);
+            Assert.IsTrue(iconSource.IsTextScaleFactorEnabled);
+            Assert.IsTrue(fontIcon.IsTextScaleFactorEnabled);
+            Assert.IsFalse(iconSource.MirroredWhenRightToLeft);
+            Assert.IsFalse(fontIcon.MirroredWhenRightToLeft);
 
             iconSource.Foreground = Brushes.Red;
             iconSource.Glyph = "&#xE114;";
@@ -63,6 +67,8 @@ public class IconSourceApiTests
             iconSource.FontStyle = FontStyles.Oblique;
             iconSource.FontWeight = FontWeights.ExtraLight;
             iconSource.FontFamily = new FontFamily("Segoe UI Symbol");
+            iconSource.IsTextScaleFactorEnabled = false;
+            iconSource.MirroredWhenRightToLeft = true;
 
             Assert.AreSame(Brushes.Red, iconSource.Foreground);
             Assert.AreSame(Brushes.Red, fontIcon.Foreground);
@@ -76,6 +82,10 @@ public class IconSourceApiTests
             Assert.AreEqual(FontWeights.ExtraLight, fontIcon.FontWeight);
             Assert.AreEqual("Segoe UI Symbol", iconSource.FontFamily.Source);
             Assert.AreEqual("Segoe UI Symbol", fontIcon.FontFamily.Source);
+            Assert.IsFalse(iconSource.IsTextScaleFactorEnabled);
+            Assert.IsFalse(fontIcon.IsTextScaleFactorEnabled);
+            Assert.IsTrue(iconSource.MirroredWhenRightToLeft);
+            Assert.IsTrue(fontIcon.MirroredWhenRightToLeft);
         });
     }
 
@@ -236,6 +246,8 @@ public class IconSourceApiTests
             iconSource.Foreground = Brushes.Red;
             iconSource.Glyph = "\uE001";
             iconSource.FontSize = 24;
+            iconSource.IsTextScaleFactorEnabled = false;
+            iconSource.MirroredWhenRightToLeft = true;
 
             Assert.AreSame(Brushes.Red, firstIcon.Foreground);
             Assert.AreSame(Brushes.Red, secondIcon.Foreground);
@@ -243,6 +255,10 @@ public class IconSourceApiTests
             Assert.AreEqual("\uE001", secondIcon.Glyph);
             Assert.AreEqual(24.0, firstIcon.FontSize);
             Assert.AreEqual(24.0, secondIcon.FontSize);
+            Assert.IsFalse(firstIcon.IsTextScaleFactorEnabled);
+            Assert.IsFalse(secondIcon.IsTextScaleFactorEnabled);
+            Assert.IsTrue(firstIcon.MirroredWhenRightToLeft);
+            Assert.IsTrue(secondIcon.MirroredWhenRightToLeft);
         });
     }
 
@@ -256,6 +272,8 @@ public class IconSourceApiTests
                 Glyph = "\uE001",
                 FontSize = 24,
                 FontFamily = new FontFamily("Segoe UI Symbol"),
+                IsTextScaleFactorEnabled = false,
+                MirroredWhenRightToLeft = true,
                 Foreground = Brushes.Purple
             };
 
@@ -264,7 +282,55 @@ public class IconSourceApiTests
             Assert.AreEqual("\uE001", fontIcon.Glyph);
             Assert.AreEqual(24.0, fontIcon.FontSize);
             Assert.AreEqual("Segoe UI Symbol", fontIcon.FontFamily.Source);
+            Assert.IsFalse(fontIcon.IsTextScaleFactorEnabled);
+            Assert.IsTrue(fontIcon.MirroredWhenRightToLeft);
             Assert.AreSame(Brushes.Purple, fontIcon.Foreground);
+        });
+    }
+
+    [TestMethod]
+    public void FontIconMirrorsWhenRightToLeft()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var fontIcon = new FontIcon
+            {
+                Glyph = "\uE001",
+                MirroredWhenRightToLeft = true,
+                FlowDirection = FlowDirection.RightToLeft
+            };
+
+            using var host = new TestWindowHost(fontIcon, width: 64, height: 64);
+
+            var textBlock = VisualTreeTestHelper.FindDescendant<TextBlock>(fontIcon);
+            Assert.IsNotNull(textBlock);
+
+            var mirrorTransform = textBlock!.RenderTransform as ScaleTransform;
+            Assert.IsNotNull(mirrorTransform);
+            Assert.AreEqual(-1.0, mirrorTransform!.ScaleX);
+            Assert.AreEqual(1.0, mirrorTransform.ScaleY);
+
+            fontIcon.FlowDirection = FlowDirection.LeftToRight;
+            host.UpdateLayout();
+            Assert.IsFalse(textBlock.ReadLocalValue(UIElement.RenderTransformProperty) is ScaleTransform);
+        });
+    }
+
+    [TestMethod]
+    public void SharedHelpersCopiesFontIconSourceFlags()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var iconSource = new FontIconSource
+            {
+                IsTextScaleFactorEnabled = false,
+                MirroredWhenRightToLeft = true
+            };
+
+            var fontIcon = (FontIcon)SharedHelpers.MakeIconElementFrom(iconSource);
+
+            Assert.IsFalse(fontIcon.IsTextScaleFactorEnabled);
+            Assert.IsTrue(fontIcon.MirroredWhenRightToLeft);
         });
     }
 

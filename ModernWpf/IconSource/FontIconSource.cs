@@ -132,6 +132,46 @@ namespace ModernWpf.Controls
             set => SetValue(GlyphProperty, value);
         }
 
+        /// <summary>
+        /// Identifies the <see cref="IsTextScaleFactorEnabled"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty IsTextScaleFactorEnabledProperty =
+            DependencyProperty.Register(
+                nameof(IsTextScaleFactorEnabled),
+                typeof(bool),
+                typeof(FontIconSource),
+                new PropertyMetadata(true));
+
+        /// <summary>
+        /// Gets or sets a value that indicates whether automatic text enlargement reflects the system text size setting.
+        /// </summary>
+        /// <returns><see langword="true"/> if text scale factor is enabled; otherwise, <see langword="false"/>. The default is <see langword="true"/>.</returns>
+        public bool IsTextScaleFactorEnabled
+        {
+            get => (bool)GetValue(IsTextScaleFactorEnabledProperty);
+            set => SetValue(IsTextScaleFactorEnabledProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the <see cref="MirroredWhenRightToLeft"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty MirroredWhenRightToLeftProperty =
+            DependencyProperty.Register(
+                nameof(MirroredWhenRightToLeft),
+                typeof(bool),
+                typeof(FontIconSource),
+                new PropertyMetadata(false));
+
+        /// <summary>
+        /// Gets or sets a value that indicates whether the glyph is mirrored when the flow direction is right-to-left.
+        /// </summary>
+        /// <returns><see langword="true"/> to mirror the glyph in right-to-left flow; otherwise, <see langword="false"/>. The default is <see langword="false"/>.</returns>
+        public bool MirroredWhenRightToLeft
+        {
+            get => (bool)GetValue(MirroredWhenRightToLeftProperty);
+            set => SetValue(MirroredWhenRightToLeftProperty, value);
+        }
+
         protected override IconElement CreateIconElementCore()
         {
             FontIcon fontIcon = new();
@@ -150,8 +190,8 @@ namespace ModernWpf.Controls
 
             fontIcon.FontWeight = FontWeight;
             fontIcon.FontStyle = FontStyle;
-            //fontIcon.IsTextScaleFactorEnabled(IsTextScaleFactorEnabled());
-            //fontIcon.MirroredWhenRightToLeft(MirroredWhenRightToLeft());
+            fontIcon.IsTextScaleFactorEnabled = IsTextScaleFactorEnabled;
+            fontIcon.MirroredWhenRightToLeft = MirroredWhenRightToLeft;
 
             return fontIcon;
         }
@@ -178,14 +218,14 @@ namespace ModernWpf.Controls
             {
                 return FontIcon.GlyphProperty;
             }
-            //else if (sourceProperty == IsTextScaleFactorEnabledProperty)
-            //{
-            //    return FontIcon.IsTextScaleFactorEnabledProperty;
-            //}
-            //else if (sourceProperty == MirroredWhenRightToLeftProperty)
-            //{
-            //    return FontIcon.MirroredWhenRightToLeftProperty;
-            //}
+            else if (sourceProperty == IsTextScaleFactorEnabledProperty)
+            {
+                return FontIcon.IsTextScaleFactorEnabledProperty;
+            }
+            else if (sourceProperty == MirroredWhenRightToLeftProperty)
+            {
+                return FontIcon.MirroredWhenRightToLeftProperty;
+            }
 
             return base.GetIconElementPropertyCore(sourceProperty);
         }

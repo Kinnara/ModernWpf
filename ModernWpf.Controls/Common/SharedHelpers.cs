@@ -178,8 +178,8 @@ namespace ModernWpf.Controls
 
                 fontIcon.FontWeight = fontIconSource.FontWeight;
                 fontIcon.FontStyle = fontIconSource.FontStyle;
-                //fontIcon.IsTextScaleFactorEnabled(fontIconSource.IsTextScaleFactorEnabled());
-                //fontIcon.MirroredWhenRightToLeft(fontIconSource.MirroredWhenRightToLeft());
+                fontIcon.IsTextScaleFactorEnabled = fontIconSource.IsTextScaleFactorEnabled;
+                fontIcon.MirroredWhenRightToLeft = fontIconSource.MirroredWhenRightToLeft;
 
                 return fontIcon;
             }
