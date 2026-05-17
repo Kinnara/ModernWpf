@@ -333,7 +333,8 @@ namespace ModernWpf.Controls
             }
 
             var itemsPerLine = DetermineItemsPerLine(itemSize, availableSize, totalRowSpan, totalColumnSpan);
-            if (itemsPerLine <= 0)
+            var lineLimit = DetermineLineLimit(itemSize, availableSize, totalRowSpan, totalColumnSpan);
+            if (itemsPerLine <= 0 || lineLimit <= 0)
             {
                 return LayoutState.Empty;
             }
@@ -348,8 +349,12 @@ namespace ModernWpf.Controls
             for (int i = 0; i < children.Count; i++)
             {
                 var span = spans[i];
-                var cell = FindNextAvailableCell(occupied, itemsPerLine, span, isHorizontal);
-                MarkOccupied(occupied, itemsPerLine, cell, span, isHorizontal);
+                if (!TryFindNextAvailableCell(occupied, itemsPerLine, lineLimit, span, isHorizontal, out var cell))
+                {
+                    break;
+                }
+
+                MarkOccupied(occupied, itemsPerLine, lineLimit, cell, span, isHorizontal);
 
                 var slot = new Rect(
                     cell.Column * itemSize.Width,
@@ -360,9 +365,12 @@ namespace ModernWpf.Controls
                 slots.Add(slot);
                 rows.Add(cell.Row);
                 columns.Add(cell.Column);
+
+                var lineSpan = isHorizontal ? span.RowSpan : span.ColumnSpan;
+                var lineStart = isHorizontal ? cell.Row : cell.Column;
                 lineCount = Math.Max(
                     lineCount,
-                    isHorizontal ? cell.Row + span.RowSpan : cell.Column + span.ColumnSpan);
+                    lineStart + Math.Min(lineSpan, Math.Max(0, lineLimit - lineStart)));
             }
 
             return new LayoutState(itemSize, itemsPerLine, lineCount, slots, rows, columns);
@@ -400,28 +408,64 @@ namespace ModernWpf.Controls
             return itemsPerLine;
         }
 
-        private Cell FindNextAvailableCell(HashSet<Cell> occupied, int itemsPerLine, Span span, bool isHorizontal)
+        private int DetermineLineLimit(Size itemSize, Size availableSize, int totalRowSpan, int totalColumnSpan)
         {
-            for (int indirect = 0; ; indirect++)
+            var isHorizontal = Orientation == WpfOrientation.Horizontal;
+            var indirectAvailable = isHorizontal ? availableSize.Height : availableSize.Width;
+            var indirectItemSize = isHorizontal ? itemSize.Height : itemSize.Width;
+            var indirectTileCount = isHorizontal ? totalRowSpan : totalColumnSpan;
+            int lineLimit;
+
+            if (indirectTileCount <= 0)
+            {
+                return 0;
+            }
+
+            if (double.IsInfinity(indirectAvailable) || indirectItemSize <= 0.0)
+            {
+                lineLimit = indirectTileCount;
+            }
+            else
+            {
+                lineLimit = (int)Math.Floor(indirectAvailable / indirectItemSize);
+            }
+
+            return Math.Max(1, Math.Min(lineLimit, indirectTileCount));
+        }
+
+        private bool TryFindNextAvailableCell(
+            HashSet<Cell> occupied,
+            int itemsPerLine,
+            int lineLimit,
+            Span span,
+            bool isHorizontal,
+            out Cell cell)
+        {
+            for (int indirect = 0; indirect < lineLimit; indirect++)
             {
                 for (int direct = 0; direct < itemsPerLine; direct++)
                 {
-                    var cell = isHorizontal
+                    cell = isHorizontal
                         ? new Cell(indirect, direct)
                         : new Cell(direct, indirect);
 
-                    if (CanPlace(occupied, itemsPerLine, cell, span, isHorizontal))
+                    if (CanPlace(occupied, itemsPerLine, lineLimit, cell, span, isHorizontal))
                     {
-                        return cell;
+                        return true;
                     }
                 }
             }
+
+            cell = default;
+            return false;
         }
 
-        private static bool CanPlace(HashSet<Cell> occupied, int itemsPerLine, Cell cell, Span span, bool isHorizontal)
+        private static bool CanPlace(HashSet<Cell> occupied, int itemsPerLine, int lineLimit, Cell cell, Span span, bool isHorizontal)
         {
             var directStart = isHorizontal ? cell.Column : cell.Row;
             var directSpan = isHorizontal ? span.ColumnSpan : span.RowSpan;
+            var indirectStart = isHorizontal ? cell.Row : cell.Column;
+            var indirectSpan = isHorizontal ? span.RowSpan : span.ColumnSpan;
 
             if (directSpan > itemsPerLine)
             {
@@ -435,7 +479,19 @@ namespace ModernWpf.Controls
                 return false;
             }
 
-            foreach (var candidate in EnumerateOccupiedCells(itemsPerLine, cell, span, isHorizontal))
+            if (indirectSpan > lineLimit)
+            {
+                if (indirectStart != 0)
+                {
+                    return false;
+                }
+            }
+            else if (indirectStart + indirectSpan > lineLimit)
+            {
+                return false;
+            }
+
+            foreach (var candidate in EnumerateOccupiedCells(itemsPerLine, lineLimit, cell, span, isHorizontal))
             {
                 if (occupied.Contains(candidate))
                 {
@@ -446,15 +502,15 @@ namespace ModernWpf.Controls
             return true;
         }
 
-        private static void MarkOccupied(HashSet<Cell> occupied, int itemsPerLine, Cell cell, Span span, bool isHorizontal)
+        private static void MarkOccupied(HashSet<Cell> occupied, int itemsPerLine, int lineLimit, Cell cell, Span span, bool isHorizontal)
         {
-            foreach (var candidate in EnumerateOccupiedCells(itemsPerLine, cell, span, isHorizontal))
+            foreach (var candidate in EnumerateOccupiedCells(itemsPerLine, lineLimit, cell, span, isHorizontal))
             {
                 occupied.Add(candidate);
             }
         }
 
-        private static IEnumerable<Cell> EnumerateOccupiedCells(int itemsPerLine, Cell cell, Span span, bool isHorizontal)
+        private static IEnumerable<Cell> EnumerateOccupiedCells(int itemsPerLine, int lineLimit, Cell cell, Span span, bool isHorizontal)
         {
             var rowSpan = span.RowSpan;
             var columnSpan = span.ColumnSpan;
@@ -466,6 +522,15 @@ namespace ModernWpf.Controls
             else
             {
                 rowSpan = Math.Min(rowSpan, itemsPerLine - cell.Row);
+            }
+
+            if (isHorizontal)
+            {
+                rowSpan = Math.Min(rowSpan, lineLimit - cell.Row);
+            }
+            else
+            {
+                columnSpan = Math.Min(columnSpan, lineLimit - cell.Column);
             }
 
             for (int row = cell.Row; row < cell.Row + rowSpan; row++)

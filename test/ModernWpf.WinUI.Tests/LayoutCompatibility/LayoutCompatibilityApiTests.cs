@@ -302,6 +302,61 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
+    public void VariableSizedWrapGridStopsPlacementWhenSourceOccupancyMapIsFull()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var horizontalPanel = CreateVariableSizedWrapGrid(Orientation.Horizontal, 10);
+            horizontalPanel.Measure(new Size(horizontalPanel.Width, horizontalPanel.Height));
+            horizontalPanel.Arrange(new Rect(0, 0, horizontalPanel.Width, horizontalPanel.Height));
+            horizontalPanel.UpdateLayout();
+
+            Assert.AreEqual(300, horizontalPanel.DesiredSize.Width, 0.1);
+            Assert.AreEqual(300, horizontalPanel.DesiredSize.Height, 0.1);
+            AssertVariableSizedWrapGridPositions(
+                horizontalPanel,
+                new[]
+                {
+                    new Point(0, 0),
+                    new Point(100, 0),
+                    new Point(200, 0),
+                    new Point(0, 100),
+                    new Point(100, 100),
+                    new Point(200, 100),
+                    new Point(0, 200),
+                    new Point(100, 200),
+                    new Point(200, 200)
+                },
+                expectedArrangedCount: 9);
+            Assert.AreEqual(new Size(), ((UIElement)horizontalPanel.Children[9]).RenderSize);
+
+            var verticalPanel = CreateVariableSizedWrapGrid(Orientation.Vertical, 10);
+            verticalPanel.Measure(new Size(verticalPanel.Width, verticalPanel.Height));
+            verticalPanel.Arrange(new Rect(0, 0, verticalPanel.Width, verticalPanel.Height));
+            verticalPanel.UpdateLayout();
+
+            Assert.AreEqual(300, verticalPanel.DesiredSize.Width, 0.1);
+            Assert.AreEqual(300, verticalPanel.DesiredSize.Height, 0.1);
+            AssertVariableSizedWrapGridPositions(
+                verticalPanel,
+                new[]
+                {
+                    new Point(0, 0),
+                    new Point(0, 100),
+                    new Point(0, 200),
+                    new Point(100, 0),
+                    new Point(100, 100),
+                    new Point(100, 200),
+                    new Point(200, 0),
+                    new Point(200, 100),
+                    new Point(200, 200)
+                },
+                expectedArrangedCount: 9);
+            Assert.AreEqual(new Size(), ((UIElement)verticalPanel.Children[9]).RenderSize);
+        });
+    }
+
+    [TestMethod]
     public void VariableSizedWrapGridParsesTemplateCompatibilityXaml()
     {
         WpfTestHost.Run(() =>
@@ -3377,15 +3432,29 @@ public class LayoutCompatibilityApiTests
         }
     }
 
-    private static void AssertVariableSizedWrapGridPositions(ModernVariableSizedWrapGrid panel, IReadOnlyList<Point> expectedPositions)
+    private static void AssertVariableSizedWrapGridPositions(
+        ModernVariableSizedWrapGrid panel,
+        IReadOnlyList<Point> expectedPositions,
+        int? expectedArrangedCount = null)
     {
-        panel.Measure(new Size(panel.Width, panel.Height));
-        panel.Arrange(new Rect(0, 0, panel.Width, panel.Height));
-        panel.UpdateLayout();
+        if (!expectedArrangedCount.HasValue)
+        {
+            panel.Measure(new Size(panel.Width, panel.Height));
+            panel.Arrange(new Rect(0, 0, panel.Width, panel.Height));
+            panel.UpdateLayout();
+        }
 
         Assert.AreEqual(300, panel.DesiredSize.Width, 0.1);
         Assert.AreEqual(300, panel.DesiredSize.Height, 0.1);
-        Assert.AreEqual(expectedPositions.Count, panel.Children.Count);
+        if (expectedArrangedCount.HasValue)
+        {
+            Assert.AreEqual(expectedArrangedCount.Value, expectedPositions.Count);
+            Assert.IsTrue(panel.Children.Count >= expectedArrangedCount.Value);
+        }
+        else
+        {
+            Assert.AreEqual(expectedPositions.Count, panel.Children.Count);
+        }
 
         for (int i = 0; i < expectedPositions.Count; i++)
         {
