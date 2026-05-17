@@ -1648,6 +1648,8 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
 "TopNavigationViewItemMargin",
 "TopNavigationViewAutoSuggestBoxMargin",
 "ToggleSwitchTopHeaderMargin",
+"ToggleSwitchLeftHeaderMargin",
+"ToggleSwitchLeftHeaderMaxWidth",
 "ToggleSwitchThemeMinWidth",
 "ToggleSwitchPreContentMargin",
 "ToggleSwitchPostContentMargin",

@@ -33,6 +33,8 @@ namespace ModernWpf.Controls
     [TemplateVisualState(GroupName = ToggleStatesGroup, Name = DraggingState)]
     [TemplateVisualState(GroupName = ToggleStatesGroup, Name = OffState)]
     [TemplateVisualState(GroupName = ToggleStatesGroup, Name = OnState)]
+    [TemplateVisualState(GroupName = HeaderStatesGroup, Name = TopHeaderState)]
+    [TemplateVisualState(GroupName = HeaderStatesGroup, Name = LeftHeaderState)]
     public class ToggleSwitch : Control
     {
         private const string PointerOverState = "PointerOver";
@@ -47,6 +49,9 @@ namespace ModernWpf.Controls
         private const string DraggingState = "Dragging";
         private const string OffState = "Off";
         private const string OnState = "On";
+        private const string HeaderStatesGroup = "HeaderStates";
+        private const string TopHeaderState = "TopHeader";
+        private const string LeftHeaderState = "LeftHeader";
 
         private bool _isPointerOver;
         private bool _isDragging;
@@ -127,6 +132,30 @@ namespace ModernWpf.Controls
         private static void OnHeaderTemplateChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((ToggleSwitch)d).UpdateHeaderContentPresenterVisibility();
+        }
+
+        #endregion
+
+        #region HeaderPlacement
+
+        public ControlHeaderPlacement HeaderPlacement
+        {
+            get => (ControlHeaderPlacement)GetValue(HeaderPlacementProperty);
+            set => SetValue(HeaderPlacementProperty, value);
+        }
+
+        public static readonly DependencyProperty HeaderPlacementProperty =
+            DependencyProperty.Register(
+                nameof(HeaderPlacement),
+                typeof(ControlHeaderPlacement),
+                typeof(ToggleSwitch),
+                new FrameworkPropertyMetadata(
+                    ControlHeaderPlacement.Top,
+                    OnHeaderPlacementChanged));
+
+        private static void OnHeaderPlacementChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((ToggleSwitch)d).UpdateVisualStates();
         }
 
         #endregion
@@ -829,6 +858,11 @@ namespace ModernWpf.Controls
                 VisualStateManager.GoToState(this, IsOn ? OnContentState : OffContentState, useTransitions);
             }
             VisualStateManager.GoToState(this, stateName, useTransitions);
+
+            VisualStateManager.GoToState(
+                this,
+                HeaderPlacement == ControlHeaderPlacement.Left ? LeftHeaderState : TopHeaderState,
+                useTransitions);
         }
 
         internal void Toggle()

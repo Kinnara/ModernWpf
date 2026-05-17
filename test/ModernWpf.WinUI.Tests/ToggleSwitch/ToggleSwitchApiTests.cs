@@ -303,6 +303,59 @@ public class ToggleSwitchApiTests
     }
 
     [TestMethod]
+    public void HeaderPlacementUsesWinUIHeaderStates()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch
+            {
+                Header = "Network"
+            };
+            using var host = new TestWindowHost(toggleSwitch, width: 500, height: 160);
+            host.UpdateLayout();
+
+            var stateGroupsRoot = FindStateGroupsRoot(toggleSwitch);
+            var leftHeaderState = FindVisualStateEx(stateGroupsRoot, "HeaderStates", "LeftHeader");
+            AssertStateSetter(leftHeaderState, "HeaderContentPresenter.(Grid.Row)");
+            AssertStateSetter(leftHeaderState, "HeaderContentPresenter.(Grid.Column)");
+            AssertStateSetter(leftHeaderState, "HeaderContentPresenter.(Grid.ColumnSpan)");
+            AssertStateSetter(leftHeaderState, "HeaderContentPresenter.Margin");
+            AssertStateSetter(leftHeaderState, "HeaderContentPresenter.MaxWidth");
+
+            var headerPresenter = FindNamedDescendant<ContentPresenterEx>(toggleSwitch, "HeaderContentPresenter");
+            Assert.AreEqual(ControlHeaderPlacement.Top, toggleSwitch.HeaderPlacement);
+            Assert.AreEqual("TopHeader", GetCurrentStateName(stateGroupsRoot, "HeaderStates"));
+            Assert.AreEqual(0, Grid.GetRow(headerPresenter));
+            Assert.AreEqual(1, Grid.GetColumn(headerPresenter));
+            Assert.AreEqual(1, Grid.GetColumnSpan(headerPresenter));
+            Assert.AreEqual((Thickness)headerPresenter.TryFindResource("ToggleSwitchTopHeaderMargin"), headerPresenter.Margin);
+            Assert.AreEqual(double.PositiveInfinity, headerPresenter.MaxWidth);
+
+            toggleSwitch.HeaderPlacement = ControlHeaderPlacement.Left;
+            host.UpdateLayout();
+
+            Assert.AreEqual("LeftHeader", GetCurrentStateName(stateGroupsRoot, "HeaderStates"));
+            Assert.AreEqual(1, Grid.GetRow(headerPresenter));
+            Assert.AreEqual(0, Grid.GetColumn(headerPresenter));
+            Assert.AreEqual(1, Grid.GetColumnSpan(headerPresenter));
+            Assert.AreEqual((Thickness)headerPresenter.TryFindResource("ToggleSwitchLeftHeaderMargin"), headerPresenter.Margin);
+            Assert.AreEqual((double)headerPresenter.TryFindResource("ToggleSwitchLeftHeaderMaxWidth"), headerPresenter.MaxWidth);
+
+            toggleSwitch.HeaderPlacement = ControlHeaderPlacement.Top;
+            host.UpdateLayout();
+
+            Assert.AreEqual("TopHeader", GetCurrentStateName(stateGroupsRoot, "HeaderStates"));
+            Assert.AreEqual(0, Grid.GetRow(headerPresenter));
+            Assert.AreEqual(1, Grid.GetColumn(headerPresenter));
+            Assert.AreEqual(1, Grid.GetColumnSpan(headerPresenter));
+            Assert.AreEqual((Thickness)headerPresenter.TryFindResource("ToggleSwitchTopHeaderMargin"), headerPresenter.Margin);
+            Assert.AreEqual(double.PositiveInfinity, headerPresenter.MaxWidth);
+        });
+    }
+
+    [TestMethod]
     public void TemplateSettingsTrackWinUIKnobOffsets()
     {
         WpfTestHost.Run(() =>

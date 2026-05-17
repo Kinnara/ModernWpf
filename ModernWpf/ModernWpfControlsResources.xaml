@@ -42,6 +42,8 @@
     <Thickness x:Key="NumberBoxIconMargin">10,0,0,0</Thickness>
     <Thickness x:Key="TextControlThemePadding">10,5,6,6</Thickness>
     <Thickness x:Key="ToggleSwitchTopHeaderMargin">0,0,0,4</Thickness>
+    <Thickness x:Key="ToggleSwitchLeftHeaderMargin">0,6,32,0</Thickness>
+    <sys:Double x:Key="ToggleSwitchLeftHeaderMaxWidth">296</sys:Double>
     <sys:Double x:Key="ToggleSwitchPreContentMargin">10</sys:Double>
     <sys:Double x:Key="ToggleSwitchPostContentMargin">10</sys:Double>
     <sys:Double x:Key="ToggleSwitchThemeMinWidth">154</sys:Double>
