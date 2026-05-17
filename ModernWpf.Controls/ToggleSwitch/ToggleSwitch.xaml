@@ -25,6 +25,7 @@
         <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
         <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
         <Setter Property="MinWidth" Value="{DynamicResource ToggleSwitchThemeMinWidth}"/>
+        <Setter Property="UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
         <Setter Property="ui:FocusVisualHelper.FocusVisualMargin" Value="-7,-3,-7,-3" />
         <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}"/>
@@ -328,18 +329,6 @@
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
-                            <VisualStateGroup x:Name="HeaderStates">
-                                <VisualState x:Name="TopHeader" />
-                                <ui:VisualStateEx x:Name="LeftHeader">
-                                    <ui:VisualStateEx.Setters>
-                                        <ui:VisualStateSetter Target="HeaderContentPresenter.(Grid.Row)" Value="1" />
-                                        <ui:VisualStateSetter Target="HeaderContentPresenter.(Grid.Column)" Value="0" />
-                                        <ui:VisualStateSetter Target="HeaderContentPresenter.(Grid.ColumnSpan)" Value="1" />
-                                        <ui:VisualStateSetter Target="HeaderContentPresenter.Margin" Value="{DynamicResource ToggleSwitchLeftHeaderMargin}" />
-                                        <ui:VisualStateSetter Target="HeaderContentPresenter.MaxWidth" Value="{DynamicResource ToggleSwitchLeftHeaderMaxWidth}" />
-                                    </ui:VisualStateEx.Setters>
-                                </ui:VisualStateEx>
-                            </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
 
                         <Grid>
@@ -347,15 +336,9 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-
                             <ui:ContentPresenterEx
                                 x:Name="HeaderContentPresenter"
                                 Grid.Row="0"
-                                Grid.Column="1"
                                 Content="{TemplateBinding Header}"
                                 ContentTemplate="{TemplateBinding HeaderTemplate}"
                                 Foreground="{DynamicResource ToggleSwitchHeaderForeground}"
@@ -367,7 +350,6 @@
                                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                             <Grid
                                 Grid.Row="1"
-                                Grid.Column="1"
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Top">
 
