@@ -2,8 +2,9 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Documents;
+using System.Windows.Markup;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
 using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
@@ -14,51 +15,27 @@ namespace ModernWpf.WinUI.Tests.CommonStyles;
 public class RepeatButtonVisualStateTests
 {
     [TestMethod]
-    public void DefaultRepeatButtonStyleUsesSourceVisualStateSetters()
+    public void DefaultRepeatButtonStyleUsesOfficialWpfFluentTriggerShape()
     {
         WpfTestHost.Run(() =>
         {
             TestApplication.EnsureInitialized();
 
-            var repeatButton = CreateRepeatButton();
-            using var host = new TestWindowHost(repeatButton, width: 140, height: 80);
-
-            var presenter = GetContentPresenter(repeatButton);
-
-            Assert.AreEqual(0, repeatButton.Template.Triggers.Count);
-            Assert.AreEqual(ClickMode.Press, repeatButton.ClickMode);
-            Assert.IsTrue(ButtonHelper.GetVisualStateSettersEnabled(repeatButton));
-            AssertStateSetters(presenter, "PointerOver");
-            AssertStateSetters(presenter, "Pressed");
-            AssertStateSetters(presenter, "Disabled");
-            AssertVisualStateAppliesResources(repeatButton, presenter, "PointerOver", "RepeatButtonBackgroundPointerOver", "RepeatButtonBorderBrushPointerOver", "RepeatButtonForegroundPointerOver");
-            AssertVisualStateAppliesResources(repeatButton, presenter, "Pressed", "RepeatButtonBackgroundPressed", "RepeatButtonBorderBrushPressed", "RepeatButtonForegroundPressed");
-            AssertVisualStateAppliesResources(repeatButton, presenter, "Disabled", "RepeatButtonBackgroundDisabled", "RepeatButtonBorderBrushDisabled", "RepeatButtonForegroundDisabled");
-        });
-    }
-
-    [TestMethod]
-    public void DisabledStateIsDrivenByButtonHelper()
-    {
-        WpfTestHost.Run(() =>
-        {
-            TestApplication.EnsureInitialized();
+            var defaultStyle = (Style)Application.Current.FindResource("DefaultRepeatButtonStyle");
+            var implicitRepeatButtonStyle = (Style)Application.Current.FindResource(typeof(RepeatButton));
+            Assert.AreEqual(typeof(RepeatButton), defaultStyle.TargetType);
+            Assert.AreEqual(typeof(RepeatButton), implicitRepeatButtonStyle.TargetType);
+            Assert.AreSame(defaultStyle, implicitRepeatButtonStyle.BasedOn);
 
             var repeatButton = CreateRepeatButton();
             using var host = new TestWindowHost(repeatButton, width: 140, height: 80);
-            host.UpdateLayout();
 
-            var presenter = GetContentPresenter(repeatButton);
-
-            repeatButton.IsEnabled = false;
-            host.UpdateLayout();
-
-            Assert.AreEqual("Disabled", GetCurrentStateName(presenter));
-            AssertPresenterResources(
-                presenter,
-                "RepeatButtonBackgroundDisabled",
-                "RepeatButtonBorderBrushDisabled",
-                "RepeatButtonForegroundDisabled");
+            Assert.AreEqual((Thickness)Application.Current.FindResource("RepeatButtonPadding"), repeatButton.Padding);
+            Assert.AreEqual((Thickness)Application.Current.FindResource("RepeatButtonBorderThemeThickness"), repeatButton.BorderThickness);
+            AssertTemplateUsesOfficialWpfPresenter(repeatButton);
+            Assert.IsFalse(ButtonHelper.GetVisualStateSettersEnabled(repeatButton));
+            AssertOfficialTriggerShape(repeatButton.Template);
+            AssertDisabledTriggerAppliesResources(repeatButton);
         });
     }
 
@@ -72,70 +49,85 @@ public class RepeatButtonVisualStateTests
         };
     }
 
-    private static ContentPresenterEx GetContentPresenter(RepeatButton repeatButton)
+    private static void AssertTemplateUsesOfficialWpfPresenter(RepeatButton repeatButton)
     {
         repeatButton.ApplyTemplate();
-        return repeatButton.Template.FindName("ContentPresenter", repeatButton) as ContentPresenterEx
-            ?? throw new AssertFailedException("Expected RepeatButton template to use ContentPresenterEx directly.");
+
+        var contentBorder = GetTemplateChild<Border>(repeatButton, "ContentBorder");
+        var contentPresenter = GetTemplateChild<ContentPresenter>(repeatButton, "ContentPresenter");
+
+        Assert.AreEqual(repeatButton.Content, contentPresenter.Content);
+        Assert.IsTrue(contentPresenter.RecognizesAccessKey);
+        Assert.AreSame(repeatButton.Foreground, TextElement.GetForeground(contentPresenter));
+        Assert.AreEqual(repeatButton.FontSize, TextElement.GetFontSize(contentPresenter));
+        Assert.AreEqual(ControlHelper.GetCornerRadius(repeatButton), contentBorder.CornerRadius);
+        Assert.AreEqual(0, VisualStateManager.GetVisualStateGroups(contentBorder).Count);
     }
 
-    private static void AssertStateSetters(FrameworkElement stateGroupsRoot, string stateName)
+    private static void AssertOfficialTriggerShape(ControlTemplate template)
     {
-        var stateEx = GetCommonState(stateGroupsRoot, stateName);
-        AssertStateSetter(stateEx, "ContentPresenter.Background");
-        AssertStateSetter(stateEx, "ContentPresenter.BorderBrush");
-        AssertStateSetter(stateEx, "ContentPresenter.Foreground");
+        var triggers = template.Triggers.OfType<Trigger>().ToArray();
+        Assert.AreEqual(3, triggers.Length);
+
+        AssertTrigger(triggers, "IsEnabled", false,
+            ("ContentBorder", "Background", "RepeatButtonBackgroundDisabled"),
+            ("ContentBorder", "BorderBrush", "RepeatButtonBorderBrushDisabled"),
+            ("ContentPresenter", "Foreground", "RepeatButtonForegroundDisabled"));
+
+        AssertTrigger(triggers, "IsMouseOver", true,
+            ("ContentBorder", "Background", "RepeatButtonBackgroundPointerOver"));
+
+        AssertTrigger(triggers, "IsPressed", true,
+            ("ContentBorder", "Background", "RepeatButtonBackgroundPressed"),
+            ("ContentBorder", "BorderBrush", "RepeatButtonBorderBrushPressed"),
+            ("ContentPresenter", "Foreground", "RepeatButtonForegroundPressed"));
     }
 
-    private static void AssertStateSetter(VisualStateEx stateEx, string target)
+    private static void AssertTrigger(
+        Trigger[] triggers,
+        string propertyName,
+        object value,
+        params (string TargetName, string PropertyName, string ResourceKey)[] expectedSetters)
     {
-        Assert.IsTrue(
-            stateEx.Setters.Any(item => item.Target == target),
-            $"{stateEx.Name} should set {target}.");
+        var trigger = triggers.Single(item => item.Property.Name == propertyName && Equals(item.Value, value));
+        var setters = trigger.Setters.OfType<Setter>().ToArray();
+
+        Assert.AreEqual(expectedSetters.Length, setters.Length);
+
+        foreach (var expectedSetter in expectedSetters)
+        {
+            AssertSetter(setters, expectedSetter.TargetName, expectedSetter.PropertyName, expectedSetter.ResourceKey);
+        }
     }
 
-    private static VisualStateEx GetCommonState(FrameworkElement stateGroupsRoot, string stateName)
+    private static void AssertSetter(Setter[] setters, string targetName, string propertyName, string resourceKey)
     {
-        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
-            .OfType<VisualStateGroup>()
-            .Single(item => item.Name == "CommonStates");
-        var state = group.States
-            .Cast<VisualState>()
-            .Single(item => item.Name == stateName);
+        var setter = setters.Single(item =>
+            item.TargetName == targetName &&
+            item.Property.Name == propertyName);
 
-        Assert.IsInstanceOfType(state, typeof(VisualStateEx));
-        return (VisualStateEx)state;
+        Assert.IsInstanceOfType(setter.Value, typeof(DynamicResourceExtension));
+        var resource = (DynamicResourceExtension)setter.Value;
+        Assert.AreEqual(resourceKey, resource.ResourceKey);
     }
 
-    private static string GetCurrentStateName(FrameworkElement stateGroupsRoot)
+    private static void AssertDisabledTriggerAppliesResources(RepeatButton repeatButton)
     {
-        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
-            .OfType<VisualStateGroup>()
-            .Single(item => item.Name == "CommonStates");
-        Assert.IsNotNull(group.CurrentState);
-        return group.CurrentState.Name;
+        var contentBorder = GetTemplateChild<Border>(repeatButton, "ContentBorder");
+        var contentPresenter = GetTemplateChild<ContentPresenter>(repeatButton, "ContentPresenter");
+
+        repeatButton.IsEnabled = false;
+        repeatButton.UpdateLayout();
+
+        Assert.AreSame(contentBorder.TryFindResource("RepeatButtonBackgroundDisabled"), contentBorder.Background);
+        Assert.AreSame(contentBorder.TryFindResource("RepeatButtonBorderBrushDisabled"), contentBorder.BorderBrush);
+        Assert.AreSame(contentPresenter.TryFindResource("RepeatButtonForegroundDisabled"), TextElement.GetForeground(contentPresenter));
     }
 
-    private static void AssertVisualStateAppliesResources(
-        RepeatButton repeatButton,
-        ContentPresenterEx presenter,
-        string stateName,
-        string backgroundKey,
-        string borderBrushKey,
-        string foregroundKey)
+    private static T GetTemplateChild<T>(Control control, string name)
+        where T : DependencyObject
     {
-        Assert.IsTrue(VisualStateManager.GoToState(repeatButton, stateName, false));
-        AssertPresenterResources(presenter, backgroundKey, borderBrushKey, foregroundKey);
-    }
-
-    private static void AssertPresenterResources(
-        ContentPresenterEx presenter,
-        string backgroundKey,
-        string borderBrushKey,
-        string foregroundKey)
-    {
-        Assert.AreSame(presenter.TryFindResource(backgroundKey), presenter.Background);
-        Assert.AreSame(presenter.TryFindResource(borderBrushKey), presenter.BorderBrush);
-        Assert.AreSame(presenter.TryFindResource(foregroundKey), presenter.Foreground);
+        return control.Template.FindName(name, control) as T
+            ?? throw new AssertFailedException($"Expected {control.GetType().Name} template child '{name}' to be a {typeof(T).Name}.");
     }
 }

@@ -1579,6 +1579,7 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
 "TopLeftCornerRadiusDoubleValueConverter8x",
 "BottomRightCornerRadiusDoubleValueConverter8x",
 "DefaultScrollBarStyle",
+"RepeatButtonPadding",
 "DefaultRepeatButtonStyle",
 "DefaultPivotHeaderItemStyle",
 "DefaultPivotStyle",

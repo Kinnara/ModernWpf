@@ -1894,33 +1894,31 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
-    public void RepeatButtonTemplateUsesContentPresenterExDirectly()
+    public void RepeatButtonTemplateUsesOfficialWpfFluentPresenterSlot()
     {
         WpfTestHost.Run(() =>
         {
-            var transitions = new ModernWpf.Media.Animation.TransitionCollection();
             var repeatButton = new RepeatButton
             {
                 Width = 100,
                 Height = 40,
-                Content = "Repeat"
+                Content = "Repeat",
+                Foreground = Brushes.Blue
             };
-            ControlHelper.SetBackgroundSizing(repeatButton, BackgroundSizing.OuterBorderEdge);
-            ControlHelper.SetCharacterSpacing(repeatButton, 19);
-            ControlHelper.SetContentTransitions(repeatButton, transitions);
-            ControlHelper.SetIsTextScaleFactorEnabled(repeatButton, false);
+            ControlHelper.SetCornerRadius(repeatButton, new CornerRadius(8));
 
             using var host = new TestWindowHost(repeatButton, width: 140, height: 80);
 
-            var presenter = FindVisualChild<ContentPresenterEx>(repeatButton)
-                ?? throw new AssertFailedException("Expected RepeatButton template to use ContentPresenterEx directly.");
+            var border = FindTemplateChild<Border>(repeatButton, "ContentBorder");
+            var presenter = FindTemplateChild<ContentPresenter>(repeatButton, "ContentPresenter");
+
+            Assert.AreEqual(repeatButton.Content, presenter.Content);
+            Assert.AreSame(repeatButton.Foreground, TextElement.GetForeground(presenter));
+            Assert.AreEqual(ControlHelper.GetCornerRadius(repeatButton), border.CornerRadius);
+            Assert.IsNull(FindVisualChild<ContentPresenterEx>(repeatButton));
             Assert.IsNull(FindVisualChild<ModernContentControlEx>(repeatButton));
-            Assert.AreEqual(BackgroundSizing.OuterBorderEdge, presenter.BackgroundSizing);
-            Assert.AreEqual(19, presenter.CharacterSpacing);
-            Assert.AreSame(transitions, presenter.ContentTransitions);
-            Assert.IsFalse(presenter.IsTextScaleFactorEnabled);
-            Assert.IsNotNull(presenter.BackgroundTransition);
-            Assert.AreEqual(TimeSpan.FromMilliseconds(83), presenter.BackgroundTransition.Duration);
+            Assert.IsFalse(ButtonHelper.GetVisualStateSettersEnabled(repeatButton));
+            Assert.AreEqual(3, repeatButton.Template.Triggers.OfType<Trigger>().Count());
         });
     }
 
