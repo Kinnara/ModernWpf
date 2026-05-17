@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
@@ -279,6 +280,52 @@ public class FlyoutBaseApiTests
 
             Assert.AreEqual(FlyoutPlacementMode.Bottom, flyout.GetEffectivePlacement());
         });
+    }
+
+    [TestMethod]
+    public void ShowAtWithOptionsAllowsNullTargetWhenPositionProvidedLikeWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var root = new Grid { Width = 240, Height = 180 };
+            var flyout = new Flyout
+            {
+                Content = new TextBlock { Text = "Flyout content" },
+                Placement = FlyoutPlacementMode.Top
+            };
+            var options = new FlyoutShowOptions
+            {
+                Position = new Point(32, 24),
+                Placement = FlyoutPlacementMode.Bottom,
+                ShowMode = FlyoutShowMode.Transient
+            };
+
+            using var host = new TestWindowHost(root, width: 320, height: 220);
+            host.UpdateLayout();
+
+            flyout.ShowAt(null, options);
+            WpfTestHost.DoEvents();
+
+            Assert.IsTrue(flyout.IsOpen);
+            Assert.AreSame(root, flyout.Target);
+            Assert.AreSame(root, flyout.InternalPopup.PlacementTarget);
+            Assert.AreEqual(FlyoutPlacementMode.Bottom, flyout.GetEffectivePlacement());
+            Assert.AreEqual(new Rect(32, 24, 0, 0), flyout.InternalPopup.PlacementRectangle);
+
+            flyout.Hide();
+            WpfTestHost.DoEvents();
+        });
+    }
+
+    [TestMethod]
+    public void ShowAtWithOptionsRequiresTargetOrPositionLikeWinUISource()
+    {
+        var flyout = new Flyout();
+
+        Assert.ThrowsException<ArgumentException>(() => flyout.ShowAt(null, null));
+        Assert.ThrowsException<ArgumentException>(() => flyout.ShowAt(null, new FlyoutShowOptions()));
     }
 
     [TestMethod]

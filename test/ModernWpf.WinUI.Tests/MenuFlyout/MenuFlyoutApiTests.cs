@@ -249,6 +249,43 @@ public class MenuFlyoutApiTests
         });
     }
 
+    [TestMethod]
+    public void ShowAtWithOptionsAllowsNullTargetWhenPositionProvidedLikeWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var root = new Grid { Width = 240, Height = 180 };
+            var menuFlyout = new MenuFlyout
+            {
+                Placement = FlyoutPlacementMode.Top
+            };
+            menuFlyout.Items.Add(new MenuItem { Header = "Copy" });
+
+            using var host = new TestWindowHost(root, width: 320, height: 220);
+            host.UpdateLayout();
+
+            menuFlyout.ShowAt(
+                null,
+                new FlyoutShowOptions
+                {
+                    Position = new Point(18, 9),
+                    Placement = FlyoutPlacementMode.Right,
+                    ShowMode = FlyoutShowMode.Transient
+                });
+            WpfTestHost.DoEvents();
+
+            Assert.IsTrue(menuFlyout.IsOpen);
+            Assert.AreSame(root, menuFlyout.Target);
+            Assert.AreEqual(FlyoutPlacementMode.Right, menuFlyout.GetEffectivePlacement());
+            Assert.AreEqual(new Rect(18, 9, 0, 0), menuFlyout.GetPlacementRectangle(root));
+
+            menuFlyout.Hide();
+            WpfTestHost.DoEvents();
+        });
+    }
+
     private static void AssertEvents(List<string> actual, params string[] expected)
     {
         Assert.AreEqual(string.Join("|", expected), string.Join("|", actual));

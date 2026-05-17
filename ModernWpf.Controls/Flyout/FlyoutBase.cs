@@ -220,7 +220,7 @@ namespace ModernWpf.Controls.Primitives
         {
             if (placementTarget is null)
             {
-                throw new ArgumentNullException(nameof(placementTarget));
+                placementTarget = GetRootPlacementTargetForPosition(showOptions);
             }
 
             ShowAtCore(placementTarget, false, showOptions);
@@ -726,6 +726,26 @@ namespace ModernWpf.Controls.Primitives
             ValidateTargetPosition(targetPosition);
             m_isTargetPositionSet = true;
             m_targetPosition = targetPosition;
+        }
+
+        private static FrameworkElement GetRootPlacementTargetForPosition(FlyoutShowOptions showOptions)
+        {
+            if (showOptions?.Position == null)
+            {
+                throw new ArgumentException("A placement target or show-options position is required.", nameof(showOptions));
+            }
+
+            if (Application.Current?.MainWindow?.Content is FrameworkElement content)
+            {
+                return content;
+            }
+
+            if (Application.Current?.MainWindow is Window window)
+            {
+                return window;
+            }
+
+            throw new InvalidOperationException("A root element is required to show a flyout at a position without a placement target.");
         }
 
         private Rect? GetTargetPositionRelativeExclusionRect()
