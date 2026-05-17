@@ -1,3 +1,5 @@
+using System;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Automation.Peers;
@@ -139,8 +141,43 @@ namespace ModernWpf.Automation.Peers
                 case FrameworkElement:
                     return string.Empty;
                 default:
-                    return value.ToString() ?? string.Empty;
+                    return GetPropertyValueString(value);
             }
+        }
+
+        private static string GetPropertyValueString(object value)
+        {
+            switch (Type.GetTypeCode(value.GetType()))
+            {
+                case TypeCode.Byte:
+                    return ((byte)value).ToString(CultureInfo.InvariantCulture);
+                case TypeCode.Int16:
+                    return ((short)value).ToString(CultureInfo.InvariantCulture);
+                case TypeCode.UInt16:
+                    return ((ushort)value).ToString(CultureInfo.InvariantCulture);
+                case TypeCode.Int32:
+                    return ((int)value).ToString(CultureInfo.InvariantCulture);
+                case TypeCode.UInt32:
+                    return ((uint)value).ToString(CultureInfo.InvariantCulture);
+                case TypeCode.Int64:
+                    return ((long)value).ToString(CultureInfo.InvariantCulture);
+                case TypeCode.UInt64:
+                    return ((ulong)value).ToString(CultureInfo.InvariantCulture);
+                case TypeCode.Single:
+                    return ((float)value).ToString("G", CultureInfo.InvariantCulture);
+                case TypeCode.Double:
+                    return ((double)value).ToString("G", CultureInfo.InvariantCulture);
+                case TypeCode.Char:
+                    return ((char)value).ToString();
+                case TypeCode.Boolean:
+                    return (bool)value ? "1" : "0";
+                case TypeCode.String:
+                    return (string)value;
+            }
+
+            return value is Guid guid
+                ? guid.ToString("B").ToUpperInvariant()
+                : string.Empty;
         }
     }
 }

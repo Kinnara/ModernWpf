@@ -951,29 +951,49 @@ public class ToggleSwitchApiTests
                 OnContent = new TextBlock { Text = "Yes" },
                 OffContent = new TextBlock { Text = "No" }
             };
+            var toggleSwitchPropertyValues = new ModernWpf.Controls.ToggleSwitch
+            {
+                Header = 7,
+                OnContent = true,
+                OffContent = false
+            };
+            var toggleSwitchUnknownObjects = new ModernWpf.Controls.ToggleSwitch
+            {
+                Header = new WinUIStringExtractionProbe(),
+                OnContent = new WinUIStringExtractionProbe(),
+                OffContent = new WinUIStringExtractionProbe()
+            };
 
             root.Children.Add(toggleSwitchWithOnOffContent);
             root.Children.Add(toggleSwitchNonTextHeader);
             root.Children.Add(toggleSwitchNonTextOnOffContent);
             root.Children.Add(toggleSwitchTextElements);
+            root.Children.Add(toggleSwitchPropertyValues);
+            root.Children.Add(toggleSwitchUnknownObjects);
 
-            using var host = new TestWindowHost(root, width: 260, height: 220);
+            using var host = new TestWindowHost(root, width: 260, height: 280);
             host.UpdateLayout();
 
             Assert.AreEqual("No", CreatePeer(toggleSwitchWithOnOffContent).GetName());
             Assert.AreEqual("No", CreatePeer(toggleSwitchNonTextHeader).GetName());
             Assert.AreEqual("Header", CreatePeer(toggleSwitchNonTextOnOffContent).GetName());
             Assert.AreEqual("Header No", CreatePeer(toggleSwitchTextElements).GetName());
+            Assert.AreEqual("7 0", CreatePeer(toggleSwitchPropertyValues).GetName());
+            Assert.AreEqual(string.Empty, CreatePeer(toggleSwitchUnknownObjects).GetName());
 
             toggleSwitchWithOnOffContent.IsOn = true;
             toggleSwitchNonTextHeader.IsOn = true;
             toggleSwitchNonTextOnOffContent.IsOn = true;
             toggleSwitchTextElements.IsOn = true;
+            toggleSwitchPropertyValues.IsOn = true;
+            toggleSwitchUnknownObjects.IsOn = true;
 
             Assert.AreEqual("Yes", CreatePeer(toggleSwitchWithOnOffContent).GetName());
             Assert.AreEqual("Yes", CreatePeer(toggleSwitchNonTextHeader).GetName());
             Assert.AreEqual("Header", CreatePeer(toggleSwitchNonTextOnOffContent).GetName());
             Assert.AreEqual("Header Yes", CreatePeer(toggleSwitchTextElements).GetName());
+            Assert.AreEqual("7 1", CreatePeer(toggleSwitchPropertyValues).GetName());
+            Assert.AreEqual(string.Empty, CreatePeer(toggleSwitchUnknownObjects).GetName());
         });
     }
 
@@ -1426,6 +1446,14 @@ public class ToggleSwitchApiTests
     private static ToggleSwitchAutomationPeer CreatePeer(ModernWpf.Controls.ToggleSwitch toggleSwitch)
     {
         return new ToggleSwitchAutomationPeer(toggleSwitch);
+    }
+
+    private sealed class WinUIStringExtractionProbe
+    {
+        public override string ToString()
+        {
+            return "ShouldNotAppearInAutomationName";
+        }
     }
 
     private sealed class CallbackToggleSwitch : ModernWpf.Controls.ToggleSwitch
