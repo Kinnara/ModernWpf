@@ -1,0 +1,88 @@
+# RatingControl WinUI 3 Source Audit
+
+Date: 2026-05-17
+
+Scope: existing `RatingControl` and its item-info helpers only. This audit
+maps the WPF implementation to local WinUI 3 source and records the WPF
+substitutions that remain because the WinUI implementation depends on platform
+services that WPF does not expose.
+
+## WinUI 3 Source Baseline
+
+- `src\controls\dev\RatingControl\RatingControl.cpp`
+- `src\controls\dev\RatingControl\RatingControl.h`
+- `src\controls\dev\RatingControl\RatingControl.xaml`
+- `src\controls\dev\RatingControl\RatingControl_themeresources.xaml`
+- `src\controls\dev\RatingControl\RatingControlAutomationPeer.cpp`
+- `src\controls\dev\RatingControl\RatingItemInfo.cpp`
+- `src\controls\dev\RatingControl\RatingItemFontInfo.cpp`
+- `src\controls\dev\RatingControl\RatingItemImageInfo.cpp`
+- `src\controls\dev\RatingControl\APITests\RatingControlTests.cs`
+- `src\controls\dev\RatingControl\InteractionTests\RatingControlTests.cs`
+
+## ModernWpf Port Surface
+
+- `ModernWpf.Controls\RatingControl\RatingControl.cs`
+- `ModernWpf.Controls\RatingControl\RatingControl.properties.cs`
+- `ModernWpf.Controls\RatingControl\RatingControl.xaml`
+- `ModernWpf.Controls\RatingControl\RatingControlAutomationPeer.cs`
+- `ModernWpf.Controls\RatingControl\RatingItemImageInfo.cs`
+- `ModernWpf\Controls\RatingItemInfo.cs`
+- `ModernWpf\Controls\RatingItemFontInfo.cs`
+- `ModernWpf\Styles\RatingControl.xaml`
+- `ModernWpf\ThemeResources\Light.xaml`
+- `ModernWpf\ThemeResources\Dark.xaml`
+- `ModernWpf\ThemeResources\HighContrast.xaml`
+- `test\ModernWpf.WinUI.Tests\RatingControl\RatingControlApiTests.cs`
+- `test\ModernWpf.WinUI.Tests\RatingControl\RatingControlInteractionTests.cs`
+
+## Ported Source Behavior
+
+| WinUI 3 behavior | ModernWpf WPF port |
+| --- | --- |
+| Template sets `MinHeight=32`, binds `LayoutRoot.Background`, names `CaptionStackPanel`, and uses named translate transforms on the foreground/background rating item panels. | Matched with WPF template bindings and `StackPanelEx` for the star panels so source `Spacing` behavior can be represented. |
+| Caption uses source margin `4,0,20,0`, `FontSize=12`, template-bound foreground, and no fixed height. | Matched where WPF exposes the same properties. Tests assert source shape and WPF template output. |
+| Source supports `RatingItemFontInfo` and `RatingItemImageInfo`; there is no `RatingItemPathInfo` in local WinUI 3 source. | Deleted `RatingItemPathInfo`, removed path data templates/resources, and removed the path-specific render branch/tests. |
+| `StampOutRatingItems` measures a representative text glyph to compute `m_scaledFontSizeForRendering`; image items use the configured rendering size directly. | Matched with a WPF `TextBlock.Measure` substitute and source-shaped cached resource fields. |
+| Source reads `RatingControlFontSizeForRendering`, `RatingControlItemSpacing`, and `RatingControlCaptionTopMargin` once into control fields. | Matched with WPF resource lookup from control resources first, then app resources, including restored `RatingControlCaptionTopMargin` resource keys. |
+| Source computes built-in item spacing from the first generated item and applies net spacing to both rating stack panels. | Matched with `StackPanelEx.Spacing`; this is the WPF substitute for WinUI `StackPanel.Spacing`. |
+| Source computes total width as rating width plus 12px caption spacing and caption width when caption text is non-empty. | Matched; ModernWpf no longer uses the item spacing resource as caption spacing. |
+| Source tracks the first item offset on pointer enter and subtracts it during pointer move. | Matched with WPF `TransformToVisual` and mouse event coordinates. |
+| Source tracks pointer capture separately from pointer-down state. | Matched with WPF `CaptureMouse`, `LostMouseCapture`, and guarded release. |
+
+## WPF Substitutions
+
+- WinUI composition expression animation has no direct WPF equivalent here.
+  ModernWpf keeps a WPF `ScaleTransform` on each generated item with source
+  center-point constants.
+- WinUI pointer events include `PointerCanceled` and pointer-device details.
+  WPF mouse events do not expose the same model, so cancellation remains a
+  platform gap while capture-lost follows the source cleanup shape.
+- WinUI gamepad focus engagement and element sounds are platform services.
+  ModernWpf keeps keyboard arrow/home/end behavior and documents gamepad/audio
+  as WPF gaps rather than guessed behavior.
+- WinUI XAML has `TextLineBounds="Tight"` and
+  `AutomationProperties.AccessibilityView="Raw"` on template elements. WPF
+  does not expose those exact properties in this control template, so they are
+  omitted.
+- WinUI `RatingControlCaptionTopMargin` is loaded by source code but is not
+  consumed by the current local WinUI implementation. ModernWpf restores the
+  resource key and loads it for source parity, but does not invent new behavior
+  for it.
+
+## Validation
+
+Run after the RatingControl source port:
+
+```powershell
+dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --filter "FullyQualifiedName~RatingControl" --no-restore
+dotnet build .\ModernWpf.Controls\ModernWpf.Controls.csproj --no-restore -m:1
+rg -n "RatingItemPathInfo|RatingControlDefaultPathInfo|BackgroundPathDefaultTemplate|ForegroundPathDefaultTemplate" ModernWpf ModernWpf.Controls test\ModernWpf.WinUI.Tests
+git diff --check
+```
+
+Latest verified result on 2026-05-17: RatingControl tests passed 12/12,
+`ModernWpf.Controls` built successfully with existing warnings, the static
+deletion check found no remaining code/test references to the removed
+path-info surface, and `git diff --check` reported only existing CRLF
+normalization warnings.

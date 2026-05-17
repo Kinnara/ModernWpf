@@ -6,7 +6,7 @@
     xmlns:local="clr-namespace:ModernWpf.Controls">
 
     <Style TargetType="local:RatingControl">
-        <Setter Property="Height" Value="32" />
+        <Setter Property="MinHeight" Value="32" />
         <!-- 9794813: retire these two properties as customisation points once all resource keys available -->
         <Setter Property="Foreground" Value="{DynamicResource RatingControlCaptionForeground}" />
         <Setter Property="UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
@@ -16,7 +16,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:RatingControl">
-                    <Grid x:Name="LayoutRoot">
+                    <Grid x:Name="LayoutRoot" Background="{TemplateBinding Background}">
                         <VisualStateManager.CustomVisualStateManager>
                             <ui:VisualStateManagerEx />
                         </VisualStateManager.CustomVisualStateManager>
@@ -56,16 +56,21 @@
                         </VisualStateManager.VisualStateGroups>
 
                         <StackPanel
+                            x:Name="CaptionStackPanel"
                             Orientation="Horizontal"
                             Grid.Row="0"
                             Margin="-20,-20,-20,-20">
-                            <StackPanel
+                            <ui:StackPanelEx
                                 x:Name="RatingBackgroundStackPanel"
                                 Orientation="Horizontal"
                                 Background="Transparent"
-                                Margin="20,20,0,20" />
-                            <TextBlock x:Name="Caption" Height="32" Margin="4,9,20,0" Style="{DynamicResource CaptionTextBlockStyle}"
-                                Foreground="{DynamicResource RatingControlCaptionForeground}" VerticalAlignment="Center" IsHitTestVisible="False"
+                                Margin="20,20,0,20">
+                                <ui:StackPanelEx.RenderTransform>
+                                    <TranslateTransform x:Name="RatingBackgroundStackPanelTranslateTransform" />
+                                </ui:StackPanelEx.RenderTransform>
+                            </ui:StackPanelEx>
+                            <TextBlock x:Name="Caption" Margin="4,0,20,0" Style="{DynamicResource CaptionTextBlockStyle}"
+                                FontSize="12" Foreground="{TemplateBinding Foreground}" VerticalAlignment="Center" IsHitTestVisible="False"
                                 AutomationProperties.Name="RatingCaption" Text="{TemplateBinding Caption}"/>
                             <!-- 4 = 8 item spacing +4 of magic redline spacing -8 to compensate for scale of the last RatingItem -->
                             <!--
@@ -85,11 +90,15 @@
                                 <StackPanel
                                     Orientation="Horizontal"
                                     Margin="-40,-40,-40,-40">
-                                    <StackPanel
+                                    <ui:StackPanelEx
                                         x:Name="RatingForegroundStackPanel"
                                         Orientation="Horizontal"
                                         IsHitTestVisible="False"
-                                        Margin="40,40,40,40" />
+                                        Margin="40,40,40,40">
+                                        <ui:StackPanelEx.RenderTransform>
+                                            <TranslateTransform x:Name="RatingForegroundStackPanelTranslateTransform" />
+                                        </ui:StackPanelEx.RenderTransform>
+                                    </ui:StackPanelEx>
                                 </StackPanel>
                             </ui:ContentPresenterEx.Content>
                         </ui:ContentPresenterEx>

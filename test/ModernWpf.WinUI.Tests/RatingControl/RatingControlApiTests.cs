@@ -18,9 +18,10 @@ public class RatingControlApiTests
 {
     private const string FontSizeForRenderingResourceKey = "RatingControlFontSizeForRendering";
     private const string ItemSpacingResourceKey = "RatingControlItemSpacing";
+    private const string CaptionTopMarginResourceKey = "RatingControlCaptionTopMargin";
 
     [TestMethod]
-    public void VerifyDefaultStyleAndWinUI2Resources()
+    public void VerifyDefaultStyleAndWinUI3Resources()
     {
         WpfTestHost.Run(() =>
         {
@@ -28,12 +29,14 @@ public class RatingControlApiTests
 
             var ratingControl = new ModernWpf.Controls.RatingControl
             {
+                Background = Brushes.Yellow,
                 Caption = "Rating API Test Caption"
             };
 
             using var host = new TestWindowHost(ratingControl, width: 420, height: 180);
             host.UpdateLayout();
 
+            Assert.AreEqual(32.0, ratingControl.MinHeight);
             Assert.AreEqual(32.0, ratingControl.Height);
             AssertBrushEquals((Brush)ratingControl.TryFindResource("RatingControlCaptionForeground"), ratingControl.Foreground);
             Assert.AreEqual(ratingControl.TryFindResource("UseSystemFocusVisuals"), ratingControl.UseSystemFocusVisuals);
@@ -44,9 +47,9 @@ public class RatingControlApiTests
             AssertRatingFontInfo(ratingControl.ItemInfo, "\uE735", "\uE734");
             AssertRatingFontInfo(ratingControl.TryFindResource("MUX_RatingControlDefaultFontInfo"), "\uE735", "\uE734");
             AssertRatingFontInfo(ratingControl.TryFindResource("RatingControlDefaultFontInfo"), "\uE735", "\uE734");
-            Assert.IsInstanceOfType(ratingControl.TryFindResource("RatingControlDefaultPathInfo"), typeof(RatingItemPathInfo));
 
             var layoutRoot = FindNamedDescendant<Grid>(ratingControl, "LayoutRoot");
+            AssertBrushEquals(Brushes.Yellow, layoutRoot.Background);
             var commonStatesGroup = VisualStateManager.GetVisualStateGroups(layoutRoot)
                 .Cast<VisualStateGroup>()
                 .Single(group => group.Name == "CommonStates");
@@ -63,30 +66,39 @@ public class RatingControlApiTests
                 commonStatesGroup.States.Cast<VisualState>().Select(state => state.Name).ToArray());
 
             var caption = FindNamedDescendant<TextBlock>(ratingControl, "Caption");
-            Assert.AreEqual(32.0, caption.Height);
+            Assert.IsTrue(double.IsNaN(caption.Height));
             Assert.AreEqual(4.0, caption.Margin.Left);
+            Assert.AreEqual(0.0, caption.Margin.Top);
             Assert.AreEqual(20.0, caption.Margin.Right);
-            AssertBrushEquals((Brush)caption.TryFindResource("RatingControlCaptionForeground"), caption.Foreground);
+            Assert.AreEqual(12.0, caption.FontSize);
+            AssertBrushEquals(ratingControl.Foreground, caption.Foreground);
             Assert.AreEqual(VerticalAlignment.Center, caption.VerticalAlignment);
             Assert.IsFalse(caption.IsHitTestVisible);
             Assert.AreEqual("RatingCaption", AutomationProperties.GetName(caption));
             Assert.AreEqual("Rating API Test Caption", caption.Text);
 
-            var backgroundStackPanel = FindNamedDescendant<StackPanel>(ratingControl, "RatingBackgroundStackPanel");
+            var captionStackPanel = FindNamedDescendant<StackPanel>(ratingControl, "CaptionStackPanel");
+            Assert.AreEqual(Orientation.Horizontal, captionStackPanel.Orientation);
+            Assert.AreEqual(new Thickness(-20), captionStackPanel.Margin);
+
+            var backgroundStackPanel = FindNamedDescendant<StackPanelEx>(ratingControl, "RatingBackgroundStackPanel");
             Assert.AreEqual(Orientation.Horizontal, backgroundStackPanel.Orientation);
             AssertBrushEquals(Brushes.Transparent, backgroundStackPanel.Background);
             Assert.AreEqual(new Thickness(20, 20, 0, 20), backgroundStackPanel.Margin);
             Assert.AreEqual(5, backgroundStackPanel.Children.Count);
+            var backgroundTranslateTransform = FindNamedDescendant<StackPanelEx>(ratingControl, "RatingBackgroundStackPanel").RenderTransform;
+            Assert.IsInstanceOfType(backgroundTranslateTransform, typeof(TranslateTransform));
 
             var foregroundContentPresenter = FindNamedDescendant<ContentPresenterEx>(ratingControl, "ForegroundContentPresenter");
             Assert.IsFalse(foregroundContentPresenter.IsHitTestVisible);
             Assert.IsInstanceOfType(foregroundContentPresenter.Content, typeof(StackPanel));
 
-            var foregroundStackPanel = FindNamedDescendant<StackPanel>(ratingControl, "RatingForegroundStackPanel");
+            var foregroundStackPanel = FindNamedDescendant<StackPanelEx>(ratingControl, "RatingForegroundStackPanel");
             Assert.AreEqual(Orientation.Horizontal, foregroundStackPanel.Orientation);
             Assert.IsFalse(foregroundStackPanel.IsHitTestVisible);
             Assert.AreEqual(new Thickness(40), foregroundStackPanel.Margin);
             Assert.AreEqual(5, foregroundStackPanel.Children.Count);
+            Assert.IsInstanceOfType(foregroundStackPanel.RenderTransform, typeof(TranslateTransform));
 
             AssertDefaultTextRatingItem(backgroundStackPanel.Children[0], "\uE734", ratingControl.FontFamily, ratingControl);
             AssertDefaultTextRatingItem(foregroundStackPanel.Children[0], "\uE735", ratingControl.FontFamily, ratingControl);
@@ -103,9 +115,9 @@ public class RatingControlApiTests
                 AssertThemeResourceReference(themeName, "RatingControlCaptionForeground", "TextFillColorSecondaryBrush");
                 AssertThemeResourceValue(themeName, FontSizeForRenderingResourceKey, 32.0);
                 AssertThemeResourceValue(themeName, ItemSpacingResourceKey, 8.0);
+                AssertThemeResourceValue(themeName, CaptionTopMarginResourceKey, -12.5);
                 AssertThemeRatingFontInfo(themeName, "MUX_RatingControlDefaultFontInfo");
                 AssertThemeRatingFontInfo(themeName, "RatingControlDefaultFontInfo");
-                AssertThemeResourceType<RatingItemPathInfo>(themeName, "RatingControlDefaultPathInfo");
             }
 
             AssertThemeResourceReference("HighContrast", "RatingControlUnselectedForeground", "SystemControlForegroundBaseLowBrush");
@@ -118,9 +130,9 @@ public class RatingControlApiTests
             AssertThemeResourceReference("HighContrast", "RatingControlCaptionForeground", "TextFillColorSecondaryBrush");
             AssertThemeResourceValue("HighContrast", FontSizeForRenderingResourceKey, 32.0);
             AssertThemeResourceValue("HighContrast", ItemSpacingResourceKey, 8.0);
+            AssertThemeResourceValue("HighContrast", CaptionTopMarginResourceKey, -12.5);
             AssertThemeRatingFontInfo("HighContrast", "MUX_RatingControlDefaultFontInfo");
             AssertThemeRatingFontInfo("HighContrast", "RatingControlDefaultFontInfo");
-            AssertThemeResourceType<RatingItemPathInfo>("HighContrast", "RatingControlDefaultPathInfo");
         });
     }
 
@@ -170,27 +182,6 @@ public class RatingControlApiTests
                     (Brush)foregroundContentPresenter.TryFindResource(expectedState.ResourceKey),
                     foregroundContentPresenter.Foreground);
             }
-        });
-    }
-
-    [TestMethod]
-    public void VerifyWpfPathItemInfoFallbackStillRenders()
-    {
-        WpfTestHost.Run(() =>
-        {
-            TestApplication.EnsureInitialized();
-
-            var ratingControl = new ModernWpf.Controls.RatingControl();
-            var pathInfo = (RatingItemPathInfo)ratingControl.TryFindResource("RatingControlDefaultPathInfo");
-            ratingControl.ItemInfo = pathInfo;
-
-            using var host = new TestWindowHost(ratingControl, width: 420, height: 180);
-            host.UpdateLayout();
-
-            var backgroundStackPanel = FindNamedDescendant<StackPanel>(ratingControl, "RatingBackgroundStackPanel");
-            var foregroundStackPanel = FindNamedDescendant<StackPanel>(ratingControl, "RatingForegroundStackPanel");
-            AssertDefaultPathRatingItem(backgroundStackPanel.Children[0], ratingControl);
-            AssertDefaultPathRatingItem(foregroundStackPanel.Children[0], ratingControl);
         });
     }
 
@@ -417,18 +408,6 @@ public class RatingControlApiTests
         {
             AssertBrushEquals((Brush)resourceOwner.TryFindResource("RatingControlUnselectedForeground"), textBlock.Foreground);
         }
-    }
-
-    private static void AssertDefaultPathRatingItem(UIElement item, FrameworkElement resourceOwner)
-    {
-        Assert.IsInstanceOfType(item, typeof(FontIconFallback));
-        var pathItem = (FontIconFallback)item;
-        Assert.AreEqual(new Thickness(-8, -8, 0, 0), pathItem.Margin);
-        Assert.AreEqual(32.0, pathItem.FontSize);
-        Assert.AreEqual(HorizontalAlignment.Left, pathItem.HorizontalContentAlignment);
-        Assert.AreEqual(VerticalAlignment.Top, pathItem.VerticalContentAlignment);
-        Assert.IsNotNull(pathItem.Data);
-        AssertBrushEquals((Brush)resourceOwner.TryFindResource("RatingControlUnselectedForeground"), pathItem.Foreground);
     }
 
     private static void AssertBrushEquals(Brush expected, Brush actual)
