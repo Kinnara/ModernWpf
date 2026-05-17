@@ -2,6 +2,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using ModernWpf.Controls;
@@ -74,8 +75,7 @@ public class CommandBarFlyoutApiTests
             Assert.IsTrue(commandBar.IsOpen);
             Assert.AreEqual(CommandBarOverflowButtonVisibility.Collapsed, commandBar.OverflowButtonVisibility);
 
-            commandBarFlyout.Hide();
-            WpfTestHost.DoEvents();
+            HideAndWait(commandBarFlyout);
         });
     }
 
@@ -133,8 +133,7 @@ public class CommandBarFlyoutApiTests
             WpfTestHost.DoEvents();
             VerifyCommandCollections(commandBarFlyout, commandBar);
 
-            commandBarFlyout.Hide();
-            WpfTestHost.DoEvents();
+            HideAndWait(commandBarFlyout);
             Assert.IsFalse(commandBarFlyout.IsOpen);
         });
     }
@@ -214,8 +213,123 @@ public class CommandBarFlyoutApiTests
             }
             finally
             {
-                commandBarFlyout.Hide();
+                HideAndWait(commandBarFlyout);
+            }
+        });
+    }
+
+    [TestMethod]
+    public void SecondaryCommandKeyboardAcceleratorChangeRefreshesOpenSizingLikeWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var secondaryCommand = new AppBarButton { Label = "Item" };
+            var commandBarFlyout = new CommandBarFlyout
+            {
+                Placement = FlyoutPlacementMode.Right,
+                ShowMode = FlyoutShowMode.Transient
+            };
+
+            commandBarFlyout.PrimaryCommands.Add(new AppBarButton { Label = "Copy" });
+            commandBarFlyout.SecondaryCommands.Add(secondaryCommand);
+
+            var target = new System.Windows.Controls.Button
+            {
+                Content = "Show CommandBarFlyout",
+                Width = 180,
+                Height = 36
+            };
+
+            using var host = new TestWindowHost(target, width: 640, height: 420);
+
+            commandBarFlyout.ShowAt(target);
+            WpfTestHost.DoEvents();
+
+            try
+            {
+                var commandBar = GetCommandBar(commandBarFlyout);
+                commandBar.ApplyTemplate();
+                host.UpdateLayout();
+
+                commandBar.IsOpen = true;
+                host.UpdateLayout();
                 WpfTestHost.DoEvents();
+
+                var initialWidth = commandBar.FlyoutTemplateSettings.CurrentWidth;
+
+                secondaryCommand.KeyboardAcceleratorTextOverride = "Ctrl+Shift+Alt+F12";
+                host.UpdateLayout();
+                WpfTestHost.DoEvents();
+                host.UpdateLayout();
+
+                var updatedWidth = commandBar.FlyoutTemplateSettings.CurrentWidth;
+                Assert.IsTrue(
+                    updatedWidth > initialWidth,
+                    $"Expected secondary command keyboard accelerator property change to refresh open width from {initialWidth} to a larger value, actual {updatedWidth}.");
+            }
+            finally
+            {
+                HideAndWait(commandBarFlyout);
+            }
+        });
+    }
+
+    [TestMethod]
+    public void CloseAnimationCancelsFirstClosingLikeWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var commandBarFlyout = new CommandBarFlyout
+            {
+                Placement = FlyoutPlacementMode.Right
+            };
+
+            commandBarFlyout.PrimaryCommands.Add(new AppBarButton { Label = "Copy" });
+            commandBarFlyout.SecondaryCommands.Add(new AppBarButton { Label = "Select all" });
+
+            var target = new System.Windows.Controls.Button
+            {
+                Content = "Show CommandBarFlyout",
+                Width = 180,
+                Height = 36
+            };
+
+            using var host = new TestWindowHost(target, width: 420, height: 260);
+
+            commandBarFlyout.ShowAt(target);
+            WpfTestHost.DoEvents();
+
+            var commandBar = GetCommandBar(commandBarFlyout);
+            commandBar.ApplyTemplate();
+            host.UpdateLayout();
+
+            int closingCount = 0;
+            bool sawCanceledClosing = false;
+            commandBarFlyout.Closing += (_, args) =>
+            {
+                closingCount++;
+                sawCanceledClosing |= args.Cancel;
+            };
+
+            commandBarFlyout.Hide();
+
+            if (commandBar.HasCloseAnimation())
+            {
+                Assert.IsTrue(sawCanceledClosing);
+                Assert.AreEqual(1, closingCount);
+                Assert.IsTrue(commandBarFlyout.IsOpen);
+                Assert.IsTrue(commandBar.IsOpen);
+
+                WaitFor(() => !commandBarFlyout.IsOpen, "CommandBarFlyout close animation did not complete.");
+
+                Assert.AreEqual(2, closingCount);
+                Assert.IsFalse(commandBar.IsOpen);
+            }
+            else
+            {
+                WpfTestHost.DoEvents();
+                Assert.IsFalse(commandBarFlyout.IsOpen);
+                Assert.IsFalse(commandBar.IsOpen);
             }
         });
     }
@@ -263,8 +377,7 @@ public class CommandBarFlyoutApiTests
             }
             finally
             {
-                commandBarFlyout.Hide();
-                WpfTestHost.DoEvents();
+                HideAndWait(commandBarFlyout);
             }
 
             AssertThemeResourceReference("Light", "CommandBarFlyoutBackground", "AcrylicInAppFillColorDefaultBrush");
@@ -627,6 +740,35 @@ public class CommandBarFlyoutApiTests
         return commandBar!;
     }
 
+    private static void WaitFor(Func<bool> predicate, string failureMessage, int timeoutMilliseconds = 1500)
+    {
+        var deadline = DateTime.UtcNow.AddMilliseconds(timeoutMilliseconds);
+
+        while (DateTime.UtcNow < deadline)
+        {
+            if (predicate())
+            {
+                return;
+            }
+
+            Thread.Sleep(10);
+            WpfTestHost.DoEvents();
+        }
+
+        Assert.Fail(failureMessage);
+    }
+
+    private static void HideAndWait(CommandBarFlyout commandBarFlyout)
+    {
+        if (!commandBarFlyout.IsOpen)
+        {
+            return;
+        }
+
+        commandBarFlyout.Hide();
+        WaitFor(() => !commandBarFlyout.IsOpen, "CommandBarFlyout did not close.");
+    }
+
     private static void VerifyCommandBarSizing(CommandBarSizingOptions sizingOptions)
     {
         WpfTestHost.Run(() =>
@@ -691,8 +833,7 @@ public class CommandBarFlyoutApiTests
             }
             finally
             {
-                commandBarFlyout.Hide();
-                WpfTestHost.DoEvents();
+                HideAndWait(commandBarFlyout);
             }
         });
     }

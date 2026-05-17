@@ -138,14 +138,14 @@ namespace ModernWpf.Controls
                 }
             };
 
-            Closing += delegate
+            Closing += delegate (FlyoutBase sender, FlyoutBaseClosingEventArgs args)
             {
                 var commandBar = m_commandBar;
                 if (commandBar != null)
                 {
                     if (!m_isClosingAfterCloseAnimation && commandBar.HasCloseAnimation())
                     {
-                        //args.Cancel(true);
+                        args.Cancel = true;
 
                         commandBar.PlayCloseAnimation(() =>
                         {
@@ -154,8 +154,11 @@ namespace ModernWpf.Controls
                             m_isClosingAfterCloseAnimation = false;
                         });
                     }
-                    // Close commandbar and thus other associated flyouts
-                    commandBar.IsOpen = false;
+                    else
+                    {
+                        // Close commandbar and thus other associated flyouts
+                        commandBar.IsOpen = false;
+                    }
 
                     //CommandBarFlyoutCommandBar.Closed will be called when
                     //clicking the more (...) button, we clear the translations
@@ -310,7 +313,8 @@ namespace ModernWpf.Controls
                 m_propertyChangedRevokersByElementMap[element] = new List<DependencyPropertyChangedRevoker>
                 {
                     new(button, AppBarButton.IconProperty, OnCommandBarElementDependencyPropertyChanged),
-                    new(button, AppBarButton.LabelProperty, OnCommandBarElementDependencyPropertyChanged)
+                    new(button, AppBarButton.LabelProperty, OnCommandBarElementDependencyPropertyChanged),
+                    new(button, AppBarButton.KeyboardAcceleratorTextOverrideProperty, OnCommandBarElementDependencyPropertyChanged)
                 };
             }
             else if (element is AppBarToggleButton toggleButton)
@@ -318,7 +322,8 @@ namespace ModernWpf.Controls
                 m_propertyChangedRevokersByElementMap[element] = new List<DependencyPropertyChangedRevoker>
                 {
                     new(toggleButton, AppBarToggleButton.IconProperty, OnCommandBarElementDependencyPropertyChanged),
-                    new(toggleButton, AppBarToggleButton.LabelProperty, OnCommandBarElementDependencyPropertyChanged)
+                    new(toggleButton, AppBarToggleButton.LabelProperty, OnCommandBarElementDependencyPropertyChanged),
+                    new(toggleButton, AppBarToggleButton.KeyboardAcceleratorTextOverrideProperty, OnCommandBarElementDependencyPropertyChanged)
                 };
             }
         }
