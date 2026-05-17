@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.ComponentModel;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Threading;
 
@@ -14,7 +15,8 @@ namespace ModernWpf.Controls.Primitives
             DependencyProperty.RegisterAttached(
                 "Title",
                 typeof(object),
-                typeof(PivotHelper));
+                typeof(PivotHelper),
+                new PropertyMetadata(null, OnTitlePropertyChanged));
 
         public static object GetTitle(TabControl tabControl)
         {
@@ -34,7 +36,8 @@ namespace ModernWpf.Controls.Primitives
             DependencyProperty.RegisterAttached(
                 "TitleTemplate",
                 typeof(DataTemplate),
-                typeof(PivotHelper));
+                typeof(PivotHelper),
+                new PropertyMetadata(null, OnTitlePropertyChanged));
 
         public static DataTemplate GetTitleTemplate(TabControl tabControl)
         {
@@ -44,6 +47,42 @@ namespace ModernWpf.Controls.Primitives
         public static void SetTitleTemplate(TabControl tabControl, DataTemplate value)
         {
             tabControl.SetValue(TitleTemplateProperty, value);
+        }
+
+        #endregion
+
+        #region TitleVisibility
+
+        private static readonly DependencyPropertyKey TitleVisibilityPropertyKey =
+            DependencyProperty.RegisterAttachedReadOnly(
+                "TitleVisibility",
+                typeof(Visibility),
+                typeof(PivotHelper),
+                new PropertyMetadata(Visibility.Collapsed));
+
+        public static readonly DependencyProperty TitleVisibilityProperty =
+            TitleVisibilityPropertyKey.DependencyProperty;
+
+        public static Visibility GetTitleVisibility(TabControl tabControl)
+        {
+            return (Visibility)tabControl.GetValue(TitleVisibilityProperty);
+        }
+
+        private static void OnTitlePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is TabControl tabControl)
+            {
+                UpdateTitleVisibility(tabControl);
+            }
+        }
+
+        private static void UpdateTitleVisibility(TabControl tabControl)
+        {
+            var visibility = GetTitle(tabControl) != null || GetTitleTemplate(tabControl) != null
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            tabControl.SetValue(TitleVisibilityPropertyKey, visibility);
         }
 
         #endregion
@@ -244,6 +283,11 @@ namespace ModernWpf.Controls.Primitives
 
             if (tabItem.IsSelected)
             {
+                if (GetIsHeaderItemPressed(tabItem))
+                {
+                    return "SelectedPressed";
+                }
+
                 return tabItem.IsMouseOver ? "SelectedPointerOver" : "Selected";
             }
 
@@ -282,6 +326,238 @@ namespace ModernWpf.Controls.Primitives
 
         private static readonly DependencyPropertyDescriptor IsEnabledPropertyDescriptor =
             DependencyPropertyDescriptor.FromProperty(UIElement.IsEnabledProperty, typeof(TabItem));
+
+        #endregion
+
+        #region NavigationButtonsVisualStateSettersEnabled
+
+        public static readonly DependencyProperty NavigationButtonsVisualStateSettersEnabledProperty =
+            DependencyProperty.RegisterAttached(
+                "NavigationButtonsVisualStateSettersEnabled",
+                typeof(bool),
+                typeof(PivotHelper),
+                new PropertyMetadata(false, OnNavigationButtonsVisualStateSettersEnabledChanged));
+
+        public static bool GetNavigationButtonsVisualStateSettersEnabled(TabControl tabControl)
+        {
+            return (bool)tabControl.GetValue(NavigationButtonsVisualStateSettersEnabledProperty);
+        }
+
+        public static void SetNavigationButtonsVisualStateSettersEnabled(TabControl tabControl, bool value)
+        {
+            tabControl.SetValue(NavigationButtonsVisualStateSettersEnabledProperty, value);
+        }
+
+        private static void OnNavigationButtonsVisualStateSettersEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var tabControl = (TabControl)d;
+            var controller = GetNavigationButtonsController(tabControl);
+
+            if ((bool)e.NewValue)
+            {
+                if (controller == null)
+                {
+                    controller = new NavigationButtonsController(tabControl);
+                    SetNavigationButtonsController(tabControl, controller);
+                }
+
+                controller.Attach();
+            }
+            else
+            {
+                controller?.Detach();
+                SetNavigationButtonsController(tabControl, null);
+            }
+        }
+
+        private static readonly DependencyProperty NavigationButtonsControllerProperty =
+            DependencyProperty.RegisterAttached(
+                "NavigationButtonsController",
+                typeof(NavigationButtonsController),
+                typeof(PivotHelper));
+
+        private static NavigationButtonsController GetNavigationButtonsController(TabControl tabControl)
+        {
+            return (NavigationButtonsController)tabControl.GetValue(NavigationButtonsControllerProperty);
+        }
+
+        private static void SetNavigationButtonsController(TabControl tabControl, NavigationButtonsController value)
+        {
+            tabControl.SetValue(NavigationButtonsControllerProperty, value);
+        }
+
+        private sealed class NavigationButtonsController
+        {
+            public NavigationButtonsController(TabControl tabControl)
+            {
+                _tabControl = tabControl;
+            }
+
+            public void Attach()
+            {
+                _tabControl.Loaded -= OnLoaded;
+                _tabControl.Unloaded -= OnUnloaded;
+                _tabControl.Loaded += OnLoaded;
+                _tabControl.Unloaded += OnUnloaded;
+
+                if (_tabControl.IsLoaded)
+                {
+                    HookTemplateParts();
+                    UpdateVisualState(false);
+                }
+            }
+
+            public void Detach()
+            {
+                _tabControl.Loaded -= OnLoaded;
+                _tabControl.Unloaded -= OnUnloaded;
+                UnhookTemplateParts();
+            }
+
+            private void OnLoaded(object sender, RoutedEventArgs e)
+            {
+                HookTemplateParts();
+                UpdateVisualState(false);
+            }
+
+            private void OnUnloaded(object sender, RoutedEventArgs e)
+            {
+                UnhookTemplateParts();
+            }
+
+            private void HookTemplateParts()
+            {
+                UnhookTemplateParts();
+
+                _tabControl.ApplyTemplate();
+                _headerPanel = _tabControl.Template?.FindName("headerPanel", _tabControl) as FrameworkElement;
+                _contentPanel = _tabControl.Template?.FindName("contentPanel", _tabControl) as FrameworkElement;
+                _scrollViewer = _tabControl.Template?.FindName("ScrollViewer", _tabControl) as PivotHeaderScrollViewer;
+                _previousButton = _tabControl.Template?.FindName("PreviousButton", _tabControl) as ButtonBase;
+                _nextButton = _tabControl.Template?.FindName("NextButton", _tabControl) as ButtonBase;
+
+                AttachMouseState(_headerPanel);
+                AttachMouseState(_contentPanel);
+                AttachMouseState(_previousButton);
+                AttachMouseState(_nextButton);
+
+                if (_scrollViewer != null)
+                {
+                    CanScrollLeftPropertyDescriptor.AddValueChanged(_scrollViewer, OnNavigationButtonStateChanged);
+                    CanScrollRightPropertyDescriptor.AddValueChanged(_scrollViewer, OnNavigationButtonStateChanged);
+                }
+            }
+
+            private void UnhookTemplateParts()
+            {
+                DetachMouseState(_headerPanel);
+                DetachMouseState(_contentPanel);
+                DetachMouseState(_previousButton);
+                DetachMouseState(_nextButton);
+
+                if (_scrollViewer != null)
+                {
+                    CanScrollLeftPropertyDescriptor.RemoveValueChanged(_scrollViewer, OnNavigationButtonStateChanged);
+                    CanScrollRightPropertyDescriptor.RemoveValueChanged(_scrollViewer, OnNavigationButtonStateChanged);
+                }
+
+                _headerPanel = null;
+                _contentPanel = null;
+                _scrollViewer = null;
+                _previousButton = null;
+                _nextButton = null;
+            }
+
+            private void AttachMouseState(FrameworkElement element)
+            {
+                if (element != null)
+                {
+                    element.MouseEnter += OnMouseStateChanged;
+                    element.MouseLeave += OnMouseStateChanged;
+                }
+            }
+
+            private void DetachMouseState(FrameworkElement element)
+            {
+                if (element != null)
+                {
+                    element.MouseEnter -= OnMouseStateChanged;
+                    element.MouseLeave -= OnMouseStateChanged;
+                }
+            }
+
+            private void OnMouseStateChanged(object sender, MouseEventArgs e)
+            {
+                UpdateVisualState(true);
+            }
+
+            private void OnNavigationButtonStateChanged(object sender, System.EventArgs e)
+            {
+                UpdateVisualState(true);
+            }
+
+            private void UpdateVisualState(bool useTransitions)
+            {
+                string stateName = GetNavigationButtonsStateName();
+                if (!GoToNavigationButtonsState(stateName, useTransitions) &&
+                    (stateName == "PreviousButtonVisible" || stateName == "NextButtonVisible"))
+                {
+                    GoToNavigationButtonsState("NavigationButtonsVisible", useTransitions);
+                }
+            }
+
+            private bool GoToNavigationButtonsState(string stateName, bool useTransitions)
+            {
+                if (VisualStateManager.GoToState(_tabControl, stateName, useTransitions))
+                {
+                    return true;
+                }
+
+                return _tabControl.GetTemplateRoot() is { } templateRoot &&
+                    VisualStateManager.GoToElementState(templateRoot, stateName, useTransitions);
+            }
+
+            private string GetNavigationButtonsStateName()
+            {
+                bool isPointerOverHeaders =
+                    _headerPanel?.IsMouseOver == true ||
+                    _previousButton?.IsMouseOver == true ||
+                    _nextButton?.IsMouseOver == true;
+
+                if (!isPointerOverHeaders || _contentPanel?.IsMouseOver == true)
+                {
+                    return "NavigationButtonsHidden";
+                }
+
+                bool showPreviousButton = _scrollViewer?.CanScrollLeft == true;
+                bool showNextButton = _scrollViewer?.CanScrollRight == true;
+
+                if (showPreviousButton && showNextButton)
+                {
+                    return "NavigationButtonsVisible";
+                }
+
+                if (showPreviousButton)
+                {
+                    return "PreviousButtonVisible";
+                }
+
+                return showNextButton ? "NextButtonVisible" : "NavigationButtonsHidden";
+            }
+
+            private readonly TabControl _tabControl;
+            private FrameworkElement _headerPanel;
+            private FrameworkElement _contentPanel;
+            private PivotHeaderScrollViewer _scrollViewer;
+            private ButtonBase _previousButton;
+            private ButtonBase _nextButton;
+        }
+
+        private static readonly DependencyPropertyDescriptor CanScrollLeftPropertyDescriptor =
+            DependencyPropertyDescriptor.FromProperty(PivotHeaderScrollViewer.CanScrollLeftProperty, typeof(PivotHeaderScrollViewer));
+
+        private static readonly DependencyPropertyDescriptor CanScrollRightPropertyDescriptor =
+            DependencyPropertyDescriptor.FromProperty(PivotHeaderScrollViewer.CanScrollRightProperty, typeof(PivotHeaderScrollViewer));
 
         #endregion
     }

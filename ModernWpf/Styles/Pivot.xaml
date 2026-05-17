@@ -35,6 +35,8 @@
                                 <root:VisualStateEx x:Name="Disabled">
                                     <root:VisualStateEx.Setters>
                                         <root:VisualStateSetter Target="SelectedPipe.Visibility" Value="Collapsed" />
+                                        <root:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource PivotHeaderItemForegroundDisabled}" />
+                                        <root:VisualStateSetter Target="Border.Background" Value="{DynamicResource PivotHeaderItemBackgroundDisabled}" />
                                     </root:VisualStateEx.Setters>
                                 </root:VisualStateEx>
                                 <root:VisualStateEx x:Name="Unselected">
@@ -47,18 +49,41 @@
                                         <root:VisualStateSetter Target="SelectedPipe.Visibility" Value="Collapsed" />
                                     </root:VisualStateEx.Setters>
                                 </root:VisualStateEx>
-                                <VisualState x:Name="Selected" />
+                                <root:VisualStateEx x:Name="Selected">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Property="(Panel.ZIndex)" Value="1" />
+                                        <root:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource PivotHeaderItemForegroundSelected}" />
+                                        <root:VisualStateSetter Target="Border.Background" Value="{DynamicResource PivotHeaderItemBackgroundSelected}" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
                                 <root:VisualStateEx x:Name="UnselectedPointerOver">
                                     <root:VisualStateEx.Setters>
                                         <root:VisualStateSetter Target="SelectedPipe.Visibility" Value="Collapsed" />
+                                        <root:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource PivotHeaderItemForegroundUnselectedPointerOver}" />
+                                        <root:VisualStateSetter Target="Border.Background" Value="{DynamicResource PivotHeaderItemBackgroundUnselectedPointerOver}" />
                                     </root:VisualStateEx.Setters>
                                 </root:VisualStateEx>
                                 <root:VisualStateEx x:Name="UnselectedPressed">
                                     <root:VisualStateEx.Setters>
                                         <root:VisualStateSetter Target="SelectedPipe.Visibility" Value="Collapsed" />
+                                        <root:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource PivotHeaderItemForegroundUnselectedPressed}" />
+                                        <root:VisualStateSetter Target="Border.Background" Value="{DynamicResource PivotHeaderItemBackgroundUnselectedPressed}" />
                                     </root:VisualStateEx.Setters>
                                 </root:VisualStateEx>
-                                <VisualState x:Name="SelectedPointerOver" />
+                                <root:VisualStateEx x:Name="SelectedPointerOver">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Property="(Panel.ZIndex)" Value="1" />
+                                        <root:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource PivotHeaderItemForegroundSelectedPointerOver}" />
+                                        <root:VisualStateSetter Target="Border.Background" Value="{DynamicResource PivotHeaderItemBackgroundSelectedPointerOver}" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="SelectedPressed">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Property="(Panel.ZIndex)" Value="1" />
+                                        <root:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource PivotHeaderItemForegroundSelectedPressed}" />
+                                        <root:VisualStateSetter Target="Border.Background" Value="{DynamicResource PivotHeaderItemBackgroundSelectedPressed}" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Grid>
@@ -85,48 +110,6 @@
                                 RadiusY="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}" />
                         </Grid>
                     </Border>
-                    <ControlTemplate.Triggers>
-                        <!-- Unselected -->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsSelected" Value="False" />
-                                <Condition SourceName="Border" Property="IsMouseOver" Value="False" />
-                            </MultiTrigger.Conditions>
-                        </MultiTrigger>
-                        <!-- Selected -->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsSelected" Value="True" />
-                                <Condition SourceName="Border" Property="IsMouseOver" Value="False" />
-                            </MultiTrigger.Conditions>
-                            <Setter Property="Panel.ZIndex" Value="1" />
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource PivotHeaderItemForegroundSelected}" />
-                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource PivotHeaderItemBackgroundSelected}" />
-                        </MultiTrigger>
-                        <!-- UnselectedPointerOver -->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsSelected" Value="False" />
-                                <Condition SourceName="Border" Property="IsMouseOver" Value="True" />
-                            </MultiTrigger.Conditions>
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource PivotHeaderItemForegroundUnselectedPointerOver}" />
-                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource PivotHeaderItemBackgroundUnselectedPointerOver}" />
-                        </MultiTrigger>
-                        <!-- SelectedPointerOver -->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsSelected" Value="True" />
-                                <Condition SourceName="Border" Property="IsMouseOver" Value="True" />
-                            </MultiTrigger.Conditions>
-                            <Setter Property="Panel.ZIndex" Value="1" />
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource PivotHeaderItemForegroundSelectedPointerOver}" />
-                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource PivotHeaderItemBackgroundSelectedPointerOver}" />
-                        </MultiTrigger>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource PivotHeaderItemForegroundDisabled}" />
-                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource PivotHeaderItemBackgroundDisabled}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -138,6 +121,7 @@
         <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
         <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
         <Setter Property="ItemContainerStyle" Value="{StaticResource TabItemPivotStyle}" />
+        <Setter Property="primitives:PivotHelper.NavigationButtonsVisualStateSettersEnabled" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TabControl">
@@ -152,6 +136,45 @@
                         KeyboardNavigation.TabNavigation="Local"
                         SnapsToDevicePixels="true"
                         ClipToBounds="true">
+                        <VisualStateManager.CustomVisualStateManager>
+                            <root:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="NavigationButtonsVisibility">
+                                <root:VisualStateEx x:Name="NavigationButtonsHidden">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="PreviousButton.Opacity" Value="0" />
+                                        <root:VisualStateSetter Target="PreviousButton.IsEnabled" Value="False" />
+                                        <root:VisualStateSetter Target="NextButton.Opacity" Value="0" />
+                                        <root:VisualStateSetter Target="NextButton.IsEnabled" Value="False" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="NavigationButtonsVisible">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="PreviousButton.Opacity" Value="1" />
+                                        <root:VisualStateSetter Target="PreviousButton.IsEnabled" Value="True" />
+                                        <root:VisualStateSetter Target="NextButton.Opacity" Value="1" />
+                                        <root:VisualStateSetter Target="NextButton.IsEnabled" Value="True" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="PreviousButtonVisible">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="PreviousButton.Opacity" Value="1" />
+                                        <root:VisualStateSetter Target="PreviousButton.IsEnabled" Value="True" />
+                                        <root:VisualStateSetter Target="NextButton.Opacity" Value="0" />
+                                        <root:VisualStateSetter Target="NextButton.IsEnabled" Value="False" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="NextButtonVisible">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="PreviousButton.Opacity" Value="0" />
+                                        <root:VisualStateSetter Target="PreviousButton.IsEnabled" Value="False" />
+                                        <root:VisualStateSetter Target="NextButton.Opacity" Value="1" />
+                                        <root:VisualStateSetter Target="NextButton.IsEnabled" Value="True" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
 
                         <Grid.Resources>
                             <Style x:Key="BaseContentControlStyle" TargetType="ContentControl">
@@ -188,7 +211,7 @@
                             IsTabStop="False"
                             Margin="{DynamicResource PivotPortraitThemePadding}"
                             Style="{StaticResource TitleContentControlStyle}"
-                            Visibility="Collapsed"
+                            Visibility="{TemplateBinding primitives:PivotHelper.TitleVisibility}"
                             Content="{TemplateBinding primitives:PivotHelper.Title}"
                             ContentTemplate="{TemplateBinding primitives:PivotHelper.TitleTemplate}"
                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
@@ -202,6 +225,28 @@
                                         Background="{DynamicResource PivotNextButtonBackground}"
                                         BorderThickness="{DynamicResource PivotNavButtonBorderThemeThickness}"
                                         BorderBrush="{DynamicResource PivotNextButtonBorderBrush}">
+                                        <VisualStateManager.CustomVisualStateManager>
+                                            <root:VisualStateManagerEx />
+                                        </VisualStateManager.CustomVisualStateManager>
+                                        <VisualStateManager.VisualStateGroups>
+                                            <VisualStateGroup x:Name="CommonStates">
+                                                <VisualState x:Name="Normal" />
+                                                <root:VisualStateEx x:Name="PointerOver">
+                                                    <root:VisualStateEx.Setters>
+                                                        <root:VisualStateSetter Target="Root.Background" Value="{DynamicResource PivotNextButtonBackgroundPointerOver}" />
+                                                        <root:VisualStateSetter Target="Root.BorderBrush" Value="{DynamicResource PivotNextButtonBorderBrushPointerOver}" />
+                                                        <root:VisualStateSetter Target="Arrow.Foreground" Value="{DynamicResource PivotNextButtonForegroundPointerOver}" />
+                                                    </root:VisualStateEx.Setters>
+                                                </root:VisualStateEx>
+                                                <root:VisualStateEx x:Name="Pressed">
+                                                    <root:VisualStateEx.Setters>
+                                                        <root:VisualStateSetter Target="Root.Background" Value="{DynamicResource PivotNextButtonBackgroundPressed}" />
+                                                        <root:VisualStateSetter Target="Root.BorderBrush" Value="{DynamicResource PivotNextButtonBorderBrushPressed}" />
+                                                        <root:VisualStateSetter Target="Arrow.Foreground" Value="{DynamicResource PivotNextButtonForegroundPressed}" />
+                                                    </root:VisualStateEx.Setters>
+                                                </root:VisualStateEx>
+                                            </VisualStateGroup>
+                                        </VisualStateManager.VisualStateGroups>
                                         <local:FontIconFallback
                                             x:Name="Arrow"
                                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
@@ -212,18 +257,6 @@
                                             VerticalAlignment="Center"
                                             UseLayoutRounding="False" />
                                     </Border>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource PivotNextButtonBackgroundPointerOver}" />
-                                            <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource PivotNextButtonBorderBrushPointerOver}" />
-                                            <Setter TargetName="Arrow" Property="Foreground" Value="{DynamicResource PivotNextButtonForegroundPointerOver}" />
-                                        </Trigger>
-                                        <Trigger Property="IsPressed" Value="True">
-                                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource PivotNextButtonBackgroundPressed}" />
-                                            <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource PivotNextButtonBorderBrushPressed}" />
-                                            <Setter TargetName="Arrow" Property="Foreground" Value="{DynamicResource PivotNextButtonForegroundPressed}" />
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
                                 </ControlTemplate>
                                 <ControlTemplate x:Key="PreviousTemplate" TargetType="ButtonBase">
                                     <Border
@@ -231,6 +264,28 @@
                                         Background="{DynamicResource PivotPreviousButtonBackground}"
                                         BorderThickness="{DynamicResource PivotNavButtonBorderThemeThickness}"
                                         BorderBrush="{DynamicResource PivotPreviousButtonBorderBrush}">
+                                        <VisualStateManager.CustomVisualStateManager>
+                                            <root:VisualStateManagerEx />
+                                        </VisualStateManager.CustomVisualStateManager>
+                                        <VisualStateManager.VisualStateGroups>
+                                            <VisualStateGroup x:Name="CommonStates">
+                                                <VisualState x:Name="Normal" />
+                                                <root:VisualStateEx x:Name="PointerOver">
+                                                    <root:VisualStateEx.Setters>
+                                                        <root:VisualStateSetter Target="Root.Background" Value="{DynamicResource PivotPreviousButtonBackgroundPointerOver}" />
+                                                        <root:VisualStateSetter Target="Root.BorderBrush" Value="{DynamicResource PivotPreviousButtonBorderBrushPointerOver}" />
+                                                        <root:VisualStateSetter Target="Arrow.Foreground" Value="{DynamicResource PivotPreviousButtonForegroundPointerOver}" />
+                                                    </root:VisualStateEx.Setters>
+                                                </root:VisualStateEx>
+                                                <root:VisualStateEx x:Name="Pressed">
+                                                    <root:VisualStateEx.Setters>
+                                                        <root:VisualStateSetter Target="Root.Background" Value="{DynamicResource PivotPreviousButtonBackgroundPressed}" />
+                                                        <root:VisualStateSetter Target="Root.BorderBrush" Value="{DynamicResource PivotPreviousButtonBorderBrushPressed}" />
+                                                        <root:VisualStateSetter Target="Arrow.Foreground" Value="{DynamicResource PivotPreviousButtonForegroundPressed}" />
+                                                    </root:VisualStateEx.Setters>
+                                                </root:VisualStateEx>
+                                            </VisualStateGroup>
+                                        </VisualStateManager.VisualStateGroups>
                                         <local:FontIconFallback
                                             x:Name="Arrow"
                                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
@@ -241,18 +296,6 @@
                                             VerticalAlignment="Center"
                                             UseLayoutRounding="False" />
                                     </Border>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource PivotPreviousButtonBackgroundPointerOver}" />
-                                            <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource PivotPreviousButtonBorderBrushPointerOver}" />
-                                            <Setter TargetName="Arrow" Property="Foreground" Value="{DynamicResource PivotPreviousButtonForegroundPointerOver}" />
-                                        </Trigger>
-                                        <Trigger Property="IsPressed" Value="True">
-                                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource PivotPreviousButtonBackgroundPressed}" />
-                                            <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource PivotPreviousButtonBorderBrushPressed}" />
-                                            <Setter TargetName="Arrow" Property="Foreground" Value="{DynamicResource PivotPreviousButtonForegroundPressed}" />
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
                                 </ControlTemplate>
                             </Grid.Resources>
                             <Grid.RowDefinitions>
@@ -300,6 +343,7 @@
                                     Height="36"
                                     FocusVisualStyle="{x:Null}"
                                     Margin="{DynamicResource PivotNavButtonMargin}"
+                                    primitives:ButtonHelper.VisualStateSettersEnabled="True"
                                     IsTabStop="False"
                                     IsEnabled="False"
                                     HorizontalAlignment="Left"
@@ -316,6 +360,7 @@
                                     Height="36"
                                     FocusVisualStyle="{x:Null}"
                                     Margin="{DynamicResource PivotNavButtonMargin}"
+                                    primitives:ButtonHelper.VisualStateSettersEnabled="True"
                                     IsTabStop="False"
                                     IsEnabled="False"
                                     HorizontalAlignment="Right"
@@ -350,31 +395,6 @@
                         </Grid>
                     </Grid>
 
-                    <ControlTemplate.Triggers>
-                        <Trigger SourceName="TitleContentControl" Property="HasContent" Value="True">
-                            <Setter TargetName="TitleContentControl" Property="Visibility" Value="Visible" />
-                        </Trigger>
-                        <!-- PreviousButtonVisible -->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition SourceName="headerPanel" Property="IsMouseOver" Value="True" />
-                                <Condition SourceName="contentPanel" Property="IsMouseOver" Value="False" />
-                                <Condition SourceName="ScrollViewer" Property="CanScrollLeft" Value="True" />
-                            </MultiTrigger.Conditions>
-                            <Setter TargetName="PreviousButton" Property="Opacity" Value="1" />
-                            <Setter TargetName="PreviousButton" Property="IsEnabled" Value="True" />
-                        </MultiTrigger>
-                        <!-- NextButtonVisible -->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition SourceName="headerPanel" Property="IsMouseOver" Value="True" />
-                                <Condition SourceName="contentPanel" Property="IsMouseOver" Value="False" />
-                                <Condition SourceName="ScrollViewer" Property="CanScrollRight" Value="True" />
-                            </MultiTrigger.Conditions>
-                            <Setter TargetName="NextButton" Property="Opacity" Value="1" />
-                            <Setter TargetName="NextButton" Property="IsEnabled" Value="True" />
-                        </MultiTrigger>
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
