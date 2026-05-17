@@ -156,6 +156,39 @@ public class ToggleSwitchApiTests
     }
 
     [TestMethod]
+    public void PointerCaptureLostClearsPointerOverAfterVerticalPanLikeWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch();
+            using var host = new TestWindowHost(toggleSwitch, width: 260, height: 120);
+            host.UpdateLayout();
+
+            var thumb = FindNamedDescendant<Thumb>(toggleSwitch, "SwitchThumb");
+            var stateGroupsRoot = FindStateGroupsRoot(toggleSwitch);
+
+            RaiseMouseEnter(toggleSwitch);
+            host.UpdateLayout();
+
+            Assert.AreEqual("PointerOver", GetCurrentStateName(stateGroupsRoot, "CommonStates"));
+
+            RaiseDragStarted(thumb);
+            RaiseDragDelta(thumb, horizontalChange: 0, verticalChange: 24);
+            RaiseDragCompleted(thumb);
+            host.UpdateLayout();
+
+            Assert.AreEqual("PointerOver", GetCurrentStateName(stateGroupsRoot, "CommonStates"));
+
+            RaiseLostMouseCapture(thumb);
+            host.UpdateLayout();
+
+            Assert.AreEqual("Normal", GetCurrentStateName(stateGroupsRoot, "CommonStates"));
+        });
+    }
+
+    [TestMethod]
     public void CanceledDragCompletionLeavesDragStateLikeWinUISource()
     {
         WpfTestHost.Run(() =>
@@ -666,6 +699,29 @@ public class ToggleSwitchApiTests
             Assert.IsNotNull(toggleSwitch.FocusVisualStyle);
             Assert.IsTrue(toggleSwitch.Focus());
             Assert.IsTrue(toggleSwitch.IsKeyboardFocusWithin);
+        });
+    }
+
+    [TestMethod]
+    public void DefaultStyleSettersMatchWinUICommonStylesSource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch();
+            using var host = new TestWindowHost(toggleSwitch, width: 260, height: 120);
+            host.UpdateLayout();
+
+            Assert.AreEqual(HorizontalAlignment.Left, toggleSwitch.HorizontalContentAlignment);
+            Assert.AreEqual(
+                BaseValueSource.DefaultStyle,
+                DependencyPropertyHelper.GetValueSource(toggleSwitch, Control.HorizontalContentAlignmentProperty).BaseValueSource);
+
+            Assert.AreEqual(VerticalAlignment.Top, toggleSwitch.VerticalContentAlignment);
+            Assert.AreEqual(
+                BaseValueSource.Default,
+                DependencyPropertyHelper.GetValueSource(toggleSwitch, Control.VerticalContentAlignmentProperty).BaseValueSource);
         });
     }
 
@@ -1470,6 +1526,32 @@ public class ToggleSwitchApiTests
             MouseButton.Left)
         {
             RoutedEvent = UIElement.MouseLeftButtonDownEvent
+        };
+
+        element.RaiseEvent(args);
+        return args;
+    }
+
+    private static MouseEventArgs RaiseMouseEnter(UIElement element)
+    {
+        var args = new MouseEventArgs(
+            Mouse.PrimaryDevice,
+            Environment.TickCount)
+        {
+            RoutedEvent = UIElement.MouseEnterEvent
+        };
+
+        element.RaiseEvent(args);
+        return args;
+    }
+
+    private static MouseEventArgs RaiseLostMouseCapture(UIElement element)
+    {
+        var args = new MouseEventArgs(
+            Mouse.PrimaryDevice,
+            Environment.TickCount)
+        {
+            RoutedEvent = UIElement.LostMouseCaptureEvent
         };
 
         element.RaiseEvent(args);

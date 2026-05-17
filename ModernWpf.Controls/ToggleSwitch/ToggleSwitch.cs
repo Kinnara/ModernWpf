@@ -367,6 +367,7 @@ namespace ModernWpf.Controls
                 SwitchThumb.DragStarted -= OnSwitchThumbDragStarted;
                 SwitchThumb.DragDelta -= OnSwitchThumbDragDelta;
                 SwitchThumb.DragCompleted -= OnSwitchThumbDragCompleted;
+                SwitchThumb.LostMouseCapture -= OnSwitchThumbLostMouseCapture;
                 SwitchThumb.RemoveHandler(MouseLeftButtonUpEvent, new MouseButtonEventHandler(OnSwitchThumbMouseLeftButtonUp));
             }
 
@@ -397,6 +398,7 @@ namespace ModernWpf.Controls
                 SwitchThumb.DragStarted += OnSwitchThumbDragStarted;
                 SwitchThumb.DragDelta += OnSwitchThumbDragDelta;
                 SwitchThumb.DragCompleted += OnSwitchThumbDragCompleted;
+                SwitchThumb.LostMouseCapture += OnSwitchThumbLostMouseCapture;
                 SwitchThumb.AddHandler(MouseLeftButtonUpEvent, new MouseButtonEventHandler(OnSwitchThumbMouseLeftButtonUp), true);
             }
 
@@ -516,6 +518,16 @@ namespace ModernWpf.Controls
         {
             base.OnLostMouseCapture(e);
 
+            OnPointerCaptureLostSubstitute();
+        }
+
+        private void OnSwitchThumbLostMouseCapture(object sender, MouseEventArgs e)
+        {
+            OnPointerCaptureLostSubstitute();
+        }
+
+        private void OnPointerCaptureLostSubstitute()
+        {
             if (!_isDragging)
             {
                 _isPointerOver = false;
