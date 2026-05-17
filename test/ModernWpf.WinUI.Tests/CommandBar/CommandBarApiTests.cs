@@ -541,6 +541,69 @@ public class CommandBarApiTests
     }
 
     [TestMethod]
+    public void NonTabStopAppBarButtonsInCommandBarRemainAutomationKeyboardFocusableLikeWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var primaryButton = new AppBarButton
+            {
+                Label = "Primary",
+                IsTabStop = false
+            };
+
+            var primaryToggleButton = new AppBarToggleButton
+            {
+                Label = "Primary toggle",
+                IsTabStop = false
+            };
+
+            var secondaryButton = new AppBarButton
+            {
+                Label = "Secondary",
+                IsTabStop = false
+            };
+
+            var secondaryToggleButton = new AppBarToggleButton
+            {
+                Label = "Secondary toggle",
+                IsTabStop = false
+            };
+
+            var commandBar = new ModernWpf.Controls.CommandBar
+            {
+                IsOpen = true
+            };
+            commandBar.PrimaryCommands.Add(primaryButton);
+            commandBar.PrimaryCommands.Add(primaryToggleButton);
+            commandBar.SecondaryCommands.Add(secondaryButton);
+            commandBar.SecondaryCommands.Add(secondaryToggleButton);
+
+            using var host = new TestWindowHost(commandBar, width: 420, height: 160);
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            Assert.IsTrue(FrameworkElementAutomationPeer.CreatePeerForElement(primaryButton).IsKeyboardFocusable());
+            Assert.IsTrue(FrameworkElementAutomationPeer.CreatePeerForElement(primaryToggleButton).IsKeyboardFocusable());
+            Assert.IsTrue(FrameworkElementAutomationPeer.CreatePeerForElement(secondaryButton).IsKeyboardFocusable());
+            Assert.IsTrue(FrameworkElementAutomationPeer.CreatePeerForElement(secondaryToggleButton).IsKeyboardFocusable());
+
+            primaryButton.IsEnabled = false;
+            primaryToggleButton.Visibility = Visibility.Collapsed;
+            secondaryButton.IsEnabled = false;
+            secondaryToggleButton.Visibility = Visibility.Collapsed;
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            Assert.IsFalse(FrameworkElementAutomationPeer.FromElement(primaryButton).IsKeyboardFocusable());
+            Assert.IsFalse(FrameworkElementAutomationPeer.FromElement(primaryToggleButton).IsKeyboardFocusable());
+            Assert.IsFalse(FrameworkElementAutomationPeer.FromElement(secondaryButton).IsKeyboardFocusable());
+            Assert.IsFalse(FrameworkElementAutomationPeer.FromElement(secondaryToggleButton).IsKeyboardFocusable());
+        });
+    }
+
+    [TestMethod]
     public void AppBarButtonsDenyPointerFocusButRemainFocusable()
     {
         WpfTestHost.Run(() =>

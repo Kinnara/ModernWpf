@@ -50,6 +50,17 @@ namespace ModernWpf.Automation.Peers
             return AutomationControlType.Button;
         }
 
+        protected override bool IsKeyboardFocusableCore()
+        {
+            var owner = GetImpl();
+            if (CommandBar.FindParentCommandBarForElement(owner) != null)
+            {
+                return AppBarButtonAutomationPeerHelper.IsKeyboardFocusable(owner);
+            }
+
+            return base.IsKeyboardFocusableCore();
+        }
+
         protected override List<AutomationPeer> GetChildrenCore()
         {
             return null;

@@ -342,7 +342,7 @@ namespace ModernWpf.Controls
             }
         }
 
-        private static CommandBar FindParentCommandBarForElement(DependencyObject element)
+        internal static CommandBar FindParentCommandBarForElement(DependencyObject element)
         {
             if (GetParentCommandBar(element) is { } ownerCommandBar &&
                 ownerCommandBar.ContainsCommandElement(element))

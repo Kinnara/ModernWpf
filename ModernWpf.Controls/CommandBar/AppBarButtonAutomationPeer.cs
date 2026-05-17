@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
+using System.Windows.Controls;
 using ModernWpf.Controls;
 
 namespace ModernWpf.Automation.Peers
@@ -49,6 +50,17 @@ namespace ModernWpf.Automation.Peers
         protected override AutomationControlType GetAutomationControlTypeCore()
         {
             return AutomationControlType.Button;
+        }
+
+        protected override bool IsKeyboardFocusableCore()
+        {
+            var owner = GetImpl();
+            if (CommandBar.FindParentCommandBarForElement(owner) != null)
+            {
+                return AppBarButtonAutomationPeerHelper.IsKeyboardFocusable(owner);
+            }
+
+            return base.IsKeyboardFocusableCore();
         }
 
         protected override List<AutomationPeer> GetChildrenCore()
@@ -108,6 +120,13 @@ namespace ModernWpf.Automation.Peers
             }
 
             return TrimKeyboardAcceleratorTextOverride(keyboardAcceleratorTextOverride);
+        }
+
+        public static bool IsKeyboardFocusable(Control owner)
+        {
+            return owner.Focusable &&
+                   owner.IsEnabled &&
+                   owner.IsVisible;
         }
 
         private static bool HasCustomAutomationProperty(DependencyObject owner, DependencyProperty property)
