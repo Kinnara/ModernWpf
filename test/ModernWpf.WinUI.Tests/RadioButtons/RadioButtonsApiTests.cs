@@ -1,11 +1,17 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Automation;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Markup;
 using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ModernWpf.Automation.Peers;
 using ModernWpf.Controls;
+using ModernWpf.Controls.Primitives;
 using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
 
@@ -89,6 +95,96 @@ public class RadioButtonsApiTests
     }
 
     [TestMethod]
+    public void VerifyCustomItemTemplateSelector()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var itemTemplate = (DataTemplate)XamlReader.Parse(
+                @"<DataTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'>
+                    <TextBlock Text='{Binding}'/>
+                </DataTemplate>");
+            var selector = new ConstantTemplateSelector(itemTemplate);
+            var radioButtons = new ModernWpf.Controls.RadioButtons
+            {
+                ItemsSource = new List<string> { "Option 1", "Option 2" },
+                ItemTemplate = selector
+            };
+
+            using var host = new TestWindowHost(radioButtons);
+
+            var radioButton = radioButtons.ContainerFromIndex(0) as RadioButton;
+            Assert.IsNotNull(radioButton, "The selected template content should have been wrapped in a RadioButton.");
+            Assert.AreSame(selector, radioButton!.ContentTemplateSelector);
+            Assert.AreEqual("Option 1", radioButton.Content);
+        });
+    }
+
+    [TestMethod]
+    public void VerifyAutomationPeerMatchesWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var radioButtons = new ModernWpf.Controls.RadioButtons
+            {
+                Header = "RadioButtons header",
+                ItemsSource = new List<string> { "Option 1", "Option 2" }
+            };
+
+            using var host = new TestWindowHost(radioButtons);
+
+            var peer = UIElementAutomationPeer.CreatePeerForElement(radioButtons);
+            Assert.IsInstanceOfType(peer, typeof(RadioButtonsAutomationPeer));
+            Assert.AreEqual(nameof(ModernWpf.Controls.RadioButtons), peer.GetClassName());
+            Assert.AreEqual(AutomationControlType.Group, peer.GetAutomationControlType());
+            Assert.AreEqual("RadioButtons header", peer.GetName());
+
+            AutomationProperties.SetName(radioButtons, "Explicit name");
+            Assert.AreEqual("Explicit name", peer.GetName());
+        });
+    }
+
+    [TestMethod]
+    public void VerifyMaxColumnsBindingMatchesWinUITemplate()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var radioButtons = new ModernWpf.Controls.RadioButtons
+            {
+                ItemsSource = new List<string> { "Option 1", "Option 2" }
+            };
+
+            using var host = new TestWindowHost(radioButtons);
+
+            var repeater = FindNamedDescendant<ItemsRepeater>(radioButtons, "InnerRepeater");
+            var layout = repeater.Layout as ColumnMajorUniformToLargestGridLayout;
+            Assert.IsNotNull(layout);
+            var actualLayout = layout!;
+            Assert.IsNotNull(BindingOperations.GetBindingExpression(
+                actualLayout,
+                ColumnMajorUniformToLargestGridLayout.MaxColumnsProperty));
+            Assert.AreEqual(1, actualLayout.MaxColumns);
+
+            radioButtons.MaxColumns = 4;
+            host.UpdateLayout();
+
+            Assert.AreEqual(4, actualLayout.MaxColumns);
+        });
+    }
+
+    [TestMethod]
+    public void VerifyMaxColumnsValidationMatchesWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var radioButtons = new ModernWpf.Controls.RadioButtons();
+
+            Assert.ThrowsException<ArgumentException>(() => radioButtons.MaxColumns = 0);
+            Assert.ThrowsException<ArgumentException>(() => radioButtons.MaxColumns = -1);
+            radioButtons.MaxColumns = 1;
+        });
+    }
+
+    [TestMethod]
     public void VerifyIsEnabledChangeUpdatesVisualState()
     {
         WpfTestHost.Run(() =>
@@ -149,5 +245,20 @@ public class RadioButtonsApiTests
         }
 
         throw new AssertFailedException($"Could not find descendant named '{name}'.");
+    }
+
+    private sealed class ConstantTemplateSelector : DataTemplateSelector
+    {
+        public ConstantTemplateSelector(DataTemplate template)
+        {
+            Template = template;
+        }
+
+        public DataTemplate Template { get; }
+
+        public override DataTemplate SelectTemplate(object item, DependencyObject container)
+        {
+            return Template;
+        }
     }
 }

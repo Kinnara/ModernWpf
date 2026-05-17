@@ -6,12 +6,13 @@ using System.Collections;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Automation;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Markup;
 using System.Windows.Media;
+using ModernWpf.Automation.Peers;
 using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
@@ -163,7 +164,8 @@ namespace ModernWpf.Controls
                 nameof(MaxColumns),
                 typeof(int),
                 typeof(RadioButtons),
-                new FrameworkPropertyMetadata(1));
+                new FrameworkPropertyMetadata(1),
+                ValidateMaxColumns);
 
         public int MaxColumns
         {
@@ -216,6 +218,11 @@ namespace ModernWpf.Controls
             remove { RemoveHandler(SelectionChangedEvent, value); }
         }
 
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new RadioButtonsAutomationPeer(this);
+        }
+
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
@@ -226,11 +233,6 @@ namespace ModernWpf.Controls
                 m_repeater.ElementClearing -= OnRepeaterElementClearing;
                 m_repeater.ElementIndexChanged -= OnRepeaterElementIndexChanged;
                 m_repeater.Loaded -= OnRepeaterLoaded;
-
-                if (m_repeater.Layout is ColumnMajorUniformToLargestGridLayout layout)
-                {
-                    layout.ClearValue(ColumnMajorUniformToLargestGridLayout.MaxColumnsProperty);
-                }
             }
 
             m_repeater = GetTemplateChild(s_repeaterName) as ItemsRepeater;
@@ -243,17 +245,15 @@ namespace ModernWpf.Controls
                 m_repeater.ElementClearing += OnRepeaterElementClearing;
                 m_repeater.ElementIndexChanged += OnRepeaterElementIndexChanged;
                 m_repeater.Loaded += OnRepeaterLoaded;
-
-                if (m_repeater.Layout is ColumnMajorUniformToLargestGridLayout layout)
-                {
-                    BindingOperations.SetBinding(layout,
-                        ColumnMajorUniformToLargestGridLayout.MaxColumnsProperty,
-                        new Binding { Path = new PropertyPath(MaxColumnsProperty), Source = this });
-                }
             }
 
             UpdateItemsSource();
             UpdateVisualStateForIsEnabledChange();
+        }
+
+        private static bool ValidateMaxColumns(object value)
+        {
+            return (int)value > 0;
         }
 
         // When focus comes from outside the RadioButtons control we will put focus on the selected radio button.

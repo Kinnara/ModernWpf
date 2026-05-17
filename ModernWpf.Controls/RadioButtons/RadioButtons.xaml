@@ -14,6 +14,11 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:RadioButtons">
                     <StackPanel SnapsToDevicePixels="True">
+                        <StackPanel.Resources>
+                            <ui:BindingProxy
+                                x:Key="RadioButtonsMaxColumnsProxy"
+                                Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=MaxColumns}" />
+                        </StackPanel.Resources>
                         <VisualStateManager.CustomVisualStateManager>
                             <ui:VisualStateManagerEx />
                         </VisualStateManager.CustomVisualStateManager>
@@ -36,6 +41,7 @@
                         <local:ItemsRepeater x:Name="InnerRepeater">
                             <local:ItemsRepeater.Layout>
                                 <primitives:ColumnMajorUniformToLargestGridLayout
+                                    MaxColumns="{Binding Value, Source={StaticResource RadioButtonsMaxColumnsProxy}}"
                                     ColumnSpacing="{DynamicResource RadioButtonsColumnSpacing}"
                                     RowSpacing="{DynamicResource RadioButtonsRowSpacing}" />
                             </local:ItemsRepeater.Layout>
