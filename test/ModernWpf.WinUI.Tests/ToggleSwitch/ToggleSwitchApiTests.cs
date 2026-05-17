@@ -79,6 +79,16 @@ public class ToggleSwitchApiTests
             var switchKnobOn = FindNamedDescendant<Border>(toggleSwitch, "SwitchKnobOn");
             var switchKnobOff = FindNamedDescendant<Rectangle>(toggleSwitch, "SwitchKnobOff");
             var switchKnobBounds = FindNamedDescendant<Rectangle>(toggleSwitch, "SwitchKnobBounds");
+            var stateGroupsRoot = FindStateGroupsRoot(toggleSwitch);
+            var pressedState = FindVisualStateEx(stateGroupsRoot, "CommonStates", "Pressed");
+            AssertStateSetter(pressedState, "SwitchKnobOn.HorizontalAlignment");
+            AssertStateSetter(pressedState, "SwitchKnobOn.Margin");
+            AssertStateSetter(pressedState, "SwitchKnobOff.HorizontalAlignment");
+            AssertStateSetter(pressedState, "SwitchKnobOff.Margin");
+            AssertStateSetter(pressedState, "SwitchKnobBounds.Fill");
+            AssertStateSetter(pressedState, "SwitchKnobBounds.Stroke");
+            AssertStateSetter(pressedState, "SwitchKnobOff.Fill");
+            AssertStateSetter(pressedState, "SwitchKnobOn.Background");
 
             Assert.IsTrue(System.Windows.VisualStateManager.GoToState(toggleSwitch, "Pressed", false));
             host.UpdateLayout();
@@ -89,6 +99,8 @@ public class ToggleSwitchApiTests
             Assert.AreEqual(new Thickness(3, 0, 0, 0), switchKnobOff.Margin);
             AssertBrushEquals((Brush)switchKnobBounds.TryFindResource("ToggleSwitchFillOnPressed"), switchKnobBounds.Fill);
             AssertBrushEquals((Brush)switchKnobBounds.TryFindResource("ToggleSwitchStrokeOnPressed"), switchKnobBounds.Stroke);
+            AssertBrushEquals((Brush)switchKnobOff.TryFindResource("ToggleSwitchKnobFillOffPressed"), switchKnobOff.Fill);
+            AssertBrushEquals((Brush)switchKnobOn.TryFindResource("ToggleSwitchKnobFillOnPressed"), switchKnobOn.Background);
         });
     }
 
