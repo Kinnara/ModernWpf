@@ -458,7 +458,7 @@ namespace ModernWpf.Controls
             base.OnKeyUp(e);
 
             bool isHandled = e.Handled;
-            ProcessKeyUp(e.Key, ref isHandled);
+            ProcessKeyUp(GetOriginalKey(e), ref isHandled);
             e.Handled = isHandled;
         }
 
@@ -471,7 +471,7 @@ namespace ModernWpf.Controls
                 return;
             }
 
-            if (HandlesKey(e.Key))
+            if (HandlesKey(GetOriginalKey(e)))
             {
                 e.Handled = true;
             }
@@ -788,6 +788,28 @@ namespace ModernWpf.Controls
         private static bool HandlesKey(Key key)
         {
             return key == Key.Space;
+        }
+
+        private static Key GetOriginalKey(KeyEventArgs e)
+        {
+            // WinUI uses KeyRoutedEventArgs.OriginalKey; these WPF fallbacks keep
+            // system/IME-processed key input on the same source-shaped path.
+            if (e.Key == Key.System)
+            {
+                return e.SystemKey;
+            }
+
+            if (e.Key == Key.ImeProcessed)
+            {
+                return e.ImeProcessedKey;
+            }
+
+            if (e.Key == Key.DeadCharProcessed)
+            {
+                return e.DeadCharProcessedKey;
+            }
+
+            return e.Key;
         }
 
         private void UpdateHeaderContentPresenterVisibility()
