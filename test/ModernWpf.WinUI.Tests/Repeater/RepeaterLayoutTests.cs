@@ -210,6 +210,34 @@ public class RepeaterLayoutTests
     }
 
     [TestMethod]
+    public void ItemsRepeaterShortcutsStackLayoutMeasureCycleLikeWinUI()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var layout = new CountingStackLayout();
+            var repeater = new ItemsRepeater
+            {
+                Layout = layout
+            };
+
+            for (var i = 0; i < 59; i++)
+            {
+                repeater.InvalidateMeasure();
+                repeater.Measure(new Size(100, 100));
+            }
+
+            Assert.AreEqual(59, layout.MeasureCount);
+            var desiredSize = repeater.DesiredSize;
+
+            repeater.InvalidateMeasure();
+            repeater.Measure(new Size(100, 100));
+
+            Assert.AreEqual(59, layout.MeasureCount);
+            Assert.AreEqual(desiredSize, repeater.DesiredSize);
+        });
+    }
+
+    [TestMethod]
     public void ValidateUniformGridLayoutWithItemsRepeater()
     {
         WpfTestHost.Run(() =>
@@ -474,6 +502,17 @@ public class RepeaterLayoutTests
             LastVisibleRect = context.VisibleRect;
             LastRealizationRect = context.RealizationRect;
             return new Size(20, 20);
+        }
+    }
+
+    private sealed class CountingStackLayout : StackLayout
+    {
+        public int MeasureCount { get; private set; }
+
+        protected override Size MeasureOverride(VirtualizingLayoutContext context, Size availableSize)
+        {
+            MeasureCount++;
+            return new Size(MeasureCount, MeasureCount);
         }
     }
 

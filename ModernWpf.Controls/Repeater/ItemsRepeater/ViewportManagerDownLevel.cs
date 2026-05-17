@@ -153,6 +153,11 @@ namespace ModernWpf.Controls
             if (m_verticalScroller != null && m_verticalScroller != outerScroller) { ((UIElement)m_verticalScroller).InvalidateArrange(); }
         }
 
+        public override Rect GetLayoutExtent()
+        {
+            return m_layoutExtent;
+        }
+
         public override Point GetOrigin()
         {
             return new Point(m_layoutExtent.X, m_layoutExtent.Y);

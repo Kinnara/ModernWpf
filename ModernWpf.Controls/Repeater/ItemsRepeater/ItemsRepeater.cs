@@ -20,6 +20,7 @@ namespace ModernWpf.Controls
         internal static readonly Point ClearedElementsArrangePosition = new Point(-10000.0, -10000.0);
         // A convention we use in the ItemsRepeater codebase for an invalid Rect value.
         internal static readonly Rect InvalidRect = Rect.Empty;
+        private const int MaxStackLayoutIterations = 60;
 
         static ItemsRepeater()
         {
@@ -35,6 +36,7 @@ namespace ModernWpf.Controls
 
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
+            LayoutUpdated += OnLayoutUpdated;
 
             SetCurrentValue(LayoutProperty, new StackLayout());
 
@@ -67,6 +69,15 @@ namespace ModernWpf.Controls
                 throw new InvalidOperationException("Cannot run layout in the middle of a collection change.");
             }
 
+            var layout = Layout;
+            if (layout is StackLayout && ++m_stackLayoutMeasureCounter >= MaxStackLayoutIterations)
+            {
+                var layoutExtent = m_viewportManager.GetLayoutExtent();
+                return new Size(
+                    Math.Max(0.0, layoutExtent.Width - layoutExtent.X),
+                    Math.Max(0.0, layoutExtent.Height - layoutExtent.Y));
+            }
+
             m_viewportManager.OnOwnerMeasuring();
 
             m_isLayoutInProgress = true;
@@ -76,7 +87,7 @@ namespace ModernWpf.Controls
                 Rect extent = default;
                 Size desiredSize = default;
 
-                if (Layout is Layout layout)
+                if (layout != null)
                 {
                     var layoutContext = GetLayoutContext();
 
@@ -557,12 +568,20 @@ namespace ModernWpf.Controls
 
         private void OnUnloaded(object sender, RoutedEventArgs args)
         {
+            m_stackLayoutMeasureCounter = 0;
+
             ++_unloadedCounter;
             // Only reset the scrollers if this unload event is in-sync.
             if (_unloadedCounter == _loadedCounter)
             {
                 m_viewportManager.ResetScrollers();
             }
+        }
+
+        private void OnLayoutUpdated(object sender, EventArgs args)
+        {
+            // Now that layout has settled, start detecting a fresh StackLayout layout cycle.
+            m_stackLayoutMeasureCounter = 0;
         }
 
         private void OnDataSourcePropertyChanged(ItemsSourceView oldValue, ItemsSourceView newValue)
@@ -724,6 +743,8 @@ namespace ModernWpf.Controls
 
             if (oldValue != null)
             {
+                m_stackLayoutMeasureCounter = 0;
+
                 oldValue.UninitializeForContext(GetLayoutContext());
                 oldValue.MeasureInvalidated -= InvalidateMeasureForLayout;
                 oldValue.ArrangeInvalidated -= InvalidateArrangeForLayout;
@@ -841,6 +862,7 @@ namespace ModernWpf.Controls
 
         private Size m_lastAvailableSize;
         private bool m_isLayoutInProgress = false;
+        private int m_stackLayoutMeasureCounter;
         // The value of _layoutOrigin is expected to be set by the layout
         // when it gets measured. It should not be used outside of measure.
         private Point m_layoutOrigin;
