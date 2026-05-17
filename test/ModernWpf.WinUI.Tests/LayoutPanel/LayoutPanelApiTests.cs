@@ -263,6 +263,51 @@ public class LayoutPanelApiTests
         });
     }
 
+    [TestMethod]
+    public void LayoutChangeRevokesSourceInvalidationHandlers()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var oldLayout = new InvalidatingLayout();
+            var newLayout = new InvalidatingLayout();
+            var panel = new CountingLayoutPanel
+            {
+                Width = 100,
+                Height = 100,
+                Layout = oldLayout
+            };
+
+            using var host = new TestWindowHost(panel, width: 100, height: 100);
+
+            panel.Layout = newLayout;
+            host.UpdateLayout();
+
+            panel.MeasureOverrideCount = 0;
+            panel.ArrangeOverrideCount = 0;
+
+            oldLayout.RaiseMeasureInvalidated();
+            oldLayout.RaiseArrangeInvalidated();
+            host.UpdateLayout();
+
+            Assert.AreEqual(0, panel.MeasureOverrideCount, "The old layout should be unhooked from LayoutPanel measure invalidation.");
+            Assert.AreEqual(0, panel.ArrangeOverrideCount, "The old layout should be unhooked from LayoutPanel arrange invalidation.");
+
+            newLayout.RaiseMeasureInvalidated();
+            host.UpdateLayout();
+
+            Assert.IsTrue(panel.MeasureOverrideCount > 0, "The new layout should invalidate LayoutPanel measure.");
+
+            panel.MeasureOverrideCount = 0;
+            panel.ArrangeOverrideCount = 0;
+
+            newLayout.RaiseArrangeInvalidated();
+            host.UpdateLayout();
+
+            Assert.AreEqual(0, panel.MeasureOverrideCount);
+            Assert.IsTrue(panel.ArrangeOverrideCount > 0, "The new layout should invalidate LayoutPanel arrange.");
+        });
+    }
+
     private sealed class CustomNonVirtualizingStackLayout : NonVirtualizingLayout
     {
         protected override Size MeasureOverride(NonVirtualizingLayoutContext context, Size availableSize)
@@ -292,6 +337,29 @@ public class LayoutPanelApiTests
         }
     }
 
+    private sealed class InvalidatingLayout : NonVirtualizingLayout
+    {
+        public void RaiseMeasureInvalidated()
+        {
+            InvalidateMeasure();
+        }
+
+        public void RaiseArrangeInvalidated()
+        {
+            InvalidateArrange();
+        }
+
+        protected override Size MeasureOverride(NonVirtualizingLayoutContext context, Size availableSize)
+        {
+            return availableSize;
+        }
+
+        protected override Size ArrangeOverride(NonVirtualizingLayoutContext context, Size finalSize)
+        {
+            return finalSize;
+        }
+    }
+
     private static Color RenderElementPixel(FrameworkElement element, int x, int y, int width, int height)
     {
         element.Measure(new Size(width, height));
@@ -311,6 +379,25 @@ public class LayoutPanelApiTests
         public Geometry GetLayoutClipForTest(Size layoutSlotSize)
         {
             return base.GetLayoutClip(layoutSlotSize);
+        }
+    }
+
+    private sealed class CountingLayoutPanel : LayoutPanel
+    {
+        public int MeasureOverrideCount { get; set; }
+
+        public int ArrangeOverrideCount { get; set; }
+
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            MeasureOverrideCount++;
+            return base.MeasureOverride(availableSize);
+        }
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            ArrangeOverrideCount++;
+            return base.ArrangeOverride(finalSize);
         }
     }
 }
