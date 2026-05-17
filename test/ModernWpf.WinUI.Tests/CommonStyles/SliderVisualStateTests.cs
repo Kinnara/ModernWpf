@@ -2,10 +2,8 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Shapes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf;
-using ModernWpf.Controls.Primitives;
 using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
 
@@ -15,7 +13,7 @@ namespace ModernWpf.WinUI.Tests.CommonStyles;
 public class SliderVisualStateTests
 {
     [TestMethod]
-    public void HorizontalSliderCommonStatesUseSourceVisualStateSetters()
+    public void HorizontalSliderUsesOfficialWpfFluentTriggerShape()
     {
         WpfTestHost.Run(() =>
         {
@@ -25,56 +23,45 @@ public class SliderVisualStateTests
             using var host = new TestWindowHost(slider, width: 240, height: 100);
             host.UpdateLayout();
 
+            AssertOfficialMetrics(slider);
+            AssertTemplateTriggerShape(slider.Template);
+
             var root = slider.GetTemplateRoot();
-            var trackRect = FindTemplatePart<Rectangle>(slider, "HorizontalTrackRect");
-            var decreaseRect = FindTemplatePart<Rectangle>(slider, "HorizontalDecreaseRect");
-            var thumb = FindTemplatePart<Thumb>(slider, "HorizontalThumb");
-            var container = FindTemplatePart<Border>(slider, "SliderContainer");
+            var topTick = FindTemplatePart<TickBar>(slider, "TopTick");
+            var bottomTick = FindTemplatePart<TickBar>(slider, "BottomTick");
+            var trackBackground = FindTemplatePart<Border>(slider, "TrackBackground");
+            var thumb = FindTemplatePart<Thumb>(slider, "Thumb");
+            var selectedRange = FindTemplatePart<Border>(slider, "PART_SelectedRange");
+            var selectionRange = FindTemplatePart<Border>(slider, "PART_SelectionRange");
 
-            Assert.AreEqual(0, slider.Template.Triggers.Count);
-            Assert.IsTrue(SliderHelper.GetVisualStateSettersEnabled(slider));
-            AssertSourceMetrics(slider);
-            AssertStateSetters(
-                root,
-                "PointerOver",
-                "HorizontalTrackRect.Fill",
-                "HorizontalThumb.Background",
-                "SliderContainer.Background",
-                "HorizontalDecreaseRect.Fill");
-            AssertStateSetters(
-                root,
-                "Pressed",
-                "HorizontalTrackRect.Fill",
-                "HorizontalThumb.Background",
-                "SliderContainer.Background",
-                "HorizontalDecreaseRect.Fill");
-            AssertStateSetters(
-                root,
-                "Disabled",
-                "HeaderContentPresenter.Foreground",
-                "HorizontalDecreaseRect.Fill",
-                "HorizontalTrackRect.Fill",
-                "HorizontalThumb.Background",
-                "TopTickBar.Fill",
-                "BottomTickBar.Fill",
-                "SliderContainer.Background");
+            Assert.AreEqual(0, VisualStateManager.GetVisualStateGroups(root).Count);
+            Assert.AreSame(slider.TryFindResource("SliderTrackFill"), trackBackground.Background);
+            Assert.AreEqual(Visibility.Collapsed, topTick.Visibility);
+            Assert.AreEqual(Visibility.Collapsed, bottomTick.Visibility);
+            Assert.AreEqual(Visibility.Visible, selectedRange.Visibility);
+            Assert.AreEqual(Visibility.Hidden, selectionRange.Visibility);
 
-            Assert.IsTrue(VisualStateManager.GoToState(slider, "PointerOver", false));
-            Assert.AreSame(slider.TryFindResource("SliderTrackFillPointerOver"), trackRect.Fill);
-            Assert.AreSame(slider.TryFindResource("SliderThumbBackgroundPointerOver"), thumb.Background);
-            Assert.AreSame(slider.TryFindResource("SliderContainerBackgroundPointerOver"), container.Background);
-            Assert.AreSame(slider.TryFindResource("SliderTrackValueFillPointerOver"), decreaseRect.Fill);
+            slider.TickPlacement = TickPlacement.TopLeft;
+            host.UpdateLayout();
+            Assert.AreEqual(Visibility.Visible, topTick.Visibility);
+            Assert.AreEqual(Visibility.Collapsed, bottomTick.Visibility);
 
-            Assert.IsTrue(VisualStateManager.GoToState(slider, "Pressed", false));
-            Assert.AreSame(slider.TryFindResource("SliderTrackFillPressed"), trackRect.Fill);
-            Assert.AreSame(slider.TryFindResource("SliderThumbBackgroundPressed"), thumb.Background);
-            Assert.AreSame(slider.TryFindResource("SliderContainerBackgroundPressed"), container.Background);
-            Assert.AreSame(slider.TryFindResource("SliderTrackValueFillPressed"), decreaseRect.Fill);
+            slider.TickPlacement = TickPlacement.Both;
+            host.UpdateLayout();
+            Assert.AreEqual(Visibility.Visible, topTick.Visibility);
+            Assert.AreEqual(Visibility.Visible, bottomTick.Visibility);
+
+            slider.IsSelectionRangeEnabled = true;
+            host.UpdateLayout();
+            Assert.AreEqual(Visibility.Visible, selectionRange.Visibility);
+            Assert.AreEqual(Visibility.Hidden, selectedRange.Visibility);
+
+            AssertThumbStatesUseWpfNames(thumb);
         });
     }
 
     [TestMethod]
-    public void VerticalSliderCommonStatesUseSourceVisualStateSetters()
+    public void VerticalSliderUsesOfficialWpfFluentTriggerShape()
     {
         WpfTestHost.Run(() =>
         {
@@ -84,91 +71,25 @@ public class SliderVisualStateTests
             using var host = new TestWindowHost(slider, width: 100, height: 240);
             host.UpdateLayout();
 
-            var root = slider.GetTemplateRoot();
-            var trackRect = FindTemplatePart<Rectangle>(slider, "VerticalTrackRect");
-            var decreaseRect = FindTemplatePart<Rectangle>(slider, "VerticalDecreaseRect");
-            var thumb = FindTemplatePart<Thumb>(slider, "VerticalThumb");
-            var container = FindTemplatePart<Border>(slider, "SliderContainer");
-
-            Assert.AreEqual(0, slider.Template.Triggers.Count);
-            Assert.IsTrue(SliderHelper.GetVisualStateSettersEnabled(slider));
-            AssertSourceMetrics(slider);
-            AssertStateSetters(
-                root,
-                "PointerOver",
-                "VerticalTrackRect.Fill",
-                "VerticalThumb.Background",
-                "SliderContainer.Background",
-                "VerticalDecreaseRect.Fill");
-            AssertStateSetters(
-                root,
-                "Pressed",
-                "VerticalTrackRect.Fill",
-                "VerticalThumb.Background",
-                "SliderContainer.Background",
-                "VerticalDecreaseRect.Fill");
-            AssertStateSetters(
-                root,
-                "Disabled",
-                "HeaderContentPresenter.Foreground",
-                "VerticalDecreaseRect.Fill",
-                "VerticalTrackRect.Fill",
-                "VerticalThumb.Background",
-                "LeftTickBar.Fill",
-                "RightTickBar.Fill",
-                "SliderContainer.Background");
-
-            Assert.IsTrue(VisualStateManager.GoToState(slider, "PointerOver", false));
-            Assert.AreSame(slider.TryFindResource("SliderTrackFillPointerOver"), trackRect.Fill);
-            Assert.AreSame(slider.TryFindResource("SliderThumbBackgroundPointerOver"), thumb.Background);
-            Assert.AreSame(slider.TryFindResource("SliderContainerBackgroundPointerOver"), container.Background);
-            Assert.AreSame(slider.TryFindResource("SliderTrackValueFillPointerOver"), decreaseRect.Fill);
-        });
-    }
-
-    [TestMethod]
-    public void SliderHelperDrivesDisabledStateAndTickPlacement()
-    {
-        WpfTestHost.Run(() =>
-        {
-            TestApplication.EnsureInitialized();
-
-            var slider = CreateSlider(Orientation.Horizontal);
-            using var host = new TestWindowHost(slider, width: 240, height: 100);
-            host.UpdateLayout();
+            AssertTemplateTriggerShape(slider.Template);
 
             var root = slider.GetTemplateRoot();
-            var topTickBar = FindTemplatePart<TickBar>(slider, "TopTickBar");
-            var bottomTickBar = FindTemplatePart<TickBar>(slider, "BottomTickBar");
-            var trackRect = FindTemplatePart<Rectangle>(slider, "HorizontalTrackRect");
-            var thumb = FindTemplatePart<Thumb>(slider, "HorizontalThumb");
+            var leftTick = FindTemplatePart<TickBar>(slider, "TopTick");
+            var rightTick = FindTemplatePart<TickBar>(slider, "BottomTick");
+            var trackBackground = FindTemplatePart<Border>(slider, "TrackBackground");
+            var thumb = FindTemplatePart<Thumb>(slider, "Thumb");
 
-            Assert.AreEqual(Visibility.Collapsed, topTickBar.Visibility);
-            Assert.AreEqual(Visibility.Collapsed, bottomTickBar.Visibility);
-
-            slider.TickPlacement = TickPlacement.TopLeft;
-            host.UpdateLayout();
-            Assert.AreEqual(Visibility.Visible, topTickBar.Visibility);
-            Assert.AreEqual(Visibility.Collapsed, bottomTickBar.Visibility);
+            Assert.AreEqual(0, VisualStateManager.GetVisualStateGroups(root).Count);
+            Assert.AreSame(slider.TryFindResource("SliderTrackFill"), trackBackground.Background);
+            Assert.AreEqual(Visibility.Collapsed, leftTick.Visibility);
+            Assert.AreEqual(Visibility.Collapsed, rightTick.Visibility);
 
             slider.TickPlacement = TickPlacement.BottomRight;
             host.UpdateLayout();
-            Assert.AreEqual(Visibility.Collapsed, topTickBar.Visibility);
-            Assert.AreEqual(Visibility.Visible, bottomTickBar.Visibility);
+            Assert.AreEqual(Visibility.Collapsed, leftTick.Visibility);
+            Assert.AreEqual(Visibility.Visible, rightTick.Visibility);
 
-            slider.TickPlacement = TickPlacement.Both;
-            host.UpdateLayout();
-            Assert.AreEqual(Visibility.Visible, topTickBar.Visibility);
-            Assert.AreEqual(Visibility.Visible, bottomTickBar.Visibility);
-
-            slider.IsEnabled = false;
-            host.UpdateLayout();
-
-            Assert.AreEqual("Disabled", GetCurrentStateName(root));
-            Assert.AreSame(slider.TryFindResource("SliderTrackFillDisabled"), trackRect.Fill);
-            Assert.AreSame(slider.TryFindResource("SliderThumbBackgroundDisabled"), thumb.Background);
-            Assert.AreSame(slider.TryFindResource("SliderTickBarFillDisabled"), topTickBar.Fill);
-            Assert.AreSame(slider.TryFindResource("SliderTickBarFillDisabled"), bottomTickBar.Fill);
+            AssertThumbStatesUseWpfNames(thumb);
         });
     }
 
@@ -183,46 +104,58 @@ public class SliderVisualStateTests
         };
     }
 
-    private static void AssertSourceMetrics(Slider slider)
+    private static void AssertOfficialMetrics(Slider slider)
     {
         Assert.AreEqual(14.0, slider.TryFindResource("SliderPreContentMargin"));
         Assert.AreEqual(14.0, slider.TryFindResource("SliderPostContentMargin"));
-        Assert.AreEqual(18.0, slider.TryFindResource("SliderHorizontalThumbWidth"));
-        Assert.AreEqual(18.0, slider.TryFindResource("SliderHorizontalThumbHeight"));
-        Assert.AreEqual(18.0, slider.TryFindResource("SliderVerticalThumbWidth"));
-        Assert.AreEqual(18.0, slider.TryFindResource("SliderVerticalThumbHeight"));
+        Assert.AreEqual(20.0, slider.TryFindResource("SliderHorizontalThumbWidth"));
+        Assert.AreEqual(20.0, slider.TryFindResource("SliderHorizontalThumbHeight"));
+        Assert.AreEqual(20.0, slider.TryFindResource("SliderVerticalThumbWidth"));
+        Assert.AreEqual(20.0, slider.TryFindResource("SliderVerticalThumbHeight"));
     }
 
-    private static void AssertStateSetters(FrameworkElement stateGroupsRoot, string stateName, params string[] expectedTargets)
+    private static void AssertTemplateTriggerShape(ControlTemplate template)
     {
-        var state = FindCommonState(stateGroupsRoot, stateName);
-        var actualTargets = state.Setters
-            .Select(setter => string.IsNullOrEmpty(setter.Target) ? setter.Property : setter.Target)
+        Assert.AreEqual(6, template.Triggers.Count);
+        AssertTriggerSetter(template, Slider.TickPlacementProperty, TickPlacement.TopLeft, "TopTick", "Visibility");
+        AssertTriggerSetter(template, Slider.TickPlacementProperty, TickPlacement.BottomRight, "BottomTick", "Visibility");
+        AssertTriggerSetter(template, Slider.TickPlacementProperty, TickPlacement.Both, "TopTick", "Visibility");
+        AssertTriggerSetter(template, Slider.TickPlacementProperty, TickPlacement.Both, "BottomTick", "Visibility");
+        AssertTriggerSetter(template, UIElement.IsMouseOverProperty, true, "TrackBackground", "Background");
+        AssertTriggerSetter(template, UIElement.IsMouseOverProperty, true, "Thumb", "Foreground");
+        AssertTriggerSetter(template, Slider.IsSelectionRangeEnabledProperty, true, "PART_SelectionRange", "Visibility");
+        AssertTriggerSetter(template, Slider.IsSelectionRangeEnabledProperty, false, "PART_SelectedRange", "Visibility");
+    }
+
+    private static void AssertTriggerSetter(ControlTemplate template, DependencyProperty property, object value, string targetName, string propertyName)
+    {
+        var trigger = template.Triggers
+            .OfType<Trigger>()
+            .Single(item => item.Property == property && Equals(item.Value, value));
+
+        Assert.IsTrue(
+            trigger.Setters
+                .OfType<Setter>()
+                .Any(item => item.TargetName == targetName && item.Property.Name == propertyName),
+            $"Expected trigger {property.Name}={value} to set {targetName}.{propertyName}.");
+    }
+
+    private static void AssertThumbStatesUseWpfNames(Thumb thumb)
+    {
+        thumb.ApplyTemplate();
+        var root = thumb.GetTemplateRoot();
+        var group = VisualStateManager.GetVisualStateGroups(root)
+            .OfType<VisualStateGroup>()
+            .Single(item => item.Name == "CommonStates");
+
+        var stateNames = group.States
+            .Cast<VisualState>()
+            .Select(item => item.Name)
             .ToArray();
 
-        CollectionAssert.IsSubsetOf(expectedTargets, actualTargets);
-    }
-
-    private static VisualStateEx FindCommonState(FrameworkElement stateGroupsRoot, string stateName)
-    {
-        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
-            .OfType<VisualStateGroup>()
-            .Single(item => item.Name == "CommonStates");
-        var state = group.States
-            .Cast<VisualState>()
-            .Single(item => item.Name == stateName);
-
-        Assert.IsInstanceOfType(state, typeof(VisualStateEx));
-        return (VisualStateEx)state;
-    }
-
-    private static string GetCurrentStateName(FrameworkElement stateGroupsRoot)
-    {
-        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
-            .OfType<VisualStateGroup>()
-            .Single(item => item.Name == "CommonStates");
-        Assert.IsNotNull(group.CurrentState);
-        return group.CurrentState.Name;
+        CollectionAssert.AreEquivalent(new[] { "Normal", "MouseOver", "Pressed" }, stateNames);
+        CollectionAssert.DoesNotContain(stateNames, "PointerOver");
+        CollectionAssert.DoesNotContain(stateNames, "Disabled");
     }
 
     private static T FindTemplatePart<T>(Slider slider, string name)

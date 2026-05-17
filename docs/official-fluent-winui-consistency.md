@@ -1,11 +1,12 @@
 # Official WPF Fluent And WinUI Consistency
 
-This matrix tracks the 1.x theme strategy after the WinUI 2.8.7 sync. ModernWpf
+This matrix tracks the 1.x theme strategy after the WinUI 2.8.7 sync and the
+later WinUI 3 source-parity pivot. ModernWpf
 uses two upstreams:
 
 - official WPF Fluent for stock WPF controls where the target framework provides
   `PresentationFramework.Fluent`;
-- WinUI 2.8.7 for ModernWpf-specific controls, WinUI-compatible resource keys,
+- WinUI 3 for ModernWpf-specific controls, WinUI-compatible resource keys,
   and element-level theme behavior.
 
 The goal is not to replace one upstream with the other. The goal is to keep a
@@ -18,7 +19,7 @@ the platform Fluent theme on new WPF runtimes.
 | --- | --- | --- | --- | --- |
 | Stock WPF control styles on `net10.0-windows7.0` | `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent` | `FluentControlsResources` entry-point composition | `FluentControlsResources` enables the platform ThemeMode bridge and layers `ModernWpfControlsResources.xaml`; WPF supplies the official Fluent stock-control dictionary. | Verify the official Fluent dictionary is active once and that ModernWpf-only control resources still resolve. |
 | Stock WPF control styles on `net462` and `net8.0-windows7.0` | ModernWpf backport, periodically compared with official WPF Fluent XAML | `ControlsResources.xaml`, `StockControlsResources.xaml`, `ThemeResources/*.xaml`, `DensityStyles/Compact.xaml` | Older targets still use the existing ModernWpf controls/resources path. | Keep source-compatible resource keys; document intentional differences from official WPF Fluent. |
-| ModernWpf WinUI-derived controls | WinUI 2.8.7 source and `docs/winui2-2.8.7-sync.md` | `ModernWpf.Controls` and `ModernWpf` control implementations | The WinUI-derived WPF test harness covers implemented controls and documented exclusions. | Do not remove WinUI resource aliases or template contracts while adopting official stock-control styles. |
+| ModernWpf WinUI-derived controls | WinUI 3 source and `docs/winui3-source-parity.md` | `ModernWpf.Controls` and `ModernWpf` control implementations | The WinUI-derived WPF test harness covers implemented controls and documented exclusions. | Do not remove WinUI resource aliases or template contracts while adopting official stock-control styles. |
 | Shared theme tokens and aliases | WinUI 2.8.7 names plus official WPF Fluent values where they overlap | `ThemeResources`, `UISettingsResources`, `ModernWpfControlsResources.xaml` | Existing resources provide WinUI-compatible brush, typography, density, and accent aliases. | Alias keys remain stable; overlapping stock-control values may map to official Fluent values when feasible. |
 | Recommended resource entry | ModernWpf compatibility contract | `<ui:ThemeResources />` plus `<ui:FluentControlsResources />` | README and Gallery use the new entry, and `ModernWpf.Theme.Tests` plus `ModernWpf.Gallery.Tests` exercise the entry on net8 and net10. | Keep focused net10 smoke coverage for the recommended entry and keep legacy entry behavior unchanged. |
 | Legacy resource entry | ModernWpf 0.9.x compatibility | `<ui:ThemeResources />` plus `<ui:XamlControlsResources />` | Legacy path still merges `ControlsResources` and `UISettingsResources`. | Do not force official `ThemeMode` or platform Fluent behavior through this path. |

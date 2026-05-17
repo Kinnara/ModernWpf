@@ -41,3 +41,31 @@ Source inspected:
 - `ModernWpf.Gallery.Tests` verifies that Gallery uses
   `FluentControlsResources`, resolves the synced icon font, and uses the
   official platform Fluent dictionary on `net10.0-windows7.0`.
+
+## 2026-05-18 Batch 2
+
+Source inspected:
+
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Themes\Fluent.Light.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Themes\Fluent.Dark.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Themes\Fluent.HC.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Themes\Fluent.xaml`
+
+### Synced Values
+
+| Resource key / style | Official WPF Fluent value | ModernWpf value after sync | Reason |
+| --- | --- | --- | --- |
+| `SliderThumbStyle` | 20px thumb with `Normal`, `MouseOver`, and `Pressed` WPF visual states | Same WPF state names and official thumb size | `Slider` is a stock WPF control, so official WPF Fluent is the primary source. |
+| Horizontal / vertical Slider templates | WPF `ControlTemplate.Triggers` for `TickPlacement`, `IsMouseOver`, and `IsSelectionRangeEnabled` | Same trigger model, retained under `SliderHorizontal` / `SliderVertical` resource keys | Replaces the WinUI `VisualStateEx` helper port with the platform WPF Fluent adaptation. |
+| `DefaultSliderStyle` | Orientation triggers choose horizontal/vertical templates and set minimum extent | Same behavior under the existing `DefaultSliderStyle` key | Keeps ModernWpf resource lookup stable while aligning the template behavior. |
+
+### Intentional Differences
+
+| Resource key / style | Official WPF Fluent value | ModernWpf backport value | Reason retained |
+| --- | --- | --- | --- |
+| Slider resource aliases | Direct official resources, for example `ControlElevationBorderBrush` | Existing ModernWpf aliases, for example `SliderThumbBorderBrush` | Existing aliases already map to the same Fluent concepts and remain part of the ModernWpf resource surface. |
+| Slider template resource names | `HorizontalSliderTemplate` / `VerticalSliderTemplate` | `SliderHorizontal` / `SliderVertical` | Preserve existing ModernWpf resource keys while copying the official template shape. |
+
+### Test Evidence
+
+- `test\ModernWpf.WinUI.Tests\CommonStyles\SliderVisualStateTests.cs` covers the official WPF Fluent Slider trigger shape, WPF thumb visual-state names, tick placement, selection range visibility, and Slider metrics.
