@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf;
+using ModernWpf.Automation.Peers;
 using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
 
@@ -246,6 +247,51 @@ public class NavigationViewApiTests
             Assert.IsNotNull(FrameworkElementAutomationPeer
                 .CreatePeerForElement(menuItem4)!
                 .GetPattern(PatternInterface.ExpandCollapse));
+        });
+    }
+
+    [TestMethod]
+    public void NavigationViewAutomationPeerUsesSourceSelectionProviderShape()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            Assert.IsTrue(
+                typeof(NavigationViewAutomationPeer).IsPublic,
+                "NavigationViewAutomationPeer should be public like the WinUI automation peer surface.");
+
+            var navView = new ModernWpf.Controls.NavigationView
+            {
+                Width = 1008,
+            };
+            var menuItem1 = new ModernWpf.Controls.NavigationViewItem
+            {
+                Content = "Item 1",
+            };
+            var menuItem2 = new ModernWpf.Controls.NavigationViewItem
+            {
+                Content = "Item 2",
+            };
+
+            navView.MenuItems.Add(menuItem1);
+            navView.MenuItems.Add(menuItem2);
+
+            using var host = new TestWindowHost(navView);
+
+            var peer = FrameworkElementAutomationPeer.CreatePeerForElement(navView);
+            Assert.IsInstanceOfType(peer, typeof(NavigationViewAutomationPeer));
+
+            var selectionProvider = peer!.GetPattern(PatternInterface.Selection) as System.Windows.Automation.Provider.ISelectionProvider;
+            Assert.IsNotNull(selectionProvider);
+            Assert.IsFalse(selectionProvider!.CanSelectMultiple);
+            Assert.IsFalse(selectionProvider.IsSelectionRequired);
+            Assert.AreEqual(0, selectionProvider.GetSelection().Length);
+
+            menuItem2.IsSelected = true;
+            host.UpdateLayout();
+
+            Assert.AreEqual(1, selectionProvider.GetSelection().Length);
         });
     }
 
