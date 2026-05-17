@@ -1,11 +1,12 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
 {
-    public class AppBarToggleButton : ToggleButton, ICommandBarElement, IAppBarElement
+    public class AppBarToggleButton : ToggleButton, ICommandBarElement, IAppBarButtonElement
     {
         static AppBarToggleButton()
         {
@@ -24,9 +25,6 @@ namespace ModernWpf.Controls
             ToolTipProperty.OverrideMetadata(typeof(AppBarToggleButton),
                 new FrameworkPropertyMetadata { CoerceValueCallback = AppBarElementProperties.CoerceToolTip });
 
-            ToolBar.OverflowModeProperty.OverrideMetadata(typeof(AppBarToggleButton),
-                new FrameworkPropertyMetadata(OnOverflowModePropertyChanged));
-
             AppBarElementProperties.DefaultLabelPositionProperty.OverrideMetadata(typeof(AppBarToggleButton),
                 new FrameworkPropertyMetadata(OnDefaultLabelPositionPropertyChanged));
 
@@ -39,6 +37,7 @@ namespace ModernWpf.Controls
 
         public AppBarToggleButton()
         {
+            SetValue(TemplateSettingsPropertyKey, new AppBarToggleButtonTemplateSettings());
             IsVisibleChanged += OnIsVisibleChanged;
         }
 
@@ -159,75 +158,78 @@ namespace ModernWpf.Controls
         private static void OnIsInOverflowChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var button = (AppBarToggleButton)d;
-            button.UpdateCommonState();
+            button.UpdateVisualState();
         }
 
         #endregion
 
         #region ApplicationViewState
 
-        private static readonly DependencyProperty ApplicationViewStateProperty =
-            AppBarElementProperties.ApplicationViewStateProperty.AddOwner(typeof(AppBarToggleButton));
-
-        private AppBarElementApplicationViewState ApplicationViewState
-        {
-            get => (AppBarElementApplicationViewState)GetValue(ApplicationViewStateProperty);
-        }
-
         private void UpdateApplicationViewState()
         {
-            AppBarElementApplicationViewState value;
+            string stateName;
 
-            if (IsInOverflow &&
-                IsVisible &&
-                AppBarElementProperties.TryGetOverflowState(VisualParent, out _, out bool hasMenuIcon))
+            if (UseOverflowStyle && IsVisible)
             {
-                value = ComputeApplicationViewStateInOverflow(hasMenuIcon);
+                stateName = ComputeOverflowApplicationViewState().ToString();
             }
             else
             {
-                CommandBarDefaultLabelPosition defaultLabelPosition;
-
-                if (ReadLocalValue(AppBarElementProperties.DefaultLabelPositionProperty) != DependencyProperty.UnsetValue)
-                {
-                    defaultLabelPosition = (CommandBarDefaultLabelPosition)GetValue(AppBarElementProperties.DefaultLabelPositionProperty);
-                }
-                else
-                {
-                    defaultLabelPosition = CommandBarDefaultLabelPosition.Bottom;
-                }
-
-                if (LabelPosition == CommandBarLabelPosition.Collapsed ||
-                    defaultLabelPosition == CommandBarDefaultLabelPosition.Collapsed)
-                {
-                    value = AppBarElementApplicationViewState.LabelCollapsed;
-                }
-                else if (defaultLabelPosition == CommandBarDefaultLabelPosition.Right)
-                {
-                    value = AppBarElementApplicationViewState.LabelOnRight;
-                }
-                else if (IsCompact)
-                {
-                    value = AppBarElementApplicationViewState.Compact;
-                }
-                else
-                {
-                    value = AppBarElementApplicationViewState.FullSize;
-                }
+                stateName = ComputePrimaryApplicationViewState().ToString();
             }
 
-            SetValue(AppBarElementProperties.ApplicationViewStatePropertyKey, value);
+            VisualStateManager.GoToState(this, stateName, true);
         }
 
-        private AppBarElementApplicationViewState ComputeApplicationViewStateInOverflow(bool hasMenuIcon)
+        private AppBarElementApplicationViewState ComputeOverflowApplicationViewState()
         {
-            return hasMenuIcon ? AppBarElementApplicationViewState.OverflowWithMenuIcons :
-                                 AppBarElementApplicationViewState.Overflow;
+            return m_isWithIcons ? AppBarElementApplicationViewState.OverflowWithMenuIcons :
+                                   AppBarElementApplicationViewState.Overflow;
+        }
+
+        private AppBarElementApplicationViewState ComputePrimaryApplicationViewState()
+        {
+            CommandBarDefaultLabelPosition defaultLabelPosition = GetEffectiveLabelPosition();
+
+            if (defaultLabelPosition == CommandBarDefaultLabelPosition.Collapsed)
+            {
+                return AppBarElementApplicationViewState.LabelCollapsed;
+            }
+            else if (defaultLabelPosition == CommandBarDefaultLabelPosition.Right)
+            {
+                return AppBarElementApplicationViewState.LabelOnRight;
+            }
+            else if (IsCompact)
+            {
+                return AppBarElementApplicationViewState.Compact;
+            }
+            else
+            {
+                return AppBarElementApplicationViewState.FullSize;
+            }
+        }
+
+        private CommandBarDefaultLabelPosition GetEffectiveLabelPosition()
+        {
+            if (LabelPosition == CommandBarLabelPosition.Collapsed)
+            {
+                return CommandBarDefaultLabelPosition.Collapsed;
+            }
+
+            if (ReadLocalValue(AppBarElementProperties.DefaultLabelPositionProperty) != DependencyProperty.UnsetValue)
+            {
+                return (CommandBarDefaultLabelPosition)GetValue(AppBarElementProperties.DefaultLabelPositionProperty);
+            }
+
+            return CommandBarDefaultLabelPosition.Bottom;
         }
 
         private void ApplyApplicationViewState(bool useTransitions = true)
         {
-            VisualStateManager.GoToState(this, ApplicationViewState.ToString(), useTransitions);
+            string stateName = UseOverflowStyle && IsVisible ?
+                ComputeOverflowApplicationViewState().ToString() :
+                ComputePrimaryApplicationViewState().ToString();
+            VisualStateManager.GoToState(this, stateName, useTransitions);
         }
 
         void IAppBarElement.UpdateApplicationViewState()
@@ -244,14 +246,40 @@ namespace ModernWpf.Controls
 
         #region InputGestureText
 
+        public static readonly DependencyProperty KeyboardAcceleratorTextOverrideProperty =
+            AppBarElementProperties.KeyboardAcceleratorTextOverrideProperty.AddOwner(typeof(AppBarToggleButton));
+
         public static readonly DependencyProperty InputGestureTextProperty =
-            AppBarElementProperties.InputGestureTextProperty.AddOwner(typeof(AppBarToggleButton));
+            KeyboardAcceleratorTextOverrideProperty;
 
         public string InputGestureText
         {
-            get => (string)GetValue(InputGestureTextProperty);
-            set => SetValue(InputGestureTextProperty, value);
+            get => KeyboardAcceleratorTextOverride;
+            set => KeyboardAcceleratorTextOverride = value;
         }
+
+        public string KeyboardAcceleratorTextOverride
+        {
+            get => (string)GetValue(KeyboardAcceleratorTextOverrideProperty);
+            set => SetValue(KeyboardAcceleratorTextOverrideProperty, value);
+        }
+
+        #endregion
+
+        #region TemplateSettings
+
+        private static readonly DependencyPropertyKey TemplateSettingsPropertyKey =
+            DependencyProperty.RegisterReadOnly(
+                nameof(TemplateSettings),
+                typeof(AppBarToggleButtonTemplateSettings),
+                typeof(AppBarToggleButton),
+                null);
+
+        public static readonly DependencyProperty TemplateSettingsProperty =
+            TemplateSettingsPropertyKey.DependencyProperty;
+
+        public AppBarToggleButtonTemplateSettings TemplateSettings =>
+            (AppBarToggleButtonTemplateSettings)GetValue(TemplateSettingsProperty);
 
         #endregion
 
@@ -265,6 +293,8 @@ namespace ModernWpf.Controls
                 VisualStateManager.SetCustomVisualStateManager(templateRoot, _vsm);
             }
 
+            _keyboardAcceleratorTextLabel = GetTemplateChild("KeyboardAcceleratorTextLabel") as TextBlock;
+            UpdateTemplateSettings(m_maxKeyboardAcceleratorTextWidth);
             UpdateVisualState(false);
         }
 
@@ -282,10 +312,6 @@ namespace ModernWpf.Controls
             if (e.Property == IsMouseOverProperty)
             {
                 UpdateCommonState();
-            }
-            else if (e.Property == ToolBar.IsOverflowItemProperty)
-            {
-                AppBarElementProperties.UpdateIsInOverflow(this);
             }
         }
 
@@ -314,14 +340,9 @@ namespace ModernWpf.Controls
             button.UpdateCommonState();
         }
 
-        private static void OnOverflowModePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            AppBarElementProperties.UpdateIsInOverflow(d);
-        }
-
         private static void OnDefaultLabelPositionPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((AppBarToggleButton)d).UpdateApplicationViewState();
+            ((AppBarToggleButton)d).UpdateInternalStyles();
         }
 
         private static void OnShowKeyboardAcceleratorTextPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -337,7 +358,9 @@ namespace ModernWpf.Controls
         private void UpdateVisualState(bool useTransitions = true)
         {
             ApplyApplicationViewState(useTransitions);
+            UpdateInputModeState(useTransitions);
             UpdateCommonState(useTransitions);
+            UpdateKeyboardAcceleratorTextVisibility(useTransitions);
         }
 
         private void UpdateCommonState(bool useTransitions = true)
@@ -354,6 +377,36 @@ namespace ModernWpf.Controls
             if (!isEnabled)
             {
                 stateName = "Disabled";
+            }
+            else if (UseOverflowStyle)
+            {
+                if (isChecked)
+                {
+                    if (IsPressed)
+                    {
+                        stateName = "OverflowCheckedPressed";
+                    }
+                    else if (IsMouseOver)
+                    {
+                        stateName = "OverflowCheckedPointerOver";
+                    }
+                    else
+                    {
+                        stateName = "OverflowChecked";
+                    }
+                }
+                else if (IsPressed)
+                {
+                    stateName = "OverflowPressed";
+                }
+                else if (IsMouseOver)
+                {
+                    stateName = "OverflowPointerOver";
+                }
+                else
+                {
+                    stateName = "OverflowNormal";
+                }
             }
             else if (IsPressed)
             {
@@ -372,14 +425,9 @@ namespace ModernWpf.Controls
                 stateName = string.Empty;
             }
 
-            if (isChecked)
+            if (isChecked && (!isEnabled || !UseOverflowStyle))
             {
                 stateName = "Checked" + stateName;
-            }
-
-            if (isEnabled && IsInOverflow)
-            {
-                stateName = "Overflow" + stateName;
             }
 
             _vsm.CanChangeCommonState = true;
@@ -389,12 +437,84 @@ namespace ModernWpf.Controls
 
         private void UpdateKeyboardAcceleratorTextVisibility(bool useTransitions = true)
         {
-            string stateName = AppBarElementProperties.GetShowKeyboardAcceleratorText(this) ?
+            string stateName = m_isWithKeyboardAcceleratorText && UseOverflowStyle ?
                 "KeyboardAcceleratorTextVisible" :
                 "KeyboardAcceleratorTextCollapsed";
             VisualStateManager.GoToState(this, stateName, useTransitions);
         }
 
+        private void UpdateInputModeState(bool useTransitions = true)
+        {
+            VisualStateManager.GoToState(this, "InputModeDefault", useTransitions);
+        }
+
+        private bool UseOverflowStyle => AppBarElementProperties.GetUseOverflowStyle(this);
+
+        internal void SetOverflowStyleParams(bool hasIcons, bool hasToggleButtons, bool hasKeyboardAcceleratorText)
+        {
+            bool updateState = false;
+
+            if (m_isWithIcons != hasIcons)
+            {
+                m_isWithIcons = hasIcons;
+                updateState = true;
+            }
+
+            if (m_isWithKeyboardAcceleratorText != hasKeyboardAcceleratorText)
+            {
+                m_isWithKeyboardAcceleratorText = hasKeyboardAcceleratorText;
+                updateState = true;
+            }
+
+            if (updateState)
+            {
+                UpdateVisualState();
+            }
+        }
+
+        void IAppBarButtonElement.SetOverflowStyleParams(bool hasIcons, bool hasToggleButtons, bool hasKeyboardAcceleratorText)
+        {
+            SetOverflowStyleParams(hasIcons, hasToggleButtons, hasKeyboardAcceleratorText);
+        }
+
+        double IAppBarButtonElement.GetKeyboardAcceleratorTextDesiredWidth()
+        {
+            if (_keyboardAcceleratorTextLabel == null)
+            {
+                return 0;
+            }
+
+            _keyboardAcceleratorTextLabel.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+            Thickness margin = _keyboardAcceleratorTextLabel.Margin;
+            return Math.Max(0, _keyboardAcceleratorTextLabel.DesiredSize.Width - margin.Left - margin.Right);
+        }
+
+        void IAppBarButtonElement.UpdateTemplateSettings(double maxKeyboardAcceleratorTextWidth)
+        {
+            UpdateTemplateSettings(maxKeyboardAcceleratorTextWidth);
+        }
+
+        private void UpdateTemplateSettings(double maxKeyboardAcceleratorTextWidth)
+        {
+            m_maxKeyboardAcceleratorTextWidth = maxKeyboardAcceleratorTextWidth;
+
+            if (TemplateSettings != null)
+            {
+                TemplateSettings.KeyboardAcceleratorTextMinWidth = maxKeyboardAcceleratorTextWidth;
+            }
+        }
+
+        private void UpdateInternalStyles()
+        {
+            UpdateApplicationViewState();
+            CoerceValue(ToolTipProperty);
+            UpdateVisualState();
+        }
+
         private AppBarElementVisualStateManager _vsm;
+        private TextBlock _keyboardAcceleratorTextLabel;
+        private bool m_isWithIcons;
+        private bool m_isWithKeyboardAcceleratorText;
+        private double m_maxKeyboardAcceleratorTextWidth;
     }
 }

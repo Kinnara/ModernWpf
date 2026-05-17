@@ -592,15 +592,18 @@ public class CommandBarFlyoutApiTests
 
             overflowPanel.UpdateChildrenApplicationViewState();
 
-            Assert.AreEqual(
-                AppBarElementApplicationViewState.OverflowWithToggleButtonsAndMenuIcons,
-                plainButton.GetValue(AppBarElementProperties.ApplicationViewStateProperty));
-            Assert.AreEqual(
-                AppBarElementApplicationViewState.OverflowWithMenuIcons,
-                toggleButton.GetValue(AppBarElementProperties.ApplicationViewStateProperty));
-            Assert.AreEqual(
-                AppBarElementApplicationViewState.OverflowWithToggleButtonsAndMenuIcons,
-                iconButton.GetValue(AppBarElementProperties.ApplicationViewStateProperty));
+            AssertCurrentState(
+                FindTemplateChild<System.Windows.Controls.Grid>(plainButton, "Root"),
+                "ApplicationViewStates",
+                "OverflowWithToggleButtonsAndMenuIcons");
+            AssertCurrentState(
+                FindTemplateChild<System.Windows.Controls.Grid>(toggleButton, "Root"),
+                "ApplicationViewStates",
+                "OverflowWithMenuIcons");
+            AssertCurrentState(
+                FindTemplateChild<System.Windows.Controls.Grid>(iconButton, "Root"),
+                "ApplicationViewStates",
+                "OverflowWithToggleButtonsAndMenuIcons");
         });
     }
 
@@ -1263,6 +1266,18 @@ public class CommandBarFlyoutApiTests
         var stateEx = (VisualStateEx)state;
         CollectionAssert.AreEquivalent(expectedTargets, stateEx.Setters.Select(setter => setter.Target).ToArray());
         return stateEx;
+    }
+
+    private static void AssertCurrentState(
+        FrameworkElement stateGroupsRoot,
+        string groupName,
+        string stateName)
+    {
+        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
+            .OfType<VisualStateGroup>()
+            .Single(candidate => candidate.Name == groupName);
+
+        Assert.AreEqual(stateName, group.CurrentState?.Name);
     }
 
     private static T FindTemplateChild<T>(System.Windows.Controls.Control control, string name)

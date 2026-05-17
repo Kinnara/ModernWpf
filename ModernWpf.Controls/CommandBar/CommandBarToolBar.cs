@@ -266,6 +266,13 @@ namespace ModernWpf.Controls.Primitives
             {
                 var appBarElement = (FrameworkElement)element;
                 appBarElement.SetBinding(DefaultLabelPositionProperty, DefaultLabelPositionProperty, this);
+                AppBarElementProperties.SetUseOverflowStyle(appBarElement, false);
+
+                if (appBarElement is IAppBarButtonElement appBarButtonElement)
+                {
+                    appBarButtonElement.SetOverflowStyleParams(false, false, false);
+                    appBarButtonElement.UpdateTemplateSettings(0);
+                }
             }
         }
 
@@ -274,6 +281,14 @@ namespace ModernWpf.Controls.Primitives
             if (element is AppBarButton ||
                 element is AppBarToggleButton)
             {
+                AppBarElementProperties.SetUseOverflowStyle(element, false);
+
+                if (element is IAppBarButtonElement appBarButtonElement)
+                {
+                    appBarButtonElement.SetOverflowStyleParams(false, false, false);
+                    appBarButtonElement.UpdateTemplateSettings(0);
+                }
+
                 element.ClearValue(DefaultLabelPositionProperty);
             }
 

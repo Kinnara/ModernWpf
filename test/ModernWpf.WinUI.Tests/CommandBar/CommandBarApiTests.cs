@@ -181,11 +181,13 @@ public class CommandBarApiTests
 
             Assert.AreEqual("Open file", button.Label);
             Assert.AreEqual("Ctrl+O", button.InputGestureText);
+            Assert.AreEqual("Ctrl+O", button.KeyboardAcceleratorTextOverride);
             Assert.AreSame(icon, button.Icon);
             Assert.IsTrue(button.IsCompact);
             Assert.IsFalse(button.IsInOverflow);
             Assert.AreEqual(CommandBarLabelPosition.Collapsed, button.LabelPosition);
             Assert.IsNull(button.Flyout);
+            Assert.IsNotNull(button.TemplateSettings);
         });
     }
 
@@ -284,9 +286,11 @@ public class CommandBarApiTests
             Assert.IsTrue(VisualStateManager.GoToState(button, "LabelOnRight", false));
             Assert.AreEqual((Thickness)button.TryFindResource("AppBarButtonSubItemChevronLabelOnRightMargin"), subItemChevron.Margin);
 
-            ToolBar.SetOverflowMode(button, OverflowMode.Always);
+            AppBarElementProperties.SetUseOverflowStyle(button, true);
+            button.SetOverflowStyleParams(hasIcons: true, hasToggleButtons: false, hasKeyboardAcceleratorText: true);
             Assert.IsTrue(button.IsInOverflow);
             AssertVisualState(root, "CommonStates", "OverflowNormal");
+            AssertVisualState(root, "KeyboardAcceleratorTextVisibility", "KeyboardAcceleratorTextVisible");
             Assert.AreEqual(Visibility.Collapsed, subItemChevron.Visibility);
             Assert.AreEqual(Visibility.Visible, overflowSubItemChevron.Visibility);
 
@@ -321,6 +325,57 @@ public class CommandBarApiTests
             Assert.IsTrue(toggleButton.IsCompact);
             Assert.IsFalse(toggleButton.IsInOverflow);
             Assert.AreEqual(CommandBarLabelPosition.Collapsed, toggleButton.LabelPosition);
+            Assert.IsNotNull(toggleButton.TemplateSettings);
+        });
+    }
+
+    [TestMethod]
+    public void AppBarOverflowPanelAppliesWinUISourceOverflowParams()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var button = new AppBarButton
+            {
+                Icon = new SymbolIcon(Symbol.Accept),
+                Label = "Open",
+                KeyboardAcceleratorTextOverride = "Ctrl+O",
+                Flyout = new MenuFlyout()
+            };
+            var toggleButton = new AppBarToggleButton
+            {
+                Icon = new SymbolIcon(Symbol.Accept),
+                Label = "Pin",
+                KeyboardAcceleratorTextOverride = "Ctrl+Shift+P",
+                IsChecked = true
+            };
+            var panel = new CommandBarFlyoutOverflowPanel();
+            panel.Children.Add(button);
+            panel.Children.Add(toggleButton);
+
+            using var host = new TestWindowHost(panel, width: 320, height: 160);
+            host.UpdateLayout();
+
+            var buttonRoot = FindTemplateChild<Border>(button, "Root");
+            var toggleRoot = FindTemplateChild<Border>(toggleButton, "Root");
+            var buttonKeyboardText = FindTemplateChild<TextBlock>(button, "KeyboardAcceleratorTextLabel");
+            var toggleKeyboardText = FindTemplateChild<TextBlock>(toggleButton, "KeyboardAcceleratorTextLabel");
+
+            Assert.IsTrue(button.IsInOverflow);
+            Assert.IsTrue(toggleButton.IsInOverflow);
+            AssertVisualState(buttonRoot, "ApplicationViewStates", "OverflowWithToggleButtonsAndMenuIcons");
+            AssertVisualState(toggleRoot, "ApplicationViewStates", "OverflowWithMenuIcons");
+            AssertVisualState(buttonRoot, "KeyboardAcceleratorTextVisibility", "KeyboardAcceleratorTextVisible");
+            AssertVisualState(toggleRoot, "KeyboardAcceleratorTextVisibility", "KeyboardAcceleratorTextVisible");
+            AssertVisualState(toggleRoot, "CommonStates", "OverflowChecked");
+
+            Assert.AreEqual("Ctrl+O", buttonKeyboardText.Text);
+            Assert.AreEqual("Ctrl+Shift+P", toggleKeyboardText.Text);
+            Assert.IsTrue(button.TemplateSettings.KeyboardAcceleratorTextMinWidth > 0);
+            Assert.AreEqual(
+                button.TemplateSettings.KeyboardAcceleratorTextMinWidth,
+                toggleButton.TemplateSettings.KeyboardAcceleratorTextMinWidth);
         });
     }
 

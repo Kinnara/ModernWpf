@@ -454,6 +454,7 @@ namespace ModernWpf.Controls.Primitives
             AddCommandsToPanel(m_primaryItemsPanel, PrimaryCommands, false);
             AddCommandsToPanel(m_secondaryItemsPanel, SecondaryCommands, true);
             UpdateCommandDefaultLabelPositions();
+            UpdateCommandOverflowStyleParams();
         }
 
         private static void ClearPanelChildren(Panel panel)
@@ -496,6 +497,12 @@ namespace ModernWpf.Controls.Primitives
         {
             UpdateCommandDefaultLabelPositions(PrimaryCommands);
             UpdateCommandDefaultLabelPositions(SecondaryCommands);
+        }
+
+        private void UpdateCommandOverflowStyleParams()
+        {
+            AppBarElementProperties.UpdateOverflowStyleParams(PrimaryCommands, false);
+            AppBarElementProperties.UpdateOverflowStyleParams(SecondaryCommands, true);
         }
 
         private void UpdateCommandDefaultLabelPositions(IEnumerable<ICommandBarElement> commands)
@@ -569,6 +576,8 @@ namespace ModernWpf.Controls.Primitives
 
         internal void OnCommandBarElementDependencyPropertyChanged()
         {
+            UpdateCommandOverflowStyleParams();
+
             if (IsOpen)
             {
                 UpdateUI(true, true);

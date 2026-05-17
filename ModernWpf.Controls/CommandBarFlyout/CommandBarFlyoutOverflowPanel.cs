@@ -73,6 +73,17 @@ namespace ModernWpf.Controls.Primitives
         {
             base.OnVisualChildrenChanged(visualAdded, visualRemoved);
 
+            if (visualRemoved is DependencyObject removedElement)
+            {
+                AppBarElementProperties.SetUseOverflowStyle(removedElement, false);
+
+                if (removedElement is IAppBarButtonElement appBarButtonElement)
+                {
+                    appBarButtonElement.SetOverflowStyleParams(false, false, false);
+                    appBarButtonElement.UpdateTemplateSettings(0);
+                }
+            }
+
             UpdateChildrenApplicationViewState();
         }
 
@@ -121,13 +132,7 @@ namespace ModernWpf.Controls.Primitives
             HasToggleButton = hasToggleButton;
             HasMenuIcon = hasMenuIcon;
 
-            for (int i = 0, count = children.Count; i < count; ++i)
-            {
-                if (children[i] is IAppBarElement element)
-                {
-                    element.UpdateApplicationViewState();
-                }
-            }
+            AppBarElementProperties.UpdateOverflowStyleParams(children, true);
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
