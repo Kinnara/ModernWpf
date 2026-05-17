@@ -89,15 +89,22 @@ namespace ModernWpf.Controls.Primitives
         {
             if (IsOpen)
             {
-                if (Keyboard.FocusedElement != null)
+                if (m_shouldTakeFocus)
                 {
-                    m_weakRefToPreviousFocus = new WeakReference<IInputElement>(Keyboard.FocusedElement);
+                    if (Keyboard.FocusedElement != null)
+                    {
+                        m_weakRefToPreviousFocus = new WeakReference<IInputElement>(Keyboard.FocusedElement);
+                    }
+
+                    FocusTarget?.Focus();
                 }
 
-                m_presenter?.Focus();
+                UpdatePointerMoveAwayTracking();
             }
             else
             {
+                RemoveRootPointerMovedHandler();
+
                 if (m_weakRefToPreviousFocus != null)
                 {
                     if (m_weakRefToPreviousFocus.TryGetTarget(out IInputElement previousFocus))
@@ -144,12 +151,17 @@ namespace ModernWpf.Controls.Primitives
                 nameof(ShowMode),
                 typeof(FlyoutShowMode),
                 typeof(FlyoutBase),
-                new PropertyMetadata(FlyoutShowMode.Standard));
+                new PropertyMetadata(FlyoutShowMode.Standard, OnShowModeChanged));
 
         public FlyoutShowMode ShowMode
         {
             get => (FlyoutShowMode)GetValue(ShowModeProperty);
             set => SetValue(ShowModeProperty, value);
+        }
+
+        private static void OnShowModeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((FlyoutBase)d).UpdateStateToShowMode((FlyoutShowMode)e.NewValue);
         }
 
         #endregion
@@ -211,6 +223,10 @@ namespace ModernWpf.Controls.Primitives
         }
 
         protected abstract Control CreatePresenter();
+
+        protected virtual Control FocusTarget => m_presenter;
+
+        protected virtual FrameworkElement PointerMoveAwayBoundsElement => m_presenter;
 
         internal void ShowAsContextFlyout(FrameworkElement placementTarget)
         {
@@ -473,6 +489,8 @@ namespace ModernWpf.Controls.Primitives
 
         private void OnPopupOpened(object sender, EventArgs e)
         {
+            UpdatePointerMoveAwayTracking();
+
             if (m_suppressNextOpened)
             {
                 m_suppressNextOpened = false;
@@ -513,6 +531,7 @@ namespace ModernWpf.Controls.Primitives
             Target = null;
             m_showingAsContextFlyout = false;
             ClearOpenFlyout(this);
+            RemoveRootPointerMovedHandler();
 
             OnClosed();
         }
@@ -557,6 +576,141 @@ namespace ModernWpf.Controls.Primitives
         private void OnPlacementTargetUnloaded(object sender, RoutedEventArgs e)
         {
             Hide();
+        }
+
+        internal void UpdateStateToShowMode(FlyoutShowMode showMode)
+        {
+            if (showMode == FlyoutShowMode.Auto)
+            {
+                SetCurrentValue(ShowModeProperty, FlyoutShowMode.Standard);
+                showMode = FlyoutShowMode.Standard;
+            }
+
+            switch (showMode)
+            {
+                case FlyoutShowMode.Standard:
+                    m_shouldTakeFocus = true;
+                    m_shouldHideIfPointerMovesAway = false;
+                    break;
+                case FlyoutShowMode.Transient:
+                    m_shouldTakeFocus = false;
+                    m_shouldHideIfPointerMovesAway = false;
+                    break;
+                case FlyoutShowMode.TransientWithDismissOnPointerMoveAway:
+                    m_shouldTakeFocus = false;
+                    m_shouldHideIfPointerMovesAway = true;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(showMode), showMode, null);
+            }
+
+            UpdatePointerMoveAwayTracking();
+        }
+
+        private void UpdatePointerMoveAwayTracking()
+        {
+            if (IsOpen && m_shouldHideIfPointerMovesAway)
+            {
+                AddRootPointerMovedHandler();
+            }
+            else
+            {
+                RemoveRootPointerMovedHandler();
+            }
+        }
+
+        private void AddRootPointerMovedHandler()
+        {
+            var root = GetRootElement();
+            if (root == null || ReferenceEquals(root, m_pointerMoveAwayRoot))
+            {
+                return;
+            }
+
+            RemoveRootPointerMovedHandler();
+
+            m_pointerMoveAwayRoot = root;
+            m_pointerMoveAwayRoot.MouseMove += OnRootPointerMoved;
+        }
+
+        private void RemoveRootPointerMovedHandler()
+        {
+            if (m_pointerMoveAwayRoot != null)
+            {
+                m_pointerMoveAwayRoot.MouseMove -= OnRootPointerMoved;
+                m_pointerMoveAwayRoot = null;
+            }
+        }
+
+        private UIElement GetRootElement()
+        {
+            if (Target == null)
+            {
+                return null;
+            }
+
+            return Window.GetWindow(Target) ??
+                   PresentationSource.FromVisual(Target)?.RootVisual as UIElement;
+        }
+
+        private void OnRootPointerMoved(object sender, MouseEventArgs e)
+        {
+            if (!IsOpen || !m_shouldHideIfPointerMovesAway)
+            {
+                return;
+            }
+
+            var root = (UIElement)sender;
+            var pointerPosition = root.PointToScreen(e.GetPosition(root));
+
+            if (ShouldHideForPointerMoveAway(pointerPosition))
+            {
+                Hide();
+            }
+        }
+
+        internal bool ShouldHideForPointerMoveAway(Point pointerScreenPosition)
+        {
+            var boundsElement = PointerMoveAwayBoundsElement;
+            if (boundsElement == null ||
+                !boundsElement.IsVisible ||
+                boundsElement.ActualWidth <= 0 ||
+                boundsElement.ActualHeight <= 0)
+            {
+                return false;
+            }
+
+            var topLeft = boundsElement.PointToScreen(new Point(0, 0));
+            var bottomRight = boundsElement.PointToScreen(new Point(boundsElement.ActualWidth, boundsElement.ActualHeight));
+            var bounds = new Rect(topLeft, bottomRight);
+
+            return IsPointerBeyondMoveAwayThreshold(bounds, pointerScreenPosition);
+        }
+
+        internal static bool IsPointerBeyondMoveAwayThreshold(Rect presenterBounds, Point pointerPosition)
+        {
+            double xDistance = 0;
+            double yDistance = 0;
+
+            if (pointerPosition.X < presenterBounds.Left)
+            {
+                xDistance = presenterBounds.Left - pointerPosition.X;
+            }
+            else if (pointerPosition.X > presenterBounds.Right)
+            {
+                xDistance = pointerPosition.X - presenterBounds.Right;
+            }
+
+            if (pointerPosition.Y < presenterBounds.Top)
+            {
+                yDistance = presenterBounds.Top - pointerPosition.Y;
+            }
+            else if (pointerPosition.Y > presenterBounds.Bottom)
+            {
+                yDistance = pointerPosition.Y - presenterBounds.Bottom;
+            }
+
+            return xDistance * xDistance + yDistance * yDistance > s_pointerMoveAwayThresholdSquared;
         }
 
         private void CancelAsyncShow()
@@ -621,6 +775,7 @@ namespace ModernWpf.Controls.Primitives
         private static readonly IValueConverter s_placementConverter = new PlacementConverter();
 
         private const double s_offset = 4;
+        private const double s_pointerMoveAwayThresholdSquared = 80 * 80;
 
         private Control m_presenter;
         private PopupEx m_popup;
@@ -629,6 +784,9 @@ namespace ModernWpf.Controls.Primitives
         private FrameworkElement m_trackedPlacementTarget;
         private bool m_closing;
         private bool m_suppressNextOpened;
+        private bool m_shouldTakeFocus = true;
+        private bool m_shouldHideIfPointerMovesAway;
+        private UIElement m_pointerMoveAwayRoot;
         private Action m_pendingShow;
         private DispatcherOperation m_asyncShow;
         private static FlyoutBase s_openFlyout;

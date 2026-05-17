@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
@@ -213,6 +214,63 @@ public class FlyoutBaseApiTests
             Assert.IsFalse(flyout.IsOpen);
             Assert.IsNull(flyout.Target);
         });
+    }
+
+    [TestMethod]
+    public void ShowModeAutoNormalizesToStandardLikeWinUISource()
+    {
+        var flyout = new Flyout();
+
+        flyout.ShowMode = FlyoutShowMode.Auto;
+
+        Assert.AreEqual(FlyoutShowMode.Standard, flyout.ShowMode);
+    }
+
+    [TestMethod]
+    public void ShowModeTransientKeepsCurrentFocusLikeWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var target = new Button { Content = "Target", Width = 120, Height = 36 };
+            var flyout = new Flyout
+            {
+                Content = new Button { Content = "Flyout content", Width = 140, Height = 40 },
+                ShowMode = FlyoutShowMode.Transient
+            };
+
+            using var host = new TestWindowHost(target, width: 320, height: 220);
+            host.UpdateLayout();
+            target.Focus();
+            WpfTestHost.DoEvents();
+
+            Assert.AreSame(target, Keyboard.FocusedElement);
+
+            flyout.ShowAt(target);
+            WpfTestHost.DoEvents();
+
+            Assert.IsTrue(flyout.IsOpen);
+            Assert.AreSame(target, Keyboard.FocusedElement);
+
+            flyout.Hide();
+            WpfTestHost.DoEvents();
+        });
+    }
+
+    [TestMethod]
+    public void ShowModeTransientWithDismissOnPointerMoveAwayUsesWinUIThreshold()
+    {
+        Assert.AreEqual(3, (int)FlyoutShowMode.TransientWithDismissOnPointerMoveAway);
+
+        var presenterBounds = new Rect(10, 20, 100, 50);
+
+        Assert.IsFalse(FlyoutBase.IsPointerBeyondMoveAwayThreshold(presenterBounds, new Point(10, 20)));
+        Assert.IsFalse(FlyoutBase.IsPointerBeyondMoveAwayThreshold(presenterBounds, new Point(110, 70)));
+        Assert.IsFalse(FlyoutBase.IsPointerBeyondMoveAwayThreshold(presenterBounds, new Point(190, 45)));
+        Assert.IsTrue(FlyoutBase.IsPointerBeyondMoveAwayThreshold(presenterBounds, new Point(191, 45)));
+        Assert.IsFalse(FlyoutBase.IsPointerBeyondMoveAwayThreshold(presenterBounds, new Point(150, 110)));
+        Assert.IsTrue(FlyoutBase.IsPointerBeyondMoveAwayThreshold(presenterBounds, new Point(168, 128)));
     }
 
     [TestMethod]

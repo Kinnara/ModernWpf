@@ -2405,6 +2405,9 @@ Use the ItemsRepeaterScrollHost if your app will run on versions of Windows prio
     <member name="F:ModernWpf.Controls.Primitives.FlyoutShowMode.Transient">
       <summary>Behavior is typical of a flyout shown proactively. The open flyout does not take focus. For a CommandBarFlyout, it opens in it's collapsed state.</summary>
     </member>
+    <member name="F:ModernWpf.Controls.Primitives.FlyoutShowMode.TransientWithDismissOnPointerMoveAway">
+      <summary>Behavior is typical of a flyout shown proactively. The open flyout does not take focus and hides when the pointer moves away.</summary>
+    </member>
     <member name="T:ModernWpf.Controls.Primitives.ProgressRingTemplateSettings">
       <summary>Provides calculated values that can be referenced as **TemplatedParent** sources when defining templates for a ProgressRing control. Not intended for general use.</summary>
     </member>

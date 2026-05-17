@@ -81,6 +81,7 @@ namespace ModernWpf.Controls
 
         internal override void OnIsOpenChanged()
         {
+            base.OnIsOpenChanged();
         }
 
         internal override void UpdateIsOpen()
@@ -92,6 +93,10 @@ namespace ModernWpf.Controls
         {
             m_presenter?.UpdatePopupAnimation();
         }
+
+        protected override FrameworkElement PointerMoveAwayBoundsElement => m_presenter;
+
+        protected override Control FocusTarget => m_presenter;
 
         private void Show(FrameworkElement placementTarget, PlacementMode placement = PlacementMode.Custom)
         {
@@ -205,6 +210,7 @@ namespace ModernWpf.Controls
             ClearPlacementTargetTracking();
             Target = null;
             m_currentPlacement = null;
+            UpdateStateToShowMode(ShowMode);
 
             OnClosed();
         }

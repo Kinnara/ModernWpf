@@ -4,6 +4,7 @@
     {
         Auto = 0,
         Standard = 1,
-        Transient = 2
+        Transient = 2,
+        TransientWithDismissOnPointerMoveAway = 3
     }
 }
