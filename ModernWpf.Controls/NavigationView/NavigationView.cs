@@ -17,6 +17,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Shell;
 using System.Windows.Threading;
 using ModernWpf.Automation.Peers;
+using ModernWpf.Controls.Primitives;
 using ModernWpf.Input;
 using ModernWpf.Media.Animation;
 using static CppWinRTHelpers;

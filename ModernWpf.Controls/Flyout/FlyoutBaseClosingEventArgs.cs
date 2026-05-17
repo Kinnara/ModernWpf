@@ -1,17 +1,13 @@
 ﻿using System;
 
-namespace ModernWpf.Controls
+namespace ModernWpf.Controls.Primitives
 {
-    internal sealed class FlyoutBaseClosingEventArgs : EventArgs
+    public sealed class FlyoutBaseClosingEventArgs : EventArgs
     {
         internal FlyoutBaseClosingEventArgs()
         {
         }
 
-        public bool Cancel
-        {
-            get => false;
-            set => throw new NotImplementedException();
-        }
+        public bool Cancel { get; set; }
     }
 }

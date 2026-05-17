@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Windows;
@@ -171,7 +172,7 @@ namespace ModernWpf.Controls.Primitives
         public event EventHandler<object> Opening;
         public event EventHandler<object> Opened;
         public event EventHandler<object> Closed;
-        internal event TypedEventHandler<FlyoutBase, FlyoutBaseClosingEventArgs> Closing;
+        public event TypedEventHandler<FlyoutBase, FlyoutBaseClosingEventArgs> Closing;
 
         public void ShowAt(FrameworkElement placementTarget)
         {
@@ -433,29 +434,47 @@ namespace ModernWpf.Controls.Primitives
 
         private void OnPopupOpened(object sender, EventArgs e)
         {
+            if (m_suppressNextOpened)
+            {
+                m_suppressNextOpened = false;
+                return;
+            }
+
             OnOpened();
         }
 
-        private void OnPopupClosing(object sender, EventArgs e)
+        private void OnPopupClosing(object sender, CancelEventArgs e)
         {
-            Closing?.Invoke(this, new FlyoutBaseClosingEventArgs()); // TODO: Cancel
-            m_closing = true;
+            var args = new FlyoutBaseClosingEventArgs();
+            Closing?.Invoke(this, args);
+
+            e.Cancel = args.Cancel;
+            if (args.Cancel)
+            {
+                m_suppressNextOpened = true;
+            }
+            else
+            {
+                m_closing = true;
+            }
         }
 
         private void OnPopupClosed(object sender, EventArgs e)
         {
             m_closing = false;
 
-            if (!m_popup.IsOpen)
+            if (m_popup.IsOpen)
             {
-                m_popup.ClearValue(Popup.PlacementProperty);
-                m_popup.ClearValue(Popup.PlacementTargetProperty);
-                m_popup.ClearValue(Popup.PlacementRectangleProperty);
-                m_popup.ClearValue(FrameworkElement.WidthProperty);
-                m_popup.ClearValue(FrameworkElement.HeightProperty);
-                m_target = null;
-                m_showingAsContextFlyout = false;
+                return;
             }
+
+            m_popup.ClearValue(Popup.PlacementProperty);
+            m_popup.ClearValue(Popup.PlacementTargetProperty);
+            m_popup.ClearValue(Popup.PlacementRectangleProperty);
+            m_popup.ClearValue(FrameworkElement.WidthProperty);
+            m_popup.ClearValue(FrameworkElement.HeightProperty);
+            m_target = null;
+            m_showingAsContextFlyout = false;
 
             OnClosed();
         }
@@ -498,6 +517,7 @@ namespace ModernWpf.Controls.Primitives
         private bool m_showingAsContextFlyout;
         private WeakReference<IInputElement> m_weakRefToPreviousFocus;
         private bool m_closing;
+        private bool m_suppressNextOpened;
         private Action m_pendingShow;
         private DispatcherOperation m_asyncShow;
 
