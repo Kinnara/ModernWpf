@@ -444,20 +444,11 @@ namespace ModernWpf.Controls
 
         protected override void OnKeyUp(KeyEventArgs e)
         {
-            if (HandlesKey(e.Key))
-            {
-                bool handledKeyDown = _handledKeyDown;
-                _handledKeyDown = false;
-
-                if (handledKeyDown && !e.Handled && !_isDragging)
-                {
-                    Toggle();
-                }
-
-                e.Handled = true;
-            }
-
             base.OnKeyUp(e);
+
+            bool isHandled = e.Handled;
+            ProcessKeyUp(e.Key, ref isHandled);
+            e.Handled = isHandled;
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
@@ -472,7 +463,25 @@ namespace ModernWpf.Controls
             if (HandlesKey(e.Key))
             {
                 e.Handled = true;
-                _handledKeyDown = true;
+            }
+
+            _handledKeyDown = e.Handled;
+        }
+
+        private void ProcessKeyUp(Key key, ref bool isHandled)
+        {
+            if (!HandlesKey(key))
+            {
+                return;
+            }
+
+            bool handledKeyDown = _handledKeyDown;
+            _handledKeyDown = false;
+
+            if (handledKeyDown && !isHandled && !_isDragging)
+            {
+                Toggle();
+                isHandled = true;
             }
         }
 

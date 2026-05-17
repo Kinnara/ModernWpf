@@ -83,19 +83,24 @@ public class ToggleSwitchApiTests
             AssertStateSetter(normalState, "SwitchKnobBounds.Fill");
             AssertStateSetter(normalState, "SwitchKnobBounds.Stroke");
 
+            var outerBorder = FindNamedDescendant<Rectangle>(toggleSwitch, "OuterBorder");
             var switchKnobBounds = FindNamedDescendant<Rectangle>(toggleSwitch, "SwitchKnobBounds");
             var switchKnobOff = FindNamedDescendant<Rectangle>(toggleSwitch, "SwitchKnobOff");
             var switchKnobOn = FindNamedDescendant<Border>(toggleSwitch, "SwitchKnobOn");
+            var switchAreaGrid = FindNamedDescendant<Border>(toggleSwitch, "SwitchAreaGrid");
 
             Assert.IsTrue(System.Windows.VisualStateManager.GoToState(toggleSwitch, "PointerOver", false));
             host.UpdateLayout();
             Assert.IsTrue(System.Windows.VisualStateManager.GoToState(toggleSwitch, "Normal", false));
             host.UpdateLayout();
 
+            AssertBrushEquals((Brush)outerBorder.TryFindResource("ToggleSwitchStrokeOff"), outerBorder.Stroke);
+            AssertBrushEquals((Brush)outerBorder.TryFindResource("ToggleSwitchFillOff"), outerBorder.Fill);
             AssertBrushEquals((Brush)switchKnobOff.TryFindResource("ToggleSwitchKnobFillOff"), switchKnobOff.Fill);
             AssertBrushEquals((Brush)switchKnobOn.TryFindResource("ToggleSwitchKnobFillOn"), switchKnobOn.Background);
             AssertBrushEquals((Brush)switchKnobBounds.TryFindResource("ToggleSwitchFillOn"), switchKnobBounds.Fill);
             AssertBrushEquals((Brush)switchKnobBounds.TryFindResource("ToggleSwitchStrokeOn"), switchKnobBounds.Stroke);
+            AssertBrushEquals((Brush)switchAreaGrid.TryFindResource("ToggleSwitchContainerBackground"), switchAreaGrid.Background);
         });
     }
 
@@ -402,6 +407,71 @@ public class ToggleSwitchApiTests
             var keyUp = RaiseKey(toggleSwitch, Keyboard.KeyUpEvent, Key.Space);
             Assert.IsTrue(keyUp.Handled);
             Assert.IsTrue(toggleSwitch.IsOn);
+        });
+    }
+
+    [TestMethod]
+    public void SpaceKeyUpWithoutPriorKeyDownDoesNotToggleOrHandle()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch();
+            using var host = new TestWindowHost(toggleSwitch, width: 260, height: 120);
+            host.UpdateLayout();
+
+            var keyUp = RaiseKey(toggleSwitch, Keyboard.KeyUpEvent, Key.Space);
+
+            Assert.IsFalse(keyUp.Handled);
+            Assert.IsFalse(toggleSwitch.IsOn);
+        });
+    }
+
+    [TestMethod]
+    public void NonSpaceKeyDownClearsPendingSpaceToggle()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch();
+            using var host = new TestWindowHost(toggleSwitch, width: 260, height: 120);
+            host.UpdateLayout();
+
+            var keyDown = RaiseKey(toggleSwitch, Keyboard.KeyDownEvent, Key.Space);
+            Assert.IsTrue(keyDown.Handled);
+
+            var nonToggleKeyDown = RaiseKey(toggleSwitch, Keyboard.KeyDownEvent, Key.A);
+            Assert.IsFalse(nonToggleKeyDown.Handled);
+
+            var keyUp = RaiseKey(toggleSwitch, Keyboard.KeyUpEvent, Key.Space);
+            Assert.IsFalse(keyUp.Handled);
+            Assert.IsFalse(toggleSwitch.IsOn);
+        });
+    }
+
+    [TestMethod]
+    public void SpaceKeyUpWhileDraggingDoesNotToggleOrHandle()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch();
+            using var host = new TestWindowHost(toggleSwitch, width: 260, height: 120);
+            host.UpdateLayout();
+
+            var thumb = FindNamedDescendant<Thumb>(toggleSwitch, "SwitchThumb");
+            var keyDown = RaiseKey(toggleSwitch, Keyboard.KeyDownEvent, Key.Space);
+            Assert.IsTrue(keyDown.Handled);
+
+            RaiseDragStarted(thumb);
+            var keyUp = RaiseKey(toggleSwitch, Keyboard.KeyUpEvent, Key.Space);
+            RaiseDragCompleted(thumb);
+
+            Assert.IsFalse(keyUp.Handled);
+            Assert.IsFalse(toggleSwitch.IsOn);
         });
     }
 
