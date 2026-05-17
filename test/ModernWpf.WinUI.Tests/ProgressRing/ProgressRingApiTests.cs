@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -15,7 +16,7 @@ namespace ModernWpf.WinUI.Tests.ProgressRing;
 public class ProgressRingApiTests
 {
     [TestMethod]
-    public void VerifyDefaultStyleAndWinUI2Resources()
+    public void VerifyDefaultStyleAndWinUI3Resources()
     {
         WpfTestHost.Run(() =>
         {
@@ -34,15 +35,17 @@ public class ProgressRingApiTests
             Assert.AreEqual(16.0, progressRing.MinHeight);
             Assert.AreEqual(16.0, progressRing.MinWidth);
             Assert.IsFalse(progressRing.IsTabStop);
-            Assert.IsFalse(progressRing.Focusable);
             Assert.AreEqual(32.0, progressRing.Width);
             Assert.AreEqual(32.0, progressRing.Height);
             Assert.AreEqual(100.0, progressRing.Maximum);
 
-            var ring = FindNamedDescendant<Border>(progressRing, "Ring");
-            AssertBrushEquals(progressRing.Background, ring.Background);
-            Assert.AreEqual(FlowDirection.LeftToRight, ring.FlowDirection);
-            Assert.AreEqual(Visibility.Visible, ring.Visibility);
+            var layoutRoot = FindNamedDescendant<Grid>(progressRing, "LayoutRoot");
+            var lottiePlayer = FindNamedDescendant<Grid>(progressRing, "LottiePlayer");
+            AssertBrushEquals(Brushes.Transparent, layoutRoot.Background);
+            Assert.AreEqual(FlowDirection.LeftToRight, lottiePlayer.FlowDirection);
+            Assert.AreEqual(Visibility.Visible, layoutRoot.Visibility);
+            Assert.AreEqual(1.0, layoutRoot.Opacity);
+            Assert.IsNull(TryFindNamedDescendant<FrameworkElement>(progressRing, "Ring"));
 
             foreach (var themeName in new[] { "Light", "Dark" })
             {
@@ -91,7 +94,27 @@ public class ProgressRingApiTests
     }
 
     [TestMethod]
-    public void InactiveStateUsesVisualStateSettersAndAutomationPeerFallback()
+    public void VerifySourceAutomationNameShape()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var progressRing = new ModernWpf.Controls.ProgressRing
+            {
+                IsActive = true,
+                IsIndeterminate = true
+            };
+            AutomationProperties.SetName(progressRing, "Loading");
+
+            var peer = FrameworkElementAutomationPeer.CreatePeerForElement(progressRing);
+            Assert.AreEqual("Busy Loading", peer.GetName());
+
+            progressRing.IsIndeterminate = false;
+            Assert.AreEqual("Loading", peer.GetName());
+        });
+    }
+
+    [TestMethod]
+    public void InactiveStateUsesSourceVisualStateSetterAndAutomationPeerFallback()
     {
         WpfTestHost.Run(() =>
         {
@@ -105,8 +128,8 @@ public class ProgressRingApiTests
             using var host = new TestWindowHost(progressRing, width: 240, height: 180);
             host.UpdateLayout();
 
-            var ring = FindNamedDescendant<Border>(progressRing, "Ring");
-            AssertStateSetter(ring, "ActiveStates", "Inactive", "Ring.Opacity");
+            var layoutRoot = FindNamedDescendant<Grid>(progressRing, "LayoutRoot");
+            AssertStateSetter(layoutRoot, "CommonStates", "Inactive", "LayoutRoot.Opacity");
 
             var peer = FrameworkElementAutomationPeer.CreatePeerForElement(progressRing);
             Assert.IsTrue(peer.IsControlElement());
@@ -114,8 +137,8 @@ public class ProgressRingApiTests
             progressRing.IsActive = false;
             host.UpdateLayout();
 
-            AssertCurrentState(ring, "ActiveStates", "Inactive");
-            Assert.AreEqual(0.0, ring.Opacity);
+            AssertCurrentState(layoutRoot, "CommonStates", "Inactive");
+            Assert.AreEqual(0.0, layoutRoot.Opacity);
             Assert.IsFalse(peer.IsControlElement());
         });
     }
@@ -176,6 +199,18 @@ public class ProgressRingApiTests
     private static T FindNamedDescendant<T>(DependencyObject root, string name)
         where T : FrameworkElement
     {
+        var descendant = TryFindNamedDescendant<T>(root, name);
+        if (descendant != null)
+        {
+            return descendant;
+        }
+
+        throw new System.InvalidOperationException($"Could not find descendant named '{name}'.");
+    }
+
+    private static T? TryFindNamedDescendant<T>(DependencyObject root, string name)
+        where T : FrameworkElement
+    {
         foreach (var descendant in VisualTreeTestHelper.EnumerateDescendants(root))
         {
             if (descendant is T element && element.Name == name)
@@ -184,6 +219,6 @@ public class ProgressRingApiTests
             }
         }
 
-        throw new System.InvalidOperationException($"Could not find descendant named '{name}'.");
+        return null;
     }
 }

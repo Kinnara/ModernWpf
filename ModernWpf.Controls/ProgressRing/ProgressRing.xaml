@@ -1,4 +1,4 @@
-﻿<!-- Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License. See LICENSE in the project root for license information. -->
+<!-- Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License. See LICENSE in the project root for license information. -->
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -6,59 +6,36 @@
     xmlns:local="clr-namespace:ModernWpf.Controls">
 
     <Style TargetType="local:ProgressRing">
-        <Setter Property="Background" Value="{DynamicResource ProgressRingBackgroundThemeBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource ProgressRingForegroundThemeBrush}" />
+        <Setter Property="Background" Value="{DynamicResource ProgressRingBackgroundThemeBrush}" />
         <Setter Property="IsHitTestVisible" Value="False" />
         <Setter Property="HorizontalAlignment" Value="Center" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="MinHeight" Value="16" />
         <Setter Property="MinWidth" Value="16" />
         <Setter Property="IsTabStop" Value="False" />
-        <Setter Property="Focusable" Value="False" />
         <Setter Property="Width" Value="32" />
         <Setter Property="Height" Value="32" />
         <Setter Property="Maximum" Value="100" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ProgressRing">
-                    <Border
-                        x:Name="Ring"
-                        Background="{TemplateBinding Background}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        CornerRadius="{TemplateBinding ui:ControlHelper.CornerRadius}"
-                        Padding="{TemplateBinding Padding}"
-                        MaxWidth="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.MaxSideLength}"
-                        MaxHeight="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.MaxSideLength}"
-                        Visibility="Collapsed"
-                        RenderTransformOrigin=".5,.5"
-                        FlowDirection="LeftToRight"
-                        SnapsToDevicePixels="True">
-                        <Border.Resources>
+                    <Grid x:Name="LayoutRoot" Background="Transparent">
+                        <Grid.Resources>
                             <Style x:Key="ProgressRingEllipseStyle" TargetType="Ellipse">
                                 <Setter Property="Opacity" Value="0" />
                                 <Setter Property="HorizontalAlignment" Value="Left" />
                                 <Setter Property="VerticalAlignment" Value="Top" />
                             </Style>
-                        </Border.Resources>
+                        </Grid.Resources>
                         <VisualStateManager.CustomVisualStateManager>
                             <ui:VisualStateManagerEx />
                         </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="SizeStates">
-                                <VisualState x:Name="Large">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Duration="0" Storyboard.TargetName="SixthCircle" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="Small" />
-                            </VisualStateGroup>
-                            <VisualStateGroup x:Name="ActiveStates">
+                            <VisualStateGroup x:Name="CommonStates">
                                 <ui:VisualStateEx x:Name="Inactive">
                                     <ui:VisualStateEx.Setters>
-                                        <ui:VisualStateSetter Target="Ring.Opacity" Value="0" />
+                                        <ui:VisualStateSetter Target="LayoutRoot.Opacity" Value="0" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                                 <VisualState x:Name="DeterminateActive">
@@ -167,7 +144,14 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <Grid>
+                        <Grid
+                            x:Name="LottiePlayer"
+                            MaxWidth="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.MaxSideLength}"
+                            MaxHeight="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.MaxSideLength}"
+                            Opacity="1"
+                            RenderTransformOrigin=".5,.5"
+                            FlowDirection="LeftToRight"
+                            SnapsToDevicePixels="True">
                             <Canvas RenderTransformOrigin=".5,.5">
                                 <Canvas.RenderTransform>
                                     <RotateTransform x:Name="E1R" />
@@ -228,10 +212,7 @@
                                     Margin="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.EllipseOffset}"
                                     Fill="{TemplateBinding Foreground}" />
                             </Canvas>
-                            <Canvas
-                                RenderTransformOrigin=".5,.5"
-                                Visibility="Collapsed"
-                                x:Name="SixthCircle">
+                            <Canvas RenderTransformOrigin=".5,.5">
                                 <Canvas.RenderTransform>
                                     <RotateTransform x:Name="E6R" />
                                 </Canvas.RenderTransform>
@@ -244,7 +225,7 @@
                                     Fill="{TemplateBinding Foreground}" />
                             </Canvas>
                         </Grid>
-                    </Border>
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

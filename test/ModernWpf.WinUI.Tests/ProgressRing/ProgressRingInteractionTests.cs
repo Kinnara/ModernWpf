@@ -23,23 +23,23 @@ public class ProgressRingInteractionTests
             using var host = new TestWindowHost(progressRing, width: 240, height: 180);
 
             AssertCurrentState(progressRing, "Active");
-            AssertRingVisibility(progressRing, Visibility.Visible);
-            AssertRingOpacity(progressRing, 1.0);
+            AssertLayoutRootVisibility(progressRing, Visibility.Visible);
+            AssertLayoutRootOpacity(progressRing, 1.0);
 
             progressRing.IsIndeterminate = false;
             host.UpdateLayout();
 
             AssertCurrentState(progressRing, "DeterminateActive");
-            AssertRingVisibility(progressRing, Visibility.Visible);
-            AssertRingOpacity(progressRing, 1.0);
+            AssertLayoutRootVisibility(progressRing, Visibility.Visible);
+            AssertLayoutRootOpacity(progressRing, 1.0);
             Assert.IsNotNull(GetRangeValueProvider(progressRing));
 
             progressRing.IsActive = false;
             host.UpdateLayout();
 
             AssertCurrentState(progressRing, "Inactive");
-            AssertRingVisibility(progressRing, Visibility.Collapsed);
-            AssertRingOpacity(progressRing, 0.0);
+            AssertLayoutRootVisibility(progressRing, Visibility.Visible);
+            AssertLayoutRootOpacity(progressRing, 0.0);
             Assert.IsNotNull(GetRangeValueProvider(progressRing));
         });
     }
@@ -139,29 +139,29 @@ public class ProgressRingInteractionTests
 
     private static void AssertCurrentState(ProgressRingControl progressRing, string expectedStateName)
     {
-        var activeStatesGroup = GetActiveStatesGroup(progressRing);
-        Assert.IsNotNull(activeStatesGroup.CurrentState);
-        Assert.AreEqual(expectedStateName, activeStatesGroup.CurrentState.Name);
+        var commonStatesGroup = GetCommonStatesGroup(progressRing);
+        Assert.IsNotNull(commonStatesGroup.CurrentState);
+        Assert.AreEqual(expectedStateName, commonStatesGroup.CurrentState.Name);
     }
 
-    private static VisualStateGroup GetActiveStatesGroup(ProgressRingControl progressRing)
+    private static VisualStateGroup GetCommonStatesGroup(ProgressRingControl progressRing)
     {
-        var ring = FindNamedDescendant<Border>(progressRing, "Ring");
-        return VisualStateManager.GetVisualStateGroups(ring)
+        var layoutRoot = FindNamedDescendant<Grid>(progressRing, "LayoutRoot");
+        return VisualStateManager.GetVisualStateGroups(layoutRoot)
             .OfType<VisualStateGroup>()
-            .First(group => group.Name == "ActiveStates");
+            .First(group => group.Name == "CommonStates");
     }
 
-    private static void AssertRingVisibility(ProgressRingControl progressRing, Visibility expectedVisibility)
+    private static void AssertLayoutRootVisibility(ProgressRingControl progressRing, Visibility expectedVisibility)
     {
-        var ring = FindNamedDescendant<Border>(progressRing, "Ring");
-        Assert.AreEqual(expectedVisibility, ring.Visibility);
+        var layoutRoot = FindNamedDescendant<Grid>(progressRing, "LayoutRoot");
+        Assert.AreEqual(expectedVisibility, layoutRoot.Visibility);
     }
 
-    private static void AssertRingOpacity(ProgressRingControl progressRing, double expectedOpacity)
+    private static void AssertLayoutRootOpacity(ProgressRingControl progressRing, double expectedOpacity)
     {
-        var ring = FindNamedDescendant<Border>(progressRing, "Ring");
-        Assert.AreEqual(expectedOpacity, ring.Opacity);
+        var layoutRoot = FindNamedDescendant<Grid>(progressRing, "LayoutRoot");
+        Assert.AreEqual(expectedOpacity, layoutRoot.Opacity);
     }
 
     private static IRangeValueProvider GetRangeValueProvider(ProgressRingControl progressRing)

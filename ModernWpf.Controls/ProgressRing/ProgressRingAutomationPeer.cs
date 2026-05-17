@@ -30,7 +30,7 @@ namespace ModernWpf.Automation.Peers
                 if (progressRing.IsActive && progressRing.IsIndeterminate)
                 {
                     var status = ResourceAccessor.GetLocalizedStringResource(SR_ProgressRingIndeterminateStatus);
-                    return string.IsNullOrEmpty(name) ? status : status + " " + name;
+                    return status + " " + name;
                 }
             }
             return name;
