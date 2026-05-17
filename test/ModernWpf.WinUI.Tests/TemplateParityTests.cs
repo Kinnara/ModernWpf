@@ -89,6 +89,7 @@ public class TemplateParityTests
             Path.Combine("ModernWpf", "Styles", "DatePicker.xaml"),
             Path.Combine("ModernWpf", "Styles", "Expander.xaml"),
             Path.Combine("ModernWpf", "Styles", "Pivot.xaml"),
+            Path.Combine("ModernWpf", "Styles", "RepeatButton.xaml"),
             Path.Combine("ModernWpf", "Styles", "ScrollBar.xaml"),
             Path.Combine("ModernWpf", "Styles", "TabControl.xaml"),
             Path.Combine("ModernWpf", "Styles", "MenuItem.xaml"),
