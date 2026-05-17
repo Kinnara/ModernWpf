@@ -776,7 +776,7 @@ namespace ModernWpf.Controls
         {
             if (HeaderContentPresenter != null)
             {
-                bool showHeader = !ControlHelper.IsNullOrEmptyString(Header) || HeaderTemplate != null;
+                bool showHeader = Header != null || HeaderTemplate != null;
                 HeaderContentPresenter.Visibility = showHeader ? Visibility.Visible : Visibility.Collapsed;
             }
         }

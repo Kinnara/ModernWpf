@@ -266,6 +266,38 @@ public class ToggleSwitchApiTests
     }
 
     [TestMethod]
+    public void HeaderPresenterVisibilityMatchesWinUI3NullRules()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch();
+            using var host = new TestWindowHost(toggleSwitch, width: 260, height: 120);
+            host.UpdateLayout();
+
+            var headerPresenter = FindNamedDescendant<ContentPresenterEx>(toggleSwitch, "HeaderContentPresenter");
+            Assert.AreEqual(Visibility.Collapsed, headerPresenter.Visibility);
+
+            toggleSwitch.Header = string.Empty;
+            host.UpdateLayout();
+            Assert.AreEqual(Visibility.Visible, headerPresenter.Visibility);
+
+            toggleSwitch.Header = null;
+            host.UpdateLayout();
+            Assert.AreEqual(Visibility.Collapsed, headerPresenter.Visibility);
+
+            toggleSwitch.HeaderTemplate = CreateTextTemplate();
+            host.UpdateLayout();
+            Assert.AreEqual(Visibility.Visible, headerPresenter.Visibility);
+
+            toggleSwitch.HeaderTemplate = null;
+            host.UpdateLayout();
+            Assert.AreEqual(Visibility.Collapsed, headerPresenter.Visibility);
+        });
+    }
+
+    [TestMethod]
     public void TemplateSettingsTrackWinUIKnobOffsets()
     {
         WpfTestHost.Run(() =>
