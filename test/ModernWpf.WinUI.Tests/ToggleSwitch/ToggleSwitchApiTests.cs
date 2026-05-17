@@ -93,6 +93,38 @@ public class ToggleSwitchApiTests
     }
 
     [TestMethod]
+    public void PointerOverStateUsesWinUIVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch();
+            using var host = new TestWindowHost(toggleSwitch, width: 260, height: 120);
+            host.UpdateLayout();
+
+            var stateGroupsRoot = FindStateGroupsRoot(toggleSwitch);
+            var pointerOverState = FindVisualStateEx(stateGroupsRoot, "CommonStates", "PointerOver");
+            AssertStateSetter(pointerOverState, "SwitchKnobBounds.Fill");
+            AssertStateSetter(pointerOverState, "SwitchKnobBounds.Stroke");
+            AssertStateSetter(pointerOverState, "SwitchKnobOff.Fill");
+            AssertStateSetter(pointerOverState, "SwitchKnobOn.Background");
+
+            var switchKnobBounds = FindNamedDescendant<Rectangle>(toggleSwitch, "SwitchKnobBounds");
+            var switchKnobOff = FindNamedDescendant<Rectangle>(toggleSwitch, "SwitchKnobOff");
+            var switchKnobOn = FindNamedDescendant<Border>(toggleSwitch, "SwitchKnobOn");
+
+            Assert.IsTrue(System.Windows.VisualStateManager.GoToState(toggleSwitch, "PointerOver", false));
+            host.UpdateLayout();
+
+            AssertBrushEquals((Brush)switchKnobBounds.TryFindResource("ToggleSwitchFillOnPointerOver"), switchKnobBounds.Fill);
+            AssertBrushEquals((Brush)switchKnobBounds.TryFindResource("ToggleSwitchStrokeOnPointerOver"), switchKnobBounds.Stroke);
+            AssertBrushEquals((Brush)switchKnobOff.TryFindResource("ToggleSwitchKnobFillOffPointerOver"), switchKnobOff.Fill);
+            AssertBrushEquals((Brush)switchKnobOn.TryFindResource("ToggleSwitchKnobFillOnPointerOver"), switchKnobOn.Background);
+        });
+    }
+
+    [TestMethod]
     public void DisabledStateUsesWinUIVisualStateSetters()
     {
         WpfTestHost.Run(() =>

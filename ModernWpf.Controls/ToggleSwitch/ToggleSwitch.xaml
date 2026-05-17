@@ -41,8 +41,6 @@
                         <Border.Resources>
                             <ui:BindingProxy x:Key="ToggleSwitchStrokeOffPointerOverProxy" Value="{DynamicResource ToggleSwitchStrokeOffPointerOver}" />
                             <ui:BindingProxy x:Key="ToggleSwitchFillOffPointerOverProxy" Value="{DynamicResource ToggleSwitchFillOffPointerOver}" />
-                            <ui:BindingProxy x:Key="ToggleSwitchKnobFillOffPointerOverProxy" Value="{DynamicResource ToggleSwitchKnobFillOffPointerOver}" />
-                            <ui:BindingProxy x:Key="ToggleSwitchKnobFillOnPointerOverProxy" Value="{DynamicResource ToggleSwitchKnobFillOnPointerOver}" />                            
                             <ui:BindingProxy x:Key="ToggleSwitchContainerBackgroundPointerOverProxy" Value="{DynamicResource ToggleSwitchContainerBackgroundPointerOver}" />
 
                             <ui:BindingProxy x:Key="ToggleSwitchStrokeOffPressedProxy" Value="{DynamicResource ToggleSwitchStrokeOffPressed}" />
@@ -77,19 +75,19 @@
                                         </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
-                                <VisualState x:Name="PointerOver">
+                                <ui:VisualStateEx x:Name="PointerOver">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="SwitchKnobBounds.Fill" Value="{DynamicResource ToggleSwitchFillOnPointerOver}" />
+                                        <ui:VisualStateSetter Target="SwitchKnobBounds.Stroke" Value="{DynamicResource ToggleSwitchStrokeOnPointerOver}" />
+                                        <ui:VisualStateSetter Target="SwitchKnobOff.Fill" Value="{DynamicResource ToggleSwitchKnobFillOffPointerOver}" />
+                                        <ui:VisualStateSetter Target="SwitchKnobOn.Background" Value="{DynamicResource ToggleSwitchKnobFillOnPointerOver}" />
+                                    </ui:VisualStateEx.Setters>
                                     <Storyboard>
                                         <ColorAnimationUsingKeyFrames Storyboard.TargetName="OuterBorder" Storyboard.TargetProperty="(Shape.Stroke).(SolidColorBrush.Color)">
                                             <LinearColorKeyFrame KeyTime="{StaticResource ControlFasterAnimationDuration}" Value="{Binding Value, Source={StaticResource ToggleSwitchStrokeOffPointerOverProxy}, Converter={StaticResource BrushToColorConverter}}" />
                                         </ColorAnimationUsingKeyFrames>
                                         <ColorAnimationUsingKeyFrames Storyboard.TargetName="OuterBorder" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
                                             <LinearColorKeyFrame KeyTime="{StaticResource ControlFasterAnimationDuration}" Value="{Binding Value, Source={StaticResource ToggleSwitchFillOffPointerOverProxy}, Converter={StaticResource BrushToColorConverter}}" />
-                                        </ColorAnimationUsingKeyFrames>
-                                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOff" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
-                                            <LinearColorKeyFrame KeyTime="{StaticResource ControlFasterAnimationDuration}" Value="{Binding Value, Source={StaticResource ToggleSwitchKnobFillOffPointerOverProxy}, Converter={StaticResource BrushToColorConverter}}" />
-                                        </ColorAnimationUsingKeyFrames>
-                                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOn" Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
-                                            <LinearColorKeyFrame KeyTime="{StaticResource ControlFasterAnimationDuration}" Value="{Binding Value, Source={StaticResource ToggleSwitchKnobFillOnPointerOverProxy}, Converter={StaticResource BrushToColorConverter}}" />
                                         </ColorAnimationUsingKeyFrames>
                                         <ColorAnimationUsingKeyFrames Storyboard.TargetName="SwitchAreaGrid" Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
                                             <LinearColorKeyFrame KeyTime="{StaticResource ControlFasterAnimationDuration}" Value="{Binding Value, Source={StaticResource ToggleSwitchContainerBackgroundPointerOverProxy}, Converter={StaticResource BrushToColorConverter}}" />
@@ -107,7 +105,7 @@
                                             <SplineDoubleKeyFrame KeyTime="{StaticResource ControlFasterAnimationDuration}" KeySpline="{StaticResource ControlFastOutSlowInKeySpline}" Value="14" />
                                         </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>
-                                </VisualState>
+                                </ui:VisualStateEx>
                                 <ui:VisualStateEx x:Name="Pressed">
                                     <ui:VisualStateEx.Setters>
                                         <ui:VisualStateSetter Target="SwitchKnobOn.HorizontalAlignment" Value="Right" />
