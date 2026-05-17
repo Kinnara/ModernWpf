@@ -431,6 +431,70 @@ public class ToggleSwitchApiTests
     }
 
     [TestMethod]
+    public void FocusableDefaultsToWinUIControlBehavior()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch();
+            using var host = new TestWindowHost(toggleSwitch, width: 260, height: 120);
+            host.UpdateLayout();
+
+            Assert.IsTrue(toggleSwitch.Focusable);
+            Assert.IsTrue(toggleSwitch.Focus());
+            Assert.IsTrue(toggleSwitch.IsKeyboardFocusWithin);
+        });
+    }
+
+    [TestMethod]
+    public void FocusStatesDistinguishKeyboardAndPointerFocus()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var root = new StackPanel();
+            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch
+            {
+                Template = CreateFocusStateTemplate()
+            };
+            var other = new Button
+            {
+                Content = "Other"
+            };
+
+            root.Children.Add(toggleSwitch);
+            root.Children.Add(other);
+
+            using var host = new TestWindowHost(root, width: 260, height: 120);
+            host.UpdateLayout();
+
+            var stateGroupsRoot = FindStateGroupsRoot(toggleSwitch);
+            Assert.AreEqual("Unfocused", GetCurrentStateName(stateGroupsRoot, "FocusStates"));
+
+            Assert.IsTrue(toggleSwitch.Focus());
+            host.UpdateLayout();
+            Assert.AreEqual("Focused", GetCurrentStateName(stateGroupsRoot, "FocusStates"));
+
+            var focusedMouseDown = RaiseMouseLeftButtonDown(toggleSwitch);
+            host.UpdateLayout();
+            Assert.IsFalse(focusedMouseDown.Handled);
+            Assert.AreEqual("PointerFocused", GetCurrentStateName(stateGroupsRoot, "FocusStates"));
+
+            Assert.IsTrue(other.Focus());
+            host.UpdateLayout();
+            Assert.AreEqual("Unfocused", GetCurrentStateName(stateGroupsRoot, "FocusStates"));
+
+            var mouseDown = RaiseMouseLeftButtonDown(toggleSwitch);
+            host.UpdateLayout();
+
+            Assert.IsTrue(mouseDown.Handled);
+            Assert.AreEqual("PointerFocused", GetCurrentStateName(stateGroupsRoot, "FocusStates"));
+        });
+    }
+
+    [TestMethod]
     public void TapAndDragCompletionFollowWinUISplitHandlers()
     {
         WpfTestHost.Run(() =>
@@ -992,6 +1056,20 @@ public class ToggleSwitchApiTests
         });
     }
 
+    private static MouseButtonEventArgs RaiseMouseLeftButtonDown(UIElement element)
+    {
+        var args = new MouseButtonEventArgs(
+            Mouse.PrimaryDevice,
+            Environment.TickCount,
+            MouseButton.Left)
+        {
+            RoutedEvent = UIElement.MouseLeftButtonDownEvent
+        };
+
+        element.RaiseEvent(args);
+        return args;
+    }
+
     private static KeyEventArgs RaiseKey(UIElement element, RoutedEvent routedEvent, Key key)
     {
         var args = new KeyEventArgs(
@@ -1013,6 +1091,45 @@ public class ToggleSwitchApiTests
             @"<DataTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'>
                 <TextBlock Text='{Binding}'/>
             </DataTemplate>");
+    }
+
+    private static ControlTemplate CreateFocusStateTemplate()
+    {
+        return (ControlTemplate)XamlReader.Parse(
+            @"<ControlTemplate
+                xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'
+                xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'
+                xmlns:controls='clr-namespace:ModernWpf.Controls;assembly=ModernWpf.Controls'
+                TargetType='{x:Type controls:ToggleSwitch}'>
+                <Grid>
+                    <VisualStateManager.VisualStateGroups>
+                        <VisualStateGroup x:Name='CommonStates'>
+                            <VisualState x:Name='Normal' />
+                            <VisualState x:Name='PointerOver' />
+                            <VisualState x:Name='Pressed' />
+                            <VisualState x:Name='Disabled' />
+                        </VisualStateGroup>
+                        <VisualStateGroup x:Name='FocusStates'>
+                            <VisualState x:Name='PointerFocused' />
+                            <VisualState x:Name='Focused' />
+                            <VisualState x:Name='Unfocused' />
+                        </VisualStateGroup>
+                        <VisualStateGroup x:Name='ContentStates'>
+                            <VisualState x:Name='OffContent' />
+                            <VisualState x:Name='OnContent' />
+                        </VisualStateGroup>
+                        <VisualStateGroup x:Name='ToggleStates'>
+                            <VisualState x:Name='Dragging' />
+                            <VisualState x:Name='Off' />
+                            <VisualState x:Name='On' />
+                        </VisualStateGroup>
+                        <VisualStateGroup x:Name='HeaderStates'>
+                            <VisualState x:Name='TopHeader' />
+                            <VisualState x:Name='LeftHeader' />
+                        </VisualStateGroup>
+                    </VisualStateManager.VisualStateGroups>
+                </Grid>
+            </ControlTemplate>");
     }
 
     private static void AssertBrushEquals(Brush expected, Brush actual)

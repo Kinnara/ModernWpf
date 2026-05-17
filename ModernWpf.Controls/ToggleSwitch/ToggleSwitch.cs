@@ -54,6 +54,7 @@ namespace ModernWpf.Controls
         private const string LeftHeaderState = "LeftHeader";
 
         private bool _isPointerOver;
+        private bool _isPointerFocused;
         private bool _isDragging;
         private bool _wasDragged;
         private bool _handledKeyDown;
@@ -69,6 +70,7 @@ namespace ModernWpf.Controls
         static ToggleSwitch()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(ToggleSwitch), new FrameworkPropertyMetadata(typeof(ToggleSwitch)));
+            FocusableProperty.OverrideMetadata(typeof(ToggleSwitch), new FrameworkPropertyMetadata(true));
 
             EventManager.RegisterClassHandler(typeof(ToggleSwitch), MouseLeftButtonDownEvent, new MouseButtonEventHandler(OnMouseLeftButtonDown), true);
         }
@@ -445,6 +447,7 @@ namespace ModernWpf.Controls
                 {
                     _isDragging = false;
                     _isPointerOver = false;
+                    _isPointerFocused = false;
                 }
 
                 UpdateVisualStates();
@@ -540,6 +543,7 @@ namespace ModernWpf.Controls
         {
             base.OnLostFocus(e);
 
+            _isPointerFocused = false;
             UpdateVisualStates(true);
         }
 
@@ -549,7 +553,12 @@ namespace ModernWpf.Controls
 
             if (!toggle.IsKeyboardFocusWithin)
             {
-                e.Handled = toggle.Focus() || e.Handled;
+                e.Handled = toggle.FocusFromPointer() || e.Handled;
+            }
+            else
+            {
+                toggle._isPointerFocused = true;
+                toggle.UpdateVisualStates(true);
             }
         }
 
@@ -559,10 +568,7 @@ namespace ModernWpf.Controls
             _isDragging = true;
             _wasDragged = false;
 
-            if (!IsKeyboardFocusWithin)
-            {
-                Focus();
-            }
+            FocusFromPointer();
 
             GetTranslations();
             UpdateVisualStates(true);
@@ -625,6 +631,7 @@ namespace ModernWpf.Controls
             {
                 _isDragging = false;
                 _isPointerOver = false;
+                _isPointerFocused = false;
             }
 
             UpdateVisualStates();
@@ -830,7 +837,14 @@ namespace ModernWpf.Controls
 
             if (IsEnabled)
             {
-                VisualStateManager.GoToState(this, IsKeyboardFocusWithin ? FocusedState : UnfocusedState, useTransitions);
+                if (IsKeyboardFocusWithin)
+                {
+                    VisualStateManager.GoToState(this, _isPointerFocused ? PointerFocusedState : FocusedState, useTransitions);
+                }
+                else
+                {
+                    VisualStateManager.GoToState(this, UnfocusedState, useTransitions);
+                }
             }
             else
             {
@@ -857,6 +871,19 @@ namespace ModernWpf.Controls
         internal void Toggle()
         {
             SetCurrentValue(IsOnProperty, !IsOn);
+        }
+
+        private bool FocusFromPointer()
+        {
+            _isPointerFocused = true;
+            bool focused = Focus();
+
+            if (!focused)
+            {
+                _isPointerFocused = false;
+            }
+
+            return focused;
         }
 
         internal UIElement GetAutomationClickableElement()
