@@ -1768,6 +1768,29 @@
     <m:StaticResource x:Key="ToggleSwitchKnobFillOnPressed" ResourceKey="TextOnAccentFillColorPrimaryBrush" />
     <m:StaticResource x:Key="ToggleSwitchKnobFillOnDisabled" ResourceKey="TextOnAccentFillColorDisabledBrush" />
     <m:StaticResource x:Key="ToggleSwitchKnobStrokeOn" ResourceKey="CircleElevationBorderBrush" />
+    <SolidColorBrush x:Key="ToggleSwitchCurtainBackgroundThemeBrush" Color="#FF5729C1" />
+    <SolidColorBrush x:Key="ToggleSwitchCurtainDisabledBackgroundThemeBrush" Color="Transparent" />
+    <SolidColorBrush x:Key="ToggleSwitchCurtainPointerOverBackgroundThemeBrush" Color="#FF6E46CA" />
+    <SolidColorBrush x:Key="ToggleSwitchCurtainPressedBackgroundThemeBrush" Color="#FF7E4FEC" />
+    <SolidColorBrush x:Key="ToggleSwitchDisabledForegroundThemeBrush" Color="#66FFFFFF" />
+    <SolidColorBrush x:Key="ToggleSwitchForegroundThemeBrush" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="ToggleSwitchHeaderDisabledForegroundThemeBrush" Color="#66FFFFFF" />
+    <SolidColorBrush x:Key="ToggleSwitchHeaderForegroundThemeBrush" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="ToggleSwitchOuterBorderBorderThemeBrush" Color="#59FFFFFF" />
+    <SolidColorBrush x:Key="ToggleSwitchOuterBorderDisabledBorderThemeBrush" Color="#33FFFFFF" />
+    <SolidColorBrush x:Key="ToggleSwitchThumbBackgroundThemeBrush" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="ToggleSwitchThumbBorderThemeBrush" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="ToggleSwitchThumbDisabledBackgroundThemeBrush" Color="#FF7E7E7E" />
+    <SolidColorBrush x:Key="ToggleSwitchThumbDisabledBorderThemeBrush" Color="#FF7E7E7E" />
+    <SolidColorBrush x:Key="ToggleSwitchThumbPointerOverBackgroundThemeBrush" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="ToggleSwitchThumbPointerOverBorderThemeBrush" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="ToggleSwitchThumbPressedBackgroundThemeBrush" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="ToggleSwitchThumbPressedForegroundThemeBrush" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="ToggleSwitchTrackBackgroundThemeBrush" Color="#42FFFFFF" />
+    <SolidColorBrush x:Key="ToggleSwitchTrackBorderThemeBrush" Color="Transparent" />
+    <SolidColorBrush x:Key="ToggleSwitchTrackDisabledBackgroundThemeBrush" Color="#1FFFFFFF" />
+    <SolidColorBrush x:Key="ToggleSwitchTrackPointerOverBackgroundThemeBrush" Color="#4AFFFFFF" />
+    <SolidColorBrush x:Key="ToggleSwitchTrackPressedBackgroundThemeBrush" Color="#59FFFFFF" />
 
     <!-- Resources for ToolTip -->
     <sys:Double x:Key="ToolTipContentThemeFontSize">12</sys:Double>

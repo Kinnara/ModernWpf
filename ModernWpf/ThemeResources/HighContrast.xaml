@@ -1749,6 +1749,29 @@
     <m:StaticResource x:Key="ToggleSwitchKnobFillOnPressed" ResourceKey="SystemColorButtonTextColorBrush" />
     <m:StaticResource x:Key="ToggleSwitchKnobFillOnDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
     <m:StaticResource x:Key="ToggleSwitchKnobStrokeOn" ResourceKey="SystemControlTransparentBrush" />
+    <SolidColorBrush x:Key="ToggleSwitchCurtainBackgroundThemeBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchCurtainDisabledBackgroundThemeBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchCurtainPointerOverBackgroundThemeBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchCurtainPressedBackgroundThemeBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchDisabledForegroundThemeBrush" Color="{m:ThemeResource SystemColorGrayTextColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchForegroundThemeBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchHeaderDisabledForegroundThemeBrush" Color="{m:ThemeResource SystemColorGrayTextColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchHeaderForegroundThemeBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchOuterBorderBorderThemeBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchOuterBorderDisabledBorderThemeBrush" Color="{m:ThemeResource SystemColorGrayTextColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchThumbBackgroundThemeBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchThumbBorderThemeBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchThumbDisabledBackgroundThemeBrush" Color="{m:ThemeResource SystemColorGrayTextColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchThumbDisabledBorderThemeBrush" Color="{m:ThemeResource SystemColorGrayTextColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchThumbPointerOverBackgroundThemeBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchThumbPointerOverBorderThemeBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchThumbPressedBackgroundThemeBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchThumbPressedForegroundThemeBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchTrackBackgroundThemeBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchTrackBorderThemeBrush" Color="Transparent" />
+    <SolidColorBrush x:Key="ToggleSwitchTrackDisabledBackgroundThemeBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchTrackPointerOverBackgroundThemeBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchTrackPressedBackgroundThemeBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
 
     <!-- Resources for ToolTip -->
     <sys:Double x:Key="ToolTipContentThemeFontSize">12</sys:Double>

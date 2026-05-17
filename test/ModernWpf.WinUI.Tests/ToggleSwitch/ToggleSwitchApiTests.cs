@@ -26,6 +26,59 @@ namespace ModernWpf.WinUI.Tests.ToggleSwitchControl;
 [TestClass]
 public class ToggleSwitchApiTests
 {
+    private static readonly (string Key, Color Dark, Color Light)[] ToggleSwitchLegacyThemeBrushColors =
+    {
+        ("ToggleSwitchCurtainBackgroundThemeBrush", Color.FromRgb(0x57, 0x29, 0xC1), Color.FromRgb(0x46, 0x17, 0xB4)),
+        ("ToggleSwitchCurtainDisabledBackgroundThemeBrush", Colors.Transparent, Colors.Transparent),
+        ("ToggleSwitchCurtainPointerOverBackgroundThemeBrush", Color.FromRgb(0x6E, 0x46, 0xCA), Color.FromRgb(0x5F, 0x37, 0xBE)),
+        ("ToggleSwitchCurtainPressedBackgroundThemeBrush", Color.FromRgb(0x7E, 0x4F, 0xEC), Color.FromRgb(0x72, 0x41, 0xE4)),
+        ("ToggleSwitchDisabledForegroundThemeBrush", Color.FromArgb(0x66, 0xFF, 0xFF, 0xFF), Color.FromArgb(0x66, 0x00, 0x00, 0x00)),
+        ("ToggleSwitchForegroundThemeBrush", Colors.White, Colors.Black),
+        ("ToggleSwitchHeaderDisabledForegroundThemeBrush", Color.FromArgb(0x66, 0xFF, 0xFF, 0xFF), Color.FromArgb(0x66, 0x00, 0x00, 0x00)),
+        ("ToggleSwitchHeaderForegroundThemeBrush", Colors.White, Colors.Black),
+        ("ToggleSwitchOuterBorderBorderThemeBrush", Color.FromArgb(0x59, 0xFF, 0xFF, 0xFF), Color.FromArgb(0x59, 0x00, 0x00, 0x00)),
+        ("ToggleSwitchOuterBorderDisabledBorderThemeBrush", Color.FromArgb(0x33, 0xFF, 0xFF, 0xFF), Color.FromArgb(0x33, 0x00, 0x00, 0x00)),
+        ("ToggleSwitchThumbBackgroundThemeBrush", Colors.White, Colors.Black),
+        ("ToggleSwitchThumbBorderThemeBrush", Colors.White, Colors.Black),
+        ("ToggleSwitchThumbDisabledBackgroundThemeBrush", Color.FromRgb(0x7E, 0x7E, 0x7E), Color.FromRgb(0x92, 0x92, 0x92)),
+        ("ToggleSwitchThumbDisabledBorderThemeBrush", Color.FromRgb(0x7E, 0x7E, 0x7E), Color.FromRgb(0x92, 0x92, 0x92)),
+        ("ToggleSwitchThumbPointerOverBackgroundThemeBrush", Colors.White, Colors.Black),
+        ("ToggleSwitchThumbPointerOverBorderThemeBrush", Colors.White, Colors.Black),
+        ("ToggleSwitchThumbPressedBackgroundThemeBrush", Colors.White, Colors.Black),
+        ("ToggleSwitchThumbPressedForegroundThemeBrush", Colors.White, Colors.Black),
+        ("ToggleSwitchTrackBackgroundThemeBrush", Color.FromArgb(0x42, 0xFF, 0xFF, 0xFF), Color.FromArgb(0x59, 0x00, 0x00, 0x00)),
+        ("ToggleSwitchTrackBorderThemeBrush", Colors.Transparent, Colors.Transparent),
+        ("ToggleSwitchTrackDisabledBackgroundThemeBrush", Color.FromArgb(0x1F, 0xFF, 0xFF, 0xFF), Color.FromArgb(0x1F, 0x00, 0x00, 0x00)),
+        ("ToggleSwitchTrackPointerOverBackgroundThemeBrush", Color.FromArgb(0x4A, 0xFF, 0xFF, 0xFF), Color.FromArgb(0x4A, 0x00, 0x00, 0x00)),
+        ("ToggleSwitchTrackPressedBackgroundThemeBrush", Color.FromArgb(0x59, 0xFF, 0xFF, 0xFF), Color.FromArgb(0x42, 0x00, 0x00, 0x00)),
+    };
+
+    private static readonly (string Key, string ColorResourceKey)[] ToggleSwitchLegacyHighContrastThemeBrushes =
+    {
+        ("ToggleSwitchCurtainBackgroundThemeBrush", "SystemColorHighlightColor"),
+        ("ToggleSwitchCurtainDisabledBackgroundThemeBrush", "SystemColorButtonFaceColor"),
+        ("ToggleSwitchCurtainPointerOverBackgroundThemeBrush", "SystemColorHighlightColor"),
+        ("ToggleSwitchCurtainPressedBackgroundThemeBrush", "SystemColorHighlightColor"),
+        ("ToggleSwitchDisabledForegroundThemeBrush", "SystemColorGrayTextColor"),
+        ("ToggleSwitchForegroundThemeBrush", "SystemColorButtonTextColor"),
+        ("ToggleSwitchHeaderDisabledForegroundThemeBrush", "SystemColorGrayTextColor"),
+        ("ToggleSwitchHeaderForegroundThemeBrush", "SystemColorButtonTextColor"),
+        ("ToggleSwitchOuterBorderBorderThemeBrush", "SystemColorButtonTextColor"),
+        ("ToggleSwitchOuterBorderDisabledBorderThemeBrush", "SystemColorGrayTextColor"),
+        ("ToggleSwitchThumbBackgroundThemeBrush", "SystemColorButtonTextColor"),
+        ("ToggleSwitchThumbBorderThemeBrush", "SystemColorButtonTextColor"),
+        ("ToggleSwitchThumbDisabledBackgroundThemeBrush", "SystemColorGrayTextColor"),
+        ("ToggleSwitchThumbDisabledBorderThemeBrush", "SystemColorGrayTextColor"),
+        ("ToggleSwitchThumbPointerOverBackgroundThemeBrush", "SystemColorHighlightColor"),
+        ("ToggleSwitchThumbPointerOverBorderThemeBrush", "SystemColorButtonTextColor"),
+        ("ToggleSwitchThumbPressedBackgroundThemeBrush", "SystemColorButtonFaceColor"),
+        ("ToggleSwitchThumbPressedForegroundThemeBrush", "SystemColorButtonTextColor"),
+        ("ToggleSwitchTrackBackgroundThemeBrush", "SystemColorButtonFaceColor"),
+        ("ToggleSwitchTrackDisabledBackgroundThemeBrush", "SystemColorButtonFaceColor"),
+        ("ToggleSwitchTrackPointerOverBackgroundThemeBrush", "SystemColorButtonFaceColor"),
+        ("ToggleSwitchTrackPressedBackgroundThemeBrush", "SystemColorButtonFaceColor"),
+    };
+
     [TestMethod]
     public void CanInstantiateAndEnterLeaveLiveTreeLikeWinUINativeTests()
     {
@@ -612,6 +665,8 @@ public class ToggleSwitchApiTests
 
             Assert.AreEqual(12d, switchKnobOn.Width, 0.1);
             Assert.AreEqual(12d, switchKnobOn.Height, 0.1);
+            Assert.IsInstanceOfType(switchKnobOn, typeof(BorderEx));
+            Assert.AreEqual(BackgroundSizing.OuterBorderEdge, ((BorderEx)switchKnobOn).BackgroundSizing);
             Assert.AreEqual(new CornerRadius(7), switchKnobOn.CornerRadius);
             Assert.AreEqual(HorizontalAlignment.Center, switchKnobOn.HorizontalAlignment);
             Assert.AreEqual(new Thickness(0, 0, 1, 0), switchKnobOn.Margin);
@@ -683,6 +738,23 @@ public class ToggleSwitchApiTests
         AssertThemeResourceReference("HighContrast", "ToggleSwitchKnobFillOnPressed", "SystemColorButtonTextColorBrush");
         AssertThemeResourceReference("HighContrast", "ToggleSwitchKnobFillOnDisabled", "SystemColorGrayTextColorBrush");
         AssertThemeResourceReference("HighContrast", "ToggleSwitchKnobStrokeOn", "SystemControlTransparentBrush");
+    }
+
+    [TestMethod]
+    public void LegacyThemeBrushResourcesMatchWinUICommonStylesSource()
+    {
+        foreach (var (key, dark, light) in ToggleSwitchLegacyThemeBrushColors)
+        {
+            AssertThemeSolidColorBrushValue("Dark", key, dark);
+            AssertThemeSolidColorBrushValue("Light", key, light);
+        }
+
+        foreach (var (key, colorResourceKey) in ToggleSwitchLegacyHighContrastThemeBrushes)
+        {
+            AssertThemeSolidColorBrushColorReference("HighContrast", key, colorResourceKey);
+        }
+
+        AssertThemeSolidColorBrushValue("HighContrast", "ToggleSwitchTrackBorderThemeBrush", Colors.Transparent);
     }
 
     [TestMethod]
@@ -2238,6 +2310,28 @@ public class ToggleSwitchApiTests
 
         Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
         Assert.AreEqual(expectedValue, themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
+    }
+
+    private static void AssertThemeSolidColorBrushValue(string themeName, string resourceKey, Color expectedColor)
+    {
+        var themeDictionary = global::ModernWpf.ThemeResources.Current.GetThemeDictionary(themeName);
+
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.IsInstanceOfType(themeDictionary[resourceKey], typeof(SolidColorBrush), $"{themeName}:{resourceKey}");
+        Assert.AreEqual(expectedColor, ((SolidColorBrush)themeDictionary[resourceKey]).Color, $"{themeName}:{resourceKey}");
+    }
+
+    private static void AssertThemeSolidColorBrushColorReference(string themeName, string resourceKey, string expectedColorResourceKey)
+    {
+        var themeDictionary = global::ModernWpf.ThemeResources.Current.GetThemeDictionary(themeName);
+
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.IsTrue(themeDictionary.Contains(expectedColorResourceKey), $"{themeName} is missing {expectedColorResourceKey}.");
+        Assert.IsInstanceOfType(themeDictionary[resourceKey], typeof(SolidColorBrush), $"{themeName}:{resourceKey}");
+        Assert.AreEqual(
+            themeDictionary[expectedColorResourceKey],
+            ((SolidColorBrush)themeDictionary[resourceKey]).Color,
+            $"{themeName}:{resourceKey}");
     }
 
     private static ToggleSwitchAutomationPeer CreatePeer(ModernWpf.Controls.ToggleSwitch toggleSwitch)

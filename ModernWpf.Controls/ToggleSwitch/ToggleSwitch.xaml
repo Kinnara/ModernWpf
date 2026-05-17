@@ -416,9 +416,10 @@
                                 HorizontalAlignment="Left"
                                 Width="20"
                                 Height="20">
-                                <Border x:Name="SwitchKnobOn"
+                                <ui:BorderEx x:Name="SwitchKnobOn"
                                     Background="{DynamicResource ToggleSwitchKnobFillOn}"
                                     BorderBrush="{DynamicResource ToggleSwitchKnobStrokeOn}"
+                                    BackgroundSizing="OuterBorderEdge"
                                     Width="12"
                                     Height="12"
                                     CornerRadius="7"
