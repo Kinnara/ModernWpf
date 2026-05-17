@@ -589,6 +589,19 @@
     <m:StaticResource x:Key="AccentButtonBorderBrushPressed" ResourceKey="ControlFillColorTransparentBrush" />
     <m:StaticResource x:Key="AccentButtonBorderBrushDisabled" ResourceKey="ControlFillColorTransparentBrush" />
 
+    <m:StaticResource x:Key="SubtleButtonBackground" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="SubtleButtonBackgroundPointerOver" ResourceKey="SubtleFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="SubtleButtonBackgroundPressed" ResourceKey="SubtleFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="SubtleButtonBackgroundDisabled" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="SubtleButtonForeground" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="SubtleButtonForegroundPointerOver" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="SubtleButtonForegroundPressed" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="SubtleButtonForegroundDisabled" ResourceKey="TextFillColorDisabledBrush" />
+    <m:StaticResource x:Key="SubtleButtonBorderBrush" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="SubtleButtonBorderBrushPointerOver" ResourceKey="SubtleFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="SubtleButtonBorderBrushPressed" ResourceKey="SubtleFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="SubtleButtonBorderBrushDisabled" ResourceKey="SubtleFillColorTransparentBrush" />
+
     <Thickness x:Key="ButtonBorderThemeThickness">1</Thickness>
 
     <m:StaticResource x:Key="ButtonBackground" ResourceKey="ControlFillColorDefaultBrush" />

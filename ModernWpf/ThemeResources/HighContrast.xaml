@@ -574,6 +574,19 @@
     <m:StaticResource x:Key="AccentButtonBorderBrushPointerOver" ResourceKey="SystemControlForegroundTransparentBrush" />
     <m:StaticResource x:Key="AccentButtonBorderBrushPressed" ResourceKey="SystemControlHighlightTransparentBrush" />
     <m:StaticResource x:Key="AccentButtonBorderBrushDisabled" ResourceKey="SystemControlDisabledTransparentBrush" />
+
+    <m:StaticResource x:Key="SubtleButtonBackground" ResourceKey="SystemControlBackgroundBaseLowBrush" />
+    <m:StaticResource x:Key="SubtleButtonBackgroundPointerOver" ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="SubtleButtonBackgroundPressed" ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="SubtleButtonBackgroundDisabled" ResourceKey="SystemControlBackgroundBaseLowBrush" />
+    <m:StaticResource x:Key="SubtleButtonForeground" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="SubtleButtonForegroundPointerOver" ResourceKey="SystemControlHighlightBaseHighBrush" />
+    <m:StaticResource x:Key="SubtleButtonForegroundPressed" ResourceKey="SystemControlHighlightBaseHighBrush" />
+    <m:StaticResource x:Key="SubtleButtonForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+    <m:StaticResource x:Key="SubtleButtonBorderBrush" ResourceKey="SystemControlForegroundTransparentBrush" />
+    <m:StaticResource x:Key="SubtleButtonBorderBrushPointerOver" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="SubtleButtonBorderBrushPressed" ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="SubtleButtonBorderBrushDisabled" ResourceKey="SystemControlDisabledTransparentBrush" />
     
     <Thickness x:Key="ButtonBorderThemeThickness">1</Thickness>
     

@@ -61,16 +61,25 @@
                                 <VisualState x:Name="Normal" />
                                 <root:VisualStateEx x:Name="PointerOver">
                                     <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="ContentPresenter.Background" Value="{DynamicResource ButtonBackgroundPointerOver}" />
+                                        <root:VisualStateSetter Target="ContentPresenter.BorderBrush" Value="{DynamicResource ButtonBorderBrushPointerOver}" />
+                                        <root:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource ButtonForegroundPointerOver}" />
                                         <root:VisualStateSetter Target="ContentPresenter.(local:AnimatedIcon.State)" Value="PointerOver" />
                                     </root:VisualStateEx.Setters>
                                 </root:VisualStateEx>
                                 <root:VisualStateEx x:Name="Pressed">
                                     <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="ContentPresenter.Background" Value="{DynamicResource ButtonBackgroundPressed}" />
+                                        <root:VisualStateSetter Target="ContentPresenter.BorderBrush" Value="{DynamicResource ButtonBorderBrushPressed}" />
+                                        <root:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource ButtonForegroundPressed}" />
                                         <root:VisualStateSetter Target="ContentPresenter.(local:AnimatedIcon.State)" Value="Pressed" />
                                     </root:VisualStateEx.Setters>
                                 </root:VisualStateEx>
                                 <root:VisualStateEx x:Name="Disabled">
                                     <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="ContentPresenter.Background" Value="{DynamicResource ButtonBackgroundDisabled}" />
+                                        <root:VisualStateSetter Target="ContentPresenter.BorderBrush" Value="{DynamicResource ButtonBorderBrushDisabled}" />
+                                        <root:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource ButtonForegroundDisabled}" />
                                         <root:VisualStateSetter Target="ContentPresenter.(local:AnimatedIcon.State)" Value="Normal" />
                                     </root:VisualStateEx.Setters>
                                 </root:VisualStateEx>
@@ -80,23 +89,6 @@
                             <local:BrushTransition Duration="0:0:0.083" />
                         </local:ContentPresenterEx.BackgroundTransition>
                     </local:ContentPresenterEx>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="ContentPresenter" Property="Background" Value="{DynamicResource ButtonBackgroundPointerOver}" />
-                            <Setter TargetName="ContentPresenter" Property="BorderBrush" Value="{DynamicResource ButtonBorderBrushPointerOver}" />
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource ButtonForegroundPointerOver}" />
-                        </Trigger>
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="ContentPresenter" Property="Background" Value="{DynamicResource ButtonBackgroundPressed}" />
-                            <Setter TargetName="ContentPresenter" Property="BorderBrush" Value="{DynamicResource ButtonBorderBrushPressed}" />
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource ButtonForegroundPressed}" />
-                        </Trigger>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="ContentPresenter" Property="Background" Value="{DynamicResource ButtonBackgroundDisabled}" />
-                            <Setter TargetName="ContentPresenter" Property="BorderBrush" Value="{DynamicResource ButtonBorderBrushDisabled}" />
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource ButtonForegroundDisabled}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -131,6 +123,73 @@
                         IsTextScaleFactorEnabled="{TemplateBinding primitives:ControlHelper.IsTextScaleFactorEnabled}"
                         VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                         RecognizesAccessKey="True"
+                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+                        <VisualStateManager.CustomVisualStateManager>
+                            <root:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <root:VisualStateEx x:Name="PointerOver">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="ContentPresenter.Background" Value="{DynamicResource AccentButtonBackgroundPointerOver}" />
+                                        <root:VisualStateSetter Target="ContentPresenter.BorderBrush" Value="{DynamicResource AccentButtonBorderBrushPointerOver}" />
+                                        <root:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource AccentButtonForegroundPointerOver}" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="Pressed">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="ContentPresenter.Background" Value="{DynamicResource AccentButtonBackgroundPressed}" />
+                                        <root:VisualStateSetter Target="ContentPresenter.BorderBrush" Value="{DynamicResource AccentButtonBorderBrushPressed}" />
+                                        <root:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource AccentButtonForegroundPressed}" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="Disabled">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="ContentPresenter.Background" Value="{DynamicResource AccentButtonBackgroundDisabled}" />
+                                        <root:VisualStateSetter Target="ContentPresenter.BorderBrush" Value="{DynamicResource AccentButtonBorderBrushDisabled}" />
+                                        <root:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource AccentButtonForegroundDisabled}" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <local:ContentPresenterEx.BackgroundTransition>
+                            <local:BrushTransition Duration="0:0:0.083" />
+                        </local:ContentPresenterEx.BackgroundTransition>
+                    </local:ContentPresenterEx>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="SubtleButtonStyle" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
+        <Setter Property="Foreground" Value="{DynamicResource SubtleButtonForeground}" />
+        <Setter Property="Background" Value="{DynamicResource SubtleButtonBackground}" />
+        <Setter Property="primitives:ControlHelper.BackgroundSizing" Value="InnerBorderEdge" />
+        <Setter Property="BorderBrush" Value="{DynamicResource SubtleButtonBorderBrush}" />
+        <Setter Property="BorderThickness" Value="{DynamicResource ButtonBorderThemeThickness}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <local:ContentPresenterEx
+                        x:Name="ContentPresenter"
+                        Background="{TemplateBinding Background}"
+                        BackgroundSizing="{TemplateBinding primitives:ControlHelper.BackgroundSizing}"
+                        Foreground="{TemplateBinding Foreground}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CharacterSpacing="{TemplateBinding primitives:ControlHelper.CharacterSpacing}"
+                        Content="{TemplateBinding Content}"
+                        ContentTemplate="{TemplateBinding ContentTemplate}"
+                        ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                        ContentTransitions="{TemplateBinding primitives:ControlHelper.ContentTransitions}"
+                        ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
+                        Padding="{TemplateBinding Padding}"
+                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        IsTextScaleFactorEnabled="{TemplateBinding primitives:ControlHelper.IsTextScaleFactorEnabled}"
+                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                        RecognizesAccessKey="True"
                         SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                         local:AnimatedIcon.State="Normal">
                         <VisualStateManager.CustomVisualStateManager>
@@ -141,16 +200,25 @@
                                 <VisualState x:Name="Normal" />
                                 <root:VisualStateEx x:Name="PointerOver">
                                     <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="ContentPresenter.Background" Value="{DynamicResource SubtleButtonBackgroundPointerOver}" />
+                                        <root:VisualStateSetter Target="ContentPresenter.BorderBrush" Value="{DynamicResource SubtleButtonBorderBrushPointerOver}" />
+                                        <root:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource SubtleButtonForegroundPointerOver}" />
                                         <root:VisualStateSetter Target="ContentPresenter.(local:AnimatedIcon.State)" Value="PointerOver" />
                                     </root:VisualStateEx.Setters>
                                 </root:VisualStateEx>
                                 <root:VisualStateEx x:Name="Pressed">
                                     <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="ContentPresenter.Background" Value="{DynamicResource SubtleButtonBackgroundPressed}" />
+                                        <root:VisualStateSetter Target="ContentPresenter.BorderBrush" Value="{DynamicResource SubtleButtonBorderBrushPressed}" />
+                                        <root:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource SubtleButtonForegroundPressed}" />
                                         <root:VisualStateSetter Target="ContentPresenter.(local:AnimatedIcon.State)" Value="Pressed" />
                                     </root:VisualStateEx.Setters>
                                 </root:VisualStateEx>
                                 <root:VisualStateEx x:Name="Disabled">
                                     <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="ContentPresenter.Background" Value="{DynamicResource SubtleButtonBackgroundDisabled}" />
+                                        <root:VisualStateSetter Target="ContentPresenter.BorderBrush" Value="{DynamicResource SubtleButtonBorderBrushDisabled}" />
+                                        <root:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource SubtleButtonForegroundDisabled}" />
                                         <root:VisualStateSetter Target="ContentPresenter.(local:AnimatedIcon.State)" Value="Normal" />
                                     </root:VisualStateEx.Setters>
                                 </root:VisualStateEx>
@@ -160,23 +228,6 @@
                             <local:BrushTransition Duration="0:0:0.083" />
                         </local:ContentPresenterEx.BackgroundTransition>
                     </local:ContentPresenterEx>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="ContentPresenter" Property="Background" Value="{DynamicResource AccentButtonBackgroundPointerOver}" />
-                            <Setter TargetName="ContentPresenter" Property="BorderBrush" Value="{DynamicResource AccentButtonBorderBrushPointerOver}" />
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource AccentButtonForegroundPointerOver}" />
-                        </Trigger>
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="ContentPresenter" Property="Background" Value="{DynamicResource AccentButtonBackgroundPressed}" />
-                            <Setter TargetName="ContentPresenter" Property="BorderBrush" Value="{DynamicResource AccentButtonBorderBrushPressed}" />
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource AccentButtonForegroundPressed}" />
-                        </Trigger>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="ContentPresenter" Property="Background" Value="{DynamicResource AccentButtonBackgroundDisabled}" />
-                            <Setter TargetName="ContentPresenter" Property="BorderBrush" Value="{DynamicResource AccentButtonBorderBrushDisabled}" />
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource AccentButtonForegroundDisabled}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

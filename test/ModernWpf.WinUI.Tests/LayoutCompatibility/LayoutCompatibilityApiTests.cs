@@ -1887,8 +1887,7 @@ public class LayoutCompatibilityApiTests
             Assert.IsNull(FindVisualChild<ModernContentControlEx>(button));
             Assert.AreEqual(BackgroundSizing.OuterBorderEdge, presenter.BackgroundSizing);
             Assert.IsTrue(ButtonHelper.GetVisualStateSettersEnabled(button));
-            AssertAnimatedIconStateSetters(presenter, "ContentPresenter.(local:AnimatedIcon.State)");
-            AssertAnimatedIconStateTransitions(button, presenter);
+            Assert.IsNull(AnimatedIcon.GetState(presenter));
         });
     }
 
