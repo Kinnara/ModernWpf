@@ -43,8 +43,10 @@ public class ExpanderApiTests
             Assert.AreEqual(VerticalAlignment.Center, expander.VerticalAlignment);
             Assert.AreEqual(expander.TryFindResource("FlyoutThemeMinWidth"), expander.MinWidth);
             Assert.AreEqual(expander.TryFindResource("ExpanderMinHeight"), expander.MinHeight);
+            Assert.IsFalse(expander.Focusable);
 
             var header = FindTemplateChild<ToggleButton>(expander, "HeaderSite");
+            Assert.IsTrue(header.Focusable);
             Assert.AreSame(expander.TryFindResource("ExpanderHeaderBackground"), header.Background);
             Assert.AreSame(expander.TryFindResource("ExpanderHeaderForeground"), header.Foreground);
             Assert.AreSame(expander.TryFindResource("ExpanderHeaderBorderBrush"), header.BorderBrush);

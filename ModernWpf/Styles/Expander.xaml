@@ -640,6 +640,7 @@
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="MinWidth" Value="{DynamicResource FlyoutThemeMinWidth}" />
         <Setter Property="MinHeight" Value="{DynamicResource ExpanderMinHeight}" />
+        <Setter Property="Focusable" Value="False" />
         <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
         <Setter Property="Template">
             <Setter.Value>
