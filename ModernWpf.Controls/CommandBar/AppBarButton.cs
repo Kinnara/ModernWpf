@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
@@ -342,6 +343,30 @@ namespace ModernWpf.Controls
             UpdateVisualState(false);
         }
 
+        protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
+        {
+            m_isPointerFocusSuppressed = true;
+            try
+            {
+                base.OnMouseLeftButtonDown(e);
+            }
+            finally
+            {
+                m_isPointerFocusSuppressed = false;
+            }
+        }
+
+        protected override void OnPreviewGotKeyboardFocus(KeyboardFocusChangedEventArgs e)
+        {
+            if (m_isPointerFocusSuppressed && ReferenceEquals(e.NewFocus, this))
+            {
+                e.Handled = true;
+                return;
+            }
+
+            base.OnPreviewGotKeyboardFocus(e);
+        }
+
         protected override void OnVisualParentChanged(DependencyObject oldParent)
         {
             base.OnVisualParentChanged(oldParent);
@@ -592,6 +617,7 @@ namespace ModernWpf.Controls
         private bool m_isWithIcons;
         private bool m_isWithToggleButtons;
         private bool m_isWithKeyboardAcceleratorText;
+        private bool m_isPointerFocusSuppressed;
         private double m_maxKeyboardAcceleratorTextWidth;
         private CommandBarDefaultLabelPosition m_defaultLabelPosition = CommandBarDefaultLabelPosition.Bottom;
     }

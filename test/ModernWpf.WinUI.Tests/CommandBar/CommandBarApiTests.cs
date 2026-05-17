@@ -192,6 +192,58 @@ public class CommandBarApiTests
     }
 
     [TestMethod]
+    public void AppBarButtonsDenyPointerFocusButRemainFocusable()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var focusTarget = new Button { Content = "Focus target" };
+            var button = new TestAppBarButton { Label = "Button" };
+            var toggleButton = new TestAppBarToggleButton { Label = "Toggle" };
+            var commandBar = new ModernWpf.Controls.CommandBar();
+            commandBar.PrimaryCommands.Add(button);
+            commandBar.PrimaryCommands.Add(toggleButton);
+
+            var root = new StackPanel();
+            root.Children.Add(focusTarget);
+            root.Children.Add(commandBar);
+
+            using var host = new TestWindowHost(root, width: 400, height: 180);
+            host.UpdateLayout();
+
+            Assert.IsTrue(focusTarget.Focus());
+            WpfTestHost.DoEvents();
+            Assert.AreSame(focusTarget, Keyboard.FocusedElement);
+
+            bool buttonGotFocus = false;
+            bool toggleButtonGotFocus = false;
+            button.GotKeyboardFocus += (_, _) => buttonGotFocus = true;
+            toggleButton.GotKeyboardFocus += (_, _) => toggleButtonGotFocus = true;
+
+            button.InvokeMouseLeftButtonDown(CreateMouseLeftButtonDownArgs(button));
+            WpfTestHost.DoEvents();
+
+            Assert.IsFalse(buttonGotFocus);
+            Assert.AreSame(focusTarget, Keyboard.FocusedElement);
+
+            toggleButton.InvokeMouseLeftButtonDown(CreateMouseLeftButtonDownArgs(toggleButton));
+            WpfTestHost.DoEvents();
+
+            Assert.IsFalse(toggleButtonGotFocus);
+            Assert.AreSame(focusTarget, Keyboard.FocusedElement);
+
+            Assert.IsTrue(button.Focus());
+            WpfTestHost.DoEvents();
+            Assert.AreSame(button, Keyboard.FocusedElement);
+
+            Assert.IsTrue(toggleButton.Focus());
+            WpfTestHost.DoEvents();
+            Assert.AreSame(toggleButton, Keyboard.FocusedElement);
+        });
+    }
+
+    [TestMethod]
     public void AppBarButtonTemplateUsesWinUIInnerChrome()
     {
         WpfTestHost.Run(() =>
@@ -667,6 +719,15 @@ public class CommandBarApiTests
         return root;
     }
 
+    private static MouseButtonEventArgs CreateMouseLeftButtonDownArgs(UIElement source)
+    {
+        return new MouseButtonEventArgs(Mouse.PrimaryDevice, Environment.TickCount, MouseButton.Left)
+        {
+            RoutedEvent = UIElement.MouseLeftButtonDownEvent,
+            Source = source
+        };
+    }
+
     private static T FindTemplateChild<T>(Control control, string name)
         where T : DependencyObject
     {
@@ -741,5 +802,21 @@ public class CommandBarApiTests
         }
 
         return null;
+    }
+
+    private sealed class TestAppBarButton : AppBarButton
+    {
+        public void InvokeMouseLeftButtonDown(MouseButtonEventArgs e)
+        {
+            OnMouseLeftButtonDown(e);
+        }
+    }
+
+    private sealed class TestAppBarToggleButton : AppBarToggleButton
+    {
+        public void InvokeMouseLeftButtonDown(MouseButtonEventArgs e)
+        {
+            OnMouseLeftButtonDown(e);
+        }
     }
 }
