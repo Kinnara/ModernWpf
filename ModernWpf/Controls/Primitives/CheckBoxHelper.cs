@@ -56,6 +56,7 @@ namespace ModernWpf.Controls.Primitives
             checkBox.Unchecked += OnRoutedStateChanged;
             checkBox.Indeterminate += OnRoutedStateChanged;
             checkBox.IsEnabledChanged += OnDependencyStateChanged;
+            checkBox.KeyDown += OnKeyDown;
             checkBox.MouseEnter += OnMouseStateChanged;
             checkBox.MouseLeave += OnMouseStateChanged;
             checkBox.PreviewMouseDown += OnMouseButtonStateChanged;
@@ -70,6 +71,7 @@ namespace ModernWpf.Controls.Primitives
             checkBox.Unchecked -= OnRoutedStateChanged;
             checkBox.Indeterminate -= OnRoutedStateChanged;
             checkBox.IsEnabledChanged -= OnDependencyStateChanged;
+            checkBox.KeyDown -= OnKeyDown;
             checkBox.MouseEnter -= OnMouseStateChanged;
             checkBox.MouseLeave -= OnMouseStateChanged;
             checkBox.PreviewMouseDown -= OnMouseButtonStateChanged;
@@ -90,6 +92,28 @@ namespace ModernWpf.Controls.Primitives
         private static void OnDependencyStateChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             UpdateVisualState((CheckBox)sender, true);
+        }
+
+        private static void OnKeyDown(object sender, KeyEventArgs e)
+        {
+            var checkBox = (CheckBox)sender;
+            if (checkBox.IsThreeState || !checkBox.IsEnabled)
+            {
+                return;
+            }
+
+            if (e.Key == Key.Add)
+            {
+                e.Handled = true;
+                checkBox.IsChecked = true;
+                UpdateVisualState(checkBox, true);
+            }
+            else if (e.Key == Key.Subtract)
+            {
+                e.Handled = true;
+                checkBox.IsChecked = false;
+                UpdateVisualState(checkBox, true);
+            }
         }
 
         private static void OnMouseStateChanged(object sender, MouseEventArgs e)
