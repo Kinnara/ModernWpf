@@ -105,9 +105,13 @@ namespace ModernWpf.Controls
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            UpdateRows(finalSize);
-
             var orientation = Orientation;
+            if ((orientation == Orientation.Horizontal && finalSize.Width < DesiredSize.Width) ||
+                (orientation == Orientation.Vertical && finalSize.Height < DesiredSize.Height))
+            {
+                UpdateRows(finalSize);
+            }
+
             var childIndex = 0;
 
             foreach (var row in _rows)
@@ -172,13 +176,10 @@ namespace ModernWpf.Controls
                 var desiredMeasure = new UvMeasure(orientation, child.DesiredSize);
                 if (desiredMeasure.U + position.U + paddingEnd.U > parentMeasure.U)
                 {
-                    if (!currentRow.IsEmpty)
-                    {
-                        position.U = paddingStart.U;
-                        position.V += currentRow.Size.V + spacingMeasure.V;
-                        _rows.Add(currentRow);
-                        currentRow = new Row();
-                    }
+                    position.U = paddingStart.U;
+                    position.V += currentRow.Size.V + spacingMeasure.V;
+                    _rows.Add(currentRow);
+                    currentRow = new Row();
                 }
 
                 if (isLast && ItemsStretch == WrapPanelItemsStretch.Last)

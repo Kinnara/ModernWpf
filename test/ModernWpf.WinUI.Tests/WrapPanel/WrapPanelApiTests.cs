@@ -443,6 +443,33 @@ public class WrapPanelApiTests
         });
     }
 
+    [TestMethod]
+    public void ArrangeKeepsMeasuredRowsWhenFinalSizeExpands()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var panel = new ModernWrapPanel
+            {
+                Orientation = Orientation.Horizontal
+            };
+            var button1 = CreateButton("Button1", 100, 50);
+            var button2 = CreateButton("Button2", 100, 50);
+            AddChildren(panel, button1, button2);
+
+            var hostPanel = new MeasureConstrainedArrangeExpandedPanel
+            {
+                MeasureSize = new Size(150, 200),
+                ArrangeSize = new Size(300, 200)
+            };
+            hostPanel.Children.Add(panel);
+
+            using var host = new TestWindowHost(hostPanel, width: 320, height: 220);
+
+            AssertLayoutSlot(button1, new Rect(0, 0, 100, 50));
+            AssertLayoutSlot(button2, new Rect(0, 50, 100, 50));
+        });
+    }
+
     private static ModernWrapPanel CreateHorizontalPanel(double width, double height)
     {
         return new ModernWrapPanel
@@ -474,5 +501,32 @@ public class WrapPanelApiTests
     private static void AssertLayoutSlot(FrameworkElement element, Rect expected)
     {
         Assert.AreEqual(expected, LayoutInformation.GetLayoutSlot(element));
+    }
+
+    private sealed class MeasureConstrainedArrangeExpandedPanel : Panel
+    {
+        public Size MeasureSize { get; set; }
+
+        public Size ArrangeSize { get; set; }
+
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            foreach (UIElement child in InternalChildren)
+            {
+                child.Measure(MeasureSize);
+            }
+
+            return ArrangeSize;
+        }
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            foreach (UIElement child in InternalChildren)
+            {
+                child.Arrange(new Rect(ArrangeSize));
+            }
+
+            return finalSize;
+        }
     }
 }

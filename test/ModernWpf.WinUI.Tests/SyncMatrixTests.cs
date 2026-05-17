@@ -35,6 +35,7 @@ public class SyncMatrixTests
         AssertControlStatus(matrix, "SplitView", "Source-backed WPF port");
         AssertControlStatus(matrix, "CommandBar / AppBarButton / AppBarToggleButton / AppBarSeparator", "Source-backed WPF port");
         AssertControlStatus(matrix, "ContentDialog", "Source-backed WPF port");
+        AssertControlStatus(matrix, "WrapPanel", "Source-backed WPF port");
     }
 
     public TestContext? TestContext { get; set; }
