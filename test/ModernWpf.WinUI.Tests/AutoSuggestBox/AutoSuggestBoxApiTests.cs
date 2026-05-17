@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using System.Windows.Controls;
+using System.Windows.Input;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf;
 using ModernWpf.Controls;
@@ -147,6 +148,73 @@ public class AutoSuggestBoxApiTests
     }
 
     [TestMethod]
+    public void SuggestionListItemClickUsesWinUISourceEventBeforeSelectionOrder()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var suggestionsList = CreateSuggestionList("alpha", "beta");
+            suggestionsList.SelectionMode = SelectionMode.Multiple;
+
+            using var host = new TestWindowHost(suggestionsList, width: 240, height: 120);
+            FlushLayout(host);
+
+            object? clickedItem = null;
+            var selectedCountDuringItemClick = -1;
+            suggestionsList.ItemClick += (_, args) =>
+            {
+                clickedItem = args.ClickedItem;
+                selectedCountDuringItemClick = suggestionsList.SelectedItems.Count;
+            };
+
+            suggestionsList.NotifyListItemClicked(GetSuggestionItem(suggestionsList, 0), MouseButton.Left);
+
+            Assert.AreEqual("alpha", clickedItem);
+            Assert.AreEqual(0, selectedCountDuringItemClick);
+            CollectionAssert.AreEqual(new[] { "alpha" }, SelectedStrings(suggestionsList));
+        });
+    }
+
+    [TestMethod]
+    public void SuggestionListPrimarySelectionUsesWinUISourceSelectionModes()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var multipleList = CreateSuggestionList("alpha", "beta", "gamma");
+            multipleList.SelectionMode = SelectionMode.Multiple;
+
+            using (var host = new TestWindowHost(multipleList, width: 240, height: 140))
+            {
+                FlushLayout(host);
+
+                multipleList.NotifyListItemClicked(GetSuggestionItem(multipleList, 0), MouseButton.Left);
+                multipleList.NotifyListItemClicked(GetSuggestionItem(multipleList, 1), MouseButton.Left);
+                CollectionAssert.AreEqual(new[] { "alpha", "beta" }, SelectedStrings(multipleList));
+
+                multipleList.NotifyListItemClicked(GetSuggestionItem(multipleList, 0), MouseButton.Left);
+                CollectionAssert.AreEqual(new[] { "beta" }, SelectedStrings(multipleList));
+            }
+
+            var extendedList = CreateSuggestionList("alpha", "beta", "gamma");
+            extendedList.SelectionMode = SelectionMode.Extended;
+
+            using (var host = new TestWindowHost(extendedList, width: 240, height: 140))
+            {
+                FlushLayout(host);
+
+                extendedList.NotifyListItemClicked(GetSuggestionItem(extendedList, 0), MouseButton.Left);
+                CollectionAssert.AreEqual(new[] { "alpha" }, SelectedStrings(extendedList));
+
+                extendedList.NotifyListItemClicked(GetSuggestionItem(extendedList, 1), MouseButton.Left);
+                CollectionAssert.AreEqual(new[] { "beta" }, SelectedStrings(extendedList));
+            }
+        });
+    }
+
+    [TestMethod]
     public void VerifyAutoSuggestBoxQueryButtonUsesWinUIContentPresenterShape()
     {
         WpfTestHost.Run(() =>
@@ -236,6 +304,38 @@ public class AutoSuggestBoxApiTests
                 new CornerRadius(0, 0, overlayCornerRadius.BottomRight, overlayCornerRadius.BottomLeft),
                 new CornerRadius(overlayCornerRadius.TopRight, overlayCornerRadius.TopLeft, 0, 0));
         });
+    }
+
+    private static AutoSuggestBoxListView CreateSuggestionList(params string[] items)
+    {
+        var suggestionsList = new AutoSuggestBoxListView
+        {
+            IsItemClickEnabled = true,
+            Width = 200,
+            Height = 120
+        };
+
+        foreach (var item in items)
+        {
+            suggestionsList.Items.Add(item);
+        }
+
+        return suggestionsList;
+    }
+
+    private static AutoSuggestBoxListViewItem GetSuggestionItem(AutoSuggestBoxListView suggestionsList, int index)
+    {
+        suggestionsList.UpdateLayout();
+        WpfTestHost.DoEvents();
+        suggestionsList.UpdateLayout();
+
+        return suggestionsList.ItemContainerGenerator.ContainerFromIndex(index) as AutoSuggestBoxListViewItem
+            ?? throw new InvalidOperationException($"Could not find suggestion item container {index}.");
+    }
+
+    private static string[] SelectedStrings(AutoSuggestBoxListView suggestionsList)
+    {
+        return suggestionsList.SelectedItems.Cast<string>().ToArray();
     }
 
     private static void FlushLayout(TestWindowHost host)

@@ -48,11 +48,11 @@ namespace ModernWpf.Controls.Primitives
         {
             base.OnKeyDown(e);
 
-            if (e.Key == Key.Enter)
+            if (e.Key == Key.Enter || (e.Key == Key.Space && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control))
             {
                 if (SelectorHelper.UiGetIsSelectable(this) && Focus())
                 {
-                    ParentListView?.NotifyListItemClicked(this);
+                    ParentListView?.NotifyListItemClicked(this, isSecondaryGesture: e.Key == Key.Space);
                     e.Handled = true;
                 }
             }
