@@ -217,6 +217,55 @@ public class ToggleSwitchApiTests
     }
 
     [TestMethod]
+    public void ThemeResourcesUseWinUI3ToggleSwitchColorAliases()
+    {
+        foreach (var themeName in new[] { "Light", "Dark" })
+        {
+            AssertThemeResourceValue(themeName, "SystemControlTransparentColor", Color.FromArgb(0x00, 0x00, 0x00, 0x00));
+            AssertThemeResourceReference(themeName, "ToggleSwitchContainerBackgroundPointerOver", "SubtleFillColorTransparent");
+            AssertThemeResourceReference(themeName, "ToggleSwitchContainerBackgroundPressed", "SubtleFillColorTransparent");
+            AssertThemeResourceReference(themeName, "ToggleSwitchContainerBackgroundDisabled", "SubtleFillColorTransparent");
+            AssertThemeResourceReference(themeName, "ToggleSwitchStrokeOffPointerOver", "ControlStrongStrokeColorDefault");
+            AssertThemeResourceReference(themeName, "ToggleSwitchStrokeOffPressed", "ControlStrongStrokeColorDefault");
+            AssertThemeResourceReference(themeName, "ToggleSwitchStrokeOffDisabled", "ControlStrongStrokeColorDisabled");
+        }
+    }
+
+    [TestMethod]
+    public void HighContrastThemeResourcesUseWinUI3ToggleSwitchAliases()
+    {
+        AssertThemeResourceValue("HighContrast", "SystemControlTransparentColor", Color.FromArgb(0x00, 0x00, 0x00, 0x00));
+        AssertThemeResourceReference("HighContrast", "ToggleSwitchContainerBackgroundPointerOver", "SystemControlTransparentColor");
+        AssertThemeResourceReference("HighContrast", "ToggleSwitchContainerBackgroundPressed", "SystemControlTransparentColor");
+        AssertThemeResourceReference("HighContrast", "ToggleSwitchContainerBackgroundDisabled", "SystemControlTransparentColor");
+        AssertThemeResourceReference("HighContrast", "ToggleSwitchFillOff", "SystemColorButtonFaceColorBrush");
+        AssertThemeResourceReference("HighContrast", "ToggleSwitchFillOffPointerOver", "SystemColorHighlightTextColor");
+        AssertThemeResourceReference("HighContrast", "ToggleSwitchFillOffPressed", "SystemColorHighlightTextColor");
+        AssertThemeResourceReference("HighContrast", "ToggleSwitchFillOffDisabled", "SystemColorWindowColor");
+        AssertThemeResourceReference("HighContrast", "ToggleSwitchStrokeOff", "SystemColorButtonTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "ToggleSwitchStrokeOffPointerOver", "SystemColorHighlightColor");
+        AssertThemeResourceReference("HighContrast", "ToggleSwitchStrokeOffPressed", "SystemColorHighlightColor");
+        AssertThemeResourceReference("HighContrast", "ToggleSwitchStrokeOffDisabled", "SystemColorGrayTextColor");
+        AssertThemeResourceReference("HighContrast", "ToggleSwitchFillOn", "SystemColorHighlightColorBrush");
+        AssertThemeResourceReference("HighContrast", "ToggleSwitchFillOnPointerOver", "SystemColorButtonFaceColorBrush");
+        AssertThemeResourceReference("HighContrast", "ToggleSwitchFillOnPressed", "SystemColorButtonFaceColorBrush");
+        AssertThemeResourceReference("HighContrast", "ToggleSwitchFillOnDisabled", "SystemColorWindowColorBrush");
+        AssertThemeResourceReference("HighContrast", "ToggleSwitchStrokeOn", "SystemColorHighlightColorBrush");
+        AssertThemeResourceReference("HighContrast", "ToggleSwitchStrokeOnPointerOver", "SystemColorButtonTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "ToggleSwitchStrokeOnPressed", "SystemColorButtonTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "ToggleSwitchStrokeOnDisabled", "SystemColorGrayTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "ToggleSwitchKnobFillOff", "SystemColorButtonTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "ToggleSwitchKnobFillOffPointerOver", "SystemColorHighlightColorBrush");
+        AssertThemeResourceReference("HighContrast", "ToggleSwitchKnobFillOffPressed", "SystemColorHighlightColorBrush");
+        AssertThemeResourceReference("HighContrast", "ToggleSwitchKnobFillOffDisabled", "SystemColorGrayTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "ToggleSwitchKnobFillOn", "SystemColorHighlightTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "ToggleSwitchKnobFillOnPointerOver", "SystemColorButtonTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "ToggleSwitchKnobFillOnPressed", "SystemColorButtonTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "ToggleSwitchKnobFillOnDisabled", "SystemColorGrayTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "ToggleSwitchKnobStrokeOn", "SystemControlTransparentBrush");
+    }
+
+    [TestMethod]
     public void TemplateSettingsTrackWinUIKnobOffsets()
     {
         WpfTestHost.Run(() =>
@@ -673,6 +722,23 @@ public class ToggleSwitchApiTests
         Assert.IsTrue(
             state.Setters.Any(setter => setter.Target == target),
             $"Expected VisualStateEx setter target '{target}'.");
+    }
+
+    private static void AssertThemeResourceReference(string themeName, string resourceKey, object expectedResourceKey)
+    {
+        var themeDictionary = global::ModernWpf.ThemeResources.Current.GetThemeDictionary(themeName);
+
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.IsTrue(themeDictionary.Contains(expectedResourceKey), $"{themeName} is missing {expectedResourceKey}.");
+        Assert.AreSame(themeDictionary[expectedResourceKey], themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
+    }
+
+    private static void AssertThemeResourceValue<T>(string themeName, string resourceKey, T expectedValue)
+    {
+        var themeDictionary = global::ModernWpf.ThemeResources.Current.GetThemeDictionary(themeName);
+
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.AreEqual(expectedValue, themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
     }
 
     private static ToggleSwitchAutomationPeer CreatePeer(ModernWpf.Controls.ToggleSwitch toggleSwitch)
