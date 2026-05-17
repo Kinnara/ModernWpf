@@ -829,5 +829,10 @@ namespace ModernWpf.Controls
         {
             SetCurrentValue(IsOnProperty, !IsOn);
         }
+
+        internal UIElement GetAutomationClickableElement()
+        {
+            return SwitchThumb != null ? (UIElement)SwitchThumb : this;
+        }
     }
 }

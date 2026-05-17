@@ -1,5 +1,6 @@
 using System;
 using System.Windows;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
@@ -196,6 +197,90 @@ public class ToggleSwitchApiTests
 
             toggleSwitch.OnContent = "Connected";
             Assert.AreEqual("Wi-Fi Connected", CreatePeer(toggleSwitch).GetName());
+        });
+    }
+
+    [TestMethod]
+    public void AutomationNameUsesWinUIStringExtraction()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var root = new StackPanel();
+            var toggleSwitchWithOnOffContent = new ModernWpf.Controls.ToggleSwitch
+            {
+                OnContent = "Yes",
+                OffContent = "No"
+            };
+            var toggleSwitchNonTextHeader = new ModernWpf.Controls.ToggleSwitch
+            {
+                Header = new Rectangle { Width = 10, Height = 10 },
+                OnContent = "Yes",
+                OffContent = "No"
+            };
+            var toggleSwitchNonTextOnOffContent = new ModernWpf.Controls.ToggleSwitch
+            {
+                Header = "Header",
+                OnContent = new Rectangle { Width = 10, Height = 10 },
+                OffContent = new Rectangle { Width = 10, Height = 10 }
+            };
+            var toggleSwitchTextElements = new ModernWpf.Controls.ToggleSwitch
+            {
+                Header = new TextBlock { Text = "Header" },
+                OnContent = new TextBlock { Text = "Yes" },
+                OffContent = new TextBlock { Text = "No" }
+            };
+
+            root.Children.Add(toggleSwitchWithOnOffContent);
+            root.Children.Add(toggleSwitchNonTextHeader);
+            root.Children.Add(toggleSwitchNonTextOnOffContent);
+            root.Children.Add(toggleSwitchTextElements);
+
+            using var host = new TestWindowHost(root, width: 260, height: 220);
+            host.UpdateLayout();
+
+            Assert.AreEqual("No", CreatePeer(toggleSwitchWithOnOffContent).GetName());
+            Assert.AreEqual("No", CreatePeer(toggleSwitchNonTextHeader).GetName());
+            Assert.AreEqual("Header", CreatePeer(toggleSwitchNonTextOnOffContent).GetName());
+            Assert.AreEqual("Header No", CreatePeer(toggleSwitchTextElements).GetName());
+
+            toggleSwitchWithOnOffContent.IsOn = true;
+            toggleSwitchNonTextHeader.IsOn = true;
+            toggleSwitchNonTextOnOffContent.IsOn = true;
+            toggleSwitchTextElements.IsOn = true;
+
+            Assert.AreEqual("Yes", CreatePeer(toggleSwitchWithOnOffContent).GetName());
+            Assert.AreEqual("Yes", CreatePeer(toggleSwitchNonTextHeader).GetName());
+            Assert.AreEqual("Header", CreatePeer(toggleSwitchNonTextOnOffContent).GetName());
+            Assert.AreEqual("Header Yes", CreatePeer(toggleSwitchTextElements).GetName());
+        });
+    }
+
+    [TestMethod]
+    public void AutomationClickablePointTargetsThumb()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch
+            {
+                Header = "Multi\nline\nheader"
+            };
+            using var host = new TestWindowHost(toggleSwitch, width: 260, height: 160);
+            host.UpdateLayout();
+
+            var thumb = FindNamedDescendant<Thumb>(toggleSwitch, "SwitchThumb");
+            var thumbPeer = UIElementAutomationPeer.FromElement(thumb) ??
+                            UIElementAutomationPeer.CreatePeerForElement(thumb);
+            Assert.IsNotNull(thumbPeer);
+
+            var expected = thumbPeer.GetClickablePoint();
+            var actual = CreatePeer(toggleSwitch).GetClickablePoint();
+
+            Assert.AreEqual(expected.X, actual.X, 0.1);
+            Assert.AreEqual(expected.Y, actual.Y, 0.1);
         });
     }
 
