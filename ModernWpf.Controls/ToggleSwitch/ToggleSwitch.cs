@@ -543,7 +543,7 @@ namespace ModernWpf.Controls
         {
             var toggle = (ToggleSwitch)sender;
 
-            if (!toggle.IsKeyboardFocusWithin)
+            if (!toggle.IsKeyboardFocused)
             {
                 e.Handled = toggle.FocusFromPointer() || e.Handled;
             }
@@ -823,7 +823,7 @@ namespace ModernWpf.Controls
 
             if (IsEnabled)
             {
-                if (IsKeyboardFocusWithin)
+                if (IsKeyboardFocused)
                 {
                     VisualStateManager.GoToState(this, _isPointerFocused ? PointerFocusedState : FocusedState, useTransitions);
                 }

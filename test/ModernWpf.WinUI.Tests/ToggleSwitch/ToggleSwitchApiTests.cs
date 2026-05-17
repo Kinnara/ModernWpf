@@ -717,6 +717,41 @@ public class ToggleSwitchApiTests
     }
 
     [TestMethod]
+    public void FocusStatesUseToggleSwitchOwnerFocusLikeWinUI()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch
+            {
+                Template = CreateFocusableChildFocusStateTemplate()
+            };
+
+            using var host = new TestWindowHost(toggleSwitch, width: 260, height: 120);
+            host.UpdateLayout();
+
+            var stateGroupsRoot = FindStateGroupsRoot(toggleSwitch);
+            var childButton = FindNamedDescendant<Button>(toggleSwitch, "TemplateButton");
+
+            Assert.IsTrue(childButton.Focus());
+            toggleSwitch.HeaderPlacement = ControlHeaderPlacement.Left;
+            host.UpdateLayout();
+
+            Assert.IsTrue(toggleSwitch.IsKeyboardFocusWithin);
+            Assert.IsFalse(toggleSwitch.IsKeyboardFocused);
+            Assert.AreEqual("Unfocused", GetCurrentStateName(stateGroupsRoot, "FocusStates"));
+
+            var mouseDown = RaiseMouseLeftButtonDown(toggleSwitch);
+            host.UpdateLayout();
+
+            Assert.IsTrue(mouseDown.Handled);
+            Assert.IsTrue(toggleSwitch.IsKeyboardFocused);
+            Assert.AreEqual("PointerFocused", GetCurrentStateName(stateGroupsRoot, "FocusStates"));
+        });
+    }
+
+    [TestMethod]
     public void TapInputTogglesOnAndOffLikeWinUINativeTest()
     {
         WpfTestHost.Run(() =>
@@ -1499,6 +1534,46 @@ public class ToggleSwitchApiTests
                             <VisualState x:Name='LeftHeader' />
                         </VisualStateGroup>
                     </VisualStateManager.VisualStateGroups>
+                </Grid>
+            </ControlTemplate>");
+    }
+
+    private static ControlTemplate CreateFocusableChildFocusStateTemplate()
+    {
+        return (ControlTemplate)XamlReader.Parse(
+            @"<ControlTemplate
+                xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'
+                xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'
+                xmlns:controls='clr-namespace:ModernWpf.Controls;assembly=ModernWpf.Controls'
+                TargetType='{x:Type controls:ToggleSwitch}'>
+                <Grid>
+                    <VisualStateManager.VisualStateGroups>
+                        <VisualStateGroup x:Name='CommonStates'>
+                            <VisualState x:Name='Normal' />
+                            <VisualState x:Name='PointerOver' />
+                            <VisualState x:Name='Pressed' />
+                            <VisualState x:Name='Disabled' />
+                        </VisualStateGroup>
+                        <VisualStateGroup x:Name='FocusStates'>
+                            <VisualState x:Name='PointerFocused' />
+                            <VisualState x:Name='Focused' />
+                            <VisualState x:Name='Unfocused' />
+                        </VisualStateGroup>
+                        <VisualStateGroup x:Name='ContentStates'>
+                            <VisualState x:Name='OffContent' />
+                            <VisualState x:Name='OnContent' />
+                        </VisualStateGroup>
+                        <VisualStateGroup x:Name='ToggleStates'>
+                            <VisualState x:Name='Dragging' />
+                            <VisualState x:Name='Off' />
+                            <VisualState x:Name='On' />
+                        </VisualStateGroup>
+                        <VisualStateGroup x:Name='HeaderStates'>
+                            <VisualState x:Name='TopHeader' />
+                            <VisualState x:Name='LeftHeader' />
+                        </VisualStateGroup>
+                    </VisualStateManager.VisualStateGroups>
+                    <Button x:Name='TemplateButton' Content='Template child' />
                 </Grid>
             </ControlTemplate>");
     }
