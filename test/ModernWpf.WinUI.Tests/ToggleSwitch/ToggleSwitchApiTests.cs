@@ -24,6 +24,40 @@ namespace ModernWpf.WinUI.Tests.ToggleSwitchControl;
 public class ToggleSwitchApiTests
 {
     [TestMethod]
+    public void CanInstantiateAndEnterLeaveLiveTreeLikeWinUINativeTests()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch();
+            Assert.IsNotNull(toggleSwitch.TemplateSettings);
+
+            var root = new StackPanel();
+            using var host = new TestWindowHost(root, width: 260, height: 160);
+
+            root.Children.Add(toggleSwitch);
+            host.UpdateLayout();
+
+            Assert.AreSame(root, toggleSwitch.Parent);
+            Assert.IsNotNull(FindNamedDescendant<Thumb>(toggleSwitch, "SwitchThumb"));
+            Assert.IsNotNull(FindNamedDescendant<FrameworkElement>(toggleSwitch, "SwitchKnob"));
+            Assert.IsNotNull(FindNamedDescendant<FrameworkElement>(toggleSwitch, "SwitchKnobBounds"));
+
+            root.Children.Remove(toggleSwitch);
+            host.UpdateLayout();
+
+            Assert.IsNull(toggleSwitch.Parent);
+
+            root.Children.Add(toggleSwitch);
+            host.UpdateLayout();
+
+            Assert.AreSame(root, toggleSwitch.Parent);
+            Assert.IsNotNull(FindNamedDescendant<Thumb>(toggleSwitch, "SwitchThumb"));
+        });
+    }
+
+    [TestMethod]
     public void DragDoesNotToggleUntilCrossingHalfRange()
     {
         WpfTestHost.Run(() =>
@@ -683,6 +717,38 @@ public class ToggleSwitchApiTests
     }
 
     [TestMethod]
+    public void TapInputTogglesOnAndOffLikeWinUINativeTest()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch
+            {
+                FontSize = 20
+            };
+            using var host = new TestWindowHost(toggleSwitch, width: 260, height: 120);
+            host.UpdateLayout();
+
+            var thumb = FindNamedDescendant<Thumb>(toggleSwitch, "SwitchThumb");
+
+            Assert.IsFalse(toggleSwitch.IsOn);
+
+            var firstTap = RaiseThumbMouseLeftButtonUp(thumb);
+            host.UpdateLayout();
+
+            Assert.IsTrue(firstTap.Handled);
+            Assert.IsTrue(toggleSwitch.IsOn);
+
+            var secondTap = RaiseThumbMouseLeftButtonUp(thumb);
+            host.UpdateLayout();
+
+            Assert.IsTrue(secondTap.Handled);
+            Assert.IsFalse(toggleSwitch.IsOn);
+        });
+    }
+
+    [TestMethod]
     public void ThumbMouseUpTapRunsAfterDragCompletionLikeWinUITapped()
     {
         WpfTestHost.Run(() =>
@@ -705,6 +771,39 @@ public class ToggleSwitchApiTests
             host.UpdateLayout();
 
             Assert.IsTrue(toggleSwitch.IsOn);
+        });
+    }
+
+    [TestMethod]
+    public void ThumbMouseUpAfterHorizontalDragDoesNotDoubleToggle()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch();
+            using var host = new TestWindowHost(toggleSwitch, width: 260, height: 120);
+            host.UpdateLayout();
+
+            var thumb = FindNamedDescendant<Thumb>(toggleSwitch, "SwitchThumb");
+
+            RaiseDragStarted(thumb);
+            RaiseDragDelta(thumb, 12);
+            RaiseDragCompleted(thumb);
+            host.UpdateLayout();
+
+            Assert.IsTrue(toggleSwitch.IsOn);
+
+            var postDragMouseUp = RaiseThumbMouseLeftButtonUp(thumb, handled: true);
+            host.UpdateLayout();
+
+            Assert.IsTrue(postDragMouseUp.Handled);
+            Assert.IsTrue(toggleSwitch.IsOn);
+
+            RaiseThumbMouseLeftButtonUp(thumb);
+            host.UpdateLayout();
+
+            Assert.IsFalse(toggleSwitch.IsOn);
         });
     }
 
@@ -1313,7 +1412,7 @@ public class ToggleSwitchApiTests
         return args;
     }
 
-    private static void RaiseThumbMouseLeftButtonUp(Thumb thumb, bool handled = false)
+    private static MouseButtonEventArgs RaiseThumbMouseLeftButtonUp(Thumb thumb, bool handled = false)
     {
         var args = new MouseButtonEventArgs(
             Mouse.PrimaryDevice,
@@ -1325,6 +1424,7 @@ public class ToggleSwitchApiTests
         };
 
         thumb.RaiseEvent(args);
+        return args;
     }
 
     private static MouseButtonEventArgs RaiseMouseLeftButtonDown(UIElement element)
