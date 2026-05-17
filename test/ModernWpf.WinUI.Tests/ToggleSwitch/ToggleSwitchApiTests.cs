@@ -66,6 +66,30 @@ public class ToggleSwitchApiTests
     }
 
     [TestMethod]
+    public void VerticalDragDeltaDoesNotMarkDragAsMoved()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch();
+            using var host = new TestWindowHost(toggleSwitch, width: 260, height: 120);
+            host.UpdateLayout();
+
+            var thumb = FindNamedDescendant<Thumb>(toggleSwitch, "SwitchThumb");
+            var stateGroupsRoot = FindStateGroupsRoot(toggleSwitch);
+
+            RaiseDragStarted(thumb);
+            RaiseDragDelta(thumb, horizontalChange: 0, verticalChange: 24);
+            RaiseDragCompleted(thumb);
+            host.UpdateLayout();
+
+            Assert.IsFalse(toggleSwitch.IsOn);
+            Assert.AreEqual("Off", GetCurrentStateName(stateGroupsRoot, "ToggleStates"));
+        });
+    }
+
+    [TestMethod]
     public void NormalStateUsesWinUIVisualStateSetters()
     {
         WpfTestHost.Run(() =>
@@ -431,6 +455,34 @@ public class ToggleSwitchApiTests
     }
 
     [TestMethod]
+    public void ToggledEventFiresWhenIsOnChanges()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch();
+            int eventCount = 0;
+            RoutedEventArgs? lastArgs = null;
+
+            toggleSwitch.Toggled += (sender, args) =>
+            {
+                Assert.AreSame(toggleSwitch, sender);
+                eventCount++;
+                lastArgs = args;
+            };
+
+            toggleSwitch.IsOn = true;
+
+            Assert.AreEqual(1, eventCount);
+            Assert.AreSame(toggleSwitch, lastArgs?.OriginalSource);
+
+            toggleSwitch.IsOn = false;
+
+            Assert.AreEqual(2, eventCount);
+            Assert.AreSame(toggleSwitch, lastArgs?.OriginalSource);
+        });
+    }
+
+    [TestMethod]
     public void DraggingDoesNotChangeContentState()
     {
         WpfTestHost.Run(() =>
@@ -780,6 +832,7 @@ public class ToggleSwitchApiTests
             var headerPresenter = FindNamedDescendant<ContentPresenterEx>(toggleSwitch, "HeaderContentPresenter");
             var offPresenter = FindNamedDescendant<ContentPresenterEx>(toggleSwitch, "OffContentPresenter");
             var onPresenter = FindNamedDescendant<ContentPresenterEx>(toggleSwitch, "OnContentPresenter");
+            var thumb = FindNamedDescendant<Thumb>(toggleSwitch, "SwitchThumb");
 
             Assert.AreEqual("Header text", headerPresenter.Content);
             Assert.AreSame(headerTemplate, headerPresenter.ContentTemplate);
@@ -792,6 +845,8 @@ public class ToggleSwitchApiTests
             Assert.AreEqual("On text", onPresenter.Content);
             Assert.AreSame(onContentTemplate, onPresenter.ContentTemplate);
             AssertBrushEquals(toggleSwitch.Foreground, onPresenter.Foreground);
+
+            Assert.IsNull(thumb.CacheMode);
 
             toggleSwitch.IsEnabled = false;
             host.UpdateLayout();
@@ -811,6 +866,14 @@ public class ToggleSwitchApiTests
 
             var root = new StackPanel();
             var toggleSwitch = new ModernWpf.Controls.ToggleSwitch();
+            var toggleSwitchWithHeader = new ModernWpf.Controls.ToggleSwitch
+            {
+                Header = "H"
+            };
+            var toggleSwitchWithWideHeader = new ModernWpf.Controls.ToggleSwitch
+            {
+                Header = new Rectangle { Height = 19, Width = 200 }
+            };
             var toggleSwitchWithWideOnContent = new ModernWpf.Controls.ToggleSwitch
             {
                 OnContent = new Rectangle { Height = 20, Width = 200 }
@@ -821,10 +884,12 @@ public class ToggleSwitchApiTests
             };
 
             root.Children.Add(toggleSwitch);
+            root.Children.Add(toggleSwitchWithHeader);
+            root.Children.Add(toggleSwitchWithWideHeader);
             root.Children.Add(toggleSwitchWithWideOnContent);
             root.Children.Add(toggleSwitchWithWideOffContent);
 
-            using var host = new TestWindowHost(root, width: 500, height: 220);
+            using var host = new TestWindowHost(root, width: 500, height: 320);
             host.UpdateLayout();
 
             Assert.AreEqual(154d, toggleSwitch.ActualWidth, 0.1);
@@ -833,6 +898,16 @@ public class ToggleSwitchApiTests
             var thumb = FindNamedDescendant<Thumb>(toggleSwitch, "SwitchThumb");
             Assert.AreEqual(72d, thumb.ActualWidth, 1.0);
             Assert.AreEqual(40d, thumb.ActualHeight, 0.1);
+
+            Assert.AreEqual(154d, toggleSwitchWithHeader.ActualWidth, 0.1);
+            Assert.AreEqual(63d, toggleSwitchWithHeader.ActualHeight, 1.0);
+
+            thumb = FindNamedDescendant<Thumb>(toggleSwitchWithHeader, "SwitchThumb");
+            Assert.AreEqual(72d, thumb.ActualWidth, 1.0);
+            Assert.AreEqual(40d, thumb.ActualHeight, 0.1);
+
+            Assert.AreEqual(200d, toggleSwitchWithWideHeader.ActualWidth, 0.1);
+            Assert.AreEqual(63d, toggleSwitchWithWideHeader.ActualHeight, 0.1);
 
             double expectedWideContentWidth = 200 + 40 + 12;
             Assert.AreEqual(expectedWideContentWidth, toggleSwitchWithWideOnContent.ActualWidth, 0.1);
@@ -850,9 +925,9 @@ public class ToggleSwitchApiTests
         });
     }
 
-    private static void RaiseDragDelta(Thumb thumb, double horizontalChange)
+    private static void RaiseDragDelta(Thumb thumb, double horizontalChange, double verticalChange = 0)
     {
-        thumb.RaiseEvent(new DragDeltaEventArgs(horizontalChange, 0)
+        thumb.RaiseEvent(new DragDeltaEventArgs(horizontalChange, verticalChange)
         {
             RoutedEvent = Thumb.DragDeltaEvent
         });
