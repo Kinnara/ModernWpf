@@ -494,54 +494,54 @@
 
                     <TextBlock Grid.Row="26" Text="MenuBar" Style="{StaticResource SideHeader}"/>
                     <Grid Grid.Row="26" Style="{StaticResource LeftColumn}">
-                        <MenuBar>
-                            <MenuBarItem Title="One">
-                                <MenuBarItem.Items>
+                        <controls:MenuBar>
+                            <controls:MenuBarItem Title="One">
+                                <controls:MenuBarItem.Items>
                                     <MenuFlyoutItem Text="A"/>
                                     <MenuFlyoutItem Text="B"/>
                                     <MenuFlyoutItem Text="C"/>
-                                </MenuBarItem.Items>
-                            </MenuBarItem>
-                            <MenuBarItem Title="Two">
-                                <MenuBarItem.Items>
+                                </controls:MenuBarItem.Items>
+                            </controls:MenuBarItem>
+                            <controls:MenuBarItem Title="Two">
+                                <controls:MenuBarItem.Items>
                                     <MenuFlyoutItem Text="1"/>
                                     <MenuFlyoutItem Text="2"/>
                                     <MenuFlyoutItem Text="3"/>
-                                </MenuBarItem.Items>
-                            </MenuBarItem>
-                            <MenuBarItem Title="Three">
-                                <MenuBarItem.Items>
+                                </controls:MenuBarItem.Items>
+                            </controls:MenuBarItem>
+                            <controls:MenuBarItem Title="Three">
+                                <controls:MenuBarItem.Items>
                                     <MenuFlyoutItem Text="i"/>
                                     <MenuFlyoutItem Text="ii"/>
                                     <MenuFlyoutItem Text="iii"/>
-                                </MenuBarItem.Items>
-                            </MenuBarItem>
-                        </MenuBar>
+                                </controls:MenuBarItem.Items>
+                            </controls:MenuBarItem>
+                        </controls:MenuBar>
                     </Grid>
                     <Grid Grid.Row="26" Style="{StaticResource RightColumn}">
-                        <MenuBar CornerRadius="{Binding ControlCornerRadius, Mode=OneWay}">
-                            <MenuBarItem Title="One">
-                                <MenuBarItem.Items>
+                        <controls:MenuBar>
+                            <controls:MenuBarItem Title="One" CornerRadius="{Binding ControlCornerRadius, Mode=OneWay}">
+                                <controls:MenuBarItem.Items>
                                     <MenuFlyoutItem Text="A"/>
                                     <MenuFlyoutItem Text="B"/>
                                     <MenuFlyoutItem Text="C"/>
-                                </MenuBarItem.Items>
-                            </MenuBarItem>
-                            <MenuBarItem Title="Two">
-                                <MenuBarItem.Items>
+                                </controls:MenuBarItem.Items>
+                            </controls:MenuBarItem>
+                            <controls:MenuBarItem Title="Two" CornerRadius="{Binding ControlCornerRadius, Mode=OneWay}">
+                                <controls:MenuBarItem.Items>
                                     <MenuFlyoutItem Text="1"/>
                                     <MenuFlyoutItem Text="2"/>
                                     <MenuFlyoutItem Text="3"/>
-                                </MenuBarItem.Items>
-                            </MenuBarItem>
-                            <MenuBarItem Title="Three">
-                                <MenuBarItem.Items>
+                                </controls:MenuBarItem.Items>
+                            </controls:MenuBarItem>
+                            <controls:MenuBarItem Title="Three" CornerRadius="{Binding ControlCornerRadius, Mode=OneWay}">
+                                <controls:MenuBarItem.Items>
                                     <MenuFlyoutItem Text="i"/>
                                     <MenuFlyoutItem Text="ii"/>
                                     <MenuFlyoutItem Text="iii"/>
-                                </MenuBarItem.Items>
-                            </MenuBarItem>
-                        </MenuBar>
+                                </controls:MenuBarItem.Items>
+                            </controls:MenuBarItem>
+                        </controls:MenuBar>
                     </Grid>
 
                     <TextBlock Grid.Row="31" Text="ProgressBar" Style="{StaticResource SideHeader}"/>

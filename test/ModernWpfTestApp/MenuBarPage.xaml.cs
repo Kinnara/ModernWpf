@@ -3,6 +3,7 @@
 
 using System.Windows;
 using System.Windows.Controls;
+using ModernWpf.Controls;
 
 namespace MUXControlsTestApp
 {
@@ -47,8 +48,8 @@ namespace MUXControlsTestApp
 
         private void AddMenuBarItem_Click(object sender, RoutedEventArgs e)
         {
-            var item = new MenuItem();
-            item.Header = "New Menu Bar Item";
+            var item = new MenuBarItem();
+            item.Title = "New Menu Bar Item";
             menuBar.Items.Add(item);
         }
 

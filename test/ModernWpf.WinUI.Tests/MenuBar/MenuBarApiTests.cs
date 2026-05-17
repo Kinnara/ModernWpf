@@ -1,7 +1,11 @@
 using System.Windows;
+using System.Windows.Automation;
+using System.Windows.Automation.Peers;
+using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using System.Windows.Markup;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ModernWpf.Automation.Peers;
 using ModernWpf.Controls;
 using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
@@ -22,20 +26,17 @@ public class MenuBarApiTests
             var menuBar = new MuxMenuBar();
             var menuBarItem = new MuxMenuBarItem();
 
+            Assert.IsNotInstanceOfType(menuBar, typeof(System.Windows.Controls.Menu));
+            Assert.IsNotInstanceOfType(menuBarItem, typeof(WpfMenuItem));
             Assert.AreEqual(0, menuBar.Items.Count);
-            Assert.AreEqual(new CornerRadius(), menuBar.CornerRadius);
             Assert.AreEqual(0, menuBarItem.Items.Count);
             Assert.AreEqual(string.Empty, menuBarItem.Title);
-            Assert.IsNull(menuBarItem.Header);
             Assert.AreEqual(new CornerRadius(), menuBarItem.CornerRadius);
 
-            menuBar.CornerRadius = new CornerRadius(4);
             menuBarItem.Title = "File";
             menuBarItem.CornerRadius = new CornerRadius(6);
 
-            Assert.AreEqual(new CornerRadius(4), menuBar.CornerRadius);
             Assert.AreEqual("File", menuBarItem.Title);
-            Assert.AreEqual("File", menuBarItem.Header);
             Assert.AreEqual(new CornerRadius(6), menuBarItem.CornerRadius);
 
             var flyout = new MenuBarItemFlyout();
@@ -59,12 +60,17 @@ public class MenuBarApiTests
             Assert.AreEqual(2, menuBar.Items.Count);
             Assert.AreSame(fileItem, menuBar.Items[0]);
             Assert.AreSame(formatItem, menuBar.Items[1]);
+            Assert.AreEqual(1, AutomationProperties.GetPositionInSet(fileItem));
+            Assert.AreEqual(2, AutomationProperties.GetSizeOfSet(fileItem));
+            Assert.AreEqual(2, AutomationProperties.GetPositionInSet(formatItem));
+            Assert.AreEqual(2, AutomationProperties.GetSizeOfSet(formatItem));
 
             var newItem = new MuxMenuBarItem { Title = "New Menu Bar Item" };
             menuBar.Items.Add(newItem);
 
             Assert.AreEqual(3, menuBar.Items.Count);
             Assert.AreSame(newItem, menuBar.Items[2]);
+            Assert.AreEqual(3, AutomationProperties.GetSizeOfSet(newItem));
 
             menuBar.Items.Remove(newItem);
             Assert.AreEqual(2, menuBar.Items.Count);
@@ -77,10 +83,39 @@ public class MenuBarApiTests
     }
 
     [TestMethod]
+    public void MenuBarTemplateOwnsItemsControl()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var menuBar = new MuxMenuBar();
+            var fileItem = new MuxMenuBarItem { Title = "File" };
+            menuBar.Items.Add(fileItem);
+
+            using var host = new TestWindowHost(menuBar, width: 320, height: 120);
+
+            var layoutRoot = GetTemplateChild<Grid>(menuBar, "LayoutRoot");
+            var contentRoot = GetTemplateChild<ItemsControl>(menuBar, "ContentRoot");
+
+            Assert.IsNotNull(layoutRoot);
+            Assert.IsNotNull(contentRoot);
+            Assert.AreSame(menuBar.Items, contentRoot.ItemsSource);
+
+            var button = GetTemplateChild<Button>(fileItem, "ContentButton");
+            Assert.IsNotNull(button);
+            Assert.AreEqual("File", button.Content);
+            Assert.AreSame(layoutRoot, fileItem.PassThroughElement);
+        });
+    }
+
+    [TestMethod]
     public void AddRemoveFlyoutItemTest()
     {
         WpfTestHost.Run(() =>
         {
+            TestApplication.EnsureInitialized();
+
             var fileItem = new MuxMenuBarItem { Title = "File" };
             var newItem = new WpfMenuItem { Header = "New" };
             var openItem = new WpfMenuItem { Header = "Open" };
@@ -88,22 +123,26 @@ public class MenuBarApiTests
             fileItem.Items.Add(newItem);
             fileItem.Items.Add(openItem);
 
-            Assert.IsTrue(fileItem.HasItems);
+            using var host = new TestWindowHost(fileItem, width: 320, height: 120);
+
             Assert.AreEqual(2, fileItem.Items.Count);
-            Assert.AreSame(newItem, fileItem.Items[0]);
+            Assert.AreEqual(2, fileItem.Flyout.Items.Count);
+            Assert.AreSame(newItem, fileItem.Flyout.Items[0]);
 
             var addedItem = new WpfMenuItem { Header = "New Flyout Item" };
             fileItem.Items.Add(addedItem);
 
             Assert.AreEqual(3, fileItem.Items.Count);
-            Assert.AreSame(addedItem, fileItem.Items[2]);
+            Assert.AreEqual(3, fileItem.Flyout.Items.Count);
+            Assert.AreSame(addedItem, fileItem.Flyout.Items[2]);
 
             fileItem.Items.Remove(addedItem);
             Assert.AreEqual(2, fileItem.Items.Count);
-            Assert.IsFalse(fileItem.Items.Contains(addedItem));
+            Assert.AreEqual(2, fileItem.Flyout.Items.Count);
 
             fileItem.Items.Clear();
-            Assert.IsFalse(fileItem.HasItems);
+            Assert.AreEqual(0, fileItem.Items.Count);
+            Assert.AreEqual(0, fileItem.Flyout.Items.Count);
         });
     }
 
@@ -112,15 +151,69 @@ public class MenuBarApiTests
     {
         WpfTestHost.Run(() =>
         {
-            var menuBarItem = new MuxMenuBarItem { Title = "One child" };
+            TestApplication.EnsureInitialized();
 
-            Assert.IsFalse(menuBarItem.HasItems);
+            var menuBarItem = new MuxMenuBarItem { Title = "Empty" };
 
-            menuBarItem.Items.Add(new WpfMenuItem { Header = "Popup" });
-            Assert.IsTrue(menuBarItem.HasItems);
+            using var host = new TestWindowHost(menuBarItem, width: 320, height: 120);
 
-            menuBarItem.Items.Clear();
-            Assert.IsFalse(menuBarItem.HasItems);
+            menuBarItem.ShowMenuFlyout();
+            WpfTestHost.DoEvents();
+
+            Assert.IsFalse(menuBarItem.IsFlyoutOpen);
+            Assert.IsFalse(menuBarItem.Flyout.IsOpen);
+        });
+    }
+
+    [TestMethod]
+    public void ShowAndCloseMenuFlyoutUpdatesSourceState()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var menuBar = new MuxMenuBar();
+            var fileItem = new MuxMenuBarItem { Title = "File" };
+            fileItem.Items.Add(new WpfMenuItem { Header = "Open" });
+            menuBar.Items.Add(fileItem);
+
+            using var host = new TestWindowHost(menuBar, width: 320, height: 120);
+
+            fileItem.ShowMenuFlyout();
+            WpfTestHost.DoEvents();
+
+            Assert.IsTrue(fileItem.IsFlyoutOpen);
+            Assert.IsTrue(menuBar.IsFlyoutOpen);
+            Assert.AreEqual(ExpandCollapseState.Expanded, ((IExpandCollapseProvider)new MenuBarItemAutomationPeer(fileItem)).ExpandCollapseState);
+
+            fileItem.CloseMenuFlyout();
+            WpfTestHost.DoEvents();
+
+            Assert.IsFalse(fileItem.IsFlyoutOpen);
+            Assert.IsFalse(menuBar.IsFlyoutOpen);
+            Assert.AreEqual(ExpandCollapseState.Collapsed, ((IExpandCollapseProvider)new MenuBarItemAutomationPeer(fileItem)).ExpandCollapseState);
+        });
+    }
+
+    [TestMethod]
+    public void AutomationPeersMatchWinUISourceShape()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var menuBar = new MuxMenuBar();
+            var menuBarPeer = new MenuBarAutomationPeer(menuBar);
+
+            Assert.AreEqual(AutomationControlType.MenuBar, menuBarPeer.GetAutomationControlType());
+            Assert.AreEqual("MenuBar", menuBarPeer.GetClassName());
+
+            var item = new MuxMenuBarItem { Title = "File" };
+            var itemPeer = new MenuBarItemAutomationPeer(item);
+
+            Assert.AreEqual(AutomationControlType.MenuItem, itemPeer.GetAutomationControlType());
+            Assert.AreEqual("MenuBarItem", itemPeer.GetClassName());
+            Assert.AreEqual("File", itemPeer.GetName());
+            Assert.IsInstanceOfType(itemPeer.GetPattern(PatternInterface.Invoke), typeof(IInvokeProvider));
+            Assert.IsInstanceOfType(itemPeer.GetPattern(PatternInterface.ExpandCollapse), typeof(IExpandCollapseProvider));
         });
     }
 
@@ -140,10 +233,9 @@ public class MenuBarApiTests
 
             using var host = new TestWindowHost(menuBar, width: 320, height: 120);
 
-            Assert.AreEqual(24, menuBar.ActualHeight, 0.5);
-            Assert.IsNotNull(menuBar.Style);
-            Assert.IsNotNull(menuBarItem.Style);
-            Assert.AreEqual("Size", menuBarItem.Header);
+            Assert.AreEqual(40, menuBar.ActualHeight, 0.5);
+            Assert.IsNotNull(GetTemplateChild<ItemsControl>(menuBar, "ContentRoot"));
+            Assert.IsNotNull(GetTemplateChild<Button>(menuBarItem, "ContentButton"));
             Assert.IsTrue(menuBarItem.ActualHeight <= menuBar.ActualHeight);
         });
     }
@@ -164,11 +256,18 @@ public class MenuBarApiTests
 
             Assert.AreEqual(1, menuBar.Items.Count);
 
-            var fileItem = (MuxMenuBarItem)menuBar.Items[0];
+            var fileItem = menuBar.Items[0];
             Assert.AreEqual("File", fileItem.Title);
-            Assert.AreEqual("File", fileItem.Header);
             Assert.AreEqual(1, fileItem.Items.Count);
             Assert.AreEqual("Open", ((WpfMenuItem)fileItem.Items[0]).Header);
         });
+    }
+
+    private static T GetTemplateChild<T>(Control control, string name)
+        where T : DependencyObject
+    {
+        control.ApplyTemplate();
+        control.UpdateLayout();
+        return (T)control.Template.FindName(name, control);
     }
 }

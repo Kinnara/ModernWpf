@@ -40,6 +40,7 @@ newer deltas, but the repo-wide sync matrix is still anchored on WinUI 2.8.7.
 | `dev\SplitView\SplitView_themeresources.xaml` | 4 | `ModernWpf.Controls\SplitView\SplitView.xaml` | Converted | Closed compact, open inline left, and open compact overlay left direct setter blocks now use `VisualStateEx.Setters`; transition storyboards remain for animated pane movement. |
 | `dev\TeachingTip\TeachingTip.xaml` | 29 | `ModernWpf.Controls\TeachingTip\TeachingTip.xaml` | Converted | Light-dismiss background, button/content/close-button-location/icon/hero-placement, tail-placement, title, and subtitle states now use `VisualStateEx.Setters` driven by `TeachingTip`; WPF popup placement, sizing, and animations remain code-driven. |
 | `dev\CommonStyles\ToggleSwitch_themeresources.xaml` | 1 | `ModernWpf.Controls\ToggleSwitch\ToggleSwitch.xaml` | Converted | WinUI's pressed knob alignment setters are represented in ModernWpf's active `Dragging` state, because this WPF port routes thumb interaction through that state instead of `CommonStates.Pressed`. |
+| `dev\MenuBar\MenuBarItem.xaml` | 3 | `ModernWpf.Controls\MenuBar\MenuBar.xaml` | Converted | MenuBarItem common/selected state setters now use `VisualStateEx.Setters` in the source-backed MenuBar template; the old WPF `Menu` / `MenuItem` mapping has been deleted. |
 | `dev\TwoPaneView\TwoPaneView.xaml` | 5 | `ModernWpf.Controls\TwoPaneView\TwoPaneView.xaml` | Converted | Mode-state pane row/column and single-pane visibility setters now live in `VisualStateEx.Setters`; code still computes mode and pane lengths. |
 
 ## Relevant Mapped WinUI 2.8.7 Sources
@@ -86,7 +87,6 @@ newer deltas, but the repo-wide sync matrix is still anchored on WinUI 2.8.7.
 | `dev\CommonStyles\MediaTransportControls_themeresources.xaml` | 11 | Media transport controls are not carried as ModernWpf controls. |
 | `dev\CommonStyles\TimePicker_themeresources.xaml` | 1 | TimePicker is not carried as a ModernWpf control. |
 | `dev\Materials\Reveal\*.xaml` and `dev\Materials\Reveal\TestUI\*.xaml` | 331 | WinUI compositor/reveal material system is excluded from the WPF port. |
-| `dev\MenuBar\MenuBarItem.xaml` | 3 | ModernWpf maps menu behavior through WPF Menu/MenuItem/MenuFlyout surfaces, not a WinUI MenuBar control. |
 
 ## Runtime Gaps Blocking Full Conversion
 

@@ -112,16 +112,16 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateMenuBarSample()
         {
-            var panel = CreateSamplePanel("MenuBar maps to WPF Menu in this port.");
+            var panel = CreateSamplePanel("MenuBar presents top-level menu items with flyout commands.");
             var output = CreateOutput("No menu item selected.");
-            var menu = new Menu();
-            var file = new MenuItem { Header = "_File" };
+            var menu = new Mux.MenuBar();
+            var file = new Mux.MenuBarItem { Title = "_File" };
             file.Items.Add(CreateMenuItem("_New", output));
             file.Items.Add(CreateMenuItem("_Open", output));
             file.Items.Add(new Separator());
             file.Items.Add(CreateMenuItem("E_xit", output));
 
-            var edit = new MenuItem { Header = "_Edit" };
+            var edit = new Mux.MenuBarItem { Title = "_Edit" };
             edit.Items.Add(CreateMenuItem("_Copy", output));
             edit.Items.Add(CreateMenuItem("_Paste", output));
 

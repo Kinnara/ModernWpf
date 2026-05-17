@@ -41,6 +41,7 @@ public class SyncMatrixTests
         AssertControlStatus(matrix, "LayoutPanel", "Source-backed WPF port");
         AssertControlStatus(matrix, "ProgressBar resources", "Source-backed WPF port");
         AssertControlStatus(matrix, "IconSource / ImageIcon", "Source-backed WPF port");
+        AssertControlStatus(matrix, "MenuBar", "Source-backed WPF port");
     }
 
     public TestContext? TestContext { get; set; }

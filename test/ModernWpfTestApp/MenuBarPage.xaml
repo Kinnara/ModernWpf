@@ -30,11 +30,11 @@
             <TextBlock
                 Text="Sample controls"
                 Style="{DynamicResource StandardGroupHeader}" />
-            <Menu x:Name="menuBar">
-                <MenuItem
+            <muxc:MenuBar x:Name="menuBar">
+                <muxc:MenuBarItem
                     x:Name="FileItem"
                     AutomationProperties.Name="FileItem"
-                    Header="File">
+                    Title="File">
                     <MenuItem
                         x:Name="NewItem"
                         AutomationProperties.Name="NewItem"
@@ -48,12 +48,12 @@
                     <MenuItem Header="Print..." />
                     <Separator />
                     <MenuItem Header="Exit" />
-                </MenuItem>
+                </muxc:MenuBarItem>
 
-                <MenuItem
+                <muxc:MenuBarItem
                     x:Name="EditItem"
                     AutomationProperties.Name="EditItem"
-                    Header="Edit">
+                    Title="Edit">
                     <MenuItem
                         x:Name="UndoItem"
                         AutomationProperties.Name="UndoItem"
@@ -72,23 +72,23 @@
                         <MenuItem Header="Item 2" />
                         <MenuItem Header="Item 3" />
                     </MenuItem>
-                </MenuItem>
+                </muxc:MenuBarItem>
 
-                <MenuItem Header="Format">
+                <muxc:MenuBarItem Title="Format">
                     <MenuItem Header="Word Wrap" />
                     <MenuItem Header="Font..." />
-                </MenuItem>
-            </Menu>
+                </muxc:MenuBarItem>
+            </muxc:MenuBar>
 
-            <Menu
+            <muxc:MenuBar
                 x:Name="SizedMenuBar"
                 AutomationProperties.Name="SizedMenuBar"
                 Height="24">
-                <MenuItem
+                <muxc:MenuBarItem
                     x:Name="SizedMenuBarItem"
                     AutomationProperties.Name="SizedMenuBarItem"
-                    Header="Size" />
-            </Menu>
+                    Title="Size" />
+            </muxc:MenuBar>
         </StackPanel>
         <TextBlock
             Grid.Row="1"

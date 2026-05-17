@@ -71,6 +71,15 @@ namespace ModernWpf.Controls
             }
         }
 
+        internal MenuFlyoutPresenter Presenter
+        {
+            get
+            {
+                EnsurePresenter();
+                return m_presenter;
+            }
+        }
+
         internal override void HideCore()
         {
             if (m_presenter != null && m_presenter.IsOpen)
