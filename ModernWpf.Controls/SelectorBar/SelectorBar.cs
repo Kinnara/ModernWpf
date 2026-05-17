@@ -7,20 +7,22 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Markup;
 using ModernWpf.Automation.Peers;
+using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
 {
     [ContentProperty(nameof(Items))]
-    [TemplatePart(Name = ItemsPanelName, Type = typeof(Panel))]
+    [TemplatePart(Name = ItemsViewName, Type = typeof(ItemsControl))]
     public class SelectorBar : Control
     {
-        private const string ItemsPanelName = "PART_ItemsPanel";
+        private const string ItemsViewName = "PART_ItemsView";
 
         static SelectorBar()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(SelectorBar), new FrameworkPropertyMetadata(typeof(SelectorBar)));
             KeyboardNavigation.TabNavigationProperty.OverrideMetadata(typeof(SelectorBar), new FrameworkPropertyMetadata(KeyboardNavigationMode.Once));
             FocusableProperty.OverrideMetadata(typeof(SelectorBar), new FrameworkPropertyMetadata(false));
+            IsTabStopProperty.OverrideMetadata(typeof(SelectorBar), new FrameworkPropertyMetadata(false));
         }
 
         public SelectorBar()
@@ -28,6 +30,8 @@ namespace ModernWpf.Controls
             var items = new ObservableCollection<SelectorBarItem>();
             items.CollectionChanged += OnItemsCollectionChanged;
             SetValue(ItemsPropertyKey, items);
+
+            Loaded += OnLoaded;
         }
 
         private static readonly DependencyPropertyKey ItemsPropertyKey =
@@ -40,6 +44,15 @@ namespace ModernWpf.Controls
         public static readonly DependencyProperty ItemsProperty = ItemsPropertyKey.DependencyProperty;
 
         public ObservableCollection<SelectorBarItem> Items => (ObservableCollection<SelectorBarItem>)GetValue(ItemsProperty);
+
+        public static readonly DependencyProperty CornerRadiusProperty =
+            ControlHelper.CornerRadiusProperty.AddOwner(typeof(SelectorBar));
+
+        public CornerRadius CornerRadius
+        {
+            get => (CornerRadius)GetValue(CornerRadiusProperty);
+            set => SetValue(CornerRadiusProperty, value);
+        }
 
         public static readonly DependencyProperty SelectedItemProperty =
             DependencyProperty.Register(
@@ -60,8 +73,17 @@ namespace ModernWpf.Controls
         {
             base.OnApplyTemplate();
 
-            _itemsPanel = GetTemplateChild(ItemsPanelName) as Panel;
-            RebuildItemsPanel();
+            _itemsView = GetTemplateChild(ItemsViewName) as ItemsControl;
+            if (_itemsView != null && _itemsView.ItemsSource == null)
+            {
+                _itemsView.ItemsSource = Items;
+            }
+
+            if (SelectedItem != null)
+            {
+                ValidateSelectedItem(SelectedItem);
+                SyncAllSelectionStates();
+            }
         }
 
         internal bool SelectItem(SelectorBarItem item)
@@ -114,17 +136,42 @@ namespace ModernWpf.Controls
             }
 
             var nextIndex = index + delta;
-            if (delta == 0 || nextIndex < 0 || nextIndex >= Items.Count)
+            while (delta != 0 && nextIndex >= 0 && nextIndex < Items.Count)
             {
-                return false;
+                var nextItem = Items[nextIndex];
+                if (IsFocusableItem(nextItem) && nextItem.Focus())
+                {
+                    return true;
+                }
+
+                nextIndex += delta;
             }
 
-            return Items[nextIndex].Focus();
+            return false;
         }
 
         protected override AutomationPeer OnCreateAutomationPeer()
         {
             return new SelectorBarAutomationPeer(this);
+        }
+
+        protected override void OnGotKeyboardFocus(KeyboardFocusChangedEventArgs e)
+        {
+            base.OnGotKeyboardFocus(e);
+
+            if (SelectedItem == null || !IsFocusableItem(SelectedItem))
+            {
+                if (e.OriginalSource is SelectorBarItem focusedItem &&
+                    Items.Contains(focusedItem) &&
+                    IsFocusableItem(focusedItem))
+                {
+                    SelectedItem = focusedItem;
+                }
+                else
+                {
+                    SelectFirstFocusableItem();
+                }
+            }
         }
 
         private static void OnSelectedItemPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -171,31 +218,39 @@ namespace ModernWpf.Controls
             }
 
             SyncAllSelectionStates();
-            RebuildItemsPanel();
         }
 
-        private void RebuildItemsPanel()
+        private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (_itemsPanel == null)
+            if (SelectedItem == null)
+            {
+                UpdateSelectedItemFromItems();
+            }
+        }
+
+        private void SelectFirstFocusableItem()
+        {
+            if (SelectedItem != null)
             {
                 return;
             }
 
-            _itemsPanel.Children.Clear();
-
             foreach (var item in Items)
             {
-                RemoveFromCurrentParent(item);
-                item.Owner = this;
-                _itemsPanel.Children.Add(item);
+                if (IsFocusableItem(item))
+                {
+                    SelectedItem = item;
+                    break;
+                }
             }
         }
 
-        private static void RemoveFromCurrentParent(SelectorBarItem item)
+        private void UpdateSelectedItemFromItems()
         {
-            if (item.Parent is Panel parentPanel)
+            var selectedItem = Items.FirstOrDefault(item => item.IsSelected);
+            if (selectedItem != null)
             {
-                parentPanel.Children.Remove(item);
+                SelectedItem = selectedItem;
             }
         }
 
@@ -205,6 +260,14 @@ namespace ModernWpf.Controls
             {
                 throw new System.ArgumentException("SelectedItem must be an element of Items.", nameof(SelectedItem));
             }
+        }
+
+        private static bool IsFocusableItem(SelectorBarItem item)
+        {
+            return item != null &&
+                item.IsEnabled &&
+                item.Visibility == Visibility.Visible &&
+                item.Focusable;
         }
 
         private void UpdateSelectionStates(SelectorBarItem oldItem, SelectorBarItem newItem)
@@ -245,7 +308,7 @@ namespace ModernWpf.Controls
             }
         }
 
-        private Panel _itemsPanel;
+        private ItemsControl _itemsView;
         private bool _updatingSelection;
     }
 }

@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
@@ -67,24 +68,29 @@ public class SelectorBarApiTests
 
             using var host = new TestWindowHost(item, width: 240, height: 80);
 
-            var button = VisualTreeTestHelper
+            var root = GetNamedDescendant<GridEx>(item, "PART_ContainerRoot");
+            var iconPresenter = GetNamedDescendant<ContentPresenterEx>(item, "PART_IconVisual");
+            var textVisual = GetNamedDescendant<TextBlock>(item, "PART_TextVisual");
+            var selectionVisual = GetNamedDescendant<Rectangle>(item, "PART_SelectionVisual");
+            var commonVisual = GetNamedDescendant<Rectangle>(item, "PART_CommonVisual");
+            var contentStack = VisualTreeTestHelper
                 .EnumerateDescendants(item)
-                .OfType<Button>()
+                .OfType<StackPanelEx>()
                 .FirstOrDefault()
-                ?? throw new AssertFailedException("Expected SelectorBarItem template to contain an item button.");
-            var presenters = VisualTreeTestHelper
-                .EnumerateDescendants(item)
-                .OfType<ContentPresenterEx>()
-                .ToList();
-            var iconPresenter = presenters.FirstOrDefault(candidate => ReferenceEquals(candidate.Content, icon))
-                ?? throw new AssertFailedException("Expected SelectorBarItem template to use ContentPresenterEx for the icon slot.");
-            var childPresenter = presenters.FirstOrDefault(candidate => ReferenceEquals(candidate.Content, child))
-                ?? throw new AssertFailedException("Expected SelectorBarItem template to use ContentPresenterEx for the child slot.");
+                ?? throw new AssertFailedException("Expected SelectorBarItem template to use StackPanelEx for source spacing.");
 
-            Assert.AreEqual(BackgroundSizing.OuterBorderEdge, ControlHelper.GetBackgroundSizing(button));
-            Assert.AreEqual(new CornerRadius(5), ControlHelper.GetCornerRadius(button));
+            Assert.IsFalse(
+                VisualTreeTestHelper.EnumerateDescendants(item).OfType<Button>().Any(),
+                "SelectorBarItem should not keep the old WPF button wrapper.");
+            Assert.AreEqual(BackgroundSizing.OuterBorderEdge, root.BackgroundSizing);
+            Assert.AreEqual(new CornerRadius(5), root.CornerRadius);
+            Assert.AreSame(icon, iconPresenter.Content);
+            Assert.AreEqual("Deleted", textVisual.Text);
             Assert.AreSame(foreground, iconPresenter.Foreground);
-            Assert.AreSame(foreground, childPresenter.Foreground);
+            Assert.AreSame(foreground, textVisual.Foreground);
+            Assert.AreEqual(8.0, contentStack.Spacing);
+            Assert.AreEqual(0.0, selectionVisual.Opacity);
+            Assert.AreEqual(1.0, commonVisual.StrokeThickness);
         });
     }
 
@@ -155,7 +161,7 @@ public class SelectorBarApiTests
 
             using var host = new TestWindowHost(selectorBar, width: 400, height: 120);
 
-            RaiseItemButtonClick(second);
+            RaiseItemClick(second);
 
             Assert.AreSame(second, selectorBar.SelectedItem);
             Assert.IsFalse(first.IsSelected);
@@ -194,6 +200,8 @@ public class SelectorBarApiTests
 
             Assert.AreSame(second, selectorBar.SelectedItem);
             Assert.IsTrue(selectionItemProvider.IsSelected);
+            Assert.AreEqual("Second", itemPeer.GetName());
+            Assert.AreEqual("SelectorBarItem", itemPeer.GetLocalizedControlType());
 
             var selectorPeer = FrameworkElementAutomationPeer.CreatePeerForElement(selectorBar);
             var selectionProvider = (ISelectionProvider)selectorPeer.GetPattern(PatternInterface.Selection);
@@ -204,19 +212,25 @@ public class SelectorBarApiTests
         });
     }
 
-    private static void RaiseItemButtonClick(SelectorBarItem item)
+    private static void RaiseItemClick(SelectorBarItem item)
     {
-        var button = VisualTreeTestHelper
-            .EnumerateDescendants(item)
-            .OfType<Button>()
-            .FirstOrDefault();
-
-        if (button == null)
+        item.RaiseEvent(new MouseButtonEventArgs(Mouse.PrimaryDevice, 0, MouseButton.Left)
         {
-            Assert.Fail("Could not find selector item button.");
-            throw new AssertFailedException();
-        }
+            RoutedEvent = UIElement.MouseLeftButtonDownEvent
+        });
+        item.RaiseEvent(new MouseButtonEventArgs(Mouse.PrimaryDevice, 0, MouseButton.Left)
+        {
+            RoutedEvent = UIElement.MouseLeftButtonUpEvent
+        });
+    }
 
-        button.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+    private static T GetNamedDescendant<T>(DependencyObject root, string name)
+        where T : FrameworkElement
+    {
+        return VisualTreeTestHelper
+            .EnumerateDescendants(root)
+            .OfType<T>()
+            .FirstOrDefault(candidate => candidate.Name == name)
+            ?? throw new AssertFailedException($"Expected to find template part {name}.");
     }
 }

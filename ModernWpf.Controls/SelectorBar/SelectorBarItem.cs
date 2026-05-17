@@ -2,19 +2,23 @@ using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using ModernWpf.Automation.Peers;
 using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
 {
-    [TemplatePart(Name = ButtonName, Type = typeof(Button))]
-    public class SelectorBarItem : ContentControl
+    [TemplatePart(Name = IconVisualName, Type = typeof(ContentPresenterEx))]
+    [TemplatePart(Name = TextVisualName, Type = typeof(TextBlock))]
+    public class SelectorBarItem : Control
     {
-        private const string ButtonName = "PART_Button";
+        private const string IconVisualName = "PART_IconVisual";
+        private const string TextVisualName = "PART_TextVisual";
 
         static SelectorBarItem()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(SelectorBarItem), new FrameworkPropertyMetadata(typeof(SelectorBarItem)));
+            IsEnabledProperty.OverrideMetadata(typeof(SelectorBarItem), new FrameworkPropertyMetadata(OnIsEnabledChanged));
         }
 
         #region BackgroundSizing
@@ -41,6 +45,32 @@ namespace ModernWpf.Controls
         {
             get => (CornerRadius)GetValue(CornerRadiusProperty);
             set => SetValue(CornerRadiusProperty, value);
+        }
+
+        #endregion
+
+        #region FocusVisualMargin
+
+        public static readonly DependencyProperty FocusVisualMarginProperty =
+            FocusVisualHelper.FocusVisualMarginProperty.AddOwner(typeof(SelectorBarItem));
+
+        public Thickness FocusVisualMargin
+        {
+            get => (Thickness)GetValue(FocusVisualMarginProperty);
+            set => SetValue(FocusVisualMarginProperty, value);
+        }
+
+        #endregion
+
+        #region UseSystemFocusVisuals
+
+        public static readonly DependencyProperty UseSystemFocusVisualsProperty =
+            FocusVisualHelper.UseSystemFocusVisualsProperty.AddOwner(typeof(SelectorBarItem));
+
+        public bool UseSystemFocusVisuals
+        {
+            get => (bool)GetValue(UseSystemFocusVisualsProperty);
+            set => SetValue(UseSystemFocusVisualsProperty, value);
         }
 
         #endregion
@@ -99,20 +129,13 @@ namespace ModernWpf.Controls
 
         public override void OnApplyTemplate()
         {
-            if (_button != null)
-            {
-                _button.Click -= OnButtonClick;
-            }
-
             base.OnApplyTemplate();
 
-            _button = GetTemplateChild(ButtonName) as Button;
-            if (_button != null)
-            {
-                _button.Click += OnButtonClick;
-            }
+            _iconVisual = GetTemplateChild(IconVisualName) as ContentPresenterEx;
+            _textVisual = GetTemplateChild(TextVisualName) as TextBlock;
 
-            UpdateVisualState();
+            UpdatePartsVisibility(true, true);
+            UpdateVisualState(false);
         }
 
         internal SelectorBar Owner { get; set; }
@@ -125,6 +148,78 @@ namespace ModernWpf.Controls
         protected override AutomationPeer OnCreateAutomationPeer()
         {
             return new SelectorBarItemAutomationPeer(this);
+        }
+
+        protected override void OnGotKeyboardFocus(KeyboardFocusChangedEventArgs e)
+        {
+            base.OnGotKeyboardFocus(e);
+            UpdateVisualState();
+        }
+
+        protected override void OnLostKeyboardFocus(KeyboardFocusChangedEventArgs e)
+        {
+            base.OnLostKeyboardFocus(e);
+            UpdateVisualState();
+        }
+
+        protected override void OnLostMouseCapture(MouseEventArgs e)
+        {
+            base.OnLostMouseCapture(e);
+
+            if (_isPressed)
+            {
+                _isPressed = false;
+                UpdateVisualState();
+            }
+        }
+
+        protected override void OnMouseEnter(MouseEventArgs e)
+        {
+            base.OnMouseEnter(e);
+            UpdateVisualState();
+        }
+
+        protected override void OnMouseLeave(MouseEventArgs e)
+        {
+            base.OnMouseLeave(e);
+            UpdateVisualState();
+        }
+
+        protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
+        {
+            base.OnMouseLeftButtonDown(e);
+
+            if (!e.Handled && IsEnabled)
+            {
+                Focus();
+                _isPressed = true;
+                CaptureMouse();
+                UpdateVisualState();
+                e.Handled = true;
+            }
+        }
+
+        protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
+        {
+            base.OnMouseLeftButtonUp(e);
+
+            if (_isPressed)
+            {
+                var shouldSelect = IsMouseOver || IsMouseCaptured;
+                _isPressed = false;
+                if (IsMouseCaptured)
+                {
+                    ReleaseMouseCapture();
+                }
+
+                if (shouldSelect)
+                {
+                    Select();
+                }
+
+                UpdateVisualState();
+                e.Handled = true;
+            }
         }
 
         protected override void OnPreviewKeyDown(KeyEventArgs e)
@@ -156,24 +251,77 @@ namespace ModernWpf.Controls
             item.UpdateVisualState();
         }
 
+        private static void OnIsEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var item = (SelectorBarItem)d;
+            if (!item.IsEnabled)
+            {
+                item._isPressed = false;
+                if (item.IsMouseCaptured)
+                {
+                    item.ReleaseMouseCapture();
+                }
+            }
+
+            item.UpdateVisualState();
+        }
+
         private static void OnVisualPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((SelectorBarItem)d).UpdateVisualState();
-        }
-
-        private void OnButtonClick(object sender, RoutedEventArgs e)
-        {
-            Select();
-        }
-
-        private void UpdateVisualState()
-        {
-            if (_button != null)
+            var item = (SelectorBarItem)d;
+            if (e.Property == IconProperty)
             {
-                _button.FontWeight = IsSelected ? FontWeights.SemiBold : FontWeights.Normal;
+                item.UpdatePartsVisibility(true, false);
+            }
+            else if (e.Property == TextProperty)
+            {
+                item.UpdatePartsVisibility(false, true);
             }
         }
 
-        private Button _button;
+        private void UpdatePartsVisibility(bool isForIcon, bool isForText)
+        {
+            UIElement iconParent = null;
+            UIElement textParent = null;
+            var hasIcon = false;
+            var hasText = false;
+
+            if (_iconVisual != null)
+            {
+                iconParent = VisualTreeHelper.GetParent(_iconVisual) as UIElement;
+                hasIcon = Icon != null;
+                if (isForIcon)
+                {
+                    _iconVisual.Visibility = hasIcon ? Visibility.Visible : Visibility.Collapsed;
+                }
+            }
+
+            if (_textVisual != null)
+            {
+                textParent = VisualTreeHelper.GetParent(_textVisual) as UIElement;
+                hasText = !string.IsNullOrEmpty(Text);
+                if (isForText)
+                {
+                    _textVisual.Visibility = hasText ? Visibility.Visible : Visibility.Collapsed;
+                }
+            }
+
+            if (iconParent != null && ReferenceEquals(iconParent, textParent))
+            {
+                iconParent.Visibility = hasIcon || hasText ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+
+        private void UpdateVisualState(bool useTransitions = true)
+        {
+            var interactionState = _isPressed ? "Pressed" : IsMouseOver ? "PointerOver" : "Normal";
+            var selectionState = IsSelected ? "Selected" : "Unselected";
+            VisualStateManager.GoToState(this, selectionState + interactionState, useTransitions);
+            VisualStateManager.GoToState(this, IsEnabled ? "Enabled" : "Disabled", useTransitions);
+        }
+
+        private ContentPresenterEx _iconVisual;
+        private TextBlock _textVisual;
+        private bool _isPressed;
     }
 }
