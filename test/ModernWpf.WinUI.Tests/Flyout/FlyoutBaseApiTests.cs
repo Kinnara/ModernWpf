@@ -120,6 +120,60 @@ public class FlyoutBaseApiTests
         });
     }
 
+    [TestMethod]
+    public void OpeningSecondFlyoutClosesFirstLikeWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var firstTarget = new Button { Content = "First", Width = 120, Height = 36 };
+            var secondTarget = new Button { Content = "Second", Width = 120, Height = 36 };
+            var root = new StackPanel
+            {
+                Children =
+                {
+                    firstTarget,
+                    secondTarget
+                }
+            };
+            var firstFlyout = new Flyout
+            {
+                Content = new TextBlock { Text = "First flyout" }
+            };
+            var secondFlyout = new Flyout
+            {
+                Content = new TextBlock { Text = "Second flyout" }
+            };
+            var events = new List<string>();
+
+            firstFlyout.Opened += (_, _) => events.Add("FirstOpened");
+            firstFlyout.Closed += (_, _) => events.Add("FirstClosed");
+            secondFlyout.Opened += (_, _) => events.Add("SecondOpened");
+
+            using var host = new TestWindowHost(root, width: 320, height: 220);
+            host.UpdateLayout();
+
+            firstFlyout.ShowAt(firstTarget);
+            WpfTestHost.DoEvents();
+
+            Assert.IsTrue(firstFlyout.IsOpen);
+            Assert.AreSame(firstTarget, firstFlyout.Target);
+
+            secondFlyout.ShowAt(secondTarget);
+            WpfTestHost.DoEvents();
+
+            Assert.IsFalse(firstFlyout.IsOpen);
+            Assert.IsNull(firstFlyout.Target);
+            Assert.IsTrue(secondFlyout.IsOpen);
+            Assert.AreSame(secondTarget, secondFlyout.Target);
+            AssertEvents(events, "FirstOpened", "FirstClosed", "SecondOpened");
+
+            secondFlyout.Hide();
+            WpfTestHost.DoEvents();
+        });
+    }
+
     private static void AssertEvents(List<string> actual, params string[] expected)
     {
         Assert.AreEqual(string.Join("|", expected), string.Join("|", actual));

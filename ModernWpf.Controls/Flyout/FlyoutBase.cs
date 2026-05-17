@@ -240,6 +240,11 @@ namespace ModernWpf.Controls.Primitives
                 return;
             }
 
+            if (TryStageLatestShowUntilOpenFlyoutCloses(placementTarget, showAsContextFlyout))
+            {
+                return;
+            }
+
             PreparePopup(placementTarget, showAsContextFlyout);
             Debug.Assert(m_popup.HasLocalValue(Popup.PlacementProperty));
             Debug.Assert(m_popup.HasLocalValue(Popup.PlacementTargetProperty));
@@ -247,6 +252,7 @@ namespace ModernWpf.Controls.Primitives
             Target = placementTarget;
             m_showingAsContextFlyout = showAsContextFlyout;
             OnOpening();
+            SetOpenFlyout(this);
             m_popup.IsOpen = true;
         }
 
@@ -277,6 +283,7 @@ namespace ModernWpf.Controls.Primitives
 
         internal virtual void OnClosed()
         {
+            ClearOpenFlyout(this);
             Closed?.Invoke(this, null);
 
             var pendingShow = m_pendingShow;
@@ -284,6 +291,10 @@ namespace ModernWpf.Controls.Primitives
             if (pendingShow != null)
             {
                 m_asyncShow = Dispatcher.BeginInvoke(pendingShow);
+            }
+            else if (TryTakePendingFlyoutShow(this, out var pendingFlyoutShow))
+            {
+                m_asyncShow = Dispatcher.BeginInvoke(new Action(pendingFlyoutShow.Show));
             }
         }
 
@@ -499,6 +510,7 @@ namespace ModernWpf.Controls.Primitives
             m_popup.ClearValue(FrameworkElement.HeightProperty);
             Target = null;
             m_showingAsContextFlyout = false;
+            ClearOpenFlyout(this);
 
             OnClosed();
         }
@@ -529,6 +541,52 @@ namespace ModernWpf.Controls.Primitives
             }
         }
 
+        internal bool TryStageLatestShowUntilOpenFlyoutCloses(FrameworkElement placementTarget, bool showAsContextFlyout)
+        {
+            if (s_openFlyout != null &&
+                s_openFlyout != this &&
+                s_openFlyout.IsOpen)
+            {
+                s_pendingFlyoutShow = new PendingFlyoutShow(this, placementTarget, showAsContextFlyout);
+                s_openFlyout.Hide();
+                return true;
+            }
+
+            return false;
+        }
+
+        internal static void SetOpenFlyout(FlyoutBase flyout)
+        {
+            s_openFlyout = flyout;
+        }
+
+        private static void ClearOpenFlyout(FlyoutBase flyout)
+        {
+            if (s_openFlyout == flyout)
+            {
+                s_openFlyout = null;
+            }
+        }
+
+        private static bool TryTakePendingFlyoutShow(FlyoutBase closingFlyout, out PendingFlyoutShow pendingFlyoutShow)
+        {
+            pendingFlyoutShow = null;
+
+            if (s_openFlyout != null && s_openFlyout != closingFlyout)
+            {
+                return false;
+            }
+
+            if (s_pendingFlyoutShow != null)
+            {
+                pendingFlyoutShow = s_pendingFlyoutShow;
+                s_pendingFlyoutShow = null;
+                return true;
+            }
+
+            return false;
+        }
+
         private static readonly IMultiValueConverter s_fullPlacementWidthConverter = new FullPlacementWidthConverter();
         private static readonly IMultiValueConverter s_fullPlacementHeightConverter = new FullPlacementHeightConverter();
         private static readonly IValueConverter s_placementConverter = new PlacementConverter();
@@ -543,6 +601,27 @@ namespace ModernWpf.Controls.Primitives
         private bool m_suppressNextOpened;
         private Action m_pendingShow;
         private DispatcherOperation m_asyncShow;
+        private static FlyoutBase s_openFlyout;
+        private static PendingFlyoutShow s_pendingFlyoutShow;
+
+        private sealed class PendingFlyoutShow
+        {
+            public PendingFlyoutShow(FlyoutBase flyout, FrameworkElement placementTarget, bool showAsContextFlyout)
+            {
+                _flyout = flyout;
+                _placementTarget = placementTarget;
+                _showAsContextFlyout = showAsContextFlyout;
+            }
+
+            public void Show()
+            {
+                _flyout.ShowAtCore(_placementTarget, _showAsContextFlyout);
+            }
+
+            private readonly FlyoutBase _flyout;
+            private readonly FrameworkElement _placementTarget;
+            private readonly bool _showAsContextFlyout;
+        }
 
         private class FullPlacementWidthConverter : IMultiValueConverter
         {

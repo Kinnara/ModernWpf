@@ -104,6 +104,11 @@ namespace ModernWpf.Controls
                 return;
             }
 
+            if (TryStageLatestShowUntilOpenFlyoutCloses(placementTarget, placement == PlacementMode.MousePoint))
+            {
+                return;
+            }
+
             EnsurePresenter();
 
             if (m_presenter.IsOpen)
@@ -126,6 +131,7 @@ namespace ModernWpf.Controls
 
             m_currentPlacement = Placement;
             OnOpening();
+            SetOpenFlyout(this);
             m_presenter.IsOpen = true;
         }
 
