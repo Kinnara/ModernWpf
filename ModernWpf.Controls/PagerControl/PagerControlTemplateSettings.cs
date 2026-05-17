@@ -1,15 +1,14 @@
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Windows;
 
 namespace ModernWpf.Controls
 {
     public sealed class PagerControlTemplateSettings : DependencyObject
     {
-        internal PagerControlTemplateSettings()
+        internal PagerControlTemplateSettings(IList<object> pages, IList<object> numberPanelItems)
         {
-            Pages = new ObservableCollection<object>();
-            NumberPanelItems = new ObservableCollection<object>();
+            Pages = pages;
+            NumberPanelItems = numberPanelItems;
         }
 
         public IList<object> Pages { get; }

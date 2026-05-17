@@ -50,11 +50,12 @@ public class PagerControlApiTests
 
             var peer = FrameworkElementAutomationPeer.CreatePeerForElement(pager);
             Assert.IsInstanceOfType(peer, typeof(ISelectionProvider));
+            Assert.AreEqual(AutomationControlType.Menu, peer.GetAutomationControlType());
             var selectionPeer = (ISelectionProvider)peer;
 
             Assert.IsFalse(selectionPeer.CanSelectMultiple);
             Assert.IsTrue(selectionPeer.IsSelectionRequired);
-            Assert.AreEqual(1, selectionPeer.GetSelection().Length);
+            Assert.AreEqual(0, selectionPeer.GetSelection().Length);
         });
     }
 
@@ -185,7 +186,8 @@ public class PagerControlApiTests
         {
             var pager = new ModernWpf.Controls.PagerControl
             {
-                NumberOfPages = 3
+                NumberOfPages = 3,
+                DisplayMode = PagerControlDisplayMode.ButtonPanel
             };
 
             using var host = new TestWindowHost(pager, width: 360, height: 120);
@@ -226,28 +228,28 @@ public class PagerControlApiTests
 
             using var host = new TestWindowHost(pager, width: 360, height: 120);
 
-            var rootPanel = GetTemplateChild<FrameworkElement>(pager, "PART_RootPanel");
-            var firstButton = GetTemplateChild<Button>(pager, "PART_FirstButton");
-            var previousButton = GetTemplateChild<Button>(pager, "PART_PreviousButton");
-            var nextButton = GetTemplateChild<Button>(pager, "PART_NextButton");
-            var lastButton = GetTemplateChild<Button>(pager, "PART_LastButton");
+            var rootPanel = GetTemplateChild<FrameworkElement>(pager, "RootGrid");
+            var firstButton = GetTemplateChild<Button>(pager, "FirstPageButton");
+            var previousButton = GetTemplateChild<Button>(pager, "PreviousPageButton");
+            var nextButton = GetTemplateChild<Button>(pager, "NextPageButton");
+            var lastButton = GetTemplateChild<Button>(pager, "LastPageButton");
 
-            AssertStateSetter(rootPanel, "FirstPageButtonVisibilityStates", "FirstPageButtonCollapsed", "PART_FirstButton.Visibility");
-            AssertStateSetter(rootPanel, "FirstPageButtonVisibilityStates", "FirstPageButtonHidden", "PART_FirstButton.Opacity");
-            AssertStateSetter(rootPanel, "FirstPageButtonVisibilityStates", "FirstPageButtonHidden", "PART_FirstButton.IsEnabled");
-            AssertStateSetter(rootPanel, "FirstPageButtonIsEnabledStates", "FirstPageButtonDisabled", "PART_FirstButton.IsEnabled");
-            AssertStateSetter(rootPanel, "PreviousPageButtonVisibilityStates", "PreviousPageButtonCollapsed", "PART_PreviousButton.Visibility");
-            AssertStateSetter(rootPanel, "PreviousPageButtonVisibilityStates", "PreviousPageButtonHidden", "PART_PreviousButton.Opacity");
-            AssertStateSetter(rootPanel, "PreviousPageButtonVisibilityStates", "PreviousPageButtonHidden", "PART_PreviousButton.IsEnabled");
-            AssertStateSetter(rootPanel, "PreviousPageButtonIsEnabledStates", "PreviousPageButtonDisabled", "PART_PreviousButton.IsEnabled");
-            AssertStateSetter(rootPanel, "NextPageButtonVisibilityStates", "NextPageButtonCollapsed", "PART_NextButton.Visibility");
-            AssertStateSetter(rootPanel, "NextPageButtonIsEnabledStates", "NextPageButtonHidden", "PART_NextButton.Opacity");
-            AssertStateSetter(rootPanel, "NextPageButtonIsEnabledStates", "NextPageButtonHidden", "PART_NextButton.IsEnabled");
-            AssertStateSetter(rootPanel, "NextPageButtonIsEnabledStates", "NextPageButtonDisabled", "PART_NextButton.IsEnabled");
-            AssertStateSetter(rootPanel, "LastPageButtonStates", "LastPageButtonCollapsed", "PART_LastButton.Visibility");
-            AssertStateSetter(rootPanel, "LastPageButtonIsEnabledStates", "LastPageButtonHidden", "PART_LastButton.Opacity");
-            AssertStateSetter(rootPanel, "LastPageButtonIsEnabledStates", "LastPageButtonHidden", "PART_LastButton.IsEnabled");
-            AssertStateSetter(rootPanel, "LastPageButtonIsEnabledStates", "LastPageButtonDisabled", "PART_LastButton.IsEnabled");
+            AssertStateSetter(rootPanel, "FirstPageButtonVisibilityStates", "FirstPageButtonCollapsed", "FirstPageButton.Visibility");
+            AssertStateSetter(rootPanel, "FirstPageButtonVisibilityStates", "FirstPageButtonHidden", "FirstPageButton.Opacity");
+            AssertStateSetter(rootPanel, "FirstPageButtonVisibilityStates", "FirstPageButtonHidden", "FirstPageButton.IsEnabled");
+            AssertStateSetter(rootPanel, "FirstPageButtonIsEnabledStates", "FirstPageButtonDisabled", "FirstPageButton.IsEnabled");
+            AssertStateSetter(rootPanel, "PreviousPageButtonVisibilityStates", "PreviousPageButtonCollapsed", "PreviousPageButton.Visibility");
+            AssertStateSetter(rootPanel, "PreviousPageButtonVisibilityStates", "PreviousPageButtonHidden", "PreviousPageButton.Opacity");
+            AssertStateSetter(rootPanel, "PreviousPageButtonVisibilityStates", "PreviousPageButtonHidden", "PreviousPageButton.IsEnabled");
+            AssertStateSetter(rootPanel, "PreviousPageButtonIsEnabledStates", "PreviousPageButtonDisabled", "PreviousPageButton.IsEnabled");
+            AssertStateSetter(rootPanel, "NextPageButtonVisibilityStates", "NextPageButtonCollapsed", "NextPageButton.Visibility");
+            AssertStateSetter(rootPanel, "NextPageButtonIsEnabledStates", "NextPageButtonHidden", "NextPageButton.Opacity");
+            AssertStateSetter(rootPanel, "NextPageButtonIsEnabledStates", "NextPageButtonHidden", "NextPageButton.IsEnabled");
+            AssertStateSetter(rootPanel, "NextPageButtonIsEnabledStates", "NextPageButtonDisabled", "NextPageButton.IsEnabled");
+            AssertStateSetter(rootPanel, "LastPageButtonStates", "LastPageButtonCollapsed", "LastPageButton.Visibility");
+            AssertStateSetter(rootPanel, null, "LastPageButtonHidden", "LastPageButton.Opacity");
+            AssertStateSetter(rootPanel, null, "LastPageButtonHidden", "LastPageButton.IsEnabled");
+            AssertStateSetter(rootPanel, null, "LastPageButtonDisabled", "LastPageButton.IsEnabled");
 
             Assert.AreEqual(0.0, firstButton.Opacity);
             Assert.AreEqual(0.0, previousButton.Opacity);
@@ -272,6 +274,63 @@ public class PagerControlApiTests
         });
     }
 
+    [TestMethod]
+    public void TemplateUsesWinUISourcePartsAndDisplayStates()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var pager = new ModernWpf.Controls.PagerControl
+            {
+                NumberOfPages = 11
+            };
+
+            using var host = new TestWindowHost(pager, width: 420, height: 120);
+
+            var root = GetTemplateChild<FrameworkElement>(pager, "RootGrid");
+            Assert.IsNotNull(GetTemplateChild<ModernWpf.Controls.NumberBox>(pager, "NumberBoxDisplay"));
+            Assert.IsNotNull(GetTemplateChild<System.Windows.Controls.ComboBox>(pager, "ComboBoxDisplay"));
+            Assert.IsNotNull(GetTemplateChild<ItemsRepeater>(pager, "NumberPanelItemsRepeater"));
+            Assert.IsNotNull(GetTemplateChild<FrameworkElement>(pager, "NumberPanelCurrentPageIndicator"));
+
+            AssertStateSetter(root, "PagerDisplayModeStates", "NumberBoxVisible", "BoxPanels.Visibility");
+            AssertStateSetter(root, "PagerDisplayModeStates", "ComboBoxVisible", "ComboBoxDisplay.Visibility");
+            AssertStateSetter(root, "PagerDisplayModeStates", "NumberPanelVisible", "NumberPanelItemsRepeater.Visibility");
+            AssertStateSetter(root, "InfiniteItemsDisplayMode", "InfiniteItems", "LastPageButton.Visibility");
+
+            Assert.AreEqual("Page", pager.PrefixText);
+            Assert.AreEqual("of", pager.SuffixText);
+        });
+    }
+
+    [TestMethod]
+    public void NumberPanelItemsFollowWinUISourceEllipsisPatterns()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var pager = new ModernWpf.Controls.PagerControl
+            {
+                NumberOfPages = 10,
+                DisplayMode = PagerControlDisplayMode.ButtonPanel
+            };
+
+            using var host = new TestWindowHost(pager, width: 420, height: 120);
+
+            AssertNumberPanelItems(pager, 1, 2, 3, 4, 5, "...", 10);
+
+            pager.SelectedPageIndex = 4;
+            host.UpdateLayout();
+
+            AssertNumberPanelItems(pager, 1, "...", 4, 5, 6, "...", 10);
+
+            pager.ButtonPanelAlwaysShowFirstLastPageIndex = false;
+            pager.NumberOfPages = 11;
+            pager.SelectedPageIndex = 5;
+            host.UpdateLayout();
+
+            AssertNumberPanelItems(pager, 5, 6, 7);
+        });
+    }
+
     private static void AssertPages(ModernWpf.Controls.PagerControl pager, int expectedCount)
     {
         Assert.AreEqual(expectedCount, pager.TemplateSettings.Pages.Count);
@@ -286,9 +345,29 @@ public class PagerControlApiTests
         return VisualTreeTestHelper
             .EnumerateDescendants(root)
             .OfType<Button>()
-            .Where(button => button.Tag is int)
-            .OrderBy(button => (int)button.Tag)
+            .Where(button => button.Content is int)
+            .OrderBy(button => (int)button.Content)
             .ToList();
+    }
+
+    private static void AssertNumberPanelItems(ModernWpf.Controls.PagerControl pager, params object[] expected)
+    {
+        Assert.AreEqual(expected.Length, pager.TemplateSettings.NumberPanelItems.Count);
+
+        for (var i = 0; i < expected.Length; i++)
+        {
+            var item = pager.TemplateSettings.NumberPanelItems[i];
+            if (expected[i] is string)
+            {
+                Assert.IsInstanceOfType(item, typeof(SymbolIcon));
+                Assert.AreEqual(Symbol.More, ((SymbolIcon)item).Symbol);
+            }
+            else
+            {
+                Assert.IsInstanceOfType(item, typeof(Button));
+                Assert.AreEqual(expected[i], ((Button)item).Content);
+            }
+        }
     }
 
     private static Button GetNamedButton(DependencyObject root, string name)
@@ -317,15 +396,19 @@ public class PagerControlApiTests
 
     private static void AssertStateSetter(
         FrameworkElement stateGroupsRoot,
-        string groupName,
+        string? groupName,
         string stateName,
         string setterTarget)
     {
-        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
-            .OfType<VisualStateGroup>()
-            .Single(item => item.Name == groupName);
-        var state = group.States
-            .Cast<VisualState>()
+        var groups = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
+            .OfType<VisualStateGroup>();
+        if (groupName != null)
+        {
+            groups = groups.Where(item => item.Name == groupName);
+        }
+
+        var state = groups
+            .SelectMany(group => group.States.Cast<VisualState>())
             .Single(item => item.Name == stateName);
 
         Assert.IsInstanceOfType(state, typeof(VisualStateEx));

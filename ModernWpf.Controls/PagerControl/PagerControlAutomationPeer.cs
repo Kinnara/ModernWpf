@@ -1,6 +1,6 @@
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
-using System.Windows.Controls;
+using System.Windows.Automation;
 using ModernWpf.Controls;
 
 namespace ModernWpf.Automation.Peers
@@ -18,14 +18,10 @@ namespace ModernWpf.Automation.Peers
 
         public IRawElementProviderSimple[] GetSelection()
         {
-            var selectedButton = OwnerPagerControl.GetSelectedButton();
-            if (selectedButton == null)
-            {
-                return new IRawElementProviderSimple[0];
-            }
-
-            var peer = CreatePeerForElement(selectedButton) ?? new ButtonAutomationPeer(selectedButton);
-            return new[] { ProviderFromPeer(peer) };
+            // WinUI returns an empty selection because the number panel mixes page
+            // buttons and ellipsis icons, so page indices do not map directly to
+            // repeater indices.
+            return new IRawElementProviderSimple[0];
         }
 
         public override object GetPattern(PatternInterface patternInterface)
@@ -40,9 +36,15 @@ namespace ModernWpf.Automation.Peers
 
         protected override AutomationControlType GetAutomationControlTypeCore()
         {
-            return AutomationControlType.Group;
+            return AutomationControlType.Menu;
         }
 
-        private PagerControl OwnerPagerControl => (PagerControl)Owner;
+        internal void RaiseSelectionChanged()
+        {
+            if (AutomationPeer.ListenerExists(AutomationEvents.SelectionPatternOnInvalidated))
+            {
+                RaiseAutomationEvent(AutomationEvents.SelectionPatternOnInvalidated);
+            }
+        }
     }
 }

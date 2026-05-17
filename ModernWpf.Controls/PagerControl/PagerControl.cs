@@ -1,33 +1,72 @@
 using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Input;
 using ModernWpf.Automation.Peers;
+using static ModernWpf.ResourceAccessor;
 
 namespace ModernWpf.Controls
 {
-    [TemplatePart(Name = RootPanelName, Type = typeof(Panel))]
-    [TemplatePart(Name = NumberPanelName, Type = typeof(Panel))]
-    [TemplatePart(Name = FirstButtonName, Type = typeof(Button))]
-    [TemplatePart(Name = PreviousButtonName, Type = typeof(Button))]
-    [TemplatePart(Name = NextButtonName, Type = typeof(Button))]
-    [TemplatePart(Name = LastButtonName, Type = typeof(Button))]
+    [TemplatePart(Name = RootGridName, Type = typeof(FrameworkElement))]
+    [TemplatePart(Name = ComboBoxName, Type = typeof(ComboBox))]
+    [TemplatePart(Name = NumberBoxName, Type = typeof(NumberBox))]
+    [TemplatePart(Name = NumberPanelRepeaterName, Type = typeof(ItemsRepeater))]
+    [TemplatePart(Name = NumberPanelIndicatorName, Type = typeof(FrameworkElement))]
+    [TemplatePart(Name = FirstPageButtonName, Type = typeof(Button))]
+    [TemplatePart(Name = PreviousPageButtonName, Type = typeof(Button))]
+    [TemplatePart(Name = NextPageButtonName, Type = typeof(Button))]
+    [TemplatePart(Name = LastPageButtonName, Type = typeof(Button))]
     public class PagerControl : Control
     {
-        private const string RootPanelName = "PART_RootPanel";
-        private const string NumberPanelName = "PART_NumberPanel";
-        private const string FirstButtonName = "PART_FirstButton";
-        private const string PreviousButtonName = "PART_PreviousButton";
-        private const string NextButtonName = "PART_NextButton";
-        private const string LastButtonName = "PART_LastButton";
-        private const string FirstPageButtonStatePrefix = "FirstPageButton";
-        private const string PreviousPageButtonStatePrefix = "PreviousPageButton";
-        private const string NextPageButtonStatePrefix = "NextPageButton";
-        private const string LastPageButtonStatePrefix = "LastPageButton";
+        private const string NumberBoxVisibleVisualState = "NumberBoxVisible";
+        private const string ComboBoxVisibleVisualState = "ComboBoxVisible";
+        private const string NumberPanelVisibleVisualState = "NumberPanelVisible";
+
+        private const string FirstPageButtonVisibleVisualState = "FirstPageButtonVisible";
+        private const string FirstPageButtonCollapsedVisualState = "FirstPageButtonCollapsed";
+        private const string FirstPageButtonHiddenVisualState = "FirstPageButtonHidden";
+        private const string FirstPageButtonEnabledVisualState = "FirstPageButtonEnabled";
+        private const string FirstPageButtonDisabledVisualState = "FirstPageButtonDisabled";
+
+        private const string PreviousPageButtonVisibleVisualState = "PreviousPageButtonVisible";
+        private const string PreviousPageButtonCollapsedVisualState = "PreviousPageButtonCollapsed";
+        private const string PreviousPageButtonHiddenVisualState = "PreviousPageButtonHidden";
+        private const string PreviousPageButtonEnabledVisualState = "PreviousPageButtonEnabled";
+        private const string PreviousPageButtonDisabledVisualState = "PreviousPageButtonDisabled";
+
+        private const string NextPageButtonVisibleVisualState = "NextPageButtonVisible";
+        private const string NextPageButtonCollapsedVisualState = "NextPageButtonCollapsed";
+        private const string NextPageButtonHiddenVisualState = "NextPageButtonHidden";
+        private const string NextPageButtonEnabledVisualState = "NextPageButtonEnabled";
+        private const string NextPageButtonDisabledVisualState = "NextPageButtonDisabled";
+
+        private const string LastPageButtonVisibleVisualState = "LastPageButtonVisible";
+        private const string LastPageButtonCollapsedVisualState = "LastPageButtonCollapsed";
+        private const string LastPageButtonHiddenVisualState = "LastPageButtonHidden";
+        private const string LastPageButtonEnabledVisualState = "LastPageButtonEnabled";
+        private const string LastPageButtonDisabledVisualState = "LastPageButtonDisabled";
+
+        private const string FiniteItemsModeState = "FiniteItems";
+        private const string InfiniteItemsModeState = "InfiniteItems";
+
+        private const string RootGridName = "RootGrid";
+        private const string ComboBoxName = "ComboBoxDisplay";
+        private const string NumberBoxName = "NumberBoxDisplay";
+        private const string NumberPanelRepeaterName = "NumberPanelItemsRepeater";
+        private const string NumberPanelIndicatorName = "NumberPanelCurrentPageIndicator";
+        private const string FirstPageButtonName = "FirstPageButton";
+        private const string PreviousPageButtonName = "PreviousPageButton";
+        private const string NextPageButtonName = "NextPageButton";
+        private const string LastPageButtonName = "LastPageButton";
+
+        private const string NumberPanelButtonStyleName = "PagerControlNumberPanelButtonStyle";
+        private const int AutoDisplayModeNumberOfPagesThreshold = 10;
         private const int InfiniteModeComboBoxItemsIncrement = 100;
+
+        private static readonly ResourceAccessor ResourceAccessor = new ResourceAccessor(typeof(PagerControl));
 
         static PagerControl()
         {
@@ -36,9 +75,9 @@ namespace ModernWpf.Controls
 
         public PagerControl()
         {
-            SetValue(TemplateSettingsPropertyKey, new PagerControlTemplateSettings());
-            Loaded += OnLoaded;
-            UpdateTemplateSettingElementLists();
+            m_comboBoxEntries = new ObservableCollection<object>();
+            m_numberPanelElements = new ObservableCollection<object>();
+            SetValue(TemplateSettingsPropertyKey, new PagerControlTemplateSettings(m_comboBoxEntries, m_numberPanelElements));
         }
 
         public static readonly DependencyProperty DisplayModeProperty =
@@ -124,7 +163,7 @@ namespace ModernWpf.Controls
                 nameof(FirstButtonCommand),
                 typeof(ICommand),
                 typeof(PagerControl),
-                new FrameworkPropertyMetadata(null, OnPagerPropertyChanged));
+                null);
 
         public ICommand FirstButtonCommand
         {
@@ -137,7 +176,7 @@ namespace ModernWpf.Controls
                 nameof(PreviousButtonCommand),
                 typeof(ICommand),
                 typeof(PagerControl),
-                new FrameworkPropertyMetadata(null, OnPagerPropertyChanged));
+                null);
 
         public ICommand PreviousButtonCommand
         {
@@ -150,7 +189,7 @@ namespace ModernWpf.Controls
                 nameof(NextButtonCommand),
                 typeof(ICommand),
                 typeof(PagerControl),
-                new FrameworkPropertyMetadata(null, OnPagerPropertyChanged));
+                null);
 
         public ICommand NextButtonCommand
         {
@@ -163,7 +202,7 @@ namespace ModernWpf.Controls
                 nameof(LastButtonCommand),
                 typeof(ICommand),
                 typeof(PagerControl),
-                new FrameworkPropertyMetadata(null, OnPagerPropertyChanged));
+                null);
 
         public ICommand LastButtonCommand
         {
@@ -176,7 +215,7 @@ namespace ModernWpf.Controls
                 nameof(PagerInputCommand),
                 typeof(ICommand),
                 typeof(PagerControl),
-                new FrameworkPropertyMetadata(null, OnPagerPropertyChanged));
+                null);
 
         public ICommand PagerInputCommand
         {
@@ -189,7 +228,7 @@ namespace ModernWpf.Controls
                 nameof(FirstButtonStyle),
                 typeof(Style),
                 typeof(PagerControl),
-                new FrameworkPropertyMetadata(null, OnPagerPropertyChanged));
+                null);
 
         public Style FirstButtonStyle
         {
@@ -202,7 +241,7 @@ namespace ModernWpf.Controls
                 nameof(PreviousButtonStyle),
                 typeof(Style),
                 typeof(PagerControl),
-                new FrameworkPropertyMetadata(null, OnPagerPropertyChanged));
+                null);
 
         public Style PreviousButtonStyle
         {
@@ -215,7 +254,7 @@ namespace ModernWpf.Controls
                 nameof(NextButtonStyle),
                 typeof(Style),
                 typeof(PagerControl),
-                new FrameworkPropertyMetadata(null, OnPagerPropertyChanged));
+                null);
 
         public Style NextButtonStyle
         {
@@ -228,7 +267,7 @@ namespace ModernWpf.Controls
                 nameof(LastButtonStyle),
                 typeof(Style),
                 typeof(PagerControl),
-                new FrameworkPropertyMetadata(null, OnPagerPropertyChanged));
+                null);
 
         public Style LastButtonStyle
         {
@@ -267,7 +306,7 @@ namespace ModernWpf.Controls
                 nameof(PrefixText),
                 typeof(string),
                 typeof(PagerControl),
-                new FrameworkPropertyMetadata(string.Empty, OnPagerPropertyChanged));
+                new FrameworkPropertyMetadata(string.Empty));
 
         public string PrefixText
         {
@@ -280,7 +319,7 @@ namespace ModernWpf.Controls
                 nameof(SuffixText),
                 typeof(string),
                 typeof(PagerControl),
-                new FrameworkPropertyMetadata(string.Empty, OnPagerPropertyChanged));
+                new FrameworkPropertyMetadata(string.Empty));
 
         public string SuffixText
         {
@@ -303,25 +342,117 @@ namespace ModernWpf.Controls
 
         public override void OnApplyTemplate()
         {
-            UnhookButtonHandlers();
+            UnhookTemplateEvents();
 
             base.OnApplyTemplate();
 
-            _rootPanel = GetTemplateChild(RootPanelName) as Panel;
-            _numberPanel = GetTemplateChild(NumberPanelName) as Panel;
-            _firstButton = GetTemplateChild(FirstButtonName) as Button;
-            _previousButton = GetTemplateChild(PreviousButtonName) as Button;
-            _nextButton = GetTemplateChild(NextButtonName) as Button;
-            _lastButton = GetTemplateChild(LastButtonName) as Button;
+            if (string.IsNullOrEmpty(PrefixText))
+            {
+                PrefixText = ResourceAccessor.GetLocalizedStringResource(SR_PagerControlPrefixTextName);
+            }
 
-            HookButtonHandlers();
-            UpdateVisuals();
+            if (string.IsNullOrEmpty(SuffixText))
+            {
+                SuffixText = ResourceAccessor.GetLocalizedStringResource(SR_PagerControlSuffixTextName);
+            }
+
+            m_rootGrid = GetTemplateChild(RootGridName) as FrameworkElement;
+            if (m_rootGrid != null)
+            {
+                m_rootGrid.KeyDown += OnRootGridKeyDown;
+            }
+
+            m_firstPageButton = GetTemplateChild(FirstPageButtonName) as Button;
+            if (m_firstPageButton != null)
+            {
+                AutomationProperties.SetName(m_firstPageButton, ResourceAccessor.GetLocalizedStringResource(SR_PagerControlFirstPageButtonTextName));
+                m_firstPageButton.Click += FirstButtonClicked;
+            }
+
+            m_previousPageButton = GetTemplateChild(PreviousPageButtonName) as Button;
+            if (m_previousPageButton != null)
+            {
+                AutomationProperties.SetName(m_previousPageButton, ResourceAccessor.GetLocalizedStringResource(SR_PagerControlPreviousPageButtonTextName));
+                m_previousPageButton.Click += PreviousButtonClicked;
+            }
+
+            m_nextPageButton = GetTemplateChild(NextPageButtonName) as Button;
+            if (m_nextPageButton != null)
+            {
+                AutomationProperties.SetName(m_nextPageButton, ResourceAccessor.GetLocalizedStringResource(SR_PagerControlNextPageButtonTextName));
+                m_nextPageButton.Click += NextButtonClicked;
+            }
+
+            m_lastPageButton = GetTemplateChild(LastPageButtonName) as Button;
+            if (m_lastPageButton != null)
+            {
+                AutomationProperties.SetName(m_lastPageButton, ResourceAccessor.GetLocalizedStringResource(SR_PagerControlLastPageButtonTextName));
+                m_lastPageButton.Click += LastButtonClicked;
+            }
+
+            m_comboBox = GetTemplateChild(ComboBoxName) as ComboBox;
+            if (m_comboBox != null)
+            {
+                FillComboBoxCollectionToSize(NumberOfPages);
+                m_comboBox.SelectedIndex = SelectedPageIndex - 1;
+                AutomationProperties.SetName(m_comboBox, ResourceAccessor.GetLocalizedStringResource(SR_PagerControlPageTextName));
+                m_comboBox.SelectionChanged += ComboBoxSelectionChanged;
+            }
+
+            m_numberBox = GetTemplateChild(NumberBoxName) as NumberBox;
+            if (m_numberBox != null)
+            {
+                m_numberBox.Value = SelectedPageIndex + 1;
+                AutomationProperties.SetName(m_numberBox, ResourceAccessor.GetLocalizedStringResource(SR_PagerControlPageTextName));
+                m_numberBox.ValueChanged += NumberBoxValueChanged;
+            }
+
+            m_numberPanelRepeater = GetTemplateChild(NumberPanelRepeaterName) as ItemsRepeater;
+            m_selectedPageIndicator = GetTemplateChild(NumberPanelIndicatorName) as FrameworkElement;
+
+            m_templateApplied = true;
+
+            OnDisplayModeChanged();
+            UpdateOnEdgeButtonVisualStates();
+            OnNumberOfPagesChanged(0);
+
+            OnButtonVisibilityChanged(
+                FirstButtonVisibility,
+                FirstPageButtonVisibleVisualState,
+                FirstPageButtonCollapsedVisualState,
+                FirstPageButtonHiddenVisualState,
+                0);
+            OnButtonVisibilityChanged(
+                PreviousButtonVisibility,
+                PreviousPageButtonVisibleVisualState,
+                PreviousPageButtonCollapsedVisualState,
+                PreviousPageButtonHiddenVisualState,
+                0);
+            OnButtonVisibilityChanged(
+                NextButtonVisibility,
+                NextPageButtonVisibleVisualState,
+                NextPageButtonCollapsedVisualState,
+                NextPageButtonHiddenVisualState,
+                NumberOfPages - 1);
+            OnButtonVisibilityChanged(
+                LastButtonVisibility,
+                LastPageButtonVisibleVisualState,
+                LastPageButtonCollapsedVisualState,
+                LastPageButtonHiddenVisualState,
+                NumberOfPages - 1);
+
+            OnSelectedPageIndexChange(-1);
         }
 
         internal Button ContainerFromPageIndex(int pageIndex)
         {
-            _pageButtonsByPageIndex.TryGetValue(pageIndex, out var button);
-            return button;
+            if (m_numberPanelRepeater != null)
+            {
+                return (m_numberPanelRepeater.TryGetElement(pageIndex) ??
+                        m_numberPanelRepeater.GetOrCreateElement(pageIndex)) as Button;
+            }
+
+            return null;
         }
 
         internal Button GetSelectedButton()
@@ -336,22 +467,19 @@ namespace ModernWpf.Controls
 
         private static void OnPagerPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((PagerControl)d).UpdateVisuals();
+            ((PagerControl)d).HandlePropertyChanged(e);
         }
 
         private static void OnNumberOfPagesPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var pager = (PagerControl)d;
             pager.CoerceValue(SelectedPageIndexProperty);
-            pager.UpdateVisuals();
+            pager.HandlePropertyChanged(e);
         }
 
         private static void OnSelectedPageIndexPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var pager = (PagerControl)d;
-            var previousIndex = (int)e.OldValue;
-            pager.UpdateVisuals();
-            pager.RaiseSelectedIndexChanged(previousIndex, pager.SelectedPageIndex);
+            ((PagerControl)d).HandlePropertyChanged(e);
         }
 
         private static object CoerceNumberOfPages(DependencyObject d, object baseValue)
@@ -372,102 +500,550 @@ namespace ModernWpf.Controls
             return index;
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        private void HandlePropertyChanged(DependencyPropertyChangedEventArgs args)
         {
-            if (!_hasRaisedInitialSelectedIndexChanged)
+            if (!m_templateApplied)
             {
-                _hasRaisedInitialSelectedIndexChanged = true;
-                RaiseSelectedIndexChanged(-1, SelectedPageIndex);
+                return;
+            }
+
+            if (args.Property == FirstButtonVisibilityProperty)
+            {
+                OnButtonVisibilityChanged(
+                    FirstButtonVisibility,
+                    FirstPageButtonVisibleVisualState,
+                    FirstPageButtonCollapsedVisualState,
+                    FirstPageButtonHiddenVisualState,
+                    0);
+            }
+            else if (args.Property == PreviousButtonVisibilityProperty)
+            {
+                OnButtonVisibilityChanged(
+                    PreviousButtonVisibility,
+                    PreviousPageButtonVisibleVisualState,
+                    PreviousPageButtonCollapsedVisualState,
+                    PreviousPageButtonHiddenVisualState,
+                    0);
+            }
+            else if (args.Property == NextButtonVisibilityProperty)
+            {
+                OnButtonVisibilityChanged(
+                    NextButtonVisibility,
+                    NextPageButtonVisibleVisualState,
+                    NextPageButtonCollapsedVisualState,
+                    NextPageButtonHiddenVisualState,
+                    NumberOfPages - 1);
+            }
+            else if (args.Property == LastButtonVisibilityProperty)
+            {
+                OnButtonVisibilityChanged(
+                    LastButtonVisibility,
+                    LastPageButtonVisibleVisualState,
+                    LastPageButtonCollapsedVisualState,
+                    LastPageButtonHiddenVisualState,
+                    NumberOfPages - 1);
+            }
+            else if (args.Property == DisplayModeProperty)
+            {
+                OnDisplayModeChanged();
+                UpdateTemplateSettingElementLists();
+            }
+            else if (args.Property == NumberOfPagesProperty)
+            {
+                OnNumberOfPagesChanged((int)args.OldValue);
+            }
+            else if (args.Property == SelectedPageIndexProperty)
+            {
+                OnSelectedPageIndexChange((int)args.OldValue);
+            }
+            else if (args.Property == ButtonPanelAlwaysShowFirstLastPageIndexProperty)
+            {
+                UpdateNumberPanel(NumberOfPages);
             }
         }
 
-        private void HookButtonHandlers()
+        private void OnDisplayModeChanged()
         {
-            if (_firstButton != null)
-            {
-                _firstButton.Click += OnFirstButtonClick;
-            }
+            var displayMode = DisplayMode;
 
-            if (_previousButton != null)
+            if (displayMode == PagerControlDisplayMode.ButtonPanel)
             {
-                _previousButton.Click += OnPreviousButtonClick;
+                VisualStateManager.GoToState(this, NumberPanelVisibleVisualState, false);
             }
-
-            if (_nextButton != null)
+            else if (displayMode == PagerControlDisplayMode.ComboBox)
             {
-                _nextButton.Click += OnNextButtonClick;
+                VisualStateManager.GoToState(this, ComboBoxVisibleVisualState, false);
             }
-
-            if (_lastButton != null)
+            else if (displayMode == PagerControlDisplayMode.NumberBox)
             {
-                _lastButton.Click += OnLastButtonClick;
+                VisualStateManager.GoToState(this, NumberBoxVisibleVisualState, false);
+            }
+            else
+            {
+                UpdateDisplayModeAutoState();
             }
         }
 
-        private void UnhookButtonHandlers()
+        private void UpdateDisplayModeAutoState()
         {
-            if (_firstButton != null)
+            var numberOfPages = NumberOfPages;
+            if (numberOfPages > -1)
             {
-                _firstButton.Click -= OnFirstButtonClick;
+                VisualStateManager.GoToState(
+                    this,
+                    numberOfPages < AutoDisplayModeNumberOfPagesThreshold ? ComboBoxVisibleVisualState : NumberBoxVisibleVisualState,
+                    false);
             }
-
-            if (_previousButton != null)
+            else
             {
-                _previousButton.Click -= OnPreviousButtonClick;
-            }
-
-            if (_nextButton != null)
-            {
-                _nextButton.Click -= OnNextButtonClick;
-            }
-
-            if (_lastButton != null)
-            {
-                _lastButton.Click -= OnLastButtonClick;
+                VisualStateManager.GoToState(this, NumberBoxVisibleVisualState, false);
             }
         }
 
-        private void OnFirstButtonClick(object sender, RoutedEventArgs e)
+        private void OnNumberOfPagesChanged(int oldValue)
+        {
+            m_lastNumberOfPagesCount = oldValue;
+            var numberOfPages = NumberOfPages;
+            if (numberOfPages < SelectedPageIndex && numberOfPages > -1)
+            {
+                SelectedPageIndex = numberOfPages - 1;
+            }
+
+            UpdateTemplateSettingElementLists();
+
+            if (DisplayMode == PagerControlDisplayMode.Auto)
+            {
+                UpdateDisplayModeAutoState();
+            }
+
+            if (numberOfPages > -1)
+            {
+                VisualStateManager.GoToState(this, FiniteItemsModeState, false);
+                if (m_numberBox != null)
+                {
+                    m_numberBox.Maximum = numberOfPages;
+                }
+            }
+            else
+            {
+                VisualStateManager.GoToState(this, InfiniteItemsModeState, false);
+                if (m_numberBox != null)
+                {
+                    m_numberBox.Maximum = double.PositiveInfinity;
+                }
+            }
+
+            UpdateOnEdgeButtonVisualStates();
+        }
+
+        private void OnSelectedPageIndexChange(int oldValue)
+        {
+            if (SelectedPageIndex > NumberOfPages - 1 && NumberOfPages > 0)
+            {
+                SelectedPageIndex = NumberOfPages - 1;
+            }
+            else if (SelectedPageIndex < 0)
+            {
+                SelectedPageIndex = 0;
+            }
+
+            m_lastSelectedPageIndex = oldValue;
+
+            if (m_comboBox != null && SelectedPageIndex < m_comboBoxEntries.Count)
+            {
+                m_comboBox.SelectedIndex = SelectedPageIndex;
+            }
+
+            if (m_numberBox != null)
+            {
+                m_numberBox.Value = SelectedPageIndex + 1;
+            }
+
+            UpdateOnEdgeButtonVisualStates();
+            UpdateTemplateSettingElementLists();
+
+            if (DisplayMode == PagerControlDisplayMode.ButtonPanel)
+            {
+                UpdateNumberPanel(NumberOfPages);
+            }
+
+            if (FrameworkElementAutomationPeer.FromElement(this) is PagerControlAutomationPeer peer)
+            {
+                peer.RaiseSelectionChanged();
+            }
+
+            RaiseSelectedIndexChanged();
+        }
+
+        private void RaiseSelectedIndexChanged()
+        {
+            SelectedIndexChanged?.Invoke(this, new PagerControlSelectedIndexChangedEventArgs(m_lastSelectedPageIndex, SelectedPageIndex));
+        }
+
+        private void OnButtonVisibilityChanged(
+            PagerControlButtonVisibility visibility,
+            string visibleStateName,
+            string collapsedStateName,
+            string hiddenStateName,
+            int hiddenOnEdgePageCriteria)
+        {
+            if (visibility == PagerControlButtonVisibility.Visible)
+            {
+                VisualStateManager.GoToState(this, visibleStateName, false);
+            }
+            else if (visibility == PagerControlButtonVisibility.Hidden)
+            {
+                VisualStateManager.GoToState(this, collapsedStateName, false);
+            }
+            else
+            {
+                VisualStateManager.GoToState(
+                    this,
+                    SelectedPageIndex != hiddenOnEdgePageCriteria ? visibleStateName : hiddenStateName,
+                    false);
+            }
+        }
+
+        private void UpdateTemplateSettingElementLists()
+        {
+            var displayMode = DisplayMode;
+            var numberOfPages = NumberOfPages;
+
+            if (displayMode == PagerControlDisplayMode.ComboBox ||
+                displayMode == PagerControlDisplayMode.Auto)
+            {
+                if (numberOfPages > -1)
+                {
+                    FillComboBoxCollectionToSize(numberOfPages);
+                }
+                else if (m_comboBoxEntries.Count < InfiniteModeComboBoxItemsIncrement)
+                {
+                    FillComboBoxCollectionToSize(InfiniteModeComboBoxItemsIncrement);
+                }
+            }
+            else if (displayMode == PagerControlDisplayMode.ButtonPanel)
+            {
+                UpdateNumberPanel(numberOfPages);
+            }
+        }
+
+        private void FillComboBoxCollectionToSize(int numberOfPages)
+        {
+            var currentComboBoxItemsCount = m_comboBoxEntries.Count;
+            if (currentComboBoxItemsCount <= numberOfPages)
+            {
+                for (var i = currentComboBoxItemsCount; i < numberOfPages; i++)
+                {
+                    m_comboBoxEntries.Add(i + 1);
+                }
+            }
+            else
+            {
+                for (var i = currentComboBoxItemsCount; i > numberOfPages; i--)
+                {
+                    m_comboBoxEntries.RemoveAt(m_comboBoxEntries.Count - 1);
+                }
+            }
+        }
+
+        private void UpdateOnEdgeButtonVisualStates()
+        {
+            var selectedPageIndex = SelectedPageIndex;
+            var numberOfPages = NumberOfPages;
+
+            if (selectedPageIndex == 0)
+            {
+                VisualStateManager.GoToState(this, FirstPageButtonDisabledVisualState, false);
+                VisualStateManager.GoToState(this, PreviousPageButtonDisabledVisualState, false);
+                VisualStateManager.GoToState(this, NextPageButtonEnabledVisualState, false);
+                VisualStateManager.GoToState(this, LastPageButtonEnabledVisualState, false);
+            }
+            else if (selectedPageIndex >= numberOfPages - 1)
+            {
+                VisualStateManager.GoToState(this, FirstPageButtonEnabledVisualState, false);
+                VisualStateManager.GoToState(this, PreviousPageButtonEnabledVisualState, false);
+                VisualStateManager.GoToState(
+                    this,
+                    numberOfPages > -1 ? NextPageButtonDisabledVisualState : NextPageButtonEnabledVisualState,
+                    false);
+                VisualStateManager.GoToState(this, LastPageButtonDisabledVisualState, false);
+            }
+            else
+            {
+                VisualStateManager.GoToState(this, FirstPageButtonEnabledVisualState, false);
+                VisualStateManager.GoToState(this, PreviousPageButtonEnabledVisualState, false);
+                VisualStateManager.GoToState(this, NextPageButtonEnabledVisualState, false);
+                VisualStateManager.GoToState(this, LastPageButtonEnabledVisualState, false);
+            }
+
+            if (FirstButtonVisibility == PagerControlButtonVisibility.HiddenOnEdge)
+            {
+                VisualStateManager.GoToState(
+                    this,
+                    selectedPageIndex != 0 ? FirstPageButtonVisibleVisualState : FirstPageButtonHiddenVisualState,
+                    false);
+            }
+
+            if (PreviousButtonVisibility == PagerControlButtonVisibility.HiddenOnEdge)
+            {
+                VisualStateManager.GoToState(
+                    this,
+                    selectedPageIndex != 0 ? PreviousPageButtonVisibleVisualState : PreviousPageButtonHiddenVisualState,
+                    false);
+            }
+
+            if (NextButtonVisibility == PagerControlButtonVisibility.HiddenOnEdge)
+            {
+                VisualStateManager.GoToState(
+                    this,
+                    selectedPageIndex != numberOfPages - 1 ? NextPageButtonVisibleVisualState : NextPageButtonHiddenVisualState,
+                    false);
+            }
+
+            if (LastButtonVisibility == PagerControlButtonVisibility.HiddenOnEdge)
+            {
+                VisualStateManager.GoToState(
+                    this,
+                    selectedPageIndex != numberOfPages - 1 ? LastPageButtonVisibleVisualState : LastPageButtonHiddenVisualState,
+                    false);
+            }
+        }
+
+        private void UpdateNumberPanel(int numberOfPages)
+        {
+            if (numberOfPages < 0)
+            {
+                UpdateNumberOfPanelCollectionInfiniteItems();
+            }
+            else if (numberOfPages < 8)
+            {
+                UpdateNumberPanelCollectionAllItems(numberOfPages);
+            }
+            else
+            {
+                var selectedIndex = SelectedPageIndex;
+                if (selectedIndex < 4)
+                {
+                    UpdateNumberPanelCollectionStartWithEllipsis(numberOfPages, selectedIndex);
+                }
+                else if (selectedIndex >= numberOfPages - 4)
+                {
+                    UpdateNumberPanelCollectionEndWithEllipsis(numberOfPages, selectedIndex);
+                }
+                else
+                {
+                    UpdateNumberPanelCollectionCenterWithEllipsis(numberOfPages, selectedIndex);
+                }
+            }
+        }
+
+        private void UpdateNumberOfPanelCollectionInfiniteItems()
+        {
+            var selectedIndex = SelectedPageIndex;
+
+            m_numberPanelElements.Clear();
+            if (selectedIndex < 3)
+            {
+                AppendButtonToNumberPanelList(1, 0);
+                AppendButtonToNumberPanelList(2, 0);
+                AppendButtonToNumberPanelList(3, 0);
+                AppendButtonToNumberPanelList(4, 0);
+                AppendButtonToNumberPanelList(5, 0);
+                MoveIdentifierToElement(selectedIndex);
+            }
+            else
+            {
+                AppendButtonToNumberPanelList(1, 0);
+                AppendEllipsisIconToNumberPanelList();
+                AppendButtonToNumberPanelList(selectedIndex, 0);
+                AppendButtonToNumberPanelList(selectedIndex + 1, 0);
+                AppendButtonToNumberPanelList(selectedIndex + 2, 0);
+                MoveIdentifierToElement(3);
+            }
+        }
+
+        private void UpdateNumberPanelCollectionAllItems(int numberOfPages)
+        {
+            if (m_lastNumberOfPagesCount != numberOfPages)
+            {
+                m_numberPanelElements.Clear();
+                for (var i = 0; i < numberOfPages && i < 7; i++)
+                {
+                    AppendButtonToNumberPanelList(i + 1, numberOfPages);
+                }
+            }
+
+            MoveIdentifierToElement(SelectedPageIndex);
+        }
+
+        private void UpdateNumberPanelCollectionStartWithEllipsis(int numberOfPages, int selectedIndex)
+        {
+            if (m_lastNumberOfPagesCount != numberOfPages)
+            {
+                m_numberPanelElements.Clear();
+                AppendButtonToNumberPanelList(1, numberOfPages);
+                AppendButtonToNumberPanelList(2, numberOfPages);
+                AppendButtonToNumberPanelList(3, numberOfPages);
+                AppendButtonToNumberPanelList(4, numberOfPages);
+                AppendButtonToNumberPanelList(5, numberOfPages);
+                if (ButtonPanelAlwaysShowFirstLastPageIndex)
+                {
+                    AppendEllipsisIconToNumberPanelList();
+                    AppendButtonToNumberPanelList(numberOfPages, numberOfPages);
+                }
+            }
+
+            MoveIdentifierToElement(selectedIndex);
+        }
+
+        private void UpdateNumberPanelCollectionEndWithEllipsis(int numberOfPages, int selectedIndex)
+        {
+            if (m_lastNumberOfPagesCount != numberOfPages)
+            {
+                m_numberPanelElements.Clear();
+                if (ButtonPanelAlwaysShowFirstLastPageIndex)
+                {
+                    AppendButtonToNumberPanelList(1, numberOfPages);
+                    AppendEllipsisIconToNumberPanelList();
+                }
+
+                AppendButtonToNumberPanelList(numberOfPages - 4, numberOfPages);
+                AppendButtonToNumberPanelList(numberOfPages - 3, numberOfPages);
+                AppendButtonToNumberPanelList(numberOfPages - 2, numberOfPages);
+                AppendButtonToNumberPanelList(numberOfPages - 1, numberOfPages);
+                AppendButtonToNumberPanelList(numberOfPages, numberOfPages);
+            }
+
+            if (ButtonPanelAlwaysShowFirstLastPageIndex)
+            {
+                MoveIdentifierToElement(selectedIndex - numberOfPages + 7);
+            }
+            else
+            {
+                MoveIdentifierToElement(selectedIndex - numberOfPages + 5);
+            }
+        }
+
+        private void UpdateNumberPanelCollectionCenterWithEllipsis(int numberOfPages, int selectedIndex)
+        {
+            var showFirstLastPageIndex = ButtonPanelAlwaysShowFirstLastPageIndex;
+            if (m_lastNumberOfPagesCount != numberOfPages)
+            {
+                m_numberPanelElements.Clear();
+                if (showFirstLastPageIndex)
+                {
+                    AppendButtonToNumberPanelList(1, numberOfPages);
+                    AppendEllipsisIconToNumberPanelList();
+                }
+
+                AppendButtonToNumberPanelList(selectedIndex, numberOfPages);
+                AppendButtonToNumberPanelList(selectedIndex + 1, numberOfPages);
+                AppendButtonToNumberPanelList(selectedIndex + 2, numberOfPages);
+                if (showFirstLastPageIndex)
+                {
+                    AppendEllipsisIconToNumberPanelList();
+                    AppendButtonToNumberPanelList(numberOfPages, numberOfPages);
+                }
+            }
+
+            MoveIdentifierToElement(showFirstLastPageIndex ? 3 : 1);
+        }
+
+        private void MoveIdentifierToElement(int index)
+        {
+            if (m_selectedPageIndicator == null || m_numberPanelRepeater == null)
+            {
+                return;
+            }
+
+            m_numberPanelRepeater.UpdateLayout();
+            if (m_numberPanelRepeater.TryGetElement(index) is FrameworkElement element)
+            {
+                var bounds = element.TransformToVisual(m_numberPanelRepeater)
+                    .TransformBounds(new Rect(0, 0, element.ActualWidth, element.ActualHeight));
+                m_selectedPageIndicator.Margin = new Thickness(bounds.X, 0, 0, 0);
+                m_selectedPageIndicator.Width = element.ActualWidth;
+            }
+        }
+
+        private void AppendButtonToNumberPanelList(int pageNumber, int numberOfPages)
+        {
+            var button = new Button
+            {
+                Content = pageNumber,
+                Style = TryFindResource(NumberPanelButtonStyleName) as Style
+            };
+
+            button.Click += NumberPanelButtonClicked;
+            AutomationProperties.SetName(button, ResourceAccessor.GetLocalizedStringResource(SR_PagerControlPageTextName) + " " + pageNumber);
+#if NET48_OR_NEWER
+            AutomationProperties.SetPositionInSet(button, pageNumber);
+            AutomationProperties.SetSizeOfSet(button, numberOfPages);
+#endif
+            m_numberPanelElements.Add(button);
+        }
+
+        private void AppendEllipsisIconToNumberPanelList()
+        {
+            m_numberPanelElements.Add(new SymbolIcon(Symbol.More));
+        }
+
+        private void OnRootGridKeyDown(object sender, KeyEventArgs args)
+        {
+            if (args.Key == Key.Left)
+            {
+                MoveFocus(new TraversalRequest(FocusNavigationDirection.Left));
+                args.Handled = true;
+            }
+            else if (args.Key == Key.Right)
+            {
+                MoveFocus(new TraversalRequest(FocusNavigationDirection.Right));
+                args.Handled = true;
+            }
+        }
+
+        private void ComboBoxSelectionChanged(object sender, SelectionChangedEventArgs args)
+        {
+            if (m_comboBox != null)
+            {
+                SelectedPageIndex = m_comboBox.SelectedIndex;
+            }
+        }
+
+        private void NumberBoxValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
+        {
+            SelectedPageIndex = (int)args.NewValue - 1;
+        }
+
+        private void FirstButtonClicked(object sender, RoutedEventArgs args)
         {
             SelectedPageIndex = 0;
             ExecuteCommand(FirstButtonCommand);
         }
 
-        private void OnPreviousButtonClick(object sender, RoutedEventArgs e)
+        private void PreviousButtonClicked(object sender, RoutedEventArgs args)
         {
-            if (SelectedPageIndex > 0)
-            {
-                SelectedPageIndex--;
-            }
-
+            SelectedPageIndex--;
             ExecuteCommand(PreviousButtonCommand);
         }
 
-        private void OnNextButtonClick(object sender, RoutedEventArgs e)
+        private void NextButtonClicked(object sender, RoutedEventArgs args)
         {
-            if (NumberOfPages < 0 || SelectedPageIndex < NumberOfPages - 1)
-            {
-                SelectedPageIndex++;
-            }
-
+            SelectedPageIndex++;
             ExecuteCommand(NextButtonCommand);
         }
 
-        private void OnLastButtonClick(object sender, RoutedEventArgs e)
+        private void LastButtonClicked(object sender, RoutedEventArgs args)
         {
-            if (NumberOfPages > 0)
-            {
-                SelectedPageIndex = NumberOfPages - 1;
-            }
-
+            SelectedPageIndex = NumberOfPages - 1;
             ExecuteCommand(LastButtonCommand);
         }
 
-        private void OnPageButtonClick(object sender, RoutedEventArgs e)
+        private void NumberPanelButtonClicked(object sender, RoutedEventArgs args)
         {
-            if (sender is Button button && button.Tag is int pageIndex)
+            if (sender is Button button && button.Content is int pageNumber)
             {
-                SelectedPageIndex = pageIndex;
+                SelectedPageIndex = pageNumber - 1;
             }
         }
 
@@ -479,176 +1055,59 @@ namespace ModernWpf.Controls
             }
         }
 
-        private void RaiseSelectedIndexChanged(int previousPageIndex, int newPageIndex)
+        private void UnhookTemplateEvents()
         {
-            SelectedIndexChanged?.Invoke(this, new PagerControlSelectedIndexChangedEventArgs(previousPageIndex, newPageIndex));
-        }
-
-        private void UpdateVisuals()
-        {
-            UpdateTemplateSettingElementLists();
-            UpdateNavigationButton(_firstButton, FirstButtonStyle, FirstButtonVisibility, SelectedPageIndex != 0, FirstPageButtonStatePrefix);
-            UpdateNavigationButton(_previousButton, PreviousButtonStyle, PreviousButtonVisibility, SelectedPageIndex != 0, PreviousPageButtonStatePrefix);
-            UpdateNavigationButton(_nextButton, NextButtonStyle, NextButtonVisibility, NumberOfPages < 0 || SelectedPageIndex < NumberOfPages - 1, NextPageButtonStatePrefix);
-            UpdateNavigationButton(_lastButton, LastButtonStyle, LastButtonVisibility, NumberOfPages > 0 && SelectedPageIndex < NumberOfPages - 1, LastPageButtonStatePrefix);
-            UpdateNumberPanelButtons();
-        }
-
-        private void UpdateTemplateSettingElementLists()
-        {
-            var pages = TemplateSettings.Pages;
-            if (NumberOfPages >= 0)
+            if (m_rootGrid != null)
             {
-                FillCollectionToSize(pages, NumberOfPages);
-            }
-            else if (pages.Count < InfiniteModeComboBoxItemsIncrement)
-            {
-                FillCollectionToSize(pages, InfiniteModeComboBoxItemsIncrement);
+                m_rootGrid.KeyDown -= OnRootGridKeyDown;
             }
 
-            var numberPanelItems = TemplateSettings.NumberPanelItems;
-            numberPanelItems.Clear();
-            foreach (var pageNumber in GetNumberPanelPageNumbers())
+            if (m_comboBox != null)
             {
-                numberPanelItems.Add(pageNumber);
-            }
-        }
-
-        private static void FillCollectionToSize(IList<object> collection, int numberOfPages)
-        {
-            while (collection.Count < numberOfPages)
-            {
-                collection.Add(collection.Count + 1);
+                m_comboBox.SelectionChanged -= ComboBoxSelectionChanged;
             }
 
-            while (collection.Count > numberOfPages)
+            if (m_numberBox != null)
             {
-                collection.RemoveAt(collection.Count - 1);
+                m_numberBox.ValueChanged -= NumberBoxValueChanged;
+            }
+
+            if (m_firstPageButton != null)
+            {
+                m_firstPageButton.Click -= FirstButtonClicked;
+            }
+
+            if (m_previousPageButton != null)
+            {
+                m_previousPageButton.Click -= PreviousButtonClicked;
+            }
+
+            if (m_nextPageButton != null)
+            {
+                m_nextPageButton.Click -= NextButtonClicked;
+            }
+
+            if (m_lastPageButton != null)
+            {
+                m_lastPageButton.Click -= LastButtonClicked;
             }
         }
 
-        private IEnumerable<int> GetNumberPanelPageNumbers()
-        {
-            if (NumberOfPages > 0)
-            {
-                for (var i = 1; i <= NumberOfPages; i++)
-                {
-                    yield return i;
-                }
-            }
-            else if (NumberOfPages < 0)
-            {
-                var start = Math.Max(1, SelectedPageIndex - 1);
-                for (var i = start; i < start + 5; i++)
-                {
-                    yield return i;
-                }
-            }
-        }
+        private int m_lastSelectedPageIndex = -1;
+        private int m_lastNumberOfPagesCount;
+        private bool m_templateApplied;
 
-        private void UpdateNavigationButton(Button button, Style style, PagerControlButtonVisibility buttonVisibility, bool isEnabled, string statePrefix)
-        {
-            if (button == null)
-            {
-                return;
-            }
+        private FrameworkElement m_rootGrid;
+        private ComboBox m_comboBox;
+        private NumberBox m_numberBox;
+        private ItemsRepeater m_numberPanelRepeater;
+        private FrameworkElement m_selectedPageIndicator;
+        private Button m_firstPageButton;
+        private Button m_previousPageButton;
+        private Button m_nextPageButton;
+        private Button m_lastPageButton;
 
-            if (style != null)
-            {
-                button.Style = style;
-            }
-
-            bool useFallback = !VisualStateManager.GoToState(this, GetButtonVisibilityStateName(buttonVisibility, statePrefix), false);
-            useFallback |= !VisualStateManager.GoToState(this, GetButtonEnabledStateName(buttonVisibility, isEnabled, statePrefix), false);
-
-            if (useFallback)
-            {
-                button.Visibility = GetButtonVisibility(buttonVisibility, isEnabled);
-                button.Opacity = buttonVisibility == PagerControlButtonVisibility.HiddenOnEdge && !isEnabled ? 0 : 1;
-                button.IsEnabled = isEnabled;
-            }
-        }
-
-        private static Visibility GetButtonVisibility(PagerControlButtonVisibility buttonVisibility, bool isEnabled)
-        {
-            if (buttonVisibility == PagerControlButtonVisibility.Hidden)
-            {
-                return Visibility.Collapsed;
-            }
-
-            if (buttonVisibility == PagerControlButtonVisibility.HiddenOnEdge && !isEnabled)
-            {
-                return Visibility.Hidden;
-            }
-
-            return Visibility.Visible;
-        }
-
-        private static string GetButtonVisibilityStateName(PagerControlButtonVisibility buttonVisibility, string statePrefix)
-        {
-            return buttonVisibility == PagerControlButtonVisibility.Hidden
-                ? statePrefix + "Collapsed"
-                : statePrefix + "Visible";
-        }
-
-        private static string GetButtonEnabledStateName(PagerControlButtonVisibility buttonVisibility, bool isEnabled, string statePrefix)
-        {
-            if (buttonVisibility == PagerControlButtonVisibility.HiddenOnEdge && !isEnabled)
-            {
-                return statePrefix + "Hidden";
-            }
-
-            return isEnabled ? statePrefix + "Enabled" : statePrefix + "Disabled";
-        }
-
-        private void UpdateNumberPanelButtons()
-        {
-            if (_numberPanel == null)
-            {
-                return;
-            }
-
-            foreach (var button in _pageButtonsByPageIndex.Values)
-            {
-                button.Click -= OnPageButtonClick;
-            }
-
-            _pageButtonsByPageIndex.Clear();
-            _numberPanel.Children.Clear();
-
-            var sizeOfSet = NumberOfPages > 0 ? NumberOfPages : 0;
-            foreach (var item in TemplateSettings.NumberPanelItems)
-            {
-                var pageNumber = (int)item;
-                var pageIndex = pageNumber - 1;
-                var button = new Button
-                {
-                    Content = pageNumber.ToString(),
-                    Tag = pageIndex,
-                    MinWidth = 28,
-                    Margin = new Thickness(2),
-                    Padding = new Thickness(4, 2, 4, 2),
-                    FontWeight = pageIndex == SelectedPageIndex ? FontWeights.SemiBold : FontWeights.Normal
-                };
-
-                AutomationProperties.SetName(button, $"Page {pageNumber}");
-#if NET48_OR_NEWER
-                AutomationProperties.SetPositionInSet(button, pageNumber);
-                AutomationProperties.SetSizeOfSet(button, sizeOfSet);
-#endif
-                button.Click += OnPageButtonClick;
-                _pageButtonsByPageIndex[pageIndex] = button;
-                _numberPanel.Children.Add(button);
-            }
-        }
-
-        private Panel _rootPanel;
-        private Panel _numberPanel;
-        private Button _firstButton;
-        private Button _previousButton;
-        private Button _nextButton;
-        private Button _lastButton;
-        private bool _hasRaisedInitialSelectedIndexChanged;
-        private readonly Dictionary<int, Button> _pageButtonsByPageIndex = new Dictionary<int, Button>();
+        private readonly ObservableCollection<object> m_comboBoxEntries;
+        private readonly ObservableCollection<object> m_numberPanelElements;
     }
 }
