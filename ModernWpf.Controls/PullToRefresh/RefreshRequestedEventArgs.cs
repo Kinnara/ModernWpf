@@ -27,6 +27,18 @@ namespace ModernWpf.Controls
             TryComplete();
         }
 
+        internal void IncrementDeferralCount()
+        {
+            _deferralCount++;
+        }
+
+        internal void DecrementDeferralCount()
+        {
+            Debug.Assert(_deferralCount > 0);
+            _deferralCount--;
+            TryComplete();
+        }
+
         private void CompleteDeferral()
         {
             Debug.Assert(_deferralCount > 0);

@@ -127,6 +127,40 @@ public class RefreshContainerApiTests
     }
 
     [TestMethod]
+    public void RefreshVisualizerSourceInfoProviderDrivesStateMachine()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var visualizer = new RefreshVisualizer();
+            var states = new List<RefreshVisualizerState>();
+            var requestedCount = 0;
+            var provider = new RefreshInfoProviderImpl(RefreshPullDirection.TopToBottom, new Size(100, 100));
+
+            using var host = new TestWindowHost(visualizer, width: 160, height: 140);
+
+            visualizer.RefreshStateChanged += (_, args) => states.Add(args.NewState);
+            visualizer.RefreshRequested += (_, _) => requestedCount++;
+            visualizer.InfoProvider = provider;
+
+            provider.UpdateIsInteractingForRefresh(true);
+            provider.RaiseInteractionRatioChanged(0.25);
+            Assert.AreEqual(RefreshVisualizerState.Interacting, visualizer.State);
+
+            provider.RaiseInteractionRatioChanged(0.83);
+            Assert.AreEqual(RefreshVisualizerState.Pending, visualizer.State);
+
+            provider.UpdateIsInteractingForRefresh(false);
+
+            Assert.AreEqual(1, requestedCount);
+            Assert.AreEqual(RefreshVisualizerState.Idle, visualizer.State);
+            CollectionAssert.Contains(states, RefreshVisualizerState.Interacting);
+            CollectionAssert.Contains(states, RefreshVisualizerState.Pending);
+            CollectionAssert.Contains(states, RefreshVisualizerState.Refreshing);
+            CollectionAssert.Contains(states, RefreshVisualizerState.Idle);
+        });
+    }
+
+    [TestMethod]
     public void RefreshContainerDefaultsAndRequestRefreshProxy()
     {
         WpfTestHost.Run(() =>
@@ -159,6 +193,37 @@ public class RefreshContainerApiTests
             Assert.AreEqual(1, containerRequestCount);
             Assert.AreEqual(1, visualizerRequestCount);
             Assert.AreEqual(RefreshVisualizerState.Idle, container.Visualizer.State);
+        });
+    }
+
+    [TestMethod]
+    public void RefreshContainerUsesSourceAdapterAndPreservesCustomVisualizerSize()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var customVisualizer = new RefreshVisualizer
+            {
+                Width = 42,
+                Height = 44
+            };
+            var container = new RefreshContainer
+            {
+                Content = new ScrollViewer
+                {
+                    Height = 80,
+                    Content = CreateTallContent()
+                },
+                PullDirection = RefreshPullDirection.LeftToRight,
+                Visualizer = customVisualizer
+            };
+
+            using var host = new TestWindowHost(container, width: 240, height: 140);
+
+            Assert.IsInstanceOfType(container.RefreshInfoProviderAdapter, typeof(ScrollViewerIRefreshInfoProviderAdapter));
+            Assert.AreSame(customVisualizer, container.Visualizer);
+            Assert.AreEqual(42.0, customVisualizer.Width);
+            Assert.AreEqual(44.0, customVisualizer.Height);
+            Assert.IsNotNull(customVisualizer.InfoProvider);
         });
     }
 

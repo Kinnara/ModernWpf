@@ -1,31 +1,17 @@
-using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media;
 
 namespace ModernWpf.Controls
 {
+    [TemplatePart(Name = RootName, Type = typeof(Panel))]
     [TemplatePart(Name = RefreshVisualizerPresenterName, Type = typeof(Panel))]
     public class RefreshContainer : ContentControl
     {
+        private const string RootName = "Root";
         private const string RefreshVisualizerPresenterName = "RefreshVisualizerPresenter";
         private const double DefaultPullDimensionSize = 100;
-        private const double PullStartThreshold = 8;
-        private const double PullExecutionThreshold = 80;
-
-        static RefreshContainer()
-        {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(RefreshContainer), new FrameworkPropertyMetadata(typeof(RefreshContainer)));
-        }
-
-        public RefreshContainer()
-        {
-            PreviewMouseLeftButtonDown += OnPreviewMouseLeftButtonDown;
-            PreviewMouseMove += OnPreviewMouseMove;
-            PreviewMouseLeftButtonUp += OnPreviewMouseLeftButtonUp;
-            LostMouseCapture += OnLostMouseCapture;
-        }
+        private const int MaxBfsDepth = 10;
 
         public static readonly DependencyProperty VisualizerProperty =
             DependencyProperty.Register(
@@ -34,12 +20,6 @@ namespace ModernWpf.Controls
                 typeof(RefreshContainer),
                 new PropertyMetadata(null, OnVisualizerPropertyChanged));
 
-        public RefreshVisualizer Visualizer
-        {
-            get => (RefreshVisualizer)GetValue(VisualizerProperty);
-            set => SetValue(VisualizerProperty, value);
-        }
-
         public static readonly DependencyProperty PullDirectionProperty =
             DependencyProperty.Register(
                 nameof(PullDirection),
@@ -47,326 +27,380 @@ namespace ModernWpf.Controls
                 typeof(RefreshContainer),
                 new PropertyMetadata(RefreshPullDirection.TopToBottom, OnPullDirectionPropertyChanged));
 
+        static RefreshContainer()
+        {
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(RefreshContainer), new FrameworkPropertyMetadata(typeof(RefreshContainer)));
+        }
+
+        public RefreshContainer()
+        {
+            RefreshInfoProviderAdapter = new ScrollViewerIRefreshInfoProviderAdapter(PullDirection);
+            _hasDefaultRefreshInfoProviderAdapter = true;
+        }
+
+        public RefreshVisualizer Visualizer
+        {
+            get => (RefreshVisualizer)GetValue(VisualizerProperty);
+            set => SetValue(VisualizerProperty, value);
+        }
+
         public RefreshPullDirection PullDirection
         {
             get => (RefreshPullDirection)GetValue(PullDirectionProperty);
             set => SetValue(PullDirectionProperty, value);
         }
 
+        internal IRefreshInfoProviderAdapter RefreshInfoProviderAdapter
+        {
+            get => _refreshInfoProviderAdapter;
+            set
+            {
+                if (!ReferenceEquals(_refreshInfoProviderAdapter, value))
+                {
+                    _refreshInfoProviderAdapter?.Dispose();
+                }
+
+                _refreshInfoProviderAdapter = value;
+                _hasDefaultRefreshInfoProviderAdapter = false;
+                OnRefreshInfoProviderAdapterChanged();
+            }
+        }
+
+        internal double PullRatioForTesting
+        {
+            get
+            {
+                EnsureRefreshInfoProvider();
+                return (_refreshInfoProviderAdapter as ScrollViewerIRefreshInfoProviderAdapter)?.InteractionRatio ?? 0;
+            }
+        }
+
+        internal bool CanStartPullForTesting
+        {
+            get
+            {
+                EnsureRefreshInfoProvider();
+                return (_refreshInfoProviderAdapter as ScrollViewerIRefreshInfoProviderAdapter)?.CanStartPull ?? true;
+            }
+        }
+
         public event TypedEventHandler<RefreshContainer, RefreshRequestedEventArgs> RefreshRequested;
 
         public override void OnApplyTemplate()
         {
-            if (_visualizer != null)
+            if (_refreshVisualizer != null)
             {
-                _visualizer.RefreshRequested -= OnVisualizerRefreshRequested;
-                _visualizer.RefreshStateChanged -= OnVisualizerRefreshStateChanged;
+                _refreshVisualizer.SizeChanged -= OnVisualizerSizeChanged;
+                _refreshVisualizer.RefreshRequested -= OnVisualizerRefreshRequested;
             }
 
             base.OnApplyTemplate();
 
+            _root = GetTemplateChild(RootName) as Panel;
             _refreshVisualizerPresenter = GetTemplateChild(RefreshVisualizerPresenterName) as Panel;
 
-            if (Visualizer == null)
+            _refreshVisualizer = Visualizer;
+            if (_refreshVisualizer == null)
             {
                 Visualizer = new RefreshVisualizer();
+                _hasDefaultRefreshVisualizer = true;
+            }
+            else
+            {
+                OnRefreshVisualizerChangedImpl();
+                _hasDefaultRefreshVisualizer = false;
             }
 
-            AttachVisualizer();
-            UpdatePullDirection();
-            UpdateVisualizerPresenterState();
+            _refreshPullDirection = PullDirection;
+            OnPullDirectionChangedImpl();
+            OnRefreshInfoProviderAdapterChanged();
         }
 
         public void RequestRefresh()
         {
-            Visualizer?.RequestRefresh();
+            _refreshVisualizer?.RequestRefresh();
         }
-
-        internal double PullRatioForTesting => _pullRatio;
-
-        internal bool CanStartPullForTesting => IsAtPullBoundary();
 
         internal void PullForTesting(double delta, bool complete)
         {
-            StartPull(new Point());
-            UpdatePull(delta);
-
-            if (complete)
-            {
-                CompletePull();
-            }
-        }
-
-        private void OnPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            StartPull(e.GetPosition(this));
-        }
-
-        private void OnPreviewMouseMove(object sender, MouseEventArgs e)
-        {
-            if (!_isPointerDown)
-            {
-                return;
-            }
-
-            var position = e.GetPosition(this);
-            var delta = GetDirectedDelta(position.X - _pullStartPoint.X, position.Y - _pullStartPoint.Y);
-            UpdatePull(delta);
-
-            if (_isPulling)
-            {
-                e.Handled = true;
-            }
-        }
-
-        private void OnPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            if (!_isPointerDown)
-            {
-                return;
-            }
-
-            ReleaseMouseCapture();
-            CompletePull();
-        }
-
-        private void OnLostMouseCapture(object sender, MouseEventArgs e)
-        {
-            if (_isPointerDown)
-            {
-                CompletePull();
-            }
-        }
-
-        private void StartPull(Point position)
-        {
-            _isPointerDown = IsAtPullBoundary();
-            _isPulling = false;
-            _pullStartPoint = position;
-        }
-
-        private void UpdatePull(double delta)
-        {
-            if (!_isPointerDown || delta <= 0 || Visualizer == null)
-            {
-                return;
-            }
-
-            if (!_isPulling)
-            {
-                if (delta < PullStartThreshold)
-                {
-                    return;
-                }
-
-                _isPulling = true;
-                CaptureMouse();
-            }
-
-            _pullRatio = Math.Min(1, delta / PullExecutionThreshold);
-            Visualizer.UpdatePullProgress(_pullRatio);
-            UpdateVisualizerPresenterState();
-        }
-
-        private void CompletePull()
-        {
-            var shouldRefresh = _isPulling && _pullRatio >= 1;
-
-            _isPointerDown = false;
-            _isPulling = false;
-            _pullRatio = 0;
-
-            if (shouldRefresh)
-            {
-                RequestRefresh();
-            }
-            else
-            {
-                Visualizer?.UpdatePullProgress(0);
-            }
-
-            UpdateVisualizerPresenterState();
-        }
-
-        private double GetDirectedDelta(double horizontalDelta, double verticalDelta)
-        {
-            switch (PullDirection)
-            {
-                case RefreshPullDirection.LeftToRight:
-                    return horizontalDelta;
-                case RefreshPullDirection.RightToLeft:
-                    return -horizontalDelta;
-                case RefreshPullDirection.BottomToTop:
-                    return -verticalDelta;
-                default:
-                    return verticalDelta;
-            }
+            EnsureRefreshInfoProvider();
+            (_refreshInfoProviderAdapter as ScrollViewerIRefreshInfoProviderAdapter)?.PullForTesting(delta, complete);
         }
 
         private static void OnVisualizerPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((RefreshContainer)d).OnVisualizerChanged(e.OldValue as RefreshVisualizer, e.NewValue as RefreshVisualizer);
+            ((RefreshContainer)d).OnRefreshVisualizerChanged(e.OldValue as RefreshVisualizer, e.NewValue as RefreshVisualizer);
         }
 
         private static void OnPullDirectionPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((RefreshContainer)d).UpdatePullDirection();
+            ((RefreshContainer)d).OnPullDirectionChanged((RefreshPullDirection)e.NewValue);
         }
 
-        private void OnVisualizerChanged(RefreshVisualizer oldVisualizer, RefreshVisualizer newVisualizer)
+        private void OnRefreshVisualizerChanged(RefreshVisualizer oldVisualizer, RefreshVisualizer newVisualizer)
         {
             if (oldVisualizer != null)
             {
+                oldVisualizer.SizeChanged -= OnVisualizerSizeChanged;
                 oldVisualizer.RefreshRequested -= OnVisualizerRefreshRequested;
-                oldVisualizer.RefreshStateChanged -= OnVisualizerRefreshStateChanged;
             }
 
-            _visualizer = newVisualizer;
-            AttachVisualizer();
-            UpdatePullDirection();
-            UpdateVisualizerPresenterState();
+            _refreshVisualizer = newVisualizer;
+            _hasDefaultRefreshVisualizer = false;
+            OnRefreshVisualizerChangedImpl();
         }
 
-        private void AttachVisualizer()
+        private void OnRefreshVisualizerChangedImpl()
         {
             if (_refreshVisualizerPresenter != null)
             {
                 _refreshVisualizerPresenter.Children.Clear();
-                if (_visualizer != null)
+                if (_refreshVisualizer != null)
                 {
-                    _refreshVisualizerPresenter.Children.Add(_visualizer);
+                    _refreshVisualizerPresenter.Children.Add(_refreshVisualizer);
                 }
             }
 
-            if (_visualizer != null)
+            if (_refreshVisualizer != null)
             {
-                _visualizer.RefreshRequested -= OnVisualizerRefreshRequested;
-                _visualizer.RefreshRequested += OnVisualizerRefreshRequested;
-                _visualizer.RefreshStateChanged -= OnVisualizerRefreshStateChanged;
-                _visualizer.RefreshStateChanged += OnVisualizerRefreshStateChanged;
+                _refreshVisualizer.SizeChanged -= OnVisualizerSizeChanged;
+                _refreshVisualizer.SizeChanged += OnVisualizerSizeChanged;
+                _refreshVisualizer.RefreshRequested -= OnVisualizerRefreshRequested;
+                _refreshVisualizer.RefreshRequested += OnVisualizerRefreshRequested;
+            }
+
+            OnRefreshInfoProviderAdapterChanged();
+        }
+
+        private void OnPullDirectionChanged(RefreshPullDirection value)
+        {
+            _refreshPullDirection = value;
+            OnPullDirectionChangedImpl();
+
+            if (_hasDefaultRefreshInfoProviderAdapter)
+            {
+                _refreshInfoProviderAdapter?.Dispose();
+                _refreshInfoProviderAdapter = new ScrollViewerIRefreshInfoProviderAdapter(PullDirection);
+                OnRefreshInfoProviderAdapterChanged();
             }
         }
 
-        private void UpdatePullDirection()
+        private void OnPullDirectionChangedImpl()
         {
             if (_refreshVisualizerPresenter == null)
             {
                 return;
             }
 
-            switch (PullDirection)
+            switch (_refreshPullDirection)
             {
                 case RefreshPullDirection.LeftToRight:
+                    _refreshVisualizerPresenter.VerticalAlignment = VerticalAlignment.Stretch;
                     _refreshVisualizerPresenter.HorizontalAlignment = HorizontalAlignment.Left;
-                    _refreshVisualizerPresenter.VerticalAlignment = VerticalAlignment.Stretch;
-                    SetVisualizerSize(width: DefaultPullDimensionSize, height: double.NaN);
+                    if (_hasDefaultRefreshVisualizer)
+                    {
+                        SetDefaultVisualizerDirectionAndSize(RefreshPullDirection.LeftToRight, double.NaN, DefaultPullDimensionSize);
+                    }
                     break;
 
                 case RefreshPullDirection.RightToLeft:
+                    _refreshVisualizerPresenter.VerticalAlignment = VerticalAlignment.Stretch;
                     _refreshVisualizerPresenter.HorizontalAlignment = HorizontalAlignment.Right;
-                    _refreshVisualizerPresenter.VerticalAlignment = VerticalAlignment.Stretch;
-                    SetVisualizerSize(width: DefaultPullDimensionSize, height: double.NaN);
+                    if (_hasDefaultRefreshVisualizer)
+                    {
+                        SetDefaultVisualizerDirectionAndSize(RefreshPullDirection.RightToLeft, double.NaN, DefaultPullDimensionSize);
+                    }
                     break;
 
                 case RefreshPullDirection.BottomToTop:
-                    _refreshVisualizerPresenter.HorizontalAlignment = HorizontalAlignment.Stretch;
                     _refreshVisualizerPresenter.VerticalAlignment = VerticalAlignment.Bottom;
-                    SetVisualizerSize(width: double.NaN, height: DefaultPullDimensionSize);
-                    break;
-
-                default:
                     _refreshVisualizerPresenter.HorizontalAlignment = HorizontalAlignment.Stretch;
+                    if (_hasDefaultRefreshVisualizer)
+                    {
+                        SetDefaultVisualizerDirectionAndSize(RefreshPullDirection.BottomToTop, DefaultPullDimensionSize, double.NaN);
+                    }
+                    break;
+
+                default:
                     _refreshVisualizerPresenter.VerticalAlignment = VerticalAlignment.Top;
-                    SetVisualizerSize(width: double.NaN, height: DefaultPullDimensionSize);
+                    _refreshVisualizerPresenter.HorizontalAlignment = HorizontalAlignment.Stretch;
+                    if (_hasDefaultRefreshVisualizer)
+                    {
+                        SetDefaultVisualizerDirectionAndSize(RefreshPullDirection.TopToBottom, DefaultPullDimensionSize, double.NaN);
+                    }
                     break;
             }
         }
 
-        private void SetVisualizerSize(double width, double height)
+        private void SetDefaultVisualizerDirectionAndSize(RefreshPullDirection pullDirection, double height, double width)
         {
-            if (_visualizer != null)
+            if (_refreshVisualizer == null)
             {
-                _visualizer.Width = width;
-                _visualizer.Height = height;
+                return;
+            }
+
+            _refreshVisualizer.SetInternalPullDirection(pullDirection);
+            _refreshVisualizer.Height = height;
+            _refreshVisualizer.Width = width;
+        }
+
+        private void OnRefreshInfoProviderAdapterChanged()
+        {
+            if (_root == null || _refreshVisualizer == null)
+            {
+                return;
+            }
+
+            var firstChildAsInfoProvider = _root.Children.Count > 0 ? _root.Children[0] as IRefreshInfoProvider : null;
+            if (firstChildAsInfoProvider != null)
+            {
+                _refreshVisualizer.InfoProvider = firstChildAsInfoProvider;
+                return;
+            }
+
+            IRefreshInfoProvider providerFromAdapter = null;
+            if (_refreshInfoProviderAdapter != null)
+            {
+                providerFromAdapter = _refreshInfoProviderAdapter.AdaptFromTree(_root, GetRefreshVisualizerSize());
+                if (providerFromAdapter != null)
+                {
+                    _refreshVisualizer.InfoProvider = providerFromAdapter;
+                    _refreshInfoProviderAdapter.SetAnimations(_refreshVisualizer);
+                }
+            }
+
+            if (providerFromAdapter == null)
+            {
+                _refreshVisualizer.InfoProvider = SearchTreeForIRefreshInfoProvider();
             }
         }
 
-        private bool IsAtPullBoundary()
+        private IRefreshInfoProvider SearchTreeForIRefreshInfoProvider()
         {
-            var scrollViewer = FindScrollViewer(Content as DependencyObject);
-            if (scrollViewer == null)
-            {
-                return true;
-            }
-
-            switch (PullDirection)
-            {
-                case RefreshPullDirection.LeftToRight:
-                    return scrollViewer.HorizontalOffset <= 0;
-                case RefreshPullDirection.RightToLeft:
-                    return scrollViewer.HorizontalOffset >= scrollViewer.ScrollableWidth;
-                case RefreshPullDirection.BottomToTop:
-                    return scrollViewer.VerticalOffset >= scrollViewer.ScrollableHeight;
-                default:
-                    return scrollViewer.VerticalOffset <= 0;
-            }
-        }
-
-        private static ScrollViewer FindScrollViewer(DependencyObject root)
-        {
-            if (root == null)
+            if (_root == null)
             {
                 return null;
             }
 
-            if (root is ScrollViewer scrollViewer)
+            if (_root is IRefreshInfoProvider rootAsProvider)
             {
-                return scrollViewer;
+                return rootAsProvider;
             }
 
-            var childCount = VisualTreeHelper.GetChildrenCount(root);
-            for (var i = 0; i < childCount; i++)
+            for (var depth = 0; depth < MaxBfsDepth; depth++)
             {
-                var match = FindScrollViewer(VisualTreeHelper.GetChild(root, i));
-                if (match != null)
+                var result = SearchTreeForIRefreshInfoProviderRecursiveHelper(_root, depth);
+                if (result != null)
                 {
-                    return match;
+                    return result;
                 }
             }
 
             return null;
         }
 
-        private void OnVisualizerRefreshStateChanged(RefreshVisualizer sender, RefreshStateChangedEventArgs args)
+        private static IRefreshInfoProvider SearchTreeForIRefreshInfoProviderRecursiveHelper(DependencyObject root, int depth)
         {
-            UpdateVisualizerPresenterState();
-        }
-
-        private void UpdateVisualizerPresenterState()
-        {
-            if (_refreshVisualizerPresenter == null || _visualizer == null)
+            var numChildren = root == null ? 0 : VisualTreeHelper.GetChildrenCount(root);
+            if (depth == 0)
             {
-                return;
+                for (var i = 0; i < numChildren; i++)
+                {
+                    if (VisualTreeHelper.GetChild(root, i) is IRefreshInfoProvider provider)
+                    {
+                        return provider;
+                    }
+                }
+
+                return null;
             }
 
-            _refreshVisualizerPresenter.Opacity =
-                _visualizer.State == RefreshVisualizerState.Idle ? _pullRatio : 1;
+            for (var i = 0; i < numChildren; i++)
+            {
+                var result = SearchTreeForIRefreshInfoProviderRecursiveHelper(VisualTreeHelper.GetChild(root, i), depth - 1);
+                if (result != null)
+                {
+                    return result;
+                }
+            }
+
+            return null;
+        }
+
+        private void OnVisualizerSizeChanged(object sender, SizeChangedEventArgs args)
+        {
+            if (_hasDefaultRefreshInfoProviderAdapter)
+            {
+                _refreshInfoProviderAdapter?.Dispose();
+                _refreshInfoProviderAdapter = new ScrollViewerIRefreshInfoProviderAdapter(PullDirection);
+                OnRefreshInfoProviderAdapterChanged();
+            }
         }
 
         private void OnVisualizerRefreshRequested(RefreshVisualizer sender, RefreshRequestedEventArgs args)
         {
-            var visualizerDeferral = args.GetDeferral();
-            var containerArgs = new RefreshRequestedEventArgs(visualizerDeferral.Complete);
-
-            RefreshRequested?.Invoke(this, containerArgs);
-            containerArgs.CompleteEvent();
+            _visualizerRefreshCompletedDeferral = args.GetDeferral();
+            RaiseRefreshRequested();
         }
 
+        private void RaiseRefreshRequested()
+        {
+            var args = new RefreshRequestedEventArgs(RefreshCompleted);
+            args.IncrementDeferralCount();
+            RefreshRequested?.Invoke(this, args);
+            args.DecrementDeferralCount();
+            args.CompleteEvent();
+        }
+
+        private void RefreshCompleted()
+        {
+            _visualizerRefreshCompletedDeferral?.Complete();
+            _visualizerRefreshCompletedDeferral = null;
+        }
+
+        private void EnsureRefreshInfoProvider()
+        {
+            if (_refreshVisualizer != null && _refreshVisualizer.InfoProvider == null)
+            {
+                OnRefreshInfoProviderAdapterChanged();
+            }
+        }
+
+        private Size GetRefreshVisualizerSize()
+        {
+            var width = _refreshVisualizer.Width;
+            var height = _refreshVisualizer.Height;
+
+            if (width <= 0 || double.IsNaN(width))
+            {
+                width = _refreshVisualizer.RenderSize.Width;
+            }
+
+            if (height <= 0 || double.IsNaN(height))
+            {
+                height = _refreshVisualizer.RenderSize.Height;
+            }
+
+            if (width <= 0 || double.IsNaN(width))
+            {
+                width = DefaultPullDimensionSize;
+            }
+
+            if (height <= 0 || double.IsNaN(height))
+            {
+                height = DefaultPullDimensionSize;
+            }
+
+            return new Size(width, height);
+        }
+
+        private Panel _root;
         private Panel _refreshVisualizerPresenter;
-        private RefreshVisualizer _visualizer;
-        private Point _pullStartPoint;
-        private double _pullRatio;
-        private bool _isPointerDown;
-        private bool _isPulling;
+        private RefreshVisualizer _refreshVisualizer;
+        private RefreshDeferral _visualizerRefreshCompletedDeferral;
+        private RefreshPullDirection _refreshPullDirection = RefreshPullDirection.TopToBottom;
+        private IRefreshInfoProviderAdapter _refreshInfoProviderAdapter;
+        private bool _hasDefaultRefreshVisualizer;
+        private bool _hasDefaultRefreshInfoProviderAdapter;
     }
 }
