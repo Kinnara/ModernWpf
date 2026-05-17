@@ -23,6 +23,10 @@ The checkout was 12 commits behind `origin/winui3/main` when this note was creat
 - Where WinUI depends on compositor, popup island, WinRT automation, gamepad, or platform-only services, document the WPF substitution and add tests around the substitute behavior.
 - Keep WinUI 2.8.7 notes only as historical/resource-reference material unless a slice explicitly needs that baseline.
 
+## Recent Source-Backed Slices
+
+- 2026-05-17 ToggleSwitch canceled drag completion: `ToggleSwitch_Partial.cpp` returns immediately when `DragCompletedHandler` receives `Canceled=true`; ModernWpf now leaves the dragging state/translations untouched on that path and tests the resulting `Pressed` / `Dragging` states.
+
 ## Active Source Parity Matrix
 
 | Area | WinUI 3 source files | ModernWpf files | Status | Evidence |

@@ -587,10 +587,6 @@ namespace ModernWpf.Controls
         {
             if (e.Canceled)
             {
-                _isDragging = false;
-                _wasDragged = false;
-                ClearTranslations();
-                UpdateVisualStates(true);
                 return;
             }
 

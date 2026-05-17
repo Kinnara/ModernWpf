@@ -92,6 +92,34 @@ public class ToggleSwitchApiTests
     }
 
     [TestMethod]
+    public void CanceledDragCompletionLeavesDragStateLikeWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch();
+            using var host = new TestWindowHost(toggleSwitch, width: 260, height: 120);
+            host.UpdateLayout();
+
+            var thumb = FindNamedDescendant<Thumb>(toggleSwitch, "SwitchThumb");
+            var stateGroupsRoot = FindStateGroupsRoot(toggleSwitch);
+
+            RaiseDragStarted(thumb);
+            RaiseDragDelta(thumb, 6);
+            var completed = RaiseDragCompleted(thumb, canceled: true);
+            host.UpdateLayout();
+
+            Assert.IsFalse(completed.Handled);
+            Assert.IsFalse(toggleSwitch.IsOn);
+            Assert.AreEqual("Pressed", GetCurrentStateName(stateGroupsRoot, "CommonStates"));
+            Assert.AreEqual("Dragging", GetCurrentStateName(stateGroupsRoot, "ToggleStates"));
+            Assert.AreEqual(6d, toggleSwitch.TemplateSettings.KnobCurrentToOffOffset, 0.1);
+            Assert.AreEqual(-14d, toggleSwitch.TemplateSettings.KnobCurrentToOnOffset, 0.1);
+        });
+    }
+
+    [TestMethod]
     public void DragRoutedEventsRemainUnhandledLikeWinUISource()
     {
         WpfTestHost.Run(() =>
@@ -1104,9 +1132,9 @@ public class ToggleSwitchApiTests
         return args;
     }
 
-    private static DragCompletedEventArgs RaiseDragCompleted(Thumb thumb)
+    private static DragCompletedEventArgs RaiseDragCompleted(Thumb thumb, bool canceled = false)
     {
-        var args = new DragCompletedEventArgs(0, 0, false)
+        var args = new DragCompletedEventArgs(0, 0, canceled)
         {
             RoutedEvent = Thumb.DragCompletedEvent
         };
