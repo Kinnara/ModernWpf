@@ -117,6 +117,26 @@ namespace ModernWpf.Controls.Primitives
 
         #endregion
 
+        #region Target
+
+        private static readonly DependencyPropertyKey TargetPropertyKey =
+            DependencyProperty.RegisterReadOnly(
+                nameof(Target),
+                typeof(FrameworkElement),
+                typeof(FlyoutBase),
+                new PropertyMetadata(null));
+
+        public static readonly DependencyProperty TargetProperty =
+            TargetPropertyKey.DependencyProperty;
+
+        public FrameworkElement Target
+        {
+            get => (FrameworkElement)GetValue(TargetProperty);
+            internal set => SetValue(TargetPropertyKey, value);
+        }
+
+        #endregion
+
         #region ShowMode
 
         public static readonly DependencyProperty ShowModeProperty =
@@ -208,7 +228,7 @@ namespace ModernWpf.Controls.Primitives
 
             if (m_popup != null &&
                 m_popup.IsOpen &&
-                m_target == placementTarget &&
+                Target == placementTarget &&
                 m_showingAsContextFlyout == showAsContextFlyout)
             {
                 return;
@@ -224,7 +244,7 @@ namespace ModernWpf.Controls.Primitives
             Debug.Assert(m_popup.HasLocalValue(Popup.PlacementProperty));
             Debug.Assert(m_popup.HasLocalValue(Popup.PlacementTargetProperty));
 
-            m_target = placementTarget;
+            Target = placementTarget;
             m_showingAsContextFlyout = showAsContextFlyout;
             OnOpening();
             m_popup.IsOpen = true;
@@ -477,7 +497,7 @@ namespace ModernWpf.Controls.Primitives
             m_popup.ClearValue(Popup.PlacementRectangleProperty);
             m_popup.ClearValue(FrameworkElement.WidthProperty);
             m_popup.ClearValue(FrameworkElement.HeightProperty);
-            m_target = null;
+            Target = null;
             m_showingAsContextFlyout = false;
 
             OnClosed();
@@ -517,7 +537,6 @@ namespace ModernWpf.Controls.Primitives
 
         private Control m_presenter;
         private PopupEx m_popup;
-        private FrameworkElement m_target;
         private bool m_showingAsContextFlyout;
         private WeakReference<IInputElement> m_weakRefToPreviousFocus;
         private bool m_closing;

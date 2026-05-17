@@ -4,9 +4,10 @@ Date: 2026-05-17
 
 This audit treats the local WinUI 3 checkout at `D:\repos\microsoft-ui-xaml`
 as the behavioral source of truth for the existing ModernWpf `ToggleSwitch`.
-It is intended to close the "guessed implementation" label for this control:
-remaining differences should be WPF substitutions or explicit platform gaps,
-not unreviewed ModernWpf behavior.
+It is an evidence map, not a completed source replacement. ToggleSwitch still
+counts as guessed implementation debt until the control is replaced/adapted as
+a whole-control WinUI 3 port; this note only identifies the source-aligned
+pieces, WPF substitutions, and platform gaps known so far.
 
 ## WinUI 3 Source Inputs
 

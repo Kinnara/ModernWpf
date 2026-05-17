@@ -2302,6 +2302,14 @@ Use the ItemsRepeaterScrollHost if your app will run on versions of Windows prio
       <summary>Identifies the Placement dependency property.</summary>
       <returns>The identifier for the Placement dependency property.</returns>
     </member>
+    <member name="P:ModernWpf.Controls.Primitives.FlyoutBase.Target">
+      <summary>Gets the element that is used as the flyout's placement target while the flyout is open.</summary>
+      <returns>The element that is used as the flyout's placement target.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.Primitives.FlyoutBase.TargetProperty">
+      <summary>Identifies the Target dependency property.</summary>
+      <returns>The identifier for the Target dependency property.</returns>
+    </member>
     <member name="E:ModernWpf.Controls.Primitives.FlyoutBase.Closed">
       <summary>Occurs when the flyout is hidden.</summary>
     </member>

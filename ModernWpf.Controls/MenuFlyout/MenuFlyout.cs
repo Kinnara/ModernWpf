@@ -113,6 +113,7 @@ namespace ModernWpf.Controls
 
             m_presenter.Placement = placement;
             m_presenter.PlacementTarget = placementTarget;
+            Target = placementTarget;
 
             if (placement == PlacementMode.Custom)
             {
@@ -194,6 +195,7 @@ namespace ModernWpf.Controls
             m_presenter.ClearValue(ContextMenu.PlacementProperty);
             m_presenter.ClearValue(ContextMenu.PlacementTargetProperty);
             m_presenter.ClearValue(ContextMenu.PlacementRectangleProperty);
+            Target = null;
             m_currentPlacement = null;
 
             OnClosed();

@@ -11,6 +11,53 @@ namespace ModernWpf.WinUI.Tests.FlyoutTests;
 public class FlyoutBaseApiTests
 {
     [TestMethod]
+    public void TargetTracksOpenFlyoutLikeWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var target = new Button
+            {
+                Content = "Target",
+                Width = 120,
+                Height = 36
+            };
+            var flyout = new Flyout
+            {
+                Content = new TextBlock { Text = "Flyout content" }
+            };
+            bool cancelClosing = true;
+
+            flyout.Closing += (_, args) => args.Cancel = cancelClosing;
+
+            using var host = new TestWindowHost(target, width: 320, height: 220);
+            host.UpdateLayout();
+
+            Assert.IsNull(flyout.Target);
+
+            flyout.ShowAt(target);
+            WpfTestHost.DoEvents();
+
+            Assert.IsTrue(flyout.IsOpen);
+            Assert.AreSame(target, flyout.Target);
+
+            flyout.Hide();
+            WpfTestHost.DoEvents();
+
+            Assert.IsTrue(flyout.IsOpen);
+            Assert.AreSame(target, flyout.Target);
+
+            cancelClosing = false;
+            flyout.Hide();
+            WpfTestHost.DoEvents();
+
+            Assert.IsFalse(flyout.IsOpen);
+            Assert.IsNull(flyout.Target);
+        });
+    }
+
+    [TestMethod]
     public void ClosingCanCancelHideLikeWinUISource()
     {
         WpfTestHost.Run(() =>

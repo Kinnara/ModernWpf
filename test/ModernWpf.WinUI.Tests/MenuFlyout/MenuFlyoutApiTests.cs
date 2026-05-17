@@ -11,6 +11,51 @@ namespace ModernWpf.WinUI.Tests.MenuFlyoutTests;
 public class MenuFlyoutApiTests
 {
     [TestMethod]
+    public void TargetTracksOpenMenuFlyoutLikeWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var target = new Button
+            {
+                Content = "Target",
+                Width = 120,
+                Height = 36
+            };
+            var menuFlyout = new MenuFlyout();
+            menuFlyout.Items.Add(new MenuItem { Header = "Copy" });
+            bool cancelClosing = true;
+
+            menuFlyout.Closing += (_, args) => args.Cancel = cancelClosing;
+
+            using var host = new TestWindowHost(target, width: 320, height: 220);
+            host.UpdateLayout();
+
+            Assert.IsNull(menuFlyout.Target);
+
+            menuFlyout.ShowAt(target);
+            WpfTestHost.DoEvents();
+
+            Assert.IsTrue(menuFlyout.IsOpen);
+            Assert.AreSame(target, menuFlyout.Target);
+
+            menuFlyout.Hide();
+            WpfTestHost.DoEvents();
+
+            Assert.IsTrue(menuFlyout.IsOpen);
+            Assert.AreSame(target, menuFlyout.Target);
+
+            cancelClosing = false;
+            menuFlyout.Hide();
+            WpfTestHost.DoEvents();
+
+            Assert.IsFalse(menuFlyout.IsOpen);
+            Assert.IsNull(menuFlyout.Target);
+        });
+    }
+
+    [TestMethod]
     public void ClosingCanCancelHideLikeWinUISource()
     {
         WpfTestHost.Run(() =>
