@@ -281,6 +281,67 @@ public class CommandBarApiTests
     }
 
     [TestMethod]
+    public void AppBarButtonOverflowFlyoutUsesWinUISourceShowOptions()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var flyout = new Flyout
+            {
+                Content = new Border
+                {
+                    Width = 24,
+                    Height = 24
+                }
+            };
+
+            var button = new TestAppBarButton
+            {
+                Label = "More",
+                Width = 80,
+                Height = 32,
+                Flyout = flyout
+            };
+
+            AppBarElementProperties.SetUseOverflowStyle(button, true);
+
+            using var host = new TestWindowHost(button, width: 180, height: 120);
+            host.UpdateLayout();
+
+            Assert.IsTrue(button.IsInOverflow);
+            Assert.AreEqual(80d, button.ActualWidth, 0.1);
+
+            button.InvokeClick();
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            Assert.IsTrue(flyout.IsOpen);
+            Assert.AreSame(button, flyout.Target);
+            Assert.AreEqual(FlyoutPlacementMode.RightEdgeAlignedTop, flyout.GetEffectivePlacement());
+            Assert.AreEqual(new Rect(button.ActualWidth, 0, 0, 0), flyout.InternalPopup.PlacementRectangle);
+
+            var peer = FrameworkElementAutomationPeer.CreatePeerForElement(button);
+            var provider = (IExpandCollapseProvider)peer.GetPattern(PatternInterface.ExpandCollapse);
+            Assert.IsNotNull(provider);
+
+            provider.Collapse();
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            provider.Expand();
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            Assert.IsTrue(flyout.IsOpen);
+            Assert.AreEqual(FlyoutPlacementMode.RightEdgeAlignedTop, flyout.GetEffectivePlacement());
+            Assert.AreEqual(new Rect(button.ActualWidth, 0, 0, 0), flyout.InternalPopup.PlacementRectangle);
+
+            flyout.Hide();
+        });
+    }
+
+    [TestMethod]
     public void AppBarButtonClickClosesParentCommandBarUnlessItHasFlyoutLikeWinUISource()
     {
         WpfTestHost.Run(() =>

@@ -74,7 +74,7 @@ namespace ModernWpf.Automation.Peers
             }
 
             var owner = GetImpl();
-            owner.Flyout?.ShowAt(owner);
+            owner.OpenAssociatedFlyout();
         }
 
         public void Collapse()

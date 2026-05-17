@@ -394,10 +394,44 @@ namespace ModernWpf.Controls
 
             base.OnClick();
 
-            if (Flyout is { } flyout)
+            OpenAssociatedFlyout();
+        }
+
+        internal void OpenAssociatedFlyout()
+        {
+            if (Flyout is not { } flyout)
+            {
+                return;
+            }
+
+            if (IsInOverflow)
+            {
+                flyout.ShowAt(this, CreateOverflowFlyoutShowOptions(GetOverflowFlyoutPosition()));
+            }
+            else
             {
                 flyout.ShowAt(this);
             }
+        }
+
+        private Point GetOverflowFlyoutPosition()
+        {
+            // WinUI gets this point from CascadingMenuHelper; WPF has no equivalent.
+            return new Point(Math.Max(0, ActualWidth), 0);
+        }
+
+        private FlyoutShowOptions CreateOverflowFlyoutShowOptions(Point position)
+        {
+            double itemWidth = Math.Max(0, ActualWidth);
+            double itemHeight = Math.Max(0, ActualHeight);
+            double overlap = itemWidth - position.X;
+
+            return new FlyoutShowOptions
+            {
+                Placement = FlyoutPlacementMode.RightEdgeAlignedTop,
+                ExclusionRect = new Rect(overlap, 0, Math.Max(0, position.X - overlap), itemHeight),
+                Position = position
+            };
         }
 
         protected override void OnVisualParentChanged(DependencyObject oldParent)
