@@ -2,6 +2,8 @@ using System;
 using System.Linq;
 using System.Numerics;
 using System.Windows;
+using System.Windows.Automation.Peers;
+using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
@@ -254,7 +256,7 @@ public class ColorPickerApiTests
             var spectrumEllipse = FindNamedDescendant<Ellipse>(colorSpectrum, "SpectrumEllipse");
             var rectangleBorder = FindNamedDescendant<Rectangle>(colorSpectrum, "RectangleBorder");
             var ellipseBorder = FindNamedDescendant<Ellipse>(colorSpectrum, "EllipseBorder");
-            var layoutRoot = FindNamedDescendant<Border>(colorSpectrum, "LayoutRoot");
+            var layoutRoot = FindNamedDescendant<Grid>(colorSpectrum, "LayoutRoot");
             AssertStateSetter(
                 layoutRoot,
                 "ShapeSelected",
@@ -300,12 +302,12 @@ public class ColorPickerApiTests
 
             colorSpectrum.SetColorFromPointForTesting(new Point(spectrumEllipse.ActualWidth, spectrumEllipse.ActualHeight / 2));
 
-            AssertClose(0, colorSpectrum.HsvColor.X, 0.5);
-            AssertClose(1, colorSpectrum.HsvColor.Y, 0.01);
+            AssertClose(0, colorSpectrum.HsvColor.X, 3.0);
+            AssertClose(0, colorSpectrum.HsvColor.Y, 0.02);
 
             colorSpectrum.SetColorFromPointForTesting(new Point(spectrumEllipse.ActualWidth / 2, spectrumEllipse.ActualHeight / 2));
 
-            AssertClose(0, colorSpectrum.HsvColor.Y, 0.01);
+            AssertClose(359, colorSpectrum.HsvColor.X, 3.0);
         });
     }
 
@@ -328,8 +330,8 @@ public class ColorPickerApiTests
             colorSpectrum.HsvColor = new Vector4(20, 0.50f, 0.50f, 1);
             colorSpectrum.AdjustColorForTesting(1, 1);
 
-            AssertClose(21, colorSpectrum.HsvColor.X, 0.01);
-            AssertClose(0.51, colorSpectrum.HsvColor.Z, 0.01);
+            AssertClose(19, colorSpectrum.HsvColor.X, 0.01);
+            AssertClose(0.49, colorSpectrum.HsvColor.Z, 0.01);
         });
     }
 
@@ -348,11 +350,13 @@ public class ColorPickerApiTests
 
             using var host = new TestWindowHost(colorSpectrum, width: 260, height: 260);
 
-            var outerRing = FindNamedDescendant<Ellipse>(colorSpectrum, "SelectionEllipseOuter");
+            var focusEllipse = FindNamedDescendant<Ellipse>(colorSpectrum, "FocusEllipse");
+            var selectionEllipse = FindNamedDescendant<Ellipse>(colorSpectrum, "SelectionEllipse");
 
             Assert.IsTrue(colorSpectrum.Focusable);
-            Assert.AreEqual(Colors.Black, ((SolidColorBrush)outerRing.Stroke).Color);
-            Assert.AreEqual(4.0, outerRing.StrokeThickness);
+            Assert.AreEqual(Colors.White, ((SolidColorBrush)focusEllipse.Stroke).Color);
+            Assert.AreEqual(Colors.Black, ((SolidColorBrush)selectionEllipse.Stroke).Color);
+            Assert.AreEqual(2.0, selectionEllipse.StrokeThickness);
         });
     }
 
@@ -372,7 +376,7 @@ public class ColorPickerApiTests
 
             using var host = new TestWindowHost(colorSpectrum, width: 260, height: 260);
 
-            var layoutRoot = FindNamedDescendant<Border>(colorSpectrum, "LayoutRoot");
+            var layoutRoot = FindNamedDescendant<Grid>(colorSpectrum, "LayoutRoot");
             var focusEllipse = FindNamedDescendant<Ellipse>(colorSpectrum, "FocusEllipse");
             var selectionEllipse = FindNamedDescendant<Ellipse>(colorSpectrum, "SelectionEllipse");
 
@@ -449,12 +453,12 @@ public class ColorPickerApiTests
             using var host = new TestWindowHost(colorPicker, width: 420, height: 520);
 
             Assert.AreEqual(Visibility.Collapsed, FindNamedDescendant<ColorSpectrum>(colorPicker, "ColorSpectrum").Visibility);
-            Assert.AreEqual(Visibility.Collapsed, FindNamedDescendant<Grid>(colorPicker, "PreviewGrid").Visibility);
-            Assert.AreEqual(Visibility.Collapsed, FindNamedDescendant<ColorPickerSlider>(colorPicker, "ThirdDimensionSlider").Visibility);
-            Assert.AreEqual(Visibility.Collapsed, FindNamedDescendant<ColorPickerSlider>(colorPicker, "AlphaSlider").Visibility);
+            Assert.AreEqual(Visibility.Collapsed, FindNamedDescendant<Grid>(colorPicker, "ColorPreviewRectangleGrid").Visibility);
+            Assert.AreEqual(Visibility.Collapsed, FindNamedDescendant<Grid>(colorPicker, "ThirdDimensionSliderGrid").Visibility);
+            Assert.AreEqual(Visibility.Collapsed, FindNamedDescendant<Grid>(colorPicker, "AlphaSliderGrid").Visibility);
             Assert.AreEqual(Visibility.Visible, FindNamedDescendant<ToggleButton>(colorPicker, "MoreButton").Visibility);
-            Assert.AreEqual(Visibility.Collapsed, FindNamedDescendant<TextBox>(colorPicker, "RedTextBox").Visibility);
-            Assert.AreEqual(Visibility.Collapsed, FindNamedDescendant<TextBox>(colorPicker, "AlphaTextBox").Visibility);
+            Assert.AreEqual(Visibility.Collapsed, FindNamedDescendant<Grid>(colorPicker, "ColorChannelTextInputPanel").Visibility);
+            Assert.AreEqual(Visibility.Collapsed, FindNamedDescendant<Grid>(colorPicker, "AlphaPanel").Visibility);
             Assert.AreEqual(Visibility.Collapsed, FindNamedDescendant<TextBox>(colorPicker, "HexTextBox").Visibility);
         });
     }
@@ -505,45 +509,73 @@ public class ColorPickerApiTests
 
             using var host = new TestWindowHost(colorPicker, width: 620, height: 360);
 
-            var rootPanel = FindNamedDescendant<StackPanel>(colorPicker, "RootPanel");
+            var rootGrid = FindNamedDescendant<Grid>(colorPicker, "RootGrid");
             var thirdDimensionSlider = FindNamedDescendant<ColorPickerSlider>(colorPicker, "ThirdDimensionSlider");
             var alphaSlider = FindNamedDescendant<ColorPickerSlider>(colorPicker, "AlphaSlider");
             var moreButton = FindNamedDescendant<ToggleButton>(colorPicker, "MoreButton");
-            var textInputGrid = FindNamedDescendant<Grid>(colorPicker, "TextInputGrid");
+            var textEntryGrid = FindNamedDescendant<Grid>(colorPicker, "TextEntryGrid");
 
             AssertStateSetter(
-                rootPanel,
+                rootGrid,
                 "Orientation",
                 "Horizontal",
-                "RootPanel.MinHeight",
-                "RootPanel.MaxHeight",
-                "RootPanel.MinWidth",
-                "RootPanel.MaxWidth",
+                "RootGrid.MinHeight",
+                "RootGrid.MaxHeight",
+                "RootGrid.MinWidth",
+                "RootGrid.MaxWidth",
+                "ColorSpectrumGrid.Margin",
+                "ColorPreviewRectangleGrid.Margin",
+                "ThirdDimensionSliderGrid.(Grid.Column)",
+                "ThirdDimensionSliderGrid.(Grid.Row)",
+                "ThirdDimensionSliderGrid.Margin",
                 "ThirdDimensionSlider.Orientation",
-                "ThirdDimensionSlider.Margin",
+                "ThirdDimensionBackgroundRectangle.Height",
+                "ThirdDimensionBackgroundRectangle.Width",
+                "ThirdDimensionBackgroundRectangle.HorizontalAlignment",
+                "ThirdDimensionBackgroundRectangle.VerticalAlignment",
+                "AlphaSliderGrid.(Grid.Column)",
+                "AlphaSliderGrid.(Grid.Row)",
+                "AlphaSliderGrid.Margin",
                 "AlphaSlider.Orientation",
-                "AlphaSlider.Margin",
+                "AlphaSliderCheckeredBackgroundRectangle.Height",
+                "AlphaSliderCheckeredBackgroundRectangle.Width",
+                "AlphaSliderCheckeredBackgroundRectangle.HorizontalAlignment",
+                "AlphaSliderCheckeredBackgroundRectangle.VerticalAlignment",
+                "AlphaSliderBackgroundRectangle.Height",
+                "AlphaSliderBackgroundRectangle.Width",
+                "AlphaSliderBackgroundRectangle.HorizontalAlignment",
+                "AlphaSliderBackgroundRectangle.VerticalAlignment",
+                "MoreEntriesPanel.(Grid.Column)",
+                "MoreEntriesPanel.(Grid.Row)",
+                "MoreEntriesPanel.Margin",
                 "MoreButton.Margin",
-                "TextInputGrid.Margin");
+                "ColorRepresentationComboBox.(Grid.Row)",
+                "ColorTextInputPanels.(Grid.Row)",
+                "HexTextBox.TabIndex",
+                "HexTextBox.(Grid.Row)",
+                "HexTextBox.(Grid.Column)",
+                "HexTextBox.(Grid.ColumnSpan)",
+                "HexTextBox.Margin",
+                "HexTextBox.HorizontalAlignment",
+                "HexTextBox.Width",
+                "RgbTextLabelColumn.Width",
+                "HsvTextLabelColumn.Width",
+                "AlphaTextLabelColumn.Width");
 
-            Assert.AreEqual("Horizontal", GetCurrentStateName(rootPanel, "Orientation"));
-            Assert.AreEqual(Orientation.Horizontal, rootPanel.Orientation);
-            Assert.AreEqual(312.0, rootPanel.MinHeight);
-            Assert.AreEqual(392.0, rootPanel.MaxHeight);
-            Assert.AreEqual(0.0, rootPanel.MinWidth);
-            Assert.AreEqual(10000.0, rootPanel.MaxWidth);
+            Assert.AreEqual("Horizontal", GetCurrentStateName(rootGrid, "Orientation"));
+            Assert.AreEqual(312.0, rootGrid.MinHeight);
+            Assert.AreEqual(392.0, rootGrid.MaxHeight);
+            Assert.AreEqual(0.0, rootGrid.MinWidth);
+            Assert.AreEqual(10000.0, rootGrid.MaxWidth);
             Assert.AreEqual(Orientation.Vertical, thirdDimensionSlider.Orientation);
-            Assert.AreEqual(new Thickness(0, 0, 6, 0), thirdDimensionSlider.Margin);
             Assert.AreEqual(Orientation.Vertical, alphaSlider.Orientation);
-            Assert.AreEqual(new Thickness(0, 0, 16, 0), alphaSlider.Margin);
             Assert.AreEqual(new Thickness(0), moreButton.Margin);
-            Assert.AreEqual(new Thickness(0), textInputGrid.Margin);
+            Assert.AreEqual(Visibility.Visible, textEntryGrid.Visibility);
 
             colorPicker.Orientation = Orientation.Vertical;
             host.UpdateLayout();
 
-            Assert.AreEqual("Vertical", GetCurrentStateName(rootPanel, "Orientation"));
-            Assert.AreEqual(Orientation.Vertical, rootPanel.Orientation);
+            Assert.AreEqual("Vertical", GetCurrentStateName(rootGrid, "Orientation"));
             Assert.AreEqual(Orientation.Horizontal, thirdDimensionSlider.Orientation);
             Assert.AreEqual(Orientation.Horizontal, alphaSlider.Orientation);
         });
@@ -559,42 +591,200 @@ public class ColorPickerApiTests
             var colorPicker = new ColorPickerControl();
             using var host = new TestWindowHost(colorPicker, width: 420, height: 520);
 
-            var rootPanel = FindNamedDescendant<StackPanel>(colorPicker, "RootPanel");
+            var rootGrid = FindNamedDescendant<Grid>(colorPicker, "RootGrid");
 
-            AssertStateSetter(rootPanel, "ColorSpectrumVisibility", "ColorSpectrumCollapsed", "ColorSpectrum.Visibility");
-            AssertStateSetter(rootPanel, "ColorPreviewVisibility", "ColorPreviewCollapsed", "PreviewGrid.Visibility");
-            AssertStateSetter(rootPanel, "PreviousColorVisibility", "PreviousColorVisibleVertical", "PreviousColorRectangle.Visibility");
-            AssertStateSetter(rootPanel, "PreviousColorVisibility", "PreviousColorVisibleHorizontal", "PreviousColorRectangle.Visibility");
-            AssertStateSetter(rootPanel, "ThirdDimensionSliderVisibility", "ThirdDimensionSliderCollapsed", "ThirdDimensionSlider.Visibility");
-            AssertStateSetter(rootPanel, "AlphaSliderVisibility", "AlphaSliderCollapsed", "AlphaSlider.Visibility");
-            AssertStateSetter(rootPanel, "MoreButtonVisibility", "MoreButtonCollapsed", "MoreButton.Visibility");
             AssertStateSetter(
-                rootPanel,
+                rootGrid,
+                "ColorSpectrumVisibility",
+                "ColorSpectrumCollapsed",
+                "ColorSpectrum.Visibility",
+                "ColorPreviewRectangleGrid.Width",
+                "ColorPreviewRectangleGrid.Height",
+                "ColorPreviewRectangleGrid.Margin",
+                "ColorPreviewRectangleGrid.(Grid.Column)",
+                "ColorPreviewRectangleGrid.(Grid.ColumnSpan)");
+            AssertStateSetter(rootGrid, "ColorPreviewVisibility", "ColorPreviewCollapsed", "ColorPreviewRectangleGrid.Visibility");
+            AssertStateSetter(rootGrid, "PreviousColorVisibility", "PreviousColorVisibleVertical", "ColorPreviewRectangle.(Grid.RowSpan)", "PreviousColorRectangle.Visibility");
+            AssertStateSetter(
+                rootGrid,
+                "PreviousColorVisibility",
+                "PreviousColorVisibleHorizontal",
+                "ColorPreviewRectangle.(Grid.ColumnSpan)",
+                "PreviousColorRectangle.Visibility",
+                "PreviousColorRectangle.(Grid.Row)",
+                "PreviousColorRectangle.(Grid.Column)",
+                "PreviousColorRectangle.(Grid.RowSpan)",
+                "PreviousColorRectangle.(Grid.ColumnSpan)");
+            AssertStateSetter(rootGrid, "ThirdDimensionSliderVisibility", "ThirdDimensionSliderCollapsed", "ThirdDimensionSliderGrid.Visibility");
+            AssertStateSetter(rootGrid, "AlphaSliderVisibility", "AlphaSliderCollapsed", "AlphaSliderGrid.Visibility");
+            AssertStateSetter(rootGrid, "MoreButtonVisibility", "MoreButtonCollapsed", "MoreButton.Visibility");
+            AssertStateSetter(rootGrid, "TextEntryGridVisibility", "TextEntryGridVisible", "TextEntryGrid.Visibility", "MoreGlyph.Text");
+            AssertStateSetter(
+                rootGrid,
                 "ColorChannelTextInputVisibility",
                 "ColorChannelTextInputCollapsed",
-                "RedTextBox.Visibility",
-                "GreenTextBox.Visibility",
-                "BlueTextBox.Visibility",
-                "HueTextBox.Visibility",
-                "SaturationTextBox.Visibility",
-                "ValueTextBox.Visibility");
-            AssertStateSetter(rootPanel, "AlphaTextInputVisibility", "AlphaTextInputCollapsed", "AlphaTextBox.Visibility");
-            AssertStateSetter(rootPanel, "HexInputVisibility", "HexInputCollapsed", "HexTextBox.Visibility");
-            AssertStateSetter(rootPanel, "AlphaEnabledState", "AlphaEnabled", "HexTextBox.MaxLength");
+                "ColorRepresentationComboBox.Visibility",
+                "ColorChannelTextInputPanel.Visibility",
+                "HexTextBox.(Grid.Column)",
+                "HexTextBox.HorizontalAlignment");
+            AssertStateSetter(rootGrid, "AlphaTextInputVisibility", "AlphaTextInputCollapsed", "AlphaPanel.Visibility");
+            AssertStateSetter(rootGrid, "ColorRepresentationSelected", "HsvSelected", "RgbPanel.Visibility", "HsvPanel.Visibility");
+            AssertStateSetter(rootGrid, "HexInputVisibility", "HexInputCollapsed", "HexTextBox.Visibility");
+            AssertStateSetter(rootGrid, "AlphaEnabledState", "AlphaEnabled", "HexTextBox.MaxLength");
             AssertStateSetter(
-                rootPanel,
+                rootGrid,
                 "Orientation",
                 "Horizontal",
-                "RootPanel.MinHeight",
-                "RootPanel.MaxHeight",
-                "RootPanel.MinWidth",
-                "RootPanel.MaxWidth",
+                "RootGrid.MinHeight",
+                "RootGrid.MaxHeight",
+                "RootGrid.MinWidth",
+                "RootGrid.MaxWidth",
+                "ColorSpectrumGrid.Margin",
+                "ColorPreviewRectangleGrid.Margin",
+                "ThirdDimensionSliderGrid.(Grid.Column)",
+                "ThirdDimensionSliderGrid.(Grid.Row)",
+                "ThirdDimensionSliderGrid.Margin",
                 "ThirdDimensionSlider.Orientation",
-                "ThirdDimensionSlider.Margin",
+                "ThirdDimensionBackgroundRectangle.Height",
+                "ThirdDimensionBackgroundRectangle.Width",
+                "ThirdDimensionBackgroundRectangle.HorizontalAlignment",
+                "ThirdDimensionBackgroundRectangle.VerticalAlignment",
+                "AlphaSliderGrid.(Grid.Column)",
+                "AlphaSliderGrid.(Grid.Row)",
+                "AlphaSliderGrid.Margin",
                 "AlphaSlider.Orientation",
-                "AlphaSlider.Margin",
+                "AlphaSliderCheckeredBackgroundRectangle.Height",
+                "AlphaSliderCheckeredBackgroundRectangle.Width",
+                "AlphaSliderCheckeredBackgroundRectangle.HorizontalAlignment",
+                "AlphaSliderCheckeredBackgroundRectangle.VerticalAlignment",
+                "AlphaSliderBackgroundRectangle.Height",
+                "AlphaSliderBackgroundRectangle.Width",
+                "AlphaSliderBackgroundRectangle.HorizontalAlignment",
+                "AlphaSliderBackgroundRectangle.VerticalAlignment",
+                "MoreEntriesPanel.(Grid.Column)",
+                "MoreEntriesPanel.(Grid.Row)",
+                "MoreEntriesPanel.Margin",
                 "MoreButton.Margin",
-                "TextInputGrid.Margin");
+                "ColorRepresentationComboBox.(Grid.Row)",
+                "ColorTextInputPanels.(Grid.Row)",
+                "HexTextBox.TabIndex",
+                "HexTextBox.(Grid.Row)",
+                "HexTextBox.(Grid.Column)",
+                "HexTextBox.(Grid.ColumnSpan)",
+                "HexTextBox.Margin",
+                "HexTextBox.HorizontalAlignment",
+                "HexTextBox.Width",
+                "RgbTextLabelColumn.Width",
+                "HsvTextLabelColumn.Width",
+                "AlphaTextLabelColumn.Width");
+        });
+    }
+
+    [TestMethod]
+    public void ColorPickerTextEntryFollowsWinUISourceBehavior()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var colorPicker = new ColorPickerControl
+            {
+                Color = Color.FromArgb(0x80, 10, 20, 30),
+                IsAlphaEnabled = true,
+                IsMoreButtonVisible = true
+            };
+
+            using var host = new TestWindowHost(colorPicker, width: 420, height: 560);
+
+            var textEntryGrid = FindNamedDescendant<Grid>(colorPicker, "TextEntryGrid");
+            var moreButton = FindNamedDescendant<ToggleButton>(colorPicker, "MoreButton");
+            var redTextBox = FindNamedDescendant<TextBox>(colorPicker, "RedTextBox");
+            var alphaTextBox = FindNamedDescendant<TextBox>(colorPicker, "AlphaTextBox");
+            var hexTextBox = FindNamedDescendant<TextBox>(colorPicker, "HexTextBox");
+
+            Assert.AreEqual(Visibility.Collapsed, textEntryGrid.Visibility);
+
+            moreButton.IsChecked = true;
+            host.UpdateLayout();
+
+            Assert.AreEqual(Visibility.Visible, textEntryGrid.Visibility);
+
+            redTextBox.Text = "128";
+            host.UpdateLayout();
+
+            Assert.AreEqual(128, colorPicker.Color.R);
+
+            alphaTextBox.Text = "25";
+            host.UpdateLayout();
+
+            Assert.AreEqual("25%", alphaTextBox.Text);
+            AssertClose(0.25, colorPicker.Color.A / 255.0, 0.01);
+
+            hexTextBox.Text = "40010203";
+            host.UpdateLayout();
+
+            Assert.AreEqual("#40010203", hexTextBox.Text);
+            Assert.AreEqual(Color.FromArgb(0x40, 0x01, 0x02, 0x03), colorPicker.Color);
+        });
+    }
+
+    [TestMethod]
+    public void ColorPickerThirdDimensionSliderFollowsWinUISourceComponents()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var colorPicker = new ColorPickerControl
+            {
+                Color = Colors.Red
+            };
+
+            using var host = new TestWindowHost(colorPicker, width: 420, height: 560);
+            var slider = FindNamedDescendant<ColorPickerSlider>(colorPicker, "ThirdDimensionSlider");
+            var gradient = (LinearGradientBrush)FindNamedDescendant<Rectangle>(colorPicker, "ThirdDimensionBackgroundRectangle").Fill;
+
+            Assert.AreEqual(ColorPickerHsvChannel.Value, slider.ColorChannel);
+            Assert.AreEqual(100.0, slider.Value);
+            Assert.AreEqual(2, gradient.GradientStops.Count);
+
+            colorPicker.ColorSpectrumComponents = ColorSpectrumComponents.HueValue;
+            host.UpdateLayout();
+
+            Assert.AreEqual(ColorPickerHsvChannel.Saturation, slider.ColorChannel);
+            Assert.AreEqual(100.0, slider.Value);
+
+            colorPicker.ColorSpectrumComponents = ColorSpectrumComponents.ValueSaturation;
+            host.UpdateLayout();
+
+            Assert.AreEqual(ColorPickerHsvChannel.Hue, slider.ColorChannel);
+            Assert.AreEqual(0.0, slider.Value);
+            Assert.IsTrue(gradient.GradientStops.Count >= 2);
+        });
+    }
+
+    [TestMethod]
+    public void ColorSpectrumAutomationPeerExposesValuePattern()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var colorSpectrum = new ColorSpectrum
+            {
+                HsvColor = new Vector4(120, 0.5f, 0.75f, 1)
+            };
+
+            using var host = new TestWindowHost(colorSpectrum, width: 260, height: 260);
+            var peer = UIElementAutomationPeer.CreatePeerForElement(colorSpectrum);
+
+            Assert.IsInstanceOfType(peer, typeof(ColorSpectrumAutomationPeer));
+            var valueProvider = (IValueProvider)peer.GetPattern(PatternInterface.Value);
+
+            Assert.IsFalse(valueProvider.IsReadOnly);
+            StringAssert.Contains(valueProvider.Value, "Hue 120");
+            StringAssert.Contains(valueProvider.Value, "saturation 50");
+            StringAssert.Contains(valueProvider.Value, "value 75");
         });
     }
 
