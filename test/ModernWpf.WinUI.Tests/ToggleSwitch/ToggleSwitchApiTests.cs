@@ -411,6 +411,29 @@ public class ToggleSwitchApiTests
     }
 
     [TestMethod]
+    public void DirectionalKeysDoNotToggle()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch();
+            using var host = new TestWindowHost(toggleSwitch, width: 260, height: 120);
+            host.UpdateLayout();
+
+            foreach (var key in new[] { Key.Home, Key.End, Key.Up, Key.Down, Key.Left, Key.Right })
+            {
+                var keyDown = RaiseKey(toggleSwitch, Keyboard.KeyDownEvent, key);
+                var keyUp = RaiseKey(toggleSwitch, Keyboard.KeyUpEvent, key);
+
+                Assert.IsFalse(keyDown.Handled, $"{key} key-down should not be handled.");
+                Assert.IsFalse(keyUp.Handled, $"{key} key-up should not be handled.");
+                Assert.IsFalse(toggleSwitch.IsOn, $"{key} should not toggle the switch.");
+            }
+        });
+    }
+
+    [TestMethod]
     public void SpaceKeyUpWithoutPriorKeyDownDoesNotToggleOrHandle()
     {
         WpfTestHost.Run(() =>
@@ -472,6 +495,36 @@ public class ToggleSwitchApiTests
 
             Assert.IsFalse(keyUp.Handled);
             Assert.IsFalse(toggleSwitch.IsOn);
+        });
+    }
+
+    [TestMethod]
+    public void DefaultOnOffContentUsesWinUIDefaultValueModel()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch();
+
+            Assert.AreEqual(global::ModernWpf.Strings.ToggleSwitchOff, toggleSwitch.OffContent);
+            Assert.AreEqual(global::ModernWpf.Strings.ToggleSwitchOn, toggleSwitch.OnContent);
+            Assert.AreEqual(
+                BaseValueSource.Default,
+                DependencyPropertyHelper.GetValueSource(toggleSwitch, ModernWpf.Controls.ToggleSwitch.OffContentProperty).BaseValueSource);
+            Assert.AreEqual(
+                BaseValueSource.Default,
+                DependencyPropertyHelper.GetValueSource(toggleSwitch, ModernWpf.Controls.ToggleSwitch.OnContentProperty).BaseValueSource);
+
+            toggleSwitch.OffContent = "Disconnected";
+            toggleSwitch.OnContent = "Connected";
+
+            Assert.AreEqual(
+                BaseValueSource.Local,
+                DependencyPropertyHelper.GetValueSource(toggleSwitch, ModernWpf.Controls.ToggleSwitch.OffContentProperty).BaseValueSource);
+            Assert.AreEqual(
+                BaseValueSource.Local,
+                DependencyPropertyHelper.GetValueSource(toggleSwitch, ModernWpf.Controls.ToggleSwitch.OnContentProperty).BaseValueSource);
         });
     }
 
@@ -596,6 +649,9 @@ public class ToggleSwitchApiTests
             var toggleSwitch = new CallbackToggleSwitch();
             int initialOnContentChanges = toggleSwitch.OnContentChanges;
             int initialOffContentChanges = toggleSwitch.OffContentChanges;
+
+            Assert.AreEqual(0, initialOnContentChanges);
+            Assert.AreEqual(0, initialOffContentChanges);
 
             toggleSwitch.OnContent = "Enabled";
 

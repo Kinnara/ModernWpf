@@ -73,8 +73,6 @@ namespace ModernWpf.Controls
         public ToggleSwitch()
         {
             SetValue(TemplateSettingsPropertyKey, new ToggleSwitchTemplateSettings());
-            SetCurrentValue(OffContentProperty, Strings.ToggleSwitchOff);
-            SetCurrentValue(OnContentProperty, Strings.ToggleSwitchOn);
 
             IsEnabledChanged += OnIsEnabledChanged;
         }
@@ -171,7 +169,7 @@ namespace ModernWpf.Controls
                 nameof(OffContent),
                 typeof(object),
                 typeof(ToggleSwitch),
-                new FrameworkPropertyMetadata(OnOffContentChanged));
+                new FrameworkPropertyMetadata(Strings.ToggleSwitchOff, OnOffContentChanged));
 
         private static void OnOffContentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -214,7 +212,7 @@ namespace ModernWpf.Controls
                 nameof(OnContent),
                 typeof(object),
                 typeof(ToggleSwitch),
-                new FrameworkPropertyMetadata(OnOnContentChanged));
+                new FrameworkPropertyMetadata(Strings.ToggleSwitchOn, OnOnContentChanged));
 
         private static void OnOnContentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
