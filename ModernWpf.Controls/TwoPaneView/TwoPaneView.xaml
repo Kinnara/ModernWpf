@@ -18,16 +18,6 @@
                         Background="{TemplateBinding Background}"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition x:Name="PART_ColumnLeft" Width="Auto" />
-                            <ColumnDefinition x:Name="PART_ColumnMiddle" Width="0" />
-                            <ColumnDefinition x:Name="PART_ColumnRight" Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition x:Name="PART_RowTop" Height="*" />
-                            <RowDefinition x:Name="PART_RowMiddle" Height="0" />
-                            <RowDefinition x:Name="PART_RowBottom" Height="0" />
-                        </Grid.RowDefinitions>
                         <VisualStateManager.CustomVisualStateManager>
                             <ui:VisualStateManagerEx />
                         </VisualStateManager.CustomVisualStateManager>
@@ -69,20 +59,28 @@
                                 </ui:VisualStateEx>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition x:Name="PART_ColumnLeft" Width="Auto" />
+                            <ColumnDefinition x:Name="PART_ColumnMiddle" Width="0" />
+                            <ColumnDefinition x:Name="PART_ColumnRight" Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition x:Name="PART_RowTop" Height="*" />
+                            <RowDefinition x:Name="PART_RowMiddle" Height="0" />
+                            <RowDefinition x:Name="PART_RowBottom" Height="0" />
+                        </Grid.RowDefinitions>
 
                         <ScrollViewer
                             x:Name="PART_Pane1ScrollViewer"
                             Grid.Column="0"
-                            VerticalScrollBarVisibility="Auto"
-                            HorizontalScrollBarVisibility="Auto">
-                            <ui:ContentPresenterEx Content="{TemplateBinding Pane1}" />
+                            VerticalScrollBarVisibility="Auto">
+                            <Border x:Name="PART_Pane1Host" />
                         </ScrollViewer>
                         <ScrollViewer
                             x:Name="PART_Pane2ScrollViewer"
                             Grid.Column="2"
-                            VerticalScrollBarVisibility="Auto"
-                            HorizontalScrollBarVisibility="Auto">
-                            <ui:ContentPresenterEx Content="{TemplateBinding Pane2}" />
+                            VerticalScrollBarVisibility="Auto">
+                            <Border x:Name="PART_Pane2Host" />
                         </ScrollViewer>
                     </Grid>
                 </ControlTemplate>

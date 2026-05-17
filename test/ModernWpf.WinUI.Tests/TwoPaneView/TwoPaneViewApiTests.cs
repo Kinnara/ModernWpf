@@ -102,6 +102,8 @@ public class TwoPaneViewApiTests
             Assert.AreEqual(new GridLength(3, GridUnitType.Star), columnRight.Width);
             Assert.IsTrue(modeChanges >= 1);
 
+            var modeChangesAfterWide = modeChanges;
+
             twoPaneView.WideModeConfiguration = TwoPaneViewWideModeConfiguration.RightLeft;
             host.UpdateLayout();
 
@@ -111,6 +113,7 @@ public class TwoPaneViewApiTests
             Assert.AreEqual(0, Grid.GetColumn(pane2ScrollViewer));
             Assert.AreEqual(new GridLength(3, GridUnitType.Star), columnLeft.Width);
             Assert.AreEqual(new GridLength(2, GridUnitType.Star), columnRight.Width);
+            Assert.AreEqual(modeChangesAfterWide, modeChanges);
 
             twoPaneView.MinWideModeWidth = 1000;
             twoPaneView.MinTallModeHeight = 500;
@@ -157,7 +160,7 @@ public class TwoPaneViewApiTests
     }
 
     [TestMethod]
-    public void TwoPaneViewTemplateUsesWinUIPaneHostSlots()
+    public void TwoPaneViewTemplateUsesWinUISourcePaneHostShape()
     {
         WpfTestHost.Run(() =>
         {
@@ -177,8 +180,90 @@ public class TwoPaneViewApiTests
             var pane1Host = AssertPaneHost(pane1ScrollViewer);
             var pane2Host = AssertPaneHost(pane2ScrollViewer);
 
-            Assert.AreSame(pane1, pane1Host.Content);
-            Assert.AreSame(pane2, pane2Host.Content);
+            Assert.AreSame(pane1, pane1Host.Child);
+            Assert.AreSame(pane2, pane2Host.Child);
+            Assert.AreEqual(ScrollBarVisibility.Disabled, pane1ScrollViewer.HorizontalScrollBarVisibility);
+            Assert.AreEqual(ScrollBarVisibility.Disabled, pane2ScrollViewer.HorizontalScrollBarVisibility);
+        });
+    }
+
+    [TestMethod]
+    public void TwoPaneViewUsesSourceDisplayRegionSizing()
+    {
+        WpfTestHost.Run(() =>
+        {
+            try
+            {
+                DisplayRegionHelperTestApi.SimulateDisplayRegions = true;
+                DisplayRegionHelperTestApi.SimulateMode = TwoPaneViewMode.Wide;
+
+                var twoPaneView = new ModernWpf.Controls.TwoPaneView
+                {
+                    Pane1 = new Border(),
+                    Pane2 = new Border(),
+                    Width = 612,
+                    Height = 400
+                };
+                var simulatedWindow = new Grid
+                {
+                    Name = "SimulatedWindow",
+                    Width = 612,
+                    Height = 400,
+                    Children = { twoPaneView }
+                };
+
+                using var host = new TestWindowHost(simulatedWindow, width: 700, height: 500);
+
+                Assert.AreEqual(TwoPaneViewMode.Wide, twoPaneView.Mode);
+                AssertModeState(twoPaneView, "ViewMode_LeftRight");
+                Assert.AreEqual(new GridLength(300, GridUnitType.Pixel), FindNamedTemplatePart<ColumnDefinition>(twoPaneView, "PART_ColumnLeft").Width);
+                Assert.AreEqual(new GridLength(12, GridUnitType.Pixel), FindNamedTemplatePart<ColumnDefinition>(twoPaneView, "PART_ColumnMiddle").Width);
+                Assert.AreEqual(new GridLength(300, GridUnitType.Pixel), FindNamedTemplatePart<ColumnDefinition>(twoPaneView, "PART_ColumnRight").Width);
+            }
+            finally
+            {
+                DisplayRegionHelperTestApi.SimulateDisplayRegions = false;
+                DisplayRegionHelperTestApi.SimulateMode = TwoPaneViewMode.SinglePane;
+            }
+        });
+    }
+
+    [TestMethod]
+    public void TwoPaneViewUsesSourceDisplayRegionOffsetSizing()
+    {
+        WpfTestHost.Run(() =>
+        {
+            try
+            {
+                DisplayRegionHelperTestApi.SimulateDisplayRegions = true;
+                DisplayRegionHelperTestApi.SimulateMode = TwoPaneViewMode.Wide;
+
+                var twoPaneView = new ModernWpf.Controls.TwoPaneView
+                {
+                    Pane1 = new Border(),
+                    Pane2 = new Border(),
+                    Margin = new Thickness(40, 10, 30, 20)
+                };
+                var simulatedWindow = new Grid
+                {
+                    Name = "SimulatedWindow",
+                    Width = 612,
+                    Height = 400,
+                    Children = { twoPaneView }
+                };
+
+                using var host = new TestWindowHost(simulatedWindow, width: 700, height: 500);
+
+                Assert.AreEqual(TwoPaneViewMode.Wide, twoPaneView.Mode);
+                Assert.AreEqual(new GridLength(260, GridUnitType.Pixel), FindNamedTemplatePart<ColumnDefinition>(twoPaneView, "PART_ColumnLeft").Width);
+                Assert.AreEqual(new GridLength(12, GridUnitType.Pixel), FindNamedTemplatePart<ColumnDefinition>(twoPaneView, "PART_ColumnMiddle").Width);
+                Assert.AreEqual(new GridLength(270, GridUnitType.Pixel), FindNamedTemplatePart<ColumnDefinition>(twoPaneView, "PART_ColumnRight").Width);
+            }
+            finally
+            {
+                DisplayRegionHelperTestApi.SimulateDisplayRegions = false;
+                DisplayRegionHelperTestApi.SimulateMode = TwoPaneViewMode.SinglePane;
+            }
         });
     }
 
@@ -208,13 +293,13 @@ public class TwoPaneViewApiTests
         return part;
     }
 
-    private static ContentPresenterEx AssertPaneHost(ScrollViewer scrollViewer)
+    private static Border AssertPaneHost(ScrollViewer scrollViewer)
     {
-        if (scrollViewer.Content is ContentPresenterEx paneHost)
+        if (scrollViewer.Content is Border paneHost)
         {
             return paneHost;
         }
 
-        throw new AssertFailedException("Expected TwoPaneView pane ScrollViewer to host content through ContentPresenterEx.");
+        throw new AssertFailedException("Expected TwoPaneView pane ScrollViewer to host content through a source-shaped Border.");
     }
 }
