@@ -44,7 +44,7 @@ pieces, WPF substitutions, and platform gaps known so far.
 | `OnPropertyChanged2` updates visual state, header visibility, protected callbacks, and automation toggle-state notifications; the `IsOn` path checks for a property-changed automation listener before calling `GetOrCreateAutomationPeer` and raising `ToggleState`. | Matched through WPF property callbacks, protected callbacks, and a listener-first/get-or-create WPF automation peer notification path. |
 | `ChangeVisualState` selects Common, Focus, Toggle, Content, and Header visual states from source state fields. | Matched with WPF `VisualStateManager.GoToState`; owner focus state is used rather than child focus. |
 | `OnIsEnabledChanged` and `OnVisibilityChanged` clear dragging and pointer-over state before refreshing visual states. | Matched with WPF property-change paths; the WPF pointer-focus substitute is left to real focus transitions rather than these source reset paths. |
-| Template part discovery, drag/tap hookup, part size updates, and header presenter visibility. | Matched with WPF template parts, `Thumb` drag events, a bubbling mouse-up tap bridge, part `SizeChanged`, and null/header-template visibility rules. |
+| Template part discovery, drag/tap hookup, part size updates, and header presenter visibility. | Matched with WPF template parts, `Thumb` drag events, a bubbling mouse-up tap bridge, part `SizeChanged`, and null/header-template visibility rules. Curtain and knob translate transforms are discovered from `SwitchCurtain.RenderTransform` and `SwitchKnob.RenderTransform` like WinUI instead of requiring a named `KnobTranslateTransform` part. |
 | `OnPointerCaptureLost` clears `PointerOver` after vertical-pan drag completion when dragging has finished. | Matched through the WPF thumb `LostMouseCapture` path plus the owner fallback. |
 | `GetTranslations`, `SetTranslations`, `ClearTranslations`, `MoveDelta`, `MoveCompleted`, and size-derived knob/curtain bounds. | Matched, including current-to-on/off and on/off-to-current template setting offsets. |
 | `ToggleSwitchKeyProcess` handles source key-down/up sequencing using `OriginalKey`. | Matched with a private WPF `ToggleSwitchKeyProcess` helper; WPF system/IME/dead-char keys normalize back to the exposed original key before processing, and the WinUI flow-direction branches are preserved behind `HandlesKey`. |
@@ -59,6 +59,7 @@ pieces, WPF substitutions, and platform gaps known so far.
 - WinUI `ManipulationMode="System,TranslateX"` is represented by WPF manipulation events plus the existing `Thumb` drag handling; exact OS touch routing through parent scroll viewers remains a platform-level verification gap.
 - WinUI `RepositionThemeAnimation`, compositor behavior, and element sounds have no direct WPF equivalent.
 - WinUI root `Grid` chrome is represented by an inert WPF `BorderEx` layer, and WinUI `SwitchAreaGrid.CornerRadius` is represented by the WPF `Border` used for `SwitchAreaGrid`; related color animations target `Border.Background` in WPF.
+- WPF can freeze unnamed `Freezable` transforms created from templates, so discovered `TranslateTransform` instances are cloned and assigned back to the part before mutation.
 - WinUI `AutomationProperties.AccessibilityView="Raw"` and WinRT automation internals are represented by WPF automation peer child filtering and WPF provider APIs.
 - The WinUI framework `dxaml` generic template remains in the source tree, but packaged WinUI 3 CommonStyles overrides it; ModernWpf targets the packaged CommonStyles template shape.
 
@@ -71,4 +72,4 @@ dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --filter "
 dotnet build .\ModernWpf.Controls\ModernWpf.Controls.csproj --no-restore
 ```
 
-Latest verified result on 2026-05-17: ToggleSwitch API tests passed 51/51.
+Latest verified result on 2026-05-17: ToggleSwitch API tests passed 52/52.

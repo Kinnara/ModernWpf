@@ -19,7 +19,6 @@ namespace ModernWpf.Controls
     [TemplatePart(Name = nameof(SwitchCurtainClip), Type = typeof(UIElement))]
     [TemplatePart(Name = nameof(SwitchKnobBounds), Type = typeof(FrameworkElement))]
     [TemplatePart(Name = nameof(SwitchKnob), Type = typeof(FrameworkElement))]
-    [TemplatePart(Name = nameof(KnobTranslateTransform), Type = typeof(TranslateTransform))]
     [TemplatePart(Name = nameof(SwitchThumb), Type = typeof(Thumb))]
     [TemplateVisualState(GroupName = VisualStates.GroupCommon, Name = VisualStates.StateNormal)]
     [TemplateVisualState(GroupName = VisualStates.GroupCommon, Name = PointerOverState)]
@@ -389,9 +388,9 @@ namespace ModernWpf.Controls
             SwitchCurtainClip = GetTemplateChild(nameof(SwitchCurtainClip)) as UIElement;
             SwitchKnobBounds = GetTemplateChild(nameof(SwitchKnobBounds)) as FrameworkElement;
             SwitchKnob = GetTemplateChild(nameof(SwitchKnob)) as FrameworkElement;
-            KnobTranslateTransform = GetTemplateChild(nameof(KnobTranslateTransform)) as TranslateTransform;
             SwitchThumb = GetTemplateChild(nameof(SwitchThumb)) as Thumb;
-            CurtainTranslateTransform = SwitchCurtain?.RenderTransform as TranslateTransform;
+            CurtainTranslateTransform = GetWritableRenderTranslateTransform(SwitchCurtain);
+            KnobTranslateTransform = GetWritableRenderTranslateTransform(SwitchKnob);
 
             if (SwitchThumb != null)
             {
@@ -821,6 +820,22 @@ namespace ModernWpf.Controls
                 StopTranslationAnimation(transform);
                 transform.ClearValue(TranslateTransform.XProperty);
             }
+        }
+
+        private static TranslateTransform GetWritableRenderTranslateTransform(FrameworkElement element)
+        {
+            if (element?.RenderTransform is not TranslateTransform transform)
+            {
+                return null;
+            }
+
+            if (transform.IsFrozen)
+            {
+                transform = transform.CloneCurrentValue();
+                element.RenderTransform = transform;
+            }
+
+            return transform;
         }
 
         private static void StopTranslationAnimation(TranslateTransform transform)

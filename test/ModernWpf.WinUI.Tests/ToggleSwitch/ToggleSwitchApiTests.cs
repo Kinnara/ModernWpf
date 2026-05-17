@@ -849,6 +849,43 @@ public class ToggleSwitchApiTests
     }
 
     [TestMethod]
+    public void TemplatePartDiscoveryUsesSwitchKnobRenderTransformLikeWinUI()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch
+            {
+                Template = CreateRenderTransformPartDiscoveryTemplate()
+            };
+            using var host = new TestWindowHost(toggleSwitch, width: 160, height: 100);
+            host.UpdateLayout();
+
+            var knob = FindNamedDescendant<FrameworkElement>(toggleSwitch, "SwitchKnob");
+            var knobBounds = FindNamedDescendant<FrameworkElement>(toggleSwitch, "SwitchKnobBounds");
+            Assert.IsInstanceOfType(knob.RenderTransform, typeof(TranslateTransform));
+            var knobTransform = (TranslateTransform)knob.RenderTransform;
+            Assert.IsFalse(knobTransform.IsFrozen);
+
+            knobBounds.Width = 48d;
+            host.UpdateLayout();
+
+            ToggleSwitchTemplateSettings settings = toggleSwitch.TemplateSettings;
+            Assert.AreEqual(-28d, settings.KnobOffToOnOffset, 0.1);
+            Assert.AreEqual(28d, settings.KnobOnToOffOffset, 0.1);
+
+            var thumb = FindNamedDescendant<Thumb>(toggleSwitch, "SwitchThumb");
+            RaiseDragStarted(thumb);
+            RaiseDragDelta(thumb, 6d);
+
+            Assert.AreEqual(6d, knobTransform.X, 0.1);
+            Assert.AreEqual(6d, settings.KnobCurrentToOffOffset, 0.1);
+            Assert.AreEqual(-22d, settings.KnobCurrentToOnOffset, 0.1);
+        });
+    }
+
+    [TestMethod]
     public void FocusableDefaultsToWinUIControlBehavior()
     {
         WpfTestHost.Run(() =>
@@ -1962,6 +1999,59 @@ public class ToggleSwitchApiTests
                             <VisualState x:Name='LeftHeader' />
                         </VisualStateGroup>
                     </VisualStateManager.VisualStateGroups>
+                </Grid>
+            </ControlTemplate>");
+    }
+
+    private static ControlTemplate CreateRenderTransformPartDiscoveryTemplate()
+    {
+        return (ControlTemplate)XamlReader.Parse(
+            @"<ControlTemplate
+                xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'
+                xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'
+                xmlns:controls='clr-namespace:ModernWpf.Controls;assembly=ModernWpf.Controls'
+                TargetType='{x:Type controls:ToggleSwitch}'>
+                <Grid Width='72' Height='40'>
+                    <VisualStateManager.VisualStateGroups>
+                        <VisualStateGroup x:Name='CommonStates'>
+                            <VisualState x:Name='Normal' />
+                            <VisualState x:Name='PointerOver' />
+                            <VisualState x:Name='Pressed' />
+                            <VisualState x:Name='Disabled' />
+                        </VisualStateGroup>
+                        <VisualStateGroup x:Name='FocusStates'>
+                            <VisualState x:Name='PointerFocused' />
+                            <VisualState x:Name='Focused' />
+                            <VisualState x:Name='Unfocused' />
+                        </VisualStateGroup>
+                        <VisualStateGroup x:Name='ContentStates'>
+                            <VisualState x:Name='OffContent' />
+                            <VisualState x:Name='OnContent' />
+                        </VisualStateGroup>
+                        <VisualStateGroup x:Name='ToggleStates'>
+                            <VisualState x:Name='Dragging' />
+                            <VisualState x:Name='Off' />
+                            <VisualState x:Name='On' />
+                        </VisualStateGroup>
+                        <VisualStateGroup x:Name='HeaderStates'>
+                            <VisualState x:Name='TopHeader' />
+                            <VisualState x:Name='LeftHeader' />
+                        </VisualStateGroup>
+                    </VisualStateManager.VisualStateGroups>
+                    <Grid x:Name='SwitchCurtain' Width='40' Height='20' HorizontalAlignment='Left' VerticalAlignment='Top'>
+                        <Grid.RenderTransform>
+                            <TranslateTransform />
+                        </Grid.RenderTransform>
+                    </Grid>
+                    <Rectangle x:Name='SwitchCurtainBounds' Width='40' Height='20' HorizontalAlignment='Left' VerticalAlignment='Top' />
+                    <Rectangle x:Name='SwitchCurtainClip' Width='40' Height='20' HorizontalAlignment='Left' VerticalAlignment='Top' />
+                    <Grid x:Name='SwitchKnobBounds' Width='40' Height='20' HorizontalAlignment='Left' VerticalAlignment='Top' />
+                    <Grid x:Name='SwitchKnob' Width='20' Height='20' HorizontalAlignment='Left' VerticalAlignment='Top'>
+                        <Grid.RenderTransform>
+                            <TranslateTransform />
+                        </Grid.RenderTransform>
+                    </Grid>
+                    <Thumb x:Name='SwitchThumb' Width='40' Height='20' HorizontalAlignment='Left' VerticalAlignment='Top' />
                 </Grid>
             </ControlTemplate>");
     }
