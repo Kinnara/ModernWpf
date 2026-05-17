@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using ModernWpf.Automation.Peers;
 using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
@@ -313,6 +315,11 @@ namespace ModernWpf.Controls
             base.OnPreviewGotKeyboardFocus(e);
         }
 
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new AppBarToggleButtonAutomationPeer(this);
+        }
+
         protected override void OnVisualParentChanged(DependencyObject oldParent)
         {
             base.OnVisualParentChanged(oldParent);
@@ -554,6 +561,11 @@ namespace ModernWpf.Controls
             UpdateApplicationViewState();
             CoerceValue(ToolTipProperty);
             UpdateVisualState();
+        }
+
+        internal void AutomationToggleButtonOnToggle()
+        {
+            OnClick();
         }
 
         private AppBarElementVisualStateManager _vsm;

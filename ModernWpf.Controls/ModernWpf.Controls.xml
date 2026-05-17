@@ -4,6 +4,37 @@
     <name>ModernWpf.Controls</name>
   </assembly>
   <members>
+    <member name="T:ModernWpf.Automation.Peers.AppBarButtonAutomationPeer">
+      <summary>Exposes AppBarButton types to Microsoft UI Automation.</summary>
+    </member>
+    <member name="M:ModernWpf.Automation.Peers.AppBarButtonAutomationPeer.#ctor(ModernWpf.Controls.AppBarButton)">
+      <summary>Initializes a new instance of the AppBarButtonAutomationPeer class.</summary>
+      <param name="owner">The AppBarButton control instance to create the peer for.</param>
+    </member>
+    <member name="P:ModernWpf.Automation.Peers.AppBarButtonAutomationPeer.ExpandCollapseState">
+      <summary>Gets the state, expanded or collapsed, of the control.</summary>
+      <returns>A value of the enumeration.</returns>
+    </member>
+    <member name="M:ModernWpf.Automation.Peers.AppBarButtonAutomationPeer.Collapse">
+      <summary>Hides the control's flyout.</summary>
+    </member>
+    <member name="M:ModernWpf.Automation.Peers.AppBarButtonAutomationPeer.Expand">
+      <summary>Displays the control's flyout.</summary>
+    </member>
+    <member name="T:ModernWpf.Automation.Peers.AppBarToggleButtonAutomationPeer">
+      <summary>Exposes AppBarToggleButton types to Microsoft UI Automation.</summary>
+    </member>
+    <member name="M:ModernWpf.Automation.Peers.AppBarToggleButtonAutomationPeer.#ctor(ModernWpf.Controls.AppBarToggleButton)">
+      <summary>Initializes a new instance of the AppBarToggleButtonAutomationPeer class.</summary>
+      <param name="owner">The AppBarToggleButton control instance to create the peer for.</param>
+    </member>
+    <member name="P:ModernWpf.Automation.Peers.AppBarToggleButtonAutomationPeer.ToggleState">
+      <summary>Gets the toggle state of the control.</summary>
+      <returns>A value of the enumeration.</returns>
+    </member>
+    <member name="M:ModernWpf.Automation.Peers.AppBarToggleButtonAutomationPeer.Toggle">
+      <summary>Cycles through the toggle states of a control.</summary>
+    </member>
     <member name="T:ModernWpf.Automation.Peers.DropDownButtonAutomationPeer">
       <summary>Exposes DropDownButton types to Microsoft UI Automation.</summary>
     </member>

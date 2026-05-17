@@ -1,11 +1,15 @@
 using System;
 using System.Windows;
+using System.Windows.Automation;
+using System.Windows.Automation.Peers;
+using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Shapes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf;
+using ModernWpf.Automation.Peers;
 using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
 using ModernWpf.WinUI.TestApp;
@@ -188,6 +192,138 @@ public class CommandBarApiTests
             Assert.AreEqual(CommandBarLabelPosition.Collapsed, button.LabelPosition);
             Assert.IsNull(button.Flyout);
             Assert.IsNotNull(button.TemplateSettings);
+        });
+    }
+
+    [TestMethod]
+    public void AppBarButtonAutomationPeerMatchesWinUISourceShape()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var button = new AppBarButton
+            {
+                Label = "Source label",
+                Content = "Ignored content",
+                KeyboardAcceleratorTextOverride = " Ctrl+A "
+            };
+
+            var peer = FrameworkElementAutomationPeer.CreatePeerForElement(button);
+
+            Assert.IsInstanceOfType(peer, typeof(AppBarButtonAutomationPeer));
+            Assert.AreEqual("AppBarButton", peer.GetClassName());
+            Assert.AreEqual("app bar button", peer.GetLocalizedControlType());
+            Assert.AreEqual("Source label", peer.GetName());
+            Assert.AreEqual("Ctrl+A", peer.GetAcceleratorKey());
+            Assert.IsNull(peer.GetChildren());
+            Assert.IsNull(peer.GetPattern(PatternInterface.ExpandCollapse));
+
+            AutomationProperties.SetName(button, "Explicit name");
+            AutomationProperties.SetAcceleratorKey(button, "Alt+A");
+
+            Assert.AreEqual("Explicit name", peer.GetName());
+            Assert.AreEqual("Alt+A", peer.GetAcceleratorKey());
+        });
+    }
+
+    [TestMethod]
+    public void AppBarButtonFlyoutOpensFromClickAndAutomationLikeWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var flyout = new Flyout
+            {
+                Content = new Border
+                {
+                    Width = 24,
+                    Height = 24
+                }
+            };
+
+            var button = new TestAppBarButton
+            {
+                Label = "Open",
+                Flyout = flyout
+            };
+
+            using var host = new TestWindowHost(button, width: 180, height: 120);
+            host.UpdateLayout();
+
+            button.InvokeClick();
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            Assert.IsTrue(flyout.IsOpen);
+            Assert.AreSame(button, flyout.Target);
+
+            var peer = FrameworkElementAutomationPeer.CreatePeerForElement(button);
+            var provider = (IExpandCollapseProvider)peer.GetPattern(PatternInterface.ExpandCollapse);
+            Assert.IsNotNull(provider);
+            Assert.AreEqual(ExpandCollapseState.Expanded, provider.ExpandCollapseState);
+
+            provider.Collapse();
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            Assert.IsFalse(flyout.IsOpen);
+            Assert.AreEqual(ExpandCollapseState.Collapsed, provider.ExpandCollapseState);
+
+            provider.Expand();
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            Assert.IsTrue(flyout.IsOpen);
+            Assert.AreSame(button, flyout.Target);
+
+            flyout.Hide();
+        });
+    }
+
+    [TestMethod]
+    public void AppBarToggleButtonAutomationPeerMatchesWinUISourceShape()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var command = new RecordingCommand();
+            var toggleButton = new AppBarToggleButton
+            {
+                Label = "Pin",
+                Content = "Ignored content",
+                KeyboardAcceleratorTextOverride = " Ctrl+P ",
+                Command = command
+            };
+
+            var peer = FrameworkElementAutomationPeer.CreatePeerForElement(toggleButton);
+
+            Assert.IsInstanceOfType(peer, typeof(AppBarToggleButtonAutomationPeer));
+            Assert.AreEqual("AppBarToggleButton", peer.GetClassName());
+            Assert.AreEqual("app bar toggle button", peer.GetLocalizedControlType());
+            Assert.AreEqual("Pin", peer.GetName());
+            Assert.AreEqual("Ctrl+P", peer.GetAcceleratorKey());
+            Assert.IsNull(peer.GetChildren());
+
+            AutomationProperties.SetName(toggleButton, "Explicit toggle");
+            AutomationProperties.SetAcceleratorKey(toggleButton, "Alt+P");
+
+            Assert.AreEqual("Explicit toggle", peer.GetName());
+            Assert.AreEqual("Alt+P", peer.GetAcceleratorKey());
+
+            var provider = (IToggleProvider)peer.GetPattern(PatternInterface.Toggle);
+            Assert.IsNotNull(provider);
+            Assert.AreEqual(ToggleState.Off, provider.ToggleState);
+
+            provider.Toggle();
+
+            Assert.AreEqual(true, toggleButton.IsChecked);
+            Assert.AreEqual(ToggleState.On, provider.ToggleState);
+            Assert.AreEqual(1, command.ExecuteCount);
+
+            provider.Toggle();
+
+            Assert.AreEqual(false, toggleButton.IsChecked);
+            Assert.AreEqual(ToggleState.Off, provider.ToggleState);
+            Assert.AreEqual(2, command.ExecuteCount);
         });
     }
 
@@ -864,6 +1000,11 @@ public class CommandBarApiTests
         {
             OnMouseLeftButtonDown(e);
         }
+
+        public void InvokeClick()
+        {
+            OnClick();
+        }
     }
 
     private sealed class TestAppBarToggleButton : AppBarToggleButton
@@ -871,6 +1012,27 @@ public class CommandBarApiTests
         public void InvokeMouseLeftButtonDown(MouseButtonEventArgs e)
         {
             OnMouseLeftButtonDown(e);
+        }
+    }
+
+    private sealed class RecordingCommand : ICommand
+    {
+        public int ExecuteCount { get; private set; }
+
+        public event EventHandler? CanExecuteChanged
+        {
+            add { }
+            remove { }
+        }
+
+        public bool CanExecute(object? parameter)
+        {
+            return true;
+        }
+
+        public void Execute(object? parameter)
+        {
+            ExecuteCount++;
         }
     }
 }

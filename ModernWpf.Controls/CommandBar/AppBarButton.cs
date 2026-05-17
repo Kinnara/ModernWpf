@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using ModernWpf.Automation.Peers;
 using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
@@ -365,6 +367,21 @@ namespace ModernWpf.Controls
             }
 
             base.OnPreviewGotKeyboardFocus(e);
+        }
+
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new AppBarButtonAutomationPeer(this);
+        }
+
+        protected override void OnClick()
+        {
+            base.OnClick();
+
+            if (Flyout is { } flyout)
+            {
+                flyout.ShowAt(this);
+            }
         }
 
         protected override void OnVisualParentChanged(DependencyObject oldParent)
