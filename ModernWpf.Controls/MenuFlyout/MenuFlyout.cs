@@ -130,6 +130,7 @@ namespace ModernWpf.Controls
             }
 
             m_currentPlacement = Placement;
+            TrackPlacementTarget(placementTarget);
             OnOpening();
             SetOpenFlyout(this);
             m_presenter.IsOpen = true;
@@ -201,6 +202,7 @@ namespace ModernWpf.Controls
             m_presenter.ClearValue(ContextMenu.PlacementProperty);
             m_presenter.ClearValue(ContextMenu.PlacementTargetProperty);
             m_presenter.ClearValue(ContextMenu.PlacementRectangleProperty);
+            ClearPlacementTargetTracking();
             Target = null;
             m_currentPlacement = null;
 

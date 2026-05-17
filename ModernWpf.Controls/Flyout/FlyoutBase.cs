@@ -251,6 +251,7 @@ namespace ModernWpf.Controls.Primitives
 
             Target = placementTarget;
             m_showingAsContextFlyout = showAsContextFlyout;
+            TrackPlacementTarget(placementTarget);
             OnOpening();
             SetOpenFlyout(this);
             m_popup.IsOpen = true;
@@ -508,6 +509,7 @@ namespace ModernWpf.Controls.Primitives
             m_popup.ClearValue(Popup.PlacementRectangleProperty);
             m_popup.ClearValue(FrameworkElement.WidthProperty);
             m_popup.ClearValue(FrameworkElement.HeightProperty);
+            ClearPlacementTargetTracking();
             Target = null;
             m_showingAsContextFlyout = false;
             ClearOpenFlyout(this);
@@ -528,6 +530,33 @@ namespace ModernWpf.Controls.Primitives
         internal CustomPopupPlacement[] PositionPopup(Size popupSize, Size targetSize, Point offset, FrameworkElement child)
         {
             return CustomPopupPlacementHelper.PositionPopup((CustomPlacementMode)Placement, popupSize, targetSize, offset, child);
+        }
+
+        protected void TrackPlacementTarget(FrameworkElement placementTarget)
+        {
+            if (m_trackedPlacementTarget == placementTarget)
+            {
+                return;
+            }
+
+            ClearPlacementTargetTracking();
+
+            m_trackedPlacementTarget = placementTarget;
+            m_trackedPlacementTarget.Unloaded += OnPlacementTargetUnloaded;
+        }
+
+        protected void ClearPlacementTargetTracking()
+        {
+            if (m_trackedPlacementTarget != null)
+            {
+                m_trackedPlacementTarget.Unloaded -= OnPlacementTargetUnloaded;
+                m_trackedPlacementTarget = null;
+            }
+        }
+
+        private void OnPlacementTargetUnloaded(object sender, RoutedEventArgs e)
+        {
+            Hide();
         }
 
         private void CancelAsyncShow()
@@ -597,6 +626,7 @@ namespace ModernWpf.Controls.Primitives
         private PopupEx m_popup;
         private bool m_showingAsContextFlyout;
         private WeakReference<IInputElement> m_weakRefToPreviousFocus;
+        private FrameworkElement m_trackedPlacementTarget;
         private bool m_closing;
         private bool m_suppressNextOpened;
         private Action m_pendingShow;

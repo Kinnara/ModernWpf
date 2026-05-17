@@ -174,6 +174,44 @@ public class FlyoutBaseApiTests
         });
     }
 
+    [TestMethod]
+    public void PlacementTargetUnloadedHidesFlyoutLikeWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var target = new Button { Content = "Target", Width = 120, Height = 36 };
+            var root = new StackPanel
+            {
+                Children =
+                {
+                    target
+                }
+            };
+            var flyout = new Flyout
+            {
+                Content = new TextBlock { Text = "Flyout content" }
+            };
+
+            using var host = new TestWindowHost(root, width: 320, height: 220);
+            host.UpdateLayout();
+
+            flyout.ShowAt(target);
+            WpfTestHost.DoEvents();
+
+            Assert.IsTrue(flyout.IsOpen);
+            Assert.AreSame(target, flyout.Target);
+
+            root.Children.Remove(target);
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            Assert.IsFalse(flyout.IsOpen);
+            Assert.IsNull(flyout.Target);
+        });
+    }
+
     private static void AssertEvents(List<string> actual, params string[] expected)
     {
         Assert.AreEqual(string.Join("|", expected), string.Join("|", actual));

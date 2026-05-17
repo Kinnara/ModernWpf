@@ -167,6 +167,42 @@ public class MenuFlyoutApiTests
         });
     }
 
+    [TestMethod]
+    public void PlacementTargetUnloadedHidesMenuFlyoutLikeWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var target = new Button { Content = "Target", Width = 120, Height = 36 };
+            var root = new StackPanel
+            {
+                Children =
+                {
+                    target
+                }
+            };
+            var menuFlyout = new MenuFlyout();
+            menuFlyout.Items.Add(new MenuItem { Header = "Copy" });
+
+            using var host = new TestWindowHost(root, width: 320, height: 220);
+            host.UpdateLayout();
+
+            menuFlyout.ShowAt(target);
+            WpfTestHost.DoEvents();
+
+            Assert.IsTrue(menuFlyout.IsOpen);
+            Assert.AreSame(target, menuFlyout.Target);
+
+            root.Children.Remove(target);
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            Assert.IsFalse(menuFlyout.IsOpen);
+            Assert.IsNull(menuFlyout.Target);
+        });
+    }
+
     private static void AssertEvents(List<string> actual, params string[] expected)
     {
         Assert.AreEqual(string.Join("|", expected), string.Join("|", actual));
