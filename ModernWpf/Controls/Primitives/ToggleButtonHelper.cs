@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls.Primitives;
+using System.Windows.Threading;
 
 namespace ModernWpf.Controls.Primitives
 {
@@ -77,22 +78,30 @@ namespace ModernWpf.Controls.Primitives
 
         private static void OnDependencyStateChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            UpdateVisualState((ToggleButton)sender, true);
+            ScheduleVisualStateUpdate((ToggleButton)sender);
         }
 
         private static void OnCheckedChanged(object sender, RoutedEventArgs e)
         {
-            UpdateVisualState((ToggleButton)sender, true);
+            ScheduleVisualStateUpdate((ToggleButton)sender);
         }
 
         private static void OnMouseStateChanged(object sender, RoutedEventArgs e)
         {
-            UpdateVisualState((ToggleButton)sender, true);
+            ScheduleVisualStateUpdate((ToggleButton)sender);
         }
 
         private static void OnVisualStatePropertyChanged(object sender, EventArgs e)
         {
-            UpdateVisualState((ToggleButton)sender, true);
+            ScheduleVisualStateUpdate((ToggleButton)sender);
+        }
+
+        private static void ScheduleVisualStateUpdate(ToggleButton button)
+        {
+            UpdateVisualState(button, true);
+            button.Dispatcher.BeginInvoke(
+                (Action)(() => UpdateVisualState(button, true)),
+                DispatcherPriority.Input);
         }
 
         private static void UpdateVisualState(ToggleButton button, bool useTransitions)
@@ -154,6 +163,21 @@ namespace ModernWpf.Controls.Primitives
 
             if (button.IsChecked == null)
             {
+                if (!button.IsEnabled)
+                {
+                    return "IndeterminateDisabled";
+                }
+
+                if (button.IsPressed)
+                {
+                    return "IndeterminatePressed";
+                }
+
+                if (button.IsMouseOver)
+                {
+                    return "IndeterminatePointerOver";
+                }
+
                 return "Indeterminate";
             }
 
