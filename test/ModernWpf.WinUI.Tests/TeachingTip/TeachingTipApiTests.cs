@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
 using System.Windows;
+using System.Windows.Automation;
+using System.Windows.Automation.Peers;
+using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
@@ -10,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf;
+using ModernWpf.Automation.Peers;
 using ModernWpf.Controls;
 using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
@@ -48,6 +52,83 @@ public class TeachingTipApiTests
             Assert.IsNull(teachingTip.HeroContent);
             Assert.IsNull(teachingTip.IconSource);
             Assert.IsNotNull(teachingTip.TemplateSettings);
+        });
+    }
+
+    [TestMethod]
+    public void TeachingTipOpenedEventFollowsWinUISourceTiming()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var teachingTip = new TeachingTipControl { Content = "Details" };
+            var openedCount = 0;
+            TeachingTipOpenedEventArgs? lastArgs = null;
+            teachingTip.Opened += (_, args) =>
+            {
+                openedCount++;
+                lastArgs = args;
+            };
+
+            using var host = new TestWindowHost(teachingTip, width: 420, height: 180);
+
+            teachingTip.IsOpen = true;
+            host.UpdateLayout();
+            WaitFor(() => openedCount == 1, "TeachingTip Opened did not fire after the open path completed.");
+
+            Assert.IsNotNull(lastArgs);
+
+            var closedCount = 0;
+            teachingTip.Closed += (_, _) => closedCount++;
+            teachingTip.IsOpen = false;
+            host.UpdateLayout();
+            WaitFor(() => closedCount == 1, "TeachingTip close animation did not complete.");
+
+            teachingTip.IsOpen = true;
+            host.UpdateLayout();
+            WaitFor(() => openedCount == 2, "TeachingTip Opened did not fire again after reopening.");
+        });
+    }
+
+    [TestMethod]
+    public void TeachingTipAutomationPeerMatchesWinUISourceShape()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var teachingTip = new TeachingTipControl { Content = "Details" };
+            using var host = new TestWindowHost(teachingTip, width: 420, height: 180);
+
+            var peer = FrameworkElementAutomationPeer.CreatePeerForElement(teachingTip);
+            Assert.IsInstanceOfType(peer, typeof(TeachingTipAutomationPeer));
+            Assert.AreEqual("TeachingTip", peer!.GetClassName());
+            Assert.AreEqual(AutomationControlType.Pane, peer.GetAutomationControlType());
+
+            var provider = peer.GetPattern(PatternInterface.Window) as IWindowProvider;
+            Assert.IsNotNull(provider);
+            Assert.IsFalse(provider!.Maximizable);
+            Assert.IsFalse(provider.Minimizable);
+            Assert.IsFalse(provider.IsModal);
+            Assert.IsFalse(provider.IsTopmost);
+            Assert.AreEqual(WindowVisualState.Normal, provider.VisualState);
+            Assert.AreEqual(WindowInteractionState.BlockedByModalWindow, provider.InteractionState);
+            Assert.IsTrue(provider.WaitForInputIdle(0));
+
+            teachingTip.IsLightDismissEnabled = true;
+            Assert.AreEqual(AutomationControlType.Window, peer.GetAutomationControlType());
+            Assert.IsTrue(provider.IsModal);
+
+            teachingTip.IsOpen = true;
+            host.UpdateLayout();
+            WaitFor(
+                () => provider.IsTopmost && provider.InteractionState == WindowInteractionState.ReadyForUserInteraction,
+                "TeachingTip automation peer did not report the opened window state.");
+
+            provider.Close();
+            host.UpdateLayout();
+            WaitFor(() => !teachingTip.IsOpen, "TeachingTip automation peer Close did not close the owner.");
         });
     }
 

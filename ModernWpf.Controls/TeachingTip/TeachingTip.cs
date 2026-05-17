@@ -1,11 +1,13 @@
 using System;
 using System.Windows;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
+using ModernWpf.Automation.Peers;
 using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
@@ -333,6 +335,8 @@ namespace ModernWpf.Controls
 
         public event TypedEventHandler<TeachingTip, TeachingTipClosedEventArgs> Closed;
 
+        public event TypedEventHandler<TeachingTip, TeachingTipOpenedEventArgs> Opened;
+
         protected override void OnContentChanged(object oldContent, object newContent)
         {
             base.OnContentChanged(oldContent, newContent);
@@ -373,6 +377,11 @@ namespace ModernWpf.Controls
             {
                 StartOpenAnimation();
             }
+        }
+
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new TeachingTipAutomationPeer(this);
         }
 
         private void ApplySizeResources()
@@ -423,6 +432,7 @@ namespace ModernWpf.Controls
             {
                 var suppressOpenAnimation = teachingTip._suppressNextOpenAnimation;
                 teachingTip._suppressNextOpenAnimation = false;
+                teachingTip._isOpeningAnimationActive = false;
                 teachingTip._isClosingAnimationActive = false;
                 teachingTip.StopTipAnimation();
                 teachingTip._lastCloseReason = TeachingTipCloseReason.Programmatic;
@@ -434,6 +444,7 @@ namespace ModernWpf.Controls
                 }
                 else
                 {
+                    teachingTip._hasRaisedOpenedForCurrentOpen = false;
                     teachingTip.StartOpenAnimation();
                 }
             }
@@ -482,6 +493,7 @@ namespace ModernWpf.Controls
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             StopTipAnimation();
+            _isOpeningAnimationActive = false;
             _isClosingAnimationActive = false;
             UpdateTargetUnloadHook(null);
             UpdateLightDismissHook(null);
@@ -1154,6 +1166,8 @@ namespace ModernWpf.Controls
 
         private bool ShouldKeepPopupOpen => IsOpen || _isClosingAnimationActive;
 
+        internal bool IsIdleForAutomation => !_isOpeningAnimationActive && !_isClosingAnimationActive;
+
         private void StartOpenAnimation()
         {
             if (_tailOcclusionScaleTransform == null)
@@ -1166,9 +1180,11 @@ namespace ModernWpf.Controls
             if (!SharedHelpers.IsAnimationsEnabled)
             {
                 SetTipScale(1.0, 1.0);
+                RaiseOpened();
                 return;
             }
 
+            _isOpeningAnimationActive = true;
             var startScale = GetExpandStartScale();
             AnimateTipScale(
                 startScale.Width,
@@ -1178,7 +1194,12 @@ namespace ModernWpf.Controls
                 ExpandAnimationDuration,
                 ExpandAnimationEasingControlPoint1,
                 ExpandAnimationEasingControlPoint2,
-                () => SetTipScale(1.0, 1.0));
+                () =>
+                {
+                    _isOpeningAnimationActive = false;
+                    SetTipScale(1.0, 1.0);
+                    RaiseOpened();
+                });
         }
 
         private void StartCloseAnimationOrClose(TeachingTipCloseReason reason)
@@ -1214,11 +1235,46 @@ namespace ModernWpf.Controls
         private void FinishClose(TeachingTipCloseReason reason)
         {
             _isClosingAnimationActive = false;
+            _isOpeningAnimationActive = false;
             StopTipAnimation();
             SetTipScale(1.0, 1.0);
             UpdateVisualState();
             Closed?.Invoke(this, new TeachingTipClosedEventArgs(reason));
+            GetAutomationPeerForEvents()?.RaiseWindowClosedEvent();
+            _hasRaisedOpenedForCurrentOpen = false;
             _lastCloseReason = TeachingTipCloseReason.Programmatic;
+        }
+
+        private void RaiseOpened()
+        {
+            if (!IsOpen || _hasRaisedOpenedForCurrentOpen)
+            {
+                return;
+            }
+
+            _hasRaisedOpenedForCurrentOpen = true;
+            Opened?.Invoke(this, new TeachingTipOpenedEventArgs());
+            GetAutomationPeerForEvents()?.RaiseWindowOpenedEvent(GetAutomationNotificationString());
+        }
+
+        private TeachingTipAutomationPeer GetAutomationPeerForEvents()
+        {
+            return UIElementAutomationPeer.FromElement(this) as TeachingTipAutomationPeer
+                ?? UIElementAutomationPeer.CreatePeerForElement(this) as TeachingTipAutomationPeer;
+        }
+
+        private string GetAutomationNotificationString()
+        {
+            var name = _popup != null
+                ? System.Windows.Automation.AutomationProperties.GetName(_popup)
+                : null;
+
+            if (string.IsNullOrEmpty(name))
+            {
+                name = System.Windows.Automation.AutomationProperties.GetName(this);
+            }
+
+            return string.IsNullOrEmpty(name) ? Title ?? string.Empty : name;
         }
 
         private void AnimateTipScale(
@@ -1450,7 +1506,9 @@ namespace ModernWpf.Controls
 
         private TeachingTipCloseReason _lastCloseReason = TeachingTipCloseReason.Programmatic;
         private bool _isCompletingClose;
+        private bool _isOpeningAnimationActive;
         private bool _isClosingAnimationActive;
+        private bool _hasRaisedOpenedForCurrentOpen;
         private bool _suppressNextOpenAnimation;
         private int _tipAnimationGeneration;
         private Popup _popup;
