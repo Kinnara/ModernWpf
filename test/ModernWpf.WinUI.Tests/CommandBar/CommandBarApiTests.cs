@@ -824,6 +824,43 @@ public class CommandBarApiTests
     }
 
     [TestMethod]
+    public void AppBarOverflowSizingUsesWinUISourceOverflowStyles()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var button = new AppBarButton();
+            var toggleButton = new AppBarToggleButton();
+            var root = new StackPanel();
+            root.Children.Add(button);
+            root.Children.Add(toggleButton);
+
+            using var host = new TestWindowHost(root, width: 240, height: 160);
+            host.UpdateLayout();
+
+            Assert.AreEqual(68d, button.Width);
+            Assert.AreEqual(HorizontalAlignment.Left, button.HorizontalAlignment);
+            Assert.IsFalse(button.IsInOverflow);
+
+            Assert.AreEqual(68d, toggleButton.Width);
+            Assert.AreEqual(HorizontalAlignment.Left, toggleButton.HorizontalAlignment);
+            Assert.IsFalse(toggleButton.IsInOverflow);
+
+            AssertStyleDoesNotTriggerOnToolBarIsOverflowItem(FindImplicitStyle<AppBarButton>(button));
+            AssertStyleDoesNotTriggerOnToolBarIsOverflowItem(FindImplicitStyle<AppBarToggleButton>(toggleButton));
+
+            var resources = CreateCommandBarResources();
+            AssertOverflowStyleMatchesWinUISource(
+                (Style)resources["AppBarButtonOverflowStyle"],
+                typeof(AppBarButton));
+            AssertOverflowStyleMatchesWinUISource(
+                (Style)resources["AppBarToggleButtonOverflowStyle"],
+                typeof(AppBarToggleButton));
+        });
+    }
+
+    [TestMethod]
     public void AppBarToggleButtonTemplateUsesWinUIInnerChrome()
     {
         WpfTestHost.Run(() =>
@@ -1077,6 +1114,62 @@ public class CommandBarApiTests
 
         return control.Template?.FindName(name, control) as T
             ?? throw new AssertFailedException($"Expected template child '{name}' to be {typeof(T).Name}.");
+    }
+
+    private static Style FindImplicitStyle<T>(FrameworkElement element)
+        where T : FrameworkElement
+    {
+        return element.TryFindResource(typeof(T)) as Style
+            ?? throw new AssertFailedException($"Expected implicit style for {typeof(T).Name}.");
+    }
+
+    private static void AssertStyleDoesNotTriggerOnToolBarIsOverflowItem(Style style)
+    {
+        for (Style? current = style; current is not null; current = current.BasedOn)
+        {
+            foreach (TriggerBase triggerBase in current.Triggers)
+            {
+                if (triggerBase is Trigger trigger &&
+                    trigger.Property == ToolBar.IsOverflowItemProperty)
+                {
+                    Assert.Fail("AppBar default styles must not use WPF ToolBar.IsOverflowItem for overflow sizing.");
+                }
+            }
+        }
+    }
+
+    private static void AssertOverflowStyleMatchesWinUISource(Style style, Type targetType)
+    {
+        Assert.AreEqual(targetType, style.TargetType);
+        AssertStyleSetter(style, FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Stretch);
+        AssertStyleSetter(style, FrameworkElement.WidthProperty, double.NaN);
+    }
+
+    private static void AssertStyleSetter(Style style, DependencyProperty property, object expectedValue)
+    {
+        for (Style? current = style; current is not null; current = current.BasedOn)
+        {
+            foreach (SetterBase setterBase in current.Setters)
+            {
+                if (setterBase is Setter setter &&
+                    setter.Property == property &&
+                    ValuesAreEqual(setter.Value, expectedValue))
+                {
+                    return;
+                }
+            }
+        }
+
+        Assert.Fail($"Expected style for {style.TargetType.Name} to set {property.Name} to {expectedValue}.");
+    }
+
+    private static bool ValuesAreEqual(object actual, object expected)
+    {
+        return (actual is double actualDouble &&
+            expected is double expectedDouble &&
+            double.IsNaN(actualDouble) &&
+            double.IsNaN(expectedDouble)) ||
+            Equals(actual, expected);
     }
 
     private static void AssertStateSetter(
