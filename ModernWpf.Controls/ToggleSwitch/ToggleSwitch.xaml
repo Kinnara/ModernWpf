@@ -23,6 +23,7 @@
         <Setter Property="HorizontalContentAlignment" Value="Left" />
         <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
         <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
+        <Setter Property="IsManipulationEnabled" Value="True" />
         <Setter Property="MinWidth" Value="{DynamicResource ToggleSwitchThemeMinWidth}"/>
         <Setter Property="UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />

@@ -48,14 +48,15 @@ pieces, WPF substitutions, and platform gaps known so far.
 | `OnPointerCaptureLost` clears `PointerOver` after vertical-pan drag completion when dragging has finished. | Matched through the WPF thumb `LostMouseCapture` path plus the owner fallback. |
 | `GetTranslations`, `SetTranslations`, `ClearTranslations`, `MoveDelta`, `MoveCompleted`, and size-derived knob/curtain bounds. | Matched, including current-to-on/off and on/off-to-current template setting offsets. |
 | `ToggleSwitchKeyProcess` handles source key-down/up sequencing using `OriginalKey`. | Matched with a private WPF `ToggleSwitchKeyProcess` helper; WPF system/IME/dead-char keys normalize back to the exposed original key before processing, and the WinUI flow-direction branches are preserved behind `HandlesKey`. |
-| WinUI native tests for live-tree entry/leave, tap, horizontal drag, vertical pan no-toggle, keyboard space, directional-key no-toggle, footprint, visual tree, and automation shape. | Covered by focused WPF tests where platform input can be represented; touch pan and compositor-only behavior are documented substitutions. |
+| WinUI native tests for live-tree entry/leave, tap, horizontal drag, horizontal pan, vertical pan no-toggle, keyboard space, directional-key no-toggle, footprint, visual tree, and automation shape. | Covered by focused WPF tests where platform input can be represented; compositor-only behavior is documented as a substitution. |
 | Automation peer class name, localized control type, toggle pattern, clickable point, name construction, default On/Off filtering, and hidden template children. | Matched with WPF automation APIs and source-shaped string extraction. |
 | CommonStyles template dimensions, style setters, state names, knob animations, On/Off content presenters, template-root shape, and WinUI resource keys. | Matched with WPF template equivalents, `VisualStateEx.Setters`, and theme resource aliases; the previous WPF-only `VerticalContentAlignment=Center` setter and outer template chrome `Border` have been removed because WinUI CommonStyles does not set them. |
+| CommonStyles `ManipulationMode="System,TranslateX"` routes horizontal pan into switch selection while vertical pan does not toggle. | Matched with a WPF manipulation substitute: `IsManipulationEnabled` defaults on, `ManipulationStarting` requests `TranslateX`, horizontal deltas reuse the WinUI-shaped move/complete path, and vertical-only deltas stay unhandled/non-toggle. |
 
 ## WPF Substitutions
 
 - WinUI `VirtualKey.GamepadA` has no WPF `Key` equivalent in the target frameworks, so this remains a documented platform gap even though the rest of the `ToggleSwitchKeyProcess` shape is ported.
-- WinUI `ManipulationMode="System,TranslateX"` is represented by WPF `Thumb` drag handling and focused drag tests; exact touch pan routing is a platform gap.
+- WinUI `ManipulationMode="System,TranslateX"` is represented by WPF manipulation events plus the existing `Thumb` drag handling; exact OS touch routing through parent scroll viewers remains a platform-level verification gap.
 - WinUI `RepositionThemeAnimation`, compositor behavior, and element sounds have no direct WPF equivalent.
 - WinUI `Grid.CornerRadius` is represented by the WPF `Border` used for `SwitchAreaGrid`.
 - WinUI `AutomationProperties.AccessibilityView="Raw"` and WinRT automation internals are represented by WPF automation peer child filtering and WPF provider APIs.

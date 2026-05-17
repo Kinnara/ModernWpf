@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Automation.Peers;
@@ -127,6 +128,76 @@ public class ToggleSwitchApiTests
             RaiseDragCompleted(thumb);
             host.UpdateLayout();
 
+            Assert.IsFalse(toggleSwitch.IsOn);
+        });
+    }
+
+    [TestMethod]
+    public void ManipulationStartingUsesWinUITranslateXModeSubstitute()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleSwitch = new ManipulationProbeToggleSwitch();
+            var args = CreateManipulationStartingArgs();
+
+            toggleSwitch.InvokeManipulationStarting(args);
+
+            Assert.AreEqual(ManipulationModes.TranslateX, args.Mode);
+            Assert.AreSame(toggleSwitch, args.ManipulationContainer);
+        });
+    }
+
+    [TestMethod]
+    public void HorizontalManipulationTogglesOnAndOffLikeWinUIPanSource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleSwitch = new ManipulationProbeToggleSwitch();
+            using var host = new TestWindowHost(toggleSwitch, width: 260, height: 120);
+            host.UpdateLayout();
+
+            toggleSwitch.InvokeManipulationStarted(CreateManipulationStartedArgs(toggleSwitch));
+            var deltaOn = CreateManipulationDeltaArgs(toggleSwitch, horizontalChange: 12, verticalChange: 5);
+            toggleSwitch.InvokeManipulationDelta(deltaOn);
+            toggleSwitch.InvokeManipulationCompleted(CreateManipulationCompletedArgs(toggleSwitch));
+            host.UpdateLayout();
+
+            Assert.IsTrue(deltaOn.Handled);
+            Assert.IsTrue(toggleSwitch.IsOn);
+
+            toggleSwitch.InvokeManipulationStarted(CreateManipulationStartedArgs(toggleSwitch));
+            var deltaOff = CreateManipulationDeltaArgs(toggleSwitch, horizontalChange: -12, verticalChange: 5);
+            toggleSwitch.InvokeManipulationDelta(deltaOff);
+            toggleSwitch.InvokeManipulationCompleted(CreateManipulationCompletedArgs(toggleSwitch));
+            host.UpdateLayout();
+
+            Assert.IsTrue(deltaOff.Handled);
+            Assert.IsFalse(toggleSwitch.IsOn);
+        });
+    }
+
+    [TestMethod]
+    public void VerticalManipulationDoesNotToggleLikeWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleSwitch = new ManipulationProbeToggleSwitch();
+            using var host = new TestWindowHost(toggleSwitch, width: 260, height: 120);
+            host.UpdateLayout();
+
+            toggleSwitch.InvokeManipulationStarted(CreateManipulationStartedArgs(toggleSwitch));
+            var delta = CreateManipulationDeltaArgs(toggleSwitch, horizontalChange: 0, verticalChange: 24);
+            toggleSwitch.InvokeManipulationDelta(delta);
+            toggleSwitch.InvokeManipulationCompleted(CreateManipulationCompletedArgs(toggleSwitch));
+            host.UpdateLayout();
+
+            Assert.IsFalse(delta.Handled);
             Assert.IsFalse(toggleSwitch.IsOn);
         });
     }
@@ -791,6 +862,11 @@ public class ToggleSwitchApiTests
             Assert.AreEqual(
                 BaseValueSource.DefaultStyle,
                 DependencyPropertyHelper.GetValueSource(toggleSwitch, Control.HorizontalContentAlignmentProperty).BaseValueSource);
+
+            Assert.IsTrue(toggleSwitch.IsManipulationEnabled);
+            Assert.AreEqual(
+                BaseValueSource.DefaultStyle,
+                DependencyPropertyHelper.GetValueSource(toggleSwitch, UIElement.IsManipulationEnabledProperty).BaseValueSource);
 
             Assert.AreEqual(VerticalAlignment.Top, toggleSwitch.VerticalContentAlignment);
             Assert.AreEqual(
@@ -1677,6 +1753,96 @@ public class ToggleSwitchApiTests
         return args;
     }
 
+    private static ManipulationStartingEventArgs CreateManipulationStartingArgs()
+    {
+        var args = CreateNonPublicInstance<ManipulationStartingEventArgs>(null, Environment.TickCount);
+        args.RoutedEvent = UIElement.ManipulationStartingEvent;
+        return args;
+    }
+
+    private static ManipulationStartedEventArgs CreateManipulationStartedArgs(IInputElement container)
+    {
+        var args = CreateNonPublicInstance<ManipulationStartedEventArgs>(
+            null,
+            Environment.TickCount,
+            container,
+            new Point());
+        args.RoutedEvent = UIElement.ManipulationStartedEvent;
+        return args;
+    }
+
+    private static ManipulationDeltaEventArgs CreateManipulationDeltaArgs(
+        IInputElement container,
+        double horizontalChange,
+        double verticalChange)
+    {
+        var delta = new ManipulationDelta(
+            new Vector(horizontalChange, verticalChange),
+            0,
+            new Vector(1, 1),
+            new Vector());
+        var velocities = new ManipulationVelocities(new Vector(), 0, new Vector());
+
+        var args = CreateNonPublicInstance<ManipulationDeltaEventArgs>(
+            null,
+            Environment.TickCount,
+            container,
+            new Point(),
+            delta,
+            delta,
+            velocities,
+            false);
+        args.RoutedEvent = UIElement.ManipulationDeltaEvent;
+        return args;
+    }
+
+    private static ManipulationCompletedEventArgs CreateManipulationCompletedArgs(IInputElement container)
+    {
+        var total = new ManipulationDelta(new Vector(), 0, new Vector(1, 1), new Vector());
+        var velocities = new ManipulationVelocities(new Vector(), 0, new Vector());
+
+        var args = CreateNonPublicInstance<ManipulationCompletedEventArgs>(
+            null,
+            Environment.TickCount,
+            container,
+            new Point(),
+            total,
+            velocities,
+            false);
+        args.RoutedEvent = UIElement.ManipulationCompletedEvent;
+        return args;
+    }
+
+    private static T CreateNonPublicInstance<T>(params object?[] args)
+    {
+        var argumentTypes = args
+            .Select(arg => arg?.GetType())
+            .ToArray();
+
+        var constructor = typeof(T)
+            .GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic)
+            .Single(item =>
+            {
+                var parameters = item.GetParameters();
+                if (parameters.Length != args.Length)
+                {
+                    return false;
+                }
+
+                for (int i = 0; i < parameters.Length; i++)
+                {
+                    if (argumentTypes[i] != null && !parameters[i].ParameterType.IsAssignableFrom(argumentTypes[i]))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            });
+
+        return (T)constructor.Invoke(args);
+    }
+
     private static DataTemplate CreateTextTemplate()
     {
         return (DataTemplate)XamlReader.Parse(
@@ -1907,6 +2073,29 @@ public class ToggleSwitchApiTests
         public override string ToString()
         {
             return "ShouldNotAppearInAutomationName";
+        }
+    }
+
+    private sealed class ManipulationProbeToggleSwitch : ModernWpf.Controls.ToggleSwitch
+    {
+        public void InvokeManipulationStarting(ManipulationStartingEventArgs args)
+        {
+            OnManipulationStarting(args);
+        }
+
+        public void InvokeManipulationStarted(ManipulationStartedEventArgs args)
+        {
+            OnManipulationStarted(args);
+        }
+
+        public void InvokeManipulationDelta(ManipulationDeltaEventArgs args)
+        {
+            OnManipulationDelta(args);
+        }
+
+        public void InvokeManipulationCompleted(ManipulationCompletedEventArgs args)
+        {
+            OnManipulationCompleted(args);
         }
     }
 

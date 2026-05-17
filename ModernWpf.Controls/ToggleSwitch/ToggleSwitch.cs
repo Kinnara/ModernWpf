@@ -501,6 +501,53 @@ namespace ModernWpf.Controls
             OnPointerCaptureLostSubstitute();
         }
 
+        protected override void OnManipulationStarting(ManipulationStartingEventArgs e)
+        {
+            base.OnManipulationStarting(e);
+
+            e.Mode = ManipulationModes.TranslateX;
+            e.ManipulationContainer = this;
+        }
+
+        protected override void OnManipulationStarted(ManipulationStartedEventArgs e)
+        {
+            base.OnManipulationStarted(e);
+
+            _isDragging = true;
+            _wasDragged = false;
+
+            FocusFromPointer();
+
+            GetTranslations();
+            UpdateVisualStates(true);
+            SetTranslations();
+        }
+
+        protected override void OnManipulationDelta(ManipulationDeltaEventArgs e)
+        {
+            base.OnManipulationDelta(e);
+
+            double horizontalChange = e.DeltaManipulation.Translation.X;
+
+            if (horizontalChange != 0)
+            {
+                _wasDragged = true;
+                MoveDelta(horizontalChange);
+                e.Handled = true;
+            }
+        }
+
+        protected override void OnManipulationCompleted(ManipulationCompletedEventArgs e)
+        {
+            base.OnManipulationCompleted(e);
+
+            if (_isDragging)
+            {
+                _isDragging = false;
+                MoveCompleted(_wasDragged);
+            }
+        }
+
         private void OnSwitchThumbLostMouseCapture(object sender, MouseEventArgs e)
         {
             OnPointerCaptureLostSubstitute();
