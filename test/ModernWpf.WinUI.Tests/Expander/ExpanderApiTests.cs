@@ -137,6 +137,7 @@ public class ExpanderApiTests
             host.UpdateLayout();
 
             var expanderBorder = FindTemplateChild<FrameworkElement>(expander, "ExpanderBorder");
+            Assert.AreEqual(0, expander.Template.Triggers.Count);
             AssertStateSetter(expanderBorder, "CommonStates", "Disabled", "Foreground");
             AssertStateSetter(expanderBorder, "ExpansionStates", "Expanded", "ExpandSite.Visibility");
             AssertStateSetter(
@@ -289,6 +290,8 @@ public class ExpanderApiTests
         Assert.IsTrue(ToggleButtonHelper.GetVisualStateSettersEnabled(headerSite));
 
         headerSite.ApplyTemplate();
+        Assert.AreEqual(0, headerSite.Template.Triggers.Count);
+
         var headerRoot = FindTemplateChild<FrameworkElement>(headerSite, "HeaderRoot");
         var arrow = FindTemplateChild<FontIconFallback>(headerSite, "arrow");
 
@@ -337,6 +340,35 @@ public class ExpanderApiTests
         AssertStateSetterValue(headerRoot, "CheckStates", "CheckedPressed", "arrow.(local:AnimatedIcon.State)", "PressedOn");
         AssertStateSetterValue(headerRoot, "CheckStates", "CheckedDisabled", "arrow.(local:AnimatedIcon.State)", "NormalOn");
 
+        AssertHeaderCommonStateTransition(
+            headerSite,
+            arrow,
+            "PointerOver",
+            "ExpanderHeaderForegroundPointerOver",
+            "ExpanderHeaderBorderPointerOverBrush",
+            "ExpanderChevronPointerOverForeground");
+        AssertHeaderCommonStateTransition(
+            headerSite,
+            arrow,
+            "Pressed",
+            "ExpanderHeaderForegroundPressed",
+            "ExpanderHeaderBorderPressedBrush",
+            "ExpanderChevronPressedForeground");
+        AssertHeaderCommonStateTransition(
+            headerSite,
+            arrow,
+            "Disabled",
+            "ExpanderHeaderDisabledForeground",
+            "ExpanderHeaderDisabledBorderBrush",
+            "ExpanderHeaderDisabledForeground");
+        AssertHeaderCommonStateTransition(
+            headerSite,
+            arrow,
+            "Normal",
+            "ExpanderHeaderForeground",
+            "ExpanderHeaderBorderBrush",
+            "ExpanderChevronForeground");
+
         Assert.AreEqual(headerSite.IsChecked == true ? "NormalOn" : "NormalOff", AnimatedIcon.GetState(arrow));
         AssertAnimatedIconStateTransition(headerSite, arrow, "Unchecked", "NormalOff");
         AssertAnimatedIconStateTransition(headerSite, arrow, "PointerOver", "PointerOverOff");
@@ -345,6 +377,20 @@ public class ExpanderApiTests
         AssertAnimatedIconStateTransition(headerSite, arrow, "CheckedPointerOver", "PointerOverOn");
         AssertAnimatedIconStateTransition(headerSite, arrow, "CheckedPressed", "PressedOn");
         AssertAnimatedIconStateTransition(headerSite, arrow, "CheckedDisabled", "NormalOn");
+    }
+
+    private static void AssertHeaderCommonStateTransition(
+        ToggleButton headerSite,
+        FontIconFallback arrow,
+        string stateName,
+        string foregroundResourceKey,
+        string borderResourceKey,
+        string arrowForegroundResourceKey)
+    {
+        Assert.IsTrue(VisualStateManager.GoToState(headerSite, stateName, false), stateName);
+        Assert.AreSame(headerSite.TryFindResource(foregroundResourceKey), headerSite.Foreground, $"{stateName}:Foreground");
+        Assert.AreSame(headerSite.TryFindResource(borderResourceKey), headerSite.BorderBrush, $"{stateName}:BorderBrush");
+        Assert.AreSame(headerSite.TryFindResource(arrowForegroundResourceKey), arrow.Foreground, $"{stateName}:arrow.Foreground");
     }
 
     private static VisualStateEx AssertStateSetter(

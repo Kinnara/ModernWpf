@@ -29,7 +29,7 @@ ModernWpf files:
 
 - WinUI's default `Expander` is not tab-stoppable; focus goes to the template toggle button. ModernWpf now makes the WPF owner `Focusable=false` in the default style while keeping the `HeaderSite` toggle focusable.
 - The WPF template maps source header/content resource keys, minimum width/height, content padding, down/up border thickness, header alignment, and source visual-state setter behavior through `VisualStateEx`.
-- The header toggle uses source-shaped pointer/pressed/disabled and checked-state setters, with `AnimatedIcon.State` values represented by `FontIconFallback`.
+- The header toggle uses source-shaped pointer/pressed/disabled and checked-state setters, with `AnimatedIcon.State` values represented by `FontIconFallback`; the old WPF `ControlTemplate.Triggers` matrices for header hover/press/disabled/checked chrome are deleted.
 - The WPF template preserves WPF `ExpandDirection.Left` and `ExpandDirection.Right` because ModernWpf is styling the platform WPF control. WinUI 3 source currently drives only the `Down` and `Up` visual states; left/right remain documented WPF platform behavior rather than guessed WinUI parity.
 - Tests cover default resources, header/content template parts, source-style owner/header focus routing, visual-state setters, up/down/left/right WPF expand direction mapping, and WPF automation visibility for collapsed content.
 

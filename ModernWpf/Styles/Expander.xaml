@@ -128,26 +128,6 @@
                                 SnapsToDevicePixels="True" />
                         </Grid>
                     </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsChecked" Value="true">
-                            <Setter TargetName="arrow" Property="Data" Value="{StaticResource ChevronUp}" />
-                        </Trigger>
-                        <Trigger Property="IsMouseOver" Value="true">
-                            <Setter Property="Foreground" Value="{DynamicResource ExpanderHeaderForegroundPointerOver}" />
-                            <Setter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderPointerOverBrush}" />
-                            <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource ExpanderChevronPointerOverForeground}" />
-                        </Trigger>
-                        <Trigger Property="IsPressed" Value="true">
-                            <Setter Property="Foreground" Value="{DynamicResource ExpanderHeaderForegroundPressed}" />
-                            <Setter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderPressedBrush}" />
-                            <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource ExpanderChevronPressedForeground}" />
-                        </Trigger>
-                        <Trigger Property="IsEnabled" Value="false">
-                            <Setter Property="Foreground" Value="{DynamicResource ExpanderHeaderDisabledForeground}" />
-                            <Setter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderDisabledBorderBrush}" />
-                            <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource ExpanderHeaderDisabledForeground}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -286,26 +266,6 @@
                                 SnapsToDevicePixels="True" />
                         </Grid>
                     </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsChecked" Value="true">
-                            <Setter TargetName="arrow" Property="Data" Value="{StaticResource ChevronUp}" />
-                        </Trigger>
-                        <Trigger Property="IsMouseOver" Value="true">
-                            <Setter Property="Foreground" Value="{DynamicResource ExpanderHeaderForegroundPointerOver}" />
-                            <Setter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderPointerOverBrush}" />
-                            <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource ExpanderChevronPointerOverForeground}" />
-                        </Trigger>
-                        <Trigger Property="IsPressed" Value="true">
-                            <Setter Property="Foreground" Value="{DynamicResource ExpanderHeaderForegroundPressed}" />
-                            <Setter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderPressedBrush}" />
-                            <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource ExpanderChevronPressedForeground}" />
-                        </Trigger>
-                        <Trigger Property="IsEnabled" Value="false">
-                            <Setter Property="Foreground" Value="{DynamicResource ExpanderHeaderDisabledForeground}" />
-                            <Setter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderDisabledBorderBrush}" />
-                            <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource ExpanderHeaderDisabledForeground}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -444,26 +404,6 @@
                                 SnapsToDevicePixels="True" />
                         </Grid>
                     </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsChecked" Value="true">
-                            <Setter TargetName="arrow" Property="Data" Value="{StaticResource ChevronUp}" />
-                        </Trigger>
-                        <Trigger Property="IsMouseOver" Value="true">
-                            <Setter Property="Foreground" Value="{DynamicResource ExpanderHeaderForegroundPointerOver}" />
-                            <Setter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderPointerOverBrush}" />
-                            <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource ExpanderChevronPointerOverForeground}" />
-                        </Trigger>
-                        <Trigger Property="IsPressed" Value="true">
-                            <Setter Property="Foreground" Value="{DynamicResource ExpanderHeaderForegroundPressed}" />
-                            <Setter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderPressedBrush}" />
-                            <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource ExpanderChevronPressedForeground}" />
-                        </Trigger>
-                        <Trigger Property="IsEnabled" Value="false">
-                            <Setter Property="Foreground" Value="{DynamicResource ExpanderHeaderDisabledForeground}" />
-                            <Setter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderDisabledBorderBrush}" />
-                            <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource ExpanderHeaderDisabledForeground}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -602,26 +542,6 @@
                                 SnapsToDevicePixels="True" />
                         </Grid>
                     </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsChecked" Value="true">
-                            <Setter TargetName="arrow" Property="Data" Value="{StaticResource ChevronUp}" />
-                        </Trigger>
-                        <Trigger Property="IsMouseOver" Value="true">
-                            <Setter Property="Foreground" Value="{DynamicResource ExpanderHeaderForegroundPointerOver}" />
-                            <Setter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderPointerOverBrush}" />
-                            <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource ExpanderChevronPointerOverForeground}" />
-                        </Trigger>
-                        <Trigger Property="IsPressed" Value="true">
-                            <Setter Property="Foreground" Value="{DynamicResource ExpanderHeaderForegroundPressed}" />
-                            <Setter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderPressedBrush}" />
-                            <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource ExpanderChevronPressedForeground}" />
-                        </Trigger>
-                        <Trigger Property="IsEnabled" Value="false">
-                            <Setter Property="Foreground" Value="{DynamicResource ExpanderHeaderDisabledForeground}" />
-                            <Setter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderDisabledBorderBrush}" />
-                            <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource ExpanderHeaderDisabledForeground}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
