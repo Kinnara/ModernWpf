@@ -287,12 +287,63 @@ public class FlyoutBaseApiTests
             Assert.AreSame(target, flyout.Target);
             Assert.AreSame(target, Keyboard.FocusedElement);
             Assert.AreEqual(FlyoutPlacementMode.Right, flyout.GetEffectivePlacement());
+            Assert.AreEqual(FlyoutShowMode.Transient, flyout.ShowMode);
             Assert.AreEqual(new Rect(24, 12, 0, 0), flyout.InternalPopup.PlacementRectangle);
 
             flyout.Hide();
             WpfTestHost.DoEvents();
 
             Assert.AreEqual(FlyoutPlacementMode.Bottom, flyout.GetEffectivePlacement());
+        });
+    }
+
+    [TestMethod]
+    public void ShowAtWithOptionsSameTargetAppliesStateBeforeNoOpLikeWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var target = new Button { Content = "Target", Width = 120, Height = 36 };
+            var flyout = new Flyout
+            {
+                Content = new TextBlock { Text = "Flyout content" },
+                Placement = FlyoutPlacementMode.Bottom
+            };
+            int openedCount = 0;
+            flyout.Opened += (_, _) => openedCount++;
+
+            using var host = new TestWindowHost(target, width: 320, height: 220);
+            host.UpdateLayout();
+
+            flyout.ShowAt(target);
+            WpfTestHost.DoEvents();
+
+            Assert.IsTrue(flyout.IsOpen);
+            Assert.AreEqual(1, openedCount);
+            Assert.AreEqual(FlyoutPlacementMode.Bottom, flyout.GetEffectivePlacement());
+            Assert.AreEqual(FlyoutShowMode.Standard, flyout.ShowMode);
+
+            flyout.ShowAt(
+                target,
+                new FlyoutShowOptions
+                {
+                    Placement = FlyoutPlacementMode.Right,
+                    ShowMode = FlyoutShowMode.Transient
+                });
+            WpfTestHost.DoEvents();
+
+            Assert.IsTrue(flyout.IsOpen);
+            Assert.AreSame(target, flyout.Target);
+            Assert.AreEqual(1, openedCount);
+            Assert.AreEqual(FlyoutPlacementMode.Right, flyout.GetEffectivePlacement());
+            Assert.AreEqual(FlyoutShowMode.Transient, flyout.ShowMode);
+
+            flyout.Hide();
+            WpfTestHost.DoEvents();
+
+            Assert.AreEqual(FlyoutPlacementMode.Bottom, flyout.GetEffectivePlacement());
+            Assert.AreEqual(FlyoutShowMode.Transient, flyout.ShowMode);
         });
     }
 

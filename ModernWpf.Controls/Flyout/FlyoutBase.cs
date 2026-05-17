@@ -271,6 +271,7 @@ namespace ModernWpf.Controls.Primitives
         {
             showOptions = CloneShowOptions(showOptions);
             CancelAsyncShow();
+            ApplyShowOptions(showOptions, showAsContextFlyout);
 
             if (m_popup != null &&
                 m_popup.IsOpen &&
@@ -292,7 +293,6 @@ namespace ModernWpf.Controls.Primitives
                 return;
             }
 
-            ApplyShowOptions(showOptions, showAsContextFlyout);
             PreparePopup(placementTarget, showAsContextFlyout);
             Debug.Assert(m_popup.HasLocalValue(Popup.PlacementProperty));
             Debug.Assert(m_popup.HasLocalValue(Popup.PlacementTargetProperty));
@@ -640,6 +640,10 @@ namespace ModernWpf.Controls.Primitives
             {
                 SetCurrentValue(ShowModeProperty, FlyoutShowMode.Standard);
                 showMode = FlyoutShowMode.Standard;
+            }
+            else if (ShowMode != showMode)
+            {
+                SetCurrentValue(ShowModeProperty, showMode);
             }
 
             switch (showMode)
@@ -1001,7 +1005,7 @@ namespace ModernWpf.Controls.Primitives
 
             public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
             {
-                throw new NotImplementedException();
+                return CreateDoNothingValues(targetTypes);
             }
         }
 
@@ -1016,7 +1020,7 @@ namespace ModernWpf.Controls.Primitives
 
             public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
             {
-                throw new NotImplementedException();
+                return CreateDoNothingValues(targetTypes);
             }
         }
 
@@ -1035,8 +1039,19 @@ namespace ModernWpf.Controls.Primitives
 
             public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
             {
-                throw new NotImplementedException();
+                return Binding.DoNothing;
             }
+        }
+
+        private static object[] CreateDoNothingValues(Type[] targetTypes)
+        {
+            var values = new object[targetTypes.Length];
+            for (int i = 0; i < values.Length; i++)
+            {
+                values[i] = Binding.DoNothing;
+            }
+
+            return values;
         }
     }
 }

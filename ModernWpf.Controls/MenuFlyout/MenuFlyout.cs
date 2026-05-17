@@ -101,23 +101,24 @@ namespace ModernWpf.Controls
         private void Show(FrameworkElement placementTarget, PlacementMode placement = PlacementMode.Custom, FlyoutShowOptions showOptions = null)
         {
             showOptions = CloneShowOptions(showOptions);
+            bool showAsContextFlyout = placement == PlacementMode.MousePoint;
+            ApplyShowOptions(showOptions, showAsContextFlyout);
+
             if (m_presenter != null &&
                 m_presenter.IsOpen &&
                 m_presenter.PlacementTarget == placementTarget &&
                 m_presenter.Placement == placement &&
-                m_currentPlacement == GetEffectivePlacement() &&
-                IsSameTargetPosition(showOptions, placement == PlacementMode.MousePoint))
+                IsSameTargetPosition(showOptions, showAsContextFlyout))
             {
                 return;
             }
 
-            if (TryStageLatestShowUntilOpenFlyoutCloses(placementTarget, placement == PlacementMode.MousePoint, showOptions))
+            if (TryStageLatestShowUntilOpenFlyoutCloses(placementTarget, showAsContextFlyout, showOptions))
             {
                 return;
             }
 
             EnsurePresenter();
-            ApplyShowOptions(showOptions, placement == PlacementMode.MousePoint);
             var effectivePlacement = GetEffectivePlacement();
             m_presenter.SetCurrentValue(CustomPopupPlacementHelper.PlacementProperty, (CustomPlacementMode)effectivePlacement);
 
@@ -139,7 +140,6 @@ namespace ModernWpf.Controls
                 m_presenter.ClearValue(Popup.PlacementRectangleProperty);
             }
 
-            m_currentPlacement = effectivePlacement;
             TrackPlacementTarget(placementTarget);
             OnOpening();
             SetOpenFlyout(this);
@@ -214,7 +214,6 @@ namespace ModernWpf.Controls
             m_presenter.ClearValue(ContextMenu.PlacementRectangleProperty);
             ClearPlacementTargetTracking();
             Target = null;
-            m_currentPlacement = null;
             UpdateStateToShowMode(ShowMode);
 
             OnClosed();
@@ -231,7 +230,6 @@ namespace ModernWpf.Controls
         }
 
         private MenuFlyoutPresenter m_presenter;
-        private FlyoutPlacementMode? m_currentPlacement;
         private bool m_suppressNextOpened;
         private bool m_closeCompleted;
     }

@@ -240,12 +240,68 @@ public class MenuFlyoutApiTests
             Assert.IsTrue(menuFlyout.IsOpen);
             Assert.AreSame(target, menuFlyout.Target);
             Assert.AreEqual(FlyoutPlacementMode.Right, menuFlyout.GetEffectivePlacement());
+            Assert.AreEqual(FlyoutShowMode.Transient, menuFlyout.ShowMode);
             Assert.AreEqual(new Rect(18, 9, 0, 0), menuFlyout.GetPlacementRectangle(target));
 
             menuFlyout.Hide();
             WpfTestHost.DoEvents();
 
             Assert.AreEqual(FlyoutPlacementMode.Bottom, menuFlyout.GetEffectivePlacement());
+        });
+    }
+
+    [TestMethod]
+    public void ShowAtWithOptionsSameTargetAppliesStateBeforeNoOpLikeWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var target = new Button
+            {
+                Content = "Target",
+                Width = 120,
+                Height = 36
+            };
+            var menuFlyout = new MenuFlyout
+            {
+                Placement = FlyoutPlacementMode.Bottom
+            };
+            menuFlyout.Items.Add(new MenuItem { Header = "Copy" });
+            int openedCount = 0;
+            menuFlyout.Opened += (_, _) => openedCount++;
+
+            using var host = new TestWindowHost(target, width: 320, height: 220);
+            host.UpdateLayout();
+
+            menuFlyout.ShowAt(target);
+            WpfTestHost.DoEvents();
+
+            Assert.IsTrue(menuFlyout.IsOpen);
+            Assert.AreEqual(1, openedCount);
+            Assert.AreEqual(FlyoutPlacementMode.Bottom, menuFlyout.GetEffectivePlacement());
+            Assert.AreEqual(FlyoutShowMode.Standard, menuFlyout.ShowMode);
+
+            menuFlyout.ShowAt(
+                target,
+                new FlyoutShowOptions
+                {
+                    Placement = FlyoutPlacementMode.Right,
+                    ShowMode = FlyoutShowMode.Transient
+                });
+            WpfTestHost.DoEvents();
+
+            Assert.IsTrue(menuFlyout.IsOpen);
+            Assert.AreSame(target, menuFlyout.Target);
+            Assert.AreEqual(1, openedCount);
+            Assert.AreEqual(FlyoutPlacementMode.Right, menuFlyout.GetEffectivePlacement());
+            Assert.AreEqual(FlyoutShowMode.Transient, menuFlyout.ShowMode);
+
+            menuFlyout.Hide();
+            WpfTestHost.DoEvents();
+
+            Assert.AreEqual(FlyoutPlacementMode.Bottom, menuFlyout.GetEffectivePlacement());
+            Assert.AreEqual(FlyoutShowMode.Transient, menuFlyout.ShowMode);
         });
     }
 
