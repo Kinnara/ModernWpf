@@ -59,23 +59,21 @@ namespace ModernWpf.Controls.Primitives
                 Helper.TryGetTransformToDevice(child, out transformToDevice);
             }
 
-            CustomPopupPlacement preferredPlacement = CalculatePopupPlacement(placement, popupSize, targetSize, offset, child, transformToDevice);
+            var fallbackOrder = GetPlacementFallbackOrder(placement);
+            var placements = new CustomPopupPlacement[fallbackOrder.Length];
 
-            CustomPopupPlacement? alternativePlacement = null;
-            var alternativePlacementMode = GetAlternativePlacementMode(placement);
-            if (alternativePlacementMode.HasValue)
+            for (int i = 0; i < fallbackOrder.Length; i++)
             {
-                alternativePlacement = CalculatePopupPlacement(alternativePlacementMode.Value, popupSize, targetSize, offset, child, transformToDevice);
+                placements[i] = CalculatePopupPlacement(
+                    fallbackOrder[i],
+                    popupSize,
+                    targetSize,
+                    offset,
+                    child,
+                    transformToDevice);
             }
 
-            if (alternativePlacement.HasValue)
-            {
-                return new[] { preferredPlacement, alternativePlacement.Value };
-            }
-            else
-            {
-                return new[] { preferredPlacement };
-            }
+            return placements;
         }
 
         private static CustomPopupPlacement CalculatePopupPlacement(
@@ -161,39 +159,111 @@ namespace ModernWpf.Controls.Primitives
             return new CustomPopupPlacement(point, primaryAxis);
         }
 
-        private static CustomPlacementMode? GetAlternativePlacementMode(CustomPlacementMode placement)
+        private static CustomPlacementMode[] GetPlacementFallbackOrder(CustomPlacementMode placement)
         {
             switch (placement)
             {
                 case CustomPlacementMode.Top:
-                    return CustomPlacementMode.Bottom;
+                    return new[]
+                    {
+                        CustomPlacementMode.Top,
+                        CustomPlacementMode.Bottom,
+                        CustomPlacementMode.Left,
+                        CustomPlacementMode.Right
+                    };
                 case CustomPlacementMode.Bottom:
-                    return CustomPlacementMode.Top;
+                    return new[]
+                    {
+                        CustomPlacementMode.Bottom,
+                        CustomPlacementMode.Top,
+                        CustomPlacementMode.Left,
+                        CustomPlacementMode.Right
+                    };
                 case CustomPlacementMode.Left:
-                    return CustomPlacementMode.Right;
+                    return new[]
+                    {
+                        CustomPlacementMode.Left,
+                        CustomPlacementMode.Right,
+                        CustomPlacementMode.Top,
+                        CustomPlacementMode.Bottom
+                    };
                 case CustomPlacementMode.Right:
-                    return CustomPlacementMode.Left;
+                    return new[]
+                    {
+                        CustomPlacementMode.Right,
+                        CustomPlacementMode.Left,
+                        CustomPlacementMode.Top,
+                        CustomPlacementMode.Bottom
+                    };
                 case CustomPlacementMode.Full:
-                    return null;
+                    return new[] { CustomPlacementMode.Full };
                 case CustomPlacementMode.TopEdgeAlignedLeft:
-                    return CustomPlacementMode.BottomEdgeAlignedLeft;
+                    return new[]
+                    {
+                        CustomPlacementMode.TopEdgeAlignedLeft,
+                        CustomPlacementMode.BottomEdgeAlignedLeft,
+                        CustomPlacementMode.LeftEdgeAlignedTop,
+                        CustomPlacementMode.RightEdgeAlignedTop
+                    };
                 case CustomPlacementMode.TopEdgeAlignedRight:
-                    return CustomPlacementMode.BottomEdgeAlignedRight;
+                    return new[]
+                    {
+                        CustomPlacementMode.TopEdgeAlignedRight,
+                        CustomPlacementMode.BottomEdgeAlignedRight,
+                        CustomPlacementMode.LeftEdgeAlignedBottom,
+                        CustomPlacementMode.RightEdgeAlignedBottom
+                    };
                 case CustomPlacementMode.BottomEdgeAlignedLeft:
-                    return CustomPlacementMode.TopEdgeAlignedLeft;
+                    return new[]
+                    {
+                        CustomPlacementMode.BottomEdgeAlignedLeft,
+                        CustomPlacementMode.TopEdgeAlignedLeft,
+                        CustomPlacementMode.LeftEdgeAlignedTop,
+                        CustomPlacementMode.RightEdgeAlignedTop
+                    };
                 case CustomPlacementMode.BottomEdgeAlignedRight:
-                    return CustomPlacementMode.TopEdgeAlignedRight;
+                    return new[]
+                    {
+                        CustomPlacementMode.BottomEdgeAlignedRight,
+                        CustomPlacementMode.TopEdgeAlignedRight,
+                        CustomPlacementMode.LeftEdgeAlignedBottom,
+                        CustomPlacementMode.RightEdgeAlignedBottom
+                    };
                 case CustomPlacementMode.LeftEdgeAlignedTop:
-                    return CustomPlacementMode.RightEdgeAlignedTop;
+                    return new[]
+                    {
+                        CustomPlacementMode.LeftEdgeAlignedTop,
+                        CustomPlacementMode.RightEdgeAlignedTop,
+                        CustomPlacementMode.TopEdgeAlignedLeft,
+                        CustomPlacementMode.BottomEdgeAlignedLeft
+                    };
                 case CustomPlacementMode.LeftEdgeAlignedBottom:
-                    return CustomPlacementMode.RightEdgeAlignedBottom;
+                    return new[]
+                    {
+                        CustomPlacementMode.LeftEdgeAlignedBottom,
+                        CustomPlacementMode.RightEdgeAlignedBottom,
+                        CustomPlacementMode.TopEdgeAlignedRight,
+                        CustomPlacementMode.BottomEdgeAlignedRight
+                    };
                 case CustomPlacementMode.RightEdgeAlignedTop:
-                    return CustomPlacementMode.RightEdgeAlignedTop;
+                    return new[]
+                    {
+                        CustomPlacementMode.RightEdgeAlignedTop,
+                        CustomPlacementMode.LeftEdgeAlignedTop,
+                        CustomPlacementMode.TopEdgeAlignedLeft,
+                        CustomPlacementMode.BottomEdgeAlignedLeft
+                    };
                 case CustomPlacementMode.RightEdgeAlignedBottom:
-                    return CustomPlacementMode.LeftEdgeAlignedBottom;
+                    return new[]
+                    {
+                        CustomPlacementMode.RightEdgeAlignedBottom,
+                        CustomPlacementMode.LeftEdgeAlignedBottom,
+                        CustomPlacementMode.TopEdgeAlignedRight,
+                        CustomPlacementMode.BottomEdgeAlignedRight
+                    };
                 //case CustomPopupPlacementMode.Auto:
                 default:
-                    return null;
+                    throw new ArgumentOutOfRangeException(nameof(placement));
             }
         }
     }

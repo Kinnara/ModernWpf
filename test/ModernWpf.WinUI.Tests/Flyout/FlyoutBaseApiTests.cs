@@ -1,7 +1,10 @@
 using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls;
+using ModernWpf.Controls.Primitives;
 using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
 
@@ -212,8 +215,50 @@ public class FlyoutBaseApiTests
         });
     }
 
+    [TestMethod]
+    public void PopupPlacementFallbackOrderMatchesWinUISourceMajorPlacementOrder()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var placements = CustomPopupPlacementHelper.PositionPopup(
+                CustomPlacementMode.RightEdgeAlignedTop,
+                popupSize: new Size(20, 10),
+                targetSize: new Size(100, 50),
+                offset: new Point());
+
+            Assert.AreEqual(4, placements.Length);
+            AssertPlacement(placements[0], 100, 0, PopupPrimaryAxis.Vertical);
+            AssertPlacement(placements[1], -20, 0, PopupPrimaryAxis.Vertical);
+            AssertPlacement(placements[2], 0, -10, PopupPrimaryAxis.Horizontal);
+            AssertPlacement(placements[3], 0, 50, PopupPrimaryAxis.Horizontal);
+        });
+    }
+
+    [TestMethod]
+    public void PopupPlacementFallbackKeepsFullPlacementAsSingleChoice()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var placements = CustomPopupPlacementHelper.PositionPopup(
+                CustomPlacementMode.Full,
+                popupSize: new Size(20, 10),
+                targetSize: new Size(100, 50),
+                offset: new Point());
+
+            Assert.AreEqual(1, placements.Length);
+            AssertPlacement(placements[0], 40, 20, PopupPrimaryAxis.None);
+        });
+    }
+
     private static void AssertEvents(List<string> actual, params string[] expected)
     {
         Assert.AreEqual(string.Join("|", expected), string.Join("|", actual));
+    }
+
+    private static void AssertPlacement(CustomPopupPlacement placement, double x, double y, PopupPrimaryAxis primaryAxis)
+    {
+        Assert.AreEqual(x, placement.Point.X, 0.1);
+        Assert.AreEqual(y, placement.Point.Y, 0.1);
+        Assert.AreEqual(primaryAxis, placement.PrimaryAxis);
     }
 }
