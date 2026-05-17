@@ -1,5 +1,6 @@
 using System;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -12,8 +13,7 @@ namespace ModernWpf.Controls
     public class InfoBar : Control
     {
         private const string CloseButtonName = "CloseButton";
-        private const string ContentRootName = "ContentRoot";
-        private const string ContentAreaName = "ContentArea";
+        private const string StandardIconName = "StandardIcon";
 
         static InfoBar()
         {
@@ -221,6 +221,8 @@ namespace ModernWpf.Controls
 
         public override void OnApplyTemplate()
         {
+            _applyTemplateCalled = true;
+
             if (_closeButton != null)
             {
                 _closeButton.Click -= OnCloseButtonClick;
@@ -228,26 +230,29 @@ namespace ModernWpf.Controls
 
             base.OnApplyTemplate();
 
-            _contentRoot = GetTemplateChild(ContentRootName) as Border;
             _closeButton = GetTemplateChild(CloseButtonName) as Button;
-            _contentArea = GetTemplateChild(ContentAreaName) as FrameworkElement;
+            _standardIconTextBlock = GetTemplateChild(StandardIconName) as FrameworkElement;
 
             if (_closeButton != null)
             {
                 _closeButton.Click += OnCloseButtonClick;
 
-                if (string.IsNullOrEmpty(System.Windows.Automation.AutomationProperties.GetName(_closeButton)))
+                if (string.IsNullOrEmpty(AutomationProperties.GetName(_closeButton)))
                 {
-                    System.Windows.Automation.AutomationProperties.SetName(_closeButton, "Close");
+                    AutomationProperties.SetName(_closeButton, Strings.InfoBarCloseButtonName);
                 }
 
-                if (_closeButton.ToolTip == null)
-                {
-                    _closeButton.ToolTip = "Close";
-                }
+                _closeButton.ToolTip = new ToolTip { Content = Strings.InfoBarCloseButtonTooltip };
             }
 
-            UpdateVisibility(force: true);
+            if (_standardIconTextBlock != null)
+            {
+                AutomationProperties.SetName(_standardIconTextBlock, GetIconSeverityLevelName(Severity));
+            }
+
+            UpdateVisibility(_notifyOpen, true);
+            _notifyOpen = false;
+
             UpdateSeverity();
             UpdateIcon();
             UpdateIconVisibility();
@@ -278,15 +283,11 @@ namespace ModernWpf.Controls
             {
                 infoBar._lastCloseReason = InfoBarCloseReason.Programmatic;
                 infoBar.UpdateVisibility();
-                infoBar.Opened?.Invoke(infoBar, new InfoBarOpenedEventArgs());
-            }
-            else if ((bool)e.OldValue)
-            {
-                infoBar.RaiseClosingEvent();
+                infoBar.RaiseOpenedEvent();
             }
             else
             {
-                infoBar.UpdateVisibility();
+                infoBar.RaiseClosingEvent();
             }
         }
 
@@ -329,29 +330,90 @@ namespace ModernWpf.Controls
             var args = new InfoBarClosingEventArgs(_lastCloseReason);
             Closing?.Invoke(this, args);
 
-            if (args.Cancel)
+            if (!args.Cancel)
+            {
+                UpdateVisibility();
+                RaiseClosedEvent();
+            }
+            else
             {
                 IsOpen = true;
-                return;
             }
+        }
 
-            UpdateVisibility();
+        private void RaiseClosedEvent()
+        {
             Closed?.Invoke(this, new InfoBarClosedEventArgs(_lastCloseReason));
         }
 
-        private void UpdateVisibility(bool force = false)
+        private void RaiseOpenedEvent()
         {
-            if (_contentRoot != null && (force || _contentRoot.Visibility != (IsOpen ? Visibility.Visible : Visibility.Collapsed)))
+            Opened?.Invoke(this, new InfoBarOpenedEventArgs());
+        }
+
+        private void UpdateVisibility(bool notify = true, bool force = false)
+        {
+            var peer = FrameworkElementAutomationPeer.FromElement(this) as InfoBarAutomationPeer;
+
+            if (!_applyTemplateCalled)
             {
-                VisualStateManager.GoToState(this, IsOpen ? "InfoBarVisible" : "InfoBarCollapsed", false);
-                var peer = FrameworkElementAutomationPeer.FromElement(this);
+                _notifyOpen = true;
+            }
+            else if (force || IsOpen != _isVisible)
+            {
+                if (IsOpen)
+                {
+                    if (notify && peer != null)
+                    {
+                        var notificationString = string.Format(
+                            Strings.InfoBarOpenedNotification,
+                            GetSeverityLevelName(Severity),
+                            Title,
+                            Message);
+                        peer.RaiseOpenedEvent(Severity, notificationString);
+                    }
+
+                    VisualStateManager.GoToState(this, "InfoBarVisible", false);
+                    _isVisible = true;
+                }
+                else
+                {
+                    if (notify && peer != null)
+                    {
+                        peer.RaiseClosedEvent(Severity, Strings.InfoBarClosedNotification);
+                    }
+
+                    VisualStateManager.GoToState(this, "InfoBarCollapsed", false);
+                    _isVisible = false;
+                }
+
                 peer?.InvalidatePeer();
             }
         }
 
         private void UpdateSeverity()
         {
-            VisualStateManager.GoToState(this, Severity.ToString(), false);
+            var severityState = "Informational";
+
+            switch (Severity)
+            {
+                case InfoBarSeverity.Success:
+                    severityState = "Success";
+                    break;
+                case InfoBarSeverity.Warning:
+                    severityState = "Warning";
+                    break;
+                case InfoBarSeverity.Error:
+                    severityState = "Error";
+                    break;
+            }
+
+            if (_standardIconTextBlock != null)
+            {
+                AutomationProperties.SetName(_standardIconTextBlock, GetIconSeverityLevelName(Severity));
+            }
+
+            VisualStateManager.GoToState(this, severityState, false);
         }
 
         private void UpdateIcon()
@@ -384,16 +446,47 @@ namespace ModernWpf.Controls
 
         private void UpdateContentPosition()
         {
-            if (_contentArea != null)
+            VisualStateManager.GoToState(
+                this,
+                string.IsNullOrEmpty(Title) && string.IsNullOrEmpty(Message) && ActionButton == null ? "NoBannerContent" : "BannerContent",
+                false);
+        }
+
+        private static string GetSeverityLevelName(InfoBarSeverity severity)
+        {
+            switch (severity)
             {
-                var row = string.IsNullOrEmpty(Title) && string.IsNullOrEmpty(Message) && ActionButton == null ? 0 : 1;
-                Grid.SetRow(_contentArea, row);
+                case InfoBarSeverity.Success:
+                    return Strings.InfoBarSeveritySuccessName;
+                case InfoBarSeverity.Warning:
+                    return Strings.InfoBarSeverityWarningName;
+                case InfoBarSeverity.Error:
+                    return Strings.InfoBarSeverityErrorName;
+                default:
+                    return Strings.InfoBarSeverityInformationalName;
+            }
+        }
+
+        private static string GetIconSeverityLevelName(InfoBarSeverity severity)
+        {
+            switch (severity)
+            {
+                case InfoBarSeverity.Success:
+                    return Strings.InfoBarIconSeveritySuccessName;
+                case InfoBarSeverity.Warning:
+                    return Strings.InfoBarIconSeverityWarningName;
+                case InfoBarSeverity.Error:
+                    return Strings.InfoBarIconSeverityErrorName;
+                default:
+                    return Strings.InfoBarIconSeverityInformationalName;
             }
         }
 
         private InfoBarCloseReason _lastCloseReason = InfoBarCloseReason.Programmatic;
-        private Border _contentRoot;
         private Button _closeButton;
-        private FrameworkElement _contentArea;
+        private FrameworkElement _standardIconTextBlock;
+        private bool _applyTemplateCalled;
+        private bool _notifyOpen;
+        private bool _isVisible;
     }
 }

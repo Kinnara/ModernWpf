@@ -55,11 +55,6 @@
         <Setter Property="Height" Value="{StaticResource InfoBarCloseButtonSize}" />
         <Setter Property="VerticalAlignment" Value="Top" />
         <Setter Property="Margin" Value="5" />
-        <Setter Property="Content" Value="&#xE711;" />
-        <Setter Property="FontFamily" Value="{DynamicResource SymbolThemeFontFamily}" />
-        <Setter Property="FontSize" Value="{StaticResource InfoBarCloseButtonGlyphSize}" />
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="BorderThickness" Value="0" />
     </Style>
 
     <Style TargetType="local:InfoBar">
@@ -159,22 +154,32 @@
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                             </VisualStateGroup>
+
+                            <VisualStateGroup x:Name="ContentStates">
+                                <ui:VisualStateEx x:Name="BannerContent" />
+                                <ui:VisualStateEx x:Name="NoBannerContent">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ContentArea.(Grid.Row)" Value="0" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <Grid
+                        <!-- Background is used here so that it overrides the severity status color if set. -->
+                        <ui:GridEx
                             HorizontalAlignment="Stretch"
                             MinHeight="{StaticResource InfoBarMinHeight}"
                             Background="{TemplateBinding Background}"
-                            Margin="0"
-                            Tag="{TemplateBinding CornerRadius}">
-                            <Grid.ColumnDefinitions>
+                            CornerRadius="{TemplateBinding CornerRadius}"
+                            Padding="{StaticResource InfoBarContentRootPadding}">
+                            <ui:GridEx.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
+                            </ui:GridEx.ColumnDefinitions>
+                            <ui:GridEx.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
+                            </ui:GridEx.RowDefinitions>
 
                             <Grid x:Name="StandardIconArea" Visibility="Collapsed">
                                 <TextBlock
@@ -232,7 +237,14 @@
                                     primitives:InfoBarPanel.HorizontalOrientationMargin="{StaticResource InfoBarActionHorizontalOrientationMargin}"
                                     primitives:InfoBarPanel.VerticalOrientationMargin="{StaticResource InfoBarActionVerticalOrientationMargin}"
                                     VerticalAlignment="Top"
-                                    Content="{TemplateBinding ActionButton}" />
+                                    Content="{TemplateBinding ActionButton}">
+                                    <ui:ContentPresenterEx.Resources>
+                                        <Style TargetType="local:HyperlinkButton">
+                                            <Setter Property="Margin" Value="{StaticResource InfoBarHyperlinkButtonMargin}" />
+                                            <Setter Property="Foreground" Value="{DynamicResource InfoBarHyperlinkButtonForeground}" />
+                                        </Style>
+                                    </ui:ContentPresenterEx.Resources>
+                                </ui:ContentPresenterEx>
                             </primitives:InfoBarPanel>
 
                             <ui:ContentPresenterEx
@@ -248,8 +260,30 @@
                                 Grid.Column="2"
                                 Command="{TemplateBinding CloseButtonCommand}"
                                 CommandParameter="{TemplateBinding CloseButtonCommandParameter}"
-                                Style="{TemplateBinding CloseButtonStyle}" />
-                        </Grid>
+                                Style="{TemplateBinding CloseButtonStyle}">
+                                <Button.Resources>
+                                    <m:StaticResource x:Key="ButtonBackground" ResourceKey="AppBarButtonBackground" />
+                                    <m:StaticResource x:Key="ButtonBackgroundPointerOver" ResourceKey="AppBarButtonBackgroundPointerOver" />
+                                    <m:StaticResource x:Key="ButtonBackgroundPressed" ResourceKey="AppBarButtonBackgroundPressed" />
+                                    <m:StaticResource x:Key="ButtonBackgroundDisabled" ResourceKey="AppBarButtonBackgroundDisabled" />
+                                    <m:StaticResource x:Key="ButtonForeground" ResourceKey="AppBarButtonForeground" />
+                                    <m:StaticResource x:Key="ButtonForegroundPointerOver" ResourceKey="AppBarButtonForegroundPointerOver" />
+                                    <m:StaticResource x:Key="ButtonForegroundPressed" ResourceKey="AppBarButtonForegroundPressed" />
+                                    <m:StaticResource x:Key="ButtonForegroundDisabled" ResourceKey="AppBarButtonForegroundDisabled" />
+                                    <m:StaticResource x:Key="ButtonBorderBrush" ResourceKey="AppBarButtonBorderBrush" />
+                                    <m:StaticResource x:Key="ButtonBorderBrushPointerOver" ResourceKey="AppBarButtonBorderBrushPointerOver" />
+                                    <m:StaticResource x:Key="ButtonBorderBrushPressed" ResourceKey="AppBarButtonBorderBrushPressed" />
+                                    <m:StaticResource x:Key="ButtonBorderBrushDisabled" ResourceKey="AppBarButtonBorderBrushDisabled" />
+                                </Button.Resources>
+                                <Viewbox
+                                    Width="{StaticResource InfoBarCloseButtonGlyphSize}"
+                                    Height="{StaticResource InfoBarCloseButtonGlyphSize}"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center">
+                                    <ui:SymbolIcon Symbol="Cancel" />
+                                </Viewbox>
+                            </Button>
+                        </ui:GridEx>
                     </Border>
                 </ControlTemplate>
             </Setter.Value>

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -109,6 +110,10 @@ public class InfoBarApiTests
             var closeButton = FindNamedDescendant<Button>(infoBar, "CloseButton");
             var contentRoot = FindNamedDescendant<Border>(infoBar, "ContentRoot");
 
+            Assert.AreEqual("Close", AutomationProperties.GetName(closeButton));
+            Assert.IsInstanceOfType(closeButton.ToolTip, typeof(ToolTip));
+            Assert.AreEqual("Close", ((ToolTip)closeButton.ToolTip).Content);
+            Assert.AreEqual(Symbol.Cancel, FindDescendant<SymbolIcon>(closeButton).Symbol);
             Assert.AreEqual("StandardIconVisible", GetCurrentStateName(contentRoot, "IconStates"));
             Assert.AreEqual("CloseButtonVisible", GetCurrentStateName(contentRoot, "CloseButtonStates"));
             Assert.AreEqual(Visibility.Visible, standardIconArea.Visibility);
@@ -155,12 +160,15 @@ public class InfoBarApiTests
             var contentArea = FindNamedDescendant<FrameworkElement>(infoBar, "ContentArea");
 
             Assert.AreEqual("Informational", GetCurrentStateName(contentRoot, "SeverityLevels"));
+            Assert.AreEqual("NoBannerContent", GetCurrentStateName(contentRoot, "ContentStates"));
             Assert.AreEqual(0, Grid.GetRow(contentArea));
             Assert.AreEqual("\uF13F", standardIcon.Text);
+            Assert.AreEqual("Informational icon", AutomationProperties.GetName(standardIcon));
 
             infoBar.Title = "Title";
             host.UpdateLayout();
 
+            Assert.AreEqual("BannerContent", GetCurrentStateName(contentRoot, "ContentStates"));
             Assert.AreEqual(1, Grid.GetRow(contentArea));
 
             infoBar.Severity = InfoBarSeverity.Error;
@@ -168,6 +176,7 @@ public class InfoBarApiTests
 
             Assert.AreEqual("Error", GetCurrentStateName(contentRoot, "SeverityLevels"));
             Assert.AreEqual("\uF13D", standardIcon.Text);
+            Assert.AreEqual("Error icon", AutomationProperties.GetName(standardIcon));
         });
     }
 
@@ -226,6 +235,10 @@ public class InfoBarApiTests
             Assert.AreEqual(1, Grid.GetRow(contentArea));
             Assert.AreEqual(VerticalAlignment.Center, contentArea.VerticalAlignment);
 
+            var layoutRoot = FindDescendant<GridEx>(infoBar);
+            Assert.AreEqual(new Thickness(16, 0, 0, 0), layoutRoot.Padding);
+            Assert.AreEqual(infoBar.CornerRadius, layoutRoot.CornerRadius);
+
             var actionPresenter = FindContentPresenter(infoBar, actionButton);
             Assert.AreEqual(VerticalAlignment.Top, actionPresenter.VerticalAlignment);
             Assert.AreEqual(
@@ -234,6 +247,7 @@ public class InfoBarApiTests
             Assert.AreEqual(
                 new Thickness(0, 12, 0, 0),
                 InfoBarPanel.GetVerticalOrientationMargin(actionPresenter));
+            Assert.AreEqual(new Thickness(-12, 0, 0, 0), actionButton.Margin);
         });
     }
 
@@ -250,6 +264,12 @@ public class InfoBarApiTests
             Assert.IsNotNull(peer);
             Assert.AreEqual(AutomationControlType.StatusBar, peer.GetAutomationControlType());
             Assert.AreEqual(nameof(ModernWpf.Controls.InfoBar), peer.GetClassName());
+            Assert.IsTrue(peer.IsControlElement());
+
+            infoBar.IsOpen = false;
+            host.UpdateLayout();
+
+            Assert.IsFalse(peer.IsControlElement());
         });
     }
 
@@ -316,6 +336,20 @@ public class InfoBarApiTests
         }
 
         throw new InvalidOperationException($"Could not find descendant named '{name}'.");
+    }
+
+    private static T FindDescendant<T>(DependencyObject root)
+        where T : FrameworkElement
+    {
+        foreach (var descendant in VisualTreeTestHelper.EnumerateDescendants(root))
+        {
+            if (descendant is T element)
+            {
+                return element;
+            }
+        }
+
+        throw new InvalidOperationException($"Could not find descendant of type '{typeof(T).Name}'.");
     }
 
     private static ContentPresenterEx FindContentPresenter(DependencyObject root, object content)

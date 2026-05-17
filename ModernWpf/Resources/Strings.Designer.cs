@@ -95,6 +95,123 @@ namespace ModernWpf {
                 return ResourceManager.GetString("IgnoreMenuItemLabel", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Close.
+        /// </summary>
+        internal static string InfoBarCloseButtonName {
+            get {
+                return ResourceManager.GetString("InfoBarCloseButtonName", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Close.
+        /// </summary>
+        internal static string InfoBarCloseButtonTooltip {
+            get {
+                return ResourceManager.GetString("InfoBarCloseButtonTooltip", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to InfoBar dismissed.
+        /// </summary>
+        internal static string InfoBarClosedNotification {
+            get {
+                return ResourceManager.GetString("InfoBarClosedNotification", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to InfoBar.
+        /// </summary>
+        internal static string InfoBarCustomLandmarkName {
+            get {
+                return ResourceManager.GetString("InfoBarCustomLandmarkName", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Error icon.
+        /// </summary>
+        internal static string InfoBarIconSeverityErrorName {
+            get {
+                return ResourceManager.GetString("InfoBarIconSeverityErrorName", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Informational icon.
+        /// </summary>
+        internal static string InfoBarIconSeverityInformationalName {
+            get {
+                return ResourceManager.GetString("InfoBarIconSeverityInformationalName", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Success icon.
+        /// </summary>
+        internal static string InfoBarIconSeveritySuccessName {
+            get {
+                return ResourceManager.GetString("InfoBarIconSeveritySuccessName", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Warning icon.
+        /// </summary>
+        internal static string InfoBarIconSeverityWarningName {
+            get {
+                return ResourceManager.GetString("InfoBarIconSeverityWarningName", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to {0} {1} {2}.
+        /// </summary>
+        internal static string InfoBarOpenedNotification {
+            get {
+                return ResourceManager.GetString("InfoBarOpenedNotification", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Info message, severity error.
+        /// </summary>
+        internal static string InfoBarSeverityErrorName {
+            get {
+                return ResourceManager.GetString("InfoBarSeverityErrorName", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Info message, severity informational.
+        /// </summary>
+        internal static string InfoBarSeverityInformationalName {
+            get {
+                return ResourceManager.GetString("InfoBarSeverityInformationalName", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Info message, severity success.
+        /// </summary>
+        internal static string InfoBarSeveritySuccessName {
+            get {
+                return ResourceManager.GetString("InfoBarSeveritySuccessName", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Info message, severity warning.
+        /// </summary>
+        internal static string InfoBarSeverityWarningName {
+            get {
+                return ResourceManager.GetString("InfoBarSeverityWarningName", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized string similar to Off.

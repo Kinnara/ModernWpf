@@ -19,6 +19,16 @@ namespace ModernWpf.Automation.Peers
             return nameof(InfoBar);
         }
 
+        internal void RaiseOpenedEvent(InfoBarSeverity severity, string displayString)
+        {
+            InvalidatePeer();
+        }
+
+        internal void RaiseClosedEvent(InfoBarSeverity severity, string displayString)
+        {
+            InvalidatePeer();
+        }
+
         protected override bool IsControlElementCore()
         {
             return Owner is InfoBar infoBar && infoBar.IsOpen;
