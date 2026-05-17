@@ -59,7 +59,7 @@ namespace ModernWpf.Controls
             throw new InvalidOperationException();
         }
 
-        internal override void ShowAtCore(FrameworkElement placementTarget, bool showAsContextFlyout = false)
+        internal override void ShowAtCore(FrameworkElement placementTarget, bool showAsContextFlyout = false, FlyoutShowOptions showOptions = null)
         {
             if (showAsContextFlyout)
             {
@@ -67,7 +67,7 @@ namespace ModernWpf.Controls
             }
             else
             {
-                Show(placementTarget);
+                Show(placementTarget, PlacementMode.Custom, showOptions);
             }
         }
 
@@ -98,23 +98,28 @@ namespace ModernWpf.Controls
 
         protected override Control FocusTarget => m_presenter;
 
-        private void Show(FrameworkElement placementTarget, PlacementMode placement = PlacementMode.Custom)
+        private void Show(FrameworkElement placementTarget, PlacementMode placement = PlacementMode.Custom, FlyoutShowOptions showOptions = null)
         {
+            showOptions = CloneShowOptions(showOptions);
             if (m_presenter != null &&
                 m_presenter.IsOpen &&
                 m_presenter.PlacementTarget == placementTarget &&
                 m_presenter.Placement == placement &&
-                m_currentPlacement == Placement)
+                m_currentPlacement == GetEffectivePlacement() &&
+                IsSameTargetPosition(showOptions, placement == PlacementMode.MousePoint))
             {
                 return;
             }
 
-            if (TryStageLatestShowUntilOpenFlyoutCloses(placementTarget, placement == PlacementMode.MousePoint))
+            if (TryStageLatestShowUntilOpenFlyoutCloses(placementTarget, placement == PlacementMode.MousePoint, showOptions))
             {
                 return;
             }
 
             EnsurePresenter();
+            ApplyShowOptions(showOptions, placement == PlacementMode.MousePoint);
+            var effectivePlacement = GetEffectivePlacement();
+            m_presenter.SetCurrentValue(CustomPopupPlacementHelper.PlacementProperty, (CustomPlacementMode)effectivePlacement);
 
             if (m_presenter.IsOpen)
             {
@@ -127,14 +132,14 @@ namespace ModernWpf.Controls
 
             if (placement == PlacementMode.Custom)
             {
-                m_presenter.PlacementRectangle = GetPlacementRectangle(placementTarget);
+                m_presenter.PlacementRectangle = GetPlacementRectangle(placementTarget, effectivePlacement);
             }
             else
             {
                 m_presenter.ClearValue(Popup.PlacementRectangleProperty);
             }
 
-            m_currentPlacement = Placement;
+            m_currentPlacement = effectivePlacement;
             TrackPlacementTarget(placementTarget);
             OnOpening();
             SetOpenFlyout(this);

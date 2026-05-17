@@ -15,6 +15,6 @@
         LeftEdgeAlignedBottom = 10,
         RightEdgeAlignedTop = 11,
         RightEdgeAlignedBottom = 12,
-        //Auto = 13
+        Auto = 13
     }
 }

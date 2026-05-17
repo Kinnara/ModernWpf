@@ -227,6 +227,114 @@ public class FlyoutBaseApiTests
     }
 
     [TestMethod]
+    public void FlyoutShowOptionsDefaultsMatchWinUISource()
+    {
+        var options = new FlyoutShowOptions();
+
+        Assert.AreEqual(FlyoutShowMode.Auto, options.ShowMode);
+        Assert.AreEqual(FlyoutPlacementMode.Auto, options.Placement);
+        Assert.AreEqual(13, (int)FlyoutPlacementMode.Auto);
+        Assert.IsNull(options.Position);
+        Assert.IsNull(options.ExclusionRect);
+    }
+
+    [TestMethod]
+    public void ShowAtWithOptionsAppliesTargetPointPlacementAndShowModeLikeWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var target = new Button { Content = "Target", Width = 120, Height = 36 };
+            var flyout = new Flyout
+            {
+                Content = new TextBlock { Text = "Flyout content" },
+                Placement = FlyoutPlacementMode.Bottom
+            };
+            var options = new FlyoutShowOptions
+            {
+                Position = new Point(24, 12),
+                Placement = FlyoutPlacementMode.Right,
+                ShowMode = FlyoutShowMode.Transient
+            };
+
+            using var host = new TestWindowHost(target, width: 320, height: 220);
+            host.UpdateLayout();
+            target.Focus();
+            WpfTestHost.DoEvents();
+
+            Assert.AreSame(target, Keyboard.FocusedElement);
+
+            flyout.ShowAt(target, options);
+            WpfTestHost.DoEvents();
+
+            Assert.IsTrue(flyout.IsOpen);
+            Assert.AreSame(target, flyout.Target);
+            Assert.AreSame(target, Keyboard.FocusedElement);
+            Assert.AreEqual(FlyoutPlacementMode.Right, flyout.GetEffectivePlacement());
+            Assert.AreEqual(new Rect(24, 12, 0, 0), flyout.InternalPopup.PlacementRectangle);
+
+            flyout.Hide();
+            WpfTestHost.DoEvents();
+
+            Assert.AreEqual(FlyoutPlacementMode.Bottom, flyout.GetEffectivePlacement());
+        });
+    }
+
+    [TestMethod]
+    public void StagedShowAtWithOptionsPreservesTargetPointLikeWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var firstTarget = new Button { Content = "First", Width = 120, Height = 36 };
+            var secondTarget = new Button { Content = "Second", Width = 120, Height = 36 };
+            var root = new StackPanel
+            {
+                Children =
+                {
+                    firstTarget,
+                    secondTarget
+                }
+            };
+            var firstFlyout = new Flyout
+            {
+                Content = new TextBlock { Text = "First flyout" }
+            };
+            var secondFlyout = new Flyout
+            {
+                Content = new TextBlock { Text = "Second flyout" },
+                Placement = FlyoutPlacementMode.Top
+            };
+            var options = new FlyoutShowOptions
+            {
+                Position = new Point(16, 8),
+                Placement = FlyoutPlacementMode.Left,
+                ShowMode = FlyoutShowMode.Transient
+            };
+
+            using var host = new TestWindowHost(root, width: 320, height: 220);
+            host.UpdateLayout();
+
+            firstFlyout.ShowAt(firstTarget);
+            WpfTestHost.DoEvents();
+
+            secondFlyout.ShowAt(secondTarget, options);
+            WpfTestHost.DoEvents();
+
+            Assert.IsFalse(firstFlyout.IsOpen);
+            Assert.IsTrue(secondFlyout.IsOpen);
+            Assert.AreSame(secondTarget, secondFlyout.Target);
+            Assert.AreEqual(FlyoutPlacementMode.Left, secondFlyout.GetEffectivePlacement());
+            Assert.AreEqual(new Rect(16, 8, 0, 0), secondFlyout.InternalPopup.PlacementRectangle);
+
+            secondFlyout.Hide();
+            WpfTestHost.DoEvents();
+        });
+    }
+
+    [TestMethod]
     public void ShowModeTransientKeepsCurrentFocusLikeWinUISource()
     {
         WpfTestHost.Run(() =>

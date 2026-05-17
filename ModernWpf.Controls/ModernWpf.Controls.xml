@@ -2371,12 +2371,35 @@ Use the ItemsRepeaterScrollHost if your app will run on versions of Windows prio
       <summary>Shows the flyout placed in relation to the specified element.</summary>
       <param name="placementTarget">The element to use as the flyout's placement target.</param>
     </member>
+    <member name="M:ModernWpf.Controls.Primitives.FlyoutBase.ShowAt(System.Windows.FrameworkElement,ModernWpf.Controls.Primitives.FlyoutShowOptions)">
+      <summary>Shows the flyout using the specified placement target and show options.</summary>
+      <param name="placementTarget">The element to use as the flyout's placement target.</param>
+      <param name="showOptions">Options that configure the flyout's placement, position, and show mode for this show request.</param>
+    </member>
     <member name="M:ModernWpf.Controls.Primitives.FlyoutBase.ShowAttachedFlyout(System.Windows.FrameworkElement)">
       <summary>Shows the flyout associated with the specified element, if any.</summary>
       <param name="flyoutOwner">The element for which to show the associated flyout.</param>
     </member>
+    <member name="T:ModernWpf.Controls.Primitives.FlyoutShowOptions">
+      <summary>Represents options used when showing a flyout.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.Primitives.FlyoutShowOptions.ExclusionRect">
+      <summary>Gets or sets the rectangle to exclude when placing the flyout.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.Primitives.FlyoutShowOptions.Placement">
+      <summary>Gets or sets the preferred placement for this show request.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.Primitives.FlyoutShowOptions.Position">
+      <summary>Gets or sets the position at which to show the flyout, relative to the placement target.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.Primitives.FlyoutShowOptions.ShowMode">
+      <summary>Gets or sets the show mode for this show request.</summary>
+    </member>
     <member name="T:ModernWpf.Controls.Primitives.FlyoutPlacementMode">
       <summary>Defines constants that specify the preferred location for positioning a FlyoutBase derived control relative to a visual element.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.Primitives.FlyoutPlacementMode.Auto">
+      <summary>The default placement is used.</summary>
     </member>
     <member name="F:ModernWpf.Controls.Primitives.FlyoutPlacementMode.Bottom">
       <summary>The preferred location of the flyout is below the target element.</summary>

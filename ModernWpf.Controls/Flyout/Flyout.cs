@@ -175,7 +175,7 @@ namespace ModernWpf.Controls
         {
             if (InternalPopup.PlacementTarget != null)
             {
-                switch (Placement)
+                switch (GetEffectivePlacement())
                 {
                     case FlyoutPlacementMode.Top:
                     case FlyoutPlacementMode.TopEdgeAlignedLeft:

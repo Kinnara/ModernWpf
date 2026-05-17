@@ -216,6 +216,16 @@ namespace ModernWpf.Controls.Primitives
             ShowAtCore(placementTarget, false);
         }
 
+        public void ShowAt(FrameworkElement placementTarget, FlyoutShowOptions showOptions)
+        {
+            if (placementTarget is null)
+            {
+                throw new ArgumentNullException(nameof(placementTarget));
+            }
+
+            ShowAtCore(placementTarget, false, showOptions);
+        }
+
         public void Hide()
         {
             CancelAsyncShow();
@@ -238,29 +248,32 @@ namespace ModernWpf.Controls.Primitives
             ShowAtCore(placementTarget, true);
         }
 
-        internal virtual void ShowAtCore(FrameworkElement placementTarget, bool showAsContextFlyout)
+        internal virtual void ShowAtCore(FrameworkElement placementTarget, bool showAsContextFlyout, FlyoutShowOptions showOptions = null)
         {
+            showOptions = CloneShowOptions(showOptions);
             CancelAsyncShow();
 
             if (m_popup != null &&
                 m_popup.IsOpen &&
                 Target == placementTarget &&
-                m_showingAsContextFlyout == showAsContextFlyout)
+                m_showingAsContextFlyout == showAsContextFlyout &&
+                IsSameTargetPosition(showOptions, showAsContextFlyout))
             {
                 return;
             }
 
             if (m_closing)
             {
-                m_pendingShow = () => ShowAtCore(placementTarget, showAsContextFlyout);
+                m_pendingShow = () => ShowAtCore(placementTarget, showAsContextFlyout, showOptions);
                 return;
             }
 
-            if (TryStageLatestShowUntilOpenFlyoutCloses(placementTarget, showAsContextFlyout))
+            if (TryStageLatestShowUntilOpenFlyoutCloses(placementTarget, showAsContextFlyout, showOptions))
             {
                 return;
             }
 
+            ApplyShowOptions(showOptions, showAsContextFlyout);
             PreparePopup(placementTarget, showAsContextFlyout);
             Debug.Assert(m_popup.HasLocalValue(Popup.PlacementProperty));
             Debug.Assert(m_popup.HasLocalValue(Popup.PlacementTargetProperty));
@@ -300,6 +313,9 @@ namespace ModernWpf.Controls.Primitives
 
         internal virtual void OnClosed()
         {
+            m_isTargetPositionSet = false;
+            m_hasPlacementOverride = false;
+
             ClearOpenFlyout(this);
             Closed?.Invoke(this, null);
 
@@ -367,6 +383,9 @@ namespace ModernWpf.Controls.Primitives
 
             UpdatePopupAnimation();
 
+            var effectivePlacement = GetEffectivePlacement();
+            m_presenter.SetCurrentValue(CustomPopupPlacementHelper.PlacementProperty, (CustomPlacementMode)effectivePlacement);
+
             if (showAsContextFlyout)
             {
                 m_presenter.ClearValue(FrameworkElement.WidthProperty);
@@ -375,7 +394,8 @@ namespace ModernWpf.Controls.Primitives
                 m_popup.PlacementTarget = placementTarget;
                 m_popup.ClearValue(Popup.PlacementRectangleProperty);
             }
-            else if (Placement == FlyoutPlacementMode.Full &&
+            else if (!m_isTargetPositionSet &&
+                effectivePlacement == FlyoutPlacementMode.Full &&
                 Window.GetWindow(placementTarget) is Window window)
             {
                 var adornerDecorator = window.FindDescendant<AdornerDecorator>();
@@ -438,7 +458,7 @@ namespace ModernWpf.Controls.Primitives
                 m_presenter.ClearValue(FrameworkElement.HeightProperty);
                 m_popup.Placement = PlacementMode.Custom;
                 m_popup.PlacementTarget = placementTarget;
-                m_popup.PlacementRectangle = GetPlacementRectangle(placementTarget);
+                m_popup.PlacementRectangle = GetPlacementRectangle(placementTarget, effectivePlacement);
             }
         }
 
@@ -453,13 +473,23 @@ namespace ModernWpf.Controls.Primitives
 
         internal Rect GetPlacementRectangle(UIElement target)
         {
+            return GetPlacementRectangle(target, GetEffectivePlacement());
+        }
+
+        internal Rect GetPlacementRectangle(UIElement target, FlyoutPlacementMode placement)
+        {
             Rect value = Rect.Empty;
 
             if (target != null)
             {
                 Size targetSize = target.RenderSize;
 
-                switch (Placement)
+                if (m_isTargetPositionSet)
+                {
+                    return new Rect(m_targetPosition, new Size());
+                }
+
+                switch (placement)
                 {
                     case FlyoutPlacementMode.Top:
                     case FlyoutPlacementMode.Bottom:
@@ -548,7 +578,7 @@ namespace ModernWpf.Controls.Primitives
 
         internal CustomPopupPlacement[] PositionPopup(Size popupSize, Size targetSize, Point offset, FrameworkElement child)
         {
-            return CustomPopupPlacementHelper.PositionPopup((CustomPlacementMode)Placement, popupSize, targetSize, offset, child);
+            return CustomPopupPlacementHelper.PositionPopup((CustomPlacementMode)GetEffectivePlacement(), popupSize, targetSize, offset, child);
         }
 
         protected void TrackPlacementTarget(FrameworkElement placementTarget)
@@ -605,6 +635,87 @@ namespace ModernWpf.Controls.Primitives
             }
 
             UpdatePointerMoveAwayTracking();
+        }
+
+        internal FlyoutPlacementMode GetEffectivePlacement()
+        {
+            var placement = m_hasPlacementOverride ? m_placementOverride : Placement;
+            return placement == FlyoutPlacementMode.Auto ? FlyoutPlacementMode.Top : placement;
+        }
+
+        internal bool IsSameTargetPosition(FlyoutShowOptions showOptions, bool showAsContextFlyout)
+        {
+            var hasTargetPosition = !showAsContextFlyout && showOptions?.Position != null;
+            if (hasTargetPosition != m_isTargetPositionSet)
+            {
+                return false;
+            }
+
+            if (!hasTargetPosition)
+            {
+                return true;
+            }
+
+            var position = showOptions.Position.Value;
+            return position.X == m_targetPosition.X &&
+                   position.Y == m_targetPosition.Y;
+        }
+
+        internal void ApplyShowOptions(FlyoutShowOptions showOptions, bool showAsContextFlyout)
+        {
+            m_hasPlacementOverride = false;
+            m_isTargetPositionSet = false;
+
+            var showMode = ShowMode;
+
+            if (!showAsContextFlyout && showOptions != null)
+            {
+                showMode = showOptions.ShowMode;
+
+                if (showOptions.Position.HasValue)
+                {
+                    SetTargetPosition(showOptions.Position.Value);
+                }
+
+                if (showOptions.Placement != FlyoutPlacementMode.Auto)
+                {
+                    m_hasPlacementOverride = true;
+                    m_placementOverride = showOptions.Placement;
+                }
+            }
+
+            UpdateStateToShowMode(showMode);
+        }
+
+        internal static FlyoutShowOptions CloneShowOptions(FlyoutShowOptions showOptions)
+        {
+            if (showOptions == null)
+            {
+                return null;
+            }
+
+            return new FlyoutShowOptions
+            {
+                ExclusionRect = showOptions.ExclusionRect,
+                Placement = showOptions.Placement,
+                Position = showOptions.Position,
+                ShowMode = showOptions.ShowMode
+            };
+        }
+
+        private static void ValidateTargetPosition(Point targetPosition)
+        {
+            if (double.IsNaN(targetPosition.X) || double.IsNaN(targetPosition.Y))
+            {
+                throw new ArgumentException("Position cannot contain NaN values.", nameof(targetPosition));
+            }
+        }
+
+        private void SetTargetPosition(Point targetPosition)
+        {
+            ValidateTargetPosition(targetPosition);
+            m_isTargetPositionSet = true;
+            m_targetPosition = targetPosition;
         }
 
         private void UpdatePointerMoveAwayTracking()
@@ -724,13 +835,13 @@ namespace ModernWpf.Controls.Primitives
             }
         }
 
-        internal bool TryStageLatestShowUntilOpenFlyoutCloses(FrameworkElement placementTarget, bool showAsContextFlyout)
+        internal bool TryStageLatestShowUntilOpenFlyoutCloses(FrameworkElement placementTarget, bool showAsContextFlyout, FlyoutShowOptions showOptions = null)
         {
             if (s_openFlyout != null &&
                 s_openFlyout != this &&
                 s_openFlyout.IsOpen)
             {
-                s_pendingFlyoutShow = new PendingFlyoutShow(this, placementTarget, showAsContextFlyout);
+                s_pendingFlyoutShow = new PendingFlyoutShow(this, placementTarget, showAsContextFlyout, showOptions);
                 s_openFlyout.Hide();
                 return true;
             }
@@ -780,6 +891,10 @@ namespace ModernWpf.Controls.Primitives
         private Control m_presenter;
         private PopupEx m_popup;
         private bool m_showingAsContextFlyout;
+        private bool m_isTargetPositionSet;
+        private Point m_targetPosition;
+        private bool m_hasPlacementOverride;
+        private FlyoutPlacementMode m_placementOverride = FlyoutPlacementMode.Top;
         private WeakReference<IInputElement> m_weakRefToPreviousFocus;
         private FrameworkElement m_trackedPlacementTarget;
         private bool m_closing;
@@ -794,21 +909,23 @@ namespace ModernWpf.Controls.Primitives
 
         private sealed class PendingFlyoutShow
         {
-            public PendingFlyoutShow(FlyoutBase flyout, FrameworkElement placementTarget, bool showAsContextFlyout)
+            public PendingFlyoutShow(FlyoutBase flyout, FrameworkElement placementTarget, bool showAsContextFlyout, FlyoutShowOptions showOptions)
             {
                 _flyout = flyout;
                 _placementTarget = placementTarget;
                 _showAsContextFlyout = showAsContextFlyout;
+                _showOptions = CloneShowOptions(showOptions);
             }
 
             public void Show()
             {
-                _flyout.ShowAtCore(_placementTarget, _showAsContextFlyout);
+                _flyout.ShowAtCore(_placementTarget, _showAsContextFlyout, _showOptions);
             }
 
             private readonly FlyoutBase _flyout;
             private readonly FrameworkElement _placementTarget;
             private readonly bool _showAsContextFlyout;
+            private readonly FlyoutShowOptions _showOptions;
         }
 
         private class FullPlacementWidthConverter : IMultiValueConverter
@@ -845,7 +962,13 @@ namespace ModernWpf.Controls.Primitives
         {
             public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
             {
-                return (CustomPlacementMode)value;
+                var placement = (FlyoutPlacementMode)value;
+                if (placement == FlyoutPlacementMode.Auto)
+                {
+                    placement = FlyoutPlacementMode.Top;
+                }
+
+                return (CustomPlacementMode)placement;
             }
 
             public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

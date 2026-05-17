@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Controls;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls;
+using ModernWpf.Controls.Primitives;
 using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
 
@@ -200,6 +202,50 @@ public class MenuFlyoutApiTests
 
             Assert.IsFalse(menuFlyout.IsOpen);
             Assert.IsNull(menuFlyout.Target);
+        });
+    }
+
+    [TestMethod]
+    public void ShowAtWithOptionsAppliesTargetPointPlacementAndShowModeLikeWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var target = new Button
+            {
+                Content = "Target",
+                Width = 120,
+                Height = 36
+            };
+            var menuFlyout = new MenuFlyout
+            {
+                Placement = FlyoutPlacementMode.Bottom
+            };
+            menuFlyout.Items.Add(new MenuItem { Header = "Copy" });
+
+            using var host = new TestWindowHost(target, width: 320, height: 220);
+            host.UpdateLayout();
+
+            menuFlyout.ShowAt(
+                target,
+                new FlyoutShowOptions
+                {
+                    Position = new Point(18, 9),
+                    Placement = FlyoutPlacementMode.Right,
+                    ShowMode = FlyoutShowMode.Transient
+                });
+            WpfTestHost.DoEvents();
+
+            Assert.IsTrue(menuFlyout.IsOpen);
+            Assert.AreSame(target, menuFlyout.Target);
+            Assert.AreEqual(FlyoutPlacementMode.Right, menuFlyout.GetEffectivePlacement());
+            Assert.AreEqual(new Rect(18, 9, 0, 0), menuFlyout.GetPlacementRectangle(target));
+
+            menuFlyout.Hide();
+            WpfTestHost.DoEvents();
+
+            Assert.AreEqual(FlyoutPlacementMode.Bottom, menuFlyout.GetEffectivePlacement());
         });
     }
 
