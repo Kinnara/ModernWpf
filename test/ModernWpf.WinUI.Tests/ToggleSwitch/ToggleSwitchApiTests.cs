@@ -9,6 +9,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Markup;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using ModernWpf.Automation.Peers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -349,6 +350,56 @@ public class ToggleSwitchApiTests
             AssertBrushEquals((Brush)switchKnobBounds.TryFindResource("ToggleSwitchStrokeOnDisabled"), switchKnobBounds.Stroke);
             AssertBrushEquals((Brush)switchKnobOff.TryFindResource("ToggleSwitchKnobFillOffDisabled"), switchKnobOff.Fill);
             AssertBrushEquals((Brush)switchKnobOn.TryFindResource("ToggleSwitchKnobFillOnDisabled"), switchKnobOn.Background);
+        });
+    }
+
+    [TestMethod]
+    public void TemplateGeometryMatchesWinUICommonStylesSource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch();
+            using var host = new TestWindowHost(toggleSwitch, width: 260, height: 120);
+            host.UpdateLayout();
+
+            var outerBorder = FindNamedDescendant<Rectangle>(toggleSwitch, "OuterBorder");
+            var switchKnobBounds = FindNamedDescendant<Rectangle>(toggleSwitch, "SwitchKnobBounds");
+            var switchKnob = FindNamedDescendant<Grid>(toggleSwitch, "SwitchKnob");
+            var switchKnobOn = FindNamedDescendant<Border>(toggleSwitch, "SwitchKnobOn");
+            var switchKnobOff = FindNamedDescendant<Rectangle>(toggleSwitch, "SwitchKnobOff");
+
+            Assert.AreEqual(40d, outerBorder.Width, 0.1);
+            Assert.AreEqual(20d, outerBorder.Height, 0.1);
+            Assert.AreEqual(40d, switchKnobBounds.Width, 0.1);
+            Assert.AreEqual(20d, switchKnobBounds.Height, 0.1);
+            Assert.AreEqual(20d, switchKnob.Width, 0.1);
+            Assert.AreEqual(20d, switchKnob.Height, 0.1);
+
+            Assert.AreEqual(12d, switchKnobOn.Width, 0.1);
+            Assert.AreEqual(12d, switchKnobOn.Height, 0.1);
+            Assert.AreEqual(new CornerRadius(7), switchKnobOn.CornerRadius);
+            Assert.AreEqual(HorizontalAlignment.Center, switchKnobOn.HorizontalAlignment);
+            Assert.AreEqual(new Thickness(0, 0, 1, 0), switchKnobOn.Margin);
+
+            Assert.AreEqual(12d, switchKnobOff.Width, 0.1);
+            Assert.AreEqual(12d, switchKnobOff.Height, 0.1);
+            Assert.AreEqual(7d, switchKnobOff.RadiusX, 0.1);
+            Assert.AreEqual(7d, switchKnobOff.RadiusY, 0.1);
+            Assert.AreEqual(HorizontalAlignment.Center, switchKnobOff.HorizontalAlignment);
+            Assert.AreEqual(new Thickness(-1, 0, 0, 0), switchKnobOff.Margin);
+
+            var stateGroupsRoot = FindStateGroupsRoot(toggleSwitch);
+            AssertKnobSizeAnimations(FindVisualState(stateGroupsRoot, "CommonStates", "Normal"), 12, 12);
+            AssertKnobSizeAnimations(FindVisualState(stateGroupsRoot, "CommonStates", "PointerOver"), 14, 14);
+            AssertKnobSizeAnimations(FindVisualState(stateGroupsRoot, "CommonStates", "Pressed"), 17, 14);
+            AssertKnobSizeAnimations(FindVisualState(stateGroupsRoot, "CommonStates", "Disabled"), 12, 12);
+
+            var offState = FindVisualState(stateGroupsRoot, "ToggleStates", "Off");
+            Assert.IsTrue(
+                offState.Storyboard == null || offState.Storyboard.Children.Count == 0,
+                "WinUI CommonStyles leaves the Off visual state empty; repositioning is handled by transitions/default transform.");
         });
     }
 
@@ -1406,7 +1457,7 @@ public class ToggleSwitchApiTests
         return group.CurrentState.Name;
     }
 
-    private static global::ModernWpf.VisualStateEx FindVisualStateEx(
+    private static VisualState FindVisualState(
         FrameworkElement stateGroupsRoot,
         string groupName,
         string stateName)
@@ -1414,9 +1465,17 @@ public class ToggleSwitchApiTests
         var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
             .OfType<VisualStateGroup>()
             .Single(item => item.Name == groupName);
-        var state = group.States
+        return group.States
             .OfType<VisualState>()
             .Single(item => item.Name == stateName);
+    }
+
+    private static global::ModernWpf.VisualStateEx FindVisualStateEx(
+        FrameworkElement stateGroupsRoot,
+        string groupName,
+        string stateName)
+    {
+        var state = FindVisualState(stateGroupsRoot, groupName, stateName);
         Assert.IsInstanceOfType(state, typeof(global::ModernWpf.VisualStateEx));
         return (global::ModernWpf.VisualStateEx)state;
     }
@@ -1426,6 +1485,32 @@ public class ToggleSwitchApiTests
         Assert.IsTrue(
             state.Setters.Any(setter => setter.Target == target),
             $"Expected VisualStateEx setter target '{target}'.");
+    }
+
+    private static void AssertKnobSizeAnimations(VisualState state, double expectedWidth, double expectedHeight)
+    {
+        AssertDoubleKeyFrameValue(state, "SwitchKnobOn", "Width", expectedWidth);
+        AssertDoubleKeyFrameValue(state, "SwitchKnobOn", "Height", expectedHeight);
+        AssertDoubleKeyFrameValue(state, "SwitchKnobOff", "Width", expectedWidth);
+        AssertDoubleKeyFrameValue(state, "SwitchKnobOff", "Height", expectedHeight);
+    }
+
+    private static void AssertDoubleKeyFrameValue(
+        VisualState state,
+        string targetName,
+        string targetProperty,
+        double expectedValue)
+    {
+        var animation = state.Storyboard.Children
+            .OfType<DoubleAnimationUsingKeyFrames>()
+            .Single(item =>
+                Storyboard.GetTargetName(item) == targetName &&
+                Storyboard.GetTargetProperty(item).Path == targetProperty);
+        var keyFrame = animation.KeyFrames
+            .OfType<DoubleKeyFrame>()
+            .Single();
+
+        Assert.AreEqual(expectedValue, keyFrame.Value, 0.1, $"{state.Name}:{targetName}.{targetProperty}");
     }
 
     private static void AssertAffectsMeasure(DependencyProperty property, Type ownerType, bool expected)

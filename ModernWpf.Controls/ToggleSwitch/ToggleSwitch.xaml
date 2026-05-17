@@ -272,15 +272,7 @@
                                     </VisualTransition>
                                 </VisualStateGroup.Transitions>
                                 <VisualState x:Name="Dragging" />
-                                <VisualState x:Name="Off">
-                                    <Storyboard>
-                                        <DoubleAnimation
-                                            Storyboard.TargetName="KnobTranslateTransform"
-                                            Storyboard.TargetProperty="X"
-                                            To="0"
-                                            Duration="0" />
-                                    </Storyboard>
-                                </VisualState>
+                                <VisualState x:Name="Off" />
                                 <VisualState x:Name="On">
                                     <Storyboard>
                                         <DoubleAnimation
