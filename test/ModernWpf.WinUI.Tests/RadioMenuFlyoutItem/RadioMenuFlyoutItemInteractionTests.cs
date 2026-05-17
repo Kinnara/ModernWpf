@@ -53,6 +53,79 @@ public class RadioMenuFlyoutItemInteractionTests
     }
 
     [TestMethod]
+    public void UnloadedCheckedItemLeavesSourceSelectionMap()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var first = new RadioMenuItem
+            {
+                Header = "First",
+                GroupName = "SourceGroup",
+                IsChecked = true
+            };
+            var second = new RadioMenuItem
+            {
+                Header = "Second",
+                GroupName = "SourceGroup"
+            };
+            var panel = new StackPanel();
+            panel.Children.Add(first);
+            panel.Children.Add(second);
+
+            using var host = new TestWindowHost(panel);
+            host.UpdateLayout();
+
+            Assert.IsTrue(first.IsChecked);
+
+            panel.Children.Remove(first);
+            host.UpdateLayout();
+
+            Check(second);
+            host.UpdateLayout();
+
+            Assert.IsTrue(first.IsChecked, "WinUI removes an unloaded checked item from the active group map without unchecking it.");
+            Assert.IsTrue(second.IsChecked);
+        });
+    }
+
+    [TestMethod]
+    public void LoadedCheckedItemReclaimsSourceSelectionMap()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var first = new RadioMenuItem
+            {
+                Header = "First",
+                GroupName = "SourceGroup",
+                IsChecked = true
+            };
+            var second = new RadioMenuItem
+            {
+                Header = "Second",
+                GroupName = "SourceGroup"
+            };
+            var panel = new StackPanel();
+            panel.Children.Add(first);
+            panel.Children.Add(second);
+
+            using var host = new TestWindowHost(panel);
+            host.UpdateLayout();
+
+            panel.Children.Remove(first);
+            host.UpdateLayout();
+
+            Check(second);
+            host.UpdateLayout();
+
+            panel.Children.Insert(0, first);
+            host.UpdateLayout();
+
+            Assert.IsTrue(first.IsChecked);
+            Assert.IsFalse(second.IsChecked, "WinUI updates the active group map when a checked radio menu item loads.");
+        });
+    }
+
+    [TestMethod]
     public void SubMenuCheckStateVisualTracksCheckedChildren()
     {
         WpfTestHost.Run(() =>

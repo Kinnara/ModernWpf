@@ -47,11 +47,7 @@ namespace ModernWpf.Controls
         private static void OnGroupNameChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var radioItem = (RadioMenuItem)d;
-            if (radioItem.IsChecked)
-            {
-                radioItem.RemoveCheckedItemFromGroup((string)e.OldValue);
-                radioItem.UpdateCheckedItemInGroup();
-            }
+            radioItem.m_groupName = (string)e.NewValue ?? string.Empty;
         }
 
         public static readonly DependencyProperty UseSystemFocusVisualsProperty =
@@ -137,6 +133,7 @@ namespace ModernWpf.Controls
 
             UpdateCheckedItemInGroup();
             UpdateVisualStates(true);
+            m_isChecked = true;
 
             base.OnChecked(e);
         }
@@ -155,6 +152,7 @@ namespace ModernWpf.Controls
             base.OnUnchecked(e);
             RemoveCheckedItemFromGroup(GroupName);
             UpdateVisualStates(true);
+            m_isChecked = false;
         }
 
         public override void OnApplyTemplate()
@@ -321,12 +319,20 @@ namespace ModernWpf.Controls
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
+            m_groupName = GroupName ?? string.Empty;
+            UpdateCheckedItemInGroup();
+            m_isChecked = IsChecked;
             AttachVisualStatePropertyListeners();
             UpdateVisualStates(false);
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
+            if (m_isChecked)
+            {
+                RemoveCheckedItemFromGroup(m_groupName);
+            }
+
             DetachVisualStatePropertyListeners();
         }
 
@@ -419,5 +425,7 @@ namespace ModernWpf.Controls
         private bool m_isSafeUncheck;
         private bool m_surpressOnChecked;
         private bool m_areVisualStatePropertyListenersAttached;
+        private bool m_isChecked;
+        private string m_groupName = string.Empty;
     }
 }
