@@ -105,6 +105,7 @@ namespace ModernWpf
         public const string SR_ProgressBarPausedStatus = "ProgressBarPausedStatus";
         public const string SR_ProgressBarErrorStatus = "ProgressBarErrorStatus";
         public const string SR_RatingLocalizedControlType = "RatingLocalizedControlType";
+        public const string SR_ToggleSwitchLocalizedControlType = "ToggleSwitchLocalizedControlType";
         public const string SR_SplitButtonSecondaryButtonName = "SplitButtonSecondaryButtonName";
         public const string SR_ProofingMenuItemLabel = "ProofingMenuItemLabel";
         public const string SR_TextCommandLabelCut = "TextCommandLabelCut";

@@ -859,6 +859,11 @@ namespace ModernWpf.Controls
             SetCurrentValue(IsOnProperty, !IsOn);
         }
 
+        internal void AutomationToggleSwitchOnToggle()
+        {
+            Toggle();
+        }
+
         private bool FocusFromPointer()
         {
             _isPointerFocused = true;

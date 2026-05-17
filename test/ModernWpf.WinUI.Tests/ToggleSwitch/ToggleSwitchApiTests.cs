@@ -1041,24 +1041,32 @@ public class ToggleSwitchApiTests
             host.UpdateLayout();
 
             var peer = CreatePeer(toggleSwitch);
+            var resourceAccessor = new ResourceAccessor(typeof(ModernWpf.Controls.ToggleSwitch));
 
             Assert.AreEqual(nameof(ModernWpf.Controls.ToggleSwitch), peer.GetClassName());
             Assert.AreEqual(AutomationControlType.Button, peer.GetAutomationControlType());
-            Assert.AreEqual("toggle switch", peer.GetLocalizedControlType());
+            Assert.AreEqual(
+                resourceAccessor.GetLocalizedStringResource(ResourceAccessor.SR_ToggleSwitchLocalizedControlType),
+                peer.GetLocalizedControlType());
             Assert.AreEqual(0, peer.GetChildren()?.Count ?? 0);
 
             var toggleProvider = (IToggleProvider)peer.GetPattern(PatternInterface.Toggle);
             Assert.AreEqual(ToggleState.Off, toggleProvider.ToggleState);
 
-            toggleProvider.Toggle();
+            toggleSwitch.AutomationToggleSwitchOnToggle();
 
             Assert.IsTrue(toggleSwitch.IsOn);
             Assert.AreEqual(ToggleState.On, toggleProvider.ToggleState);
 
+            toggleProvider.Toggle();
+
+            Assert.IsFalse(toggleSwitch.IsOn);
+            Assert.AreEqual(ToggleState.Off, toggleProvider.ToggleState);
+
             toggleSwitch.IsEnabled = false;
 
             Assert.ThrowsException<ElementNotEnabledException>(() => toggleProvider.Toggle());
-            Assert.IsTrue(toggleSwitch.IsOn);
+            Assert.IsFalse(toggleSwitch.IsOn);
         });
     }
 

@@ -7,11 +7,14 @@ using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using ModernWpf.Controls;
+using static ModernWpf.ResourceAccessor;
 
 namespace ModernWpf.Automation.Peers
 {
     public class ToggleSwitchAutomationPeer : FrameworkElementAutomationPeer, IToggleProvider
     {
+        private static readonly ResourceAccessor ResourceAccessor = new ResourceAccessor(typeof(ToggleSwitch));
+
         public ToggleSwitchAutomationPeer(ToggleSwitch owner) : base(owner)
         {
         }
@@ -88,7 +91,7 @@ namespace ModernWpf.Automation.Peers
 
         protected override string GetLocalizedControlTypeCore()
         {
-            return "toggle switch";
+            return ResourceAccessor.GetLocalizedStringResource(SR_ToggleSwitchLocalizedControlType);
         }
 
         public ToggleState ToggleState => GetImpl().IsOn ? ToggleState.On : ToggleState.Off;
@@ -100,7 +103,7 @@ namespace ModernWpf.Automation.Peers
                 throw new ElementNotEnabledException();
             }
 
-            GetImpl().Toggle();
+            GetImpl().AutomationToggleSwitchOnToggle();
         }
 
         private ToggleSwitch GetImpl()
