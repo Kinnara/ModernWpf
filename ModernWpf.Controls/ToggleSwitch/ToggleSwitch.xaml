@@ -31,14 +31,8 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ToggleSwitch">
-                    <Border
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{TemplateBinding CornerRadius}"
-                        SnapsToDevicePixels="True">
-
-                        <Border.Resources>
+                    <Grid>
+                        <Grid.Resources>
                             <ui:BindingProxy x:Key="ToggleSwitchStrokeOffProxy" Value="{DynamicResource ToggleSwitchStrokeOff}" />
                             <ui:BindingProxy x:Key="ToggleSwitchFillOffProxy" Value="{DynamicResource ToggleSwitchFillOff}" />
                             <ui:BindingProxy x:Key="ToggleSwitchContainerBackgroundProxy" Value="{DynamicResource ToggleSwitchContainerBackground}" />
@@ -54,7 +48,7 @@
                             <ui:BindingProxy x:Key="ToggleSwitchStrokeOffDisabledProxy" Value="{DynamicResource ToggleSwitchStrokeOffDisabled}" />
                             <ui:BindingProxy x:Key="ToggleSwitchFillOffDisabledProxy" Value="{DynamicResource ToggleSwitchFillOffDisabled}" />
                             <ui:BindingProxy x:Key="ToggleSwitchContainerBackgroundDisabledProxy" Value="{DynamicResource ToggleSwitchContainerBackgroundDisabled}" />
-                        </Border.Resources>
+                        </Grid.Resources>
 
                         <VisualStateManager.CustomVisualStateManager>
                             <ui:VisualStateManagerEx />
@@ -322,134 +316,132 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
 
-                        <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <ui:ContentPresenterEx
+                            x:Name="HeaderContentPresenter"
+                            Grid.Row="0"
+                            Content="{TemplateBinding Header}"
+                            ContentTemplate="{TemplateBinding HeaderTemplate}"
+                            Foreground="{DynamicResource ToggleSwitchHeaderForeground}"
+                            IsHitTestVisible="False"
+                            Margin="{DynamicResource ToggleSwitchTopHeaderMargin}"
+                            TextWrapping="Wrap"
+                            VerticalAlignment="Top"
+                            Visibility="Collapsed"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        <Grid
+                            Grid.Row="1"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top">
+
                             <Grid.RowDefinitions>
+                                <RowDefinition ui:RowDefinitionHelper.PixelHeight="{DynamicResource ToggleSwitchPreContentMargin}" />
                                 <RowDefinition Height="Auto" />
-                                <RowDefinition Height="*" />
+                                <RowDefinition ui:RowDefinitionHelper.PixelHeight="{DynamicResource ToggleSwitchPostContentMargin}" />
                             </Grid.RowDefinitions>
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="12" MaxWidth="12" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Border
+                                x:Name="SwitchAreaGrid"
+                                Grid.RowSpan="3"
+                                Grid.ColumnSpan="3"
+                                Margin="0,5"
+                                CornerRadius="{TemplateBinding CornerRadius}"
+                                ui:FocusVisualHelper.IsTemplateFocusTarget="True"
+                                Background="{DynamicResource ToggleSwitchContainerBackground}" />
                             <ui:ContentPresenterEx
-                                x:Name="HeaderContentPresenter"
-                                Grid.Row="0"
-                                Content="{TemplateBinding Header}"
-                                ContentTemplate="{TemplateBinding HeaderTemplate}"
-                                Foreground="{DynamicResource ToggleSwitchHeaderForeground}"
+                                x:Name="OffContentPresenter"
+                                Grid.RowSpan="3"
+                                Grid.Column="2"
+                                Opacity="0"
+                                Foreground="{TemplateBinding Foreground}"
                                 IsHitTestVisible="False"
-                                Margin="{DynamicResource ToggleSwitchTopHeaderMargin}"
-                                TextWrapping="Wrap"
-                                VerticalAlignment="Top"
-                                Visibility="Collapsed"
+                                Content="{TemplateBinding OffContent}"
+                                ContentTemplate="{TemplateBinding OffContentTemplate}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            <ui:ContentPresenterEx
+                                x:Name="OnContentPresenter"
+                                Grid.RowSpan="3"
+                                Grid.Column="2"
+                                Opacity="0"
+                                Foreground="{TemplateBinding Foreground}"
+                                IsHitTestVisible="False"
+                                Content="{TemplateBinding OnContent}"
+                                ContentTemplate="{TemplateBinding OnContentTemplate}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            <Rectangle
+                                x:Name="OuterBorder"
+                                Grid.Row="1"
+                                Height="20"
+                                Width="40"
+                                RadiusX="10"
+                                RadiusY="10"
+                                Fill="{DynamicResource ToggleSwitchFillOff}"
+                                Stroke="{DynamicResource ToggleSwitchStrokeOff}"
+                                StrokeThickness="{DynamicResource ToggleSwitchOuterBorderStrokeThickness}" />
+                            <Rectangle
+                                x:Name="SwitchKnobBounds"
+                                Grid.Row="1"
+                                Height="20"
+                                Width="40"
+                                RadiusX="10"
+                                RadiusY="10"
+                                Fill="{DynamicResource ToggleSwitchFillOn}"
+                                Stroke="{DynamicResource ToggleSwitchStrokeOn}"
+                                StrokeThickness="{DynamicResource ToggleSwitchOnStrokeThickness}"
+                                Opacity="0" />
                             <Grid
+                                x:Name="SwitchKnob"
                                 Grid.Row="1"
                                 HorizontalAlignment="Left"
-                                VerticalAlignment="Top">
-
-                                <Grid.RowDefinitions>
-                                    <RowDefinition ui:RowDefinitionHelper.PixelHeight="{DynamicResource ToggleSwitchPreContentMargin}" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition ui:RowDefinitionHelper.PixelHeight="{DynamicResource ToggleSwitchPostContentMargin}" />
-                                </Grid.RowDefinitions>
-
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="12" MaxWidth="12" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <Border
-                                    x:Name="SwitchAreaGrid"
-                                    Grid.RowSpan="3"
-                                    Grid.ColumnSpan="3"
-                                    Margin="0,5"
-                                    CornerRadius="{TemplateBinding CornerRadius}"
-                                    ui:FocusVisualHelper.IsTemplateFocusTarget="True"
-                                    Background="{DynamicResource ToggleSwitchContainerBackground}" />
-                                <ui:ContentPresenterEx
-                                    x:Name="OffContentPresenter"
-                                    Grid.RowSpan="3"
-                                    Grid.Column="2"
+                                Width="20"
+                                Height="20">
+                                <Border x:Name="SwitchKnobOn"
+                                    Background="{DynamicResource ToggleSwitchKnobFillOn}"
+                                    BorderBrush="{DynamicResource ToggleSwitchKnobStrokeOn}"
+                                    Width="12"
+                                    Height="12"
+                                    CornerRadius="7"
                                     Opacity="0"
-                                    Foreground="{TemplateBinding Foreground}"
-                                    IsHitTestVisible="False"
-                                    Content="{TemplateBinding OffContent}"
-                                    ContentTemplate="{TemplateBinding OffContentTemplate}"
-                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                                <ui:ContentPresenterEx
-                                    x:Name="OnContentPresenter"
-                                    Grid.RowSpan="3"
-                                    Grid.Column="2"
-                                    Opacity="0"
-                                    Foreground="{TemplateBinding Foreground}"
-                                    IsHitTestVisible="False"
-                                    Content="{TemplateBinding OnContent}"
-                                    ContentTemplate="{TemplateBinding OnContentTemplate}"
-                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                                <Rectangle
-                                    x:Name="OuterBorder"
-                                    Grid.Row="1"
-                                    Height="20"
-                                    Width="40"
-                                    RadiusX="10"
-                                    RadiusY="10"
-                                    Fill="{DynamicResource ToggleSwitchFillOff}"
-                                    Stroke="{DynamicResource ToggleSwitchStrokeOff}"
-                                    StrokeThickness="{DynamicResource ToggleSwitchOuterBorderStrokeThickness}" />
-                                <Rectangle
-                                    x:Name="SwitchKnobBounds"
-                                    Grid.Row="1"
-                                    Height="20"
-                                    Width="40"
-                                    RadiusX="10"
-                                    RadiusY="10"
-                                    Fill="{DynamicResource ToggleSwitchFillOn}"
-                                    Stroke="{DynamicResource ToggleSwitchStrokeOn}"
-                                    StrokeThickness="{DynamicResource ToggleSwitchOnStrokeThickness}"
-                                    Opacity="0" />
-                                <Grid
-                                    x:Name="SwitchKnob"
-                                    Grid.Row="1"
-                                    HorizontalAlignment="Left"
-                                    Width="20"
-                                    Height="20">
-                                    <Border x:Name="SwitchKnobOn"
-                                        Background="{DynamicResource ToggleSwitchKnobFillOn}"
-                                        BorderBrush="{DynamicResource ToggleSwitchKnobStrokeOn}"
-                                        Width="12"
-                                        Height="12"
-                                        CornerRadius="7"
-                                        Opacity="0"
-                                        HorizontalAlignment="Center"
-                                        Margin="0,0,1,0"
-                                        RenderTransformOrigin="0.5, 0.5" />
-                                    <Rectangle x:Name="SwitchKnobOff"
-                                        Fill="{DynamicResource ToggleSwitchKnobFillOff}"
-                                        Width="12"
-                                        Height="12"
-                                        RadiusX="7"
-                                        RadiusY="7"
-                                        HorizontalAlignment="Center"
-                                        Margin="-1,0,0,0"
-                                        RenderTransformOrigin="0.5, 0.5" />
-                                    <Grid.RenderTransform>
-                                        <TranslateTransform x:Name="KnobTranslateTransform" />
-                                    </Grid.RenderTransform>
-                                </Grid>
-                                <Thumb
-                                    x:Name="SwitchThumb"
-                                    Grid.RowSpan="3"
-                                    Grid.ColumnSpan="3">
-                                    <Thumb.Template>
-                                        <ControlTemplate TargetType="Thumb">
-                                            <Rectangle Fill="Transparent" />
-                                        </ControlTemplate>
-                                    </Thumb.Template>
-                                </Thumb>
+                                    HorizontalAlignment="Center"
+                                    Margin="0,0,1,0"
+                                    RenderTransformOrigin="0.5, 0.5" />
+                                <Rectangle x:Name="SwitchKnobOff"
+                                    Fill="{DynamicResource ToggleSwitchKnobFillOff}"
+                                    Width="12"
+                                    Height="12"
+                                    RadiusX="7"
+                                    RadiusY="7"
+                                    HorizontalAlignment="Center"
+                                    Margin="-1,0,0,0"
+                                    RenderTransformOrigin="0.5, 0.5" />
+                                <Grid.RenderTransform>
+                                    <TranslateTransform x:Name="KnobTranslateTransform" />
+                                </Grid.RenderTransform>
                             </Grid>
+                            <Thumb
+                                x:Name="SwitchThumb"
+                                Grid.RowSpan="3"
+                                Grid.ColumnSpan="3">
+                                <Thumb.Template>
+                                    <ControlTemplate TargetType="Thumb">
+                                        <Rectangle Fill="Transparent" />
+                                    </ControlTemplate>
+                                </Thumb.Template>
+                            </Thumb>
                         </Grid>
-                    </Border>
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

@@ -1491,6 +1491,30 @@ public class ToggleSwitchApiTests
     }
 
     [TestMethod]
+    public void TemplateRootMatchesWinUICommonStylesGrid()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch();
+            using var host = new TestWindowHost(toggleSwitch, width: 260, height: 120);
+            host.UpdateLayout();
+
+            Assert.AreEqual(1, VisualTreeHelper.GetChildrenCount(toggleSwitch));
+
+            var templateRoot = VisualTreeHelper.GetChild(toggleSwitch, 0);
+            Assert.IsInstanceOfType(templateRoot, typeof(Grid));
+
+            var templateRootGrid = (Grid)templateRoot;
+            Assert.AreEqual(2, templateRootGrid.RowDefinitions.Count);
+            Assert.AreEqual("ContentStates", VisualStateManager.GetVisualStateGroups(templateRootGrid)
+                .OfType<VisualStateGroup>()
+                .Last().Name);
+        });
+    }
+
+    [TestMethod]
     public void ValidateWinUIFootprint()
     {
         WpfTestHost.Run(() =>

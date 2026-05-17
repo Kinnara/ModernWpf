@@ -50,7 +50,7 @@ pieces, WPF substitutions, and platform gaps known so far.
 | `ToggleSwitchKeyProcess` handles source key-down/up sequencing using `OriginalKey`. | Matched with a private WPF `ToggleSwitchKeyProcess` helper; WPF system/IME/dead-char keys normalize back to the exposed original key before processing, and the WinUI flow-direction branches are preserved behind `HandlesKey`. |
 | WinUI native tests for live-tree entry/leave, tap, horizontal drag, vertical pan no-toggle, keyboard space, directional-key no-toggle, footprint, visual tree, and automation shape. | Covered by focused WPF tests where platform input can be represented; touch pan and compositor-only behavior are documented substitutions. |
 | Automation peer class name, localized control type, toggle pattern, clickable point, name construction, default On/Off filtering, and hidden template children. | Matched with WPF automation APIs and source-shaped string extraction. |
-| CommonStyles template dimensions, style setters, state names, knob animations, On/Off content presenters, and WinUI resource keys. | Matched with WPF template equivalents, `VisualStateEx.Setters`, and theme resource aliases; the previous WPF-only `VerticalContentAlignment=Center` setter has been removed because WinUI CommonStyles does not set it. |
+| CommonStyles template dimensions, style setters, state names, knob animations, On/Off content presenters, template-root shape, and WinUI resource keys. | Matched with WPF template equivalents, `VisualStateEx.Setters`, and theme resource aliases; the previous WPF-only `VerticalContentAlignment=Center` setter and outer template chrome `Border` have been removed because WinUI CommonStyles does not set them. |
 
 ## WPF Substitutions
 
