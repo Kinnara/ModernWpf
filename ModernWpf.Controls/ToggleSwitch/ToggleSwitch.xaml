@@ -321,6 +321,14 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
+                        <ui:BorderEx
+                            x:Name="TemplateRootChrome"
+                            Grid.RowSpan="2"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}"
+                            IsHitTestVisible="False" />
                         <ui:ContentPresenterEx
                             x:Name="HeaderContentPresenter"
                             Grid.Row="0"

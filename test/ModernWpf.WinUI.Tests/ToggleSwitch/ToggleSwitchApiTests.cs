@@ -1567,13 +1567,23 @@ public class ToggleSwitchApiTests
     }
 
     [TestMethod]
-    public void TemplateRootMatchesWinUICommonStylesGrid()
+    public void TemplateRootCarriesWinUICommonStylesGridChrome()
     {
         WpfTestHost.Run(() =>
         {
             TestApplication.EnsureInitialized();
 
-            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch();
+            var background = Brushes.Red;
+            var borderBrush = Brushes.Blue;
+            var borderThickness = new Thickness(2);
+            var cornerRadius = new CornerRadius(6);
+            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch
+            {
+                Background = background,
+                BorderBrush = borderBrush,
+                BorderThickness = borderThickness,
+                CornerRadius = cornerRadius
+            };
             using var host = new TestWindowHost(toggleSwitch, width: 260, height: 120);
             host.UpdateLayout();
 
@@ -1583,6 +1593,11 @@ public class ToggleSwitchApiTests
             Assert.IsInstanceOfType(templateRoot, typeof(Grid));
 
             var templateRootGrid = (Grid)templateRoot;
+            var templateRootChrome = FindNamedDescendant<BorderEx>(toggleSwitch, "TemplateRootChrome");
+            Assert.AreSame(background, templateRootChrome.Background);
+            Assert.AreSame(borderBrush, templateRootChrome.BorderBrush);
+            Assert.AreEqual(borderThickness, templateRootChrome.BorderThickness);
+            Assert.AreEqual(cornerRadius, templateRootChrome.CornerRadius);
             Assert.AreEqual(2, templateRootGrid.RowDefinitions.Count);
             Assert.AreEqual("ContentStates", VisualStateManager.GetVisualStateGroups(templateRootGrid)
                 .OfType<VisualStateGroup>()
