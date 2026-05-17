@@ -51,7 +51,8 @@ namespace ModernWpf.Controls.Primitives
             Size popupSize,
             Size targetSize,
             Point offset,
-            FrameworkElement child = null)
+            FrameworkElement child = null,
+            Rect? exclusionRect = null)
         {
             Matrix transformToDevice = default;
             if (child != null)
@@ -71,6 +72,15 @@ namespace ModernWpf.Controls.Primitives
                     offset,
                     child,
                     transformToDevice);
+
+                if (exclusionRect.HasValue)
+                {
+                    placements[i] = AccountForExclusionRect(
+                        fallbackOrder[i],
+                        placements[i],
+                        popupSize,
+                        exclusionRect.Value);
+                }
             }
 
             return placements;
@@ -157,6 +167,69 @@ namespace ModernWpf.Controls.Primitives
             }
 
             return new CustomPopupPlacement(point, primaryAxis);
+        }
+
+        private static CustomPopupPlacement AccountForExclusionRect(
+            CustomPlacementMode placement,
+            CustomPopupPlacement popupPlacement,
+            Size popupSize,
+            Rect exclusionRect)
+        {
+            var popupRect = new Rect(popupPlacement.Point, popupSize);
+            if (!popupRect.IntersectsWith(exclusionRect))
+            {
+                return popupPlacement;
+            }
+
+            var point = popupPlacement.Point;
+            switch (GetMajorPlacement(placement))
+            {
+                case CustomPlacementMode.Top:
+                    point.Y = exclusionRect.Y - popupSize.Height;
+                    break;
+                case CustomPlacementMode.Bottom:
+                    point.Y = exclusionRect.Y + exclusionRect.Height;
+                    break;
+                case CustomPlacementMode.Left:
+                    point.X = exclusionRect.X - popupSize.Width;
+                    break;
+                case CustomPlacementMode.Right:
+                    point.X = exclusionRect.X + exclusionRect.Width;
+                    break;
+                case CustomPlacementMode.Full:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(placement));
+            }
+
+            return new CustomPopupPlacement(point, popupPlacement.PrimaryAxis);
+        }
+
+        private static CustomPlacementMode GetMajorPlacement(CustomPlacementMode placement)
+        {
+            switch (placement)
+            {
+                case CustomPlacementMode.Top:
+                case CustomPlacementMode.TopEdgeAlignedLeft:
+                case CustomPlacementMode.TopEdgeAlignedRight:
+                    return CustomPlacementMode.Top;
+                case CustomPlacementMode.Bottom:
+                case CustomPlacementMode.BottomEdgeAlignedLeft:
+                case CustomPlacementMode.BottomEdgeAlignedRight:
+                    return CustomPlacementMode.Bottom;
+                case CustomPlacementMode.Left:
+                case CustomPlacementMode.LeftEdgeAlignedTop:
+                case CustomPlacementMode.LeftEdgeAlignedBottom:
+                    return CustomPlacementMode.Left;
+                case CustomPlacementMode.Right:
+                case CustomPlacementMode.RightEdgeAlignedTop:
+                case CustomPlacementMode.RightEdgeAlignedBottom:
+                    return CustomPlacementMode.Right;
+                case CustomPlacementMode.Full:
+                    return CustomPlacementMode.Full;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(placement));
+            }
         }
 
         private static CustomPlacementMode[] GetPlacementFallbackOrder(CustomPlacementMode placement)

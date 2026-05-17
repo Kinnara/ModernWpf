@@ -282,6 +282,83 @@ public class FlyoutBaseApiTests
     }
 
     [TestMethod]
+    public void ShowAtWithOptionsExclusionRectShiftsTargetPointLikeWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var target = new Button { Content = "Target", Width = 120, Height = 36 };
+            var flyout = new Flyout
+            {
+                Content = new TextBlock { Text = "Flyout content" },
+                Placement = FlyoutPlacementMode.Top
+            };
+            var options = new FlyoutShowOptions
+            {
+                Position = new Point(50, 50),
+                ExclusionRect = new Rect(40, 45, 20, 10),
+                Placement = FlyoutPlacementMode.Bottom
+            };
+
+            using var host = new TestWindowHost(target, width: 320, height: 220);
+            host.UpdateLayout();
+
+            flyout.ShowAt(target, options);
+            WpfTestHost.DoEvents();
+
+            Assert.IsTrue(flyout.IsOpen);
+            Assert.AreEqual(new Rect(50, 50, 0, 0), flyout.InternalPopup.PlacementRectangle);
+
+            var placements = flyout.PositionPopup(
+                popupSize: new Size(30, 10),
+                targetSize: new Size(),
+                offset: new Point(),
+                child: null);
+
+            AssertPlacement(placements[0], -15, 5, PopupPrimaryAxis.Horizontal);
+
+            flyout.Hide();
+            WpfTestHost.DoEvents();
+        });
+
+        var exclusionRect = new Rect(-10, -5, 20, 10);
+
+        AssertPlacement(
+            CustomPopupPlacementHelper.PositionPopup(
+                CustomPlacementMode.Top,
+                popupSize: new Size(30, 10),
+                targetSize: new Size(),
+                offset: new Point(),
+                exclusionRect: exclusionRect)[0],
+            -15,
+            -15,
+            PopupPrimaryAxis.Horizontal);
+
+        AssertPlacement(
+            CustomPopupPlacementHelper.PositionPopup(
+                CustomPlacementMode.Right,
+                popupSize: new Size(30, 10),
+                targetSize: new Size(),
+                offset: new Point(),
+                exclusionRect: exclusionRect)[0],
+            10,
+            -5,
+            PopupPrimaryAxis.Vertical);
+
+        AssertPlacement(
+            CustomPopupPlacementHelper.PositionPopup(
+                CustomPlacementMode.Left,
+                popupSize: new Size(30, 10),
+                targetSize: new Size(),
+                offset: new Point(),
+                exclusionRect: exclusionRect)[0],
+            -40,
+            -5,
+            PopupPrimaryAxis.Vertical);
+    }
+
+    [TestMethod]
     public void StagedShowAtWithOptionsPreservesTargetPointLikeWinUISource()
     {
         WpfTestHost.Run(() =>

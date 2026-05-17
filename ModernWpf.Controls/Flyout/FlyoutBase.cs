@@ -314,6 +314,7 @@ namespace ModernWpf.Controls.Primitives
         internal virtual void OnClosed()
         {
             m_isTargetPositionSet = false;
+            m_exclusionRect = null;
             m_hasPlacementOverride = false;
 
             ClearOpenFlyout(this);
@@ -578,7 +579,13 @@ namespace ModernWpf.Controls.Primitives
 
         internal CustomPopupPlacement[] PositionPopup(Size popupSize, Size targetSize, Point offset, FrameworkElement child)
         {
-            return CustomPopupPlacementHelper.PositionPopup((CustomPlacementMode)GetEffectivePlacement(), popupSize, targetSize, offset, child);
+            return CustomPopupPlacementHelper.PositionPopup(
+                (CustomPlacementMode)GetEffectivePlacement(),
+                popupSize,
+                targetSize,
+                offset,
+                child,
+                GetTargetPositionRelativeExclusionRect());
         }
 
         protected void TrackPlacementTarget(FrameworkElement placementTarget)
@@ -665,6 +672,7 @@ namespace ModernWpf.Controls.Primitives
         {
             m_hasPlacementOverride = false;
             m_isTargetPositionSet = false;
+            m_exclusionRect = null;
 
             var showMode = ShowMode;
 
@@ -676,6 +684,8 @@ namespace ModernWpf.Controls.Primitives
                 {
                     SetTargetPosition(showOptions.Position.Value);
                 }
+
+                m_exclusionRect = showOptions.ExclusionRect;
 
                 if (showOptions.Placement != FlyoutPlacementMode.Auto)
                 {
@@ -716,6 +726,18 @@ namespace ModernWpf.Controls.Primitives
             ValidateTargetPosition(targetPosition);
             m_isTargetPositionSet = true;
             m_targetPosition = targetPosition;
+        }
+
+        private Rect? GetTargetPositionRelativeExclusionRect()
+        {
+            if (!m_isTargetPositionSet || !m_exclusionRect.HasValue)
+            {
+                return null;
+            }
+
+            Rect exclusionRect = m_exclusionRect.Value;
+            exclusionRect.Offset(-m_targetPosition.X, -m_targetPosition.Y);
+            return exclusionRect;
         }
 
         private void UpdatePointerMoveAwayTracking()
@@ -893,6 +915,7 @@ namespace ModernWpf.Controls.Primitives
         private bool m_showingAsContextFlyout;
         private bool m_isTargetPositionSet;
         private Point m_targetPosition;
+        private Rect? m_exclusionRect;
         private bool m_hasPlacementOverride;
         private FlyoutPlacementMode m_placementOverride = FlyoutPlacementMode.Top;
         private WeakReference<IInputElement> m_weakRefToPreviousFocus;
