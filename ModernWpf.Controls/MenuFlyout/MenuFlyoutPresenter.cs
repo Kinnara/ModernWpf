@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
@@ -52,6 +53,7 @@ namespace ModernWpf.Controls
         #endregion
 
         internal event EventHandler<DependencyPropertyChangedEventArgs> IsOpenChanged;
+        internal event EventHandler<CancelEventArgs> Closing;
 
         protected override void OnVisualParentChanged(DependencyObject oldParent)
         {
@@ -90,6 +92,18 @@ namespace ModernWpf.Controls
 
         private void OnIsOpenChanged(DependencyPropertyChangedEventArgs e)
         {
+            if (!(bool)e.NewValue)
+            {
+                var args = new CancelEventArgs();
+                Closing?.Invoke(this, args);
+
+                if (args.Cancel)
+                {
+                    SetCurrentValue(IsOpenProperty, true);
+                    return;
+                }
+            }
+
             IsOpenChanged?.Invoke(this, e);
 
             if ((bool)e.NewValue)

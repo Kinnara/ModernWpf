@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -147,6 +148,7 @@ namespace ModernWpf.Controls
                 BindPlacement(presenter);
                 presenter.UpdatePopupAnimation();
                 presenter.Opened += OnPresenterOpened;
+                presenter.Closing += OnPresenterClosing;
                 presenter.Closed += OnPresenterClosed;
                 presenter.IsOpenChanged += OnPresenterIsOpenChanged;
 
@@ -156,18 +158,43 @@ namespace ModernWpf.Controls
 
         private void OnPresenterOpened(object sender, RoutedEventArgs e)
         {
+            m_closeCompleted = false;
+
+            if (m_suppressNextOpened)
+            {
+                m_suppressNextOpened = false;
+                return;
+            }
+
             OnOpened();
+        }
+
+        private void OnPresenterClosing(object sender, CancelEventArgs e)
+        {
+            e.Cancel = OnClosing();
+            if (e.Cancel)
+            {
+                m_suppressNextOpened = true;
+            }
         }
 
         private void OnPresenterClosed(object sender, RoutedEventArgs e)
         {
-            if (!m_presenter.IsOpen)
+            CompleteClose();
+        }
+
+        private void CompleteClose()
+        {
+            if (m_presenter.IsOpen || m_closeCompleted)
             {
-                m_presenter.ClearValue(ContextMenu.PlacementProperty);
-                m_presenter.ClearValue(ContextMenu.PlacementTargetProperty);
-                m_presenter.ClearValue(ContextMenu.PlacementRectangleProperty);
-                m_currentPlacement = null;
+                return;
             }
+
+            m_closeCompleted = true;
+            m_presenter.ClearValue(ContextMenu.PlacementProperty);
+            m_presenter.ClearValue(ContextMenu.PlacementTargetProperty);
+            m_presenter.ClearValue(ContextMenu.PlacementRectangleProperty);
+            m_currentPlacement = null;
 
             OnClosed();
         }
@@ -175,9 +202,16 @@ namespace ModernWpf.Controls
         private void OnPresenterIsOpenChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             UpdateIsOpen();
+
+            if (!(bool)e.NewValue)
+            {
+                CompleteClose();
+            }
         }
 
         private MenuFlyoutPresenter m_presenter;
         private FlyoutPlacementMode? m_currentPlacement;
+        private bool m_suppressNextOpened;
+        private bool m_closeCompleted;
     }
 }

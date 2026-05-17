@@ -248,6 +248,13 @@ namespace ModernWpf.Controls.Primitives
             Opened?.Invoke(this, null);
         }
 
+        internal virtual bool OnClosing()
+        {
+            var args = new FlyoutBaseClosingEventArgs();
+            Closing?.Invoke(this, args);
+            return args.Cancel;
+        }
+
         internal virtual void OnClosed()
         {
             Closed?.Invoke(this, null);
@@ -445,11 +452,8 @@ namespace ModernWpf.Controls.Primitives
 
         private void OnPopupClosing(object sender, CancelEventArgs e)
         {
-            var args = new FlyoutBaseClosingEventArgs();
-            Closing?.Invoke(this, args);
-
-            e.Cancel = args.Cancel;
-            if (args.Cancel)
+            e.Cancel = OnClosing();
+            if (e.Cancel)
             {
                 m_suppressNextOpened = true;
             }
