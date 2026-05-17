@@ -26,6 +26,7 @@ public class PersonPictureApiTests
             Assert.AreEqual(string.Empty, personPicture.BadgeGlyph);
             Assert.AreEqual(0, personPicture.BadgeNumber);
             Assert.IsFalse(personPicture.IsGroup);
+            Assert.IsFalse(personPicture.PreferSmallImage);
             Assert.IsNull(personPicture.ProfilePicture);
             Assert.AreEqual(string.Empty, personPicture.DisplayName);
             Assert.AreEqual(string.Empty, personPicture.Initials);
@@ -38,6 +39,9 @@ public class PersonPictureApiTests
 
             personPicture.IsGroup = true;
             Assert.IsTrue(personPicture.IsGroup);
+
+            personPicture.PreferSmallImage = true;
+            Assert.IsTrue(personPicture.PreferSmallImage);
 
             personPicture.DisplayName = "Some Name";
             Assert.AreEqual("Some Name", personPicture.DisplayName);
@@ -115,13 +119,12 @@ public class PersonPictureApiTests
             using var host = new TestWindowHost(personPicture);
 
             var initialsTextBlock = FindNamedDescendant<TextBlock>(personPicture, "InitialsTextBlock");
-            var placeholderIcon = FindNamedDescendant<ModernWpf.Controls.FontIconFallback>(personPicture, "PlaceholderIcon");
+            var symbolFontFamily = (FontFamily)personPicture.FindResource("SymbolThemeFontFamily");
 
             personPicture.IsGroup = true;
             host.UpdateLayout();
-            Assert.AreEqual(Visibility.Collapsed, initialsTextBlock.Visibility);
-            Assert.AreEqual(Visibility.Visible, placeholderIcon.Visibility);
-            Assert.AreSame(placeholderIcon.FindResource("People"), placeholderIcon.Data);
+            Assert.AreEqual(symbolFontFamily.Source, initialsTextBlock.FontFamily.Source);
+            Assert.AreEqual("\uE716", initialsTextBlock.Text);
 
             personPicture.IsGroup = false;
             personPicture.Initials = "JS";
@@ -131,9 +134,8 @@ public class PersonPictureApiTests
 
             personPicture.Initials = string.Empty;
             host.UpdateLayout();
-            Assert.AreEqual(Visibility.Collapsed, initialsTextBlock.Visibility);
-            Assert.AreEqual(Visibility.Visible, placeholderIcon.Visibility);
-            Assert.AreSame(placeholderIcon.FindResource("Contact"), placeholderIcon.Data);
+            Assert.AreEqual(symbolFontFamily.Source, initialsTextBlock.FontFamily.Source);
+            Assert.AreEqual("\uE77B", initialsTextBlock.Text);
 
             personPicture.FontFamily = new FontFamily("Segoe UI Emoji");
             personPicture.Initials = "\U0001F44D";
@@ -143,9 +145,8 @@ public class PersonPictureApiTests
 
             personPicture.IsGroup = true;
             host.UpdateLayout();
-            Assert.AreEqual(Visibility.Collapsed, initialsTextBlock.Visibility);
-            Assert.AreEqual(Visibility.Visible, placeholderIcon.Visibility);
-            Assert.AreSame(placeholderIcon.FindResource("People"), placeholderIcon.Data);
+            Assert.AreEqual(symbolFontFamily.Source, initialsTextBlock.FontFamily.Source);
+            Assert.AreEqual("\uE716", initialsTextBlock.Text);
         });
     }
 
@@ -214,8 +215,8 @@ public class PersonPictureApiTests
             using var host = new TestWindowHost(personPicture);
 
             var initialsTextBlock = FindNamedDescendant<TextBlock>(personPicture, "InitialsTextBlock");
-            var placeholderIcon = FindNamedDescendant<ModernWpf.Controls.FontIconFallback>(personPicture, "PlaceholderIcon");
             var personPictureEllipse = FindNamedDescendant<Ellipse>(personPicture, "PersonPictureEllipse");
+            var symbolFontFamily = (FontFamily)personPicture.FindResource("SymbolThemeFontFamily");
 
             Assert.AreEqual("AL", initialsTextBlock.Text);
 
@@ -236,9 +237,9 @@ public class PersonPictureApiTests
             personPicture.DisplayName = string.Empty;
             host.UpdateLayout();
 
-            Assert.AreEqual(Visibility.Collapsed, initialsTextBlock.Visibility);
-            Assert.AreEqual(Visibility.Visible, placeholderIcon.Visibility);
-            Assert.AreSame(placeholderIcon.FindResource("Contact"), placeholderIcon.Data);
+            Assert.AreEqual(Visibility.Visible, initialsTextBlock.Visibility);
+            Assert.AreEqual(symbolFontFamily.Source, initialsTextBlock.FontFamily.Source);
+            Assert.AreEqual("\uE77B", initialsTextBlock.Text);
             Assert.IsNull(personPictureEllipse.Fill);
         });
     }
@@ -262,6 +263,8 @@ public class PersonPictureApiTests
 
             var rootGrid = FindNamedDescendant<Grid>(personPicture, "RootGrid");
             AssertStateSetter(rootGrid, "CommonStates", "Photo", "PersonPictureEllipse.Fill");
+            AssertStateSetter(rootGrid, "CommonStates", "NoPhotoOrInitials", "InitialsTextBlock.FontFamily", "InitialsTextBlock.Text");
+            AssertStateSetter(rootGrid, "CommonStates", "Group", "InitialsTextBlock.FontFamily", "InitialsTextBlock.Text");
             var badgeWithImageSource = AssertStateSetter(
                 rootGrid,
                 "BadgeStates",
@@ -304,11 +307,14 @@ public class PersonPictureApiTests
             Assert.IsNotNull(FindNamedDescendant<TextBlock>(personPicture, "InitialsTextBlock"));
             Assert.IsNotNull(FindNamedDescendant<FrameworkElement>(personPicture, "PersonPictureEllipse"));
             Assert.IsNotNull(FindNamedDescendant<Grid>(personPicture, "BadgeGrid"));
+            Assert.IsFalse(VisualTreeTestHelper.EnumerateDescendants(personPicture)
+                .OfType<FrameworkElement>()
+                .Any(element => element.Name == "PlaceholderIcon"));
         });
     }
 
     [TestMethod]
-    public void VerifyFinalWinUI2PersonPictureResources()
+    public void VerifyWinUI3PersonPictureTemplateAndResources()
     {
         WpfTestHost.Run(() =>
         {
@@ -325,6 +331,9 @@ public class PersonPictureApiTests
             Assert.AreEqual(96.0, personPicture.Width);
             Assert.AreEqual(96.0, personPicture.Height);
             AssertBrushEquals((Brush)personPicture.TryFindResource("PersonPictureForegroundThemeBrush"), personPicture.Foreground);
+            AssertBrushEquals((Brush)personPicture.TryFindResource("PersonPictureEllipseFillThemeBrush"), personPicture.Background);
+            AssertBrushEquals((Brush)personPicture.TryFindResource("PersonPictureEllipseFillStrokeBrush"), personPicture.BorderBrush);
+            Assert.AreEqual((double)personPicture.TryFindResource("PersonPictureEllipseStrokeThickness"), personPicture.BorderThickness.Left);
             Assert.AreEqual(
                 ((FontFamily)personPicture.TryFindResource("ContentControlThemeFontFamily")).Source,
                 personPicture.FontFamily.Source);

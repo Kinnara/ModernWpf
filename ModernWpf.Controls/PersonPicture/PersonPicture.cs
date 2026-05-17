@@ -397,7 +397,7 @@ namespace ModernWpf.Controls
             {
                 UpdateIfReady();
             }
-            // No additional action required for s_PreferSmallImageProperty
+            // No additional action required for PreferSmallImageProperty.
         }
 
         // DependencyProperty changed event handlers

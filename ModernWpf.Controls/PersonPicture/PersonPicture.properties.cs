@@ -169,6 +169,29 @@ namespace ModernWpf.Controls
 
         #endregion
 
+        #region PreferSmallImage
+
+        public static readonly DependencyProperty PreferSmallImageProperty =
+            DependencyProperty.Register(
+                nameof(PreferSmallImage),
+                typeof(bool),
+                typeof(PersonPicture),
+                new PropertyMetadata(false, OnPreferSmallImagePropertyChanged));
+
+        public bool PreferSmallImage
+        {
+            get => (bool)GetValue(PreferSmallImageProperty);
+            set => SetValue(PreferSmallImageProperty, value);
+        }
+
+        private static void OnPreferSmallImagePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        {
+            var owner = (PersonPicture)sender;
+            owner.PrivateOnPropertyChanged(args);
+        }
+
+        #endregion
+
         #region ProfilePicture
 
         public static readonly DependencyProperty ProfilePictureProperty =
