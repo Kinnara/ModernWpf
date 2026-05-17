@@ -1,5 +1,6 @@
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
+using System.Windows.Automation;
 using ModernWpf.Controls;
 
 namespace ModernWpf.Automation.Peers
@@ -34,12 +35,26 @@ namespace ModernWpf.Automation.Peers
 
         protected override AutomationControlType GetAutomationControlTypeCore()
         {
-            return AutomationControlType.Group;
+            return AutomationControlType.Menu;
         }
 
         protected override string GetClassNameCore()
         {
             return nameof(PipsPager);
+        }
+
+        protected override string GetNameCore()
+        {
+            var name = base.GetNameCore();
+            return string.IsNullOrEmpty(name) ? AutomationProperties.GetName(Owner) : name;
+        }
+
+        internal void RaiseSelectionChanged()
+        {
+            if (AutomationPeer.ListenerExists(AutomationEvents.SelectionPatternOnInvalidated))
+            {
+                RaiseAutomationEvent(AutomationEvents.SelectionPatternOnInvalidated);
+            }
         }
     }
 }

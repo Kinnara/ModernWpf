@@ -5,39 +5,165 @@
     xmlns:local="clr-namespace:ModernWpf.Controls"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
+    <sys:Double x:Key="PipsPagerButtonWidth">20</sys:Double>
+    <sys:Double x:Key="PipsPagerButtonHeight">12</sys:Double>
     <sys:Double x:Key="PipsPagerHorizontalOrientationButtonWidth">12</sys:Double>
-    <sys:Double x:Key="PipsPagerHorizontalOrientationButtonHeight">20</sys:Double>
-    <sys:Double x:Key="PipsPagerVerticalOrientationButtonWidth">20</sys:Double>
+    <sys:Double x:Key="PipsPagerHorizontalOrientationButtonHeight">24</sys:Double>
+    <sys:Double x:Key="PipsPagerVerticalOrientationButtonWidth">24</sys:Double>
     <sys:Double x:Key="PipsPagerVerticalOrientationButtonHeight">12</sys:Double>
+    <Thickness x:Key="PipsPagerButtonBorderThickness">1</Thickness>
+    <Thickness x:Key="PipsPagerNavigationButtonBorderThickness">1</Thickness>
+    <sys:String x:Key="PipsPagerSelectedGlyph">&#xEA3B;</sys:String>
+    <sys:String x:Key="PipsPagerNormalGlyph">&#xEA3B;</sys:String>
+    <sys:String x:Key="PipsPagerPreviousPageButtonGlyph">&#xEDDB;</sys:String>
+    <sys:String x:Key="PipsPagerNextPageButtonGlyph">&#xEDDC;</sys:String>
+    <sys:Double x:Key="PipsPagerNavigationButtonHeight">24</sys:Double>
+    <sys:Double x:Key="PipsPagerNavigationButtonWidth">24</sys:Double>
+    <sys:Double x:Key="PipsPagerNavigationButtonFontSize">8</sys:Double>
+    <sys:Double x:Key="PipsPagerSelectedGlyphFontSize">6</sys:Double>
+    <sys:Double x:Key="PipsPagerNormalGlyphFontSize">4</sys:Double>
+    <sys:Double x:Key="PipsPagerNavigationButtonScalePressed">0.875</sys:Double>
 
-    <Style x:Key="DefaultPipsPagerNavigationButtonStyle" TargetType="Button">
-        <Setter Property="MinWidth" Value="20" />
-        <Setter Property="MinHeight" Value="20" />
-        <Setter Property="Padding" Value="0" />
-        <Setter Property="Margin" Value="2" />
+    <Style x:Key="PipsPagerNavigationButtonBaseStyle" TargetType="Button">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="Background" Value="{DynamicResource PipsPagerNavigationButtonBackground}" />
+        <Setter Property="Foreground" Value="{DynamicResource PipsPagerNavigationButtonForeground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource PipsPagerNavigationButtonBorderBrush}" />
+        <Setter Property="BorderThickness" Value="{StaticResource PipsPagerNavigationButtonBorderThickness}" />
         <Setter Property="FontFamily" Value="{DynamicResource SymbolThemeFontFamily}" />
-    </Style>
-
-    <Style x:Key="DefaultPipsPagerPipButtonStyle" TargetType="Button">
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="BorderBrush" Value="Transparent" />
-        <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="Padding" Value="0" />
-        <Setter Property="Margin" Value="2" />
+        <Setter Property="FontSize" Value="{StaticResource PipsPagerNavigationButtonFontSize}" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
+        <Setter Property="ui:FocusVisualHelper.UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
+        <Setter Property="ui:FocusVisualHelper.FocusVisualMargin" Value="0" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Width" Value="{StaticResource PipsPagerNavigationButtonWidth}" />
+        <Setter Property="Height" Value="{StaticResource PipsPagerNavigationButtonHeight}" />
+        <Setter Property="ui:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Grid
+                    <ui:GridEx
                         x:Name="RootGrid"
-                        Width="{StaticResource PipsPagerHorizontalOrientationButtonWidth}"
-                        Height="{StaticResource PipsPagerHorizontalOrientationButtonHeight}"
-                        Background="{TemplateBinding Background}">
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(ui:ControlHelper.CornerRadius)}">
                         <VisualStateManager.CustomVisualStateManager>
                             <ui:VisualStateManagerEx />
                         </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <ui:VisualStateEx x:Name="PointerOver">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="RootGrid.Background" Value="{DynamicResource PipsPagerNavigationButtonBackgroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="RootGrid.BorderBrush" Value="{DynamicResource PipsPagerNavigationButtonBorderBrushPointerOver}" />
+                                        <ui:VisualStateSetter Target="Content.Foreground" Value="{DynamicResource PipsPagerNavigationButtonForegroundPointerOver}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="Pressed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="RootGrid.Background" Value="{DynamicResource PipsPagerNavigationButtonBackgroundPressed}" />
+                                        <ui:VisualStateSetter Target="RootGrid.BorderBrush" Value="{DynamicResource PipsPagerNavigationButtonBorderBrushPressed}" />
+                                        <ui:VisualStateSetter Target="Content.Foreground" Value="{DynamicResource PipsPagerNavigationButtonForegroundPressed}" />
+                                        <ui:VisualStateSetter Target="ScaleTransform.ScaleX" Value="{StaticResource PipsPagerNavigationButtonScalePressed}" />
+                                        <ui:VisualStateSetter Target="ScaleTransform.ScaleY" Value="{StaticResource PipsPagerNavigationButtonScalePressed}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="Disabled">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="RootGrid.Background" Value="{DynamicResource PipsPagerNavigationButtonBackgroundDisabled}" />
+                                        <ui:VisualStateSetter Target="RootGrid.BorderBrush" Value="{DynamicResource PipsPagerNavigationButtonBorderBrushDisabled}" />
+                                        <ui:VisualStateSetter Target="Content.Foreground" Value="{DynamicResource PipsPagerNavigationButtonForegroundDisabled}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Border RenderTransformOrigin="0.5,0.5">
+                            <Border.RenderTransform>
+                                <ScaleTransform x:Name="ScaleTransform" ScaleX="1" ScaleY="1" />
+                            </Border.RenderTransform>
+                            <ui:FontIcon
+                                x:Name="Content"
+                                FontSize="{TemplateBinding FontSize}"
+                                FontFamily="{TemplateBinding FontFamily}"
+                                Glyph="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Content}"
+                                Foreground="{TemplateBinding Foreground}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        </Border>
+                    </ui:GridEx>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="PipsPagerPreviousPageButtonStyle" TargetType="Button" BasedOn="{StaticResource PipsPagerNavigationButtonBaseStyle}">
+        <Setter Property="Content" Value="{StaticResource PipsPagerPreviousPageButtonGlyph}" />
+    </Style>
+
+    <Style x:Key="PipsPagerNextPageButtonStyle" TargetType="Button" BasedOn="{StaticResource PipsPagerNavigationButtonBaseStyle}">
+        <Setter Property="Content" Value="{StaticResource PipsPagerNextPageButtonGlyph}" />
+    </Style>
+
+    <Style x:Key="PipsPagerButtonBaseStyle" TargetType="Button">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="Background" Value="{DynamicResource PipsPagerSelectionIndicatorBackground}" />
+        <Setter Property="Foreground" Value="{DynamicResource PipsPagerSelectionIndicatorForeground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource PipsPagerSelectionIndicatorBorderBrush}" />
+        <Setter Property="BorderThickness" Value="{StaticResource PipsPagerButtonBorderThickness}" />
+        <Setter Property="FontFamily" Value="{DynamicResource SymbolThemeFontFamily}" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
+        <Setter Property="ui:FocusVisualHelper.UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
+        <Setter Property="ui:FocusVisualHelper.FocusVisualMargin" Value="0" />
+        <Setter Property="Content" Value="{StaticResource PipsPagerNormalGlyph}" />
+        <Setter Property="FontSize" Value="{StaticResource PipsPagerNormalGlyphFontSize}" />
+        <Setter Property="ui:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <ui:GridEx
+                        x:Name="RootGrid"
+                        Width="{StaticResource PipsPagerHorizontalOrientationButtonWidth}"
+                        Height="{StaticResource PipsPagerHorizontalOrientationButtonHeight}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(ui:ControlHelper.CornerRadius)}">
+                        <VisualStateManager.CustomVisualStateManager>
+                            <ui:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <ui:VisualStateEx x:Name="PointerOver">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="RootGrid.Background" Value="{DynamicResource PipsPagerSelectionIndicatorBackgroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="RootGrid.BorderBrush" Value="{DynamicResource PipsPagerSelectionIndicatorBorderBrushPointerOver}" />
+                                        <ui:VisualStateSetter Target="Content.Foreground" Value="{DynamicResource PipsPagerSelectionIndicatorForegroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="Content.FontSize" Value="{StaticResource PipsPagerSelectedGlyphFontSize}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="Pressed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="RootGrid.Background" Value="{DynamicResource PipsPagerSelectionIndicatorBackgroundPressed}" />
+                                        <ui:VisualStateSetter Target="RootGrid.BorderBrush" Value="{DynamicResource PipsPagerSelectionIndicatorBorderBrushPressed}" />
+                                        <ui:VisualStateSetter Target="Content.Foreground" Value="{DynamicResource PipsPagerSelectionIndicatorForegroundPressed}" />
+                                        <ui:VisualStateSetter Target="Content.FontSize" Value="{StaticResource PipsPagerNormalGlyphFontSize}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="Disabled">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="RootGrid.Background" Value="{DynamicResource PipsPagerSelectionIndicatorBackgroundDisabled}" />
+                                        <ui:VisualStateSetter Target="RootGrid.BorderBrush" Value="{DynamicResource PipsPagerSelectionIndicatorBorderBrushDisabled}" />
+                                        <ui:VisualStateSetter Target="Content.Foreground" Value="{DynamicResource PipsPagerSelectionIndicatorForegroundDisabled}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
                             <VisualStateGroup x:Name="OrientationStates">
                                 <ui:VisualStateEx x:Name="HorizontalOrientation" />
                                 <ui:VisualStateEx x:Name="VerticalOrientation">
@@ -48,90 +174,110 @@
                                 </ui:VisualStateEx>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <ContentPresenter
-                            Content="{TemplateBinding Content}"
+                        <ui:FontIcon
+                            x:Name="Content"
+                            FontSize="{TemplateBinding FontSize}"
+                            FontFamily="{TemplateBinding FontFamily}"
+                            Glyph="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Content}"
+                            Foreground="{TemplateBinding Foreground}"
                             HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
-                    </Grid>
+                    </ui:GridEx>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
 
-    <Style x:Key="DefaultPipsPagerSelectedPipButtonStyle" TargetType="Button" BasedOn="{StaticResource DefaultPipsPagerPipButtonStyle}">
-        <Setter Property="FontWeight" Value="Bold" />
+    <Style x:Key="PipsPagerSelectedPipButtonStyle" TargetType="Button" BasedOn="{StaticResource PipsPagerButtonBaseStyle}">
+        <Setter Property="Content" Value="{StaticResource PipsPagerSelectedGlyph}" />
+        <Setter Property="FontSize" Value="{StaticResource PipsPagerSelectedGlyphFontSize}" />
+        <Setter Property="Background" Value="{DynamicResource PipsPagerSelectionIndicatorBackgroundSelected}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource PipsPagerSelectionIndicatorBorderBrushSelected}" />
+        <Setter Property="Foreground" Value="{DynamicResource PipsPagerSelectionIndicatorForegroundSelected}" />
+    </Style>
+
+    <Style x:Key="PipsPagerNormalPipButtonStyle" TargetType="Button" BasedOn="{StaticResource PipsPagerButtonBaseStyle}">
+        <Setter Property="Content" Value="{StaticResource PipsPagerNormalGlyph}" />
+        <Setter Property="FontSize" Value="{StaticResource PipsPagerNormalGlyphFontSize}" />
     </Style>
 
     <Style TargetType="local:PipsPager">
-        <Setter Property="SelectedPipStyle" Value="{StaticResource DefaultPipsPagerSelectedPipButtonStyle}" />
-        <Setter Property="NormalPipStyle" Value="{StaticResource DefaultPipsPagerPipButtonStyle}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="PreviousButtonStyle" Value="{StaticResource PipsPagerPreviousPageButtonStyle}" />
+        <Setter Property="NextButtonStyle" Value="{StaticResource PipsPagerNextPageButtonStyle}" />
+        <Setter Property="SelectedPipStyle" Value="{StaticResource PipsPagerSelectedPipButtonStyle}" />
+        <Setter Property="NormalPipStyle" Value="{StaticResource PipsPagerNormalPipButtonStyle}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:PipsPager">
                     <StackPanel
-                        x:Name="PART_RootPanel"
-                        Orientation="{TemplateBinding Orientation}">
+                        x:Name="RootPanel"
+                        Orientation="{TemplateBinding Orientation}"
+                        Background="{TemplateBinding Background}">
                         <VisualStateManager.CustomVisualStateManager>
                             <ui:VisualStateManagerEx />
                         </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="PreviousPageButtonVisibilityStates">
-                                <ui:VisualStateEx x:Name="PreviousPageButtonVisible" />
+                                <VisualState x:Name="PreviousPageButtonVisible" />
                                 <ui:VisualStateEx x:Name="PreviousPageButtonHidden">
                                     <ui:VisualStateEx.Setters>
-                                        <ui:VisualStateSetter Target="PART_PreviousButton.Opacity" Value="0" />
+                                        <ui:VisualStateSetter Target="PreviousPageButton.Opacity" Value="0" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                                 <ui:VisualStateEx x:Name="PreviousPageButtonCollapsed">
                                     <ui:VisualStateEx.Setters>
-                                        <ui:VisualStateSetter Target="PART_PreviousButton.Visibility" Value="Collapsed" />
+                                        <ui:VisualStateSetter Target="PreviousPageButton.Visibility" Value="Collapsed" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="PreviousPageButtonIsEnabledStates">
-                                <ui:VisualStateEx x:Name="PreviousPageButtonEnabled" />
+                                <VisualState x:Name="PreviousPageButtonEnabled" />
                                 <ui:VisualStateEx x:Name="PreviousPageButtonDisabled">
                                     <ui:VisualStateEx.Setters>
-                                        <ui:VisualStateSetter Target="PART_PreviousButton.IsEnabled" Value="False" />
+                                        <ui:VisualStateSetter Target="PreviousPageButton.IsEnabled" Value="False" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="NextPageButtonVisibilityStates">
-                                <ui:VisualStateEx x:Name="NextPageButtonVisible" />
+                                <VisualState x:Name="NextPageButtonVisible" />
                                 <ui:VisualStateEx x:Name="NextPageButtonHidden">
                                     <ui:VisualStateEx.Setters>
-                                        <ui:VisualStateSetter Target="PART_NextButton.Opacity" Value="0" />
+                                        <ui:VisualStateSetter Target="NextPageButton.Opacity" Value="0" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                                 <ui:VisualStateEx x:Name="NextPageButtonCollapsed">
                                     <ui:VisualStateEx.Setters>
-                                        <ui:VisualStateSetter Target="PART_NextButton.Visibility" Value="Collapsed" />
+                                        <ui:VisualStateSetter Target="NextPageButton.Visibility" Value="Collapsed" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="NextPageButtonIsEnabledStates">
-                                <ui:VisualStateEx x:Name="NextPageButtonEnabled" />
+                                <VisualState x:Name="NextPageButtonEnabled" />
                                 <ui:VisualStateEx x:Name="NextPageButtonDisabled">
                                     <ui:VisualStateEx.Setters>
-                                        <ui:VisualStateSetter Target="PART_NextButton.IsEnabled" Value="False" />
+                                        <ui:VisualStateSetter Target="NextPageButton.IsEnabled" Value="False" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="RootPanelOrientationStates">
-                                <ui:VisualStateEx x:Name="VerticalOrientationView" />
+                                <VisualState x:Name="VerticalOrientationView" />
                                 <ui:VisualStateEx x:Name="HorizontalOrientationView">
                                     <ui:VisualStateEx.Setters>
-                                        <ui:VisualStateSetter Target="PART_RootPanel.Orientation" Value="Horizontal" />
-                                        <ui:VisualStateSetter Target="PART_PreviousButton.(ToolTipService.Placement)" Value="Left" />
-                                        <ui:VisualStateSetter Target="PART_PreviousButton.RenderTransformOrigin" Value="0.5,0.5" />
-                                        <ui:VisualStateSetter Target="PART_PreviousButton.RenderTransform">
+                                        <ui:VisualStateSetter Target="RootPanel.Orientation" Value="Horizontal" />
+                                        <ui:VisualStateSetter Target="PreviousPageButton.(ToolTipService.Placement)" Value="Left" />
+                                        <ui:VisualStateSetter Target="PreviousPageButton.RenderTransformOrigin" Value="0.5,0.5" />
+                                        <ui:VisualStateSetter Target="PreviousPageButton.RenderTransform">
                                             <ui:VisualStateSetter.Value>
                                                 <RotateTransform Angle="-90" />
                                             </ui:VisualStateSetter.Value>
                                         </ui:VisualStateSetter>
-                                        <ui:VisualStateSetter Target="PART_NextButton.(ToolTipService.Placement)" Value="Right" />
-                                        <ui:VisualStateSetter Target="PART_NextButton.RenderTransformOrigin" Value="0.5,0.5" />
-                                        <ui:VisualStateSetter Target="PART_NextButton.RenderTransform">
+                                        <ui:VisualStateSetter Target="NextPageButton.(ToolTipService.Placement)" Value="Right" />
+                                        <ui:VisualStateSetter Target="NextPageButton.RenderTransformOrigin" Value="0.5,0.5" />
+                                        <ui:VisualStateSetter Target="NextPageButton.RenderTransform">
                                             <ui:VisualStateSetter.Value>
                                                 <RotateTransform Angle="-90" />
                                             </ui:VisualStateSetter.Value>
@@ -141,18 +287,38 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Button
-                            x:Name="PART_PreviousButton"
-                            Content="&#xEDDB;"
-                            Style="{StaticResource DefaultPipsPagerNavigationButtonStyle}"
+                            x:Name="PreviousPageButton"
+                            ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=(AutomationProperties.Name)}"
                             ToolTipService.Placement="Top"
-                            AutomationProperties.Name="Previous page" />
-                        <StackPanel x:Name="PART_PipsPanel" Orientation="{TemplateBinding Orientation}" />
+                            Style="{TemplateBinding PreviousButtonStyle}"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
+                        <ScrollViewer
+                            x:Name="PipsPagerScrollViewer"
+                            VerticalScrollBarVisibility="Hidden"
+                            HorizontalScrollBarVisibility="Hidden"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                            <local:ItemsRepeater
+                                x:Name="PipsPagerItemsRepeater"
+                                ItemsSource="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.PipsPagerItems}">
+                                <local:ItemsRepeater.Layout>
+                                    <local:StackLayout Orientation="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Orientation}" />
+                                </local:ItemsRepeater.Layout>
+                                <local:ItemsRepeater.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button />
+                                    </DataTemplate>
+                                </local:ItemsRepeater.ItemTemplate>
+                            </local:ItemsRepeater>
+                        </ScrollViewer>
                         <Button
-                            x:Name="PART_NextButton"
-                            Content="&#xEDDC;"
-                            Style="{StaticResource DefaultPipsPagerNavigationButtonStyle}"
+                            x:Name="NextPageButton"
+                            ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=(AutomationProperties.Name)}"
                             ToolTipService.Placement="Bottom"
-                            AutomationProperties.Name="Next page" />
+                            Style="{TemplateBinding NextButtonStyle}"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
                     </StackPanel>
                 </ControlTemplate>
             </Setter.Value>

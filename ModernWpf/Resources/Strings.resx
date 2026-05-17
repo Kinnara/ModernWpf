@@ -185,6 +185,22 @@
     <value>Info message, severity warning</value>
     <comment>Name used to announce severity warning to users.</comment>
   </data>
+  <data name="PipsPagerNameText" xml:space="preserve">
+    <value>Pager</value>
+    <comment>Automation name of the PipsPager control.</comment>
+  </data>
+  <data name="PipsPagerNextPageButtonText" xml:space="preserve">
+    <value>Next Page</value>
+    <comment>Automation name of the PipsPager next-page button.</comment>
+  </data>
+  <data name="PipsPagerPageText" xml:space="preserve">
+    <value>Page</value>
+    <comment>Automation name prefix for a PipsPager page button.</comment>
+  </data>
+  <data name="PipsPagerPreviousPageButtonText" xml:space="preserve">
+    <value>Previous Page</value>
+    <comment>Automation name of the PipsPager previous-page button.</comment>
+  </data>
   <data name="ToggleSwitchOff" xml:space="preserve">
     <value>Off</value>
     <comment>Default text for "Off" for ToggleSwitch.</comment>

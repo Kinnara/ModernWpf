@@ -1397,6 +1397,35 @@
     <SolidColorBrush x:Key="RefreshVisualizerForeground" Color="Black" />
     <SolidColorBrush x:Key="RefreshVisualizerBackground" Color="Transparent" />
 
+    <!-- Resources for PipsPager -->
+    <m:StaticResource x:Key="PipsPagerSelectionIndicatorBackground" ResourceKey="ControlFillColorTransparentBrush" />
+    <m:StaticResource x:Key="PipsPagerSelectionIndicatorBackgroundPointerOver" ResourceKey="ControlFillColorTransparentBrush" />
+    <m:StaticResource x:Key="PipsPagerSelectionIndicatorBackgroundPressed" ResourceKey="ControlFillColorTransparentBrush" />
+    <m:StaticResource x:Key="PipsPagerSelectionIndicatorBackgroundSelected" ResourceKey="ControlFillColorTransparentBrush" />
+    <m:StaticResource x:Key="PipsPagerSelectionIndicatorBackgroundDisabled" ResourceKey="ControlFillColorTransparentBrush" />
+    <m:StaticResource x:Key="PipsPagerSelectionIndicatorBorderBrush" ResourceKey="ControlFillColorTransparentBrush" />
+    <m:StaticResource x:Key="PipsPagerSelectionIndicatorBorderBrushPointerOver" ResourceKey="ControlFillColorTransparentBrush" />
+    <m:StaticResource x:Key="PipsPagerSelectionIndicatorBorderBrushPressed" ResourceKey="ControlFillColorTransparentBrush" />
+    <m:StaticResource x:Key="PipsPagerSelectionIndicatorBorderBrushSelected" ResourceKey="ControlFillColorTransparentBrush" />
+    <m:StaticResource x:Key="PipsPagerSelectionIndicatorBorderBrushDisabled" ResourceKey="ControlFillColorTransparentBrush" />
+    <m:StaticResource x:Key="PipsPagerSelectionIndicatorForeground" ResourceKey="ControlStrongFillColorDefaultBrush" />
+    <m:StaticResource x:Key="PipsPagerSelectionIndicatorForegroundPointerOver" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="PipsPagerSelectionIndicatorForegroundPressed" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="PipsPagerSelectionIndicatorForegroundSelected" ResourceKey="ControlStrongFillColorDefaultBrush" />
+    <m:StaticResource x:Key="PipsPagerSelectionIndicatorForegroundDisabled" ResourceKey="ControlStrongFillColorDisabledBrush" />
+    <m:StaticResource x:Key="PipsPagerNavigationButtonBackground" ResourceKey="ControlFillColorTransparentBrush" />
+    <m:StaticResource x:Key="PipsPagerNavigationButtonBackgroundPointerOver" ResourceKey="ControlFillColorTransparentBrush" />
+    <m:StaticResource x:Key="PipsPagerNavigationButtonBackgroundPressed" ResourceKey="ControlFillColorTransparentBrush" />
+    <m:StaticResource x:Key="PipsPagerNavigationButtonBackgroundDisabled" ResourceKey="ControlFillColorTransparentBrush" />
+    <m:StaticResource x:Key="PipsPagerNavigationButtonBorderBrush" ResourceKey="ControlFillColorTransparentBrush" />
+    <m:StaticResource x:Key="PipsPagerNavigationButtonBorderBrushPointerOver" ResourceKey="ControlFillColorTransparentBrush" />
+    <m:StaticResource x:Key="PipsPagerNavigationButtonBorderBrushPressed" ResourceKey="ControlFillColorTransparentBrush" />
+    <m:StaticResource x:Key="PipsPagerNavigationButtonBorderBrushDisabled" ResourceKey="ControlFillColorTransparentBrush" />
+    <m:StaticResource x:Key="PipsPagerNavigationButtonForeground" ResourceKey="ControlStrongFillColorDefaultBrush" />
+    <m:StaticResource x:Key="PipsPagerNavigationButtonForegroundPointerOver" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="PipsPagerNavigationButtonForegroundPressed" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="PipsPagerNavigationButtonForegroundDisabled" ResourceKey="ControlStrongFillColorDisabledBrush" />
+
     <!-- Resources for RadioButton -->
     <sys:Double x:Key="RadioButtonBorderThemeThickness">1</sys:Double>
     <m:StaticResource x:Key="RadioButtonForeground" ResourceKey="TextFillColorPrimaryBrush" />

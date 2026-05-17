@@ -34,6 +34,7 @@ public class PipsPagerApiTests
             Assert.IsNull(pipsPager.NextButtonStyle);
             Assert.IsNull(pipsPager.SelectedPipStyle);
             Assert.IsNull(pipsPager.NormalPipStyle);
+            Assert.AreEqual(PipsPagerWrapMode.None, pipsPager.WrapMode);
             Assert.IsNotNull(pipsPager.TemplateSettings);
         });
     }
@@ -58,7 +59,8 @@ public class PipsPagerApiTests
                 PreviousButtonStyle = previousButtonStyle,
                 NextButtonStyle = nextButtonStyle,
                 SelectedPipStyle = selectedPipStyle,
-                NormalPipStyle = normalPipStyle
+                NormalPipStyle = normalPipStyle,
+                WrapMode = PipsPagerWrapMode.Wrap
             };
 
             Assert.AreEqual(10, pipsPager.NumberOfPages);
@@ -71,6 +73,7 @@ public class PipsPagerApiTests
             Assert.AreSame(nextButtonStyle, pipsPager.NextButtonStyle);
             Assert.AreSame(selectedPipStyle, pipsPager.SelectedPipStyle);
             Assert.AreSame(normalPipStyle, pipsPager.NormalPipStyle);
+            Assert.AreEqual(PipsPagerWrapMode.Wrap, pipsPager.WrapMode);
         });
     }
 
@@ -88,6 +91,8 @@ public class PipsPagerApiTests
 
             var peer = FrameworkElementAutomationPeer.CreatePeerForElement(pipsPager);
             Assert.IsInstanceOfType(peer, typeof(ISelectionProvider));
+            Assert.AreEqual(AutomationControlType.Menu, peer.GetAutomationControlType());
+            Assert.AreEqual("Pager", peer.GetName());
             var selectionPeer = (ISelectionProvider)peer;
 
             Assert.IsFalse(selectionPeer.CanSelectMultiple);
@@ -113,6 +118,7 @@ public class PipsPagerApiTests
 
             for (var i = 0; i < buttons.Count; i++)
             {
+                Assert.AreEqual($"Page {i + 1}", AutomationProperties.GetName(buttons[i]));
                 Assert.AreEqual(i + 1, buttons[i].GetValue(AutomationProperties.PositionInSetProperty));
                 Assert.AreEqual(5, buttons[i].GetValue(AutomationProperties.SizeOfSetProperty));
             }
@@ -162,7 +168,7 @@ public class PipsPagerApiTests
     }
 
     [TestMethod]
-    public void VisiblePipWindowTracksSelectedPage()
+    public void PipItemsFollowWinUISourceCollectionShape()
     {
         WpfTestHost.Run(() =>
         {
@@ -173,14 +179,27 @@ public class PipsPagerApiTests
                 SelectedPageIndex = 8
             };
 
+            using var host = new TestWindowHost(pipsPager, width: 300, height: 120);
+
             CollectionAssert.AreEqual(
-                new[] { 5, 6, 7, 8, 9 },
+                Enumerable.Range(1, 10).ToArray(),
                 pipsPager.TemplateSettings.PipsPagerItems.ToArray());
 
             pipsPager.SelectedPageIndex = 1;
 
             CollectionAssert.AreEqual(
-                new[] { 0, 1, 2, 3, 4 },
+                Enumerable.Range(1, 10).ToArray(),
+                pipsPager.TemplateSettings.PipsPagerItems.ToArray());
+
+            var scrollViewer = FindNamedDescendant<ScrollViewer>(pipsPager, "PipsPagerScrollViewer");
+            Assert.AreEqual(60.0, scrollViewer.MaxWidth);
+
+            pipsPager.NumberOfPages = -1;
+            pipsPager.SelectedPageIndex = 10;
+            host.UpdateLayout();
+
+            CollectionAssert.AreEqual(
+                Enumerable.Range(1, 11).ToArray(),
                 pipsPager.TemplateSettings.PipsPagerItems.ToArray());
         });
     }
@@ -199,8 +218,8 @@ public class PipsPagerApiTests
 
             using var host = new TestWindowHost(pipsPager, width: 300, height: 120);
 
-            var nextButton = GetNamedButton(pipsPager, "Next page");
-            var previousButton = GetNamedButton(pipsPager, "Previous page");
+            var nextButton = GetNamedButton(pipsPager, "Next Page");
+            var previousButton = GetNamedButton(pipsPager, "Previous Page");
 
             Assert.IsFalse(previousButton.IsEnabled);
             Assert.IsTrue(nextButton.IsEnabled);
@@ -220,6 +239,41 @@ public class PipsPagerApiTests
     }
 
     [TestMethod]
+    public void NavigationButtonsWrapWhenWrapModeIsEnabled()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var pipsPager = new ModernWpf.Controls.PipsPager
+            {
+                NumberOfPages = 3,
+                PreviousButtonVisibility = PipsPagerButtonVisibility.Visible,
+                NextButtonVisibility = PipsPagerButtonVisibility.Visible,
+                WrapMode = PipsPagerWrapMode.Wrap
+            };
+
+            using var host = new TestWindowHost(pipsPager, width: 300, height: 120);
+
+            var previousButton = GetNamedButton(pipsPager, "Previous Page");
+            var nextButton = GetNamedButton(pipsPager, "Next Page");
+
+            Assert.IsTrue(previousButton.IsEnabled);
+            previousButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+            host.UpdateLayout();
+
+            Assert.AreEqual(2, pipsPager.SelectedPageIndex);
+
+            nextButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+            host.UpdateLayout();
+
+            Assert.AreEqual(0, pipsPager.SelectedPageIndex);
+
+            var repeater = FindNamedDescendant<ItemsRepeater>(pipsPager, "PipsPagerItemsRepeater");
+            Assert.IsInstanceOfType(repeater.Layout, typeof(StackLayout));
+            Assert.IsFalse(((StackLayout)repeater.Layout).IsVirtualizationEnabled);
+        });
+    }
+
+    [TestMethod]
     public void NavigationButtonStatesUseVisualStateSetters()
     {
         WpfTestHost.Run(() =>
@@ -234,16 +288,16 @@ public class PipsPagerApiTests
             using var host = new TestWindowHost(pipsPager, width: 300, height: 120);
             host.UpdateLayout();
 
-            var rootPanel = FindNamedDescendant<StackPanel>(pipsPager, "PART_RootPanel");
-            var previousButton = FindNamedDescendant<Button>(pipsPager, "PART_PreviousButton");
-            var nextButton = FindNamedDescendant<Button>(pipsPager, "PART_NextButton");
+            var rootPanel = FindNamedDescendant<StackPanel>(pipsPager, "RootPanel");
+            var previousButton = FindNamedDescendant<Button>(pipsPager, "PreviousPageButton");
+            var nextButton = FindNamedDescendant<Button>(pipsPager, "NextPageButton");
 
-            AssertStateSetter(rootPanel, "PreviousPageButtonVisibilityStates", "PreviousPageButtonHidden", "PART_PreviousButton.Opacity");
-            AssertStateSetter(rootPanel, "PreviousPageButtonVisibilityStates", "PreviousPageButtonCollapsed", "PART_PreviousButton.Visibility");
-            AssertStateSetter(rootPanel, "PreviousPageButtonIsEnabledStates", "PreviousPageButtonDisabled", "PART_PreviousButton.IsEnabled");
-            AssertStateSetter(rootPanel, "NextPageButtonVisibilityStates", "NextPageButtonHidden", "PART_NextButton.Opacity");
-            AssertStateSetter(rootPanel, "NextPageButtonVisibilityStates", "NextPageButtonCollapsed", "PART_NextButton.Visibility");
-            AssertStateSetter(rootPanel, "NextPageButtonIsEnabledStates", "NextPageButtonDisabled", "PART_NextButton.IsEnabled");
+            AssertStateSetter(rootPanel, "PreviousPageButtonVisibilityStates", "PreviousPageButtonHidden", "PreviousPageButton.Opacity");
+            AssertStateSetter(rootPanel, "PreviousPageButtonVisibilityStates", "PreviousPageButtonCollapsed", "PreviousPageButton.Visibility");
+            AssertStateSetter(rootPanel, "PreviousPageButtonIsEnabledStates", "PreviousPageButtonDisabled", "PreviousPageButton.IsEnabled");
+            AssertStateSetter(rootPanel, "NextPageButtonVisibilityStates", "NextPageButtonHidden", "NextPageButton.Opacity");
+            AssertStateSetter(rootPanel, "NextPageButtonVisibilityStates", "NextPageButtonCollapsed", "NextPageButton.Visibility");
+            AssertStateSetter(rootPanel, "NextPageButtonIsEnabledStates", "NextPageButtonDisabled", "NextPageButton.IsEnabled");
 
             Assert.AreEqual("PreviousPageButtonHidden", GetCurrentStateName(rootPanel, "PreviousPageButtonVisibilityStates"));
             Assert.AreEqual("PreviousPageButtonDisabled", GetCurrentStateName(rootPanel, "PreviousPageButtonIsEnabledStates"));
@@ -289,20 +343,20 @@ public class PipsPagerApiTests
             using var host = new TestWindowHost(pipsPager, width: 300, height: 120);
             host.UpdateLayout();
 
-            var rootPanel = FindNamedDescendant<StackPanel>(pipsPager, "PART_RootPanel");
-            var pipsPanel = FindNamedDescendant<StackPanel>(pipsPager, "PART_PipsPanel");
-            var previousButton = FindNamedDescendant<Button>(pipsPager, "PART_PreviousButton");
-            var nextButton = FindNamedDescendant<Button>(pipsPager, "PART_NextButton");
+            var rootPanel = FindNamedDescendant<StackPanel>(pipsPager, "RootPanel");
+            var repeater = FindNamedDescendant<ItemsRepeater>(pipsPager, "PipsPagerItemsRepeater");
+            var previousButton = FindNamedDescendant<Button>(pipsPager, "PreviousPageButton");
+            var nextButton = FindNamedDescendant<Button>(pipsPager, "NextPageButton");
             var orientationState = AssertStateSetter(
                 rootPanel,
                 "RootPanelOrientationStates",
                 "HorizontalOrientationView",
-                "PART_RootPanel.Orientation");
+                "RootPanel.Orientation");
 
             Assert.AreEqual(7, orientationState.Setters.Count);
             Assert.AreEqual("HorizontalOrientationView", GetCurrentStateName(rootPanel, "RootPanelOrientationStates"));
             Assert.AreEqual(Orientation.Horizontal, rootPanel.Orientation);
-            Assert.AreEqual(Orientation.Horizontal, pipsPanel.Orientation);
+            Assert.AreEqual(Orientation.Horizontal, ((StackLayout)repeater.Layout).Orientation);
             Assert.AreEqual(PlacementMode.Left, ToolTipService.GetPlacement(previousButton));
             Assert.AreEqual(PlacementMode.Right, ToolTipService.GetPlacement(nextButton));
             AssertRotateTransform(previousButton.RenderTransform);
@@ -313,7 +367,7 @@ public class PipsPagerApiTests
 
             Assert.AreEqual("VerticalOrientationView", GetCurrentStateName(rootPanel, "RootPanelOrientationStates"));
             Assert.AreEqual(Orientation.Vertical, rootPanel.Orientation);
-            Assert.AreEqual(Orientation.Vertical, pipsPanel.Orientation);
+            Assert.AreEqual(Orientation.Vertical, ((StackLayout)repeater.Layout).Orientation);
             Assert.AreEqual(PlacementMode.Top, ToolTipService.GetPlacement(previousButton));
             Assert.AreEqual(PlacementMode.Bottom, ToolTipService.GetPlacement(nextButton));
             Assert.IsFalse(previousButton.RenderTransform is RotateTransform);
@@ -335,22 +389,22 @@ public class PipsPagerApiTests
             host.UpdateLayout();
 
             var pipButton = pipsPager.ContainerFromIndex(0);
-            var rootGrid = FindNamedDescendant<Grid>(pipButton, "RootGrid");
+            var rootGrid = FindNamedDescendant<GridEx>(pipButton, "RootGrid");
 
             AssertStateSetter(rootGrid, "OrientationStates", "VerticalOrientation", "RootGrid.Width");
             AssertStateSetter(rootGrid, "OrientationStates", "VerticalOrientation", "RootGrid.Height");
             Assert.AreEqual("HorizontalOrientation", GetCurrentStateName(rootGrid, "OrientationStates"));
             Assert.AreEqual(12.0, rootGrid.Width);
-            Assert.AreEqual(20.0, rootGrid.Height);
+            Assert.AreEqual(24.0, rootGrid.Height);
 
             pipsPager.Orientation = Orientation.Vertical;
             host.UpdateLayout();
 
             pipButton = pipsPager.ContainerFromIndex(0);
-            rootGrid = FindNamedDescendant<Grid>(pipButton, "RootGrid");
+            rootGrid = FindNamedDescendant<GridEx>(pipButton, "RootGrid");
 
             Assert.AreEqual("VerticalOrientation", GetCurrentStateName(rootGrid, "OrientationStates"));
-            Assert.AreEqual(20.0, rootGrid.Width);
+            Assert.AreEqual(24.0, rootGrid.Width);
             Assert.AreEqual(12.0, rootGrid.Height);
         });
     }

@@ -212,6 +212,42 @@ namespace ModernWpf {
                 return ResourceManager.GetString("InfoBarSeverityWarningName", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Pager.
+        /// </summary>
+        internal static string PipsPagerNameText {
+            get {
+                return ResourceManager.GetString("PipsPagerNameText", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Next Page.
+        /// </summary>
+        internal static string PipsPagerNextPageButtonText {
+            get {
+                return ResourceManager.GetString("PipsPagerNextPageButtonText", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Page.
+        /// </summary>
+        internal static string PipsPagerPageText {
+            get {
+                return ResourceManager.GetString("PipsPagerPageText", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Previous Page.
+        /// </summary>
+        internal static string PipsPagerPreviousPageButtonText {
+            get {
+                return ResourceManager.GetString("PipsPagerPreviousPageButtonText", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized string similar to Off.
