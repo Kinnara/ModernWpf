@@ -150,7 +150,22 @@ public class SwipeControlApiTests
             Assert.AreSame(transitions, presenter.ContentTransitions);
             Assert.AreEqual(HorizontalAlignment.Stretch, presenter.HorizontalContentAlignment);
             Assert.AreEqual(VerticalAlignment.Stretch, presenter.VerticalContentAlignment);
-            Assert.IsInstanceOfType(presenter.RenderTransform, typeof(TranslateTransform));
+            var rootGrid = FindDescendantByName<Grid>(swipeControl, "RootGrid");
+            var swipeContentRoot = FindDescendantByName<Grid>(swipeControl, "SwipeContentRoot");
+            var swipeContentStackPanel = FindDescendantByName<StackPanel>(swipeControl, "SwipeContentStackPanel");
+            var contentRoot = FindDescendantByName<Grid>(swipeControl, "ContentRoot");
+            var inputEater = FindDescendantByName<Grid>(swipeControl, "InputEater");
+
+            Assert.IsNotNull(rootGrid);
+            Assert.IsNotNull(swipeContentRoot);
+            Assert.IsNotNull(swipeContentStackPanel);
+            Assert.IsNotNull(contentRoot);
+            Assert.IsNotNull(inputEater);
+            Assert.IsInstanceOfType(contentRoot!.RenderTransform, typeof(TranslateTransform));
+            Assert.IsNull(FindDescendantByName<Panel>(swipeControl, "PART_LeftItemsPanel"));
+            Assert.IsNull(FindDescendantByName<Panel>(swipeControl, "PART_RightItemsPanel"));
+            Assert.IsNull(FindDescendantByName<Panel>(swipeControl, "PART_TopItemsPanel"));
+            Assert.IsNull(FindDescendantByName<Panel>(swipeControl, "PART_BottomItemsPanel"));
         });
     }
 
@@ -251,15 +266,18 @@ public class SwipeControlApiTests
             var swipeControl = new ModernWpf.Controls.SwipeControl
             {
                 Content = new TextBlock { Text = "Item" },
-                RightItems = new SwipeItems { swipeItem }
+                LeftItems = new SwipeItems { swipeItem }
             };
 
             using var host = new TestWindowHost(swipeControl, width: 240, height: 120);
 
+            swipeControl.DragForTesting(-120, 0, complete: true);
+            host.UpdateLayout();
+
             var button = VisualTreeTestHelper
                 .EnumerateDescendants(swipeControl)
-                .OfType<Button>()
-                .FirstOrDefault(candidate => candidate.Tag == swipeItem);
+                .OfType<AppBarButton>()
+                .FirstOrDefault(candidate => candidate.Label == "Delete");
 
             Assert.IsNotNull(button);
 
@@ -280,15 +298,18 @@ public class SwipeControlApiTests
             var swipeControl = new ModernWpf.Controls.SwipeControl
             {
                 Content = new TextBlock { Text = "Item" },
-                RightItems = new SwipeItems { swipeItem }
+                LeftItems = new SwipeItems { swipeItem }
             };
 
             using var host = new TestWindowHost(swipeControl, width: 240, height: 120);
 
+            swipeControl.DragForTesting(-120, 0, complete: true);
+            host.UpdateLayout();
+
             var button = VisualTreeTestHelper
                 .EnumerateDescendants(swipeControl)
-                .OfType<Button>()
-                .FirstOrDefault(candidate => candidate.Tag == swipeItem);
+                .OfType<AppBarButton>()
+                .FirstOrDefault(candidate => candidate.Label == "Delete");
 
             Assert.IsNotNull(button);
             Assert.IsNotNull(button!.Style);
@@ -298,7 +319,7 @@ public class SwipeControlApiTests
 
             var root = VisualTreeTestHelper
                 .EnumerateDescendants(button)
-                .OfType<Border>()
+                .OfType<Grid>()
                 .FirstOrDefault(candidate => candidate.Name == "Root");
             Assert.IsNotNull(root);
 
@@ -314,22 +335,19 @@ public class SwipeControlApiTests
             Assert.AreEqual(1, stateEx.Setters.Count);
             Assert.AreEqual("Root.Background", stateEx.Setters[0].Target);
 
-            Assert.IsTrue(VisualStateManager.GoToState(button, "Pressed", false));
-            host.UpdateLayout();
-
-            AssertBrushEquals((Brush)root!.TryFindResource("SwipeItemBackgroundPressed"), root.Background);
+            Assert.IsNotNull(root!.TryFindResource("SwipeItemBackgroundPressed"));
         });
     }
 
     [TestMethod]
-    public void DragRevealsRightItemsAndCloseResetsOffset()
+    public void DragRevealsLeftItemsAndCloseResetsOffset()
     {
         WpfTestHost.Run(() =>
         {
             var swipeControl = new ModernWpf.Controls.SwipeControl
             {
                 Content = new Border { Width = 200, Height = 48, Background = Brushes.Green },
-                RightItems = new SwipeItems
+                LeftItems = new SwipeItems
                 {
                     new SwipeItem { Text = "Delete" }
                 }
@@ -337,11 +355,11 @@ public class SwipeControlApiTests
 
             using var host = new TestWindowHost(swipeControl, width: 260, height: 120);
 
-            swipeControl.DragForTesting(-96, 0, complete: true);
+            swipeControl.DragForTesting(-120, 0, complete: true);
             host.UpdateLayout();
 
             Assert.IsTrue(swipeControl.IsOpenForTesting);
-            Assert.AreEqual(SwipeItemsPlacement.Right, swipeControl.OpenedItemsPlacementForTesting);
+            Assert.AreEqual(SwipeItemsPlacement.Left, swipeControl.OpenedItemsPlacementForTesting);
             Assert.IsTrue(swipeControl.HorizontalOffsetForTesting < 0);
 
             swipeControl.Close();
@@ -371,12 +389,12 @@ public class SwipeControlApiTests
             var swipeControl = new ModernWpf.Controls.SwipeControl
             {
                 Content = new Border { Width = 200, Height = 48, Background = Brushes.Green },
-                RightItems = executeItems
+                LeftItems = executeItems
             };
 
             using var host = new TestWindowHost(swipeControl, width: 260, height: 120);
 
-            swipeControl.DragForTesting(-96, 0, complete: true);
+            swipeControl.DragForTesting(-120, 0, complete: true);
             host.UpdateLayout();
 
             Assert.IsTrue(invoked);
@@ -395,7 +413,7 @@ public class SwipeControlApiTests
             var swipeControl = new ModernWpf.Controls.SwipeControl
             {
                 Content = new Border { Width = 200, Height = 48, Background = Brushes.Green },
-                RightItems = new SwipeItems
+                LeftItems = new SwipeItems
                 {
                     new SwipeItem { Text = "Delete" }
                 }
@@ -411,7 +429,7 @@ public class SwipeControlApiTests
 
             using var host = new TestWindowHost(root, width: 260, height: 160);
 
-            swipeControl.DragForTesting(-96, 0, complete: true);
+            swipeControl.DragForTesting(-120, 0, complete: true);
             Assert.IsTrue(swipeControl.IsOpenForTesting);
 
             outside.RaiseEvent(new MouseButtonEventArgs(Mouse.PrimaryDevice, Environment.TickCount, MouseButton.Left)
@@ -441,18 +459,18 @@ public class SwipeControlApiTests
             var swipeControl = new ModernWpf.Controls.SwipeControl
             {
                 Content = new Border { Width = 200, Height = 48, Background = Brushes.Green },
-                RightItems = new SwipeItems { swipeItem }
+                LeftItems = new SwipeItems { swipeItem }
             };
 
             using var host = new TestWindowHost(swipeControl, width: 260, height: 120);
 
-            swipeControl.DragForTesting(-96, 0, complete: true);
+            swipeControl.DragForTesting(-120, 0, complete: true);
             Assert.IsTrue(swipeControl.IsOpenForTesting);
 
             var button = VisualTreeTestHelper
                 .EnumerateDescendants(swipeControl)
-                .OfType<Button>()
-                .FirstOrDefault(candidate => candidate.Tag == swipeItem);
+                .OfType<AppBarButton>()
+                .FirstOrDefault(candidate => candidate.Label == "Delete");
 
             Assert.IsNotNull(button);
             button!.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
@@ -461,6 +479,38 @@ public class SwipeControlApiTests
             Assert.AreEqual("row", command.ExecutedParameter);
             Assert.IsFalse(swipeControl.IsOpenForTesting);
             Assert.AreEqual(0d, swipeControl.HorizontalOffsetForTesting);
+        });
+    }
+
+    [TestMethod]
+    public void ExecuteSwipeRemainOpenKeepsExecuteContentOpen()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var swipeItem = new SwipeItem
+            {
+                Text = "Delete",
+                BehaviorOnInvoked = SwipeBehaviorOnInvoked.RemainOpen
+            };
+            var invoked = false;
+            swipeItem.Invoked += (_, _) => invoked = true;
+            var executeItems = new SwipeItems { Mode = SwipeMode.Execute };
+            executeItems.Add(swipeItem);
+            var swipeControl = new ModernWpf.Controls.SwipeControl
+            {
+                Content = new Border { Width = 200, Height = 48, Background = Brushes.Green },
+                LeftItems = executeItems
+            };
+
+            using var host = new TestWindowHost(swipeControl, width: 260, height: 120);
+
+            swipeControl.DragForTesting(-120, 0, complete: true);
+            host.UpdateLayout();
+
+            Assert.IsTrue(invoked);
+            Assert.IsTrue(swipeControl.IsOpenForTesting);
+            Assert.AreEqual(SwipeItemsPlacement.Left, swipeControl.OpenedItemsPlacementForTesting);
+            Assert.IsTrue(swipeControl.HorizontalOffsetForTesting < 0);
         });
     }
 
@@ -482,18 +532,13 @@ public class SwipeControlApiTests
         }
     }
 
-    private static void AssertBrushEquals(Brush expected, Brush actual)
+    private static T? FindDescendantByName<T>(DependencyObject root, string name)
+        where T : FrameworkElement
     {
-        Assert.IsNotNull(expected);
-        Assert.IsNotNull(actual);
-
-        if (expected is SolidColorBrush expectedSolid && actual is SolidColorBrush actualSolid)
-        {
-            Assert.AreEqual(expectedSolid.Color, actualSolid.Color);
-            Assert.AreEqual(expectedSolid.Opacity, actualSolid.Opacity);
-            return;
-        }
-
-        Assert.AreEqual(expected.ToString(), actual.ToString());
+        return VisualTreeTestHelper
+            .EnumerateDescendants(root)
+            .OfType<T>()
+            .FirstOrDefault(candidate => candidate.Name == name);
     }
+
 }

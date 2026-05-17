@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using System.Windows;
-using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
@@ -11,22 +10,39 @@ using ModernWpf.Media.Animation;
 
 namespace ModernWpf.Controls
 {
-    [TemplatePart(Name = LeftItemsPanelName, Type = typeof(Panel))]
-    [TemplatePart(Name = RightItemsPanelName, Type = typeof(Panel))]
-    [TemplatePart(Name = TopItemsPanelName, Type = typeof(Panel))]
-    [TemplatePart(Name = BottomItemsPanelName, Type = typeof(Panel))]
-    [TemplatePart(Name = ContentTransformName, Type = typeof(TranslateTransform))]
+    [TemplatePart(Name = RootGridName, Type = typeof(Grid))]
+    [TemplatePart(Name = SwipeContentRootName, Type = typeof(Grid))]
+    [TemplatePart(Name = SwipeContentStackPanelName, Type = typeof(StackPanel))]
+    [TemplatePart(Name = ContentRootName, Type = typeof(Grid))]
+    [TemplatePart(Name = ContentPresenterName, Type = typeof(ContentPresenterEx))]
+    [TemplatePart(Name = InputEaterName, Type = typeof(Grid))]
     public class SwipeControl : ContentControl
     {
         private const double DragThreshold = 8;
-        private const double OpenThreshold = 32;
-        private const double ExecuteThresholdRatio = 0.75;
-        private const string LeftItemsPanelName = "PART_LeftItemsPanel";
-        private const string RightItemsPanelName = "PART_RightItemsPanel";
-        private const string TopItemsPanelName = "PART_TopItemsPanel";
-        private const string BottomItemsPanelName = "PART_BottomItemsPanel";
-        private const string ContentTransformName = "PART_ContentTransform";
+        private const double ThresholdValue = 100;
+        private const double Epsilon = 0.0001;
+        private const string RootGridName = "RootGrid";
+        private const string SwipeContentRootName = "SwipeContentRoot";
+        private const string SwipeContentStackPanelName = "SwipeContentStackPanel";
+        private const string ContentRootName = "ContentRoot";
+        private const string ContentPresenterName = "ContentPresenter";
+        private const string InputEaterName = "InputEater";
         private const string SwipeItemStyleKey = "SwipeItemStyle";
+        private const string SwipeItemBackgroundKey = "SwipeItemBackground";
+        private const string SwipeItemForegroundKey = "SwipeItemForeground";
+        private const string SwipeItemPreThresholdExecuteForegroundKey = "SwipeItemPreThresholdExecuteForeground";
+        private const string SwipeItemPreThresholdExecuteBackgroundKey = "SwipeItemPreThresholdExecuteBackground";
+        private const string SwipeItemPostThresholdExecuteForegroundKey = "SwipeItemPostThresholdExecuteForeground";
+        private const string SwipeItemPostThresholdExecuteBackgroundKey = "SwipeItemPostThresholdExecuteBackground";
+
+        private enum CreatedContent
+        {
+            None,
+            Left,
+            Top,
+            Bottom,
+            Right
+        }
 
         static SwipeControl()
         {
@@ -38,11 +54,13 @@ namespace ModernWpf.Controls
         public SwipeControl()
         {
             IsTabStop = false;
+            Loaded += OnLoaded;
+            Unloaded += OnUnloaded;
+            SizeChanged += OnSizeChanged;
             PreviewMouseLeftButtonDown += OnPreviewMouseLeftButtonDown;
             PreviewMouseMove += OnPreviewMouseMove;
             PreviewMouseLeftButtonUp += OnPreviewMouseLeftButtonUp;
             LostMouseCapture += OnLostMouseCapture;
-            Unloaded += OnUnloaded;
         }
 
         public static readonly DependencyProperty ContentTransitionsProperty =
@@ -133,55 +151,80 @@ namespace ModernWpf.Controls
 
         public void Close()
         {
-            CloseSwipe();
+            if (_isOpen && !_isInteracting)
+            {
+                CloseWithoutAnimation();
+            }
         }
 
         public override void OnApplyTemplate()
         {
-            UpdateDismissHook(null);
+            DetachTemplateEventHandlers();
 
             base.OnApplyTemplate();
 
-            _leftItemsPanel = GetTemplateChild(LeftItemsPanelName) as Panel;
-            _rightItemsPanel = GetTemplateChild(RightItemsPanelName) as Panel;
-            _topItemsPanel = GetTemplateChild(TopItemsPanelName) as Panel;
-            _bottomItemsPanel = GetTemplateChild(BottomItemsPanelName) as Panel;
-            _contentTransform = GetTemplateChild(ContentTransformName) as TranslateTransform;
+            _templateApplied = true;
+            ThrowIfHasVerticalAndHorizontalContent(setIsHorizontal: true);
+            GetTemplateParts();
+            EnsureClip();
+            AttachTemplateEventHandlers();
+            CloseWithoutAnimation();
+        }
 
-            RebuildSwipeItems();
-            ApplySwipeOffset(_openPlacement, _currentOffset);
-            UpdateDismissHook(IsOpen ? Window.GetWindow(this) : null);
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            if (_rootGrid != null)
+            {
+                _rootGrid.Measure(availableSize);
+                var desiredSize = _rootGrid.DesiredSize;
+
+                if (!double.IsInfinity(availableSize.Width))
+                {
+                    desiredSize.Width = availableSize.Width;
+                }
+
+                if (!double.IsInfinity(availableSize.Height))
+                {
+                    desiredSize.Height = availableSize.Height;
+                }
+
+                return desiredSize;
+            }
+
+            return base.MeasureOverride(availableSize);
         }
 
         internal void ValidateSwipeItemsCanAdd(SwipeItemsPlacement placement)
         {
-            if (IsHorizontalPlacement(placement) && HasVerticalItems())
-            {
-                throw new ArgumentException("SwipeControl can only have horizontal or vertical items.");
-            }
-
-            if (IsVerticalPlacement(placement) && HasHorizontalItems())
-            {
-                throw new ArgumentException("SwipeControl can only have horizontal or vertical items.");
-            }
+            var hasHorizontal = HasHorizontalItems() || IsHorizontalPlacement(placement);
+            var hasVertical = HasVerticalItems() || IsVerticalPlacement(placement);
+            ThrowIfInvalidAxis(hasHorizontal, hasVertical);
         }
 
         internal void OnSwipeItemsChanged()
         {
-            RebuildSwipeItems();
-            if (_openPlacement != SwipeItemsPlacement.None && !HasItems(GetItemsForPlacement(_openPlacement)))
+            ThrowIfHasVerticalAndHorizontalContent();
+
+            if (_createdContent != CreatedContent.None && !HasItems(GetItemsForCreatedContent(_createdContent)))
             {
-                CloseSwipe();
+                CloseWithoutAnimation();
+                return;
+            }
+
+            if (_createdContent != CreatedContent.None)
+            {
+                CreateContent(_createdContent);
+                ApplySwipeValue(_currentValue);
             }
         }
 
-        internal bool IsOpenForTesting => IsOpen;
+        internal bool IsOpenForTesting => _isOpen;
 
-        internal SwipeItemsPlacement OpenedItemsPlacementForTesting => _openPlacement;
+        internal SwipeItemsPlacement OpenedItemsPlacementForTesting => GetPlacementFromCreatedContent(_createdContent);
 
-        internal double HorizontalOffsetForTesting => _contentTransform?.X ?? _currentOffset;
+        internal double HorizontalOffsetForTesting => _isHorizontal ? _currentValue : 0;
 
-        internal double VerticalOffsetForTesting => _contentTransform?.Y ?? _currentOffset;
+        internal double VerticalOffsetForTesting => !_isHorizontal ? _currentValue : 0;
 
         internal void DragForTesting(double horizontalDelta, double verticalDelta, bool complete)
         {
@@ -210,12 +253,29 @@ namespace ModernWpf.Controls
                 newItems.AttachOwner(swipeControl, placement);
             }
 
-            swipeControl.RebuildSwipeItems();
-            if (swipeControl._openPlacement != SwipeItemsPlacement.None &&
-                !HasItems(swipeControl.GetItemsForPlacement(swipeControl._openPlacement)))
+            swipeControl.OnSwipeItemsChanged();
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            CloseWithoutAnimation();
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            DetachDismissingHandlers();
+
+            if (ReferenceEquals(s_lastInteractedWithSwipeControl, this))
             {
-                swipeControl.CloseSwipe();
+                s_lastInteractedWithSwipeControl = null;
             }
+        }
+
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            EnsureClip();
+            UpdateButtonSizes();
+            ApplySwipeValue(_currentValue);
         }
 
         private void OnPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -225,9 +285,11 @@ namespace ModernWpf.Controls
                 return;
             }
 
-            if (s_openSwipeControl != null && !ReferenceEquals(s_openSwipeControl, this))
+            if (_isOpen && IsWithinInputEater(e.OriginalSource as DependencyObject))
             {
-                s_openSwipeControl.Close();
+                CloseWithoutAnimation();
+                e.Handled = true;
+                return;
             }
 
             StartDrag(e.GetPosition(this));
@@ -263,301 +325,632 @@ namespace ModernWpf.Controls
             }
         }
 
-        private void OnUnloaded(object sender, RoutedEventArgs e)
-        {
-            UpdateDismissHook(null);
-            if (ReferenceEquals(s_openSwipeControl, this))
-            {
-                s_openSwipeControl = null;
-            }
-        }
-
         private void StartDrag(Point position)
         {
             _isPointerDown = true;
             _isDragging = false;
+            _isInteracting = true;
             _dragStartPoint = position;
-            _dragStartOffset = _currentOffset;
-            _dragPlacement = _openPlacement;
+            _dragStartValue = _currentValue;
+            _dragStartedOpen = _isOpen;
+            _dragCreatedContent = _createdContent;
         }
 
         private void UpdateDrag(Point position)
         {
             var horizontalDelta = position.X - _dragStartPoint.X;
             var verticalDelta = position.Y - _dragStartPoint.Y;
-            var placement = _dragPlacement != SwipeItemsPlacement.None
-                ? _dragPlacement
-                : GetPlacementFromDelta(horizontalDelta, verticalDelta);
+            var candidateContent = _dragCreatedContent != CreatedContent.None
+                ? _dragCreatedContent
+                : GetCreatedContentFromDelta(horizontalDelta, verticalDelta);
 
-            if (placement == SwipeItemsPlacement.None)
+            if (candidateContent == CreatedContent.None)
             {
                 return;
             }
 
-            var delta = IsHorizontalPlacement(placement) ? horizontalDelta : verticalDelta;
-            if (!_isDragging && Math.Abs(delta) < DragThreshold)
+            var axisDelta = IsHorizontalCreatedContent(candidateContent) ? horizontalDelta : verticalDelta;
+            if (!_isDragging && Math.Abs(axisDelta) < DragThreshold)
             {
                 return;
             }
 
-            var directionalDelta = GetDirectionalDelta(placement, delta);
-            if (directionalDelta <= 0 && _openPlacement == SwipeItemsPlacement.None)
+            if (!ReferenceEquals(s_lastInteractedWithSwipeControl, this))
             {
-                return;
+                s_lastInteractedWithSwipeControl?.CloseIfNotRemainOpenExecuteItem();
+                s_lastInteractedWithSwipeControl = this;
             }
 
             _isDragging = true;
-            _dragPlacement = placement;
+            _createdContent = candidateContent;
+            CreateContent(candidateContent);
 
-            var revealSize = GetRevealSize(placement);
-            var unsignedOffset = Math.Max(0, Math.Min(revealSize, GetDirectionalOffset(placement, _dragStartOffset) + directionalDelta));
-            OpenSwipe(placement, GetSignedOffset(placement, unsignedOffset), hookDismiss: false);
+            var openValue = GetOpenValue(candidateContent);
+            var value = _dragStartedOpen ? _dragStartValue + axisDelta : axisDelta;
+            value = ClampValue(candidateContent, value, openValue);
+
+            ApplySwipeValue(value);
+            UpdateThresholdReached(value);
         }
 
         private void CompleteDrag()
         {
             var wasDragging = _isDragging;
-            var placement = _dragPlacement;
+            var createdContent = _createdContent;
+            var startedOpen = _dragStartedOpen;
 
             _isPointerDown = false;
             _isDragging = false;
-            _dragPlacement = SwipeItemsPlacement.None;
+            _isInteracting = false;
+            _dragCreatedContent = CreatedContent.None;
+            _dragStartedOpen = false;
 
-            if (!wasDragging || placement == SwipeItemsPlacement.None)
+            if (!wasDragging || createdContent == CreatedContent.None)
             {
                 return;
             }
 
-            var items = GetItemsForPlacement(placement);
-            var revealSize = GetRevealSize(placement);
-            var directionalOffset = GetDirectionalOffset(placement, _currentOffset);
+            var currentItems = _currentItems;
+            var openValue = GetOpenValue(createdContent);
+            var shouldOpen = startedOpen
+                ? Math.Abs(_currentValue) >= Math.Max(0, Math.Abs(openValue) - Epsilon)
+                : IsThresholdReached(_currentValue);
 
-            if (items?.Mode == SwipeMode.Execute &&
-                items.Count > 0 &&
-                revealSize > 0 &&
-                directionalOffset >= revealSize * ExecuteThresholdRatio)
+            if (!shouldOpen)
             {
-                items[0].Invoke(this);
-                if (items[0].BehaviorOnInvoked == SwipeBehaviorOnInvoked.RemainOpen)
+                CloseWithoutAnimation();
+                return;
+            }
+
+            OpenToValue(createdContent, openValue);
+
+            if (currentItems?.Mode == SwipeMode.Execute && currentItems.Count > 0)
+            {
+                currentItems[0].Invoke(this);
+
+                if (currentItems[0].BehaviorOnInvoked == SwipeBehaviorOnInvoked.RemainOpen)
                 {
-                    OpenSwipe(placement, GetSignedOffset(placement, revealSize), hookDismiss: true);
+                    OpenToValue(createdContent, openValue);
                 }
-
-                return;
-            }
-
-            if (directionalOffset >= Math.Min(OpenThreshold, revealSize / 2))
-            {
-                OpenSwipe(placement, GetSignedOffset(placement, revealSize), hookDismiss: true);
-            }
-            else
-            {
-                CloseSwipe();
             }
         }
 
-        private SwipeItemsPlacement GetPlacementFromDelta(double horizontalDelta, double verticalDelta)
+        private void OpenToValue(CreatedContent createdContent, double value)
         {
-            if (Math.Abs(horizontalDelta) >= Math.Abs(verticalDelta) && HasHorizontalItems())
-            {
-                return horizontalDelta > 0 && HasItems(LeftItems)
-                    ? SwipeItemsPlacement.Left
-                    : horizontalDelta < 0 && HasItems(RightItems)
-                        ? SwipeItemsPlacement.Right
-                        : SwipeItemsPlacement.None;
-            }
-
-            if (HasVerticalItems())
-            {
-                return verticalDelta > 0 && HasItems(TopItems)
-                    ? SwipeItemsPlacement.Top
-                    : verticalDelta < 0 && HasItems(BottomItems)
-                        ? SwipeItemsPlacement.Bottom
-                        : SwipeItemsPlacement.None;
-            }
-
-            return SwipeItemsPlacement.None;
+            _createdContent = createdContent;
+            CreateContent(createdContent);
+            ApplySwipeValue(value);
+            UpdateIsOpen(true);
         }
 
-        private static double GetDirectionalDelta(SwipeItemsPlacement placement, double delta)
+        private void CloseWithoutAnimation()
         {
-            return placement == SwipeItemsPlacement.Left || placement == SwipeItemsPlacement.Top ? delta : -delta;
+            ApplySwipeValue(0);
+            UpdateIsOpen(false);
+            ClearContent();
+            _createdContent = CreatedContent.None;
+            _currentItems = null;
+            _thresholdReached = false;
+            _dragCreatedContent = CreatedContent.None;
+            _dragStartedOpen = false;
+            _isInteracting = false;
         }
 
-        private static double GetSignedOffset(SwipeItemsPlacement placement, double offset)
+        private void CloseIfNotRemainOpenExecuteItem()
         {
-            return placement == SwipeItemsPlacement.Left || placement == SwipeItemsPlacement.Top ? offset : -offset;
-        }
-
-        private static double GetDirectionalOffset(SwipeItemsPlacement placement, double offset)
-        {
-            return placement == SwipeItemsPlacement.Left || placement == SwipeItemsPlacement.Top ? offset : -offset;
-        }
-
-        private void OpenSwipe(SwipeItemsPlacement placement, double offset, bool hookDismiss)
-        {
-            _openPlacement = placement;
-            _currentOffset = offset;
-            s_openSwipeControl = this;
-            ApplySwipeOffset(placement, offset);
-
-            if (hookDismiss)
-            {
-                UpdateDismissHook(Window.GetWindow(this));
-            }
-        }
-
-        private void CloseSwipe()
-        {
-            _openPlacement = SwipeItemsPlacement.None;
-            _dragPlacement = SwipeItemsPlacement.None;
-            _currentOffset = 0;
-            ApplySwipeOffset(SwipeItemsPlacement.None, 0);
-            UpdateDismissHook(null);
-
-            if (ReferenceEquals(s_openSwipeControl, this))
-            {
-                s_openSwipeControl = null;
-            }
-        }
-
-        private void ApplySwipeOffset(SwipeItemsPlacement placement, double offset)
-        {
-            if (_contentTransform == null)
+            if (_isOpen &&
+                _currentItems?.Mode == SwipeMode.Execute &&
+                _currentItems.Count > 0 &&
+                _currentItems[0].BehaviorOnInvoked == SwipeBehaviorOnInvoked.RemainOpen)
             {
                 return;
             }
 
-            if (IsHorizontalPlacement(placement))
+            CloseWithoutAnimation();
+        }
+
+        private void UpdateIsOpen(bool isOpen)
+        {
+            if (_isOpen == isOpen)
             {
-                _contentTransform.X = offset;
-                _contentTransform.Y = 0;
+                UpdateInputEater();
+                return;
             }
-            else if (IsVerticalPlacement(placement))
+
+            _isOpen = isOpen;
+
+            if (_isOpen)
             {
-                _contentTransform.X = 0;
-                _contentTransform.Y = offset;
+                if (_currentItems?.Mode != SwipeMode.Execute)
+                {
+                    AttachDismissingHandlers();
+                }
             }
             else
             {
-                _contentTransform.X = 0;
-                _contentTransform.Y = 0;
+                DetachDismissingHandlers();
+
+                if (ReferenceEquals(s_lastInteractedWithSwipeControl, this))
+                {
+                    s_lastInteractedWithSwipeControl = null;
+                }
+            }
+
+            UpdateInputEater();
+        }
+
+        private void GetTemplateParts()
+        {
+            _rootGrid = GetTemplateChild(RootGridName) as Grid;
+            _swipeContentRoot = GetTemplateChild(SwipeContentRootName) as Grid;
+            _swipeContentStackPanel = GetTemplateChild(SwipeContentStackPanelName) as StackPanel;
+            _contentRoot = GetTemplateChild(ContentRootName) as Grid;
+            _contentPresenter = GetTemplateChild(ContentPresenterName) as ContentPresenterEx;
+            _inputEater = GetTemplateChild(InputEaterName) as Grid;
+
+            if (_rootGrid != null && _swipeContentRoot == null)
+            {
+                _swipeContentRoot = new Grid
+                {
+                    Name = SwipeContentRootName
+                };
+                _rootGrid.Children.Insert(0, _swipeContentRoot);
+            }
+
+            if (_swipeContentRoot != null && _swipeContentStackPanel == null)
+            {
+                _swipeContentStackPanel = new StackPanel
+                {
+                    Name = SwipeContentStackPanelName
+                };
+                _swipeContentRoot.Children.Add(_swipeContentStackPanel);
+            }
+
+            if (_contentRoot != null)
+            {
+                _contentTransform = EnsureTranslateTransform(_contentRoot);
+            }
+
+            if (_swipeContentStackPanel != null)
+            {
+                _swipeContentStackPanelTransform = EnsureTranslateTransform(_swipeContentStackPanel);
+                _swipeContentStackPanel.Orientation = _isHorizontal ? Orientation.Horizontal : Orientation.Vertical;
+            }
+
+            _swipeItemStyle = FindSwipeItemStyle();
+            UpdateInputEater();
+        }
+
+        private void AttachTemplateEventHandlers()
+        {
+            if (_inputEater != null)
+            {
+                _inputEater.MouseLeftButtonDown += OnInputEaterMouseLeftButtonDown;
             }
         }
 
-        private double GetRevealSize(SwipeItemsPlacement placement)
+        private void DetachTemplateEventHandlers()
         {
-            var panel = GetPanelForPlacement(placement);
-            if (panel == null)
+            if (_inputEater != null)
+            {
+                _inputEater.MouseLeftButtonDown -= OnInputEaterMouseLeftButtonDown;
+            }
+        }
+
+        private void OnInputEaterMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (_isOpen)
+            {
+                CloseWithoutAnimation();
+                e.Handled = true;
+            }
+        }
+
+        private void AttachDismissingHandlers()
+        {
+            var window = Window.GetWindow(this);
+            if (ReferenceEquals(_dismissWindow, window))
+            {
+                return;
+            }
+
+            DetachDismissingHandlers();
+            _dismissWindow = window;
+
+            if (_dismissWindow != null)
+            {
+                _dismissWindow.PreviewMouseDown += OnWindowPreviewMouseDown;
+                _dismissWindow.PreviewKeyDown += OnWindowPreviewKeyDown;
+            }
+        }
+
+        private void DetachDismissingHandlers()
+        {
+            if (_dismissWindow != null)
+            {
+                _dismissWindow.PreviewMouseDown -= OnWindowPreviewMouseDown;
+                _dismissWindow.PreviewKeyDown -= OnWindowPreviewKeyDown;
+                _dismissWindow = null;
+            }
+        }
+
+        private void OnWindowPreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (!_isOpen)
+            {
+                return;
+            }
+
+            if (!IsWithinThisControl(e.OriginalSource as DependencyObject))
+            {
+                CloseWithoutAnimation();
+            }
+        }
+
+        private void OnWindowPreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (_isOpen && e.Key == Key.Escape)
+            {
+                CloseWithoutAnimation();
+                e.Handled = true;
+            }
+        }
+
+        private void CreateContent(CreatedContent createdContent)
+        {
+            if (_swipeContentStackPanel == null)
+            {
+                return;
+            }
+
+            var items = GetItemsForCreatedContent(createdContent);
+            if (!HasItems(items))
+            {
+                return;
+            }
+
+            _createdContent = createdContent;
+            _currentItems = items;
+            _isHorizontal = IsHorizontalCreatedContent(createdContent);
+            _swipeContentStackPanel.Orientation = _isHorizontal ? Orientation.Horizontal : Orientation.Vertical;
+            _swipeContentStackPanel.Children.Clear();
+
+            AlignStackPanel(createdContent);
+
+            foreach (var swipeItem in items)
+            {
+                _swipeContentStackPanel.Children.Add(GetSwipeItemButton(swipeItem));
+            }
+
+            UpdateColors();
+            UpdateButtonSizes();
+        }
+
+        private AppBarButton GetSwipeItemButton(SwipeItem swipeItem)
+        {
+            var itemAsButton = new AppBarButton();
+            swipeItem.GenerateControl(itemAsButton, _swipeItemStyle);
+
+            if (swipeItem.Background == null)
+            {
+                itemAsButton.Background = GetBrush(_currentItems?.Mode == SwipeMode.Reveal
+                    ? SwipeItemBackgroundKey
+                    : _thresholdReached
+                        ? SwipeItemPostThresholdExecuteBackgroundKey
+                        : SwipeItemPreThresholdExecuteBackgroundKey);
+            }
+
+            if (swipeItem.Foreground == null)
+            {
+                itemAsButton.Foreground = GetBrush(_currentItems?.Mode == SwipeMode.Reveal
+                    ? SwipeItemForegroundKey
+                    : _thresholdReached
+                        ? SwipeItemPostThresholdExecuteForegroundKey
+                        : SwipeItemPreThresholdExecuteForegroundKey);
+            }
+
+            SetSwipeItemButtonSize(itemAsButton);
+            return itemAsButton;
+        }
+
+        private void AlignStackPanel(CreatedContent createdContent)
+        {
+            if (_swipeContentStackPanel == null)
+            {
+                return;
+            }
+
+            switch (createdContent)
+            {
+                case CreatedContent.Left:
+                    _swipeContentStackPanel.HorizontalAlignment = HorizontalAlignment.Left;
+                    _swipeContentStackPanel.VerticalAlignment = VerticalAlignment.Stretch;
+                    break;
+                case CreatedContent.Right:
+                    _swipeContentStackPanel.HorizontalAlignment = HorizontalAlignment.Right;
+                    _swipeContentStackPanel.VerticalAlignment = VerticalAlignment.Stretch;
+                    break;
+                case CreatedContent.Top:
+                    _swipeContentStackPanel.HorizontalAlignment = HorizontalAlignment.Center;
+                    _swipeContentStackPanel.VerticalAlignment = VerticalAlignment.Top;
+                    break;
+                case CreatedContent.Bottom:
+                    _swipeContentStackPanel.HorizontalAlignment = HorizontalAlignment.Center;
+                    _swipeContentStackPanel.VerticalAlignment = VerticalAlignment.Bottom;
+                    break;
+                default:
+                    _swipeContentStackPanel.HorizontalAlignment = HorizontalAlignment.Stretch;
+                    _swipeContentStackPanel.VerticalAlignment = VerticalAlignment.Stretch;
+                    break;
+            }
+        }
+
+        private void UpdateColors()
+        {
+            if (_currentItems == null)
+            {
+                return;
+            }
+
+            if (_currentItems.Mode == SwipeMode.Execute)
+            {
+                UpdateColorsIfExecuteItem();
+            }
+            else
+            {
+                UpdateColorsIfRevealItems();
+            }
+        }
+
+        private void UpdateColorsIfExecuteItem()
+        {
+            if (_swipeContentStackPanel == null ||
+                _currentItems == null ||
+                _currentItems.Mode != SwipeMode.Execute)
+            {
+                return;
+            }
+
+            var swipeItem = _currentItems.Count > 0 ? _currentItems[0] : null;
+            var background = _thresholdReached
+                ? GetBrush(SwipeItemPostThresholdExecuteBackgroundKey)
+                : GetBrush(SwipeItemPreThresholdExecuteBackgroundKey);
+            var foreground = _thresholdReached
+                ? GetBrush(SwipeItemPostThresholdExecuteForegroundKey)
+                : GetBrush(SwipeItemPreThresholdExecuteForegroundKey);
+
+            if (swipeItem?.Background != null)
+            {
+                background = swipeItem.Background;
+            }
+
+            if (swipeItem?.Foreground != null)
+            {
+                foreground = swipeItem.Foreground;
+            }
+
+            _swipeContentStackPanel.Background = background;
+
+            if (_swipeContentRoot != null)
+            {
+                _swipeContentRoot.Background = null;
+            }
+
+            if (_swipeContentStackPanel.Children.OfType<AppBarButton>().FirstOrDefault() is AppBarButton button)
+            {
+                button.Foreground = foreground;
+                button.Background = Brushes.Transparent;
+            }
+        }
+
+        private void UpdateColorsIfRevealItems()
+        {
+            if (_currentItems == null || _currentItems.Mode != SwipeMode.Reveal)
+            {
+                return;
+            }
+
+            var background = GetBrush(SwipeItemBackgroundKey);
+
+            if (_currentItems.Count > 0)
+            {
+                var backgroundItem = _createdContent == CreatedContent.Left || _createdContent == CreatedContent.Top
+                    ? _currentItems[_currentItems.Count - 1]
+                    : _currentItems[0];
+
+                if (backgroundItem.Background != null)
+                {
+                    background = backgroundItem.Background;
+                }
+            }
+
+            if (_swipeContentRoot != null)
+            {
+                _swipeContentRoot.Background = background;
+            }
+
+            if (_swipeContentStackPanel != null)
+            {
+                _swipeContentStackPanel.Background = null;
+            }
+        }
+
+        private void ClearContent()
+        {
+            if (_swipeContentStackPanel != null)
+            {
+                _swipeContentStackPanel.Background = null;
+                _swipeContentStackPanel.Children.Clear();
+            }
+
+            if (_swipeContentRoot != null)
+            {
+                _swipeContentRoot.Background = null;
+            }
+        }
+
+        private void UpdateButtonSizes()
+        {
+            if (_swipeContentStackPanel == null)
+            {
+                return;
+            }
+
+            foreach (var button in _swipeContentStackPanel.Children.OfType<AppBarButton>())
+            {
+                SetSwipeItemButtonSize(button);
+            }
+        }
+
+        private void SetSwipeItemButtonSize(AppBarButton button)
+        {
+            if (_isHorizontal)
+            {
+                button.Height = ActualHeight;
+                button.Width = _currentItems?.Mode == SwipeMode.Execute ? ActualWidth : double.NaN;
+            }
+            else
+            {
+                button.Width = ActualWidth;
+                button.Height = _currentItems?.Mode == SwipeMode.Execute ? ActualHeight : double.NaN;
+            }
+        }
+
+        private void ApplySwipeValue(double value)
+        {
+            _currentValue = value;
+            var visualValue = -value;
+
+            if (_contentTransform != null)
+            {
+                if (_isHorizontal)
+                {
+                    _contentTransform.X = visualValue;
+                    _contentTransform.Y = 0;
+                }
+                else
+                {
+                    _contentTransform.X = 0;
+                    _contentTransform.Y = visualValue;
+                }
+            }
+
+            if (_swipeContentStackPanelTransform != null)
+            {
+                _swipeContentStackPanelTransform.X = 0;
+                _swipeContentStackPanelTransform.Y = 0;
+            }
+        }
+
+        private void UpdateThresholdReached(double value)
+        {
+            var oldValue = _thresholdReached;
+            _thresholdReached = IsThresholdReached(value);
+
+            if (_thresholdReached != oldValue)
+            {
+                UpdateColorsIfExecuteItem();
+            }
+        }
+
+        private bool IsThresholdReached(double value)
+        {
+            var effectiveStackPanelSize = Math.Max(0, GetSwipeContentStackPanelSize() - 1);
+            return Math.Abs(value) > Math.Min(effectiveStackPanelSize, ThresholdValue);
+        }
+
+        private double GetSwipeContentStackPanelSize()
+        {
+            if (_swipeContentStackPanel == null)
             {
                 return 0;
             }
 
-            panel.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-            var size = IsHorizontalPlacement(placement)
-                ? Math.Max(panel.ActualWidth, panel.DesiredSize.Width)
-                : Math.Max(panel.ActualHeight, panel.DesiredSize.Height);
-
+            _swipeContentStackPanel.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+            var size = _isHorizontal
+                ? Math.Max(_swipeContentStackPanel.ActualWidth, _swipeContentStackPanel.DesiredSize.Width)
+                : Math.Max(_swipeContentStackPanel.ActualHeight, _swipeContentStackPanel.DesiredSize.Height);
             return Math.Max(0, size);
         }
 
-        private SwipeItems GetItemsForPlacement(SwipeItemsPlacement placement)
+        private double GetOpenValue(CreatedContent createdContent)
         {
-            switch (placement)
+            var size = GetSwipeContentStackPanelSize();
+            return createdContent == CreatedContent.Left || createdContent == CreatedContent.Top ? -size : size;
+        }
+
+        private static double ClampValue(CreatedContent createdContent, double value, double openValue)
+        {
+            if (createdContent == CreatedContent.Left || createdContent == CreatedContent.Top)
             {
-                case SwipeItemsPlacement.Left:
+                return Math.Min(0, Math.Max(openValue, value));
+            }
+
+            return Math.Max(0, Math.Min(openValue, value));
+        }
+
+        private CreatedContent GetCreatedContentFromDelta(double horizontalDelta, double verticalDelta)
+        {
+            if (_isHorizontal)
+            {
+                if (horizontalDelta < -Epsilon && HasItems(LeftItems))
+                {
+                    return CreatedContent.Left;
+                }
+
+                if (horizontalDelta > Epsilon && HasItems(RightItems))
+                {
+                    return CreatedContent.Right;
+                }
+            }
+            else
+            {
+                if (verticalDelta < -Epsilon && HasItems(TopItems))
+                {
+                    return CreatedContent.Top;
+                }
+
+                if (verticalDelta > Epsilon && HasItems(BottomItems))
+                {
+                    return CreatedContent.Bottom;
+                }
+            }
+
+            return CreatedContent.None;
+        }
+
+        private SwipeItems GetItemsForCreatedContent(CreatedContent createdContent)
+        {
+            switch (createdContent)
+            {
+                case CreatedContent.Left:
                     return LeftItems;
-                case SwipeItemsPlacement.Right:
+                case CreatedContent.Right:
                     return RightItems;
-                case SwipeItemsPlacement.Top:
+                case CreatedContent.Top:
                     return TopItems;
-                case SwipeItemsPlacement.Bottom:
+                case CreatedContent.Bottom:
                     return BottomItems;
                 default:
                     return null;
             }
         }
 
-        private Panel GetPanelForPlacement(SwipeItemsPlacement placement)
+        private static SwipeItemsPlacement GetPlacementFromCreatedContent(CreatedContent createdContent)
         {
-            switch (placement)
+            switch (createdContent)
             {
-                case SwipeItemsPlacement.Left:
-                    return _leftItemsPanel;
-                case SwipeItemsPlacement.Right:
-                    return _rightItemsPanel;
-                case SwipeItemsPlacement.Top:
-                    return _topItemsPanel;
-                case SwipeItemsPlacement.Bottom:
-                    return _bottomItemsPanel;
+                case CreatedContent.Left:
+                    return SwipeItemsPlacement.Left;
+                case CreatedContent.Right:
+                    return SwipeItemsPlacement.Right;
+                case CreatedContent.Top:
+                    return SwipeItemsPlacement.Top;
+                case CreatedContent.Bottom:
+                    return SwipeItemsPlacement.Bottom;
                 default:
-                    return null;
+                    return SwipeItemsPlacement.None;
             }
-        }
-
-        private bool IsOpen => _openPlacement != SwipeItemsPlacement.None;
-
-        private void UpdateDismissHook(Window window)
-        {
-            if (ReferenceEquals(_dismissWindow, window))
-            {
-                return;
-            }
-
-            if (_dismissWindow != null)
-            {
-                _dismissWindow.PreviewMouseDown -= OnWindowPreviewMouseDown;
-            }
-
-            _dismissWindow = window;
-
-            if (_dismissWindow != null)
-            {
-                _dismissWindow.PreviewMouseDown += OnWindowPreviewMouseDown;
-            }
-        }
-
-        private void OnWindowPreviewMouseDown(object sender, MouseButtonEventArgs e)
-        {
-            if (!IsOpen)
-            {
-                return;
-            }
-
-            var position = e.GetPosition(this);
-            if (position.X >= 0 &&
-                position.Y >= 0 &&
-                position.X <= ActualWidth &&
-                position.Y <= ActualHeight)
-            {
-                return;
-            }
-
-            CloseSwipe();
-        }
-
-        private bool IsWithinSwipeItems(DependencyObject source)
-        {
-            while (source != null)
-            {
-                if (ReferenceEquals(source, _leftItemsPanel) ||
-                    ReferenceEquals(source, _rightItemsPanel) ||
-                    ReferenceEquals(source, _topItemsPanel) ||
-                    ReferenceEquals(source, _bottomItemsPanel))
-                {
-                    return true;
-                }
-
-                var parent = VisualTreeHelper.GetParent(source);
-                if (parent == null)
-                {
-                    parent = LogicalTreeHelper.GetParent(source);
-                }
-
-                source = parent;
-            }
-
-            return false;
         }
 
         private void ValidateSwipeItemsCanSet(SwipeItems items, SwipeItemsPlacement placement)
@@ -572,25 +965,56 @@ namespace ModernWpf.Controls
                 throw new ArgumentException("Execute items should only have one item.");
             }
 
-            if (IsHorizontalPlacement(placement) && HasVerticalItems())
+            var hasHorizontal = HasHorizontalItems(excludePlacement: placement) ||
+                (IsHorizontalPlacement(placement) && HasItems(items));
+            var hasVertical = HasVerticalItems(excludePlacement: placement) ||
+                (IsVerticalPlacement(placement) && HasItems(items));
+            ThrowIfInvalidAxis(hasHorizontal, hasVertical);
+        }
+
+        private void ThrowIfHasVerticalAndHorizontalContent(bool setIsHorizontal = false)
+        {
+            var hasHorizontal = HasHorizontalItems();
+            var hasVertical = HasVerticalItems();
+
+            if (setIsHorizontal)
             {
-                throw new ArgumentException("SwipeControl can only have horizontal or vertical items.");
+                _isHorizontal = hasHorizontal || !hasVertical;
             }
 
-            if (IsVerticalPlacement(placement) && HasHorizontalItems())
+            ThrowIfInvalidAxis(hasHorizontal, hasVertical);
+        }
+
+        private void ThrowIfInvalidAxis(bool hasHorizontal, bool hasVertical)
+        {
+            if (_templateApplied)
             {
-                throw new ArgumentException("SwipeControl can only have horizontal or vertical items.");
+                if (_isHorizontal && hasVertical)
+                {
+                    throw new ArgumentException("This SwipeControl is horizontal and can not have vertical items.");
+                }
+
+                if (!_isHorizontal && hasHorizontal)
+                {
+                    throw new ArgumentException("This SwipeControl is vertical and can not have horizontal items.");
+                }
+            }
+            else if (hasHorizontal && hasVertical)
+            {
+                throw new ArgumentException("SwipeControl can't have both horizontal items and vertical items set at the same time.");
             }
         }
 
-        private bool HasHorizontalItems()
+        private bool HasHorizontalItems(SwipeItemsPlacement excludePlacement = SwipeItemsPlacement.None)
         {
-            return HasItems(LeftItems) || HasItems(RightItems);
+            return (excludePlacement != SwipeItemsPlacement.Left && HasItems(LeftItems)) ||
+                (excludePlacement != SwipeItemsPlacement.Right && HasItems(RightItems));
         }
 
-        private bool HasVerticalItems()
+        private bool HasVerticalItems(SwipeItemsPlacement excludePlacement = SwipeItemsPlacement.None)
         {
-            return HasItems(TopItems) || HasItems(BottomItems);
+            return (excludePlacement != SwipeItemsPlacement.Top && HasItems(TopItems)) ||
+                (excludePlacement != SwipeItemsPlacement.Bottom && HasItems(BottomItems));
         }
 
         private static bool HasItems(SwipeItems items)
@@ -606,6 +1030,11 @@ namespace ModernWpf.Controls
         private static bool IsVerticalPlacement(SwipeItemsPlacement placement)
         {
             return placement == SwipeItemsPlacement.Top || placement == SwipeItemsPlacement.Bottom;
+        }
+
+        private static bool IsHorizontalCreatedContent(CreatedContent createdContent)
+        {
+            return createdContent == CreatedContent.Left || createdContent == CreatedContent.Right;
         }
 
         private static SwipeItemsPlacement GetPlacement(DependencyProperty property)
@@ -633,117 +1062,131 @@ namespace ModernWpf.Controls
             return SwipeItemsPlacement.None;
         }
 
-        private void RebuildSwipeItems()
+        private bool IsWithinSwipeItems(DependencyObject source)
         {
-            RebuildPanel(_leftItemsPanel, LeftItems);
-            RebuildPanel(_rightItemsPanel, RightItems);
-            RebuildPanel(_topItemsPanel, TopItems);
-            RebuildPanel(_bottomItemsPanel, BottomItems);
+            while (source != null)
+            {
+                if (ReferenceEquals(source, _swipeContentStackPanel))
+                {
+                    return true;
+                }
+
+                source = GetParent(source);
+            }
+
+            return false;
         }
 
-        private void RebuildPanel(Panel panel, SwipeItems items)
+        private bool IsWithinInputEater(DependencyObject source)
         {
-            if (panel == null)
+            while (source != null)
+            {
+                if (ReferenceEquals(source, _inputEater))
+                {
+                    return true;
+                }
+
+                source = GetParent(source);
+            }
+
+            return false;
+        }
+
+        private bool IsWithinThisControl(DependencyObject source)
+        {
+            while (source != null)
+            {
+                if (ReferenceEquals(source, this))
+                {
+                    return true;
+                }
+
+                source = GetParent(source);
+            }
+
+            return false;
+        }
+
+        private static DependencyObject GetParent(DependencyObject source)
+        {
+            if (source == null)
+            {
+                return null;
+            }
+
+            var parent = VisualTreeHelper.GetParent(source);
+            return parent ?? LogicalTreeHelper.GetParent(source);
+        }
+
+        private void EnsureClip()
+        {
+            if (_rootGrid != null)
+            {
+                _rootGrid.ClipToBounds = true;
+            }
+        }
+
+        private void UpdateInputEater()
+        {
+            if (_inputEater == null)
             {
                 return;
             }
 
-            foreach (var button in panel.Children.OfType<Button>().ToList())
-            {
-                button.Click -= OnSwipeItemButtonClick;
-            }
-
-            panel.Children.Clear();
-            panel.Visibility = HasItems(items) ? Visibility.Visible : Visibility.Collapsed;
-
-            if (items == null)
-            {
-                return;
-            }
-
-            foreach (var item in items)
-            {
-                var button = CreateButtonForItem(item);
-                button.Click += OnSwipeItemButtonClick;
-                panel.Children.Add(button);
-            }
+            _inputEater.Visibility = _isOpen ? Visibility.Visible : Visibility.Collapsed;
+            _inputEater.IsHitTestVisible = _isOpen;
         }
 
-        private Button CreateButtonForItem(SwipeItem item)
+        private Brush GetBrush(string resourceKey)
         {
-            var button = new Button
-            {
-                Tag = item,
-                Content = CreateButtonContent(item)
-            };
-
-            button.SetResourceReference(StyleProperty, SwipeItemStyleKey);
-
-            if (item.Background != null)
-            {
-                button.Background = item.Background;
-            }
-
-            if (item.Foreground != null)
-            {
-                button.Foreground = item.Foreground;
-            }
-
-            AutomationProperties.SetName(button, item.Text ?? string.Empty);
-
-            var command = item.Command;
-            if (command != null)
-            {
-                button.IsEnabled = command.CanExecute(item.CommandParameter);
-            }
-
-            return button;
+            return TryFindResource(resourceKey) as Brush ??
+                _rootGrid?.TryFindResource(resourceKey) as Brush ??
+                Application.Current?.TryFindResource(resourceKey) as Brush;
         }
 
-        private static object CreateButtonContent(SwipeItem item)
+        private Style FindSwipeItemStyle()
         {
-            if (item.IconSource == null)
-            {
-                return item.Text;
-            }
-
-            var panel = new StackPanel
-            {
-                Orientation = Orientation.Horizontal
-            };
-
-            var icon = item.IconSource.CreateIconElement();
-            icon.Margin = new Thickness(0, 0, 4, 0);
-            panel.Children.Add(icon);
-            panel.Children.Add(new TextBlock
-            {
-                Text = item.Text,
-                VerticalAlignment = VerticalAlignment.Center
-            });
-            return panel;
+            return TryFindResource(SwipeItemStyleKey) as Style ??
+                _rootGrid?.TryFindResource(SwipeItemStyleKey) as Style ??
+                Application.Current?.TryFindResource(SwipeItemStyleKey) as Style;
         }
 
-        private void OnSwipeItemButtonClick(object sender, RoutedEventArgs e)
+        private static TranslateTransform EnsureTranslateTransform(UIElement element)
         {
-            if (sender is Button { Tag: SwipeItem item })
+            if (element.RenderTransform is TranslateTransform translateTransform)
             {
-                item.Invoke(this);
+                return translateTransform;
             }
+
+            translateTransform = new TranslateTransform();
+            element.RenderTransform = translateTransform;
+            return translateTransform;
         }
 
-        private Panel _leftItemsPanel;
-        private Panel _rightItemsPanel;
-        private Panel _topItemsPanel;
-        private Panel _bottomItemsPanel;
+        private Grid _rootGrid;
+        private Grid _swipeContentRoot;
+        private StackPanel _swipeContentStackPanel;
+        private Grid _contentRoot;
+        private ContentPresenterEx _contentPresenter;
+        private Grid _inputEater;
         private TranslateTransform _contentTransform;
+        private TranslateTransform _swipeContentStackPanelTransform;
+        private Style _swipeItemStyle;
         private Window _dismissWindow;
+        private SwipeItems _currentItems;
         private Point _dragStartPoint;
-        private double _dragStartOffset;
-        private double _currentOffset;
+        private double _dragStartValue;
+        private double _currentValue;
+        private bool _templateApplied;
+        private bool _isHorizontal = true;
+        private bool _isOpen;
         private bool _isPointerDown;
         private bool _isDragging;
-        private SwipeItemsPlacement _openPlacement = SwipeItemsPlacement.None;
-        private SwipeItemsPlacement _dragPlacement = SwipeItemsPlacement.None;
-        private static SwipeControl s_openSwipeControl;
+        private bool _isInteracting;
+        private bool _dragStartedOpen;
+        private bool _thresholdReached;
+        private CreatedContent _createdContent = CreatedContent.None;
+        private CreatedContent _dragCreatedContent = CreatedContent.None;
+        private static SwipeControl s_lastInteractedWithSwipeControl;
     }
 }

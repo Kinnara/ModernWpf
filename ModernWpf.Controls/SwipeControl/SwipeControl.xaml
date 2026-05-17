@@ -5,28 +5,24 @@
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:m="clr-namespace:ModernWpf.Markup;assembly=ModernWpf">
 
-    <Style x:Key="DefaultSwipeItemStyle" TargetType="Button">
+    <Style x:Key="DefaultSwipeItemStyle" TargetType="local:AppBarButton">
         <Setter Property="HorizontalAlignment" Value="Center" />
         <Setter Property="VerticalAlignment" Value="Center" />
-        <Setter Property="HorizontalContentAlignment" Value="Center" />
-        <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="MinWidth" Value="68" />
+        <Setter Property="Width" Value="Auto" />
         <Setter Property="MinHeight" Value="40" />
         <Setter Property="Background" Value="{DynamicResource SwipeItemBackground}" />
         <Setter Property="Foreground" Value="{DynamicResource SwipeItemForeground}" />
-        <Setter Property="Padding" Value="8,4,8,4" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="Button">
-                    <Border
+                <ControlTemplate TargetType="local:AppBarButton">
+                    <Grid
                         x:Name="Root"
                         MinWidth="{TemplateBinding MinWidth}"
                         MinHeight="{TemplateBinding MinHeight}"
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}">
+                        Background="{TemplateBinding Background}">
                         <VisualStateManager.CustomVisualStateManager>
                             <ui:VisualStateManagerEx />
                         </VisualStateManager.CustomVisualStateManager>
@@ -42,14 +38,31 @@
                                 </ui:VisualStateEx>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <ContentPresenter
-                            Margin="{TemplateBinding Padding}"
-                            Content="{TemplateBinding Content}"
-                            ContentStringFormat="{TemplateBinding ContentStringFormat}"
-                            ContentTemplate="{TemplateBinding ContentTemplate}"
-                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
-                    </Border>
+                        <Grid
+                            x:Name="ContentRoot"
+                            Margin="4,4,4,2"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Viewbox MaxHeight="16" MinWidth="16">
+                                <ContentPresenter
+                                    x:Name="Content"
+                                    Margin="0,0,0,2"
+                                    Content="{TemplateBinding Icon}" />
+                            </Viewbox>
+                            <TextBlock
+                                x:Name="TextLabel"
+                                Grid.Row="1"
+                                FontSize="12"
+                                Foreground="{TemplateBinding Foreground}"
+                                Text="{TemplateBinding Label}"
+                                TextAlignment="Center"
+                                TextWrapping="Wrap" />
+                        </Grid>
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -64,59 +77,51 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:SwipeControl">
                     <Grid
-                        x:Name="PART_Root"
+                        x:Name="RootGrid"
                         Background="Transparent"
                         ClipToBounds="True">
                         <Grid.Resources>
                             <m:StaticResource x:Key="SwipeItemBackground" ResourceKey="ControlFillColorTertiaryBrush" />
                             <m:StaticResource x:Key="SwipeItemForeground" ResourceKey="TextFillColorPrimaryBrush" />
                             <m:StaticResource x:Key="SwipeItemBackgroundPressed" ResourceKey="ControlAltFillColorQuarternaryBrush" />
-                            <Style x:Key="SwipeItemStyle" TargetType="Button" BasedOn="{StaticResource DefaultSwipeItemStyle}" />
+                            <m:StaticResource x:Key="SwipeItemPreThresholdExecuteForeground" ResourceKey="ControlStrongFillColorDefaultBrush" />
+                            <m:StaticResource x:Key="SwipeItemPreThresholdExecuteBackground" ResourceKey="ControlFillColorTertiaryBrush" />
+                            <m:StaticResource x:Key="SwipeItemPostThresholdExecuteForeground" ResourceKey="TextOnAccentFillColorPrimaryBrush" />
+                            <m:StaticResource x:Key="SwipeItemPostThresholdExecuteBackground" ResourceKey="AccentFillColorDefaultBrush" />
+                            <Style x:Key="SwipeItemStyle" TargetType="local:AppBarButton" BasedOn="{StaticResource DefaultSwipeItemStyle}" />
                         </Grid.Resources>
-                        <Grid x:Name="PART_ItemsRoot">
-                            <StackPanel
-                                x:Name="PART_TopItemsPanel"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Top"
-                                Orientation="Horizontal"
-                                Visibility="Collapsed" />
-                            <StackPanel
-                                x:Name="PART_LeftItemsPanel"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Stretch"
-                                Orientation="Horizontal"
-                                Visibility="Collapsed" />
-                            <StackPanel
-                                x:Name="PART_RightItemsPanel"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Stretch"
-                                Orientation="Horizontal"
-                                Visibility="Collapsed" />
-                            <StackPanel
-                                x:Name="PART_BottomItemsPanel"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Bottom"
-                                Orientation="Horizontal"
-                                Visibility="Collapsed" />
+
+                        <Grid x:Name="SwipeContentRoot">
+                            <StackPanel x:Name="SwipeContentStackPanel">
+                                <StackPanel.RenderTransform>
+                                    <TranslateTransform x:Name="SwipeContentStackPanelTransform" />
+                                </StackPanel.RenderTransform>
+                            </StackPanel>
                         </Grid>
 
-                        <ui:ContentPresenterEx
-                            x:Name="PART_ContentPresenter"
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="{TemplateBinding CornerRadius}"
-                            Padding="{TemplateBinding Padding}"
-                            Content="{TemplateBinding Content}"
-                            ContentTransitions="{TemplateBinding ContentTransitions}"
-                            ContentStringFormat="{TemplateBinding ContentStringFormat}"
-                            ContentTemplate="{TemplateBinding ContentTemplate}"
-                            HorizontalContentAlignment="Stretch"
-                            VerticalContentAlignment="Stretch">
-                            <ui:ContentPresenterEx.RenderTransform>
-                                <TranslateTransform x:Name="PART_ContentTransform" />
-                            </ui:ContentPresenterEx.RenderTransform>
-                        </ui:ContentPresenterEx>
+                        <Grid x:Name="ContentRoot">
+                            <Grid.RenderTransform>
+                                <TranslateTransform x:Name="ContentRootTransform" />
+                            </Grid.RenderTransform>
+                            <ui:ContentPresenterEx
+                                x:Name="ContentPresenter"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="{TemplateBinding CornerRadius}"
+                                Padding="{TemplateBinding Padding}"
+                                Content="{TemplateBinding Content}"
+                                ContentTransitions="{TemplateBinding ContentTransitions}"
+                                ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                HorizontalContentAlignment="Stretch"
+                                VerticalContentAlignment="Stretch" />
+                            <Grid
+                                x:Name="InputEater"
+                                Background="Transparent"
+                                IsHitTestVisible="False"
+                                Visibility="Collapsed" />
+                        </Grid>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

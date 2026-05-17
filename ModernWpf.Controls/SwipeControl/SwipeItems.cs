@@ -20,6 +20,7 @@ namespace ModernWpf.Controls
                 }
 
                 _mode = value;
+                _owner?.OnSwipeItemsChanged();
             }
         }
 
