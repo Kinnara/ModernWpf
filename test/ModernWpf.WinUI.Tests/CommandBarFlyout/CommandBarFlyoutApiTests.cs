@@ -36,6 +36,8 @@ public class CommandBarFlyoutApiTests
             Assert.AreEqual(0, commandBarFlyout.PrimaryCommands.Count);
             Assert.IsNotNull(commandBarFlyout.SecondaryCommands);
             Assert.AreEqual(0, commandBarFlyout.SecondaryCommands.Count);
+            Assert.IsFalse(commandBarFlyout.ShouldConstrainToRootBounds);
+            Assert.IsFalse(commandBarFlyout.IsConstrainedToRootBounds);
             Assert.IsFalse(commandBarFlyout.AreOpenCloseAnimationsEnabled);
         });
     }

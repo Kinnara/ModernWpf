@@ -62,6 +62,25 @@ namespace ModernWpf.Controls.Primitives
 
         #endregion
 
+        #region ShouldConstrainToRootBounds
+
+        public static readonly DependencyProperty ShouldConstrainToRootBoundsProperty =
+            DependencyProperty.Register(
+                nameof(ShouldConstrainToRootBounds),
+                typeof(bool),
+                typeof(FlyoutBase),
+                new PropertyMetadata(true));
+
+        public bool ShouldConstrainToRootBounds
+        {
+            get => (bool)GetValue(ShouldConstrainToRootBoundsProperty);
+            set => SetValue(ShouldConstrainToRootBoundsProperty, value);
+        }
+
+        public bool IsConstrainedToRootBounds => ShouldConstrainToRootBounds;
+
+        #endregion
+
         #region IsOpen
 
         private static readonly DependencyPropertyKey IsOpenPropertyKey =

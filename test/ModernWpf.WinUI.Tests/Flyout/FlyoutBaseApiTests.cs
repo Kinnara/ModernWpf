@@ -16,6 +16,20 @@ namespace ModernWpf.WinUI.Tests.FlyoutTests;
 public class FlyoutBaseApiTests
 {
     [TestMethod]
+    public void RootBoundsConstraintSurfaceMatchesWinUISource()
+    {
+        var flyout = new Flyout();
+
+        Assert.IsTrue(flyout.ShouldConstrainToRootBounds);
+        Assert.IsTrue(flyout.IsConstrainedToRootBounds);
+
+        flyout.ShouldConstrainToRootBounds = false;
+
+        Assert.IsFalse(flyout.ShouldConstrainToRootBounds);
+        Assert.IsFalse(flyout.IsConstrainedToRootBounds);
+    }
+
+    [TestMethod]
     public void TargetTracksOpenFlyoutLikeWinUISource()
     {
         WpfTestHost.Run(() =>

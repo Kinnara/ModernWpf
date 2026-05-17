@@ -20,6 +20,7 @@ namespace ModernWpf.Controls
     {
         public CommandBarFlyout()
         {
+            ShouldConstrainToRootBounds = false;
             AreOpenCloseAnimationsEnabled = false;
 
             PrimaryCommands = new ObservableCollection<ICommandBarElement>();
