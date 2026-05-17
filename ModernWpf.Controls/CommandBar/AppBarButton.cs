@@ -574,7 +574,7 @@ namespace ModernWpf.Controls
         private bool GetHasLabelAtPosition(CommandBarDefaultLabelPosition labelPosition)
         {
             return GetEffectiveLabelPosition() == labelPosition &&
-                   !string.IsNullOrEmpty(Label);
+                   Label != null;
         }
 
         double IAppBarButtonElement.GetKeyboardAcceleratorTextDesiredWidth()

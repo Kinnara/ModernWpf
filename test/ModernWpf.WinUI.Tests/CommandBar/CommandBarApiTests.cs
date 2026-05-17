@@ -446,6 +446,21 @@ public class CommandBarApiTests
     }
 
     [TestMethod]
+    public void CommandBarAutoOverflowButtonTreatsEmptyAppBarLabelsAsPresent()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var button = new AppBarButton { Icon = new SymbolIcon(Symbol.Accept) };
+            VerifyEmptyLabelPrimaryCommandShowsAutoOverflowButton(button);
+
+            var toggleButton = new AppBarToggleButton { Icon = new SymbolIcon(Symbol.Accept) };
+            VerifyEmptyLabelPrimaryCommandShowsAutoOverflowButton(toggleButton);
+        });
+    }
+
+    [TestMethod]
     public void AppBarToggleButtonDefaultsAndSetters()
     {
         WpfTestHost.Run(() =>
@@ -717,6 +732,45 @@ public class CommandBarApiTests
         root.Resources.MergedDictionaries.Add(resources);
         root.Children.Add(child);
         return root;
+    }
+
+    private static void VerifyEmptyLabelPrimaryCommandShowsAutoOverflowButton(Control command)
+    {
+        var appBarElement = (ICommandBarElement)command;
+        var commandBar = new ModernWpf.Controls.CommandBar
+        {
+            DefaultLabelPosition = CommandBarDefaultLabelPosition.Bottom,
+            IsDynamicOverflowEnabled = false
+        };
+        commandBar.PrimaryCommands.Add(appBarElement);
+
+        using var host = new TestWindowHost(commandBar, width: 240, height: 120);
+        host.UpdateLayout();
+
+        var toolBar = FindTemplateChild<CommandBarToolBar>(commandBar, "PART_ToolBar");
+        var moreButton = FindTemplateChild<ToggleButton>(toolBar, "MoreButton");
+
+        Assert.AreEqual(Visibility.Visible, toolBar.EffectiveOverflowButtonVisibility);
+        Assert.IsTrue(toolBar.EffectiveOverflowButtonEnabled);
+        Assert.AreEqual(Visibility.Visible, moreButton.Visibility);
+        Assert.IsTrue(moreButton.IsEnabled);
+
+        switch (command)
+        {
+            case AppBarButton button:
+                button.LabelPosition = CommandBarLabelPosition.Collapsed;
+                break;
+            case AppBarToggleButton toggleButton:
+                toggleButton.LabelPosition = CommandBarLabelPosition.Collapsed;
+                break;
+        }
+
+        host.UpdateLayout();
+
+        Assert.AreEqual(Visibility.Collapsed, toolBar.EffectiveOverflowButtonVisibility);
+        Assert.IsFalse(toolBar.EffectiveOverflowButtonEnabled);
+        Assert.AreEqual(Visibility.Collapsed, moreButton.Visibility);
+        Assert.IsFalse(moreButton.IsEnabled);
     }
 
     private static MouseButtonEventArgs CreateMouseLeftButtonDownArgs(UIElement source)
