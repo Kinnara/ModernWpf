@@ -145,7 +145,9 @@ namespace ModernWpf.Controls
         #region DefaultLabelPosition
 
         public static readonly DependencyProperty DefaultLabelPositionProperty =
-            CommandBarToolBar.DefaultLabelPositionProperty.AddOwner(typeof(CommandBar));
+            CommandBarToolBar.DefaultLabelPositionProperty.AddOwner(
+                typeof(CommandBar),
+                new FrameworkPropertyMetadata(CommandBarDefaultLabelPosition.Right));
 
         public CommandBarDefaultLabelPosition DefaultLabelPosition
         {

@@ -270,12 +270,7 @@ namespace ModernWpf.Controls
                 return CommandBarDefaultLabelPosition.Collapsed;
             }
 
-            if (ReadLocalValue(AppBarElementProperties.DefaultLabelPositionProperty) != DependencyProperty.UnsetValue)
-            {
-                return (CommandBarDefaultLabelPosition)GetValue(AppBarElementProperties.DefaultLabelPositionProperty);
-            }
-
-            return CommandBarDefaultLabelPosition.Bottom;
+            return m_defaultLabelPosition;
         }
 
         private void ApplyApplicationViewState(bool useTransitions = true)
@@ -385,7 +380,7 @@ namespace ModernWpf.Controls
 
         private static void OnDefaultLabelPositionPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((AppBarButton)d).UpdateInternalStyles();
+            ((AppBarButton)d).SetDefaultLabelPosition((CommandBarDefaultLabelPosition)e.NewValue);
         }
 
         private static void OnShowKeyboardAcceleratorTextPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -527,6 +522,36 @@ namespace ModernWpf.Controls
             SetOverflowStyleParams(hasIcons, hasToggleButtons, hasKeyboardAcceleratorText);
         }
 
+        private void SetDefaultLabelPosition(CommandBarDefaultLabelPosition defaultLabelPosition)
+        {
+            if (m_defaultLabelPosition != defaultLabelPosition)
+            {
+                m_defaultLabelPosition = defaultLabelPosition;
+                UpdateInternalStyles();
+            }
+        }
+
+        void IAppBarButtonElement.SetDefaultLabelPosition(CommandBarDefaultLabelPosition defaultLabelPosition)
+        {
+            SetDefaultLabelPosition(defaultLabelPosition);
+        }
+
+        bool IAppBarButtonElement.GetHasBottomLabel()
+        {
+            return GetHasLabelAtPosition(CommandBarDefaultLabelPosition.Bottom);
+        }
+
+        bool IAppBarButtonElement.GetHasRightLabel()
+        {
+            return GetHasLabelAtPosition(CommandBarDefaultLabelPosition.Right);
+        }
+
+        private bool GetHasLabelAtPosition(CommandBarDefaultLabelPosition labelPosition)
+        {
+            return GetEffectiveLabelPosition() == labelPosition &&
+                   !string.IsNullOrEmpty(Label);
+        }
+
         double IAppBarButtonElement.GetKeyboardAcceleratorTextDesiredWidth()
         {
             if (_keyboardAcceleratorTextLabel == null)
@@ -568,5 +593,6 @@ namespace ModernWpf.Controls
         private bool m_isWithToggleButtons;
         private bool m_isWithKeyboardAcceleratorText;
         private double m_maxKeyboardAcceleratorTextWidth;
+        private CommandBarDefaultLabelPosition m_defaultLabelPosition = CommandBarDefaultLabelPosition.Bottom;
     }
 }

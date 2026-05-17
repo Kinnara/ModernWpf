@@ -4,6 +4,7 @@ using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
 using ModernWpf.Controls;
 
@@ -46,12 +47,21 @@ namespace ModernWpf.Controls.Primitives
         #region DefaultLabelPosition
 
         public static readonly DependencyProperty DefaultLabelPositionProperty =
-            AppBarElementProperties.DefaultLabelPositionProperty.AddOwner(typeof(CommandBarToolBar));
+            AppBarElementProperties.DefaultLabelPositionProperty.AddOwner(
+                typeof(CommandBarToolBar),
+                new FrameworkPropertyMetadata(CommandBarDefaultLabelPosition.Right, OnDefaultLabelPositionChanged));
 
         public CommandBarDefaultLabelPosition DefaultLabelPosition
         {
             get => (CommandBarDefaultLabelPosition)GetValue(DefaultLabelPositionProperty);
             set => SetValue(DefaultLabelPositionProperty, value);
+        }
+
+        private static void OnDefaultLabelPositionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var toolBar = (CommandBarToolBar)d;
+            toolBar.PropagateDefaultLabelPosition();
+            toolBar.UpdateEffectiveOverflowButtonVisibility();
         }
 
         #endregion
@@ -177,7 +187,7 @@ namespace ModernWpf.Controls.Primitives
             switch (OverflowButtonVisibility)
             {
                 case CommandBarOverflowButtonVisibility.Auto:
-                    visible = HasOverflowItems;
+                    visible = HasOverflowItems || HasVisiblePrimaryCommandWithBottomLabel();
                     break;
                 case CommandBarOverflowButtonVisibility.Collapsed:
                     visible = false;
@@ -185,6 +195,27 @@ namespace ModernWpf.Controls.Primitives
             }
 
             EffectiveOverflowButtonVisibility = visible ? Visibility.Visible : Visibility.Collapsed;
+            EffectiveOverflowButtonEnabled = visible;
+        }
+
+        #endregion
+
+        #region EffectiveOverflowButtonEnabled
+
+        private static readonly DependencyPropertyKey EffectiveOverflowButtonEnabledPropertyKey =
+            DependencyProperty.RegisterReadOnly(
+                nameof(EffectiveOverflowButtonEnabled),
+                typeof(bool),
+                typeof(CommandBarToolBar),
+                new PropertyMetadata(false));
+
+        public static readonly DependencyProperty EffectiveOverflowButtonEnabledProperty =
+            EffectiveOverflowButtonEnabledPropertyKey.DependencyProperty;
+
+        public bool EffectiveOverflowButtonEnabled
+        {
+            get => (bool)GetValue(EffectiveOverflowButtonEnabledProperty);
+            private set => SetValue(EffectiveOverflowButtonEnabledPropertyKey, value);
         }
 
         #endregion
@@ -248,6 +279,9 @@ namespace ModernWpf.Controls.Primitives
                 m_toolBarPanel.HasChildrenChanged += OnToolBarPanelHasChildrenChanged;
             }
 
+            PropagateDefaultLabelPosition();
+            UpdateEffectiveOverflowButtonVisibility();
+
             if (TemplatedParent is CommandBar commandBar)
             {
                 commandBar.UpdateVisualState(false);
@@ -265,11 +299,11 @@ namespace ModernWpf.Controls.Primitives
                 element is AppBarToggleButton)
             {
                 var appBarElement = (FrameworkElement)element;
-                appBarElement.SetBinding(DefaultLabelPositionProperty, DefaultLabelPositionProperty, this);
                 AppBarElementProperties.SetUseOverflowStyle(appBarElement, false);
 
                 if (appBarElement is IAppBarButtonElement appBarButtonElement)
                 {
+                    appBarButtonElement.SetDefaultLabelPosition(DefaultLabelPosition);
                     appBarButtonElement.SetOverflowStyleParams(false, false, false);
                     appBarButtonElement.UpdateTemplateSettings(0);
                 }
@@ -285,11 +319,10 @@ namespace ModernWpf.Controls.Primitives
 
                 if (element is IAppBarButtonElement appBarButtonElement)
                 {
+                    appBarButtonElement.SetDefaultLabelPosition(CommandBarDefaultLabelPosition.Bottom);
                     appBarButtonElement.SetOverflowStyleParams(false, false, false);
                     appBarButtonElement.UpdateTemplateSettings(0);
                 }
-
-                element.ClearValue(DefaultLabelPositionProperty);
             }
 
             base.ClearContainerForItemOverride(element, item);
@@ -371,6 +404,7 @@ namespace ModernWpf.Controls.Primitives
 
         private void OnToolBarPanelHasChildrenChanged(object sender, EventArgs e)
         {
+            UpdateEffectiveOverflowButtonVisibility();
             HasPrimaryCommandsChanged?.Invoke(this, e);
         }
 
@@ -390,6 +424,52 @@ namespace ModernWpf.Controls.Primitives
             {
                 m_moreButton.ToolTip = IsOverflowOpen ? m_moreButtonOpenToolTip : m_moreButtonClosedToolTip;
             }
+        }
+
+        internal static void InvalidateCommandBarElementLayout(DependencyObject element)
+        {
+            var toolBar = ItemsControl.ItemsControlFromItemContainer(element) as CommandBarToolBar ??
+                          FindAncestorCommandBarToolBar(element);
+            toolBar?.UpdateEffectiveOverflowButtonVisibility();
+        }
+
+        private static CommandBarToolBar FindAncestorCommandBarToolBar(DependencyObject element)
+        {
+            var current = element;
+            while (current != null)
+            {
+                if (current is CommandBarToolBar toolBar)
+                {
+                    return toolBar;
+                }
+
+                current = VisualTreeHelper.GetParent(current);
+            }
+
+            return null;
+        }
+
+        private void PropagateDefaultLabelPosition()
+        {
+            if (m_toolBarPanel is null)
+            {
+                return;
+            }
+
+            foreach (UIElement child in m_toolBarPanel.GetChildren(includeCollapsed: true))
+            {
+                if (child is IAppBarButtonElement appBarButtonElement)
+                {
+                    appBarButtonElement.SetDefaultLabelPosition(DefaultLabelPosition);
+                }
+            }
+        }
+
+        private bool HasVisiblePrimaryCommandWithBottomLabel()
+        {
+            return DefaultLabelPosition == CommandBarDefaultLabelPosition.Bottom &&
+                   m_toolBarPanel != null &&
+                   m_toolBarPanel.HasVisibleBottomLabel;
         }
 
         private void UpdateDynamicOverflowVisualState(bool useTransitions)

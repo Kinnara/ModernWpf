@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 
@@ -20,6 +21,35 @@ namespace ModernWpf.Controls.Primitives
         }
 
         internal event EventHandler HasChildrenChanged;
+
+        internal bool HasVisibleBottomLabel
+        {
+            get
+            {
+                foreach (UIElement child in GetChildren(includeCollapsed: false))
+                {
+                    if (child is IAppBarButtonElement appBarButtonElement &&
+                        appBarButtonElement.GetHasBottomLabel())
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        }
+
+        internal IEnumerable<UIElement> GetChildren(bool includeCollapsed)
+        {
+            for (int i = 0; i < InternalChildren.Count; i++)
+            {
+                if (InternalChildren[i] is UIElement child &&
+                    (includeCollapsed || child.Visibility != Visibility.Collapsed))
+                {
+                    yield return child;
+                }
+            }
+        }
 
         protected override void OnVisualChildrenChanged(DependencyObject visualAdded, DependencyObject visualRemoved)
         {

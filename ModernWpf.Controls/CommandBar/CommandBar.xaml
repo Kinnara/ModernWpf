@@ -401,7 +401,7 @@
                             </Grid>
                             <ToggleButton
                                 x:Name="MoreButton"
-                                IsEnabled="{TemplateBinding HasOverflowItems}"
+                                IsEnabled="{TemplateBinding EffectiveOverflowButtonEnabled}"
                                 Foreground="{TemplateBinding Foreground}"
                                 Style="{DynamicResource EllipsisButton}"
                                 Padding="{DynamicResource CommandBarMoreButtonMargin}"

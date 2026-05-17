@@ -19,6 +19,12 @@ namespace ModernWpf.Controls
 
         string KeyboardAcceleratorTextOverride { get; }
 
+        void SetDefaultLabelPosition(CommandBarDefaultLabelPosition defaultLabelPosition);
+
+        bool GetHasBottomLabel();
+
+        bool GetHasRightLabel();
+
         void SetOverflowStyleParams(bool hasIcons, bool hasToggleButtons, bool hasKeyboardAcceleratorText);
 
         double GetKeyboardAcceleratorTextDesiredWidth();
@@ -56,6 +62,8 @@ namespace ModernWpf.Controls
         private static void OnLabelChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             (d as FrameworkElement)?.CoerceValue(FrameworkElement.ToolTipProperty);
+            (d as IAppBarElement)?.UpdateApplicationViewState();
+            CommandBarToolBar.InvalidateCommandBarElementLayout(d);
         }
 
         // Set the label to the command text if no label has been explicitly specified
@@ -87,11 +95,18 @@ namespace ModernWpf.Controls
                 "DefaultLabelPosition",
                 typeof(CommandBarDefaultLabelPosition),
                 typeof(AppBarElementProperties),
-                new PropertyMetadata(CommandBarDefaultLabelPosition.Right, OnDefaultLabelPositionChanged));
+                new PropertyMetadata(CommandBarDefaultLabelPosition.Bottom, OnDefaultLabelPositionChanged));
 
         private static void OnDefaultLabelPositionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            (d as IAppBarElement)?.UpdateApplicationViewState();
+            if (d is IAppBarButtonElement appBarButtonElement)
+            {
+                appBarButtonElement.SetDefaultLabelPosition((CommandBarDefaultLabelPosition)e.NewValue);
+            }
+            else
+            {
+                (d as IAppBarElement)?.UpdateApplicationViewState();
+            }
         }
 
         #endregion
@@ -108,6 +123,7 @@ namespace ModernWpf.Controls
         private static void OnLabelPositionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             (d as IAppBarElement)?.UpdateApplicationViewState();
+            CommandBarToolBar.InvalidateCommandBarElementLayout(d);
         }
 
         #endregion

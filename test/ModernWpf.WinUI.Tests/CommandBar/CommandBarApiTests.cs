@@ -305,6 +305,95 @@ public class CommandBarApiTests
     }
 
     [TestMethod]
+    public void AppBarButtonsUseWinUIDefaultLabelPositionPropagation()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var button = new AppBarButton
+            {
+                Icon = new SymbolIcon(Symbol.Accept),
+                Label = "Accept"
+            };
+            var toggleButton = new AppBarToggleButton
+            {
+                Icon = new SymbolIcon(Symbol.Pin),
+                Label = "Pin"
+            };
+            var commandBar = new ModernWpf.Controls.CommandBar
+            {
+                DefaultLabelPosition = CommandBarDefaultLabelPosition.Right,
+                IsDynamicOverflowEnabled = false
+            };
+            commandBar.PrimaryCommands.Add(button);
+            commandBar.PrimaryCommands.Add(toggleButton);
+
+            using var host = new TestWindowHost(commandBar, width: 320, height: 120);
+            host.UpdateLayout();
+
+            var buttonRoot = FindTemplateChild<Border>(button, "Root");
+            var toggleRoot = FindTemplateChild<Border>(toggleButton, "Root");
+
+            AssertVisualState(buttonRoot, "ApplicationViewStates", "LabelOnRight");
+            AssertVisualState(toggleRoot, "ApplicationViewStates", "LabelOnRight");
+
+            commandBar.DefaultLabelPosition = CommandBarDefaultLabelPosition.Bottom;
+            host.UpdateLayout();
+
+            AssertVisualState(buttonRoot, "ApplicationViewStates", "FullSize");
+            AssertVisualState(toggleRoot, "ApplicationViewStates", "FullSize");
+
+            button.LabelPosition = CommandBarLabelPosition.Collapsed;
+            toggleButton.LabelPosition = CommandBarLabelPosition.Collapsed;
+            host.UpdateLayout();
+
+            AssertVisualState(buttonRoot, "ApplicationViewStates", "LabelCollapsed");
+            AssertVisualState(toggleRoot, "ApplicationViewStates", "LabelCollapsed");
+        });
+    }
+
+    [TestMethod]
+    public void CommandBarAutoOverflowButtonUsesBottomLabelQueries()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var button = new AppBarButton
+            {
+                Icon = new SymbolIcon(Symbol.Accept),
+                Label = "Accept"
+            };
+            var commandBar = new ModernWpf.Controls.CommandBar
+            {
+                DefaultLabelPosition = CommandBarDefaultLabelPosition.Bottom,
+                IsDynamicOverflowEnabled = false
+            };
+            commandBar.PrimaryCommands.Add(button);
+
+            using var host = new TestWindowHost(commandBar, width: 240, height: 120);
+            host.UpdateLayout();
+
+            var toolBar = FindTemplateChild<CommandBarToolBar>(commandBar, "PART_ToolBar");
+            var moreButton = FindTemplateChild<ToggleButton>(toolBar, "MoreButton");
+
+            Assert.AreEqual(Visibility.Visible, toolBar.EffectiveOverflowButtonVisibility);
+            Assert.IsTrue(toolBar.EffectiveOverflowButtonEnabled);
+            Assert.AreEqual(Visibility.Visible, moreButton.Visibility);
+            Assert.IsTrue(moreButton.IsEnabled);
+
+            button.LabelPosition = CommandBarLabelPosition.Collapsed;
+            host.UpdateLayout();
+
+            Assert.AreEqual(Visibility.Collapsed, toolBar.EffectiveOverflowButtonVisibility);
+            Assert.IsFalse(toolBar.EffectiveOverflowButtonEnabled);
+            Assert.AreEqual(Visibility.Collapsed, moreButton.Visibility);
+            Assert.IsFalse(moreButton.IsEnabled);
+        });
+    }
+
+    [TestMethod]
     public void AppBarToggleButtonDefaultsAndSetters()
     {
         WpfTestHost.Run(() =>
