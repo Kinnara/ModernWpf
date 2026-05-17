@@ -819,10 +819,9 @@ namespace ModernWpf.Controls
             else
             {
                 stateName = IsOn ? OnState : OffState;
+                VisualStateManager.GoToState(this, IsOn ? OnContentState : OffContentState, useTransitions);
             }
             VisualStateManager.GoToState(this, stateName, useTransitions);
-
-            VisualStateManager.GoToState(this, IsOn ? OnContentState : OffContentState, useTransitions);
         }
 
         internal void Toggle()

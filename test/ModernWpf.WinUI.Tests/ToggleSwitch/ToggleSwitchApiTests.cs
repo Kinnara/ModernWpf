@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
@@ -149,6 +150,32 @@ public class ToggleSwitchApiTests
             host.UpdateLayout();
 
             Assert.IsTrue(toggleSwitch.IsOn);
+        });
+    }
+
+    [TestMethod]
+    public void DraggingDoesNotChangeContentState()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch();
+            using var host = new TestWindowHost(toggleSwitch, width: 260, height: 120);
+            host.UpdateLayout();
+
+            var thumb = FindNamedDescendant<Thumb>(toggleSwitch, "SwitchThumb");
+            var stateGroupsRoot = FindStateGroupsRoot(toggleSwitch);
+            Assert.AreEqual("OffContent", GetCurrentStateName(stateGroupsRoot, "ContentStates"));
+
+            Assert.IsTrue(System.Windows.VisualStateManager.GoToState(toggleSwitch, "OnContent", false));
+            Assert.AreEqual("OnContent", GetCurrentStateName(stateGroupsRoot, "ContentStates"));
+
+            RaiseDragStarted(thumb);
+            host.UpdateLayout();
+
+            Assert.AreEqual("Dragging", GetCurrentStateName(stateGroupsRoot, "ToggleStates"));
+            Assert.AreEqual("OnContent", GetCurrentStateName(stateGroupsRoot, "ContentStates"));
         });
     }
 
@@ -350,6 +377,46 @@ public class ToggleSwitchApiTests
         });
     }
 
+    [TestMethod]
+    public void ValidateWinUIFootprint()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var root = new StackPanel();
+            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch();
+            var toggleSwitchWithWideOnContent = new ModernWpf.Controls.ToggleSwitch
+            {
+                OnContent = new Rectangle { Height = 20, Width = 200 }
+            };
+            var toggleSwitchWithWideOffContent = new ModernWpf.Controls.ToggleSwitch
+            {
+                OffContent = new Rectangle { Height = 20, Width = 200 }
+            };
+
+            root.Children.Add(toggleSwitch);
+            root.Children.Add(toggleSwitchWithWideOnContent);
+            root.Children.Add(toggleSwitchWithWideOffContent);
+
+            using var host = new TestWindowHost(root, width: 500, height: 220);
+            host.UpdateLayout();
+
+            Assert.AreEqual(154d, toggleSwitch.ActualWidth, 0.1);
+            Assert.AreEqual(40d, toggleSwitch.ActualHeight, 0.1);
+
+            var thumb = FindNamedDescendant<Thumb>(toggleSwitch, "SwitchThumb");
+            Assert.AreEqual(72d, thumb.ActualWidth, 1.0);
+            Assert.AreEqual(40d, thumb.ActualHeight, 0.1);
+
+            double expectedWideContentWidth = 200 + 40 + 12;
+            Assert.AreEqual(expectedWideContentWidth, toggleSwitchWithWideOnContent.ActualWidth, 0.1);
+            Assert.AreEqual(40d, toggleSwitchWithWideOnContent.ActualHeight, 0.1);
+            Assert.AreEqual(expectedWideContentWidth, toggleSwitchWithWideOffContent.ActualWidth, 0.1);
+            Assert.AreEqual(40d, toggleSwitchWithWideOffContent.ActualHeight, 0.1);
+        });
+    }
+
     private static void RaiseDragStarted(Thumb thumb)
     {
         thumb.RaiseEvent(new DragStartedEventArgs(0, 0)
@@ -435,6 +502,31 @@ public class ToggleSwitchApiTests
         }
 
         throw new InvalidOperationException($"Could not find descendant named '{name}'.");
+    }
+
+    private static FrameworkElement FindStateGroupsRoot(DependencyObject root)
+    {
+        foreach (var descendant in VisualTreeTestHelper.EnumerateDescendants(root))
+        {
+            if (descendant is FrameworkElement element &&
+                VisualStateManager.GetVisualStateGroups(element)
+                    .OfType<VisualStateGroup>()
+                    .Any(group => group.Name == "ContentStates"))
+            {
+                return element;
+            }
+        }
+
+        throw new InvalidOperationException("Could not find ToggleSwitch state groups root.");
+    }
+
+    private static string GetCurrentStateName(FrameworkElement stateGroupsRoot, string groupName)
+    {
+        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
+            .OfType<VisualStateGroup>()
+            .Single(item => item.Name == groupName);
+        Assert.IsNotNull(group.CurrentState);
+        return group.CurrentState.Name;
     }
 
     private static ToggleSwitchAutomationPeer CreatePeer(ModernWpf.Controls.ToggleSwitch toggleSwitch)
