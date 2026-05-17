@@ -238,6 +238,46 @@ public class ContentDialogApiTests
     }
 
     [TestMethod]
+    public void DefaultButtonVisualStateFollowsSourceCommandAreaFocus()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var dialog = CreateDialog();
+            using var host = CreateInPlaceHost(dialog);
+            var showTask = ShowInPlace(dialog);
+
+            var primaryButton = GetTemplateButton(dialog, "PrimaryButton");
+            var secondaryButton = GetTemplateButton(dialog, "SecondaryButton");
+            var normalPrimaryStyle = primaryButton.Style;
+            var normalSecondaryStyle = secondaryButton.Style;
+            var accentButtonStyle = dialog.TryFindResource("AccentButtonStyle") as Style
+                ?? throw new AssertFailedException("Expected AccentButtonStyle resource.");
+
+            dialog.DefaultButton = ContentDialogButton.Primary;
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            Assert.AreSame(accentButtonStyle, primaryButton.Style);
+
+            Assert.IsTrue(secondaryButton.Focus());
+            WpfTestHost.DoEvents();
+
+            Assert.AreSame(normalPrimaryStyle, primaryButton.Style);
+            Assert.AreSame(normalSecondaryStyle, secondaryButton.Style);
+
+            Assert.IsTrue(primaryButton.Focus());
+            WpfTestHost.DoEvents();
+
+            Assert.AreSame(accentButtonStyle, primaryButton.Style);
+
+            dialog.Hide();
+            Assert.AreEqual(ContentDialogResult.None, WaitForResult(showTask));
+        });
+    }
+
+    [TestMethod]
     public void InPlaceShowAndHideRaiseEventsAndReturnNone()
     {
         WpfTestHost.Run(() =>
@@ -311,6 +351,72 @@ public class ContentDialogApiTests
                 }));
             Assert.AreEqual(1, closeCommand.ExecuteCount);
             Assert.AreEqual("close", closeCommand.LastParameter);
+        });
+    }
+
+    [TestMethod]
+    public void EnterOnlyInvokesExplicitDefaultButtonLikeWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var dialog = CreateDialog();
+            dialog.DefaultButton = ContentDialogButton.None;
+
+            var primaryClickCount = 0;
+            dialog.PrimaryButtonClick += (_, _) => primaryClickCount++;
+
+            using (CreateInPlaceHost(dialog))
+            {
+                var showTask = ShowInPlace(dialog);
+
+                PressKey(dialog, Key.Enter);
+                Assert.IsFalse(showTask.IsCompleted);
+                Assert.AreEqual(0, primaryClickCount);
+
+                dialog.DefaultButton = ContentDialogButton.Primary;
+                PressKey(dialog, Key.Enter);
+
+                Assert.AreEqual(ContentDialogResult.Primary, WaitForResult(showTask));
+                Assert.AreEqual(1, primaryClickCount);
+            }
+        });
+    }
+
+    [TestMethod]
+    public void EscapeUsesSourceCloseActionAndCloseButtonClickCancellation()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var closeCommand = new RecordingCommand();
+            var dialog = CreateDialog();
+            dialog.CloseButtonCommand = closeCommand;
+            dialog.CloseButtonCommandParameter = "close";
+
+            var closeClickCount = 0;
+            var cancelClose = true;
+            dialog.CloseButtonClick += (_, args) =>
+            {
+                closeClickCount++;
+                args.Cancel = cancelClose;
+            };
+
+            using (CreateInPlaceHost(dialog))
+            {
+                var showTask = ShowInPlace(dialog);
+
+                PressKey(dialog, Key.Escape);
+                Assert.IsFalse(showTask.IsCompleted);
+                Assert.AreEqual(1, closeClickCount);
+                Assert.AreEqual(0, closeCommand.ExecuteCount);
+
+                cancelClose = false;
+                PressKey(dialog, Key.Escape);
+
+                Assert.AreEqual(ContentDialogResult.None, WaitForResult(showTask));
+                Assert.AreEqual(2, closeClickCount);
+                Assert.AreEqual(1, closeCommand.ExecuteCount);
+                Assert.AreEqual("close", closeCommand.LastParameter);
+            }
         });
     }
 
@@ -499,6 +605,19 @@ public class ContentDialogApiTests
     private static void ClickButton(ContentDialog dialog, ContentDialogButton button)
     {
         GetTemplateButton(dialog, GetButtonName(button)).RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+        WpfTestHost.DoEvents();
+    }
+
+    private static void PressKey(ContentDialog dialog, Key key)
+    {
+        var source = PresentationSource.FromVisual(dialog)
+            ?? throw new AssertFailedException("Expected ContentDialog to be connected to a presentation source.");
+        var args = new KeyEventArgs(Keyboard.PrimaryDevice, source, Environment.TickCount, key)
+        {
+            RoutedEvent = Keyboard.KeyDownEvent
+        };
+
+        dialog.RaiseEvent(args);
         WpfTestHost.DoEvents();
     }
 
