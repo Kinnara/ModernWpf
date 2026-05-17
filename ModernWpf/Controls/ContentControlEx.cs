@@ -52,11 +52,13 @@ namespace ModernWpf.Controls
         #region CharacterSpacing
 
         public static readonly DependencyProperty CharacterSpacingProperty =
-            DependencyProperty.Register(
-                nameof(CharacterSpacing),
-                typeof(int),
+            ControlHelper.CharacterSpacingProperty.AddOwner(
                 typeof(ContentControlEx),
-                new FrameworkPropertyMetadata(0));
+                new FrameworkPropertyMetadata(
+                    0,
+                    FrameworkPropertyMetadataOptions.AffectsMeasure |
+                    FrameworkPropertyMetadataOptions.AffectsRender |
+                    FrameworkPropertyMetadataOptions.Inherits));
 
         public int CharacterSpacing
         {
@@ -99,11 +101,13 @@ namespace ModernWpf.Controls
         #region IsTextScaleFactorEnabled
 
         public static readonly DependencyProperty IsTextScaleFactorEnabledProperty =
-            DependencyProperty.Register(
-                nameof(IsTextScaleFactorEnabled),
-                typeof(bool),
+            ControlHelper.IsTextScaleFactorEnabledProperty.AddOwner(
                 typeof(ContentControlEx),
-                new FrameworkPropertyMetadata(true));
+                new FrameworkPropertyMetadata(
+                    true,
+                    FrameworkPropertyMetadataOptions.AffectsMeasure |
+                    FrameworkPropertyMetadataOptions.AffectsRender |
+                    FrameworkPropertyMetadataOptions.Inherits));
 
         public bool IsTextScaleFactorEnabled
         {

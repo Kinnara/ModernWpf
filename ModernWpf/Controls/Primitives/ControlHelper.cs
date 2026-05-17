@@ -44,7 +44,11 @@ namespace ModernWpf.Controls.Primitives
                 "CharacterSpacing",
                 typeof(int),
                 typeof(ControlHelper),
-                new FrameworkPropertyMetadata(0));
+                new FrameworkPropertyMetadata(
+                    0,
+                    FrameworkPropertyMetadataOptions.AffectsMeasure |
+                    FrameworkPropertyMetadataOptions.AffectsRender |
+                    FrameworkPropertyMetadataOptions.Inherits));
 
         #endregion
 
@@ -123,7 +127,11 @@ namespace ModernWpf.Controls.Primitives
                 "IsTextScaleFactorEnabled",
                 typeof(bool),
                 typeof(ControlHelper),
-                new FrameworkPropertyMetadata(true));
+                new FrameworkPropertyMetadata(
+                    true,
+                    FrameworkPropertyMetadataOptions.AffectsMeasure |
+                    FrameworkPropertyMetadataOptions.AffectsRender |
+                    FrameworkPropertyMetadataOptions.Inherits));
 
         #endregion
 

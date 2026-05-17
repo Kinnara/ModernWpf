@@ -1474,6 +1474,41 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
+    public void ContentPresenterExUsesWinUIInheritedTextMetadata()
+    {
+        WpfTestHost.Run(() =>
+        {
+            Assert.AreSame(ControlHelper.CharacterSpacingProperty, ContentPresenterEx.CharacterSpacingProperty);
+            Assert.AreSame(ControlHelper.IsTextScaleFactorEnabledProperty, ContentPresenterEx.IsTextScaleFactorEnabledProperty);
+            Assert.AreSame(ControlHelper.CharacterSpacingProperty, ModernContentControlEx.CharacterSpacingProperty);
+            Assert.AreSame(ControlHelper.IsTextScaleFactorEnabledProperty, ModernContentControlEx.IsTextScaleFactorEnabledProperty);
+
+            AssertInheritedTextMetadata(ContentPresenterEx.CharacterSpacingProperty, typeof(ContentPresenterEx));
+            AssertInheritedTextMetadata(ContentPresenterEx.IsTextScaleFactorEnabledProperty, typeof(ContentPresenterEx));
+            AssertInheritedTextMetadata(ModernContentControlEx.CharacterSpacingProperty, typeof(ModernContentControlEx));
+            AssertInheritedTextMetadata(ModernContentControlEx.IsTextScaleFactorEnabledProperty, typeof(ModernContentControlEx));
+
+            var parent = new StackPanel();
+            var presenter = new ContentPresenterEx();
+
+            parent.SetValue(ControlHelper.CharacterSpacingProperty, 24);
+            parent.SetValue(ControlHelper.IsTextScaleFactorEnabledProperty, false);
+            parent.Children.Add(presenter);
+
+            using var host = new TestWindowHost(parent, width: 120, height: 40);
+
+            Assert.AreEqual(24, presenter.CharacterSpacing);
+            Assert.IsFalse(presenter.IsTextScaleFactorEnabled);
+
+            presenter.CharacterSpacing = 7;
+            presenter.IsTextScaleFactorEnabled = true;
+
+            Assert.AreEqual(7, presenter.CharacterSpacing);
+            Assert.IsTrue(presenter.IsTextScaleFactorEnabled);
+        });
+    }
+
+    [TestMethod]
     public void ContentPresenterExPushesSupportedTextPropertiesToDefaultTextBlock()
     {
         WpfTestHost.Run(() =>
@@ -3022,6 +3057,14 @@ public class LayoutCompatibilityApiTests
         clearTransition(control);
 
         Assert.AreSame(targetBrush, getEffectiveBackground(control));
+    }
+
+    private static void AssertInheritedTextMetadata(DependencyProperty property, Type ownerType)
+    {
+        var metadata = (FrameworkPropertyMetadata)property.GetMetadata(ownerType);
+        Assert.IsTrue(metadata.AffectsMeasure, $"{ownerType.Name}.{property.Name} should affect measure.");
+        Assert.IsTrue(metadata.AffectsRender, $"{ownerType.Name}.{property.Name} should affect render.");
+        Assert.IsTrue(metadata.Inherits, $"{ownerType.Name}.{property.Name} should inherit like WinUI text formatting properties.");
     }
 
     private static void AssertStackAxisOffsetRelativeTo(FrameworkElement element, Visual ancestor, Orientation orientation, double expected)

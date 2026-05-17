@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Markup;
 using System.Windows.Media;
+using ModernWpf.Controls.Primitives;
 using ModernWpf.Media.Animation;
 
 namespace ModernWpf.Controls
@@ -240,14 +241,13 @@ namespace ModernWpf.Controls
         }
 
         public static readonly DependencyProperty CharacterSpacingProperty =
-            DependencyProperty.Register(
-                nameof(CharacterSpacing),
-                typeof(int),
+            ControlHelper.CharacterSpacingProperty.AddOwner(
                 typeof(ContentPresenterEx),
                 new FrameworkPropertyMetadata(
                     0,
                     FrameworkPropertyMetadataOptions.AffectsMeasure |
-                    FrameworkPropertyMetadataOptions.AffectsRender));
+                    FrameworkPropertyMetadataOptions.AffectsRender |
+                    FrameworkPropertyMetadataOptions.Inherits));
 
         public int CharacterSpacing
         {
@@ -256,14 +256,13 @@ namespace ModernWpf.Controls
         }
 
         public static readonly DependencyProperty IsTextScaleFactorEnabledProperty =
-            DependencyProperty.Register(
-                nameof(IsTextScaleFactorEnabled),
-                typeof(bool),
+            ControlHelper.IsTextScaleFactorEnabledProperty.AddOwner(
                 typeof(ContentPresenterEx),
                 new FrameworkPropertyMetadata(
                     true,
                     FrameworkPropertyMetadataOptions.AffectsMeasure |
-                    FrameworkPropertyMetadataOptions.AffectsRender));
+                    FrameworkPropertyMetadataOptions.AffectsRender |
+                    FrameworkPropertyMetadataOptions.Inherits));
 
         public bool IsTextScaleFactorEnabled
         {
