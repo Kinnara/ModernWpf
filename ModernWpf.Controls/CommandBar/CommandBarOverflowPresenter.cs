@@ -50,7 +50,7 @@ namespace ModernWpf.Controls.Primitives
             UpdateVisualState(false);
         }
 
-        private void UpdateVisualState(bool useTransitions)
+        internal void UpdateVisualState(bool useTransitions)
         {
             string stateName;
 
@@ -68,11 +68,9 @@ namespace ModernWpf.Controls.Primitives
 
         private bool IsPopupOpenDown()
         {
-            if (TemplatedParent is CommandBarToolBar toolBar)
+            if (TemplatedParent is CommandBar commandBar)
             {
-                var popupTop = TranslatePoint(new Point(0, 0), toolBar);
-                var verticalOffset = popupTop.Y;
-                return verticalOffset > 0;
+                return commandBar.IsOverflowPopupOpenDown();
             }
             else if (TemplatedParent is CommandBarFlyoutCommandBar commandBarFlyoutCommandBar)
             {

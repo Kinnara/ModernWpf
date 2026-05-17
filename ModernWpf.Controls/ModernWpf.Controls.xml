@@ -437,6 +437,14 @@
       <summary>Identifies the CommandBarOverflowPresenterStyle dependency property.</summary>
       <returns>The identifier for the CommandBarOverflowPresenterStyle dependency property.</returns>
     </member>
+    <member name="P:ModernWpf.Controls.CommandBar.CommandBarTemplateSettings">
+      <summary>Gets an object that provides calculated values that can be referenced as TemplateBinding sources when defining templates for a CommandBar.</summary>
+      <returns>An object that provides calculated values for CommandBar templates.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.CommandBar.CommandBarTemplateSettingsProperty">
+      <summary>Identifies the CommandBarTemplateSettings dependency property.</summary>
+      <returns>The identifier for the CommandBarTemplateSettings dependency property.</returns>
+    </member>
     <member name="P:ModernWpf.Controls.CommandBar.DefaultLabelPosition">
       <summary>Gets or sets a value that indicates the placement and visibility of the labels on the command bar's buttons.</summary>
       <returns>An enumeration value that indicates the placement and visibility of the labels on the command bar's buttons. The default is **Bottom**.</returns>
@@ -521,6 +529,9 @@
     </member>
     <member name="M:ModernWpf.Controls.CommandBarOverflowPresenter.#ctor">
       <summary>Initializes a new instance of the CommandBarOverflowPresenter class.</summary>
+    </member>
+    <member name="T:ModernWpf.Controls.Primitives.CommandBarTemplateSettings">
+      <summary>Provides calculated values that can be referenced as TemplateBinding sources when defining templates for a CommandBar.</summary>
     </member>
     <member name="T:ModernWpf.Controls.ContentDialog">
       <summary>Represents a dialog box that can be customized to contain checkboxes, hyperlinks, buttons and any other XAML content.</summary>

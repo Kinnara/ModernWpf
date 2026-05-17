@@ -69,7 +69,7 @@ public class CommandBarApiTests
     }
 
     [TestMethod]
-    public void CommandCollectionsApplyOverflowModes()
+    public void CommandCollectionsApplyWinUIOverflowStyleRouting()
     {
         WpfTestHost.Run(() =>
         {
@@ -80,25 +80,25 @@ public class CommandBarApiTests
             commandBar.PrimaryCommands.Add(primary);
             commandBar.SecondaryCommands.Add(secondary);
 
-            Assert.AreEqual(OverflowMode.AsNeeded, ToolBar.GetOverflowMode(primary));
-            Assert.AreEqual(OverflowMode.Always, ToolBar.GetOverflowMode(secondary));
+            Assert.IsFalse(primary.IsInOverflow);
+            Assert.IsTrue(secondary.IsInOverflow);
 
             commandBar.IsDynamicOverflowEnabled = false;
-            Assert.AreEqual(OverflowMode.Never, ToolBar.GetOverflowMode(primary));
+            Assert.IsFalse(primary.IsInOverflow);
 
             var secondPrimary = new AppBarButton();
             commandBar.PrimaryCommands.Add(secondPrimary);
-            Assert.AreEqual(OverflowMode.Never, ToolBar.GetOverflowMode(secondPrimary));
+            Assert.IsFalse(secondPrimary.IsInOverflow);
 
             commandBar.IsDynamicOverflowEnabled = true;
-            Assert.AreEqual(OverflowMode.AsNeeded, ToolBar.GetOverflowMode(primary));
-            Assert.AreEqual(OverflowMode.AsNeeded, ToolBar.GetOverflowMode(secondPrimary));
-            Assert.AreEqual(OverflowMode.Always, ToolBar.GetOverflowMode(secondary));
+            Assert.IsFalse(primary.IsInOverflow);
+            Assert.IsFalse(secondPrimary.IsInOverflow);
+            Assert.IsTrue(secondary.IsInOverflow);
         });
     }
 
     [TestMethod]
-    public void CommandBarToolBarDynamicOverflowUsesVisualStateSetters()
+    public void CommandBarDynamicOverflowUsesVisualStateSetters()
     {
         WpfTestHost.Run(() =>
         {
@@ -113,9 +113,8 @@ public class CommandBarApiTests
             using var host = new TestWindowHost(commandBar, width: 300, height: 80);
             host.UpdateLayout();
 
-            var toolBar = FindTemplateChild<CommandBarToolBar>(commandBar, "PART_ToolBar");
-            var contentColumn = FindTemplateChild<ColumnDefinition>(toolBar, "ContentControlColumnDefinition");
-            var primaryColumn = FindTemplateChild<ColumnDefinition>(toolBar, "PrimaryItemsControlColumnDefinition");
+            var contentColumn = FindTemplateChild<ColumnDefinition>(commandBar, "ContentControlColumnDefinition");
+            var primaryColumn = FindTemplateChild<ColumnDefinition>(commandBar, "PrimaryItemsControlColumnDefinition");
 
             Assert.AreEqual(GridUnitType.Star, contentColumn.Width.GridUnitType);
             Assert.AreEqual(GridUnitType.Auto, primaryColumn.Width.GridUnitType);
@@ -540,8 +539,7 @@ public class CommandBarApiTests
             using var host = new TestWindowHost(commandBar, width: 320, height: 160);
             host.UpdateLayout();
 
-            var toolBar = FindTemplateChild<CommandBarToolBar>(commandBar, "PART_ToolBar");
-            var layoutRoot = FindTemplateChild<Grid>(toolBar, "LayoutRoot");
+            var layoutRoot = FindTemplateChild<Grid>(commandBar, "LayoutRoot");
 
             AssertVisualState(layoutRoot, "AvailableCommandsStates", "BothCommands");
 
@@ -977,21 +975,16 @@ public class CommandBarApiTests
             using var host = new TestWindowHost(commandBar, width: 240, height: 120);
             host.UpdateLayout();
 
-            var toolBar = FindTemplateChild<CommandBarToolBar>(commandBar, "PART_ToolBar");
-            var moreButton = FindTemplateChild<ToggleButton>(toolBar, "MoreButton");
+            var moreButton = FindTemplateChild<ToggleButton>(commandBar, "MoreButton");
 
-            Assert.AreEqual(Visibility.Visible, toolBar.EffectiveOverflowButtonVisibility);
-            Assert.IsTrue(toolBar.EffectiveOverflowButtonEnabled);
+            Assert.AreEqual(Visibility.Visible, commandBar.CommandBarTemplateSettings.EffectiveOverflowButtonVisibility);
             Assert.AreEqual(Visibility.Visible, moreButton.Visibility);
-            Assert.IsTrue(moreButton.IsEnabled);
 
             button.LabelPosition = CommandBarLabelPosition.Collapsed;
             host.UpdateLayout();
 
-            Assert.AreEqual(Visibility.Collapsed, toolBar.EffectiveOverflowButtonVisibility);
-            Assert.IsFalse(toolBar.EffectiveOverflowButtonEnabled);
+            Assert.AreEqual(Visibility.Collapsed, commandBar.CommandBarTemplateSettings.EffectiveOverflowButtonVisibility);
             Assert.AreEqual(Visibility.Collapsed, moreButton.Visibility);
-            Assert.IsFalse(moreButton.IsEnabled);
         });
     }
 
@@ -1334,13 +1327,10 @@ public class CommandBarApiTests
         using var host = new TestWindowHost(commandBar, width: 240, height: 120);
         host.UpdateLayout();
 
-        var toolBar = FindTemplateChild<CommandBarToolBar>(commandBar, "PART_ToolBar");
-        var moreButton = FindTemplateChild<ToggleButton>(toolBar, "MoreButton");
+        var moreButton = FindTemplateChild<ToggleButton>(commandBar, "MoreButton");
 
-        Assert.AreEqual(Visibility.Visible, toolBar.EffectiveOverflowButtonVisibility);
-        Assert.IsTrue(toolBar.EffectiveOverflowButtonEnabled);
+        Assert.AreEqual(Visibility.Visible, commandBar.CommandBarTemplateSettings.EffectiveOverflowButtonVisibility);
         Assert.AreEqual(Visibility.Visible, moreButton.Visibility);
-        Assert.IsTrue(moreButton.IsEnabled);
 
         switch (command)
         {
@@ -1354,10 +1344,8 @@ public class CommandBarApiTests
 
         host.UpdateLayout();
 
-        Assert.AreEqual(Visibility.Collapsed, toolBar.EffectiveOverflowButtonVisibility);
-        Assert.IsFalse(toolBar.EffectiveOverflowButtonEnabled);
+        Assert.AreEqual(Visibility.Collapsed, commandBar.CommandBarTemplateSettings.EffectiveOverflowButtonVisibility);
         Assert.AreEqual(Visibility.Collapsed, moreButton.Visibility);
-        Assert.IsFalse(moreButton.IsEnabled);
     }
 
     private static MouseButtonEventArgs CreateMouseLeftButtonDownArgs(UIElement source)

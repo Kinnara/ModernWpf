@@ -65,9 +65,10 @@ platform services that do not exist in WPF.
   can be selected, but automatic runtime selection remains a platform gap.
 - WinUI disabled `AllowFocusWhenDisabled` has no direct WPF equivalent here, so
   disabled AppBar controls remain non-keyboard-focusable.
-- Normal `CommandBar` still uses WPF `ToolBar` hosting for overflow layout. The
-  AppBar controls themselves no longer depend on WPF `ToolBar.IsOverflowItem`
-  triggers; overflow state flows through the explicit `UseOverflowStyle` model.
+- Normal `CommandBar` no longer uses the old WPF `ToolBar` host. Its overflow
+  path now uses the same explicit `UseOverflowStyle` model as the AppBar
+  controls; see `docs\commandbar-winui3-source-audit.md` for the remaining
+  CommandBar-specific WPF substitutions.
 
 ## Validation
 

@@ -1,11 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
-using System.Windows.Data;
+using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using System.Windows.Markup;
 using System.Windows.Media;
 using ModernWpf.Controls.Primitives;
@@ -13,21 +15,33 @@ using ModernWpf.Controls.Primitives;
 namespace ModernWpf.Controls
 {
     [ContentProperty(nameof(PrimaryCommands))]
-    [TemplatePart(Name = ToolBarName, Type = typeof(CommandBarToolBar))]
+    [TemplatePart(Name = PrimaryItemsControlName, Type = typeof(Panel))]
+    [TemplatePart(Name = SecondaryItemsPanelName, Type = typeof(Panel))]
+    [TemplatePart(Name = OverflowPopupName, Type = typeof(Popup))]
     public class CommandBar : Control
     {
         static CommandBar()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(CommandBar), new FrameworkPropertyMetadata(typeof(CommandBar)));
+
+            KeyboardNavigation.DirectionalNavigationProperty.OverrideMetadata(typeof(CommandBar),
+                new FrameworkPropertyMetadata(KeyboardNavigationMode.Contained));
+            KeyboardNavigation.TabNavigationProperty.OverrideMetadata(typeof(CommandBar),
+                new FrameworkPropertyMetadata(KeyboardNavigationMode.Continue));
         }
 
         public CommandBar()
         {
+            SetValue(CommandBarTemplateSettingsPropertyKey, new CommandBarTemplateSettings());
+
             PrimaryCommands = new ObservableCollection<ICommandBarElement>();
             PrimaryCommands.CollectionChanged += PrimaryCommands_CollectionChanged;
 
             SecondaryCommands = new ObservableCollection<ICommandBarElement>();
             SecondaryCommands.CollectionChanged += SecondaryCommands_CollectionChanged;
+
+            Loaded += OnLoaded;
+            SizeChanged += OnSizeChanged;
         }
 
         #region Content
@@ -84,12 +98,29 @@ namespace ModernWpf.Controls
                 typeof(CommandBar),
                 new FrameworkPropertyMetadata(
                     false,
-                    FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+                    FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
+                    OnIsOpenChanged));
 
         public bool IsOpen
         {
             get => (bool)GetValue(IsOpenProperty);
             set => SetValue(IsOpenProperty, value);
+        }
+
+        private static void OnIsOpenChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((CommandBar)d).OnIsOpenChanged((bool)e.NewValue);
+        }
+
+        private void OnIsOpenChanged(bool isOpen)
+        {
+            UpdateTemplateSettings();
+            UpdateOverflowPresenterVisualState(true);
+
+            if (!isOpen)
+            {
+                CloseSubMenus(null);
+            }
         }
 
         #endregion
@@ -107,12 +138,11 @@ namespace ModernWpf.Controls
 
             if (e.NewItems != null)
             {
-                var newItems = e.NewItems.OfType<DependencyObject>().ToArray();
-                SetParentCommandBarForCommands(newItems);
-                UpdateOverflowModeForPrimaryCommands(newItems);
+                SetParentCommandBarForCommands(e.NewItems.OfType<DependencyObject>());
             }
 
-            UpdateVisualState();
+            ResetDynamicCommands();
+            UpdateUI();
         }
 
         #endregion
@@ -130,12 +160,11 @@ namespace ModernWpf.Controls
 
             if (e.NewItems != null)
             {
-                var newItems = e.NewItems.OfType<DependencyObject>().ToArray();
-                SetParentCommandBarForCommands(newItems);
-                UpdateOverflowModeForSecondaryCommands(newItems);
+                SetParentCommandBarForCommands(e.NewItems.OfType<DependencyObject>());
             }
 
-            UpdateVisualState();
+            ResetDynamicCommands();
+            UpdateUI();
         }
 
         #endregion
@@ -157,12 +186,29 @@ namespace ModernWpf.Controls
 
         #endregion
 
+        #region CommandBarTemplateSettings
+
+        private static readonly DependencyPropertyKey CommandBarTemplateSettingsPropertyKey =
+            DependencyProperty.RegisterReadOnly(
+                nameof(CommandBarTemplateSettings),
+                typeof(CommandBarTemplateSettings),
+                typeof(CommandBar),
+                null);
+
+        public static readonly DependencyProperty CommandBarTemplateSettingsProperty =
+            CommandBarTemplateSettingsPropertyKey.DependencyProperty;
+
+        public CommandBarTemplateSettings CommandBarTemplateSettings =>
+            (CommandBarTemplateSettings)GetValue(CommandBarTemplateSettingsProperty);
+
+        #endregion
+
         #region DefaultLabelPosition
 
         public static readonly DependencyProperty DefaultLabelPositionProperty =
-            CommandBarToolBar.DefaultLabelPositionProperty.AddOwner(
+            AppBarElementProperties.DefaultLabelPositionProperty.AddOwner(
                 typeof(CommandBar),
-                new FrameworkPropertyMetadata(CommandBarDefaultLabelPosition.Right));
+                new FrameworkPropertyMetadata(CommandBarDefaultLabelPosition.Right, OnDefaultLabelPositionChanged));
 
         public CommandBarDefaultLabelPosition DefaultLabelPosition
         {
@@ -170,13 +216,23 @@ namespace ModernWpf.Controls
             set => SetValue(DefaultLabelPositionProperty, value);
         }
 
+        private static void OnDefaultLabelPositionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var commandBar = (CommandBar)d;
+            commandBar.PropagateDefaultLabelPosition();
+            commandBar.UpdateUI();
+        }
+
         #endregion
 
         #region IsDynamicOverflowEnabled
 
         public static readonly DependencyProperty IsDynamicOverflowEnabledProperty =
-            CommandBarToolBar.IsDynamicOverflowEnabledProperty.AddOwner(typeof(CommandBar),
-                new FrameworkPropertyMetadata(OnIsDynamicOverflowEnabledChanged));
+            DependencyProperty.Register(
+                nameof(IsDynamicOverflowEnabled),
+                typeof(bool),
+                typeof(CommandBar),
+                new PropertyMetadata(true, OnIsDynamicOverflowEnabledChanged));
 
         public bool IsDynamicOverflowEnabled
         {
@@ -186,30 +242,9 @@ namespace ModernWpf.Controls
 
         private static void OnIsDynamicOverflowEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((CommandBar)d).OnIsDynamicOverflowEnabledChanged();
-        }
-
-        private  void OnIsDynamicOverflowEnabledChanged()
-        {
-            UpdateOverflowModeForPrimaryCommands(PrimaryCommands.OfType<DependencyObject>());
-            UpdateOverflowModeForSecondaryCommands(SecondaryCommands.OfType<DependencyObject>());
-        }
-
-        private void UpdateOverflowModeForPrimaryCommands(IEnumerable<DependencyObject> items)
-        {
-            bool isDynamicOverflowEnabled = IsDynamicOverflowEnabled;
-            foreach (var item in items)
-            {
-                ToolBar.SetOverflowMode(item, isDynamicOverflowEnabled ? OverflowMode.AsNeeded : OverflowMode.Never);
-            }
-        }
-
-        private void UpdateOverflowModeForSecondaryCommands(IEnumerable<DependencyObject> items)
-        {
-            foreach (var item in items)
-            {
-                ToolBar.SetOverflowMode(item, OverflowMode.Always);
-            }
+            var commandBar = (CommandBar)d;
+            commandBar.ApplyDynamicOverflow(commandBar.ActualWidth);
+            commandBar.UpdateUI();
         }
 
         #endregion
@@ -217,12 +252,21 @@ namespace ModernWpf.Controls
         #region OverflowButtonVisibility
 
         public static readonly DependencyProperty OverflowButtonVisibilityProperty =
-            CommandBarToolBar.OverflowButtonVisibilityProperty.AddOwner(typeof(CommandBar));
+            DependencyProperty.Register(
+                nameof(OverflowButtonVisibility),
+                typeof(CommandBarOverflowButtonVisibility),
+                typeof(CommandBar),
+                new PropertyMetadata(CommandBarOverflowButtonVisibility.Auto, OnOverflowButtonVisibilityChanged));
 
         public CommandBarOverflowButtonVisibility OverflowButtonVisibility
         {
             get => (CommandBarOverflowButtonVisibility)GetValue(OverflowButtonVisibilityProperty);
             set => SetValue(OverflowButtonVisibilityProperty, value);
+        }
+
+        private static void OnOverflowButtonVisibilityChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((CommandBar)d).UpdateUI();
         }
 
         #endregion
@@ -233,79 +277,392 @@ namespace ModernWpf.Controls
 
         public override void OnApplyTemplate()
         {
-            if (m_toolBar != null)
-            {
-                m_toolBar.ClearValue(ItemsControl.ItemsSourceProperty);
-                m_toolBar.OverflowOpened -= OnOverflowOpened;
-                m_toolBar.OverflowClosed -= OnOverflowClosed;
-                m_toolBar.HasPrimaryCommandsChanged -= OnHasPrimaryCommandsChanged;
-                m_toolBar.HasOverflowItemsChanged -= OnHasOverflowItemsChanged;
-            }
+            DetachTemplatePartHandlers();
+            ClearPanelChildren(m_primaryItemsPanel);
+            ClearPanelChildren(m_secondaryItemsPanel);
 
             base.OnApplyTemplate();
 
-            m_toolBar = GetTemplateChild(ToolBarName) as CommandBarToolBar;
+            m_layoutRoot = GetTemplateChild("LayoutRoot") as FrameworkElement;
+            m_contentControl = GetTemplateChild("ContentControl") as FrameworkElement;
+            m_primaryItemsPanel = GetTemplateChild(PrimaryItemsControlName) as Panel;
+            m_secondaryItemsPanel = GetTemplateChild(SecondaryItemsPanelName) as Panel;
+            m_secondaryItemsControl = GetTemplateChild(SecondaryItemsControlName) as CommandBarOverflowPresenter;
+            m_moreButton = GetTemplateChild("MoreButton") as ButtonBase;
+            m_overflowPopup = GetTemplateChild(OverflowPopupName) as Popup;
+            m_overflowContentRoot = GetTemplateChild("OverflowContentRoot") as FrameworkElement;
 
-            if (m_toolBar != null)
+            if (m_moreButton != null)
             {
-                m_toolBar.ItemsSource = new CompositeCollection
-                {
-                    new CollectionContainer { Collection = PrimaryCommands },
-                    new CollectionContainer { Collection = SecondaryCommands },
-                };
-                m_toolBar.OverflowOpened += OnOverflowOpened;
-                m_toolBar.OverflowClosed += OnOverflowClosed;
-                m_toolBar.HasPrimaryCommandsChanged += OnHasPrimaryCommandsChanged;
-                m_toolBar.HasOverflowItemsChanged += OnHasOverflowItemsChanged;
+                AutomationProperties.SetName(m_moreButton, Strings.AppBarMoreButtonName);
+                UpdateMoreButtonToolTip();
             }
 
-            UpdateVisualState(false);
+            if (m_overflowPopup != null)
+            {
+                m_overflowPopup.CustomPopupPlacementCallback = PositionOverflowPopup;
+                m_overflowPopup.SetValue(CustomPopupPlacementHelper.PlacementProperty, CustomPlacementMode.BottomEdgeAlignedRight);
+                m_overflowPopup.Opened += OnOverflowPopupOpened;
+                m_overflowPopup.Closed += OnOverflowPopupClosed;
+            }
+
+            AttachCommandElementsToPanels();
+            UpdateUI(false);
         }
 
-        private void OnOverflowOpened(object sender, EventArgs e)
+        protected override Size MeasureOverride(Size constraint)
         {
-            Opened?.Invoke(this, null);
+            ApplyDynamicOverflow(constraint.Width);
+            return base.MeasureOverride(constraint);
         }
 
-        private void OnOverflowClosed(object sender, EventArgs e)
+        protected override void OnKeyDown(KeyEventArgs e)
         {
-            Closed?.Invoke(this, null);
+            if (e.Key == Key.Escape && IsOpen)
+            {
+                SetCurrentValue(IsOpenProperty, false);
+                e.Handled = true;
+            }
+
+            base.OnKeyDown(e);
         }
 
-        private void OnHasPrimaryCommandsChanged(object sender, EventArgs e)
+        private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            UpdateVisualState();
+            ApplyDynamicOverflow(ActualWidth);
+            UpdateUI(false);
         }
 
-        private void OnHasOverflowItemsChanged(object sender, EventArgs e)
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            UpdateVisualState();
+            ApplyDynamicOverflow(e.NewSize.Width);
+            UpdateUI(false);
+        }
+
+        private void DetachTemplatePartHandlers()
+        {
+            if (m_moreButton != null)
+            {
+                m_moreButton.ClearValue(ToolTipProperty);
+            }
+
+            if (m_overflowPopup != null)
+            {
+                m_overflowPopup.ClearValue(Popup.CustomPopupPlacementCallbackProperty);
+                m_overflowPopup.ClearValue(CustomPopupPlacementHelper.PlacementProperty);
+                m_overflowPopup.Opened -= OnOverflowPopupOpened;
+                m_overflowPopup.Closed -= OnOverflowPopupClosed;
+            }
+        }
+
+        private void AttachCommandElementsToPanels()
+        {
+            ClearPanelChildren(m_primaryItemsPanel);
+            ClearPanelChildren(m_secondaryItemsPanel);
+
+            AddCommandsToPanel(m_primaryItemsPanel, m_dynamicPrimaryCommands);
+            AddCommandsToPanel(m_secondaryItemsPanel, m_dynamicSecondaryCommands);
+
+            PropagateDefaultLabelPosition();
+            UpdateCommandOverflowStyleParams();
+        }
+
+        private static void ClearPanelChildren(Panel panel)
+        {
+            if (panel == null)
+            {
+                return;
+            }
+
+            foreach (UIElement child in panel.Children)
+            {
+                if (child is DependencyObject dependencyObject)
+                {
+                    AppBarElementProperties.SetUseOverflowStyle(dependencyObject, false);
+                    dependencyObject.ClearValue(AppBarElementProperties.DefaultLabelPositionProperty);
+                }
+            }
+
+            panel.Children.Clear();
+        }
+
+        private static void AddCommandsToPanel(Panel panel, IEnumerable<ICommandBarElement> commands)
+        {
+            if (panel == null)
+            {
+                return;
+            }
+
+            foreach (var command in commands)
+            {
+                if (command is UIElement element && !HasVisualOrLogicalParent(element))
+                {
+                    panel.Children.Add(element);
+                }
+            }
+        }
+
+        private static bool HasVisualOrLogicalParent(UIElement element)
+        {
+            return VisualTreeHelper.GetParent(element) != null ||
+                   LogicalTreeHelper.GetParent(element) != null;
+        }
+
+        private void ResetDynamicCommands()
+        {
+            ReplaceDynamicCommands(PrimaryCommands, SecondaryCommands);
+        }
+
+        private void ApplyDynamicOverflow(double availableWidth)
+        {
+            if (m_isApplyingDynamicOverflow)
+            {
+                return;
+            }
+
+            m_isApplyingDynamicOverflow = true;
+
+            try
+            {
+                if (!IsDynamicOverflowEnabled || double.IsInfinity(availableWidth) || double.IsNaN(availableWidth) || availableWidth <= 0)
+                {
+                    ReplaceDynamicCommands(PrimaryCommands, SecondaryCommands);
+                    return;
+                }
+
+                var primaryCommands = PrimaryCommands.ToList();
+                var secondaryCommands = SecondaryCommands.ToList();
+
+                double primaryWidth = MeasureCommandsWidth(primaryCommands);
+                double contentWidth = MeasureElementWidth(m_contentControl);
+                double moreButtonWidth = MeasureElementWidth(m_moreButton);
+                double availablePrimaryWidth = Math.Max(0, availableWidth - contentWidth - moreButtonWidth);
+
+                int firstOverflowPrimaryIndex = primaryCommands.Count;
+                for (int i = primaryCommands.Count - 1; i >= 0 && primaryWidth > availablePrimaryWidth; i--)
+                {
+                    primaryWidth -= MeasureCommandWidth(primaryCommands[i]);
+                    firstOverflowPrimaryIndex = i;
+                }
+
+                var dynamicPrimary = primaryCommands.Take(firstOverflowPrimaryIndex).ToList();
+                var dynamicSecondary = new List<ICommandBarElement>();
+                var movedPrimaryCommands = primaryCommands.Skip(firstOverflowPrimaryIndex).ToList();
+
+                if (movedPrimaryCommands.Count > 0)
+                {
+                    dynamicSecondary.AddRange(movedPrimaryCommands);
+
+                    if (HasVisibleElements(secondaryCommands))
+                    {
+                        dynamicSecondary.Add(OverflowSeparator);
+                    }
+                }
+
+                dynamicSecondary.AddRange(secondaryCommands);
+                ReplaceDynamicCommands(dynamicPrimary, dynamicSecondary);
+            }
+            finally
+            {
+                m_isApplyingDynamicOverflow = false;
+            }
+        }
+
+        private void ReplaceDynamicCommands(IEnumerable<ICommandBarElement> primaryCommands, IEnumerable<ICommandBarElement> secondaryCommands)
+        {
+            var primaryList = primaryCommands.ToList();
+            var secondaryList = secondaryCommands.ToList();
+
+            if (m_dynamicPrimaryCommands.SequenceEqual(primaryList) &&
+                m_dynamicSecondaryCommands.SequenceEqual(secondaryList))
+            {
+                PropagateDefaultLabelPosition();
+                UpdateCommandOverflowStyleParams();
+                return;
+            }
+
+            ClearPanelChildren(m_primaryItemsPanel);
+            ClearPanelChildren(m_secondaryItemsPanel);
+
+            m_dynamicPrimaryCommands.Clear();
+            m_dynamicSecondaryCommands.Clear();
+
+            foreach (var command in primaryList)
+            {
+                m_dynamicPrimaryCommands.Add(command);
+            }
+
+            foreach (var command in secondaryList)
+            {
+                m_dynamicSecondaryCommands.Add(command);
+            }
+
+            AttachCommandElementsToPanels();
+        }
+
+        private double MeasureCommandsWidth(IEnumerable<ICommandBarElement> commands)
+        {
+            double width = 0;
+
+            foreach (var command in commands)
+            {
+                width += MeasureCommandWidth(command);
+            }
+
+            return width;
+        }
+
+        private static double MeasureCommandWidth(ICommandBarElement command)
+        {
+            return MeasureElementWidth(command as UIElement);
+        }
+
+        private static double MeasureElementWidth(UIElement element)
+        {
+            if (element == null || element.Visibility == Visibility.Collapsed)
+            {
+                return 0;
+            }
+
+            element.Measure(InfiniteSize);
+            return element.DesiredSize.Width;
+        }
+
+        private void UpdateUI(bool useTransitions = true)
+        {
+            UpdateTemplateSettings();
+            UpdateVisualState(useTransitions);
+            UpdateMoreButtonToolTip();
+            UpdateOverflowPresenterVisualState(useTransitions);
         }
 
         internal void UpdateVisualState(bool useTransitions = true)
         {
-            if (m_toolBar != null)
+            string stateName;
+
+            bool hasVisiblePrimaryCommands = HasVisibleElements(m_dynamicPrimaryCommands);
+            bool hasVisibleSecondaryCommands = HasVisibleElements(m_dynamicSecondaryCommands);
+
+            if (hasVisiblePrimaryCommands && hasVisibleSecondaryCommands)
             {
-                string stateName;
-
-                bool hasVisiblePrimaryCommands = HasVisibleElements(PrimaryCommands);
-                bool hasVisibleSecondaryCommands = HasVisibleElements(SecondaryCommands);
-
-                if (hasVisiblePrimaryCommands && hasVisibleSecondaryCommands)
-                {
-                    stateName = "BothCommands";
-                }
-                else if (hasVisibleSecondaryCommands)
-                {
-                    stateName = "SecondaryCommandsOnly";
-                }
-                else
-                {
-                    stateName = "PrimaryCommandsOnly";
-                }
-
-                VisualStateManager.GoToState(m_toolBar, stateName, useTransitions);
+                stateName = "BothCommands";
             }
+            else if (hasVisibleSecondaryCommands)
+            {
+                stateName = "SecondaryCommandsOnly";
+            }
+            else
+            {
+                stateName = "PrimaryCommandsOnly";
+            }
+
+            VisualStateManager.GoToState(this, stateName, useTransitions);
+            VisualStateManager.GoToState(
+                this,
+                IsDynamicOverflowEnabled ? DynamicOverflowEnabledStateName : DynamicOverflowDisabledStateName,
+                useTransitions);
+        }
+
+        private void UpdateTemplateSettings()
+        {
+            var settings = CommandBarTemplateSettings;
+            if (settings == null)
+            {
+                return;
+            }
+
+            double contentHeight = Math.Max(ActualHeight, m_layoutRoot?.ActualHeight ?? 0);
+            settings.ContentHeight = contentHeight;
+            settings.OverflowContentMaxHeight = CalculateOverflowContentMaxHeight();
+            settings.OverflowContentMinWidth = GetDoubleResource("CommandBarOverflowMinWidth", 160);
+            settings.OverflowContentMaxWidth = GetDoubleResource("CommandBarOverflowMaxWidth", 480);
+            settings.EffectiveOverflowButtonVisibility = CalculateEffectiveOverflowButtonVisibility();
+            settings.OverflowContentHorizontalOffset = 0;
+
+            Size overflowContentSize = new();
+            if (m_overflowContentRoot != null && HasVisibleElements(m_dynamicSecondaryCommands))
+            {
+                m_overflowContentRoot.Measure(InfiniteSize);
+                overflowContentSize = m_overflowContentRoot.DesiredSize;
+            }
+
+            settings.OverflowContentHeight = overflowContentSize.Height;
+            settings.NegativeOverflowContentHeight = -overflowContentSize.Height;
+            settings.OverflowContentClipRect = new Rect(0, 0, overflowContentSize.Width, overflowContentSize.Height);
+            settings.OverflowContentCompactYTranslation = -contentHeight;
+            settings.OverflowContentMinimalYTranslation = -contentHeight;
+            settings.OverflowContentHiddenYTranslation = -contentHeight;
+        }
+
+        private Visibility CalculateEffectiveOverflowButtonVisibility()
+        {
+            bool visible = true;
+
+            switch (OverflowButtonVisibility)
+            {
+                case CommandBarOverflowButtonVisibility.Auto:
+                    visible = m_dynamicSecondaryCommands.Count > 0 || HasVisiblePrimaryCommandWithBottomLabel();
+                    break;
+                case CommandBarOverflowButtonVisibility.Collapsed:
+                    visible = false;
+                    break;
+            }
+
+            return visible ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private double GetDoubleResource(string key, double fallback)
+        {
+            if (TryFindResource(key) is double value)
+            {
+                return value;
+            }
+
+            return fallback;
+        }
+
+        private static double CalculateOverflowContentMaxHeight()
+        {
+            return SystemParameters.PrimaryScreenHeight / 2 + 20;
+        }
+
+        private void UpdateCommandOverflowStyleParams()
+        {
+            AppBarElementProperties.UpdateOverflowStyleParams(m_dynamicPrimaryCommands, false);
+            AppBarElementProperties.UpdateOverflowStyleParams(m_dynamicSecondaryCommands, true);
+        }
+
+        private void PropagateDefaultLabelPosition()
+        {
+            PropagateDefaultLabelPosition(PrimaryCommands);
+            PropagateDefaultLabelPosition(SecondaryCommands);
+        }
+
+        private void PropagateDefaultLabelPosition(IEnumerable<ICommandBarElement> commands)
+        {
+            foreach (var command in commands)
+            {
+                if (command is DependencyObject dependencyObject)
+                {
+                    dependencyObject.SetValue(AppBarElementProperties.DefaultLabelPositionProperty, DefaultLabelPosition);
+                    (command as IAppBarElement)?.UpdateApplicationViewState();
+                }
+            }
+        }
+
+        private bool HasVisiblePrimaryCommandWithBottomLabel()
+        {
+            foreach (var command in m_dynamicPrimaryCommands)
+            {
+                if (command is UIElement { Visibility: Visibility.Visible } &&
+                    command is IAppBarButtonElement appBarButtonElement &&
+                    appBarButtonElement.GetHasBottomLabel())
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private static bool HasVisibleElements(IEnumerable<ICommandBarElement> elements)
@@ -322,6 +679,54 @@ namespace ModernWpf.Controls
             return false;
         }
 
+        private void OnOverflowPopupOpened(object sender, EventArgs e)
+        {
+            UpdateTemplateSettings();
+            UpdateOverflowPresenterVisualState(true);
+            Opened?.Invoke(this, null);
+        }
+
+        private void OnOverflowPopupClosed(object sender, EventArgs e)
+        {
+            UpdateTemplateSettings();
+            UpdateOverflowPresenterVisualState(true);
+            Closed?.Invoke(this, null);
+        }
+
+        private CustomPopupPlacement[] PositionOverflowPopup(Size popupSize, Size targetSize, Point offset)
+        {
+            return CustomPopupPlacementHelper.PositionPopup(
+                CustomPlacementMode.BottomEdgeAlignedRight,
+                popupSize,
+                targetSize,
+                offset,
+                child: m_overflowPopup?.Child as FrameworkElement);
+        }
+
+        private void UpdateOverflowPresenterVisualState(bool useTransitions)
+        {
+            m_secondaryItemsControl?.UpdateVisualState(useTransitions);
+        }
+
+        internal bool IsOverflowPopupOpenDown()
+        {
+            if (m_overflowContentRoot != null)
+            {
+                var overflowPopupTop = m_overflowContentRoot.TranslatePoint(new Point(), this);
+                return overflowPopupTop.Y > 0;
+            }
+
+            return true;
+        }
+
+        private void UpdateMoreButtonToolTip()
+        {
+            if (m_moreButton != null)
+            {
+                m_moreButton.ToolTip = IsOpen ? Strings.AppBarMoreButtonOpenToolTip : Strings.AppBarMoreButtonClosedToolTip;
+            }
+        }
+
         internal static void OnCommandExecutionStatic(ICommandBarElement element)
         {
             if (element is DependencyObject dependencyObject &&
@@ -336,10 +741,22 @@ namespace ModernWpf.Controls
             if (element is DependencyObject dependencyObject &&
                 FindParentCommandBarForElement(dependencyObject) is { } commandBar)
             {
-                CommandBarToolBar.InvalidateCommandBarElementLayout(dependencyObject);
-                commandBar.m_toolBar?.InvalidateCommandBarElementLayout();
-                commandBar.UpdateVisualState();
+                commandBar.OnCommandBarElementChanged();
             }
+        }
+
+        internal static void OnCommandBarElementDependencyPropertyChanged(DependencyObject element)
+        {
+            if (FindParentCommandBarForElement(element) is { } commandBar)
+            {
+                commandBar.OnCommandBarElementChanged();
+            }
+        }
+
+        private void OnCommandBarElementChanged()
+        {
+            ApplyDynamicOverflow(ActualWidth);
+            UpdateUI();
         }
 
         internal static void ClosePeerSubMenusOnPointerEntered(DependencyObject element, AppBarButton menuToLeaveOpen)
@@ -364,24 +781,12 @@ namespace ModernWpf.Controls
                 return ownerCommandBar;
             }
 
-            if (ItemsControl.ItemsControlFromItemContainer(element) is CommandBarToolBar itemToolBar &&
-                itemToolBar.TemplatedParent is CommandBar itemCommandBar)
-            {
-                return itemCommandBar;
-            }
-
             var current = element;
             while (current != null)
             {
                 if (current is CommandBar commandBar)
                 {
                     return commandBar;
-                }
-
-                if (current is CommandBarToolBar toolBar &&
-                    toolBar.TemplatedParent is CommandBar templatedCommandBar)
-                {
-                    return templatedCommandBar;
                 }
 
                 current = VisualTreeHelper.GetParent(current) ?? LogicalTreeHelper.GetParent(current);
@@ -442,6 +847,19 @@ namespace ModernWpf.Controls
             element.SetValue(ParentCommandBarProperty, commandBar);
         }
 
+        private AppBarSeparator OverflowSeparator
+        {
+            get
+            {
+                if (m_overflowSeparator == null)
+                {
+                    m_overflowSeparator = new AppBarSeparator();
+                }
+
+                return m_overflowSeparator;
+            }
+        }
+
         private static readonly DependencyProperty ParentCommandBarProperty =
             DependencyProperty.RegisterAttached(
                 "ParentCommandBar",
@@ -449,8 +867,27 @@ namespace ModernWpf.Controls
                 typeof(CommandBar),
                 new PropertyMetadata(null));
 
-        private CommandBarToolBar m_toolBar;
+        private readonly List<ICommandBarElement> m_dynamicPrimaryCommands = new();
+        private readonly List<ICommandBarElement> m_dynamicSecondaryCommands = new();
 
-        internal const string ToolBarName = "PART_ToolBar";
+        private FrameworkElement m_layoutRoot;
+        private FrameworkElement m_contentControl;
+        private Panel m_primaryItemsPanel;
+        private Panel m_secondaryItemsPanel;
+        private CommandBarOverflowPresenter m_secondaryItemsControl;
+        private ButtonBase m_moreButton;
+        private Popup m_overflowPopup;
+        private FrameworkElement m_overflowContentRoot;
+        private AppBarSeparator m_overflowSeparator;
+        private bool m_isApplyingDynamicOverflow;
+
+        private static readonly Size InfiniteSize = new(double.PositiveInfinity, double.PositiveInfinity);
+
+        private const string OverflowPopupName = "OverflowPopup";
+        private const string PrimaryItemsControlName = "PrimaryItemsControl";
+        private const string SecondaryItemsControlName = "SecondaryItemsControl";
+        private const string SecondaryItemsPanelName = "SecondaryItemsPanel";
+        private const string DynamicOverflowDisabledStateName = "DynamicOverflowDisabled";
+        private const string DynamicOverflowEnabledStateName = "DynamicOverflowEnabled";
     }
 }

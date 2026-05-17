@@ -63,7 +63,7 @@ namespace ModernWpf.Controls
         {
             (d as FrameworkElement)?.CoerceValue(FrameworkElement.ToolTipProperty);
             (d as IAppBarElement)?.UpdateApplicationViewState();
-            CommandBarToolBar.InvalidateCommandBarElementLayout(d);
+            CommandBar.OnCommandBarElementDependencyPropertyChanged(d);
         }
 
         // Set the label to the command text if no label has been explicitly specified
@@ -123,7 +123,7 @@ namespace ModernWpf.Controls
         private static void OnLabelPositionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             (d as IAppBarElement)?.UpdateApplicationViewState();
-            CommandBarToolBar.InvalidateCommandBarElementLayout(d);
+            CommandBar.OnCommandBarElementDependencyPropertyChanged(d);
         }
 
         #endregion

@@ -307,9 +307,10 @@
         </Setter>
     </Style>
 
-    <Style TargetType="primitives:CommandBarToolBar">
+    <Style TargetType="local:CommandBar">
         <Setter Property="Background" Value="{DynamicResource CommandBarBackground}" />
         <Setter Property="Foreground" Value="{DynamicResource CommandBarForeground}" />
+        <Setter Property="Padding" Value="4,0,0,0" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="VerticalAlignment" Value="Top" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
@@ -318,7 +319,7 @@
         <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="primitives:CommandBarToolBar">
+                <ControlTemplate TargetType="local:CommandBar">
                     <ControlTemplate.Resources>
                         <StreamGeometry x:Key="More">M 2.5 8.75 C 2.675781 8.75 2.838542 8.782553 2.988281 8.847656 C 3.138021 8.912761 3.269857 9 3.383789 9.116211 C 3.497721 9.230144 3.58724 9.361979 3.652344 9.511719 C 3.717448 9.661459 3.75 9.824219 3.75 10 C 3.75 10.175781 3.717448 10.338542 3.652344 10.488281 C 3.58724 10.638021 3.497721 10.769857 3.383789 10.883789 C 3.269857 11 3.138021 11.08724 2.988281 11.152344 C 2.838542 11.217448 2.675781 11.25 2.5 11.25 C 2.324219 11.25 2.161458 11.217448 2.011719 11.152344 C 1.861979 11.08724 1.730143 11 1.616211 10.883789 C 1.502279 10.769857 1.41276 10.638021 1.347656 10.488281 C 1.282552 10.338542 1.25 10.175781 1.25 10 C 1.25 9.824219 1.282552 9.661459 1.347656 9.511719 C 1.41276 9.361979 1.502279 9.230144 1.616211 9.116211 C 1.730143 9 1.861979 8.912761 2.011719 8.847656 C 2.161458 8.782553 2.324219 8.75 2.5 8.75 Z M 10 8.75 C 10.175781 8.75 10.338541 8.782553 10.488281 8.847656 C 10.638021 8.912761 10.769856 9 10.883789 9.116211 C 11 9.230144 11.087239 9.361979 11.152344 9.511719 C 11.217447 9.661459 11.25 9.824219 11.25 10 C 11.25 10.175781 11.217447 10.338542 11.152344 10.488281 C 11.087239 10.638021 11 10.769857 10.883789 10.883789 C 10.769856 11 10.638021 11.08724 10.488281 11.152344 C 10.338541 11.217448 10.175781 11.25 10 11.25 C 9.824219 11.25 9.661458 11.217448 9.511719 11.152344 C 9.361979 11.08724 9.230143 11 9.116211 10.883789 C 9 10.769857 8.91276 10.638021 8.847656 10.488281 C 8.782552 10.338542 8.75 10.175781 8.75 10 C 8.75 9.824219 8.782552 9.661459 8.847656 9.511719 C 8.91276 9.361979 9 9.230144 9.116211 9.116211 C 9.230143 9 9.361979 8.912761 9.511719 8.847656 C 9.661458 8.782553 9.824219 8.75 10 8.75 Z M 17.5 8.75 C 17.675781 8.75 17.838541 8.782553 17.988281 8.847656 C 18.13802 8.912761 18.269855 9 18.383789 9.116211 C 18.497721 9.230144 18.587238 9.361979 18.652344 9.511719 C 18.717447 9.661459 18.75 9.824219 18.75 10 C 18.75 10.175781 18.717447 10.338542 18.652344 10.488281 C 18.587238 10.638021 18.497721 10.769857 18.383789 10.883789 C 18.269855 11 18.13802 11.08724 17.988281 11.152344 C 17.838541 11.217448 17.675781 11.25 17.5 11.25 C 17.324219 11.25 17.161457 11.217448 17.011719 11.152344 C 16.861979 11.08724 16.730143 11 16.616211 10.883789 C 16.502277 10.769857 16.41276 10.638021 16.347656 10.488281 C 16.282551 10.338542 16.25 10.175781 16.25 10 C 16.25 9.824219 16.282551 9.661459 16.347656 9.511719 C 16.41276 9.361979 16.502277 9.230144 16.616211 9.116211 C 16.730143 9 16.861979 8.912761 17.011719 8.847656 C 17.161457 8.782553 17.324219 8.75 17.5 8.75 Z</StreamGeometry>
                     </ControlTemplate.Resources>
@@ -344,7 +345,7 @@
                                 </VisualState>
                                 <VisualState x:Name="SecondaryCommandsOnly">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PART_ToolBarPanel" Storyboard.TargetProperty="Visibility">
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PrimaryItemsControl" Storyboard.TargetProperty="Visibility">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Hidden}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
@@ -382,8 +383,8 @@
                                 <ContentControl
                                     x:Name="ContentControl"
                                     Margin="{TemplateBinding Padding}"
-                                    Content="{TemplateBinding Header}"
-                                    ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                    Content="{TemplateBinding Content}"
+                                    ContentTemplate="{TemplateBinding ContentTemplate}"
                                     Foreground="{TemplateBinding Foreground}"
                                     HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                     VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
@@ -391,25 +392,24 @@
                                     VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                                     IsTabStop="False"
                                     SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                                <primitives:CommandBarPanel
-                                    x:Name="PART_ToolBarPanel"
+                                <StackPanel
+                                    x:Name="PrimaryItemsControl"
                                     HorizontalAlignment="Right"
+                                    Orientation="Horizontal"
                                     MinHeight="{DynamicResource AppBarThemeCompactHeight}"
                                     Grid.Column="1"
-                                    IsItemsHost="true"
                                     SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                             </Grid>
                             <ToggleButton
                                 x:Name="MoreButton"
-                                IsEnabled="{TemplateBinding EffectiveOverflowButtonEnabled}"
                                 Foreground="{TemplateBinding Foreground}"
                                 Style="{DynamicResource EllipsisButton}"
                                 Padding="{DynamicResource CommandBarMoreButtonMargin}"
                                 MinHeight="{DynamicResource AppBarThemeCompactHeight}"
                                 VerticalAlignment="Top"
                                 Grid.Column="1"
-                                Visibility="{TemplateBinding EffectiveOverflowButtonVisibility}"
-                                IsChecked="{Binding Path=IsOverflowOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=CommandBarTemplateSettings.EffectiveOverflowButtonVisibility}"
+                                IsChecked="{Binding Path=IsOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
                                 ClickMode="Press">
                                 <ui:FontIconFallback
                                     x:Name="EllipsisIcon"
@@ -423,7 +423,7 @@
                                 x:Name="OverflowPopup"
                                 AllowsTransparency="true"
                                 Placement="Custom"
-                                IsOpen="{Binding Path=IsOverflowOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                                IsOpen="{Binding Path=IsOpen, RelativeSource={RelativeSource TemplatedParent}}"
                                 StaysOpen="True"
                                 Focusable="false"
                                 PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}">
@@ -433,19 +433,19 @@
                                     CornerRadius="{Binding ElementName=SecondaryItemsControl, Path=CornerRadius}"
                                     MinWidth="{DynamicResource CommandBarOverflowMinWidth}"
                                     MaxWidth="{DynamicResource CommandBarOverflowMaxWidth}"
-                                    MaxHeight="{TemplateBinding OverflowContentMaxHeight}"
+                                    MaxHeight="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=CommandBarTemplateSettings.OverflowContentMaxHeight}"
                                     RenderOptions.ClearTypeHint="Enabled">
 
                                     <primitives:CommandBarOverflowPresenter
                                         x:Name="SecondaryItemsControl"
-                                        Style="{TemplateBinding OverflowPresenterStyle}"
+                                        Style="{TemplateBinding CommandBarOverflowPresenterStyle}"
                                         IsTabStop="False">
                                         <primitives:CommandBarOverflowPresenter.Resources>
                                             <Style TargetType="local:AppBarButton" BasedOn="{StaticResource AppBarButtonOverflowStyle}" />
                                             <Style TargetType="local:AppBarToggleButton" BasedOn="{StaticResource AppBarToggleButtonOverflowStyle}" />
                                         </primitives:CommandBarOverflowPresenter.Resources>
                                         <primitives:CommandBarOverflowPanel
-                                            x:Name="PART_ToolBarOverflowPanel"
+                                            x:Name="SecondaryItemsPanel"
                                             Focusable="true"
                                             FocusVisualStyle="{x:Null}"
                                             KeyboardNavigation.TabNavigation="Once"
@@ -478,7 +478,7 @@
                         <Trigger Property="DefaultLabelPosition" Value="Bottom">
                             <Setter TargetName="MoreButton" Property="VerticalAlignment" Value="Stretch" />
                         </Trigger>
-                        <Trigger Property="IsOverflowOpen" Value="True">
+                        <Trigger Property="IsOpen" Value="True">
                             <Setter TargetName="OpenBorder" Property="Visibility" Value="Visible" />
                         </Trigger>
                         <Trigger SourceName="OverflowPopup" Property="IsSuspendingAnimation" Value="true">
@@ -537,39 +537,6 @@
                             Padding="3"
                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                     </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style TargetType="local:CommandBar">
-        <Setter Property="Background" Value="{DynamicResource CommandBarBackground}" />
-        <Setter Property="Foreground" Value="{DynamicResource CommandBarForeground}" />
-        <Setter Property="Padding" Value="4,0,0,0" />
-        <Setter Property="IsTabStop" Value="False" />
-        <Setter Property="VerticalAlignment" Value="Top" />
-        <Setter Property="HorizontalAlignment" Value="Stretch" />
-        <Setter Property="HorizontalContentAlignment" Value="Left" />
-        <Setter Property="VerticalContentAlignment" Value="Top" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="local:CommandBar">
-                    <primitives:CommandBarToolBar
-                        x:Name="PART_ToolBar"
-                        Background="{TemplateBinding Background}"
-                        Foreground="{TemplateBinding Foreground}"
-                        IsTabStop="{TemplateBinding IsTabStop}"
-                        VerticalAlignment="{TemplateBinding VerticalAlignment}"
-                        HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
-                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                        Header="{TemplateBinding Content}"
-                        HeaderTemplate="{TemplateBinding ContentTemplate}"
-                        DefaultLabelPosition="{TemplateBinding DefaultLabelPosition}"
-                        IsDynamicOverflowEnabled="{TemplateBinding IsDynamicOverflowEnabled}"
-                        OverflowButtonVisibility="{TemplateBinding OverflowButtonVisibility}"
-                        OverflowPresenterStyle="{TemplateBinding CommandBarOverflowPresenterStyle}"
-                        IsOverflowOpen="{Binding IsOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
