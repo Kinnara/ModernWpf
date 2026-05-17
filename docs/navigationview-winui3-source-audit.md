@@ -11,6 +11,7 @@ This audit treats `D:\repos\microsoft-ui-xaml` as the source of truth for the ex
 - `src\controls\dev\NavigationView\NavigationView.idl`
 - `src\controls\dev\NavigationView\NavigationView.xaml`
 - `src\controls\dev\NavigationView\NavigationView_themeresources.xaml`
+- `src\controls\dev\NavigationView\NavigationBackButton.xaml`
 - `src\controls\dev\NavigationView\NavigationViewAutomationPeer.cpp`
 - `src\controls\dev\NavigationView\NavigationViewItem.cpp`
 - `src\controls\dev\NavigationView\NavigationViewItem.h`
@@ -45,6 +46,7 @@ This audit treats `D:\repos\microsoft-ui-xaml` as the source of truth for the ex
 - `ModernWpf.Controls\NavigationView\NavigationViewItemsFactory.cs`
 - `ModernWpf.Controls\NavigationView\NavigationViewTemplateSettings.cs`
 - `ModernWpf\Styles\NavigationView.xaml`
+- `ModernWpf\Styles\NavigationBackButton.xaml`
 - `test\ModernWpf.WinUI.Tests\NavigationView\NavigationViewApiTests.cs`
 
 ## Implementation Mapping
@@ -53,9 +55,10 @@ This audit treats `D:\repos\microsoft-ui-xaml` as the source of truth for the ex
 | --- | --- |
 | `NavigationView` owns source-shaped template parts, pane state, menu/footer collections, selected item state, top-navigation data provider, and display-mode state. | ModernWpf keeps the source-style field/method shape in `NavigationView.cs`, including root split view, pane/title/header/footer hosts, top-navigation repeaters, overflow host, selection model, and display-mode updates. |
 | Source template uses `RootSplitView`, left/top menu hosts, pane/header/footer presenters, top overflow button, visual-state groups, and NavigationViewItemPresenter slots. | `NavigationView.xaml` and `Styles\NavigationView.xaml` expose the matching named parts and use `VisualStateEx.Setters` for WPF-compatible source setter blocks. |
+| Source `NavigationBackButton.xaml` owns pointer-over, pressed, and disabled back-button chrome through the template visual states. | `Styles\NavigationBackButton.xaml` now has no WPF `ControlTemplate.Triggers`; pointer-over, pressed, disabled foreground, and static `AnimatedIcon.State` fallback behavior live in `VisualStateEx.Setters` against the source `CommonStates` table. |
 | Source `NavigationViewItem` owns the presenter, child repeater, split-view closed-compact behavior, chevron state, child flyout, and hierarchical item propagation. | ModernWpf keeps `NavigationViewItem`, `NavigationViewItemBase`, `NavigationViewItemPresenter`, `NavigationViewItemHeader`, and `NavigationViewItemSeparator` as source-shaped WPF controls with documented WPF input/flyout substitutions. |
 | Source uses `NavigationViewAutomationPeer` as a selection provider and returns the selected container's provider. | `NavigationViewAutomationPeer` now has a public peer surface and implements the source selection-provider shape; tests cover public visibility, selection pattern, empty selection, and selected-container provider count. |
-| Source API and interaction tests cover defaults, pane behavior, selection, item automation, top mode, resource/style contracts, and template states. | `NavigationViewApiTests` covers defaults, coercion, selected item clearing, expand/collapse peer availability, settings item behavior, footer/top host details, presenter states, visual-state setter conversions, back-button resources, theme resources, and automation selection-provider shape. |
+| Source API and interaction tests cover defaults, pane behavior, selection, item automation, top mode, resource/style contracts, and template states. | `NavigationViewApiTests` covers defaults, coercion, selected item clearing, expand/collapse peer availability, settings item behavior, footer/top host details, presenter states, visual-state setter conversions, back-button source state setters, theme resources, and automation selection-provider shape. |
 
 ## WPF Substitutions
 

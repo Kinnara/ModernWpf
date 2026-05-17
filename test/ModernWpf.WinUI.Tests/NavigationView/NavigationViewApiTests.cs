@@ -1946,20 +1946,41 @@ public class NavigationViewApiTests
             var rootGrid = FindNamedDescendant<Border>(button, "RootGrid");
             var content = FindNamedDescendant<ModernWpf.Controls.FontIconFallback>(button, "Content");
 
-            AssertStateSetter(rootGrid, "CommonStates", "PointerOver", "Content.(local:AnimatedIcon.State)");
+            Assert.AreEqual(0, button.Template.Triggers.Count);
+            AssertStateSetter(rootGrid, "CommonStates", "PointerOver",
+                "RootGrid.Background",
+                "Content.Foreground",
+                "Content.(local:AnimatedIcon.State)");
             Assert.AreEqual(
                 "PointerOver",
                 GetStateSetterValue<string>(rootGrid, "CommonStates", "PointerOver", "Content.(local:AnimatedIcon.State)"));
-            AssertStateSetter(rootGrid, "CommonStates", "Pressed", "Content.(local:AnimatedIcon.State)");
+            AssertStateSetter(rootGrid, "CommonStates", "Pressed",
+                "RootGrid.Background",
+                "Content.Foreground",
+                "Content.(local:AnimatedIcon.State)");
             Assert.AreEqual(
                 "Pressed",
                 GetStateSetterValue<string>(rootGrid, "CommonStates", "Pressed", "Content.(local:AnimatedIcon.State)"));
+            AssertStateSetter(rootGrid, "CommonStates", "Disabled",
+                "Content.Foreground");
 
             Assert.AreEqual("Normal", ModernWpf.Controls.AnimatedIcon.GetState(content));
             Assert.IsTrue(VisualStateManager.GoToState(button, "PointerOver", false));
+            Assert.AreSame(button.TryFindResource("NavigationViewButtonBackgroundPointerOver"), rootGrid.Background);
+            Assert.AreSame(button.TryFindResource("NavigationViewButtonForegroundPointerOver"), content.Foreground);
             Assert.AreEqual("PointerOver", ModernWpf.Controls.AnimatedIcon.GetState(content));
             Assert.IsTrue(VisualStateManager.GoToState(button, "Pressed", false));
+            Assert.AreSame(button.TryFindResource("NavigationViewButtonBackgroundPressed"), rootGrid.Background);
+            Assert.AreSame(button.TryFindResource("NavigationViewButtonForegroundPressed"), content.Foreground);
             Assert.AreEqual("Pressed", ModernWpf.Controls.AnimatedIcon.GetState(content));
+            button.IsEnabled = false;
+            buttonHost.UpdateLayout();
+            AssertCurrentState(rootGrid, "CommonStates", "Disabled");
+            Assert.AreSame(button.TryFindResource("NavigationViewButtonForegroundDisabled"), content.Foreground);
+            Assert.AreEqual("Normal", ModernWpf.Controls.AnimatedIcon.GetState(content));
+
+            button.IsEnabled = true;
+            buttonHost.UpdateLayout();
             Assert.IsTrue(VisualStateManager.GoToState(button, "Normal", false));
             Assert.AreEqual("Normal", ModernWpf.Controls.AnimatedIcon.GetState(content));
 
