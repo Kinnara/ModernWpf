@@ -21,6 +21,7 @@ This file tracks the ModernWpf parity plan against final WinUI 2.8.7. Every upst
 - `Gallery fallback only`: represented in the gallery by an explanatory WPF fallback, not a ModernWpf parity control.
 - `Ported`: legacy wording for rows that have not yet been reclassified; do not use for newly audited complex controls.
 - `Mapped`: legacy wording for rows that have not yet been reclassified; prefer `WPF-equivalent`.
+- `Source-backed WPF port`: current WinUI 3 source has replaced the old WinUI 2-era guessed implementation; see `docs/winui3-source-parity.md` for the active source evidence.
 - `Optional`: supported through documentation/sample integration, not a core dependency.
 - `Excluded`: not feasible or not appropriate for WPF; reason required.
 - `Pending`: not completed yet.
@@ -39,7 +40,7 @@ The old test projects remain on disk for reference while porting, but are no lon
 
 | Upstream WinUI 2.8.7 area | ModernWpf status | Test status | Notes |
 | --- | --- | --- | --- |
-| AnnotatedScrollBar | Functional subset | API/resource + rail/detail event tests | `AnnotatedScrollBar` exposes label/event argument types, default non-null labels collection, label templates, small-change property, simple WPF template, rail offset mapping, `Scrolling` event raising, and default/overridable detail-label lookup. It still needs direct ScrollViewer binding, hover popup presentation, and richer rail visuals before parity. |
+| AnnotatedScrollBar | Source-backed WPF port | API/template + scroll-controller request tests | Current work targets WinUI 3 source rather than this legacy WinUI 2 matrix. `docs\annotatedscrollbar-winui3-source-audit.md` maps the active WPF port against local WinUI 3 source: source-shaped vertical parts, label grid layout, hover tooltip/thumb ghost, `IScrollController` request events, `SetValues` validation, cancelable scrolling, source small-change direction, and no guessed nearest-label fallback. WPF substitutions remain for platform `ScrollPresenter`, composition panning, and raw touch/TestUI automation. |
 | AnimatedIcon | Excluded | Excluded | Depends on WinUI animated icon source infrastructure and compositor animation semantics not present in WPF. |
 | AnimatedVisualPlayer | Excluded | Excluded | Depends on WinUI visual/lottie animation pipeline; do not add as ModernWpf core surface. |
 | AutoSuggestBox | Ported existing WPF surface/resources | Ported API/resource + interaction slices | Existing WPF port is covered for final WinUI 2.8.7 default stretch content alignment, `AutoSuggestBoxTextBoxStyle` application, suggestion-popup corner-radius behavior, final Light/Dark/HighContrast popup background and border resource mappings, icon font size resources, light-dismiss overlay background resources, and suggestion-selection interaction. WinUI visual-tree snapshots and accessibility scan coverage are excluded for WPF feasibility. |

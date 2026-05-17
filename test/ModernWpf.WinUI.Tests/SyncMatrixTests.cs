@@ -28,7 +28,7 @@ public class SyncMatrixTests
         AssertControlStatus(matrix, "SwipeControl", "Functional subset");
         AssertControlStatus(matrix, "PullToRefresh / RefreshContainer", "Functional subset");
         AssertControlStatus(matrix, "ColorPicker / ColorSpectrum", "Functional subset");
-        AssertControlStatus(matrix, "AnnotatedScrollBar", "Functional subset");
+        AssertControlStatus(matrix, "AnnotatedScrollBar", "Source-backed WPF port");
     }
 
     public TestContext? TestContext { get; set; }

@@ -11,10 +11,5 @@ namespace ModernWpf.Controls
         public object Content { get; }
 
         public double ScrollOffset { get; }
-
-        public override string ToString()
-        {
-            return Content?.ToString() ?? string.Empty;
-        }
     }
 }
