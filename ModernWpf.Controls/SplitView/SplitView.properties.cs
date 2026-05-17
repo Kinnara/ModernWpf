@@ -13,7 +13,10 @@ namespace ModernWpf.Controls
                 nameof(CompactPaneLength),
                 typeof(double),
                 typeof(SplitView),
-                new PropertyMetadata(OnCompactPaneLengthPropertyChanged));
+                new FrameworkPropertyMetadata(
+                    0d,
+                    FrameworkPropertyMetadataOptions.AffectsMeasure,
+                    OnCompactPaneLengthPropertyChanged));
 
         public double CompactPaneLength
         {
@@ -29,6 +32,7 @@ namespace ModernWpf.Controls
         private void OnCompactPaneLengthPropertyChanged(DependencyPropertyChangedEventArgs args)
         {
             UpdateTemplateSettings();
+            UpdateVisualState(false);
             CompactPaneLengthChanged?.Invoke(this, args.Property);
         }
 
@@ -40,12 +44,21 @@ namespace ModernWpf.Controls
             DependencyProperty.Register(
                 nameof(Content),
                 typeof(UIElement),
-                typeof(SplitView));
+                typeof(SplitView),
+                new FrameworkPropertyMetadata(
+                    null,
+                    FrameworkPropertyMetadataOptions.AffectsMeasure,
+                    OnContentPropertyChanged));
 
         public UIElement Content
         {
             get => (UIElement)GetValue(ContentProperty);
             set => SetValue(ContentProperty, value);
+        }
+
+        private static void OnContentPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        {
+            ((SplitView)sender).OnContentPropertyChanged(args);
         }
 
         #endregion
@@ -57,7 +70,10 @@ namespace ModernWpf.Controls
                 nameof(DisplayMode),
                 typeof(SplitViewDisplayMode),
                 typeof(SplitView),
-                new PropertyMetadata(SplitViewDisplayMode.Overlay, OnDisplayModePropertyChanged));
+                new FrameworkPropertyMetadata(
+                    SplitViewDisplayMode.Overlay,
+                    FrameworkPropertyMetadataOptions.AffectsMeasure,
+                    OnDisplayModePropertyChanged));
 
         public SplitViewDisplayMode DisplayMode
         {
@@ -72,8 +88,13 @@ namespace ModernWpf.Controls
 
         private void OnDisplayModePropertyChanged(DependencyPropertyChangedEventArgs args)
         {
-            UpdateIsLightDismissActive();
+            RestoreSavedFocusElement();
             UpdateVisualState();
+            SetupOuterDismissLayer();
+            if (!CanLightDismiss())
+            {
+                TeardownOuterDismissLayer();
+            }
 
             DisplayModeChanged?.Invoke(this, args.Property);
         }
@@ -87,7 +108,10 @@ namespace ModernWpf.Controls
                 nameof(IsPaneOpen),
                 typeof(bool),
                 typeof(SplitView),
-                new PropertyMetadata(OnIsPaneOpenPropertyChanged));
+                new FrameworkPropertyMetadata(
+                    false,
+                    FrameworkPropertyMetadataOptions.AffectsMeasure,
+                    OnIsPaneOpenPropertyChanged));
 
         public bool IsPaneOpen
         {
@@ -113,7 +137,6 @@ namespace ModernWpf.Controls
                 ClosePane();
             }
 
-            UpdateIsLightDismissActive();
             UpdateOverlayVisibilityState();
 
             IsPaneOpenChanged?.Invoke(this, args.Property);
@@ -128,7 +151,10 @@ namespace ModernWpf.Controls
                 nameof(OpenPaneLength),
                 typeof(double),
                 typeof(SplitView),
-                new PropertyMetadata(OnOpenPaneLengthPropertyChanged));
+                new FrameworkPropertyMetadata(
+                    0d,
+                    FrameworkPropertyMetadataOptions.AffectsMeasure,
+                    OnOpenPaneLengthPropertyChanged));
 
         public double OpenPaneLength
         {
@@ -145,6 +171,7 @@ namespace ModernWpf.Controls
         {
             UpdateTemplateSettings();
             UpdatePaneClipRectangle();
+            UpdateVisualState(false);
         }
 
         #endregion
@@ -172,7 +199,10 @@ namespace ModernWpf.Controls
                 nameof(PanePlacement),
                 typeof(SplitViewPanePlacement),
                 typeof(SplitView),
-                new PropertyMetadata(SplitViewPanePlacement.Left, OnPanePlacementPropertyChanged));
+                new FrameworkPropertyMetadata(
+                    SplitViewPanePlacement.Left,
+                    FrameworkPropertyMetadataOptions.AffectsMeasure,
+                    OnPanePlacementPropertyChanged));
 
         public SplitViewPanePlacement PanePlacement
         {
@@ -187,7 +217,7 @@ namespace ModernWpf.Controls
 
         private void OnPanePlacementPropertyChanged(DependencyPropertyChangedEventArgs args)
         {
-            UpdateDisplayModeState();
+            UpdateVisualState();
         }
 
         #endregion
@@ -198,12 +228,33 @@ namespace ModernWpf.Controls
             DependencyProperty.Register(
                 nameof(Pane),
                 typeof(UIElement),
-                typeof(SplitView));
+                typeof(SplitView),
+                new FrameworkPropertyMetadata(
+                    null,
+                    FrameworkPropertyMetadataOptions.AffectsMeasure,
+                    OnPanePropertyChanged));
 
         public UIElement Pane
         {
             get => (UIElement)GetValue(PaneProperty);
             set => SetValue(PaneProperty, value);
+        }
+
+        private static void OnPanePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        {
+            ((SplitView)sender).OnPanePropertyChanged(args);
+        }
+
+        private void OnContentPropertyChanged(DependencyPropertyChangedEventArgs args)
+        {
+            InvalidateMeasure();
+        }
+
+        private void OnPanePropertyChanged(DependencyPropertyChangedEventArgs args)
+        {
+            InvalidateMeasure();
+            UpdateTemplateSettings(false);
+            UpdatePaneClipRectangle();
         }
 
         #endregion

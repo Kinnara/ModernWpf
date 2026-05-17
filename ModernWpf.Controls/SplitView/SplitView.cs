@@ -1,5 +1,7 @@
-﻿using System.Diagnostics;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Markup;
 using System.Windows.Media;
@@ -11,6 +13,26 @@ namespace ModernWpf.Controls
     [ContentProperty(nameof(Content))]
     public partial class SplitView : ControlEx
     {
+        private static readonly string[,,] s_visualStateTable =
+        {
+            {
+                { "Closed", "OpenOverlayLeft" },
+                { "Closed", "OpenOverlayRight" }
+            },
+            {
+                { "Closed", "OpenInlineLeft" },
+                { "Closed", "OpenInlineRight" }
+            },
+            {
+                { "ClosedCompactLeft", "OpenCompactOverlayLeft" },
+                { "ClosedCompactRight", "OpenCompactOverlayRight" }
+            },
+            {
+                { "ClosedCompactLeft", "OpenInlineLeft" },
+                { "ClosedCompactRight", "OpenInlineRight" }
+            }
+        };
+
         static SplitView()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(SplitView), new FrameworkPropertyMetadata(typeof(SplitView)));
@@ -20,17 +42,10 @@ namespace ModernWpf.Controls
         {
             TemplateSettings = new SplitViewTemplateSettings();
 
+            Loaded += OnLoaded;
+            Unloaded += OnUnloaded;
             SizeChanged += OnSizeChanged;
             IsVisibleChanged += OnIsVisibleChanged;
-        }
-
-        private bool IsLightDismissible
-        {
-            get
-            {
-                var displayMode = DisplayMode;
-                return displayMode == SplitViewDisplayMode.Overlay || displayMode == SplitViewDisplayMode.CompactOverlay;
-            }
         }
 
         public event TypedEventHandler<SplitView, object> PaneOpening;
@@ -42,31 +57,46 @@ namespace ModernWpf.Controls
         internal event DependencyPropertyChangedCallback DisplayModeChanged;
         internal event DependencyPropertyChangedCallback CompactPaneLengthChanged;
 
+        private bool IsLightDismissible()
+        {
+            var displayMode = DisplayMode;
+            return displayMode != SplitViewDisplayMode.Inline &&
+                displayMode != SplitViewDisplayMode.CompactInline;
+        }
+
+        private bool CanLightDismiss()
+        {
+            return IsPaneOpen && !_isPaneClosingByLightDismiss && IsLightDismissible();
+        }
+
         public override void OnApplyTemplate()
         {
-            if (_displayModeStates != null)
-            {
-                _displayModeStates.CurrentStateChanging -= OnDisplayModeStatesCurrentStateChanging;
-                _displayModeStates.CurrentStateChanged -= OnDisplayModeStatesCurrentStateChanged;
-            }
+            UnregisterDisplayModeStateHandler();
+            UnregisterLightDismissLayerHandler();
+            TeardownOuterDismissLayer();
+
+            _templateRoot = null;
+            _paneRoot = null;
+            _contentRoot = null;
+            _lightDismissLayer = null;
+            _paneClipRectangle = null;
 
             base.OnApplyTemplate();
 
             _templateRoot = this.GetTemplateRoot();
             _paneRoot = GetTemplateChild(PaneRootName) as FrameworkElement;
-            _displayModeStates = GetTemplateChild(DisplayModeStatesName) as VisualStateGroup;
+            _contentRoot = GetTemplateChild(ContentRootName) as FrameworkElement;
+            _lightDismissLayer = GetTemplateChild(LightDismissLayerName) as FrameworkElement;
             _paneClipRectangle = GetTemplateChild(PaneClipRectangleName) as RectangleGeometry;
+            _displayModeStates = GetTemplateChild(DisplayModeStatesName) as VisualStateGroup;
 
-            if (_displayModeStates != null)
-            {
-                _displayModeStates.CurrentStateChanging += OnDisplayModeStatesCurrentStateChanging;
-                _displayModeStates.CurrentStateChanged += OnDisplayModeStatesCurrentStateChanged;
-                AnimationHelper.DeferTransitions(_displayModeStates);
-            }
+            RegisterDisplayModeStateHandler();
+            RegisterLightDismissLayerHandler();
 
-            UpdateTemplateSettings();
+            UpdateTemplateSettings(false);
             UpdatePaneClipRectangle();
             UpdateVisualState(false);
+            SetupOuterDismissLayer();
 
             Dispatcher.BeginInvoke(() =>
             {
@@ -74,14 +104,119 @@ namespace ModernWpf.Controls
             }, DispatcherPriority.DataBind);
         }
 
+        protected override Size MeasureOverride(Size constraint)
+        {
+            if (Pane != null)
+            {
+                Pane.Measure(constraint);
+                _paneMeasuredLength = Pane.DesiredSize.Width;
+            }
+            else
+            {
+                _paneMeasuredLength = 0d;
+            }
+
+            var desiredSize = base.MeasureOverride(constraint);
+            UpdateTemplateSettings(false);
+            return desiredSize;
+        }
+
+        protected override Size ArrangeOverride(Size arrangeBounds)
+        {
+            var finalSize = base.ArrangeOverride(arrangeBounds);
+            UpdatePaneClipRectangle(finalSize.Height);
+            return finalSize;
+        }
+
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+
+            if (!e.Handled && e.Key == Key.Escape && CanLightDismiss())
+            {
+                e.Handled = TryCloseLightDismissiblePane();
+            }
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            SetupOuterDismissLayer();
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            TeardownOuterDismissLayer();
+        }
+
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
             UpdatePaneClipRectangle();
+
+            if (!_hasCompletedInitialSize)
+            {
+                if (e.NewSize.Width != 0 || e.NewSize.Height != 0)
+                {
+                    Dispatcher.BeginInvoke(() =>
+                    {
+                        _hasCompletedInitialSize = true;
+                    }, DispatcherPriority.Loaded);
+                }
+
+                return;
+            }
+
+            if ((e.PreviousSize.Width != 0 || e.PreviousSize.Height != 0) && CanLightDismiss())
+            {
+                TryCloseLightDismissiblePane();
+            }
         }
 
         private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            UpdateIsLightDismissActive();
+            if (IsVisible)
+            {
+                SetupOuterDismissLayer();
+            }
+            else
+            {
+                TeardownOuterDismissLayer();
+            }
+        }
+
+        private void RegisterDisplayModeStateHandler()
+        {
+            if (_displayModeStates != null)
+            {
+                _displayModeStates.CurrentStateChanging += OnDisplayModeStatesCurrentStateChanging;
+                _displayModeStates.CurrentStateChanged += OnDisplayModeStatesCurrentStateChanged;
+                AnimationHelper.DeferTransitions(_displayModeStates);
+            }
+        }
+
+        private void UnregisterDisplayModeStateHandler()
+        {
+            if (_displayModeStates != null)
+            {
+                _displayModeStates.CurrentStateChanging -= OnDisplayModeStatesCurrentStateChanging;
+                _displayModeStates.CurrentStateChanged -= OnDisplayModeStatesCurrentStateChanged;
+                _displayModeStates = null;
+            }
+        }
+
+        private void RegisterLightDismissLayerHandler()
+        {
+            if (_lightDismissLayer != null)
+            {
+                _lightDismissLayer.MouseLeftButtonUp += OnLightDismissLayerMouseLeftButtonUp;
+            }
+        }
+
+        private void UnregisterLightDismissLayerHandler()
+        {
+            if (_lightDismissLayer != null)
+            {
+                _lightDismissLayer.MouseLeftButtonUp -= OnLightDismissLayerMouseLeftButtonUp;
+            }
         }
 
         private void OnDisplayModeStatesCurrentStateChanging(object sender, VisualStateChangedEventArgs e)
@@ -101,11 +236,11 @@ namespace ModernWpf.Controls
             else if (_isPaneClosing)
             {
                 _isPaneClosing = false;
-                PaneClosed?.Invoke(this, null);
+                OnPaneClosed();
             }
         }
 
-        private void OnWindowPreviewMouseDown(object sender, MouseButtonEventArgs e)
+        private void OnOuterDismissElementPreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             if (_paneRoot != null)
             {
@@ -122,10 +257,19 @@ namespace ModernWpf.Controls
                 return;
             }
 
-            if (IsPaneOpen)
+            if (CanLightDismiss())
             {
+                TryCloseLightDismissiblePane();
                 e.Handled = true;
-                ClosePane();
+            }
+        }
+
+        private void OnLightDismissLayerMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (CanLightDismiss())
+            {
+                TryCloseLightDismissiblePane();
+                e.Handled = true;
             }
         }
 
@@ -136,7 +280,10 @@ namespace ModernWpf.Controls
                 return;
             }
 
+            _isPaneClosingByLightDismiss = false;
+
             PaneOpening?.Invoke(this, null);
+            OnPaneOpening();
 
             if (UpdateDisplayModeState())
             {
@@ -146,6 +293,8 @@ namespace ModernWpf.Controls
             {
                 PaneOpened?.Invoke(this, null);
             }
+
+            SetupOuterDismissLayer();
         }
 
         private void ClosePane()
@@ -155,36 +304,77 @@ namespace ModernWpf.Controls
                 return;
             }
 
-            var paneClosing = PaneClosing;
-            if (paneClosing != null)
-            {
-                var args = new SplitViewPaneClosingEventArgs();
-                paneClosing(this, args);
+            OnPaneClosing();
 
-                if (args.Cancel && IsPaneOpen)
-                {
-                    return;
-                }
+            if (UpdateDisplayModeState())
+            {
+                _isPaneClosing = true;
+            }
+            else
+            {
+                OnPaneClosed();
             }
 
-            _isPaneClosing = true;
+            TeardownOuterDismissLayer();
+        }
 
-            if (IsPaneOpen)
+        private bool TryCloseLightDismissiblePane()
+        {
+            if (!CanLightDismiss())
             {
-                SetCurrentValue(IsPaneOpenProperty, false);
+                return false;
             }
 
-            if (!UpdateDisplayModeState())
+            var args = new SplitViewPaneClosingEventArgs();
+            PaneClosing?.Invoke(this, args);
+
+            if (args.Cancel)
             {
-                _isPaneClosing = false;
-                PaneClosed?.Invoke(this, null);
+                OnCancelClosing();
+                return false;
+            }
+
+            _isPaneClosingByLightDismiss = true;
+            SetCurrentValue(IsPaneOpenProperty, false);
+            return true;
+        }
+
+        private void OnPaneOpening()
+        {
+            if (IsLightDismissible())
+            {
+                SetFocusToPane();
             }
         }
 
-        private void UpdateTemplateSettings()
+        private void OnPaneClosing()
+        {
+            if (!_isPaneClosingByLightDismiss)
+            {
+                PaneClosing?.Invoke(this, new SplitViewPaneClosingEventArgs());
+            }
+
+            if (IsLightDismissible())
+            {
+                RestoreSavedFocusElement();
+            }
+        }
+
+        private void OnPaneClosed()
+        {
+            _isPaneClosingByLightDismiss = false;
+            PaneClosed?.Invoke(this, null);
+        }
+
+        private void OnCancelClosing()
+        {
+            _isPaneClosingByLightDismiss = false;
+        }
+
+        private void UpdateTemplateSettings(bool reapplyDisplayModeState = true)
         {
             var compactPaneLength = CompactPaneLength;
-            var openPaneLength = OpenPaneLength;
+            var openPaneLength = GetOpenPaneLength();
             var openPaneLengthMinusCompactLength = openPaneLength - compactPaneLength;
 
             var templateSettings = TemplateSettings;
@@ -195,122 +385,52 @@ namespace ModernWpf.Controls
             templateSettings.OpenPaneLength = openPaneLength;
             templateSettings.OpenPaneLengthMinusCompactLength = openPaneLengthMinusCompactLength;
 
-            ReapplyDisplayModeState();
+            if (reapplyDisplayModeState)
+            {
+                ReapplyDisplayModeState();
+            }
+        }
+
+        private double GetOpenPaneLength()
+        {
+            var openPaneLength = OpenPaneLength;
+            return double.IsNaN(openPaneLength) ? _paneMeasuredLength : openPaneLength;
         }
 
         private void UpdatePaneClipRectangle()
         {
-            if (_paneClipRectangle != null)
-            {
-                _paneClipRectangle.Rect = new Rect(0, 0, OpenPaneLength, ActualHeight);
-            }
+            UpdatePaneClipRectangle(ActualHeight);
         }
 
-        private void UpdateIsLightDismissActive()
+        private void UpdatePaneClipRectangle(double height)
         {
-            bool value = IsVisible && IsPaneOpen && IsLightDismissible;
-
-            if (_isLightDismissActive != value)
+            if (_paneClipRectangle != null)
             {
-                _isLightDismissActive = value;
-
-                if (_isLightDismissActive)
-                {
-                    _window = Window.GetWindow(this);
-                    if (_window != null)
-                    {
-                        _window.PreviewMouseDown += OnWindowPreviewMouseDown;
-                    }
-                }
-                else
-                {
-                    if (_window != null)
-                    {
-                        _window.PreviewMouseDown -= OnWindowPreviewMouseDown;
-                        _window = null;
-                    }
-                }
+                _paneClipRectangle.Rect = new Rect(0, 0, GetOpenPaneLength(), height);
             }
         }
 
         private bool UpdateDisplayModeState(bool useTransitions = true)
         {
-            string stateName = null;
-            var displayMode = DisplayMode;
+            var displayMode = (int)DisplayMode;
+            var panePlacement = (int)PanePlacement;
 
-            if (IsPaneOpen)
+            Debug.Assert(displayMode >= 0 && displayMode < 4);
+            Debug.Assert(panePlacement >= 0 && panePlacement < 2);
+
+            if (displayMode < 0 || displayMode >= 4 || panePlacement < 0 || panePlacement >= 2)
             {
-                if (displayMode == SplitViewDisplayMode.Overlay)
-                {
-                    if (PanePlacement == SplitViewPanePlacement.Left)
-                    {
-                        stateName = "OpenOverlayLeft";
-                    }
-                    else
-                    {
-                        stateName = "OpenOverlayRight";
-                    }
-                }
-                else if (displayMode == SplitViewDisplayMode.Inline || displayMode == SplitViewDisplayMode.CompactInline)
-                {
-                    if (PanePlacement == SplitViewPanePlacement.Left)
-                    {
-                        stateName = "OpenInlineLeft";
-                    }
-                    else
-                    {
-                        stateName = "OpenInlineRight";
-                    }
-                }
-                else if (displayMode == SplitViewDisplayMode.CompactOverlay)
-                {
-                    if (PanePlacement == SplitViewPanePlacement.Left)
-                    {
-                        stateName = "OpenCompactOverlayLeft";
-                    }
-                    else
-                    {
-                        stateName = "OpenCompactOverlayRight";
-                    }
-                }
-            }
-            else
-            {
-                if (displayMode == SplitViewDisplayMode.CompactOverlay || displayMode == SplitViewDisplayMode.CompactInline)
-                {
-                    if (PanePlacement == SplitViewPanePlacement.Left)
-                    {
-                        stateName = "ClosedCompactLeft";
-                    }
-                    else
-                    {
-                        stateName = "ClosedCompactRight";
-                    }
-                }
-                else
-                {
-                    stateName = "Closed";
-                }
+                return false;
             }
 
-            Debug.Assert(stateName != null);
+            var stateName = s_visualStateTable[displayMode, panePlacement, IsPaneOpen ? 1 : 0];
             return VisualStateManager.GoToState(this, stateName, useTransitions);
         }
 
         private void UpdateOverlayVisibilityState(bool useTransitions = true)
         {
-            string stateName;
-
-            if (IsPaneOpen && IsLightDismissible && LightDismissOverlayMode == LightDismissOverlayMode.On)
-            {
-                stateName = "OverlayVisible";
-            }
-            else
-            {
-                stateName = "OverlayNotVisible";
-            }
-
-            VisualStateManager.GoToState(this, stateName, useTransitions);
+            var isOverlayVisible = LightDismissOverlayMode == LightDismissOverlayMode.On;
+            VisualStateManager.GoToState(this, isOverlayVisible ? "OverlayVisible" : "OverlayNotVisible", useTransitions);
         }
 
         private void UpdateVisualState(bool useTransitions = true)
@@ -330,7 +450,6 @@ namespace ModernWpf.Controls
                     {
                         if (waitForDataBinding)
                         {
-                            // Wait for data binding to update the storyboard
                             DispatcherHelper.DoEvents(DispatcherPriority.DataBind);
                         }
 
@@ -340,19 +459,115 @@ namespace ModernWpf.Controls
             }
         }
 
+        private void SetupOuterDismissLayer()
+        {
+            if (_isOuterDismissLayerActive || !IsVisible || !CanLightDismiss())
+            {
+                return;
+            }
+
+            _window = Window.GetWindow(this);
+            if (_window != null)
+            {
+                _window.PreviewMouseDown += OnOuterDismissElementPreviewMouseDown;
+                _isOuterDismissLayerActive = true;
+            }
+        }
+
+        private void TeardownOuterDismissLayer()
+        {
+            if (_window != null)
+            {
+                _window.PreviewMouseDown -= OnOuterDismissElementPreviewMouseDown;
+                _window = null;
+            }
+
+            _isOuterDismissLayerActive = false;
+        }
+
+        private void SetFocusToPane()
+        {
+            _previousFocusedElement = Keyboard.FocusedElement;
+
+            if (_paneRoot != null)
+            {
+                if (TryFocusFirstElement(_paneRoot))
+                {
+                    return;
+                }
+
+                _paneRoot.Focus();
+            }
+        }
+
+        private void RestoreSavedFocusElement()
+        {
+            if (_previousFocusedElement is UIElement element && element.IsVisible && element.IsEnabled && element.Focusable)
+            {
+                element.Focus();
+            }
+            else if (_contentRoot != null)
+            {
+                TryFocusFirstElement(_contentRoot);
+            }
+
+            _previousFocusedElement = null;
+        }
+
+        private static bool TryFocusFirstElement(DependencyObject root)
+        {
+            foreach (var child in EnumerateVisualDescendants(root))
+            {
+                if (child is UIElement element && element.Focusable && element.IsVisible && element.IsEnabled)
+                {
+                    return element.Focus();
+                }
+            }
+
+            return false;
+        }
+
+        private static IEnumerable<DependencyObject> EnumerateVisualDescendants(DependencyObject root)
+        {
+            if (!(root is Visual) && !(root is System.Windows.Media.Media3D.Visual3D))
+            {
+                yield break;
+            }
+
+            var childCount = VisualTreeHelper.GetChildrenCount(root);
+            for (var i = 0; i < childCount; i++)
+            {
+                var child = VisualTreeHelper.GetChild(root, i);
+                yield return child;
+
+                foreach (var descendant in EnumerateVisualDescendants(child))
+                {
+                    yield return descendant;
+                }
+            }
+        }
+
         private FrameworkElement _templateRoot;
         private VisualStateGroup _displayModeStates;
         private FrameworkElement _paneRoot;
+        private FrameworkElement _contentRoot;
+        private FrameworkElement _lightDismissLayer;
         private RectangleGeometry _paneClipRectangle;
 
         private Window _window;
+        private IInputElement _previousFocusedElement;
 
-        private bool _isLightDismissActive;
+        private bool _isOuterDismissLayerActive;
+        private bool _hasCompletedInitialSize;
         private bool _isPaneOpening;
         private bool _isPaneClosing;
+        private bool _isPaneClosingByLightDismiss;
         private bool _isDisplayModeStateChanging;
+        private double _paneMeasuredLength;
 
         private const string PaneRootName = "PaneRoot";
+        private const string ContentRootName = "ContentRoot";
+        private const string LightDismissLayerName = "LightDismissLayer";
         private const string DisplayModeStatesName = "DisplayModeStates";
         private const string PaneClipRectangleName = "PaneClipRectangle";
     }

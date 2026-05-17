@@ -1,6 +1,10 @@
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls;
@@ -86,6 +90,31 @@ public class SplitViewApiTests
     }
 
     [TestMethod]
+    public void TemplateSettingsUseMeasuredPaneLengthWhenOpenPaneLengthIsAuto()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var splitView = new ModernWpf.Controls.SplitView
+            {
+                OpenPaneLength = double.NaN,
+                CompactPaneLength = 48,
+                Pane = new Border { Width = 137, Height = 24 },
+                Content = new Border()
+            };
+
+            using var host = new TestWindowHost(splitView, width: 640, height: 360);
+            host.UpdateLayout();
+
+            SplitViewTemplateSettings settings = splitView.TemplateSettings;
+            Assert.AreEqual(137d, settings.OpenPaneLength, 0.01);
+            Assert.AreEqual(-137d, settings.NegativeOpenPaneLength, 0.01);
+            Assert.AreEqual(89d, settings.OpenPaneLengthMinusCompactLength, 0.01);
+            Assert.AreEqual(-89d, settings.NegativeOpenPaneLengthMinusCompactLength, 0.01);
+            Assert.AreEqual(new GridLength(137), settings.OpenPaneGridLength);
+        });
+    }
+
+    [TestMethod]
     public void PaneOpenCloseEventsFollowTestUiPattern()
     {
         WpfTestHost.Run(() =>
@@ -116,6 +145,77 @@ public class SplitViewApiTests
             Assert.AreEqual(1, openedCount);
             Assert.AreEqual(1, closingCount);
             Assert.AreEqual(1, closedCount);
+        });
+    }
+
+    [TestMethod]
+    public void LightDismissLayerRespectsPaneClosingCancellation()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var splitView = new ModernWpf.Controls.SplitView
+            {
+                DisplayMode = SplitViewDisplayMode.Overlay,
+                IsPaneOpen = true,
+                OpenPaneLength = 200,
+                Pane = new Border(),
+                Content = new Border()
+            };
+
+            var cancel = true;
+            var closingCount = 0;
+            var closedCount = 0;
+            splitView.PaneClosing += (sender, args) =>
+            {
+                closingCount++;
+                args.Cancel = cancel;
+            };
+            splitView.PaneClosed += (sender, args) => closedCount++;
+
+            using var host = new TestWindowHost(splitView, width: 640, height: 360);
+            WpfTestHost.DoEvents();
+            host.UpdateLayout();
+
+            var lightDismissLayer = FindTemplatePart<FrameworkElement>(splitView, "LightDismissLayer");
+            RaiseMouseLeftButtonUp(lightDismissLayer);
+
+            Assert.IsTrue(splitView.IsPaneOpen);
+            Assert.AreEqual(1, closingCount);
+            Assert.AreEqual(0, closedCount);
+
+            cancel = false;
+            RaiseMouseLeftButtonUp(lightDismissLayer);
+            WaitFor(() => closedCount == 1, "SplitView PaneClosed did not fire after light dismiss.");
+
+            Assert.IsFalse(splitView.IsPaneOpen);
+            Assert.AreEqual(2, closingCount);
+            Assert.AreEqual(1, closedCount);
+        });
+    }
+
+    [TestMethod]
+    public void EscapeClosesLightDismissiblePane()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var splitView = new ModernWpf.Controls.SplitView
+            {
+                DisplayMode = SplitViewDisplayMode.Overlay,
+                IsPaneOpen = true,
+                OpenPaneLength = 200,
+                Pane = new Border(),
+                Content = new Border()
+            };
+
+            using var host = new TestWindowHost(splitView, width: 640, height: 360);
+            WpfTestHost.DoEvents();
+            host.UpdateLayout();
+
+            RaiseKeyDown(splitView, Key.Escape);
+            WpfTestHost.DoEvents();
+            host.UpdateLayout();
+
+            Assert.IsFalse(splitView.IsPaneOpen);
         });
     }
 
@@ -218,6 +318,33 @@ public class SplitViewApiTests
         });
     }
 
+    [TestMethod]
+    public void RightInlineTransitionsMatchWinUISourceTemplate()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var splitView = new ModernWpf.Controls.SplitView();
+
+            using var host = new TestWindowHost(splitView, width: 640, height: 360);
+            host.UpdateLayout();
+
+            var layoutRoot = (FrameworkElement)VisualTreeHelper.GetChild(splitView, 0);
+            var group = VisualStateManager.GetVisualStateGroups(layoutRoot)
+                .OfType<VisualStateGroup>()
+                .Single(item => item.Name == "DisplayModeStates");
+
+            var transitions = new HashSet<string>(
+                group.Transitions
+                    .OfType<VisualTransition>()
+                    .Select(transition => $"{transition.From}->{transition.To}"));
+
+            Assert.IsTrue(transitions.Contains("Closed->OpenInlineRight"));
+            Assert.IsTrue(transitions.Contains("OpenInlineRight->Closed"));
+            Assert.IsTrue(transitions.Contains("ClosedCompactRight->OpenInlineRight"));
+            Assert.IsTrue(transitions.Contains("OpenInlineRight->ClosedCompactRight"));
+        });
+    }
+
     private static void VerifyClosedCompactState(SplitViewPanePlacement panePlacement)
     {
         var splitView = new ModernWpf.Controls.SplitView
@@ -277,5 +404,38 @@ public class SplitViewApiTests
             .Single(item => item.Name == groupName);
         Assert.IsNotNull(group.CurrentState);
         return group.CurrentState.Name;
+    }
+
+    private static void RaiseMouseLeftButtonUp(UIElement target)
+    {
+        var args = new MouseButtonEventArgs(Mouse.PrimaryDevice, Environment.TickCount, MouseButton.Left)
+        {
+            RoutedEvent = UIElement.MouseLeftButtonUpEvent,
+            Source = target
+        };
+
+        target.RaiseEvent(args);
+    }
+
+    private static void RaiseKeyDown(UIElement target, Key key)
+    {
+        var args = new KeyEventArgs(Keyboard.PrimaryDevice, PresentationSource.FromVisual(target), Environment.TickCount, key)
+        {
+            RoutedEvent = Keyboard.KeyDownEvent,
+            Source = target
+        };
+
+        target.RaiseEvent(args);
+    }
+
+    private static void WaitFor(Func<bool> predicate, string failureMessage, int timeoutMilliseconds = 1500)
+    {
+        var stopwatch = Stopwatch.StartNew();
+        while (!predicate() && stopwatch.ElapsedMilliseconds < timeoutMilliseconds)
+        {
+            WpfTestHost.DoEvents();
+        }
+
+        Assert.IsTrue(predicate(), failureMessage);
     }
 }
