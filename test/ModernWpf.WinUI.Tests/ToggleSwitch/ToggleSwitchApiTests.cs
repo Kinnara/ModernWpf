@@ -974,7 +974,7 @@ public class ToggleSwitchApiTests
     }
 
     [TestMethod]
-    public void DirectionalKeysDoNotToggle()
+    public void DirectionalKeysDoNotToggleInEitherFlowDirection()
     {
         WpfTestHost.Run(() =>
         {
@@ -984,14 +984,20 @@ public class ToggleSwitchApiTests
             using var host = new TestWindowHost(toggleSwitch, width: 260, height: 120);
             host.UpdateLayout();
 
-            foreach (var key in new[] { Key.Home, Key.End, Key.Up, Key.Down, Key.Left, Key.Right })
+            foreach (var flowDirection in new[] { FlowDirection.LeftToRight, FlowDirection.RightToLeft })
             {
-                var keyDown = RaiseKey(toggleSwitch, Keyboard.KeyDownEvent, key);
-                var keyUp = RaiseKey(toggleSwitch, Keyboard.KeyUpEvent, key);
+                toggleSwitch.FlowDirection = flowDirection;
+                toggleSwitch.IsOn = false;
 
-                Assert.IsFalse(keyDown.Handled, $"{key} key-down should not be handled.");
-                Assert.IsFalse(keyUp.Handled, $"{key} key-up should not be handled.");
-                Assert.IsFalse(toggleSwitch.IsOn, $"{key} should not toggle the switch.");
+                foreach (var key in new[] { Key.Home, Key.End, Key.Up, Key.Down, Key.Left, Key.Right })
+                {
+                    var keyDown = RaiseKey(toggleSwitch, Keyboard.KeyDownEvent, key);
+                    var keyUp = RaiseKey(toggleSwitch, Keyboard.KeyUpEvent, key);
+
+                    Assert.IsFalse(keyDown.Handled, $"{flowDirection} {key} key-down should not be handled.");
+                    Assert.IsFalse(keyUp.Handled, $"{flowDirection} {key} key-up should not be handled.");
+                    Assert.IsFalse(toggleSwitch.IsOn, $"{flowDirection} {key} should not toggle the switch.");
+                }
             }
         });
     }

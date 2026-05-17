@@ -460,7 +460,7 @@ namespace ModernWpf.Controls
             base.OnKeyUp(e);
 
             bool isHandled = e.Handled;
-            ProcessKeyUp(GetOriginalKey(e), ref isHandled);
+            ToggleSwitchKeyProcess.KeyUp(GetOriginalKey(e), this, ref isHandled);
             e.Handled = isHandled;
         }
 
@@ -473,29 +473,10 @@ namespace ModernWpf.Controls
                 return;
             }
 
-            if (HandlesKey(GetOriginalKey(e)))
-            {
-                e.Handled = true;
-            }
-
-            _handledKeyDown = e.Handled;
-        }
-
-        private void ProcessKeyUp(Key key, ref bool isHandled)
-        {
-            if (!HandlesKey(key))
-            {
-                return;
-            }
-
-            bool handledKeyDown = _handledKeyDown;
-            _handledKeyDown = false;
-
-            if (handledKeyDown && !isHandled && !_isDragging)
-            {
-                Toggle();
-                isHandled = true;
-            }
+            bool isHandled = e.Handled;
+            ToggleSwitchKeyProcess.KeyDown(GetOriginalKey(e), this, ref isHandled);
+            e.Handled = isHandled;
+            _handledKeyDown = isHandled;
         }
 
         protected override void OnMouseEnter(MouseEventArgs e)
@@ -800,6 +781,60 @@ namespace ModernWpf.Controls
         private static bool HandlesKey(Key key)
         {
             return key == Key.Space;
+        }
+
+        private static class ToggleSwitchKeyProcess
+        {
+            public static void KeyDown(Key key, ToggleSwitch control, ref bool isHandled)
+            {
+                if (HandlesKey(key))
+                {
+                    isHandled = true;
+                }
+            }
+
+            public static void KeyUp(Key key, ToggleSwitch control, ref bool isHandled)
+            {
+                bool shouldToggleOff = false;
+                bool shouldToggleOn = false;
+                bool handlesKey = HandlesKey(key);
+                bool handledKeyDown = false;
+                bool isLTR = control.FlowDirection == FlowDirection.LeftToRight;
+
+                if (handlesKey)
+                {
+                    handledKeyDown = control._handledKeyDown;
+                    control._handledKeyDown = false;
+                }
+
+                // WinUI also handles VirtualKey.GamepadA here. WPF exposes no
+                // equivalent Key value in the target frameworks.
+                if (handlesKey && handledKeyDown && !isHandled && !control._isDragging)
+                {
+                    if ((key == Key.Left && isLTR) ||
+                        (key == Key.Right && !isLTR) ||
+                        key == Key.Down ||
+                        key == Key.Home)
+                    {
+                        shouldToggleOff = true;
+                    }
+                    else if ((key == Key.Right && isLTR) ||
+                        (key == Key.Left && !isLTR) ||
+                        key == Key.Up ||
+                        key == Key.End)
+                    {
+                        shouldToggleOn = true;
+                    }
+
+                    if ((!control.IsOn && shouldToggleOn) ||
+                        (control.IsOn && shouldToggleOff) ||
+                        key == Key.Space)
+                    {
+                        control.Toggle();
+                        isHandled = true;
+                    }
+                }
+            }
         }
 
         private static Key GetOriginalKey(KeyEventArgs e)
