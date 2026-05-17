@@ -39,6 +39,7 @@ public class SyncMatrixTests
         AssertControlStatus(matrix, "ParallaxView", "Source-backed WPF port");
         AssertControlStatus(matrix, "RadioMenuFlyoutItem", "Source-backed WPF port");
         AssertControlStatus(matrix, "LayoutPanel", "Source-backed WPF port");
+        AssertControlStatus(matrix, "ProgressBar resources", "Source-backed WPF port");
     }
 
     public TestContext? TestContext { get; set; }

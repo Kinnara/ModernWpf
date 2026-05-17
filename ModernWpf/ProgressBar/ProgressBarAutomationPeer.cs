@@ -54,15 +54,15 @@ namespace ModernWpf.Automation.Peers
             {
                 if (progressBar.ShowError)
                 {
-                    return ResourceAccessor.GetLocalizedStringResource(SR_ProgressBarErrorStatus);
+                    return ResourceAccessor.GetLocalizedStringResource(SR_ProgressBarErrorStatus) + name;
                 }
                 else if (progressBar.ShowPaused)
                 {
-                    return ResourceAccessor.GetLocalizedStringResource(SR_ProgressBarPausedStatus);
+                    return ResourceAccessor.GetLocalizedStringResource(SR_ProgressBarPausedStatus) + name;
                 }
                 else if (progressBar.IsIndeterminate)
                 {
-                    return ResourceAccessor.GetLocalizedStringResource(SR_ProgressBarIndeterminateStatus);
+                    return ResourceAccessor.GetLocalizedStringResource(SR_ProgressBarIndeterminateStatus) + name;
                 }
             }
             return name;

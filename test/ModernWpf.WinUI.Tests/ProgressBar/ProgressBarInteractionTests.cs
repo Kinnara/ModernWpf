@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using System.Windows.Controls;
@@ -138,6 +139,72 @@ public class ProgressBarInteractionTests
     }
 
     [TestMethod]
+    public void BorderThicknessContributesToSourceIndicatorWidth()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var progressBar = CreateProgressBar(width: 100);
+            progressBar.BorderThickness = new Thickness(4, 0, 6, 0);
+
+            using var host = new TestWindowHost(progressBar, width: 320, height: 180);
+
+            progressBar.Value = 100;
+            host.UpdateLayout();
+
+            AssertIndicatorWidth(progressBar, 90.0);
+        });
+    }
+
+    [TestMethod]
+    public void IndeterminatePausedAndErrorUseFullSourceIndicatorWidth()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var progressBar = CreateProgressBar(width: 100);
+            progressBar.Padding = new Thickness(5, 0, 7, 0);
+            progressBar.BorderThickness = new Thickness(3, 0, 5, 0);
+            progressBar.IsIndeterminate = true;
+
+            using var host = new TestWindowHost(progressBar, width: 320, height: 180);
+            host.UpdateLayout();
+
+            var firstIndicator = FindNamedDescendant<Rectangle>(progressBar, "IndeterminateProgressBarIndicator");
+            var secondIndicator = FindNamedDescendant<Rectangle>(progressBar, "IndeterminateProgressBarIndicator2");
+            Assert.AreEqual(32.0, firstIndicator.Width, 0.5);
+            Assert.AreEqual(48.0, secondIndicator.Width, 0.5);
+            Assert.AreEqual(0.0, progressBar.TemplateSettings.ContainerAnimationMidPosition);
+
+            progressBar.ShowPaused = true;
+            host.UpdateLayout();
+            Assert.AreEqual(80.0, secondIndicator.Width, 0.5);
+
+            progressBar.ShowPaused = false;
+            progressBar.ShowError = true;
+            host.UpdateLayout();
+            Assert.AreEqual(80.0, secondIndicator.Width, 0.5);
+        });
+    }
+
+    [TestMethod]
+    public void HiddenIndeterminateFallsBackToDeterminateState()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var progressBar = CreateProgressBar(width: 100);
+            progressBar.IsIndeterminate = true;
+
+            using var host = new TestWindowHost(progressBar, width: 320, height: 180);
+
+            AssertCurrentState(progressBar, "Indeterminate");
+
+            progressBar.Visibility = Visibility.Hidden;
+            host.UpdateLayout();
+
+            AssertCurrentState(progressBar, "Determinate");
+        });
+    }
+
+    [TestMethod]
     public void ChangeStateTest()
     {
         WpfTestHost.Run(() =>
@@ -268,6 +335,32 @@ public class ProgressBarInteractionTests
             var peer = FrameworkElementAutomationPeer.CreatePeerForElement(progressBar);
             Assert.IsNotNull(peer);
             Assert.IsNull(peer!.GetPattern(PatternInterface.RangeValue));
+        });
+    }
+
+    [TestMethod]
+    public void StatusAutomationNamePreservesSourcePrefixBehavior()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var progressBar = CreateProgressBar(width: 100);
+            AutomationProperties.SetName(progressBar, "Upload");
+
+            using var host = new TestWindowHost(progressBar, width: 320, height: 180);
+
+            var peer = FrameworkElementAutomationPeer.CreatePeerForElement(progressBar);
+            Assert.IsNotNull(peer);
+
+            progressBar.ShowError = true;
+            Assert.AreEqual("ErrorUpload", peer!.GetName());
+
+            progressBar.ShowError = false;
+            progressBar.ShowPaused = true;
+            Assert.AreEqual("PausedUpload", peer.GetName());
+
+            progressBar.ShowPaused = false;
+            progressBar.IsIndeterminate = true;
+            Assert.AreEqual("BusyUpload", peer.GetName());
         });
     }
 
