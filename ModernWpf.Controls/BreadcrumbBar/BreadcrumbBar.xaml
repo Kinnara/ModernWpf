@@ -2,38 +2,108 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ui="http://schemas.modernwpf.com/2019"
-    xmlns:local="clr-namespace:ModernWpf.Controls">
+    xmlns:local="clr-namespace:ModernWpf.Controls"
+    xmlns:m="clr-namespace:ModernWpf.Markup;assembly=ModernWpf"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
-    <Style TargetType="local:BreadcrumbBar">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="local:BreadcrumbBar">
-                    <StackPanel x:Name="PART_RootPanel" Orientation="Horizontal" />
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
+    <sys:String x:Key="BreadcrumbBarChevronLeftToRight">&#xE974;</sys:String>
+    <sys:String x:Key="BreadcrumbBarChevronRightToLeft">&#xE973;</sys:String>
+    <Thickness x:Key="BreadcrumbBarChevronPadding">2,0</Thickness>
+    <FontWeight x:Key="BreadcrumbBarItemFontWeight">Normal</FontWeight>
+    <m:StaticResource x:Key="BreadcrumbBarNormalForegroundBrush" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="BreadcrumbBarHoverForegroundBrush" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="BreadcrumbBarPressedForegroundBrush" ResourceKey="TextFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="BreadcrumbBarDisabledForegroundBrush" ResourceKey="TextFillColorDisabledBrush" />
+    <m:StaticResource x:Key="BreadcrumbBarFocusForegroundBrush" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="BreadcrumbBarCurrentNormalForegroundBrush" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="BreadcrumbBarCurrentHoverForegroundBrush" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="BreadcrumbBarCurrentPressedForegroundBrush" ResourceKey="TextFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="BreadcrumbBarCurrentDisabledForegroundBrush" ResourceKey="TextFillColorDisabledBrush" />
+    <m:StaticResource x:Key="BreadcrumbBarCurrentFocusForegroundBrush" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="BreadcrumbBarEllipsisDropDownItemBackground" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="BreadcrumbBarEllipsisDropDownItemBackgroundPointerOver" ResourceKey="SubtleFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="BreadcrumbBarEllipsisDropDownItemBackgroundPressed" ResourceKey="SubtleFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="BreadcrumbBarEllipsisDropDownItemBackgroundDisabled" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="BreadcrumbBarEllipsisDropDownItemForegroundPointerOver" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="BreadcrumbBarEllipsisDropDownItemForegroundPressed" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="BreadcrumbBarEllipsisDropDownItemForegroundDisabled" ResourceKey="TextFillColorDisabledBrush" />
+    <m:StaticResource x:Key="BreadcrumbBarForegroundBrush" ResourceKey="TextFillColorPrimaryBrush" />
+    <SolidColorBrush x:Key="BreadcrumbBarBackgroundBrush" Color="Transparent" />
+    <SolidColorBrush x:Key="BreadcrumbBarBorderBrush" Color="Transparent" />
+    <m:StaticResource x:Key="BreadcrumbBarEllipsisFlyoutPresenterBackground" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
+    <m:StaticResource x:Key="BreadcrumbBarEllipsisFlyoutPresenterBorderBrush" ResourceKey="SurfaceStrokeColorFlyoutBrush" />
+    <Thickness x:Key="BreadcrumbBarEllipsisFlyoutPresenterBorderThemeThickness">1</Thickness>
+    <m:StaticResource x:Key="BreadcrumbBarItemThemeFontSize" ResourceKey="ControlContentThemeFontSize" />
+    <sys:Double x:Key="BreadcrumbBarChevronFontSize">12</sys:Double>
 
-    <Style TargetType="local:BreadcrumbBarItem">
-        <Setter Property="Focusable" Value="True" />
-        <Setter Property="Background" Value="{DynamicResource SubtleFillColorTransparentBrush}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource ControlFillColorTransparentBrush}" />
-        <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
-        <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
-        <Setter Property="Padding" Value="4,2" />
+    <Style x:Key="DefaultBreadcrumbBarItemStyle" TargetType="local:BreadcrumbBarItem">
+        <Setter Property="Background" Value="{DynamicResource BreadcrumbBarBackgroundBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BreadcrumbBarBorderBrush}" />
+        <Setter Property="FocusVisualMargin" Value="1" />
+        <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
+        <Setter Property="FontSize" Value="{DynamicResource BreadcrumbBarItemThemeFontSize}" />
+        <Setter Property="FontWeight" Value="{StaticResource BreadcrumbBarItemFontWeight}" />
+        <Setter Property="Foreground" Value="{DynamicResource BreadcrumbBarForegroundBrush}" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="IsTabStop" Value="True" />
+        <Setter Property="UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:BreadcrumbBarItem">
-                    <Grid x:Name="PART_LayoutRoot">
+                    <ui:GridEx
+                        x:Name="PART_LayoutRoot"
+                        CornerRadius="{TemplateBinding CornerRadius}">
                         <VisualStateManager.CustomVisualStateManager>
                             <ui:VisualStateManagerEx />
                         </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="ItemTypeStates">
+                                <VisualState x:Name="Inline" />
+                                <ui:VisualStateEx x:Name="EllipsisDropDown">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_ItemButton.Visibility" Value="Collapsed" />
+                                        <ui:VisualStateSetter Target="PART_ChevronTextBlock.Visibility" Value="Collapsed" />
+                                        <ui:VisualStateSetter Target="PART_ContentColumn.Width" Value="*" />
+                                        <ui:VisualStateSetter Target="PART_EllipsisDropDownItemContentPresenter.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="PART_LayoutRoot.Padding" Value="11,7,11,9" />
+                                        <ui:VisualStateSetter Target="PART_LayoutRoot.Margin" Value="5,3" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="EllipsisDropDownItemCommonStates">
+                                <VisualState x:Name="Normal" />
+                                <ui:VisualStateEx x:Name="PointerOver">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_LayoutRoot.Background" Value="{DynamicResource BreadcrumbBarEllipsisDropDownItemBackgroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="PART_EllipsisDropDownItemContentPresenter.Foreground" Value="{DynamicResource BreadcrumbBarEllipsisDropDownItemForegroundPointerOver}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="Pressed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_LayoutRoot.Background" Value="{DynamicResource BreadcrumbBarEllipsisDropDownItemBackgroundPressed}" />
+                                        <ui:VisualStateSetter Target="PART_EllipsisDropDownItemContentPresenter.Foreground" Value="{DynamicResource BreadcrumbBarEllipsisDropDownItemForegroundPressed}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="Disabled">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_LayoutRoot.Background" Value="{DynamicResource BreadcrumbBarEllipsisDropDownItemBackgroundDisabled}" />
+                                        <ui:VisualStateSetter Target="PART_EllipsisDropDownItemContentPresenter.Foreground" Value="{DynamicResource BreadcrumbBarEllipsisDropDownItemForegroundDisabled}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
                             <VisualStateGroup x:Name="InlineItemTypeStates">
                                 <ui:VisualStateEx x:Name="Default">
                                     <ui:VisualStateEx.Setters>
-                                        <ui:VisualStateSetter Target="PART_ChevronTextBlock.Text" Value="&#xE76C;" />
+                                        <ui:VisualStateSetter Target="PART_ChevronTextBlock.Text" Value="{StaticResource BreadcrumbBarChevronLeftToRight}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="DefaultRTL">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_ChevronTextBlock.Text" Value="{StaticResource BreadcrumbBarChevronRightToLeft}" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                                 <ui:VisualStateEx x:Name="LastItem">
@@ -43,94 +113,148 @@
                                         <ui:VisualStateSetter Target="PART_LastItemContentPresenter.Visibility" Value="Visible" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="Ellipsis">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_ChevronTextBlock.Text" Value="{StaticResource BreadcrumbBarChevronLeftToRight}" />
+                                        <ui:VisualStateSetter Target="PART_EllipsisTextBlock.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="PART_ItemContentPresenter.Visibility" Value="Collapsed" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="EllipsisRTL">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_EllipsisTextBlock.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="PART_ItemContentPresenter.Visibility" Value="Collapsed" />
+                                        <ui:VisualStateSetter Target="PART_ChevronTextBlock.Text" Value="{StaticResource BreadcrumbBarChevronRightToLeft}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
+
+                        <ui:GridEx.Resources>
+                            <local:Flyout
+                                x:Key="PART_EllipsisFlyout"
+                                Placement="Bottom"
+                                ShouldConstrainToRootBounds="False">
+                                <local:Flyout.FlyoutPresenterStyle>
+                                    <Style TargetType="local:FlyoutPresenter">
+                                        <Setter Property="Background" Value="{DynamicResource BreadcrumbBarEllipsisFlyoutPresenterBackground}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource BreadcrumbBarEllipsisFlyoutPresenterBorderBrush}" />
+                                        <Setter Property="BorderThickness" Value="{StaticResource BreadcrumbBarEllipsisFlyoutPresenterBorderThemeThickness}" />
+                                        <Setter Property="Padding" Value="0,2" />
+                                        <Setter Property="MaxWidth" Value="{DynamicResource FlyoutThemeMaxWidth}" />
+                                        <Setter Property="MinHeight" Value="40" />
+                                        <Setter Property="CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="local:FlyoutPresenter">
+                                                    <ui:GridEx
+                                                        Background="{TemplateBinding Background}"
+                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                                        CornerRadius="{TemplateBinding CornerRadius}">
+                                                        <ScrollViewer
+                                                            Margin="{TemplateBinding Padding}"
+                                                            HorizontalScrollBarVisibility="Disabled"
+                                                            VerticalScrollBarVisibility="Auto"
+                                                            Content="{TemplateBinding Content}" />
+                                                    </ui:GridEx>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </local:Flyout.FlyoutPresenterStyle>
+                            </local:Flyout>
+                        </ui:GridEx.Resources>
+
+                        <ui:GridEx.ColumnDefinitions>
+                            <ColumnDefinition x:Name="PART_ContentColumn" Width="Auto" />
+                            <ColumnDefinition x:Name="PART_ChevronColumn" Width="Auto" />
+                        </ui:GridEx.ColumnDefinitions>
+
                         <Button
                             x:Name="PART_ItemButton"
-                            Padding="{TemplateBinding Padding}"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="0"
+                            BorderThickness="{TemplateBinding BorderThickness}"
                             Focusable="False"
                             Foreground="{TemplateBinding Foreground}"
-                            FontFamily="{TemplateBinding FontFamily}"
-                            FontSize="{TemplateBinding FontSize}"
-                            FontWeight="Normal"
-                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                            HorizontalAlignment="Left"
+                            IsTabStop="False"
+                            Padding="1,3"
                             ui:ControlHelper.ContentTransitions="{TemplateBinding ContentTransitions}"
                             ui:ControlHelper.CornerRadius="{TemplateBinding CornerRadius}">
                             <Button.Style>
                                 <Style TargetType="Button">
+                                    <Setter Property="Foreground" Value="{DynamicResource BreadcrumbBarNormalForegroundBrush}" />
+                                    <Setter Property="BorderBrush" Value="{DynamicResource BreadcrumbBarBorderBrush}" />
+                                    <Setter Property="Background" Value="{DynamicResource BreadcrumbBarBackgroundBrush}" />
+                                    <Setter Property="HorizontalAlignment" Value="Left" />
+                                    <Setter Property="VerticalAlignment" Value="Center" />
+                                    <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
+                                    <Setter Property="FontWeight" Value="Normal" />
+                                    <Setter Property="FontSize" Value="{DynamicResource BreadcrumbBarItemThemeFontSize}" />
+                                    <Setter Property="Padding" Value="0" />
                                     <Setter Property="Template">
                                         <Setter.Value>
                                             <ControlTemplate TargetType="Button">
-                                                <Grid x:Name="PART_ItemButtonRoot" Background="Transparent">
+                                                <Grid Background="{TemplateBinding Background}">
                                                     <VisualStateManager.CustomVisualStateManager>
                                                         <ui:VisualStateManagerEx />
                                                     </VisualStateManager.CustomVisualStateManager>
                                                     <VisualStateManager.VisualStateGroups>
                                                         <VisualStateGroup x:Name="CommonStates">
-                                                            <ui:VisualStateEx x:Name="Normal">
-                                                                <ui:VisualStateEx.Setters>
-                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.Foreground" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Foreground}" />
-                                                                </ui:VisualStateEx.Setters>
-                                                            </ui:VisualStateEx>
+                                                            <VisualState x:Name="Normal" />
                                                             <ui:VisualStateEx x:Name="CurrentNormal">
                                                                 <ui:VisualStateEx.Setters>
-                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.Foreground" Value="{DynamicResource BreadcrumbBarCurrentNormalForegroundBrush}" />
                                                                 </ui:VisualStateEx.Setters>
                                                             </ui:VisualStateEx>
                                                             <ui:VisualStateEx x:Name="PointerOver">
                                                                 <ui:VisualStateEx.Setters>
-                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
-                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.Background" Value="{DynamicResource SubtleFillColorTransparentBrush}" />
-                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.BorderBrush" Value="{DynamicResource ControlFillColorTransparentBrush}" />
+                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.Foreground" Value="{DynamicResource BreadcrumbBarHoverForegroundBrush}" />
+                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.Background" Value="{DynamicResource BreadcrumbBarBackgroundBrush}" />
+                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.BorderBrush" Value="{DynamicResource BreadcrumbBarBorderBrush}" />
                                                                 </ui:VisualStateEx.Setters>
                                                             </ui:VisualStateEx>
                                                             <ui:VisualStateEx x:Name="CurrentPointerOver">
                                                                 <ui:VisualStateEx.Setters>
-                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
-                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.Background" Value="{DynamicResource SubtleFillColorTransparentBrush}" />
-                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.BorderBrush" Value="{DynamicResource ControlFillColorTransparentBrush}" />
+                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.Foreground" Value="{DynamicResource BreadcrumbBarCurrentHoverForegroundBrush}" />
+                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.Background" Value="{DynamicResource BreadcrumbBarBackgroundBrush}" />
+                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.BorderBrush" Value="{DynamicResource BreadcrumbBarBorderBrush}" />
                                                                 </ui:VisualStateEx.Setters>
                                                             </ui:VisualStateEx>
                                                             <ui:VisualStateEx x:Name="Pressed">
                                                                 <ui:VisualStateEx.Setters>
-                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
-                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.Background" Value="{DynamicResource SubtleFillColorTransparentBrush}" />
-                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.BorderBrush" Value="{DynamicResource ControlFillColorTransparentBrush}" />
+                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.Foreground" Value="{DynamicResource BreadcrumbBarPressedForegroundBrush}" />
+                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.Background" Value="{DynamicResource BreadcrumbBarBackgroundBrush}" />
+                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.BorderBrush" Value="{DynamicResource BreadcrumbBarBorderBrush}" />
                                                                 </ui:VisualStateEx.Setters>
                                                             </ui:VisualStateEx>
                                                             <ui:VisualStateEx x:Name="CurrentPressed">
                                                                 <ui:VisualStateEx.Setters>
-                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.Foreground" Value="{DynamicResource BreadcrumbBarCurrentPressedForegroundBrush}" />
                                                                     <ui:VisualStateSetter Target="PART_ContentPresenter.Background" Value="Transparent" />
                                                                     <ui:VisualStateSetter Target="PART_ContentPresenter.BorderBrush" Value="Transparent" />
                                                                 </ui:VisualStateEx.Setters>
                                                             </ui:VisualStateEx>
                                                             <ui:VisualStateEx x:Name="Disabled">
                                                                 <ui:VisualStateEx.Setters>
-                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
+                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.Foreground" Value="{DynamicResource BreadcrumbBarDisabledForegroundBrush}" />
                                                                 </ui:VisualStateEx.Setters>
                                                             </ui:VisualStateEx>
                                                             <ui:VisualStateEx x:Name="CurrentDisabled">
                                                                 <ui:VisualStateEx.Setters>
-                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
+                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.Foreground" Value="{DynamicResource BreadcrumbBarCurrentDisabledForegroundBrush}" />
                                                                 </ui:VisualStateEx.Setters>
                                                             </ui:VisualStateEx>
                                                             <ui:VisualStateEx x:Name="Focus">
                                                                 <ui:VisualStateEx.Setters>
-                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.Foreground" Value="{DynamicResource BreadcrumbBarFocusForegroundBrush}" />
                                                                 </ui:VisualStateEx.Setters>
                                                             </ui:VisualStateEx>
                                                             <ui:VisualStateEx x:Name="CurrentFocus">
                                                                 <ui:VisualStateEx.Setters>
-                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.Foreground" Value="{DynamicResource BreadcrumbBarCurrentFocusForegroundBrush}" />
                                                                 </ui:VisualStateEx.Setters>
                                                             </ui:VisualStateEx>
                                                         </VisualStateGroup>
@@ -143,13 +267,11 @@
                                                         BorderThickness="{TemplateBinding BorderThickness}"
                                                         Content="{TemplateBinding Content}"
                                                         ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                        ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
                                                         ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                                        ContentTransitions="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(ui:ControlHelper.ContentTransitions)}"
                                                         CornerRadius="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(ui:ControlHelper.CornerRadius)}"
                                                         Foreground="{TemplateBinding Foreground}"
-                                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                                         HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                                         VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
                                                 </Grid>
                                             </ControlTemplate>
@@ -157,45 +279,88 @@
                                     </Setter>
                                 </Style>
                             </Button.Style>
-                            <ui:ContentPresenterEx
-                                x:Name="PART_ItemContentPresenter"
-                                Content="{TemplateBinding Content}"
-                                ContentTemplate="{TemplateBinding ContentTemplate}"
-                                ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
-                                ContentStringFormat="{TemplateBinding ContentStringFormat}"
-                                ContentTransitions="{TemplateBinding ContentTransitions}"
-                                FontFamily="{TemplateBinding FontFamily}"
-                                FontSize="{TemplateBinding FontSize}"
-                                FontWeight="{TemplateBinding FontWeight}"
-                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+
+                            <Grid>
+                                <ui:ContentPresenterEx
+                                    x:Name="PART_ItemContentPresenter"
+                                    Content="{TemplateBinding Content}"
+                                    ContentTemplate="{TemplateBinding ContentTemplate}"
+                                    ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                    ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                    ContentTransitions="{TemplateBinding ContentTransitions}"
+                                    FontFamily="{TemplateBinding FontFamily}"
+                                    FontSize="{TemplateBinding FontSize}"
+                                    FontWeight="{TemplateBinding FontWeight}"
+                                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                <TextBlock
+                                    x:Name="PART_EllipsisTextBlock"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    FontSize="{TemplateBinding FontSize}"
+                                    Padding="3"
+                                    Text="&#xE712;"
+                                    Visibility="Collapsed"
+                                    VerticalAlignment="Stretch" />
+                            </Grid>
                         </Button>
+
                         <ui:ContentPresenterEx
                             x:Name="PART_LastItemContentPresenter"
+                            Visibility="Collapsed"
+                            Background="{TemplateBinding Background}"
+                            Content="{TemplateBinding Content}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                            ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                            ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                            ContentTransitions="{TemplateBinding ContentTransitions}"
+                            FontFamily="{TemplateBinding FontFamily}"
+                            FontSize="{TemplateBinding FontSize}"
+                            FontWeight="{TemplateBinding FontWeight}"
+                            Foreground="{DynamicResource BreadcrumbBarCurrentNormalForegroundBrush}"
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            Padding="1,3"
+                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                            CornerRadius="{TemplateBinding CornerRadius}" />
+
+                        <ui:ContentPresenterEx
+                            x:Name="PART_EllipsisDropDownItemContentPresenter"
                             Visibility="Collapsed"
                             Content="{TemplateBinding Content}"
                             ContentTemplate="{TemplateBinding ContentTemplate}"
                             ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
                             ContentStringFormat="{TemplateBinding ContentStringFormat}"
                             ContentTransitions="{TemplateBinding ContentTransitions}"
-                            FontWeight="SemiBold"
-                            Foreground="{TemplateBinding Foreground}"
                             HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                            HorizontalContentAlignment="Stretch"
+                            FontWeight="Normal"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+
                         <TextBlock
                             x:Name="PART_ChevronTextBlock"
                             Grid.Column="1"
-                            Margin="2,0"
-                            VerticalAlignment="Center"
-                            FontFamily="Segoe MDL2 Assets"
-                            Text="&#xE76C;" />
-                    </Grid>
+                            HorizontalAlignment="Center"
+                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                            FontSize="{StaticResource BreadcrumbBarChevronFontSize}"
+                            Foreground="{DynamicResource BreadcrumbBarNormalForegroundBrush}"
+                            Padding="{StaticResource BreadcrumbBarChevronPadding}"
+                            Text="&#xE76C;"
+                            VerticalAlignment="Center" />
+                    </ui:GridEx>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style TargetType="local:BreadcrumbBar">
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:BreadcrumbBar">
+                    <local:ItemsRepeater x:Name="PART_ItemsRepeater" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:BreadcrumbBarItem" BasedOn="{StaticResource DefaultBreadcrumbBarItemStyle}" />
 </ResourceDictionary>

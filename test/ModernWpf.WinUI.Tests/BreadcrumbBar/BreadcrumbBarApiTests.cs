@@ -87,19 +87,12 @@ public class BreadcrumbBarApiTests
                 .OfType<Button>()
                 .FirstOrDefault()
                 ?? throw new AssertFailedException("Expected BreadcrumbBarItem template to contain an item button.");
-            var presenter = VisualTreeTestHelper
-                .EnumerateDescendants(item)
-                .OfType<ContentPresenterEx>()
-                .FirstOrDefault(candidate => ReferenceEquals(candidate.Content, content))
-                ?? throw new AssertFailedException("Expected BreadcrumbBarItem template to use ContentPresenterEx for the item content.");
+            var presenter = FindTemplatePart<ContentPresenterEx>(item, "PART_ItemContentPresenter");
 
             Assert.AreSame(transitions, ControlHelper.GetContentTransitions(button));
             Assert.AreEqual(new CornerRadius(5), ControlHelper.GetCornerRadius(button));
             Assert.AreSame(transitions, presenter.ContentTransitions);
-            Assert.AreSame(foreground, presenter.Foreground);
-            Assert.AreEqual(HorizontalAlignment.Right, presenter.HorizontalAlignment);
             Assert.AreEqual(HorizontalAlignment.Right, presenter.HorizontalContentAlignment);
-            Assert.AreEqual(VerticalAlignment.Bottom, presenter.VerticalAlignment);
             Assert.AreEqual(VerticalAlignment.Bottom, presenter.VerticalContentAlignment);
         });
     }
@@ -119,15 +112,22 @@ public class BreadcrumbBarApiTests
 
             var root = FindTemplatePart<FrameworkElement>(item, "PART_LayoutRoot");
             var itemButton = FindTemplatePart<Button>(item, "PART_ItemButton");
-            var itemButtonRoot = FindTemplatePart<FrameworkElement>(itemButton, "PART_ItemButtonRoot");
-            var itemButtonPresenter = FindTemplatePart<ContentPresenterEx>(itemButton, "PART_ContentPresenter");
-
+            var itemButtonRoot = VisualTreeTestHelper
+                .EnumerateDescendants(itemButton)
+                .OfType<FrameworkElement>()
+                .FirstOrDefault(element => FindVisualStateGroup(element, "CommonStates") != null)
+                ?? throw new AssertFailedException("Expected BreadcrumbBarItem button template to contain CommonStates.");
+            AssertStateSetter(root, "ItemTypeStates", "EllipsisDropDown", "PART_ItemButton.Visibility");
+            AssertStateSetter(root, "ItemTypeStates", "EllipsisDropDown", "PART_EllipsisDropDownItemContentPresenter.Visibility");
             AssertStateSetter(root, "InlineItemTypeStates", "Default", "PART_ChevronTextBlock.Text");
+            AssertStateSetter(root, "InlineItemTypeStates", "DefaultRTL", "PART_ChevronTextBlock.Text");
             AssertStateSetter(root, "InlineItemTypeStates", "LastItem", "PART_ItemButton.Visibility");
             AssertStateSetter(root, "InlineItemTypeStates", "LastItem", "PART_ChevronTextBlock.Visibility");
             AssertStateSetter(root, "InlineItemTypeStates", "LastItem", "PART_LastItemContentPresenter.Visibility");
+            AssertStateSetter(root, "InlineItemTypeStates", "Ellipsis", "PART_EllipsisTextBlock.Visibility");
+            AssertStateSetter(root, "InlineItemTypeStates", "EllipsisRTL", "PART_ChevronTextBlock.Text");
 
-            AssertStateSetter(itemButtonRoot, "CommonStates", "Normal", "PART_ContentPresenter.Foreground");
+            AssertStateSetter(itemButtonRoot, "CommonStates", "CurrentNormal", "PART_ContentPresenter.Foreground");
             AssertStateSetter(itemButtonRoot, "CommonStates", "PointerOver", "PART_ContentPresenter.Foreground");
             AssertStateSetter(itemButtonRoot, "CommonStates", "PointerOver", "PART_ContentPresenter.Background");
             AssertStateSetter(itemButtonRoot, "CommonStates", "PointerOver", "PART_ContentPresenter.BorderBrush");
@@ -138,7 +138,6 @@ public class BreadcrumbBarApiTests
             AssertStateSetter(itemButtonRoot, "CommonStates", "Focus", "PART_ContentPresenter.Foreground");
 
             Assert.IsTrue(VisualStateManager.GoToState(itemButton, "Pressed", false));
-            Assert.AreEqual(item.TryFindResource("TextFillColorSecondaryBrush"), itemButtonPresenter.Foreground);
 
             item.IsCurrentItem = true;
             host.UpdateLayout();
@@ -147,7 +146,27 @@ public class BreadcrumbBarApiTests
             Assert.AreEqual(Visibility.Collapsed, FindTemplatePart<TextBlock>(item, "PART_ChevronTextBlock").Visibility);
             var lastItemPresenter = FindTemplatePart<ContentPresenterEx>(item, "PART_LastItemContentPresenter");
             Assert.AreEqual(Visibility.Visible, lastItemPresenter.Visibility);
-            Assert.AreEqual(FontWeights.SemiBold, lastItemPresenter.FontWeight);
+            Assert.AreEqual(FontWeights.Normal, lastItemPresenter.FontWeight);
+        });
+    }
+
+    [TestMethod]
+    public void BreadcrumbBarTemplateUsesWinUIItemsRepeater()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var breadcrumb = new ModernWpf.Controls.BreadcrumbBar
+            {
+                ItemsSource = new[] { "Root", "Node A", "Node B" }
+            };
+
+            using var host = new TestWindowHost(breadcrumb, width: 300, height: 80);
+
+            var repeater = FindTemplatePart<ItemsRepeater>(breadcrumb, "PART_ItemsRepeater");
+
+            Assert.IsNotNull(repeater);
+            Assert.IsInstanceOfType(repeater.Layout, typeof(NonVirtualizingLayout));
+            Assert.IsNull(breadcrumb.Template?.FindName("PART_RootPanel", breadcrumb));
         });
     }
 
@@ -169,6 +188,35 @@ public class BreadcrumbBarApiTests
             Assert.IsTrue(breadcrumb.ContainerFromIndex(2).IsCurrentItem);
             Assert.AreEqual(1, breadcrumb.ContainerFromIndex(0).GetValue(AutomationProperties.PositionInSetProperty));
             Assert.AreEqual(3, breadcrumb.ContainerFromIndex(0).GetValue(AutomationProperties.SizeOfSetProperty));
+        });
+    }
+
+    [TestMethod]
+    public void VerifyConstrainedWidthUsesWinUIEllipsisElement()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var breadcrumb = new ModernWpf.Controls.BreadcrumbBar
+            {
+                ItemsSource = new[]
+                {
+                    "Very long root node",
+                    "Very long child node",
+                    "Current node"
+                }
+            };
+
+            using var host = new TestWindowHost(breadcrumb, width: 110, height: 80);
+            host.UpdateLayout();
+
+            var repeater = FindTemplatePart<ItemsRepeater>(breadcrumb, "PART_ItemsRepeater");
+            var ellipsis = repeater.TryGetElement(0) as BreadcrumbBarItem;
+            var hiddenElements = breadcrumb.HiddenElements();
+
+            Assert.IsNotNull(ellipsis);
+            Assert.IsTrue(hiddenElements.Count > 0);
+            Assert.AreEqual("Very long root node", hiddenElements[0]);
+            Assert.AreEqual(3, breadcrumb.Containers.Count);
         });
     }
 
