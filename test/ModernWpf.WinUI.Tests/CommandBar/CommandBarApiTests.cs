@@ -481,11 +481,18 @@ public class CommandBarApiTests
             var presenter = VisualTreeTestHelper.FindDescendant<ContentPresenterEx>(container)
                 ?? throw new AssertFailedException("Expected AppBarElementContainer template to use ContentPresenterEx.");
 
+            Assert.IsFalse(container.IsInOverflow);
             Assert.AreEqual("Custom content", presenter.Content);
             Assert.AreSame(transitions, presenter.ContentTransitions);
             Assert.AreEqual(container.Padding, presenter.Margin);
             Assert.AreEqual(HorizontalAlignment.Center, presenter.HorizontalAlignment);
             Assert.AreEqual(VerticalAlignment.Bottom, presenter.VerticalAlignment);
+
+            AppBarElementProperties.SetUseOverflowStyle(container, true);
+            Assert.IsTrue(container.IsInOverflow);
+
+            AppBarElementProperties.SetUseOverflowStyle(container, false);
+            Assert.IsFalse(container.IsInOverflow);
         });
     }
 
@@ -543,7 +550,7 @@ public class CommandBarApiTests
             Assert.AreEqual((double)rootGrid.TryFindResource("AppBarThemeCompactHeight"), rootGrid.Height);
             Assert.AreEqual(VerticalAlignment.Top, rootGrid.VerticalAlignment);
 
-            ToolBar.SetOverflowMode(separator, OverflowMode.Always);
+            AppBarElementProperties.SetUseOverflowStyle(separator, true);
             host.UpdateLayout();
 
             Assert.IsTrue(separator.IsCompact);

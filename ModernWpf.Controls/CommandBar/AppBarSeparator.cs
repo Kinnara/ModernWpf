@@ -12,9 +12,6 @@ namespace ModernWpf.Controls
 
             FocusableProperty.OverrideMetadata(typeof(AppBarSeparator),
                 new FrameworkPropertyMetadata(false));
-
-            ToolBar.OverflowModeProperty.OverrideMetadata(typeof(AppBarSeparator),
-                new FrameworkPropertyMetadata(OnOverflowModePropertyChanged));
         }
 
         public AppBarSeparator()
@@ -47,47 +44,26 @@ namespace ModernWpf.Controls
 
         #endregion
 
-        #region ApplicationViewState
-
-        private static readonly DependencyProperty ApplicationViewStateProperty =
-            AppBarElementProperties.ApplicationViewStateProperty.AddOwner(typeof(AppBarSeparator));
-
-        private AppBarElementApplicationViewState ApplicationViewState
+        private string GetApplicationViewState()
         {
-            get => (AppBarElementApplicationViewState)GetValue(ApplicationViewStateProperty);
-        }
-
-        private void UpdateApplicationViewState()
-        {
-            AppBarElementApplicationViewState value;
-
-            if (IsInOverflow && IsVisible)
+            if (AppBarElementProperties.GetUseOverflowStyle(this))
             {
-                value = AppBarElementApplicationViewState.Overflow;
+                return nameof(AppBarElementApplicationViewState.Overflow);
             }
             else if (IsCompact)
             {
-                value = AppBarElementApplicationViewState.Compact;
+                return nameof(AppBarElementApplicationViewState.Compact);
             }
             else
             {
-                value = AppBarElementApplicationViewState.FullSize;
+                return nameof(AppBarElementApplicationViewState.FullSize);
             }
-
-            SetValue(AppBarElementProperties.ApplicationViewStatePropertyKey, value);
         }
 
         void IAppBarElement.UpdateApplicationViewState()
         {
-            UpdateApplicationViewState();
-        }
-
-        void IAppBarElement.ApplyApplicationViewState()
-        {
             UpdateVisualState();
         }
-
-        #endregion
 
         public override void OnApplyTemplate()
         {
@@ -95,29 +71,14 @@ namespace ModernWpf.Controls
             UpdateVisualState(false);
         }
 
-        protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
-        {
-            base.OnPropertyChanged(e);
-
-            if (e.Property == ToolBar.IsOverflowItemProperty)
-            {
-                AppBarElementProperties.UpdateIsInOverflow(this);
-            }
-        }
-
-        private static void OnOverflowModePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            AppBarElementProperties.UpdateIsInOverflow(d);
-        }
-
         private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            UpdateApplicationViewState();
+            UpdateVisualState();
         }
 
         private void UpdateVisualState(bool useTransitions = true)
         {
-            VisualStateManager.GoToState(this, ApplicationViewState.ToString(), useTransitions);
+            VisualStateManager.GoToState(this, GetApplicationViewState(), useTransitions);
         }
     }
 }

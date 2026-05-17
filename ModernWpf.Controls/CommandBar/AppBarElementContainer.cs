@@ -11,9 +11,6 @@ namespace ModernWpf.Controls
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(AppBarElementContainer),
                 new FrameworkPropertyMetadata(typeof(AppBarElementContainer)));
-
-            ToolBar.OverflowModeProperty.OverrideMetadata(typeof(AppBarElementContainer),
-                new FrameworkPropertyMetadata(OnOverflowModePropertyChanged));
         }
 
         public AppBarElementContainer()
@@ -58,19 +55,5 @@ namespace ModernWpf.Controls
 
         #endregion
 
-        protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
-        {
-            base.OnPropertyChanged(e);
-
-            if (e.Property == ToolBar.IsOverflowItemProperty)
-            {
-                AppBarElementProperties.UpdateIsInOverflow(this);
-            }
-        }
-
-        private static void OnOverflowModePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            AppBarElementProperties.UpdateIsInOverflow(d);
-        }
     }
 }

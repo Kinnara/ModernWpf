@@ -11,7 +11,6 @@ namespace ModernWpf.Controls
     internal interface IAppBarElement
     {
         void UpdateApplicationViewState();
-        void ApplyApplicationViewState();
     }
 
     internal interface IAppBarButtonElement : IAppBarElement
@@ -170,60 +169,9 @@ namespace ModernWpf.Controls
             (d as FrameworkElement)?.CoerceValue(FrameworkElement.ToolTipProperty);
         }
 
-        internal static void UpdateIsInOverflow(DependencyObject element)
-        {
-            bool value = ToolBar.GetIsOverflowItem(element) || ToolBar.GetOverflowMode(element) == OverflowMode.Always;
-            SetUseOverflowStyle(element, value);
-        }
-
         internal static void SetIsInOverflow(DependencyObject element, bool value)
         {
             SetUseOverflowStyle(element, value);
-        }
-
-        internal static bool TryGetOverflowState(
-            DependencyObject parent,
-            out bool hasToggleButton,
-            out bool hasMenuIcon)
-        {
-            switch (parent)
-            {
-                case CommandBarOverflowPanel overflowPanel:
-                    hasToggleButton = overflowPanel.HasToggleButton;
-                    hasMenuIcon = overflowPanel.HasMenuIcon;
-                    return true;
-
-                case CommandBarFlyoutOverflowPanel flyoutOverflowPanel:
-                    hasToggleButton = flyoutOverflowPanel.HasToggleButton;
-                    hasMenuIcon = flyoutOverflowPanel.HasMenuIcon;
-                    return true;
-
-                default:
-                    hasToggleButton = false;
-                    hasMenuIcon = false;
-                    return false;
-            }
-        }
-
-        #endregion
-
-        #region ApplicationViewState
-
-        internal static readonly DependencyPropertyKey ApplicationViewStatePropertyKey =
-            DependencyProperty.RegisterAttachedReadOnly(
-                "ApplicationViewState",
-                typeof(AppBarElementApplicationViewState),
-                typeof(AppBarElementProperties),
-                new PropertyMetadata(
-                    AppBarElementApplicationViewState.FullSize,
-                    OnApplicationViewStateChanged));
-
-        internal static readonly DependencyProperty ApplicationViewStateProperty =
-            ApplicationViewStatePropertyKey.DependencyProperty;
-
-        private static void OnApplicationViewStateChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            (d as IAppBarElement)?.ApplyApplicationViewState();
         }
 
         #endregion

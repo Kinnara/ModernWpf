@@ -237,11 +237,6 @@ namespace ModernWpf.Controls
             UpdateApplicationViewState();
         }
 
-        void IAppBarElement.ApplyApplicationViewState()
-        {
-            ApplyApplicationViewState();
-        }
-
         #endregion
 
         #region InputGestureText
