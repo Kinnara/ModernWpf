@@ -367,7 +367,7 @@ namespace ModernWpf.Controls
                 SwitchThumb.DragStarted -= OnSwitchThumbDragStarted;
                 SwitchThumb.DragDelta -= OnSwitchThumbDragDelta;
                 SwitchThumb.DragCompleted -= OnSwitchThumbDragCompleted;
-                SwitchThumb.RemoveHandler(PreviewMouseLeftButtonUpEvent, new MouseButtonEventHandler(OnSwitchThumbPreviewMouseLeftButtonUp));
+                SwitchThumb.RemoveHandler(MouseLeftButtonUpEvent, new MouseButtonEventHandler(OnSwitchThumbMouseLeftButtonUp));
             }
 
             if (SwitchKnob != null)
@@ -397,7 +397,7 @@ namespace ModernWpf.Controls
                 SwitchThumb.DragStarted += OnSwitchThumbDragStarted;
                 SwitchThumb.DragDelta += OnSwitchThumbDragDelta;
                 SwitchThumb.DragCompleted += OnSwitchThumbDragCompleted;
-                SwitchThumb.AddHandler(PreviewMouseLeftButtonUpEvent, new MouseButtonEventHandler(OnSwitchThumbPreviewMouseLeftButtonUp), true);
+                SwitchThumb.AddHandler(MouseLeftButtonUpEvent, new MouseButtonEventHandler(OnSwitchThumbMouseLeftButtonUp), true);
             }
 
             if (SwitchKnob != null)
@@ -594,9 +594,11 @@ namespace ModernWpf.Controls
             MoveCompleted(_wasDragged);
         }
 
-        private void OnSwitchThumbPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void OnSwitchThumbMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            if (e.Handled || _isDragging)
+            // WPF Thumb handles MouseLeftButtonUp before this instance handler runs; this is the
+            // closest substitute for WinUI's Thumb.Tapped event, which runs after drag cleanup.
+            if (_isDragging)
             {
                 return;
             }

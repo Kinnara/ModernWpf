@@ -584,7 +584,7 @@ public class ToggleSwitchApiTests
     }
 
     [TestMethod]
-    public void TapAndDragCompletionFollowWinUISplitHandlers()
+    public void ThumbMouseUpTapRunsAfterDragCompletionLikeWinUITapped()
     {
         WpfTestHost.Run(() =>
         {
@@ -602,7 +602,7 @@ public class ToggleSwitchApiTests
 
             Assert.IsFalse(toggleSwitch.IsOn, "DragCompleted without movement should not toggle; WinUI toggles taps through the tap handler.");
 
-            RaiseThumbPreviewMouseLeftButtonUp(thumb);
+            RaiseThumbMouseLeftButtonUp(thumb, handled: true);
             host.UpdateLayout();
 
             Assert.IsTrue(toggleSwitch.IsOn);
@@ -1143,15 +1143,18 @@ public class ToggleSwitchApiTests
         return args;
     }
 
-    private static void RaiseThumbPreviewMouseLeftButtonUp(Thumb thumb)
+    private static void RaiseThumbMouseLeftButtonUp(Thumb thumb, bool handled = false)
     {
-        thumb.RaiseEvent(new MouseButtonEventArgs(
+        var args = new MouseButtonEventArgs(
             Mouse.PrimaryDevice,
             Environment.TickCount,
             MouseButton.Left)
         {
-            RoutedEvent = UIElement.PreviewMouseLeftButtonUpEvent
-        });
+            RoutedEvent = UIElement.MouseLeftButtonUpEvent,
+            Handled = handled
+        };
+
+        thumb.RaiseEvent(args);
     }
 
     private static MouseButtonEventArgs RaiseMouseLeftButtonDown(UIElement element)

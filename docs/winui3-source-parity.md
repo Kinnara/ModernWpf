@@ -26,6 +26,7 @@ The checkout was 12 commits behind `origin/winui3/main` when this note was creat
 ## Recent Source-Backed Slices
 
 - 2026-05-17 ToggleSwitch canceled drag completion: `ToggleSwitch_Partial.cpp` returns immediately when `DragCompletedHandler` receives `Canceled=true`; ModernWpf now leaves the dragging state/translations untouched on that path and tests the resulting `Pressed` / `Dragging` states.
+- 2026-05-17 ToggleSwitch thumb tap bridge: WinUI registers `Tapped` on `SwitchThumb`, and its tap handler runs after drag cleanup; ModernWpf now uses a handled bubbling `MouseLeftButtonUp` hook instead of the old preview mouse-up hook so the WPF `Thumb` completes `DragCompleted` before the tap substitute toggles.
 
 ## Active Source Parity Matrix
 
