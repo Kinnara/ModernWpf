@@ -184,6 +184,11 @@ namespace ModernWpf.Controls
             if (IsItemClickEnabled)
             {
                 var clickedItem = ItemContainerGenerator.ItemFromContainer(item);
+                if (clickedItem == DependencyProperty.UnsetValue || ReferenceEquals(clickedItem, item))
+                {
+                    clickedItem = item.Content;
+                }
+
                 ItemClick?.Invoke(this, new ItemClickEventArgs { ClickedItem = clickedItem });
             }
         }

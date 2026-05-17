@@ -1078,6 +1078,7 @@
     <m:StaticResource x:Key="ListViewItemBackgroundSelected" ResourceKey="SubtleFillColorSecondaryBrush" />
     <m:StaticResource x:Key="ListViewItemBackgroundSelectedPointerOver" ResourceKey="AccentFillColorSecondaryBrush" />
     <m:StaticResource x:Key="ListViewItemBackgroundSelectedPressed" ResourceKey="SubtleFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="ListViewItemBackgroundSelectedDisabled" ResourceKey="SubtleFillColorSecondaryBrush" />
     <m:StaticResource x:Key="ListViewItemForeground" ResourceKey="TextFillColorPrimaryBrush" />
     <m:StaticResource x:Key="ListViewItemForegroundPointerOver" ResourceKey="TextFillColorPrimaryBrush" />
     <m:StaticResource x:Key="ListViewItemForegroundPressed" ResourceKey="TextFillColorPrimaryBrush" />
@@ -1105,6 +1106,7 @@
     <m:StaticResource x:Key="GridViewItemBackgroundSelected" ResourceKey="SubtleFillColorSecondaryBrush" />
     <m:StaticResource x:Key="GridViewItemBackgroundSelectedPointerOver" ResourceKey="AccentFillColorSecondaryBrush" />
     <m:StaticResource x:Key="GridViewItemBackgroundSelectedPressed" ResourceKey="SubtleFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="GridViewItemBackgroundSelectedDisabled" ResourceKey="SubtleFillColorSecondaryBrush" />
     <m:StaticResource x:Key="GridViewItemForeground" ResourceKey="TextFillColorPrimaryBrush" />
     <m:StaticResource x:Key="GridViewItemForegroundPointerOver" ResourceKey="TextFillColorPrimaryBrush" />
     <m:StaticResource x:Key="GridViewItemForegroundSelected" ResourceKey="TextFillColorPrimaryBrush" />

@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
@@ -10,6 +11,7 @@ namespace ModernWpf.Controls
     {
         protected ListViewBaseItem()
         {
+            IsEnabledChanged += OnIsEnabledChanged;
         }
 
         #region UseSystemFocusVisuals
@@ -43,9 +45,9 @@ namespace ModernWpf.Controls
         public static readonly DependencyProperty FocusVisualPrimaryBrushProperty =
             FocusVisualHelper.FocusVisualPrimaryBrushProperty.AddOwner(typeof(ListViewBaseItem));
 
-        public Thickness FocusVisualPrimaryBrush
+        public Brush FocusVisualPrimaryBrush
         {
-            get => (Thickness)GetValue(FocusVisualPrimaryBrushProperty);
+            get => (Brush)GetValue(FocusVisualPrimaryBrushProperty);
             set => SetValue(FocusVisualPrimaryBrushProperty, value);
         }
 
@@ -69,9 +71,9 @@ namespace ModernWpf.Controls
         public static readonly DependencyProperty FocusVisualSecondaryBrushProperty =
             FocusVisualHelper.FocusVisualSecondaryBrushProperty.AddOwner(typeof(ListViewBaseItem));
 
-        public Thickness FocusVisualSecondaryBrush
+        public Brush FocusVisualSecondaryBrush
         {
-            get => (Thickness)GetValue(FocusVisualSecondaryBrushProperty);
+            get => (Brush)GetValue(FocusVisualSecondaryBrushProperty);
             set => SetValue(FocusVisualSecondaryBrushProperty, value);
         }
 
@@ -107,7 +109,7 @@ namespace ModernWpf.Controls
         {
             base.OnApplyTemplate();
 
-            UpdateMultiSelectStates(ParentListViewBase, false);
+            UpdateVisualStates(false);
         }
 
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
@@ -115,6 +117,7 @@ namespace ModernWpf.Controls
             if (!e.Handled)
             {
                 m_isPressed = true;
+                UpdateVisualStates();
             }
             base.OnMouseLeftButtonDown(e);
         }
@@ -125,8 +128,15 @@ namespace ModernWpf.Controls
             {
                 HandleMouseUp(e);
                 m_isPressed = false;
+                UpdateVisualStates();
             }
             base.OnMouseLeftButtonUp(e);
+        }
+
+        protected override void OnMouseEnter(MouseEventArgs e)
+        {
+            base.OnMouseEnter(e);
+            UpdateVisualStates();
         }
 
         protected override void OnMouseLeave(MouseEventArgs e)
@@ -134,6 +144,7 @@ namespace ModernWpf.Controls
             if (!e.Handled)
             {
                 m_isPressed = false;
+                UpdateVisualStates();
             }
             base.OnMouseLeave(e);
         }
@@ -142,37 +153,105 @@ namespace ModernWpf.Controls
         {
             base.OnKeyDown(e);
 
-            if (e.Key == Key.Enter)
+            if (IsPrimaryInteractionKey(e))
             {
+                m_isKeyboardPressed = true;
+                UpdateVisualStates();
                 OnClick();
                 e.Handled = true;
             }
         }
 
+        protected override void OnKeyUp(KeyEventArgs e)
+        {
+            base.OnKeyUp(e);
+
+            if (m_isKeyboardPressed && (e.Key == Key.Space || e.Key == Key.Enter))
+            {
+                m_isKeyboardPressed = false;
+                UpdateVisualStates();
+            }
+        }
+
+        protected override void OnSelected(RoutedEventArgs e)
+        {
+            base.OnSelected(e);
+            UpdateVisualStates();
+        }
+
+        protected override void OnUnselected(RoutedEventArgs e)
+        {
+            base.OnUnselected(e);
+            UpdateVisualStates();
+        }
+
+        protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
+        {
+            base.OnPropertyChanged(e);
+
+            if (e.Property == IsEnabledProperty)
+            {
+                UpdateVisualStates();
+            }
+        }
+
+        private void OnIsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            UpdateVisualStates();
+        }
+
         internal void SubscribeToMultiSelectEnabledChanged(ListViewBase parent)
         {
             parent.MultiSelectEnabledChanged += OnMultiSelectEnabledChanged;
-            UpdateMultiSelectStates(parent);
+            UpdateVisualStates();
         }
 
         internal void UnsubscribeFromMultiSelectEnabledChanged(ListViewBase parent)
         {
             parent.MultiSelectEnabledChanged -= OnMultiSelectEnabledChanged;
-            UpdateMultiSelectStates(parent);
+            UpdateVisualStates();
         }
 
         private void OnMultiSelectEnabledChanged(object sender, EventArgs e)
         {
-            UpdateMultiSelectStates((ListViewBase)sender);
+            UpdateVisualStates();
         }
 
-        private void UpdateMultiSelectStates(ListViewBase parent, bool useTransitions = true)
+        private void UpdateVisualStates(bool useTransitions = true)
         {
-            if (parent != null)
+            VisualStateManager.GoToState(this, GetCommonState(), useTransitions);
+            VisualStateManager.GoToState(this, GetMultiSelectState(), useTransitions);
+        }
+
+        private string GetCommonState()
+        {
+            if (!IsEnabled)
             {
-                bool enabled = parent.MultiSelectEnabled && parent.IsMultiSelectCheckBoxEnabled;
-                VisualStateManager.GoToState(this, enabled ? "MultiSelectEnabled" : "MultiSelectDisabled", useTransitions);
+                return IsSelected ? "SelectedDisabled" : "Disabled";
             }
+
+            if (IsPressed)
+            {
+                return IsSelected ? "PressedSelected" : "Pressed";
+            }
+
+            if (IsMouseOver)
+            {
+                return IsSelected ? "PointerOverSelected" : "PointerOver";
+            }
+
+            return IsSelected ? "Selected" : "Normal";
+        }
+
+        private string GetMultiSelectState()
+        {
+            var parent = ParentListViewBase;
+            if (parent == null || !parent.MultiSelectEnabled || !parent.IsMultiSelectCheckBoxEnabled)
+            {
+                return "NoMultiSelect";
+            }
+
+            return this is GridViewItem ? "GridMultiSelect" : "ListMultiSelect";
         }
 
         private void HandleMouseUp(MouseButtonEventArgs e)
@@ -193,8 +272,21 @@ namespace ModernWpf.Controls
             ParentListViewBase?.NotifyListItemClicked(this);
         }
 
+        private static bool IsPrimaryInteractionKey(KeyEventArgs e)
+        {
+            if (e.Key == Key.Space && (Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt)
+            {
+                return false;
+            }
+
+            return e.Key == Key.Space || e.Key == Key.Enter;
+        }
+
+        private bool IsPressed => m_isPressed || m_isKeyboardPressed;
+
         private ListViewBase ParentListViewBase => ItemsControl.ItemsControlFromItemContainer(this) as ListViewBase;
 
         private bool m_isPressed;
+        private bool m_isKeyboardPressed;
     }
 }

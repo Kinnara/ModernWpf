@@ -1062,6 +1062,7 @@
     <SolidColorBrush x:Key="ListViewItemBackgroundSelected" Color="{m:ThemeResource SystemColorHighlightColor}" />
     <SolidColorBrush x:Key="ListViewItemBackgroundSelectedPointerOver" Color="{m:ThemeResource SystemColorHighlightColor}" />
     <SolidColorBrush x:Key="ListViewItemBackgroundSelectedPressed" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="ListViewItemBackgroundSelectedDisabled" Color="{m:ThemeResource SystemColorWindowColor}" />
     <SolidColorBrush x:Key="ListViewItemForeground" Color="{m:ThemeResource SystemColorButtonTextColor}" />
     <SolidColorBrush x:Key="ListViewItemForegroundPointerOver" Color="{m:ThemeResource SystemColorHighlightTextColor}" />
     <SolidColorBrush x:Key="ListViewItemForegroundPressed" Color="{m:ThemeResource SystemColorHighlightTextColor}" />
@@ -1089,6 +1090,7 @@
     <m:StaticResource x:Key="GridViewItemBackgroundSelected" ResourceKey="SystemControlHighlightAccentBrush" />
     <m:StaticResource x:Key="GridViewItemBackgroundSelectedPointerOver" ResourceKey="SystemControlHighlightListAccentMediumBrush" />
     <m:StaticResource x:Key="GridViewItemBackgroundSelectedPressed" ResourceKey="SystemControlHighlightListAccentHighBrush" />
+    <m:StaticResource x:Key="GridViewItemBackgroundSelectedDisabled" ResourceKey="SystemColorWindowColorBrush" />
     <m:StaticResource x:Key="GridViewItemForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
     <m:StaticResource x:Key="GridViewItemForegroundPointerOver" ResourceKey="SystemControlForegroundBaseHighBrush" />
     <m:StaticResource x:Key="GridViewItemForegroundSelected" ResourceKey="SystemControlForegroundBaseHighBrush" />
