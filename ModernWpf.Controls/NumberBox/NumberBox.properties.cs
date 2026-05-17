@@ -65,7 +65,15 @@ namespace ModernWpf.Controls
         public double Value
         {
             get => (double)GetValue(ValueProperty);
-            set => SetValue(ValueProperty, value);
+            set
+            {
+                // Match WinUI's generated setter guard: NaN represents the cleared state,
+                // so setting NaN while already NaN should not create a binding/update cycle.
+                if (!double.IsNaN(value) || !double.IsNaN(Value))
+                {
+                    SetValue(ValueProperty, value);
+                }
+            }
         }
 
         private static void OnValuePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)

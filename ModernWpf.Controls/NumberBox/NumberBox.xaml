@@ -10,9 +10,6 @@
         <ResourceDictionary Source="/ModernWpf;component/Styles/TextBox.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-    <ui:CornerRadiusFilterConverter x:Key="LeftCornerRadiusFilterConverter" Filter="Left" />
-    <ui:CornerRadiusFilterConverter x:Key="RightCornerRadiusFilterConverter" Filter="Right" />
-
     <Thickness x:Key="NumberBoxPopupIndicatorMargin">0,0,8,0</Thickness>
 
     <Style x:Key="NumberBoxSpinButtonStyle" TargetType="RepeatButton" BasedOn="{StaticResource DefaultRepeatButtonStyle}">
@@ -21,38 +18,23 @@
             <Setter Property="MinWidth" Value="32" />
             <Setter Property="Padding" Value="0" />
             <Setter Property="VerticalAlignment" Value="Stretch" />
-            <Setter Property="Background" Value="{DynamicResource TextControlBackground}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource TextControlBorderBrush}" />
             <Setter Property="BorderThickness" Value="{DynamicResource NumberBoxSpinButtonBorderThickness}" />
             <Setter Property="FontSize" Value="12" />
             <Setter Property="FontFamily" Value="{DynamicResource SymbolThemeFontFamily}" />
-            <Setter Property="ContentTemplate">
-                <Setter.Value>
-                    <DataTemplate>
-                        <ui:FontIconFallback Data="{Binding}" />
-                    </DataTemplate>
-                </Setter.Value>
-            </Setter>
         </Style.Setters>
     </Style>
 
     <Style x:Key="NumberBoxPopupSpinButtonStyle" TargetType="RepeatButton" BasedOn="{StaticResource DefaultRepeatButtonStyle}">
         <Style.Setters>
             <Setter Property="Focusable" Value="False" />
+            <Setter Property="IsTabStop" Value="False" />
             <Setter Property="Width" Value="36" />
             <Setter Property="Height" Value="36" />
             <Setter Property="Padding" Value="0" />
-            <Setter Property="Background" Value="{DynamicResource NumberBoxPopupSpinButtonBackground}" />
             <Setter Property="BorderThickness" Value="{DynamicResource NumberBoxPopupSpinButtonBorderThickness}" />
             <Setter Property="FontSize" Value="16" />
             <Setter Property="FontFamily" Value="{DynamicResource SymbolThemeFontFamily}" />
-            <Setter Property="ContentTemplate">
-                <Setter.Value>
-                    <DataTemplate>
-                        <ui:FontIconFallback Data="{Binding}" />
-                    </DataTemplate>
-                </Setter.Value>
-            </Setter>
+            <Setter Property="ui:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         </Style.Setters>
     </Style>
 
@@ -61,7 +43,6 @@
             <Setter.Value>
                 <ControlTemplate TargetType="TextBox">
                     <ControlTemplate.Resources>
-                        <StreamGeometry x:Key="ScrollUpDown">M 10 2.138672 L 4.189453 7.939453 L 3.310547 7.060547 L 10 0.361328 L 16.689453 7.060547 L 15.810547 7.939453 Z M 10 17.861328 L 15.810547 12.060547 L 16.689453 12.939453 L 10 19.638672 L 3.310547 12.939453 L 4.189453 12.060547 Z</StreamGeometry>
                         <Style x:Key="DeleteButtonStyle" TargetType="Button">
                             <Setter Property="Template">
                                 <Setter.Value>
@@ -198,13 +179,13 @@
                             Focusable="False"
                             Style="{StaticResource DeleteButtonStyle}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            ui:ControlHelper.CornerRadius="{TemplateBinding ui:ControlHelper.CornerRadius, Converter={StaticResource RightCornerRadiusFilterConverter}}"
+                            ui:ControlHelper.CornerRadius="{TemplateBinding ui:ControlHelper.CornerRadius}"
                             Padding="{DynamicResource HelperButtonThemePadding}"
                             IsTabStop="False"
                             Visibility="Collapsed"
                             FontSize="{TemplateBinding FontSize}"
                             HorizontalAlignment="Right"
-                            MinWidth="34"
+                            MinWidth="40"
                             VerticalAlignment="Stretch"
                             ui:TextBoxHelper.IsDeleteButton="True" />
                         <ui:ContentPresenterEx
@@ -216,7 +197,7 @@
                             Visibility="{TemplateBinding ui:ControlHelper.DescriptionVisibility}"
                             Foreground="{DynamicResource SystemControlDescriptionTextForegroundBrush}"
                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                        <ui:FontIconFallback
+                        <TextBlock
                             x:Name="PopupIndicator"
                             Grid.Row="1"
                             Grid.Column="2"
@@ -226,7 +207,7 @@
                             VerticalAlignment="Center"
                             HorizontalAlignment="Center"
                             FontSize="12"
-                            Data="{StaticResource ScrollUpDown}"
+                            Text="&#xEC8F;"
                             FontFamily="{DynamicResource SymbolThemeFontFamily}" />
                     </Grid>
                     <ControlTemplate.Triggers>
@@ -278,18 +259,15 @@
         <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
         <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
         <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+        <Setter Property="Background" Value="{DynamicResource TextControlBackground}" />
         <Setter Property="BorderThickness" Value="{DynamicResource TextControlBorderThemeThickness}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource TextControlBorderBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextControlForeground}" />
         <Setter Property="Padding" Value="{DynamicResource TextControlThemePadding}" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:NumberBox">
-                    <ControlTemplate.Resources>
-                        <StreamGeometry x:Key="ChevronDown">M 18.935547 4.560547 L 19.814453 5.439453 L 10 15.253906 L 0.185547 5.439453 L 1.064453 4.560547 L 10 13.496094 Z</StreamGeometry>
-                        <StreamGeometry x:Key="ChevronUp">M 19.091797 14.970703 L 10 5.888672 L 0.908203 14.970703 L 0.029297 14.091797 L 10 4.111328 L 19.970703 14.091797 Z</StreamGeometry>
-                    </ControlTemplate.Resources>
-
                     <Grid Height="{TemplateBinding Height}" ui:ThemeManager.HasThemeResources="True">
                         <VisualStateManager.CustomVisualStateManager>
                             <ui:VisualStateManagerEx />
@@ -309,9 +287,8 @@
                                     <ui:VisualStateEx.Setters>
                                         <ui:VisualStateSetter Target="DownSpinButton.Visibility" Value="Visible" />
                                         <ui:VisualStateSetter Target="UpSpinButton.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="InputEater.Visibility" Value="Visible" />
                                         <ui:VisualStateSetter Target="InputBox.MinWidth" Value="{DynamicResource NumberBoxMinWidth}" />
-                                        <ui:VisualStateSetter Target="SpinButtonsColumn.Width" Value="72" />
-                                        <ui:VisualStateSetter Target="InputBox.(ui:ControlHelper.CornerRadius)" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=CornerRadius, Converter={StaticResource LeftCornerRadiusFilterConverter}}" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                                 <ui:VisualStateEx x:Name="SpinButtonsPopup">
@@ -346,18 +323,42 @@
                             <ui:ResourceDictionaryEx>
                                 <ui:ResourceDictionaryEx.ThemeDictionaries>
                                     <ResourceDictionary x:Key="Light" ui:ThemeDictionary.Key="Light">
-                                        <ui:StaticResource x:Key="RepeatButtonBorderBrushPointerOver" ResourceKey="TextControlBorderBrush" />
-                                        <ui:StaticResource x:Key="RepeatButtonBorderBrushPressed" ResourceKey="TextControlBorderBrush" />
+                                        <ui:StaticResource x:Key="RepeatButtonBackground" ResourceKey="TextControlButtonBackground" />
+                                        <ui:StaticResource x:Key="RepeatButtonBackgroundPointerOver" ResourceKey="TextControlButtonBackgroundPointerOver" />
+                                        <ui:StaticResource x:Key="RepeatButtonBackgroundPressed" ResourceKey="TextControlButtonBackgroundPressed" />
+                                        <ui:StaticResource x:Key="RepeatButtonForeground" ResourceKey="TextControlButtonForeground" />
+                                        <ui:StaticResource x:Key="RepeatButtonForegroundPointerOver" ResourceKey="TextControlButtonForegroundPointerOver" />
+                                        <ui:StaticResource x:Key="RepeatButtonForegroundPressed" ResourceKey="TextControlButtonForegroundPressed" />
+                                        <ui:StaticResource x:Key="RepeatButtonBorderBrush" ResourceKey="TextControlButtonBorderBrush" />
+                                        <ui:StaticResource x:Key="RepeatButtonBorderBrushPointerOver" ResourceKey="TextControlButtonBorderBrushPointerOver" />
+                                        <ui:StaticResource x:Key="RepeatButtonBorderBrushPressed" ResourceKey="TextControlButtonBorderBrushPressed" />
+                                        <ui:StaticResource x:Key="RepeatButtonBorderBrushDisabled" ResourceKey="TextControlButtonBorderBrush" />
                                     </ResourceDictionary>
 
                                     <ResourceDictionary x:Key="Dark" ui:ThemeDictionary.Key="Dark">
-                                        <ui:StaticResource x:Key="RepeatButtonBorderBrushPointerOver" ResourceKey="TextControlBorderBrush" />
-                                        <ui:StaticResource x:Key="RepeatButtonBorderBrushPressed" ResourceKey="TextControlBorderBrush" />
+                                        <ui:StaticResource x:Key="RepeatButtonBackground" ResourceKey="TextControlButtonBackground" />
+                                        <ui:StaticResource x:Key="RepeatButtonBackgroundPointerOver" ResourceKey="TextControlButtonBackgroundPointerOver" />
+                                        <ui:StaticResource x:Key="RepeatButtonBackgroundPressed" ResourceKey="TextControlButtonBackgroundPressed" />
+                                        <ui:StaticResource x:Key="RepeatButtonForeground" ResourceKey="TextControlButtonForeground" />
+                                        <ui:StaticResource x:Key="RepeatButtonForegroundPointerOver" ResourceKey="TextControlButtonForegroundPointerOver" />
+                                        <ui:StaticResource x:Key="RepeatButtonForegroundPressed" ResourceKey="TextControlButtonForegroundPressed" />
+                                        <ui:StaticResource x:Key="RepeatButtonBorderBrush" ResourceKey="TextControlButtonBorderBrush" />
+                                        <ui:StaticResource x:Key="RepeatButtonBorderBrushPointerOver" ResourceKey="TextControlButtonBorderBrushPointerOver" />
+                                        <ui:StaticResource x:Key="RepeatButtonBorderBrushPressed" ResourceKey="TextControlButtonBorderBrushPressed" />
+                                        <ui:StaticResource x:Key="RepeatButtonBorderBrushDisabled" ResourceKey="TextControlButtonBorderBrush" />
                                     </ResourceDictionary>
 
                                     <ResourceDictionary x:Key="HighContrast" ui:ThemeDictionary.Key="HighContrast">
-                                        <ui:StaticResource x:Key="RepeatButtonBorderBrushPointerOver" ResourceKey="SystemControlHighlightBaseMediumLowBrush" />
-                                        <ui:StaticResource x:Key="RepeatButtonBorderBrushPressed" ResourceKey="SystemControlHighlightTransparentBrush" />
+                                        <ui:StaticResource x:Key="RepeatButtonBackground" ResourceKey="TextControlButtonBackground" />
+                                        <ui:StaticResource x:Key="RepeatButtonBackgroundPointerOver" ResourceKey="TextControlButtonBackgroundPointerOver" />
+                                        <ui:StaticResource x:Key="RepeatButtonBackgroundPressed" ResourceKey="TextControlButtonBackgroundPressed" />
+                                        <ui:StaticResource x:Key="RepeatButtonForeground" ResourceKey="TextControlButtonForeground" />
+                                        <ui:StaticResource x:Key="RepeatButtonForegroundPointerOver" ResourceKey="TextControlButtonForegroundPointerOver" />
+                                        <ui:StaticResource x:Key="RepeatButtonForegroundPressed" ResourceKey="TextControlButtonForegroundPressed" />
+                                        <ui:StaticResource x:Key="RepeatButtonBorderBrush" ResourceKey="TextControlButtonBorderBrush" />
+                                        <ui:StaticResource x:Key="RepeatButtonBorderBrushPointerOver" ResourceKey="TextControlButtonBorderBrushPointerOver" />
+                                        <ui:StaticResource x:Key="RepeatButtonBorderBrushPressed" ResourceKey="TextControlButtonBorderBrushPressed" />
+                                        <ui:StaticResource x:Key="RepeatButtonBorderBrushDisabled" ResourceKey="TextControlButtonBorderBrush" />
                                     </ResourceDictionary>
                                 </ui:ResourceDictionaryEx.ThemeDictionaries>
                             </ui:ResourceDictionaryEx>
@@ -393,12 +394,15 @@
                         <TextBox
                             x:Name="InputBox"
                             Grid.Row="1"
+                            Grid.ColumnSpan="3"
+                            Style="{StaticResource NumberBoxTextBoxStyle}"
                             InputScope="{TemplateBinding InputScope}"
                             ui:ControlHelper.PlaceholderText="{TemplateBinding PlaceholderText}"
                             SelectionBrush="{TemplateBinding SelectionBrush}"
                             FontSize="{TemplateBinding FontSize}"
                             FontWeight="{TemplateBinding FontWeight}"
                             FontFamily="{TemplateBinding FontFamily}"
+                            Background="{TemplateBinding Background}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             Padding="{TemplateBinding Padding}"
@@ -427,6 +431,50 @@
                                     BorderThickness="{DynamicResource NumberBoxPopupBorderThickness}"
                                     CornerRadius="{DynamicResource OverlayCornerRadius}">
                                     <Grid>
+                                        <Grid.Resources>
+                                            <ui:ResourceDictionaryEx>
+                                                <ui:ResourceDictionaryEx.ThemeDictionaries>
+                                                    <ResourceDictionary x:Key="Light" ui:ThemeDictionary.Key="Light">
+                                                        <ui:StaticResource x:Key="RepeatButtonBackground" ResourceKey="TextControlButtonBackground" />
+                                                        <ui:StaticResource x:Key="RepeatButtonBackgroundPointerOver" ResourceKey="TextControlButtonBackgroundPointerOver" />
+                                                        <ui:StaticResource x:Key="RepeatButtonBackgroundPressed" ResourceKey="TextControlButtonBackgroundPressed" />
+                                                        <ui:StaticResource x:Key="RepeatButtonForeground" ResourceKey="TextControlButtonForeground" />
+                                                        <ui:StaticResource x:Key="RepeatButtonForegroundPointerOver" ResourceKey="TextControlButtonForegroundPointerOver" />
+                                                        <ui:StaticResource x:Key="RepeatButtonForegroundPressed" ResourceKey="TextControlButtonForegroundPressed" />
+                                                        <ui:StaticResource x:Key="RepeatButtonBorderBrush" ResourceKey="TextControlButtonBorderBrush" />
+                                                        <ui:StaticResource x:Key="RepeatButtonBorderBrushPointerOver" ResourceKey="TextControlButtonBorderBrushPointerOver" />
+                                                        <ui:StaticResource x:Key="RepeatButtonBorderBrushPressed" ResourceKey="TextControlButtonBorderBrushPressed" />
+                                                        <ui:StaticResource x:Key="RepeatButtonBorderBrushDisabled" ResourceKey="TextControlButtonBorderBrush" />
+                                                    </ResourceDictionary>
+
+                                                    <ResourceDictionary x:Key="Dark" ui:ThemeDictionary.Key="Dark">
+                                                        <ui:StaticResource x:Key="RepeatButtonBackground" ResourceKey="TextControlButtonBackground" />
+                                                        <ui:StaticResource x:Key="RepeatButtonBackgroundPointerOver" ResourceKey="TextControlButtonBackgroundPointerOver" />
+                                                        <ui:StaticResource x:Key="RepeatButtonBackgroundPressed" ResourceKey="TextControlButtonBackgroundPressed" />
+                                                        <ui:StaticResource x:Key="RepeatButtonForeground" ResourceKey="TextControlButtonForeground" />
+                                                        <ui:StaticResource x:Key="RepeatButtonForegroundPointerOver" ResourceKey="TextControlButtonForegroundPointerOver" />
+                                                        <ui:StaticResource x:Key="RepeatButtonForegroundPressed" ResourceKey="TextControlButtonForegroundPressed" />
+                                                        <ui:StaticResource x:Key="RepeatButtonBorderBrush" ResourceKey="TextControlButtonBorderBrush" />
+                                                        <ui:StaticResource x:Key="RepeatButtonBorderBrushPointerOver" ResourceKey="TextControlButtonBorderBrushPointerOver" />
+                                                        <ui:StaticResource x:Key="RepeatButtonBorderBrushPressed" ResourceKey="TextControlButtonBorderBrushPressed" />
+                                                        <ui:StaticResource x:Key="RepeatButtonBorderBrushDisabled" ResourceKey="TextControlButtonBorderBrush" />
+                                                    </ResourceDictionary>
+
+                                                    <ResourceDictionary x:Key="HighContrast" ui:ThemeDictionary.Key="HighContrast">
+                                                        <ui:StaticResource x:Key="RepeatButtonBackground" ResourceKey="TextControlButtonBackground" />
+                                                        <ui:StaticResource x:Key="RepeatButtonBackgroundPointerOver" ResourceKey="TextControlButtonBackgroundPointerOver" />
+                                                        <ui:StaticResource x:Key="RepeatButtonBackgroundPressed" ResourceKey="TextControlButtonBackgroundPressed" />
+                                                        <ui:StaticResource x:Key="RepeatButtonForeground" ResourceKey="TextControlButtonForeground" />
+                                                        <ui:StaticResource x:Key="RepeatButtonForegroundPointerOver" ResourceKey="TextControlButtonForegroundPointerOver" />
+                                                        <ui:StaticResource x:Key="RepeatButtonForegroundPressed" ResourceKey="TextControlButtonForegroundPressed" />
+                                                        <ui:StaticResource x:Key="RepeatButtonBorderBrush" ResourceKey="TextControlButtonBorderBrush" />
+                                                        <ui:StaticResource x:Key="RepeatButtonBorderBrushPointerOver" ResourceKey="TextControlButtonBorderBrushPointerOver" />
+                                                        <ui:StaticResource x:Key="RepeatButtonBorderBrushPressed" ResourceKey="TextControlButtonBorderBrushPressed" />
+                                                        <ui:StaticResource x:Key="RepeatButtonBorderBrushDisabled" ResourceKey="TextControlButtonBorderBrush" />
+                                                    </ResourceDictionary>
+                                                </ui:ResourceDictionaryEx.ThemeDictionaries>
+                                            </ui:ResourceDictionaryEx>
+                                        </Grid.Resources>
 
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="*" />
@@ -437,17 +485,34 @@
                                             x:Name="PopupUpSpinButton"
                                             Style="{StaticResource NumberBoxPopupSpinButtonStyle}"
                                             Margin="0,0,0,4"
-                                            Content="{StaticResource ChevronUp}" />
+                                            Content="&#xE70E;" />
 
                                         <RepeatButton
                                             x:Name="PopupDownSpinButton"
                                             Style="{StaticResource NumberBoxPopupSpinButtonStyle}"
                                             Grid.Row="1"
-                                            Content="{StaticResource ChevronDown}" />
+                                            Content="&#xE70D;" />
                                     </Grid>
                                 </Border>
                             </ui:ThemeShadowChrome>
                         </Popup>
+
+                        <Button
+                            x:Name="InputEater"
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Grid.ColumnSpan="2"
+                            Visibility="Collapsed"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            Margin="4,0,0,0"
+                            IsTabStop="False">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Grid Background="Transparent" />
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
 
                         <RepeatButton
                             x:Name="UpSpinButton"
@@ -455,10 +520,10 @@
                             Grid.Column="1"
                             Visibility="Collapsed"
                             FontSize="{TemplateBinding FontSize}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            Content="{StaticResource ChevronUp}"
+                            Content="&#xE70E;"
                             Style="{StaticResource NumberBoxSpinButtonStyle}"
-                            ui:ControlHelper.CornerRadius="0" />
+                            Margin="4"
+                            ui:ControlHelper.CornerRadius="{TemplateBinding CornerRadius}" />
 
                         <RepeatButton
                             x:Name="DownSpinButton"
@@ -466,10 +531,10 @@
                             Grid.Column="2"
                             Visibility="Collapsed"
                             FontSize="{TemplateBinding FontSize}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            Content="{StaticResource ChevronDown}"
+                            Content="&#xE70D;"
                             Style="{StaticResource NumberBoxSpinButtonStyle}"
-                            ui:ControlHelper.CornerRadius="{TemplateBinding CornerRadius, Converter={StaticResource RightCornerRadiusFilterConverter}}" />
+                            Margin="0,4,4,4"
+                            ui:ControlHelper.CornerRadius="{TemplateBinding CornerRadius}" />
 
                         <ui:ContentPresenterEx
                             x:Name="DescriptionPresenter"

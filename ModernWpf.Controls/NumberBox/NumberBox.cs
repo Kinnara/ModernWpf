@@ -9,6 +9,7 @@ using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media;
 using ModernWpf.Automation.Peers;
 using static ModernWpf.ResourceAccessor;
 
@@ -54,6 +55,7 @@ namespace ModernWpf.Controls
             DefaultStyleKeyProperty.OverrideMetadata(typeof(NumberBox), new FrameworkPropertyMetadata(typeof(NumberBox)));
 
             AutomationProperties.NameProperty.OverrideMetadata(typeof(NumberBox), new FrameworkPropertyMetadata(OnAutomationPropertiesNamePropertyChanged));
+            AutomationProperties.LabeledByProperty.OverrideMetadata(typeof(NumberBox), new FrameworkPropertyMetadata(OnAutomationPropertiesLabeledByPropertyChanged));
         }
 
         public NumberBox()
@@ -93,6 +95,8 @@ namespace ModernWpf.Controls
 
         public override void OnApplyTemplate()
         {
+            UnhookEvents();
+
             base.OnApplyTemplate();
 
             var spinDownName = ResourceAccessor.GetLocalizedStringResource(SR_NumberBoxDownSpinButtonName);
@@ -100,23 +104,25 @@ namespace ModernWpf.Controls
 
             if (GetTemplateChild(c_numberBoxDownButtonName) is RepeatButton spinDown)
             {
-                spinDown.Click += OnSpinDownClick;
+                m_spinDownButton = spinDown;
+                m_spinDownButton.Click += OnSpinDownClick;
 
                 // Do localization for the down button
-                if (string.IsNullOrEmpty(AutomationProperties.GetName(spinDown)))
+                if (string.IsNullOrEmpty(AutomationProperties.GetName(m_spinDownButton)))
                 {
-                    AutomationProperties.SetName(spinDown, spinDownName);
+                    AutomationProperties.SetName(m_spinDownButton, spinDownName);
                 }
             }
 
             if (GetTemplateChild(c_numberBoxUpButtonName) is RepeatButton spinUp)
             {
-                spinUp.Click += OnSpinUpClick;
+                m_spinUpButton = spinUp;
+                m_spinUpButton.Click += OnSpinUpClick;
 
                 // Do localization for the up button
-                if (string.IsNullOrEmpty(AutomationProperties.GetName(spinUp)))
+                if (string.IsNullOrEmpty(AutomationProperties.GetName(m_spinUpButton)))
                 {
-                    AutomationProperties.SetName(spinUp, spinUpName);
+                    AutomationProperties.SetName(m_spinUpButton, spinUpName);
                 }
             }
 
@@ -140,6 +146,7 @@ namespace ModernWpf.Controls
                     }
 
                     textBox.KeyUp += OnNumberBoxKeyUp;
+                    textBox.Loaded += OnTextBoxLoaded;
 
                     // Listen to NumberBox::CornerRadius changes so that we can enfore the T-rule for the textbox in SpinButtonPlacementMode::Inline.
                     // We need to explicitly go to the corresponding visual state each time the NumberBox' CornerRadius is changed in order for the new
@@ -172,23 +179,26 @@ namespace ModernWpf.Controls
 
             if (GetTemplateChild(c_numberBoxPopupDownButtonName) is RepeatButton popupSpinDown)
             {
-                popupSpinDown.Click += OnSpinDownClick;
+                m_popupSpinDownButton = popupSpinDown;
+                m_popupSpinDownButton.Click += OnSpinDownClick;
             }
 
             if (GetTemplateChild(c_numberBoxPopupUpButtonName) is RepeatButton popupSpinUp)
             {
-                popupSpinUp.Click += OnSpinUpClick;
+                m_popupSpinUpButton = popupSpinUp;
+                m_popupSpinUpButton.Click += OnSpinUpClick;
             }
 
             IsEnabledChanged += OnIsEnabledChanged;
 
-            // .NET rounds to 12 significant digits when displaying doubles, so we will do the same.
-            //m_displayRounder.SignificantDigits(12);
+            m_displayRounder.SignificantDigits = 10;
 
             UpdateSpinButtonPlacement();
             UpdateSpinButtonEnabled();
 
             UpdateVisualStateForIsEnabledChange();
+
+            ReevaluateForwardedUIAProperties();
 
             if (ReadLocalValue(ValueProperty) == DependencyProperty.UnsetValue
                 && ReadLocalValue(TextProperty) != DependencyProperty.UnsetValue)
@@ -213,6 +223,54 @@ namespace ModernWpf.Controls
             }
         }
         */
+
+        private void UnhookEvents()
+        {
+            if (m_spinDownButton != null)
+            {
+                m_spinDownButton.Click -= OnSpinDownClick;
+                m_spinDownButton = null;
+            }
+
+            if (m_spinUpButton != null)
+            {
+                m_spinUpButton.Click -= OnSpinUpClick;
+                m_spinUpButton = null;
+            }
+
+            if (m_textBox != null)
+            {
+                m_textBox.PreviewKeyDown -= OnNumberBoxKeyDown;
+                m_textBox.KeyDown -= OnNumberBoxKeyDown;
+                m_textBox.KeyUp -= OnNumberBoxKeyUp;
+                m_textBox.Loaded -= OnTextBoxLoaded;
+                m_textBox = null;
+            }
+
+            if (m_popupSpinDownButton != null)
+            {
+                m_popupSpinDownButton.Click -= OnSpinDownClick;
+                m_popupSpinDownButton = null;
+            }
+
+            if (m_popupSpinUpButton != null)
+            {
+                m_popupSpinUpButton.Click -= OnSpinUpClick;
+                m_popupSpinUpButton = null;
+            }
+
+            IsEnabledChanged -= OnIsEnabledChanged;
+
+            m_popupRepositionHelper?.Dispose();
+            m_popupRepositionHelper = null;
+            m_popup = null;
+        }
+
+        private void OnTextBoxLoaded(object sender, RoutedEventArgs e)
+        {
+            // Updating again once TextBox is loaded so its visual states are set properly.
+            UpdateSpinButtonPlacement();
+        }
 
         private void OnValuePropertyChanged(DependencyPropertyChangedEventArgs args)
         {
@@ -257,7 +315,7 @@ namespace ModernWpf.Controls
             CoerceValue();
 
             UpdateSpinButtonEnabled();
-            ReevaluateForwardedUIAName();
+            ReevaluateForwardedUIAProperties();
         }
 
         private void OnMaximumPropertyChanged(DependencyPropertyChangedEventArgs args)
@@ -266,7 +324,7 @@ namespace ModernWpf.Controls
             CoerceValue();
 
             UpdateSpinButtonEnabled();
-            ReevaluateForwardedUIAName();
+            ReevaluateForwardedUIAProperties();
         }
 
         private void OnSmallChangePropertyChanged(DependencyPropertyChangedEventArgs args)
@@ -338,10 +396,15 @@ namespace ModernWpf.Controls
 
         private static void OnAutomationPropertiesNamePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((NumberBox)d).ReevaluateForwardedUIAName();
+            ((NumberBox)d).ReevaluateForwardedUIAProperties();
         }
 
-        private void ReevaluateForwardedUIAName()
+        private static void OnAutomationPropertiesLabeledByPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((NumberBox)d).ReevaluateForwardedUIAProperties();
+        }
+
+        private void ReevaluateForwardedUIAProperties()
         {
             if (m_textBox is { } textBox)
             {
@@ -365,6 +428,12 @@ namespace ModernWpf.Controls
                         // Header is a string, we can use that as our UIA name.
                         AutomationProperties.SetName(textBox, headerAsString + minimum + maximum);
                     }
+                }
+
+                var labeledBy = AutomationProperties.GetLabeledBy(this);
+                if (labeledBy != null)
+                {
+                    AutomationProperties.SetLabeledBy(textBox, labeledBy);
                 }
             }
         }
@@ -644,7 +713,35 @@ namespace ModernWpf.Controls
             {
                 m_textBox.ApplyTemplate();
                 VisualStateManager.GoToState(m_textBox, state, false);
+
+                if (TryGetTextBoxSpinButtonsColumn(out var spinButtonsColumn))
+                {
+                    spinButtonsColumn.Width = spinButtonMode == NumberBoxSpinButtonPlacementMode.Inline
+                        ? new GridLength(72)
+                        : GridLength.Auto;
+                }
             }
+        }
+
+        private bool TryGetTextBoxSpinButtonsColumn(out ColumnDefinition spinButtonsColumn)
+        {
+            spinButtonsColumn = null;
+
+            if (m_textBox == null || VisualTreeHelper.GetChildrenCount(m_textBox) == 0)
+            {
+                return false;
+            }
+
+            if (VisualTreeHelper.GetChild(m_textBox, 0) is Grid rootGrid)
+            {
+                if (rootGrid.ColumnDefinitions.Count > 2)
+                {
+                    spinButtonsColumn = rootGrid.ColumnDefinitions[2];
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private void UpdateSpinButtonEnabled()
@@ -676,19 +773,6 @@ namespace ModernWpf.Controls
 
             VisualStateManager.GoToState(this, isUpButtonEnabled ? "UpSpinButtonEnabled" : "UpSpinButtonDisabled", false);
             VisualStateManager.GoToState(this, isDownButtonEnabled ? "DownSpinButtonEnabled" : "DownSpinButtonDisabled", false);
-
-            SetSpinButtonEnabled(c_numberBoxUpButtonName, isUpButtonEnabled);
-            SetSpinButtonEnabled(c_numberBoxPopupUpButtonName, isUpButtonEnabled);
-            SetSpinButtonEnabled(c_numberBoxDownButtonName, isDownButtonEnabled);
-            SetSpinButtonEnabled(c_numberBoxPopupDownButtonName, isDownButtonEnabled);
-        }
-
-        private void SetSpinButtonEnabled(string templatePartName, bool isEnabled)
-        {
-            if (GetTemplateChild(templatePartName) is UIElement spinButton)
-            {
-                spinButton.SetCurrentValue(IsEnabledProperty, isEnabled);
-            }
         }
 
         private bool IsInBounds(double value)
@@ -744,7 +828,7 @@ namespace ModernWpf.Controls
                 m_headerPresenter.Visibility = shouldShowHeader ? Visibility.Visible : Visibility.Collapsed;
             }
 
-            ReevaluateForwardedUIAName();
+            ReevaluateForwardedUIAProperties();
         }
 
         private void MoveCaretToTextEnd()
@@ -765,5 +849,9 @@ namespace ModernWpf.Controls
         ContentPresenter m_headerPresenter;
         Popup m_popup;
         PopupRepositionHelper m_popupRepositionHelper;
+        RepeatButton m_spinDownButton;
+        RepeatButton m_spinUpButton;
+        RepeatButton m_popupSpinDownButton;
+        RepeatButton m_popupSpinUpButton;
     }
 }

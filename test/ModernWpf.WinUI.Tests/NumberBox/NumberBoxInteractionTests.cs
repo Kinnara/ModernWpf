@@ -132,6 +132,13 @@ public class NumberBoxInteractionTests
             numberBox.Text = " 15 ";
             host.UpdateLayout();
             Assert.AreEqual("15", inputBox.Text);
+
+            numberBox.Maximum = double.MaxValue;
+            foreach (var text in new[] { "25.8", "0.0001", "294.1", "2924.8", "1.01", "0.03" })
+            {
+                EnterText(inputBox, text);
+                Assert.AreEqual(text, inputBox.Text);
+            }
         });
     }
 

@@ -127,7 +127,7 @@ public class NumberBoxApiTests
     }
 
     [TestMethod]
-    public void VerifyFinalWinUI2ResourcesAndTemplateMetrics()
+    public void VerifyWinUI3ResourcesAndTemplateMetrics()
     {
         WpfTestHost.Run(() =>
         {
@@ -142,40 +142,48 @@ public class NumberBoxApiTests
             host.UpdateLayout();
 
             var layoutRoot = (FrameworkElement)VisualTreeHelper.GetChild(numberBox, 0);
-            var layoutGrid = (Grid)layoutRoot;
             AssertStateSetter(layoutRoot, "SpinButtonStates", "SpinButtonsVisible",
                 "DownSpinButton.Visibility",
                 "UpSpinButton.Visibility",
-                "InputBox.MinWidth",
-                "SpinButtonsColumn.Width");
+                "InputEater.Visibility",
+                "InputBox.MinWidth");
             Assert.AreEqual("SpinButtonsVisible", GetCurrentStateName(layoutRoot, "SpinButtonStates"));
 
             var inputBox = FindTemplatePart<TextBox>(numberBox, "InputBox");
+            Assert.AreEqual(3, Grid.GetColumnSpan(inputBox));
             Assert.AreEqual(120.0, inputBox.MinWidth);
-            Assert.AreEqual(new GridLength(72), layoutGrid.ColumnDefinitions[2].Width);
+            Assert.IsNotNull(inputBox.Style);
             var inlineInputBoxStyle = inputBox.Style;
+            var inputBoxRoot = (FrameworkElement)VisualTreeHelper.GetChild(inputBox, 0);
+            var inputBoxGrid = (Grid)inputBoxRoot;
+            Assert.AreEqual(new GridLength(72), inputBoxGrid.ColumnDefinitions[2].Width);
+
+            var inputEater = FindTemplatePart<Button>(numberBox, "InputEater");
+            Assert.AreEqual(Visibility.Visible, inputEater.Visibility);
+            Assert.AreEqual(new Thickness(4, 0, 0, 0), inputEater.Margin);
+            Assert.IsFalse(inputEater.IsTabStop);
 
             var upButton = FindTemplatePart<RepeatButton>(numberBox, "UpSpinButton");
             var downButton = FindTemplatePart<RepeatButton>(numberBox, "DownSpinButton");
             Assert.AreEqual(Visibility.Visible, upButton.Visibility);
             Assert.AreEqual(Visibility.Visible, downButton.Visibility);
-            AssertInlineSpinButtonMetrics(upButton, numberBox.FontSize);
-            AssertInlineSpinButtonMetrics(downButton, numberBox.FontSize);
+            AssertInlineSpinButtonMetrics(upButton, numberBox.FontSize, new Thickness(4), "\uE70E");
+            AssertInlineSpinButtonMetrics(downButton, numberBox.FontSize, new Thickness(0, 4, 4, 4), "\uE70D");
 
             numberBox.SpinButtonPlacementMode = ModernWpf.Controls.NumberBoxSpinButtonPlacementMode.Compact;
             host.UpdateLayout();
 
             Assert.AreEqual("SpinButtonsPopup", GetCurrentStateName(layoutRoot, "SpinButtonStates"));
             Assert.IsNotNull(inputBox.Style);
-            Assert.AreNotSame(inlineInputBoxStyle, inputBox.Style);
+            Assert.AreSame(inlineInputBoxStyle, inputBox.Style);
 
-            var inputBoxRoot = (FrameworkElement)VisualTreeHelper.GetChild(inputBox, 0);
             AssertStateSetter(inputBoxRoot, "SpinButtonStates", "SpinButtonsPopup",
                 "PopupIndicator.Visibility");
             Assert.AreEqual("SpinButtonsPopup", GetCurrentStateName(inputBoxRoot, "SpinButtonStates"));
 
-            var popupIndicator = FindTemplatePart<FontIconFallback>(inputBox, "PopupIndicator");
+            var popupIndicator = FindTemplatePart<TextBlock>(inputBox, "PopupIndicator");
             Assert.AreEqual(Visibility.Visible, popupIndicator.Visibility);
+            Assert.AreEqual("\uEC8F", popupIndicator.Text);
 
             var popup = FindTemplatePart<Popup>(numberBox, "UpDownPopup");
             Assert.AreEqual(-21.0, popup.HorizontalOffset);
@@ -192,8 +200,8 @@ public class NumberBoxApiTests
 
             var popupUpButton = FindTemplatePart<RepeatButton>(popupRoot, "PopupUpSpinButton");
             var popupDownButton = FindTemplatePart<RepeatButton>(popupRoot, "PopupDownSpinButton");
-            AssertPopupSpinButtonMetrics(popupUpButton, new Thickness(0, 0, 0, 4));
-            AssertPopupSpinButtonMetrics(popupDownButton, new Thickness(0));
+            AssertPopupSpinButtonMetrics(popupUpButton, new Thickness(0, 0, 0, 4), "\uE70E");
+            AssertPopupSpinButtonMetrics(popupDownButton, new Thickness(0), "\uE70D");
 
             AssertGlobalResourceValue(numberBox, "NumberBoxSpinButtonBorderThickness", new Thickness(0, 1, 1, 1));
             AssertGlobalResourceValue(numberBox, "NumberBoxIconMargin", new Thickness(10, 0, 0, 0));
@@ -222,6 +230,36 @@ public class NumberBoxApiTests
         });
     }
 
+    [TestMethod]
+    public void VerifyUIALabeledByForwarding()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var label = new TextBlock { Text = "Amount" };
+            var numberBox = new ModernWpf.Controls.NumberBox();
+            AutomationProperties.SetLabeledBy(numberBox, label);
+
+            using var host = new TestWindowHost(new StackPanel
+            {
+                Children =
+                {
+                    label,
+                    numberBox
+                }
+            });
+
+            var textBox = FindTemplatePart<TextBox>(numberBox, "InputBox");
+            Assert.AreSame(label, AutomationProperties.GetLabeledBy(textBox));
+
+            var nextLabel = new TextBlock { Text = "Updated amount" };
+            ((StackPanel)host.Window.Content).Children.Insert(0, nextLabel);
+            AutomationProperties.SetLabeledBy(numberBox, nextLabel);
+            host.UpdateLayout();
+
+            Assert.AreSame(nextLabel, AutomationProperties.GetLabeledBy(textBox));
+        });
+    }
+
     private static T FindTemplatePart<T>(DependencyObject root, string name)
         where T : FrameworkElement
     {
@@ -244,21 +282,28 @@ public class NumberBoxApiTests
             ?? throw new AssertFailedException("Expected an InputScopeName entry.");
     }
 
-    private static void AssertInlineSpinButtonMetrics(RepeatButton button, double expectedFontSize)
+    private static void AssertInlineSpinButtonMetrics(RepeatButton button, double expectedFontSize, Thickness expectedMargin, string expectedContent)
     {
         Assert.AreEqual(32.0, button.MinWidth);
         Assert.AreEqual(new Thickness(0), button.Padding);
         Assert.AreEqual(expectedFontSize, button.FontSize);
+        Assert.AreEqual(expectedContent, button.Content);
+        Assert.AreEqual(expectedMargin, button.Margin);
         Assert.AreEqual(new Thickness(0, 1, 1, 1), button.BorderThickness);
+        Assert.AreEqual(button.TryFindResource("TextControlButtonBackground"), button.TryFindResource("RepeatButtonBackground"));
+        Assert.AreEqual(button.TryFindResource("TextControlButtonForeground"), button.TryFindResource("RepeatButtonForeground"));
+        Assert.AreEqual(button.TryFindResource("TextControlButtonBorderBrush"), button.TryFindResource("RepeatButtonBorderBrush"));
     }
 
-    private static void AssertPopupSpinButtonMetrics(RepeatButton button, Thickness expectedMargin)
+    private static void AssertPopupSpinButtonMetrics(RepeatButton button, Thickness expectedMargin, string expectedContent)
     {
         Assert.IsFalse(button.Focusable);
+        Assert.IsFalse(button.IsTabStop);
         Assert.AreEqual(36.0, button.Width);
         Assert.AreEqual(36.0, button.Height);
         Assert.AreEqual(new Thickness(0), button.Padding);
         Assert.AreEqual(expectedMargin, button.Margin);
+        Assert.AreEqual(expectedContent, button.Content);
         Assert.AreEqual(16.0, button.FontSize);
     }
 
