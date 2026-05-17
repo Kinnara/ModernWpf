@@ -189,6 +189,80 @@ public class ToggleSwitchApiTests
     }
 
     [TestMethod]
+    public void IsEnabledFalseClearsTransientStatesLikeWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch();
+            using var host = new TestWindowHost(toggleSwitch, width: 260, height: 120);
+            host.UpdateLayout();
+
+            var thumb = FindNamedDescendant<Thumb>(toggleSwitch, "SwitchThumb");
+            var stateGroupsRoot = FindStateGroupsRoot(toggleSwitch);
+
+            RaiseMouseEnter(toggleSwitch);
+            RaiseDragStarted(thumb);
+            RaiseDragDelta(thumb, 6);
+            host.UpdateLayout();
+
+            Assert.AreEqual("Pressed", GetCurrentStateName(stateGroupsRoot, "CommonStates"));
+            Assert.AreEqual("Dragging", GetCurrentStateName(stateGroupsRoot, "ToggleStates"));
+
+            toggleSwitch.IsEnabled = false;
+            host.UpdateLayout();
+
+            Assert.IsFalse(toggleSwitch.IsOn);
+            Assert.AreEqual("Disabled", GetCurrentStateName(stateGroupsRoot, "CommonStates"));
+            Assert.AreEqual("Off", GetCurrentStateName(stateGroupsRoot, "ToggleStates"));
+
+            toggleSwitch.IsEnabled = true;
+            host.UpdateLayout();
+
+            Assert.AreEqual("Normal", GetCurrentStateName(stateGroupsRoot, "CommonStates"));
+            Assert.AreEqual("Off", GetCurrentStateName(stateGroupsRoot, "ToggleStates"));
+        });
+    }
+
+    [TestMethod]
+    public void VisibilityNonVisibleClearsTransientStatesLikeWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch();
+            using var host = new TestWindowHost(toggleSwitch, width: 260, height: 120);
+            host.UpdateLayout();
+
+            var thumb = FindNamedDescendant<Thumb>(toggleSwitch, "SwitchThumb");
+            var stateGroupsRoot = FindStateGroupsRoot(toggleSwitch);
+
+            RaiseMouseEnter(toggleSwitch);
+            RaiseDragStarted(thumb);
+            RaiseDragDelta(thumb, 6);
+            host.UpdateLayout();
+
+            Assert.AreEqual("Pressed", GetCurrentStateName(stateGroupsRoot, "CommonStates"));
+            Assert.AreEqual("Dragging", GetCurrentStateName(stateGroupsRoot, "ToggleStates"));
+
+            toggleSwitch.Visibility = Visibility.Collapsed;
+            host.UpdateLayout();
+
+            Assert.IsFalse(toggleSwitch.IsOn);
+            Assert.AreEqual("Normal", GetCurrentStateName(stateGroupsRoot, "CommonStates"));
+            Assert.AreEqual("Off", GetCurrentStateName(stateGroupsRoot, "ToggleStates"));
+
+            toggleSwitch.Visibility = Visibility.Visible;
+            host.UpdateLayout();
+
+            Assert.AreEqual("Normal", GetCurrentStateName(stateGroupsRoot, "CommonStates"));
+            Assert.AreEqual("Off", GetCurrentStateName(stateGroupsRoot, "ToggleStates"));
+        });
+    }
+
+    [TestMethod]
     public void CanceledDragCompletionLeavesDragStateLikeWinUISource()
     {
         WpfTestHost.Run(() =>

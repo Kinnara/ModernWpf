@@ -448,7 +448,6 @@ namespace ModernWpf.Controls
                 {
                     _isDragging = false;
                     _isPointerOver = false;
-                    _isPointerFocused = false;
                 }
 
                 UpdateVisualStates();
@@ -610,7 +609,6 @@ namespace ModernWpf.Controls
             {
                 _isDragging = false;
                 _isPointerOver = false;
-                _isPointerFocused = false;
             }
 
             UpdateVisualStates();
