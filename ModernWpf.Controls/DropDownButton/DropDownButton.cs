@@ -128,25 +128,22 @@ namespace ModernWpf.Controls
 
         private static void OnFlyoutPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((DropDownButton)d).OnFlyoutPropertyChanged(e);
+            ((DropDownButton)d).OnFlyoutPropertyChanged();
         }
 
-        private void OnFlyoutPropertyChanged(DependencyPropertyChangedEventArgs e)
+        private void OnFlyoutPropertyChanged()
         {
-            if (e.OldValue is FlyoutBase oldFlyout)
-            {
-                oldFlyout.Opened -= OnFlyoutOpened;
-                oldFlyout.Closed -= OnFlyoutClosed;
-            }
-
-            if (e.NewValue is FlyoutBase newFlyout)
-            {
-                newFlyout.Opened += OnFlyoutOpened;
-                newFlyout.Closed += OnFlyoutClosed;
-            }
+            RegisterFlyoutEvents();
         }
 
         #endregion
+
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+
+            RegisterFlyoutEvents();
+        }
 
         internal bool IsFlyoutOpen => m_isFlyoutOpen;
 
@@ -158,6 +155,24 @@ namespace ModernWpf.Controls
         internal void CloseFlyout()
         {
             Flyout?.Hide();
+        }
+
+        private void RegisterFlyoutEvents()
+        {
+            if (m_registeredFlyout != null)
+            {
+                m_registeredFlyout.Opened -= OnFlyoutOpened;
+                m_registeredFlyout.Closed -= OnFlyoutClosed;
+                m_registeredFlyout = null;
+            }
+
+            var flyout = Flyout;
+            if (flyout != null)
+            {
+                flyout.Opened += OnFlyoutOpened;
+                flyout.Closed += OnFlyoutClosed;
+                m_registeredFlyout = flyout;
+            }
         }
 
         private void OnFlyoutOpened(object sender, object e)
@@ -178,5 +193,6 @@ namespace ModernWpf.Controls
         }
 
         private bool m_isFlyoutOpen;
+        private FlyoutBase m_registeredFlyout;
     }
 }

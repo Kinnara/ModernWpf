@@ -51,16 +51,28 @@
                                 <VisualState x:Name="Normal" />
                                 <ui:VisualStateEx x:Name="PointerOver">
                                     <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="RootGrid.Background" Value="{DynamicResource ButtonBackgroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="RootGrid.BorderBrush" Value="{DynamicResource ButtonBorderBrushPointerOver}" />
+                                        <ui:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource ButtonForegroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="ChevronIcon.Foreground" Value="{DynamicResource DropDownButtonForegroundSecondaryPointerOver}" />
                                         <ui:VisualStateSetter Target="ChevronIcon.(ui:AnimatedIcon.State)" Value="PointerOver" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                                 <ui:VisualStateEx x:Name="Pressed">
                                     <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="RootGrid.Background" Value="{DynamicResource ButtonBackgroundPressed}" />
+                                        <ui:VisualStateSetter Target="RootGrid.BorderBrush" Value="{DynamicResource ButtonBorderBrushPressed}" />
+                                        <ui:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource ButtonForegroundPressed}" />
+                                        <ui:VisualStateSetter Target="ChevronIcon.Foreground" Value="{DynamicResource DropDownButtonForegroundSecondaryPressed}" />
                                         <ui:VisualStateSetter Target="ChevronIcon.(ui:AnimatedIcon.State)" Value="Pressed" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                                 <ui:VisualStateEx x:Name="Disabled">
                                     <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="RootGrid.Background" Value="{DynamicResource ButtonBackgroundDisabled}" />
+                                        <ui:VisualStateSetter Target="RootGrid.BorderBrush" Value="{DynamicResource ButtonBorderBrushDisabled}" />
+                                        <ui:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource ButtonForegroundDisabled}" />
+                                        <ui:VisualStateSetter Target="ChevronIcon.Foreground" Value="{DynamicResource ButtonForegroundDisabled}" />
                                         <ui:VisualStateSetter Target="ChevronIcon.(ui:AnimatedIcon.State)" Value="Normal" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
@@ -91,37 +103,17 @@
                         <ui:FontIconFallback
                             x:Name="ChevronIcon"
                             Grid.Column="1"
+                            Width="12"
+                            Height="12"
                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
                             FontSize="8"
                             Foreground="{DynamicResource DropDownButtonForegroundSecondary}"
                             Data="{StaticResource ChevronDownSmall}"
                             VerticalAlignment="Center"
-                            Padding="2,4,2,0"
                             Margin="8,0,0,0"
                             ui:AnimatedIcon.State="Normal" />
 
                     </ui:GridEx>
-
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="RootGrid" Property="Background" Value="{DynamicResource ButtonBackgroundPointerOver}" />
-                            <Setter TargetName="RootGrid" Property="BorderBrush" Value="{DynamicResource ButtonBorderBrushPointerOver}" />
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource ButtonForegroundPointerOver}" />
-                            <Setter TargetName="ChevronIcon" Property="Foreground" Value="{DynamicResource DropDownButtonForegroundSecondaryPointerOver}" />
-                        </Trigger>
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="RootGrid" Property="Background" Value="{DynamicResource ButtonBackgroundPressed}" />
-                            <Setter TargetName="RootGrid" Property="BorderBrush" Value="{DynamicResource ButtonBorderBrushPressed}" />
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource ButtonForegroundPressed}" />
-                            <Setter TargetName="ChevronIcon" Property="Foreground" Value="{DynamicResource DropDownButtonForegroundSecondaryPressed}" />
-                        </Trigger>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="RootGrid" Property="Background" Value="{DynamicResource ButtonBackgroundDisabled}" />
-                            <Setter TargetName="RootGrid" Property="BorderBrush" Value="{DynamicResource ButtonBorderBrushDisabled}" />
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource ButtonForegroundDisabled}" />
-                            <Setter TargetName="ChevronIcon" Property="Foreground" Value="{DynamicResource ButtonForegroundDisabled}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

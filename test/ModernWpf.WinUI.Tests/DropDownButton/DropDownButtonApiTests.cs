@@ -1,6 +1,9 @@
 using System;
 using System.Linq;
 using System.Windows;
+using System.Windows.Automation;
+using System.Windows.Automation.Peers;
+using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using ModernWpf;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -83,6 +86,8 @@ public class DropDownButtonApiTests
 
             Assert.IsNotNull(chevron);
             Assert.AreEqual("ChevronIcon", chevron!.Name);
+            Assert.AreEqual(12d, chevron.Width);
+            Assert.AreEqual(12d, chevron.Height);
             Assert.IsNotNull(chevron.Foreground);
         });
     }
@@ -146,8 +151,20 @@ public class DropDownButtonApiTests
                 ?? throw new AssertFailedException("Expected DropDownButton chevron icon.");
 
             AssertStateSetter(rootGrid, "CommonStates", "PointerOver", "ChevronIcon.(ui:AnimatedIcon.State)", "PointerOver");
+            AssertStateSetter(rootGrid, "CommonStates", "PointerOver", "RootGrid.Background", button.TryFindResource("ButtonBackgroundPointerOver"));
+            AssertStateSetter(rootGrid, "CommonStates", "PointerOver", "RootGrid.BorderBrush", button.TryFindResource("ButtonBorderBrushPointerOver"));
+            AssertStateSetter(rootGrid, "CommonStates", "PointerOver", "ContentPresenter.Foreground", button.TryFindResource("ButtonForegroundPointerOver"));
+            AssertStateSetter(rootGrid, "CommonStates", "PointerOver", "ChevronIcon.Foreground", button.TryFindResource("DropDownButtonForegroundSecondaryPointerOver"));
             AssertStateSetter(rootGrid, "CommonStates", "Pressed", "ChevronIcon.(ui:AnimatedIcon.State)", "Pressed");
+            AssertStateSetter(rootGrid, "CommonStates", "Pressed", "RootGrid.Background", button.TryFindResource("ButtonBackgroundPressed"));
+            AssertStateSetter(rootGrid, "CommonStates", "Pressed", "RootGrid.BorderBrush", button.TryFindResource("ButtonBorderBrushPressed"));
+            AssertStateSetter(rootGrid, "CommonStates", "Pressed", "ContentPresenter.Foreground", button.TryFindResource("ButtonForegroundPressed"));
+            AssertStateSetter(rootGrid, "CommonStates", "Pressed", "ChevronIcon.Foreground", button.TryFindResource("DropDownButtonForegroundSecondaryPressed"));
             AssertStateSetter(rootGrid, "CommonStates", "Disabled", "ChevronIcon.(ui:AnimatedIcon.State)", "Normal");
+            AssertStateSetter(rootGrid, "CommonStates", "Disabled", "RootGrid.Background", button.TryFindResource("ButtonBackgroundDisabled"));
+            AssertStateSetter(rootGrid, "CommonStates", "Disabled", "RootGrid.BorderBrush", button.TryFindResource("ButtonBorderBrushDisabled"));
+            AssertStateSetter(rootGrid, "CommonStates", "Disabled", "ContentPresenter.Foreground", button.TryFindResource("ButtonForegroundDisabled"));
+            AssertStateSetter(rootGrid, "CommonStates", "Disabled", "ChevronIcon.Foreground", button.TryFindResource("ButtonForegroundDisabled"));
 
             Assert.AreEqual("Normal", AnimatedIcon.GetState(chevron));
 
@@ -165,6 +182,52 @@ public class DropDownButtonApiTests
         });
     }
 
+    [TestMethod]
+    public void FlyoutEventsTrackExpandCollapseState()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var flyout = new Flyout
+            {
+                Content = new TextBlock
+                {
+                    Text = "Flyout content",
+                    MinWidth = 120,
+                    MinHeight = 32
+                }
+            };
+            var button = new ModernWpf.Controls.DropDownButton
+            {
+                Content = "Options",
+                Flyout = flyout
+            };
+
+            using var host = new TestWindowHost(button, width: 320, height: 160);
+            host.UpdateLayout();
+
+            var provider = GetExpandCollapseProvider(button);
+
+            Assert.AreEqual(ExpandCollapseState.Collapsed, provider.ExpandCollapseState);
+            Assert.IsFalse(button.IsFlyoutOpen);
+
+            provider.Expand();
+            WpfTestHost.DoEvents();
+
+            Assert.IsTrue(flyout.IsOpen);
+            Assert.IsTrue(button.IsFlyoutOpen);
+            Assert.AreEqual(ExpandCollapseState.Expanded, provider.ExpandCollapseState);
+
+            provider.Collapse();
+            WpfTestHost.DoEvents();
+
+            Assert.IsFalse(flyout.IsOpen);
+            Assert.IsFalse(button.IsFlyoutOpen);
+            Assert.AreEqual(ExpandCollapseState.Collapsed, provider.ExpandCollapseState);
+        });
+    }
+
     private static void AssertStateSetter(FrameworkElement stateGroupsRoot, string groupName, string stateName, string target, object expectedValue)
     {
         var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
@@ -174,5 +237,19 @@ public class DropDownButtonApiTests
         var setter = state.Setters.Single(item => item.Target == target);
 
         Assert.AreEqual(expectedValue, setter.Value);
+    }
+
+    private static IExpandCollapseProvider GetExpandCollapseProvider(ModernWpf.Controls.DropDownButton button)
+    {
+        var peer = FrameworkElementAutomationPeer.CreatePeerForElement(button);
+        Assert.IsNotNull(peer);
+
+        if (peer!.GetPattern(PatternInterface.ExpandCollapse) is IExpandCollapseProvider provider)
+        {
+            return provider;
+        }
+
+        Assert.Fail("DropDownButton should expose IExpandCollapseProvider.");
+        throw new InvalidOperationException();
     }
 }
