@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Windows;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Threading;
+using ModernWpf.Automation.Peers;
 using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
@@ -18,6 +21,7 @@ namespace ModernWpf.Controls
         const string c_popupBorderName = "SuggestionsContainer";
         const string c_textBoxName = "TextBox";
         const string c_textBoxBorderName = "BorderElement";
+        const string c_suggestionsListName = "SuggestionsList";
         const string c_controlCornerRadiusKey = "ControlCornerRadius";
         const string c_overlayCornerRadiusKey = "OverlayCornerRadius";
 
@@ -65,13 +69,14 @@ namespace ModernWpf.Controls
                 m_suggestionsList.Loaded -= OnSuggestionsListLoaded;
                 m_suggestionsList.SelectionChanged -= OnSuggestionsListSelectionChanged;
                 m_suggestionsList.ItemClick -= OnSuggestionsListItemClick;
+                m_suggestionsList.PreviewKeyDown -= OnSuggestionsListPreviewKeyDown;
             }
 
             base.OnApplyTemplate();
 
             m_textBox = GetTemplateChild(c_textBoxName) as TextBox;
             m_suggestionsPopup = GetTemplateChild(c_popupName) as Popup;
-            m_suggestionsList = GetTemplateChild("SuggestionsList") as AutoSuggestBoxListView;
+            m_suggestionsList = GetTemplateChild(c_suggestionsListName) as AutoSuggestBoxListView;
 
             if (m_textBox != null)
             {
@@ -81,7 +86,7 @@ namespace ModernWpf.Controls
                 m_textBox.TextChanged += OnTextBoxTextChanged;
                 m_textBox.PreviewKeyDown += OnTextBoxPreviewKeyDown;
 
-                UpdateTextBox();
+                UpdateTextBoxText(Text, AutoSuggestionBoxTextChangeReason.ProgrammaticChange);
             }
 
             if (m_queryButton != null)
@@ -111,6 +116,7 @@ namespace ModernWpf.Controls
                 m_suggestionsList.Loaded += OnSuggestionsListLoaded;
                 m_suggestionsList.SelectionChanged += OnSuggestionsListSelectionChanged;
                 m_suggestionsList.ItemClick += OnSuggestionsListItemClick;
+                m_suggestionsList.PreviewKeyDown += OnSuggestionsListPreviewKeyDown;
             }
         }
 
@@ -118,7 +124,11 @@ namespace ModernWpf.Controls
         {
             base.OnItemsChanged(e);
 
-            OpenOrCloseSuggestionListIfFocused();
+            if (IsTextBoxFocused())
+            {
+                BeginDeferredSuggestionListUpdate();
+                UpdateSuggestionListVisibility();
+            }
         }
 
         protected override void OnItemsSourceChanged(IEnumerable oldValue, IEnumerable newValue)
@@ -131,6 +141,12 @@ namespace ModernWpf.Controls
         {
             base.OnGotFocus(e);
             m_textBox?.Focus();
+
+            if (IsTextBoxFocused() && !string.IsNullOrEmpty(Text) && !m_suppressSuggestionListVisibility)
+            {
+                UpdateSuggestionListVisibility();
+                m_suppressSuggestionListVisibility = false;
+            }
         }
 
         protected override void OnIsKeyboardFocusWithinChanged(DependencyPropertyChangedEventArgs e)
@@ -139,35 +155,39 @@ namespace ModernWpf.Controls
 
             if (!(bool)e.NewValue)
             {
+                m_suppressSuggestionListVisibility = false;
                 CloseSuggestionList();
             }
         }
 
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new AutoSuggestBoxAutomationPeer(this);
+        }
+
         private void OnTextChanged(DependencyPropertyChangedEventArgs args)
         {
-            m_delayTimer.Stop();
-            m_delayTimer.Tag = null;
-
-            OpenOrCloseSuggestionListIfFocused();
-
-            if (m_textChangeReason != AutoSuggestionBoxTextChangeReason.SuggestionChosen)
-            {
-                UpdateSearchText((string)args.NewValue);
-            }
-
-            UpdateTextBox();
-
-            m_delayTimer.Tag = m_textChangeReason ?? AutoSuggestionBoxTextChangeReason.ProgrammaticChange;
-            m_delayTimer.Start();
+            UpdateTextBoxText((string)args.NewValue, AutoSuggestionBoxTextChangeReason.ProgrammaticChange);
         }
 
         private void OnIsSuggestionListOpenChanged(DependencyPropertyChangedEventArgs args)
         {
-            if (!(bool)args.NewValue)
+            if ((bool)args.NewValue)
             {
-                UpdateSearchText(Text);
+                if (!m_isUpdatingSuggestionListVisibility)
+                {
+                    m_textBox?.Focus();
+                }
+            }
+            else
+            {
                 ClearSelection();
             }
+        }
+
+        private void OnTextMemberPathChanged()
+        {
+            // WinUI releases its cached PropertyPathListener when TextMemberPath changes.
         }
 
         private void OnQueryIconChanged(DependencyPropertyChangedEventArgs args)
@@ -205,12 +225,33 @@ namespace ModernWpf.Controls
 
         private void OnTextBoxTextChanged(object sender, TextChangedEventArgs e)
         {
-            if (m_ignoreTextBoxTextChange)
+            var reason = m_textChangeReason;
+
+            m_textChangedCounter++;
+            var textChangedArgs = new AutoSuggestBoxTextChangedEventArgs(this, m_textChangedCounter, reason);
+            m_delayTimer.Stop();
+            m_delayTimer.Tag = textChangedArgs;
+            m_delayTimer.Start();
+
+            UpdateText(m_textBox.Text);
+
+            if (!m_ignoreTextChanges)
             {
-                return;
+                if (reason == AutoSuggestionBoxTextChangeReason.UserInput)
+                {
+                    m_userTypedText = m_textBox.Text;
+                    UpdateSuggestionListVisibility();
+                }
+
+                if (m_suggestionsList != null && m_suggestionsList.SelectedIndex != -1)
+                {
+                    m_ignoreSelectionChange = true;
+                    m_suggestionsList.SelectedIndex = -1;
+                    m_ignoreSelectionChange = false;
+                }
             }
 
-            UpdateTextValue(m_textBox.Text, AutoSuggestionBoxTextChangeReason.UserInput);
+            m_textChangeReason = AutoSuggestionBoxTextChangeReason.UserInput;
         }
 
         private void OnTextBoxPreviewKeyDown(object sender, KeyEventArgs e)
@@ -227,7 +268,7 @@ namespace ModernWpf.Controls
                         break;
 
                     case Key.Up:
-                        SelectedIndexDecrement();
+                        MoveSelection(isForward: false);
                         e.Handled = true;
                         break;
 
@@ -236,16 +277,21 @@ namespace ModernWpf.Controls
                         {
                             if (!TryMoveCaretToEnd())
                             {
-                                SelectedIndexIncrement();
+                                MoveSelection(isForward: true);
                             }
                             e.Handled = true;
                         }
                         break;
 
+                    case Key.Tab:
+                        UpdateTextBoxText(m_userTypedText, AutoSuggestionBoxTextChangeReason.ProgrammaticChange);
+                        CloseSuggestionList();
+                        break;
+
                     case Key.Escape:
                         if (IsSuggestionListOpen)
                         {
-                            UpdateTextValue(m_searchText);
+                            UpdateTextBoxText(m_userTypedText, AutoSuggestionBoxTextChangeReason.ProgrammaticChange);
                             TryMoveCaretToEnd();
                             CloseSuggestionList();
                             e.Handled = true;
@@ -264,7 +310,7 @@ namespace ModernWpf.Controls
 
         private void OnQueryButtonClick(object sender, RoutedEventArgs e)
         {
-            TryCommitTextBoxText();
+            ProgrammaticSubmitQuery();
         }
 
         private void OnSuggestionsPopupOpened(object sender, EventArgs e)
@@ -285,87 +331,124 @@ namespace ModernWpf.Controls
 
         private void OnSuggestionsListSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            ScrollSelectedSuggestionIntoView();
+
             if (m_ignoreSelectionChange)
             {
                 return;
             }
 
-            if (IsSuggestionListOpen)
+            m_ignoreTextChanges = true;
+
+            if (IsSuggestionListOpen && m_suggestionsList.SelectedItem != null)
             {
                 var selectedItem = m_suggestionsList.SelectedItem;
-                if (selectedItem != null)
+
+                if (UpdateTextOnSelect)
                 {
-                    m_suggestionsList.ScrollIntoView(selectedItem);
-
-                    SuggestionChosen?.Invoke(this, new AutoSuggestBoxSuggestionChosenEventArgs { SelectedItem = selectedItem });
-
-                    if (UpdateTextOnSelect)
+                    var selectedValue = GetSuggestionText(selectedItem);
+                    if (selectedValue != null)
                     {
-                        var selectedValue = m_suggestionsList.SelectedValue;
-                        if (selectedValue != null)
-                        {
-                            UpdateTextValue(selectedValue.ToString(), AutoSuggestionBoxTextChangeReason.SuggestionChosen);
-                        }
+                        UpdateTextBoxText(selectedValue, AutoSuggestionBoxTextChangeReason.SuggestionChosen);
                     }
                 }
-                else
-                {
-                    m_suggestionsList.ScrollToTop();
-                    UpdateTextValue(m_searchText);
-                }
+
+                SuggestionChosen?.Invoke(this, new AutoSuggestBoxSuggestionChosenEventArgs { SelectedItem = selectedItem });
 
                 if (m_textBox != null)
                 {
                     m_textBox.CaretIndex = m_textBox.Text.Length;
                 }
             }
+
+            Dispatcher.BeginInvoke(
+                new Action(() => m_ignoreTextChanges = false),
+                DispatcherPriority.Background);
         }
 
         private void OnSuggestionsListItemClick(object sender, ItemClickEventArgs e)
         {
             m_suggestionsList.SelectedItem = e.ClickedItem;
-            TryCommitChosenSuggestion();
+            Dispatcher.BeginInvoke(
+                new Action(() => SubmitQuery(e.ClickedItem)),
+                DispatcherPriority.Background);
+        }
+
+        private void OnSuggestionsListPreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.Up:
+                case Key.Down:
+                    if (m_suggestionsList != null)
+                    {
+                        int selectedIndex = m_suggestionsList.SelectedIndex;
+                        int lastIndex = m_suggestionsList.Items.Count - 1;
+
+                        if ((selectedIndex == 0 && e.Key == Key.Up) ||
+                            (selectedIndex == lastIndex && e.Key == Key.Down))
+                        {
+                            UpdateTextBoxText(m_userTypedText, AutoSuggestionBoxTextChangeReason.ProgrammaticChange);
+                            m_suggestionsList.SelectedIndex = -1;
+                            m_textBox?.Focus();
+                            e.Handled = true;
+                        }
+                    }
+                    break;
+
+                case Key.Enter:
+                case Key.Space:
+                    SubmitQuery(m_suggestionsList?.SelectedItem);
+                    e.Handled = true;
+                    break;
+
+                case Key.Escape:
+                    UpdateTextBoxText(m_userTypedText, AutoSuggestionBoxTextChangeReason.ProgrammaticChange);
+                    CloseSuggestionList();
+                    m_textBox?.Focus();
+                    e.Handled = true;
+                    break;
+            }
         }
 
         private void OnDelayTimerTick(object sender, EventArgs e)
         {
             m_delayTimer.Stop();
 
-            if (m_delayTimer.Tag is AutoSuggestionBoxTextChangeReason reason)
+            if (m_delayTimer.Tag is AutoSuggestBoxTextChangedEventArgs args)
             {
                 m_delayTimer.Tag = null;
-                TextChanged?.Invoke(this, new AutoSuggestBoxTextChangedEventArgs(this, Text, reason));
+                TextChanged?.Invoke(this, args);
             }
         }
 
-        private void UpdateTextValue(string value, AutoSuggestionBoxTextChangeReason reason = AutoSuggestionBoxTextChangeReason.ProgrammaticChange)
+        private void UpdateText(string value)
         {
             if (Text != value)
             {
-                m_textChangeReason = reason;
                 SetCurrentValue(TextProperty, value);
-                m_textChangeReason = null;
             }
         }
 
-        private void UpdateSearchText(string value)
+        private void UpdateTextBoxText(string value, AutoSuggestionBoxTextChangeReason reason)
         {
-            if (m_searchText != value)
-            {
-                m_searchText = value;
-            }
-        }
+            value ??= string.Empty;
 
-        private void UpdateTextBox()
-        {
-            if (m_textBox != null)
+            if (m_textBox != null && m_textBox.Text != value)
             {
-                string text = Text;
-                if (m_textBox.Text != text)
+                var previousReason = m_textChangeReason;
+                m_textChangeReason = reason;
+                try
                 {
-                    m_ignoreTextBoxTextChange = true;
-                    m_textBox.Text = text;
-                    m_ignoreTextBoxTextChange = false;
+                    m_textBox.Text = value;
+                    m_textBox.CaretIndex = m_textBox.Text.Length;
+                }
+                finally
+                {
+                    if (m_textChangeReason == reason)
+                    {
+                        m_textChangeReason = previousReason;
+                    }
                 }
             }
         }
@@ -396,11 +479,16 @@ namespace ModernWpf.Controls
             }
         }
 
-        private void OpenOrCloseSuggestionListIfFocused()
+        private void UpdateSuggestionListVisibility()
         {
-            if (IsKeyboardFocusWithin)
+            bool shouldOpen = m_suggestionsList != null &&
+                m_suggestionsList.Items.Count > 0 &&
+                GetEffectiveMaxSuggestionListHeight() > 0;
+
+            m_isUpdatingSuggestionListVisibility = true;
+            try
             {
-                if (HasItems)
+                if (shouldOpen)
                 {
                     OpenSuggestionList();
                 }
@@ -409,29 +497,61 @@ namespace ModernWpf.Controls
                     CloseSuggestionList();
                 }
             }
-        }
-
-        private void SelectedIndexIncrement()
-        {
-            if (m_suggestionsList != null)
+            finally
             {
-                int index = m_suggestionsList.SelectedIndex;
-                m_suggestionsList.SelectedIndex = index + 1 >= m_suggestionsList.Items.Count ? -1 : index + 1;
+                m_isUpdatingSuggestionListVisibility = false;
             }
         }
 
-        private void SelectedIndexDecrement()
+        private void BeginDeferredSuggestionListUpdate()
         {
-            if (m_suggestionsList != null)
+            Dispatcher.BeginInvoke(
+                new Action(() =>
+                {
+                    UpdateSuggestionListSize();
+                    UpdateSuggestionListVisibility();
+                }),
+                DispatcherPriority.Background);
+        }
+
+        private void MoveSelection(bool isForward)
+        {
+            if (m_suggestionsList != null && m_suggestionsList.Items.Count > 0)
             {
-                int index = m_suggestionsList.SelectedIndex;
-                if (index >= 0)
+                int selectedIndex = m_suggestionsList.SelectedIndex;
+                int lastIndex = m_suggestionsList.Items.Count - 1;
+
+                if (selectedIndex == -1)
                 {
-                    m_suggestionsList.SelectedIndex--;
+                    m_suggestionsList.SelectedIndex = isForward ? 0 : lastIndex;
                 }
-                else if (index == -1)
+                else if (selectedIndex == 0)
                 {
-                    m_suggestionsList.SelectedIndex = m_suggestionsList.Items.Count - 1;
+                    if (isForward)
+                    {
+                        m_suggestionsList.SelectedIndex = selectedIndex + 1;
+                    }
+                    else
+                    {
+                        UpdateTextBoxText(m_userTypedText, AutoSuggestionBoxTextChangeReason.ProgrammaticChange);
+                        m_suggestionsList.SelectedIndex = -1;
+                    }
+                }
+                else if (selectedIndex == lastIndex)
+                {
+                    if (isForward)
+                    {
+                        UpdateTextBoxText(m_userTypedText, AutoSuggestionBoxTextChangeReason.ProgrammaticChange);
+                        m_suggestionsList.SelectedIndex = -1;
+                    }
+                    else
+                    {
+                        m_suggestionsList.SelectedIndex = lastIndex - 1;
+                    }
+                }
+                else
+                {
+                    m_suggestionsList.SelectedIndex = isForward ? selectedIndex + 1 : selectedIndex - 1;
                 }
             }
         }
@@ -447,6 +567,24 @@ namespace ModernWpf.Controls
             }
         }
 
+        internal void ProgrammaticSubmitQuery()
+        {
+            m_ignoreSelectionChange = true;
+            try
+            {
+                if (m_suggestionsList != null)
+                {
+                    m_suggestionsList.SelectedIndex = -1;
+                }
+            }
+            finally
+            {
+                m_ignoreSelectionChange = false;
+            }
+
+            SubmitQuery(null);
+        }
+
         private bool TryCommitChosenSuggestion()
         {
             if (IsSuggestionListOpen && m_textBox != null && m_suggestionsList != null)
@@ -454,8 +592,7 @@ namespace ModernWpf.Controls
                 var selectedItem = m_suggestionsList.SelectedItem;
                 if (selectedItem != null)
                 {
-                    CloseSuggestionList();
-                    SubmitQuery(m_textBox.Text, selectedItem);
+                    SubmitQuery(selectedItem);
                     return true;
                 }
             }
@@ -466,24 +603,21 @@ namespace ModernWpf.Controls
         {
             if (m_textBox != null)
             {
-                bool shouldCloseSuggestionList = IsSuggestionListOpen;
-                SubmitQuery(m_textBox.Text, null);
-                if (shouldCloseSuggestionList)
-                {
-                    CloseSuggestionList();
-                }
+                SubmitQuery(null);
                 return true;
             }
             return false;
         }
 
-        private void SubmitQuery(string queryText, object chosenSuggestion)
+        private void SubmitQuery(object chosenSuggestion)
         {
             QuerySubmitted?.Invoke(this, new AutoSuggestBoxQuerySubmittedEventArgs
             {
-                QueryText = queryText,
+                QueryText = m_textBox?.Text ?? Text,
                 ChosenSuggestion = chosenSuggestion
             });
+
+            CloseSuggestionList();
         }
 
         private bool TryMoveCaretToEnd()
@@ -547,15 +681,87 @@ namespace ModernWpf.Controls
             return TryFindResource(key);
         }
 
+        private bool IsTextBoxFocused()
+        {
+            return m_textBox != null && m_textBox.IsKeyboardFocusWithin;
+        }
+
+        private double GetEffectiveMaxSuggestionListHeight()
+        {
+            double maxHeight = MaxSuggestionListHeight;
+
+            if (m_suggestionsPopup != null &&
+                m_suggestionsPopup.Child is FrameworkElement popupChild &&
+                popupChild.MaxHeight > 0 &&
+                popupChild.MaxHeight < maxHeight)
+            {
+                maxHeight = popupChild.MaxHeight;
+            }
+
+            return maxHeight;
+        }
+
+        private void UpdateSuggestionListSize()
+        {
+            if (GetTemplateChild(c_popupBorderName) is FrameworkElement suggestionsContainer)
+            {
+                suggestionsContainer.Width = ActualWidth;
+                suggestionsContainer.MaxHeight = MaxSuggestionListHeight;
+            }
+        }
+
+        private void ScrollSelectedSuggestionIntoView()
+        {
+            if (m_suggestionsList == null)
+            {
+                return;
+            }
+
+            var scrollToItem = m_suggestionsList.SelectedItem;
+            if (scrollToItem == null && m_suggestionsList.Items.Count > 0)
+            {
+                scrollToItem = m_suggestionsList.Items[0];
+            }
+
+            if (scrollToItem != null)
+            {
+                m_suggestionsList.ScrollIntoView(scrollToItem);
+            }
+        }
+
+        private string GetSuggestionText(object selectedItem)
+        {
+            if (selectedItem == null)
+            {
+                return null;
+            }
+
+            if (!string.IsNullOrEmpty(TextMemberPath))
+            {
+                var descriptor = TypeDescriptor.GetProperties(selectedItem)[TextMemberPath];
+                if (descriptor != null)
+                {
+                    return descriptor.GetValue(selectedItem)?.ToString();
+                }
+            }
+
+            return selectedItem.ToString();
+        }
+
+        internal uint TextChangedEventCounter => m_textChangedCounter;
+
         private TextBox m_textBox;
         private Button m_queryButton;
         private Popup m_suggestionsPopup;
         private AutoSuggestBoxListView m_suggestionsList;
         private PopupRepositionHelper m_popupRepositionHelper;
-        private string m_searchText = string.Empty;
+        private string m_userTypedText = string.Empty;
         private readonly DispatcherTimer m_delayTimer;
-        private AutoSuggestionBoxTextChangeReason? m_textChangeReason;
-        private bool m_ignoreTextBoxTextChange;
+        private AutoSuggestionBoxTextChangeReason m_textChangeReason = AutoSuggestionBoxTextChangeReason.UserInput;
+        private uint m_textChangedCounter;
+        private bool m_ignoreTextChanges;
         private bool m_ignoreSelectionChange;
+        private bool m_isUpdatingSuggestionListVisibility;
+        private bool m_suppressSuggestionListVisibility;
     }
 }

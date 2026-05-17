@@ -13,12 +13,13 @@ namespace ModernWpf.Controls
     {
         public AutoSuggestBoxTextChangedEventArgs()
         {
+            Reason = AutoSuggestionBoxTextChangeReason.ProgrammaticChange;
         }
 
-        internal AutoSuggestBoxTextChangedEventArgs(AutoSuggestBox source, string value, AutoSuggestionBoxTextChangeReason reason)
+        internal AutoSuggestBoxTextChangedEventArgs(AutoSuggestBox source, uint counter, AutoSuggestionBoxTextChangeReason reason)
         {
             m_source = new WeakReference<AutoSuggestBox>(source);
-            m_value = value;
+            m_counter = counter;
             Reason = reason;
         }
         
@@ -28,10 +29,10 @@ namespace ModernWpf.Controls
         {
             return m_source != null &&
                    m_source.TryGetTarget(out var source) &&
-                   source.Text == m_value;
+                   source.TextChangedEventCounter == m_counter;
         }
 
         private readonly WeakReference<AutoSuggestBox> m_source;
-        private readonly string m_value;
+        private readonly uint m_counter;
     }
 }

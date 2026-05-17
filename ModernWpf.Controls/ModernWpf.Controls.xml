@@ -35,6 +35,15 @@
     <member name="M:ModernWpf.Automation.Peers.AppBarToggleButtonAutomationPeer.Toggle">
       <summary>Cycles through the toggle states of a control.</summary>
     </member>
+    <member name="T:ModernWpf.Automation.Peers.AutoSuggestBoxAutomationPeer">
+      <summary>Exposes AutoSuggestBox types to Microsoft UI Automation.</summary>
+    </member>
+    <member name="M:ModernWpf.Automation.Peers.AutoSuggestBoxAutomationPeer.#ctor(ModernWpf.Controls.AutoSuggestBox)">
+      <summary>Initializes a new instance of the AutoSuggestBoxAutomationPeer class.</summary>
+    </member>
+    <member name="M:ModernWpf.Automation.Peers.AutoSuggestBoxAutomationPeer.Invoke">
+      <summary>Sends a request to activate a control and initiate its single, unambiguous action.</summary>
+    </member>
     <member name="T:ModernWpf.Automation.Peers.DropDownButtonAutomationPeer">
       <summary>Exposes DropDownButton types to Microsoft UI Automation.</summary>
     </member>
@@ -280,6 +289,14 @@
     <member name="M:ModernWpf.Controls.AutoSuggestBox.#ctor">
       <summary>Initializes a new instance of the AutoSuggestBox class.</summary>
     </member>
+    <member name="P:ModernWpf.Controls.AutoSuggestBox.AutoMaximizeSuggestionArea">
+      <summary>Gets or sets a value that indicates whether the suggestion area is automatically maximized.</summary>
+      <returns>true if the suggestion area is automatically maximized; otherwise, false. The default is true.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.AutoSuggestBox.AutoMaximizeSuggestionAreaProperty">
+      <summary>Identifies the AutoMaximizeSuggestionArea dependency property.</summary>
+      <returns>Identifier for the AutoMaximizeSuggestionArea dependency property.</returns>
+    </member>
     <member name="P:ModernWpf.Controls.AutoSuggestBox.Description">
       <summary>Gets or sets content that is shown below the control. The content should provide guidance about the input expected by the control.</summary>
       <returns>The content to be displayed below the control. The default is **null**.</returns>
@@ -296,6 +313,14 @@
       <summary>Identifies the Header dependency property.</summary>
       <returns>The identifier for the Header dependency property.</returns>
     </member>
+    <member name="P:ModernWpf.Controls.AutoSuggestBox.HeaderPlacement">
+      <summary>Gets or sets a value that indicates where the header is placed.</summary>
+      <returns>A value that indicates where the header is placed. The default is Top.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.AutoSuggestBox.HeaderPlacementProperty">
+      <summary>Identifies the HeaderPlacement dependency property.</summary>
+      <returns>Identifier for the HeaderPlacement dependency property.</returns>
+    </member>
     <member name="P:ModernWpf.Controls.AutoSuggestBox.IsSuggestionListOpen">
       <summary>Gets or sets a Boolean value indicating whether the drop-down portion of the AutoSuggestBox is open.</summary>
       <returns>A Boolean value indicating whether the drop-down portion of the AutoSuggestBox is open.</returns>
@@ -303,6 +328,14 @@
     <member name="F:ModernWpf.Controls.AutoSuggestBox.IsSuggestionListOpenProperty">
       <summary>Identifies the IsSuggestionListOpen dependency property.</summary>
       <returns>Identifier for the IsSuggestionListOpen dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.AutoSuggestBox.LightDismissOverlayMode">
+      <summary>Gets or sets a value that indicates whether the light-dismiss overlay is shown.</summary>
+      <returns>A value that indicates whether the light-dismiss overlay is shown. The default is Auto.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.AutoSuggestBox.LightDismissOverlayModeProperty">
+      <summary>Identifies the LightDismissOverlayMode dependency property.</summary>
+      <returns>Identifier for the LightDismissOverlayMode dependency property.</returns>
     </member>
     <member name="P:ModernWpf.Controls.AutoSuggestBox.MaxSuggestionListHeight">
       <summary>Gets or set the maximum height for the drop-down portion of the AutoSuggestBox control.</summary>

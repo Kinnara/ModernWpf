@@ -29,12 +29,22 @@ namespace ModernWpf.Controls
                 nameof(TextMemberPath),
                 typeof(string),
                 typeof(AutoSuggestBox),
-                new PropertyMetadata(string.Empty));
+                new PropertyMetadata(string.Empty, OnTextMemberPathPropertyChanged, CoerceTextMemberPath));
 
         public string TextMemberPath
         {
             get => (string)GetValue(TextMemberPathProperty);
             set => SetValue(TextMemberPathProperty, value);
+        }
+
+        private static void OnTextMemberPathPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        {
+            ((AutoSuggestBox)sender).OnTextMemberPathChanged();
+        }
+
+        private static object CoerceTextMemberPath(DependencyObject d, object baseValue)
+        {
+            return baseValue ?? string.Empty;
         }
 
         #endregion
@@ -135,6 +145,23 @@ namespace ModernWpf.Controls
 
         #endregion
 
+        #region AutoMaximizeSuggestionArea
+
+        public static readonly DependencyProperty AutoMaximizeSuggestionAreaProperty =
+            DependencyProperty.Register(
+                nameof(AutoMaximizeSuggestionArea),
+                typeof(bool),
+                typeof(AutoSuggestBox),
+                new PropertyMetadata(true));
+
+        public bool AutoMaximizeSuggestionArea
+        {
+            get => (bool)GetValue(AutoMaximizeSuggestionAreaProperty);
+            set => SetValue(AutoMaximizeSuggestionAreaProperty, value);
+        }
+
+        #endregion
+
         #region Header
 
         public static readonly DependencyProperty HeaderProperty =
@@ -144,6 +171,23 @@ namespace ModernWpf.Controls
         {
             get => GetValue(HeaderProperty);
             set => SetValue(HeaderProperty, value);
+        }
+
+        #endregion
+
+        #region HeaderPlacement
+
+        public static readonly DependencyProperty HeaderPlacementProperty =
+            DependencyProperty.Register(
+                nameof(HeaderPlacement),
+                typeof(ControlHeaderPlacement),
+                typeof(AutoSuggestBox),
+                new PropertyMetadata(ControlHeaderPlacement.Top));
+
+        public ControlHeaderPlacement HeaderPlacement
+        {
+            get => (ControlHeaderPlacement)GetValue(HeaderPlacementProperty);
+            set => SetValue(HeaderPlacementProperty, value);
         }
 
         #endregion
@@ -179,6 +223,23 @@ namespace ModernWpf.Controls
         {
             get => GetValue(DescriptionProperty);
             set => SetValue(DescriptionProperty, value);
+        }
+
+        #endregion
+
+        #region LightDismissOverlayMode
+
+        public static readonly DependencyProperty LightDismissOverlayModeProperty =
+            DependencyProperty.Register(
+                nameof(LightDismissOverlayMode),
+                typeof(LightDismissOverlayMode),
+                typeof(AutoSuggestBox),
+                new PropertyMetadata(LightDismissOverlayMode.Auto));
+
+        public LightDismissOverlayMode LightDismissOverlayMode
+        {
+            get => (LightDismissOverlayMode)GetValue(LightDismissOverlayModeProperty);
+            set => SetValue(LightDismissOverlayModeProperty, value);
         }
 
         #endregion

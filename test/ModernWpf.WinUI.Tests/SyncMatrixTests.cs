@@ -24,6 +24,7 @@ public class SyncMatrixTests
         Assert.IsFalse(matrix.Contains("remain pending", StringComparison.OrdinalIgnoreCase), "Sync matrix still has unresolved pending wording.");
         Assert.IsFalse(matrix.Contains("pending/excluded", StringComparison.OrdinalIgnoreCase), "Sync matrix should document exclusions directly instead of using pending/excluded wording.");
 
+        AssertControlStatus(matrix, "AutoSuggestBox", "Source-backed WPF port");
         AssertControlStatus(matrix, "TeachingTip", "Source-backed WPF port");
         AssertControlStatus(matrix, "SwipeControl", "Source-backed WPF port");
         AssertControlStatus(matrix, "PullToRefresh / RefreshContainer", "Source-backed WPF port");

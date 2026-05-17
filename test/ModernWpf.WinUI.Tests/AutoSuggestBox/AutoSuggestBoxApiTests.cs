@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Windows;
+using System.Windows.Automation.Peers;
+using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf;
@@ -33,6 +36,9 @@ public class AutoSuggestBoxApiTests
             Assert.AreEqual(VerticalAlignment.Stretch, autoSuggestBox.VerticalContentAlignment);
             Assert.AreEqual(HorizontalAlignment.Stretch, autoSuggestBox.HorizontalContentAlignment);
             Assert.IsNotNull(autoSuggestBox.TextBoxStyle);
+            Assert.IsTrue(autoSuggestBox.AutoMaximizeSuggestionArea);
+            Assert.AreEqual(LightDismissOverlayMode.Auto, autoSuggestBox.LightDismissOverlayMode);
+            Assert.AreEqual(ControlHeaderPlacement.Top, autoSuggestBox.HeaderPlacement);
 
             var textBox = FindTemplateChild<TextBox>(autoSuggestBox, "TextBox");
             Assert.AreSame(autoSuggestBox.TextBoxStyle, textBox.Style);
@@ -49,6 +55,94 @@ public class AutoSuggestBoxApiTests
             AssertThemeResourceValue("Light", "AutoSuggestBoxIconFontSize", 12d);
             AssertThemeResourceValue("Dark", "AutoSuggestBoxIconFontSize", 12d);
             AssertThemeResourceValue("HighContrast", "AutoSuggestBoxIconFontSize", 12d);
+        });
+    }
+
+    [TestMethod]
+    public void TextChangedArgsUseSourceCounterSemantics()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var autoSuggestBox = new MuxAutoSuggestBox
+            {
+                ItemsSource = new List<string> { "alpha" },
+                Width = 400
+            };
+
+            using var host = new TestWindowHost(autoSuggestBox, width: 460, height: 120);
+            var textBox = FindTemplateChild<TextBox>(autoSuggestBox, "TextBox");
+
+            AutoSuggestBoxTextChangedEventArgs? firstArgs = null;
+            AutoSuggestBoxTextChangedEventArgs? secondArgs = null;
+
+            autoSuggestBox.TextChanged += (_, args) =>
+            {
+                if (firstArgs == null)
+                {
+                    firstArgs = args;
+                }
+                else
+                {
+                    secondArgs = args;
+                }
+            };
+
+            textBox.Text = "a";
+            WaitFor(() => firstArgs != null, "First source-delayed TextChanged event did not fire.");
+            var first = firstArgs!;
+            Assert.AreEqual(AutoSuggestionBoxTextChangeReason.UserInput, first.Reason);
+            Assert.IsTrue(first.CheckCurrent());
+
+            textBox.Text = "ab";
+            WaitFor(() => secondArgs != null, "Second source-delayed TextChanged event did not fire.");
+            var second = secondArgs!;
+            Assert.IsFalse(first.CheckCurrent());
+            Assert.IsTrue(second.CheckCurrent());
+        });
+    }
+
+    [TestMethod]
+    public void AutomationPeerInvokesProgrammaticSubmitQuery()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var autoSuggestBox = new MuxAutoSuggestBox
+            {
+                ItemsSource = new List<string> { "alpha", "beta" },
+                Text = "alpha",
+                Width = 400
+            };
+
+            using var host = new TestWindowHost(autoSuggestBox, width: 460, height: 160);
+            autoSuggestBox.IsSuggestionListOpen = true;
+            FlushLayout(host);
+
+            var suggestionsList = FindTemplateChild<AutoSuggestBoxListView>(autoSuggestBox, "SuggestionsList");
+            suggestionsList.SelectedIndex = 1;
+            FlushLayout(host);
+
+            AutoSuggestBoxQuerySubmittedEventArgs? submitted = null;
+            autoSuggestBox.QuerySubmitted += (_, args) => submitted = args;
+
+            var peer = UIElementAutomationPeer.CreatePeerForElement(autoSuggestBox);
+            Assert.IsNotNull(peer);
+            Assert.AreEqual("AutoSuggestBox", peer!.GetClassName());
+            Assert.AreEqual(AutomationControlType.Group, peer.GetAutomationControlType());
+
+            var invokeProvider = (IInvokeProvider)peer.GetPattern(PatternInterface.Invoke)!;
+            invokeProvider.Invoke();
+            FlushLayout(host);
+
+            Assert.IsNotNull(submitted);
+            var args = submitted!;
+            Assert.AreEqual("beta", args.QueryText);
+            Assert.IsNull(args.ChosenSuggestion);
+            Assert.IsFalse(autoSuggestBox.IsSuggestionListOpen);
+            Assert.AreEqual(-1, suggestionsList.SelectedIndex);
         });
     }
 
@@ -149,6 +243,24 @@ public class AutoSuggestBoxApiTests
         host.UpdateLayout();
         WpfTestHost.DoEvents();
         host.UpdateLayout();
+    }
+
+    private static void WaitFor(Func<bool> predicate, string failureMessage, int timeoutMilliseconds = 1500)
+    {
+        var deadline = Environment.TickCount + timeoutMilliseconds;
+
+        while (Environment.TickCount < deadline)
+        {
+            WpfTestHost.DoEvents();
+            if (predicate())
+            {
+                return;
+            }
+
+            Thread.Sleep(10);
+        }
+
+        Assert.Fail(failureMessage);
     }
 
     private static T FindTemplateChild<T>(Control control, string name)
