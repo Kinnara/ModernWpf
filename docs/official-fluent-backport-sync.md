@@ -462,3 +462,28 @@ Source inspected:
 ### Test Evidence
 
 - `test\ModernWpf.WinUI.Tests\CommonStyles\HyperlinkVisualStateTests.cs` covers the official WPF Fluent Hyperlink setter/trigger shape, removal of the pressed-helper and cursor triggers, removal of the old underline resource, and official theme aliases.
+
+## 2026-05-18 Batch 16
+
+Source inspected:
+
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\GroupItem.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\CollectionViewGroup.xaml`
+
+### Synced Values
+
+| Resource key / style | Official WPF Fluent value | ModernWpf value after sync | Reason |
+| --- | --- | --- | --- |
+| Implicit `GroupItem` style | `{x:Type GroupItem}` style with a `PART_Header` `ContentPresenter` and an `ItemsPresenter` margin of `5,0,0,0` | Same implicit style shape | `GroupItem` is a stock WPF grouping container, so official WPF Fluent is the primary source. |
+| `CollectionViewGroup` data template | `ContentPresenter` binding `Content` to `Name` | Same template included in `Styles\GroupItem.xaml` | Required for grouped headers to display the group name with the official presenter shape. |
+
+### Intentional Differences
+
+| Resource key / style | Official WPF Fluent value | ModernWpf backport value | Reason retained |
+| --- | --- | --- | --- |
+| Source file split | `GroupItem.xaml` and `CollectionViewGroup.xaml` are separate files merged by the platform theme | Both official resources live in `ModernWpf\Styles\GroupItem.xaml` | `GroupItem.xaml` is ModernWpf's existing grouped-view style entry point under `StockControlsResources`; adding a new source file is unnecessary. |
+| `DefaultGroupItemStyle` | No official key | Removed | The old key represented the guessed `ListViewHeaderItem` wrapper style and was not part of official WPF Fluent. |
+
+### Test Evidence
+
+- `test\ModernWpf.WinUI.Tests\CommonStyles\GroupItemVisualStateTests.cs` covers the official WPF Fluent GroupItem style key/template shape, CollectionViewGroup header template, `ItemsPresenter` margin, and deletion of the old `ListViewHeaderItem` wrapper.
