@@ -47,42 +47,137 @@
                             Background="Transparent"
                             Padding="{DynamicResource AppBarButtonInnerBorderMargin}"
                             SnapsToDevicePixels="True">
+                        <VisualStateManager.CustomVisualStateManager>
+                            <ui:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
-                                <VisualState x:Name="FlyoutOpen" />
-                                <VisualState x:Name="TouchPressed" />
-                                <VisualState x:Name="PrimaryPointerOver" />
-                                <VisualState x:Name="PrimaryPressed" />
-                                <VisualState x:Name="SecondaryPointerOver" />
-                                <VisualState x:Name="SecondaryPressed" />
-                                <VisualState x:Name="Checked" />
-                                <VisualState x:Name="CheckedFlyoutOpen" />
-                                <VisualState x:Name="CheckedTouchPressed" />
-                                <VisualState x:Name="CheckedPrimaryPointerOver" />
-                                <VisualState x:Name="CheckedPrimaryPressed" />
-                                <VisualState x:Name="CheckedSecondaryPointerOver" />
-                                <VisualState x:Name="CheckedSecondaryPressed" />
-                                <ui:VisualStateGroupListener.Listener>
-                                    <ui:VisualStateGroupListener x:Name="CommonStatesListener" />
-                                </ui:VisualStateGroupListener.Listener>
+                                <ui:VisualStateEx x:Name="Disabled">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="Border.BorderBrush" Value="{DynamicResource AppBarButtonBorderBrushDisabled}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="FlyoutOpen">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PrimaryBackgroundGrid.Background" Value="{DynamicResource AppBarButtonBackgroundPressed}" />
+                                        <ui:VisualStateSetter Target="SecondaryBackgroundGrid.Background" Value="{DynamicResource AppBarButtonBackgroundPressed}" />
+                                        <ui:VisualStateSetter Target="Border.BorderBrush" Value="{DynamicResource AppBarButtonBorderBrushPressed}" />
+                                        <ui:VisualStateSetter Target="PrimaryButton.Foreground" Value="{DynamicResource AppBarButtonForegroundPressed}" />
+                                        <ui:VisualStateSetter Target="SecondaryButton.Foreground" Value="{DynamicResource AppBarButtonForegroundPressed}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="TouchPressed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PrimaryBackgroundGrid.Background" Value="{DynamicResource AppBarButtonBackgroundPressed}" />
+                                        <ui:VisualStateSetter Target="SecondaryBackgroundGrid.Background" Value="{DynamicResource AppBarButtonBackgroundPressed}" />
+                                        <ui:VisualStateSetter Target="Border.BorderBrush" Value="{DynamicResource AppBarButtonBorderBrushPressed}" />
+                                        <ui:VisualStateSetter Target="PrimaryButton.Foreground" Value="{DynamicResource AppBarButtonForegroundPressed}" />
+                                        <ui:VisualStateSetter Target="SecondaryButton.Foreground" Value="{DynamicResource AppBarButtonForegroundPressed}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="PrimaryPointerOver">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PrimaryBackgroundGrid.Background" Value="{DynamicResource AppBarButtonBackgroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="SecondaryBackgroundGrid.Background" Value="{DynamicResource SplitButtonInAppBarUnfocusedPointerOver}" />
+                                        <ui:VisualStateSetter Target="PrimaryButton.Foreground" Value="{DynamicResource AppBarButtonForegroundPointerOver}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="PrimaryPressed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PrimaryBackgroundGrid.Background" Value="{DynamicResource AppBarButtonBackgroundPressed}" />
+                                        <ui:VisualStateSetter Target="SecondaryBackgroundGrid.Background" Value="{DynamicResource SplitButtonInAppBarUnfocusedPointerOver}" />
+                                        <ui:VisualStateSetter Target="PrimaryButton.Foreground" Value="{DynamicResource AppBarButtonForegroundPressed}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="SecondaryPointerOver">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PrimaryBackgroundGrid.Background" Value="{DynamicResource SplitButtonInAppBarUnfocusedPointerOver}" />
+                                        <ui:VisualStateSetter Target="SecondaryBackgroundGrid.Background" Value="{DynamicResource AppBarButtonBackgroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="SecondaryButton.Foreground" Value="{DynamicResource AppBarButtonForeground}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="SecondaryPressed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PrimaryBackgroundGrid.Background" Value="{DynamicResource SplitButtonInAppBarUnfocusedPointerOver}" />
+                                        <ui:VisualStateSetter Target="SecondaryBackgroundGrid.Background" Value="{DynamicResource AppBarButtonBackgroundPressed}" />
+                                        <ui:VisualStateSetter Target="SecondaryButton.Foreground" Value="{DynamicResource AppBarButtonForegroundPressed}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="Checked">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PrimaryBackgroundGrid.Background" Value="{DynamicResource AppBarToggleButtonBackgroundChecked}" />
+                                        <ui:VisualStateSetter Target="SecondaryBackgroundGrid.Background" Value="{DynamicResource AppBarToggleButtonBackgroundChecked}" />
+                                        <ui:VisualStateSetter Target="Border.BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushChecked}" />
+                                        <ui:VisualStateSetter Target="PrimaryButton.Foreground" Value="{DynamicResource AppBarToggleButtonForegroundChecked}" />
+                                        <ui:VisualStateSetter Target="SecondaryButton.Foreground" Value="{DynamicResource AppBarToggleButtonForegroundChecked}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="CheckedFlyoutOpen">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PrimaryBackgroundGrid.Background" Value="{DynamicResource AppBarToggleButtonBackgroundCheckedPressed}" />
+                                        <ui:VisualStateSetter Target="SecondaryBackgroundGrid.Background" Value="{DynamicResource AppBarToggleButtonBackgroundCheckedPressed}" />
+                                        <ui:VisualStateSetter Target="Border.BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushCheckedPressed}" />
+                                        <ui:VisualStateSetter Target="PrimaryButton.Foreground" Value="{DynamicResource AppBarToggleButtonForegroundCheckedPressed}" />
+                                        <ui:VisualStateSetter Target="SecondaryButton.Foreground" Value="{DynamicResource AppBarToggleButtonForegroundCheckedPressed}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="CheckedTouchPressed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PrimaryBackgroundGrid.Background" Value="{DynamicResource AppBarToggleButtonBackgroundCheckedPressed}" />
+                                        <ui:VisualStateSetter Target="SecondaryBackgroundGrid.Background" Value="{DynamicResource AppBarToggleButtonBackgroundCheckedPressed}" />
+                                        <ui:VisualStateSetter Target="Border.BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushCheckedPressed}" />
+                                        <ui:VisualStateSetter Target="PrimaryButton.Foreground" Value="{DynamicResource AppBarToggleButtonForegroundCheckedPressed}" />
+                                        <ui:VisualStateSetter Target="SecondaryButton.Foreground" Value="{DynamicResource AppBarToggleButtonForegroundCheckedPressed}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="CheckedPrimaryPointerOver">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="Border.BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushChecked}" />
+                                        <ui:VisualStateSetter Target="PrimaryBackgroundGrid.Background" Value="{DynamicResource AppBarToggleButtonBackgroundCheckedPointerOver}" />
+                                        <ui:VisualStateSetter Target="PrimaryButton.Foreground" Value="{DynamicResource AppBarToggleButtonForegroundCheckedPointerOver}" />
+                                        <ui:VisualStateSetter Target="SecondaryBackgroundGrid.Background" Value="{DynamicResource AppBarToggleButtonBackgroundChecked}" />
+                                        <ui:VisualStateSetter Target="SecondaryButton.Foreground" Value="{DynamicResource AppBarToggleButtonForegroundChecked}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="CheckedPrimaryPressed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="Border.BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushChecked}" />
+                                        <ui:VisualStateSetter Target="PrimaryBackgroundGrid.Background" Value="{DynamicResource AppBarToggleButtonBackgroundCheckedPressed}" />
+                                        <ui:VisualStateSetter Target="PrimaryButton.Foreground" Value="{DynamicResource AppBarToggleButtonForegroundCheckedPressed}" />
+                                        <ui:VisualStateSetter Target="SecondaryBackgroundGrid.Background" Value="{DynamicResource AppBarToggleButtonBackgroundChecked}" />
+                                        <ui:VisualStateSetter Target="SecondaryButton.Foreground" Value="{DynamicResource AppBarToggleButtonForegroundChecked}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="CheckedSecondaryPointerOver">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="Border.BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushChecked}" />
+                                        <ui:VisualStateSetter Target="PrimaryBackgroundGrid.Background" Value="{DynamicResource AppBarToggleButtonBackgroundChecked}" />
+                                        <ui:VisualStateSetter Target="PrimaryButton.Foreground" Value="{DynamicResource AppBarToggleButtonForegroundChecked}" />
+                                        <ui:VisualStateSetter Target="SecondaryBackgroundGrid.Background" Value="{DynamicResource AppBarToggleButtonBackgroundCheckedPointerOver}" />
+                                        <ui:VisualStateSetter Target="SecondaryButton.Foreground" Value="{DynamicResource AppBarToggleButtonForegroundCheckedPointerOver}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="CheckedSecondaryPressed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="Border.BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushChecked}" />
+                                        <ui:VisualStateSetter Target="PrimaryBackgroundGrid.Background" Value="{DynamicResource AppBarToggleButtonBackgroundChecked}" />
+                                        <ui:VisualStateSetter Target="PrimaryButton.Foreground" Value="{DynamicResource AppBarToggleButtonForegroundChecked}" />
+                                        <ui:VisualStateSetter Target="SecondaryBackgroundGrid.Background" Value="{DynamicResource AppBarToggleButtonBackgroundCheckedPressed}" />
+                                        <ui:VisualStateSetter Target="SecondaryButton.Foreground" Value="{DynamicResource AppBarToggleButtonForegroundCheckedPressed}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
 
                             <VisualStateGroup x:Name="SecondaryButtonPlacementStates">
                                 <VisualState x:Name="SecondaryButtonRight"/>
 
-                                <VisualState x:Name="SecondaryButtonSpan">
-                                    <VisualState.Storyboard>
-                                        <Storyboard>
-                                            <Int32AnimationUsingKeyFrames Storyboard.TargetName="SecondaryButton" Storyboard.TargetProperty="(Grid.Column)">
-                                                <DiscreteInt32KeyFrame KeyTime="0" Value="0" />
-                                            </Int32AnimationUsingKeyFrames>
-                                            <Int32AnimationUsingKeyFrames Storyboard.TargetName="SecondaryButton" Storyboard.TargetProperty="(Grid.ColumnSpan)">
-                                                <DiscreteInt32KeyFrame KeyTime="0" Value="3" />
-                                            </Int32AnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState.Storyboard>
-                                </VisualState>
+                                <ui:VisualStateEx x:Name="SecondaryButtonSpan">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="SecondaryButton.(Grid.Column)" Value="0" />
+                                        <ui:VisualStateSetter Target="SecondaryButton.(Grid.ColumnSpan)" Value="3" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
 
@@ -107,6 +202,20 @@
                                         <Setter.Value>
                                             <ControlTemplate TargetType="Button">
                                                 <Grid x:Name="RootGrid" Background="Transparent">
+                                                    <VisualStateManager.CustomVisualStateManager>
+                                                        <ui:VisualStateManagerEx />
+                                                    </VisualStateManager.CustomVisualStateManager>
+                                                    <VisualStateManager.VisualStateGroups>
+                                                        <VisualStateGroup x:Name="CommonStates">
+                                                            <VisualState x:Name="Normal" />
+                                                            <ui:VisualStateEx x:Name="Disabled">
+                                                                <ui:VisualStateEx.Setters>
+                                                                    <ui:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource AppBarButtonForegroundDisabled}" />
+                                                                    <ui:VisualStateSetter Target="RootGrid.Background" Value="{DynamicResource AppBarButtonBackgroundDisabled}" />
+                                                                </ui:VisualStateEx.Setters>
+                                                            </ui:VisualStateEx>
+                                                        </VisualStateGroup>
+                                                    </VisualStateManager.VisualStateGroups>
                                                     <ui:ContentPresenterEx
                                                         x:Name="ContentPresenter"
                                                         BorderBrush="{TemplateBinding BorderBrush}"
@@ -124,12 +233,6 @@
                                                         RecognizesAccessKey="True"
                                                         SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                                                 </Grid>
-
-                                                <ControlTemplate.Triggers>
-                                                    <Trigger Property="IsEnabled" Value="False">
-                                                        <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundDisabled}" />
-                                                    </Trigger>
-                                                </ControlTemplate.Triggers>
                                             </ControlTemplate>
                                         </Setter.Value>
                                     </Setter>
@@ -204,104 +307,6 @@
                         </Grid>
                     </Border>
 
-                    <ControlTemplate.Triggers>
-                        <!-- FlyoutOpen -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="FlyoutOpen">
-                            <Setter TargetName="PrimaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarButtonBackgroundPressed}" />
-                            <Setter TargetName="SecondaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarButtonBackgroundPressed}" />
-                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AppBarButtonBorderBrushPressed}" />
-                            <Setter TargetName="PrimaryButton" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPressed}" />
-                            <Setter TargetName="SecondaryButton" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPressed}" />
-                        </Trigger>
-                        <!-- TouchPressed -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="TouchPressed">
-                            <Setter TargetName="PrimaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarButtonBackgroundPressed}" />
-                            <Setter TargetName="SecondaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarButtonBackgroundPressed}" />
-                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AppBarButtonBorderBrushPressed}" />
-                            <Setter TargetName="PrimaryButton" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPressed}" />
-                            <Setter TargetName="SecondaryButton" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPressed}" />
-                        </Trigger>
-                        <!-- PrimaryPointerOver -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="PrimaryPointerOver">
-                            <Setter TargetName="PrimaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarButtonBackgroundPointerOver}" />
-                            <Setter TargetName="SecondaryBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonInAppBarUnfocusedPointerOver}" />
-                            <Setter TargetName="PrimaryButton" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPointerOver}" />
-                        </Trigger>
-                        <!-- PrimaryPressed -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="PrimaryPressed">
-                            <Setter TargetName="PrimaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarButtonBackgroundPressed}" />
-                            <Setter TargetName="SecondaryBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonInAppBarUnfocusedPointerOver}" />
-                            <Setter TargetName="PrimaryButton" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPressed}" />
-                        </Trigger>
-                        <!-- SecondaryPointerOver -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="SecondaryPointerOver">
-                            <Setter TargetName="PrimaryBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonInAppBarUnfocusedPointerOver}" />
-                            <Setter TargetName="SecondaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarButtonBackgroundPointerOver}" />
-                            <Setter TargetName="SecondaryButton" Property="Foreground" Value="{DynamicResource AppBarButtonForeground}" />
-                        </Trigger>
-                        <!-- SecondaryPressed -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="SecondaryPressed">
-                            <Setter TargetName="PrimaryBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonInAppBarUnfocusedPointerOver}" />
-                            <Setter TargetName="SecondaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarButtonBackgroundPressed}" />
-                            <Setter TargetName="SecondaryButton" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPressed}" />
-                        </Trigger>
-                        <!-- Checked -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Checked">
-                            <Setter TargetName="PrimaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarToggleButtonBackgroundChecked}" />
-                            <Setter TargetName="SecondaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarToggleButtonBackgroundChecked}" />
-                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushChecked}" />
-                            <Setter TargetName="PrimaryButton" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundChecked}" />
-                            <Setter TargetName="SecondaryButton" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundChecked}" />
-                        </Trigger>
-                        <!-- CheckedFlyoutOpen -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="CheckedFlyoutOpen">
-                            <Setter TargetName="PrimaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarToggleButtonBackgroundCheckedPressed}" />
-                            <Setter TargetName="SecondaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarToggleButtonBackgroundCheckedPressed}" />
-                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushCheckedPressed}" />
-                            <Setter TargetName="PrimaryButton" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundCheckedPressed}" />
-                            <Setter TargetName="SecondaryButton" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundCheckedPressed}" />
-                        </Trigger>
-                        <!-- CheckedTouchPressed -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="CheckedTouchPressed">
-                            <Setter TargetName="PrimaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarToggleButtonBackgroundCheckedPressed}" />
-                            <Setter TargetName="SecondaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarToggleButtonBackgroundCheckedPressed}" />
-                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushCheckedPressed}" />
-                            <Setter TargetName="PrimaryButton" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundCheckedPressed}" />
-                            <Setter TargetName="SecondaryButton" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundCheckedPressed}" />
-                        </Trigger>
-                        <!-- CheckedPrimaryPointerOver -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="CheckedPrimaryPointerOver">
-                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushChecked}" />
-                            <Setter TargetName="PrimaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarToggleButtonBackgroundCheckedPointerOver}" />
-                            <Setter TargetName="PrimaryButton" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundCheckedPointerOver}" />
-                            <Setter TargetName="SecondaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarToggleButtonBackgroundChecked}" />
-                            <Setter TargetName="SecondaryButton" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundChecked}" />
-                        </Trigger>
-                        <!-- CheckedPrimaryPressed -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="CheckedPrimaryPressed">
-                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushChecked}" />
-                            <Setter TargetName="PrimaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarToggleButtonBackgroundCheckedPressed}" />
-                            <Setter TargetName="PrimaryButton" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundCheckedPressed}" />
-                            <Setter TargetName="SecondaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarToggleButtonBackgroundChecked}" />
-                            <Setter TargetName="SecondaryButton" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundChecked}" />
-                        </Trigger>
-                        <!-- CheckedSecondaryPointerOver -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="CheckedSecondaryPointerOver">
-                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushChecked}" />
-                            <Setter TargetName="PrimaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarToggleButtonBackgroundChecked}" />
-                            <Setter TargetName="PrimaryButton" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundChecked}" />
-                            <Setter TargetName="SecondaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarToggleButtonBackgroundCheckedPointerOver}" />
-                            <Setter TargetName="SecondaryButton" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundCheckedPointerOver}" />
-                        </Trigger>
-                        <!-- CheckedSecondaryPressed -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="CheckedSecondaryPressed">
-                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushChecked}" />
-                            <Setter TargetName="PrimaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarToggleButtonBackgroundChecked}" />
-                            <Setter TargetName="PrimaryButton" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundChecked}" />
-                            <Setter TargetName="SecondaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarToggleButtonBackgroundCheckedPressed}" />
-                            <Setter TargetName="SecondaryButton" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundCheckedPressed}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

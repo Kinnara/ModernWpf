@@ -16,6 +16,7 @@ ModernWpf files:
 - `ModernWpf.Controls\SplitButton\SplitButton.cs`
 - `ModernWpf.Controls\SplitButton\ToggleSplitButton.cs`
 - `ModernWpf.Controls\SplitButton\SplitButton.xaml`
+- `ModernWpf.Controls\CommandBar\CommandBar.xaml`
 - `ModernWpf.Controls\SplitButton\SplitButtonAutomationPeer.cs`
 - `ModernWpf.Controls\SplitButton\ToggleSplitButtonAutomationPeer.cs`
 - `ModernWpf\ThemeResources\Light.xaml`
@@ -32,11 +33,13 @@ ModernWpf files:
 - Pointer-type tracking now distinguishes mouse and WPF touch input so touch/key activation can route through the source `TouchPressed` and `CheckedTouchPressed` states.
 - `SplitButtonAutomationPeer.Invoke` now routes through the owner `SplitButton.Invoke`, which first tries the primary button invoke provider and falls back to the source primary-click path.
 - The default template now uses the WinUI split-border shape: separate `PrimaryButtonBorder` and `SecondaryButtonBorder`, `PrimaryBackgroundGrid` spanning the separator, and source state setter targets for the two borders instead of the old single full-width `Border`.
+- `SplitButtonCommandBarStyle` now carries the source command-bar variant states with `VisualStateEx.Setters` instead of the old `VisualStateGroupListener` plus WPF `ControlTemplate.Triggers` relay.
 - `SplitButtonPadding` and `SplitButtonBorderBrushPressed` now match the WinUI 3 source resource values.
 
 ## WPF Substitutions
 
 - WinUI `Grid` supports `CornerRadius`, `BorderBrush`, and `BorderThickness`; WPF `Grid` does not. ModernWpf uses `GridEx` for the root and split border layers while keeping plain WPF `Grid` for the source background layers.
+- WinUI `SplitButtonCommandBarStyle` uses `Grid` corner-radius bindings for the command-bar background surfaces. ModernWpf keeps WPF `Border` elements with the same source target names so rounded corners and setter targets stay functional.
 - WinUI `AnimatedIcon` uses `AnimatedChevronDownSmallVisualSource`; ModernWpf keeps the existing `FontIconFallback` path because the repo does not carry the WinUI animated visual source.
 - WPF has no direct `AutomationProperties.AccessibilityView=Raw` equivalent, so the template cannot express that source metadata.
 - WPF has no WinUI `VirtualKey.GamepadA` path in this control. Keyboard parity is covered for Space/Enter, `Alt+Down`, and `F4`.
@@ -44,4 +47,4 @@ ModernWpf files:
 
 ## Verification
 
-Focused tests cover default style/resource values, the source split-border template shape, source visual-state setter targets, source flyout placement, and Space/Enter command execution.
+Focused tests cover default style/resource values, the source split-border template shape, source and command-bar visual-state setter targets, source flyout placement, and Space/Enter command execution.

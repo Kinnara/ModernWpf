@@ -1253,12 +1253,44 @@ public class CommandBarApiTests
             host.UpdateLayout();
 
             var primaryButton = FindTemplateChild<Button>(splitButton, "PrimaryButton");
+            var rootGrid = FindTemplateChild<Border>(splitButton, "RootGrid");
+            var primaryBackgroundGrid = FindTemplateChild<Border>(splitButton, "PrimaryBackgroundGrid");
+            var secondaryBackgroundGrid = FindTemplateChild<Border>(splitButton, "SecondaryBackgroundGrid");
             var presenter = VisualTreeTestHelper.FindDescendant<ContentPresenterEx>(primaryButton)
                 ?? throw new AssertFailedException("Expected SplitButtonCommandBarStyle primary button to use ContentPresenterEx.");
 
             Assert.AreEqual("Accept", presenter.Content);
             Assert.AreSame(transitions, presenter.ContentTransitions);
             Assert.AreEqual(splitButton.Foreground, presenter.Foreground);
+            Assert.AreEqual(0, splitButton.Template.Triggers.Count);
+
+            AssertStateSetter(rootGrid, "CommonStates", "Disabled", "Border.BorderBrush");
+            AssertStateSetter(rootGrid, "CommonStates", "FlyoutOpen", "PrimaryBackgroundGrid.Background");
+            AssertStateSetter(rootGrid, "CommonStates", "FlyoutOpen", "Border.BorderBrush");
+            AssertStateSetter(rootGrid, "CommonStates", "TouchPressed", "SecondaryButton.Foreground");
+            AssertStateSetter(rootGrid, "CommonStates", "PrimaryPointerOver", "SecondaryBackgroundGrid.Background");
+            AssertStateSetter(rootGrid, "CommonStates", "PrimaryPressed", "PrimaryButton.Foreground");
+            AssertStateSetter(rootGrid, "CommonStates", "SecondaryPointerOver", "PrimaryBackgroundGrid.Background");
+            AssertStateSetter(rootGrid, "CommonStates", "SecondaryPressed", "SecondaryButton.Foreground");
+            AssertStateSetter(rootGrid, "CommonStates", "Checked", "Border.BorderBrush");
+            AssertStateSetter(rootGrid, "CommonStates", "CheckedFlyoutOpen", "SecondaryBackgroundGrid.Background");
+            AssertStateSetter(rootGrid, "CommonStates", "CheckedTouchPressed", "PrimaryButton.Foreground");
+            AssertStateSetter(rootGrid, "CommonStates", "CheckedPrimaryPointerOver", "SecondaryButton.Foreground");
+            AssertStateSetter(rootGrid, "CommonStates", "CheckedPrimaryPressed", "PrimaryBackgroundGrid.Background");
+            AssertStateSetter(rootGrid, "CommonStates", "CheckedSecondaryPointerOver", "SecondaryBackgroundGrid.Background");
+            AssertStateSetter(rootGrid, "CommonStates", "CheckedSecondaryPressed", "SecondaryButton.Foreground");
+            AssertStateSetter(rootGrid, "SecondaryButtonPlacementStates", "SecondaryButtonSpan", "SecondaryButton.(Grid.Column)");
+            AssertStateSetter(rootGrid, "SecondaryButtonPlacementStates", "SecondaryButtonSpan", "SecondaryButton.(Grid.ColumnSpan)");
+
+            primaryButton.ApplyTemplate();
+            var primaryButtonRoot = primaryButton.Template?.FindName("RootGrid", primaryButton) as FrameworkElement
+                ?? throw new AssertFailedException("Expected SplitButtonCommandBarStyle primary button template root.");
+            AssertStateSetter(primaryButtonRoot, "CommonStates", "Disabled", "ContentPresenter.Foreground");
+            AssertStateSetter(primaryButtonRoot, "CommonStates", "Disabled", "RootGrid.Background");
+
+            Assert.IsTrue(VisualStateManager.GoToState(splitButton, "PrimaryPointerOver", false));
+            Assert.AreSame(splitButton.TryFindResource("AppBarButtonBackgroundPointerOver"), primaryBackgroundGrid.Background);
+            Assert.AreSame(splitButton.TryFindResource("SplitButtonInAppBarUnfocusedPointerOver"), secondaryBackgroundGrid.Background);
         });
     }
 
