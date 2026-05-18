@@ -2,7 +2,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Shapes;
+using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf;
 using ModernWpf.Controls.Primitives;
@@ -15,116 +15,173 @@ namespace ModernWpf.WinUI.Tests.CommonStyles;
 public class ScrollBarVisualStateTests
 {
     [TestMethod]
-    public void VerticalScrollBarConsciousStatesUseVisualStateSetters()
+    public void DefaultScrollBarStyleUsesOfficialWpfFluentSetterAndTriggerShape()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var defaultStyle = (Style)Application.Current.FindResource("DefaultScrollBarStyle");
+            var implicitStyle = (Style)Application.Current.FindResource(typeof(ScrollBar));
+            Assert.AreEqual(typeof(ScrollBar), defaultStyle.TargetType);
+            Assert.AreEqual(typeof(ScrollBar), implicitStyle.TargetType);
+            Assert.AreSame(defaultStyle, implicitStyle.BasedOn);
+
+            var setters = defaultStyle.Setters.OfType<Setter>().ToArray();
+            AssertDynamicResourceSetter(setters, Control.BackgroundProperty, "ScrollBarTrackFill");
+            AssertDynamicResourceSetter(setters, Control.BorderBrushProperty, "ScrollBarTrackStroke");
+            AssertSetter(setters, FrameworkElement.MarginProperty, new Thickness(0));
+            AssertSetter(setters, Control.PaddingProperty, new Thickness(0));
+            AssertSetter(setters, UIElement.SnapsToDevicePixelsProperty, true);
+            AssertSetter(setters, Control.OverridesDefaultStyleProperty, true);
+            AssertNoSetter(setters, ScrollBarHelper.AutoHideProperty);
+            AssertNoSetter(setters, ScrollBarHelper.IndicatorModeProperty);
+            AssertNoSetter(setters, ScrollBarHelper.IsEnabledProperty);
+
+            var orientationTriggers = defaultStyle.Triggers.OfType<Trigger>()
+                .Where(item => item.Property == ScrollBar.OrientationProperty)
+                .ToArray();
+            Assert.AreEqual(2, orientationTriggers.Length);
+
+            AssertOrientationTrigger(
+                orientationTriggers.Single(item => Equals(item.Value, Orientation.Vertical)),
+                width: 12.0,
+                height: double.NaN,
+                templateKey: "VerticalScrollBarTemplate");
+            AssertOrientationTrigger(
+                orientationTriggers.Single(item => Equals(item.Value, Orientation.Horizontal)),
+                width: double.NaN,
+                height: 12.0,
+                templateKey: "HorizontalScrollBarTemplate");
+        });
+    }
+
+    [TestMethod]
+    public void ScrollBarSupportStylesUseOfficialWpfFluentShape()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var lineButtonStyle = (Style)Application.Current.FindResource("ScrollBarLineButtonStyle");
+            var lineButtonSetters = lineButtonStyle.Setters.OfType<Setter>().ToArray();
+            Assert.AreEqual(typeof(RepeatButton), lineButtonStyle.TargetType);
+            AssertDynamicResourceSetter(lineButtonSetters, Control.ForegroundProperty, "ScrollBarButtonArrowForeground");
+            AssertSetter(lineButtonSetters, FrameworkElement.WidthProperty, Application.Current.FindResource("LineButtonWidth"));
+            AssertSetter(lineButtonSetters, FrameworkElement.HeightProperty, Application.Current.FindResource("LineButtonHeight"));
+            AssertSetter(lineButtonSetters, Control.FontSizeProperty, Application.Current.FindResource("ScrollBarButtonArrowIconFontSize"));
+            AssertSetter(lineButtonSetters, UIElement.FocusableProperty, false);
+
+            var pageButtonStyle = (Style)Application.Current.FindResource("ScrollBarPageButtonStyle");
+            var pageButtonSetters = pageButtonStyle.Setters.OfType<Setter>().ToArray();
+            Assert.AreEqual(typeof(RepeatButton), pageButtonStyle.TargetType);
+            AssertSetter(pageButtonSetters, Control.IsTabStopProperty, false);
+            AssertSetter(pageButtonSetters, UIElement.FocusableProperty, false);
+
+            var thumbStyle = (Style)Application.Current.FindResource("ScrollBarThumbStyle");
+            var thumbSetters = thumbStyle.Setters.OfType<Setter>().ToArray();
+            Assert.AreEqual(typeof(Thumb), thumbStyle.TargetType);
+            AssertDynamicResourceSetter(thumbSetters, Control.BackgroundProperty, "ScrollBarThumbFill");
+            AssertSetter(thumbSetters, ControlHelper.CornerRadiusProperty, new CornerRadius(4));
+            AssertNoSetter(thumbSetters, Border.CornerRadiusProperty);
+            AssertSetter(thumbSetters, Control.IsTabStopProperty, false);
+            AssertSetter(thumbSetters, UIElement.FocusableProperty, false);
+        });
+    }
+
+    [TestMethod]
+    public void VerticalScrollBarAppliesOfficialWpfFluentTemplateParts()
     {
         WpfTestHost.Run(() =>
         {
             TestApplication.EnsureInitialized();
 
             var scrollBar = CreateScrollBar(Orientation.Vertical);
-            ScrollBarHelper.SetAutoHide(scrollBar, false);
-
-            using var host = new TestWindowHost(scrollBar, width: 120, height: 180);
-
-            var root = FindTemplatePart<System.Windows.Controls.Border>(scrollBar, "Root");
-            var trackRect = FindTemplatePart<Rectangle>(scrollBar, "VerticalTrackRect");
-            var thumb = FindTemplatePart<Thumb>(scrollBar, "VerticalThumb");
-            var decreaseButton = FindTemplatePart<RepeatButton>(scrollBar, "PART_LineUpButton");
-            var increaseButton = FindTemplatePart<RepeatButton>(scrollBar, "PART_LineDownButton");
-
-            AssertStateSetters(
-                root,
-                "CommonStates",
-                "Disabled",
-                "Root.Background",
-                "Root.BorderBrush",
-                "Root.Opacity",
-                "VerticalTrackRect.Stroke",
-                "VerticalTrackRect.Fill",
-                "PART_LineUpButton.Visibility",
-                "PART_LineDownButton.Visibility");
-
-            AssertExpandedState(root);
-            Assert.AreSame(scrollBar.TryFindResource("ScrollBarBackgroundPointerOver"), root.Background);
-            Assert.AreSame(scrollBar.TryFindResource("ScrollBarBorderBrushPointerOver"), root.BorderBrush);
-            Assert.AreSame(scrollBar.TryFindResource("ScrollBarTrackStrokePointerOver"), trackRect.Stroke);
-            Assert.AreSame(scrollBar.TryFindResource("ScrollBarTrackFillPointerOver"), trackRect.Fill);
-            Assert.AreSame(scrollBar.TryFindResource("ScrollBarThumbBackground"), thumb.Background);
-
-            ScrollBarHelper.SetAutoHide(scrollBar, true);
+            using var host = new TestWindowHost(scrollBar, width: 80, height: 180);
             host.UpdateLayout();
 
-            AssertCollapsedState(root);
-            Assert.AreSame(scrollBar.TryFindResource("ScrollBarPanningThumbBackground"), thumb.Background);
+            Assert.AreEqual(12.0, scrollBar.Width);
+            Assert.AreEqual(double.NaN, scrollBar.Height);
+            Assert.AreSame(scrollBar.TryFindResource("ScrollBarTrackFill"), scrollBar.Background);
+            Assert.AreSame(scrollBar.TryFindResource("ScrollBarTrackStroke"), scrollBar.BorderBrush);
 
-            scrollBar.IsEnabled = false;
-            host.UpdateLayout();
+            var border = FindTemplatePart<Border>(scrollBar, "PART_Border");
+            Assert.AreEqual(12.0, border.Width);
+            Assert.AreEqual(new CornerRadius(6), border.CornerRadius);
 
-            AssertVisualState(root, "CommonStates", "Disabled");
-            Assert.AreSame(scrollBar.TryFindResource("ScrollBarBackgroundDisabled"), root.Background);
-            Assert.AreSame(scrollBar.TryFindResource("ScrollBarBorderBrushDisabled"), root.BorderBrush);
-            Assert.AreEqual(0.5, root.Opacity);
-            Assert.AreSame(scrollBar.TryFindResource("ScrollBarTrackStrokeDisabled"), trackRect.Stroke);
-            Assert.AreSame(scrollBar.TryFindResource("ScrollBarTrackFillDisabled"), trackRect.Fill);
-            Assert.AreEqual(Visibility.Hidden, decreaseButton.Visibility);
-            Assert.AreEqual(Visibility.Hidden, increaseButton.Visibility);
+            Assert.IsNotNull(FindTemplatePart<RepeatButton>(scrollBar, "PART_ButtonScrollUp"));
+            Assert.IsNotNull(FindTemplatePart<RepeatButton>(scrollBar, "PART_ButtonScrollDown"));
+
+            var track = FindTemplatePart<Track>(scrollBar, "PART_Track");
+            Assert.AreEqual(4.0, track.Width);
+            Assert.IsTrue(track.IsDirectionReversed);
+            Assert.AreSame((ControlTemplate)Application.Current.FindResource("VerticalScrollBarTemplate"), scrollBar.Template);
         });
     }
 
     [TestMethod]
-    public void HorizontalScrollBarConsciousStatesUseVisualStateSetters()
+    public void HorizontalScrollBarAppliesOfficialWpfFluentTemplateParts()
     {
         WpfTestHost.Run(() =>
         {
             TestApplication.EnsureInitialized();
 
             var scrollBar = CreateScrollBar(Orientation.Horizontal);
-            ScrollBarHelper.SetAutoHide(scrollBar, false);
-
-            using var host = new TestWindowHost(scrollBar, width: 180, height: 120);
-
-            var root = FindTemplatePart<System.Windows.Controls.Border>(scrollBar, "Root");
-            var trackRect = FindTemplatePart<Rectangle>(scrollBar, "HorizontalTrackRect");
-            var thumb = FindTemplatePart<Thumb>(scrollBar, "HorizontalThumb");
-            var decreaseButton = FindTemplatePart<RepeatButton>(scrollBar, "PART_LineLeftButton");
-            var increaseButton = FindTemplatePart<RepeatButton>(scrollBar, "PART_LineRightButton");
-
-            AssertStateSetters(
-                root,
-                "CommonStates",
-                "Disabled",
-                "Root.Background",
-                "Root.BorderBrush",
-                "Root.Opacity",
-                "HorizontalTrackRect.Stroke",
-                "HorizontalTrackRect.Fill",
-                "PART_LineLeftButton.Visibility",
-                "PART_LineRightButton.Visibility");
-
-            AssertExpandedState(root);
-            Assert.AreSame(scrollBar.TryFindResource("ScrollBarBackgroundPointerOver"), root.Background);
-            Assert.AreSame(scrollBar.TryFindResource("ScrollBarBorderBrushPointerOver"), root.BorderBrush);
-            Assert.AreSame(scrollBar.TryFindResource("ScrollBarTrackStrokePointerOver"), trackRect.Stroke);
-            Assert.AreSame(scrollBar.TryFindResource("ScrollBarTrackFillPointerOver"), trackRect.Fill);
-            Assert.AreSame(scrollBar.TryFindResource("ScrollBarThumbBackground"), thumb.Background);
-
-            ScrollBarHelper.SetAutoHide(scrollBar, true);
+            using var host = new TestWindowHost(scrollBar, width: 180, height: 80);
             host.UpdateLayout();
 
-            AssertCollapsedState(root);
-            Assert.AreSame(scrollBar.TryFindResource("ScrollBarPanningThumbBackground"), thumb.Background);
+            Assert.AreEqual(double.NaN, scrollBar.Width);
+            Assert.AreEqual(12.0, scrollBar.Height);
 
-            scrollBar.IsEnabled = false;
-            host.UpdateLayout();
+            var border = FindTemplatePart<Border>(scrollBar, "PART_Border");
+            Assert.AreEqual(12.0, border.Height);
+            Assert.AreEqual(new CornerRadius(6), border.CornerRadius);
 
-            AssertVisualState(root, "CommonStates", "Disabled");
-            Assert.AreSame(scrollBar.TryFindResource("ScrollBarBackgroundDisabled"), root.Background);
-            Assert.AreSame(scrollBar.TryFindResource("ScrollBarBorderBrushDisabled"), root.BorderBrush);
-            Assert.AreEqual(0.5, root.Opacity);
-            Assert.AreSame(scrollBar.TryFindResource("ScrollBarTrackStrokeDisabled"), trackRect.Stroke);
-            Assert.AreSame(scrollBar.TryFindResource("ScrollBarTrackFillDisabled"), trackRect.Fill);
-            Assert.AreEqual(Visibility.Hidden, decreaseButton.Visibility);
-            Assert.AreEqual(Visibility.Hidden, increaseButton.Visibility);
+            Assert.IsNotNull(FindTemplatePart<RepeatButton>(scrollBar, "PART_ButtonScrollLeft"));
+            Assert.IsNotNull(FindTemplatePart<RepeatButton>(scrollBar, "PART_ButtonScrollRight"));
+
+            var track = FindTemplatePart<Track>(scrollBar, "PART_Track");
+            Assert.AreEqual(4.0, track.Height);
+            Assert.IsFalse(track.IsDirectionReversed);
+            Assert.AreSame((ControlTemplate)Application.Current.FindResource("HorizontalScrollBarTemplate"), scrollBar.Template);
+        });
+    }
+
+    [TestMethod]
+    public void ScrollBarDeletesModernWpfAutoHideTemplateGuesses()
+    {
+        var repoRoot = FindRepoRoot();
+        var text = System.IO.File.ReadAllText(System.IO.Path.Combine(repoRoot, "ModernWpf", "Styles", "ScrollBar.xaml"));
+
+        Assert.IsFalse(text.Contains("VisualStateEx", System.StringComparison.Ordinal));
+        Assert.IsFalse(text.Contains("VisualStateManagerEx", System.StringComparison.Ordinal));
+        Assert.IsFalse(text.Contains("ScrollBarHelper", System.StringComparison.Ordinal));
+        Assert.IsFalse(text.Contains("AutoHideScrollBars", System.StringComparison.Ordinal));
+        Assert.IsFalse(text.Contains("PanningThumb", System.StringComparison.Ordinal));
+        Assert.IsFalse(text.Contains("RepeatButtonTransparent", System.StringComparison.Ordinal));
+        Assert.IsFalse(text.Contains("CornerRadiusFilterConverter", System.StringComparison.Ordinal));
+        Assert.IsFalse(text.Contains("FontIconFallback", System.StringComparison.Ordinal));
+        Assert.IsFalse(text.Contains("Border.CornerRadius", System.StringComparison.Ordinal));
+    }
+
+    [TestMethod]
+    public void ThemeDictionariesExposeOfficialScrollBarAliases()
+    {
+        WpfTestHost.Run(() =>
+        {
+            foreach (var themeName in new[] { "Light", "Dark" })
+            {
+                AssertThemeResourceReference(themeName, "ScrollBarButtonBackground", "SubtleFillColorTransparentBrush");
+                AssertThemeResourceReference(themeName, "ScrollBarButtonBackgroundPointerOver", "SubtleFillColorSecondaryBrush");
+                AssertThemeResourceReference(themeName, "ScrollBarThumbFill", "ControlStrongFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "ScrollBarTrackFill", "AcrylicInAppFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "ScrollBarTrackStroke", "AcrylicInAppFillColorDefaultBrush");
+            }
+
+            AssertThemeResourceReference("HighContrast", "ScrollBarButtonBackground", "SystemControlTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "ScrollBarThumbFill", "SystemControlForegroundChromeDisabledLowBrush");
+            AssertThemeResourceReference("HighContrast", "ScrollBarTrackFill", "SystemControlPageBackgroundChromeLowBrush");
+            AssertThemeResourceReference("HighContrast", "ScrollBarTrackStroke", "SystemControlForegroundTransparentBrush");
         });
     }
 
@@ -139,61 +196,64 @@ public class ScrollBarVisualStateTests
         };
     }
 
-    private static void AssertExpandedState(FrameworkElement stateGroupsRoot)
+    private static void AssertOrientationTrigger(Trigger trigger, object width, object height, object templateKey)
     {
-        string stateName = GetConsciousStateName(stateGroupsRoot);
-        Assert.IsTrue(
-            stateName == "Expanded" || stateName == "ExpandedWithoutAnimation",
-            $"Expected expanded ScrollBar conscious state, got '{stateName}'.");
+        var setters = trigger.Setters.OfType<Setter>().ToArray();
+        AssertSetter(setters, FrameworkElement.WidthProperty, width);
+        AssertSetter(setters, FrameworkElement.HeightProperty, height);
+
+        var templateSetter = setters.Single(item => item.Property == Control.TemplateProperty);
+        Assert.AreSame(Application.Current.FindResource(templateKey), templateSetter.Value);
     }
 
-    private static void AssertCollapsedState(FrameworkElement stateGroupsRoot)
+    private static void AssertSetter(Setter[] setters, DependencyProperty property, object value)
     {
-        string stateName = GetConsciousStateName(stateGroupsRoot);
-        Assert.IsTrue(
-            stateName == "Collapsed" || stateName == "CollapsedWithoutAnimation",
-            $"Expected collapsed ScrollBar conscious state, got '{stateName}'.");
+        var setter = setters.Single(item => item.Property == property);
+        Assert.AreEqual(value, setter.Value);
     }
 
-    private static string GetConsciousStateName(FrameworkElement stateGroupsRoot)
+    private static void AssertNoSetter(Setter[] setters, DependencyProperty property)
     {
-        var consciousStates = FindVisualStateGroup(stateGroupsRoot, "ConsciousStates");
-        Assert.IsNotNull(consciousStates.CurrentState);
-        return consciousStates.CurrentState.Name;
+        Assert.IsFalse(setters.Any(item => item.Property == property), $"Unexpected setter for {property.Name}.");
     }
 
-    private static void AssertVisualState(FrameworkElement stateGroupsRoot, string groupName, string expectedStateName)
+    private static void AssertDynamicResourceSetter(Setter[] setters, DependencyProperty property, object resourceKey)
     {
-        Assert.AreEqual(expectedStateName, FindVisualStateGroup(stateGroupsRoot, groupName).CurrentState?.Name);
-    }
-
-    private static void AssertStateSetters(FrameworkElement stateGroupsRoot, string groupName, string stateName, params string[] expectedTargets)
-    {
-        var group = FindVisualStateGroup(stateGroupsRoot, groupName);
-        var state = group.States.OfType<VisualStateEx>().Single(item => item.Name == stateName);
-        var actualTargets = state.Setters
-            .Select(setter => string.IsNullOrEmpty(setter.Target) ? setter.Property : setter.Target)
-            .ToArray();
-
-        CollectionAssert.IsSubsetOf(expectedTargets, actualTargets);
-    }
-
-    private static VisualStateGroup FindVisualStateGroup(FrameworkElement stateGroupsRoot, string groupName)
-    {
-        return VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
-            .OfType<VisualStateGroup>()
-            .Single(group => group.Name == groupName);
+        var setter = setters.Single(item => item.Property == property);
+        Assert.IsInstanceOfType(setter.Value, typeof(DynamicResourceExtension));
+        var dynamicResource = (DynamicResourceExtension)setter.Value;
+        Assert.AreEqual(resourceKey, dynamicResource.ResourceKey);
     }
 
     private static T FindTemplatePart<T>(ScrollBar scrollBar, string name)
         where T : DependencyObject
     {
-        var part = scrollBar.Template.FindName(name, scrollBar) as T;
-        if (part == null)
+        return scrollBar.Template.FindName(name, scrollBar) as T
+            ?? throw new AssertFailedException($"Expected ScrollBar template part '{name}' to be a {typeof(T).Name}.");
+    }
+
+    private static void AssertThemeResourceReference(string themeName, string key, object expectedResourceKey)
+    {
+        var theme = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(theme.Contains(expectedResourceKey), $"Theme is missing {expectedResourceKey}.");
+        Assert.AreSame(theme[expectedResourceKey], theme[key], key);
+    }
+
+    private static string FindRepoRoot()
+    {
+        var directory = new System.IO.DirectoryInfo(System.AppContext.BaseDirectory);
+
+        while (directory != null)
         {
-            throw new AssertFailedException($"Expected ScrollBar template part '{name}'.");
+            if (System.IO.File.Exists(System.IO.Path.Combine(directory.FullName, "ModernWpf.sln")))
+            {
+                return directory.FullName;
+            }
+
+            directory = directory.Parent;
         }
 
-        return part;
+        Assert.Fail("Could not locate ModernWpf.sln from the test output directory.");
+        return string.Empty;
     }
 }

@@ -613,3 +613,33 @@ Source inspected:
 
 - `test\ModernWpf.WinUI.Tests\CommonStyles\ScrollViewerVisualStateTests.cs` covers the official WPF Fluent stock ScrollViewer setter surface, template parts, deleted default-style guesses, and retained ModernWpf support templates.
 - `test\ModernWpf.WinUI.Tests\TemplateParityTests.cs` classifies `ScrollViewer.xaml` as an official WPF Fluent stock template file that should not use `VisualStateEx`.
+
+## 2026-05-18 Batch 21
+
+Source inspected:
+
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\ScrollBar.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Light.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Dark.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\HC.xaml`
+
+### Synced Values
+
+| Resource key / style | Official WPF Fluent value | ModernWpf value after sync | Reason |
+| --- | --- | --- | --- |
+| `DefaultScrollBarStyle` / implicit stock `ScrollBar` style | Official stock WPF `ScrollBar` style with resource-backed track fill/stroke, `Margin=0`, `Padding=0`, `SnapsToDevicePixels=True`, `OverridesDefaultStyle=True`, and orientation triggers selecting the vertical or horizontal template | Same source shape under the retained `DefaultScrollBarStyle` key | `ScrollBar` is a stock WPF primitive, so official WPF Fluent is the primary source for the stock style. |
+| `VerticalScrollBarTemplate` / `HorizontalScrollBarTemplate` | Official WPF Fluent templates with `PART_Border`, line buttons, `PART_Track`, page buttons, and animated pointer-over expansion | Same source shape | Removes the previous WinUI-derived auto-hide, panning-thumb, `ScrollBarHelper`, and setter-backed visual-state guesses from the stock WPF style. |
+| ScrollBar support styles | Official `ScrollBarLineButtonStyle`, `ScrollBarPageButtonStyle`, and `ScrollBarThumbStyle` | Same source shape with the documented thumb corner-radius property substitution | Keeps the official button/thumb structure and metrics. |
+
+### Intentional Differences
+
+| Resource key / style | Official WPF Fluent value | ModernWpf backport value | Reason retained |
+| --- | --- | --- | --- |
+| `system` namespace assembly | `System.Runtime` | `mscorlib` | Keeps copied glyph/string resources compatible with ModernWpf's older target frameworks. |
+| Thumb corner radius property | `Border.CornerRadius` setter on `Thumb` | `primitives:ControlHelper.CornerRadius` | Older ModernWpf targets do not expose the official source property on `Thumb`; this preserves the existing backport radius bridge. |
+| ScrollBar theme aliases | Dedicated brush resources in official WPF Fluent | Existing ModernWpf aliases remain mapped to ModernWpf Fluent brush tokens | Keeps ModernWpf's theme-resource alias model while exposing the official keys required by the template. |
+
+### Test Evidence
+
+- `test\ModernWpf.WinUI.Tests\CommonStyles\ScrollBarVisualStateTests.cs` covers the official WPF Fluent ScrollBar setter surface, orientation triggers, support styles, template parts, theme aliases, and deletion of ModernWpf-specific template guesses.
+- `test\ModernWpf.WinUI.Tests\TemplateParityTests.cs` classifies `ScrollBar.xaml` as an official WPF Fluent stock template file that should not use `VisualStateEx`.
