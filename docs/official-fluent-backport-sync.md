@@ -668,7 +668,7 @@ Source inspected:
 | Text-entry corner radius property | `Border.CornerRadius` setters and template bindings | `primitives:ControlHelper.CornerRadius` | Older ModernWpf targets do not expose the official source property on these controls; this preserves the existing backport radius bridge. |
 | `TextBox` clear-button command | `TemplateButtonCommand` | `TextBoxHelper.IsDeleteButton` | Older target frameworks do not expose the official platform command property; the substitution keeps the official button shape and clear behavior. |
 | `TextBox` validation chrome | Official `DefaultTextBoxInvalidationStyle` | Existing `TextControlValidationErrorTemplate` plus `ValidationHelper.IsTemplateValidationAdornerSite` | Keeps ModernWpf's existing validation adorner routing. |
-| `DataGridTextBoxStyle` | No official `TextBox.xaml` equivalent | Retained as a support style based on `DefaultTextBoxStyle` | Existing `DataGrid` text and hyperlink columns still reference this editing-element style. |
+| `DataGridTextBoxStyle` | No official `TextBox.xaml` equivalent | Retained as a support style based on `DefaultTextBoxStyle` | Kept as a compatibility resource for callers that reference it directly; the stock DataGrid template no longer wires it through `DataGridHelper`. |
 | `TextBoxTopHeaderMargin` / `PasswordBoxTopHeaderMargin` | No official stock template use | Retained as unused public aliases | Avoids unnecessary resource-surface churn while the official templates no longer consume header presenter resources. |
 
 ### Test Evidence
@@ -841,7 +841,7 @@ Source inspected:
 | --- | --- | --- | --- |
 | `system` namespace assembly | `System.Runtime` in `ComboBox.xaml` | `mscorlib` | Keeps copied resources compatible with ModernWpf's older target frameworks. |
 | ComboBox corner radius property | Official `Border.CornerRadius` attached setter/template binding | `primitives:ControlHelper.CornerRadius` | Older ModernWpf targets do not expose the official attached property surface. |
-| DataGrid ComboBox adapter styles | No equivalent in official `ComboBox.xaml` | `DataGridComboBoxStyle` and `DataGridTextBlockComboBoxStyle` retained as WPF adapters based on `DefaultComboBoxStyle` | Existing ModernWpf DataGrid resources still reference these keys; the adapter templates use plain WPF presenters so `ComboBox.xaml` remains official-Fluent-shaped. |
+| DataGrid ComboBox adapter styles | No equivalent in official `ComboBox.xaml` | `DataGridComboBoxStyle` and `DataGridTextBlockComboBoxStyle` retained as WPF adapter resources based on `DefaultComboBoxStyle` | Kept as compatibility resources for callers that reference them directly; the stock DataGrid template now follows official WPF Fluent and no longer wires them through `DataGridHelper`. |
 | Historical ComboBox resource aliases | Some are not consumed by official WPF Fluent `ComboBox.xaml` | Retained as unused public aliases | Avoids unnecessary resource-surface churn while the active stock ComboBox consumes official keys. |
 
 ### Test Evidence
@@ -881,3 +881,39 @@ Source inspected:
 - `test\ModernWpf.WinUI.Tests\TabView\TabViewResourceTests.cs` covers the official WPF Fluent TabControl resource keys, theme aliases, selected TabItem trigger behavior, WPF presenter slots, and deletion of old sizing/helper assumptions.
 - `test\ModernWpf.WinUI.Tests\LayoutCompatibility\LayoutCompatibilityApiTests.cs` covers the official WPF TabControl and TabItem presenter shape.
 - `test\ModernWpf.WinUI.Tests\TemplateParityTests.cs` classifies `TabControl.xaml` as an official WPF Fluent stock template file that should not use `VisualStateEx` or `ContentPresenterEx`.
+
+## 2026-05-18 Batch 29
+
+Source inspected:
+
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\DataGrid.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Controls\FallbackBrushConverter.cs`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Light.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Dark.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\HC.xaml`
+
+### Synced Values
+
+| Resource key / style | Official WPF Fluent value | ModernWpf value after sync | Reason |
+| --- | --- | --- | --- |
+| `DefaultDataGridCellStyle`, `DefaultDataGridRowStyle`, `DefaultDataGridRowHeaderStyle` | Official stock WPF DataGrid row/cell/header templates with WPF presenters, validation hooks, row details, and row-header grippers | Same source shape with older-target namespace substitution | `DataGrid` is a stock WPF control, so official WPF Fluent is the primary source. |
+| `DefaultDataGridColumnHeaderStyle`, `DefaultDataGridColumnHeadersPresenterStyle`, `DefaultDataGridCellsPresenterStyle` | Official column header templates, sort indicator glyphs, filler header, grippers, and header state triggers | Same source shape | Deletes the previous ModernWpf column-header `ContentPresenterEx` / `FontIconFallback` guess. |
+| `DefaultDataGridColumnFloatingHeaderStyle`, `DefaultDataGridHeaderDropSeparatorStyle`, `DefaultDragIndicatorStyleStyle` | Official drag indicator and drop separator styles | Same source shape | Restores official column reordering resources. |
+| `DefaultDataGridStyle` / implicit stock `DataGrid` style | Official style setters, row/cell/header style wiring, scroll-viewer template, select-all button, and grouping trigger | Same source shape with `ControlHelper.CornerRadius` substitution | Deletes the old `DataGridHelper` and `DataGridRowHelper` wiring. |
+| `DataGridCheckBoxElementDefaultStyle`, `DataGridCheckBoxEditingElementDefaultStyle` | Official stock DataGrid CheckBox element/editing styles | Same source shape with `ControlHelper.CornerRadius` substitution | Replaces the old helper-driven CheckBox-column styling path for stock DataGrid. |
+| DataGrid theme aliases | Official `DataGridHeader*`, `DataGridColumnHeader*`, `DataGridColumnFloatingHeaderBorderBrush`, `DataGridHeaderDropSeparatorBackground`, and selected-row theme brushes | Added across Light, Dark, and HighContrast dictionaries | Required by the copied official templates. |
+
+### Intentional Differences
+
+| Resource key / style | Official WPF Fluent value | ModernWpf backport value | Reason retained |
+| --- | --- | --- | --- |
+| `system` namespace assembly | `System.Runtime` in `DataGrid.xaml` | `mscorlib` | Keeps copied resources compatible with ModernWpf's older target frameworks. |
+| DataGrid and DataGrid CheckBox corner radius property | Official `Border.CornerRadius` attached setter/template binding | `primitives:ControlHelper.CornerRadius` | Older ModernWpf targets do not expose the official attached property surface. |
+| `FallbackBrushConverter` namespace | `Fluent.Controls.FallbackBrushConverter` | `ModernWpf.Controls.Primitives.FallbackBrushConverter` | Keeps the copied style self-contained inside ModernWpf. |
+| DataGrid adapter styles in `TextBox.xaml`, `ComboBox.xaml`, and `CheckBox.xaml` | Separate from official `DataGrid.xaml` | Retained as compatibility resources, but no longer wired by `DataGridHelper` | Avoids unrelated resource churn while the active stock DataGrid template follows official WPF Fluent. |
+
+### Test Evidence
+
+- `test\ModernWpf.WinUI.Tests\CommonStyles\DataGridVisualStateTests.cs` covers the official WPF Fluent DataGrid style keys, converter, theme aliases, WPF presenter slots, and deletion of the old helper/template branches.
+- `test\ModernWpf.WinUI.Tests\LayoutCompatibility\LayoutCompatibilityApiTests.cs` covers the official WPF DataGrid cell/header presenter shape.
+- `test\ModernWpf.WinUI.Tests\TemplateParityTests.cs` classifies `DataGrid.xaml` as an official WPF Fluent stock template file that should not use `VisualStateEx` or `ContentPresenterEx`.

@@ -1012,6 +1012,24 @@
     <SolidColorBrush x:Key="DataGridRowSelectedHoveredUnfocusedBackground" Color="{m:DynamicColor SystemAccentColor}" />
     <SolidColorBrush x:Key="DataGridRowSelectedUnfocusedBackground" Color="{m:DynamicColor SystemAccentColor}" />
     <m:StaticResource x:Key="DataGridRowSelectedForeground" ResourceKey="SystemControlHighlightAltChromeWhiteBrush" />
+    <m:StaticResource x:Key="DataGridColumnFloatingHeaderBorderBrush" ResourceKey="ControlStrongStrokeColorDefaultBrush" />
+    <m:StaticResource x:Key="DataGridHeaderDropSeparatorBackground" ResourceKey="ControlStrongStrokeColorDefaultBrush" />
+    <m:StaticResource x:Key="DataGridHeaderSeparatorBrush" ResourceKey="ControlStrokeColorSecondaryBrush" />
+    <m:StaticResource x:Key="DataGridColumnHeaderForeground" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="DataGridColumnHeaderBackground" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="DataGridHeaderBackground" ResourceKey="SubtleFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="DataGridHeaderBackgroundPointerOver" ResourceKey="SubtleFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="DataGridHeaderBackgroundPressed" ResourceKey="SubtleFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="DataGridHeaderBackgroundDisabled" ResourceKey="SubtleFillColorDisabledBrush" />
+    <m:StaticResource x:Key="DataGridHeaderBackgroundSelected" ResourceKey="SubtleFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="DataGridHeaderBorderBrush" ResourceKey="ControlStrokeColorSecondaryBrush" />
+    <m:StaticResource x:Key="DataGridHeaderBorderBrushPointerOver" ResourceKey="ControlStrokeColorSecondaryBrush" />
+    <m:StaticResource x:Key="DataGridHeaderBorderBrushPressed" ResourceKey="ControlStrokeColorSecondaryBrush" />
+    <m:StaticResource x:Key="DataGridHeaderBorderBrushDisabled" ResourceKey="ControlStrokeColorSecondaryBrush" />
+    <m:StaticResource x:Key="DataGridHeaderBorderBrushSelected" ResourceKey="ControlStrokeColorSecondaryBrush" />
+    <m:StaticResource x:Key="DataGridHeaderForegroundDisabled" ResourceKey="TextFillColorDisabledBrush" />
+    <m:StaticResource x:Key="DataGridRowSelectedBackgroundThemeBrush" ResourceKey="SystemAccentColorLight3Brush" />
+    <m:StaticResource x:Key="DataGridRowSelectedForegroundThemeBrush" ResourceKey="TextOnAccentFillColorPrimaryBrush" />
 
     <Thickness x:Key="DatePickerHeaderThemeMargin">0,0,0,4</Thickness>
     <Thickness x:Key="DateTimeFlyoutBorderThickness">1</Thickness>

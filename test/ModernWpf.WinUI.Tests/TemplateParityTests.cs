@@ -134,6 +134,7 @@ public class TemplateParityTests
             Path.Combine("ModernWpf", "Styles", "Calendar.xaml"),
             Path.Combine("ModernWpf", "Styles", "CheckBox.xaml"),
             Path.Combine("ModernWpf", "Styles", "ComboBox.xaml"),
+            Path.Combine("ModernWpf", "Styles", "DataGrid.xaml"),
             Path.Combine("ModernWpf", "Styles", "DatePicker.xaml"),
             Path.Combine("ModernWpf", "Styles", "Expander.xaml"),
             Path.Combine("ModernWpf", "Styles", "GridSplitter.xaml"),
@@ -276,6 +277,7 @@ public class TemplateParityTests
             Path.Combine("ModernWpf", "Styles", "ListBox.xaml"),
             Path.Combine("ModernWpf", "Styles", "ListBoxItem.xaml"),
             Path.Combine("ModernWpf", "Styles", "ComboBox.xaml"),
+            Path.Combine("ModernWpf", "Styles", "DataGrid.xaml"),
             Path.Combine("ModernWpf", "Styles", "GridView.xaml"),
             Path.Combine("ModernWpf", "Styles", "ListView.xaml"),
             Path.Combine("ModernWpf", "Styles", "ListViewItem.xaml"),
@@ -395,17 +397,18 @@ public class TemplateParityTests
     }
 
     [TestMethod]
-    public void DataGridWpfSpecificPresenterSlotsUseModernPresenterShape()
+    public void DataGridOfficialWpfFluentPresenterSlotsUseWpfPresenterShape()
     {
         var repoRoot = FindRepoRoot();
         var templateFile = Path.Combine(repoRoot, "ModernWpf", "Styles", "DataGrid.xaml");
+        var text = File.ReadAllText(templateFile);
 
-        var offenders = FindPlainContentPresenterElementUses(repoRoot, templateFile)
-            .ToArray();
-
-        Assert.IsFalse(
-            offenders.Any(),
-            "WPF-specific DataGrid template content slots should use ContentPresenterEx for consistent template compatibility. Offenders: " + string.Join("; ", offenders));
+        Assert.IsTrue(text.Contains("<ContentPresenter", StringComparison.Ordinal));
+        Assert.IsFalse(text.Contains("ContentPresenterEx", StringComparison.Ordinal));
+        Assert.IsFalse(text.Contains("FontIconFallback", StringComparison.Ordinal));
+        Assert.IsFalse(text.Contains("DataGridHelper", StringComparison.Ordinal));
+        Assert.IsFalse(text.Contains("DataGridRowHelper", StringComparison.Ordinal));
+        Assert.IsFalse(text.Contains("DataGridCellPresenter", StringComparison.Ordinal));
     }
 
     private static string FindRepoRoot()

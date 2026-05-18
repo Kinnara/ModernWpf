@@ -49,8 +49,8 @@ the stock WPF `TextBox`, `TextBoxBase`, and `PasswordBox` templates.
   `TextBoxHelper.IsDeleteButton` click hook while retaining the official
   template shape and trigger matrix.
 - `DataGridTextBoxStyle` is retained as a ModernWpf support style because the
-  local `DataGrid` text and hyperlink columns still reference it for editing
-  elements.
+  callers that reference it directly; the stock DataGrid template no longer
+  wires it through `DataGridHelper`.
 - `TextBoxTopHeaderMargin` and `PasswordBoxTopHeaderMargin` are retained as
   unused public aliases for existing resource consumers, but the official
   stock templates no longer have header presenters.

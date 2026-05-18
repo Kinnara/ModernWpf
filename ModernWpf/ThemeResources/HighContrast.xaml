@@ -999,6 +999,24 @@
     <SolidColorBrush x:Key="DataGridRowSelectedHoveredUnfocusedBackground" Color="{DynamicResource SystemAccentColor}" />
     <SolidColorBrush x:Key="DataGridRowSelectedUnfocusedBackground" Color="{DynamicResource SystemAccentColor}" />
     <m:StaticResource x:Key="DataGridRowSelectedForeground" ResourceKey="SystemControlHighlightAltChromeWhiteBrush" />
+    <m:StaticResource x:Key="DataGridColumnFloatingHeaderBorderBrush" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="DataGridHeaderDropSeparatorBackground" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="DataGridHeaderSeparatorBrush" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="DataGridColumnHeaderForeground" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="DataGridColumnHeaderBackground" ResourceKey="SystemControlTransparentBrush" />
+    <m:StaticResource x:Key="DataGridHeaderBackground" ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="DataGridHeaderBackgroundPointerOver" ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="DataGridHeaderBackgroundPressed" ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="DataGridHeaderBackgroundDisabled" ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="DataGridHeaderBackgroundSelected" ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="DataGridHeaderBorderBrush" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="DataGridHeaderBorderBrushPointerOver" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="DataGridHeaderBorderBrushPressed" ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="DataGridHeaderBorderBrushDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
+    <m:StaticResource x:Key="DataGridHeaderBorderBrushSelected" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="DataGridHeaderForegroundDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
+    <m:StaticResource x:Key="DataGridRowSelectedBackgroundThemeBrush" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="DataGridRowSelectedForegroundThemeBrush" ResourceKey="SystemColorButtonFaceColorBrush" />
 
     <Thickness x:Key="DatePickerHeaderThemeMargin">0,0,0,4</Thickness>
     <Thickness x:Key="DateTimeFlyoutBorderThickness">1</Thickness>

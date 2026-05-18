@@ -1293,7 +1293,7 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
-    public void DataGridWpfSpecificTemplatesUseModernPresenterSlots()
+    public void DataGridTemplatesUseOfficialWpfPresenterSlots()
     {
         WpfTestHost.Run(() =>
         {
@@ -1301,7 +1301,7 @@ public class LayoutCompatibilityApiTests
 
             var cell = new DataGridCell
             {
-                Style = FindStyleResource("DataGridCellExpanded"),
+                Style = FindStyleResource("DefaultDataGridCellStyle"),
                 Content = "Cell content",
                 Foreground = Brushes.Red
             };
@@ -1317,23 +1317,16 @@ public class LayoutCompatibilityApiTests
                 Content = "Row header",
                 Foreground = Brushes.Green
             };
-            var groupHeader = new ToggleButton
-            {
-                Style = FindStyleResource("DataGridRowGroupHeaderStyle"),
-                Content = "Group header",
-                Foreground = Brushes.Purple
-            };
 
             using var host = new TestWindowHost(new StackPanel
             {
-                Children = { cell, columnHeader, rowHeader, groupHeader }
-            }, width: 360, height: 220);
+                Children = { cell, columnHeader, rowHeader }
+            }, width: 360, height: 180);
             host.UpdateLayout();
 
-            AssertDataGridPresenter(cell, cell.Content, cell.Foreground);
-            AssertDataGridPresenter(columnHeader, columnHeader.Content, columnHeader.Foreground);
-            AssertDataGridPresenter(rowHeader, rowHeader.Content, rowHeader.Foreground);
-            AssertDataGridPresenter(groupHeader, groupHeader.Content, groupHeader.Foreground);
+            AssertDataGridWpfPresenter(cell, cell.Content);
+            AssertDataGridWpfPresenter(columnHeader, columnHeader.Content);
+            AssertDataGridWpfPresenter(rowHeader, rowHeader.Content);
         });
     }
 
@@ -3419,12 +3412,14 @@ public class LayoutCompatibilityApiTests
         Assert.IsNull(FindVisualChild<ContentPresenterEx>(button));
     }
 
-    private static void AssertDataGridPresenter(DependencyObject root, object expectedContent, Brush expectedForeground)
+    private static void AssertDataGridWpfPresenter(DependencyObject root, object expectedContent)
     {
-        var presenter = FindVisualChild<ContentPresenterEx>(root)
-            ?? throw new AssertFailedException($"Expected {root.GetType().Name} template to use ContentPresenterEx.");
+        var presenter = FindVisualChildren<ContentPresenter>(root)
+            .FirstOrDefault(item => Equals(item.Content, expectedContent))
+            ?? throw new AssertFailedException($"Expected {root.GetType().Name} template to use WPF ContentPresenter.");
         Assert.AreEqual(expectedContent, presenter.Content);
-        Assert.AreSame(expectedForeground, presenter.Foreground);
+        Assert.AreEqual(typeof(ContentPresenter), presenter.GetType());
+        Assert.IsNull(FindVisualChild<ContentPresenterEx>(root));
     }
 
     private static ModernVariableSizedWrapGrid CreateVariableSizedWrapGrid(Orientation orientation, int itemCount)
