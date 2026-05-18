@@ -254,6 +254,28 @@ public class LayoutCompatibilityApiTests
             Assert.AreEqual(70, 50 + popupInsets.Left + popupInsets.Right);
             Assert.AreEqual(70, 50 + popupInsets.Top + popupInsets.Bottom);
 
+            // WinUI source:
+            // Foundation_Graphics_ThemeShadowTests_ThemeShadowDropShadowWindowedPopup125.Shadow.master.xml
+            // has a 50.4x50.4 DIP popup caster at 125% scale and a 82.4x82.4 DIP
+            // DropShadowVisual sprite. In pixels, that maps to a 103x103 bitmap with
+            // 20px/10px content offsets and 63x63px content bounds.
+            var popup125Z32 = ThemeShadowChrome.ThemeShadowRenderer.GetRenderMetrics(
+                new Size(50.4, 50.4),
+                new CornerRadius(),
+                32,
+                ElementTheme.Light,
+                new DpiScale(1.25, 1.25));
+            AssertWinUIMockDCompShadowGeometry(
+                popup125Z32,
+                bitmapWidth: 103,
+                bitmapHeight: 103,
+                contentLeft: 20,
+                contentTop: 10,
+                contentWidth: 63,
+                contentHeight: 63);
+            Assert.AreEqual(82.4, popup125Z32.BitmapWidth / 1.25, 0.001);
+            Assert.AreEqual(82.4, popup125Z32.BitmapHeight / 1.25, 0.001);
+
             // WinUI source pixel masters:
             // Foundation_Graphics_ThemeShadowTests_ThemeShadowDropShadowSystemThemeRedrawRTB.Light.1.master.png
             // Foundation_Graphics_ThemeShadowTests_ThemeShadowDropShadowSystemThemeRedrawRTB.Dark.1.master.png

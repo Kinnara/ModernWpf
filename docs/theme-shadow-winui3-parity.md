@@ -79,6 +79,7 @@ The WinUI source tree includes MockDComp visual-tree masters for `ThemeShadowTes
 | `Foundation_Graphics_ThemeShadowTests_ThemeShadowBasicDropShadow.master.xml` | `100x100` caster, `Translation.Z=32` | `132x132` | `-16,-8` | `132x132` bitmap, content offset `16,8` |
 | `Foundation_Graphics_ThemeShadowTests_ThemeShadowDropShadowDynamicCornerRadius.4_CR.master.xml` | same caster with `RadiusX=4`, `RadiusY=4` | `132x132` | `-16,-8` | same outer bitmap and offset; WPF uses a direct rounded mask instead of WinUI's adjusted `NineGridBrush` insets |
 | `Foundation_Graphics_ThemeShadowTests_ThemeShadowDropShadowWindowedPopup.Shadow.master.xml` | `50x50` windowed popup caster, `Translation.Z=32`, `200%` scale | `82x82` | `-16,-8` | `82x82` bitmap, content offset `16,8`; source medium popup insets produce `70x70` DIP popup bounds |
+| `Foundation_Graphics_ThemeShadowTests_ThemeShadowDropShadowWindowedPopup125.Shadow.master.xml` | `50.4x50.4` windowed popup caster, `Translation.Z=32`, `125%` scale | `82.4x82.4` | `-16,-8` | `103x103` bitmap at 125% scale, content offset `20,10`, content size `63x63` pixels |
 
 WinUI also has pixel masters for `ThemeShadowDropShadowSystemThemeRedrawRTB`, rendering a `50x50` rounded caster at `Canvas.Left=25`, `Canvas.Top=25`, and `Translation.Z=32` into a `100x100` white `RenderTargetBitmap`. The WPF renderer is not pixel-identical, but after clearing the hollow center it tracks the source output closely enough to use as a bounded regression check:
 
