@@ -42,6 +42,7 @@ ModernWpf files:
 ## Ported Source Shape
 
 - The existing Repeater files are already Microsoft source-derived rather than a disposable WPF wrapper. This slice does not preserve old guessed behavior; it reclassifies the family against WinUI 3 source and ports the remaining concrete source delta found during the audit.
+- `ModernWpf.Controls\Repeater\GlobalSuppressions.cs` now uses explicit source-parity justifications instead of stale `<Pending>` analyzer suppressions. The suppressions preserve source-shaped field names, method signatures, animation hooks, viewport hooks, and WPF substitute signatures that would otherwise be mechanically renamed or deleted by style analyzers.
 - `ItemsRepeater` owns the source-shaped `AnimationManager`, `ViewManager`, viewport manager, layout context, element mapping, recycle/pin flow, item-template wrapping, and layout replacement hooks.
 - `ViewportManagerDownLevel` exposes the source `GetLayoutExtent` hook used by `ItemsRepeater` measure-cycle protection.
 - `ItemsRepeater.MeasureOverride` now follows WinUI 3's `StackLayout` cycle guard: after 60 consecutive `StackLayout` measure passes without layout settling, it shortcuts to the last layout extent instead of re-entering layout indefinitely.
@@ -55,3 +56,7 @@ ModernWpf files:
 - WinUI's invalid-rect sentinel is `{-1,-1,-1,-1}`. WPF `Rect` cannot represent a negative width/height sentinel, so ModernWpf keeps `Rect.Empty` as the WPF invalid-arrange substitute.
 - WinUI resets default layout state lazily from `OnLayoutUpdated`. ModernWpf eagerly installs and initializes the default `StackLayout` in the constructor, so the WPF `LayoutUpdated` substitute only resets the source measure-cycle counter.
 - WinUI automation and visual/TestUI coverage remains platform-owned. ModernWpf tests the WPF-feasible API, layout, element mapping, recycle, selection, item-template, and scroll-host behavior.
+
+## Regression Guards
+
+- `test\ModernWpf.WinUI.Tests\Repeater\RepeaterSourceAuditTests.cs` verifies that Repeater analyzer suppressions remain explicit, carry source-audit justifications, and do not fall back to `<Pending>` wording.
