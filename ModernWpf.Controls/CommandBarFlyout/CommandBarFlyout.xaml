@@ -878,6 +878,14 @@
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                             </VisualStateGroup>
+                            <VisualStateGroup x:Name="OuterOverflowContentRootShadowStates">
+                                <VisualState x:Name="NoOuterOverflowContentRootShadow" />
+                                <ui:VisualStateEx x:Name="OuterOverflowContentRootShadow">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="OuterOverflowContentRootShadowChrome.IsShadowEnabled" Value="True" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Border
                             x:Name="OuterContentRoot"
@@ -966,65 +974,72 @@
                                     StaysOpen="false"
                                     Focusable="false"
                                     PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}">
-                                    <Border
-                                        x:Name="OuterOverflowContentRoot"
-                                        Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.ExpandedWidth}">
-                                        <Border.Clip>
-                                            <RectangleGeometry
-                                                x:Name="OuterOverflowContentRootClip"
-                                                Rect="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.OverflowContentClipRect}">
-                                                <RectangleGeometry.Transform>
-                                                    <TranslateTransform x:Name="OuterOverflowContentRootClipTransform" />
-                                                </RectangleGeometry.Transform>
-                                            </RectangleGeometry>
-                                        </Border.Clip>
+                                    <ui:ThemeShadowChrome
+                                        x:Name="OuterOverflowContentRootShadowChrome"
+                                        IsShadowEnabled="False"
+                                        WindowedPopupInsetMode="Medium"
+                                        CornerRadius="{Binding ElementName=OuterOverflowContentRoot, Path=CornerRadius}"
+                                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
                                         <Border
-                                            x:Name="OverflowContentRoot"
-                                            HorizontalAlignment="Stretch"
-                                            Background="{TemplateBinding Background}"
-                                            CornerRadius="{Binding ElementName=OuterOverflowContentRoot, Path=CornerRadius}">
+                                            x:Name="OuterOverflowContentRoot"
+                                            Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.ExpandedWidth}">
                                             <Border.Clip>
                                                 <RectangleGeometry
-                                                    x:Name="OverflowContentRootClip"
+                                                    x:Name="OuterOverflowContentRootClip"
                                                     Rect="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.OverflowContentClipRect}">
                                                     <RectangleGeometry.Transform>
-                                                        <!--
-                                                        If you have a value set by a binding and then animate that value,
-                                                        the animation will clear the binding.  Because of that, we need to have
-                                                        two translate transforms - one that we bind to a property,
-                                                        and another that we can animate.
-                                                        -->
-                                                        <TransformGroup>
-                                                            <TranslateTransform X="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.WidthExpansionDelta}" />
-                                                            <TranslateTransform x:Name="OverflowContentRootClipTransform" />
-                                                        </TransformGroup>
+                                                        <TranslateTransform x:Name="OuterOverflowContentRootClipTransform" />
                                                     </RectangleGeometry.Transform>
                                                 </RectangleGeometry>
                                             </Border.Clip>
-                                            <Grid>
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="Auto" />
-                                                    <RowDefinition />
-                                                    <RowDefinition Height="Auto" />
-                                                </Grid.RowDefinitions>
-                                                <primitives:CommandBarOverflowPresenter
-                                                    Grid.Row="1"
-                                                    x:Name="SecondaryItemsControl"
-                                                    Style="{TemplateBinding OverflowPresenterStyle}"
-                                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                                    BorderThickness="{DynamicResource CommandBarFlyoutBorderThemeThickness}"
-                                                    IsTabStop="False">
-                                                    <primitives:CommandBarFlyoutOverflowPanel
-                                                        x:Name="SecondaryItemsPanel"
-                                                        Focusable="False"
-                                                        FocusVisualStyle="{x:Null}"
-                                                        KeyboardNavigation.TabNavigation="Once"
-                                                        KeyboardNavigation.DirectionalNavigation="Cycle"
-                                                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                                                </primitives:CommandBarOverflowPresenter>
-                                            </Grid>
+                                            <Border
+                                                x:Name="OverflowContentRoot"
+                                                HorizontalAlignment="Stretch"
+                                                Background="{TemplateBinding Background}"
+                                                CornerRadius="{Binding ElementName=OuterOverflowContentRoot, Path=CornerRadius}">
+                                                <Border.Clip>
+                                                    <RectangleGeometry
+                                                        x:Name="OverflowContentRootClip"
+                                                        Rect="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.OverflowContentClipRect}">
+                                                        <RectangleGeometry.Transform>
+                                                            <!--
+                                                            If you have a value set by a binding and then animate that value,
+                                                            the animation will clear the binding.  Because of that, we need to have
+                                                            two translate transforms - one that we bind to a property,
+                                                            and another that we can animate.
+                                                            -->
+                                                            <TransformGroup>
+                                                                <TranslateTransform X="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.WidthExpansionDelta}" />
+                                                                <TranslateTransform x:Name="OverflowContentRootClipTransform" />
+                                                            </TransformGroup>
+                                                        </RectangleGeometry.Transform>
+                                                    </RectangleGeometry>
+                                                </Border.Clip>
+                                                <Grid>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition />
+                                                        <RowDefinition Height="Auto" />
+                                                    </Grid.RowDefinitions>
+                                                    <primitives:CommandBarOverflowPresenter
+                                                        Grid.Row="1"
+                                                        x:Name="SecondaryItemsControl"
+                                                        Style="{TemplateBinding OverflowPresenterStyle}"
+                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                        BorderThickness="{DynamicResource CommandBarFlyoutBorderThemeThickness}"
+                                                        IsTabStop="False">
+                                                        <primitives:CommandBarFlyoutOverflowPanel
+                                                            x:Name="SecondaryItemsPanel"
+                                                            Focusable="False"
+                                                            FocusVisualStyle="{x:Null}"
+                                                            KeyboardNavigation.TabNavigation="Once"
+                                                            KeyboardNavigation.DirectionalNavigation="Cycle"
+                                                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                                    </primitives:CommandBarOverflowPresenter>
+                                                </Grid>
+                                            </Border>
                                         </Border>
-                                    </Border>
+                                    </ui:ThemeShadowChrome>
                                 </ui:PopupEx>
                             </Grid>
                         </Border>

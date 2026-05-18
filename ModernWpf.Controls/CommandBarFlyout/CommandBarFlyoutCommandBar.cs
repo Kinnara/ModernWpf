@@ -572,6 +572,7 @@ namespace ModernWpf.Controls.Primitives
 
         internal void ClearShadow()
         {
+            VisualStateManager.GoToState(this, "NoOuterOverflowContentRootShadow", true);
         }
 
         internal bool IsOverflowPopupOpenDown()
@@ -1133,6 +1134,17 @@ namespace ModernWpf.Controls.Primitives
 
         private void UpdateShadow()
         {
+            if (!IsOpen || !m_secondaryItemsRootSized)
+            {
+                VisualStateManager.GoToState(this, "NoOuterOverflowContentRootShadow", true);
+                return;
+            }
+
+            var shouldUseOverflowShadow = PrimaryCommands.Count == 0 || IsOverflowPopupOpenDown();
+            VisualStateManager.GoToState(
+                this,
+                shouldUseOverflowShadow ? "OuterOverflowContentRootShadow" : "NoOuterOverflowContentRootShadow",
+                true);
         }
 
         private void AttachEventsToSecondaryStoryboards()

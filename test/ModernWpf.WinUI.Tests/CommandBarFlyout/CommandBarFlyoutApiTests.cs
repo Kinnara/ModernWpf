@@ -370,7 +370,12 @@ public class CommandBarFlyoutApiTests
 
                 Assert.IsTrue(presenter.IsDefaultShadowEnabled);
 
-                var chrome = FindDescendant<ThemeShadowChrome>(presenter);
+                if (System.Windows.Media.VisualTreeHelper.GetChild(presenter, 0) is not ThemeShadowChrome chrome)
+                {
+                    Assert.Fail("Expected FlyoutPresenter template root to be ThemeShadowChrome.");
+                    return;
+                }
+
                 Assert.AreEqual(32.0, chrome.Depth);
                 Assert.AreEqual(ThemeShadowChromeWindowedPopupInsetMode.Medium, chrome.WindowedPopupInsetMode);
                 Assert.AreEqual(new Thickness(10, 2, 10, 18), chrome.PopupShadowPadding);
@@ -424,6 +429,25 @@ public class CommandBarFlyoutApiTests
                 var presenter = commandBarFlyout.GetPresenter();
                 Assert.IsNotNull(presenter);
                 Assert.IsFalse(presenter!.IsDefaultShadowEnabled);
+
+                var commandBar = GetCommandBar(commandBarFlyout);
+                commandBar.ApplyTemplate();
+                host.UpdateLayout();
+
+                commandBar.IsOpen = true;
+                host.UpdateLayout();
+                WpfTestHost.DoEvents();
+                host.UpdateLayout();
+
+                var overflowShadow = FindTemplateChild<ThemeShadowChrome>(commandBar, "OuterOverflowContentRootShadowChrome");
+                WaitFor(
+                    () => overflowShadow.IsShadowEnabled,
+                    "CommandBarFlyout overflow shadow did not turn on for the no-primary-command source path.");
+
+                Assert.AreEqual(32.0, overflowShadow.Depth);
+                Assert.AreEqual(ThemeShadowChromeWindowedPopupInsetMode.Medium, overflowShadow.WindowedPopupInsetMode);
+                commandBar.ClearShadow();
+                Assert.IsFalse(overflowShadow.IsShadowEnabled);
             }
             finally
             {
@@ -1442,6 +1466,7 @@ public class CommandBarFlyoutApiTests
         var layoutRoot = FindTemplateChild<System.Windows.Controls.Border>(commandBar, "LayoutRoot");
         var primaryItemsRoot = FindTemplateChild<System.Windows.Controls.Border>(commandBar, "PrimaryItemsRoot");
         var overflowPopup = FindTemplateChild<System.Windows.Controls.Primitives.Popup>(commandBar, "OverflowPopup");
+        var overflowShadow = FindTemplateChild<ThemeShadowChrome>(commandBar, "OuterOverflowContentRootShadowChrome");
         var outerOverflowContentRoot = FindTemplateChild<System.Windows.Controls.Border>(commandBar, "OuterOverflowContentRoot");
         var overflowContentRoot = FindTemplateChild<System.Windows.Controls.Border>(commandBar, "OverflowContentRoot");
         var secondaryItemsControl = FindTemplateChild<CommandBarOverflowPresenter>(commandBar, "SecondaryItemsControl");
@@ -1495,6 +1520,25 @@ public class CommandBarFlyoutApiTests
             "PrimaryItemsRoot.CornerRadius",
             "OuterOverflowContentRoot.CornerRadius",
             "SecondaryItemsControl.CornerRadius");
+        AssertStateSetter(
+            layoutRoot,
+            "OuterOverflowContentRootShadowStates",
+            "OuterOverflowContentRootShadow",
+            "OuterOverflowContentRootShadowChrome.IsShadowEnabled");
+
+        Assert.IsFalse(overflowShadow.IsShadowEnabled);
+        Assert.AreEqual(32.0, overflowShadow.Depth);
+        Assert.AreEqual(ThemeShadowChromeWindowedPopupInsetMode.Medium, overflowShadow.WindowedPopupInsetMode);
+        Assert.AreEqual(new Thickness(10, 2, 10, 18), overflowShadow.PopupShadowPadding);
+        Assert.AreEqual(outerOverflowContentRoot.CornerRadius, overflowShadow.CornerRadius);
+
+        Assert.IsTrue(VisualStateManager.GoToState(commandBar, "OuterOverflowContentRootShadow", false));
+        Assert.IsTrue(overflowShadow.IsShadowEnabled);
+        Assert.IsTrue(VisualStateManager.GoToState(commandBar, "NoOuterOverflowContentRootShadow", false));
+        Assert.IsFalse(overflowShadow.IsShadowEnabled);
+        Assert.IsTrue(VisualStateManager.GoToState(commandBar, "OuterOverflowContentRootShadow", false));
+        commandBar.ClearShadow();
+        Assert.IsFalse(overflowShadow.IsShadowEnabled);
 
         Assert.AreEqual(Visibility.Visible, overflowContentRoot.Visibility);
         Assert.IsTrue(VisualStateManager.GoToState(commandBar, "PrimaryCommandsOnly", false));
