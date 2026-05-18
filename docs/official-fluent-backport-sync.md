@@ -957,3 +957,34 @@ Source inspected:
 
 - `test\ModernWpf.WinUI.Tests\CommonStyles\FoundationNavigationVisualStateTests.cs` covers official foundation/navigation style keys, WPF presenter slots, text-style shape, theme aliases, and source-shape file substitutions.
 - `test\ModernWpf.WinUI.Tests\TemplateParityTests.cs` classifies the new foundation/navigation style files as official WPF Fluent stock template files that should not use `VisualStateEx` or `ContentPresenterEx`.
+
+## 2026-05-18 Batch 31
+
+Source inspected:
+
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\Window.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Light.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Dark.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\HC.xaml`
+
+### Synced Values
+
+| Resource key / style | Official WPF Fluent value | ModernWpf value after sync | Reason |
+| --- | --- | --- | --- |
+| `DefaultWindowStyle.Foreground` | `WindowForeground` | `BaseWindowStyle.Foreground` uses `WindowForeground` | `Window` is a stock WPF control, so the compatible foreground surface should follow official WPF Fluent. |
+| Window fallback background | `WindowBackground` when the official Fluent backdrop is disabled, high contrast is active, or the OS fallback path is used | `BaseWindowStyle.Background` uses `WindowBackground` | ModernWpf does not own official WPF Fluent's platform backdrop implementation, so the fallback resource is the stable WPF substitute. |
+| Window content host | Plain WPF `ContentPresenter` inside `AdornerDecorator` | Same plain WPF `ContentPresenter` inside ModernWpf's custom title-bar layout | Deletes the old `ContentPresenterEx` guess from the stock `Window` content slot. |
+| Resize grip visibility rule | `ResizeMode=CanResizeWithGrip` and `WindowState=Normal` shows `WindowResizeGrip` | Same trigger retained inside the ModernWpf shell template | Preserves source WPF resize-grip behavior while keeping the custom chrome. |
+
+### Intentional Differences
+
+| Resource key / style | Official WPF Fluent value | ModernWpf backport value | Reason retained |
+| --- | --- | --- | --- |
+| Whole `Window.xaml` template | Plain content-window style with optional platform backdrop | ModernWpf custom title-bar/window-chrome style | ModernWpf owns `TitleBarControl`, attached title-bar properties, `WindowChrome`, high-contrast caption border, and `WindowHelper.FixMaximizedWindow`; copying the official file wholesale would remove those public shell features. |
+| Official backdrop guards | `MS.Internal.FrameworkAppContextSwitches.DisableFluentThemeWindowBackdrop` and `Standard.Utility.IsOSWindows11OrNewer` triggers | Not copied; ModernWpf uses `WindowBackground` directly | Those guards are tied to .NET WPF Fluent backdrop internals not present in ModernWpf. |
+| Title-bar back button icon surface | No equivalent in official WPF Fluent `Window.xaml` | `TitleBarBackButtonStyle` still uses `FontIconFallback` | This belongs to ModernWpf's custom title-bar chrome, not the stock content-window presenter slot. |
+
+### Test Evidence
+
+- `test\ModernWpf.WinUI.Tests\CommonStyles\WindowVisualStateTests.cs` covers the official `WindowForeground` / `WindowBackground` resource surface, ModernWpf chrome retention, WPF `ContentPresenter` content host, resize grip, and source-shape substitutions.
+- `test\ModernWpf.WinUI.Tests\TemplateParityTests.cs` no longer classifies `Styles\Window.xaml` as a WinUI presenter template requiring `ContentPresenterEx`.

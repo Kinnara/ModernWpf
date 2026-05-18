@@ -32,6 +32,7 @@ public class SyncMatrixTests
         AssertControlStatus(matrix, "ComboBox", "Official WPF Fluent-backed stock control");
         AssertControlStatus(matrix, "DataGrid", "Official WPF Fluent-backed stock control");
         AssertControlStatus(matrix, "Foundation navigation stock styles", "Official WPF Fluent-backed stock control family");
+        AssertControlStatus(matrix, "Window shell", "Official WPF Fluent-backed shell substitution");
         AssertControlStatus(matrix, "TabView / stock WPF TabControl", "Official WPF Fluent-backed stock control");
         AssertControlStatus(matrix, "AnnotatedScrollBar", "Source-backed WPF port");
         AssertControlStatus(matrix, "RadioButtons", "Source-backed WPF port");

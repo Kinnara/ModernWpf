@@ -67,7 +67,7 @@ the foundation/navigation coverage because it is a generic stock primitive.
 | `System.Runtime` system namespace | `mscorlib` | Keeps copied resources compatible with ModernWpf's older target frameworks. |
 | `Border.CornerRadius` in `Thumb.xaml` | `primitives:ControlHelper.CornerRadius` | Older ModernWpf targets do not expose the official attached property surface. |
 | `TextBlock.xaml` file name | `TextStyles.xaml` | Preserve the existing ModernWpf merge path and public legacy text-style aliases. |
-| Official shell theme resources | Added as Light, Dark, and HighContrast aliases | Required by `Page`, `Frame`, `NavigationWindow`, and future official `Window` style comparisons. |
+| Official shell theme resources | Added as Light, Dark, and HighContrast aliases | Required by `Page`, `Frame`, `NavigationWindow`, and the separate audited `Window` shell substitution. |
 
 ## Intentional Differences
 
@@ -75,8 +75,8 @@ ModernWpf's `Styles\Window.xaml` is not replaced in this slice. The official
 WPF Fluent `Window.xaml` is a plain content-window style with platform backdrop
 guards; ModernWpf's `Window` style owns custom title-bar chrome,
 `WindowChrome`, `TitleBarControl`, and `WindowHelper.FixMaximizedWindow`.
-That is a deliberate ModernWpf shell feature and should be audited separately
-before any replacement attempt.
+That deliberate shell feature is covered separately by
+`docs\window-wpf-fluent-source-audit.md`.
 
 ModernWpf also keeps `HeaderTextBlockStyle` and `SubheaderTextBlockStyle` as
 legacy resource aliases even though official WPF Fluent no longer defines them.

@@ -381,8 +381,7 @@ public class TemplateParityTests
         var sourceBackedTemplateFiles = new[]
         {
             Path.Combine("ModernWpf", "Navigation", "Frame.xaml"),
-            Path.Combine("ModernWpf", "Navigation", "Page.xaml"),
-            Path.Combine("ModernWpf", "Styles", "Window.xaml")
+            Path.Combine("ModernWpf", "Navigation", "Page.xaml")
         };
 
         var offenders = sourceBackedTemplateFiles
