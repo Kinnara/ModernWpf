@@ -28,13 +28,16 @@
         <ResourceDictionary Source="Styles/RichTextBox.xaml" />
         <ResourceDictionary Source="Styles/ScrollBar.xaml" />
         <ResourceDictionary Source="Styles/ScrollViewer.xaml" />
+        <ResourceDictionary Source="Styles/Separator.xaml" />
         <ResourceDictionary Source="Styles/Slider.xaml" />
         <ResourceDictionary Source="Styles/StatusBar.xaml" />
         <ResourceDictionary Source="Styles/TabControl.xaml" />
         <ResourceDictionary Source="Styles/TextBox.xaml" />
         <ResourceDictionary Source="Styles/TextStyles.xaml" />
+        <ResourceDictionary Source="Styles/Thumb.xaml" />
         <ResourceDictionary Source="Styles/ToolTip.xaml" />
         <ResourceDictionary Source="Styles/ToggleButton.xaml" />
+        <ResourceDictionary Source="Styles/ToolBar.xaml" />
         <ResourceDictionary Source="Styles/TreeView.xaml" />
         <ResourceDictionary Source="Styles/Window.xaml" />
     </ResourceDictionary.MergedDictionaries>

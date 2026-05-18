@@ -522,3 +522,38 @@ Source inspected:
 
 - `test\ModernWpf.WinUI.Tests\CommonStyles\MenuFamilyVisualStateTests.cs` covers the official WPF Fluent Menu, ContextMenu, MenuItem, role-template mapping, deleted ModernWpf-specific helper surface, and theme aliases.
 - `test\ModernWpf.WinUI.Tests\TemplateParityTests.cs` classifies the menu-family style files as official WPF Fluent stock templates that should not use `VisualStateEx`.
+
+## 2026-05-18 Batch 18
+
+Source inspected:
+
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\Separator.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\Thumb.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\ToolBar.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Light.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Dark.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\HC.xaml`
+
+### Synced Values
+
+| Resource key / style | Official WPF Fluent value | ModernWpf value after sync | Reason |
+| --- | --- | --- | --- |
+| `DefaultSeparatorStyle` / implicit `Separator` style | Official stock `Separator` style with `SeparatorBorderBrush`, transparent background, `Focusable=false`, `BorderThickness=1,1,0,0`, and WPF `Border` template | Same source shape | `Separator` is a stock WPF control, so official WPF Fluent is the primary source. |
+| `DefaultThumbStyle` / implicit `Thumb` style | Official stock generic `Thumb` style with `ThumbBackground`, disabled `ThumbBackgroundDisabled`, non-focusable/non-tab-stop behavior, and WPF `Border` template | Same source shape with `ControlHelper.CornerRadius` compatibility substitution | `Thumb` is a stock WPF primitive, so official WPF Fluent is the primary source. |
+| `ToolBar` / `ToolBarTray` styles | Official stock `ToolBar` and `ToolBarTray` styles, including toolbar item style keys, toolbar thumb, overflow button, popup, `ToolBarPanel`, and `ToolBarOverflowPanel` | Same source shape, now merged through `StockControlsResources` | `ToolBar` is a stock WPF control, so official WPF Fluent is the primary source. |
+| `ToolBar.ButtonStyleKey`, `ToolBar.ToggleButtonStyleKey`, `ToolBar.CheckBoxStyleKey`, `ToolBar.RadioButtonStyleKey`, `ToolBar.ComboBoxStyleKey`, `ToolBar.MenuStyleKey`, `ToolBar.SeparatorStyleKey`, `ToolBar.TextBoxStyleKey` | Official toolbar item style routing | Same routing | Restores official WPF toolbar child styling instead of relying on platform defaults. |
+| `SeparatorBorderBrush`, `ThumbBackground`, `ThumbBackgroundDisabled`, `MenuBorderColorDefaultBrush` | Official theme concepts for separator stroke, generic thumb chrome, disabled generic thumb chrome, and toolbar overflow border | Same aliases across Light, Dark, and HighContrast through ModernWpf's theme-resource alias model | Required by the official WPF Fluent `Separator`, `Thumb`, and `ToolBar` templates. |
+
+### Intentional Differences
+
+| Resource key / style | Official WPF Fluent value | ModernWpf backport value | Reason retained |
+| --- | --- | --- | --- |
+| `system` namespace assembly | `System.Runtime` | `mscorlib` | Keeps copied glyph/string resources compatible with ModernWpf's older target frameworks. |
+| Thumb corner radius property | `Border.CornerRadius` on `Thumb` | `primitives:ControlHelper.CornerRadius` | Older ModernWpf targets do not expose the official source property on `Thumb`; this preserves the existing backport radius bridge. |
+| ToolBar dependency lookup | Generated monolithic official dictionary resolves sibling style sections | Split `ToolBar.xaml` locally merges its stock style dependencies | WPF `StaticResource` `BasedOn` references in a separately loaded dictionary cannot see sibling merged dictionaries reliably. |
+| `MenuBorderColorDefaultBrush` | Referenced by official `ToolBar.xaml` but absent from the local official resource files as an exact key | Alias to `SurfaceStrokeColorFlyoutBrush` / `SystemColorWindowTextColorBrush` | Avoid unresolved toolbar overflow border resources while preserving the official visual intent. |
+
+### Test Evidence
+
+- `test\ModernWpf.WinUI.Tests\CommonStyles\ToolBarFamilyVisualStateTests.cs` covers the official WPF Fluent Separator, Thumb, ToolBar, toolbar item style keys, theme aliases, and deletion of ModernWpf-specific template guesses.
+- `test\ModernWpf.WinUI.Tests\TemplateParityTests.cs` classifies `Separator.xaml`, `Thumb.xaml`, and `ToolBar.xaml` as official WPF Fluent stock templates that should not use `VisualStateEx`.

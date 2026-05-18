@@ -1174,6 +1174,7 @@
     <m:StaticResource x:Key="ContextMenuForeground" ResourceKey="TextFillColorPrimaryBrush" />
     <m:StaticResource x:Key="FlyoutBackground" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
     <m:StaticResource x:Key="FlyoutBorderBrush" ResourceKey="SurfaceStrokeColorFlyoutBrush" />
+    <m:StaticResource x:Key="MenuBorderColorDefaultBrush" ResourceKey="SurfaceStrokeColorFlyoutBrush" />
     <m:StaticResource x:Key="CheckBoxBackground" ResourceKey="SubtleFillColorTransparentBrush" />
     <m:StaticResource x:Key="CheckBoxBorderBrush" ResourceKey="SubtleFillColorTransparentBrush" />
 
@@ -1627,6 +1628,9 @@
     <m:StaticResource x:Key="SliderHeaderForegroundDisabled" ResourceKey="TextFillColorDisabledBrush" />
     <m:StaticResource x:Key="SliderTickBarFill" ResourceKey="ControlStrongFillColorDefaultBrush" />
     <m:StaticResource x:Key="SliderTickBarFillDisabled" ResourceKey="ControlStrongFillColorDisabledBrush" />
+
+    <!-- Resources for Separator -->
+    <m:StaticResource x:Key="SeparatorBorderBrush" ResourceKey="DividerStrokeColorDefaultBrush" />
     <m:StaticResource x:Key="SliderInlineTickBarFill" ResourceKey="ControlFillColorInputActiveBrush" />
 
     <!-- Resources for SplitButton -->
@@ -1737,7 +1741,8 @@
     <m:StaticResource x:Key="TabViewItemHeaderCloseButtonBorderBrushDisabled"         ResourceKey="SubtleFillColorTransparentBrush" />
 
     <!-- Resources for Thumb -->
-    <m:StaticResource x:Key="ThumbBackground" ResourceKey="SystemControlBackgroundBaseLowBrush" />
+    <m:StaticResource x:Key="ThumbBackground" ResourceKey="ControlStrongFillColorDefaultBrush" />
+    <m:StaticResource x:Key="ThumbBackgroundDisabled" ResourceKey="ControlStrongFillColorDisabledBrush" />
     <m:StaticResource x:Key="ThumbBackgroundPointerOver" ResourceKey="SystemControlHighlightBaseMediumLowBrush" />
     <m:StaticResource x:Key="ThumbBackgroundPressed" ResourceKey="SystemControlHighlightBaseMediumBrush" />
     <m:StaticResource x:Key="ThumbBorderBrush" ResourceKey="SystemControlHighlightTransparentBrush" />

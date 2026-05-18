@@ -1161,6 +1161,7 @@
     <m:StaticResource x:Key="ContextMenuForeground" ResourceKey="SystemColorWindowTextColorBrush" />
     <m:StaticResource x:Key="FlyoutBackground" ResourceKey="SystemColorWindowColorBrush" />
     <m:StaticResource x:Key="FlyoutBorderBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+    <m:StaticResource x:Key="MenuBorderColorDefaultBrush" ResourceKey="SystemColorWindowTextColorBrush" />
     <m:StaticResource x:Key="CheckBoxBackground" ResourceKey="SystemColorWindowColorBrush" />
     <m:StaticResource x:Key="CheckBoxBorderBrush" ResourceKey="SystemColorWindowColorBrush" />
     <m:StaticResource x:Key="MenuBarItemBackground" ResourceKey="SystemControlTransparentBrush" />
@@ -1609,6 +1610,9 @@
     <m:StaticResource x:Key="SliderHeaderForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
     <m:StaticResource x:Key="SliderTickBarFill" ResourceKey="SystemControlForegroundBaseMediumLowBrush" />
     <m:StaticResource x:Key="SliderTickBarFillDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+
+    <!-- Resources for Separator -->
+    <m:StaticResource x:Key="SeparatorBorderBrush" ResourceKey="SystemColorWindowTextColorBrush" />
     <m:StaticResource x:Key="SliderInlineTickBarFill" ResourceKey="SystemControlBackgroundAltHighBrush" />
 
     <!-- Resources for SplitButton -->
@@ -1719,7 +1723,8 @@
     <m:StaticResource x:Key="TabViewItemHeaderCloseButtonBorderBrushDisabled"         ResourceKey="SubtleFillColorTransparentBrush" />
 
     <!-- Resources for Thumb -->
-    <m:StaticResource x:Key="ThumbBackground" ResourceKey="SystemControlBackgroundBaseLowBrush" />
+    <m:StaticResource x:Key="ThumbBackground" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="ThumbBackgroundDisabled" ResourceKey="SystemColorButtonFaceColorBrush" />
     <m:StaticResource x:Key="ThumbBackgroundPointerOver" ResourceKey="SystemControlHighlightBaseMediumLowBrush" />
     <m:StaticResource x:Key="ThumbBackgroundPressed" ResourceKey="SystemControlHighlightBaseMediumBrush" />
     <m:StaticResource x:Key="ThumbBorderBrush" ResourceKey="SystemControlHighlightTransparentBrush" />
