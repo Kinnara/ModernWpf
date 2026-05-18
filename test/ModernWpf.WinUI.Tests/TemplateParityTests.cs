@@ -417,6 +417,67 @@ public class TemplateParityTests
     }
 
     [TestMethod]
+    public void ModernWpfCoreControlSourceCoverageAuditCoversControlsResourcesInventory()
+    {
+        var repoRoot = FindRepoRoot();
+        var controlsResourcesFile = Path.Combine(repoRoot, "ModernWpf", "ModernWpfControlsResources.xaml");
+        var auditFile = Path.Combine(repoRoot, "docs", "modernwpf-core-control-source-coverage.md");
+        var allowedStatuses = new[]
+        {
+            "WinUI 3 source-backed WPF port",
+            "WinUI 3 source-backed WPF family",
+            "WinUI 3 source-backed WPF platform mapping",
+            "Shared WinUI resource compatibility layer"
+        };
+
+        Assert.IsTrue(File.Exists(auditFile), "Missing ModernWpf core control source coverage audit.");
+
+        var expectedResources = XDocument.Load(controlsResourcesFile)
+            .Descendants()
+            .Where(element => element.Name.LocalName == "ResourceDictionary")
+            .Select(element => element.Attribute("Source")?.Value)
+            .Where(source => source != null)
+            .Select(source => source!.StartsWith("/ModernWpf;component/", StringComparison.OrdinalIgnoreCase)
+                ? source.Substring("/ModernWpf;component/".Length)
+                : source)
+            .ToArray();
+
+        var rows = ParseWinUIControlSourceCoverageRows(auditFile);
+        var rowResources = rows.Select(row => row.SourceFile).ToArray();
+        var missing = expectedResources
+            .Except(rowResources, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+        var extra = rowResources
+            .Except(expectedResources, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+        var duplicates = rows
+            .GroupBy(row => row.SourceFile, StringComparer.OrdinalIgnoreCase)
+            .Where(group => group.Count() > 1)
+            .Select(group => group.Key)
+            .ToArray();
+        var badStatuses = rows
+            .Where(row => !allowedStatuses.Contains(row.Status, StringComparer.Ordinal))
+            .Select(row => $"{row.SourceFile}:{row.LineNumber} {row.Status}")
+            .ToArray();
+        var missingEvidence = rows
+            .Where(row => row.ArtifactPaths.Length == 0 ||
+                row.ArtifactPaths.Any(path => !File.Exists(Path.Combine(repoRoot, path))))
+            .Select(row => $"{row.SourceFile}:{row.LineNumber}")
+            .ToArray();
+
+        Assert.AreEqual(expectedResources.Length, rows.Length, "Unexpected ModernWpf core control source coverage row count.");
+        Assert.IsFalse(missing.Any(), "Missing ModernWpf core control resource rows: " + string.Join("; ", missing));
+        Assert.IsFalse(extra.Any(), "Unexpected ModernWpf core control resource rows: " + string.Join("; ", extra));
+        Assert.IsFalse(duplicates.Any(), "Duplicate ModernWpf core control resource rows: " + string.Join("; ", duplicates));
+        Assert.IsFalse(badStatuses.Any(), "Invalid ModernWpf core control coverage statuses: " + string.Join("; ", badStatuses));
+        Assert.IsFalse(missingEvidence.Any(), "ModernWpf core control coverage rows should point at existing source-audit evidence: " + string.Join("; ", missingEvidence));
+
+        AssertCoverageStatus(rows, "Styles/Common.xaml", "Shared WinUI resource compatibility layer");
+        AssertCoverageStatus(rows, "Styles/Pivot.xaml", "WinUI 3 source-backed WPF platform mapping");
+        AssertCoverageStatus(rows, "Styles/NavigationView.xaml", "WinUI 3 source-backed WPF family");
+    }
+
+    [TestMethod]
     public void VisualStateSetterAuditUsesExplicitStatusBuckets()
     {
         var repoRoot = FindRepoRoot();
