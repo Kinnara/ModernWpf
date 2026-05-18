@@ -2,253 +2,202 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:root="clr-namespace:ModernWpf"
-    xmlns:local="clr-namespace:ModernWpf.Controls"
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
-    <primitives:CornerRadiusFilterConverter x:Key="TopLeftCornerRadiusDoubleValueConverter" Filter="TopLeftValue" />
-    <primitives:CornerRadiusFilterConverter x:Key="BottomRightCornerRadiusDoubleValueConverter" Filter="BottomRightValue" />
-
-    <sys:Double x:Key="CheckBoxBorderThickness">1</sys:Double>
+    <Thickness x:Key="CheckBoxBorderThickness">1</Thickness>
+    <Thickness x:Key="CheckBoxPadding">8,5,0,0</Thickness>
+    <sys:Double x:Key="CheckBoxIconSize">14</sys:Double>
     <sys:Double x:Key="CheckBoxSize">20</sys:Double>
-    <sys:Double x:Key="CheckBoxGlyphSize">12</sys:Double>
+    <sys:String x:Key="CheckBoxCheckedGlyph">&#xE73E;</sys:String>
+    <sys:String x:Key="CheckBoxIndeterminateGlyph">&#xE9AE;</sys:String>
     <sys:Double x:Key="CheckBoxHeight">32</sys:Double>
     <sys:Double x:Key="CheckBoxMinWidth">120</sys:Double>
-    <Thickness x:Key="CheckBoxPadding">8,5,0,0</Thickness>
     <Thickness x:Key="CheckBoxFocusVisualMargin">-7,-3,-7,-3</Thickness>
-    <sys:String x:Key="CheckBoxCheckedGlyph">&#xE001;</sys:String>
-    <sys:String x:Key="CheckBoxIndeterminateGlyph">&#xE9AE;</sys:String>
 
-    <Style x:Key="DefaultCheckBoxStyle" TargetType="CheckBox">
-        <Setter Property="OverridesDefaultStyle" Value="True" />
+    <Style x:Key="DefaultCheckBoxStyle" TargetType="{x:Type CheckBox}">
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
         <Setter Property="Background" Value="{DynamicResource CheckBoxBackgroundUnchecked}" />
         <Setter Property="Foreground" Value="{DynamicResource CheckBoxForegroundUnchecked}" />
         <Setter Property="BorderBrush" Value="{DynamicResource CheckBoxBorderBrushUnchecked}" />
+        <Setter Property="BorderThickness" Value="{StaticResource CheckBoxBorderThickness}" />
         <Setter Property="Padding" Value="{StaticResource CheckBoxPadding}" />
         <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="HorizontalContentAlignment" Value="Left" />
         <Setter Property="VerticalContentAlignment" Value="Top" />
-        <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
-        <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="KeyboardNavigation.IsTabStop" Value="True" />
+        <Setter Property="Focusable" Value="True" />
         <Setter Property="MinWidth" Value="{StaticResource CheckBoxMinWidth}" />
         <Setter Property="MinHeight" Value="{StaticResource CheckBoxHeight}" />
-        <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
         <Setter Property="primitives:FocusVisualHelper.UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
         <Setter Property="primitives:FocusVisualHelper.FocusVisualMargin" Value="{StaticResource CheckBoxFocusVisualMargin}" />
         <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
-        <Setter Property="primitives:CheckBoxHelper.IsEnabled" Value="True" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Stylus.IsPressAndHoldEnabled" Value="False" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="CheckBox">
-                    <ControlTemplate.Resources>
-                        <StreamGeometry x:Key="CheckMark">M 17.939453 5.439453 L 7.5 15.888672 L 2.060547 10.439453 L 2.939453 9.560547 L 7.5 14.111328 L 17.060547 4.560547 Z</StreamGeometry>
-                        <StreamGeometry x:Key="CheckboxIndeterminate">M 15 5 L 15 15 L 5 15 L 5 5 Z</StreamGeometry>
-                    </ControlTemplate.Resources>
-                    <local:GridEx x:Name="RootGrid"
+                <ControlTemplate TargetType="{x:Type CheckBox}">
+                    <Border
+                        x:Name="RootBorder"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
-                        SnapsToDevicePixels="True">
-                        <VisualStateManager.CustomVisualStateManager>
-                            <root:VisualStateManagerEx />
-                        </VisualStateManager.CustomVisualStateManager>
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CombinedStates">
-                                <root:VisualStateEx x:Name="UncheckedNormal">
-                                    <root:VisualStateEx.Setters>
-                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.(local:AnimatedIcon.State)" Value="NormalOff" />
-                                    </root:VisualStateEx.Setters>
-                                </root:VisualStateEx>
-                                <root:VisualStateEx x:Name="UncheckedPointerOver">
-                                    <root:VisualStateEx.Setters>
-                                        <root:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource CheckBoxForegroundUncheckedPointerOver}" />
-                                        <root:VisualStateSetter Target="RootGrid.Background" Value="{DynamicResource CheckBoxBackgroundUncheckedPointerOver}" />
-                                        <root:VisualStateSetter Target="RootGrid.BorderBrush" Value="{DynamicResource CheckBoxBorderBrushUncheckedPointerOver}" />
-                                        <root:VisualStateSetter Target="NormalRectangle.Stroke" Value="{DynamicResource CheckBoxCheckBackgroundStrokeUncheckedPointerOver}" />
-                                        <root:VisualStateSetter Target="NormalRectangle.Fill" Value="{DynamicResource CheckBoxCheckBackgroundFillUncheckedPointerOver}" />
-                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.Foreground" Value="{DynamicResource CheckBoxCheckGlyphForegroundUncheckedPointerOver}" />
-                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.(local:AnimatedIcon.State)" Value="PointerOverOff" />
-                                    </root:VisualStateEx.Setters>
-                                </root:VisualStateEx>
-                                <root:VisualStateEx x:Name="UncheckedPressed">
-                                    <root:VisualStateEx.Setters>
-                                        <root:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource CheckBoxForegroundUncheckedPressed}" />
-                                        <root:VisualStateSetter Target="RootGrid.Background" Value="{DynamicResource CheckBoxBackgroundUncheckedPressed}" />
-                                        <root:VisualStateSetter Target="RootGrid.BorderBrush" Value="{DynamicResource CheckBoxBorderBrushUncheckedPressed}" />
-                                        <root:VisualStateSetter Target="NormalRectangle.Stroke" Value="{DynamicResource CheckBoxCheckBackgroundStrokeUncheckedPressed}" />
-                                        <root:VisualStateSetter Target="NormalRectangle.Fill" Value="{DynamicResource CheckBoxCheckBackgroundFillUncheckedPressed}" />
-                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.Foreground" Value="{DynamicResource CheckBoxCheckGlyphForegroundUncheckedPressed}" />
-                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.(local:AnimatedIcon.State)" Value="PressedOff" />
-                                    </root:VisualStateEx.Setters>
-                                </root:VisualStateEx>
-                                <root:VisualStateEx x:Name="UncheckedDisabled">
-                                    <root:VisualStateEx.Setters>
-                                        <root:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource CheckBoxForegroundUncheckedDisabled}" />
-                                        <root:VisualStateSetter Target="RootGrid.Background" Value="{DynamicResource CheckBoxBackgroundUncheckedDisabled}" />
-                                        <root:VisualStateSetter Target="RootGrid.BorderBrush" Value="{DynamicResource CheckBoxBorderBrushUncheckedDisabled}" />
-                                        <root:VisualStateSetter Target="NormalRectangle.Stroke" Value="{DynamicResource CheckBoxCheckBackgroundStrokeUncheckedDisabled}" />
-                                        <root:VisualStateSetter Target="NormalRectangle.Fill" Value="{DynamicResource CheckBoxCheckBackgroundFillUncheckedDisabled}" />
-                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.Foreground" Value="{DynamicResource CheckBoxCheckGlyphForegroundUncheckedDisabled}" />
-                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.(local:AnimatedIcon.State)" Value="NormalOff" />
-                                    </root:VisualStateEx.Setters>
-                                </root:VisualStateEx>
-                                <root:VisualStateEx x:Name="CheckedNormal">
-                                    <root:VisualStateEx.Setters>
-                                        <root:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource CheckBoxForegroundChecked}" />
-                                        <root:VisualStateSetter Target="RootGrid.Background" Value="{DynamicResource CheckBoxBackgroundChecked}" />
-                                        <root:VisualStateSetter Target="RootGrid.BorderBrush" Value="{DynamicResource CheckBoxBorderBrushChecked}" />
-                                        <root:VisualStateSetter Target="NormalRectangle.Stroke" Value="{DynamicResource CheckBoxCheckBackgroundStrokeChecked}" />
-                                        <root:VisualStateSetter Target="NormalRectangle.Fill" Value="{DynamicResource CheckBoxCheckBackgroundFillChecked}" />
-                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.Foreground" Value="{DynamicResource CheckBoxCheckGlyphForegroundChecked}" />
-                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.(local:AnimatedIcon.State)" Value="NormalOn" />
-                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.Opacity" Value="1" />
-                                    </root:VisualStateEx.Setters>
-                                </root:VisualStateEx>
-                                <root:VisualStateEx x:Name="CheckedPointerOver">
-                                    <root:VisualStateEx.Setters>
-                                        <root:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource CheckBoxForegroundCheckedPointerOver}" />
-                                        <root:VisualStateSetter Target="RootGrid.Background" Value="{DynamicResource CheckBoxBackgroundCheckedPointerOver}" />
-                                        <root:VisualStateSetter Target="RootGrid.BorderBrush" Value="{DynamicResource CheckBoxBorderBrushCheckedPointerOver}" />
-                                        <root:VisualStateSetter Target="NormalRectangle.Stroke" Value="{DynamicResource CheckBoxCheckBackgroundStrokeCheckedPointerOver}" />
-                                        <root:VisualStateSetter Target="NormalRectangle.Fill" Value="{DynamicResource CheckBoxCheckBackgroundFillCheckedPointerOver}" />
-                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.Foreground" Value="{DynamicResource CheckBoxCheckGlyphForegroundCheckedPointerOver}" />
-                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.(local:AnimatedIcon.State)" Value="PointerOverOn" />
-                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.Opacity" Value="1" />
-                                    </root:VisualStateEx.Setters>
-                                </root:VisualStateEx>
-                                <root:VisualStateEx x:Name="CheckedPressed">
-                                    <root:VisualStateEx.Setters>
-                                        <root:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource CheckBoxForegroundCheckedPressed}" />
-                                        <root:VisualStateSetter Target="RootGrid.Background" Value="{DynamicResource CheckBoxBackgroundCheckedPressed}" />
-                                        <root:VisualStateSetter Target="RootGrid.BorderBrush" Value="{DynamicResource CheckBoxBorderBrushCheckedPressed}" />
-                                        <root:VisualStateSetter Target="NormalRectangle.Stroke" Value="{DynamicResource CheckBoxCheckBackgroundStrokeCheckedPressed}" />
-                                        <root:VisualStateSetter Target="NormalRectangle.Fill" Value="{DynamicResource CheckBoxCheckBackgroundFillCheckedPressed}" />
-                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.Foreground" Value="{DynamicResource CheckBoxCheckGlyphForegroundCheckedPressed}" />
-                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.(local:AnimatedIcon.State)" Value="PressedOn" />
-                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.Opacity" Value="1" />
-                                    </root:VisualStateEx.Setters>
-                                </root:VisualStateEx>
-                                <root:VisualStateEx x:Name="CheckedDisabled">
-                                    <root:VisualStateEx.Setters>
-                                        <root:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource CheckBoxForegroundCheckedDisabled}" />
-                                        <root:VisualStateSetter Target="RootGrid.Background" Value="{DynamicResource CheckBoxBackgroundCheckedDisabled}" />
-                                        <root:VisualStateSetter Target="RootGrid.BorderBrush" Value="{DynamicResource CheckBoxBorderBrushCheckedDisabled}" />
-                                        <root:VisualStateSetter Target="NormalRectangle.Stroke" Value="{DynamicResource CheckBoxCheckBackgroundStrokeCheckedDisabled}" />
-                                        <root:VisualStateSetter Target="NormalRectangle.Fill" Value="{DynamicResource CheckBoxCheckBackgroundFillCheckedDisabled}" />
-                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.Foreground" Value="{DynamicResource CheckBoxCheckGlyphForegroundCheckedDisabled}" />
-                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.(local:AnimatedIcon.State)" Value="NormalOn" />
-                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.Opacity" Value="1" />
-                                    </root:VisualStateEx.Setters>
-                                </root:VisualStateEx>
-                                <root:VisualStateEx x:Name="IndeterminateNormal">
-                                    <root:VisualStateEx.Setters>
-                                        <root:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource CheckBoxForegroundIndeterminate}" />
-                                        <root:VisualStateSetter Target="RootGrid.Background" Value="{DynamicResource CheckBoxBackgroundIndeterminate}" />
-                                        <root:VisualStateSetter Target="RootGrid.BorderBrush" Value="{DynamicResource CheckBoxBorderBrushIndeterminate}" />
-                                        <root:VisualStateSetter Target="NormalRectangle.Stroke" Value="{DynamicResource CheckBoxCheckBackgroundStrokeIndeterminate}" />
-                                        <root:VisualStateSetter Target="NormalRectangle.Fill" Value="{DynamicResource CheckBoxCheckBackgroundFillIndeterminate}" />
-                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.Foreground" Value="{DynamicResource CheckBoxCheckGlyphForegroundIndeterminate}" />
-                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.(local:AnimatedIcon.State)" Value="NormalIndeterminate" />
-                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.Data" Value="{StaticResource CheckboxIndeterminate}" />
-                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.Margin" Value="0" />
-                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.Opacity" Value="1" />
-                                    </root:VisualStateEx.Setters>
-                                </root:VisualStateEx>
-                                <root:VisualStateEx x:Name="IndeterminatePointerOver">
-                                    <root:VisualStateEx.Setters>
-                                        <root:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource CheckBoxForegroundIndeterminatePointerOver}" />
-                                        <root:VisualStateSetter Target="RootGrid.Background" Value="{DynamicResource CheckBoxBackgroundIndeterminatePointerOver}" />
-                                        <root:VisualStateSetter Target="RootGrid.BorderBrush" Value="{DynamicResource CheckBoxBorderBrushIndeterminatePointerOver}" />
-                                        <root:VisualStateSetter Target="NormalRectangle.Stroke" Value="{DynamicResource CheckBoxCheckBackgroundStrokeIndeterminatePointerOver}" />
-                                        <root:VisualStateSetter Target="NormalRectangle.Fill" Value="{DynamicResource CheckBoxCheckBackgroundFillIndeterminatePointerOver}" />
-                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.Foreground" Value="{DynamicResource CheckBoxCheckGlyphForegroundIndeterminatePointerOver}" />
-                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.(local:AnimatedIcon.State)" Value="PointerOverIndeterminate" />
-                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.Data" Value="{StaticResource CheckboxIndeterminate}" />
-                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.Margin" Value="0" />
-                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.Opacity" Value="1" />
-                                    </root:VisualStateEx.Setters>
-                                </root:VisualStateEx>
-                                <root:VisualStateEx x:Name="IndeterminatePressed">
-                                    <root:VisualStateEx.Setters>
-                                        <root:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource CheckBoxForegroundIndeterminatePressed}" />
-                                        <root:VisualStateSetter Target="RootGrid.Background" Value="{DynamicResource CheckBoxBackgroundIndeterminatePressed}" />
-                                        <root:VisualStateSetter Target="RootGrid.BorderBrush" Value="{DynamicResource CheckBoxBorderBrushIndeterminatePressed}" />
-                                        <root:VisualStateSetter Target="NormalRectangle.Stroke" Value="{DynamicResource CheckBoxCheckBackgroundStrokeIndeterminatePressed}" />
-                                        <root:VisualStateSetter Target="NormalRectangle.Fill" Value="{DynamicResource CheckBoxCheckBackgroundFillIndeterminatePressed}" />
-                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.Foreground" Value="{DynamicResource CheckBoxCheckGlyphForegroundIndeterminatePressed}" />
-                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.(local:AnimatedIcon.State)" Value="PressedIndeterminate" />
-                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.Data" Value="{StaticResource CheckboxIndeterminate}" />
-                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.Margin" Value="0" />
-                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.Opacity" Value="1" />
-                                    </root:VisualStateEx.Setters>
-                                </root:VisualStateEx>
-                                <root:VisualStateEx x:Name="IndeterminateDisabled">
-                                    <root:VisualStateEx.Setters>
-                                        <root:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource CheckBoxForegroundIndeterminateDisabled}" />
-                                        <root:VisualStateSetter Target="RootGrid.Background" Value="{DynamicResource CheckBoxBackgroundIndeterminateDisabled}" />
-                                        <root:VisualStateSetter Target="RootGrid.BorderBrush" Value="{DynamicResource CheckBoxBorderBrushIndeterminateDisabled}" />
-                                        <root:VisualStateSetter Target="NormalRectangle.Stroke" Value="{DynamicResource CheckBoxCheckBackgroundStrokeIndeterminateDisabled}" />
-                                        <root:VisualStateSetter Target="NormalRectangle.Fill" Value="{DynamicResource CheckBoxCheckBackgroundFillIndeterminateDisabled}" />
-                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.Foreground" Value="{DynamicResource CheckBoxCheckGlyphForegroundIndeterminateDisabled}" />
-                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.(local:AnimatedIcon.State)" Value="NormalIndeterminate" />
-                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.Data" Value="{StaticResource CheckboxIndeterminate}" />
-                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.Margin" Value="0" />
-                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.Opacity" Value="1" />
-                                    </root:VisualStateEx.Setters>
-                                </root:VisualStateEx>
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
-
-                        <Grid VerticalAlignment="Center">
-                            
+                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
+                        <Grid x:Name="RootGrid">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
 
-                            <Grid Grid.Column="0" VerticalAlignment="Center" Height="{DynamicResource CheckBoxSize}" Width="{StaticResource CheckBoxSize}">
-                                <Rectangle
-                                    x:Name="NormalRectangle"
-                                    Fill="{DynamicResource CheckBoxCheckBackgroundFillUnchecked}"
-                                    Stroke="{DynamicResource CheckBoxCheckBackgroundStrokeUnchecked}"
-                                    StrokeThickness="{StaticResource CheckBoxBorderThickness}"
-                                    UseLayoutRounding="False"
-                                    Height="{StaticResource CheckBoxSize}"
-                                    Width="{StaticResource CheckBoxSize}"
-                                    RadiusX="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
-                                    RadiusY="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}" />
-                                <local:FontIconFallback
-                                    x:Name="DownLevelCheckGlyph"
-                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                    Data="{StaticResource CheckMark}"
-                                    FontSize="{StaticResource CheckBoxGlyphSize}"
-                                    Foreground="{DynamicResource CheckBoxCheckGlyphForegroundUnchecked}"
-                                    Margin="4"
-                                    local:AnimatedIcon.State="NormalOff"
-                                    Opacity="0" />
-                            </Grid>
-                            <local:ContentPresenterEx
+                            <Border
+                                x:Name="ControlBorderIconPresenter"
+                                Width="{StaticResource CheckBoxSize}"
+                                Height="{StaticResource CheckBoxSize}"
+                                VerticalAlignment="Center"
+                                Background="{DynamicResource CheckBoxCheckBackgroundFillUnchecked}"
+                                CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
+                                <Border
+                                    x:Name="StrokeBorder"
+                                    BorderBrush="{DynamicResource CheckBoxCheckBackgroundStrokeUnchecked}"
+                                    BorderThickness="{StaticResource CheckBoxBorderThickness}"
+                                    CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
+                                    <Grid>
+                                        <TextBlock
+                                            x:Name="ControlIcon"
+                                            Margin="0"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                            FontSize="{StaticResource CheckBoxIconSize}"
+                                            FontWeight="Bold"
+                                            Foreground="{DynamicResource CheckBoxCheckGlyphForeground}"
+                                            Text="{StaticResource CheckBoxCheckedGlyph}"
+                                            Visibility="Collapsed" />
+                                    </Grid>
+                                </Border>
+                            </Border>
+
+                            <ContentPresenter
                                 x:Name="ContentPresenter"
                                 Grid.Column="1"
                                 Margin="{TemplateBinding Padding}"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                TextWrapping="Wrap"
-                                Focusable="False"
-                                RecognizesAccessKey="True"
-                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                RecognizesAccessKey="True" />
                         </Grid>
-                    </local:GridEx>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Content" Value="{x:Null}">
+                            <Setter TargetName="ContentPresenter" Property="Margin" Value="0" />
+                            <Setter Property="MinWidth" Value="30" />
+                        </Trigger>
+                        <Trigger Property="Content" Value="">
+                            <Setter TargetName="ContentPresenter" Property="Margin" Value="0" />
+                            <Setter Property="MinWidth" Value="30" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="{x:Null}">
+                            <Setter TargetName="ControlIcon" Property="Text" Value="{StaticResource CheckBoxIndeterminateGlyph}" />
+                            <Setter TargetName="ControlIcon" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="ControlBorderIconPresenter" Property="Background" Value="{DynamicResource CheckBoxCheckBackgroundFillIndeterminate}" />
+                            <Setter TargetName="StrokeBorder" Property="BorderBrush" Value="{DynamicResource CheckBoxCheckBackgroundStrokeIndeterminate}" />
+                            <Setter TargetName="RootBorder" Property="BorderBrush" Value="{DynamicResource CheckBoxBorderBrushIndeterminate}" />
+                            <Setter TargetName="RootBorder" Property="Background" Value="{DynamicResource CheckBoxBackgroundIndeterminate}" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="ControlIcon" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="ControlBorderIconPresenter" Property="Background" Value="{DynamicResource CheckBoxCheckBackgroundFillChecked}" />
+                            <Setter TargetName="StrokeBorder" Property="BorderBrush" Value="{DynamicResource CheckBoxCheckBackgroundStrokeChecked}" />
+                            <Setter TargetName="RootBorder" Property="BorderBrush" Value="{DynamicResource CheckBoxBorderBrushChecked}" />
+                            <Setter TargetName="RootBorder" Property="Background" Value="{DynamicResource CheckBoxBackgroundChecked}" />
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True" />
+                                <Condition Property="IsChecked" Value="False" />
+                                <Condition Property="IsPressed" Value="False" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="ControlBorderIconPresenter" Property="Background" Value="{DynamicResource CheckBoxCheckBackgroundFillUncheckedPointerOver}" />
+                            <Setter TargetName="StrokeBorder" Property="BorderBrush" Value="{DynamicResource CheckBoxCheckBackgroundStrokeUncheckedPointerOver}" />
+                            <Setter TargetName="RootBorder" Property="BorderBrush" Value="{DynamicResource CheckBoxBorderBrushUncheckedPointerOver}" />
+                            <Setter TargetName="RootBorder" Property="Background" Value="{DynamicResource CheckBoxBackgroundUncheckedPointerOver}" />
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True" />
+                                <Condition Property="IsChecked" Value="False" />
+                                <Condition Property="IsPressed" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="ControlBorderIconPresenter" Property="Background" Value="{DynamicResource CheckBoxCheckBackgroundFillUncheckedPressed}" />
+                            <Setter TargetName="StrokeBorder" Property="BorderBrush" Value="{DynamicResource CheckBoxCheckBackgroundStrokeUncheckedPressed}" />
+                            <Setter TargetName="RootBorder" Property="BorderBrush" Value="{DynamicResource CheckBoxBorderBrushUncheckedPressed}" />
+                            <Setter TargetName="RootBorder" Property="Background" Value="{DynamicResource CheckBoxBackgroundUncheckedPressed}" />
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True" />
+                                <Condition Property="IsChecked" Value="{x:Null}" />
+                                <Condition Property="IsPressed" Value="False" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="ControlBorderIconPresenter" Property="Background" Value="{DynamicResource CheckBoxCheckBackgroundFillIndeterminatePointerOver}" />
+                            <Setter TargetName="StrokeBorder" Property="BorderBrush" Value="{DynamicResource CheckBoxCheckBackgroundStrokeIndeterminatePointerOver}" />
+                            <Setter TargetName="RootBorder" Property="BorderBrush" Value="{DynamicResource CheckBoxBorderBrushIndeterminatePointerOver}" />
+                            <Setter TargetName="RootBorder" Property="Background" Value="{DynamicResource CheckBoxBackgroundIndeterminatePointerOver}" />
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True" />
+                                <Condition Property="IsChecked" Value="{x:Null}" />
+                                <Condition Property="IsPressed" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="ControlBorderIconPresenter" Property="Background" Value="{DynamicResource CheckBoxCheckBackgroundFillIndeterminatePressed}" />
+                            <Setter TargetName="StrokeBorder" Property="BorderBrush" Value="{DynamicResource CheckBoxCheckBackgroundStrokeIndeterminatePressed}" />
+                            <Setter TargetName="RootBorder" Property="BorderBrush" Value="{DynamicResource CheckBoxBorderBrushIndeterminatePressed}" />
+                            <Setter TargetName="RootBorder" Property="Background" Value="{DynamicResource CheckBoxBackgroundIndeterminatePressed}" />
+                            <Setter TargetName="ControlIcon" Property="Foreground" Value="{DynamicResource CheckBoxCheckGlyphForegroundPressed}" />
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True" />
+                                <Condition Property="IsChecked" Value="True" />
+                                <Condition Property="IsPressed" Value="False" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="ControlBorderIconPresenter" Property="Background" Value="{DynamicResource CheckBoxCheckBackgroundFillCheckedPointerOver}" />
+                            <Setter TargetName="StrokeBorder" Property="BorderBrush" Value="{DynamicResource CheckBoxCheckBackgroundStrokeCheckedPointerOver}" />
+                            <Setter TargetName="RootBorder" Property="BorderBrush" Value="{DynamicResource CheckBoxBorderBrushCheckedPointerOver}" />
+                            <Setter TargetName="RootBorder" Property="Background" Value="{DynamicResource CheckBoxBackgroundCheckedPointerOver}" />
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True" />
+                                <Condition Property="IsChecked" Value="True" />
+                                <Condition Property="IsPressed" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="ControlBorderIconPresenter" Property="Background" Value="{DynamicResource CheckBoxCheckBackgroundFillCheckedPressed}" />
+                            <Setter TargetName="StrokeBorder" Property="BorderBrush" Value="{DynamicResource CheckBoxCheckBackgroundStrokeCheckedPressed}" />
+                            <Setter TargetName="RootBorder" Property="BorderBrush" Value="{DynamicResource CheckBoxBorderBrushCheckedPressed}" />
+                            <Setter TargetName="RootBorder" Property="Background" Value="{DynamicResource CheckBoxBackgroundCheckedPressed}" />
+                            <Setter TargetName="ControlIcon" Property="Foreground" Value="{DynamicResource CheckBoxCheckGlyphForegroundPressed}" />
+                        </MultiTrigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="ControlBorderIconPresenter" Property="Background" Value="{DynamicResource CheckBoxCheckBackgroundFillUncheckedDisabled}" />
+                            <Setter TargetName="StrokeBorder" Property="BorderBrush" Value="{DynamicResource CheckBoxCheckBackgroundStrokeUncheckedDisabled}" />
+                            <Setter TargetName="ControlIcon" Property="Foreground" Value="{DynamicResource CheckBoxForegroundUncheckedDisabled}" />
+                            <Setter Property="Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
+                            <Setter TargetName="RootBorder" Property="BorderBrush" Value="{DynamicResource CheckBoxBorderBrushUncheckedPressed}" />
+                            <Setter TargetName="RootBorder" Property="Background" Value="{DynamicResource CheckBoxBackgroundUncheckedPressed}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
 
-    <Style TargetType="CheckBox" BasedOn="{StaticResource DefaultCheckBoxStyle}" />
+    <Style TargetType="{x:Type CheckBox}" BasedOn="{StaticResource DefaultCheckBoxStyle}" />
 
     <Style x:Key="DataGridCheckBoxStyle" TargetType="CheckBox" BasedOn="{StaticResource DefaultCheckBoxStyle}">
         <Setter Property="MinWidth" Value="0" />

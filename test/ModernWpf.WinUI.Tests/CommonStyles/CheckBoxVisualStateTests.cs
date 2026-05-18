@@ -1,10 +1,11 @@
-using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Markup;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ModernWpf.Controls;
+using ModernWpf.Controls.Primitives;
 using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
 
@@ -14,221 +15,324 @@ namespace ModernWpf.WinUI.Tests.CommonStyles;
 public class CheckBoxVisualStateTests
 {
     [TestMethod]
-    public void IndeterminateStatesUseVisualStateSettersForGlyphMargin()
+    public void DefaultCheckBoxStyleUsesOfficialWpfFluentTriggerShape()
     {
         WpfTestHost.Run(() =>
         {
             TestApplication.EnsureInitialized();
 
-            var checkBox = new CheckBox
-            {
-                IsThreeState = true,
-                IsChecked = null,
-                Content = "Option"
-            };
+            var defaultStyle = (Style)Application.Current.FindResource("DefaultCheckBoxStyle");
+            var implicitCheckBoxStyle = (Style)Application.Current.FindResource(typeof(CheckBox));
+            Assert.AreEqual(typeof(CheckBox), defaultStyle.TargetType);
+            Assert.AreEqual(typeof(CheckBox), implicitCheckBoxStyle.TargetType);
+            Assert.AreSame(defaultStyle, implicitCheckBoxStyle.BasedOn);
 
+            var checkBox = CreateCheckBox();
             using var host = new TestWindowHost(checkBox, width: 180, height: 80);
-            host.UpdateLayout();
 
-            var root = FindTemplatePart<FrameworkElement>(checkBox, "RootGrid");
-            var glyph = FindTemplatePart<FontIconFallback>(checkBox, "DownLevelCheckGlyph");
-
-            Assert.AreEqual(0, checkBox.Template.Triggers.Count);
-            Assert.IsInstanceOfType(root, typeof(GridEx));
-            AssertStateSetters(root, "IndeterminateNormal", "DownLevelCheckGlyph.Data", "DownLevelCheckGlyph.Margin", "DownLevelCheckGlyph.Opacity");
-            AssertStateSetters(root, "IndeterminatePointerOver", "DownLevelCheckGlyph.Data", "DownLevelCheckGlyph.Margin", "DownLevelCheckGlyph.Opacity");
-            AssertStateSetters(root, "IndeterminatePressed", "DownLevelCheckGlyph.Data", "DownLevelCheckGlyph.Margin", "DownLevelCheckGlyph.Opacity");
-            AssertStateSetters(root, "IndeterminateDisabled", "DownLevelCheckGlyph.Data", "DownLevelCheckGlyph.Margin", "DownLevelCheckGlyph.Opacity");
-            AssertAnimatedIconStateSetter(root, "IndeterminateNormal", "NormalIndeterminate");
-            AssertAnimatedIconStateSetter(root, "IndeterminatePointerOver", "PointerOverIndeterminate");
-            AssertAnimatedIconStateSetter(root, "IndeterminatePressed", "PressedIndeterminate");
-            AssertAnimatedIconStateSetter(root, "IndeterminateDisabled", "NormalIndeterminate");
-            Assert.AreEqual("IndeterminateNormal", GetCurrentStateName(root));
-            Assert.AreEqual("NormalIndeterminate", AnimatedIcon.GetState(glyph));
-            Assert.AreEqual(new Thickness(0), glyph.Margin);
-            Assert.AreEqual(1.0, glyph.Opacity);
-
-            checkBox.IsChecked = false;
-            host.UpdateLayout();
-
-            Assert.AreEqual("UncheckedNormal", GetCurrentStateName(root));
-            Assert.AreEqual("NormalOff", AnimatedIcon.GetState(glyph));
-            Assert.AreEqual(new Thickness(4), glyph.Margin);
-            Assert.AreEqual(0.0, glyph.Opacity);
+            Assert.AreEqual((Thickness)Application.Current.FindResource("CheckBoxPadding"), checkBox.Padding);
+            Assert.AreEqual((Thickness)Application.Current.FindResource("CheckBoxBorderThickness"), checkBox.BorderThickness);
+            Assert.AreEqual((double)Application.Current.FindResource("CheckBoxHeight"), checkBox.MinHeight);
+            Assert.IsTrue(checkBox.Focusable);
+            Assert.IsTrue(KeyboardNavigation.GetIsTabStop(checkBox));
+            AssertTemplateUsesOfficialWpfPresenter(checkBox);
+            AssertOfficialTriggerShape(checkBox.Template);
+            AssertUncheckedDisabledTriggerAppliesResources(checkBox);
         });
     }
 
     [TestMethod]
-    public void CombinedStatesUseWinUISourceVisualStateSetters()
+    public void CheckedAndIndeterminateStatesUseOfficialWpfFluentResources()
     {
         WpfTestHost.Run(() =>
         {
             TestApplication.EnsureInitialized();
 
-            var checkBox = new CheckBox
-            {
-                IsThreeState = true,
-                Content = "Option"
-            };
-
-            using var host = new TestWindowHost(checkBox, width: 180, height: 80);
-            host.UpdateLayout();
-
-            var root = FindTemplatePart<FrameworkElement>(checkBox, "RootGrid");
-            var glyph = FindTemplatePart<FontIconFallback>(checkBox, "DownLevelCheckGlyph");
-
-            AssertStateSetters(root, "UncheckedNormal", "DownLevelCheckGlyph.(local:AnimatedIcon.State)");
-            AssertStateSetters(root, "UncheckedPointerOver", SourceColorTargets().Append("DownLevelCheckGlyph.(local:AnimatedIcon.State)").ToArray());
-            AssertStateSetters(root, "UncheckedPressed", SourceColorTargets().Append("DownLevelCheckGlyph.(local:AnimatedIcon.State)").ToArray());
-            AssertStateSetters(root, "UncheckedDisabled", SourceColorTargets().Append("DownLevelCheckGlyph.(local:AnimatedIcon.State)").ToArray());
-            AssertStateSetters(root, "CheckedNormal", SourceColorTargets().Concat(new[] { "DownLevelCheckGlyph.(local:AnimatedIcon.State)", "DownLevelCheckGlyph.Opacity" }).ToArray());
-            AssertStateSetters(root, "CheckedPointerOver", SourceColorTargets().Concat(new[] { "DownLevelCheckGlyph.(local:AnimatedIcon.State)", "DownLevelCheckGlyph.Opacity" }).ToArray());
-            AssertStateSetters(root, "CheckedPressed", SourceColorTargets().Concat(new[] { "DownLevelCheckGlyph.(local:AnimatedIcon.State)", "DownLevelCheckGlyph.Opacity" }).ToArray());
-            AssertStateSetters(root, "CheckedDisabled", SourceColorTargets().Concat(new[] { "DownLevelCheckGlyph.(local:AnimatedIcon.State)", "DownLevelCheckGlyph.Opacity" }).ToArray());
-            AssertStateSetters(root, "IndeterminateNormal", SourceColorTargets().Concat(new[] { "DownLevelCheckGlyph.(local:AnimatedIcon.State)", "DownLevelCheckGlyph.Data", "DownLevelCheckGlyph.Margin", "DownLevelCheckGlyph.Opacity" }).ToArray());
-            AssertStateSetters(root, "IndeterminatePointerOver", SourceColorTargets().Concat(new[] { "DownLevelCheckGlyph.(local:AnimatedIcon.State)", "DownLevelCheckGlyph.Data", "DownLevelCheckGlyph.Margin", "DownLevelCheckGlyph.Opacity" }).ToArray());
-            AssertStateSetters(root, "IndeterminatePressed", SourceColorTargets().Concat(new[] { "DownLevelCheckGlyph.(local:AnimatedIcon.State)", "DownLevelCheckGlyph.Data", "DownLevelCheckGlyph.Margin", "DownLevelCheckGlyph.Opacity" }).ToArray());
-            AssertStateSetters(root, "IndeterminateDisabled", SourceColorTargets().Concat(new[] { "DownLevelCheckGlyph.(local:AnimatedIcon.State)", "DownLevelCheckGlyph.Data", "DownLevelCheckGlyph.Margin", "DownLevelCheckGlyph.Opacity" }).ToArray());
-
-            AssertAnimatedIconState(root, glyph, "UncheckedNormal", "NormalOff");
-            AssertAnimatedIconState(root, glyph, "CheckedNormal", "NormalOn");
-            AssertAnimatedIconState(root, glyph, "IndeterminateNormal", "NormalIndeterminate");
-        });
-    }
-
-    [TestMethod]
-    public void AddAndSubtractKeysFollowWinUICheckBoxSourceBehavior()
-    {
-        WpfTestHost.Run(() =>
-        {
-            TestApplication.EnsureInitialized();
-
-            var checkBox = new CheckBox
-            {
-                IsChecked = false,
-                Content = "Option"
-            };
-
-            using var host = new TestWindowHost(checkBox, width: 180, height: 80);
-            host.UpdateLayout();
-
-            var addArgs = RaiseKey(checkBox, Key.Add);
-            Assert.IsTrue(addArgs.Handled);
-            Assert.AreEqual(true, checkBox.IsChecked);
-
-            var subtractArgs = RaiseKey(checkBox, Key.Subtract);
-            Assert.IsTrue(subtractArgs.Handled);
-            Assert.AreEqual(false, checkBox.IsChecked);
-
+            var checkBox = CreateCheckBox();
             checkBox.IsThreeState = true;
-            var ignoredAddArgs = RaiseKey(checkBox, Key.Add);
-            Assert.IsFalse(ignoredAddArgs.Handled);
-            Assert.AreEqual(false, checkBox.IsChecked);
+            checkBox.IsChecked = null;
+            using var host = new TestWindowHost(checkBox, width: 180, height: 80);
+            host.UpdateLayout();
+
+            var rootBorder = GetTemplateChild<Border>(checkBox, "RootBorder");
+            var iconPresenter = GetTemplateChild<Border>(checkBox, "ControlBorderIconPresenter");
+            var strokeBorder = GetTemplateChild<Border>(checkBox, "StrokeBorder");
+            var controlIcon = GetTemplateChild<TextBlock>(checkBox, "ControlIcon");
+
+            Assert.AreEqual(Visibility.Visible, controlIcon.Visibility);
+            Assert.AreEqual((string)Application.Current.FindResource("CheckBoxIndeterminateGlyph"), controlIcon.Text);
+            Assert.AreSame(iconPresenter.TryFindResource("CheckBoxCheckBackgroundFillIndeterminate"), iconPresenter.Background);
+            Assert.AreSame(strokeBorder.TryFindResource("CheckBoxCheckBackgroundStrokeIndeterminate"), strokeBorder.BorderBrush);
+            Assert.AreSame(rootBorder.TryFindResource("CheckBoxBorderBrushIndeterminate"), rootBorder.BorderBrush);
+            Assert.AreSame(rootBorder.TryFindResource("CheckBoxBackgroundIndeterminate"), rootBorder.Background);
+
+            checkBox.IsChecked = true;
+            host.UpdateLayout();
+
+            Assert.AreEqual(Visibility.Visible, controlIcon.Visibility);
+            Assert.AreEqual((string)Application.Current.FindResource("CheckBoxCheckedGlyph"), controlIcon.Text);
+            Assert.AreSame(iconPresenter.TryFindResource("CheckBoxCheckBackgroundFillChecked"), iconPresenter.Background);
+            Assert.AreSame(strokeBorder.TryFindResource("CheckBoxCheckBackgroundStrokeChecked"), strokeBorder.BorderBrush);
+            Assert.AreSame(rootBorder.TryFindResource("CheckBoxBorderBrushChecked"), rootBorder.BorderBrush);
+            Assert.AreSame(rootBorder.TryFindResource("CheckBoxBackgroundChecked"), rootBorder.Background);
         });
     }
 
-    private static void AssertStateSetters(
-        FrameworkElement stateGroupsRoot,
-        string stateName,
-        params string[] setterTargets)
+    [TestMethod]
+    public void ThemeDictionariesExposeOfficialCheckBoxGlyphResources()
     {
-        var group = GetCombinedStatesGroup(stateGroupsRoot);
-        var state = group.States
-            .Cast<VisualState>()
-            .Single(item => item.Name == stateName);
-
-        Assert.IsInstanceOfType(state, typeof(VisualStateEx));
-
-        var stateEx = (VisualStateEx)state;
-        foreach (var setterTarget in setterTargets)
+        WpfTestHost.Run(() =>
         {
-            Assert.IsTrue(
-                stateEx.Setters.Any(setter => setter.Target == setterTarget),
-                $"CombinedStates.{stateName} should set {setterTarget}.");
-        }
+            AssertThemeResourceReference("Light", "CheckBoxCheckGlyphForeground", "TextOnAccentFillColorPrimaryBrush");
+            AssertThemeResourceReference("Light", "CheckBoxCheckGlyphForegroundPressed", "TextOnAccentFillColorSecondaryBrush");
+            AssertThemeResourceReference("Light", "CheckBoxCheckGlyphForegroundDisabled", "TextFillColorDisabledBrush");
+
+            AssertThemeResourceReference("Dark", "CheckBoxCheckGlyphForeground", "TextOnAccentFillColorPrimaryBrush");
+            AssertThemeResourceReference("Dark", "CheckBoxCheckGlyphForegroundPressed", "TextOnAccentFillColorSecondaryBrush");
+            AssertThemeResourceReference("Dark", "CheckBoxCheckGlyphForegroundDisabled", "TextFillColorDisabledBrush");
+
+            AssertThemeResourceReference("HighContrast", "CheckBoxCheckGlyphForeground", "SystemColorButtonFaceColorBrush");
+            AssertThemeResourceReference("HighContrast", "CheckBoxCheckGlyphForegroundPressed", "SystemColorHighlightTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "CheckBoxCheckGlyphForegroundDisabled", "SystemColorWindowColorBrush");
+        });
     }
 
-    private static void AssertAnimatedIconState(
-        FrameworkElement stateGroupsRoot,
-        DependencyObject glyph,
-        string stateName,
-        string expectedValue)
+    private static CheckBox CreateCheckBox()
     {
-        AssertAnimatedIconStateSetter(stateGroupsRoot, stateName, expectedValue);
-        Assert.IsTrue(VisualStateManager.GoToElementState(stateGroupsRoot, stateName, false));
-        Assert.AreEqual(expectedValue, AnimatedIcon.GetState(glyph));
-    }
-
-    private static void AssertAnimatedIconStateSetter(
-        FrameworkElement stateGroupsRoot,
-        string stateName,
-        string expectedValue)
-    {
-        var group = GetCombinedStatesGroup(stateGroupsRoot);
-        var state = group.States
-            .Cast<VisualState>()
-            .Single(item => item.Name == stateName);
-
-        Assert.IsInstanceOfType(state, typeof(VisualStateEx));
-
-        var stateEx = (VisualStateEx)state;
-        var setter = stateEx.Setters.Single(item => item.Target == "DownLevelCheckGlyph.(local:AnimatedIcon.State)");
-
-        Assert.AreEqual(expectedValue, setter.Value);
-    }
-
-    private static string[] SourceColorTargets()
-    {
-        return new[]
+        return new CheckBox
         {
-            "ContentPresenter.Foreground",
-            "RootGrid.Background",
-            "RootGrid.BorderBrush",
-            "NormalRectangle.Stroke",
-            "NormalRectangle.Fill",
-            "DownLevelCheckGlyph.Foreground"
+            Width = 150,
+            Height = 48,
+            Content = "Option"
         };
     }
 
-    private static string GetCurrentStateName(FrameworkElement stateGroupsRoot)
+    private static void AssertTemplateUsesOfficialWpfPresenter(CheckBox checkBox)
     {
-        var group = GetCombinedStatesGroup(stateGroupsRoot);
-        Assert.IsNotNull(group.CurrentState);
-        return group.CurrentState.Name;
+        checkBox.ApplyTemplate();
+
+        var rootBorder = GetTemplateChild<Border>(checkBox, "RootBorder");
+        var rootGrid = GetTemplateChild<Grid>(checkBox, "RootGrid");
+        var iconPresenter = GetTemplateChild<Border>(checkBox, "ControlBorderIconPresenter");
+        var strokeBorder = GetTemplateChild<Border>(checkBox, "StrokeBorder");
+        var controlIcon = GetTemplateChild<TextBlock>(checkBox, "ControlIcon");
+        var contentPresenter = GetTemplateChild<ContentPresenter>(checkBox, "ContentPresenter");
+
+        Assert.AreEqual(typeof(Grid), rootGrid.GetType());
+        Assert.AreEqual(typeof(ContentPresenter), contentPresenter.GetType());
+        Assert.AreEqual(checkBox.Content, contentPresenter.Content);
+        Assert.IsTrue(contentPresenter.RecognizesAccessKey);
+        Assert.AreEqual(ControlHelper.GetCornerRadius(checkBox), rootBorder.CornerRadius);
+        Assert.AreEqual(ControlHelper.GetCornerRadius(checkBox), iconPresenter.CornerRadius);
+        Assert.AreEqual(ControlHelper.GetCornerRadius(checkBox), strokeBorder.CornerRadius);
+        Assert.AreEqual((Thickness)Application.Current.FindResource("CheckBoxBorderThickness"), strokeBorder.BorderThickness);
+        Assert.AreEqual((double)Application.Current.FindResource("CheckBoxSize"), iconPresenter.Width);
+        Assert.AreEqual((double)Application.Current.FindResource("CheckBoxSize"), iconPresenter.Height);
+        Assert.AreEqual((double)Application.Current.FindResource("CheckBoxIconSize"), controlIcon.FontSize);
+        Assert.AreEqual((string)Application.Current.FindResource("CheckBoxCheckedGlyph"), controlIcon.Text);
+        Assert.AreEqual(Visibility.Collapsed, controlIcon.Visibility);
+        Assert.AreEqual(0, VisualStateManager.GetVisualStateGroups(rootBorder).Count);
+        Assert.AreEqual(0, VisualStateManager.GetVisualStateGroups(rootGrid).Count);
     }
 
-    private static VisualStateGroup GetCombinedStatesGroup(FrameworkElement stateGroupsRoot)
+    private static void AssertOfficialTriggerShape(ControlTemplate template)
     {
-        return VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
-            .OfType<VisualStateGroup>()
-            .Single(item => item.Name == "CombinedStates");
+        var triggers = template.Triggers.OfType<Trigger>().ToArray();
+        var multiTriggers = template.Triggers.OfType<MultiTrigger>().ToArray();
+
+        Assert.AreEqual(5, triggers.Length);
+        Assert.AreEqual(6, multiTriggers.Length);
+
+        AssertContentNullTrigger(triggers);
+        AssertContentEmptyTrigger(triggers);
+        AssertIndeterminateTrigger(triggers);
+        AssertCheckedTrigger(triggers);
+        AssertDisabledTrigger(triggers);
+
+        AssertTrigger(multiTriggers,
+            new[] { ("IsMouseOver", (object?)true), ("IsChecked", (object?)false), ("IsPressed", (object?)false) },
+            ("ControlBorderIconPresenter", "Background", "CheckBoxCheckBackgroundFillUncheckedPointerOver"),
+            ("StrokeBorder", "BorderBrush", "CheckBoxCheckBackgroundStrokeUncheckedPointerOver"),
+            ("RootBorder", "BorderBrush", "CheckBoxBorderBrushUncheckedPointerOver"),
+            ("RootBorder", "Background", "CheckBoxBackgroundUncheckedPointerOver"));
+
+        AssertTrigger(multiTriggers,
+            new[] { ("IsMouseOver", (object?)true), ("IsChecked", (object?)false), ("IsPressed", (object?)true) },
+            ("ControlBorderIconPresenter", "Background", "CheckBoxCheckBackgroundFillUncheckedPressed"),
+            ("StrokeBorder", "BorderBrush", "CheckBoxCheckBackgroundStrokeUncheckedPressed"),
+            ("RootBorder", "BorderBrush", "CheckBoxBorderBrushUncheckedPressed"),
+            ("RootBorder", "Background", "CheckBoxBackgroundUncheckedPressed"));
+
+        AssertTrigger(multiTriggers,
+            new[] { ("IsMouseOver", (object)true), ("IsChecked", null), ("IsPressed", (object)false) },
+            ("ControlBorderIconPresenter", "Background", "CheckBoxCheckBackgroundFillIndeterminatePointerOver"),
+            ("StrokeBorder", "BorderBrush", "CheckBoxCheckBackgroundStrokeIndeterminatePointerOver"),
+            ("RootBorder", "BorderBrush", "CheckBoxBorderBrushIndeterminatePointerOver"),
+            ("RootBorder", "Background", "CheckBoxBackgroundIndeterminatePointerOver"));
+
+        AssertTrigger(multiTriggers,
+            new[] { ("IsMouseOver", (object)true), ("IsChecked", null), ("IsPressed", (object)true) },
+            ("ControlBorderIconPresenter", "Background", "CheckBoxCheckBackgroundFillIndeterminatePressed"),
+            ("StrokeBorder", "BorderBrush", "CheckBoxCheckBackgroundStrokeIndeterminatePressed"),
+            ("RootBorder", "BorderBrush", "CheckBoxBorderBrushIndeterminatePressed"),
+            ("RootBorder", "Background", "CheckBoxBackgroundIndeterminatePressed"),
+            ("ControlIcon", "Foreground", "CheckBoxCheckGlyphForegroundPressed"));
+
+        AssertTrigger(multiTriggers,
+            new[] { ("IsMouseOver", (object?)true), ("IsChecked", (object?)true), ("IsPressed", (object?)false) },
+            ("ControlBorderIconPresenter", "Background", "CheckBoxCheckBackgroundFillCheckedPointerOver"),
+            ("StrokeBorder", "BorderBrush", "CheckBoxCheckBackgroundStrokeCheckedPointerOver"),
+            ("RootBorder", "BorderBrush", "CheckBoxBorderBrushCheckedPointerOver"),
+            ("RootBorder", "Background", "CheckBoxBackgroundCheckedPointerOver"));
+
+        AssertTrigger(multiTriggers,
+            new[] { ("IsMouseOver", (object?)true), ("IsChecked", (object?)true), ("IsPressed", (object?)true) },
+            ("ControlBorderIconPresenter", "Background", "CheckBoxCheckBackgroundFillCheckedPressed"),
+            ("StrokeBorder", "BorderBrush", "CheckBoxCheckBackgroundStrokeCheckedPressed"),
+            ("RootBorder", "BorderBrush", "CheckBoxBorderBrushCheckedPressed"),
+            ("RootBorder", "Background", "CheckBoxBackgroundCheckedPressed"),
+            ("ControlIcon", "Foreground", "CheckBoxCheckGlyphForegroundPressed"));
     }
 
-    private static T FindTemplatePart<T>(Control control, string name)
+    private static void AssertContentNullTrigger(Trigger[] triggers)
+    {
+        var trigger = triggers.Single(item => item.Property.Name == "Content" && item.Value == null);
+        AssertSetters(trigger.Setters.OfType<Setter>().ToArray(),
+            ("ContentPresenter", "Margin", new Thickness(0)),
+            ("", "MinWidth", 30.0));
+    }
+
+    private static void AssertContentEmptyTrigger(Trigger[] triggers)
+    {
+        var trigger = triggers.Single(item => item.Property.Name == "Content" && Equals(item.Value, string.Empty));
+        AssertSetters(trigger.Setters.OfType<Setter>().ToArray(),
+            ("ContentPresenter", "Margin", new Thickness(0)),
+            ("", "MinWidth", 30.0));
+    }
+
+    private static void AssertIndeterminateTrigger(Trigger[] triggers)
+    {
+        var trigger = triggers.Single(item => item.Property.Name == "IsChecked" && item.Value == null);
+        AssertSetters(trigger.Setters.OfType<Setter>().ToArray(),
+            ("ControlIcon", "Text", "CheckBoxIndeterminateGlyph"),
+            ("ControlIcon", "Visibility", Visibility.Visible),
+            ("ControlBorderIconPresenter", "Background", "CheckBoxCheckBackgroundFillIndeterminate"),
+            ("StrokeBorder", "BorderBrush", "CheckBoxCheckBackgroundStrokeIndeterminate"),
+            ("RootBorder", "BorderBrush", "CheckBoxBorderBrushIndeterminate"),
+            ("RootBorder", "Background", "CheckBoxBackgroundIndeterminate"));
+    }
+
+    private static void AssertCheckedTrigger(Trigger[] triggers)
+    {
+        var trigger = triggers.Single(item => item.Property.Name == "IsChecked" && Equals(item.Value, true));
+        AssertSetters(trigger.Setters.OfType<Setter>().ToArray(),
+            ("ControlIcon", "Visibility", Visibility.Visible),
+            ("ControlBorderIconPresenter", "Background", "CheckBoxCheckBackgroundFillChecked"),
+            ("StrokeBorder", "BorderBrush", "CheckBoxCheckBackgroundStrokeChecked"),
+            ("RootBorder", "BorderBrush", "CheckBoxBorderBrushChecked"),
+            ("RootBorder", "Background", "CheckBoxBackgroundChecked"));
+    }
+
+    private static void AssertDisabledTrigger(Trigger[] triggers)
+    {
+        var trigger = triggers.Single(item => item.Property.Name == "IsEnabled" && Equals(item.Value, false));
+        AssertSetters(trigger.Setters.OfType<Setter>().ToArray(),
+            ("ControlBorderIconPresenter", "Background", "CheckBoxCheckBackgroundFillUncheckedDisabled"),
+            ("StrokeBorder", "BorderBrush", "CheckBoxCheckBackgroundStrokeUncheckedDisabled"),
+            ("ControlIcon", "Foreground", "CheckBoxForegroundUncheckedDisabled"),
+            ("", "Foreground", "TextFillColorDisabledBrush"),
+            ("RootBorder", "BorderBrush", "CheckBoxBorderBrushUncheckedPressed"),
+            ("RootBorder", "Background", "CheckBoxBackgroundUncheckedPressed"));
+    }
+
+    private static void AssertTrigger(
+        MultiTrigger[] triggers,
+        (string PropertyName, object? Value)[] expectedConditions,
+        params (string TargetName, string PropertyName, object Value)[] expectedSetters)
+    {
+        var trigger = triggers.Single(item => expectedConditions.All(condition => HasCondition(item, condition.PropertyName, condition.Value)));
+        AssertSetters(trigger.Setters.OfType<Setter>().ToArray(), expectedSetters);
+    }
+
+    private static void AssertSetters(
+        Setter[] setters,
+        params (string TargetName, string PropertyName, object Value)[] expectedSetters)
+    {
+        Assert.AreEqual(expectedSetters.Length, setters.Length);
+
+        foreach (var expectedSetter in expectedSetters)
+        {
+            AssertSetter(setters, expectedSetter.TargetName, expectedSetter.PropertyName, expectedSetter.Value);
+        }
+    }
+
+    private static bool HasCondition(MultiTrigger trigger, string propertyName, object? value)
+    {
+        return trigger.Conditions.Cast<Condition>().Any(item =>
+            item.Property.Name == propertyName &&
+            Equals(item.Value, value));
+    }
+
+    private static void AssertSetter(Setter[] setters, string targetName, string propertyName, object value)
+    {
+        var setter = setters.Single(item =>
+            (item.TargetName ?? string.Empty) == targetName &&
+            item.Property.Name == propertyName);
+
+        if (value is string resourceKey)
+        {
+            if (setter.Value is DynamicResourceExtension dynamicResource)
+            {
+                Assert.AreEqual(resourceKey, dynamicResource.ResourceKey);
+            }
+            else
+            {
+                var resolvedResource = Application.Current.TryFindResource(resourceKey);
+                if (resolvedResource != null && Equals(setter.Value, resolvedResource))
+                {
+                    return;
+                }
+
+                Assert.IsInstanceOfType(setter.Value, typeof(StaticResourceExtension));
+                var staticResource = (StaticResourceExtension)setter.Value;
+                Assert.AreEqual(resourceKey, staticResource.ResourceKey);
+            }
+        }
+        else
+        {
+            Assert.AreEqual(value, setter.Value);
+        }
+    }
+
+    private static void AssertUncheckedDisabledTriggerAppliesResources(CheckBox checkBox)
+    {
+        var rootBorder = GetTemplateChild<Border>(checkBox, "RootBorder");
+        var iconPresenter = GetTemplateChild<Border>(checkBox, "ControlBorderIconPresenter");
+        var strokeBorder = GetTemplateChild<Border>(checkBox, "StrokeBorder");
+        var controlIcon = GetTemplateChild<TextBlock>(checkBox, "ControlIcon");
+
+        checkBox.IsEnabled = false;
+        checkBox.UpdateLayout();
+
+        Assert.AreSame(checkBox.TryFindResource("TextFillColorDisabledBrush"), checkBox.Foreground);
+        Assert.AreSame(iconPresenter.TryFindResource("CheckBoxCheckBackgroundFillUncheckedDisabled"), iconPresenter.Background);
+        Assert.AreSame(strokeBorder.TryFindResource("CheckBoxCheckBackgroundStrokeUncheckedDisabled"), strokeBorder.BorderBrush);
+        Assert.AreSame(controlIcon.TryFindResource("CheckBoxForegroundUncheckedDisabled"), controlIcon.Foreground);
+        Assert.AreSame(rootBorder.TryFindResource("CheckBoxBorderBrushUncheckedPressed"), rootBorder.BorderBrush);
+        Assert.AreSame(rootBorder.TryFindResource("CheckBoxBackgroundUncheckedPressed"), rootBorder.Background);
+    }
+
+    private static void AssertThemeResourceReference(string themeName, string key, object expectedResourceKey)
+    {
+        var theme = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(theme.Contains(expectedResourceKey), $"Theme is missing {expectedResourceKey}.");
+        Assert.AreSame(theme[expectedResourceKey], theme[key], key);
+    }
+
+    private static T GetTemplateChild<T>(Control control, string name)
         where T : DependencyObject
     {
-        var part = control.Template.FindName(name, control) as T;
-        if (part == null)
-        {
-            throw new AssertFailedException($"Expected CheckBox template part '{name}'.");
-        }
-
-        return part;
-    }
-
-    private static KeyEventArgs RaiseKey(UIElement element, Key key)
-    {
-        var args = new KeyEventArgs(
-            Keyboard.PrimaryDevice,
-            PresentationSource.FromVisual(element),
-            Environment.TickCount,
-            key)
-        {
-            RoutedEvent = Keyboard.KeyDownEvent,
-            Source = element
-        };
-
-        element.RaiseEvent(args);
-        return args;
+        return control.Template.FindName(name, control) as T
+            ?? throw new AssertFailedException($"Expected {control.GetType().Name} template child '{name}' to be a {typeof(T).Name}.");
     }
 }

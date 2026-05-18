@@ -742,6 +742,10 @@
 
     <!-- Checkbox glyph brushes -->
 
+    <m:StaticResource x:Key="CheckBoxCheckGlyphForeground" ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundPressed" ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundDisabled" ResourceKey="SystemColorWindowColorBrush" />
+
     <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundUnchecked" ResourceKey="SystemColorButtonFaceColorBrush" />
     <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundUncheckedPointerOver" ResourceKey="SystemColorHighlightColorBrush" />
     <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundUncheckedPressed" ResourceKey="SystemColorHighlightTextColorBrush" />

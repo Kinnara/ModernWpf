@@ -83,7 +83,6 @@ public class TemplateParityTests
             Path.Combine("ModernWpf", "ProgressBar", "ProgressBar.xaml"),
             Path.Combine("ModernWpf", "Styles", "AutoSuggestBox.xaml"),
             Path.Combine("ModernWpf", "Styles", "Calendar.xaml"),
-            Path.Combine("ModernWpf", "Styles", "CheckBox.xaml"),
             Path.Combine("ModernWpf", "Styles", "ComboBox.xaml"),
             Path.Combine("ModernWpf", "Styles", "DatePicker.xaml"),
             Path.Combine("ModernWpf", "Styles", "Expander.xaml"),
@@ -140,6 +139,7 @@ public class TemplateParityTests
         var officialWpfFluentTemplateFiles = new[]
         {
             Path.Combine("ModernWpf", "Styles", "Button.xaml"),
+            Path.Combine("ModernWpf", "Styles", "CheckBox.xaml"),
             Path.Combine("ModernWpf", "Styles", "RadioButton.xaml"),
             Path.Combine("ModernWpf", "Styles", "RepeatButton.xaml"),
             Path.Combine("ModernWpf", "Styles", "Slider.xaml"),

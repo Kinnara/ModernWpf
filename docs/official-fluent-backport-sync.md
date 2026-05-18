@@ -192,3 +192,34 @@ Source inspected:
 
 - `test\ModernWpf.WinUI.Tests\CommonStyles\RadioButtonVisualStateTests.cs` covers the official WPF Fluent RadioButton visual-state names, WPF trigger shape, WPF presenter slot, checked/disabled behavior, and newly added checked outer-ellipse resource aliases.
 - `test\ModernWpf.WinUI.Tests\LayoutCompatibility\LayoutCompatibilityApiTests.cs` covers the RadioButton WPF presenter slot plus the retained `ControlHelper.CornerRadius` substitution.
+
+## 2026-05-18 Batch 7
+
+Source inspected:
+
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\CheckBox.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Light.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Dark.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\HC.xaml`
+
+### Synced Values
+
+| Resource key / style | Official WPF Fluent value | ModernWpf value after sync | Reason |
+| --- | --- | --- | --- |
+| `DefaultCheckBoxStyle` | `CheckBox` style with `RootBorder`, `RootGrid`, `ControlBorderIconPresenter`, `StrokeBorder`, `ControlIcon`, WPF `ContentPresenter`, and WPF trigger entries for checked, indeterminate, disabled, pointer-over, pressed, and empty-content behavior | Same structure under the existing resource key, with the older-target `ControlHelper.CornerRadius` substitution | `CheckBox` is a stock WPF control, so official WPF Fluent is the primary source. |
+| Implicit `CheckBox` style | Based on `DefaultCheckBoxStyle` | Same | Matches official WPF Fluent resource shape while keeping the existing ModernWpf resource key. |
+| `CheckBoxBorderThickness` / `CheckBoxIconSize` / `CheckBoxCheckedGlyph` / `CheckBoxIndeterminateGlyph` | Official WPF Fluent metrics and text glyphs | Same metrics and glyph values | Replaces the previous WinUI fallback geometry glyph path for stock CheckBox. |
+| `CheckBoxCheckGlyphForeground`, `CheckBoxCheckGlyphForegroundPressed`, `CheckBoxCheckGlyphForegroundDisabled` | Official theme glyph brush aliases | Same aliases across Light, Dark, and HighContrast | Required by the official WPF Fluent template shape. |
+
+### Intentional Differences
+
+| Resource key / style | Official WPF Fluent value | ModernWpf backport value | Reason retained |
+| --- | --- | --- | --- |
+| CheckBox corner radius property | `Border.CornerRadius` on `CheckBox` | `primitives:ControlHelper.CornerRadius` | Older ModernWpf targets do not expose the official source property on `CheckBox`; this preserves the backport radius bridge. |
+| CheckBox focus style resource | `DefaultControlFocusVisualStyle` | `{x:Static SystemParameters.FocusVisualStyleKey}` plus `FocusVisualHelper` settings | ModernWpf keeps its existing focus visual bridge across supported target frameworks. |
+| CheckBox brush resources | Direct official resources | Existing ModernWpf aliases such as `CheckBoxBackgroundUnchecked` and `CheckBoxCheckBackgroundFillChecked` | Existing aliases map to the same Fluent concepts and remain part of the public resource surface. |
+| `DataGridCheckBoxStyle` / `DataGridReadOnlyCheckBoxStyle` | No direct official WPF Fluent equivalents in the CheckBox style file | Retained as ModernWpf/WPF-specific styles based on `DefaultCheckBoxStyle` | These styles serve WPF DataGrid usage and remain outside the stock official template copy. |
+
+### Test Evidence
+
+- `test\ModernWpf.WinUI.Tests\CommonStyles\CheckBoxVisualStateTests.cs` covers the official WPF Fluent CheckBox trigger shape, WPF presenter slot, official metrics/glyph resources, checked/indeterminate/disabled behavior, and newly added glyph brush aliases.
