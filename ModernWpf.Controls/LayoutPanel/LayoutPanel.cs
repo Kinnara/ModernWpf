@@ -9,74 +9,13 @@ using System.Windows.Media;
 
 namespace ModernWpf.Controls
 {
-    public class LayoutPanel : Panel
+    public partial class LayoutPanel : Panel
     {
         public LayoutPanel()
         {
         }
 
-        #region BorderBrush
-
-        public static readonly DependencyProperty BorderBrushProperty =
-            Border.BorderBrushProperty.AddOwner(
-                typeof(LayoutPanel),
-                new FrameworkPropertyMetadata(
-                    null,
-                    FrameworkPropertyMetadataOptions.AffectsRender));
-
-        public Brush BorderBrush
-        {
-            get => (Brush)GetValue(BorderBrushProperty);
-            set => SetValue(BorderBrushProperty, value);
-        }
-
-        #endregion
-
-        #region BorderThickness
-
-        public static readonly DependencyProperty BorderThicknessProperty =
-            Border.BorderThicknessProperty.AddOwner(
-                typeof(LayoutPanel),
-                new FrameworkPropertyMetadata(
-                    new Thickness(),
-                    FrameworkPropertyMetadataOptions.AffectsMeasure |
-                    FrameworkPropertyMetadataOptions.AffectsArrange |
-                    FrameworkPropertyMetadataOptions.AffectsRender));
-
-        public Thickness BorderThickness
-        {
-            get => (Thickness)GetValue(BorderThicknessProperty);
-            set => SetValue(BorderThicknessProperty, value);
-        }
-
-        #endregion
-
-        #region CornerRadius
-
-        public static readonly DependencyProperty CornerRadiusProperty =
-            Border.CornerRadiusProperty.AddOwner(
-                typeof(LayoutPanel),
-                new FrameworkPropertyMetadata(
-                    new CornerRadius(),
-                    FrameworkPropertyMetadataOptions.AffectsArrange |
-                    FrameworkPropertyMetadataOptions.AffectsRender));
-
-        public CornerRadius CornerRadius
-        {
-            get => (CornerRadius)GetValue(CornerRadiusProperty);
-            set => SetValue(CornerRadiusProperty, value);
-        }
-
-        #endregion
-
         #region Layout
-
-        public static readonly DependencyProperty LayoutProperty =
-            DependencyProperty.Register(
-                nameof(Layout),
-                typeof(Layout),
-                typeof(LayoutPanel),
-                new FrameworkPropertyMetadata(OnLayoutChanged));
 
         public Layout Layout
         {
@@ -87,25 +26,6 @@ namespace ModernWpf.Controls
         private static void OnLayoutChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((LayoutPanel)d).OnLayoutChanged((Layout)e.OldValue, (Layout)e.NewValue);
-        }
-
-        #endregion
-
-        #region Padding
-
-        public static readonly DependencyProperty PaddingProperty =
-            DependencyProperty.Register(
-                nameof(Padding),
-                typeof(Thickness),
-                typeof(LayoutPanel),
-                new FrameworkPropertyMetadata(
-                    new Thickness(0, 0, 0, 0),
-                    FrameworkPropertyMetadataOptions.AffectsMeasure));
-
-        public Thickness Padding
-        {
-            get => (Thickness)GetValue(PaddingProperty);
-            set => SetValue(PaddingProperty, value);
         }
 
         #endregion

@@ -1,0 +1,38 @@
+{
+  "usings": [
+    "System.Windows",
+    "ModernWpf.Controls.Primitives",
+    "ModernWpf.Media.Animation"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "BreadcrumbBarItem"
+  },
+  "properties": [
+    {
+      "name": "ContentTransitions",
+      "type": "TransitionCollection",
+      "kind": "AddOwner",
+      "sourceProperty": "ControlHelper.ContentTransitionsProperty"
+    },
+    {
+      "name": "CornerRadius",
+      "type": "CornerRadius",
+      "kind": "AddOwner",
+      "sourceProperty": "ControlHelper.CornerRadiusProperty"
+    },
+    {
+      "name": "FocusVisualMargin",
+      "type": "Thickness",
+      "kind": "AddOwner",
+      "sourceProperty": "FocusVisualHelper.FocusVisualMarginProperty"
+    },
+    {
+      "name": "UseSystemFocusVisuals",
+      "type": "bool",
+      "kind": "AddOwner",
+      "sourceProperty": "FocusVisualHelper.UseSystemFocusVisualsProperty"
+    }
+  ]
+}

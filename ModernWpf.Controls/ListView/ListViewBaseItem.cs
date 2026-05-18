@@ -7,103 +7,12 @@ using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
 {
-    public class ListViewBaseItem : ListBoxItem
+    public partial class ListViewBaseItem : ListBoxItem
     {
         protected ListViewBaseItem()
         {
             IsEnabledChanged += OnIsEnabledChanged;
         }
-
-        #region UseSystemFocusVisuals
-
-        public static readonly DependencyProperty UseSystemFocusVisualsProperty =
-            FocusVisualHelper.UseSystemFocusVisualsProperty.AddOwner(typeof(ListViewBaseItem));
-
-        public bool UseSystemFocusVisuals
-        {
-            get => (bool)GetValue(UseSystemFocusVisualsProperty);
-            set => SetValue(UseSystemFocusVisualsProperty, value);
-        }
-
-        #endregion
-
-        #region FocusVisualMargin
-
-        public static readonly DependencyProperty FocusVisualMarginProperty =
-            FocusVisualHelper.FocusVisualMarginProperty.AddOwner(typeof(ListViewBaseItem));
-
-        public Thickness FocusVisualMargin
-        {
-            get => (Thickness)GetValue(FocusVisualMarginProperty);
-            set => SetValue(FocusVisualMarginProperty, value);
-        }
-
-        #endregion
-
-        #region FocusVisualPrimaryBrush
-
-        public static readonly DependencyProperty FocusVisualPrimaryBrushProperty =
-            FocusVisualHelper.FocusVisualPrimaryBrushProperty.AddOwner(typeof(ListViewBaseItem));
-
-        public Brush FocusVisualPrimaryBrush
-        {
-            get => (Brush)GetValue(FocusVisualPrimaryBrushProperty);
-            set => SetValue(FocusVisualPrimaryBrushProperty, value);
-        }
-
-        #endregion
-
-        #region FocusVisualPrimaryThickness
-
-        public static readonly DependencyProperty FocusVisualPrimaryThicknessProperty =
-            FocusVisualHelper.FocusVisualPrimaryThicknessProperty.AddOwner(typeof(ListViewBaseItem));
-
-        public Thickness FocusVisualPrimaryThickness
-        {
-            get => (Thickness)GetValue(FocusVisualPrimaryThicknessProperty);
-            set => SetValue(FocusVisualPrimaryThicknessProperty, value);
-        }
-
-        #endregion
-
-        #region FocusVisualSecondaryBrush
-
-        public static readonly DependencyProperty FocusVisualSecondaryBrushProperty =
-            FocusVisualHelper.FocusVisualSecondaryBrushProperty.AddOwner(typeof(ListViewBaseItem));
-
-        public Brush FocusVisualSecondaryBrush
-        {
-            get => (Brush)GetValue(FocusVisualSecondaryBrushProperty);
-            set => SetValue(FocusVisualSecondaryBrushProperty, value);
-        }
-
-        #endregion
-
-        #region FocusVisualSecondaryThickness
-
-        public static readonly DependencyProperty FocusVisualSecondaryThicknessProperty =
-            FocusVisualHelper.FocusVisualSecondaryThicknessProperty.AddOwner(typeof(ListViewBaseItem));
-
-        public Thickness FocusVisualSecondaryThickness
-        {
-            get => (Thickness)GetValue(FocusVisualSecondaryThicknessProperty);
-            set => SetValue(FocusVisualSecondaryThicknessProperty, value);
-        }
-
-        #endregion
-
-        #region CornerRadius
-
-        public static readonly DependencyProperty CornerRadiusProperty =
-            ControlHelper.CornerRadiusProperty.AddOwner(typeof(ListViewBaseItem));
-
-        public CornerRadius CornerRadius
-        {
-            get => (CornerRadius)GetValue(CornerRadiusProperty);
-            set => SetValue(CornerRadiusProperty, value);
-        }
-
-        #endregion
 
         public override void OnApplyTemplate()
         {

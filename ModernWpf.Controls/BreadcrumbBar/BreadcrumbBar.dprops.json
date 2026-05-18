@@ -1,0 +1,27 @@
+{
+  "usings": [
+    "System.Windows",
+    "System.Windows.Controls"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "BreadcrumbBar"
+  },
+  "properties": [
+    {
+      "name": "ItemsSource",
+      "type": "object",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "null",
+      "changed": "OnItemsSourcePropertyChanged"
+    },
+    {
+      "name": "ItemTemplate",
+      "type": "DataTemplate",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "null",
+      "changed": "OnItemTemplatePropertyChanged"
+    }
+  ]
+}

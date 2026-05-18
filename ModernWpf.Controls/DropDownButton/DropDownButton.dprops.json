@@ -1,0 +1,64 @@
+{
+  "usings": [
+    "System.Windows",
+    "ModernWpf.Controls.Primitives",
+    "ModernWpf.Media.Animation"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "DropDownButton"
+  },
+  "properties": [
+    {
+      "name": "BackgroundSizing",
+      "type": "BackgroundSizing",
+      "kind": "AddOwner",
+      "sourceProperty": "ControlHelper.BackgroundSizingProperty"
+    },
+    {
+      "name": "CharacterSpacing",
+      "type": "int",
+      "kind": "AddOwner",
+      "sourceProperty": "ControlHelper.CharacterSpacingProperty"
+    },
+    {
+      "name": "ContentTransitions",
+      "type": "TransitionCollection",
+      "kind": "AddOwner",
+      "sourceProperty": "ControlHelper.ContentTransitionsProperty"
+    },
+    {
+      "name": "CornerRadius",
+      "type": "CornerRadius",
+      "kind": "AddOwner",
+      "sourceProperty": "ControlHelper.CornerRadiusProperty"
+    },
+    {
+      "name": "IsTextScaleFactorEnabled",
+      "type": "bool",
+      "kind": "AddOwner",
+      "sourceProperty": "ControlHelper.IsTextScaleFactorEnabledProperty"
+    },
+    {
+      "name": "UseSystemFocusVisuals",
+      "type": "bool",
+      "kind": "AddOwner",
+      "sourceProperty": "FocusVisualHelper.UseSystemFocusVisualsProperty"
+    },
+    {
+      "name": "FocusVisualMargin",
+      "type": "Thickness",
+      "kind": "AddOwner",
+      "sourceProperty": "FocusVisualHelper.FocusVisualMarginProperty"
+    },
+    {
+      "name": "Flyout",
+      "type": "FlyoutBase",
+      "kind": "AddOwner",
+      "sourceProperty": "FlyoutService.FlyoutProperty",
+      "metadataType": "FrameworkPropertyMetadata",
+      "changed": "OnFlyoutPropertyChanged"
+    }
+  ]
+}

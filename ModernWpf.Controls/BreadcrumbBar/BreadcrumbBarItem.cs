@@ -15,7 +15,7 @@ namespace ModernWpf.Controls
 {
     [TemplatePart(Name = ItemButtonName, Type = typeof(Button))]
     [TemplatePart(Name = ChevronTextBlockName, Type = typeof(TextBlock))]
-    public class BreadcrumbBarItem : ContentControl
+    public partial class BreadcrumbBarItem : ContentControl
     {
         private const string ItemButtonName = "PART_ItemButton";
         private const string ChevronTextBlockName = "PART_ChevronTextBlock";
@@ -27,58 +27,6 @@ namespace ModernWpf.Controls
             DefaultStyleKeyProperty.OverrideMetadata(typeof(BreadcrumbBarItem), new FrameworkPropertyMetadata(typeof(BreadcrumbBarItem)));
             IsEnabledProperty.OverrideMetadata(typeof(BreadcrumbBarItem), new FrameworkPropertyMetadata(OnIsEnabledChanged));
         }
-
-        #region ContentTransitions
-
-        public static readonly DependencyProperty ContentTransitionsProperty =
-            ControlHelper.ContentTransitionsProperty.AddOwner(typeof(BreadcrumbBarItem));
-
-        public TransitionCollection ContentTransitions
-        {
-            get => (TransitionCollection)GetValue(ContentTransitionsProperty);
-            set => SetValue(ContentTransitionsProperty, value);
-        }
-
-        #endregion
-
-        #region CornerRadius
-
-        public static readonly DependencyProperty CornerRadiusProperty =
-            ControlHelper.CornerRadiusProperty.AddOwner(typeof(BreadcrumbBarItem));
-
-        public CornerRadius CornerRadius
-        {
-            get => (CornerRadius)GetValue(CornerRadiusProperty);
-            set => SetValue(CornerRadiusProperty, value);
-        }
-
-        #endregion
-
-        #region FocusVisualMargin
-
-        public static readonly DependencyProperty FocusVisualMarginProperty =
-            FocusVisualHelper.FocusVisualMarginProperty.AddOwner(typeof(BreadcrumbBarItem));
-
-        public Thickness FocusVisualMargin
-        {
-            get => (Thickness)GetValue(FocusVisualMarginProperty);
-            set => SetValue(FocusVisualMarginProperty, value);
-        }
-
-        #endregion
-
-        #region UseSystemFocusVisuals
-
-        public static readonly DependencyProperty UseSystemFocusVisualsProperty =
-            FocusVisualHelper.UseSystemFocusVisualsProperty.AddOwner(typeof(BreadcrumbBarItem));
-
-        public bool UseSystemFocusVisuals
-        {
-            get => (bool)GetValue(UseSystemFocusVisualsProperty);
-            set => SetValue(UseSystemFocusVisualsProperty, value);
-        }
-
-        #endregion
 
         public override void OnApplyTemplate()
         {

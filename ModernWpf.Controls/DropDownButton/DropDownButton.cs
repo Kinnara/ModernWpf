@@ -11,7 +11,7 @@ using ModernWpf.Media.Animation;
 
 namespace ModernWpf.Controls
 {
-    public class DropDownButton : Button
+    public partial class DropDownButton : Button
     {
         static DropDownButton()
         {
@@ -22,109 +22,7 @@ namespace ModernWpf.Controls
         {
         }
 
-        #region BackgroundSizing
-
-        public static readonly DependencyProperty BackgroundSizingProperty =
-            ControlHelper.BackgroundSizingProperty.AddOwner(typeof(DropDownButton));
-
-        public BackgroundSizing BackgroundSizing
-        {
-            get => (BackgroundSizing)GetValue(BackgroundSizingProperty);
-            set => SetValue(BackgroundSizingProperty, value);
-        }
-
-        #endregion
-
-        #region CharacterSpacing
-
-        public static readonly DependencyProperty CharacterSpacingProperty =
-            ControlHelper.CharacterSpacingProperty.AddOwner(typeof(DropDownButton));
-
-        public int CharacterSpacing
-        {
-            get => (int)GetValue(CharacterSpacingProperty);
-            set => SetValue(CharacterSpacingProperty, value);
-        }
-
-        #endregion
-
-        #region ContentTransitions
-
-        public static readonly DependencyProperty ContentTransitionsProperty =
-            ControlHelper.ContentTransitionsProperty.AddOwner(typeof(DropDownButton));
-
-        public TransitionCollection ContentTransitions
-        {
-            get => (TransitionCollection)GetValue(ContentTransitionsProperty);
-            set => SetValue(ContentTransitionsProperty, value);
-        }
-
-        #endregion
-
-        #region CornerRadius
-
-        public static readonly DependencyProperty CornerRadiusProperty =
-            ControlHelper.CornerRadiusProperty.AddOwner(typeof(DropDownButton));
-
-        public CornerRadius CornerRadius
-        {
-            get => (CornerRadius)GetValue(CornerRadiusProperty);
-            set => SetValue(CornerRadiusProperty, value);
-        }
-
-        #endregion
-
-        #region IsTextScaleFactorEnabled
-
-        public static readonly DependencyProperty IsTextScaleFactorEnabledProperty =
-            ControlHelper.IsTextScaleFactorEnabledProperty.AddOwner(typeof(DropDownButton));
-
-        public bool IsTextScaleFactorEnabled
-        {
-            get => (bool)GetValue(IsTextScaleFactorEnabledProperty);
-            set => SetValue(IsTextScaleFactorEnabledProperty, value);
-        }
-
-        #endregion
-
-        #region UseSystemFocusVisuals
-
-        public static readonly DependencyProperty UseSystemFocusVisualsProperty =
-            FocusVisualHelper.UseSystemFocusVisualsProperty.AddOwner(typeof(DropDownButton));
-
-        public bool UseSystemFocusVisuals
-        {
-            get => (bool)GetValue(UseSystemFocusVisualsProperty);
-            set => SetValue(UseSystemFocusVisualsProperty, value);
-        }
-
-        #endregion
-
-        #region FocusVisualMargin
-
-        public static readonly DependencyProperty FocusVisualMarginProperty =
-            FocusVisualHelper.FocusVisualMarginProperty.AddOwner(typeof(DropDownButton));
-
-        public Thickness FocusVisualMargin
-        {
-            get => (Thickness)GetValue(FocusVisualMarginProperty);
-            set => SetValue(FocusVisualMarginProperty, value);
-        }
-
-        #endregion
-
         #region Flyout
-
-        public static readonly DependencyProperty FlyoutProperty =
-            FlyoutService.FlyoutProperty.AddOwner(
-                typeof(DropDownButton),
-                new FrameworkPropertyMetadata(OnFlyoutPropertyChanged));
-
-        public FlyoutBase Flyout
-        {
-            get => (FlyoutBase)GetValue(FlyoutProperty);
-            set => SetValue(FlyoutProperty, value);
-        }
 
         private static void OnFlyoutPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {

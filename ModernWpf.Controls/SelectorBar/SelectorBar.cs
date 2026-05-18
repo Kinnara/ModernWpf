@@ -13,7 +13,7 @@ namespace ModernWpf.Controls
 {
     [ContentProperty(nameof(Items))]
     [TemplatePart(Name = ItemsViewName, Type = typeof(ItemsControl))]
-    public class SelectorBar : Control
+    public partial class SelectorBar : Control
     {
         private const string ItemsViewName = "PART_ItemsView";
 
@@ -32,39 +32,6 @@ namespace ModernWpf.Controls
             SetValue(ItemsPropertyKey, items);
 
             Loaded += OnLoaded;
-        }
-
-        private static readonly DependencyPropertyKey ItemsPropertyKey =
-            DependencyProperty.RegisterReadOnly(
-                nameof(Items),
-                typeof(ObservableCollection<SelectorBarItem>),
-                typeof(SelectorBar),
-                new PropertyMetadata(null));
-
-        public static readonly DependencyProperty ItemsProperty = ItemsPropertyKey.DependencyProperty;
-
-        public ObservableCollection<SelectorBarItem> Items => (ObservableCollection<SelectorBarItem>)GetValue(ItemsProperty);
-
-        public static readonly DependencyProperty CornerRadiusProperty =
-            ControlHelper.CornerRadiusProperty.AddOwner(typeof(SelectorBar));
-
-        public CornerRadius CornerRadius
-        {
-            get => (CornerRadius)GetValue(CornerRadiusProperty);
-            set => SetValue(CornerRadiusProperty, value);
-        }
-
-        public static readonly DependencyProperty SelectedItemProperty =
-            DependencyProperty.Register(
-                nameof(SelectedItem),
-                typeof(SelectorBarItem),
-                typeof(SelectorBar),
-                new FrameworkPropertyMetadata(null, OnSelectedItemPropertyChanged));
-
-        public SelectorBarItem SelectedItem
-        {
-            get => (SelectorBarItem)GetValue(SelectedItemProperty);
-            set => SetValue(SelectedItemProperty, value);
         }
 
         public event TypedEventHandler<SelectorBar, SelectorBarSelectionChangedEventArgs> SelectionChanged;

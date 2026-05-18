@@ -10,7 +10,7 @@ namespace ModernWpf.Controls
 {
     [TemplatePart(Name = IconVisualName, Type = typeof(ContentPresenterEx))]
     [TemplatePart(Name = TextVisualName, Type = typeof(TextBlock))]
-    public class SelectorBarItem : Control
+    public partial class SelectorBarItem : Control
     {
         private const string IconVisualName = "PART_IconVisual";
         private const string TextVisualName = "PART_TextVisual";
@@ -19,112 +19,6 @@ namespace ModernWpf.Controls
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(SelectorBarItem), new FrameworkPropertyMetadata(typeof(SelectorBarItem)));
             IsEnabledProperty.OverrideMetadata(typeof(SelectorBarItem), new FrameworkPropertyMetadata(OnIsEnabledChanged));
-        }
-
-        #region BackgroundSizing
-
-        public static readonly DependencyProperty BackgroundSizingProperty =
-            ControlHelper.BackgroundSizingProperty.AddOwner(
-                typeof(SelectorBarItem),
-                new FrameworkPropertyMetadata(BackgroundSizing.OuterBorderEdge));
-
-        public BackgroundSizing BackgroundSizing
-        {
-            get => (BackgroundSizing)GetValue(BackgroundSizingProperty);
-            set => SetValue(BackgroundSizingProperty, value);
-        }
-
-        #endregion
-
-        #region CornerRadius
-
-        public static readonly DependencyProperty CornerRadiusProperty =
-            ControlHelper.CornerRadiusProperty.AddOwner(typeof(SelectorBarItem));
-
-        public CornerRadius CornerRadius
-        {
-            get => (CornerRadius)GetValue(CornerRadiusProperty);
-            set => SetValue(CornerRadiusProperty, value);
-        }
-
-        #endregion
-
-        #region FocusVisualMargin
-
-        public static readonly DependencyProperty FocusVisualMarginProperty =
-            FocusVisualHelper.FocusVisualMarginProperty.AddOwner(typeof(SelectorBarItem));
-
-        public Thickness FocusVisualMargin
-        {
-            get => (Thickness)GetValue(FocusVisualMarginProperty);
-            set => SetValue(FocusVisualMarginProperty, value);
-        }
-
-        #endregion
-
-        #region UseSystemFocusVisuals
-
-        public static readonly DependencyProperty UseSystemFocusVisualsProperty =
-            FocusVisualHelper.UseSystemFocusVisualsProperty.AddOwner(typeof(SelectorBarItem));
-
-        public bool UseSystemFocusVisuals
-        {
-            get => (bool)GetValue(UseSystemFocusVisualsProperty);
-            set => SetValue(UseSystemFocusVisualsProperty, value);
-        }
-
-        #endregion
-
-        public static readonly DependencyProperty TextProperty =
-            DependencyProperty.Register(
-                nameof(Text),
-                typeof(string),
-                typeof(SelectorBarItem),
-                new FrameworkPropertyMetadata(string.Empty, OnVisualPropertyChanged));
-
-        public string Text
-        {
-            get => (string)GetValue(TextProperty);
-            set => SetValue(TextProperty, value);
-        }
-
-        public static readonly DependencyProperty IconProperty =
-            DependencyProperty.Register(
-                nameof(Icon),
-                typeof(IconElement),
-                typeof(SelectorBarItem),
-                new FrameworkPropertyMetadata(null, OnVisualPropertyChanged));
-
-        public IconElement Icon
-        {
-            get => (IconElement)GetValue(IconProperty);
-            set => SetValue(IconProperty, value);
-        }
-
-        public static readonly DependencyProperty ChildProperty =
-            DependencyProperty.Register(
-                nameof(Child),
-                typeof(UIElement),
-                typeof(SelectorBarItem),
-                new FrameworkPropertyMetadata(null, OnVisualPropertyChanged));
-
-        public UIElement Child
-        {
-            get => (UIElement)GetValue(ChildProperty);
-            set => SetValue(ChildProperty, value);
-        }
-
-        public static readonly DependencyProperty IsSelectedProperty =
-            DependencyProperty.Register(
-                nameof(IsSelected),
-                typeof(bool),
-                typeof(SelectorBarItem),
-                new FrameworkPropertyMetadata(false, OnIsSelectedPropertyChanged));
-
-        public bool IsSelected
-        {
-            get => (bool)GetValue(IsSelectedProperty);
-            set => SetValue(IsSelectedProperty, value);
         }
 
         public override void OnApplyTemplate()

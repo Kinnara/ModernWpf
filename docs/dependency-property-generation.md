@@ -72,16 +72,19 @@ as a WinUI-style validation/coercion path that cannot be expressed as a guard.
 The existing ModernWpf control/property-owner generated-property companion
 files are manifest-backed: `AnnotatedScrollBar`, `AppBarButton`,
 `AppBarElementContainer`, `AppBarElementProperties`, `AppBarSeparator`,
-`AppBarToggleButton`, `AutoSuggestBox`, `CommandBar`,
-`CommandBarFlyoutCommandBar`,
+`AppBarToggleButton`, `AutoSuggestBox`, `BreadcrumbBar`,
+`BreadcrumbBarItem`, `CommandBar`, `CommandBarFlyoutCommandBar`,
 `CommandBarFlyoutCommandBarTemplateSettingsProxy`,
-`CommandBarOverflowPresenter`, `Flyout`, `FlyoutBase`, `FlyoutPresenter`,
-`HyperlinkButton`, `InfoBadge`, `InfoBar`, `InfoBarPanel`, `MenuBarItem`,
-`MenuFlyout`, `MenuFlyoutPresenter`, `NavigationView`,
+`CommandBarOverflowPresenter`, `DropDownButton`, `Flyout`, `FlyoutBase`,
+`FlyoutPresenter`, `HyperlinkButton`, `InfoBadge`, `InfoBar`,
+`InfoBarPanel`, `LayoutPanel`, `ListViewBase`, `ListViewBaseItem`,
+`MenuBarItem`, `MenuFlyout`, `MenuFlyoutPresenter`, `NavigationView`,
 `NavigationViewItem`, `NumberBox`, `PagerControl`, `ParallaxView`,
 `PersonPicture`, `PipsPager`, `ProgressRing`, `RadioButtons`,
-`RatingControl`, `RefreshContainer`, `RefreshVisualizer`, `SplitView`,
-`SwipeControl`, `SwipeItem`, `TeachingTip`, `TwoPaneView`, and `WrapPanel`.
+`RatingControl`, `RatingItemImageInfo`, `RefreshContainer`,
+`RefreshVisualizer`, `SelectorBar`, `SelectorBarItem`, `SplitView`,
+`SwipeControl`, `SwipeItem`, `TeachingTip`, `TwoPaneView`, and
+`WrapPanel`.
 
 The template-settings dependency properties are also manifest-backed:
 `AppBarButtonTemplateSettings`, `AppBarToggleButtonTemplateSettings`,
@@ -110,17 +113,22 @@ framework generated files under `src/dxaml/xcp/dxaml/lib/winrtgeneratedclasses`
 `AppBarButtonTemplateSettings` and `SplitViewTemplateSettings`.
 
 After the template-settings, Repeater layout, CommandBar/AppBar family, WinUI
-source-backed controls, and the latest layout/navigation DP-generation rounds,
+source-backed controls, and the latest small-control DP-generation round,
 the remaining ModernWpf types with inline DP/AddOwner sites whose type names
-match generated WinUI sources are 21 types / 148 sites:
-`AutoSuggestBoxHelper`, `BreadcrumbBar`, `BreadcrumbBarItem`, `ColorPicker`,
-`ColorPickerSlider`, `ColorSpectrum`, `ContentDialog`, `DropDownButton`,
-`ItemsRepeater`, `LayoutPanel`, `ListViewBase`, `ListViewBaseItem`,
-`NavigationViewItemBase`, `NavigationViewItemPresenter`,
-`RatingItemImageInfo`, `RecyclePool`, `SelectorBar`, `SelectorBarItem`,
+match generated WinUI sources are 12 types / 99 sites:
+`AutoSuggestBoxHelper`, `ColorPicker`, `ColorPickerSlider`,
+`ColorSpectrum`, `ContentDialog`, `ItemsRepeater`,
+`NavigationViewItemBase`, `NavigationViewItemPresenter`, `RecyclePool`,
 `SplitButton`, `ToggleSplitButton`, and `ToggleSwitch`.
 
 Those remaining sites are control implementation work, not pure storage-class
 cleanup. Convert them in coherent control/family slices so the manifest changes
 can be validated with the corresponding WinUI source defaults, callbacks,
 coercion, attached-property accessors, and tests.
+
+The small-control round converted 49 inline sites across `DropDownButton`,
+`SelectorBar`, `SelectorBarItem`, `BreadcrumbBar`, `BreadcrumbBarItem`,
+`ListViewBase`, `ListViewBaseItem`, `LayoutPanel`, and
+`RatingItemImageInfo`. `LayoutPanel.Layout` intentionally keeps its manual CLR
+wrapper because the old getter returns the initialized `m_layout` field instead
+of the raw dependency-property storage value.

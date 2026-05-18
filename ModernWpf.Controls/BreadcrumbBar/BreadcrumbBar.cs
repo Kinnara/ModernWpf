@@ -13,7 +13,7 @@ using ModernWpf.Automation.Peers;
 namespace ModernWpf.Controls
 {
     [TemplatePart(Name = ItemsRepeaterName, Type = typeof(ItemsRepeater))]
-    public class BreadcrumbBar : Control
+    public partial class BreadcrumbBar : Control
     {
         private const string ItemsRepeaterName = "PART_ItemsRepeater";
 
@@ -29,32 +29,6 @@ namespace ModernWpf.Controls
         {
             _itemsRepeaterElementFactory = new BreadcrumbElementFactory();
             _itemsRepeaterLayout = new BreadcrumbLayout(this);
-        }
-
-        public static readonly DependencyProperty ItemsSourceProperty =
-            DependencyProperty.Register(
-                nameof(ItemsSource),
-                typeof(object),
-                typeof(BreadcrumbBar),
-                new FrameworkPropertyMetadata(null, OnItemsSourcePropertyChanged));
-
-        public object ItemsSource
-        {
-            get => GetValue(ItemsSourceProperty);
-            set => SetValue(ItemsSourceProperty, value);
-        }
-
-        public static readonly DependencyProperty ItemTemplateProperty =
-            DependencyProperty.Register(
-                nameof(ItemTemplate),
-                typeof(DataTemplate),
-                typeof(BreadcrumbBar),
-                new FrameworkPropertyMetadata(null, OnItemTemplatePropertyChanged));
-
-        public DataTemplate ItemTemplate
-        {
-            get => (DataTemplate)GetValue(ItemTemplateProperty);
-            set => SetValue(ItemTemplateProperty, value);
         }
 
         public event TypedEventHandler<BreadcrumbBar, BreadcrumbBarItemClickedEventArgs> ItemClicked;

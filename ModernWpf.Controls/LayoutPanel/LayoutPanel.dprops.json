@@ -1,0 +1,66 @@
+{
+  "usings": [
+    "System.Windows",
+    "System.Windows.Controls",
+    "System.Windows.Media"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "LayoutPanel"
+  },
+  "properties": [
+    {
+      "name": "BorderBrush",
+      "type": "Brush",
+      "kind": "AddOwner",
+      "sourceProperty": "Border.BorderBrushProperty",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "null",
+      "options": [
+        "AffectsRender"
+      ]
+    },
+    {
+      "name": "BorderThickness",
+      "type": "Thickness",
+      "kind": "AddOwner",
+      "sourceProperty": "Border.BorderThicknessProperty",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "new Thickness()",
+      "options": [
+        "AffectsMeasure",
+        "AffectsArrange",
+        "AffectsRender"
+      ]
+    },
+    {
+      "name": "CornerRadius",
+      "type": "CornerRadius",
+      "kind": "AddOwner",
+      "sourceProperty": "Border.CornerRadiusProperty",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "new CornerRadius()",
+      "options": [
+        "AffectsArrange",
+        "AffectsRender"
+      ]
+    },
+    {
+      "name": "Layout",
+      "type": "Layout",
+      "metadataType": "FrameworkPropertyMetadata",
+      "changed": "OnLayoutChanged",
+      "generateWrapper": false
+    },
+    {
+      "name": "Padding",
+      "type": "Thickness",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "new Thickness(0, 0, 0, 0)",
+      "options": [
+        "AffectsMeasure"
+      ]
+    }
+  ]
+}
