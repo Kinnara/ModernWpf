@@ -747,3 +747,39 @@ Source inspected:
 
 - `test\ModernWpf.WinUI.Tests\TreeView\TreeViewResourceTests.cs` covers the official WPF Fluent TreeView/TreeViewItem setter surface, chevron resources, expansion behavior, WPF presenter slot, selection indicator, and deleted old helper path.
 - `test\ModernWpf.WinUI.Tests\TemplateParityTests.cs` classifies `TreeView.xaml` and `TreeViewItem.xaml` as official WPF Fluent stock template files that should not use `VisualStateEx` or `ContentPresenterEx`.
+
+## 2026-05-18 Batch 25
+
+Source inspected:
+
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\Calendar.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\DatePicker.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\DefaultContextMenu.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Light.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Dark.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\HC.xaml`
+
+### Synced Values
+
+| Resource key / style | Official WPF Fluent value | ModernWpf value after sync | Reason |
+| --- | --- | --- | --- |
+| `DefaultCalendarDayButtonStyle`, `DefaultCalendarButtonStyle`, `DefaultCalendarItemStyle`, `DefaultCalendarStyle` | Official stock WPF Fluent Calendar templates using WPF visual states/storyboards, WPF buttons, WPF `ContentPresenter`, and official CalendarView resource keys | Same source shape with older-target namespace and corner-radius substitutions | `Calendar` is a stock WPF control, so official WPF Fluent is the primary source. |
+| `DefaultDatePickerTextBoxStyle`, `DatePickerCalendarStyle`, `DefaultDatePickerStyle` | Official stock WPF Fluent DatePicker templates using WPF triggers, `PART_TextBox`, `PART_Button`, `PART_Popup`, `DatePickerPopupBackground`, and `DefaultControlContextMenu` | Same source shape with `ControlHelper.CornerRadius` substitutions and ModernWpf theme aliases | `DatePicker` is a stock WPF control, so official WPF Fluent is the primary source. |
+| DatePicker helper path | No official WPF Fluent helper that drives WinUI `CalendarDatePicker` states | `DatePickerHelper` and `DatePickerHeaderPlacement` deleted | Removes the previous guessed WinUI `CalendarDatePicker` state-driver layer from the stock WPF DatePicker path. |
+| Theme aliases | Official `DatePicker*`, `CalendarViewItemBackgroundPointerOver`, `CalendarViewSelectedBackground`, and `CalendarViewTodayBackground` resources | Added to Light, Dark, and HighContrast dictionaries through ModernWpf aliases | Required by the copied official templates. |
+
+### Intentional Differences
+
+| Resource key / style | Official WPF Fluent value | ModernWpf backport value | Reason retained |
+| --- | --- | --- | --- |
+| `system` namespace assembly | `System.Runtime` in `Calendar.xaml` | `mscorlib` | Keeps copied resources compatible with ModernWpf's older target frameworks. |
+| Calendar / DatePicker corner radius property | Official `Border.CornerRadius` attached setters or literal Calendar border radius | `primitives:ControlHelper.CornerRadius` | Older ModernWpf targets do not expose the official attached property surface. |
+| DatePicker dictionary dependency | Official source can resolve `DefaultCalendarStyle` through the unified Fluent resource layout | `DatePicker.xaml` locally merges `Calendar.xaml`, and `CalendarStyle` uses `StaticResource` for the same-file `DatePickerCalendarStyle` | Keeps the copied popup Calendar style source-backed after ModernWpf splits official source files into separate dictionaries. |
+| `CalendarDatePicker*` resource aliases | Not consumed by official WPF Fluent `DatePicker.xaml` | Retained as unused public aliases | Avoids unnecessary resource-surface churn while the active stock DatePicker consumes official `DatePicker*` keys. |
+| DatePicker context menu resource | Official `DefaultControlContextMenu` resource dictionary | Added to existing `Styles\ContextMenu.xaml` rather than a new resource dictionary | Preserves ModernWpf's resource merge layout while exposing the official resource key. |
+
+### Test Evidence
+
+- `test\ModernWpf.WinUI.Tests\CommonStyles\DatePickerVisualStateTests.cs` covers the official WPF Fluent DatePicker setter surface, trigger shape, popup Calendar style, context menu resource, corner-radius substitution, and absence of `VisualStateEx`.
+- `test\ModernWpf.WinUI.Tests\LayoutCompatibility\LayoutCompatibilityApiTests.cs` covers the official WPF Calendar navigation button presenter shape.
+- `test\ModernWpf.WinUI.Tests\TemplateParityTests.cs` classifies `Calendar.xaml` and `DatePicker.xaml` as official WPF Fluent stock template files that should not use `VisualStateEx`.

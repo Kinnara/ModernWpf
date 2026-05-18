@@ -77,6 +77,12 @@
 
     <Style BasedOn="{StaticResource DefaultContextMenuStyle}" TargetType="{x:Type ContextMenu}" />
 
+    <ContextMenu x:Key="DefaultControlContextMenu">
+        <MenuItem Command="ApplicationCommands.Copy" />
+        <MenuItem Command="ApplicationCommands.Cut" />
+        <MenuItem Command="ApplicationCommands.Paste" />
+    </ContextMenu>
+
     <m:TextContextMenu x:Key="TextControlContextMenu" x:Shared="False" />
 
 </ResourceDictionary>

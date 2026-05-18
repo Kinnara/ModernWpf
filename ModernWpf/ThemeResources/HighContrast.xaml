@@ -628,6 +628,11 @@
     <m:StaticResource x:Key="CalendarDatePickerBorderBrushPressed" ResourceKey="SystemColorHighlightColorBrush" />
     <m:StaticResource x:Key="CalendarDatePickerBorderBrushDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
     <m:StaticResource x:Key="CalendarDatePickerLightDismissOverlayBackground" ResourceKey="SystemControlPageBackgroundMediumAltMediumBrush" />
+    <m:StaticResource x:Key="DatePickerForeground" ResourceKey="SystemColorWindowTextColorBrush" />
+    <m:StaticResource x:Key="DatePickerBackground" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="DatePickerBackgroundFocused" ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="DatePickerBackgroundPointerOver" ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="DatePickerPopupBackground" ResourceKey="SystemColorWindowColorBrush" />
 
     <!-- Resources for CalendarView -->
     <m:StaticResource x:Key="CalendarViewFocusBorderBrush" ResourceKey="SystemControlForegroundBaseHighBrush" />
@@ -648,6 +653,9 @@
     <m:StaticResource x:Key="CalendarViewBackground" ResourceKey="SystemControlBackgroundAltHighBrush" />
     <m:StaticResource x:Key="CalendarViewBorderBrush" ResourceKey="SystemControlForegroundChromeMediumBrush" />
     <m:StaticResource x:Key="CalendarViewWeekDayForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+    <m:StaticResource x:Key="CalendarViewItemBackgroundPointerOver" ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="CalendarViewSelectedBackground" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="CalendarViewTodayBackground" ResourceKey="SystemColorHighlightColorBrush" />
     <m:StaticResource x:Key="CalendarViewNavigationButtonBackground" ResourceKey="SystemControlTransparentBrush" />
     <m:StaticResource x:Key="CalendarViewNavigationButtonForegroundPointerOver" ResourceKey="SystemControlForegroundBaseHighBrush" />
     <m:StaticResource x:Key="CalendarViewNavigationButtonForegroundPressed" ResourceKey="SystemControlForegroundBaseMediumBrush" />

@@ -642,6 +642,11 @@
     <m:StaticResource x:Key="CalendarDatePickerBorderBrushPressed" ResourceKey="ControlStrokeColorDefaultBrush" />
     <m:StaticResource x:Key="CalendarDatePickerBorderBrushDisabled" ResourceKey="ControlStrokeColorDefaultBrush" />
     <m:StaticResource x:Key="CalendarDatePickerLightDismissOverlayBackground" ResourceKey="SystemControlPageBackgroundMediumAltMediumBrush" />
+    <m:StaticResource x:Key="DatePickerForeground" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="DatePickerBackground" ResourceKey="ControlFillColorDefaultBrush" />
+    <m:StaticResource x:Key="DatePickerBackgroundFocused" ResourceKey="ControlFillColorInputActiveBrush" />
+    <m:StaticResource x:Key="DatePickerBackgroundPointerOver" ResourceKey="ControlFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="DatePickerPopupBackground" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
 
     <!-- Resources for CalendarView -->
     <m:StaticResource x:Key="CalendarViewFocusBorderBrush" ResourceKey="AccentFillColorSecondaryBrush" />
@@ -662,6 +667,9 @@
     <m:StaticResource x:Key="CalendarViewBackground" ResourceKey="ControlFillColorInputActiveBrush" />
     <m:StaticResource x:Key="CalendarViewBorderBrush" ResourceKey="ControlStrokeColorDefaultBrush" />
     <m:StaticResource x:Key="CalendarViewWeekDayForegroundDisabled" ResourceKey="TextFillColorDisabledBrush" />
+    <m:StaticResource x:Key="CalendarViewItemBackgroundPointerOver" ResourceKey="SubtleFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="CalendarViewSelectedBackground" ResourceKey="SystemAccentColorLight2Brush" />
+    <m:StaticResource x:Key="CalendarViewTodayBackground" ResourceKey="SystemAccentColorLight2Brush" />
     <m:StaticResource x:Key="CalendarViewNavigationButtonBackground" ResourceKey="SubtleFillColorTransparentBrush" />
     <m:StaticResource x:Key="CalendarViewNavigationButtonForegroundPointerOver" ResourceKey="TextFillColorPrimaryBrush" />
     <m:StaticResource x:Key="CalendarViewNavigationButtonForegroundPressed" ResourceKey="ControlAltFillColorTertiaryBrush" />

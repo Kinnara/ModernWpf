@@ -82,9 +82,7 @@ public class TemplateParityTests
         {
             Path.Combine("ModernWpf", "ProgressBar", "ProgressBar.xaml"),
             Path.Combine("ModernWpf", "Styles", "AutoSuggestBox.xaml"),
-            Path.Combine("ModernWpf", "Styles", "Calendar.xaml"),
             Path.Combine("ModernWpf", "Styles", "ComboBox.xaml"),
-            Path.Combine("ModernWpf", "Styles", "DatePicker.xaml"),
             Path.Combine("ModernWpf", "Styles", "Expander.xaml"),
             Path.Combine("ModernWpf", "Styles", "Pivot.xaml"),
             Path.Combine("ModernWpf", "Styles", "TabControl.xaml"),
@@ -136,7 +134,9 @@ public class TemplateParityTests
         var officialWpfFluentTemplateFiles = new[]
         {
             Path.Combine("ModernWpf", "Styles", "Button.xaml"),
+            Path.Combine("ModernWpf", "Styles", "Calendar.xaml"),
             Path.Combine("ModernWpf", "Styles", "CheckBox.xaml"),
+            Path.Combine("ModernWpf", "Styles", "DatePicker.xaml"),
             Path.Combine("ModernWpf", "Styles", "GridSplitter.xaml"),
             Path.Combine("ModernWpf", "Styles", "GroupBox.xaml"),
             Path.Combine("ModernWpf", "Styles", "GroupItem.xaml"),
@@ -255,8 +255,7 @@ public class TemplateParityTests
         var sourceBackedTemplateFiles = new[]
         {
             Path.Combine("ModernWpf", "Styles", "AutoSuggestBox.xaml"),
-            Path.Combine("ModernWpf", "Styles", "ComboBox.xaml"),
-            Path.Combine("ModernWpf", "Styles", "DatePicker.xaml")
+            Path.Combine("ModernWpf", "Styles", "ComboBox.xaml")
         };
 
         var offenders = sourceBackedTemplateFiles
@@ -393,21 +392,6 @@ public class TemplateParityTests
         Assert.IsFalse(
             offenders.Any(),
             "RefreshVisualizer should keep content hosting in code like WinUI3, not in a template ContentPresenter. Offenders: " + string.Join("; ", offenders));
-    }
-
-    [TestMethod]
-    public void CalendarPresenterSlotsUseWinUIPresenterShape()
-    {
-        var repoRoot = FindRepoRoot();
-        var templateFile = Path.Combine(repoRoot, "ModernWpf", "Styles", "Calendar.xaml");
-
-        var offenders = FindPlainContentPresenterElementUses(repoRoot, templateFile)
-            .Concat(FindTextElementForegroundUses(repoRoot, templateFile))
-            .ToArray();
-
-        Assert.IsFalse(
-            offenders.Any(),
-            "Calendar navigation and weekday text slots should use ContentPresenterEx/direct foreground routing instead of WPF ContentPresenter/TextElement.Foreground. Offenders: " + string.Join("; ", offenders));
     }
 
     [TestMethod]

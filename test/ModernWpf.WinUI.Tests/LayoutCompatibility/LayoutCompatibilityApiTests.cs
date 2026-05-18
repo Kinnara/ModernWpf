@@ -806,7 +806,7 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
-    public void CoreTextInputDescriptionPresentersUseWinUIPresenterSlot()
+    public void CoreTextInputStockTemplatesDoNotUseDescriptionPresenterSlots()
     {
         WpfTestHost.Run(() =>
         {
@@ -829,12 +829,8 @@ public class LayoutCompatibilityApiTests
 
             foreach (var control in controls)
             {
-                var descriptionPresenter = FindTemplateChild<ContentPresenterEx>(control, "DescriptionPresenter");
-                Assert.AreEqual(ControlHelper.GetDescription(control), descriptionPresenter.Content);
-                Assert.AreEqual(Visibility.Visible, descriptionPresenter.Visibility);
-                Assert.AreSame(
-                    descriptionPresenter.TryFindResource("SystemControlDescriptionTextForegroundBrush"),
-                    descriptionPresenter.Foreground);
+                Assert.AreEqual(control.GetType().Name + " description", ControlHelper.GetDescription(control));
+                Assert.IsNull(FindVisualChild<ContentPresenterEx>(control));
             }
         });
     }
@@ -883,7 +879,7 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
-    public void CoreMenuItemTemplatesUseWinUIPresenterSlots()
+    public void CoreMenuItemTemplatesUseOfficialWpfPresenterSlots()
     {
         WpfTestHost.Run(() =>
         {
@@ -900,15 +896,10 @@ public class LayoutCompatibilityApiTests
             });
             host.UpdateLayout();
 
-            Assert.AreEqual(topLevelItem.Header, FindVisualChild<ContentPresenterEx>(topLevelItem)?.Content);
-            Assert.AreEqual(topLevelHeader.Header, FindVisualChild<ContentPresenterEx>(topLevelHeader)?.Content);
-
-            AssertMenuTemplatePresenterSlot(
-                submenuItem,
-                expectedForegroundResource: "MenuFlyoutItemForegroundDisabled");
-            AssertMenuTemplatePresenterSlot(
-                submenuHeader,
-                expectedForegroundResource: "MenuFlyoutSubItemForegroundDisabled");
+            AssertMenuTemplatePresenterSlot(topLevelItem);
+            AssertMenuTemplatePresenterSlot(topLevelHeader);
+            AssertMenuTemplatePresenterSlot(submenuItem);
+            AssertMenuTemplatePresenterSlot(submenuHeader);
         });
     }
 
@@ -1277,7 +1268,7 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
-    public void CalendarNavigationButtonsUseWinUIPresenterSlots()
+    public void CalendarNavigationButtonsUseOfficialWpfPresenterSlots()
     {
         WpfTestHost.Run(() =>
         {
@@ -1288,9 +1279,9 @@ public class LayoutCompatibilityApiTests
             host.UpdateLayout();
 
             var calendarItem = FindTemplateChild<CalendarItem>(calendar, "PART_CalendarItem");
-            AssertCalendarNavigationPresenter(FindTemplateChild<Button>(calendarItem, "PART_HeaderButton"));
-            AssertCalendarNavigationPresenter(FindTemplateChild<Button>(calendarItem, "PART_PreviousButton"));
-            AssertCalendarNavigationPresenter(FindTemplateChild<Button>(calendarItem, "PART_NextButton"));
+            AssertCalendarNavigationButtonPresenter(FindTemplateChild<Button>(calendarItem, "PART_HeaderButton"));
+            AssertCalendarNavigationButtonPresenter(FindTemplateChild<Button>(calendarItem, "PART_PreviousButton"));
+            AssertCalendarNavigationButtonPresenter(FindTemplateChild<Button>(calendarItem, "PART_NextButton"));
         });
     }
 
@@ -3263,6 +3254,29 @@ public class LayoutCompatibilityApiTests
         return null;
     }
 
+    private static T[] FindVisualChildren<T>(DependencyObject root)
+        where T : DependencyObject
+    {
+        var result = new List<T>();
+        AddVisualChildren(root, result);
+        return result.ToArray();
+    }
+
+    private static void AddVisualChildren<T>(DependencyObject root, List<T> result)
+        where T : DependencyObject
+    {
+        for (int i = 0; i < VisualTreeHelper.GetChildrenCount(root); i++)
+        {
+            var child = VisualTreeHelper.GetChild(root, i);
+            if (child is T typedChild)
+            {
+                result.Add(typedChild);
+            }
+
+            AddVisualChildren(child, result);
+        }
+    }
+
     private static T FindTemplateChild<T>(Control control, string name)
         where T : FrameworkElement
     {
@@ -3370,37 +3384,32 @@ public class LayoutCompatibilityApiTests
             ?? throw new AssertFailedException($"Expected style resource '{resourceId}'.");
     }
 
-    private static void AssertMenuTemplatePresenterSlot(MenuItem menuItem, string expectedForegroundResource)
+    private static void AssertMenuTemplatePresenterSlot(MenuItem menuItem)
     {
-        var contentPresenter = FindTemplateChild<ContentPresenterEx>(menuItem, "ContentPresenter");
-        Assert.AreEqual(menuItem.Header, contentPresenter.Content);
-        Assert.AreSame(contentPresenter.TryFindResource(expectedForegroundResource), contentPresenter.Foreground);
+        var presenters = FindVisualChildren<ContentPresenter>(menuItem);
 
-        var iconContent = FindTemplateChild<ContentPresenterEx>(menuItem, "IconContent");
-        Assert.AreEqual(menuItem.Icon, iconContent.Content);
-        Assert.AreSame(iconContent.TryFindResource(expectedForegroundResource), iconContent.Foreground);
+        Assert.IsTrue(
+            presenters.Any(presenter => Equals(menuItem.Header, presenter.Content)),
+            "Expected official WPF Fluent MenuItem template to present Header with a WPF ContentPresenter.");
+
+        if (menuItem.Icon != null)
+        {
+            Assert.IsTrue(
+                presenters.Any(presenter => Equals(menuItem.Icon, presenter.Content)),
+                "Expected official WPF Fluent MenuItem template to present Icon with a WPF ContentPresenter.");
+        }
+
+        Assert.IsNull(FindVisualChild<ContentPresenterEx>(menuItem));
     }
 
-    private static void AssertCalendarNavigationPresenter(Button button)
+    private static void AssertCalendarNavigationButtonPresenter(Button button)
     {
-        var presenter = FindTemplateChild<ContentPresenterEx>(button, "Text");
+        var presenter = FindVisualChild<ContentPresenter>(button)
+            ?? throw new AssertFailedException("Expected official WPF Fluent Calendar navigation button to use WPF ContentPresenter.");
+
+        Assert.AreEqual(typeof(ContentPresenter), presenter.GetType());
         Assert.AreEqual(button.Content, presenter.Content);
-        Assert.AreSame(button.Foreground, presenter.Foreground);
-        Assert.AreEqual(button.Padding, presenter.Padding);
-        Assert.AreEqual(ControlHelper.GetCornerRadius(button), presenter.CornerRadius);
-        Assert.AreSame(presenter.TryFindResource("CalendarViewNavigationButtonBorderBrush"), presenter.BorderBrush);
-
-        Assert.IsTrue(VisualStateManager.GoToState(button, "MouseOver", false));
-        Assert.AreSame(presenter.TryFindResource("CalendarViewNavigationButtonBorderBrushPointerOver"), presenter.BorderBrush);
-        Assert.AreSame(presenter.TryFindResource("CalendarViewNavigationButtonForegroundPointerOver"), presenter.Foreground);
-
-        Assert.IsTrue(VisualStateManager.GoToState(button, "Pressed", false));
-        Assert.AreSame(presenter.TryFindResource("CalendarViewNavigationButtonBorderBrush"), presenter.BorderBrush);
-        Assert.AreSame(presenter.TryFindResource("CalendarViewNavigationButtonForegroundPressed"), presenter.Foreground);
-
-        Assert.IsTrue(VisualStateManager.GoToState(button, "Normal", false));
-        Assert.AreSame(presenter.TryFindResource("CalendarViewNavigationButtonBorderBrush"), presenter.BorderBrush);
-        Assert.AreSame(button.Foreground, presenter.Foreground);
+        Assert.IsNull(FindVisualChild<ContentPresenterEx>(button));
     }
 
     private static void AssertDataGridPresenter(DependencyObject root, object expectedContent, Brush expectedForeground)
