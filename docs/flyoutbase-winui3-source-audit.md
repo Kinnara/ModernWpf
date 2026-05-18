@@ -12,6 +12,8 @@ source-backed WPF adaptation with explicit platform substitutions.
 - `src\dxaml\xcp\dxaml\lib\FlyoutBase_partial.cpp`
 - `src\dxaml\xcp\dxaml\lib\FlyoutBase_partial.h`
 - `src\dxaml\xcp\dxaml\lib\MenuFlyout_Partial.cpp`
+- `src\dxaml\xcp\dxaml\lib\MenuFlyoutPresenter_Partial.cpp`
+- `src\controls\dev\CommonStyles\MenuFlyout_themeresources.xaml`
 - `src\dxaml\xcp\dxaml\lib\winrtgeneratedclasses\FlyoutBaseClosingEventArgs.g.cpp`
 - `src\dxaml\xcp\dxaml\lib\winrtgeneratedclasses\FlyoutShowOptions.g.cpp`
 - `src\dxaml\xcp\tools\XCPTypesAutoGen\XamlOM\Model\Microsoft.UI.Xaml.Controls.Primitives.cs`
@@ -25,6 +27,7 @@ source-backed WPF adaptation with explicit platform substitutions.
 - `ModernWpf.Controls\Flyout\FlyoutShowOptions.cs`
 - `ModernWpf.Controls\MenuFlyout\MenuFlyout.cs`
 - `ModernWpf.Controls\MenuFlyout\MenuFlyoutPresenter.cs`
+- `ModernWpf.Controls\MenuFlyout\MenuFlyout.xaml`
 - `ModernWpf\Controls\Primitives\PopupEx.cs`
 - `ModernWpf\Controls\Primitives\CustomPopupPlacementHelper.cs`
 - `test\ModernWpf.WinUI.Tests\Flyout\FlyoutBaseApiTests.cs`
@@ -43,6 +46,7 @@ source-backed WPF adaptation with explicit platform substitutions.
 | `Closing` is cancelable and `MenuFlyout::OnClosing` delegates to the base path. | Matched through WPF popup/context-menu cancellation bridges. |
 | Placement fallback order tries requested major placement, opposite major placement, then the remaining axis while preserving justification. | Matched in `CustomPopupPlacementHelper`, including full-placement single-choice behavior. |
 | `ShowMode.Auto` normalizes to `Standard`; transient modes do not take focus; pointer-move-away dismisses beyond the WinUI 80px threshold. | Matched with a WPF root `MouseMove` substitute. |
+| `MenuFlyoutPresenter::OnApplyTemplate` applies elevation to the presenter surface in drop-shadow mode, using default nested depth `0` plus the source base elevation `32`; the source default template uses menu-flyout presenter resources and `BackgroundSizing=InnerBorderEdge`. | Matched with WPF `ThemeShadowChrome` at depth `32`, `WindowedPopupInsetMode=Medium`, `ContextMenu.HasDropShadow=False`, `BorderEx.BackgroundSizing=InnerBorderEdge`, and source menu-flyout presenter resources while keeping WPF item hosting. |
 
 ## WPF Substitutions
 
@@ -50,6 +54,7 @@ source-backed WPF adaptation with explicit platform substitutions.
 - WPF has no direct `XamlRoot` content lookup on `FlyoutBase`; positioned null-target opens use `Application.Current.MainWindow.Content` or the main window as the root placement target.
 - WPF does not expose WinUI popup offsets or targetless placement directly; target-point placement uses a zero-size `PlacementRectangle`, and exclusion-rect avoidance is applied in custom-placement coordinates.
 - WPF popups are windowed, so `IsConstrainedToRootBounds` is represented by the requested constraint state rather than WinUI's internal popup implementation.
+- WPF has no compositor `ThemeShadow` or `Translation.Z`; `MenuFlyoutPresenter` uses the shared software `ThemeShadowChrome` renderer and WPF popup margins instead of `ContextMenu.HasDropShadow`.
 - WPF does not expose WinUI overlay pass-through, popup-root pointer events, child-flyout metadata, target theme forwarding, exact `ActualPlacement`, compositor transitions, or system backdrop directly.
 
 ## Current Validation
@@ -61,4 +66,8 @@ dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --filter "
 dotnet build .\ModernWpf.Controls\ModernWpf.Controls.csproj --no-restore -m:1
 ```
 
-Latest verified result on 2026-05-17: FlyoutBase/MenuFlyout API tests passed 24/24.
+Latest verified result on 2026-05-18: `MenuFlyoutApiTests.PresenterShadowFollowsWinUISource` passed, and the focused presenter/shadow/template parity slice passed 35/35 with:
+
+```powershell
+dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --no-build --filter "FullyQualifiedName~MenuFlyoutApiTests|FullyQualifiedName~FlyoutPresenter|FullyQualifiedName~LayoutCompatibilityApiTests.ThemeShadow|FullyQualifiedName~TemplateParityTests"
+```

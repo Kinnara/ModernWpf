@@ -342,6 +342,69 @@ public class MenuFlyoutApiTests
         });
     }
 
+    [TestMethod]
+    public void PresenterShadowFollowsWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var target = new Button
+            {
+                Content = "Target",
+                Width = 120,
+                Height = 36
+            };
+            var menuFlyout = new MenuFlyout();
+            menuFlyout.Items.Add(new MenuItem { Header = "Copy" });
+
+            using var host = new TestWindowHost(target, width: 320, height: 220);
+            host.UpdateLayout();
+
+            menuFlyout.ShowAt(target);
+            WpfTestHost.DoEvents();
+
+            try
+            {
+                var presenter = menuFlyout.Presenter;
+                presenter.ApplyTemplate();
+                host.UpdateLayout();
+                WpfTestHost.DoEvents();
+
+                Assert.IsFalse(presenter.HasDropShadow);
+
+                var chrome = VisualTreeTestHelper.FindDescendant<ThemeShadowChrome>(presenter)
+                    ?? throw new AssertFailedException("Expected MenuFlyoutPresenter to use ThemeShadowChrome.");
+                Assert.AreEqual(presenter.IsDefaultShadowEnabled, chrome.IsShadowEnabled);
+
+                presenter.IsDefaultShadowEnabled = true;
+                WpfTestHost.DoEvents();
+                Assert.IsTrue(chrome.IsShadowEnabled);
+
+                presenter.IsDefaultShadowEnabled = false;
+                WpfTestHost.DoEvents();
+                Assert.IsFalse(chrome.IsShadowEnabled);
+
+                Assert.AreEqual(32.0, chrome.Depth);
+                Assert.AreEqual(ThemeShadowChromeWindowedPopupInsetMode.Medium, chrome.WindowedPopupInsetMode);
+                Assert.AreEqual(new Thickness(10, 2, 10, 18), chrome.PopupShadowPadding);
+                Assert.AreEqual(presenter.CornerRadius, chrome.CornerRadius);
+
+                var border = VisualTreeTestHelper.FindDescendant<BorderEx>(presenter)
+                    ?? throw new AssertFailedException("Expected MenuFlyoutPresenter template to use BorderEx for WinUI BackgroundSizing.");
+                Assert.AreEqual(BackgroundSizing.InnerBorderEdge, border.BackgroundSizing);
+                Assert.AreEqual(presenter.Background, border.Background);
+                Assert.AreEqual(presenter.BorderBrush, border.BorderBrush);
+                Assert.AreEqual(presenter.BorderThickness, border.BorderThickness);
+            }
+            finally
+            {
+                menuFlyout.Hide();
+                WpfTestHost.DoEvents();
+            }
+        });
+    }
+
     private static void AssertEvents(List<string> actual, params string[] expected)
     {
         Assert.AreEqual(string.Join("|", expected), string.Join("|", actual));

@@ -1,6 +1,7 @@
-﻿<ResourceDictionary
+<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:local="clr-namespace:ModernWpf.Controls">
 
     <ResourceDictionary.MergedDictionaries>
@@ -8,8 +9,70 @@
     </ResourceDictionary.MergedDictionaries>
 
     <Style TargetType="local:MenuFlyoutPresenter" BasedOn="{StaticResource ContextMenuStyleBase}">
+        <Setter Property="Background" Value="{DynamicResource MenuFlyoutPresenterBackground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource MenuFlyoutPresenterBorderBrush}" />
+        <Setter Property="BorderThickness" Value="{DynamicResource MenuFlyoutPresenterBorderThemeThickness}" />
+        <Setter Property="Padding" Value="{DynamicResource MenuFlyoutPresenterThemePadding}" />
+        <Setter Property="MinWidth" Value="{DynamicResource FlyoutThemeMinWidth}" />
+        <Setter Property="MinHeight" Value="{DynamicResource MenuFlyoutThemeMinHeight}" />
+        <Setter Property="CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
         <Setter Property="IsDefaultShadowEnabled" Value="{DynamicResource {x:Static SystemParameters.DropShadowKey}}" />
-        <Setter Property="HasDropShadow" Value="{Binding IsDefaultShadowEnabled, RelativeSource={RelativeSource Self}}" />
+        <Setter Property="HasDropShadow" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:MenuFlyoutPresenter">
+                    <ui:ThemeShadowChrome
+                        IsShadowEnabled="{TemplateBinding IsDefaultShadowEnabled}"
+                        WindowedPopupInsetMode="Medium"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        SnapsToDevicePixels="True">
+                        <ui:BorderEx
+                            x:Name="Border"
+                            Background="{TemplateBinding Background}"
+                            BackgroundSizing="InnerBorderEdge"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}">
+                            <ui:BorderEx.RenderTransform>
+                                <TranslateTransform />
+                            </ui:BorderEx.RenderTransform>
+                            <ScrollViewer
+                                x:Name="MenuFlyoutPresenterScrollViewer"
+                                CanContentScroll="True"
+                                HorizontalScrollBarVisibility="Disabled"
+                                Margin="{TemplateBinding Padding}"
+                                VerticalScrollBarVisibility="Auto">
+                                <StackPanel
+                                    ClipToBounds="True"
+                                    IsItemsHost="True"
+                                    KeyboardNavigation.DirectionalNavigation="Cycle"
+                                    Orientation="Vertical" />
+                            </ScrollViewer>
+                        </ui:BorderEx>
+                    </ui:ThemeShadowChrome>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsOpen" Value="True">
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation
+                                            Storyboard.TargetName="Border"
+                                            Storyboard.TargetProperty="(Border.RenderTransform).(TranslateTransform.Y)"
+                                            From="-90"
+                                            To="0"
+                                            Duration="00:00:00.167">
+                                            <DoubleAnimation.EasingFunction>
+                                                <CircleEase EasingMode="EaseOut" />
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
 </ResourceDictionary>
