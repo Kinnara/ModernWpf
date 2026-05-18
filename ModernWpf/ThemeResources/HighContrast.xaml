@@ -1038,9 +1038,10 @@
     <m:StaticResource x:Key="GroupBoxHeaderForeground" ResourceKey="SystemColorButtonTextColorBrush" />
 
     <!-- Resources for Hyperlink -->
-    <SolidColorBrush x:Key="HyperlinkForeground" Color="{m:ThemeResource SystemColorHotlightColor}"/>
-    <SolidColorBrush x:Key="HyperlinkForegroundPointerOver" Color="{m:ThemeResource SystemColorWindowTextColor}"/>
+    <m:StaticResource x:Key="HyperlinkForeground" ResourceKey="SystemControlHyperlinkTextBrush" />
+    <m:StaticResource x:Key="HyperlinkForegroundPointerOver" ResourceKey="SystemControlHyperlinkTextBrush" />
     <SolidColorBrush x:Key="HyperlinkForegroundPressed" Color="{m:ThemeResource SystemColorHighlightColor}"/>
+    <m:StaticResource x:Key="HyperlinkForegroundDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
 
     <!-- Resources for HyperlinkButton -->
     <m:StaticResource x:Key="HyperlinkButtonForeground" ResourceKey="SystemControlHyperlinkTextBrush" />

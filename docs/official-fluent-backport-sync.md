@@ -432,3 +432,33 @@ Source inspected:
 ### Test Evidence
 
 - `test\ModernWpf.WinUI.Tests\CommonStyles\GridSplitterVisualStateTests.cs` covers the official WPF Fluent GridSplitter setter shape, runtime metric values, thumb template, WPF trigger matrix, and official theme aliases.
+
+## 2026-05-18 Batch 15
+
+Source inspected:
+
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\Hyperlink.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Light.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Dark.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\HC.xaml`
+
+### Synced Values
+
+| Resource key / style | Official WPF Fluent value | ModernWpf value after sync | Reason |
+| --- | --- | --- | --- |
+| `DefaultHyperlinkStyle` | Setter-only `Hyperlink` style with `Foreground`, `TextDecorations=Underline`, pointer-over foreground/underline trigger, and disabled foreground trigger | Same structure under the existing resource key | `Hyperlink` is a stock WPF text element, so official WPF Fluent is the primary source. |
+| Implicit `Hyperlink` style | Based on `DefaultHyperlinkStyle` | Same | Matches official WPF Fluent resource shape. |
+| `HyperlinkForegroundPointerOver` | Same color as `HyperlinkForeground` in Light, Dark, and HighContrast | Same same-brush alias behavior in ModernWpf's theme-resource model | Replaces the earlier WinUI-style secondary hover color for stock WPF Hyperlink. |
+| `HyperlinkForegroundDisabled` | Official disabled foreground resource | Same alias across Light, Dark, and HighContrast | Required by the official WPF Fluent style shape. |
+
+### Intentional Differences
+
+| Resource key / style | Official WPF Fluent value | ModernWpf backport value | Reason retained |
+| --- | --- | --- | --- |
+| Hyperlink theme aliases | Dedicated brush resources in official WPF Fluent | `m:StaticResource` aliases to ModernWpf's existing Fluent brush tokens | Keeps ModernWpf's existing theme-resource alias model while exposing the official keys. |
+| `HyperlinkForegroundPressed` | No official stock `Hyperlink` style use | Retained as an existing resource but no longer consumed by `DefaultHyperlinkStyle` | Avoids unnecessary resource-surface churn while the stock style follows official WPF Fluent. |
+| `HyperlinkHelper` | Not part of official stock `Hyperlink` style | Kept for DataGrid-specific hyperlink styling that still uses a WPF pressed-state substitute | This slice is scoped to the stock `Hyperlink` style; DataGrid remains a separate WPF-specific style. |
+
+### Test Evidence
+
+- `test\ModernWpf.WinUI.Tests\CommonStyles\HyperlinkVisualStateTests.cs` covers the official WPF Fluent Hyperlink setter/trigger shape, removal of the pressed-helper and cursor triggers, removal of the old underline resource, and official theme aliases.
