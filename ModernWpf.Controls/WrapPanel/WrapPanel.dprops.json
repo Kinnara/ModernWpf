@@ -1,0 +1,48 @@
+{
+  "usings": [
+    "System.Windows",
+    "System.Windows.Controls"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "WrapPanel"
+  },
+  "properties": [
+    {
+      "name": "Padding",
+      "type": "Thickness",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "default(Thickness)",
+      "options": [ "AffectsMeasure", "AffectsArrange" ]
+    },
+    {
+      "name": "ItemSpacing",
+      "type": "double",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "0.0",
+      "options": [ "AffectsMeasure", "AffectsArrange" ]
+    },
+    {
+      "name": "LineSpacing",
+      "type": "double",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "0.0",
+      "options": [ "AffectsMeasure", "AffectsArrange" ]
+    },
+    {
+      "name": "Orientation",
+      "type": "Orientation",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "Orientation.Horizontal",
+      "options": [ "AffectsMeasure", "AffectsArrange" ]
+    },
+    {
+      "name": "ItemsStretch",
+      "type": "WrapPanelItemsStretch",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "WrapPanelItemsStretch.None",
+      "options": [ "AffectsMeasure", "AffectsArrange" ]
+    }
+  ]
+}

@@ -7,7 +7,7 @@ using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
 {
-    public class ProgressRing : Control
+    public partial class ProgressRing : Control
     {
         const string s_LayoutRootName = "LayoutRoot";
         const string s_ActiveStateName = "Active";
@@ -26,135 +26,6 @@ namespace ModernWpf.Controls
             SizeChanged += OnSizeChanged;
             Loaded += OnLoaded;
         }
-
-        #region IsActive
-
-        public bool IsActive
-        {
-            get => (bool)GetValue(IsActiveProperty);
-            set => SetValue(IsActiveProperty, value);
-        }
-
-        public static readonly DependencyProperty IsActiveProperty =
-            DependencyProperty.Register(
-                nameof(IsActive),
-                typeof(bool),
-                typeof(ProgressRing),
-                new FrameworkPropertyMetadata(true, OnIsActivePropertyChanged));
-
-        private static void OnIsActivePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {
-            ((ProgressRing)sender).OnIsActivePropertyChanged(args);
-        }
-
-        #endregion
-
-        #region IsIndeterminate
-
-        public bool IsIndeterminate
-        {
-            get => (bool)GetValue(IsIndeterminateProperty);
-            set => SetValue(IsIndeterminateProperty, value);
-        }
-
-        public static readonly DependencyProperty IsIndeterminateProperty =
-            DependencyProperty.Register(
-                nameof(IsIndeterminate),
-                typeof(bool),
-                typeof(ProgressRing),
-                new FrameworkPropertyMetadata(true, OnIsIndeterminatePropertyChanged));
-
-        private static void OnIsIndeterminatePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {
-            ((ProgressRing)sender).OnIsIndeterminatePropertyChanged(args);
-        }
-
-        #endregion
-
-        #region Value
-
-        public double Value
-        {
-            get => (double)GetValue(ValueProperty);
-            set => SetValue(ValueProperty, value);
-        }
-
-        public static readonly DependencyProperty ValueProperty =
-            DependencyProperty.Register(
-                nameof(Value),
-                typeof(double),
-                typeof(ProgressRing),
-                new FrameworkPropertyMetadata(0.0, OnValuePropertyChanged));
-
-        private static void OnValuePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {
-            ((ProgressRing)sender).OnValuePropertyChanged(args);
-        }
-
-        #endregion
-
-        #region Minimum
-
-        public double Minimum
-        {
-            get => (double)GetValue(MinimumProperty);
-            set => SetValue(MinimumProperty, value);
-        }
-
-        public static readonly DependencyProperty MinimumProperty =
-            DependencyProperty.Register(
-                nameof(Minimum),
-                typeof(double),
-                typeof(ProgressRing),
-                new FrameworkPropertyMetadata(0.0, OnMinimumPropertyChanged));
-
-        private static void OnMinimumPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {
-            ((ProgressRing)sender).OnMinimumPropertyChanged(args);
-        }
-
-        #endregion
-
-        #region Maximum
-
-        public double Maximum
-        {
-            get => (double)GetValue(MaximumProperty);
-            set => SetValue(MaximumProperty, value);
-        }
-
-        public static readonly DependencyProperty MaximumProperty =
-            DependencyProperty.Register(
-                nameof(Maximum),
-                typeof(double),
-                typeof(ProgressRing),
-                new FrameworkPropertyMetadata(100.0, OnMaximumPropertyChanged));
-
-        private static void OnMaximumPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {
-            ((ProgressRing)sender).OnMaximumPropertyChanged(args);
-        }
-
-        #endregion
-
-        #region TemplateSettings
-
-        private static readonly DependencyPropertyKey TemplateSettingsPropertyKey =
-            DependencyProperty.RegisterReadOnly(
-                nameof(TemplateSettings),
-                typeof(ProgressRingTemplateSettings),
-                typeof(ProgressRing),
-                null);
-
-        public static readonly DependencyProperty TemplateSettingsProperty =
-            TemplateSettingsPropertyKey.DependencyProperty;
-
-        public ProgressRingTemplateSettings TemplateSettings
-        {
-            get => (ProgressRingTemplateSettings)GetValue(TemplateSettingsProperty);
-        }
-
-        #endregion
 
         protected override AutomationPeer OnCreateAutomationPeer()
         {

@@ -6,61 +6,17 @@ using System.Windows.Media.Animation;
 
 namespace ModernWpf.Controls
 {
-    public class RefreshVisualizer : Control
+    public partial class RefreshVisualizer : Control
     {
         private const string RootName = "Root";
         private const double MinimumIndicatorOpacity = 0.4;
         private const double DefaultIndicatorSize = 30;
         private const double ParallaxPositionRatio = 0.5;
 
-        private static readonly DependencyPropertyKey StatePropertyKey =
-            DependencyProperty.RegisterReadOnly(
-                nameof(State),
-                typeof(RefreshVisualizerState),
-                typeof(RefreshVisualizer),
-                new PropertyMetadata(RefreshVisualizerState.Idle, OnStateChanged));
-
-        public static readonly DependencyProperty StateProperty = StatePropertyKey.DependencyProperty;
-
-        public static readonly DependencyProperty InfoProviderProperty =
-            DependencyProperty.Register(
-                "InfoProvider",
-                typeof(object),
-                typeof(RefreshVisualizer),
-                new PropertyMetadata(null, OnInfoProviderChanged));
-
-        public static readonly DependencyProperty OrientationProperty =
-            DependencyProperty.Register(
-                nameof(Orientation),
-                typeof(RefreshVisualizerOrientation),
-                typeof(RefreshVisualizer),
-                new PropertyMetadata(RefreshVisualizerOrientation.Auto, OnOrientationChanged));
-
-        public static readonly DependencyProperty ContentProperty =
-            DependencyProperty.Register(
-                nameof(Content),
-                typeof(UIElement),
-                typeof(RefreshVisualizer),
-                new PropertyMetadata(null, OnContentChanged));
-
         static RefreshVisualizer()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(RefreshVisualizer), new FrameworkPropertyMetadata(typeof(RefreshVisualizer)));
         }
-
-        public RefreshVisualizerOrientation Orientation
-        {
-            get => (RefreshVisualizerOrientation)GetValue(OrientationProperty);
-            set => SetValue(OrientationProperty, value);
-        }
-
-        public UIElement Content
-        {
-            get => (UIElement)GetValue(ContentProperty);
-            set => SetValue(ContentProperty, value);
-        }
-
-        public RefreshVisualizerState State => (RefreshVisualizerState)GetValue(StateProperty);
 
         internal IRefreshInfoProvider InfoProvider
         {

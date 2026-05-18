@@ -1,0 +1,60 @@
+{
+  "usings": [
+    "System.Windows",
+    "ModernWpf.Controls.Primitives"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "ProgressRing"
+  },
+  "properties": [
+    {
+      "name": "IsActive",
+      "type": "bool",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "true",
+      "changed": "OnIsActivePropertyChanged",
+      "changedForwardTo": "OnIsActivePropertyChanged"
+    },
+    {
+      "name": "IsIndeterminate",
+      "type": "bool",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "true",
+      "changed": "OnIsIndeterminatePropertyChanged",
+      "changedForwardTo": "OnIsIndeterminatePropertyChanged"
+    },
+    {
+      "name": "Value",
+      "type": "double",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "0.0",
+      "changed": "OnValuePropertyChanged",
+      "changedForwardTo": "OnValuePropertyChanged"
+    },
+    {
+      "name": "Minimum",
+      "type": "double",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "0.0",
+      "changed": "OnMinimumPropertyChanged",
+      "changedForwardTo": "OnMinimumPropertyChanged"
+    },
+    {
+      "name": "Maximum",
+      "type": "double",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "100.0",
+      "changed": "OnMaximumPropertyChanged",
+      "changedForwardTo": "OnMaximumPropertyChanged"
+    },
+    {
+      "name": "TemplateSettings",
+      "type": "ProgressRingTemplateSettings",
+      "kind": "RegisterReadOnly",
+      "metadata": "null",
+      "setterAccessibility": "none"
+    }
+  ]
+}

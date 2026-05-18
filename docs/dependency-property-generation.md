@@ -69,9 +69,17 @@ as a WinUI-style validation/coercion path that cannot be expressed as a guard.
 
 ## Current Coverage
 
-The existing ModernWpf control generated-property companion files are
-manifest-backed: `AutoSuggestBox`, `NavigationView`, `NavigationViewItem`,
-`NumberBox`, `PersonPicture`, `RatingControl`, and `SplitView`.
+The existing ModernWpf control/property-owner generated-property companion
+files are manifest-backed: `AnnotatedScrollBar`, `AppBarButton`,
+`AppBarElementContainer`, `AppBarElementProperties`, `AppBarSeparator`,
+`AppBarToggleButton`, `AutoSuggestBox`, `CommandBar`,
+`CommandBarFlyoutCommandBar`,
+`CommandBarFlyoutCommandBarTemplateSettingsProxy`,
+`CommandBarOverflowPresenter`, `NavigationView`, `NavigationViewItem`,
+`NumberBox`, `PagerControl`, `ParallaxView`, `PersonPicture`, `PipsPager`,
+`ProgressRing`, `RadioButtons`, `RatingControl`, `RefreshContainer`,
+`RefreshVisualizer`, `SplitView`, `SwipeControl`, `SwipeItem`,
+`TeachingTip`, `TwoPaneView`, and `WrapPanel`.
 
 The template-settings dependency properties are also manifest-backed:
 `AppBarButtonTemplateSettings`, `AppBarToggleButtonTemplateSettings`,
@@ -99,21 +107,18 @@ framework generated files under `src/dxaml/xcp/dxaml/lib/winrtgeneratedclasses`
 `*.properties.*` misses framework-generated types such as
 `AppBarButtonTemplateSettings` and `SplitViewTemplateSettings`.
 
-After the template-settings, Repeater layout, and CommandBar/AppBar family
-conversions, the remaining ModernWpf types with inline DP/AddOwner sites whose
-type names match generated WinUI sources are 42 types / 302 sites:
-`AnnotatedScrollBar`, `AutoSuggestBoxHelper`, `BreadcrumbBar`, `ColorPicker`,
-`ColorPickerSlider`, `ColorSpectrum`, `ContentDialog`, `Flyout`,
-`FlyoutBase`, `FlyoutPresenter`, `HyperlinkButton`, `InfoBadge`, `InfoBar`,
-`InfoBarPanel`, `LayoutPanel`,
-`ListViewBase`, `ListViewBaseItem`, `MenuBarItem`, `MenuFlyout`,
-`MenuFlyoutPresenter`, `NavigationViewItemBase`,
-`NavigationViewItemPresenter`, `PagerControl`, `ParallaxView`, `PipsPager`,
-`ProgressRing`, `RefreshContainer`, `RefreshVisualizer`,
-`RadioButtons`, `RatingItemImageInfo`, `ItemsRepeater`, `RecyclePool`,
-`SelectorBar`, `SelectorBarItem`, `SplitButton`, `ToggleSplitButton`,
-`SwipeControl`, `SwipeItem`, `TeachingTip`, `ToggleSwitch`, `TwoPaneView`, and
-`WrapPanel`.
+After the template-settings, Repeater layout, CommandBar/AppBar family, WinUI
+source-backed controls, and the latest layout/navigation DP-generation rounds,
+the remaining ModernWpf types with inline DP/AddOwner sites whose type names
+match generated WinUI sources are 31 types / 194 sites:
+`AutoSuggestBoxHelper`, `BreadcrumbBar`, `BreadcrumbBarItem`, `ColorPicker`,
+`ColorPickerSlider`, `ColorSpectrum`, `ContentDialog`, `DropDownButton`,
+`Flyout`, `FlyoutBase`, `FlyoutPresenter`, `HyperlinkButton`, `InfoBadge`,
+`InfoBar`, `InfoBarPanel`, `ItemsRepeater`, `LayoutPanel`, `ListViewBase`,
+`ListViewBaseItem`, `MenuBarItem`, `MenuFlyout`, `MenuFlyoutPresenter`,
+`NavigationViewItemBase`, `NavigationViewItemPresenter`,
+`RatingItemImageInfo`, `RecyclePool`, `SelectorBar`, `SelectorBarItem`,
+`SplitButton`, `ToggleSplitButton`, and `ToggleSwitch`.
 
 Those remaining sites are control implementation work, not pure storage-class
 cleanup. Convert them in coherent control/family slices so the manifest changes

@@ -6,26 +6,12 @@ namespace ModernWpf.Controls
 {
     [TemplatePart(Name = RootName, Type = typeof(Panel))]
     [TemplatePart(Name = RefreshVisualizerPresenterName, Type = typeof(Panel))]
-    public class RefreshContainer : ContentControl
+    public partial class RefreshContainer : ContentControl
     {
         private const string RootName = "Root";
         private const string RefreshVisualizerPresenterName = "RefreshVisualizerPresenter";
         private const double DefaultPullDimensionSize = 100;
         private const int MaxBfsDepth = 10;
-
-        public static readonly DependencyProperty VisualizerProperty =
-            DependencyProperty.Register(
-                nameof(Visualizer),
-                typeof(RefreshVisualizer),
-                typeof(RefreshContainer),
-                new PropertyMetadata(null, OnVisualizerPropertyChanged));
-
-        public static readonly DependencyProperty PullDirectionProperty =
-            DependencyProperty.Register(
-                nameof(PullDirection),
-                typeof(RefreshPullDirection),
-                typeof(RefreshContainer),
-                new PropertyMetadata(RefreshPullDirection.TopToBottom, OnPullDirectionPropertyChanged));
 
         static RefreshContainer()
         {
@@ -36,18 +22,6 @@ namespace ModernWpf.Controls
         {
             RefreshInfoProviderAdapter = new ScrollViewerIRefreshInfoProviderAdapter(PullDirection);
             _hasDefaultRefreshInfoProviderAdapter = true;
-        }
-
-        public RefreshVisualizer Visualizer
-        {
-            get => (RefreshVisualizer)GetValue(VisualizerProperty);
-            set => SetValue(VisualizerProperty, value);
-        }
-
-        public RefreshPullDirection PullDirection
-        {
-            get => (RefreshPullDirection)GetValue(PullDirectionProperty);
-            set => SetValue(PullDirectionProperty, value);
         }
 
         internal IRefreshInfoProviderAdapter RefreshInfoProviderAdapter

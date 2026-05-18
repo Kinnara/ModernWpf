@@ -1,0 +1,112 @@
+{
+  "usings": [
+    "System.Windows"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "ParallaxView"
+  },
+  "properties": [
+    {
+      "name": "Child",
+      "type": "UIElement",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "null",
+      "options": [ "AffectsMeasure", "AffectsArrange" ],
+      "changed": "OnChildPropertyChanged",
+      "propertyAccessibility": "public new"
+    },
+    {
+      "name": "HorizontalShift",
+      "type": "double",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "0.0",
+      "options": [ "AffectsMeasure", "AffectsArrange" ]
+    },
+    {
+      "name": "HorizontalSourceEndOffset",
+      "type": "double",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "0.0",
+      "options": [ "AffectsArrange" ]
+    },
+    {
+      "name": "HorizontalSourceOffsetKind",
+      "type": "ParallaxSourceOffsetKind",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "ParallaxSourceOffsetKind.Relative",
+      "options": [ "AffectsArrange" ]
+    },
+    {
+      "name": "HorizontalSourceStartOffset",
+      "type": "double",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "0.0",
+      "options": [ "AffectsArrange" ]
+    },
+    {
+      "name": "IsHorizontalShiftClamped",
+      "type": "bool",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "true",
+      "options": [ "AffectsArrange" ]
+    },
+    {
+      "name": "IsVerticalShiftClamped",
+      "type": "bool",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "true",
+      "options": [ "AffectsArrange" ]
+    },
+    {
+      "name": "MaxHorizontalShiftRatio",
+      "type": "double",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "1.0",
+      "options": [ "AffectsArrange" ]
+    },
+    {
+      "name": "MaxVerticalShiftRatio",
+      "type": "double",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "1.0",
+      "options": [ "AffectsArrange" ]
+    },
+    {
+      "name": "Source",
+      "type": "UIElement",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "null",
+      "changed": "OnSourcePropertyChanged"
+    },
+    {
+      "name": "VerticalShift",
+      "type": "double",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "0.0",
+      "options": [ "AffectsMeasure", "AffectsArrange" ]
+    },
+    {
+      "name": "VerticalSourceEndOffset",
+      "type": "double",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "0.0",
+      "options": [ "AffectsArrange" ]
+    },
+    {
+      "name": "VerticalSourceOffsetKind",
+      "type": "ParallaxSourceOffsetKind",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "ParallaxSourceOffsetKind.Relative",
+      "options": [ "AffectsArrange" ]
+    },
+    {
+      "name": "VerticalSourceStartOffset",
+      "type": "double",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "0.0",
+      "options": [ "AffectsArrange" ]
+    }
+  ]
+}

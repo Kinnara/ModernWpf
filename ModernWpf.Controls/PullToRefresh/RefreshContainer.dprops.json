@@ -1,0 +1,24 @@
+{
+  "usings": [
+    "System.Windows"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "RefreshContainer"
+  },
+  "properties": [
+    {
+      "name": "Visualizer",
+      "type": "RefreshVisualizer",
+      "default": "null",
+      "changed": "OnVisualizerPropertyChanged"
+    },
+    {
+      "name": "PullDirection",
+      "type": "RefreshPullDirection",
+      "default": "RefreshPullDirection.TopToBottom",
+      "changed": "OnPullDirectionPropertyChanged"
+    }
+  ]
+}

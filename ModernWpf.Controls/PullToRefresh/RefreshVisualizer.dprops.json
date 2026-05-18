@@ -1,0 +1,39 @@
+{
+  "usings": [
+    "System.Windows"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "RefreshVisualizer"
+  },
+  "properties": [
+    {
+      "name": "State",
+      "type": "RefreshVisualizerState",
+      "kind": "RegisterReadOnly",
+      "default": "RefreshVisualizerState.Idle",
+      "changed": "OnStateChanged",
+      "setterAccessibility": "none"
+    },
+    {
+      "name": "InfoProvider",
+      "type": "object",
+      "default": "null",
+      "changed": "OnInfoProviderChanged",
+      "generateWrapper": false
+    },
+    {
+      "name": "Orientation",
+      "type": "RefreshVisualizerOrientation",
+      "default": "RefreshVisualizerOrientation.Auto",
+      "changed": "OnOrientationChanged"
+    },
+    {
+      "name": "Content",
+      "type": "UIElement",
+      "default": "null",
+      "changed": "OnContentChanged"
+    }
+  ]
+}

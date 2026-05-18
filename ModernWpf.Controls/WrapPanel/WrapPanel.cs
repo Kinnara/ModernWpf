@@ -11,83 +11,8 @@ namespace ModernWpf.Controls
         Last = 1,
     }
 
-    public class WrapPanel : Panel
+    public partial class WrapPanel : Panel
     {
-        public static readonly DependencyProperty PaddingProperty =
-            DependencyProperty.Register(
-                nameof(Padding),
-                typeof(Thickness),
-                typeof(WrapPanel),
-                new FrameworkPropertyMetadata(
-                    default(Thickness),
-                    FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange));
-
-        public Thickness Padding
-        {
-            get => (Thickness)GetValue(PaddingProperty);
-            set => SetValue(PaddingProperty, value);
-        }
-
-        public static readonly DependencyProperty ItemSpacingProperty =
-            DependencyProperty.Register(
-                nameof(ItemSpacing),
-                typeof(double),
-                typeof(WrapPanel),
-                new FrameworkPropertyMetadata(
-                    0.0,
-                    FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange));
-
-        public double ItemSpacing
-        {
-            get => (double)GetValue(ItemSpacingProperty);
-            set => SetValue(ItemSpacingProperty, value);
-        }
-
-        public static readonly DependencyProperty LineSpacingProperty =
-            DependencyProperty.Register(
-                nameof(LineSpacing),
-                typeof(double),
-                typeof(WrapPanel),
-                new FrameworkPropertyMetadata(
-                    0.0,
-                    FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange));
-
-        public double LineSpacing
-        {
-            get => (double)GetValue(LineSpacingProperty);
-            set => SetValue(LineSpacingProperty, value);
-        }
-
-        public static readonly DependencyProperty OrientationProperty =
-            DependencyProperty.Register(
-                nameof(Orientation),
-                typeof(Orientation),
-                typeof(WrapPanel),
-                new FrameworkPropertyMetadata(
-                    Orientation.Horizontal,
-                    FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange));
-
-        public Orientation Orientation
-        {
-            get => (Orientation)GetValue(OrientationProperty);
-            set => SetValue(OrientationProperty, value);
-        }
-
-        public static readonly DependencyProperty ItemsStretchProperty =
-            DependencyProperty.Register(
-                nameof(ItemsStretch),
-                typeof(WrapPanelItemsStretch),
-                typeof(WrapPanel),
-                new FrameworkPropertyMetadata(
-                    WrapPanelItemsStretch.None,
-                    FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange));
-
-        public WrapPanelItemsStretch ItemsStretch
-        {
-            get => (WrapPanelItemsStretch)GetValue(ItemsStretchProperty);
-            set => SetValue(ItemsStretchProperty, value);
-        }
-
         protected override Size MeasureOverride(Size availableSize)
         {
             var padding = Padding;
