@@ -988,3 +988,29 @@ Source inspected:
 
 - `test\ModernWpf.WinUI.Tests\CommonStyles\WindowVisualStateTests.cs` covers the official `WindowForeground` / `WindowBackground` resource surface, ModernWpf chrome retention, WPF `ContentPresenter` content host, resize grip, and source-shape substitutions.
 - `test\ModernWpf.WinUI.Tests\TemplateParityTests.cs` no longer classifies `Styles\Window.xaml` as a WinUI presenter template requiring `ContentPresenterEx`.
+
+## 2026-05-18 Batch 32
+
+Source inspected:
+
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles`
+
+### Synced Values
+
+| Resource key / style | Official WPF Fluent value | ModernWpf value after sync | Reason |
+| --- | --- | --- | --- |
+| Official `Styles` source inventory | Every stock style file in the local `PresentationFramework.Fluent\Styles` folder | `docs\official-fluent-style-coverage.md` records each source file as `Backported`, `Folded`, `Substituted`, or `Excluded` | Allows broad official Fluent copying while keeping non-copy cases explicit and testable. |
+| Backported stock style rows | Same-named stock WPF Fluent style files | Existing ModernWpf `Styles` artifacts plus per-control audit docs | Confirms the older-target backport has an artifact for every supported official stock style. |
+| Folded source rows | `TextBlock.xaml`, `StatusBarItem.xaml`, and `CollectionViewGroup.xaml` are separate official files | `TextStyles.xaml`, `StatusBar.xaml`, and `GroupItem.xaml` remain ModernWpf's merge points | Preserves existing resource entry points while still accounting for the official source files. |
+
+### Intentional Differences
+
+| Resource key / style | Official WPF Fluent value | ModernWpf backport value | Reason retained |
+| --- | --- | --- | --- |
+| `Window.xaml` | Plain official content-window style | `Styles\Window.xaml` is marked `Substituted` | ModernWpf keeps its custom title bar and `WindowChrome` shell while mapping the compatible foreground/background/content-host surface. |
+| `DocumentViewer.xaml` | Official stock WPF DocumentViewer style | Marked `Excluded` | ModernWpf has no existing DocumentViewer style/control in the current no-new-controls parity goal. |
+| Whole-folder copy | Platform theme assembly source layout | Explicit coverage matrix with status buckets | Avoids accidentally merging WPF internals, unsupported controls, or folded resources into the public ModernWpf resource surface. |
+
+### Test Evidence
+
+- `test\ModernWpf.WinUI.Tests\TemplateParityTests.cs` now includes `OfficialWpfFluentStyleCoverageAuditCoversSourceFolderInventory`, which verifies the 51-file official WPF Fluent style inventory, rejects duplicate/missing/unknown-status rows, and requires non-excluded rows to point at existing ModernWpf artifacts.

@@ -191,6 +191,113 @@ public class TemplateParityTests
     }
 
     [TestMethod]
+    public void OfficialWpfFluentStyleCoverageAuditCoversSourceFolderInventory()
+    {
+        var repoRoot = FindRepoRoot();
+        var auditFile = Path.Combine(repoRoot, "docs", "official-fluent-style-coverage.md");
+        var expectedSourceFiles = new[]
+        {
+            "Button.xaml",
+            "Calendar.xaml",
+            "CheckBox.xaml",
+            "CollectionViewGroup.xaml",
+            "ComboBox.xaml",
+            "ContentControl.xaml",
+            "ContextMenu.xaml",
+            "DataGrid.xaml",
+            "DatePicker.xaml",
+            "DocumentViewer.xaml",
+            "Expander.xaml",
+            "Frame.xaml",
+            "GridSplitter.xaml",
+            "GridView.xaml",
+            "GroupBox.xaml",
+            "GroupItem.xaml",
+            "HeaderedContentControl.xaml",
+            "Hyperlink.xaml",
+            "ItemsControl.xaml",
+            "Label.xaml",
+            "ListBox.xaml",
+            "ListBoxItem.xaml",
+            "ListView.xaml",
+            "ListViewItem.xaml",
+            "Menu.xaml",
+            "MenuItem.xaml",
+            "NavigationWindow.xaml",
+            "Page.xaml",
+            "PasswordBox.xaml",
+            "ProgressBar.xaml",
+            "RadioButton.xaml",
+            "RepeatButton.xaml",
+            "ResizeGrip.xaml",
+            "RichTextBox.xaml",
+            "ScrollBar.xaml",
+            "ScrollViewer.xaml",
+            "Separator.xaml",
+            "Slider.xaml",
+            "StatusBar.xaml",
+            "StatusBarItem.xaml",
+            "TabControl.xaml",
+            "TextBlock.xaml",
+            "TextBox.xaml",
+            "Thumb.xaml",
+            "ToggleButton.xaml",
+            "ToolBar.xaml",
+            "ToolTip.xaml",
+            "TreeView.xaml",
+            "TreeViewItem.xaml",
+            "UserControl.xaml",
+            "Window.xaml"
+        };
+        var allowedStatuses = new[]
+        {
+            "Backported",
+            "Folded",
+            "Substituted",
+            "Excluded"
+        };
+
+        Assert.IsTrue(File.Exists(auditFile), "Missing official WPF Fluent style coverage audit.");
+
+        var rows = ParseOfficialWpfFluentCoverageRows(auditFile);
+        var rowSourceFiles = rows.Select(row => row.SourceFile).ToArray();
+        var missing = expectedSourceFiles
+            .Except(rowSourceFiles, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+        var extra = rowSourceFiles
+            .Except(expectedSourceFiles, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+        var duplicates = rows
+            .GroupBy(row => row.SourceFile, StringComparer.OrdinalIgnoreCase)
+            .Where(group => group.Count() > 1)
+            .Select(group => group.Key)
+            .ToArray();
+        var badStatuses = rows
+            .Where(row => !allowedStatuses.Contains(row.Status, StringComparer.Ordinal))
+            .Select(row => $"{row.SourceFile}:{row.LineNumber} {row.Status}")
+            .ToArray();
+        var missingArtifacts = rows
+            .Where(row => row.Status != "Excluded")
+            .Where(row => row.ArtifactPaths.Length == 0 ||
+                row.ArtifactPaths.Any(path => !File.Exists(Path.Combine(repoRoot, path))))
+            .Select(row => $"{row.SourceFile}:{row.LineNumber}")
+            .ToArray();
+
+        Assert.AreEqual(expectedSourceFiles.Length, rows.Length, "Unexpected official WPF Fluent source coverage row count.");
+        Assert.IsFalse(missing.Any(), "Missing official WPF Fluent source rows: " + string.Join("; ", missing));
+        Assert.IsFalse(extra.Any(), "Unexpected official WPF Fluent source rows: " + string.Join("; ", extra));
+        Assert.IsFalse(duplicates.Any(), "Duplicate official WPF Fluent source rows: " + string.Join("; ", duplicates));
+        Assert.IsFalse(badStatuses.Any(), "Invalid official WPF Fluent coverage statuses: " + string.Join("; ", badStatuses));
+        Assert.IsFalse(missingArtifacts.Any(), "Non-excluded official WPF Fluent coverage rows should point at existing ModernWpf artifacts: " + string.Join("; ", missingArtifacts));
+
+        AssertCoverageStatus(rows, "Window.xaml", "Substituted");
+        AssertCoverageStatus(rows, "TextBlock.xaml", "Folded");
+        AssertCoverageStatus(rows, "StatusBarItem.xaml", "Folded");
+        AssertCoverageStatus(rows, "CollectionViewGroup.xaml", "Folded");
+        AssertCoverageStatus(rows, "DocumentViewer.xaml", "Excluded");
+    }
+
+    [TestMethod]
     public void VisualStateSetterAuditUsesExplicitStatusBuckets()
     {
         var repoRoot = FindRepoRoot();
@@ -455,6 +562,43 @@ public class TemplateParityTests
             .ToArray();
     }
 
+    private static CoverageRow[] ParseOfficialWpfFluentCoverageRows(string path)
+    {
+        var rowPattern = new Regex(
+            @"^\|\s+`(?<source>[^`]+\.xaml)`\s+\|\s+(?<artifact>[^|]+)\|\s+(?<status>[A-Za-z]+)\s+\|",
+            RegexOptions.Compiled);
+
+        return File.ReadAllLines(path)
+            .Select((line, index) => (
+                Match: rowPattern.Match(line),
+                LineNumber: index + 1))
+            .Where(entry => entry.Match.Success)
+            .Select(entry => new CoverageRow(
+                entry.Match.Groups["source"].Value,
+                entry.Match.Groups["status"].Value,
+                ExtractArtifactPaths(entry.Match.Groups["artifact"].Value),
+                entry.LineNumber))
+            .ToArray();
+    }
+
+    private static string[] ExtractArtifactPaths(string artifactCell)
+    {
+        return Regex.Matches(artifactCell, @"`(?<path>[^`]+)`")
+            .Cast<Match>()
+            .Select(match => match.Groups["path"].Value)
+            .Where(path => path.Contains("\\", StringComparison.Ordinal) ||
+                path.Contains("/", StringComparison.Ordinal))
+            .ToArray();
+    }
+
+    private static void AssertCoverageStatus(CoverageRow[] rows, string sourceFile, string expectedStatus)
+    {
+        var row = rows.SingleOrDefault(entry => entry.SourceFile.Equals(sourceFile, StringComparison.OrdinalIgnoreCase));
+
+        Assert.IsNotNull(row.SourceFile, $"Missing {sourceFile} coverage row.");
+        Assert.AreEqual(expectedStatus, row.Status, $"{sourceFile} should use the expected official WPF Fluent coverage status.");
+    }
+
     private static string[] FindPlainContentPresenterElementUses(string repoRoot, string path)
     {
         var relativePath = Path.GetRelativePath(repoRoot, path);
@@ -509,6 +653,25 @@ public class TemplateParityTests
             .Where(match => !string.IsNullOrEmpty(match.Attribute))
             .Select(match => $"{relativePath}:{match.LineNumber} {element}.{match.Attribute}")
             .ToArray();
+    }
+
+    private readonly struct CoverageRow
+    {
+        public CoverageRow(string sourceFile, string status, string[] artifactPaths, int lineNumber)
+        {
+            SourceFile = sourceFile;
+            Status = status;
+            ArtifactPaths = artifactPaths;
+            LineNumber = lineNumber;
+        }
+
+        public string SourceFile { get; }
+
+        public string Status { get; }
+
+        public string[] ArtifactPaths { get; }
+
+        public int LineNumber { get; }
     }
 
     private static string[] FindRawWinUIVisualStateSetterUses(string repoRoot, string path)
