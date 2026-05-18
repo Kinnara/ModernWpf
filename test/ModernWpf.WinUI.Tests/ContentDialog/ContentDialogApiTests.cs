@@ -9,6 +9,7 @@ using System.Windows.Input;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf;
 using ModernWpf.Controls;
+using ModernWpf.Controls.Primitives;
 using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
 
@@ -202,6 +203,25 @@ public class ContentDialogApiTests
             AssertStateSetter(root, "DefaultButtonStates", "SecondaryAsDefaultButton", "SecondaryButton.Style");
             AssertStateSetter(root, "DefaultButtonStates", "CloseAsDefaultButton", "CloseButton.Style");
             AssertStateSetter(root, "DialogBorderStates", "AccentColorBorder", "BackgroundElement.BorderBrush");
+        });
+    }
+
+    [TestMethod]
+    public void TemplateUsesSourceContentDialogShadowDepth()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var dialog = CreateDialog();
+            using var host = CreateInPlaceHost(dialog);
+            host.UpdateLayout();
+
+            var shadow = GetTemplateChild<ThemeShadowChrome>(dialog, "Shdw");
+
+            Assert.AreEqual(128.0, shadow.Depth);
+            Assert.AreEqual(ThemeShadowChromeWindowedPopupInsetMode.Default, shadow.WindowedPopupInsetMode);
+            Assert.AreEqual(new Thickness(64, 32, 64, 96), shadow.ShadowPadding);
         });
     }
 

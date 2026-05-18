@@ -215,6 +215,7 @@
                                     </Grid.RenderTransform>
                                     <ui:ThemeShadowChrome
                                         x:Name="Shdw"
+                                        Depth="128"
                                         IsShadowEnabled="{TemplateBinding IsShadowEnabled}"
                                         CornerRadius="{TemplateBinding CornerRadius}"
                                         Margin="{DynamicResource ContentDialogBorderWidth}" />
