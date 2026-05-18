@@ -1025,6 +1025,11 @@
     <m:StaticResource x:Key="FlyoutPresenterBackground" ResourceKey="SystemColorWindowColorBrush" />
     <m:StaticResource x:Key="FlyoutBorderThemeBrush" ResourceKey="SystemColorWindowTextColorBrush" />
 
+    <!-- Resources for GroupBox -->
+    <m:StaticResource x:Key="GroupBoxBackground" ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="GroupBoxBorderBrush" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="GroupBoxHeaderForeground" ResourceKey="SystemColorButtonTextColorBrush" />
+
     <!-- Resources for Hyperlink -->
     <SolidColorBrush x:Key="HyperlinkForeground" Color="{m:ThemeResource SystemColorHotlightColor}"/>
     <SolidColorBrush x:Key="HyperlinkForegroundPointerOver" Color="{m:ThemeResource SystemColorWindowTextColor}"/>

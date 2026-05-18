@@ -311,3 +311,33 @@ Source inspected:
 
 - `test\ModernWpf.WinUI.Tests\CommonStyles\LabelVisualStateTests.cs` covers the official WPF Fluent Label setter-only style shape, runtime values, removal of the old `ContentPresenterEx` template, and official theme alias.
 - `test\ModernWpf.WinUI.Tests\LayoutCompatibility\LayoutCompatibilityApiTests.cs` covers the official WPF style surface for Label in the broader layout compatibility suite.
+
+## 2026-05-18 Batch 11
+
+Source inspected:
+
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\GroupBox.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Light.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Dark.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\HC.xaml`
+
+### Synced Values
+
+| Resource key / style | Official WPF Fluent value | ModernWpf value after sync | Reason |
+| --- | --- | --- | --- |
+| `DefaultGroupBoxStyle` | `GroupBox` style with `OverridesDefaultStyle=True`, resource-backed `BorderThickness`, `Background`, `BorderBrush`, `Padding`, and a WPF `Border` / `Grid` template | Same structure under the existing resource key | `GroupBox` is a stock WPF control, so official WPF Fluent is the primary source. |
+| Implicit `GroupBox` style | Based on `DefaultGroupBoxStyle` | Same | Matches official WPF Fluent resource shape while keeping the existing ModernWpf resource key. |
+| `GroupBoxPadding` / `GroupBoxHeaderFontSize` / `GroupBoxHeaderMargin` / `GroupBoxBorderThickness` | Official GroupBox metrics: `0,0,0,16`, `20`, `0,4,0,12`, and `0` | Same | Replaces the earlier ModernWpf spacing guesses. |
+| `GroupBoxBackground` / `GroupBoxBorderBrush` / `GroupBoxHeaderForeground` | Official theme aliases for GroupBox chrome and header foreground | Same aliases across Light, Dark, and HighContrast | Required by the official WPF Fluent template shape. |
+
+### Intentional Differences
+
+| Resource key / style | Official WPF Fluent value | ModernWpf backport value | Reason retained |
+| --- | --- | --- | --- |
+| `system:Double` namespace assembly | `System.Runtime` | `mscorlib` | Keeps the XAML resource compatible with ModernWpf's older target frameworks. |
+| GroupBox theme aliases | Dedicated brush resources in official WPF Fluent | `m:StaticResource` aliases to ModernWpf's existing Fluent brush tokens | Keeps ModernWpf's existing theme-resource alias model while exposing the official keys. |
+
+### Test Evidence
+
+- `test\ModernWpf.WinUI.Tests\CommonStyles\GroupBoxVisualStateTests.cs` covers the official WPF Fluent GroupBox style setters, runtime values, WPF `Border` / plain `ContentPresenter` template shape, header text attached properties, access-key recognition, removal of `ContentPresenterEx`, and official theme aliases.
+- `test\ModernWpf.WinUI.Tests\LayoutCompatibility\LayoutCompatibilityApiTests.cs` covers the official WPF presenter shape for GroupBox in the broader layout compatibility suite.

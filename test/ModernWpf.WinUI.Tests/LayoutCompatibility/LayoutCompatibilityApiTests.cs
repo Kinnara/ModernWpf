@@ -1109,12 +1109,6 @@ public class LayoutCompatibilityApiTests
                 Foreground = Brushes.Red
             };
             var frame = new ModernWpf.Controls.Frame();
-            var groupBox = new GroupBox
-            {
-                Header = "Group header",
-                Content = "Group content",
-                Foreground = Brushes.Blue
-            };
             var statusBarItem = new StatusBarItem
             {
                 Content = "Status content",
@@ -1130,7 +1124,6 @@ public class LayoutCompatibilityApiTests
 
             var hostPanel = new StackPanel();
             hostPanel.Children.Add(frame);
-            hostPanel.Children.Add(groupBox);
             hostPanel.Children.Add(statusBarItem);
             hostPanel.Children.Add(expander);
 
@@ -1147,12 +1140,6 @@ public class LayoutCompatibilityApiTests
             Assert.IsInstanceOfType(FindTemplateChild<ContentPresenterEx>(frame, "FirstContentPresenter"), typeof(ContentPresenterEx));
             Assert.IsInstanceOfType(FindTemplateChild<ContentPresenterEx>(frame, "SecondContentPresenter"), typeof(ContentPresenterEx));
 
-            var groupPresenters = VisualTreeTestHelper.EnumerateDescendants(groupBox)
-                .OfType<ContentPresenterEx>()
-                .ToArray();
-            Assert.IsTrue(groupPresenters.Any(presenter => Equals(groupBox.Header, presenter.Content)));
-            Assert.IsTrue(groupPresenters.Any(presenter => Equals(groupBox.Content, presenter.Content)));
-
             var statusPresenter = FindVisualChild<ContentPresenterEx>(statusBarItem)
                 ?? throw new AssertFailedException("Expected StatusBarItem template to use ContentPresenterEx.");
             Assert.AreEqual(statusBarItem.Content, statusPresenter.Content);
@@ -1168,6 +1155,52 @@ public class LayoutCompatibilityApiTests
                     .OfType<ContentPresenterEx>()
                     .Any(presenter => Equals(expander.Header, presenter.Content)),
                 "Expected Expander header template to use ContentPresenterEx.");
+        });
+    }
+
+    [TestMethod]
+    public void GroupBoxTemplateUsesOfficialWpfFluentPresenterShape()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var groupBox = new GroupBox
+            {
+                Header = "Group header",
+                Content = "Group content"
+            };
+
+            using var host = new TestWindowHost(groupBox, width: 240, height: 140);
+            host.UpdateLayout();
+
+            Assert.IsTrue(groupBox.OverridesDefaultStyle);
+            Assert.AreSame(groupBox.TryFindResource("GroupBoxBackground"), groupBox.Background);
+            Assert.AreSame(groupBox.TryFindResource("GroupBoxBorderBrush"), groupBox.BorderBrush);
+            Assert.AreEqual((Thickness)groupBox.TryFindResource("GroupBoxBorderThickness"), groupBox.BorderThickness);
+            Assert.AreEqual((Thickness)groupBox.TryFindResource("GroupBoxPadding"), groupBox.Padding);
+
+            var border = FindVisualChild<Border>(groupBox)
+                ?? throw new AssertFailedException("Expected GroupBox template to use official WPF Border chrome.");
+            var presenters = VisualTreeTestHelper.EnumerateDescendants(groupBox)
+                .OfType<ContentPresenter>()
+                .ToArray();
+            var headerPresenter = presenters.Single(item => Equals(item.Content, groupBox.Header));
+            var contentPresenter = presenters.Single(item => Equals(item.Content, groupBox.Content));
+
+            Assert.AreSame(groupBox.Background, border.Background);
+            Assert.AreSame(groupBox.BorderBrush, border.BorderBrush);
+            Assert.AreEqual(groupBox.BorderThickness, border.BorderThickness);
+            Assert.AreEqual(typeof(ContentPresenter), headerPresenter.GetType());
+            Assert.AreEqual(typeof(ContentPresenter), contentPresenter.GetType());
+            Assert.AreEqual(0, Grid.GetRow(headerPresenter));
+            Assert.AreEqual(1, Grid.GetRow(contentPresenter));
+            Assert.AreEqual((double)groupBox.TryFindResource("GroupBoxHeaderFontSize"), TextElement.GetFontSize(headerPresenter));
+            Assert.AreSame(groupBox.TryFindResource("GroupBoxHeaderForeground"), TextElement.GetForeground(headerPresenter));
+            Assert.AreEqual((Thickness)groupBox.TryFindResource("GroupBoxHeaderMargin"), headerPresenter.Margin);
+            Assert.AreEqual(groupBox.Padding, contentPresenter.Margin);
+            Assert.IsNull(FindVisualChild<ContentPresenterEx>(groupBox));
+            Assert.IsNull(FindVisualChild<ModernContentControlEx>(groupBox));
         });
     }
 
