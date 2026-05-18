@@ -67,8 +67,29 @@ public class LayoutCompatibilityApiTests
             host.UpdateLayout();
 
             Assert.IsTrue(chrome.UsesSoftwareRenderer);
-            Assert.AreEqual(new Thickness(52, 44, 52, 60), chrome.ShadowPadding);
+            Assert.AreEqual(new Thickness(16, 8, 16, 24), chrome.ShadowPadding);
             Assert.IsFalse(FindVisualChildren<Border>(chrome).Any(border => border.Effect is System.Windows.Media.Effects.BlurEffect));
+
+            chrome.Depth = 64;
+            host.UpdateLayout();
+
+            Assert.AreEqual(new Thickness(32, 16, 32, 48), chrome.ShadowPadding);
+
+            var lightLowElevation = ThemeShadowChrome.ThemeShadowRenderer.GetLayerOpacities(16, ElementTheme.Light);
+            Assert.AreEqual(0, lightLowElevation.Ambient, 0.001);
+            Assert.AreEqual(0.14, lightLowElevation.Directional, 0.001);
+
+            var darkLowElevation = ThemeShadowChrome.ThemeShadowRenderer.GetLayerOpacities(16, ElementTheme.Dark);
+            Assert.AreEqual(0, darkLowElevation.Ambient, 0.001);
+            Assert.AreEqual(0.26, darkLowElevation.Directional, 0.001);
+
+            var lightHighElevation = ThemeShadowChrome.ThemeShadowRenderer.GetLayerOpacities(64, ElementTheme.Light);
+            Assert.AreEqual(0.15, lightHighElevation.Ambient, 0.001);
+            Assert.AreEqual(0.19, lightHighElevation.Directional, 0.001);
+
+            var darkHighElevation = ThemeShadowChrome.ThemeShadowRenderer.GetLayerOpacities(64, ElementTheme.Dark);
+            Assert.AreEqual(0.37, darkHighElevation.Ambient, 0.001);
+            Assert.AreEqual(0.37, darkHighElevation.Directional, 0.001);
 
             chrome.Depth = 0;
             host.UpdateLayout();

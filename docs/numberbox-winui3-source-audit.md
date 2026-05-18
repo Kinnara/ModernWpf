@@ -43,7 +43,7 @@ ModernWpf files:
 
 ## WPF Substitutions
 
-- WPF `Popup`, `ThemeShadowChrome`, and `PopupRepositionHelper` remain the substitute for WinUI popup hosting, theme shadow, translation, and root-bounds behavior. `ThemeShadowChrome` now renders through the shared depth-driven software ThemeShadow renderer rather than the old WPF `BlurEffect` border pair, while preserving the source `NumberBoxPopupShadowDepth=16` resource path.
+- WPF `Popup`, `ThemeShadowChrome`, and `PopupRepositionHelper` remain the substitute for WinUI popup hosting, theme shadow, translation, and root-bounds behavior. `ThemeShadowChrome` now renders through the shared depth-driven software ThemeShadow renderer rather than the old WPF `BlurEffect` border pair, while preserving the source `NumberBoxPopupShadowDepth=16` resource path and WinUI `GetDropShadowRecipe` padding of `8,4,8,12` for that depth.
 - WPF `TextBox` requires `PART_ContentHost`; ModernWpf cannot exactly use the WinUI `ContentElement` scroll viewer or `AutomationProperties.AccessibilityView=Raw` paths.
 - Popup spin buttons keep `Focusable=False` in addition to source `IsTabStop=False` because WPF focus movement can close the popup.
 - The local `NumberBoxPopupIndicatorMargin` resource remains in the NumberBox dictionary so WPF template-scope `StaticResource` lookup resolves reliably.

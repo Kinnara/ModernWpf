@@ -192,7 +192,7 @@ public class NumberBoxApiTests
             var chrome = popup.Child as ThemeShadowChrome;
             Assert.IsNotNull(chrome);
             Assert.AreEqual(16.0, chrome!.Depth);
-            Assert.AreEqual(new Thickness(32, 28, 32, 36), chrome.ShadowPadding);
+            Assert.AreEqual(new Thickness(8, 4, 8, 12), chrome.ShadowPadding);
             Assert.IsFalse(VisualTreeTestHelper.EnumerateDescendants(chrome).OfType<Border>().Any(border => border.Effect is System.Windows.Media.Effects.BlurEffect));
 
             var popupRoot = chrome.Child as Border;

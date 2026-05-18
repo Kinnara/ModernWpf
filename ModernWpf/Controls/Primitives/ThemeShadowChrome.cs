@@ -28,6 +28,7 @@ namespace ModernWpf.Controls.Primitives
             };
             AddVisualChild(_background);
 
+            ThemeManager.AddActualThemeChangedHandler(this, OnActualThemeChanged);
             SizeChanged += OnSizeChanged;
             Loaded += OnLoaded;
         }
@@ -329,6 +330,11 @@ namespace ModernWpf.Controls.Primitives
             {
                 AdjustMargin();
             }
+        }
+
+        private void OnActualThemeChanged(object sender, RoutedEventArgs e)
+        {
+            _shadow?.InvalidateVisual();
         }
 
         private void AdjustMargin()
@@ -876,7 +882,13 @@ namespace ModernWpf.Controls.Primitives
                 var renderSize = RenderSize;
                 if (renderSize.Width > 0 && renderSize.Height > 0)
                 {
-                    ThemeShadowRenderer.DrawShadow(drawingContext, renderSize, CornerRadius, Depth, VisualTreeHelper.GetDpi(this));
+                    ThemeShadowRenderer.DrawShadow(
+                        drawingContext,
+                        renderSize,
+                        CornerRadius,
+                        Depth,
+                        ThemeManager.GetActualTheme(this),
+                        VisualTreeHelper.GetDpi(this));
                 }
             }
 
@@ -886,6 +898,12 @@ namespace ModernWpf.Controls.Primitives
 
         internal static class ThemeShadowRenderer
         {
+            internal static (double Ambient, double Directional) GetLayerOpacities(double depth, ElementTheme theme)
+            {
+                var recipe = ThemeShadowRecipe.FromDepth(depth, theme);
+                return (recipe.AmbientOpacity, recipe.DirectionalOpacity);
+            }
+
             public static Thickness GetPadding(double depth)
             {
                 if (depth <= 0 || double.IsNaN(depth) || double.IsInfinity(depth))
@@ -915,7 +933,13 @@ namespace ModernWpf.Controls.Primitives
                     Math.Ceiling(bottom));
             }
 
-            public static void DrawShadow(DrawingContext drawingContext, Size contentSize, CornerRadius cornerRadius, double depth, DpiScale dpi)
+            public static void DrawShadow(
+                DrawingContext drawingContext,
+                Size contentSize,
+                CornerRadius cornerRadius,
+                double depth,
+                ElementTheme theme,
+                DpiScale dpi)
             {
                 if (depth <= 0 || double.IsNaN(depth) || double.IsInfinity(depth) ||
                     contentSize.Width <= 0 || contentSize.Height <= 0)
@@ -924,7 +948,7 @@ namespace ModernWpf.Controls.Primitives
                 }
 
                 var padding = GetPadding(depth);
-                var image = GetShadowImage(contentSize, cornerRadius, depth, padding, dpi);
+                var image = GetShadowImage(contentSize, cornerRadius, depth, theme, padding, dpi);
                 var imageWidth = image.PixelWidth / dpi.DpiScaleX;
                 var imageHeight = image.PixelHeight / dpi.DpiScaleY;
 
@@ -933,9 +957,9 @@ namespace ModernWpf.Controls.Primitives
                     new Rect(-padding.Left, -padding.Top, imageWidth, imageHeight));
             }
 
-            private static BitmapSource GetShadowImage(Size contentSize, CornerRadius cornerRadius, double depth, Thickness padding, DpiScale dpi)
+            private static BitmapSource GetShadowImage(Size contentSize, CornerRadius cornerRadius, double depth, ElementTheme theme, Thickness padding, DpiScale dpi)
             {
-                var key = ThemeShadowKey.Create(contentSize, cornerRadius, depth, padding, dpi);
+                var key = ThemeShadowKey.Create(contentSize, cornerRadius, depth, theme, padding, dpi);
 
                 lock (s_cache)
                 {
@@ -967,14 +991,19 @@ namespace ModernWpf.Controls.Primitives
                 var outputAlpha = new byte[pixelCount];
                 var sourceAlpha = new byte[pixelCount];
                 var blurredAlpha = new byte[pixelCount];
-                var profile = ThemeShadowProfile.FromDepth(key.Depth);
+                var profile = ThemeShadowProfile.FromDepth(key.Depth, key.IsDarkTheme ? ElementTheme.Dark : ElementTheme.Light);
 
                 for (int i = 0; i < profile.Layers.Length; i++)
                 {
+                    var layer = profile.Layers[i];
+                    if (layer.Opacity <= 0)
+                    {
+                        continue;
+                    }
+
                     Array.Clear(sourceAlpha, 0, sourceAlpha.Length);
                     Array.Clear(blurredAlpha, 0, blurredAlpha.Length);
 
-                    var layer = profile.Layers[i];
                     FillRoundedRectMask(sourceAlpha, key, cornerRadius, layer.OffsetX, layer.OffsetY);
                     Blur(sourceAlpha, blurredAlpha, key.BitmapWidth, key.BitmapHeight, DipToPixel(layer.BlurRadius, key.DpiScaleX));
                     CompositeAlpha(outputAlpha, blurredAlpha, layer.Opacity);
@@ -1196,16 +1225,90 @@ namespace ModernWpf.Controls.Primitives
 
                 public ThemeShadowLayer[] Layers { get; }
 
-                public static ThemeShadowProfile FromDepth(double depth)
+                public static ThemeShadowProfile FromDepth(double depth, ElementTheme theme = ElementTheme.Light)
                 {
-                    depth = Math.Max(0, Math.Min(128, depth));
+                    var recipe = ThemeShadowRecipe.FromDepth(depth, theme);
 
                     return new ThemeShadowProfile(new[]
                     {
-                        new ThemeShadowLayer(12 + depth * 1.25, 0, depth * 0.25, 0.18),
-                        new ThemeShadowLayer(4 + depth * 0.25, 0, depth * 0.075, 0.12),
-                        new ThemeShadowLayer(1 + depth * 0.05, 0, Math.Min(2, depth * 0.05), 0.08)
+                        new ThemeShadowLayer(recipe.AmbientBlurRadius, 0, recipe.AmbientYOffset, recipe.AmbientOpacity),
+                        new ThemeShadowLayer(recipe.DirectionalBlurRadius, 0, recipe.DirectionalYOffset, recipe.DirectionalOpacity)
                     });
+                }
+            }
+
+            private readonly struct ThemeShadowRecipe
+            {
+                private ThemeShadowRecipe(
+                    double ambientBlurRadius,
+                    double directionalBlurRadius,
+                    double ambientYOffset,
+                    double directionalYOffset,
+                    double ambientOpacity,
+                    double directionalOpacity)
+                {
+                    AmbientBlurRadius = ambientBlurRadius;
+                    DirectionalBlurRadius = directionalBlurRadius;
+                    AmbientYOffset = ambientYOffset;
+                    DirectionalYOffset = directionalYOffset;
+                    AmbientOpacity = ambientOpacity;
+                    DirectionalOpacity = directionalOpacity;
+                }
+
+                public double AmbientBlurRadius { get; }
+                public double DirectionalBlurRadius { get; }
+                public double AmbientYOffset { get; }
+                public double DirectionalYOffset { get; }
+                public double AmbientOpacity { get; }
+                public double DirectionalOpacity { get; }
+
+                public static ThemeShadowRecipe FromDepth(double depth, ElementTheme theme)
+                {
+                    double elevation = Math.Min(64, Math.Max(0, depth) / 2);
+                    double ambientBlurRadius;
+                    double directionalBlurRadius;
+                    double ambientYOffset = 0;
+                    double directionalYOffset;
+                    double ambientOpacity = 0;
+                    double directionalOpacity = 0;
+                    bool isDarkTheme = theme == ElementTheme.Dark;
+
+                    if (elevation < 2)
+                    {
+                        ambientBlurRadius = 2;
+                    }
+                    else if (elevation <= 16)
+                    {
+                        ambientBlurRadius = 2;
+                        directionalOpacity = isDarkTheme ? 0.26 : Math.Min((elevation / 100) + 0.06, 0.14);
+                    }
+                    else
+                    {
+                        ambientBlurRadius = elevation / 3;
+                        ambientYOffset = 2;
+
+                        if (isDarkTheme)
+                        {
+                            ambientOpacity = 0.37;
+                            directionalOpacity = 0.37;
+                        }
+                        else
+                        {
+                            ambientOpacity = 0.15;
+                            directionalOpacity = 0.19;
+                        }
+                    }
+
+                    directionalBlurRadius = elevation;
+                    directionalYOffset = elevation * 0.5;
+
+                    return new ThemeShadowRecipe(
+                        ambientBlurRadius,
+                        directionalBlurRadius,
+                        ambientYOffset,
+                        directionalYOffset,
+                        ambientOpacity,
+                        directionalOpacity);
                 }
             }
 
@@ -1219,6 +1322,7 @@ namespace ModernWpf.Controls.Primitives
                     int paddingLeft,
                     int paddingTop,
                     double depth,
+                    bool isDarkTheme,
                     double dpiScaleX,
                     double dpiScaleY,
                     double topLeft,
@@ -1233,6 +1337,7 @@ namespace ModernWpf.Controls.Primitives
                     PaddingLeft = paddingLeft;
                     PaddingTop = paddingTop;
                     Depth = depth;
+                    IsDarkTheme = isDarkTheme;
                     DpiScaleX = dpiScaleX;
                     DpiScaleY = dpiScaleY;
                     TopLeft = topLeft;
@@ -1248,6 +1353,7 @@ namespace ModernWpf.Controls.Primitives
                 public int PaddingLeft { get; }
                 public int PaddingTop { get; }
                 public double Depth { get; }
+                public bool IsDarkTheme { get; }
                 public double DpiScaleX { get; }
                 public double DpiScaleY { get; }
                 private double TopLeft { get; }
@@ -1255,7 +1361,7 @@ namespace ModernWpf.Controls.Primitives
                 private double BottomRight { get; }
                 private double BottomLeft { get; }
 
-                public static ThemeShadowKey Create(Size contentSize, CornerRadius cornerRadius, double depth, Thickness padding, DpiScale dpi)
+                public static ThemeShadowKey Create(Size contentSize, CornerRadius cornerRadius, double depth, ElementTheme theme, Thickness padding, DpiScale dpi)
                 {
                     int contentWidth = Math.Max(1, (int)Math.Ceiling(contentSize.Width * dpi.DpiScaleX));
                     int contentHeight = Math.Max(1, (int)Math.Ceiling(contentSize.Height * dpi.DpiScaleY));
@@ -1272,6 +1378,7 @@ namespace ModernWpf.Controls.Primitives
                         paddingLeft,
                         paddingTop,
                         Math.Round(depth, 2),
+                        theme == ElementTheme.Dark,
                         Math.Round(dpi.DpiScaleX, 3),
                         Math.Round(dpi.DpiScaleY, 3),
                         Math.Round(cornerRadius.TopLeft, 2),
@@ -1289,6 +1396,7 @@ namespace ModernWpf.Controls.Primitives
                         PaddingLeft == other.PaddingLeft &&
                         PaddingTop == other.PaddingTop &&
                         Depth.Equals(other.Depth) &&
+                        IsDarkTheme == other.IsDarkTheme &&
                         DpiScaleX.Equals(other.DpiScaleX) &&
                         DpiScaleY.Equals(other.DpiScaleY) &&
                         TopLeft.Equals(other.TopLeft) &&
@@ -1313,6 +1421,7 @@ namespace ModernWpf.Controls.Primitives
                         hash = (hash * 397) ^ PaddingLeft;
                         hash = (hash * 397) ^ PaddingTop;
                         hash = (hash * 397) ^ Depth.GetHashCode();
+                        hash = (hash * 397) ^ IsDarkTheme.GetHashCode();
                         hash = (hash * 397) ^ DpiScaleX.GetHashCode();
                         hash = (hash * 397) ^ DpiScaleY.GetHashCode();
                         hash = (hash * 397) ^ TopLeft.GetHashCode();

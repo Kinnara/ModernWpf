@@ -24,17 +24,19 @@ ModernWpf files:
 
 ModernWpf still exposes `ThemeShadowChrome` as the WPF template host because WPF has no compositor `UIElement.Shadow` or `Translation.Z` equivalent. The implementation is no longer the old two-`Border` `BlurEffect` approximation. It now renders a cached alpha-mask bitmap from the child bounds, corner radius, DPI scale, and WinUI-style depth.
 
-The renderer uses three shadow layers derived from depth:
+The renderer ports the WinUI `GetDropShadowRecipe` formulas into WPF:
 
-- A broad ambient layer for the soft outer shadow.
-- A smaller occlusion layer near the caster.
-- A tight contact layer near the bottom edge.
+- `Elevation = min(64, Translation.Z / 2)`.
+- Low elevations use only the directional shadow; ambient opacity is zero.
+- Elevations above `16` add the ambient shadow with the source light/dark opacity split.
+- Directional blur is `Elevation`; directional Y offset is `Elevation * 0.5`.
+- Ambient blur is `2` at low elevations and `Elevation / 3` at high elevations.
 
-The computed padding is also depth-driven so popup hosts reserve enough room for the shadow. For the source NumberBox depth `16`, the current profile reserves `32,28,32,36`. For depth `32`, it reserves `52,44,52,60`.
+The computed padding follows the source recipe insets so popup hosts reserve source-shaped shadow space. For the source NumberBox depth `16`, the current profile reserves `8,4,8,12`. For depth `32`, it reserves `16,8,16,24`. For depth `64`, it reserves `32,16,32,48`.
 
 ## Remaining Gap
 
-This is still a WPF substitution, not a literal WinUI compositor port. The constants are calibrated to be closer to WinUI than `DropShadowEffect`, but they are not yet screenshot-matched against a WinUI reference window. The next shadow parity round should render the same flyout/NumberBox/ContentDialog samples in WinUI and ModernWpf, compare alpha bounds and peak opacity, then tune the profile from that evidence.
+This is still a WPF substitution, not a literal WinUI compositor port. The depth, blur, offset, inset, and light/dark opacity constants now come from WinUI source, but the final rasterization uses WPF software alpha masks rather than compositor `DropShadow` visuals. The next shadow parity round should render the same flyout/NumberBox/ContentDialog samples in WinUI and ModernWpf, compare alpha bounds and peak opacity, then adjust only the WPF rasterization details that differ from the source compositor output.
 
 ## Verification
 
