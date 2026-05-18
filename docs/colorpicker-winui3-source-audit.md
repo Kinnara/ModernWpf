@@ -44,6 +44,7 @@ WinUI 3 source root: `D:\repos\microsoft-ui-xaml`
 - `ColorSpectrum` now owns source-shaped HSV state and bitmap-backed color maps instead of static WPF gradients. The WPF port builds `WriteableBitmap` maps for the same hue/saturation/value component combinations and uses `ImageBrush` fills as the `SpectrumBrush` substitute.
 - Pointer, keyboard, focus, selection ellipse, box/ring, and contrast state logic follows the WinUI source path, with WPF mouse capture and visual-state setters as the platform substitutes.
 - Third-dimension slider behavior now follows WinUI source mapping: hue/value components use saturation as the slider, hue/saturation components use value, and value/saturation components use hue with source hue-gradient stops.
+- `ColorPickerSliderStyle` now carries the source thumb template, `CommonStates`, focus-engagement state names, and color-picker-specific thumb/track resources instead of falling back to the stock WPF `Slider` template.
 - RGB, HSV, alpha, and hex text inputs now follow source validation semantics, including alpha `%` insertion, hex `#` insertion, RGB/HSV range validation, and invalid text rollback on focus loss.
 - `ColorSpectrumAutomationPeer` exposes WPF `IValueProvider` with source-shaped hue/saturation/value text.
 
@@ -51,6 +52,7 @@ WinUI 3 source root: `D:\repos\microsoft-ui-xaml`
 
 - WinUI `SpectrumBrush` is represented by WPF `WriteableBitmap` plus `ImageBrush` fills.
 - WinUI asynchronous software-bitmap creation is synchronous in WPF because the template tests and WPF rendering path need immediate brush availability.
+- WinUI `ColorPickerSliderStyle` has separate horizontal and vertical thumb targets. WPF `Slider` requires a functional `PART_Track`, so ModernWpf keeps one source-named `HorizontalThumb` inside the WPF track and routes both focus-engagement states to that thumb.
 - WinRT automation notifications are represented by WPF value-pattern property-change events.
 - Localized strings currently use English source text in the WPF port.
 - Raw WinUI TestUI pointer automation remains represented by direct WPF helper methods and WPF template/input tests.
@@ -58,4 +60,5 @@ WinUI 3 source root: `D:\repos\microsoft-ui-xaml`
 ## Validation
 
 - `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --no-restore --filter FullyQualifiedName~ColorPicker`
-- `dotnet build .\ModernWpf.Controls\ModernWpf.Controls.csproj --no-restore`
+- `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --no-restore --filter "FullyQualifiedName~ColorPicker|FullyQualifiedName~TemplateParityTests"`
+- `dotnet build .\ModernWpf.sln --no-restore`

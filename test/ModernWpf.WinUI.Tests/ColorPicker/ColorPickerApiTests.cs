@@ -211,6 +211,62 @@ public class ColorPickerApiTests
     }
 
     [TestMethod]
+    public void ColorPickerSliderTemplateUsesWinUISourceStates()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var colorPicker = new ColorPickerControl();
+
+            using var host = new TestWindowHost(colorPicker, width: 420, height: 560);
+
+            var slider = FindNamedDescendant<ColorPickerSlider>(colorPicker, "ThirdDimensionSlider");
+            var stateRoot = VisualTreeTestHelper
+                .EnumerateDescendants(slider)
+                .OfType<FrameworkElement>()
+                .FirstOrDefault(element => VisualStateManager.GetVisualStateGroups(element)
+                    .OfType<VisualStateGroup>()
+                    .Any(group => group.Name == "CommonStates"))
+                ?? throw new AssertFailedException("Expected ColorPickerSlider template to contain source visual-state groups.");
+            var sliderContainer = FindNamedDescendant<Grid>(slider, "SliderContainer");
+            var track = FindNamedDescendant<Track>(slider, "PART_Track");
+            var thumb = FindNamedDescendant<Thumb>(slider, "HorizontalThumb");
+
+            Assert.AreSame(thumb, track.Thumb);
+            Assert.IsTrue(ModernWpf.Controls.Primitives.FocusVisualHelper.GetIsTemplateFocusTarget(sliderContainer));
+
+            AssertStateSetter(stateRoot, "CommonStates", "PointerOver", "HorizontalThumb.Background");
+            AssertStateSetter(stateRoot, "CommonStates", "Pressed", "HorizontalThumb.Background");
+            AssertStateSetter(
+                stateRoot,
+                "CommonStates",
+                "Disabled",
+                "HeaderContentPresenter.Foreground",
+                "HorizontalThumb.Background",
+                "HorizontalTrackRect.Fill",
+                "HorizontalDecreaseRect.Fill");
+            AssertStateSetter(
+                stateRoot,
+                "FocusEngagementStates",
+                "FocusEngagedHorizontal",
+                "SliderContainer.(FocusVisualHelper.IsTemplateFocusTarget)",
+                "HorizontalThumb.(FocusVisualHelper.IsTemplateFocusTarget)");
+            AssertStateSetter(
+                stateRoot,
+                "FocusEngagementStates",
+                "FocusEngagedVertical",
+                "SliderContainer.(FocusVisualHelper.IsTemplateFocusTarget)",
+                "HorizontalThumb.(FocusVisualHelper.IsTemplateFocusTarget)");
+
+            Assert.IsTrue(VisualStateManager.GoToState(slider, "FocusEngagedHorizontal", false));
+
+            Assert.IsFalse(ModernWpf.Controls.Primitives.FocusVisualHelper.GetIsTemplateFocusTarget(sliderContainer));
+            Assert.IsTrue(ModernWpf.Controls.Primitives.FocusVisualHelper.GetIsTemplateFocusTarget(thumb));
+        });
+    }
+
+    [TestMethod]
     public void ColorSpectrumSupportsDerivation()
     {
         WpfTestHost.Run(() =>

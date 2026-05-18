@@ -23,11 +23,160 @@
         <Setter Property="StrokeThickness" Value="2" />
     </Style>
 
+    <Style x:Key="ColorPickerSliderRepeatButtonStyle" TargetType="RepeatButton">
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RepeatButton">
+                    <Border Background="Transparent" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="ColorPickerSliderThumbStyle" TargetType="Thumb">
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Background" Value="{DynamicResource ColorPickerSliderThumbBackground}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Thumb">
+                    <Border
+                        Background="{DynamicResource SliderOuterThumbBackground}"
+                        BorderBrush="{DynamicResource SliderThumbBorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{DynamicResource SliderThumbCornerRadius}">
+                        <Ellipse
+                            x:Name="SliderInnerThumb"
+                            Width="{StaticResource ColorPickerSliderInnerThumbWidth}"
+                            Height="{StaticResource ColorPickerSliderInnerThumbHeight}"
+                            Fill="{TemplateBinding Background}" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style x:Key="ColorPickerSliderStyle" TargetType="primitives:ColorPickerSlider">
         <Setter Property="Minimum" Value="0" />
         <Setter Property="Maximum" Value="100" />
         <Setter Property="Margin" Value="0" />
         <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="ui:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="primitives:ColorPickerSlider">
+                    <Grid>
+                        <VisualStateManager.CustomVisualStateManager>
+                            <ui:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <ui:VisualStateEx x:Name="Pressed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="HorizontalThumb.Background" Value="{DynamicResource ColorPickerSliderThumbBackgroundPressed}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="Disabled">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="HeaderContentPresenter.Foreground" Value="{DynamicResource ColorPickerHeaderContentDisabled}" />
+                                        <ui:VisualStateSetter Target="HorizontalThumb.Background" Value="{DynamicResource ColorPickerSliderThumbBackgroundDisabled}" />
+                                        <ui:VisualStateSetter Target="HorizontalTrackRect.Fill" Value="{DynamicResource ColorPickerSliderTrackFillDisabled}" />
+                                        <ui:VisualStateSetter Target="HorizontalDecreaseRect.Fill" Value="{DynamicResource ColorPickerSliderTrackFillDisabled}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="PointerOver">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="HorizontalThumb.Background" Value="{DynamicResource ColorPickerSliderThumbBackgroundPointerOver}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="FocusEngagementStates">
+                                <VisualState x:Name="FocusDisengaged" />
+                                <ui:VisualStateEx x:Name="FocusEngagedHorizontal">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="SliderContainer.(FocusVisualHelper.IsTemplateFocusTarget)" Value="False" />
+                                        <ui:VisualStateSetter Target="HorizontalThumb.(FocusVisualHelper.IsTemplateFocusTarget)" Value="True" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="FocusEngagedVertical">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="SliderContainer.(FocusVisualHelper.IsTemplateFocusTarget)" Value="False" />
+                                        <ui:VisualStateSetter Target="HorizontalThumb.(FocusVisualHelper.IsTemplateFocusTarget)" Value="True" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+
+                        <ui:ContentPresenterEx
+                            x:Name="HeaderContentPresenter"
+                            Foreground="{DynamicResource SliderHeaderForeground}"
+                            FontWeight="{DynamicResource SliderHeaderThemeFontWeight}"
+                            Margin="{DynamicResource SliderHeaderThemeMargin}"
+                            Visibility="Collapsed" />
+
+                        <Grid
+                            x:Name="SliderContainer"
+                            Background="Transparent"
+                            ui:ControlHelper.CornerRadius="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(ui:ControlHelper.CornerRadius)}"
+                            ui:FocusVisualHelper.IsTemplateFocusTarget="True">
+                            <Grid
+                                x:Name="HorizontalTemplate"
+                                MinHeight="32">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="14" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="14" />
+                                </Grid.RowDefinitions>
+
+                                <Rectangle
+                                    x:Name="HorizontalTrackRect"
+                                    Grid.Row="1"
+                                    Grid.ColumnSpan="3"
+                                    Height="{DynamicResource SliderTrackThemeHeight}"
+                                    Fill="Transparent"
+                                    Opacity="0"
+                                    RadiusX="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(ui:ControlHelper.CornerRadius), Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
+                                    RadiusY="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(ui:ControlHelper.CornerRadius), Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}" />
+                                <Rectangle
+                                    x:Name="HorizontalDecreaseRect"
+                                    Grid.Row="1"
+                                    Fill="Transparent"
+                                    Opacity="0" />
+                                <Track
+                                    x:Name="PART_Track"
+                                    Grid.Row="0"
+                                    Grid.RowSpan="3"
+                                    Grid.ColumnSpan="3"
+                                    Orientation="{TemplateBinding Orientation}">
+                                    <Track.DecreaseRepeatButton>
+                                        <RepeatButton Style="{StaticResource ColorPickerSliderRepeatButtonStyle}" />
+                                    </Track.DecreaseRepeatButton>
+                                    <Track.Thumb>
+                                        <Thumb
+                                            x:Name="HorizontalThumb"
+                                            Grid.Row="0"
+                                            Grid.RowSpan="3"
+                                            Width="{DynamicResource SliderHorizontalThumbWidth}"
+                                            Height="{DynamicResource SliderHorizontalThumbHeight}"
+                                            Style="{StaticResource ColorPickerSliderThumbStyle}" />
+                                    </Track.Thumb>
+                                    <Track.IncreaseRepeatButton>
+                                        <RepeatButton Style="{StaticResource ColorPickerSliderRepeatButtonStyle}" />
+                                    </Track.IncreaseRepeatButton>
+                                </Track>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <Style TargetType="primitives:ColorSpectrum">
