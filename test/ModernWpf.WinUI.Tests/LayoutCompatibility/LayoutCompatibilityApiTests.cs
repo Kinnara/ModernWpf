@@ -177,6 +177,84 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
+    public void ThemeShadowRendererMatchesWinUIMockDCompMasterGeometry()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var dpi = new DpiScale(1, 1);
+
+            // WinUI source:
+            // Foundation_Graphics_ThemeShadowTests_ThemeShadowBasicDropShadow.master.xml
+            // has a 100x100 caster at Translation.Z=32 and a DropShadowVisual sprite
+            // sized 132x132 with OffsetX=-16 and OffsetY=-8.
+            var z32 = ThemeShadowChrome.ThemeShadowRenderer.GetRenderMetrics(
+                new Size(100, 100),
+                new CornerRadius(),
+                32,
+                ElementTheme.Light,
+                dpi);
+            AssertWinUIMockDCompShadowGeometry(
+                z32,
+                bitmapWidth: 132,
+                bitmapHeight: 132,
+                contentLeft: 16,
+                contentTop: 8,
+                contentWidth: 100,
+                contentHeight: 100);
+
+            // WinUI source:
+            // Foundation_Graphics_ThemeShadowTests_ThemeShadowDropShadowDynamicCornerRadius.4_CR.master.xml
+            // keeps the same outer DropShadowVisual geometry for RadiusX/RadiusY=4 and
+            // only adjusts the NineGridBrush insets. ModernWpf renders a direct rounded mask,
+            // so the corresponding parity requirement is stable outer geometry.
+            var roundedZ32 = ThemeShadowChrome.ThemeShadowRenderer.GetRenderMetrics(
+                new Size(100, 100),
+                new CornerRadius(4),
+                32,
+                ElementTheme.Light,
+                dpi);
+            AssertWinUIMockDCompShadowGeometry(
+                roundedZ32,
+                bitmapWidth: 132,
+                bitmapHeight: 132,
+                contentLeft: 16,
+                contentTop: 8,
+                contentWidth: 100,
+                contentHeight: 100);
+
+            // WinUI source:
+            // Foundation_Graphics_ThemeShadowTests_ThemeShadowDropShadowWindowedPopup.Shadow.master.xml
+            // has a 50x50 popup caster at Translation.Z=32 and an 82x82 DropShadowVisual
+            // sprite with the same -16,-8 offset. The popup HWND is 140px at 200%, i.e.
+            // 70 DIPs: child 50 + source medium insets 10+10 and 2+18.
+            var popupZ32 = ThemeShadowChrome.ThemeShadowRenderer.GetRenderMetrics(
+                new Size(50, 50),
+                new CornerRadius(),
+                32,
+                ElementTheme.Light,
+                dpi);
+            AssertWinUIMockDCompShadowGeometry(
+                popupZ32,
+                bitmapWidth: 82,
+                bitmapHeight: 82,
+                contentLeft: 16,
+                contentTop: 8,
+                contentWidth: 50,
+                contentHeight: 50);
+
+            var popupChrome = new ThemeShadowChrome
+            {
+                Depth = 32,
+                WindowedPopupInsetMode = ThemeShadowChromeWindowedPopupInsetMode.Medium
+            };
+            var popupInsets = popupChrome.PopupShadowPadding;
+            Assert.AreEqual(new Thickness(10, 2, 10, 18), popupInsets);
+            Assert.AreEqual(70, 50 + popupInsets.Left + popupInsets.Right);
+            Assert.AreEqual(70, 50 + popupInsets.Top + popupInsets.Bottom);
+        });
+    }
+
+    [TestMethod]
     public void ExistingPopupTemplatesUseWinUIWindowedPopupInsets()
     {
         WpfTestHost.Run(() =>
@@ -3410,6 +3488,26 @@ public class LayoutCompatibilityApiTests
         Assert.AreEqual(nonZeroBounds, metrics.NonZeroBounds);
         Assert.AreEqual(alphaCentroidX, metrics.AlphaCentroidX, alphaCentroidTolerance);
         Assert.AreEqual(alphaCentroidY, metrics.AlphaCentroidY, alphaCentroidTolerance);
+        Assert.IsTrue(metrics.AlphaCentroidY > metrics.ContentCenterY);
+    }
+
+    private static void AssertWinUIMockDCompShadowGeometry(
+        ThemeShadowChrome.ThemeShadowRenderer.ThemeShadowRenderMetrics metrics,
+        int bitmapWidth,
+        int bitmapHeight,
+        int contentLeft,
+        int contentTop,
+        int contentWidth,
+        int contentHeight)
+    {
+        Assert.AreEqual(bitmapWidth, metrics.BitmapWidth);
+        Assert.AreEqual(bitmapHeight, metrics.BitmapHeight);
+        Assert.AreEqual(contentLeft, metrics.ContentLeft);
+        Assert.AreEqual(contentTop, metrics.ContentTop);
+        Assert.AreEqual(contentWidth, metrics.ContentWidth);
+        Assert.AreEqual(contentHeight, metrics.ContentHeight);
+        AssertShadowMetricsCoverContent(metrics);
+        Assert.IsTrue(metrics.PeakAlpha > 0);
         Assert.IsTrue(metrics.AlphaCentroidY > metrics.ContentCenterY);
     }
 

@@ -66,6 +66,16 @@ The current WPF baseline for an `80x40` DIP content rect with `CornerRadius=8` a
 | Dark depth 16 | `96x56` | `8,4` | `1,1,94,54` | `66` | `4824` | `47.500,27.500` |
 | Light depth 64 | `144x104` | `32,16` | `8,8,128,88` | `77` | `9984` | `71.500,45.447` |
 
+## WinUI Master Geometry Check
+
+The WinUI source tree includes MockDComp visual-tree masters for `ThemeShadowTests`, which give source-side geometry for the compositor shadow visual even without a live WinUI screenshot capture. `LayoutCompatibilityApiTests.ThemeShadowRendererMatchesWinUIMockDCompMasterGeometry` pins the matching WPF renderer geometry against those masters:
+
+| WinUI master | Source scenario | WinUI `DropShadowVisual` sprite | WinUI sprite offset | ModernWpf renderer geometry |
+| --- | --- | --- | --- | --- |
+| `Foundation_Graphics_ThemeShadowTests_ThemeShadowBasicDropShadow.master.xml` | `100x100` caster, `Translation.Z=32` | `132x132` | `-16,-8` | `132x132` bitmap, content offset `16,8` |
+| `Foundation_Graphics_ThemeShadowTests_ThemeShadowDropShadowDynamicCornerRadius.4_CR.master.xml` | same caster with `RadiusX=4`, `RadiusY=4` | `132x132` | `-16,-8` | same outer bitmap and offset; WPF uses a direct rounded mask instead of WinUI's adjusted `NineGridBrush` insets |
+| `Foundation_Graphics_ThemeShadowTests_ThemeShadowDropShadowWindowedPopup.Shadow.master.xml` | `50x50` windowed popup caster, `Translation.Z=32`, `200%` scale | `82x82` | `-16,-8` | `82x82` bitmap, content offset `16,8`; source medium popup insets produce `70x70` DIP popup bounds |
+
 ## Remaining Gap
 
 This is still a WPF substitution, not a literal WinUI compositor port. The depth, blur, offset, inset, and light/dark opacity constants now come from WinUI source, but the final rasterization uses WPF software alpha masks rather than compositor `DropShadow` visuals. The next shadow parity round should render the same flyout/NumberBox/ContentDialog/NavigationView samples in WinUI and ModernWpf, compare alpha bounds and peak opacity, then adjust only the WPF rasterization details that differ from the source compositor output.
