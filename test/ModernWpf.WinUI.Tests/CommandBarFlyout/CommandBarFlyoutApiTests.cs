@@ -669,6 +669,56 @@ public class CommandBarFlyoutApiTests
     }
 
     [TestMethod]
+    public void FlyoutSecondaryCommandsUseTouchInputModeWhenOpenedByTouchLikeWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var resources = CreateCommandBarFlyoutResources();
+            var primaryButton = new AppBarButton { Label = "Primary" };
+            var secondaryButton = new AppBarButton { Label = "Secondary" };
+            var secondaryToggleButton = new AppBarToggleButton { Label = "Toggle" };
+            var commandBar = new CommandBarFlyoutCommandBar
+            {
+                CommandBarOverflowPresenterStyle = (Style)resources["CommandBarFlyoutCommandBarOverflowPresenterStyle"],
+                Width = 220,
+                Height = 48
+            };
+            commandBar.PrimaryCommands.Add(primaryButton);
+            commandBar.SecondaryCommands.Add(secondaryButton);
+            commandBar.SecondaryCommands.Add(secondaryToggleButton);
+
+            var rootHost = CreateTemplateHost(commandBar, resources);
+            using var host = new TestWindowHost(rootHost, width: 260, height: 180);
+            host.UpdateLayout();
+
+            commandBar.SetLastInputModeForTesting(AppBarButtonInputMode.Touch);
+            commandBar.IsOpen = true;
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            var primaryRoot = FindTemplateChild<System.Windows.Controls.Grid>(primaryButton, "Root");
+            var secondaryRoot = FindTemplateChild<System.Windows.Controls.Grid>(secondaryButton, "Root");
+            var secondaryToggleRoot = FindTemplateChild<System.Windows.Controls.Grid>(secondaryToggleButton, "Root");
+
+            AssertCurrentState(primaryRoot, "InputModeStates", "InputModeDefault");
+            AssertCurrentState(secondaryRoot, "InputModeStates", "TouchInputMode");
+            AssertCurrentState(secondaryToggleRoot, "InputModeStates", "TouchInputMode");
+
+            commandBar.IsOpen = false;
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            secondaryRoot = FindTemplateChild<System.Windows.Controls.Grid>(secondaryButton, "Root");
+            secondaryToggleRoot = FindTemplateChild<System.Windows.Controls.Grid>(secondaryToggleButton, "Root");
+
+            AssertCurrentState(secondaryRoot, "InputModeStates", "InputModeDefault");
+            AssertCurrentState(secondaryToggleRoot, "InputModeStates", "InputModeDefault");
+        });
+    }
+
+    [TestMethod]
     public void FlyoutOverflowPanelComputesOverflowApplicationViewStates()
     {
         WpfTestHost.Run(() =>

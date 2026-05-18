@@ -207,8 +207,13 @@ namespace ModernWpf.Controls.Primitives
 
         private void OnIsOpenChanged(bool isOpen)
         {
-            if (!isOpen)
+            if (isOpen)
             {
+                UpdateInputDeviceTypeUsedToOpen();
+            }
+            else
+            {
+                m_inputModeUsedToOpen = AppBarButtonInputMode.Default;
                 m_secondaryItemsRootSized = false;
                 StopOpenAnimation();
 
@@ -384,6 +389,28 @@ namespace ModernWpf.Controls.Primitives
             base.OnIsKeyboardFocusWithinChanged(e);
         }
 
+        protected override void OnPreviewKeyDown(KeyEventArgs e)
+        {
+            m_lastInputMode = AppBarButtonInputMode.Default;
+            base.OnPreviewKeyDown(e);
+        }
+
+        protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
+        {
+            if (e.StylusDevice == null)
+            {
+                m_lastInputMode = AppBarButtonInputMode.Default;
+            }
+
+            base.OnPreviewMouseDown(e);
+        }
+
+        protected override void OnPreviewTouchDown(TouchEventArgs e)
+        {
+            m_lastInputMode = AppBarButtonInputMode.Touch;
+            base.OnPreviewTouchDown(e);
+        }
+
         private void AttachEventHandlers()
         {
             if (m_secondaryItemsRoot != null)
@@ -422,6 +449,12 @@ namespace ModernWpf.Controls.Primitives
                 m_secondaryItemsRoot.SizeChanged -= SecondaryItemsRootSizeChanged;
             }
 
+            if (m_secondaryItemsPanel is CommandBarFlyoutOverflowPanel overflowPanel &&
+                ReferenceEquals(overflowPanel.OwnerCommandBar, this))
+            {
+                overflowPanel.OwnerCommandBar = null;
+            }
+
             if (m_overflowPopup != null)
             {
                 m_overflowPopup.Opened -= OverflowPopupOpened;
@@ -450,6 +483,11 @@ namespace ModernWpf.Controls.Primitives
         {
             ClearPanelChildren(m_primaryItemsPanel);
             ClearPanelChildren(m_secondaryItemsPanel);
+
+            if (m_secondaryItemsPanel is CommandBarFlyoutOverflowPanel overflowPanel)
+            {
+                overflowPanel.OwnerCommandBar = this;
+            }
 
             AddCommandsToPanel(m_primaryItemsPanel, PrimaryCommands, false);
             AddCommandsToPanel(m_secondaryItemsPanel, SecondaryCommands, true);
@@ -502,7 +540,25 @@ namespace ModernWpf.Controls.Primitives
         private void UpdateCommandOverflowStyleParams()
         {
             AppBarElementProperties.UpdateOverflowStyleParams(PrimaryCommands, false);
-            AppBarElementProperties.UpdateOverflowStyleParams(SecondaryCommands, true);
+            AppBarElementProperties.UpdateOverflowStyleParams(
+                SecondaryCommands,
+                true,
+                GetInputModeForOverflowCommands());
+        }
+
+        internal void SetLastInputModeForTesting(AppBarButtonInputMode inputMode)
+        {
+            m_lastInputMode = inputMode;
+        }
+
+        internal AppBarButtonInputMode GetInputModeForOverflowCommands()
+        {
+            return IsOpen ? m_inputModeUsedToOpen : AppBarButtonInputMode.Default;
+        }
+
+        private void UpdateInputDeviceTypeUsedToOpen()
+        {
+            m_inputModeUsedToOpen = m_lastInputMode;
         }
 
         private void UpdateCommandDefaultLabelPositions(IEnumerable<ICommandBarElement> commands)
@@ -1406,6 +1462,8 @@ namespace ModernWpf.Controls.Primitives
         private RoutedEventHandlerRevoker m_firstItemLoadedRevoker;
         private readonly List<RoutedEventHandlerRevoker> m_itemLoadedRevokers = new();
         private readonly List<(FrameworkElement Element, SizeChangedEventHandler Handler)> m_itemSizeChangedHandlers = new();
+        private AppBarButtonInputMode m_lastInputMode;
+        private AppBarButtonInputMode m_inputModeUsedToOpen;
 
         private FrameworkElement m_currentPrimaryItemsEndElement;
         private FrameworkElement m_currentSecondaryItemsStartElement;
