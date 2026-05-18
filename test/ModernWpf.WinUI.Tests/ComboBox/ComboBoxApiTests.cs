@@ -1,15 +1,17 @@
 using System;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ModernWpf;
 using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
 using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
 
 using WpfComboBox = System.Windows.Controls.ComboBox;
+using Rectangle = System.Windows.Shapes.Rectangle;
 
 namespace ModernWpf.WinUI.Tests.ComboBox;
 
@@ -17,7 +19,7 @@ namespace ModernWpf.WinUI.Tests.ComboBox;
 public class ComboBoxApiTests
 {
     [TestMethod]
-    public void VerifyComboBoxDefaultStyleAndWinUI2Resources()
+    public void VerifyComboBoxDefaultStyleMatchesOfficialWpfFluent()
     {
         WpfTestHost.Run(() =>
         {
@@ -25,49 +27,44 @@ public class ComboBoxApiTests
 
             var comboBox = CreateComboBox();
             comboBox.SelectedIndex = 0;
+            ControlHelper.SetCornerRadius(comboBox, new CornerRadius(6));
 
             using var host = new TestWindowHost(comboBox);
             host.UpdateLayout();
 
-            Assert.AreEqual(HorizontalAlignment.Left, comboBox.HorizontalAlignment);
-            Assert.AreEqual(VerticalAlignment.Top, comboBox.VerticalAlignment);
-            Assert.IsTrue(ComboBoxHelper.GetKeepInteriorCornersSquare(comboBox));
-            Assert.IsNotNull(ComboBoxHelper.GetTextBoxStyle(comboBox));
-            Assert.AreEqual(new Thickness(0), comboBox.TryFindResource("ComboBoxDropdownBorderPadding"));
+            var implicitStyle = comboBox.Style;
+            var defaultStyle = AssertStyle(comboBox, "DefaultComboBoxStyle");
+            Assert.AreSame(defaultStyle, implicitStyle.BasedOn);
+            Assert.AreEqual(HorizontalAlignment.Stretch, comboBox.HorizontalAlignment);
+            Assert.AreEqual(VerticalAlignment.Center, comboBox.VerticalAlignment);
+            Assert.AreEqual(comboBox.TryFindResource("TextControlThemeMinHeight"), comboBox.MinHeight);
+            Assert.AreEqual(comboBox.TryFindResource("TextControlThemeMinWidth"), comboBox.MinWidth);
+            Assert.AreEqual(comboBox.TryFindResource("ComboBoxPadding"), comboBox.Padding);
+            Assert.AreSame(comboBox.TryFindResource("DefaultControlContextMenu"), comboBox.ContextMenu);
+            Assert.IsNotNull(comboBox.FocusVisualStyle);
 
-            ControlHelper.SetDescription(comboBox, "Pick one");
-            host.UpdateLayout();
+            var contentBorder = FindTemplateChild<Border>(comboBox, "ContentBorder");
+            Assert.AreEqual(new CornerRadius(6), contentBorder.CornerRadius);
 
-            var contentPresenter = FindTemplateChild<ContentPresenterEx>(comboBox, "ContentPresenter");
+            var contentPresenter = FindTemplateChild<ContentPresenter>(comboBox, "PART_ContentPresenter");
+            Assert.AreEqual(typeof(ContentPresenter), contentPresenter.GetType());
             Assert.AreEqual("Item 1", contentPresenter.Content);
 
-            var descriptionPresenter = FindTemplateChild<ContentPresenterEx>(comboBox, "DescriptionPresenter");
-            Assert.AreEqual("Pick one", descriptionPresenter.Content);
-            Assert.AreEqual(Visibility.Visible, descriptionPresenter.Visibility);
-            Assert.AreSame(
-                descriptionPresenter.TryFindResource("SystemControlDescriptionTextForegroundBrush"),
-                descriptionPresenter.Foreground);
+            var toggleButton = FindTemplateChild<ToggleButton>(comboBox, "ToggleButton");
+            Assert.IsFalse(toggleButton.Focusable);
+            var chevronIcon = FindTemplateChild<TextBlock>(comboBox, "ChevronIcon");
+            Assert.AreEqual(comboBox.TryFindResource("ComboBoxChevronDownGlyph"), chevronIcon.Text);
+            Assert.AreEqual(comboBox.TryFindResource("ComboBoxChevronSize"), chevronIcon.FontSize);
+            Assert.IsNotNull(FindTemplateChild<Popup>(comboBox, "PART_Popup"));
+            Assert.IsTrue(comboBox.Template.Triggers.Count > 0);
 
-            comboBox.IsEditable = true;
-            host.UpdateLayout();
-
-            var editableTextBox = FindTemplateChild<TextBox>(comboBox, "PART_EditableTextBox");
-            Assert.AreSame(ComboBoxHelper.GetTextBoxStyle(comboBox), editableTextBox.Style);
-
-            AssertThemeResourceReference("Light", "ComboBoxDropDownBackground", "AcrylicInAppFillColorDefaultBrush");
-            AssertThemeResourceReference("Dark", "ComboBoxDropDownBackground", "AcrylicInAppFillColorDefaultBrush");
-            AssertThemeResourceReference("Light", "ComboBoxDropDownBorderBrush", "SurfaceStrokeColorFlyoutBrush");
-            AssertThemeResourceReference("Dark", "ComboBoxDropDownBorderBrush", "SurfaceStrokeColorFlyoutBrush");
-            AssertThemeResourceReference("HighContrast", "ComboBoxDropDownBackground", "SystemControlBackgroundChromeMediumLowBrush");
-            AssertThemeResourceReference("HighContrast", "ComboBoxDropDownBorderBrush", "SystemControlForegroundChromeHighBrush");
-            AssertThemeResourceReference("Light", "ComboBoxLightDismissOverlayBackground", "SystemControlPageBackgroundMediumAltMediumBrush");
-            AssertThemeResourceReference("Dark", "ComboBoxLightDismissOverlayBackground", "SystemControlPageBackgroundMediumAltMediumBrush");
-            AssertThemeResourceReference("HighContrast", "ComboBoxLightDismissOverlayBackground", "SystemControlPageBackgroundMediumAltMediumBrush");
+            Assert.IsNull(VisualTreeTestHelper.FindDescendant<ContentPresenterEx>(comboBox));
+            Assert.IsNull(VisualTreeTestHelper.FindDescendant<FontIconFallback>(comboBox));
         });
     }
 
     [TestMethod]
-    public void VerifyComboBoxItemTemplateUsesWinUIPresenterSlot()
+    public void VerifyComboBoxItemTemplateUsesOfficialWpfPresenter()
     {
         WpfTestHost.Run(() =>
         {
@@ -81,95 +78,27 @@ public class ComboBoxApiTests
             using var host = new TestWindowHost(item);
             host.UpdateLayout();
 
-            var presenter = FindTemplateChild<ContentPresenterEx>(item, "ContentPresenter");
+            var implicitStyle = item.Style;
+            var defaultStyle = AssertStyle(item, "DefaultComboBoxItemStyle");
+            Assert.AreSame(defaultStyle, implicitStyle.BasedOn);
+
+            var presenter = FindTemplateChild<ContentPresenter>(item, "PART_ContentPresenter");
+            Assert.AreEqual(typeof(ContentPresenter), presenter.GetType());
             Assert.AreEqual("Item content", presenter.Content);
-            Assert.AreSame(item.Foreground, presenter.Foreground);
-        });
-    }
 
-    [TestMethod]
-    public void NonEditableComboBoxKeepsSourceOverlayCornerRadius()
-    {
-        WpfTestHost.Run(() =>
-        {
-            TestApplication.EnsureInitialized();
+            var activeRectangle = FindTemplateChild<Rectangle>(item, "ActiveRectangle");
+            Assert.AreEqual(Visibility.Collapsed, activeRectangle.Visibility);
 
-            var comboBox = CreateComboBox();
-            ControlHelper.SetCornerRadius(comboBox, new CornerRadius(2));
-
-            using var host = new TestWindowHost(comboBox);
-
-            comboBox.IsDropDownOpen = true;
-            FlushLayout(host);
-
-            var background = FindTemplateChild<Border>(comboBox, "Background");
-            Assert.AreEqual(new CornerRadius(2), background.CornerRadius);
-
-            var overlayCornerRadius = GetOverlayCornerRadius(comboBox);
-            var popupBorder = FindTemplateChild<Border>(comboBox, "PopupBorder");
-            Assert.AreEqual(overlayCornerRadius, popupBorder.CornerRadius);
-        });
-    }
-
-    [TestMethod]
-    public void VerifyComboBoxEditModeCornerRadius()
-    {
-        WpfTestHost.Run(() =>
-        {
-            TestApplication.EnsureInitialized();
-
-            var comboBox = CreateComboBox();
-            ControlHelper.SetCornerRadius(comboBox, new CornerRadius(2));
-            comboBox.IsEditable = true;
-
-            using var host = new TestWindowHost(comboBox);
-
-            comboBox.IsDropDownOpen = true;
-            FlushLayout(host);
-
-            var editableText = FindTemplateChild<TextBox>(comboBox, "PART_EditableTextBox");
-            AssertCornerRadiusMatchesOpenDirection(
-                ControlHelper.GetCornerRadius(editableText),
-                new CornerRadius(2, 2, 0, 0),
-                new CornerRadius(0, 0, 2, 2));
-
-            var overlayCornerRadius = GetOverlayCornerRadius(comboBox);
-            var popupBorder = FindTemplateChild<Border>(comboBox, "PopupBorder");
-            AssertCornerRadiusMatchesOpenDirection(
-                popupBorder.CornerRadius,
-                new CornerRadius(0, 0, overlayCornerRadius.BottomRight, overlayCornerRadius.BottomLeft),
-                new CornerRadius(overlayCornerRadius.TopRight, overlayCornerRadius.TopLeft, 0, 0));
-        });
-    }
-
-    [TestMethod]
-    public void EditableModeStatesUseVisualStateSetters()
-    {
-        WpfTestHost.Run(() =>
-        {
-            TestApplication.EnsureInitialized();
-
-            var comboBox = CreateComboBox();
-            comboBox.IsEditable = true;
-
-            using var host = new TestWindowHost(comboBox);
+            item.IsSelected = true;
             host.UpdateLayout();
+            Assert.AreEqual(Visibility.Visible, activeRectangle.Visibility);
 
-            var layoutRoot = FindTemplateChild<FrameworkElement>(comboBox, "LayoutRoot");
-
-            AssertStateSetter(layoutRoot, "TextBoxFocused", "DropDownGlyph.Foreground");
-            AssertStateSetter(layoutRoot, "TextBoxFocusedOverlayPointerOver", "DropDownGlyph.Foreground");
-            AssertStateSetter(layoutRoot, "TextBoxFocusedOverlayPointerOver", "DropDownOverlay.Background");
-            AssertStateSetter(layoutRoot, "TextBoxFocusedOverlayPressed", "DropDownGlyph.Foreground");
-            AssertStateSetter(layoutRoot, "TextBoxFocusedOverlayPressed", "DropDownOverlay.Background");
-            AssertStateSetter(layoutRoot, "TextBoxOverlayPointerOver", "DropDownOverlay.Background");
-            AssertStateSetter(layoutRoot, "TextBoxOverlayPressed", "DropDownOverlay.Background");
-            Assert.AreEqual("TextBoxUnfocused", GetCurrentStateName(layoutRoot, "EditableModeStates"));
+            Assert.IsNull(VisualTreeTestHelper.FindDescendant<ContentPresenterEx>(item));
         });
     }
 
     [TestMethod]
-    public void EditableTextBoxCommonStatesUseVisualStateSetters()
+    public void VerifyEditableComboBoxUsesOfficialTextBoxTemplate()
     {
         WpfTestHost.Run(() =>
         {
@@ -177,82 +106,88 @@ public class ComboBoxApiTests
 
             var comboBox = CreateComboBox();
             comboBox.IsEditable = true;
+            ControlHelper.SetCornerRadius(comboBox, new CornerRadius(4));
 
             using var host = new TestWindowHost(comboBox);
             host.UpdateLayout();
 
             var editableTextBox = FindTemplateChild<TextBox>(comboBox, "PART_EditableTextBox");
+            Assert.AreSame(comboBox.TryFindResource("DefaultComboBoxTextBoxStyle"), editableTextBox.Style);
+            Assert.AreEqual(new Thickness(11, 5, 38, 6), editableTextBox.Padding);
+            Assert.AreEqual(new CornerRadius(4), ControlHelper.GetCornerRadius(editableTextBox));
+
             editableTextBox.ApplyTemplate();
+            var editableContentBorder = FindTemplateChild<Border>(editableTextBox, "ContentBorder");
+            Assert.AreEqual(new CornerRadius(4), editableContentBorder.CornerRadius);
+            Assert.IsNotNull(FindTemplateChild<ScrollViewer>(editableTextBox, "PART_ContentHost"));
 
-            var textBoxRoot = FindTemplateChild<FrameworkElement>(editableTextBox, "ComboBoxTextBoxRoot");
-            var border = FindTemplateChild<Border>(editableTextBox, "BorderElement");
-            var contentHost = FindTemplateChild<ScrollViewer>(editableTextBox, "PART_ContentHost");
-            var placeholder = FindTemplateChild<TextBlock>(editableTextBox, "PlaceholderTextContentPresenter");
+            Assert.IsNotNull(FindTemplateChild<Border>(comboBox, "DropDownOverlay"));
+            Assert.IsNotNull(FindTemplateChild<ToggleButton>(comboBox, "ToggleButton"));
+            Assert.IsNotNull(FindTemplateChild<TextBlock>(comboBox, "ChevronIcon"));
+            Assert.IsNotNull(FindTemplateChild<Popup>(comboBox, "PART_Popup"));
+            Assert.IsTrue(comboBox.Template.Triggers.Count > 0);
 
-            AssertStateSetter(textBoxRoot, "CommonStates", "Disabled", "BorderElement.Background");
-            AssertStateSetter(textBoxRoot, "CommonStates", "Disabled", "BorderElement.BorderBrush");
-            AssertStateSetter(textBoxRoot, "CommonStates", "Disabled", "PART_ContentHost.Foreground");
-            AssertStateSetter(textBoxRoot, "CommonStates", "Disabled", "PlaceholderTextContentPresenter.Foreground");
-            AssertStateSetter(textBoxRoot, "CommonStates", "PointerOver", "BorderElement.Background");
-            AssertStateSetter(textBoxRoot, "CommonStates", "PointerOver", "BorderElement.BorderBrush");
-            AssertStateSetter(textBoxRoot, "CommonStates", "PointerOver", "PART_ContentHost.Foreground");
-            AssertStateSetter(textBoxRoot, "CommonStates", "PointerOver", "PlaceholderTextContentPresenter.Foreground");
-            AssertStateSetter(textBoxRoot, "CommonStates", "Focused", "BorderElement.Background");
-            AssertStateSetter(textBoxRoot, "CommonStates", "Focused", "BorderElement.BorderBrush");
-            AssertStateSetter(textBoxRoot, "CommonStates", "Focused", "BorderElement.BorderThickness");
-            AssertStateSetter(textBoxRoot, "CommonStates", "Focused", "PART_ContentHost.Foreground");
-            AssertStateSetter(textBoxRoot, "CommonStates", "Focused", "PlaceholderTextContentPresenter.Foreground");
-
-            Assert.IsTrue(VisualStateManager.GoToState(editableTextBox, "PointerOver", false));
-            Assert.AreSame(editableTextBox.TryFindResource("TextControlBackgroundPointerOver"), border.Background);
-            Assert.AreSame(editableTextBox.TryFindResource("TextControlBorderBrushPointerOver"), border.BorderBrush);
-            Assert.AreSame(editableTextBox.TryFindResource("TextControlForegroundPointerOver"), contentHost.Foreground);
-            Assert.AreSame(editableTextBox.TryFindResource("TextControlPlaceholderForegroundPointerOver"), placeholder.Foreground);
-
-            Assert.IsTrue(VisualStateManager.GoToState(editableTextBox, "Focused", false));
-            Assert.AreSame(editableTextBox.TryFindResource("TextControlBackgroundFocused"), border.Background);
-            Assert.AreSame(editableTextBox.TryFindResource("TextControlBorderBrushFocused"), border.BorderBrush);
-            Assert.AreEqual(editableTextBox.TryFindResource("TextControlBorderThemeThicknessFocused"), border.BorderThickness);
-            Assert.AreSame(editableTextBox.TryFindResource("TextControlForegroundFocused"), contentHost.Foreground);
-            Assert.AreSame(editableTextBox.TryFindResource("TextControlPlaceholderForegroundFocused"), placeholder.Foreground);
-
-            Assert.IsTrue(VisualStateManager.GoToState(editableTextBox, "Disabled", false));
-            Assert.AreSame(editableTextBox.TryFindResource("TextControlBackgroundDisabled"), border.Background);
-            Assert.AreSame(editableTextBox.TryFindResource("TextControlBorderBrushDisabled"), border.BorderBrush);
-            Assert.AreSame(editableTextBox.TryFindResource("TextControlForegroundDisabled"), contentHost.Foreground);
-            Assert.AreSame(editableTextBox.TryFindResource("TextControlPlaceholderForegroundDisabled"), placeholder.Foreground);
+            Assert.IsNull(VisualTreeTestHelper.FindDescendant<ContentPresenterEx>(comboBox));
+            Assert.IsNull(VisualTreeTestHelper.FindDescendant<FontIconFallback>(comboBox));
         });
     }
 
     [TestMethod]
-    public void CommonStatesUseVisualStateSettersForDropDownGlyphAnimatedIconState()
+    public void OfficialComboBoxStyleDeletesWinUILayer()
+    {
+        var repoRoot = FindRepoRoot();
+        var text = File.ReadAllText(Path.Combine(repoRoot, "ModernWpf", "Styles", "ComboBox.xaml"));
+
+        Assert.IsFalse(text.Contains("ComboBoxHelper", StringComparison.Ordinal));
+        Assert.IsFalse(text.Contains("VisualStateEx", StringComparison.Ordinal));
+        Assert.IsFalse(text.Contains("ContentPresenterEx", StringComparison.Ordinal));
+        Assert.IsFalse(text.Contains("FontIconFallback", StringComparison.Ordinal));
+        Assert.IsFalse(text.Contains("Border.CornerRadius", StringComparison.Ordinal));
+        Assert.IsFalse(text.Contains("System.Runtime", StringComparison.Ordinal));
+        StringAssert.Contains(text, "DefaultComboBoxTextBoxStyle");
+        StringAssert.Contains(text, "DefaultComboBoxToggleButtonStyle");
+    }
+
+    [TestMethod]
+    public void ComboBoxThemeResourcesRemainMapped()
     {
         WpfTestHost.Run(() =>
         {
             TestApplication.EnsureInitialized();
 
-            var comboBox = CreateComboBox();
+            AssertThemeResourceReference("Light", "ComboBoxDropDownBackground", "AcrylicInAppFillColorDefaultBrush");
+            AssertThemeResourceReference("Dark", "ComboBoxDropDownBackground", "AcrylicInAppFillColorDefaultBrush");
+            AssertThemeResourceReference("Light", "ComboBoxDropDownBorderBrush", "SurfaceStrokeColorFlyoutBrush");
+            AssertThemeResourceReference("Dark", "ComboBoxDropDownBorderBrush", "SurfaceStrokeColorFlyoutBrush");
+            AssertThemeResourceReference("HighContrast", "ComboBoxDropDownBackground", "SystemControlBackgroundChromeMediumLowBrush");
+            AssertThemeResourceReference("HighContrast", "ComboBoxDropDownBorderBrush", "SystemControlForegroundChromeHighBrush");
+        });
+    }
 
-            using var host = new TestWindowHost(comboBox);
-            host.UpdateLayout();
+    [TestMethod]
+    public void DataGridComboBoxAdapterStylesRemainResolvable()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
 
-            var layoutRoot = FindTemplateChild<FrameworkElement>(comboBox, "LayoutRoot");
-            var glyph = FindTemplateChild<FontIconFallback>(comboBox, "DropDownGlyph");
+            var comboBox = new WpfComboBox();
+            var defaultStyle = AssertStyle(comboBox, "DefaultComboBoxStyle");
+            var editingStyle = AssertStyle(comboBox, "DataGridComboBoxStyle");
+            var elementStyle = AssertStyle(comboBox, "DataGridTextBlockComboBoxStyle");
 
-            Assert.IsTrue(ComboBoxHelper.GetVisualStateSettersEnabled(comboBox));
-            AssertStateSetter(layoutRoot, "CommonStates", "PointerOver", "DropDownGlyph.(local:AnimatedIcon.State)");
-            AssertStateSetter(layoutRoot, "CommonStates", "Pressed", "DropDownGlyph.(local:AnimatedIcon.State)");
-            Assert.AreEqual("Normal", GetCurrentStateName(layoutRoot, "CommonStates"));
-            Assert.AreEqual("Normal", AnimatedIcon.GetState(glyph));
+            Assert.AreSame(defaultStyle, editingStyle.BasedOn);
+            Assert.AreSame(defaultStyle, elementStyle.BasedOn);
 
-            Assert.IsTrue(VisualStateManager.GoToState(comboBox, "PointerOver", false));
-            Assert.AreEqual("PointerOver", AnimatedIcon.GetState(glyph));
-            Assert.IsTrue(VisualStateManager.GoToState(comboBox, "Pressed", false));
-            Assert.AreEqual("Pressed", AnimatedIcon.GetState(glyph));
-            Assert.IsTrue(VisualStateManager.GoToState(comboBox, "Disabled", false));
-            Assert.AreEqual("Normal", AnimatedIcon.GetState(glyph));
-            Assert.IsTrue(VisualStateManager.GoToState(comboBox, "Normal", false));
-            Assert.AreEqual("Normal", AnimatedIcon.GetState(glyph));
+            var cornerRadiusSetter = editingStyle.Setters
+                .OfType<Setter>()
+                .Single(setter => setter.Property == ControlHelper.CornerRadiusProperty);
+            Assert.AreEqual(new CornerRadius(), cornerRadiusSetter.Value);
+
+            var templateSetter = elementStyle.Setters
+                .OfType<Setter>()
+                .Single(setter => setter.Property == Control.TemplateProperty);
+            Assert.IsInstanceOfType(templateSetter.Value, typeof(ControlTemplate));
         });
     }
 
@@ -262,62 +197,21 @@ public class ComboBoxApiTests
         comboBox.Items.Add("Item 1");
         comboBox.Items.Add("Item 2");
         comboBox.Items.Add("Item 3");
-        comboBox.Items.Add("Item 4");
-        comboBox.Items.Add("Item 5");
-        comboBox.Items.Add("Item 6");
         return comboBox;
-    }
-
-    private static void FlushLayout(TestWindowHost host)
-    {
-        host.UpdateLayout();
-        WpfTestHost.DoEvents();
-        host.UpdateLayout();
     }
 
     private static T FindTemplateChild<T>(Control control, string name)
         where T : FrameworkElement
     {
+        control.ApplyTemplate();
         return control.Template?.FindName(name, control) as T
-            ?? throw new InvalidOperationException($"Could not find template child '{name}'.");
+            ?? throw new AssertFailedException($"Expected template child '{name}' on {control.GetType().Name}.");
     }
 
-    private static void AssertStateSetter(
-        FrameworkElement stateGroupsRoot,
-        string stateName,
-        string setterTarget)
+    private static Style AssertStyle(FrameworkElement element, string resourceKey)
     {
-        AssertStateSetter(stateGroupsRoot, "EditableModeStates", stateName, setterTarget);
-    }
-
-    private static void AssertStateSetter(
-        FrameworkElement stateGroupsRoot,
-        string groupName,
-        string stateName,
-        string setterTarget)
-    {
-        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
-            .OfType<VisualStateGroup>()
-            .Single(item => item.Name == groupName);
-        var state = group.States
-            .Cast<VisualState>()
-            .Single(item => item.Name == stateName);
-
-        Assert.IsInstanceOfType(state, typeof(VisualStateEx));
-
-        var stateEx = (VisualStateEx)state;
-        Assert.IsTrue(
-            stateEx.Setters.Any(setter => setter.Target == setterTarget),
-            $"{groupName}.{stateName} should set {setterTarget}.");
-    }
-
-    private static string GetCurrentStateName(FrameworkElement stateGroupsRoot, string groupName)
-    {
-        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
-            .OfType<VisualStateGroup>()
-            .Single(item => item.Name == groupName);
-        Assert.IsNotNull(group.CurrentState);
-        return group.CurrentState.Name;
+        return element.TryFindResource(resourceKey) as Style
+            ?? throw new AssertFailedException($"Expected style resource '{resourceKey}'.");
     }
 
     private static void AssertThemeResourceReference(string themeName, string resourceKey, string expectedResourceKey)
@@ -328,20 +222,21 @@ public class ComboBoxApiTests
         Assert.AreSame(themeDictionary[expectedResourceKey], themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
     }
 
-    private static CornerRadius GetOverlayCornerRadius(FrameworkElement element)
+    private static string FindRepoRoot()
     {
-        return element.TryFindResource("OverlayCornerRadius") is CornerRadius radius
-            ? radius
-            : default;
-    }
+        var directory = new DirectoryInfo(AppContext.BaseDirectory);
 
-    private static void AssertCornerRadiusMatchesOpenDirection(
-        CornerRadius actual,
-        CornerRadius openDownExpected,
-        CornerRadius openUpExpected)
-    {
-        Assert.IsTrue(
-            actual == openDownExpected || actual == openUpExpected,
-            $"Expected {openDownExpected} or {openUpExpected}, got {actual}.");
+        while (directory != null)
+        {
+            if (File.Exists(Path.Combine(directory.FullName, "ModernWpf.sln")))
+            {
+                return directory.FullName;
+            }
+
+            directory = directory.Parent;
+        }
+
+        Assert.Fail("Could not locate ModernWpf.sln from the test output directory.");
+        return string.Empty;
     }
 }

@@ -817,3 +817,34 @@ Source inspected:
 - `test\ModernWpf.WinUI.Tests\Expander\ExpanderApiTests.cs` covers the official WPF Fluent Expander style, template parts, direction triggers, collapse animation, high-contrast aliases, and WPF automation visibility.
 - `test\ModernWpf.WinUI.Tests\LayoutCompatibility\LayoutCompatibilityApiTests.cs` covers the official WPF Expander presenter shape.
 - `test\ModernWpf.WinUI.Tests\TemplateParityTests.cs` classifies `Expander.xaml` as an official WPF Fluent stock template file that should not use `VisualStateEx` or `ContentPresenterEx`.
+
+## 2026-05-18 Batch 27
+
+Source inspected:
+
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\ComboBox.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Light.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Dark.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\HC.xaml`
+
+### Synced Values
+
+| Resource key / style | Official WPF Fluent value | ModernWpf value after sync | Reason |
+| --- | --- | --- | --- |
+| `DefaultComboBoxTextBoxStyle`, `DefaultComboBoxToggleButtonStyle`, `DefaultComboBoxItemStyle` | Official stock WPF helper styles with WPF `ControlTemplate.Triggers`, text chevron glyphs, and plain WPF presenters | Same source shape with older-target namespace and corner-radius substitutions | `ComboBox` is a stock WPF control, so official WPF Fluent is the primary source. |
+| `DefaultComboBoxTemplate` / `EditableComboBoxTemplate` | Official stock WPF popup, trigger, text-box, and chevron layout | Same source shape under the retained `ComboBox.xaml` split dictionary | Deletes the previous WinUI-shaped `ComboBoxHelper`, `VisualStateEx`, `ContentPresenterEx`, and `FontIconFallback` guesses from the stock ComboBox path. |
+| `DefaultComboBoxStyle` / implicit stock `ComboBox` and `ComboBoxItem` styles | Official style keys and implicit style shape | Same source shape | Aligns stock WPF ComboBox behavior with official WPF Fluent rather than WinUI CommonStyles. |
+
+### Intentional Differences
+
+| Resource key / style | Official WPF Fluent value | ModernWpf backport value | Reason retained |
+| --- | --- | --- | --- |
+| `system` namespace assembly | `System.Runtime` in `ComboBox.xaml` | `mscorlib` | Keeps copied resources compatible with ModernWpf's older target frameworks. |
+| ComboBox corner radius property | Official `Border.CornerRadius` attached setter/template binding | `primitives:ControlHelper.CornerRadius` | Older ModernWpf targets do not expose the official attached property surface. |
+| DataGrid ComboBox adapter styles | No equivalent in official `ComboBox.xaml` | `DataGridComboBoxStyle` and `DataGridTextBlockComboBoxStyle` retained as WPF adapters based on `DefaultComboBoxStyle` | Existing ModernWpf DataGrid resources still reference these keys; the adapter templates use plain WPF presenters so `ComboBox.xaml` remains official-Fluent-shaped. |
+| Historical ComboBox resource aliases | Some are not consumed by official WPF Fluent `ComboBox.xaml` | Retained as unused public aliases | Avoids unnecessary resource-surface churn while the active stock ComboBox consumes official keys. |
+
+### Test Evidence
+
+- `test\ModernWpf.WinUI.Tests\ComboBox\ComboBoxApiTests.cs` covers the official WPF Fluent ComboBox and ComboBoxItem style shape, editable TextBox style, WPF presenters, theme resource aliases, DataGrid adapter styles, and deletion of the old WinUI helper/template layer.
+- `test\ModernWpf.WinUI.Tests\TemplateParityTests.cs` classifies `ComboBox.xaml` as an official WPF Fluent stock template file that should not use `VisualStateEx` or `ContentPresenterEx`.

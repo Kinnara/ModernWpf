@@ -82,7 +82,6 @@ public class TemplateParityTests
         {
             Path.Combine("ModernWpf", "ProgressBar", "ProgressBar.xaml"),
             Path.Combine("ModernWpf", "Styles", "AutoSuggestBox.xaml"),
-            Path.Combine("ModernWpf", "Styles", "ComboBox.xaml"),
             Path.Combine("ModernWpf", "Styles", "Pivot.xaml"),
             Path.Combine("ModernWpf", "Styles", "TabControl.xaml"),
             Path.Combine("ModernWpf", "Styles", "NavigationBackButton.xaml"),
@@ -135,6 +134,7 @@ public class TemplateParityTests
             Path.Combine("ModernWpf", "Styles", "Button.xaml"),
             Path.Combine("ModernWpf", "Styles", "Calendar.xaml"),
             Path.Combine("ModernWpf", "Styles", "CheckBox.xaml"),
+            Path.Combine("ModernWpf", "Styles", "ComboBox.xaml"),
             Path.Combine("ModernWpf", "Styles", "DatePicker.xaml"),
             Path.Combine("ModernWpf", "Styles", "Expander.xaml"),
             Path.Combine("ModernWpf", "Styles", "GridSplitter.xaml"),
@@ -254,8 +254,7 @@ public class TemplateParityTests
         var repoRoot = FindRepoRoot();
         var sourceBackedTemplateFiles = new[]
         {
-            Path.Combine("ModernWpf", "Styles", "AutoSuggestBox.xaml"),
-            Path.Combine("ModernWpf", "Styles", "ComboBox.xaml")
+            Path.Combine("ModernWpf", "Styles", "AutoSuggestBox.xaml")
         };
 
         var offenders = sourceBackedTemplateFiles
@@ -276,6 +275,7 @@ public class TemplateParityTests
         {
             Path.Combine("ModernWpf", "Styles", "ListBox.xaml"),
             Path.Combine("ModernWpf", "Styles", "ListBoxItem.xaml"),
+            Path.Combine("ModernWpf", "Styles", "ComboBox.xaml"),
             Path.Combine("ModernWpf", "Styles", "GridView.xaml"),
             Path.Combine("ModernWpf", "Styles", "ListView.xaml"),
             Path.Combine("ModernWpf", "Styles", "ListViewItem.xaml"),
