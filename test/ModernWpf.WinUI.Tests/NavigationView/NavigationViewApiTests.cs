@@ -139,6 +139,42 @@ public class NavigationViewApiTests
     }
 
     [TestMethod]
+    public void TemplateSettingsOpenPaneLengthUsesWinUISourceClamp()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var navView = new ModernWpf.Controls.NavigationView
+            {
+                PaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode.Left,
+                Width = 100.0,
+                OpenPaneLength = 320.0,
+                Content = "Content"
+            };
+
+            navView.MenuItems.Add(new ModernWpf.Controls.NavigationViewItem { Content = "Home" });
+
+            using var host = new TestWindowHost(navView, width: 640, height: 360);
+            host.UpdateLayout();
+
+            var splitView = FindNamedDescendant<ModernWpf.Controls.SplitView>(navView, "RootSplitView");
+            var shadowCaster = FindNamedDescendant<Grid>(navView, "ShadowCaster");
+
+            Assert.AreEqual(100.0, navView.TemplateSettings.OpenPaneLength);
+            Assert.AreEqual(100.0, splitView.OpenPaneLength);
+            Assert.AreEqual(100.0, shadowCaster.Width);
+
+            navView.Width = 500.0;
+            host.UpdateLayout();
+
+            Assert.AreEqual(320.0, navView.TemplateSettings.OpenPaneLength);
+            Assert.AreEqual(320.0, splitView.OpenPaneLength);
+            Assert.AreEqual(320.0, shadowCaster.Width);
+        });
+    }
+
+    [TestMethod]
     public void VerifySelectedItemIsNullWhenNoItemIsSelected()
     {
         WpfTestHost.Run(() =>
@@ -1644,15 +1680,18 @@ public class NavigationViewApiTests
 
             var root = FindNamedDescendant<Grid>(navView, "RootGrid");
             var splitView = FindNamedDescendant<ModernWpf.Controls.SplitView>(navView, "RootSplitView");
+            var shadowCaster = FindNamedDescendant<Grid>(navView, "ShadowCaster");
             var paneToggleButtonGrid = FindNamedDescendant<FrameworkElement>(navView, "PaneToggleButtonGrid");
 
             AssertStateSetter(root, "PaneVisibilityGroup", "PaneCollapsed",
                 "RootSplitView.CompactPaneLength",
+                "ShadowCaster.Width",
                 "PaneToggleButtonGrid.Visibility");
 
             Assert.IsTrue(VisualStateManager.GoToState(navView, "PaneCollapsed", false));
             AssertCurrentState(root, "PaneVisibilityGroup", "PaneCollapsed");
             Assert.AreEqual(0.0, splitView.CompactPaneLength);
+            Assert.AreEqual(0.0, shadowCaster.Width);
             Assert.AreEqual(Visibility.Collapsed, paneToggleButtonGrid.Visibility);
         });
     }
@@ -1682,6 +1721,7 @@ public class NavigationViewApiTests
 
             var root = FindNamedDescendant<Grid>(navView, "RootGrid");
             var paneContentGrid = FindNamedDescendant<FrameworkElement>(navView, "PaneContentGrid");
+            var shadowCaster = FindNamedDescendant<Grid>(navView, "ShadowCaster");
             var paneTitleTextBlock = FindNamedDescendant<FrameworkElement>(navView, "PaneTitleTextBlock");
             var paneHeaderContentBorder = FindNamedDescendant<FrameworkElement>(navView, "PaneHeaderContentBorder");
             var paneCustomContentBorder = FindNamedDescendant<FrameworkElement>(navView, "PaneCustomContentBorder");
@@ -1689,6 +1729,7 @@ public class NavigationViewApiTests
 
             AssertStateSetter(root, "PaneStateListSizeGroup", "ListSizeCompact",
                 "PaneContentGrid.Width",
+                "ShadowCaster.Width",
                 "PaneTitleTextBlock.Visibility",
                 "PaneHeaderContentBorder.Visibility",
                 "PaneContentGrid.HorizontalAlignment",
@@ -1698,6 +1739,7 @@ public class NavigationViewApiTests
             Assert.IsTrue(VisualStateManager.GoToState(navView, "ListSizeCompact", false));
             AssertCurrentState(root, "PaneStateListSizeGroup", "ListSizeCompact");
             Assert.AreEqual(72.0, paneContentGrid.Width);
+            Assert.AreEqual(72.0, shadowCaster.Width);
             Assert.AreEqual(Visibility.Collapsed, paneTitleTextBlock.Visibility);
             Assert.AreEqual(Visibility.Collapsed, paneHeaderContentBorder.Visibility);
             Assert.AreEqual(HorizontalAlignment.Left, paneContentGrid.HorizontalAlignment);
@@ -1838,11 +1880,16 @@ public class NavigationViewApiTests
             var root = FindNamedDescendant<Grid>(navView, "RootGrid");
             var splitView = (ModernWpf.Controls.SplitView)navView.Template.FindName("RootSplitView", navView);
             var paneContentGrid = (Border)navView.Template.FindName("PaneContentGrid", navView);
+            var shadowCaster = (Grid)navView.Template.FindName("ShadowCaster", navView);
+            var shadowCasterTransform = navView.Template.FindName("ShadowCasterTransform", navView);
             Assert.IsNotNull(splitView);
             Assert.IsNotNull(paneContentGrid);
+            Assert.IsNotNull(shadowCaster);
+            Assert.IsInstanceOfType(shadowCasterTransform, typeof(TranslateTransform));
 
             AssertStateSetter(root, "PaneOverlayGroup", "PaneNotOverlaying",
                 "RootSplitView.BorderBrush",
+                "ShadowCaster.Opacity",
                 "RootSplitView.CornerRadius",
                 "RootSplitView.BorderThickness",
                 "PaneContentGrid.BorderThickness",
@@ -1857,6 +1904,7 @@ public class NavigationViewApiTests
             Assert.AreEqual(new CornerRadius(0), splitView.CornerRadius);
             Assert.AreEqual(new Thickness(0), splitView.BorderThickness);
             Assert.AreEqual(new Thickness(0, 0, 1, 0), paneContentGrid.BorderThickness);
+            Assert.AreEqual(0.0, shadowCaster.Opacity);
             Assert.AreSame(navView.FindResource("NavigationViewExpandedPaneBackground"), splitView.PaneBackground);
         });
     }

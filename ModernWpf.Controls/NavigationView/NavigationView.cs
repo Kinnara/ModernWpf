@@ -749,6 +749,7 @@ namespace ModernWpf.Controls
             m_appliedTemplate = true;
 
             // Do initial setup
+            UpdateOpenPaneLength(ActualWidth);
             UpdatePaneDisplayMode();
             UpdateHeaderVisibility();
             UpdatePaneTitleFrameworkElementParents();
@@ -1475,10 +1476,20 @@ namespace ModernWpf.Controls
         void OnSizeChanged(object sender, SizeChangedEventArgs args)
         {
             var width = args.NewSize.Width;
+            UpdateOpenPaneLength(width);
             UpdateAdaptiveLayout(width);
             UpdateTitleBarPadding();
             UpdateBackAndCloseButtonsVisibility();
             UpdatePaneLayout();
+        }
+
+        void UpdateOpenPaneLength(double width)
+        {
+            if (!IsTopNavigationView() && m_rootSplitView != null)
+            {
+                m_OpenPaneLength = Math.Max(0.0, Math.Min(width, OpenPaneLength));
+                GetTemplateSettings().OpenPaneLength = m_OpenPaneLength;
+            }
         }
 
         void OnItemsContainerSizeChanged(object sender, SizeChangedEventArgs e)
@@ -4221,6 +4232,10 @@ namespace ModernWpf.Controls
                 // Update pane-button-grid width when pane is closed and we are not in minimal
                 UpdatePaneButtonsWidths();
             }
+            else if (property == OpenPaneLengthProperty)
+            {
+                UpdateOpenPaneLength(ActualWidth);
+            }
             else if (property == IsTitleBarAutoPaddingEnabledProperty)
             {
                 UpdateTitleBarPadding();
@@ -4596,19 +4611,19 @@ namespace ModernWpf.Controls
                     {
                         if (splitView.DisplayMode == SplitViewDisplayMode.Overlay && IsPaneOpen)
                         {
-                            width = OpenPaneLength;
-                            togglePaneButtonWidth = OpenPaneLength - ((ShouldShowBackButton() || ShouldShowCloseButton()) ? c_backButtonWidth : 0);
+                            width = m_OpenPaneLength;
+                            togglePaneButtonWidth = m_OpenPaneLength - ((ShouldShowBackButton() || ShouldShowCloseButton()) ? c_backButtonWidth : 0);
                         }
                         else if (!(splitView.DisplayMode == SplitViewDisplayMode.Overlay && !IsPaneOpen))
                         {
-                            width = OpenPaneLength;
-                            togglePaneButtonWidth = OpenPaneLength;
+                            width = m_OpenPaneLength;
+                            togglePaneButtonWidth = m_OpenPaneLength;
                         }
                     }
 
                     if (m_paneToggleButton is { } toggleButton)
                     {
-                        toggleButton.Width = togglePaneButtonWidth;
+                        toggleButton.Width = Math.Max(0.0, togglePaneButtonWidth);
                     }
                 }
             }
@@ -5882,6 +5897,8 @@ namespace ModernWpf.Controls
         ItemsSourceView m_footerItemsSource = null;
 
         bool m_appliedTemplate = false;
+
+        double m_OpenPaneLength = 320.0;
 
         // flag is used to stop recursive call. eg:
         // Customer select an item from SelectedItem property->ChangeSelection update ListView->LIstView raise OnSelectChange(we want stop here)->change property do do animation again.

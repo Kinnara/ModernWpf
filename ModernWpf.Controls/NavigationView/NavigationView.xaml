@@ -1169,6 +1169,7 @@
                                 <ui:VisualStateEx x:Name="ListSizeCompact">
                                     <ui:VisualStateEx.Setters>
                                         <ui:VisualStateSetter Target="PaneContentGrid.Width" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=CompactPaneLength}" />
+                                        <ui:VisualStateSetter Target="ShadowCaster.Width" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=CompactPaneLength}" />
                                         <ui:VisualStateSetter Target="PaneTitleTextBlock.Visibility" Value="Collapsed" />
                                         <ui:VisualStateSetter Target="PaneHeaderContentBorder.Visibility" Value="Collapsed" />
                                         <ui:VisualStateSetter Target="PaneContentGrid.HorizontalAlignment" Value="Left" />
@@ -1179,10 +1180,41 @@
                             </VisualStateGroup>
 
                             <VisualStateGroup x:Name="PaneOverlayGroup">
+                                <VisualStateGroup.Transitions>
+                                    <VisualTransition From="PaneNotOverlaying" To="PaneOverlaying">
+                                        <Storyboard>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ShadowCasterTransform" Storyboard.TargetProperty="X">
+                                                <DiscreteDoubleKeyFrame KeyTime="0" Value="{Binding ElementName=RootSplitView, Path=TemplateSettings.NegativeOpenPaneLengthMinusCompactLength}" />
+                                                <SplineDoubleKeyFrame KeyTime="0:0:0.35" KeySpline="0.1,0.9 0.2,1.0" Value="0" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ShadowCaster" Storyboard.TargetProperty="Opacity">
+                                                <LinearDoubleKeyFrame KeyTime="0:0:0.35" Value="1" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ShadowCaster" Storyboard.TargetProperty="HorizontalAlignment">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static HorizontalAlignment.Left}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualTransition>
+                                    <VisualTransition From="PaneOverlaying" To="PaneNotOverlaying">
+                                        <Storyboard x:Name="ShadowCasterEaseOutStoryboard">
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ShadowCasterTransform" Storyboard.TargetProperty="X">
+                                                <DiscreteDoubleKeyFrame KeyTime="0" Value="0" />
+                                                <SplineDoubleKeyFrame KeyTime="0:0:0.12" KeySpline="0.1,0.9 0.2,1.0" Value="{Binding ElementName=RootSplitView, Path=TemplateSettings.NegativeOpenPaneLengthMinusCompactLength}" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ShadowCaster" Storyboard.TargetProperty="Opacity">
+                                                <LinearDoubleKeyFrame KeyTime="0:0:0.12" Value="0" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ShadowCaster" Storyboard.TargetProperty="HorizontalAlignment">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static HorizontalAlignment.Left}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualTransition>
+                                </VisualStateGroup.Transitions>
                                 <VisualState x:Name="PaneOverlaying" />
                                 <ui:VisualStateEx x:Name="PaneNotOverlaying">
                                     <ui:VisualStateEx.Setters>
                                         <ui:VisualStateSetter Target="RootSplitView.BorderBrush" Value="Transparent" />
+                                        <ui:VisualStateSetter Target="ShadowCaster.Opacity" Value="0" />
                                         <ui:VisualStateSetter Target="RootSplitView.CornerRadius" Value="0" />
                                         <ui:VisualStateSetter Target="RootSplitView.BorderThickness" Value="0" />
                                         <ui:VisualStateSetter Target="PaneContentGrid.BorderThickness" Value="0,0,1,0" />
@@ -1224,6 +1256,7 @@
                                     <ui:VisualStateEx.Setters>
                                         <!-- RootSplitView.DisplayMode is set in code; these values work together to hide the left pane. -->
                                         <ui:VisualStateSetter Target="RootSplitView.CompactPaneLength" Value="0" />
+                                        <ui:VisualStateSetter Target="ShadowCaster.Width" Value="0" />
                                         <ui:VisualStateSetter Target="PaneToggleButtonGrid.Visibility" Value="Collapsed" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
@@ -1463,7 +1496,7 @@
                                 DisplayMode="Inline"
                                 IsPaneOpen="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=IsPaneOpen, Mode=TwoWay}"
                                 IsTabStop="False"
-                                OpenPaneLength="{TemplateBinding OpenPaneLength}"
+                                OpenPaneLength="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.OpenPaneLength}"
                                 PaneBackground="{DynamicResource NavigationViewDefaultPaneBackground}"
                                 Grid.Row="1"
                                 CornerRadius="{DynamicResource OverlayCornerRadius}">
@@ -1648,6 +1681,17 @@
                                     </Border>
                                 </local:SplitView.Content>
                             </local:SplitView>
+
+                            <Grid
+                                x:Name="ShadowCaster"
+                                Grid.RowSpan="2"
+                                Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.OpenPaneLength}"
+                                HorizontalAlignment="Left"
+                                IsHitTestVisible="False">
+                                <Grid.RenderTransform>
+                                    <TranslateTransform x:Name="ShadowCasterTransform" />
+                                </Grid.RenderTransform>
+                            </Grid>
 
                         </Grid>
                     </Grid>

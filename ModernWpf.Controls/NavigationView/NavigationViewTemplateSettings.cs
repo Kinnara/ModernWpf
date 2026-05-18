@@ -190,5 +190,25 @@ namespace ModernWpf.Controls
         }
 
         #endregion
+
+        #region OpenPaneLength
+
+        private static readonly DependencyPropertyKey OpenPaneLengthPropertyKey =
+            DependencyProperty.RegisterReadOnly(
+                nameof(OpenPaneLength),
+                typeof(double),
+                typeof(NavigationViewTemplateSettings),
+                new PropertyMetadata(320.0));
+
+        public static readonly DependencyProperty OpenPaneLengthProperty =
+            OpenPaneLengthPropertyKey.DependencyProperty;
+
+        public double OpenPaneLength
+        {
+            get => (double)GetValue(OpenPaneLengthProperty);
+            internal set => SetValue(OpenPaneLengthPropertyKey, value);
+        }
+
+        #endregion
     }
 }
