@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ModernWpf.WinUI.Tests;
@@ -298,6 +299,64 @@ public class TemplateParityTests
     }
 
     [TestMethod]
+    public void WinUIControlSourceCoverageAuditCoversGenericResourceInventory()
+    {
+        var repoRoot = FindRepoRoot();
+        var genericFile = Path.Combine(repoRoot, "ModernWpf.Controls", "Themes", "Generic.xaml");
+        var auditFile = Path.Combine(repoRoot, "docs", "winui3-control-source-coverage.md");
+        var allowedStatuses = new[]
+        {
+            "WinUI 3 source-backed WPF port",
+            "WinUI 3 source-backed WPF family"
+        };
+
+        Assert.IsTrue(File.Exists(auditFile), "Missing WinUI 3 control source coverage audit.");
+
+        var expectedResources = XDocument.Load(genericFile)
+            .Descendants()
+            .Where(element => element.Name.LocalName == "ResourceDictionary")
+            .Select(element => element.Attribute("Source")?.Value)
+            .Where(source => source != null &&
+                source.StartsWith("/ModernWpf.Controls;component/", StringComparison.OrdinalIgnoreCase))
+            .Select(source => source!.Substring("/ModernWpf.Controls;component/".Length))
+            .ToArray();
+
+        var rows = ParseWinUIControlSourceCoverageRows(auditFile);
+        var rowResources = rows.Select(row => row.SourceFile).ToArray();
+        var missing = expectedResources
+            .Except(rowResources, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+        var extra = rowResources
+            .Except(expectedResources, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+        var duplicates = rows
+            .GroupBy(row => row.SourceFile, StringComparer.OrdinalIgnoreCase)
+            .Where(group => group.Count() > 1)
+            .Select(group => group.Key)
+            .ToArray();
+        var badStatuses = rows
+            .Where(row => !allowedStatuses.Contains(row.Status, StringComparer.Ordinal))
+            .Select(row => $"{row.SourceFile}:{row.LineNumber} {row.Status}")
+            .ToArray();
+        var missingEvidence = rows
+            .Where(row => row.ArtifactPaths.Length == 0 ||
+                row.ArtifactPaths.Any(path => !File.Exists(Path.Combine(repoRoot, path))))
+            .Select(row => $"{row.SourceFile}:{row.LineNumber}")
+            .ToArray();
+
+        Assert.AreEqual(expectedResources.Length, rows.Length, "Unexpected WinUI 3 control source coverage row count.");
+        Assert.IsFalse(missing.Any(), "Missing WinUI 3 control resource rows: " + string.Join("; ", missing));
+        Assert.IsFalse(extra.Any(), "Unexpected WinUI 3 control resource rows: " + string.Join("; ", extra));
+        Assert.IsFalse(duplicates.Any(), "Duplicate WinUI 3 control resource rows: " + string.Join("; ", duplicates));
+        Assert.IsFalse(badStatuses.Any(), "Invalid WinUI 3 control coverage statuses: " + string.Join("; ", badStatuses));
+        Assert.IsFalse(missingEvidence.Any(), "WinUI 3 control coverage rows should point at existing source-audit evidence: " + string.Join("; ", missingEvidence));
+
+        AssertCoverageStatus(rows, "CommandBar/AppBarButton.xaml", "WinUI 3 source-backed WPF family");
+        AssertCoverageStatus(rows, "Flyout/FlyoutPresenter.xaml", "WinUI 3 source-backed WPF family");
+        AssertCoverageStatus(rows, "ToggleSwitch/ToggleSwitch.xaml", "WinUI 3 source-backed WPF port");
+    }
+
+    [TestMethod]
     public void VisualStateSetterAuditUsesExplicitStatusBuckets()
     {
         var repoRoot = FindRepoRoot();
@@ -577,6 +636,25 @@ public class TemplateParityTests
                 entry.Match.Groups["source"].Value,
                 entry.Match.Groups["status"].Value,
                 ExtractArtifactPaths(entry.Match.Groups["artifact"].Value),
+                entry.LineNumber))
+            .ToArray();
+    }
+
+    private static CoverageRow[] ParseWinUIControlSourceCoverageRows(string path)
+    {
+        var rowPattern = new Regex(
+            @"^\|\s+`(?<source>[^`]+\.xaml)`\s+\|\s+(?<status>[^|]+?)\s+\|\s+(?<evidence>[^|]+)\|",
+            RegexOptions.Compiled);
+
+        return File.ReadAllLines(path)
+            .Select((line, index) => (
+                Match: rowPattern.Match(line),
+                LineNumber: index + 1))
+            .Where(entry => entry.Match.Success)
+            .Select(entry => new CoverageRow(
+                entry.Match.Groups["source"].Value,
+                entry.Match.Groups["status"].Value.Trim(),
+                ExtractArtifactPaths(entry.Match.Groups["evidence"].Value),
                 entry.LineNumber))
             .ToArray();
     }
