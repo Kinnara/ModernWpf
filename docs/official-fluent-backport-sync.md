@@ -675,3 +675,42 @@ Source inspected:
 
 - `test\ModernWpf.WinUI.Tests\CommonStyles\TextBoxPasswordBoxVisualStateTests.cs` covers the official WPF Fluent TextBox, TextBoxBase, and PasswordBox setter surfaces, template parts, trigger shapes, clear-button substitution, retained `DataGridTextBoxStyle`, and deletion of ModernWpf-specific template guesses.
 - `test\ModernWpf.WinUI.Tests\TemplateParityTests.cs` classifies `TextBox.xaml` and `PasswordBox.xaml` as official WPF Fluent stock template files that should not use `VisualStateEx`.
+
+## 2026-05-18 Batch 23
+
+Source inspected:
+
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\ListBox.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\ListBoxItem.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\GridView.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\ListView.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\ListViewItem.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Light.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Dark.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\HC.xaml`
+
+### Synced Values
+
+| Resource key / style | Official WPF Fluent value | ModernWpf value after sync | Reason |
+| --- | --- | --- | --- |
+| `DefaultListBoxStyle` / implicit stock `ListBox` style | Official stock WPF `ListBox` style with `Margin=0`, `Padding=0`, `BorderThickness=0`, virtualizing stack panel, `PART_ContentHost`, and grouping trigger | Same source shape under the retained `DefaultListBoxStyle` key | `ListBox` is a stock WPF control, so official WPF Fluent is the primary source. |
+| `DefaultListBoxItemStyle` / implicit stock `ListBoxItem` style | Official stock WPF item template with a plain WPF `ContentPresenter`, selection and pointer-over triggers, `DefaultCollectionFocusVisualStyle`, and official item metrics | Same source shape in the new `Styles\ListBoxItem.xaml` split dictionary | Deletes the previous WinUI-like `ContentPresenterEx`, `PressedBackground`, and selection-active trigger guesses from stock ListBoxItem. |
+| `DefaultListViewStyle` / implicit stock `ListView` style | Official stock WPF `ListView` style with base template, disabled overlay, virtualizing panel, and GridView view switch | Same source shape under the retained `DefaultListViewStyle` key | `ListView` is a stock WPF control, so official WPF Fluent is the primary source. |
+| `DefaultListViewItemStyle` / implicit stock `ListViewItem` style | Official stock WPF item template with plain WPF `ContentPresenter`, selection pill, and WPF trigger model | Same source shape in the new `Styles\ListViewItem.xaml` split dictionary | Deletes the previous stock WPF `ContentPresenterEx` and `FocusVisualHelper` item-template guesses. |
+| `GridViewTemplate`, `DefaultGridViewColumnHeaderStyle`, and `GridView.GridViewScrollViewerStyleKey` | Official stock WPF GridView resources | Same source shape in the new `Styles\GridView.xaml` split dictionary | Restores official WPF GridView header and scroller behavior for the stock WPF ListView path. |
+
+### Intentional Differences
+
+| Resource key / style | Official WPF Fluent value | ModernWpf backport value | Reason retained |
+| --- | --- | --- | --- |
+| Dictionary layout | Separate official source files | Same split copied into `ModernWpf\Styles`, merged in dependency order from `StockControlsResources.xaml` | Keeps source ownership clear while preserving the existing resource entry point. |
+| `system` namespace assembly | `System.Runtime` in `GridView.xaml` / `ListViewItem.xaml` | `mscorlib` | Keeps copied numeric resources compatible with ModernWpf's older target frameworks. |
+| Item corner radius property | Official `Border.CornerRadius` attached setters/template bindings | `primitives:ControlHelper.CornerRadius` | Older ModernWpf targets do not expose the official attached property. |
+| GridView view converter | `Fluent.Controls.ViewIsGridViewConverter` | Existing `primitives:IsGridViewConverter` | Same WPF behavior without adding an external helper namespace. |
+| Theme resources | Official brushes from Fluent light/dark/HC resource dictionaries | ModernWpf theme aliases for the required official keys | Keeps ModernWpf theme alias conventions while exposing the imported template keys. |
+
+### Test Evidence
+
+- `test\ModernWpf.WinUI.Tests\CommonStyles\ListBoxListViewVisualStateTests.cs` covers the official WPF Fluent ListBox/ListView/GridView setter surfaces, presenter shape, selection indicator shape, missing old guesses, and resource substitutions.
+- `test\ModernWpf.WinUI.Tests\LayoutCompatibility\LayoutCompatibilityApiTests.cs` now expects stock item presenters to be plain WPF `ContentPresenter` instances.
+- `test\ModernWpf.WinUI.Tests\TemplateParityTests.cs` classifies `ListBox.xaml`, `ListBoxItem.xaml`, `GridView.xaml`, `ListView.xaml`, and `ListViewItem.xaml` as official WPF Fluent stock template files that should not use `VisualStateEx`.

@@ -1,400 +1,93 @@
-﻿<!-- Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License. See LICENSE in the project root for license information. -->
+﻿<!--
+    This Source Code Form is subject to the terms of the MIT License.
+    If a copy of the MIT was not distributed with this file, You can obtain one at https://opensource.org/licenses/MIT.
+    Copyright (C) Leszek Pomianowski and WPF UI Contributors.
+    All Rights Reserved.
+-->
+
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:sys="clr-namespace:System;assembly=mscorlib"
-    xmlns:local="clr-namespace:ModernWpf.Controls"
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives">
 
-    <sys:Double x:Key="GridViewColumnHeaderMinHeight">33</sys:Double>
-    <sys:Double x:Key="GridViewItemContainerMinHeight">32</sys:Double>
+    <primitives:IsGridViewConverter x:Key="ViewIsGridViewConverter" />
 
-    <sys:Boolean x:Key="ListViewBaseItemRoundedChromeEnabled">True</sys:Boolean>
-
-    <Style x:Key="DefaultListViewItemStyle" TargetType="ListViewItem">
-        <Setter Property="OverridesDefaultStyle" Value="True" />
-        <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
-        <Setter Property="Background" Value="{DynamicResource ListViewItemBackground}" />
-        <Setter Property="Foreground" Value="{DynamicResource ListViewItemForeground}" />
-        <Setter Property="Padding" Value="12,0,12,0" />
-        <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
-        <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
-        <Setter Property="MinWidth" Value="{DynamicResource ListViewItemMinWidth}" />
-        <Setter Property="MinHeight" Value="{DynamicResource ListViewItemMinHeight}" />
-        <Setter Property="SnapsToDevicePixels" Value="True" />
-        <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
-        <Setter Property="primitives:FocusVisualHelper.UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="ListViewItem">
-                    <Border
-                        x:Name="Bd"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        Background="{TemplateBinding Background}"
-                        Padding="{TemplateBinding Padding}"
-                        SnapsToDevicePixels="true">
-                        <local:ContentPresenterEx
-                            x:Name="ContentPresenter"
-                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ListViewItemBackgroundPointerOver}" />
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource ListViewItemForegroundPointerOver}" />
-                        </Trigger>
-                        <Trigger Property="IsSelected" Value="True">
-                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ListViewItemBackgroundSelected}" />
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource ListViewItemForegroundSelected}" />
-                        </Trigger>
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsSelected" Value="True" />
-                                <Condition Property="IsMouseOver" Value="True" />
-                            </MultiTrigger.Conditions>
-                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ListViewItemBackgroundSelectedPointerOver}" />
-                        </MultiTrigger>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="Bd" Property="Opacity" Value="{DynamicResource ListViewItemDisabledThemeOpacity}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}" />
-
-    <ControlTemplate x:Key="GridViewTemplate" TargetType="ListView">
-        <Border
-            x:Name="Bd"
-            BorderThickness="{TemplateBinding BorderThickness}"
-            Background="{TemplateBinding Background}"
-            BorderBrush="{TemplateBinding BorderBrush}"
-            SnapsToDevicePixels="true">
-            <local:ScrollViewerEx
-                Style="{DynamicResource {x:Static GridView.GridViewScrollViewerStyleKey}}"
-                Focusable="false"
-                Padding="{TemplateBinding Padding}">
-                <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-            </local:ScrollViewerEx>
+    <ControlTemplate x:Key="ListViewTemplate" TargetType="{x:Type ListView}">
+        <Border BorderThickness="{TemplateBinding BorderThickness}"
+                BorderBrush="{TemplateBinding BorderBrush}"
+                Background="{TemplateBinding Background}">
+            <Grid>
+                <ScrollViewer x:Name="PART_ContentHost"
+                            Padding="{TemplateBinding Padding}"
+                            CanContentScroll="{TemplateBinding ScrollViewer.CanContentScroll}"
+                            HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                            VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}">
+                    <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                </ScrollViewer>
+                <Rectangle x:Name="PART_DisabledVisual"
+                    Opacity="0"
+                    RadiusX="2"
+                    RadiusY="2"
+                    Stretch="Fill"
+                    Stroke="Transparent"
+                    StrokeThickness="0"
+                    Visibility="Collapsed">
+                    <Rectangle.Fill>
+                        <SolidColorBrush Color="{DynamicResource ControlFillColorDefault}" />
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Grid>
         </Border>
         <ControlTemplate.Triggers>
-            <MultiTrigger>
-                <MultiTrigger.Conditions>
-                    <Condition Property="IsGrouping" Value="true" />
-                    <Condition Property="VirtualizingPanel.IsVirtualizingWhenGrouping" Value="false" />
-                </MultiTrigger.Conditions>
-                <Setter Property="ScrollViewer.CanContentScroll" Value="false" />
-            </MultiTrigger>
+            <Trigger Property="IsGrouping" Value="True">
+                <Setter Property="ScrollViewer.CanContentScroll" Value="False" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter TargetName="PART_DisabledVisual" Property="Visibility" Value="Visible" />
+            </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
 
-    <Style x:Key="BaseListViewStyle" TargetType="ListView">
-        <Setter Property="OverridesDefaultStyle" Value="True" />
-        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+    <Style x:Key="BaseListViewStyle" TargetType="{x:Type ListView}">
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Background" Value="{DynamicResource ListViewBackground}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource ListViewBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
-        <Setter Property="ScrollViewer.CanContentScroll" Value="true" />
-        <Setter Property="ScrollViewer.PanningMode" Value="Both" />
-        <Setter Property="Stylus.IsFlicksEnabled" Value="False" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+        <Setter Property="ScrollViewer.CanContentScroll" Value="True" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="ItemContainerStyle" Value="{StaticResource DefaultListViewItemStyle}" />
-        <Setter Property="Template">
+        <Setter Property="VirtualizingPanel.IsVirtualizing" Value="True" />
+        <Setter Property="VirtualizingPanel.VirtualizationMode" Value="Standard" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="ItemsPanel">
             <Setter.Value>
-                <ControlTemplate TargetType="ListView">
-                    <Border
-                        x:Name="Bd"
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        SnapsToDevicePixels="true">
-                        <local:ScrollViewerEx
-                            Padding="{TemplateBinding Padding}"
-                            Focusable="false"
-                            HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
-                            VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}">
-                            <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                        </local:ScrollViewerEx>
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsGrouping" Value="true" />
-                                <Condition Property="VirtualizingPanel.IsVirtualizingWhenGrouping" Value="false" />
-                            </MultiTrigger.Conditions>
-                            <Setter Property="ScrollViewer.CanContentScroll" Value="false" />
-                        </MultiTrigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
+                <ItemsPanelTemplate>
+                    <VirtualizingStackPanel IsVirtualizing="{TemplateBinding VirtualizingPanel.IsVirtualizing}" VirtualizationMode="{TemplateBinding VirtualizingPanel.VirtualizationMode}" />
+                </ItemsPanelTemplate>
             </Setter.Value>
         </Setter>
     </Style>
 
-    <Style x:Key="DefaultListViewStyle" TargetType="ListView" BasedOn="{StaticResource BaseListViewStyle}">
-        <Style.Resources>
-            <primitives:IsGridViewConverter x:Key="IsGridViewConverter" />
-        </Style.Resources>
+    <Style x:Key="DefaultListViewStyle" TargetType="{x:Type ListView}" BasedOn="{StaticResource BaseListViewStyle}">
+        <Setter Property="Template" Value="{StaticResource ListViewTemplate}"/>
         <Style.Triggers>
-            <DataTrigger Binding="{Binding View, RelativeSource={RelativeSource Self}, Converter={StaticResource IsGridViewConverter}}" Value="True">
+            <DataTrigger Binding="{Binding View, RelativeSource={RelativeSource Self}, Converter={StaticResource ViewIsGridViewConverter}}" Value="True">
                 <Setter Property="Template" Value="{StaticResource GridViewTemplate}" />
                 <Setter Property="ItemContainerStyle" Value="{DynamicResource {x:Static GridView.GridViewItemContainerStyleKey}}" />
+                <Setter Property="GridView.ColumnHeaderContainerStyle" Value="{DynamicResource DefaultGridViewColumnHeaderStyle}" />
             </DataTrigger>
         </Style.Triggers>
     </Style>
 
-    <Style TargetType="ListView" BasedOn="{StaticResource DefaultListViewStyle}" />
-
-    <!-- GridView ScrollViewer Style -->
-    <Style x:Key="{x:Static GridView.GridViewScrollViewerStyleKey}" TargetType="ScrollViewer">
-        <Setter Property="Focusable" Value="false" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="ScrollViewer">
-                    <Grid
-                        Background="{TemplateBinding Background}"
-                        SnapsToDevicePixels="true">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <!-- Grid.Column="0" Grid.Row="0" -->
-                        <DockPanel
-                            Grid.ColumnSpan="2"
-                            Grid.RowSpan="2"
-                            Margin="{TemplateBinding Padding}">
-                            <!-- Column Headers Scroll Viewer -->
-                            <ScrollViewer
-                                DockPanel.Dock="Top"
-                                HorizontalScrollBarVisibility="Hidden"
-                                VerticalScrollBarVisibility="Hidden"
-                                Focusable="false">
-                                <GridViewHeaderRowPresenter
-                                    Columns="{Binding Path=TemplatedParent.View.Columns, RelativeSource={RelativeSource TemplatedParent}}"
-                                    ColumnHeaderContainerStyle="{Binding Path=TemplatedParent.View.ColumnHeaderContainerStyle, RelativeSource={RelativeSource TemplatedParent}}"
-                                    ColumnHeaderTemplate="{Binding Path=TemplatedParent.View.ColumnHeaderTemplate, RelativeSource={RelativeSource TemplatedParent}}"
-                                    ColumnHeaderTemplateSelector="{Binding Path=TemplatedParent.View.ColumnHeaderTemplateSelector, RelativeSource={RelativeSource TemplatedParent}}"
-                                    ColumnHeaderStringFormat="{Binding Path=TemplatedParent.View.ColumnHeaderStringFormat, RelativeSource={RelativeSource TemplatedParent}}"
-                                    AllowsColumnReorder="{Binding Path=TemplatedParent.View.AllowsColumnReorder, RelativeSource={RelativeSource TemplatedParent}}"
-                                    ColumnHeaderContextMenu="{Binding Path=TemplatedParent.View.ColumnHeaderContextMenu, RelativeSource={RelativeSource TemplatedParent}}"
-                                    ColumnHeaderToolTip="{Binding Path=TemplatedParent.View.ColumnHeaderToolTip, RelativeSource={RelativeSource TemplatedParent}}"
-                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                            </ScrollViewer>
-                            <!-- Items Scroll Viewer -->
-                            <ScrollContentPresenter
-                                Name="PART_ScrollContentPresenter"
-                                KeyboardNavigation.DirectionalNavigation="Local"
-                                Content="{TemplateBinding Content}"
-                                ContentTemplate="{TemplateBinding ContentTemplate}"
-                                CanContentScroll="{TemplateBinding CanContentScroll}"
-                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                        </DockPanel>
-                        <!-- Horizontal Scroll Bar -->
-                        <ScrollBar
-                            Name="PART_HorizontalScrollBar"
-                            Orientation="Horizontal"
-                            Grid.Row="1"
-                            Minimum="0.0"
-                            Maximum="{TemplateBinding ScrollableWidth}"
-                            ViewportSize="{TemplateBinding ViewportWidth}"
-                            Value="{TemplateBinding HorizontalOffset}"
-                            Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"
-                            Cursor="Arrow" />
-                        <!-- Vertical Scroll Bar -->
-                        <ScrollBar
-                            Name="PART_VerticalScrollBar"
-                            Orientation="Vertical"
-                            Grid.Column="1"
-                            Minimum="0.0"
-                            Maximum="{TemplateBinding ScrollableHeight}"
-                            ViewportSize="{TemplateBinding ViewportHeight}"
-                            Value="{TemplateBinding VerticalOffset}"
-                            Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
-                            Cursor="Arrow" />
-                        <!-- Right Bottom Corner -->
-                        <DockPanel
-                            Grid.Column="1"
-                            Grid.Row="1"
-                            Background="{Binding Path=Background, ElementName=PART_VerticalScrollBar}"
-                            LastChildFill="false">
-                            <Rectangle
-                                DockPanel.Dock="Left"
-                                Width="1"
-                                Fill="Transparent"
-                                Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" />
-                            <Rectangle
-                                DockPanel.Dock="Top"
-                                Height="1"
-                                Fill="Transparent"
-                                Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}" />
-                        </DockPanel>
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style x:Key="GridViewColumnHeaderGripper" TargetType="Thumb">
-        <Setter Property="Canvas.Right" Value="-9" />
-        <Setter Property="Width" Value="18" />
-        <Setter Property="Height" Value="{Binding Path=ActualHeight, RelativeSource={RelativeSource TemplatedParent}}" />
-        <Setter Property="Padding" Value="0,3,0,4" />
-        <Setter Property="Background" Value="#FF000000" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Thumb">
-                    <Border
-                        Padding="{TemplateBinding Padding}"
-                        Background="Transparent">
-                        <Rectangle
-                            HorizontalAlignment="Center"
-                            Width="1"
-                            Fill="{TemplateBinding Background}" />
-                    </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style x:Key="{x:Type GridViewColumnHeader}" TargetType="GridViewColumnHeader">
-        <Setter Property="OverridesDefaultStyle" Value="True" />
-        <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
-        <Setter Property="HorizontalContentAlignment" Value="Left" />
-        <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="Background" Value="{DynamicResource ListViewItemBackground}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseMediumLowBrush}" />
-        <Setter Property="BorderThickness" Value="0,0,1,1" />
-        <Setter Property="Padding" Value="12,0,12,0" />
-        <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="GridViewColumnHeader">
-                    <Grid SnapsToDevicePixels="true">
-                        <!-- GridViewColumnHeader Content -->
-                        <Border
-                            x:Name="ContentContainer"
-                            Background="{TemplateBinding Background}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            BorderBrush="{TemplateBinding BorderBrush}">
-                            <local:ContentPresenterEx
-                                Margin="{TemplateBinding Padding}"
-                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                RecognizesAccessKey="True"
-                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                        </Border>
-                        <Canvas>
-                            <Thumb
-                                x:Name="PART_HeaderGripper"
-                                Style="{StaticResource GridViewColumnHeaderGripper}"
-                                Background="Transparent" />
-                        </Canvas>
-                    </Grid>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="true">
-                            <Setter TargetName="ContentContainer" Property="Background" Value="{DynamicResource ListViewItemBackgroundPointerOver}" />
-                        </Trigger>
-                        <Trigger Property="IsPressed" Value="true">
-                            <Setter TargetName="ContentContainer" Property="Background" Value="{DynamicResource ListViewItemBackgroundPressed}" />
-                        </Trigger>
-                        <Trigger Property="Height" Value="Auto">
-                            <Setter Property="MinHeight" Value="{DynamicResource GridViewColumnHeaderMinHeight}" />
-                        </Trigger>
-                        <Trigger Property="IsEnabled" Value="false">
-                            <Setter TargetName="ContentContainer" Property="Opacity" Value="{DynamicResource ListViewItemDisabledThemeOpacity}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-        <Style.Triggers>
-            <Trigger Property="Role" Value="Padding">
-                <Setter Property="BorderThickness" Value="0,0,0,1" />
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <!-- The same as normal header, just no gripper. -->
-                        <ControlTemplate TargetType="GridViewColumnHeader">
-                            <Border
-                                Background="{TemplateBinding Background}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                BorderBrush="{TemplateBinding BorderBrush}" />
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="Height" Value="Auto">
-                                    <Setter Property="MinHeight" Value="{DynamicResource GridViewColumnHeaderMinHeight}" />
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Trigger>
-            <Trigger Property="Role" Value="Floating">
-                <Setter Property="Opacity" Value="{DynamicResource ListViewItemReorderTargetThemeOpacity}" />
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="GridViewColumnHeader">
-                            <Canvas Name="PART_FloatingHeaderCanvas">
-                                <Rectangle
-                                    Opacity="0.3034"
-                                    Fill="{DynamicResource SystemControlBackgroundBaseHighBrush}"
-                                    Width="{TemplateBinding ActualWidth}"
-                                    Height="{TemplateBinding ActualHeight}" />
-                            </Canvas>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Trigger>
-        </Style.Triggers>
-    </Style>
-
-    <Style x:Key="{x:Static GridView.GridViewItemContainerStyleKey}" TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
-        <Setter Property="Padding" Value="6,0,6,0" />
-        <Setter Property="MinHeight" Value="{DynamicResource GridViewItemContainerMinHeight}" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="ListViewItem">
-                    <Border
-                        x:Name="Bd"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        Background="{TemplateBinding Background}"
-                        Padding="{TemplateBinding Padding}"
-                        SnapsToDevicePixels="true">
-                        <!-- remove the HorizontalAlignment due to HeaderRowPresenter does not have the ability to align to center or right -->
-                        <GridViewRowPresenter
-                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ListViewItemBackgroundPointerOver}" />
-                        </Trigger>
-                        <Trigger Property="IsSelected" Value="True">
-                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ListViewItemBackgroundSelected}" />
-                        </Trigger>
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsSelected" Value="True" />
-                                <Condition Property="IsMouseOver" Value="True" />
-                            </MultiTrigger.Conditions>
-                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ListViewItemBackgroundSelectedPointerOver}" />
-                        </MultiTrigger>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="Bd" Property="Opacity" Value="{DynamicResource ListViewItemDisabledThemeOpacity}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
+    <Style BasedOn="{StaticResource DefaultListViewStyle}" TargetType="{x:Type ListView}" />
 
     <Style x:Key="{x:Static GridView.GridViewStyleKey}" TargetType="ListView" BasedOn="{StaticResource BaseListViewStyle}">
         <Setter Property="ItemContainerStyle" Value="{DynamicResource {x:Static GridView.GridViewItemContainerStyleKey}}" />
         <Setter Property="Template" Value="{StaticResource GridViewTemplate}" />
+        <Setter Property="GridView.ColumnHeaderContainerStyle" Value="{DynamicResource DefaultGridViewColumnHeaderStyle}" />
     </Style>
 
 </ResourceDictionary>

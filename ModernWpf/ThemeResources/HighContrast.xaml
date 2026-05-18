@@ -1073,6 +1073,10 @@
     <m:StaticResource x:Key="ListBoxItemBackgroundSelected" ResourceKey="SystemControlHighlightListAccentMediumLowBrush" />
     <m:StaticResource x:Key="ListBoxItemBackgroundSelectedPointerOver" ResourceKey="SystemControlHighlightListAccentLowBrush" />
     <m:StaticResource x:Key="ListBoxItemBackgroundSelectedPressed" ResourceKey="SystemControlHighlightListAccentVeryHighBrush" />
+    <SolidColorBrush x:Key="ListBoxItemSelectedBackgroundThemeBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="ListBoxItemSelectedBackgroundPointerOverThemeBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="ListBoxItemSelectedForegroundThemeBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="ListBoxItemUnselectedBackgroundPointerOverThemeBrush" Color="{m:ThemeResource SystemColorHighlightTextColor}" />
 
     <!-- Resources for ListViewHeaderItem -->
     <sys:Double x:Key="ListViewHeaderItemMinHeight">44</sys:Double>
@@ -1094,6 +1098,19 @@
     <sys:Double x:Key="ListViewItemReorderHintThemeOffset">10.0</sys:Double>
     <sys:Double x:Key="ListViewItemSelectedBorderThemeThickness">4</sys:Double>
     <SolidColorBrush x:Key="ListViewItemBorderBackground" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="ListViewBackground" Color="Transparent" />
+    <SolidColorBrush x:Key="ListViewBorderBrush" Color="Transparent" />
+    <SolidColorBrush x:Key="GridViewColumnHeaderBackground" Color="Transparent" />
+    <SolidColorBrush x:Key="GridViewColumnHeaderBackgroundPointerOver" Color="{m:ThemeResource SystemColorHighlightTextColor}" />
+    <SolidColorBrush x:Key="GridViewColumnHeaderBackgroundPressed" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="GridViewColumnHeaderBackgroundDisabled" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="GridViewColumnHeaderBorderBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="GridViewColumnHeaderBorderBrushPointerOver" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="GridViewColumnHeaderBorderBrushPressed" Color="{m:ThemeResource SystemColorHighlightTextColor}" />
+    <SolidColorBrush x:Key="GridViewColumnHeaderBorderBrushDisabled" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="GridViewColumnHeaderForeground" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="GridViewColumnHeaderForegroundDisabled" Color="{m:ThemeResource SystemColorGrayTextColor}" />
+    <SolidColorBrush x:Key="GridViewColumnHeaderGripperThumbFill" Color="{m:ThemeResource SystemColorButtonTextColor}" />
     <SolidColorBrush x:Key="ListViewItemBackground" Color="{m:ThemeResource SystemColorWindowColor}" />
     <SolidColorBrush x:Key="ListViewItemBackgroundPointerOver" Color="{m:ThemeResource SystemColorHighlightColor}" />
     <SolidColorBrush x:Key="ListViewItemBackgroundPressed" Color="{m:ThemeResource SystemColorHighlightColor}" />

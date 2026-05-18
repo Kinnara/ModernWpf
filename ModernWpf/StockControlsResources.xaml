@@ -16,7 +16,10 @@
         <ResourceDictionary Source="Styles/GroupItem.xaml" />
         <ResourceDictionary Source="Styles/Hyperlink.xaml" />
         <ResourceDictionary Source="Styles/Label.xaml" />
+        <ResourceDictionary Source="Styles/ListBoxItem.xaml" />
         <ResourceDictionary Source="Styles/ListBox.xaml" />
+        <ResourceDictionary Source="Styles/GridView.xaml" />
+        <ResourceDictionary Source="Styles/ListViewItem.xaml" />
         <ResourceDictionary Source="Styles/ListView.xaml" />
         <ResourceDictionary Source="Styles/Menu.xaml" />
         <ResourceDictionary Source="Styles/MenuItem.xaml" />

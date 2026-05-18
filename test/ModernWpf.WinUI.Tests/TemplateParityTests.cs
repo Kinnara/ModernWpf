@@ -143,6 +143,11 @@ public class TemplateParityTests
             Path.Combine("ModernWpf", "Styles", "GroupItem.xaml"),
             Path.Combine("ModernWpf", "Styles", "Hyperlink.xaml"),
             Path.Combine("ModernWpf", "Styles", "Label.xaml"),
+            Path.Combine("ModernWpf", "Styles", "ListBox.xaml"),
+            Path.Combine("ModernWpf", "Styles", "ListBoxItem.xaml"),
+            Path.Combine("ModernWpf", "Styles", "GridView.xaml"),
+            Path.Combine("ModernWpf", "Styles", "ListView.xaml"),
+            Path.Combine("ModernWpf", "Styles", "ListViewItem.xaml"),
             Path.Combine("ModernWpf", "Styles", "Menu.xaml"),
             Path.Combine("ModernWpf", "Styles", "ContextMenu.xaml"),
             Path.Combine("ModernWpf", "Styles", "MenuItem.xaml"),
@@ -264,24 +269,27 @@ public class TemplateParityTests
     }
 
     [TestMethod]
-    public void CoreItemSourceBackedPresenterSlotsUseWinUIPresenterShape()
+    public void CoreItemOfficialWpfFluentPresenterSlotsUseWpfPresenterShape()
     {
         var repoRoot = FindRepoRoot();
-        var sourceBackedTemplateFiles = new[]
+        var officialWpfFluentTemplateFiles = new[]
         {
             Path.Combine("ModernWpf", "Styles", "ListBox.xaml"),
-            Path.Combine("ModernWpf", "Styles", "ListView.xaml")
+            Path.Combine("ModernWpf", "Styles", "ListBoxItem.xaml"),
+            Path.Combine("ModernWpf", "Styles", "GridView.xaml"),
+            Path.Combine("ModernWpf", "Styles", "ListView.xaml"),
+            Path.Combine("ModernWpf", "Styles", "ListViewItem.xaml")
         };
 
-        var offenders = sourceBackedTemplateFiles
+        var offenders = officialWpfFluentTemplateFiles
             .Select(path => Path.Combine(repoRoot, path))
-            .SelectMany(path => FindPlainContentPresenterElementUses(repoRoot, path)
-                .Concat(FindTextElementForegroundUses(repoRoot, path)))
+            .Where(path => File.ReadAllText(path).Contains("ContentPresenterEx", StringComparison.Ordinal))
+            .Select(path => Path.GetRelativePath(repoRoot, path))
             .ToArray();
 
         Assert.IsFalse(
             offenders.Any(),
-            "These core item template files should use ContentPresenterEx and direct Foreground routing. Offenders: " + string.Join("; ", offenders));
+            "Stock ListBox/ListView controls aligned to official WPF Fluent should use WPF presenters, not ContentPresenterEx. Offenders: " + string.Join("; ", offenders));
     }
 
     [TestMethod]

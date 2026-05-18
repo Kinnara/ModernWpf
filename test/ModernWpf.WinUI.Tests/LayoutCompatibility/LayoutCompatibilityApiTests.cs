@@ -840,7 +840,7 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
-    public void CoreItemTemplatesUseWinUIPresenterSlots()
+    public void CoreItemTemplatesUseOfficialWpfFluentPresenterSlots()
     {
         WpfTestHost.Run(() =>
         {
@@ -858,23 +858,27 @@ public class LayoutCompatibilityApiTests
             };
             var header = new GridViewColumnHeader
             {
+                Style = (Style)Application.Current.FindResource("DefaultGridViewColumnHeaderStyle"),
                 Content = "Header content"
             };
 
             using var host = new TestWindowHost(new StackPanel { Children = { listBoxItem, listViewItem, header } });
             host.UpdateLayout();
 
-            var listBoxPresenter = FindTemplateChild<ContentPresenterEx>(listBoxItem, "ContentPresenter");
+            var listBoxPresenter = FindVisualChild<ContentPresenter>(listBoxItem)
+                ?? throw new AssertFailedException("Expected ListBoxItem template to use WPF ContentPresenter.");
             Assert.AreEqual(listBoxItem.Content, listBoxPresenter.Content);
-            Assert.AreSame(listBoxPresenter.TryFindResource("ListBoxItemForegroundDisabled"), listBoxPresenter.Foreground);
+            Assert.IsNull(FindVisualChild<ContentPresenterEx>(listBoxItem));
 
-            var listViewPresenter = FindTemplateChild<ContentPresenterEx>(listViewItem, "ContentPresenter");
+            var listViewPresenter = FindVisualChild<ContentPresenter>(listViewItem)
+                ?? throw new AssertFailedException("Expected ListViewItem template to use WPF ContentPresenter.");
             Assert.AreEqual(listViewItem.Content, listViewPresenter.Content);
-            Assert.AreSame(listViewPresenter.TryFindResource("ListViewItemForegroundSelected"), listViewPresenter.Foreground);
+            Assert.IsNull(FindVisualChild<ContentPresenterEx>(listViewItem));
 
-            var headerPresenter = FindVisualChild<ContentPresenterEx>(header)
-                ?? throw new AssertFailedException("Expected GridViewColumnHeader template to use ContentPresenterEx.");
+            var headerPresenter = FindVisualChild<ContentPresenter>(header)
+                ?? throw new AssertFailedException("Expected GridViewColumnHeader template to use WPF ContentPresenter.");
             Assert.AreEqual(header.Content, headerPresenter.Content);
+            Assert.IsNull(FindVisualChild<ContentPresenterEx>(header));
         });
     }
 
