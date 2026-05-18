@@ -1167,6 +1167,15 @@
 
     <!-- Resources for MenuBar -->
     <m:StaticResource x:Key="MenuBarBackground" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="MenuBarForeground" ResourceKey="TextFillColorPrimaryBrush" />
+
+    <m:StaticResource x:Key="ContextMenuBackground" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
+    <m:StaticResource x:Key="ContextMenuBorderBrush" ResourceKey="SurfaceStrokeColorFlyoutBrush" />
+    <m:StaticResource x:Key="ContextMenuForeground" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="FlyoutBackground" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
+    <m:StaticResource x:Key="FlyoutBorderBrush" ResourceKey="SurfaceStrokeColorFlyoutBrush" />
+    <m:StaticResource x:Key="CheckBoxBackground" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="CheckBoxBorderBrush" ResourceKey="SubtleFillColorTransparentBrush" />
 
     <m:StaticResource x:Key="MenuBarItemBackground" ResourceKey="SubtleFillColorTransparentBrush" />
     <m:StaticResource x:Key="MenuBarItemBackgroundPointerOver" ResourceKey="SubtleFillColorSecondaryBrush" />
@@ -2058,5 +2067,6 @@
     </Style>
 
     <Style x:Key="{x:Static SystemParameters.FocusVisualStyleKey}" BasedOn="{StaticResource HighVisibilityFocusVisual}" />
+    <Style x:Key="DefaultCollectionFocusVisualStyle" BasedOn="{StaticResource HighVisibilityFocusVisual}" />
 
 </ResourceDictionary>

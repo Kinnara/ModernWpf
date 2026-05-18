@@ -487,3 +487,38 @@ Source inspected:
 ### Test Evidence
 
 - `test\ModernWpf.WinUI.Tests\CommonStyles\GroupItemVisualStateTests.cs` covers the official WPF Fluent GroupItem style key/template shape, CollectionViewGroup header template, `ItemsPresenter` margin, and deletion of the old `ListViewHeaderItem` wrapper.
+
+## 2026-05-18 Batch 17
+
+Source inspected:
+
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\Menu.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\ContextMenu.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\MenuItem.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Light.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Dark.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\HC.xaml`
+
+### Synced Values
+
+| Resource key / style | Official WPF Fluent value | ModernWpf value after sync | Reason |
+| --- | --- | --- | --- |
+| `DefaultMenuStyle` / implicit `Menu` style | Official WPF Fluent stock `Menu` style with `MenuBarBackground`, `MenuBarForeground`, non-focusable root, WPF `Border`, and clipped `ItemsPresenter` | Same source shape | `Menu` is a stock WPF control, so official WPF Fluent is the primary source. |
+| `DefaultContextMenuStyle` / implicit `ContextMenu` style | Official WPF Fluent stock `ContextMenu` style with context-menu aliases, `MinWidth=140`, no drop shadow, no popup animation, rounded WPF `Border`, WPF `ScrollViewer`, and vertical `StackPanel` item host | Same source shape, with ModernWpf `TextControlContextMenu` retained outside the stock style | Replaces the previous WinUI-like flyout presenter guess for stock WPF `ContextMenu`. |
+| `DefaultMenuItemStyle` / implicit `MenuItem` style | Official WPF Fluent role-template mapping for top-level header/item and submenu header/item, using WPF `ContentPresenter`, `Popup`, `TextBlock`, and trigger behavior | Same source shape with `mscorlib` namespace compatibility | Replaces the previous `VisualStateEx` / `ContentPresenterEx` / `BorderEx` / `ThemeShadowChrome` guessed menu item templates. |
+| Menu-family theme aliases | `MenuBarForeground`, `ContextMenuBackground`, `ContextMenuBorderBrush`, `ContextMenuForeground`, `FlyoutBackground`, and `FlyoutBorderBrush` | Same aliases across Light, Dark, and HighContrast through ModernWpf's theme-resource alias model | Required by the official WPF Fluent `Menu`, `ContextMenu`, and `MenuItem` templates. |
+| `DefaultCollectionFocusVisualStyle` | Official menu item focus-style resource | ModernWpf alias based on `HighVisibilityFocusVisual` | Lets the official `MenuItem` focus-style setter resolve through ModernWpf's existing focus visual bridge. |
+
+### Intentional Differences
+
+| Resource key / style | Official WPF Fluent value | ModernWpf backport value | Reason retained |
+| --- | --- | --- | --- |
+| Source provenance header | WPF UI contributor attribution in the official WPF Fluent source tree | Preserved header in copied ModernWpf style files | Keep provenance from the upstream official source files. |
+| `system` namespace assembly | `System.Runtime` | `mscorlib` | Keeps copied glyph string resources compatible with ModernWpf's older target frameworks. |
+| `TextControlContextMenu` | No stock menu-family style dependency | Retained in `ContextMenu.xaml` | Existing ModernWpf text controls still use the custom text context menu resource. |
+| `CheckBoxBackground` / `CheckBoxBorderBrush` | Referenced by official `MenuItem` templates | Explicit aliases to transparent/system check-box background concepts | Avoid unresolved menu checkbox resources while preserving the official visual intent. |
+
+### Test Evidence
+
+- `test\ModernWpf.WinUI.Tests\CommonStyles\MenuFamilyVisualStateTests.cs` covers the official WPF Fluent Menu, ContextMenu, MenuItem, role-template mapping, deleted ModernWpf-specific helper surface, and theme aliases.
+- `test\ModernWpf.WinUI.Tests\TemplateParityTests.cs` classifies the menu-family style files as official WPF Fluent stock templates that should not use `VisualStateEx`.

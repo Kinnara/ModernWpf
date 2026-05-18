@@ -1,31 +1,36 @@
-﻿<ResourceDictionary
+﻿<!--
+    This Source Code Form is subject to the terms of the MIT License.
+    If a copy of the MIT was not distributed with this file, You can obtain one at https://opensource.org/licenses/MIT.
+    Copyright (C) Leszek Pomianowski and WPF UI Contributors.
+    All Rights Reserved.
+-->
+
+<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <sys:Double x:Key="MenuBarHeight">40</sys:Double>
-
-    <Style x:Key="DefaultMenuStyle" TargetType="Menu">
-        <Setter Property="OverridesDefaultStyle" Value="True" />
+    <Style x:Key="DefaultMenuStyle" TargetType="{x:Type Menu}">
         <Setter Property="Background" Value="{DynamicResource MenuBarBackground}" />
-        <Setter Property="IsTabStop" Value="False" />
-        <Setter Property="Height" Value="{StaticResource MenuBarHeight}" />
+        <Setter Property="Foreground" Value="{DynamicResource MenuBarForeground}" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="Menu">
+                <ControlTemplate TargetType="{x:Type Menu}">
                     <Border
-                        Padding="{TemplateBinding Padding}"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
-                        SnapsToDevicePixels="true">
-                        <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        Padding="{TemplateBinding Padding}">
+                        <ItemsPresenter
+                            ClipToBounds="True" />
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
 
-    <Style TargetType="Menu" BasedOn="{StaticResource DefaultMenuStyle}" />
+    <Style x:Key="{x:Type Menu}" BasedOn="{StaticResource DefaultMenuStyle}" TargetType="{x:Type Menu}" />
 
 </ResourceDictionary>

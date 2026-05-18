@@ -89,7 +89,6 @@ public class TemplateParityTests
             Path.Combine("ModernWpf", "Styles", "Pivot.xaml"),
             Path.Combine("ModernWpf", "Styles", "ScrollBar.xaml"),
             Path.Combine("ModernWpf", "Styles", "TabControl.xaml"),
-            Path.Combine("ModernWpf", "Styles", "MenuItem.xaml"),
             Path.Combine("ModernWpf", "Styles", "NavigationBackButton.xaml"),
             Path.Combine("ModernWpf", "Styles", "TreeView.xaml"),
             Path.Combine("ModernWpf", "TitleBar", "TitleBarControl.xaml"),
@@ -145,6 +144,9 @@ public class TemplateParityTests
             Path.Combine("ModernWpf", "Styles", "GroupItem.xaml"),
             Path.Combine("ModernWpf", "Styles", "Hyperlink.xaml"),
             Path.Combine("ModernWpf", "Styles", "Label.xaml"),
+            Path.Combine("ModernWpf", "Styles", "Menu.xaml"),
+            Path.Combine("ModernWpf", "Styles", "ContextMenu.xaml"),
+            Path.Combine("ModernWpf", "Styles", "MenuItem.xaml"),
             Path.Combine("ModernWpf", "Styles", "RadioButton.xaml"),
             Path.Combine("ModernWpf", "Styles", "RepeatButton.xaml"),
             Path.Combine("ModernWpf", "Styles", "ResizeGrip.xaml"),
@@ -275,26 +277,6 @@ public class TemplateParityTests
         Assert.IsFalse(
             offenders.Any(),
             "These core item template files should use ContentPresenterEx and direct Foreground routing. Offenders: " + string.Join("; ", offenders));
-    }
-
-    [TestMethod]
-    public void CoreMenuSourceBackedPresenterSlotsUseWinUIPresenterShape()
-    {
-        var repoRoot = FindRepoRoot();
-        var sourceBackedTemplateFiles = new[]
-        {
-            Path.Combine("ModernWpf", "Styles", "MenuItem.xaml")
-        };
-
-        var offenders = sourceBackedTemplateFiles
-            .Select(path => Path.Combine(repoRoot, path))
-            .SelectMany(path => FindPlainContentPresenterElementUses(repoRoot, path)
-                .Concat(FindTextElementForegroundUses(repoRoot, path)))
-            .ToArray();
-
-        Assert.IsFalse(
-            offenders.Any(),
-            "The core menu template file should use ContentPresenterEx and direct Foreground routing. Offenders: " + string.Join("; ", offenders));
     }
 
     [TestMethod]
