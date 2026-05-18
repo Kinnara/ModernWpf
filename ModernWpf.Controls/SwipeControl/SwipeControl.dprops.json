@@ -1,0 +1,58 @@
+{
+  "usings": [
+    "System.Windows",
+    "ModernWpf.Controls.Primitives",
+    "ModernWpf.Media.Animation"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "SwipeControl"
+  },
+  "properties": [
+    {
+      "name": "ContentTransitions",
+      "type": "TransitionCollection",
+      "kind": "AddOwner",
+      "sourceProperty": "ControlHelper.ContentTransitionsProperty"
+    },
+    {
+      "name": "CornerRadius",
+      "type": "CornerRadius",
+      "kind": "AddOwner",
+      "sourceProperty": "ControlHelper.CornerRadiusProperty"
+    },
+    {
+      "name": "LeftItems",
+      "type": "SwipeItems",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "null",
+      "changed": "OnItemsPropertyChanged",
+      "setterBody": "ValidateSwipeItemsCanSet(value, SwipeItemsPlacement.Left);\nSetValue(LeftItemsProperty, value);"
+    },
+    {
+      "name": "RightItems",
+      "type": "SwipeItems",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "null",
+      "changed": "OnItemsPropertyChanged",
+      "setterBody": "ValidateSwipeItemsCanSet(value, SwipeItemsPlacement.Right);\nSetValue(RightItemsProperty, value);"
+    },
+    {
+      "name": "TopItems",
+      "type": "SwipeItems",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "null",
+      "changed": "OnItemsPropertyChanged",
+      "setterBody": "ValidateSwipeItemsCanSet(value, SwipeItemsPlacement.Top);\nSetValue(TopItemsProperty, value);"
+    },
+    {
+      "name": "BottomItems",
+      "type": "SwipeItems",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "null",
+      "changed": "OnItemsPropertyChanged",
+      "setterBody": "ValidateSwipeItemsCanSet(value, SwipeItemsPlacement.Bottom);\nSetValue(BottomItemsProperty, value);"
+    }
+  ]
+}

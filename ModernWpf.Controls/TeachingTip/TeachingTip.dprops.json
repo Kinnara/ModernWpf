@@ -1,0 +1,143 @@
+{
+  "usings": [
+    "System.Windows",
+    "System.Windows.Controls",
+    "System.Windows.Input"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "TeachingTip"
+  },
+  "properties": [
+    {
+      "name": "Title",
+      "type": "string",
+      "default": "string.Empty",
+      "changed": "OnVisualStatePropertyChanged"
+    },
+    {
+      "name": "Subtitle",
+      "type": "string",
+      "default": "string.Empty",
+      "changed": "OnVisualStatePropertyChanged"
+    },
+    {
+      "name": "IsOpen",
+      "type": "bool",
+      "default": "false",
+      "changed": "OnIsOpenPropertyChanged"
+    },
+    {
+      "name": "Target",
+      "type": "FrameworkElement",
+      "default": "null",
+      "changed": "OnTargetPropertyChanged"
+    },
+    {
+      "name": "TailVisibility",
+      "type": "TeachingTipTailVisibility",
+      "default": "TeachingTipTailVisibility.Auto",
+      "changed": "OnVisualStatePropertyChanged"
+    },
+    {
+      "name": "ActionButtonContent",
+      "type": "object",
+      "default": "null",
+      "changed": "OnVisualStatePropertyChanged"
+    },
+    {
+      "name": "ActionButtonStyle",
+      "type": "Style",
+      "metadata": "null"
+    },
+    {
+      "name": "ActionButtonCommand",
+      "type": "ICommand",
+      "metadata": "null"
+    },
+    {
+      "name": "ActionButtonCommandParameter",
+      "type": "object",
+      "metadata": "null"
+    },
+    {
+      "name": "CloseButtonContent",
+      "type": "object",
+      "default": "null",
+      "changed": "OnVisualStatePropertyChanged"
+    },
+    {
+      "name": "CloseButtonStyle",
+      "type": "Style",
+      "metadata": "null"
+    },
+    {
+      "name": "CloseButtonCommand",
+      "type": "ICommand",
+      "metadata": "null"
+    },
+    {
+      "name": "CloseButtonCommandParameter",
+      "type": "object",
+      "metadata": "null"
+    },
+    {
+      "name": "PlacementMargin",
+      "type": "Thickness",
+      "default": "new Thickness()",
+      "changed": "OnVisualStatePropertyChanged"
+    },
+    {
+      "name": "ShouldConstrainToRootBounds",
+      "type": "bool",
+      "default": "true",
+      "changed": "OnVisualStatePropertyChanged"
+    },
+    {
+      "name": "IsLightDismissEnabled",
+      "type": "bool",
+      "default": "false",
+      "changed": "OnVisualStatePropertyChanged"
+    },
+    {
+      "name": "PreferredPlacement",
+      "type": "TeachingTipPlacementMode",
+      "default": "TeachingTipPlacementMode.Auto",
+      "changed": "OnVisualStatePropertyChanged"
+    },
+    {
+      "name": "HeroContentPlacement",
+      "type": "TeachingTipHeroContentPlacementMode",
+      "default": "TeachingTipHeroContentPlacementMode.Auto",
+      "changed": "OnVisualStatePropertyChanged"
+    },
+    {
+      "name": "HeroContent",
+      "type": "UIElement",
+      "default": "null",
+      "changed": "OnVisualStatePropertyChanged"
+    },
+    {
+      "name": "IconSource",
+      "type": "IconSource",
+      "default": "null",
+      "changed": "OnIconSourcePropertyChanged"
+    },
+    {
+      "name": "CornerRadius",
+      "type": "CornerRadius",
+      "kind": "AddOwner",
+      "sourceProperty": "Border.CornerRadiusProperty",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "new CornerRadius()"
+    },
+    {
+      "name": "TemplateSettings",
+      "type": "TeachingTipTemplateSettings",
+      "kind": "RegisterReadOnly",
+      "default": "null",
+      "setterAccessibility": "none"
+    }
+  ]
+}

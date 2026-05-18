@@ -16,7 +16,7 @@ namespace ModernWpf.Controls
     [TemplatePart(Name = ContentRootName, Type = typeof(Grid))]
     [TemplatePart(Name = ContentPresenterName, Type = typeof(ContentPresenterEx))]
     [TemplatePart(Name = InputEaterName, Type = typeof(Grid))]
-    public class SwipeControl : ContentControl
+    public partial class SwipeControl : ContentControl
     {
         private const double DragThreshold = 8;
         private const double ThresholdValue = 100;
@@ -61,92 +61,6 @@ namespace ModernWpf.Controls
             PreviewMouseMove += OnPreviewMouseMove;
             PreviewMouseLeftButtonUp += OnPreviewMouseLeftButtonUp;
             LostMouseCapture += OnLostMouseCapture;
-        }
-
-        public static readonly DependencyProperty ContentTransitionsProperty =
-            ControlHelper.ContentTransitionsProperty.AddOwner(typeof(SwipeControl));
-
-        public TransitionCollection ContentTransitions
-        {
-            get => (TransitionCollection)GetValue(ContentTransitionsProperty);
-            set => SetValue(ContentTransitionsProperty, value);
-        }
-
-        public static readonly DependencyProperty CornerRadiusProperty =
-            ControlHelper.CornerRadiusProperty.AddOwner(typeof(SwipeControl));
-
-        public CornerRadius CornerRadius
-        {
-            get => (CornerRadius)GetValue(CornerRadiusProperty);
-            set => SetValue(CornerRadiusProperty, value);
-        }
-
-        public static readonly DependencyProperty LeftItemsProperty =
-            DependencyProperty.Register(
-                nameof(LeftItems),
-                typeof(SwipeItems),
-                typeof(SwipeControl),
-                new FrameworkPropertyMetadata(null, OnItemsPropertyChanged));
-
-        public SwipeItems LeftItems
-        {
-            get => (SwipeItems)GetValue(LeftItemsProperty);
-            set
-            {
-                ValidateSwipeItemsCanSet(value, SwipeItemsPlacement.Left);
-                SetValue(LeftItemsProperty, value);
-            }
-        }
-
-        public static readonly DependencyProperty RightItemsProperty =
-            DependencyProperty.Register(
-                nameof(RightItems),
-                typeof(SwipeItems),
-                typeof(SwipeControl),
-                new FrameworkPropertyMetadata(null, OnItemsPropertyChanged));
-
-        public SwipeItems RightItems
-        {
-            get => (SwipeItems)GetValue(RightItemsProperty);
-            set
-            {
-                ValidateSwipeItemsCanSet(value, SwipeItemsPlacement.Right);
-                SetValue(RightItemsProperty, value);
-            }
-        }
-
-        public static readonly DependencyProperty TopItemsProperty =
-            DependencyProperty.Register(
-                nameof(TopItems),
-                typeof(SwipeItems),
-                typeof(SwipeControl),
-                new FrameworkPropertyMetadata(null, OnItemsPropertyChanged));
-
-        public SwipeItems TopItems
-        {
-            get => (SwipeItems)GetValue(TopItemsProperty);
-            set
-            {
-                ValidateSwipeItemsCanSet(value, SwipeItemsPlacement.Top);
-                SetValue(TopItemsProperty, value);
-            }
-        }
-
-        public static readonly DependencyProperty BottomItemsProperty =
-            DependencyProperty.Register(
-                nameof(BottomItems),
-                typeof(SwipeItems),
-                typeof(SwipeControl),
-                new FrameworkPropertyMetadata(null, OnItemsPropertyChanged));
-
-        public SwipeItems BottomItems
-        {
-            get => (SwipeItems)GetValue(BottomItemsProperty);
-            set
-            {
-                ValidateSwipeItemsCanSet(value, SwipeItemsPlacement.Bottom);
-                SetValue(BottomItemsProperty, value);
-            }
         }
 
         public void Close()

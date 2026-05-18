@@ -1,0 +1,41 @@
+{
+  "usings": [
+    "System.Collections.Generic",
+    "System.Windows",
+    "System.Windows.Controls"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "AnnotatedScrollBar"
+  },
+  "properties": [
+    {
+      "name": "Labels",
+      "type": "IList<AnnotatedScrollBarLabel>",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "null",
+      "changed": "OnLabelsPropertyChanged"
+    },
+    {
+      "name": "LabelTemplate",
+      "type": "DataTemplate",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "null",
+      "changed": "OnAnnotatedScrollBarPropertyChanged"
+    },
+    {
+      "name": "DetailLabelTemplate",
+      "type": "DataTemplate",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "null",
+      "changed": "OnAnnotatedScrollBarPropertyChanged"
+    },
+    {
+      "name": "SmallChange",
+      "type": "double",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "0d"
+    }
+  ]
+}

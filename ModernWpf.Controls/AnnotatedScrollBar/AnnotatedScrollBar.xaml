@@ -35,7 +35,7 @@
         <Setter Property="Background" Value="{DynamicResource ScrollButtonBackground}" />
         <Setter Property="Foreground" Value="{DynamicResource ScrollButtonForeground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource ScrollButtonBorderBrush}" />
-        <Setter Property="BorderThickness" Value="{DynamicResource ScrollButtonStyleBorderThickness}" />
+        <Setter Property="BorderThickness" Value="{StaticResource ScrollButtonStyleBorderThickness}" />
         <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="FontFamily" Value="{DynamicResource SymbolThemeFontFamily}" />
         <Setter Property="FontSize" Value="{StaticResource ScrollButtonFontSize}" />

@@ -5,7 +5,7 @@ using System.Windows.Media;
 
 namespace ModernWpf.Controls
 {
-    public class TwoPaneView : Control
+    public partial class TwoPaneView : Control
     {
         private const double DefaultMinWideModeWidth = 641.0;
         private const double DefaultMinTallModeHeight = 641.0;
@@ -29,135 +29,6 @@ namespace ModernWpf.Controls
         {
             Loaded += OnLoaded;
             SizeChanged += OnSizeChanged;
-        }
-
-        public static readonly DependencyProperty Pane1Property =
-            DependencyProperty.Register(
-                nameof(Pane1),
-                typeof(UIElement),
-                typeof(TwoPaneView),
-                new PropertyMetadata(null, OnPanePropertyChanged));
-
-        public UIElement Pane1
-        {
-            get => (UIElement)GetValue(Pane1Property);
-            set => SetValue(Pane1Property, value);
-        }
-
-        public static readonly DependencyProperty Pane2Property =
-            DependencyProperty.Register(
-                nameof(Pane2),
-                typeof(UIElement),
-                typeof(TwoPaneView),
-                new PropertyMetadata(null, OnPanePropertyChanged));
-
-        public UIElement Pane2
-        {
-            get => (UIElement)GetValue(Pane2Property);
-            set => SetValue(Pane2Property, value);
-        }
-
-        public static readonly DependencyProperty Pane1LengthProperty =
-            DependencyProperty.Register(
-                nameof(Pane1Length),
-                typeof(GridLength),
-                typeof(TwoPaneView),
-                new PropertyMetadata(GridLength.Auto, OnLayoutPropertyChanged));
-
-        public GridLength Pane1Length
-        {
-            get => (GridLength)GetValue(Pane1LengthProperty);
-            set => SetValue(Pane1LengthProperty, value);
-        }
-
-        public static readonly DependencyProperty Pane2LengthProperty =
-            DependencyProperty.Register(
-                nameof(Pane2Length),
-                typeof(GridLength),
-                typeof(TwoPaneView),
-                new PropertyMetadata(new GridLength(1, GridUnitType.Star), OnLayoutPropertyChanged));
-
-        public GridLength Pane2Length
-        {
-            get => (GridLength)GetValue(Pane2LengthProperty);
-            set => SetValue(Pane2LengthProperty, value);
-        }
-
-        public static readonly DependencyProperty PanePriorityProperty =
-            DependencyProperty.Register(
-                nameof(PanePriority),
-                typeof(TwoPaneViewPriority),
-                typeof(TwoPaneView),
-                new PropertyMetadata(TwoPaneViewPriority.Pane1, OnLayoutPropertyChanged));
-
-        public TwoPaneViewPriority PanePriority
-        {
-            get => (TwoPaneViewPriority)GetValue(PanePriorityProperty);
-            set => SetValue(PanePriorityProperty, value);
-        }
-
-        private static readonly DependencyPropertyKey ModePropertyKey =
-            DependencyProperty.RegisterReadOnly(
-                nameof(Mode),
-                typeof(TwoPaneViewMode),
-                typeof(TwoPaneView),
-                new PropertyMetadata(TwoPaneViewMode.SinglePane));
-
-        public static readonly DependencyProperty ModeProperty =
-            ModePropertyKey.DependencyProperty;
-
-        public TwoPaneViewMode Mode => (TwoPaneViewMode)GetValue(ModeProperty);
-
-        public static readonly DependencyProperty WideModeConfigurationProperty =
-            DependencyProperty.Register(
-                nameof(WideModeConfiguration),
-                typeof(TwoPaneViewWideModeConfiguration),
-                typeof(TwoPaneView),
-                new PropertyMetadata(TwoPaneViewWideModeConfiguration.LeftRight, OnLayoutPropertyChanged));
-
-        public TwoPaneViewWideModeConfiguration WideModeConfiguration
-        {
-            get => (TwoPaneViewWideModeConfiguration)GetValue(WideModeConfigurationProperty);
-            set => SetValue(WideModeConfigurationProperty, value);
-        }
-
-        public static readonly DependencyProperty TallModeConfigurationProperty =
-            DependencyProperty.Register(
-                nameof(TallModeConfiguration),
-                typeof(TwoPaneViewTallModeConfiguration),
-                typeof(TwoPaneView),
-                new PropertyMetadata(TwoPaneViewTallModeConfiguration.TopBottom, OnLayoutPropertyChanged));
-
-        public TwoPaneViewTallModeConfiguration TallModeConfiguration
-        {
-            get => (TwoPaneViewTallModeConfiguration)GetValue(TallModeConfigurationProperty);
-            set => SetValue(TallModeConfigurationProperty, value);
-        }
-
-        public static readonly DependencyProperty MinWideModeWidthProperty =
-            DependencyProperty.Register(
-                nameof(MinWideModeWidth),
-                typeof(double),
-                typeof(TwoPaneView),
-                new PropertyMetadata(DefaultMinWideModeWidth, OnLayoutPropertyChanged, CoerceMinModeLength));
-
-        public double MinWideModeWidth
-        {
-            get => (double)GetValue(MinWideModeWidthProperty);
-            set => SetValue(MinWideModeWidthProperty, value);
-        }
-
-        public static readonly DependencyProperty MinTallModeHeightProperty =
-            DependencyProperty.Register(
-                nameof(MinTallModeHeight),
-                typeof(double),
-                typeof(TwoPaneView),
-                new PropertyMetadata(DefaultMinTallModeHeight, OnLayoutPropertyChanged, CoerceMinModeLength));
-
-        public double MinTallModeHeight
-        {
-            get => (double)GetValue(MinTallModeHeightProperty);
-            set => SetValue(MinTallModeHeightProperty, value);
         }
 
         public event TypedEventHandler<TwoPaneView, object> ModeChanged;

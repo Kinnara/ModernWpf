@@ -19,7 +19,7 @@ namespace ModernWpf.Controls
     [TemplatePart(Name = LabelsGridName, Type = typeof(Grid))]
     [TemplatePart(Name = TooltipContentPresenterName, Type = typeof(ContentPresenter))]
     [TemplatePart(Name = DetailLabelToolTipName, Type = typeof(ToolTip))]
-    public class AnnotatedScrollBar : Control, IScrollController
+    public partial class AnnotatedScrollBar : Control, IScrollController
     {
         private const string VerticalThumbName = "PART_VerticalThumb";
         private const string VerticalThumbGhostName = "PART_VerticalThumbGhost";
@@ -50,58 +50,6 @@ namespace ModernWpf.Controls
         }
 
         public IScrollController ScrollController => this;
-
-        public static readonly DependencyProperty LabelsProperty =
-            DependencyProperty.Register(
-                nameof(Labels),
-                typeof(IList<AnnotatedScrollBarLabel>),
-                typeof(AnnotatedScrollBar),
-                new FrameworkPropertyMetadata(null, OnLabelsPropertyChanged));
-
-        public IList<AnnotatedScrollBarLabel> Labels
-        {
-            get => (IList<AnnotatedScrollBarLabel>)GetValue(LabelsProperty);
-            set => SetValue(LabelsProperty, value);
-        }
-
-        public static readonly DependencyProperty LabelTemplateProperty =
-            DependencyProperty.Register(
-                nameof(LabelTemplate),
-                typeof(DataTemplate),
-                typeof(AnnotatedScrollBar),
-                new FrameworkPropertyMetadata(null, OnAnnotatedScrollBarPropertyChanged));
-
-        public DataTemplate LabelTemplate
-        {
-            get => (DataTemplate)GetValue(LabelTemplateProperty);
-            set => SetValue(LabelTemplateProperty, value);
-        }
-
-        public static readonly DependencyProperty DetailLabelTemplateProperty =
-            DependencyProperty.Register(
-                nameof(DetailLabelTemplate),
-                typeof(DataTemplate),
-                typeof(AnnotatedScrollBar),
-                new FrameworkPropertyMetadata(null, OnAnnotatedScrollBarPropertyChanged));
-
-        public DataTemplate DetailLabelTemplate
-        {
-            get => (DataTemplate)GetValue(DetailLabelTemplateProperty);
-            set => SetValue(DetailLabelTemplateProperty, value);
-        }
-
-        public static readonly DependencyProperty SmallChangeProperty =
-            DependencyProperty.Register(
-                nameof(SmallChange),
-                typeof(double),
-                typeof(AnnotatedScrollBar),
-                new FrameworkPropertyMetadata(0d));
-
-        public double SmallChange
-        {
-            get => (double)GetValue(SmallChangeProperty);
-            set => SetValue(SmallChangeProperty, value);
-        }
 
         public event TypedEventHandler<AnnotatedScrollBar, AnnotatedScrollBarScrollingEventArgs> Scrolling;
 
