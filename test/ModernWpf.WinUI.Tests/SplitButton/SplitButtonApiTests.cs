@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -271,6 +272,18 @@ public class SplitButtonApiTests
     }
 
     [TestMethod]
+    public void DefaultTemplateDoesNotUseLegacyVisualStateGroupListener()
+    {
+        var repoRoot = FindRepoRoot();
+        var templatePath = Path.Combine(repoRoot, "ModernWpf.Controls", "SplitButton", "SplitButton.xaml");
+        var template = File.ReadAllText(templatePath);
+
+        Assert.IsFalse(
+            template.Contains("VisualStateGroupListener", StringComparison.Ordinal),
+            "SplitButton should use source-shaped VisualStateEx.Setters directly without the legacy listener bridge.");
+    }
+
+    [TestMethod]
     public void VerifyIsCheckedProperty()
     {
         WpfTestHost.Run(() =>
@@ -360,6 +373,24 @@ public class SplitButtonApiTests
 
         return button.Template?.FindName("RootGrid", button) as FrameworkElement
             ?? throw new AssertFailedException("Expected SplitButton inner button template root.");
+    }
+
+    private static string FindRepoRoot()
+    {
+        var directory = new DirectoryInfo(AppContext.BaseDirectory);
+
+        while (directory != null)
+        {
+            if (File.Exists(Path.Combine(directory.FullName, "ModernWpf.sln")))
+            {
+                return directory.FullName;
+            }
+
+            directory = directory.Parent;
+        }
+
+        Assert.Fail("Could not locate ModernWpf.sln from the test output directory.");
+        return string.Empty;
     }
 
     private static void AssertAnimatedIconStateSetters(FrameworkElement stateGroupsRoot)

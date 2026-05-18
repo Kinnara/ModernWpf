@@ -33,6 +33,7 @@ ModernWpf files:
 - Pointer-type tracking now distinguishes mouse and WPF touch input so touch/key activation can route through the source `TouchPressed` and `CheckedTouchPressed` states.
 - `SplitButtonAutomationPeer.Invoke` now routes through the owner `SplitButton.Invoke`, which first tries the primary button invoke provider and falls back to the source primary-click path.
 - The default template now uses the WinUI split-border shape: separate `PrimaryButtonBorder` and `SecondaryButtonBorder`, `PrimaryBackgroundGrid` spanning the separator, and source state setter targets for the two borders instead of the old single full-width `Border`.
+- The default template no longer keeps the stale `VisualStateGroupListener` bridge; common states are represented directly by `VisualStateEx.Setters`, matching the WinUI template's setter-owned state model.
 - `SplitButtonCommandBarStyle` now carries the source command-bar variant states with `VisualStateEx.Setters` instead of the old `VisualStateGroupListener` plus WPF `ControlTemplate.Triggers` relay.
 - `SplitButtonPadding` and `SplitButtonBorderBrushPressed` now match the WinUI 3 source resource values.
 
@@ -47,4 +48,4 @@ ModernWpf files:
 
 ## Verification
 
-Focused tests cover default style/resource values, the source split-border template shape, source and command-bar visual-state setter targets, source flyout placement, and Space/Enter command execution.
+Focused tests cover default style/resource values, the source split-border template shape, source and command-bar visual-state setter targets, removal of the stale default-template listener bridge, source flyout placement, and Space/Enter command execution.

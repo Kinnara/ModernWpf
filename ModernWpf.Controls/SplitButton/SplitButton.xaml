@@ -259,9 +259,6 @@
                                         <ui:VisualStateSetter Target="DividerBackgroundGrid.Background" Value="{DynamicResource SplitButtonBorderBrushCheckedDivider}" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
-                                <ui:VisualStateGroupListener.Listener>
-                                    <ui:VisualStateGroupListener x:Name="CommonStatesListener" />
-                                </ui:VisualStateGroupListener.Listener>
                             </VisualStateGroup>
 
                             <VisualStateGroup x:Name="SecondaryButtonPlacementStates">
