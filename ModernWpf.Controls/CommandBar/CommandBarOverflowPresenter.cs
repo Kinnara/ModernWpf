@@ -3,7 +3,7 @@ using System.Windows.Controls;
 
 namespace ModernWpf.Controls.Primitives
 {
-    public class CommandBarOverflowPresenter : ContentControl
+    public partial class CommandBarOverflowPresenter : ContentControl
     {
         static CommandBarOverflowPresenter()
         {
@@ -16,19 +16,6 @@ namespace ModernWpf.Controls.Primitives
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
         }
-
-        #region CornerRadius
-
-        public static readonly DependencyProperty CornerRadiusProperty =
-            ControlHelper.CornerRadiusProperty.AddOwner(typeof(CommandBarOverflowPresenter));
-
-        public CornerRadius CornerRadius
-        {
-            get => (CornerRadius)GetValue(CornerRadiusProperty);
-            set => SetValue(CornerRadiusProperty, value);
-        }
-
-        #endregion
 
         public override void OnApplyTemplate()
         {

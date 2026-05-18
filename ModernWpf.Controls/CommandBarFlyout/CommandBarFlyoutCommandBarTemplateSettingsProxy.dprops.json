@@ -1,0 +1,13 @@
+{
+  "usings": [
+    "System.Windows"
+  ],
+  "namespace": "ModernWpf.Controls.Primitives",
+  "type": {
+    "declaration": "public partial class",
+    "name": "CommandBarFlyoutCommandBarTemplateSettingsProxy"
+  },
+  "properties": [
+    { "name": "FlyoutTemplateSettings", "type": "CommandBarFlyoutCommandBarTemplateSettings" }
+  ]
+}

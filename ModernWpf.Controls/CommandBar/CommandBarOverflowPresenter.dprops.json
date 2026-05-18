@@ -1,0 +1,14 @@
+{
+  "usings": [
+    "System.Windows",
+    "ModernWpf.Controls"
+  ],
+  "namespace": "ModernWpf.Controls.Primitives",
+  "type": {
+    "declaration": "public partial class",
+    "name": "CommandBarOverflowPresenter"
+  },
+  "properties": [
+    { "name": "CornerRadius", "type": "CornerRadius", "kind": "AddOwner", "sourceProperty": "ControlHelper.CornerRadiusProperty" }
+  ]
+}

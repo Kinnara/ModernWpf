@@ -9,10 +9,12 @@ using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
 {
-    public class AppBarButton : Button, ICommandBarElement, IAppBarButtonElement
+    public partial class AppBarButton : Button, ICommandBarElement, IAppBarButtonElement
     {
         static AppBarButton()
         {
+            InputGestureTextProperty = KeyboardAcceleratorTextOverrideProperty;
+
             DefaultStyleKeyProperty.OverrideMetadata(typeof(AppBarButton),
                 new FrameworkPropertyMetadata(typeof(AppBarButton)));
 
@@ -50,71 +52,6 @@ namespace ModernWpf.Controls
             SetValue(TemplateSettingsPropertyKey, new AppBarButtonTemplateSettings());
         }
 
-        #region UseSystemFocusVisuals
-
-        public static readonly DependencyProperty UseSystemFocusVisualsProperty =
-            FocusVisualHelper.UseSystemFocusVisualsProperty.AddOwner(typeof(AppBarButton));
-
-        public bool UseSystemFocusVisuals
-        {
-            get => (bool)GetValue(UseSystemFocusVisualsProperty);
-            set => SetValue(UseSystemFocusVisualsProperty, value);
-        }
-
-        #endregion
-
-        #region FocusVisualMargin
-
-        public static readonly DependencyProperty FocusVisualMarginProperty =
-            FocusVisualHelper.FocusVisualMarginProperty.AddOwner(typeof(AppBarButton));
-
-        public Thickness FocusVisualMargin
-        {
-            get => (Thickness)GetValue(FocusVisualMarginProperty);
-            set => SetValue(FocusVisualMarginProperty, value);
-        }
-
-        #endregion
-
-        #region CornerRadius
-
-        public static readonly DependencyProperty CornerRadiusProperty =
-            ControlHelper.CornerRadiusProperty.AddOwner(typeof(AppBarButton));
-
-        public CornerRadius CornerRadius
-        {
-            get => (CornerRadius)GetValue(CornerRadiusProperty);
-            set => SetValue(CornerRadiusProperty, value);
-        }
-
-        #endregion
-
-        #region BackgroundSizing
-
-        public static readonly DependencyProperty BackgroundSizingProperty =
-            ControlHelper.BackgroundSizingProperty.AddOwner(typeof(AppBarButton));
-
-        public BackgroundSizing BackgroundSizing
-        {
-            get => (BackgroundSizing)GetValue(BackgroundSizingProperty);
-            set => SetValue(BackgroundSizingProperty, value);
-        }
-
-        #endregion
-
-        #region Flyout
-
-        public static readonly DependencyProperty FlyoutProperty =
-            FlyoutService.FlyoutProperty.AddOwner(
-                typeof(AppBarButton),
-                new FrameworkPropertyMetadata(OnFlyoutChanged));
-
-        public FlyoutBase Flyout
-        {
-            get => (FlyoutBase)GetValue(FlyoutProperty);
-            set => SetValue(FlyoutProperty, value);
-        }
-
         private static void OnFlyoutChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((AppBarButton)d).OnFlyoutChanged(e);
@@ -143,77 +80,11 @@ namespace ModernWpf.Controls
             UpdateVisualState();
         }
 
-        #endregion
-
-        #region Icon
-
-        public static readonly DependencyProperty IconProperty =
-            AppBarElementProperties.IconProperty.AddOwner(typeof(AppBarButton));
-
-        public IconElement Icon
-        {
-            get => (IconElement)GetValue(IconProperty);
-            set => SetValue(IconProperty, value);
-        }
-
-        #endregion
-
-        #region Label
-
-        public static readonly DependencyProperty LabelProperty =
-            AppBarElementProperties.LabelProperty.AddOwner(typeof(AppBarButton));
-
-        public string Label
-        {
-            get => (string)GetValue(LabelProperty);
-            set => SetValue(LabelProperty, value);
-        }
-
-        #endregion
-
-        #region LabelPosition
-
-        public static readonly DependencyProperty LabelPositionProperty =
-            AppBarElementProperties.LabelPositionProperty.AddOwner(typeof(AppBarButton));
-
-        public CommandBarLabelPosition LabelPosition
-        {
-            get => (CommandBarLabelPosition)GetValue(LabelPositionProperty);
-            set => SetValue(LabelPositionProperty, value);
-        }
-
-        #endregion
-
-        #region IsCompact
-
-        public static readonly DependencyProperty IsCompactProperty =
-            AppBarElementProperties.IsCompactProperty.AddOwner(typeof(AppBarButton));
-
-        public bool IsCompact
-        {
-            get => (bool)GetValue(IsCompactProperty);
-            set => SetValue(IsCompactProperty, value);
-        }
-
-        #endregion
-
-        #region IsInOverflow
-
-        public static readonly DependencyProperty IsInOverflowProperty =
-            AppBarElementProperties.IsInOverflowProperty.AddOwner(typeof(AppBarButton));
-
-        public bool IsInOverflow
-        {
-            get => (bool)GetValue(IsInOverflowProperty);
-        }
-
         private static void OnIsInOverflowChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var button = (AppBarButton)d;
             button.UpdateVisualState();
         }
-
-        #endregion
 
         #region ApplicationViewState
 
@@ -304,40 +175,13 @@ namespace ModernWpf.Controls
 
         #region InputGestureText
 
-        public static readonly DependencyProperty KeyboardAcceleratorTextOverrideProperty =
-            AppBarElementProperties.KeyboardAcceleratorTextOverrideProperty.AddOwner(typeof(AppBarButton));
-
-        public static readonly DependencyProperty InputGestureTextProperty =
-            KeyboardAcceleratorTextOverrideProperty;
+        public static readonly DependencyProperty InputGestureTextProperty;
 
         public string InputGestureText
         {
             get => KeyboardAcceleratorTextOverride;
             set => KeyboardAcceleratorTextOverride = value;
         }
-
-        public string KeyboardAcceleratorTextOverride
-        {
-            get => (string)GetValue(KeyboardAcceleratorTextOverrideProperty);
-            set => SetValue(KeyboardAcceleratorTextOverrideProperty, value);
-        }
-
-        #endregion
-
-        #region TemplateSettings
-
-        private static readonly DependencyPropertyKey TemplateSettingsPropertyKey =
-            DependencyProperty.RegisterReadOnly(
-                nameof(TemplateSettings),
-                typeof(AppBarButtonTemplateSettings),
-                typeof(AppBarButton),
-                null);
-
-        public static readonly DependencyProperty TemplateSettingsProperty =
-            TemplateSettingsPropertyKey.DependencyProperty;
-
-        public AppBarButtonTemplateSettings TemplateSettings =>
-            (AppBarButtonTemplateSettings)GetValue(TemplateSettingsProperty);
 
         #endregion
 

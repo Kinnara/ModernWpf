@@ -1,0 +1,39 @@
+{
+  "usings": [
+    "System.Windows",
+    "System.Windows.Controls",
+    "ModernWpf.Controls.Primitives"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "CommandBar"
+  },
+  "properties": [
+    { "name": "Content", "type": "object" },
+    { "name": "ContentTemplate", "type": "DataTemplate" },
+    { "name": "CornerRadius", "type": "CornerRadius", "kind": "AddOwner", "sourceProperty": "ControlHelper.CornerRadiusProperty" },
+    {
+      "name": "IsOpen",
+      "type": "bool",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "false",
+      "options": [ "BindsTwoWayByDefault" ],
+      "changed": "OnIsOpenChanged"
+    },
+    { "name": "CommandBarOverflowPresenterStyle", "type": "Style" },
+    { "name": "CommandBarTemplateSettings", "type": "CommandBarTemplateSettings", "kind": "RegisterReadOnly", "setterAccessibility": "none" },
+    {
+      "name": "DefaultLabelPosition",
+      "type": "CommandBarDefaultLabelPosition",
+      "kind": "AddOwner",
+      "sourceProperty": "AppBarElementProperties.DefaultLabelPositionProperty",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "CommandBarDefaultLabelPosition.Right",
+      "changed": "OnDefaultLabelPositionChanged"
+    },
+    { "name": "IsDynamicOverflowEnabled", "type": "bool", "default": "true", "changed": "OnIsDynamicOverflowEnabledChanged" },
+    { "name": "OverflowButtonVisibility", "type": "CommandBarOverflowButtonVisibility", "default": "CommandBarOverflowButtonVisibility.Auto", "changed": "OnOverflowButtonVisibilityChanged" },
+    { "name": "ParentCommandBar", "type": "CommandBar", "kind": "RegisterAttached", "fieldAccessibility": "private", "generateWrapper": false }
+  ]
+}

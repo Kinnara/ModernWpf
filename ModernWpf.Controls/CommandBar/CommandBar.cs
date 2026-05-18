@@ -18,7 +18,7 @@ namespace ModernWpf.Controls
     [TemplatePart(Name = PrimaryItemsControlName, Type = typeof(Panel))]
     [TemplatePart(Name = SecondaryItemsPanelName, Type = typeof(Panel))]
     [TemplatePart(Name = OverflowPopupName, Type = typeof(Popup))]
-    public class CommandBar : Control
+    public partial class CommandBar : Control
     {
         static CommandBar()
         {
@@ -42,69 +42,6 @@ namespace ModernWpf.Controls
 
             Loaded += OnLoaded;
             SizeChanged += OnSizeChanged;
-        }
-
-        #region Content
-
-        public static readonly DependencyProperty ContentProperty =
-            DependencyProperty.Register(
-                nameof(Content),
-                typeof(object),
-                typeof(CommandBar));
-
-        public object Content
-        {
-            get => GetValue(ContentProperty);
-            set => SetValue(ContentProperty, value);
-        }
-
-        #endregion
-
-        #region ContentTemplate
-
-        public static readonly DependencyProperty ContentTemplateProperty =
-            DependencyProperty.Register(
-                nameof(ContentTemplate),
-                typeof(DataTemplate),
-                typeof(CommandBar));
-
-        public DataTemplate ContentTemplate
-        {
-            get => (DataTemplate)GetValue(ContentTemplateProperty);
-            set => SetValue(ContentTemplateProperty, value);
-        }
-
-        #endregion
-
-        #region CornerRadius
-
-        public static readonly DependencyProperty CornerRadiusProperty =
-            ControlHelper.CornerRadiusProperty.AddOwner(typeof(CommandBar));
-
-        public CornerRadius CornerRadius
-        {
-            get => (CornerRadius)GetValue(CornerRadiusProperty);
-            set => SetValue(CornerRadiusProperty, value);
-        }
-
-        #endregion
-
-        #region IsOpen
-
-        public static readonly DependencyProperty IsOpenProperty =
-            DependencyProperty.Register(
-                nameof(IsOpen),
-                typeof(bool),
-                typeof(CommandBar),
-                new FrameworkPropertyMetadata(
-                    false,
-                    FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
-                    OnIsOpenChanged));
-
-        public bool IsOpen
-        {
-            get => (bool)GetValue(IsOpenProperty);
-            set => SetValue(IsOpenProperty, value);
         }
 
         private static void OnIsOpenChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -132,8 +69,6 @@ namespace ModernWpf.Controls
                 CloseSubMenus(null);
             }
         }
-
-        #endregion
 
         #region PrimaryCommands
 
@@ -179,75 +114,11 @@ namespace ModernWpf.Controls
 
         #endregion
 
-        #region CommandBarOverflowPresenterStyle
-
-        public static readonly DependencyProperty CommandBarOverflowPresenterStyleProperty =
-            DependencyProperty.Register(
-                nameof(CommandBarOverflowPresenterStyle),
-                typeof(Style),
-                typeof(CommandBar),
-                null);
-
-        public Style CommandBarOverflowPresenterStyle
-        {
-            get => (Style)GetValue(CommandBarOverflowPresenterStyleProperty);
-            set => SetValue(CommandBarOverflowPresenterStyleProperty, value);
-        }
-
-        #endregion
-
-        #region CommandBarTemplateSettings
-
-        private static readonly DependencyPropertyKey CommandBarTemplateSettingsPropertyKey =
-            DependencyProperty.RegisterReadOnly(
-                nameof(CommandBarTemplateSettings),
-                typeof(CommandBarTemplateSettings),
-                typeof(CommandBar),
-                null);
-
-        public static readonly DependencyProperty CommandBarTemplateSettingsProperty =
-            CommandBarTemplateSettingsPropertyKey.DependencyProperty;
-
-        public CommandBarTemplateSettings CommandBarTemplateSettings =>
-            (CommandBarTemplateSettings)GetValue(CommandBarTemplateSettingsProperty);
-
-        #endregion
-
-        #region DefaultLabelPosition
-
-        public static readonly DependencyProperty DefaultLabelPositionProperty =
-            AppBarElementProperties.DefaultLabelPositionProperty.AddOwner(
-                typeof(CommandBar),
-                new FrameworkPropertyMetadata(CommandBarDefaultLabelPosition.Right, OnDefaultLabelPositionChanged));
-
-        public CommandBarDefaultLabelPosition DefaultLabelPosition
-        {
-            get => (CommandBarDefaultLabelPosition)GetValue(DefaultLabelPositionProperty);
-            set => SetValue(DefaultLabelPositionProperty, value);
-        }
-
         private static void OnDefaultLabelPositionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var commandBar = (CommandBar)d;
             commandBar.PropagateDefaultLabelPosition();
             commandBar.UpdateUI();
-        }
-
-        #endregion
-
-        #region IsDynamicOverflowEnabled
-
-        public static readonly DependencyProperty IsDynamicOverflowEnabledProperty =
-            DependencyProperty.Register(
-                nameof(IsDynamicOverflowEnabled),
-                typeof(bool),
-                typeof(CommandBar),
-                new PropertyMetadata(true, OnIsDynamicOverflowEnabledChanged));
-
-        public bool IsDynamicOverflowEnabled
-        {
-            get => (bool)GetValue(IsDynamicOverflowEnabledProperty);
-            set => SetValue(IsDynamicOverflowEnabledProperty, value);
         }
 
         private static void OnIsDynamicOverflowEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -257,29 +128,10 @@ namespace ModernWpf.Controls
             commandBar.UpdateUI();
         }
 
-        #endregion
-
-        #region OverflowButtonVisibility
-
-        public static readonly DependencyProperty OverflowButtonVisibilityProperty =
-            DependencyProperty.Register(
-                nameof(OverflowButtonVisibility),
-                typeof(CommandBarOverflowButtonVisibility),
-                typeof(CommandBar),
-                new PropertyMetadata(CommandBarOverflowButtonVisibility.Auto, OnOverflowButtonVisibilityChanged));
-
-        public CommandBarOverflowButtonVisibility OverflowButtonVisibility
-        {
-            get => (CommandBarOverflowButtonVisibility)GetValue(OverflowButtonVisibilityProperty);
-            set => SetValue(OverflowButtonVisibilityProperty, value);
-        }
-
         private static void OnOverflowButtonVisibilityChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((CommandBar)d).UpdateUI();
         }
-
-        #endregion
 
         public event EventHandler<object> Opened;
 
@@ -927,13 +779,6 @@ namespace ModernWpf.Controls
                 return m_overflowSeparator;
             }
         }
-
-        private static readonly DependencyProperty ParentCommandBarProperty =
-            DependencyProperty.RegisterAttached(
-                "ParentCommandBar",
-                typeof(CommandBar),
-                typeof(CommandBar),
-                new PropertyMetadata(null));
 
         private readonly List<ICommandBarElement> m_dynamicPrimaryCommands = new();
         private readonly List<ICommandBarElement> m_dynamicSecondaryCommands = new();

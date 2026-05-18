@@ -1,0 +1,24 @@
+{
+  "usings": [
+    "System.Windows",
+    "ModernWpf.Controls.Primitives"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "AppBarToggleButton"
+  },
+  "properties": [
+    { "name": "UseSystemFocusVisuals", "type": "bool", "kind": "AddOwner", "sourceProperty": "FocusVisualHelper.UseSystemFocusVisualsProperty" },
+    { "name": "FocusVisualMargin", "type": "Thickness", "kind": "AddOwner", "sourceProperty": "FocusVisualHelper.FocusVisualMarginProperty" },
+    { "name": "CornerRadius", "type": "CornerRadius", "kind": "AddOwner", "sourceProperty": "ControlHelper.CornerRadiusProperty" },
+    { "name": "BackgroundSizing", "type": "BackgroundSizing", "kind": "AddOwner", "sourceProperty": "ControlHelper.BackgroundSizingProperty" },
+    { "name": "Icon", "type": "IconElement", "kind": "AddOwner", "sourceProperty": "AppBarElementProperties.IconProperty" },
+    { "name": "Label", "type": "string", "kind": "AddOwner", "sourceProperty": "AppBarElementProperties.LabelProperty" },
+    { "name": "LabelPosition", "type": "CommandBarLabelPosition", "kind": "AddOwner", "sourceProperty": "AppBarElementProperties.LabelPositionProperty" },
+    { "name": "IsCompact", "type": "bool", "kind": "AddOwner", "sourceProperty": "AppBarElementProperties.IsCompactProperty" },
+    { "name": "IsInOverflow", "type": "bool", "kind": "AddOwner", "sourceProperty": "AppBarElementProperties.IsInOverflowProperty", "setterAccessibility": "none" },
+    { "name": "KeyboardAcceleratorTextOverride", "type": "string", "kind": "AddOwner", "sourceProperty": "AppBarElementProperties.KeyboardAcceleratorTextOverrideProperty" },
+    { "name": "TemplateSettings", "type": "AppBarToggleButtonTemplateSettings", "kind": "RegisterReadOnly", "setterAccessibility": "none" }
+  ]
+}

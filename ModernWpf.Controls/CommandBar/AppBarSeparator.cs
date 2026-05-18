@@ -3,7 +3,7 @@ using System.Windows.Controls;
 
 namespace ModernWpf.Controls
 {
-    public class AppBarSeparator : Control, ICommandBarElement, IAppBarElement
+    public partial class AppBarSeparator : Control, ICommandBarElement, IAppBarElement
     {
         static AppBarSeparator()
         {
@@ -16,31 +16,6 @@ namespace ModernWpf.Controls
             VisibilityProperty.OverrideMetadata(typeof(AppBarSeparator),
                 new FrameworkPropertyMetadata(Visibility.Visible, OnVisibilityChanged));
         }
-
-        #region IsCompact
-
-        public static readonly DependencyProperty IsCompactProperty =
-            AppBarElementProperties.IsCompactProperty.AddOwner(typeof(AppBarSeparator));
-
-        public bool IsCompact
-        {
-            get => (bool)GetValue(IsCompactProperty);
-            set => SetValue(IsCompactProperty, value);
-        }
-
-        #endregion
-
-        #region IsInOverflow
-
-        public static readonly DependencyProperty IsInOverflowProperty =
-            AppBarElementProperties.IsInOverflowProperty.AddOwner(typeof(AppBarSeparator));
-
-        public bool IsInOverflow
-        {
-            get => (bool)GetValue(IsInOverflowProperty);
-        }
-
-        #endregion
 
         private string GetApplicationViewState()
         {

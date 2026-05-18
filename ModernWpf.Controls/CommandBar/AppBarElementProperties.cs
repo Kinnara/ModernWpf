@@ -41,16 +41,14 @@ namespace ModernWpf.Controls
         GameController
     }
 
-    internal static class AppBarElementProperties
+    internal static partial class AppBarElementProperties
     {
-        #region Icon
+        static AppBarElementProperties()
+        {
+            InputGestureTextProperty = KeyboardAcceleratorTextOverrideProperty;
+        }
 
-        public static readonly DependencyProperty IconProperty =
-            DependencyProperty.RegisterAttached(
-                "Icon",
-                typeof(IconElement),
-                typeof(AppBarElementProperties),
-                new PropertyMetadata(OnIconChanged));
+        #region Icon
 
         private static void OnIconChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -60,13 +58,6 @@ namespace ModernWpf.Controls
         #endregion
 
         #region Label
-
-        public static readonly DependencyProperty LabelProperty =
-            DependencyProperty.RegisterAttached(
-                "Label",
-                typeof(string),
-                typeof(AppBarElementProperties),
-                new PropertyMetadata(string.Empty, OnLabelChanged, CoerceLabel));
 
         private static void OnLabelChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -99,13 +90,6 @@ namespace ModernWpf.Controls
 
         #region DefaultLabelPosition
 
-        internal static readonly DependencyProperty DefaultLabelPositionProperty =
-            DependencyProperty.RegisterAttached(
-                "DefaultLabelPosition",
-                typeof(CommandBarDefaultLabelPosition),
-                typeof(AppBarElementProperties),
-                new PropertyMetadata(CommandBarDefaultLabelPosition.Bottom, OnDefaultLabelPositionChanged));
-
         private static void OnDefaultLabelPositionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is IAppBarButtonElement appBarButtonElement)
@@ -122,13 +106,6 @@ namespace ModernWpf.Controls
 
         #region LabelPosition
 
-        public static readonly DependencyProperty LabelPositionProperty =
-            DependencyProperty.RegisterAttached(
-                "LabelPosition",
-                typeof(CommandBarLabelPosition),
-                typeof(AppBarElementProperties),
-                new PropertyMetadata(CommandBarLabelPosition.Default, OnLabelPositionChanged));
-
         private static void OnLabelPositionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             (d as IAppBarElement)?.UpdateApplicationViewState();
@@ -139,13 +116,6 @@ namespace ModernWpf.Controls
 
         #region IsCompact
 
-        public static readonly DependencyProperty IsCompactProperty =
-            DependencyProperty.RegisterAttached(
-                "IsCompact",
-                typeof(bool),
-                typeof(AppBarElementProperties),
-                new PropertyMetadata(false, OnIsCompactChanged));
-
         private static void OnIsCompactChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             (d as IAppBarElement)?.UpdateApplicationViewState();
@@ -154,13 +124,6 @@ namespace ModernWpf.Controls
         #endregion
 
         #region IsInOverflow
-
-        internal static readonly DependencyProperty UseOverflowStyleProperty =
-            DependencyProperty.RegisterAttached(
-                "UseOverflowStyle",
-                typeof(bool),
-                typeof(AppBarElementProperties),
-                new PropertyMetadata(false, OnUseOverflowStyleChanged));
 
         internal static bool GetUseOverflowStyle(DependencyObject element)
         {
@@ -176,16 +139,6 @@ namespace ModernWpf.Controls
         {
             d.SetValue(IsInOverflowPropertyKey, e.NewValue);
         }
-
-        internal static readonly DependencyPropertyKey IsInOverflowPropertyKey =
-            DependencyProperty.RegisterAttachedReadOnly(
-                "IsInOverflow",
-                typeof(bool),
-                typeof(AppBarElementProperties),
-                new PropertyMetadata(false, OnIsInOverflowChanged));
-
-        public static readonly DependencyProperty IsInOverflowProperty =
-            IsInOverflowPropertyKey.DependencyProperty;
 
         private static void OnIsInOverflowChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -203,18 +156,7 @@ namespace ModernWpf.Controls
 
         #region InputGestureText
 
-        public static readonly DependencyProperty KeyboardAcceleratorTextOverrideProperty =
-            DependencyProperty.RegisterAttached(
-                "KeyboardAcceleratorTextOverride",
-                typeof(string),
-                typeof(AppBarElementProperties),
-                new PropertyMetadata(
-                    string.Empty,
-                    OnInputGestureTextChanged,
-                    CoerceInputGestureText));
-
-        public static readonly DependencyProperty InputGestureTextProperty =
-            KeyboardAcceleratorTextOverrideProperty;
+        public static readonly DependencyProperty InputGestureTextProperty;
 
         private static void OnInputGestureTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -253,16 +195,6 @@ namespace ModernWpf.Controls
 
         #region HasInputGestureText
 
-        private static readonly DependencyPropertyKey HasInputGestureTextPropertyKey =
-            DependencyProperty.RegisterAttachedReadOnly(
-                "HasInputGestureText",
-                typeof(bool),
-                typeof(AppBarElementProperties),
-                new PropertyMetadata(false, OnHasInputGestureTextChanged));
-
-        public static readonly DependencyProperty HasInputGestureTextProperty =
-            HasInputGestureTextPropertyKey.DependencyProperty;
-
         private static void OnHasInputGestureTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             UpdateShowKeyboardAcceleratorText(d as FrameworkElement);
@@ -276,12 +208,6 @@ namespace ModernWpf.Controls
         #endregion
 
         #region ShowKeyboardAcceleratorText
-
-        internal static readonly DependencyProperty ShowKeyboardAcceleratorTextProperty =
-            DependencyProperty.RegisterAttached(
-                "ShowKeyboardAcceleratorText",
-                typeof(bool),
-                typeof(AppBarElementProperties));
 
         internal static bool GetShowKeyboardAcceleratorText(DependencyObject element)
         {

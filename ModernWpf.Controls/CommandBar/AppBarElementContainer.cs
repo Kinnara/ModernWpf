@@ -5,7 +5,7 @@ using ModernWpf.Media.Animation;
 
 namespace ModernWpf.Controls
 {
-    public class AppBarElementContainer : ContentControl, ICommandBarElement
+    public partial class AppBarElementContainer : ContentControl, ICommandBarElement
     {
         static AppBarElementContainer()
         {
@@ -16,44 +16,6 @@ namespace ModernWpf.Controls
         public AppBarElementContainer()
         {
         }
-
-        #region ContentTransitions
-
-        public static readonly DependencyProperty ContentTransitionsProperty =
-            ControlHelper.ContentTransitionsProperty.AddOwner(typeof(AppBarElementContainer));
-
-        public TransitionCollection ContentTransitions
-        {
-            get => (TransitionCollection)GetValue(ContentTransitionsProperty);
-            set => SetValue(ContentTransitionsProperty, value);
-        }
-
-        #endregion
-
-        #region IsCompact
-
-        public static readonly DependencyProperty IsCompactProperty =
-            AppBarElementProperties.IsCompactProperty.AddOwner(typeof(AppBarElementContainer));
-
-        public bool IsCompact
-        {
-            get => (bool)GetValue(IsCompactProperty);
-            set => SetValue(IsCompactProperty, value);
-        }
-
-        #endregion
-
-        #region IsInOverflow
-
-        public static readonly DependencyProperty IsInOverflowProperty =
-            AppBarElementProperties.IsInOverflowProperty.AddOwner(typeof(AppBarElementContainer));
-
-        public bool IsInOverflow
-        {
-            get => (bool)GetValue(IsInOverflowProperty);
-        }
-
-        #endregion
 
     }
 }

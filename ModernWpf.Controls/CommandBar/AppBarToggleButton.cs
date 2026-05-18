@@ -9,10 +9,12 @@ using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
 {
-    public class AppBarToggleButton : ToggleButton, ICommandBarElement, IAppBarButtonElement
+    public partial class AppBarToggleButton : ToggleButton, ICommandBarElement, IAppBarButtonElement
     {
         static AppBarToggleButton()
         {
+            InputGestureTextProperty = KeyboardAcceleratorTextOverrideProperty;
+
             DefaultStyleKeyProperty.OverrideMetadata(typeof(AppBarToggleButton),
                 new FrameworkPropertyMetadata(typeof(AppBarToggleButton)));
 
@@ -53,127 +55,11 @@ namespace ModernWpf.Controls
             SetValue(TemplateSettingsPropertyKey, new AppBarToggleButtonTemplateSettings());
         }
 
-        #region UseSystemFocusVisuals
-
-        public static readonly DependencyProperty UseSystemFocusVisualsProperty =
-            FocusVisualHelper.UseSystemFocusVisualsProperty.AddOwner(typeof(AppBarToggleButton));
-
-        public bool UseSystemFocusVisuals
-        {
-            get => (bool)GetValue(UseSystemFocusVisualsProperty);
-            set => SetValue(UseSystemFocusVisualsProperty, value);
-        }
-
-        #endregion
-
-        #region FocusVisualMargin
-
-        public static readonly DependencyProperty FocusVisualMarginProperty =
-            FocusVisualHelper.FocusVisualMarginProperty.AddOwner(typeof(AppBarToggleButton));
-
-        public Thickness FocusVisualMargin
-        {
-            get => (Thickness)GetValue(FocusVisualMarginProperty);
-            set => SetValue(FocusVisualMarginProperty, value);
-        }
-
-        #endregion
-
-        #region CornerRadius
-
-        public static readonly DependencyProperty CornerRadiusProperty =
-            ControlHelper.CornerRadiusProperty.AddOwner(typeof(AppBarToggleButton));
-
-        public CornerRadius CornerRadius
-        {
-            get => (CornerRadius)GetValue(CornerRadiusProperty);
-            set => SetValue(CornerRadiusProperty, value);
-        }
-
-        #endregion
-
-        #region BackgroundSizing
-
-        public static readonly DependencyProperty BackgroundSizingProperty =
-            ControlHelper.BackgroundSizingProperty.AddOwner(typeof(AppBarToggleButton));
-
-        public BackgroundSizing BackgroundSizing
-        {
-            get => (BackgroundSizing)GetValue(BackgroundSizingProperty);
-            set => SetValue(BackgroundSizingProperty, value);
-        }
-
-        #endregion
-
-        #region Icon
-
-        public static readonly DependencyProperty IconProperty =
-            AppBarElementProperties.IconProperty.AddOwner(typeof(AppBarToggleButton));
-
-        public IconElement Icon
-        {
-            get => (IconElement)GetValue(IconProperty);
-            set => SetValue(IconProperty, value);
-        }
-
-        #endregion
-
-        #region Label
-
-        public static readonly DependencyProperty LabelProperty =
-            AppBarElementProperties.LabelProperty.AddOwner(typeof(AppBarToggleButton));
-
-        public string Label
-        {
-            get => (string)GetValue(LabelProperty);
-            set => SetValue(LabelProperty, value);
-        }
-
-        #endregion
-
-        #region LabelPosition
-
-        public static readonly DependencyProperty LabelPositionProperty =
-            AppBarElementProperties.LabelPositionProperty.AddOwner(typeof(AppBarToggleButton));
-
-        public CommandBarLabelPosition LabelPosition
-        {
-            get => (CommandBarLabelPosition)GetValue(LabelPositionProperty);
-            set => SetValue(LabelPositionProperty, value);
-        }
-
-        #endregion
-
-        #region IsCompact
-
-        public static readonly DependencyProperty IsCompactProperty =
-            AppBarElementProperties.IsCompactProperty.AddOwner(typeof(AppBarToggleButton));
-
-        public bool IsCompact
-        {
-            get => (bool)GetValue(IsCompactProperty);
-            set => SetValue(IsCompactProperty, value);
-        }
-
-        #endregion
-
-        #region IsInOverflow
-
-        public static readonly DependencyProperty IsInOverflowProperty =
-            AppBarElementProperties.IsInOverflowProperty.AddOwner(typeof(AppBarToggleButton));
-
-        public bool IsInOverflow
-        {
-            get => (bool)GetValue(IsInOverflowProperty);
-        }
-
         private static void OnIsInOverflowChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var button = (AppBarToggleButton)d;
             button.UpdateVisualState();
         }
-
-        #endregion
 
         #region ApplicationViewState
 
@@ -250,40 +136,13 @@ namespace ModernWpf.Controls
 
         #region InputGestureText
 
-        public static readonly DependencyProperty KeyboardAcceleratorTextOverrideProperty =
-            AppBarElementProperties.KeyboardAcceleratorTextOverrideProperty.AddOwner(typeof(AppBarToggleButton));
-
-        public static readonly DependencyProperty InputGestureTextProperty =
-            KeyboardAcceleratorTextOverrideProperty;
+        public static readonly DependencyProperty InputGestureTextProperty;
 
         public string InputGestureText
         {
             get => KeyboardAcceleratorTextOverride;
             set => KeyboardAcceleratorTextOverride = value;
         }
-
-        public string KeyboardAcceleratorTextOverride
-        {
-            get => (string)GetValue(KeyboardAcceleratorTextOverrideProperty);
-            set => SetValue(KeyboardAcceleratorTextOverrideProperty, value);
-        }
-
-        #endregion
-
-        #region TemplateSettings
-
-        private static readonly DependencyPropertyKey TemplateSettingsPropertyKey =
-            DependencyProperty.RegisterReadOnly(
-                nameof(TemplateSettings),
-                typeof(AppBarToggleButtonTemplateSettings),
-                typeof(AppBarToggleButton),
-                null);
-
-        public static readonly DependencyProperty TemplateSettingsProperty =
-            TemplateSettingsPropertyKey.DependencyProperty;
-
-        public AppBarToggleButtonTemplateSettings TemplateSettings =>
-            (AppBarToggleButtonTemplateSettings)GetValue(TemplateSettingsProperty);
 
         #endregion
 

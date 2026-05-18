@@ -1,0 +1,26 @@
+{
+  "usings": [
+    "System.Windows",
+    "System.Windows.Controls.Primitives",
+    "ModernWpf.Controls.Primitives"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "AppBarButton"
+  },
+  "properties": [
+    { "name": "UseSystemFocusVisuals", "type": "bool", "kind": "AddOwner", "sourceProperty": "FocusVisualHelper.UseSystemFocusVisualsProperty" },
+    { "name": "FocusVisualMargin", "type": "Thickness", "kind": "AddOwner", "sourceProperty": "FocusVisualHelper.FocusVisualMarginProperty" },
+    { "name": "CornerRadius", "type": "CornerRadius", "kind": "AddOwner", "sourceProperty": "ControlHelper.CornerRadiusProperty" },
+    { "name": "BackgroundSizing", "type": "BackgroundSizing", "kind": "AddOwner", "sourceProperty": "ControlHelper.BackgroundSizingProperty" },
+    { "name": "Flyout", "type": "FlyoutBase", "kind": "AddOwner", "sourceProperty": "FlyoutService.FlyoutProperty", "metadataType": "FrameworkPropertyMetadata", "changed": "OnFlyoutChanged" },
+    { "name": "Icon", "type": "IconElement", "kind": "AddOwner", "sourceProperty": "AppBarElementProperties.IconProperty" },
+    { "name": "Label", "type": "string", "kind": "AddOwner", "sourceProperty": "AppBarElementProperties.LabelProperty" },
+    { "name": "LabelPosition", "type": "CommandBarLabelPosition", "kind": "AddOwner", "sourceProperty": "AppBarElementProperties.LabelPositionProperty" },
+    { "name": "IsCompact", "type": "bool", "kind": "AddOwner", "sourceProperty": "AppBarElementProperties.IsCompactProperty" },
+    { "name": "IsInOverflow", "type": "bool", "kind": "AddOwner", "sourceProperty": "AppBarElementProperties.IsInOverflowProperty", "setterAccessibility": "none" },
+    { "name": "KeyboardAcceleratorTextOverride", "type": "string", "kind": "AddOwner", "sourceProperty": "AppBarElementProperties.KeyboardAcceleratorTextOverrideProperty" },
+    { "name": "TemplateSettings", "type": "AppBarButtonTemplateSettings", "kind": "RegisterReadOnly", "setterAccessibility": "none" }
+  ]
+}

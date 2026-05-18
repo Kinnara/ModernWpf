@@ -54,11 +54,15 @@ as a WinUI-style validation/coercion path that cannot be expressed as a guard.
 ## Conversion Rules
 
 - Keep generated files in source control.
-- Convert one control or template-settings type at a time.
+- Convert one coherent control/family slice or template-settings type at a
+  time.
 - Preserve public field names, CLR wrapper names, default values, callback
   routing, setter accessibility, and readonly key accessibility.
 - Keep unusual hand-written behavior in the non-generated partial class until
   the generator explicitly supports that pattern.
+- If a legacy dependency-property alias must point at a generated field, assign
+  the readonly alias in the type's static constructor. Do not use a field
+  initializer that depends on static initialization order across partial files.
 - For WinUI parity work, copy source defaults/callback intent into the manifest
   during the control audit; do not treat the manifest as a replacement for the
   source comparison.
@@ -82,6 +86,12 @@ The Repeater layout dependency properties are manifest-backed:
 `ColumnMajorUniformToLargestGridLayout`, `FlowLayout`, `StackLayout`, and
 `UniformGridLayout`.
 
+The CommandBar/AppBar family dependency properties are manifest-backed:
+`AppBarButton`, `AppBarElementContainer`, `AppBarElementProperties`,
+`AppBarSeparator`, `AppBarToggleButton`, `CommandBar`,
+`CommandBarOverflowPresenter`, `CommandBarFlyoutCommandBar`, and
+`CommandBarFlyoutCommandBarTemplateSettingsProxy`.
+
 WinUI has two generated-property pools that matter for ModernWpf parity:
 MUX generated files under `src/controls/dev/Generated/*.properties.*` and
 framework generated files under `src/dxaml/xcp/dxaml/lib/winrtgeneratedclasses`
@@ -89,15 +99,13 @@ framework generated files under `src/dxaml/xcp/dxaml/lib/winrtgeneratedclasses`
 `*.properties.*` misses framework-generated types such as
 `AppBarButtonTemplateSettings` and `SplitViewTemplateSettings`.
 
-After the template-settings and Repeater layout conversions, the remaining
-ModernWpf types with inline DP/AddOwner sites whose type names match generated
-WinUI sources are 49 types / 351 sites:
+After the template-settings, Repeater layout, and CommandBar/AppBar family
+conversions, the remaining ModernWpf types with inline DP/AddOwner sites whose
+type names match generated WinUI sources are 42 types / 302 sites:
 `AnnotatedScrollBar`, `AutoSuggestBoxHelper`, `BreadcrumbBar`, `ColorPicker`,
-`ColorPickerSlider`, `ColorSpectrum`, `AppBarButton`,
-`AppBarElementContainer`, `AppBarSeparator`, `AppBarToggleButton`,
-`CommandBar`, `CommandBarOverflowPresenter`, `CommandBarFlyoutCommandBar`,
-`ContentDialog`, `Flyout`, `FlyoutBase`, `FlyoutPresenter`,
-`HyperlinkButton`, `InfoBadge`, `InfoBar`, `InfoBarPanel`, `LayoutPanel`,
+`ColorPickerSlider`, `ColorSpectrum`, `ContentDialog`, `Flyout`,
+`FlyoutBase`, `FlyoutPresenter`, `HyperlinkButton`, `InfoBadge`, `InfoBar`,
+`InfoBarPanel`, `LayoutPanel`,
 `ListViewBase`, `ListViewBaseItem`, `MenuBarItem`, `MenuFlyout`,
 `MenuFlyoutPresenter`, `NavigationViewItemBase`,
 `NavigationViewItemPresenter`, `PagerControl`, `ParallaxView`, `PipsPager`,
