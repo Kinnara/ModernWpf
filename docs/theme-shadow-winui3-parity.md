@@ -18,9 +18,12 @@ ModernWpf files:
 - `ModernWpf.Controls\Flyout\FlyoutPresenter.xaml`
 - `ModernWpf.Controls\CommandBar\CommandBar.xaml`
 - `ModernWpf.Controls\AutoSuggestBox\AutoSuggestBox.xaml`
+- `ModernWpf.Controls\NavigationView\NavigationView.xaml`
+- `ModernWpf\ModernWpfControlsResources.xaml`
 - `ModernWpf.Controls\ContentDialog\ContentDialog.xaml`
 - `test\ModernWpf.WinUI.Tests\LayoutCompatibility\LayoutCompatibilityApiTests.cs`
 - `test\ModernWpf.WinUI.Tests\NumberBox\NumberBoxApiTests.cs`
+- `test\ModernWpf.WinUI.Tests\NavigationView\NavigationViewApiTests.cs`
 
 ## Current WPF Renderer
 
@@ -44,10 +47,12 @@ WinUI has a second, Popup-owned inset path for windowed popups. The Popup window
 
 `FlyoutPresenter`, `AutoSuggestBox` suggestions, and `CommandBar` overflow now opt into `Medium` so the WPF popup margin tracks WinUI's windowed Popup gutter instead of the full renderer blur padding. `ContentDialog` remains on default padding because it is not a WPF Popup host in ModernWpf.
 
+`NavigationView` uses the same renderer for the source `ShadowCaster` template part. `PaneOverlayShadowDepth` is now defined as `16` from the WinUI theme resources, and the WPF `ShadowCaster` remains a state-targeted template part while rendering the source depth profile through `ThemeShadowChrome`.
+
 ## Remaining Gap
 
-This is still a WPF substitution, not a literal WinUI compositor port. The depth, blur, offset, inset, and light/dark opacity constants now come from WinUI source, but the final rasterization uses WPF software alpha masks rather than compositor `DropShadow` visuals. The next shadow parity round should render the same flyout/NumberBox/ContentDialog samples in WinUI and ModernWpf, compare alpha bounds and peak opacity, then adjust only the WPF rasterization details that differ from the source compositor output.
+This is still a WPF substitution, not a literal WinUI compositor port. The depth, blur, offset, inset, and light/dark opacity constants now come from WinUI source, but the final rasterization uses WPF software alpha masks rather than compositor `DropShadow` visuals. The next shadow parity round should render the same flyout/NumberBox/ContentDialog/NavigationView samples in WinUI and ModernWpf, compare alpha bounds and peak opacity, then adjust only the WPF rasterization details that differ from the source compositor output.
 
 ## Verification
 
-Focused tests cover the renderer path, the removal of `BlurEffect` border shadow internals, computed depth padding, source windowed Popup insets, popup-host template opt-ins, and the NumberBox popup's source `NumberBoxPopupShadowDepth=16` path.
+Focused tests cover the renderer path, the removal of `BlurEffect` border shadow internals, computed depth padding, source windowed Popup insets, popup-host template opt-ins, the NumberBox popup's source `NumberBoxPopupShadowDepth=16` path, and NavigationView's source `PaneOverlayShadowDepth=16` shadow caster.

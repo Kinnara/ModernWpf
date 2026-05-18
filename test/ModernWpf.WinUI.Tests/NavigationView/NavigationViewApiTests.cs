@@ -9,6 +9,7 @@ using System.Windows.Shapes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf;
 using ModernWpf.Automation.Peers;
+using ModernWpf.Controls.Primitives;
 using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
 
@@ -159,11 +160,12 @@ public class NavigationViewApiTests
             host.UpdateLayout();
 
             var splitView = FindNamedDescendant<ModernWpf.Controls.SplitView>(navView, "RootSplitView");
-            var shadowCaster = FindNamedDescendant<Grid>(navView, "ShadowCaster");
+            var shadowCaster = FindNamedDescendant<ThemeShadowChrome>(navView, "ShadowCaster");
 
             Assert.AreEqual(100.0, navView.TemplateSettings.OpenPaneLength);
             Assert.AreEqual(100.0, splitView.OpenPaneLength);
             Assert.AreEqual(100.0, shadowCaster.Width);
+            AssertNavigationViewPaneOverlayShadow(shadowCaster);
 
             navView.Width = 500.0;
             host.UpdateLayout();
@@ -1680,7 +1682,7 @@ public class NavigationViewApiTests
 
             var root = FindNamedDescendant<Grid>(navView, "RootGrid");
             var splitView = FindNamedDescendant<ModernWpf.Controls.SplitView>(navView, "RootSplitView");
-            var shadowCaster = FindNamedDescendant<Grid>(navView, "ShadowCaster");
+            var shadowCaster = FindNamedDescendant<ThemeShadowChrome>(navView, "ShadowCaster");
             var paneToggleButtonGrid = FindNamedDescendant<FrameworkElement>(navView, "PaneToggleButtonGrid");
 
             AssertStateSetter(root, "PaneVisibilityGroup", "PaneCollapsed",
@@ -1721,7 +1723,7 @@ public class NavigationViewApiTests
 
             var root = FindNamedDescendant<Grid>(navView, "RootGrid");
             var paneContentGrid = FindNamedDescendant<FrameworkElement>(navView, "PaneContentGrid");
-            var shadowCaster = FindNamedDescendant<Grid>(navView, "ShadowCaster");
+            var shadowCaster = FindNamedDescendant<ThemeShadowChrome>(navView, "ShadowCaster");
             var paneTitleTextBlock = FindNamedDescendant<FrameworkElement>(navView, "PaneTitleTextBlock");
             var paneHeaderContentBorder = FindNamedDescendant<FrameworkElement>(navView, "PaneHeaderContentBorder");
             var paneCustomContentBorder = FindNamedDescendant<FrameworkElement>(navView, "PaneCustomContentBorder");
@@ -1880,11 +1882,12 @@ public class NavigationViewApiTests
             var root = FindNamedDescendant<Grid>(navView, "RootGrid");
             var splitView = (ModernWpf.Controls.SplitView)navView.Template.FindName("RootSplitView", navView);
             var paneContentGrid = (Border)navView.Template.FindName("PaneContentGrid", navView);
-            var shadowCaster = (Grid)navView.Template.FindName("ShadowCaster", navView);
+            var shadowCaster = (ThemeShadowChrome)navView.Template.FindName("ShadowCaster", navView);
             var shadowCasterTransform = navView.Template.FindName("ShadowCasterTransform", navView);
             Assert.IsNotNull(splitView);
             Assert.IsNotNull(paneContentGrid);
             Assert.IsNotNull(shadowCaster);
+            AssertNavigationViewPaneOverlayShadow(shadowCaster);
             Assert.IsInstanceOfType(shadowCasterTransform, typeof(TranslateTransform));
 
             AssertStateSetter(root, "PaneOverlayGroup", "PaneNotOverlaying",
@@ -2073,6 +2076,13 @@ public class NavigationViewApiTests
             AssertThemeResourceReference("HighContrast", "TopNavigationViewItemForeground", "NavigationViewItemForeground");
             AssertThemeResourceReference("HighContrast", "NavigationViewBackButtonBackground", "SystemControlBackgroundBaseLowBrush");
         });
+    }
+
+    private static void AssertNavigationViewPaneOverlayShadow(ThemeShadowChrome shadowCaster)
+    {
+        Assert.AreEqual(16.0, shadowCaster.Depth);
+        Assert.AreEqual(ThemeShadowChromeWindowedPopupInsetMode.Default, shadowCaster.WindowedPopupInsetMode);
+        Assert.AreEqual(new Thickness(8, 4, 8, 12), shadowCaster.ShadowPadding);
     }
 
     private static object GetToolTipContent(FrameworkElement element)

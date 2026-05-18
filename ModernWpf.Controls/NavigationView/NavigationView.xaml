@@ -1682,16 +1682,18 @@
                                 </local:SplitView.Content>
                             </local:SplitView>
 
-                            <Grid
+                            <ui:ThemeShadowChrome
                                 x:Name="ShadowCaster"
                                 Grid.RowSpan="2"
                                 Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.OpenPaneLength}"
                                 HorizontalAlignment="Left"
+                                Depth="{DynamicResource PaneOverlayShadowDepth}"
+                                IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}"
                                 IsHitTestVisible="False">
-                                <Grid.RenderTransform>
+                                <ui:ThemeShadowChrome.RenderTransform>
                                     <TranslateTransform x:Name="ShadowCasterTransform" />
-                                </Grid.RenderTransform>
-                            </Grid>
+                                </ui:ThemeShadowChrome.RenderTransform>
+                            </ui:ThemeShadowChrome>
 
                         </Grid>
                     </Grid>
