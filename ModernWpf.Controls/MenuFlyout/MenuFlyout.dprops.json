@@ -1,0 +1,17 @@
+{
+  "usings": [
+    "System.Windows"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "MenuFlyout"
+  },
+  "properties": [
+    {
+      "name": "MenuFlyoutPresenterStyle",
+      "type": "Style",
+      "changed": "OnMenuFlyoutPresenterStyleChanged"
+    }
+  ]
+}

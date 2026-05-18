@@ -8,7 +8,7 @@ using ModernWpf.Media.Animation;
 
 namespace ModernWpf.Controls
 {
-    public class FlyoutPresenter : ContentControl
+    public partial class FlyoutPresenter : ContentControl
     {
         static FlyoutPresenter()
         {
@@ -18,49 +18,6 @@ namespace ModernWpf.Controls
         public FlyoutPresenter()
         {
         }
-
-        #region CornerRadius
-
-        public static readonly DependencyProperty CornerRadiusProperty =
-            ControlHelper.CornerRadiusProperty.AddOwner(typeof(FlyoutPresenter));
-
-        public CornerRadius CornerRadius
-        {
-            get => (CornerRadius)GetValue(CornerRadiusProperty);
-            set => SetValue(CornerRadiusProperty, value);
-        }
-
-        #endregion
-
-        #region ContentTransitions
-
-        public static readonly DependencyProperty ContentTransitionsProperty =
-            ControlHelper.ContentTransitionsProperty.AddOwner(typeof(FlyoutPresenter));
-
-        public TransitionCollection ContentTransitions
-        {
-            get => (TransitionCollection)GetValue(ContentTransitionsProperty);
-            set => SetValue(ContentTransitionsProperty, value);
-        }
-
-        #endregion
-
-        #region IsDefaultShadowEnabled
-
-        public static readonly DependencyProperty IsDefaultShadowEnabledProperty =
-            DependencyProperty.Register(
-                nameof(IsDefaultShadowEnabled),
-                typeof(bool),
-                typeof(FlyoutPresenter),
-                new PropertyMetadata(true));
-
-        public bool IsDefaultShadowEnabled
-        {
-            get => (bool)GetValue(IsDefaultShadowEnabledProperty);
-            set => SetValue(IsDefaultShadowEnabledProperty, value);
-        }
-
-        #endregion
 
         protected override void OnKeyDown(KeyEventArgs e)
         {

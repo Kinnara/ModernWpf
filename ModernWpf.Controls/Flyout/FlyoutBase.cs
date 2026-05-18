@@ -12,43 +12,13 @@ using System.Windows.Threading;
 
 namespace ModernWpf.Controls.Primitives
 {
-    public abstract class FlyoutBase : DependencyObject
+    public abstract partial class FlyoutBase : DependencyObject
     {
         protected FlyoutBase()
         {
         }
 
-        #region Placement
-
-        public static readonly DependencyProperty PlacementProperty =
-            DependencyProperty.Register(
-                nameof(Placement),
-                typeof(FlyoutPlacementMode),
-                typeof(FlyoutBase),
-                new PropertyMetadata(FlyoutPlacementMode.Top));
-
-        public FlyoutPlacementMode Placement
-        {
-            get => (FlyoutPlacementMode)GetValue(PlacementProperty);
-            set => SetValue(PlacementProperty, value);
-        }
-
-        #endregion
-
         #region AreOpenCloseAnimationsEnabled
-
-        public static readonly DependencyProperty AreOpenCloseAnimationsEnabledProperty =
-            DependencyProperty.Register(
-                nameof(AreOpenCloseAnimationsEnabled),
-                typeof(bool),
-                typeof(FlyoutBase),
-                new PropertyMetadata(true, OnAreOpenCloseAnimationsEnabledChanged));
-
-        public bool AreOpenCloseAnimationsEnabled
-        {
-            get => (bool)GetValue(AreOpenCloseAnimationsEnabledProperty);
-            set => SetValue(AreOpenCloseAnimationsEnabledProperty, value);
-        }
 
         private static void OnAreOpenCloseAnimationsEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -62,42 +32,9 @@ namespace ModernWpf.Controls.Primitives
 
         #endregion
 
-        #region ShouldConstrainToRootBounds
-
-        public static readonly DependencyProperty ShouldConstrainToRootBoundsProperty =
-            DependencyProperty.Register(
-                nameof(ShouldConstrainToRootBounds),
-                typeof(bool),
-                typeof(FlyoutBase),
-                new PropertyMetadata(true));
-
-        public bool ShouldConstrainToRootBounds
-        {
-            get => (bool)GetValue(ShouldConstrainToRootBoundsProperty);
-            set => SetValue(ShouldConstrainToRootBoundsProperty, value);
-        }
-
         public bool IsConstrainedToRootBounds => ShouldConstrainToRootBounds;
 
-        #endregion
-
         #region IsOpen
-
-        private static readonly DependencyPropertyKey IsOpenPropertyKey =
-            DependencyProperty.RegisterReadOnly(
-                nameof(IsOpen),
-                typeof(bool),
-                typeof(FlyoutBase),
-                new PropertyMetadata(false, OnIsOpenChanged));
-
-        public static readonly DependencyProperty IsOpenProperty =
-            IsOpenPropertyKey.DependencyProperty;
-
-        public bool IsOpen
-        {
-            get => (bool)GetValue(IsOpenProperty);
-            internal set => SetValue(IsOpenPropertyKey, value);
-        }
 
         private static void OnIsOpenChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -143,40 +80,7 @@ namespace ModernWpf.Controls.Primitives
 
         #endregion
 
-        #region Target
-
-        private static readonly DependencyPropertyKey TargetPropertyKey =
-            DependencyProperty.RegisterReadOnly(
-                nameof(Target),
-                typeof(FrameworkElement),
-                typeof(FlyoutBase),
-                new PropertyMetadata(null));
-
-        public static readonly DependencyProperty TargetProperty =
-            TargetPropertyKey.DependencyProperty;
-
-        public FrameworkElement Target
-        {
-            get => (FrameworkElement)GetValue(TargetProperty);
-            internal set => SetValue(TargetPropertyKey, value);
-        }
-
-        #endregion
-
         #region ShowMode
-
-        public static readonly DependencyProperty ShowModeProperty =
-            DependencyProperty.Register(
-                nameof(ShowMode),
-                typeof(FlyoutShowMode),
-                typeof(FlyoutBase),
-                new PropertyMetadata(FlyoutShowMode.Standard, OnShowModeChanged));
-
-        public FlyoutShowMode ShowMode
-        {
-            get => (FlyoutShowMode)GetValue(ShowModeProperty);
-            set => SetValue(ShowModeProperty, value);
-        }
 
         private static void OnShowModeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -186,12 +90,6 @@ namespace ModernWpf.Controls.Primitives
         #endregion
 
         #region AttachedFlyout
-
-        public static readonly DependencyProperty AttachedFlyoutProperty =
-            DependencyProperty.RegisterAttached(
-                "AttachedFlyout",
-                typeof(FlyoutBase),
-                typeof(FlyoutBase));
 
         public static FlyoutBase GetAttachedFlyout(FrameworkElement element)
         {

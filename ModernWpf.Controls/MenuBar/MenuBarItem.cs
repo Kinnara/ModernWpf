@@ -15,7 +15,7 @@ using ModernWpf.Controls.Primitives;
 namespace ModernWpf.Controls
 {
     [ContentProperty(nameof(Items))]
-    public class MenuBarItem : Control
+    public partial class MenuBarItem : Control
     {
         static MenuBarItem()
         {
@@ -35,62 +35,6 @@ namespace ModernWpf.Controls
         }
 
         public ObservableCollection<object> Items { get; }
-
-        #region CornerRadius
-
-        public static readonly DependencyProperty CornerRadiusProperty =
-            ControlHelper.CornerRadiusProperty.AddOwner(typeof(MenuBarItem));
-
-        public CornerRadius CornerRadius
-        {
-            get => (CornerRadius)GetValue(CornerRadiusProperty);
-            set => SetValue(CornerRadiusProperty, value);
-        }
-
-        #endregion
-
-        #region UseSystemFocusVisuals
-
-        public static readonly DependencyProperty UseSystemFocusVisualsProperty =
-            FocusVisualHelper.UseSystemFocusVisualsProperty.AddOwner(typeof(MenuBarItem));
-
-        public bool UseSystemFocusVisuals
-        {
-            get => (bool)GetValue(UseSystemFocusVisualsProperty);
-            set => SetValue(UseSystemFocusVisualsProperty, value);
-        }
-
-        #endregion
-
-        #region FocusVisualMargin
-
-        public static readonly DependencyProperty FocusVisualMarginProperty =
-            FocusVisualHelper.FocusVisualMarginProperty.AddOwner(typeof(MenuBarItem));
-
-        public Thickness FocusVisualMargin
-        {
-            get => (Thickness)GetValue(FocusVisualMarginProperty);
-            set => SetValue(FocusVisualMarginProperty, value);
-        }
-
-        #endregion
-
-        #region Title
-
-        public static readonly DependencyProperty TitleProperty =
-            DependencyProperty.Register(
-                nameof(Title),
-                typeof(string),
-                typeof(MenuBarItem),
-                new PropertyMetadata(string.Empty));
-
-        public string Title
-        {
-            get => (string)GetValue(TitleProperty);
-            set => SetValue(TitleProperty, value);
-        }
-
-        #endregion
 
         internal bool IsFlyoutOpen => _isFlyoutOpen;
 

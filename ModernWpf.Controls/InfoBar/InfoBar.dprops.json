@@ -1,0 +1,97 @@
+{
+  "usings": [
+    "System.Windows",
+    "System.Windows.Controls",
+    "System.Windows.Controls.Primitives",
+    "System.Windows.Input",
+    "ModernWpf.Controls.Primitives"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "InfoBar"
+  },
+  "properties": [
+    {
+      "name": "IsOpen",
+      "type": "bool",
+      "default": "false",
+      "changed": "OnIsOpenPropertyChanged"
+    },
+    {
+      "name": "Title",
+      "type": "string",
+      "default": "string.Empty",
+      "changed": "OnContentPositionPropertyChanged"
+    },
+    {
+      "name": "Message",
+      "type": "string",
+      "default": "string.Empty",
+      "changed": "OnContentPositionPropertyChanged"
+    },
+    {
+      "name": "Severity",
+      "type": "InfoBarSeverity",
+      "default": "InfoBarSeverity.Informational",
+      "changed": "OnSeverityPropertyChanged"
+    },
+    {
+      "name": "IconSource",
+      "type": "IconSource",
+      "default": "null",
+      "changed": "OnIconSourcePropertyChanged"
+    },
+    {
+      "name": "IsIconVisible",
+      "type": "bool",
+      "default": "true",
+      "changed": "OnIsIconVisiblePropertyChanged"
+    },
+    {
+      "name": "IsClosable",
+      "type": "bool",
+      "default": "true",
+      "changed": "OnIsClosablePropertyChanged"
+    },
+    {
+      "name": "CloseButtonStyle",
+      "type": "Style"
+    },
+    {
+      "name": "CloseButtonCommand",
+      "type": "ICommand"
+    },
+    {
+      "name": "CloseButtonCommandParameter",
+      "type": "object"
+    },
+    {
+      "name": "ActionButton",
+      "type": "ButtonBase",
+      "default": "null",
+      "changed": "OnContentPositionPropertyChanged"
+    },
+    {
+      "name": "Content",
+      "type": "object"
+    },
+    {
+      "name": "ContentTemplate",
+      "type": "DataTemplate"
+    },
+    {
+      "name": "CornerRadius",
+      "type": "CornerRadius",
+      "kind": "AddOwner",
+      "sourceProperty": "ControlHelper.CornerRadiusProperty"
+    },
+    {
+      "name": "TemplateSettings",
+      "type": "InfoBarTemplateSettings",
+      "kind": "RegisterReadOnly",
+      "default": "null",
+      "setterAccessibility": "none"
+    }
+  ]
+}

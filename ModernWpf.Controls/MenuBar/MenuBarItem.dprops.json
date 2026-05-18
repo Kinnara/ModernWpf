@@ -1,0 +1,36 @@
+{
+  "usings": [
+    "System.Windows",
+    "ModernWpf.Controls.Primitives"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "MenuBarItem"
+  },
+  "properties": [
+    {
+      "name": "CornerRadius",
+      "type": "CornerRadius",
+      "kind": "AddOwner",
+      "sourceProperty": "ControlHelper.CornerRadiusProperty"
+    },
+    {
+      "name": "UseSystemFocusVisuals",
+      "type": "bool",
+      "kind": "AddOwner",
+      "sourceProperty": "FocusVisualHelper.UseSystemFocusVisualsProperty"
+    },
+    {
+      "name": "FocusVisualMargin",
+      "type": "Thickness",
+      "kind": "AddOwner",
+      "sourceProperty": "FocusVisualHelper.FocusVisualMarginProperty"
+    },
+    {
+      "name": "Title",
+      "type": "string",
+      "default": "string.Empty"
+    }
+  ]
+}

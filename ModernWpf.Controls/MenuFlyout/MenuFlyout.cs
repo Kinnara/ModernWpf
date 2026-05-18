@@ -9,7 +9,7 @@ using ModernWpf.Controls.Primitives;
 namespace ModernWpf.Controls
 {
     [ContentProperty(nameof(Items))]
-    public class MenuFlyout : FlyoutBase
+    public partial class MenuFlyout : FlyoutBase
     {
         public MenuFlyout()
         {
@@ -24,21 +24,6 @@ namespace ModernWpf.Controls
             }
         }
 
-        #region MenuFlyoutPresenterStyle
-
-        public static readonly DependencyProperty MenuFlyoutPresenterStyleProperty =
-            DependencyProperty.Register(
-                nameof(MenuFlyoutPresenterStyle),
-                typeof(Style),
-                typeof(MenuFlyout),
-                new PropertyMetadata(OnMenuFlyoutPresenterStyleChanged));
-
-        public Style MenuFlyoutPresenterStyle
-        {
-            get => (Style)GetValue(MenuFlyoutPresenterStyleProperty);
-            set => SetValue(MenuFlyoutPresenterStyleProperty, value);
-        }
-
         private static void OnMenuFlyoutPresenterStyleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((MenuFlyout)d).OnMenuFlyoutPresenterStyleChanged(e);
@@ -51,8 +36,6 @@ namespace ModernWpf.Controls
                 m_presenter.Style = (Style)e.NewValue;
             }
         }
-
-        #endregion
 
         protected override Control CreatePresenter()
         {

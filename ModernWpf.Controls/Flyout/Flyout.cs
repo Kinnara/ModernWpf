@@ -12,7 +12,7 @@ namespace ModernWpf.Controls
 {
     [ContentProperty(nameof(Content))]
     [StyleTypedProperty(Property = nameof(FlyoutPresenterStyle), StyleTargetType = typeof(FlyoutPresenter))]
-    public class Flyout : FlyoutBase
+    public partial class Flyout : FlyoutBase
     {
         private const double c_translation = 40;
         private static readonly TimeSpan s_translateDuration = TimeSpan.FromMilliseconds(367);
@@ -27,38 +27,6 @@ namespace ModernWpf.Controls
         public Flyout()
         {
         }
-
-        #region Content
-
-        public static readonly DependencyProperty ContentProperty =
-            DependencyProperty.Register(
-                nameof(Content),
-                typeof(UIElement),
-                typeof(Flyout));
-
-        public UIElement Content
-        {
-            get => (UIElement)GetValue(ContentProperty);
-            set => SetValue(ContentProperty, value);
-        }
-
-        #endregion
-
-        #region FlyoutPresenterStyle
-
-        public static readonly DependencyProperty FlyoutPresenterStyleProperty =
-            DependencyProperty.Register(
-                nameof(FlyoutPresenterStyle),
-                typeof(Style),
-                typeof(Flyout));
-
-        public Style FlyoutPresenterStyle
-        {
-            get => (Style)GetValue(FlyoutPresenterStyleProperty);
-            set => SetValue(FlyoutPresenterStyleProperty, value);
-        }
-
-        #endregion
 
         internal override PopupAnimation DesiredPopupAnimation => PopupAnimation.None;
 

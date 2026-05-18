@@ -4,68 +4,8 @@ using System.Windows.Controls;
 
 namespace ModernWpf.Controls.Primitives
 {
-    public class InfoBarPanel : Panel
+    public partial class InfoBarPanel : Panel
     {
-        public static readonly DependencyProperty HorizontalOrientationPaddingProperty =
-            DependencyProperty.Register(
-                nameof(HorizontalOrientationPadding),
-                typeof(Thickness),
-                typeof(InfoBarPanel),
-                new FrameworkPropertyMetadata(default(Thickness), FrameworkPropertyMetadataOptions.AffectsMeasure));
-
-        public Thickness HorizontalOrientationPadding
-        {
-            get => (Thickness)GetValue(HorizontalOrientationPaddingProperty);
-            set => SetValue(HorizontalOrientationPaddingProperty, value);
-        }
-
-        public static readonly DependencyProperty VerticalOrientationPaddingProperty =
-            DependencyProperty.Register(
-                nameof(VerticalOrientationPadding),
-                typeof(Thickness),
-                typeof(InfoBarPanel),
-                new FrameworkPropertyMetadata(default(Thickness), FrameworkPropertyMetadataOptions.AffectsMeasure));
-
-        public Thickness VerticalOrientationPadding
-        {
-            get => (Thickness)GetValue(VerticalOrientationPaddingProperty);
-            set => SetValue(VerticalOrientationPaddingProperty, value);
-        }
-
-        public static readonly DependencyProperty HorizontalOrientationMarginProperty =
-            DependencyProperty.RegisterAttached(
-                "HorizontalOrientationMargin",
-                typeof(Thickness),
-                typeof(InfoBarPanel),
-                new FrameworkPropertyMetadata(default(Thickness), FrameworkPropertyMetadataOptions.AffectsParentMeasure));
-
-        public static Thickness GetHorizontalOrientationMargin(DependencyObject obj)
-        {
-            return (Thickness)obj.GetValue(HorizontalOrientationMarginProperty);
-        }
-
-        public static void SetHorizontalOrientationMargin(DependencyObject obj, Thickness value)
-        {
-            obj.SetValue(HorizontalOrientationMarginProperty, value);
-        }
-
-        public static readonly DependencyProperty VerticalOrientationMarginProperty =
-            DependencyProperty.RegisterAttached(
-                "VerticalOrientationMargin",
-                typeof(Thickness),
-                typeof(InfoBarPanel),
-                new FrameworkPropertyMetadata(default(Thickness), FrameworkPropertyMetadataOptions.AffectsParentMeasure));
-
-        public static Thickness GetVerticalOrientationMargin(DependencyObject obj)
-        {
-            return (Thickness)obj.GetValue(VerticalOrientationMarginProperty);
-        }
-
-        public static void SetVerticalOrientationMargin(DependencyObject obj, Thickness value)
-        {
-            obj.SetValue(VerticalOrientationMarginProperty, value);
-        }
-
         protected override Size MeasureOverride(Size availableSize)
         {
             var desiredSize = default(Size);

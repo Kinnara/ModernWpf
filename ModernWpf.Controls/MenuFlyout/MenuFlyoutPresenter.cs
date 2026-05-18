@@ -9,7 +9,7 @@ using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
 {
-    public class MenuFlyoutPresenter : ContextMenu
+    public partial class MenuFlyoutPresenter : ContextMenu
     {
         static MenuFlyoutPresenter()
         {
@@ -21,36 +21,6 @@ namespace ModernWpf.Controls
         public MenuFlyoutPresenter()
         {
         }
-
-        #region CornerRadius
-
-        public static readonly DependencyProperty CornerRadiusProperty =
-            ControlHelper.CornerRadiusProperty.AddOwner(typeof(MenuFlyoutPresenter));
-
-        public CornerRadius CornerRadius
-        {
-            get => (CornerRadius)GetValue(CornerRadiusProperty);
-            set => SetValue(CornerRadiusProperty, value);
-        }
-
-        #endregion
-
-        #region IsDefaultShadowEnabled
-
-        public static readonly DependencyProperty IsDefaultShadowEnabledProperty =
-            DependencyProperty.Register(
-                nameof(IsDefaultShadowEnabled),
-                typeof(bool),
-                typeof(MenuFlyoutPresenter),
-                new PropertyMetadata(true));
-
-        public bool IsDefaultShadowEnabled
-        {
-            get => (bool)GetValue(IsDefaultShadowEnabledProperty);
-            set => SetValue(IsDefaultShadowEnabledProperty, value);
-        }
-
-        #endregion
 
         internal event EventHandler<DependencyPropertyChangedEventArgs> IsOpenChanged;
         internal event EventHandler<CancelEventArgs> Closing;

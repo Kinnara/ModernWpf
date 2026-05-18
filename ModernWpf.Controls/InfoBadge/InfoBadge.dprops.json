@@ -1,0 +1,42 @@
+{
+  "usings": [
+    "System.Windows",
+    "ModernWpf.Controls.Primitives"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "InfoBadge"
+  },
+  "properties": [
+    {
+      "name": "Value",
+      "type": "int",
+      "default": "-1",
+      "changed": "OnDisplayKindPropertyChanged",
+      "validate": "value => (int)value >= -1"
+    },
+    {
+      "name": "IconSource",
+      "type": "IconSource",
+      "default": "null",
+      "changed": "OnDisplayKindPropertyChanged"
+    },
+    {
+      "name": "CornerRadius",
+      "type": "CornerRadius",
+      "kind": "AddOwner",
+      "sourceProperty": "ControlHelper.CornerRadiusProperty",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "default(CornerRadius)",
+      "changed": "OnCornerRadiusChanged"
+    },
+    {
+      "name": "TemplateSettings",
+      "type": "InfoBadgeTemplateSettings",
+      "kind": "RegisterReadOnly",
+      "default": "null",
+      "setterAccessibility": "none"
+    }
+  ]
+}

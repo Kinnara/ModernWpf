@@ -8,7 +8,7 @@ using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
 {
-    public class HyperlinkButton : ButtonBase
+    public partial class HyperlinkButton : ButtonBase
     {
         static HyperlinkButton()
         {
@@ -23,46 +23,6 @@ namespace ModernWpf.Controls
             VerticalContentAlignmentProperty.OverrideMetadata(
                 typeof(HyperlinkButton),
                 new FrameworkPropertyMetadata(VerticalAlignment.Center));
-        }
-
-        public static readonly DependencyProperty NavigateUriProperty =
-            DependencyProperty.Register(
-                nameof(NavigateUri),
-                typeof(Uri),
-                typeof(HyperlinkButton),
-                new FrameworkPropertyMetadata(null));
-
-        public Uri NavigateUri
-        {
-            get => (Uri)GetValue(NavigateUriProperty);
-            set => SetValue(NavigateUriProperty, value);
-        }
-
-        public static readonly DependencyProperty UseSystemFocusVisualsProperty =
-            FocusVisualHelper.UseSystemFocusVisualsProperty.AddOwner(typeof(HyperlinkButton));
-
-        public bool UseSystemFocusVisuals
-        {
-            get => (bool)GetValue(UseSystemFocusVisualsProperty);
-            set => SetValue(UseSystemFocusVisualsProperty, value);
-        }
-
-        public static readonly DependencyProperty FocusVisualMarginProperty =
-            FocusVisualHelper.FocusVisualMarginProperty.AddOwner(typeof(HyperlinkButton));
-
-        public Thickness FocusVisualMargin
-        {
-            get => (Thickness)GetValue(FocusVisualMarginProperty);
-            set => SetValue(FocusVisualMarginProperty, value);
-        }
-
-        public static readonly DependencyProperty CornerRadiusProperty =
-            ControlHelper.CornerRadiusProperty.AddOwner(typeof(HyperlinkButton));
-
-        public CornerRadius CornerRadius
-        {
-            get => (CornerRadius)GetValue(CornerRadiusProperty);
-            set => SetValue(CornerRadiusProperty, value);
         }
 
         protected override AutomationPeer OnCreateAutomationPeer()
