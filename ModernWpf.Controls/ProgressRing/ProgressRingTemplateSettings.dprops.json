@@ -1,0 +1,15 @@
+{
+  "usings": [
+    "System.Windows"
+  ],
+  "namespace": "ModernWpf.Controls.Primitives",
+  "type": {
+    "declaration": "public sealed partial class",
+    "name": "ProgressRingTemplateSettings"
+  },
+  "properties": [
+    { "name": "EllipseDiameter", "type": "double", "kind": "RegisterReadOnly", "metadata": "null" },
+    { "name": "EllipseOffset", "type": "Thickness", "kind": "RegisterReadOnly", "metadata": "null" },
+    { "name": "MaxSideLength", "type": "double", "kind": "RegisterReadOnly", "metadata": "null" }
+  ]
+}

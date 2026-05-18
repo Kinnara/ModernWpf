@@ -1,0 +1,18 @@
+{
+  "usings": [
+    "System.Windows"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "InfoBarTemplateSettings"
+  },
+  "properties": [
+    {
+      "name": "IconElement",
+      "type": "IconElement",
+      "metadata": "null",
+      "setterAccessibility": "internal"
+    }
+  ]
+}

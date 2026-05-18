@@ -1,0 +1,30 @@
+{
+  "usings": [
+    "System.Windows"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public sealed partial class",
+    "name": "TeachingTipTemplateSettings"
+  },
+  "properties": [
+    {
+      "name": "TopRightHighlightMargin",
+      "type": "Thickness",
+      "default": "new Thickness()",
+      "setterAccessibility": "internal"
+    },
+    {
+      "name": "TopLeftHighlightMargin",
+      "type": "Thickness",
+      "default": "new Thickness()",
+      "setterAccessibility": "internal"
+    },
+    {
+      "name": "IconElement",
+      "type": "IconElement",
+      "metadata": "null",
+      "setterAccessibility": "internal"
+    }
+  ]
+}

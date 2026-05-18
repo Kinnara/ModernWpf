@@ -1,0 +1,18 @@
+{
+  "usings": [
+    "System.Windows"
+  ],
+  "namespace": "ModernWpf.Controls.Primitives",
+  "type": {
+    "declaration": "public sealed partial class",
+    "name": "AppBarToggleButtonTemplateSettings"
+  },
+  "properties": [
+    {
+      "name": "KeyboardAcceleratorTextMinWidth",
+      "type": "double",
+      "default": "0.0",
+      "setterAccessibility": "internal"
+    }
+  ]
+}

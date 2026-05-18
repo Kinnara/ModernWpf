@@ -65,12 +65,45 @@ as a WinUI-style validation/coercion path that cannot be expressed as a guard.
 
 ## Current Coverage
 
-The existing ModernWpf generated-property companion files are manifest-backed:
-`AutoSuggestBox`, `CommandBarFlyoutCommandBarTemplateSettings`,
-`NavigationView`, `NavigationViewItem`, `NumberBox`, `PersonPicture`,
-`RatingControl`, and `SplitView`.
+The existing ModernWpf control generated-property companion files are
+manifest-backed: `AutoSuggestBox`, `NavigationView`, `NavigationViewItem`,
+`NumberBox`, `PersonPicture`, `RatingControl`, and `SplitView`.
 
-Some ModernWpf controls still keep dependency properties inline even though
-WinUI generates their counterparts. Move those during the corresponding
-whole-control parity slice, because that changes the handwritten control file
-rather than only a generated-property companion.
+The template-settings dependency properties are also manifest-backed:
+`AppBarButtonTemplateSettings`, `AppBarToggleButtonTemplateSettings`,
+`CommandBarFlyoutCommandBarTemplateSettings`, `CommandBarTemplateSettings`,
+`InfoBadgeTemplateSettings`, `InfoBarTemplateSettings`,
+`NavigationViewItemPresenterTemplateSettings`, `NavigationViewTemplateSettings`,
+`PersonPictureTemplateSettings`, `ProgressRingTemplateSettings`,
+`SplitViewTemplateSettings`, `TeachingTipTemplateSettings`, and
+`ToggleSwitchTemplateSettings`.
+
+WinUI has two generated-property pools that matter for ModernWpf parity:
+MUX generated files under `src/controls/dev/Generated/*.properties.*` and
+framework generated files under `src/dxaml/xcp/dxaml/lib/winrtgeneratedclasses`
+(`*.g.*`). Inventory against both pools is required; checking only
+`*.properties.*` misses framework-generated types such as
+`AppBarButtonTemplateSettings` and `SplitViewTemplateSettings`.
+
+After the template-settings conversion, the remaining ModernWpf types with
+inline DP/AddOwner sites whose type names match generated WinUI sources are:
+`AnnotatedScrollBar`, `AutoSuggestBoxHelper`, `BreadcrumbBar`, `ColorPicker`,
+`ColorPickerSlider`, `ColorSpectrum`, `AppBarButton`,
+`AppBarElementContainer`, `AppBarSeparator`, `AppBarToggleButton`,
+`CommandBar`, `CommandBarOverflowPresenter`, `CommandBarFlyoutCommandBar`,
+`ContentDialog`, `Flyout`, `FlyoutBase`, `FlyoutPresenter`,
+`HyperlinkButton`, `InfoBadge`, `InfoBar`, `InfoBarPanel`, `LayoutPanel`,
+`ListViewBase`, `ListViewBaseItem`, `MenuBarItem`, `MenuFlyout`,
+`MenuFlyoutPresenter`, `NavigationViewItemBase`,
+`NavigationViewItemPresenter`, `PagerControl`, `ParallaxView`, `PipsPager`,
+`ProgressRing`, `RefreshContainer`, `RefreshVisualizer`,
+`ColumnMajorUniformToLargestGridLayout`, `RadioButtons`, `RatingItemImageInfo`,
+`ItemsRepeater`, `RecyclePool`, `FlowLayout`, `StackLayout`,
+`UniformGridLayout`, `SelectorBar`, `SelectorBarItem`, `SplitButton`,
+`ToggleSplitButton`, `SwipeControl`, `SwipeItem`, `TeachingTip`,
+`ToggleSwitch`, `TwoPaneView`, and `WrapPanel`.
+
+Those remaining sites are control implementation work, not pure storage-class
+cleanup. Convert them in coherent control/family slices so the manifest changes
+can be validated with the corresponding WinUI source defaults, callbacks,
+coercion, attached-property accessors, and tests.
