@@ -162,3 +162,33 @@ Source inspected:
 
 - `test\ModernWpf.WinUI.Tests\CommonStyles\ToggleButtonVisualStateTests.cs` covers the official WPF Fluent ToggleButton trigger shape, WPF presenter slot, control-specific padding and border resources, checked/disabled resource application, and indeterminate fallback behavior.
 - `test\ModernWpf.WinUI.Tests\LayoutCompatibility\LayoutCompatibilityApiTests.cs` covers the ToggleButton WPF presenter slot plus the retained `ControlHelper.CornerRadius` substitution.
+
+## 2026-05-18 Batch 6
+
+Source inspected:
+
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Themes\Fluent.Light.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Themes\Fluent.Dark.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Themes\Fluent.HC.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Themes\Fluent.xaml`
+
+### Synced Values
+
+| Resource key / style | Official WPF Fluent value | ModernWpf value after sync | Reason |
+| --- | --- | --- | --- |
+| `DefaultRadioButtonStyle` | `RadioButton` style with `RootBorder`, `RootGrid`, WPF `ContentPresenter`, `Normal` / `MouseOver` / `Pressed` visual states, and native trigger entries for checked, disabled, pointer-over, pressed, and RTL behavior | Same structure under the existing resource key, with the older-target `ControlHelper.CornerRadius` substitution | `RadioButton` is a stock WPF control, so official WPF Fluent is the primary source. |
+| Implicit `RadioButton` style | Based on `DefaultRadioButtonStyle` | Same | Matches official WPF Fluent resource shape while keeping the existing ModernWpf resource key. |
+| `RadioButtonPadding` / `RadioButtonStrokeThickness` / checked outer-ellipse resources | Control-specific metrics and official checked outer-ellipse trigger resource keys | Same metrics and trigger resource keys are present for the stock template | Removes the previous WinUI `VisualStateEx` stock RadioButton template path. |
+
+### Intentional Differences
+
+| Resource key / style | Official WPF Fluent value | ModernWpf backport value | Reason retained |
+| --- | --- | --- | --- |
+| RadioButton corner radius property | `Border.CornerRadius` on `RadioButton` | `primitives:ControlHelper.CornerRadius` | Older ModernWpf targets do not expose the official source property on `RadioButton`; this preserves the backport radius bridge. |
+| RadioButton focus style resource | `DefaultControlFocusVisualStyle` | `{x:Static SystemParameters.FocusVisualStyleKey}` plus `FocusVisualHelper` settings | ModernWpf keeps its existing focus visual bridge across supported target frameworks. |
+| RadioButton brush resources | Direct official resources | Existing ModernWpf aliases such as `RadioButtonBackground` and `RadioButtonOuterEllipseStroke` | Existing aliases map to the same Fluent concepts and remain part of the public resource surface. |
+
+### Test Evidence
+
+- `test\ModernWpf.WinUI.Tests\CommonStyles\RadioButtonVisualStateTests.cs` covers the official WPF Fluent RadioButton visual-state names, WPF trigger shape, WPF presenter slot, checked/disabled behavior, and newly added checked outer-ellipse resource aliases.
+- `test\ModernWpf.WinUI.Tests\LayoutCompatibility\LayoutCompatibilityApiTests.cs` covers the RadioButton WPF presenter slot plus the retained `ControlHelper.CornerRadius` substitution.

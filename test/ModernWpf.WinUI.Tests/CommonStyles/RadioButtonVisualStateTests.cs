@@ -2,9 +2,12 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Markup;
+using System.Windows.Media;
 using System.Windows.Shapes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
 using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
@@ -15,103 +18,34 @@ namespace ModernWpf.WinUI.Tests.CommonStyles;
 public class RadioButtonVisualStateTests
 {
     [TestMethod]
-    public void DefaultRadioButtonStyleUsesSourceVisualStatesWithoutTemplateTriggers()
+    public void DefaultRadioButtonStyleUsesOfficialWpfFluentTriggerShape()
     {
         WpfTestHost.Run(() =>
         {
             TestApplication.EnsureInitialized();
 
+            var defaultStyle = (Style)Application.Current.FindResource("DefaultRadioButtonStyle");
+            var implicitRadioButtonStyle = (Style)Application.Current.FindResource(typeof(RadioButton));
+            Assert.AreEqual(typeof(RadioButton), defaultStyle.TargetType);
+            Assert.AreEqual(typeof(RadioButton), implicitRadioButtonStyle.TargetType);
+            Assert.AreSame(defaultStyle, implicitRadioButtonStyle.BasedOn);
+
             var radioButton = CreateRadioButton();
             using var host = new TestWindowHost(radioButton, width: 180, height: 80);
-            host.UpdateLayout();
 
-            var root = FindTemplatePart<FrameworkElement>(radioButton, "RootGrid");
-
-            Assert.AreEqual(0, radioButton.Template.Triggers.Count);
-            Assert.IsTrue(ButtonHelper.GetVisualStateSettersEnabled(radioButton));
-            Assert.IsFalse(GetCommonStates(root).States.Cast<VisualState>().Any(state => state.Name == "MouseOver"));
-            AssertStateSetters(root, "PointerOver", SourceCommonStateTargets());
-            AssertStateSetters(root, "Pressed", SourceCommonStateTargets());
-            AssertStateSetters(root, "Disabled", SourceCommonStateTargets());
-            AssertStateSetters(root, "Checked", "CheckGlyph.Stroke", "PressedCheckGlyph.Background");
+            Assert.AreEqual((Thickness)Application.Current.FindResource("RadioButtonPadding"), radioButton.Padding);
+            Assert.IsTrue(radioButton.Focusable);
+            Assert.IsTrue(KeyboardNavigation.GetIsTabStop(radioButton));
+            AssertTemplateUsesOfficialWpfPresenter(radioButton);
+            Assert.IsFalse(ButtonHelper.GetVisualStateSettersEnabled(radioButton));
+            AssertOfficialVisualStateShape(radioButton);
+            AssertOfficialTriggerShape(radioButton.Template);
+            AssertUncheckedDisabledTriggerAppliesResources(radioButton);
         });
     }
 
     [TestMethod]
-    public void CommonStatesApplySourceResourceTargets()
-    {
-        WpfTestHost.Run(() =>
-        {
-            TestApplication.EnsureInitialized();
-
-            var radioButton = CreateRadioButton();
-            using var host = new TestWindowHost(radioButton, width: 180, height: 80);
-            host.UpdateLayout();
-
-            var root = FindTemplatePart<Border>(radioButton, "RootGrid");
-            var presenter = FindTemplatePart<ContentPresenterEx>(radioButton, "ContentPresenter");
-            var outerEllipse = FindTemplatePart<Ellipse>(radioButton, "OuterEllipse");
-            var checkOuterEllipse = FindTemplatePart<Ellipse>(radioButton, "CheckOuterEllipse");
-            var checkGlyph = FindTemplatePart<Ellipse>(radioButton, "CheckGlyph");
-
-            AssertVisualStateAppliesResources(
-                radioButton,
-                "PointerOver",
-                presenter,
-                root,
-                outerEllipse,
-                checkOuterEllipse,
-                checkGlyph,
-                "RadioButtonForegroundPointerOver",
-                "RadioButtonBackgroundPointerOver",
-                "RadioButtonBorderBrushPointerOver",
-                "RadioButtonOuterEllipseStrokePointerOver",
-                "RadioButtonOuterEllipseFillPointerOver",
-                "RadioButtonOuterEllipseCheckedStrokePointerOver",
-                "RadioButtonOuterEllipseCheckedFillPointerOver",
-                "RadioButtonCheckGlyphFillPointerOver",
-                "RadioButtonCheckGlyphStrokePointerOver");
-
-            AssertVisualStateAppliesResources(
-                radioButton,
-                "Pressed",
-                presenter,
-                root,
-                outerEllipse,
-                checkOuterEllipse,
-                checkGlyph,
-                "RadioButtonForegroundPressed",
-                "RadioButtonBackgroundPressed",
-                "RadioButtonBorderBrushPressed",
-                "RadioButtonOuterEllipseStrokePressed",
-                "RadioButtonOuterEllipseFillPressed",
-                "RadioButtonOuterEllipseCheckedStrokePressed",
-                "RadioButtonOuterEllipseCheckedFillPressed",
-                "RadioButtonCheckGlyphFillPressed",
-                "RadioButtonCheckGlyphStrokePressed");
-
-            AssertVisualStateAppliesResources(
-                radioButton,
-                "Disabled",
-                presenter,
-                root,
-                outerEllipse,
-                checkOuterEllipse,
-                checkGlyph,
-                "RadioButtonForegroundDisabled",
-                "RadioButtonBackgroundDisabled",
-                "RadioButtonBorderBrushDisabled",
-                "RadioButtonOuterEllipseStrokeDisabled",
-                "RadioButtonOuterEllipseFillDisabled",
-                "RadioButtonOuterEllipseCheckedStrokeDisabled",
-                "RadioButtonOuterEllipseCheckedFillDisabled",
-                "RadioButtonCheckGlyphFillDisabled",
-                "RadioButtonCheckGlyphStrokeDisabled");
-        });
-    }
-
-    [TestMethod]
-    public void CheckedStateAppliesSourceGlyphTargets()
+    public void CheckedAndDisabledStatesUseOfficialWpfFluentResources()
     {
         WpfTestHost.Run(() =>
         {
@@ -122,15 +56,42 @@ public class RadioButtonVisualStateTests
             using var host = new TestWindowHost(radioButton, width: 180, height: 80);
             host.UpdateLayout();
 
-            var checkGlyph = FindTemplatePart<Ellipse>(radioButton, "CheckGlyph");
-            var pressedCheckGlyph = FindTemplatePart<Border>(radioButton, "PressedCheckGlyph");
+            var checkGlyph = GetTemplateChild<Ellipse>(radioButton, "CheckGlyph");
+            var outerEllipse = GetTemplateChild<Ellipse>(radioButton, "OuterEllipse");
+            var checkOuterEllipse = GetTemplateChild<Ellipse>(radioButton, "CheckOuterEllipse");
 
-            Assert.IsTrue(VisualStateManager.GoToState(radioButton, "Checked", false));
-            Assert.AreSame(checkGlyph.TryFindResource("RadioButtonCheckGlyphStrokeChecked"), checkGlyph.Stroke);
-            Assert.AreSame(pressedCheckGlyph.TryFindResource("RadioButtonCheckGlyphFillPressed"), pressedCheckGlyph.Background);
+            Assert.AreEqual(1.0, checkGlyph.Opacity);
+            Assert.AreEqual(0.0, outerEllipse.Opacity);
+            Assert.AreEqual(1.0, checkOuterEllipse.Opacity);
 
-            Assert.IsTrue(VisualStateManager.GoToState(radioButton, "PointerOver", false));
-            Assert.AreSame(checkGlyph.TryFindResource("RadioButtonCheckGlyphStrokePointerOver"), checkGlyph.Stroke);
+            radioButton.IsEnabled = false;
+            host.UpdateLayout();
+
+            Assert.AreSame(radioButton.TryFindResource("RadioButtonForegroundDisabled"), radioButton.Foreground);
+            Assert.AreSame(radioButton.TryFindResource("RadioButtonBackgroundDisabled"), radioButton.Background);
+            Assert.AreSame(outerEllipse.TryFindResource("RadioButtonOuterEllipseFillDisabled"), outerEllipse.Fill);
+            Assert.AreSame(outerEllipse.TryFindResource("RadioButtonOuterEllipseCheckedStrokeDisabled"), outerEllipse.Stroke);
+            Assert.AreSame(checkOuterEllipse.TryFindResource("RadioButtonOuterEllipseCheckedStrokeDisabled"), checkOuterEllipse.Stroke);
+            Assert.AreSame(checkOuterEllipse.TryFindResource("RadioButtonOuterEllipseCheckedFillDisabled"), checkOuterEllipse.Fill);
+        });
+    }
+
+    [TestMethod]
+    public void ThemeDictionariesExposeOfficialRadioButtonCheckedResources()
+    {
+        WpfTestHost.Run(() =>
+        {
+            AssertThemeResourceReference("Light", "RadioButtonCheckOuterEllipseCheckedStrokePressed", "AccentFillColorTertiaryBrush");
+            AssertThemeResourceReference("Light", "RadioButtonCheckOuterEllipseCheckedFillPointerOver", "AccentFillColorSecondaryBrush");
+            AssertThemeResourceReference("Light", "RadioButtonCheckOuterEllipseCheckedFillPressed", "AccentFillColorTertiaryBrush");
+
+            AssertThemeResourceReference("Dark", "RadioButtonCheckOuterEllipseCheckedStrokePressed", "AccentFillColorTertiaryBrush");
+            AssertThemeResourceReference("Dark", "RadioButtonCheckOuterEllipseCheckedFillPointerOver", "AccentFillColorSecondaryBrush");
+            AssertThemeResourceReference("Dark", "RadioButtonCheckOuterEllipseCheckedFillPressed", "AccentFillColorTertiaryBrush");
+
+            AssertThemeResourceReference("HighContrast", "RadioButtonCheckOuterEllipseCheckedStrokePressed", "SystemColorButtonTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "RadioButtonCheckOuterEllipseCheckedFillPointerOver", "SystemColorButtonTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "RadioButtonCheckOuterEllipseCheckedFillPressed", "SystemColorButtonTextColorBrush");
         });
     }
 
@@ -144,86 +105,190 @@ public class RadioButtonVisualStateTests
         };
     }
 
-    private static void AssertStateSetters(
-        FrameworkElement stateGroupsRoot,
-        string stateName,
-        params string[] setterTargets)
+    private static void AssertTemplateUsesOfficialWpfPresenter(RadioButton radioButton)
     {
-        var groups = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
-            .OfType<VisualStateGroup>();
-        var state = groups
-            .SelectMany(group => group.States.Cast<VisualState>())
-            .Single(item => item.Name == stateName);
+        radioButton.ApplyTemplate();
 
-        Assert.IsInstanceOfType(state, typeof(VisualStateEx));
+        var rootBorder = GetTemplateChild<Border>(radioButton, "RootBorder");
+        var rootGrid = GetTemplateChild<Grid>(radioButton, "RootGrid");
+        var contentPresenter = GetTemplateChild<ContentPresenter>(radioButton, "ContentPresenter");
+        var outerEllipse = GetTemplateChild<Ellipse>(radioButton, "OuterEllipse");
+        var checkOuterEllipse = GetTemplateChild<Ellipse>(radioButton, "CheckOuterEllipse");
+        var checkGlyph = GetTemplateChild<Ellipse>(radioButton, "CheckGlyph");
+        var pressedCheckGlyph = GetTemplateChild<Border>(radioButton, "PressedCheckGlyph");
 
-        var stateEx = (VisualStateEx)state;
-        foreach (var setterTarget in setterTargets)
+        Assert.AreEqual(radioButton.Content, contentPresenter.Content);
+        Assert.AreEqual(typeof(ContentPresenter), contentPresenter.GetType());
+        Assert.IsTrue(contentPresenter.RecognizesAccessKey);
+        Assert.AreSame(radioButton.Foreground, TextElement.GetForeground(contentPresenter));
+        Assert.AreEqual(ControlHelper.GetCornerRadius(radioButton), rootBorder.CornerRadius);
+        Assert.AreEqual(0, VisualStateManager.GetVisualStateGroups(rootGrid).Count);
+
+        var strokeThickness = (double)Application.Current.FindResource("RadioButtonStrokeThickness");
+        Assert.AreEqual(strokeThickness, outerEllipse.StrokeThickness);
+        Assert.AreEqual(strokeThickness, checkOuterEllipse.StrokeThickness);
+        Assert.IsInstanceOfType(checkGlyph.RenderTransform, typeof(ScaleTransform));
+        Assert.AreEqual(4.0, pressedCheckGlyph.Width);
+        Assert.AreEqual(4.0, pressedCheckGlyph.Height);
+    }
+
+    private static void AssertOfficialVisualStateShape(RadioButton radioButton)
+    {
+        var rootBorder = GetTemplateChild<Border>(radioButton, "RootBorder");
+        var group = VisualStateManager.GetVisualStateGroups(rootBorder)
+            .OfType<VisualStateGroup>()
+            .Single(item => item.Name == "CommonStates");
+        var states = group.States.Cast<VisualState>().ToArray();
+
+        CollectionAssert.AreEqual(new[] { "Normal", "MouseOver", "Pressed" }, states.Select(item => item.Name).ToArray());
+        Assert.IsFalse(states.Any(item => item.GetType().Name == "VisualStateEx"));
+    }
+
+    private static void AssertOfficialTriggerShape(ControlTemplate template)
+    {
+        var multiTriggers = template.Triggers.OfType<MultiTrigger>().ToArray();
+        var triggers = template.Triggers.OfType<Trigger>().ToArray();
+        Assert.AreEqual(6, multiTriggers.Length);
+        Assert.AreEqual(2, triggers.Length);
+
+        AssertTrigger(multiTriggers,
+            new[] { ("IsPressed", (object)true), ("IsChecked", (object)false), ("IsEnabled", (object)true) },
+            ("CheckGlyph", "Opacity", 1.0),
+            ("OuterEllipse", "Fill", "RadioButtonOuterEllipseFillPressed"),
+            ("OuterEllipse", "Stroke", "RadioButtonOuterEllipseStrokePressed"),
+            ("RootBorder", "BorderBrush", "RadioButtonBorderBrushPressed"),
+            ("RootBorder", "Background", "RadioButtonBackgroundPressed"));
+
+        AssertTrigger(multiTriggers,
+            new[] { ("IsMouseOver", (object)true), ("IsChecked", (object)false), ("IsEnabled", (object)true) },
+            ("OuterEllipse", "Fill", "RadioButtonOuterEllipseFillPointerOver"),
+            ("OuterEllipse", "Stroke", "RadioButtonOuterEllipseStrokePointerOver"),
+            ("RootBorder", "BorderBrush", "RadioButtonBorderBrushPointerOver"),
+            ("RootBorder", "Background", "RadioButtonBackgroundPointerOver"));
+
+        AssertTrigger(multiTriggers,
+            new[] { ("IsMouseOver", (object)true), ("IsChecked", (object)true), ("IsEnabled", (object)true) },
+            ("OuterEllipse", "Fill", "RadioButtonOuterEllipseFillPointerOver"),
+            ("OuterEllipse", "Stroke", "RadioButtonOuterEllipseStrokePointerOver"),
+            ("CheckOuterEllipse", "Fill", "RadioButtonCheckOuterEllipseCheckedFillPointerOver"),
+            ("PressedCheckGlyph", "Background", "RadioButtonOuterEllipseCheckedStrokePointerOver"),
+            ("RootBorder", "BorderBrush", "RadioButtonBorderBrushPointerOver"),
+            ("RootBorder", "Background", "RadioButtonBackgroundPointerOver"));
+
+        AssertTrigger(multiTriggers,
+            new[] { ("IsPressed", (object)true), ("IsChecked", (object)true), ("IsEnabled", (object)true) },
+            ("OuterEllipse", "Fill", "RadioButtonCheckOuterEllipseCheckedFillPressed"),
+            ("CheckOuterEllipse", "Fill", "RadioButtonCheckOuterEllipseCheckedFillPressed"),
+            ("RootBorder", "BorderBrush", "RadioButtonBorderBrushPressed"),
+            ("RootBorder", "Background", "RadioButtonBackgroundPressed"),
+            ("PressedCheckGlyph", "Background", "RadioButtonCheckOuterEllipseCheckedStrokePressed"));
+
+        AssertTrigger(multiTriggers,
+            new[] { ("IsChecked", (object)false), ("IsEnabled", (object)false) },
+            ("", "Foreground", "RadioButtonForegroundDisabled"),
+            ("", "Background", "RadioButtonBackgroundDisabled"),
+            ("OuterEllipse", "Fill", "RadioButtonOuterEllipseFillDisabled"),
+            ("OuterEllipse", "Stroke", "RadioButtonOuterEllipseStrokeDisabled"));
+
+        AssertTrigger(multiTriggers,
+            new[] { ("IsChecked", (object)true), ("IsEnabled", (object)false) },
+            ("", "Foreground", "RadioButtonForegroundDisabled"),
+            ("", "Background", "RadioButtonBackgroundDisabled"),
+            ("OuterEllipse", "Fill", "RadioButtonOuterEllipseFillDisabled"),
+            ("OuterEllipse", "Stroke", "RadioButtonOuterEllipseCheckedStrokeDisabled"),
+            ("CheckOuterEllipse", "Stroke", "RadioButtonOuterEllipseCheckedStrokeDisabled"),
+            ("CheckOuterEllipse", "Fill", "RadioButtonOuterEllipseCheckedFillDisabled"));
+
+        AssertCheckedTrigger(triggers);
+        AssertRightToLeftTrigger(triggers);
+    }
+
+    private static void AssertTrigger(
+        MultiTrigger[] triggers,
+        (string PropertyName, object Value)[] expectedConditions,
+        params (string TargetName, string PropertyName, object Value)[] expectedSetters)
+    {
+        var trigger = triggers.Single(item => expectedConditions.All(condition => HasCondition(item, condition.PropertyName, condition.Value)));
+        var setters = trigger.Setters.OfType<Setter>().ToArray();
+
+        Assert.AreEqual(expectedSetters.Length, setters.Length);
+
+        foreach (var expectedSetter in expectedSetters)
         {
-            Assert.IsTrue(
-                stateEx.Setters.Any(setter => setter.Target == setterTarget),
-                $"{stateName} should set {setterTarget}.");
+            AssertSetter(setters, expectedSetter.TargetName, expectedSetter.PropertyName, expectedSetter.Value);
         }
     }
 
-    private static void AssertVisualStateAppliesResources(
-        RadioButton radioButton,
-        string stateName,
-        ContentPresenterEx presenter,
-        Border root,
-        Ellipse outerEllipse,
-        Ellipse checkOuterEllipse,
-        Ellipse checkGlyph,
-        string foregroundKey,
-        string backgroundKey,
-        string borderBrushKey,
-        string outerStrokeKey,
-        string outerFillKey,
-        string checkedStrokeKey,
-        string checkedFillKey,
-        string glyphFillKey,
-        string glyphStrokeKey)
+    private static void AssertCheckedTrigger(Trigger[] triggers)
     {
-        Assert.IsTrue(VisualStateManager.GoToState(radioButton, stateName, false));
-        Assert.AreSame(presenter.TryFindResource(foregroundKey), presenter.Foreground);
-        Assert.AreSame(root.TryFindResource(backgroundKey), root.Background);
-        Assert.AreSame(root.TryFindResource(borderBrushKey), root.BorderBrush);
-        Assert.AreSame(outerEllipse.TryFindResource(outerStrokeKey), outerEllipse.Stroke);
-        Assert.AreSame(outerEllipse.TryFindResource(outerFillKey), outerEllipse.Fill);
-        Assert.AreSame(checkOuterEllipse.TryFindResource(checkedStrokeKey), checkOuterEllipse.Stroke);
-        Assert.AreSame(checkOuterEllipse.TryFindResource(checkedFillKey), checkOuterEllipse.Fill);
-        Assert.AreSame(checkGlyph.TryFindResource(glyphFillKey), checkGlyph.Fill);
-        Assert.AreSame(checkGlyph.TryFindResource(glyphStrokeKey), checkGlyph.Stroke);
+        var trigger = triggers.Single(item => item.Property.Name == "IsChecked" && Equals(item.Value, true));
+        var setters = trigger.Setters.OfType<Setter>().ToArray();
+
+        Assert.AreEqual(3, setters.Length);
+        AssertSetter(setters, "CheckGlyph", "Opacity", 1.0);
+        AssertSetter(setters, "OuterEllipse", "Opacity", 0.0);
+        AssertSetter(setters, "CheckOuterEllipse", "Opacity", 1.0);
     }
 
-    private static VisualStateGroup GetCommonStates(FrameworkElement stateGroupsRoot)
+    private static void AssertRightToLeftTrigger(Trigger[] triggers)
     {
-        return VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
-            .OfType<VisualStateGroup>()
-            .Single(group => group.Name == "CommonStates");
+        var trigger = triggers.Single(item => item.Property.Name == "FlowDirection" && Equals(item.Value, FlowDirection.RightToLeft));
+        var setter = trigger.Setters.OfType<Setter>().Single();
+
+        Assert.AreEqual(string.Empty, setter.TargetName ?? string.Empty);
+        Assert.AreEqual("HorizontalAlignment", setter.Property.Name);
+        Assert.AreEqual(HorizontalAlignment.Right, setter.Value);
     }
 
-    private static string[] SourceCommonStateTargets()
+    private static bool HasCondition(MultiTrigger trigger, string propertyName, object value)
     {
-        return new[]
+        return trigger.Conditions.Cast<Condition>().Any(item =>
+            item.Property.Name == propertyName &&
+            Equals(item.Value, value));
+    }
+
+    private static void AssertSetter(Setter[] setters, string targetName, string propertyName, object value)
+    {
+        var setter = setters.Single(item =>
+            (item.TargetName ?? string.Empty) == targetName &&
+            item.Property.Name == propertyName);
+
+        if (value is string resourceKey)
         {
-            "ContentPresenter.Foreground",
-            "RootGrid.Background",
-            "RootGrid.BorderBrush",
-            "OuterEllipse.Stroke",
-            "OuterEllipse.Fill",
-            "CheckOuterEllipse.Stroke",
-            "CheckOuterEllipse.Fill",
-            "CheckGlyph.Fill",
-            "CheckGlyph.Stroke"
-        };
+            Assert.IsInstanceOfType(setter.Value, typeof(DynamicResourceExtension));
+            var resource = (DynamicResourceExtension)setter.Value;
+            Assert.AreEqual(resourceKey, resource.ResourceKey);
+        }
+        else
+        {
+            Assert.AreEqual(value, setter.Value);
+        }
     }
 
-    private static T FindTemplatePart<T>(Control control, string name)
+    private static void AssertUncheckedDisabledTriggerAppliesResources(RadioButton radioButton)
+    {
+        var outerEllipse = GetTemplateChild<Ellipse>(radioButton, "OuterEllipse");
+
+        radioButton.IsEnabled = false;
+        radioButton.UpdateLayout();
+
+        Assert.AreSame(radioButton.TryFindResource("RadioButtonForegroundDisabled"), radioButton.Foreground);
+        Assert.AreSame(radioButton.TryFindResource("RadioButtonBackgroundDisabled"), radioButton.Background);
+        Assert.AreSame(outerEllipse.TryFindResource("RadioButtonOuterEllipseFillDisabled"), outerEllipse.Fill);
+        Assert.AreSame(outerEllipse.TryFindResource("RadioButtonOuterEllipseStrokeDisabled"), outerEllipse.Stroke);
+    }
+
+    private static void AssertThemeResourceReference(string themeName, string key, object expectedResourceKey)
+    {
+        var theme = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(theme.Contains(expectedResourceKey), $"Theme is missing {expectedResourceKey}.");
+        Assert.AreSame(theme[expectedResourceKey], theme[key], key);
+    }
+
+    private static T GetTemplateChild<T>(Control control, string name)
         where T : DependencyObject
     {
-        control.ApplyTemplate();
         return control.Template.FindName(name, control) as T
-            ?? throw new AssertFailedException($"Expected RadioButton template part '{name}'.");
+            ?? throw new AssertFailedException($"Expected {control.GetType().Name} template child '{name}' to be a {typeof(T).Name}.");
     }
 }

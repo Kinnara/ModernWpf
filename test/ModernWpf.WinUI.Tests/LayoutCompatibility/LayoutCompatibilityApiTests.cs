@@ -1050,7 +1050,7 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
-    public void CoreResidualTemplatesUseWinUIPresenterSlots()
+    public void CoreResidualTemplatesUseExpectedPresenterSlots()
     {
         WpfTestHost.Run(() =>
         {
@@ -1081,9 +1081,10 @@ public class LayoutCompatibilityApiTests
             using var host = new TestWindowHost(hostPanel, width: 320, height: 180);
             host.UpdateLayout();
 
-            var radioPresenter = FindTemplateChild<ContentPresenterEx>(radioButton, "ContentPresenter");
+            var radioPresenter = FindTemplateChild<ContentPresenter>(radioButton, "ContentPresenter");
+            Assert.AreEqual(typeof(ContentPresenter), radioPresenter.GetType());
             Assert.AreEqual(radioButton.Content, radioPresenter.Content);
-            Assert.AreSame(radioButton.Foreground, radioPresenter.Foreground);
+            Assert.AreSame(radioButton.Foreground, TextElement.GetForeground(radioPresenter));
 
             var headerPresenter = FindTemplateChild<ContentPresenterEx>(listViewHeaderItem, "ContentPresenter");
             Assert.AreEqual(listViewHeaderItem.Content, headerPresenter.Content);

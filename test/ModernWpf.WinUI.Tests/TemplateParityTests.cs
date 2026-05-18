@@ -140,6 +140,7 @@ public class TemplateParityTests
         var officialWpfFluentTemplateFiles = new[]
         {
             Path.Combine("ModernWpf", "Styles", "Button.xaml"),
+            Path.Combine("ModernWpf", "Styles", "RadioButton.xaml"),
             Path.Combine("ModernWpf", "Styles", "RepeatButton.xaml"),
             Path.Combine("ModernWpf", "Styles", "Slider.xaml"),
             Path.Combine("ModernWpf", "Styles", "ToggleButton.xaml")
@@ -336,7 +337,6 @@ public class TemplateParityTests
         var repoRoot = FindRepoRoot();
         var sourceBackedTemplateFiles = new[]
         {
-            Path.Combine("ModernWpf", "Styles", "RadioButton.xaml"),
             Path.Combine("ModernWpf", "Themes", "ListViewHeaderItem.xaml"),
             Path.Combine("ModernWpf", "TitleBar", "TitleBarButton.xaml")
         };
