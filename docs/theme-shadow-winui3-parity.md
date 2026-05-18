@@ -54,10 +54,14 @@ WinUI has a second, Popup-owned inset path for windowed popups. The Popup window
 
 `CommandBarFlyout` now follows the source presenter-shadow lifecycle. Its `FlyoutPresenter` starts with the default shadow disabled, enables the WPF `ThemeShadowChrome` presenter shadow when opening with primary commands, removes it for flyout close, removes it during secondary command-bar open/close animations, and restores it when those secondary storyboards complete. The presenter continues to use depth `32` and `Medium` popup insets, matching the WinUI source `Translation.Z=32` presenter path and non-tooltip windowed popup inset path.
 
+## Calibration Probe
+
+`ThemeShadowChrome.ThemeShadowRenderer.GetRenderMetrics` exposes an internal bitmap-profile probe for the WPF software renderer. It renders the same alpha-mask path used by `DrawShadow` and reports bitmap size, content offset, non-zero alpha bounds, non-zero pixel count, peak alpha, and alpha centroid. The test suite pins depth `16` and `64` profiles so future renderer changes can be compared against stable WPF output before they are compared against a WinUI reference capture.
+
 ## Remaining Gap
 
 This is still a WPF substitution, not a literal WinUI compositor port. The depth, blur, offset, inset, and light/dark opacity constants now come from WinUI source, but the final rasterization uses WPF software alpha masks rather than compositor `DropShadow` visuals. The next shadow parity round should render the same flyout/NumberBox/ContentDialog/NavigationView samples in WinUI and ModernWpf, compare alpha bounds and peak opacity, then adjust only the WPF rasterization details that differ from the source compositor output.
 
 ## Verification
 
-Focused tests cover the renderer path, the removal of `BlurEffect` border shadow internals, computed depth padding, source windowed Popup insets, popup-host template opt-ins, the NumberBox popup's source `NumberBoxPopupShadowDepth=16` path, NavigationView's source `PaneOverlayShadowDepth=16` shadow caster, ContentDialog's source `baseElevation=128` shadow depth, and CommandBarFlyout's source presenter-shadow toggle lifecycle.
+Focused tests cover the renderer path, rendered alpha-profile calibration metrics, the removal of `BlurEffect` border shadow internals, computed depth padding, source windowed Popup insets, popup-host template opt-ins, the NumberBox popup's source `NumberBoxPopupShadowDepth=16` path, NavigationView's source `PaneOverlayShadowDepth=16` shadow caster, ContentDialog's source `baseElevation=128` shadow depth, and CommandBarFlyout's source presenter-shadow toggle lifecycle.

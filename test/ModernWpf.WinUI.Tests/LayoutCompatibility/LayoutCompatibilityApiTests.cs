@@ -117,6 +117,46 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
+    public void ThemeShadowRendererReportsCalibrationMetrics()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var dpi = new DpiScale(1, 1);
+            var contentSize = new Size(80, 40);
+            var cornerRadius = new CornerRadius(8);
+
+            var light16 = ThemeShadowChrome.ThemeShadowRenderer.GetRenderMetrics(contentSize, cornerRadius, 16, ElementTheme.Light, dpi);
+            Assert.AreEqual(96, light16.BitmapWidth);
+            Assert.AreEqual(56, light16.BitmapHeight);
+            Assert.AreEqual(8, light16.ContentLeft);
+            Assert.AreEqual(4, light16.ContentTop);
+            Assert.AreEqual(80, light16.ContentWidth);
+            Assert.AreEqual(40, light16.ContentHeight);
+            AssertShadowMetricsCoverContent(light16);
+            Assert.IsTrue(light16.PeakAlpha > 0);
+            Assert.IsTrue(light16.AlphaCentroidY > light16.ContentCenterY);
+
+            var dark16 = ThemeShadowChrome.ThemeShadowRenderer.GetRenderMetrics(contentSize, cornerRadius, 16, ElementTheme.Dark, dpi);
+            Assert.AreEqual(light16.BitmapWidth, dark16.BitmapWidth);
+            Assert.AreEqual(light16.BitmapHeight, dark16.BitmapHeight);
+            Assert.IsTrue(dark16.PeakAlpha > light16.PeakAlpha);
+
+            var light64 = ThemeShadowChrome.ThemeShadowRenderer.GetRenderMetrics(contentSize, cornerRadius, 64, ElementTheme.Light, dpi);
+            Assert.AreEqual(144, light64.BitmapWidth);
+            Assert.AreEqual(104, light64.BitmapHeight);
+            AssertShadowMetricsCoverContent(light64);
+            Assert.IsTrue(light64.NonZeroPixelCount > light16.NonZeroPixelCount);
+            Assert.IsTrue(light64.PeakAlpha > light16.PeakAlpha);
+            Assert.IsTrue(light64.AlphaCentroidY - light64.ContentCenterY > light16.AlphaCentroidY - light16.ContentCenterY);
+
+            var empty = ThemeShadowChrome.ThemeShadowRenderer.GetRenderMetrics(contentSize, cornerRadius, 0, ElementTheme.Light, dpi);
+            Assert.IsFalse(empty.HasShadow);
+            Assert.AreEqual(0, empty.BitmapWidth);
+            Assert.AreEqual(0, empty.BitmapHeight);
+        });
+    }
+
+    [TestMethod]
     public void ExistingPopupTemplatesUseWinUIWindowedPopupInsets()
     {
         WpfTestHost.Run(() =>
@@ -3314,6 +3354,15 @@ public class LayoutCompatibilityApiTests
     {
         Assert.AreEqual(ThemeShadowChromeWindowedPopupInsetMode.Medium, chrome.WindowedPopupInsetMode);
         Assert.AreEqual(new Thickness(10, 2, 10, 18), chrome.PopupShadowPadding);
+    }
+
+    private static void AssertShadowMetricsCoverContent(ThemeShadowChrome.ThemeShadowRenderer.ThemeShadowRenderMetrics metrics)
+    {
+        Assert.IsTrue(metrics.HasShadow);
+        Assert.IsTrue(metrics.NonZeroBounds.X <= metrics.ContentLeft);
+        Assert.IsTrue(metrics.NonZeroBounds.Y <= metrics.ContentTop);
+        Assert.IsTrue(metrics.NonZeroBounds.X + metrics.NonZeroBounds.Width >= metrics.ContentLeft + metrics.ContentWidth);
+        Assert.IsTrue(metrics.NonZeroBounds.Y + metrics.NonZeroBounds.Height >= metrics.ContentTop + metrics.ContentHeight);
     }
 
     private static void AssertInheritedTextMetadata(DependencyProperty property, Type ownerType)

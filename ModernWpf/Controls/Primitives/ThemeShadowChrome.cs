@@ -985,6 +985,26 @@ namespace ModernWpf.Controls.Primitives
                 }
             }
 
+            internal static ThemeShadowRenderMetrics GetRenderMetrics(
+                Size contentSize,
+                CornerRadius cornerRadius,
+                double depth,
+                ElementTheme theme,
+                DpiScale dpi)
+            {
+                if (depth <= 0 || double.IsNaN(depth) || double.IsInfinity(depth) ||
+                    contentSize.Width <= 0 || contentSize.Height <= 0)
+                {
+                    return ThemeShadowRenderMetrics.Empty;
+                }
+
+                var padding = GetPadding(depth);
+                var key = ThemeShadowKey.Create(contentSize, cornerRadius, depth, theme, padding, dpi);
+                var image = GetShadowImage(contentSize, cornerRadius, depth, theme, padding, dpi);
+
+                return MeasureShadowImage(image, key);
+            }
+
             public static void DrawShadow(
                 DrawingContext drawingContext,
                 Size contentSize,
@@ -1035,6 +1055,65 @@ namespace ModernWpf.Controls.Primitives
                 }
 
                 return image;
+            }
+
+            private static ThemeShadowRenderMetrics MeasureShadowImage(BitmapSource image, ThemeShadowKey key)
+            {
+                int stride = image.PixelWidth * 4;
+                var pixels = new byte[stride * image.PixelHeight];
+                image.CopyPixels(pixels, stride, 0);
+
+                int minX = image.PixelWidth;
+                int minY = image.PixelHeight;
+                int maxX = -1;
+                int maxY = -1;
+                int peakAlpha = 0;
+                int nonZeroPixelCount = 0;
+                long alphaSum = 0;
+                long weightedAlphaX = 0;
+                long weightedAlphaY = 0;
+
+                for (int y = 0; y < image.PixelHeight; y++)
+                {
+                    int row = y * stride;
+                    for (int x = 0; x < image.PixelWidth; x++)
+                    {
+                        int alpha = pixels[row + x * 4 + 3];
+                        if (alpha == 0)
+                        {
+                            continue;
+                        }
+
+                        minX = Math.Min(minX, x);
+                        minY = Math.Min(minY, y);
+                        maxX = Math.Max(maxX, x);
+                        maxY = Math.Max(maxY, y);
+                        peakAlpha = Math.Max(peakAlpha, alpha);
+                        nonZeroPixelCount++;
+                        alphaSum += alpha;
+                        weightedAlphaX += (long)alpha * x;
+                        weightedAlphaY += (long)alpha * y;
+                    }
+                }
+
+                var nonZeroBounds = nonZeroPixelCount == 0
+                    ? Int32Rect.Empty
+                    : new Int32Rect(minX, minY, maxX - minX + 1, maxY - minY + 1);
+                double alphaCentroidX = alphaSum == 0 ? double.NaN : (double)weightedAlphaX / alphaSum;
+                double alphaCentroidY = alphaSum == 0 ? double.NaN : (double)weightedAlphaY / alphaSum;
+
+                return new ThemeShadowRenderMetrics(
+                    image.PixelWidth,
+                    image.PixelHeight,
+                    key.PaddingLeft,
+                    key.PaddingTop,
+                    key.ContentWidth,
+                    key.ContentHeight,
+                    peakAlpha,
+                    nonZeroPixelCount,
+                    nonZeroBounds,
+                    alphaCentroidX,
+                    alphaCentroidY);
             }
 
             private static BitmapSource RenderShadowImage(ThemeShadowKey key, CornerRadius cornerRadius)
@@ -1251,6 +1330,53 @@ namespace ModernWpf.Controls.Primitives
 
             private const int MaxCacheEntries = 64;
             private static readonly Dictionary<ThemeShadowKey, BitmapSource> s_cache = new Dictionary<ThemeShadowKey, BitmapSource>();
+
+            internal readonly struct ThemeShadowRenderMetrics
+            {
+                public ThemeShadowRenderMetrics(
+                    int bitmapWidth,
+                    int bitmapHeight,
+                    int contentLeft,
+                    int contentTop,
+                    int contentWidth,
+                    int contentHeight,
+                    int peakAlpha,
+                    int nonZeroPixelCount,
+                    Int32Rect nonZeroBounds,
+                    double alphaCentroidX,
+                    double alphaCentroidY)
+                {
+                    BitmapWidth = bitmapWidth;
+                    BitmapHeight = bitmapHeight;
+                    ContentLeft = contentLeft;
+                    ContentTop = contentTop;
+                    ContentWidth = contentWidth;
+                    ContentHeight = contentHeight;
+                    PeakAlpha = peakAlpha;
+                    NonZeroPixelCount = nonZeroPixelCount;
+                    NonZeroBounds = nonZeroBounds;
+                    AlphaCentroidX = alphaCentroidX;
+                    AlphaCentroidY = alphaCentroidY;
+                }
+
+                public int BitmapWidth { get; }
+                public int BitmapHeight { get; }
+                public int ContentLeft { get; }
+                public int ContentTop { get; }
+                public int ContentWidth { get; }
+                public int ContentHeight { get; }
+                public int PeakAlpha { get; }
+                public int NonZeroPixelCount { get; }
+                public Int32Rect NonZeroBounds { get; }
+                public double AlphaCentroidX { get; }
+                public double AlphaCentroidY { get; }
+                public bool HasShadow => NonZeroPixelCount > 0;
+                public double ContentCenterX => ContentLeft + ContentWidth / 2.0;
+                public double ContentCenterY => ContentTop + ContentHeight / 2.0;
+
+                public static ThemeShadowRenderMetrics Empty { get; } =
+                    new ThemeShadowRenderMetrics(0, 0, 0, 0, 0, 0, 0, 0, Int32Rect.Empty, double.NaN, double.NaN);
+            }
 
             private readonly struct ThemeShadowLayer
             {
