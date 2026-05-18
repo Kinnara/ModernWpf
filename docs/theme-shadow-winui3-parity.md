@@ -58,6 +58,14 @@ WinUI has a second, Popup-owned inset path for windowed popups. The Popup window
 
 `ThemeShadowChrome.ThemeShadowRenderer.GetRenderMetrics` exposes an internal bitmap-profile probe for the WPF software renderer. It renders the same alpha-mask path used by `DrawShadow` and reports bitmap size, content offset, non-zero alpha bounds, non-zero pixel count, peak alpha, and alpha centroid. The test suite pins depth `16` and `64` profiles so future renderer changes can be compared against stable WPF output before they are compared against a WinUI reference capture.
 
+The current WPF baseline for an `80x40` DIP content rect with `CornerRadius=8` at `96` DPI is:
+
+| Case | Bitmap | Content offset | Non-zero alpha bounds | Peak alpha | Non-zero pixels | Alpha centroid |
+| --- | --- | --- | --- | --- | --- | --- |
+| Light depth 16 | `96x56` | `8,4` | `2,2,92,52` | `36` | `4584` | `47.500,27.500` |
+| Dark depth 16 | `96x56` | `8,4` | `1,1,94,54` | `66` | `4824` | `47.500,27.500` |
+| Light depth 64 | `144x104` | `32,16` | `8,8,128,88` | `77` | `9984` | `71.500,45.447` |
+
 ## Remaining Gap
 
 This is still a WPF substitution, not a literal WinUI compositor port. The depth, blur, offset, inset, and light/dark opacity constants now come from WinUI source, but the final rasterization uses WPF software alpha masks rather than compositor `DropShadow` visuals. The next shadow parity round should render the same flyout/NumberBox/ContentDialog/NavigationView samples in WinUI and ModernWpf, compare alpha bounds and peak opacity, then adjust only the WPF rasterization details that differ from the source compositor output.

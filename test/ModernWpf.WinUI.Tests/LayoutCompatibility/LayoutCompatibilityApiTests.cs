@@ -126,25 +126,45 @@ public class LayoutCompatibilityApiTests
             var cornerRadius = new CornerRadius(8);
 
             var light16 = ThemeShadowChrome.ThemeShadowRenderer.GetRenderMetrics(contentSize, cornerRadius, 16, ElementTheme.Light, dpi);
-            Assert.AreEqual(96, light16.BitmapWidth);
-            Assert.AreEqual(56, light16.BitmapHeight);
-            Assert.AreEqual(8, light16.ContentLeft);
-            Assert.AreEqual(4, light16.ContentTop);
-            Assert.AreEqual(80, light16.ContentWidth);
-            Assert.AreEqual(40, light16.ContentHeight);
-            AssertShadowMetricsCoverContent(light16);
-            Assert.IsTrue(light16.PeakAlpha > 0);
-            Assert.IsTrue(light16.AlphaCentroidY > light16.ContentCenterY);
+            AssertShadowMetrics(
+                light16,
+                bitmapWidth: 96,
+                bitmapHeight: 56,
+                contentLeft: 8,
+                contentTop: 4,
+                peakAlpha: 36,
+                nonZeroPixelCount: 4584,
+                nonZeroBounds: new Int32Rect(2, 2, 92, 52),
+                alphaCentroidX: 47.5,
+                alphaCentroidY: 27.5);
 
             var dark16 = ThemeShadowChrome.ThemeShadowRenderer.GetRenderMetrics(contentSize, cornerRadius, 16, ElementTheme.Dark, dpi);
-            Assert.AreEqual(light16.BitmapWidth, dark16.BitmapWidth);
-            Assert.AreEqual(light16.BitmapHeight, dark16.BitmapHeight);
+            AssertShadowMetrics(
+                dark16,
+                bitmapWidth: 96,
+                bitmapHeight: 56,
+                contentLeft: 8,
+                contentTop: 4,
+                peakAlpha: 66,
+                nonZeroPixelCount: 4824,
+                nonZeroBounds: new Int32Rect(1, 1, 94, 54),
+                alphaCentroidX: 47.5,
+                alphaCentroidY: 27.5);
             Assert.IsTrue(dark16.PeakAlpha > light16.PeakAlpha);
 
             var light64 = ThemeShadowChrome.ThemeShadowRenderer.GetRenderMetrics(contentSize, cornerRadius, 64, ElementTheme.Light, dpi);
-            Assert.AreEqual(144, light64.BitmapWidth);
-            Assert.AreEqual(104, light64.BitmapHeight);
-            AssertShadowMetricsCoverContent(light64);
+            AssertShadowMetrics(
+                light64,
+                bitmapWidth: 144,
+                bitmapHeight: 104,
+                contentLeft: 32,
+                contentTop: 16,
+                peakAlpha: 77,
+                nonZeroPixelCount: 9984,
+                nonZeroBounds: new Int32Rect(8, 8, 128, 88),
+                alphaCentroidX: 71.5,
+                alphaCentroidY: 45.447,
+                alphaCentroidTolerance: 0.001);
             Assert.IsTrue(light64.NonZeroPixelCount > light16.NonZeroPixelCount);
             Assert.IsTrue(light64.PeakAlpha > light16.PeakAlpha);
             Assert.IsTrue(light64.AlphaCentroidY - light64.ContentCenterY > light16.AlphaCentroidY - light16.ContentCenterY);
@@ -3363,6 +3383,34 @@ public class LayoutCompatibilityApiTests
         Assert.IsTrue(metrics.NonZeroBounds.Y <= metrics.ContentTop);
         Assert.IsTrue(metrics.NonZeroBounds.X + metrics.NonZeroBounds.Width >= metrics.ContentLeft + metrics.ContentWidth);
         Assert.IsTrue(metrics.NonZeroBounds.Y + metrics.NonZeroBounds.Height >= metrics.ContentTop + metrics.ContentHeight);
+    }
+
+    private static void AssertShadowMetrics(
+        ThemeShadowChrome.ThemeShadowRenderer.ThemeShadowRenderMetrics metrics,
+        int bitmapWidth,
+        int bitmapHeight,
+        int contentLeft,
+        int contentTop,
+        int peakAlpha,
+        int nonZeroPixelCount,
+        Int32Rect nonZeroBounds,
+        double alphaCentroidX,
+        double alphaCentroidY,
+        double alphaCentroidTolerance = 0.0001)
+    {
+        Assert.AreEqual(bitmapWidth, metrics.BitmapWidth);
+        Assert.AreEqual(bitmapHeight, metrics.BitmapHeight);
+        Assert.AreEqual(contentLeft, metrics.ContentLeft);
+        Assert.AreEqual(contentTop, metrics.ContentTop);
+        Assert.AreEqual(80, metrics.ContentWidth);
+        Assert.AreEqual(40, metrics.ContentHeight);
+        AssertShadowMetricsCoverContent(metrics);
+        Assert.AreEqual(peakAlpha, metrics.PeakAlpha);
+        Assert.AreEqual(nonZeroPixelCount, metrics.NonZeroPixelCount);
+        Assert.AreEqual(nonZeroBounds, metrics.NonZeroBounds);
+        Assert.AreEqual(alphaCentroidX, metrics.AlphaCentroidX, alphaCentroidTolerance);
+        Assert.AreEqual(alphaCentroidY, metrics.AlphaCentroidY, alphaCentroidTolerance);
+        Assert.IsTrue(metrics.AlphaCentroidY > metrics.ContentCenterY);
     }
 
     private static void AssertInheritedTextMetadata(DependencyProperty property, Type ownerType)
