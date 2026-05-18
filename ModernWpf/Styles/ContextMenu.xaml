@@ -25,7 +25,6 @@
         <Setter Property="Grid.IsSharedSizeScope" Value="True" />
         <Setter Property="Popup.PopupAnimation" Value="None" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
-        <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ContextMenu}">
@@ -75,7 +74,9 @@
         </Setter>
     </Style>
 
-    <Style BasedOn="{StaticResource DefaultContextMenuStyle}" TargetType="{x:Type ContextMenu}" />
+    <Style x:Key="ContextMenuStyleBase" BasedOn="{StaticResource DefaultContextMenuStyle}" TargetType="{x:Type ContextMenu}" />
+
+    <Style BasedOn="{StaticResource ContextMenuStyleBase}" TargetType="{x:Type ContextMenu}" />
 
     <ContextMenu x:Key="DefaultControlContextMenu">
         <MenuItem Command="ApplicationCommands.Copy" />

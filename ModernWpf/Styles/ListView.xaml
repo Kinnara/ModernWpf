@@ -10,6 +10,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives">
 
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="GridView.xaml" />
+        <ResourceDictionary Source="ListViewItem.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
     <primitives:IsGridViewConverter x:Key="ViewIsGridViewConverter" />
 
     <ControlTemplate x:Key="ListViewTemplate" TargetType="{x:Type ListView}">
@@ -76,8 +81,8 @@
         <Style.Triggers>
             <DataTrigger Binding="{Binding View, RelativeSource={RelativeSource Self}, Converter={StaticResource ViewIsGridViewConverter}}" Value="True">
                 <Setter Property="Template" Value="{StaticResource GridViewTemplate}" />
-                <Setter Property="ItemContainerStyle" Value="{DynamicResource {x:Static GridView.GridViewItemContainerStyleKey}}" />
-                <Setter Property="GridView.ColumnHeaderContainerStyle" Value="{DynamicResource DefaultGridViewColumnHeaderStyle}" />
+                <Setter Property="ItemContainerStyle" Value="{StaticResource {x:Static GridView.GridViewItemContainerStyleKey}}" />
+                <Setter Property="GridView.ColumnHeaderContainerStyle" Value="{StaticResource DefaultGridViewColumnHeaderStyle}" />
             </DataTrigger>
         </Style.Triggers>
     </Style>
@@ -85,9 +90,9 @@
     <Style BasedOn="{StaticResource DefaultListViewStyle}" TargetType="{x:Type ListView}" />
 
     <Style x:Key="{x:Static GridView.GridViewStyleKey}" TargetType="ListView" BasedOn="{StaticResource BaseListViewStyle}">
-        <Setter Property="ItemContainerStyle" Value="{DynamicResource {x:Static GridView.GridViewItemContainerStyleKey}}" />
+        <Setter Property="ItemContainerStyle" Value="{StaticResource {x:Static GridView.GridViewItemContainerStyleKey}}" />
         <Setter Property="Template" Value="{StaticResource GridViewTemplate}" />
-        <Setter Property="GridView.ColumnHeaderContainerStyle" Value="{DynamicResource DefaultGridViewColumnHeaderStyle}" />
+        <Setter Property="GridView.ColumnHeaderContainerStyle" Value="{StaticResource DefaultGridViewColumnHeaderStyle}" />
     </Style>
 
 </ResourceDictionary>

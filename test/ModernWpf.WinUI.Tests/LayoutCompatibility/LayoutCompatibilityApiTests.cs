@@ -3622,6 +3622,9 @@ public class LayoutCompatibilityApiTests
 
     private static void AssertDynamicRoundedChildClip(FrameworkElement element, Action<CornerRadius> setCornerRadius)
     {
+        element.HorizontalAlignment = HorizontalAlignment.Left;
+        element.VerticalAlignment = VerticalAlignment.Top;
+
         setCornerRadius(new CornerRadius());
         using var host = new TestWindowHost(element, width: 120, height: 90);
 

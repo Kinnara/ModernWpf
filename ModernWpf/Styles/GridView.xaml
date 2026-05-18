@@ -215,7 +215,7 @@
             <Border.Resources>
                 <Style TargetType="GridViewColumnHeader" BasedOn="{StaticResource DefaultGridViewColumnHeaderStyle}" />
             </Border.Resources>
-            <ScrollViewer Style="{DynamicResource {x:Static GridView.GridViewScrollViewerStyleKey}}"
+            <ScrollViewer Style="{StaticResource {x:Static GridView.GridViewScrollViewerStyleKey}}"
                           Padding="{TemplateBinding Padding}">
                 <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
             </ScrollViewer>
