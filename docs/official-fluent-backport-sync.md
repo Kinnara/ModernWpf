@@ -917,3 +917,43 @@ Source inspected:
 - `test\ModernWpf.WinUI.Tests\CommonStyles\DataGridVisualStateTests.cs` covers the official WPF Fluent DataGrid style keys, converter, theme aliases, WPF presenter slots, and deletion of the old helper/template branches.
 - `test\ModernWpf.WinUI.Tests\LayoutCompatibility\LayoutCompatibilityApiTests.cs` covers the official WPF DataGrid cell/header presenter shape.
 - `test\ModernWpf.WinUI.Tests\TemplateParityTests.cs` classifies `DataGrid.xaml` as an official WPF Fluent stock template file that should not use `VisualStateEx` or `ContentPresenterEx`.
+
+## 2026-05-18 Batch 30
+
+Source inspected:
+
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\ContentControl.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\HeaderedContentControl.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\ItemsControl.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\UserControl.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\Page.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\Frame.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\NavigationWindow.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\TextBlock.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\Thumb.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Light.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Dark.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\HC.xaml`
+
+### Synced Values
+
+| Resource key / style | Official WPF Fluent value | ModernWpf value after sync | Reason |
+| --- | --- | --- | --- |
+| `ContentControl`, `HeaderedContentControl`, `ItemsControl`, and `UserControl` stock styles | Official WPF presenter templates | Added under `ModernWpf\Styles` and merged through `StockControlsResources` | These are stock WPF controls, so official WPF Fluent is the primary source. |
+| `DefaultPageStyle`, `DefaultFrameStyle`, and `DefaultNavigationWindowStyle` | Official WPF navigation-shell templates, including frame journal menu resources | Added under `ModernWpf\Styles` and merged through `StockControlsResources` | Fills a stock-style gap using source-backed WPF Fluent templates. |
+| `BaseTextBlockStyle`, `CaptionTextBlockStyle`, `BodyTextBlockStyle`, `BodyStrongTextBlockStyle`, `SubtitleTextBlockStyle`, `TitleTextBlockStyle`, `TitleLargeTextBlockStyle`, and `DisplayTextBlockStyle` | Official WPF Fluent text style relationships and setters | `TextStyles.xaml` now follows the official shape while retaining legacy aliases | Aligns the base text style surface without breaking existing ModernWpf resource lookups. |
+| `WindowBackground`, `WindowForeground`, `Frame*`, `NavigationWindow*`, and `Page*` aliases | Official WPF Fluent shell theme resources | Added across Light, Dark, and HighContrast dictionaries | Required by the copied page/frame/navigation styles and useful for future Window comparison. |
+
+### Intentional Differences
+
+| Resource key / style | Official WPF Fluent value | ModernWpf backport value | Reason retained |
+| --- | --- | --- | --- |
+| `system` namespace assembly | `System.Runtime` in several official style files | `mscorlib` | Keeps copied resources compatible with ModernWpf's older target frameworks. |
+| `TextBlock.xaml` file name | Official file is `TextBlock.xaml` | ModernWpf keeps `TextStyles.xaml` | Preserve the existing merge path and public resource naming. |
+| `HeaderTextBlockStyle` / `SubheaderTextBlockStyle` | Not present in official WPF Fluent | Retained as legacy aliases | Avoids unnecessary resource-surface churn while the core text styles follow official WPF Fluent. |
+| `Window.xaml` | Official plain WPF window content/backdrop style | ModernWpf custom title-bar/window-chrome style is retained | ModernWpf owns custom `TitleBarControl`, `WindowChrome`, and maximized-window behavior; replacing it needs a separate shell audit. |
+
+### Test Evidence
+
+- `test\ModernWpf.WinUI.Tests\CommonStyles\FoundationNavigationVisualStateTests.cs` covers official foundation/navigation style keys, WPF presenter slots, text-style shape, theme aliases, and source-shape file substitutions.
+- `test\ModernWpf.WinUI.Tests\TemplateParityTests.cs` classifies the new foundation/navigation style files as official WPF Fluent stock template files that should not use `VisualStateEx` or `ContentPresenterEx`.

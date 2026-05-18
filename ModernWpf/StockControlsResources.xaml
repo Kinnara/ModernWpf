@@ -4,6 +4,10 @@
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="Styles/Common.xaml" />
+        <ResourceDictionary Source="Styles/ContentControl.xaml" />
+        <ResourceDictionary Source="Styles/HeaderedContentControl.xaml" />
+        <ResourceDictionary Source="Styles/ItemsControl.xaml" />
+        <ResourceDictionary Source="Styles/UserControl.xaml" />
         <ResourceDictionary Source="Styles/Calendar.xaml" />
         <ResourceDictionary Source="Styles/CheckBox.xaml" />
         <ResourceDictionary Source="Styles/ComboBox.xaml" />
@@ -43,6 +47,9 @@
         <ResourceDictionary Source="Styles/ToolBar.xaml" />
         <ResourceDictionary Source="Styles/TreeViewItem.xaml" />
         <ResourceDictionary Source="Styles/TreeView.xaml" />
+        <ResourceDictionary Source="Styles/Page.xaml" />
+        <ResourceDictionary Source="Styles/Frame.xaml" />
+        <ResourceDictionary Source="Styles/NavigationWindow.xaml" />
         <ResourceDictionary Source="Styles/Window.xaml" />
     </ResourceDictionary.MergedDictionaries>
 

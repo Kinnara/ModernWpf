@@ -134,13 +134,17 @@ public class TemplateParityTests
             Path.Combine("ModernWpf", "Styles", "Calendar.xaml"),
             Path.Combine("ModernWpf", "Styles", "CheckBox.xaml"),
             Path.Combine("ModernWpf", "Styles", "ComboBox.xaml"),
+            Path.Combine("ModernWpf", "Styles", "ContentControl.xaml"),
             Path.Combine("ModernWpf", "Styles", "DataGrid.xaml"),
             Path.Combine("ModernWpf", "Styles", "DatePicker.xaml"),
             Path.Combine("ModernWpf", "Styles", "Expander.xaml"),
+            Path.Combine("ModernWpf", "Styles", "Frame.xaml"),
             Path.Combine("ModernWpf", "Styles", "GridSplitter.xaml"),
             Path.Combine("ModernWpf", "Styles", "GroupBox.xaml"),
             Path.Combine("ModernWpf", "Styles", "GroupItem.xaml"),
+            Path.Combine("ModernWpf", "Styles", "HeaderedContentControl.xaml"),
             Path.Combine("ModernWpf", "Styles", "Hyperlink.xaml"),
+            Path.Combine("ModernWpf", "Styles", "ItemsControl.xaml"),
             Path.Combine("ModernWpf", "Styles", "Label.xaml"),
             Path.Combine("ModernWpf", "Styles", "ListBox.xaml"),
             Path.Combine("ModernWpf", "Styles", "ListBoxItem.xaml"),
@@ -150,6 +154,8 @@ public class TemplateParityTests
             Path.Combine("ModernWpf", "Styles", "Menu.xaml"),
             Path.Combine("ModernWpf", "Styles", "ContextMenu.xaml"),
             Path.Combine("ModernWpf", "Styles", "MenuItem.xaml"),
+            Path.Combine("ModernWpf", "Styles", "NavigationWindow.xaml"),
+            Path.Combine("ModernWpf", "Styles", "Page.xaml"),
             Path.Combine("ModernWpf", "Styles", "ProgressBar.xaml"),
             Path.Combine("ModernWpf", "Styles", "RadioButton.xaml"),
             Path.Combine("ModernWpf", "Styles", "RepeatButton.xaml"),
@@ -162,13 +168,15 @@ public class TemplateParityTests
             Path.Combine("ModernWpf", "Styles", "StatusBar.xaml"),
             Path.Combine("ModernWpf", "Styles", "TabControl.xaml"),
             Path.Combine("ModernWpf", "Styles", "TextBox.xaml"),
+            Path.Combine("ModernWpf", "Styles", "TextStyles.xaml"),
             Path.Combine("ModernWpf", "Styles", "PasswordBox.xaml"),
             Path.Combine("ModernWpf", "Styles", "Thumb.xaml"),
             Path.Combine("ModernWpf", "Styles", "ToolTip.xaml"),
             Path.Combine("ModernWpf", "Styles", "ToolBar.xaml"),
             Path.Combine("ModernWpf", "Styles", "ToggleButton.xaml"),
             Path.Combine("ModernWpf", "Styles", "TreeView.xaml"),
-            Path.Combine("ModernWpf", "Styles", "TreeViewItem.xaml")
+            Path.Combine("ModernWpf", "Styles", "TreeViewItem.xaml"),
+            Path.Combine("ModernWpf", "Styles", "UserControl.xaml")
         };
 
         var offenders = officialWpfFluentTemplateFiles
@@ -274,6 +282,13 @@ public class TemplateParityTests
         var repoRoot = FindRepoRoot();
         var officialWpfFluentTemplateFiles = new[]
         {
+            Path.Combine("ModernWpf", "Styles", "ContentControl.xaml"),
+            Path.Combine("ModernWpf", "Styles", "HeaderedContentControl.xaml"),
+            Path.Combine("ModernWpf", "Styles", "ItemsControl.xaml"),
+            Path.Combine("ModernWpf", "Styles", "UserControl.xaml"),
+            Path.Combine("ModernWpf", "Styles", "Page.xaml"),
+            Path.Combine("ModernWpf", "Styles", "Frame.xaml"),
+            Path.Combine("ModernWpf", "Styles", "NavigationWindow.xaml"),
             Path.Combine("ModernWpf", "Styles", "ListBox.xaml"),
             Path.Combine("ModernWpf", "Styles", "ListBoxItem.xaml"),
             Path.Combine("ModernWpf", "Styles", "ComboBox.xaml"),

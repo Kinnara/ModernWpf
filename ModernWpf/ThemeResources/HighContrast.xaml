@@ -2036,8 +2036,20 @@
     <Thickness x:Key="TeachingTipAlternateCloseButtonBorderThickness">1</Thickness>
 
     <!-- Resources for Window -->
+    <m:StaticResource x:Key="WindowBackground" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="WindowForeground" ResourceKey="SystemColorWindowTextColorBrush" />
     <SolidColorBrush x:Key="WindowBorder" Color="{m:ThemeResource SystemColorActiveCaptionColor}" />
     <SolidColorBrush x:Key="WindowBorderInactive" Color="{m:ThemeResource SystemColorInactiveCaptionTextColor}" />
+    <m:StaticResource x:Key="FrameBackground" ResourceKey="SystemControlTransparentBrush" />
+    <m:StaticResource x:Key="FrameForeground" ResourceKey="SystemColorWindowTextColorBrush" />
+    <m:StaticResource x:Key="FrameMenuItemBackground" ResourceKey="SystemControlTransparentBrush" />
+    <m:StaticResource x:Key="FrameMenuItemBorderBrush" ResourceKey="SystemControlTransparentBrush" />
+    <m:StaticResource x:Key="FrameMenuItemBackgroundSelected" ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="FrameMenuItemForegroundDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
+    <m:StaticResource x:Key="NavigationWindowBackground" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="NavigationWindowForeground" ResourceKey="SystemColorWindowTextColorBrush" />
+    <m:StaticResource x:Key="PageForeground" ResourceKey="SystemColorWindowTextColorBrush" />
+    <m:StaticResource x:Key="PageBackground" ResourceKey="SystemControlTransparentBrush" />
     <m:StaticResource x:Key="TitleBarForegroundBrush" ResourceKey="TextFillColorPrimaryBrush" />
     <m:StaticResource x:Key="TitleBarDeactivatedForegroundBrush" ResourceKey="TextFillColorTertiaryBrush" />
     <m:StaticResource x:Key="TitleBarButtonForegroundColor" ResourceKey="TextFillColorPrimary" />
