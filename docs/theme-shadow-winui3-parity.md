@@ -52,10 +52,12 @@ WinUI has a second, Popup-owned inset path for windowed popups. The Popup window
 
 `ContentDialog` opts into `Depth=128`, matching the source drop-shadow-mode call to `ApplyElevationEffect` with `baseElevation=128`. This maps to the clamped maximum WinUI drop-shadow recipe, with renderer padding `64,32,64,96`.
 
+`CommandBarFlyout` now follows the source presenter-shadow lifecycle. Its `FlyoutPresenter` starts with the default shadow disabled, enables the WPF `ThemeShadowChrome` presenter shadow when opening with primary commands, removes it for flyout close, removes it during secondary command-bar open/close animations, and restores it when those secondary storyboards complete. The presenter continues to use depth `32` and `Medium` popup insets, matching the WinUI source `Translation.Z=32` presenter path and non-tooltip windowed popup inset path.
+
 ## Remaining Gap
 
 This is still a WPF substitution, not a literal WinUI compositor port. The depth, blur, offset, inset, and light/dark opacity constants now come from WinUI source, but the final rasterization uses WPF software alpha masks rather than compositor `DropShadow` visuals. The next shadow parity round should render the same flyout/NumberBox/ContentDialog/NavigationView samples in WinUI and ModernWpf, compare alpha bounds and peak opacity, then adjust only the WPF rasterization details that differ from the source compositor output.
 
 ## Verification
 
-Focused tests cover the renderer path, the removal of `BlurEffect` border shadow internals, computed depth padding, source windowed Popup insets, popup-host template opt-ins, the NumberBox popup's source `NumberBoxPopupShadowDepth=16` path, NavigationView's source `PaneOverlayShadowDepth=16` shadow caster, and ContentDialog's source `baseElevation=128` shadow depth.
+Focused tests cover the renderer path, the removal of `BlurEffect` border shadow internals, computed depth padding, source windowed Popup insets, popup-host template opt-ins, the NumberBox popup's source `NumberBoxPopupShadowDepth=16` path, NavigationView's source `PaneOverlayShadowDepth=16` shadow caster, ContentDialog's source `baseElevation=128` shadow depth, and CommandBarFlyout's source presenter-shadow toggle lifecycle.

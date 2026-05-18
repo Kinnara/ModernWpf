@@ -125,6 +125,11 @@ namespace ModernWpf.Controls
                         commandBar.OverflowButtonVisibility = CommandBarOverflowButtonVisibility.Auto;
                     }
                 }
+
+                if (PrimaryCommands.Count > 0)
+                {
+                    AddDropShadow();
+                }
             };
 
             Opened += delegate
@@ -143,6 +148,8 @@ namespace ModernWpf.Controls
                 var commandBar = m_commandBar;
                 if (commandBar != null)
                 {
+                    RemoveDropShadow();
+
                     if (!m_isClosingAfterCloseAnimation && commandBar.HasCloseAnimation())
                     {
                         args.Cancel = true;
@@ -220,6 +227,20 @@ namespace ModernWpf.Controls
             {
                 SetCurrentValue(ShowModeProperty, FlyoutShowMode.Standard);
             };
+            commandBar.Opening += delegate
+            {
+                if (commandBar.HasSecondaryOpenCloseAnimations() && SecondaryCommands.Count > 0)
+                {
+                    RemoveDropShadow();
+                }
+            };
+            commandBar.Closing += delegate
+            {
+                if (commandBar.HasSecondaryOpenCloseAnimations())
+                {
+                    RemoveDropShadow();
+                }
+            };
 
             commandBar.SetOwningFlyout(this);
             return presenter;
@@ -287,6 +308,22 @@ namespace ModernWpf.Controls
         internal FlyoutPresenter GetPresenter()
         {
             return m_presenter;
+        }
+
+        internal void AddDropShadow()
+        {
+            if (m_presenter != null)
+            {
+                m_presenter.IsDefaultShadowEnabled = true;
+            }
+        }
+
+        internal void RemoveDropShadow()
+        {
+            if (m_presenter != null)
+            {
+                m_presenter.IsDefaultShadowEnabled = false;
+            }
         }
 
         private void HookAllCommandBarElementDependencyPropertyChanges()

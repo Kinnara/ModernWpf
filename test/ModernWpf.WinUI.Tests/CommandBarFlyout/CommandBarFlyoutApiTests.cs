@@ -281,7 +281,8 @@ public class CommandBarFlyoutApiTests
         {
             var commandBarFlyout = new CommandBarFlyout
             {
-                Placement = FlyoutPlacementMode.Right
+                Placement = FlyoutPlacementMode.Right,
+                ShowMode = FlyoutShowMode.Standard
             };
 
             commandBarFlyout.PrimaryCommands.Add(new AppBarButton { Label = "Copy" });
@@ -330,6 +331,103 @@ public class CommandBarFlyoutApiTests
                 WpfTestHost.DoEvents();
                 Assert.IsFalse(commandBarFlyout.IsOpen);
                 Assert.IsFalse(commandBar.IsOpen);
+            }
+        });
+    }
+
+    [TestMethod]
+    public void PresenterShadowFollowsWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var commandBarFlyout = new CommandBarFlyout
+            {
+                Placement = FlyoutPlacementMode.Right,
+                ShowMode = FlyoutShowMode.Transient
+            };
+
+            commandBarFlyout.PrimaryCommands.Add(new AppBarButton { Label = "Copy" });
+            commandBarFlyout.SecondaryCommands.Add(new AppBarButton { Label = "Select all" });
+
+            var target = new System.Windows.Controls.Button
+            {
+                Content = "Show CommandBarFlyout",
+                Width = 180,
+                Height = 36
+            };
+
+            using var host = new TestWindowHost(target, width: 420, height: 260);
+
+            commandBarFlyout.ShowAt(target);
+            WpfTestHost.DoEvents();
+
+            try
+            {
+                var presenter = commandBarFlyout.GetPresenter();
+                Assert.IsNotNull(presenter);
+                presenter!.ApplyTemplate();
+                host.UpdateLayout();
+
+                Assert.IsTrue(presenter.IsDefaultShadowEnabled);
+
+                var chrome = FindDescendant<ThemeShadowChrome>(presenter);
+                Assert.AreEqual(32.0, chrome.Depth);
+                Assert.AreEqual(ThemeShadowChromeWindowedPopupInsetMode.Medium, chrome.WindowedPopupInsetMode);
+                Assert.AreEqual(new Thickness(10, 2, 10, 18), chrome.PopupShadowPadding);
+
+                var commandBar = GetCommandBar(commandBarFlyout);
+                commandBar.ApplyTemplate();
+                host.UpdateLayout();
+
+                commandBar.IsOpen = true;
+
+                if (commandBar.HasSecondaryOpenCloseAnimations())
+                {
+                    Assert.IsFalse(presenter.IsDefaultShadowEnabled);
+                }
+            }
+            finally
+            {
+                HideAndWait(commandBarFlyout);
+            }
+
+            Assert.IsFalse(commandBarFlyout.GetPresenter()?.IsDefaultShadowEnabled ?? true);
+        });
+    }
+
+    [TestMethod]
+    public void PresenterShadowStaysDisabledWithoutPrimaryCommandsLikeWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var commandBarFlyout = new CommandBarFlyout
+            {
+                Placement = FlyoutPlacementMode.Right
+            };
+
+            commandBarFlyout.SecondaryCommands.Add(new AppBarButton { Label = "Select all" });
+
+            var target = new System.Windows.Controls.Button
+            {
+                Content = "Show CommandBarFlyout",
+                Width = 180,
+                Height = 36
+            };
+
+            using var host = new TestWindowHost(target, width: 420, height: 260);
+
+            commandBarFlyout.ShowAt(target);
+            WpfTestHost.DoEvents();
+
+            try
+            {
+                var presenter = commandBarFlyout.GetPresenter();
+                Assert.IsNotNull(presenter);
+                Assert.IsFalse(presenter!.IsDefaultShadowEnabled);
+            }
+            finally
+            {
+                HideAndWait(commandBarFlyout);
             }
         });
     }

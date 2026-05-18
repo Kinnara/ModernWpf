@@ -128,9 +128,11 @@ namespace ModernWpf.Controls.Primitives
             if (isOpen)
             {
                 UpdateInputDeviceTypeUsedToOpen();
+                Opening?.Invoke(this, null);
             }
             else
             {
+                Closing?.Invoke(this, null);
                 m_inputModeUsedToOpen = AppBarButtonInputMode.Default;
                 m_secondaryItemsRootSized = false;
                 StopOpenAnimation();
@@ -164,6 +166,10 @@ namespace ModernWpf.Controls.Primitives
 
         public event EventHandler<object> Opened;
 
+        internal event EventHandler<object> Opening;
+
+        internal event EventHandler<object> Closing;
+
         public event EventHandler<object> Closed;
 
         public override void OnApplyTemplate()
@@ -186,6 +192,10 @@ namespace ModernWpf.Controls.Primitives
             {
                 m_openingStoryboard = m_layoutRoot.Resources["OpeningStoryboard"] as Storyboard;
                 m_closingStoryboard = m_layoutRoot.Resources["ClosingStoryboard"] as Storyboard;
+                m_collapsedToExpandedUpStoryboard = m_layoutRoot.Resources["CollapsedToExpandedUpStoryboard"] as Storyboard;
+                m_collapsedToExpandedDownStoryboard = m_layoutRoot.Resources["CollapsedToExpandedDownStoryboard"] as Storyboard;
+                m_expandedUpToCollapsedStoryboard = m_layoutRoot.Resources["ExpandedUpToCollapsedStoryboard"] as Storyboard;
+                m_expandedDownToCollapsedStoryboard = m_layoutRoot.Resources["ExpandedDownToCollapsedStoryboard"] as Storyboard;
             }
 
             if (m_moreButton != null && m_moreButton.IsTabStop)
@@ -271,6 +281,8 @@ namespace ModernWpf.Controls.Primitives
                 m_closingStoryboard.Completed += ClosingStoryboardCompleted;
                 m_closingStoryboard.CurrentStateInvalidated += ClosingStoryboardCurrentStateInvalidated;
             }
+
+            AttachEventsToSecondaryStoryboards();
         }
 
         private void DetachEventHandlers()
@@ -312,6 +324,8 @@ namespace ModernWpf.Controls.Primitives
                 m_closingStoryboard.CurrentStateInvalidated -= ClosingStoryboardCurrentStateInvalidated;
                 m_closingStoryboardState = null;
             }
+
+            DetachEventsFromSecondaryStoryboards();
         }
 
         private void AttachCommandElementsToPanels()
@@ -523,6 +537,15 @@ namespace ModernWpf.Controls.Primitives
         internal bool HasCloseAnimation()
         {
             return m_closingStoryboard != null && SharedHelpers.IsAnimationsEnabled;
+        }
+
+        internal bool HasSecondaryOpenCloseAnimations()
+        {
+            return SharedHelpers.IsAnimationsEnabled &&
+                   (m_collapsedToExpandedUpStoryboard != null ||
+                    m_collapsedToExpandedDownStoryboard != null ||
+                    m_expandedUpToCollapsedStoryboard != null ||
+                    m_expandedDownToCollapsedStoryboard != null);
         }
 
         internal void PlayCloseAnimation(Action onCompleteFunc)
@@ -1112,6 +1135,66 @@ namespace ModernWpf.Controls.Primitives
         {
         }
 
+        private void AttachEventsToSecondaryStoryboards()
+        {
+            if (m_collapsedToExpandedUpStoryboard != null)
+            {
+                m_collapsedToExpandedUpStoryboard.Completed += SecondaryOpenCloseStoryboardCompleted;
+            }
+
+            if (m_collapsedToExpandedDownStoryboard != null)
+            {
+                m_collapsedToExpandedDownStoryboard.Completed += SecondaryOpenCloseStoryboardCompleted;
+            }
+
+            if (m_expandedUpToCollapsedStoryboard != null)
+            {
+                m_expandedUpToCollapsedStoryboard.Completed += SecondaryOpenCloseStoryboardCompleted;
+            }
+
+            if (m_expandedDownToCollapsedStoryboard != null)
+            {
+                m_expandedDownToCollapsedStoryboard.Completed += SecondaryOpenCloseStoryboardCompleted;
+            }
+        }
+
+        private void DetachEventsFromSecondaryStoryboards()
+        {
+            if (m_collapsedToExpandedUpStoryboard != null)
+            {
+                m_collapsedToExpandedUpStoryboard.Completed -= SecondaryOpenCloseStoryboardCompleted;
+                m_collapsedToExpandedUpStoryboard = null;
+            }
+
+            if (m_collapsedToExpandedDownStoryboard != null)
+            {
+                m_collapsedToExpandedDownStoryboard.Completed -= SecondaryOpenCloseStoryboardCompleted;
+                m_collapsedToExpandedDownStoryboard = null;
+            }
+
+            if (m_expandedUpToCollapsedStoryboard != null)
+            {
+                m_expandedUpToCollapsedStoryboard.Completed -= SecondaryOpenCloseStoryboardCompleted;
+                m_expandedUpToCollapsedStoryboard = null;
+            }
+
+            if (m_expandedDownToCollapsedStoryboard != null)
+            {
+                m_expandedDownToCollapsedStoryboard.Completed -= SecondaryOpenCloseStoryboardCompleted;
+                m_expandedDownToCollapsedStoryboard = null;
+            }
+        }
+
+        private void SecondaryOpenCloseStoryboardCompleted(object sender, EventArgs e)
+        {
+            if (SharedHelpers.IsAnimationsEnabled &&
+                TryGetOwningFlyout(out var owningFlyout) &&
+                owningFlyout.IsOpen)
+            {
+                owningFlyout.AddDropShadow();
+            }
+        }
+
         private void BindOwningFlyoutPresenterToCornerRadius()
         {
             if (TryGetOwningFlyout(out var actualFlyout) &&
@@ -1307,6 +1390,10 @@ namespace ModernWpf.Controls.Primitives
         private Storyboard m_closingStoryboard;
         private ClockState? m_openingStoryboardState;
         private ClockState? m_closingStoryboardState;
+        private Storyboard m_collapsedToExpandedUpStoryboard;
+        private Storyboard m_collapsedToExpandedDownStoryboard;
+        private Storyboard m_expandedUpToCollapsedStoryboard;
+        private Storyboard m_expandedDownToCollapsedStoryboard;
 
         private bool m_secondaryItemsRootSized;
         private bool m_openAnimationPending;

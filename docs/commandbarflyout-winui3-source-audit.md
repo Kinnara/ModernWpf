@@ -43,10 +43,11 @@ the remaining implementation is tracked as a source-backed WPF adaptation.
 | `CommandBarFlyoutCommandBar` owns template settings, open/close animation state, overflow placement visual states, command focus routing, and tab-stop uniqueness. | Matched with WPF template settings, visual states, and focused API coverage. |
 | The flyout command bar avoids the WPF `ToolBar` secondary panel path. | Matched by deleting `CommandBarFlyoutToolBar` and using `CommandBarFlyoutOverflowPanel`. |
 | `CommandBar::UpdateInputDeviceTypeUsedToOpen` snapshots the input device used to open secondary commands and applies source input-mode visual states to secondary AppBar entries. | Matched for WPF touch/default input. `CommandBarFlyoutCommandBar` snapshots the last WPF key/mouse/touch input before opening, `CommandBarFlyoutOverflowPanel` preserves the owner back-reference during layout updates, and secondary `AppBarButton` / `AppBarToggleButton` entries enter `TouchInputMode` when opened by touch. |
+| Presenter shadow is disabled by default, added on flyout open when primary commands exist, removed during close, removed while secondary open/close animations run, then restored after those secondary storyboards complete. | Matched through `FlyoutPresenter.IsDefaultShadowEnabled` toggling. The presenter template renders the WPF `ThemeShadowChrome` depth-32 shadow with WinUI non-tooltip popup insets. |
 
 ## WPF Substitutions
 
-- WPF has no WinUI `ThemeShadow` or compositor backdrop equivalent, so presenter shadow and system-backdrop behavior remain documented platform gaps.
+- WPF has no WinUI compositor `ThemeShadow` or system backdrop equivalent. Presenter shadow is represented by `ThemeShadowChrome`; exact compositor rasterization and backdrop material remain platform gaps.
 - WPF popups do not expose WinUI `Popup.ActualPlacement`; ModernWpf uses measured overflow location and combined placement visual states instead.
 - WPF automation does not expose WinRT `AutomationEvents.MenuOpened` / `MenuClosed`; app-visible command-bar behavior and focus routing are covered by WPF tests.
 - WPF template binding can lag dependency-property callbacks during measurement, so ModernWpf keeps a narrow deferred size refresh after source-tracked secondary command property changes.
@@ -63,4 +64,4 @@ dotnet build .\ModernWpf.sln --no-restore
 git diff --check
 ```
 
-Latest verified result on 2026-05-18: CommandBarFlyout API tests passed 21/21.
+Latest verified result on 2026-05-18: CommandBarFlyout API tests passed 23/23.
