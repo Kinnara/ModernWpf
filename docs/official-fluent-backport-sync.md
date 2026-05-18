@@ -557,3 +557,33 @@ Source inspected:
 
 - `test\ModernWpf.WinUI.Tests\CommonStyles\ToolBarFamilyVisualStateTests.cs` covers the official WPF Fluent Separator, Thumb, ToolBar, toolbar item style keys, theme aliases, and deletion of ModernWpf-specific template guesses.
 - `test\ModernWpf.WinUI.Tests\TemplateParityTests.cs` classifies `Separator.xaml`, `Thumb.xaml`, and `ToolBar.xaml` as official WPF Fluent stock templates that should not use `VisualStateEx`.
+
+## 2026-05-18 Batch 19
+
+Source inspected:
+
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\ProgressBar.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Light.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Dark.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\HC.xaml`
+
+### Synced Values
+
+| Resource key / style | Official WPF Fluent value | ModernWpf value after sync | Reason |
+| --- | --- | --- | --- |
+| `DefaultProgressBarStyle` / implicit stock `ProgressBar` style | Official stock WPF `ProgressBar` template with `TemplateRoot`, `TrackBorder`, `PART_Track`, `PART_Indicator`, `Indicator`, `Animation`, `Determinate` / `Indeterminate` states, and WPF triggers for vertical orientation and indeterminate mode | Same source shape under the retained `DefaultProgressBarStyle` key | `ProgressBar` is a stock WPF control, so official WPF Fluent is the primary source for the stock style. |
+| Stock `ProgressBar` template target | WPF `ProgressBar` template directly owns the official visual tree | Same | Removes the previous ModernWpf wrapper guess where the stock WPF style instantiated `ModernWpf.Controls.ProgressBar`. |
+| `ProgressBarIndeterminateBackground` / `ProgressBarIndeterminateBorderBrush` | Transparent official indeterminate resources | Same aliases across Light, Dark, and HighContrast through ModernWpf's theme-resource alias model | Required by the official WPF Fluent indeterminate trigger. |
+
+### Intentional Differences
+
+| Resource key / style | Official WPF Fluent value | ModernWpf backport value | Reason retained |
+| --- | --- | --- | --- |
+| Explicit style key | No `DefaultProgressBarStyle` key in the standalone official style file | Retained `DefaultProgressBarStyle` key with implicit stock style based on it | Existing ModernWpf apps and tests reference this public style key. |
+| `ProgressBarForeground`, `ProgressBarBackground`, `ProgressBarBorderBrush` | Direct official color-backed resources | Existing ModernWpf aliases remain | These aliases are also consumed by the separate WinUI-source-backed `ModernWpf.Controls.ProgressBar`; changing them belongs to the custom-control parity surface, not the stock WPF style slice. |
+| `ProgressBarThemeMinHeight` / `ProgressBarBorderThemeThickness` | Not used by the official stock WPF style | Retained as theme resources for `ModernWpf.Controls.ProgressBar` only | The custom ModernWpf progress control remains governed by the WinUI 3 source audit. |
+
+### Test Evidence
+
+- `test\ModernWpf.WinUI.Tests\CommonStyles\StockProgressBarVisualStateTests.cs` covers the official WPF Fluent stock ProgressBar setter surface, visual-state names, animation shape, template parts, orientation and indeterminate triggers, deleted wrapper guess, and theme aliases.
+- `test\ModernWpf.WinUI.Tests\TemplateParityTests.cs` classifies `ProgressBar.xaml` as an official WPF Fluent stock template that should not use `VisualStateEx`.

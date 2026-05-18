@@ -147,6 +147,7 @@ public class TemplateParityTests
             Path.Combine("ModernWpf", "Styles", "Menu.xaml"),
             Path.Combine("ModernWpf", "Styles", "ContextMenu.xaml"),
             Path.Combine("ModernWpf", "Styles", "MenuItem.xaml"),
+            Path.Combine("ModernWpf", "Styles", "ProgressBar.xaml"),
             Path.Combine("ModernWpf", "Styles", "RadioButton.xaml"),
             Path.Combine("ModernWpf", "Styles", "RepeatButton.xaml"),
             Path.Combine("ModernWpf", "Styles", "ResizeGrip.xaml"),

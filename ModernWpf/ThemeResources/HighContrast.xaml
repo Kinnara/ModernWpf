@@ -1414,6 +1414,8 @@
     <m:StaticResource x:Key="ProgressBarForeground" ResourceKey="SystemColorHighlightColorBrush" />
     <m:StaticResource x:Key="ProgressBarBackground" ResourceKey="SystemColorWindowColorBrush" />
     <m:StaticResource x:Key="ProgressBarBorderBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+    <m:StaticResource x:Key="ProgressBarIndeterminateBackground" ResourceKey="SystemControlTransparentBrush" />
+    <m:StaticResource x:Key="ProgressBarIndeterminateBorderBrush" ResourceKey="SystemControlTransparentBrush" />
     <m:StaticResource x:Key="ProgressBarPausedForegroundColor" ResourceKey="{x:Static SystemColors.WindowTextColorKey}" />
     <m:StaticResource x:Key="ProgressBarErrorForegroundColor" ResourceKey="{x:Static SystemColors.HotTrackColorKey}" />
 
