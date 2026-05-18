@@ -43,6 +43,7 @@
         <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
         <Setter Property="FontSize" Value="{DynamicResource BreadcrumbBarItemThemeFontSize}" />
         <Setter Property="FontWeight" Value="{StaticResource BreadcrumbBarItemFontWeight}" />
+        <Setter Property="Focusable" Value="True" />
         <Setter Property="Foreground" Value="{DynamicResource BreadcrumbBarForegroundBrush}" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -71,6 +72,9 @@
                                         <ui:VisualStateSetter Target="PART_EllipsisDropDownItemContentPresenter.Visibility" Value="Visible" />
                                         <ui:VisualStateSetter Target="PART_LayoutRoot.Padding" Value="11,7,11,9" />
                                         <ui:VisualStateSetter Target="PART_LayoutRoot.Margin" Value="5,3" />
+                                        <ui:VisualStateSetter Target="PART_LayoutRoot.(FocusVisualHelper.FocusVisualMargin)" Value="-3" />
+                                        <ui:VisualStateSetter Target="PART_ItemButton.(FocusVisualHelper.IsTemplateFocusTarget)" Value="False" />
+                                        <ui:VisualStateSetter Target="PART_LayoutRoot.(FocusVisualHelper.IsTemplateFocusTarget)" Value="True" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                             </VisualStateGroup>
@@ -111,6 +115,8 @@
                                         <ui:VisualStateSetter Target="PART_ItemButton.Visibility" Value="Collapsed" />
                                         <ui:VisualStateSetter Target="PART_ChevronTextBlock.Visibility" Value="Collapsed" />
                                         <ui:VisualStateSetter Target="PART_LastItemContentPresenter.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="PART_ItemButton.(FocusVisualHelper.IsTemplateFocusTarget)" Value="False" />
+                                        <ui:VisualStateSetter Target="PART_LastItemContentPresenter.(FocusVisualHelper.IsTemplateFocusTarget)" Value="True" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                                 <ui:VisualStateEx x:Name="Ellipsis">
@@ -182,7 +188,9 @@
                             IsTabStop="False"
                             Padding="1,3"
                             ui:ControlHelper.ContentTransitions="{TemplateBinding ContentTransitions}"
-                            ui:ControlHelper.CornerRadius="{TemplateBinding CornerRadius}">
+                            ui:ControlHelper.CornerRadius="{TemplateBinding CornerRadius}"
+                            ui:FocusVisualHelper.FocusVisualMargin="-3"
+                            ui:FocusVisualHelper.IsTemplateFocusTarget="True">
                             <Button.Style>
                                 <Style TargetType="Button">
                                     <Setter Property="Foreground" Value="{DynamicResource BreadcrumbBarNormalForegroundBrush}" />
@@ -320,7 +328,8 @@
                             HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                             Padding="1,3"
                             VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                            CornerRadius="{TemplateBinding CornerRadius}" />
+                            CornerRadius="{TemplateBinding CornerRadius}"
+                            ui:FocusVisualHelper.FocusVisualMargin="-3" />
 
                         <ui:ContentPresenterEx
                             x:Name="PART_EllipsisDropDownItemContentPresenter"

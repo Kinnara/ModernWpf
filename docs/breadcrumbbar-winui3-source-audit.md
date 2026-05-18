@@ -43,6 +43,7 @@ reference/winui3-current
 - Ported the source `BreadcrumbLayout` behavior: all elements are measured, the ellipsis is arranged only when total breadcrumb width exceeds the available width, earlier items are hidden, and visible items are re-indexed for automation.
 - Ported the source `BreadcrumbElementFactory` shape for wrapping data items in `BreadcrumbBarItem` containers and forwarding `ItemTemplate` through the item content template.
 - Replaced the simplified item template with the source item-type states: `Inline`, `EllipsisDropDown`, `Default`, `DefaultRTL`, `LastItem`, `Ellipsis`, and `EllipsisRTL`.
+- Ported the source focus-target setters for `EllipsisDropDown` and `LastItem` states. `FocusVisualHelper.IsTemplateFocusTarget` and `FocusVisualHelper.FocusVisualMargin` represent WinUI `Control.IsTemplateFocusTarget` and `FocusVisualMargin` on WPF template parts.
 - Added the source ellipsis flyout path: hidden elements are cloned in reverse order into an `ItemsRepeater`, dropdown item indexes map back to original item indexes, and dropdown clicks route through `ItemClicked`.
 - Added source-style breadcrumb resources for chevrons, item foregrounds, current item foregrounds, dropdown item states, flyout presenter chrome, item font weight, and chevron metrics.
 
@@ -51,10 +52,11 @@ reference/winui3-current
 - WinUI `Grid.CornerRadius`, `Grid.BackgroundSizing`, and `ContentPresenter` chrome are represented with `GridEx` and `ContentPresenterEx`.
 - WPF XAML does not support WinUI `VisualState.Setters`; the template uses `VisualStateEx.Setters`, matching the repository's WinUI setter substitute.
 - WinUI `Flyout` can be a named template resource. WPF resource lookup uses the same key and instantiates the ellipsis repeater in code before showing the flyout.
-- WinUI `AccessibilityView`, `Control.IsTemplateFocusTarget`, `Pointer*` routed events, `FocusState`, gamepad navigation, access-key routing, and XamlRoot-specific focus movement do not have direct WPF equivalents. The WPF port uses hit testing, standard WPF focus, mouse capture, and left/right keyboard movement as substitutes.
+- WinUI `AccessibilityView`, `Pointer*` routed events, `FocusState`, gamepad navigation, access-key routing, and XamlRoot-specific focus movement do not have direct WPF equivalents. The WPF port uses hit testing, standard WPF focus, mouse capture, and left/right keyboard movement as substitutes.
 - Localized WinUI resource strings for ellipsis and localized control type are currently represented by English strings until localized ModernWpf resource packs add this control.
 
 ## Validation
 
 - `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --filter FullyQualifiedName~BreadcrumbBar --no-restore`
-- `dotnet build .\ModernWpf.Controls\ModernWpf.Controls.csproj --no-restore -m:1`
+- `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --filter "FullyQualifiedName~BreadcrumbBar|FullyQualifiedName~TemplateParityTests" --no-restore`
+- `dotnet build .\ModernWpf.sln --no-restore`

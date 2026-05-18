@@ -119,11 +119,16 @@ public class BreadcrumbBarApiTests
                 ?? throw new AssertFailedException("Expected BreadcrumbBarItem button template to contain CommonStates.");
             AssertStateSetter(root, "ItemTypeStates", "EllipsisDropDown", "PART_ItemButton.Visibility");
             AssertStateSetter(root, "ItemTypeStates", "EllipsisDropDown", "PART_EllipsisDropDownItemContentPresenter.Visibility");
+            AssertStateSetter(root, "ItemTypeStates", "EllipsisDropDown", "PART_LayoutRoot.(FocusVisualHelper.FocusVisualMargin)");
+            AssertStateSetter(root, "ItemTypeStates", "EllipsisDropDown", "PART_ItemButton.(FocusVisualHelper.IsTemplateFocusTarget)");
+            AssertStateSetter(root, "ItemTypeStates", "EllipsisDropDown", "PART_LayoutRoot.(FocusVisualHelper.IsTemplateFocusTarget)");
             AssertStateSetter(root, "InlineItemTypeStates", "Default", "PART_ChevronTextBlock.Text");
             AssertStateSetter(root, "InlineItemTypeStates", "DefaultRTL", "PART_ChevronTextBlock.Text");
             AssertStateSetter(root, "InlineItemTypeStates", "LastItem", "PART_ItemButton.Visibility");
             AssertStateSetter(root, "InlineItemTypeStates", "LastItem", "PART_ChevronTextBlock.Visibility");
             AssertStateSetter(root, "InlineItemTypeStates", "LastItem", "PART_LastItemContentPresenter.Visibility");
+            AssertStateSetter(root, "InlineItemTypeStates", "LastItem", "PART_ItemButton.(FocusVisualHelper.IsTemplateFocusTarget)");
+            AssertStateSetter(root, "InlineItemTypeStates", "LastItem", "PART_LastItemContentPresenter.(FocusVisualHelper.IsTemplateFocusTarget)");
             AssertStateSetter(root, "InlineItemTypeStates", "Ellipsis", "PART_EllipsisTextBlock.Visibility");
             AssertStateSetter(root, "InlineItemTypeStates", "EllipsisRTL", "PART_ChevronTextBlock.Text");
 
@@ -147,6 +152,44 @@ public class BreadcrumbBarApiTests
             var lastItemPresenter = FindTemplatePart<ContentPresenterEx>(item, "PART_LastItemContentPresenter");
             Assert.AreEqual(Visibility.Visible, lastItemPresenter.Visibility);
             Assert.AreEqual(FontWeights.Normal, lastItemPresenter.FontWeight);
+        });
+    }
+
+    [TestMethod]
+    public void BreadcrumbBarItemFocusTargetsFollowWinUISourceStates()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var item = new ModernWpf.Controls.BreadcrumbBarItem
+            {
+                Content = "Node"
+            };
+
+            using var host = new TestWindowHost(item, width: 240, height: 80);
+            host.UpdateLayout();
+
+            var root = FindTemplatePart<FrameworkElement>(item, "PART_LayoutRoot");
+            var itemButton = FindTemplatePart<Button>(item, "PART_ItemButton");
+            var lastItemPresenter = FindTemplatePart<ContentPresenterEx>(item, "PART_LastItemContentPresenter");
+
+            Assert.IsTrue(item.Focusable);
+            Assert.AreEqual(new Thickness(-3), FocusVisualHelper.GetFocusVisualMargin(itemButton));
+            Assert.IsTrue(FocusVisualHelper.GetIsTemplateFocusTarget(itemButton));
+
+            item.IsCurrentItem = true;
+            host.UpdateLayout();
+
+            Assert.IsFalse(FocusVisualHelper.GetIsTemplateFocusTarget(itemButton));
+            Assert.IsTrue(FocusVisualHelper.GetIsTemplateFocusTarget(lastItemPresenter));
+            Assert.AreEqual(new Thickness(-3), FocusVisualHelper.GetFocusVisualMargin(lastItemPresenter));
+
+            item.IsCurrentItem = false;
+            item.SetIsEllipsisDropDownItem(true);
+            host.UpdateLayout();
+
+            Assert.IsFalse(FocusVisualHelper.GetIsTemplateFocusTarget(itemButton));
+            Assert.IsTrue(FocusVisualHelper.GetIsTemplateFocusTarget(root));
+            Assert.AreEqual(new Thickness(-3), FocusVisualHelper.GetFocusVisualMargin(root));
         });
     }
 
