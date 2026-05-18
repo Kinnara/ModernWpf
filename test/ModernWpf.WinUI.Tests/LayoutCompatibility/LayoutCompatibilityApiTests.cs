@@ -47,6 +47,37 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
+    public void ThemeShadowChromeUsesDepthDrivenSoftwareRenderer()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var chrome = new ThemeShadowChrome
+            {
+                Depth = 32,
+                CornerRadius = new CornerRadius(8),
+                Child = new Border
+                {
+                    Width = 80,
+                    Height = 32,
+                    Background = Brushes.White
+                }
+            };
+
+            using var host = new TestWindowHost(chrome, width: 180, height: 120);
+            host.UpdateLayout();
+
+            Assert.IsTrue(chrome.UsesSoftwareRenderer);
+            Assert.AreEqual(new Thickness(52, 44, 52, 60), chrome.ShadowPadding);
+            Assert.IsFalse(FindVisualChildren<Border>(chrome).Any(border => border.Effect is System.Windows.Media.Effects.BlurEffect));
+
+            chrome.Depth = 0;
+            host.UpdateLayout();
+
+            Assert.AreEqual(new Thickness(), chrome.ShadowPadding);
+        });
+    }
+
+    [TestMethod]
     public void LayoutChromeControlsUseBackgroundTransitionBrush()
     {
         WpfTestHost.Run(() =>
