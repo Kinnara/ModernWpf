@@ -192,6 +192,43 @@ public class TemplateParityTests
     }
 
     [TestMethod]
+    public void ProductTemplatesDoNotUseDropShadowEffectOutsideOfficialWpfFluentStockShadows()
+    {
+        var repoRoot = FindRepoRoot();
+        var productTemplateRoots = new[]
+        {
+            Path.Combine(repoRoot, "ModernWpf"),
+            Path.Combine(repoRoot, "ModernWpf.Controls")
+        };
+        var officialWpfFluentShadowFiles = new[]
+        {
+            Path.Combine("ModernWpf", "Styles", "ComboBox.xaml"),
+            Path.Combine("ModernWpf", "Styles", "DatePicker.xaml"),
+            Path.Combine("ModernWpf", "Styles", "MenuItem.xaml"),
+            Path.Combine("ModernWpf", "Styles", "ToolTip.xaml")
+        };
+
+        var offenders = productTemplateRoots
+            .Where(Directory.Exists)
+            .SelectMany(root => Directory.EnumerateFiles(root, "*.xaml", SearchOption.AllDirectories))
+            .Select(path => Path.GetRelativePath(repoRoot, path))
+            .Where(path => File.ReadAllText(Path.Combine(repoRoot, path)).Contains("DropShadowEffect", StringComparison.Ordinal))
+            .Except(officialWpfFluentShadowFiles, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+
+        var missingAllowedShadows = officialWpfFluentShadowFiles
+            .Where(path => !File.ReadAllText(Path.Combine(repoRoot, path)).Contains("DropShadowEffect", StringComparison.Ordinal))
+            .ToArray();
+
+        Assert.IsFalse(
+            offenders.Any(),
+            "WinUI-source-backed templates should use ThemeShadowChrome instead of raw WPF DropShadowEffect. Offenders: " + string.Join("; ", offenders));
+        Assert.IsFalse(
+            missingAllowedShadows.Any(),
+            "Update this guard when an official WPF Fluent stock-control shadow no longer uses DropShadowEffect. Missing: " + string.Join("; ", missingAllowedShadows));
+    }
+
+    [TestMethod]
     public void OfficialWpfFluentStyleCoverageAuditCoversSourceFolderInventory()
     {
         var repoRoot = FindRepoRoot();

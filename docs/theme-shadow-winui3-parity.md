@@ -54,6 +54,8 @@ WinUI has a second, Popup-owned inset path for windowed popups. The Popup window
 
 `CommandBarFlyout` now follows the source presenter-shadow lifecycle. Its `FlyoutPresenter` starts with the default shadow disabled, enables the WPF `ThemeShadowChrome` presenter shadow when opening with primary commands, removes it for flyout close, removes it during secondary command-bar open/close animations, and restores it when those secondary storyboards complete. The presenter continues to use depth `32` and `Medium` popup insets, matching the WinUI source `Translation.Z=32` presenter path and non-tooltip windowed popup inset path.
 
+Raw WPF `DropShadowEffect` is now guarded as an official WPF Fluent stock-control exception only. The allowed product-template occurrences are `ModernWpf\Styles\ComboBox.xaml`, `ModernWpf\Styles\DatePicker.xaml`, `ModernWpf\Styles\MenuItem.xaml`, and `ModernWpf\Styles\ToolTip.xaml`, where the styles intentionally track `PresentationFramework.Fluent`. `TemplateParityTests.ProductTemplatesDoNotUseDropShadowEffectOutsideOfficialWpfFluentStockShadows` fails any other product XAML that reintroduces a raw WPF shadow instead of the shared WinUI-style `ThemeShadowChrome` renderer.
+
 ## Calibration Probe
 
 `ThemeShadowChrome.ThemeShadowRenderer.GetRenderMetrics` exposes an internal bitmap-profile probe for the WPF software renderer. It renders the same alpha-mask path used by `DrawShadow` and reports bitmap size, content offset, non-zero alpha bounds, non-zero pixel count, peak alpha, and alpha centroid. The test suite pins depth `16` and `64` profiles so future renderer changes can be compared against stable WPF output before they are compared against a WinUI reference capture.
