@@ -402,3 +402,33 @@ Source inspected:
 ### Test Evidence
 
 - `test\ModernWpf.WinUI.Tests\CommonStyles\ResizeGripVisualStateTests.cs` covers the official WPF Fluent ResizeGrip setter shape, runtime metric/glyph values, glyph `TextBlock` template, deletion of the old `Path` / `DrawingBrush` template, and official theme aliases.
+
+## 2026-05-18 Batch 14
+
+Source inspected:
+
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\GridSplitter.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Light.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Dark.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\HC.xaml`
+
+### Synced Values
+
+| Resource key / style | Official WPF Fluent value | ModernWpf value after sync | Reason |
+| --- | --- | --- | --- |
+| `DefaultGridSplitterStyle` | `GridSplitter` style with stretch alignment, official min-size/padding resources, official foreground/background aliases, a WPF `Border` root, `PART_Thumb` rectangle, and WPF triggers for pointer-over, dragging, disabled, and `Cursor=SizeNS` | Same structure under the existing resource key | `GridSplitter` is a stock WPF control, so official WPF Fluent is the primary source. |
+| Implicit `GridSplitter` style | Based on `DefaultGridSplitterStyle` | Same | Matches official WPF Fluent resource shape. |
+| `GridsplitterThumbHeight` / `GridsplitterThumbWidth` / `GridsplitterThumbRadius` / `GridsplitterMinHeight` / `GridsplitterMinWidth` / `GridsplitterPadding` | Official values: `24`, `4`, `2`, `8`, `8`, and `4` | Same | Replaces the earlier flat bar and preview-style guess. |
+| `GridsplitterBackground` / `GridsplitterBackgroundPointerOver` / `GridsplitterBackgroundPressed` / `GridsplitterBackgroundDisabled` / `GridsplitterForeground` | Official theme aliases for GridSplitter chrome and thumb foreground | Same aliases across Light, Dark, and HighContrast | Required by the official WPF Fluent template shape. |
+
+### Intentional Differences
+
+| Resource key / style | Official WPF Fluent value | ModernWpf backport value | Reason retained |
+| --- | --- | --- | --- |
+| `system` namespace assembly | `System.Runtime` | `mscorlib` / `sys` | Keeps the XAML resource compatible with ModernWpf's older target frameworks. |
+| GridSplitter theme aliases | Dedicated brush resources in official WPF Fluent | `m:StaticResource` aliases to ModernWpf's existing Fluent brush tokens | Keeps ModernWpf's existing theme-resource alias model while exposing the official keys. |
+| `GridsplitterMinWidth` | Defined as `8` but not referenced by the official `MinWidth` setter | Defined as `8`, with `MinWidth` still referencing `GridsplitterMinHeight` like official WPF Fluent | Preserves the official style shape while keeping the public resource available. |
+
+### Test Evidence
+
+- `test\ModernWpf.WinUI.Tests\CommonStyles\GridSplitterVisualStateTests.cs` covers the official WPF Fluent GridSplitter setter shape, runtime metric values, thumb template, WPF trigger matrix, and official theme aliases.

@@ -921,6 +921,13 @@
     <m:StaticResource x:Key="ContentDialogSeparatorBorderBrush" ResourceKey="CardStrokeColorDefaultBrush" />
     <Thickness x:Key="ContentDialogBorderWidth">1</Thickness>
 
+    <!-- Resources for GridSplitter -->
+    <m:StaticResource x:Key="GridsplitterBackground" ResourceKey="ControlAltFillColorTransparentBrush" />
+    <m:StaticResource x:Key="GridsplitterBackgroundPointerOver" ResourceKey="ControlAltFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="GridsplitterBackgroundPressed" ResourceKey="ControlAltFillColorQuarternaryBrush" />
+    <m:StaticResource x:Key="GridsplitterBackgroundDisabled" ResourceKey="ControlAltFillColorDisabledBrush" />
+    <m:StaticResource x:Key="GridsplitterForeground" ResourceKey="ControlStrongFillColorDefaultBrush" />
+
     <!-- Resources for Expander -->
     <m:StaticResource x:Key="ExpanderHeaderBackground" ResourceKey="CardBackgroundFillColorDefaultBrush" />
     <m:StaticResource x:Key="ExpanderHeaderForeground" ResourceKey="TextFillColorPrimaryBrush" />

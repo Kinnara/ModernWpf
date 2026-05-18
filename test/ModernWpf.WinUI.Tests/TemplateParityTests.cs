@@ -140,6 +140,7 @@ public class TemplateParityTests
         {
             Path.Combine("ModernWpf", "Styles", "Button.xaml"),
             Path.Combine("ModernWpf", "Styles", "CheckBox.xaml"),
+            Path.Combine("ModernWpf", "Styles", "GridSplitter.xaml"),
             Path.Combine("ModernWpf", "Styles", "GroupBox.xaml"),
             Path.Combine("ModernWpf", "Styles", "Label.xaml"),
             Path.Combine("ModernWpf", "Styles", "RadioButton.xaml"),

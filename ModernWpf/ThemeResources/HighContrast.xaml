@@ -908,6 +908,13 @@
     <m:StaticResource x:Key="ContentDialogSeparatorBorderBrush" ResourceKey="SystemColorWindowTextColorBrush" />
     <Thickness x:Key="ContentDialogBorderWidth">2</Thickness>
 
+    <!-- Resources for GridSplitter -->
+    <m:StaticResource x:Key="GridsplitterBackground" ResourceKey="SystemControlTransparentBrush" />
+    <m:StaticResource x:Key="GridsplitterBackgroundPointerOver" ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="GridsplitterBackgroundPressed" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="GridsplitterBackgroundDisabled" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="GridsplitterForeground" ResourceKey="SystemColorButtonTextColorBrush" />
+
     <!-- Resources for Expander -->
     <m:StaticResource x:Key="ExpanderHeaderBackground" ResourceKey="SystemColorButtonFaceColorBrush" />
     <m:StaticResource x:Key="ExpanderHeaderForeground" ResourceKey="SystemColorButtonTextColorBrush" />
