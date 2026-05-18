@@ -89,7 +89,6 @@ public class TemplateParityTests
             Path.Combine("ModernWpf", "Styles", "Pivot.xaml"),
             Path.Combine("ModernWpf", "Styles", "TabControl.xaml"),
             Path.Combine("ModernWpf", "Styles", "NavigationBackButton.xaml"),
-            Path.Combine("ModernWpf", "Styles", "TreeView.xaml"),
             Path.Combine("ModernWpf", "TitleBar", "TitleBarControl.xaml"),
             Path.Combine("ModernWpf.Controls", "BreadcrumbBar", "BreadcrumbBar.xaml"),
             Path.Combine("ModernWpf.Controls", "ColorPicker", "ColorPicker.xaml"),
@@ -166,7 +165,9 @@ public class TemplateParityTests
             Path.Combine("ModernWpf", "Styles", "Thumb.xaml"),
             Path.Combine("ModernWpf", "Styles", "ToolTip.xaml"),
             Path.Combine("ModernWpf", "Styles", "ToolBar.xaml"),
-            Path.Combine("ModernWpf", "Styles", "ToggleButton.xaml")
+            Path.Combine("ModernWpf", "Styles", "ToggleButton.xaml"),
+            Path.Combine("ModernWpf", "Styles", "TreeView.xaml"),
+            Path.Combine("ModernWpf", "Styles", "TreeViewItem.xaml")
         };
 
         var offenders = officialWpfFluentTemplateFiles
@@ -278,7 +279,9 @@ public class TemplateParityTests
             Path.Combine("ModernWpf", "Styles", "ListBoxItem.xaml"),
             Path.Combine("ModernWpf", "Styles", "GridView.xaml"),
             Path.Combine("ModernWpf", "Styles", "ListView.xaml"),
-            Path.Combine("ModernWpf", "Styles", "ListViewItem.xaml")
+            Path.Combine("ModernWpf", "Styles", "ListViewItem.xaml"),
+            Path.Combine("ModernWpf", "Styles", "TreeView.xaml"),
+            Path.Combine("ModernWpf", "Styles", "TreeViewItem.xaml")
         };
 
         var offenders = officialWpfFluentTemplateFiles
@@ -289,7 +292,7 @@ public class TemplateParityTests
 
         Assert.IsFalse(
             offenders.Any(),
-            "Stock ListBox/ListView controls aligned to official WPF Fluent should use WPF presenters, not ContentPresenterEx. Offenders: " + string.Join("; ", offenders));
+            "Stock controls aligned to official WPF Fluent should use WPF presenters, not ContentPresenterEx. Offenders: " + string.Join("; ", offenders));
     }
 
     [TestMethod]
@@ -314,13 +317,12 @@ public class TemplateParityTests
     }
 
     [TestMethod]
-    public void CoreNavigationViewAndTreePresenterSlotsUseWinUIPresenterShape()
+    public void CoreNavigationViewPresenterSlotsUseWinUIPresenterShape()
     {
         var repoRoot = FindRepoRoot();
         var sourceBackedTemplateFiles = new[]
         {
-            Path.Combine("ModernWpf", "Styles", "NavigationView.xaml"),
-            Path.Combine("ModernWpf", "Styles", "TreeView.xaml")
+            Path.Combine("ModernWpf", "Styles", "NavigationView.xaml")
         };
 
         var offenders = sourceBackedTemplateFiles
@@ -331,7 +333,7 @@ public class TemplateParityTests
 
         Assert.IsFalse(
             offenders.Any(),
-            "These NavigationView/TreeView template files should use ContentPresenterEx and direct Foreground routing. Offenders: " + string.Join("; ", offenders));
+            "NavigationView template files should use ContentPresenterEx and direct Foreground routing. Offenders: " + string.Join("; ", offenders));
     }
 
     [TestMethod]

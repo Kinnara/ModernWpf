@@ -1941,7 +1941,7 @@
     <m:StaticResource x:Key="TreeViewItemCheckBoxBackgroundSelected" ResourceKey="SubtleFillColorTransparentBrush" />
     <m:StaticResource x:Key="TreeViewItemCheckBoxBorderSelected" ResourceKey="TextFillColorSecondaryBrush" />
     <m:StaticResource x:Key="TreeViewItemCheckGlyphSelected" ResourceKey="TextFillColorSecondaryBrush" />
-    <m:StaticResource x:Key="TreeViewItemSelectionIndicatorForeground" ResourceKey="AccentFillColorDefaultBrush" />
+    <m:StaticResource x:Key="TreeViewItemSelectionIndicatorForeground" ResourceKey="SystemAccentColorDark1Brush" />
     <m:StaticResource x:Key="TreeViewItemSelectionIndicatorForegroundPointerOver" ResourceKey="AccentFillColorDefaultBrush" />
     <m:StaticResource x:Key="TreeViewItemSelectionIndicatorForegroundPressed" ResourceKey="AccentFillColorDefaultBrush" />
     <m:StaticResource x:Key="TreeViewItemSelectionIndicatorForegroundDisabled" ResourceKey="TextFillColorDisabledBrush" />

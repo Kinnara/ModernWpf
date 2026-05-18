@@ -1899,7 +1899,7 @@
     <m:StaticResource x:Key="TreeViewItemBackgroundSelectedPointerOver" ResourceKey="SystemColorButtonFaceColorBrush" />
     <m:StaticResource x:Key="TreeViewItemBackgroundSelectedPressed" ResourceKey="SystemColorButtonFaceColorBrush" />
     <m:StaticResource x:Key="TreeViewItemBackgroundSelectedDisabled" ResourceKey="SystemColorWindowColorBrush" />
-    <m:StaticResource x:Key="TreeViewItemForeground" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="TreeViewItemForeground" ResourceKey="SystemColorWindowTextColorBrush" />
     <m:StaticResource x:Key="TreeViewItemForegroundPointerOver" ResourceKey="SystemColorHighlightColorBrush" />
     <m:StaticResource x:Key="TreeViewItemForegroundPressed" ResourceKey="SystemColorHighlightColorBrush" />
     <m:StaticResource x:Key="TreeViewItemForegroundDisabled" ResourceKey="SystemColorGrayTextColorBrush" />

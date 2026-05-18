@@ -3,8 +3,10 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Documents;
+using System.Windows.Markup;
+using System.Windows.Shapes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ModernWpf;
 using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
 using ModernWpf.WinUI.TestApp;
@@ -18,7 +20,7 @@ namespace ModernWpf.WinUI.Tests.TreeView;
 public class TreeViewResourceTests
 {
     [TestMethod]
-    public void VerifyFinalWinUI2TreeViewThemeResources()
+    public void VerifyOfficialWpfFluentTreeViewThemeResources()
     {
         WpfTestHost.Run(() =>
         {
@@ -28,47 +30,32 @@ public class TreeViewResourceTests
             {
                 AssertThemeResourceReference(themeName, "TreeViewItemBackground", "SubtleFillColorTransparentBrush");
                 AssertThemeResourceReference(themeName, "TreeViewItemBackgroundPointerOver", "SubtleFillColorSecondaryBrush");
-                AssertThemeResourceReference(themeName, "TreeViewItemBackgroundPressed", "SubtleFillColorTertiaryBrush");
-                AssertThemeResourceReference(themeName, "TreeViewItemBackgroundDisabled", "SubtleFillColorDisabledBrush");
                 AssertThemeResourceReference(themeName, "TreeViewItemBackgroundSelected", "SubtleFillColorSecondaryBrush");
-                AssertThemeResourceReference(themeName, "TreeViewItemBackgroundSelectedPointerOver", "SubtleFillColorTertiaryBrush");
-                AssertThemeResourceReference(themeName, "TreeViewItemBackgroundSelectedPressed", "SubtleFillColorSecondaryBrush");
-                AssertThemeResourceReference(themeName, "TreeViewItemForegroundPressed", "TextFillColorSecondaryBrush");
-                AssertThemeResourceReference(themeName, "TreeViewItemForegroundSelectedPressed", "TextFillColorSecondaryBrush");
-                AssertThemeResourceReference(themeName, "TreeViewItemMultiSelectBorderBrushSelected", "SubtleFillColorTransparentBrush");
-                AssertThemeResourceReference(themeName, "TreeViewItemSelectionIndicatorForeground", "AccentFillColorDefaultBrush");
-                AssertThemeResourceReference(themeName, "TreeViewItemSelectionIndicatorForegroundDisabled", "TextFillColorDisabledBrush");
-                AssertThemeResourceValue(themeName, "TreeViewItemBorderThemeThickness", new Thickness(0));
-                AssertThemeResourceValue(themeName, "TreeViewItemPresenterMargin", new Thickness(4, 2, 4, 2));
-                AssertThemeResourceValue(themeName, "TreeViewItemPresenterPadding", new Thickness(0, 3, 0, 5));
-                AssertThemeResourceValue(themeName, "TreeViewItemMultiSelectSelectedItemBorderMargin", new Thickness(0));
-                AssertThemeResourceValue(themeName, "TreeViewItemMinHeight", 28.0);
-                AssertThemeResourceValue(themeName, "TreeViewItemMultiSelectCheckBoxMinHeight", 28.0);
-                AssertThemeResourceValue(themeName, "TreeViewItemContentHeight", 20.0);
+                AssertThemeResourceReference(themeName, "TreeViewItemForeground", "TextFillColorPrimaryBrush");
             }
 
+            AssertThemeResourceReference("Light", "TreeViewItemSelectionIndicatorForeground", "SystemAccentColorDark1Brush");
+            AssertThemeResourceReference("Dark", "TreeViewItemSelectionIndicatorForeground", "SystemAccentColorLight2Brush");
+
             AssertThemeResourceReference("HighContrast", "TreeViewItemBackground", "SystemColorWindowColorBrush");
-            AssertThemeResourceReference("HighContrast", "TreeViewItemBackgroundSelectedPointerOver", "SystemColorButtonFaceColorBrush");
-            AssertThemeResourceReference("HighContrast", "TreeViewItemForeground", "SystemColorButtonTextColorBrush");
-            AssertThemeResourceReference("HighContrast", "TreeViewItemForegroundPointerOver", "SystemColorHighlightColorBrush");
-            AssertThemeResourceReference("HighContrast", "TreeViewItemForegroundDisabled", "SystemColorGrayTextColorBrush");
-            AssertThemeResourceReference("HighContrast", "TreeViewItemBorderBrushSelected", "SystemColorHighlightColorBrush");
-            AssertThemeResourceReference("HighContrast", "TreeViewItemBorderBrushSelectedPointerOver", "SystemColorButtonTextColorBrush");
-            AssertThemeResourceReference("HighContrast", "TreeViewItemCheckGlyphSelected", "SystemColorWindowTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "TreeViewItemBackgroundPointerOver", "SystemColorWindowColorBrush");
+            AssertThemeResourceReference("HighContrast", "TreeViewItemBackgroundSelected", "SystemColorWindowColorBrush");
+            AssertThemeResourceReference("HighContrast", "TreeViewItemForeground", "SystemColorWindowTextColorBrush");
             AssertThemeResourceReference("HighContrast", "TreeViewItemSelectionIndicatorForeground", "SystemColorHighlightColorBrush");
-            AssertThemeResourceReference("HighContrast", "TreeViewItemSelectionIndicatorForegroundDisabled", "SystemColorGrayTextColorBrush");
-            AssertThemeResourceValue("HighContrast", "TreeViewItemBorderThemeThickness", new Thickness(1));
-            AssertThemeResourceValue("HighContrast", "TreeViewItemMultiSelectSelectedItemBorderMargin", new Thickness(1));
-            AssertThemeResourceValue("HighContrast", "TreeViewItemMinHeight", 28.0);
         });
     }
 
     [TestMethod]
-    public void VerifyFinalWinUI2TreeViewResourceDefaults()
+    public void VerifyOfficialWpfFluentTreeViewResourceDefaults()
     {
         WpfTestHost.Run(() =>
         {
             var resources = new XamlControlsResources();
+
+            AssertResource(resources, "TreeViewItemChevronSize", 10.0);
+            AssertResource(resources, "TreeViewItemFontSize", 14.0);
+            AssertResource(resources, "TreeViewChevronRightGlyph", "\uE76C");
+            AssertResource(resources, "TreeViewChevronLeftGlyph", "\uE76B");
 
             AssertResource(resources, "TreeViewItemMinHeight", 28.0);
             AssertResource(resources, "TreeViewItemPresenterMargin", new Thickness(4, 2, 4, 2));
@@ -80,7 +67,7 @@ public class TreeViewResourceTests
     }
 
     [TestMethod]
-    public void VerifyTreeViewItemStyleUsesFinalResourceKeys()
+    public void VerifyTreeViewItemStyleUsesOfficialWpfFluentSurface()
     {
         WpfTestHost.Run(() =>
         {
@@ -89,21 +76,26 @@ public class TreeViewResourceTests
             var style = (Style)Application.Current.TryFindResource("DefaultTreeViewItemStyle");
             Assert.IsNotNull(style);
 
-            AssertDynamicResourceSetter(style, Control.BackgroundProperty, "TreeViewItemBackground");
+            AssertDynamicResourceSetter(style, Control.FocusVisualStyleProperty, "DefaultCollectionFocusVisualStyle");
             AssertDynamicResourceSetter(style, Control.ForegroundProperty, "TreeViewItemForeground");
-            AssertDynamicResourceSetter(style, Control.BorderBrushProperty, "TreeViewItemBorderBrush");
-            AssertDynamicResourceSetter(style, Control.BorderThicknessProperty, "TreeViewItemBorderThemeThickness");
-            AssertDynamicResourceSetter(style, FrameworkElement.MinHeightProperty, "TreeViewItemMinHeight");
-            AssertSetterValue(style, TreeViewItemHelper.VisualStateSettersEnabledProperty, true);
-            AssertDynamicResourceSetter(style, TreeViewItemHelper.GlyphBrushProperty, "TreeViewItemForeground");
-            Assert.AreEqual(12.0, TreeViewItemHelper.GetGlyphSize(new WpfTreeViewItem()));
-            Assert.IsNotNull(GetLocalSetter(style, TreeViewItemHelper.CollapsedPathProperty).Value);
-            Assert.IsNotNull(GetLocalSetter(style, TreeViewItemHelper.ExpandedPathProperty).Value);
+            AssertDynamicResourceSetter(style, Control.BackgroundProperty, "TreeViewItemBackground");
+            AssertSetterValue(style, FrameworkElement.MarginProperty, new Thickness(0, 0, 0, 2));
+            AssertSetterValue(style, Control.PaddingProperty, new Thickness(4));
+            AssertDynamicResourceSetter(style, ControlHelper.CornerRadiusProperty, "ControlCornerRadius");
+            AssertSetterValue(style, Control.IsTabStopProperty, true);
+            AssertSetterValue(style, FrameworkElement.OverridesDefaultStyleProperty, true);
+            AssertSetterValue(style, UIElement.SnapsToDevicePixelsProperty, true);
+
+            var oldHelperSetters = style.Setters
+                .OfType<Setter>()
+                .Where(setter => setter.Property.OwnerType.Name == "TreeViewItemHelper")
+                .ToArray();
+            Assert.AreEqual(0, oldHelperSetters.Length, "Official WPF Fluent TreeViewItem should not use the deleted TreeViewItemHelper state path.");
         });
     }
 
     [TestMethod]
-    public void VerifyWpfTreeViewExpansionAndIndentationMapping()
+    public void VerifyOfficialWpfFluentTreeViewExpansion()
     {
         WpfTestHost.Run(() =>
         {
@@ -122,58 +114,26 @@ public class TreeViewResourceTests
 
             using var host = new TestWindowHost(treeView);
 
-            Assert.AreEqual(new Thickness(0), TreeViewItemHelper.GetIndentation(root));
-            Assert.AreEqual(new Thickness(16, 0, 0, 0), TreeViewItemHelper.GetIndentation(child));
+            var rootExpander = FindNamedDescendant<ToggleButton>(root, "Expander");
+            var childExpander = FindNamedDescendant<ToggleButton>(child, "Expander");
+            var itemsHost = FindNamedDescendant<ItemsPresenter>(root, "ItemsHost");
 
-            var rootChevron = FindNamedDescendant<ToggleButton>(root, "ExpandCollapseChevron");
-            var childChevron = FindNamedDescendant<ToggleButton>(child, "ExpandCollapseChevron");
-
-            Assert.AreEqual(Visibility.Visible, rootChevron.Visibility);
-            Assert.AreEqual(Visibility.Hidden, childChevron.Visibility);
+            Assert.AreEqual(Visibility.Visible, rootExpander.Visibility);
+            Assert.AreEqual(Visibility.Hidden, childExpander.Visibility);
+            Assert.AreEqual(Visibility.Visible, itemsHost.Visibility);
 
             root.IsExpanded = false;
             host.UpdateLayout();
-            Assert.IsFalse(child.IsVisible);
+            Assert.AreEqual(Visibility.Collapsed, itemsHost.Visibility);
 
             root.IsExpanded = true;
             host.UpdateLayout();
-            Assert.IsTrue(child.IsVisible);
+            Assert.AreEqual(Visibility.Visible, itemsHost.Visibility);
         });
     }
 
     [TestMethod]
-    public void TreeViewItemTemplateUsesWinUIPresenterSlots()
-    {
-        WpfTestHost.Run(() =>
-        {
-            TestApplication.EnsureInitialized();
-
-            var root = new WpfTreeViewItem
-            {
-                Header = "Root",
-                IsExpanded = true,
-                IsSelected = true
-            };
-            root.Items.Add(new WpfTreeViewItem { Header = "Child" });
-
-            var treeView = new WpfTreeView();
-            treeView.Items.Add(root);
-
-            using var host = new TestWindowHost(treeView);
-
-            var headerPresenter = FindNamedDescendant<ContentPresenterEx>(root, "PART_Header");
-            Assert.AreEqual(root.Header, headerPresenter.Content);
-            Assert.AreSame(headerPresenter.TryFindResource("TreeViewItemForegroundSelected"), headerPresenter.Foreground);
-
-            var chevron = FindNamedDescendant<ToggleButton>(root, "ExpandCollapseChevron");
-            Assert.IsTrue(
-                VisualTreeTestHelper.EnumerateDescendants(chevron).OfType<ContentPresenterEx>().Any(),
-                "Expected the expand/collapse toggle template to use ContentPresenterEx.");
-        });
-    }
-
-    [TestMethod]
-    public void TreeViewItemCommonStatesUseVisualStateSettersForWinUIStateParity()
+    public void TreeViewItemTemplateUsesOfficialWpfPresenterAndTriggers()
     {
         WpfTestHost.Run(() =>
         {
@@ -193,28 +153,24 @@ public class TreeViewResourceTests
             using var host = new TestWindowHost(treeView);
             host.UpdateLayout();
 
-            var templateRoot = FindNamedDescendant<FrameworkElement>(root, "RootGrid");
-            var selectionIndicator = FindNamedDescendant<FrameworkElement>(root, "SelectionIndicator");
+            var headerPresenter = FindNamedDescendant<ContentPresenter>(root, "PART_Header");
+            Assert.AreEqual(root.Header, headerPresenter.Content);
+            Assert.AreEqual(14.0, TextElement.GetFontSize(headerPresenter));
 
-            AssertStateSetter(templateRoot, "CommonStates", "PointerOver", "ContentPresenterGrid.Background");
-            AssertStateSetter(templateRoot, "CommonStates", "PointerOver", "PART_Header.Foreground");
-            AssertStateSetter(templateRoot, "CommonStates", "PointerOver", "SelectionIndicator.Fill");
-            AssertStateSetter(templateRoot, "CommonStates", "PointerOver", "CollapsedGlyph.Foreground");
-            AssertStateSetter(templateRoot, "CommonStates", "PointerOver", "ExpandedGlyph.Foreground");
-            AssertStateSetter(templateRoot, "CommonStates", "PointerOver", "ContentPresenterGrid.BorderBrush");
-            AssertStateSetter(templateRoot, "CommonStates", "PointerOver", "SelectionIndicator.Opacity");
+            var activeRectangle = FindNamedDescendant<Rectangle>(root, "ActiveRectangle");
+            Assert.AreEqual(Visibility.Visible, activeRectangle.Visibility);
+            Assert.AreSame(root.TryFindResource("TreeViewItemSelectionIndicatorForeground"), activeRectangle.Fill);
 
-            AssertStateSetter(templateRoot, "CommonStates", "Selected", "ContentPresenterGrid.Background");
-            AssertStateSetter(templateRoot, "CommonStates", "Selected", "PART_Header.Foreground");
-            AssertStateSetter(templateRoot, "CommonStates", "Selected", "SelectionIndicator.Fill");
-            AssertStateSetter(templateRoot, "CommonStates", "Selected", "CollapsedGlyph.Foreground");
-            AssertStateSetter(templateRoot, "CommonStates", "Selected", "ExpandedGlyph.Foreground");
-            AssertStateSetter(templateRoot, "CommonStates", "Selected", "ContentPresenterGrid.BorderBrush");
-            AssertStateSetter(templateRoot, "CommonStates", "Selected", "SelectionIndicator.Opacity");
+            var itemBorder = FindNamedDescendant<Border>(root, "Border");
+            Assert.AreSame(root.TryFindResource("TreeViewItemBackgroundSelected"), itemBorder.Background);
 
-            AssertStateSetter(templateRoot, "CommonStates", "PressedSelected", "ContentPresenterGrid.Background");
-            AssertStateSetter(templateRoot, "CommonStates", "SelectedDisabled", "SelectionIndicator.Opacity");
-            Assert.AreEqual(1.0, selectionIndicator.Opacity);
+            var chevronIcon = FindNamedDescendant<TextBlock>(root, "ChevronIcon");
+            Assert.AreEqual(root.TryFindResource("TreeViewChevronRightGlyph"), chevronIcon.Text);
+            Assert.AreEqual(root.TryFindResource("TreeViewItemChevronSize"), chevronIcon.FontSize);
+
+            Assert.IsFalse(
+                VisualTreeTestHelper.EnumerateDescendants(root).OfType<ContentPresenterEx>().Any(),
+                "Official WPF Fluent TreeViewItem should use plain WPF ContentPresenter slots.");
         });
     }
 
@@ -224,13 +180,6 @@ public class TreeViewResourceTests
         Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
         Assert.IsTrue(themeDictionary.Contains(expectedResourceKey), $"{themeName} is missing {expectedResourceKey}.");
         Assert.AreSame(themeDictionary[expectedResourceKey], themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
-    }
-
-    private static void AssertThemeResourceValue(string themeName, string resourceKey, object expectedValue)
-    {
-        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
-        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
-        Assert.AreEqual(expectedValue, themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
     }
 
     private static void AssertResource(ResourceDictionary resources, string key, object expected)
@@ -273,26 +222,5 @@ public class TreeViewResourceTests
 
         Assert.Fail($"Could not find descendant named '{name}'.");
         throw new InvalidOperationException();
-    }
-
-    private static void AssertStateSetter(
-        FrameworkElement stateGroupsRoot,
-        string groupName,
-        string stateName,
-        string setterTarget)
-    {
-        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
-            .OfType<VisualStateGroup>()
-            .Single(item => item.Name == groupName);
-        var state = group.States
-            .Cast<VisualState>()
-            .Single(item => item.Name == stateName);
-
-        Assert.IsInstanceOfType(state, typeof(VisualStateEx));
-
-        var stateEx = (VisualStateEx)state;
-        Assert.IsTrue(
-            stateEx.Setters.Any(setter => setter.Target == setterTarget),
-            $"{groupName}.{stateName} should set {setterTarget}.");
     }
 }

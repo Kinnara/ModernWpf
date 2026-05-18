@@ -29,9 +29,9 @@ Source inspected:
 | Resource key | Official WPF Fluent value | ModernWpf backport value | Reason retained |
 | --- | --- | --- | --- |
 | `TextControlThemeMinWidth` | `0` | `64` | ModernWpf inherited the WinUI-compatible text-control width contract; changing it would be a visible backport layout break. |
-| `TreeViewItemPresenterMargin` | `0` | `4,2` | The default backport TreeView follows existing ModernWpf/WinUI-derived layout expectations. Compact mode already provides the official-style `0` value. |
-| `TreeViewItemPresenterPadding` | `0` | `0,3,0,5` | Same as TreeView margin; keep default compatibility and use compact resources for denser layout. |
-| `TreeViewItemMultiSelectCheckBoxMinHeight` | `24` | `28` | Retained for default ModernWpf/WinUI backport behavior; compact resources already use `24`. |
+| `TreeViewItemPresenterMargin` | No official stock `TreeView` usage | Retained as an unused public alias | The stock TreeView template was later replaced by official WPF Fluent; this key remains only for resource-surface and compact-resource compatibility. |
+| `TreeViewItemPresenterPadding` | No official stock `TreeView` usage | Retained as an unused public alias | Same as `TreeViewItemPresenterMargin`; official WPF Fluent no longer consumes the key. |
+| `TreeViewItemMultiSelectCheckBoxMinHeight` | No official stock `TreeView` usage | Retained as an unused public alias | ModernWpf does not add WinUI's separate TreeView multi-select surface in this phase; compact resources still expose the historical key. |
 | Stock WPF control templates | Official WPF Fluent templates | ModernWpf backport templates on `net462` and `net8.0-windows7.0` | Template replacement is intentionally batched. `net10.0-windows7.0` uses official templates through `FluentControlsResources`. |
 
 ### Test Evidence
@@ -714,3 +714,36 @@ Source inspected:
 - `test\ModernWpf.WinUI.Tests\CommonStyles\ListBoxListViewVisualStateTests.cs` covers the official WPF Fluent ListBox/ListView/GridView setter surfaces, presenter shape, selection indicator shape, missing old guesses, and resource substitutions.
 - `test\ModernWpf.WinUI.Tests\LayoutCompatibility\LayoutCompatibilityApiTests.cs` now expects stock item presenters to be plain WPF `ContentPresenter` instances.
 - `test\ModernWpf.WinUI.Tests\TemplateParityTests.cs` classifies `ListBox.xaml`, `ListBoxItem.xaml`, `GridView.xaml`, `ListView.xaml`, and `ListViewItem.xaml` as official WPF Fluent stock template files that should not use `VisualStateEx`.
+
+## 2026-05-18 Batch 24
+
+Source inspected:
+
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\TreeView.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\TreeViewItem.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Light.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Dark.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\HC.xaml`
+
+### Synced Values
+
+| Resource key / style | Official WPF Fluent value | ModernWpf value after sync | Reason |
+| --- | --- | --- | --- |
+| `DefaultTreeViewStyle` / implicit stock `TreeView` style | Official stock WPF `TreeView` style with transparent chrome, rounded WPF `Border`, WPF `ScrollViewer`, padding on `ItemsPresenter`, and virtualization trigger | Same source shape under the retained `DefaultTreeViewStyle` key | `TreeView` is a stock WPF control, so official WPF Fluent is the primary source. |
+| `DefaultTreeViewItemStyle` / implicit stock `TreeViewItem` style | Official stock WPF `TreeViewItem` template with `Expander`, `ChevronIcon`, `ActiveRectangle`, plain WPF `ContentPresenter`, and WPF trigger behavior | Same source shape in the new `Styles\TreeViewItem.xaml` split dictionary | Deletes the previous WinUI-like `TreeViewItemHelper`, `VisualStateEx`, `ContentPresenterEx`, `FontIconFallback`, and selected-state setter guesses from the stock TreeViewItem path. |
+| `TreeViewItemChevronSize`, `TreeViewItemFontSize`, `TreeViewChevronRightGlyph`, `TreeViewChevronLeftGlyph` | Official stock TreeViewItem local resources | Same values in `TreeViewItem.xaml` | Restores official WPF Fluent chevron text-glyph behavior, including right-to-left glyph selection. |
+| Core TreeView theme aliases | Official `TreeViewItemBackground`, `TreeViewItemBackgroundPointerOver`, `TreeViewItemBackgroundSelected`, `TreeViewItemForeground`, and `TreeViewItemSelectionIndicatorForeground` resources | Same official keys mapped through ModernWpf theme aliases | Required by the copied official templates. |
+
+### Intentional Differences
+
+| Resource key / style | Official WPF Fluent value | ModernWpf backport value | Reason retained |
+| --- | --- | --- | --- |
+| Dictionary layout | Separate official source files | Same split copied into `ModernWpf\Styles`, merged in dependency order from `StockControlsResources.xaml` | Keeps source ownership clear while preserving the existing resource entry point. |
+| `system` namespace assembly | `System.Runtime` in `TreeViewItem.xaml` | `mscorlib` | Keeps copied numeric/string resources compatible with ModernWpf's older target frameworks. |
+| Item corner radius property | Official `Border.CornerRadius` attached setter/template binding | `primitives:ControlHelper.CornerRadius` | Older ModernWpf targets do not expose the official attached property. |
+| Historical TreeView density keys | No official stock TreeView usage | Retained as unused public aliases and compact-resource API keys | Avoids unnecessary resource-surface churn; official TreeView templates no longer consume these aliases. |
+
+### Test Evidence
+
+- `test\ModernWpf.WinUI.Tests\TreeView\TreeViewResourceTests.cs` covers the official WPF Fluent TreeView/TreeViewItem setter surface, chevron resources, expansion behavior, WPF presenter slot, selection indicator, and deleted old helper path.
+- `test\ModernWpf.WinUI.Tests\TemplateParityTests.cs` classifies `TreeView.xaml` and `TreeViewItem.xaml` as official WPF Fluent stock template files that should not use `VisualStateEx` or `ContentPresenterEx`.
