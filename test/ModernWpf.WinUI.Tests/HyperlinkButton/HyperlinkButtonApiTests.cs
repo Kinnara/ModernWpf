@@ -10,6 +10,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf;
 using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
+using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
 
 namespace ModernWpf.WinUI.Tests.HyperlinkButtonTests;
@@ -22,6 +23,10 @@ public class HyperlinkButtonApiTests
     {
         WpfTestHost.Run(() =>
         {
+            TestApplication.EnsureInitialized();
+            var resources = (ResourceDictionary)Application.LoadComponent(
+                new Uri("/ModernWpf.Controls;component/HyperlinkButton/HyperlinkButton.xaml", UriKind.Relative));
+
             var hyperlinkButton = new ModernWpf.Controls.HyperlinkButton
             {
                 Content = "Link"
@@ -32,6 +37,7 @@ public class HyperlinkButtonApiTests
             Assert.IsNull(hyperlinkButton.NavigateUri);
             Assert.IsNull(typeof(ModernWpf.Controls.HyperlinkButton).GetProperty("TargetName"));
             Assert.IsNull(typeof(ModernWpf.Controls.HyperlinkButton).GetField("TargetNameProperty", BindingFlags.Public | BindingFlags.Static));
+            Assert.IsInstanceOfType(resources["DefaultHyperlinkButtonStyle"], typeof(Style));
             Assert.AreEqual(hyperlinkButton.TryFindResource("ButtonPadding"), hyperlinkButton.Padding);
             Assert.IsTrue(ButtonHelper.GetVisualStateSettersEnabled(hyperlinkButton));
         });

@@ -229,6 +229,12 @@ public class InfoBarApiTests
 
             using var host = new TestWindowHost(infoBar, width: 400, height: 140);
 
+            var closeButton = FindNamedDescendant<Button>(infoBar, "CloseButton");
+            var closeButtonChrome = FindNamedDescendant<Border>(closeButton, "ContentBorder");
+            Assert.AreEqual(closeButton.Width, closeButtonChrome.Width);
+            Assert.AreEqual(closeButton.Height, closeButtonChrome.Height);
+            Assert.AreEqual(1, closeButtonChrome.BorderThickness.Left);
+
             var contentArea = FindNamedDescendant<ContentPresenterEx>(infoBar, "ContentArea");
             Assert.AreSame(bannerContent, contentArea.Content);
             Assert.AreEqual(1, Grid.GetColumn(contentArea));

@@ -32,6 +32,7 @@ ModernWpf files:
 - Click handling now follows the source order: raise the invoke automation event when listeners exist, run the base `ButtonBase` click path, then launch `NavigateUri` if it is set.
 - The automation peer remains source-shaped: it exposes `Invoke`, reports class name `Hyperlink`, reports control type `Hyperlink`, rejects disabled invoke, and invokes through the owner button path.
 - The template now uses source `ButtonPadding` instead of the old local `HyperlinkButtonPadding`.
+- The resource dictionary now exposes the source-named `DefaultHyperlinkButtonStyle` key and keeps the implicit `HyperlinkButton` style based on that keyed style.
 - Pointer-over, pressed, and disabled foreground/background/border values now live in source-shaped visual states via `VisualStateEx.Setters` instead of WPF `ControlTemplate.Triggers`.
 - Light and Dark `HyperlinkButtonForegroundPointerOver` now map to source `AccentTextFillColorSecondaryBrush`.
 
@@ -44,10 +45,10 @@ ModernWpf files:
 
 ## Verification
 
-Focused tests cover source API surface/defaults, removal of WPF-only `TargetName`, source `ButtonPadding`, visual-state setter ownership and application, source pointer-over theme resource mapping, and automation peer invoke behavior without launching a URI.
+Focused tests cover source API surface/defaults, the source-named `DefaultHyperlinkButtonStyle` resource key, removal of WPF-only `TargetName`, source `ButtonPadding`, visual-state setter ownership and application, source pointer-over theme resource mapping, and automation peer invoke behavior without launching a URI.
 
-- `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --filter "FullyQualifiedName~HyperlinkButton" --no-restore`
-  - Passed 4/4.
+- `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --filter "FullyQualifiedName~InfoBar|FullyQualifiedName~HyperlinkButton" --no-restore`
+  - Passed 12/12.
 - `dotnet build .\ModernWpf.Controls\ModernWpf.Controls.csproj --no-restore -m:1`
   - Passed with existing warnings.
 - `rg -n "TargetNameProperty|public string TargetName|m_hyperlink|ControlTemplate.Triggers|HyperlinkButtonPadding" .\ModernWpf.Controls\HyperlinkButton .\ModernWpf\ThemeResources .\test\ModernWpf.WinUI.Tests\HyperlinkButton`

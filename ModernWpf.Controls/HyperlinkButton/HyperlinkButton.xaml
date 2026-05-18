@@ -4,7 +4,7 @@
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:local="clr-namespace:ModernWpf.Controls">
 
-    <Style TargetType="local:HyperlinkButton">
+    <Style x:Key="DefaultHyperlinkButtonStyle" TargetType="local:HyperlinkButton">
         <Setter Property="Background" Value="{DynamicResource HyperlinkButtonBackground}" />
         <Setter Property="ui:ControlHelper.BackgroundSizing" Value="OuterBorderEdge" />
         <Setter Property="Foreground" Value="{DynamicResource HyperlinkButtonForeground}" />
@@ -89,5 +89,7 @@
             </Trigger>
         </Style.Triggers>
     </Style>
+
+    <Style TargetType="local:HyperlinkButton" BasedOn="{StaticResource DefaultHyperlinkButtonStyle}" />
 
 </ResourceDictionary>

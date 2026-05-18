@@ -37,6 +37,7 @@ ModernWpf files:
 - Visibility state is now tracked through source-shaped `_applyTemplateCalled`, `_notifyOpen`, and `_isVisible` fields.
 - The inner layout root now uses `GridEx` to carry the source `Grid` `CornerRadius` and `Padding` behavior that WPF `Grid` lacks.
 - The close button now uses source-shaped `Viewbox` + `SymbolIcon Cancel` content and the source AppBar button resource aliases.
+- The close button style now inlines the source default-button chrome shape as a WPF-scoped substitute, including `ContentBorder`, focus visual settings, button pointer/pressed/disabled resource aliases, 32px source sizing, and top-right source margin.
 - The action-button slot now carries the source `HyperlinkButton` margin and foreground override.
 - Source InfoBar localized strings were added to the shared ModernWpf resource table.
 
@@ -47,15 +48,15 @@ ModernWpf files:
 - WPF `Grid` does not have `CornerRadius` or `Padding`, so `GridEx` represents the source inner root.
 - WPF `Viewbox.Child` template binding to `IconElement` is represented with `ContentPresenterEx` for the user icon slot.
 - WPF `TextWrapping` does not have WinUI `WrapWholeWords`, so the template keeps WPF `Wrap`.
-- The source `InfoBarCloseButtonStyle BasedOn="{StaticResource DefaultButtonStyle}"` is not directly reliable from this resource dictionary scope; ModernWpf keeps an explicit WPF close-button style while preserving source size, margin, content, and AppBar resource aliases.
-- The source action-slot `DefaultHyperlinkButtonStyle` base style is represented by a local WPF `HyperlinkButton` style that only applies the InfoBar-specific margin and foreground.
+- The source `InfoBarCloseButtonStyle BasedOn="{StaticResource DefaultButtonStyle}"` is not directly reliable from this resource dictionary scope. ModernWpf uses a self-contained WPF style that mirrors the relevant `DefaultButtonStyle` template/trigger shape and uses dynamic button resources where theme resources are resolved later.
+- The source action-slot `DefaultHyperlinkButtonStyle` base style is not referenced directly from the InfoBar resource dictionary because it does not resolve reliably from this scope. ModernWpf represents the slot with a local WPF `HyperlinkButton` style that applies the InfoBar-specific margin and foreground.
 
 ## Verification
 
-Focused tests cover source defaults, close/cancel events, source close-button automation text and tooltip, source close-button `SymbolIcon`, icon/close visual states, `NoBannerContent` and `BannerContent` state routing, severity icon text and automation names, foreground setter binding, source `GridEx` root chrome/padding, action presenter margins, HyperlinkButton action margin, automation peer control-view visibility, and `InfoBarPanel` layout.
+Focused tests cover source defaults, close/cancel events, source close-button automation text and tooltip, source close-button `SymbolIcon`, close-button WPF button chrome, icon/close visual states, `NoBannerContent` and `BannerContent` state routing, severity icon text and automation names, foreground setter binding, source `GridEx` root chrome/padding, action presenter margins, HyperlinkButton action margin, automation peer control-view visibility, and `InfoBarPanel` layout.
 
-- `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --filter "FullyQualifiedName~InfoBar" --no-restore`
-  - Passed 8/8.
+- `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --filter "FullyQualifiedName~InfoBar|FullyQualifiedName~HyperlinkButton" --no-restore`
+  - Passed 12/12.
 - `dotnet build .\ModernWpf.Controls\ModernWpf.Controls.csproj --no-restore -m:1`
   - Passed with existing repository warnings.
 - `rg -n 'ContentAreaName|ContentRootName|_contentArea|_contentRoot|Severity\.ToString|Grid\.SetRow' .\ModernWpf.Controls\InfoBar .\test\ModernWpf.WinUI.Tests\InfoBar`
