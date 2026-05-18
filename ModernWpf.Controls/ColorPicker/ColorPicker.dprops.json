@@ -31,6 +31,6 @@
     { "name": "ColorSpectrumShape", "type": "ColorSpectrumShape", "default": "ColorSpectrumShape.Box", "changed": "OnColorSpectrumShapePropertyChanged" },
     { "name": "ColorSpectrumComponents", "type": "ColorSpectrumComponents", "default": "ColorSpectrumComponents.HueSaturation", "changed": "OnColorSpectrumComponentsPropertyChanged" },
     { "name": "Orientation", "type": "Orientation", "default": "Orientation.Vertical", "changed": "OnOrientationPropertyChanged" },
-    { "name": "CornerRadius", "type": "CornerRadius", "kind": "AddOwner", "sourceProperty": "ControlHelper.CornerRadiusProperty" }
+    { "name": "CornerRadius", "type": "CornerRadius", "kind": "AddOwner", "sourceProperty": "System.Windows.Controls.Border.CornerRadiusProperty" }
   ]
 }

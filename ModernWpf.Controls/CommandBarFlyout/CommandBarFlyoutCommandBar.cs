@@ -193,6 +193,11 @@ namespace ModernWpf.Controls.Primitives
                 m_moreButton.IsTabStop = false;
             }
 
+            if (m_moreButton != null)
+            {
+                m_moreButton.SetBinding(System.Windows.Controls.Border.CornerRadiusProperty, new Binding(nameof(CornerRadius)) { Source = this, Mode = BindingMode.OneWay });
+            }
+
             if (m_overflowPopup is PopupEx popupEx)
             {
                 popupEx.SuppressFadeAnimation = true;
@@ -1118,7 +1123,7 @@ namespace ModernWpf.Controls.Primitives
                 binding.Mode = BindingMode.OneWay;
                 if (actualFlyout.GetPresenter() is { } presenter)
                 {
-                    presenter.SetBinding(ControlHelper.CornerRadiusProperty, binding);
+                    presenter.SetBinding(System.Windows.Controls.Border.CornerRadiusProperty, binding);
                 }
             }
         }

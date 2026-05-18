@@ -30,7 +30,7 @@ public class DataGridVisualStateTests
             AssertDynamicResourceSetter(defaultStyle, Control.BorderBrushProperty, "ControlElevationBorderBrush");
             AssertDynamicResourceSetter(defaultStyle, DataGrid.HorizontalGridLinesBrushProperty, "ControlElevationBorderBrush");
             AssertDynamicResourceSetter(defaultStyle, DataGrid.VerticalGridLinesBrushProperty, "ControlElevationBorderBrush");
-            AssertDynamicResourceSetter(defaultStyle, ControlHelper.CornerRadiusProperty, "ControlCornerRadius");
+            AssertDynamicResourceSetter(defaultStyle, System.Windows.Controls.Border.CornerRadiusProperty, "ControlCornerRadius");
             AssertStyleSetter(defaultStyle, DataGrid.RowStyleProperty, "DefaultDataGridRowStyle");
             AssertStyleSetter(defaultStyle, DataGrid.RowHeaderStyleProperty, "DefaultDataGridRowHeaderStyle");
             AssertStyleSetter(defaultStyle, DataGrid.CellStyleProperty, "DefaultDataGridCellStyle");
@@ -130,7 +130,7 @@ public class DataGridVisualStateTests
         Assert.IsFalse(text.Contains("DataGridRowGroupHeaderStyle", System.StringComparison.Ordinal));
         Assert.IsFalse(text.Contains("Fluent.Controls", System.StringComparison.Ordinal));
         Assert.IsFalse(text.Contains("System.Runtime", System.StringComparison.Ordinal));
-        Assert.IsFalse(text.Contains("Border.CornerRadius", System.StringComparison.Ordinal));
+        Assert.IsFalse(text.Contains("ControlHelper.CornerRadius", System.StringComparison.Ordinal));
     }
 
     private static void AssertDynamicResourceSetter(Style style, DependencyProperty property, object expectedResourceKey)

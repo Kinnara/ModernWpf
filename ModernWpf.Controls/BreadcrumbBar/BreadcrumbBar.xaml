@@ -188,7 +188,6 @@
                             IsTabStop="False"
                             Padding="1,3"
                             ui:ControlHelper.ContentTransitions="{TemplateBinding ContentTransitions}"
-                            ui:ControlHelper.CornerRadius="{TemplateBinding CornerRadius}"
                             ui:FocusVisualHelper.FocusVisualMargin="-3"
                             ui:FocusVisualHelper.IsTemplateFocusTarget="True">
                             <Button.Style>
@@ -277,7 +276,7 @@
                                                         ContentTemplate="{TemplateBinding ContentTemplate}"
                                                         ContentStringFormat="{TemplateBinding ContentStringFormat}"
                                                         ContentTransitions="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(ui:ControlHelper.ContentTransitions)}"
-                                                        CornerRadius="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(ui:ControlHelper.CornerRadius)}"
+                                                        CornerRadius="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(Border.CornerRadius)}"
                                                         Foreground="{TemplateBinding Foreground}"
                                                         HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                                         VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />

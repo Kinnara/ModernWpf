@@ -62,7 +62,7 @@ public class TextBoxPasswordBoxVisualStateTests
             AssertDynamicResourceSetter(setters, Control.BackgroundProperty, "TextControlBackground");
             AssertDynamicResourceSetter(setters, Control.BorderBrushProperty, "TextControlElevationBorderBrush");
             AssertDynamicResourceSetter(setters, Control.BorderThicknessProperty, "TextControlBorderThemeThickness");
-            AssertDynamicResourceSetter(setters, ControlHelper.CornerRadiusProperty, "ControlCornerRadius");
+            AssertDynamicResourceSetter(setters, System.Windows.Controls.Border.CornerRadiusProperty, "ControlCornerRadius");
             AssertSetter(setters, TextContextMenu.UsingTextContextMenuProperty, true);
             AssertSetter(setters, Control.OverridesDefaultStyleProperty, true);
         });
@@ -113,7 +113,7 @@ public class TextBoxPasswordBoxVisualStateTests
             AssertSetter(setters, Control.PaddingProperty, new Thickness(11, 0, 6, 0));
             AssertSetter(setters, FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Stretch);
             AssertSetter(setters, Control.VerticalContentAlignmentProperty, VerticalAlignment.Center);
-            AssertSetter(setters, ControlHelper.CornerRadiusProperty, new CornerRadius(0));
+            AssertSetter(setters, System.Windows.Controls.Border.CornerRadiusProperty, new CornerRadius(0));
             AssertDynamicResourceSetter(setters, Validation.ErrorTemplateProperty, "DataGridTextControlValidationErrorTemplate");
         });
     }
@@ -141,7 +141,7 @@ public class TextBoxPasswordBoxVisualStateTests
         Assert.IsFalse(text.Contains("TextBoxHelper.IsEnabled", System.StringComparison.Ordinal));
         Assert.IsFalse(text.Contains("TextBoxHelper.IsDeleteButtonVisible", System.StringComparison.Ordinal));
         Assert.IsFalse(text.Contains("TemplateButtonCommand", System.StringComparison.Ordinal));
-        Assert.IsFalse(text.Contains("Border.CornerRadius", System.StringComparison.Ordinal));
+        Assert.IsFalse(text.Contains("ControlHelper.CornerRadius", System.StringComparison.Ordinal));
         Assert.IsFalse(text.Contains("DefaultControlContextMenu", System.StringComparison.Ordinal));
     }
 
@@ -161,7 +161,7 @@ public class TextBoxPasswordBoxVisualStateTests
         Assert.AreEqual((double)textBox.TryFindResource("TextControlThemeMinHeight"), textBox.MinHeight);
         Assert.AreEqual((double)textBox.TryFindResource("TextControlThemeMinWidth"), textBox.MinWidth);
         Assert.AreEqual((Thickness)textBox.TryFindResource("TextControlThemePadding"), textBox.Padding);
-        Assert.AreEqual((CornerRadius)textBox.TryFindResource("ControlCornerRadius"), ControlHelper.GetCornerRadius(textBox));
+        Assert.AreEqual((CornerRadius)textBox.TryFindResource("ControlCornerRadius"), ((CornerRadius)textBox.GetValue(System.Windows.Controls.Border.CornerRadiusProperty)));
         Assert.IsTrue(textBox.OverridesDefaultStyle);
         Assert.AreEqual(Cursors.IBeam, textBox.Cursor);
         Assert.IsTrue(textBox.AllowDrop);
@@ -188,7 +188,7 @@ public class TextBoxPasswordBoxVisualStateTests
         Assert.AreEqual((double)passwordBox.TryFindResource("TextControlThemeMinHeight"), passwordBox.MinHeight);
         Assert.AreEqual((double)passwordBox.TryFindResource("TextControlThemeMinWidth"), passwordBox.MinWidth);
         Assert.AreEqual((Thickness)passwordBox.TryFindResource("TextControlThemePadding"), passwordBox.Padding);
-        Assert.AreEqual((CornerRadius)passwordBox.TryFindResource("ControlCornerRadius"), ControlHelper.GetCornerRadius(passwordBox));
+        Assert.AreEqual((CornerRadius)passwordBox.TryFindResource("ControlCornerRadius"), ((CornerRadius)passwordBox.GetValue(System.Windows.Controls.Border.CornerRadiusProperty)));
         Assert.IsTrue(passwordBox.AllowDrop);
         Assert.AreEqual(PanningMode.VerticalFirst, ScrollViewer.GetPanningMode(passwordBox));
         Assert.AreEqual('\u25CF', passwordBox.PasswordChar);
@@ -209,7 +209,7 @@ public class TextBoxPasswordBoxVisualStateTests
         Assert.AreSame(textBox.BorderBrush, contentBorder.BorderBrush);
         Assert.AreEqual(textBox.BorderThickness, contentBorder.BorderThickness);
         Assert.AreEqual(textBox.MinHeight, contentBorder.MinHeight);
-        Assert.AreEqual(ControlHelper.GetCornerRadius(textBox), contentBorder.CornerRadius);
+        Assert.AreEqual(((CornerRadius)textBox.GetValue(System.Windows.Controls.Border.CornerRadiusProperty)), contentBorder.CornerRadius);
         Assert.IsTrue(ValidationHelper.GetIsTemplateValidationAdornerSite(contentBorder));
 
         Assert.AreEqual(textBox.BorderThickness, contentHost.Margin);
@@ -235,7 +235,7 @@ public class TextBoxPasswordBoxVisualStateTests
         Assert.AreEqual(passwordBox.BorderThickness, contentBorder.BorderThickness);
         Assert.AreEqual(passwordBox.MinWidth, contentBorder.MinWidth);
         Assert.AreEqual(passwordBox.MinHeight, contentBorder.MinHeight);
-        Assert.AreEqual(ControlHelper.GetCornerRadius(passwordBox), contentBorder.CornerRadius);
+        Assert.AreEqual(((CornerRadius)passwordBox.GetValue(System.Windows.Controls.Border.CornerRadiusProperty)), contentBorder.CornerRadius);
 
         Assert.AreEqual(passwordBox.BorderThickness, contentHost.Margin);
         Assert.AreEqual(passwordBox.Padding, contentHost.Padding);

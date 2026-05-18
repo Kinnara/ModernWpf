@@ -45,7 +45,7 @@ primary source is official WPF Fluent, not WinUI `CalendarView` /
 - `System.Runtime` in official Calendar XAML is normalized to `mscorlib` for
   older ModernWpf target frameworks.
 - Official `Border.CornerRadius` attached setters and bindings are represented
-  with `primitives:ControlHelper.CornerRadius`, because older WPF targets do
+  with `Border.CornerRadius`, because older WPF targets do
   not expose the official attached property surface.
 - `DatePicker.xaml` locally merges `Calendar.xaml`, and the DatePicker
   `CalendarStyle` setter uses `StaticResource`, so the copied

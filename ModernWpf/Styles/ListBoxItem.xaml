@@ -23,7 +23,7 @@
         <Setter Property="Margin" Value="{DynamicResource ListBoxItemMargin}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Padding" Value="{DynamicResource ListBoxItemPadding}" />
-        <Setter Property="primitives:ControlHelper.CornerRadius" Value="0" />
+        <Setter Property="Border.CornerRadius" Value="0" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Template">
@@ -36,7 +36,7 @@
                         Background="{TemplateBinding Background}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         BorderBrush="{TemplateBinding BorderBrush}"
-                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
+                        CornerRadius="{TemplateBinding Border.CornerRadius}">
                         <ContentPresenter 
                             HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}"

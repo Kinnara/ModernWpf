@@ -137,7 +137,7 @@
       "name": "CornerRadius",
       "type": "CornerRadius",
       "kind": "AddOwner",
-      "sourceProperty": "ControlHelper.CornerRadiusProperty"
+      "sourceProperty": "System.Windows.Controls.Border.CornerRadiusProperty"
     }
   ]
 }

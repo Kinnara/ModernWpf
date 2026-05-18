@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using ModernWpf.Controls.Primitives;
@@ -178,7 +178,7 @@ namespace ModernWpf.Controls
         /// Identifies the CornerRadius dependency property.
         /// </summary>
         public static readonly DependencyProperty CornerRadiusProperty =
-            ControlHelper.CornerRadiusProperty.AddOwner(typeof(ProgressBar));
+            System.Windows.Controls.Border.CornerRadiusProperty.AddOwner(typeof(ProgressBar));
 
         /// <summary>
         /// Gets or sets the radius for the corners of the control's border.

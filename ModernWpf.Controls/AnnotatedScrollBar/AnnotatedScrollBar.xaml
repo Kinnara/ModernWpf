@@ -36,7 +36,7 @@
         <Setter Property="Foreground" Value="{DynamicResource ScrollButtonForeground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource ScrollButtonBorderBrush}" />
         <Setter Property="BorderThickness" Value="{StaticResource ScrollButtonStyleBorderThickness}" />
-        <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+        <Setter Property="Border.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="FontFamily" Value="{DynamicResource SymbolThemeFontFamily}" />
         <Setter Property="FontSize" Value="{StaticResource ScrollButtonFontSize}" />
         <Setter Property="Padding" Value="0" />
@@ -49,7 +49,7 @@
                                            BorderThickness="{TemplateBinding BorderThickness}"
                                            Content="{TemplateBinding Content}"
                                            ContentTemplate="{TemplateBinding ContentTemplate}"
-                                           CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
+                                           CornerRadius="{TemplateBinding Border.CornerRadius}"
                                            Foreground="{TemplateBinding Foreground}"
                                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                            Padding="{TemplateBinding Padding}"

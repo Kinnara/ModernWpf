@@ -62,7 +62,7 @@
         <Setter Property="Maximum" Value="100" />
         <Setter Property="Margin" Value="0" />
         <Setter Property="VerticalAlignment" Value="Center" />
-        <Setter Property="ui:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+        <Setter Property="Border.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="primitives:ColorPickerSlider">
@@ -119,7 +119,7 @@
                         <Grid
                             x:Name="SliderContainer"
                             Background="Transparent"
-                            ui:ControlHelper.CornerRadius="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(ui:ControlHelper.CornerRadius)}"
+                            Tag="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(Border.CornerRadius)}"
                             ui:FocusVisualHelper.IsTemplateFocusTarget="True">
                             <Grid
                                 x:Name="HorizontalTemplate"
@@ -142,8 +142,8 @@
                                     Height="{DynamicResource SliderTrackThemeHeight}"
                                     Fill="Transparent"
                                     Opacity="0"
-                                    RadiusX="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(ui:ControlHelper.CornerRadius), Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
-                                    RadiusY="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(ui:ControlHelper.CornerRadius), Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}" />
+                                    RadiusX="{Binding ElementName=SliderContainer, Path=Tag, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
+                                    RadiusY="{Binding ElementName=SliderContainer, Path=Tag, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}" />
                                 <Rectangle
                                     x:Name="HorizontalDecreaseRect"
                                     Grid.Row="1"

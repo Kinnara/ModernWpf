@@ -570,7 +570,7 @@
         <Setter Property="ScrollViewer.CanContentScroll" Value="True" />
         <Setter Property="ScrollViewer.PanningMode" Value="Both" />
         <Setter Property="Stylus.IsFlicksEnabled" Value="False" />
-        <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+        <Setter Property="Border.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="RowStyle" Value="{StaticResource DefaultDataGridRowStyle}" />
         <Setter Property="RowHeaderStyle" Value="{StaticResource DefaultDataGridRowHeaderStyle}" />
         <Setter Property="CellStyle" Value="{StaticResource DefaultDataGridCellStyle}" />
@@ -587,7 +587,7 @@
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
+                        CornerRadius="{TemplateBinding Border.CornerRadius}"
                         SnapsToDevicePixels="True">
                         <ScrollViewer x:Name="DG_ScrollViewer" Focusable="False">
                             <ScrollViewer.Template>
@@ -700,7 +700,7 @@
         <Setter Property="BorderBrush" Value="{DynamicResource ControlElevationBorderBrush}" />
         <Setter Property="BorderThickness" Value="{StaticResource DataGridCheckBoxBorderThemeThickness}" />
         <Setter Property="Padding" Value="{StaticResource DataGridCheckBoxPadding}" />
-        <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+        <Setter Property="Border.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="HorizontalAlignment" Value="Center" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="HorizontalContentAlignment" Value="Left" />
@@ -729,7 +729,7 @@
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
+                                CornerRadius="{TemplateBinding Border.CornerRadius}">
                                 <Grid>
                                     <TextBlock
                                         x:Name="ControlIcon"

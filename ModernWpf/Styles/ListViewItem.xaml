@@ -1,4 +1,4 @@
-﻿<!--
+<!--
     This Source Code Form is subject to the terms of the MIT License.
     If a copy of the MIT was not distributed with this file, You can obtain one at https://opensource.org/licenses/MIT.
     Copyright (C) Leszek Pomianowski and WPF UI Contributors.
@@ -19,7 +19,7 @@
     <Style x:Key="DefaultListViewItemStyle" TargetType="{x:Type ListViewItem}">
         <Setter Property="Foreground" Value="{DynamicResource ListViewItemForeground}" />
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+        <Setter Property="Border.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="MinHeight" Value="{StaticResource ListViewItemMinHeight}" />
         <Setter Property="MinWidth" Value="{StaticResource ListViewItemMinWidth}" />
         <Setter Property="BorderThickness" Value="1" />
@@ -39,7 +39,7 @@
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
+                        CornerRadius="{TemplateBinding Border.CornerRadius}">
                         <Grid>
                             <ContentPresenter 
                                 Margin="{TemplateBinding Padding}" 
@@ -87,7 +87,7 @@
                             BorderBrush="{TemplateBinding BorderBrush}" 
                             BorderThickness="{TemplateBinding BorderThickness}" 
                             Background="{TemplateBinding Background}"
-                            CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
+                            CornerRadius="{TemplateBinding Border.CornerRadius}"
                             SnapsToDevicePixels="True">
                         <Grid x:Name="ContentGrid">
                             <!-- remove the HorizontalAlignment due to HeaderRowPresenter does not have the ability to align to center or right -->

@@ -42,7 +42,7 @@ public class ExpanderApiTests
                 Content = contentButton,
                 IsExpanded = true
             };
-            ControlHelper.SetCornerRadius(expander, new CornerRadius(6));
+            expander.SetValue(System.Windows.Controls.Border.CornerRadiusProperty, new CornerRadius(6));
 
             using var host = new TestWindowHost(expander, width: 400, height: 240);
             host.UpdateLayout();
@@ -58,7 +58,7 @@ public class ExpanderApiTests
             Assert.AreEqual(HorizontalAlignment.Stretch, expander.HorizontalContentAlignment);
             Assert.AreEqual(VerticalAlignment.Center, expander.VerticalContentAlignment);
             Assert.AreEqual(FontWeights.Normal, expander.FontWeight);
-            Assert.AreEqual(new CornerRadius(6), ControlHelper.GetCornerRadius(expander));
+            Assert.AreEqual(new CornerRadius(6), ((CornerRadius)expander.GetValue(System.Windows.Controls.Border.CornerRadiusProperty)));
             Assert.IsTrue(expander.IsExpanded);
             Assert.IsTrue(expander.OverridesDefaultStyle);
             Assert.IsTrue(expander.SnapsToDevicePixels);
@@ -303,7 +303,7 @@ public class ExpanderApiTests
             IsExpanded = true,
             ExpandDirection = direction
         };
-        ControlHelper.SetCornerRadius(expander, new CornerRadius(4));
+        expander.SetValue(System.Windows.Controls.Border.CornerRadiusProperty, new CornerRadius(4));
 
         using var host = new TestWindowHost(expander, width: 400, height: 240);
         host.UpdateLayout();

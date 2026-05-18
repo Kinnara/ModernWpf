@@ -27,7 +27,7 @@ public class ComboBoxApiTests
 
             var comboBox = CreateComboBox();
             comboBox.SelectedIndex = 0;
-            ControlHelper.SetCornerRadius(comboBox, new CornerRadius(6));
+            comboBox.SetValue(System.Windows.Controls.Border.CornerRadiusProperty, new CornerRadius(6));
 
             using var host = new TestWindowHost(comboBox);
             host.UpdateLayout();
@@ -106,7 +106,7 @@ public class ComboBoxApiTests
 
             var comboBox = CreateComboBox();
             comboBox.IsEditable = true;
-            ControlHelper.SetCornerRadius(comboBox, new CornerRadius(4));
+            comboBox.SetValue(System.Windows.Controls.Border.CornerRadiusProperty, new CornerRadius(4));
 
             using var host = new TestWindowHost(comboBox);
             host.UpdateLayout();
@@ -114,7 +114,7 @@ public class ComboBoxApiTests
             var editableTextBox = FindTemplateChild<TextBox>(comboBox, "PART_EditableTextBox");
             Assert.AreSame(comboBox.TryFindResource("DefaultComboBoxTextBoxStyle"), editableTextBox.Style);
             Assert.AreEqual(new Thickness(11, 5, 38, 6), editableTextBox.Padding);
-            Assert.AreEqual(new CornerRadius(4), ControlHelper.GetCornerRadius(editableTextBox));
+            Assert.AreEqual(new CornerRadius(4), ((CornerRadius)editableTextBox.GetValue(System.Windows.Controls.Border.CornerRadiusProperty)));
 
             editableTextBox.ApplyTemplate();
             var editableContentBorder = FindTemplateChild<Border>(editableTextBox, "ContentBorder");
@@ -142,7 +142,7 @@ public class ComboBoxApiTests
         Assert.IsFalse(text.Contains("VisualStateEx", StringComparison.Ordinal));
         Assert.IsFalse(text.Contains("ContentPresenterEx", StringComparison.Ordinal));
         Assert.IsFalse(text.Contains("FontIconFallback", StringComparison.Ordinal));
-        Assert.IsFalse(text.Contains("Border.CornerRadius", StringComparison.Ordinal));
+        Assert.IsFalse(text.Contains("ControlHelper.CornerRadius", StringComparison.Ordinal));
         Assert.IsFalse(text.Contains("System.Runtime", StringComparison.Ordinal));
         StringAssert.Contains(text, "DefaultComboBoxTextBoxStyle");
         StringAssert.Contains(text, "DefaultComboBoxToggleButtonStyle");
@@ -181,7 +181,7 @@ public class ComboBoxApiTests
 
             var cornerRadiusSetter = editingStyle.Setters
                 .OfType<Setter>()
-                .Single(setter => setter.Property == ControlHelper.CornerRadiusProperty);
+                .Single(setter => setter.Property == System.Windows.Controls.Border.CornerRadiusProperty);
             Assert.AreEqual(new CornerRadius(), cornerRadiusSetter.Value);
 
             var templateSetter = elementStyle.Setters

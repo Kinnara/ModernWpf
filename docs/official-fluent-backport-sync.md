@@ -83,23 +83,23 @@ Source inspected:
 
 | Resource key / style | Official WPF Fluent value | ModernWpf value after sync | Reason |
 | --- | --- | --- | --- |
-| `DefaultButtonStyle` | `ButtonBase` style with `ContentBorder`, WPF `ContentPresenter`, and `ControlTemplate.Triggers` for pointer-over, disabled, and pressed states | Same structure under the existing resource key, with the older-target `ControlHelper.CornerRadius` substitution | `Button` is a stock WPF control, so official WPF Fluent is the primary source. |
+| `DefaultButtonStyle` | `ButtonBase` style with `ContentBorder`, WPF `ContentPresenter`, and `ControlTemplate.Triggers` for pointer-over, disabled, and pressed states | Same structure under the existing resource key, with the older-target `Border.CornerRadius` substitution | `Button` is a stock WPF control, so official WPF Fluent is the primary source. |
 | Implicit `Button` style | Based on `DefaultButtonStyle` | Same | Matches official WPF Fluent resource shape while keeping the existing ModernWpf resource key. |
-| `AccentButtonStyle` | Self-contained `Button` style with `ContentBorder`, WPF `ContentPresenter`, and WPF trigger chrome | Same structure under the existing resource key, with the older-target `ControlHelper.CornerRadius` substitution | Removes the previous WinUI `VisualStateEx` stock-button template path. |
+| `AccentButtonStyle` | Self-contained `Button` style with `ContentBorder`, WPF `ContentPresenter`, and WPF trigger chrome | Same structure under the existing resource key, with the older-target `Border.CornerRadius` substitution | Removes the previous WinUI `VisualStateEx` stock-button template path. |
 | `SubtleButtonStyle` | No official WPF Fluent equivalent | ModernWpf-specific style using the same WPF trigger/template structure and existing WinUI-derived resource aliases | Keep the public ModernWpf style while aligning the template mechanism with official WPF Fluent. |
 
 ### Intentional Differences
 
 | Resource key / style | Official WPF Fluent value | ModernWpf backport value | Reason retained |
 | --- | --- | --- | --- |
-| Button corner radius property | `Border.CornerRadius` on `ButtonBase` | `primitives:ControlHelper.CornerRadius` | Older ModernWpf targets do not expose the official source property on `ButtonBase`; this preserves the backport radius bridge. |
+| Button corner radius property | `Border.CornerRadius` on `ButtonBase` | `Border.CornerRadius` | Older ModernWpf targets do not expose the official source property on `ButtonBase`; this preserves the backport radius bridge. |
 | Button focus style resource | `DefaultControlFocusVisualStyle` | `{x:Static SystemParameters.FocusVisualStyleKey}` plus `FocusVisualHelper` settings | ModernWpf keeps its existing focus visual bridge across supported target frameworks. |
 | Button brush resources | Direct official resources | Existing ModernWpf aliases such as `ButtonBackground` and `AccentButtonBorderBrush` | Existing aliases map to the same Fluent concepts and remain part of the public resource surface. |
 
 ### Test Evidence
 
 - `test\ModernWpf.WinUI.Tests\CommonStyles\ButtonVisualStateTests.cs` covers the official WPF Fluent Button trigger shape, `ButtonBase` default style target, self-contained accent style, disabled trigger resource application, and ModernWpf-specific subtle button trigger shape.
-- `test\ModernWpf.WinUI.Tests\LayoutCompatibility\LayoutCompatibilityApiTests.cs` covers the Button and AccentButton WPF presenter slots plus the retained `ControlHelper.CornerRadius` substitution.
+- `test\ModernWpf.WinUI.Tests\LayoutCompatibility\LayoutCompatibilityApiTests.cs` covers the Button and AccentButton WPF presenter slots plus the retained `Border.CornerRadius` substitution.
 
 ## 2026-05-18 Batch 4
 
@@ -114,7 +114,7 @@ Source inspected:
 
 | Resource key / style | Official WPF Fluent value | ModernWpf value after sync | Reason |
 | --- | --- | --- | --- |
-| `DefaultRepeatButtonStyle` | `RepeatButton` style with `ContentBorder`, WPF `ContentPresenter`, and `ControlTemplate.Triggers` for disabled, pointer-over, and pressed states | Same structure under the existing resource key, with the older-target `ControlHelper.CornerRadius` substitution | `RepeatButton` is a stock WPF control, so official WPF Fluent is the primary source. |
+| `DefaultRepeatButtonStyle` | `RepeatButton` style with `ContentBorder`, WPF `ContentPresenter`, and `ControlTemplate.Triggers` for disabled, pointer-over, and pressed states | Same structure under the existing resource key, with the older-target `Border.CornerRadius` substitution | `RepeatButton` is a stock WPF control, so official WPF Fluent is the primary source. |
 | Implicit `RepeatButton` style | Based on `DefaultRepeatButtonStyle` | Same | Matches official WPF Fluent resource shape while keeping the existing ModernWpf resource key. |
 | `RepeatButtonPadding` / `RepeatButtonBorderThemeThickness` | Control-specific padding and border thickness resources | Same control-specific keys used by `DefaultRepeatButtonStyle` | Stops borrowing button metrics for the stock repeat button template. |
 
@@ -122,14 +122,14 @@ Source inspected:
 
 | Resource key / style | Official WPF Fluent value | ModernWpf backport value | Reason retained |
 | --- | --- | --- | --- |
-| RepeatButton corner radius property | `Border.CornerRadius` on `RepeatButton` | `primitives:ControlHelper.CornerRadius` | Older ModernWpf targets do not expose the official source property on `RepeatButton`; this preserves the backport radius bridge. |
+| RepeatButton corner radius property | `Border.CornerRadius` on `RepeatButton` | `Border.CornerRadius` | Older ModernWpf targets do not expose the official source property on `RepeatButton`; this preserves the backport radius bridge. |
 | RepeatButton focus style resource | `DefaultControlFocusVisualStyle` | `{x:Static SystemParameters.FocusVisualStyleKey}` plus `FocusVisualHelper` settings | ModernWpf keeps its existing focus visual bridge across supported target frameworks. |
 | RepeatButton brush resources | Direct official resources | Existing ModernWpf aliases such as `RepeatButtonBackground` and `RepeatButtonBorderBrush` | Existing aliases map to the same Fluent concepts and remain part of the public resource surface. |
 
 ### Test Evidence
 
 - `test\ModernWpf.WinUI.Tests\CommonStyles\RepeatButtonVisualStateTests.cs` covers the official WPF Fluent RepeatButton trigger shape, WPF presenter slot, control-specific padding and border resources, and disabled trigger resource application.
-- `test\ModernWpf.WinUI.Tests\LayoutCompatibility\LayoutCompatibilityApiTests.cs` covers the RepeatButton WPF presenter slot plus the retained `ControlHelper.CornerRadius` substitution.
+- `test\ModernWpf.WinUI.Tests\LayoutCompatibility\LayoutCompatibilityApiTests.cs` covers the RepeatButton WPF presenter slot plus the retained `Border.CornerRadius` substitution.
 
 ## 2026-05-18 Batch 5
 
@@ -144,7 +144,7 @@ Source inspected:
 
 | Resource key / style | Official WPF Fluent value | ModernWpf value after sync | Reason |
 | --- | --- | --- | --- |
-| `DefaultToggleButtonStyle` | `ToggleButton` style with `ContentBorder`, WPF `ContentPresenter`, and `MultiTrigger` entries for unchecked, checked, disabled, pointer-over, and pressed states | Same structure under the existing resource key, with the older-target `ControlHelper.CornerRadius` substitution | `ToggleButton` is a stock WPF control, so official WPF Fluent is the primary source. |
+| `DefaultToggleButtonStyle` | `ToggleButton` style with `ContentBorder`, WPF `ContentPresenter`, and `MultiTrigger` entries for unchecked, checked, disabled, pointer-over, and pressed states | Same structure under the existing resource key, with the older-target `Border.CornerRadius` substitution | `ToggleButton` is a stock WPF control, so official WPF Fluent is the primary source. |
 | Implicit `ToggleButton` style | Based on `DefaultToggleButtonStyle` | Same | Matches official WPF Fluent resource shape while keeping the existing ModernWpf resource key. |
 | `ToggleButtonPadding` / `ToggleButtonBorderThemeThickness` | Control-specific padding and border thickness resources | Same control-specific keys used by `DefaultToggleButtonStyle` | Stops borrowing button metrics for the stock toggle button template. |
 
@@ -152,7 +152,7 @@ Source inspected:
 
 | Resource key / style | Official WPF Fluent value | ModernWpf backport value | Reason retained |
 | --- | --- | --- | --- |
-| ToggleButton corner radius property | `Border.CornerRadius` on `ToggleButton` | `primitives:ControlHelper.CornerRadius` | Older ModernWpf targets do not expose the official source property on `ToggleButton`; this preserves the backport radius bridge. |
+| ToggleButton corner radius property | `Border.CornerRadius` on `ToggleButton` | `Border.CornerRadius` | Older ModernWpf targets do not expose the official source property on `ToggleButton`; this preserves the backport radius bridge. |
 | ToggleButton focus style resource | `DefaultControlFocusVisualStyle` | `{x:Static SystemParameters.FocusVisualStyleKey}` plus `FocusVisualHelper` settings | ModernWpf keeps its existing focus visual bridge across supported target frameworks. |
 | ToggleButton brush resources | Direct official resources | Existing ModernWpf aliases such as `ToggleButtonBackground` and `ToggleButtonBorderBrush` | Existing aliases map to the same Fluent concepts and remain part of the public resource surface. |
 | `ToggleButtonForegroundCheckedDisabled` resource type | Brush-valued resource used by `TextElement.Foreground` | Light/Dark aliases now resolve to `TextOnAccentFillColorDisabledBrush` | The official WPF trigger setter targets `TextElement.Foreground`, which requires a brush, not the underlying color token. |
@@ -161,7 +161,7 @@ Source inspected:
 ### Test Evidence
 
 - `test\ModernWpf.WinUI.Tests\CommonStyles\ToggleButtonVisualStateTests.cs` covers the official WPF Fluent ToggleButton trigger shape, WPF presenter slot, control-specific padding and border resources, checked/disabled resource application, and indeterminate fallback behavior.
-- `test\ModernWpf.WinUI.Tests\LayoutCompatibility\LayoutCompatibilityApiTests.cs` covers the ToggleButton WPF presenter slot plus the retained `ControlHelper.CornerRadius` substitution.
+- `test\ModernWpf.WinUI.Tests\LayoutCompatibility\LayoutCompatibilityApiTests.cs` covers the ToggleButton WPF presenter slot plus the retained `Border.CornerRadius` substitution.
 
 ## 2026-05-18 Batch 6
 
@@ -176,7 +176,7 @@ Source inspected:
 
 | Resource key / style | Official WPF Fluent value | ModernWpf value after sync | Reason |
 | --- | --- | --- | --- |
-| `DefaultRadioButtonStyle` | `RadioButton` style with `RootBorder`, `RootGrid`, WPF `ContentPresenter`, `Normal` / `MouseOver` / `Pressed` visual states, and native trigger entries for checked, disabled, pointer-over, pressed, and RTL behavior | Same structure under the existing resource key, with the older-target `ControlHelper.CornerRadius` substitution | `RadioButton` is a stock WPF control, so official WPF Fluent is the primary source. |
+| `DefaultRadioButtonStyle` | `RadioButton` style with `RootBorder`, `RootGrid`, WPF `ContentPresenter`, `Normal` / `MouseOver` / `Pressed` visual states, and native trigger entries for checked, disabled, pointer-over, pressed, and RTL behavior | Same structure under the existing resource key, with the older-target `Border.CornerRadius` substitution | `RadioButton` is a stock WPF control, so official WPF Fluent is the primary source. |
 | Implicit `RadioButton` style | Based on `DefaultRadioButtonStyle` | Same | Matches official WPF Fluent resource shape while keeping the existing ModernWpf resource key. |
 | `RadioButtonPadding` / `RadioButtonStrokeThickness` / checked outer-ellipse resources | Control-specific metrics and official checked outer-ellipse trigger resource keys | Same metrics and trigger resource keys are present for the stock template | Removes the previous WinUI `VisualStateEx` stock RadioButton template path. |
 
@@ -184,14 +184,14 @@ Source inspected:
 
 | Resource key / style | Official WPF Fluent value | ModernWpf backport value | Reason retained |
 | --- | --- | --- | --- |
-| RadioButton corner radius property | `Border.CornerRadius` on `RadioButton` | `primitives:ControlHelper.CornerRadius` | Older ModernWpf targets do not expose the official source property on `RadioButton`; this preserves the backport radius bridge. |
+| RadioButton corner radius property | `Border.CornerRadius` on `RadioButton` | `Border.CornerRadius` | Older ModernWpf targets do not expose the official source property on `RadioButton`; this preserves the backport radius bridge. |
 | RadioButton focus style resource | `DefaultControlFocusVisualStyle` | `{x:Static SystemParameters.FocusVisualStyleKey}` plus `FocusVisualHelper` settings | ModernWpf keeps its existing focus visual bridge across supported target frameworks. |
 | RadioButton brush resources | Direct official resources | Existing ModernWpf aliases such as `RadioButtonBackground` and `RadioButtonOuterEllipseStroke` | Existing aliases map to the same Fluent concepts and remain part of the public resource surface. |
 
 ### Test Evidence
 
 - `test\ModernWpf.WinUI.Tests\CommonStyles\RadioButtonVisualStateTests.cs` covers the official WPF Fluent RadioButton visual-state names, WPF trigger shape, WPF presenter slot, checked/disabled behavior, and newly added checked outer-ellipse resource aliases.
-- `test\ModernWpf.WinUI.Tests\LayoutCompatibility\LayoutCompatibilityApiTests.cs` covers the RadioButton WPF presenter slot plus the retained `ControlHelper.CornerRadius` substitution.
+- `test\ModernWpf.WinUI.Tests\LayoutCompatibility\LayoutCompatibilityApiTests.cs` covers the RadioButton WPF presenter slot plus the retained `Border.CornerRadius` substitution.
 
 ## 2026-05-18 Batch 7
 
@@ -206,7 +206,7 @@ Source inspected:
 
 | Resource key / style | Official WPF Fluent value | ModernWpf value after sync | Reason |
 | --- | --- | --- | --- |
-| `DefaultCheckBoxStyle` | `CheckBox` style with `RootBorder`, `RootGrid`, `ControlBorderIconPresenter`, `StrokeBorder`, `ControlIcon`, WPF `ContentPresenter`, and WPF trigger entries for checked, indeterminate, disabled, pointer-over, pressed, and empty-content behavior | Same structure under the existing resource key, with the older-target `ControlHelper.CornerRadius` substitution | `CheckBox` is a stock WPF control, so official WPF Fluent is the primary source. |
+| `DefaultCheckBoxStyle` | `CheckBox` style with `RootBorder`, `RootGrid`, `ControlBorderIconPresenter`, `StrokeBorder`, `ControlIcon`, WPF `ContentPresenter`, and WPF trigger entries for checked, indeterminate, disabled, pointer-over, pressed, and empty-content behavior | Same structure under the existing resource key, with the older-target `Border.CornerRadius` substitution | `CheckBox` is a stock WPF control, so official WPF Fluent is the primary source. |
 | Implicit `CheckBox` style | Based on `DefaultCheckBoxStyle` | Same | Matches official WPF Fluent resource shape while keeping the existing ModernWpf resource key. |
 | `CheckBoxBorderThickness` / `CheckBoxIconSize` / `CheckBoxCheckedGlyph` / `CheckBoxIndeterminateGlyph` | Official WPF Fluent metrics and text glyphs | Same metrics and glyph values | Replaces the previous WinUI fallback geometry glyph path for stock CheckBox. |
 | `CheckBoxCheckGlyphForeground`, `CheckBoxCheckGlyphForegroundPressed`, `CheckBoxCheckGlyphForegroundDisabled` | Official theme glyph brush aliases | Same aliases across Light, Dark, and HighContrast | Required by the official WPF Fluent template shape. |
@@ -215,7 +215,7 @@ Source inspected:
 
 | Resource key / style | Official WPF Fluent value | ModernWpf backport value | Reason retained |
 | --- | --- | --- | --- |
-| CheckBox corner radius property | `Border.CornerRadius` on `CheckBox` | `primitives:ControlHelper.CornerRadius` | Older ModernWpf targets do not expose the official source property on `CheckBox`; this preserves the backport radius bridge. |
+| CheckBox corner radius property | `Border.CornerRadius` on `CheckBox` | `Border.CornerRadius` | Older ModernWpf targets do not expose the official source property on `CheckBox`; this preserves the backport radius bridge. |
 | CheckBox focus style resource | `DefaultControlFocusVisualStyle` | `{x:Static SystemParameters.FocusVisualStyleKey}` plus `FocusVisualHelper` settings | ModernWpf keeps its existing focus visual bridge across supported target frameworks. |
 | CheckBox brush resources | Direct official resources | Existing ModernWpf aliases such as `CheckBoxBackgroundUnchecked` and `CheckBoxCheckBackgroundFillChecked` | Existing aliases map to the same Fluent concepts and remain part of the public resource surface. |
 | `DataGridCheckBoxStyle` / `DataGridReadOnlyCheckBoxStyle` | No direct official WPF Fluent equivalents in the CheckBox style file | Retained as ModernWpf/WPF-specific styles based on `DefaultCheckBoxStyle` | These styles serve WPF DataGrid usage and remain outside the stock official template copy. |
@@ -246,7 +246,7 @@ Source inspected:
 | Resource key / style | Official WPF Fluent value | ModernWpf backport value | Reason retained |
 | --- | --- | --- | --- |
 | RichTextBox context menu | `DefaultControlContextMenu` | `TextControlContextMenu` plus `TextContextMenu.UsingTextContextMenu=True` | ModernWpf keeps its existing text-control context-menu integration. |
-| RichTextBox corner radius property | `Border.CornerRadius` on `RichTextBox` | `primitives:ControlHelper.CornerRadius` | Older ModernWpf targets do not expose the official source property on `RichTextBox`; this preserves the backport radius bridge. |
+| RichTextBox corner radius property | `Border.CornerRadius` on `RichTextBox` | `Border.CornerRadius` | Older ModernWpf targets do not expose the official source property on `RichTextBox`; this preserves the backport radius bridge. |
 | RichTextBox validation chrome | No ModernWpf validation adorner bridge | `Validation.ErrorTemplate` and `ValidationHelper.IsTemplateValidationAdornerSite` retained | Existing ModernWpf validation adorners still need a template-owned chrome site. |
 | `RichEditBoxTopHeaderMargin` | No official WPF Fluent equivalent | Retained as an unused public alias | Prevents unnecessary resource-surface churn while the official template no longer consumes header-presenter resources. |
 
@@ -539,7 +539,7 @@ Source inspected:
 | Resource key / style | Official WPF Fluent value | ModernWpf value after sync | Reason |
 | --- | --- | --- | --- |
 | `DefaultSeparatorStyle` / implicit `Separator` style | Official stock `Separator` style with `SeparatorBorderBrush`, transparent background, `Focusable=false`, `BorderThickness=1,1,0,0`, and WPF `Border` template | Same source shape | `Separator` is a stock WPF control, so official WPF Fluent is the primary source. |
-| `DefaultThumbStyle` / implicit `Thumb` style | Official stock generic `Thumb` style with `ThumbBackground`, disabled `ThumbBackgroundDisabled`, non-focusable/non-tab-stop behavior, and WPF `Border` template | Same source shape with `ControlHelper.CornerRadius` compatibility substitution | `Thumb` is a stock WPF primitive, so official WPF Fluent is the primary source. |
+| `DefaultThumbStyle` / implicit `Thumb` style | Official stock generic `Thumb` style with `ThumbBackground`, disabled `ThumbBackgroundDisabled`, non-focusable/non-tab-stop behavior, and WPF `Border` template | Same source shape with `Border.CornerRadius` compatibility substitution | `Thumb` is a stock WPF primitive, so official WPF Fluent is the primary source. |
 | `ToolBar` / `ToolBarTray` styles | Official stock `ToolBar` and `ToolBarTray` styles, including toolbar item style keys, toolbar thumb, overflow button, popup, `ToolBarPanel`, and `ToolBarOverflowPanel` | Same source shape, now merged through `StockControlsResources` | `ToolBar` is a stock WPF control, so official WPF Fluent is the primary source. |
 | `ToolBar.ButtonStyleKey`, `ToolBar.ToggleButtonStyleKey`, `ToolBar.CheckBoxStyleKey`, `ToolBar.RadioButtonStyleKey`, `ToolBar.ComboBoxStyleKey`, `ToolBar.MenuStyleKey`, `ToolBar.SeparatorStyleKey`, `ToolBar.TextBoxStyleKey` | Official toolbar item style routing | Same routing | Restores official WPF toolbar child styling instead of relying on platform defaults. |
 | `SeparatorBorderBrush`, `ThumbBackground`, `ThumbBackgroundDisabled`, `MenuBorderColorDefaultBrush` | Official theme concepts for separator stroke, generic thumb chrome, disabled generic thumb chrome, and toolbar overflow border | Same aliases across Light, Dark, and HighContrast through ModernWpf's theme-resource alias model | Required by the official WPF Fluent `Separator`, `Thumb`, and `ToolBar` templates. |
@@ -549,7 +549,7 @@ Source inspected:
 | Resource key / style | Official WPF Fluent value | ModernWpf backport value | Reason retained |
 | --- | --- | --- | --- |
 | `system` namespace assembly | `System.Runtime` | `mscorlib` | Keeps copied glyph/string resources compatible with ModernWpf's older target frameworks. |
-| Thumb corner radius property | `Border.CornerRadius` on `Thumb` | `primitives:ControlHelper.CornerRadius` | Older ModernWpf targets do not expose the official source property on `Thumb`; this preserves the existing backport radius bridge. |
+| Thumb corner radius property | `Border.CornerRadius` on `Thumb` | `Border.CornerRadius` | Older ModernWpf targets do not expose the official source property on `Thumb`; this preserves the existing backport radius bridge. |
 | ToolBar dependency lookup | Generated monolithic official dictionary resolves sibling style sections | Split `ToolBar.xaml` locally merges its stock style dependencies | WPF `StaticResource` `BasedOn` references in a separately loaded dictionary cannot see sibling merged dictionaries reliably. |
 | `MenuBorderColorDefaultBrush` | Referenced by official `ToolBar.xaml` but absent from the local official resource files as an exact key | Alias to `SurfaceStrokeColorFlyoutBrush` / `SystemColorWindowTextColorBrush` | Avoid unresolved toolbar overflow border resources while preserving the official visual intent. |
 
@@ -636,7 +636,7 @@ Source inspected:
 | Resource key / style | Official WPF Fluent value | ModernWpf backport value | Reason retained |
 | --- | --- | --- | --- |
 | `system` namespace assembly | `System.Runtime` | `mscorlib` | Keeps copied glyph/string resources compatible with ModernWpf's older target frameworks. |
-| Thumb corner radius property | `Border.CornerRadius` setter on `Thumb` | `primitives:ControlHelper.CornerRadius` | Older ModernWpf targets do not expose the official source property on `Thumb`; this preserves the existing backport radius bridge. |
+| Thumb corner radius property | `Border.CornerRadius` setter on `Thumb` | `Border.CornerRadius` | Older ModernWpf targets do not expose the official source property on `Thumb`; this preserves the existing backport radius bridge. |
 | ScrollBar theme aliases | Dedicated brush resources in official WPF Fluent | Existing ModernWpf aliases remain mapped to ModernWpf Fluent brush tokens | Keeps ModernWpf's theme-resource alias model while exposing the official keys required by the template. |
 
 ### Test Evidence
@@ -665,7 +665,7 @@ Source inspected:
 | --- | --- | --- | --- |
 | `system` namespace assembly | `System.Runtime` in `TextBox.xaml` | `mscorlib` | Keeps copied glyph/string resources compatible with ModernWpf's older target frameworks. |
 | Text-entry context menu | `DefaultControlContextMenu` for `TextBox` / `TextBoxBase`, `DefaultPasswordBoxContextMenu` for `PasswordBox` | `TextControlContextMenu` plus `TextContextMenu.UsingTextContextMenu=True` | Keeps ModernWpf's existing text-control context-menu integration. |
-| Text-entry corner radius property | `Border.CornerRadius` setters and template bindings | `primitives:ControlHelper.CornerRadius` | Older ModernWpf targets do not expose the official source property on these controls; this preserves the existing backport radius bridge. |
+| Text-entry corner radius property | `Border.CornerRadius` setters and template bindings | `Border.CornerRadius` | Older ModernWpf targets do not expose the official source property on these controls; this preserves the existing backport radius bridge. |
 | `TextBox` clear-button command | `TemplateButtonCommand` | `TextBoxHelper.IsDeleteButton` | Older target frameworks do not expose the official platform command property; the substitution keeps the official button shape and clear behavior. |
 | `TextBox` validation chrome | Official `DefaultTextBoxInvalidationStyle` | Existing `TextControlValidationErrorTemplate` plus `ValidationHelper.IsTemplateValidationAdornerSite` | Keeps ModernWpf's existing validation adorner routing. |
 | `DataGridTextBoxStyle` | No official `TextBox.xaml` equivalent | Retained as a support style based on `DefaultTextBoxStyle` | Kept as a compatibility resource for callers that reference it directly; the stock DataGrid template no longer wires it through `DataGridHelper`. |
@@ -705,7 +705,7 @@ Source inspected:
 | --- | --- | --- | --- |
 | Dictionary layout | Separate official source files | Same split copied into `ModernWpf\Styles`, merged in dependency order from `StockControlsResources.xaml` | Keeps source ownership clear while preserving the existing resource entry point. |
 | `system` namespace assembly | `System.Runtime` in `GridView.xaml` / `ListViewItem.xaml` | `mscorlib` | Keeps copied numeric resources compatible with ModernWpf's older target frameworks. |
-| Item corner radius property | Official `Border.CornerRadius` attached setters/template bindings | `primitives:ControlHelper.CornerRadius` | Older ModernWpf targets do not expose the official attached property. |
+| Item corner radius property | Official `Border.CornerRadius` attached setters/template bindings | `Border.CornerRadius` | Older ModernWpf targets do not expose the official attached property. |
 | GridView view converter | `Fluent.Controls.ViewIsGridViewConverter` | Existing `primitives:IsGridViewConverter` | Same WPF behavior without adding an external helper namespace. |
 | Theme resources | Official brushes from Fluent light/dark/HC resource dictionaries | ModernWpf theme aliases for the required official keys | Keeps ModernWpf theme alias conventions while exposing the imported template keys. |
 
@@ -740,7 +740,7 @@ Source inspected:
 | --- | --- | --- | --- |
 | Dictionary layout | Separate official source files | Same split copied into `ModernWpf\Styles`, merged in dependency order from `StockControlsResources.xaml` | Keeps source ownership clear while preserving the existing resource entry point. |
 | `system` namespace assembly | `System.Runtime` in `TreeViewItem.xaml` | `mscorlib` | Keeps copied numeric/string resources compatible with ModernWpf's older target frameworks. |
-| Item corner radius property | Official `Border.CornerRadius` attached setter/template binding | `primitives:ControlHelper.CornerRadius` | Older ModernWpf targets do not expose the official attached property. |
+| Item corner radius property | Official `Border.CornerRadius` attached setter/template binding | `Border.CornerRadius` | Older ModernWpf targets do not expose the official attached property. |
 | Historical TreeView density keys | No official stock TreeView usage | Retained as unused public aliases and compact-resource API keys | Avoids unnecessary resource-surface churn; official TreeView templates no longer consume these aliases. |
 
 ### Test Evidence
@@ -764,7 +764,7 @@ Source inspected:
 | Resource key / style | Official WPF Fluent value | ModernWpf value after sync | Reason |
 | --- | --- | --- | --- |
 | `DefaultCalendarDayButtonStyle`, `DefaultCalendarButtonStyle`, `DefaultCalendarItemStyle`, `DefaultCalendarStyle` | Official stock WPF Fluent Calendar templates using WPF visual states/storyboards, WPF buttons, WPF `ContentPresenter`, and official CalendarView resource keys | Same source shape with older-target namespace and corner-radius substitutions | `Calendar` is a stock WPF control, so official WPF Fluent is the primary source. |
-| `DefaultDatePickerTextBoxStyle`, `DatePickerCalendarStyle`, `DefaultDatePickerStyle` | Official stock WPF Fluent DatePicker templates using WPF triggers, `PART_TextBox`, `PART_Button`, `PART_Popup`, `DatePickerPopupBackground`, and `DefaultControlContextMenu` | Same source shape with `ControlHelper.CornerRadius` substitutions and ModernWpf theme aliases | `DatePicker` is a stock WPF control, so official WPF Fluent is the primary source. |
+| `DefaultDatePickerTextBoxStyle`, `DatePickerCalendarStyle`, `DefaultDatePickerStyle` | Official stock WPF Fluent DatePicker templates using WPF triggers, `PART_TextBox`, `PART_Button`, `PART_Popup`, `DatePickerPopupBackground`, and `DefaultControlContextMenu` | Same source shape with `Border.CornerRadius` substitutions and ModernWpf theme aliases | `DatePicker` is a stock WPF control, so official WPF Fluent is the primary source. |
 | DatePicker helper path | No official WPF Fluent helper that drives WinUI `CalendarDatePicker` states | `DatePickerHelper` and `DatePickerHeaderPlacement` deleted | Removes the previous guessed WinUI `CalendarDatePicker` state-driver layer from the stock WPF DatePicker path. |
 | Theme aliases | Official `DatePicker*`, `CalendarViewItemBackgroundPointerOver`, `CalendarViewSelectedBackground`, and `CalendarViewTodayBackground` resources | Added to Light, Dark, and HighContrast dictionaries through ModernWpf aliases | Required by the copied official templates. |
 
@@ -773,7 +773,7 @@ Source inspected:
 | Resource key / style | Official WPF Fluent value | ModernWpf backport value | Reason retained |
 | --- | --- | --- | --- |
 | `system` namespace assembly | `System.Runtime` in `Calendar.xaml` | `mscorlib` | Keeps copied resources compatible with ModernWpf's older target frameworks. |
-| Calendar / DatePicker corner radius property | Official `Border.CornerRadius` attached setters or literal Calendar border radius | `primitives:ControlHelper.CornerRadius` | Older ModernWpf targets do not expose the official attached property surface. |
+| Calendar / DatePicker corner radius property | Official `Border.CornerRadius` attached setters or literal Calendar border radius | `Border.CornerRadius` | Older ModernWpf targets do not expose the official attached property surface. |
 | DatePicker dictionary dependency | Official source can resolve `DefaultCalendarStyle` through the unified Fluent resource layout | `DatePicker.xaml` locally merges `Calendar.xaml`, and `CalendarStyle` uses `StaticResource` for the same-file `DatePickerCalendarStyle` | Keeps the copied popup Calendar style source-backed after ModernWpf splits official source files into separate dictionaries. |
 | `CalendarDatePicker*` resource aliases | Not consumed by official WPF Fluent `DatePicker.xaml` | Retained as unused public aliases | Avoids unnecessary resource-surface churn while the active stock DatePicker consumes official `DatePicker*` keys. |
 | DatePicker context menu resource | Official `DefaultControlContextMenu` resource dictionary | Added to existing `Styles\ContextMenu.xaml` rather than a new resource dictionary | Preserves ModernWpf's resource merge layout while exposing the official resource key. |
@@ -808,7 +808,7 @@ Source inspected:
 | Resource key / style | Official WPF Fluent value | ModernWpf backport value | Reason retained |
 | --- | --- | --- | --- |
 | `system` namespace assembly | `System.Runtime` in `Expander.xaml` | `mscorlib` | Keeps copied resources compatible with ModernWpf's older target frameworks. |
-| Expander corner radius property | Official `Border.CornerRadius` attached setter/template binding | `primitives:ControlHelper.CornerRadius` | Older ModernWpf targets do not expose the official attached property surface. |
+| Expander corner radius property | Official `Border.CornerRadius` attached setter/template binding | `Border.CornerRadius` | Older ModernWpf targets do not expose the official attached property surface. |
 | Animation factor converter namespace | `Fluent.Controls.AnimationFactorToValueConverter` | `ModernWpf.Controls.Primitives.AnimationFactorToValueConverter` | Keeps the copied style self-contained inside ModernWpf. |
 | Historical Expander resource aliases | Not consumed by official WPF Fluent `Expander.xaml` | Retained as unused public aliases | Avoids unnecessary resource-surface churn while the active stock Expander consumes official keys. |
 
@@ -840,7 +840,7 @@ Source inspected:
 | Resource key / style | Official WPF Fluent value | ModernWpf backport value | Reason retained |
 | --- | --- | --- | --- |
 | `system` namespace assembly | `System.Runtime` in `ComboBox.xaml` | `mscorlib` | Keeps copied resources compatible with ModernWpf's older target frameworks. |
-| ComboBox corner radius property | Official `Border.CornerRadius` attached setter/template binding | `primitives:ControlHelper.CornerRadius` | Older ModernWpf targets do not expose the official attached property surface. |
+| ComboBox corner radius property | Official `Border.CornerRadius` attached setter/template binding | `Border.CornerRadius` | Older ModernWpf targets do not expose the official attached property surface. |
 | DataGrid ComboBox adapter styles | No equivalent in official `ComboBox.xaml` | `DataGridComboBoxStyle` and `DataGridTextBlockComboBoxStyle` retained as WPF adapter resources based on `DefaultComboBoxStyle` | Kept as compatibility resources for callers that reference them directly; the stock DataGrid template now follows official WPF Fluent and no longer wires them through `DataGridHelper`. |
 | Historical ComboBox resource aliases | Some are not consumed by official WPF Fluent `ComboBox.xaml` | Retained as unused public aliases | Avoids unnecessary resource-surface churn while the active stock ComboBox consumes official keys. |
 
@@ -899,8 +899,8 @@ Source inspected:
 | `DefaultDataGridCellStyle`, `DefaultDataGridRowStyle`, `DefaultDataGridRowHeaderStyle` | Official stock WPF DataGrid row/cell/header templates with WPF presenters, validation hooks, row details, and row-header grippers | Same source shape with older-target namespace substitution | `DataGrid` is a stock WPF control, so official WPF Fluent is the primary source. |
 | `DefaultDataGridColumnHeaderStyle`, `DefaultDataGridColumnHeadersPresenterStyle`, `DefaultDataGridCellsPresenterStyle` | Official column header templates, sort indicator glyphs, filler header, grippers, and header state triggers | Same source shape | Deletes the previous ModernWpf column-header `ContentPresenterEx` / `FontIconFallback` guess. |
 | `DefaultDataGridColumnFloatingHeaderStyle`, `DefaultDataGridHeaderDropSeparatorStyle`, `DefaultDragIndicatorStyleStyle` | Official drag indicator and drop separator styles | Same source shape | Restores official column reordering resources. |
-| `DefaultDataGridStyle` / implicit stock `DataGrid` style | Official style setters, row/cell/header style wiring, scroll-viewer template, select-all button, and grouping trigger | Same source shape with `ControlHelper.CornerRadius` substitution | Deletes the old `DataGridHelper` and `DataGridRowHelper` wiring. |
-| `DataGridCheckBoxElementDefaultStyle`, `DataGridCheckBoxEditingElementDefaultStyle` | Official stock DataGrid CheckBox element/editing styles | Same source shape with `ControlHelper.CornerRadius` substitution | Replaces the old helper-driven CheckBox-column styling path for stock DataGrid. |
+| `DefaultDataGridStyle` / implicit stock `DataGrid` style | Official style setters, row/cell/header style wiring, scroll-viewer template, select-all button, and grouping trigger | Same source shape with `Border.CornerRadius` substitution | Deletes the old `DataGridHelper` and `DataGridRowHelper` wiring. |
+| `DataGridCheckBoxElementDefaultStyle`, `DataGridCheckBoxEditingElementDefaultStyle` | Official stock DataGrid CheckBox element/editing styles | Same source shape with `Border.CornerRadius` substitution | Replaces the old helper-driven CheckBox-column styling path for stock DataGrid. |
 | DataGrid theme aliases | Official `DataGridHeader*`, `DataGridColumnHeader*`, `DataGridColumnFloatingHeaderBorderBrush`, `DataGridHeaderDropSeparatorBackground`, and selected-row theme brushes | Added across Light, Dark, and HighContrast dictionaries | Required by the copied official templates. |
 
 ### Intentional Differences
@@ -908,7 +908,7 @@ Source inspected:
 | Resource key / style | Official WPF Fluent value | ModernWpf backport value | Reason retained |
 | --- | --- | --- | --- |
 | `system` namespace assembly | `System.Runtime` in `DataGrid.xaml` | `mscorlib` | Keeps copied resources compatible with ModernWpf's older target frameworks. |
-| DataGrid and DataGrid CheckBox corner radius property | Official `Border.CornerRadius` attached setter/template binding | `primitives:ControlHelper.CornerRadius` | Older ModernWpf targets do not expose the official attached property surface. |
+| DataGrid and DataGrid CheckBox corner radius property | Official `Border.CornerRadius` attached setter/template binding | `Border.CornerRadius` | Older ModernWpf targets do not expose the official attached property surface. |
 | `FallbackBrushConverter` namespace | `Fluent.Controls.FallbackBrushConverter` | `ModernWpf.Controls.Primitives.FallbackBrushConverter` | Keeps the copied style self-contained inside ModernWpf. |
 | DataGrid adapter styles in `TextBox.xaml`, `ComboBox.xaml`, and `CheckBox.xaml` | Separate from official `DataGrid.xaml` | Retained as compatibility resources, but no longer wired by `DataGridHelper` | Avoids unrelated resource churn while the active stock DataGrid template follows official WPF Fluent. |
 

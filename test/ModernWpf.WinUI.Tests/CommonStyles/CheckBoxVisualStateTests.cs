@@ -122,9 +122,9 @@ public class CheckBoxVisualStateTests
         Assert.AreEqual(typeof(ContentPresenter), contentPresenter.GetType());
         Assert.AreEqual(checkBox.Content, contentPresenter.Content);
         Assert.IsTrue(contentPresenter.RecognizesAccessKey);
-        Assert.AreEqual(ControlHelper.GetCornerRadius(checkBox), rootBorder.CornerRadius);
-        Assert.AreEqual(ControlHelper.GetCornerRadius(checkBox), iconPresenter.CornerRadius);
-        Assert.AreEqual(ControlHelper.GetCornerRadius(checkBox), strokeBorder.CornerRadius);
+        Assert.AreEqual(((CornerRadius)checkBox.GetValue(System.Windows.Controls.Border.CornerRadiusProperty)), rootBorder.CornerRadius);
+        Assert.AreEqual(((CornerRadius)checkBox.GetValue(System.Windows.Controls.Border.CornerRadiusProperty)), iconPresenter.CornerRadius);
+        Assert.AreEqual(((CornerRadius)checkBox.GetValue(System.Windows.Controls.Border.CornerRadiusProperty)), strokeBorder.CornerRadius);
         Assert.AreEqual((Thickness)Application.Current.FindResource("CheckBoxBorderThickness"), strokeBorder.BorderThickness);
         Assert.AreEqual((double)Application.Current.FindResource("CheckBoxSize"), iconPresenter.Width);
         Assert.AreEqual((double)Application.Current.FindResource("CheckBoxSize"), iconPresenter.Height);

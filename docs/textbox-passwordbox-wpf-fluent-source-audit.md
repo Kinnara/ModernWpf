@@ -36,7 +36,7 @@ the stock WPF `TextBox`, `TextBoxBase`, and `PasswordBox` templates.
 ## ModernWpf Substitutions
 
 - Official WPF Fluent uses `Border.CornerRadius`; ModernWpf uses
-  `primitives:ControlHelper.CornerRadius` for older target-framework support.
+  `Border.CornerRadius` for older target-framework support.
 - Official WPF Fluent uses `DefaultControlContextMenu`; ModernWpf keeps
   `TextControlContextMenu` plus `TextContextMenu.UsingTextContextMenu` so the
   existing text-control context menu integration remains available.

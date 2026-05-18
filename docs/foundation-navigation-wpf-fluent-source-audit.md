@@ -57,7 +57,7 @@ official `BodyStrongTextBlockStyle` relationship and base text setters are now
 source-backed.
 
 `Thumb.xaml` was already an official WPF Fluent-shaped import with only the
-older-target `ControlHelper.CornerRadius` substitution; this audit adds it to
+older-target `Border.CornerRadius` substitution; this audit adds it to
 the foundation/navigation coverage because it is a generic stock primitive.
 
 ## Backport Substitutions
@@ -65,7 +65,7 @@ the foundation/navigation coverage because it is a generic stock primitive.
 | Official WPF Fluent source | ModernWpf value | Reason |
 | --- | --- | --- |
 | `System.Runtime` system namespace | `mscorlib` | Keeps copied resources compatible with ModernWpf's older target frameworks. |
-| `Border.CornerRadius` in `Thumb.xaml` | `primitives:ControlHelper.CornerRadius` | Older ModernWpf targets do not expose the official attached property surface. |
+| `Border.CornerRadius` in `Thumb.xaml` | `Border.CornerRadius` | Older ModernWpf targets do not expose the official attached property surface. |
 | `TextBlock.xaml` file name | `TextStyles.xaml` | Preserve the existing ModernWpf merge path and public legacy text-style aliases. |
 | Official shell theme resources | Added as Light, Dark, and HighContrast aliases | Required by `Page`, `Frame`, `NavigationWindow`, and the separate audited `Window` shell substitution. |
 

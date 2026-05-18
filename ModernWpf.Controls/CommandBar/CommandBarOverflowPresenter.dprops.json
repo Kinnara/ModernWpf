@@ -9,6 +9,6 @@
     "name": "CommandBarOverflowPresenter"
   },
   "properties": [
-    { "name": "CornerRadius", "type": "CornerRadius", "kind": "AddOwner", "sourceProperty": "ControlHelper.CornerRadiusProperty" }
+    { "name": "CornerRadius", "type": "CornerRadius", "kind": "AddOwner", "sourceProperty": "System.Windows.Controls.Border.CornerRadiusProperty" }
   ]
 }

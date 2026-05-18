@@ -42,7 +42,7 @@ than WinUI 3 common styles.
 ## WPF Substitutions
 
 - Official WPF Fluent uses `Border.CornerRadius`; ModernWpf keeps
-  `primitives:ControlHelper.CornerRadius` for older target-framework support.
+  `Border.CornerRadius` for older target-framework support.
 - Official WPF Fluent uses `DefaultControlFocusVisualStyle`; ModernWpf keeps
   `{x:Static SystemParameters.FocusVisualStyleKey}` plus
   `FocusVisualHelper.UseSystemFocusVisuals` and `FocusVisualHelper.FocusVisualMargin`.

@@ -36,7 +36,7 @@ public class ListBoxListViewVisualStateTests
             var itemSetters = defaultItemStyle.Setters.OfType<Setter>().ToArray();
             AssertDynamicResourceSetter(itemSetters, Control.ForegroundProperty, "ListBoxItemForeground");
             AssertDynamicResourceSetter(itemSetters, Control.FocusVisualStyleProperty, "DefaultCollectionFocusVisualStyle");
-            AssertSetter(itemSetters, ControlHelper.CornerRadiusProperty, new CornerRadius(0));
+            AssertSetter(itemSetters, System.Windows.Controls.Border.CornerRadiusProperty, new CornerRadius(0));
             AssertNoSetter(itemSetters, FocusVisualHelper.UseSystemFocusVisualsProperty);
 
             var item = new ListBoxItem
@@ -82,7 +82,7 @@ public class ListBoxListViewVisualStateTests
 
             var itemSetters = defaultItemStyle.Setters.OfType<Setter>().ToArray();
             AssertDynamicResourceSetter(itemSetters, Control.ForegroundProperty, "ListViewItemForeground");
-            AssertDynamicResourceSetter(itemSetters, ControlHelper.CornerRadiusProperty, "ControlCornerRadius");
+            AssertDynamicResourceSetter(itemSetters, System.Windows.Controls.Border.CornerRadiusProperty, "ControlCornerRadius");
             AssertDynamicResourceSetter(itemSetters, Control.FocusVisualStyleProperty, "DefaultCollectionFocusVisualStyle");
             AssertSetter(itemSetters, Control.OverridesDefaultStyleProperty, true);
             AssertNoSetter(itemSetters, FocusVisualHelper.UseSystemFocusVisualsProperty);
@@ -152,7 +152,7 @@ public class ListBoxListViewVisualStateTests
         Assert.IsFalse(text.Contains("ListViewBaseItemRoundedChromeEnabled", System.StringComparison.Ordinal));
         Assert.IsFalse(text.Contains("PressedBackground", System.StringComparison.Ordinal));
         Assert.IsFalse(text.Contains("Selector.IsSelectionActive", System.StringComparison.Ordinal));
-        Assert.IsFalse(text.Contains("Border.CornerRadius", System.StringComparison.Ordinal));
+        Assert.IsFalse(text.Contains("ControlHelper.CornerRadius", System.StringComparison.Ordinal));
         Assert.IsFalse(text.Contains("System.Runtime", System.StringComparison.Ordinal));
         Assert.IsFalse(text.Contains("Fluent.Controls", System.StringComparison.Ordinal));
     }

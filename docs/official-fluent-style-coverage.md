@@ -16,7 +16,7 @@ style in scope.
 
 - `Backported`: the official stock WPF style is represented by a ModernWpf
   style dictionary, usually with small compatibility substitutions such as
-  `mscorlib` for older targets or `ControlHelper.CornerRadius`.
+  `mscorlib` for older targets or `Border.CornerRadius`.
 - `Folded`: the official source file is intentionally merged into another
   ModernWpf style dictionary to preserve the existing resource entry point.
 - `Substituted`: the official source file cannot be copied wholesale because

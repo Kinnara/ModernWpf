@@ -1,4 +1,4 @@
-﻿<!--
+<!--
     This Source Code Form is subject to the terms of the MIT License.
     If a copy of the MIT was not distributed with this file, You can obtain one at https://opensource.org/licenses/MIT.
     Copyright (C) Leszek Pomianowski and WPF UI Contributors.
@@ -101,7 +101,7 @@
 
     <Style x:Key="ScrollBarThumbStyle" TargetType="{x:Type Thumb}">
         <Setter Property="Background" Value="{DynamicResource ScrollBarThumbFill}" />
-        <Setter Property="primitives:ControlHelper.CornerRadius" Value="4" />
+        <Setter Property="Border.CornerRadius" Value="4" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="IsTabStop" Value="False" />
@@ -113,7 +113,7 @@
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="1"
-                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}" />
+                        CornerRadius="{TemplateBinding Border.CornerRadius}" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

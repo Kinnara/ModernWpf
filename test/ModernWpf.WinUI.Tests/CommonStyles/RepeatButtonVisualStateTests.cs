@@ -60,7 +60,7 @@ public class RepeatButtonVisualStateTests
         Assert.IsTrue(contentPresenter.RecognizesAccessKey);
         Assert.AreSame(repeatButton.Foreground, TextElement.GetForeground(contentPresenter));
         Assert.AreEqual(repeatButton.FontSize, TextElement.GetFontSize(contentPresenter));
-        Assert.AreEqual(ControlHelper.GetCornerRadius(repeatButton), contentBorder.CornerRadius);
+        Assert.AreEqual(((CornerRadius)repeatButton.GetValue(System.Windows.Controls.Border.CornerRadiusProperty)), contentBorder.CornerRadius);
         Assert.AreEqual(0, VisualStateManager.GetVisualStateGroups(contentBorder).Count);
     }
 

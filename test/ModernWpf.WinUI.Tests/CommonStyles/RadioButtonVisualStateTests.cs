@@ -121,7 +121,7 @@ public class RadioButtonVisualStateTests
         Assert.AreEqual(typeof(ContentPresenter), contentPresenter.GetType());
         Assert.IsTrue(contentPresenter.RecognizesAccessKey);
         Assert.AreSame(radioButton.Foreground, TextElement.GetForeground(contentPresenter));
-        Assert.AreEqual(ControlHelper.GetCornerRadius(radioButton), rootBorder.CornerRadius);
+        Assert.AreEqual(((CornerRadius)radioButton.GetValue(System.Windows.Controls.Border.CornerRadiusProperty)), rootBorder.CornerRadius);
         Assert.AreEqual(0, VisualStateManager.GetVisualStateGroups(rootGrid).Count);
 
         var strokeThickness = (double)Application.Current.FindResource("RadioButtonStrokeThickness");

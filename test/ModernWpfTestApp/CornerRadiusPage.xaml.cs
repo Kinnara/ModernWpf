@@ -3,6 +3,8 @@
 using ModernWpf.Controls;
 using System.Collections.ObjectModel;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace MUXControlsTestApp
 {
@@ -70,6 +72,9 @@ namespace MUXControlsTestApp
             OverlayCornerRadius = new CornerRadius(OverlayCornerRadiusSize);
 
             InitializeComponent();
+
+            SamplesScrollViewer.SetBinding(Border.CornerRadiusProperty, new Binding(nameof(ControlCornerRadius)) { Source = this, Mode = BindingMode.OneWay });
+            RoundedPasswordBox.SetBinding(Border.CornerRadiusProperty, new Binding(nameof(ControlCornerRadius)) { Source = this, Mode = BindingMode.OneWay });
         }
 
         private void ShowDialog_Click(object sender, RoutedEventArgs e)

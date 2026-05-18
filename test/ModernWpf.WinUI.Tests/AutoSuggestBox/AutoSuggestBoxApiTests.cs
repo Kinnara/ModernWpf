@@ -247,7 +247,7 @@ public class AutoSuggestBoxApiTests
             Assert.AreSame(queryIcon, presenter.Content);
             Assert.AreSame(transitions, presenter.ContentTransitions);
             Assert.AreEqual(queryButton.Padding, presenter.Padding);
-            Assert.AreEqual(ControlHelper.GetCornerRadius(queryButton), presenter.CornerRadius);
+            Assert.AreEqual(((CornerRadius)queryButton.GetValue(System.Windows.Controls.Border.CornerRadiusProperty)), presenter.CornerRadius);
             Assert.AreEqual(12d, presenter.FontSize);
             Assert.IsTrue(ButtonHelper.GetVisualStateSettersEnabled(queryButton));
             AssertAnimatedIconStateSetter(presenter, "PointerOver", "PointerOver");
@@ -293,7 +293,7 @@ public class AutoSuggestBoxApiTests
 
             var textBox = FindTemplateChild<TextBox>(autoSuggestBox, "TextBox");
             AssertCornerRadiusMatchesOpenDirection(
-                ControlHelper.GetCornerRadius(textBox),
+                ((CornerRadius)textBox.GetValue(System.Windows.Controls.Border.CornerRadiusProperty)),
                 new CornerRadius(2, 2, 0, 0),
                 new CornerRadius(0, 0, 2, 2));
 

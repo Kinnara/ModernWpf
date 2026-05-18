@@ -48,7 +48,7 @@
         <Setter Property="MinHeight" Value="{DynamicResource TextControlThemeMinHeight}" />
         <Setter Property="MinWidth" Value="{DynamicResource TextControlThemeMinWidth}" />
         <Setter Property="Padding" Value="{DynamicResource TextControlThemePadding}" />
-        <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+        <Setter Property="Border.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="AllowDrop" Value="True"/>
         <Setter Property="ScrollViewer.PanningMode" Value="VerticalFirst"/>
         <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
@@ -66,7 +66,7 @@
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
+                            CornerRadius="{TemplateBinding Border.CornerRadius}"
                             primitives:ValidationHelper.IsTemplateValidationAdornerSite="True" />
 
                         <ScrollViewer
@@ -110,7 +110,7 @@
                     <Setter Property="Foreground" Value="{DynamicResource TextControlButtonForeground}" />
                     <Setter Property="Background" Value="{DynamicResource TextControlButtonBackground}" />
                     <Setter Property="BorderBrush" Value="{DynamicResource TextControlButtonBorderBrush}" />
-                    <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+                    <Setter Property="Border.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
                     <Setter Property="Width" Value="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" />
                     <Setter Property="OverridesDefaultStyle" Value="True" />
                     <Setter Property="Template">
@@ -120,7 +120,7 @@
                                             BorderBrush="{TemplateBinding BorderBrush}"
                                             BorderThickness="{TemplateBinding BorderThickness}"
                                             Background="{TemplateBinding Background}"
-                                            CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
+                                            CornerRadius="{TemplateBinding Border.CornerRadius}">
                                     <ContentPresenter x:Name="GlyphElement"
                                                     TextElement.Foreground="{TemplateBinding Foreground}"
                                                     VerticalAlignment="Center"
@@ -158,7 +158,7 @@
                 BorderBrush="{TemplateBinding BorderBrush}"
                 BorderThickness="{TemplateBinding BorderThickness}"
                 MinHeight="{TemplateBinding MinHeight}"
-                CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
+                CornerRadius="{TemplateBinding Border.CornerRadius}"
                 primitives:ValidationHelper.IsTemplateValidationAdornerSite="True" />
 
             <ScrollViewer
@@ -252,7 +252,7 @@
         <Setter Property="MinHeight" Value="{DynamicResource TextControlThemeMinHeight}" />
         <Setter Property="MinWidth" Value="{DynamicResource TextControlThemeMinWidth}" />
         <Setter Property="Padding" Value="{DynamicResource TextControlThemePadding}" />
-        <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+        <Setter Property="Border.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Cursor" Value="IBeam" />
         <Setter Property="AllowDrop" Value="True"/>
@@ -271,7 +271,7 @@
         <Setter Property="Padding" Value="11,0,6,0" />
         <Setter Property="VerticalAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="primitives:ControlHelper.CornerRadius" Value="0" />
+        <Setter Property="Border.CornerRadius" Value="0" />
         <Setter Property="Validation.ErrorTemplate" Value="{DynamicResource DataGridTextControlValidationErrorTemplate}" />
     </Style>
 

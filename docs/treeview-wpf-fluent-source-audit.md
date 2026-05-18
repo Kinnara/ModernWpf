@@ -45,7 +45,7 @@ WPF Fluent rather than WinUI `TreeView`.
 | Official WPF Fluent source | ModernWpf substitution | Reason |
 | --- | --- | --- |
 | `System.Runtime` namespace for `system:Double` / `system:String` | `mscorlib` | Keeps copied resources compatible with ModernWpf's older target frameworks. |
-| `Border.CornerRadius` attached setter/template binding on `TreeViewItem` | `primitives:ControlHelper.CornerRadius` | Older ModernWpf targets do not expose the official attached property. |
+| `Border.CornerRadius` attached setter/template binding on `TreeViewItem` | `Border.CornerRadius` | Older ModernWpf targets do not expose the official attached property. |
 | Split official style dictionaries | `TreeViewItem.xaml` merged before `TreeView.xaml` | Keeps copied source ownership clear and satisfies `StaticResource` lookup order. |
 | Old TreeView density resources | Retained as unused public aliases and compact-resource API keys | Existing compact-resource tests and public resource lookup still depend on them, but official TreeView templates no longer consume them. |
 

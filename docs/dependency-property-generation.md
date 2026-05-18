@@ -53,6 +53,10 @@ Use `setterGuard` for simple conditional `SetValue` wrappers. Use
 `setterBody` only when the generated property needs a custom setter body, such
 as a WinUI-style validation/coercion path that cannot be expressed as a guard.
 
+For `AddOwner`, specify `sourceProperty`. Corner-radius owners should point at
+`System.Windows.Controls.Border.CornerRadiusProperty`; do not reintroduce a
+ModernWpf `ControlHelper.CornerRadius` attached property.
+
 ## Conversion Rules
 
 - Keep generated files in source control.

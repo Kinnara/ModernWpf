@@ -1931,7 +1931,7 @@ public class LayoutCompatibilityApiTests
                 Content = "Button",
                 Foreground = Brushes.Red
             };
-            ControlHelper.SetCornerRadius(button, new CornerRadius(6));
+            button.SetValue(System.Windows.Controls.Border.CornerRadiusProperty, new CornerRadius(6));
 
             using var host = new TestWindowHost(button, width: 140, height: 80);
 
@@ -1940,7 +1940,7 @@ public class LayoutCompatibilityApiTests
 
             Assert.AreEqual(button.Content, presenter.Content);
             Assert.AreSame(button.Foreground, TextElement.GetForeground(presenter));
-            Assert.AreEqual(ControlHelper.GetCornerRadius(button), border.CornerRadius);
+            Assert.AreEqual(((CornerRadius)button.GetValue(System.Windows.Controls.Border.CornerRadiusProperty)), border.CornerRadius);
             Assert.IsNull(FindVisualChild<ContentPresenterEx>(button));
             Assert.IsNull(FindVisualChild<ModernContentControlEx>(button));
             Assert.IsFalse(ButtonHelper.GetVisualStateSettersEnabled(button));
@@ -1961,7 +1961,7 @@ public class LayoutCompatibilityApiTests
                 Foreground = Brushes.Blue,
                 Style = (Style)Application.Current.FindResource("AccentButtonStyle")
             };
-            ControlHelper.SetCornerRadius(button, new CornerRadius(8));
+            button.SetValue(System.Windows.Controls.Border.CornerRadiusProperty, new CornerRadius(8));
 
             using var host = new TestWindowHost(button, width: 140, height: 80);
 
@@ -1970,7 +1970,7 @@ public class LayoutCompatibilityApiTests
 
             Assert.AreEqual(button.Content, presenter.Content);
             Assert.AreSame(button.Foreground, TextElement.GetForeground(presenter));
-            Assert.AreEqual(ControlHelper.GetCornerRadius(button), border.CornerRadius);
+            Assert.AreEqual(((CornerRadius)button.GetValue(System.Windows.Controls.Border.CornerRadiusProperty)), border.CornerRadius);
             Assert.IsNull(FindVisualChild<ContentPresenterEx>(button));
             Assert.IsNull(FindVisualChild<ModernContentControlEx>(button));
             Assert.IsFalse(ButtonHelper.GetVisualStateSettersEnabled(button));
@@ -1990,7 +1990,7 @@ public class LayoutCompatibilityApiTests
                 Content = "Repeat",
                 Foreground = Brushes.Blue
             };
-            ControlHelper.SetCornerRadius(repeatButton, new CornerRadius(8));
+            repeatButton.SetValue(System.Windows.Controls.Border.CornerRadiusProperty, new CornerRadius(8));
 
             using var host = new TestWindowHost(repeatButton, width: 140, height: 80);
 
@@ -1999,7 +1999,7 @@ public class LayoutCompatibilityApiTests
 
             Assert.AreEqual(repeatButton.Content, presenter.Content);
             Assert.AreSame(repeatButton.Foreground, TextElement.GetForeground(presenter));
-            Assert.AreEqual(ControlHelper.GetCornerRadius(repeatButton), border.CornerRadius);
+            Assert.AreEqual(((CornerRadius)repeatButton.GetValue(System.Windows.Controls.Border.CornerRadiusProperty)), border.CornerRadius);
             Assert.IsNull(FindVisualChild<ContentPresenterEx>(repeatButton));
             Assert.IsNull(FindVisualChild<ModernContentControlEx>(repeatButton));
             Assert.IsFalse(ButtonHelper.GetVisualStateSettersEnabled(repeatButton));
@@ -2019,7 +2019,7 @@ public class LayoutCompatibilityApiTests
                 Content = "Toggle",
                 Foreground = Brushes.Blue
             };
-            ControlHelper.SetCornerRadius(toggleButton, new CornerRadius(8));
+            toggleButton.SetValue(System.Windows.Controls.Border.CornerRadiusProperty, new CornerRadius(8));
 
             using var host = new TestWindowHost(toggleButton, width: 140, height: 80);
 
@@ -2028,7 +2028,7 @@ public class LayoutCompatibilityApiTests
 
             Assert.AreEqual(toggleButton.Content, presenter.Content);
             Assert.AreSame(toggleButton.Foreground, TextElement.GetForeground(presenter));
-            Assert.AreEqual(ControlHelper.GetCornerRadius(toggleButton), border.CornerRadius);
+            Assert.AreEqual(((CornerRadius)toggleButton.GetValue(System.Windows.Controls.Border.CornerRadiusProperty)), border.CornerRadius);
             Assert.IsNull(FindVisualChild<ContentPresenterEx>(toggleButton));
             Assert.IsNull(FindVisualChild<ModernContentControlEx>(toggleButton));
             Assert.IsFalse(ToggleButtonHelper.GetVisualStateSettersEnabled(toggleButton));

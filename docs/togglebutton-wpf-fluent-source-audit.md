@@ -47,7 +47,7 @@ Fluent as the primary source instead of WinUI 3 CommonStyles:
   resource and `FocusVisualHelper` settings so the older-target focus visual
   bridge remains active.
 - Official WPF Fluent uses `Border.CornerRadius`; ModernWpf keeps
-  `ControlHelper.CornerRadius` in the backported template because older WPF
+  `Border.CornerRadius` in the backported template because older WPF
   targets do not expose the same source property on `ToggleButton`.
 - Existing ModernWpf theme-resource aliases for toggle button brushes are
   retained because they already map to the same Fluent concepts and remain

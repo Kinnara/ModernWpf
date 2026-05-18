@@ -12,7 +12,7 @@
     "name": "SplitButton"
   },
   "properties": [
-    { "name": "CornerRadius", "type": "CornerRadius", "kind": "AddOwner", "sourceProperty": "ControlHelper.CornerRadiusProperty" },
+    { "name": "CornerRadius", "type": "CornerRadius", "kind": "AddOwner", "sourceProperty": "System.Windows.Controls.Border.CornerRadiusProperty" },
     { "name": "UseSystemFocusVisuals", "type": "bool", "kind": "AddOwner", "sourceProperty": "FocusVisualHelper.UseSystemFocusVisualsProperty" },
     { "name": "FocusVisualMargin", "type": "Thickness", "kind": "AddOwner", "sourceProperty": "FocusVisualHelper.FocusVisualMarginProperty" },
     { "name": "Command", "type": "ICommand", "kind": "AddOwner", "sourceProperty": "ButtonBase.CommandProperty" },

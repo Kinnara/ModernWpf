@@ -40,7 +40,7 @@ source is official WPF Fluent rather than WinUI 3 common styles.
   `TextControlContextMenu` plus `TextContextMenu.UsingTextContextMenu` so the
   existing text-control context menu integration remains available.
 - Official WPF Fluent uses `Border.CornerRadius`; ModernWpf keeps
-  `primitives:ControlHelper.CornerRadius` for older target-framework support.
+  `Border.CornerRadius` for older target-framework support.
 - ModernWpf keeps `Validation.ErrorTemplate` and
   `ValidationHelper.IsTemplateValidationAdornerSite` so existing validation
   adorners continue to attach to the template chrome.

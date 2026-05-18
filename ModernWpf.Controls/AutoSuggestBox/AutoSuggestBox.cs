@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -80,8 +80,13 @@ namespace ModernWpf.Controls
 
             if (m_textBox != null)
             {
+                BindCornerRadius(m_textBox);
                 m_textBox.ApplyTemplate();
+                var deleteButton = m_textBox.GetTemplateChild<Button>("DeleteButton");
                 m_queryButton = m_textBox.GetTemplateChild<Button>("QueryButton");
+
+                BindCornerRadius(deleteButton);
+                BindCornerRadius(m_queryButton);
 
                 m_textBox.TextChanged += OnTextBoxTextChanged;
                 m_textBox.PreviewKeyDown += OnTextBoxPreviewKeyDown;
@@ -118,6 +123,11 @@ namespace ModernWpf.Controls
                 m_suggestionsList.ItemClick += OnSuggestionsListItemClick;
                 m_suggestionsList.PreviewKeyDown += OnSuggestionsListPreviewKeyDown;
             }
+        }
+
+        private void BindCornerRadius(Control control)
+        {
+            control?.SetBinding(System.Windows.Controls.Border.CornerRadiusProperty, new Binding(nameof(CornerRadius)) { Source = this, Mode = BindingMode.OneWay });
         }
 
         protected override void OnItemsChanged(NotifyCollectionChangedEventArgs e)
@@ -658,7 +668,7 @@ namespace ModernWpf.Controls
 
             if (GetTemplateChild(c_textBoxName) is TextBox textBox)
             {
-                ControlHelper.SetCornerRadius(textBox, textBoxRadius);
+                textBox.SetValue(System.Windows.Controls.Border.CornerRadiusProperty, textBoxRadius);
             }
         }
 

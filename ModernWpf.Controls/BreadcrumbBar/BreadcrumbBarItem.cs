@@ -6,6 +6,7 @@ using System.Windows.Automation;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Data;
 using System.Windows.Input;
 using ModernWpf.Automation.Peers;
 using ModernWpf.Controls.Primitives;
@@ -39,6 +40,7 @@ namespace ModernWpf.Controls
 
             if (_button != null)
             {
+                _button.SetBinding(System.Windows.Controls.Border.CornerRadiusProperty, new Binding(nameof(CornerRadius)) { Source = this, Mode = BindingMode.OneWay });
                 _button.Click += OnButtonClick;
                 _button.IsEnabledChanged += OnButtonIsEnabledChanged;
                 _button.MouseEnter += OnButtonVisualPropertyChanged;

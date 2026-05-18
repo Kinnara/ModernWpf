@@ -88,7 +88,7 @@
         <Setter Property="Background" Value="{DynamicResource TreeViewItemBackground}" />
         <Setter Property="Margin" Value="0,0,0,2" />
         <Setter Property="Padding" Value="4" />
-        <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+        <Setter Property="Border.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="IsTabStop" Value="True" />
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
@@ -103,7 +103,7 @@
                         <Border
                             x:Name="Border"
                             Grid.Row="0"
-                            CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
+                            CornerRadius="{TemplateBinding Border.CornerRadius}"
                             Margin="{TemplateBinding Margin}">
                             <Grid>
                                 <Grid.ColumnDefinitions>

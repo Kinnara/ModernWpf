@@ -54,7 +54,7 @@ The copied style now uses official WPF Fluent structures:
 | Official WPF Fluent source | ModernWpf value | Reason |
 | --- | --- | --- |
 | `System.Runtime` system namespace | `mscorlib` | Keeps the style compatible with ModernWpf's older target frameworks. |
-| `Border.CornerRadius` attached setter/template binding | `primitives:ControlHelper.CornerRadius` | Older ModernWpf targets do not expose the official attached property surface. |
+| `Border.CornerRadius` attached setter/template binding | `Border.CornerRadius` | Older ModernWpf targets do not expose the official attached property surface. |
 | `Fluent.Controls.FallbackBrushConverter` | `ModernWpf.Controls.Primitives.FallbackBrushConverter` | Keeps the copied style self-contained inside ModernWpf. |
 | Official DataGrid theme aliases | Added to Light, Dark, and HighContrast dictionaries | Required by the copied official template. |
 

@@ -12,7 +12,7 @@
   "properties": [
     { "name": "UseSystemFocusVisuals", "type": "bool", "kind": "AddOwner", "sourceProperty": "FocusVisualHelper.UseSystemFocusVisualsProperty" },
     { "name": "FocusVisualMargin", "type": "Thickness", "kind": "AddOwner", "sourceProperty": "FocusVisualHelper.FocusVisualMarginProperty" },
-    { "name": "CornerRadius", "type": "CornerRadius", "kind": "AddOwner", "sourceProperty": "ControlHelper.CornerRadiusProperty" },
+    { "name": "CornerRadius", "type": "CornerRadius", "kind": "AddOwner", "sourceProperty": "System.Windows.Controls.Border.CornerRadiusProperty" },
     { "name": "BackgroundSizing", "type": "BackgroundSizing", "kind": "AddOwner", "sourceProperty": "ControlHelper.BackgroundSizingProperty" },
     { "name": "Flyout", "type": "FlyoutBase", "kind": "AddOwner", "sourceProperty": "FlyoutService.FlyoutProperty", "metadataType": "FrameworkPropertyMetadata", "changed": "OnFlyoutChanged" },
     { "name": "Icon", "type": "IconElement", "kind": "AddOwner", "sourceProperty": "AppBarElementProperties.IconProperty" },

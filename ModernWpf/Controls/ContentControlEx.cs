@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using ModernWpf.Controls.Primitives;
@@ -88,7 +88,7 @@ namespace ModernWpf.Controls
         #region CornerRadius
 
         public static readonly DependencyProperty CornerRadiusProperty =
-            ControlHelper.CornerRadiusProperty.AddOwner(typeof(ContentControlEx));
+            System.Windows.Controls.Border.CornerRadiusProperty.AddOwner(typeof(ContentControlEx));
 
         public CornerRadius CornerRadius
         {

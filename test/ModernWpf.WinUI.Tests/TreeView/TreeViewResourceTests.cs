@@ -81,7 +81,7 @@ public class TreeViewResourceTests
             AssertDynamicResourceSetter(style, Control.BackgroundProperty, "TreeViewItemBackground");
             AssertSetterValue(style, FrameworkElement.MarginProperty, new Thickness(0, 0, 0, 2));
             AssertSetterValue(style, Control.PaddingProperty, new Thickness(4));
-            AssertDynamicResourceSetter(style, ControlHelper.CornerRadiusProperty, "ControlCornerRadius");
+            AssertDynamicResourceSetter(style, System.Windows.Controls.Border.CornerRadiusProperty, "ControlCornerRadius");
             AssertSetterValue(style, Control.IsTabStopProperty, true);
             AssertSetterValue(style, FrameworkElement.OverridesDefaultStyleProperty, true);
             AssertSetterValue(style, UIElement.SnapsToDevicePixelsProperty, true);

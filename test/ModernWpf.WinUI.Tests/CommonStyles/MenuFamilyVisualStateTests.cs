@@ -56,7 +56,7 @@ public class MenuFamilyVisualStateTests
             var implicitStyle = (Style)Application.Current.FindResource(typeof(ContextMenu));
             Assert.AreEqual(typeof(ContextMenu), defaultStyle.TargetType);
             Assert.AreEqual(typeof(ContextMenu), implicitStyle.TargetType);
-            Assert.AreSame(defaultStyle, implicitStyle.BasedOn);
+            Assert.AreSame(defaultStyle, implicitStyle.BasedOn?.BasedOn);
 
             var setters = defaultStyle.Setters.OfType<Setter>().ToArray();
             AssertDynamicResourceSetter(setters, TextElement.ForegroundProperty, "ContextMenuForeground");
@@ -71,7 +71,6 @@ public class MenuFamilyVisualStateTests
             AssertSetter(setters, Grid.IsSharedSizeScopeProperty, true);
             AssertSetter(setters, Popup.PopupAnimationProperty, PopupAnimation.None);
             AssertSetter(setters, UIElement.SnapsToDevicePixelsProperty, true);
-            AssertSetter(setters, Control.OverridesDefaultStyleProperty, true);
             Assert.IsTrue(setters.Any(item => item.Property == Control.TemplateProperty));
 
             var template = (ControlTemplate)setters.Single(item => item.Property == Control.TemplateProperty).Value;

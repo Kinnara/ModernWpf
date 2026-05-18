@@ -33,7 +33,7 @@
         <Setter Property="MinHeight" Value="{StaticResource CheckBoxHeight}" />
         <Setter Property="primitives:FocusVisualHelper.UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
         <Setter Property="primitives:FocusVisualHelper.FocusVisualMargin" Value="{StaticResource CheckBoxFocusVisualMargin}" />
-        <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+        <Setter Property="Border.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Stylus.IsPressAndHoldEnabled" Value="False" />
@@ -45,7 +45,7 @@
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
+                        CornerRadius="{TemplateBinding Border.CornerRadius}">
                         <Grid x:Name="RootGrid">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
@@ -58,12 +58,12 @@
                                 Height="{StaticResource CheckBoxSize}"
                                 VerticalAlignment="Center"
                                 Background="{DynamicResource CheckBoxCheckBackgroundFillUnchecked}"
-                                CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
+                                CornerRadius="{TemplateBinding Border.CornerRadius}">
                                 <Border
                                     x:Name="StrokeBorder"
                                     BorderBrush="{DynamicResource CheckBoxCheckBackgroundStrokeUnchecked}"
                                     BorderThickness="{StaticResource CheckBoxBorderThickness}"
-                                    CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
+                                    CornerRadius="{TemplateBinding Border.CornerRadius}">
                                     <Grid>
                                         <TextBlock
                                             x:Name="ControlIcon"

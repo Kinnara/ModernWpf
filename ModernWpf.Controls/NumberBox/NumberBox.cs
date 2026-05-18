@@ -8,6 +8,7 @@ using System.Windows.Automation;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using ModernWpf.Automation.Peers;
@@ -105,6 +106,7 @@ namespace ModernWpf.Controls
             if (GetTemplateChild(c_numberBoxDownButtonName) is RepeatButton spinDown)
             {
                 m_spinDownButton = spinDown;
+                BindCornerRadius(m_spinDownButton);
                 m_spinDownButton.Click += OnSpinDownClick;
 
                 // Do localization for the down button
@@ -117,6 +119,7 @@ namespace ModernWpf.Controls
             if (GetTemplateChild(c_numberBoxUpButtonName) is RepeatButton spinUp)
             {
                 m_spinUpButton = spinUp;
+                BindCornerRadius(m_spinUpButton);
                 m_spinUpButton.Click += OnSpinUpClick;
 
                 // Do localization for the up button
@@ -134,6 +137,8 @@ namespace ModernWpf.Controls
                 var textBox = GetTemplateChild(c_numberBoxTextBoxName) as TextBox;
                 if (textBox != null)
                 {
+                    BindCornerRadius(textBox);
+
                     if (SharedHelpers.IsRS3OrHigher())
                     {
                         // Listen to PreviewKeyDown because textbox eats the down arrow key in some circumstances.
@@ -210,6 +215,11 @@ namespace ModernWpf.Controls
             {
                 UpdateTextToValue();
             }
+        }
+
+        private void BindCornerRadius(Control control)
+        {
+            control.SetBinding(System.Windows.Controls.Border.CornerRadiusProperty, new Binding(nameof(CornerRadius)) { Source = this, Mode = BindingMode.OneWay });
         }
 
         // Not needed for WPF.

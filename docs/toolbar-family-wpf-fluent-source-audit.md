@@ -40,7 +40,7 @@ This is a stock WPF control-family port, so official WPF Fluent is the primary s
 ## ModernWpf Substitutions
 
 - `System.Runtime` string namespaces were changed to `mscorlib` for older target compatibility.
-- Official WPF Fluent's generic `Thumb` uses `Border.CornerRadius`; ModernWpf uses `primitives:ControlHelper.CornerRadius` for older target compatibility, matching the existing stock-control backport pattern.
+- Official WPF Fluent's generic `Thumb` uses `Border.CornerRadius`; ModernWpf uses `Border.CornerRadius` for older target compatibility, matching the existing stock-control backport pattern.
 - Official WPF Fluent's generated monolithic dictionary can resolve `ToolBar.xaml` `StaticResource BasedOn` references from sibling style sections. ModernWpf loads style files as split dictionaries, so `ToolBar.xaml` locally merges the stock style dependencies it needs.
 - Official `ToolBar.xaml` references `MenuBorderColorDefaultBrush`, but the local official theme resource files do not define that exact key. ModernWpf exposes it as an alias to the same flyout border concept used by the menu/context menu family.
 

@@ -82,8 +82,7 @@ public class ScrollBarVisualStateTests
             var thumbSetters = thumbStyle.Setters.OfType<Setter>().ToArray();
             Assert.AreEqual(typeof(Thumb), thumbStyle.TargetType);
             AssertDynamicResourceSetter(thumbSetters, Control.BackgroundProperty, "ScrollBarThumbFill");
-            AssertSetter(thumbSetters, ControlHelper.CornerRadiusProperty, new CornerRadius(4));
-            AssertNoSetter(thumbSetters, Border.CornerRadiusProperty);
+            AssertSetter(thumbSetters, System.Windows.Controls.Border.CornerRadiusProperty, new CornerRadius(4));
             AssertSetter(thumbSetters, Control.IsTabStopProperty, false);
             AssertSetter(thumbSetters, UIElement.FocusableProperty, false);
         });
@@ -161,7 +160,7 @@ public class ScrollBarVisualStateTests
         Assert.IsFalse(text.Contains("RepeatButtonTransparent", System.StringComparison.Ordinal));
         Assert.IsFalse(text.Contains("CornerRadiusFilterConverter", System.StringComparison.Ordinal));
         Assert.IsFalse(text.Contains("FontIconFallback", System.StringComparison.Ordinal));
-        Assert.IsFalse(text.Contains("Border.CornerRadius", System.StringComparison.Ordinal));
+        Assert.IsFalse(text.Contains("ControlHelper.CornerRadius", System.StringComparison.Ordinal));
     }
 
     [TestMethod]

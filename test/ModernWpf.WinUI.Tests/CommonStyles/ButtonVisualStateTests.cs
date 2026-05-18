@@ -180,7 +180,7 @@ public class ButtonVisualStateTests
         Assert.AreEqual(button.Content, contentPresenter.Content);
         Assert.AreEqual(recognizesAccessKey, contentPresenter.RecognizesAccessKey);
         Assert.AreSame(button.Foreground, TextElement.GetForeground(contentPresenter));
-        Assert.AreEqual(ControlHelper.GetCornerRadius(button), contentBorder.CornerRadius);
+        Assert.AreEqual(((CornerRadius)button.GetValue(System.Windows.Controls.Border.CornerRadiusProperty)), contentBorder.CornerRadius);
         Assert.AreEqual(0, VisualStateManager.GetVisualStateGroups(contentBorder).Count);
     }
 

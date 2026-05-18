@@ -40,7 +40,7 @@ official `DefaultComboBoxTextBoxStyle`, `DefaultComboBoxToggleButtonStyle`,
 | Official WPF Fluent surface | ModernWpf substitution | Reason |
 | --- | --- | --- |
 | `System.Runtime` in the XAML namespace | `mscorlib` | Keeps copied resources compatible with ModernWpf's older target frameworks. |
-| `Border.CornerRadius` attached setters and template bindings | `primitives:ControlHelper.CornerRadius` | Older ModernWpf targets do not expose the newer official WPF attached property. |
+| `Border.CornerRadius` attached setters and template bindings | `Border.CornerRadius` | Older ModernWpf targets do not expose the newer official WPF attached property. |
 | Unified official Fluent resource layout | Existing `ModernWpf\Styles\ComboBox.xaml` split dictionary | Keeps ModernWpf's current stock-control resource entry point. |
 | No official DataGrid ComboBox adapter styles in `ComboBox.xaml` | Retained `DataGridComboBoxStyle` and `DataGridTextBlockComboBoxStyle` as WPF adapter resources based on `DefaultComboBoxStyle` | These remain compatibility resources for callers that reference them directly. The stock DataGrid template now follows official WPF Fluent and no longer wires them through `DataGridHelper`. |
 

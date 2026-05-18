@@ -93,7 +93,7 @@ public class DependencyPropertyGeneratorTests
                     Name = "CornerRadius",
                     Type = "CornerRadius",
                     Kind = DependencyPropertyKind.AddOwner,
-                    SourceProperty = "ControlHelper.CornerRadiusProperty"
+                    SourceProperty = "System.Windows.Controls.Border.CornerRadiusProperty"
                 }
             }
         });
@@ -102,7 +102,7 @@ public class DependencyPropertyGeneratorTests
         StringAssert.Contains(text, "\"IsActive\",");
         StringAssert.Contains(text, "public static bool GetIsActive(DependencyObject element)");
         StringAssert.Contains(text, "public static void SetIsActive(DependencyObject element, bool value)");
-        StringAssert.Contains(text, "ControlHelper.CornerRadiusProperty.AddOwner(typeof(SampleHelper));");
+        StringAssert.Contains(text, "System.Windows.Controls.Border.CornerRadiusProperty.AddOwner(typeof(SampleHelper));");
     }
 
     [TestMethod]

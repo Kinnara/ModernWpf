@@ -60,7 +60,7 @@ public class ToolBarFamilyVisualStateTests
 
             var setters = defaultStyle.Setters.OfType<Setter>().ToArray();
             AssertDynamicResourceSetter(setters, Control.BackgroundProperty, "ThumbBackground");
-            AssertDynamicResourceSetter(setters, ControlHelper.CornerRadiusProperty, "ControlCornerRadius");
+            AssertDynamicResourceSetter(setters, System.Windows.Controls.Border.CornerRadiusProperty, "ControlCornerRadius");
             AssertSetter(setters, UIElement.SnapsToDevicePixelsProperty, true);
             AssertSetter(setters, Control.OverridesDefaultStyleProperty, true);
             AssertSetter(setters, Control.IsTabStopProperty, false);
@@ -73,7 +73,7 @@ public class ToolBarFamilyVisualStateTests
 
             var border = GetTemplateChild<Border>(thumb, "Border");
             Assert.AreSame(thumb.Background, border.Background);
-            Assert.AreEqual(ControlHelper.GetCornerRadius(thumb), border.CornerRadius);
+            Assert.AreEqual(((CornerRadius)thumb.GetValue(System.Windows.Controls.Border.CornerRadiusProperty)), border.CornerRadius);
 
             thumb.IsEnabled = false;
             host.UpdateLayout();

@@ -114,7 +114,7 @@ public class ToggleButtonVisualStateTests
         Assert.IsTrue(contentPresenter.RecognizesAccessKey);
         Assert.AreSame(toggleButton.Foreground, TextElement.GetForeground(contentPresenter));
         Assert.AreEqual(toggleButton.FontSize, TextElement.GetFontSize(contentPresenter));
-        Assert.AreEqual(ControlHelper.GetCornerRadius(toggleButton), contentBorder.CornerRadius);
+        Assert.AreEqual(((CornerRadius)toggleButton.GetValue(System.Windows.Controls.Border.CornerRadiusProperty)), contentBorder.CornerRadius);
         Assert.AreEqual(0, VisualStateManager.GetVisualStateGroups(contentBorder).Count);
     }
 

@@ -1,4 +1,4 @@
-﻿<!-- Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License. See LICENSE in the project root for license information. -->
+<!-- Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License. See LICENSE in the project root for license information. -->
 <local:TestPage
     x:Class="MUXControlsTestApp.CornerRadiusPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -43,7 +43,8 @@
         </StackPanel>
         <GridEx Grid.Row="1" BorderBrush="{ThemeResource SystemControlForegroundChromeGrayBrush}" BorderThickness="1">
             <ScrollViewer
-                Padding="4" controls:ControlHelper.CornerRadius="{Binding ControlCornerRadius, Mode=OneWay}">
+                x:Name="SamplesScrollViewer"
+                Padding="4">
                 <Grid>
                     <Grid.Resources>
                         <Style x:Key="SideHeader" TargetType="TextBlock">
@@ -621,7 +622,7 @@
                         <PasswordBox Password="Hello World"/>
                     </Grid>
                     <Grid Grid.Row="37" Style="{StaticResource RightColumn}">
-                        <PasswordBox Password="Hello World" controls:ControlHelper.CornerRadius="{Binding ControlCornerRadius, Mode=OneWay}"/>
+                        <PasswordBox x:Name="RoundedPasswordBox" Password="Hello World"/>
                     </Grid>
 
                     <TextBlock Grid.Row="38" Text="RichEditBox" Style="{StaticResource SideHeader}"/>

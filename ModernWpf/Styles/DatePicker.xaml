@@ -101,7 +101,7 @@
 
     <Style x:Key="DatePickerCalendarStyle" BasedOn="{StaticResource DefaultCalendarStyle}" TargetType="{x:Type Calendar}">
         <Setter Property="Background" Value="{DynamicResource DatePickerPopupBackground}" />
-        <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
+        <Setter Property="Border.CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
         <Setter Property="Margin" Value="10" />
         <Setter Property="Effect">
             <Setter.Value>
@@ -128,7 +128,7 @@
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Stretch" />
         <Setter Property="Padding" Value="{DynamicResource TextControlThemePadding}" />
-        <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+        <Setter Property="Border.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="IsTodayHighlighted" Value="True" />
         <Setter Property="SelectedDateFormat" Value="Short" />
@@ -143,7 +143,7 @@
                                 <Setter Property="Background" Value="Transparent" />
                                 <Setter Property="BorderBrush" Value="Transparent" />
                                 <Setter Property="BorderThickness" Value="1" />
-                                <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+                                <Setter Property="Border.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
                                 <Setter Property="Width" Value="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" />
                                 <Setter Property="OverridesDefaultStyle" Value="True" />
                                 <Setter Property="Template">
@@ -154,7 +154,7 @@
                                                 BorderBrush="{TemplateBinding BorderBrush}"
                                                 BorderThickness="{TemplateBinding BorderThickness}"
                                                 Background="{TemplateBinding Background}"
-                                                CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
+                                                CornerRadius="{TemplateBinding Border.CornerRadius}">
                                                 <TextBlock x:Name="GlyphElement"
                                                               TextElement.Foreground="{TemplateBinding Foreground}"
                                                               FontFamily="{DynamicResource SymbolThemeFontFamily}"
@@ -193,7 +193,7 @@
                                     BorderBrush="{TemplateBinding BorderBrush}"
                                     BorderThickness="{TemplateBinding BorderThickness}"
                                     Background="{TemplateBinding Background}"
-                                    CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
+                                    CornerRadius="{TemplateBinding Border.CornerRadius}"
                                     MinHeight="{TemplateBinding MinHeight}">
                             </Border>
 

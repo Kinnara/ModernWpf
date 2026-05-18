@@ -21,6 +21,6 @@
     { "name": "MaxValue", "type": "int", "default": "100", "changed": "OnValueRangePropertyChanged" },
     { "name": "Shape", "type": "ColorSpectrumShape", "default": "ColorSpectrumShape.Box", "changed": "OnShapePropertyChanged" },
     { "name": "Components", "type": "ColorSpectrumComponents", "default": "ColorSpectrumComponents.HueSaturation", "changed": "OnComponentsPropertyChanged" },
-    { "name": "CornerRadius", "type": "CornerRadius", "kind": "AddOwner", "sourceProperty": "ControlHelper.CornerRadiusProperty" }
+    { "name": "CornerRadius", "type": "CornerRadius", "kind": "AddOwner", "sourceProperty": "System.Windows.Controls.Border.CornerRadiusProperty" }
   ]
 }

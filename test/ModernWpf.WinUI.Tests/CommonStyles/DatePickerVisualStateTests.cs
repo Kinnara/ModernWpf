@@ -31,7 +31,7 @@ public class DatePickerVisualStateTests
             {
                 Style = implicitDatePickerStyle
             };
-            ControlHelper.SetCornerRadius(datePicker, new CornerRadius(6));
+            datePicker.SetValue(System.Windows.Controls.Border.CornerRadiusProperty, new CornerRadius(6));
 
             using var host = new TestWindowHost(datePicker, width: 240, height: 120);
             host.UpdateLayout();
@@ -50,10 +50,10 @@ public class DatePickerVisualStateTests
             Assert.IsNotNull(datePicker.CalendarStyle);
             Assert.AreEqual(new Thickness(1), datePicker.BorderThickness);
             Assert.AreEqual(datePicker.TryFindResource("TextControlThemeMinHeight"), datePicker.MinHeight);
-            Assert.AreEqual(ControlHelper.GetCornerRadius(datePicker), border.CornerRadius);
+            Assert.AreEqual(((CornerRadius)datePicker.GetValue(System.Windows.Controls.Border.CornerRadiusProperty)), border.CornerRadius);
             Assert.AreEqual(typeof(DatePickerTextBox), textBox.GetType());
-            Assert.AreEqual((CornerRadius)datePicker.TryFindResource("ControlCornerRadius"), ControlHelper.GetCornerRadius(button));
-            Assert.AreEqual(ControlHelper.GetCornerRadius(button), buttonBorder.CornerRadius);
+            Assert.AreEqual((CornerRadius)datePicker.TryFindResource("ControlCornerRadius"), ((CornerRadius)button.GetValue(System.Windows.Controls.Border.CornerRadiusProperty)));
+            Assert.AreEqual(((CornerRadius)button.GetValue(System.Windows.Controls.Border.CornerRadiusProperty)), buttonBorder.CornerRadius);
             Assert.AreEqual(0, VisualStateManager.GetVisualStateGroups(root).Count);
             Assert.IsNull(FindVisualChild<ContentPresenterEx>(datePicker));
         });
@@ -88,8 +88,8 @@ public class DatePickerVisualStateTests
             AssertDynamicResourceSetter(calendar.Style, Control.BackgroundProperty, "DatePickerPopupBackground");
             Assert.IsNotNull(calendar.Background);
             Assert.AreEqual(new Thickness(10), calendar.Margin);
-            Assert.AreEqual((CornerRadius)calendar.TryFindResource("OverlayCornerRadius"), ControlHelper.GetCornerRadius(calendar));
-            Assert.AreEqual(ControlHelper.GetCornerRadius(calendar), root.CornerRadius);
+            Assert.AreEqual((CornerRadius)calendar.TryFindResource("OverlayCornerRadius"), ((CornerRadius)calendar.GetValue(System.Windows.Controls.Border.CornerRadiusProperty)));
+            Assert.AreEqual(((CornerRadius)calendar.GetValue(System.Windows.Controls.Border.CornerRadiusProperty)), root.CornerRadius);
             Assert.IsInstanceOfType(calendar.Effect, typeof(DropShadowEffect));
             Assert.IsNull(FindVisualChild<ContentPresenterEx>(calendar));
         });

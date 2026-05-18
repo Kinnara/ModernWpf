@@ -36,7 +36,7 @@ Date: 2026-05-18
 | --- | --- | --- |
 | Split source dictionaries | Same split under `ModernWpf\Styles\ListBoxItem.xaml`, `GridView.xaml`, and `ListViewItem.xaml`, merged from `StockControlsResources.xaml` | Preserves source file ownership while keeping the public stock controls resource entry point. |
 | `System.Runtime` namespace in `GridView.xaml` / `ListViewItem.xaml` | `mscorlib` | Keeps older ModernWpf targets compatible. |
-| Official `Border.CornerRadius` attached setters on item containers / gripper | `primitives:ControlHelper.CornerRadius` | Older ModernWpf targets do not expose the newer official WPF attached property. |
+| Official `Border.CornerRadius` attached setters on item containers / gripper | `Border.CornerRadius` | Older ModernWpf targets do not expose the newer official WPF attached property. |
 | `Fluent.Controls.ViewIsGridViewConverter` | Existing `ModernWpf.Controls.Primitives.IsGridViewConverter` | ModernWpf already ships the equivalent WPF converter; avoids adding the official WPF Fluent helper assembly namespace. |
 | Official resource brush definitions | ModernWpf aliases in `ThemeResources\Light.xaml`, `Dark.xaml`, and `HighContrast.xaml` | Keeps ModernWpf's theme-resource model while exposing the official keys required by the imported templates. |
 

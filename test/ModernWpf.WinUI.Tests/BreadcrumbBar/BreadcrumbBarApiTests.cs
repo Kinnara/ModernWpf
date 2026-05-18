@@ -90,7 +90,7 @@ public class BreadcrumbBarApiTests
             var presenter = FindTemplatePart<ContentPresenterEx>(item, "PART_ItemContentPresenter");
 
             Assert.AreSame(transitions, ControlHelper.GetContentTransitions(button));
-            Assert.AreEqual(new CornerRadius(5), ControlHelper.GetCornerRadius(button));
+            Assert.AreEqual(new CornerRadius(5), ((CornerRadius)button.GetValue(System.Windows.Controls.Border.CornerRadiusProperty)));
             Assert.AreSame(transitions, presenter.ContentTransitions);
             Assert.AreEqual(HorizontalAlignment.Right, presenter.HorizontalContentAlignment);
             Assert.AreEqual(VerticalAlignment.Bottom, presenter.VerticalContentAlignment);

@@ -15,7 +15,7 @@
     { "name": "GroupName", "type": "string", "metadataType": "FrameworkPropertyMetadata", "default": "string.Empty", "changed": "OnGroupNameChanged" },
     { "name": "UseSystemFocusVisuals", "type": "bool", "kind": "AddOwner", "sourceProperty": "FocusVisualHelper.UseSystemFocusVisualsProperty" },
     { "name": "AreCheckStatesEnabled", "type": "bool", "kind": "RegisterAttached", "default": "false", "changed": "OnAreCheckStatesEnabledChanged", "generateWrapper": false },
-    { "name": "CornerRadius", "type": "CornerRadius", "kind": "AddOwner", "sourceProperty": "ControlHelper.CornerRadiusProperty" },
+    { "name": "CornerRadius", "type": "CornerRadius", "kind": "AddOwner", "sourceProperty": "System.Windows.Controls.Border.CornerRadiusProperty" },
     { "name": "HookedRadioItems", "type": "List<RadioMenuItem>", "kind": "RegisterAttached", "default": "null", "fieldAccessibility": "private", "generateWrapper": false },
     { "name": "CollectionChangedHandler", "type": "NotifyCollectionChangedEventHandler", "kind": "RegisterAttached", "default": "null", "fieldAccessibility": "private", "generateWrapper": false }
   ]

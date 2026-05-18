@@ -34,6 +34,6 @@ ModernWpf files:
 ## WPF Substitutions
 
 - Official WPF Fluent uses `System.Runtime` for `system` resources; ModernWpf uses `mscorlib` to keep older target frameworks working.
-- Official WPF Fluent uses `Border.CornerRadius` attached setters/template bindings; ModernWpf maps that to `primitives:ControlHelper.CornerRadius`.
+- Official WPF Fluent uses `Border.CornerRadius` attached setters/template bindings; ModernWpf maps that to `Border.CornerRadius`.
 - Official WPF Fluent's `Fluent.Controls.AnimationFactorToValueConverter` is localized as `ModernWpf.Controls.Primitives.AnimationFactorToValueConverter` so the copied style can resolve the converter without referencing the platform Fluent theme assembly.
 - Historical ModernWpf Expander resource aliases that are no longer consumed by the official style remain in the theme dictionaries to avoid unnecessary resource-surface churn.

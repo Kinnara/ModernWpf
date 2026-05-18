@@ -51,7 +51,7 @@ trigger structure as the stock default/accent button templates.
   resource and `FocusVisualHelper` settings so the older-target focus visual
   bridge remains active.
 - Official WPF Fluent uses `Border.CornerRadius`; ModernWpf keeps
-  `ControlHelper.CornerRadius` in the backported templates because older WPF
+  `Border.CornerRadius` in the backported templates because older WPF
   targets do not expose the same source property on `ButtonBase`.
 - Existing ModernWpf theme-resource aliases for button brushes are retained
   because they already map to the same Fluent concepts and remain public

@@ -37,7 +37,7 @@ the stock `System.Windows.Controls.Primitives.ScrollBar` template.
 - The official source file's `System.Runtime` namespace reference is mapped to
   `mscorlib` for ModernWpf's older target frameworks.
 - The official source file's `Border.CornerRadius` setter on `Thumb` is mapped
-  to `primitives:ControlHelper.CornerRadius`. This keeps the existing
+  to `Border.CornerRadius`. This keeps the existing
   ModernWpf backport bridge for older WPF targets while preserving the official
   4px thumb radius.
 - Existing ModernWpf theme-resource aliases for ScrollBar colors are retained

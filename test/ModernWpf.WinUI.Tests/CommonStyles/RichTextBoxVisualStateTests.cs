@@ -89,7 +89,7 @@ public class RichTextBoxVisualStateTests
         Assert.AreSame(richTextBox.Background, contentBorder.Background);
         Assert.AreSame(richTextBox.BorderBrush, contentBorder.BorderBrush);
         Assert.AreEqual(richTextBox.BorderThickness, contentBorder.BorderThickness);
-        Assert.AreEqual(ControlHelper.GetCornerRadius(richTextBox), contentBorder.CornerRadius);
+        Assert.AreEqual(((CornerRadius)richTextBox.GetValue(System.Windows.Controls.Border.CornerRadiusProperty)), contentBorder.CornerRadius);
         Assert.IsTrue(ValidationHelper.GetIsTemplateValidationAdornerSite(contentBorder));
 
         Assert.AreEqual(richTextBox.BorderThickness, contentHost.Margin);

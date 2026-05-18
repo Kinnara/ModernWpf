@@ -11,7 +11,7 @@
   "properties": [
     { "name": "UseSystemFocusVisuals", "type": "bool", "kind": "AddOwner", "sourceProperty": "FocusVisualHelper.UseSystemFocusVisualsProperty" },
     { "name": "FocusVisualMargin", "type": "Thickness", "kind": "AddOwner", "sourceProperty": "FocusVisualHelper.FocusVisualMarginProperty" },
-    { "name": "CornerRadius", "type": "CornerRadius", "kind": "AddOwner", "sourceProperty": "ControlHelper.CornerRadiusProperty" },
+    { "name": "CornerRadius", "type": "CornerRadius", "kind": "AddOwner", "sourceProperty": "System.Windows.Controls.Border.CornerRadiusProperty" },
     { "name": "BackgroundSizing", "type": "BackgroundSizing", "kind": "AddOwner", "sourceProperty": "ControlHelper.BackgroundSizingProperty" },
     { "name": "Icon", "type": "IconElement", "kind": "AddOwner", "sourceProperty": "AppBarElementProperties.IconProperty" },
     { "name": "Label", "type": "string", "kind": "AddOwner", "sourceProperty": "AppBarElementProperties.LabelProperty" },

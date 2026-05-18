@@ -45,7 +45,7 @@ headers are preserved in ModernWpf.
   `Popup` submenu hosts, WPF trigger behavior, and official glyph resources.
 - The old ModernWpf menu-family guesses were deleted for these stock controls:
   `VisualStateEx`, `ContentPresenterEx`, `BorderEx`, `ThemeShadowChrome`,
-  `MenuPopup`, `ControlHelper.CornerRadius`, and
+  `MenuPopup`, `Border.CornerRadius`, and
   `MenuItemHelper.VisualStateSettersEnabled` are no longer used by the stock
   `Menu`, `ContextMenu`, or `MenuItem` styles.
 - Theme dictionaries now expose the official menu-family aliases:

@@ -34,7 +34,7 @@ ModernWpf now treats stock WPF `RadioButton` as an official WPF Fluent-backed st
 ## WPF Substitutions
 
 - Official WPF Fluent uses `DefaultControlFocusVisualStyle`; ModernWpf keeps its existing cross-target system focus visual bridge with `FocusVisualHelper`.
-- Official WPF Fluent uses the platform `Border.CornerRadius` property; ModernWpf uses `ControlHelper.CornerRadius` for older target-framework compatibility.
+- Official WPF Fluent uses the platform `Border.CornerRadius` property; ModernWpf uses `Border.CornerRadius` for older target-framework compatibility.
 - Existing ModernWpf brush aliases are retained where they map to the same Fluent concepts, and the official `RadioButtonCheckOuterEllipseChecked*` keys are added as aliases for the trigger targets.
 - Platform `RadioButton` grouping, focus traversal, toggle behavior, and automation remain owned by WPF.
 
