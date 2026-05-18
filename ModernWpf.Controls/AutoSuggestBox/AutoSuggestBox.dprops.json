@@ -1,0 +1,103 @@
+{
+  "usings": [
+    "System.Windows",
+    "ModernWpf.Controls.Primitives"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public sealed partial class",
+    "name": "AutoSuggestBox"
+  },
+  "properties": [
+    {
+      "name": "UpdateTextOnSelect",
+      "type": "bool",
+      "default": "true"
+    },
+    {
+      "name": "TextMemberPath",
+      "type": "string",
+      "default": "string.Empty",
+      "changed": "OnTextMemberPathPropertyChanged",
+      "changedBody": "((AutoSuggestBox)sender).OnTextMemberPathChanged();",
+      "coerce": "CoerceTextMemberPath"
+    },
+    {
+      "name": "TextBoxStyle",
+      "type": "Style",
+      "metadata": "null"
+    },
+    {
+      "name": "Text",
+      "type": "string",
+      "default": "string.Empty",
+      "changed": "OnTextPropertyChanged",
+      "changedForwardTo": "OnTextChanged",
+      "coerce": "CoerceText"
+    },
+    {
+      "name": "PlaceholderText",
+      "type": "string",
+      "kind": "AddOwner",
+      "sourceProperty": "ControlHelper.PlaceholderTextProperty"
+    },
+    {
+      "name": "MaxSuggestionListHeight",
+      "type": "double",
+      "default": "double.PositiveInfinity"
+    },
+    {
+      "name": "IsSuggestionListOpen",
+      "type": "bool",
+      "default": "false",
+      "changed": "OnIsSuggestionListOpenPropertyChanged",
+      "changedForwardTo": "OnIsSuggestionListOpenChanged"
+    },
+    {
+      "name": "AutoMaximizeSuggestionArea",
+      "type": "bool",
+      "default": "true"
+    },
+    {
+      "name": "Header",
+      "type": "object",
+      "kind": "AddOwner",
+      "sourceProperty": "ControlHelper.HeaderProperty"
+    },
+    {
+      "name": "HeaderPlacement",
+      "type": "ControlHeaderPlacement",
+      "default": "ControlHeaderPlacement.Top"
+    },
+    {
+      "name": "QueryIcon",
+      "type": "IconElement",
+      "default": "null",
+      "changed": "OnQueryIconPropertyChanged",
+      "changedForwardTo": "OnQueryIconChanged"
+    },
+    {
+      "name": "Description",
+      "type": "object",
+      "kind": "AddOwner",
+      "sourceProperty": "ControlHelper.DescriptionProperty"
+    },
+    {
+      "name": "LightDismissOverlayMode",
+      "type": "LightDismissOverlayMode",
+      "default": "LightDismissOverlayMode.Auto"
+    },
+    {
+      "name": "UseSystemFocusVisuals",
+      "type": "bool",
+      "kind": "AddOwner",
+      "sourceProperty": "FocusVisualHelper.UseSystemFocusVisualsProperty"
+    },
+    {
+      "name": "CornerRadius",
+      "type": "CornerRadius",
+      "kind": "AddOwner",
+      "sourceProperty": "ControlHelper.CornerRadiusProperty"
+    }
+  ]
+}

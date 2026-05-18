@@ -1,0 +1,110 @@
+{
+  "usings": [
+    "System.Windows",
+    "System.Windows.Media",
+    "ModernWpf.Controls.Primitives"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "SplitView"
+  },
+  "properties": [
+    {
+      "name": "CompactPaneLength",
+      "type": "double",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "0d",
+      "options": [
+        "AffectsMeasure"
+      ],
+      "changed": "OnCompactPaneLengthPropertyChanged",
+      "changedForwardTo": "OnCompactPaneLengthPropertyChanged"
+    },
+    {
+      "name": "Content",
+      "type": "UIElement",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "null",
+      "options": [
+        "AffectsMeasure"
+      ],
+      "changed": "OnContentPropertyChanged",
+      "changedForwardTo": "OnContentPropertyChanged"
+    },
+    {
+      "name": "DisplayMode",
+      "type": "SplitViewDisplayMode",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "SplitViewDisplayMode.Overlay",
+      "options": [
+        "AffectsMeasure"
+      ],
+      "changed": "OnDisplayModePropertyChanged",
+      "changedForwardTo": "OnDisplayModePropertyChanged"
+    },
+    {
+      "name": "IsPaneOpen",
+      "type": "bool",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "false",
+      "options": [
+        "AffectsMeasure"
+      ],
+      "changed": "OnIsPaneOpenPropertyChanged",
+      "changedForwardTo": "OnIsPaneOpenPropertyChanged"
+    },
+    {
+      "name": "OpenPaneLength",
+      "type": "double",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "0d",
+      "options": [
+        "AffectsMeasure"
+      ],
+      "changed": "OnOpenPaneLengthPropertyChanged",
+      "changedForwardTo": "OnOpenPaneLengthPropertyChanged"
+    },
+    {
+      "name": "PaneBackground",
+      "type": "Brush",
+      "metadata": "null"
+    },
+    {
+      "name": "PanePlacement",
+      "type": "SplitViewPanePlacement",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "SplitViewPanePlacement.Left",
+      "options": [
+        "AffectsMeasure"
+      ],
+      "changed": "OnPanePlacementPropertyChanged",
+      "changedForwardTo": "OnPanePlacementPropertyChanged"
+    },
+    {
+      "name": "Pane",
+      "type": "UIElement",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "null",
+      "options": [
+        "AffectsMeasure"
+      ],
+      "changed": "OnPanePropertyChanged",
+      "changedForwardTo": "OnPanePropertyChanged"
+    },
+    {
+      "name": "TemplateSettings",
+      "type": "SplitViewTemplateSettings",
+      "kind": "RegisterReadOnly",
+      "metadata": "null",
+      "setterAccessibility": "private"
+    },
+    {
+      "name": "LightDismissOverlayMode",
+      "type": "LightDismissOverlayMode",
+      "default": "LightDismissOverlayMode.Auto",
+      "changed": "OnLightDismissOverlayModePropertyChanged",
+      "changedForwardTo": "OnLightDismissOverlayModePropertyChanged"
+    }
+  ]
+}

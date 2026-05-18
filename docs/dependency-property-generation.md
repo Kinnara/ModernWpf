@@ -45,7 +45,11 @@ Supported property kinds are `Register`, `RegisterReadOnly`,
 
 Supported metadata fields include `metadata`, `metadataType`, `default`,
 `options`, `changed`, `changedForwardTo`, `changedBody`, `coerce`,
-`validate`, and `setterGuard`.
+`validate`, `setterGuard`, and `setterBody`.
+
+Use `setterGuard` for simple conditional `SetValue` wrappers. Use
+`setterBody` only when the generated property needs a custom setter body, such
+as a WinUI-style validation/coercion path that cannot be expressed as a guard.
 
 ## Conversion Rules
 
@@ -58,3 +62,15 @@ Supported metadata fields include `metadata`, `metadataType`, `default`,
 - For WinUI parity work, copy source defaults/callback intent into the manifest
   during the control audit; do not treat the manifest as a replacement for the
   source comparison.
+
+## Current Coverage
+
+The existing ModernWpf generated-property companion files are manifest-backed:
+`AutoSuggestBox`, `CommandBarFlyoutCommandBarTemplateSettings`,
+`NavigationView`, `NavigationViewItem`, `NumberBox`, `PersonPicture`,
+`RatingControl`, and `SplitView`.
+
+Some ModernWpf controls still keep dependency properties inline even though
+WinUI generates their counterparts. Move those during the corresponding
+whole-control parity slice, because that changes the handwritten control file
+rather than only a generated-property companion.

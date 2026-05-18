@@ -242,6 +242,8 @@ public sealed class DependencyPropertyEntry
 
     public string? SetterGuard { get; set; }
 
+    public string? SetterBody { get; set; }
+
     public bool GenerateWrapper { get; set; } = true;
 
     public void ValidateEntry(string sourceName)
@@ -264,6 +266,11 @@ public sealed class DependencyPropertyEntry
         if (ChangedBody != null && string.IsNullOrWhiteSpace(Changed))
         {
             throw new InvalidOperationException($"Property '{Name}' in '{sourceName}' specifies changedBody without changed.");
+        }
+
+        if (!string.IsNullOrWhiteSpace(SetterBody) && !string.IsNullOrWhiteSpace(SetterGuard))
+        {
+            throw new InvalidOperationException($"Property '{Name}' in '{sourceName}' cannot specify both setterBody and setterGuard.");
         }
     }
 }
@@ -492,7 +499,14 @@ public static class DependencyPropertyCodeGenerator
                 ? $"{property.Name}PropertyKey"
                 : $"{property.Name}Property";
 
-            if (string.IsNullOrWhiteSpace(property.SetterGuard))
+            if (!string.IsNullOrWhiteSpace(property.SetterBody))
+            {
+                writer.WriteLine($"{setterPrefix}set");
+                writer.OpenBlock();
+                writer.WriteBody(property.SetterBody);
+                writer.CloseBlock();
+            }
+            else if (string.IsNullOrWhiteSpace(property.SetterGuard))
             {
                 writer.WriteLine($"{setterPrefix}set => SetValue({setValueTarget}, value);");
             }
@@ -541,7 +555,7 @@ public static class DependencyPropertyCodeGenerator
         writer.OpenBlock();
         if (!string.IsNullOrWhiteSpace(property.ChangedBody))
         {
-            writer.WriteLine(property.ChangedBody);
+            writer.WriteBody(property.ChangedBody);
         }
         else
         {
@@ -605,6 +619,14 @@ internal sealed class CodeWriter
             _builder.Append(' ', _indentLevel * 4);
         }
         _builder.AppendLine(value);
+    }
+
+    public void WriteBody(string body)
+    {
+        foreach (var line in body.Replace("\r\n", "\n").Split('\n'))
+        {
+            WriteLine(line);
+        }
     }
 
     public override string ToString()

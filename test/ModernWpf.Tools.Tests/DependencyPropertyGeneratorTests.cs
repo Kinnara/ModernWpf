@@ -106,6 +106,33 @@ public class DependencyPropertyGeneratorTests
     }
 
     [TestMethod]
+    public void GeneratesCustomSetterAndChangedBodies()
+    {
+        var text = Generate(new DependencyPropertyManifest
+        {
+            Namespace = "ModernWpf.Controls",
+            Usings = { "System.Windows" },
+            Type = new TypeManifest { Name = "NumberBox" },
+            Properties =
+            {
+                new DependencyPropertyEntry
+                {
+                    Name = "NumberFormatter",
+                    Type = "INumberBoxNumberFormatter",
+                    Changed = "OnNumberFormatterPropertyChanged",
+                    SetterBody = "ValidateNumberFormatter(value);\nSetValue(NumberFormatterProperty, value);",
+                    ChangedBody = "var owner = (NumberBox)sender;\nowner.OnNumberFormatterPropertyChanged(args);"
+                }
+            }
+        });
+
+        StringAssert.Contains(text, "ValidateNumberFormatter(value);");
+        StringAssert.Contains(text, "SetValue(NumberFormatterProperty, value);");
+        StringAssert.Contains(text, "var owner = (NumberBox)sender;");
+        StringAssert.Contains(text, "owner.OnNumberFormatterPropertyChanged(args);");
+    }
+
+    [TestMethod]
     public void CheckModeReportsStaleGeneratedFiles()
     {
         var directory = Path.Combine(Path.GetTempPath(), "ModernWpfDpGenTests", Guid.NewGuid().ToString("N"));
