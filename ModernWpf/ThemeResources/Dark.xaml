@@ -1058,6 +1058,9 @@
     <m:StaticResource x:Key="HyperlinkButtonBorderBrushDisabled" ResourceKey="SubtleFillColorTransparentBrush" />
     <Thickness x:Key="HyperlinkButtonBorderThemeThickness">1</Thickness>
 
+    <!-- Resources for Label -->
+    <m:StaticResource x:Key="LabelForeground" ResourceKey="TextFillColorPrimaryBrush" />
+
     <!-- Resources for ListBox -->
     <Thickness x:Key="ListBoxBorderThemeThickness">0</Thickness>
     <m:StaticResource x:Key="ListBoxForeground" ResourceKey="TextFillColorPrimaryBrush" />

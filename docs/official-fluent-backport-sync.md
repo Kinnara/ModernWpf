@@ -283,3 +283,31 @@ Source inspected:
 
 - `test\ModernWpf.WinUI.Tests\CommonStyles\ToolTipVisualStateTests.cs` covers the official WPF Fluent ToolTip style setters, WPF `Border` / `ContentPresenter` shape, drop shadow, TextBlock wrapping style, removal of `ContentPresenterEx` / `ThemeShadowChrome`, and official theme aliases.
 - `test\ModernWpf.WinUI.Tests\LayoutCompatibility\LayoutCompatibilityApiTests.cs` covers the official WPF presenter shape for ToolTip in the broader layout compatibility suite.
+
+## 2026-05-18 Batch 10
+
+Source inspected:
+
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\Label.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Light.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Dark.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\HC.xaml`
+
+### Synced Values
+
+| Resource key / style | Official WPF Fluent value | ModernWpf value after sync | Reason |
+| --- | --- | --- | --- |
+| `DefaultLabelStyle` | Setter-only `Label` style with `Padding=0,0,0,4`, `Focusable=False`, `Foreground={DynamicResource LabelForeground}`, and `SnapsToDevicePixels=True` | Same setter-only style under the existing resource key | `Label` is a stock WPF control, so official WPF Fluent is the primary source. |
+| Implicit `Label` style | Based on `DefaultLabelStyle` | Same | Matches official WPF Fluent resource shape while keeping the existing ModernWpf resource key. |
+| `LabelForeground` | Official theme alias for the label foreground brush | Same alias across Light, Dark, and HighContrast | Required by the official WPF Fluent style surface. |
+
+### Intentional Differences
+
+| Resource key / style | Official WPF Fluent value | ModernWpf backport value | Reason retained |
+| --- | --- | --- | --- |
+| `LabelForeground` theme alias | Dedicated brush resources in official WPF Fluent | `m:StaticResource` aliases to ModernWpf's existing Fluent brush tokens | Keeps ModernWpf's existing theme-resource alias model while exposing the official key. |
+
+### Test Evidence
+
+- `test\ModernWpf.WinUI.Tests\CommonStyles\LabelVisualStateTests.cs` covers the official WPF Fluent Label setter-only style shape, runtime values, removal of the old `ContentPresenterEx` template, and official theme alias.
+- `test\ModernWpf.WinUI.Tests\LayoutCompatibility\LayoutCompatibilityApiTests.cs` covers the official WPF style surface for Label in the broader layout compatibility suite.

@@ -140,6 +140,7 @@ public class TemplateParityTests
         {
             Path.Combine("ModernWpf", "Styles", "Button.xaml"),
             Path.Combine("ModernWpf", "Styles", "CheckBox.xaml"),
+            Path.Combine("ModernWpf", "Styles", "Label.xaml"),
             Path.Combine("ModernWpf", "Styles", "RadioButton.xaml"),
             Path.Combine("ModernWpf", "Styles", "RepeatButton.xaml"),
             Path.Combine("ModernWpf", "Styles", "RichTextBox.xaml"),
@@ -363,7 +364,6 @@ public class TemplateParityTests
             Path.Combine("ModernWpf", "Navigation", "Page.xaml"),
             Path.Combine("ModernWpf", "Styles", "Expander.xaml"),
             Path.Combine("ModernWpf", "Styles", "GroupBox.xaml"),
-            Path.Combine("ModernWpf", "Styles", "Label.xaml"),
             Path.Combine("ModernWpf", "Styles", "StatusBar.xaml"),
             Path.Combine("ModernWpf", "Styles", "Window.xaml")
         };

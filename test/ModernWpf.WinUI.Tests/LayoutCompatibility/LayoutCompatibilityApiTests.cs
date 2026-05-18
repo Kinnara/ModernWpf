@@ -1115,11 +1115,6 @@ public class LayoutCompatibilityApiTests
                 Content = "Group content",
                 Foreground = Brushes.Blue
             };
-            var label = new Label
-            {
-                Content = "Label content",
-                Foreground = Brushes.Green
-            };
             var statusBarItem = new StatusBarItem
             {
                 Content = "Status content",
@@ -1136,7 +1131,6 @@ public class LayoutCompatibilityApiTests
             var hostPanel = new StackPanel();
             hostPanel.Children.Add(frame);
             hostPanel.Children.Add(groupBox);
-            hostPanel.Children.Add(label);
             hostPanel.Children.Add(statusBarItem);
             hostPanel.Children.Add(expander);
 
@@ -1159,11 +1153,6 @@ public class LayoutCompatibilityApiTests
             Assert.IsTrue(groupPresenters.Any(presenter => Equals(groupBox.Header, presenter.Content)));
             Assert.IsTrue(groupPresenters.Any(presenter => Equals(groupBox.Content, presenter.Content)));
 
-            var labelPresenter = FindVisualChild<ContentPresenterEx>(label)
-                ?? throw new AssertFailedException("Expected Label template to use ContentPresenterEx.");
-            Assert.AreEqual(label.Content, labelPresenter.Content);
-            Assert.AreSame(label.Foreground, labelPresenter.Foreground);
-
             var statusPresenter = FindVisualChild<ContentPresenterEx>(statusBarItem)
                 ?? throw new AssertFailedException("Expected StatusBarItem template to use ContentPresenterEx.");
             Assert.AreEqual(statusBarItem.Content, statusPresenter.Content);
@@ -1179,6 +1168,41 @@ public class LayoutCompatibilityApiTests
                     .OfType<ContentPresenterEx>()
                     .Any(presenter => Equals(expander.Header, presenter.Content)),
                 "Expected Expander header template to use ContentPresenterEx.");
+        });
+    }
+
+    [TestMethod]
+    public void LabelStyleUsesOfficialWpfFluentStyleSurface()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var defaultStyle = (Style)Application.Current.FindResource("DefaultLabelStyle");
+            var implicitStyle = (Style)Application.Current.FindResource(typeof(Label));
+            Assert.AreEqual(typeof(Label), defaultStyle.TargetType);
+            Assert.AreEqual(typeof(Label), implicitStyle.TargetType);
+            Assert.AreSame(defaultStyle, implicitStyle.BasedOn);
+            Assert.IsFalse(defaultStyle.Setters.OfType<Setter>().Any(item => item.Property == Control.TemplateProperty));
+            Assert.IsFalse(defaultStyle.Setters.OfType<Setter>().Any(item => item.Property == Control.OverridesDefaultStyleProperty));
+
+            var label = new Label
+            {
+                Width = 160,
+                Height = 40,
+                Content = "_Label content"
+            };
+
+            using var host = new TestWindowHost(label, width: 200, height: 80);
+            host.UpdateLayout();
+
+            Assert.AreEqual(new Thickness(0, 0, 0, 4), label.Padding);
+            Assert.IsFalse(label.Focusable);
+            Assert.IsTrue(label.SnapsToDevicePixels);
+            Assert.IsFalse(label.OverridesDefaultStyle);
+            Assert.AreSame(label.TryFindResource("LabelForeground"), label.Foreground);
+            Assert.IsNull(FindVisualChild<ContentPresenterEx>(label));
+            Assert.IsNull(FindVisualChild<ModernContentControlEx>(label));
         });
     }
 
