@@ -27,9 +27,18 @@ namespace ModernWpf.Controls
 
         void SetOverflowStyleParams(bool hasIcons, bool hasToggleButtons, bool hasKeyboardAcceleratorText);
 
+        void SetInputMode(AppBarButtonInputMode inputMode);
+
         double GetKeyboardAcceleratorTextDesiredWidth();
 
         void UpdateTemplateSettings(double maxKeyboardAcceleratorTextWidth);
+    }
+
+    internal enum AppBarButtonInputMode
+    {
+        Default,
+        Touch,
+        GameController
     }
 
     internal static class AppBarElementProperties
@@ -296,7 +305,10 @@ namespace ModernWpf.Controls
 
         #endregion
 
-        internal static void UpdateOverflowStyleParams(IEnumerable commands, bool useOverflowStyle)
+        internal static void UpdateOverflowStyleParams(
+            IEnumerable commands,
+            bool useOverflowStyle,
+            AppBarButtonInputMode inputMode = AppBarButtonInputMode.Default)
         {
             if (!useOverflowStyle)
             {
@@ -310,6 +322,7 @@ namespace ModernWpf.Controls
                     if (command is IAppBarButtonElement appBarElement)
                     {
                         appBarElement.SetOverflowStyleParams(false, false, false);
+                        appBarElement.SetInputMode(AppBarButtonInputMode.Default);
                         appBarElement.UpdateTemplateSettings(0);
                     }
                 }
@@ -357,6 +370,7 @@ namespace ModernWpf.Controls
                         hasAppBarIcons,
                         hasAppBarToggleButtons,
                         hasAppBarAcceleratorText);
+                    appBarElement.SetInputMode(inputMode);
                     appBarElement.UpdateTemplateSettings(maxAppBarKeyboardAcceleratorTextWidth);
                 }
             }

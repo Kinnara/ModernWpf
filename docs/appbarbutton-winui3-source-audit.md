@@ -42,13 +42,13 @@ platform services that do not exist in WPF.
 | `AppBarButton::OnClick` calls `CommandBar::OnCommandExecutionStatic` only when there is no associated flyout, then invokes the base click path and opens the associated flyout. | Matched. WPF tests cover command execution close, flyout preservation, click-open, automation expand, and automation collapse. |
 | `AppBarToggleButton::OnClick` always routes through `CommandBar::OnCommandExecutionStatic` before the base toggle click. | Matched. WPF tests cover close behavior, command execution, and toggle state. |
 | `AppBarButtonHelpers::OnPropertyChanged` updates internal styles and visual states for `IsCompact`, `UseOverflowStyle`, and `LabelPosition`. | Matched through WPF dependency-property callbacks, `SetDefaultLabelPosition`, `UpdateApplicationViewState`, width coercion, tooltip coercion, and visual-state refresh. |
-| `SetOverflowStyleParams` records peer icon/toggle/keyboard-accelerator presence and refreshes visual states. | Matched for `CommandBarOverflowPanel` and `CommandBarFlyoutOverflowPanel`, including shared keyboard-accelerator text width. |
+| `SetOverflowStyleParams` records peer icon/toggle/keyboard-accelerator presence and refreshes visual states. | Matched for `CommandBarOverflowPanel` and `CommandBarFlyoutOverflowPanel`, including shared keyboard-accelerator text width. Normal `CommandBar` also propagates the source overflow-open input mode so secondary commands enter `TouchInputMode` when overflow is opened by touch. |
 | `GetEffectiveLabelPosition` treats `LabelPosition=Collapsed` as collapsed and otherwise uses the propagated `CommandBarDefaultLabelPosition`. | Matched. Empty labels are treated as present where WinUI checks non-null `HSTRING`. |
 | `UpdateInternalStyles` applies the label-on-right auto-width adjustment only for right labels, non-overflow style, and no local `Width`. | Matched with WPF `WidthProperty` coercion so local widths remain authoritative. |
 | WinUI creates explicit AppBar automation peers with source class names, localized control-type strings, label-based name fallback, trimmed keyboard accelerator text, no template children, command-bar hosted keyboard focusability, AppBarButton expand/collapse, and AppBarToggleButton toggle routing through the owner. | Matched with WPF automation peers and tests. |
 | WinUI `AllowFocusOnInteraction` tests keep AppBar buttons keyboard-focusable while suppressing pointer-origin focus. | Matched with WPF mouse-origin focus cancellation and tests. |
 | `AppBarButtonHelpers::CloseSubMenusOnPointerEntered` closes peer overflow submenus on pointer entry, leaving the hovered AppBarButton submenu open and closing all peers for AppBarToggleButton. | Matched with WPF `MouseEnter` routing through `CommandBar.ClosePeerSubMenusOnPointerEntered`; peer `FlyoutBase` submenus are hidden for regular `CommandBar` and `CommandBarFlyoutCommandBar`. |
-| CommonStyles AppBar templates use setter-backed application-view, common, input-mode, keyboard-accelerator, chevron, and checked states. | Matched through `VisualStateEx.Setters` in WPF templates with tests for setter presence and active state effects. |
+| CommonStyles AppBar templates use setter-backed application-view, common, input-mode, keyboard-accelerator, chevron, and checked states. | Matched through `VisualStateEx.Setters` in WPF templates with tests for setter presence, active state effects, and source-style secondary-command touch input-mode propagation. |
 
 ## WPF Substitutions
 
@@ -60,9 +60,11 @@ platform services that do not exist in WPF.
   accelerator visibility from overflow state plus source-shaped peer
   `KeyboardAcceleratorTextOverride` presence.
 - WinUI `TextTrimming="Clip"` is not a WPF enum value.
-- WinUI touch and gamepad input-mode state selection is not wired to a WPF
-  platform input-mode service. The source visual states exist in templates and
-  can be selected, but automatic runtime selection remains a platform gap.
+- WinUI touch input-mode state selection is wired for normal `CommandBar`
+  overflow through a WPF touch/default input substitute. WinUI gamepad/remote
+  input-mode selection is still not wired because WPF has no equivalent
+  platform input-device service in this control path. CommandBarFlyout-specific
+  input-mode propagation remains a separate platform gap.
 - WinUI disabled `AllowFocusWhenDisabled` has no direct WPF equivalent here, so
   disabled AppBar controls remain non-keyboard-focusable.
 - Normal `CommandBar` no longer uses the old WPF `ToolBar` host. Its overflow
@@ -73,6 +75,7 @@ platform services that do not exist in WPF.
 ## Validation
 
 - `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --filter "FullyQualifiedName~CommandBarApiTests.AppBarOverflowPointerEnterClosesPeerSubMenusLikeWinUISource" --no-restore`
+- `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --filter "FullyQualifiedName~CommandBarApiTests.CommandBarSecondaryCommandsUseTouchInputModeWhenOpenedByTouchLikeWinUISource" --no-restore`
 - `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --filter "FullyQualifiedName~CommandBarApiTests" --no-restore`
 - `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --filter "FullyQualifiedName~CommandBarFlyoutApiTests" --no-restore`
 - `dotnet build .\ModernWpf.Controls\ModernWpf.Controls.csproj --no-restore -m:1`

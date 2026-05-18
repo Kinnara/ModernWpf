@@ -73,7 +73,10 @@ public class CommandBarApiTests
     {
         WpfTestHost.Run(() =>
         {
-            var commandBar = new ModernWpf.Controls.CommandBar();
+            var commandBar = new ModernWpf.Controls.CommandBar
+            {
+                IsDynamicOverflowEnabled = false
+            };
             var primary = new AppBarButton();
             var secondary = new AppBarButton();
 
@@ -515,6 +518,83 @@ public class CommandBarApiTests
             Assert.IsFalse(commandBar.IsOpen);
             Assert.AreEqual(true, toggleButton.IsChecked);
             Assert.AreEqual(1, command.ExecuteCount);
+        });
+    }
+
+    [TestMethod]
+    public void CommandBarSecondaryCommandsUseTouchInputModeWhenOpenedByTouchLikeWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var primaryButton = new AppBarButton { Label = "Primary" };
+            var primaryToggleButton = new AppBarToggleButton { Label = "Primary toggle" };
+            var secondaryButton = new AppBarButton { Label = "Secondary" };
+            var secondaryToggleButton = new AppBarToggleButton { Label = "Secondary toggle" };
+            var commandBar = new ModernWpf.Controls.CommandBar
+            {
+                IsDynamicOverflowEnabled = false
+            };
+            commandBar.PrimaryCommands.Add(primaryButton);
+            commandBar.PrimaryCommands.Add(primaryToggleButton);
+            commandBar.SecondaryCommands.Add(secondaryButton);
+            commandBar.SecondaryCommands.Add(secondaryToggleButton);
+
+            using var host = new TestWindowHost(commandBar, width: 320, height: 180);
+            host.UpdateLayout();
+
+            commandBar.SetLastInputModeForTesting(AppBarButtonInputMode.Touch);
+            commandBar.IsOpen = true;
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            var primaryButtonRoot = FindTemplateChild<Border>(primaryButton, "Root");
+            var primaryToggleRoot = FindTemplateChild<Border>(primaryToggleButton, "Root");
+            var secondaryButtonRoot = FindTemplateChild<Border>(secondaryButton, "Root");
+            var secondaryToggleRoot = FindTemplateChild<Border>(secondaryToggleButton, "Root");
+
+            AssertVisualState(primaryButtonRoot, "InputModeStates", "InputModeDefault");
+            AssertVisualState(primaryToggleRoot, "InputModeStates", "InputModeDefault");
+            AssertVisualState(secondaryButtonRoot, "InputModeStates", "TouchInputMode");
+            AssertVisualState(secondaryToggleRoot, "InputModeStates", "TouchInputMode");
+
+            commandBar.SecondaryCommands.Remove(secondaryToggleButton);
+            commandBar.PrimaryCommands.Add(secondaryToggleButton);
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            secondaryButtonRoot = FindTemplateChild<Border>(secondaryButton, "Root");
+            secondaryToggleRoot = FindTemplateChild<Border>(secondaryToggleButton, "Root");
+
+            Assert.IsFalse(secondaryToggleButton.IsInOverflow);
+            AssertVisualState(secondaryButtonRoot, "InputModeStates", "TouchInputMode");
+            AssertVisualState(secondaryToggleRoot, "InputModeStates", "InputModeDefault");
+
+            commandBar.PrimaryCommands.Remove(primaryButton);
+            commandBar.PrimaryCommands.Remove(primaryToggleButton);
+            commandBar.SecondaryCommands.Add(primaryButton);
+            commandBar.SecondaryCommands.Add(primaryToggleButton);
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            primaryButtonRoot = FindTemplateChild<Border>(primaryButton, "Root");
+            primaryToggleRoot = FindTemplateChild<Border>(primaryToggleButton, "Root");
+
+            AssertVisualState(primaryButtonRoot, "InputModeStates", "TouchInputMode");
+            AssertVisualState(primaryToggleRoot, "InputModeStates", "TouchInputMode");
+
+            commandBar.IsOpen = false;
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            primaryButtonRoot = FindTemplateChild<Border>(primaryButton, "Root");
+            primaryToggleRoot = FindTemplateChild<Border>(primaryToggleButton, "Root");
+            secondaryButtonRoot = FindTemplateChild<Border>(secondaryButton, "Root");
+
+            AssertVisualState(primaryButtonRoot, "InputModeStates", "InputModeDefault");
+            AssertVisualState(primaryToggleRoot, "InputModeStates", "InputModeDefault");
+            AssertVisualState(secondaryButtonRoot, "InputModeStates", "InputModeDefault");
         });
     }
 

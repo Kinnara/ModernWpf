@@ -11,6 +11,8 @@ namespace ModernWpf.Controls.Primitives
             Loaded += OnLoaded;
         }
 
+        internal CommandBar OwnerCommandBar { get; set; }
+
         internal bool HasToggleButton { get; private set; }
 
         internal bool HasMenuIcon { get; private set; }
@@ -132,7 +134,10 @@ namespace ModernWpf.Controls.Primitives
             HasToggleButton = hasToggleButton;
             HasMenuIcon = hasMenuIcon;
 
-            AppBarElementProperties.UpdateOverflowStyleParams(children, true);
+            AppBarElementProperties.UpdateOverflowStyleParams(
+                children,
+                true,
+                OwnerCommandBar?.GetInputModeForOverflowCommands() ?? AppBarButtonInputMode.Default);
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)

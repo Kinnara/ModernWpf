@@ -39,6 +39,7 @@ available-command visual states directly.
 | Auto overflow-button visibility accounts for secondary commands and visible bottom-label primary commands. | Matched through `CommandBarTemplateSettings.EffectiveOverflowButtonVisibility` and focused tests. |
 | Overflow presenter open-up/down display states are driven from popup placement. | Matched with WPF popup geometry, reusing the existing `CommandBarOverflowPresenter` visual states. |
 | Command execution closes the parent command bar and visibility/property changes refresh command-bar state. | Matched through parent ownership tracking and `AppBarElementProperties` callbacks. |
+| `CommandBar::UpdateInputDeviceTypeUsedToOpen` captures the input device used to open overflow and applies that input mode to secondary AppBar commands while primary commands remain in `InputModeDefault`. | Matched for WPF touch/default input with `CommandBar` input-mode tracking, `CommandBarOverflowPanel` owner propagation, and focused tests that move commands between primary and secondary collections while overflow is open. |
 
 ## WPF Substitutions
 
@@ -55,8 +56,10 @@ available-command visual states directly.
 - WPF popup placement does not expose WinUI `Popup.ActualPlacement`, so
   `CommandBarOverflowPresenter` derives open-up/down state from measured popup
   position.
-- Theme shadow, root-bounds, touch/gamepad input mode, and WinRT automation
+- Theme shadow, root-bounds, gamepad/remote input mode, and WinRT automation
   details remain platform substitutions shared with the CommandBarFlyout port.
+  WPF touch input is mapped to WinUI's overflow `TouchInputMode`; WPF has no
+  equivalent gamepad/remote input-device service in this control path.
 
 ## Current Validation
 
@@ -70,6 +73,7 @@ dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --no-resto
 dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --no-restore --filter FullyQualifiedName~SyncMatrixTests
 ```
 
-Latest verified result on 2026-05-17: CommandBar API tests passed 30/30,
-CommandBarFlyout API tests passed 20/20, TemplateParityTests passed 16/16,
-and SyncMatrixTests passed 1/1.
+Latest verified result on 2026-05-18: the combined
+`CommandBarApiTests`, `CommandBarFlyoutApiTests`, and `TemplateParityTests`
+filter passed 67/67. `dotnet build ModernWpf.sln --no-restore` passed with
+existing warnings, and `git diff --check` passed with line-ending warnings only.

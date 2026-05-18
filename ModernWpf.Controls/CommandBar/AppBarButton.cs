@@ -613,6 +613,18 @@ namespace ModernWpf.Controls
         private void UpdateInputModeState(bool useTransitions = true)
         {
             VisualStateManager.GoToState(this, "InputModeDefault", useTransitions);
+
+            string stateName = m_inputMode switch
+            {
+                AppBarButtonInputMode.Touch => "TouchInputMode",
+                AppBarButtonInputMode.GameController => "GameControllerInputMode",
+                _ => null
+            };
+
+            if (stateName != null)
+            {
+                VisualStateManager.GoToState(this, stateName, useTransitions);
+            }
         }
 
         private void UpdateFlyoutState(bool useTransitions = true)
@@ -654,6 +666,20 @@ namespace ModernWpf.Controls
         void IAppBarButtonElement.SetOverflowStyleParams(bool hasIcons, bool hasToggleButtons, bool hasKeyboardAcceleratorText)
         {
             SetOverflowStyleParams(hasIcons, hasToggleButtons, hasKeyboardAcceleratorText);
+        }
+
+        private void SetInputMode(AppBarButtonInputMode inputMode)
+        {
+            if (m_inputMode != inputMode)
+            {
+                m_inputMode = inputMode;
+                UpdateInputModeState();
+            }
+        }
+
+        void IAppBarButtonElement.SetInputMode(AppBarButtonInputMode inputMode)
+        {
+            SetInputMode(inputMode);
         }
 
         private void SetDefaultLabelPosition(CommandBarDefaultLabelPosition defaultLabelPosition)
@@ -727,6 +753,7 @@ namespace ModernWpf.Controls
         private bool m_isWithToggleButtons;
         private bool m_isWithKeyboardAcceleratorText;
         private bool m_isPointerFocusSuppressed;
+        private AppBarButtonInputMode m_inputMode;
         private double m_maxKeyboardAcceleratorTextWidth;
         private CommandBarDefaultLabelPosition m_defaultLabelPosition = CommandBarDefaultLabelPosition.Bottom;
     }

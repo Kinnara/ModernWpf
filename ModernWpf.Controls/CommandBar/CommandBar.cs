@@ -114,6 +114,16 @@ namespace ModernWpf.Controls
 
         private void OnIsOpenChanged(bool isOpen)
         {
+            if (isOpen)
+            {
+                UpdateInputDeviceTypeUsedToOpen();
+            }
+            else
+            {
+                m_inputModeUsedToOpen = AppBarButtonInputMode.Default;
+            }
+
+            UpdateCommandOverflowStyleParams();
             UpdateTemplateSettings();
             UpdateOverflowPresenterVisualState(true);
 
@@ -327,6 +337,28 @@ namespace ModernWpf.Controls
             base.OnKeyDown(e);
         }
 
+        protected override void OnPreviewKeyDown(KeyEventArgs e)
+        {
+            m_lastInputMode = AppBarButtonInputMode.Default;
+            base.OnPreviewKeyDown(e);
+        }
+
+        protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
+        {
+            if (e.StylusDevice == null)
+            {
+                m_lastInputMode = AppBarButtonInputMode.Default;
+            }
+
+            base.OnPreviewMouseDown(e);
+        }
+
+        protected override void OnPreviewTouchDown(TouchEventArgs e)
+        {
+            m_lastInputMode = AppBarButtonInputMode.Touch;
+            base.OnPreviewTouchDown(e);
+        }
+
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             ApplyDynamicOverflow(ActualWidth);
@@ -346,6 +378,12 @@ namespace ModernWpf.Controls
                 m_moreButton.ClearValue(ToolTipProperty);
             }
 
+            if (m_secondaryItemsPanel is CommandBarOverflowPanel overflowPanel &&
+                ReferenceEquals(overflowPanel.OwnerCommandBar, this))
+            {
+                overflowPanel.OwnerCommandBar = null;
+            }
+
             if (m_overflowPopup != null)
             {
                 m_overflowPopup.ClearValue(Popup.CustomPopupPlacementCallbackProperty);
@@ -359,6 +397,11 @@ namespace ModernWpf.Controls
         {
             ClearPanelChildren(m_primaryItemsPanel);
             ClearPanelChildren(m_secondaryItemsPanel);
+
+            if (m_secondaryItemsPanel is CommandBarOverflowPanel overflowPanel)
+            {
+                overflowPanel.OwnerCommandBar = this;
+            }
 
             AddCommandsToPanel(m_primaryItemsPanel, m_dynamicPrimaryCommands);
             AddCommandsToPanel(m_secondaryItemsPanel, m_dynamicSecondaryCommands);
@@ -380,6 +423,13 @@ namespace ModernWpf.Controls
                 {
                     AppBarElementProperties.SetUseOverflowStyle(dependencyObject, false);
                     dependencyObject.ClearValue(AppBarElementProperties.DefaultLabelPositionProperty);
+                }
+
+                if (child is IAppBarButtonElement appBarButtonElement)
+                {
+                    appBarButtonElement.SetOverflowStyleParams(false, false, false);
+                    appBarButtonElement.SetInputMode(AppBarButtonInputMode.Default);
+                    appBarButtonElement.UpdateTemplateSettings(0);
                 }
             }
 
@@ -629,7 +679,25 @@ namespace ModernWpf.Controls
         private void UpdateCommandOverflowStyleParams()
         {
             AppBarElementProperties.UpdateOverflowStyleParams(m_dynamicPrimaryCommands, false);
-            AppBarElementProperties.UpdateOverflowStyleParams(m_dynamicSecondaryCommands, true);
+            AppBarElementProperties.UpdateOverflowStyleParams(
+                m_dynamicSecondaryCommands,
+                true,
+                IsOpen ? m_inputModeUsedToOpen : AppBarButtonInputMode.Default);
+        }
+
+        internal void SetLastInputModeForTesting(AppBarButtonInputMode inputMode)
+        {
+            m_lastInputMode = inputMode;
+        }
+
+        internal AppBarButtonInputMode GetInputModeForOverflowCommands()
+        {
+            return IsOpen ? m_inputModeUsedToOpen : AppBarButtonInputMode.Default;
+        }
+
+        private void UpdateInputDeviceTypeUsedToOpen()
+        {
+            m_inputModeUsedToOpen = m_lastInputMode;
         }
 
         private void PropagateDefaultLabelPosition()
@@ -879,6 +947,8 @@ namespace ModernWpf.Controls
         private Popup m_overflowPopup;
         private FrameworkElement m_overflowContentRoot;
         private AppBarSeparator m_overflowSeparator;
+        private AppBarButtonInputMode m_lastInputMode;
+        private AppBarButtonInputMode m_inputModeUsedToOpen;
         private bool m_isApplyingDynamicOverflow;
 
         private static readonly Size InfiniteSize = new(double.PositiveInfinity, double.PositiveInfinity);
