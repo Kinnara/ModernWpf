@@ -1652,6 +1652,11 @@
     <Thickness x:Key="SplitViewRightBorderThemeThickness">1,0,0,0</Thickness>
     <m:StaticResource x:Key="SplitViewLightDismissOverlayBackground" ResourceKey="SystemControlPageBackgroundMediumAltMediumBrush" />
 
+    <!-- Resources for StatusBarItem -->
+    <m:StaticResource x:Key="StatusBarItemBackground" ResourceKey="SystemControlTransparentBrush" />
+    <m:StaticResource x:Key="StatusBarItemBackgroundDisabled" ResourceKey="ControlFillColorDisabledBrush" />
+    <m:StaticResource x:Key="StatusBarItemForegroundDisabled" ResourceKey="TextFillColorDisabledBrush" />
+
     <!-- Resources for TabView -->
     <m:StaticResource x:Key="TabViewBackground"                                       ResourceKey="SubtleFillColorTransparentBrush" />
     <m:StaticResource x:Key="TabViewItemHeaderBackground"                             ResourceKey="LayerOnMicaBaseAltFillColorTransparentBrush" />

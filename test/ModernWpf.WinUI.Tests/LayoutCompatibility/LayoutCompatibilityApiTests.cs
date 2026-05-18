@@ -1109,11 +1109,6 @@ public class LayoutCompatibilityApiTests
                 Foreground = Brushes.Red
             };
             var frame = new ModernWpf.Controls.Frame();
-            var statusBarItem = new StatusBarItem
-            {
-                Content = "Status content",
-                Foreground = Brushes.Orange
-            };
             var expander = new System.Windows.Controls.Expander
             {
                 Header = "Expander header",
@@ -1124,7 +1119,6 @@ public class LayoutCompatibilityApiTests
 
             var hostPanel = new StackPanel();
             hostPanel.Children.Add(frame);
-            hostPanel.Children.Add(statusBarItem);
             hostPanel.Children.Add(expander);
 
             using var pageHost = new TestWindowHost(page, width: 240, height: 120);
@@ -1140,11 +1134,6 @@ public class LayoutCompatibilityApiTests
             Assert.IsInstanceOfType(FindTemplateChild<ContentPresenterEx>(frame, "FirstContentPresenter"), typeof(ContentPresenterEx));
             Assert.IsInstanceOfType(FindTemplateChild<ContentPresenterEx>(frame, "SecondContentPresenter"), typeof(ContentPresenterEx));
 
-            var statusPresenter = FindVisualChild<ContentPresenterEx>(statusBarItem)
-                ?? throw new AssertFailedException("Expected StatusBarItem template to use ContentPresenterEx.");
-            Assert.AreEqual(statusBarItem.Content, statusPresenter.Content);
-            Assert.AreSame(statusBarItem.Foreground, statusPresenter.Foreground);
-
             var expandSite = FindTemplateChild<ContentPresenterEx>(expander, "ExpandSite");
             Assert.AreEqual(expander.Content, expandSite.Content);
             Assert.AreSame(expander.Foreground, expandSite.Foreground);
@@ -1155,6 +1144,50 @@ public class LayoutCompatibilityApiTests
                     .OfType<ContentPresenterEx>()
                     .Any(presenter => Equals(expander.Header, presenter.Content)),
                 "Expected Expander header template to use ContentPresenterEx.");
+        });
+    }
+
+    [TestMethod]
+    public void StatusBarTemplateUsesOfficialWpfFluentPresenterShape()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var statusBar = new StatusBar();
+            var statusBarItem = new StatusBarItem
+            {
+                Content = "Status content"
+            };
+            statusBar.Items.Add(statusBarItem);
+
+            using var host = new TestWindowHost(statusBar, width: 260, height: 80);
+            host.UpdateLayout();
+
+            Assert.AreSame(statusBarItem.TryFindResource("StatusBarItemBackground"), statusBarItem.Background);
+            Assert.AreEqual((Thickness)statusBarItem.TryFindResource("StatusBarItemPadding"), statusBarItem.Padding);
+            Assert.AreEqual(HorizontalAlignment.Left, statusBarItem.HorizontalContentAlignment);
+            Assert.AreEqual(VerticalAlignment.Center, statusBarItem.VerticalContentAlignment);
+
+            var border = FindVisualChild<Border>(statusBarItem)
+                ?? throw new AssertFailedException("Expected StatusBarItem template to use official WPF Border chrome.");
+            var presenter = VisualTreeTestHelper.EnumerateDescendants(statusBarItem)
+                .OfType<ContentPresenter>()
+                .Single(item => Equals(item.Content, statusBarItem.Content));
+
+            Assert.AreEqual(typeof(ContentPresenter), presenter.GetType());
+            Assert.AreEqual(HorizontalAlignment.Left, presenter.HorizontalAlignment);
+            Assert.AreEqual(VerticalAlignment.Center, presenter.VerticalAlignment);
+            Assert.AreSame(statusBarItem.Background, border.Background);
+            Assert.AreEqual(statusBarItem.Padding, border.Padding);
+            Assert.IsNull(FindVisualChild<ContentPresenterEx>(statusBarItem));
+            Assert.IsNull(FindVisualChild<ModernContentControlEx>(statusBarItem));
+
+            statusBarItem.IsEnabled = false;
+            host.UpdateLayout();
+
+            Assert.AreSame(statusBarItem.TryFindResource("StatusBarItemBackgroundDisabled"), statusBarItem.Background);
+            Assert.AreSame(statusBarItem.TryFindResource("StatusBarItemForegroundDisabled"), statusBarItem.Foreground);
         });
     }
 

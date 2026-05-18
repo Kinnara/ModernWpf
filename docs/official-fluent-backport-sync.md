@@ -341,3 +341,35 @@ Source inspected:
 
 - `test\ModernWpf.WinUI.Tests\CommonStyles\GroupBoxVisualStateTests.cs` covers the official WPF Fluent GroupBox style setters, runtime values, WPF `Border` / plain `ContentPresenter` template shape, header text attached properties, access-key recognition, removal of `ContentPresenterEx`, and official theme aliases.
 - `test\ModernWpf.WinUI.Tests\LayoutCompatibility\LayoutCompatibilityApiTests.cs` covers the official WPF presenter shape for GroupBox in the broader layout compatibility suite.
+
+## 2026-05-18 Batch 12
+
+Source inspected:
+
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\StatusBar.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\StatusBarItem.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Light.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Dark.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\HC.xaml`
+
+### Synced Values
+
+| Resource key / style | Official WPF Fluent value | ModernWpf value after sync | Reason |
+| --- | --- | --- | --- |
+| `DefaultStatusBarStyle` / implicit `StatusBar` style | Official implicit `StatusBar` style with foreground/background color resources, `ControlElevationBorderBrush`, `BorderThickness=1`, `Padding=12`, and `Margin=0` | Same setter surface under the existing `DefaultStatusBarStyle` key with the implicit style based on it | `StatusBar` is a stock WPF control, so official WPF Fluent is the primary source. |
+| `StatusBar.SeparatorStyleKey` | Separator style with transparent background, `ControlElevationBorderBrush`, `Margin=6,0`, `BorderThickness=1,1,0,0`, and override-default-style `Border` template | Same structure | Replaces the old thin foreground-brush separator guess. |
+| `DefaultStatusBarItemStyle` | `StatusBarItem` style with `Padding={DynamicResource StatusBarItemPadding}`, transparent background alias, left/center content alignment, WPF `ContentPresenter`, and disabled foreground/background triggers | Same structure under the existing resource key | Removes the previous `ContentPresenterEx` template path for the stock WPF control. |
+| `StatusBarItemPadding` | `4` | Same | Restores the official item padding metric. |
+| `StatusBarItemBackground` / `StatusBarItemBackgroundDisabled` / `StatusBarItemForegroundDisabled` | Official theme aliases for StatusBarItem chrome and disabled text | Same aliases across Light, Dark, and HighContrast | Required by the official WPF Fluent template shape. |
+
+### Intentional Differences
+
+| Resource key / style | Official WPF Fluent value | ModernWpf backport value | Reason retained |
+| --- | --- | --- | --- |
+| StatusBar style key | Implicit-only style | Existing `DefaultStatusBarStyle` key plus implicit style based on it | Keeps ModernWpf resource lookup stable while using the official setter surface. |
+| StatusBarItem theme aliases | Dedicated brush resources in official WPF Fluent | `m:StaticResource` aliases to ModernWpf's existing Fluent brush tokens | Keeps ModernWpf's existing theme-resource alias model while exposing the official keys. |
+
+### Test Evidence
+
+- `test\ModernWpf.WinUI.Tests\CommonStyles\StatusBarVisualStateTests.cs` covers the official WPF Fluent StatusBar setter shape, separator style, StatusBarItem setters, runtime values, disabled trigger resources, plain WPF presenter slot, deletion of `ContentPresenterEx`, and official theme aliases.
+- `test\ModernWpf.WinUI.Tests\LayoutCompatibility\LayoutCompatibilityApiTests.cs` covers the official WPF presenter shape for StatusBarItem in the broader layout compatibility suite.
