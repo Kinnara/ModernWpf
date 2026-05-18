@@ -60,6 +60,8 @@ Raw WPF `DropShadowEffect` is now guarded as an official WPF Fluent stock-contro
 
 `ThemeShadowChrome.ThemeShadowRenderer.GetRenderMetrics` exposes an internal bitmap-profile probe for the WPF software renderer. It renders the same alpha-mask path used by `DrawShadow` and reports bitmap size, content offset, non-zero alpha bounds, non-zero pixel count, peak alpha, and alpha centroid. The test suite pins depth `16` and `64` profiles so future renderer changes can be compared against stable WPF output before they are compared against a WinUI reference capture.
 
+`LayoutCompatibilityApiTests.ThemeShadowChromeRendersHollowCenteredVisualShadow` also renders an actual `ThemeShadowChrome` instance through WPF `RenderTargetBitmap` and samples the center and outer shadow pixels. This guards the visual-tree integration path used by templates: the transparent caster center must remain white after the hollow-center mask, while the surrounding pixels must still show the rendered shadow.
+
 The current WPF baseline for an `80x40` DIP content rect with `CornerRadius=8` at `96` DPI is:
 
 | Case | Bitmap | Content offset | Non-zero alpha bounds | Peak alpha | Non-zero pixels | Alpha centroid |

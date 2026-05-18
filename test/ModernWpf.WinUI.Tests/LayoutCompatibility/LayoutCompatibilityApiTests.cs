@@ -294,6 +294,43 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
+    public void ThemeShadowChromeRendersHollowCenteredVisualShadow()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var chrome = new ThemeShadowChrome
+            {
+                Width = 50,
+                Height = 50,
+                Depth = 32,
+                CornerRadius = new CornerRadius(4),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                Margin = new Thickness(16, 8, 0, 0),
+                Child = new Border
+                {
+                    Background = Brushes.Transparent
+                }
+            };
+            var root = new Grid
+            {
+                Width = 90,
+                Height = 90,
+                Background = Brushes.White
+            };
+            root.Children.Add(chrome);
+
+            var center = RenderElementPixel(root, 41, 33, 90, 90);
+            var lowerShadow = RenderElementPixel(root, 41, 63, 90, 90);
+            var rightShadow = RenderElementPixel(root, 75, 33, 90, 90);
+
+            Assert.IsTrue(center.R >= 250 && center.G >= 250 && center.B >= 250 && center.A == 255, $"Expected hollow shadow center to leave the transparent child area white. Pixel={center}");
+            Assert.IsTrue(lowerShadow.R < center.R - 4 && lowerShadow.A == 255, $"Expected rendered shadow below the caster. Pixel={lowerShadow}");
+            Assert.IsTrue(rightShadow.R < center.R && rightShadow.A == 255, $"Expected rendered shadow beside the caster. Pixel={rightShadow}");
+        });
+    }
+
+    [TestMethod]
     public void ExistingPopupTemplatesUseWinUIWindowedPopupInsets()
     {
         WpfTestHost.Run(() =>
