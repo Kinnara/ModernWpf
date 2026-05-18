@@ -1104,17 +1104,9 @@ public class LayoutCompatibilityApiTests
                 Foreground = Brushes.Red
             };
             var frame = new ModernWpf.Controls.Frame();
-            var expander = new System.Windows.Controls.Expander
-            {
-                Header = "Expander header",
-                Content = "Expander content",
-                Foreground = Brushes.Purple,
-                IsExpanded = true
-            };
 
             var hostPanel = new StackPanel();
             hostPanel.Children.Add(frame);
-            hostPanel.Children.Add(expander);
 
             using var pageHost = new TestWindowHost(page, width: 240, height: 120);
             using var host = new TestWindowHost(hostPanel, width: 360, height: 320);
@@ -1128,17 +1120,39 @@ public class LayoutCompatibilityApiTests
 
             Assert.IsInstanceOfType(FindTemplateChild<ContentPresenterEx>(frame, "FirstContentPresenter"), typeof(ContentPresenterEx));
             Assert.IsInstanceOfType(FindTemplateChild<ContentPresenterEx>(frame, "SecondContentPresenter"), typeof(ContentPresenterEx));
+        });
+    }
 
-            var expandSite = FindTemplateChild<ContentPresenterEx>(expander, "ExpandSite");
-            Assert.AreEqual(expander.Content, expandSite.Content);
-            Assert.AreSame(expander.Foreground, expandSite.Foreground);
+    [TestMethod]
+    public void ExpanderTemplateUsesOfficialWpfFluentPresenterShape()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var expander = new System.Windows.Controls.Expander
+            {
+                Header = "Expander header",
+                Content = "Expander content",
+                Foreground = Brushes.Purple,
+                IsExpanded = true
+            };
+
+            using var host = new TestWindowHost(expander, width: 360, height: 240);
+            host.UpdateLayout();
+
+            var contentPresenter = FindTemplateChild<ContentPresenter>(expander, "ContentPresenter");
+            Assert.AreEqual(typeof(ContentPresenter), contentPresenter.GetType());
+            Assert.AreEqual(expander.Content, contentPresenter.Content);
 
             var headerSite = FindTemplateChild<ToggleButton>(expander, "HeaderSite");
-            Assert.IsTrue(
-                VisualTreeTestHelper.EnumerateDescendants(headerSite)
-                    .OfType<ContentPresenterEx>()
-                    .Any(presenter => Equals(expander.Header, presenter.Content)),
-                "Expected Expander header template to use ContentPresenterEx.");
+            headerSite.ApplyTemplate();
+
+            var headerPresenter = FindTemplateChild<ContentPresenter>(headerSite, "ContentPresenter");
+            Assert.AreEqual(typeof(ContentPresenter), headerPresenter.GetType());
+            Assert.AreEqual(expander.Header, headerPresenter.Content);
+
+            Assert.IsNull(FindVisualChild<ContentPresenterEx>(expander));
         });
     }
 

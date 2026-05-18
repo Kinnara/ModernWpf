@@ -783,3 +783,37 @@ Source inspected:
 - `test\ModernWpf.WinUI.Tests\CommonStyles\DatePickerVisualStateTests.cs` covers the official WPF Fluent DatePicker setter surface, trigger shape, popup Calendar style, context menu resource, corner-radius substitution, and absence of `VisualStateEx`.
 - `test\ModernWpf.WinUI.Tests\LayoutCompatibility\LayoutCompatibilityApiTests.cs` covers the official WPF Calendar navigation button presenter shape.
 - `test\ModernWpf.WinUI.Tests\TemplateParityTests.cs` classifies `Calendar.xaml` and `DatePicker.xaml` as official WPF Fluent stock template files that should not use `VisualStateEx`.
+
+## 2026-05-18 Batch 26
+
+Source inspected:
+
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\Expander.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Controls\AnimationFactorToValueConverter.cs`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Light.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Dark.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\HC.xaml`
+
+### Synced Values
+
+| Resource key / style | Official WPF Fluent value | ModernWpf value after sync | Reason |
+| --- | --- | --- | --- |
+| `DefaultExpanderToggleButtonDownStyle`, `DefaultExpanderToggleButtonUpStyle`, `DefaultExpanderToggleButtonLeftStyle`, `DefaultExpanderToggleButtonRightStyle` | Official stock WPF header templates with WPF `ContentPresenter`, text chevron glyphs, and WPF trigger/storyboard behavior | Same source shape with older-target namespace substitutions | `Expander` is a stock WPF control, so official WPF Fluent is the primary source. |
+| `DefaultExpanderStyle` / implicit stock `Expander` style | Official stock WPF template with `ToggleButtonBorder`, `HeaderSite`, `ContentPresenterGrid`, `ContentPresenterBorder`, WPF `ControlTemplate.Triggers`, and collapse animation storyboards | Same source shape under the retained `DefaultExpanderStyle` key | Deletes the previous WinUI-shaped `VisualStateEx`, `ToggleButtonHelper`, `ContentPresenterEx`, and `FontIconFallback` guesses from the stock Expander path. |
+| `ExpanderPadding`, `ExpanderBorderThemeThickness`, `ExpanderChevronSize`, and chevron glyph resources | Official style-local values | Same values in `Styles\Expander.xaml` | Required by the copied official templates. |
+| High-contrast consumed aliases | Official `SystemColorWindowTextColorBrush` border and `SystemColorGrayTextColorBrush` disabled foreground/border | Same aliases in `HighContrast.xaml` | Aligns the active keys consumed by the official template. |
+
+### Intentional Differences
+
+| Resource key / style | Official WPF Fluent value | ModernWpf backport value | Reason retained |
+| --- | --- | --- | --- |
+| `system` namespace assembly | `System.Runtime` in `Expander.xaml` | `mscorlib` | Keeps copied resources compatible with ModernWpf's older target frameworks. |
+| Expander corner radius property | Official `Border.CornerRadius` attached setter/template binding | `primitives:ControlHelper.CornerRadius` | Older ModernWpf targets do not expose the official attached property surface. |
+| Animation factor converter namespace | `Fluent.Controls.AnimationFactorToValueConverter` | `ModernWpf.Controls.Primitives.AnimationFactorToValueConverter` | Keeps the copied style self-contained inside ModernWpf. |
+| Historical Expander resource aliases | Not consumed by official WPF Fluent `Expander.xaml` | Retained as unused public aliases | Avoids unnecessary resource-surface churn while the active stock Expander consumes official keys. |
+
+### Test Evidence
+
+- `test\ModernWpf.WinUI.Tests\Expander\ExpanderApiTests.cs` covers the official WPF Fluent Expander style, template parts, direction triggers, collapse animation, high-contrast aliases, and WPF automation visibility.
+- `test\ModernWpf.WinUI.Tests\LayoutCompatibility\LayoutCompatibilityApiTests.cs` covers the official WPF Expander presenter shape.
+- `test\ModernWpf.WinUI.Tests\TemplateParityTests.cs` classifies `Expander.xaml` as an official WPF Fluent stock template file that should not use `VisualStateEx` or `ContentPresenterEx`.

@@ -928,11 +928,11 @@
     <m:StaticResource x:Key="ExpanderHeaderForeground" ResourceKey="SystemColorButtonTextColorBrush" />
     <m:StaticResource x:Key="ExpanderHeaderForegroundPointerOver" ResourceKey="SystemColorHighlightColorBrush" />
     <m:StaticResource x:Key="ExpanderHeaderForegroundPressed" ResourceKey="SystemColorHighlightColorBrush" />
-    <m:StaticResource x:Key="ExpanderHeaderBorderBrush" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="ExpanderHeaderBorderBrush" ResourceKey="SystemColorWindowTextColorBrush" />
     <m:StaticResource x:Key="ExpanderHeaderBorderPointerOverBrush" ResourceKey="SystemColorHighlightColorBrush" />
     <m:StaticResource x:Key="ExpanderHeaderBorderPressedBrush" ResourceKey="SystemColorHighlightColorBrush" />
-    <m:StaticResource x:Key="ExpanderHeaderDisabledForeground" ResourceKey="TextFillColorDisabledBrush" />
-    <m:StaticResource x:Key="ExpanderHeaderDisabledBorderBrush" ResourceKey="TextFillColorDisabledBrush" />
+    <m:StaticResource x:Key="ExpanderHeaderDisabledForeground" ResourceKey="SystemColorGrayTextColorBrush" />
+    <m:StaticResource x:Key="ExpanderHeaderDisabledBorderBrush" ResourceKey="SystemColorGrayTextColorBrush" />
     <Thickness x:Key="ExpanderHeaderBorderThickness">2</Thickness>
     <m:StaticResource x:Key="ExpanderChevronBackground" ResourceKey="SystemColorButtonFaceColorBrush" />
     <m:StaticResource x:Key="ExpanderChevronPointerOverBackground" ResourceKey="SystemControlTransparentBrush" />

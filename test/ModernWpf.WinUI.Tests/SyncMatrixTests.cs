@@ -44,7 +44,7 @@ public class SyncMatrixTests
         AssertControlStatus(matrix, "MenuBar", "Source-backed WPF port");
         AssertControlStatus(matrix, "NavigationView", "Source-backed WPF port");
         AssertControlStatus(matrix, "Repeater / ItemsRepeater layouts", "Source-backed WPF port");
-        AssertControlStatus(matrix, "Expander", "Source-backed WPF platform mapping");
+        AssertControlStatus(matrix, "Expander", "Official WPF Fluent-backed stock control");
     }
 
     public TestContext? TestContext { get; set; }

@@ -83,7 +83,6 @@ public class TemplateParityTests
             Path.Combine("ModernWpf", "ProgressBar", "ProgressBar.xaml"),
             Path.Combine("ModernWpf", "Styles", "AutoSuggestBox.xaml"),
             Path.Combine("ModernWpf", "Styles", "ComboBox.xaml"),
-            Path.Combine("ModernWpf", "Styles", "Expander.xaml"),
             Path.Combine("ModernWpf", "Styles", "Pivot.xaml"),
             Path.Combine("ModernWpf", "Styles", "TabControl.xaml"),
             Path.Combine("ModernWpf", "Styles", "NavigationBackButton.xaml"),
@@ -137,6 +136,7 @@ public class TemplateParityTests
             Path.Combine("ModernWpf", "Styles", "Calendar.xaml"),
             Path.Combine("ModernWpf", "Styles", "CheckBox.xaml"),
             Path.Combine("ModernWpf", "Styles", "DatePicker.xaml"),
+            Path.Combine("ModernWpf", "Styles", "Expander.xaml"),
             Path.Combine("ModernWpf", "Styles", "GridSplitter.xaml"),
             Path.Combine("ModernWpf", "Styles", "GroupBox.xaml"),
             Path.Combine("ModernWpf", "Styles", "GroupItem.xaml"),
@@ -269,7 +269,7 @@ public class TemplateParityTests
     }
 
     [TestMethod]
-    public void CoreItemOfficialWpfFluentPresenterSlotsUseWpfPresenterShape()
+    public void CoreOfficialWpfFluentPresenterSlotsUseWpfPresenterShape()
     {
         var repoRoot = FindRepoRoot();
         var officialWpfFluentTemplateFiles = new[]
@@ -279,6 +279,7 @@ public class TemplateParityTests
             Path.Combine("ModernWpf", "Styles", "GridView.xaml"),
             Path.Combine("ModernWpf", "Styles", "ListView.xaml"),
             Path.Combine("ModernWpf", "Styles", "ListViewItem.xaml"),
+            Path.Combine("ModernWpf", "Styles", "Expander.xaml"),
             Path.Combine("ModernWpf", "Styles", "TreeView.xaml"),
             Path.Combine("ModernWpf", "Styles", "TreeViewItem.xaml")
         };
@@ -364,7 +365,6 @@ public class TemplateParityTests
         {
             Path.Combine("ModernWpf", "Navigation", "Frame.xaml"),
             Path.Combine("ModernWpf", "Navigation", "Page.xaml"),
-            Path.Combine("ModernWpf", "Styles", "Expander.xaml"),
             Path.Combine("ModernWpf", "Styles", "Window.xaml")
         };
 

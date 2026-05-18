@@ -1,11 +1,13 @@
+using System;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ModernWpf;
 using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
 using ModernWpf.WinUI.TestApp;
@@ -19,108 +21,153 @@ namespace ModernWpf.WinUI.Tests.Expander;
 public class ExpanderApiTests
 {
     [TestMethod]
-    public void VerifyExpanderDefaultStyleAndWinUI2Resources()
+    public void VerifyExpanderDefaultStyleUsesOfficialWpfFluentShape()
     {
         WpfTestHost.Run(() =>
         {
             TestApplication.EnsureInitialized();
 
+            var defaultStyle = AssertStyleResource("DefaultExpanderStyle");
+            var implicitStyle = AssertStyleResource(typeof(WpfExpander));
+            Assert.AreEqual(typeof(WpfExpander), defaultStyle.TargetType);
+            Assert.AreEqual(typeof(WpfExpander), implicitStyle.TargetType);
+            Assert.AreSame(defaultStyle, implicitStyle.BasedOn);
+            AssertStyleHasSetter(defaultStyle, Control.FocusVisualStyleProperty);
+
+            var contentButton = new Button { Content = "Content" };
             var expander = new WpfExpander
             {
+                Style = implicitStyle,
                 Header = "Header",
-                Content = new Button { Content = "Content" },
+                Content = contentButton,
                 IsExpanded = true
             };
+            ControlHelper.SetCornerRadius(expander, new CornerRadius(6));
 
             using var host = new TestWindowHost(expander, width: 400, height: 240);
             host.UpdateLayout();
 
-            Assert.AreSame(expander.TryFindResource("ExpanderContentBackground"), expander.Background);
-            Assert.AreSame(expander.TryFindResource("ExpanderContentBorderBrush"), expander.BorderBrush);
-            Assert.AreEqual(expander.TryFindResource("ExpanderContentDownBorderThickness"), expander.BorderThickness);
-            Assert.AreEqual(expander.TryFindResource("ExpanderContentPadding"), expander.Padding);
-            Assert.AreEqual(HorizontalAlignment.Left, expander.HorizontalAlignment);
+            Assert.IsNotNull(expander.FocusVisualStyle);
+            Assert.AreSame(expander.TryFindResource("ExpanderHeaderBackground"), expander.Background);
+            Assert.AreSame(expander.TryFindResource("ExpanderHeaderForeground"), expander.Foreground);
+            Assert.AreSame(expander.TryFindResource("ExpanderHeaderBorderBrush"), expander.BorderBrush);
+            Assert.AreEqual(new Thickness(1), expander.BorderThickness);
+            Assert.AreEqual(new Thickness(11), expander.Padding);
+            Assert.AreEqual(HorizontalAlignment.Stretch, expander.HorizontalAlignment);
             Assert.AreEqual(VerticalAlignment.Center, expander.VerticalAlignment);
-            Assert.AreEqual(expander.TryFindResource("FlyoutThemeMinWidth"), expander.MinWidth);
-            Assert.AreEqual(expander.TryFindResource("ExpanderMinHeight"), expander.MinHeight);
-            Assert.IsFalse(expander.Focusable);
+            Assert.AreEqual(HorizontalAlignment.Stretch, expander.HorizontalContentAlignment);
+            Assert.AreEqual(VerticalAlignment.Center, expander.VerticalContentAlignment);
+            Assert.AreEqual(FontWeights.Normal, expander.FontWeight);
+            Assert.AreEqual(new CornerRadius(6), ControlHelper.GetCornerRadius(expander));
+            Assert.IsTrue(expander.IsExpanded);
+            Assert.IsTrue(expander.OverridesDefaultStyle);
+            Assert.IsTrue(expander.SnapsToDevicePixels);
 
-            var header = FindTemplateChild<ToggleButton>(expander, "HeaderSite");
-            Assert.IsTrue(header.Focusable);
-            Assert.AreSame(expander.TryFindResource("ExpanderHeaderBackground"), header.Background);
-            Assert.AreSame(expander.TryFindResource("ExpanderHeaderForeground"), header.Foreground);
-            Assert.AreSame(expander.TryFindResource("ExpanderHeaderBorderBrush"), header.BorderBrush);
-            Assert.AreEqual(expander.TryFindResource("ExpanderHeaderBorderThickness"), header.BorderThickness);
-            Assert.AreEqual(expander.TryFindResource("ExpanderHeaderPadding"), header.Padding);
-            Assert.AreEqual(expander.TryFindResource("ExpanderHeaderHorizontalContentAlignment"), header.HorizontalContentAlignment);
-            Assert.AreEqual(expander.TryFindResource("ExpanderHeaderVerticalContentAlignment"), header.VerticalContentAlignment);
-            Assert.AreEqual(expander.MinHeight, header.MinHeight);
-            Assert.IsTrue(FocusVisualHelper.GetUseSystemFocusVisuals(header));
-            Assert.AreEqual(new Thickness(-3), FocusVisualHelper.GetFocusVisualMargin(header));
+            Assert.AreEqual(new Thickness(11), expander.TryFindResource("ExpanderPadding"));
+            Assert.AreEqual(new Thickness(1), expander.TryFindResource("ExpanderBorderThemeThickness"));
+            Assert.AreEqual(12.0, expander.TryFindResource("ExpanderChevronSize"));
+            Assert.AreEqual("\uE70E", expander.TryFindResource("ExpanderChevronUpGlyph"));
+            Assert.AreEqual("\uE70D", expander.TryFindResource("ExpanderChevronDownGlyph"));
+            Assert.AreEqual("\uE76B", expander.TryFindResource("ExpanderChevronLeftGlyph"));
+            Assert.AreEqual("\uE76C", expander.TryFindResource("ExpanderChevronRightGlyph"));
+            Assert.IsInstanceOfType(expander.TryFindResource("AnimationFactorToValueConverter"), typeof(AnimationFactorToValueConverter));
 
-            var content = FindTemplateChild<ContentPresenter>(expander, "ExpandSite");
-            Assert.AreEqual(expander.TryFindResource("ExpanderContentPadding"), content.Margin);
-            Assert.AreEqual(Visibility.Visible, content.Visibility);
+            var toggleButtonBorder = FindTemplateChild<Border>(expander, "ToggleButtonBorder");
+            Assert.AreSame(expander.Background, toggleButtonBorder.Background);
+            Assert.AreSame(expander.BorderBrush, toggleButtonBorder.BorderBrush);
+            Assert.AreEqual(expander.BorderThickness, toggleButtonBorder.BorderThickness);
+            Assert.AreEqual(new CornerRadius(6), toggleButtonBorder.CornerRadius);
 
-            expander.IsExpanded = false;
-            host.UpdateLayout();
-            Assert.AreEqual(Visibility.Collapsed, content.Visibility);
+            var headerSite = FindTemplateChild<ToggleButton>(expander, "HeaderSite");
+            Assert.IsTrue(headerSite.Focusable);
+            Assert.IsTrue(headerSite.IsChecked == true);
+            Assert.AreEqual(expander.Header, headerSite.Content);
+            Assert.AreSame(expander.TryFindResource("DefaultExpanderToggleButtonDownStyle"), headerSite.Template);
+            Assert.IsNotNull(headerSite.FocusVisualStyle);
+            Assert.IsNotNull(headerSite.Background);
+            Assert.IsNotNull(headerSite.Foreground);
+            Assert.IsNotNull(headerSite.BorderBrush);
+            Assert.AreEqual(expander.BorderThickness, headerSite.BorderThickness);
+            Assert.AreEqual(expander.Padding, headerSite.Padding);
+            Assert.AreEqual(expander.HorizontalContentAlignment, headerSite.HorizontalContentAlignment);
+            Assert.AreEqual(expander.VerticalContentAlignment, headerSite.VerticalContentAlignment);
+            Assert.IsTrue(headerSite.OverridesDefaultStyle);
+            Assert.IsFalse(ToggleButtonHelper.GetVisualStateSettersEnabled(headerSite));
 
-            foreach (var themeName in new[] { "Light", "Dark" })
-            {
-                AssertThemeResourceReference(themeName, "ExpanderHeaderBackground", "CardBackgroundFillColorDefaultBrush");
-                AssertThemeResourceReference(themeName, "ExpanderHeaderForeground", "TextFillColorPrimaryBrush");
-                AssertThemeResourceReference(themeName, "ExpanderHeaderForegroundPointerOver", "TextFillColorPrimaryBrush");
-                AssertThemeResourceReference(themeName, "ExpanderHeaderForegroundPressed", "TextFillColorPrimaryBrush");
-                AssertThemeResourceReference(themeName, "ExpanderHeaderBorderBrush", "CardStrokeColorDefaultBrush");
-                AssertThemeResourceReference(themeName, "ExpanderHeaderBorderPointerOverBrush", "CardStrokeColorDefaultBrush");
-                AssertThemeResourceReference(themeName, "ExpanderHeaderBorderPressedBrush", "CardStrokeColorDefaultBrush");
-                AssertThemeResourceReference(themeName, "ExpanderHeaderDisabledForeground", "TextFillColorDisabledBrush");
-                AssertThemeResourceReference(themeName, "ExpanderHeaderDisabledBorderBrush", "CardStrokeColorDefaultBrush");
-                AssertThemeResourceReference(themeName, "ExpanderChevronBackground", "SubtleFillColorTransparentBrush");
-                AssertThemeResourceReference(themeName, "ExpanderChevronPointerOverBackground", "SubtleFillColorSecondaryBrush");
-                AssertThemeResourceReference(themeName, "ExpanderChevronPressedBackground", "SubtleFillColorTertiaryBrush");
-                AssertThemeResourceReference(themeName, "ExpanderChevronForeground", "TextFillColorPrimaryBrush");
-                AssertThemeResourceReference(themeName, "ExpanderChevronPointerOverForeground", "TextFillColorPrimaryBrush");
-                AssertThemeResourceReference(themeName, "ExpanderChevronPressedForeground", "TextFillColorPrimaryBrush");
-                AssertThemeResourceReference(themeName, "ExpanderChevronBorderBrush", "SubtleFillColorTransparentBrush");
-                AssertThemeResourceReference(themeName, "ExpanderChevronBorderPointerOverBrush", "SubtleFillColorTransparentBrush");
-                AssertThemeResourceReference(themeName, "ExpanderChevronBorderPressedBrush", "SubtleFillColorTransparentBrush");
-                AssertThemeResourceReference(themeName, "ExpanderContentBackground", "CardBackgroundFillColorSecondaryBrush");
-                AssertThemeResourceReference(themeName, "ExpanderContentBorderBrush", "CardStrokeColorDefaultBrush");
-                AssertThemeResourceValue(themeName, "ExpanderHeaderBorderThickness", new Thickness(1));
-                AssertThemeResourceValue(themeName, "ExpanderChevronBorderThickness", new Thickness(0));
-                AssertSharedExpanderResourceValues(themeName);
-            }
+            headerSite.ApplyTemplate();
+            var headerPresenter = FindTemplateChild<ContentPresenter>(headerSite, "ContentPresenter");
+            Assert.AreEqual(typeof(ContentPresenter), headerPresenter.GetType());
+            Assert.AreEqual(expander.Header, headerPresenter.Content);
+            var chevron = FindTemplateChild<TextBlock>(headerSite, "ControlChevronIcon");
+            Assert.IsNotNull(chevron.Foreground);
+            Assert.IsTrue(headerSite.Template.Triggers.Count > 0);
+            Assert.IsNull(VisualTreeTestHelper.FindDescendant<FontIconFallback>(headerSite));
 
-            AssertThemeResourceReference("HighContrast", "ExpanderHeaderBackground", "SystemColorButtonFaceColorBrush");
-            AssertThemeResourceReference("HighContrast", "ExpanderHeaderForeground", "SystemColorButtonTextColorBrush");
-            AssertThemeResourceReference("HighContrast", "ExpanderHeaderForegroundPointerOver", "SystemColorHighlightColorBrush");
-            AssertThemeResourceReference("HighContrast", "ExpanderHeaderForegroundPressed", "SystemColorHighlightColorBrush");
-            AssertThemeResourceReference("HighContrast", "ExpanderHeaderBorderBrush", "SystemColorButtonTextColorBrush");
-            AssertThemeResourceReference("HighContrast", "ExpanderHeaderBorderPointerOverBrush", "SystemColorHighlightColorBrush");
-            AssertThemeResourceReference("HighContrast", "ExpanderHeaderBorderPressedBrush", "SystemColorHighlightColorBrush");
-            AssertThemeResourceReference("HighContrast", "ExpanderHeaderDisabledForeground", "TextFillColorDisabledBrush");
-            AssertThemeResourceReference("HighContrast", "ExpanderHeaderDisabledBorderBrush", "TextFillColorDisabledBrush");
-            AssertThemeResourceReference("HighContrast", "ExpanderChevronBackground", "SystemColorButtonFaceColorBrush");
-            AssertThemeResourceReference("HighContrast", "ExpanderChevronPointerOverBackground", "SystemControlTransparentBrush");
-            AssertThemeResourceReference("HighContrast", "ExpanderChevronPressedBackground", "SystemControlTransparentBrush");
-            AssertThemeResourceReference("HighContrast", "ExpanderChevronForeground", "SystemColorButtonTextColorBrush");
-            AssertThemeResourceReference("HighContrast", "ExpanderChevronPointerOverForeground", "SystemColorHighlightColorBrush");
-            AssertThemeResourceReference("HighContrast", "ExpanderChevronPressedForeground", "SystemColorHighlightColorBrush");
-            AssertThemeResourceReference("HighContrast", "ExpanderChevronBorderBrush", "SystemColorButtonTextColorBrush");
-            AssertThemeResourceReference("HighContrast", "ExpanderChevronBorderPointerOverBrush", "SystemColorHighlightColorBrush");
-            AssertThemeResourceReference("HighContrast", "ExpanderChevronBorderPressedBrush", "SystemColorHighlightColorBrush");
-            AssertThemeResourceReference("HighContrast", "ExpanderContentBackground", "SystemColorWindowColorBrush");
-            AssertThemeResourceReference("HighContrast", "ExpanderContentBorderBrush", "SystemColorWindowTextColorBrush");
-            AssertThemeResourceValue("HighContrast", "ExpanderHeaderBorderThickness", new Thickness(2));
-            AssertThemeResourceValue("HighContrast", "ExpanderChevronBorderThickness", new Thickness(2));
-            AssertSharedExpanderResourceValues("HighContrast");
+            var contentGrid = FindTemplateChild<Grid>(expander, "ContentPresenterGrid");
+            Assert.AreEqual(Dock.Bottom, DockPanel.GetDock(contentGrid));
+
+            var contentBorder = FindTemplateChild<Border>(expander, "ContentPresenterBorder");
+            Assert.AreSame(expander.TryFindResource("ExpanderContentBackground"), contentBorder.Background);
+            Assert.AreSame(expander.BorderBrush, contentBorder.BorderBrush);
+            Assert.AreEqual(new Thickness(1, 0, 1, 1), contentBorder.BorderThickness);
+            Assert.AreEqual(new CornerRadius(0, 0, 4, 4), contentBorder.CornerRadius);
+            Assert.AreEqual(Visibility.Visible, contentBorder.Visibility);
+
+            var contentPresenter = FindTemplateChild<ContentPresenter>(expander, "ContentPresenter");
+            Assert.AreEqual(typeof(ContentPresenter), contentPresenter.GetType());
+            Assert.AreEqual(expander.Content, contentPresenter.Content);
+            Assert.AreEqual(expander.Padding, contentPresenter.Margin);
+
+            Assert.IsTrue(expander.Template.Triggers.Count > 0);
+            Assert.IsNull(VisualTreeTestHelper.FindDescendant<ContentPresenterEx>(expander));
+            Assert.IsNull(VisualTreeTestHelper.FindDescendant<FontIconFallback>(expander));
         });
     }
 
     [TestMethod]
-    public void VerifyExpanderVisualStateSetters()
+    public void VerifyExpanderDirectionTriggersUseOfficialWpfFluentTemplates()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            AssertExpandedDirection(
+                ExpandDirection.Down,
+                Dock.Bottom,
+                Dock.Top,
+                "DefaultExpanderToggleButtonDownStyle",
+                new Thickness(1, 0, 1, 1),
+                new CornerRadius(0, 0, 4, 4),
+                new CornerRadius(4));
+            AssertExpandedDirection(
+                ExpandDirection.Up,
+                Dock.Top,
+                Dock.Bottom,
+                "DefaultExpanderToggleButtonUpStyle",
+                new Thickness(1, 1, 1, 0),
+                new CornerRadius(4, 4, 0, 0),
+                new CornerRadius(0, 0, 4, 4));
+            AssertExpandedDirection(
+                ExpandDirection.Left,
+                Dock.Left,
+                Dock.Right,
+                "DefaultExpanderToggleButtonLeftStyle",
+                new Thickness(1, 1, 0, 1),
+                new CornerRadius(4, 0, 0, 4),
+                new CornerRadius(0, 4, 4, 0));
+            AssertExpandedDirection(
+                ExpandDirection.Right,
+                Dock.Right,
+                Dock.Left,
+                "DefaultExpanderToggleButtonRightStyle",
+                new Thickness(0, 1, 1, 1),
+                new CornerRadius(0, 4, 4, 0),
+                new CornerRadius(4, 0, 0, 4));
+        });
+    }
+
+    [TestMethod]
+    public void VerifyExpanderCollapsedContentFollowsOfficialWpfFluentAnimation()
     {
         WpfTestHost.Run(() =>
         {
@@ -136,69 +183,39 @@ public class ExpanderApiTests
             using var host = new TestWindowHost(expander, width: 400, height: 240);
             host.UpdateLayout();
 
-            var expanderBorder = FindTemplateChild<FrameworkElement>(expander, "ExpanderBorder");
-            Assert.AreEqual(0, expander.Template.Triggers.Count);
-            AssertStateSetter(expanderBorder, "CommonStates", "Disabled", "Foreground");
-            AssertStateSetter(expanderBorder, "ExpansionStates", "Expanded", "ExpandSite.Visibility");
-            AssertStateSetter(
-                expanderBorder,
-                "ExpandDirectionStates",
-                "ExpandUp",
-                "ExpandSite.(DockPanel.Dock)",
-                "HeaderSite.(DockPanel.Dock)",
-                "HeaderSite.Style",
-                "ExpanderBorder.BorderThickness");
-            AssertStateSetter(
-                expanderBorder,
-                "ExpandDirectionStates",
-                "ExpandLeft",
-                "ExpandSite.(DockPanel.Dock)",
-                "HeaderSite.(DockPanel.Dock)",
-                "HeaderSite.Style");
-            AssertStateSetter(
-                expanderBorder,
-                "ExpandDirectionStates",
-                "ExpandRight",
-                "ExpandSite.(DockPanel.Dock)",
-                "HeaderSite.(DockPanel.Dock)",
-                "HeaderSite.Style");
-
-            var expandSite = FindTemplateChild<ContentPresenterEx>(expander, "ExpandSite");
-            var headerSite = FindTemplateChild<ToggleButton>(expander, "HeaderSite");
-            AssertHeaderToggleVisualStateSetters(headerSite);
-
-            Assert.AreEqual(Visibility.Visible, expandSite.Visibility);
+            var contentBorder = FindTemplateChild<Border>(expander, "ContentPresenterBorder");
+            Assert.AreEqual(Visibility.Visible, contentBorder.Visibility);
 
             expander.IsExpanded = false;
             host.UpdateLayout();
-            Assert.AreEqual(Visibility.Collapsed, expandSite.Visibility);
 
-            expander.ExpandDirection = ExpandDirection.Up;
-            host.UpdateLayout();
-            Assert.AreEqual(Dock.Top, DockPanel.GetDock(expandSite));
-            Assert.AreEqual(Dock.Bottom, DockPanel.GetDock(headerSite));
-            Assert.AreSame(expander.TryFindResource("ExpanderUpHeaderStyle"), headerSite.Style);
-            AssertHeaderToggleVisualStateSetters(headerSite);
-            Assert.AreEqual(expander.TryFindResource("ExpanderContentUpBorderThickness"), ((Border)expanderBorder).BorderThickness);
-
-            expander.ExpandDirection = ExpandDirection.Down;
-            host.UpdateLayout();
-            Assert.AreEqual(Dock.Bottom, DockPanel.GetDock(expandSite));
-            Assert.AreEqual(Dock.Top, DockPanel.GetDock(headerSite));
-            Assert.AreSame(expander.TryFindResource("ExpanderDownHeaderStyle"), headerSite.Style);
-            AssertHeaderToggleVisualStateSetters(headerSite);
-            Assert.AreEqual(expander.BorderThickness, ((Border)expanderBorder).BorderThickness);
-
-            expander.ExpandDirection = ExpandDirection.Left;
-            host.UpdateLayout();
-            Assert.AreSame(expander.TryFindResource("ExpanderLeftHeaderStyle"), headerSite.Style);
-            AssertHeaderToggleVisualStateSetters(headerSite);
-
-            expander.ExpandDirection = ExpandDirection.Right;
-            host.UpdateLayout();
-            Assert.AreSame(expander.TryFindResource("ExpanderRightHeaderStyle"), headerSite.Style);
-            AssertHeaderToggleVisualStateSetters(headerSite);
+            WaitFor(
+                () => contentBorder.Visibility == Visibility.Collapsed,
+                "Official WPF Fluent Expander collapse animation did not hide the content border.");
         });
+    }
+
+    [TestMethod]
+    public void VerifyExpanderThemeAliasesRetainOfficialWpfFluentKeys()
+    {
+        foreach (var themeName in new[] { "Light", "Dark" })
+        {
+            AssertThemeResourceReference(themeName, "ExpanderHeaderBackground", "CardBackgroundFillColorDefaultBrush");
+            AssertThemeResourceReference(themeName, "ExpanderHeaderForeground", "TextFillColorPrimaryBrush");
+            AssertThemeResourceReference(themeName, "ExpanderHeaderBorderBrush", "CardStrokeColorDefaultBrush");
+            AssertThemeResourceReference(themeName, "ExpanderHeaderBorderPointerOverBrush", "CardStrokeColorDefaultBrush");
+            AssertThemeResourceReference(themeName, "ExpanderHeaderDisabledForeground", "TextFillColorDisabledBrush");
+            AssertThemeResourceReference(themeName, "ExpanderHeaderDisabledBorderBrush", "CardStrokeColorDefaultBrush");
+            AssertThemeResourceReference(themeName, "ExpanderContentBackground", "CardBackgroundFillColorSecondaryBrush");
+        }
+
+        AssertThemeResourceReference("HighContrast", "ExpanderHeaderBackground", "SystemColorButtonFaceColorBrush");
+        AssertThemeResourceReference("HighContrast", "ExpanderHeaderForeground", "SystemColorButtonTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "ExpanderHeaderBorderBrush", "SystemColorWindowTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "ExpanderHeaderBorderPointerOverBrush", "SystemColorHighlightColorBrush");
+        AssertThemeResourceReference("HighContrast", "ExpanderHeaderDisabledForeground", "SystemColorGrayTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "ExpanderHeaderDisabledBorderBrush", "SystemColorGrayTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "ExpanderContentBackground", "SystemColorWindowColorBrush");
     }
 
     [TestMethod]
@@ -264,8 +281,45 @@ public class ExpanderApiTests
             expander.IsExpanded = false;
             host.UpdateLayout();
 
-            Assert.IsFalse(contentButton.IsVisible, "Collapsed Expander content should not be visible to UI automation.");
+            WaitFor(
+                () => !contentButton.IsVisible,
+                "Collapsed Expander content should not be visible to UI automation.");
         });
+    }
+
+    private static void AssertExpandedDirection(
+        ExpandDirection direction,
+        Dock expectedContentDock,
+        Dock expectedHeaderDock,
+        string expectedHeaderTemplateKey,
+        Thickness expectedContentBorderThickness,
+        CornerRadius expectedContentCornerRadius,
+        CornerRadius expectedHeaderCornerRadius)
+    {
+        var expander = new WpfExpander
+        {
+            Header = "Header",
+            Content = "Content",
+            IsExpanded = true,
+            ExpandDirection = direction
+        };
+        ControlHelper.SetCornerRadius(expander, new CornerRadius(4));
+
+        using var host = new TestWindowHost(expander, width: 400, height: 240);
+        host.UpdateLayout();
+
+        var headerSite = FindTemplateChild<ToggleButton>(expander, "HeaderSite");
+        var contentGrid = FindTemplateChild<Grid>(expander, "ContentPresenterGrid");
+        var toggleButtonBorder = FindTemplateChild<Border>(expander, "ToggleButtonBorder");
+        var contentBorder = FindTemplateChild<Border>(expander, "ContentPresenterBorder");
+
+        Assert.AreEqual(expectedContentDock, DockPanel.GetDock(contentGrid), direction.ToString());
+        Assert.AreEqual(expectedHeaderDock, DockPanel.GetDock(toggleButtonBorder), direction.ToString());
+        Assert.AreSame(expander.TryFindResource(expectedHeaderTemplateKey), headerSite.Template, direction.ToString());
+        Assert.AreEqual(expectedContentBorderThickness, contentBorder.BorderThickness, direction.ToString());
+        Assert.AreEqual(expectedContentCornerRadius, contentBorder.CornerRadius, direction.ToString());
+        Assert.AreEqual(expectedHeaderCornerRadius, toggleButtonBorder.CornerRadius, direction.ToString());
+        Assert.AreEqual(Visibility.Visible, contentBorder.Visibility, direction.ToString());
     }
 
     private static bool IsContentElement(FrameworkElement element)
@@ -278,170 +332,42 @@ public class ExpanderApiTests
         return FrameworkElementAutomationPeer.CreatePeerForElement(element)?.IsControlElement() == true;
     }
 
+    private static Style AssertStyleResource(object key)
+    {
+        return Application.Current.TryFindResource(key) as Style
+            ?? throw new AssertFailedException($"Expected style resource '{key}'.");
+    }
+
+    private static void AssertStyleHasSetter(Style style, DependencyProperty property)
+    {
+        Assert.IsTrue(
+            style.Setters.OfType<Setter>().Any(setter => setter.Property == property),
+            $"{style.TargetType.Name} should set {property.Name}.");
+    }
+
     private static T FindTemplateChild<T>(Control control, string name)
         where T : FrameworkElement
     {
+        control.ApplyTemplate();
         return control.Template?.FindName(name, control) as T
-            ?? throw new AssertFailedException($"Could not find template child '{name}'.");
+            ?? throw new AssertFailedException($"Could not find template child '{name}' on {control.GetType().Name}.");
     }
 
-    private static void AssertHeaderToggleVisualStateSetters(ToggleButton headerSite)
+    private static void WaitFor(Func<bool> predicate, string failureMessage, int timeoutMilliseconds = 1500)
     {
-        Assert.IsTrue(ToggleButtonHelper.GetVisualStateSettersEnabled(headerSite));
+        var stopwatch = Stopwatch.StartNew();
+        while (stopwatch.ElapsedMilliseconds < timeoutMilliseconds)
+        {
+            WpfTestHost.DoEvents();
+            if (predicate())
+            {
+                return;
+            }
 
-        headerSite.ApplyTemplate();
-        Assert.AreEqual(0, headerSite.Template.Triggers.Count);
+            Thread.Sleep(10);
+        }
 
-        var headerRoot = FindTemplateChild<FrameworkElement>(headerSite, "HeaderRoot");
-        var arrow = FindTemplateChild<FontIconFallback>(headerSite, "arrow");
-
-        AssertStateSetter(
-            headerRoot,
-            "CommonStates",
-            "MouseOver",
-            "Foreground",
-            "BorderBrush",
-            "arrow.Foreground",
-            "arrow.(local:AnimatedIcon.State)");
-        AssertStateSetter(
-            headerRoot,
-            "CommonStates",
-            "PointerOver",
-            "Foreground",
-            "BorderBrush",
-            "arrow.Foreground",
-            "arrow.(local:AnimatedIcon.State)");
-        AssertStateSetter(
-            headerRoot,
-            "CommonStates",
-            "Pressed",
-            "Foreground",
-            "BorderBrush",
-            "arrow.Foreground",
-            "arrow.(local:AnimatedIcon.State)");
-        AssertStateSetter(
-            headerRoot,
-            "CommonStates",
-            "Disabled",
-            "Foreground",
-            "BorderBrush",
-            "arrow.Foreground");
-        AssertStateSetter(headerRoot, "CheckStates", "Unchecked", "arrow.Data", "arrow.(local:AnimatedIcon.State)");
-        AssertStateSetter(headerRoot, "CheckStates", "Checked", "arrow.Data", "arrow.(local:AnimatedIcon.State)");
-        AssertStateSetter(headerRoot, "CheckStates", "CheckedPointerOver", "arrow.Data", "arrow.(local:AnimatedIcon.State)");
-        AssertStateSetter(headerRoot, "CheckStates", "CheckedPressed", "arrow.Data", "arrow.(local:AnimatedIcon.State)");
-        AssertStateSetter(headerRoot, "CheckStates", "CheckedDisabled", "arrow.Data", "arrow.(local:AnimatedIcon.State)");
-
-        AssertStateSetterValue(headerRoot, "CommonStates", "PointerOver", "arrow.(local:AnimatedIcon.State)", "PointerOverOff");
-        AssertStateSetterValue(headerRoot, "CommonStates", "Pressed", "arrow.(local:AnimatedIcon.State)", "PressedOff");
-        AssertStateSetterValue(headerRoot, "CheckStates", "Unchecked", "arrow.(local:AnimatedIcon.State)", "NormalOff");
-        AssertStateSetterValue(headerRoot, "CheckStates", "Checked", "arrow.(local:AnimatedIcon.State)", "NormalOn");
-        AssertStateSetterValue(headerRoot, "CheckStates", "CheckedPointerOver", "arrow.(local:AnimatedIcon.State)", "PointerOverOn");
-        AssertStateSetterValue(headerRoot, "CheckStates", "CheckedPressed", "arrow.(local:AnimatedIcon.State)", "PressedOn");
-        AssertStateSetterValue(headerRoot, "CheckStates", "CheckedDisabled", "arrow.(local:AnimatedIcon.State)", "NormalOn");
-
-        AssertHeaderCommonStateTransition(
-            headerSite,
-            arrow,
-            "PointerOver",
-            "ExpanderHeaderForegroundPointerOver",
-            "ExpanderHeaderBorderPointerOverBrush",
-            "ExpanderChevronPointerOverForeground");
-        AssertHeaderCommonStateTransition(
-            headerSite,
-            arrow,
-            "Pressed",
-            "ExpanderHeaderForegroundPressed",
-            "ExpanderHeaderBorderPressedBrush",
-            "ExpanderChevronPressedForeground");
-        AssertHeaderCommonStateTransition(
-            headerSite,
-            arrow,
-            "Disabled",
-            "ExpanderHeaderDisabledForeground",
-            "ExpanderHeaderDisabledBorderBrush",
-            "ExpanderHeaderDisabledForeground");
-        AssertHeaderCommonStateTransition(
-            headerSite,
-            arrow,
-            "Normal",
-            "ExpanderHeaderForeground",
-            "ExpanderHeaderBorderBrush",
-            "ExpanderChevronForeground");
-
-        Assert.AreEqual(headerSite.IsChecked == true ? "NormalOn" : "NormalOff", AnimatedIcon.GetState(arrow));
-        AssertAnimatedIconStateTransition(headerSite, arrow, "Unchecked", "NormalOff");
-        AssertAnimatedIconStateTransition(headerSite, arrow, "PointerOver", "PointerOverOff");
-        AssertAnimatedIconStateTransition(headerSite, arrow, "Pressed", "PressedOff");
-        AssertAnimatedIconStateTransition(headerSite, arrow, "Checked", "NormalOn");
-        AssertAnimatedIconStateTransition(headerSite, arrow, "CheckedPointerOver", "PointerOverOn");
-        AssertAnimatedIconStateTransition(headerSite, arrow, "CheckedPressed", "PressedOn");
-        AssertAnimatedIconStateTransition(headerSite, arrow, "CheckedDisabled", "NormalOn");
-    }
-
-    private static void AssertHeaderCommonStateTransition(
-        ToggleButton headerSite,
-        FontIconFallback arrow,
-        string stateName,
-        string foregroundResourceKey,
-        string borderResourceKey,
-        string arrowForegroundResourceKey)
-    {
-        Assert.IsTrue(VisualStateManager.GoToState(headerSite, stateName, false), stateName);
-        Assert.AreSame(headerSite.TryFindResource(foregroundResourceKey), headerSite.Foreground, $"{stateName}:Foreground");
-        Assert.AreSame(headerSite.TryFindResource(borderResourceKey), headerSite.BorderBrush, $"{stateName}:BorderBrush");
-        Assert.AreSame(headerSite.TryFindResource(arrowForegroundResourceKey), arrow.Foreground, $"{stateName}:arrow.Foreground");
-    }
-
-    private static VisualStateEx AssertStateSetter(
-        FrameworkElement stateGroupsRoot,
-        string groupName,
-        string stateName,
-        params string[] expectedTargets)
-    {
-        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
-            .OfType<VisualStateGroup>()
-            .Single(candidate => candidate.Name == groupName);
-        var state = group.States
-            .OfType<VisualState>()
-            .Single(candidate => candidate.Name == stateName);
-
-        Assert.IsInstanceOfType(state, typeof(VisualStateEx));
-
-        var stateEx = (VisualStateEx)state;
-        CollectionAssert.AreEquivalent(expectedTargets, stateEx.Setters.Select(setter => setter.Target ?? setter.Property).ToArray());
-        return stateEx;
-    }
-
-    private static void AssertStateSetterValue(
-        FrameworkElement stateGroupsRoot,
-        string groupName,
-        string stateName,
-        string target,
-        object expectedValue)
-    {
-        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
-            .OfType<VisualStateGroup>()
-            .Single(candidate => candidate.Name == groupName);
-        var state = group.States
-            .OfType<VisualState>()
-            .Single(candidate => candidate.Name == stateName);
-
-        Assert.IsInstanceOfType(state, typeof(VisualStateEx));
-
-        var stateEx = (VisualStateEx)state;
-        var setter = stateEx.Setters.Single(candidate => candidate.Target == target);
-        Assert.AreEqual(expectedValue, setter.Value);
-    }
-
-    private static void AssertAnimatedIconStateTransition(
-        ToggleButton headerSite,
-        DependencyObject arrow,
-        string stateName,
-        string expectedState)
-    {
-        Assert.IsTrue(VisualStateManager.GoToState(headerSite, stateName, false), stateName);
-        Assert.AreEqual(expectedState, AnimatedIcon.GetState(arrow), stateName);
+        Assert.Fail(failureMessage);
     }
 
     private static void AssertThemeResourceReference(string themeName, string resourceKey, string expectedResourceKey)
@@ -450,28 +376,5 @@ public class ExpanderApiTests
         Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
         Assert.IsTrue(themeDictionary.Contains(expectedResourceKey), $"{themeName} is missing {expectedResourceKey}.");
         Assert.AreSame(themeDictionary[expectedResourceKey], themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
-    }
-
-    private static void AssertThemeResourceValue<T>(string themeName, string resourceKey, T expectedValue)
-    {
-        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
-        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
-        Assert.AreEqual(expectedValue, themeDictionary[resourceKey]);
-    }
-
-    private static void AssertSharedExpanderResourceValues(string themeName)
-    {
-        AssertThemeResourceValue(themeName, "ExpanderMinHeight", 48d);
-        AssertThemeResourceValue(themeName, "ExpanderHeaderHorizontalContentAlignment", HorizontalAlignment.Stretch);
-        AssertThemeResourceValue(themeName, "ExpanderHeaderVerticalContentAlignment", VerticalAlignment.Center);
-        AssertThemeResourceValue(themeName, "ExpanderHeaderPadding", new Thickness(16, 0, 0, 0));
-        AssertThemeResourceValue(themeName, "ExpanderChevronMargin", new Thickness(20, 0, 8, 0));
-        AssertThemeResourceValue(themeName, "ExpanderChevronUpGlyph", "\uE70E");
-        AssertThemeResourceValue(themeName, "ExpanderChevronDownGlyph", "\uE70D");
-        AssertThemeResourceValue(themeName, "ExpanderChevronButtonSize", 32d);
-        AssertThemeResourceValue(themeName, "ExpanderChevronGlyphSize", 12d);
-        AssertThemeResourceValue(themeName, "ExpanderContentPadding", new Thickness(16));
-        AssertThemeResourceValue(themeName, "ExpanderContentDownBorderThickness", new Thickness(1, 0, 1, 1));
-        AssertThemeResourceValue(themeName, "ExpanderContentUpBorderThickness", new Thickness(1, 1, 1, 0));
     }
 }
