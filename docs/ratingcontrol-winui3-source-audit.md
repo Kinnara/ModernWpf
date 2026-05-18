@@ -49,6 +49,7 @@ services that WPF does not expose.
 | Source computes total width as rating width plus 12px caption spacing and caption width when caption text is non-empty. | Matched; ModernWpf no longer uses the item spacing resource as caption spacing. |
 | Source tracks the first item offset on pointer enter and subtracts it during pointer move. | Matched with WPF `TransformToVisual` and mouse event coordinates. |
 | Source tracks pointer capture separately from pointer-down state. | Matched with WPF `CaptureMouse`, `LostMouseCapture`, and guarded release. |
+| `RatingControlAutomationPeer::IValueProvider_Value` chooses unset, community placeholder, or basic value strings using source resources. | Matched. The WinUI C++ source contains an unused `ratingString` local in this method; the C# port intentionally omits that local so the source-backed build remains warning-free without changing behavior. |
 
 ## WPF Substitutions
 
@@ -81,8 +82,8 @@ rg -n "RatingItemPathInfo|RatingControlDefaultPathInfo|BackgroundPathDefaultTemp
 git diff --check
 ```
 
-Latest verified result on 2026-05-17: RatingControl tests passed 12/12,
-`ModernWpf.Controls` built successfully with existing warnings, the static
-deletion check found no remaining code/test references to the removed
-path-info surface, and `git diff --check` reported only existing CRLF
-normalization warnings.
+Latest verified result on 2026-05-18: RatingControl tests passed 13/13,
+`ModernWpf.Controls` built successfully, the static deletion check found no
+remaining code/test references to the removed path-info surface, the
+automation-peer source audit confirmed the unused WinUI C++ local is not kept
+in C#, and `git diff --check` passed with CRLF normalization warnings only.

@@ -37,8 +37,6 @@ namespace ModernWpf.Automation.Peers
                 double ratingValue = GetRatingControl().Value;
                 string valueString;
 
-                string ratingString;
-
                 if (ratingValue == -1)
                 {
                     double placeholderValue = GetRatingControl().PlaceholderValue;
