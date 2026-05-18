@@ -9,7 +9,7 @@ using System.Windows.Controls;
 
 namespace ModernWpf.Controls
 {
-    public class StackLayout : VirtualizingLayout, IFlowLayoutAlgorithmDelegates
+    public partial class StackLayout : VirtualizingLayout, IFlowLayoutAlgorithmDelegates
     {
         public StackLayout()
         {
@@ -19,56 +19,10 @@ namespace ModernWpf.Controls
 
         #region Properties
 
-        public static readonly DependencyProperty DisableVirtualizationProperty =
-            DependencyProperty.Register(
-                nameof(DisableVirtualization),
-                typeof(bool),
-                typeof(StackLayout),
-                new PropertyMetadata(false, OnPropertyChanged));
-
         public bool DisableVirtualization
         {
             get => !IsVirtualizationEnabled;
             set => IsVirtualizationEnabled = !value;
-        }
-
-        public static readonly DependencyProperty IsVirtualizationEnabledProperty =
-            DependencyProperty.Register(
-                nameof(IsVirtualizationEnabled),
-                typeof(bool),
-                typeof(StackLayout),
-                new PropertyMetadata(true, OnPropertyChanged));
-
-        public bool IsVirtualizationEnabled
-        {
-            get => (bool)GetValue(IsVirtualizationEnabledProperty);
-            set => SetValue(IsVirtualizationEnabledProperty, value);
-        }
-
-        public static readonly DependencyProperty OrientationProperty =
-            DependencyProperty.Register(
-                nameof(Orientation),
-                typeof(Orientation),
-                typeof(StackLayout),
-                new PropertyMetadata(Orientation.Vertical, OnPropertyChanged));
-
-        public Orientation Orientation
-        {
-            get => (Orientation)GetValue(OrientationProperty);
-            set => SetValue(OrientationProperty, value);
-        }
-
-        public static readonly DependencyProperty SpacingProperty =
-            DependencyProperty.Register(
-                nameof(Spacing),
-                typeof(double),
-                typeof(StackLayout),
-                new PropertyMetadata(0.0, OnPropertyChanged));
-
-        public double Spacing
-        {
-            get => (double)GetValue(SpacingProperty);
-            set => SetValue(SpacingProperty, value);
         }
 
         private static void OnPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)

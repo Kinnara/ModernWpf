@@ -9,7 +9,7 @@ using System.Windows.Controls;
 
 namespace ModernWpf.Controls
 {
-    public class UniformGridLayout : VirtualizingLayout, IFlowLayoutAlgorithmDelegates
+    public partial class UniformGridLayout : VirtualizingLayout, IFlowLayoutAlgorithmDelegates
     {
         public UniformGridLayout()
         {
@@ -18,110 +18,6 @@ namespace ModernWpf.Controls
         }
 
         #region Properties
-
-        public static readonly DependencyProperty ItemsJustificationProperty =
-            DependencyProperty.Register(
-                nameof(ItemsJustification),
-                typeof(UniformGridLayoutItemsJustification),
-                typeof(UniformGridLayout),
-                new PropertyMetadata(UniformGridLayoutItemsJustification.Start, OnPropertyChanged));
-
-        public UniformGridLayoutItemsJustification ItemsJustification
-        {
-            get => (UniformGridLayoutItemsJustification)GetValue(ItemsJustificationProperty);
-            set => SetValue(ItemsJustificationProperty, value);
-        }
-
-        public static readonly DependencyProperty ItemsStretchProperty =
-            DependencyProperty.Register(
-                nameof(ItemsStretch),
-                typeof(UniformGridLayoutItemsStretch),
-                typeof(UniformGridLayout),
-                new PropertyMetadata(UniformGridLayoutItemsStretch.None, OnPropertyChanged));
-
-        public UniformGridLayoutItemsStretch ItemsStretch
-        {
-            get => (UniformGridLayoutItemsStretch)GetValue(ItemsStretchProperty);
-            set => SetValue(ItemsStretchProperty, value);
-        }
-
-        public static readonly DependencyProperty MaximumRowsOrColumnsProperty =
-            DependencyProperty.Register(
-                nameof(MaximumRowsOrColumns),
-                typeof(int),
-                typeof(UniformGridLayout),
-                new PropertyMetadata(-1, OnPropertyChanged));
-
-        public int MaximumRowsOrColumns
-        {
-            get => (int)GetValue(MaximumRowsOrColumnsProperty);
-            set => SetValue(MaximumRowsOrColumnsProperty, value);
-        }
-
-        public static readonly DependencyProperty MinColumnSpacingProperty =
-            DependencyProperty.Register(
-                nameof(MinColumnSpacing),
-                typeof(double),
-                typeof(UniformGridLayout),
-                new PropertyMetadata(OnPropertyChanged));
-
-        public double MinColumnSpacing
-        {
-            get => (double)GetValue(MinColumnSpacingProperty);
-            set => SetValue(MinColumnSpacingProperty, value);
-        }
-
-        public static readonly DependencyProperty MinItemHeightProperty =
-            DependencyProperty.Register(
-                nameof(MinItemHeight),
-                typeof(double),
-                typeof(UniformGridLayout),
-                new PropertyMetadata(OnPropertyChanged));
-
-        public double MinItemHeight
-        {
-            get => (double)GetValue(MinItemHeightProperty);
-            set => SetValue(MinItemHeightProperty, value);
-        }
-
-        public static readonly DependencyProperty MinItemWidthProperty =
-            DependencyProperty.Register(
-                nameof(MinItemWidth),
-                typeof(double),
-                typeof(UniformGridLayout),
-                new PropertyMetadata(OnPropertyChanged));
-
-        public double MinItemWidth
-        {
-            get => (double)GetValue(MinItemWidthProperty);
-            set => SetValue(MinItemWidthProperty, value);
-        }
-
-        public static readonly DependencyProperty MinRowSpacingProperty =
-            DependencyProperty.Register(
-                nameof(MinRowSpacing),
-                typeof(double),
-                typeof(UniformGridLayout),
-                new PropertyMetadata(OnPropertyChanged));
-
-        public double MinRowSpacing
-        {
-            get => (double)GetValue(MinRowSpacingProperty);
-            set => SetValue(MinRowSpacingProperty, value);
-        }
-
-        public static readonly DependencyProperty OrientationProperty =
-            DependencyProperty.Register(
-                nameof(Orientation),
-                typeof(Orientation),
-                typeof(UniformGridLayout),
-                new PropertyMetadata(Orientation.Horizontal, OnPropertyChanged));
-
-        public Orientation Orientation
-        {
-            get => (Orientation)GetValue(OrientationProperty);
-            set => SetValue(OrientationProperty, value);
-        }
 
         private static void OnPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {

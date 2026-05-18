@@ -1,0 +1,21 @@
+{
+  "usings": [
+    "System.Windows",
+    "System.Windows.Controls"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "UniformGridLayout"
+  },
+  "properties": [
+    { "name": "ItemsJustification", "type": "UniformGridLayoutItemsJustification", "default": "UniformGridLayoutItemsJustification.Start", "changed": "OnPropertyChanged" },
+    { "name": "ItemsStretch", "type": "UniformGridLayoutItemsStretch", "default": "UniformGridLayoutItemsStretch.None", "changed": "OnPropertyChanged" },
+    { "name": "MaximumRowsOrColumns", "type": "int", "default": "-1", "changed": "OnPropertyChanged" },
+    { "name": "MinColumnSpacing", "type": "double", "changed": "OnPropertyChanged" },
+    { "name": "MinItemHeight", "type": "double", "changed": "OnPropertyChanged" },
+    { "name": "MinItemWidth", "type": "double", "changed": "OnPropertyChanged" },
+    { "name": "MinRowSpacing", "type": "double", "changed": "OnPropertyChanged" },
+    { "name": "Orientation", "type": "Orientation", "default": "Orientation.Horizontal", "changed": "OnPropertyChanged" }
+  ]
+}

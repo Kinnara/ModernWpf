@@ -78,6 +78,10 @@ The template-settings dependency properties are also manifest-backed:
 `SplitViewTemplateSettings`, `TeachingTipTemplateSettings`, and
 `ToggleSwitchTemplateSettings`.
 
+The Repeater layout dependency properties are manifest-backed:
+`ColumnMajorUniformToLargestGridLayout`, `FlowLayout`, `StackLayout`, and
+`UniformGridLayout`.
+
 WinUI has two generated-property pools that matter for ModernWpf parity:
 MUX generated files under `src/controls/dev/Generated/*.properties.*` and
 framework generated files under `src/dxaml/xcp/dxaml/lib/winrtgeneratedclasses`
@@ -85,8 +89,9 @@ framework generated files under `src/dxaml/xcp/dxaml/lib/winrtgeneratedclasses`
 `*.properties.*` misses framework-generated types such as
 `AppBarButtonTemplateSettings` and `SplitViewTemplateSettings`.
 
-After the template-settings conversion, the remaining ModernWpf types with
-inline DP/AddOwner sites whose type names match generated WinUI sources are:
+After the template-settings and Repeater layout conversions, the remaining
+ModernWpf types with inline DP/AddOwner sites whose type names match generated
+WinUI sources are 49 types / 351 sites:
 `AnnotatedScrollBar`, `AutoSuggestBoxHelper`, `BreadcrumbBar`, `ColorPicker`,
 `ColorPickerSlider`, `ColorSpectrum`, `AppBarButton`,
 `AppBarElementContainer`, `AppBarSeparator`, `AppBarToggleButton`,
@@ -97,11 +102,10 @@ inline DP/AddOwner sites whose type names match generated WinUI sources are:
 `MenuFlyoutPresenter`, `NavigationViewItemBase`,
 `NavigationViewItemPresenter`, `PagerControl`, `ParallaxView`, `PipsPager`,
 `ProgressRing`, `RefreshContainer`, `RefreshVisualizer`,
-`ColumnMajorUniformToLargestGridLayout`, `RadioButtons`, `RatingItemImageInfo`,
-`ItemsRepeater`, `RecyclePool`, `FlowLayout`, `StackLayout`,
-`UniformGridLayout`, `SelectorBar`, `SelectorBarItem`, `SplitButton`,
-`ToggleSplitButton`, `SwipeControl`, `SwipeItem`, `TeachingTip`,
-`ToggleSwitch`, `TwoPaneView`, and `WrapPanel`.
+`RadioButtons`, `RatingItemImageInfo`, `ItemsRepeater`, `RecyclePool`,
+`SelectorBar`, `SelectorBarItem`, `SplitButton`, `ToggleSplitButton`,
+`SwipeControl`, `SwipeItem`, `TeachingTip`, `ToggleSwitch`, `TwoPaneView`, and
+`WrapPanel`.
 
 Those remaining sites are control implementation work, not pure storage-class
 cleanup. Convert them in coherent control/family slices so the manifest changes

@@ -9,7 +9,7 @@ using System.Windows.Controls;
 
 namespace ModernWpf.Controls
 {
-    public class FlowLayout : VirtualizingLayout, IFlowLayoutAlgorithmDelegates
+    public partial class FlowLayout : VirtualizingLayout, IFlowLayoutAlgorithmDelegates
     {
         public FlowLayout()
         {
@@ -18,84 +18,6 @@ namespace ModernWpf.Controls
         }
 
         #region Properties
-
-        public static readonly DependencyProperty LineAlignmentProperty =
-            DependencyProperty.Register(
-                nameof(LineAlignment),
-                typeof(FlowLayoutLineAlignment),
-                typeof(FlowLayout),
-                new PropertyMetadata(FlowLayoutLineAlignment.Start, OnPropertyChanged));
-
-        public FlowLayoutLineAlignment LineAlignment
-        {
-            get => (FlowLayoutLineAlignment)GetValue(LineAlignmentProperty);
-            set => SetValue(LineAlignmentProperty, value);
-        }
-
-        public static readonly DependencyProperty LineSpacingProperty =
-            DependencyProperty.Register(
-                nameof(LineSpacing),
-                typeof(double),
-                typeof(FlowLayout),
-                new PropertyMetadata(0.0, OnPropertyChanged));
-
-        public double LineSpacing
-        {
-            get => (double)GetValue(LineSpacingProperty);
-            set => SetValue(LineSpacingProperty, value);
-        }
-
-        public static readonly DependencyProperty MinItemSpacingProperty =
-            DependencyProperty.Register(
-                nameof(MinItemSpacing),
-                typeof(double),
-                typeof(FlowLayout),
-                new PropertyMetadata(0.0, OnPropertyChanged));
-
-        public double MinItemSpacing
-        {
-            get => (double)GetValue(MinItemSpacingProperty);
-            set => SetValue(MinItemSpacingProperty, value);
-        }
-
-        public static readonly DependencyProperty MinColumnSpacingProperty =
-            DependencyProperty.Register(
-                nameof(MinColumnSpacing),
-                typeof(double),
-                typeof(FlowLayout),
-                new PropertyMetadata(0.0, OnPropertyChanged));
-
-        public double MinColumnSpacing
-        {
-            get => (double)GetValue(MinColumnSpacingProperty);
-            set => SetValue(MinColumnSpacingProperty, value);
-        }
-
-        public static readonly DependencyProperty MinRowSpacingProperty =
-            DependencyProperty.Register(
-                nameof(MinRowSpacing),
-                typeof(double),
-                typeof(FlowLayout),
-                new PropertyMetadata(0.0, OnPropertyChanged));
-
-        public double MinRowSpacing
-        {
-            get => (double)GetValue(MinRowSpacingProperty);
-            set => SetValue(MinRowSpacingProperty, value);
-        }
-
-        public static readonly DependencyProperty OrientationProperty =
-            DependencyProperty.Register(
-                nameof(Orientation),
-                typeof(Orientation),
-                typeof(FlowLayout),
-                new PropertyMetadata(Orientation.Horizontal, OnPropertyChanged));
-
-        public Orientation Orientation
-        {
-            get => (Orientation)GetValue(OrientationProperty);
-            set => SetValue(OrientationProperty, value);
-        }
 
         private static void OnPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {

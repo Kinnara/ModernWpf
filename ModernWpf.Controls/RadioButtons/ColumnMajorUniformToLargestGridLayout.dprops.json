@@ -1,0 +1,32 @@
+{
+  "usings": [
+    "System.Windows"
+  ],
+  "namespace": "ModernWpf.Controls.Primitives",
+  "type": {
+    "declaration": "public partial class",
+    "name": "ColumnMajorUniformToLargestGridLayout"
+  },
+  "properties": [
+    {
+      "name": "ColumnSpacing",
+      "type": "double",
+      "metadataType": "FrameworkPropertyMetadata",
+      "changed": "OnColumnSpacingPropertyChanged"
+    },
+    {
+      "name": "RowSpacing",
+      "type": "double",
+      "metadataType": "FrameworkPropertyMetadata",
+      "changed": "OnRowSpacingPropertyChanged"
+    },
+    {
+      "name": "MaxColumns",
+      "type": "int",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "1",
+      "changed": "OnMaxColumnsPropertyChanged",
+      "validate": "ValidateMaxColumns"
+    }
+  ]
+}
