@@ -1985,11 +1985,10 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
-    public void ToolTipTemplateUsesContentPresenterExChromeSurface()
+    public void ToolTipTemplateUsesOfficialWpfFluentPresenterShape()
     {
         WpfTestHost.Run(() =>
         {
-            var transitions = new ModernWpf.Media.Animation.TransitionCollection();
             var toolTip = new ToolTip
             {
                 Width = 30,
@@ -2000,28 +1999,26 @@ public class LayoutCompatibilityApiTests
                 BorderThickness = new Thickness(12),
                 Padding = new Thickness(0)
             };
-            ControlHelper.SetBackgroundSizing(toolTip, BackgroundSizing.OuterBorderEdge);
-            ControlHelper.SetCharacterSpacing(toolTip, 16);
-            ControlHelper.SetContentTransitions(toolTip, transitions);
-            ControlHelper.SetCornerRadius(toolTip, new CornerRadius(0, 4, 0, 0));
-            ControlHelper.SetIsTextScaleFactorEnabled(toolTip, false);
 
             toolTip.ApplyTemplate();
             toolTip.Measure(new Size(30, 30));
             toolTip.Arrange(new Rect(0, 0, 30, 30));
             toolTip.UpdateLayout();
 
-            var presenter = FindVisualChild<ContentPresenterEx>(toolTip)
-                ?? throw new AssertFailedException("Expected ToolTip template to use ContentPresenterEx as the chrome presenter.");
-            Assert.AreEqual(BackgroundSizing.OuterBorderEdge, presenter.BackgroundSizing);
-            Assert.AreEqual(16, presenter.CharacterSpacing);
-            Assert.AreSame(transitions, presenter.ContentTransitions);
-            Assert.AreEqual(new CornerRadius(0, 4, 0, 0), presenter.CornerRadius);
-            Assert.IsFalse(presenter.IsTextScaleFactorEnabled);
-            Assert.AreEqual(new Thickness(0), presenter.Padding);
-            Assert.AreEqual(TextWrapping.Wrap, presenter.TextWrapping);
+            var border = FindVisualChild<Border>(toolTip)
+                ?? throw new AssertFailedException("Expected ToolTip template to use official WPF Border chrome.");
+            var presenter = FindVisualChild<ContentPresenter>(toolTip)
+                ?? throw new AssertFailedException("Expected ToolTip template to use official WPF ContentPresenter.");
 
-            AssertOuterChromePixels(presenter);
+            Assert.AreEqual(typeof(ContentPresenter), presenter.GetType());
+            Assert.IsNull(FindVisualChild<ContentPresenterEx>(toolTip));
+            Assert.IsNull(FindVisualChild<ThemeShadowChrome>(toolTip));
+            Assert.AreEqual(new CornerRadius(4), border.CornerRadius);
+            Assert.AreSame(toolTip.Background, border.Background);
+            Assert.AreSame(toolTip.BorderBrush, border.BorderBrush);
+            Assert.AreEqual(toolTip.BorderThickness, border.BorderThickness);
+            Assert.IsInstanceOfType(border.Effect, typeof(System.Windows.Media.Effects.DropShadowEffect));
+            Assert.AreEqual(new Thickness(0), presenter.Margin);
         });
     }
 

@@ -1,0 +1,123 @@
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media.Effects;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ModernWpf.Controls;
+using ModernWpf.Controls.Primitives;
+using ModernWpf.WinUI.TestApp;
+using ModernWpf.WinUI.TestInfra;
+
+namespace ModernWpf.WinUI.Tests.CommonStyles;
+
+[TestClass]
+public class ToolTipVisualStateTests
+{
+    [TestMethod]
+    public void DefaultToolTipStyleUsesOfficialWpfFluentTemplateShape()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var defaultStyle = (Style)Application.Current.FindResource("DefaultToolTipStyle");
+            var implicitToolTipStyle = (Style)Application.Current.FindResource(typeof(ToolTip));
+            Assert.AreEqual(typeof(ToolTip), defaultStyle.TargetType);
+            Assert.AreEqual(typeof(ToolTip), implicitToolTipStyle.TargetType);
+            Assert.AreSame(defaultStyle, implicitToolTipStyle.BasedOn);
+
+            var toolTip = new ToolTip
+            {
+                Content = new TextBlock { Text = "Tip" }
+            };
+            toolTip.ApplyTemplate();
+            toolTip.Measure(new Size(240, 120));
+            toolTip.Arrange(new Rect(0, 0, 240, 120));
+            toolTip.UpdateLayout();
+
+            AssertOfficialSetters(toolTip);
+            AssertOfficialTemplateShape(toolTip);
+        });
+    }
+
+    [TestMethod]
+    public void ThemeDictionariesExposeOfficialToolTipAliases()
+    {
+        WpfTestHost.Run(() =>
+        {
+            AssertThemeResourceReference("Light", "ToolTipForeground", "TextFillColorPrimaryBrush");
+            AssertThemeResourceReference("Light", "ToolTipBackground", "AcrylicBackgroundFillColorDefaultBrush");
+
+            AssertThemeResourceReference("Dark", "ToolTipForeground", "TextFillColorPrimaryBrush");
+            AssertThemeResourceReference("Dark", "ToolTipBackground", "AcrylicBackgroundFillColorDefaultBrush");
+
+            AssertThemeResourceReference("HighContrast", "ToolTipForeground", "SystemColorWindowTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "ToolTipBackground", "SystemColorWindowColorBrush");
+        });
+    }
+
+    private static void AssertOfficialSetters(ToolTip toolTip)
+    {
+        Assert.AreSame(toolTip.TryFindResource("ToolTipForegroundBrush"), toolTip.Foreground);
+        Assert.AreEqual(SystemFonts.StatusFontFamily, toolTip.FontFamily);
+        Assert.AreEqual(SystemFonts.StatusFontSize, toolTip.FontSize);
+        Assert.AreEqual(SystemFonts.StatusFontStyle, toolTip.FontStyle);
+        Assert.AreEqual(SystemFonts.StatusFontWeight, toolTip.FontWeight);
+        Assert.AreSame(toolTip.TryFindResource("ToolTipBackgroundBrush"), toolTip.Background);
+        Assert.AreSame(toolTip.TryFindResource("ToolTipBorderBrush"), toolTip.BorderBrush);
+        Assert.AreEqual(new Thickness(1), toolTip.BorderThickness);
+        Assert.AreEqual(new Thickness(9, 6, 9, 8), toolTip.Padding);
+        Assert.AreEqual(320.0, toolTip.MaxWidth);
+        Assert.AreEqual(HorizontalAlignment.Left, toolTip.HorizontalContentAlignment);
+        Assert.AreEqual(VerticalAlignment.Center, toolTip.VerticalContentAlignment);
+        Assert.IsTrue(toolTip.SnapsToDevicePixels);
+        Assert.IsTrue(toolTip.OverridesDefaultStyle);
+    }
+
+    private static void AssertOfficialTemplateShape(ToolTip toolTip)
+    {
+        toolTip.ApplyTemplate();
+
+        var border = GetTemplateChild<Border>(toolTip, "Border");
+        var presenter = VisualTreeTestHelper.EnumerateDescendants(border).OfType<ContentPresenter>().Single();
+
+        Assert.AreSame(toolTip.Background, border.Background);
+        Assert.AreSame(toolTip.BorderBrush, border.BorderBrush);
+        Assert.AreEqual(toolTip.BorderThickness, border.BorderThickness);
+        Assert.AreEqual(new CornerRadius(4), border.CornerRadius);
+        Assert.IsInstanceOfType(border.Effect, typeof(DropShadowEffect));
+
+        var shadow = (DropShadowEffect)border.Effect;
+        Assert.AreEqual(30.0, shadow.BlurRadius);
+        Assert.AreEqual(0.0, shadow.Direction);
+        Assert.AreEqual(0.4, shadow.Opacity);
+        Assert.AreEqual(0.0, shadow.ShadowDepth);
+
+        Assert.AreEqual(toolTip.Padding, presenter.Margin);
+        Assert.AreEqual(toolTip.HorizontalContentAlignment, presenter.HorizontalAlignment);
+        Assert.AreEqual(toolTip.VerticalContentAlignment, presenter.VerticalAlignment);
+        Assert.AreEqual(typeof(ContentPresenter), presenter.GetType());
+        Assert.IsNull(VisualTreeTestHelper.FindDescendant<ContentPresenterEx>(toolTip));
+        Assert.IsNull(VisualTreeTestHelper.FindDescendant<ThemeShadowChrome>(toolTip));
+
+        var textBlockStyle = presenter.Resources[typeof(TextBlock)] as Style
+            ?? throw new AssertFailedException("Expected official WPF Fluent ToolTip TextBlock wrapping style.");
+        var wrappingSetter = textBlockStyle.Setters.OfType<Setter>()
+            .Single(item => item.Property == TextBlock.TextWrappingProperty);
+        Assert.AreEqual(TextWrapping.WrapWithOverflow, wrappingSetter.Value);
+    }
+
+    private static T GetTemplateChild<T>(Control control, string name)
+        where T : DependencyObject
+    {
+        return control.Template.FindName(name, control) as T
+            ?? throw new AssertFailedException($"Expected {control.GetType().Name} template child '{name}' to be a {typeof(T).Name}.");
+    }
+
+    private static void AssertThemeResourceReference(string themeName, string key, object expectedResourceKey)
+    {
+        var theme = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(theme.Contains(expectedResourceKey), $"Theme is missing {expectedResourceKey}.");
+        Assert.AreSame(theme[expectedResourceKey], theme[key], key);
+    }
+}

@@ -253,3 +253,33 @@ Source inspected:
 ### Test Evidence
 
 - `test\ModernWpf.WinUI.Tests\CommonStyles\RichTextBoxVisualStateTests.cs` covers the official WPF Fluent RichTextBox trigger shape, WPF template parts, official setters, deleted header/placeholder/description slots, deleted `ContentPresenterEx` slot, disabled trigger resource application, and retained ModernWpf substitutions.
+
+## 2026-05-18 Batch 9
+
+Source inspected:
+
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\ToolTip.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Light.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Dark.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\HC.xaml`
+
+### Synced Values
+
+| Resource key / style | Official WPF Fluent value | ModernWpf value after sync | Reason |
+| --- | --- | --- | --- |
+| `DefaultToolTipStyle` | `ToolTip` style with a WPF `Border`, plain WPF `ContentPresenter`, 4px corner radius, WPF `DropShadowEffect`, system status font resources, and `WrapWithOverflow` TextBlock content wrapping | Same structure under the existing resource key | `ToolTip` is a stock WPF control, so official WPF Fluent is the primary source. |
+| Implicit `ToolTip` style | Based on `DefaultToolTipStyle` | Same | Matches official WPF Fluent resource shape while keeping the existing ModernWpf resource key. |
+| Stock resource merge | Included by the official Fluent theme dictionaries | `ModernWpf\StockControlsResources.xaml` now merges `Styles\ToolTip.xaml` | Makes the official-backed style active through `XamlControlsResources`. |
+| `ToolTipForeground` / `ToolTipBackground` | Official theme aliases for tooltip foreground/background brushes | Same aliases across Light, Dark, and HighContrast | Required by the official WPF Fluent resource surface. |
+
+### Intentional Differences
+
+| Resource key / style | Official WPF Fluent value | ModernWpf backport value | Reason retained |
+| --- | --- | --- | --- |
+| ToolTip theme aliases | Dedicated brush resources in official WPF Fluent | `m:StaticResource` aliases to ModernWpf's existing Fluent brush tokens | Keeps ModernWpf's existing theme-resource alias model while exposing the official keys. |
+| `ToolTipContentThemeFontSize` | No active official template use | Retained as an unused public alias | Prevents unnecessary resource-surface churn while the official template uses system status font size. |
+
+### Test Evidence
+
+- `test\ModernWpf.WinUI.Tests\CommonStyles\ToolTipVisualStateTests.cs` covers the official WPF Fluent ToolTip style setters, WPF `Border` / `ContentPresenter` shape, drop shadow, TextBlock wrapping style, removal of `ContentPresenterEx` / `ThemeShadowChrome`, and official theme aliases.
+- `test\ModernWpf.WinUI.Tests\LayoutCompatibility\LayoutCompatibilityApiTests.cs` covers the official WPF presenter shape for ToolTip in the broader layout compatibility suite.

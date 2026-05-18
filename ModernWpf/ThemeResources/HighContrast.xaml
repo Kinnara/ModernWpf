@@ -1833,6 +1833,8 @@
     <m:StaticResource x:Key="ToolTipForegroundBrush" ResourceKey="SystemColorWindowTextColorBrush" />
     <m:StaticResource x:Key="ToolTipBackgroundBrush" ResourceKey="SystemColorWindowColorBrush" />
     <m:StaticResource x:Key="ToolTipBorderBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+    <m:StaticResource x:Key="ToolTipForeground" ResourceKey="SystemColorWindowTextColorBrush" />
+    <m:StaticResource x:Key="ToolTipBackground" ResourceKey="SystemColorWindowColorBrush" />
 
     <!-- Resources for TreeView -->
     <m:StaticResource x:Key="TreeViewItemBackground" ResourceKey="SystemColorWindowColorBrush" />

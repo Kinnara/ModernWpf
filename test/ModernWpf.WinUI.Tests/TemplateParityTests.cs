@@ -144,6 +144,7 @@ public class TemplateParityTests
             Path.Combine("ModernWpf", "Styles", "RepeatButton.xaml"),
             Path.Combine("ModernWpf", "Styles", "RichTextBox.xaml"),
             Path.Combine("ModernWpf", "Styles", "Slider.xaml"),
+            Path.Combine("ModernWpf", "Styles", "ToolTip.xaml"),
             Path.Combine("ModernWpf", "Styles", "ToggleButton.xaml")
         };
 

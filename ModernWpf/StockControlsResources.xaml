@@ -33,6 +33,7 @@
         <ResourceDictionary Source="Styles/TabControl.xaml" />
         <ResourceDictionary Source="Styles/TextBox.xaml" />
         <ResourceDictionary Source="Styles/TextStyles.xaml" />
+        <ResourceDictionary Source="Styles/ToolTip.xaml" />
         <ResourceDictionary Source="Styles/ToggleButton.xaml" />
         <ResourceDictionary Source="Styles/TreeView.xaml" />
         <ResourceDictionary Source="Styles/Window.xaml" />
