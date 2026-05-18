@@ -8,6 +8,7 @@ using System.Windows.Controls.Primitives;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf;
 using ModernWpf.Controls;
+using ModernWpf.Controls.Primitives;
 using ModernWpf.WinUI.TestInfra;
 
 namespace ModernWpf.WinUI.Tests.PagerControl;
@@ -303,6 +304,43 @@ public class PagerControlApiTests
     }
 
     [TestMethod]
+    public void PagerButtonsUseWinUISourceButtonTemplates()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var pager = new ModernWpf.Controls.PagerControl
+            {
+                NumberOfPages = 5,
+                DisplayMode = PagerControlDisplayMode.ButtonPanel
+            };
+
+            using var host = new TestWindowHost(pager, width: 420, height: 120);
+
+            var firstButton = GetTemplateChild<Button>(pager, "FirstPageButton");
+            Assert.IsTrue(ButtonHelper.GetVisualStateSettersEnabled(firstButton));
+
+            var navigationRoot = FindNamedDescendant<FrameworkElement>(firstButton, "RootGrid");
+            var navigationIcon = FindNamedDescendant<FontIcon>(firstButton, "Content");
+            Assert.AreEqual(firstButton.Content, navigationIcon.Glyph);
+            Assert.IsTrue(navigationIcon.MirroredWhenRightToLeft);
+            AssertStateSetter(navigationRoot, "CommonStates", "PointerOver", "RootGrid.Background");
+            AssertStateSetter(navigationRoot, "CommonStates", "PointerOver", "Content.Foreground");
+            AssertStateSetter(navigationRoot, "CommonStates", "Pressed", "RootGrid.Background");
+            AssertStateSetter(navigationRoot, "CommonStates", "Disabled", "Content.Foreground");
+
+            var pageButton = GetPageButtons(pager).First();
+            Assert.IsTrue(ButtonHelper.GetVisualStateSettersEnabled(pageButton));
+
+            var pageButtonPresenter = FindNamedDescendant<ContentPresenterEx>(pageButton, "ContentPresenter");
+            Assert.AreEqual(pageButton.Content, pageButtonPresenter.Content);
+            AssertStateSetter(pageButtonPresenter, "CommonStates", "PointerOver", "ContentPresenter.Background");
+            AssertStateSetter(pageButtonPresenter, "CommonStates", "PointerOver", "ContentPresenter.Foreground");
+            AssertStateSetter(pageButtonPresenter, "CommonStates", "Pressed", "ContentPresenter.Background");
+            AssertStateSetter(pageButtonPresenter, "CommonStates", "Disabled", "ContentPresenter.Foreground");
+        });
+    }
+
+    [TestMethod]
     public void NumberPanelItemsFollowWinUISourceEllipsisPatterns()
     {
         WpfTestHost.Run(() =>
@@ -391,6 +429,18 @@ public class PagerControlApiTests
     {
         var child = control.Template.FindName(name, control) as T;
         Assert.IsNotNull(child, $"Missing template part '{name}'.");
+        return child!;
+    }
+
+    private static T FindNamedDescendant<T>(DependencyObject root, string name)
+        where T : FrameworkElement
+    {
+        var child = VisualTreeTestHelper
+            .EnumerateDescendants(root)
+            .OfType<T>()
+            .FirstOrDefault(candidate => candidate.Name == name);
+
+        Assert.IsNotNull(child, $"Missing descendant '{name}'.");
         return child!;
     }
 

@@ -62,6 +62,7 @@ namespace ModernWpf.Controls
         private const string NextPageButtonName = "NextPageButton";
         private const string LastPageButtonName = "LastPageButton";
 
+        private const string TemplateNumberPanelButtonStyleName = "PagerControlTemplateNumberPanelButtonStyle";
         private const string NumberPanelButtonStyleName = "PagerControlNumberPanelButtonStyle";
         private const int AutoDisplayModeNumberOfPagesThreshold = 10;
         private const int InfiniteModeComboBoxItemsIncrement = 100;
@@ -971,7 +972,7 @@ namespace ModernWpf.Controls
             var button = new Button
             {
                 Content = pageNumber,
-                Style = TryFindResource(NumberPanelButtonStyleName) as Style
+                Style = FindNumberPanelButtonStyle()
             };
 
             button.Click += NumberPanelButtonClicked;
@@ -981,6 +982,16 @@ namespace ModernWpf.Controls
             AutomationProperties.SetSizeOfSet(button, numberOfPages);
 #endif
             m_numberPanelElements.Add(button);
+        }
+
+        private Style FindNumberPanelButtonStyle()
+        {
+            return m_rootGrid?.TryFindResource(TemplateNumberPanelButtonStyleName) as Style ??
+                m_numberPanelRepeater?.TryFindResource(TemplateNumberPanelButtonStyleName) as Style ??
+                TryFindResource(NumberPanelButtonStyleName) as Style ??
+                m_rootGrid?.TryFindResource(NumberPanelButtonStyleName) as Style ??
+                m_numberPanelRepeater?.TryFindResource(NumberPanelButtonStyleName) as Style ??
+                Application.Current?.TryFindResource(NumberPanelButtonStyleName) as Style;
         }
 
         private void AppendEllipsisIconToNumberPanelList()
