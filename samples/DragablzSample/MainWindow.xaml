@@ -19,25 +19,9 @@
         <local:TabablzControlEx.InterTabController>
             <dragablz:InterTabController />
         </local:TabablzControlEx.InterTabController>
-        <TabItem Header="Home">
-            <ui:TabItemHelper.Icon>
-                <ui:SymbolIcon Symbol="Home" />
-            </ui:TabItemHelper.Icon>
-        </TabItem>
-        <TabItem Header="Document 1">
-            <ui:TabItemHelper.Icon>
-                <ui:SymbolIcon Symbol="Document" />
-            </ui:TabItemHelper.Icon>
-        </TabItem>
-        <TabItem Header="Document 2">
-            <ui:TabItemHelper.Icon>
-                <ui:SymbolIcon Symbol="Document" />
-            </ui:TabItemHelper.Icon>
-        </TabItem>
-        <TabItem Header="Document 3">
-            <ui:TabItemHelper.Icon>
-                <ui:SymbolIcon Symbol="Document" />
-            </ui:TabItemHelper.Icon>
-        </TabItem>
+        <TabItem Header="Home" />
+        <TabItem Header="Document 1" />
+        <TabItem Header="Document 2" />
+        <TabItem Header="Document 3" />
     </local:TabablzControlEx>
 </Window>

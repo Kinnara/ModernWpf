@@ -1707,6 +1707,10 @@
 
     <!-- Resources for TabView -->
     <m:StaticResource x:Key="TabViewBackground"                                       ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="TabViewForeground"                                       ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="TabViewItemForegroundSelected"                           ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="TabViewBorderBrush"                                      ResourceKey="CardStrokeColorDefaultBrush" />
+    <m:StaticResource x:Key="TabViewSelectedItemBorderBrush"                          ResourceKey="CardStrokeColorDefaultBrush" />
     <m:StaticResource x:Key="TabViewItemHeaderBackground"                             ResourceKey="LayerOnMicaBaseAltFillColorTransparentBrush" />
     <m:StaticResource x:Key="TabViewItemHeaderBackgroundSelected"                     ResourceKey="SolidBackgroundFillColorTertiaryBrush" />
     <m:StaticResource x:Key="TabViewItemHeaderBackgroundPointerOver"                  ResourceKey="LayerOnMicaBaseAltFillColorSecondaryBrush" />
@@ -2099,6 +2103,7 @@
     </Style>
 
     <Style x:Key="{x:Static SystemParameters.FocusVisualStyleKey}" BasedOn="{StaticResource HighVisibilityFocusVisual}" />
+    <Style x:Key="DefaultControlFocusVisualStyle" BasedOn="{StaticResource HighVisibilityFocusVisual}" />
     <Style x:Key="DefaultCollectionFocusVisualStyle" BasedOn="{StaticResource HighVisibilityFocusVisual}" />
 
 </ResourceDictionary>

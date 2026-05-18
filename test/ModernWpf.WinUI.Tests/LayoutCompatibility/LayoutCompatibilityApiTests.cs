@@ -904,7 +904,7 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
-    public void CoreTabControlTemplatesUseWinUIPresenterSlots()
+    public void CoreTabControlTemplatesUseOfficialWpfPresenterSlots()
     {
         WpfTestHost.Run(() =>
         {
@@ -920,25 +920,18 @@ public class LayoutCompatibilityApiTests
                 Width = 320,
                 Height = 160
             };
-            TabControlHelper.SetTabStripHeader(tabControl, "Strip Header");
-            TabControlHelper.SetTabStripFooter(tabControl, "Strip Footer");
             tabControl.Items.Add(tabItem);
 
             using var host = new TestWindowHost(tabControl, width: 380, height: 220);
             host.UpdateLayout();
 
-            var itemPresenter = FindTemplateChild<ContentPresenterEx>(tabItem, "ContentPresenter");
+            var itemPresenter = FindTemplateChild<ContentPresenter>(tabItem, "ContentSite");
             Assert.AreEqual(tabItem.Header, itemPresenter.Content);
-            Assert.AreSame(itemPresenter.TryFindResource("TabViewItemHeaderForegroundSelected"), itemPresenter.Foreground);
+            Assert.IsNull(FindVisualChild<ContentPresenterEx>(tabItem));
 
-            var headerPresenter = FindTemplateChild<ContentPresenterEx>(tabControl, "HeaderContentPresenter");
-            Assert.AreEqual(TabControlHelper.GetTabStripHeader(tabControl), headerPresenter.Content);
-
-            var footerPresenter = FindTemplateChild<ContentPresenterEx>(tabControl, "FooterContentPresenter");
-            Assert.AreEqual(TabControlHelper.GetTabStripFooter(tabControl), footerPresenter.Content);
-
-            var selectedContentHost = FindTemplateChild<ContentPresenterEx>(tabControl, "PART_SelectedContentHost");
+            var selectedContentHost = FindTemplateChild<ContentPresenter>(tabControl, "PART_SelectedContentHost");
             Assert.AreEqual(tabItem.Content, selectedContentHost.Content);
+            Assert.IsNull(FindVisualChild<ContentPresenterEx>(tabControl));
         });
     }
 

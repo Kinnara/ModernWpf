@@ -83,7 +83,6 @@ public class TemplateParityTests
             Path.Combine("ModernWpf", "ProgressBar", "ProgressBar.xaml"),
             Path.Combine("ModernWpf", "Styles", "AutoSuggestBox.xaml"),
             Path.Combine("ModernWpf", "Styles", "Pivot.xaml"),
-            Path.Combine("ModernWpf", "Styles", "TabControl.xaml"),
             Path.Combine("ModernWpf", "Styles", "NavigationBackButton.xaml"),
             Path.Combine("ModernWpf", "TitleBar", "TitleBarControl.xaml"),
             Path.Combine("ModernWpf.Controls", "BreadcrumbBar", "BreadcrumbBar.xaml"),
@@ -160,6 +159,7 @@ public class TemplateParityTests
             Path.Combine("ModernWpf", "Styles", "ScrollBar.xaml"),
             Path.Combine("ModernWpf", "Styles", "ScrollViewer.xaml"),
             Path.Combine("ModernWpf", "Styles", "StatusBar.xaml"),
+            Path.Combine("ModernWpf", "Styles", "TabControl.xaml"),
             Path.Combine("ModernWpf", "Styles", "TextBox.xaml"),
             Path.Combine("ModernWpf", "Styles", "PasswordBox.xaml"),
             Path.Combine("ModernWpf", "Styles", "Thumb.xaml"),
@@ -280,6 +280,7 @@ public class TemplateParityTests
             Path.Combine("ModernWpf", "Styles", "ListView.xaml"),
             Path.Combine("ModernWpf", "Styles", "ListViewItem.xaml"),
             Path.Combine("ModernWpf", "Styles", "Expander.xaml"),
+            Path.Combine("ModernWpf", "Styles", "TabControl.xaml"),
             Path.Combine("ModernWpf", "Styles", "TreeView.xaml"),
             Path.Combine("ModernWpf", "Styles", "TreeViewItem.xaml")
         };
@@ -301,8 +302,7 @@ public class TemplateParityTests
         var repoRoot = FindRepoRoot();
         var sourceBackedTemplateFiles = new[]
         {
-            Path.Combine("ModernWpf", "Styles", "Pivot.xaml"),
-            Path.Combine("ModernWpf", "Styles", "TabControl.xaml")
+            Path.Combine("ModernWpf", "Styles", "Pivot.xaml")
         };
 
         var offenders = sourceBackedTemplateFiles

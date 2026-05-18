@@ -1,5 +1,3 @@
-﻿using ModernWpf.Controls;
-using ModernWpf.Controls.Primitives;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -13,9 +11,7 @@ namespace DragablzSample
 
             TabView.NewItemFactory = () =>
             {
-                var newItem = new TabItem { Header = "New Document" };
-                TabItemHelper.SetIcon(newItem, new SymbolIcon(Symbol.Document));
-                return newItem;
+                return new TabItem { Header = "New Document" };
             };
         }
     }

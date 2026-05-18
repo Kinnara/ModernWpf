@@ -1688,7 +1688,11 @@
     <m:StaticResource x:Key="StatusBarItemForegroundDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
 
     <!-- Resources for TabView -->
-    <m:StaticResource x:Key="TabViewBackground"                                       ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="TabViewBackground"                                       ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="TabViewForeground"                                       ResourceKey="SystemColorWindowTextColorBrush" />
+    <m:StaticResource x:Key="TabViewItemForegroundSelected"                           ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="TabViewBorderBrush"                                      ResourceKey="SystemColorWindowTextColorBrush" />
+    <m:StaticResource x:Key="TabViewSelectedItemBorderBrush"                          ResourceKey="SystemColorHighlightColorBrush" />
     <m:StaticResource x:Key="TabViewItemHeaderBackground"                             ResourceKey="SystemColorButtonFaceColorBrush" />
     <m:StaticResource x:Key="TabViewItemHeaderBackgroundSelected"                     ResourceKey="SystemColorWindowColorBrush" />
     <m:StaticResource x:Key="TabViewItemHeaderBackgroundPointerOver"                  ResourceKey="SystemColorHighlightColorBrush" />
@@ -2072,6 +2076,7 @@
     </Style>
 
     <Style x:Key="{x:Static SystemParameters.FocusVisualStyleKey}" BasedOn="{StaticResource HighVisibilityFocusVisual}" />
+    <Style x:Key="DefaultControlFocusVisualStyle" BasedOn="{StaticResource HighVisibilityFocusVisual}" />
     <Style x:Key="DefaultCollectionFocusVisualStyle" BasedOn="{StaticResource HighVisibilityFocusVisual}" />
 
 </ResourceDictionary>

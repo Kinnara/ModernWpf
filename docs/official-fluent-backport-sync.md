@@ -848,3 +848,36 @@ Source inspected:
 
 - `test\ModernWpf.WinUI.Tests\ComboBox\ComboBoxApiTests.cs` covers the official WPF Fluent ComboBox and ComboBoxItem style shape, editable TextBox style, WPF presenters, theme resource aliases, DataGrid adapter styles, and deletion of the old WinUI helper/template layer.
 - `test\ModernWpf.WinUI.Tests\TemplateParityTests.cs` classifies `ComboBox.xaml` as an official WPF Fluent stock template file that should not use `VisualStateEx` or `ContentPresenterEx`.
+
+## 2026-05-18 Batch 28
+
+Source inspected:
+
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\TabControl.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Light.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Dark.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\HC.xaml`
+
+### Synced Values
+
+| Resource key / style | Official WPF Fluent value | ModernWpf value after sync | Reason |
+| --- | --- | --- | --- |
+| `DefaultTopTabControlStyle`, `DefaultBottomTabControlStyle`, `DefaultLeftTabControlStyle`, `DefaultRightTabControlStyle` | Official stock WPF `TabControl` templates with WPF `TabPanel`, `Border`, and `ContentPresenter` selected-content host | Same source shape in `Styles\TabControl.xaml` | `TabControl` is a stock WPF control, so official WPF Fluent is the primary source. |
+| `DefaultTabControlStyle` / implicit stock `TabControl` style | Official style setters and placement-trigger template switching | Same source shape | Deletes the previous WinUI `TabView`-shaped header/footer presenter mapping for stock TabControl. |
+| `DefaultTabItemStyle` / implicit stock `TabItem` style | Official stock WPF TabItem template with WPF `ContentPresenter`, WPF visual-state names, and WPF triggers for selected and strip placement | Same source shape | Deletes the previous helper-driven `VisualStateEx` state matrix and icon presenter guess from stock TabItem. |
+| `TabViewForeground`, `TabViewItemForegroundSelected`, `TabViewBorderBrush`, `TabViewSelectedItemBorderBrush` | Official WPF Fluent theme aliases | Added across Light, Dark, and HighContrast theme dictionaries | Required by the copied official templates. |
+| `DefaultControlFocusVisualStyle` | Official focus style key consumed by stock Fluent styles | Added as an alias to ModernWpf's existing `HighVisibilityFocusVisual` | Lets copied official stock styles resolve the official key while keeping the existing ModernWpf focus visual implementation. |
+
+### Intentional Differences
+
+| Resource key / style | Official WPF Fluent value | ModernWpf backport value | Reason retained |
+| --- | --- | --- | --- |
+| WinUI `TabView` control APIs and template parts | Separate WinUI control surface | Excluded | This phase does not add a `TabView` control; stock WPF `TabControl` now follows official WPF Fluent instead. |
+| Historical TabView sizing resources | Not consumed by official WPF Fluent `TabControl.xaml` | Not used by the stock TabControl style | The old WinUI density/min-width helper path was deleted for the stock WPF control. |
+| Dragablz sample icon helper path | No official stock TabItem helper | Sample no longer uses `TabItemHelper.Icon` | The helper was part of the deleted guessed TabView-shaped layer. |
+
+### Test Evidence
+
+- `test\ModernWpf.WinUI.Tests\TabView\TabViewResourceTests.cs` covers the official WPF Fluent TabControl resource keys, theme aliases, selected TabItem trigger behavior, WPF presenter slots, and deletion of old sizing/helper assumptions.
+- `test\ModernWpf.WinUI.Tests\LayoutCompatibility\LayoutCompatibilityApiTests.cs` covers the official WPF TabControl and TabItem presenter shape.
+- `test\ModernWpf.WinUI.Tests\TemplateParityTests.cs` classifies `TabControl.xaml` as an official WPF Fluent stock template file that should not use `VisualStateEx` or `ContentPresenterEx`.
