@@ -1,0 +1,26 @@
+{
+  "usings": [
+    "System.Numerics",
+    "System.Windows",
+    "System.Windows.Media",
+    "ModernWpf.Controls"
+  ],
+  "namespace": "ModernWpf.Controls.Primitives",
+  "type": {
+    "declaration": "public partial class",
+    "name": "ColorSpectrum"
+  },
+  "properties": [
+    { "name": "Color", "type": "Color", "default": "Colors.White", "changed": "OnColorPropertyChanged" },
+    { "name": "HsvColor", "type": "Vector4", "default": "new Vector4(0, 0, 1, 1)", "changed": "OnHsvColorPropertyChanged" },
+    { "name": "MinHue", "type": "int", "default": "0", "changed": "OnHueRangePropertyChanged" },
+    { "name": "MaxHue", "type": "int", "default": "359", "changed": "OnHueRangePropertyChanged" },
+    { "name": "MinSaturation", "type": "int", "default": "0", "changed": "OnSaturationRangePropertyChanged" },
+    { "name": "MaxSaturation", "type": "int", "default": "100", "changed": "OnSaturationRangePropertyChanged" },
+    { "name": "MinValue", "type": "int", "default": "0", "changed": "OnValueRangePropertyChanged" },
+    { "name": "MaxValue", "type": "int", "default": "100", "changed": "OnValueRangePropertyChanged" },
+    { "name": "Shape", "type": "ColorSpectrumShape", "default": "ColorSpectrumShape.Box", "changed": "OnShapePropertyChanged" },
+    { "name": "Components", "type": "ColorSpectrumComponents", "default": "ColorSpectrumComponents.HueSaturation", "changed": "OnComponentsPropertyChanged" },
+    { "name": "CornerRadius", "type": "CornerRadius", "kind": "AddOwner", "sourceProperty": "ControlHelper.CornerRadiusProperty" }
+  ]
+}

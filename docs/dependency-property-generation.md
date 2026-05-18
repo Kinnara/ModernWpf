@@ -73,7 +73,8 @@ The existing ModernWpf control/property-owner generated-property companion
 files are manifest-backed: `AnnotatedScrollBar`, `AppBarButton`,
 `AppBarElementContainer`, `AppBarElementProperties`, `AppBarSeparator`,
 `AppBarToggleButton`, `AutoSuggestBox`, `BreadcrumbBar`,
-`BreadcrumbBarItem`, `CommandBar`, `CommandBarFlyoutCommandBar`,
+`BreadcrumbBarItem`, `ColorPicker`, `ColorPickerSlider`, `ColorSpectrum`,
+`CommandBar`, `CommandBarFlyoutCommandBar`,
 `CommandBarFlyoutCommandBarTemplateSettingsProxy`,
 `CommandBarOverflowPresenter`, `DropDownButton`, `Flyout`, `FlyoutBase`,
 `FlyoutPresenter`, `HyperlinkButton`, `InfoBadge`, `InfoBar`,
@@ -113,11 +114,10 @@ framework generated files under `src/dxaml/xcp/dxaml/lib/winrtgeneratedclasses`
 `AppBarButtonTemplateSettings` and `SplitViewTemplateSettings`.
 
 After the template-settings, Repeater layout, CommandBar/AppBar family, WinUI
-source-backed controls, and the latest small-control DP-generation round,
+source-backed controls, and the latest ColorPicker-family DP-generation round,
 the remaining ModernWpf types with inline DP/AddOwner sites whose type names
-match generated WinUI sources are 12 types / 99 sites:
-`AutoSuggestBoxHelper`, `ColorPicker`, `ColorPickerSlider`,
-`ColorSpectrum`, `ContentDialog`, `ItemsRepeater`,
+match generated WinUI sources are 9 types / 66 sites:
+`AutoSuggestBoxHelper`, `ContentDialog`, `ItemsRepeater`,
 `NavigationViewItemBase`, `NavigationViewItemPresenter`, `RecyclePool`,
 `SplitButton`, `ToggleSplitButton`, and `ToggleSwitch`.
 
@@ -132,3 +132,7 @@ The small-control round converted 49 inline sites across `DropDownButton`,
 `RatingItemImageInfo`. `LayoutPanel.Layout` intentionally keeps its manual CLR
 wrapper because the old getter returns the initialized `m_layout` field instead
 of the raw dependency-property storage value.
+
+The ColorPicker-family round converted 33 inline sites across `ColorPicker`,
+`ColorPickerSlider`, and `ColorSpectrum`, with defaults checked against the
+local WinUI `dev/ColorPicker/*.idl` source.
