@@ -142,6 +142,7 @@ public class TemplateParityTests
             Path.Combine("ModernWpf", "Styles", "CheckBox.xaml"),
             Path.Combine("ModernWpf", "Styles", "RadioButton.xaml"),
             Path.Combine("ModernWpf", "Styles", "RepeatButton.xaml"),
+            Path.Combine("ModernWpf", "Styles", "RichTextBox.xaml"),
             Path.Combine("ModernWpf", "Styles", "Slider.xaml"),
             Path.Combine("ModernWpf", "Styles", "ToggleButton.xaml")
         };
@@ -234,7 +235,6 @@ public class TemplateParityTests
             Path.Combine("ModernWpf", "Styles", "ComboBox.xaml"),
             Path.Combine("ModernWpf", "Styles", "DatePicker.xaml"),
             Path.Combine("ModernWpf", "Styles", "PasswordBox.xaml"),
-            Path.Combine("ModernWpf", "Styles", "RichTextBox.xaml"),
             Path.Combine("ModernWpf", "Styles", "TextBox.xaml")
         };
 

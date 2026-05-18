@@ -223,3 +223,33 @@ Source inspected:
 ### Test Evidence
 
 - `test\ModernWpf.WinUI.Tests\CommonStyles\CheckBoxVisualStateTests.cs` covers the official WPF Fluent CheckBox trigger shape, WPF presenter slot, official metrics/glyph resources, checked/indeterminate/disabled behavior, and newly added glyph brush aliases.
+
+## 2026-05-18 Batch 8
+
+Source inspected:
+
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Themes\Fluent.Light.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Themes\Fluent.Dark.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Themes\Fluent.HC.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Themes\Fluent.xaml`
+
+### Synced Values
+
+| Resource key / style | Official WPF Fluent value | ModernWpf value after sync | Reason |
+| --- | --- | --- | --- |
+| `DefaultRichTextBoxStyle` | `RichTextBox` style with `ContentBorder`, `PART_ContentHost`, official text-control setters, and WPF triggers for pointer-over, focused, and disabled states | Same structure under the existing resource key, with ModernWpf context-menu, validation, and corner-radius substitutions | `RichTextBox` is a stock WPF control, so official WPF Fluent is the primary source. |
+| Implicit `RichTextBox` style | Based on `DefaultRichTextBoxStyle` | Same | Matches official WPF Fluent resource shape while keeping the existing ModernWpf resource key. |
+| `RichTextBoxAccentBorderThemeThickness` | `0,0,0,1` | Same | Restores the official RichTextBox-specific accent border resource. |
+
+### Intentional Differences
+
+| Resource key / style | Official WPF Fluent value | ModernWpf backport value | Reason retained |
+| --- | --- | --- | --- |
+| RichTextBox context menu | `DefaultControlContextMenu` | `TextControlContextMenu` plus `TextContextMenu.UsingTextContextMenu=True` | ModernWpf keeps its existing text-control context-menu integration. |
+| RichTextBox corner radius property | `Border.CornerRadius` on `RichTextBox` | `primitives:ControlHelper.CornerRadius` | Older ModernWpf targets do not expose the official source property on `RichTextBox`; this preserves the backport radius bridge. |
+| RichTextBox validation chrome | No ModernWpf validation adorner bridge | `Validation.ErrorTemplate` and `ValidationHelper.IsTemplateValidationAdornerSite` retained | Existing ModernWpf validation adorners still need a template-owned chrome site. |
+| `RichEditBoxTopHeaderMargin` | No official WPF Fluent equivalent | Retained as an unused public alias | Prevents unnecessary resource-surface churn while the official template no longer consumes header-presenter resources. |
+
+### Test Evidence
+
+- `test\ModernWpf.WinUI.Tests\CommonStyles\RichTextBoxVisualStateTests.cs` covers the official WPF Fluent RichTextBox trigger shape, WPF template parts, official setters, deleted header/placeholder/description slots, deleted `ContentPresenterEx` slot, disabled trigger resource application, and retained ModernWpf substitutions.

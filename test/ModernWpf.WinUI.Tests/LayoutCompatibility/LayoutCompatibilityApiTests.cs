@@ -816,7 +816,6 @@ public class LayoutCompatibilityApiTests
             {
                 new TextBox(),
                 new PasswordBox(),
-                new RichTextBox(),
                 new DatePicker()
             };
 
@@ -825,7 +824,7 @@ public class LayoutCompatibilityApiTests
                 ControlHelper.SetDescription(control, control.GetType().Name + " description");
             }
 
-            using var host = new TestWindowHost(new StackPanel { Children = { controls[0], controls[1], controls[2], controls[3] } });
+            using var host = new TestWindowHost(new StackPanel { Children = { controls[0], controls[1], controls[2] } });
             host.UpdateLayout();
 
             foreach (var control in controls)
