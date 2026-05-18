@@ -28,7 +28,7 @@ ModernWpf files:
 
 ## Current WPF Renderer
 
-ModernWpf still exposes `ThemeShadowChrome` as the WPF template host because WPF has no compositor `UIElement.Shadow` or `Translation.Z` equivalent. The implementation is no longer the old two-`Border` `BlurEffect` approximation. It now renders a cached alpha-mask bitmap from the child bounds, corner radius, DPI scale, and WinUI-style depth.
+ModernWpf still exposes `ThemeShadowChrome` as the WPF template host because WPF has no compositor `UIElement.Shadow` or `Translation.Z` equivalent. The implementation is no longer the old two-`Border` `BlurEffect` approximation. It now renders a cached alpha-mask bitmap from the child bounds, corner radius, DPI scale, and WinUI-style depth. The composed shadow clears the caster's rounded shape from the center, matching WinUI's `DropShadowVisual` `NineGridBrush isCenterHollow=True` behavior instead of painting shadow alpha underneath transparent content.
 
 The renderer ports the WinUI `GetDropShadowRecipe` formulas into WPF:
 
@@ -62,9 +62,9 @@ The current WPF baseline for an `80x40` DIP content rect with `CornerRadius=8` a
 
 | Case | Bitmap | Content offset | Non-zero alpha bounds | Peak alpha | Non-zero pixels | Alpha centroid |
 | --- | --- | --- | --- | --- | --- | --- |
-| Light depth 16 | `96x56` | `8,4` | `2,2,92,52` | `36` | `4584` | `47.500,27.500` |
-| Dark depth 16 | `96x56` | `8,4` | `1,1,94,54` | `66` | `4824` | `47.500,27.500` |
-| Light depth 64 | `144x104` | `32,16` | `8,8,128,88` | `77` | `9984` | `71.500,45.447` |
+| Light depth 16 | `96x56` | `8,4` | `2,2,92,52` | `32` | `1432` | `47.500,42.030` |
+| Dark depth 16 | `96x56` | `8,4` | `1,1,94,54` | `60` | `1672` | `47.500,42.069` |
+| Light depth 64 | `144x104` | `32,16` | `8,8,128,88` | `65` | `6832` | `71.500,60.108` |
 
 ## WinUI Master Geometry Check
 
@@ -76,9 +76,16 @@ The WinUI source tree includes MockDComp visual-tree masters for `ThemeShadowTes
 | `Foundation_Graphics_ThemeShadowTests_ThemeShadowDropShadowDynamicCornerRadius.4_CR.master.xml` | same caster with `RadiusX=4`, `RadiusY=4` | `132x132` | `-16,-8` | same outer bitmap and offset; WPF uses a direct rounded mask instead of WinUI's adjusted `NineGridBrush` insets |
 | `Foundation_Graphics_ThemeShadowTests_ThemeShadowDropShadowWindowedPopup.Shadow.master.xml` | `50x50` windowed popup caster, `Translation.Z=32`, `200%` scale | `82x82` | `-16,-8` | `82x82` bitmap, content offset `16,8`; source medium popup insets produce `70x70` DIP popup bounds |
 
+WinUI also has pixel masters for `ThemeShadowDropShadowSystemThemeRedrawRTB`, rendering a `50x50` rounded caster at `Canvas.Left=25`, `Canvas.Top=25`, and `Translation.Z=32` into a `100x100` white `RenderTargetBitmap`. The WPF renderer is not pixel-identical, but after clearing the hollow center it tracks the source output closely enough to use as a bounded regression check:
+
+| Case | WinUI shadow bounds | WPF shadow bounds when placed in source canvas | WinUI peak darkening | WPF peak alpha | WinUI shadow pixels | WPF shadow pixels |
+| --- | --- | --- | --- | --- | --- | --- |
+| Light | `14,22,72,72` | `13,21,74,74` | `31` | `33` | `2330` | `2564` |
+| Dark | `14,21,72,74` | `12,20,76,76` | `58` | `61` | `2542` | `2936` |
+
 ## Remaining Gap
 
-This is still a WPF substitution, not a literal WinUI compositor port. The depth, blur, offset, inset, and light/dark opacity constants now come from WinUI source, but the final rasterization uses WPF software alpha masks rather than compositor `DropShadow` visuals. The next shadow parity round should render the same flyout/NumberBox/ContentDialog/NavigationView samples in WinUI and ModernWpf, compare alpha bounds and peak opacity, then adjust only the WPF rasterization details that differ from the source compositor output.
+This is still a WPF substitution, not a literal WinUI compositor port. The depth, blur, offset, inset, hollow-center behavior, and light/dark opacity constants now come from WinUI source and WinUI masters, but the final rasterization uses WPF software alpha masks rather than compositor `DropShadow` visuals. The next shadow parity round should render the same flyout/NumberBox/ContentDialog/NavigationView samples in WinUI and ModernWpf, compare full screenshots, then adjust only the WPF rasterization details that differ from the source compositor output.
 
 ## Verification
 

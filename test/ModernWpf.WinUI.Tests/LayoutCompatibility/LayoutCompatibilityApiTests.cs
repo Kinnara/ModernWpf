@@ -132,11 +132,12 @@ public class LayoutCompatibilityApiTests
                 bitmapHeight: 56,
                 contentLeft: 8,
                 contentTop: 4,
-                peakAlpha: 36,
-                nonZeroPixelCount: 4584,
+                peakAlpha: 32,
+                nonZeroPixelCount: 1432,
                 nonZeroBounds: new Int32Rect(2, 2, 92, 52),
                 alphaCentroidX: 47.5,
-                alphaCentroidY: 27.5);
+                alphaCentroidY: 42.03,
+                alphaCentroidTolerance: 0.001);
 
             var dark16 = ThemeShadowChrome.ThemeShadowRenderer.GetRenderMetrics(contentSize, cornerRadius, 16, ElementTheme.Dark, dpi);
             AssertShadowMetrics(
@@ -145,11 +146,12 @@ public class LayoutCompatibilityApiTests
                 bitmapHeight: 56,
                 contentLeft: 8,
                 contentTop: 4,
-                peakAlpha: 66,
-                nonZeroPixelCount: 4824,
+                peakAlpha: 60,
+                nonZeroPixelCount: 1672,
                 nonZeroBounds: new Int32Rect(1, 1, 94, 54),
                 alphaCentroidX: 47.5,
-                alphaCentroidY: 27.5);
+                alphaCentroidY: 42.069,
+                alphaCentroidTolerance: 0.001);
             Assert.IsTrue(dark16.PeakAlpha > light16.PeakAlpha);
 
             var light64 = ThemeShadowChrome.ThemeShadowRenderer.GetRenderMetrics(contentSize, cornerRadius, 64, ElementTheme.Light, dpi);
@@ -159,11 +161,11 @@ public class LayoutCompatibilityApiTests
                 bitmapHeight: 104,
                 contentLeft: 32,
                 contentTop: 16,
-                peakAlpha: 77,
-                nonZeroPixelCount: 9984,
+                peakAlpha: 65,
+                nonZeroPixelCount: 6832,
                 nonZeroBounds: new Int32Rect(8, 8, 128, 88),
                 alphaCentroidX: 71.5,
-                alphaCentroidY: 45.447,
+                alphaCentroidY: 60.108,
                 alphaCentroidTolerance: 0.001);
             Assert.IsTrue(light64.NonZeroPixelCount > light16.NonZeroPixelCount);
             Assert.IsTrue(light64.PeakAlpha > light16.PeakAlpha);
@@ -251,6 +253,43 @@ public class LayoutCompatibilityApiTests
             Assert.AreEqual(new Thickness(10, 2, 10, 18), popupInsets);
             Assert.AreEqual(70, 50 + popupInsets.Left + popupInsets.Right);
             Assert.AreEqual(70, 50 + popupInsets.Top + popupInsets.Bottom);
+
+            // WinUI source pixel masters:
+            // Foundation_Graphics_ThemeShadowTests_ThemeShadowDropShadowSystemThemeRedrawRTB.Light.1.master.png
+            // Foundation_Graphics_ThemeShadowTests_ThemeShadowDropShadowSystemThemeRedrawRTB.Dark.1.master.png
+            // The source sample renders a 50x50 rounded caster at Canvas.Left/Top=25 in a 100x100
+            // white RenderTargetBitmap. ModernWpf's shadow bitmap is placed at 25-contentOffset.
+            var pixelLight = ThemeShadowChrome.ThemeShadowRenderer.GetRenderMetrics(
+                new Size(50, 50),
+                new CornerRadius(4),
+                32,
+                ElementTheme.Light,
+                dpi);
+            AssertWinUIPixelMasterComparableShadow(
+                pixelLight,
+                canvasOffsetX: 9,
+                canvasOffsetY: 17,
+                expectedCanvasBounds: new Int32Rect(14, 22, 72, 72),
+                expectedPeakDarkening: 31,
+                expectedShadowPixels: 2330,
+                expectedCanvasCentroidX: 49.402,
+                expectedCanvasCentroidY: 71.869);
+
+            var pixelDark = ThemeShadowChrome.ThemeShadowRenderer.GetRenderMetrics(
+                new Size(50, 50),
+                new CornerRadius(4),
+                32,
+                ElementTheme.Dark,
+                dpi);
+            AssertWinUIPixelMasterComparableShadow(
+                pixelDark,
+                canvasOffsetX: 9,
+                canvasOffsetY: 17,
+                expectedCanvasBounds: new Int32Rect(14, 21, 72, 74),
+                expectedPeakDarkening: 58,
+                expectedShadowPixels: 2542,
+                expectedCanvasCentroidX: 49.356,
+                expectedCanvasCentroidY: 71.786);
         });
     }
 
@@ -3509,6 +3548,37 @@ public class LayoutCompatibilityApiTests
         AssertShadowMetricsCoverContent(metrics);
         Assert.IsTrue(metrics.PeakAlpha > 0);
         Assert.IsTrue(metrics.AlphaCentroidY > metrics.ContentCenterY);
+    }
+
+    private static void AssertWinUIPixelMasterComparableShadow(
+        ThemeShadowChrome.ThemeShadowRenderer.ThemeShadowRenderMetrics metrics,
+        int canvasOffsetX,
+        int canvasOffsetY,
+        Int32Rect expectedCanvasBounds,
+        int expectedPeakDarkening,
+        int expectedShadowPixels,
+        double expectedCanvasCentroidX,
+        double expectedCanvasCentroidY)
+    {
+        var canvasBounds = new Int32Rect(
+            metrics.NonZeroBounds.X + canvasOffsetX,
+            metrics.NonZeroBounds.Y + canvasOffsetY,
+            metrics.NonZeroBounds.Width,
+            metrics.NonZeroBounds.Height);
+
+        AssertNear(expectedCanvasBounds.X, canvasBounds.X, 2, "WinUI pixel-master shadow bounds X");
+        AssertNear(expectedCanvasBounds.Y, canvasBounds.Y, 2, "WinUI pixel-master shadow bounds Y");
+        AssertNear(expectedCanvasBounds.Width, canvasBounds.Width, 4, "WinUI pixel-master shadow bounds width");
+        AssertNear(expectedCanvasBounds.Height, canvasBounds.Height, 4, "WinUI pixel-master shadow bounds height");
+        AssertNear(expectedPeakDarkening, metrics.PeakAlpha, 4, "WinUI pixel-master peak darkening");
+        AssertNear(expectedShadowPixels, metrics.NonZeroPixelCount, expectedShadowPixels * 0.2, "WinUI pixel-master shadow pixel count");
+        Assert.AreEqual(expectedCanvasCentroidX, metrics.AlphaCentroidX + canvasOffsetX, 1.0);
+        Assert.AreEqual(expectedCanvasCentroidY, metrics.AlphaCentroidY + canvasOffsetY, 1.0);
+    }
+
+    private static void AssertNear(double expected, double actual, double tolerance, string message)
+    {
+        Assert.IsTrue(Math.Abs(expected - actual) <= tolerance, $"{message}: expected {expected}, actual {actual}, tolerance {tolerance}.");
     }
 
     private static void AssertInheritedTextMetadata(DependencyProperty property, Type ownerType)

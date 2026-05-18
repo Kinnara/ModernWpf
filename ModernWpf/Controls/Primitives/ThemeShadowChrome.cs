@@ -1140,6 +1140,8 @@ namespace ModernWpf.Controls.Primitives
                     CompositeAlpha(outputAlpha, blurredAlpha, layer.Opacity);
                 }
 
+                ClearRoundedRectMask(outputAlpha, key, cornerRadius);
+
                 var pixels = new byte[pixelCount * 4];
                 for (int i = 0, pixelOffset = 0; i < outputAlpha.Length; i++, pixelOffset += 4)
                 {
@@ -1182,6 +1184,35 @@ namespace ModernWpf.Controls.Primitives
                         if (IsInsideRoundedRect(px, py, left, top, width, height, radii))
                         {
                             alpha[row + x] = 255;
+                        }
+                    }
+                }
+            }
+
+            private static void ClearRoundedRectMask(byte[] alpha, ThemeShadowKey key, CornerRadius cornerRadius)
+            {
+                double left = key.PaddingLeft;
+                double top = key.PaddingTop;
+                double width = key.ContentWidth;
+                double height = key.ContentHeight;
+
+                var radii = CornerRadii.From(cornerRadius, key.DpiScaleX, key.DpiScaleY, width, height);
+                int minX = Math.Max(0, (int)Math.Floor(left));
+                int minY = Math.Max(0, (int)Math.Floor(top));
+                int maxX = Math.Min(key.BitmapWidth, (int)Math.Ceiling(left + width));
+                int maxY = Math.Min(key.BitmapHeight, (int)Math.Ceiling(top + height));
+
+                for (int y = minY; y < maxY; y++)
+                {
+                    double py = y + 0.5;
+                    int row = y * key.BitmapWidth;
+
+                    for (int x = minX; x < maxX; x++)
+                    {
+                        double px = x + 0.5;
+                        if (IsInsideRoundedRect(px, py, left, top, width, height, radii))
+                        {
+                            alpha[row + x] = 0;
                         }
                     }
                 }
