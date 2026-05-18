@@ -12,7 +12,7 @@ using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
 {
-    public class RadioMenuItem : MenuItem
+    public partial class RadioMenuItem : MenuItem
     {
         static RadioMenuItem()
         {
@@ -31,42 +31,13 @@ namespace ModernWpf.Controls
             return true;
         }
 
-        public static readonly DependencyProperty GroupNameProperty =
-            DependencyProperty.Register(
-                nameof(GroupName),
-                typeof(string),
-                typeof(RadioMenuItem),
-                new FrameworkPropertyMetadata(string.Empty, OnGroupNameChanged));
-
-        public string GroupName
-        {
-            get => (string)GetValue(GroupNameProperty);
-            set => SetValue(GroupNameProperty, value);
-        }
-
         private static void OnGroupNameChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var radioItem = (RadioMenuItem)d;
             radioItem.m_groupName = (string)e.NewValue ?? string.Empty;
         }
 
-        public static readonly DependencyProperty UseSystemFocusVisualsProperty =
-            FocusVisualHelper.UseSystemFocusVisualsProperty.AddOwner(typeof(RadioMenuItem));
-
-        public bool UseSystemFocusVisuals
-        {
-            get => (bool)GetValue(UseSystemFocusVisualsProperty);
-            set => SetValue(UseSystemFocusVisualsProperty, value);
-        }
-
         #region AreCheckStatesEnabled
-
-        public static readonly DependencyProperty AreCheckStatesEnabledProperty =
-            DependencyProperty.RegisterAttached(
-                "AreCheckStatesEnabled",
-                typeof(bool),
-                typeof(RadioMenuItem),
-                new PropertyMetadata(false, OnAreCheckStatesEnabledChanged));
 
         public static bool GetAreCheckStatesEnabled(MenuItem element)
         {
@@ -111,15 +82,6 @@ namespace ModernWpf.Controls
         #endregion
 
         #region CornerRadius
-
-        public static readonly DependencyProperty CornerRadiusProperty =
-            ControlHelper.CornerRadiusProperty.AddOwner(typeof(RadioMenuItem));
-
-        public CornerRadius CornerRadius
-        {
-            get => (CornerRadius)GetValue(CornerRadiusProperty);
-            set => SetValue(CornerRadiusProperty, value);
-        }
 
         #endregion
 
@@ -283,13 +245,6 @@ namespace ModernWpf.Controls
             menuItem.SetCurrentValue(IsCheckedProperty, isAnyItemChecked);
         }
 
-        private static readonly DependencyProperty HookedRadioItemsProperty =
-            DependencyProperty.RegisterAttached(
-                "HookedRadioItems",
-                typeof(List<RadioMenuItem>),
-                typeof(RadioMenuItem),
-                new PropertyMetadata(null));
-
         private static List<RadioMenuItem> GetHookedRadioItems(DependencyObject element)
         {
             return (List<RadioMenuItem>)element.GetValue(HookedRadioItemsProperty);
@@ -299,13 +254,6 @@ namespace ModernWpf.Controls
         {
             element.SetValue(HookedRadioItemsProperty, value);
         }
-
-        private static readonly DependencyProperty CollectionChangedHandlerProperty =
-            DependencyProperty.RegisterAttached(
-                "CollectionChangedHandler",
-                typeof(NotifyCollectionChangedEventHandler),
-                typeof(RadioMenuItem),
-                new PropertyMetadata(null));
 
         private static NotifyCollectionChangedEventHandler GetCollectionChangedHandler(DependencyObject element)
         {

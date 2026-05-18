@@ -1,0 +1,19 @@
+{
+  "usings": [
+    "System.Windows"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "ItemsRepeater"
+  },
+  "properties": [
+    { "name": "ItemsSource", "type": "object", "changed": "OnPropertyChanged" },
+    { "name": "ItemTemplate", "type": "object", "changed": "OnPropertyChanged" },
+    { "name": "Layout", "type": "Layout", "changed": "OnPropertyChanged" },
+    { "name": "Animator", "type": "ElementAnimator", "changed": "OnPropertyChanged", "propertyAccessibility": "internal" },
+    { "name": "HorizontalCacheLength", "type": "double", "default": "2.0", "changed": "OnPropertyChanged" },
+    { "name": "VerticalCacheLength", "type": "double", "default": "2.0", "changed": "OnPropertyChanged" },
+    { "name": "VirtualizationInfo", "type": "VirtualizationInfo", "kind": "RegisterAttached", "metadata": "null", "fieldAccessibility": "internal", "generateWrapper": false }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "usings": [
+    "System.Windows"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "ToggleSplitButton"
+  },
+  "properties": [
+    {
+      "name": "IsChecked",
+      "type": "bool",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "false",
+      "options": [
+        "BindsTwoWayByDefault",
+        "Journal"
+      ],
+      "changed": "OnIsCheckedPropertyChanged"
+    }
+  ]
+}

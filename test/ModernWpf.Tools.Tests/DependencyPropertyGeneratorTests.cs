@@ -133,6 +133,35 @@ public class DependencyPropertyGeneratorTests
     }
 
     [TestMethod]
+    public void GeneratesExplicitRegistrationNameForNoWrapperProperties()
+    {
+        var text = Generate(new DependencyPropertyManifest
+        {
+            Namespace = "ModernWpf.Controls",
+            Usings = { "System.Windows" },
+            Type = new TypeManifest { Name = "SplitButton" },
+            Properties =
+            {
+                new DependencyPropertyEntry
+                {
+                    Name = "PrimaryButtonIsPressed",
+                    Type = "bool",
+                    MetadataType = "FrameworkPropertyMetadata",
+                    Changed = "OnVisualPropertyChanged",
+                    FieldAccessibility = "private",
+                    GenerateWrapper = false,
+                    RegistrationName = "PrimaryButtonIsPressed"
+                }
+            }
+        });
+
+        StringAssert.Contains(text, "private static readonly DependencyProperty PrimaryButtonIsPressedProperty =");
+        StringAssert.Contains(text, "\"PrimaryButtonIsPressed\",");
+        Assert.IsFalse(text.Contains("nameof(PrimaryButtonIsPressed),", StringComparison.Ordinal));
+        Assert.IsFalse(text.Contains("public bool PrimaryButtonIsPressed", StringComparison.Ordinal));
+    }
+
+    [TestMethod]
     public void CheckModeReportsStaleGeneratedFiles()
     {
         var directory = Path.Combine(Path.GetTempPath(), "ModernWpfDpGenTests", Guid.NewGuid().ToString("N"));

@@ -8,36 +8,16 @@ using ModernWpf.Automation.Peers;
 
 namespace ModernWpf.Controls
 {
-    public class ToggleSplitButton : SplitButton
+    public partial class ToggleSplitButton : SplitButton
     {
         public ToggleSplitButton()
         {
-        }
-
-        #region IsChecked
-
-        public static readonly DependencyProperty IsCheckedProperty =
-            DependencyProperty.Register(
-                nameof(IsChecked),
-                typeof(bool),
-                typeof(ToggleSplitButton),
-                new FrameworkPropertyMetadata(
-                    false,
-                    FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.Journal,
-                    OnIsCheckedPropertyChanged));
-
-        public bool IsChecked
-        {
-            get => (bool)GetValue(IsCheckedProperty);
-            set => SetValue(IsCheckedProperty, value);
         }
 
         private static void OnIsCheckedPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((ToggleSplitButton)d).OnIsCheckedChanged();
         }
-
-        #endregion
 
         public event TypedEventHandler<ToggleSplitButton, ToggleSplitButtonIsCheckedChangedEventArgs> IsCheckedChanged;
 

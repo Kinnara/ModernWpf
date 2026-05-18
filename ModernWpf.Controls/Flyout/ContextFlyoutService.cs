@@ -4,16 +4,9 @@ using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
 {
-    public static class ContextFlyoutService
+    public static partial class ContextFlyoutService
     {
         #region ContextFlyout
-
-        public static readonly DependencyProperty ContextFlyoutProperty =
-            DependencyProperty.RegisterAttached(
-                "ContextFlyout",
-                typeof(FlyoutBase),
-                typeof(ContextFlyoutService),
-                new PropertyMetadata(OnContextFlyoutChanged));
 
         public static FlyoutBase GetContextFlyout(FrameworkElement element)
         {

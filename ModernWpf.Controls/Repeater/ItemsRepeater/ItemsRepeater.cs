@@ -202,85 +202,7 @@ namespace ModernWpf.Controls
 
         #region Properties
 
-        public static readonly DependencyProperty ItemsSourceProperty =
-            DependencyProperty.Register(
-                nameof(ItemsSource),
-                typeof(object),
-                typeof(ItemsRepeater),
-                new PropertyMetadata(OnPropertyChanged));
-
-        public object ItemsSource
-        {
-            get => GetValue(ItemsSourceProperty);
-            set => SetValue(ItemsSourceProperty, value);
-        }
-
         public ItemsSourceView ItemsSourceView { get; private set; }
-
-        public static readonly DependencyProperty ItemTemplateProperty =
-            DependencyProperty.Register(
-                nameof(ItemTemplate),
-                typeof(object),
-                typeof(ItemsRepeater),
-                new PropertyMetadata(OnPropertyChanged));
-
-        public object ItemTemplate
-        {
-            get => GetValue(ItemTemplateProperty);
-            set => SetValue(ItemTemplateProperty, value);
-        }
-
-        public static readonly DependencyProperty LayoutProperty =
-            DependencyProperty.Register(
-                nameof(Layout),
-                typeof(Layout),
-                typeof(ItemsRepeater),
-                new PropertyMetadata(OnPropertyChanged));
-
-        public Layout Layout
-        {
-            get => (Layout)GetValue(LayoutProperty);
-            set => SetValue(LayoutProperty, value);
-        }
-
-        public static readonly DependencyProperty AnimatorProperty =
-            DependencyProperty.Register(
-                nameof(Animator),
-                typeof(ElementAnimator),
-                typeof(ItemsRepeater),
-                new PropertyMetadata(OnPropertyChanged));
-
-        internal ElementAnimator Animator
-        {
-            get => (ElementAnimator)GetValue(AnimatorProperty);
-            set => SetValue(AnimatorProperty, value);
-        }
-
-        public static readonly DependencyProperty HorizontalCacheLengthProperty =
-            DependencyProperty.Register(
-                nameof(HorizontalCacheLength),
-                typeof(double),
-                typeof(ItemsRepeater),
-                new PropertyMetadata(2.0, OnPropertyChanged));
-
-        public double HorizontalCacheLength
-        {
-            get => (double)GetValue(HorizontalCacheLengthProperty);
-            set => SetValue(HorizontalCacheLengthProperty, value);
-        }
-
-        public static readonly DependencyProperty VerticalCacheLengthProperty =
-            DependencyProperty.Register(
-                nameof(VerticalCacheLength),
-                typeof(double),
-                typeof(ItemsRepeater),
-                new PropertyMetadata(2.0, OnPropertyChanged));
-
-        public double VerticalCacheLength
-        {
-            get => (double)GetValue(VerticalCacheLengthProperty);
-            set => SetValue(VerticalCacheLengthProperty, value);
-        }
 
         #endregion
 
@@ -545,13 +467,6 @@ namespace ModernWpf.Controls
                 ElementIndexChanged(this, m_elementIndexChangedArgs);
             }
         }
-
-        internal static readonly DependencyProperty VirtualizationInfoProperty =
-            DependencyProperty.RegisterAttached(
-                "VirtualizationInfo",
-                typeof(VirtualizationInfo),
-                typeof(ItemsRepeater),
-                null);
 
         private void OnLoaded(object sender, RoutedEventArgs args)
         {

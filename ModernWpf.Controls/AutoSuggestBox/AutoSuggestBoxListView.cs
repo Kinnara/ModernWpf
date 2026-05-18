@@ -5,29 +5,12 @@ using System.Windows.Input;
 
 namespace ModernWpf.Controls.Primitives
 {
-    public class AutoSuggestBoxListView : System.Windows.Controls.ListView
+    public partial class AutoSuggestBoxListView : System.Windows.Controls.ListView
     {
         static AutoSuggestBoxListView()
         {
             SelectionModeProperty.OverrideMetadata(typeof(AutoSuggestBoxListView), new FrameworkPropertyMetadata(SelectionMode.Single));
         }
-
-        #region IsItemClickEnabled
-
-        public static readonly DependencyProperty IsItemClickEnabledProperty =
-            DependencyProperty.Register(
-                nameof(IsItemClickEnabled),
-                typeof(bool),
-                typeof(AutoSuggestBoxListView),
-                new PropertyMetadata(false));
-
-        public bool IsItemClickEnabled
-        {
-            get => (bool)GetValue(IsItemClickEnabledProperty);
-            set => SetValue(IsItemClickEnabledProperty, value);
-        }
-
-        #endregion
 
         public event ItemClickEventHandler ItemClick;
 

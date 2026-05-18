@@ -15,7 +15,7 @@ using static ModernWpf.ResourceAccessor;
 
 namespace ModernWpf.Controls
 {
-    public class SplitButton : ContentControl, ICommandSource
+    public partial class SplitButton : ContentControl, ICommandSource
     {
         private static readonly ResourceAccessor ResourceAccessor = new ResourceAccessor(typeof(SplitButton));
 
@@ -31,111 +31,7 @@ namespace ModernWpf.Controls
             IsEnabledChanged += OnSplitButtonIsEnabledChanged;
         }
 
-        #region CornerRadius
-
-        public static readonly DependencyProperty CornerRadiusProperty =
-            ControlHelper.CornerRadiusProperty.AddOwner(typeof(SplitButton));
-
-        public CornerRadius CornerRadius
-        {
-            get => (CornerRadius)GetValue(CornerRadiusProperty);
-            set => SetValue(CornerRadiusProperty, value);
-        }
-
-        #endregion
-
-        #region UseSystemFocusVisuals
-
-        public static readonly DependencyProperty UseSystemFocusVisualsProperty =
-            FocusVisualHelper.UseSystemFocusVisualsProperty.AddOwner(typeof(SplitButton));
-
-        public bool UseSystemFocusVisuals
-        {
-            get => (bool)GetValue(UseSystemFocusVisualsProperty);
-            set => SetValue(UseSystemFocusVisualsProperty, value);
-        }
-
-        #endregion
-
-        #region FocusVisualMargin
-
-        public static readonly DependencyProperty FocusVisualMarginProperty =
-            FocusVisualHelper.FocusVisualMarginProperty.AddOwner(typeof(SplitButton));
-
-        public Thickness FocusVisualMargin
-        {
-            get => (Thickness)GetValue(FocusVisualMarginProperty);
-            set => SetValue(FocusVisualMarginProperty, value);
-        }
-
-        #endregion
-
-        #region Command
-
-        public static readonly DependencyProperty CommandProperty =
-            ButtonBase.CommandProperty.AddOwner(typeof(SplitButton));
-
-        public ICommand Command
-        {
-            get => (ICommand)GetValue(CommandProperty);
-            set => SetValue(CommandProperty, value);
-        }
-
-        #endregion
-
-        #region CommandParameter
-
-        public static readonly DependencyProperty CommandParameterProperty =
-            ButtonBase.CommandParameterProperty.AddOwner(typeof(SplitButton));
-
-        public object CommandParameter
-        {
-            get => GetValue(CommandParameterProperty);
-            set => SetValue(CommandParameterProperty, value);
-        }
-
-        #endregion
-
-        #region CommandTarget
-
-        public static readonly DependencyProperty CommandTargetProperty =
-            ButtonBase.CommandTargetProperty.AddOwner(typeof(SplitButton));
-
-        public IInputElement CommandTarget
-        {
-            get => (IInputElement)GetValue(CommandTargetProperty);
-            set => SetValue(CommandTargetProperty, value);
-        }
-
-        #endregion
-
-        #region ContentTransitions
-
-        public static readonly DependencyProperty ContentTransitionsProperty =
-            ControlHelper.ContentTransitionsProperty.AddOwner(typeof(SplitButton));
-
-        public TransitionCollection ContentTransitions
-        {
-            get => (TransitionCollection)GetValue(ContentTransitionsProperty);
-            set => SetValue(ContentTransitionsProperty, value);
-        }
-
-        #endregion
-
         #region Flyout
-
-        public static readonly DependencyProperty FlyoutProperty =
-            DependencyProperty.Register(
-                nameof(Flyout),
-                typeof(FlyoutBase),
-                typeof(SplitButton),
-                new PropertyMetadata(OnFlyoutChanged));
-
-        public FlyoutBase Flyout
-        {
-            get => (FlyoutBase)GetValue(FlyoutProperty);
-            set => SetValue(FlyoutProperty, value);
-        }
 
         private static void OnFlyoutChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -143,39 +39,6 @@ namespace ModernWpf.Controls
         }
 
         #endregion
-
-        private static readonly DependencyProperty PrimaryButtonIsPressedProperty =
-            DependencyProperty.Register(
-                "PrimaryButtonIsPressed",
-                typeof(bool),
-                typeof(SplitButton),
-                new FrameworkPropertyMetadata(OnVisualPropertyChanged));
-
-        private static readonly DependencyProperty PrimaryButtonIsMouseOverProperty =
-            DependencyProperty.Register(
-                "PrimaryButtonIsMouseOver",
-                typeof(bool),
-                typeof(SplitButton),
-                new FrameworkPropertyMetadata(OnVisualPropertyChanged));
-
-        private static readonly DependencyProperty SecondaryButtonIsPressedProperty =
-            DependencyProperty.Register(
-                "SecondaryButtonIsPressed",
-                typeof(bool),
-                typeof(SplitButton),
-                new FrameworkPropertyMetadata(OnVisualPropertyChanged));
-
-        private static readonly DependencyProperty SecondaryButtonIsMouseOverProperty =
-            DependencyProperty.Register(
-                "SecondaryButtonIsMouseOver",
-                typeof(bool),
-                typeof(SplitButton),
-                new FrameworkPropertyMetadata(OnVisualPropertyChanged));
-
-        private static readonly DependencyProperty FlyoutPlacementProperty =
-            FlyoutBase.PlacementProperty.AddOwner(
-                typeof(SplitButton),
-                new FrameworkPropertyMetadata(OnFlyoutPlacementChanged));
 
         public event TypedEventHandler<SplitButton, SplitButtonClickEventArgs> Click;
 

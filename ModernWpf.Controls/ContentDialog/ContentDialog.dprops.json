@@ -1,0 +1,36 @@
+{
+  "usings": [
+    "System.Windows",
+    "System.Windows.Controls",
+    "System.Windows.Input"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "ContentDialog"
+  },
+  "properties": [
+    { "name": "Title", "type": "object", "metadata": "null" },
+    { "name": "TitleTemplate", "type": "DataTemplate", "metadata": "null" },
+    { "name": "PrimaryButtonText", "type": "string", "default": "string.Empty", "changed": "OnButtonTextChanged" },
+    { "name": "PrimaryButtonCommand", "type": "ICommand", "metadata": "null" },
+    { "name": "PrimaryButtonCommandParameter", "type": "object", "metadata": "null" },
+    { "name": "PrimaryButtonStyle", "type": "Style", "metadata": "null" },
+    { "name": "IsPrimaryButtonEnabled", "type": "bool", "default": "true" },
+    { "name": "SecondaryButtonText", "type": "string", "default": "string.Empty", "changed": "OnButtonTextChanged" },
+    { "name": "SecondaryButtonCommand", "type": "ICommand", "metadata": "null" },
+    { "name": "SecondaryButtonCommandParameter", "type": "object", "metadata": "null" },
+    { "name": "SecondaryButtonStyle", "type": "Style", "metadata": "null" },
+    { "name": "IsSecondaryButtonEnabled", "type": "bool", "default": "true" },
+    { "name": "CloseButtonText", "type": "string", "default": "string.Empty", "changed": "OnButtonTextChanged" },
+    { "name": "CloseButtonCommand", "type": "ICommand", "metadata": "null" },
+    { "name": "CloseButtonCommandParameter", "type": "object", "metadata": "null" },
+    { "name": "CloseButtonStyle", "type": "Style", "metadata": "null" },
+    { "name": "DefaultButton", "type": "ContentDialogButton", "changed": "OnDefaultButtonChanged" },
+    { "name": "FullSizeDesired", "type": "bool", "changed": "OnFullSizeDesiredChanged" },
+    { "name": "CornerRadius", "type": "CornerRadius", "metadata": "null" },
+    { "name": "IsShadowEnabled", "type": "bool", "metadataType": "FrameworkPropertyMetadata", "default": "false" },
+    { "name": "OpenDialog", "type": "ContentDialog", "kind": "RegisterAttached", "metadata": "null", "fieldAccessibility": "private", "generateWrapper": false },
+    { "name": "OpenInPlaceDialog", "type": "ContentDialog", "kind": "RegisterAttached", "metadata": "null", "fieldAccessibility": "private", "generateWrapper": false }
+  ]
+}

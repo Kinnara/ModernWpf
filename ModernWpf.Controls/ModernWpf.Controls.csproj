@@ -10,10 +10,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="AutoSuggestBox\AutoSuggestBoxHelper.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Page Remove="Properties\DesignTimeResources.xaml" />
   </ItemGroup>
 
@@ -27,10 +23,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ModernWpf\ModernWpf.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="AutoSuggestBox\AutoSuggestBoxHelper.cs" />
   </ItemGroup>
 
   <ItemGroup>

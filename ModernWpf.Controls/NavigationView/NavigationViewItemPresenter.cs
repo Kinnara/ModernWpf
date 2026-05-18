@@ -11,7 +11,7 @@ using static ModernWpf.Controls.NavigationViewItemHelper;
 
 namespace ModernWpf.Controls.Primitives
 {
-    public class NavigationViewItemPresenter : ContentControl, IControlProtected
+    public partial class NavigationViewItemPresenter : ContentControl, IControlProtected
     {
         const string c_contentGrid = "PresenterContentRootGrid";
         const string c_expandCollapseChevron = "ExpandCollapseChevron";
@@ -41,86 +41,6 @@ namespace ModernWpf.Controls.Primitives
             TemplateSettings = new NavigationViewItemPresenterTemplateSettings();
             InputHelper.SetIsTapEnabled(this, true);
         }
-
-        #region Icon
-
-        public static readonly DependencyProperty IconProperty =
-            DependencyProperty.Register(
-                nameof(Icon),
-                typeof(IconElement),
-                typeof(NavigationViewItemPresenter),
-                null);
-
-        public IconElement Icon
-        {
-            get => (IconElement)GetValue(IconProperty);
-            set => SetValue(IconProperty, value);
-        }
-
-        #endregion
-
-        #region InfoBadge
-
-        public static readonly DependencyProperty InfoBadgeProperty =
-            DependencyProperty.Register(
-                nameof(InfoBadge),
-                typeof(InfoBadge),
-                typeof(NavigationViewItemPresenter),
-                null);
-
-        public InfoBadge InfoBadge
-        {
-            get => (InfoBadge)GetValue(InfoBadgeProperty);
-            set => SetValue(InfoBadgeProperty, value);
-        }
-
-        #endregion
-
-        #region TemplateSettings
-
-        private static readonly DependencyPropertyKey TemplateSettingsPropertyKey =
-            DependencyProperty.RegisterReadOnly(
-                nameof(TemplateSettings),
-                typeof(NavigationViewItemPresenterTemplateSettings),
-                typeof(NavigationViewItemPresenter),
-                null);
-
-        public static readonly DependencyProperty TemplateSettingsProperty =
-            TemplateSettingsPropertyKey.DependencyProperty;
-
-        public NavigationViewItemPresenterTemplateSettings TemplateSettings
-        {
-            get => (NavigationViewItemPresenterTemplateSettings)GetValue(TemplateSettingsProperty);
-            private set => SetValue(TemplateSettingsPropertyKey, value);
-        }
-
-        #endregion
-
-        #region UseSystemFocusVisuals
-
-        public static readonly DependencyProperty UseSystemFocusVisualsProperty =
-            FocusVisualHelper.UseSystemFocusVisualsProperty.AddOwner(typeof(NavigationViewItemPresenter));
-
-        public bool UseSystemFocusVisuals
-        {
-            get => (bool)GetValue(UseSystemFocusVisualsProperty);
-            set => SetValue(UseSystemFocusVisualsProperty, value);
-        }
-
-        #endregion
-
-        #region CornerRadius
-
-        public static readonly DependencyProperty CornerRadiusProperty =
-            ControlHelper.CornerRadiusProperty.AddOwner(typeof(NavigationViewItemPresenter));
-
-        public CornerRadius CornerRadius
-        {
-            get => (CornerRadius)GetValue(CornerRadiusProperty);
-            set => SetValue(CornerRadiusProperty, value);
-        }
-
-        #endregion
 
         public override void OnApplyTemplate()
         {

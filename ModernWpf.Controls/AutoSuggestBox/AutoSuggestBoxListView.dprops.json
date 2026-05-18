@@ -1,0 +1,13 @@
+{
+  "usings": [
+    "System.Windows"
+  ],
+  "namespace": "ModernWpf.Controls.Primitives",
+  "type": {
+    "declaration": "public partial class",
+    "name": "AutoSuggestBoxListView"
+  },
+  "properties": [
+    { "name": "IsItemClickEnabled", "type": "bool", "default": "false" }
+  ]
+}

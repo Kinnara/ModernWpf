@@ -1,0 +1,19 @@
+{
+  "usings": [
+    "System.Windows",
+    "ModernWpf.Controls",
+    "ModernWpf.Controls.Primitives"
+  ],
+  "namespace": "ModernWpf.Controls.Primitives",
+  "type": {
+    "declaration": "public partial class",
+    "name": "NavigationViewItemPresenter"
+  },
+  "properties": [
+    { "name": "Icon", "type": "IconElement", "metadata": "null" },
+    { "name": "InfoBadge", "type": "InfoBadge", "metadata": "null" },
+    { "name": "TemplateSettings", "type": "NavigationViewItemPresenterTemplateSettings", "kind": "RegisterReadOnly", "metadata": "null", "setterAccessibility": "private" },
+    { "name": "UseSystemFocusVisuals", "type": "bool", "kind": "AddOwner", "sourceProperty": "FocusVisualHelper.UseSystemFocusVisualsProperty" },
+    { "name": "CornerRadius", "type": "CornerRadius", "kind": "AddOwner", "sourceProperty": "ControlHelper.CornerRadiusProperty" }
+  ]
+}

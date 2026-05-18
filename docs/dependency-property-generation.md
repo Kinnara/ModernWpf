@@ -46,6 +46,8 @@ Supported property kinds are `Register`, `RegisterReadOnly`,
 Supported metadata fields include `metadata`, `metadataType`, `default`,
 `options`, `changed`, `changedForwardTo`, `changedBody`, `coerce`,
 `validate`, `setterGuard`, and `setterBody`.
+Use `registrationName` when a non-attached dependency property is intentionally
+generated without a CLR wrapper and therefore cannot use `nameof(Property)`.
 
 Use `setterGuard` for simple conditional `SetValue` wrappers. Use
 `setterBody` only when the generated property needs a custom setter body, such
@@ -76,16 +78,18 @@ files are manifest-backed: `AnnotatedScrollBar`, `AppBarButton`,
 `BreadcrumbBarItem`, `ColorPicker`, `ColorPickerSlider`, `ColorSpectrum`,
 `CommandBar`, `CommandBarFlyoutCommandBar`,
 `CommandBarFlyoutCommandBarTemplateSettingsProxy`,
-`CommandBarOverflowPresenter`, `DropDownButton`, `Flyout`, `FlyoutBase`,
-`FlyoutPresenter`, `HyperlinkButton`, `InfoBadge`, `InfoBar`,
+`CommandBarOverflowPresenter`, `ContentDialog`, `ContextFlyoutService`,
+`DropDownButton`, `Flyout`, `FlyoutBase`, `FlyoutPresenter`,
+`FlyoutService`, `HyperlinkButton`, `InfoBadge`, `InfoBar`,
 `InfoBarPanel`, `LayoutPanel`, `ListViewBase`, `ListViewBaseItem`,
 `MenuBarItem`, `MenuFlyout`, `MenuFlyoutPresenter`, `NavigationView`,
-`NavigationViewItem`, `NumberBox`, `PagerControl`, `ParallaxView`,
-`PersonPicture`, `PipsPager`, `ProgressRing`, `RadioButtons`,
-`RatingControl`, `RatingItemImageInfo`, `RefreshContainer`,
-`RefreshVisualizer`, `SelectorBar`, `SelectorBarItem`, `SplitView`,
-`SwipeControl`, `SwipeItem`, `TeachingTip`, `TwoPaneView`, and
-`WrapPanel`.
+`NavigationViewItem`, `NavigationViewItemBase`,
+`NavigationViewItemPresenter`, `NumberBox`, `PagerControl`,
+`ParallaxView`, `PersonPicture`, `PipsPager`, `ProgressRing`,
+`RadioButtons`, `RadioMenuItem`, `RatingControl`, `RatingItemImageInfo`,
+`RefreshContainer`, `RefreshVisualizer`, `SelectorBar`, `SelectorBarItem`,
+`SplitButton`, `SplitView`, `SwipeControl`, `SwipeItem`, `TeachingTip`,
+`ToggleSplitButton`, `ToggleSwitch`, `TwoPaneView`, and `WrapPanel`.
 
 The template-settings dependency properties are also manifest-backed:
 `AppBarButtonTemplateSettings`, `AppBarToggleButtonTemplateSettings`,
@@ -99,6 +103,12 @@ The template-settings dependency properties are also manifest-backed:
 The Repeater layout dependency properties are manifest-backed:
 `ColumnMajorUniformToLargestGridLayout`, `FlowLayout`, `StackLayout`, and
 `UniformGridLayout`.
+
+The ItemsRepeater runtime dependency properties are manifest-backed:
+`ItemsRepeater` and `RecyclePool`.
+
+The AutoSuggestBox dependency properties are manifest-backed:
+`AutoSuggestBox` and `AutoSuggestBoxListView`.
 
 The CommandBar/AppBar family dependency properties are manifest-backed:
 `AppBarButton`, `AppBarElementContainer`, `AppBarElementProperties`,
@@ -114,17 +124,19 @@ framework generated files under `src/dxaml/xcp/dxaml/lib/winrtgeneratedclasses`
 `AppBarButtonTemplateSettings` and `SplitViewTemplateSettings`.
 
 After the template-settings, Repeater layout, CommandBar/AppBar family, WinUI
-source-backed controls, and the latest ColorPicker-family DP-generation round,
-the remaining ModernWpf types with inline DP/AddOwner sites whose type names
-match generated WinUI sources are 9 types / 66 sites:
-`AutoSuggestBoxHelper`, `ContentDialog`, `ItemsRepeater`,
-`NavigationViewItemBase`, `NavigationViewItemPresenter`, `RecyclePool`,
-`SplitButton`, `ToggleSplitButton`, and `ToggleSwitch`.
+source-backed controls, ColorPicker-family round, and the final compiled-owner
+round, the remaining ModernWpf types with inline DP/AddOwner sites whose type
+names match generated WinUI sources are 0 types / 0 sites. A raw scan for
+`DependencyProperty.Register*` and `.AddOwner(` in `ModernWpf.Controls`
+outside `*.properties.g.cs` is clean.
 
-Those remaining sites are control implementation work, not pure storage-class
-cleanup. Convert them in coherent control/family slices so the manifest changes
-can be validated with the corresponding WinUI source defaults, callbacks,
-coercion, attached-property accessors, and tests.
+The final compiled-owner round converted 73 inline sites across
+`AutoSuggestBoxListView`, `ContentDialog`, `ContextFlyoutService`,
+`FlyoutService`, `ItemsRepeater`, `NavigationViewItemBase`,
+`NavigationViewItemPresenter`, `RadioMenuItem`, `RecyclePool`, `SplitButton`,
+`ToggleSplitButton`, and `ToggleSwitch`. `AutoSuggestBoxHelper` was deleted
+instead of generated because it was explicitly excluded from compilation,
+included as `None`, and had no call sites or template references.
 
 The small-control round converted 49 inline sites across `DropDownButton`,
 `SelectorBar`, `SelectorBarItem`, `BreadcrumbBar`, `BreadcrumbBarItem`,

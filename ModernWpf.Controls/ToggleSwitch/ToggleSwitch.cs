@@ -34,7 +34,7 @@ namespace ModernWpf.Controls
     [TemplateVisualState(GroupName = ToggleStatesGroup, Name = OnState)]
     [TemplateVisualState(GroupName = HeaderStatesGroup, Name = TopHeaderState)]
     [TemplateVisualState(GroupName = HeaderStatesGroup, Name = LeftHeaderState)]
-    public class ToggleSwitch : Control
+    public partial class ToggleSwitch : Control
     {
         private const string PointerOverState = "PointerOver";
         private const string FocusStatesGroup = "FocusStates";
@@ -89,22 +89,6 @@ namespace ModernWpf.Controls
             remove { RemoveHandler(ToggledEvent, value); }
         }
 
-        #region Header
-
-        public object Header
-        {
-            get => GetValue(HeaderProperty);
-            set => SetValue(HeaderProperty, value);
-        }
-
-        public static readonly DependencyProperty HeaderProperty =
-            ControlHelper.HeaderProperty.AddOwner(
-                typeof(ToggleSwitch),
-                new FrameworkPropertyMetadata(
-                    null,
-                    FrameworkPropertyMetadataOptions.AffectsMeasure,
-                    OnHeaderChanged));
-
         private static void OnHeaderChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (ToggleSwitch)d;
@@ -116,99 +100,20 @@ namespace ModernWpf.Controls
         {
         }
 
-        #endregion
-
-        #region HeaderTemplate
-
-        public DataTemplate HeaderTemplate
-        {
-            get => (DataTemplate)GetValue(HeaderTemplateProperty);
-            set => SetValue(HeaderTemplateProperty, value);
-        }
-
-        public static readonly DependencyProperty HeaderTemplateProperty =
-            ControlHelper.HeaderTemplateProperty.AddOwner(
-                typeof(ToggleSwitch),
-                new FrameworkPropertyMetadata(
-                    null,
-                    FrameworkPropertyMetadataOptions.AffectsMeasure,
-                    OnHeaderTemplateChanged));
-
         private static void OnHeaderTemplateChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((ToggleSwitch)d).UpdateHeaderContentPresenterVisibility();
         }
-
-        #endregion
-
-        #region HeaderPlacement
-
-        public ControlHeaderPlacement HeaderPlacement
-        {
-            get => (ControlHeaderPlacement)GetValue(HeaderPlacementProperty);
-            set => SetValue(HeaderPlacementProperty, value);
-        }
-
-        public static readonly DependencyProperty HeaderPlacementProperty =
-            DependencyProperty.Register(
-                nameof(HeaderPlacement),
-                typeof(ControlHeaderPlacement),
-                typeof(ToggleSwitch),
-                new FrameworkPropertyMetadata(
-                    ControlHeaderPlacement.Top,
-                    OnHeaderPlacementChanged));
 
         private static void OnHeaderPlacementChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((ToggleSwitch)d).ChangeVisualState();
         }
 
-        #endregion
-
-        #region IsOn
-
-        public bool IsOn
-        {
-            get => (bool)GetValue(IsOnProperty);
-            set => SetValue(IsOnProperty, value);
-        }
-
-        public static readonly DependencyProperty IsOnProperty =
-            DependencyProperty.Register(
-                nameof(IsOn),
-                typeof(bool),
-                typeof(ToggleSwitch),
-                new FrameworkPropertyMetadata(
-                    false,
-                    FrameworkPropertyMetadataOptions.AffectsMeasure |
-                    FrameworkPropertyMetadataOptions.BindsTwoWayByDefault |
-                    FrameworkPropertyMetadataOptions.Journal,
-                    OnIsOnChanged));
-
         private static void OnIsOnChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((ToggleSwitch)d).OnToggled();
         }
-
-        #endregion
-
-        #region OffContent
-
-        public object OffContent
-        {
-            get => GetValue(OffContentProperty);
-            set => SetValue(OffContentProperty, value);
-        }
-
-        public static readonly DependencyProperty OffContentProperty =
-            DependencyProperty.Register(
-                nameof(OffContent),
-                typeof(object),
-                typeof(ToggleSwitch),
-                new FrameworkPropertyMetadata(
-                    Strings.ToggleSwitchOff,
-                    FrameworkPropertyMetadataOptions.AffectsMeasure,
-                    OnOffContentChanged));
 
         private static void OnOffContentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -219,42 +124,6 @@ namespace ModernWpf.Controls
         {
         }
 
-        #endregion
-
-        #region OffContentTemplate
-
-        public DataTemplate OffContentTemplate
-        {
-            get => (DataTemplate)GetValue(OffContentTemplateProperty);
-            set => SetValue(OffContentTemplateProperty, value);
-        }
-
-        public static readonly DependencyProperty OffContentTemplateProperty =
-            DependencyProperty.Register(
-                nameof(OffContentTemplate),
-                typeof(DataTemplate),
-                typeof(ToggleSwitch),
-                new FrameworkPropertyMetadata(
-                    null,
-                    FrameworkPropertyMetadataOptions.AffectsMeasure));
-
-        #endregion
-
-        #region OnContent
-
-        public object OnContent
-        {
-            get => GetValue(OnContentProperty);
-            set => SetValue(OnContentProperty, value);
-        }
-
-        public static readonly DependencyProperty OnContentProperty =
-            DependencyProperty.Register(
-                nameof(OnContent),
-                typeof(object),
-                typeof(ToggleSwitch),
-                new FrameworkPropertyMetadata(Strings.ToggleSwitchOn, OnOnContentChanged));
-
         private static void OnOnContentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((ToggleSwitch)d).OnOnContentChanged(e.OldValue, e.NewValue);
@@ -263,83 +132,6 @@ namespace ModernWpf.Controls
         protected virtual void OnOnContentChanged(object oldContent, object newContent)
         {
         }
-
-        #endregion
-
-        #region OnContentTemplate
-
-        public DataTemplate OnContentTemplate
-        {
-            get => (DataTemplate)GetValue(OnContentTemplateProperty);
-            set => SetValue(OnContentTemplateProperty, value);
-        }
-
-        public static readonly DependencyProperty OnContentTemplateProperty =
-            DependencyProperty.Register(
-                nameof(OnContentTemplate),
-                typeof(DataTemplate),
-                typeof(ToggleSwitch),
-                new FrameworkPropertyMetadata(
-                    null,
-                    FrameworkPropertyMetadataOptions.AffectsMeasure));
-
-        #endregion
-
-        #region UseSystemFocusVisuals
-
-        public static readonly DependencyProperty UseSystemFocusVisualsProperty =
-            FocusVisualHelper.UseSystemFocusVisualsProperty.AddOwner(typeof(ToggleSwitch));
-
-        public bool UseSystemFocusVisuals
-        {
-            get => (bool)GetValue(UseSystemFocusVisualsProperty);
-            set => SetValue(UseSystemFocusVisualsProperty, value);
-        }
-
-        #endregion
-
-        #region FocusVisualMargin
-
-        public static readonly DependencyProperty FocusVisualMarginProperty =
-            FocusVisualHelper.FocusVisualMarginProperty.AddOwner(typeof(ToggleSwitch));
-
-        public Thickness FocusVisualMargin
-        {
-            get => (Thickness)GetValue(FocusVisualMarginProperty);
-            set => SetValue(FocusVisualMarginProperty, value);
-        }
-
-        #endregion
-
-        #region CornerRadius
-
-        public static readonly DependencyProperty CornerRadiusProperty =
-            ControlHelper.CornerRadiusProperty.AddOwner(typeof(ToggleSwitch));
-
-        public CornerRadius CornerRadius
-        {
-            get => (CornerRadius)GetValue(CornerRadiusProperty);
-            set => SetValue(CornerRadiusProperty, value);
-        }
-
-        #endregion
-
-        #region TemplateSettings
-
-        private static readonly DependencyPropertyKey TemplateSettingsPropertyKey =
-            DependencyProperty.RegisterReadOnly(
-                nameof(TemplateSettings),
-                typeof(ToggleSwitchTemplateSettings),
-                typeof(ToggleSwitch),
-                new PropertyMetadata(null));
-
-        public static readonly DependencyProperty TemplateSettingsProperty =
-            TemplateSettingsPropertyKey.DependencyProperty;
-
-        public ToggleSwitchTemplateSettings TemplateSettings =>
-            (ToggleSwitchTemplateSettings)GetValue(TemplateSettingsProperty);
-
-        #endregion
 
         private ContentPresenter HeaderContentPresenter { get; set; }
 

@@ -228,6 +228,8 @@ public sealed class DependencyPropertyEntry
 
     public string? Validate { get; set; }
 
+    public string? RegistrationName { get; set; }
+
     public string FieldAccessibility { get; set; } = "public";
 
     public string KeyAccessibility { get; set; } = "private";
@@ -369,9 +371,7 @@ public static class DependencyPropertyCodeGenerator
         var registrationMethod = property.Kind == DependencyPropertyKind.RegisterAttached
             ? "RegisterAttached"
             : "Register";
-        var propertyName = property.Kind == DependencyPropertyKind.RegisterAttached
-            ? Quote(property.Name)
-            : $"nameof({property.Name})";
+        var propertyName = BuildRegistrationName(property);
         var validateArgument = string.IsNullOrWhiteSpace(property.Validate) ? string.Empty : $", {property.Validate}";
 
         writer.WriteLine($"{property.FieldAccessibility} static readonly DependencyProperty {property.Name}Property =");
@@ -391,9 +391,7 @@ public static class DependencyPropertyCodeGenerator
         var registrationMethod = property.Kind == DependencyPropertyKind.RegisterAttachedReadOnly
             ? "RegisterAttachedReadOnly"
             : "RegisterReadOnly";
-        var propertyName = property.Kind == DependencyPropertyKind.RegisterAttachedReadOnly
-            ? Quote(property.Name)
-            : $"nameof({property.Name})";
+        var propertyName = BuildRegistrationName(property);
         var validateArgument = string.IsNullOrWhiteSpace(property.Validate) ? string.Empty : $", {property.Validate}";
 
         writer.WriteLine($"{property.KeyAccessibility} static readonly DependencyPropertyKey {property.Name}PropertyKey =");
@@ -567,6 +565,18 @@ public static class DependencyPropertyCodeGenerator
     private static bool IsAttached(DependencyPropertyKind kind)
     {
         return kind is DependencyPropertyKind.RegisterAttached or DependencyPropertyKind.RegisterAttachedReadOnly;
+    }
+
+    private static string BuildRegistrationName(DependencyPropertyEntry property)
+    {
+        if (!string.IsNullOrWhiteSpace(property.RegistrationName))
+        {
+            return Quote(property.RegistrationName);
+        }
+
+        return IsAttached(property.Kind)
+            ? Quote(property.Name)
+            : $"nameof({property.Name})";
     }
 
     private static string WithAccessorAccessibility(string? accessibility)
