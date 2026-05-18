@@ -2,8 +2,9 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Documents;
+using System.Windows.Markup;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
 using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
@@ -14,104 +15,81 @@ namespace ModernWpf.WinUI.Tests.CommonStyles;
 public class ToggleButtonVisualStateTests
 {
     [TestMethod]
-    public void DefaultToggleButtonStyleUsesSourceVisualStateSetters()
+    public void DefaultToggleButtonStyleUsesOfficialWpfFluentTriggerShape()
     {
         WpfTestHost.Run(() =>
         {
             TestApplication.EnsureInitialized();
 
+            var defaultStyle = (Style)Application.Current.FindResource("DefaultToggleButtonStyle");
+            var implicitToggleButtonStyle = (Style)Application.Current.FindResource(typeof(ToggleButton));
+            Assert.AreEqual(typeof(ToggleButton), defaultStyle.TargetType);
+            Assert.AreEqual(typeof(ToggleButton), implicitToggleButtonStyle.TargetType);
+            Assert.AreSame(defaultStyle, implicitToggleButtonStyle.BasedOn);
+
             var toggleButton = CreateToggleButton();
             using var host = new TestWindowHost(toggleButton, width: 140, height: 80);
-            host.UpdateLayout();
 
-            var presenter = GetContentPresenter(toggleButton);
-
-            Assert.AreEqual(0, toggleButton.Template.Triggers.Count);
-            Assert.IsTrue(ToggleButtonHelper.GetVisualStateSettersEnabled(toggleButton));
-
-            AssertStateSetters(presenter, "PointerOver", "ContentPresenter.Background", "ContentPresenter.BorderBrush", "ContentPresenter.Foreground");
-            AssertStateSetters(presenter, "Pressed", "ContentPresenter.Background", "ContentPresenter.BorderBrush", "ContentPresenter.Foreground");
-            AssertStateSetters(presenter, "Disabled", "ContentPresenter.Background", "ContentPresenter.BorderBrush", "ContentPresenter.Foreground");
-            AssertStateSetters(presenter, "Checked", CheckedStateTargets());
-            AssertStateSetters(presenter, "CheckedPointerOver", CheckedStateTargets());
-            AssertStateSetters(presenter, "CheckedPressed", CheckedStateTargets());
-            AssertStateSetters(presenter, "CheckedDisabled", "ContentPresenter.Background", "ContentPresenter.Foreground", "ContentPresenter.BorderBrush");
-            AssertStateSetters(presenter, "Indeterminate", "ContentPresenter.Background", "ContentPresenter.Foreground", "ContentPresenter.BorderBrush");
-            AssertStateSetters(presenter, "IndeterminatePointerOver", "ContentPresenter.Background", "ContentPresenter.BorderBrush", "ContentPresenter.Foreground");
-            AssertStateSetters(presenter, "IndeterminatePressed", "ContentPresenter.Background", "ContentPresenter.BorderBrush", "ContentPresenter.Foreground");
-            AssertStateSetters(presenter, "IndeterminateDisabled", "ContentPresenter.Background", "ContentPresenter.Foreground", "ContentPresenter.BorderBrush");
+            Assert.AreEqual((Thickness)Application.Current.FindResource("ToggleButtonPadding"), toggleButton.Padding);
+            Assert.AreEqual((Thickness)Application.Current.FindResource("ToggleButtonBorderThemeThickness"), toggleButton.BorderThickness);
+            AssertTemplateUsesOfficialWpfPresenter(toggleButton);
+            Assert.IsFalse(ToggleButtonHelper.GetVisualStateSettersEnabled(toggleButton));
+            AssertOfficialTriggerShape(toggleButton.Template);
+            AssertUncheckedDisabledTriggerAppliesResources(toggleButton);
         });
     }
 
     [TestMethod]
-    public void CheckedAndIndeterminateStatesApplySourceResources()
+    public void CheckedStateUsesOfficialWpfFluentResources()
     {
         WpfTestHost.Run(() =>
         {
             TestApplication.EnsureInitialized();
 
             var toggleButton = CreateToggleButton();
-            toggleButton.IsThreeState = true;
-            using var host = new TestWindowHost(toggleButton, width: 140, height: 80);
-            host.UpdateLayout();
-
-            var presenter = GetContentPresenter(toggleButton);
-            Assert.AreEqual("Normal", GetCurrentStateName(presenter));
-
             toggleButton.IsChecked = true;
-            host.UpdateLayout();
-
-            Assert.AreEqual("Checked", GetCurrentStateName(presenter));
-            AssertPresenterResources(
-                presenter,
-                "ToggleButtonBackgroundChecked",
-                "ToggleButtonBorderBrushChecked",
-                "ToggleButtonForegroundChecked");
-            Assert.AreEqual(BackgroundSizing.OuterBorderEdge, presenter.BackgroundSizing);
-
-            toggleButton.IsChecked = null;
-            host.UpdateLayout();
-
-            Assert.AreEqual("Indeterminate", GetCurrentStateName(presenter));
-            AssertPresenterResources(
-                presenter,
-                "ToggleButtonBackgroundIndeterminate",
-                "ToggleButtonBorderBrushIndeterminate",
-                "ToggleButtonForegroundIndeterminate");
-
-            Assert.IsTrue(VisualStateManager.GoToState(toggleButton, "IndeterminatePointerOver", false));
-            AssertPresenterResources(
-                presenter,
-                "ToggleButtonBackgroundIndeterminatePointerOver",
-                "ToggleButtonBorderBrushIndeterminatePointerOver",
-                "ToggleButtonForegroundIndeterminatePointerOver");
-        });
-    }
-
-    [TestMethod]
-    public void IndeterminateDisabledStateIsDrivenByHelper()
-    {
-        WpfTestHost.Run(() =>
-        {
-            TestApplication.EnsureInitialized();
-
-            var toggleButton = CreateToggleButton();
-            toggleButton.IsThreeState = true;
-            toggleButton.IsChecked = null;
             using var host = new TestWindowHost(toggleButton, width: 140, height: 80);
             host.UpdateLayout();
 
-            var presenter = GetContentPresenter(toggleButton);
+            var contentBorder = GetTemplateChild<Border>(toggleButton, "ContentBorder");
+            var contentPresenter = GetTemplateChild<ContentPresenter>(toggleButton, "ContentPresenter");
+
+            Assert.AreSame(toggleButton.TryFindResource("ToggleButtonBackgroundChecked"), toggleButton.Background);
+            Assert.AreSame(toggleButton.TryFindResource("AccentControlElevationBorderBrush"), toggleButton.BorderBrush);
+            Assert.AreSame(contentPresenter.TryFindResource("ToggleButtonForegroundChecked"), TextElement.GetForeground(contentPresenter));
+            Assert.AreSame(toggleButton.Background, contentBorder.Background);
+            Assert.AreSame(toggleButton.BorderBrush, contentBorder.BorderBrush);
 
             toggleButton.IsEnabled = false;
             host.UpdateLayout();
 
-            Assert.AreEqual("IndeterminateDisabled", GetCurrentStateName(presenter));
-            AssertPresenterResources(
-                presenter,
-                "ToggleButtonBackgroundIndeterminateDisabled",
-                "ToggleButtonBorderBrushIndeterminateDisabled",
-                "ToggleButtonForegroundIndeterminateDisabled");
+            Assert.AreSame(toggleButton.TryFindResource("ToggleButtonBackgroundCheckedDisabled"), toggleButton.Background);
+            Assert.AreSame(toggleButton.TryFindResource("ToggleButtonBorderBrushCheckedDisabled"), toggleButton.BorderBrush);
+            Assert.AreSame(contentPresenter.TryFindResource("ToggleButtonForegroundCheckedDisabled"), TextElement.GetForeground(contentPresenter));
+        });
+    }
+
+    [TestMethod]
+    public void IndeterminateStateUsesOfficialWpfFluentFallbackChrome()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleButton = CreateToggleButton();
+            toggleButton.IsThreeState = true;
+            toggleButton.IsChecked = null;
+            using var host = new TestWindowHost(toggleButton, width: 140, height: 80);
+            host.UpdateLayout();
+
+            var contentBorder = GetTemplateChild<Border>(toggleButton, "ContentBorder");
+            var contentPresenter = GetTemplateChild<ContentPresenter>(toggleButton, "ContentPresenter");
+
+            Assert.AreSame(toggleButton.TryFindResource("ToggleButtonBackground"), toggleButton.Background);
+            Assert.AreSame(toggleButton.TryFindResource("ToggleButtonBorderBrush"), toggleButton.BorderBrush);
+            Assert.AreSame(toggleButton.Foreground, TextElement.GetForeground(contentPresenter));
+            Assert.AreSame(toggleButton.Background, contentBorder.Background);
+            Assert.AreSame(toggleButton.BorderBrush, contentBorder.BorderBrush);
         });
     }
 
@@ -125,68 +103,128 @@ public class ToggleButtonVisualStateTests
         };
     }
 
-    private static ContentPresenterEx GetContentPresenter(ToggleButton toggleButton)
+    private static void AssertTemplateUsesOfficialWpfPresenter(ToggleButton toggleButton)
     {
         toggleButton.ApplyTemplate();
-        return toggleButton.Template.FindName("ContentPresenter", toggleButton) as ContentPresenterEx
-            ?? throw new AssertFailedException("Expected ToggleButton template to use ContentPresenterEx directly.");
+
+        var contentBorder = GetTemplateChild<Border>(toggleButton, "ContentBorder");
+        var contentPresenter = GetTemplateChild<ContentPresenter>(toggleButton, "ContentPresenter");
+
+        Assert.AreEqual(toggleButton.Content, contentPresenter.Content);
+        Assert.IsTrue(contentPresenter.RecognizesAccessKey);
+        Assert.AreSame(toggleButton.Foreground, TextElement.GetForeground(contentPresenter));
+        Assert.AreEqual(toggleButton.FontSize, TextElement.GetFontSize(contentPresenter));
+        Assert.AreEqual(ControlHelper.GetCornerRadius(toggleButton), contentBorder.CornerRadius);
+        Assert.AreEqual(0, VisualStateManager.GetVisualStateGroups(contentBorder).Count);
     }
 
-    private static string[] CheckedStateTargets()
+    private static void AssertOfficialTriggerShape(ControlTemplate template)
     {
-        return new[]
-        {
-            "ContentPresenter.Background",
-            "ContentPresenter.Foreground",
-            "ContentPresenter.BorderBrush",
-            "ContentPresenter.BackgroundSizing"
-        };
+        var triggers = template.Triggers.OfType<MultiTrigger>().ToArray();
+        Assert.AreEqual(7, triggers.Length);
+
+        AssertTrigger(triggers,
+            ("IsEnabled", false),
+            ("IsChecked", false),
+            ("", "Background", "ToggleButtonBackgroundDisabled"),
+            ("", "BorderBrush", "ToggleButtonBorderBrushDisabled"),
+            ("ContentPresenter", "Foreground", "ToggleButtonForegroundDisabled"));
+
+        AssertTrigger(triggers,
+            ("IsEnabled", false),
+            ("IsChecked", true),
+            ("", "Background", "ToggleButtonBackgroundCheckedDisabled"),
+            ("", "BorderBrush", "ToggleButtonBorderBrushCheckedDisabled"),
+            ("ContentPresenter", "Foreground", "ToggleButtonForegroundCheckedDisabled"));
+
+        AssertTrigger(triggers,
+            ("IsEnabled", true),
+            ("IsChecked", true),
+            ("", "Background", "ToggleButtonBackgroundChecked"),
+            ("", "BorderBrush", "AccentControlElevationBorderBrush"),
+            ("ContentPresenter", "Foreground", "ToggleButtonForegroundChecked"));
+
+        AssertTrigger(triggers,
+            ("IsMouseOver", true),
+            ("IsChecked", false),
+            ("", "Background", "ToggleButtonBackgroundPointerOver"));
+
+        AssertTrigger(triggers,
+            ("IsMouseOver", true),
+            ("IsChecked", true),
+            ("", "Background", "ToggleButtonBackgroundCheckedPointerOver"));
+
+        AssertTrigger(triggers,
+            ("IsPressed", true),
+            ("IsChecked", false),
+            ("", "Background", "ToggleButtonBackgroundPressed"),
+            ("", "BorderBrush", "ToggleButtonBorderBrushPressed"),
+            ("ContentPresenter", "Foreground", "ToggleButtonForegroundPressed"));
+
+        AssertTrigger(triggers,
+            ("IsPressed", true),
+            ("IsChecked", true),
+            ("", "Background", "ToggleButtonBackgroundCheckedPressed"),
+            ("", "BorderBrush", "ToggleButtonBorderBrushCheckedPressed"),
+            ("ContentPresenter", "Foreground", "ToggleButtonForegroundCheckedPressed"));
     }
 
-    private static void AssertStateSetters(
-        FrameworkElement stateGroupsRoot,
-        string stateName,
-        params string[] setterTargets)
+    private static void AssertTrigger(
+        MultiTrigger[] triggers,
+        (string PropertyName, object Value) firstCondition,
+        (string PropertyName, object Value) secondCondition,
+        params (string TargetName, string PropertyName, string ResourceKey)[] expectedSetters)
     {
-        var stateEx = GetCommonState(stateGroupsRoot, stateName);
-        foreach (var setterTarget in setterTargets)
+        var trigger = triggers.Single(item =>
+            HasCondition(item, firstCondition.PropertyName, firstCondition.Value) &&
+            HasCondition(item, secondCondition.PropertyName, secondCondition.Value));
+        var setters = trigger.Setters.OfType<Setter>().ToArray();
+
+        Assert.AreEqual(expectedSetters.Length, setters.Length);
+
+        foreach (var expectedSetter in expectedSetters)
         {
-            Assert.IsTrue(
-                stateEx.Setters.Any(item => item.Target == setterTarget),
-                $"CommonStates.{stateName} should set {setterTarget}.");
+            AssertSetter(setters, expectedSetter.TargetName, expectedSetter.PropertyName, expectedSetter.ResourceKey);
         }
     }
 
-    private static VisualStateEx GetCommonState(FrameworkElement stateGroupsRoot, string stateName)
+    private static bool HasCondition(MultiTrigger trigger, string propertyName, object value)
     {
-        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
-            .OfType<VisualStateGroup>()
-            .Single(item => item.Name == "CommonStates");
-        var state = group.States
-            .Cast<VisualState>()
-            .Single(item => item.Name == stateName);
-
-        Assert.IsInstanceOfType(state, typeof(VisualStateEx));
-        return (VisualStateEx)state;
+        return trigger.Conditions.Cast<Condition>().Any(item =>
+            item.Property.Name == propertyName &&
+            Equals(item.Value, value));
     }
 
-    private static string GetCurrentStateName(FrameworkElement stateGroupsRoot)
+    private static void AssertSetter(Setter[] setters, string targetName, string propertyName, string resourceKey)
     {
-        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
-            .OfType<VisualStateGroup>()
-            .Single(item => item.Name == "CommonStates");
-        Assert.IsNotNull(group.CurrentState);
-        return group.CurrentState.Name;
+        var setter = setters.Single(item =>
+            (item.TargetName ?? string.Empty) == targetName &&
+            item.Property.Name == propertyName);
+
+        Assert.IsInstanceOfType(setter.Value, typeof(DynamicResourceExtension));
+        var resource = (DynamicResourceExtension)setter.Value;
+        Assert.AreEqual(resourceKey, resource.ResourceKey);
     }
 
-    private static void AssertPresenterResources(
-        ContentPresenterEx presenter,
-        string backgroundKey,
-        string borderBrushKey,
-        string foregroundKey)
+    private static void AssertUncheckedDisabledTriggerAppliesResources(ToggleButton toggleButton)
     {
-        Assert.AreSame(presenter.TryFindResource(backgroundKey), presenter.Background);
-        Assert.AreSame(presenter.TryFindResource(borderBrushKey), presenter.BorderBrush);
-        Assert.AreSame(presenter.TryFindResource(foregroundKey), presenter.Foreground);
+        var contentBorder = GetTemplateChild<Border>(toggleButton, "ContentBorder");
+        var contentPresenter = GetTemplateChild<ContentPresenter>(toggleButton, "ContentPresenter");
+
+        toggleButton.IsEnabled = false;
+        toggleButton.UpdateLayout();
+
+        Assert.AreSame(toggleButton.TryFindResource("ToggleButtonBackgroundDisabled"), toggleButton.Background);
+        Assert.AreSame(toggleButton.TryFindResource("ToggleButtonBorderBrushDisabled"), toggleButton.BorderBrush);
+        Assert.AreSame(contentPresenter.TryFindResource("ToggleButtonForegroundDisabled"), TextElement.GetForeground(contentPresenter));
+        Assert.AreSame(toggleButton.Background, contentBorder.Background);
+        Assert.AreSame(toggleButton.BorderBrush, contentBorder.BorderBrush);
+    }
+
+    private static T GetTemplateChild<T>(Control control, string name)
+        where T : DependencyObject
+    {
+        return control.Template.FindName(name, control) as T
+            ?? throw new AssertFailedException($"Expected {control.GetType().Name} template child '{name}' to be a {typeof(T).Name}.");
     }
 }

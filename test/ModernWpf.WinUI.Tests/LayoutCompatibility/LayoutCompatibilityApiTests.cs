@@ -1923,7 +1923,7 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
-    public void ToggleButtonCheckedStateUsesOuterBackgroundSizing()
+    public void ToggleButtonTemplateUsesOfficialWpfFluentPresenterSlot()
     {
         WpfTestHost.Run(() =>
         {
@@ -1932,15 +1932,22 @@ public class LayoutCompatibilityApiTests
                 Width = 100,
                 Height = 40,
                 Content = "Toggle",
-                IsChecked = true
+                Foreground = Brushes.Blue
             };
+            ControlHelper.SetCornerRadius(toggleButton, new CornerRadius(8));
 
             using var host = new TestWindowHost(toggleButton, width: 140, height: 80);
 
-            var presenter = FindVisualChild<ContentPresenterEx>(toggleButton)
-                ?? throw new AssertFailedException("Expected ToggleButton template to use ContentPresenterEx directly.");
+            var border = FindTemplateChild<Border>(toggleButton, "ContentBorder");
+            var presenter = FindTemplateChild<ContentPresenter>(toggleButton, "ContentPresenter");
+
+            Assert.AreEqual(toggleButton.Content, presenter.Content);
+            Assert.AreSame(toggleButton.Foreground, TextElement.GetForeground(presenter));
+            Assert.AreEqual(ControlHelper.GetCornerRadius(toggleButton), border.CornerRadius);
+            Assert.IsNull(FindVisualChild<ContentPresenterEx>(toggleButton));
             Assert.IsNull(FindVisualChild<ModernContentControlEx>(toggleButton));
-            Assert.AreEqual(BackgroundSizing.OuterBorderEdge, presenter.BackgroundSizing);
+            Assert.IsFalse(ToggleButtonHelper.GetVisualStateSettersEnabled(toggleButton));
+            Assert.AreEqual(7, toggleButton.Template.Triggers.OfType<MultiTrigger>().Count());
         });
     }
 

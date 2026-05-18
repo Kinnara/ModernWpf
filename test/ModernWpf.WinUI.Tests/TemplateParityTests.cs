@@ -141,7 +141,8 @@ public class TemplateParityTests
         {
             Path.Combine("ModernWpf", "Styles", "Button.xaml"),
             Path.Combine("ModernWpf", "Styles", "RepeatButton.xaml"),
-            Path.Combine("ModernWpf", "Styles", "Slider.xaml")
+            Path.Combine("ModernWpf", "Styles", "Slider.xaml"),
+            Path.Combine("ModernWpf", "Styles", "ToggleButton.xaml")
         };
 
         var offenders = officialWpfFluentTemplateFiles

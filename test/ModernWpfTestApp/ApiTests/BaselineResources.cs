@@ -1575,6 +1575,7 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
 "DefaultRichEditBoxStyle",
 "DefaultProgressBarStyle",
 "ButtonPadding",
+"ToggleButtonPadding",
 "DefaultToggleButtonStyle",
 "TopLeftCornerRadiusDoubleValueConverter8x",
 "BottomRightCornerRadiusDoubleValueConverter8x",
