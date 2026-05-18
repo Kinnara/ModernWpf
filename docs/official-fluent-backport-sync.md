@@ -587,3 +587,29 @@ Source inspected:
 
 - `test\ModernWpf.WinUI.Tests\CommonStyles\StockProgressBarVisualStateTests.cs` covers the official WPF Fluent stock ProgressBar setter surface, visual-state names, animation shape, template parts, orientation and indeterminate triggers, deleted wrapper guess, and theme aliases.
 - `test\ModernWpf.WinUI.Tests\TemplateParityTests.cs` classifies `ProgressBar.xaml` as an official WPF Fluent stock template that should not use `VisualStateEx`.
+
+## 2026-05-18 Batch 20
+
+Source inspected:
+
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\ScrollViewer.xaml`
+
+### Synced Values
+
+| Resource key / style | Official WPF Fluent value | ModernWpf value after sync | Reason |
+| --- | --- | --- | --- |
+| `DefaultScrollViewerStyle` / implicit stock `ScrollViewer` style | Official stock WPF `ScrollViewer` style with `Margin=0`, `Padding=0`, `SnapsToDevicePixels=True`, `OverridesDefaultStyle=True`, and a grid template containing `PART_ScrollContentPresenter`, `PART_VerticalScrollBar`, and `PART_HorizontalScrollBar` | Same source shape under the retained `DefaultScrollViewerStyle` key | `ScrollViewer` is a stock WPF control, so official WPF Fluent is the primary source for the stock style. |
+| Default stock `ScrollViewer` template | Plain official WPF grid layout with no ModernWpf focus, border, background, corner-radius, automation-id, or explicit `CanHorizontallyScroll` / `CanVerticallyScroll` additions | Same source shape | Removes old WinUI/backport guesses from the stock default style. |
+
+### Intentional Differences
+
+| Resource key / style | Official WPF Fluent value | ModernWpf backport value | Reason retained |
+| --- | --- | --- | --- |
+| Explicit style key | `DefaultScrollViewerStyle` is present in official WPF Fluent and retained | Same | Existing ModernWpf apps can continue to reference the public style key. |
+| `TextControlContentHostStyle` | No official WPF Fluent style in `ScrollViewer.xaml` | Retained as a support style based on `DefaultScrollViewerStyle` | Existing text-entry templates use this style for content-host presenter margin and ModernWpf corner-radius support. |
+| `ScrollViewerScrollBarlessTemplate` | No official WPF Fluent helper template | Retained | Pivot still uses this ModernWpf-specific scrollbarless scroller template. |
+
+### Test Evidence
+
+- `test\ModernWpf.WinUI.Tests\CommonStyles\ScrollViewerVisualStateTests.cs` covers the official WPF Fluent stock ScrollViewer setter surface, template parts, deleted default-style guesses, and retained ModernWpf support templates.
+- `test\ModernWpf.WinUI.Tests\TemplateParityTests.cs` classifies `ScrollViewer.xaml` as an official WPF Fluent stock template file that should not use `VisualStateEx`.

@@ -154,6 +154,7 @@ public class TemplateParityTests
             Path.Combine("ModernWpf", "Styles", "RichTextBox.xaml"),
             Path.Combine("ModernWpf", "Styles", "Separator.xaml"),
             Path.Combine("ModernWpf", "Styles", "Slider.xaml"),
+            Path.Combine("ModernWpf", "Styles", "ScrollViewer.xaml"),
             Path.Combine("ModernWpf", "Styles", "StatusBar.xaml"),
             Path.Combine("ModernWpf", "Styles", "Thumb.xaml"),
             Path.Combine("ModernWpf", "Styles", "ToolTip.xaml"),
