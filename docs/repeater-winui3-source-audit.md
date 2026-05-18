@@ -47,6 +47,7 @@ ModernWpf files:
 - `ViewportManagerDownLevel` exposes the source `GetLayoutExtent` hook used by `ItemsRepeater` measure-cycle protection.
 - `ItemsRepeater.MeasureOverride` now follows WinUI 3's `StackLayout` cycle guard: after 60 consecutive `StackLayout` measure passes without layout settling, it shortcuts to the last layout extent instead of re-entering layout indefinitely.
 - `ItemsRepeater` resets that counter from source-equivalent layout-settled points: `LayoutUpdated`, `Unloaded`, and layout replacement.
+- The WPF `ScrollViewer.ChangeView` substitute now follows source return semantics for Repeater calls: it clamps requested offsets to the current WPF scrollable range, returns `true` only when an offset request is actually applied, returns `false` for already-current/no-op requests, and rejects NaN/infinite offset or zoom values like WinUI's invalid numeric path.
 - `StackLayout`, `FlowLayout`, and `UniformGridLayout` carry the source layout surface and WPF-feasible layout algorithms, including virtualization toggles, item spacing, wrapping, uniform item slots, and index-based orientation.
 - `IndexPath`, `ItemsSourceView`, `RecyclePool`, `ElementFactory`, `SelectionModel`, and `ItemsRepeaterScrollHost` retain the existing source-shaped API/test coverage.
 
@@ -56,6 +57,7 @@ ModernWpf files:
 - WinUI's invalid-rect sentinel is `{-1,-1,-1,-1}`. WPF `Rect` cannot represent a negative width/height sentinel, so ModernWpf keeps `Rect.Empty` as the WPF invalid-arrange substitute.
 - WinUI resets default layout state lazily from `OnLayoutUpdated`. ModernWpf eagerly installs and initializes the default `StackLayout` in the constructor, so the WPF `LayoutUpdated` substitute only resets the source measure-cycle counter.
 - WinUI automation and visual/TestUI coverage remains platform-owned. ModernWpf tests the WPF-feasible API, layout, element mapping, recycle, selection, item-template, and scroll-host behavior.
+- WPF `ScrollViewer` has no WinUI `ZoomFactor` surface in this Repeater substitute. Valid zoom requests are ignored and report `false` unless an offset request was also applied; invalid zoom values still throw to preserve the source numeric guard.
 
 ## Regression Guards
 

@@ -419,6 +419,81 @@ public class RepeaterLayoutTests
         });
     }
 
+    [TestMethod]
+    public void ScrollViewerChangeViewSubstituteReturnsHandledOnlyWhenOffsetChanges()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var scrollViewer = new ScrollViewer
+            {
+                Width = 100,
+                Height = 100,
+                HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
+                VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+                Content = new Border
+                {
+                    Width = 300,
+                    Height = 400
+                }
+            };
+
+            using var host = new TestWindowHost(scrollViewer, width: 160, height: 160);
+
+            Assert.IsTrue(scrollViewer.ChangeView(50, 75, null, disableAnimation: true));
+            host.UpdateLayout();
+            Assert.AreEqual(50, scrollViewer.HorizontalOffset, 0.001);
+            Assert.AreEqual(75, scrollViewer.VerticalOffset, 0.001);
+
+            Assert.IsFalse(scrollViewer.ChangeView(50, 75, null, disableAnimation: true));
+            Assert.IsFalse(scrollViewer.ChangeView(null, null, 1.0f, disableAnimation: true));
+
+            Assert.IsTrue(scrollViewer.ChangeView(999, 999, null, disableAnimation: true));
+            host.UpdateLayout();
+            Assert.AreEqual(scrollViewer.ScrollableWidth, scrollViewer.HorizontalOffset, 0.001);
+            Assert.AreEqual(scrollViewer.ScrollableHeight, scrollViewer.VerticalOffset, 0.001);
+
+            Assert.IsFalse(scrollViewer.ChangeView(999, 999, null, disableAnimation: true));
+        });
+    }
+
+    [TestMethod]
+    public void ScrollViewerChangeViewSubstituteRejectsInvalidSourceOffsets()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var scrollViewer = new ScrollViewer
+            {
+                Width = 100,
+                Height = 100,
+                HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
+                VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+                Content = new Border
+                {
+                    Width = 300,
+                    Height = 400
+                }
+            };
+
+            using var host = new TestWindowHost(scrollViewer, width: 160, height: 160);
+
+            Assert.ThrowsException<ArgumentException>(
+                () => scrollViewer.ChangeView(double.NaN, null, null, disableAnimation: true));
+            Assert.ThrowsException<ArgumentException>(
+                () => scrollViewer.ChangeView(null, double.PositiveInfinity, null, disableAnimation: true));
+            Assert.ThrowsException<ArgumentException>(
+                () => scrollViewer.ChangeView(null, null, float.PositiveInfinity, disableAnimation: true));
+
+            Assert.IsTrue(scrollViewer.ChangeView(20, 30, null, disableAnimation: true));
+            host.UpdateLayout();
+
+            Assert.ThrowsException<ArgumentException>(
+                () => scrollViewer.ChangeView(60, 70, float.NaN, disableAnimation: true));
+            host.UpdateLayout();
+            Assert.AreEqual(20, scrollViewer.HorizontalOffset, 0.001);
+            Assert.AreEqual(30, scrollViewer.VerticalOffset, 0.001);
+        });
+    }
+
     private static double GetAverageElementSize(
         StackLayout stackLayout,
         VirtualizingLayoutContext context,
