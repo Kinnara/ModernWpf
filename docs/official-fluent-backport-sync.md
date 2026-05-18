@@ -643,3 +643,35 @@ Source inspected:
 
 - `test\ModernWpf.WinUI.Tests\CommonStyles\ScrollBarVisualStateTests.cs` covers the official WPF Fluent ScrollBar setter surface, orientation triggers, support styles, template parts, theme aliases, and deletion of ModernWpf-specific template guesses.
 - `test\ModernWpf.WinUI.Tests\TemplateParityTests.cs` classifies `ScrollBar.xaml` as an official WPF Fluent stock template file that should not use `VisualStateEx`.
+
+## 2026-05-18 Batch 22
+
+Source inspected:
+
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\TextBox.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\PasswordBox.xaml`
+
+### Synced Values
+
+| Resource key / style | Official WPF Fluent value | ModernWpf value after sync | Reason |
+| --- | --- | --- | --- |
+| `DefaultTextBoxBaseStyle` | Official stock WPF `TextBoxBase` style with text-control setters, `ContentBorder`, `PART_ContentHost`, and WPF triggers for pointer-over, focused, and disabled states | Same source shape with ModernWpf context-menu, validation, and corner-radius substitutions | `TextBoxBase` is a stock WPF control base, so official WPF Fluent is the primary source. |
+| `DefaultTextBoxStyle` / implicit stock `TextBox` style | Official stock WPF `TextBox` style with clear-button resources, two-column template, `DeleteButton`, WPF triggers, and official text-control setters | Same source shape with a `TextBoxHelper.IsDeleteButton` click hook in place of the newer platform `TemplateButtonCommand` | `TextBox` is a stock WPF control, so official WPF Fluent is the primary source while older ModernWpf targets still need a clear-button substitute. |
+| `DefaultPasswordBoxStyle` / implicit stock `PasswordBox` style | Official stock WPF `PasswordBox` style with `ContentBorder`, `PART_ContentHost`, `PasswordBoxBorderThemeThickness`, and WPF pointer-over/focused/disabled triggers | Same source shape with ModernWpf context-menu and corner-radius substitutions | `PasswordBox` is a stock WPF control, so official WPF Fluent is the primary source. |
+
+### Intentional Differences
+
+| Resource key / style | Official WPF Fluent value | ModernWpf backport value | Reason retained |
+| --- | --- | --- | --- |
+| `system` namespace assembly | `System.Runtime` in `TextBox.xaml` | `mscorlib` | Keeps copied glyph/string resources compatible with ModernWpf's older target frameworks. |
+| Text-entry context menu | `DefaultControlContextMenu` for `TextBox` / `TextBoxBase`, `DefaultPasswordBoxContextMenu` for `PasswordBox` | `TextControlContextMenu` plus `TextContextMenu.UsingTextContextMenu=True` | Keeps ModernWpf's existing text-control context-menu integration. |
+| Text-entry corner radius property | `Border.CornerRadius` setters and template bindings | `primitives:ControlHelper.CornerRadius` | Older ModernWpf targets do not expose the official source property on these controls; this preserves the existing backport radius bridge. |
+| `TextBox` clear-button command | `TemplateButtonCommand` | `TextBoxHelper.IsDeleteButton` | Older target frameworks do not expose the official platform command property; the substitution keeps the official button shape and clear behavior. |
+| `TextBox` validation chrome | Official `DefaultTextBoxInvalidationStyle` | Existing `TextControlValidationErrorTemplate` plus `ValidationHelper.IsTemplateValidationAdornerSite` | Keeps ModernWpf's existing validation adorner routing. |
+| `DataGridTextBoxStyle` | No official `TextBox.xaml` equivalent | Retained as a support style based on `DefaultTextBoxStyle` | Existing `DataGrid` text and hyperlink columns still reference this editing-element style. |
+| `TextBoxTopHeaderMargin` / `PasswordBoxTopHeaderMargin` | No official stock template use | Retained as unused public aliases | Avoids unnecessary resource-surface churn while the official templates no longer consume header presenter resources. |
+
+### Test Evidence
+
+- `test\ModernWpf.WinUI.Tests\CommonStyles\TextBoxPasswordBoxVisualStateTests.cs` covers the official WPF Fluent TextBox, TextBoxBase, and PasswordBox setter surfaces, template parts, trigger shapes, clear-button substitution, retained `DataGridTextBoxStyle`, and deletion of ModernWpf-specific template guesses.
+- `test\ModernWpf.WinUI.Tests\TemplateParityTests.cs` classifies `TextBox.xaml` and `PasswordBox.xaml` as official WPF Fluent stock template files that should not use `VisualStateEx`.

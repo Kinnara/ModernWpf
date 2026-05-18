@@ -156,6 +156,8 @@ public class TemplateParityTests
             Path.Combine("ModernWpf", "Styles", "ScrollBar.xaml"),
             Path.Combine("ModernWpf", "Styles", "ScrollViewer.xaml"),
             Path.Combine("ModernWpf", "Styles", "StatusBar.xaml"),
+            Path.Combine("ModernWpf", "Styles", "TextBox.xaml"),
+            Path.Combine("ModernWpf", "Styles", "PasswordBox.xaml"),
             Path.Combine("ModernWpf", "Styles", "Thumb.xaml"),
             Path.Combine("ModernWpf", "Styles", "ToolTip.xaml"),
             Path.Combine("ModernWpf", "Styles", "ToolBar.xaml"),
@@ -248,9 +250,7 @@ public class TemplateParityTests
         {
             Path.Combine("ModernWpf", "Styles", "AutoSuggestBox.xaml"),
             Path.Combine("ModernWpf", "Styles", "ComboBox.xaml"),
-            Path.Combine("ModernWpf", "Styles", "DatePicker.xaml"),
-            Path.Combine("ModernWpf", "Styles", "PasswordBox.xaml"),
-            Path.Combine("ModernWpf", "Styles", "TextBox.xaml")
+            Path.Combine("ModernWpf", "Styles", "DatePicker.xaml")
         };
 
         var offenders = sourceBackedTemplateFiles
