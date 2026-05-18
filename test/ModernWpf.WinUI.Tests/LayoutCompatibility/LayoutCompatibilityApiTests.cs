@@ -99,6 +99,62 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
+    public void ThemeShadowChromeUsesWinUIWindowedPopupInsets()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var chrome = new ThemeShadowChrome { Depth = 32 };
+
+            Assert.AreEqual(ThemeShadowChromeWindowedPopupInsetMode.Default, chrome.WindowedPopupInsetMode);
+            Assert.AreEqual(new Thickness(16, 8, 16, 24), chrome.PopupShadowPadding);
+
+            chrome.WindowedPopupInsetMode = ThemeShadowChromeWindowedPopupInsetMode.Medium;
+            Assert.AreEqual(new Thickness(10, 2, 10, 18), chrome.PopupShadowPadding);
+
+            chrome.WindowedPopupInsetMode = ThemeShadowChromeWindowedPopupInsetMode.Small;
+            Assert.AreEqual(new Thickness(4, 1, 4, 8), chrome.PopupShadowPadding);
+        });
+    }
+
+    [TestMethod]
+    public void ExistingPopupTemplatesUseWinUIWindowedPopupInsets()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var flyoutPresenter = new FlyoutPresenter { Content = "Flyout" };
+            using (var host = new TestWindowHost(flyoutPresenter, width: 180, height: 120))
+            {
+                host.UpdateLayout();
+                var chrome = FindVisualChild<ThemeShadowChrome>(flyoutPresenter)
+                    ?? throw new AssertFailedException("Expected FlyoutPresenter to use ThemeShadowChrome.");
+                AssertMediumWindowedPopupInsets(chrome);
+            }
+
+            var autoSuggestBox = new ModernWpf.Controls.AutoSuggestBox { Width = 180 };
+            using (var host = new TestWindowHost(autoSuggestBox, width: 220, height: 120))
+            {
+                host.UpdateLayout();
+                var popup = FindTemplateChild<Popup>(autoSuggestBox, "SuggestionsPopup");
+                var chrome = popup.Child as ThemeShadowChrome
+                    ?? throw new AssertFailedException("Expected AutoSuggestBox suggestions popup to use ThemeShadowChrome.");
+                AssertMediumWindowedPopupInsets(chrome);
+            }
+
+            var commandBar = new CommandBar { Width = 220 };
+            using (var host = new TestWindowHost(commandBar, width: 260, height: 120))
+            {
+                host.UpdateLayout();
+                var popup = FindTemplateChild<Popup>(commandBar, "OverflowPopup");
+                var chrome = popup.Child as ThemeShadowChrome
+                    ?? throw new AssertFailedException("Expected CommandBar overflow popup to use ThemeShadowChrome.");
+                AssertMediumWindowedPopupInsets(chrome);
+            }
+        });
+    }
+
+    [TestMethod]
     public void LayoutChromeControlsUseBackgroundTransitionBrush()
     {
         WpfTestHost.Run(() =>
@@ -3252,6 +3308,12 @@ public class LayoutCompatibilityApiTests
         clearTransition(control);
 
         Assert.AreSame(targetBrush, getEffectiveBackground(control));
+    }
+
+    private static void AssertMediumWindowedPopupInsets(ThemeShadowChrome chrome)
+    {
+        Assert.AreEqual(ThemeShadowChromeWindowedPopupInsetMode.Medium, chrome.WindowedPopupInsetMode);
+        Assert.AreEqual(new Thickness(10, 2, 10, 18), chrome.PopupShadowPadding);
     }
 
     private static void AssertInheritedTextMetadata(DependencyProperty property, Type ownerType)

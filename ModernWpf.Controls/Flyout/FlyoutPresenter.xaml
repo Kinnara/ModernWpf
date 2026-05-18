@@ -32,6 +32,7 @@
                 <ControlTemplate TargetType="local:FlyoutPresenter">
                     <ui:ThemeShadowChrome
                         IsShadowEnabled="{TemplateBinding IsDefaultShadowEnabled}"
+                        WindowedPopupInsetMode="Medium"
                         CornerRadius="{TemplateBinding CornerRadius}"
                         SnapsToDevicePixels="True">
                         <ui:BorderEx

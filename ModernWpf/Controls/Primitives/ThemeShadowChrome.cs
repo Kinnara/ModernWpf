@@ -10,6 +10,13 @@ using System.Windows.Media.Imaging;
 
 namespace ModernWpf.Controls.Primitives
 {
+    public enum ThemeShadowChromeWindowedPopupInsetMode
+    {
+        Default,
+        Small,
+        Medium
+    }
+
     public class ThemeShadowChrome : Decorator
     {
         public ThemeShadowChrome()
@@ -99,11 +106,43 @@ namespace ModernWpf.Controls.Primitives
 
         internal Thickness ShadowPadding => ThemeShadowRenderer.GetPadding(Depth);
 
+        internal Thickness PopupShadowPadding => ThemeShadowRenderer.GetPopupPadding(WindowedPopupInsetMode, Depth);
+
         private void OnDepthChanged()
         {
             if (IsInitialized)
             {
                 UpdateShadow();
+                UpdatePopupMargin();
+            }
+        }
+
+        #endregion
+
+        #region WindowedPopupInsetMode
+
+        public static readonly DependencyProperty WindowedPopupInsetModeProperty =
+            DependencyProperty.Register(
+                nameof(WindowedPopupInsetMode),
+                typeof(ThemeShadowChromeWindowedPopupInsetMode),
+                typeof(ThemeShadowChrome),
+                new PropertyMetadata(ThemeShadowChromeWindowedPopupInsetMode.Default, OnWindowedPopupInsetModeChanged));
+
+        public ThemeShadowChromeWindowedPopupInsetMode WindowedPopupInsetMode
+        {
+            get => (ThemeShadowChromeWindowedPopupInsetMode)GetValue(WindowedPopupInsetModeProperty);
+            set => SetValue(WindowedPopupInsetModeProperty, value);
+        }
+
+        private static void OnWindowedPopupInsetModeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((ThemeShadowChrome)d).OnWindowedPopupInsetModeChanged();
+        }
+
+        private void OnWindowedPopupInsetModeChanged()
+        {
+            if (IsInitialized)
+            {
                 UpdatePopupMargin();
             }
         }
@@ -171,7 +210,7 @@ namespace ModernWpf.Controls.Primitives
         {
             if (IsShadowEnabled)
             {
-                PopupMargin = ShadowPadding;
+                PopupMargin = PopupShadowPadding;
             }
             else
             {
@@ -931,6 +970,19 @@ namespace ModernWpf.Controls.Primitives
                     Math.Ceiling(top),
                     Math.Ceiling(right),
                     Math.Ceiling(bottom));
+            }
+
+            internal static Thickness GetPopupPadding(ThemeShadowChromeWindowedPopupInsetMode insetMode, double depth)
+            {
+                switch (insetMode)
+                {
+                    case ThemeShadowChromeWindowedPopupInsetMode.Small:
+                        return new Thickness(4, 1, 4, 8);
+                    case ThemeShadowChromeWindowedPopupInsetMode.Medium:
+                        return new Thickness(10, 2, 10, 18);
+                    default:
+                        return GetPadding(depth);
+                }
             }
 
             public static void DrawShadow(
