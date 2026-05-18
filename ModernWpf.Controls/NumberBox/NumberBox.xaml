@@ -55,7 +55,7 @@
                                             BorderBrush="{DynamicResource TextControlButtonBorderBrush}"
                                             BorderThickness="{TemplateBinding BorderThickness}"
                                             Background="{DynamicResource TextControlButtonBackground}"
-                                            CornerRadius="{TemplateBinding Tag}">
+                                            CornerRadius="{TemplateBinding ui:ControlHelper.CornerRadius}">
                                             <ui:FontIconFallback
                                                 x:Name="GlyphElement"
                                                 Foreground="{DynamicResource TextControlButtonForeground}"
@@ -179,7 +179,7 @@
                             Focusable="False"
                             Style="{StaticResource DeleteButtonStyle}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            Tag="{TemplateBinding Border.CornerRadius}"
+                            ui:ControlHelper.CornerRadius="{TemplateBinding Border.CornerRadius}"
                             Padding="{DynamicResource HelperButtonThemePadding}"
                             IsTabStop="False"
                             Visibility="Collapsed"

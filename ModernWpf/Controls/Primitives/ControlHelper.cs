@@ -73,6 +73,30 @@ namespace ModernWpf.Controls.Primitives
 
         #endregion
 
+        #region CornerRadius
+
+        public static CornerRadius GetCornerRadius(DependencyObject element)
+        {
+            return (CornerRadius)element.GetValue(CornerRadiusProperty);
+        }
+
+        public static void SetCornerRadius(DependencyObject element, CornerRadius value)
+        {
+            element.SetValue(CornerRadiusProperty, value);
+        }
+
+        public static readonly DependencyProperty CornerRadiusProperty =
+            DependencyProperty.RegisterAttached(
+                "CornerRadius",
+                typeof(CornerRadius),
+                typeof(ControlHelper),
+                new FrameworkPropertyMetadata(
+                    new CornerRadius(),
+                    FrameworkPropertyMetadataOptions.AffectsMeasure |
+                    FrameworkPropertyMetadataOptions.AffectsRender));
+
+        #endregion
+
         #region IsTextScaleFactorEnabled
 
         public static bool GetIsTextScaleFactorEnabled(Control control)

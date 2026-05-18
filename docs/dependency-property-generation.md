@@ -54,8 +54,11 @@ Use `setterGuard` for simple conditional `SetValue` wrappers. Use
 as a WinUI-style validation/coercion path that cannot be expressed as a guard.
 
 For `AddOwner`, specify `sourceProperty`. Corner-radius owners should point at
-`System.Windows.Controls.Border.CornerRadiusProperty`; do not reintroduce a
-ModernWpf `ControlHelper.CornerRadius` attached property.
+`System.Windows.Controls.Border.CornerRadiusProperty` for controls that can own
+or consume the WPF `Border.CornerRadiusProperty` directly. Use
+`ControlHelper.CornerRadius` only as an explicit WPF template-part carrier when
+`Border.CornerRadius` cannot be set or bound cleanly, such as on non-control
+layout elements or shape radius bindings.
 
 ## Conversion Rules
 
