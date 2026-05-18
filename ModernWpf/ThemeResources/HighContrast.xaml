@@ -1521,7 +1521,7 @@
     <m:StaticResource x:Key="RepeatButtonBorderBrushDisabled" ResourceKey="SystemControlDisabledTransparentBrush" />
 
     <!-- Resources for ResizeGrip -->
-    <m:StaticResource x:Key="ResizeGripForeground" ResourceKey="SystemControlForegroundBaseMediumLowBrush" />
+    <m:StaticResource x:Key="ResizeGripForeground" ResourceKey="SystemColorButtonTextColorBrush" />
 
     <!-- Resources for ScrollBar -->
     <sys:Double x:Key="ScrollBarTrackBorderThemeThickness">1</sys:Double>

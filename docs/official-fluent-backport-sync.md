@@ -373,3 +373,32 @@ Source inspected:
 
 - `test\ModernWpf.WinUI.Tests\CommonStyles\StatusBarVisualStateTests.cs` covers the official WPF Fluent StatusBar setter shape, separator style, StatusBarItem setters, runtime values, disabled trigger resources, plain WPF presenter slot, deletion of `ContentPresenterEx`, and official theme aliases.
 - `test\ModernWpf.WinUI.Tests\LayoutCompatibility\LayoutCompatibilityApiTests.cs` covers the official WPF presenter shape for StatusBarItem in the broader layout compatibility suite.
+
+## 2026-05-18 Batch 13
+
+Source inspected:
+
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\ResizeGrip.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Light.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Dark.xaml`
+- `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\HC.xaml`
+
+### Synced Values
+
+| Resource key / style | Official WPF Fluent value | ModernWpf value after sync | Reason |
+| --- | --- | --- | --- |
+| `DefaultResizeGripStyle` | `ResizeGrip` style with `OverridesDefaultStyle=True`, 12px min size resources, transparent background, and a glyph `TextBlock` template | Same structure under the official resource key | `ResizeGrip` is a stock WPF control, so official WPF Fluent is the primary source. |
+| Implicit `ResizeGrip` style | Based on `DefaultResizeGripStyle` | Same | Matches official WPF Fluent resource shape. |
+| `ResizeGripMinHeight` / `ResizeGripMinWidth` / `ResizeGripIconSize` / `ResizeGripIconGlyph` | Official values: `12`, `12`, `8.0`, and `\uF169` | Same | Replaces the earlier tiled geometry template and scrollbar-size metrics. |
+| `ResizeGripForeground` | Official theme alias for the glyph foreground brush | Same alias across Light, Dark, and HighContrast | Required by the official WPF Fluent template shape. |
+
+### Intentional Differences
+
+| Resource key / style | Official WPF Fluent value | ModernWpf backport value | Reason retained |
+| --- | --- | --- | --- |
+| `sys` namespace assembly | `System.Runtime` | `mscorlib` | Keeps the XAML resource compatible with ModernWpf's older target frameworks. |
+| `ResizeGripForeground` theme alias | Dedicated brush resource in official WPF Fluent | `m:StaticResource` aliases to ModernWpf's existing Fluent brush tokens | Keeps ModernWpf's existing theme-resource alias model while exposing the official key. |
+
+### Test Evidence
+
+- `test\ModernWpf.WinUI.Tests\CommonStyles\ResizeGripVisualStateTests.cs` covers the official WPF Fluent ResizeGrip setter shape, runtime metric/glyph values, glyph `TextBlock` template, deletion of the old `Path` / `DrawingBrush` template, and official theme aliases.
