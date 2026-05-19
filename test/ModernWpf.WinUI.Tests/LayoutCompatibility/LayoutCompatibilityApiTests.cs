@@ -434,6 +434,42 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
+    public void ThemeShadowChromeRerendersWhenRequestedThemeChangesLikeWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var (root, _) = CreateThemeShadowSourceCanvas(ElementTheme.Light);
+
+            var light = MeasureRenderedShadowPixels(root, 100, 100);
+            AssertWinUIRenderedPixelMasterComparableShadow(
+                light,
+                expectedCanvasBounds: new Int32Rect(14, 22, 72, 72),
+                expectedPeakDarkening: 31,
+                expectedShadowPixels: 2330,
+                expectedCanvasCentroidX: 49.402,
+                expectedCanvasCentroidY: 71.869);
+
+            ThemeManager.SetRequestedTheme(root, ElementTheme.Dark);
+            root.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            var dark = MeasureRenderedShadowPixels(root, 100, 100);
+            AssertWinUIRenderedPixelMasterComparableShadow(
+                dark,
+                expectedCanvasBounds: new Int32Rect(14, 21, 72, 74),
+                expectedPeakDarkening: 58,
+                expectedShadowPixels: 2542,
+                expectedCanvasCentroidX: 49.356,
+                expectedCanvasCentroidY: 71.786);
+
+            Assert.IsTrue(dark.PeakDarkening > light.PeakDarkening);
+            Assert.IsTrue(dark.ShadowPixelCount > light.ShadowPixelCount);
+        });
+    }
+
+    [TestMethod]
     public void ThemeShadowChromeChildlessCasterUsesExplicitSizeAsSourceCaster()
     {
         WpfTestHost.Run(() =>
@@ -4207,6 +4243,14 @@ public class LayoutCompatibilityApiTests
 
     private static RenderedShadowPixelStats RenderThemeShadowSourceCanvas(ElementTheme theme)
     {
+        var (root, chrome) = CreateThemeShadowSourceCanvas(theme);
+        AssertThemeShadowSourceCanvasLayout(root, chrome);
+
+        return MeasureRenderedShadowPixels(root, 100, 100);
+    }
+
+    private static (Grid Root, ThemeShadowChrome Chrome) CreateThemeShadowSourceCanvas(ElementTheme theme)
+    {
         var chrome = new ThemeShadowChrome
         {
             Depth = 32,
@@ -4230,15 +4274,22 @@ public class LayoutCompatibilityApiTests
         ThemeManager.SetRequestedTheme(root, theme);
         root.Children.Add(chrome);
 
-        root.Measure(new Size(100, 100));
-        root.Arrange(new Rect(0, 0, 100, 100));
-        root.UpdateLayout();
+        ArrangeSourceCanvas(root);
+        return (root, chrome);
+    }
 
+    private static void AssertThemeShadowSourceCanvasLayout(FrameworkElement root, ThemeShadowChrome chrome)
+    {
         Assert.AreEqual(82, chrome.ActualWidth, 0.1);
         Assert.AreEqual(82, chrome.ActualHeight, 0.1);
         Assert.AreEqual(new Point(25, 25), ((FrameworkElement)chrome.Child).TranslatePoint(new Point(), root));
+    }
 
-        return MeasureRenderedShadowPixels(root, 100, 100);
+    private static void ArrangeSourceCanvas(FrameworkElement root)
+    {
+        root.Measure(new Size(100, 100));
+        root.Arrange(new Rect(0, 0, 100, 100));
+        root.UpdateLayout();
     }
 
     private static RenderedShadowPixelStats RenderThemeShadowChildlessSourceCanvas(ElementTheme theme)
