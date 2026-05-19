@@ -329,6 +329,22 @@ namespace ModernWpf.Controls.Primitives
             return arrangeSize;
         }
 
+        protected override HitTestResult HitTestCore(PointHitTestParameters hitTestParameters)
+        {
+            // WinUI's DropShadowVisual is TransparentForInput. Keep the WPF
+            // shadow host itself transparent so only the decorated child can hit.
+            if (Child is UIElement child && child.IsHitTestVisible)
+            {
+                var childPoint = TranslatePoint(hitTestParameters.HitPoint, child);
+                if (child.InputHitTest(childPoint) != null)
+                {
+                    return new PointHitTestResult(child, childPoint);
+                }
+            }
+
+            return null;
+        }
+
         protected override Geometry GetLayoutClip(Size layoutSlotSize)
         {
             return IsShadowEnabled ? null : base.GetLayoutClip(layoutSlotSize);

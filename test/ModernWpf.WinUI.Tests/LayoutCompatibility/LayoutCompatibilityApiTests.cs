@@ -404,6 +404,54 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
+    public void ThemeShadowChromeShadowVisualIsTransparentForInputLikeWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var chrome = new ThemeShadowChrome
+            {
+                Depth = 32,
+                CornerRadius = new CornerRadius(4),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                Child = new Border
+                {
+                    Width = 50,
+                    Height = 50,
+                    Background = Brushes.Transparent
+                }
+            };
+
+            var root = new Grid
+            {
+                Width = 100,
+                Height = 100,
+                Background = Brushes.Transparent,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top
+            };
+            root.Children.Add(chrome);
+
+            using var host = new TestWindowHost(root, width: 120, height: 120);
+            host.UpdateLayout();
+
+            var child = (FrameworkElement)chrome.Child;
+            var childOrigin = child.TranslatePoint(new Point(), chrome);
+            Assert.AreEqual(new Point(16, 8), childOrigin);
+
+            Assert.IsNull(
+                chrome.InputHitTest(new Point(4, 4)),
+                "The top-left shadow extent should not be hit-testable.");
+            Assert.IsNull(
+                chrome.InputHitTest(new Point(41, 70)),
+                "The lower shadow extent should not be hit-testable.");
+            Assert.IsNotNull(
+                chrome.InputHitTest(new Point(childOrigin.X + 10, childOrigin.Y + 10)),
+                "The caster child should remain hit-testable.");
+        });
+    }
+
+    [TestMethod]
     public void ThemeShadowChromeRenderedPixelsTrackWinUIPixelMasters()
     {
         WpfTestHost.Run(() =>
