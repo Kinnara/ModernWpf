@@ -26,6 +26,8 @@ using ModernRelativePanel = ModernWpf.Controls.RelativePanel;
 using ModernStackPanelEx = ModernWpf.Controls.StackPanelEx;
 using ModernVariableSizedWrapGrid = ModernWpf.Controls.VariableSizedWrapGrid;
 using ModernWrapGrid = ModernWpf.Controls.WrapGrid;
+using CultureInfo = System.Globalization.CultureInfo;
+using NumberStyles = System.Globalization.NumberStyles;
 
 namespace ModernWpf.WinUI.Tests.LayoutCompatibility;
 
@@ -646,6 +648,28 @@ public class LayoutCompatibilityApiTests
             Assert.IsTrue(dark.PeakDarkening > light.PeakDarkening);
             Assert.IsTrue(dark.ShadowPixelCount > light.ShadowPixelCount);
         });
+    }
+
+    [TestMethod]
+    public void ShadowSnapshotMetricsRoundTripForReferenceComparison()
+    {
+        var stats = new RenderedShadowPixelStats(new Int32Rect(12, 20, 76, 76), 61, 2936, 49.356, 71.786);
+        var text = CreateShadowSnapshotMetricsText("SampleControl", "shadow-only", 100, 100, stats);
+
+        var metrics = ParseShadowSnapshotMetrics(
+            "SampleControl-shadow-only.txt",
+            text.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None));
+
+        Assert.AreEqual("SampleControl", metrics.Name);
+        Assert.AreEqual("shadow-only", metrics.Kind);
+        Assert.AreEqual(100, metrics.Width);
+        Assert.AreEqual(100, metrics.Height);
+        Assert.AreEqual(stats.Bounds, metrics.Stats.Bounds);
+        Assert.AreEqual(stats.PeakDarkening, metrics.Stats.PeakDarkening);
+        Assert.AreEqual(stats.ShadowPixelCount, metrics.Stats.ShadowPixelCount);
+        Assert.AreEqual(stats.CentroidX, metrics.Stats.CentroidX, 0.001);
+        Assert.AreEqual(stats.CentroidY, metrics.Stats.CentroidY, 0.001);
+        AssertShadowSnapshotStatsMatchReference("SampleControl", "SampleControl-shadow-only", metrics.Stats, stats);
     }
 
     [TestMethod]
@@ -5226,39 +5250,237 @@ public class LayoutCompatibilityApiTests
         int height,
         RenderedShadowPixelStats? stats)
     {
-        var snapshotRoot = Environment.GetEnvironmentVariable("MODERNWPF_SHADOW_SNAPSHOT_DIR");
-        if (string.IsNullOrWhiteSpace(snapshotRoot))
-        {
-            return;
-        }
-
-        Directory.CreateDirectory(snapshotRoot);
-
         var fileBase = SanitizeSnapshotName($"{templateName}-{snapshotKind}");
-        var bitmap = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
-        bitmap.Render(element);
+        var snapshotRoot = Environment.GetEnvironmentVariable("MODERNWPF_SHADOW_SNAPSHOT_DIR");
 
-        using (var stream = File.Create(Path.Combine(snapshotRoot, fileBase + ".png")))
+        if (!string.IsNullOrWhiteSpace(snapshotRoot))
         {
-            var encoder = new PngBitmapEncoder();
-            encoder.Frames.Add(BitmapFrame.Create(bitmap));
-            encoder.Save(stream);
+            Directory.CreateDirectory(snapshotRoot);
+
+            var bitmap = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
+            bitmap.Render(element);
+
+            using (var stream = File.Create(Path.Combine(snapshotRoot, fileBase + ".png")))
+            {
+                var encoder = new PngBitmapEncoder();
+                encoder.Frames.Add(BitmapFrame.Create(bitmap));
+                encoder.Save(stream);
+            }
+
+            if (stats.HasValue)
+            {
+                File.WriteAllText(
+                    Path.Combine(snapshotRoot, fileBase + ".txt"),
+                    CreateShadowSnapshotMetricsText(templateName, snapshotKind, width, height, stats.Value));
+            }
         }
 
-        if (stats.HasValue)
-        {
-            File.WriteAllText(
-                Path.Combine(snapshotRoot, fileBase + ".txt"),
-                $"Name={templateName}{Environment.NewLine}" +
-                $"Kind={snapshotKind}{Environment.NewLine}" +
-                $"Size={width}x{height}{Environment.NewLine}" +
-                $"Stats={stats.Value}{Environment.NewLine}");
-        }
+        CompareShadowSnapshotReferenceIfRequested(templateName, snapshotKind, fileBase, width, height, stats);
     }
 
     private static string SanitizeSnapshotName(string name)
     {
         return Regex.Replace(name, @"[^A-Za-z0-9_.-]+", "-").Trim('-');
+    }
+
+    private static string CreateShadowSnapshotMetricsText(
+        string templateName,
+        string snapshotKind,
+        int width,
+        int height,
+        RenderedShadowPixelStats stats)
+    {
+        return string.Format(
+            CultureInfo.InvariantCulture,
+            "Name={0}{5}" +
+            "Kind={1}{5}" +
+            "Size={2}x{3}{5}" +
+            "Bounds={4}{5}" +
+            "PeakDarkening={6}{5}" +
+            "ShadowPixelCount={7}{5}" +
+            "Centroid={8:0.###},{9:0.###}{5}" +
+            "Stats={10}{5}",
+            templateName,
+            snapshotKind,
+            width,
+            height,
+            FormatShadowSnapshotBounds(stats.Bounds),
+            Environment.NewLine,
+            stats.PeakDarkening,
+            stats.ShadowPixelCount,
+            stats.CentroidX,
+            stats.CentroidY,
+            stats);
+    }
+
+    private static void CompareShadowSnapshotReferenceIfRequested(
+        string templateName,
+        string snapshotKind,
+        string fileBase,
+        int width,
+        int height,
+        RenderedShadowPixelStats? stats)
+    {
+        var referenceRoot = Environment.GetEnvironmentVariable("MODERNWPF_SHADOW_REFERENCE_DIR");
+        if (string.IsNullOrWhiteSpace(referenceRoot) || !stats.HasValue)
+        {
+            return;
+        }
+
+        var referencePath = Path.Combine(referenceRoot, fileBase + ".txt");
+        if (!File.Exists(referencePath))
+        {
+            throw new AssertFailedException(
+                $"Missing WinUI shadow reference metrics '{referencePath}' for {templateName} {snapshotKind}. " +
+                "Unset MODERNWPF_SHADOW_REFERENCE_DIR or add the matching WinUI metrics file.");
+        }
+
+        var reference = ReadShadowSnapshotMetrics(referencePath);
+
+        Assert.AreEqual(templateName, reference.Name, $"Unexpected shadow reference name in {referencePath}.");
+        Assert.AreEqual(snapshotKind, reference.Kind, $"Unexpected shadow reference kind in {referencePath}.");
+        Assert.AreEqual(width, reference.Width, $"Unexpected shadow reference width in {referencePath}.");
+        Assert.AreEqual(height, reference.Height, $"Unexpected shadow reference height in {referencePath}.");
+        AssertShadowSnapshotStatsMatchReference(templateName, fileBase, reference.Stats, stats.Value);
+    }
+
+    private static RenderedShadowSnapshotMetrics ReadShadowSnapshotMetrics(string metricsPath)
+    {
+        return ParseShadowSnapshotMetrics(metricsPath, File.ReadLines(metricsPath));
+    }
+
+    private static RenderedShadowSnapshotMetrics ParseShadowSnapshotMetrics(string metricsName, IEnumerable<string> lines)
+    {
+        var values = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (var rawLine in lines)
+        {
+            if (string.IsNullOrWhiteSpace(rawLine))
+            {
+                continue;
+            }
+
+            var separator = rawLine.IndexOf('=');
+            if (separator <= 0)
+            {
+                continue;
+            }
+
+            values[rawLine.Substring(0, separator)] = rawLine.Substring(separator + 1);
+        }
+
+        var (width, height) = ParseShadowSnapshotSize(RequireShadowSnapshotMetric(values, "Size", metricsName), metricsName);
+        var (centroidX, centroidY) = ParseShadowSnapshotPoint(RequireShadowSnapshotMetric(values, "Centroid", metricsName), "Centroid", metricsName);
+
+        return new RenderedShadowSnapshotMetrics(
+            RequireShadowSnapshotMetric(values, "Name", metricsName),
+            RequireShadowSnapshotMetric(values, "Kind", metricsName),
+            width,
+            height,
+            new RenderedShadowPixelStats(
+                ParseShadowSnapshotBounds(RequireShadowSnapshotMetric(values, "Bounds", metricsName), metricsName),
+                ParseShadowSnapshotInt(RequireShadowSnapshotMetric(values, "PeakDarkening", metricsName), "PeakDarkening", metricsName),
+                ParseShadowSnapshotInt(RequireShadowSnapshotMetric(values, "ShadowPixelCount", metricsName), "ShadowPixelCount", metricsName),
+                centroidX,
+                centroidY));
+    }
+
+    private static string RequireShadowSnapshotMetric(IReadOnlyDictionary<string, string> values, string name, string metricsName)
+    {
+        if (values.TryGetValue(name, out var value))
+        {
+            return value;
+        }
+
+        throw new AssertFailedException($"Shadow snapshot metrics '{metricsName}' is missing '{name}'.");
+    }
+
+    private static (int Width, int Height) ParseShadowSnapshotSize(string value, string metricsName)
+    {
+        var parts = value.Split('x');
+        if (parts.Length == 2 &&
+            int.TryParse(parts[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out var width) &&
+            int.TryParse(parts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out var height))
+        {
+            return (width, height);
+        }
+
+        throw new AssertFailedException($"Shadow snapshot metrics '{metricsName}' has invalid Size '{value}'.");
+    }
+
+    private static Int32Rect ParseShadowSnapshotBounds(string value, string metricsName)
+    {
+        var parts = value.Split(',');
+        if (parts.Length == 4 &&
+            int.TryParse(parts[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out var x) &&
+            int.TryParse(parts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out var y) &&
+            int.TryParse(parts[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out var width) &&
+            int.TryParse(parts[3], NumberStyles.Integer, CultureInfo.InvariantCulture, out var height))
+        {
+            return new Int32Rect(x, y, width, height);
+        }
+
+        throw new AssertFailedException($"Shadow snapshot metrics '{metricsName}' has invalid Bounds '{value}'.");
+    }
+
+    private static (double X, double Y) ParseShadowSnapshotPoint(string value, string name, string metricsName)
+    {
+        var parts = value.Split(',');
+        if (parts.Length == 2 &&
+            double.TryParse(parts[0], NumberStyles.Float, CultureInfo.InvariantCulture, out var x) &&
+            double.TryParse(parts[1], NumberStyles.Float, CultureInfo.InvariantCulture, out var y))
+        {
+            return (x, y);
+        }
+
+        throw new AssertFailedException($"Shadow snapshot metrics '{metricsName}' has invalid {name} '{value}'.");
+    }
+
+    private static int ParseShadowSnapshotInt(string value, string name, string metricsName)
+    {
+        if (int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var result))
+        {
+            return result;
+        }
+
+        throw new AssertFailedException($"Shadow snapshot metrics '{metricsName}' has invalid {name} '{value}'.");
+    }
+
+    private static string FormatShadowSnapshotBounds(Int32Rect bounds)
+    {
+        return string.Format(
+            CultureInfo.InvariantCulture,
+            "{0},{1},{2},{3}",
+            bounds.X,
+            bounds.Y,
+            bounds.Width,
+            bounds.Height);
+    }
+
+    private static void AssertShadowSnapshotStatsMatchReference(
+        string templateName,
+        string fileBase,
+        RenderedShadowPixelStats reference,
+        RenderedShadowPixelStats actual)
+    {
+        const double boundsPositionTolerance = 8;
+        const double boundsSizeTolerance = 8;
+        const double peakDarkeningTolerance = 10;
+        const double shadowPixelRelativeTolerance = 0.35;
+        const double shadowPixelMinimumTolerance = 400;
+        const double centroidTolerance = 8;
+
+        AssertNear(reference.Bounds.X, actual.Bounds.X, boundsPositionTolerance, $"{templateName} reference shadow bounds X ({fileBase}). Reference={reference}; Actual={actual}");
+        AssertNear(reference.Bounds.Y, actual.Bounds.Y, boundsPositionTolerance, $"{templateName} reference shadow bounds Y ({fileBase}). Reference={reference}; Actual={actual}");
+        AssertNear(reference.Bounds.Width, actual.Bounds.Width, boundsSizeTolerance, $"{templateName} reference shadow bounds width ({fileBase}). Reference={reference}; Actual={actual}");
+        AssertNear(reference.Bounds.Height, actual.Bounds.Height, boundsSizeTolerance, $"{templateName} reference shadow bounds height ({fileBase}). Reference={reference}; Actual={actual}");
+        AssertNear(reference.PeakDarkening, actual.PeakDarkening, peakDarkeningTolerance, $"{templateName} reference shadow peak darkening ({fileBase}). Reference={reference}; Actual={actual}");
+        AssertNear(
+            reference.ShadowPixelCount,
+            actual.ShadowPixelCount,
+            Math.Max(shadowPixelMinimumTolerance, reference.ShadowPixelCount * shadowPixelRelativeTolerance),
+            $"{templateName} reference shadow pixel count ({fileBase}). Reference={reference}; Actual={actual}");
+        AssertNear(reference.CentroidX, actual.CentroidX, centroidTolerance, $"{templateName} reference shadow centroid X ({fileBase}). Reference={reference}; Actual={actual}");
+        AssertNear(reference.CentroidY, actual.CentroidY, centroidTolerance, $"{templateName} reference shadow centroid Y ({fileBase}). Reference={reference}; Actual={actual}");
     }
 
     private readonly struct RenderedShadowPixelStats
@@ -5284,8 +5506,42 @@ public class LayoutCompatibilityApiTests
 
         public override string ToString()
         {
-            return $"Bounds={Bounds}, PeakDarkening={PeakDarkening}, ShadowPixelCount={ShadowPixelCount}, Centroid=({CentroidX:0.###},{CentroidY:0.###})";
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                "Bounds={0}, PeakDarkening={1}, ShadowPixelCount={2}, Centroid=({3:0.###},{4:0.###})",
+                FormatShadowSnapshotBounds(Bounds),
+                PeakDarkening,
+                ShadowPixelCount,
+                CentroidX,
+                CentroidY);
         }
+    }
+
+    private readonly struct RenderedShadowSnapshotMetrics
+    {
+        public RenderedShadowSnapshotMetrics(
+            string name,
+            string kind,
+            int width,
+            int height,
+            RenderedShadowPixelStats stats)
+        {
+            Name = name;
+            Kind = kind;
+            Width = width;
+            Height = height;
+            Stats = stats;
+        }
+
+        public string Name { get; }
+
+        public string Kind { get; }
+
+        public int Width { get; }
+
+        public int Height { get; }
+
+        public RenderedShadowPixelStats Stats { get; }
     }
 
     private sealed class TestBorderEx : BorderEx

@@ -110,14 +110,24 @@ Raw WPF `DropShadowEffect` is now guarded as an official WPF Fluent stock-contro
 
 `LayoutCompatibilityApiTests.SourceBackedChildlessShadowTemplatesRenderVisibleShadowPixels` does the same for representative childless source-backed template parts. It renders the actual `ContentDialog` `Shdw` chrome at source depth `128` and the actual `NavigationView` `ShadowCaster` chrome at source depth `16`, normalizing state-driven opacity/transform only for the detached render pass, and verifies visible shadow pixels around their explicit caster slots.
 
-The rendered-template guards also provide an opt-in WPF snapshot exporter for the eventual WinUI screenshot comparison. Set `MODERNWPF_SHADOW_SNAPSHOT_DIR` to a writable directory when running the focused shadow tests and the same validated render paths write PNGs plus text metrics for the representative surfaces:
+The rendered-template guards also provide opt-in snapshot and reference-comparison hooks for the eventual WinUI screenshot comparison. Set `MODERNWPF_SHADOW_SNAPSHOT_DIR` to a writable directory when running the focused shadow tests and the same validated render paths write PNGs plus stable key-value text metrics for the representative surfaces:
 
 ```powershell
 $env:MODERNWPF_SHADOW_SNAPSHOT_DIR = "D:\tmp\modernwpf-shadow-snapshots"
 dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --no-restore --filter "FullyQualifiedName~LayoutCompatibilityApiTests.SourceBackedShadowTemplatesRenderVisibleShadowPixels|FullyQualifiedName~LayoutCompatibilityApiTests.SourceBackedChildlessShadowTemplatesRenderVisibleShadowPixels" -p:UseSharedCompilation=false
 ```
 
-The exporter writes `surface` captures for childful chromes before hiding the caster, `shadow-only` captures after isolating the shadow layer, and `shadow-only` captures for childless caster slots. It intentionally does not run by default in CI and does not replace the remaining WinUI reference capture.
+The exporter writes `surface` captures for childful chromes before hiding the caster, `shadow-only` captures after isolating the shadow layer, and `shadow-only` captures for childless caster slots. Shadow-only metric files include `Bounds`, `PeakDarkening`, `ShadowPixelCount`, and `Centroid` keys so they can be compared without parsing the human-readable `Stats` line.
+
+When a matching WinUI reference metrics directory exists, set `MODERNWPF_SHADOW_REFERENCE_DIR` as well:
+
+```powershell
+$env:MODERNWPF_SHADOW_SNAPSHOT_DIR = "D:\tmp\modernwpf-shadow-snapshots"
+$env:MODERNWPF_SHADOW_REFERENCE_DIR = "D:\tmp\winui-shadow-reference-metrics"
+dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --no-restore --filter "FullyQualifiedName~LayoutCompatibilityApiTests.SourceBackedShadowTemplatesRenderVisibleShadowPixels|FullyQualifiedName~LayoutCompatibilityApiTests.SourceBackedChildlessShadowTemplatesRenderVisibleShadowPixels" -p:UseSharedCompilation=false
+```
+
+With `MODERNWPF_SHADOW_REFERENCE_DIR` set, each shadow-only snapshot must have a same-named `.txt` reference file. The comparison checks canvas size plus bounds, peak darkening, shadow-pixel count, and centroid using bounded tolerances for WPF's software-rasterized substitute. This still does not run by default in CI and does not replace the missing WinUI reference capture, but the comparison gate is now repo-owned once those references are produced.
 
 The current WPF baseline for an `80x40` DIP content rect with `CornerRadius=8` at `96` DPI is:
 
