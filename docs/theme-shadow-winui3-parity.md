@@ -129,6 +129,8 @@ dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --no-resto
 
 With `MODERNWPF_SHADOW_REFERENCE_DIR` set, each shadow-only snapshot must have a same-named `.txt` metrics file or `.png` image file. Text metrics compare canvas size plus bounds, peak darkening, shadow-pixel count, and centroid using bounded tolerances for WPF's software-rasterized substitute. PNG references derive those same metrics directly from the reference image and also compare per-pixel darkening deltas across the full canvas and the shadow-pixel union. This still does not run by default in CI and does not replace the missing WinUI reference capture, but the comparison gate can now consume raw WinUI captures once those references are produced.
 
+The canonical WinUI capture checklist is `docs/theme-shadow-reference-captures.json`. It pins the nine shadow-only reference filenames, canvas sizes, owning ModernWpf rendered-template tests, and WinUI source evidence. `TemplateParityTests.ThemeShadowReferenceCaptureManifestCoversRenderedSnapshotTargets` guards that manifest so a new source-backed shadow host cannot leave the WinUI capture contract implicit.
+
 The current WPF baseline for an `80x40` DIP content rect with `CornerRadius=8` at `96` DPI is:
 
 | Case | Bitmap | Content offset | Non-zero alpha bounds | Peak alpha | Non-zero pixels | Alpha centroid |

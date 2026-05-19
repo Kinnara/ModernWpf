@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Text.Json;
 using System.Xml.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -352,6 +353,57 @@ public class TemplateParityTests
         AssertCoverageStatus(rows, @"src\dxaml\xcp\dxaml\lib\ComboBox_Partial.cpp", "Official WPF Fluent stock exception");
         AssertCoverageStatus(rows, @"src\dxaml\xcp\dxaml\lib\ToolTip_Partial.cpp", "Official WPF Fluent stock exception");
         AssertCoverageStatus(rows, @"src\dxaml\phone\lib\TimePickerFlyoutPresenter_Partial.cpp", "Documented WPF substitution");
+    }
+
+    [TestMethod]
+    public void ThemeShadowReferenceCaptureManifestCoversRenderedSnapshotTargets()
+    {
+        var repoRoot = FindRepoRoot();
+        var manifestFile = Path.Combine(repoRoot, "docs", "theme-shadow-reference-captures.json");
+        var expectedTargets = GetExpectedThemeShadowReferenceCaptureTargets();
+
+        Assert.IsTrue(File.Exists(manifestFile), "Missing ThemeShadow reference capture manifest.");
+
+        using var document = JsonDocument.Parse(File.ReadAllText(manifestFile));
+        var root = document.RootElement;
+        Assert.AreEqual(1, root.GetProperty("version").GetInt32());
+        Assert.AreEqual("MODERNWPF_SHADOW_SNAPSHOT_DIR", root.GetProperty("snapshotDirectoryEnvVar").GetString());
+        Assert.AreEqual("MODERNWPF_SHADOW_REFERENCE_DIR", root.GetProperty("referenceDirectoryEnvVar").GetString());
+        Assert.AreEqual("shadow-only", root.GetProperty("snapshotKind").GetString());
+
+        var targets = root.GetProperty("targets")
+            .EnumerateArray()
+            .Select(ParseThemeShadowReferenceCaptureTarget)
+            .ToArray();
+        var actualFileBases = targets.Select(target => target.ReferenceFileBase).ToArray();
+        var expectedFileBases = expectedTargets.Select(target => target.ReferenceFileBase).ToArray();
+        var missing = expectedFileBases.Except(actualFileBases, StringComparer.Ordinal).ToArray();
+        var extra = actualFileBases.Except(expectedFileBases, StringComparer.Ordinal).ToArray();
+        var duplicateTargets = actualFileBases
+            .GroupBy(fileBase => fileBase, StringComparer.Ordinal)
+            .Where(group => group.Count() > 1)
+            .Select(group => $"{group.Key} ({group.Count()})")
+            .ToArray();
+        var invalidEvidence = targets
+            .Where(target => target.WinUIEvidence.Length == 0 ||
+                target.WinUIEvidence.Any(path => !path.StartsWith("src/", StringComparison.Ordinal)))
+            .Select(target => target.ReferenceFileBase)
+            .ToArray();
+
+        Assert.AreEqual(expectedTargets.Length, targets.Length, "Unexpected ThemeShadow reference capture target count.");
+        Assert.IsFalse(missing.Any(), "Missing ThemeShadow reference capture targets: " + string.Join("; ", missing));
+        Assert.IsFalse(extra.Any(), "Unexpected ThemeShadow reference capture targets: " + string.Join("; ", extra));
+        Assert.IsFalse(duplicateTargets.Any(), "Duplicate ThemeShadow reference capture targets: " + string.Join("; ", duplicateTargets));
+        Assert.IsFalse(invalidEvidence.Any(), "ThemeShadow reference targets need WinUI source evidence: " + string.Join("; ", invalidEvidence));
+
+        foreach (var expected in expectedTargets)
+        {
+            var actual = targets.Single(target => target.ReferenceFileBase == expected.ReferenceFileBase);
+            Assert.AreEqual(expected.Name, actual.Name, expected.ReferenceFileBase);
+            Assert.AreEqual(expected.Width, actual.Width, expected.ReferenceFileBase);
+            Assert.AreEqual(expected.Height, actual.Height, expected.ReferenceFileBase);
+            Assert.AreEqual(expected.ModernWpfTest, actual.ModernWpfTest, expected.ReferenceFileBase);
+        }
     }
 
     [TestMethod]
@@ -1052,6 +1104,70 @@ public class TemplateParityTests
             .Where(match => !string.IsNullOrEmpty(match.Attribute))
             .Select(match => $"{relativePath}:{match.LineNumber} {element}.{match.Attribute}")
             .ToArray();
+    }
+
+    private static ShadowReferenceCaptureTarget[] GetExpectedThemeShadowReferenceCaptureTargets()
+    {
+        return new[]
+        {
+            new ShadowReferenceCaptureTarget("FlyoutPresenter", "FlyoutPresenter-shadow-only", 140, 140, "LayoutCompatibilityApiTests.SourceBackedShadowTemplatesRenderVisibleShadowPixels", Array.Empty<string>()),
+            new ShadowReferenceCaptureTarget("NumberBox compact popup", "NumberBox-compact-popup-shadow-only", 140, 140, "LayoutCompatibilityApiTests.SourceBackedShadowTemplatesRenderVisibleShadowPixels", Array.Empty<string>()),
+            new ShadowReferenceCaptureTarget("AutoSuggestBox suggestions popup", "AutoSuggestBox-suggestions-popup-shadow-only", 280, 220, "LayoutCompatibilityApiTests.SourceBackedShadowTemplatesRenderVisibleShadowPixels", Array.Empty<string>()),
+            new ShadowReferenceCaptureTarget("CommandBar overflow popup", "CommandBar-overflow-popup-shadow-only", 320, 180, "LayoutCompatibilityApiTests.SourceBackedShadowTemplatesRenderVisibleShadowPixels", Array.Empty<string>()),
+            new ShadowReferenceCaptureTarget("CommandBarFlyout overflow root", "CommandBarFlyout-overflow-root-shadow-only", 320, 180, "LayoutCompatibilityApiTests.SourceBackedShadowTemplatesRenderVisibleShadowPixels", Array.Empty<string>()),
+            new ShadowReferenceCaptureTarget("MenuFlyoutPresenter", "MenuFlyoutPresenter-shadow-only", 200, 140, "LayoutCompatibilityApiTests.SourceBackedShadowTemplatesRenderVisibleShadowPixels", Array.Empty<string>()),
+            new ShadowReferenceCaptureTarget("TeachingTip content root", "TeachingTip-content-root-shadow-only", 320, 220, "LayoutCompatibilityApiTests.SourceBackedShadowTemplatesRenderVisibleShadowPixels", Array.Empty<string>()),
+            new ShadowReferenceCaptureTarget("ContentDialog background shadow", "ContentDialog-background-shadow-shadow-only", 260, 260, "LayoutCompatibilityApiTests.SourceBackedChildlessShadowTemplatesRenderVisibleShadowPixels", Array.Empty<string>()),
+            new ShadowReferenceCaptureTarget("NavigationView pane overlay shadow", "NavigationView-pane-overlay-shadow-shadow-only", 130, 130, "LayoutCompatibilityApiTests.SourceBackedChildlessShadowTemplatesRenderVisibleShadowPixels", Array.Empty<string>())
+        };
+    }
+
+    private static ShadowReferenceCaptureTarget ParseThemeShadowReferenceCaptureTarget(JsonElement element)
+    {
+        var canvasSize = element.GetProperty("canvasSize");
+        var evidence = element.GetProperty("winuiEvidence")
+            .EnumerateArray()
+            .Select(item => item.GetString() ?? string.Empty)
+            .ToArray();
+
+        return new ShadowReferenceCaptureTarget(
+            element.GetProperty("name").GetString() ?? string.Empty,
+            element.GetProperty("referenceFileBase").GetString() ?? string.Empty,
+            canvasSize.GetProperty("width").GetInt32(),
+            canvasSize.GetProperty("height").GetInt32(),
+            element.GetProperty("modernWpfTest").GetString() ?? string.Empty,
+            evidence);
+    }
+
+    private readonly struct ShadowReferenceCaptureTarget
+    {
+        public ShadowReferenceCaptureTarget(
+            string name,
+            string referenceFileBase,
+            int width,
+            int height,
+            string modernWpfTest,
+            string[] winUIEvidence)
+        {
+            Name = name;
+            ReferenceFileBase = referenceFileBase;
+            Width = width;
+            Height = height;
+            ModernWpfTest = modernWpfTest;
+            WinUIEvidence = winUIEvidence;
+        }
+
+        public string Name { get; }
+
+        public string ReferenceFileBase { get; }
+
+        public int Width { get; }
+
+        public int Height { get; }
+
+        public string ModernWpfTest { get; }
+
+        public string[] WinUIEvidence { get; }
     }
 
     private readonly struct CoverageRow
