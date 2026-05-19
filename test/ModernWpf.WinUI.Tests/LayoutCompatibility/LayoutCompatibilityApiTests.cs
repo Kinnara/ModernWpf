@@ -370,6 +370,92 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
+    public void ThemeShadowRendererMatchesWinUIControlDropShadowMasters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var dpi = new DpiScale(1, 1);
+            var overlayRadius = new CornerRadius(8);
+
+            // WinUI source:
+            // Controls_Flyout_FlyoutIntegrationTests_CanFlyoutOpenCloseDropShadow.master.xml
+            // has a 316x134 presenter caster at Translation.Z=32 and a 348x166
+            // DropShadowVisual sprite with OffsetX=-16 and OffsetY=-8.
+            var flyout = ThemeShadowChrome.ThemeShadowRenderer.GetRenderMetrics(
+                new Size(316, 134),
+                overlayRadius,
+                32,
+                ElementTheme.Light,
+                dpi);
+            AssertWinUIMockDCompShadowGeometry(
+                flyout,
+                bitmapWidth: 348,
+                bitmapHeight: 166,
+                contentLeft: 16,
+                contentTop: 8,
+                contentWidth: 316,
+                contentHeight: 134);
+
+            // WinUI source:
+            // Controls_MenuFlyout_MenuFlyoutIntegrationTests_CanMenuFlyoutOpenCloseDropShadow.master.xml
+            // has a 302x131 presenter caster at Translation.Z=32 and a 334x163
+            // DropShadowVisual sprite with OffsetX=-16 and OffsetY=-8.
+            var menuFlyout = ThemeShadowChrome.ThemeShadowRenderer.GetRenderMetrics(
+                new Size(302, 131),
+                overlayRadius,
+                32,
+                ElementTheme.Light,
+                dpi);
+            AssertWinUIMockDCompShadowGeometry(
+                menuFlyout,
+                bitmapWidth: 334,
+                bitmapHeight: 163,
+                contentLeft: 16,
+                contentTop: 8,
+                contentWidth: 302,
+                contentHeight: 131);
+
+            // WinUI source:
+            // Controls_CommandBar_CommandBarIntegrationTests_CanOpenAndCloseUsingMoreButtonDropShadow.master.xml
+            // has a 400x49 overflow caster at Translation.Z=32 and a 432x81
+            // DropShadowVisual sprite with OffsetX=-16 and OffsetY=-8.
+            var commandBarOverflow = ThemeShadowChrome.ThemeShadowRenderer.GetRenderMetrics(
+                new Size(400, 49),
+                overlayRadius,
+                32,
+                ElementTheme.Light,
+                dpi);
+            AssertWinUIMockDCompShadowGeometry(
+                commandBarOverflow,
+                bitmapWidth: 432,
+                bitmapHeight: 81,
+                contentLeft: 16,
+                contentTop: 8,
+                contentWidth: 400,
+                contentHeight: 49);
+
+            // WinUI source:
+            // Controls_ContentDialog_ContentDialogIntegrationTests_CanOpenAndCloseDropShadow.master.xml
+            // has a 320x189 dialog caster at Translation.Z=128 and a 448x317
+            // DropShadowVisual sprite with OffsetX=-64 and OffsetY=-32.
+            var contentDialog = ThemeShadowChrome.ThemeShadowRenderer.GetRenderMetrics(
+                new Size(320, 189),
+                overlayRadius,
+                128,
+                ElementTheme.Light,
+                dpi);
+            AssertWinUIMockDCompShadowGeometry(
+                contentDialog,
+                bitmapWidth: 448,
+                bitmapHeight: 317,
+                contentLeft: 64,
+                contentTop: 32,
+                contentWidth: 320,
+                contentHeight: 189);
+        });
+    }
+
+    [TestMethod]
     public void ThemeShadowChromeRendersHollowCenteredVisualShadow()
     {
         WpfTestHost.Run(() =>
