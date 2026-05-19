@@ -715,6 +715,87 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
+    public void SourceBackedShadowTemplatesRenderVisibleShadowPixels()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var flyoutPresenter = new FlyoutPresenter
+            {
+                Content = new Border
+                {
+                    Width = 50,
+                    Height = 50,
+                    Background = Brushes.Transparent
+                },
+                Background = Brushes.Transparent,
+                BorderBrush = Brushes.Transparent,
+                BorderThickness = new Thickness(),
+                Padding = new Thickness(),
+                CornerRadius = new CornerRadius(4),
+                IsDefaultShadowEnabled = true,
+                MinWidth = 0,
+                MinHeight = 0,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                Margin = new Thickness(24)
+            };
+            var flyoutRoot = CreateWhiteCanvas(140, 140);
+            flyoutRoot.Children.Add(flyoutPresenter);
+            ArrangeElement(flyoutRoot, 140, 140);
+
+            var flyoutChrome = FindVisualChild<ThemeShadowChrome>(flyoutPresenter)
+                ?? throw new AssertFailedException("Expected FlyoutPresenter to render through ThemeShadowChrome.");
+            AssertMediumWindowedPopupInsets(flyoutChrome);
+            AssertRenderedTemplateShadow(flyoutRoot, flyoutChrome, 140, 140, minPeakDarkening: 25, minShadowPixels: 1200, "FlyoutPresenter");
+
+            var numberBox = new ModernWpf.Controls.NumberBox
+            {
+                SpinButtonPlacementMode = ModernWpf.Controls.NumberBoxSpinButtonPlacementMode.Compact,
+                Width = 160
+            };
+            using (var host = new TestWindowHost(numberBox, width: 220, height: 140))
+            {
+                host.UpdateLayout();
+                var popup = FindTemplateChild<Popup>(numberBox, "UpDownPopup");
+                var numberBoxChrome = popup.Child as ThemeShadowChrome
+                    ?? throw new AssertFailedException("Expected NumberBox popup child to be ThemeShadowChrome.");
+                Assert.AreEqual(16.0, numberBoxChrome.Depth);
+                Assert.AreEqual(new Thickness(8, 4, 8, 12), numberBoxChrome.ShadowPadding);
+
+                popup.Child = null;
+                try
+                {
+                    // SystemParameters.DropShadowKey can be disabled on CI; force the real
+                    // template chrome on so this render guard covers ThemeShadow pixels.
+                    numberBoxChrome.IsShadowEnabled = true;
+                    numberBoxChrome.HorizontalAlignment = HorizontalAlignment.Left;
+                    numberBoxChrome.VerticalAlignment = VerticalAlignment.Top;
+                    numberBoxChrome.Margin = new Thickness(24);
+
+                    var numberBoxRoot = CreateWhiteCanvas(140, 140);
+                    numberBoxRoot.Children.Add(numberBoxChrome);
+                    try
+                    {
+                        ArrangeElement(numberBoxRoot, 140, 140);
+
+                        AssertRenderedTemplateShadow(numberBoxRoot, numberBoxChrome, 140, 140, minPeakDarkening: 10, minShadowPixels: 300, "NumberBox compact popup");
+                    }
+                    finally
+                    {
+                        numberBoxRoot.Children.Remove(numberBoxChrome);
+                    }
+                }
+                finally
+                {
+                    popup.Child = numberBoxChrome;
+                }
+            }
+        });
+    }
+
+    [TestMethod]
     public void LayoutChromeControlsUseBackgroundTransitionBrush()
     {
         WpfTestHost.Run(() =>
@@ -4547,6 +4628,98 @@ public class LayoutCompatibilityApiTests
         }
 
         Assert.IsTrue(rendered, "Timed out waiting for a WPF render tick.");
+    }
+
+    private static Grid CreateWhiteCanvas(double width, double height)
+    {
+        return new Grid
+        {
+            Width = width,
+            Height = height,
+            Background = Brushes.White,
+            HorizontalAlignment = HorizontalAlignment.Left,
+            VerticalAlignment = VerticalAlignment.Top
+        };
+    }
+
+    private static void ArrangeElement(FrameworkElement element, double width, double height)
+    {
+        element.Measure(new Size(width, height));
+        element.Arrange(new Rect(0, 0, width, height));
+        element.UpdateLayout();
+    }
+
+    private static void AssertRenderedTemplateShadow(
+        FrameworkElement root,
+        ThemeShadowChrome chrome,
+        int width,
+        int height,
+        int minPeakDarkening,
+        int minShadowPixels,
+        string templateName)
+    {
+        if (chrome.Child is not FrameworkElement caster)
+        {
+            throw new AssertFailedException($"{templateName} shadow chrome should have a framework-element caster child.");
+        }
+
+        var casterBounds = GetElementBounds(caster, root);
+        var previousVisibility = caster.Visibility;
+
+        try
+        {
+            caster.Visibility = Visibility.Hidden;
+            root.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            var stats = MeasureRenderedShadowPixels(root, width, height);
+            AssertRenderedShadowExtendsBeyondCaster(stats, casterBounds, minPeakDarkening, minShadowPixels, templateName);
+        }
+        finally
+        {
+            caster.Visibility = previousVisibility;
+            root.UpdateLayout();
+        }
+    }
+
+    private static Rect GetElementBounds(FrameworkElement element, UIElement ancestor)
+    {
+        var topLeft = element.TranslatePoint(new Point(), ancestor);
+        return new Rect(topLeft, new Size(element.ActualWidth, element.ActualHeight));
+    }
+
+    private static void AssertRenderedShadowExtendsBeyondCaster(
+        RenderedShadowPixelStats stats,
+        Rect casterBounds,
+        int minPeakDarkening,
+        int minShadowPixels,
+        string templateName)
+    {
+        var boundsRight = stats.Bounds.X + stats.Bounds.Width;
+        var boundsBottom = stats.Bounds.Y + stats.Bounds.Height;
+        var casterCenterY = casterBounds.Top + (casterBounds.Height / 2);
+
+        Assert.IsTrue(
+            stats.PeakDarkening >= minPeakDarkening,
+            $"{templateName} should render a visible ThemeShadow. Stats={stats}; Caster={casterBounds}");
+        Assert.IsTrue(
+            stats.ShadowPixelCount >= minShadowPixels,
+            $"{templateName} should render enough shadow pixels to cover the source-backed template caster. Stats={stats}; Caster={casterBounds}");
+        Assert.IsTrue(
+            stats.Bounds.X < casterBounds.Left,
+            $"{templateName} shadow should extend left of the caster. Stats={stats}; Caster={casterBounds}");
+        Assert.IsTrue(
+            stats.Bounds.Y <= casterBounds.Top + 4,
+            $"{templateName} shadow should reach the upper caster edge within the clipped windowed-popup inset. Stats={stats}; Caster={casterBounds}");
+        Assert.IsTrue(
+            boundsRight > casterBounds.Right,
+            $"{templateName} shadow should extend right of the caster. Stats={stats}; Caster={casterBounds}");
+        Assert.IsTrue(
+            boundsBottom > casterBounds.Bottom,
+            $"{templateName} shadow should extend below the caster. Stats={stats}; Caster={casterBounds}");
+        Assert.IsTrue(
+            stats.CentroidY > casterCenterY,
+            $"{templateName} shadow centroid should sit below the caster center like WinUI ThemeShadow. Stats={stats}; Caster={casterBounds}");
     }
 
     private static RenderedShadowPixelStats MeasureRenderedShadowPixels(FrameworkElement element, int width, int height)
