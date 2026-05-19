@@ -796,6 +796,71 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
+    public void SourceBackedChildlessShadowTemplatesRenderVisibleShadowPixels()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var contentDialog = new ContentDialog
+            {
+                Content = "Dialog content",
+                IsShadowEnabled = true
+            };
+            using (var host = new TestWindowHost(contentDialog, width: 640, height: 480))
+            {
+                host.UpdateLayout();
+
+                var contentDialogShadow = FindTemplateChild<ThemeShadowChrome>(contentDialog, "Shdw");
+                Assert.AreEqual(128.0, contentDialogShadow.Depth);
+                Assert.AreEqual(ThemeShadowChromeWindowedPopupInsetMode.Default, contentDialogShadow.WindowedPopupInsetMode);
+                Assert.AreEqual(new Thickness(64, 32, 64, 96), contentDialogShadow.ShadowPadding);
+
+                AssertDetachedChildlessTemplateShadow(
+                    contentDialogShadow,
+                    casterWidth: 80,
+                    casterHeight: 60,
+                    canvasWidth: 260,
+                    canvasHeight: 260,
+                    margin: new Thickness(80),
+                    minPeakDarkening: 40,
+                    minShadowPixels: 7000,
+                    "ContentDialog background shadow");
+            }
+
+            var navigationView = new ModernWpf.Controls.NavigationView
+            {
+                PaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode.Left,
+                IsPaneOpen = true,
+                OpenPaneLength = 100,
+                Width = 320,
+                Height = 180
+            };
+            navigationView.MenuItems.Add(new ModernWpf.Controls.NavigationViewItem { Content = "Home" });
+            using (var host = new TestWindowHost(navigationView, width: 360, height: 220))
+            {
+                host.UpdateLayout();
+
+                var shadowCaster = FindTemplateChild<ThemeShadowChrome>(navigationView, "ShadowCaster");
+                Assert.AreEqual(16.0, shadowCaster.Depth);
+                Assert.AreEqual(ThemeShadowChromeWindowedPopupInsetMode.Default, shadowCaster.WindowedPopupInsetMode);
+                Assert.AreEqual(new Thickness(8, 4, 8, 12), shadowCaster.ShadowPadding);
+
+                AssertDetachedChildlessTemplateShadow(
+                    shadowCaster,
+                    casterWidth: 80,
+                    casterHeight: 80,
+                    canvasWidth: 130,
+                    canvasHeight: 130,
+                    margin: new Thickness(20),
+                    minPeakDarkening: 10,
+                    minShadowPixels: 600,
+                    "NavigationView pane overlay shadow");
+            }
+        });
+    }
+
+    [TestMethod]
     public void LayoutChromeControlsUseBackgroundTransitionBrush()
     {
         WpfTestHost.Run(() =>
@@ -4680,6 +4745,73 @@ public class LayoutCompatibilityApiTests
             caster.Visibility = previousVisibility;
             root.UpdateLayout();
         }
+    }
+
+    private static void AssertDetachedChildlessTemplateShadow(
+        ThemeShadowChrome chrome,
+        double casterWidth,
+        double casterHeight,
+        int canvasWidth,
+        int canvasHeight,
+        Thickness margin,
+        int minPeakDarkening,
+        int minShadowPixels,
+        string templateName)
+    {
+        if (VisualTreeHelper.GetParent(chrome) is not Panel parent)
+        {
+            throw new AssertFailedException($"{templateName} shadow chrome should be parented by a panel in the source-backed template.");
+        }
+
+        var index = parent.Children.IndexOf(chrome);
+        Assert.IsTrue(index >= 0, $"{templateName} shadow chrome should be present in its template parent.");
+
+        parent.Children.RemoveAt(index);
+        try
+        {
+            chrome.IsShadowEnabled = true;
+            chrome.Width = casterWidth;
+            chrome.Height = casterHeight;
+            chrome.Margin = margin;
+            chrome.HorizontalAlignment = HorizontalAlignment.Left;
+            chrome.VerticalAlignment = VerticalAlignment.Top;
+            chrome.Opacity = 1.0;
+            chrome.RenderTransform = null;
+
+            var root = CreateWhiteCanvas(canvasWidth, canvasHeight);
+            ThemeManager.SetRequestedTheme(root, ElementTheme.Light);
+            root.Children.Add(chrome);
+            try
+            {
+                ArrangeElement(root, canvasWidth, canvasHeight);
+                Assert.AreEqual(casterWidth, chrome.ActualWidth, 0.1);
+                Assert.AreEqual(casterHeight, chrome.ActualHeight, 0.1);
+
+                AssertRenderedChildlessTemplateShadow(root, chrome, canvasWidth, canvasHeight, minPeakDarkening, minShadowPixels, templateName);
+            }
+            finally
+            {
+                root.Children.Remove(chrome);
+            }
+        }
+        finally
+        {
+            parent.Children.Insert(index, chrome);
+        }
+    }
+
+    private static void AssertRenderedChildlessTemplateShadow(
+        FrameworkElement root,
+        ThemeShadowChrome chrome,
+        int width,
+        int height,
+        int minPeakDarkening,
+        int minShadowPixels,
+        string templateName)
+    {
+        var casterBounds = GetElementBounds(chrome, root);
+        var stats = MeasureRenderedShadowPixels(root, width, height);
+        AssertRenderedShadowExtendsBeyondCaster(stats, casterBounds, minPeakDarkening, minShadowPixels, templateName);
     }
 
     private static Rect GetElementBounds(FrameworkElement element, UIElement ancestor)
