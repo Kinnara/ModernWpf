@@ -32,6 +32,7 @@ Mapped source files:
 - Reworked query submission toward source `ProgrammaticSubmitQuery` / `SubmitQuery`: query-button and automation invoke clear the current suggestion selection and submit only the text-box text; suggestion item click is deferred so `SuggestionChosen` and text updates can happen before `QuerySubmitted`.
 - Deleted the old suggestion-list `SelectionMode.Single`-only guess that threw for every other WPF selection mode. `AutoSuggestBoxListView` now follows WinUI `ListViewBase` item-interaction ordering: raise `ItemClick` first, then apply primary/secondary selection behavior for single, multiple, and extended selection.
 - Added `AutoSuggestBoxAutomationPeer` with source class name, `AutomationControlType.Group`, and invoke-pattern routing to `ProgrammaticSubmitQuery`.
+- The suggestions popup maps WinUI's `ApplyElevationEffect(m_tpPopupPart.AsOrNull<IUIElement>().Get())` popup-child elevation path to a WPF `ThemeShadowChrome` wrapping `SuggestionsContainer`, using source depth `32`, `WindowedPopupInsetMode=Medium`, and a corner-radius binding to the popup surface.
 - Kept the WinUI CommonStyles-derived `AutoSuggestBoxTextBoxStyle`, query-button `ContentPresenterEx` state setter shape, source theme resources, and corner-radius popup/textbox update behavior already present in the WPF port.
 
 ## WPF Substitutions
@@ -48,4 +49,5 @@ Mapped source files:
 - `AutoSuggestBoxApiTests.TextChangedArgsUseSourceCounterSemantics` covers the delayed event counter and `CheckCurrent()` behavior.
 - `AutoSuggestBoxApiTests.AutomationPeerInvokesProgrammaticSubmitQuery` covers source automation peer class/control type/invoke routing and no-chosen-suggestion query-button semantics.
 - `AutoSuggestBoxApiTests.SuggestionListItemClickUsesWinUISourceEventBeforeSelectionOrder` and `SuggestionListPrimarySelectionUsesWinUISourceSelectionModes` cover source `ItemClick` ordering and primary selection behavior for WPF multiple/extended modes.
+- `AutoSuggestBoxApiTests.SuggestionsPopupUsesSourceThemeShadow` covers the source popup-child shadow target, depth `32`, medium windowed-popup insets, and the `SuggestionsContainer.CornerRadius` binding.
 - Existing tests continue covering query-button `ContentPresenterEx` state setters, corner-radius popup/textbox filtering, and suggestion selection/query behavior.

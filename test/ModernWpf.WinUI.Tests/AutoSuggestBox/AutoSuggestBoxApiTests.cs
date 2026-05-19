@@ -6,6 +6,8 @@ using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Data;
 using System.Windows.Input;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf;
@@ -268,6 +270,40 @@ public class AutoSuggestBoxApiTests
             Assert.AreSame(
                 descriptionPresenter.TryFindResource("SystemControlDescriptionTextForegroundBrush"),
                 descriptionPresenter.Foreground);
+        });
+    }
+
+    [TestMethod]
+    public void SuggestionsPopupUsesSourceThemeShadow()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var autoSuggestBox = new MuxAutoSuggestBox
+            {
+                ItemsSource = new List<string> { "Item 1", "Item 2", "Item 3" },
+                Width = 400
+            };
+
+            using var host = new TestWindowHost(autoSuggestBox, width: 460, height: 160);
+            host.UpdateLayout();
+
+            var popup = FindTemplateChild<Popup>(autoSuggestBox, "SuggestionsPopup");
+            var shadowChrome = popup.Child as ThemeShadowChrome
+                ?? throw new AssertFailedException("Expected AutoSuggestBox suggestions popup child to be ThemeShadowChrome.");
+            var suggestionsContainer = FindTemplateChild<Border>(autoSuggestBox, "SuggestionsContainer");
+
+            Assert.AreSame(suggestionsContainer, shadowChrome.Child);
+            Assert.AreEqual(32.0, shadowChrome.Depth);
+            Assert.AreEqual(ThemeShadowChromeWindowedPopupInsetMode.Medium, shadowChrome.WindowedPopupInsetMode);
+            Assert.AreEqual(new Thickness(10, 2, 10, 18), shadowChrome.PopupShadowPadding);
+            Assert.AreEqual(suggestionsContainer.CornerRadius, shadowChrome.CornerRadius);
+
+            var cornerRadiusBinding = BindingOperations.GetBinding(shadowChrome, ThemeShadowChrome.CornerRadiusProperty);
+            Assert.IsNotNull(cornerRadiusBinding);
+            Assert.AreEqual("SuggestionsContainer", cornerRadiusBinding!.ElementName);
+            Assert.AreEqual("CornerRadius", cornerRadiusBinding.Path.Path);
         });
     }
 
