@@ -38,6 +38,7 @@ available-command visual states directly.
 | `IsDynamicOverflowEnabled` switches the source dynamic-overflow visual state and moves primary commands into overflow when measured width is constrained. | Matched with a WPF measurement pass that rebuilds dynamic primary/secondary command lists from the original collections. |
 | Auto overflow-button visibility accounts for secondary commands and visible bottom-label primary commands. | Matched through `CommandBarTemplateSettings.EffectiveOverflowButtonVisibility` and focused tests. |
 | Overflow presenter open-up/down display states are driven from popup placement. | Matched with WPF popup geometry, reusing the existing `CommandBarOverflowPresenter` visual states. |
+| Source drop-shadow mode applies elevation to `SecondaryItemsControlShadowWrapper`, and the source template keeps `OverflowContentRoot` as the measured popup root around that wrapper. | Matched with a WPF `OverflowContentRoot` grid containing `SecondaryItemsControlShadowWrapper`, a `ThemeShadowChrome` at depth `32` with `WindowedPopupInsetMode=Medium`, and focused template-shape tests. |
 | Command execution closes the parent command bar and visibility/property changes refresh command-bar state. | Matched through parent ownership tracking and `AppBarElementProperties` callbacks. |
 | `CommandBar::UpdateInputDeviceTypeUsedToOpen` captures the input device used to open overflow and applies that input mode to secondary AppBar commands while primary commands remain in `InputModeDefault`. | Matched for WPF touch/default input with `CommandBar` input-mode tracking, `CommandBarOverflowPanel` owner propagation, and focused tests that move commands between primary and secondary collections while overflow is open. |
 
@@ -56,7 +57,9 @@ available-command visual states directly.
 - WPF popup placement does not expose WinUI `Popup.ActualPlacement`, so
   `CommandBarOverflowPresenter` derives open-up/down state from measured popup
   position.
-- Theme shadow, root-bounds, gamepad/remote input mode, and WinRT automation
+- WinUI compositor `ThemeShadow` and popup-root shadow animation are represented
+  by the shared WPF `ThemeShadowChrome` renderer on the source shadow-wrapper
+  template part. Root-bounds, gamepad/remote input mode, and WinRT automation
   details remain platform substitutions shared with the CommandBarFlyout port.
   WPF touch input is mapped to WinUI's overflow `TouchInputMode`; WPF has no
   equivalent gamepad/remote input-device service in this control path.
@@ -73,7 +76,7 @@ dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --no-resto
 dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --no-restore --filter FullyQualifiedName~SyncMatrixTests
 ```
 
-Latest verified result on 2026-05-18: the combined
-`CommandBarApiTests`, `CommandBarFlyoutApiTests`, and `TemplateParityTests`
-filter passed 67/67. `dotnet build ModernWpf.sln --no-restore` passed with
-existing warnings, and `git diff --check` passed with line-ending warnings only.
+Latest verified result on 2026-05-19: the combined `CommandBarApiTests`,
+`LayoutCompatibilityApiTests.ThemeShadow`, and `TemplateParityTests` filter
+passed 57/57. `CommandBarApiTests.CommandBarOverflowShadowUsesSourceWrapper`
+guards the source shadow-wrapper target.

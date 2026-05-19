@@ -137,6 +137,36 @@ public class CommandBarApiTests
     }
 
     [TestMethod]
+    public void CommandBarOverflowShadowUsesSourceWrapper()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var commandBar = new ModernWpf.Controls.CommandBar
+            {
+                IsDynamicOverflowEnabled = false
+            };
+            commandBar.SecondaryCommands.Add(new AppBarButton { Label = "Share" });
+
+            using var host = new TestWindowHost(commandBar, width: 320, height: 160);
+            host.UpdateLayout();
+
+            var popup = FindTemplateChild<Popup>(commandBar, "OverflowPopup");
+            var overflowContentRoot = FindTemplateChild<Grid>(commandBar, "OverflowContentRoot");
+            var shadowWrapper = FindTemplateChild<ThemeShadowChrome>(commandBar, "SecondaryItemsControlShadowWrapper");
+            var secondaryItemsControl = FindTemplateChild<CommandBarOverflowPresenter>(commandBar, "SecondaryItemsControl");
+
+            Assert.AreSame(overflowContentRoot, popup.Child);
+            Assert.AreSame(secondaryItemsControl, shadowWrapper.Child);
+            Assert.AreEqual(32.0, shadowWrapper.Depth);
+            Assert.AreEqual(ThemeShadowChromeWindowedPopupInsetMode.Medium, shadowWrapper.WindowedPopupInsetMode);
+            Assert.AreEqual(new Thickness(10, 2, 10, 18), shadowWrapper.PopupShadowPadding);
+            Assert.AreEqual(secondaryItemsControl.CornerRadius, shadowWrapper.CornerRadius);
+        });
+    }
+
+    [TestMethod]
     public void CommandBarOverflowPresenterFullWidthStatesUseVisualStateSetters()
     {
         WpfTestHost.Run(() =>

@@ -383,7 +383,7 @@ public class LayoutCompatibilityApiTests
             {
                 host.UpdateLayout();
                 var popup = FindTemplateChild<Popup>(commandBar, "OverflowPopup");
-                var chrome = popup.Child as ThemeShadowChrome
+                var chrome = FindVisualChild<ThemeShadowChrome>(popup.Child)
                     ?? throw new AssertFailedException("Expected CommandBar overflow popup to use ThemeShadowChrome.");
                 AssertMediumWindowedPopupInsets(chrome);
             }

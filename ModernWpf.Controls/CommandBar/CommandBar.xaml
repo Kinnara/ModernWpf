@@ -432,33 +432,36 @@
                                 StaysOpen="True"
                                 Focusable="false"
                                 PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}">
-                                <ui:ThemeShadowChrome
+                                <Grid
                                     x:Name="OverflowContentRoot"
-                                    IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}"
-                                    WindowedPopupInsetMode="Medium"
-                                    CornerRadius="{Binding ElementName=SecondaryItemsControl, Path=CornerRadius}"
                                     MinWidth="{DynamicResource CommandBarOverflowMinWidth}"
                                     MaxWidth="{DynamicResource CommandBarOverflowMaxWidth}"
                                     MaxHeight="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=CommandBarTemplateSettings.OverflowContentMaxHeight}"
                                     RenderOptions.ClearTypeHint="Enabled">
+                                    <ui:ThemeShadowChrome
+                                        x:Name="SecondaryItemsControlShadowWrapper"
+                                        IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}"
+                                        WindowedPopupInsetMode="Medium"
+                                        CornerRadius="{Binding ElementName=SecondaryItemsControl, Path=CornerRadius}">
 
-                                    <primitives:CommandBarOverflowPresenter
-                                        x:Name="SecondaryItemsControl"
-                                        Style="{TemplateBinding CommandBarOverflowPresenterStyle}"
-                                        IsTabStop="False">
-                                        <primitives:CommandBarOverflowPresenter.Resources>
-                                            <Style TargetType="local:AppBarButton" BasedOn="{StaticResource AppBarButtonOverflowStyle}" />
-                                            <Style TargetType="local:AppBarToggleButton" BasedOn="{StaticResource AppBarToggleButtonOverflowStyle}" />
-                                        </primitives:CommandBarOverflowPresenter.Resources>
-                                        <primitives:CommandBarOverflowPanel
-                                            x:Name="SecondaryItemsPanel"
-                                            Focusable="true"
-                                            FocusVisualStyle="{x:Null}"
-                                            KeyboardNavigation.TabNavigation="Once"
-                                            KeyboardNavigation.DirectionalNavigation="Cycle"
-                                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                                    </primitives:CommandBarOverflowPresenter>
-                                </ui:ThemeShadowChrome>
+                                        <primitives:CommandBarOverflowPresenter
+                                            x:Name="SecondaryItemsControl"
+                                            Style="{TemplateBinding CommandBarOverflowPresenterStyle}"
+                                            IsTabStop="False">
+                                            <primitives:CommandBarOverflowPresenter.Resources>
+                                                <Style TargetType="local:AppBarButton" BasedOn="{StaticResource AppBarButtonOverflowStyle}" />
+                                                <Style TargetType="local:AppBarToggleButton" BasedOn="{StaticResource AppBarToggleButtonOverflowStyle}" />
+                                            </primitives:CommandBarOverflowPresenter.Resources>
+                                            <primitives:CommandBarOverflowPanel
+                                                x:Name="SecondaryItemsPanel"
+                                                Focusable="true"
+                                                FocusVisualStyle="{x:Null}"
+                                                KeyboardNavigation.TabNavigation="Once"
+                                                KeyboardNavigation.DirectionalNavigation="Cycle"
+                                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                        </primitives:CommandBarOverflowPresenter>
+                                    </ui:ThemeShadowChrome>
+                                </Grid>
                             </ui:MenuPopup>
                             <Rectangle
                                 x:Name="HighContrastBorder"
