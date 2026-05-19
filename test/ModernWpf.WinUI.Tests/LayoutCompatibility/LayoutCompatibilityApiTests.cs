@@ -470,6 +470,56 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
+    public void ThemeShadowChromeRerendersWhenCornerRadiusChangesLikeWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var (root, chrome) = CreateThemeShadowSourceCanvas(ElementTheme.Light);
+
+            var roundedStats = MeasureRenderedShadowPixels(root, 100, 100);
+            AssertWinUIRenderedPixelMasterComparableShadow(
+                roundedStats,
+                expectedCanvasBounds: new Int32Rect(14, 22, 72, 72),
+                expectedPeakDarkening: 31,
+                expectedShadowPixels: 2330,
+                expectedCanvasCentroidX: 49.402,
+                expectedCanvasCentroidY: 71.869);
+
+            var roundedCorner = RenderCurrentElementPixel(root, 25, 25, 100, 100);
+
+            chrome.CornerRadius = new CornerRadius();
+            root.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            var squareStats = MeasureRenderedShadowPixels(root, 100, 100);
+            var squareCorner = RenderCurrentElementPixel(root, 25, 25, 100, 100);
+            Assert.IsTrue(
+                squareCorner.R > roundedCorner.R && squareCorner.A == 255,
+                $"Expected square caster corner to be cleared from the hollow center after CornerRadius changes. Pixel={squareCorner}");
+            Assert.AreNotEqual(
+                roundedStats.ShadowPixelCount,
+                squareStats.ShadowPixelCount,
+                "Expected dynamic CornerRadius change to alter the rendered shadow mask.");
+
+            chrome.CornerRadius = new CornerRadius(8);
+            root.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            var largerRoundedStats = MeasureRenderedShadowPixels(root, 100, 100);
+            var largerRoundedCorner = RenderCurrentElementPixel(root, 25, 25, 100, 100);
+            Assert.IsTrue(
+                largerRoundedCorner.R < squareCorner.R && largerRoundedCorner.A == 255,
+                $"Expected larger rounded caster corner to restore visible shadow after dynamic CornerRadius update. Pixel={largerRoundedCorner}");
+            Assert.AreNotEqual(
+                squareStats.ShadowPixelCount,
+                largerRoundedStats.ShadowPixelCount,
+                "Expected the second dynamic CornerRadius change to update the rendered shadow mask.");
+        });
+    }
+
+    [TestMethod]
     public void ThemeShadowChromeChildlessCasterUsesExplicitSizeAsSourceCaster()
     {
         WpfTestHost.Run(() =>
