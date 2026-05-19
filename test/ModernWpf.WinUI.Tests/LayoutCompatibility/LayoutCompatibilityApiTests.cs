@@ -7,7 +7,9 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
 using System.Windows.Markup;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
@@ -487,6 +489,44 @@ public class LayoutCompatibilityApiTests
             Assert.IsTrue(
                 halfOpacityStats.ShadowPixelCount > fullOpacityStats.ShadowPixelCount * 0.75,
                 $"Caster opacity should dim the shadow without removing most of its mask. Full={fullOpacityStats}; Half={halfOpacityStats}");
+        });
+    }
+
+    [TestMethod]
+    public void ThemeShadowChromeTracksAnimatedCasterOpacityLikeWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var (root, chrome) = CreateThemeShadowSourceCanvas(ElementTheme.Light);
+            using var host = new TestWindowHost(root, width: 120, height: 120);
+            host.UpdateLayout();
+            var caster = (UIElement)chrome.Child;
+
+            var fullOpacityStats = MeasureRenderedShadowPixels(root, 100, 100);
+
+            caster.BeginAnimation(
+                UIElement.OpacityProperty,
+                new DoubleAnimation
+                {
+                    From = 0.5,
+                    To = 0.5,
+                    Duration = TimeSpan.FromMilliseconds(100)
+                },
+                HandoffBehavior.SnapshotAndReplace);
+            root.UpdateLayout();
+            WaitForRendering();
+
+            var animatedOpacityStats = MeasureRenderedShadowPixels(root, 100, 100);
+            AssertNear(fullOpacityStats.PeakDarkening * 0.5, animatedOpacityStats.PeakDarkening, 3, $"Animated caster opacity should scale shadow peak darkening. Stats={animatedOpacityStats}");
+
+            caster.BeginAnimation(UIElement.OpacityProperty, null);
+            root.UpdateLayout();
+            WaitForRendering();
+
+            var restoredOpacityStats = MeasureRenderedShadowPixels(root, 100, 100);
+            AssertNear(fullOpacityStats.PeakDarkening, restoredOpacityStats.PeakDarkening, 1, $"Clearing caster opacity animation should restore shadow peak darkening. Stats={restoredOpacityStats}");
         });
     }
 
@@ -4477,6 +4517,36 @@ public class LayoutCompatibilityApiTests
         var pixels = new byte[4];
         bitmap.CopyPixels(new Int32Rect(x, y, 1, 1), pixels, 4, 0);
         return Color.FromArgb(pixels[3], pixels[2], pixels[1], pixels[0]);
+    }
+
+    private static void WaitForRendering()
+    {
+        var frame = new DispatcherFrame();
+        var rendered = false;
+        EventHandler renderingHandler = (_, _) =>
+        {
+            rendered = true;
+            frame.Continue = false;
+        };
+        var timer = new DispatcherTimer(DispatcherPriority.Background)
+        {
+            Interval = TimeSpan.FromMilliseconds(250)
+        };
+        timer.Tick += (_, _) => frame.Continue = false;
+
+        try
+        {
+            CompositionTarget.Rendering += renderingHandler;
+            timer.Start();
+            Dispatcher.PushFrame(frame);
+        }
+        finally
+        {
+            timer.Stop();
+            CompositionTarget.Rendering -= renderingHandler;
+        }
+
+        Assert.IsTrue(rendered, "Timed out waiting for a WPF render tick.");
     }
 
     private static RenderedShadowPixelStats MeasureRenderedShadowPixels(FrameworkElement element, int width, int height)

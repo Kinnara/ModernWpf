@@ -39,6 +39,7 @@ namespace ModernWpf.Controls.Primitives
             ThemeManager.AddActualThemeChangedHandler(this, OnActualThemeChanged);
             SizeChanged += OnSizeChanged;
             Loaded += OnLoaded;
+            Unloaded += OnUnloaded;
         }
 
         #region IsShadowEnabled
@@ -80,6 +81,8 @@ namespace ModernWpf.Controls.Primitives
 
                 OnVisualParentChanged();
                 UpdatePopupMargin();
+                UpdateShadowOpacity();
+                UpdateShadowOpacitySubscription();
             }
         }
 
@@ -428,7 +431,6 @@ namespace ModernWpf.Controls.Primitives
             var child = Child as UIElement;
             if (_shadowOpacitySource == child)
             {
-                UpdateShadowOpacity();
                 return;
             }
 
@@ -445,6 +447,7 @@ namespace ModernWpf.Controls.Primitives
             }
 
             UpdateShadowOpacity();
+            UpdateShadowOpacitySubscription();
         }
 
         private void OnShadowOpacitySourceChanged(object sender, EventArgs e)
@@ -452,9 +455,43 @@ namespace ModernWpf.Controls.Primitives
             UpdateShadowOpacity();
         }
 
+        private void UpdateShadowOpacitySubscription()
+        {
+            if (IsLoaded && IsShadowEnabled && _shadowOpacitySource != null)
+            {
+                if (!_isShadowOpacityRenderingHooked)
+                {
+                    CompositionTarget.Rendering += OnRendering;
+                    _isShadowOpacityRenderingHooked = true;
+                }
+            }
+            else
+            {
+                StopShadowOpacityRenderingSync();
+            }
+        }
+
+        private void StopShadowOpacityRenderingSync()
+        {
+            if (_isShadowOpacityRenderingHooked)
+            {
+                CompositionTarget.Rendering -= OnRendering;
+                _isShadowOpacityRenderingHooked = false;
+            }
+        }
+
+        private void OnRendering(object sender, EventArgs e)
+        {
+            UpdateShadowOpacity();
+        }
+
         private void UpdateShadowOpacity()
         {
-            _background.Opacity = _shadowOpacitySource?.Opacity ?? 1.0;
+            var opacity = _shadowOpacitySource?.Opacity ?? 1.0;
+            if (Math.Abs(_background.Opacity - opacity) > 0.001)
+            {
+                _background.Opacity = opacity;
+            }
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
@@ -466,10 +503,17 @@ namespace ModernWpf.Controls.Primitives
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
+            UpdateShadowOpacitySubscription();
+
             if (IsVisible)
             {
                 AdjustMargin();
             }
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            StopShadowOpacityRenderingSync();
         }
 
         private void OnActualThemeChanged(object sender, RoutedEventArgs e)
@@ -962,6 +1006,7 @@ namespace ModernWpf.Controls.Primitives
         private TranslateTransform _transform;
         private PopupPositioner _popupPositioner;
         private UIElement _shadowOpacitySource;
+        private bool _isShadowOpacityRenderingHooked;
 
         private static readonly Vector s_noTranslation = new Vector(0, 0);
         private static readonly DependencyPropertyDescriptor OpacityPropertyDescriptor =
