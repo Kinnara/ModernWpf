@@ -651,6 +651,42 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
+    public void ThemeShadowChromeRenderedPixelsTrackWinUIPixelMasterPngsWhenSourceRootProvided()
+    {
+        var sourceRoot = Environment.GetEnvironmentVariable("MODERNWPF_WINUI_SOURCE_ROOT");
+        if (string.IsNullOrWhiteSpace(sourceRoot))
+        {
+            return;
+        }
+
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var mastersRoot = Path.Combine(
+                sourceRoot,
+                "src",
+                "dxaml",
+                "test",
+                "resources",
+                "masters");
+
+            var light = RenderThemeShadowSourceCanvas(ElementTheme.Light);
+            // The .1 masters are the RenderTargetBitmap surfaces for the 100x100 rtbCanvas in ThemeShadowDropShadowSystemThemeRedrawRTB.
+            AssertWinUIPixelMasterPngComparableShadow(
+                light,
+                mastersRoot,
+                "Foundation_Graphics_ThemeShadowTests_ThemeShadowDropShadowSystemThemeRedrawRTB.Light.1.master.png");
+
+            var dark = RenderThemeShadowSourceCanvas(ElementTheme.Dark);
+            AssertWinUIPixelMasterPngComparableShadow(
+                dark,
+                mastersRoot,
+                "Foundation_Graphics_ThemeShadowTests_ThemeShadowDropShadowSystemThemeRedrawRTB.Dark.1.master.png");
+        });
+    }
+
+    [TestMethod]
     public void ShadowSnapshotMetricsRoundTripForReferenceComparison()
     {
         var stats = new RenderedShadowPixelStats(new Int32Rect(12, 20, 76, 76), 61, 2936, 49.356, 71.786);
@@ -4361,6 +4397,33 @@ public class LayoutCompatibilityApiTests
         Assert.AreEqual(expectedCanvasCentroidY, stats.CentroidY, 1.0);
     }
 
+    private static void AssertWinUIPixelMasterPngComparableShadow(
+        RenderedShadowPixelStats actual,
+        string mastersRoot,
+        string masterName)
+    {
+        var masterPath = Path.Combine(mastersRoot, masterName);
+        Assert.IsTrue(File.Exists(masterPath), $"Missing WinUI ThemeShadow pixel master '{masterPath}'.");
+
+        var reference = MeasureWinUIThemeShadowSystemThemeRedrawPixelMaster(ReadShadowSnapshotPng(masterPath));
+        AssertWinUIRenderedPixelMasterComparableShadow(actual, reference, masterName);
+    }
+
+    private static void AssertWinUIRenderedPixelMasterComparableShadow(
+        RenderedShadowPixelStats actual,
+        RenderedShadowPixelStats reference,
+        string referenceName)
+    {
+        AssertNear(reference.Bounds.X, actual.Bounds.X, 2, $"{referenceName} shadow bounds X. Reference={reference}; Actual={actual}");
+        AssertNear(reference.Bounds.Y, actual.Bounds.Y, 2, $"{referenceName} shadow bounds Y. Reference={reference}; Actual={actual}");
+        AssertNear(reference.Bounds.Width, actual.Bounds.Width, 4, $"{referenceName} shadow bounds width. Reference={reference}; Actual={actual}");
+        AssertNear(reference.Bounds.Height, actual.Bounds.Height, 4, $"{referenceName} shadow bounds height. Reference={reference}; Actual={actual}");
+        AssertNear(reference.PeakDarkening, actual.PeakDarkening, 4, $"{referenceName} peak darkening. Reference={reference}; Actual={actual}");
+        AssertNear(reference.ShadowPixelCount, actual.ShadowPixelCount, reference.ShadowPixelCount * 0.2, $"{referenceName} shadow pixel count. Reference={reference}; Actual={actual}");
+        Assert.AreEqual(reference.CentroidX, actual.CentroidX, 1.0, $"{referenceName} shadow centroid X. Reference={reference}; Actual={actual}");
+        Assert.AreEqual(reference.CentroidY, actual.CentroidY, 1.0, $"{referenceName} shadow centroid Y. Reference={reference}; Actual={actual}");
+    }
+
     private static void AssertNear(double expected, double actual, double tolerance, string message)
     {
         Assert.IsTrue(Math.Abs(expected - actual) <= tolerance, $"{message}: expected {expected}, actual {actual}, tolerance {tolerance}.");
@@ -5235,6 +5298,16 @@ public class LayoutCompatibilityApiTests
 
     private static RenderedShadowPixelStats MeasureShadowPixels(BitmapSource bitmap)
     {
+        return MeasureShadowPixels(bitmap, ignoredBounds: null);
+    }
+
+    private static RenderedShadowPixelStats MeasureWinUIThemeShadowSystemThemeRedrawPixelMaster(BitmapSource bitmap)
+    {
+        return MeasureShadowPixels(bitmap, new Int32Rect(25, 25, 50, 50));
+    }
+
+    private static RenderedShadowPixelStats MeasureShadowPixels(BitmapSource bitmap, Int32Rect? ignoredBounds)
+    {
         var darkeningPixels = GetShadowSnapshotDarkeningPixels(bitmap);
         int width = bitmap.PixelWidth;
         int height = bitmap.PixelHeight;
@@ -5253,6 +5326,11 @@ public class LayoutCompatibilityApiTests
         {
             for (int x = 0; x < width; x++)
             {
+                if (ignoredBounds.HasValue && Contains(ignoredBounds.Value, x, y))
+                {
+                    continue;
+                }
+
                 int darkening = darkeningPixels[(y * width) + x];
 
                 if (darkening <= 0)
@@ -5279,6 +5357,14 @@ public class LayoutCompatibilityApiTests
         double centroidY = darkeningSum == 0 ? double.NaN : (double)weightedY / darkeningSum;
 
         return new RenderedShadowPixelStats(bounds, peakDarkening, shadowPixelCount, centroidX, centroidY);
+    }
+
+    private static bool Contains(Int32Rect bounds, int x, int y)
+    {
+        return x >= bounds.X
+            && x < bounds.X + bounds.Width
+            && y >= bounds.Y
+            && y < bounds.Y + bounds.Height;
     }
 
     private static void ExportShadowSnapshotIfRequested(
