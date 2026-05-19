@@ -15,6 +15,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf;
 using ModernWpf.Automation.Peers;
 using ModernWpf.Controls;
+using ModernWpf.Controls.Primitives;
 using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
 using TeachingTipControl = ModernWpf.Controls.TeachingTip;
@@ -369,6 +370,39 @@ public class TeachingTipApiTests
             Assert.IsNotNull(scaleTransform, "TeachingTip should animate the tip scale like WinUI instead of using PopupAnimation.");
             Assert.AreEqual(Math.Max(tailOcclusionGrid.ActualWidth, tailOcclusionGrid.MinWidth) / 2.0, scaleTransform!.CenterX, 0.5);
             Assert.AreEqual(8.0, scaleTransform.CenterY, 0.5);
+        });
+    }
+
+    [TestMethod]
+    public void TeachingTipContentRootUsesSourceThemeShadow()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var teachingTip = new TeachingTipControl
+            {
+                Content = "Targeted tip",
+                CornerRadius = new CornerRadius(2, 4, 6, 8)
+            };
+
+            using var host = new TestWindowHost(teachingTip, width: 360, height: 240);
+            var shadowChrome = FindNamedDescendant<ThemeShadowChrome>(teachingTip, "ContentRootGridShadowChrome");
+            var contentRoot = FindNamedDescendant<Border>(teachingTip, "ContentRootGrid");
+
+            Assert.AreSame(contentRoot, shadowChrome.Child);
+            Assert.AreEqual(32.0, shadowChrome.Depth);
+            Assert.AreEqual(ThemeShadowChromeWindowedPopupInsetMode.Medium, shadowChrome.WindowedPopupInsetMode);
+            Assert.AreEqual(new Thickness(10, 2, 10, 18), shadowChrome.PopupShadowPadding);
+            Assert.AreEqual(contentRoot.CornerRadius, shadowChrome.CornerRadius);
+
+            teachingTip.IsOpen = true;
+            host.UpdateLayout();
+            WaitFor(() => Math.Abs(shadowChrome.Depth - 32.0) < 0.5, "TeachingTip content shadow did not animate to source open elevation.");
+
+            teachingTip.IsOpen = false;
+            host.UpdateLayout();
+            WaitFor(() => Math.Abs(shadowChrome.Depth - 0.01) < 0.5, "TeachingTip content shadow did not animate back to source closed elevation.");
         });
     }
 

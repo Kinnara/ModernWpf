@@ -38,6 +38,7 @@ The old ModernWpf row treated `TeachingTip` as a functional subset. The control 
 - Automation window provider state follows the source `m_isIdle` model through WPF open/close animation state: closed idle tips report `BlockedByModalWindow`, open idle tips report `ReadyForUserInteraction`, and active open/close animations report running/closing states.
 - Automation `Close()` routes through the owner `IsOpen` property like WinUI source.
 - Existing WPF template parts remain source-shaped: `Popup`, `Container`, `TailOcclusionGrid`, `ContentRootGrid`, `HeroContentBorder`, `MainContentPresenter`, title/subtitle/icon presenters, source button slots, and `TailPolygon`.
+- WinUI source applies a `ThemeShadow` to `ContentRootGrid` when `m_tipShouldHaveShadow=true`, with default `m_contentElevation=32`, and animates content translation Z from `0.01` to `32` during expand/contract. ModernWpf now wraps `ContentRootGrid` in `ContentRootGridShadowChrome`, uses the shared WPF `ThemeShadowChrome` renderer at depth `32` with `WindowedPopupInsetMode=Medium`, and animates the WPF shadow depth alongside the existing scale animation.
 - Existing tests already cover source-shaped visual-state setters, title/subtitle/content/hero/icon states, open popup placement, close cancellation/deferral, light dismiss, target-unload close, scale animation, and final WinUI 2 resource mappings. This slice adds tests for `Opened` and automation peer shape.
 
 ## WPF Substitutions
@@ -45,7 +46,7 @@ The old ModernWpf row treated `TeachingTip` as a functional subset. The control 
 - WinUI's popup is XamlRoot-aware and integrates with WinRT automation notification/window events. ModernWpf keeps WPF `Popup`; WPF `AutomationPeer` exposes `IWindowProvider` but does not expose WinUI's notification event or window opened/closed peer events, so those calls are documented no-ops.
 - WinUI placement solves against XamlRoot, screen bounds, flow direction, and composition metrics. ModernWpf keeps the existing WPF custom-popup placement substitute and bounds-aware fallback tests.
 - WinUI light-dismiss focus management, F6 handling, gamepad/XYFocus, Axe scans, and full TestUI process input automation remain platform gaps.
-- WinUI compositor scale/elevation animations are represented by WPF scale transforms and storyboards.
+- WinUI compositor scale/elevation animations are represented by WPF scale transforms, `ThemeShadowChrome.Depth` animation, and storyboards.
 
 ## Verification
 
@@ -55,7 +56,7 @@ Focused validation:
 dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --no-restore --filter FullyQualifiedName~TeachingTip
 ```
 
-Result: 20 passed.
+Result: 21 passed.
 
 Controls build validation:
 

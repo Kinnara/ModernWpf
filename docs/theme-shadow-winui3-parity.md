@@ -8,6 +8,7 @@ WinUI source evidence:
 - `src\controls\dev\NumberBox\NumberBox.cpp`: popup root gets `ThemeShadow{}` and `Translation.Z` from `NumberBoxPopupShadowDepth`, default `16`.
 - `src\controls\dev\CommandBarFlyout\CommandBarFlyout.cpp` and `src\controls\dev\CommandBarFlyout\CommandBarFlyout_themeresources.xaml`: command bar flyout presenter uses `Translation.Z=32`, and the command bar flyout overflow root uses `OuterOverflowContentRootShadow` / `NoOuterOverflowContentRootShadow` states to attach or clear a `ThemeShadow` at `Translation.Z=32`.
 - `src\controls\dev\NavigationView\NavigationView.cpp`: overlay pane shadow caster gets `ThemeShadow{}` and `Translation.Z` from `PaneOverlayShadowDepth`, default `16`.
+- `src\controls\dev\TeachingTip\TeachingTip.cpp`: `EstablishShadows` applies `ThemeShadow{}` to `ContentRootGrid` when `m_tipShouldHaveShadow=true`, default `m_contentElevation=32`, and expand/contract animations move translation Z between `0.01` and `32`.
 - `src\dxaml\xcp\dxaml\lib\ContentDialog_Partial.cpp`: drop-shadow mode applies elevation to the background element with `baseElevation=128`.
 - `src\dxaml\xcp\dxaml\lib\MenuFlyoutPresenter_Partial.cpp`: drop-shadow mode applies elevation to the `MenuFlyoutPresenter` itself at `GetDepth()`, whose default nested depth is `0`, mapping through the source elevation helper to `Translation.Z=32`.
 - `src\dxaml\xcp\dxaml\lib\ElevationHelper.cpp`: default elevated flyout/menu surfaces use base `Translation.Z=32`, plus `8` for each nested depth level.
@@ -24,11 +25,13 @@ ModernWpf files:
 - `ModernWpf.Controls\CommandBar\CommandBar.xaml`
 - `ModernWpf.Controls\AutoSuggestBox\AutoSuggestBox.xaml`
 - `ModernWpf.Controls\NavigationView\NavigationView.xaml`
+- `ModernWpf.Controls\TeachingTip\TeachingTip.xaml`
 - `ModernWpf\ModernWpfControlsResources.xaml`
 - `ModernWpf.Controls\ContentDialog\ContentDialog.xaml`
 - `test\ModernWpf.WinUI.Tests\LayoutCompatibility\LayoutCompatibilityApiTests.cs`
 - `test\ModernWpf.WinUI.Tests\NumberBox\NumberBoxApiTests.cs`
 - `test\ModernWpf.WinUI.Tests\NavigationView\NavigationViewApiTests.cs`
+- `test\ModernWpf.WinUI.Tests\TeachingTip\TeachingTipApiTests.cs`
 - `test\ModernWpf.WinUI.Tests\CommandBarFlyout\CommandBarFlyoutApiTests.cs`
 
 ## Current WPF Renderer
@@ -56,6 +59,8 @@ WinUI has a second, Popup-owned inset path for windowed popups. The Popup window
 `NavigationView` uses the same renderer for the source `ShadowCaster` template part. `PaneOverlayShadowDepth` is now defined as `16` from the WinUI theme resources, and the WPF `ShadowCaster` remains a state-targeted template part while rendering the source depth profile through `ThemeShadowChrome`.
 
 `ContentDialog` opts into `Depth=128`, matching the source drop-shadow-mode call to `ApplyElevationEffect` with `baseElevation=128`. This maps to the clamped maximum WinUI drop-shadow recipe, with renderer padding `64,32,64,96`.
+
+`TeachingTip` now wraps the source `ContentRootGrid` template part in `ContentRootGridShadowChrome`. The WPF chrome uses depth `32`, `Medium` popup insets, and the source content corner radius, matching the WinUI `m_tipShouldHaveShadow=true` and `m_contentElevation=32` default path. The existing WPF scale animation now also animates `ThemeShadowChrome.Depth` from `0.01` to `32` on open and back toward `0.01` on close, representing the source translation-Z animation without a compositor. WinUI's debug/test-only tail shadow experiment remains intentionally unported.
 
 `CommandBarFlyout` now follows both source shadow paths. Its `FlyoutPresenter` starts with the default shadow disabled, enables the WPF `ThemeShadowChrome` presenter shadow when opening with primary commands, removes it for flyout close, removes it during secondary command-bar open/close animations, and restores it when those secondary storyboards complete. The flyout command-bar overflow root also ports the source `OuterOverflowContentRootShadow` / `NoOuterOverflowContentRootShadow` states through an `OuterOverflowContentRootShadowChrome` wrapper at depth `32`: no-primary-command flyouts enable the overflow-root shadow, while primary-command flyouts enable it only when the overflow opens downward. Both paths use `Medium` popup insets, matching WinUI's non-tooltip windowed Popup gutter.
 
@@ -101,4 +106,4 @@ This is still a WPF substitution, not a literal WinUI compositor port. The depth
 
 ## Verification
 
-Focused tests cover the renderer path, rendered alpha-profile calibration metrics, the removal of `BlurEffect` border shadow internals, computed depth padding, source windowed Popup insets, popup-host template opt-ins, the NumberBox popup's source `NumberBoxPopupShadowDepth=16` path, NavigationView's source `PaneOverlayShadowDepth=16` shadow caster, ContentDialog's source `baseElevation=128` shadow depth, CommandBarFlyout's source presenter-shadow toggle lifecycle and overflow-root shadow states, and MenuFlyoutPresenter's source-shaped `ThemeShadowChrome` presenter shadow path.
+Focused tests cover the renderer path, rendered alpha-profile calibration metrics, the removal of `BlurEffect` border shadow internals, computed depth padding, source windowed Popup insets, popup-host template opt-ins, the NumberBox popup's source `NumberBoxPopupShadowDepth=16` path, NavigationView's source `PaneOverlayShadowDepth=16` shadow caster, ContentDialog's source `baseElevation=128` shadow depth, TeachingTip's source `ContentRootGrid` shadow depth, CommandBarFlyout's source presenter-shadow toggle lifecycle and overflow-root shadow states, and MenuFlyoutPresenter's source-shaped `ThemeShadowChrome` presenter shadow path.

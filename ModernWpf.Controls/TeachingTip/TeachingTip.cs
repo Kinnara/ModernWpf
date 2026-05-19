@@ -18,6 +18,7 @@ namespace ModernWpf.Controls
         private const string ContainerName = "Container";
         private const string TailOcclusionGridName = "TailOcclusionGrid";
         private const string TailOcclusionScaleTransformName = "TailOcclusionScaleTransform";
+        private const string ContentRootGridShadowChromeName = "ContentRootGridShadowChrome";
         private const string ContentRootGridName = "ContentRootGrid";
         private const string HeroContentBorderName = "HeroContentBorder";
         private const string MainContentPresenterName = "MainContentPresenter";
@@ -30,6 +31,8 @@ namespace ModernWpf.Controls
         private const string TailPolygonName = "TailPolygon";
         private const double DefaultTipHeightAndWidth = 320.0;
         private const double ContractedTipSize = 20.0;
+        private const double ContentElevation = 32.0;
+        private const double ContractedContentElevation = 0.01;
         private static readonly TimeSpan ExpandAnimationDuration = TimeSpan.FromMilliseconds(300);
         private static readonly TimeSpan ContractAnimationDuration = TimeSpan.FromMilliseconds(200);
         private static readonly Point ExpandAnimationEasingControlPoint1 = new Point(0.1, 0.9);
@@ -78,6 +81,7 @@ namespace ModernWpf.Controls
             _container = GetTemplateChild(ContainerName) as FrameworkElement;
             _tailOcclusionGrid = GetTemplateChild(TailOcclusionGridName) as Grid;
             _tailOcclusionScaleTransform = GetTemplateChild(TailOcclusionScaleTransformName) as ScaleTransform;
+            _contentRootGridShadowChrome = GetTemplateChild(ContentRootGridShadowChromeName) as ThemeShadowChrome;
             _contentRootGrid = GetTemplateChild(ContentRootGridName) as Border;
             _heroContentBorder = GetTemplateChild(HeroContentBorderName) as Border;
             _mainContentPresenter = GetTemplateChild(MainContentPresenterName) as ContentPresenterEx;
@@ -163,6 +167,7 @@ namespace ModernWpf.Controls
                 if (suppressOpenAnimation)
                 {
                     teachingTip.SetTipScale(1.0, 1.0);
+                    teachingTip.SetTipShadowDepth(ContentElevation);
                 }
                 else
                 {
@@ -902,6 +907,7 @@ namespace ModernWpf.Controls
             if (!SharedHelpers.IsAnimationsEnabled)
             {
                 SetTipScale(1.0, 1.0);
+                SetTipShadowDepth(ContentElevation);
                 RaiseOpened();
                 return;
             }
@@ -920,8 +926,11 @@ namespace ModernWpf.Controls
                 {
                     _isOpeningAnimationActive = false;
                     SetTipScale(1.0, 1.0);
+                    SetTipShadowDepth(ContentElevation);
                     RaiseOpened();
-                });
+                },
+                ContractedContentElevation,
+                ContentElevation);
         }
 
         private void StartCloseAnimationOrClose(TeachingTipCloseReason reason)
@@ -951,7 +960,9 @@ namespace ModernWpf.Controls
                 ContractAnimationDuration,
                 ContractAnimationEasingControlPoint1,
                 ContractAnimationEasingControlPoint2,
-                () => FinishClose(reason));
+                () => FinishClose(reason),
+                _contentRootGridShadowChrome?.Depth ?? ContentElevation,
+                ContractedContentElevation);
         }
 
         private void FinishClose(TeachingTipCloseReason reason)
@@ -960,6 +971,7 @@ namespace ModernWpf.Controls
             _isOpeningAnimationActive = false;
             StopTipAnimation();
             SetTipScale(1.0, 1.0);
+            SetTipShadowDepth(ContractedContentElevation);
             UpdateVisualState();
             Closed?.Invoke(this, new TeachingTipClosedEventArgs(reason));
             GetAutomationPeerForEvents()?.RaiseWindowClosedEvent();
@@ -1007,7 +1019,9 @@ namespace ModernWpf.Controls
             TimeSpan duration,
             Point easingControlPoint1,
             Point easingControlPoint2,
-            Action completed)
+            Action completed,
+            double? fromShadowDepth = null,
+            double? toShadowDepth = null)
         {
             if (_tailOcclusionScaleTransform == null)
             {
@@ -1017,6 +1031,10 @@ namespace ModernWpf.Controls
 
             StopTipAnimation();
             SetTipScale(fromScaleX, fromScaleY);
+            if (fromShadowDepth.HasValue)
+            {
+                SetTipShadowDepth(fromShadowDepth.Value);
+            }
 
             var generation = ++_tipAnimationGeneration;
             var scaleXAnimation = CreateScaleAnimation(toScaleX, duration, easingControlPoint1, easingControlPoint2);
@@ -1031,6 +1049,12 @@ namespace ModernWpf.Controls
 
             _tailOcclusionScaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, scaleXAnimation, HandoffBehavior.SnapshotAndReplace);
             _tailOcclusionScaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, scaleYAnimation, HandoffBehavior.SnapshotAndReplace);
+
+            if (_contentRootGridShadowChrome != null && toShadowDepth.HasValue)
+            {
+                var depthAnimation = CreateScaleAnimation(toShadowDepth.Value, duration, easingControlPoint1, easingControlPoint2);
+                _contentRootGridShadowChrome.BeginAnimation(ThemeShadowChrome.DepthProperty, depthAnimation, HandoffBehavior.SnapshotAndReplace);
+            }
         }
 
         private static DoubleAnimationUsingKeyFrames CreateScaleAnimation(
@@ -1062,6 +1086,11 @@ namespace ModernWpf.Controls
                 _tailOcclusionScaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, null);
                 _tailOcclusionScaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, null);
             }
+
+            if (_contentRootGridShadowChrome != null)
+            {
+                _contentRootGridShadowChrome.BeginAnimation(ThemeShadowChrome.DepthProperty, null);
+            }
         }
 
         private void SetTipScale(double scaleX, double scaleY)
@@ -1070,6 +1099,14 @@ namespace ModernWpf.Controls
             {
                 _tailOcclusionScaleTransform.ScaleX = scaleX;
                 _tailOcclusionScaleTransform.ScaleY = scaleY;
+            }
+        }
+
+        private void SetTipShadowDepth(double depth)
+        {
+            if (_contentRootGridShadowChrome != null)
+            {
+                _contentRootGridShadowChrome.Depth = depth;
             }
         }
 
@@ -1241,6 +1278,7 @@ namespace ModernWpf.Controls
         private FrameworkElement _container;
         private Grid _tailOcclusionGrid;
         private ScaleTransform _tailOcclusionScaleTransform;
+        private ThemeShadowChrome _contentRootGridShadowChrome;
         private Border _contentRootGrid;
         private Border _heroContentBorder;
         private ContentPresenterEx _mainContentPresenter;
