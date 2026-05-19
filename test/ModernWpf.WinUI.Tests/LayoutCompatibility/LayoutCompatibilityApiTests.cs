@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -4910,11 +4912,14 @@ public class LayoutCompatibilityApiTests
 
         try
         {
+            ExportShadowSnapshotIfRequested(templateName, "surface", root, width, height, null);
+
             caster.Visibility = Visibility.Hidden;
             root.UpdateLayout();
             WpfTestHost.DoEvents();
 
             var stats = MeasureRenderedShadowPixels(root, width, height);
+            ExportShadowSnapshotIfRequested(templateName, "shadow-only", root, width, height, stats);
             AssertRenderedShadowExtendsBeyondCaster(stats, casterBounds, minPeakDarkening, minShadowPixels, templateName);
         }
         finally
@@ -4943,11 +4948,14 @@ public class LayoutCompatibilityApiTests
 
         try
         {
+            ExportShadowSnapshotIfRequested(templateName, "surface", root, width, height, null);
+
             caster.Visibility = Visibility.Hidden;
             root.UpdateLayout();
             WpfTestHost.DoEvents();
 
             var stats = MeasureRenderedShadowPixels(root, width, height);
+            ExportShadowSnapshotIfRequested(templateName, "shadow-only", root, width, height, stats);
             AssertRenderedShadowVisible(stats, casterBounds, minPeakDarkening, minShadowPixels, templateName);
         }
         finally
@@ -5082,6 +5090,7 @@ public class LayoutCompatibilityApiTests
     {
         var casterBounds = GetElementBounds(chrome, root);
         var stats = MeasureRenderedShadowPixels(root, width, height);
+        ExportShadowSnapshotIfRequested(templateName, "shadow-only", root, width, height, stats);
         AssertRenderedShadowExtendsBeyondCaster(stats, casterBounds, minPeakDarkening, minShadowPixels, templateName);
     }
 
@@ -5207,6 +5216,49 @@ public class LayoutCompatibilityApiTests
         double centroidY = darkeningSum == 0 ? double.NaN : (double)weightedY / darkeningSum;
 
         return new RenderedShadowPixelStats(bounds, peakDarkening, shadowPixelCount, centroidX, centroidY);
+    }
+
+    private static void ExportShadowSnapshotIfRequested(
+        string templateName,
+        string snapshotKind,
+        FrameworkElement element,
+        int width,
+        int height,
+        RenderedShadowPixelStats? stats)
+    {
+        var snapshotRoot = Environment.GetEnvironmentVariable("MODERNWPF_SHADOW_SNAPSHOT_DIR");
+        if (string.IsNullOrWhiteSpace(snapshotRoot))
+        {
+            return;
+        }
+
+        Directory.CreateDirectory(snapshotRoot);
+
+        var fileBase = SanitizeSnapshotName($"{templateName}-{snapshotKind}");
+        var bitmap = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
+        bitmap.Render(element);
+
+        using (var stream = File.Create(Path.Combine(snapshotRoot, fileBase + ".png")))
+        {
+            var encoder = new PngBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(bitmap));
+            encoder.Save(stream);
+        }
+
+        if (stats.HasValue)
+        {
+            File.WriteAllText(
+                Path.Combine(snapshotRoot, fileBase + ".txt"),
+                $"Name={templateName}{Environment.NewLine}" +
+                $"Kind={snapshotKind}{Environment.NewLine}" +
+                $"Size={width}x{height}{Environment.NewLine}" +
+                $"Stats={stats.Value}{Environment.NewLine}");
+        }
+    }
+
+    private static string SanitizeSnapshotName(string name)
+    {
+        return Regex.Replace(name, @"[^A-Za-z0-9_.-]+", "-").Trim('-');
     }
 
     private readonly struct RenderedShadowPixelStats

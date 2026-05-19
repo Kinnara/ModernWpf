@@ -110,6 +110,15 @@ Raw WPF `DropShadowEffect` is now guarded as an official WPF Fluent stock-contro
 
 `LayoutCompatibilityApiTests.SourceBackedChildlessShadowTemplatesRenderVisibleShadowPixels` does the same for representative childless source-backed template parts. It renders the actual `ContentDialog` `Shdw` chrome at source depth `128` and the actual `NavigationView` `ShadowCaster` chrome at source depth `16`, normalizing state-driven opacity/transform only for the detached render pass, and verifies visible shadow pixels around their explicit caster slots.
 
+The rendered-template guards also provide an opt-in WPF snapshot exporter for the eventual WinUI screenshot comparison. Set `MODERNWPF_SHADOW_SNAPSHOT_DIR` to a writable directory when running the focused shadow tests and the same validated render paths write PNGs plus text metrics for the representative surfaces:
+
+```powershell
+$env:MODERNWPF_SHADOW_SNAPSHOT_DIR = "D:\tmp\modernwpf-shadow-snapshots"
+dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --no-restore --filter "FullyQualifiedName~LayoutCompatibilityApiTests.SourceBackedShadowTemplatesRenderVisibleShadowPixels|FullyQualifiedName~LayoutCompatibilityApiTests.SourceBackedChildlessShadowTemplatesRenderVisibleShadowPixels" -p:UseSharedCompilation=false
+```
+
+The exporter writes `surface` captures for childful chromes before hiding the caster, `shadow-only` captures after isolating the shadow layer, and `shadow-only` captures for childless caster slots. It intentionally does not run by default in CI and does not replace the remaining WinUI reference capture.
+
 The current WPF baseline for an `80x40` DIP content rect with `CornerRadius=8` at `96` DPI is:
 
 | Case | Bitmap | Content offset | Non-zero alpha bounds | Peak alpha | Non-zero pixels | Alpha centroid |
@@ -148,7 +157,7 @@ WinUI also has pixel masters for `ThemeShadowDropShadowSystemThemeRedrawRTB`, re
 
 ## Remaining Gap
 
-This is still a WPF substitution, not a literal WinUI compositor port. The depth, blur, offset, inset, hollow-center behavior, and light/dark opacity constants now come from WinUI source and WinUI masters, and representative ModernWpf source-backed templates now have rendered-pixel guards for childful and childless chrome shapes. The final rasterization still uses WPF software alpha masks rather than compositor `DropShadow` visuals. A future shadow parity round should render the same FlyoutPresenter, NumberBox, AutoSuggestBox, CommandBar, CommandBarFlyout, MenuFlyoutPresenter, TeachingTip, ContentDialog, and NavigationView samples in WinUI and ModernWpf, compare full screenshots, then adjust only the WPF rasterization details that differ from the source compositor output.
+This is still a WPF substitution, not a literal WinUI compositor port. The depth, blur, offset, inset, hollow-center behavior, and light/dark opacity constants now come from WinUI source and WinUI masters, and representative ModernWpf source-backed templates now have rendered-pixel guards for childful and childless chrome shapes. The final rasterization still uses WPF software alpha masks rather than compositor `DropShadow` visuals. A future shadow parity round should render the same FlyoutPresenter, NumberBox, AutoSuggestBox, CommandBar, CommandBarFlyout, MenuFlyoutPresenter, TeachingTip, ContentDialog, and NavigationView samples in WinUI and ModernWpf, compare full screenshots, then adjust only the WPF rasterization details that differ from the source compositor output. ModernWpf now has an opt-in WPF snapshot exporter for those representative surfaces; the missing piece is the corresponding WinUI reference capture and automated image/metric comparison.
 
 ## Verification
 
