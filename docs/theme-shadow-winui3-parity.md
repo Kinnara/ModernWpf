@@ -131,6 +131,13 @@ With `MODERNWPF_SHADOW_REFERENCE_DIR` set, each shadow-only snapshot must have a
 
 The canonical WinUI capture checklist is `docs/theme-shadow-reference-captures.json`. It pins the nine shadow-only reference filenames, canvas sizes, owning ModernWpf rendered-template tests, and WinUI source evidence. `TemplateParityTests.ThemeShadowReferenceCaptureManifestCoversRenderedSnapshotTargets` guards that manifest so a new source-backed shadow host cannot leave the WinUI capture contract implicit.
 
+`TemplateParityTests.ThemeShadowReferenceDirectoryCoversCaptureManifestWhenOptedIn` also honors `MODERNWPF_SHADOW_REFERENCE_DIR`. When that env var is set, the test requires every manifest target to have a same-named `.png` or `.txt` file and verifies each reference dimension against the manifest. Run it before the rendered-template comparison filter to catch incomplete WinUI capture folders:
+
+```powershell
+$env:MODERNWPF_SHADOW_REFERENCE_DIR = "D:\tmp\winui-shadow-references"
+dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --no-restore --filter "FullyQualifiedName~TemplateParityTests.ThemeShadowReferenceDirectoryCoversCaptureManifestWhenOptedIn" -p:UseSharedCompilation=false
+```
+
 The current WPF baseline for an `80x40` DIP content rect with `CornerRadius=8` at `96` DPI is:
 
 | Case | Bitmap | Content offset | Non-zero alpha bounds | Peak alpha | Non-zero pixels | Alpha centroid |

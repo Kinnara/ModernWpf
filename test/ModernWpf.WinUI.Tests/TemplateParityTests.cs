@@ -1,8 +1,10 @@
 using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Text.Json;
+using System.Windows.Media.Imaging;
 using System.Xml.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -404,6 +406,41 @@ public class TemplateParityTests
             Assert.AreEqual(expected.Height, actual.Height, expected.ReferenceFileBase);
             Assert.AreEqual(expected.ModernWpfTest, actual.ModernWpfTest, expected.ReferenceFileBase);
         }
+    }
+
+    [TestMethod]
+    public void ThemeShadowReferenceDirectoryCoversCaptureManifestWhenOptedIn()
+    {
+        var repoRoot = FindRepoRoot();
+        var manifestFile = Path.Combine(repoRoot, "docs", "theme-shadow-reference-captures.json");
+        using var document = JsonDocument.Parse(File.ReadAllText(manifestFile));
+        var root = document.RootElement;
+        var referenceDirectoryEnvVar = root.GetProperty("referenceDirectoryEnvVar").GetString();
+        var referenceDirectory = string.IsNullOrEmpty(referenceDirectoryEnvVar)
+            ? null
+            : Environment.GetEnvironmentVariable(referenceDirectoryEnvVar);
+
+        if (string.IsNullOrWhiteSpace(referenceDirectory))
+        {
+            return;
+        }
+
+        var targets = root.GetProperty("targets")
+            .EnumerateArray()
+            .Select(ParseThemeShadowReferenceCaptureTarget)
+            .ToArray();
+        var missing = targets
+            .Where(target => !File.Exists(Path.Combine(referenceDirectory, target.ReferenceFileBase + ".png")) &&
+                !File.Exists(Path.Combine(referenceDirectory, target.ReferenceFileBase + ".txt")))
+            .Select(target => target.ReferenceFileBase)
+            .ToArray();
+        var badDimensions = targets
+            .Select(target => ValidateThemeShadowReferenceCaptureDimensions(referenceDirectory, target))
+            .Where(result => !string.IsNullOrEmpty(result))
+            .ToArray();
+
+        Assert.IsFalse(missing.Any(), $"Missing ThemeShadow reference files in {referenceDirectory}: " + string.Join("; ", missing));
+        Assert.IsFalse(badDimensions.Any(), "ThemeShadow reference dimensions should match the capture manifest: " + string.Join("; ", badDimensions));
     }
 
     [TestMethod]
@@ -1137,6 +1174,49 @@ public class TemplateParityTests
             canvasSize.GetProperty("height").GetInt32(),
             element.GetProperty("modernWpfTest").GetString() ?? string.Empty,
             evidence);
+    }
+
+    private static string ValidateThemeShadowReferenceCaptureDimensions(string referenceDirectory, ShadowReferenceCaptureTarget target)
+    {
+        var pngPath = Path.Combine(referenceDirectory, target.ReferenceFileBase + ".png");
+        if (File.Exists(pngPath))
+        {
+            using var stream = File.OpenRead(pngPath);
+            var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
+            var frame = decoder.Frames[0];
+            if (frame.PixelWidth != target.Width || frame.PixelHeight != target.Height)
+            {
+                return $"{target.ReferenceFileBase}.png expected {target.Width}x{target.Height}, actual {frame.PixelWidth}x{frame.PixelHeight}";
+            }
+
+            return string.Empty;
+        }
+
+        var metricsPath = Path.Combine(referenceDirectory, target.ReferenceFileBase + ".txt");
+        if (File.Exists(metricsPath))
+        {
+            var size = File.ReadLines(metricsPath)
+                .FirstOrDefault(line => line.StartsWith("Size=", StringComparison.Ordinal));
+            if (string.IsNullOrEmpty(size))
+            {
+                return $"{target.ReferenceFileBase}.txt missing Size";
+            }
+
+            var parts = size.Substring("Size=".Length).Split('x');
+            if (parts.Length != 2 ||
+                !int.TryParse(parts[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out var width) ||
+                !int.TryParse(parts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out var height))
+            {
+                return $"{target.ReferenceFileBase}.txt has invalid Size '{size}'";
+            }
+
+            if (width != target.Width || height != target.Height)
+            {
+                return $"{target.ReferenceFileBase}.txt expected {target.Width}x{target.Height}, actual {width}x{height}";
+            }
+        }
+
+        return string.Empty;
     }
 
     private readonly struct ShadowReferenceCaptureTarget
