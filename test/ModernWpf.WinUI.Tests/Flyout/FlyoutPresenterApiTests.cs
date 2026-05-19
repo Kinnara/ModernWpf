@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls;
+using ModernWpf.Controls.Primitives;
 using ModernWpf.Media.Animation;
 using ModernWpf.WinUI.TestInfra;
 
@@ -68,6 +69,39 @@ public class FlyoutPresenterApiTests
             Assert.AreSame(transitions, contentPresenter.ContentTransitions);
             Assert.AreEqual(HorizontalAlignment.Right, contentPresenter.HorizontalAlignment);
             Assert.AreEqual(VerticalAlignment.Bottom, contentPresenter.VerticalAlignment);
+        });
+    }
+
+    [TestMethod]
+    public void FlyoutPresenterTemplateUsesSourceThemeShadow()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var presenter = new FlyoutPresenter
+            {
+                Content = "Flyout",
+                CornerRadius = new CornerRadius(6),
+                IsDefaultShadowEnabled = false
+            };
+
+            using var host = new TestWindowHost(presenter, width: 240, height: 160);
+
+            var shadowChrome = VisualTreeHelper.GetChild(presenter, 0) as ThemeShadowChrome
+                ?? throw new AssertFailedException("Expected FlyoutPresenter template root to be ThemeShadowChrome.");
+            var chrome = VisualTreeTestHelper.FindDescendant<BorderEx>(presenter)
+                ?? throw new AssertFailedException("Expected FlyoutPresenter template to use BorderEx for WinUI chrome.");
+
+            Assert.AreSame(chrome, shadowChrome.Child);
+            Assert.AreEqual(32.0, shadowChrome.Depth);
+            Assert.AreEqual(ThemeShadowChromeWindowedPopupInsetMode.Medium, shadowChrome.WindowedPopupInsetMode);
+            Assert.AreEqual(new Thickness(10, 2, 10, 18), shadowChrome.PopupShadowPadding);
+            Assert.AreEqual(new CornerRadius(6), shadowChrome.CornerRadius);
+            Assert.IsFalse(shadowChrome.IsShadowEnabled);
+
+            presenter.IsDefaultShadowEnabled = true;
+            host.UpdateLayout();
+
+            Assert.IsTrue(shadowChrome.IsShadowEnabled);
         });
     }
 }
