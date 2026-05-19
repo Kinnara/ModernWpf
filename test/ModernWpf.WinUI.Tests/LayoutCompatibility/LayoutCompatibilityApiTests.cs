@@ -117,6 +117,58 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
+    public void ThemeShadowChromePopupInsetsAreNotDoubleAppliedAsChildMargin()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var root = new Grid
+            {
+                Width = 160,
+                Height = 120,
+                Background = Brushes.White
+            };
+            using var host = new TestWindowHost(root, width: 160, height: 120);
+
+            var chrome = new ThemeShadowChrome
+            {
+                Depth = 32,
+                WindowedPopupInsetMode = ThemeShadowChromeWindowedPopupInsetMode.Medium,
+                Child = new Border
+                {
+                    Width = 50,
+                    Height = 20,
+                    Background = Brushes.Transparent
+                }
+            };
+            var popup = new Popup
+            {
+                AllowsTransparency = true,
+                Child = chrome,
+                Placement = PlacementMode.Bottom,
+                PlacementTarget = root
+            };
+            root.Children.Add(popup);
+
+            try
+            {
+                popup.IsOpen = true;
+                WpfTestHost.DoEvents();
+                chrome.UpdateLayout();
+
+                Assert.AreEqual(new Thickness(10, 2, 10, 18), chrome.PopupShadowPadding);
+                Assert.AreEqual(new Thickness(), chrome.Margin);
+                Assert.AreEqual(70, chrome.ActualWidth, 0.1);
+                Assert.AreEqual(40, chrome.ActualHeight, 0.1);
+                Assert.AreEqual(new Point(10, 2), ((FrameworkElement)chrome.Child).TranslatePoint(new Point(), chrome));
+            }
+            finally
+            {
+                popup.IsOpen = false;
+            }
+        });
+    }
+
+    [TestMethod]
     public void ThemeShadowRendererReportsCalibrationMetrics()
     {
         WpfTestHost.Run(() =>

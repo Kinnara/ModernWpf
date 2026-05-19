@@ -203,7 +203,10 @@ namespace ModernWpf.Controls.Primitives
 
         private void OnPopupMarginChanged(DependencyPropertyChangedEventArgs e)
         {
-            ApplyPopupMargin();
+            if (_parentPopupControl != null)
+            {
+                PositionParentPopupControl();
+            }
         }
 
         private void UpdatePopupMargin()
@@ -215,21 +218,6 @@ namespace ModernWpf.Controls.Primitives
             else
             {
                 ClearValue(PopupMarginProperty);
-            }
-        }
-
-        private void ApplyPopupMargin()
-        {
-            if (_parentPopupControl != null)
-            {
-                if (ReadLocalValue(PopupMarginProperty) == DependencyProperty.UnsetValue)
-                {
-                    _parentPopupControl.ClearMargin();
-                }
-                else
-                {
-                    _parentPopupControl.SetMargin(PopupMargin);
-                }
             }
         }
 
@@ -476,7 +464,6 @@ namespace ModernWpf.Controls.Primitives
             {
                 _parentPopupControl.Opened -= OnParentPopupControlOpened;
                 _parentPopupControl.Closed -= OnParentPopupControlClosed;
-                _parentPopupControl.ClearMargin();
                 _parentPopupControl.Dispose();
             }
 
@@ -486,7 +473,6 @@ namespace ModernWpf.Controls.Primitives
             {
                 _parentPopupControl.Opened += OnParentPopupControlOpened;
                 _parentPopupControl.Closed += OnParentPopupControlClosed;
-                ApplyPopupMargin();
             }
         }
 
@@ -866,28 +852,9 @@ namespace ModernWpf.Controls.Primitives
                 }
             }
 
-            private FrameworkElement ChildAsFE =>
-                _contextMenu as FrameworkElement ??
-                _toolTip as FrameworkElement ??
-                _popup?.Child as FrameworkElement;
-
             public event EventHandler Opened;
 
             public event EventHandler Closed;
-
-            public void SetMargin(Thickness margin)
-            {
-                var child = ChildAsFE;
-                if (child != null)
-                {
-                    child.Margin = margin;
-                }
-            }
-
-            public void ClearMargin()
-            {
-                ChildAsFE?.ClearValue(MarginProperty);
-            }
 
             public void Dispose()
             {
