@@ -673,6 +673,41 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
+    public void ShadowSnapshotReferencePngRoundTripForReferenceComparison()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var root = CreateWhiteCanvas(20, 20);
+            root.Children.Add(new Border
+            {
+                Width = 10,
+                Height = 10,
+                Margin = new Thickness(5),
+                Background = new SolidColorBrush(Color.FromArgb(128, 0, 0, 0)),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top
+            });
+
+            ArrangeElement(root, 20, 20);
+
+            var bitmap = RenderShadowSnapshotBitmap(root, 20, 20);
+            var metrics = CreateShadowSnapshotMetricsFromReferenceBitmap(
+                "SampleControl",
+                "shadow-only",
+                "SampleControl-shadow-only.png",
+                bitmap);
+
+            Assert.AreEqual("SampleControl", metrics.Name);
+            Assert.AreEqual("shadow-only", metrics.Kind);
+            Assert.AreEqual(20, metrics.Width);
+            Assert.AreEqual(20, metrics.Height);
+            Assert.IsTrue(metrics.Stats.PeakDarkening > 0);
+            Assert.IsTrue(metrics.Stats.ShadowPixelCount > 0);
+            AssertShadowSnapshotImageMatchesReference("SampleControl", "SampleControl-shadow-only", bitmap, bitmap);
+        });
+    }
+
+    [TestMethod]
     public void ThemeShadowChromeRerendersWhenRequestedThemeChangesLikeWinUISource()
     {
         WpfTestHost.Run(() =>
@@ -5188,11 +5223,21 @@ public class LayoutCompatibilityApiTests
 
     private static RenderedShadowPixelStats MeasureRenderedShadowPixels(FrameworkElement element, int width, int height)
     {
+        return MeasureShadowPixels(RenderShadowSnapshotBitmap(element, width, height));
+    }
+
+    private static RenderTargetBitmap RenderShadowSnapshotBitmap(FrameworkElement element, int width, int height)
+    {
         var bitmap = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
         bitmap.Render(element);
+        return bitmap;
+    }
 
-        var pixels = new byte[width * height * 4];
-        bitmap.CopyPixels(pixels, width * 4, 0);
+    private static RenderedShadowPixelStats MeasureShadowPixels(BitmapSource bitmap)
+    {
+        var darkeningPixels = GetShadowSnapshotDarkeningPixels(bitmap);
+        int width = bitmap.PixelWidth;
+        int height = bitmap.PixelHeight;
 
         int minX = width;
         int minY = height;
@@ -5208,13 +5253,7 @@ public class LayoutCompatibilityApiTests
         {
             for (int x = 0; x < width; x++)
             {
-                int offset = ((y * width) + x) * 4;
-                int alpha = pixels[offset + 3];
-                int blue = Math.Min(255, pixels[offset] + 255 - alpha);
-                int green = Math.Min(255, pixels[offset + 1] + 255 - alpha);
-                int red = Math.Min(255, pixels[offset + 2] + 255 - alpha);
-                int darkestChannel = Math.Min(red, Math.Min(green, blue));
-                int darkening = 255 - darkestChannel;
+                int darkening = darkeningPixels[(y * width) + x];
 
                 if (darkening <= 0)
                 {
@@ -5257,8 +5296,7 @@ public class LayoutCompatibilityApiTests
         {
             Directory.CreateDirectory(snapshotRoot);
 
-            var bitmap = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
-            bitmap.Render(element);
+            var bitmap = RenderShadowSnapshotBitmap(element, width, height);
 
             using (var stream = File.Create(Path.Combine(snapshotRoot, fileBase + ".png")))
             {
@@ -5275,7 +5313,7 @@ public class LayoutCompatibilityApiTests
             }
         }
 
-        CompareShadowSnapshotReferenceIfRequested(templateName, snapshotKind, fileBase, width, height, stats);
+        CompareShadowSnapshotReferenceIfRequested(templateName, snapshotKind, fileBase, element, width, height, stats);
     }
 
     private static string SanitizeSnapshotName(string name)
@@ -5317,6 +5355,7 @@ public class LayoutCompatibilityApiTests
         string templateName,
         string snapshotKind,
         string fileBase,
+        FrameworkElement element,
         int width,
         int height,
         RenderedShadowPixelStats? stats)
@@ -5327,26 +5366,73 @@ public class LayoutCompatibilityApiTests
             return;
         }
 
-        var referencePath = Path.Combine(referenceRoot, fileBase + ".txt");
-        if (!File.Exists(referencePath))
+        var metricsPath = Path.Combine(referenceRoot, fileBase + ".txt");
+        var imagePath = Path.Combine(referenceRoot, fileBase + ".png");
+        var comparedReference = false;
+
+        if (File.Exists(metricsPath))
         {
-            throw new AssertFailedException(
-                $"Missing WinUI shadow reference metrics '{referencePath}' for {templateName} {snapshotKind}. " +
-                "Unset MODERNWPF_SHADOW_REFERENCE_DIR or add the matching WinUI metrics file.");
+            var reference = ReadShadowSnapshotMetrics(metricsPath);
+
+            Assert.AreEqual(templateName, reference.Name, $"Unexpected shadow reference name in {metricsPath}.");
+            Assert.AreEqual(snapshotKind, reference.Kind, $"Unexpected shadow reference kind in {metricsPath}.");
+            Assert.AreEqual(width, reference.Width, $"Unexpected shadow reference width in {metricsPath}.");
+            Assert.AreEqual(height, reference.Height, $"Unexpected shadow reference height in {metricsPath}.");
+            AssertShadowSnapshotStatsMatchReference(templateName, fileBase, reference.Stats, stats.Value);
+            comparedReference = true;
         }
 
-        var reference = ReadShadowSnapshotMetrics(referencePath);
+        if (File.Exists(imagePath))
+        {
+            var referenceImage = ReadShadowSnapshotPng(imagePath);
+            var reference = CreateShadowSnapshotMetricsFromReferenceBitmap(templateName, snapshotKind, imagePath, referenceImage);
 
-        Assert.AreEqual(templateName, reference.Name, $"Unexpected shadow reference name in {referencePath}.");
-        Assert.AreEqual(snapshotKind, reference.Kind, $"Unexpected shadow reference kind in {referencePath}.");
-        Assert.AreEqual(width, reference.Width, $"Unexpected shadow reference width in {referencePath}.");
-        Assert.AreEqual(height, reference.Height, $"Unexpected shadow reference height in {referencePath}.");
-        AssertShadowSnapshotStatsMatchReference(templateName, fileBase, reference.Stats, stats.Value);
+            Assert.AreEqual(width, reference.Width, $"Unexpected shadow reference image width in {imagePath}.");
+            Assert.AreEqual(height, reference.Height, $"Unexpected shadow reference image height in {imagePath}.");
+            AssertShadowSnapshotStatsMatchReference(templateName, fileBase, reference.Stats, stats.Value);
+            AssertShadowSnapshotImageMatchesReference(templateName, fileBase, referenceImage, RenderShadowSnapshotBitmap(element, width, height));
+            comparedReference = true;
+        }
+
+        if (!comparedReference)
+        {
+            throw new AssertFailedException(
+                $"Missing WinUI shadow reference '{metricsPath}' or '{imagePath}' for {templateName} {snapshotKind}. " +
+                "Unset MODERNWPF_SHADOW_REFERENCE_DIR or add the matching WinUI metrics or PNG file.");
+        }
     }
 
     private static RenderedShadowSnapshotMetrics ReadShadowSnapshotMetrics(string metricsPath)
     {
         return ParseShadowSnapshotMetrics(metricsPath, File.ReadLines(metricsPath));
+    }
+
+    private static BitmapSource ReadShadowSnapshotPng(string imagePath)
+    {
+        using (var stream = File.OpenRead(imagePath))
+        {
+            var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
+            return decoder.Frames[0];
+        }
+    }
+
+    private static RenderedShadowSnapshotMetrics CreateShadowSnapshotMetricsFromReferenceBitmap(
+        string templateName,
+        string snapshotKind,
+        string imageName,
+        BitmapSource bitmap)
+    {
+        if (bitmap.PixelWidth <= 0 || bitmap.PixelHeight <= 0)
+        {
+            throw new AssertFailedException($"Shadow snapshot reference image '{imageName}' has invalid dimensions {bitmap.PixelWidth}x{bitmap.PixelHeight}.");
+        }
+
+        return new RenderedShadowSnapshotMetrics(
+            templateName,
+            snapshotKind,
+            bitmap.PixelWidth,
+            bitmap.PixelHeight,
+            MeasureShadowPixels(bitmap));
     }
 
     private static RenderedShadowSnapshotMetrics ParseShadowSnapshotMetrics(string metricsName, IEnumerable<string> lines)
@@ -5481,6 +5567,78 @@ public class LayoutCompatibilityApiTests
             $"{templateName} reference shadow pixel count ({fileBase}). Reference={reference}; Actual={actual}");
         AssertNear(reference.CentroidX, actual.CentroidX, centroidTolerance, $"{templateName} reference shadow centroid X ({fileBase}). Reference={reference}; Actual={actual}");
         AssertNear(reference.CentroidY, actual.CentroidY, centroidTolerance, $"{templateName} reference shadow centroid Y ({fileBase}). Reference={reference}; Actual={actual}");
+    }
+
+    private static void AssertShadowSnapshotImageMatchesReference(
+        string templateName,
+        string fileBase,
+        BitmapSource reference,
+        BitmapSource actual)
+    {
+        Assert.AreEqual(reference.PixelWidth, actual.PixelWidth, $"{templateName} reference shadow image width ({fileBase}).");
+        Assert.AreEqual(reference.PixelHeight, actual.PixelHeight, $"{templateName} reference shadow image height ({fileBase}).");
+
+        var referenceDarkening = GetShadowSnapshotDarkeningPixels(reference);
+        var actualDarkening = GetShadowSnapshotDarkeningPixels(actual);
+
+        long canvasDelta = 0;
+        long shadowDelta = 0;
+        int shadowUnionPixels = 0;
+        int changedShadowPixels = 0;
+        int maxShadowDelta = 0;
+
+        for (int i = 0; i < referenceDarkening.Length; i++)
+        {
+            int delta = Math.Abs(referenceDarkening[i] - actualDarkening[i]);
+            canvasDelta += delta;
+
+            if (referenceDarkening[i] > 0 || actualDarkening[i] > 0)
+            {
+                shadowUnionPixels++;
+                shadowDelta += delta;
+                maxShadowDelta = Math.Max(maxShadowDelta, delta);
+
+                if (delta > 8)
+                {
+                    changedShadowPixels++;
+                }
+            }
+        }
+
+        var totalPixels = reference.PixelWidth * reference.PixelHeight;
+        var meanCanvasDelta = totalPixels == 0 ? 0 : (double)canvasDelta / totalPixels;
+        var meanShadowDelta = shadowUnionPixels == 0 ? 0 : (double)shadowDelta / shadowUnionPixels;
+        var changedShadowPixelTolerance = Math.Max(400, shadowUnionPixels * 0.45);
+
+        AssertNear(0, meanCanvasDelta, 6, $"{templateName} reference image mean canvas darkening delta ({fileBase}). ShadowUnion={shadowUnionPixels}; MaxDelta={maxShadowDelta}");
+        AssertNear(0, meanShadowDelta, 18, $"{templateName} reference image mean shadow darkening delta ({fileBase}). ShadowUnion={shadowUnionPixels}; MaxDelta={maxShadowDelta}");
+        AssertNear(0, changedShadowPixels, changedShadowPixelTolerance, $"{templateName} reference image changed shadow-pixel count ({fileBase}). ShadowUnion={shadowUnionPixels}; MaxDelta={maxShadowDelta}");
+    }
+
+    private static int[] GetShadowSnapshotDarkeningPixels(BitmapSource bitmap)
+    {
+        BitmapSource source = bitmap.Format == PixelFormats.Pbgra32
+            ? bitmap
+            : new FormatConvertedBitmap(bitmap, PixelFormats.Pbgra32, null, 0);
+        int width = source.PixelWidth;
+        int height = source.PixelHeight;
+        int stride = width * 4;
+        var pixels = new byte[stride * height];
+        source.CopyPixels(pixels, stride, 0);
+
+        var darkeningPixels = new int[width * height];
+        for (int i = 0; i < darkeningPixels.Length; i++)
+        {
+            int offset = i * 4;
+            int alpha = pixels[offset + 3];
+            int blue = Math.Min(255, pixels[offset] + 255 - alpha);
+            int green = Math.Min(255, pixels[offset + 1] + 255 - alpha);
+            int red = Math.Min(255, pixels[offset + 2] + 255 - alpha);
+            int darkestChannel = Math.Min(red, Math.Min(green, blue));
+            darkeningPixels[i] = 255 - darkestChannel;
+        }
+
+        return darkeningPixels;
     }
 
     private readonly struct RenderedShadowPixelStats

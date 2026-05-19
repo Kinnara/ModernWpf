@@ -119,15 +119,15 @@ dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --no-resto
 
 The exporter writes `surface` captures for childful chromes before hiding the caster, `shadow-only` captures after isolating the shadow layer, and `shadow-only` captures for childless caster slots. Shadow-only metric files include `Bounds`, `PeakDarkening`, `ShadowPixelCount`, and `Centroid` keys so they can be compared without parsing the human-readable `Stats` line.
 
-When a matching WinUI reference metrics directory exists, set `MODERNWPF_SHADOW_REFERENCE_DIR` as well:
+When a matching WinUI reference directory exists, set `MODERNWPF_SHADOW_REFERENCE_DIR` as well:
 
 ```powershell
 $env:MODERNWPF_SHADOW_SNAPSHOT_DIR = "D:\tmp\modernwpf-shadow-snapshots"
-$env:MODERNWPF_SHADOW_REFERENCE_DIR = "D:\tmp\winui-shadow-reference-metrics"
+$env:MODERNWPF_SHADOW_REFERENCE_DIR = "D:\tmp\winui-shadow-references"
 dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --no-restore --filter "FullyQualifiedName~LayoutCompatibilityApiTests.SourceBackedShadowTemplatesRenderVisibleShadowPixels|FullyQualifiedName~LayoutCompatibilityApiTests.SourceBackedChildlessShadowTemplatesRenderVisibleShadowPixels" -p:UseSharedCompilation=false
 ```
 
-With `MODERNWPF_SHADOW_REFERENCE_DIR` set, each shadow-only snapshot must have a same-named `.txt` reference file. The comparison checks canvas size plus bounds, peak darkening, shadow-pixel count, and centroid using bounded tolerances for WPF's software-rasterized substitute. This still does not run by default in CI and does not replace the missing WinUI reference capture, but the comparison gate is now repo-owned once those references are produced.
+With `MODERNWPF_SHADOW_REFERENCE_DIR` set, each shadow-only snapshot must have a same-named `.txt` metrics file or `.png` image file. Text metrics compare canvas size plus bounds, peak darkening, shadow-pixel count, and centroid using bounded tolerances for WPF's software-rasterized substitute. PNG references derive those same metrics directly from the reference image and also compare per-pixel darkening deltas across the full canvas and the shadow-pixel union. This still does not run by default in CI and does not replace the missing WinUI reference capture, but the comparison gate can now consume raw WinUI captures once those references are produced.
 
 The current WPF baseline for an `80x40` DIP content rect with `CornerRadius=8` at `96` DPI is:
 
