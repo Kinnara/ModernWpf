@@ -744,6 +744,23 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
+    public void ShadowSnapshotReferenceMaskRoundTripForReferenceComparison()
+    {
+        var ignoredBounds = new Int32Rect(5, 6, 7, 8);
+        var text = CreateShadowSnapshotReferenceMaskText("SampleControl", "shadow-only", 20, 20, ignoredBounds);
+
+        var mask = ParseShadowSnapshotReferenceMask(
+            "SampleControl-shadow-only.mask.txt",
+            text.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None));
+
+        Assert.AreEqual("SampleControl", mask.Name);
+        Assert.AreEqual("shadow-only", mask.Kind);
+        Assert.AreEqual(20, mask.Width);
+        Assert.AreEqual(20, mask.Height);
+        Assert.AreEqual(ignoredBounds, mask.IgnoredBounds);
+    }
+
+    [TestMethod]
     public void ThemeShadowChromeRerendersWhenRequestedThemeChangesLikeWinUISource()
     {
         WpfTestHost.Run(() =>
@@ -5041,7 +5058,7 @@ public class LayoutCompatibilityApiTests
             WpfTestHost.DoEvents();
 
             var stats = MeasureRenderedShadowPixels(root, width, height);
-            ExportShadowSnapshotIfRequested(templateName, "shadow-only", root, width, height, stats);
+            ExportShadowSnapshotIfRequested(templateName, "shadow-only", root, width, height, stats, ToShadowSnapshotBounds(casterBounds));
             AssertRenderedShadowExtendsBeyondCaster(stats, casterBounds, minPeakDarkening, minShadowPixels, templateName);
         }
         finally
@@ -5077,7 +5094,7 @@ public class LayoutCompatibilityApiTests
             WpfTestHost.DoEvents();
 
             var stats = MeasureRenderedShadowPixels(root, width, height);
-            ExportShadowSnapshotIfRequested(templateName, "shadow-only", root, width, height, stats);
+            ExportShadowSnapshotIfRequested(templateName, "shadow-only", root, width, height, stats, ToShadowSnapshotBounds(casterBounds));
             AssertRenderedShadowVisible(stats, casterBounds, minPeakDarkening, minShadowPixels, templateName);
         }
         finally
@@ -5212,7 +5229,7 @@ public class LayoutCompatibilityApiTests
     {
         var casterBounds = GetElementBounds(chrome, root);
         var stats = MeasureRenderedShadowPixels(root, width, height);
-        ExportShadowSnapshotIfRequested(templateName, "shadow-only", root, width, height, stats);
+        ExportShadowSnapshotIfRequested(templateName, "shadow-only", root, width, height, stats, ToShadowSnapshotBounds(casterBounds));
         AssertRenderedShadowExtendsBeyondCaster(stats, casterBounds, minPeakDarkening, minShadowPixels, templateName);
     }
 
@@ -5220,6 +5237,15 @@ public class LayoutCompatibilityApiTests
     {
         var topLeft = element.TranslatePoint(new Point(), ancestor);
         return new Rect(topLeft, new Size(element.ActualWidth, element.ActualHeight));
+    }
+
+    private static Int32Rect ToShadowSnapshotBounds(Rect bounds)
+    {
+        return new Int32Rect(
+            (int)Math.Round(bounds.X),
+            (int)Math.Round(bounds.Y),
+            (int)Math.Round(bounds.Width),
+            (int)Math.Round(bounds.Height));
     }
 
     private static void AssertRenderedShadowExtendsBeyondCaster(
@@ -5373,7 +5399,8 @@ public class LayoutCompatibilityApiTests
         FrameworkElement element,
         int width,
         int height,
-        RenderedShadowPixelStats? stats)
+        RenderedShadowPixelStats? stats,
+        Int32Rect? ignoredReferenceBounds = null)
     {
         var fileBase = SanitizeSnapshotName($"{templateName}-{snapshotKind}");
         var snapshotRoot = Environment.GetEnvironmentVariable("MODERNWPF_SHADOW_SNAPSHOT_DIR");
@@ -5396,6 +5423,13 @@ public class LayoutCompatibilityApiTests
                 File.WriteAllText(
                     Path.Combine(snapshotRoot, fileBase + ".txt"),
                     CreateShadowSnapshotMetricsText(templateName, snapshotKind, width, height, stats.Value));
+
+                if (ignoredReferenceBounds.HasValue)
+                {
+                    File.WriteAllText(
+                        Path.Combine(snapshotRoot, fileBase + ".mask.txt"),
+                        CreateShadowSnapshotReferenceMaskText(templateName, snapshotKind, width, height, ignoredReferenceBounds.Value));
+                }
             }
         }
 
@@ -5437,6 +5471,27 @@ public class LayoutCompatibilityApiTests
             stats);
     }
 
+    private static string CreateShadowSnapshotReferenceMaskText(
+        string templateName,
+        string snapshotKind,
+        int width,
+        int height,
+        Int32Rect ignoredBounds)
+    {
+        return string.Format(
+            CultureInfo.InvariantCulture,
+            "Name={0}{4}" +
+            "Kind={1}{4}" +
+            "Size={2}x{3}{4}" +
+            "IgnoredBounds={5}{4}",
+            templateName,
+            snapshotKind,
+            width,
+            height,
+            Environment.NewLine,
+            FormatShadowSnapshotBounds(ignoredBounds));
+    }
+
     private static void CompareShadowSnapshotReferenceIfRequested(
         string templateName,
         string snapshotKind,
@@ -5454,6 +5509,12 @@ public class LayoutCompatibilityApiTests
 
         var metricsPath = Path.Combine(referenceRoot, fileBase + ".txt");
         var imagePath = Path.Combine(referenceRoot, fileBase + ".png");
+        var referenceIgnoredBounds = ReadShadowSnapshotReferenceMaskIfExists(
+            Path.Combine(referenceRoot, fileBase + ".mask.txt"),
+            templateName,
+            snapshotKind,
+            width,
+            height);
         var comparedReference = false;
 
         if (File.Exists(metricsPath))
@@ -5471,12 +5532,16 @@ public class LayoutCompatibilityApiTests
         if (File.Exists(imagePath))
         {
             var referenceImage = ReadShadowSnapshotPng(imagePath);
-            var reference = CreateShadowSnapshotMetricsFromReferenceBitmap(templateName, snapshotKind, imagePath, referenceImage);
+            var actualImage = RenderShadowSnapshotBitmap(element, width, height);
+            var reference = CreateShadowSnapshotMetricsFromReferenceBitmap(templateName, snapshotKind, imagePath, referenceImage, referenceIgnoredBounds);
+            var actualStats = referenceIgnoredBounds.HasValue
+                ? MeasureShadowPixels(actualImage, referenceIgnoredBounds)
+                : stats.Value;
 
             Assert.AreEqual(width, reference.Width, $"Unexpected shadow reference image width in {imagePath}.");
             Assert.AreEqual(height, reference.Height, $"Unexpected shadow reference image height in {imagePath}.");
-            AssertShadowSnapshotStatsMatchReference(templateName, fileBase, reference.Stats, stats.Value);
-            AssertShadowSnapshotImageMatchesReference(templateName, fileBase, referenceImage, RenderShadowSnapshotBitmap(element, width, height));
+            AssertShadowSnapshotStatsMatchReference(templateName, fileBase, reference.Stats, actualStats);
+            AssertShadowSnapshotImageMatchesReference(templateName, fileBase, referenceImage, actualImage, referenceIgnoredBounds);
             comparedReference = true;
         }
 
@@ -5502,11 +5567,33 @@ public class LayoutCompatibilityApiTests
         }
     }
 
+    private static Int32Rect? ReadShadowSnapshotReferenceMaskIfExists(
+        string maskPath,
+        string templateName,
+        string snapshotKind,
+        int width,
+        int height)
+    {
+        if (!File.Exists(maskPath))
+        {
+            return null;
+        }
+
+        var mask = ParseShadowSnapshotReferenceMask(maskPath, File.ReadLines(maskPath));
+        Assert.AreEqual(templateName, mask.Name, $"Unexpected shadow reference mask name in {maskPath}.");
+        Assert.AreEqual(snapshotKind, mask.Kind, $"Unexpected shadow reference mask kind in {maskPath}.");
+        Assert.AreEqual(width, mask.Width, $"Unexpected shadow reference mask width in {maskPath}.");
+        Assert.AreEqual(height, mask.Height, $"Unexpected shadow reference mask height in {maskPath}.");
+        AssertShadowSnapshotReferenceMaskBounds(mask.IgnoredBounds, width, height, maskPath);
+        return mask.IgnoredBounds;
+    }
+
     private static RenderedShadowSnapshotMetrics CreateShadowSnapshotMetricsFromReferenceBitmap(
         string templateName,
         string snapshotKind,
         string imageName,
-        BitmapSource bitmap)
+        BitmapSource bitmap,
+        Int32Rect? ignoredBounds = null)
     {
         if (bitmap.PixelWidth <= 0 || bitmap.PixelHeight <= 0)
         {
@@ -5518,7 +5605,7 @@ public class LayoutCompatibilityApiTests
             snapshotKind,
             bitmap.PixelWidth,
             bitmap.PixelHeight,
-            MeasureShadowPixels(bitmap));
+            MeasureShadowPixels(bitmap, ignoredBounds));
     }
 
     private static RenderedShadowSnapshotMetrics ParseShadowSnapshotMetrics(string metricsName, IEnumerable<string> lines)
@@ -5554,6 +5641,35 @@ public class LayoutCompatibilityApiTests
                 ParseShadowSnapshotInt(RequireShadowSnapshotMetric(values, "ShadowPixelCount", metricsName), "ShadowPixelCount", metricsName),
                 centroidX,
                 centroidY));
+    }
+
+    private static RenderedShadowSnapshotReferenceMask ParseShadowSnapshotReferenceMask(string maskName, IEnumerable<string> lines)
+    {
+        var values = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (var rawLine in lines)
+        {
+            if (string.IsNullOrWhiteSpace(rawLine))
+            {
+                continue;
+            }
+
+            var separator = rawLine.IndexOf('=');
+            if (separator <= 0)
+            {
+                continue;
+            }
+
+            values[rawLine.Substring(0, separator)] = rawLine.Substring(separator + 1);
+        }
+
+        var (width, height) = ParseShadowSnapshotSize(RequireShadowSnapshotMetric(values, "Size", maskName), maskName);
+
+        return new RenderedShadowSnapshotReferenceMask(
+            RequireShadowSnapshotMetric(values, "Name", maskName),
+            RequireShadowSnapshotMetric(values, "Kind", maskName),
+            width,
+            height,
+            ParseShadowSnapshotBounds(RequireShadowSnapshotMetric(values, "IgnoredBounds", maskName), maskName));
     }
 
     private static string RequireShadowSnapshotMetric(IReadOnlyDictionary<string, string> values, string name, string metricsName)
@@ -5659,13 +5775,16 @@ public class LayoutCompatibilityApiTests
         string templateName,
         string fileBase,
         BitmapSource reference,
-        BitmapSource actual)
+        BitmapSource actual,
+        Int32Rect? ignoredBounds = null)
     {
         Assert.AreEqual(reference.PixelWidth, actual.PixelWidth, $"{templateName} reference shadow image width ({fileBase}).");
         Assert.AreEqual(reference.PixelHeight, actual.PixelHeight, $"{templateName} reference shadow image height ({fileBase}).");
 
         var referenceDarkening = GetShadowSnapshotDarkeningPixels(reference);
         var actualDarkening = GetShadowSnapshotDarkeningPixels(actual);
+        ClearIgnoredShadowSnapshotBounds(referenceDarkening, reference.PixelWidth, ignoredBounds);
+        ClearIgnoredShadowSnapshotBounds(actualDarkening, actual.PixelWidth, ignoredBounds);
 
         long canvasDelta = 0;
         long shadowDelta = 0;
@@ -5699,6 +5818,33 @@ public class LayoutCompatibilityApiTests
         AssertNear(0, meanCanvasDelta, 6, $"{templateName} reference image mean canvas darkening delta ({fileBase}). ShadowUnion={shadowUnionPixels}; MaxDelta={maxShadowDelta}");
         AssertNear(0, meanShadowDelta, 18, $"{templateName} reference image mean shadow darkening delta ({fileBase}). ShadowUnion={shadowUnionPixels}; MaxDelta={maxShadowDelta}");
         AssertNear(0, changedShadowPixels, changedShadowPixelTolerance, $"{templateName} reference image changed shadow-pixel count ({fileBase}). ShadowUnion={shadowUnionPixels}; MaxDelta={maxShadowDelta}");
+    }
+
+    private static void AssertShadowSnapshotReferenceMaskBounds(Int32Rect bounds, int width, int height, string maskName)
+    {
+        Assert.IsTrue(bounds.X >= 0, $"Shadow snapshot reference mask '{maskName}' has negative X.");
+        Assert.IsTrue(bounds.Y >= 0, $"Shadow snapshot reference mask '{maskName}' has negative Y.");
+        Assert.IsTrue(bounds.Width >= 0, $"Shadow snapshot reference mask '{maskName}' has negative width.");
+        Assert.IsTrue(bounds.Height >= 0, $"Shadow snapshot reference mask '{maskName}' has negative height.");
+        Assert.IsTrue(bounds.X + bounds.Width <= width, $"Shadow snapshot reference mask '{maskName}' exceeds image width.");
+        Assert.IsTrue(bounds.Y + bounds.Height <= height, $"Shadow snapshot reference mask '{maskName}' exceeds image height.");
+    }
+
+    private static void ClearIgnoredShadowSnapshotBounds(int[] darkeningPixels, int width, Int32Rect? ignoredBounds)
+    {
+        if (!ignoredBounds.HasValue || ignoredBounds.Value.IsEmpty)
+        {
+            return;
+        }
+
+        var bounds = ignoredBounds.Value;
+        for (int y = bounds.Y; y < bounds.Y + bounds.Height; y++)
+        {
+            for (int x = bounds.X; x < bounds.X + bounds.Width; x++)
+            {
+                darkeningPixels[(y * width) + x] = 0;
+            }
+        }
     }
 
     private static int[] GetShadowSnapshotDarkeningPixels(BitmapSource bitmap)
@@ -5786,6 +5932,33 @@ public class LayoutCompatibilityApiTests
         public int Height { get; }
 
         public RenderedShadowPixelStats Stats { get; }
+    }
+
+    private readonly struct RenderedShadowSnapshotReferenceMask
+    {
+        public RenderedShadowSnapshotReferenceMask(
+            string name,
+            string kind,
+            int width,
+            int height,
+            Int32Rect ignoredBounds)
+        {
+            Name = name;
+            Kind = kind;
+            Width = width;
+            Height = height;
+            IgnoredBounds = ignoredBounds;
+        }
+
+        public string Name { get; }
+
+        public string Kind { get; }
+
+        public int Width { get; }
+
+        public int Height { get; }
+
+        public Int32Rect IgnoredBounds { get; }
     }
 
     private sealed class TestBorderEx : BorderEx

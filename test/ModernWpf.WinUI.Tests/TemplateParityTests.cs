@@ -371,6 +371,7 @@ public class TemplateParityTests
         Assert.AreEqual(1, root.GetProperty("version").GetInt32());
         Assert.AreEqual("MODERNWPF_SHADOW_SNAPSHOT_DIR", root.GetProperty("snapshotDirectoryEnvVar").GetString());
         Assert.AreEqual("MODERNWPF_SHADOW_REFERENCE_DIR", root.GetProperty("referenceDirectoryEnvVar").GetString());
+        Assert.AreEqual(".mask.txt", root.GetProperty("referenceMaskSidecarExtension").GetString());
         Assert.AreEqual("shadow-only", root.GetProperty("snapshotKind").GetString());
 
         var targets = root.GetProperty("targets")
