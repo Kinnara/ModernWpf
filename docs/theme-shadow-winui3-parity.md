@@ -52,6 +52,8 @@ The renderer ports the WinUI `GetDropShadowRecipe` formulas into WPF:
 
 The computed padding follows the source recipe insets so `ThemeShadowChrome` reserves source-shaped shadow space in its own WPF layout slot. The child is arranged at the source content offset and the private shadow visual renders from the outer shadow origin; this avoids relying on WPF overflow rendering for the negative left/top shadow extent, which clips differently from WinUI compositor visuals. For the source NumberBox depth `16`, the current profile reserves `8,4,8,12`. For depth `32`, it reserves `16,8,16,24`. For depth `64`, it reserves `32,16,32,48`.
 
+Childless `ThemeShadowChrome` instances remain explicit caster slots. This keeps source-shaped template parts such as NavigationView's `ShadowCaster` compatible with WPF visual states that set `Width` / `Height` directly: the chrome measures and arranges at the requested size, then renders the source shadow outward from that caster instead of subtracting the renderer padding from the caster dimensions.
+
 WinUI has a second, Popup-owned inset path for windowed popups. The Popup window bounds do not use the full recipe padding; they use manually calibrated tight insets around the visible drop shadow. `ThemeShadowChrome.WindowedPopupInsetMode` ports that distinction for WPF Popup hosts:
 
 - `Default`: use the renderer recipe padding for explicit child shadows such as NumberBox's `PopupContentRoot` at depth `16`.
@@ -88,6 +90,8 @@ Raw WPF `DropShadowEffect` is now guarded as an official WPF Fluent stock-contro
 
 `LayoutCompatibilityApiTests.ThemeShadowChromePopupInsetsAreNotDoubleAppliedAsChildMargin` opens a WPF `Popup` whose child is a medium-inset `ThemeShadowChrome`. It verifies that the chrome measures to `70x40` for a `50x20` caster, arranges that caster at `10,2`, and leaves `ThemeShadowChrome.Margin` unset. This keeps source windowed-popup insets single-owned by chrome layout while preserving `PopupMargin` as an internal placement-adjustment input.
 
+`LayoutCompatibilityApiTests.ThemeShadowChromeChildlessCasterUsesExplicitSizeAsSourceCaster` renders a childless `ThemeShadowChrome` with explicit `50x50` size in the same source canvas. This guards the NavigationView-style shadow-caster pattern where the template part itself is the caster and must not lose effective width/height to the layout padding added for childful chrome hosts.
+
 The current WPF baseline for an `80x40` DIP content rect with `CornerRadius=8` at `96` DPI is:
 
 | Case | Bitmap | Content offset | Non-zero alpha bounds | Peak alpha | Non-zero pixels | Alpha centroid |
@@ -120,6 +124,6 @@ This is still a WPF substitution, not a literal WinUI compositor port. The depth
 
 ## Verification
 
-Focused tests cover the renderer path, rendered alpha-profile calibration metrics, the removal of `BlurEffect` border shadow internals, computed depth padding, source windowed Popup insets, popup-host template opt-ins, FlyoutPresenter's source child-elevation shadow path, the NumberBox popup's source `NumberBoxPopupShadowDepth=16` path, NavigationView's source `PaneOverlayShadowDepth=16` shadow caster, ContentDialog's source `baseElevation=128` shadow depth, TeachingTip's source `ContentRootGrid` shadow depth, CommandBar's source `SecondaryItemsControlShadowWrapper` overflow target, AutoSuggestBox's source popup-child suggestions shadow target, CommandBarFlyout's source presenter-shadow toggle lifecycle and overflow-root shadow states, and MenuFlyoutPresenter's source-shaped `ThemeShadowChrome` presenter shadow path.
+Focused tests cover the renderer path, rendered alpha-profile calibration metrics, the removal of `BlurEffect` border shadow internals, computed depth padding, childless explicit-size caster behavior, source windowed Popup insets, popup-host template opt-ins, FlyoutPresenter's source child-elevation shadow path, the NumberBox popup's source `NumberBoxPopupShadowDepth=16` path, NavigationView's source `PaneOverlayShadowDepth=16` shadow caster, ContentDialog's source `baseElevation=128` shadow depth, TeachingTip's source `ContentRootGrid` shadow depth, CommandBar's source `SecondaryItemsControlShadowWrapper` overflow target, AutoSuggestBox's source popup-child suggestions shadow target, CommandBarFlyout's source presenter-shadow toggle lifecycle and overflow-root shadow states, and MenuFlyoutPresenter's source-shaped `ThemeShadowChrome` presenter shadow path.
 
 `TemplateParityTests.ThemeShadowSourceCoverageAuditCoversKnownWinUIShadowInputs` keeps the source coverage matrix aligned with the known WinUI shadow inputs, shared renderer recipe sources, official WPF Fluent stock exceptions, and documented WPF substitutions.

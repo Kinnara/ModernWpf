@@ -273,14 +273,17 @@ namespace ModernWpf.Controls.Primitives
 
             var padding = LayoutShadowPadding;
             var child = Child;
-            if (child != null)
+            if (child == null)
             {
-                child.Measure(new Size(
-                    SubtractConstraintPadding(constraint.Width, padding.Left + padding.Right),
-                    SubtractConstraintPadding(constraint.Height, padding.Top + padding.Bottom)));
+                _background.Measure(constraint);
+                return base.MeasureOverride(constraint);
             }
 
-            var childSize = child?.DesiredSize ?? new Size();
+            child.Measure(new Size(
+                SubtractConstraintPadding(constraint.Width, padding.Left + padding.Right),
+                SubtractConstraintPadding(constraint.Height, padding.Top + padding.Bottom)));
+
+            var childSize = child.DesiredSize;
             var desiredSize = new Size(
                 childSize.Width + padding.Left + padding.Right,
                 childSize.Height + padding.Top + padding.Bottom);
@@ -302,20 +305,25 @@ namespace ModernWpf.Controls.Primitives
             }
 
             var padding = LayoutShadowPadding;
-            var contentSize = new Size(
-                Math.Max(0, arrangeSize.Width - padding.Left - padding.Right),
-                Math.Max(0, arrangeSize.Height - padding.Top - padding.Bottom));
+            var child = Child;
+            var hasChild = child != null;
+            var contentSize = hasChild
+                ? new Size(
+                    Math.Max(0, arrangeSize.Width - padding.Left - padding.Right),
+                    Math.Max(0, arrangeSize.Height - padding.Top - padding.Bottom))
+                : arrangeSize;
 
             if (_shadow != null)
             {
                 _shadow.ContentSize = contentSize;
                 _shadow.LayoutSize = arrangeSize;
+                _shadow.AlignToContentOrigin = !hasChild;
                 _background.Arrange(new Rect(arrangeSize));
             }
 
-            if (Child != null)
+            if (child != null)
             {
-                Child.Arrange(new Rect(padding.Left, padding.Top, contentSize.Width, contentSize.Height));
+                child.Arrange(new Rect(padding.Left, padding.Top, contentSize.Width, contentSize.Height));
             }
 
             return arrangeSize;
@@ -952,6 +960,19 @@ namespace ModernWpf.Controls.Primitives
                 }
             }
 
+            public bool AlignToContentOrigin
+            {
+                get => _alignToContentOrigin;
+                set
+                {
+                    if (_alignToContentOrigin != value)
+                    {
+                        _alignToContentOrigin = value;
+                        InvalidateVisual();
+                    }
+                }
+            }
+
 #if NET462_OR_NEWER
             protected override void OnDpiChanged(DpiScale oldDpi, DpiScale newDpi)
             {
@@ -980,7 +1001,7 @@ namespace ModernWpf.Controls.Primitives
                         Depth,
                         ThemeManager.GetActualTheme(this),
                         VisualTreeHelper.GetDpi(this),
-                        alignToContentOrigin: false);
+                        AlignToContentOrigin);
                 }
             }
 
@@ -988,6 +1009,7 @@ namespace ModernWpf.Controls.Primitives
             private CornerRadius _cornerRadius;
             private Size _contentSize;
             private Size _layoutSize;
+            private bool _alignToContentOrigin;
         }
 
         internal static class ThemeShadowRenderer
