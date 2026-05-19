@@ -229,6 +229,81 @@ public class TemplateParityTests
     }
 
     [TestMethod]
+    public void ThemeShadowSourceCoverageAuditCoversKnownWinUIShadowInputs()
+    {
+        var repoRoot = FindRepoRoot();
+        var auditFile = Path.Combine(repoRoot, "docs", "theme-shadow-source-coverage.md");
+        var expectedSources = new[]
+        {
+            @"src\controls\dev\CommonStyles\Common_themeresources.xaml",
+            @"src\dxaml\xcp\dxaml\lib\ElevationHelper.cpp",
+            @"src\dxaml\xcp\components\graphics\ThemeShadow.cpp",
+            @"src\dxaml\xcp\components\graphics\ProjectedShadowManager.cpp",
+            @"src\controls\dev\NumberBox\NumberBox.cpp",
+            @"src\dxaml\xcp\dxaml\lib\CommandBar_Partial.cpp",
+            @"src\controls\dev\CommandBarFlyout\CommandBarFlyout.cpp",
+            @"src\controls\dev\CommandBarFlyout\CommandBarFlyout_themeresources.xaml",
+            @"src\controls\dev\NavigationView\NavigationView.cpp",
+            @"src\controls\dev\TeachingTip\TeachingTip.cpp",
+            @"src\controls\dev\TeachingTip\TeachingTip.cpp",
+            @"src\dxaml\xcp\dxaml\lib\AutoSuggestBox_Partial.cpp",
+            @"src\dxaml\xcp\dxaml\lib\ContentDialog_Partial.cpp",
+            @"src\dxaml\xcp\dxaml\lib\FlyoutPresenter_partial.cpp",
+            @"src\dxaml\xcp\dxaml\lib\MenuFlyoutPresenter_Partial.cpp",
+            @"src\dxaml\xcp\dxaml\lib\ComboBox_Partial.cpp",
+            @"src\dxaml\xcp\dxaml\lib\ToolTip_Partial.cpp",
+            @"src\dxaml\phone\lib\DatePickerFlyoutPresenter_Partial.cpp",
+            @"src\dxaml\phone\lib\TimePickerFlyoutPresenter_Partial.cpp",
+            @"src\dxaml\xcp\dxaml\lib\UIElement_Partial.cpp"
+        };
+        var allowedStatuses = new[]
+        {
+            "Source-backed renderer recipe",
+            "Source-backed ThemeShadowChrome",
+            "Official WPF Fluent stock exception",
+            "Documented WPF substitution"
+        };
+
+        Assert.IsTrue(File.Exists(auditFile), "Missing ThemeShadow source coverage audit.");
+
+        var rows = ParseThemeShadowSourceCoverageRows(auditFile);
+        var rowSources = rows.Select(row => row.SourceFile).ToArray();
+        var missing = expectedSources
+            .Except(rowSources, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+        var extra = rowSources
+            .Except(expectedSources, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+        var duplicateStatusRows = rows
+            .GroupBy(row => $"{row.SourceFile}\0{row.Status}", StringComparer.OrdinalIgnoreCase)
+            .Where(group => group.Count() > 1)
+            .Select(group => group.Key.Replace("\0", ":", StringComparison.Ordinal))
+            .ToArray();
+        var badStatuses = rows
+            .Where(row => !allowedStatuses.Contains(row.Status, StringComparer.Ordinal))
+            .Select(row => $"{row.SourceFile}:{row.LineNumber} {row.Status}")
+            .ToArray();
+        var missingEvidence = rows
+            .Where(row => row.ArtifactPaths.Length == 0 ||
+                row.ArtifactPaths.Any(path => !File.Exists(Path.Combine(repoRoot, path))))
+            .Select(row => $"{row.SourceFile}:{row.LineNumber}")
+            .ToArray();
+
+        Assert.AreEqual(expectedSources.Length, rows.Length, "Unexpected ThemeShadow source coverage row count.");
+        Assert.IsFalse(missing.Any(), "Missing ThemeShadow source rows: " + string.Join("; ", missing));
+        Assert.IsFalse(extra.Any(), "Unexpected ThemeShadow source rows: " + string.Join("; ", extra));
+        Assert.IsFalse(duplicateStatusRows.Any(), "Duplicate ThemeShadow source/status rows: " + string.Join("; ", duplicateStatusRows));
+        Assert.IsFalse(badStatuses.Any(), "Invalid ThemeShadow source statuses: " + string.Join("; ", badStatuses));
+        Assert.IsFalse(missingEvidence.Any(), "ThemeShadow source rows should point at existing repo evidence: " + string.Join("; ", missingEvidence));
+
+        AssertCoverageStatus(rows, @"src\controls\dev\NumberBox\NumberBox.cpp", "Source-backed ThemeShadowChrome");
+        AssertCoverageStatus(rows, @"src\dxaml\xcp\components\graphics\ThemeShadow.cpp", "Source-backed renderer recipe");
+        AssertCoverageStatus(rows, @"src\dxaml\xcp\dxaml\lib\ComboBox_Partial.cpp", "Official WPF Fluent stock exception");
+        AssertCoverageStatus(rows, @"src\dxaml\xcp\dxaml\lib\ToolTip_Partial.cpp", "Official WPF Fluent stock exception");
+        AssertCoverageStatus(rows, @"src\dxaml\phone\lib\TimePickerFlyoutPresenter_Partial.cpp", "Documented WPF substitution");
+    }
+
+    [TestMethod]
     public void OfficialWpfFluentStyleCoverageAuditCoversSourceFolderInventory()
     {
         var repoRoot = FindRepoRoot();
@@ -802,6 +877,25 @@ public class TemplateParityTests
     {
         var rowPattern = new Regex(
             @"^\|\s+`(?<source>[^`]+\.xaml)`\s+\|\s+(?<status>[^|]+?)\s+\|\s+(?<evidence>[^|]+)\|",
+            RegexOptions.Compiled);
+
+        return File.ReadAllLines(path)
+            .Select((line, index) => (
+                Match: rowPattern.Match(line),
+                LineNumber: index + 1))
+            .Where(entry => entry.Match.Success)
+            .Select(entry => new CoverageRow(
+                entry.Match.Groups["source"].Value,
+                entry.Match.Groups["status"].Value.Trim(),
+                ExtractArtifactPaths(entry.Match.Groups["evidence"].Value),
+                entry.LineNumber))
+            .ToArray();
+    }
+
+    private static CoverageRow[] ParseThemeShadowSourceCoverageRows(string path)
+    {
+        var rowPattern = new Regex(
+            @"^\|\s+`(?<source>[^`]+)`\s+\|\s+[^|]+\|\s+(?<status>[^|]+?)\s+\|\s+(?<evidence>[^|]+)\|",
             RegexOptions.Compiled);
 
         return File.ReadAllLines(path)

@@ -2,6 +2,8 @@
 
 Source snapshot: `D:\repos\microsoft-ui-xaml`, `reference/winui3-current` / `c70471c511a0168b61dcca13af9556465f26b673`.
 
+Source coverage matrix: `docs\theme-shadow-source-coverage.md`.
+
 WinUI source evidence:
 
 - `src\controls\dev\CommonStyles\Common_themeresources.xaml`: `ThemeShadowIsUsingDropShadows=True`.
@@ -115,3 +117,5 @@ This is still a WPF substitution, not a literal WinUI compositor port. The depth
 ## Verification
 
 Focused tests cover the renderer path, rendered alpha-profile calibration metrics, the removal of `BlurEffect` border shadow internals, computed depth padding, source windowed Popup insets, popup-host template opt-ins, FlyoutPresenter's source child-elevation shadow path, the NumberBox popup's source `NumberBoxPopupShadowDepth=16` path, NavigationView's source `PaneOverlayShadowDepth=16` shadow caster, ContentDialog's source `baseElevation=128` shadow depth, TeachingTip's source `ContentRootGrid` shadow depth, CommandBar's source `SecondaryItemsControlShadowWrapper` overflow target, AutoSuggestBox's source popup-child suggestions shadow target, CommandBarFlyout's source presenter-shadow toggle lifecycle and overflow-root shadow states, and MenuFlyoutPresenter's source-shaped `ThemeShadowChrome` presenter shadow path.
+
+`TemplateParityTests.ThemeShadowSourceCoverageAuditCoversKnownWinUIShadowInputs` keeps the source coverage matrix aligned with the known WinUI shadow inputs, shared renderer recipe sources, official WPF Fluent stock exceptions, and documented WPF substitutions.
