@@ -18,7 +18,7 @@ WinUI source evidence:
 - `src\dxaml\xcp\dxaml\lib\ElevationHelper.cpp`: default elevated flyout/menu surfaces use base `Translation.Z=32`, plus `8` for each nested depth level.
 - `src\controls\dev\CommonStyles\MenuFlyout_themeresources.xaml`: the default `MenuFlyoutPresenter` template uses a presenter border with `BackgroundSizing=InnerBorderEdge`, menu-flyout padding, `FlyoutThemeMinWidth`, `MenuFlyoutThemeMinHeight`, and `OverlayCornerRadius`.
 - `src\dxaml\xcp\core\core\elements\Popup.cpp` and `src\dxaml\xcp\components\graphics\ThemeShadow.cpp`: windowed Popup drop-shadow mode reserves tight source insets, `4,1,4,8` for tooltip popups and `10,2,10,18` for other popups.
-- `src\dxaml\test\native\external\foundation\graphics\rendering\ThemeShadowTests.cpp` and the MockDComp masters: drop-shadow visuals are `TransparentForInput`, so shadow-only pixels do not receive input.
+- `src\dxaml\test\native\external\foundation\graphics\rendering\ThemeShadowTests.cpp` and the MockDComp masters: drop-shadow visuals are `TransparentForInput`, so shadow-only pixels do not receive input, and `ThemeShadowDropShadowOpacity` shows caster opacity propagating to the generated `DropShadowVisual`.
 
 ModernWpf files:
 
@@ -57,6 +57,8 @@ Childless `ThemeShadowChrome` instances remain explicit caster slots. This keeps
 
 The private WPF shadow visual is transparent for input, matching WinUI's `DropShadowVisual TransparentForInput=True` masters. `ThemeShadowChrome` delegates point hit testing only into its decorated child; shadow-only padding regions do not become an input surface.
 
+The private WPF shadow visual also tracks the decorated child opacity. WinUI's drop-shadow path creates a separate `DropShadowVisual`, but the source opacity master shows that visual receiving the caster opacity. WPF would not get this automatically because `ThemeShadowChrome` renders the shadow as a sibling of the decorated child, so the chrome observes the child `Opacity` property and applies it to the shadow host.
+
 WinUI has a second, Popup-owned inset path for windowed popups. The Popup window bounds do not use the full recipe padding; they use manually calibrated tight insets around the visible drop shadow. `ThemeShadowChrome.WindowedPopupInsetMode` ports that distinction for WPF Popup hosts:
 
 - `Default`: use the renderer recipe padding for explicit child shadows such as NumberBox's `PopupContentRoot` at depth `16`.
@@ -91,6 +93,8 @@ Raw WPF `DropShadowEffect` is now guarded as an official WPF Fluent stock-contro
 
 `LayoutCompatibilityApiTests.ThemeShadowChromeShadowVisualIsTransparentForInputLikeWinUISource` hosts an actual chrome and verifies that input hit testing skips top-left and lower shadow extents while still hitting the decorated child. This guards the WPF substitute for source `DropShadowVisual TransparentForInput=True`.
 
+`LayoutCompatibilityApiTests.ThemeShadowChromeTracksCasterOpacityLikeWinUISource` keeps the same source-shaped rendered canvas, changes the decorated caster opacity from `1.0` to `0.5`, and verifies that the rendered shadow peak darkening is halved while the shadow geometry remains stable. This guards the WPF substitute for `ThemeShadowDropShadowOpacity.master.xml`, where the generated `DropShadowVisual` carries the caster opacity.
+
 `LayoutCompatibilityApiTests.ThemeShadowChromeRenderedPixelsTrackWinUIPixelMasters` renders the actual WPF chrome in the same source-shaped `100x100` white canvas used by WinUI's `ThemeShadowDropShadowSystemThemeRedrawRTB` masters. The test verifies the chrome's layout contract first: the WPF shadow host is `82x82` at depth `32`, while the `50x50` caster is arranged at `25,25`, matching the source sample. It then computes rendered darkening bounds, peak, pixel count, and centroid for light and dark themes, catching regressions where WPF layout clipping removes the source left/top shadow extent even if the internal bitmap renderer is still correct.
 
 `LayoutCompatibilityApiTests.ThemeShadowChromeRerendersWhenRequestedThemeChangesLikeWinUISource` keeps the same WPF chrome instance and switches the source canvas from light to dark theme before rendering again. This follows the WinUI `ThemeShadowDropShadowSystemThemeRedrawRTB` path where the same shadowed element is re-rendered after a theme change, and guards `ThemeShadowChrome`'s actual-theme invalidation path.
@@ -117,6 +121,7 @@ The WinUI source tree includes MockDComp visual-tree masters for `ThemeShadowTes
 | --- | --- | --- | --- | --- |
 | `Foundation_Graphics_ThemeShadowTests_ThemeShadowBasicDropShadow.master.xml` | `100x100` caster, `Translation.Z=32` | `132x132` | `-16,-8` | `132x132` bitmap, content offset `16,8` |
 | `Foundation_Graphics_ThemeShadowTests_ThemeShadowDropShadowDynamicCornerRadius.4_CR.master.xml` / `No_CR.master.xml` / `Uneven_CR.master.xml` | same caster with dynamic `RadiusX` / `RadiusY` changes | `132x132` | `-16,-8` | same outer bitmap and offset; WPF uses a direct `CornerRadius` mask instead of WinUI's adjusted `NineGridBrush` insets and independent X/Y radii |
+| `Foundation_Graphics_ThemeShadowTests_ThemeShadowDropShadowOpacity.master.xml` | `100x100` caster with `Opacity=0.5`, `Translation.Z=32` | `132x132`, `Opacity=0.5` | `-16,-8` | same outer bitmap and offset; WPF applies the child opacity to the private shadow host |
 | `Foundation_Graphics_ThemeShadowTests_ThemeShadowDropShadowWindowedPopup.Shadow.master.xml` | `50x50` windowed popup caster, `Translation.Z=32`, `200%` scale | `82x82` | `-16,-8` | `82x82` bitmap, content offset `16,8`; source medium popup insets produce `70x70` DIP popup bounds |
 | `Foundation_Graphics_ThemeShadowTests_ThemeShadowDropShadowWindowedPopup125.Shadow.master.xml` | `50.4x50.4` windowed popup caster, `Translation.Z=32`, `125%` scale | `82.4x82.4` | `-16,-8` | `103x103` bitmap at 125% scale, content offset `20,10`, content size `63x63` pixels |
 
@@ -133,6 +138,6 @@ This is still a WPF substitution, not a literal WinUI compositor port. The depth
 
 ## Verification
 
-Focused tests cover the renderer path, rendered alpha-profile calibration metrics, input-hit-test transparency, actual-theme redraw behavior, dynamic corner-radius redraw behavior, the removal of `BlurEffect` border shadow internals, computed depth padding, childless explicit-size caster behavior, source windowed Popup insets, popup-host template opt-ins, FlyoutPresenter's source child-elevation shadow path, the NumberBox popup's source `NumberBoxPopupShadowDepth=16` path, NavigationView's source `PaneOverlayShadowDepth=16` shadow caster, ContentDialog's source `baseElevation=128` shadow depth, TeachingTip's source `ContentRootGrid` shadow depth, CommandBar's source `SecondaryItemsControlShadowWrapper` overflow target, AutoSuggestBox's source popup-child suggestions shadow target, CommandBarFlyout's source presenter-shadow toggle lifecycle and overflow-root shadow states, and MenuFlyoutPresenter's source-shaped `ThemeShadowChrome` presenter shadow path.
+Focused tests cover the renderer path, rendered alpha-profile calibration metrics, input-hit-test transparency, caster-opacity propagation, actual-theme redraw behavior, dynamic corner-radius redraw behavior, the removal of `BlurEffect` border shadow internals, computed depth padding, childless explicit-size caster behavior, source windowed Popup insets, popup-host template opt-ins, FlyoutPresenter's source child-elevation shadow path, the NumberBox popup's source `NumberBoxPopupShadowDepth=16` path, NavigationView's source `PaneOverlayShadowDepth=16` shadow caster, ContentDialog's source `baseElevation=128` shadow depth, TeachingTip's source `ContentRootGrid` shadow depth, CommandBar's source `SecondaryItemsControlShadowWrapper` overflow target, AutoSuggestBox's source popup-child suggestions shadow target, CommandBarFlyout's source presenter-shadow toggle lifecycle and overflow-root shadow states, and MenuFlyoutPresenter's source-shaped `ThemeShadowChrome` presenter shadow path.
 
 `TemplateParityTests.ThemeShadowSourceCoverageAuditCoversKnownWinUIShadowInputs` keeps the source coverage matrix aligned with the known WinUI shadow inputs, shared renderer recipe sources, official WPF Fluent stock exceptions, and documented WPF substitutions.

@@ -239,6 +239,7 @@ public class TemplateParityTests
             @"src\dxaml\xcp\dxaml\lib\ElevationHelper.cpp",
             @"src\dxaml\xcp\components\graphics\ThemeShadow.cpp",
             @"src\dxaml\xcp\components\graphics\ProjectedShadowManager.cpp",
+            @"src\dxaml\test\native\external\foundation\graphics\rendering\ThemeShadowTests.cpp",
             @"src\controls\dev\NumberBox\NumberBox.cpp",
             @"src\dxaml\xcp\dxaml\lib\CommandBar_Partial.cpp",
             @"src\controls\dev\CommandBarFlyout\CommandBarFlyout.cpp",

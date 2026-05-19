@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
@@ -257,6 +258,13 @@ namespace ModernWpf.Controls.Primitives
             }
         }
 
+        protected override void OnVisualChildrenChanged(DependencyObject visualAdded, DependencyObject visualRemoved)
+        {
+            base.OnVisualChildrenChanged(visualAdded, visualRemoved);
+
+            UpdateShadowOpacitySource();
+        }
+
         protected override void OnInitialized(EventArgs e)
         {
             base.OnInitialized(e);
@@ -413,6 +421,40 @@ namespace ModernWpf.Controls.Primitives
 
             InvalidateMeasure();
             InvalidateArrange();
+        }
+
+        private void UpdateShadowOpacitySource()
+        {
+            var child = Child as UIElement;
+            if (_shadowOpacitySource == child)
+            {
+                UpdateShadowOpacity();
+                return;
+            }
+
+            if (_shadowOpacitySource != null)
+            {
+                OpacityPropertyDescriptor.RemoveValueChanged(_shadowOpacitySource, OnShadowOpacitySourceChanged);
+            }
+
+            _shadowOpacitySource = child;
+
+            if (_shadowOpacitySource != null)
+            {
+                OpacityPropertyDescriptor.AddValueChanged(_shadowOpacitySource, OnShadowOpacitySourceChanged);
+            }
+
+            UpdateShadowOpacity();
+        }
+
+        private void OnShadowOpacitySourceChanged(object sender, EventArgs e)
+        {
+            UpdateShadowOpacity();
+        }
+
+        private void UpdateShadowOpacity()
+        {
+            _background.Opacity = _shadowOpacitySource?.Opacity ?? 1.0;
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
@@ -919,8 +961,11 @@ namespace ModernWpf.Controls.Primitives
         private PopupControl _parentPopupControl;
         private TranslateTransform _transform;
         private PopupPositioner _popupPositioner;
+        private UIElement _shadowOpacitySource;
 
         private static readonly Vector s_noTranslation = new Vector(0, 0);
+        private static readonly DependencyPropertyDescriptor OpacityPropertyDescriptor =
+            DependencyPropertyDescriptor.FromProperty(UIElement.OpacityProperty, typeof(UIElement));
 
         private sealed class ThemeShadowElement : FrameworkElement
         {

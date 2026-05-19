@@ -452,6 +452,45 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
+    public void ThemeShadowChromeTracksCasterOpacityLikeWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            // WinUI source:
+            // Foundation_Graphics_ThemeShadowTests_ThemeShadowDropShadowOpacity.master.xml
+            // sets the caster Opacity to 0.5 and the generated DropShadowVisual
+            // also has Opacity=0.5.
+            var (root, chrome) = CreateThemeShadowSourceCanvas(ElementTheme.Light);
+            var caster = (UIElement)chrome.Child;
+
+            var fullOpacityStats = MeasureRenderedShadowPixels(root, 100, 100);
+            AssertWinUIRenderedPixelMasterComparableShadow(
+                fullOpacityStats,
+                expectedCanvasBounds: new Int32Rect(14, 22, 72, 72),
+                expectedPeakDarkening: 31,
+                expectedShadowPixels: 2330,
+                expectedCanvasCentroidX: 49.402,
+                expectedCanvasCentroidY: 71.869);
+
+            caster.Opacity = 0.5;
+            root.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            var halfOpacityStats = MeasureRenderedShadowPixels(root, 100, 100);
+            AssertNear(fullOpacityStats.PeakDarkening * 0.5, halfOpacityStats.PeakDarkening, 3, $"Caster opacity should scale the shadow peak darkening. Stats={halfOpacityStats}");
+            AssertNear(fullOpacityStats.Bounds.X, halfOpacityStats.Bounds.X, 3, $"Caster opacity should preserve shadow geometry. Stats={halfOpacityStats}");
+            AssertNear(fullOpacityStats.Bounds.Y, halfOpacityStats.Bounds.Y, 3, $"Caster opacity should preserve shadow geometry. Stats={halfOpacityStats}");
+            AssertNear(fullOpacityStats.Bounds.Width, halfOpacityStats.Bounds.Width, 6, $"Caster opacity should preserve shadow geometry. Stats={halfOpacityStats}");
+            AssertNear(fullOpacityStats.Bounds.Height, halfOpacityStats.Bounds.Height, 6, $"Caster opacity should preserve shadow geometry. Stats={halfOpacityStats}");
+            Assert.IsTrue(
+                halfOpacityStats.ShadowPixelCount > fullOpacityStats.ShadowPixelCount * 0.75,
+                $"Caster opacity should dim the shadow without removing most of its mask. Full={fullOpacityStats}; Half={halfOpacityStats}");
+        });
+    }
+
+    [TestMethod]
     public void ThemeShadowChromeRenderedPixelsTrackWinUIPixelMasters()
     {
         WpfTestHost.Run(() =>
