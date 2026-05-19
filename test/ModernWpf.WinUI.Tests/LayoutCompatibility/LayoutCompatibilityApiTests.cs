@@ -322,15 +322,14 @@ public class LayoutCompatibilityApiTests
         {
             var chrome = new ThemeShadowChrome
             {
-                Width = 50,
-                Height = 50,
                 Depth = 32,
                 CornerRadius = new CornerRadius(4),
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Top,
-                Margin = new Thickness(16, 8, 0, 0),
                 Child = new Border
                 {
+                    Width = 50,
+                    Height = 50,
                     Background = Brushes.Transparent
                 }
             };
@@ -349,6 +348,36 @@ public class LayoutCompatibilityApiTests
             Assert.IsTrue(center.R >= 250 && center.G >= 250 && center.B >= 250 && center.A == 255, $"Expected hollow shadow center to leave the transparent child area white. Pixel={center}");
             Assert.IsTrue(lowerShadow.R < center.R - 4 && lowerShadow.A == 255, $"Expected rendered shadow below the caster. Pixel={lowerShadow}");
             Assert.IsTrue(rightShadow.R < center.R && rightShadow.A == 255, $"Expected rendered shadow beside the caster. Pixel={rightShadow}");
+        });
+    }
+
+    [TestMethod]
+    public void ThemeShadowChromeRenderedPixelsTrackWinUIPixelMasters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var light = RenderThemeShadowSourceCanvas(ElementTheme.Light);
+            AssertWinUIRenderedPixelMasterComparableShadow(
+                light,
+                expectedCanvasBounds: new Int32Rect(14, 22, 72, 72),
+                expectedPeakDarkening: 31,
+                expectedShadowPixels: 2330,
+                expectedCanvasCentroidX: 49.402,
+                expectedCanvasCentroidY: 71.869);
+
+            var dark = RenderThemeShadowSourceCanvas(ElementTheme.Dark);
+            AssertWinUIRenderedPixelMasterComparableShadow(
+                dark,
+                expectedCanvasBounds: new Int32Rect(14, 21, 72, 74),
+                expectedPeakDarkening: 58,
+                expectedShadowPixels: 2542,
+                expectedCanvasCentroidX: 49.356,
+                expectedCanvasCentroidY: 71.786);
+
+            Assert.IsTrue(dark.PeakDarkening > light.PeakDarkening);
+            Assert.IsTrue(dark.ShadowPixelCount > light.ShadowPixelCount);
         });
     }
 
@@ -3635,6 +3664,24 @@ public class LayoutCompatibilityApiTests
         Assert.AreEqual(expectedCanvasCentroidY, metrics.AlphaCentroidY + canvasOffsetY, 1.0);
     }
 
+    private static void AssertWinUIRenderedPixelMasterComparableShadow(
+        RenderedShadowPixelStats stats,
+        Int32Rect expectedCanvasBounds,
+        int expectedPeakDarkening,
+        int expectedShadowPixels,
+        double expectedCanvasCentroidX,
+        double expectedCanvasCentroidY)
+    {
+        AssertNear(expectedCanvasBounds.X, stats.Bounds.X, 2, $"WinUI rendered pixel-master shadow bounds X. Stats={stats}");
+        AssertNear(expectedCanvasBounds.Y, stats.Bounds.Y, 2, $"WinUI rendered pixel-master shadow bounds Y. Stats={stats}");
+        AssertNear(expectedCanvasBounds.Width, stats.Bounds.Width, 4, $"WinUI rendered pixel-master shadow bounds width. Stats={stats}");
+        AssertNear(expectedCanvasBounds.Height, stats.Bounds.Height, 4, $"WinUI rendered pixel-master shadow bounds height. Stats={stats}");
+        AssertNear(expectedPeakDarkening, stats.PeakDarkening, 4, $"WinUI rendered pixel-master peak darkening. Stats={stats}");
+        AssertNear(expectedShadowPixels, stats.ShadowPixelCount, expectedShadowPixels * 0.2, $"WinUI rendered pixel-master shadow pixel count. Stats={stats}");
+        Assert.AreEqual(expectedCanvasCentroidX, stats.CentroidX, 1.0);
+        Assert.AreEqual(expectedCanvasCentroidY, stats.CentroidY, 1.0);
+    }
+
     private static void AssertNear(double expected, double actual, double tolerance, string message)
     {
         Assert.IsTrue(Math.Abs(expected - actual) <= tolerance, $"{message}: expected {expected}, actual {actual}, tolerance {tolerance}.");
@@ -4076,6 +4123,42 @@ public class LayoutCompatibilityApiTests
         Assert.IsTrue(clippedCorner.A < 30, $"Expected rounded corner clip to refresh after CornerRadius change. Pixel={clippedCorner}");
     }
 
+    private static RenderedShadowPixelStats RenderThemeShadowSourceCanvas(ElementTheme theme)
+    {
+        var chrome = new ThemeShadowChrome
+        {
+            Depth = 32,
+            CornerRadius = new CornerRadius(4),
+            HorizontalAlignment = HorizontalAlignment.Left,
+            VerticalAlignment = VerticalAlignment.Top,
+            Margin = new Thickness(9, 17, 0, 0),
+            Child = new Border
+            {
+                Width = 50,
+                Height = 50,
+                Background = Brushes.Transparent
+            }
+        };
+        var root = new Grid
+        {
+            Width = 100,
+            Height = 100,
+            Background = Brushes.White
+        };
+        ThemeManager.SetRequestedTheme(root, theme);
+        root.Children.Add(chrome);
+
+        root.Measure(new Size(100, 100));
+        root.Arrange(new Rect(0, 0, 100, 100));
+        root.UpdateLayout();
+
+        Assert.AreEqual(82, chrome.ActualWidth, 0.1);
+        Assert.AreEqual(82, chrome.ActualHeight, 0.1);
+        Assert.AreEqual(new Point(25, 25), ((FrameworkElement)chrome.Child).TranslatePoint(new Point(), root));
+
+        return MeasureRenderedShadowPixels(root, 100, 100);
+    }
+
     private static Color RenderElementPixel(FrameworkElement element, int x, int y, int width, int height)
     {
         element.Measure(new Size(width, height));
@@ -4093,6 +4176,89 @@ public class LayoutCompatibilityApiTests
         var pixels = new byte[4];
         bitmap.CopyPixels(new Int32Rect(x, y, 1, 1), pixels, 4, 0);
         return Color.FromArgb(pixels[3], pixels[2], pixels[1], pixels[0]);
+    }
+
+    private static RenderedShadowPixelStats MeasureRenderedShadowPixels(FrameworkElement element, int width, int height)
+    {
+        var bitmap = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
+        bitmap.Render(element);
+
+        var pixels = new byte[width * height * 4];
+        bitmap.CopyPixels(pixels, width * 4, 0);
+
+        int minX = width;
+        int minY = height;
+        int maxX = -1;
+        int maxY = -1;
+        int peakDarkening = 0;
+        int shadowPixelCount = 0;
+        long darkeningSum = 0;
+        long weightedX = 0;
+        long weightedY = 0;
+
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                int offset = ((y * width) + x) * 4;
+                int alpha = pixels[offset + 3];
+                int blue = Math.Min(255, pixels[offset] + 255 - alpha);
+                int green = Math.Min(255, pixels[offset + 1] + 255 - alpha);
+                int red = Math.Min(255, pixels[offset + 2] + 255 - alpha);
+                int darkestChannel = Math.Min(red, Math.Min(green, blue));
+                int darkening = 255 - darkestChannel;
+
+                if (darkening <= 0)
+                {
+                    continue;
+                }
+
+                minX = Math.Min(minX, x);
+                minY = Math.Min(minY, y);
+                maxX = Math.Max(maxX, x);
+                maxY = Math.Max(maxY, y);
+                peakDarkening = Math.Max(peakDarkening, darkening);
+                shadowPixelCount++;
+                darkeningSum += darkening;
+                weightedX += (long)x * darkening;
+                weightedY += (long)y * darkening;
+            }
+        }
+
+        var bounds = shadowPixelCount == 0
+            ? new Int32Rect()
+            : new Int32Rect(minX, minY, maxX - minX + 1, maxY - minY + 1);
+        double centroidX = darkeningSum == 0 ? double.NaN : (double)weightedX / darkeningSum;
+        double centroidY = darkeningSum == 0 ? double.NaN : (double)weightedY / darkeningSum;
+
+        return new RenderedShadowPixelStats(bounds, peakDarkening, shadowPixelCount, centroidX, centroidY);
+    }
+
+    private readonly struct RenderedShadowPixelStats
+    {
+        public RenderedShadowPixelStats(Int32Rect bounds, int peakDarkening, int shadowPixelCount, double centroidX, double centroidY)
+        {
+            Bounds = bounds;
+            PeakDarkening = peakDarkening;
+            ShadowPixelCount = shadowPixelCount;
+            CentroidX = centroidX;
+            CentroidY = centroidY;
+        }
+
+        public Int32Rect Bounds { get; }
+
+        public int PeakDarkening { get; }
+
+        public int ShadowPixelCount { get; }
+
+        public double CentroidX { get; }
+
+        public double CentroidY { get; }
+
+        public override string ToString()
+        {
+            return $"Bounds={Bounds}, PeakDarkening={PeakDarkening}, ShadowPixelCount={ShadowPixelCount}, Centroid=({CentroidX:0.###},{CentroidY:0.###})";
+        }
     }
 
     private sealed class TestBorderEx : BorderEx

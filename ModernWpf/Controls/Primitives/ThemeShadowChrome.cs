@@ -278,22 +278,64 @@ namespace ModernWpf.Controls.Primitives
 
         protected override Size MeasureOverride(Size constraint)
         {
-            if (IsShadowEnabled)
+            if (!IsShadowEnabled)
             {
-                _background.Measure(constraint);
+                return base.MeasureOverride(constraint);
             }
 
-            return base.MeasureOverride(constraint);
+            var padding = LayoutShadowPadding;
+            var child = Child;
+            if (child != null)
+            {
+                child.Measure(new Size(
+                    SubtractConstraintPadding(constraint.Width, padding.Left + padding.Right),
+                    SubtractConstraintPadding(constraint.Height, padding.Top + padding.Bottom)));
+            }
+
+            var childSize = child?.DesiredSize ?? new Size();
+            var desiredSize = new Size(
+                childSize.Width + padding.Left + padding.Right,
+                childSize.Height + padding.Top + padding.Bottom);
+
+            if (_shadow != null)
+            {
+                _shadow.LayoutSize = desiredSize;
+            }
+            _background.Measure(desiredSize);
+
+            return desiredSize;
         }
 
         protected override Size ArrangeOverride(Size arrangeSize)
         {
-            if (IsShadowEnabled)
+            if (!IsShadowEnabled)
             {
+                return base.ArrangeOverride(arrangeSize);
+            }
+
+            var padding = LayoutShadowPadding;
+            var contentSize = new Size(
+                Math.Max(0, arrangeSize.Width - padding.Left - padding.Right),
+                Math.Max(0, arrangeSize.Height - padding.Top - padding.Bottom));
+
+            if (_shadow != null)
+            {
+                _shadow.ContentSize = contentSize;
+                _shadow.LayoutSize = arrangeSize;
                 _background.Arrange(new Rect(arrangeSize));
             }
 
-            return base.ArrangeOverride(arrangeSize);
+            if (Child != null)
+            {
+                Child.Arrange(new Rect(padding.Left, padding.Top, contentSize.Width, contentSize.Height));
+            }
+
+            return arrangeSize;
+        }
+
+        protected override Geometry GetLayoutClip(Size layoutSlotSize)
+        {
+            return IsShadowEnabled ? null : base.GetLayoutClip(layoutSlotSize);
         }
 
 #if NET462_OR_NEWER
@@ -343,7 +385,9 @@ namespace ModernWpf.Controls.Primitives
                 _shadow = new ThemeShadowElement
                 {
                     Depth = Depth,
-                    CornerRadius = CornerRadius
+                    CornerRadius = CornerRadius,
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    VerticalAlignment = VerticalAlignment.Top
                 };
             }
         }
@@ -354,6 +398,9 @@ namespace ModernWpf.Controls.Primitives
             {
                 _shadow.Depth = Depth;
             }
+
+            InvalidateMeasure();
+            InvalidateArrange();
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
@@ -374,6 +421,13 @@ namespace ModernWpf.Controls.Primitives
         private void OnActualThemeChanged(object sender, RoutedEventArgs e)
         {
             _shadow?.InvalidateVisual();
+        }
+
+        private Thickness LayoutShadowPadding => PopupShadowPadding;
+
+        private static double SubtractConstraintPadding(double value, double padding)
+        {
+            return double.IsInfinity(value) ? value : Math.Max(0, value - padding);
         }
 
         private void AdjustMargin()
@@ -905,6 +959,32 @@ namespace ModernWpf.Controls.Primitives
                 }
             }
 
+            public Size ContentSize
+            {
+                get => _contentSize;
+                set
+                {
+                    if (_contentSize != value)
+                    {
+                        _contentSize = value;
+                        InvalidateVisual();
+                    }
+                }
+            }
+
+            public Size LayoutSize
+            {
+                get => _layoutSize;
+                set
+                {
+                    if (_layoutSize != value)
+                    {
+                        _layoutSize = value;
+                        InvalidateMeasure();
+                    }
+                }
+            }
+
 #if NET462_OR_NEWER
             protected override void OnDpiChanged(DpiScale oldDpi, DpiScale newDpi)
             {
@@ -914,25 +994,33 @@ namespace ModernWpf.Controls.Primitives
             }
 #endif
 
+            protected override Size MeasureOverride(Size availableSize)
+            {
+                return LayoutSize;
+            }
+
             protected override void OnRender(DrawingContext drawingContext)
             {
                 base.OnRender(drawingContext);
 
-                var renderSize = RenderSize;
-                if (renderSize.Width > 0 && renderSize.Height > 0)
+                var contentSize = ContentSize;
+                if (contentSize.Width > 0 && contentSize.Height > 0)
                 {
                     ThemeShadowRenderer.DrawShadow(
                         drawingContext,
-                        renderSize,
+                        contentSize,
                         CornerRadius,
                         Depth,
                         ThemeManager.GetActualTheme(this),
-                        VisualTreeHelper.GetDpi(this));
+                        VisualTreeHelper.GetDpi(this),
+                        alignToContentOrigin: false);
                 }
             }
 
             private double _depth;
             private CornerRadius _cornerRadius;
+            private Size _contentSize;
+            private Size _layoutSize;
         }
 
         internal static class ThemeShadowRenderer
@@ -1011,7 +1099,8 @@ namespace ModernWpf.Controls.Primitives
                 CornerRadius cornerRadius,
                 double depth,
                 ElementTheme theme,
-                DpiScale dpi)
+                DpiScale dpi,
+                bool alignToContentOrigin = true)
             {
                 if (depth <= 0 || double.IsNaN(depth) || double.IsInfinity(depth) ||
                     contentSize.Width <= 0 || contentSize.Height <= 0)
@@ -1026,7 +1115,11 @@ namespace ModernWpf.Controls.Primitives
 
                 drawingContext.DrawImage(
                     image,
-                    new Rect(-padding.Left, -padding.Top, imageWidth, imageHeight));
+                    new Rect(
+                        alignToContentOrigin ? -padding.Left : 0,
+                        alignToContentOrigin ? -padding.Top : 0,
+                        imageWidth,
+                        imageHeight));
             }
 
             private static BitmapSource GetShadowImage(Size contentSize, CornerRadius cornerRadius, double depth, ElementTheme theme, Thickness padding, DpiScale dpi)

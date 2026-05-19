@@ -50,7 +50,7 @@ The renderer ports the WinUI `GetDropShadowRecipe` formulas into WPF:
 - Directional blur is `Elevation`; directional Y offset is `Elevation * 0.5`.
 - Ambient blur is `2` at low elevations and `Elevation / 3` at high elevations.
 
-The computed padding follows the source recipe insets so popup hosts reserve source-shaped shadow space. For the source NumberBox depth `16`, the current profile reserves `8,4,8,12`. For depth `32`, it reserves `16,8,16,24`. For depth `64`, it reserves `32,16,32,48`.
+The computed padding follows the source recipe insets so `ThemeShadowChrome` reserves source-shaped shadow space in its own WPF layout slot. The child is arranged at the source content offset and the private shadow visual renders from the outer shadow origin; this avoids relying on WPF overflow rendering for the negative left/top shadow extent, which clips differently from WinUI compositor visuals. For the source NumberBox depth `16`, the current profile reserves `8,4,8,12`. For depth `32`, it reserves `16,8,16,24`. For depth `64`, it reserves `32,16,32,48`.
 
 WinUI has a second, Popup-owned inset path for windowed popups. The Popup window bounds do not use the full recipe padding; they use manually calibrated tight insets around the visible drop shadow. `ThemeShadowChrome.WindowedPopupInsetMode` ports that distinction for WPF Popup hosts:
 
@@ -58,7 +58,7 @@ WinUI has a second, Popup-owned inset path for windowed popups. The Popup window
 - `Small`: use WinUI tooltip popup insets, `4,1,4,8`.
 - `Medium`: use WinUI non-tooltip popup insets, `10,2,10,18`.
 
-`FlyoutPresenter`, `MenuFlyoutPresenter`, `AutoSuggestBox` suggestions, and `CommandBar` overflow now opt into `Medium` so the WPF popup margin tracks WinUI's windowed Popup gutter instead of the full renderer blur padding. `ContentDialog` remains on default padding because it is not a WPF Popup host in ModernWpf.
+`FlyoutPresenter`, `MenuFlyoutPresenter`, `AutoSuggestBox` suggestions, and `CommandBar` overflow now opt into `Medium` so the WPF chrome layout and popup-placement adjustment track WinUI's windowed Popup gutter instead of the full renderer blur padding. `ContentDialog` remains on default padding because it is not a WPF Popup host in ModernWpf.
 
 `FlyoutPresenter` maps WinUI's `FlyoutPresenter::OnApplyTemplate` elevation path by making the WPF template root a `ThemeShadowChrome`. `IsDefaultShadowEnabled` toggles the shared renderer, depth defaults to `32`, the popup inset mode is `Medium`, and the shadow corner radius follows the presenter surface.
 
@@ -83,6 +83,8 @@ Raw WPF `DropShadowEffect` is now guarded as an official WPF Fluent stock-contro
 `ThemeShadowChrome.ThemeShadowRenderer.GetRenderMetrics` exposes an internal bitmap-profile probe for the WPF software renderer. It renders the same alpha-mask path used by `DrawShadow` and reports bitmap size, content offset, non-zero alpha bounds, non-zero pixel count, peak alpha, and alpha centroid. The test suite pins depth `16` and `64` profiles so future renderer changes can be compared against stable WPF output before they are compared against a WinUI reference capture.
 
 `LayoutCompatibilityApiTests.ThemeShadowChromeRendersHollowCenteredVisualShadow` also renders an actual `ThemeShadowChrome` instance through WPF `RenderTargetBitmap` and samples the center and outer shadow pixels. This guards the visual-tree integration path used by templates: the transparent caster center must remain white after the hollow-center mask, while the surrounding pixels must still show the rendered shadow.
+
+`LayoutCompatibilityApiTests.ThemeShadowChromeRenderedPixelsTrackWinUIPixelMasters` renders the actual WPF chrome in the same source-shaped `100x100` white canvas used by WinUI's `ThemeShadowDropShadowSystemThemeRedrawRTB` masters. The test verifies the chrome's layout contract first: the WPF shadow host is `82x82` at depth `32`, while the `50x50` caster is arranged at `25,25`, matching the source sample. It then computes rendered darkening bounds, peak, pixel count, and centroid for light and dark themes, catching regressions where WPF layout clipping removes the source left/top shadow extent even if the internal bitmap renderer is still correct.
 
 The current WPF baseline for an `80x40` DIP content rect with `CornerRadius=8` at `96` DPI is:
 
