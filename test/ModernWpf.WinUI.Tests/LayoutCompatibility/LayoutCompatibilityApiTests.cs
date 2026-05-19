@@ -853,30 +853,69 @@ public class LayoutCompatibilityApiTests
                 popup.Child = null;
                 try
                 {
-                    // SystemParameters.DropShadowKey can be disabled on CI; force the real
-                    // template chrome on so this render guard covers ThemeShadow pixels.
-                    numberBoxChrome.IsShadowEnabled = true;
-                    numberBoxChrome.HorizontalAlignment = HorizontalAlignment.Left;
-                    numberBoxChrome.VerticalAlignment = VerticalAlignment.Top;
-                    numberBoxChrome.Margin = new Thickness(24);
-
-                    var numberBoxRoot = CreateWhiteCanvas(140, 140);
-                    numberBoxRoot.Children.Add(numberBoxChrome);
-                    try
-                    {
-                        ArrangeElement(numberBoxRoot, 140, 140);
-
-                        AssertRenderedTemplateShadow(numberBoxRoot, numberBoxChrome, 140, 140, minPeakDarkening: 10, minShadowPixels: 300, "NumberBox compact popup");
-                    }
-                    finally
-                    {
-                        numberBoxRoot.Children.Remove(numberBoxChrome);
-                    }
+                    AssertDetachedTemplateShadow(numberBoxChrome, 140, 140, new Thickness(24), minPeakDarkening: 10, minShadowPixels: 300, "NumberBox compact popup");
                 }
                 finally
                 {
                     popup.Child = numberBoxChrome;
                 }
+            }
+
+            var autoSuggestBox = new ModernWpf.Controls.AutoSuggestBox
+            {
+                ItemsSource = new[] { "One", "Two", "Three" },
+                Width = 180,
+                IsSuggestionListOpen = true
+            };
+            using (var host = new TestWindowHost(autoSuggestBox, width: 260, height: 180))
+            {
+                host.UpdateLayout();
+                WpfTestHost.DoEvents();
+
+                var popup = FindTemplateChild<Popup>(autoSuggestBox, "SuggestionsPopup");
+                var autoSuggestChrome = popup.Child as ThemeShadowChrome
+                    ?? throw new AssertFailedException("Expected AutoSuggestBox suggestions popup child to be ThemeShadowChrome.");
+                AssertMediumWindowedPopupInsets(autoSuggestChrome);
+
+                popup.Child = null;
+                try
+                {
+                    AssertDetachedTemplateShadow(autoSuggestChrome, 280, 220, new Thickness(24), minPeakDarkening: 20, minShadowPixels: 1800, "AutoSuggestBox suggestions popup");
+                }
+                finally
+                {
+                    popup.Child = autoSuggestChrome;
+                }
+            }
+
+            var commandBar = new CommandBar
+            {
+                IsDynamicOverflowEnabled = false,
+                Width = 220
+            };
+            commandBar.SecondaryCommands.Add(new AppBarButton { Label = "Share" });
+            using (var host = new TestWindowHost(commandBar, width: 320, height: 160))
+            {
+                host.UpdateLayout();
+
+                var commandBarChrome = FindTemplateChild<ThemeShadowChrome>(commandBar, "SecondaryItemsControlShadowWrapper");
+                AssertMediumWindowedPopupInsets(commandBarChrome);
+                AssertDetachedTemplateShadow(commandBarChrome, 320, 180, new Thickness(24), minPeakDarkening: 20, minShadowPixels: 1000, "CommandBar overflow popup");
+            }
+
+            var teachingTip = new ModernWpf.Controls.TeachingTip
+            {
+                Content = "Tip content",
+                Title = "Tip title",
+                CornerRadius = new CornerRadius(4)
+            };
+            using (var host = new TestWindowHost(teachingTip, width: 360, height: 240))
+            {
+                host.UpdateLayout();
+
+                var teachingTipChrome = FindTemplateChild<ThemeShadowChrome>(teachingTip, "ContentRootGridShadowChrome");
+                AssertMediumWindowedPopupInsets(teachingTipChrome);
+                AssertDetachedTemplateShadow(teachingTipChrome, 320, 220, new Thickness(32), minPeakDarkening: 20, minShadowPixels: 2500, "TeachingTip content root");
             }
         });
     }
@@ -4830,6 +4869,67 @@ public class LayoutCompatibilityApiTests
         {
             caster.Visibility = previousVisibility;
             root.UpdateLayout();
+        }
+    }
+
+    private static void AssertDetachedTemplateShadow(
+        ThemeShadowChrome chrome,
+        int canvasWidth,
+        int canvasHeight,
+        Thickness margin,
+        int minPeakDarkening,
+        int minShadowPixels,
+        string templateName)
+    {
+        var parent = VisualTreeHelper.GetParent(chrome) as Panel;
+        var parentIndex = parent?.Children.IndexOf(chrome) ?? -1;
+        var previousIsShadowEnabled = chrome.IsShadowEnabled;
+        var previousHorizontalAlignment = chrome.HorizontalAlignment;
+        var previousVerticalAlignment = chrome.VerticalAlignment;
+        var previousMargin = chrome.Margin;
+        var previousOpacity = chrome.Opacity;
+        var previousRenderTransform = chrome.RenderTransform;
+
+        if (parent != null)
+        {
+            parent.Children.RemoveAt(parentIndex);
+        }
+
+        try
+        {
+            chrome.IsShadowEnabled = true;
+            chrome.HorizontalAlignment = HorizontalAlignment.Left;
+            chrome.VerticalAlignment = VerticalAlignment.Top;
+            chrome.Margin = margin;
+            chrome.Opacity = 1.0;
+            chrome.RenderTransform = null;
+
+            var root = CreateWhiteCanvas(canvasWidth, canvasHeight);
+            ThemeManager.SetRequestedTheme(root, ElementTheme.Light);
+            root.Children.Add(chrome);
+            try
+            {
+                ArrangeElement(root, canvasWidth, canvasHeight);
+                AssertRenderedTemplateShadow(root, chrome, canvasWidth, canvasHeight, minPeakDarkening, minShadowPixels, templateName);
+            }
+            finally
+            {
+                root.Children.Remove(chrome);
+            }
+        }
+        finally
+        {
+            chrome.IsShadowEnabled = previousIsShadowEnabled;
+            chrome.HorizontalAlignment = previousHorizontalAlignment;
+            chrome.VerticalAlignment = previousVerticalAlignment;
+            chrome.Margin = previousMargin;
+            chrome.Opacity = previousOpacity;
+            chrome.RenderTransform = previousRenderTransform;
+
+            if (parent != null)
+            {
+                parent.Children.Insert(parentIndex, chrome);
+            }
         }
     }
 
