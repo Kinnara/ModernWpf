@@ -229,6 +229,56 @@ public class TemplateParityTests
     }
 
     [TestMethod]
+    public void ProductTemplatesUseOnlyKnownThemeShadowChromeHosts()
+    {
+        var repoRoot = FindRepoRoot();
+        var productTemplateRoots = new[]
+        {
+            Path.Combine(repoRoot, "ModernWpf"),
+            Path.Combine(repoRoot, "ModernWpf.Controls")
+        };
+        var expectedHosts = new[]
+        {
+            Path.Combine("ModernWpf.Controls", "AutoSuggestBox", "AutoSuggestBox.xaml"),
+            Path.Combine("ModernWpf.Controls", "CommandBar", "CommandBar.xaml"),
+            Path.Combine("ModernWpf.Controls", "CommandBarFlyout", "CommandBarFlyout.xaml"),
+            Path.Combine("ModernWpf.Controls", "ContentDialog", "ContentDialog.xaml"),
+            Path.Combine("ModernWpf.Controls", "Flyout", "FlyoutPresenter.xaml"),
+            Path.Combine("ModernWpf.Controls", "MenuFlyout", "MenuFlyout.xaml"),
+            Path.Combine("ModernWpf.Controls", "NavigationView", "NavigationView.xaml"),
+            Path.Combine("ModernWpf.Controls", "NumberBox", "NumberBox.xaml"),
+            Path.Combine("ModernWpf.Controls", "TeachingTip", "TeachingTip.xaml")
+        };
+
+        var actualHostEntries = productTemplateRoots
+            .Where(Directory.Exists)
+            .SelectMany(root => Directory.EnumerateFiles(root, "*.xaml", SearchOption.AllDirectories))
+            .SelectMany(path => FindThemeShadowChromeElementUses(repoRoot, path))
+            .ToArray();
+        var actualHostPaths = actualHostEntries
+            .Select(GetEntryPath)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+
+        var missing = expectedHosts
+            .Except(actualHostPaths, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+        var extra = actualHostPaths
+            .Except(expectedHosts, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+        var duplicateHosts = actualHostEntries
+            .GroupBy(GetEntryPath, StringComparer.OrdinalIgnoreCase)
+            .Where(group => group.Count() > 1)
+            .Select(group => $"{group.Key} ({group.Count()} hosts: {string.Join(", ", group)})")
+            .ToArray();
+
+        Assert.AreEqual(expectedHosts.Length, actualHostEntries.Length, "Unexpected ThemeShadowChrome host count.");
+        Assert.IsFalse(missing.Any(), "Missing source-backed ThemeShadowChrome hosts: " + string.Join("; ", missing));
+        Assert.IsFalse(extra.Any(), "New ThemeShadowChrome hosts need source evidence, rendered-pixel coverage, and docs: " + string.Join("; ", extra));
+        Assert.IsFalse(duplicateHosts.Any(), "Unexpected duplicate ThemeShadowChrome host rows: " + string.Join("; ", duplicateHosts));
+    }
+
+    [TestMethod]
     public void ThemeShadowSourceCoverageAuditCoversKnownWinUIShadowInputs()
     {
         var repoRoot = FindRepoRoot();
@@ -940,6 +990,24 @@ public class TemplateParityTests
             .Where(entry => Regex.IsMatch(entry.Line, @"<\s*ContentPresenter(?=[\s>/])"))
             .Select(entry => $"{relativePath}:{entry.LineNumber}")
             .ToArray();
+    }
+
+    private static string[] FindThemeShadowChromeElementUses(string repoRoot, string path)
+    {
+        var relativePath = Path.GetRelativePath(repoRoot, path);
+        var lines = File.ReadAllLines(path);
+
+        return lines
+            .Select((line, index) => (Line: line, LineNumber: index + 1))
+            .Where(entry => Regex.IsMatch(entry.Line, @"<\s*ui:ThemeShadowChrome(?=$|[\s>/])"))
+            .Select(entry => $"{relativePath}:{entry.LineNumber}")
+            .ToArray();
+    }
+
+    private static string GetEntryPath(string entry)
+    {
+        var separatorIndex = entry.LastIndexOf(':');
+        return separatorIndex < 0 ? entry : entry.Substring(0, separatorIndex);
     }
 
     private static string[] FindTextElementForegroundUses(string repoRoot, string path)

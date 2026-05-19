@@ -903,6 +903,58 @@ public class LayoutCompatibilityApiTests
                 AssertDetachedTemplateShadow(commandBarChrome, 320, 180, new Thickness(24), minPeakDarkening: 20, minShadowPixels: 1000, "CommandBar overflow popup");
             }
 
+            var commandBarFlyoutCommandBar = new CommandBarFlyoutCommandBar
+            {
+                IsOpen = true,
+                Width = 220,
+                Height = 48,
+                CornerRadius = new CornerRadius(4)
+            };
+            commandBarFlyoutCommandBar.SecondaryCommands.Add(new AppBarButton { Label = "Select all" });
+            using (var host = new TestWindowHost(commandBarFlyoutCommandBar, width: 320, height: 180))
+            {
+                host.UpdateLayout();
+
+                var commandBarFlyoutChrome = FindTemplateChild<ThemeShadowChrome>(commandBarFlyoutCommandBar, "OuterOverflowContentRootShadowChrome");
+                AssertMediumWindowedPopupInsets(commandBarFlyoutChrome);
+
+                var overflowPopup = FindTemplateChild<Popup>(commandBarFlyoutCommandBar, "OverflowPopup");
+                overflowPopup.Child = null;
+                try
+                {
+                    AssertDetachedTemplateShadow(commandBarFlyoutChrome, 320, 180, new Thickness(24), minPeakDarkening: 20, minShadowPixels: 1000, "CommandBarFlyout overflow root");
+                }
+                finally
+                {
+                    overflowPopup.Child = commandBarFlyoutChrome;
+                }
+            }
+
+            var menuFlyoutPresenter = new MenuFlyoutPresenter
+            {
+                Width = 160,
+                Height = 96,
+                MinWidth = 0,
+                MinHeight = 0,
+                Padding = new Thickness(),
+                IsDefaultShadowEnabled = true,
+                CornerRadius = new CornerRadius(4)
+            };
+            menuFlyoutPresenter.Items.Add(new MenuItem { Header = "Copy" });
+            ArrangeElement(menuFlyoutPresenter, 200, 140);
+
+            var menuFlyoutChrome = FindVisualChild<ThemeShadowChrome>(menuFlyoutPresenter)
+                ?? throw new AssertFailedException("Expected MenuFlyoutPresenter to render through ThemeShadowChrome.");
+            AssertMediumWindowedPopupInsets(menuFlyoutChrome);
+            AssertRenderedTemplateShadowVisible(
+                menuFlyoutPresenter,
+                menuFlyoutChrome,
+                200,
+                140,
+                minPeakDarkening: 20,
+                minShadowPixels: 1000,
+                "MenuFlyoutPresenter");
+
             var teachingTip = new ModernWpf.Controls.TeachingTip
             {
                 Content = "Tip content",
@@ -4872,6 +4924,39 @@ public class LayoutCompatibilityApiTests
         }
     }
 
+    private static void AssertRenderedTemplateShadowVisible(
+        FrameworkElement root,
+        ThemeShadowChrome chrome,
+        int width,
+        int height,
+        int minPeakDarkening,
+        int minShadowPixels,
+        string templateName)
+    {
+        if (chrome.Child is not FrameworkElement caster)
+        {
+            throw new AssertFailedException($"{templateName} shadow chrome should have a framework-element caster child.");
+        }
+
+        var casterBounds = GetElementBounds(caster, root);
+        var previousVisibility = caster.Visibility;
+
+        try
+        {
+            caster.Visibility = Visibility.Hidden;
+            root.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            var stats = MeasureRenderedShadowPixels(root, width, height);
+            AssertRenderedShadowVisible(stats, casterBounds, minPeakDarkening, minShadowPixels, templateName);
+        }
+        finally
+        {
+            caster.Visibility = previousVisibility;
+            root.UpdateLayout();
+        }
+    }
+
     private static void AssertDetachedTemplateShadow(
         ThemeShadowChrome chrome,
         int canvasWidth,
@@ -5029,6 +5114,34 @@ public class LayoutCompatibilityApiTests
         Assert.IsTrue(
             stats.Bounds.Y <= casterBounds.Top + 4,
             $"{templateName} shadow should reach the upper caster edge within the clipped windowed-popup inset. Stats={stats}; Caster={casterBounds}");
+        Assert.IsTrue(
+            boundsRight > casterBounds.Right,
+            $"{templateName} shadow should extend right of the caster. Stats={stats}; Caster={casterBounds}");
+        Assert.IsTrue(
+            boundsBottom > casterBounds.Bottom,
+            $"{templateName} shadow should extend below the caster. Stats={stats}; Caster={casterBounds}");
+        Assert.IsTrue(
+            stats.CentroidY > casterCenterY,
+            $"{templateName} shadow centroid should sit below the caster center like WinUI ThemeShadow. Stats={stats}; Caster={casterBounds}");
+    }
+
+    private static void AssertRenderedShadowVisible(
+        RenderedShadowPixelStats stats,
+        Rect casterBounds,
+        int minPeakDarkening,
+        int minShadowPixels,
+        string templateName)
+    {
+        var boundsRight = stats.Bounds.X + stats.Bounds.Width;
+        var boundsBottom = stats.Bounds.Y + stats.Bounds.Height;
+        var casterCenterY = casterBounds.Top + (casterBounds.Height / 2);
+
+        Assert.IsTrue(
+            stats.PeakDarkening >= minPeakDarkening,
+            $"{templateName} should render a visible ThemeShadow. Stats={stats}; Caster={casterBounds}");
+        Assert.IsTrue(
+            stats.ShadowPixelCount >= minShadowPixels,
+            $"{templateName} should render enough shadow pixels to cover the source-backed template caster. Stats={stats}; Caster={casterBounds}");
         Assert.IsTrue(
             boundsRight > casterBounds.Right,
             $"{templateName} shadow should extend right of the caster. Stats={stats}; Caster={casterBounds}");
