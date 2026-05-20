@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Windows.Graphics.Imaging;
@@ -34,6 +35,15 @@ public sealed class CaptureApp : Application
     public CaptureApp(string[] args)
     {
         _args = args;
+        UnhandledException += OnUnhandledException;
+    }
+
+    private static void OnUnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs args)
+    {
+        Console.Error.WriteLine(args.Exception);
+        args.Handled = true;
+        Environment.ExitCode = 1;
+        Environment.Exit(Environment.ExitCode);
     }
 
     protected override void OnLaunched(LaunchActivatedEventArgs args)
@@ -91,8 +101,17 @@ public sealed class CaptureApp : Application
         var tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var enqueued = _window.DispatcherQueue.TryEnqueue(() =>
         {
-            var visual = CreateTargetVisual(target, options.CaptureMode);
-            _window.Content = visual.Canvas;
+            CaptureVisual visual;
+            try
+            {
+                visual = CreateTargetVisual(target, options.CaptureMode);
+                _window.Content = visual.Canvas;
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+                return;
+            }
 
             var timer = _window.DispatcherQueue.CreateTimer();
             timer.Interval = TimeSpan.FromMilliseconds(options.DelayMilliseconds);
@@ -102,6 +121,13 @@ public sealed class CaptureApp : Application
 
                 try
                 {
+                    var targetElement = visual.TargetElement;
+                    if (visual.Prepare is not null)
+                    {
+                        targetElement = visual.Prepare();
+                        visual.Canvas.UpdateLayout();
+                    }
+
                     var bitmap = new RenderTargetBitmap();
                     await bitmap.RenderAsync(visual.Canvas, target.Width, target.Height);
                     var pixels = await bitmap.GetPixelsAsync();
@@ -114,7 +140,7 @@ public sealed class CaptureApp : Application
                         Path.Combine(options.ReferenceDirectory, target.ReferenceFileBase + ".capture.txt"),
                         target,
                         options.CaptureMode,
-                        visual.TargetElement);
+                        targetElement);
                     tcs.SetResult();
                 }
                 catch (Exception ex)
@@ -151,7 +177,7 @@ public sealed class CaptureApp : Application
         };
 
         canvas.Children.Add(targetElement.Element);
-        return new CaptureVisual(canvas, targetElement.Description);
+        return new CaptureVisual(canvas, targetElement.Description, targetElement.Prepare);
     }
 
     private static CaptureTargetElement CreateSourceGeometryCaster(CaptureTarget target)
@@ -177,7 +203,9 @@ public sealed class CaptureApp : Application
         return target.ReferenceFileBase switch
         {
             "FlyoutPresenter-shadow-only" => CreateActualFlyoutPresenterTarget(target),
+            "CommandBar-overflow-popup-shadow-only" => CreateActualCommandBarOverflowTarget(target),
             "MenuFlyoutPresenter-shadow-only" => CreateActualMenuFlyoutPresenterTarget(target),
+            "ContentDialog-background-shadow-shadow-only" => CreateActualContentDialogBackgroundTarget(target),
             _ => throw new NotSupportedException(
                 $"Actual-control capture is not implemented for {target.ReferenceFileBase}. " +
                 "Use --capture-mode source-geometry for the current all-target reference path.")
@@ -211,6 +239,24 @@ public sealed class CaptureApp : Application
         return new CaptureTargetElement(presenter, "Microsoft.UI.Xaml.Controls.FlyoutPresenter actual control");
     }
 
+    private static CaptureTargetElement CreateActualCommandBarOverflowTarget(CaptureTarget target)
+    {
+        var commandBar = new CommandBar
+        {
+            Width = 220,
+            IsOpen = true,
+            HorizontalAlignment = HorizontalAlignment.Left,
+            VerticalAlignment = VerticalAlignment.Top
+        };
+        commandBar.SecondaryCommands.Add(new AppBarButton { Label = "Share" });
+
+        return CreateActualTemplatePartTarget(
+            target,
+            commandBar,
+            "SecondaryItemsControlShadowWrapper",
+            "Microsoft.UI.Xaml.Controls.CommandBar actual SecondaryItemsControlShadowWrapper template part");
+    }
+
     private static CaptureTargetElement CreateActualMenuFlyoutPresenterTarget(CaptureTarget target)
     {
         var presenter = new MenuFlyoutPresenter
@@ -233,6 +279,172 @@ public sealed class CaptureApp : Application
         Canvas.SetLeft(presenter, target.IgnoredBounds.X);
         Canvas.SetTop(presenter, target.IgnoredBounds.Y);
         return new CaptureTargetElement(presenter, "Microsoft.UI.Xaml.Controls.MenuFlyoutPresenter actual control");
+    }
+
+    private static CaptureTargetElement CreateActualContentDialogBackgroundTarget(CaptureTarget target)
+    {
+        var contentDialog = new ContentDialog
+        {
+            Title = "Dialog",
+            Content = "Dialog content",
+            PrimaryButtonText = "OK",
+            Width = 240,
+            HorizontalAlignment = HorizontalAlignment.Left,
+            VerticalAlignment = VerticalAlignment.Top
+        };
+
+        return CreateActualTemplatePartTarget(
+            target,
+            contentDialog,
+            "BackgroundElement",
+            "Microsoft.UI.Xaml.Controls.ContentDialog actual BackgroundElement template part",
+            isChildlessTarget: true);
+    }
+
+    private static CaptureTargetElement CreateActualTemplatePartTarget(
+        CaptureTarget target,
+        FrameworkElement owner,
+        string partName,
+        string description,
+        bool isChildlessTarget = false)
+    {
+        PrepareOwner(owner, target);
+        return new CaptureTargetElement(
+            owner,
+            $"{owner.GetType().FullName} actual control host for {partName}",
+            () =>
+            {
+                owner.UpdateLayout();
+                var part = FindNamedDescendant(owner, partName)
+                    ?? throw new InvalidOperationException($"Could not find WinUI template part '{partName}' in {owner.GetType().FullName}.");
+
+                return ExtractPartIntoManifestCanvas(target, owner, part, description, isChildlessTarget);
+            });
+    }
+
+    private static void PrepareOwner(FrameworkElement owner, CaptureTarget target)
+    {
+        owner.RequestedTheme = ElementTheme.Light;
+        owner.MinWidth = 0;
+        owner.MinHeight = 0;
+        owner.MaxWidth = double.PositiveInfinity;
+        owner.MaxHeight = double.PositiveInfinity;
+        owner.Margin = new Thickness();
+        owner.HorizontalAlignment = HorizontalAlignment.Left;
+        owner.VerticalAlignment = VerticalAlignment.Top;
+        Canvas.SetLeft(owner, 0);
+        Canvas.SetTop(owner, 0);
+
+        if (double.IsNaN(owner.Width))
+        {
+            owner.Width = Math.Max(target.Width, target.IgnoredBounds.X + target.IgnoredBounds.Width);
+        }
+
+        if (double.IsNaN(owner.Height))
+        {
+            owner.Height = Math.Max(target.Height, target.IgnoredBounds.Y + target.IgnoredBounds.Height);
+        }
+    }
+
+    private static string ExtractPartIntoManifestCanvas(
+        CaptureTarget target,
+        FrameworkElement owner,
+        FrameworkElement part,
+        string description,
+        bool isChildlessTarget)
+    {
+        DetachFromParent(part);
+        owner.Visibility = Visibility.Collapsed;
+
+        NormalizeExtractedPart(part, target, isChildlessTarget);
+        var canvas = owner.Parent as Canvas
+            ?? throw new InvalidOperationException("The WinUI actual-control host is not parented to the capture canvas.");
+
+        canvas.Children.Clear();
+        canvas.Children.Add(part);
+        return description;
+    }
+
+    private static void NormalizeExtractedPart(FrameworkElement element, CaptureTarget target, bool isChildlessTarget)
+    {
+        element.MinWidth = 0;
+        element.MinHeight = 0;
+        element.MaxWidth = double.PositiveInfinity;
+        element.MaxHeight = double.PositiveInfinity;
+        element.Margin = new Thickness();
+        if (element is Control control)
+        {
+            control.Padding = new Thickness();
+        }
+        element.HorizontalAlignment = HorizontalAlignment.Left;
+        element.VerticalAlignment = VerticalAlignment.Top;
+        element.Opacity = 1;
+        element.RenderTransform = null;
+
+        if (isChildlessTarget)
+        {
+            element.Width = target.IgnoredBounds.Width;
+            element.Height = target.IgnoredBounds.Height;
+        }
+        else
+        {
+            element.Width = Math.Max(element.ActualWidth, target.IgnoredBounds.Width);
+            element.Height = Math.Max(element.ActualHeight, target.IgnoredBounds.Height);
+        }
+
+        Canvas.SetLeft(element, target.IgnoredBounds.X);
+        Canvas.SetTop(element, target.IgnoredBounds.Y);
+    }
+
+    private static FrameworkElement? FindNamedDescendant(DependencyObject root, string name)
+    {
+        if (root is FrameworkElement frameworkElement && frameworkElement.Name == name)
+        {
+            return frameworkElement;
+        }
+
+        var count = VisualTreeHelper.GetChildrenCount(root);
+        for (var i = 0; i < count; i++)
+        {
+            var result = FindNamedDescendant(VisualTreeHelper.GetChild(root, i), name);
+            if (result is not null)
+            {
+                return result;
+            }
+        }
+
+        if (root is Popup popup && popup.Child is not null)
+        {
+            return FindNamedDescendant(popup.Child, name);
+        }
+
+        return null;
+    }
+
+    private static void DetachFromParent(FrameworkElement element)
+    {
+        if (element.Parent is Panel panel)
+        {
+            panel.Children.Remove(element);
+            return;
+        }
+
+        if (element.Parent is Border border)
+        {
+            border.Child = null;
+            return;
+        }
+
+        if (element.Parent is ContentControl contentControl && ReferenceEquals(contentControl.Content, element))
+        {
+            contentControl.Content = null;
+            return;
+        }
+
+        if (element.Parent is ContentPresenter contentPresenter && ReferenceEquals(contentPresenter.Content, element))
+        {
+            contentPresenter.Content = null;
+        }
     }
 
     private static async Task WritePngAsync(string path, int width, int height, byte[] pixels)
@@ -385,9 +597,9 @@ public sealed record CaptureTarget(
 
 public sealed record Int32Rect(int X, int Y, int Width, int Height);
 
-public sealed record CaptureVisual(Canvas Canvas, string TargetElement);
+public sealed record CaptureVisual(Canvas Canvas, string TargetElement, Func<string>? Prepare = null);
 
-public sealed record CaptureTargetElement(UIElement Element, string Description);
+public sealed record CaptureTargetElement(UIElement Element, string Description, Func<string>? Prepare = null);
 
 public enum ReferenceCaptureMode
 {
