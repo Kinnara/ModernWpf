@@ -98,6 +98,22 @@
                 <Setter Property="Margin" Value="7" />
             </Style>
 
+            <Style x:Key="GalleryHeaderTileButtonStyle" TargetType="Button">
+                <Setter Property="Width" Value="198" />
+                <Setter Property="Height" Value="220" />
+                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                <Setter Property="VerticalContentAlignment" Value="Stretch" />
+                <Setter Property="Padding" Value="24" />
+                <Setter Property="Margin" Value="6" />
+                <Setter Property="BorderThickness" Value="1" />
+            </Style>
+
+            <Style x:Key="GalleryHeaderTileScrollButtonStyle" TargetType="Button">
+                <Setter Property="Width" Value="16" />
+                <Setter Property="Height" Value="38" />
+                <Setter Property="Padding" Value="0" />
+            </Style>
+
             <Style
                 x:Key="GalleryMetaTextBlockStyle"
                 BasedOn="{StaticResource CaptionTextBlockStyle}"

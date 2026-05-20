@@ -15,7 +15,9 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid Style="{StaticResource GalleryPageRootStyle}">
+    <Grid
+        AutomationProperties.AutomationId="ContentRootGrid"
+        Style="{StaticResource GalleryPageRootStyle}">
         <ScrollViewer>
             <Grid Margin="0,0,0,48">
                 <Grid.RowDefinitions>
@@ -44,70 +46,191 @@
                     Height="220"
                     BorderThickness="0,0,0,1"
                     CornerRadius="8,0,0,0">
-                    <StackPanel Margin="36,48,0,0" VerticalAlignment="Top">
+                    <StackPanel
+                        Margin="36,48,0,0"
+                        TextElement.Foreground="Black"
+                        VerticalAlignment="Top">
                         <TextBlock
                             Margin="0,0,0,2"
                             Foreground="Black"
                             Style="{StaticResource SubtitleTextBlockStyle}"
-                            Text="ModernWpf" />
+                            Text=".NET 10" />
                         <TextBlock
                             Margin="0,0,0,8"
                             Foreground="Black"
                             Style="{StaticResource TitleLargeTextBlockStyle}"
                             Text="WPF Gallery" />
-                        <TextBlock
-                            MaxWidth="330"
-                            Padding="0,8,12,8"
+                        <Border
+                            MaxWidth="300"
                             HorizontalAlignment="Left"
-                            Foreground="Black"
-                            Style="{StaticResource BodyStrongTextBlockStyle}"
-                            Text="A WPF-first gallery that combines official WPF Gallery visuals with WinUI-style controls implemented by ModernWpf." />
+                            Background="Transparent"
+                            CornerRadius="8">
+                            <TextBlock
+                                MaxWidth="300"
+                                Padding="0,8,12,8"
+                                HorizontalAlignment="Left"
+                                Foreground="Black"
+                                Style="{StaticResource BodyStrongTextBlockStyle}"
+                                Text="A collection of controls, guidelines and samples to build great WPF applications"
+                                TextAlignment="Left" />
+                        </Border>
                     </StackPanel>
                 </Border>
 
-                <ItemsControl
-                    Grid.Row="1"
-                    Margin="18,0,0,0"
-                    ItemsSource="{Binding Groups}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal" />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Button
-                                Width="198"
-                                Height="220"
-                                Margin="6"
-                                Padding="24"
-                                BorderThickness="1"
-                                Click="OnGroupCardClick"
-                                Content="{Binding}"
-                                ContentTemplate="{StaticResource GalleryTileCardTemplate}"
-                                HorizontalContentAlignment="Stretch"
-                                VerticalContentAlignment="Stretch" />
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                <Grid Grid.Row="1">
+                <ScrollViewer
+                    Margin="24,0,0,0"
+                    HorizontalScrollBarVisibility="Hidden"
+                    VerticalScrollBarVisibility="Disabled">
+                <StackPanel Orientation="Horizontal">
+                    <Button Style="{StaticResource GalleryHeaderTileButtonStyle}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="56" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Image
+                                Width="48"
+                                Height="48"
+                                HorizontalAlignment="Left"
+                                Source="pack://application:,,,/ModernWpf.Gallery;component/Assets/Tiles/GalleryIcon.ico" />
+                            <StackPanel Grid.Row="1" Margin="0,16,0,0">
+                                <TextBlock
+                                    Margin="0,0,0,8"
+                                    FontSize="18"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="Getting started" />
+                                <TextBlock
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="An overview of app development options, tools, and samples." />
+                            </StackPanel>
+                        </Grid>
+                    </Button>
+                    <Button Style="{StaticResource GalleryHeaderTileButtonStyle}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="56" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Image
+                                Width="56"
+                                Height="56"
+                                HorizontalAlignment="Left"
+                                Source="pack://application:,,,/ModernWpf.Gallery;component/Assets/HomeHeaderTiles/Header-WindowsDesign.png" />
+                            <StackPanel Grid.Row="1" Margin="0,16,0,0">
+                                <TextBlock
+                                    Margin="0,0,0,8"
+                                    FontSize="18"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="Windows design" />
+                                <TextBlock
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="Design guidelines and toolkits for creating native app experiences." />
+                            </StackPanel>
+                        </Grid>
+                    </Button>
+                    <Button Style="{StaticResource GalleryHeaderTileButtonStyle}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="56" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                                FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                FontSize="42"
+                                Text="&#xE8A7;" />
+                            <StackPanel Grid.Row="1" Margin="0,16,0,0">
+                                <TextBlock
+                                    Margin="0,0,0,8"
+                                    FontSize="18"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="WPF GitHub" />
+                                <TextBlock
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="A robust UI framework for your desktop applications." />
+                            </StackPanel>
+                        </Grid>
+                    </Button>
+                    <Button Style="{StaticResource GalleryHeaderTileButtonStyle}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="56" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                                FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                FontSize="42"
+                                Text="&#xE8A7;" />
+                            <StackPanel Grid.Row="1" Margin="0,16,0,0">
+                                <TextBlock
+                                    Margin="0,0,0,8"
+                                    FontSize="18"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="Code samples" />
+                                <TextBlock
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="Find WPF samples that demonstrate specific tasks, features, and APIs." />
+                            </StackPanel>
+                        </Grid>
+                    </Button>
+                    <Button Style="{StaticResource GalleryHeaderTileButtonStyle}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="56" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Image
+                                Width="56"
+                                Height="56"
+                                HorizontalAlignment="Left"
+                                Source="pack://application:,,,/ModernWpf.Gallery;component/Assets/HomeHeaderTiles/Header-Store.dark.png" />
+                            <StackPanel Grid.Row="1" Margin="0,16,0,0">
+                                <TextBlock
+                                    Margin="0,0,0,8"
+                                    FontSize="18"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="Partner Center" />
+                                <TextBlock
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="Upload your app to the Store." />
+                            </StackPanel>
+                        </Grid>
+                    </Button>
+                </StackPanel>
+                </ScrollViewer>
+                    <Button
+                        Margin="8,-16,0,0"
+                        HorizontalAlignment="Left"
+                        Style="{StaticResource GalleryHeaderTileScrollButtonStyle}"
+                        ToolTip="Scroll left">
+                        <TextBlock
+                            FontFamily="{StaticResource SymbolThemeFontFamily}"
+                            FontSize="8"
+                            Text="&#xEDD9;" />
+                    </Button>
+                    <Button
+                        Margin="0,-16,8,0"
+                        HorizontalAlignment="Right"
+                        Style="{StaticResource GalleryHeaderTileScrollButtonStyle}"
+                        ToolTip="Scroll right">
+                        <TextBlock
+                            FontFamily="{StaticResource SymbolThemeFontFamily}"
+                            FontSize="8"
+                            Text="&#xEDDA;" />
+                    </Button>
+                </Grid>
 
                 <StackPanel
                     Grid.Row="2"
-                    Margin="32,24,24,0"
+                    Margin="32,24,0,0"
                     Orientation="Vertical">
-                    <DockPanel Margin="0,0,0,6">
-                        <Button
-                            DockPanel.Dock="Right"
-                            Content="View all controls"
-                            Click="OnAllControlsClick" />
-                        <TextBlock
-                            FontSize="16"
-                            Style="{StaticResource BodyStrongTextBlockStyle}"
-                            Text="Overview" />
-                    </DockPanel>
+                    <TextBlock
+                        FontSize="16"
+                        Style="{StaticResource BodyStrongTextBlockStyle}"
+                        Text="Overview" />
 
                     <ItemsControl
-                        Margin="-7,0,0,0"
+                        Margin="-20,0,0,0"
                         ItemsSource="{Binding Groups}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -131,7 +254,7 @@
                         Text="Recently added and updated" />
 
                     <ItemsControl
-                        Margin="-7,0,0,0"
+                        Margin="-18,0,0,0"
                         ItemsSource="{Binding FeaturedItems}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>

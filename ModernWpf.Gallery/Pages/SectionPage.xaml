@@ -15,32 +15,43 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid Style="{StaticResource GalleryPageRootStyle}">
+    <Grid
+        AutomationProperties.AutomationId="ContentRootGrid"
+        Style="{StaticResource GalleryPageRootStyle}">
         <ScrollViewer>
-            <StackPanel Margin="32,24,24,48">
-                <Label
-                    Padding="0"
-                    Focusable="True"
-                    KeyboardNavigation.IsTabStop="True">
-                    <TextBlock
-                        Style="{StaticResource GalleryTitleTextBlockStyle}"
-                        Text="{Binding Title}" />
-                </Label>
-                <Label
-                    Padding="0"
-                    Margin="0,0,0,32"
-                    Focusable="True"
-                    KeyboardNavigation.IsTabStop="True">
-                    <TextBlock
-                        Style="{StaticResource BodyTextBlockStyle}"
-                        Text="{Binding Subtitle}" />
-                </Label>
+            <Grid Margin="24,16,24,48">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <StackPanel
+                    Grid.Row="0"
+                    Margin="0,0,0,40"
+                    VerticalAlignment="Center">
+                    <Label
+                        Focusable="True"
+                        KeyboardNavigation.IsTabStop="True">
+                        <TextBlock
+                            Style="{StaticResource TitleTextBlockStyle}"
+                            Text="{Binding Title}" />
+                    </Label>
+                    <Label
+                        Focusable="True"
+                        KeyboardNavigation.IsTabStop="True">
+                        <TextBlock
+                            Style="{StaticResource BodyTextBlockStyle}"
+                            Text="{Binding Subtitle}" />
+                    </Label>
+                </StackPanel>
+
                 <ItemsControl
-                    Margin="-7,0,0,0"
+                    Grid.Row="1"
+                    Margin="-12,0,0,0"
                     ItemsSource="{Binding Items}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <WrapPanel />
+                            <WrapPanel Margin="10" />
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
@@ -53,7 +64,7 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-            </StackPanel>
+            </Grid>
         </ScrollViewer>
     </Grid>
 </UserControl>

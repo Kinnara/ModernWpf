@@ -6,7 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:shell="clr-namespace:ModernWpf.Gallery.Shell"
     xmlns:ui="http://schemas.modernwpf.com/2019"
-    Title="ModernWPF Gallery"
+    Title="WPF Gallery"
     Width="1180"
     Height="820"
     MinWidth="840"

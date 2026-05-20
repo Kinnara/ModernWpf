@@ -15,38 +15,45 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid Style="{StaticResource GalleryPageRootStyle}">
-        <ScrollViewer>
-            <StackPanel Margin="32,24,24,48">
+    <Grid
+        AutomationProperties.AutomationId="ContentRootGrid"
+        Style="{StaticResource GalleryPageRootStyle}">
+        <Grid Margin="24,16,24,48">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <StackPanel
+                Grid.Row="0"
+                Margin="0,0,0,40"
+                VerticalAlignment="Center">
                 <Label
-                    Padding="0"
                     Focusable="True"
                     KeyboardNavigation.IsTabStop="True">
                     <TextBlock
-                        Style="{StaticResource GalleryTitleTextBlockStyle}"
-                        Text="All controls" />
+                        Style="{StaticResource TitleTextBlockStyle}"
+                        Text="All Controls" />
                 </Label>
                 <Label
-                    Padding="0"
-                    Margin="0,0,0,24"
                     Focusable="True"
                     KeyboardNavigation.IsTabStop="True">
                     <TextBlock
                         Style="{StaticResource BodyTextBlockStyle}"
-                        Text="Browse every WPF and WinUI-derived gallery entry tracked by the ModernWpf catalog." />
+                        Text="" />
                 </Label>
-                <TextBox
-                    x:Name="FilterBox"
-                    Width="360"
-                    HorizontalAlignment="Left"
-                    Margin="0,0,0,24"
-                    TextChanged="OnFilterTextChanged" />
+            </StackPanel>
+
+            <ScrollViewer
+                Grid.Row="1"
+                Margin="0"
+                VerticalScrollBarVisibility="Auto">
                 <ItemsControl
-                    Margin="-7,0,0,0"
+                    Margin="-12,0,0,0"
                     ItemsSource="{Binding FilteredItems}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <WrapPanel />
+                            <WrapPanel Margin="10" />
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
@@ -59,7 +66,7 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-            </StackPanel>
-        </ScrollViewer>
+            </ScrollViewer>
+        </Grid>
     </Grid>
 </UserControl>

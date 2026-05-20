@@ -11,27 +11,14 @@
                 Source="{Binding ImagePath}"
                 Stretch="Uniform" />
             <StackPanel Orientation="Vertical">
-                <DockPanel Width="240" LastChildFill="True">
-                    <Border
-                        DockPanel.Dock="Right"
-                        Padding="8,2"
-                        Margin="8,0,0,0"
-                        Background="{DynamicResource SystemControlHighlightAccentBrush}"
-                        CornerRadius="4"
-                        Visibility="{Binding HasBadge, Converter={StaticResource BooleanToVisibilityConverter}}">
-                        <TextBlock
-                            FontSize="11"
-                            Foreground="White"
-                            Text="{Binding Badge}" />
-                    </Border>
-                    <TextBlock
-                        Margin="10,0,0,0"
-                        Style="{StaticResource BodyStrongTextBlockStyle}"
-                        Text="{Binding Title}" />
-                </DockPanel>
+                <TextBlock
+                    Margin="10,0,0,0"
+                    Style="{StaticResource BodyStrongTextBlockStyle}"
+                    Text="{Binding Title}" />
                 <TextBlock
                     Width="240"
                     Margin="10,0,0,0"
+                    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                     Opacity="0.7"
                     Style="{StaticResource CaptionTextBlockStyle}"
                     Text="{Binding Subtitle}" />

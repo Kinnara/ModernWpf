@@ -28,11 +28,6 @@ namespace ModernWpf.Gallery.Pages
             }
         }
 
-        private void OnFilterTextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
-        {
-            FilteredItems = GalleryCatalog.Search(FilterBox.Text);
-        }
-
         private void OnItemCardClick(object sender, System.Windows.RoutedEventArgs e)
         {
             var item = ((System.Windows.FrameworkElement)sender).DataContext as GalleryItem;
