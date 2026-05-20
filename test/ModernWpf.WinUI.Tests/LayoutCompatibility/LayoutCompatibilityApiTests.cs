@@ -105,6 +105,55 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
+    public void ThemeShadowChromeExposesWinUIShapedShadowAliases()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var chrome = new ThemeShadowChrome();
+
+            Assert.IsNotNull(chrome.Shadow);
+            Assert.IsTrue(chrome.IsShadowEnabled);
+            Assert.AreEqual(32, chrome.TranslationZ);
+            Assert.AreEqual(chrome.Depth, chrome.TranslationZ);
+
+            chrome.TranslationZ = 64;
+            Assert.AreEqual(64, chrome.Depth);
+            Assert.AreEqual(new Thickness(32, 16, 32, 48), chrome.ShadowPadding);
+
+            chrome.Depth = 16;
+            Assert.AreEqual(16, chrome.TranslationZ);
+            Assert.AreEqual(new Thickness(8, 4, 8, 12), chrome.ShadowPadding);
+
+            chrome.Shadow = null;
+            Assert.IsFalse(chrome.IsShadowEnabled);
+
+            chrome.IsShadowEnabled = true;
+            Assert.IsNotNull(chrome.Shadow);
+
+            var shadow = new ThemeShadow();
+            chrome.Shadow = shadow;
+            Assert.AreSame(shadow, chrome.Shadow);
+            Assert.IsTrue(chrome.IsShadowEnabled);
+        });
+    }
+
+    [TestMethod]
+    public void ThemeShadowChromeAcceptsThemeShadowMarkupExtension()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var chrome = (ThemeShadowChrome)XamlReader.Parse(
+                @"<ui:ThemeShadowChrome xmlns:ui=""http://schemas.modernwpf.com/2019"" TranslationZ=""64"" Shadow=""{ui:ThemeShadow}"" />");
+
+            Assert.IsNotNull(chrome.Shadow);
+            Assert.IsTrue(chrome.IsShadowEnabled);
+            Assert.AreEqual(64, chrome.TranslationZ);
+            Assert.AreEqual(64, chrome.Depth);
+            Assert.AreEqual(new Thickness(32, 16, 32, 48), chrome.ShadowPadding);
+        });
+    }
+
+    [TestMethod]
     public void ThemeShadowChromeUsesWinUIWindowedPopupInsets()
     {
         WpfTestHost.Run(() =>

@@ -44,6 +44,18 @@ ModernWpf files:
 
 ModernWpf still exposes `ThemeShadowChrome` as the WPF template host because WPF has no compositor `UIElement.Shadow` or `Translation.Z` equivalent. The implementation is no longer the old two-`Border` `BlurEffect` approximation. It now renders a cached alpha-mask bitmap from the child bounds, corner radius, DPI scale, and WinUI-style depth. The composed shadow clears the caster's rounded shape from the center, matching WinUI's `DropShadowVisual` `NineGridBrush isCenterHollow=True` behavior instead of painting shadow alpha underneath transparent content.
 
+`ThemeShadowChrome` also exposes WinUI-shaped aliases for new template work:
+
+```xaml
+<ui:ThemeShadowChrome
+    TranslationZ="32"
+    Shadow="{ui:ThemeShadow}">
+    <!-- shadowed surface -->
+</ui:ThemeShadowChrome>
+```
+
+`TranslationZ` is a two-way alias for the existing `Depth` property, and `Shadow` is a lightweight `ThemeShadow` marker alias for the existing `IsShadowEnabled` switch: non-null enables the WPF substitute shadow, and `null` disables it. The older `Depth` / `IsShadowEnabled` properties remain supported for existing templates and tests. This is intentionally an API-shape alignment, not an arbitrary WPF `UIElement.Shadow` implementation; WPF still needs the explicit `ThemeShadowChrome` host so layout, popup insets, opacity propagation, hit testing, and the proven PNG comparison path stay controlled.
+
 The renderer ports the WinUI `GetDropShadowRecipe` formulas into WPF:
 
 - `Elevation = min(64, Translation.Z / 2)`.

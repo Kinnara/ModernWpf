@@ -40,6 +40,8 @@ namespace ModernWpf.Controls.Primitives
             SizeChanged += OnSizeChanged;
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
+
+            SetCurrentValue(ShadowProperty, new ThemeShadow());
         }
 
         #region IsShadowEnabled
@@ -64,6 +66,8 @@ namespace ModernWpf.Controls.Primitives
 
         private void OnIsShadowEnabledChanged()
         {
+            SyncShadowFromIsShadowEnabled();
+
             if (IsInitialized)
             {
                 if (IsShadowEnabled)
@@ -83,6 +87,69 @@ namespace ModernWpf.Controls.Primitives
                 UpdatePopupMargin();
                 UpdateShadowOpacity();
                 UpdateShadowOpacitySubscription();
+            }
+        }
+
+        #endregion
+
+        #region Shadow
+
+        public static readonly DependencyProperty ShadowProperty =
+            DependencyProperty.Register(
+                nameof(Shadow),
+                typeof(ThemeShadow),
+                typeof(ThemeShadowChrome),
+                new PropertyMetadata(null, OnShadowChanged));
+
+        public ThemeShadow Shadow
+        {
+            get => (ThemeShadow)GetValue(ShadowProperty);
+            set => SetValue(ShadowProperty, value);
+        }
+
+        private static void OnShadowChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((ThemeShadowChrome)d).OnShadowChanged();
+        }
+
+        private void OnShadowChanged()
+        {
+            SyncIsShadowEnabledFromShadow();
+        }
+
+        private void SyncShadowFromIsShadowEnabled()
+        {
+            if (_updatingShadowAlias)
+            {
+                return;
+            }
+
+            try
+            {
+                _updatingShadowAlias = true;
+                SetCurrentValue(ShadowProperty, IsShadowEnabled ? Shadow ?? new ThemeShadow() : null);
+            }
+            finally
+            {
+                _updatingShadowAlias = false;
+            }
+        }
+
+        private void SyncIsShadowEnabledFromShadow()
+        {
+            if (_updatingShadowAlias)
+            {
+                return;
+            }
+
+            try
+            {
+                _updatingShadowAlias = true;
+                SetCurrentValue(IsShadowEnabledProperty, Shadow != null);
+            }
+            finally
+            {
+                _updatingShadowAlias = false;
             }
         }
 
@@ -114,11 +181,87 @@ namespace ModernWpf.Controls.Primitives
 
         private void OnDepthChanged()
         {
+            SyncTranslationZFromDepth();
+
             if (IsInitialized)
             {
                 UpdateShadow();
                 UpdatePopupMargin();
             }
+        }
+
+        #endregion
+
+        #region TranslationZ
+
+        public static readonly DependencyProperty TranslationZProperty =
+            DependencyProperty.Register(
+                nameof(TranslationZ),
+                typeof(double),
+                typeof(ThemeShadowChrome),
+                new PropertyMetadata(32d, OnTranslationZChanged));
+
+        public double TranslationZ
+        {
+            get => (double)GetValue(TranslationZProperty);
+            set => SetValue(TranslationZProperty, value);
+        }
+
+        private static void OnTranslationZChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((ThemeShadowChrome)d).OnTranslationZChanged();
+        }
+
+        private void OnTranslationZChanged()
+        {
+            SyncDepthFromTranslationZ();
+        }
+
+        private void SyncTranslationZFromDepth()
+        {
+            if (_updatingTranslationZAlias)
+            {
+                return;
+            }
+
+            try
+            {
+                _updatingTranslationZAlias = true;
+                if (!AreClose(TranslationZ, Depth))
+                {
+                    SetCurrentValue(TranslationZProperty, Depth);
+                }
+            }
+            finally
+            {
+                _updatingTranslationZAlias = false;
+            }
+        }
+
+        private void SyncDepthFromTranslationZ()
+        {
+            if (_updatingTranslationZAlias)
+            {
+                return;
+            }
+
+            try
+            {
+                _updatingTranslationZAlias = true;
+                if (!AreClose(Depth, TranslationZ))
+                {
+                    SetCurrentValue(DepthProperty, TranslationZ);
+                }
+            }
+            finally
+            {
+                _updatingTranslationZAlias = false;
+            }
+        }
+
+        private static bool AreClose(double value1, double value2)
+        {
+            return value1.Equals(value2) || Math.Abs(value1 - value2) < 0.000001;
         }
 
         #endregion
@@ -1009,6 +1152,8 @@ namespace ModernWpf.Controls.Primitives
         private PopupPositioner _popupPositioner;
         private UIElement _shadowOpacitySource;
         private bool _isShadowOpacityRenderingHooked;
+        private bool _updatingShadowAlias;
+        private bool _updatingTranslationZAlias;
 
         private static readonly Vector s_noTranslation = new Vector(0, 0);
         private static readonly DependencyPropertyDescriptor OpacityPropertyDescriptor =
