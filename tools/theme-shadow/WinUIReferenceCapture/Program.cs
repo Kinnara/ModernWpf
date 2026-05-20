@@ -27,19 +27,21 @@ public static class Program
     }
 }
 
-public sealed class CaptureApp : Application
+public sealed partial class CaptureApp : Application
 {
     private readonly string[] _args;
     private Window? _window;
 
     public CaptureApp(string[] args)
     {
+        InitializeComponent();
         _args = args;
         UnhandledException += OnUnhandledException;
     }
 
     private static void OnUnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs args)
     {
+        Console.Error.WriteLine(args.Message);
         Console.Error.WriteLine(args.Exception);
         args.Handled = true;
         Environment.ExitCode = 1;
@@ -105,7 +107,14 @@ public sealed class CaptureApp : Application
             try
             {
                 visual = CreateTargetVisual(target, options.CaptureMode);
-                _window.Content = visual.Canvas;
+                try
+                {
+                    _window.Content = visual.Canvas;
+                }
+                catch (Exception ex)
+                {
+                    throw new InvalidOperationException($"Could not attach {target.ReferenceFileBase} to the WinUI capture window.", ex);
+                }
             }
             catch (Exception ex)
             {
@@ -128,19 +137,35 @@ public sealed class CaptureApp : Application
                         visual.Canvas.UpdateLayout();
                     }
 
-                    var bitmap = new RenderTargetBitmap();
-                    await bitmap.RenderAsync(visual.Canvas, target.Width, target.Height);
-                    var pixels = await bitmap.GetPixelsAsync();
-                    await WritePngAsync(
-                        Path.Combine(options.ReferenceDirectory, target.ReferenceFileBase + ".png"),
-                        target.Width,
-                        target.Height,
-                        pixels.ToArray());
-                    WriteCaptureMetadata(
-                        Path.Combine(options.ReferenceDirectory, target.ReferenceFileBase + ".capture.txt"),
-                        target,
-                        options.CaptureMode,
-                        targetElement);
+                    if (visual.PostPrepareDelayMilliseconds > 0)
+                    {
+                        var postPrepareTimer = _window.DispatcherQueue.CreateTimer();
+                        postPrepareTimer.Interval = TimeSpan.FromMilliseconds(visual.PostPrepareDelayMilliseconds);
+                        postPrepareTimer.Tick += async (_, _) =>
+                        {
+                            postPrepareTimer.Stop();
+                            try
+                            {
+                                var postPrepareTargetElement = targetElement;
+                                if (visual.PostPrepare is not null)
+                                {
+                                    postPrepareTargetElement = visual.PostPrepare();
+                                    visual.Canvas.UpdateLayout();
+                                }
+
+                                await RenderCaptureAsync(target, options, visual, postPrepareTargetElement);
+                                tcs.SetResult();
+                            }
+                            catch (Exception ex)
+                            {
+                                tcs.SetException(ex);
+                            }
+                        };
+                        postPrepareTimer.Start();
+                        return;
+                    }
+
+                    await RenderCaptureAsync(target, options, visual, targetElement);
                     tcs.SetResult();
                 }
                 catch (Exception ex)
@@ -157,6 +182,27 @@ public sealed class CaptureApp : Application
         }
 
         return tcs.Task;
+    }
+
+    private static async Task RenderCaptureAsync(
+        CaptureTarget target,
+        CaptureOptions options,
+        CaptureVisual visual,
+        string targetElement)
+    {
+        var bitmap = new RenderTargetBitmap();
+        await bitmap.RenderAsync(visual.Canvas, target.Width, target.Height);
+        var pixels = await bitmap.GetPixelsAsync();
+        await WritePngAsync(
+            Path.Combine(options.ReferenceDirectory, target.ReferenceFileBase + ".png"),
+            target.Width,
+            target.Height,
+            pixels.ToArray());
+        WriteCaptureMetadata(
+            Path.Combine(options.ReferenceDirectory, target.ReferenceFileBase + ".capture.txt"),
+            target,
+            options.CaptureMode,
+            targetElement);
     }
 
     private static CaptureVisual CreateTargetVisual(CaptureTarget target, ReferenceCaptureMode captureMode)
@@ -177,7 +223,12 @@ public sealed class CaptureApp : Application
         };
 
         canvas.Children.Add(targetElement.Element);
-        return new CaptureVisual(canvas, targetElement.Description, targetElement.Prepare);
+        return new CaptureVisual(
+            canvas,
+            targetElement.Description,
+            targetElement.Prepare,
+            targetElement.PostPrepare,
+            targetElement.PostPrepareDelayMilliseconds);
     }
 
     private static CaptureTargetElement CreateSourceGeometryCaster(CaptureTarget target)
@@ -203,9 +254,14 @@ public sealed class CaptureApp : Application
         return target.ReferenceFileBase switch
         {
             "FlyoutPresenter-shadow-only" => CreateActualFlyoutPresenterTarget(target),
+            "NumberBox-compact-popup-shadow-only" => CreateActualNumberBoxPopupTarget(target),
             "CommandBar-overflow-popup-shadow-only" => CreateActualCommandBarOverflowTarget(target),
+            "CommandBarFlyout-overflow-root-shadow-only" => CreateActualCommandBarFlyoutOverflowTarget(target),
+            "AutoSuggestBox-suggestions-popup-shadow-only" => CreateActualAutoSuggestBoxSuggestionsTarget(target),
             "MenuFlyoutPresenter-shadow-only" => CreateActualMenuFlyoutPresenterTarget(target),
+            "TeachingTip-content-root-shadow-only" => CreateActualTeachingTipContentRootTarget(target),
             "ContentDialog-background-shadow-shadow-only" => CreateActualContentDialogBackgroundTarget(target),
+            "NavigationView-pane-overlay-shadow-shadow-only" => CreateActualNavigationViewShadowCasterTarget(target),
             _ => throw new NotSupportedException(
                 $"Actual-control capture is not implemented for {target.ReferenceFileBase}. " +
                 "Use --capture-mode source-geometry for the current all-target reference path.")
@@ -239,6 +295,41 @@ public sealed class CaptureApp : Application
         return new CaptureTargetElement(presenter, "Microsoft.UI.Xaml.Controls.FlyoutPresenter actual control");
     }
 
+    private static CaptureTargetElement CreateActualNumberBoxPopupTarget(CaptureTarget target)
+    {
+        var numberBox = new NumberBox
+        {
+            Width = target.IgnoredBounds.Width,
+            SpinButtonPlacementMode = NumberBoxSpinButtonPlacementMode.Compact,
+            Value = 1,
+            HorizontalAlignment = HorizontalAlignment.Left,
+            VerticalAlignment = VerticalAlignment.Top
+        };
+
+        PrepareOwner(numberBox, target);
+        return new CaptureTargetElement(
+            numberBox,
+            "Microsoft.UI.Xaml.Controls.NumberBox actual control host for PopupContentRoot",
+            () =>
+            {
+                numberBox.UpdateLayout();
+                var popup = FindNamedDescendant(numberBox, "UpDownPopup") as Popup
+                    ?? throw new InvalidOperationException("Could not find WinUI template part 'UpDownPopup' in Microsoft.UI.Xaml.Controls.NumberBox.");
+                popup.IsOpen = true;
+                numberBox.UpdateLayout();
+
+                var popupContentRoot = FindNamedDescendant(popup, "PopupContentRoot")
+                    ?? throw new InvalidOperationException("Could not find WinUI template part 'PopupContentRoot' in Microsoft.UI.Xaml.Controls.NumberBox.");
+
+                return ExtractPartIntoManifestCanvas(
+                    target,
+                    numberBox,
+                    popupContentRoot,
+                    "Microsoft.UI.Xaml.Controls.NumberBox actual PopupContentRoot template part",
+                    isChildlessTarget: false);
+            });
+    }
+
     private static CaptureTargetElement CreateActualCommandBarOverflowTarget(CaptureTarget target)
     {
         var commandBar = new CommandBar
@@ -255,6 +346,61 @@ public sealed class CaptureApp : Application
             commandBar,
             "SecondaryItemsControlShadowWrapper",
             "Microsoft.UI.Xaml.Controls.CommandBar actual SecondaryItemsControlShadowWrapper template part");
+    }
+
+    private static CaptureTargetElement CreateActualCommandBarFlyoutOverflowTarget(CaptureTarget target)
+    {
+        var anchor = new Button
+        {
+            Content = "Anchor",
+            Width = 80,
+            Height = 32,
+            HorizontalAlignment = HorizontalAlignment.Left,
+            VerticalAlignment = VerticalAlignment.Top
+        };
+        var commandBarFlyout = new CommandBarFlyout
+        {
+            Placement = FlyoutPlacementMode.Bottom,
+            ShowMode = FlyoutShowMode.Standard
+        };
+        commandBarFlyout.SecondaryCommands.Add(new AppBarButton { Label = "Select all" });
+
+        PrepareOwner(anchor, target);
+        return new CaptureTargetElement(
+            anchor,
+            "Microsoft.UI.Xaml.Controls.CommandBarFlyout actual anchor host for OuterOverflowContentRootV2",
+            () =>
+            {
+                anchor.UpdateLayout();
+                commandBarFlyout.ShowAt(anchor);
+                anchor.UpdateLayout();
+                return "Microsoft.UI.Xaml.Controls.CommandBarFlyout actual anchor host for OuterOverflowContentRootV2";
+            },
+            () =>
+            {
+                anchor.UpdateLayout();
+
+                if (FindDescendantInOpenPopups<CommandBar>(anchor) is { } commandBar)
+                {
+                    commandBar.IsOpen = true;
+                    commandBar.UpdateLayout();
+                }
+
+                var overflowRoot = FindNamedDescendantInOpenPopups(anchor, "OuterOverflowContentRootV2")
+                    ?? throw new InvalidOperationException("Could not find WinUI template part 'OuterOverflowContentRootV2' in Microsoft.UI.Xaml.Controls.CommandBarFlyout.");
+                if (overflowRoot.Shadow is null)
+                {
+                    throw new InvalidOperationException("WinUI CommandBarFlyout OuterOverflowContentRootV2 did not have a ThemeShadow after opening.");
+                }
+
+                return ExtractPartIntoManifestCanvas(
+                    target,
+                    anchor,
+                    overflowRoot,
+                    "Microsoft.UI.Xaml.Controls.CommandBarFlyout actual OuterOverflowContentRootV2 template part",
+                    isChildlessTarget: false);
+            },
+            PostPrepareDelayMilliseconds: 250);
     }
 
     private static CaptureTargetElement CreateActualMenuFlyoutPresenterTarget(CaptureTarget target)
@@ -281,8 +427,159 @@ public sealed class CaptureApp : Application
         return new CaptureTargetElement(presenter, "Microsoft.UI.Xaml.Controls.MenuFlyoutPresenter actual control");
     }
 
+    private static CaptureTargetElement CreateActualTeachingTipContentRootTarget(CaptureTarget target)
+    {
+        var teachingTip = new TeachingTip
+        {
+            Title = "Tip",
+            Subtitle = "Tip content",
+            Width = target.IgnoredBounds.Width,
+            IsLightDismissEnabled = false,
+            HorizontalAlignment = HorizontalAlignment.Left,
+            VerticalAlignment = VerticalAlignment.Top
+        };
+
+        PrepareOwner(teachingTip, target);
+        return new CaptureTargetElement(
+            teachingTip,
+            "Microsoft.UI.Xaml.Controls.TeachingTip actual control host for ContentRootGrid",
+            () =>
+            {
+                teachingTip.UpdateLayout();
+                teachingTip.IsOpen = true;
+                teachingTip.UpdateLayout();
+                return "Microsoft.UI.Xaml.Controls.TeachingTip actual control host for ContentRootGrid";
+            },
+            () =>
+            {
+                teachingTip.UpdateLayout();
+                var contentRootGrid = FindNamedDescendantInOpenPopups(teachingTip, "ContentRootGrid")
+                    ?? throw new InvalidOperationException("Could not find WinUI template part 'ContentRootGrid' in Microsoft.UI.Xaml.Controls.TeachingTip.");
+                if (contentRootGrid.Shadow is null)
+                {
+                    throw new InvalidOperationException("WinUI TeachingTip ContentRootGrid did not have a ThemeShadow after opening.");
+                }
+
+                return ExtractPartIntoManifestCanvas(
+                    target,
+                    teachingTip,
+                    contentRootGrid,
+                    "Microsoft.UI.Xaml.Controls.TeachingTip actual ContentRootGrid template part",
+                    isChildlessTarget: false);
+            },
+            PostPrepareDelayMilliseconds: 250);
+    }
+
+    private static CaptureTargetElement CreateActualNavigationViewShadowCasterTarget(CaptureTarget target)
+    {
+        var navigationView = new NavigationView
+        {
+            Width = Math.Max(target.Width, target.IgnoredBounds.Width),
+            Height = Math.Max(target.Height, target.IgnoredBounds.Height),
+            PaneDisplayMode = NavigationViewPaneDisplayMode.LeftCompact,
+            IsPaneOpen = false,
+            OpenPaneLength = target.IgnoredBounds.Width,
+            CompactPaneLength = 40,
+            HorizontalAlignment = HorizontalAlignment.Left,
+            VerticalAlignment = VerticalAlignment.Top
+        };
+        navigationView.MenuItems.Add(new NavigationViewItem { Content = "Home" });
+
+        PrepareOwner(navigationView, target);
+        return new CaptureTargetElement(
+            navigationView,
+            "Microsoft.UI.Xaml.Controls.NavigationView actual control host for ShadowCaster",
+            () =>
+            {
+                navigationView.UpdateLayout();
+                navigationView.IsPaneOpen = true;
+                navigationView.UpdateLayout();
+                return "Microsoft.UI.Xaml.Controls.NavigationView actual control host for ShadowCaster";
+            },
+            () =>
+            {
+                navigationView.UpdateLayout();
+                var shadowCaster = FindNamedDescendant(navigationView, "ShadowCaster")
+                    ?? throw new InvalidOperationException("Could not find WinUI template part 'ShadowCaster' in Microsoft.UI.Xaml.Controls.NavigationView.");
+                if (shadowCaster.Shadow is null)
+                {
+                    throw new InvalidOperationException("WinUI NavigationView ShadowCaster did not have a ThemeShadow after layout.");
+                }
+
+                return ExtractPartIntoManifestCanvas(
+                    target,
+                    navigationView,
+                    shadowCaster,
+                    "Microsoft.UI.Xaml.Controls.NavigationView actual ShadowCaster template part",
+                    isChildlessTarget: true);
+            },
+            PostPrepareDelayMilliseconds: 250);
+    }
+
+    private static CaptureTargetElement CreateActualAutoSuggestBoxSuggestionsTarget(CaptureTarget target)
+    {
+        var autoSuggestBox = new AutoSuggestBox
+        {
+            Width = target.IgnoredBounds.Width,
+            MaxSuggestionListHeight = target.IgnoredBounds.Height,
+            Text = "a",
+            ItemsSource = new[]
+            {
+                "Alpha",
+                "Atlas",
+                "Azure"
+            },
+            HorizontalAlignment = HorizontalAlignment.Left,
+            VerticalAlignment = VerticalAlignment.Top
+        };
+
+        PrepareOwner(autoSuggestBox, target);
+        return new CaptureTargetElement(
+            autoSuggestBox,
+            "Microsoft.UI.Xaml.Controls.AutoSuggestBox actual control host for SuggestionsPopup",
+            () =>
+            {
+                autoSuggestBox.UpdateLayout();
+                autoSuggestBox.IsSuggestionListOpen = true;
+                autoSuggestBox.UpdateLayout();
+                return "Microsoft.UI.Xaml.Controls.AutoSuggestBox actual control host for SuggestionsPopup";
+            },
+            () =>
+            {
+                autoSuggestBox.UpdateLayout();
+
+                var popup = FindNamedDescendant(autoSuggestBox, "SuggestionsPopup") as Popup
+                    ?? throw new InvalidOperationException("Could not find WinUI template part 'SuggestionsPopup' in Microsoft.UI.Xaml.Controls.AutoSuggestBox.");
+                var suggestionsContainer = FindNamedDescendant(popup, "SuggestionsContainer")
+                    ?? throw new InvalidOperationException("Could not find WinUI template part 'SuggestionsContainer' in Microsoft.UI.Xaml.Controls.AutoSuggestBox.");
+
+                var popupShadow = popup.Shadow
+                    ?? throw new InvalidOperationException("WinUI AutoSuggestBox SuggestionsPopup did not have a ThemeShadow after opening.");
+                var popupTranslation = popup.Translation;
+                popup.Shadow = null;
+                suggestionsContainer.Shadow = popupShadow;
+                suggestionsContainer.Translation = popupTranslation;
+
+                return ExtractPartIntoManifestCanvas(
+                    target,
+                    autoSuggestBox,
+                    suggestionsContainer,
+                    "Microsoft.UI.Xaml.Controls.AutoSuggestBox actual SuggestionsPopup shadow applied to SuggestionsContainer template part",
+                    isChildlessTarget: false);
+            },
+            PostPrepareDelayMilliseconds: 250);
+    }
+
     private static CaptureTargetElement CreateActualContentDialogBackgroundTarget(CaptureTarget target)
     {
+        var host = new Border
+        {
+            Width = Math.Max(target.Width, target.IgnoredBounds.X + target.IgnoredBounds.Width),
+            Height = Math.Max(target.Height, target.IgnoredBounds.Y + target.IgnoredBounds.Height),
+            Background = new SolidColorBrush(Colors.Transparent),
+            HorizontalAlignment = HorizontalAlignment.Left,
+            VerticalAlignment = VerticalAlignment.Top
+        };
         var contentDialog = new ContentDialog
         {
             Title = "Dialog",
@@ -293,12 +590,36 @@ public sealed class CaptureApp : Application
             VerticalAlignment = VerticalAlignment.Top
         };
 
-        return CreateActualTemplatePartTarget(
-            target,
-            contentDialog,
-            "BackgroundElement",
-            "Microsoft.UI.Xaml.Controls.ContentDialog actual BackgroundElement template part",
-            isChildlessTarget: true);
+        PrepareOwner(host, target);
+        return new CaptureTargetElement(
+            host,
+            "Microsoft.UI.Xaml.Controls.ContentDialog actual host for BackgroundElement",
+            () =>
+            {
+                host.UpdateLayout();
+                contentDialog.XamlRoot = host.XamlRoot;
+                _ = contentDialog.ShowAsync();
+                host.UpdateLayout();
+                return "Microsoft.UI.Xaml.Controls.ContentDialog actual host for BackgroundElement";
+            },
+            () =>
+            {
+                host.UpdateLayout();
+                var backgroundElement = FindNamedDescendantInOpenPopups(host, "BackgroundElement")
+                    ?? throw new InvalidOperationException("Could not find WinUI template part 'BackgroundElement' in Microsoft.UI.Xaml.Controls.ContentDialog.");
+                if (backgroundElement.Shadow is null)
+                {
+                    throw new InvalidOperationException("WinUI ContentDialog BackgroundElement did not have a ThemeShadow after opening.");
+                }
+
+                return ExtractPartIntoManifestCanvas(
+                    target,
+                    host,
+                    backgroundElement,
+                    "Microsoft.UI.Xaml.Controls.ContentDialog actual BackgroundElement template part",
+                    isChildlessTarget: true);
+            },
+            PostPrepareDelayMilliseconds: 250);
     }
 
     private static CaptureTargetElement CreateActualTemplatePartTarget(
@@ -421,6 +742,67 @@ public sealed class CaptureApp : Application
         return null;
     }
 
+    private static FrameworkElement? FindNamedDescendantInOpenPopups(FrameworkElement owner, string name)
+    {
+        var xamlRoot = owner.XamlRoot
+            ?? throw new InvalidOperationException($"Cannot search open WinUI popups for '{name}' before the owner is attached to a XamlRoot.");
+
+        foreach (var popup in VisualTreeHelper.GetOpenPopupsForXamlRoot(xamlRoot))
+        {
+            var result = FindNamedDescendant(popup, name);
+            if (result is not null)
+            {
+                return result;
+            }
+        }
+
+        return null;
+    }
+
+    private static T? FindDescendant<T>(DependencyObject root)
+        where T : FrameworkElement
+    {
+        if (root is T matched)
+        {
+            return matched;
+        }
+
+        var count = VisualTreeHelper.GetChildrenCount(root);
+        for (var i = 0; i < count; i++)
+        {
+            var result = FindDescendant<T>(VisualTreeHelper.GetChild(root, i));
+            if (result is not null)
+            {
+                return result;
+            }
+        }
+
+        if (root is Popup popup && popup.Child is not null)
+        {
+            return FindDescendant<T>(popup.Child);
+        }
+
+        return null;
+    }
+
+    private static T? FindDescendantInOpenPopups<T>(FrameworkElement owner)
+        where T : FrameworkElement
+    {
+        var xamlRoot = owner.XamlRoot
+            ?? throw new InvalidOperationException($"Cannot search open WinUI popups for '{typeof(T).FullName}' before the owner is attached to a XamlRoot.");
+
+        foreach (var popup in VisualTreeHelper.GetOpenPopupsForXamlRoot(xamlRoot))
+        {
+            var result = FindDescendant<T>(popup);
+            if (result is not null)
+            {
+                return result;
+            }
+        }
+
+        return null;
+    }
+
     private static void DetachFromParent(FrameworkElement element)
     {
         if (element.Parent is Panel panel)
@@ -432,6 +814,12 @@ public sealed class CaptureApp : Application
         if (element.Parent is Border border)
         {
             border.Child = null;
+            return;
+        }
+
+        if (element.Parent is Popup popup && ReferenceEquals(popup.Child, element))
+        {
+            popup.Child = null;
             return;
         }
 
@@ -597,9 +985,19 @@ public sealed record CaptureTarget(
 
 public sealed record Int32Rect(int X, int Y, int Width, int Height);
 
-public sealed record CaptureVisual(Canvas Canvas, string TargetElement, Func<string>? Prepare = null);
+public sealed record CaptureVisual(
+    Canvas Canvas,
+    string TargetElement,
+    Func<string>? Prepare = null,
+    Func<string>? PostPrepare = null,
+    int PostPrepareDelayMilliseconds = 0);
 
-public sealed record CaptureTargetElement(UIElement Element, string Description, Func<string>? Prepare = null);
+public sealed record CaptureTargetElement(
+    UIElement Element,
+    string Description,
+    Func<string>? Prepare = null,
+    Func<string>? PostPrepare = null,
+    int PostPrepareDelayMilliseconds = 0);
 
 public enum ReferenceCaptureMode
 {
