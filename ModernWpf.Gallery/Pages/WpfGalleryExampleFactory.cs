@@ -486,13 +486,8 @@ namespace ModernWpf.Gallery.Pages
             {
                 new GalleryExample(
                     "An Expander with text in the header and content areas",
-                    new Expander
-                    {
-                        Width = 360,
-                        Header = "This text is in the header",
-                        Content = new TextBlock { Text = "This is in the content", Margin = new Thickness(4) }
-                    },
-                    "<Expander Header=\"This text is in the header\">\n    <TextBlock Text=\"This is in the content\" />\n</Expander>",
+                    CreateExpanderExample(),
+                    "<Expander Header=\"This text is in the header\" Content=\"This is in the content\" />",
                     null)
             };
         }
@@ -504,17 +499,17 @@ namespace ModernWpf.Gallery.Pages
                 new GalleryExample(
                     "A simple 3x3 Grid",
                     CreateSimpleGridExample(),
-                    "<Grid ShowGridLines=\"True\">\n    <Grid.RowDefinitions>\n        <RowDefinition Height=\"*\" />\n        <RowDefinition Height=\"*\" />\n        <RowDefinition Height=\"*\" />\n    </Grid.RowDefinitions>\n    <Grid.ColumnDefinitions>\n        <ColumnDefinition Width=\"*\" />\n        <ColumnDefinition Width=\"*\" />\n        <ColumnDefinition Width=\"*\" />\n    </Grid.ColumnDefinitions>\n    <TextBlock Grid.Row=\"0\" Grid.Column=\"0\" Text=\"Cell 1\" />\n</Grid>",
+                    "<Grid ShowGridLines=\"True\">\n    <Grid.RowDefinitions>\n        <RowDefinition Height=\"*\" />\n        <RowDefinition Height=\"*\" />\n        <RowDefinition Height=\"*\" />\n    </Grid.RowDefinitions>\n    <Grid.ColumnDefinitions>\n        <ColumnDefinition Width=\"*\" />\n        <ColumnDefinition Width=\"*\" />\n        <ColumnDefinition Width=\"*\" />\n    </Grid.ColumnDefinitions>\n    <TextBlock Grid.Row=\"0\" Grid.Column=\"0\" Text=\"Cell 1\" />\n    <TextBlock Grid.Row=\"0\" Grid.Column=\"1\" Text=\"Cell 2\" />\n    <TextBlock Grid.Row=\"0\" Grid.Column=\"2\" Text=\"Cell 3\" />\n    <TextBlock Grid.Row=\"1\" Grid.Column=\"0\" Text=\"Cell 4\" />\n    <TextBlock Grid.Row=\"1\" Grid.Column=\"1\" Text=\"Cell 5\" />\n    <TextBlock Grid.Row=\"1\" Grid.Column=\"2\" Text=\"Cell 6\" />\n    <TextBlock Grid.Row=\"2\" Grid.Column=\"0\" Text=\"Cell 7\" />\n    <TextBlock Grid.Row=\"2\" Grid.Column=\"1\" Text=\"Cell 8\" />\n    <TextBlock Grid.Row=\"2\" Grid.Column=\"2\" Text=\"Cell 9\" />\n</Grid>",
                     null),
                 new GalleryExample(
                     "A Grid with custom sizing and spanning",
                     CreateCustomGridExample(),
-                    "<Grid>\n    <Grid.RowDefinitions>\n        <RowDefinition Height=\"Auto\" />\n        <RowDefinition Height=\"*\" />\n        <RowDefinition Height=\"Auto\" />\n    </Grid.RowDefinitions>\n    <Grid.ColumnDefinitions>\n        <ColumnDefinition Width=\"*\" />\n        <ColumnDefinition Width=\"2*\" />\n        <ColumnDefinition Width=\"*\" />\n    </Grid.ColumnDefinitions>\n    <Border Grid.Row=\"1\" Grid.Column=\"0\" Grid.ColumnSpan=\"3\" />\n</Grid>",
+                    "<Grid>\n    <Grid.RowDefinitions>\n        <RowDefinition Height=\"Auto\" />\n        <RowDefinition Height=\"*\" />\n        <RowDefinition Height=\"Auto\" />\n    </Grid.RowDefinitions>\n    <Grid.ColumnDefinitions>\n        <ColumnDefinition Width=\"*\" />\n        <ColumnDefinition Width=\"2*\" />\n        <ColumnDefinition Width=\"*\" />\n    </Grid.ColumnDefinitions>\n    <Border Grid.Row=\"0\" Grid.Column=\"0\" Background=\"{DynamicResource ControlFillColorDefaultBrush}\" Margin=\"5\" Padding=\"10\">\n        <TextBlock Text=\"Row 0, Column 0\" />\n    </Border>\n    <Border Grid.Row=\"0\" Grid.Column=\"1\" Background=\"{DynamicResource ControlFillColorDefaultBrush}\" Margin=\"5\" Padding=\"10\">\n        <TextBlock Text=\"Row 0, Column 1 (2x width)\" />\n    </Border>\n    <Border Grid.Row=\"0\" Grid.Column=\"2\" Background=\"{DynamicResource ControlFillColorDefaultBrush}\" Margin=\"5\" Padding=\"10\">\n        <TextBlock Text=\"Row 0, Column 2\" />\n    </Border>\n    <Border Grid.Row=\"1\" Grid.Column=\"0\" Grid.ColumnSpan=\"3\" Background=\"{DynamicResource ControlFillColorSecondaryBrush}\" Margin=\"5\" Padding=\"10\">\n        <TextBlock Text=\"Row 1, Spans all columns\" />\n    </Border>\n    <Border Grid.Row=\"2\" Grid.Column=\"0\" Grid.ColumnSpan=\"2\" Background=\"{DynamicResource ControlFillColorDefaultBrush}\" Margin=\"5\" Padding=\"10\">\n        <TextBlock Text=\"Row 2, Spans 2 columns\" />\n    </Border>\n    <Border Grid.Row=\"2\" Grid.Column=\"2\" Background=\"{DynamicResource ControlFillColorDefaultBrush}\" Margin=\"5\" Padding=\"10\">\n        <TextBlock Text=\"Row 2, Column 2\" />\n    </Border>\n</Grid>",
                     null),
                 new GalleryExample(
                     "Grid using XAML shorthand syntax",
                     CreateShorthandGridExample(),
-                    "<Grid RowDefinitions=\"Auto,*,Auto\" ColumnDefinitions=\"100,2*,*\">\n    <Border Grid.Row=\"0\" Grid.Column=\"0\">\n        <TextBlock Text=\"Header (100px)\" />\n    </Border>\n</Grid>",
+                    "<Grid RowDefinitions=\"Auto,*,Auto\" ColumnDefinitions=\"100,2*,*\">\n    <Border Grid.Row=\"0\" Grid.Column=\"0\" Background=\"{DynamicResource ControlFillColorDefaultBrush}\" Margin=\"5\" Padding=\"10\">\n        <TextBlock Text=\"Header (100px)\" />\n    </Border>\n    <Border Grid.Row=\"0\" Grid.Column=\"1\" Background=\"{DynamicResource ControlFillColorSecondaryBrush}\" Margin=\"5\" Padding=\"10\">\n        <TextBlock Text=\"Title (2*)\" />\n    </Border>\n    <Border Grid.Row=\"0\" Grid.Column=\"2\" Background=\"{DynamicResource ControlFillColorDefaultBrush}\" Margin=\"5\" Padding=\"10\">\n        <TextBlock Text=\"Actions (*)\" />\n    </Border>\n    <Border Grid.Row=\"1\" Grid.Column=\"0\" Grid.ColumnSpan=\"3\" Background=\"{DynamicResource ControlAltFillColorSecondaryBrush}\" Margin=\"5\" Padding=\"10\">\n        <TextBlock Text=\"Main Content Area (fills available space)\" VerticalAlignment=\"Center\" HorizontalAlignment=\"Center\" />\n    </Border>\n    <Border Grid.Row=\"2\" Grid.Column=\"0\" Grid.ColumnSpan=\"3\" Background=\"{DynamicResource ControlFillColorDefaultBrush}\" Margin=\"5\" Padding=\"10\">\n        <TextBlock Text=\"Footer (Auto height, spans all columns)\" />\n    </Border>\n</Grid>",
                     null)
             };
         }
@@ -526,7 +521,7 @@ namespace ModernWpf.Gallery.Pages
                 new GalleryExample(
                     "A GridSplitter",
                     CreateGridSplitterExample(),
-                    "<Grid Height=\"400\">\n    <Grid.RowDefinitions>\n        <RowDefinition Height=\"Auto\" />\n        <RowDefinition Height=\"*\" />\n    </Grid.RowDefinitions>\n    <TextBlock Style=\"{DynamicResource TitleTextBlockStyle}\" Text=\"Grid Splitter\" Margin=\"0,0,0,10\" />\n    <Border BorderBrush=\"{DynamicResource ControlElevationBorderBrush}\" BorderThickness=\"2\" Grid.Row=\"1\" Padding=\"10\" CornerRadius=\"4\">\n        <Grid Background=\"{DynamicResource ControlAltFillColorSecondaryBrush}\">\n            <Grid.RowDefinitions>\n                <RowDefinition Height=\"*\" />\n                <RowDefinition Height=\"Auto\" />\n                <RowDefinition Height=\"*\" />\n                <RowDefinition Height=\"Auto\" />\n                <RowDefinition Height=\"*\" />\n                <RowDefinition Height=\"Auto\" />\n                <RowDefinition Height=\"*\" />\n            </Grid.RowDefinitions>\n            <Grid.ColumnDefinitions>\n                <ColumnDefinition Width=\"*\" />\n                <ColumnDefinition Width=\"Auto\" />\n                <ColumnDefinition Width=\"*\" />\n            </Grid.ColumnDefinitions>\n            <GridSplitter Grid.RowSpan=\"5\" Grid.Column=\"1\" ResizeDirection=\"Columns\" />\n            <GridSplitter Grid.Row=\"1\" Grid.ColumnSpan=\"3\" ResizeDirection=\"Rows\" />\n        </Grid>\n    </Border>\n</Grid>",
+                    "<Grid Height=\"400\">\n    <Grid.RowDefinitions>\n        <RowDefinition Height=\"Auto\" />\n        <RowDefinition Height=\"*\" />\n    </Grid.RowDefinitions>\n    <TextBlock Style=\"{DynamicResource TitleTextBlockStyle}\" Text=\"Grid Splitter\" Margin=\"0 0 0 10\" />\n    <Border BorderBrush=\"{DynamicResource ControlElevationBorderBrush}\" BorderThickness=\"2\" Grid.Row=\"1\" Padding=\"10\" CornerRadius=\"4\">\n        <Grid Background=\"{DynamicResource ControlAltFillColorSecondaryBrush}\">\n            <Grid.RowDefinitions>\n                <RowDefinition Height=\"*\" />\n                <RowDefinition Height=\"Auto\" />\n                <RowDefinition Height=\"*\" />\n                <RowDefinition Height=\"Auto\" />\n                <RowDefinition Height=\"*\" />\n                <RowDefinition Height=\"Auto\" />\n                <RowDefinition Height=\"*\" />\n            </Grid.RowDefinitions>\n            <Grid.ColumnDefinitions>\n                <ColumnDefinition Width=\"*\" />\n                <ColumnDefinition Width=\"Auto\" />\n                <ColumnDefinition Width=\"*\" />\n            </Grid.ColumnDefinitions>\n            <TextBlock TextWrapping=\"Wrap\" Text=\"{StaticResource SampleText}\" />\n            <TextBlock Grid.Row=\"0\" Grid.Column=\"2\" TextWrapping=\"Wrap\" Text=\"{StaticResource SampleText2}\" />\n            <TextBlock Grid.Row=\"2\" Grid.Column=\"2\" TextWrapping=\"Wrap\" Text=\"{StaticResource SampleText}\" />\n            <TextBlock Grid.Row=\"2\" Grid.Column=\"0\" TextWrapping=\"Wrap\" Text=\"{StaticResource SampleText2}\" />\n            <TextBlock Grid.Row=\"4\" Grid.Column=\"2\" TextWrapping=\"Wrap\" Text=\"{StaticResource SampleText2}\" />\n            <TextBlock Grid.Row=\"4\" Grid.Column=\"0\" TextWrapping=\"Wrap\" Text=\"{StaticResource SampleText}\" />\n            <GridSplitter Grid.RowSpan=\"5\" Grid.Column=\"1\" ResizeDirection=\"Columns\" />\n            <GridSplitter Grid.Row=\"1\" Grid.ColumnSpan=\"3\" ResizeDirection=\"Rows\" />\n            <GridSplitter Grid.Row=\"3\" Grid.ColumnSpan=\"1\" ResizeDirection=\"Rows\" />\n        </Grid>\n    </Border>\n</Grid>",
                     null)
             };
         }
@@ -538,7 +533,7 @@ namespace ModernWpf.Gallery.Pages
                 new GalleryExample(
                     "A GroupBox",
                     CreateUserInformationGroupBox(),
-                    "<GroupBox Header=\"User Information\" HorizontalAlignment=\"Left\" VerticalAlignment=\"Center\" Width=\"400\">\n    <StackPanel>\n        <StackPanel Orientation=\"Horizontal\">\n            <TextBlock Width=\"100\" Text=\"Name:\" />\n            <TextBox Width=\"280\" Margin=\"10,0,0,20\" />\n        </StackPanel>\n        <StackPanel Orientation=\"Horizontal\">\n            <TextBlock Width=\"100\" Text=\"Gender:\" Margin=\"0,10,0,0\" />\n            <TextBox Width=\"280\" Margin=\"10,0,0,20\" />\n        </StackPanel>\n        <Button Content=\"Submit\" HorizontalAlignment=\"Right\" Width=\"100\" Margin=\"0,10,0,0\" />\n    </StackPanel>\n</GroupBox>",
+                    "<GroupBox Header=\"User Information\" HorizontalAlignment=\"Left\" VerticalAlignment=\"Center\" Width=\"400\">\n    <StackPanel>\n        <StackPanel Orientation=\"Horizontal\">\n            <TextBlock Width=\"100\" Text=\"Name:\" />\n            <TextBox Name=\"NameTextBox\" Width=\"280\" Margin=\"10,0,0,20\" />\n        </StackPanel>\n        <StackPanel Orientation=\"Horizontal\">\n            <TextBlock Width=\"100\" Text=\"Gender:\" Margin=\"0,10,0,0\" />\n            <TextBox Name=\"GenderTextBox\" Width=\"280\" Margin=\"10,0,0,20\" />\n        </StackPanel>\n        <Button Content=\"Submit\" HorizontalAlignment=\"Right\" Margin=\"0,10,0,0\" />\n    </StackPanel>\n</GroupBox>",
                     null)
             };
         }
@@ -907,12 +902,12 @@ namespace ModernWpf.Gallery.Pages
                 new GalleryExample(
                     "A basic vertical StackPanel",
                     CreateStackPanel(Orientation.Vertical),
-                    "<StackPanel>\n    <Button Content=\"First\" />\n    <Button Content=\"Second\" />\n    <Button Content=\"Third\" />\n</StackPanel>",
+                    "<StackPanel Orientation=\"Vertical\">\n    <Rectangle Width=\"100\" Height=\"30\" Fill=\"CornflowerBlue\" />\n    <Rectangle Width=\"100\" Height=\"30\" Fill=\"LightCoral\" />\n    <Rectangle Width=\"100\" Height=\"30\" Fill=\"MediumSeaGreen\" />\n</StackPanel>",
                     null),
                 new GalleryExample(
                     "A horizontal StackPanel",
                     CreateStackPanel(Orientation.Horizontal),
-                    "<StackPanel Orientation=\"Horizontal\">\n    <Button Content=\"First\" />\n    <Button Content=\"Second\" />\n    <Button Content=\"Third\" />\n</StackPanel>",
+                    "<StackPanel Orientation=\"Horizontal\">\n    <Rectangle Width=\"100\" Height=\"30\" Fill=\"CornflowerBlue\" />\n    <Rectangle Width=\"100\" Height=\"30\" Fill=\"LightCoral\" />\n    <Rectangle Width=\"100\" Height=\"30\" Fill=\"MediumSeaGreen\" />\n</StackPanel>",
                     null)
             };
         }
@@ -1067,6 +1062,23 @@ namespace ModernWpf.Gallery.Pages
             stack.Children.Add(button);
             stack.Children.Add(output);
             return stack;
+        }
+
+        private static Grid CreateExpanderExample()
+        {
+            var grid = new Grid();
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+            var expander = new Expander
+            {
+                Header = "This text is in the header",
+                Content = "This is in the content"
+            };
+            Grid.SetColumn(expander, 0);
+
+            grid.Children.Add(expander);
+            return grid;
         }
 
         private static Border CreateClipboardNotice()
@@ -2245,7 +2257,6 @@ namespace ModernWpf.Gallery.Pages
             {
                 Content = "Submit",
                 HorizontalAlignment = HorizontalAlignment.Right,
-                Width = 100,
                 Margin = new Thickness(0, 10, 0, 0)
             });
 
@@ -2798,13 +2809,20 @@ namespace ModernWpf.Gallery.Pages
             return grid;
         }
 
-        private static Border CreateResourceGridBorder(string text, int row, int column, int rowSpan, int columnSpan, string backgroundResourceKey)
+        private static Border CreateResourceGridBorder(string text, int row, int column, int rowSpan, int columnSpan, string backgroundResourceKey, bool centerContent = false)
         {
+            var textBlock = new TextBlock { Text = text };
+            if (centerContent)
+            {
+                textBlock.HorizontalAlignment = HorizontalAlignment.Center;
+                textBlock.VerticalAlignment = VerticalAlignment.Center;
+            }
+
             var border = new Border
             {
                 Margin = new Thickness(5),
                 Padding = new Thickness(10),
-                Child = new TextBlock { Text = text }
+                Child = textBlock
             };
             border.SetResourceReference(Border.BackgroundProperty, backgroundResourceKey);
             Grid.SetRow(border, row);
@@ -2836,7 +2854,7 @@ namespace ModernWpf.Gallery.Pages
             grid.Children.Add(CreateResourceGridBorder("Header (100px)", 0, 0, 1, 1, "ControlFillColorDefaultBrush"));
             grid.Children.Add(CreateResourceGridBorder("Title (2*)", 0, 1, 1, 1, "ControlFillColorSecondaryBrush"));
             grid.Children.Add(CreateResourceGridBorder("Actions (*)", 0, 2, 1, 1, "ControlFillColorDefaultBrush"));
-            grid.Children.Add(CreateResourceGridBorder("Main Content Area (fills available space)", 1, 0, 1, 3, "ControlAltFillColorSecondaryBrush"));
+            grid.Children.Add(CreateResourceGridBorder("Main Content Area (fills available space)", 1, 0, 1, 3, "ControlAltFillColorSecondaryBrush", true));
             grid.Children.Add(CreateResourceGridBorder("Footer (Auto height, spans all columns)", 2, 0, 1, 3, "ControlFillColorDefaultBrush"));
             return grid;
         }
@@ -2861,8 +2879,7 @@ namespace ModernWpf.Gallery.Pages
                 {
                     var text = new TextBlock
                     {
-                        Text = "Cell " + cell++,
-                        Margin = new Thickness(4)
+                        Text = "Cell " + cell++
                     };
                     Grid.SetRow(text, row);
                     Grid.SetColumn(text, column);
@@ -3137,10 +3154,21 @@ namespace ModernWpf.Gallery.Pages
             {
                 Orientation = orientation
             };
-            stack.Children.Add(new Button { Content = "First", Margin = new Thickness(0, 0, 8, 8) });
-            stack.Children.Add(new Button { Content = "Second", Margin = new Thickness(0, 0, 8, 8) });
-            stack.Children.Add(new Button { Content = "Third", Margin = new Thickness(0, 0, 8, 8) });
+            stack.Children.Add(CreateStackPanelRectangle(Brushes.CornflowerBlue));
+            stack.Children.Add(CreateStackPanelRectangle(Brushes.LightCoral));
+            stack.Children.Add(CreateStackPanelRectangle(Brushes.MediumSeaGreen));
             return stack;
+        }
+
+        private static Rectangle CreateStackPanelRectangle(Brush fill)
+        {
+            return new Rectangle
+            {
+                Width = 100,
+                Height = 30,
+                Fill = fill,
+                Margin = new Thickness(5)
+            };
         }
 
         private static bool? ShowDialog(FileDialog dialog, FrameworkElement ownerElement)
