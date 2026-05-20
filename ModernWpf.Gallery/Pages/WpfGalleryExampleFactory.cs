@@ -204,7 +204,6 @@ namespace ModernWpf.Gallery.Pages
             var disableButton = new CheckBox
             {
                 Content = "Disable button",
-                Margin = new Thickness(24, 0, 0, 0),
                 VerticalAlignment = VerticalAlignment.Center
             };
             disableButton.Checked += delegate { simpleButton.IsEnabled = false; };
@@ -294,12 +293,12 @@ namespace ModernWpf.Gallery.Pages
             {
                 new GalleryExample(
                     "A 2-state CheckBox.",
-                    CreateCheckBox("Two-state CheckBox", false, false),
+                    CreateCheckBox("Two-state CheckBox", false, false, "Sample Two State"),
                     "<CheckBox Content=\"Two-state CheckBox\" />",
                     null),
                 new GalleryExample(
                     "A 3-state CheckBox.",
-                    CreateCheckBox("Three-state CheckBox", true, null),
+                    CreateCheckBox("Three-state CheckBox", true, null, "Sample Three State"),
                     "<CheckBox IsThreeState=\"True\" Content=\"Three-state CheckBox\" IsChecked=\"{x:Null}\" />",
                     null),
                 new GalleryExample(
@@ -352,26 +351,20 @@ namespace ModernWpf.Gallery.Pages
             return new[]
             {
                 new GalleryExample(
-                    "A simple ComboBox.",
-                    new ComboBox
-                    {
-                        Width = 220,
-                        ItemsSource = new[] { "Blue", "Green", "Red", "Yellow" },
-                        SelectedIndex = 0
-                    },
-                    "<ComboBox SelectedIndex=\"0\">\n    <ComboBoxItem Content=\"Blue\" />\n    <ComboBoxItem Content=\"Green\" />\n    <ComboBoxItem Content=\"Red\" />\n    <ComboBoxItem Content=\"Yellow\" />\n</ComboBox>",
+                    "A ComboBox with items defined inline.",
+                    CreateInlineComboBoxExample(),
+                    "<ComboBox MinWidth=\"200\" HorizontalAlignment=\"Left\" SelectedIndex=\"0\">\n    <ComboBoxItem Content=\"Blue\" />\n    <ComboBoxItem Content=\"Green\" />\n    <ComboBoxItem Content=\"Red\" />\n    <ComboBoxItem Content=\"Yellow\" />\n</ComboBox>",
+                    null),
+                new GalleryExample(
+                    "A ComboBox with ItemsSource set.",
+                    CreateFontFamilyComboBoxExample(),
+                    "<ComboBox MinWidth=\"200\" HorizontalAlignment=\"Left\" ItemsSource=\"{Binding FontFamilies}\" SelectedIndex=\"0\" />",
                     null),
                 new GalleryExample(
                     "An editable ComboBox.",
-                    new ComboBox
-                    {
-                        Width = 220,
-                        IsEditable = true,
-                        ItemsSource = new[] { "Arial", "Calibri", "Segoe UI", "Verdana" },
-                        Text = "Segoe UI"
-                    },
-                    "<ComboBox IsEditable=\"True\" Text=\"Segoe UI\" />",
-                null)
+                    CreateEditableFontSizeComboBoxExample(),
+                    "<ComboBox MinWidth=\"200\" HorizontalAlignment=\"Left\" ItemsSource=\"{Binding FontSizes}\" SelectedIndex=\"0\" IsEditable=\"True\" />",
+                    null)
             };
         }
 
@@ -2653,7 +2646,7 @@ namespace ModernWpf.Gallery.Pages
             return tabControl;
         }
 
-        private static CheckBox CreateCheckBox(string content, bool isThreeState, bool? isChecked)
+        private static CheckBox CreateCheckBox(string content, bool isThreeState, bool? isChecked, string automationName)
         {
             var checkBox = new CheckBox
             {
@@ -2661,8 +2654,88 @@ namespace ModernWpf.Gallery.Pages
                 IsThreeState = isThreeState,
                 IsChecked = isChecked
             };
-            AutomationProperties.SetName(checkBox, content);
+            AutomationProperties.SetName(checkBox, automationName);
             return checkBox;
+        }
+
+        private static ComboBox CreateInlineComboBoxExample()
+        {
+            var comboBox = CreateGalleryComboBox("Sample defined inline");
+            comboBox.Items.Add(new ComboBoxItem { Content = "Blue" });
+            comboBox.Items.Add(new ComboBoxItem { Content = "Green" });
+            comboBox.Items.Add(new ComboBoxItem { Content = "Red" });
+            comboBox.Items.Add(new ComboBoxItem { Content = "Yellow" });
+            comboBox.SelectedIndex = 0;
+            return comboBox;
+        }
+
+        private static ComboBox CreateFontFamilyComboBoxExample()
+        {
+            var comboBox = CreateGalleryComboBox("Sample item source set");
+            comboBox.ItemsSource = CreateComboBoxFontFamilies();
+            comboBox.ItemTemplate = CreateFontFamilyComboBoxItemTemplate();
+            comboBox.SelectedIndex = 0;
+            return comboBox;
+        }
+
+        private static ComboBox CreateEditableFontSizeComboBoxExample()
+        {
+            var comboBox = CreateGalleryComboBox("Editable");
+            comboBox.ItemsSource = CreateComboBoxFontSizes();
+            comboBox.IsEditable = true;
+            comboBox.SelectedIndex = 0;
+            return comboBox;
+        }
+
+        private static ComboBox CreateGalleryComboBox(string automationName)
+        {
+            var comboBox = new ComboBox
+            {
+                MinWidth = 200,
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+            AutomationProperties.SetName(comboBox, automationName);
+            return comboBox;
+        }
+
+        private static string[] CreateComboBoxFontFamilies()
+        {
+            return new[]
+            {
+                "Arial",
+                "Comic Sans MS",
+                "Segoe UI",
+                "Times New Roman"
+            };
+        }
+
+        private static int[] CreateComboBoxFontSizes()
+        {
+            return new[]
+            {
+                8,
+                9,
+                10,
+                11,
+                12,
+                14,
+                16,
+                18,
+                20,
+                24,
+                28,
+                36,
+                48,
+                72
+            };
+        }
+
+        private static DataTemplate CreateFontFamilyComboBoxItemTemplate()
+        {
+            var textBlock = new FrameworkElementFactory(typeof(TextBlock));
+            textBlock.SetBinding(TextBlock.FontFamilyProperty, new Binding());
+            textBlock.SetBinding(TextBlock.TextProperty, new Binding());
+            return new DataTemplate { VisualTree = textBlock };
         }
 
         private static void AddGridSplitterText(Grid grid, string text, int row, int column)
