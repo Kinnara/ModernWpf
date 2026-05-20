@@ -47,14 +47,16 @@ ModernWpf still exposes `ThemeShadowChrome` as the WPF template host because WPF
 `ThemeShadowChrome` also exposes WinUI-shaped aliases for new template work:
 
 ```xaml
-<ui:ThemeShadowChrome
-    TranslationZ="32"
-    Shadow="{ui:ThemeShadow}">
+<ui:ThemeShadowChrome TranslationZ="32">
+    <ui:ThemeShadowChrome.Shadow>
+        <ui:ThemeShadow />
+    </ui:ThemeShadowChrome.Shadow>
+
     <!-- shadowed surface -->
 </ui:ThemeShadowChrome>
 ```
 
-`TranslationZ` is a two-way alias for the existing `Depth` property, and `Shadow` is a lightweight `ThemeShadow` marker alias for the existing `IsShadowEnabled` switch: non-null enables the WPF substitute shadow, and `null` disables it. The older `Depth` / `IsShadowEnabled` properties remain supported for existing templates and tests. This is intentionally an API-shape alignment, not an arbitrary WPF `UIElement.Shadow` implementation; WPF still needs the explicit `ThemeShadowChrome` host so layout, popup insets, opacity propagation, hit testing, and the proven PNG comparison path stay controlled.
+`TranslationZ` is a two-way alias for the existing `Depth` property, and the `Shadow` property accepts a lightweight `ThemeShadow` marker object like WinUI's property-element syntax. A non-null `Shadow` enables the WPF substitute shadow, and `null` disables it. The older `Depth` / `IsShadowEnabled` properties remain supported for existing templates and tests. This is intentionally an API-shape alignment, not an arbitrary WPF `UIElement.Shadow` implementation; WPF still needs the explicit `ThemeShadowChrome` host so layout, popup insets, opacity propagation, hit testing, and the proven PNG comparison path stay controlled.
 
 The renderer ports the WinUI `GetDropShadowRecipe` formulas into WPF:
 

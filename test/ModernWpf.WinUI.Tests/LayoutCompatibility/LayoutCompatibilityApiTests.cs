@@ -138,12 +138,16 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
-    public void ThemeShadowChromeAcceptsThemeShadowMarkupExtension()
+    public void ThemeShadowChromeAcceptsWinUIShapedShadowPropertyElement()
     {
         WpfTestHost.Run(() =>
         {
             var chrome = (ThemeShadowChrome)XamlReader.Parse(
-                @"<ui:ThemeShadowChrome xmlns:ui=""http://schemas.modernwpf.com/2019"" TranslationZ=""64"" Shadow=""{ui:ThemeShadow}"" />");
+                @"<ui:ThemeShadowChrome xmlns:ui=""http://schemas.modernwpf.com/2019"" TranslationZ=""64"">
+                    <ui:ThemeShadowChrome.Shadow>
+                        <ui:ThemeShadow />
+                    </ui:ThemeShadowChrome.Shadow>
+                  </ui:ThemeShadowChrome>");
 
             Assert.IsNotNull(chrome.Shadow);
             Assert.IsTrue(chrome.IsShadowEnabled);
