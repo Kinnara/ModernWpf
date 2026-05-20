@@ -202,7 +202,8 @@
                         Margin="8,-16,0,0"
                         HorizontalAlignment="Left"
                         Style="{StaticResource GalleryHeaderTileScrollButtonStyle}"
-                        ToolTip="Scroll left">
+                        ToolTip="Scroll left"
+                        Visibility="Collapsed">
                         <TextBlock
                             FontFamily="{StaticResource SymbolThemeFontFamily}"
                             FontSize="8"
