@@ -328,7 +328,9 @@ namespace ModernWpf.Controls.Primitives
             {
                 _shadow.ContentSize = contentSize;
                 _shadow.LayoutSize = arrangeSize;
-                _shadow.AlignToContentOrigin = !hasChild;
+                _shadow.ContentOrigin = hasChild
+                    ? new Point(padding.Left, padding.Top)
+                    : new Point();
                 _background.Arrange(new Rect(arrangeSize));
             }
 
@@ -1066,14 +1068,14 @@ namespace ModernWpf.Controls.Primitives
                 }
             }
 
-            public bool AlignToContentOrigin
+            public Point ContentOrigin
             {
-                get => _alignToContentOrigin;
+                get => _contentOrigin;
                 set
                 {
-                    if (_alignToContentOrigin != value)
+                    if (_contentOrigin != value)
                     {
-                        _alignToContentOrigin = value;
+                        _contentOrigin = value;
                         InvalidateVisual();
                     }
                 }
@@ -1107,7 +1109,7 @@ namespace ModernWpf.Controls.Primitives
                         Depth,
                         ThemeManager.GetActualTheme(this),
                         VisualTreeHelper.GetDpi(this),
-                        AlignToContentOrigin);
+                        ContentOrigin);
                 }
             }
 
@@ -1115,7 +1117,7 @@ namespace ModernWpf.Controls.Primitives
             private CornerRadius _cornerRadius;
             private Size _contentSize;
             private Size _layoutSize;
-            private bool _alignToContentOrigin;
+            private Point _contentOrigin;
         }
 
         internal static class ThemeShadowRenderer
@@ -1195,7 +1197,7 @@ namespace ModernWpf.Controls.Primitives
                 double depth,
                 ElementTheme theme,
                 DpiScale dpi,
-                bool alignToContentOrigin = true)
+                Point? contentOrigin = null)
             {
                 if (depth <= 0 || double.IsNaN(depth) || double.IsInfinity(depth) ||
                     contentSize.Width <= 0 || contentSize.Height <= 0)
@@ -1207,12 +1209,13 @@ namespace ModernWpf.Controls.Primitives
                 var image = GetShadowImage(contentSize, cornerRadius, depth, theme, padding, dpi);
                 var imageWidth = image.PixelWidth / dpi.DpiScaleX;
                 var imageHeight = image.PixelHeight / dpi.DpiScaleY;
+                var origin = contentOrigin ?? new Point();
 
                 drawingContext.DrawImage(
                     image,
                     new Rect(
-                        alignToContentOrigin ? -padding.Left : 0,
-                        alignToContentOrigin ? -padding.Top : 0,
+                        origin.X - padding.Left,
+                        origin.Y - padding.Top,
                         imageWidth,
                         imageHeight));
             }

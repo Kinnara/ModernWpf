@@ -1044,30 +1044,51 @@ public class LayoutCompatibilityApiTests
                 }
             }
 
-            var menuFlyoutPresenter = new MenuFlyoutPresenter
+            var menuFlyoutOwner = new Button
             {
-                Width = 160,
-                Height = 96,
-                MinWidth = 0,
-                MinHeight = 0,
-                Padding = new Thickness(),
-                IsDefaultShadowEnabled = true,
-                CornerRadius = new CornerRadius(4)
+                Content = "Anchor",
+                Width = 80,
+                Height = 32
             };
-            menuFlyoutPresenter.Items.Add(new MenuItem { Header = "Copy" });
-            ArrangeElement(menuFlyoutPresenter, 200, 140);
+            ThemeManager.SetRequestedTheme(menuFlyoutOwner, ElementTheme.Light);
+            var menuFlyout = new MenuFlyout();
+            menuFlyout.Items.Add(new MenuItem { Header = "Copy" });
+            var menuFlyoutPresenter = menuFlyout.Presenter;
+            ThemeManager.SetRequestedTheme(menuFlyoutPresenter, ElementTheme.Light);
+            menuFlyoutPresenter.Width = 160;
+            menuFlyoutPresenter.Height = 96;
+            menuFlyoutPresenter.MinWidth = 0;
+            menuFlyoutPresenter.MinHeight = 0;
+            menuFlyoutPresenter.Padding = new Thickness();
+            menuFlyoutPresenter.IsDefaultShadowEnabled = true;
+            menuFlyoutPresenter.CornerRadius = new CornerRadius(4);
 
-            var menuFlyoutChrome = FindVisualChild<ThemeShadowChrome>(menuFlyoutPresenter)
-                ?? throw new AssertFailedException("Expected MenuFlyoutPresenter to render through ThemeShadowChrome.");
-            AssertMediumWindowedPopupInsets(menuFlyoutChrome);
-            AssertRenderedTemplateShadowVisible(
-                menuFlyoutPresenter,
-                menuFlyoutChrome,
-                200,
-                140,
-                minPeakDarkening: 20,
-                minShadowPixels: 1000,
-                "MenuFlyoutPresenter");
+            using (var host = new TestWindowHost(menuFlyoutOwner, width: 200, height: 140))
+            {
+                host.UpdateLayout();
+                menuFlyout.ShowAt(menuFlyoutOwner);
+                WpfTestHost.DoEvents();
+                WaitForDispatcherDelay(250);
+
+                try
+                {
+                    var menuFlyoutChrome = FindVisualChild<ThemeShadowChrome>(menuFlyoutPresenter)
+                        ?? throw new AssertFailedException("Expected MenuFlyoutPresenter to render through ThemeShadowChrome.");
+                    AssertMediumWindowedPopupInsets(menuFlyoutChrome);
+                    AssertRenderedTemplateShadowVisible(
+                        menuFlyoutPresenter,
+                        menuFlyoutChrome,
+                        200,
+                        140,
+                        minPeakDarkening: 20,
+                        minShadowPixels: 1000,
+                        "MenuFlyoutPresenter");
+                }
+                finally
+                {
+                    menuFlyout.Hide();
+                }
+            }
 
             var teachingTip = new ModernWpf.Controls.TeachingTip
             {
@@ -5011,6 +5032,23 @@ public class LayoutCompatibilityApiTests
         }
 
         Assert.IsTrue(rendered, "Timed out waiting for a WPF render tick.");
+    }
+
+    private static void WaitForDispatcherDelay(int milliseconds)
+    {
+        var frame = new DispatcherFrame();
+        var timer = new DispatcherTimer(DispatcherPriority.Background)
+        {
+            Interval = TimeSpan.FromMilliseconds(milliseconds)
+        };
+        timer.Tick += (_, _) =>
+        {
+            timer.Stop();
+            frame.Continue = false;
+        };
+
+        timer.Start();
+        Dispatcher.PushFrame(frame);
     }
 
     private static Grid CreateWhiteCanvas(double width, double height)

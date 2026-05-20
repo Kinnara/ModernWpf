@@ -405,26 +405,50 @@ public sealed partial class CaptureApp : Application
 
     private static CaptureTargetElement CreateActualMenuFlyoutPresenterTarget(CaptureTarget target)
     {
-        var presenter = new MenuFlyoutPresenter
+        var anchor = new Button
         {
-            Width = target.IgnoredBounds.Width,
-            Height = target.IgnoredBounds.Height,
-            MinWidth = 0,
-            MinHeight = 0,
-            Padding = new Thickness(),
-            Background = new SolidColorBrush(Colors.Transparent),
-            BorderBrush = new SolidColorBrush(Colors.Transparent),
-            BorderThickness = new Thickness(),
-            CornerRadius = new CornerRadius(target.CornerRadius),
-            IsDefaultShadowEnabled = true,
+            Content = "Anchor",
+            Width = 80,
+            Height = 32,
             HorizontalAlignment = HorizontalAlignment.Left,
             VerticalAlignment = VerticalAlignment.Top
         };
-        presenter.Items.Add(new MenuFlyoutItem { Text = "Copy" });
+        var menuFlyout = new MenuFlyout
+        {
+            Placement = FlyoutPlacementMode.Bottom,
+            ShowMode = FlyoutShowMode.Standard
+        };
+        menuFlyout.Items.Add(new MenuFlyoutItem { Text = "Copy" });
 
-        Canvas.SetLeft(presenter, target.IgnoredBounds.X);
-        Canvas.SetTop(presenter, target.IgnoredBounds.Y);
-        return new CaptureTargetElement(presenter, "Microsoft.UI.Xaml.Controls.MenuFlyoutPresenter actual control");
+        PrepareOwner(anchor, target);
+        return new CaptureTargetElement(
+            anchor,
+            "Microsoft.UI.Xaml.Controls.MenuFlyout actual anchor host for MenuFlyoutPresenter",
+            () =>
+            {
+                anchor.UpdateLayout();
+                menuFlyout.ShowAt(anchor);
+                anchor.UpdateLayout();
+                return "Microsoft.UI.Xaml.Controls.MenuFlyout actual anchor host for MenuFlyoutPresenter";
+            },
+            () =>
+            {
+                anchor.UpdateLayout();
+                var presenter = FindDescendantInOpenPopups<MenuFlyoutPresenter>(anchor)
+                    ?? throw new InvalidOperationException("Could not find WinUI Microsoft.UI.Xaml.Controls.MenuFlyoutPresenter after opening MenuFlyout.");
+                if (presenter.Shadow is null)
+                {
+                    throw new InvalidOperationException("WinUI MenuFlyoutPresenter did not have a ThemeShadow after opening.");
+                }
+
+                return ExtractPartIntoManifestCanvas(
+                    target,
+                    anchor,
+                    presenter,
+                    "Microsoft.UI.Xaml.Controls.MenuFlyout actual MenuFlyoutPresenter",
+                    isChildlessTarget: true);
+            },
+            PostPrepareDelayMilliseconds: 250);
     }
 
     private static CaptureTargetElement CreateActualTeachingTipContentRootTarget(CaptureTarget target)
