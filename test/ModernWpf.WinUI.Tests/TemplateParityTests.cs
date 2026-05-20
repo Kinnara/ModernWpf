@@ -377,6 +377,13 @@ public class TemplateParityTests
         Assert.IsTrue(
             File.Exists(Path.Combine(repoRoot, referencePrepScript)),
             $"Missing ThemeShadow reference prep script '{referencePrepScript}'.");
+        var referenceCaptureProject = root.GetProperty("referenceCaptureProject").GetString() ?? string.Empty;
+        Assert.IsFalse(string.IsNullOrWhiteSpace(referenceCaptureProject), "ThemeShadow reference capture manifest should point at the WinUI capture project.");
+        Assert.IsTrue(
+            File.Exists(Path.Combine(repoRoot, referenceCaptureProject)),
+            $"Missing ThemeShadow reference capture project '{referenceCaptureProject}'.");
+        var referenceChecklistFile = root.GetProperty("referenceChecklistFile").GetString() ?? string.Empty;
+        Assert.IsFalse(string.IsNullOrWhiteSpace(referenceChecklistFile), "ThemeShadow reference capture manifest should name the generated checklist file.");
         Assert.AreEqual("shadow-only", root.GetProperty("snapshotKind").GetString());
 
         var targets = root.GetProperty("targets")
