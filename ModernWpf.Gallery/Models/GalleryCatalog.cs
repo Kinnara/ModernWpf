@@ -79,6 +79,16 @@ namespace ModernWpf.Gallery.Models
                 return "FileAndFolderDialogs";
             }
 
+            if (string.Equals(uniqueId, "Colors", StringComparison.OrdinalIgnoreCase))
+            {
+                return "Color";
+            }
+
+            if (string.Equals(uniqueId, "Icons", StringComparison.OrdinalIgnoreCase))
+            {
+                return "Iconography";
+            }
+
             return uniqueId;
         }
 
@@ -86,6 +96,59 @@ namespace ModernWpf.Gallery.Models
         {
             return new[]
             {
+                CreateWpfItem(
+                    "DesignGuidance",
+                    "Color",
+                    "Colors",
+                    "Guide showing how to use colors in your app.",
+                    "ColorPaletteResources.png",
+                    "Color provides an intuitive way of communicating information to users in your app.",
+                    "",
+                    new string[0],
+                    new[] { "Typography", "Spacing", "Geometry" }),
+                CreateWpfItem(
+                    "DesignGuidance",
+                    "Typography",
+                    "Typography",
+                    "Guide showing how to use typography in your app.",
+                    "TextBlock.png",
+                    "Type helps provide structure and hierarchy to UI.",
+                    "",
+                    new string[0],
+                    new[] { "Color", "Spacing" }),
+                CreateWpfItem(
+                    "DesignGuidance",
+                    "Spacing",
+                    "Spacing",
+                    "Guide showing how to use spacing in your app.",
+                    "CompactSizing.png",
+                    "Consistent spacing helps create visual harmony and improves readability and usability.",
+                    "",
+                    new string[0],
+                    new[] { "Typography", "Geometry" },
+                    isNew: true),
+                CreateWpfItem(
+                    "DesignGuidance",
+                    "Geometry",
+                    "Geometry",
+                    "Corner radius standards for your app.",
+                    "Border.png",
+                    "Geometry describes the shape, size and position of UI elements on screen.",
+                    "",
+                    new string[0],
+                    new[] { "Spacing", "Color" },
+                    isNew: true),
+                CreateWpfItem(
+                    "DesignGuidance",
+                    "Iconography",
+                    "Icons",
+                    "Guide showing how to use icons in your app.",
+                    "IconElement.png",
+                    "Icons provide a visual shorthand for actions, status, and navigation.",
+                    "",
+                    new string[0],
+                    new[] { "Typography", "Color" },
+                    isUpdated: true),
                 CreateWpfItem(
                     "BasicInput",
                     "Button",

@@ -38,6 +38,8 @@ namespace ModernWpf.Gallery.Pages
                     return CreateComboBoxExamples();
                 case "Clipboard":
                     return CreateClipboardExamples();
+                case "Color":
+                    return CreateColorExamples();
                 case "DataGrid":
                     return CreateDataGridExamples();
                 case "DatePicker":
@@ -56,6 +58,10 @@ namespace ModernWpf.Gallery.Pages
                     return CreateGroupBoxExamples();
                 case "Hyperlink":
                     return CreateHyperlinkExamples();
+                case "Geometry":
+                    return CreateGeometryExamples();
+                case "Iconography":
+                    return CreateIconographyExamples();
                 case "Image":
                     return CreateImageExamples();
                 case "Label":
@@ -83,6 +89,8 @@ namespace ModernWpf.Gallery.Pages
                     return CreateRichEditBoxExamples();
                 case "Slider":
                     return CreateSliderExamples();
+                case "Spacing":
+                    return CreateSpacingExamples();
                 case "StackPanel":
                     return CreateStackPanelExamples();
                 case "TabControl":
@@ -95,6 +103,8 @@ namespace ModernWpf.Gallery.Pages
                     return CreateToolTipExamples();
                 case "TreeView":
                     return CreateTreeViewExamples();
+                case "Typography":
+                    return CreateTypographyExamples();
                 default:
                     return Array.Empty<GalleryExample>();
             }
@@ -106,6 +116,26 @@ namespace ModernWpf.Gallery.Pages
             {
                 case "Clipboard":
                     return CreateClipboardNotice();
+                case "Color":
+                    return CreateDesignNotice(
+                        "Color provides an intuitive way of communicating information to users in your app: it can be used to indicate interactivity, give feedback to user actions, and give your interface a sense of visual continuity.",
+                        "The colors below are provided as part of WPF .NET 9 onwards. You can reference them in your app using DynamicResource bindings. For example: Color=\"{DynamicResource CardBackgroundFillColorDefault}\"");
+                case "Geometry":
+                    return CreateDesignNotice(
+                        "Geometry describes the shape, size and position of UI elements on screen.",
+                        "These fundamental design elements help experiences feel coherent across the entire design system. You can reference built-in corner radii styles using CornerRadius=\"{StaticResource ControlCornerRadius}\".");
+                case "Iconography":
+                    return CreateDesignNotice(
+                        "Segoe Fluent Icons is the system icon font used by Windows.",
+                        "Use icon font sizes such as 16, 20, 24, 32, 40, 48, and 64 to keep glyphs crisp and aligned.");
+                case "Spacing":
+                    return CreateDesignNotice(
+                        "Consistent spacing helps create visual harmony and improves the readability and usability of your application.",
+                        "Use the following spacing values to maintain a consistent layout throughout your app.");
+                case "Typography":
+                    return CreateDesignNotice(
+                        "Type helps provide structure and hierarchy to UI. The default font for Windows is Segoe UI Variable.",
+                        "Best practice is to use Regular weight for most text and Semibold for titles. The minimum values should be 12px Regular, 14px Semibold.");
                 default:
                     return null;
             }
@@ -330,6 +360,66 @@ namespace ModernWpf.Gallery.Pages
                         Text = "Segoe UI"
                     },
                     "<ComboBox IsEditable=\"True\" Text=\"Segoe UI\" />",
+                null)
+            };
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateColorExamples()
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "Text color resources",
+                    CreateColorResourcesExample(),
+                    "<TextBlock Foreground=\"{DynamicResource TextFillColorPrimaryBrush}\" Text=\"Primary text\" />",
+                    null)
+            };
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateGeometryExamples()
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "Corner radius",
+                    CreateGeometryExample(),
+                    "<Border CornerRadius=\"{StaticResource OverlayCornerRadius}\" />\n<Border CornerRadius=\"{StaticResource ControlCornerRadius}\" />",
+                    null)
+            };
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateIconographyExamples()
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "Fluent Icons Library",
+                    CreateIconographyExample(),
+                    "<TextBlock FontFamily=\"{StaticResource SymbolThemeFontFamily}\" Text=\"&#xE8A7;\" />",
+                    null)
+            };
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateSpacingExamples()
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "Spacing values",
+                    CreateSpacingExample(),
+                    "<Border Padding=\"16\" Margin=\"0,0,0,24\" />",
+                    null)
+            };
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateTypographyExamples()
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "Type ramp",
+                    CreateTypographyRampExample(),
+                    "<TextBlock Text=\"Caption\" Style=\"{StaticResource CaptionTextBlockStyle}\" />\n<TextBlock Text=\"Body\" Style=\"{StaticResource BodyTextBlockStyle}\" />\n<TextBlock Text=\"Body Strong\" Style=\"{StaticResource BodyStrongTextBlockStyle}\" />\n<TextBlock Text=\"Subtitle\" Style=\"{StaticResource SubtitleTextBlockStyle}\" />\n<TextBlock Text=\"Title\" Style=\"{StaticResource TitleTextBlockStyle}\" />\n<TextBlock Text=\"Title Large\" Style=\"{StaticResource TitleLargeTextBlockStyle}\" />\n<TextBlock Text=\"Display\" Style=\"{StaticResource DisplayTextBlockStyle}\" />",
                     null)
             };
         }
@@ -957,6 +1047,417 @@ namespace ModernWpf.Gallery.Pages
             grid.Children.Add(text);
             border.Child = grid;
             return border;
+        }
+
+        private static StackPanel CreateDesignNotice(params string[] paragraphs)
+        {
+            var stack = new StackPanel
+            {
+                Margin = new Thickness(10, 0, 10, 24)
+            };
+
+            foreach (var paragraph in paragraphs)
+            {
+                var text = new TextBlock
+                {
+                    Margin = new Thickness(0, 0, 0, 8),
+                    Text = paragraph,
+                    TextWrapping = TextWrapping.Wrap
+                };
+                text.SetResourceReference(FrameworkElement.StyleProperty, "BodyTextBlockStyle");
+                stack.Children.Add(text);
+            }
+
+            return stack;
+        }
+
+        private static StackPanel CreateColorResourcesExample()
+        {
+            var root = new StackPanel();
+            var selector = new ComboBox
+            {
+                Width = 200,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                ItemsSource = new[] { "Text", "Fill", "Stroke", "Background", "Signal", "HighContrast" },
+                SelectedIndex = 0,
+                Margin = new Thickness(0, 0, 0, 12)
+            };
+            AutomationProperties.SetName(selector, "Page Selector");
+            root.Children.Add(selector);
+
+            var tiles = new UniformGrid
+            {
+                Columns = 2
+            };
+            tiles.Children.Add(CreateColorResourceTile("Primary text", "TextFillColorPrimaryBrush", "Primary body text and page titles."));
+            tiles.Children.Add(CreateColorResourceTile("Secondary text", "TextFillColorSecondaryBrush", "Supplementary text and descriptions."));
+            tiles.Children.Add(CreateColorResourceTile("Tertiary text", "TextFillColorTertiaryBrush", "Lower-emphasis supporting text."));
+            tiles.Children.Add(CreateColorResourceTile("Disabled text", "TextFillColorDisabledBrush", "Unavailable commands and inactive text."));
+            tiles.Children.Add(CreateColorResourceTile("Accent", "AccentFillColorDefaultBrush", "Primary accent actions and highlights."));
+            tiles.Children.Add(CreateColorResourceTile("Card background", "CardBackgroundFillColorDefaultBrush", "Cards and elevated content surfaces."));
+            root.Children.Add(tiles);
+
+            return root;
+        }
+
+        private static Border CreateColorResourceTile(string colorName, string brushName, string explanation)
+        {
+            var border = new Border
+            {
+                Width = 330,
+                MinHeight = 118,
+                Margin = new Thickness(0, 0, 8, 8),
+                Padding = new Thickness(12),
+                BorderThickness = new Thickness(1),
+                CornerRadius = new CornerRadius(8)
+            };
+            border.SetResourceReference(Border.BackgroundProperty, "CardBackgroundFillColorDefaultBrush");
+            border.SetResourceReference(Border.BorderBrushProperty, "CardStrokeColorDefaultBrush");
+
+            var grid = new Grid();
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+            var swatch = new Border
+            {
+                Width = 48,
+                Height = 48,
+                CornerRadius = new CornerRadius(6),
+                BorderThickness = new Thickness(1),
+                Margin = new Thickness(0, 0, 12, 0)
+            };
+            swatch.SetResourceReference(Border.BackgroundProperty, brushName);
+            swatch.SetResourceReference(Border.BorderBrushProperty, "CardStrokeColorDefaultBrush");
+            grid.Children.Add(swatch);
+
+            var textStack = new StackPanel();
+            Grid.SetColumn(textStack, 1);
+            var title = new TextBlock { Text = colorName, TextWrapping = TextWrapping.Wrap };
+            title.SetResourceReference(FrameworkElement.StyleProperty, "BodyStrongTextBlockStyle");
+            textStack.Children.Add(title);
+            var body = new TextBlock
+            {
+                Text = explanation,
+                TextWrapping = TextWrapping.Wrap,
+                Margin = new Thickness(0, 2, 0, 8)
+            };
+            body.SetResourceReference(FrameworkElement.StyleProperty, "CaptionTextBlockStyle");
+            textStack.Children.Add(body);
+            var brush = new TextBlock { Text = brushName, TextWrapping = TextWrapping.Wrap };
+            brush.SetResourceReference(FrameworkElement.StyleProperty, "CaptionTextBlockStyle");
+            textStack.Children.Add(brush);
+            grid.Children.Add(textStack);
+
+            border.Child = grid;
+            return border;
+        }
+
+        private static StackPanel CreateGeometryExample()
+        {
+            var root = new StackPanel();
+            root.Children.Add(CreateDesignImage("Geometry.dark.png", "Example of corner radius.", 500, 300));
+            root.Children.Add(CreateCornerRadiusTable());
+            return root;
+        }
+
+        private static Grid CreateCornerRadiusTable()
+        {
+            var grid = CreateTableGrid(new[] { 148.0, 400.0, 180.0 }, 4);
+            AddHeaderRow(grid, new[] { "Corner radius", "Usage", "Style" });
+            AddCornerRadiusRow(grid, 1, "8px", 8, "Top-level containers such as app windows, flyouts, cards and dialogs.", "OverlayCornerRadius", true);
+            AddCornerRadiusRow(grid, 2, "4px", 4, "In-page elements such as controls and list backplates.", "ControlCornerRadius", false);
+            AddCornerRadiusRow(grid, 3, "0px", 0, "Straight edges that intersect with other straight edges.", "N/A", true);
+            return grid;
+        }
+
+        private static void AddCornerRadiusRow(Grid grid, int row, string value, double radius, string usage, string styleName, bool shaded)
+        {
+            var rowGrid = CreateShadedRow(60, shaded);
+            rowGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(148) });
+            rowGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(400) });
+            rowGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(180) });
+
+            var sample = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                Margin = new Thickness(16, 0, 0, 0),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            var shape = new Border
+            {
+                Width = 20,
+                Height = 20,
+                CornerRadius = new CornerRadius(radius),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            shape.SetResourceReference(Border.BackgroundProperty, "AccentFillColorDefaultBrush");
+            sample.Children.Add(shape);
+            var label = CreateTableText(value, "BodyTextBlockStyle");
+            label.Margin = new Thickness(16, 0, 0, 0);
+            sample.Children.Add(label);
+
+            rowGrid.Children.Add(sample);
+            AddTableCell(rowGrid, CreateTableText(usage, "CaptionTextBlockStyle"), 0, 1, new Thickness(16, 0, 16, 0));
+            AddTableCell(rowGrid, CreateTableText(styleName, "CaptionTextBlockStyle"), 0, 2, new Thickness(16, 0, 16, 0));
+            AddTableCell(grid, rowGrid, row, 0, new Thickness(0));
+            Grid.SetColumnSpan(rowGrid, 3);
+        }
+
+        private static StackPanel CreateIconographyExample()
+        {
+            var root = new StackPanel();
+            var expander = new Expander
+            {
+                Header = "Instructions on how to use Segoe Fluent Icons",
+                Margin = new Thickness(0, 0, 0, 24),
+                Content = new TextBlock
+                {
+                    Text = "On Windows 11, the Segoe Fluent Icons font comes with Windows. Use TextBlock with SymbolThemeFontFamily and a glyph value such as &#xE8A7; for predictable 16, 20, 24, 32, 40, 48, and 64 pixel sizing.",
+                    TextWrapping = TextWrapping.Wrap
+                }
+            };
+            root.Children.Add(expander);
+
+            var searchBox = new TextBox
+            {
+                Width = 500,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Margin = new Thickness(0, 0, 0, 16)
+            };
+            AutomationProperties.SetName(searchBox, "Search Icons by Name, Tag");
+            root.Children.Add(searchBox);
+
+            var icons = new WrapPanel();
+            icons.Children.Add(CreateIconGlyphCard("Open in new window", "\uE8A7", "E8A7"));
+            icons.Children.Add(CreateIconGlyphCard("Copy", "\uE8C8", "E8C8"));
+            icons.Children.Add(CreateIconGlyphCard("Accept", "\uE73E", "E73E"));
+            icons.Children.Add(CreateIconGlyphCard("Search", "\uE721", "E721"));
+            icons.Children.Add(CreateIconGlyphCard("Settings", "\uE713", "E713"));
+            icons.Children.Add(CreateIconGlyphCard("Back", "\uE72B", "E72B"));
+            root.Children.Add(icons);
+            return root;
+        }
+
+        private static Border CreateIconGlyphCard(string name, string glyph, string code)
+        {
+            var border = new Border
+            {
+                Width = 150,
+                Height = 124,
+                Margin = new Thickness(0, 0, 12, 12),
+                Padding = new Thickness(12),
+                BorderThickness = new Thickness(1),
+                CornerRadius = new CornerRadius(8)
+            };
+            border.SetResourceReference(Border.BackgroundProperty, "CardBackgroundFillColorDefaultBrush");
+            border.SetResourceReference(Border.BorderBrushProperty, "CardStrokeColorDefaultBrush");
+
+            var stack = new StackPanel();
+            var glyphText = new TextBlock
+            {
+                Text = glyph,
+                FontSize = 32,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Margin = new Thickness(0, 0, 0, 8)
+            };
+            glyphText.SetResourceReference(TextBlock.FontFamilyProperty, "SymbolThemeFontFamily");
+            stack.Children.Add(glyphText);
+            var nameText = CreateTableText(name, "CaptionTextBlockStyle");
+            nameText.FontWeight = FontWeights.SemiBold;
+            stack.Children.Add(nameText);
+            stack.Children.Add(CreateTableText("&#x" + code + ";", "CaptionTextBlockStyle"));
+            border.Child = stack;
+            return border;
+        }
+
+        private static StackPanel CreateSpacingExample()
+        {
+            var root = new StackPanel();
+            var images = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                Margin = new Thickness(0, 0, 0, 16)
+            };
+            images.Children.Add(CreateDesignImage("Cards.dark.png", "Page with cards layout", 280, 280));
+            images.Children.Add(CreateDesignImage("Dialog.dark.png", "Form layout", 280, 280));
+            root.Children.Add(images);
+            root.Children.Add(CreateSpacingTable());
+            return root;
+        }
+
+        private static Grid CreateSpacingTable()
+        {
+            var grid = CreateTableGrid(new[] { 90.0, 100.0, 400.0 }, 8);
+            AddHeaderRow(grid, new[] { "Value", "", "Usage" });
+            AddSpacingRow(grid, 1, "4px", 4, "Spacing used for compact sizing.", true);
+            AddSpacingRow(grid, 2, "8px", 8, "Spacing between UI controls, control + label.", false);
+            AddSpacingRow(grid, 3, "12px", 12, "Spacing between control + header, surface and edge text, text sections.", true);
+            AddSpacingRow(grid, 4, "16px", 16, "Padding used in list styles, cards.", false);
+            AddSpacingRow(grid, 5, "24px", 24, "Spacing between content sections.", true);
+            AddSpacingRow(grid, 6, "32px", 32, "Padding on pages.", false);
+            AddSpacingRow(grid, 7, "48px", 48, "Spacing between page sections with title.", true);
+            return grid;
+        }
+
+        private static void AddSpacingRow(Grid grid, int row, string value, double width, string usage, bool shaded)
+        {
+            var rowGrid = CreateShadedRow(60, shaded);
+            rowGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(90) });
+            rowGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(100) });
+            rowGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(400) });
+
+            AddTableCell(rowGrid, CreateTableText(value, "BodyTextBlockStyle"), 0, 0, new Thickness(16, 0, 0, 0));
+            var bar = new Border
+            {
+                Width = width,
+                Height = 24,
+                CornerRadius = new CornerRadius(4),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            bar.SetResourceReference(Border.BackgroundProperty, "AccentFillColorDefaultBrush");
+            AddTableCell(rowGrid, bar, 0, 1, new Thickness(0));
+            AddTableCell(rowGrid, CreateTableText(usage, "CaptionTextBlockStyle"), 0, 2, new Thickness(0, 0, 16, 0));
+
+            AddTableCell(grid, rowGrid, row, 0, new Thickness(0));
+            Grid.SetColumnSpan(rowGrid, 3);
+        }
+
+        private static Grid CreateTypographyRampExample()
+        {
+            var grid = CreateTableGrid(new[] { 272.0, 136.0, 112.0, 164.0 }, 8);
+            AddHeaderRow(grid, new[] { "Example", "Variable Font", "Size/Line height", "Style" });
+            AddTypographyRow(grid, 1, "Caption", "CaptionTextBlockStyle", "Small, Regular", "12/16 epx", "CaptionTextBlockStyle", true);
+            AddTypographyRow(grid, 2, "Body", "BodyTextBlockStyle", "Text, Regular", "14/20 epx", "BodyTextBlockStyle", false);
+            AddTypographyRow(grid, 3, "Body Strong", "BodyStrongTextBlockStyle", "Text, SemiBold", "14/20 epx", "BodyStrongTextBlockStyle", true);
+            AddTypographyRow(grid, 4, "Subtitle", "SubtitleTextBlockStyle", "Display, SemiBold", "20/28 epx", "SubtitleTextBlockStyle", false);
+            AddTypographyRow(grid, 5, "Title", "TitleTextBlockStyle", "Display, SemiBold", "28/36 epx", "TitleTextBlockStyle", true);
+            AddTypographyRow(grid, 6, "Title Large", "TitleLargeTextBlockStyle", "Display, SemiBold", "40/52 epx", "TitleLargeTextBlockStyle", false);
+            AddTypographyRow(grid, 7, "Display", "DisplayTextBlockStyle", "Display, SemiBold", "68/92 epx", "DisplayTextBlockStyle", true);
+            return grid;
+        }
+
+        private static void AddTypographyRow(Grid grid, int row, string example, string exampleStyle, string variableFont, string size, string styleName, bool shaded)
+        {
+            var rowGrid = CreateShadedRow(row == 7 ? 96 : 68, shaded);
+            rowGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(272) });
+            rowGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(136) });
+            rowGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(112) });
+            rowGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(164) });
+
+            AddTableCell(rowGrid, CreateTableText(example, exampleStyle), 0, 0, new Thickness(16, 0, 0, 0));
+            AddTableCell(rowGrid, CreateTableText(variableFont, "CaptionTextBlockStyle"), 0, 1, new Thickness(0));
+            AddTableCell(rowGrid, CreateTableText(size, "CaptionTextBlockStyle"), 0, 2, new Thickness(0));
+            AddTableCell(rowGrid, CreateTableText(styleName, "CaptionTextBlockStyle"), 0, 3, new Thickness(0));
+
+            AddTableCell(grid, rowGrid, row, 0, new Thickness(0));
+            Grid.SetColumnSpan(rowGrid, 4);
+        }
+
+        private static Grid CreateTableGrid(double[] columnWidths, int rowCount)
+        {
+            var grid = new Grid
+            {
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Margin = new Thickness(0, 10, 0, 10)
+            };
+
+            foreach (var width in columnWidths)
+            {
+                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(width) });
+            }
+
+            for (var i = 0; i < rowCount; i++)
+            {
+                grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            }
+
+            return grid;
+        }
+
+        private static void AddHeaderRow(Grid grid, string[] headers)
+        {
+            for (var i = 0; i < headers.Length; i++)
+            {
+                var text = CreateTableText(headers[i], "CaptionTextBlockStyle");
+                text.Opacity = 0.7;
+                AddTableCell(grid, text, 0, i, new Thickness(16, 0, 0, 24));
+            }
+        }
+
+        private static Grid CreateShadedRow(double minHeight, bool shaded)
+        {
+            var rowGrid = new Grid
+            {
+                MinHeight = minHeight,
+                HorizontalAlignment = HorizontalAlignment.Stretch
+            };
+
+            if (shaded)
+            {
+                rowGrid.SetResourceReference(Panel.BackgroundProperty, "CardBackgroundFillColorDefaultBrush");
+            }
+
+            return rowGrid;
+        }
+
+        private static TextBlock CreateTableText(string text, string styleKey)
+        {
+            var textBlock = new TextBlock
+            {
+                Text = text,
+                TextWrapping = TextWrapping.Wrap,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            textBlock.SetResourceReference(FrameworkElement.StyleProperty, styleKey);
+            return textBlock;
+        }
+
+        private static void AddTableCell(Grid grid, UIElement element, int row, int column, Thickness margin)
+        {
+            var frameworkElement = element as FrameworkElement;
+            if (frameworkElement != null)
+            {
+                frameworkElement.Margin = margin;
+            }
+
+            Grid.SetRow(element, row);
+            Grid.SetColumn(element, column);
+            grid.Children.Add(element);
+        }
+
+        private static Grid CreateDesignImage(string fileName, string title, double width, double height)
+        {
+            var grid = new Grid
+            {
+                Width = width,
+                Margin = new Thickness(0, 0, 16, 16),
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+
+            var titleText = new TextBlock
+            {
+                Text = title,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(0, 0, 0, 8)
+            };
+            titleText.SetResourceReference(FrameworkElement.StyleProperty, "SubtitleTextBlockStyle");
+            grid.Children.Add(titleText);
+
+            var image = new Image
+            {
+                Width = width,
+                Height = height,
+                Stretch = Stretch.Uniform,
+                Source = new BitmapImage(new Uri("pack://application:,,,/ModernWpf.Gallery;component/Assets/Design/" + fileName))
+            };
+            AutomationProperties.SetName(image, title);
+            Grid.SetRow(image, 1);
+            grid.Children.Add(image);
+
+            return grid;
         }
 
         private static StackPanel CreateCheckClipboardFormatsExample()

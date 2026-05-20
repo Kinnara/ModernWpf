@@ -68,6 +68,13 @@
             </Style>
 
             <Style
+                x:Key="DisplayTextBlockStyle"
+                BasedOn="{StaticResource BaseTextBlockStyle}"
+                TargetType="TextBlock">
+                <Setter Property="FontSize" Value="68" />
+            </Style>
+
+            <Style
                 x:Key="GalleryTitleTextBlockStyle"
                 BasedOn="{StaticResource TitleTextBlockStyle}"
                 TargetType="TextBlock">
