@@ -201,6 +201,7 @@ namespace ModernWpf.Gallery.Pages
                 Content = "Standard WPF button"
             };
             AutomationProperties.SetName(simpleButton, "Standard WPF");
+            GalleryAutomation.WithAutomationId(simpleButton, GalleryAutomation.SampleElementId("Button", "PrimaryButton"));
             var disableButton = new CheckBox
             {
                 Content = "Disable button",
@@ -234,7 +235,7 @@ namespace ModernWpf.Gallery.Pages
             {
                 new GalleryExample(
                     "Simple Button",
-                    simpleGrid,
+                    CreateSampleRoot("Button", simpleGrid),
                     "<Button Content=\"Standard WPF button\" />",
                     null),
                 new GalleryExample(
@@ -341,7 +342,7 @@ namespace ModernWpf.Gallery.Pages
             {
                 new GalleryExample(
                     "A ComboBox with items defined inline.",
-                    CreateInlineComboBoxExample(),
+                    CreateSampleRoot("ComboBox", CreateInlineComboBoxExample()),
                     "<ComboBox MinWidth=\"200\" HorizontalAlignment=\"Left\" SelectedIndex=\"0\">\n    <ComboBoxItem Content=\"Blue\" />\n    <ComboBoxItem Content=\"Green\" />\n    <ComboBoxItem Content=\"Red\" />\n    <ComboBoxItem Content=\"Yellow\" />\n</ComboBox>",
                     null),
                 new GalleryExample(
@@ -2717,9 +2718,18 @@ namespace ModernWpf.Gallery.Pages
             return checkBox;
         }
 
+        private static GallerySamplePanel CreateSampleRoot(string uniqueId, UIElement content)
+        {
+            var panel = new GallerySamplePanel();
+            GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId(uniqueId));
+            panel.Children.Add(content);
+            return panel;
+        }
+
         private static ComboBox CreateInlineComboBoxExample()
         {
             var comboBox = CreateGalleryComboBox("Sample defined inline");
+            GalleryAutomation.WithAutomationId(comboBox, GalleryAutomation.SampleElementId("ComboBox", "ComboBox"));
             comboBox.Items.Add(new ComboBoxItem { Content = "Blue" });
             comboBox.Items.Add(new ComboBoxItem { Content = "Green" });
             comboBox.Items.Add(new ComboBoxItem { Content = "Red" });

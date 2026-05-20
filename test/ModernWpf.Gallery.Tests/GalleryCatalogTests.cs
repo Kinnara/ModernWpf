@@ -9,29 +9,22 @@ namespace ModernWpf.Gallery.Tests
     public class GalleryCatalogTests
     {
         [TestMethod]
-        public void GroupsMatchWinUIGalleryOrder()
+        public void GroupsMatchWpfFirstGalleryOrder()
         {
             var expected = new[]
             {
-                "Fundamentals",
-                "Design",
-                "Accessibility",
-                "Menus & toolbars",
+                "Design Guidance",
+                "Samples",
+                "Basic Input",
                 "Collections",
-                "Date & time",
-                "Basic input",
-                "Status & info",
-                "Dialogs & flyouts",
-                "Scrolling",
+                "Date & Calendar",
                 "Layout",
                 "Navigation",
-                "Media",
-                "Styles",
+                "Status & Info",
                 "Text",
-                "Motion",
-                "Windowing",
                 "System",
-                "Shell"
+                "ModernWpf controls",
+                "Platform & patterns"
             };
 
             var actual = GalleryCatalog.Groups.Select(group => group.Title).ToArray();
@@ -42,15 +35,14 @@ namespace ModernWpf.Gallery.Tests
         [TestMethod]
         public void SearchForAFindsEveryGroup()
         {
-            var resultGroupIds = GalleryCatalog.Search("a")
-                .Select(item => item.GroupId)
-                .Distinct(StringComparer.OrdinalIgnoreCase)
+            var resultItemIds = GalleryCatalog.Search("a")
+                .Select(item => item.UniqueId)
                 .ToArray();
 
             foreach (var group in GalleryCatalog.Groups)
             {
                 Assert.IsTrue(
-                    resultGroupIds.Contains(group.UniqueId, StringComparer.OrdinalIgnoreCase),
+                    group.Items.Any(item => resultItemIds.Contains(item.UniqueId, StringComparer.OrdinalIgnoreCase)),
                     "Expected query 'a' to return at least one result from group '{0}'.",
                     group.Title);
             }
@@ -87,10 +79,10 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void CatalogContainsPortedWinUIGallerySurface()
+        public void CatalogContainsWpfFirstGallerySurface()
         {
-            Assert.AreEqual(19, GalleryCatalog.Groups.Count);
-            Assert.AreEqual(121, GalleryCatalog.Items.Count);
+            Assert.AreEqual(12, GalleryCatalog.Groups.Count);
+            Assert.AreEqual(136, GalleryCatalog.Items.Count);
         }
     }
 }

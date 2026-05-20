@@ -127,7 +127,7 @@ namespace ModernWpf.Gallery.Pages
 
         public bool HasWpfSampleContent
         {
-            get { return Examples.Count != 0; }
+            get { return Examples.Count != 0 || DirectPageContent != null; }
         }
 
         public IReadOnlyList<SampleSnippet> SampleSnippets { get; }
