@@ -28,6 +28,7 @@ namespace ModernWpf.Gallery.Pages
                 case "PasswordBox":
                     return CreatePasswordBoxSample();
                 case "RichEditBox":
+                case "RichTextEdit":
                     return CreateRichEditBoxSample();
                 case "RichTextBlock":
                     return CreateRichTextBlockSample();

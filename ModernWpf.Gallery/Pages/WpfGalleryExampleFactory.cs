@@ -621,17 +621,23 @@ namespace ModernWpf.Gallery.Pages
 
         private static IReadOnlyList<GalleryExample> CreateHyperlinkExamples()
         {
-            var textBlock = new TextBlock();
-            textBlock.Inlines.Add(new Run("Open the "));
-            textBlock.Inlines.Add(new Hyperlink(new Run("WPF documentation")) { NavigateUri = new Uri("https://learn.microsoft.com/dotnet/desktop/wpf/") });
-            textBlock.Inlines.Add(new Run(" from inline text."));
+            var textBlock = new TextBlock
+            {
+                Margin = new Thickness(20)
+            };
+            var hyperlink = new Hyperlink(new Run("Hyperlink"))
+            {
+                NavigateUri = new Uri("https://www.microsoft.com")
+            };
+            hyperlink.RequestNavigate += OnRequestNavigate;
+            textBlock.Inlines.Add(hyperlink);
 
             return new[]
             {
                 new GalleryExample(
-                    "A Hyperlink inside a TextBlock.",
+                    "A Hyperlink",
                     textBlock,
-                    "<TextBlock>\n    Open the <Hyperlink NavigateUri=\"https://learn.microsoft.com/dotnet/desktop/wpf/\">WPF documentation</Hyperlink> from inline text.\n</TextBlock>",
+                    "<TextBlock Margin=\"20\">\n    <Hyperlink NavigateUri=\"https://www.microsoft.com\" RequestNavigate=\"Hyperlink_RequestNavigate\">\n        Lorem Ipsum link\n    </Hyperlink>\n</TextBlock>",
                     null)
             };
         }
@@ -656,23 +662,17 @@ namespace ModernWpf.Gallery.Pages
 
         private static IReadOnlyList<GalleryExample> CreateLabelExamples()
         {
-            var textBox = new TextBox { Width = 240 };
-            var label = new Label
-            {
-                Content = "_Name",
-                Target = textBox,
-                Padding = new Thickness(0, 0, 0, 4)
-            };
-            var stack = new StackPanel();
-            stack.Children.Add(label);
-            stack.Children.Add(textBox);
-
             return new[]
             {
                 new GalleryExample(
-                    "A Label targeting a TextBox.",
-                    stack,
-                    "<Label Content=\"_Name\" Target=\"{Binding ElementName=NameTextBox}\" />\n<TextBox x:Name=\"NameTextBox\" />",
+                    "A simple Label.",
+                    CreateSimpleLabelExample(),
+                    "<Label Content=\"I am a Label.\" />",
+                    null),
+                new GalleryExample(
+                    "A Label for TextBox.",
+                    CreateLabelForTextBoxExample(),
+                    "<Grid>\n    <Grid.RowDefinitions>\n        <RowDefinition Height=\"Auto\" />\n        <RowDefinition Height=\"Auto\" />\n    </Grid.RowDefinitions>\n    <Label Grid.Row=\"0\" Content=\"I am a Label of the TextBox below.\" />\n    <TextBox Grid.Row=\"1\" />\n</Grid>",
                     null)
             };
         }
@@ -781,11 +781,14 @@ namespace ModernWpf.Gallery.Pages
 
         private static IReadOnlyList<GalleryExample> CreatePasswordBoxExamples()
         {
+            var passwordBox = new PasswordBox();
+            AutomationProperties.SetName(passwordBox, "Simple Password Box");
+
             return new[]
             {
                 new GalleryExample(
                     "A simple PasswordBox.",
-                    new PasswordBox { Width = 240 },
+                    passwordBox,
                     "<PasswordBox />",
                     null)
             };
@@ -928,23 +931,31 @@ namespace ModernWpf.Gallery.Pages
 
         private static IReadOnlyList<GalleryExample> CreateTextBoxExamples()
         {
+            var simpleTextBox = new TextBox();
+            AutomationProperties.SetName(simpleTextBox, "simple TextBox");
+
+            var multiLineTextBox = new TextBox
+            {
+                AcceptsReturn = true,
+                TextWrapping = TextWrapping.Wrap
+            };
+            AutomationProperties.SetName(multiLineTextBox, "multi-line TextBox");
+
             return new[]
             {
                 new GalleryExample(
                     "A simple TextBox.",
-                    new TextBox { Width = 260 },
+                    simpleTextBox,
                     "<TextBox />",
                     null),
                 new GalleryExample(
+                    "A TextBox with input validation.",
+                    CreateValidatedTextBoxExample(),
+                    "<TextBox>\n    <TextBox.Text>\n        <Binding Path=\"ViewModel.ValidatedText\" UpdateSourceTrigger=\"PropertyChanged\">\n            <Binding.ValidationRules>\n                <helpers:AlphabeticValidationRule />\n            </Binding.ValidationRules>\n        </Binding>\n    </TextBox.Text>\n</TextBox>",
+                    null),
+                new GalleryExample(
                     "A multi-line TextBox.",
-                    new TextBox
-                    {
-                        Width = 360,
-                        Height = 90,
-                        AcceptsReturn = true,
-                        TextWrapping = TextWrapping.Wrap,
-                        Text = "The TextBox control can accept multiple lines of text."
-                    },
+                    multiLineTextBox,
                     "<TextBox TextWrapping=\"Wrap\" AcceptsReturn=\"True\" />",
                     null)
             };
@@ -1000,6 +1011,54 @@ namespace ModernWpf.Gallery.Pages
             textBlock.Inlines.Add(new Underline(new Run("underlined")));
             textBlock.Inlines.Add(new Run("."));
             return textBlock;
+        }
+
+        private static Label CreateSimpleLabelExample()
+        {
+            var label = new Label
+            {
+                Content = "I am a Label.",
+                Opacity = 0.7
+            };
+            label.SetResourceReference(Control.ForegroundProperty, "TextFillColorPrimaryBrush");
+            return label;
+        }
+
+        private static Grid CreateLabelForTextBoxExample()
+        {
+            var grid = new Grid();
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+
+            var label = new Label
+            {
+                Content = "I am a Label of the TextBox below.",
+                Opacity = 0.7
+            };
+            label.SetResourceReference(Control.ForegroundProperty, "TextFillColorPrimaryBrush");
+
+            var textBox = new TextBox();
+            AutomationProperties.SetName(textBox, "Simple Text Box");
+            Grid.SetRow(textBox, 1);
+
+            grid.Children.Add(label);
+            grid.Children.Add(textBox);
+            return grid;
+        }
+
+        private static TextBox CreateValidatedTextBoxExample()
+        {
+            var textBox = new TextBox();
+            AutomationProperties.SetName(textBox, "validated TextBox");
+
+            var binding = new Binding("Text")
+            {
+                Source = new ValidatedTextBoxState(),
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+            };
+            binding.ValidationRules.Add(new AlphabeticValidationRule());
+            textBox.SetBinding(TextBox.TextProperty, binding);
+            return textBox;
         }
 
         private static StackPanel CreateButtonResultExample(Button button, TextBlock output)
@@ -1763,6 +1822,38 @@ namespace ModernWpf.Gallery.Pages
                 new DashboardUser("473", "Theo", "Marsh", "Luminary Nexus", "PO Box 54647, 252 Derek Way, Flushing, New York, United States", 58, new DateTime(2021, 5, 14), false),
                 new DashboardUser("505", "Iris", "Banks", "CrestWave Dynamics", "20th Floor, 5524 Badeau Pass, Glendale, Arizona, United States", 30, new DateTime(2023, 11, 2), true)
             };
+        }
+
+        private sealed class AlphabeticValidationRule : ValidationRule
+        {
+            public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
+            {
+                var text = value as string;
+                if (string.IsNullOrEmpty(text))
+                {
+                    return ValidationResult.ValidResult;
+                }
+
+                foreach (var character in text)
+                {
+                    if (!IsEnglishAlphabetic(character))
+                    {
+                        return new ValidationResult(false, "Only English alphabetic characters (a-z, A-Z) are allowed.");
+                    }
+                }
+
+                return ValidationResult.ValidResult;
+            }
+
+            private static bool IsEnglishAlphabetic(char character)
+            {
+                return (character >= 'a' && character <= 'z') || (character >= 'A' && character <= 'Z');
+            }
+        }
+
+        private sealed class ValidatedTextBoxState
+        {
+            public string Text { get; set; }
         }
 
         private sealed class DashboardUser
