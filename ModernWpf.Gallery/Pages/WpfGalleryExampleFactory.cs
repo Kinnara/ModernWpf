@@ -110,6 +110,17 @@ namespace ModernWpf.Gallery.Pages
             }
         }
 
+        public static object CreatePageContent(string uniqueId)
+        {
+            switch (uniqueId)
+            {
+                case "UserDashboard":
+                    return CreateUserDashboardPageContent();
+                default:
+                    return null;
+            }
+        }
+
         public static object CreateNotice(string uniqueId)
         {
             switch (uniqueId)
@@ -1458,6 +1469,328 @@ namespace ModernWpf.Gallery.Pages
             grid.Children.Add(image);
 
             return grid;
+        }
+
+        private static Grid CreateUserDashboardPageContent()
+        {
+            var users = CreateDashboardUsers();
+            var selectedUser = users[0];
+
+            var root = new Grid
+            {
+                MinHeight = 620
+            };
+            AutomationProperties.SetAutomationId(root, "ContentRootGrid");
+            root.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            root.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            root.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star), MaxHeight = 280 });
+            root.RowDefinitions.Add(new RowDefinition { Height = new GridLength(2, GridUnitType.Star) });
+
+            var userListGrid = new Grid();
+            userListGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+            userListGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            Grid.SetRowSpan(userListGrid, 2);
+            root.Children.Add(userListGrid);
+
+            var userList = new ListView
+            {
+                Width = 300,
+                SelectionMode = SelectionMode.Single
+            };
+            userList.SetResourceReference(Control.BackgroundProperty, "CardBackgroundFillColorDefaultBrush");
+            AutomationProperties.SetName(userList, "Users");
+            foreach (var user in users)
+            {
+                var item = new ListViewItem
+                {
+                    Content = CreateUserListItemContent(user)
+                };
+                AutomationProperties.SetName(item, user.Name);
+                userList.Items.Add(item);
+            }
+            userList.SelectedIndex = 0;
+            userListGrid.Children.Add(userList);
+
+            var addButton = new Button
+            {
+                Content = "Add New User",
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(10)
+            };
+            addButton.SetResourceReference(FrameworkElement.StyleProperty, "AccentButtonStyle");
+            Grid.SetRow(addButton, 1);
+            userListGrid.Children.Add(addButton);
+
+            var detailsGrid = new Grid();
+            detailsGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            detailsGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+            Grid.SetColumn(detailsGrid, 1);
+            Grid.SetRowSpan(detailsGrid, 2);
+            root.Children.Add(detailsGrid);
+
+            var header = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                Margin = new Thickness(20, 10, 20, 10)
+            };
+            header.Children.Add(new Ellipse
+            {
+                Width = 96,
+                Height = 96,
+                Margin = new Thickness(12),
+                Fill = CreateDashboardAvatarBrush(selectedUser.ImageId)
+            });
+            var headerText = new StackPanel
+            {
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            headerText.Children.Add(new TextBlock { Text = selectedUser.Name, FontSize = 24 });
+            headerText.Children.Add(new TextBlock { Text = selectedUser.Company, FontSize = 16 });
+            header.Children.Add(headerText);
+            detailsGrid.Children.Add(header);
+
+            var formGrid = new Grid
+            {
+                Margin = new Thickness(20, 10, 20, 10)
+            };
+            formGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            formGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            Grid.SetRow(formGrid, 1);
+            detailsGrid.Children.Add(formGrid);
+
+            var scrollViewer = new ScrollViewer
+            {
+                Focusable = false
+            };
+            Grid.SetColumn(scrollViewer, 1);
+            formGrid.Children.Add(scrollViewer);
+
+            var form = new StackPanel
+            {
+                Margin = new Thickness(20, 0, 20, 0)
+            };
+            scrollViewer.Content = form;
+
+            var nameGrid = new Grid();
+            nameGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            nameGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            nameGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            nameGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            form.Children.Add(nameGrid);
+
+            var firstNamePanel = CreateFormField("First Name", selectedUser.FirstName);
+            firstNamePanel.Margin = new Thickness(0, 0, 10, 0);
+            nameGrid.Children.Add(firstNamePanel);
+            var lastNamePanel = CreateFormField("Last Name", selectedUser.LastName);
+            Grid.SetColumn(lastNamePanel, 1);
+            nameGrid.Children.Add(lastNamePanel);
+
+            form.Children.Add(CreateFormLabel("Company"));
+            form.Children.Add(CreateFormTextBox(selectedUser.Company));
+            form.Children.Add(CreateFormLabel("Address"));
+            form.Children.Add(CreateFormTextBox(selectedUser.Address));
+
+            var ageHeader = new Grid();
+            ageHeader.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            ageHeader.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            ageHeader.Children.Add(CreateFormLabel("Age"));
+            var ageValue = new TextBlock
+            {
+                Text = selectedUser.Age.ToString(),
+                Padding = new Thickness(10, 0, 0, 0),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            Grid.SetColumn(ageValue, 1);
+            ageHeader.Children.Add(ageValue);
+            form.Children.Add(ageHeader);
+
+            form.Children.Add(new Slider
+            {
+                Minimum = 21,
+                Maximum = 62,
+                IsSnapToTickEnabled = true,
+                IsEnabled = false,
+                Value = selectedUser.Age,
+                Margin = new Thickness(0, 5, 0, 15)
+            });
+
+            form.Children.Add(CreateFormLabel("Date of Joining"));
+            form.Children.Add(new DatePicker
+            {
+                SelectedDate = selectedUser.DateOfJoining,
+                IsEnabled = false,
+                Margin = new Thickness(0, 5, 0, 15)
+            });
+
+            var graduatePanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                Margin = new Thickness(0, 5, 0, 15)
+            };
+            var graduateLabel = CreateFormLabel("Is user a new graduate ?");
+            graduateLabel.Margin = new Thickness(0, 0, 10, 0);
+            graduatePanel.Children.Add(graduateLabel);
+            graduatePanel.Children.Add(new CheckBox
+            {
+                IsChecked = selectedUser.IsNewGraduate,
+                IsEnabled = false,
+                VerticalAlignment = VerticalAlignment.Center
+            });
+            form.Children.Add(graduatePanel);
+
+            var commands = new StackPanel
+            {
+                HorizontalAlignment = HorizontalAlignment.Right,
+                Orientation = Orientation.Horizontal
+            };
+            commands.Children.Add(new Button { Content = "Edit", Margin = new Thickness(10) });
+            commands.Children.Add(new Button { Content = "Delete", Margin = new Thickness(10) });
+            form.Children.Add(commands);
+
+            return root;
+        }
+
+        private static Grid CreateUserListItemContent(DashboardUser user)
+        {
+            var grid = new Grid
+            {
+                Margin = new Thickness(8, 0, 8, 0)
+            };
+            grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+            grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+            var avatar = new Ellipse
+            {
+                Width = 32,
+                Height = 32,
+                Margin = new Thickness(6),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                Fill = CreateDashboardAvatarBrush(user.ImageId)
+            };
+            Grid.SetRowSpan(avatar, 2);
+            grid.Children.Add(avatar);
+
+            var name = new TextBlock
+            {
+                Text = user.Name,
+                Margin = new Thickness(12, 6, 0, 0)
+            };
+            Grid.SetColumn(name, 1);
+            grid.Children.Add(name);
+
+            var company = new TextBlock
+            {
+                Text = user.Company,
+                Margin = new Thickness(12, 0, 0, 6),
+                Opacity = 0.8
+            };
+            company.SetResourceReference(TextBlock.ForegroundProperty, "TextFillColorPrimaryBrush");
+            Grid.SetRow(company, 1);
+            Grid.SetColumn(company, 1);
+            grid.Children.Add(company);
+
+            return grid;
+        }
+
+        private static StackPanel CreateFormField(string label, string value)
+        {
+            var panel = new StackPanel
+            {
+                Orientation = Orientation.Vertical
+            };
+            panel.Children.Add(CreateFormLabel(label));
+            panel.Children.Add(CreateFormTextBox(value));
+            return panel;
+        }
+
+        private static Label CreateFormLabel(string content)
+        {
+            var label = new Label
+            {
+                Content = content,
+                FontWeight = FontWeights.SemiBold,
+                Opacity = 0.67,
+                Padding = new Thickness(0)
+            };
+            label.SetResourceReference(Control.ForegroundProperty, "TextFillColorPrimaryBrush");
+            return label;
+        }
+
+        private static TextBox CreateFormTextBox(string text)
+        {
+            return new TextBox
+            {
+                Text = text,
+                IsReadOnly = true,
+                Margin = new Thickness(0, 5, 0, 15)
+            };
+        }
+
+        private static ImageBrush CreateDashboardAvatarBrush(string imageId)
+        {
+            return new ImageBrush
+            {
+                ImageSource = new BitmapImage(new Uri("pack://application:,,,/ModernWpf.Gallery;component/Assets/UserDashboard/" + imageId + "-100x100.jpg")),
+                Stretch = Stretch.UniformToFill
+            };
+        }
+
+        private static DashboardUser[] CreateDashboardUsers()
+        {
+            return new[]
+            {
+                new DashboardUser("91", "John", "Doe", "Luminary Nexus", "Room 1450, 9819 Rutledge Parkway, Saint Louis, Missouri, United States", 37, new DateTime(2022, 8, 15), false),
+                new DashboardUser("65", "Adrianna", "Cisneros", "CrestWave Dynamics", "18th Floor, 3631 Manitowish Point, Mobile, Alabama, United States", 29, new DateTime(2021, 3, 22), true),
+                new DashboardUser("64", "Spencer", "Lynch", "Horizon Ventures", "Apt 1145, Kansas, United States", 44, new DateTime(2020, 11, 4), false),
+                new DashboardUser("103", "Phoebe", "Munoz", "Sapphire Pulse Technologies", "PO Box 54647, 252 Derek Way, Flushing, New York, United States", 25, new DateTime(2024, 1, 9), true),
+                new DashboardUser("177", "Lucas", "Marsh", "EmberLight Industries", "20th Floor, 5524 Badeau Pass, Glendale, Arizona, United States", 32, new DateTime(2023, 6, 5), false),
+                new DashboardUser("334", "Marissa", "Bartlett", "StellarEdge Ventrues", "Room 1121, 9 Kipling Terrace, Winston Salem, North Carolina, United States", 41, new DateTime(2021, 9, 18), false),
+                new DashboardUser("338", "Brandon", "Gregory", "Luminary Nexus", "16th Floor, Odessa, Texas, United States", 28, new DateTime(2024, 4, 12), true),
+                new DashboardUser("342", "Antoine", "Banks", "CrestWave Dynamics", "Suite 82, 44 Shasta Terrace, Las Cruces, United States", 36, new DateTime(2022, 12, 1), false),
+                new DashboardUser("349", "Winston", "Tapia", "Horizon Ventures", "Room 1930, 45779 Anhalt Junction, Detroit, Michigan, United States", 52, new DateTime(2020, 5, 29), false),
+                new DashboardUser("366", "Carl", "Hudson", "Sapphire Pulse Technologies", "PO Box 54206, 14 Waubesa Street, Greenville, South Carolina, United States", 34, new DateTime(2023, 2, 20), true),
+                new DashboardUser("367", "Arielle", "Hood", "EmberLight Industries", "1st Floor, 78 Barby Park, South Dakota, United States", 31, new DateTime(2021, 7, 11), false),
+                new DashboardUser("373", "Clara", "Fry", "StellarEdge Ventrues", "Room 1426, 7394 Welch Alley, Huntsville, Alabama, United States", 49, new DateTime(2020, 10, 8), false),
+                new DashboardUser("375", "Elliot", "Carroll", "Luminary Nexus", "20th Floor, 11 Eastwood Road, El Paso, Texas, United States", 27, new DateTime(2024, 3, 6), true),
+                new DashboardUser("378", "Amelia", "Doe", "CrestWave Dynamics", "Suite 92, 9 Hermina Point, Bakersfield, United States", 39, new DateTime(2022, 1, 24), false),
+                new DashboardUser("399", "Grant", "Tapia", "Horizon Ventures", "Apt 687, 47182 Superior Avenue, Kansas City, Missouri", 46, new DateTime(2021, 12, 19), false),
+                new DashboardUser("447", "Nora", "Cisneros", "Sapphire Pulse Technologies", "Room 1450, 9819 Rutledge Parkway, Saint Louis, Missouri, United States", 26, new DateTime(2024, 5, 3), true),
+                new DashboardUser("453", "Milo", "Lynch", "EmberLight Industries", "18th Floor, 3631 Manitowish Point, Mobile, Alabama, United States", 43, new DateTime(2020, 4, 17), false),
+                new DashboardUser("469", "Leah", "Munoz", "StellarEdge Ventrues", "Apt 1145, Kansas, United States", 35, new DateTime(2022, 9, 27), false),
+                new DashboardUser("473", "Theo", "Marsh", "Luminary Nexus", "PO Box 54647, 252 Derek Way, Flushing, New York, United States", 58, new DateTime(2021, 5, 14), false),
+                new DashboardUser("505", "Iris", "Banks", "CrestWave Dynamics", "20th Floor, 5524 Badeau Pass, Glendale, Arizona, United States", 30, new DateTime(2023, 11, 2), true)
+            };
+        }
+
+        private sealed class DashboardUser
+        {
+            public DashboardUser(string imageId, string firstName, string lastName, string company, string address, int age, DateTime dateOfJoining, bool isNewGraduate)
+            {
+                ImageId = imageId;
+                FirstName = firstName;
+                LastName = lastName;
+                Company = company;
+                Address = address;
+                Age = age;
+                DateOfJoining = dateOfJoining;
+                IsNewGraduate = isNewGraduate;
+            }
+
+            public string ImageId { get; }
+            public string FirstName { get; }
+            public string LastName { get; }
+            public string Name
+            {
+                get { return FirstName + " " + LastName; }
+            }
+            public string Company { get; }
+            public string Address { get; }
+            public int Age { get; }
+            public DateTime DateOfJoining { get; }
+            public bool IsNewGraduate { get; }
         }
 
         private static StackPanel CreateCheckClipboardFormatsExample()

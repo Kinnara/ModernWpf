@@ -89,6 +89,11 @@ namespace ModernWpf.Gallery.Models
                 return "Iconography";
             }
 
+            if (string.Equals(uniqueId, "User Dashboard", StringComparison.OrdinalIgnoreCase))
+            {
+                return "UserDashboard";
+            }
+
             return uniqueId;
         }
 
@@ -149,6 +154,16 @@ namespace ModernWpf.Gallery.Models
                     new string[0],
                     new[] { "Typography", "Color" },
                     isUpdated: true),
+                CreateWpfItem(
+                    "Samples",
+                    "UserDashboard",
+                    "User Dashboard",
+                    "A dashboard for a user to view and interact with.",
+                    "PersonPicture.png",
+                    "A dashboard for viewing, editing, adding, and removing users.",
+                    "",
+                    new string[0],
+                    new[] { "ListView", "TextBox", "DatePicker", "Slider", "CheckBox" }),
                 CreateWpfItem(
                     "BasicInput",
                     "Button",
@@ -559,6 +574,15 @@ namespace ModernWpf.Gallery.Models
                         "Spacing",
                         "Geometry",
                         "Iconography"
+                    }),
+                CreateGroup(
+                    "Samples",
+                    "Samples",
+                    "User-facing app samples that combine WPF controls into realistic screens.",
+                    "pack://application:,,,/Assets/ControlImages/PersonPicture.png",
+                    new[]
+                    {
+                        "UserDashboard"
                     }),
                 CreateGroup(
                     "BasicInput",

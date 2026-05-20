@@ -20,8 +20,9 @@ namespace ModernWpf.Gallery.Pages
             SampleSnippets = LoadSampleSnippets(_item.UniqueId);
             var xamlSnippet = FindSampleSnippet(SampleSnippets, IsXamlSnippet);
             var csharpSnippet = FindSampleSnippet(SampleSnippets, IsCSharpSnippet);
-            var examples = WpfGalleryExampleFactory.Create(_item.UniqueId);
-            UsesWpfGalleryPageMode = examples.Count != 0;
+            DirectPageContent = WpfGalleryExampleFactory.CreatePageContent(_item.UniqueId);
+            var examples = DirectPageContent == null ? WpfGalleryExampleFactory.Create(_item.UniqueId) : Array.Empty<GalleryExample>();
+            UsesWpfGalleryPageMode = DirectPageContent != null || examples.Count != 0;
             NoticeContent = WpfGalleryExampleFactory.CreateNotice(_item.UniqueId);
             if (examples.Count == 0)
             {
@@ -112,6 +113,13 @@ namespace ModernWpf.Gallery.Pages
 
         public object NoticeContent { get; }
 
+        public object DirectPageContent { get; }
+
+        public bool HasDirectPageContent
+        {
+            get { return DirectPageContent != null; }
+        }
+
         public bool HasNoticeContent
         {
             get { return NoticeContent != null; }
@@ -154,6 +162,16 @@ namespace ModernWpf.Gallery.Pages
         public bool HasSampleSnippets
         {
             get { return SampleSnippets.Count != 0; }
+        }
+
+        public bool ShowPageHeader
+        {
+            get { return !HasDirectPageContent; }
+        }
+
+        public bool ShowScrolledPageContent
+        {
+            get { return !HasDirectPageContent; }
         }
 
         public bool HasAdditionalSampleSnippets

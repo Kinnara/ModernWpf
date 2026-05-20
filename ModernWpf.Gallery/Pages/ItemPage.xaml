@@ -16,7 +16,9 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <StackPanel Margin="32,24,24,32">
+        <StackPanel
+            Margin="32,24,24,32"
+            Visibility="{Binding ShowPageHeader, Converter={StaticResource BooleanToVisibilityConverter}}">
             <Label
                 Focusable="True"
                 KeyboardNavigation.IsTabStop="True"
@@ -40,7 +42,8 @@
         <ScrollViewer
             Grid.Row="1"
             Margin="32,0,0,24"
-            Padding="0,0,24,0">
+            Padding="0,0,24,0"
+            Visibility="{Binding ShowScrolledPageContent, Converter={StaticResource BooleanToVisibilityConverter}}">
             <StackPanel Margin="0,0,0,24">
                 <ContentControl
                     Content="{Binding NoticeContent}"
@@ -184,5 +187,11 @@
                 </ItemsControl>
             </StackPanel>
         </ScrollViewer>
+
+        <ContentControl
+            Grid.Row="1"
+            Margin="32,0,24,24"
+            Content="{Binding DirectPageContent}"
+            Visibility="{Binding HasDirectPageContent, Converter={StaticResource BooleanToVisibilityConverter}}" />
     </Grid>
 </UserControl>
