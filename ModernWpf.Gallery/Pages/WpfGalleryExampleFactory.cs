@@ -717,10 +717,20 @@ namespace ModernWpf.Gallery.Pages
                     "<Button Content=\"Show MessageBox\" Click=\"ShowButtonFromComboBox_Click\" />",
                     "private void ShowButtonFromComboBox_Click(object sender, RoutedEventArgs e)\n{\n    var result = MessageBox.Show(\n        \"Choose one of the available responses.\",\n        \"MessageBox buttons\",\n        MessageBoxButton.YesNoCancel);\n}"),
                 new GalleryExample(
+                    "MessageBox with Different Images",
+                    CreateMessageBoxImagesExample(),
+                    "<Button Content=\"Show MessageBox\" Click=\"ShowImageFromComboBox_Click\" />",
+                    "private void ShowImageFromComboBox_Click(object sender, RoutedEventArgs e)\n{\n    var result = MessageBox.Show(\n        \"This MessageBox displays the Information icon.\",\n        \"Information Icon\",\n        MessageBoxButton.OK,\n        MessageBoxImage.Information);\n}"),
+                new GalleryExample(
                     "Information, Error, and Warning MessageBox",
                     CreateCommonMessageBoxExample(),
-                    "<Button Content=\"Information\" Click=\"ShowCommonInformation_Click\" />",
-                    "private void ShowCommonInformation_Click(object sender, RoutedEventArgs e)\n{\n    var result = MessageBox.Show(\n        \"This is an information message.\",\n        \"Information\",\n        MessageBoxButton.OK,\n        MessageBoxImage.Information);\n}")
+                    "<WrapPanel Margin=\"0,0,0,10\">\n    <Button Content=\"Information\" Click=\"ShowInformationButton_Click\" />\n    <Button Content=\"Error\" Click=\"ShowErrorButton_Click\" />\n    <Button Content=\"Warning\" Click=\"ShowWarningButton_Click\" />\n</WrapPanel>",
+                    "private void ShowInformationButton_Click(object sender, RoutedEventArgs e)\n{\n    MessageBox.Show(\"Operation completed successfully.\", \"Information\", MessageBoxButton.OK, MessageBoxImage.Information);\n}\n\nprivate void ShowErrorButton_Click(object sender, RoutedEventArgs e)\n{\n    MessageBox.Show(\"An error occurred!\", \"Error\", MessageBoxButton.OK, MessageBoxImage.Error);\n}\n\nprivate void ShowWarningButton_Click(object sender, RoutedEventArgs e)\n{\n    MessageBox.Show(\"This action cannot be undone!\", \"Warning\", MessageBoxButton.OKCancel, MessageBoxImage.Warning);\n}"),
+                new GalleryExample(
+                    "MessageBox with Custom Default Button",
+                    CreateCustomDefaultMessageBoxExample(),
+                    "<Button Content=\"Show with 'No' as default\" Click=\"ShowCustomDefaultButton_Click\" />",
+                    "private void ShowCustomDefaultButton_Click(object sender, RoutedEventArgs e)\n{\n    var result = MessageBox.Show(\n        \"Do you want to save changes? Press Enter to select the default 'No' button.\",\n        \"Save Changes\",\n        MessageBoxButton.YesNoCancel,\n        MessageBoxImage.Question,\n        MessageBoxResult.No);\n}")
             };
         }
 
@@ -2129,15 +2139,16 @@ namespace ModernWpf.Gallery.Pages
         {
             var output = new TextBlock
             {
+                Text = "No common message shown yet",
                 TextWrapping = TextWrapping.Wrap
             };
             var row = new WrapPanel
             {
                 Margin = new Thickness(0, 0, 0, 10)
             };
-            row.Children.Add(CreateMessageBoxButton("Information", "This is an information message.", "Information", MessageBoxImage.Information, output));
-            row.Children.Add(CreateMessageBoxButton("Error", "This is an error message.", "Error", MessageBoxImage.Error, output));
-            row.Children.Add(CreateMessageBoxButton("Warning", "This is a warning message.", "Warning", MessageBoxImage.Warning, output));
+            row.Children.Add(CreateMessageBoxButton("Information", "The operation completed successfully.", "Information", MessageBoxButton.OK, MessageBoxImage.Information, output, "Type: Information"));
+            row.Children.Add(CreateMessageBoxButton("Error", "An error occurred! The operation could not be completed.", "Error", MessageBoxButton.OK, MessageBoxImage.Error, output, "Type: Error"));
+            row.Children.Add(CreateMessageBoxButton("Warning", "This action cannot be undone! Do you want to continue?", "Warning", MessageBoxButton.OKCancel, MessageBoxImage.Warning, output, "Type: Warning"));
 
             var stack = new StackPanel();
             stack.Children.Add(row);
@@ -2251,6 +2262,7 @@ namespace ModernWpf.Gallery.Pages
         {
             var output = new TextBlock
             {
+                Text = "No message shown yet",
                 TextWrapping = TextWrapping.Wrap
             };
             var button = new Button
@@ -2264,7 +2276,7 @@ namespace ModernWpf.Gallery.Pages
                     Window.GetWindow(button),
                     "This is a detailed description of what happened or what action is needed.",
                     "Custom Title");
-                output.Text = result.ToString();
+                output.Text = "Result: " + result;
             };
             return CreateButtonResultExample(button, output);
         }
@@ -2273,6 +2285,7 @@ namespace ModernWpf.Gallery.Pages
         {
             var output = new TextBlock
             {
+                Text = "No button clicked yet",
                 TextWrapping = TextWrapping.Wrap
             };
             var comboBox = new ComboBox
@@ -2280,7 +2293,8 @@ namespace ModernWpf.Gallery.Pages
                 MinWidth = 150,
                 SelectedIndex = 0
             };
-            foreach (var item in new[] { "OK", "OK/Cancel", "Yes/No/Cancel", "Yes/No" })
+            AutomationProperties.SetName(comboBox, "MessageBox Button Selector");
+            foreach (var item in new[] { "OK", "OK/Cancel", "Abort/Retry/Ignore", "Yes/No/Cancel", "Yes/No", "Retry/Cancel", "Cancel/Try/Continue" })
             {
                 comboBox.Items.Add(item);
             }
@@ -2293,13 +2307,14 @@ namespace ModernWpf.Gallery.Pages
             AutomationProperties.SetName(button, "MessageBox with Different Buttons");
             button.Click += delegate
             {
+                var buttonName = comboBox.SelectedItem as string ?? "OK";
                 var messageBoxButton = GetMessageBoxButton(comboBox.SelectedIndex);
                 var result = MessageBox.Show(
                     Window.GetWindow(button),
-                    "Choose one of the available responses.",
-                    "MessageBox buttons",
+                    "This MessageBox has " + buttonName + " button(s).",
+                    buttonName + " Button(s)",
                     messageBoxButton);
-                output.Text = result.ToString();
+                output.Text = "Result: " + result;
             };
 
             var left = new StackPanel();
@@ -2310,6 +2325,64 @@ namespace ModernWpf.Gallery.Pages
                 Margin = new Thickness(10, 0, 0, 0)
             };
             right.Children.Add(new TextBlock { Text = "Button Type:", Margin = new Thickness(0, 0, 0, 5) });
+            right.Children.Add(comboBox);
+
+            var grid = new Grid();
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            Grid.SetColumn(right, 1);
+            grid.Children.Add(left);
+            grid.Children.Add(right);
+
+            var stack = new StackPanel();
+            stack.Children.Add(grid);
+            return stack;
+        }
+
+        private static StackPanel CreateMessageBoxImagesExample()
+        {
+            var output = new TextBlock
+            {
+                Text = "No image example shown yet",
+                TextWrapping = TextWrapping.Wrap
+            };
+            var comboBox = new ComboBox
+            {
+                MinWidth = 150,
+                SelectedIndex = 0
+            };
+            AutomationProperties.SetName(comboBox, "MessageBox Image Selector");
+            foreach (var item in new[] { "None", "Error", "Question", "Warning", "Information" })
+            {
+                comboBox.Items.Add(item);
+            }
+
+            var button = new Button
+            {
+                Content = "Show MessageBox",
+                Margin = new Thickness(0, 0, 0, 10)
+            };
+            AutomationProperties.SetName(button, "MessageBox with different images");
+            button.Click += delegate
+            {
+                var imageName = comboBox.SelectedItem as string ?? "None";
+                var result = MessageBox.Show(
+                    Window.GetWindow(button),
+                    "This MessageBox displays the " + imageName + " icon.",
+                    imageName + " Icon",
+                    MessageBoxButton.OK,
+                    GetMessageBoxImage(comboBox.SelectedIndex));
+                output.Text = "Result: " + result;
+            };
+
+            var left = new StackPanel();
+            left.Children.Add(button);
+            left.Children.Add(output);
+            var right = new StackPanel
+            {
+                Margin = new Thickness(10, 0, 0, 0)
+            };
+            right.Children.Add(new TextBlock { Text = "Icon Type:", Margin = new Thickness(0, 0, 0, 5) });
             right.Children.Add(comboBox);
 
             var grid = new Grid();
@@ -2559,6 +2632,7 @@ namespace ModernWpf.Gallery.Pages
         {
             var output = new TextBlock
             {
+                Text = "No message shown yet",
                 TextWrapping = TextWrapping.Wrap
             };
             var button = new Button
@@ -2569,7 +2643,7 @@ namespace ModernWpf.Gallery.Pages
             button.Click += delegate
             {
                 var result = MessageBox.Show(Window.GetWindow(button), "This is a simple message box!");
-                output.Text = result.ToString();
+                output.Text = "Result: " + result;
             };
             return CreateButtonResultExample(button, output);
         }
@@ -2788,7 +2862,33 @@ namespace ModernWpf.Gallery.Pages
             return stack;
         }
 
-        private static Button CreateMessageBoxButton(string content, string message, string title, MessageBoxImage image, TextBlock output)
+        private static StackPanel CreateCustomDefaultMessageBoxExample()
+        {
+            var output = new TextBlock
+            {
+                Text = "No selection made",
+                TextWrapping = TextWrapping.Wrap
+            };
+            var button = new Button
+            {
+                Content = "Show with 'No' as default",
+                Margin = new Thickness(0, 0, 0, 10)
+            };
+            button.Click += delegate
+            {
+                var result = MessageBox.Show(
+                    Window.GetWindow(button),
+                    "Do you want to save changes? Press Enter to select the default 'No' button.",
+                    "Save Changes",
+                    MessageBoxButton.YesNoCancel,
+                    MessageBoxImage.Question,
+                    MessageBoxResult.No);
+                output.Text = "User selected: " + result;
+            };
+            return CreateButtonResultExample(button, output);
+        }
+
+        private static Button CreateMessageBoxButton(string content, string message, string title, MessageBoxButton buttons, MessageBoxImage image, TextBlock output, string resultPrefix)
         {
             var button = new Button
             {
@@ -2797,8 +2897,8 @@ namespace ModernWpf.Gallery.Pages
             };
             button.Click += delegate
             {
-                var result = MessageBox.Show(Window.GetWindow(button), message, title, MessageBoxButton.OK, image);
-                output.Text = result.ToString();
+                var result = MessageBox.Show(Window.GetWindow(button), message, title, buttons, image);
+                output.Text = resultPrefix + " | Result: " + result;
             };
             return button;
         }
@@ -2956,12 +3056,29 @@ namespace ModernWpf.Gallery.Pages
             {
                 case 1:
                     return MessageBoxButton.OKCancel;
-                case 2:
-                    return MessageBoxButton.YesNoCancel;
                 case 3:
+                    return MessageBoxButton.YesNoCancel;
+                case 4:
                     return MessageBoxButton.YesNo;
                 default:
                     return MessageBoxButton.OK;
+            }
+        }
+
+        private static MessageBoxImage GetMessageBoxImage(int index)
+        {
+            switch (index)
+            {
+                case 1:
+                    return MessageBoxImage.Error;
+                case 2:
+                    return MessageBoxImage.Question;
+                case 3:
+                    return MessageBoxImage.Warning;
+                case 4:
+                    return MessageBoxImage.Information;
+                default:
+                    return MessageBoxImage.None;
             }
         }
 
