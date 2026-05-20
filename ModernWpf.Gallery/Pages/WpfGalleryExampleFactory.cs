@@ -247,20 +247,19 @@ namespace ModernWpf.Gallery.Pages
 
         private static IReadOnlyList<GalleryExample> CreateCalendarExamples()
         {
+            var calendar = new Calendar
+            {
+                HorizontalAlignment = HorizontalAlignment.Left,
+                IsTabStop = false
+            };
+            AutomationProperties.SetName(calendar, "Default");
+
             return new[]
             {
                 new GalleryExample(
-                    "A simple Calendar.",
-                    new Calendar(),
-                    "<Calendar />",
-                    null),
-                new GalleryExample(
-                    "A Calendar with single range selection.",
-                    new Calendar
-                    {
-                        SelectionMode = CalendarSelectionMode.SingleRange
-                    },
-                    "<Calendar SelectionMode=\"SingleRange\" />",
+                    "A basic Calendar control.",
+                    calendar,
+                    "<Calendar/>",
                     null)
             };
         }
@@ -432,43 +431,36 @@ namespace ModernWpf.Gallery.Pages
         {
             var dataGrid = new DataGrid
             {
-                Width = 520,
-                Height = 180,
-                AutoGenerateColumns = false,
-                CanUserAddRows = false,
-                ItemsSource = CreatePeople()
+                Height = 400,
+                ItemsSource = CreateProducts()
             };
-            dataGrid.Columns.Add(new DataGridTextColumn { Header = "Name", Binding = new Binding("Name"), Width = 180 });
-            dataGrid.Columns.Add(new DataGridTextColumn { Header = "Role", Binding = new Binding("Role"), Width = 160 });
-            dataGrid.Columns.Add(new DataGridTextColumn { Header = "Status", Binding = new Binding("Status"), Width = 120 });
+            AutomationProperties.SetName(dataGrid, "Sample Data Grid");
 
             return new[]
             {
                 new GalleryExample(
-                    "A DataGrid with explicit columns.",
+                    "Default DataGrid with ItemsSource.",
                     dataGrid,
-                    "<DataGrid AutoGenerateColumns=\"False\" ItemsSource=\"{Binding People}\">\n    <DataGrid.Columns>\n        <DataGridTextColumn Header=\"Name\" Binding=\"{Binding Name}\" />\n        <DataGridTextColumn Header=\"Role\" Binding=\"{Binding Role}\" />\n        <DataGridTextColumn Header=\"Status\" Binding=\"{Binding Status}\" />\n    </DataGrid.Columns>\n</DataGrid>",
+                    "<DataGrid ItemsSource=\"{Binding ViewModel.ProductsCollection, Mode=TwoWay}\" />",
                     null)
             };
         }
 
         private static IReadOnlyList<GalleryExample> CreateDatePickerExamples()
         {
+            var datePicker = new DatePicker
+            {
+                MinWidth = 200,
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+            AutomationProperties.SetName(datePicker, "Pick a date");
+
             return new[]
             {
                 new GalleryExample(
-                    "A simple DatePicker.",
-                    new DatePicker { Width = 220 },
+                    "A basic DatePicker control.",
+                    datePicker,
                     "<DatePicker />",
-                    null),
-                new GalleryExample(
-                    "A DatePicker with a selected date.",
-                    new DatePicker
-                    {
-                        Width = 220,
-                        SelectedDate = DateTime.Today
-                    },
-                    "<DatePicker SelectedDate=\"{x:Static sys:DateTime.Today}\" />",
                     null)
             };
         }
@@ -676,12 +668,7 @@ namespace ModernWpf.Gallery.Pages
                     null),
                 new GalleryExample(
                     "A ListBox with its ItemsSource and Height set.",
-                    new ListBox
-                    {
-                        Height = 164,
-                        ItemsSource = CreateFontNames(),
-                        SelectedIndex = 2
-                    },
+                    CreateFontListBox(),
                     "<ListBox Height=\"100\" ItemsSource=\"{Binding ViewModel.MyItems}\" SelectedIndex=\"2\" />",
                     null)
             };
@@ -693,14 +680,7 @@ namespace ModernWpf.Gallery.Pages
             {
                 new GalleryExample(
                     "Basic ListView with Simple DataTemplate.",
-                    new ListView
-                    {
-                        Height = 200,
-                        ItemsSource = CreatePeople(),
-                        SelectedIndex = 2,
-                        SelectionMode = SelectionMode.Single,
-                        ItemTemplate = CreatePersonTemplate()
-                    },
+                    CreateBasicListView(),
                     "<ListView Height=\"200\" ItemsSource=\"{Binding ViewModel.BasicListViewItems}\" SelectedIndex=\"2\" SelectionMode=\"Single\">\n    <ListView.ItemTemplate>\n        <DataTemplate>\n            <TextBlock Margin=\"8,4\" Text=\"{Binding Name}\" />\n        </DataTemplate>\n    </ListView.ItemTemplate>\n</ListView>",
                     null),
                 new GalleryExample(
@@ -975,9 +955,9 @@ namespace ModernWpf.Gallery.Pages
             return new[]
             {
                 new GalleryExample(
-                    "A simple TreeView.",
+                    "Simple TreeView.",
                     CreateTreeView(),
-                    "<TreeView>\n    <TreeViewItem Header=\"Controls\">\n        <TreeViewItem Header=\"Button\" />\n        <TreeViewItem Header=\"TextBox\" />\n    </TreeViewItem>\n</TreeView>",
+                    "<TreeView AllowDrop=\"True\" ScrollViewer.CanContentScroll=\"False\">\n    <TreeViewItem Header=\"Work Documents\" IsExpanded=\"True\" IsSelected=\"True\">\n        <TreeViewItem Header=\"Feature Schedule\" />\n        <TreeViewItem Header=\"Overall Project Plan\" />\n    </TreeViewItem>\n    <TreeViewItem Header=\"Personal Documents\">\n        <TreeViewItem Header=\"Contractor contact info\" />\n        <TreeViewItem Header=\"Home Remodel\">\n            <TreeViewItem Header=\"Paint Color Scheme\" />\n            <TreeViewItem Header=\"Flooring Woodgrain Type\" />\n            <TreeViewItem Header=\"Kitchen Cabinet Style\" />\n        </TreeViewItem>\n    </TreeViewItem>\n</TreeView>",
                     null)
             };
         }
@@ -3000,7 +2980,14 @@ namespace ModernWpf.Gallery.Pages
 
         private static string[] CreateFontNames()
         {
-            return new[] { "Arial", "Calibri", "Cambria", "Candara", "Comic Sans MS", "Consolas", "Segoe UI", "Verdana" };
+            return new[]
+            {
+                "Arial",
+                "Comic Sans MS",
+                "Courier New",
+                "Segoe UI",
+                "Times New Roman"
+            };
         }
 
         private static ListBox CreateInlineListBox()
@@ -3015,6 +3002,32 @@ namespace ModernWpf.Gallery.Pages
             listBox.Items.Add(new ListBoxItem { Content = "Red" });
             listBox.Items.Add(new ListBoxItem { Content = "Yellow" });
             return listBox;
+        }
+
+        private static ListBox CreateFontListBox()
+        {
+            var listBox = new ListBox
+            {
+                Height = 164,
+                ItemsSource = CreateFontNames(),
+                SelectedIndex = 2
+            };
+            AutomationProperties.SetName(listBox, "Font ListBox");
+            return listBox;
+        }
+
+        private static ListView CreateBasicListView()
+        {
+            var listView = new ListView
+            {
+                Height = 200,
+                ItemsSource = CreatePeople(),
+                SelectedIndex = 2,
+                SelectionMode = SelectionMode.Single,
+                ItemTemplate = CreatePersonTemplate()
+            };
+            AutomationProperties.SetName(listView, "Basic ListView");
+            return listView;
         }
 
         private static DataTemplate CreatePersonTemplate()
@@ -3284,31 +3297,118 @@ namespace ModernWpf.Gallery.Pages
         {
             var treeView = new TreeView
             {
-                Width = 280,
-                Height = 150
+                AllowDrop = true
             };
-            var controls = new TreeViewItem { Header = "Controls", IsExpanded = true };
-            controls.Items.Add(new TreeViewItem { Header = "Button" });
-            controls.Items.Add(new TreeViewItem { Header = "TextBox" });
-            controls.Items.Add(new TreeViewItem { Header = "ListView" });
-            var layout = new TreeViewItem { Header = "Layout", IsExpanded = true };
-            layout.Items.Add(new TreeViewItem { Header = "Grid" });
-            layout.Items.Add(new TreeViewItem { Header = "StackPanel" });
-            treeView.Items.Add(controls);
-            treeView.Items.Add(layout);
+            AutomationProperties.SetName(treeView, "Sample TreeView");
+            ScrollViewer.SetCanContentScroll(treeView, false);
+
+            var workDocuments = new TreeViewItem
+            {
+                Header = "Work Documents",
+                IsExpanded = true,
+                IsSelected = true
+            };
+            workDocuments.Items.Add(new TreeViewItem { Header = "Feature Schedule" });
+            workDocuments.Items.Add(new TreeViewItem { Header = "Overall Project Plan" });
+
+            var homeRemodel = new TreeViewItem { Header = "Home Remodel" };
+            homeRemodel.Items.Add(new TreeViewItem { Header = "Paint Color Scheme" });
+            homeRemodel.Items.Add(new TreeViewItem { Header = "Flooring Woodgrain Type" });
+            homeRemodel.Items.Add(new TreeViewItem { Header = "Kitchen Cabinet Style" });
+
+            var personalDocuments = new TreeViewItem { Header = "Personal Documents" };
+            personalDocuments.Items.Add(new TreeViewItem { Header = "Contractor contact info" });
+            personalDocuments.Items.Add(homeRemodel);
+
+            treeView.Items.Add(workDocuments);
+            treeView.Items.Add(personalDocuments);
             return treeView;
         }
 
         private static object[] CreatePeople()
         {
-            return new object[]
+            var random = new Random(0);
+            var people = new object[50];
+            var names = new[]
             {
-                new { FirstName = "Avery", LastName = "Howard", Name = "Avery Howard", Company = "Contoso", Role = "Designer", Status = "Online" },
-                new { FirstName = "Kai", LastName = "Martin", Name = "Kai Martin", Company = "Fabrikam", Role = "Engineer", Status = "Busy" },
-                new { FirstName = "Mina", LastName = "Patel", Name = "Mina Patel", Company = "Northwind", Role = "PM", Status = "Away" },
-                new { FirstName = "Diego", LastName = "Reyes", Name = "Diego Reyes", Company = "Tailspin", Role = "Researcher", Status = "Online" },
-                new { FirstName = "Lena", LastName = "Keller", Name = "Lena Keller", Company = "Adventure Works", Role = "Support", Status = "Offline" }
+                "John",
+                "Winston",
+                "Adrianna",
+                "Spencer",
+                "Phoebe",
+                "Lucas",
+                "Carl",
+                "Marissa",
+                "Brandon",
+                "Antoine",
+                "Arielle",
+                "Arielle",
+                "Jamie",
+                "Alexander"
             };
+            var surnames = new[]
+            {
+                "Doe",
+                "Tapia",
+                "Cisneros",
+                "Lynch",
+                "Munoz",
+                "Marsh",
+                "Hudson",
+                "Bartlett",
+                "Gregory",
+                "Banks",
+                "Hood",
+                "Fry",
+                "Carroll"
+            };
+            var companies = new[]
+            {
+                "Luminary Nexus",
+                "CrestWave Dynamics",
+                "Horizon Ventures",
+                "Sapphire Pulse Technologies",
+                "EmberLight Industries",
+                "StellarEdge Ventrues",
+                "Elysium Crest Holdings"
+            };
+
+            for (var i = 0; i < people.Length; i++)
+            {
+                var firstName = names[random.Next(0, names.Length)];
+                var lastName = surnames[random.Next(0, surnames.Length)];
+                people[i] = new
+                {
+                    FirstName = firstName,
+                    LastName = lastName,
+                    Name = firstName + " " + lastName,
+                    Company = companies[random.Next(0, companies.Length)]
+                };
+            }
+
+            return people;
+        }
+
+        private static object[] CreateProducts()
+        {
+            var random = new Random(0);
+            var products = new object[50];
+            var adjectives = new[] { "Red", "Blueberry" };
+            var names = new[] { "Marmalade", "Dumplings", "Soup" };
+
+            for (var i = 0; i < products.Length; i++)
+            {
+                products[i] = new
+                {
+                    ProductId = i,
+                    ProductCode = i,
+                    ProductName = adjectives[random.Next(0, adjectives.Length)] + " " + names[random.Next(0, names.Length)],
+                    UnitPrice = Math.Round(random.NextDouble() * 20.0, 3),
+                    UnitsInStock = random.Next(0, 100)
+                };
+            }
+
+            return products;
         }
     }
 }
