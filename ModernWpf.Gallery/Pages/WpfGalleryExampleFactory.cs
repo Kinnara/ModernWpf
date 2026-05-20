@@ -266,22 +266,12 @@ namespace ModernWpf.Gallery.Pages
 
         private static IReadOnlyList<GalleryExample> CreateCanvasExamples()
         {
-            var canvas = new Canvas
-            {
-                Width = 180,
-                Height = 120,
-                Background = Brushes.LightGray
-            };
-            canvas.Children.Add(CreateCanvasRect(10, 10, Brushes.Red));
-            canvas.Children.Add(CreateCanvasRect(42, 32, Brushes.Blue));
-            canvas.Children.Add(CreateCanvasRect(74, 54, Brushes.Green));
-
             return new[]
             {
                 new GalleryExample(
-                    "A Canvas with positioned rectangles.",
-                    canvas,
-                    "<Canvas Width=\"180\" Height=\"120\" Background=\"LightGray\">\n    <Rectangle Canvas.Left=\"10\" Canvas.Top=\"10\" Width=\"48\" Height=\"48\" Fill=\"Red\" />\n    <Rectangle Canvas.Left=\"42\" Canvas.Top=\"32\" Width=\"48\" Height=\"48\" Fill=\"Blue\" />\n    <Rectangle Canvas.Left=\"74\" Canvas.Top=\"54\" Width=\"48\" Height=\"48\" Fill=\"Green\" />\n</Canvas>",
+                    "A basic Canvas inside the ViewBox",
+                    CreateCanvasViewboxExample(),
+                    "<Viewbox Width=\"200\" Height=\"200\" >\n    <Canvas Width=\"47\" Height=\"123\">\n        <Path Data=\"M0,19H18V84h29v15H0V19Z\" Fill=\"White\" />\n        <Path Data=\"M46,80H29V15H0V0H46V80Z\" Fill=\"White\" />\n    </Canvas>\n</Viewbox>",
                     null)
             };
         }
@@ -627,15 +617,14 @@ namespace ModernWpf.Gallery.Pages
             return new[]
             {
                 new GalleryExample(
-                    "An Image with Uniform stretch.",
+                    "Standand Image from a local file.",
                     new Image
                     {
-                        Width = 160,
-                        Height = 90,
-                        Source = new System.Windows.Media.Imaging.BitmapImage(new Uri("pack://application:,,,/ModernWpf.Gallery;component/Assets/HomeHeaderTiles/Header-WindowsDesign.png")),
-                        Stretch = Stretch.Uniform
+                        Height = 200,
+                        HorizontalAlignment = HorizontalAlignment.Left,
+                        Source = new BitmapImage(new Uri("pack://application:,,,/ModernWpf.Gallery;component/Assets/win11-dashboard.light.png"))
                     },
-                    "<Image Source=\"Assets/HomeHeaderTiles/Header-WindowsDesign.png\" Stretch=\"Uniform\" />",
+                    "<Image Height=\"100\" Source=\"Assets\\MyImage.jpg\" />",
                     null)
             };
         }
@@ -703,7 +692,7 @@ namespace ModernWpf.Gallery.Pages
                 new GalleryExample(
                     "Standard Menu.",
                     CreateStandardMenuExample(),
-                    "<Menu>\n    <MenuItem Header=\"File\">\n        <MenuItem Header=\"New\" />\n        <MenuItem Header=\"New window\" />\n        <MenuItem Header=\"Open...\" />\n        <MenuItem Header=\"Save\" />\n        <MenuItem Header=\"Save As...\" />\n        <Separator />\n        <MenuItem Header=\"Exit\" />\n    </MenuItem>\n    <MenuItem Header=\"Edit\">\n        <MenuItem Header=\"Undo\" />\n        <Separator />\n        <MenuItem Header=\"Cut\" />\n        <MenuItem Header=\"Copy\" />\n        <MenuItem Header=\"Paste\" />\n        <Separator />\n        <MenuItem Header=\"Select All\" />\n    </MenuItem>\n</Menu>",
+                    "<Menu>\n    <MenuItem Header=\"File\">\n        <MenuItem Header=\"New\" />\n        <MenuItem Header=\"New window\" />\n        <MenuItem Header=\"Open...\" />\n        <MenuItem Header=\"Save\" />\n        <MenuItem Header=\"Save As...\" />\n        <Separator />\n        <MenuItem Header=\"Exit\" />\n    </MenuItem>\n    <MenuItem Header=\"Edit\">\n        <MenuItem Header=\"Undo\" />\n        <Separator />\n        <MenuItem Header=\"Cut\" />\n        <MenuItem Header=\"Copy\" />\n        <MenuItem Header=\"Paste\" />\n        <MenuItem IsEnabled=\"False\" />\n        <Separator />\n        <MenuItem Header=\"Search with browser\" />\n        <MenuItem Header=\"Find...\" />\n        <MenuItem Header=\"Find Next\" />\n        <Separator />\n        <MenuItem Header=\"Select All\" />\n    </MenuItem>\n</Menu>",
                     null)
             };
         }
@@ -2108,17 +2097,32 @@ namespace ModernWpf.Gallery.Pages
             return stack;
         }
 
-        private static Rectangle CreateCanvasRect(double left, double top, Brush fill)
+        private static Viewbox CreateCanvasViewboxExample()
         {
-            var rectangle = new Rectangle
+            var canvas = new Canvas
             {
-                Width = 48,
-                Height = 48,
-                Fill = fill
+                Width = 47,
+                Height = 123
             };
-            Canvas.SetLeft(rectangle, left);
-            Canvas.SetTop(rectangle, top);
-            return rectangle;
+            canvas.Children.Add(CreateCanvasLogoPath("M0,19H18V84h29v15H0V19Z"));
+            canvas.Children.Add(CreateCanvasLogoPath("M46,80H29V15H0V0H46V80Z"));
+
+            return new Viewbox
+            {
+                Width = 200,
+                Height = 200,
+                Child = canvas
+            };
+        }
+
+        private static System.Windows.Shapes.Path CreateCanvasLogoPath(string data)
+        {
+            var path = new System.Windows.Shapes.Path
+            {
+                Data = Geometry.Parse(data)
+            };
+            path.SetResourceReference(System.Windows.Shapes.Shape.FillProperty, "TextFillColorSecondaryBrush");
+            return path;
         }
 
         private static StackPanel CreateCommonMessageBoxExample()
@@ -2590,6 +2594,7 @@ namespace ModernWpf.Gallery.Pages
             edit.Items.Add(CreateMenuItem("Cut", output));
             edit.Items.Add(CreateMenuItem("Copy", output));
             edit.Items.Add(CreateMenuItem("Paste", output));
+            edit.Items.Add(new MenuItem { IsEnabled = false });
             edit.Items.Add(new Separator());
             edit.Items.Add(CreateMenuItem("Search with browser", output));
             edit.Items.Add(CreateMenuItem("Find", output));
@@ -2805,10 +2810,12 @@ namespace ModernWpf.Gallery.Pages
                 Header = new TextBlock
                 {
                     Text = glyph,
-                    Focusable = false
+                    Focusable = false,
+                    FontSize = 12
                 },
                 Tag = name
             };
+            ((TextBlock)item.Header).SetResourceReference(TextBlock.FontFamilyProperty, "SymbolThemeFontFamily");
             AutomationProperties.SetName(item, name);
             item.Click += delegate { output.Text = "Selected " + name; };
             return item;
