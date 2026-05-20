@@ -8,47 +8,101 @@
             <ResourceDictionary.MergedDictionaries>
                 <ui:ThemeResources />
                 <ui:FluentControlsResources UseCompactResources="False" />
+                <ResourceDictionary Source="Controls/ControlExample.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 
             <Style x:Key="GalleryPageRootStyle" TargetType="Grid">
-                <Setter Property="Background" Value="{DynamicResource SystemControlPageBackgroundAltHighBrush}" />
+                <Setter Property="Background" Value="{DynamicResource LayerFillColorDefaultBrush}" />
             </Style>
 
-            <Style x:Key="GalleryTitleTextBlockStyle" TargetType="TextBlock">
-                <Setter Property="FontSize" Value="32" />
+            <Style x:Key="BaseTextBlockStyle" TargetType="TextBlock">
+                <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+                <Setter Property="FontSize" Value="14" />
                 <Setter Property="FontWeight" Value="SemiBold" />
+                <Setter Property="LineStackingStrategy" Value="MaxHeight" />
+                <Setter Property="TextTrimming" Value="CharacterEllipsis" />
                 <Setter Property="TextWrapping" Value="Wrap" />
+            </Style>
+
+            <Style
+                x:Key="CaptionTextBlockStyle"
+                BasedOn="{StaticResource BaseTextBlockStyle}"
+                TargetType="TextBlock">
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="FontWeight" Value="Normal" />
+            </Style>
+
+            <Style
+                x:Key="BodyTextBlockStyle"
+                BasedOn="{StaticResource BaseTextBlockStyle}"
+                TargetType="TextBlock">
+                <Setter Property="FontWeight" Value="Normal" />
+            </Style>
+
+            <Style
+                x:Key="BodyStrongTextBlockStyle"
+                BasedOn="{StaticResource BaseTextBlockStyle}"
+                TargetType="TextBlock" />
+
+            <Style
+                x:Key="SubtitleTextBlockStyle"
+                BasedOn="{StaticResource BaseTextBlockStyle}"
+                TargetType="TextBlock">
+                <Setter Property="FontSize" Value="20" />
+            </Style>
+
+            <Style
+                x:Key="TitleTextBlockStyle"
+                BasedOn="{StaticResource BaseTextBlockStyle}"
+                TargetType="TextBlock">
+                <Setter Property="FontSize" Value="28" />
+            </Style>
+
+            <Style
+                x:Key="TitleLargeTextBlockStyle"
+                BasedOn="{StaticResource BaseTextBlockStyle}"
+                TargetType="TextBlock">
+                <Setter Property="FontSize" Value="40" />
+            </Style>
+
+            <Style
+                x:Key="GalleryTitleTextBlockStyle"
+                BasedOn="{StaticResource TitleTextBlockStyle}"
+                TargetType="TextBlock">
                 <Setter Property="Margin" Value="0,0,0,8" />
             </Style>
 
-            <Style x:Key="GallerySubtitleTextBlockStyle" TargetType="TextBlock">
-                <Setter Property="FontSize" Value="15" />
-                <Setter Property="Opacity" Value="0.78" />
-                <Setter Property="TextWrapping" Value="Wrap" />
-                <Setter Property="Margin" Value="0,0,0,24" />
+            <Style
+                x:Key="GallerySubtitleTextBlockStyle"
+                BasedOn="{StaticResource BodyTextBlockStyle}"
+                TargetType="TextBlock">
+                <Setter Property="Margin" Value="0,0,0,32" />
             </Style>
 
-            <Style x:Key="GallerySectionHeaderTextBlockStyle" TargetType="TextBlock">
-                <Setter Property="FontSize" Value="20" />
-                <Setter Property="FontWeight" Value="SemiBold" />
+            <Style
+                x:Key="GallerySectionHeaderTextBlockStyle"
+                BasedOn="{StaticResource BodyStrongTextBlockStyle}"
+                TargetType="TextBlock">
+                <Setter Property="FontSize" Value="16" />
                 <Setter Property="Margin" Value="0,24,0,12" />
             </Style>
 
             <Style x:Key="GalleryCardButtonStyle" TargetType="Button">
-                <Setter Property="Width" Value="280" />
-                <Setter Property="MinHeight" Value="136" />
-                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                <Setter Property="VerticalContentAlignment" Value="Stretch" />
-                <Setter Property="Padding" Value="0" />
-                <Setter Property="Margin" Value="0,0,12,12" />
+                <Setter Property="Width" Value="360" />
+                <Setter Property="Height" Value="90" />
+                <Setter Property="HorizontalContentAlignment" Value="Left" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="Padding" Value="20,10" />
+                <Setter Property="Margin" Value="7" />
             </Style>
 
-            <Style x:Key="GalleryMetaTextBlockStyle" TargetType="TextBlock">
-                <Setter Property="FontSize" Value="12" />
-                <Setter Property="Opacity" Value="0.72" />
-                <Setter Property="TextWrapping" Value="Wrap" />
+            <Style
+                x:Key="GalleryMetaTextBlockStyle"
+                BasedOn="{StaticResource CaptionTextBlockStyle}"
+                TargetType="TextBlock">
+                <Setter Property="Opacity" Value="0.7" />
             </Style>
         </ResourceDictionary>
     </Application.Resources>

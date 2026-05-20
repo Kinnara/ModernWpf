@@ -17,14 +17,27 @@
 
     <Grid Style="{StaticResource GalleryPageRootStyle}">
         <ScrollViewer>
-            <StackPanel Margin="40,32,40,48">
-                <TextBlock
-                    Style="{StaticResource GalleryTitleTextBlockStyle}"
-                    Text="{Binding Title}" />
-                <TextBlock
-                    Style="{StaticResource GallerySubtitleTextBlockStyle}"
-                    Text="{Binding Subtitle}" />
-                <ItemsControl ItemsSource="{Binding Items}">
+            <StackPanel Margin="32,24,24,48">
+                <Label
+                    Padding="0"
+                    Focusable="True"
+                    KeyboardNavigation.IsTabStop="True">
+                    <TextBlock
+                        Style="{StaticResource GalleryTitleTextBlockStyle}"
+                        Text="{Binding Title}" />
+                </Label>
+                <Label
+                    Padding="0"
+                    Margin="0,0,0,32"
+                    Focusable="True"
+                    KeyboardNavigation.IsTabStop="True">
+                    <TextBlock
+                        Style="{StaticResource BodyTextBlockStyle}"
+                        Text="{Binding Subtitle}" />
+                </Label>
+                <ItemsControl
+                    Margin="-7,0,0,0"
+                    ItemsSource="{Binding Items}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <WrapPanel />

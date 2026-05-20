@@ -18,7 +18,7 @@
             IsSettingsVisible="False"
             ItemInvoked="OnNavigationItemInvoked"
             PaneDisplayMode="Left"
-            PaneTitle="ModernWPF Gallery">
+            PaneTitle="WPF Gallery">
             <ui:NavigationView.PaneCustomContent>
                 <ui:AutoSuggestBox
                     x:Name="SearchBox"

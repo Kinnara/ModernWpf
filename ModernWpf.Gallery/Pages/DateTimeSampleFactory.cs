@@ -13,6 +13,8 @@ namespace ModernWpf.Gallery.Pages
         {
             switch (uniqueId)
             {
+                case "Calendar":
+                    return CreateCalendarSample();
                 case "CalendarDatePicker":
                     return CreateCalendarDatePickerSample();
                 case "CalendarView":
@@ -24,6 +26,11 @@ namespace ModernWpf.Gallery.Pages
                 default:
                     return null;
             }
+        }
+
+        private static UIElement CreateCalendarSample()
+        {
+            return CreateCalendarViewSample();
         }
 
         private static UIElement CreateCalendarDatePickerSample()

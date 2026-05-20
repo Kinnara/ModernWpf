@@ -2,6 +2,7 @@
     x:Class="ModernWpf.Gallery.Pages.ItemPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:ModernWpf.Gallery.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="760"
@@ -10,82 +11,118 @@
     <Grid
         AutomationProperties.AutomationId="GalleryItemPageRoot"
         Style="{StaticResource GalleryPageRootStyle}">
-        <ScrollViewer>
-            <StackPanel Margin="40,32,40,48">
-                <DockPanel>
-                    <Border
-                        DockPanel.Dock="Left"
-                        Width="72"
-                        Height="72"
-                        Margin="0,0,24,0"
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
-                        <Image
-                            Width="44"
-                            Height="44"
-                            Source="{Binding ImagePath}"
-                            Stretch="Uniform" />
-                    </Border>
-                    <StackPanel>
-                        <TextBlock
-                            x:Name="TitleTextBlock"
-                            AutomationProperties.AutomationId="GalleryItemPageTitle"
-                            Style="{StaticResource GalleryTitleTextBlockStyle}"
-                            Text="{Binding Title}" />
-                        <TextBlock
-                            Style="{StaticResource GallerySubtitleTextBlockStyle}"
-                            Text="{Binding Subtitle}" />
-                    </StackPanel>
-                </DockPanel>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
 
+        <StackPanel Margin="32,24,24,32">
+            <Label
+                Focusable="True"
+                KeyboardNavigation.IsTabStop="True"
+                KeyboardNavigation.TabIndex="0">
                 <TextBlock
-                    Text="{Binding Description}"
-                    TextWrapping="Wrap" />
+                    x:Name="TitleTextBlock"
+                    AutomationProperties.AutomationId="GalleryItemPageTitle"
+                    Style="{StaticResource TitleTextBlockStyle}"
+                    Text="{Binding Title}" />
+            </Label>
+            <Label
+                Focusable="True"
+                KeyboardNavigation.IsTabStop="True"
+                KeyboardNavigation.TabIndex="1">
+                <TextBlock
+                    Style="{StaticResource BodyTextBlockStyle}"
+                    Text="{Binding Description}" />
+            </Label>
+        </StackPanel>
 
-                <TextBlock
-                    Style="{StaticResource GallerySectionHeaderTextBlockStyle}"
-                    Text="WPF sample"
-                    Visibility="{Binding HasWpfSampleContent, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        <ScrollViewer
+            Grid.Row="1"
+            Margin="32,0,0,24"
+            Padding="0,0,24,0">
+            <StackPanel Margin="0,0,0,24">
                 <ContentControl
+                    Content="{Binding NoticeContent}"
+                    Visibility="{Binding HasNoticeContent, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                <ItemsControl
                     AutomationProperties.AutomationId="GallerySampleHost"
-                    Content="{Binding WpfSampleContent}"
-                    Visibility="{Binding HasWpfSampleContent, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    ItemsSource="{Binding Examples}"
+                    Visibility="{Binding HasWpfSampleContent, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <controls:ControlExample
+                                Margin="10,0,10,36"
+                                CSharpCode="{Binding CSharpCode}"
+                                ExampleContent="{Binding ExampleContent}"
+                                HeaderText="{Binding HeaderText}"
+                                XamlCode="{Binding XamlCode}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
 
                 <Grid Margin="0,24,0,0">
+                    <Grid.Visibility>
+                        <Binding
+                            Converter="{StaticResource BooleanToVisibilityConverter}"
+                            Path="ShowCatalogDetails" />
+                    </Grid.Visibility>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="24" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <StackPanel>
-                        <TextBlock
-                            Style="{StaticResource GallerySectionHeaderTextBlockStyle}"
-                            Text="API" />
-                        <TextBlock
-                            Style="{StaticResource GalleryMetaTextBlockStyle}"
-                            Text="{Binding ApiNamespace}" />
-                        <TextBlock
-                            Margin="0,8,0,0"
-                            Style="{StaticResource GalleryMetaTextBlockStyle}"
-                            Text="{Binding BaseClassText}" />
-                    </StackPanel>
-                    <StackPanel Grid.Column="2">
-                        <TextBlock
-                            Style="{StaticResource GallerySectionHeaderTextBlockStyle}"
-                            Text="Source" />
-                        <TextBlock
-                            Style="{StaticResource GalleryMetaTextBlockStyle}"
-                            Text="{Binding GroupTitle}" />
-                        <TextBlock
-                            Margin="0,8,0,0"
-                            Style="{StaticResource GalleryMetaTextBlockStyle}"
-                            Text="{Binding UniqueId}" />
-                    </StackPanel>
+                    <Border
+                        Padding="16"
+                        Background="{DynamicResource SolidBackgroundFillColorBaseBrush}"
+                        BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8">
+                        <StackPanel>
+                            <TextBlock
+                                Style="{StaticResource BodyStrongTextBlockStyle}"
+                                Text="API surface" />
+                            <TextBlock
+                                Margin="0,8,0,0"
+                                Style="{StaticResource GalleryMetaTextBlockStyle}"
+                                Text="{Binding ApiNamespace}" />
+                            <TextBlock
+                                Margin="0,8,0,0"
+                                Style="{StaticResource GalleryMetaTextBlockStyle}"
+                                Text="{Binding BaseClassText}" />
+                        </StackPanel>
+                    </Border>
+                    <Border
+                        Grid.Column="2"
+                        Padding="16"
+                        Background="{DynamicResource SolidBackgroundFillColorBaseBrush}"
+                        BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8">
+                        <StackPanel>
+                            <TextBlock
+                                Style="{StaticResource BodyStrongTextBlockStyle}"
+                                Text="Catalog" />
+                            <TextBlock
+                                Margin="0,8,0,0"
+                                Style="{StaticResource GalleryMetaTextBlockStyle}"
+                                Text="{Binding GroupTitle}" />
+                            <TextBlock
+                                Margin="0,8,0,0"
+                                Style="{StaticResource GalleryMetaTextBlockStyle}"
+                                Text="{Binding UniqueId}" />
+                        </StackPanel>
+                    </Border>
                 </Grid>
 
                 <TextBlock
                     Style="{StaticResource GallerySectionHeaderTextBlockStyle}"
-                    Text="Documentation" />
-                <ItemsControl ItemsSource="{Binding Docs}">
+                    Text="Documentation"
+                    Visibility="{Binding ShowDocs, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <ItemsControl
+                    ItemsSource="{Binding Docs}"
+                    Visibility="{Binding ShowDocs, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Margin="0,0,0,8">
@@ -99,8 +136,11 @@
 
                 <TextBlock
                     Style="{StaticResource GallerySectionHeaderTextBlockStyle}"
-                    Text="Original WinUI Gallery sample code" />
-                <ItemsControl ItemsSource="{Binding SampleSnippets}">
+                    Text="Additional sample code"
+                    Visibility="{Binding ShowAdditionalSampleSnippets, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <ItemsControl
+                    ItemsSource="{Binding AdditionalSampleSnippets}"
+                    Visibility="{Binding ShowAdditionalSampleSnippets, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Expander
@@ -122,8 +162,11 @@
 
                 <TextBlock
                     Style="{StaticResource GallerySectionHeaderTextBlockStyle}"
-                    Text="Related controls" />
-                <ItemsControl ItemsSource="{Binding RelatedItems}">
+                    Text="Related controls"
+                    Visibility="{Binding ShowRelatedItems, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <ItemsControl
+                    ItemsSource="{Binding RelatedItems}"
+                    Visibility="{Binding ShowRelatedItems, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <WrapPanel />

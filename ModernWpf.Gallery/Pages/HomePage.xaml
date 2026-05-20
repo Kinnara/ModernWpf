@@ -17,32 +17,122 @@
 
     <Grid Style="{StaticResource GalleryPageRootStyle}">
         <ScrollViewer>
-            <StackPanel Margin="40,32,40,48">
-                <Image
-                    MaxHeight="220"
-                    HorizontalAlignment="Stretch"
-                    Source="pack://application:,,,/ModernWpf.Gallery;component/Assets/GalleryHeaderImage.png"
-                    Stretch="UniformToFill" />
+            <Grid Margin="0,0,0,48">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
 
-                <TextBlock
-                    Margin="0,32,0,0"
-                    Style="{StaticResource GalleryTitleTextBlockStyle}"
-                    Text="ModernWPF Gallery" />
-                <TextBlock
-                    Style="{StaticResource GallerySubtitleTextBlockStyle}"
-                    Text="A WPF port of the WinUI Gallery catalog, assets, and sample-code structure, built as the ModernWpf Gallery app." />
+                <Border
+                    Grid.RowSpan="2"
+                    CornerRadius="8,0,0,0">
+                    <Border.Background>
+                        <ImageBrush
+                            ImageSource="pack://application:,,,/ModernWpf.Gallery;component/Assets/win11-dashboard.light.png"
+                            Stretch="UniformToFill" />
+                    </Border.Background>
+                    <Border.OpacityMask>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                            <GradientStop Color="Black" Offset="0.6" />
+                            <GradientStop Color="Transparent" Offset="0.9" />
+                        </LinearGradientBrush>
+                    </Border.OpacityMask>
+                </Border>
 
-                <DockPanel Margin="0,0,0,12">
-                    <Button
-                        DockPanel.Dock="Right"
-                        Content="View all controls"
-                        Click="OnAllControlsClick" />
+                <Border
+                    Height="220"
+                    BorderThickness="0,0,0,1"
+                    CornerRadius="8,0,0,0">
+                    <StackPanel Margin="36,48,0,0" VerticalAlignment="Top">
+                        <TextBlock
+                            Margin="0,0,0,2"
+                            Foreground="Black"
+                            Style="{StaticResource SubtitleTextBlockStyle}"
+                            Text="ModernWpf" />
+                        <TextBlock
+                            Margin="0,0,0,8"
+                            Foreground="Black"
+                            Style="{StaticResource TitleLargeTextBlockStyle}"
+                            Text="WPF Gallery" />
+                        <TextBlock
+                            MaxWidth="330"
+                            Padding="0,8,12,8"
+                            HorizontalAlignment="Left"
+                            Foreground="Black"
+                            Style="{StaticResource BodyStrongTextBlockStyle}"
+                            Text="A WPF-first gallery that combines official WPF Gallery visuals with WinUI-style controls implemented by ModernWpf." />
+                    </StackPanel>
+                </Border>
+
+                <ItemsControl
+                    Grid.Row="1"
+                    Margin="18,0,0,0"
+                    ItemsSource="{Binding Groups}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button
+                                Width="198"
+                                Height="220"
+                                Margin="6"
+                                Padding="24"
+                                BorderThickness="1"
+                                Click="OnGroupCardClick"
+                                Content="{Binding}"
+                                ContentTemplate="{StaticResource GalleryTileCardTemplate}"
+                                HorizontalContentAlignment="Stretch"
+                                VerticalContentAlignment="Stretch" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <StackPanel
+                    Grid.Row="2"
+                    Margin="32,24,24,0"
+                    Orientation="Vertical">
+                    <DockPanel Margin="0,0,0,6">
+                        <Button
+                            DockPanel.Dock="Right"
+                            Content="View all controls"
+                            Click="OnAllControlsClick" />
+                        <TextBlock
+                            FontSize="16"
+                            Style="{StaticResource BodyStrongTextBlockStyle}"
+                            Text="Overview" />
+                    </DockPanel>
+
+                    <ItemsControl
+                        Margin="-7,0,0,0"
+                        ItemsSource="{Binding Groups}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button
+                                    Click="OnGroupCardClick"
+                                    Content="{Binding}"
+                                    ContentTemplate="{StaticResource GalleryGroupCardTemplate}"
+                                    Style="{StaticResource GalleryCardButtonStyle}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
                     <TextBlock
+                        FontSize="16"
                         Style="{StaticResource GallerySectionHeaderTextBlockStyle}"
-                        Text="New and updated" />
-                </DockPanel>
+                        Text="Recently added and updated" />
 
-                <ItemsControl ItemsSource="{Binding FeaturedItems}">
+                    <ItemsControl
+                        Margin="-7,0,0,0"
+                        ItemsSource="{Binding FeaturedItems}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <WrapPanel />
@@ -58,42 +148,8 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-
-                <TextBlock
-                    Style="{StaticResource GallerySectionHeaderTextBlockStyle}"
-                    Text="Sections" />
-                <ItemsControl ItemsSource="{Binding Groups}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Button
-                                Width="280"
-                                MinHeight="92"
-                                Margin="0,0,12,12"
-                                Click="OnGroupCardClick"
-                                HorizontalContentAlignment="Stretch"
-                                VerticalContentAlignment="Stretch">
-                                <StackPanel Margin="16,14">
-                                    <TextBlock
-                                        FontSize="16"
-                                        FontWeight="SemiBold"
-                                        Text="{Binding Title}"
-                                        TextTrimming="CharacterEllipsis" />
-                                    <TextBlock
-                                        Margin="0,6,0,0"
-                                        Opacity="0.72"
-                                        Text="{Binding Subtitle}"
-                                        TextWrapping="Wrap" />
-                                </StackPanel>
-                            </Button>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </StackPanel>
+                </StackPanel>
+            </Grid>
         </ScrollViewer>
     </Grid>
 </UserControl>

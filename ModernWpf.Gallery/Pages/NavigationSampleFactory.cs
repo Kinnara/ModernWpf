@@ -17,17 +17,128 @@ namespace ModernWpf.Gallery.Pages
             {
                 case "BreadcrumbBar":
                     return CreateBreadcrumbBarSample();
+                case "Frame":
+                    return CreateFrameSample();
+                case "Menu":
+                    return CreateMenuSample();
                 case "NavigationView":
                     return CreateNavigationViewSample();
+                case "NavigationWindow":
+                    return CreateNavigationWindowSample();
                 case "Pivot":
                     return CreatePivotSample();
                 case "SelectorBar":
                     return CreateSelectorBarSample();
+                case "TabControl":
+                    return CreateTabControlSample();
                 case "TabView":
                     return CreateTabViewSample();
                 default:
                     return null;
             }
+        }
+
+        private static UIElement CreateFrameSample()
+        {
+            var panel = CreateSamplePanel("Frame hosts Page content and maintains navigation history.");
+            var frame = new Frame
+            {
+                Width = 520,
+                Height = 220,
+                NavigationUIVisibility = System.Windows.Navigation.NavigationUIVisibility.Hidden,
+                Content = CreatePageContent("Home page", "#D9EAF7")
+            };
+
+            var commands = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                Margin = new Thickness(0, 12, 0, 0)
+            };
+            var home = CreateButton("Home");
+            var details = CreateButton("Details");
+            var back = CreateButton("Back");
+            home.Click += delegate { frame.Navigate(CreatePageContent("Home page", "#D9EAF7")); };
+            details.Click += delegate { frame.Navigate(CreatePageContent("Details page", "#E6E6E6")); };
+            back.Click += delegate
+            {
+                if (frame.CanGoBack)
+                {
+                    frame.GoBack();
+                }
+            };
+            commands.Children.Add(home);
+            commands.Children.Add(details);
+            commands.Children.Add(back);
+
+            panel.Children.Add(frame);
+            panel.Children.Add(commands);
+            return panel;
+        }
+
+        private static UIElement CreateMenuSample()
+        {
+            var panel = CreateSamplePanel("Menu presents top-level WPF commands with nested MenuItem entries and keyboard access.");
+            var output = CreateOutput("Choose a menu command.");
+            var menu = new Menu
+            {
+                Width = 420
+            };
+            var file = new MenuItem { Header = "_File" };
+            file.Items.Add(CreateWpfMenuItem("_New", output));
+            file.Items.Add(CreateWpfMenuItem("_Open", output));
+            file.Items.Add(new Separator());
+            file.Items.Add(CreateWpfMenuItem("E_xit", output));
+            var edit = new MenuItem { Header = "_Edit" };
+            edit.Items.Add(CreateWpfMenuItem("_Copy", output));
+            edit.Items.Add(CreateWpfMenuItem("_Paste", output));
+            menu.Items.Add(file);
+            menu.Items.Add(edit);
+            panel.Children.Add(menu);
+            panel.Children.Add(output);
+            return panel;
+        }
+
+        private static UIElement CreateNavigationWindowSample()
+        {
+            var panel = CreateSamplePanel("NavigationWindow opens Page content in a top-level window with navigation support.");
+            var output = CreateOutput("Window not opened yet.");
+            var open = CreateButton("Open NavigationWindow");
+            open.Click += delegate
+            {
+                var owner = Window.GetWindow((FrameworkElement)open);
+                var window = new System.Windows.Navigation.NavigationWindow
+                {
+                    Title = "NavigationWindow sample",
+                    Width = 480,
+                    Height = 320,
+                    Content = CreatePageContent("NavigationWindow page", "#D9EAF7")
+                };
+                if (owner != null)
+                {
+                    window.Owner = owner;
+                }
+                window.Show();
+                output.Text = "NavigationWindow opened.";
+            };
+            panel.Children.Add(open);
+            panel.Children.Add(output);
+            return panel;
+        }
+
+        private static UIElement CreateTabControlSample()
+        {
+            var panel = CreateSamplePanel("TabControl presents multiple TabItem pages with one active selection.");
+            var tabControl = new TabControl
+            {
+                Width = 520,
+                Height = 220
+            };
+            tabControl.Items.Add(CreateTab("Overview", "Overview content"));
+            tabControl.Items.Add(CreateTab("Details", "Details content"));
+            tabControl.Items.Add(CreateTab("History", "History content"));
+            tabControl.SelectedIndex = 0;
+            panel.Children.Add(tabControl);
+            return panel;
         }
 
         private static UIElement CreateBreadcrumbBarSample()
@@ -328,6 +439,33 @@ namespace ModernWpf.Gallery.Pages
                 Icon = new Mux.SymbolIcon(symbol),
                 Tag = tag
             };
+        }
+
+        private static Page CreatePageContent(string title, string color)
+        {
+            return new Page
+            {
+                Content = new Border
+                {
+                    Background = CreateBrush(color),
+                    Padding = new Thickness(18),
+                    Child = new TextBlock
+                    {
+                        Text = title,
+                        FontSize = 22,
+                        FontWeight = FontWeights.SemiBold,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center
+                    }
+                }
+            };
+        }
+
+        private static MenuItem CreateWpfMenuItem(string header, TextBlock output)
+        {
+            var item = new MenuItem { Header = header };
+            item.Click += delegate { output.Text = "Selected " + header.Replace("_", string.Empty); };
+            return item;
         }
 
         private static TabItem CreateTab(string header, string text)

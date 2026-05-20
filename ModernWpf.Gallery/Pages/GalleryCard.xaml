@@ -3,33 +3,21 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <DataTemplate x:Key="GalleryItemCardTemplate">
-        <Grid MinHeight="136">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="72" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <Border
-                Width="48"
-                Height="48"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Top"
-                Margin="12,18,12,0"
-                Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
-                <Image
-                    Width="32"
-                    Height="32"
-                    Source="{Binding ImagePath}"
-                    Stretch="Uniform" />
-            </Border>
-            <StackPanel
-                Grid.Column="1"
-                Margin="0,14,16,14">
-                <DockPanel LastChildFill="True">
+        <StackPanel Orientation="Horizontal">
+            <Image
+                Width="50"
+                Height="50"
+                Margin="0,0,8,0"
+                Source="{Binding ImagePath}"
+                Stretch="Uniform" />
+            <StackPanel Orientation="Vertical">
+                <DockPanel Width="240" LastChildFill="True">
                     <Border
                         DockPanel.Dock="Right"
                         Padding="8,2"
                         Margin="8,0,0,0"
                         Background="{DynamicResource SystemControlHighlightAccentBrush}"
+                        CornerRadius="4"
                         Visibility="{Binding HasBadge, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <TextBlock
                             FontSize="11"
@@ -37,18 +25,57 @@
                             Text="{Binding Badge}" />
                     </Border>
                     <TextBlock
-                        FontSize="15"
-                        FontWeight="SemiBold"
-                        Text="{Binding Title}"
-                        TextTrimming="CharacterEllipsis" />
+                        Margin="10,0,0,0"
+                        Style="{StaticResource BodyStrongTextBlockStyle}"
+                        Text="{Binding Title}" />
                 </DockPanel>
                 <TextBlock
-                    Margin="0,6,0,0"
-                    MaxHeight="58"
-                    Opacity="0.72"
-                    Text="{Binding Subtitle}"
-                    TextTrimming="CharacterEllipsis"
-                    TextWrapping="Wrap" />
+                    Width="240"
+                    Margin="10,0,0,0"
+                    Opacity="0.7"
+                    Style="{StaticResource CaptionTextBlockStyle}"
+                    Text="{Binding Subtitle}" />
+            </StackPanel>
+        </StackPanel>
+    </DataTemplate>
+
+    <DataTemplate x:Key="GalleryGroupCardTemplate">
+        <StackPanel Orientation="Horizontal">
+            <Image
+                Width="50"
+                Height="50"
+                Margin="0,0,8,0"
+                Source="{Binding ImagePath}"
+                Stretch="Uniform" />
+            <StackPanel Orientation="Vertical">
+                <TextBlock
+                    Width="240"
+                    Margin="10,0,0,0"
+                    Style="{StaticResource BodyStrongTextBlockStyle}"
+                    Text="{Binding Title}" />
+                <TextBlock
+                    Width="240"
+                    Margin="10,0,0,0"
+                    Opacity="0.7"
+                    Style="{StaticResource CaptionTextBlockStyle}"
+                    Text="{Binding Subtitle}" />
+            </StackPanel>
+        </StackPanel>
+    </DataTemplate>
+
+    <DataTemplate x:Key="GalleryTileCardTemplate">
+        <Grid>
+            <StackPanel Margin="18,14">
+                <Image
+                    Width="42"
+                    Height="42"
+                    HorizontalAlignment="Left"
+                    Source="{Binding ImagePath}"
+                    Stretch="Uniform" />
+                <TextBlock
+                    Margin="0,12,0,0"
+                    Style="{StaticResource BodyStrongTextBlockStyle}"
+                    Text="{Binding Title}" />
             </StackPanel>
         </Grid>
     </DataTemplate>

@@ -14,6 +14,8 @@ namespace ModernWpf.Gallery.Pages
         {
             switch (uniqueId)
             {
+                case "DataGrid":
+                    return CreateDataGridSample();
                 case "FlipView":
                     return CreateFlipViewSample();
                 case "GridView":
@@ -33,6 +35,24 @@ namespace ModernWpf.Gallery.Pages
                 default:
                     return null;
             }
+        }
+
+        private static UIElement CreateDataGridSample()
+        {
+            var panel = CreateSamplePanel("DataGrid presents editable rows and columns with selection, sorting, and generated or explicit columns.");
+            var grid = new DataGrid
+            {
+                Width = 540,
+                Height = 190,
+                AutoGenerateColumns = false,
+                CanUserAddRows = false,
+                ItemsSource = CreatePeople()
+            };
+            grid.Columns.Add(new DataGridTextColumn { Header = "Name", Binding = new Binding("Name"), Width = 190 });
+            grid.Columns.Add(new DataGridTextColumn { Header = "Role", Binding = new Binding("Role"), Width = 160 });
+            grid.Columns.Add(new DataGridTextColumn { Header = "Status", Binding = new Binding("Status"), Width = 120 });
+            panel.Children.Add(grid);
+            return panel;
         }
 
         private static UIElement CreateFlipViewSample()

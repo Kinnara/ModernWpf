@@ -17,25 +17,32 @@ namespace ModernWpf.Gallery.Pages
             InitializeComponent();
 
             _item = item ?? GalleryCatalog.Items.First();
-            WpfSampleContent = FundamentalsSampleFactory.Create(_item.UniqueId)
-                ?? BasicInputSampleFactory.Create(_item.UniqueId)
-                ?? StatusInfoSampleFactory.Create(_item.UniqueId)
-                ?? DialogsFlyoutsSampleFactory.Create(_item.UniqueId)
-                ?? DesignAccessibilitySampleFactory.Create(_item.UniqueId)
-                ?? MenusToolbarsSampleFactory.Create(_item.UniqueId)
-                ?? CollectionsSampleFactory.Create(_item.UniqueId)
-                ?? DateTimeSampleFactory.Create(_item.UniqueId)
-                ?? ScrollingSampleFactory.Create(_item.UniqueId)
-                ?? LayoutSampleFactory.Create(_item.UniqueId)
-                ?? NavigationSampleFactory.Create(_item.UniqueId)
-                ?? MediaSampleFactory.Create(_item.UniqueId)
-                ?? StylesSampleFactory.Create(_item.UniqueId)
-                ?? TextSampleFactory.Create(_item.UniqueId)
-                ?? MotionSampleFactory.Create(_item.UniqueId)
-                ?? WindowingSampleFactory.Create(_item.UniqueId)
-                ?? SystemSampleFactory.Create(_item.UniqueId)
-                ?? ShellSampleFactory.Create(_item.UniqueId);
             SampleSnippets = LoadSampleSnippets(_item.UniqueId);
+            var xamlSnippet = FindSampleSnippet(SampleSnippets, IsXamlSnippet);
+            var csharpSnippet = FindSampleSnippet(SampleSnippets, IsCSharpSnippet);
+            var examples = WpfGalleryExampleFactory.Create(_item.UniqueId);
+            UsesWpfGalleryPageMode = examples.Count != 0;
+            NoticeContent = WpfGalleryExampleFactory.CreateNotice(_item.UniqueId);
+            if (examples.Count == 0)
+            {
+                var sampleContent = CreateWorkingSampleContent(_item.UniqueId);
+                if (sampleContent != null)
+                {
+                    examples = new[]
+                    {
+                        new GalleryExample(
+                            "Working WPF sample",
+                            sampleContent,
+                            xamlSnippet == null ? null : xamlSnippet.Text,
+                            csharpSnippet == null ? null : csharpSnippet.Text)
+                    };
+                }
+            }
+
+            Examples = examples;
+            AdditionalSampleSnippets = SampleSnippets
+                .Where(snippet => !ReferenceEquals(snippet, xamlSnippet) && !ReferenceEquals(snippet, csharpSnippet))
+                .ToArray();
             RelatedItems = _item.RelatedControlIds
                 .Select(GalleryCatalog.FindItem)
                 .Where(related => related != null)
@@ -72,7 +79,7 @@ namespace ModernWpf.Gallery.Pages
 
         public string ApiNamespace
         {
-            get { return string.IsNullOrWhiteSpace(_item.ApiNamespace) ? "WinUI Gallery metadata only" : _item.ApiNamespace; }
+            get { return string.IsNullOrWhiteSpace(_item.ApiNamespace) ? "WPF sample or guidance page" : _item.ApiNamespace; }
         }
 
         public string BaseClassText
@@ -82,7 +89,11 @@ namespace ModernWpf.Gallery.Pages
 
         public string GroupTitle
         {
-            get { return _item.GroupTitle; }
+            get
+            {
+                var displayGroup = GalleryCatalog.FindDisplayGroupForItem(_item.UniqueId);
+                return displayGroup == null ? _item.GroupTitle : displayGroup.Title;
+            }
         }
 
         public IReadOnlyList<GalleryDocLink> Docs
@@ -90,15 +101,65 @@ namespace ModernWpf.Gallery.Pages
             get { return _item.Docs; }
         }
 
-        public object WpfSampleContent { get; }
+        public bool HasDocs
+        {
+            get { return Docs.Count != 0; }
+        }
+
+        public IReadOnlyList<GalleryExample> Examples { get; }
+
+        public bool UsesWpfGalleryPageMode { get; }
+
+        public object NoticeContent { get; }
+
+        public bool HasNoticeContent
+        {
+            get { return NoticeContent != null; }
+        }
 
         public bool HasWpfSampleContent
         {
-            get { return WpfSampleContent != null; }
+            get { return Examples.Count != 0; }
         }
 
         public IReadOnlyList<SampleSnippet> SampleSnippets { get; }
+        public IReadOnlyList<SampleSnippet> AdditionalSampleSnippets { get; }
         public IReadOnlyList<GalleryItem> RelatedItems { get; }
+
+        public bool HasRelatedItems
+        {
+            get { return RelatedItems.Count != 0; }
+        }
+
+        public bool ShowCatalogDetails
+        {
+            get { return !UsesWpfGalleryPageMode; }
+        }
+
+        public bool ShowDocs
+        {
+            get { return !UsesWpfGalleryPageMode && HasDocs; }
+        }
+
+        public bool ShowAdditionalSampleSnippets
+        {
+            get { return !UsesWpfGalleryPageMode && HasAdditionalSampleSnippets; }
+        }
+
+        public bool ShowRelatedItems
+        {
+            get { return !UsesWpfGalleryPageMode && HasRelatedItems; }
+        }
+
+        public bool HasSampleSnippets
+        {
+            get { return SampleSnippets.Count != 0; }
+        }
+
+        public bool HasAdditionalSampleSnippets
+        {
+            get { return AdditionalSampleSnippets.Count != 0; }
+        }
 
         private static IReadOnlyList<SampleSnippet> LoadSampleSnippets(string uniqueId)
         {
@@ -115,6 +176,51 @@ namespace ModernWpf.Gallery.Pages
                 .ToArray();
         }
 
+        private static object CreateWorkingSampleContent(string uniqueId)
+        {
+            return FundamentalsSampleFactory.Create(uniqueId)
+                ?? BasicInputSampleFactory.Create(uniqueId)
+                ?? StatusInfoSampleFactory.Create(uniqueId)
+                ?? DialogsFlyoutsSampleFactory.Create(uniqueId)
+                ?? DesignAccessibilitySampleFactory.Create(uniqueId)
+                ?? MenusToolbarsSampleFactory.Create(uniqueId)
+                ?? CollectionsSampleFactory.Create(uniqueId)
+                ?? DateTimeSampleFactory.Create(uniqueId)
+                ?? ScrollingSampleFactory.Create(uniqueId)
+                ?? LayoutSampleFactory.Create(uniqueId)
+                ?? NavigationSampleFactory.Create(uniqueId)
+                ?? MediaSampleFactory.Create(uniqueId)
+                ?? StylesSampleFactory.Create(uniqueId)
+                ?? TextSampleFactory.Create(uniqueId)
+                ?? MotionSampleFactory.Create(uniqueId)
+                ?? WindowingSampleFactory.Create(uniqueId)
+                ?? SystemSampleFactory.Create(uniqueId)
+                ?? ShellSampleFactory.Create(uniqueId);
+        }
+
+        private static SampleSnippet FindSampleSnippet(IReadOnlyList<SampleSnippet> snippets, Func<SampleSnippet, bool> predicate)
+        {
+            return snippets.FirstOrDefault(predicate);
+        }
+
+        private static bool IsXamlSnippet(SampleSnippet snippet)
+        {
+            return Contains(snippet.Title, "xaml") || snippet.Text.TrimStart().StartsWith("<", StringComparison.Ordinal);
+        }
+
+        private static bool IsCSharpSnippet(SampleSnippet snippet)
+        {
+            return Contains(snippet.Title, "_cs") ||
+                Contains(snippet.Title, "csharp") ||
+                Contains(snippet.Text, "using System") ||
+                Contains(snippet.Text, "public ");
+        }
+
+        private static bool Contains(string value, string token)
+        {
+            return !string.IsNullOrEmpty(value) && value.IndexOf(token, StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
         private void OnRelatedItemClick(object sender, System.Windows.RoutedEventArgs e)
         {
             var item = ((System.Windows.FrameworkElement)sender).DataContext as GalleryItem;
@@ -129,5 +235,21 @@ namespace ModernWpf.Gallery.Pages
             Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
             e.Handled = true;
         }
+    }
+
+    public sealed class GalleryExample
+    {
+        public GalleryExample(string headerText, object exampleContent, string xamlCode, string csharpCode)
+        {
+            HeaderText = headerText;
+            ExampleContent = exampleContent;
+            XamlCode = xamlCode;
+            CSharpCode = csharpCode;
+        }
+
+        public string HeaderText { get; }
+        public object ExampleContent { get; }
+        public string XamlCode { get; }
+        public string CSharpCode { get; }
     }
 }

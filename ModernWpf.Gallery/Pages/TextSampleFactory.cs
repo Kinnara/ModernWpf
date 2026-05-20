@@ -19,6 +19,10 @@ namespace ModernWpf.Gallery.Pages
             {
                 case "AutoSuggestBox":
                     return CreateAutoSuggestBoxSample();
+                case "Hyperlink":
+                    return CreateHyperlinkSample();
+                case "Label":
+                    return CreateLabelSample();
                 case "NumberBox":
                     return CreateNumberBoxSample();
                 case "PasswordBox":
@@ -34,6 +38,51 @@ namespace ModernWpf.Gallery.Pages
                 default:
                     return null;
             }
+        }
+
+        private static UIElement CreateHyperlinkSample()
+        {
+            var panel = CreateSamplePanel("Hyperlink is an inline text element that can raise navigation requests from text content.");
+            var output = CreateOutput("Click a link.");
+            var text = new TextBlock
+            {
+                Width = 460,
+                TextWrapping = TextWrapping.Wrap
+            };
+            text.Inlines.Add(new Run("Open the "));
+            var docs = new Hyperlink(new Run("WPF documentation"));
+            docs.Click += delegate { output.Text = "Hyperlink clicked: WPF documentation"; };
+            text.Inlines.Add(docs);
+            text.Inlines.Add(new Run(" or "));
+            var account = new Hyperlink(new Run("account page"));
+            account.Click += delegate { output.Text = "Hyperlink clicked: account page"; };
+            text.Inlines.Add(account);
+            text.Inlines.Add(new Run(" from inline content."));
+
+            panel.Children.Add(text);
+            panel.Children.Add(output);
+            return panel;
+        }
+
+        private static UIElement CreateLabelSample()
+        {
+            var panel = CreateSamplePanel("Label identifies another control and can move focus to it through an access key.");
+            var textBox = new TextBox
+            {
+                Width = 320,
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+            var label = new Label
+            {
+                Content = "_Name",
+                Target = textBox,
+                Padding = new Thickness(0, 0, 0, 4)
+            };
+
+            panel.Children.Add(label);
+            panel.Children.Add(textBox);
+            panel.Children.Add(CreateOutput("Press Alt+N to focus the text box."));
+            return panel;
         }
 
         private static UIElement CreateAutoSuggestBoxSample()

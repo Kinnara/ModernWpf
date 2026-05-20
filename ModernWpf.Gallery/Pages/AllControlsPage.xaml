@@ -17,20 +17,33 @@
 
     <Grid Style="{StaticResource GalleryPageRootStyle}">
         <ScrollViewer>
-            <StackPanel Margin="40,32,40,48">
-                <TextBlock
-                    Style="{StaticResource GalleryTitleTextBlockStyle}"
-                    Text="All controls" />
-                <TextBlock
-                    Style="{StaticResource GallerySubtitleTextBlockStyle}"
-                    Text="Browse every WinUI Gallery entry that is now tracked by the WPF port catalog." />
+            <StackPanel Margin="32,24,24,48">
+                <Label
+                    Padding="0"
+                    Focusable="True"
+                    KeyboardNavigation.IsTabStop="True">
+                    <TextBlock
+                        Style="{StaticResource GalleryTitleTextBlockStyle}"
+                        Text="All controls" />
+                </Label>
+                <Label
+                    Padding="0"
+                    Margin="0,0,0,24"
+                    Focusable="True"
+                    KeyboardNavigation.IsTabStop="True">
+                    <TextBlock
+                        Style="{StaticResource BodyTextBlockStyle}"
+                        Text="Browse every WPF and WinUI-derived gallery entry tracked by the ModernWpf catalog." />
+                </Label>
                 <TextBox
                     x:Name="FilterBox"
                     Width="360"
                     HorizontalAlignment="Left"
                     Margin="0,0,0,24"
                     TextChanged="OnFilterTextChanged" />
-                <ItemsControl ItemsSource="{Binding FilteredItems}">
+                <ItemsControl
+                    Margin="-7,0,0,0"
+                    ItemsSource="{Binding FilteredItems}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <WrapPanel />

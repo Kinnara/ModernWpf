@@ -19,11 +19,54 @@ namespace ModernWpf.Gallery.Pages
                     return CreateClipboardSample();
                 case "ContentIsland":
                     return CreateContentIslandSample();
+                case "FileAndFolderDialogs":
+                    return CreateFileAndFolderDialogsSample();
+                case "MessageBox":
+                    return CreateMessageBoxSample();
                 case "StoragePickers":
                     return CreateStoragePickersSample();
                 default:
                     return null;
             }
+        }
+
+        private static UIElement CreateMessageBoxSample()
+        {
+            var panel = CreateSamplePanel("MessageBox displays a short modal message with standard buttons, icons, and result values.");
+            var output = CreateOutput("No dialog result yet.");
+            var row = CreateCommandRow();
+            var showInfo = CreateButton("Show message");
+            var showQuestion = CreateButton("Ask question");
+            showInfo.Click += delegate
+            {
+                var result = System.Windows.MessageBox.Show(
+                    Window.GetWindow((FrameworkElement)showInfo),
+                    "The operation completed successfully.",
+                    "ModernWpf Gallery",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+                output.Text = "Message result: " + result;
+            };
+            showQuestion.Click += delegate
+            {
+                var result = System.Windows.MessageBox.Show(
+                    Window.GetWindow((FrameworkElement)showQuestion),
+                    "Do you want to continue?",
+                    "ModernWpf Gallery",
+                    MessageBoxButton.YesNoCancel,
+                    MessageBoxImage.Question);
+                output.Text = "Question result: " + result;
+            };
+            row.Children.Add(showInfo);
+            row.Children.Add(showQuestion);
+            panel.Children.Add(row);
+            panel.Children.Add(output);
+            return panel;
+        }
+
+        private static UIElement CreateFileAndFolderDialogsSample()
+        {
+            return CreateStoragePickersSample();
         }
 
         private static UIElement CreateClipboardSample()
@@ -230,7 +273,7 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateStoragePickersSample()
         {
-            var panel = CreateSamplePanel("Storage pickers map to WPF OpenFileDialog and SaveFileDialog, with folder paths represented as validated text input.");
+            var panel = CreateSamplePanel("WPF file and save dialogs use Microsoft.Win32 dialog types; folder selection is represented here as validated path input.");
             var selectedFiles = new ListBox
             {
                 Width = 520,

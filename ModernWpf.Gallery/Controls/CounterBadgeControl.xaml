@@ -5,15 +5,18 @@
     xmlns:local="clr-namespace:ModernWpf.Gallery.Controls">
     <Border
         Padding="18"
-        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+        Background="{DynamicResource SolidBackgroundFillColorBaseBrush}"
+        BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+        BorderThickness="1"
+        CornerRadius="8">
         <StackPanel>
             <TextBlock
-                FontSize="18"
-                FontWeight="SemiBold"
+                Style="{StaticResource BodyStrongTextBlockStyle}"
                 Text="{Binding Title, RelativeSource={RelativeSource AncestorType=local:CounterBadgeControl}}" />
             <TextBlock
                 Margin="0,6,0,16"
-                Opacity="0.72"
+                Opacity="0.7"
+                Style="{StaticResource BodyTextBlockStyle}"
                 Text="A reusable WPF UserControl with dependency properties and internal interaction." />
             <Button
                 HorizontalAlignment="Left"

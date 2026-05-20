@@ -23,8 +23,14 @@ namespace ModernWpf.Gallery.Pages
                     return CreateExpanderSample();
                 case "Grid":
                     return CreateGridSample();
+                case "GridSplitter":
+                    return CreateGridSplitterSample();
+                case "GroupBox":
+                    return CreateGroupBoxSample();
                 case "RelativePanel":
                     return CreateRelativePanelSample();
+                case "ResizeGrip":
+                    return CreateResizeGripSample();
                 case "SplitView":
                     return CreateSplitViewSample();
                 case "StackPanel":
@@ -233,6 +239,88 @@ namespace ModernWpf.Gallery.Pages
             root.Children.Add(grid);
             root.Children.Add(options);
             panel.Children.Add(root);
+            return panel;
+        }
+
+        private static UIElement CreateGridSplitterSample()
+        {
+            var panel = CreateSamplePanel("GridSplitter lets users redistribute space between Grid rows or columns.");
+            var grid = new Grid
+            {
+                Width = 520,
+                Height = 180
+            };
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(2, GridUnitType.Star), MinWidth = 120 });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star), MinWidth = 120 });
+
+            var left = CreatePane("Left pane", "#D9EAF7");
+            var splitter = new GridSplitter
+            {
+                Width = 8,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Stretch,
+                ResizeBehavior = GridResizeBehavior.PreviousAndNext,
+                Background = CreateBrush("#808080")
+            };
+            var right = CreatePane("Right pane", "#E6E6E6");
+            Grid.SetColumn(splitter, 1);
+            Grid.SetColumn(right, 2);
+            grid.Children.Add(left);
+            grid.Children.Add(splitter);
+            grid.Children.Add(right);
+            panel.Children.Add(grid);
+            return panel;
+        }
+
+        private static UIElement CreateGroupBoxSample()
+        {
+            var panel = CreateSamplePanel("GroupBox groups related controls with a header and a visible boundary.");
+            var options = new StackPanel();
+            options.Children.Add(new CheckBox { Content = "Enable notifications", IsChecked = true, Margin = new Thickness(0, 0, 0, 6) });
+            options.Children.Add(new CheckBox { Content = "Show message previews", IsChecked = true, Margin = new Thickness(0, 0, 0, 6) });
+            options.Children.Add(new CheckBox { Content = "Play a sound" });
+            panel.Children.Add(new GroupBox
+            {
+                Header = "Notification settings",
+                Width = 320,
+                Padding = new Thickness(12),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Content = options
+            });
+            return panel;
+        }
+
+        private static UIElement CreateResizeGripSample()
+        {
+            var panel = CreateSamplePanel("ResizeGrip provides the standard visual handle used by resizable surfaces.");
+            var host = new Grid
+            {
+                Width = 260,
+                Height = 150,
+                Background = CreateBrush("#F3F3F3")
+            };
+            host.Children.Add(new TextBlock
+            {
+                Text = "Resizable surface preview",
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                Opacity = 0.72
+            });
+            host.Children.Add(new ResizeGrip
+            {
+                Width = 16,
+                Height = 16,
+                HorizontalAlignment = HorizontalAlignment.Right,
+                VerticalAlignment = VerticalAlignment.Bottom,
+                Margin = new Thickness(0, 0, 4, 4)
+            });
+            panel.Children.Add(new Border
+            {
+                BorderBrush = CreateBrush("#D8D8D8"),
+                BorderThickness = new Thickness(1),
+                Child = host
+            });
             return panel;
         }
 
@@ -674,6 +762,20 @@ namespace ModernWpf.Gallery.Pages
                 Width = width,
                 Height = height,
                 Fill = fill
+            };
+        }
+
+        private static Border CreatePane(string text, string color)
+        {
+            return new Border
+            {
+                Background = CreateBrush(color),
+                Child = new TextBlock
+                {
+                    Text = text,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                }
             };
         }
 

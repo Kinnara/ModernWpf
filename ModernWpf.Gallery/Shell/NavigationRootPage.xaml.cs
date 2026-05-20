@@ -73,9 +73,10 @@ namespace ModernWpf.Gallery.Shell
                 return NavigationTarget.Group(normalized);
             }
 
-            if (linkKind != NavigationLinkKind.Category && GalleryCatalog.FindItem(normalized) != null)
+            var item = linkKind == NavigationLinkKind.Category ? null : GalleryCatalog.FindItem(normalized);
+            if (item != null)
             {
-                return NavigationTarget.Item(normalized);
+                return NavigationTarget.Item(item.UniqueId);
             }
 
             return null;
@@ -105,7 +106,8 @@ namespace ModernWpf.Gallery.Shell
                 return string.IsNullOrEmpty(path) ? host : path;
             }
 
-            var parts = value.Trim('/').Split(new[] { '/', '\\' }, 2, StringSplitOptions.RemoveEmptyEntries);
+            var decodedValue = Uri.UnescapeDataString(value.Trim('/'));
+            var parts = decodedValue.Split(new[] { '/', '\\' }, 2, StringSplitOptions.RemoveEmptyEntries);
             if (parts.Length == 2)
             {
                 if (string.Equals(parts[0], "item", StringComparison.OrdinalIgnoreCase))
@@ -121,7 +123,7 @@ namespace ModernWpf.Gallery.Shell
                 }
             }
 
-            return value.Trim('/');
+            return decodedValue;
         }
 
         private void BuildNavigationMenu()
