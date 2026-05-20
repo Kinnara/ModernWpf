@@ -169,9 +169,19 @@ namespace ModernWpf.Gallery.Pages
             get { return !HasDirectPageContent; }
         }
 
+        public bool ShowPageDescription
+        {
+            get { return ShowPageHeader && (!UsesWpfGalleryPageMode || OfficialWpfPageShowsDescription(_item.UniqueId)); }
+        }
+
         public bool ShowScrolledPageContent
         {
             get { return !HasDirectPageContent; }
+        }
+
+        public string ContentRootAutomationId
+        {
+            get { return HasDirectPageContent ? "GalleryItemPageRoot" : "ContentRootGrid"; }
         }
 
         public bool HasAdditionalSampleSnippets
@@ -237,6 +247,28 @@ namespace ModernWpf.Gallery.Pages
         private static bool Contains(string value, string token)
         {
             return !string.IsNullOrEmpty(value) && value.IndexOf(token, StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
+        private static bool OfficialWpfPageShowsDescription(string uniqueId)
+        {
+            switch (uniqueId)
+            {
+                case "Canvas":
+                case "Color":
+                case "Iconography":
+                case "Image":
+                case "Label":
+                case "PasswordBox":
+                case "RichEditBox":
+                case "RichTextEdit":
+                case "Spacing":
+                case "TextBlock":
+                case "TextBox":
+                case "Typography":
+                    return true;
+                default:
+                    return false;
+            }
         }
 
         private void OnRelatedItemClick(object sender, System.Windows.RoutedEventArgs e)

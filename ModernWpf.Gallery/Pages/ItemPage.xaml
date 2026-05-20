@@ -9,7 +9,7 @@
     d:DesignWidth="900"
     mc:Ignorable="d">
     <Grid
-        AutomationProperties.AutomationId="GalleryItemPageRoot"
+        AutomationProperties.AutomationId="{Binding ContentRootAutomationId}"
         Style="{StaticResource GalleryPageRootStyle}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -17,7 +17,7 @@
         </Grid.RowDefinitions>
 
         <StackPanel
-            Margin="32,24,24,32"
+            Margin="24,16,24,32"
             Visibility="{Binding ShowPageHeader, Converter={StaticResource BooleanToVisibilityConverter}}">
             <Label
                 Focusable="True"
@@ -32,7 +32,8 @@
             <Label
                 Focusable="True"
                 KeyboardNavigation.IsTabStop="True"
-                KeyboardNavigation.TabIndex="1">
+                KeyboardNavigation.TabIndex="1"
+                Visibility="{Binding ShowPageDescription, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <TextBlock
                     Style="{StaticResource BodyTextBlockStyle}"
                     Text="{Binding Description}" />
@@ -41,7 +42,7 @@
 
         <ScrollViewer
             Grid.Row="1"
-            Margin="32,0,0,24"
+            Margin="24,0,0,24"
             Padding="0,0,24,0"
             Visibility="{Binding ShowScrolledPageContent, Converter={StaticResource BooleanToVisibilityConverter}}">
             <StackPanel Margin="0,0,0,24">
@@ -50,13 +51,23 @@
                     Visibility="{Binding HasNoticeContent, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                 <ItemsControl
+                    AlternationCount="2147483647"
                     AutomationProperties.AutomationId="GallerySampleHost"
                     ItemsSource="{Binding Examples}"
                     Visibility="{Binding HasWpfSampleContent, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ItemsControl.ItemContainerStyle>
+                        <Style TargetType="ContentPresenter">
+                            <Setter Property="Margin" Value="10,36,10,10" />
+                            <Style.Triggers>
+                                <Trigger Property="ItemsControl.AlternationIndex" Value="0">
+                                    <Setter Property="Margin" Value="10" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <controls:ControlExample
-                                Margin="10,0,10,36"
                                 CSharpCode="{Binding CSharpCode}"
                                 ExampleContent="{Binding ExampleContent}"
                                 HeaderText="{Binding HeaderText}"
@@ -190,7 +201,7 @@
 
         <ContentControl
             Grid.Row="1"
-            Margin="32,0,24,24"
+            Margin="24,16,24,24"
             Content="{Binding DirectPageContent}"
             Visibility="{Binding HasDirectPageContent, Converter={StaticResource BooleanToVisibilityConverter}}" />
     </Grid>

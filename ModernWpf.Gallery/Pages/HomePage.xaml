@@ -89,11 +89,19 @@
                                 <RowDefinition Height="56" />
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
+                            <TextBlock
+                                Grid.RowSpan="2"
+                                Margin="-12"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Bottom"
+                                FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                FontSize="16"
+                                Text="&#xE8A7;" />
                             <Image
                                 Width="48"
                                 Height="48"
                                 HorizontalAlignment="Left"
-                                Source="pack://application:,,,/ModernWpf.Gallery;component/Assets/Tiles/GalleryIcon.ico" />
+                                Source="pack://application:,,,/ModernWpf.Gallery;component/Assets/AppIcons/WPFGallery_48px.png" />
                             <StackPanel Grid.Row="1" Margin="0,16,0,0">
                                 <TextBlock
                                     Margin="0,0,0,8"
@@ -112,6 +120,14 @@
                                 <RowDefinition Height="56" />
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
+                            <TextBlock
+                                Grid.RowSpan="2"
+                                Margin="-12"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Bottom"
+                                FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                FontSize="16"
+                                Text="&#xE8A7;" />
                             <Image
                                 Width="56"
                                 Height="56"
@@ -136,9 +152,18 @@
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
                             <TextBlock
+                                Grid.RowSpan="2"
+                                Margin="-12"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Bottom"
                                 FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                FontSize="42"
+                                FontSize="16"
                                 Text="&#xE8A7;" />
+                            <Viewbox Height="52" Margin="-20,0,0,0" HorizontalAlignment="Left">
+                                <Path
+                                    Data="{StaticResource GitHubIconGeometry}"
+                                    Fill="{DynamicResource TextFillColorPrimaryBrush}" />
+                            </Viewbox>
                             <StackPanel Grid.Row="1" Margin="0,16,0,0">
                                 <TextBlock
                                     Margin="0,0,0,8"
@@ -158,9 +183,18 @@
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
                             <TextBlock
+                                Grid.RowSpan="2"
+                                Margin="-12"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Bottom"
                                 FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                FontSize="42"
+                                FontSize="16"
                                 Text="&#xE8A7;" />
+                            <Viewbox Height="52" Margin="-20,0,0,0" HorizontalAlignment="Left">
+                                <Path
+                                    Data="{StaticResource GitHubIconGeometry}"
+                                    Fill="{DynamicResource TextFillColorPrimaryBrush}" />
+                            </Viewbox>
                             <StackPanel Grid.Row="1" Margin="0,16,0,0">
                                 <TextBlock
                                     Margin="0,0,0,8"
@@ -179,6 +213,14 @@
                                 <RowDefinition Height="56" />
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
+                            <TextBlock
+                                Grid.RowSpan="2"
+                                Margin="-12"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Bottom"
+                                FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                FontSize="16"
+                                Text="&#xE8A7;" />
                             <Image
                                 Width="56"
                                 Height="56"
