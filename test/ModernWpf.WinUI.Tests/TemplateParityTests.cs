@@ -372,6 +372,11 @@ public class TemplateParityTests
         Assert.AreEqual("MODERNWPF_SHADOW_SNAPSHOT_DIR", root.GetProperty("snapshotDirectoryEnvVar").GetString());
         Assert.AreEqual("MODERNWPF_SHADOW_REFERENCE_DIR", root.GetProperty("referenceDirectoryEnvVar").GetString());
         Assert.AreEqual(".mask.txt", root.GetProperty("referenceMaskSidecarExtension").GetString());
+        var referencePrepScript = root.GetProperty("referencePrepScript").GetString() ?? string.Empty;
+        Assert.IsFalse(string.IsNullOrWhiteSpace(referencePrepScript), "ThemeShadow reference capture manifest should point at the prep script.");
+        Assert.IsTrue(
+            File.Exists(Path.Combine(repoRoot, referencePrepScript)),
+            $"Missing ThemeShadow reference prep script '{referencePrepScript}'.");
         Assert.AreEqual("shadow-only", root.GetProperty("snapshotKind").GetString());
 
         var targets = root.GetProperty("targets")
