@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Text.Json;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Xml.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -447,13 +449,13 @@ public class TemplateParityTests
                 !File.Exists(Path.Combine(referenceDirectory, target.ReferenceFileBase + ".txt")))
             .Select(target => target.ReferenceFileBase)
             .ToArray();
-        var badDimensions = targets
-            .Select(target => ValidateThemeShadowReferenceCaptureDimensions(referenceDirectory, target))
+        var badReferences = targets
+            .Select(target => ValidateThemeShadowReferenceCaptureFile(referenceDirectory, target))
             .Where(result => !string.IsNullOrEmpty(result))
             .ToArray();
 
         Assert.IsFalse(missing.Any(), $"Missing ThemeShadow reference files in {referenceDirectory}: " + string.Join("; ", missing));
-        Assert.IsFalse(badDimensions.Any(), "ThemeShadow reference dimensions should match the capture manifest: " + string.Join("; ", badDimensions));
+        Assert.IsFalse(badReferences.Any(), "ThemeShadow references should match the capture manifest and contain visible masked shadow pixels: " + string.Join("; ", badReferences));
     }
 
     [TestMethod]
@@ -1189,7 +1191,7 @@ public class TemplateParityTests
             evidence);
     }
 
-    private static string ValidateThemeShadowReferenceCaptureDimensions(string referenceDirectory, ShadowReferenceCaptureTarget target)
+    private static string ValidateThemeShadowReferenceCaptureFile(string referenceDirectory, ShadowReferenceCaptureTarget target)
     {
         var pngPath = Path.Combine(referenceDirectory, target.ReferenceFileBase + ".png");
         if (File.Exists(pngPath))
@@ -1200,6 +1202,39 @@ public class TemplateParityTests
             if (frame.PixelWidth != target.Width || frame.PixelHeight != target.Height)
             {
                 return $"{target.ReferenceFileBase}.png expected {target.Width}x{target.Height}, actual {frame.PixelWidth}x{frame.PixelHeight}";
+            }
+
+            var maskPath = Path.Combine(referenceDirectory, target.ReferenceFileBase + ".mask.txt");
+            if (!File.Exists(maskPath))
+            {
+                return $"{target.ReferenceFileBase}.png missing .mask.txt sidecar";
+            }
+
+            var mask = ParseThemeShadowReferenceCaptureMask(maskPath);
+            if (!string.Equals(target.Name, mask.Name, StringComparison.Ordinal))
+            {
+                return $"{target.ReferenceFileBase}.mask.txt expected Name={target.Name}, actual {mask.Name}";
+            }
+
+            if (!string.Equals("shadow-only", mask.Kind, StringComparison.Ordinal))
+            {
+                return $"{target.ReferenceFileBase}.mask.txt expected Kind=shadow-only, actual {mask.Kind}";
+            }
+
+            if (mask.Width != target.Width || mask.Height != target.Height)
+            {
+                return $"{target.ReferenceFileBase}.mask.txt expected Size={target.Width}x{target.Height}, actual {mask.Width}x{mask.Height}";
+            }
+
+            if (!IsWithinImage(mask.IgnoredBounds, target.Width, target.Height))
+            {
+                return $"{target.ReferenceFileBase}.mask.txt IgnoredBounds exceeds image bounds";
+            }
+
+            var stats = MeasureThemeShadowReferencePixels(frame, mask.IgnoredBounds);
+            if (stats.PeakDarkening <= 0 || stats.ShadowPixelCount < 100)
+            {
+                return $"{target.ReferenceFileBase}.png has no visible shadow outside IgnoredBounds. PeakDarkening={stats.PeakDarkening}, ShadowPixelCount={stats.ShadowPixelCount}";
             }
 
             return string.Empty;
@@ -1230,6 +1265,174 @@ public class TemplateParityTests
         }
 
         return string.Empty;
+    }
+
+    private static ShadowReferenceCaptureMask ParseThemeShadowReferenceCaptureMask(string maskPath)
+    {
+        var values = File.ReadLines(maskPath)
+            .Select(line => line.Split(new[] { '=' }, 2))
+            .Where(parts => parts.Length == 2)
+            .ToDictionary(parts => parts[0], parts => parts[1], StringComparer.Ordinal);
+
+        var name = RequireThemeShadowReferenceMaskValue(values, "Name", maskPath);
+        var kind = RequireThemeShadowReferenceMaskValue(values, "Kind", maskPath);
+        var (width, height) = ParseThemeShadowReferenceSize(RequireThemeShadowReferenceMaskValue(values, "Size", maskPath), maskPath);
+        var ignoredBounds = ParseThemeShadowReferenceBounds(RequireThemeShadowReferenceMaskValue(values, "IgnoredBounds", maskPath), maskPath);
+
+        return new ShadowReferenceCaptureMask(name, kind, width, height, ignoredBounds);
+    }
+
+    private static string RequireThemeShadowReferenceMaskValue(IReadOnlyDictionary<string, string> values, string key, string maskPath)
+    {
+        if (values.TryGetValue(key, out var value) && !string.IsNullOrWhiteSpace(value))
+        {
+            return value;
+        }
+
+        throw new AssertFailedException($"{maskPath} missing {key}.");
+    }
+
+    private static (int Width, int Height) ParseThemeShadowReferenceSize(string value, string maskPath)
+    {
+        var parts = value.Split('x');
+        if (parts.Length == 2 &&
+            int.TryParse(parts[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out var width) &&
+            int.TryParse(parts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out var height))
+        {
+            return (width, height);
+        }
+
+        throw new AssertFailedException($"{maskPath} has invalid Size={value}.");
+    }
+
+    private static ShadowReferenceBounds ParseThemeShadowReferenceBounds(string value, string maskPath)
+    {
+        var parts = value.Split(',');
+        if (parts.Length == 4 &&
+            int.TryParse(parts[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out var x) &&
+            int.TryParse(parts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out var y) &&
+            int.TryParse(parts[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out var width) &&
+            int.TryParse(parts[3], NumberStyles.Integer, CultureInfo.InvariantCulture, out var height))
+        {
+            return new ShadowReferenceBounds(x, y, width, height);
+        }
+
+        throw new AssertFailedException($"{maskPath} has invalid IgnoredBounds={value}.");
+    }
+
+    private static bool IsWithinImage(ShadowReferenceBounds bounds, int width, int height)
+    {
+        return bounds.X >= 0 &&
+            bounds.Y >= 0 &&
+            bounds.Width >= 0 &&
+            bounds.Height >= 0 &&
+            bounds.X + bounds.Width <= width &&
+            bounds.Y + bounds.Height <= height;
+    }
+
+    private static ShadowReferencePixelStats MeasureThemeShadowReferencePixels(BitmapSource bitmap, ShadowReferenceBounds ignoredBounds)
+    {
+        var source = bitmap.Format == PixelFormats.Pbgra32
+            ? bitmap
+            : new FormatConvertedBitmap(bitmap, PixelFormats.Pbgra32, null, 0);
+        int width = source.PixelWidth;
+        int height = source.PixelHeight;
+        int stride = width * 4;
+        var pixels = new byte[stride * height];
+        source.CopyPixels(pixels, stride, 0);
+
+        int peakDarkening = 0;
+        int shadowPixelCount = 0;
+
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                if (Contains(ignoredBounds, x, y))
+                {
+                    continue;
+                }
+
+                int offset = ((y * width) + x) * 4;
+                int alpha = pixels[offset + 3];
+                int blue = Math.Min(255, pixels[offset] + 255 - alpha);
+                int green = Math.Min(255, pixels[offset + 1] + 255 - alpha);
+                int red = Math.Min(255, pixels[offset + 2] + 255 - alpha);
+                int darkestChannel = Math.Min(red, Math.Min(green, blue));
+                int darkening = 255 - darkestChannel;
+                if (darkening <= 0)
+                {
+                    continue;
+                }
+
+                peakDarkening = Math.Max(peakDarkening, darkening);
+                shadowPixelCount++;
+            }
+        }
+
+        return new ShadowReferencePixelStats(peakDarkening, shadowPixelCount);
+    }
+
+    private static bool Contains(ShadowReferenceBounds bounds, int x, int y)
+    {
+        return x >= bounds.X &&
+            y >= bounds.Y &&
+            x < bounds.X + bounds.Width &&
+            y < bounds.Y + bounds.Height;
+    }
+
+    private readonly struct ShadowReferenceCaptureMask
+    {
+        public ShadowReferenceCaptureMask(string name, string kind, int width, int height, ShadowReferenceBounds ignoredBounds)
+        {
+            Name = name;
+            Kind = kind;
+            Width = width;
+            Height = height;
+            IgnoredBounds = ignoredBounds;
+        }
+
+        public string Name { get; }
+
+        public string Kind { get; }
+
+        public int Width { get; }
+
+        public int Height { get; }
+
+        public ShadowReferenceBounds IgnoredBounds { get; }
+    }
+
+    private readonly struct ShadowReferenceBounds
+    {
+        public ShadowReferenceBounds(int x, int y, int width, int height)
+        {
+            X = x;
+            Y = y;
+            Width = width;
+            Height = height;
+        }
+
+        public int X { get; }
+
+        public int Y { get; }
+
+        public int Width { get; }
+
+        public int Height { get; }
+    }
+
+    private readonly struct ShadowReferencePixelStats
+    {
+        public ShadowReferencePixelStats(int peakDarkening, int shadowPixelCount)
+        {
+            PeakDarkening = peakDarkening;
+            ShadowPixelCount = shadowPixelCount;
+        }
+
+        public int PeakDarkening { get; }
+
+        public int ShadowPixelCount { get; }
     }
 
     private readonly struct ShadowReferenceCaptureTarget
