@@ -374,6 +374,7 @@ public class TemplateParityTests
         Assert.AreEqual("MODERNWPF_SHADOW_SNAPSHOT_DIR", root.GetProperty("snapshotDirectoryEnvVar").GetString());
         Assert.AreEqual("MODERNWPF_SHADOW_REFERENCE_DIR", root.GetProperty("referenceDirectoryEnvVar").GetString());
         Assert.AreEqual(".mask.txt", root.GetProperty("referenceMaskSidecarExtension").GetString());
+        Assert.AreEqual(".capture.txt", root.GetProperty("referenceCaptureProvenanceExtension").GetString());
         var referencePrepScript = root.GetProperty("referencePrepScript").GetString() ?? string.Empty;
         Assert.IsFalse(string.IsNullOrWhiteSpace(referencePrepScript), "ThemeShadow reference capture manifest should point at the prep script.");
         Assert.IsTrue(
@@ -387,6 +388,7 @@ public class TemplateParityTests
         var referenceChecklistFile = root.GetProperty("referenceChecklistFile").GetString() ?? string.Empty;
         Assert.IsFalse(string.IsNullOrWhiteSpace(referenceChecklistFile), "ThemeShadow reference capture manifest should name the generated checklist file.");
         Assert.AreEqual("shadow-only", root.GetProperty("snapshotKind").GetString());
+        Assert.IsFalse(string.IsNullOrWhiteSpace(root.GetProperty("captureMode").GetString()), "ThemeShadow reference capture manifest should document the capture mode.");
 
         var targets = root.GetProperty("targets")
             .EnumerateArray()
@@ -1237,6 +1239,44 @@ public class TemplateParityTests
                 return $"{target.ReferenceFileBase}.png has no visible shadow outside IgnoredBounds. PeakDarkening={stats.PeakDarkening}, ShadowPixelCount={stats.ShadowPixelCount}";
             }
 
+            var captureMetadataPath = Path.Combine(referenceDirectory, target.ReferenceFileBase + ".capture.txt");
+            if (!File.Exists(captureMetadataPath))
+            {
+                return $"{target.ReferenceFileBase}.png missing .capture.txt provenance sidecar";
+            }
+
+            var captureMetadata = ParseThemeShadowReferenceCaptureMetadata(captureMetadataPath);
+            if (!string.Equals(target.Name, captureMetadata.Name, StringComparison.Ordinal))
+            {
+                return $"{target.ReferenceFileBase}.capture.txt expected Name={target.Name}, actual {captureMetadata.Name}";
+            }
+
+            if (!string.Equals(target.ReferenceFileBase, captureMetadata.ReferenceFileBase, StringComparison.Ordinal))
+            {
+                return $"{target.ReferenceFileBase}.capture.txt expected ReferenceFileBase={target.ReferenceFileBase}, actual {captureMetadata.ReferenceFileBase}";
+            }
+
+            if (captureMetadata.CaptureMode != "source-geometry" &&
+                captureMetadata.CaptureMode != "actual-control")
+            {
+                return $"{target.ReferenceFileBase}.capture.txt has unsupported CaptureMode={captureMetadata.CaptureMode}";
+            }
+
+            if (!string.Equals("WinUI RenderTargetBitmap", captureMetadata.RenderPath, StringComparison.Ordinal))
+            {
+                return $"{target.ReferenceFileBase}.capture.txt expected RenderPath=WinUI RenderTargetBitmap, actual {captureMetadata.RenderPath}";
+            }
+
+            if (captureMetadata.Width != target.Width || captureMetadata.Height != target.Height)
+            {
+                return $"{target.ReferenceFileBase}.capture.txt expected Canvas={target.Width}x{target.Height}, actual {captureMetadata.Width}x{captureMetadata.Height}";
+            }
+
+            if (!captureMetadata.IgnoredBounds.Equals(mask.IgnoredBounds))
+            {
+                return $"{target.ReferenceFileBase}.capture.txt IgnoredBounds should match the .mask.txt sidecar";
+            }
+
             return string.Empty;
         }
 
@@ -1280,6 +1320,32 @@ public class TemplateParityTests
         var ignoredBounds = ParseThemeShadowReferenceBounds(RequireThemeShadowReferenceMaskValue(values, "IgnoredBounds", maskPath), maskPath);
 
         return new ShadowReferenceCaptureMask(name, kind, width, height, ignoredBounds);
+    }
+
+    private static ShadowReferenceCaptureMetadata ParseThemeShadowReferenceCaptureMetadata(string metadataPath)
+    {
+        var values = File.ReadLines(metadataPath)
+            .Select(line => line.Split(new[] { '=' }, 2))
+            .Where(parts => parts.Length == 2)
+            .ToDictionary(parts => parts[0], parts => parts[1], StringComparer.Ordinal);
+
+        var name = RequireThemeShadowReferenceMaskValue(values, "Name", metadataPath);
+        var referenceFileBase = RequireThemeShadowReferenceMaskValue(values, "ReferenceFileBase", metadataPath);
+        var captureMode = RequireThemeShadowReferenceMaskValue(values, "CaptureMode", metadataPath);
+        var targetElement = RequireThemeShadowReferenceMaskValue(values, "TargetElement", metadataPath);
+        var renderPath = RequireThemeShadowReferenceMaskValue(values, "RenderPath", metadataPath);
+        var (width, height) = ParseThemeShadowReferenceSize(RequireThemeShadowReferenceMaskValue(values, "Canvas", metadataPath), metadataPath);
+        var ignoredBounds = ParseThemeShadowReferenceBounds(RequireThemeShadowReferenceMaskValue(values, "IgnoredBounds", metadataPath), metadataPath);
+
+        return new ShadowReferenceCaptureMetadata(
+            name,
+            referenceFileBase,
+            captureMode,
+            targetElement,
+            renderPath,
+            width,
+            height,
+            ignoredBounds);
     }
 
     private static string RequireThemeShadowReferenceMaskValue(IReadOnlyDictionary<string, string> values, string key, string maskPath)
@@ -1395,6 +1461,45 @@ public class TemplateParityTests
         public string Name { get; }
 
         public string Kind { get; }
+
+        public int Width { get; }
+
+        public int Height { get; }
+
+        public ShadowReferenceBounds IgnoredBounds { get; }
+    }
+
+    private readonly struct ShadowReferenceCaptureMetadata
+    {
+        public ShadowReferenceCaptureMetadata(
+            string name,
+            string referenceFileBase,
+            string captureMode,
+            string targetElement,
+            string renderPath,
+            int width,
+            int height,
+            ShadowReferenceBounds ignoredBounds)
+        {
+            Name = name;
+            ReferenceFileBase = referenceFileBase;
+            CaptureMode = captureMode;
+            TargetElement = targetElement;
+            RenderPath = renderPath;
+            Width = width;
+            Height = height;
+            IgnoredBounds = ignoredBounds;
+        }
+
+        public string Name { get; }
+
+        public string ReferenceFileBase { get; }
+
+        public string CaptureMode { get; }
+
+        public string TargetElement { get; }
+
+        public string RenderPath { get; }
 
         public int Width { get; }
 

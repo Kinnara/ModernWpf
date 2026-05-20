@@ -96,6 +96,7 @@ if (-not [string]::IsNullOrWhiteSpace($ChecklistDirectory)) {
 
 $missingSnapshots = New-Object System.Collections.Generic.List[string]
 $missingReferencePngs = New-Object System.Collections.Generic.List[string]
+$missingCaptureMetadata = New-Object System.Collections.Generic.List[string]
 $rows = New-Object System.Collections.Generic.List[object]
 
 foreach ($target in $targets) {
@@ -105,6 +106,7 @@ foreach ($target in $targets) {
     $snapshotMask = Join-Path $SnapshotDir "$fileBase.mask.txt"
     $referencePng = Join-Path $ReferenceDir "$fileBase.png"
     $referenceMask = Join-Path $ReferenceDir "$fileBase.mask.txt"
+    $referenceCaptureMetadata = Join-Path $ReferenceDir "$fileBase.capture.txt"
 
     foreach ($requiredSnapshot in @($snapshotPng, $snapshotMetrics, $snapshotMask)) {
         if (-not (Test-ExistingFile $requiredSnapshot)) {
@@ -119,8 +121,15 @@ foreach ($target in $targets) {
     }
 
     $referenceStatus = "missing live PNG"
+    $captureMetadataStatus = "missing"
     if (Test-ExistingFile $referencePng) {
         $referenceStatus = "present"
+        if (Test-ExistingFile $referenceCaptureMetadata) {
+            $captureMetadataStatus = "present"
+        }
+        else {
+            $missingCaptureMetadata.Add($referenceCaptureMetadata)
+        }
     }
     else {
         $missingReferencePngs.Add($referencePng)
@@ -132,6 +141,7 @@ foreach ($target in $targets) {
         Canvas = "$($target.canvasSize.width)x$($target.canvasSize.height)"
         ReferencePng = $referencePng
         Mask = $maskStatus
+        CaptureMetadata = $captureMetadataStatus
         Status = $referenceStatus
     })
 }
@@ -144,6 +154,10 @@ if ($RequireReferencePngs -and $missingReferencePngs.Count -gt 0) {
     throw "Missing live WinUI reference PNGs:`n$($missingReferencePngs -join [Environment]::NewLine)"
 }
 
+if ($RequireReferencePngs -and $missingCaptureMetadata.Count -gt 0) {
+    throw "Missing WinUI reference capture provenance sidecars:`n$($missingCaptureMetadata -join [Environment]::NewLine)"
+}
+
 $lines = New-Object System.Collections.Generic.List[string]
 $lines.Add("# ThemeShadow WinUI Reference Capture Checklist")
 $lines.Add("")
@@ -151,18 +165,19 @@ $lines.Add("Manifest: ``$ManifestPath``")
 $lines.Add("Snapshot directory: ``$SnapshotDir``")
 $lines.Add("Reference directory: ``$ReferenceDir``")
 $lines.Add("")
-$lines.Add("Capture or copy each live WinUI reference PNG into the reference directory with the exact file name below. The staged ``.mask.txt`` files come from the ModernWpf shadow snapshot exporter and should remain beside PNG references that include their opaque caster/content region.")
+$lines.Add("Capture or copy each live WinUI reference PNG into the reference directory with the exact file name below. The staged ``.mask.txt`` files come from the ModernWpf shadow snapshot exporter and should remain beside PNG references that include their opaque caster/content region. The WinUI capture tool also writes a same-named ``.capture.txt`` provenance sidecar recording whether the PNG came from the all-target ``source-geometry`` path or an ``actual-control`` capture.")
 $lines.Add("")
-$lines.Add("| Target | Canvas | Reference PNG | Mask | Status |")
-$lines.Add("| --- | --- | --- | --- | --- |")
+$lines.Add("| Target | Canvas | Reference PNG | Mask | Capture metadata | Status |")
+$lines.Add("| --- | --- | --- | --- | --- | --- |")
 
 foreach ($row in $rows) {
     $lines.Add((
-        "| {0} | {1} | {2}.png | {3} | {4} |" -f
+        "| {0} | {1} | {2}.png | {3} | {4} | {5} |" -f
         (Escape-MarkdownCell $row.Name),
         (Escape-MarkdownCell $row.Canvas),
         (Escape-MarkdownCell $row.FileBase),
         (Escape-MarkdownCell $row.Mask),
+        (Escape-MarkdownCell $row.CaptureMetadata),
         (Escape-MarkdownCell $row.Status)))
 }
 

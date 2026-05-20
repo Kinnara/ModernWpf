@@ -62,7 +62,7 @@ public sealed class CaptureApp : Application
 
                 await CaptureTargetAsync(target, options);
                 capturedCount++;
-                Console.WriteLine($"Wrote {target.ReferenceFileBase}.png");
+                Console.WriteLine($"Wrote {target.ReferenceFileBase}.png ({FormatCaptureMode(options.CaptureMode)})");
             }
 
             if (capturedCount == 0)
@@ -77,7 +77,7 @@ public sealed class CaptureApp : Application
         }
         finally
         {
-            Exit();
+            Environment.Exit(Environment.ExitCode);
         }
     }
 
@@ -91,8 +91,8 @@ public sealed class CaptureApp : Application
         var tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var enqueued = _window.DispatcherQueue.TryEnqueue(() =>
         {
-            var canvas = CreateTargetCanvas(target);
-            _window.Content = canvas;
+            var visual = CreateTargetVisual(target, options.CaptureMode);
+            _window.Content = visual.Canvas;
 
             var timer = _window.DispatcherQueue.CreateTimer();
             timer.Interval = TimeSpan.FromMilliseconds(options.DelayMilliseconds);
@@ -103,13 +103,18 @@ public sealed class CaptureApp : Application
                 try
                 {
                     var bitmap = new RenderTargetBitmap();
-                    await bitmap.RenderAsync(canvas, target.Width, target.Height);
+                    await bitmap.RenderAsync(visual.Canvas, target.Width, target.Height);
                     var pixels = await bitmap.GetPixelsAsync();
                     await WritePngAsync(
                         Path.Combine(options.ReferenceDirectory, target.ReferenceFileBase + ".png"),
                         target.Width,
                         target.Height,
                         pixels.ToArray());
+                    WriteCaptureMetadata(
+                        Path.Combine(options.ReferenceDirectory, target.ReferenceFileBase + ".capture.txt"),
+                        target,
+                        options.CaptureMode,
+                        visual.TargetElement);
                     tcs.SetResult();
                 }
                 catch (Exception ex)
@@ -128,7 +133,7 @@ public sealed class CaptureApp : Application
         return tcs.Task;
     }
 
-    private static Canvas CreateTargetCanvas(CaptureTarget target)
+    private static CaptureVisual CreateTargetVisual(CaptureTarget target, ReferenceCaptureMode captureMode)
     {
         var canvas = new Canvas
         {
@@ -138,6 +143,19 @@ public sealed class CaptureApp : Application
             RequestedTheme = ElementTheme.Light
         };
 
+        var targetElement = captureMode switch
+        {
+            ReferenceCaptureMode.SourceGeometry => CreateSourceGeometryCaster(target),
+            ReferenceCaptureMode.ActualControl => CreateActualControlTarget(target),
+            _ => throw new ArgumentOutOfRangeException(nameof(captureMode), captureMode, null)
+        };
+
+        canvas.Children.Add(targetElement.Element);
+        return new CaptureVisual(canvas, targetElement.Description);
+    }
+
+    private static CaptureTargetElement CreateSourceGeometryCaster(CaptureTarget target)
+    {
         var caster = new Border
         {
             Width = target.IgnoredBounds.Width,
@@ -151,8 +169,70 @@ public sealed class CaptureApp : Application
 
         Canvas.SetLeft(caster, target.IgnoredBounds.X);
         Canvas.SetTop(caster, target.IgnoredBounds.Y);
-        canvas.Children.Add(caster);
-        return canvas;
+        return new CaptureTargetElement(caster, "Microsoft.UI.Xaml.Controls.Border source-geometry caster");
+    }
+
+    private static CaptureTargetElement CreateActualControlTarget(CaptureTarget target)
+    {
+        return target.ReferenceFileBase switch
+        {
+            "FlyoutPresenter-shadow-only" => CreateActualFlyoutPresenterTarget(target),
+            "MenuFlyoutPresenter-shadow-only" => CreateActualMenuFlyoutPresenterTarget(target),
+            _ => throw new NotSupportedException(
+                $"Actual-control capture is not implemented for {target.ReferenceFileBase}. " +
+                "Use --capture-mode source-geometry for the current all-target reference path.")
+        };
+    }
+
+    private static CaptureTargetElement CreateActualFlyoutPresenterTarget(CaptureTarget target)
+    {
+        var presenter = new FlyoutPresenter
+        {
+            Content = new Border
+            {
+                Width = target.IgnoredBounds.Width,
+                Height = target.IgnoredBounds.Height,
+                Background = new SolidColorBrush(Colors.White)
+            },
+            Background = new SolidColorBrush(Colors.Transparent),
+            BorderBrush = new SolidColorBrush(Colors.Transparent),
+            BorderThickness = new Thickness(),
+            Padding = new Thickness(),
+            CornerRadius = new CornerRadius(target.CornerRadius),
+            IsDefaultShadowEnabled = true,
+            MinWidth = 0,
+            MinHeight = 0,
+            HorizontalAlignment = HorizontalAlignment.Left,
+            VerticalAlignment = VerticalAlignment.Top
+        };
+
+        Canvas.SetLeft(presenter, target.IgnoredBounds.X);
+        Canvas.SetTop(presenter, target.IgnoredBounds.Y);
+        return new CaptureTargetElement(presenter, "Microsoft.UI.Xaml.Controls.FlyoutPresenter actual control");
+    }
+
+    private static CaptureTargetElement CreateActualMenuFlyoutPresenterTarget(CaptureTarget target)
+    {
+        var presenter = new MenuFlyoutPresenter
+        {
+            Width = target.IgnoredBounds.Width,
+            Height = target.IgnoredBounds.Height,
+            MinWidth = 0,
+            MinHeight = 0,
+            Padding = new Thickness(),
+            Background = new SolidColorBrush(Colors.Transparent),
+            BorderBrush = new SolidColorBrush(Colors.Transparent),
+            BorderThickness = new Thickness(),
+            CornerRadius = new CornerRadius(target.CornerRadius),
+            IsDefaultShadowEnabled = true,
+            HorizontalAlignment = HorizontalAlignment.Left,
+            VerticalAlignment = VerticalAlignment.Top
+        };
+        presenter.Items.Add(new MenuFlyoutItem { Text = "Copy" });
+
+        Canvas.SetLeft(presenter, target.IgnoredBounds.X);
+        Canvas.SetTop(presenter, target.IgnoredBounds.Y);
+        return new CaptureTargetElement(presenter, "Microsoft.UI.Xaml.Controls.MenuFlyoutPresenter actual control");
     }
 
     private static async Task WritePngAsync(string path, int width, int height, byte[] pixels)
@@ -171,6 +251,25 @@ public sealed class CaptureApp : Application
             pixels);
         await encoder.FlushAsync();
         await randomAccessStream.FlushAsync();
+    }
+
+    private static void WriteCaptureMetadata(string path, CaptureTarget target, ReferenceCaptureMode captureMode, string targetElement)
+    {
+        Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(path))!);
+        File.WriteAllLines(
+            path,
+            new[]
+            {
+                $"Name={target.Name}",
+                $"ReferenceFileBase={target.ReferenceFileBase}",
+                $"CaptureMode={FormatCaptureMode(captureMode)}",
+                $"TargetElement={targetElement}",
+                "RenderPath=WinUI RenderTargetBitmap",
+                $"Canvas={target.Width}x{target.Height}",
+                $"IgnoredBounds={target.IgnoredBounds.X},{target.IgnoredBounds.Y},{target.IgnoredBounds.Width},{target.IgnoredBounds.Height}",
+                $"RequestedDepth={target.Depth.ToString(CultureInfo.InvariantCulture)}",
+                $"CornerRadius={target.CornerRadius.ToString(CultureInfo.InvariantCulture)}"
+            });
     }
 
     private static IReadOnlyList<CaptureTarget> LoadTargets(string manifestPath, string referenceDirectory)
@@ -263,6 +362,16 @@ public sealed class CaptureApp : Application
             _ => 4
         };
     }
+
+    private static string FormatCaptureMode(ReferenceCaptureMode captureMode)
+    {
+        return captureMode switch
+        {
+            ReferenceCaptureMode.SourceGeometry => "source-geometry",
+            ReferenceCaptureMode.ActualControl => "actual-control",
+            _ => throw new ArgumentOutOfRangeException(nameof(captureMode), captureMode, null)
+        };
+    }
 }
 
 public sealed record CaptureTarget(
@@ -276,6 +385,16 @@ public sealed record CaptureTarget(
 
 public sealed record Int32Rect(int X, int Y, int Width, int Height);
 
+public sealed record CaptureVisual(Canvas Canvas, string TargetElement);
+
+public sealed record CaptureTargetElement(UIElement Element, string Description);
+
+public enum ReferenceCaptureMode
+{
+    SourceGeometry,
+    ActualControl
+}
+
 public sealed class CaptureOptions
 {
     public string ManifestPath { get; private set; } = string.Empty;
@@ -283,6 +402,8 @@ public sealed class CaptureOptions
     public string ReferenceDirectory { get; private set; } = string.Empty;
 
     public int DelayMilliseconds { get; private set; } = 250;
+
+    public ReferenceCaptureMode CaptureMode { get; private set; } = ReferenceCaptureMode.SourceGeometry;
 
     public HashSet<string> Targets { get; } = new(StringComparer.OrdinalIgnoreCase);
 
@@ -306,6 +427,9 @@ public sealed class CaptureOptions
                     break;
                 case "--delay-ms":
                     options.DelayMilliseconds = RequireIntValue(args, ref i);
+                    break;
+                case "--capture-mode":
+                    options.CaptureMode = ParseCaptureMode(RequireValue(args, ref i));
                     break;
                 case "--target":
                     options.Targets.Add(RequireValue(args, ref i));
@@ -346,6 +470,16 @@ public sealed class CaptureOptions
         }
 
         return result;
+    }
+
+    private static ReferenceCaptureMode ParseCaptureMode(string value)
+    {
+        return value switch
+        {
+            "source-geometry" => ReferenceCaptureMode.SourceGeometry,
+            "actual-control" => ReferenceCaptureMode.ActualControl,
+            _ => throw new ArgumentException($"Unknown capture mode '{value}'. Expected source-geometry or actual-control.")
+        };
     }
 
     private static string FindRepoRoot()
