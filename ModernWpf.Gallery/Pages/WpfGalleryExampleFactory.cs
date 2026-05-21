@@ -1232,7 +1232,7 @@ namespace ModernWpf.Gallery.Pages
             intro.Inlines.Add(new Run("The colors below are provided as part of WPF .NET 9 onwards. You can reference them in your app using DynamicResource bindings. For example: Color=\"{DynamicResource CardBackgroundFillColorDefault}\""));
             root.Children.Add(intro);
 
-            root.Children.Add(CreateColorResourcesExample());
+            AddColorResourcesExample(root);
             return root;
         }
 
@@ -1262,17 +1262,13 @@ namespace ModernWpf.Gallery.Pages
             root.Children.Add(CreateDesignParagraph("Consistent spacing helps create visual harmony and improves the readability and usability of your application."));
             root.Children.Add(CreateDesignParagraph("Use the following spacing values to maintain a consistent layout throughout your app.", new Thickness(0, 0, 0, 12)));
 
-            var images = new Grid
+            var images = new StackPanel
             {
+                Orientation = Orientation.Horizontal,
                 Margin = new Thickness(0, 0, 0, 16)
             };
-            images.ColumnDefinitions.Add(new ColumnDefinition());
-            images.ColumnDefinitions.Add(new ColumnDefinition());
-            var cardsImage = CreateDesignImageFrame("Cards.dark.png", "Page with cards layout", "Example of spacing in a page with cards layout", double.NaN, 500);
-            var dialogImage = CreateDesignImageFrame("Dialog.dark.png", "Form layout", "Example of spacing in a form layout", double.NaN, 500);
-            Grid.SetColumn(dialogImage, 1);
-            images.Children.Add(cardsImage);
-            images.Children.Add(dialogImage);
+            images.Children.Add(CreateSpacingImageFrame("Cards.dark.png", "Page with cards layout", "Example of spacing in a page with cards layout"));
+            images.Children.Add(CreateSpacingImageFrame("Dialog.dark.png", "Form layout", "Example of spacing in a form layout"));
             root.Children.Add(images);
 
             var tableCard = new Border
@@ -1349,9 +1345,8 @@ namespace ModernWpf.Gallery.Pages
             return example;
         }
 
-        private static StackPanel CreateColorResourcesExample()
+        private static void AddColorResourcesExample(StackPanel root)
         {
-            var root = new StackPanel();
             var selector = new ComboBox
             {
                 Width = 200,
@@ -1373,7 +1368,12 @@ namespace ModernWpf.Gallery.Pages
             {
                 sectionHost.Content = CreateColorSection(selector.SelectedIndex);
             };
+        }
 
+        private static StackPanel CreateColorResourcesExample()
+        {
+            var root = new StackPanel();
+            AddColorResourcesExample(root);
             return root;
         }
 
@@ -3247,6 +3247,39 @@ namespace ModernWpf.Gallery.Pages
                 HorizontalAlignment = HorizontalAlignment.Left,
                 Child = image
             };
+        }
+
+        private static Grid CreateSpacingImageFrame(string fileName, string title, string automationName)
+        {
+            var grid = new Grid
+            {
+                VerticalAlignment = VerticalAlignment.Top
+            };
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+
+            var titleText = new TextBlock
+            {
+                Text = title,
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+            titleText.SetResourceReference(FrameworkElement.StyleProperty, "SubtitleTextBlockStyle");
+            grid.Children.Add(titleText);
+
+            var border = new Border
+            {
+                Height = 500
+            };
+            var image = new Image
+            {
+                Source = new BitmapImage(new Uri("pack://application:,,,/ModernWpf.Gallery;component/Assets/Design/" + fileName))
+            };
+            AutomationProperties.SetName(image, automationName);
+            border.Child = image;
+            Grid.SetRow(border, 1);
+            grid.Children.Add(border);
+
+            return grid;
         }
 
         private static Grid CreateDesignImageFrame(string fileName, string title, string automationName, double width, double height)

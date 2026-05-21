@@ -160,6 +160,13 @@ namespace ModernWpf.Gallery.Tests
                     AssertNavigationItemsControl((ItemsControl)allControlsPage.FindName("AllControlsItemsControl"), "Items in group");
                     AssertRenderedNavigationCard((ItemsControl)allControlsPage.FindName("AllControlsItemsControl"), GalleryCatalog.AllControlsItems.First().Title);
                 });
+
+                var itemPage = new ItemPage(GalleryCatalog.FindItem("Color"));
+                RenderPage(itemPage, () =>
+                {
+                    AssertPageHeaderLabel((Label)itemPage.FindName("TitleLabel"), "Colors Page", AutomationHeadingLevel.Level1, 0);
+                    AssertPageHeaderLabel((Label)itemPage.FindName("DescriptionLabel"), string.Empty, AutomationHeadingLevel.Level2, 1);
+                });
             });
         }
 

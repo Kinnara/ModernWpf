@@ -50,6 +50,8 @@ namespace ModernWpf.Gallery.Pages
                 .Select(GalleryCatalog.FindItem)
                 .Where(related => related != null)
                 .ToArray();
+            GalleryAutomation.SetHeadingLevel(TitleLabel, GalleryAutomationHeadingLevel.Level1);
+            GalleryAutomation.SetHeadingLevel(DescriptionLabel, GalleryAutomationHeadingLevel.Level2);
             DataContext = this;
         }
 

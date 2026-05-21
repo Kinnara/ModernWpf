@@ -20,6 +20,8 @@
             Margin="0,0,0,32"
             Visibility="{Binding ShowPageHeader, Converter={StaticResource BooleanToVisibilityConverter}}">
             <Label
+                x:Name="TitleLabel"
+                AutomationProperties.Name="{Binding Title, StringFormat='{}{0} Page'}"
                 Focusable="True"
                 KeyboardNavigation.IsTabStop="True"
                 KeyboardNavigation.TabIndex="0">
@@ -30,6 +32,7 @@
                     Text="{Binding Title}" />
             </Label>
             <Label
+                x:Name="DescriptionLabel"
                 Focusable="True"
                 KeyboardNavigation.IsTabStop="True"
                 KeyboardNavigation.TabIndex="1"

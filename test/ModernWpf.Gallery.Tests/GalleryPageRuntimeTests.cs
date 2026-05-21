@@ -955,18 +955,24 @@ namespace ModernWpf.Gallery.Tests
             {
                 var spacingPage = new ItemPage(GalleryCatalog.FindItem("Spacing"));
                 var spacingBody = (StackPanel)spacingPage.PageBodyContent;
-                var images = (Grid)spacingBody.Children[2];
-                Assert.AreEqual(2, images.ColumnDefinitions.Count);
+                var images = (StackPanel)spacingBody.Children[2];
+                Assert.AreEqual(Orientation.Horizontal, images.Orientation);
+                Assert.AreEqual(new Thickness(0, 0, 0, 16), images.Margin);
                 Assert.AreEqual(2, images.Children.Count);
 
                 var cardsFrame = (Grid)images.Children[0];
                 var dialogFrame = (Grid)images.Children[1];
-                Assert.AreEqual(0, Grid.GetColumn(cardsFrame));
-                Assert.AreEqual(1, Grid.GetColumn(dialogFrame));
-                Assert.AreEqual(HorizontalAlignment.Stretch, cardsFrame.HorizontalAlignment);
-                Assert.AreEqual(new Thickness(0, 0, 0, 8), ((TextBlock)cardsFrame.Children[0]).Margin);
+                Assert.AreEqual(VerticalAlignment.Top, cardsFrame.VerticalAlignment);
+                Assert.AreEqual(VerticalAlignment.Top, dialogFrame.VerticalAlignment);
+                Assert.AreEqual("Page with cards layout", ((TextBlock)cardsFrame.Children[0]).Text);
+                Assert.AreEqual(HorizontalAlignment.Center, ((TextBlock)cardsFrame.Children[0]).HorizontalAlignment);
+                Assert.AreEqual(new Thickness(0), ((TextBlock)cardsFrame.Children[0]).Margin);
                 Assert.AreEqual(500.0, ((Border)cardsFrame.Children[1]).Height);
-                Assert.AreEqual(HorizontalAlignment.Stretch, ((Border)cardsFrame.Children[1]).HorizontalAlignment);
+                var cardsImage = (Image)((Border)cardsFrame.Children[1]).Child;
+                Assert.IsTrue(double.IsNaN(cardsImage.Width));
+                Assert.IsTrue(double.IsNaN(cardsImage.Height));
+                Assert.AreEqual("Example of spacing in a page with cards layout", AutomationProperties.GetName(cardsImage));
+                StringAssert.Contains(((BitmapImage)cardsImage.Source).UriSource.ToString(), "Cards.dark.png");
 
                 var typographyPage = new ItemPage(GalleryCatalog.FindItem("Typography"));
                 var typographyBody = (StackPanel)typographyPage.PageBodyContent;
@@ -1020,9 +1026,9 @@ namespace ModernWpf.Gallery.Tests
             {
                 var page = new ItemPage(GalleryCatalog.FindItem("Color"));
                 var body = (StackPanel)page.PageBodyContent;
-                var colorContent = (StackPanel)body.Children[1];
-                var selector = (ComboBox)colorContent.Children[0];
-                var sectionHost = (ContentControl)colorContent.Children[1];
+                Assert.AreEqual(3, body.Children.Count);
+                var selector = (ComboBox)body.Children[1];
+                var sectionHost = (ContentControl)body.Children[2];
 
                 CollectionAssert.AreEqual(
                     new[] { "Text", "Fill", "Stroke", "Background", "Signal", "HighContrast" },
