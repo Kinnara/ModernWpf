@@ -11,7 +11,7 @@ namespace ModernWpf.Gallery.Pages
         public AllControlsPage()
         {
             InitializeComponent();
-            FilteredItems = GalleryCatalog.Items;
+            FilteredItems = GalleryCatalog.AllControlsItems;
             DataContext = this;
         }
 

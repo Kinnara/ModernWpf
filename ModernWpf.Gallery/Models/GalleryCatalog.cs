@@ -16,6 +16,11 @@ namespace ModernWpf.Gallery.Models
             get { return DisplayGroups; }
         }
 
+        public static IReadOnlyList<GalleryGroup> OverviewGroups
+        {
+            get { return DisplayGroups.Where(IsOverviewGroup).ToArray(); }
+        }
+
         private static IReadOnlyList<GalleryGroup> SourceGroups
         {
             get { return GalleryCatalogData.Groups; }
@@ -24,6 +29,11 @@ namespace ModernWpf.Gallery.Models
         public static IReadOnlyList<GalleryItem> Items
         {
             get { return CatalogItems; }
+        }
+
+        public static IReadOnlyList<GalleryItem> AllControlsItems
+        {
+            get { return CatalogItems.Where(IsAllControlsItem).ToArray(); }
         }
 
         public static IReadOnlyList<GalleryItem> NewOrUpdatedItems
@@ -95,6 +105,17 @@ namespace ModernWpf.Gallery.Models
             }
 
             return uniqueId;
+        }
+
+        private static bool IsOverviewGroup(GalleryGroup group)
+        {
+            return !string.Equals(group.UniqueId, "DesignGuidance", StringComparison.OrdinalIgnoreCase) &&
+                !string.Equals(group.UniqueId, "Samples", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static bool IsAllControlsItem(GalleryItem item)
+        {
+            return !string.Equals(item.GroupId, "Samples", StringComparison.OrdinalIgnoreCase);
         }
 
         private static IReadOnlyList<GalleryItem> CreateWpfGalleryItems()

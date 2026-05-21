@@ -33,6 +33,40 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void HomeOverviewGroupsMatchWpfGalleryReferenceWithModernExtensions()
+        {
+            var expected = new[]
+            {
+                "BasicInput",
+                "Collections",
+                "DateAndCalendar",
+                "Layout",
+                "Navigation",
+                "StatusAndInfo",
+                "Text",
+                "System",
+                "ModernWpfControls",
+                "PlatformAndPatterns"
+            };
+
+            var actual = GalleryCatalog.OverviewGroups.Select(group => group.UniqueId).ToArray();
+
+            CollectionAssert.AreEqual(expected, actual);
+            Assert.IsFalse(actual.Contains("DesignGuidance"));
+            Assert.IsFalse(actual.Contains("Samples"));
+        }
+
+        [TestMethod]
+        public void AllControlsItemsExcludeWpfGallerySamplesLikeReference()
+        {
+            var allControlIds = GalleryCatalog.AllControlsItems.Select(item => item.UniqueId).ToArray();
+
+            Assert.IsFalse(allControlIds.Contains("UserDashboard"), "The official WPF Gallery excludes the Samples section from All Controls.");
+            Assert.IsTrue(allControlIds.Contains("Color"), "Design guidance items remain part of All Controls.");
+            Assert.IsTrue(allControlIds.Contains("NavigationView"), "ModernWpf control pages remain part of the combined gallery.");
+        }
+
+        [TestMethod]
         public void WpfGallerySectionPageDescriptionsMatchReferenceViewModels()
         {
             var expected = new[]

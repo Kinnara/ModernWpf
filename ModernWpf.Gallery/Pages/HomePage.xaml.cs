@@ -25,7 +25,7 @@ namespace ModernWpf.Gallery.Pages
 
         public object Groups
         {
-            get { return GalleryCatalog.Groups; }
+            get { return GalleryCatalog.OverviewGroups; }
         }
 
         private void OnScrollBackButtonClick(object sender, RoutedEventArgs e)

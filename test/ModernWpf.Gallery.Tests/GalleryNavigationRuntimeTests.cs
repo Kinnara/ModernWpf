@@ -5,6 +5,7 @@ using System.Windows;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls;
 using ModernWpf.Gallery.Models;
+using ModernWpf.Gallery.Pages;
 using ModernWpf.Gallery.Shell;
 using ModernWpf.Gallery.Testing;
 
@@ -99,6 +100,21 @@ namespace ModernWpf.Gallery.Tests
 
                 var basicInputItems = topLevelItems[5].MenuItems.OfType<NavigationViewItem>().ToList();
                 Assert.IsNull(basicInputItems[0].Icon);
+            });
+        }
+
+        [TestMethod]
+        public void HomePageOverviewUsesWpfReferenceGroupFilter()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new HomePage();
+                var expected = GalleryCatalog.OverviewGroups.Select(group => group.UniqueId).ToArray();
+                var actual = ((IEnumerable<GalleryGroup>)page.Groups).Select(group => group.UniqueId).ToArray();
+
+                CollectionAssert.AreEqual(expected, actual);
+                Assert.IsFalse(actual.Contains("DesignGuidance"));
+                Assert.IsFalse(actual.Contains("Samples"));
             });
         }
 
