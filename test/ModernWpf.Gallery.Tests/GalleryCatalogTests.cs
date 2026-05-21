@@ -113,6 +113,47 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void WpfGalleryOverviewGroupCardsMatchOfficialCatalogMetadata()
+        {
+            AssertGroupCard("BasicInput", "Basic Input", "Button, CheckBox, ComboBox, RadioButton, Slider", "Button.png");
+            AssertGroupCard("Collections", "Collections", "DataGrid, ListBox, ListView, TreeView", "DataGrid.png");
+            AssertGroupCard("DateAndCalendar", "Date & Calendar", "Calendar, DatePicker", "CalendarView.png");
+            AssertGroupCard("Layout", "Layout", "Expander,Grid, ResizeGrip, GridSplitter, GroupBox, StackPanel, Border", "Expander.png");
+            AssertGroupCard("Navigation", "Navigation", "Menu, TabControl, Frame, NavigationWindow", "Pivot.png");
+            AssertGroupCard("StatusAndInfo", "Status & Info", "ProgressBar, ToolTip", "ProgressBar.png");
+            AssertGroupCard("Text", "Text", "Label, TextBox, TextBlock, RichTextEdit, PasswordBox", "TextBlock.png");
+            AssertGroupCard("System", "System", "File and Folder Dialogs, MessageBox, Clipboard", "FilePicker.png");
+        }
+
+        [TestMethod]
+        public void WpfGalleryRecentlyAddedItemsMatchOfficialCatalogOrder()
+        {
+            var expected = new[]
+            {
+                "Spacing",
+                "Geometry",
+                "Iconography",
+                "DataGrid",
+                "Grid",
+                "ResizeGrip",
+                "GridSplitter",
+                "GroupBox",
+                "StackPanel",
+                "Border",
+                "Frame",
+                "NavigationWindow",
+                "TextBox",
+                "FileAndFolderDialogs",
+                "MessageBox",
+                "Clipboard"
+            };
+
+            var actual = GalleryCatalog.NewOrUpdatedItems.Select(item => item.UniqueId).ToArray();
+
+            CollectionAssert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
         public void SearchForAFindsEveryGroup()
         {
             var resultItemIds = GalleryCatalog.Search("a")
@@ -174,6 +215,16 @@ namespace ModernWpf.Gallery.Tests
             AssertItemImage(item, imageFileName);
         }
 
+        private static void AssertGroupCard(string uniqueId, string title, string subtitle, string imageFileName)
+        {
+            var group = GalleryCatalog.FindGroup(uniqueId);
+
+            Assert.IsNotNull(group, uniqueId);
+            Assert.AreEqual(title, group.Title, uniqueId);
+            Assert.AreEqual(subtitle, group.Subtitle, uniqueId);
+            AssertImagePath(group.ImagePath, imageFileName);
+        }
+
         private static void AssertItemImage(string uniqueId, string imageFileName)
         {
             var item = GalleryCatalog.FindItem(uniqueId);
@@ -184,12 +235,17 @@ namespace ModernWpf.Gallery.Tests
 
         private static void AssertItemImage(GalleryItem item, string imageFileName)
         {
+            AssertImagePath(item.ImagePath, imageFileName);
+        }
+
+        private static void AssertImagePath(string imagePath, string imageFileName)
+        {
             var expectedSuffix = "Assets/ControlImages/" + imageFileName;
 
             Assert.IsTrue(
-                item.ImagePath.EndsWith(expectedSuffix, StringComparison.OrdinalIgnoreCase),
+                imagePath.EndsWith(expectedSuffix, StringComparison.OrdinalIgnoreCase),
                 "Expected '{0}' to end with '{1}'.",
-                item.ImagePath,
+                imagePath,
                 expectedSuffix);
         }
     }

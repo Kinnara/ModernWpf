@@ -648,7 +648,7 @@ namespace ModernWpf.Gallery.Models
                 CreateGroup(
                     "Layout",
                     "Layout",
-                    "Expander, Grid, ResizeGrip, GridSplitter, GroupBox, StackPanel, Border",
+                    "Expander,Grid, ResizeGrip, GridSplitter, GroupBox, StackPanel, Border",
                     "pack://application:,,,/Assets/ControlImages/Expander.png",
                     new[]
                     {

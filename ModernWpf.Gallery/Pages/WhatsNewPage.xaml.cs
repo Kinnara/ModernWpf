@@ -86,6 +86,11 @@ namespace ModernWpf.Gallery.Pages
             OpenUri("https://learn.microsoft.com/dotnet/desktop/wpf/whats-new/net90");
         }
 
+        private void OnUsingFluentInWpfClick(object sender, RoutedEventArgs e)
+        {
+            OpenUri("https://learn.microsoft.com/dotnet/desktop/wpf/whats-new/net90#using-fluent-theme-in-wpf-in-net-9");
+        }
+
         private static void OpenUri(string uri)
         {
             Process.Start(new ProcessStartInfo(uri) { UseShellExecute = true });
