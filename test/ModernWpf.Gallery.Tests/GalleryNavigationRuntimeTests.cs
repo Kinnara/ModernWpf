@@ -105,6 +105,13 @@ namespace ModernWpf.Gallery.Tests
 
                 var basicInputItems = topLevelItems[5].MenuItems.OfType<NavigationViewItem>().ToList();
                 Assert.IsNull(basicInputItems[0].Icon);
+
+                var mediaItem = topLevelItems.Single(item => string.Equals(GetNavigationItemText(item), "Media Controls", StringComparison.Ordinal));
+                AssertFontIconGlyph(mediaItem, "\uE8B9");
+                CollectionAssert.AreEqual(
+                    new[] { "Canvas", "Image" },
+                    mediaItem.MenuItems.OfType<NavigationViewItem>().Select(GetNavigationItemText).ToArray());
+                Assert.IsNull(mediaItem.MenuItems.OfType<NavigationViewItem>().First().Icon);
             });
         }
 
@@ -153,6 +160,16 @@ namespace ModernWpf.Gallery.Tests
                     AssertNavigationItemsControl((ItemsControl)sectionPage.FindName("GroupItemsControl"), "Items in group");
                     AssertReferenceCategoryPageRoot((Grid)sectionPage.FindName("ContentRootGrid"), false);
                     AssertRenderedNavigationCard((ItemsControl)sectionPage.FindName("GroupItemsControl"), basicInputGroup.Items.First().Title);
+                });
+
+                var mediaGroup = GalleryCatalog.FindGroup("Media");
+                var mediaPage = new SectionPage(mediaGroup);
+                RenderPage(mediaPage, () =>
+                {
+                    AssertPageHeaderLabel((Label)mediaPage.FindName("TitleLabel"), "Media Controls Page", AutomationHeadingLevel.Level1, 0);
+                    AssertPageHeaderLabel((Label)mediaPage.FindName("DescriptionLabel"), string.Empty, AutomationHeadingLevel.Level2, 1);
+                    AssertReferenceCategoryPageRoot((Grid)mediaPage.FindName("ContentRootGrid"), false);
+                    AssertRenderedNavigationCard((ItemsControl)mediaPage.FindName("GroupItemsControl"), "Canvas");
                 });
 
                 var allControlsPage = new AllControlsPage();

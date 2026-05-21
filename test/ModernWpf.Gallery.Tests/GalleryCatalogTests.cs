@@ -19,6 +19,7 @@ namespace ModernWpf.Gallery.Tests
                 "Collections",
                 "Date & Calendar",
                 "Layout",
+                "Media Controls",
                 "Navigation",
                 "Status & Info",
                 "Text",
@@ -41,6 +42,7 @@ namespace ModernWpf.Gallery.Tests
                 "Collections",
                 "DateAndCalendar",
                 "Layout",
+                "Media",
                 "Navigation",
                 "StatusAndInfo",
                 "Text",
@@ -77,6 +79,7 @@ namespace ModernWpf.Gallery.Tests
                 new { UniqueId = "Collections", PageDescription = "Controls for collection presentation" },
                 new { UniqueId = "DateAndCalendar", PageDescription = "Controls for date and calendar" },
                 new { UniqueId = "Layout", PageDescription = "Controls for layouting" },
+                new { UniqueId = "Media", PageDescription = "Controls for media presentation" },
                 new { UniqueId = "Navigation", PageDescription = "Controls for navigation and actions" },
                 new { UniqueId = "StatusAndInfo", PageDescription = "Controls to show progress and extra information" },
                 new { UniqueId = "Text", PageDescription = "Controls for displaying and editing text" },
@@ -119,6 +122,7 @@ namespace ModernWpf.Gallery.Tests
             AssertGroupCard("Collections", "Collections", "DataGrid, ListBox, ListView, TreeView", "DataGrid.png");
             AssertGroupCard("DateAndCalendar", "Date & Calendar", "Calendar, DatePicker", "CalendarView.png");
             AssertGroupCard("Layout", "Layout", "Expander,Grid, ResizeGrip, GridSplitter, GroupBox, StackPanel, Border", "Expander.png");
+            AssertGroupCard("Media", "Media Controls", "Canvas, Image", "Image.png");
             AssertGroupCard("Navigation", "Navigation", "Menu, TabControl, Frame, NavigationWindow", "Pivot.png");
             AssertGroupCard("StatusAndInfo", "Status & Info", "ProgressBar, ToolTip", "ProgressBar.png");
             AssertGroupCard("Text", "Text", "Label, TextBox, TextBlock, RichTextEdit, PasswordBox", "TextBlock.png");
@@ -202,7 +206,7 @@ namespace ModernWpf.Gallery.Tests
         [TestMethod]
         public void CatalogContainsWpfFirstGallerySurface()
         {
-            Assert.AreEqual(12, GalleryCatalog.Groups.Count);
+            Assert.AreEqual(13, GalleryCatalog.Groups.Count);
             Assert.AreEqual(136, GalleryCatalog.Items.Count);
         }
 
