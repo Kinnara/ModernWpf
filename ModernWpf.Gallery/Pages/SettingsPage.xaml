@@ -38,7 +38,6 @@
                 KeyboardNavigation.TabIndex="0">
                 <TextBlock
                     AutomationProperties.AutomationId="GalleryItemPageTitle"
-                    AutomationProperties.HeadingLevel="Level1"
                     Style="{StaticResource TitleTextBlockStyle}"
                     Text="Settings" />
             </Label>
