@@ -40,6 +40,36 @@ In short: the official WPF Gallery is the source of truth for WPF-equivalent
 visuals, but most files still need namespace, resource, route, and test
 adaptation before they can live in this repo.
 
+## Architecture Direction
+
+The current broad parity pass got WPF Gallery-equivalent pages represented, but
+it still relies too much on ModernWpf-specific sample factories that recreate
+official WPF Gallery pages in C#. That makes visual parity slower and easier to
+drift.
+
+The preferred next architecture is closer to WPF Gallery for WPF-equivalent
+pages:
+
+- Keep the ModernWpf outer shell, catalog, and `NavigationView` model so the
+  gallery can still host ModernWpf/WinUI-specific pages.
+- Add or strengthen a WPF Gallery compatibility layer inside that shell:
+  WPF-style page view models with `PageTitle`, `PageDescription`, and sample
+  code strings; WPF Gallery-like `PageHeader`, `ControlExample`, `HeaderTile`,
+  and navigation-card components; and explicit catalog item to page mappings.
+- Prefer adapted `.xaml` pages copied from official WPF Gallery for direct
+  WPF-equivalent pages instead of rebuilding those pages through C# sample
+  factories.
+- Keep C# sample factories for ModernWpf/WinUI-specific pages, generated sample
+  content, or pages that do not exist in official WPF Gallery.
+- Treat the official WPF Gallery view model/resource/navigation shape as the
+  default design for WPF pages, then adapt only the integration points required
+  by ModernWpf routing, resource naming, tests, and mixed WPF/WinUI catalog
+  support.
+
+This should make future parity rounds more mechanical: copy official page XAML
+and view-model state, adapt namespaces/resources/routes, add targeted tests, and
+record the checklist status below.
+
 ## Current Status
 
 Branch: `maintenance-reboot-1x`
