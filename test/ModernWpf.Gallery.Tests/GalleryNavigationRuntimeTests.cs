@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ModernWpf.Controls;
 using ModernWpf.Gallery.Models;
 using ModernWpf.Gallery.Shell;
 using ModernWpf.Gallery.Testing;
@@ -68,6 +69,50 @@ namespace ModernWpf.Gallery.Tests
 
                 Assert.AreEqual(0, failures.Count, string.Join(Environment.NewLine, failures.Take(20)));
             });
+        }
+
+        [TestMethod]
+        public void ShellNavigationMenuMatchesWpfGalleryReferenceChrome()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new NavigationRootPage();
+                var navigation = (NavigationView)page.FindName("Navigation");
+                var topLevelItems = navigation.MenuItems.OfType<NavigationViewItem>().ToList();
+
+                CollectionAssert.AreEqual(
+                    new[] { "Home", "What's New", "Design Guidance", "Samples", "All controls", "Basic Input" },
+                    topLevelItems.Take(6).Select(GetNavigationItemText).ToArray());
+
+                AssertFontIconGlyph(topLevelItems[0], "\uE80F");
+                AssertFontIconGlyph(topLevelItems[1], "\uEB51");
+                AssertFontIconGlyph(topLevelItems[2], "\uEB3C");
+                AssertFontIconGlyph(topLevelItems[3], "\uEF58");
+                AssertFontIconGlyph(topLevelItems[4], "\uE71D");
+                AssertFontIconGlyph(topLevelItems[5], "\uE73A");
+
+                var designGuidanceItems = topLevelItems[2].MenuItems.OfType<NavigationViewItem>().ToList();
+                CollectionAssert.AreEqual(
+                    new[] { "Colors", "Typography", "Spacing", "Geometry", "Icons" },
+                    designGuidanceItems.Select(GetNavigationItemText).ToArray());
+                AssertFontIconGlyph(designGuidanceItems[0], "\uE790");
+
+                var basicInputItems = topLevelItems[5].MenuItems.OfType<NavigationViewItem>().ToList();
+                Assert.IsNull(basicInputItems[0].Icon);
+            });
+        }
+
+        private static string GetNavigationItemText(NavigationViewItem item)
+        {
+            return item.Content as string;
+        }
+
+        private static void AssertFontIconGlyph(NavigationViewItem item, string expectedGlyph)
+        {
+            var icon = item.Icon as FontIcon;
+
+            Assert.IsNotNull(icon);
+            Assert.AreEqual(expectedGlyph, icon.Glyph);
         }
 
         private static IEnumerable<string> CatalogRoutes()

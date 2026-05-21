@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Automation;
+using System.Windows.Media;
 using System.Windows.Threading;
 using ModernWpf.Controls;
+using ModernWpf.Controls.Primitives;
 using ModernWpf.Gallery.Testing;
 using ModernWpf.Gallery.Models;
 using ModernWpf.Gallery.Pages;
@@ -15,6 +17,42 @@ namespace ModernWpf.Gallery.Shell
     {
         private readonly Stack<NavigationTarget> _backStack = new Stack<NavigationTarget>();
         private readonly Dictionary<string, NavigationViewItem> _itemContainers = new Dictionary<string, NavigationViewItem>(StringComparer.OrdinalIgnoreCase);
+        private static readonly ISet<string> WpfGalleryGroupIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "DesignGuidance",
+            "Samples",
+            "BasicInput",
+            "Collections",
+            "DateAndCalendar",
+            "Layout",
+            "Navigation",
+            "StatusAndInfo",
+            "Text",
+            "System"
+        };
+
+        private static readonly IReadOnlyDictionary<string, string> WpfGalleryGlyphs = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            { "Home", "\uE80F" },
+            { "WhatsNew", "\uEB51" },
+            { "AllControls", "\uE71D" },
+            { "DesignGuidance", "\uEB3C" },
+            { "Color", "\uE790" },
+            { "Typography", "\uE8D2" },
+            { "Spacing", "\uE8B3" },
+            { "Geometry", "\uE743" },
+            { "Iconography", "\uED58" },
+            { "Samples", "\uEF58" },
+            { "BasicInput", "\uE73A" },
+            { "Collections", "\uE80A" },
+            { "DateAndCalendar", "\uEC92" },
+            { "Layout", "\uF246" },
+            { "Navigation", "\uE700" },
+            { "StatusAndInfo", "\uE8F2" },
+            { "Text", "\uE8D2" },
+            { "System", "\uE7F8" }
+        };
+
         private NavigationViewItem _homeNavigationItem;
         private NavigationViewItem _whatsNewNavigationItem;
         private NavigationViewItem _allControlsNavigationItem;
@@ -143,42 +181,83 @@ namespace ModernWpf.Gallery.Shell
 
         private void BuildNavigationMenu()
         {
-            _homeNavigationItem = CreateNavigationItem("Home", NavigationTarget.Home(), Symbol.Home);
-            _whatsNewNavigationItem = CreateNavigationItem("What's New", NavigationTarget.WhatsNew(), Symbol.Emoji);
-            _allControlsNavigationItem = CreateNavigationItem("All controls", NavigationTarget.AllControls(), Symbol.ViewAll);
+            _homeNavigationItem = CreateNavigationItem("Home", NavigationTarget.Home(), CreateWpfGalleryGlyphIcon("Home"));
+            _whatsNewNavigationItem = CreateNavigationItem("What's New", NavigationTarget.WhatsNew(), CreateWpfGalleryGlyphIcon("WhatsNew"));
+            _allControlsNavigationItem = CreateNavigationItem("All controls", NavigationTarget.AllControls(), CreateWpfGalleryGlyphIcon("AllControls"));
 
             Navigation.MenuItems.Add(_homeNavigationItem);
             Navigation.MenuItems.Add(_whatsNewNavigationItem);
-            Navigation.MenuItems.Add(_allControlsNavigationItem);
             Navigation.MenuItems.Add(new NavigationViewItemSeparator());
 
             foreach (var group in GalleryCatalog.Groups)
             {
-                var groupItem = CreateNavigationItem(group.Title, NavigationTarget.Group(group.UniqueId), Symbol.List);
+                var groupItem = CreateNavigationItem(group.Title, NavigationTarget.Group(group.UniqueId), CreateNavigationIcon(group.UniqueId, true, false));
                 groupItem.IsExpanded = !group.IsSpecialSection;
 
                 foreach (var item in group.Items)
                 {
-                    var child = CreateNavigationItem(item.Title, NavigationTarget.Item(item.UniqueId), Symbol.Page);
+                    var child = CreateNavigationItem(item.Title, NavigationTarget.Item(item.UniqueId), CreateNavigationIcon(item.UniqueId, false, WpfGalleryGroupIds.Contains(group.UniqueId)));
                     groupItem.MenuItems.Add(child);
                     _itemContainers[item.UniqueId] = child;
                 }
 
                 Navigation.MenuItems.Add(groupItem);
                 _itemContainers[group.UniqueId] = groupItem;
+
+                if (string.Equals(group.UniqueId, "Samples", StringComparison.OrdinalIgnoreCase))
+                {
+                    Navigation.MenuItems.Add(_allControlsNavigationItem);
+                }
             }
         }
 
-        private static NavigationViewItem CreateNavigationItem(string title, NavigationTarget target, Symbol symbol)
+        private static NavigationViewItem CreateNavigationItem(string title, NavigationTarget target, IconElement icon)
         {
             var item = new NavigationViewItem
             {
                 Content = title,
-                Icon = new SymbolIcon(symbol),
+                Icon = icon,
                 Tag = target
             };
             AutomationProperties.SetAutomationId(item, "GalleryNav_" + FormatRoute(target).Replace("/", "_"));
             return item;
+        }
+
+        private static IconElement CreateNavigationIcon(string uniqueId, bool isGroup, bool isWpfGalleryChild)
+        {
+            var wpfGlyphIcon = CreateWpfGalleryGlyphIcon(uniqueId);
+            if (wpfGlyphIcon != null)
+            {
+                return wpfGlyphIcon;
+            }
+
+            if (isWpfGalleryChild)
+            {
+                return null;
+            }
+
+            return new SymbolIcon(isGroup ? Symbol.List : Symbol.Page);
+        }
+
+        private static IconElement CreateWpfGalleryGlyphIcon(string uniqueId)
+        {
+            if (!WpfGalleryGlyphs.TryGetValue(uniqueId, out var glyph))
+            {
+                return null;
+            }
+
+            var icon = new FontIcon
+            {
+                Glyph = glyph
+            };
+
+            var fontFamily = Application.Current.TryFindResource("SymbolThemeFontFamily") as FontFamily;
+            if (fontFamily != null)
+            {
+                icon.FontFamily = fontFamily;
+            }
+
+            return icon;
         }
 
         private void OnNavigationItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
