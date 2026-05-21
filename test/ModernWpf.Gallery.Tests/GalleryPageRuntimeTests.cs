@@ -267,10 +267,94 @@ namespace ModernWpf.Gallery.Tests
             });
         }
 
+        [TestMethod]
+        public void IconographyPageUsesWpfGalleryIconLibraryLayout()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("Iconography"));
+                var body = (StackPanel)page.PageBodyContent;
+
+                var instructions = (Expander)body.Children[0];
+                Assert.AreEqual("Instructions on how to use Segoe Fluent Icons", instructions.Header);
+                Assert.IsFalse(instructions.IsExpanded);
+                Assert.AreEqual(new Thickness(2, -8, 0, 0), instructions.Margin);
+
+                var libraryTitle = (TextBlock)body.Children[1];
+                Assert.AreEqual("Fluent Icons Library", libraryTitle.Text);
+
+                var searchHost = (Grid)body.Children[2];
+                var searchBox = (TextBox)searchHost.Children[0];
+                var searchPlaceholder = (TextBlock)searchHost.Children[1];
+                Assert.AreEqual(500.0, searchBox.Width);
+                Assert.AreEqual("Search Icons by Name, Tag", AutomationProperties.GetName(searchBox));
+                Assert.AreEqual("Search Icons by Name, Tag", searchPlaceholder.Text);
+                Assert.AreEqual(Visibility.Visible, searchPlaceholder.Visibility);
+
+                var libraryGrid = (Grid)body.Children[3];
+                Assert.AreEqual(2, libraryGrid.ColumnDefinitions.Count);
+                Assert.AreEqual(300.0, libraryGrid.ColumnDefinitions[1].Width.Value);
+
+                var iconsListView = libraryGrid.Children.OfType<ListView>().Single();
+                Assert.AreEqual("Icons", AutomationProperties.GetName(iconsListView));
+                Assert.AreEqual(520.0, iconsListView.Height);
+                Assert.AreEqual(250, iconsListView.Items.Count);
+                Assert.AreEqual(0, iconsListView.SelectedIndex);
+
+                var detailsPane = libraryGrid.Children.OfType<Grid>().Single(child => Grid.GetColumn(child) == 1);
+                Assert.AreEqual(300.0, detailsPane.Width);
+                Assert.AreEqual(520.0, detailsPane.Height);
+                var detailsStack = (StackPanel)((ScrollViewer)detailsPane.Children[0]).Content;
+                var selectedName = (TextBlock)detailsStack.Children[0];
+                var selectedGlyph = (TextBlock)detailsStack.Children[1];
+                Assert.AreEqual("GlobalNavButton", selectedName.Text);
+                Assert.AreNotEqual(string.Empty, selectedGlyph.Text);
+                Assert.AreEqual("GlobalNavButton", GetIconDataValue(detailsStack, 2));
+                Assert.AreEqual("E700", GetIconDataValue(detailsStack, 3));
+                Assert.AreEqual("&#xE700;", GetIconDataValue(detailsStack, 4));
+                Assert.AreEqual("\\xE700", GetIconDataValue(detailsStack, 5));
+
+                var pagination = (Grid)body.Children[4];
+                var navigation = (StackPanel)pagination.Children[0];
+                var previousButton = (Button)navigation.Children[0];
+                var pageText = (TextBlock)navigation.Children[1];
+                var nextButton = (Button)navigation.Children[2];
+                Assert.IsFalse(previousButton.IsEnabled);
+                Assert.IsTrue(nextButton.IsEnabled);
+                Assert.AreEqual("Page 1 of 7", pageText.Text);
+
+                var pageSize = (StackPanel)pagination.Children[1];
+                var pageSizeComboBox = (ComboBox)pageSize.Children[1];
+                CollectionAssert.AreEqual(new[] { "100", "250", "500", "1000", "All" }, pageSizeComboBox.Items.Cast<string>().ToArray());
+                Assert.AreEqual(1, pageSizeComboBox.SelectedIndex);
+
+                searchBox.Text = "GlobalNavButton";
+                WpfTestHost.DoEvents();
+                Assert.AreEqual(Visibility.Collapsed, searchPlaceholder.Visibility);
+                Assert.AreEqual("GlobalNavButton", selectedName.Text);
+                Assert.IsTrue(iconsListView.Items.Count > 0);
+                Assert.IsTrue(iconsListView.Items.Count < 250);
+
+                searchBox.Text = string.Empty;
+                pageSizeComboBox.SelectedIndex = 0;
+                WpfTestHost.DoEvents();
+                Assert.AreEqual(Visibility.Visible, searchPlaceholder.Visibility);
+                Assert.AreEqual(100, iconsListView.Items.Count);
+                Assert.AreEqual("Page 1 of 16", pageText.Text);
+            });
+        }
+
         private static string GetColorPageExampleTitle(StackPanel section, int childIndex)
         {
             var example = (Border)section.Children[childIndex];
             var grid = (Grid)example.Child;
+            return ((TextBlock)grid.Children[0]).Text;
+        }
+
+        private static string GetIconDataValue(StackPanel detailsStack, int rowIndex)
+        {
+            var row = (StackPanel)detailsStack.Children[rowIndex];
+            var grid = (Grid)row.Children[1];
             return ((TextBlock)grid.Children[0]).Text;
         }
 

@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
@@ -1941,43 +1944,315 @@ namespace ModernWpf.Gallery.Pages
 
         private static StackPanel CreateIconographyExample()
         {
-            var root = new StackPanel();
-            var expander = new Expander
+            var allIcons = LoadIconData().ToArray();
+            var filteredIcons = allIcons.ToList();
+            var currentPage = 1;
+            var selectedPageSizeIndex = 1;
+            var pageSizeOptions = new[] { "100", "250", "500", "1000", "All" };
+
+            TextBox searchBox;
+            TextBlock searchPlaceholder;
+            TextBlock pageText;
+            Button previousButton;
+            Button nextButton;
+            ComboBox pageSizeComboBox;
+            TextBlock selectedNameText;
+            TextBlock selectedGlyphText;
+            TextBlock iconNameValue;
+            TextBlock unicodePointValue;
+            TextBlock textGlyphValue;
+            TextBlock codeGlyphValue;
+            TextBlock xamlValue;
+            TextBlock tagsHeader;
+            WrapPanel tagsPanel;
+            ListView iconsListView;
+
+            var root = new StackPanel
             {
-                Header = "Instructions on how to use Segoe Fluent Icons",
-                Margin = new Thickness(0, 0, 0, 24),
-                Content = new TextBlock
-                {
-                    Text = "On Windows 11, the Segoe Fluent Icons font comes with Windows. Use TextBlock with SymbolThemeFontFamily and a glyph value such as &#xE8A7; for predictable 16, 20, 24, 32, 40, 48, and 64 pixel sizing.",
-                    TextWrapping = TextWrapping.Wrap
-                }
+                Margin = new Thickness(0, 0, 0, 10)
             };
-            root.Children.Add(expander);
+            root.Children.Add(CreateSegoeFluentIconsInstructionsExpander());
 
             var libraryTitle = new TextBlock
             {
                 Text = "Fluent Icons Library",
-                Margin = new Thickness(2, 0, 0, 10)
+                Margin = new Thickness(2, 24, 0, 10)
             };
             libraryTitle.SetResourceReference(FrameworkElement.StyleProperty, "BodyStrongTextBlockStyle");
             root.Children.Add(libraryTitle);
 
-            var searchBox = new TextBox
+            root.Children.Add(CreateIconSearchBox(out searchBox, out searchPlaceholder));
+
+            var libraryGrid = new Grid
             {
-                Width = 500,
-                HorizontalAlignment = HorizontalAlignment.Left,
-                Margin = new Thickness(0, 0, 0, 16)
+                Margin = new Thickness(2, 10, 2, 10),
+                MinHeight = 520
             };
-            AutomationProperties.SetName(searchBox, "Search Icons by Name, Tag");
+            libraryGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            libraryGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(300) });
+
+            var listBackground = new Border
+            {
+                CornerRadius = new CornerRadius(8, 0, 0, 8)
+            };
+            listBackground.SetResourceReference(Border.BackgroundProperty, "SubtleFillColorSecondaryBrush");
+            libraryGrid.Children.Add(listBackground);
+
+            iconsListView = CreateIconsListView();
+            Grid.SetColumn(iconsListView, 0);
+            libraryGrid.Children.Add(iconsListView);
+
+            var detailsPane = CreateIconDetailsPane(
+                out selectedNameText,
+                out selectedGlyphText,
+                out iconNameValue,
+                out unicodePointValue,
+                out textGlyphValue,
+                out codeGlyphValue,
+                out tagsHeader,
+                out tagsPanel,
+                out xamlValue);
+            Grid.SetColumn(detailsPane, 1);
+            libraryGrid.Children.Add(detailsPane);
+            root.Children.Add(libraryGrid);
+
+            root.Children.Add(CreateIconPaginationBar(
+                pageSizeOptions,
+                out previousButton,
+                out nextButton,
+                out pageText,
+                out pageSizeComboBox));
+
+            searchBox.TextChanged += delegate
+            {
+                searchPlaceholder.Visibility = string.IsNullOrEmpty(searchBox.Text) ? Visibility.Visible : Visibility.Collapsed;
+                currentPage = 1;
+                ApplyIconFilter();
+                RefreshDisplayedIcons(true);
+            };
+
+            iconsListView.SelectionChanged += delegate
+            {
+                UpdateSelectedIcon((IconData)iconsListView.SelectedItem);
+            };
+
+            previousButton.Click += delegate
+            {
+                if (currentPage > 1)
+                {
+                    currentPage--;
+                    RefreshDisplayedIcons(true);
+                }
+            };
+
+            nextButton.Click += delegate
+            {
+                var totalPages = GetTotalIconPages();
+                if (currentPage < totalPages)
+                {
+                    currentPage++;
+                    RefreshDisplayedIcons(true);
+                }
+            };
+
+            pageSizeComboBox.SelectionChanged += delegate
+            {
+                selectedPageSizeIndex = pageSizeComboBox.SelectedIndex < 0 ? 1 : pageSizeComboBox.SelectedIndex;
+                currentPage = 1;
+                RefreshDisplayedIcons(true);
+            };
+
+            RefreshDisplayedIcons(true);
+            return root;
+
+            void ApplyIconFilter()
+            {
+                var filterText = searchBox.Text ?? string.Empty;
+                if (string.IsNullOrWhiteSpace(filterText))
+                {
+                    filteredIcons = allIcons.ToList();
+                    return;
+                }
+
+                filteredIcons = allIcons
+                    .Where(icon => IconMatchesFilter(icon, filterText))
+                    .ToList();
+            }
+
+            bool IconMatchesFilter(IconData icon, string filterText)
+            {
+                var comparison = StringComparison.OrdinalIgnoreCase;
+                return icon.Name.IndexOf(filterText, comparison) >= 0 ||
+                    (icon.Tags != null && icon.Tags.Any(tag => tag.IndexOf(filterText, comparison) >= 0));
+            }
+
+            int GetSelectedPageSize()
+            {
+                return selectedPageSizeIndex == pageSizeOptions.Length - 1 ? int.MaxValue : int.Parse(pageSizeOptions[selectedPageSizeIndex]);
+            }
+
+            int GetTotalIconPages()
+            {
+                var pageSize = GetSelectedPageSize();
+                if (pageSize == int.MaxValue)
+                {
+                    return 1;
+                }
+
+                return Math.Max(1, (int)Math.Ceiling((double)filteredIcons.Count / pageSize));
+            }
+
+            void RefreshDisplayedIcons(bool resetSelectedIcon)
+            {
+                var pageSize = GetSelectedPageSize();
+                var totalPages = GetTotalIconPages();
+                currentPage = Math.Max(1, Math.Min(currentPage, totalPages));
+
+                var displayedIcons = pageSize == int.MaxValue
+                    ? filteredIcons
+                    : filteredIcons.Skip((currentPage - 1) * pageSize).Take(pageSize).ToList();
+
+                var previousSelection = iconsListView.SelectedItem as IconData;
+                iconsListView.ItemsSource = displayedIcons;
+                pageText.Text = "Page " + currentPage + " of " + totalPages;
+                previousButton.IsEnabled = currentPage > 1;
+                nextButton.IsEnabled = currentPage < totalPages;
+
+                if (displayedIcons.Count == 0)
+                {
+                    iconsListView.SelectedItem = null;
+                    UpdateSelectedIcon(previousSelection);
+                    return;
+                }
+
+                if (!resetSelectedIcon && previousSelection != null && displayedIcons.Contains(previousSelection))
+                {
+                    iconsListView.SelectedItem = previousSelection;
+                }
+                else
+                {
+                    iconsListView.SelectedIndex = 0;
+                }
+            }
+
+            void UpdateSelectedIcon(IconData icon)
+            {
+                if (icon == null)
+                {
+                    selectedNameText.Text = string.Empty;
+                    selectedGlyphText.Text = string.Empty;
+                    iconNameValue.Text = string.Empty;
+                    unicodePointValue.Text = string.Empty;
+                    textGlyphValue.Text = string.Empty;
+                    codeGlyphValue.Text = string.Empty;
+                    xamlValue.Text = string.Empty;
+                    tagsPanel.Children.Clear();
+                    tagsHeader.Visibility = Visibility.Collapsed;
+                    tagsPanel.Visibility = Visibility.Collapsed;
+                    return;
+                }
+
+                selectedNameText.Text = icon.Name;
+                selectedGlyphText.Text = icon.Character;
+                iconNameValue.Text = icon.Name;
+                unicodePointValue.Text = icon.Code;
+                textGlyphValue.Text = icon.TextGlyph;
+                codeGlyphValue.Text = icon.CodeGlyph;
+                xamlValue.Text = "<TextBlock FontFamily=\"{StaticResource SymbolThemeFontFamily}\" Text=\"" + icon.TextGlyph + "\"/>";
+
+                tagsPanel.Children.Clear();
+                if (icon.Tags == null || icon.Tags.Count == 0)
+                {
+                    tagsHeader.Visibility = Visibility.Collapsed;
+                    tagsPanel.Visibility = Visibility.Collapsed;
+                    return;
+                }
+
+                tagsHeader.Visibility = Visibility.Visible;
+                tagsPanel.Visibility = Visibility.Visible;
+                foreach (var tag in icon.Tags)
+                {
+                    tagsPanel.Children.Add(CreateIconTagButton(tag, ApplyTagFilter));
+                }
+            }
+
+            void ApplyTagFilter(string tag)
+            {
+                searchBox.Text = tag;
+            }
+        }
+
+        private static Expander CreateSegoeFluentIconsInstructionsExpander()
+        {
+            var text = new TextBlock
+            {
+                TextWrapping = TextWrapping.Wrap
+            };
+            text.Inlines.Add(new Run("How to get the font") { FontWeight = FontWeights.SemiBold });
+            text.Inlines.Add(new LineBreak());
+            text.Inlines.Add(new Run("On Windows 11: There's nothing you need to do, the font comes with Windows."));
+            text.Inlines.Add(new LineBreak());
+            text.Inlines.Add(new Run("On Windows 10: Segoe Fluent Icons is not included by default on Windows 10. You can download it "));
+            var fontLink = new Hyperlink(new Run("here"))
+            {
+                NavigateUri = new Uri("https://aka.ms/SegoeFluentIcons")
+            };
+            fontLink.RequestNavigate += OpenRequestNavigate;
+            text.Inlines.Add(fontLink);
+            text.Inlines.Add(new Run("."));
+            text.Inlines.Add(new LineBreak());
+            text.Inlines.Add(new LineBreak());
+            text.Inlines.Add(new Run("How to use the font") { FontWeight = FontWeights.SemiBold });
+            text.Inlines.Add(new LineBreak());
+            text.Inlines.Add(new Run("An icon with a 16-epx font size is the equivalent of a 16x16-epx icon, to make sizing and positioning more predictable. For optimal appearance, use these specific sizes: 16, 20, 24, 32, 40, 48, and 64. Deviating from these font sizes could lead to less crisp or blurry outcomes."));
+            text.Inlines.Add(new LineBreak());
+            text.Inlines.Add(new Run("All glyphs in Segoe Fluent Icons have the same fixed width with a consistent height and left origin point, so "));
+            var guidelinesLink = new Hyperlink(new Run("layering"))
+            {
+                NavigateUri = new Uri("https://learn.microsoft.com/windows/apps/design/style/segoe-fluent-icons-font")
+            };
+            guidelinesLink.RequestNavigate += OpenRequestNavigate;
+            text.Inlines.Add(guidelinesLink);
+            text.Inlines.Add(new Run(" and colorization effects can be achieved by drawing glyphs directly on top of each other."));
+            text.Inlines.Add(new LineBreak());
+            text.Inlines.Add(new LineBreak());
+            text.Inlines.Add(new Run("XAML") { FontWeight = FontWeights.SemiBold });
+            text.Inlines.Add(new LineBreak());
+            text.Inlines.Add(new Run("<Grid>"));
+            text.Inlines.Add(new LineBreak());
+            text.Inlines.Add(new Run("    <TextBlock FontFamily=\"{StaticResource SymbolThemeFontFamily}\" Text=\"&#xEB51;\" Foreground=\"#C72335\"/>"));
+            text.Inlines.Add(new LineBreak());
+            text.Inlines.Add(new Run("    <TextBlock FontFamily=\"{StaticResource SymbolThemeFontFamily}\" Text=\"&#xEB51;\"/>"));
+            text.Inlines.Add(new LineBreak());
+            text.Inlines.Add(new Run("</Grid>"));
+
+            return new Expander
+            {
+                Header = "Instructions on how to use Segoe Fluent Icons",
+                IsExpanded = false,
+                Margin = new Thickness(2, -8, 0, 0),
+                Content = text
+            };
+        }
+
+        private static Grid CreateIconSearchBox(out TextBox searchBox, out TextBlock searchPlaceholder)
+        {
             var searchHost = new Grid
             {
                 Width = 500,
-                HorizontalAlignment = HorizontalAlignment.Left,
-                Margin = new Thickness(0, 0, 0, 16)
+                HorizontalAlignment = HorizontalAlignment.Left
             };
-            searchBox.Margin = new Thickness(0);
+
+            searchBox = new TextBox
+            {
+                Width = 500,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            AutomationProperties.SetName(searchBox, "Search Icons by Name, Tag");
             searchHost.Children.Add(searchBox);
-            var searchPlaceholder = new TextBlock
+
+            searchPlaceholder = new TextBlock
             {
                 Text = "Search Icons by Name, Tag",
                 Margin = new Thickness(14, 0, 0, 0),
@@ -1987,49 +2262,366 @@ namespace ModernWpf.Gallery.Pages
             searchPlaceholder.SetResourceReference(FrameworkElement.StyleProperty, "BodyTextBlockStyle");
             searchPlaceholder.SetResourceReference(TextBlock.ForegroundProperty, "TextFillColorSecondaryBrush");
             searchHost.Children.Add(searchPlaceholder);
-            root.Children.Add(searchHost);
-
-            var icons = new WrapPanel();
-            icons.Children.Add(CreateIconGlyphCard("Open in new window", "\uE8A7", "E8A7"));
-            icons.Children.Add(CreateIconGlyphCard("Copy", "\uE8C8", "E8C8"));
-            icons.Children.Add(CreateIconGlyphCard("Accept", "\uE73E", "E73E"));
-            icons.Children.Add(CreateIconGlyphCard("Search", "\uE721", "E721"));
-            icons.Children.Add(CreateIconGlyphCard("Settings", "\uE713", "E713"));
-            icons.Children.Add(CreateIconGlyphCard("Back", "\uE72B", "E72B"));
-            root.Children.Add(icons);
-            return root;
+            return searchHost;
         }
 
-        private static Border CreateIconGlyphCard(string name, string glyph, string code)
+        private static ListView CreateIconsListView()
         {
-            var border = new Border
+            var listView = new ListView
             {
-                Width = 150,
-                Height = 124,
-                Margin = new Thickness(0, 0, 12, 12),
-                Padding = new Thickness(12),
-                BorderThickness = new Thickness(1),
-                CornerRadius = new CornerRadius(8)
+                Padding = new Thickness(4),
+                Height = 520,
+                SelectionMode = SelectionMode.Single
             };
-            border.SetResourceReference(Border.BackgroundProperty, "CardBackgroundFillColorDefaultBrush");
-            border.SetResourceReference(Border.BorderBrushProperty, "CardStrokeColorDefaultBrush");
+            AutomationProperties.SetName(listView, "Icons");
+            ScrollViewer.SetHorizontalScrollBarVisibility(listView, ScrollBarVisibility.Disabled);
+            ScrollViewer.SetVerticalScrollBarVisibility(listView, ScrollBarVisibility.Visible);
 
-            var stack = new StackPanel();
-            var glyphText = new TextBlock
+            var wrapPanel = new FrameworkElementFactory(typeof(WrapPanel));
+            wrapPanel.SetValue(WrapPanel.OrientationProperty, Orientation.Horizontal);
+            wrapPanel.SetValue(FrameworkElement.MarginProperty, new Thickness(10));
+            listView.ItemsPanel = new ItemsPanelTemplate(wrapPanel);
+
+            var itemStyle = new Style(typeof(ListViewItem), (Style)Application.Current.TryFindResource("DefaultListViewItemStyle"));
+            itemStyle.Setters.Add(new Setter(AutomationProperties.NameProperty, new Binding("Name")));
+            itemStyle.Setters.Add(new Setter(Control.HorizontalContentAlignmentProperty, HorizontalAlignment.Center));
+            itemStyle.Setters.Add(new Setter(Control.VerticalContentAlignmentProperty, VerticalAlignment.Center));
+            listView.ItemContainerStyle = itemStyle;
+            listView.ItemTemplate = CreateIconTileTemplate();
+            return listView;
+        }
+
+        private static DataTemplate CreateIconTileTemplate()
+        {
+            var border = new FrameworkElementFactory(typeof(Border));
+            border.SetValue(Border.BorderThicknessProperty, new Thickness(4));
+            border.SetValue(Border.CornerRadiusProperty, new CornerRadius(8));
+            border.SetValue(FrameworkElement.MarginProperty, new Thickness(0));
+            border.SetBinding(FrameworkElement.ToolTipProperty, new Binding("Name"));
+            border.SetResourceReference(Border.BackgroundProperty, "ButtonBackground");
+
+            var stack = new FrameworkElementFactory(typeof(StackPanel));
+            stack.SetValue(FrameworkElement.WidthProperty, 96.0);
+            stack.SetValue(FrameworkElement.HeightProperty, 96.0);
+            stack.SetValue(StackPanel.OrientationProperty, Orientation.Vertical);
+
+            var glyph = new FrameworkElementFactory(typeof(TextBlock));
+            glyph.SetBinding(TextBlock.TextProperty, new Binding("Character"));
+            glyph.SetResourceReference(TextBlock.FontFamilyProperty, "SymbolThemeFontFamily");
+            glyph.SetValue(TextBlock.FontSizeProperty, 28.0);
+            glyph.SetValue(FrameworkElement.WidthProperty, 28.0);
+            glyph.SetValue(FrameworkElement.HeightProperty, 28.0);
+            glyph.SetValue(FrameworkElement.MarginProperty, new Thickness(0, 18, 0, 8));
+            glyph.SetValue(FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Center);
+            stack.AppendChild(glyph);
+
+            var name = new FrameworkElementFactory(typeof(TextBlock));
+            name.SetBinding(TextBlock.TextProperty, new Binding("Name"));
+            name.SetResourceReference(FrameworkElement.StyleProperty, "CaptionTextBlockStyle");
+            name.SetResourceReference(TextBlock.ForegroundProperty, "TextFillColorPrimaryBrush");
+            name.SetValue(FrameworkElement.WidthProperty, 84.0);
+            name.SetValue(TextBlock.TextAlignmentProperty, TextAlignment.Center);
+            name.SetValue(TextBlock.TextTrimmingProperty, TextTrimming.CharacterEllipsis);
+            name.SetValue(TextBlock.TextWrappingProperty, TextWrapping.NoWrap);
+            name.SetValue(FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Center);
+            stack.AppendChild(name);
+
+            border.AppendChild(stack);
+            return new DataTemplate { VisualTree = border };
+        }
+
+        private static Grid CreateIconDetailsPane(
+            out TextBlock selectedNameText,
+            out TextBlock selectedGlyphText,
+            out TextBlock iconNameValue,
+            out TextBlock unicodePointValue,
+            out TextBlock textGlyphValue,
+            out TextBlock codeGlyphValue,
+            out TextBlock tagsHeader,
+            out WrapPanel tagsPanel,
+            out TextBlock xamlValue)
+        {
+            var pane = new Grid
             {
-                Text = glyph,
-                FontSize = 32,
-                HorizontalAlignment = HorizontalAlignment.Left,
-                Margin = new Thickness(0, 0, 0, 8)
+                Width = 300,
+                Height = 520
             };
-            glyphText.SetResourceReference(TextBlock.FontFamilyProperty, "SymbolThemeFontFamily");
-            stack.Children.Add(glyphText);
-            var nameText = CreateTableText(name, "CaptionTextBlockStyle");
-            nameText.FontWeight = FontWeights.SemiBold;
-            stack.Children.Add(nameText);
-            stack.Children.Add(CreateTableText("&#x" + code + ";", "CaptionTextBlockStyle"));
-            border.Child = stack;
-            return border;
+            pane.SetResourceReference(Panel.BackgroundProperty, "ButtonBackground");
+
+            var scrollViewer = new ScrollViewer
+            {
+                VerticalScrollBarVisibility = ScrollBarVisibility.Auto
+            };
+            var stack = new StackPanel
+            {
+                Margin = new Thickness(16)
+            };
+
+            selectedNameText = new TextBlock
+            {
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            selectedNameText.SetResourceReference(FrameworkElement.StyleProperty, "SubtitleTextBlockStyle");
+            stack.Children.Add(selectedNameText);
+
+            selectedGlyphText = new TextBlock
+            {
+                FontSize = 50,
+                Margin = new Thickness(0, 12, 0, 32),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            selectedGlyphText.SetResourceReference(TextBlock.FontFamilyProperty, "SymbolThemeFontFamily");
+            stack.Children.Add(selectedGlyphText);
+
+            stack.Children.Add(CreateIconDataRow("Icon Name", out iconNameValue));
+            stack.Children.Add(CreateIconDataRow("Unicode point", out unicodePointValue));
+            stack.Children.Add(CreateIconDataRow("Text glyph", out textGlyphValue));
+            stack.Children.Add(CreateIconDataRow("Code glyph", out codeGlyphValue));
+
+            tagsHeader = new TextBlock
+            {
+                Text = "Tags"
+            };
+            stack.Children.Add(tagsHeader);
+            tagsPanel = new WrapPanel
+            {
+                Margin = new Thickness(0, 0, 0, 12)
+            };
+            AutomationProperties.SetName(tagsPanel, "Selected Icon Tags");
+            stack.Children.Add(tagsPanel);
+
+            stack.Children.Add(CreateIconDataRow("XAML", out xamlValue));
+            scrollViewer.Content = stack;
+            pane.Children.Add(scrollViewer);
+            return pane;
+        }
+
+        private static StackPanel CreateIconDataRow(string label, out TextBlock valueText)
+        {
+            var stack = new StackPanel
+            {
+                Margin = new Thickness(0, 0, 0, 4)
+            };
+            stack.Children.Add(new TextBlock { Text = label });
+
+            var grid = new Grid
+            {
+                Margin = new Thickness(0, 4, 0, 4),
+                MinHeight = 32
+            };
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+            valueText = new TextBlock
+            {
+                Padding = new Thickness(0, 6, 0, 4),
+                TextWrapping = TextWrapping.Wrap,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            valueText.SetResourceReference(TextBlock.ForegroundProperty, "TextFillColorPrimaryBrush");
+            valueText.Opacity = 0.7;
+            grid.Children.Add(valueText);
+
+            var copyTarget = valueText;
+            var copyButton = new Button
+            {
+                Padding = new Thickness(8),
+                ToolTip = "Copy to clipboard"
+            };
+            AutomationProperties.SetName(copyButton, "Copy " + label + " to clipboard");
+            copyButton.Click += delegate { CopyTextToClipboard(copyTarget.Text); };
+            copyButton.Content = new TextBlock
+            {
+                Text = "\uE8C8"
+            };
+            ((TextBlock)copyButton.Content).SetResourceReference(TextBlock.FontFamilyProperty, "SymbolThemeFontFamily");
+            Grid.SetColumn(copyButton, 1);
+            grid.Children.Add(copyButton);
+            stack.Children.Add(grid);
+            return stack;
+        }
+
+        private static Button CreateIconTagButton(string tag, Action<string> applyTagFilter)
+        {
+            var button = new Button
+            {
+                Padding = new Thickness(8, 2, 8, 2),
+                Margin = new Thickness(0, 4, 4, 4),
+                Content = new TextBlock
+                {
+                    Text = tag
+                }
+            };
+            AutomationProperties.SetName(button, tag);
+            ((TextBlock)button.Content).SetResourceReference(FrameworkElement.StyleProperty, "CaptionTextBlockStyle");
+            ((TextBlock)button.Content).SetResourceReference(TextBlock.ForegroundProperty, "TextFillColorPrimaryBrush");
+            button.Click += delegate { applyTagFilter(tag); };
+            return button;
+        }
+
+        private static Grid CreateIconPaginationBar(
+            string[] pageSizeOptions,
+            out Button previousButton,
+            out Button nextButton,
+            out TextBlock pageText,
+            out ComboBox pageSizeComboBox)
+        {
+            var grid = new Grid();
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+            var navigation = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+            previousButton = CreateIconPaginationButton("\uF08D", "Previous Page");
+            previousButton.Margin = new Thickness(0, 0, 8, 0);
+            navigation.Children.Add(previousButton);
+
+            pageText = new TextBlock
+            {
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(0, 0, 8, 0)
+            };
+            navigation.Children.Add(pageText);
+
+            nextButton = CreateIconPaginationButton("\uF08F", "Next Page");
+            navigation.Children.Add(nextButton);
+            grid.Children.Add(navigation);
+
+            var pageSize = new StackPanel
+            {
+                Orientation = Orientation.Horizontal
+            };
+            Grid.SetColumn(pageSize, 1);
+            var label = new TextBlock
+            {
+                Text = "Icons per page",
+                Margin = new Thickness(10, 0, 0, 0),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            label.SetResourceReference(FrameworkElement.StyleProperty, "BodyTextBlockStyle");
+            pageSize.Children.Add(label);
+            pageSizeComboBox = new ComboBox
+            {
+                ItemsSource = pageSizeOptions,
+                SelectedIndex = 1,
+                Margin = new Thickness(10, 0, 0, 0)
+            };
+            AutomationProperties.SetName(pageSizeComboBox, "Icons per page");
+            pageSize.Children.Add(pageSizeComboBox);
+            grid.Children.Add(pageSize);
+            return grid;
+        }
+
+        private static Button CreateIconPaginationButton(string glyph, string automationName)
+        {
+            var button = new Button
+            {
+                Padding = new Thickness(8),
+                ToolTip = automationName,
+                Content = new TextBlock
+                {
+                    FontSize = 12,
+                    Text = glyph
+                }
+            };
+            ((TextBlock)button.Content).SetResourceReference(TextBlock.FontFamilyProperty, "SymbolThemeFontFamily");
+            AutomationProperties.SetName(button, automationName);
+            return button;
+        }
+
+        private static IReadOnlyList<IconData> LoadIconData()
+        {
+            var path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Samples", "Data", "IconsData.json");
+            try
+            {
+                if (File.Exists(path))
+                {
+                    using (var stream = File.OpenRead(path))
+                    {
+                        var serializer = new DataContractJsonSerializer(typeof(List<IconData>));
+                        var icons = serializer.ReadObject(stream) as List<IconData>;
+                        if (icons != null && icons.Count != 0)
+                        {
+                            return icons;
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+            }
+
+            return new[]
+            {
+                new IconData { Code = "E700", Name = "GlobalNavButton", Tags = new List<string> { "menu", "hamburger", "symbol-icon" } },
+                new IconData { Code = "E8C8", Name = "Copy", Tags = new List<string> { "clipboard", "duplicate" } },
+                new IconData { Code = "E73E", Name = "Accept", Tags = new List<string> { "check", "success" } },
+                new IconData { Code = "E721", Name = "Find", Tags = new List<string> { "search" } }
+            };
+        }
+
+        private static void CopyTextToClipboard(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                return;
+            }
+
+            try
+            {
+                Clipboard.SetText(text);
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        private static void OpenRequestNavigate(object sender, RequestNavigateEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
+            e.Handled = true;
+        }
+
+        [DataContract]
+        private sealed class IconData
+        {
+            [DataMember]
+            public string Code { get; set; }
+
+            [DataMember]
+            public string Name { get; set; }
+
+            [DataMember]
+            public List<string> Tags { get; set; }
+
+            public string Character
+            {
+                get
+                {
+                    try
+                    {
+                        return char.ConvertFromUtf32(Convert.ToInt32(Code, 16));
+                    }
+                    catch (Exception)
+                    {
+                        return string.Empty;
+                    }
+                }
+            }
+
+            public string CodeGlyph
+            {
+                get { return "\\x" + Code; }
+            }
+
+            public string TextGlyph
+            {
+                get { return "&#x" + Code + ";"; }
+            }
         }
 
         private static StackPanel CreateSpacingExample()
