@@ -35,7 +35,7 @@
                             Grid.Row="0"
                             Margin="0,0,0,10"
                             Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-                            Style="{DynamicResource BodyStrongTextBlockStyle}"
+                            Style="{StaticResource BodyStrongTextBlockStyle}"
                             Text="{TemplateBinding HeaderText}"
                             Visibility="{TemplateBinding HeaderText, Converter={StaticResource NullToVisibilityConverter}}" />
 
@@ -127,9 +127,8 @@
                                 </StackPanel>
 
                                 <Border
-                                    x:Name="CodeBlockDivider"
+                                    x:Name="Border"
                                     Margin="0,20"
-                                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
                                     BorderThickness="1" />
 
                                 <StackPanel x:Name="CSharpCodeBlock">
@@ -141,7 +140,8 @@
 
                                         <TextBlock
                                             Margin="0,0,0,5"
-                                            Style="{DynamicResource BodyStrongTextBlockStyle}"
+                                            Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                            Style="{StaticResource BodyStrongTextBlockStyle}"
                                             Text="C#" />
 
                                         <Button
@@ -168,11 +168,11 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="XamlCode" Value="{x:Null}">
                             <Setter TargetName="XamlCodeBlock" Property="Visibility" Value="Collapsed" />
-                            <Setter TargetName="CodeBlockDivider" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="Border" Property="Visibility" Value="Collapsed" />
                         </Trigger>
                         <Trigger Property="CSharpCode" Value="{x:Null}">
                             <Setter TargetName="CSharpCodeBlock" Property="Visibility" Value="Collapsed" />
-                            <Setter TargetName="CodeBlockDivider" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="Border" Property="Visibility" Value="Collapsed" />
                         </Trigger>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
@@ -180,7 +180,7 @@
                                 <Condition Property="CSharpCode" Value="{x:Null}" />
                             </MultiTrigger.Conditions>
                             <Setter TargetName="SourceCodeExpander" Property="Visibility" Value="Collapsed" />
-                            <Setter TargetName="CodeBlockDivider" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="Border" Property="Visibility" Value="Collapsed" />
                         </MultiTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

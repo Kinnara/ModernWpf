@@ -8,6 +8,7 @@ using System.Windows.Markup;
 using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls;
+using ModernWpf.Gallery.Controls;
 using ModernWpf.Gallery.Pages;
 
 namespace ModernWpf.Gallery.Tests
@@ -100,6 +101,53 @@ namespace ModernWpf.Gallery.Tests
 
                 AssertDynamicResourceSetter(style, Control.ForegroundProperty, "TextControlForeground");
                 AssertDynamicResourceSetter(style, Control.FontSizeProperty, "ControlContentThemeFontSize");
+            });
+        }
+
+        [TestMethod]
+        public void ControlExampleTemplateMatchesWpfGalleryReferenceDivider()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var controlExample = new ControlExample
+                {
+                    HeaderText = "Reference sample",
+                    ExampleContent = new Button { Content = "Example" },
+                    XamlCode = "<Button Content=\"Example\" />",
+                    CSharpCode = "button.Content = \"Example\";"
+                };
+
+                var window = new Window
+                {
+                    Width = 480,
+                    Height = 360,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = controlExample
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    var divider = (Border)controlExample.Template.FindName("Border", controlExample);
+                    Assert.IsNotNull(divider);
+                    Assert.AreEqual(new Thickness(0, 20, 0, 20), divider.Margin);
+                    Assert.AreEqual(new Thickness(1), divider.BorderThickness);
+                    Assert.IsNull(divider.BorderBrush);
+                    Assert.AreEqual(Visibility.Visible, divider.Visibility);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
             });
         }
 
