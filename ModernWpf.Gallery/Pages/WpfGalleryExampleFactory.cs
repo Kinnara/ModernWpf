@@ -188,6 +188,11 @@ namespace ModernWpf.Gallery.Pages
                 return examples;
             }
 
+            if (UsesUniformTenPixelExampleSpacing(uniqueId))
+            {
+                return examples.Select(example => example.WithMargin(new Thickness(10))).ToArray();
+            }
+
             var subsequentTopMargin = UsesThirtyTwoPixelExampleSpacing(uniqueId) ? 32 : 36;
             var result = new GalleryExample[examples.Count];
             for (var i = 0; i < examples.Count; i++)
@@ -197,6 +202,25 @@ namespace ModernWpf.Gallery.Pages
             }
 
             return result;
+        }
+
+        private static bool UsesUniformTenPixelExampleSpacing(string uniqueId)
+        {
+            switch (uniqueId)
+            {
+                case "Border":
+                case "Canvas":
+                case "Expander":
+                case "Grid":
+                case "GridSplitter":
+                case "GroupBox":
+                case "Image":
+                case "ResizeGrip":
+                case "StackPanel":
+                    return true;
+                default:
+                    return false;
+            }
         }
 
         private static bool UsesThirtyTwoPixelExampleSpacing(string uniqueId)
@@ -3959,9 +3983,6 @@ namespace ModernWpf.Gallery.Pages
 
             var columnSplitter = new GridSplitter
             {
-                Width = 8,
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                VerticalAlignment = VerticalAlignment.Stretch,
                 ResizeDirection = GridResizeDirection.Columns
             };
             Grid.SetRowSpan(columnSplitter, 5);
@@ -3978,9 +3999,9 @@ namespace ModernWpf.Gallery.Pages
 
         private static GroupBox CreateUserInformationGroupBox()
         {
-            var nameTextBox = new TextBox { Width = 280, Margin = new Thickness(10, 0, 0, 20) };
+            var nameTextBox = new TextBox { Name = "NameTextBox", Width = 280, Margin = new Thickness(10, 0, 0, 20) };
             AutomationProperties.SetName(nameTextBox, "Name Field");
-            var genderTextBox = new TextBox { Width = 280, Margin = new Thickness(10, 0, 0, 20) };
+            var genderTextBox = new TextBox { Name = "GenderTextBox", Width = 280, Margin = new Thickness(10, 0, 0, 20) };
             AutomationProperties.SetName(genderTextBox, "Gender Field");
 
             var stack = new StackPanel();
@@ -4295,6 +4316,7 @@ namespace ModernWpf.Gallery.Pages
         {
             var button = new Button
             {
+                Name = "OpenResizeGripWindow",
                 Content = "Open window with resize grip",
                 VerticalAlignment = VerticalAlignment.Center,
                 HorizontalAlignment = HorizontalAlignment.Center
@@ -4326,6 +4348,7 @@ namespace ModernWpf.Gallery.Pages
             {
                 Orientation = Orientation.Vertical
             };
+            Grid.SetRow(stack, 1);
             stack.Children.Add(new TextBlock
             {
                 Margin = new Thickness(0, 10, 0, 40),
@@ -4562,8 +4585,7 @@ namespace ModernWpf.Gallery.Pages
             var textBlock = new TextBlock
             {
                 Text = text,
-                TextWrapping = TextWrapping.Wrap,
-                Margin = new Thickness(8)
+                TextWrapping = TextWrapping.Wrap
             };
             Grid.SetRow(textBlock, row);
             Grid.SetColumn(textBlock, column);
@@ -4574,9 +4596,6 @@ namespace ModernWpf.Gallery.Pages
         {
             var splitter = new GridSplitter
             {
-                Height = 8,
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                VerticalAlignment = VerticalAlignment.Stretch,
                 ResizeDirection = GridResizeDirection.Rows
             };
             Grid.SetRow(splitter, row);

@@ -9,6 +9,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Gallery.Controls;
@@ -238,6 +239,15 @@ namespace ModernWpf.Gallery.Tests
                 AssertExampleMargins("TextBlock", new Thickness(10), new Thickness(10, 36, 10, 10), new Thickness(10, 36, 10, 10), new Thickness(10, 36, 10, 10));
                 AssertExampleMargins("TextBox", new Thickness(10), new Thickness(10, 36, 10, 10), new Thickness(10, 36, 10, 10));
                 AssertExampleMargins("Label", new Thickness(10), new Thickness(10, 36, 10, 10));
+                AssertExampleMargins("Border", new Thickness(10), new Thickness(10), new Thickness(10));
+                AssertExampleMargins("Grid", new Thickness(10), new Thickness(10), new Thickness(10));
+                AssertExampleMargins("StackPanel", new Thickness(10), new Thickness(10));
+                AssertExampleMargins("Canvas", new Thickness(10));
+                AssertExampleMargins("Expander", new Thickness(10));
+                AssertExampleMargins("GridSplitter", new Thickness(10));
+                AssertExampleMargins("GroupBox", new Thickness(10));
+                AssertExampleMargins("Image", new Thickness(10));
+                AssertExampleMargins("ResizeGrip", new Thickness(10));
             });
         }
 
@@ -499,6 +509,151 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual("simple rich text editor", AutomationProperties.GetName(richTextBox));
                 Assert.IsTrue(double.IsNaN(richTextBox.Width));
                 Assert.IsTrue(double.IsNaN(richTextBox.Height));
+            });
+        }
+
+        [TestMethod]
+        public void LayoutAndMediaPagesMatchWpfGalleryReference()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var borderPage = new ItemPage(GalleryCatalog.FindItem("Border"));
+                Assert.AreEqual(3, borderPage.Examples.Count);
+                CollectionAssert.AreEqual(
+                    new[] { "A basic Border", "A Border with rounded corners", "A Border with different thickness on each side" },
+                    borderPage.Examples.Select(example => example.HeaderText).ToArray());
+
+                var basicBorder = (Border)borderPage.Examples[0].ExampleContent;
+                Assert.AreEqual(Brushes.Gray, basicBorder.BorderBrush);
+                Assert.AreEqual(new Thickness(2), basicBorder.BorderThickness);
+                Assert.AreEqual(new Thickness(10), basicBorder.Padding);
+                Assert.AreEqual("Content inside a Border", ((TextBlock)basicBorder.Child).Text);
+
+                var roundedBorder = (Border)borderPage.Examples[1].ExampleContent;
+                Assert.AreEqual(Brushes.LightBlue, roundedBorder.Background);
+                Assert.AreEqual(Brushes.CornflowerBlue, roundedBorder.BorderBrush);
+                Assert.AreEqual(new CornerRadius(10), roundedBorder.CornerRadius);
+                Assert.AreEqual(new Thickness(15), roundedBorder.Padding);
+
+                var variedBorder = (Border)borderPage.Examples[2].ExampleContent;
+                Assert.AreEqual(Brushes.DarkSlateGray, variedBorder.BorderBrush);
+                Assert.AreEqual(new Thickness(1, 2, 4, 8), variedBorder.BorderThickness);
+
+                var gridPage = new ItemPage(GalleryCatalog.FindItem("Grid"));
+                Assert.AreEqual(3, gridPage.Examples.Count);
+                CollectionAssert.AreEqual(
+                    new[] { "A simple 3x3 Grid", "A Grid with custom sizing and spanning", "Grid using XAML shorthand syntax" },
+                    gridPage.Examples.Select(example => example.HeaderText).ToArray());
+
+                var simpleGrid = (Grid)gridPage.Examples[0].ExampleContent;
+                Assert.AreEqual(250.0, simpleGrid.Height);
+                Assert.IsTrue(simpleGrid.ShowGridLines);
+                Assert.AreEqual(3, simpleGrid.RowDefinitions.Count);
+                Assert.AreEqual(3, simpleGrid.ColumnDefinitions.Count);
+                CollectionAssert.AreEqual(
+                    Enumerable.Range(1, 9).Select(i => "Cell " + i).ToArray(),
+                    simpleGrid.Children.OfType<TextBlock>().Select(textBlock => textBlock.Text).ToArray());
+
+                var customGrid = (Grid)gridPage.Examples[1].ExampleContent;
+                AssertGridExample(customGrid, 300.0, new[] { "Row 0, Column 0", "Row 1, Spans all columns", "Row 2, Spans 2 columns" });
+
+                var shorthandGrid = (Grid)gridPage.Examples[2].ExampleContent;
+                AssertGridExample(shorthandGrid, 300.0, new[] { "Header (100px)", "Main Content Area (fills available space)", "Footer (Auto height, spans all columns)" });
+                Assert.AreEqual(100.0, shorthandGrid.ColumnDefinitions[0].Width.Value);
+                Assert.AreEqual(2.0, shorthandGrid.ColumnDefinitions[1].Width.Value);
+
+                var stackPanelPage = new ItemPage(GalleryCatalog.FindItem("StackPanel"));
+                Assert.AreEqual(2, stackPanelPage.Examples.Count);
+                CollectionAssert.AreEqual(
+                    new[] { "A basic vertical StackPanel", "A horizontal StackPanel" },
+                    stackPanelPage.Examples.Select(example => example.HeaderText).ToArray());
+                AssertStackPanelExample((StackPanel)stackPanelPage.Examples[0].ExampleContent, Orientation.Vertical);
+                AssertStackPanelExample((StackPanel)stackPanelPage.Examples[1].ExampleContent, Orientation.Horizontal);
+
+                var expanderPage = new ItemPage(GalleryCatalog.FindItem("Expander"));
+                Assert.AreEqual(1, expanderPage.Examples.Count);
+                Assert.AreEqual("An Expander with text in the header and content areas", expanderPage.Examples[0].HeaderText);
+                var expanderGrid = (Grid)expanderPage.Examples[0].ExampleContent;
+                Assert.AreEqual(2, expanderGrid.ColumnDefinitions.Count);
+                var expander = expanderGrid.Children.OfType<Expander>().Single();
+                Assert.AreEqual(0, Grid.GetColumn(expander));
+                Assert.AreEqual("This text is in the header", expander.Header);
+                Assert.AreEqual("This is in the content", expander.Content);
+
+                var gridSplitterPage = new ItemPage(GalleryCatalog.FindItem("GridSplitter"));
+                Assert.AreEqual(1, gridSplitterPage.Examples.Count);
+                Assert.AreEqual("A GridSplitter", gridSplitterPage.Examples[0].HeaderText);
+                var gridSplitterRoot = (Grid)gridSplitterPage.Examples[0].ExampleContent;
+                Assert.AreEqual(400.0, gridSplitterRoot.Height);
+                Assert.AreEqual("Grid Splitter", ((TextBlock)gridSplitterRoot.Children[0]).Text);
+                var splitterBorder = (Border)gridSplitterRoot.Children.OfType<Border>().Single();
+                Assert.AreEqual(new Thickness(2), splitterBorder.BorderThickness);
+                Assert.AreEqual(new Thickness(10), splitterBorder.Padding);
+                Assert.AreEqual(new CornerRadius(4), splitterBorder.CornerRadius);
+                Assert.AreEqual(1, Grid.GetRow(splitterBorder));
+                var splitterGrid = (Grid)splitterBorder.Child;
+                Assert.AreEqual(7, splitterGrid.RowDefinitions.Count);
+                Assert.AreEqual(3, splitterGrid.ColumnDefinitions.Count);
+                Assert.AreEqual(6, splitterGrid.Children.OfType<TextBlock>().Count());
+                Assert.IsTrue(splitterGrid.Children.OfType<TextBlock>().All(textBlock => textBlock.Margin == new Thickness(0)));
+                var splitters = splitterGrid.Children.OfType<GridSplitter>().ToArray();
+                Assert.AreEqual(3, splitters.Length);
+                Assert.AreEqual(GridResizeDirection.Columns, splitters[0].ResizeDirection);
+                Assert.IsTrue(double.IsNaN(splitters[0].Width));
+                Assert.AreEqual(5, Grid.GetRowSpan(splitters[0]));
+                Assert.AreEqual(1, Grid.GetColumn(splitters[0]));
+                Assert.IsTrue(splitters.Skip(1).All(splitter => splitter.ResizeDirection == GridResizeDirection.Rows));
+                Assert.IsTrue(splitters.Skip(1).All(splitter => double.IsNaN(splitter.Height)));
+
+                var groupBoxPage = new ItemPage(GalleryCatalog.FindItem("GroupBox"));
+                Assert.AreEqual(1, groupBoxPage.Examples.Count);
+                Assert.AreEqual("A GroupBox", groupBoxPage.Examples[0].HeaderText);
+                var groupBox = (GroupBox)groupBoxPage.Examples[0].ExampleContent;
+                Assert.AreEqual("User Information", groupBox.Header);
+                Assert.AreEqual(HorizontalAlignment.Left, groupBox.HorizontalAlignment);
+                Assert.AreEqual(VerticalAlignment.Center, groupBox.VerticalAlignment);
+                Assert.AreEqual(400.0, groupBox.Width);
+                var groupStack = (StackPanel)groupBox.Content;
+                Assert.AreEqual(3, groupStack.Children.Count);
+                var nameRow = (StackPanel)groupStack.Children[0];
+                var genderRow = (StackPanel)groupStack.Children[1];
+                Assert.AreEqual("Name:", ((TextBlock)nameRow.Children[0]).Text);
+                Assert.AreEqual("NameTextBox", ((TextBox)nameRow.Children[1]).Name);
+                Assert.AreEqual("Gender:", ((TextBlock)genderRow.Children[0]).Text);
+                Assert.AreEqual("GenderTextBox", ((TextBox)genderRow.Children[1]).Name);
+                Assert.AreEqual("Submit", ((Button)groupStack.Children[2]).Content);
+
+                var canvasPage = new ItemPage(GalleryCatalog.FindItem("Canvas"));
+                Assert.AreEqual(1, canvasPage.Examples.Count);
+                Assert.AreEqual("A basic Canvas inside the ViewBox", canvasPage.Examples[0].HeaderText);
+                var viewbox = (Viewbox)canvasPage.Examples[0].ExampleContent;
+                Assert.AreEqual(200.0, viewbox.Width);
+                Assert.AreEqual(200.0, viewbox.Height);
+                var canvas = (Canvas)viewbox.Child;
+                Assert.AreEqual(47.0, canvas.Width);
+                Assert.AreEqual(123.0, canvas.Height);
+                Assert.AreEqual(2, canvas.Children.OfType<Path>().Count());
+
+                var imagePage = new ItemPage(GalleryCatalog.FindItem("Image"));
+                Assert.AreEqual(1, imagePage.Examples.Count);
+                Assert.AreEqual("Standand Image from a local file.", imagePage.Examples[0].HeaderText);
+                var image = (Image)imagePage.Examples[0].ExampleContent;
+                Assert.AreEqual(200.0, image.Height);
+                Assert.AreEqual(HorizontalAlignment.Left, image.HorizontalAlignment);
+                StringAssert.Contains(((BitmapImage)image.Source).UriSource.ToString(), "win11-dashboard");
+
+                var resizeGripPage = new ItemPage(GalleryCatalog.FindItem("ResizeGrip"));
+                Assert.AreEqual(1, resizeGripPage.Examples.Count);
+                Assert.AreEqual("A ResizeGrip", resizeGripPage.Examples[0].HeaderText);
+                var resizeGripStack = (StackPanel)resizeGripPage.Examples[0].ExampleContent;
+                Assert.AreEqual(Orientation.Vertical, resizeGripStack.Orientation);
+                Assert.AreEqual(1, Grid.GetRow(resizeGripStack));
+                Assert.AreEqual(new Thickness(0, 10, 0, 40), ((TextBlock)resizeGripStack.Children[0]).Margin);
+                var resizeGripButton = (Button)resizeGripStack.Children[1];
+                Assert.AreEqual("OpenResizeGripWindow", resizeGripButton.Name);
+                Assert.AreEqual("Open window with resize grip", resizeGripButton.Content);
+                Assert.AreEqual(HorizontalAlignment.Center, resizeGripButton.HorizontalAlignment);
+                Assert.AreEqual(VerticalAlignment.Center, resizeGripButton.VerticalAlignment);
             });
         }
 
@@ -788,6 +943,41 @@ namespace ModernWpf.Gallery.Tests
             for (var i = 0; i < expectedMargins.Length; i++)
             {
                 Assert.AreEqual(expectedMargins[i], page.Examples[i].Margin, uniqueId + " example " + i);
+            }
+        }
+
+        private static void AssertGridExample(Grid grid, double height, string[] expectedTexts)
+        {
+            Assert.AreEqual(height, grid.Height);
+            Assert.AreEqual(3, grid.RowDefinitions.Count);
+            Assert.AreEqual(3, grid.ColumnDefinitions.Count);
+
+            var borders = grid.Children.OfType<Border>().ToArray();
+            Assert.IsTrue(borders.Length >= expectedTexts.Length);
+            var texts = borders.Select(border => ((TextBlock)border.Child).Text).ToArray();
+            foreach (var expectedText in expectedTexts)
+            {
+                Assert.IsTrue(texts.Contains(expectedText), expectedText);
+            }
+
+            foreach (var border in borders)
+            {
+                Assert.AreEqual(new Thickness(5), border.Margin);
+                Assert.AreEqual(new Thickness(10), border.Padding);
+            }
+        }
+
+        private static void AssertStackPanelExample(StackPanel stackPanel, Orientation orientation)
+        {
+            Assert.AreEqual(orientation, stackPanel.Orientation);
+            var rectangles = stackPanel.Children.OfType<Rectangle>().ToArray();
+            Assert.AreEqual(3, rectangles.Length);
+            CollectionAssert.AreEqual(new[] { Brushes.CornflowerBlue, Brushes.LightCoral, Brushes.MediumSeaGreen }, rectangles.Select(rectangle => rectangle.Fill).ToArray());
+            foreach (var rectangle in rectangles)
+            {
+                Assert.AreEqual(100.0, rectangle.Width);
+                Assert.AreEqual(30.0, rectangle.Height);
+                Assert.AreEqual(new Thickness(5), rectangle.Margin);
             }
         }
 
