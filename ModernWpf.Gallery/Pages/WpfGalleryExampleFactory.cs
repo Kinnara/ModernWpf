@@ -1362,26 +1362,58 @@ namespace ModernWpf.Gallery.Pages
         private static StackPanel CreateFillColorSection()
         {
             var root = new StackPanel();
-            root.Children.Add(CreateColorPageExample("Accent Fill", "Recommended for accent controls and prominent actions", CreateAccentFillExample()));
-            root.Children.Add(CreateColorTilesPanel(
-                ColorTile("Accent Fill / Default", "AccentFillColorDefaultBrush", "Rest", "TextOnAccentFillColorPrimaryBrush"),
-                ColorTile("Accent Fill / Secondary", "AccentFillColorSecondaryBrush", "Hover", "TextOnAccentFillColorPrimaryBrush"),
-                ColorTile("Accent Fill / Tertiary", "AccentFillColorTertiaryBrush", "Pressed", "TextOnAccentFillColorPrimaryBrush"),
-                ColorTile("Accent Fill / Disabled", "AccentFillColorDisabledBrush", "Disabled only", "TextFillColorPrimaryBrush")));
 
-            root.Children.Add(CreateColorPageExample("Control Fill", "For standard controls in their default states", CreateControlFillExample()));
+            root.Children.Add(CreateFillColorPageExample("Control Fill", "Fill used for standard controls", CreateControlFillExample()));
             root.Children.Add(CreateColorTilesPanel(
-                ColorTile("Control Fill / Default", "ControlFillColorDefaultBrush", "Rest"),
-                ColorTile("Control Fill / Secondary", "ControlFillColorSecondaryBrush", "Hover"),
-                ColorTile("Control Fill / Tertiary", "ControlFillColorTertiaryBrush", "Pressed"),
-                ColorTile("Control Fill / Disabled", "ControlFillColorDisabledBrush", "Disabled only")));
+                ColorTile("Control / Default", "ControlFillColorDefaultBrush", "Rest"),
+                ColorTile("Control / Secondary", "ControlFillColorSecondaryBrush", "Hover"),
+                ColorTile("Control / Tertiary", "ControlFillColorTertiaryBrush", "Pressed"),
+                ColorTileWithBackground("Control / Quartenary", "ControlFillColorQuarternaryBrush", "ControlFillColorTertiaryBrush", "Rest (Pill Button control)")));
+            root.Children.Add(CreateColorTilesPanel(
+                ColorTile("Control / Disabled", "ControlFillColorDisabledBrush", "Disabled"),
+                ColorTile("Control / Transparent", "ControlFillColorTransparentBrush", "Rest"),
+                ColorTile("Control / Input Active", "ControlFillColorInputActiveBrush", "Active/focused text input fields")));
 
-            root.Children.Add(CreateColorPageExample("Subtle Fill", "For transparent controls, secondary buttons, and list states", CreateSubtleFillExample()));
+            root.Children.Add(CreateFillColorPageExample("Control Alt Fill", "Fill used for the 'off' states of toggle controls", CreateControlAltFillExample()));
             root.Children.Add(CreateColorTilesPanel(
-                ColorTile("Subtle Fill / Transparent", "SubtleFillColorTransparentBrush", "Rest"),
-                ColorTile("Subtle Fill / Secondary", "SubtleFillColorSecondaryBrush", "Hover"),
-                ColorTile("Subtle Fill / Tertiary", "SubtleFillColorTertiaryBrush", "Pressed"),
-                ColorTile("Subtle Fill / Disabled", "SubtleFillColorDisabledBrush", "Disabled only")));
+                ColorTile("Control Alt / Transparent", "ControlAltFillColorTransparentBrush", string.Empty),
+                ColorTile("Control Alt / Secondary", "ControlAltFillColorSecondaryBrush", "Rest"),
+                ColorTile("Control Alt / Tertiary", "ControlAltFillColorTertiaryBrush", "Hover")));
+            root.Children.Add(CreateColorTilesPanel(
+                ColorTile("Control Alt / Quarternary", "ControlAltFillColorQuarternaryBrush", "Pressed"),
+                ColorTile("Control Alt / Disabled", "ControlAltFillColorDisabledBrush", "Disabled")));
+
+            root.Children.Add(CreateFillColorPageExample("Control Solid", "Fills used for Sliders thumb control to cover the track beneath it.", CreateControlSolidFillExample()));
+            root.Children.Add(CreateColorTilesPanel(
+                ColorTileWithBackground("Control Solid / Default", "ControlStrongFillColorDefaultBrush", "ControlSolidFillColorDefaultBrush", "Rest")));
+
+            root.Children.Add(CreateFillColorPageExample("Control Strong Fill", "Used for controls that must meet contrast ratio requirements of 3:1.", CreateControlStrongFillExample()));
+            root.Children.Add(CreateColorTilesPanel(
+                ColorTile("Control Strong / Default", "ControlStrongFillColorDefaultBrush", "Rest or hover", "TextFillColorInverseBrush"),
+                ColorTile("Control Strong / Disabled", "ControlStrongFillColorDisabledBrush", "Disabled only (not accessible)", "TextFillColorInverseBrush")));
+
+            root.Children.Add(CreateFillColorPageExample("Subtle Fill", "Used for list items and fills that are transparent at rest and appear upon interaction.", CreateSubtleFillExample()));
+            root.Children.Add(CreateColorTilesPanel(
+                ColorTile("Subtle / Transparent ", "SubtleFillColorTransparentBrush", "Rest", "TextFillColorPrimaryBrush"),
+                ColorTile("Subtle / Secondary", "SubtleFillColorSecondaryBrush", "Hover", "TextFillColorPrimaryBrush"),
+                ColorTile("Subtle / Tertiary ", "SubtleFillColorTertiaryBrush", "Pressed", "TextFillColorPrimaryBrush"),
+                ColorTile("Subtle / Disabled", "SubtleFillColorDisabledBrush", "Disabled only (not accessible)", "TextFillColorPrimaryBrush")));
+
+            root.Children.Add(CreateFillColorPageExample("Control On Image Fill", "Used for controls living on top of imagery.", CreateControlOnImageFillExample()));
+            root.Children.Add(CreateColorTilesPanel(
+                ColorTile("Control On Image Fill Default", "ControlOnImageFillColorDefaultBrush", "Rest", "TextFillColorPrimaryBrush"),
+                ColorTile("Control On Image Fill Secondary", "ControlOnImageFillColorSecondaryBrush", "Hover", "TextFillColorPrimaryBrush"),
+                ColorTile("Control On Image Fill Tertiary", "ControlOnImageFillColorTertiaryBrush", "Pressed", "TextFillColorPrimaryBrush"),
+                ColorTile("Control On Image Fill Disabled", "ControlOnImageFillColorDisabledBrush", "Disabled only (not accessible)", "TextFillColorPrimaryBrush")));
+
+            root.Children.Add(CreateFillColorPageExample("Accent Fill", "Used for accent fills on controls", CreateAccentFillExample()));
+            root.Children.Add(CreateColorTilesPanel(
+                ColorTile("Accent / Default", "AccentFillColorDefaultBrush", "Rest", "TextOnAccentFillColorDefaultBrush"),
+                ColorTile("Accent / Secondary", "AccentFillColorSecondaryBrush", "Hover", "TextOnAccentFillColorDefaultBrush"),
+                ColorTile("Accent / Tertiary", "AccentFillColorTertiaryBrush", "Pressed", "TextOnAccentFillColorDefaultBrush")));
+            root.Children.Add(CreateColorTilesPanel(
+                ColorTile("Accent / Disabled", "AccentFillColorDisabledBrush", "Disabled"),
+                ColorTile("Accent / Selected Text Background", "AccentFillColorSelectedTextBackgroundBrush", "Highighted/selected text background", "TextOnAccentFillColorDefaultBrush")));
             return root;
         }
 
@@ -1467,6 +1499,16 @@ namespace ModernWpf.Gallery.Pages
 
         private static Border CreateColorPageExample(string title, string description, UIElement exampleContent, string foregroundResource)
         {
+            return CreateColorPageExample(title, description, exampleContent, foregroundResource, "SolidBackgroundFillColorBaseBrush");
+        }
+
+        private static Border CreateFillColorPageExample(string title, string description, UIElement exampleContent)
+        {
+            return CreateColorPageExample(title, description, exampleContent, null, "SolidBackgroundFillColorQuarternaryBrush");
+        }
+
+        private static Border CreateColorPageExample(string title, string description, UIElement exampleContent, string foregroundResource, string backgroundResource)
+        {
             var border = new Border
             {
                 Margin = new Thickness(0, 36, 0, 0),
@@ -1474,7 +1516,7 @@ namespace ModernWpf.Gallery.Pages
                 BorderThickness = new Thickness(1),
                 CornerRadius = new CornerRadius(8)
             };
-            border.SetResourceReference(Border.BackgroundProperty, "SolidBackgroundFillColorBaseBrush");
+            border.SetResourceReference(Border.BackgroundProperty, backgroundResource);
             border.SetResourceReference(Border.BorderBrushProperty, "CardStrokeColorDefaultBrush");
             AutomationProperties.SetName(border, title + " Color Page Example");
 
@@ -1529,40 +1571,113 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateAccentFillExample()
         {
+            var panel = new StackPanel();
             var button = new Button
             {
-                Content = "Accent"
+                Content = "Text"
             };
-            button.SetResourceReference(Control.BackgroundProperty, "AccentFillColorDefaultBrush");
-            button.SetResourceReference(Control.ForegroundProperty, "TextOnAccentFillColorPrimaryBrush");
-            return button;
+            button.SetResourceReference(FrameworkElement.StyleProperty, "AccentButtonStyle");
+            panel.Children.Add(button);
+            return panel;
         }
 
         private static UIElement CreateControlFillExample()
         {
-            var button = new Button
+            return new Button
             {
-                Content = "Control fill"
+                Content = "Text"
             };
-            button.SetResourceReference(Control.BackgroundProperty, "ControlFillColorDefaultBrush");
-            return button;
+        }
+
+        private static UIElement CreateControlAltFillExample()
+        {
+            return new CheckBox
+            {
+                Focusable = false
+            };
+        }
+
+        private static UIElement CreateControlSolidFillExample()
+        {
+            return new Slider
+            {
+                Focusable = false,
+                MinWidth = 240,
+                Maximum = 100,
+                Value = 40
+            };
+        }
+
+        private static UIElement CreateControlStrongFillExample()
+        {
+            return new ScrollBar
+            {
+                Focusable = false,
+                Width = 200,
+                Height = 20,
+                Orientation = Orientation.Horizontal,
+                Visibility = Visibility.Visible
+            };
         }
 
         private static UIElement CreateSubtleFillExample()
         {
-            var border = new Border
+            var root = new StackPanel
             {
-                Width = 180,
-                Height = 72,
-                CornerRadius = new CornerRadius(8),
+                Orientation = Orientation.Vertical
+            };
+
+            var rest = new Grid();
+            rest.Children.Add(new TextBlock
+            {
+                Margin = new Thickness(8),
+                Text = "Rest"
+            });
+            root.Children.Add(rest);
+
+            var hover = new Border
+            {
+                MinWidth = 120,
                 Child = new TextBlock
                 {
-                    Text = "Subtle fill",
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center
+                    Padding = new Thickness(12),
+                    Text = "Hover"
                 }
             };
-            border.SetResourceReference(Border.BackgroundProperty, "SubtleFillColorSecondaryBrush");
+            hover.SetResourceReference(Border.BackgroundProperty, "SubtleFillColorSecondaryBrush");
+            hover.SetResourceReference(Border.CornerRadiusProperty, "ControlCornerRadius");
+            root.Children.Add(hover);
+
+            return root;
+        }
+
+        private static UIElement CreateControlOnImageFillExample()
+        {
+            var border = new Border();
+            border.SetResourceReference(Border.CornerRadiusProperty, "ControlCornerRadius");
+
+            var grid = new Grid();
+            grid.Children.Add(new Image
+            {
+                MaxHeight = 150,
+                Source = new BitmapImage(new Uri("pack://application:,,,/ModernWpf.Gallery;component/Assets/win11-dashboard.light.png"))
+            });
+
+            var swatch = new Border
+            {
+                Width = 20,
+                Height = 20,
+                Margin = new Thickness(8),
+                HorizontalAlignment = HorizontalAlignment.Right,
+                VerticalAlignment = VerticalAlignment.Top,
+                BorderThickness = new Thickness(1)
+            };
+            swatch.SetResourceReference(Border.BackgroundProperty, "ControlOnImageFillColorDefaultBrush");
+            swatch.SetResourceReference(Border.BorderBrushProperty, "ControlStrongStrokeColorDefaultBrush");
+            swatch.SetResourceReference(Border.CornerRadiusProperty, "ControlCornerRadius");
+            grid.Children.Add(swatch);
+
+            border.Child = grid;
             return border;
         }
 
@@ -1718,7 +1833,7 @@ namespace ModernWpf.Gallery.Pages
                 MinHeight = 124,
                 CornerRadius = CreateTileRadius(index, count)
             };
-            border.SetResourceReference(Border.BackgroundProperty, tileInfo.BrushName);
+            border.SetResourceReference(Border.BackgroundProperty, tileInfo.BackgroundResource);
             AutomationProperties.SetName(border, tileInfo.ColorName);
 
             var outerGrid = new Grid();
@@ -1848,17 +1963,22 @@ namespace ModernWpf.Gallery.Pages
 
         private static ColorTileInfo ColorTile(string colorName, string brushName, string explanation)
         {
-            return new ColorTileInfo(colorName, brushName, explanation, null, null);
+            return new ColorTileInfo(colorName, brushName, brushName, explanation, null, null);
         }
 
         private static ColorTileInfo ColorTile(string colorName, string brushName, string explanation, string foregroundResource)
         {
-            return new ColorTileInfo(colorName, brushName, explanation, foregroundResource, null);
+            return new ColorTileInfo(colorName, brushName, brushName, explanation, foregroundResource, null);
         }
 
         private static ColorTileInfo ColorTile(string colorName, string brushName, string explanation, Brush foregroundBrush)
         {
-            return new ColorTileInfo(colorName, brushName, explanation, null, foregroundBrush);
+            return new ColorTileInfo(colorName, brushName, brushName, explanation, null, foregroundBrush);
+        }
+
+        private static ColorTileInfo ColorTileWithBackground(string colorName, string brushName, string backgroundResource, string explanation)
+        {
+            return new ColorTileInfo(colorName, brushName, backgroundResource, explanation, null, null);
         }
 
         private static void ApplyForeground(TextBlock textBlock, string foregroundResource, Brush foregroundBrush)
@@ -1875,10 +1995,11 @@ namespace ModernWpf.Gallery.Pages
 
         private sealed class ColorTileInfo
         {
-            public ColorTileInfo(string colorName, string brushName, string colorExplanation, string foregroundResource, Brush foregroundBrush)
+            public ColorTileInfo(string colorName, string brushName, string backgroundResource, string colorExplanation, string foregroundResource, Brush foregroundBrush)
             {
                 ColorName = colorName;
                 BrushName = brushName;
+                BackgroundResource = backgroundResource;
                 ColorExplanation = colorExplanation;
                 ForegroundResource = foregroundResource;
                 ForegroundBrush = foregroundBrush;
@@ -1886,6 +2007,7 @@ namespace ModernWpf.Gallery.Pages
 
             public string ColorName { get; }
             public string BrushName { get; }
+            public string BackgroundResource { get; }
             public string ColorExplanation { get; }
             public string ForegroundResource { get; }
             public Brush ForegroundBrush { get; }

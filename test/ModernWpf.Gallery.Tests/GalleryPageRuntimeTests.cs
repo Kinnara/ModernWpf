@@ -255,7 +255,28 @@ namespace ModernWpf.Gallery.Tests
 
                 selector.SelectedIndex = 1;
                 WpfTestHost.DoEvents();
-                Assert.AreEqual("Accent Fill", GetColorPageExampleTitle((StackPanel)sectionHost.Content, 0));
+                var fillSection = (StackPanel)sectionHost.Content;
+                Assert.AreEqual(17, fillSection.Children.Count);
+                Assert.AreEqual("Control Fill", GetColorPageExampleTitle(fillSection, 0));
+                Assert.AreEqual("Control Alt Fill", GetColorPageExampleTitle(fillSection, 3));
+                Assert.AreEqual("Control Solid", GetColorPageExampleTitle(fillSection, 6));
+                Assert.AreEqual("Control Strong Fill", GetColorPageExampleTitle(fillSection, 8));
+                Assert.AreEqual("Subtle Fill", GetColorPageExampleTitle(fillSection, 10));
+                Assert.AreEqual("Control On Image Fill", GetColorPageExampleTitle(fillSection, 12));
+                Assert.AreEqual("Accent Fill", GetColorPageExampleTitle(fillSection, 14));
+
+                var controlFillTiles = GetColorTilesGrid(fillSection, 1);
+                Assert.AreEqual(4, controlFillTiles.ColumnDefinitions.Count);
+                Assert.AreEqual("Control / Default", AutomationProperties.GetName((UIElement)controlFillTiles.Children[0]));
+                Assert.AreEqual("Control / Quartenary", AutomationProperties.GetName((UIElement)controlFillTiles.Children[3]));
+
+                var controlFillSecondRow = GetColorTilesGrid(fillSection, 2);
+                Assert.AreEqual(3, controlFillSecondRow.ColumnDefinitions.Count);
+                Assert.AreEqual("Control / Disabled", AutomationProperties.GetName((UIElement)controlFillSecondRow.Children[0]));
+                Assert.AreEqual("Control / Input Active", AutomationProperties.GetName((UIElement)controlFillSecondRow.Children[2]));
+
+                var accentFillSecondRow = GetColorTilesGrid(fillSection, 16);
+                Assert.AreEqual("Accent / Selected Text Background", AutomationProperties.GetName((UIElement)accentFillSecondRow.Children[1]));
 
                 selector.SelectedIndex = 4;
                 WpfTestHost.DoEvents();
@@ -349,6 +370,12 @@ namespace ModernWpf.Gallery.Tests
             var example = (Border)section.Children[childIndex];
             var grid = (Grid)example.Child;
             return ((TextBlock)grid.Children[0]).Text;
+        }
+
+        private static Grid GetColorTilesGrid(StackPanel section, int childIndex)
+        {
+            var tilesPanel = (Border)section.Children[childIndex];
+            return (Grid)tilesPanel.Child;
         }
 
         private static string GetIconDataValue(StackPanel detailsStack, int rowIndex)
