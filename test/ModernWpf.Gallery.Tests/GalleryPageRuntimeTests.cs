@@ -4,7 +4,9 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -309,6 +311,95 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void BasicInputComboBoxRadioButtonAndSliderPagesMatchWpfGalleryReference()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var comboBoxPage = new ItemPage(GalleryCatalog.FindItem("ComboBox"));
+                Assert.AreEqual(3, comboBoxPage.Examples.Count);
+                CollectionAssert.AreEqual(
+                    new[]
+                    {
+                        "A ComboBox with items defined inline.",
+                        "A ComboBox with ItemsSource set.",
+                        "An editable ComboBox."
+                    },
+                    comboBoxPage.Examples.Select(example => example.HeaderText).ToArray());
+
+                var inlineComboBox = (ComboBox)((Panel)comboBoxPage.Examples[0].ExampleContent).Children[0];
+                AssertGalleryComboBox(inlineComboBox, "Sample defined inline");
+                CollectionAssert.AreEqual(
+                    new[] { "Blue", "Green", "Red", "Yellow" },
+                    inlineComboBox.Items.Cast<ComboBoxItem>().Select(item => (string)item.Content).ToArray());
+                Assert.AreEqual(0, inlineComboBox.SelectedIndex);
+
+                var fontFamilyComboBox = (ComboBox)comboBoxPage.Examples[1].ExampleContent;
+                AssertGalleryComboBox(fontFamilyComboBox, "Sample item source set");
+                CollectionAssert.AreEqual(
+                    new[] { "Arial", "Comic Sans MS", "Segoe UI", "Times New Roman" },
+                    fontFamilyComboBox.ItemsSource.Cast<string>().ToArray());
+                Assert.IsNotNull(fontFamilyComboBox.ItemTemplate);
+                Assert.AreEqual(0, fontFamilyComboBox.SelectedIndex);
+
+                var editableComboBox = (ComboBox)comboBoxPage.Examples[2].ExampleContent;
+                AssertGalleryComboBox(editableComboBox, "Editable");
+                Assert.IsTrue(editableComboBox.IsEditable);
+                CollectionAssert.AreEqual(
+                    new[] { 8, 9, 10, 11, 12, 14, 16, 18, 20, 24, 28, 36, 48, 72 },
+                    editableComboBox.ItemsSource.Cast<int>().ToArray());
+                Assert.AreEqual(0, editableComboBox.SelectedIndex);
+
+                var radioButtonPage = new ItemPage(GalleryCatalog.FindItem("RadioButton"));
+                Assert.AreEqual(2, radioButtonPage.Examples.Count);
+                CollectionAssert.AreEqual(
+                    new[] { "Standard RadioButton.", "RadioButton with right to left flow direction." },
+                    radioButtonPage.Examples.Select(example => example.HeaderText).ToArray());
+
+                var radioGrid = (Grid)radioButtonPage.Examples[0].ExampleContent;
+                Assert.AreEqual(2, radioGrid.ColumnDefinitions.Count);
+                var defaultRadioStack = (StackPanel)radioGrid.Children[0];
+                Assert.AreEqual(KeyboardNavigationMode.Once, KeyboardNavigation.GetTabNavigation(defaultRadioStack));
+                Assert.AreEqual(KeyboardNavigationMode.Cycle, KeyboardNavigation.GetDirectionalNavigation(defaultRadioStack));
+                var defaultRadios = defaultRadioStack.Children.OfType<RadioButton>().ToArray();
+                AssertRadioButtons(defaultRadios, "Default", "radio_group_one", FlowDirection.LeftToRight);
+
+                var disableRadioButtons = (CheckBox)radioGrid.Children[1];
+                Assert.AreEqual(1, Grid.GetColumn(disableRadioButtons));
+                Assert.AreEqual("Disable RadioButton's", disableRadioButtons.Content);
+                disableRadioButtons.IsChecked = true;
+                Assert.IsTrue(defaultRadios.All(radioButton => !radioButton.IsEnabled));
+                disableRadioButtons.IsChecked = false;
+                Assert.IsTrue(defaultRadios.All(radioButton => radioButton.IsEnabled));
+
+                RaiseGotKeyboardFocus(defaultRadios[1]);
+                Assert.AreEqual(true, defaultRadios[1].IsChecked);
+                Assert.AreEqual(false, defaultRadios[0].IsChecked);
+
+                var leftFlowStack = (StackPanel)radioButtonPage.Examples[1].ExampleContent;
+                Assert.AreEqual(KeyboardNavigationMode.Once, KeyboardNavigation.GetTabNavigation(leftFlowStack));
+                Assert.AreEqual(KeyboardNavigationMode.Cycle, KeyboardNavigation.GetDirectionalNavigation(leftFlowStack));
+                AssertRadioButtons(leftFlowStack.Children.OfType<RadioButton>().ToArray(), "Left Flow", "radio_group_two", FlowDirection.RightToLeft);
+
+                var sliderPage = new ItemPage(GalleryCatalog.FindItem("Slider"));
+                Assert.AreEqual(4, sliderPage.Examples.Count);
+                CollectionAssert.AreEqual(
+                    new[]
+                    {
+                        "A simple slider.",
+                        "A slider with steps and range specified.",
+                        "A slider with tick marks.",
+                        "A vertical slider with range and tick marks specified."
+                    },
+                    sliderPage.Examples.Select(example => example.HeaderText).ToArray());
+
+                AssertSliderExample(sliderPage.Examples[0], "Simple", 0, 100, 0, 0, TickPlacement.None, Orientation.Horizontal);
+                AssertSliderExample(sliderPage.Examples[1], "Range and steps specified", 500, 1000, 500, 50, TickPlacement.None, Orientation.Horizontal);
+                AssertSliderExample(sliderPage.Examples[2], "Tick marks", 0, 100, 0, 20, TickPlacement.Both, Orientation.Horizontal);
+                AssertSliderExample(sliderPage.Examples[3], "Vertical", 0, 100, 0, 20, TickPlacement.Both, Orientation.Vertical);
+            });
+        }
+
+        [TestMethod]
         public void DesignGuidancePagesMatchWpfGalleryReferenceLayoutDetails()
         {
             WpfTestHost.Run(() =>
@@ -595,6 +686,69 @@ namespace ModernWpf.Gallery.Tests
             {
                 Assert.AreEqual(expectedMargins[i], page.Examples[i].Margin, uniqueId + " example " + i);
             }
+        }
+
+        private static void AssertGalleryComboBox(ComboBox comboBox, string automationName)
+        {
+            Assert.AreEqual(200.0, comboBox.MinWidth);
+            Assert.AreEqual(HorizontalAlignment.Left, comboBox.HorizontalAlignment);
+            Assert.AreEqual(automationName, AutomationProperties.GetName(comboBox));
+        }
+
+        private static void AssertRadioButtons(RadioButton[] radioButtons, string automationNamePrefix, string groupName, FlowDirection flowDirection)
+        {
+            Assert.AreEqual(3, radioButtons.Length);
+            for (var i = 0; i < radioButtons.Length; i++)
+            {
+                Assert.AreEqual("Option " + (i + 1), radioButtons[i].Content);
+                Assert.AreEqual(groupName, radioButtons[i].GroupName);
+                Assert.AreEqual(flowDirection, radioButtons[i].FlowDirection);
+                Assert.AreEqual(automationNamePrefix + " Radio Option " + (i + 1), AutomationProperties.GetName(radioButtons[i]));
+            }
+
+            Assert.AreEqual(true, radioButtons[0].IsChecked);
+        }
+
+        private static void RaiseGotKeyboardFocus(RadioButton radioButton)
+        {
+            radioButton.RaiseEvent(new KeyboardFocusChangedEventArgs(Keyboard.PrimaryDevice, 0, null, radioButton)
+            {
+                RoutedEvent = Keyboard.GotKeyboardFocusEvent
+            });
+        }
+
+        private static void AssertSliderExample(GalleryExample example, string automationName, double minimum, double maximum, double value, double tickFrequency, TickPlacement tickPlacement, Orientation orientation)
+        {
+            var grid = (Grid)example.ExampleContent;
+            Assert.AreEqual(2, grid.ColumnDefinitions.Count);
+            Assert.AreEqual(GridUnitType.Star, grid.ColumnDefinitions[0].Width.GridUnitType);
+            Assert.AreEqual(GridUnitType.Auto, grid.ColumnDefinitions[1].Width.GridUnitType);
+
+            var slider = grid.Children.OfType<Slider>().Single();
+            Assert.AreEqual(200.0, slider.Width);
+            Assert.IsTrue(double.IsNaN(slider.Height));
+            Assert.AreEqual(new Thickness(0), slider.Margin);
+            Assert.AreEqual(HorizontalAlignment.Left, slider.HorizontalAlignment);
+            Assert.AreEqual(VerticalAlignment.Center, slider.VerticalAlignment);
+            Assert.AreEqual(automationName, AutomationProperties.GetName(slider));
+            Assert.IsTrue(slider.IsSnapToTickEnabled);
+            Assert.AreEqual(minimum, slider.Minimum);
+            Assert.AreEqual(maximum, slider.Maximum);
+            Assert.AreEqual(value, slider.Value);
+            Assert.AreEqual(tickFrequency, slider.TickFrequency);
+            Assert.AreEqual(tickPlacement, slider.TickPlacement);
+            Assert.AreEqual(orientation, slider.Orientation);
+
+            var outputGrid = grid.Children.OfType<Grid>().Single(child => Grid.GetColumn(child) == 1);
+            var outputStack = (StackPanel)outputGrid.Children[0];
+            Assert.AreEqual(VerticalAlignment.Center, outputStack.VerticalAlignment);
+            var outputLabel = (TextBlock)outputStack.Children[0];
+            var outputValue = (TextBlock)outputStack.Children[1];
+            Assert.AreEqual("Output:", outputLabel.Text);
+            Assert.AreEqual(value.ToString("0"), outputValue.Text);
+
+            slider.Value = minimum == maximum ? value : minimum + 1;
+            Assert.AreEqual(slider.Value.ToString("0"), outputValue.Text);
         }
 
         private static void AssertGridViewColumn(GridViewColumn column, string header, double width, string path)

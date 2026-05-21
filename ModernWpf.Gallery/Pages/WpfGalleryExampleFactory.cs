@@ -5006,6 +5006,7 @@ namespace ModernWpf.Gallery.Pages
             for (var i = 0; i < options.Length; i++)
             {
                 AutomationProperties.SetName(options[i], (flowDirection == FlowDirection.RightToLeft ? "Left Flow" : "Default") + " Radio Option " + (i + 1));
+                options[i].GotKeyboardFocus += OnRadioButtonGotKeyboardFocus;
                 stack.Children.Add(options[i]);
             }
 
@@ -5107,10 +5108,6 @@ namespace ModernWpf.Gallery.Pages
                 TickPlacement = tickPlacement,
                 Orientation = orientation
             };
-            if (orientation == Orientation.Vertical)
-            {
-                slider.Height = 200;
-            }
             AutomationProperties.SetName(slider, automationName);
 
             var outputValue = new TextBlock();
@@ -5127,11 +5124,23 @@ namespace ModernWpf.Gallery.Pages
             outputLabel.SetResourceReference(TextBlock.ForegroundProperty, "TextFillColorPrimaryBrush");
             outputStack.Children.Add(outputLabel);
             outputStack.Children.Add(outputValue);
-            Grid.SetColumn(outputStack, 1);
+
+            var outputGrid = new Grid();
+            outputGrid.Children.Add(outputStack);
+            Grid.SetColumn(outputGrid, 1);
 
             grid.Children.Add(slider);
-            grid.Children.Add(outputStack);
+            grid.Children.Add(outputGrid);
             return grid;
+        }
+
+        private static void OnRadioButtonGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            var radioButton = sender as RadioButton;
+            if (radioButton != null)
+            {
+                radioButton.IsChecked = true;
+            }
         }
 
         private static StackPanel CreateStackPanel(Orientation orientation)
