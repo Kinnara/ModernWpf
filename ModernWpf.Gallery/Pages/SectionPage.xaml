@@ -41,7 +41,7 @@
                         KeyboardNavigation.IsTabStop="True">
                         <TextBlock
                             Style="{StaticResource BodyTextBlockStyle}"
-                            Text="{Binding Subtitle}" />
+                            Text="{Binding PageDescription}" />
                     </Label>
                 </StackPanel>
 

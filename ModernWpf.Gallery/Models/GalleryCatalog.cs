@@ -375,8 +375,8 @@ namespace ModernWpf.Gallery.Models
                     "Navigation",
                     "Frame",
                     "Frame",
-                    "A navigation host that displays Page content.",
-                    "NavigationView.png",
+                    "A navigation control that allows displaying different Page content within an application.",
+                    "MenuBar.png",
                     "Frame hosts navigable WPF Page instances and maintains a navigation journal.",
                     "System.Windows.Controls.Frame",
                     new[] { "Object", "DispatcherObject", "DependencyObject", "Visual", "UIElement", "FrameworkElement", "Control", "ContentControl", "Frame" },
@@ -386,8 +386,8 @@ namespace ModernWpf.Gallery.Models
                     "Navigation",
                     "NavigationWindow",
                     "NavigationWindow",
-                    "A top-level window with built-in page navigation.",
-                    "AppWindow.png",
+                    "A control that supports navigation between pages, similar to a web browser.",
+                    "CreateMultipleWindows.png",
                     "NavigationWindow hosts Page content in its own window and provides browser-style navigation chrome.",
                     "System.Windows.Navigation.NavigationWindow",
                     new[] { "Object", "DispatcherObject", "DependencyObject", "Visual", "UIElement", "FrameworkElement", "ContentControl", "Window", "NavigationWindow" },
@@ -397,7 +397,7 @@ namespace ModernWpf.Gallery.Models
                     "Navigation",
                     "Menu",
                     "Menu",
-                    "A classic WPF menu with nested commands and keyboard access.",
+                    "A classic menu, allowing the display of MenuItems containing MenuFlyoutItems.",
                     "MenuBar.png",
                     "Menu provides top-level commands through MenuItem children, separators, and access keys.",
                     "System.Windows.Controls.Menu",
@@ -407,7 +407,7 @@ namespace ModernWpf.Gallery.Models
                     "Navigation",
                     "TabControl",
                     "TabControl",
-                    "A selector that switches between multiple tabbed content pages.",
+                    "A control that displays a collection of tabs.",
                     "TabView.png",
                     "TabControl presents a set of TabItem pages with one active selection.",
                     "System.Windows.Controls.TabControl",
@@ -574,7 +574,8 @@ namespace ModernWpf.Gallery.Models
                         "Spacing",
                         "Geometry",
                         "Iconography"
-                    }),
+                    },
+                    "Design guidelines on how to use colors, typography, and icons in your app."),
                 CreateGroup(
                     "Samples",
                     "Samples",
@@ -583,7 +584,8 @@ namespace ModernWpf.Gallery.Models
                     new[]
                     {
                         "UserDashboard"
-                    }),
+                    },
+                    "Sample pages for common scenarios"),
                 CreateGroup(
                     "BasicInput",
                     "Basic Input",
@@ -596,7 +598,8 @@ namespace ModernWpf.Gallery.Models
                         "ComboBox",
                         "RadioButton",
                         "Slider"
-                    }),
+                    },
+                    "Controls for getting user input"),
                 CreateGroup(
                     "Collections",
                     "Collections",
@@ -608,7 +611,8 @@ namespace ModernWpf.Gallery.Models
                         "ListBox",
                         "ListView",
                         "TreeView"
-                    }),
+                    },
+                    "Controls for collection presentation"),
                 CreateGroup(
                     "DateAndCalendar",
                     "Date & Calendar",
@@ -618,7 +622,8 @@ namespace ModernWpf.Gallery.Models
                     {
                         "Calendar",
                         "DatePicker"
-                    }),
+                    },
+                    "Controls for date and calendar"),
                 CreateGroup(
                     "Layout",
                     "Layout",
@@ -633,7 +638,8 @@ namespace ModernWpf.Gallery.Models
                         "GroupBox",
                         "StackPanel",
                         "Border"
-                    }),
+                    },
+                    "Controls for layouting"),
                 CreateGroup(
                     "Navigation",
                     "Navigation",
@@ -645,7 +651,8 @@ namespace ModernWpf.Gallery.Models
                         "TabControl",
                         "Frame",
                         "NavigationWindow"
-                    }),
+                    },
+                    "Controls for navigation and actions"),
                 CreateGroup(
                     "StatusAndInfo",
                     "Status & Info",
@@ -655,7 +662,8 @@ namespace ModernWpf.Gallery.Models
                     {
                         "ProgressBar",
                         "ToolTip"
-                    }),
+                    },
+                    "Controls to show progress and extra information"),
                 CreateGroup(
                     "Text",
                     "Text",
@@ -669,7 +677,8 @@ namespace ModernWpf.Gallery.Models
                         "RichTextEdit",
                         "PasswordBox",
                         "Hyperlink"
-                    }),
+                    },
+                    "Controls for displaying and editing text"),
                 CreateGroup(
                     "System",
                     "System",
@@ -680,7 +689,8 @@ namespace ModernWpf.Gallery.Models
                         "FileAndFolderDialogs",
                         "MessageBox",
                         "Clipboard"
-                    }),
+                    },
+                    "System-level controls and dialogs"),
                 CreateGroup(
                     "ModernWpfControls",
                     "ModernWpf controls",
@@ -759,24 +769,25 @@ namespace ModernWpf.Gallery.Models
             };
         }
 
-        private static GalleryGroup CreateGroup(string uniqueId, string title, string subtitle, string imagePath, IReadOnlyList<string> itemIds)
+        private static GalleryGroup CreateGroup(string uniqueId, string title, string subtitle, string imagePath, IReadOnlyList<string> itemIds, string pageDescription = null)
         {
             var items = itemIds
                 .Select(FindItem)
                 .Where(item => item != null)
                 .ToArray();
 
-            return new GalleryGroup(uniqueId, title, subtitle, imagePath, false, items);
+            return new GalleryGroup(uniqueId, title, subtitle, imagePath, false, items, pageDescription);
         }
     }
 
     public sealed class GalleryGroup
     {
-        public GalleryGroup(string uniqueId, string title, string subtitle, string imagePath, bool isSpecialSection, IReadOnlyList<GalleryItem> items)
+        public GalleryGroup(string uniqueId, string title, string subtitle, string imagePath, bool isSpecialSection, IReadOnlyList<GalleryItem> items, string pageDescription = null)
         {
             UniqueId = uniqueId;
             Title = title;
             Subtitle = subtitle;
+            PageDescription = pageDescription ?? subtitle;
             ImagePath = GalleryAssetUri.Normalize(imagePath);
             IsSpecialSection = isSpecialSection;
             Items = items ?? Array.Empty<GalleryItem>();
@@ -785,6 +796,7 @@ namespace ModernWpf.Gallery.Models
         public string UniqueId { get; }
         public string Title { get; }
         public string Subtitle { get; }
+        public string PageDescription { get; }
         public string ImagePath { get; }
         public bool IsSpecialSection { get; }
         public IReadOnlyList<GalleryItem> Items { get; }
