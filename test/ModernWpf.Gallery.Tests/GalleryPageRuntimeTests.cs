@@ -101,6 +101,36 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void WpfGalleryItemPageDescriptionsMatchReferenceViewModels()
+        {
+            var expectedDescriptions = new Dictionary<string, string>
+            {
+                { "Canvas", string.Empty },
+                { "Color", "Guide showing how to use colors in your app" },
+                { "Iconography", "Guide showing how to use icons in your application." },
+                { "Image", string.Empty },
+                { "Label", string.Empty },
+                { "PasswordBox", string.Empty },
+                { "RichTextEdit", string.Empty },
+                { "Spacing", "Guide showing how to use spacing in your app" },
+                { "TextBlock", string.Empty },
+                { "TextBox", string.Empty },
+                { "Typography", "Guide showing how to use typography in your app" },
+            };
+
+            WpfTestHost.Run(() =>
+            {
+                foreach (var expectedDescription in expectedDescriptions)
+                {
+                    var page = new ItemPage(GalleryCatalog.FindItem(expectedDescription.Key));
+
+                    Assert.IsTrue(page.ShowPageDescription, expectedDescription.Key);
+                    Assert.AreEqual(expectedDescription.Value, page.Description, expectedDescription.Key);
+                }
+            });
+        }
+
+        [TestMethod]
         public void WhatsNewPageHeaderMatchesWpfGalleryReference()
         {
             WpfTestHost.Run(() =>
