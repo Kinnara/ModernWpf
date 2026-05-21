@@ -96,10 +96,20 @@ namespace ModernWpf.Gallery.Tests
         [TestMethod]
         public void NavigationSectionCardsMatchOfficialWpfGalleryCatalog()
         {
-            AssertNavigationItem("Menu", "A classic menu, allowing the display of MenuItems containing MenuFlyoutItems.", "MenuBar.png");
+            AssertNavigationItem("Menu", "A classic menu, allowing the display of MenuItems containing MenuFlyoutItems.", "Pivot.png");
             AssertNavigationItem("TabControl", "A control that displays a collection of tabs.", "TabView.png");
             AssertNavigationItem("Frame", "A navigation control that allows displaying different Page content within an application.", "MenuBar.png");
             AssertNavigationItem("NavigationWindow", "A control that supports navigation between pages, similar to a web browser.", "CreateMultipleWindows.png");
+        }
+
+        [TestMethod]
+        public void BasicInputSectionCardsMatchOfficialWpfGalleryCatalogArtwork()
+        {
+            AssertItemImage("Button", "Button.png");
+            AssertItemImage("CheckBox", "CheckBox.png");
+            AssertItemImage("ComboBox", "CheckBox.png");
+            AssertItemImage("RadioButton", "RadioButton.png");
+            AssertItemImage("Slider", "Slider.png");
         }
 
         [TestMethod]
@@ -161,7 +171,26 @@ namespace ModernWpf.Gallery.Tests
 
             Assert.IsNotNull(item, uniqueId);
             Assert.AreEqual(subtitle, item.Subtitle, uniqueId);
-            StringAssert.EndsWith(item.ImagePath, "Assets/ControlImages/" + imageFileName);
+            AssertItemImage(item, imageFileName);
+        }
+
+        private static void AssertItemImage(string uniqueId, string imageFileName)
+        {
+            var item = GalleryCatalog.FindItem(uniqueId);
+
+            Assert.IsNotNull(item, uniqueId);
+            AssertItemImage(item, imageFileName);
+        }
+
+        private static void AssertItemImage(GalleryItem item, string imageFileName)
+        {
+            var expectedSuffix = "Assets/ControlImages/" + imageFileName;
+
+            Assert.IsTrue(
+                item.ImagePath.EndsWith(expectedSuffix, StringComparison.OrdinalIgnoreCase),
+                "Expected '{0}' to end with '{1}'.",
+                item.ImagePath,
+                expectedSuffix);
         }
     }
 }
