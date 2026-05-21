@@ -1528,33 +1528,113 @@ namespace ModernWpf.Gallery.Pages
         private static StackPanel CreateSignalColorSection()
         {
             var root = new StackPanel();
-            root.Children.Add(CreateColorPageExample("System Fill", "For status, severity, and validation indicators", CreateSignalExample()));
+            root.Children.Add(CreateColorPageExample("System", "Used for accent fills on controls", null));
             root.Children.Add(CreateColorTilesPanel(
-                ColorTile("System Fill / Success", "SystemFillColorSuccessBrush", "Success foreground", "TextFillColorInverseBrush"),
-                ColorTile("System Fill / Caution", "SystemFillColorCautionBrush", "Warning foreground", "TextFillColorInverseBrush"),
-                ColorTile("System Fill / Critical", "SystemFillColorCriticalBrush", "Error foreground", "TextFillColorInverseBrush"),
-                ColorTile("System Fill / Attention", "SystemFillColorAttentionBrush", "Informational foreground", "TextFillColorInverseBrush")));
+                ColorTile("System / Success", "SystemFillColorSuccessBrush", "Badge", "TextFillColorInverseBrush"),
+                ColorTile("System / Caution", "SystemFillColorCautionBrush", "Badge", "TextFillColorInverseBrush"),
+                ColorTile("System / Critical", "SystemFillColorCriticalBrush", "Badge", "TextFillColorInverseBrush")));
 
-            root.Children.Add(CreateColorPageExample("System Fill Background", "For status backgrounds and low-emphasis banners", CreateSignalBackgroundExample()));
             root.Children.Add(CreateColorTilesPanel(
-                ColorTile("System Fill / Success Background", "SystemFillColorSuccessBackgroundBrush", "Success background"),
-                ColorTile("System Fill / Caution Background", "SystemFillColorCautionBackgroundBrush", "Warning background"),
-                ColorTile("System Fill / Critical Background", "SystemFillColorCriticalBackgroundBrush", "Error background"),
-                ColorTile("System Fill / Attention Background", "SystemFillColorAttentionBackgroundBrush", "Informational background")));
+                ColorTile("System / Success Background", "SystemFillColorSuccessBackgroundBrush", "Infobar Background"),
+                ColorTile("System / Caution Background", "SystemFillColorCautionBackgroundBrush", "Infobar Background"),
+                ColorTile("Accent / Selected Text Background", "SystemFillColorCriticalBackgroundBrush", "Infobar Background")));
+            root.Children.Add(CreateColorTilesPanel(
+                ColorTile("System / Attention", "SystemFillColorAttentionBrush", "Badge", "TextFillColorInverseBrush"),
+                ColorTile("System / Neutral", "SystemFillColorNeutralBrush", "Badge", "TextFillColorPrimaryBrush"),
+                ColorTile("System / Solid Neutral", "SystemFillColorSolidNeutralBrush", "Neutral badges over content", "TextFillColorInverseBrush")));
+            root.Children.Add(CreateColorTilesPanel(
+                ColorTile("System / Attention Background", "SystemFillColorAttentionBackgroundBrush", "Infobar Background"),
+                ColorTile("System / Neutral Background", "SystemFillColorNeutralBackgroundBrush", "Infobar Background"),
+                ColorTile("System / Solid Neutral Background", "SystemFillColorSolidNeutralBackgroundBrush", "Neutral badges over content")));
+            root.Children.Add(CreateColorTilesPanel(
+                ColorTile("System / Solid Attention Background", "SystemFillColorSolidAttentionBackgroundBrush", string.Empty)));
             return root;
         }
 
         private static StackPanel CreateHighContrastColorSection()
         {
             var root = new StackPanel();
-            root.Children.Add(CreateColorPageExample("High Contrast", "System color resources used when high contrast is enabled", CreateHighContrastExample()));
-            root.Children.Add(CreateColorTilesPanel(
-                ColorTile("Window Text", "SystemColorWindowTextColorBrush", "Text on window backgrounds"),
-                ColorTile("Window", "SystemColorWindowColorBrush", "Window background"),
-                ColorTile("Highlight", "SystemColorHighlightColorBrush", "Selection background", "SystemColorHighlightTextColorBrush"),
-                ColorTile("Highlight Text", "SystemColorHighlightTextColorBrush", "Selection text"),
-                ColorTile("Gray Text", "SystemColorGrayTextColorBrush", "Disabled text")));
+            root.Children.Add(new TextBlock
+            {
+                Margin = new Thickness(0, 0, 0, 8),
+                Text = "Below are the default highcontrast themes shown. The brush names are the same, and the OS will chose the right colors based on the selected theme.",
+                TextWrapping = TextWrapping.Wrap
+            });
+
+            AddHighContrastTheme(root, "Aquatic",
+                HighContrastTile("Window Text Color", "SystemColorWindowTextColor", "#FFFFFF", "Foreground / Text color for Headings, body copy, lists, placeholder text, app and window borders, any UI that can't be interacted with.", "#202020", new CornerRadius(8, 0, 0, 0), true),
+                HighContrastTile("Window Color", "SystemColorWindowColor", "#202020", "Background of pages, panes, popups, and windows.", "#FFFFFF", new CornerRadius(0, 0, 0, 8), true),
+                HighContrastTile("Highlight Text Color", "SystemColorHighlightTextColor", "#263B50", "Foreground color for text or UI that is in selected, interacted with (hover, pressed), or in progress.", "#8EE3F0"),
+                HighContrastTile("Highlight Color", "SystemColorHighlightColor", "#8EE3F0", "Background or accent color for UI that is in selected, interacted with (hover, pressed), or in progress.", "#263B50"),
+                HighContrastTile("Button Text Color", "SystemColorButtonTextColor", "#FFFFFF", "Foreground color for buttons and any UI that can be interacted with.", "#202020"),
+                HighContrastTile("Button Face Color", "SystemColorButtonFaceColor", "#202020", "Background color for buttons and any UI that can be interacted with.", "#FFFFFF"),
+                HighContrastTile("Hotlight Color", "SystemColorHotlightColor", "#75E9FC", "Foreground / Text color for hyperlink text.", "#202020", new CornerRadius(0, 8, 0, 0), false),
+                HighContrastTile("Grey Text Color / Disabled", "SystemColorGreyTextColor", "#A6A6A6", "Foreground / Text color for Inactive (disabled) UI.", "#FFFFFF", new CornerRadius(0, 0, 8, 0), false));
+
+            AddHighContrastTheme(root, "Desert",
+                HighContrastTile("Window Text Color", "SystemColorWindowTextColor", "#3D3D3D", "Foreground / Text color for Headings, body copy, lists, placeholder text, app and window borders, any UI that can't be interacted with.", "#FFFAEF", new CornerRadius(8, 0, 0, 0), true),
+                HighContrastTile("Window Color", "SystemColorWindowColor", "#FFFAEF", "Background of pages, panes, popups, and windows.", "#3D3D3D", new CornerRadius(0, 0, 0, 8), true),
+                HighContrastTile("Highlight Text Color", "SystemColorHighlightTextColor", "#FFF5E3", "Foreground color for text or UI that is in selected, interacted with (hover, pressed), or in progress.", "#903909"),
+                HighContrastTile("Highlight Color", "SystemColorHighlightColor", "#903909", "Background or accent color for UI that is in selected, interacted with (hover, pressed), or in progress.", "#FFF5E3"),
+                HighContrastTile("Button Text Color", "SystemColorButtonTextColor", "#202020", "Foreground color for buttons and any UI that can be interacted with.", "#FFFAEF"),
+                HighContrastTile("Button Face Color", "SystemColorButtonFaceColor", "#FFFAEF", "Background color for buttons and any UI that can be interacted with.", "#202020"),
+                HighContrastTile("Hotlight Color", "SystemColorHotlightColor", "#1C5E75", "Foreground / Text color for hyperlink text.", "#FFFAEF", new CornerRadius(0, 8, 0, 0), false),
+                HighContrastTile("Grey Text Color / Disabled", "SystemColorGreyTextColor", "#676767", "Foreground / Text color for Inactive (disabled) UI.", "#FFFAEF", new CornerRadius(0, 0, 8, 0), false));
+
+            AddHighContrastTheme(root, "Dusk",
+                HighContrastTile("Window Text Color", "SystemColorWindowTextColor", "#FFFFFF", "Foreground / Text color for Headings, body copy, lists, placeholder text, app and window borders, any UI that can't be interacted with.", "#2D3236", new CornerRadius(8, 0, 0, 0), true),
+                HighContrastTile("Window Color", "SystemColorWindowColor", "#2D3236", "Background of pages, panes, popups, and windows.", "#FFFFFF", new CornerRadius(0, 0, 0, 8), true),
+                HighContrastTile("Highlight Text Color", "SystemColorHighlightTextColor", "#212D3B", "Foreground color for text or UI that is in selected, interacted with (hover, pressed), or in progress.", "#ABCFF2"),
+                HighContrastTile("Highlight Color", "SystemColorHighlightColor", "#ABCFF2", "Background or accent color for UI that is in selected, interacted with (hover, pressed), or in progress.", "#212D3B"),
+                HighContrastTile("Button Text Color", "SystemColorButtonTextColor", "#B6F6F0", "Foreground color for buttons and any UI that can be interacted with.", "#2D3236"),
+                HighContrastTile("Button Face Color", "SystemColorButtonFaceColor", "#2D3236", "Background color for buttons and any UI that can be interacted with.", "#B6F6F0"),
+                HighContrastTile("Hotlight Color", "SystemColorHotlightColor", "#70EBDE", "Foreground / Text color for hyperlink text.", "#202020", new CornerRadius(0, 8, 0, 0), false),
+                HighContrastTile("Grey Text Color / Disabled", "SystemColorGreyTextColor", "#A6A6A6", "Foreground / Text color for Inactive (disabled) UI.", "#FFFFFF", new CornerRadius(0, 0, 8, 0), false));
+
+            AddHighContrastTheme(root, "Night Sky",
+                HighContrastTile("Window Text Color", "SystemColorWindowTextColor", "#FFFFFF", "Foreground / Text color for Headings, body copy, lists, placeholder text, app and window borders, any UI that can't be interacted with.", "#000000", new CornerRadius(8, 0, 0, 0), true),
+                HighContrastTile("Window Color", "SystemColorWindowColor", "#000000", "Background of pages, panes, popups, and windows.", "#FFFFFF", new CornerRadius(0, 0, 0, 8), true),
+                HighContrastTile("Highlight Text Color", "SystemColorHighlightTextColor", "#2B2B2B", "Foreground color for text or UI that is in selected, interacted with (hover, pressed), or in progress.", "#D6B4FD"),
+                HighContrastTile("Highlight Color", "SystemColorHighlightColor", "#D6B4FD", "Background or accent color for UI that is in selected, interacted with (hover, pressed), or in progress.", "#2B2B2B"),
+                HighContrastTile("Button Text Color", "SystemColorButtonTextColor", "#FFEE32", "Foreground color for buttons and any UI that can be interacted with.", "#000000"),
+                HighContrastTile("Button Face Color", "SystemColorButtonFaceColor", "#000000", "Background color for buttons and any UI that can be interacted with.", "#FFEE32"),
+                HighContrastTile("Hotlight Color", "SystemColorHotlightColor", "#8080FF", "Foreground / Text color for hyperlink text.", "#FFFFFF", new CornerRadius(0, 8, 0, 0), false),
+                HighContrastTile("Grey Text Color / Disabled", "SystemColorGreyTextColor", "#A6A6A6", "Foreground / Text color for Inactive (disabled) UI.", "#000000", new CornerRadius(0, 0, 8, 0), false));
             return root;
+        }
+
+        private static void AddHighContrastTheme(StackPanel root, string title, params ColorTileInfo[] tiles)
+        {
+            var titleText = new TextBlock
+            {
+                Margin = root.Children.Count == 1 ? new Thickness(0, 12, 0, 12) : new Thickness(0, 24, 0, 12),
+                Text = title
+            };
+            titleText.SetResourceReference(FrameworkElement.StyleProperty, "SubtitleTextBlockStyle");
+            root.Children.Add(titleText);
+            root.Children.Add(CreateHighContrastTilesGrid(tiles));
+        }
+
+        private static Grid CreateHighContrastTilesGrid(params ColorTileInfo[] tiles)
+        {
+            var grid = new Grid();
+            for (var i = 0; i < 4; i++)
+            {
+                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            }
+
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+
+            for (var i = 0; i < tiles.Length; i++)
+            {
+                var tile = CreateColorTile(tiles[i], i, tiles.Length);
+                Grid.SetColumn(tile, i / 2);
+                Grid.SetRow(tile, i % 2);
+                grid.Children.Add(tile);
+            }
+
+            return grid;
         }
 
         private static Border CreateColorPageExample(string title, string description, UIElement exampleContent)
@@ -1614,14 +1694,17 @@ namespace ModernWpf.Gallery.Pages
             Grid.SetRow(descriptionText, 1);
             grid.Children.Add(descriptionText);
 
-            var content = new ContentControl
+            if (exampleContent != null)
             {
-                Content = exampleContent,
-                Margin = new Thickness(0, 12, 0, 12),
-                HorizontalAlignment = HorizontalAlignment.Center
-            };
-            Grid.SetRow(content, 2);
-            grid.Children.Add(content);
+                var content = new ContentControl
+                {
+                    Content = exampleContent,
+                    Margin = new Thickness(0, 12, 0, 12),
+                    HorizontalAlignment = HorizontalAlignment.Center
+                };
+                Grid.SetRow(content, 2);
+                grid.Children.Add(content);
+            }
 
             border.Child = grid;
             return border;
@@ -1907,64 +1990,6 @@ namespace ModernWpf.Gallery.Pages
             return border;
         }
 
-        private static UIElement CreateSignalExample()
-        {
-            var panel = new StackPanel
-            {
-                Orientation = Orientation.Horizontal
-            };
-            panel.Children.Add(CreateSignalPill("Success", "SystemFillColorSuccessBrush"));
-            panel.Children.Add(CreateSignalPill("Caution", "SystemFillColorCautionBrush"));
-            panel.Children.Add(CreateSignalPill("Critical", "SystemFillColorCriticalBrush"));
-            return panel;
-        }
-
-        private static UIElement CreateSignalBackgroundExample()
-        {
-            var panel = new StackPanel
-            {
-                Orientation = Orientation.Horizontal
-            };
-            panel.Children.Add(CreateSignalPill("Success", "SystemFillColorSuccessBackgroundBrush"));
-            panel.Children.Add(CreateSignalPill("Caution", "SystemFillColorCautionBackgroundBrush"));
-            panel.Children.Add(CreateSignalPill("Critical", "SystemFillColorCriticalBackgroundBrush"));
-            return panel;
-        }
-
-        private static Border CreateSignalPill(string text, string backgroundResource)
-        {
-            var pill = new Border
-            {
-                MinWidth = 80,
-                Margin = new Thickness(0, 0, 8, 0),
-                Padding = new Thickness(12, 6, 12, 6),
-                CornerRadius = new CornerRadius(16),
-                Child = new TextBlock { Text = text }
-            };
-            pill.SetResourceReference(Border.BackgroundProperty, backgroundResource);
-            return pill;
-        }
-
-        private static UIElement CreateHighContrastExample()
-        {
-            var border = new Border
-            {
-                Width = 220,
-                Height = 96,
-                BorderThickness = new Thickness(1),
-                Child = new TextBlock
-                {
-                    Text = "High contrast",
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center
-                }
-            };
-            border.SetResourceReference(Border.BackgroundProperty, "SystemColorWindowColorBrush");
-            border.SetResourceReference(Border.BorderBrushProperty, "SystemColorWindowTextColorBrush");
-            ((TextBlock)border.Child).SetResourceReference(TextBlock.ForegroundProperty, "SystemColorWindowTextColorBrush");
-            return border;
-        }
-
         private static Border CreateColorTilesPanel(params ColorTileInfo[] tiles)
         {
             var panel = new Border
@@ -1994,9 +2019,16 @@ namespace ModernWpf.Gallery.Pages
             var border = new Border
             {
                 MinHeight = 124,
-                CornerRadius = CreateTileRadius(index, count)
+                CornerRadius = tileInfo.TileRadius ?? CreateTileRadius(index, count)
             };
-            border.SetResourceReference(Border.BackgroundProperty, tileInfo.BackgroundResource);
+            if (tileInfo.BackgroundBrush != null)
+            {
+                border.Background = tileInfo.BackgroundBrush;
+            }
+            else
+            {
+                border.SetResourceReference(Border.BackgroundProperty, tileInfo.BackgroundResource);
+            }
             AutomationProperties.SetName(border, tileInfo.ColorName);
 
             var outerGrid = new Grid();
@@ -2053,7 +2085,7 @@ namespace ModernWpf.Gallery.Pages
 
             outerGrid.Children.Add(contentGrid);
 
-            if (index < count - 1)
+            if (tileInfo.ShowSeparator ?? index < count - 1)
             {
                 var separator = new Border
                 {
@@ -2144,6 +2176,23 @@ namespace ModernWpf.Gallery.Pages
             return new ColorTileInfo(colorName, brushName, backgroundResource, explanation, null, null);
         }
 
+        private static ColorTileInfo HighContrastTile(string colorName, string brushName, string backgroundColor, string explanation, string foregroundColor)
+        {
+            return HighContrastTile(colorName, brushName, backgroundColor, explanation, foregroundColor, null, true);
+        }
+
+        private static ColorTileInfo HighContrastTile(string colorName, string brushName, string backgroundColor, string explanation, string foregroundColor, CornerRadius? tileRadius, bool showSeparator)
+        {
+            return new ColorTileInfo(colorName, brushName, null, explanation, null, CreateBrush(foregroundColor), CreateBrush(backgroundColor), tileRadius, showSeparator);
+        }
+
+        private static Brush CreateBrush(string color)
+        {
+            var brush = (SolidColorBrush)new BrushConverter().ConvertFromString(color);
+            brush.Freeze();
+            return brush;
+        }
+
         private static void ApplyForeground(TextBlock textBlock, string foregroundResource, Brush foregroundBrush)
         {
             if (foregroundBrush != null)
@@ -2158,7 +2207,7 @@ namespace ModernWpf.Gallery.Pages
 
         private sealed class ColorTileInfo
         {
-            public ColorTileInfo(string colorName, string brushName, string backgroundResource, string colorExplanation, string foregroundResource, Brush foregroundBrush)
+            public ColorTileInfo(string colorName, string brushName, string backgroundResource, string colorExplanation, string foregroundResource, Brush foregroundBrush, Brush backgroundBrush = null, CornerRadius? tileRadius = null, bool? showSeparator = null)
             {
                 ColorName = colorName;
                 BrushName = brushName;
@@ -2166,6 +2215,9 @@ namespace ModernWpf.Gallery.Pages
                 ColorExplanation = colorExplanation;
                 ForegroundResource = foregroundResource;
                 ForegroundBrush = foregroundBrush;
+                BackgroundBrush = backgroundBrush;
+                TileRadius = tileRadius;
+                ShowSeparator = showSeparator;
             }
 
             public string ColorName { get; }
@@ -2174,6 +2226,9 @@ namespace ModernWpf.Gallery.Pages
             public string ColorExplanation { get; }
             public string ForegroundResource { get; }
             public Brush ForegroundBrush { get; }
+            public Brush BackgroundBrush { get; }
+            public CornerRadius? TileRadius { get; }
+            public bool? ShowSeparator { get; }
         }
 
         private static StackPanel CreateGeometryExample()

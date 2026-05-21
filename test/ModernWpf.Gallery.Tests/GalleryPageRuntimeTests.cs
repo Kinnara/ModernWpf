@@ -329,11 +329,33 @@ namespace ModernWpf.Gallery.Tests
 
                 selector.SelectedIndex = 4;
                 WpfTestHost.DoEvents();
-                Assert.AreEqual("System Fill", GetColorPageExampleTitle((StackPanel)sectionHost.Content, 0));
+                var signalSection = (StackPanel)sectionHost.Content;
+                Assert.AreEqual(6, signalSection.Children.Count);
+                Assert.AreEqual("System", GetColorPageExampleTitle(signalSection, 0));
+                var signalStatusTiles = GetColorTilesGrid(signalSection, 1);
+                Assert.AreEqual("System / Success", AutomationProperties.GetName((UIElement)signalStatusTiles.Children[0]));
+                Assert.AreEqual("System / Critical", AutomationProperties.GetName((UIElement)signalStatusTiles.Children[2]));
+                var signalNeutralTiles = GetColorTilesGrid(signalSection, 3);
+                Assert.AreEqual("System / Solid Neutral", AutomationProperties.GetName((UIElement)signalNeutralTiles.Children[2]));
+                var signalSolidAttentionTiles = GetColorTilesGrid(signalSection, 5);
+                Assert.AreEqual(1, signalSolidAttentionTiles.ColumnDefinitions.Count);
+                Assert.AreEqual("System / Solid Attention Background", AutomationProperties.GetName((UIElement)signalSolidAttentionTiles.Children[0]));
 
                 selector.SelectedIndex = 5;
                 WpfTestHost.DoEvents();
-                Assert.AreEqual("High Contrast", GetColorPageExampleTitle((StackPanel)sectionHost.Content, 0));
+                var highContrastSection = (StackPanel)sectionHost.Content;
+                Assert.AreEqual(9, highContrastSection.Children.Count);
+                StringAssert.StartsWith(((TextBlock)highContrastSection.Children[0]).Text, "Below are the default highcontrast themes shown.");
+                Assert.AreEqual("Aquatic", ((TextBlock)highContrastSection.Children[1]).Text);
+                var aquaticTiles = (Grid)highContrastSection.Children[2];
+                Assert.AreEqual(4, aquaticTiles.ColumnDefinitions.Count);
+                Assert.AreEqual(2, aquaticTiles.RowDefinitions.Count);
+                Assert.AreEqual(8, aquaticTiles.Children.Count);
+                Assert.AreEqual("Window Text Color", AutomationProperties.GetName((UIElement)aquaticTiles.Children[0]));
+                Assert.AreEqual("Grey Text Color / Disabled", AutomationProperties.GetName((UIElement)aquaticTiles.Children[7]));
+                Assert.AreEqual("Night Sky", ((TextBlock)highContrastSection.Children[7]).Text);
+                var nightSkyTiles = (Grid)highContrastSection.Children[8];
+                Assert.AreEqual("Hotlight Color", AutomationProperties.GetName((UIElement)nightSkyTiles.Children[6]));
             });
         }
 

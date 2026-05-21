@@ -270,6 +270,8 @@
     <SolidColorBrush x:Key="SystemFillColorCautionBackgroundBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
     <SolidColorBrush x:Key="SystemFillColorCriticalBackgroundBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
     <SolidColorBrush x:Key="SystemFillColorNeutralBackgroundBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="SystemFillColorSolidAttentionBackgroundBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="SystemFillColorSolidNeutralBackgroundBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
 
     <SolidColorBrush x:Key="InfoBarBorderBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
     <SolidColorBrush x:Key="InfoBarTitleForeground" Color="{m:ThemeResource SystemColorButtonTextColor}" />

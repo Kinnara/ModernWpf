@@ -300,6 +300,8 @@
     <Color x:Key="SystemFillColorCautionBackground">#FFF4CE</Color>
     <Color x:Key="SystemFillColorCriticalBackground">#FDE7E9</Color>
     <Color x:Key="SystemFillColorNeutralBackground">#06000000</Color>
+    <Color x:Key="SystemFillColorSolidAttentionBackground">#F7F7F7</Color>
+    <Color x:Key="SystemFillColorSolidNeutralBackground">#F3F3F3</Color>
 
     <!-- Brushes -->
 
@@ -410,6 +412,8 @@
     <SolidColorBrush x:Key="SystemFillColorCautionBackgroundBrush" Color="{StaticResource SystemFillColorCautionBackground}" />
     <SolidColorBrush x:Key="SystemFillColorCriticalBackgroundBrush" Color="{StaticResource SystemFillColorCriticalBackground}" />
     <SolidColorBrush x:Key="SystemFillColorNeutralBackgroundBrush" Color="{StaticResource SystemFillColorNeutralBackground}" />
+    <SolidColorBrush x:Key="SystemFillColorSolidAttentionBackgroundBrush" Color="{StaticResource SystemFillColorSolidAttentionBackground}" />
+    <SolidColorBrush x:Key="SystemFillColorSolidNeutralBackgroundBrush" Color="{StaticResource SystemFillColorSolidNeutralBackground}" />
 
     <SolidColorBrush x:Key="InfoBarBorderBrush" Color="{StaticResource CardStrokeColorDefault}" />
     <SolidColorBrush x:Key="InfoBarTitleForeground" Color="{StaticResource TextFillColorPrimary}" />
