@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
@@ -217,6 +218,60 @@ namespace ModernWpf.Gallery.Tests
                 AssertGridViewColumn(gridView.Columns[1], "Last Name", 150.0, "LastName");
                 AssertGridViewColumn(gridView.Columns[2], "Company", 200.0, "Company");
             });
+        }
+
+        [TestMethod]
+        public void ColorPageUsesWpfGallerySelectorAndTextSectionLayout()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("Color"));
+                var body = (StackPanel)page.PageBodyContent;
+                var colorContent = (StackPanel)body.Children[1];
+                var selector = (ComboBox)colorContent.Children[0];
+                var sectionHost = (ContentControl)colorContent.Children[1];
+
+                CollectionAssert.AreEqual(
+                    new[] { "Text", "Fill", "Stroke", "Background", "Signal", "HighContrast" },
+                    selector.Items.Cast<string>().ToArray());
+                Assert.AreEqual(200.0, selector.Width);
+                Assert.AreEqual("Page Selector", AutomationProperties.GetName(selector));
+
+                var textSection = (StackPanel)sectionHost.Content;
+                Assert.AreEqual("Text", GetColorPageExampleTitle(textSection, 0));
+                Assert.AreEqual("Accent Text", GetColorPageExampleTitle(textSection, 2));
+                Assert.AreEqual("Text On Accent", GetColorPageExampleTitle(textSection, 4));
+
+                var firstTilesPanel = (Border)textSection.Children[1];
+                var firstTilesGrid = (Grid)firstTilesPanel.Child;
+                Assert.AreEqual(4, firstTilesGrid.ColumnDefinitions.Count);
+                Assert.AreEqual("Text / Primary", AutomationProperties.GetName((UIElement)firstTilesGrid.Children[0]));
+                Assert.AreEqual("Text / Disabled", AutomationProperties.GetName((UIElement)firstTilesGrid.Children[3]));
+
+                var firstTextTile = (Border)firstTilesGrid.Children[0];
+                Assert.AreEqual(new CornerRadius(8, 0, 0, 8), firstTextTile.CornerRadius);
+                var lastTextTile = (Border)firstTilesGrid.Children[3];
+                Assert.AreEqual(new CornerRadius(0, 8, 8, 0), lastTextTile.CornerRadius);
+
+                selector.SelectedIndex = 1;
+                WpfTestHost.DoEvents();
+                Assert.AreEqual("Accent Fill", GetColorPageExampleTitle((StackPanel)sectionHost.Content, 0));
+
+                selector.SelectedIndex = 4;
+                WpfTestHost.DoEvents();
+                Assert.AreEqual("System Fill", GetColorPageExampleTitle((StackPanel)sectionHost.Content, 0));
+
+                selector.SelectedIndex = 5;
+                WpfTestHost.DoEvents();
+                Assert.AreEqual("High Contrast", GetColorPageExampleTitle((StackPanel)sectionHost.Content, 0));
+            });
+        }
+
+        private static string GetColorPageExampleTitle(StackPanel section, int childIndex)
+        {
+            var example = (Border)section.Children[childIndex];
+            var grid = (Grid)example.Child;
+            return ((TextBlock)grid.Children[0]).Text;
         }
 
         private static void AssertGridViewColumn(GridViewColumn column, string header, double width, string path)

@@ -1286,77 +1286,606 @@ namespace ModernWpf.Gallery.Pages
                 Width = 200,
                 HorizontalAlignment = HorizontalAlignment.Left,
                 ItemsSource = new[] { "Text", "Fill", "Stroke", "Background", "Signal", "HighContrast" },
-                SelectedIndex = 0,
-                Margin = new Thickness(0, 0, 0, 12)
+                SelectedIndex = 0
             };
             AutomationProperties.SetName(selector, "Page Selector");
             root.Children.Add(selector);
 
-            var tiles = new UniformGrid
+            var sectionHost = new ContentControl
             {
-                Columns = 2
+                Content = CreateColorSection(0)
             };
-            tiles.Children.Add(CreateColorResourceTile("Primary text", "TextFillColorPrimaryBrush", "Primary body text and page titles."));
-            tiles.Children.Add(CreateColorResourceTile("Secondary text", "TextFillColorSecondaryBrush", "Supplementary text and descriptions."));
-            tiles.Children.Add(CreateColorResourceTile("Tertiary text", "TextFillColorTertiaryBrush", "Lower-emphasis supporting text."));
-            tiles.Children.Add(CreateColorResourceTile("Disabled text", "TextFillColorDisabledBrush", "Unavailable commands and inactive text."));
-            tiles.Children.Add(CreateColorResourceTile("Accent", "AccentFillColorDefaultBrush", "Primary accent actions and highlights."));
-            tiles.Children.Add(CreateColorResourceTile("Card background", "CardBackgroundFillColorDefaultBrush", "Cards and elevated content surfaces."));
-            root.Children.Add(tiles);
+            AutomationProperties.SetName(sectionHost, "Color Subpage Navigation Frame");
+            root.Children.Add(sectionHost);
+
+            selector.SelectionChanged += delegate
+            {
+                sectionHost.Content = CreateColorSection(selector.SelectedIndex);
+            };
 
             return root;
         }
 
-        private static Border CreateColorResourceTile(string colorName, string brushName, string explanation)
+        private static StackPanel CreateColorSection(int index)
+        {
+            switch (index)
+            {
+                case 1:
+                    return CreateFillColorSection();
+                case 2:
+                    return CreateStrokeColorSection();
+                case 3:
+                    return CreateBackgroundColorSection();
+                case 4:
+                    return CreateSignalColorSection();
+                case 5:
+                    return CreateHighContrastColorSection();
+                default:
+                    return CreateTextColorSection();
+            }
+        }
+
+        private static StackPanel CreateTextColorSection()
+        {
+            var root = new StackPanel();
+            root.Children.Add(CreateColorPageExample("Text", "For UI labels and static text", CreateColorExampleGlyph("Aa", null)));
+            root.Children.Add(CreateColorTilesPanel(
+                ColorTile("Text / Primary", "TextFillColorPrimaryBrush", "Rest or Hover", "TextOnAccentFillColorPrimaryBrush"),
+                ColorTile("Text / Secondary", "TextFillColorSecondaryBrush", "Rest or Hover", "TextOnAccentFillColorPrimaryBrush"),
+                ColorTile("Text / Tertiary", "TextFillColorTertiaryBrush", "Pressed only (not accessible)", "TextOnAccentFillColorPrimaryBrush"),
+                ColorTile("Text / Disabled", "TextFillColorDisabledBrush", "Disabled only (not accessible)", "TextOnAccentFillColorPrimaryBrush")));
+
+            root.Children.Add(CreateColorPageExample("Accent Text", "Recommended for links", CreateColorExampleGlyph("Aa", "AccentTextFillColorPrimaryBrush")));
+            root.Children.Add(CreateColorTilesPanel(
+                ColorTile("Accent Text / Primary", "AccentTextFillColorPrimaryBrush", "Rest or Hover", "TextOnAccentFillColorPrimaryBrush"),
+                ColorTile("Accent Text / Secondary", "AccentTextFillColorSecondaryBrush", "Rest or Hover", "TextOnAccentFillColorPrimaryBrush"),
+                ColorTile("Accent Text / Tertiary", "AccentTextFillColorTertiaryBrush", "Pressed only (not accessible)", "TextOnAccentFillColorPrimaryBrush"),
+                ColorTile("Accent Text / Disabled", "AccentTextFillColorDisabledBrush", "Disabled only (not accessible)", "TextOnAccentFillColorPrimaryBrush")));
+
+            root.Children.Add(CreateColorPageExample(
+                "Text On Accent",
+                "Used for text on accent colored controls or fills",
+                CreateColorExampleGlyph("Aa", "TextOnAccentFillColorPrimaryBrush"),
+                "TextOnAccentFillColorPrimaryBrush"));
+            root.Children.Add(CreateColorTilesPanel(
+                ColorTile("Text on Accent / Primary", "TextOnAccentFillColorPrimaryBrush", "Rest or Hover", "TextFillColorPrimaryBrush"),
+                ColorTile("Text on Accent / Secondary", "TextOnAccentFillColorSecondaryBrush", "Pressed only (not accessible)", "TextFillColorPrimaryBrush")));
+            root.Children.Add(CreateColorTilesPanel(
+                ColorTile("Text on Accent / Disabled", "TextOnAccentFillColorDisabledBrush", "Disabled only (not accessible)", "TextFillColorPrimaryBrush"),
+                ColorTile("Text on Accent / Selected Text", "TextOnAccentFillColorSelectedTextBrush", "For highlighted text in text entry experiences", Brushes.Black)));
+            return root;
+        }
+
+        private static StackPanel CreateFillColorSection()
+        {
+            var root = new StackPanel();
+            root.Children.Add(CreateColorPageExample("Accent Fill", "Recommended for accent controls and prominent actions", CreateAccentFillExample()));
+            root.Children.Add(CreateColorTilesPanel(
+                ColorTile("Accent Fill / Default", "AccentFillColorDefaultBrush", "Rest", "TextOnAccentFillColorPrimaryBrush"),
+                ColorTile("Accent Fill / Secondary", "AccentFillColorSecondaryBrush", "Hover", "TextOnAccentFillColorPrimaryBrush"),
+                ColorTile("Accent Fill / Tertiary", "AccentFillColorTertiaryBrush", "Pressed", "TextOnAccentFillColorPrimaryBrush"),
+                ColorTile("Accent Fill / Disabled", "AccentFillColorDisabledBrush", "Disabled only", "TextFillColorPrimaryBrush")));
+
+            root.Children.Add(CreateColorPageExample("Control Fill", "For standard controls in their default states", CreateControlFillExample()));
+            root.Children.Add(CreateColorTilesPanel(
+                ColorTile("Control Fill / Default", "ControlFillColorDefaultBrush", "Rest"),
+                ColorTile("Control Fill / Secondary", "ControlFillColorSecondaryBrush", "Hover"),
+                ColorTile("Control Fill / Tertiary", "ControlFillColorTertiaryBrush", "Pressed"),
+                ColorTile("Control Fill / Disabled", "ControlFillColorDisabledBrush", "Disabled only")));
+
+            root.Children.Add(CreateColorPageExample("Subtle Fill", "For transparent controls, secondary buttons, and list states", CreateSubtleFillExample()));
+            root.Children.Add(CreateColorTilesPanel(
+                ColorTile("Subtle Fill / Transparent", "SubtleFillColorTransparentBrush", "Rest"),
+                ColorTile("Subtle Fill / Secondary", "SubtleFillColorSecondaryBrush", "Hover"),
+                ColorTile("Subtle Fill / Tertiary", "SubtleFillColorTertiaryBrush", "Pressed"),
+                ColorTile("Subtle Fill / Disabled", "SubtleFillColorDisabledBrush", "Disabled only")));
+            return root;
+        }
+
+        private static StackPanel CreateStrokeColorSection()
+        {
+            var root = new StackPanel();
+            root.Children.Add(CreateColorPageExample("Control Stroke", "For control outlines, states, and dividers", CreateStrokeExample()));
+            root.Children.Add(CreateColorTilesPanel(
+                ColorTile("Control Stroke / Default", "ControlStrokeColorDefaultBrush", "Rest"),
+                ColorTile("Control Stroke / Secondary", "ControlStrokeColorSecondaryBrush", "Secondary rest"),
+                ColorTile("Control Stroke / On Accent Default", "ControlStrokeColorOnAccentDefaultBrush", "On accent controls", "TextOnAccentFillColorPrimaryBrush"),
+                ColorTile("Control Stroke / On Accent Secondary", "ControlStrokeColorOnAccentSecondaryBrush", "On accent hover", "TextOnAccentFillColorPrimaryBrush")));
+
+            root.Children.Add(CreateColorPageExample("Surface Stroke", "For cards, flyouts, and content surfaces", CreateSurfaceStrokeExample()));
+            root.Children.Add(CreateColorTilesPanel(
+                ColorTile("Card Stroke / Default", "CardStrokeColorDefaultBrush", "Card outline"),
+                ColorTile("Card Stroke / Default Solid", "CardStrokeColorDefaultSolidBrush", "Card outline fallback"),
+                ColorTile("Surface Stroke / Default", "SurfaceStrokeColorDefaultBrush", "Surface outline"),
+                ColorTile("Surface Stroke / Flyout", "SurfaceStrokeColorFlyoutBrush", "Flyout outline")));
+            return root;
+        }
+
+        private static StackPanel CreateBackgroundColorSection()
+        {
+            var root = new StackPanel();
+            root.Children.Add(CreateColorPageExample("Card Background", "For cards and elevated content surfaces", CreateBackgroundLayerExample("CardBackgroundFillColorDefaultBrush")));
+            root.Children.Add(CreateColorTilesPanel(
+                ColorTile("Card Background / Default", "CardBackgroundFillColorDefaultBrush", "Default card surface"),
+                ColorTile("Card Background / Secondary", "CardBackgroundFillColorSecondaryBrush", "Secondary card surface")));
+
+            root.Children.Add(CreateColorPageExample("Layer Background", "For layered surfaces in pages and acrylic", CreateBackgroundLayerExample("LayerFillColorDefaultBrush")));
+            root.Children.Add(CreateColorTilesPanel(
+                ColorTile("Layer / Default", "LayerFillColorDefaultBrush", "Default layer"),
+                ColorTile("Layer / Alt", "LayerFillColorAltBrush", "Alternative layer"),
+                ColorTile("Layer On Acrylic / Default", "LayerOnAcrylicFillColorDefaultBrush", "On acrylic"),
+                ColorTile("Layer On Mica Base Alt / Default", "LayerOnMicaBaseAltFillColorDefaultBrush", "On mica base alt")));
+
+            root.Children.Add(CreateColorPageExample("Solid Background", "For base page and app backgrounds", CreateBackgroundLayerExample("SolidBackgroundFillColorBaseBrush")));
+            root.Children.Add(CreateColorTilesPanel(
+                ColorTile("Solid Background / Base", "SolidBackgroundFillColorBaseBrush", "App base"),
+                ColorTile("Solid Background / Secondary", "SolidBackgroundFillColorSecondaryBrush", "Secondary base"),
+                ColorTile("Solid Background / Tertiary", "SolidBackgroundFillColorTertiaryBrush", "Tertiary base"),
+                ColorTile("Solid Background / Quarternary", "SolidBackgroundFillColorQuarternaryBrush", "Quarternary base")));
+            return root;
+        }
+
+        private static StackPanel CreateSignalColorSection()
+        {
+            var root = new StackPanel();
+            root.Children.Add(CreateColorPageExample("System Fill", "For status, severity, and validation indicators", CreateSignalExample()));
+            root.Children.Add(CreateColorTilesPanel(
+                ColorTile("System Fill / Success", "SystemFillColorSuccessBrush", "Success foreground", "TextFillColorInverseBrush"),
+                ColorTile("System Fill / Caution", "SystemFillColorCautionBrush", "Warning foreground", "TextFillColorInverseBrush"),
+                ColorTile("System Fill / Critical", "SystemFillColorCriticalBrush", "Error foreground", "TextFillColorInverseBrush"),
+                ColorTile("System Fill / Attention", "SystemFillColorAttentionBrush", "Informational foreground", "TextFillColorInverseBrush")));
+
+            root.Children.Add(CreateColorPageExample("System Fill Background", "For status backgrounds and low-emphasis banners", CreateSignalBackgroundExample()));
+            root.Children.Add(CreateColorTilesPanel(
+                ColorTile("System Fill / Success Background", "SystemFillColorSuccessBackgroundBrush", "Success background"),
+                ColorTile("System Fill / Caution Background", "SystemFillColorCautionBackgroundBrush", "Warning background"),
+                ColorTile("System Fill / Critical Background", "SystemFillColorCriticalBackgroundBrush", "Error background"),
+                ColorTile("System Fill / Attention Background", "SystemFillColorAttentionBackgroundBrush", "Informational background")));
+            return root;
+        }
+
+        private static StackPanel CreateHighContrastColorSection()
+        {
+            var root = new StackPanel();
+            root.Children.Add(CreateColorPageExample("High Contrast", "System color resources used when high contrast is enabled", CreateHighContrastExample()));
+            root.Children.Add(CreateColorTilesPanel(
+                ColorTile("Window Text", "SystemColorWindowTextColorBrush", "Text on window backgrounds"),
+                ColorTile("Window", "SystemColorWindowColorBrush", "Window background"),
+                ColorTile("Highlight", "SystemColorHighlightColorBrush", "Selection background", "SystemColorHighlightTextColorBrush"),
+                ColorTile("Highlight Text", "SystemColorHighlightTextColorBrush", "Selection text"),
+                ColorTile("Gray Text", "SystemColorGrayTextColorBrush", "Disabled text")));
+            return root;
+        }
+
+        private static Border CreateColorPageExample(string title, string description, UIElement exampleContent)
+        {
+            return CreateColorPageExample(title, description, exampleContent, null);
+        }
+
+        private static Border CreateColorPageExample(string title, string description, UIElement exampleContent, string foregroundResource)
         {
             var border = new Border
             {
-                Width = 330,
-                MinHeight = 118,
-                Margin = new Thickness(0, 0, 8, 8),
+                Margin = new Thickness(0, 36, 0, 0),
                 Padding = new Thickness(12),
                 BorderThickness = new Thickness(1),
                 CornerRadius = new CornerRadius(8)
             };
-            border.SetResourceReference(Border.BackgroundProperty, "CardBackgroundFillColorDefaultBrush");
+            border.SetResourceReference(Border.BackgroundProperty, "SolidBackgroundFillColorBaseBrush");
             border.SetResourceReference(Border.BorderBrushProperty, "CardStrokeColorDefaultBrush");
+            AutomationProperties.SetName(border, title + " Color Page Example");
 
             var grid = new Grid();
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
 
-            var swatch = new Border
+            var titleText = new TextBlock
             {
-                Width = 48,
-                Height = 48,
-                CornerRadius = new CornerRadius(6),
-                BorderThickness = new Thickness(1),
-                Margin = new Thickness(0, 0, 12, 0)
+                Margin = new Thickness(0, 0, 0, 12),
+                Text = title
             };
-            swatch.SetResourceReference(Border.BackgroundProperty, brushName);
-            swatch.SetResourceReference(Border.BorderBrushProperty, "CardStrokeColorDefaultBrush");
-            grid.Children.Add(swatch);
+            titleText.SetResourceReference(FrameworkElement.StyleProperty, "SubtitleTextBlockStyle");
+            ApplyForeground(titleText, foregroundResource, null);
+            grid.Children.Add(titleText);
 
-            var textStack = new StackPanel();
-            Grid.SetColumn(textStack, 1);
-            var title = new TextBlock { Text = colorName, TextWrapping = TextWrapping.Wrap };
-            title.SetResourceReference(FrameworkElement.StyleProperty, "BodyStrongTextBlockStyle");
-            textStack.Children.Add(title);
-            var body = new TextBlock
+            var descriptionText = new TextBlock
             {
-                Text = explanation,
-                TextWrapping = TextWrapping.Wrap,
-                Margin = new Thickness(0, 2, 0, 8)
+                Text = description,
+                TextWrapping = TextWrapping.Wrap
             };
-            body.SetResourceReference(FrameworkElement.StyleProperty, "CaptionTextBlockStyle");
-            textStack.Children.Add(body);
-            var brush = new TextBlock { Text = brushName, TextWrapping = TextWrapping.Wrap };
-            brush.SetResourceReference(FrameworkElement.StyleProperty, "CaptionTextBlockStyle");
-            textStack.Children.Add(brush);
-            grid.Children.Add(textStack);
+            descriptionText.SetResourceReference(FrameworkElement.StyleProperty, "CaptionTextBlockStyle");
+            ApplyForeground(descriptionText, foregroundResource, null);
+            Grid.SetRow(descriptionText, 1);
+            grid.Children.Add(descriptionText);
+
+            var content = new ContentControl
+            {
+                Content = exampleContent,
+                Margin = new Thickness(0, 12, 0, 12),
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+            Grid.SetRow(content, 2);
+            grid.Children.Add(content);
 
             border.Child = grid;
             return border;
+        }
+
+        private static TextBlock CreateColorExampleGlyph(string text, string foregroundResource)
+        {
+            var glyph = new TextBlock
+            {
+                FontSize = 42,
+                FontWeight = FontWeights.SemiBold,
+                Text = text
+            };
+            ApplyForeground(glyph, foregroundResource, null);
+            return glyph;
+        }
+
+        private static UIElement CreateAccentFillExample()
+        {
+            var button = new Button
+            {
+                Content = "Accent"
+            };
+            button.SetResourceReference(Control.BackgroundProperty, "AccentFillColorDefaultBrush");
+            button.SetResourceReference(Control.ForegroundProperty, "TextOnAccentFillColorPrimaryBrush");
+            return button;
+        }
+
+        private static UIElement CreateControlFillExample()
+        {
+            var button = new Button
+            {
+                Content = "Control fill"
+            };
+            button.SetResourceReference(Control.BackgroundProperty, "ControlFillColorDefaultBrush");
+            return button;
+        }
+
+        private static UIElement CreateSubtleFillExample()
+        {
+            var border = new Border
+            {
+                Width = 180,
+                Height = 72,
+                CornerRadius = new CornerRadius(8),
+                Child = new TextBlock
+                {
+                    Text = "Subtle fill",
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                }
+            };
+            border.SetResourceReference(Border.BackgroundProperty, "SubtleFillColorSecondaryBrush");
+            return border;
+        }
+
+        private static UIElement CreateStrokeExample()
+        {
+            var border = new Border
+            {
+                Width = 180,
+                Height = 72,
+                BorderThickness = new Thickness(2),
+                CornerRadius = new CornerRadius(8),
+                Child = new TextBlock
+                {
+                    Text = "Control stroke",
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                }
+            };
+            border.SetResourceReference(Border.BorderBrushProperty, "ControlStrokeColorDefaultBrush");
+            return border;
+        }
+
+        private static UIElement CreateSurfaceStrokeExample()
+        {
+            var border = new Border
+            {
+                Width = 180,
+                Height = 72,
+                BorderThickness = new Thickness(1),
+                CornerRadius = new CornerRadius(8),
+                Child = new TextBlock
+                {
+                    Text = "Surface stroke",
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                }
+            };
+            border.SetResourceReference(Border.BackgroundProperty, "CardBackgroundFillColorDefaultBrush");
+            border.SetResourceReference(Border.BorderBrushProperty, "CardStrokeColorDefaultBrush");
+            return border;
+        }
+
+        private static UIElement CreateBackgroundLayerExample(string backgroundResource)
+        {
+            var border = new Border
+            {
+                Width = 220,
+                Height = 96,
+                Padding = new Thickness(16),
+                CornerRadius = new CornerRadius(8),
+                Child = new Border
+                {
+                    CornerRadius = new CornerRadius(4),
+                    Child = new TextBlock
+                    {
+                        Text = "Layer",
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center
+                    }
+                }
+            };
+            border.SetResourceReference(Border.BackgroundProperty, backgroundResource);
+            ((Border)border.Child).SetResourceReference(Border.BackgroundProperty, "CardBackgroundFillColorDefaultBrush");
+            return border;
+        }
+
+        private static UIElement CreateSignalExample()
+        {
+            var panel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal
+            };
+            panel.Children.Add(CreateSignalPill("Success", "SystemFillColorSuccessBrush"));
+            panel.Children.Add(CreateSignalPill("Caution", "SystemFillColorCautionBrush"));
+            panel.Children.Add(CreateSignalPill("Critical", "SystemFillColorCriticalBrush"));
+            return panel;
+        }
+
+        private static UIElement CreateSignalBackgroundExample()
+        {
+            var panel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal
+            };
+            panel.Children.Add(CreateSignalPill("Success", "SystemFillColorSuccessBackgroundBrush"));
+            panel.Children.Add(CreateSignalPill("Caution", "SystemFillColorCautionBackgroundBrush"));
+            panel.Children.Add(CreateSignalPill("Critical", "SystemFillColorCriticalBackgroundBrush"));
+            return panel;
+        }
+
+        private static Border CreateSignalPill(string text, string backgroundResource)
+        {
+            var pill = new Border
+            {
+                MinWidth = 80,
+                Margin = new Thickness(0, 0, 8, 0),
+                Padding = new Thickness(12, 6, 12, 6),
+                CornerRadius = new CornerRadius(16),
+                Child = new TextBlock { Text = text }
+            };
+            pill.SetResourceReference(Border.BackgroundProperty, backgroundResource);
+            return pill;
+        }
+
+        private static UIElement CreateHighContrastExample()
+        {
+            var border = new Border
+            {
+                Width = 220,
+                Height = 96,
+                BorderThickness = new Thickness(1),
+                Child = new TextBlock
+                {
+                    Text = "High contrast",
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                }
+            };
+            border.SetResourceReference(Border.BackgroundProperty, "SystemColorWindowColorBrush");
+            border.SetResourceReference(Border.BorderBrushProperty, "SystemColorWindowTextColorBrush");
+            ((TextBlock)border.Child).SetResourceReference(TextBlock.ForegroundProperty, "SystemColorWindowTextColorBrush");
+            return border;
+        }
+
+        private static Border CreateColorTilesPanel(params ColorTileInfo[] tiles)
+        {
+            var panel = new Border
+            {
+                Margin = new Thickness(0, 8, 0, 0),
+                BorderThickness = new Thickness(1),
+                CornerRadius = new CornerRadius(8)
+            };
+            panel.SetResourceReference(Border.BackgroundProperty, "SolidBackgroundFillColorBaseBrush");
+            panel.SetResourceReference(Border.BorderBrushProperty, "CardStrokeColorDefaultBrush");
+
+            var grid = new Grid();
+            for (var i = 0; i < tiles.Length; i++)
+            {
+                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                var tile = CreateColorTile(tiles[i], i, tiles.Length);
+                Grid.SetColumn(tile, i);
+                grid.Children.Add(tile);
+            }
+
+            panel.Child = grid;
+            return panel;
+        }
+
+        private static Border CreateColorTile(ColorTileInfo tileInfo, int index, int count)
+        {
+            var border = new Border
+            {
+                MinHeight = 124,
+                CornerRadius = CreateTileRadius(index, count)
+            };
+            border.SetResourceReference(Border.BackgroundProperty, tileInfo.BrushName);
+            AutomationProperties.SetName(border, tileInfo.ColorName);
+
+            var outerGrid = new Grid();
+            outerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            outerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+            var contentGrid = new Grid();
+            contentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            contentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            contentGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star), MinHeight = 30 });
+            contentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            contentGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            contentGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(30) });
+            contentGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+            var name = new TextBlock
+            {
+                Margin = new Thickness(12, 12, 0, 6),
+                Text = tileInfo.ColorName,
+                TextWrapping = TextWrapping.Wrap
+            };
+            name.SetResourceReference(FrameworkElement.StyleProperty, "BodyStrongTextBlockStyle");
+            ApplyForeground(name, tileInfo.ForegroundResource, tileInfo.ForegroundBrush);
+            contentGrid.Children.Add(name);
+
+            var copyButton = CreateCopyBrushButton(tileInfo);
+            Grid.SetColumn(copyButton, 1);
+            Grid.SetColumnSpan(copyButton, 2);
+            Grid.SetRowSpan(copyButton, 4);
+            contentGrid.Children.Add(copyButton);
+
+            var explanation = new TextBlock
+            {
+                Margin = new Thickness(12, -4, 0, 0),
+                Text = tileInfo.ColorExplanation,
+                TextWrapping = TextWrapping.Wrap
+            };
+            explanation.SetResourceReference(FrameworkElement.StyleProperty, "CaptionTextBlockStyle");
+            ApplyForeground(explanation, tileInfo.ForegroundResource, tileInfo.ForegroundBrush);
+            Grid.SetRow(explanation, 1);
+            contentGrid.Children.Add(explanation);
+
+            var brushName = new TextBlock
+            {
+                Margin = new Thickness(12, 0, 0, 18),
+                Text = tileInfo.BrushName,
+                TextWrapping = TextWrapping.Wrap
+            };
+            brushName.SetResourceReference(FrameworkElement.StyleProperty, "CaptionTextBlockStyle");
+            ApplyForeground(brushName, tileInfo.ForegroundResource, tileInfo.ForegroundBrush);
+            Grid.SetRow(brushName, 3);
+            Grid.SetColumnSpan(brushName, 2);
+            contentGrid.Children.Add(brushName);
+
+            outerGrid.Children.Add(contentGrid);
+
+            if (index < count - 1)
+            {
+                var separator = new Border
+                {
+                    Width = 1,
+                    HorizontalAlignment = HorizontalAlignment.Right,
+                    BorderThickness = new Thickness(1)
+                };
+                separator.SetResourceReference(Border.BorderBrushProperty, "CardStrokeColorDefaultBrush");
+                Grid.SetColumn(separator, 1);
+                outerGrid.Children.Add(separator);
+            }
+
+            border.Child = outerGrid;
+            return border;
+        }
+
+        private static Button CreateCopyBrushButton(ColorTileInfo tileInfo)
+        {
+            var glyph = new TextBlock
+            {
+                FontSize = 16,
+                Text = "\uE8C8"
+            };
+            glyph.SetResourceReference(TextBlock.FontFamilyProperty, "SymbolThemeFontFamily");
+            ApplyForeground(glyph, tileInfo.ForegroundResource, tileInfo.ForegroundBrush);
+
+            var button = new Button
+            {
+                Padding = new Thickness(4),
+                Margin = new Thickness(0, 12, 12, 0),
+                HorizontalAlignment = HorizontalAlignment.Right,
+                VerticalAlignment = VerticalAlignment.Top,
+                Background = Brushes.Transparent,
+                BorderBrush = Brushes.Transparent,
+                Content = glyph
+            };
+            AutomationProperties.SetName(button, "Copy brush name " + tileInfo.BrushName + " to clipboard");
+            button.Click += delegate
+            {
+                try
+                {
+                    Clipboard.SetText(tileInfo.BrushName);
+                }
+                catch (Exception)
+                {
+                }
+            };
+            return button;
+        }
+
+        private static CornerRadius CreateTileRadius(int index, int count)
+        {
+            if (count == 1)
+            {
+                return new CornerRadius(8);
+            }
+
+            if (index == 0)
+            {
+                return new CornerRadius(8, 0, 0, 8);
+            }
+
+            if (index == count - 1)
+            {
+                return new CornerRadius(0, 8, 8, 0);
+            }
+
+            return new CornerRadius(0);
+        }
+
+        private static ColorTileInfo ColorTile(string colorName, string brushName, string explanation)
+        {
+            return new ColorTileInfo(colorName, brushName, explanation, null, null);
+        }
+
+        private static ColorTileInfo ColorTile(string colorName, string brushName, string explanation, string foregroundResource)
+        {
+            return new ColorTileInfo(colorName, brushName, explanation, foregroundResource, null);
+        }
+
+        private static ColorTileInfo ColorTile(string colorName, string brushName, string explanation, Brush foregroundBrush)
+        {
+            return new ColorTileInfo(colorName, brushName, explanation, null, foregroundBrush);
+        }
+
+        private static void ApplyForeground(TextBlock textBlock, string foregroundResource, Brush foregroundBrush)
+        {
+            if (foregroundBrush != null)
+            {
+                textBlock.Foreground = foregroundBrush;
+            }
+            else if (!string.IsNullOrEmpty(foregroundResource))
+            {
+                textBlock.SetResourceReference(TextBlock.ForegroundProperty, foregroundResource);
+            }
+        }
+
+        private sealed class ColorTileInfo
+        {
+            public ColorTileInfo(string colorName, string brushName, string colorExplanation, string foregroundResource, Brush foregroundBrush)
+            {
+                ColorName = colorName;
+                BrushName = brushName;
+                ColorExplanation = colorExplanation;
+                ForegroundResource = foregroundResource;
+                ForegroundBrush = foregroundBrush;
+            }
+
+            public string ColorName { get; }
+            public string BrushName { get; }
+            public string ColorExplanation { get; }
+            public string ForegroundResource { get; }
+            public Brush ForegroundBrush { get; }
         }
 
         private static StackPanel CreateGeometryExample()
