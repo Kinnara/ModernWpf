@@ -15,6 +15,9 @@ namespace ModernWpf.Gallery.Shell
     {
         private readonly Stack<NavigationTarget> _backStack = new Stack<NavigationTarget>();
         private readonly Dictionary<string, NavigationViewItem> _itemContainers = new Dictionary<string, NavigationViewItem>(StringComparer.OrdinalIgnoreCase);
+        private NavigationViewItem _homeNavigationItem;
+        private NavigationViewItem _whatsNewNavigationItem;
+        private NavigationViewItem _allControlsNavigationItem;
         private NavigationTarget _currentTarget;
         private bool _isProgrammaticNavigation;
 
@@ -61,6 +64,13 @@ namespace ModernWpf.Gallery.Shell
             if (string.Equals(normalized, "AllControls", StringComparison.OrdinalIgnoreCase))
             {
                 return NavigationTarget.AllControls();
+            }
+
+            if (string.Equals(normalized, "WhatsNew", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(normalized, "What's New", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(normalized, "Whats New", StringComparison.OrdinalIgnoreCase))
+            {
+                return NavigationTarget.WhatsNew();
             }
 
             if (string.Equals(normalized, "Settings", StringComparison.OrdinalIgnoreCase))
@@ -133,8 +143,13 @@ namespace ModernWpf.Gallery.Shell
 
         private void BuildNavigationMenu()
         {
-            Navigation.MenuItems.Add(CreateNavigationItem("Home", NavigationTarget.Home(), Symbol.Home));
-            Navigation.MenuItems.Add(CreateNavigationItem("All controls", NavigationTarget.AllControls(), Symbol.ViewAll));
+            _homeNavigationItem = CreateNavigationItem("Home", NavigationTarget.Home(), Symbol.Home);
+            _whatsNewNavigationItem = CreateNavigationItem("What's New", NavigationTarget.WhatsNew(), Symbol.Emoji);
+            _allControlsNavigationItem = CreateNavigationItem("All controls", NavigationTarget.AllControls(), Symbol.ViewAll);
+
+            Navigation.MenuItems.Add(_homeNavigationItem);
+            Navigation.MenuItems.Add(_whatsNewNavigationItem);
+            Navigation.MenuItems.Add(_allControlsNavigationItem);
             Navigation.MenuItems.Add(new NavigationViewItemSeparator());
 
             foreach (var group in GalleryCatalog.Groups)
@@ -269,6 +284,13 @@ namespace ModernWpf.Gallery.Shell
                 return page;
             }
 
+            if (target.Kind == NavigationTargetKind.WhatsNew)
+            {
+                var page = new WhatsNewPage();
+                page.ItemRequested = uniqueId => Navigate(NavigationTarget.Item(uniqueId), true);
+                return page;
+            }
+
             if (target.Kind == NavigationTargetKind.Settings)
             {
                 return new SettingsPage();
@@ -292,11 +314,15 @@ namespace ModernWpf.Gallery.Shell
             NavigationViewItem selectedItem = null;
             if (target.Kind == NavigationTargetKind.Home)
             {
-                selectedItem = Navigation.MenuItems.OfType<NavigationViewItem>().FirstOrDefault();
+                selectedItem = _homeNavigationItem;
+            }
+            else if (target.Kind == NavigationTargetKind.WhatsNew)
+            {
+                selectedItem = _whatsNewNavigationItem;
             }
             else if (target.Kind == NavigationTargetKind.AllControls)
             {
-                selectedItem = Navigation.MenuItems.OfType<NavigationViewItem>().Skip(1).FirstOrDefault();
+                selectedItem = _allControlsNavigationItem;
             }
             else if (target.Kind == NavigationTargetKind.Settings)
             {
@@ -345,6 +371,11 @@ namespace ModernWpf.Gallery.Shell
                 return "AllControls";
             }
 
+            if (target.Kind == NavigationTargetKind.WhatsNew)
+            {
+                return "WhatsNew";
+            }
+
             if (target.Kind == NavigationTargetKind.Settings)
             {
                 return "settings";
@@ -362,6 +393,7 @@ namespace ModernWpf.Gallery.Shell
     internal enum NavigationTargetKind
     {
         Home,
+        WhatsNew,
         AllControls,
         Settings,
         Group,
@@ -394,6 +426,11 @@ namespace ModernWpf.Gallery.Shell
         public static NavigationTarget AllControls()
         {
             return new NavigationTarget(NavigationTargetKind.AllControls, string.Empty);
+        }
+
+        public static NavigationTarget WhatsNew()
+        {
+            return new NavigationTarget(NavigationTargetKind.WhatsNew, string.Empty);
         }
 
         public static NavigationTarget Settings()

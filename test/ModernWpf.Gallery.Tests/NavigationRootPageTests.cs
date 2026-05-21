@@ -58,6 +58,19 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [DataTestMethod]
+        [DataRow("WhatsNew")]
+        [DataRow("What's New")]
+        [DataRow("Whats New")]
+        [DataRow("/WhatsNew")]
+        public void ResolveNavigationTargetAcceptsWhatsNew(string value)
+        {
+            var target = NavigationRootPage.ResolveNavigationTarget(value);
+
+            Assert.IsNotNull(target);
+            Assert.AreEqual(NavigationTargetKind.WhatsNew, target.Kind);
+        }
+
+        [DataTestMethod]
         [DataRow("Settings")]
         [DataRow("settings")]
         [DataRow("/settings")]

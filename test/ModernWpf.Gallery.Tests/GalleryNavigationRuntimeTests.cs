@@ -73,6 +73,7 @@ namespace ModernWpf.Gallery.Tests
         private static IEnumerable<string> CatalogRoutes()
         {
             yield return "home";
+            yield return "WhatsNew";
             yield return "AllControls";
 
             foreach (var group in GalleryCatalog.Groups)

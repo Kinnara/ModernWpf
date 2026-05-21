@@ -1,0 +1,271 @@
+<UserControl
+    x:Class="ModernWpf.Gallery.Pages.WhatsNewPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:ModernWpf.Gallery.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="700"
+    d:DesignWidth="900"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style
+            x:Key="WhatsNewSubHeaderTextStyle"
+            BasedOn="{StaticResource SubtitleTextBlockStyle}"
+            TargetType="TextBlock">
+            <Setter Property="Margin" Value="0,0,0,12" />
+        </Style>
+
+        <Style
+            x:Key="WhatsNewParagraphTextStyle"
+            BasedOn="{StaticResource BodyTextBlockStyle}"
+            TargetType="TextBlock">
+            <Setter Property="Margin" Value="0,0,0,12" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid
+        AutomationProperties.AutomationId="ContentRootGrid"
+        Style="{StaticResource GalleryPageRootStyle}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Margin="0,0,0,32">
+            <Label
+                Focusable="True"
+                KeyboardNavigation.IsTabStop="True">
+                <TextBlock
+                    AutomationProperties.AutomationId="GalleryWhatsNewPageTitle"
+                    Style="{StaticResource TitleTextBlockStyle}"
+                    Text="What's new in WPF" />
+            </Label>
+            <Label
+                Focusable="True"
+                KeyboardNavigation.IsTabStop="True">
+                <TextBlock
+                    Style="{StaticResource BodyTextBlockStyle}"
+                    Text="Discover all the new features, enhancements and APIs introduced in WPF" />
+            </Label>
+        </StackPanel>
+
+        <ScrollViewer
+            Grid.Row="1"
+            Margin="0,0,0,24"
+            Padding="0,0,24,0">
+            <StackPanel>
+                <TextBlock
+                    Margin="0,0,0,12"
+                    Style="{StaticResource TitleTextBlockStyle}"
+                    Text=".NET 10" />
+
+                <TextBlock Style="{StaticResource WhatsNewSubHeaderTextStyle}" Text="New and enhanced Fluent styles" />
+
+                <TextBlock Style="{StaticResource WhatsNewParagraphTextStyle}">
+                    <Run>
+                        Fluent styles for remaining PresentationFramework controls have been added in .NET 10, including GridSplitter, GridView,
+                        GroupBox, Label, Frame, NavigationWindow, and related controls.
+                    </Run>
+                    <Run>
+                        Existing styles for text input controls, DataGrid, Expander, and other controls have also been updated for more consistent
+                        layout, right-to-left behavior, and control heights.
+                    </Run>
+                    <LineBreak />
+                    <LineBreak />
+                    <Run>See the </Run>
+                    <Bold>Recently added and updated</Bold>
+                    <Run> section on the Home page for the current sample list.</Run>
+                </TextBlock>
+
+                <TextBlock Style="{StaticResource WhatsNewSubHeaderTextStyle}" Text="Grid shorthand syntax" />
+
+                <TextBlock Style="{StaticResource WhatsNewParagraphTextStyle}">
+                    The WPF Grid supports shorthand row and column definitions using the RowDefinitions and ColumnDefinitions attributes.
+                    Values are comma-separated and follow the same sizing rules as explicit RowDefinition and ColumnDefinition elements.
+                </TextBlock>
+
+                <controls:ControlExample
+                    Margin="2,10,2,24"
+                    HeaderText="Grid shorthand syntax sample"
+                    XamlCode="{Binding GridShorthandSyntaxXamlCode}">
+                    <Grid HorizontalAlignment="Left">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="80" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Margin="0,0,10,0"
+                            FontWeight="Bold"
+                            Text="Sl. No." />
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            FontWeight="Bold"
+                            Text="Name" />
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="2"
+                            FontWeight="Bold"
+                            Text="Description" />
+                        <TextBlock
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Text="1" />
+                        <TextBlock
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Text="Rectangle" />
+                        <TextBlock
+                            Grid.Row="1"
+                            Grid.Column="2"
+                            Text="Quadrilateral where all the adjacent sides form a right angle."
+                            TextWrapping="Wrap" />
+                        <TextBlock
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            Text="2" />
+                        <TextBlock
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            Text="Circle" />
+                        <TextBlock
+                            Grid.Row="2"
+                            Grid.Column="2"
+                            Text="Set of all points that are equidistant from a fixed point."
+                            TextWrapping="Wrap" />
+                    </Grid>
+                </controls:ControlExample>
+
+                <TextBlock Style="{StaticResource WhatsNewSubHeaderTextStyle}" Text="Extended MessageBox options" />
+
+                <TextBlock Style="{StaticResource WhatsNewParagraphTextStyle}">
+                    <Run>
+                        MessageBox in WPF calls into the Win32 API for displaying message dialogs. Additional button and result values are now
+                        surfaced through the WPF API so applications can use more of the platform dialog behavior directly.
+                    </Run>
+                    <LineBreak />
+                    <LineBreak />
+                    <Run>See the </Run>
+                    <Hyperlink Click="OnMessageBoxSpecClick">MessageBox API proposal</Hyperlink>
+                    <Run> and the </Run>
+                    <Hyperlink Click="OnMessageBoxSampleClick">MessageBox sample</Hyperlink>
+                    <Run> for details.</Run>
+                </TextBlock>
+
+                <TextBlock
+                    Margin="0,12,0,24"
+                    Style="{StaticResource WhatsNewParagraphTextStyle}">
+                    <Run>See </Run>
+                    <Hyperlink Click="OnWhatsNewNet10Click">What's New in WPF for .NET 10</Hyperlink>
+                    <Run> for more details.</Run>
+                </TextBlock>
+
+                <TextBlock
+                    Margin="0,0,0,12"
+                    Style="{StaticResource TitleTextBlockStyle}"
+                    Text=".NET 9" />
+
+                <TextBlock Style="{StaticResource WhatsNewSubHeaderTextStyle}" Text="Accent colors as SystemColors" />
+
+                <TextBlock Style="{StaticResource WhatsNewParagraphTextStyle}">
+                    Since Windows 10, accent color has been central to app styling. WPF now exposes system accent colors and brushes directly so apps can
+                    align with the user's system theme without defining their own color ramp.
+                </TextBlock>
+
+                <TextBlock Style="{StaticResource WhatsNewParagraphTextStyle}">
+                    <Bold>NOTE: </Bold>
+                    <Run>In high contrast mode, accent color brushes and colors may resolve to the same value.</Run>
+                </TextBlock>
+
+                <controls:ControlExample
+                    Margin="2,10,2,24"
+                    HeaderText="AccentColor API"
+                    XamlCode="{Binding AccentColorXamlCode}">
+                    <StackPanel Height="50" Orientation="Horizontal">
+                        <Border
+                            Width="30"
+                            Height="50"
+                            Background="#004275"
+                            CornerRadius="2,0,0,2" />
+                        <Border
+                            Width="30"
+                            Height="50"
+                            Background="#005A9E" />
+                        <Border
+                            Width="30"
+                            Height="50"
+                            Background="#0078D4" />
+                        <Border
+                            Width="30"
+                            Height="50"
+                            Background="#2B88D8" />
+                        <Border
+                            Width="30"
+                            Height="50"
+                            Background="#C7E0F4" />
+                        <Border
+                            Width="30"
+                            Height="50"
+                            Background="#DEECF9" />
+                        <Border
+                            Width="30"
+                            Height="50"
+                            Background="#EFF6FC"
+                            CornerRadius="0,2,2,0" />
+                    </StackPanel>
+                </controls:ControlExample>
+
+                <TextBlock Style="{StaticResource WhatsNewSubHeaderTextStyle}" Text="[ Experimental ] ThemeMode API" />
+
+                <TextBlock Style="{StaticResource WhatsNewParagraphTextStyle}">
+                    ThemeMode enables applications to switch between Fluent Themes at runtime. It can be configured at the application or window level
+                    and supports Light, Dark, System, and None modes.
+                </TextBlock>
+
+                <TextBlock Style="{StaticResource WhatsNewSubHeaderTextStyle}" Text="Hyphen based ligature support" />
+
+                <TextBlock Style="{StaticResource WhatsNewParagraphTextStyle}">
+                    Based on WPF community feedback, hyphen based ligatures now work correctly in fonts such as Cascadia Code.
+                </TextBlock>
+
+                <controls:ControlExample
+                    Margin="2,10,2,24"
+                    HeaderText="Hyphen based ligature example"
+                    XamlCode="{Binding HyphenBasedLigatureXamlCode}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock
+                            Margin="0,0,16,0"
+                            FontFamily="Cascadia Code"
+                            Text="--&gt;" />
+                        <TextBlock
+                            Margin="0,0,16,0"
+                            FontFamily="Cascadia Code"
+                            Text="&lt;!--" />
+                        <TextBlock
+                            Margin="0,0,16,0"
+                            FontFamily="Cascadia Code"
+                            Text="&lt;--" />
+                    </StackPanel>
+                </controls:ControlExample>
+
+                <TextBlock
+                    Margin="0,0,0,24"
+                    Style="{StaticResource WhatsNewParagraphTextStyle}">
+                    <Run>See </Run>
+                    <Hyperlink Click="OnWhatsNewNet9Click">What's New in WPF for .NET 9</Hyperlink>
+                    <Run> for more details.</Run>
+                </TextBlock>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>
