@@ -119,18 +119,18 @@
                 <Style.Resources>
                     <SolidColorBrush
                         x:Key="ButtonBackground"
-                        Color="{DynamicResource SystemChromeMediumLowColor}"
+                        Color="{Binding Color, Source={StaticResource AcrylicBackgroundFillColorDefaultBrush}}"
                         Opacity="0.8" />
                     <SolidColorBrush
                         x:Key="ButtonBackgroundPointerOver"
-                        Color="{DynamicResource SystemChromeMediumLowColor}"
+                        Color="{Binding Color, Source={StaticResource AcrylicBackgroundFillColorDefaultBrush}}"
                         Opacity="0.9" />
                     <SolidColorBrush
                         x:Key="ButtonBackgroundPressed"
-                        Color="{DynamicResource SystemChromeMediumLowColor}" />
+                        Color="{Binding Color, Source={StaticResource AcrylicBackgroundFillColorDefaultBrush}}" />
                 </Style.Resources>
-                <Setter Property="Width" Value="198" />
-                <Setter Property="Height" Value="220" />
+                <Setter Property="Width" Value="186" />
+                <Setter Property="Height" Value="208" />
                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                 <Setter Property="VerticalContentAlignment" Value="Stretch" />
                 <Setter Property="Padding" Value="24" />

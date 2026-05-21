@@ -1,9 +1,13 @@
 using System;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Markup;
 using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls;
+using ModernWpf.Gallery.Pages;
 
 namespace ModernWpf.Gallery.Tests
 {
@@ -39,6 +43,58 @@ namespace ModernWpf.Gallery.Tests
             });
         }
 
+        [TestMethod]
+        public void HomeHeaderTilesMatchWpfGalleryReferenceSlotGeometry()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new HomePage();
+                var tilesPanel = (StackPanel)page.FindName("TilesPanel");
+                var buttons = tilesPanel.Children.OfType<Button>().ToArray();
+
+                Assert.AreEqual(5, buttons.Length);
+
+                foreach (var button in buttons)
+                {
+                    Assert.AreEqual(186d, button.Width);
+                    Assert.AreEqual(208d, button.Height);
+                }
+
+                Assert.AreEqual(new Thickness(6, 6, 12, 6), buttons[0].Margin);
+
+                foreach (var button in buttons.Skip(1))
+                {
+                    Assert.AreEqual(new Thickness(6), button.Margin);
+                }
+            });
+        }
+
+        [TestMethod]
+        public void HomeHeaderTilesUseWpfGalleryAcrylicFillResources()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var style = (Style)Application.Current.FindResource("GalleryHeaderTileButtonStyle");
+                var acrylicBrush = Application.Current.FindResource("AcrylicBackgroundFillColorDefaultBrush");
+
+                AssertHeaderTileBrush(style.Resources["ButtonBackground"], acrylicBrush, 0.8);
+                AssertHeaderTileBrush(style.Resources["ButtonBackgroundPointerOver"], acrylicBrush, 0.9);
+                AssertHeaderTileBrush(style.Resources["ButtonBackgroundPressed"], acrylicBrush, 1.0);
+            });
+        }
+
+        [TestMethod]
+        public void ControlExampleSourceCodeTextStyleUsesWpfGalleryReferenceResources()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var style = (Style)Application.Current.FindResource("SelectionTextBox");
+
+                AssertDynamicResourceSetter(style, Control.ForegroundProperty, "TextControlForeground");
+                AssertDynamicResourceSetter(style, Control.FontSizeProperty, "ControlContentThemeFontSize");
+            });
+        }
+
         private static int CountPlatformFluentThemeDictionaries(ResourceDictionary resources)
         {
             var count = IsPlatformFluentThemeDictionary(resources) ? 1 : 0;
@@ -54,6 +110,27 @@ namespace ModernWpf.Gallery.Tests
         private static bool IsPlatformFluentThemeDictionary(ResourceDictionary dictionary)
         {
             return dictionary.Source?.ToString().StartsWith(PlatformFluentThemePrefix, StringComparison.OrdinalIgnoreCase) == true;
+        }
+
+        private static void AssertHeaderTileBrush(object resource, object acrylicBrush, double opacity)
+        {
+            var brush = resource as SolidColorBrush;
+            Assert.IsNotNull(brush);
+            Assert.AreEqual(opacity, brush.Opacity, 0.001);
+
+            var binding = BindingOperations.GetBinding(brush, SolidColorBrush.ColorProperty);
+            Assert.IsNotNull(binding);
+            Assert.AreEqual("Color", binding.Path.Path);
+            Assert.AreSame(acrylicBrush, binding.Source);
+        }
+
+        private static void AssertDynamicResourceSetter(Style style, DependencyProperty property, object resourceKey)
+        {
+            var setter = style.Setters.OfType<Setter>().Single(item => item.Property == property);
+            var dynamicResource = setter.Value as DynamicResourceExtension;
+
+            Assert.IsNotNull(dynamicResource);
+            Assert.AreEqual(resourceKey, dynamicResource.ResourceKey);
         }
     }
 }

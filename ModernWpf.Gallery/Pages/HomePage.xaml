@@ -90,6 +90,7 @@
                     Orientation="Horizontal">
                     <Button
                         Click="OnHeaderTileClick"
+                        Margin="6,6,12,6"
                         Style="{StaticResource GalleryHeaderTileButtonStyle}"
                         Tag="https://learn.microsoft.com/windows/apps/get-started/">
                         <Grid>
