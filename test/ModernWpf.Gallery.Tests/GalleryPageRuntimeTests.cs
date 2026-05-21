@@ -76,11 +76,122 @@ namespace ModernWpf.Gallery.Tests
             WpfTestHost.Run(() =>
             {
                 var page = new WhatsNewPage();
+                var titleLabel = (Label)page.FindName("TitleLabel");
+                var descriptionLabel = (Label)page.FindName("DescriptionLabel");
                 var title = (TextBlock)page.FindName("WhatsNewTitleTextBlock");
                 var description = (TextBlock)page.FindName("WhatsNewDescriptionTextBlock");
 
+                Assert.AreEqual("What's new in WPF Page", AutomationProperties.GetName(titleLabel));
+                Assert.AreEqual(AutomationHeadingLevel.Level1, AutomationProperties.GetHeadingLevel(titleLabel));
+                Assert.AreEqual(AutomationHeadingLevel.Level2, AutomationProperties.GetHeadingLevel(descriptionLabel));
+                Assert.AreEqual(0, KeyboardNavigation.GetTabIndex(titleLabel));
+                Assert.AreEqual(1, KeyboardNavigation.GetTabIndex(descriptionLabel));
                 Assert.AreEqual("What's new in WPF", title.Text);
                 Assert.AreEqual("Discover all the new features, enhancements and APIs introduced in WPF", description.Text);
+
+                var gridExample = (ControlExample)page.FindName("GridShorthandSyntaxExample");
+                var accentExample = (ControlExample)page.FindName("AccentColorExample");
+                var ligatureExample = (ControlExample)page.FindName("HyphenLigatureExample");
+                Assert.AreEqual(new Thickness(2, 10, 2, 24), gridExample.Margin);
+                Assert.AreEqual(new Thickness(2, 10, 2, 10), accentExample.Margin);
+                Assert.AreEqual(new Thickness(2, 10, 2, 10), ligatureExample.Margin);
+                Assert.IsInstanceOfType(accentExample.ExampleContent, typeof(Grid));
+            });
+        }
+
+        [TestMethod]
+        public void SettingsPageMatchesWpfGalleryReferenceLayout()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new SettingsPage();
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    var root = (Grid)page.FindName("ContentRootGrid");
+                    Assert.AreEqual(2, root.RowDefinitions.Count);
+                    Assert.AreEqual(GridUnitType.Auto, root.RowDefinitions[0].Height.GridUnitType);
+                    Assert.AreEqual(GridUnitType.Star, root.RowDefinitions[1].Height.GridUnitType);
+
+                    var titleLabel = (Label)page.FindName("TitleLabel");
+                    Assert.AreEqual("Settings Page", AutomationProperties.GetName(titleLabel));
+                    Assert.AreEqual(AutomationHeadingLevel.Level1, AutomationProperties.GetHeadingLevel(titleLabel));
+                    Assert.IsTrue(titleLabel.Focusable);
+                    Assert.IsTrue(KeyboardNavigation.GetIsTabStop(titleLabel));
+                    Assert.AreEqual(0, KeyboardNavigation.GetTabIndex(titleLabel));
+
+                    var title = (TextBlock)titleLabel.Content;
+                    Assert.AreEqual("Settings", title.Text);
+
+                    var scrollViewer = root.Children.OfType<ScrollViewer>().Single();
+                    Assert.AreEqual(1, Grid.GetRow(scrollViewer));
+                    Assert.AreEqual(new Thickness(0, 0, 0, 24), scrollViewer.Margin);
+                    Assert.AreEqual(new Thickness(0, 0, 24, 0), scrollViewer.Padding);
+
+                    var appearanceHeader = (TextBlock)page.FindName("AppearanceHeaderText");
+                    var aboutHeader = (TextBlock)page.FindName("AboutHeaderText");
+                    AssertSettingsSectionHeader(appearanceHeader, "Appearance & behavior");
+                    AssertSettingsSectionHeader(aboutHeader, "About");
+
+                    var appIcon = (TextBlock)page.FindName("AppIcon");
+                    Assert.AreEqual("App Icon", AutomationProperties.GetName(appIcon));
+                    Assert.AreEqual(20.0, appIcon.Width);
+                    Assert.AreEqual(20.0, appIcon.Height);
+                    Assert.AreEqual(new Thickness(10, 5, 10, 5), appIcon.Margin);
+                    Assert.AreEqual("\uE790", appIcon.Text);
+
+                    var themeMode = (ComboBox)page.FindName("Change_ThemeMode");
+                    Assert.AreEqual(200.0, themeMode.MinWidth);
+                    Assert.AreEqual(HorizontalAlignment.Right, themeMode.HorizontalAlignment);
+                    Assert.AreEqual(new Thickness(10), themeMode.Margin);
+                    Assert.AreEqual("Change ThemeMode", AutomationProperties.GetName(themeMode));
+                    CollectionAssert.AreEqual(
+                        new[] { "Light", "Dark", "Use system setting" },
+                        themeMode.Items.Cast<ComboBoxItem>().Select(item => item.Content.ToString()).ToArray());
+
+                    var aboutExpander = (Expander)page.FindName("AboutExpander");
+                    Assert.AreEqual("ModernWpf Gallery", AutomationProperties.GetName(aboutExpander));
+                    var expanderHeader = (Grid)aboutExpander.Header;
+                    Assert.AreEqual(3, expanderHeader.ColumnDefinitions.Count);
+                    Assert.AreEqual("ModernWpf Gallery", ((TextBlock)((StackPanel)expanderHeader.Children[1]).Children[0]).Text);
+
+                    var cloneCommand = (TextBox)page.FindName("CloneCommandTextBox");
+                    Assert.IsFalse(cloneCommand.Focusable);
+                    Assert.AreEqual("git clone https://github.com/Kinnara/ModernWpf.git", cloneCommand.Text);
+
+                    var openIssues = (Button)page.FindName("OpenIssuesButton");
+                    Assert.AreEqual("Open Issues", AutomationProperties.GetName(openIssues));
+                    Assert.AreEqual(new Thickness(8), openIssues.Padding);
+                    Assert.IsTrue(FocusManager.GetIsFocusScope(openIssues));
+
+                    var dependencies = (GroupBox)page.FindName("DependenciesGroupBox");
+                    var warranty = (GroupBox)page.FindName("WarrantyGroupBox");
+                    Assert.AreEqual("Dependencies and References", AutomationProperties.GetName(dependencies));
+                    Assert.AreEqual("THIS CODE AND INFORMATION IS PROVIDED AS IS WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.", AutomationProperties.GetName(warranty));
+                    Assert.AreEqual(new Thickness(0), dependencies.BorderThickness);
+                    Assert.AreEqual(new Thickness(0), warranty.BorderThickness);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
             });
         }
 
@@ -1515,6 +1626,14 @@ namespace ModernWpf.Gallery.Tests
             {
                 Assert.AreEqual(expectedMargins[i], page.Examples[i].Margin, uniqueId + " example " + i);
             }
+        }
+
+        private static void AssertSettingsSectionHeader(TextBlock header, string expectedText)
+        {
+            Assert.AreEqual(expectedText, header.Text);
+            Assert.AreEqual(new Thickness(10), header.Margin);
+            Assert.AreEqual(14.0, header.FontSize);
+            Assert.AreEqual(FontWeights.SemiBold, header.FontWeight);
         }
 
         private static void AssertGridExample(Grid grid, double height, string[] expectedTexts)

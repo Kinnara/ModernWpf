@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="700"
     d:DesignWidth="900"
+    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     mc:Ignorable="d">
     <UserControl.Resources>
         <Style x:Key="LinkTextBlockStyle" TargetType="TextBlock">
@@ -24,6 +25,7 @@
     </UserControl.Resources>
 
     <Grid
+        x:Name="ContentRootGrid"
         AutomationProperties.AutomationId="ContentRootGrid"
         Style="{StaticResource GalleryPageRootStyle}">
         <Grid.RowDefinitions>
@@ -33,6 +35,8 @@
 
         <StackPanel Margin="0,0,0,40">
             <Label
+                x:Name="TitleLabel"
+                AutomationProperties.Name="Settings Page"
                 Focusable="True"
                 KeyboardNavigation.IsTabStop="True"
                 KeyboardNavigation.TabIndex="0">
@@ -49,6 +53,7 @@
             Padding="0,0,24,0">
             <StackPanel>
                 <TextBlock
+                    x:Name="AppearanceHeaderText"
                     Margin="10"
                     FontSize="14"
                     FontWeight="SemiBold"
@@ -69,6 +74,7 @@
                             </Grid.ColumnDefinitions>
 
                             <TextBlock
+                                x:Name="AppIcon"
                                 Grid.Column="0"
                                 Width="20"
                                 Height="20"
@@ -92,7 +98,7 @@
                             </StackPanel>
 
                             <ComboBox
-                                x:Name="ThemeModeComboBox"
+                                x:Name="Change_ThemeMode"
                                 Grid.Column="2"
                                 MinWidth="200"
                                 Margin="10"
@@ -108,12 +114,15 @@
                 </Grid>
 
                 <TextBlock
+                    x:Name="AboutHeaderText"
                     Margin="10"
                     FontSize="14"
                     FontWeight="SemiBold"
                     Text="About" />
 
-                <Expander AutomationProperties.Name="ModernWpf Gallery">
+                <Expander
+                    x:Name="AboutExpander"
+                    AutomationProperties.Name="ModernWpf Gallery">
                     <Expander.Header>
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -160,6 +169,7 @@
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Grid.Column="0" Text="To clone this repository" />
                                 <TextBox
+                                    x:Name="CloneCommandTextBox"
                                     Grid.Column="2"
                                     Focusable="False"
                                     Style="{StaticResource SelectionTextBox}"
@@ -176,6 +186,7 @@
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Grid.Column="0" Text="File a bug or request a new sample" />
                                 <Button
+                                    x:Name="OpenIssuesButton"
                                     Grid.Column="2"
                                     Padding="8"
                                     AutomationProperties.Name="Open Issues"
@@ -189,6 +200,7 @@
                         </Border>
 
                         <GroupBox
+                            x:Name="DependenciesGroupBox"
                             Grid.Row="2"
                             AutomationProperties.Name="Dependencies and References"
                             BorderThickness="0">
@@ -209,8 +221,9 @@
                         </GroupBox>
 
                         <GroupBox
+                            x:Name="WarrantyGroupBox"
                             Grid.Row="3"
-                            AutomationProperties.Name="Code and information warranty notice"
+                            AutomationProperties.Name="THIS CODE AND INFORMATION IS PROVIDED AS IS WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE."
                             BorderThickness="0">
                             <Border Style="{StaticResource BottomSettingsCardStyle}">
                                 <StackPanel Margin="48,0,16,0" Orientation="Vertical">

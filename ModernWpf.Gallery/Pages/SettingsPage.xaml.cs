@@ -12,6 +12,7 @@ namespace ModernWpf.Gallery.Pages
         public SettingsPage()
         {
             InitializeComponent();
+            GalleryAutomation.SetHeadingLevel(TitleLabel, GalleryAutomationHeadingLevel.Level1);
             SelectCurrentTheme();
             _canApplyThemeSelection = true;
         }
@@ -21,13 +22,13 @@ namespace ModernWpf.Gallery.Pages
             switch (ThemeManager.Current.ApplicationTheme)
             {
                 case ApplicationTheme.Light:
-                    ThemeModeComboBox.SelectedIndex = 0;
+                    Change_ThemeMode.SelectedIndex = 0;
                     break;
                 case ApplicationTheme.Dark:
-                    ThemeModeComboBox.SelectedIndex = 1;
+                    Change_ThemeMode.SelectedIndex = 1;
                     break;
                 default:
-                    ThemeModeComboBox.SelectedIndex = 2;
+                    Change_ThemeMode.SelectedIndex = 2;
                     break;
             }
         }
@@ -39,7 +40,7 @@ namespace ModernWpf.Gallery.Pages
                 return;
             }
 
-            switch (ThemeModeComboBox.SelectedIndex)
+            switch (Change_ThemeMode.SelectedIndex)
             {
                 case 0:
                     ThemeManager.Current.ApplicationTheme = ApplicationTheme.Light;

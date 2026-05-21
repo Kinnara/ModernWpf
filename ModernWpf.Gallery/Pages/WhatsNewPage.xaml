@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="700"
     d:DesignWidth="900"
+    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     mc:Ignorable="d">
     <UserControl.Resources>
         <Style
@@ -35,8 +36,11 @@
 
         <StackPanel Margin="0,0,0,32">
             <Label
+                x:Name="TitleLabel"
+                AutomationProperties.Name="What's new in WPF Page"
                 Focusable="True"
-                KeyboardNavigation.IsTabStop="True">
+                KeyboardNavigation.IsTabStop="True"
+                KeyboardNavigation.TabIndex="0">
                 <TextBlock
                     x:Name="WhatsNewTitleTextBlock"
                     AutomationProperties.AutomationId="GalleryWhatsNewPageTitle"
@@ -44,8 +48,10 @@
                     Text="What's new in WPF" />
             </Label>
             <Label
+                x:Name="DescriptionLabel"
                 Focusable="True"
-                KeyboardNavigation.IsTabStop="True">
+                KeyboardNavigation.IsTabStop="True"
+                KeyboardNavigation.TabIndex="1">
                 <TextBlock
                     x:Name="WhatsNewDescriptionTextBlock"
                     Style="{StaticResource BodyTextBlockStyle}"
@@ -91,6 +97,7 @@
                 </TextBlock>
 
                 <controls:ControlExample
+                    x:Name="GridShorthandSyntaxExample"
                     Margin="2,10,2,24"
                     HeaderText="Grid Shorthand Syntax Sample"
                     XamlCode="{Binding GridShorthandSyntaxXamlCode}">
@@ -200,31 +207,34 @@
                 </TextBlock>
 
                 <controls:ControlExample
-                    Margin="2,10,2,24"
+                    x:Name="AccentColorExample"
+                    Margin="2,10"
                     HeaderText="AccentColor API"
                     XamlCode="{Binding AccentColorXamlCode}">
-                    <StackPanel
-                        x:Name="AccentColorSwatches"
-                        Height="50"
-                        Orientation="Horizontal">
-                        <StackPanel.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="Height" Value="50" />
-                                <Setter Property="Width" Value="30" />
-                            </Style>
-                        </StackPanel.Resources>
-                        <Border
-                            Background="{DynamicResource SystemAccentColorDark3Brush}"
-                            CornerRadius="2,0,0,2" />
-                        <Border Background="{DynamicResource SystemAccentColorDark2Brush}" />
-                        <Border Background="{DynamicResource SystemAccentColorDark1Brush}" />
-                        <Border Background="{DynamicResource SystemControlBackgroundAccentBrush}" />
-                        <Border Background="{DynamicResource SystemAccentColorLight1Brush}" />
-                        <Border Background="{DynamicResource SystemAccentColorLight2Brush}" />
-                        <Border
-                            Background="{DynamicResource SystemAccentColorLight3Brush}"
-                            CornerRadius="0,2,2,0" />
-                    </StackPanel>
+                    <Grid>
+                        <StackPanel
+                            x:Name="AccentColorSwatches"
+                            Height="50"
+                            Orientation="Horizontal">
+                            <StackPanel.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="Height" Value="50" />
+                                    <Setter Property="Width" Value="30" />
+                                </Style>
+                            </StackPanel.Resources>
+                            <Border
+                                Background="{DynamicResource SystemAccentColorDark3Brush}"
+                                CornerRadius="2,0,0,2" />
+                            <Border Background="{DynamicResource SystemAccentColorDark2Brush}" />
+                            <Border Background="{DynamicResource SystemAccentColorDark1Brush}" />
+                            <Border Background="{DynamicResource SystemControlBackgroundAccentBrush}" />
+                            <Border Background="{DynamicResource SystemAccentColorLight1Brush}" />
+                            <Border Background="{DynamicResource SystemAccentColorLight2Brush}" />
+                            <Border
+                                Background="{DynamicResource SystemAccentColorLight3Brush}"
+                                CornerRadius="0,2,2,0" />
+                        </StackPanel>
+                    </Grid>
                 </controls:ControlExample>
 
                 <TextBlock
@@ -272,7 +282,8 @@
                 </TextBlock>
 
                 <controls:ControlExample
-                    Margin="2,10,2,24"
+                    x:Name="HyphenLigatureExample"
+                    Margin="2,10"
                     HeaderText="Hyphen based ligature example"
                     XamlCode="{Binding HyphenBasedLigatureXamlCode}">
                     <StackPanel Orientation="Horizontal">
