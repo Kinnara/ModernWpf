@@ -50,11 +50,15 @@
                     Content="{Binding NoticeContent}"
                     Visibility="{Binding HasNoticeContent, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
+                <ContentControl
+                    Content="{Binding PageBodyContent}"
+                    Visibility="{Binding HasPageBodyContent, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
                 <ItemsControl
                     AlternationCount="2147483647"
                     AutomationProperties.AutomationId="GallerySampleHost"
                     ItemsSource="{Binding Examples}"
-                    Visibility="{Binding HasWpfSampleContent, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    Visibility="{Binding ShowExamples, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <ItemsControl.ItemContainerStyle>
                         <Style TargetType="ContentPresenter">
                             <Setter Property="Margin" Value="10,36,10,10" />

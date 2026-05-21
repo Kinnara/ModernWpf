@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ModernWpf.Gallery.Controls;
 using Microsoft.Win32;
 
 namespace ModernWpf.Gallery.Pages
@@ -116,6 +117,25 @@ namespace ModernWpf.Gallery.Pages
             {
                 case "UserDashboard":
                     return CreateUserDashboardPageContent();
+                default:
+                    return null;
+            }
+        }
+
+        public static object CreatePageBodyContent(string uniqueId)
+        {
+            switch (uniqueId)
+            {
+                case "Color":
+                    return CreateColorPageBody();
+                case "Geometry":
+                    return CreateGeometryPageBody();
+                case "Iconography":
+                    return CreateIconographyPageBody();
+                case "Spacing":
+                    return CreateSpacingPageBody();
+                case "Typography":
+                    return CreateTypographyPageBody();
                 default:
                     return null;
             }
@@ -1126,6 +1146,137 @@ namespace ModernWpf.Gallery.Pages
             return stack;
         }
 
+        private static StackPanel CreateColorPageBody()
+        {
+            var root = CreateDesignPageBodyStack();
+
+            var intro = new TextBlock
+            {
+                Margin = new Thickness(0, 0, 0, 24),
+                TextWrapping = TextWrapping.Wrap
+            };
+            intro.SetResourceReference(FrameworkElement.StyleProperty, "BodyTextBlockStyle");
+            intro.Inlines.Add(new Run("Color provides an intuitive way of communicating information to users in your app: it can be used to indicate interactivity, give feedback to user actions, and give your interface a sense of visual continuity."));
+            intro.Inlines.Add(new LineBreak());
+            intro.Inlines.Add(new LineBreak());
+            intro.Inlines.Add(new Run("Using Colors") { FontWeight = FontWeights.SemiBold });
+            intro.Inlines.Add(new LineBreak());
+            intro.Inlines.Add(new Run("The colors below are provided as part of WPF .NET 9 onwards. You can reference them in your app using DynamicResource bindings. For example: Color=\"{DynamicResource CardBackgroundFillColorDefault}\""));
+            root.Children.Add(intro);
+
+            root.Children.Add(CreateColorResourcesExample());
+            return root;
+        }
+
+        private static StackPanel CreateGeometryPageBody()
+        {
+            var root = CreateDesignPageBodyStack();
+            root.Children.Add(CreateDesignParagraph("Geometry describes the shape, size and position of UI elements on screen."));
+            root.Children.Add(CreateDesignParagraph("These fundamental design elements help experiences feel coherent across the entire design system."));
+            root.Children.Add(CreateDesignParagraph("You can reference built-in corner radii styles using: CornerRadius=\"{StaticResource ControlCornerRadius}\".", new Thickness(0, 0, 0, 12)));
+            root.Children.Add(CreateDesignImageFrame("Geometry.dark.png", null, "Example of corner radius.", 500, 300));
+            root.Children.Add(CreateControlExample(
+                null,
+                CreateCornerRadiusTable(),
+                "<Border CornerRadius=\"{StaticResource OverlayCornerRadius}\" />\n<Border CornerRadius=\"{StaticResource ControlCornerRadius}\" />",
+                null));
+            return root;
+        }
+
+        private static StackPanel CreateIconographyPageBody()
+        {
+            return CreateIconographyExample();
+        }
+
+        private static StackPanel CreateSpacingPageBody()
+        {
+            var root = CreateDesignPageBodyStack();
+            root.Children.Add(CreateDesignParagraph("Consistent spacing helps create visual harmony and improves the readability and usability of your application."));
+            root.Children.Add(CreateDesignParagraph("Use the following spacing values to maintain a consistent layout throughout your app.", new Thickness(0, 0, 0, 12)));
+
+            var images = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                Margin = new Thickness(0, 0, 0, 16)
+            };
+            images.Children.Add(CreateDesignImageFrame("Cards.dark.png", "Page with cards layout", "Example of spacing in a page with cards layout", double.NaN, 500));
+            images.Children.Add(CreateDesignImageFrame("Dialog.dark.png", "Form layout", "Example of spacing in a form layout", double.NaN, 500));
+            root.Children.Add(images);
+
+            var tableCard = new Border
+            {
+                Margin = new Thickness(0, 10, 0, 10),
+                Padding = new Thickness(16),
+                BorderThickness = new Thickness(1, 1, 1, 0),
+                CornerRadius = new CornerRadius(8, 8, 0, 0),
+                Child = CreateSpacingTable()
+            };
+            tableCard.SetResourceReference(Border.BackgroundProperty, "SolidBackgroundFillColorBaseBrush");
+            tableCard.SetResourceReference(Border.BorderBrushProperty, "CardStrokeColorDefaultBrush");
+            root.Children.Add(tableCard);
+            return root;
+        }
+
+        private static StackPanel CreateTypographyPageBody()
+        {
+            var root = CreateDesignPageBodyStack();
+            root.Children.Add(CreateDesignParagraph("Type helps provide structure and hierarchy to UI. The default font for Windows is Segoe UI Variable."));
+            root.Children.Add(CreateDesignParagraph("Best practice is to use Regular weight for most text, use Semibold for titles."));
+            root.Children.Add(CreateDesignParagraph("The minimum values should be 12px Regular, 14px Semibold.", new Thickness(0, 0, 0, 12)));
+            root.Children.Add(CreateControlExample(
+                "Type ramp",
+                CreateTypographyRampExample(),
+                "<TextBlock Text=\"Caption\" Style=\"{StaticResource CaptionTextBlockStyle}\" />\n<TextBlock Text=\"Body\" Style=\"{StaticResource BodyTextBlockStyle}\" />\n<TextBlock Text=\"Body Strong\" Style=\"{StaticResource BodyStrongTextBlockStyle}\" />\n<TextBlock Text=\"Subtitle\" Style=\"{StaticResource SubtitleTextBlockStyle}\" />\n<TextBlock Text=\"Title\" Style=\"{StaticResource TitleTextBlockStyle}\" />\n<TextBlock Text=\"Title Large\" Style=\"{StaticResource TitleLargeTextBlockStyle}\" />\n<TextBlock Text=\"Display\" Style=\"{StaticResource DisplayTextBlockStyle}\" />",
+                null,
+                new Thickness(10)));
+            return root;
+        }
+
+        private static StackPanel CreateDesignPageBodyStack()
+        {
+            return new StackPanel
+            {
+                Margin = new Thickness(0, 0, 0, 24),
+                Orientation = Orientation.Vertical
+            };
+        }
+
+        private static TextBlock CreateDesignParagraph(string text)
+        {
+            return CreateDesignParagraph(text, new Thickness(0));
+        }
+
+        private static TextBlock CreateDesignParagraph(string text, Thickness margin)
+        {
+            var paragraph = new TextBlock
+            {
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Margin = margin,
+                Text = text,
+                TextWrapping = TextWrapping.Wrap
+            };
+            paragraph.SetResourceReference(FrameworkElement.StyleProperty, "BodyTextBlockStyle");
+            return paragraph;
+        }
+
+        private static ControlExample CreateControlExample(string headerText, UIElement exampleContent, string xamlCode, string csharpCode, Thickness? margin = null)
+        {
+            var example = new ControlExample
+            {
+                HeaderText = headerText,
+                ExampleContent = exampleContent,
+                XamlCode = xamlCode,
+                CSharpCode = csharpCode
+            };
+
+            if (margin.HasValue)
+            {
+                example.Margin = margin.Value;
+            }
+
+            return example;
+        }
+
         private static StackPanel CreateColorResourcesExample()
         {
             var root = new StackPanel();
@@ -1273,6 +1424,14 @@ namespace ModernWpf.Gallery.Pages
             };
             root.Children.Add(expander);
 
+            var libraryTitle = new TextBlock
+            {
+                Text = "Fluent Icons Library",
+                Margin = new Thickness(2, 0, 0, 10)
+            };
+            libraryTitle.SetResourceReference(FrameworkElement.StyleProperty, "BodyStrongTextBlockStyle");
+            root.Children.Add(libraryTitle);
+
             var searchBox = new TextBox
             {
                 Width = 500,
@@ -1280,7 +1439,25 @@ namespace ModernWpf.Gallery.Pages
                 Margin = new Thickness(0, 0, 0, 16)
             };
             AutomationProperties.SetName(searchBox, "Search Icons by Name, Tag");
-            root.Children.Add(searchBox);
+            var searchHost = new Grid
+            {
+                Width = 500,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Margin = new Thickness(0, 0, 0, 16)
+            };
+            searchBox.Margin = new Thickness(0);
+            searchHost.Children.Add(searchBox);
+            var searchPlaceholder = new TextBlock
+            {
+                Text = "Search Icons by Name, Tag",
+                Margin = new Thickness(14, 0, 0, 0),
+                VerticalAlignment = VerticalAlignment.Center,
+                IsHitTestVisible = false
+            };
+            searchPlaceholder.SetResourceReference(FrameworkElement.StyleProperty, "BodyTextBlockStyle");
+            searchPlaceholder.SetResourceReference(TextBlock.ForegroundProperty, "TextFillColorSecondaryBrush");
+            searchHost.Children.Add(searchPlaceholder);
+            root.Children.Add(searchHost);
 
             var icons = new WrapPanel();
             icons.Children.Add(CreateIconGlyphCard("Open in new window", "\uE8A7", "E8A7"));
@@ -1512,6 +1689,66 @@ namespace ModernWpf.Gallery.Pages
             Grid.SetRow(image, 1);
             grid.Children.Add(image);
 
+            return grid;
+        }
+
+        private static Grid CreateDesignImageFrame(string fileName, string title, string automationName, double width, double height)
+        {
+            var grid = new Grid
+            {
+                Margin = new Thickness(0, 0, 16, 16),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top
+            };
+
+            if (!double.IsNaN(width))
+            {
+                grid.Width = width;
+            }
+
+            if (!string.IsNullOrEmpty(title))
+            {
+                grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+                var titleText = new TextBlock
+                {
+                    Text = title,
+                    HorizontalAlignment = HorizontalAlignment.Center
+                };
+                titleText.SetResourceReference(FrameworkElement.StyleProperty, "SubtitleTextBlockStyle");
+                grid.Children.Add(titleText);
+            }
+
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+
+            var border = new Border
+            {
+                Height = height,
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+            if (!double.IsNaN(width))
+            {
+                border.Width = width;
+            }
+
+            var image = new Image
+            {
+                Source = new BitmapImage(new Uri("pack://application:,,,/ModernWpf.Gallery;component/Assets/Design/" + fileName)),
+                Stretch = Stretch.Uniform
+            };
+            if (double.IsNaN(width))
+            {
+                image.Height = height;
+            }
+            else
+            {
+                image.Width = width;
+                image.Height = height;
+            }
+
+            AutomationProperties.SetName(image, automationName);
+            border.Child = image;
+            Grid.SetRow(border, string.IsNullOrEmpty(title) ? 0 : 1);
+            grid.Children.Add(border);
             return grid;
         }
 
