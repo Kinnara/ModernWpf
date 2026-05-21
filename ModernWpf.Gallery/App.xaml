@@ -116,6 +116,19 @@
                 x:Key="GalleryHeaderTileButtonStyle"
                 BasedOn="{StaticResource DefaultButtonStyle}"
                 TargetType="Button">
+                <Style.Resources>
+                    <SolidColorBrush
+                        x:Key="ButtonBackground"
+                        Color="{DynamicResource SystemChromeMediumLowColor}"
+                        Opacity="0.8" />
+                    <SolidColorBrush
+                        x:Key="ButtonBackgroundPointerOver"
+                        Color="{DynamicResource SystemChromeMediumLowColor}"
+                        Opacity="0.9" />
+                    <SolidColorBrush
+                        x:Key="ButtonBackgroundPressed"
+                        Color="{DynamicResource SystemChromeMediumLowColor}" />
+                </Style.Resources>
                 <Setter Property="Width" Value="198" />
                 <Setter Property="Height" Value="220" />
                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />

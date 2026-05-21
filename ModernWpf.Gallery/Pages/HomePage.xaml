@@ -80,11 +80,18 @@
 
                 <Grid Grid.Row="1">
                 <ScrollViewer
+                    x:Name="RootScrollViewer"
                     Margin="24,0,0,0"
                     HorizontalScrollBarVisibility="Hidden"
+                    SizeChanged="OnRootScrollViewerSizeChanged"
                     VerticalScrollBarVisibility="Disabled">
-                <StackPanel Orientation="Horizontal">
-                    <Button Style="{StaticResource GalleryHeaderTileButtonStyle}">
+                <StackPanel
+                    x:Name="TilesPanel"
+                    Orientation="Horizontal">
+                    <Button
+                        Click="OnHeaderTileClick"
+                        Style="{StaticResource GalleryHeaderTileButtonStyle}"
+                        Tag="https://learn.microsoft.com/windows/apps/get-started/">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="56" />
@@ -115,7 +122,10 @@
                             </StackPanel>
                         </Grid>
                     </Button>
-                    <Button Style="{StaticResource GalleryHeaderTileButtonStyle}">
+                    <Button
+                        Click="OnHeaderTileClick"
+                        Style="{StaticResource GalleryHeaderTileButtonStyle}"
+                        Tag="https://learn.microsoft.com/windows/apps/design/">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="56" />
@@ -146,7 +156,10 @@
                             </StackPanel>
                         </Grid>
                     </Button>
-                    <Button Style="{StaticResource GalleryHeaderTileButtonStyle}">
+                    <Button
+                        Click="OnHeaderTileClick"
+                        Style="{StaticResource GalleryHeaderTileButtonStyle}"
+                        Tag="https://github.com/dotnet/wpf">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="56" />
@@ -177,7 +190,10 @@
                             </StackPanel>
                         </Grid>
                     </Button>
-                    <Button Style="{StaticResource GalleryHeaderTileButtonStyle}">
+                    <Button
+                        Click="OnHeaderTileClick"
+                        Style="{StaticResource GalleryHeaderTileButtonStyle}"
+                        Tag="https://github.com/microsoft/WPF-Samples">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="56" />
@@ -208,7 +224,10 @@
                             </StackPanel>
                         </Grid>
                     </Button>
-                    <Button Style="{StaticResource GalleryHeaderTileButtonStyle}">
+                    <Button
+                        Click="OnHeaderTileClick"
+                        Style="{StaticResource GalleryHeaderTileButtonStyle}"
+                        Tag="https://developer.microsoft.com/windows/">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="56" />
@@ -242,18 +261,21 @@
                 </StackPanel>
                 </ScrollViewer>
                     <Button
+                        x:Name="ScrollBackButton"
                         Margin="8,-16,0,0"
+                        Click="OnScrollBackButtonClick"
                         HorizontalAlignment="Left"
                         Style="{StaticResource GalleryHeaderTileScrollButtonStyle}"
-                        ToolTip="Scroll left"
-                        Visibility="Collapsed">
+                        ToolTip="Scroll left">
                         <TextBlock
                             FontFamily="{StaticResource SymbolThemeFontFamily}"
                             FontSize="8"
                             Text="&#xEDD9;" />
                     </Button>
                     <Button
+                        x:Name="ScrollForwardButton"
                         Margin="0,-16,8,0"
+                        Click="OnScrollForwardButtonClick"
                         HorizontalAlignment="Right"
                         Style="{StaticResource GalleryHeaderTileScrollButtonStyle}"
                         ToolTip="Scroll right">
