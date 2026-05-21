@@ -339,9 +339,9 @@ namespace ModernWpf.Gallery.Pages
         {
             var calendar = new Calendar
             {
-                HorizontalAlignment = HorizontalAlignment.Left,
-                IsTabStop = false
+                HorizontalAlignment = HorizontalAlignment.Left
             };
+            KeyboardNavigation.SetIsTabStop(calendar, false);
             AutomationProperties.SetName(calendar, "Default");
 
             return new[]
@@ -3702,6 +3702,7 @@ namespace ModernWpf.Gallery.Pages
         {
             var source = new Image
             {
+                Name = "SourceImage",
                 Source = new BitmapImage(new Uri("pack://application:,,,/ModernWpf.Gallery;component/Assets/ControlImages/Clipboard.png")),
                 Width = 100,
                 Height = 100,
@@ -3748,6 +3749,7 @@ namespace ModernWpf.Gallery.Pages
         {
             var input = new TextBox
             {
+                Name = "CopyTextBox",
                 Text = "Hello, Clipboard!",
                 Width = 300,
                 HorizontalAlignment = HorizontalAlignment.Left,
@@ -3793,6 +3795,7 @@ namespace ModernWpf.Gallery.Pages
         {
             var image = new Image
             {
+                Name = "PastedImage",
                 Stretch = Stretch.Uniform,
                 Visibility = Visibility.Collapsed
             };
@@ -3851,6 +3854,7 @@ namespace ModernWpf.Gallery.Pages
         {
             var output = new TextBox
             {
+                Name = "PasteTextBox",
                 IsReadOnly = true,
                 TextWrapping = TextWrapping.Wrap,
                 MinHeight = 60,
@@ -3921,9 +3925,9 @@ namespace ModernWpf.Gallery.Pages
             {
                 Margin = new Thickness(0, 0, 0, 10)
             };
-            row.Children.Add(CreateMessageBoxButton("Information", "The operation completed successfully.", "Information", MessageBoxButton.OK, MessageBoxImage.Information, output, "Type: Information"));
-            row.Children.Add(CreateMessageBoxButton("Error", "An error occurred! The operation could not be completed.", "Error", MessageBoxButton.OK, MessageBoxImage.Error, output, "Type: Error"));
-            row.Children.Add(CreateMessageBoxButton("Warning", "This action cannot be undone! Do you want to continue?", "Warning", MessageBoxButton.OKCancel, MessageBoxImage.Warning, output, "Type: Warning"));
+            row.Children.Add(CreateMessageBoxButton("Information", "The operation completed successfully.", "Information", MessageBoxButton.OK, MessageBoxImage.Information, output, "Type: Information", new Thickness(0, 0, 5, 0)));
+            row.Children.Add(CreateMessageBoxButton("Error", "An error occurred! The operation could not be completed.", "Error", MessageBoxButton.OK, MessageBoxImage.Error, output, "Type: Error", new Thickness(0, 0, 5, 0)));
+            row.Children.Add(CreateMessageBoxButton("Warning", "This action cannot be undone! Do you want to continue?", "Warning", MessageBoxButton.OKCancel, MessageBoxImage.Warning, output, "Type: Warning", new Thickness(0)));
 
             var stack = new StackPanel();
             stack.Children.Add(row);
@@ -4053,7 +4057,7 @@ namespace ModernWpf.Gallery.Pages
             return CreateButtonResultExample(button, output);
         }
 
-        private static StackPanel CreateMessageBoxButtonsExample()
+        private static Grid CreateMessageBoxButtonsExample()
         {
             var output = new TextBlock
             {
@@ -4106,12 +4110,10 @@ namespace ModernWpf.Gallery.Pages
             grid.Children.Add(left);
             grid.Children.Add(right);
 
-            var stack = new StackPanel();
-            stack.Children.Add(grid);
-            return stack;
+            return grid;
         }
 
-        private static StackPanel CreateMessageBoxImagesExample()
+        private static Grid CreateMessageBoxImagesExample()
         {
             var output = new TextBlock
             {
@@ -4164,9 +4166,7 @@ namespace ModernWpf.Gallery.Pages
             grid.Children.Add(left);
             grid.Children.Add(right);
 
-            var stack = new StackPanel();
-            stack.Children.Add(grid);
-            return stack;
+            return grid;
         }
 
         private static StackPanel CreateOpenFrameWindowButton()
@@ -4244,6 +4244,7 @@ namespace ModernWpf.Gallery.Pages
         {
             var output = new TextBlock
             {
+                Text = "No folder selected",
                 TextWrapping = TextWrapping.Wrap
             };
             var button = new Button
@@ -4262,6 +4263,7 @@ namespace ModernWpf.Gallery.Pages
         {
             var output = new TextBlock
             {
+                Text = "No files selected",
                 TextWrapping = TextWrapping.Wrap
             };
             var button = new Button
@@ -4289,6 +4291,7 @@ namespace ModernWpf.Gallery.Pages
         {
             var output = new TextBlock
             {
+                Text = "No file selected",
                 TextWrapping = TextWrapping.Wrap
             };
             var button = new Button
@@ -4363,7 +4366,7 @@ namespace ModernWpf.Gallery.Pages
         {
             var textBox = new TextBox
             {
-                Text = "ModernWpf Gallery file content",
+                Text = "Enter text here to save to a file...",
                 AcceptsReturn = true,
                 TextWrapping = TextWrapping.Wrap,
                 MinHeight = 80,
@@ -4371,8 +4374,10 @@ namespace ModernWpf.Gallery.Pages
                 VerticalScrollBarVisibility = ScrollBarVisibility.Auto
             };
             AutomationProperties.SetName(textBox, "Save File Text Box");
+            AutomationProperties.SetHelpText(textBox, "The text in the textbox will be saved to a file on button click");
             var output = new TextBlock
             {
+                Text = "No file saved",
                 TextWrapping = TextWrapping.Wrap
             };
             var button = new Button
@@ -4697,12 +4702,12 @@ namespace ModernWpf.Gallery.Pages
             return CreateButtonResultExample(button, output);
         }
 
-        private static Button CreateMessageBoxButton(string content, string message, string title, MessageBoxButton buttons, MessageBoxImage image, TextBlock output, string resultPrefix)
+        private static Button CreateMessageBoxButton(string content, string message, string title, MessageBoxButton buttons, MessageBoxImage image, TextBlock output, string resultPrefix, Thickness margin)
         {
             var button = new Button
             {
                 Content = content,
-                Margin = new Thickness(0, 0, 5, 0)
+                Margin = margin
             };
             button.Click += delegate
             {

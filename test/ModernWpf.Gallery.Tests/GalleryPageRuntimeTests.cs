@@ -248,6 +248,13 @@ namespace ModernWpf.Gallery.Tests
                 AssertExampleMargins("GroupBox", new Thickness(10));
                 AssertExampleMargins("Image", new Thickness(10));
                 AssertExampleMargins("ResizeGrip", new Thickness(10));
+                AssertExampleMargins("Calendar", new Thickness(10));
+                AssertExampleMargins("DatePicker", new Thickness(10));
+                AssertExampleMargins("ProgressBar", new Thickness(10), new Thickness(10, 32, 10, 10));
+                AssertExampleMargins("ToolTip", new Thickness(10));
+                AssertExampleMargins("Clipboard", new Thickness(10), new Thickness(10, 32, 10, 10), new Thickness(10, 32, 10, 10), new Thickness(10, 32, 10, 10), new Thickness(10, 32, 10, 10), new Thickness(10, 32, 10, 10));
+                AssertExampleMargins("FileAndFolderDialogs", new Thickness(10), new Thickness(10, 32, 10, 10), new Thickness(10, 32, 10, 10), new Thickness(10, 32, 10, 10));
+                AssertExampleMargins("MessageBox", new Thickness(10), new Thickness(10, 32, 10, 10), new Thickness(10, 32, 10, 10), new Thickness(10, 32, 10, 10), new Thickness(10, 32, 10, 10), new Thickness(10, 32, 10, 10));
             });
         }
 
@@ -658,6 +665,163 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void DateStatusAndSystemPagesMatchWpfGalleryReference()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var calendarPage = new ItemPage(GalleryCatalog.FindItem("Calendar"));
+                Assert.AreEqual(1, calendarPage.Examples.Count);
+                Assert.AreEqual("A basic Calendar control.", calendarPage.Examples[0].HeaderText);
+                var calendar = (Calendar)calendarPage.Examples[0].ExampleContent;
+                Assert.AreEqual(HorizontalAlignment.Left, calendar.HorizontalAlignment);
+                Assert.AreEqual("Default", AutomationProperties.GetName(calendar));
+                Assert.IsFalse(KeyboardNavigation.GetIsTabStop(calendar));
+
+                var datePickerPage = new ItemPage(GalleryCatalog.FindItem("DatePicker"));
+                Assert.AreEqual(1, datePickerPage.Examples.Count);
+                Assert.AreEqual("A basic DatePicker control.", datePickerPage.Examples[0].HeaderText);
+                var datePicker = (DatePicker)datePickerPage.Examples[0].ExampleContent;
+                Assert.AreEqual(200.0, datePicker.MinWidth);
+                Assert.AreEqual(HorizontalAlignment.Left, datePicker.HorizontalAlignment);
+                Assert.AreEqual("Pick a date", AutomationProperties.GetName(datePicker));
+
+                var progressBarPage = new ItemPage(GalleryCatalog.FindItem("ProgressBar"));
+                Assert.AreEqual(2, progressBarPage.Examples.Count);
+                CollectionAssert.AreEqual(
+                    new[] { "A simple progress bar.", "An indeterminate progress bar." },
+                    progressBarPage.Examples.Select(example => example.HeaderText).ToArray());
+                var determinate = (ProgressBar)progressBarPage.Examples[0].ExampleContent;
+                Assert.AreEqual(new Thickness(24), determinate.Margin);
+                Assert.AreEqual(40.0, determinate.Value);
+                Assert.IsFalse(determinate.IsIndeterminate);
+                Assert.AreEqual("A determinate", AutomationProperties.GetName(determinate));
+                var indeterminate = (ProgressBar)progressBarPage.Examples[1].ExampleContent;
+                Assert.AreEqual(new Thickness(24), indeterminate.Margin);
+                Assert.IsTrue(indeterminate.IsIndeterminate);
+                Assert.AreEqual("An indeterminate", AutomationProperties.GetName(indeterminate));
+
+                var toolTipPage = new ItemPage(GalleryCatalog.FindItem("ToolTip"));
+                Assert.AreEqual(1, toolTipPage.Examples.Count);
+                Assert.AreEqual("A button with a simple ToolTip.", toolTipPage.Examples[0].HeaderText);
+                var toolTipButton = (Button)toolTipPage.Examples[0].ExampleContent;
+                Assert.AreEqual("Button with a simple ToolTip.", toolTipButton.Content);
+                Assert.AreEqual("TooltipButton", AutomationProperties.GetName(toolTipButton));
+                Assert.AreEqual(100, ToolTipService.GetInitialShowDelay(toolTipButton));
+                Assert.AreEqual(PlacementMode.MousePoint, ToolTipService.GetPlacement(toolTipButton));
+                Assert.AreEqual("Simple ToolTip", ToolTipService.GetToolTip(toolTipButton));
+
+                var clipboardPage = new ItemPage(GalleryCatalog.FindItem("Clipboard"));
+                Assert.AreEqual(6, clipboardPage.Examples.Count);
+                CollectionAssert.AreEqual(
+                    new[]
+                    {
+                        "Copy text to Clipboard",
+                        "Paste text from Clipboard",
+                        "Clear Clipboard",
+                        "Check Clipboard data formats",
+                        "Copy image to Clipboard",
+                        "Paste image from Clipboard"
+                    },
+                    clipboardPage.Examples.Select(example => example.HeaderText).ToArray());
+
+                var copyClipboardStack = (StackPanel)clipboardPage.Examples[0].ExampleContent;
+                var copyTextBox = (TextBox)copyClipboardStack.Children[0];
+                Assert.AreEqual("CopyTextBox", copyTextBox.Name);
+                Assert.AreEqual("Hello, Clipboard!", copyTextBox.Text);
+                Assert.AreEqual(300.0, copyTextBox.Width);
+                Assert.AreEqual(HorizontalAlignment.Left, copyTextBox.HorizontalAlignment);
+                Assert.AreEqual("Copy To Clipboard TextBox", AutomationProperties.GetName(copyTextBox));
+                Assert.AreEqual("Copy to Clipboard", ((Button)copyClipboardStack.Children[1]).Content);
+                Assert.AreEqual(string.Empty, ((TextBlock)copyClipboardStack.Children[2]).Text);
+
+                var pasteClipboardStack = (StackPanel)clipboardPage.Examples[1].ExampleContent;
+                Assert.AreEqual("Paste from Clipboard", ((Button)pasteClipboardStack.Children[0]).Content);
+                Assert.AreEqual("Pasted Content:", ((TextBlock)pasteClipboardStack.Children[1]).Text);
+                var pasteTextBox = (TextBox)pasteClipboardStack.Children[2];
+                Assert.AreEqual("PasteTextBox", pasteTextBox.Name);
+                Assert.IsTrue(pasteTextBox.IsReadOnly);
+                Assert.AreEqual(TextWrapping.Wrap, pasteTextBox.TextWrapping);
+                Assert.AreEqual(60.0, pasteTextBox.MinHeight);
+                Assert.AreEqual(300.0, pasteTextBox.Width);
+                Assert.AreEqual("Paste content textbox", AutomationProperties.GetName(pasteTextBox));
+
+                AssertButtonResultExample((StackPanel)clipboardPage.Examples[2].ExampleContent, "Clear Clipboard", string.Empty);
+                AssertButtonResultExample((StackPanel)clipboardPage.Examples[3].ExampleContent, "Check Clipboard Formats", string.Empty);
+
+                var copyImageStack = (StackPanel)clipboardPage.Examples[4].ExampleContent;
+                var sourceImage = (Image)copyImageStack.Children[0];
+                Assert.AreEqual("SourceImage", sourceImage.Name);
+                Assert.AreEqual(100.0, sourceImage.Width);
+                Assert.AreEqual(100.0, sourceImage.Height);
+                Assert.AreEqual(HorizontalAlignment.Left, sourceImage.HorizontalAlignment);
+                StringAssert.Contains(((BitmapImage)sourceImage.Source).UriSource.ToString(), "ControlImages/Clipboard.png");
+                Assert.AreEqual("Copy Image to Clipboard", ((Button)copyImageStack.Children[1]).Content);
+
+                var pasteImageStack = (StackPanel)clipboardPage.Examples[5].ExampleContent;
+                Assert.AreEqual("Paste Image from Clipboard", ((Button)pasteImageStack.Children[0]).Content);
+                Assert.AreEqual("Pasted Image:", ((TextBlock)pasteImageStack.Children[1]).Text);
+                var imageHost = (Border)pasteImageStack.Children[2];
+                Assert.AreEqual(Brushes.Gray, imageHost.BorderBrush);
+                Assert.AreEqual(new Thickness(1), imageHost.BorderThickness);
+                Assert.AreEqual(200.0, imageHost.Width);
+                Assert.AreEqual(200.0, imageHost.Height);
+                var pastedImage = (Image)imageHost.Child;
+                Assert.AreEqual("PastedImage", pastedImage.Name);
+                Assert.AreEqual(Stretch.Uniform, pastedImage.Stretch);
+                Assert.AreEqual(Visibility.Collapsed, pastedImage.Visibility);
+
+                var dialogsPage = new ItemPage(GalleryCatalog.FindItem("FileAndFolderDialogs"));
+                Assert.AreEqual(4, dialogsPage.Examples.Count);
+                CollectionAssert.AreEqual(
+                    new[] { "Pick Single File", "Pick Multiple Files", "Save File", "Pick Folder" },
+                    dialogsPage.Examples.Select(example => example.HeaderText).ToArray());
+                AssertButtonResultExample((StackPanel)dialogsPage.Examples[0].ExampleContent, "Pick a single file", "No file selected");
+                AssertButtonResultExample((StackPanel)dialogsPage.Examples[1].ExampleContent, "Pick multiple files", "No files selected");
+                var saveFileStack = (StackPanel)dialogsPage.Examples[2].ExampleContent;
+                var saveTextBox = (TextBox)saveFileStack.Children[0];
+                Assert.AreEqual("Enter text here to save to a file...", saveTextBox.Text);
+                Assert.IsTrue(saveTextBox.AcceptsReturn);
+                Assert.AreEqual(TextWrapping.Wrap, saveTextBox.TextWrapping);
+                Assert.AreEqual(80.0, saveTextBox.MinHeight);
+                Assert.AreEqual(ScrollBarVisibility.Auto, saveTextBox.VerticalScrollBarVisibility);
+                Assert.AreEqual("Save File Text Box", AutomationProperties.GetName(saveTextBox));
+                Assert.AreEqual("The text in the textbox will be saved to a file on button click", AutomationProperties.GetHelpText(saveTextBox));
+                Assert.AreEqual("Save a file", ((Button)saveFileStack.Children[1]).Content);
+                Assert.AreEqual("No file saved", ((TextBlock)saveFileStack.Children[2]).Text);
+                AssertButtonResultExample((StackPanel)dialogsPage.Examples[3].ExampleContent, "Pick a folder", "No folder selected");
+
+                var messageBoxPage = new ItemPage(GalleryCatalog.FindItem("MessageBox"));
+                Assert.AreEqual(6, messageBoxPage.Examples.Count);
+                CollectionAssert.AreEqual(
+                    new[]
+                    {
+                        "Simple MessageBox",
+                        "MessageBox with Custom Title and Description",
+                        "MessageBox with Different Buttons",
+                        "MessageBox with Different Images",
+                        "Information, Error, and Warning MessageBox",
+                        "MessageBox with Custom Default Button"
+                    },
+                    messageBoxPage.Examples.Select(example => example.HeaderText).ToArray());
+
+                AssertButtonResultExample((StackPanel)messageBoxPage.Examples[0].ExampleContent, "Simple MessageBox", "No message shown yet");
+                AssertButtonResultExample((StackPanel)messageBoxPage.Examples[1].ExampleContent, "Custom MessageBox", "No message shown yet");
+                AssertMessageBoxSelectorExample((Grid)messageBoxPage.Examples[2].ExampleContent, "Button Type:", "MessageBox with Different Buttons", "MessageBox Button Selector", "No button clicked yet", new[] { "OK", "OK/Cancel", "Abort/Retry/Ignore", "Yes/No/Cancel", "Yes/No", "Retry/Cancel", "Cancel/Try/Continue" });
+                AssertMessageBoxSelectorExample((Grid)messageBoxPage.Examples[3].ExampleContent, "Icon Type:", "MessageBox with different images", "MessageBox Image Selector", "No image example shown yet", new[] { "None", "Error", "Question", "Warning", "Information" });
+
+                var commonMessagesStack = (StackPanel)messageBoxPage.Examples[4].ExampleContent;
+                var commonButtons = ((WrapPanel)commonMessagesStack.Children[0]).Children.OfType<Button>().ToArray();
+                CollectionAssert.AreEqual(new[] { "Information", "Error", "Warning" }, commonButtons.Select(button => (string)button.Content).ToArray());
+                Assert.AreEqual(new Thickness(0, 0, 5, 0), commonButtons[0].Margin);
+                Assert.AreEqual(new Thickness(0, 0, 5, 0), commonButtons[1].Margin);
+                Assert.AreEqual(new Thickness(0), commonButtons[2].Margin);
+                Assert.AreEqual("No common message shown yet", ((TextBlock)commonMessagesStack.Children[1]).Text);
+
+                AssertButtonResultExample((StackPanel)messageBoxPage.Examples[5].ExampleContent, "Show with 'No' as default", "No selection made");
+            });
+        }
+
+        [TestMethod]
         public void DesignGuidancePagesMatchWpfGalleryReferenceLayoutDetails()
         {
             WpfTestHost.Run(() =>
@@ -979,6 +1143,41 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(30.0, rectangle.Height);
                 Assert.AreEqual(new Thickness(5), rectangle.Margin);
             }
+        }
+
+        private static void AssertButtonResultExample(StackPanel stackPanel, string expectedButtonContent, string expectedOutputText)
+        {
+            Assert.AreEqual(2, stackPanel.Children.Count);
+            Assert.AreEqual(expectedButtonContent, ((Button)stackPanel.Children[0]).Content);
+            var output = (TextBlock)stackPanel.Children[1];
+            Assert.AreEqual(expectedOutputText, output.Text);
+            Assert.AreEqual(TextWrapping.Wrap, output.TextWrapping);
+        }
+
+        private static void AssertMessageBoxSelectorExample(Grid grid, string expectedLabel, string expectedButtonName, string expectedComboBoxName, string expectedOutputText, string[] expectedItems)
+        {
+            Assert.AreEqual(2, grid.ColumnDefinitions.Count);
+            Assert.AreEqual(GridUnitType.Star, grid.ColumnDefinitions[0].Width.GridUnitType);
+            Assert.AreEqual(GridUnitType.Auto, grid.ColumnDefinitions[1].Width.GridUnitType);
+
+            var left = (StackPanel)grid.Children.OfType<StackPanel>().Single(stackPanel => Grid.GetColumn(stackPanel) == 0);
+            var button = (Button)left.Children[0];
+            Assert.AreEqual("Show MessageBox", button.Content);
+            Assert.AreEqual(expectedButtonName, AutomationProperties.GetName(button));
+            var output = (TextBlock)left.Children[1];
+            Assert.AreEqual(expectedOutputText, output.Text);
+            Assert.AreEqual(TextWrapping.Wrap, output.TextWrapping);
+
+            var right = (StackPanel)grid.Children.OfType<StackPanel>().Single(stackPanel => Grid.GetColumn(stackPanel) == 1);
+            Assert.AreEqual(new Thickness(10, 0, 0, 0), right.Margin);
+            Assert.AreEqual(expectedLabel, ((TextBlock)right.Children[0]).Text);
+            Assert.AreEqual(new Thickness(0, 0, 0, 5), ((TextBlock)right.Children[0]).Margin);
+
+            var comboBox = (ComboBox)right.Children[1];
+            Assert.AreEqual(expectedComboBoxName, AutomationProperties.GetName(comboBox));
+            Assert.AreEqual(150.0, comboBox.MinWidth);
+            Assert.AreEqual(0, comboBox.SelectedIndex);
+            CollectionAssert.AreEqual(expectedItems, comboBox.Items.Cast<object>().Select(item => item.ToString()).ToArray());
         }
 
         private static void AssertGalleryComboBox(ComboBox comboBox, string automationName)
