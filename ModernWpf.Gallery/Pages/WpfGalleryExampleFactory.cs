@@ -26,6 +26,11 @@ namespace ModernWpf.Gallery.Pages
     {
         public static IReadOnlyList<GalleryExample> Create(string uniqueId)
         {
+            return ApplyReferenceExampleMargins(uniqueId, CreateCore(uniqueId));
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateCore(string uniqueId)
+        {
             switch (uniqueId)
             {
                 case "Border":
@@ -173,6 +178,42 @@ namespace ModernWpf.Gallery.Pages
                         "Best practice is to use Regular weight for most text and Semibold for titles. The minimum values should be 12px Regular, 14px Semibold.");
                 default:
                     return null;
+            }
+        }
+
+        private static IReadOnlyList<GalleryExample> ApplyReferenceExampleMargins(string uniqueId, IReadOnlyList<GalleryExample> examples)
+        {
+            if (examples.Count == 0)
+            {
+                return examples;
+            }
+
+            var subsequentTopMargin = UsesThirtyTwoPixelExampleSpacing(uniqueId) ? 32 : 36;
+            var result = new GalleryExample[examples.Count];
+            for (var i = 0; i < examples.Count; i++)
+            {
+                var margin = i == 0 ? new Thickness(10) : new Thickness(10, subsequentTopMargin, 10, 10);
+                result[i] = examples[i].WithMargin(margin);
+            }
+
+            return result;
+        }
+
+        private static bool UsesThirtyTwoPixelExampleSpacing(string uniqueId)
+        {
+            switch (uniqueId)
+            {
+                case "Button":
+                case "CheckBox":
+                case "Clipboard":
+                case "ComboBox":
+                case "FileAndFolderDialogs":
+                case "MessageBox":
+                case "ProgressBar":
+                case "Slider":
+                    return true;
+                default:
+                    return false;
             }
         }
 
@@ -1198,13 +1239,17 @@ namespace ModernWpf.Gallery.Pages
             root.Children.Add(CreateDesignParagraph("Consistent spacing helps create visual harmony and improves the readability and usability of your application."));
             root.Children.Add(CreateDesignParagraph("Use the following spacing values to maintain a consistent layout throughout your app.", new Thickness(0, 0, 0, 12)));
 
-            var images = new StackPanel
+            var images = new Grid
             {
-                Orientation = Orientation.Horizontal,
                 Margin = new Thickness(0, 0, 0, 16)
             };
-            images.Children.Add(CreateDesignImageFrame("Cards.dark.png", "Page with cards layout", "Example of spacing in a page with cards layout", double.NaN, 500));
-            images.Children.Add(CreateDesignImageFrame("Dialog.dark.png", "Form layout", "Example of spacing in a form layout", double.NaN, 500));
+            images.ColumnDefinitions.Add(new ColumnDefinition());
+            images.ColumnDefinitions.Add(new ColumnDefinition());
+            var cardsImage = CreateDesignImageFrame("Cards.dark.png", "Page with cards layout", "Example of spacing in a page with cards layout", double.NaN, 500);
+            var dialogImage = CreateDesignImageFrame("Dialog.dark.png", "Form layout", "Example of spacing in a form layout", double.NaN, 500);
+            Grid.SetColumn(dialogImage, 1);
+            images.Children.Add(cardsImage);
+            images.Children.Add(dialogImage);
             root.Children.Add(images);
 
             var tableCard = new Border
@@ -3023,7 +3068,7 @@ namespace ModernWpf.Gallery.Pages
             AddHeaderRow(grid, new[] { "Example", "Variable Font", "Size/Line height", "Style" });
             AddTypographyRow(grid, 1, "Caption", "CaptionTextBlockStyle", "Small, Regular", "12/16 epx", "CaptionTextBlockStyle", true);
             AddTypographyRow(grid, 2, "Body", "BodyTextBlockStyle", "Text, Regular", "14/20 epx", "BodyTextBlockStyle", false);
-            AddTypographyRow(grid, 3, "Body Strong", "BodyStrongTextBlockStyle", "Text, SemiBold", "14/20 epx", "BodyStrongTextBlockStyle", true);
+            AddTypographyRow(grid, 3, "Body Strong", "BodyStrongTextBlockStyle", "Text, SemiBold", "14/20 epx", "CaptionTextBlockStyle", true);
             AddTypographyRow(grid, 4, "Subtitle", "SubtitleTextBlockStyle", "Display, SemiBold", "20/28 epx", "SubtitleTextBlockStyle", false);
             AddTypographyRow(grid, 5, "Title", "TitleTextBlockStyle", "Display, SemiBold", "28/36 epx", "TitleTextBlockStyle", true);
             AddTypographyRow(grid, 6, "Title Large", "TitleLargeTextBlockStyle", "Display, SemiBold", "40/52 epx", "TitleLargeTextBlockStyle", false);
@@ -3033,7 +3078,7 @@ namespace ModernWpf.Gallery.Pages
 
         private static void AddTypographyRow(Grid grid, int row, string example, string exampleStyle, string variableFont, string size, string styleName, bool shaded)
         {
-            var rowGrid = CreateShadedRow(row == 7 ? 96 : 68, shaded);
+            var rowGrid = CreateShadedRow(68, shaded);
             rowGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(272) });
             rowGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(136) });
             rowGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(112) });
@@ -3042,9 +3087,16 @@ namespace ModernWpf.Gallery.Pages
             AddTableCell(rowGrid, CreateTableText(example, exampleStyle), 0, 0, new Thickness(16, 0, 0, 0));
             AddTableCell(rowGrid, CreateTableText(variableFont, "CaptionTextBlockStyle"), 0, 1, new Thickness(0));
             AddTableCell(rowGrid, CreateTableText(size, "CaptionTextBlockStyle"), 0, 2, new Thickness(0));
-            AddTableCell(rowGrid, CreateTableText(styleName, "CaptionTextBlockStyle"), 0, 3, new Thickness(0));
+            var styleNameText = CreateTableText(styleName, "CaptionTextBlockStyle");
+            if (row == 7)
+            {
+                styleNameText.FontFamily = new FontFamily("Consolas");
+            }
 
-            AddTableCell(grid, rowGrid, row, 0, new Thickness(0));
+            AddTableCell(rowGrid, styleNameText, 0, 3, new Thickness(0));
+
+            var rowMargin = row >= 5 ? new Thickness(0, 0, 0, 24) : new Thickness(0);
+            AddTableCell(grid, rowGrid, row, 0, rowMargin);
             Grid.SetColumnSpan(rowGrid, 4);
         }
 
@@ -3159,7 +3211,7 @@ namespace ModernWpf.Gallery.Pages
             var grid = new Grid
             {
                 Margin = new Thickness(0, 0, 16, 16),
-                HorizontalAlignment = HorizontalAlignment.Left,
+                HorizontalAlignment = double.IsNaN(width) ? HorizontalAlignment.Stretch : HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Top
             };
 
@@ -3174,7 +3226,8 @@ namespace ModernWpf.Gallery.Pages
                 var titleText = new TextBlock
                 {
                     Text = title,
-                    HorizontalAlignment = HorizontalAlignment.Center
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    Margin = new Thickness(0, 0, 0, 8)
                 };
                 titleText.SetResourceReference(FrameworkElement.StyleProperty, "SubtitleTextBlockStyle");
                 grid.Children.Add(titleText);
@@ -3185,7 +3238,7 @@ namespace ModernWpf.Gallery.Pages
             var border = new Border
             {
                 Height = height,
-                HorizontalAlignment = HorizontalAlignment.Left
+                HorizontalAlignment = double.IsNaN(width) ? HorizontalAlignment.Stretch : HorizontalAlignment.Left
             };
             if (!double.IsNaN(width))
             {
@@ -4540,31 +4593,61 @@ namespace ModernWpf.Gallery.Pages
                 Content = "Select all",
                 IsThreeState = true
             };
+
             var options = new[]
             {
                 new CheckBox { Content = "Option 1", Margin = new Thickness(24, 0, 0, 0) },
                 new CheckBox { Content = "Option 2", Margin = new Thickness(24, 0, 0, 0) },
                 new CheckBox { Content = "Option 3", Margin = new Thickness(24, 0, 0, 0) }
             };
-            selectAll.Checked += delegate
+
+            var updating = false;
+            void SetOptions(bool isChecked)
             {
+                if (updating)
+                {
+                    return;
+                }
+
+                updating = true;
                 foreach (var option in options)
                 {
-                    option.IsChecked = true;
+                    option.IsChecked = isChecked;
                 }
+
+                updating = false;
+            }
+
+            void UpdateSelectAll()
+            {
+                if (updating)
+                {
+                    return;
+                }
+
+                updating = true;
+                var checkedCount = options.Count(option => option.IsChecked == true);
+                selectAll.IsChecked = checkedCount == options.Length
+                    ? true
+                    : checkedCount == 0 ? false : (bool?)null;
+                updating = false;
+            }
+
+            selectAll.Checked += delegate
+            {
+                SetOptions(true);
             };
             selectAll.Unchecked += delegate
             {
-                foreach (var option in options)
-                {
-                    option.IsChecked = false;
-                }
+                SetOptions(false);
             };
 
             var stack = new StackPanel();
             stack.Children.Add(selectAll);
             foreach (var option in options)
             {
+                option.Checked += delegate { UpdateSelectAll(); };
+                option.Unchecked += delegate { UpdateSelectAll(); };
                 stack.Children.Add(option);
             }
 

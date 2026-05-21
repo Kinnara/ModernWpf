@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Windows;
 using System.Windows.Navigation;
 using ModernWpf.Gallery.Models;
 
@@ -303,16 +304,28 @@ namespace ModernWpf.Gallery.Pages
     public sealed class GalleryExample
     {
         public GalleryExample(string headerText, object exampleContent, string xamlCode, string csharpCode)
+            : this(headerText, exampleContent, xamlCode, csharpCode, new Thickness(10))
+        {
+        }
+
+        public GalleryExample(string headerText, object exampleContent, string xamlCode, string csharpCode, Thickness margin)
         {
             HeaderText = headerText;
             ExampleContent = exampleContent;
             XamlCode = xamlCode;
             CSharpCode = csharpCode;
+            Margin = margin;
         }
 
         public string HeaderText { get; }
         public object ExampleContent { get; }
         public string XamlCode { get; }
         public string CSharpCode { get; }
+        public Thickness Margin { get; }
+
+        public GalleryExample WithMargin(Thickness margin)
+        {
+            return new GalleryExample(HeaderText, ExampleContent, XamlCode, CSharpCode, margin);
+        }
     }
 }

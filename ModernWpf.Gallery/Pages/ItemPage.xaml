@@ -61,12 +61,7 @@
                     Visibility="{Binding ShowExamples, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <ItemsControl.ItemContainerStyle>
                         <Style TargetType="ContentPresenter">
-                            <Setter Property="Margin" Value="10,36,10,10" />
-                            <Style.Triggers>
-                                <Trigger Property="ItemsControl.AlternationIndex" Value="0">
-                                    <Setter Property="Margin" Value="10" />
-                                </Trigger>
-                            </Style.Triggers>
+                            <Setter Property="Margin" Value="0" />
                         </Style>
                     </ItemsControl.ItemContainerStyle>
                     <ItemsControl.ItemTemplate>
@@ -75,6 +70,7 @@
                                 CSharpCode="{Binding CSharpCode}"
                                 ExampleContent="{Binding ExampleContent}"
                                 HeaderText="{Binding HeaderText}"
+                                Margin="{Binding Margin}"
                                 XamlCode="{Binding XamlCode}" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

@@ -8,6 +8,7 @@ using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ModernWpf.Gallery.Controls;
 using ModernWpf.Gallery.Models;
 using ModernWpf.Gallery.Pages;
 
@@ -217,6 +218,131 @@ namespace ModernWpf.Gallery.Tests
                 AssertGridViewColumn(gridView.Columns[0], "First Name", 150.0, "FirstName");
                 AssertGridViewColumn(gridView.Columns[1], "Last Name", 150.0, "LastName");
                 AssertGridViewColumn(gridView.Columns[2], "Company", 200.0, "Company");
+            });
+        }
+
+        [TestMethod]
+        public void WpfGalleryExampleMarginsMatchReferencePages()
+        {
+            WpfTestHost.Run(() =>
+            {
+                AssertExampleMargins("Button", new Thickness(10), new Thickness(10, 32, 10, 10));
+                AssertExampleMargins("CheckBox", new Thickness(10), new Thickness(10, 32, 10, 10), new Thickness(10, 32, 10, 10));
+                AssertExampleMargins("ComboBox", new Thickness(10), new Thickness(10, 32, 10, 10), new Thickness(10, 32, 10, 10));
+                AssertExampleMargins("Slider", new Thickness(10), new Thickness(10, 32, 10, 10), new Thickness(10, 32, 10, 10), new Thickness(10, 32, 10, 10));
+                AssertExampleMargins("RadioButton", new Thickness(10), new Thickness(10, 36, 10, 10));
+                AssertExampleMargins("ListView", new Thickness(10), new Thickness(10, 36, 10, 10), new Thickness(10, 36, 10, 10));
+            });
+        }
+
+        [TestMethod]
+        public void BasicInputButtonAndCheckBoxPagesMatchWpfGalleryReference()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var buttonPage = new ItemPage(GalleryCatalog.FindItem("Button"));
+                Assert.AreEqual(2, buttonPage.Examples.Count);
+                CollectionAssert.AreEqual(
+                    new[] { "Simple Button", "WPF Accent Button" },
+                    buttonPage.Examples.Select(example => example.HeaderText).ToArray());
+
+                var simpleRoot = (Panel)buttonPage.Examples[0].ExampleContent;
+                var simpleGrid = (Grid)simpleRoot.Children[0];
+                Assert.AreEqual(2, simpleGrid.ColumnDefinitions.Count);
+                Assert.AreEqual(GridUnitType.Star, simpleGrid.ColumnDefinitions[0].Width.GridUnitType);
+                Assert.AreEqual(GridUnitType.Auto, simpleGrid.ColumnDefinitions[1].Width.GridUnitType);
+
+                var simpleButton = (Button)simpleGrid.Children[0];
+                var disableButton = (CheckBox)simpleGrid.Children[1];
+                Assert.AreEqual("Standard WPF button", simpleButton.Content);
+                Assert.AreEqual("Standard WPF", AutomationProperties.GetName(simpleButton));
+                Assert.AreEqual("Disable button", disableButton.Content);
+                Assert.AreEqual(1, Grid.GetColumn(disableButton));
+                disableButton.IsChecked = true;
+                Assert.IsFalse(simpleButton.IsEnabled);
+                disableButton.IsChecked = false;
+                Assert.IsTrue(simpleButton.IsEnabled);
+
+                var accentButton = (Button)buttonPage.Examples[1].ExampleContent;
+                Assert.AreEqual("WPF Accent", AutomationProperties.GetName(accentButton));
+                var accentContent = (StackPanel)accentButton.Content;
+                Assert.AreEqual(Orientation.Horizontal, accentContent.Orientation);
+                Assert.AreEqual("WPF Accent Button", ((TextBlock)accentContent.Children[0]).Text);
+
+                var checkBoxPage = new ItemPage(GalleryCatalog.FindItem("CheckBox"));
+                Assert.AreEqual(3, checkBoxPage.Examples.Count);
+                CollectionAssert.AreEqual(
+                    new[] { "A 2-state CheckBox.", "A 3-state CheckBox.", "Using a 3-state CheckBox." },
+                    checkBoxPage.Examples.Select(example => example.HeaderText).ToArray());
+
+                var twoState = (CheckBox)checkBoxPage.Examples[0].ExampleContent;
+                Assert.AreEqual("Two-state CheckBox", twoState.Content);
+                Assert.IsFalse(twoState.IsThreeState);
+                Assert.AreEqual(false, twoState.IsChecked);
+                Assert.AreEqual("Sample Two State", AutomationProperties.GetName(twoState));
+
+                var threeState = (CheckBox)checkBoxPage.Examples[1].ExampleContent;
+                Assert.AreEqual("Three-state CheckBox", threeState.Content);
+                Assert.IsTrue(threeState.IsThreeState);
+                Assert.IsNull(threeState.IsChecked);
+                Assert.AreEqual("Sample Three State", AutomationProperties.GetName(threeState));
+
+                var group = (StackPanel)checkBoxPage.Examples[2].ExampleContent;
+                Assert.AreEqual(4, group.Children.Count);
+                var selectAll = (CheckBox)group.Children[0];
+                var options = group.Children.OfType<CheckBox>().Skip(1).ToArray();
+                Assert.AreEqual("Select all", selectAll.Content);
+                Assert.IsTrue(selectAll.IsThreeState);
+                CollectionAssert.AreEqual(new[] { "Option 1", "Option 2", "Option 3" }, options.Select(option => (string)option.Content).ToArray());
+                CollectionAssert.AreEqual(Enumerable.Repeat(new Thickness(24, 0, 0, 0), 3).ToArray(), options.Select(option => option.Margin).ToArray());
+
+                options[0].IsChecked = true;
+                Assert.IsNull(selectAll.IsChecked);
+                options[1].IsChecked = true;
+                options[2].IsChecked = true;
+                Assert.AreEqual(true, selectAll.IsChecked);
+                options[1].IsChecked = false;
+                Assert.IsNull(selectAll.IsChecked);
+                selectAll.IsChecked = false;
+                CollectionAssert.AreEqual(new bool?[] { false, false, false }, options.Select(option => option.IsChecked).ToArray());
+            });
+        }
+
+        [TestMethod]
+        public void DesignGuidancePagesMatchWpfGalleryReferenceLayoutDetails()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var spacingPage = new ItemPage(GalleryCatalog.FindItem("Spacing"));
+                var spacingBody = (StackPanel)spacingPage.PageBodyContent;
+                var images = (Grid)spacingBody.Children[2];
+                Assert.AreEqual(2, images.ColumnDefinitions.Count);
+                Assert.AreEqual(2, images.Children.Count);
+
+                var cardsFrame = (Grid)images.Children[0];
+                var dialogFrame = (Grid)images.Children[1];
+                Assert.AreEqual(0, Grid.GetColumn(cardsFrame));
+                Assert.AreEqual(1, Grid.GetColumn(dialogFrame));
+                Assert.AreEqual(HorizontalAlignment.Stretch, cardsFrame.HorizontalAlignment);
+                Assert.AreEqual(new Thickness(0, 0, 0, 8), ((TextBlock)cardsFrame.Children[0]).Margin);
+                Assert.AreEqual(500.0, ((Border)cardsFrame.Children[1]).Height);
+                Assert.AreEqual(HorizontalAlignment.Stretch, ((Border)cardsFrame.Children[1]).HorizontalAlignment);
+
+                var typographyPage = new ItemPage(GalleryCatalog.FindItem("Typography"));
+                var typographyBody = (StackPanel)typographyPage.PageBodyContent;
+                var typeRampExample = (ControlExample)typographyBody.Children[3];
+                var typeRamp = (Grid)typeRampExample.ExampleContent;
+                var rows = typeRamp.Children.OfType<Grid>().OrderBy(Grid.GetRow).ToArray();
+                Assert.AreEqual(7, rows.Length);
+
+                var bodyStrongStyleName = GetTableText(rows.Single(row => Grid.GetRow(row) == 3), 3);
+                Assert.AreEqual("CaptionTextBlockStyle", bodyStrongStyleName.Text);
+                Assert.AreEqual(new Thickness(0, 0, 0, 24), rows.Single(row => Grid.GetRow(row) == 5).Margin);
+                Assert.AreEqual(new Thickness(0, 0, 0, 24), rows.Single(row => Grid.GetRow(row) == 6).Margin);
+                var displayRow = rows.Single(row => Grid.GetRow(row) == 7);
+                Assert.AreEqual(68.0, displayRow.MinHeight);
+                Assert.AreEqual(new Thickness(0, 0, 0, 24), displayRow.Margin);
+                Assert.AreEqual("Consolas", GetTableText(displayRow, 3).FontFamily.Source);
             });
         }
 
@@ -454,6 +580,21 @@ namespace ModernWpf.Gallery.Tests
             var row = (StackPanel)detailsStack.Children[rowIndex];
             var grid = (Grid)row.Children[1];
             return ((TextBlock)grid.Children[0]).Text;
+        }
+
+        private static TextBlock GetTableText(Grid row, int column)
+        {
+            return row.Children.OfType<TextBlock>().Single(textBlock => Grid.GetColumn(textBlock) == column);
+        }
+
+        private static void AssertExampleMargins(string uniqueId, params Thickness[] expectedMargins)
+        {
+            var page = new ItemPage(GalleryCatalog.FindItem(uniqueId));
+            Assert.AreEqual(expectedMargins.Length, page.Examples.Count, uniqueId);
+            for (var i = 0; i < expectedMargins.Length; i++)
+            {
+                Assert.AreEqual(expectedMargins[i], page.Examples[i].Margin, uniqueId + " example " + i);
+            }
         }
 
         private static void AssertGridViewColumn(GridViewColumn column, string header, double width, string path)
