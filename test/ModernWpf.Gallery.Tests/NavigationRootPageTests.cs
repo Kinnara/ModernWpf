@@ -57,6 +57,18 @@ namespace ModernWpf.Gallery.Tests
             Assert.AreEqual(NavigationTargetKind.AllControls, target.Kind);
         }
 
+        [DataTestMethod]
+        [DataRow("Settings")]
+        [DataRow("settings")]
+        [DataRow("/settings")]
+        public void ResolveNavigationTargetAcceptsSettings(string value)
+        {
+            var target = NavigationRootPage.ResolveNavigationTarget(value);
+
+            Assert.IsNotNull(target);
+            Assert.AreEqual(NavigationTargetKind.Settings, target.Kind);
+        }
+
         [TestMethod]
         public void ResolveNavigationTargetRejectsUnknownLinks()
         {

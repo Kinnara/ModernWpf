@@ -63,6 +63,11 @@ namespace ModernWpf.Gallery.Shell
                 return NavigationTarget.AllControls();
             }
 
+            if (string.Equals(normalized, "Settings", StringComparison.OrdinalIgnoreCase))
+            {
+                return NavigationTarget.Settings();
+            }
+
             if (string.Equals(normalized, "NewControls", StringComparison.OrdinalIgnoreCase))
             {
                 return NavigationTarget.Home();
@@ -163,8 +168,14 @@ namespace ModernWpf.Gallery.Shell
 
         private void OnNavigationItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
         {
-            if (_isProgrammaticNavigation || args.IsSettingsInvoked)
+            if (_isProgrammaticNavigation)
             {
+                return;
+            }
+
+            if (args.IsSettingsInvoked)
+            {
+                Navigate(NavigationTarget.Settings(), true);
                 return;
             }
 
@@ -258,6 +269,11 @@ namespace ModernWpf.Gallery.Shell
                 return page;
             }
 
+            if (target.Kind == NavigationTargetKind.Settings)
+            {
+                return new SettingsPage();
+            }
+
             if (target.Kind == NavigationTargetKind.Group)
             {
                 var group = GalleryCatalog.FindGroup(target.UniqueId);
@@ -281,6 +297,10 @@ namespace ModernWpf.Gallery.Shell
             else if (target.Kind == NavigationTargetKind.AllControls)
             {
                 selectedItem = Navigation.MenuItems.OfType<NavigationViewItem>().Skip(1).FirstOrDefault();
+            }
+            else if (target.Kind == NavigationTargetKind.Settings)
+            {
+                selectedItem = Navigation.SettingsItem as NavigationViewItem;
             }
             else if (!string.IsNullOrEmpty(target.UniqueId))
             {
@@ -325,6 +345,11 @@ namespace ModernWpf.Gallery.Shell
                 return "AllControls";
             }
 
+            if (target.Kind == NavigationTargetKind.Settings)
+            {
+                return "settings";
+            }
+
             if (target.Kind == NavigationTargetKind.Group)
             {
                 return "category/" + target.UniqueId;
@@ -338,6 +363,7 @@ namespace ModernWpf.Gallery.Shell
     {
         Home,
         AllControls,
+        Settings,
         Group,
         Item
     }
@@ -368,6 +394,11 @@ namespace ModernWpf.Gallery.Shell
         public static NavigationTarget AllControls()
         {
             return new NavigationTarget(NavigationTargetKind.AllControls, string.Empty);
+        }
+
+        public static NavigationTarget Settings()
+        {
+            return new NavigationTarget(NavigationTargetKind.Settings, string.Empty);
         }
 
         public static NavigationTarget Group(string uniqueId)

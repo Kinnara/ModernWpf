@@ -15,7 +15,7 @@
             x:Name="Navigation"
             AutomationProperties.AutomationId="GalleryNavigationView"
             IsBackButtonVisible="Auto"
-            IsSettingsVisible="False"
+            IsSettingsVisible="True"
             ItemInvoked="OnNavigationItemInvoked"
             PaneDisplayMode="Left"
             PaneTitle="WPF Gallery">

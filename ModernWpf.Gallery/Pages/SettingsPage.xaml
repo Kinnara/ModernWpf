@@ -1,0 +1,236 @@
+<UserControl
+    x:Class="ModernWpf.Gallery.Pages.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="700"
+    d:DesignWidth="900"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style x:Key="LinkTextBlockStyle" TargetType="TextBlock">
+            <Setter Property="Margin" Value="0,4,0,4" />
+        </Style>
+
+        <Style x:Key="SettingsCardStyle" TargetType="Border">
+            <Setter Property="Padding" Value="0,16,0,16" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderBrush}" />
+            <Setter Property="BorderThickness" Value="0,0,0,1" />
+        </Style>
+
+        <Style x:Key="BottomSettingsCardStyle" TargetType="Border">
+            <Setter Property="Padding" Value="0,16,0,16" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid
+        AutomationProperties.AutomationId="ContentRootGrid"
+        Style="{StaticResource GalleryPageRootStyle}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Margin="0,0,0,40">
+            <Label
+                Focusable="True"
+                KeyboardNavigation.IsTabStop="True"
+                KeyboardNavigation.TabIndex="0">
+                <TextBlock
+                    AutomationProperties.AutomationId="GalleryItemPageTitle"
+                    AutomationProperties.HeadingLevel="Level1"
+                    Style="{StaticResource TitleTextBlockStyle}"
+                    Text="Settings" />
+            </Label>
+        </StackPanel>
+
+        <ScrollViewer
+            Grid.Row="1"
+            Margin="0,0,0,24"
+            Padding="0,0,24,0">
+            <StackPanel>
+                <TextBlock
+                    Margin="10"
+                    FontSize="14"
+                    FontWeight="SemiBold"
+                    Text="Appearance &amp; behavior" />
+
+                <Grid Margin="0,0,0,20" Background="Transparent">
+                    <Border
+                        Padding="{StaticResource ExpanderPadding}"
+                        Background="{DynamicResource ExpanderHeaderBackground}"
+                        BorderBrush="{DynamicResource ExpanderHeaderBorderBrush}"
+                        BorderThickness="{StaticResource ExpanderBorderThemeThickness}"
+                        CornerRadius="{DynamicResource ControlCornerRadius}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock
+                                Grid.Column="0"
+                                Width="20"
+                                Height="20"
+                                Margin="10,5,10,5"
+                                VerticalAlignment="Center"
+                                AutomationProperties.Name="App Icon"
+                                FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                FontSize="20"
+                                Text="&#xE790;" />
+
+                            <StackPanel
+                                Grid.Column="1"
+                                Margin="12"
+                                Orientation="Vertical">
+                                <TextBlock FontSize="14" Text="App theme" />
+                                <TextBlock
+                                    FontSize="12"
+                                    Opacity="0.7"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="Select which app theme to display" />
+                            </StackPanel>
+
+                            <ComboBox
+                                x:Name="ThemeModeComboBox"
+                                Grid.Column="2"
+                                MinWidth="200"
+                                Margin="10"
+                                HorizontalAlignment="Right"
+                                AutomationProperties.Name="Change ThemeMode"
+                                SelectionChanged="OnThemeModeSelectionChanged">
+                                <ComboBoxItem Content="Light" />
+                                <ComboBoxItem Content="Dark" />
+                                <ComboBoxItem Content="Use system setting" />
+                            </ComboBox>
+                        </Grid>
+                    </Border>
+                </Grid>
+
+                <TextBlock
+                    Margin="10"
+                    FontSize="14"
+                    FontWeight="SemiBold"
+                    Text="About" />
+
+                <Expander AutomationProperties.Name="ModernWpf Gallery">
+                    <Expander.Header>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <Image
+                                Grid.Column="0"
+                                Width="20"
+                                Height="20"
+                                Margin="10,5,10,5"
+                                VerticalAlignment="Center"
+                                Source="pack://application:,,,/ModernWpf.Gallery;component/Assets/AppIcons/WPFGallery_48px.png" />
+
+                            <StackPanel
+                                Grid.Column="1"
+                                Margin="12"
+                                Orientation="Vertical">
+                                <TextBlock Text="ModernWpf Gallery" />
+                                <TextBlock
+                                    Opacity="0.7"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="ModernWpf control gallery and WPF samples." />
+                            </StackPanel>
+                        </Grid>
+                    </Expander.Header>
+
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <Border Grid.Row="0" Style="{StaticResource SettingsCardStyle}">
+                            <Grid Margin="48,0,16,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="To clone this repository" />
+                                <TextBox
+                                    Grid.Column="2"
+                                    Focusable="False"
+                                    Style="{StaticResource SelectionTextBox}"
+                                    Text="git clone https://github.com/Kinnara/ModernWpf.git" />
+                            </Grid>
+                        </Border>
+
+                        <Border Grid.Row="1" Style="{StaticResource SettingsCardStyle}">
+                            <Grid Margin="48,0,16,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="File a bug or request a new sample" />
+                                <Button
+                                    Grid.Column="2"
+                                    Padding="8"
+                                    AutomationProperties.Name="Open Issues"
+                                    Click="OnOpenIssuesClick"
+                                    FocusManager.IsFocusScope="True">
+                                    <TextBlock
+                                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                        Text="&#xE8A7;" />
+                                </Button>
+                            </Grid>
+                        </Border>
+
+                        <GroupBox
+                            Grid.Row="2"
+                            AutomationProperties.Name="Dependencies and References"
+                            BorderThickness="0">
+                            <Border Style="{StaticResource SettingsCardStyle}">
+                                <StackPanel Margin="48,0,16,0" Orientation="Vertical">
+                                    <TextBlock Margin="0,0,0,12" Text="Dependencies and References" />
+                                    <TextBlock Style="{StaticResource LinkTextBlockStyle}">
+                                        <Hyperlink Click="OnModernWpfClick">ModernWpf</Hyperlink>
+                                    </TextBlock>
+                                    <TextBlock Style="{StaticResource LinkTextBlockStyle}">
+                                        <Hyperlink Click="OnWpfSamplesClick">WPF Samples</Hyperlink>
+                                    </TextBlock>
+                                    <TextBlock Style="{StaticResource LinkTextBlockStyle}">
+                                        <Hyperlink Click="OnWinUIGalleryClick">WinUI Gallery</Hyperlink>
+                                    </TextBlock>
+                                </StackPanel>
+                            </Border>
+                        </GroupBox>
+
+                        <GroupBox
+                            Grid.Row="3"
+                            AutomationProperties.Name="Code and information warranty notice"
+                            BorderThickness="0">
+                            <Border Style="{StaticResource BottomSettingsCardStyle}">
+                                <StackPanel Margin="48,0,16,0" Orientation="Vertical">
+                                    <TextBlock
+                                        Margin="0,0,0,12"
+                                        Text="THIS CODE AND INFORMATION IS PROVIDED AS IS WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE."
+                                        TextWrapping="Wrap" />
+                                    <TextBlock Style="{StaticResource LinkTextBlockStyle}">
+                                        <Hyperlink Click="OnServicesClick">Microsoft Services Agreement</Hyperlink>
+                                    </TextBlock>
+                                    <TextBlock Style="{StaticResource LinkTextBlockStyle}">
+                                        <Hyperlink Click="OnPrivacyClick">Microsoft Privacy Statement</Hyperlink>
+                                    </TextBlock>
+                                </StackPanel>
+                            </Border>
+                        </GroupBox>
+                    </Grid>
+                </Expander>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>
