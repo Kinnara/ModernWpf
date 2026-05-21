@@ -3450,17 +3450,19 @@ namespace ModernWpf.Gallery.Pages
             nameGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
             form.Children.Add(nameGrid);
 
-            var firstNamePanel = CreateFormField("First Name", selectedUser.FirstName);
+            var firstNamePanel = CreateFormField("First Name", selectedUser.FirstName, out var firstNameBox);
             firstNamePanel.Margin = new Thickness(0, 0, 10, 0);
             nameGrid.Children.Add(firstNamePanel);
-            var lastNamePanel = CreateFormField("Last Name", selectedUser.LastName);
+            var lastNamePanel = CreateFormField("Last Name", selectedUser.LastName, out var lastNameBox);
             Grid.SetColumn(lastNamePanel, 1);
             nameGrid.Children.Add(lastNamePanel);
 
             form.Children.Add(CreateFormLabel("Company"));
-            form.Children.Add(CreateFormTextBox(selectedUser.Company));
+            var companyBox = CreateFormTextBox("Company", selectedUser.Company);
+            form.Children.Add(companyBox);
             form.Children.Add(CreateFormLabel("Address"));
-            form.Children.Add(CreateFormTextBox(selectedUser.Address));
+            var addressBox = CreateFormTextBox("Address", selectedUser.Address);
+            form.Children.Add(addressBox);
 
             var ageHeader = new Grid();
             ageHeader.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
@@ -3476,7 +3478,7 @@ namespace ModernWpf.Gallery.Pages
             ageHeader.Children.Add(ageValue);
             form.Children.Add(ageHeader);
 
-            form.Children.Add(new Slider
+            var ageSlider = new Slider
             {
                 Minimum = 21,
                 Maximum = 62,
@@ -3484,15 +3486,23 @@ namespace ModernWpf.Gallery.Pages
                 IsEnabled = false,
                 Value = selectedUser.Age,
                 Margin = new Thickness(0, 5, 0, 15)
-            });
+            };
+            AutomationProperties.SetName(ageSlider, "Age");
+            ageSlider.ValueChanged += delegate
+            {
+                ageValue.Text = ((int)ageSlider.Value).ToString();
+            };
+            form.Children.Add(ageSlider);
 
             form.Children.Add(CreateFormLabel("Date of Joining"));
-            form.Children.Add(new DatePicker
+            var datePicker = new DatePicker
             {
                 SelectedDate = selectedUser.DateOfJoining,
                 IsEnabled = false,
                 Margin = new Thickness(0, 5, 0, 15)
-            });
+            };
+            AutomationProperties.SetName(datePicker, "Date of Joining");
+            form.Children.Add(datePicker);
 
             var graduatePanel = new StackPanel
             {
@@ -3502,12 +3512,14 @@ namespace ModernWpf.Gallery.Pages
             var graduateLabel = CreateFormLabel("Is user a new graduate ?");
             graduateLabel.Margin = new Thickness(0, 0, 10, 0);
             graduatePanel.Children.Add(graduateLabel);
-            graduatePanel.Children.Add(new CheckBox
+            var graduateCheckBox = new CheckBox
             {
                 IsChecked = selectedUser.IsNewGraduate,
                 IsEnabled = false,
                 VerticalAlignment = VerticalAlignment.Center
-            });
+            };
+            AutomationProperties.SetName(graduateCheckBox, "Is user a new graduate ?");
+            graduatePanel.Children.Add(graduateCheckBox);
             form.Children.Add(graduatePanel);
 
             var commands = new StackPanel
@@ -3515,9 +3527,90 @@ namespace ModernWpf.Gallery.Pages
                 HorizontalAlignment = HorizontalAlignment.Right,
                 Orientation = Orientation.Horizontal
             };
-            commands.Children.Add(new Button { Content = "Edit", Margin = new Thickness(10) });
-            commands.Children.Add(new Button { Content = "Delete", Margin = new Thickness(10) });
+            var savedStatus = new TextBlock
+            {
+                FontSize = 14,
+                FontStyle = FontStyles.Italic,
+                Text = "Saved!",
+                VerticalAlignment = VerticalAlignment.Center,
+                Visibility = Visibility.Collapsed
+            };
+            commands.Children.Add(savedStatus);
+            var deletedStatus = new TextBlock
+            {
+                FontSize = 14,
+                FontStyle = FontStyles.Italic,
+                Text = "User " + selectedUser.Name + " Deleted!",
+                VerticalAlignment = VerticalAlignment.Center,
+                Visibility = Visibility.Collapsed
+            };
+            commands.Children.Add(deletedStatus);
+            var editButton = new Button { Name = "edit_button", Content = "Edit", Margin = new Thickness(10) };
+            var deleteButton = new Button { Name = "delete_button", Content = "Delete", Margin = new Thickness(10) };
+            var saveButton = new Button { Name = "save_button", Content = "Save", Margin = new Thickness(10), Visibility = Visibility.Collapsed };
+            var cancelButton = new Button { Name = "cancel_button", Content = "Cancel", Margin = new Thickness(10), Visibility = Visibility.Collapsed };
+            Action<bool> setEditing = editing =>
+            {
+                foreach (var textBox in new[] { firstNameBox, lastNameBox, companyBox, addressBox })
+                {
+                    textBox.IsReadOnly = !editing;
+                }
+
+                ageSlider.IsEnabled = editing;
+                datePicker.IsEnabled = editing;
+                graduateCheckBox.IsEnabled = editing;
+                editButton.Visibility = editing ? Visibility.Collapsed : Visibility.Visible;
+                deleteButton.Visibility = editing ? Visibility.Collapsed : Visibility.Visible;
+                saveButton.Visibility = editing ? Visibility.Visible : Visibility.Collapsed;
+                cancelButton.Visibility = editing ? Visibility.Visible : Visibility.Collapsed;
+            };
+            editButton.Click += delegate
+            {
+                setEditing(true);
+                savedStatus.Visibility = Visibility.Collapsed;
+                deletedStatus.Visibility = Visibility.Collapsed;
+                saveButton.Focus();
+            };
+            deleteButton.Click += delegate
+            {
+                deletedStatus.Visibility = Visibility.Visible;
+                savedStatus.Visibility = Visibility.Collapsed;
+                editButton.Focus();
+            };
+            saveButton.Click += delegate
+            {
+                setEditing(false);
+                savedStatus.Visibility = Visibility.Visible;
+                deletedStatus.Visibility = Visibility.Collapsed;
+                editButton.Focus();
+            };
+            cancelButton.Click += delegate
+            {
+                setEditing(false);
+                editButton.Focus();
+            };
+            commands.Children.Add(editButton);
+            commands.Children.Add(deleteButton);
+            commands.Children.Add(saveButton);
+            commands.Children.Add(cancelButton);
             form.Children.Add(commands);
+
+            root.SizeChanged += delegate(object sender, SizeChangedEventArgs e)
+            {
+                ApplyDashboardLayout(
+                    e.NewSize.Width,
+                    userListGrid,
+                    detailsGrid,
+                    formGrid,
+                    userList,
+                    addButton,
+                    firstNamePanel,
+                    lastNamePanel,
+                    header,
+                    headerText,
+                    (TextBlock)headerText.Children[0],
+                    (TextBlock)headerText.Children[1]);
+            };
 
             return root;
         }
@@ -3550,6 +3643,7 @@ namespace ModernWpf.Gallery.Pages
                 Text = user.Name,
                 Margin = new Thickness(12, 6, 0, 0)
             };
+            GalleryAutomation.SetHeadingLevel(name, GalleryAutomationHeadingLevel.Level3);
             Grid.SetColumn(name, 1);
             grid.Children.Add(name);
 
@@ -3567,14 +3661,87 @@ namespace ModernWpf.Gallery.Pages
             return grid;
         }
 
-        private static StackPanel CreateFormField(string label, string value)
+        private static void ApplyDashboardLayout(
+            double width,
+            Grid userListGrid,
+            Grid detailsGrid,
+            Grid formGrid,
+            ListView userList,
+            Button addButton,
+            StackPanel firstNamePanel,
+            StackPanel lastNamePanel,
+            StackPanel header,
+            StackPanel headerText,
+            TextBlock headerName,
+            TextBlock headerCompany)
+        {
+            if (width < 600)
+            {
+                SetGridPosition(userListGrid, 0, 0, 1, 2);
+                SetGridPosition(detailsGrid, 1, 0, 1, 2);
+                detailsGrid.Margin = new Thickness(0);
+                formGrid.Margin = new Thickness(20, 10, 20, 10);
+                userList.ClearValue(FrameworkElement.WidthProperty);
+                addButton.HorizontalAlignment = HorizontalAlignment.Right;
+                SetGridPosition(firstNamePanel, 0, 0, 2, 1);
+                SetGridPosition(lastNamePanel, 0, 1, 2, 1);
+                firstNamePanel.Margin = new Thickness(0, 0, 10, 0);
+                header.Orientation = Orientation.Horizontal;
+                headerText.HorizontalAlignment = HorizontalAlignment.Left;
+                headerName.HorizontalAlignment = HorizontalAlignment.Left;
+                headerCompany.HorizontalAlignment = HorizontalAlignment.Left;
+            }
+            else if (width >= 400 && width < 800)
+            {
+                SetGridPosition(userListGrid, 0, 0, 2, 1);
+                SetGridPosition(detailsGrid, 0, 1, 2, 1);
+                detailsGrid.Margin = new Thickness(-10, 0, -20, 0);
+                formGrid.Margin = new Thickness(0, 10, 0, 10);
+                userList.Width = 240;
+                addButton.HorizontalAlignment = HorizontalAlignment.Center;
+                SetGridPosition(firstNamePanel, 0, 0, 1, 2);
+                SetGridPosition(lastNamePanel, 1, 0, 1, 2);
+                firstNamePanel.Margin = new Thickness(0);
+                header.Orientation = Orientation.Vertical;
+                headerText.HorizontalAlignment = HorizontalAlignment.Center;
+                headerName.HorizontalAlignment = HorizontalAlignment.Center;
+                headerCompany.HorizontalAlignment = HorizontalAlignment.Center;
+            }
+            else
+            {
+                SetGridPosition(userListGrid, 0, 0, 2, 1);
+                SetGridPosition(detailsGrid, 0, 1, 2, 1);
+                detailsGrid.Margin = new Thickness(0);
+                formGrid.Margin = new Thickness(20, 10, 20, 10);
+                userList.Width = 300;
+                addButton.HorizontalAlignment = HorizontalAlignment.Center;
+                SetGridPosition(firstNamePanel, 0, 0, 2, 1);
+                SetGridPosition(lastNamePanel, 0, 1, 2, 1);
+                firstNamePanel.Margin = new Thickness(0, 0, 10, 0);
+                header.Orientation = Orientation.Horizontal;
+                headerText.HorizontalAlignment = HorizontalAlignment.Left;
+                headerName.HorizontalAlignment = HorizontalAlignment.Left;
+                headerCompany.HorizontalAlignment = HorizontalAlignment.Left;
+            }
+        }
+
+        private static void SetGridPosition(UIElement element, int row, int column, int rowSpan, int columnSpan)
+        {
+            Grid.SetRow(element, row);
+            Grid.SetColumn(element, column);
+            Grid.SetRowSpan(element, rowSpan);
+            Grid.SetColumnSpan(element, columnSpan);
+        }
+
+        private static StackPanel CreateFormField(string label, string value, out TextBox textBox)
         {
             var panel = new StackPanel
             {
                 Orientation = Orientation.Vertical
             };
             panel.Children.Add(CreateFormLabel(label));
-            panel.Children.Add(CreateFormTextBox(value));
+            textBox = CreateFormTextBox(label, value);
+            panel.Children.Add(textBox);
             return panel;
         }
 
@@ -3584,21 +3751,22 @@ namespace ModernWpf.Gallery.Pages
             {
                 Content = content,
                 FontWeight = FontWeights.SemiBold,
-                Opacity = 0.67,
-                Padding = new Thickness(0)
+                Opacity = 0.67
             };
             label.SetResourceReference(Control.ForegroundProperty, "TextFillColorPrimaryBrush");
             return label;
         }
 
-        private static TextBox CreateFormTextBox(string text)
+        private static TextBox CreateFormTextBox(string automationName, string text)
         {
-            return new TextBox
+            var textBox = new TextBox
             {
                 Text = text,
                 IsReadOnly = true,
                 Margin = new Thickness(0, 5, 0, 15)
             };
+            AutomationProperties.SetName(textBox, automationName);
+            return textBox;
         }
 
         private static ImageBrush CreateDashboardAvatarBrush(string imageId)

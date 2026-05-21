@@ -1235,6 +1235,158 @@ namespace ModernWpf.Gallery.Tests
             });
         }
 
+        [TestMethod]
+        public void UserDashboardPageMatchesWpfGalleryReferenceLayoutAndBehavior()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("UserDashboard"));
+                var root = (Grid)page.DirectPageContent;
+                var window = new Window
+                {
+                    Width = 900,
+                    Height = 720,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = root
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(2, root.ColumnDefinitions.Count);
+                    Assert.AreEqual(GridLength.Auto, root.ColumnDefinitions[0].Width);
+                    Assert.AreEqual(2, root.RowDefinitions.Count);
+                    Assert.AreEqual(280.0, root.RowDefinitions[0].MaxHeight);
+                    Assert.AreEqual(new GridLength(2, GridUnitType.Star), root.RowDefinitions[1].Height);
+
+                    var userListGrid = root.Children.OfType<Grid>().Single(child => Grid.GetColumn(child) == 0);
+                    var userList = userListGrid.Children.OfType<ListView>().Single();
+                    Assert.AreEqual("Users", AutomationProperties.GetName(userList));
+                    Assert.AreEqual(300.0, userList.Width);
+                    Assert.AreEqual(SelectionMode.Single, userList.SelectionMode);
+                    Assert.AreEqual(20, userList.Items.Count);
+                    Assert.AreEqual(0, userList.SelectedIndex);
+                    var firstUserItem = (ListViewItem)userList.Items[0];
+                    Assert.AreEqual("John Doe", AutomationProperties.GetName(firstUserItem));
+                    var firstUserName = FindTextBlock((DependencyObject)firstUserItem.Content, "John Doe");
+                    Assert.AreEqual(AutomationHeadingLevel.Level3, AutomationProperties.GetHeadingLevel(firstUserName));
+
+                    var addUserButton = userListGrid.Children.OfType<Button>().Single();
+                    Assert.AreEqual("Add New User", addUserButton.Content);
+                    Assert.AreEqual(new Thickness(10), addUserButton.Margin);
+                    Assert.AreEqual(HorizontalAlignment.Center, addUserButton.HorizontalAlignment);
+
+                    var detailsGrid = root.Children.OfType<Grid>().Single(child => Grid.GetColumn(child) == 1);
+                    var header = (StackPanel)detailsGrid.Children[0];
+                    Assert.AreEqual(Orientation.Horizontal, header.Orientation);
+                    Assert.AreEqual(new Thickness(20, 10, 20, 10), header.Margin);
+                    Assert.AreEqual(96.0, ((Ellipse)header.Children[0]).Width);
+
+                    var formGrid = (Grid)detailsGrid.Children[1];
+                    Assert.AreEqual(new Thickness(20, 10, 20, 10), formGrid.Margin);
+                    var form = (StackPanel)((ScrollViewer)formGrid.Children[0]).Content;
+                    Assert.AreEqual(new Thickness(20, 0, 20, 0), form.Margin);
+
+                    var nameGrid = (Grid)form.Children[0];
+                    var firstNamePanel = (StackPanel)nameGrid.Children[0];
+                    var lastNamePanel = (StackPanel)nameGrid.Children[1];
+                    var firstNameBox = (TextBox)firstNamePanel.Children[1];
+                    var lastNameBox = (TextBox)lastNamePanel.Children[1];
+                    Assert.AreEqual("First Name", ((Label)firstNamePanel.Children[0]).Content);
+                    Assert.AreEqual("First Name", AutomationProperties.GetName(firstNameBox));
+                    Assert.AreEqual("John", firstNameBox.Text);
+                    Assert.IsTrue(firstNameBox.IsReadOnly);
+                    Assert.AreEqual("Last Name", AutomationProperties.GetName(lastNameBox));
+                    Assert.AreEqual("Doe", lastNameBox.Text);
+
+                    var companyBox = (TextBox)form.Children[2];
+                    var addressBox = (TextBox)form.Children[4];
+                    Assert.AreEqual("Company", AutomationProperties.GetName(companyBox));
+                    Assert.AreEqual("Address", AutomationProperties.GetName(addressBox));
+
+                    var ageSlider = (Slider)form.Children[6];
+                    Assert.AreEqual("Age", AutomationProperties.GetName(ageSlider));
+                    Assert.AreEqual(21.0, ageSlider.Minimum);
+                    Assert.AreEqual(62.0, ageSlider.Maximum);
+                    Assert.IsTrue(ageSlider.IsSnapToTickEnabled);
+                    Assert.IsFalse(ageSlider.IsEnabled);
+                    Assert.AreEqual(37.0, ageSlider.Value);
+
+                    var datePicker = (DatePicker)form.Children[8];
+                    Assert.AreEqual("Date of Joining", AutomationProperties.GetName(datePicker));
+                    Assert.IsFalse(datePicker.IsEnabled);
+
+                    var graduatePanel = (StackPanel)form.Children[9];
+                    var graduateCheckBox = (CheckBox)graduatePanel.Children[1];
+                    Assert.AreEqual("Is user a new graduate ?", AutomationProperties.GetName(graduateCheckBox));
+                    Assert.IsFalse(graduateCheckBox.IsEnabled);
+
+                    var commands = (StackPanel)form.Children[10];
+                    var savedStatus = (TextBlock)commands.Children[0];
+                    var deletedStatus = (TextBlock)commands.Children[1];
+                    var editButton = (Button)commands.Children[2];
+                    var deleteButton = (Button)commands.Children[3];
+                    var saveButton = (Button)commands.Children[4];
+                    var cancelButton = (Button)commands.Children[5];
+                    Assert.AreEqual("Saved!", savedStatus.Text);
+                    Assert.AreEqual(Visibility.Collapsed, savedStatus.Visibility);
+                    Assert.AreEqual("User John Doe Deleted!", deletedStatus.Text);
+                    Assert.AreEqual(Visibility.Collapsed, deletedStatus.Visibility);
+                    Assert.AreEqual("Edit", editButton.Content);
+                    Assert.AreEqual("Delete", deleteButton.Content);
+                    Assert.AreEqual(Visibility.Collapsed, saveButton.Visibility);
+                    Assert.AreEqual(Visibility.Collapsed, cancelButton.Visibility);
+
+                    editButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                    WpfTestHost.DoEvents();
+                    Assert.IsFalse(firstNameBox.IsReadOnly);
+                    Assert.IsTrue(ageSlider.IsEnabled);
+                    Assert.IsTrue(datePicker.IsEnabled);
+                    Assert.IsTrue(graduateCheckBox.IsEnabled);
+                    Assert.AreEqual(Visibility.Collapsed, editButton.Visibility);
+                    Assert.AreEqual(Visibility.Visible, saveButton.Visibility);
+
+                    cancelButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                    WpfTestHost.DoEvents();
+                    Assert.IsTrue(firstNameBox.IsReadOnly);
+                    Assert.IsFalse(ageSlider.IsEnabled);
+                    Assert.AreEqual(Visibility.Visible, editButton.Visibility);
+                    Assert.AreEqual(Visibility.Collapsed, saveButton.Visibility);
+
+                    root.Width = 700;
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(240.0, userList.Width);
+                    Assert.AreEqual(new Thickness(-10, 0, -20, 0), detailsGrid.Margin);
+                    Assert.AreEqual(Orientation.Vertical, header.Orientation);
+                    Assert.AreEqual(1, Grid.GetRow(lastNamePanel));
+                    Assert.AreEqual(2, Grid.GetColumnSpan(firstNamePanel));
+
+                    root.Width = 500;
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+                    Assert.AreSame(DependencyProperty.UnsetValue, userList.ReadLocalValue(FrameworkElement.WidthProperty));
+                    Assert.AreEqual(1, Grid.GetRow(detailsGrid));
+                    Assert.AreEqual(2, Grid.GetColumnSpan(detailsGrid));
+                    Assert.AreEqual(HorizontalAlignment.Right, addUserButton.HorizontalAlignment);
+                    Assert.AreEqual(Orientation.Horizontal, header.Orientation);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
         private static string GetColorPageExampleTitle(StackPanel section, int childIndex)
         {
             var example = (Border)section.Children[childIndex];
@@ -1253,6 +1405,32 @@ namespace ModernWpf.Gallery.Tests
             var row = (StackPanel)detailsStack.Children[rowIndex];
             var grid = (Grid)row.Children[1];
             return ((TextBlock)grid.Children[0]).Text;
+        }
+
+        private static TextBlock FindTextBlock(DependencyObject root, string text)
+        {
+            if (root == null)
+            {
+                return null;
+            }
+
+            var textBlock = root as TextBlock;
+            if (textBlock != null && textBlock.Text == text)
+            {
+                return textBlock;
+            }
+
+            var childCount = VisualTreeHelper.GetChildrenCount(root);
+            for (var i = 0; i < childCount; i++)
+            {
+                var result = FindTextBlock(VisualTreeHelper.GetChild(root, i), text);
+                if (result != null)
+                {
+                    return result;
+                }
+            }
+
+            return null;
         }
 
         private static TextBlock GetTableText(Grid row, int column)
