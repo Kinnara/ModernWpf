@@ -511,6 +511,7 @@ namespace ModernWpf.Gallery.Pages
         {
             var dataGrid = new DataGrid
             {
+                Name = "SampleDataGrid",
                 Height = 400,
                 ItemsSource = CreateProducts()
             };
@@ -521,7 +522,7 @@ namespace ModernWpf.Gallery.Pages
                 new GalleryExample(
                     "Default DataGrid with ItemsSource.",
                     dataGrid,
-                    "<DataGrid ItemsSource=\"{Binding ViewModel.ProductsCollection, Mode=TwoWay}\" />",
+                    "<DataGrid x:Name=\"SampleDataGrid\" Height=\"400\" AutomationProperties.Name=\"Sample Data Grid\" ItemsSource=\"{Binding ViewModel.ProductsCollection, Mode=TwoWay}\" />",
                     null)
             };
         }
@@ -674,7 +675,7 @@ namespace ModernWpf.Gallery.Pages
                 new GalleryExample(
                     "A Frame",
                     CreateOpenFrameWindowButton(),
-                    "<Frame Source=\"FramePage1.xaml\" NavigationUIVisibility=\"Visible\" />",
+                    "<Button x:Name=\"OpenFrameWindow\" VerticalAlignment=\"Center\" HorizontalAlignment=\"Center\" Content=\"Open window to view Frame\" />",
                     null)
             };
         }
@@ -697,7 +698,7 @@ namespace ModernWpf.Gallery.Pages
                 new GalleryExample(
                     "A Hyperlink",
                     textBlock,
-                    "<TextBlock Margin=\"20\">\n    <Hyperlink NavigateUri=\"https://www.microsoft.com\" RequestNavigate=\"Hyperlink_RequestNavigate\">\n        Lorem Ipsum link\n    </Hyperlink>\n</TextBlock>",
+                    "<TextBlock Margin=\"20\">\n    <Hyperlink NavigateUri=\"https://www.microsoft.com\" RequestNavigate=\"Hyperlink_RequestNavigate\">\n        Hyperlink\n    </Hyperlink>\n</TextBlock>",
                     null)
             };
         }
@@ -743,12 +744,12 @@ namespace ModernWpf.Gallery.Pages
                 new GalleryExample(
                     "ListBox with items defined inline.",
                     CreateInlineListBox(),
-                    "<ListBox SelectedIndex=\"0\">\n    <ListBoxItem>Blue</ListBoxItem>\n    <ListBoxItem>Green</ListBoxItem>\n    <ListBoxItem>Red</ListBoxItem>\n    <ListBoxItem>Yellow</ListBoxItem>\n</ListBox>",
+                    "<ListBox AutomationProperties.Name=\"Color ListBox\" SelectedIndex=\"0\">\n    <ListBoxItem>Blue</ListBoxItem>\n    <ListBoxItem>Green</ListBoxItem>\n    <ListBoxItem>Red</ListBoxItem>\n    <ListBoxItem>Yellow</ListBoxItem>\n</ListBox>",
                     null),
                 new GalleryExample(
                     "A ListBox with its ItemsSource and Height set.",
                     CreateFontListBox(),
-                    "<ListBox Height=\"100\" ItemsSource=\"{Binding ViewModel.MyItems}\" SelectedIndex=\"2\" />",
+                    "<ListBox Height=\"164\" AutomationProperties.Name=\"Font ListBox\" ItemsSource=\"{Binding ViewModel.ListBoxItems, Mode=TwoWay}\" SelectedIndex=\"2\" />",
                     null)
             };
         }
@@ -782,7 +783,7 @@ namespace ModernWpf.Gallery.Pages
                 new GalleryExample(
                     "Standard Menu.",
                     CreateStandardMenuExample(),
-                    "<Menu>\n    <MenuItem Header=\"File\">\n        <MenuItem Header=\"New\" />\n        <MenuItem Header=\"New window\" />\n        <MenuItem Header=\"Open...\" />\n        <MenuItem Header=\"Save\" />\n        <MenuItem Header=\"Save As...\" />\n        <Separator />\n        <MenuItem Header=\"Exit\" />\n    </MenuItem>\n    <MenuItem Header=\"Edit\">\n        <MenuItem Header=\"Undo\" />\n        <Separator />\n        <MenuItem Header=\"Cut\" />\n        <MenuItem Header=\"Copy\" />\n        <MenuItem Header=\"Paste\" />\n        <MenuItem IsEnabled=\"False\" />\n        <Separator />\n        <MenuItem Header=\"Search with browser\" />\n        <MenuItem Header=\"Find...\" />\n        <MenuItem Header=\"Find Next\" />\n        <Separator />\n        <MenuItem Header=\"Select All\" />\n    </MenuItem>\n</Menu>",
+                    "<StackPanel>\n    <TextBlock x:Name=\"StatusMenuItem\" Text=\"\" />\n    <Menu>\n        <MenuItem Header=\"File\">\n            <MenuItem Header=\"New\" />\n            <MenuItem Header=\"New window\" />\n            <MenuItem Header=\"Open\" />\n            <MenuItem Header=\"Save\" />\n            <MenuItem Header=\"Save As\" />\n            <Separator />\n            <MenuItem Header=\"Exit\" />\n        </MenuItem>\n        <MenuItem Header=\"Edit\">\n            <MenuItem Header=\"Undo\" />\n            <Separator />\n            <MenuItem Header=\"Cut\" />\n            <MenuItem Header=\"Copy\" />\n            <MenuItem Header=\"Paste\" />\n            <MenuItem IsEnabled=\"False\" />\n            <Separator />\n            <MenuItem Header=\"Search with browser\" />\n            <MenuItem Header=\"Find\" />\n            <MenuItem Header=\"Find next\" />\n            <Separator />\n            <MenuItem Header=\"Select All\" />\n        </MenuItem>\n        <Separator />\n        <MenuItem AutomationProperties.Name=\"Bold\" Tag=\"Bold\" />\n        <MenuItem AutomationProperties.Name=\"Italic\" Tag=\"Italic\" />\n        <MenuItem AutomationProperties.Name=\"Underlined\" Tag=\"Underlined\" />\n    </Menu>\n</StackPanel>",
                     null)
             };
         }
@@ -831,7 +832,7 @@ namespace ModernWpf.Gallery.Pages
                 new GalleryExample(
                     "A Navigation Window",
                     CreateOpenNavigationWindowButton(),
-                    "<NavigationWindow Width=\"800\" Height=\"450\" Source=\"/Views/Navigation/Page1.xaml\" />",
+                    "<Button x:Name=\"OpenNavigationWindow\" VerticalAlignment=\"Center\" HorizontalAlignment=\"Center\" Content=\"Open window to view NavigationWindow\" />",
                     "private void OpenNavigationWindow_Click(object sender, RoutedEventArgs e)\n{\n    NavigationWindow window = new NavigationWindow()\n    {\n        Width = 800,\n        Height = 450,\n        Source = new Uri(\"/Views/Navigation/Page1.xaml\", UriKind.Relative)\n    };\n    window.Show();\n}")
             };
         }
@@ -977,7 +978,7 @@ namespace ModernWpf.Gallery.Pages
                 new GalleryExample(
                     "Standard TabControl.",
                     CreateStandardTabControl(),
-                    "<TabControl Margin=\"0,8,0,0\">\n    <TabItem>\n        <TabItem.Header>\n            <StackPanel Orientation=\"Horizontal\">\n                <TextBlock Text=\"Hello\" />\n            </StackPanel>\n        </TabItem.Header>\n        <Grid>\n            <TextBlock Margin=\"12\" Text=\"World\" />\n        </Grid>\n    </TabItem>\n    <TabItem IsSelected=\"True\">\n        <TabItem.Header>\n            <StackPanel Orientation=\"Horizontal\">\n                <TextBlock Text=\"The cake\" />\n            </StackPanel>\n        </TabItem.Header>\n        <Grid>\n            <TextBlock Margin=\"12\" Text=\"Is a lie.\" />\n        </Grid>\n    </TabItem>\n</TabControl>",
+                    "<TabControl Margin=\"0,8,0,0\">\n    <TabItem AutomationProperties.Name=\"Hello Tab\">\n        <TabItem.Header>\n            <StackPanel Orientation=\"Horizontal\">\n                <TextBlock Text=\"Hello\" />\n            </StackPanel>\n        </TabItem.Header>\n        <Grid>\n            <TextBlock Margin=\"12\" Text=\"World\" />\n        </Grid>\n    </TabItem>\n    <TabItem AutomationProperties.Name=\"The cake Tab\" IsSelected=\"True\">\n        <TabItem.Header>\n            <StackPanel Orientation=\"Horizontal\">\n                <TextBlock Text=\"The cake\" />\n            </StackPanel>\n        </TabItem.Header>\n        <Grid>\n            <TextBlock Margin=\"12\" Text=\"Is a lie.\" />\n        </Grid>\n    </TabItem>\n</TabControl>",
                     null)
             };
         }
@@ -4169,10 +4170,11 @@ namespace ModernWpf.Gallery.Pages
             return grid;
         }
 
-        private static StackPanel CreateOpenFrameWindowButton()
+        private static Button CreateOpenFrameWindowButton()
         {
             var button = new Button
             {
+                Name = "OpenFrameWindow",
                 Content = "Open window to view Frame",
                 VerticalAlignment = VerticalAlignment.Center,
                 HorizontalAlignment = HorizontalAlignment.Center
@@ -4199,18 +4201,14 @@ namespace ModernWpf.Gallery.Pages
                 window.Show();
             };
 
-            var stack = new StackPanel
-            {
-                HorizontalAlignment = HorizontalAlignment.Center
-            };
-            stack.Children.Add(button);
-            return stack;
+            return button;
         }
 
-        private static StackPanel CreateOpenNavigationWindowButton()
+        private static Button CreateOpenNavigationWindowButton()
         {
             var button = new Button
             {
+                Name = "OpenNavigationWindow",
                 Content = "Open window to view NavigationWindow",
                 VerticalAlignment = VerticalAlignment.Center,
                 HorizontalAlignment = HorizontalAlignment.Center
@@ -4232,12 +4230,7 @@ namespace ModernWpf.Gallery.Pages
                 window.Show();
             };
 
-            var stack = new StackPanel
-            {
-                HorizontalAlignment = HorizontalAlignment.Center
-            };
-            stack.Children.Add(button);
-            return stack;
+            return button;
         }
 
         private static StackPanel CreatePickFolderExample()
@@ -4429,7 +4422,11 @@ namespace ModernWpf.Gallery.Pages
 
         private static StackPanel CreateStandardMenuExample()
         {
-            var output = new TextBlock();
+            var output = new TextBlock
+            {
+                Name = "StatusMenuItem",
+                Text = string.Empty
+            };
             var menu = new Menu();
 
             var file = new MenuItem { Header = "File" };

@@ -255,6 +255,14 @@ namespace ModernWpf.Gallery.Tests
                 AssertExampleMargins("Clipboard", new Thickness(10), new Thickness(10, 32, 10, 10), new Thickness(10, 32, 10, 10), new Thickness(10, 32, 10, 10), new Thickness(10, 32, 10, 10), new Thickness(10, 32, 10, 10));
                 AssertExampleMargins("FileAndFolderDialogs", new Thickness(10), new Thickness(10, 32, 10, 10), new Thickness(10, 32, 10, 10), new Thickness(10, 32, 10, 10));
                 AssertExampleMargins("MessageBox", new Thickness(10), new Thickness(10, 32, 10, 10), new Thickness(10, 32, 10, 10), new Thickness(10, 32, 10, 10), new Thickness(10, 32, 10, 10), new Thickness(10, 32, 10, 10));
+                AssertExampleMargins("Menu", new Thickness(10));
+                AssertExampleMargins("Frame", new Thickness(10));
+                AssertExampleMargins("NavigationWindow", new Thickness(10));
+                AssertExampleMargins("TabControl", new Thickness(10));
+                AssertExampleMargins("ListBox", new Thickness(10), new Thickness(10, 36, 10, 10));
+                AssertExampleMargins("TreeView", new Thickness(10));
+                AssertExampleMargins("DataGrid", new Thickness(10));
+                AssertExampleMargins("Hyperlink", new Thickness(10));
             });
         }
 
@@ -822,6 +830,125 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void NavigationCollectionsAndHyperlinkPagesMatchWpfGalleryReference()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var menuPage = new ItemPage(GalleryCatalog.FindItem("Menu"));
+                Assert.AreEqual(1, menuPage.Examples.Count);
+                Assert.AreEqual("Standard Menu.", menuPage.Examples[0].HeaderText);
+                var menuStack = (StackPanel)menuPage.Examples[0].ExampleContent;
+                Assert.AreEqual(2, menuStack.Children.Count);
+                var statusMenuItem = (TextBlock)menuStack.Children[0];
+                Assert.AreEqual("StatusMenuItem", statusMenuItem.Name);
+                Assert.AreEqual(string.Empty, statusMenuItem.Text);
+
+                var menu = (Menu)menuStack.Children[1];
+                var menuItems = menu.Items.Cast<object>().ToArray();
+                Assert.AreEqual(6, menuItems.Length);
+                var fileMenu = (MenuItem)menuItems[0];
+                Assert.AreEqual("File", fileMenu.Header);
+                Assert.AreEqual(7, fileMenu.Items.Count);
+                CollectionAssert.AreEqual(new[] { "New", "New window", "Open", "Save", "Save As" }, fileMenu.Items.Cast<object>().Take(5).Cast<MenuItem>().Select(item => (string)item.Header).ToArray());
+                Assert.IsInstanceOfType(fileMenu.Items[5], typeof(Separator));
+                Assert.AreEqual("Exit", ((MenuItem)fileMenu.Items[6]).Header);
+
+                var editMenu = (MenuItem)menuItems[1];
+                Assert.AreEqual("Edit", editMenu.Header);
+                Assert.AreEqual(12, editMenu.Items.Count);
+                Assert.AreEqual("Undo", ((MenuItem)editMenu.Items[0]).Header);
+                Assert.IsInstanceOfType(editMenu.Items[1], typeof(Separator));
+                CollectionAssert.AreEqual(new[] { "Cut", "Copy", "Paste" }, editMenu.Items.Cast<object>().Skip(2).Take(3).Cast<MenuItem>().Select(item => (string)item.Header).ToArray());
+                Assert.IsFalse(((MenuItem)editMenu.Items[5]).IsEnabled);
+                Assert.IsInstanceOfType(editMenu.Items[6], typeof(Separator));
+                CollectionAssert.AreEqual(new[] { "Search with browser", "Find", "Find next" }, editMenu.Items.Cast<object>().Skip(7).Take(3).Cast<MenuItem>().Select(item => (string)item.Header).ToArray());
+                Assert.IsInstanceOfType(editMenu.Items[10], typeof(Separator));
+                Assert.AreEqual("Select All", ((MenuItem)editMenu.Items[11]).Header);
+                Assert.IsInstanceOfType(menuItems[2], typeof(Separator));
+                AssertGlyphMenuItem((MenuItem)menuItems[3], "Bold", "\uE8DD");
+                AssertGlyphMenuItem((MenuItem)menuItems[4], "Italic", "\uE8DB");
+                AssertGlyphMenuItem((MenuItem)menuItems[5], "Underlined", "\uE8DC");
+
+                var framePage = new ItemPage(GalleryCatalog.FindItem("Frame"));
+                Assert.AreEqual("A Frame", framePage.Examples[0].HeaderText);
+                var frameButton = (Button)framePage.Examples[0].ExampleContent;
+                Assert.AreEqual("OpenFrameWindow", frameButton.Name);
+                Assert.AreEqual("Open window to view Frame", frameButton.Content);
+                Assert.AreEqual(HorizontalAlignment.Center, frameButton.HorizontalAlignment);
+                Assert.AreEqual(VerticalAlignment.Center, frameButton.VerticalAlignment);
+
+                var navigationWindowPage = new ItemPage(GalleryCatalog.FindItem("NavigationWindow"));
+                Assert.AreEqual("A Navigation Window", navigationWindowPage.Examples[0].HeaderText);
+                var navigationWindowButton = (Button)navigationWindowPage.Examples[0].ExampleContent;
+                Assert.AreEqual("OpenNavigationWindow", navigationWindowButton.Name);
+                Assert.AreEqual("Open window to view NavigationWindow", navigationWindowButton.Content);
+                Assert.AreEqual(HorizontalAlignment.Center, navigationWindowButton.HorizontalAlignment);
+                Assert.AreEqual(VerticalAlignment.Center, navigationWindowButton.VerticalAlignment);
+
+                var tabControlPage = new ItemPage(GalleryCatalog.FindItem("TabControl"));
+                Assert.AreEqual(1, tabControlPage.Examples.Count);
+                Assert.AreEqual("Standard TabControl.", tabControlPage.Examples[0].HeaderText);
+                var tabControl = (TabControl)tabControlPage.Examples[0].ExampleContent;
+                Assert.AreEqual(new Thickness(0, 8, 0, 0), tabControl.Margin);
+                Assert.AreEqual(2, tabControl.Items.Count);
+                AssertTabItem((TabItem)tabControl.Items[0], "Hello", "Hello Tab", "World", false);
+                AssertTabItem((TabItem)tabControl.Items[1], "The cake", "The cake Tab", "Is a lie.", true);
+
+                var listBoxPage = new ItemPage(GalleryCatalog.FindItem("ListBox"));
+                Assert.AreEqual(2, listBoxPage.Examples.Count);
+                CollectionAssert.AreEqual(
+                    new[] { "ListBox with items defined inline.", "A ListBox with its ItemsSource and Height set." },
+                    listBoxPage.Examples.Select(example => example.HeaderText).ToArray());
+                var colorListBox = (ListBox)listBoxPage.Examples[0].ExampleContent;
+                Assert.AreEqual("Color ListBox", AutomationProperties.GetName(colorListBox));
+                Assert.AreEqual(0, colorListBox.SelectedIndex);
+                CollectionAssert.AreEqual(new[] { "Blue", "Green", "Red", "Yellow" }, colorListBox.Items.Cast<ListBoxItem>().Select(item => (string)item.Content).ToArray());
+                var fontListBox = (ListBox)listBoxPage.Examples[1].ExampleContent;
+                Assert.AreEqual(164.0, fontListBox.Height);
+                Assert.AreEqual("Font ListBox", AutomationProperties.GetName(fontListBox));
+                Assert.AreEqual(2, fontListBox.SelectedIndex);
+                CollectionAssert.AreEqual(new[] { "Arial", "Comic Sans MS", "Courier New", "Segoe UI", "Times New Roman" }, fontListBox.ItemsSource.Cast<string>().ToArray());
+
+                var treeViewPage = new ItemPage(GalleryCatalog.FindItem("TreeView"));
+                Assert.AreEqual(1, treeViewPage.Examples.Count);
+                Assert.AreEqual("Simple TreeView.", treeViewPage.Examples[0].HeaderText);
+                var treeView = (TreeView)treeViewPage.Examples[0].ExampleContent;
+                Assert.IsTrue(treeView.AllowDrop);
+                Assert.AreEqual("Sample TreeView", AutomationProperties.GetName(treeView));
+                Assert.IsFalse(ScrollViewer.GetCanContentScroll(treeView));
+                var workDocuments = AssertTreeViewItem(treeView.Items, 0, "Work Documents");
+                Assert.IsTrue(workDocuments.IsExpanded);
+                Assert.IsTrue(workDocuments.IsSelected);
+                AssertTreeViewItem(workDocuments.Items, 0, "Feature Schedule");
+                AssertTreeViewItem(workDocuments.Items, 1, "Overall Project Plan");
+                var personalDocuments = AssertTreeViewItem(treeView.Items, 1, "Personal Documents");
+                AssertTreeViewItem(personalDocuments.Items, 0, "Contractor contact info");
+                var homeRemodel = AssertTreeViewItem(personalDocuments.Items, 1, "Home Remodel");
+                AssertTreeViewItem(homeRemodel.Items, 0, "Paint Color Scheme");
+                AssertTreeViewItem(homeRemodel.Items, 1, "Flooring Woodgrain Type");
+                AssertTreeViewItem(homeRemodel.Items, 2, "Kitchen Cabinet Style");
+
+                var dataGridPage = new ItemPage(GalleryCatalog.FindItem("DataGrid"));
+                Assert.AreEqual(1, dataGridPage.Examples.Count);
+                Assert.AreEqual("Default DataGrid with ItemsSource.", dataGridPage.Examples[0].HeaderText);
+                var dataGrid = (DataGrid)dataGridPage.Examples[0].ExampleContent;
+                Assert.AreEqual("SampleDataGrid", dataGrid.Name);
+                Assert.AreEqual(400.0, dataGrid.Height);
+                Assert.AreEqual("Sample Data Grid", AutomationProperties.GetName(dataGrid));
+                Assert.AreEqual(50, dataGrid.ItemsSource.Cast<object>().Count());
+
+                var hyperlinkPage = new ItemPage(GalleryCatalog.FindItem("Hyperlink"));
+                Assert.AreEqual(1, hyperlinkPage.Examples.Count);
+                Assert.AreEqual("A Hyperlink", hyperlinkPage.Examples[0].HeaderText);
+                var hyperlinkTextBlock = (TextBlock)hyperlinkPage.Examples[0].ExampleContent;
+                Assert.AreEqual(new Thickness(20), hyperlinkTextBlock.Margin);
+                var hyperlink = hyperlinkTextBlock.Inlines.OfType<Hyperlink>().Single();
+                Assert.AreEqual(new System.Uri("https://www.microsoft.com"), hyperlink.NavigateUri);
+                Assert.AreEqual("Hyperlink", hyperlink.Inlines.OfType<Run>().Single().Text);
+            });
+        }
+
+        [TestMethod]
         public void DesignGuidancePagesMatchWpfGalleryReferenceLayoutDetails()
         {
             WpfTestHost.Run(() =>
@@ -1098,6 +1225,36 @@ namespace ModernWpf.Gallery.Tests
         private static TextBlock GetTableText(Grid row, int column)
         {
             return row.Children.OfType<TextBlock>().Single(textBlock => Grid.GetColumn(textBlock) == column);
+        }
+
+        private static void AssertGlyphMenuItem(MenuItem item, string name, string glyph)
+        {
+            Assert.AreEqual(name, AutomationProperties.GetName(item));
+            Assert.AreEqual(name, item.Tag);
+            var header = (TextBlock)item.Header;
+            Assert.AreEqual(glyph, header.Text);
+            Assert.AreEqual(12.0, header.FontSize);
+            Assert.IsFalse(header.Focusable);
+        }
+
+        private static void AssertTabItem(TabItem tabItem, string headerText, string automationName, string contentText, bool isSelected)
+        {
+            Assert.AreEqual(automationName, AutomationProperties.GetName(tabItem));
+            Assert.AreEqual(isSelected, tabItem.IsSelected);
+            var header = (StackPanel)tabItem.Header;
+            Assert.AreEqual(Orientation.Horizontal, header.Orientation);
+            Assert.AreEqual(headerText, ((TextBlock)header.Children[0]).Text);
+            var contentGrid = (Grid)tabItem.Content;
+            var content = contentGrid.Children.OfType<TextBlock>().Single();
+            Assert.AreEqual(new Thickness(12), content.Margin);
+            Assert.AreEqual(contentText, content.Text);
+        }
+
+        private static TreeViewItem AssertTreeViewItem(ItemCollection items, int index, string header)
+        {
+            var item = (TreeViewItem)items[index];
+            Assert.AreEqual(header, item.Header);
+            return item;
         }
 
         private static void AssertExampleMargins(string uniqueId, params Thickness[] expectedMargins)
