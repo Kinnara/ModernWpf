@@ -889,11 +889,7 @@ namespace ModernWpf.Gallery.Pages
 
         private static IReadOnlyList<GalleryExample> CreateRichEditBoxExamples()
         {
-            var richTextBox = new RichTextBox
-            {
-                Width = 480,
-                Height = 160
-            };
+            var richTextBox = new RichTextBox();
             AutomationProperties.SetName(richTextBox, "simple rich text editor");
 
             return new[]
@@ -1030,11 +1026,12 @@ namespace ModernWpf.Gallery.Pages
         private static TextBlock CreateInlineTextBlock()
         {
             var textBlock = new TextBlock { FontSize = 14 };
-            textBlock.Inlines.Add(new Run("Text in a TextBlock doesn't have to be a simple string.")
+            var textRun = new Run("Text in a TextBlock doesn't have to be a simple string.")
             {
-                FontFamily = new FontFamily("Times New Roman"),
-                Foreground = (Brush)Application.Current.TryFindResource("TextFillColorPrimaryBrush")
-            });
+                FontFamily = new FontFamily("Times New Roman")
+            };
+            textRun.SetResourceReference(TextElement.ForegroundProperty, "TextFillColorPrimaryBrush");
+            textBlock.Inlines.Add(textRun);
             textBlock.Inlines.Add(new LineBreak());
             textBlock.Inlines.Add(new Run("Text can be "));
             textBlock.Inlines.Add(new Bold(new Run("bold")));
@@ -1069,6 +1066,7 @@ namespace ModernWpf.Gallery.Pages
                 Opacity = 0.7
             };
             label.SetResourceReference(Control.ForegroundProperty, "TextFillColorPrimaryBrush");
+            Grid.SetRow(label, 0);
 
             var textBox = new TextBox();
             AutomationProperties.SetName(textBox, "Simple Text Box");

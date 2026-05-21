@@ -6,6 +6,7 @@ using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -234,6 +235,9 @@ namespace ModernWpf.Gallery.Tests
                 AssertExampleMargins("Slider", new Thickness(10), new Thickness(10, 32, 10, 10), new Thickness(10, 32, 10, 10), new Thickness(10, 32, 10, 10));
                 AssertExampleMargins("RadioButton", new Thickness(10), new Thickness(10, 36, 10, 10));
                 AssertExampleMargins("ListView", new Thickness(10), new Thickness(10, 36, 10, 10), new Thickness(10, 36, 10, 10));
+                AssertExampleMargins("TextBlock", new Thickness(10), new Thickness(10, 36, 10, 10), new Thickness(10, 36, 10, 10), new Thickness(10, 36, 10, 10));
+                AssertExampleMargins("TextBox", new Thickness(10), new Thickness(10, 36, 10, 10), new Thickness(10, 36, 10, 10));
+                AssertExampleMargins("Label", new Thickness(10), new Thickness(10, 36, 10, 10));
             });
         }
 
@@ -396,6 +400,105 @@ namespace ModernWpf.Gallery.Tests
                 AssertSliderExample(sliderPage.Examples[1], "Range and steps specified", 500, 1000, 500, 50, TickPlacement.None, Orientation.Horizontal);
                 AssertSliderExample(sliderPage.Examples[2], "Tick marks", 0, 100, 0, 20, TickPlacement.Both, Orientation.Horizontal);
                 AssertSliderExample(sliderPage.Examples[3], "Vertical", 0, 100, 0, 20, TickPlacement.Both, Orientation.Vertical);
+            });
+        }
+
+        [TestMethod]
+        public void TextPagesMatchWpfGalleryReference()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var textBlockPage = new ItemPage(GalleryCatalog.FindItem("TextBlock"));
+                Assert.AreEqual(4, textBlockPage.Examples.Count);
+                CollectionAssert.AreEqual(
+                    new[]
+                    {
+                        "A simple TextBlock.",
+                        "A TextBlock with style applied.",
+                        "A TextBlock with inline text elements.",
+                        "A TextBlock with wrap property."
+                    },
+                    textBlockPage.Examples.Select(example => example.HeaderText).ToArray());
+
+                var simpleTextBlock = (TextBlock)textBlockPage.Examples[0].ExampleContent;
+                Assert.AreEqual("I am a text block.", simpleTextBlock.Text);
+
+                var styledTextBlock = (TextBlock)textBlockPage.Examples[1].ExampleContent;
+                Assert.AreEqual("I am a styled TextBlock.", styledTextBlock.Text);
+                Assert.AreEqual("Comic Sans MS", styledTextBlock.FontFamily.Source);
+                Assert.AreEqual(FontStyles.Italic, styledTextBlock.FontStyle);
+
+                var inlineTextBlock = (TextBlock)textBlockPage.Examples[2].ExampleContent;
+                Assert.AreEqual(14.0, inlineTextBlock.FontSize);
+                var inlines = inlineTextBlock.Inlines.ToArray();
+                Assert.AreEqual(9, inlines.Length);
+                var firstRun = (Run)inlines[0];
+                Assert.AreEqual("Text in a TextBlock doesn't have to be a simple string.", firstRun.Text);
+                Assert.AreEqual("Times New Roman", firstRun.FontFamily.Source);
+                Assert.IsInstanceOfType(inlines[1], typeof(LineBreak));
+                Assert.AreEqual("bold", ((Bold)inlines[3]).Inlines.OfType<Run>().Single().Text);
+                Assert.AreEqual("italic", ((Italic)inlines[5]).Inlines.OfType<Run>().Single().Text);
+                Assert.AreEqual("underlined", ((Underline)inlines[7]).Inlines.OfType<Run>().Single().Text);
+
+                var wrappedTextBlock = (TextBlock)textBlockPage.Examples[3].ExampleContent;
+                Assert.AreEqual(14.0, wrappedTextBlock.FontSize);
+                Assert.AreEqual(TextWrapping.Wrap, wrappedTextBlock.TextWrapping);
+                StringAssert.StartsWith(wrappedTextBlock.Text, "The TextBlock control provides flexible text support");
+
+                var textBoxPage = new ItemPage(GalleryCatalog.FindItem("TextBox"));
+                Assert.AreEqual(3, textBoxPage.Examples.Count);
+                CollectionAssert.AreEqual(
+                    new[] { "A simple TextBox.", "A TextBox with input validation.", "A multi-line TextBox." },
+                    textBoxPage.Examples.Select(example => example.HeaderText).ToArray());
+
+                var simpleTextBox = (TextBox)textBoxPage.Examples[0].ExampleContent;
+                Assert.AreEqual("simple TextBox", AutomationProperties.GetName(simpleTextBox));
+
+                var validatedTextBox = (TextBox)textBoxPage.Examples[1].ExampleContent;
+                Assert.AreEqual("validated TextBox", AutomationProperties.GetName(validatedTextBox));
+                var textBinding = BindingOperations.GetBinding(validatedTextBox, TextBox.TextProperty);
+                Assert.IsNotNull(textBinding);
+                Assert.AreEqual(UpdateSourceTrigger.PropertyChanged, textBinding.UpdateSourceTrigger);
+                Assert.AreEqual(1, textBinding.ValidationRules.Count);
+                Assert.AreEqual("AlphabeticValidationRule", textBinding.ValidationRules[0].GetType().Name);
+
+                var multilineTextBox = (TextBox)textBoxPage.Examples[2].ExampleContent;
+                Assert.IsTrue(multilineTextBox.AcceptsReturn);
+                Assert.AreEqual(TextWrapping.Wrap, multilineTextBox.TextWrapping);
+                Assert.AreEqual("multi-line TextBox", AutomationProperties.GetName(multilineTextBox));
+
+                var labelPage = new ItemPage(GalleryCatalog.FindItem("Label"));
+                Assert.AreEqual(2, labelPage.Examples.Count);
+                CollectionAssert.AreEqual(
+                    new[] { "A simple Label.", "A Label for TextBox." },
+                    labelPage.Examples.Select(example => example.HeaderText).ToArray());
+
+                var simpleLabel = (Label)labelPage.Examples[0].ExampleContent;
+                Assert.AreEqual("I am a Label.", simpleLabel.Content);
+                Assert.AreEqual(0.7, simpleLabel.Opacity);
+
+                var labelGrid = (Grid)labelPage.Examples[1].ExampleContent;
+                Assert.AreEqual(2, labelGrid.RowDefinitions.Count);
+                var textBoxLabel = labelGrid.Children.OfType<Label>().Single();
+                var labelledTextBox = labelGrid.Children.OfType<TextBox>().Single();
+                Assert.AreEqual(0, Grid.GetRow(textBoxLabel));
+                Assert.AreEqual("I am a Label of the TextBox below.", textBoxLabel.Content);
+                Assert.AreEqual(0.7, textBoxLabel.Opacity);
+                Assert.AreEqual(1, Grid.GetRow(labelledTextBox));
+                Assert.AreEqual("Simple Text Box", AutomationProperties.GetName(labelledTextBox));
+
+                var passwordBoxPage = new ItemPage(GalleryCatalog.FindItem("PasswordBox"));
+                Assert.AreEqual(1, passwordBoxPage.Examples.Count);
+                Assert.AreEqual("A simple PasswordBox.", passwordBoxPage.Examples[0].HeaderText);
+                Assert.AreEqual("Simple Password Box", AutomationProperties.GetName((PasswordBox)passwordBoxPage.Examples[0].ExampleContent));
+
+                var richTextPage = new ItemPage(GalleryCatalog.FindItem("RichTextEdit"));
+                Assert.AreEqual(1, richTextPage.Examples.Count);
+                Assert.AreEqual("A simple RichTextBox", richTextPage.Examples[0].HeaderText);
+                var richTextBox = (RichTextBox)richTextPage.Examples[0].ExampleContent;
+                Assert.AreEqual("simple rich text editor", AutomationProperties.GetName(richTextBox));
+                Assert.IsTrue(double.IsNaN(richTextBox.Width));
+                Assert.IsTrue(double.IsNaN(richTextBox.Height));
             });
         }
 
