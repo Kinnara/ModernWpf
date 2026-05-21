@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Markup;
@@ -66,6 +67,13 @@ namespace ModernWpf.Gallery.Tests
                 {
                     Assert.AreEqual(new Thickness(6), button.Margin);
                 }
+
+                CollectionAssert.AreEqual(
+                    new[] { "Getting started", "Windows design", "WPF GitHub", "Code samples", "Partner Center" },
+                    buttons.Select(AutomationProperties.GetName).ToArray());
+
+                Assert.AreEqual("Scroll left", AutomationProperties.GetName((Button)page.FindName("ScrollBackButton")));
+                Assert.AreEqual("Scroll right", AutomationProperties.GetName((Button)page.FindName("ScrollForwardButton")));
             });
         }
 

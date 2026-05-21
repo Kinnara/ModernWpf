@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="700"
     d:DesignWidth="900"
+    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     mc:Ignorable="d">
     <UserControl.Resources>
         <ResourceDictionary>
@@ -16,66 +17,65 @@
     </UserControl.Resources>
 
     <Grid
+        x:Name="ContentRootGrid"
         AutomationProperties.AutomationId="ContentRootGrid"
         Style="{StaticResource GalleryPageRootStyle}">
-        <Grid Margin="0,0,0,48">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
 
-            <StackPanel
-                Grid.Row="0"
-                Margin="0,0,0,40"
-                VerticalAlignment="Center">
-                <Label
-                    x:Name="TitleLabel"
-                    AutomationProperties.Name="All Controls Page"
-                    Focusable="True"
-                    KeyboardNavigation.IsTabStop="True"
-                    KeyboardNavigation.TabIndex="0">
-                    <TextBlock
-                        Style="{StaticResource TitleTextBlockStyle}"
-                        Text="All Controls" />
-                </Label>
-                <Label
-                    x:Name="DescriptionLabel"
-                    Focusable="True"
-                    KeyboardNavigation.IsTabStop="True"
-                    KeyboardNavigation.TabIndex="1">
-                    <TextBlock
-                        Style="{StaticResource BodyTextBlockStyle}"
-                        Text="" />
-                </Label>
-            </StackPanel>
+        <StackPanel
+            Grid.Row="0"
+            Margin="0,0,0,40"
+            VerticalAlignment="Center">
+            <Label
+                x:Name="TitleLabel"
+                AutomationProperties.Name="All Controls Page"
+                Focusable="True"
+                KeyboardNavigation.IsTabStop="True"
+                KeyboardNavigation.TabIndex="0">
+                <TextBlock
+                    Style="{StaticResource TitleTextBlockStyle}"
+                    Text="All Controls" />
+            </Label>
+            <Label
+                x:Name="DescriptionLabel"
+                Focusable="True"
+                KeyboardNavigation.IsTabStop="True"
+                KeyboardNavigation.TabIndex="1">
+                <TextBlock
+                    Style="{StaticResource BodyTextBlockStyle}"
+                    Text="" />
+            </Label>
+        </StackPanel>
 
-            <ScrollViewer
-                Grid.Row="1"
-                Margin="0"
-                VerticalScrollBarVisibility="Auto">
-                <ItemsControl
-                    x:Name="AllControlsItemsControl"
-                    AutomationProperties.Name="Items in group"
-                    Focusable="False"
-                    Margin="-12,0,0,0"
-                    ItemsSource="{Binding FilteredItems}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel Margin="10" />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Button
-                                AutomationProperties.Name="{Binding Title, StringFormat='{}{0}Page'}"
-                                Click="OnItemCardClick"
-                                Content="{Binding}"
-                                ContentTemplate="{StaticResource GalleryItemCardTemplate}"
-                                Style="{StaticResource GalleryCardButtonStyle}" />
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </ScrollViewer>
-        </Grid>
+        <ScrollViewer
+            Grid.Row="1"
+            Margin="0"
+            VerticalScrollBarVisibility="Auto">
+            <ItemsControl
+                x:Name="AllControlsItemsControl"
+                AutomationProperties.Name="Items in group"
+                Focusable="False"
+                Margin="-12,0,0,0"
+                ItemsSource="{Binding FilteredItems}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Margin="10" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button
+                            AutomationProperties.Name="{Binding Title, StringFormat='{}{0}Page'}"
+                            Click="OnItemCardClick"
+                            Content="{Binding}"
+                            ContentTemplate="{StaticResource GalleryItemCardTemplate}"
+                            Style="{StaticResource GalleryCardButtonStyle}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
     </Grid>
 </UserControl>

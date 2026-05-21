@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="700"
     d:DesignWidth="900"
+    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     mc:Ignorable="d">
     <UserControl.Resources>
         <ResourceDictionary>
@@ -20,7 +21,7 @@
         Margin="-24,-16,-24,12"
         Style="{StaticResource GalleryPageRootStyle}">
         <ScrollViewer>
-            <Grid Margin="0,0,0,48">
+            <Grid x:Name="HomeContentGrid">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -91,6 +92,7 @@
                     x:Name="TilesPanel"
                     Orientation="Horizontal">
                     <Button
+                        AutomationProperties.Name="Getting started"
                         Click="OnHeaderTileClick"
                         Margin="6,6,12,6"
                         Style="{StaticResource GalleryHeaderTileButtonStyle}"
@@ -126,6 +128,7 @@
                         </Grid>
                     </Button>
                     <Button
+                        AutomationProperties.Name="Windows design"
                         Click="OnHeaderTileClick"
                         Style="{StaticResource GalleryHeaderTileButtonStyle}"
                         Tag="https://learn.microsoft.com/windows/apps/design/">
@@ -160,6 +163,7 @@
                         </Grid>
                     </Button>
                     <Button
+                        AutomationProperties.Name="WPF GitHub"
                         Click="OnHeaderTileClick"
                         Style="{StaticResource GalleryHeaderTileButtonStyle}"
                         Tag="https://github.com/dotnet/wpf">
@@ -194,6 +198,7 @@
                         </Grid>
                     </Button>
                     <Button
+                        AutomationProperties.Name="Code samples"
                         Click="OnHeaderTileClick"
                         Style="{StaticResource GalleryHeaderTileButtonStyle}"
                         Tag="https://github.com/microsoft/WPF-Samples">
@@ -228,6 +233,7 @@
                         </Grid>
                     </Button>
                     <Button
+                        AutomationProperties.Name="Partner Center"
                         Click="OnHeaderTileClick"
                         Style="{StaticResource GalleryHeaderTileButtonStyle}"
                         Tag="https://developer.microsoft.com/windows/">
@@ -265,6 +271,7 @@
                 </ScrollViewer>
                     <Button
                         x:Name="ScrollBackButton"
+                        AutomationProperties.Name="Scroll left"
                         Margin="8,-16,0,0"
                         Click="OnScrollBackButtonClick"
                         HorizontalAlignment="Left"
@@ -277,6 +284,7 @@
                     </Button>
                     <Button
                         x:Name="ScrollForwardButton"
+                        AutomationProperties.Name="Scroll right"
                         Margin="0,-16,8,0"
                         Click="OnScrollForwardButtonClick"
                         HorizontalAlignment="Right"
@@ -325,7 +333,7 @@
                     <TextBlock
                         x:Name="RecentlyAddedHeaderText"
                         FontSize="16"
-                        Style="{StaticResource GallerySectionHeaderTextBlockStyle}"
+                        Style="{StaticResource BodyStrongTextBlockStyle}"
                         Text="Recently added and updated" />
 
                     <ItemsControl

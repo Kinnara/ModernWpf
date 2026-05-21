@@ -137,6 +137,8 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(AutomationHeadingLevel.Level2, AutomationProperties.GetHeadingLevel((TextBlock)homePage.FindName("RecentlyAddedHeaderText")));
                     AssertNavigationItemsControl((ItemsControl)homePage.FindName("OverviewItemsControl"), "Items in group");
                     AssertNavigationItemsControl((ItemsControl)homePage.FindName("RecentlyAddedItemsControl"), "Recently Added and Updated Samples Section");
+                    Assert.AreEqual(new Thickness(0), ((Grid)homePage.FindName("HomeContentGrid")).Margin);
+                    Assert.AreEqual(new Thickness(0), ((TextBlock)homePage.FindName("RecentlyAddedHeaderText")).Margin);
 
                     var firstGroup = GalleryCatalog.OverviewGroups.First();
                     AssertRenderedNavigationCard((ItemsControl)homePage.FindName("OverviewItemsControl"), firstGroup.Title);
@@ -149,6 +151,7 @@ namespace ModernWpf.Gallery.Tests
                     AssertPageHeaderLabel((Label)sectionPage.FindName("TitleLabel"), "Basic Input Page", AutomationHeadingLevel.Level1, 0);
                     AssertPageHeaderLabel((Label)sectionPage.FindName("DescriptionLabel"), string.Empty, AutomationHeadingLevel.Level2, 1);
                     AssertNavigationItemsControl((ItemsControl)sectionPage.FindName("GroupItemsControl"), "Items in group");
+                    AssertReferenceCategoryPageRoot((Grid)sectionPage.FindName("ContentRootGrid"), false);
                     AssertRenderedNavigationCard((ItemsControl)sectionPage.FindName("GroupItemsControl"), basicInputGroup.Items.First().Title);
                 });
 
@@ -158,6 +161,7 @@ namespace ModernWpf.Gallery.Tests
                     AssertPageHeaderLabel((Label)allControlsPage.FindName("TitleLabel"), "All Controls Page", AutomationHeadingLevel.Level1, 0);
                     AssertPageHeaderLabel((Label)allControlsPage.FindName("DescriptionLabel"), string.Empty, AutomationHeadingLevel.Level2, 1);
                     AssertNavigationItemsControl((ItemsControl)allControlsPage.FindName("AllControlsItemsControl"), "Items in group");
+                    AssertReferenceCategoryPageRoot((Grid)allControlsPage.FindName("ContentRootGrid"), true);
                     AssertRenderedNavigationCard((ItemsControl)allControlsPage.FindName("AllControlsItemsControl"), GalleryCatalog.AllControlsItems.First().Title);
                 });
 
@@ -200,6 +204,27 @@ namespace ModernWpf.Gallery.Tests
             Assert.IsFalse(itemsControl.Focusable);
             var panel = (System.Windows.Controls.WrapPanel)itemsControl.ItemsPanel.LoadContent();
             Assert.AreEqual(new Thickness(10), panel.Margin);
+        }
+
+        private static void AssertReferenceCategoryPageRoot(Grid root, bool hasItemsScrollViewer)
+        {
+            Assert.AreEqual(new Thickness(0), root.Margin);
+            Assert.AreEqual(2, root.RowDefinitions.Count);
+            Assert.AreEqual(GridUnitType.Auto, root.RowDefinitions[0].Height.GridUnitType);
+            Assert.AreEqual(GridUnitType.Star, root.RowDefinitions[1].Height.GridUnitType);
+
+            var scrollViewers = root.Children.OfType<ScrollViewer>().ToArray();
+            if (hasItemsScrollViewer)
+            {
+                Assert.AreEqual(1, scrollViewers.Length);
+                Assert.AreEqual(1, Grid.GetRow(scrollViewers[0]));
+                Assert.AreEqual(new Thickness(0), scrollViewers[0].Margin);
+                Assert.AreEqual(ScrollBarVisibility.Auto, scrollViewers[0].VerticalScrollBarVisibility);
+            }
+            else
+            {
+                Assert.AreEqual(0, scrollViewers.Length);
+            }
         }
 
         private static void AssertRenderedNavigationCard(ItemsControl itemsControl, string title)
