@@ -1420,19 +1420,49 @@ namespace ModernWpf.Gallery.Pages
         private static StackPanel CreateStrokeColorSection()
         {
             var root = new StackPanel();
-            root.Children.Add(CreateColorPageExample("Control Stroke", "For control outlines, states, and dividers", CreateStrokeExample()));
+            root.Children.Add(CreateColorSectionPageExample("Control Elevation (gradient strokes)", "Used for standard control strokes and stroke states.", CreateControlFillExample()));
             root.Children.Add(CreateColorTilesPanel(
-                ColorTile("Control Stroke / Default", "ControlStrokeColorDefaultBrush", "Rest"),
-                ColorTile("Control Stroke / Secondary", "ControlStrokeColorSecondaryBrush", "Secondary rest"),
-                ColorTile("Control Stroke / On Accent Default", "ControlStrokeColorOnAccentDefaultBrush", "On accent controls", "TextOnAccentFillColorPrimaryBrush"),
-                ColorTile("Control Stroke / On Accent Secondary", "ControlStrokeColorOnAccentSecondaryBrush", "On accent hover", "TextOnAccentFillColorPrimaryBrush")));
+                ColorTile("Control / Border", "ControlElevationBorderBrush", "Rest"),
+                ColorTile("Circle / Border", "CircleElevationBorderBrush", "Rest"),
+                ColorTile("Text Control / Border", "TextControlElevationBorderBrush", "Rest")));
+            root.Children.Add(CreateColorTilesPanel(
+                ColorTile("Text Control / Border Focused", "TextControlElevationBorderFocusedBrush", "Active text fields"),
+                ColorTile("Accent Control / Border", "AccentControlElevationBorderBrush", "Rest")));
 
-            root.Children.Add(CreateColorPageExample("Surface Stroke", "For cards, flyouts, and content surfaces", CreateSurfaceStrokeExample()));
+            root.Children.Add(CreateColorSectionPageExample("Control Stroke", "Used for gradient stops in elevation borders, and for control states.", CreateControlFillExample()));
             root.Children.Add(CreateColorTilesPanel(
-                ColorTile("Card Stroke / Default", "CardStrokeColorDefaultBrush", "Card outline"),
-                ColorTile("Card Stroke / Default Solid", "CardStrokeColorDefaultSolidBrush", "Card outline fallback"),
-                ColorTile("Surface Stroke / Default", "SurfaceStrokeColorDefaultBrush", "Surface outline"),
-                ColorTile("Surface Stroke / Flyout", "SurfaceStrokeColorFlyoutBrush", "Flyout outline")));
+                ColorTile("Control Stroke / Default", "ControlStrokeColorDefaultBrush", "Used in Control Elevation Brushes. Pressed or Disabled"),
+                ColorTile("Control Stroke / Secondary", "ControlStrokeColorSecondaryBrush", "Used in Control Elevation Brushes"),
+                ColorTile("Control Stroke / On Accent Default", "ControlStrokeColorOnAccentDefaultBrush", "Used in Control Elevation Brushes. Pressed or Disabled"),
+                ColorTile("Control Stroke / On Accent Secondary", "ControlStrokeColorOnAccentSecondaryBrush", "Used in Control Elevation Brushes")));
+            root.Children.Add(CreateColorTilesPanel(
+                ColorTile("Control Stroke / On Accent Tertiary", "ControlStrokeColorOnAccentTertiaryBrush", "Linework on Accent controls, ie: dividers"),
+                ColorTile("Control Stroke / On Accent Disabled", "ControlStrokeColorOnAccentDisabledBrush", "Disabled"),
+                ColorTile("Control Stroke / For Strong Fill When On Image", "ControlStrokeColorForStrongFillWhenOnImageBrush", "When used with a 'strong' fill color, ensures a 3:1 contrast on any background")));
+
+            root.Children.Add(CreateColorSectionPageExample("Card Stroke", "Used for card and layer colors.", CreateCardStrokeExample()));
+            root.Children.Add(CreateColorTilesPanel(
+                ColorTile("Control Stroke / Default", "CardStrokeColorDefaultBrush", "Card layer and strokes"),
+                ColorTile("Card Stroke / Default Solid", "CardStrokeColorDefaultSolidBrush", "Solid equivalent of Card Stroke / Default. Used in command bar for expanded states")));
+
+            root.Children.Add(CreateColorSectionPageExample("Control Strong Stroke", "Used for control strokes that must meet contrast ratio requirements of 3:1.", CreateControlStrongStrokeExample()));
+            root.Children.Add(CreateColorTilesPanel(
+                ColorTile("Control Strong Stroke / Default", "ControlStrongStrokeColorDefaultBrush", "3:1 control border", "TextFillColorInverseBrush"),
+                ColorTile("Control Strong Stroke / Disabled", "ControlStrongStrokeColorDisabledBrush", "Disabled")));
+
+            root.Children.Add(CreateColorSectionPageExample("Surface Stroke", "Used for strokes on background surfaces, ie: flyouts, windows, dialogs.", CreateSurfaceStrokeExample()));
+            root.Children.Add(CreateColorTilesPanel(
+                ColorTile("Surface Stroke / Default", "SurfaceStrokeColorDefaultBrush", "Window and dialog borders, theme inverse"),
+                ColorTile("Surface Stroke / Flyout", "SurfaceStrokeColorFlyoutBrush", "Control flyouts, always dark")));
+
+            root.Children.Add(CreateColorSectionPageExample("Divider Stroke", "Used for divider and graphic lines. Theme inverse; dark in light theme and light in dark theme.", CreateDividerStrokeExample()));
+            root.Children.Add(CreateColorTilesPanel(
+                ColorTile("Divider Stroke / Default", "DividerStrokeColorDefaultBrush", "Content dividers", "TextFillColorPrimaryBrush")));
+
+            root.Children.Add(CreateColorSectionPageExample("Focus Stroke", "Used for divider and graphic lines. Theme inverse; dark in light theme and light in dark theme..", CreateFocusStrokeExample()));
+            root.Children.Add(CreateColorTilesPanel(
+                ColorTile("Focus / Outer", "FocusStrokeColorOuterBrush", "Outer stroke color", "TextFillColorInverseBrush"),
+                ColorTile("Focus / Inner", "FocusStrokeColorInnerBrush", "Inner stroke color")));
             return root;
         }
 
@@ -1503,6 +1533,11 @@ namespace ModernWpf.Gallery.Pages
         }
 
         private static Border CreateFillColorPageExample(string title, string description, UIElement exampleContent)
+        {
+            return CreateColorSectionPageExample(title, description, exampleContent);
+        }
+
+        private static Border CreateColorSectionPageExample(string title, string description, UIElement exampleContent)
         {
             return CreateColorPageExample(title, description, exampleContent, null, "SolidBackgroundFillColorQuarternaryBrush");
         }
@@ -1683,41 +1718,103 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateStrokeExample()
         {
-            var border = new Border
+            return CreateControlFillExample();
+        }
+
+        private static UIElement CreateCardStrokeExample()
+        {
+            var button = new Button
             {
-                Width = 180,
-                Height = 72,
-                BorderThickness = new Thickness(2),
-                CornerRadius = new CornerRadius(8),
-                Child = new TextBlock
+                Content = new TextBlock
                 {
-                    Text = "Control stroke",
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center
+                    Width = 60
                 }
             };
-            border.SetResourceReference(Border.BorderBrushProperty, "ControlStrokeColorDefaultBrush");
-            return border;
+            button.SetResourceReference(Control.BorderBrushProperty, "ControlStrongStrokeColorDefaultBrush");
+            return button;
+        }
+
+        private static UIElement CreateControlStrongStrokeExample()
+        {
+            return new CheckBox
+            {
+                MinWidth = 40,
+                MaxWidth = 40
+            };
         }
 
         private static UIElement CreateSurfaceStrokeExample()
         {
             var border = new Border
             {
-                Width = 180,
-                Height = 72,
+                Width = 120,
+                Height = 40,
                 BorderThickness = new Thickness(1),
-                CornerRadius = new CornerRadius(8),
+            };
+            border.SetResourceReference(Border.BackgroundProperty, "AcrylicBackgroundFillColorBaseBrush");
+            border.SetResourceReference(Border.BorderBrushProperty, "SurfaceStrokeColorDefaultBrush");
+            border.SetResourceReference(Border.CornerRadiusProperty, "OverlayCornerRadius");
+            return border;
+        }
+
+        private static UIElement CreateDividerStrokeExample()
+        {
+            var outer = new Border
+            {
+                Width = 120,
+                Height = 40,
+                BorderThickness = new Thickness(1)
+            };
+            outer.SetResourceReference(Border.BackgroundProperty, "AcrylicBackgroundFillColorBaseBrush");
+            outer.SetResourceReference(Border.BorderBrushProperty, "ControlStrongStrokeColorDefaultBrush");
+            outer.SetResourceReference(Border.CornerRadiusProperty, "OverlayCornerRadius");
+
+            var divider = new Border
+            {
+                Width = 1,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Stretch,
+                BorderThickness = new Thickness(1)
+            };
+            divider.SetResourceReference(Border.BorderBrushProperty, "ControlStrongStrokeColorDefaultBrush");
+            outer.Child = divider;
+            return outer;
+        }
+
+        private static UIElement CreateFocusStrokeExample()
+        {
+            var outerFocus = new Border
+            {
+                BorderThickness = new Thickness(2),
+                CornerRadius = new CornerRadius(10)
+            };
+            outerFocus.SetResourceReference(Border.BorderBrushProperty, "FocusStrokeColorOuterBrush");
+
+            var innerFocus = new Border
+            {
+                BorderThickness = new Thickness(2),
+                CornerRadius = new CornerRadius(9)
+            };
+            innerFocus.SetResourceReference(Border.BorderBrushProperty, "FocusStrokeColorInnerBrush");
+
+            var content = new Border
+            {
+                Width = 120,
+                Height = 40,
+                BorderThickness = new Thickness(1),
                 Child = new TextBlock
                 {
-                    Text = "Surface stroke",
                     HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Text = "Text"
                 }
             };
-            border.SetResourceReference(Border.BackgroundProperty, "CardBackgroundFillColorDefaultBrush");
-            border.SetResourceReference(Border.BorderBrushProperty, "CardStrokeColorDefaultBrush");
-            return border;
+            content.SetResourceReference(Border.BorderBrushProperty, "SurfaceStrokeColorDefaultBrush");
+            content.SetResourceReference(Border.CornerRadiusProperty, "OverlayCornerRadius");
+
+            innerFocus.Child = content;
+            outerFocus.Child = innerFocus;
+            return outerFocus;
         }
 
         private static UIElement CreateBackgroundLayerExample(string backgroundResource)

@@ -278,6 +278,31 @@ namespace ModernWpf.Gallery.Tests
                 var accentFillSecondRow = GetColorTilesGrid(fillSection, 16);
                 Assert.AreEqual("Accent / Selected Text Background", AutomationProperties.GetName((UIElement)accentFillSecondRow.Children[1]));
 
+                selector.SelectedIndex = 2;
+                WpfTestHost.DoEvents();
+                var strokeSection = (StackPanel)sectionHost.Content;
+                Assert.AreEqual(16, strokeSection.Children.Count);
+                Assert.AreEqual("Control Elevation (gradient strokes)", GetColorPageExampleTitle(strokeSection, 0));
+                Assert.AreEqual("Control Stroke", GetColorPageExampleTitle(strokeSection, 3));
+                Assert.AreEqual("Card Stroke", GetColorPageExampleTitle(strokeSection, 6));
+                Assert.AreEqual("Control Strong Stroke", GetColorPageExampleTitle(strokeSection, 8));
+                Assert.AreEqual("Surface Stroke", GetColorPageExampleTitle(strokeSection, 10));
+                Assert.AreEqual("Divider Stroke", GetColorPageExampleTitle(strokeSection, 12));
+                Assert.AreEqual("Focus Stroke", GetColorPageExampleTitle(strokeSection, 14));
+
+                var elevationTiles = GetColorTilesGrid(strokeSection, 1);
+                Assert.AreEqual(3, elevationTiles.ColumnDefinitions.Count);
+                Assert.AreEqual("Control / Border", AutomationProperties.GetName((UIElement)elevationTiles.Children[0]));
+                Assert.AreEqual("Text Control / Border", AutomationProperties.GetName((UIElement)elevationTiles.Children[2]));
+
+                var controlStrokeSecondRow = GetColorTilesGrid(strokeSection, 5);
+                Assert.AreEqual(3, controlStrokeSecondRow.ColumnDefinitions.Count);
+                Assert.AreEqual("Control Stroke / For Strong Fill When On Image", AutomationProperties.GetName((UIElement)controlStrokeSecondRow.Children[2]));
+
+                var focusTiles = GetColorTilesGrid(strokeSection, 15);
+                Assert.AreEqual("Focus / Outer", AutomationProperties.GetName((UIElement)focusTiles.Children[0]));
+                Assert.AreEqual("Focus / Inner", AutomationProperties.GetName((UIElement)focusTiles.Children[1]));
+
                 selector.SelectedIndex = 4;
                 WpfTestHost.DoEvents();
                 Assert.AreEqual("System Fill", GetColorPageExampleTitle((StackPanel)sectionHost.Content, 0));
