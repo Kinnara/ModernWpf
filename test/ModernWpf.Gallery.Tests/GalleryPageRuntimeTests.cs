@@ -3,7 +3,9 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Gallery.Models;
 using ModernWpf.Gallery.Pages;
@@ -127,6 +129,102 @@ namespace ModernWpf.Gallery.Tests
                     WpfTestHost.DoEvents();
                 }
             });
+        }
+
+        [TestMethod]
+        public void ListViewPageExamplesMatchWpfGalleryReference()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("ListView"));
+
+                Assert.AreEqual(3, page.Examples.Count);
+                CollectionAssert.AreEqual(
+                    new[]
+                    {
+                        "Basic ListView with Simple DataTemplate.",
+                        "ListView with Selection Support.",
+                        "ListView with GridView."
+                    },
+                    page.Examples.Select(example => example.HeaderText).ToArray());
+
+                var basicListView = (ListView)page.Examples[0].ExampleContent;
+                Assert.AreEqual(200.0, basicListView.Height);
+                Assert.AreEqual(2, basicListView.SelectedIndex);
+                Assert.AreEqual(SelectionMode.Single, basicListView.SelectionMode);
+                Assert.IsNotNull(basicListView.ItemTemplate);
+                StringAssert.Contains(page.Examples[0].XamlCode, "ViewModel.BasicListViewItems, Mode=TwoWay");
+                StringAssert.Contains(page.Examples[0].XamlCode, "Text=\"{Binding Name, Mode=OneWay}\"");
+
+                var selectionGrid = (Grid)page.Examples[1].ExampleContent;
+                Assert.AreEqual(2, selectionGrid.ColumnDefinitions.Count);
+                Assert.AreEqual(GridUnitType.Star, selectionGrid.ColumnDefinitions[0].Width.GridUnitType);
+                Assert.AreEqual(GridUnitType.Auto, selectionGrid.ColumnDefinitions[1].Width.GridUnitType);
+
+                var selectionListView = selectionGrid.Children.OfType<ListView>().Single();
+                Assert.AreEqual(200.0, selectionListView.Height);
+                Assert.AreEqual(1, selectionListView.SelectedIndex);
+                Assert.AreEqual(SelectionMode.Single, selectionListView.SelectionMode);
+                Assert.IsNotNull(selectionListView.ItemTemplate);
+
+                var templateGrid = (Grid)selectionListView.ItemTemplate.LoadContent();
+                Assert.AreEqual(new Thickness(8, 0, 8, 0), templateGrid.Margin);
+                Assert.AreEqual(2, templateGrid.RowDefinitions.Count);
+                Assert.AreEqual(2, templateGrid.ColumnDefinitions.Count);
+
+                var ellipse = templateGrid.Children.OfType<Ellipse>().Single();
+                Assert.AreEqual(2, Grid.GetRowSpan(ellipse));
+                Assert.AreEqual(32.0, ellipse.Width);
+                Assert.AreEqual(32.0, ellipse.Height);
+                Assert.AreEqual(new Thickness(6), ellipse.Margin);
+
+                var textBlocks = templateGrid.Children.OfType<TextBlock>().ToArray();
+                Assert.AreEqual(2, textBlocks.Length);
+                Assert.AreEqual(FontWeights.Bold, textBlocks[0].FontWeight);
+                Assert.AreEqual(0, Grid.GetRow(textBlocks[0]));
+                Assert.AreEqual(1, Grid.GetColumn(textBlocks[0]));
+                Assert.AreEqual(1, Grid.GetRow(textBlocks[1]));
+                Assert.AreEqual(1, Grid.GetColumn(textBlocks[1]));
+                Assert.AreEqual(1.0, textBlocks[1].Opacity);
+
+                var controls = selectionGrid.Children.OfType<StackPanel>().Single();
+                Assert.AreEqual(120.0, controls.MinWidth);
+                Assert.AreEqual(new Thickness(12, 0, 0, 0), controls.Margin);
+                Assert.AreEqual(VerticalAlignment.Top, controls.VerticalAlignment);
+
+                var label = (Label)controls.Children[0];
+                var comboBox = (ComboBox)controls.Children[1];
+                Assert.AreEqual("Selection mode", label.Content);
+                Assert.AreSame(comboBox, label.Target);
+                CollectionAssert.AreEqual(
+                    new[] { "Single", "Multiple", "Extended" },
+                    comboBox.Items.Cast<ComboBoxItem>().Select(item => (string)item.Content).ToArray());
+
+                comboBox.SelectedIndex = 1;
+                Assert.AreEqual(SelectionMode.Multiple, selectionListView.SelectionMode);
+                comboBox.SelectedIndex = 2;
+                Assert.AreEqual(SelectionMode.Extended, selectionListView.SelectionMode);
+
+                StringAssert.Contains(page.Examples[1].XamlCode, "<Grid.RowDefinitions>");
+                StringAssert.Contains(page.Examples[1].XamlCode, "FontWeight=\"Bold\"");
+                StringAssert.Contains(page.Examples[1].XamlCode, "Foreground=\"{DynamicResource TextFillColorPrimaryBrush}\"");
+
+                var gridViewListView = (ListView)page.Examples[2].ExampleContent;
+                Assert.AreEqual(280.0, gridViewListView.Height);
+                var gridView = (GridView)gridViewListView.View;
+                Assert.AreEqual(3, gridView.Columns.Count);
+                AssertGridViewColumn(gridView.Columns[0], "First Name", 150.0, "FirstName");
+                AssertGridViewColumn(gridView.Columns[1], "Last Name", 150.0, "LastName");
+                AssertGridViewColumn(gridView.Columns[2], "Company", 200.0, "Company");
+            });
+        }
+
+        private static void AssertGridViewColumn(GridViewColumn column, string header, double width, string path)
+        {
+            Assert.AreEqual(header, column.Header);
+            Assert.AreEqual(width, column.Width);
+            var binding = (Binding)column.DisplayMemberBinding;
+            Assert.AreEqual(path, binding.Path.Path);
         }
     }
 }

@@ -9,6 +9,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
@@ -691,17 +692,17 @@ namespace ModernWpf.Gallery.Pages
                 new GalleryExample(
                     "Basic ListView with Simple DataTemplate.",
                     CreateBasicListView(),
-                    "<ListView Height=\"200\" ItemsSource=\"{Binding ViewModel.BasicListViewItems}\" SelectedIndex=\"2\" SelectionMode=\"Single\">\n    <ListView.ItemTemplate>\n        <DataTemplate>\n            <TextBlock Margin=\"8,4\" Text=\"{Binding Name}\" />\n        </DataTemplate>\n    </ListView.ItemTemplate>\n</ListView>",
+                    "<ListView\n    Height=\"200\"\n    ItemsSource=\"{Binding ViewModel.BasicListViewItems, Mode=TwoWay}\"\n    SelectedIndex=\"2\"\n    SelectionMode=\"Single\">\n    <ListView.ItemTemplate>\n        <DataTemplate DataType=\"{x:Type models:Person}\">\n            <TextBlock Margin=\"8,4\" Text=\"{Binding Name, Mode=OneWay}\" />\n        </DataTemplate>\n    </ListView.ItemTemplate>\n</ListView>",
                     null),
                 new GalleryExample(
                     "ListView with Selection Support.",
                     CreateSelectionListView(),
-                    "<Grid>\n    <ListView Height=\"200\" ItemsSource=\"{Binding BasicListViewItems}\" SelectedIndex=\"1\" SelectionMode=\"{Binding ListViewSelectionMode}\" />\n    <ComboBox SelectedIndex=\"{Binding ListViewSelectionModeComboBoxSelectedIndex}\">\n        <ComboBoxItem Content=\"Single\" />\n        <ComboBoxItem Content=\"Multiple\" />\n        <ComboBoxItem Content=\"Extended\" />\n    </ComboBox>\n</Grid>",
+                    "<Grid>\n    <Grid.ColumnDefinitions>\n        <ColumnDefinition Width=\"*\" />\n        <ColumnDefinition Width=\"Auto\" />\n    </Grid.ColumnDefinitions>\n    <ListView\n        Grid.Column=\"0\"\n        Height=\"200\"\n        ItemsSource=\"{Binding BasicListViewItems, Mode=TwoWay}\"\n        SelectedIndex=\"1\"\n        SelectionMode=\"{Binding ListViewSelectionMode, Mode=OneWay}\">\n        <ListView.ItemTemplate>\n            <DataTemplate DataType=\"{x:Type models:Person}\">\n                <Grid Margin=\"8,0\">\n                    <Grid.RowDefinitions>\n                        <RowDefinition Height=\"*\" />\n                        <RowDefinition Height=\"*\" />\n                    </Grid.RowDefinitions>\n                    <Grid.ColumnDefinitions>\n                        <ColumnDefinition Width=\"Auto\" />\n                        <ColumnDefinition Width=\"*\" />\n                    </Grid.ColumnDefinitions>\n                    <Ellipse\n                        x:Name=\"Ellipse\"\n                        Grid.RowSpan=\"2\"\n                        Width=\"32\"\n                        Height=\"32\"\n                        Margin=\"6\"\n                        HorizontalAlignment=\"Center\"\n                        VerticalAlignment=\"Center\"\n                        Fill=\"{DynamicResource SystemAccentColorPrimaryBrush}\" />\n                    <TextBlock\n                        Grid.Row=\"0\"\n                        Grid.Column=\"1\"\n                        Margin=\"12,6,0,0\"\n                        FontWeight=\"Bold\"\n                        Text=\"{Binding Name, Mode=OneWay}\" />\n                    <TextBlock\n                        Grid.Row=\"1\"\n                        Grid.Column=\"1\"\n                        Margin=\"12,0,0,6\"\n                        Foreground=\"{DynamicResource TextFillColorPrimaryBrush}\"\n                        Text=\"{Binding Company, Mode=OneWay}\" />\n                </Grid>\n            </DataTemplate>\n        </ListView.ItemTemplate>\n    </ListView>\n    <StackPanel\n        Grid.Column=\"1\"\n        MinWidth=\"120\"\n        Margin=\"12,0,0,0\"\n        VerticalAlignment=\"Top\">\n        <Label Content=\"Selection mode\" Target=\"{Binding ElementName=SelectionModeComboBox}\" />\n        <ComboBox x:Name=\"SelectionModeComboBox\" SelectedIndex=\"{Binding ListViewSelectionModeComboBoxSelectedIndex, Mode=TwoWay}\">\n            <ComboBoxItem Content=\"Single\" />\n            <ComboBoxItem Content=\"Multiple\" />\n            <ComboBoxItem Content=\"Extended\" />\n        </ComboBox>\n    </StackPanel>\n</Grid>",
                     null),
                 new GalleryExample(
                     "ListView with GridView.",
                     CreateGridViewListView(),
-                    "<ListView Height=\"280\" ItemsSource=\"{Binding ViewModel.GridViewItems}\">\n    <ListView.View>\n        <GridView>\n            <GridViewColumn Header=\"First Name\" Width=\"150\" DisplayMemberBinding=\"{Binding FirstName}\" />\n            <GridViewColumn Header=\"Last Name\" Width=\"150\" DisplayMemberBinding=\"{Binding LastName}\" />\n            <GridViewColumn Header=\"Company\" Width=\"200\" DisplayMemberBinding=\"{Binding Company}\" />\n        </GridView>\n    </ListView.View>\n</ListView>",
+                    "<ListView\n    Height=\"280\"\n    ItemsSource=\"{Binding ViewModel.GridViewItems}\">\n    <ListView.View>\n        <GridView>\n            <GridViewColumn\n                Header=\"First Name\"\n                Width=\"150\"\n                DisplayMemberBinding=\"{Binding FirstName}\" />\n            <GridViewColumn\n                Header=\"Last Name\"\n                Width=\"150\"\n                DisplayMemberBinding=\"{Binding LastName}\" />\n            <GridViewColumn\n                Header=\"Company\"\n                Width=\"200\"\n                DisplayMemberBinding=\"{Binding Company}\" />\n        </GridView>\n    </ListView.View>\n</ListView>",
                     null)
             };
         }
@@ -3411,38 +3412,24 @@ namespace ModernWpf.Gallery.Pages
 
         private static DataTemplate CreateDetailedPersonTemplate()
         {
-            var row = new FrameworkElementFactory(typeof(StackPanel));
-            row.SetValue(StackPanel.OrientationProperty, Orientation.Horizontal);
-            row.SetValue(FrameworkElement.MarginProperty, new Thickness(8, 0, 8, 0));
+            const string templateXaml =
+                "<DataTemplate xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\">" +
+                "    <Grid Margin=\"8,0\">" +
+                "        <Grid.RowDefinitions>" +
+                "            <RowDefinition Height=\"*\" />" +
+                "            <RowDefinition Height=\"*\" />" +
+                "        </Grid.RowDefinitions>" +
+                "        <Grid.ColumnDefinitions>" +
+                "            <ColumnDefinition Width=\"Auto\" />" +
+                "            <ColumnDefinition Width=\"*\" />" +
+                "        </Grid.ColumnDefinitions>" +
+                "        <Ellipse Grid.RowSpan=\"2\" Width=\"32\" Height=\"32\" Margin=\"6\" HorizontalAlignment=\"Center\" VerticalAlignment=\"Center\" Fill=\"{DynamicResource SystemAccentColorPrimaryBrush}\" />" +
+                "        <TextBlock Grid.Row=\"0\" Grid.Column=\"1\" Margin=\"12,6,0,0\" FontWeight=\"Bold\" Text=\"{Binding Name, Mode=OneWay}\" />" +
+                "        <TextBlock Grid.Row=\"1\" Grid.Column=\"1\" Margin=\"12,0,0,6\" Foreground=\"{DynamicResource TextFillColorPrimaryBrush}\" Text=\"{Binding Company, Mode=OneWay}\" />" +
+                "    </Grid>" +
+                "</DataTemplate>";
 
-            var ellipse = new FrameworkElementFactory(typeof(Ellipse));
-            ellipse.SetValue(FrameworkElement.WidthProperty, 32.0);
-            ellipse.SetValue(FrameworkElement.HeightProperty, 32.0);
-            ellipse.SetValue(FrameworkElement.MarginProperty, new Thickness(6));
-            ellipse.SetValue(FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Center);
-            ellipse.SetValue(FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
-            ellipse.SetResourceReference(Shape.FillProperty, "SystemAccentColorPrimaryBrush");
-
-            var textStack = new FrameworkElementFactory(typeof(StackPanel));
-            textStack.SetValue(FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
-
-            var name = new FrameworkElementFactory(typeof(TextBlock));
-            name.SetValue(FrameworkElement.MarginProperty, new Thickness(12, 6, 0, 0));
-            name.SetValue(TextBlock.FontWeightProperty, FontWeights.SemiBold);
-            name.SetBinding(TextBlock.TextProperty, new Binding("Name"));
-
-            var company = new FrameworkElementFactory(typeof(TextBlock));
-            company.SetValue(FrameworkElement.MarginProperty, new Thickness(12, 0, 0, 6));
-            company.SetValue(UIElement.OpacityProperty, 0.7);
-            company.SetResourceReference(TextBlock.ForegroundProperty, "TextFillColorPrimaryBrush");
-            company.SetBinding(TextBlock.TextProperty, new Binding("Company"));
-
-            textStack.AppendChild(name);
-            textStack.AppendChild(company);
-            row.AppendChild(ellipse);
-            row.AppendChild(textStack);
-
-            return new DataTemplate { VisualTree = row };
+            return (DataTemplate)XamlReader.Parse(templateXaml);
         }
 
         private static ListView CreateGridViewListView()
@@ -3534,10 +3521,8 @@ namespace ModernWpf.Gallery.Pages
             };
             var label = new Label
             {
-                Content = "Selection mode",
-                Opacity = 0.7
+                Content = "Selection mode"
             };
-            label.SetResourceReference(Control.ForegroundProperty, "TextFillColorPrimaryBrush");
             var comboBox = new ComboBox();
             AutomationProperties.SetName(comboBox, "Selection Mode");
             comboBox.Items.Add(new ComboBoxItem { Content = "Single" });
