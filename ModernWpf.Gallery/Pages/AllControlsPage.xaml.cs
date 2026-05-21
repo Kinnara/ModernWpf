@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Windows.Automation;
 using ModernWpf.Gallery.Models;
 
 namespace ModernWpf.Gallery.Pages
@@ -13,6 +14,9 @@ namespace ModernWpf.Gallery.Pages
             InitializeComponent();
             FilteredItems = GalleryCatalog.AllControlsItems;
             DataContext = this;
+            AutomationProperties.SetName(TitleLabel, "All Controls Page");
+            GalleryAutomation.SetHeadingLevel(TitleLabel, GalleryAutomationHeadingLevel.Level1);
+            GalleryAutomation.SetHeadingLevel(DescriptionLabel, GalleryAutomationHeadingLevel.Level2);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

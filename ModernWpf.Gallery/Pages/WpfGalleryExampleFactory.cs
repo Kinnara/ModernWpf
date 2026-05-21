@@ -1242,7 +1242,7 @@ namespace ModernWpf.Gallery.Pages
             root.Children.Add(CreateDesignParagraph("Geometry describes the shape, size and position of UI elements on screen."));
             root.Children.Add(CreateDesignParagraph("These fundamental design elements help experiences feel coherent across the entire design system."));
             root.Children.Add(CreateDesignParagraph("You can reference built-in corner radii styles using: CornerRadius=\"{StaticResource ControlCornerRadius}\".", new Thickness(0, 0, 0, 12)));
-            root.Children.Add(CreateDesignImageFrame("Geometry.dark.png", null, "Example of corner radius.", 500, 300));
+            root.Children.Add(CreateDesignImageBorder("Geometry.dark.png", "Example of corner radius.", 500, 300));
             root.Children.Add(CreateControlExample(
                 null,
                 CreateCornerRadiusTable(),
@@ -3227,6 +3227,26 @@ namespace ModernWpf.Gallery.Pages
             grid.Children.Add(image);
 
             return grid;
+        }
+
+        private static Border CreateDesignImageBorder(string fileName, string automationName, double width, double height)
+        {
+            var image = new Image
+            {
+                Width = width,
+                Height = height,
+                Stretch = Stretch.Uniform,
+                Source = new BitmapImage(new Uri("pack://application:,,,/ModernWpf.Gallery;component/Assets/Design/" + fileName))
+            };
+            AutomationProperties.SetName(image, automationName);
+
+            return new Border
+            {
+                Width = width,
+                Height = height,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Child = image
+            };
         }
 
         private static Grid CreateDesignImageFrame(string fileName, string title, string automationName, double width, double height)

@@ -2,6 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Automation;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Input;
+using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls;
 using ModernWpf.Gallery.Models;
@@ -118,6 +123,46 @@ namespace ModernWpf.Gallery.Tests
             });
         }
 
+        [TestMethod]
+        public void WpfGalleryPageShellCardsMatchReferenceAutomationAndLayout()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var homePage = new HomePage();
+                RenderPage(homePage, () =>
+                {
+                    Assert.AreEqual(AutomationHeadingLevel.Level1, AutomationProperties.GetHeadingLevel((TextBlock)homePage.FindName("HeroVersionText")));
+                    Assert.AreEqual(AutomationHeadingLevel.Level1, AutomationProperties.GetHeadingLevel((TextBlock)homePage.FindName("HeroTitleText")));
+                    Assert.AreEqual(AutomationHeadingLevel.Level2, AutomationProperties.GetHeadingLevel((TextBlock)homePage.FindName("OverviewHeaderText")));
+                    Assert.AreEqual(AutomationHeadingLevel.Level2, AutomationProperties.GetHeadingLevel((TextBlock)homePage.FindName("RecentlyAddedHeaderText")));
+                    AssertNavigationItemsControl((ItemsControl)homePage.FindName("OverviewItemsControl"), "Items in group");
+                    AssertNavigationItemsControl((ItemsControl)homePage.FindName("RecentlyAddedItemsControl"), "Recently Added and Updated Samples Section");
+
+                    var firstGroup = GalleryCatalog.OverviewGroups.First();
+                    AssertRenderedNavigationCard((ItemsControl)homePage.FindName("OverviewItemsControl"), firstGroup.Title);
+                });
+
+                var basicInputGroup = GalleryCatalog.FindGroup("BasicInput");
+                var sectionPage = new SectionPage(basicInputGroup);
+                RenderPage(sectionPage, () =>
+                {
+                    AssertPageHeaderLabel((Label)sectionPage.FindName("TitleLabel"), "Basic Input Page", AutomationHeadingLevel.Level1, 0);
+                    AssertPageHeaderLabel((Label)sectionPage.FindName("DescriptionLabel"), string.Empty, AutomationHeadingLevel.Level2, 1);
+                    AssertNavigationItemsControl((ItemsControl)sectionPage.FindName("GroupItemsControl"), "Items in group");
+                    AssertRenderedNavigationCard((ItemsControl)sectionPage.FindName("GroupItemsControl"), basicInputGroup.Items.First().Title);
+                });
+
+                var allControlsPage = new AllControlsPage();
+                RenderPage(allControlsPage, () =>
+                {
+                    AssertPageHeaderLabel((Label)allControlsPage.FindName("TitleLabel"), "All Controls Page", AutomationHeadingLevel.Level1, 0);
+                    AssertPageHeaderLabel((Label)allControlsPage.FindName("DescriptionLabel"), string.Empty, AutomationHeadingLevel.Level2, 1);
+                    AssertNavigationItemsControl((ItemsControl)allControlsPage.FindName("AllControlsItemsControl"), "Items in group");
+                    AssertRenderedNavigationCard((ItemsControl)allControlsPage.FindName("AllControlsItemsControl"), GalleryCatalog.AllControlsItems.First().Title);
+                });
+            });
+        }
+
         private static string GetNavigationItemText(NavigationViewItem item)
         {
             return item.Content as string;
@@ -129,6 +174,91 @@ namespace ModernWpf.Gallery.Tests
 
             Assert.IsNotNull(icon);
             Assert.AreEqual(expectedGlyph, icon.Glyph);
+        }
+
+        private static void AssertPageHeaderLabel(Label label, string automationName, AutomationHeadingLevel headingLevel, int tabIndex)
+        {
+            BindingOperations.GetBindingExpression(label, AutomationProperties.NameProperty)?.UpdateTarget();
+            Assert.IsTrue(label.Focusable);
+            Assert.AreEqual(KeyboardNavigationMode.Continue, KeyboardNavigation.GetTabNavigation(label));
+            Assert.IsTrue(KeyboardNavigation.GetIsTabStop(label));
+            Assert.AreEqual(tabIndex, KeyboardNavigation.GetTabIndex(label));
+            Assert.AreEqual(automationName, AutomationProperties.GetName(label));
+            Assert.AreEqual(headingLevel, AutomationProperties.GetHeadingLevel(label));
+        }
+
+        private static void AssertNavigationItemsControl(ItemsControl itemsControl, string automationName)
+        {
+            Assert.AreEqual(automationName, AutomationProperties.GetName(itemsControl));
+            Assert.IsFalse(itemsControl.Focusable);
+            var panel = (System.Windows.Controls.WrapPanel)itemsControl.ItemsPanel.LoadContent();
+            Assert.AreEqual(new Thickness(10), panel.Margin);
+        }
+
+        private static void AssertRenderedNavigationCard(ItemsControl itemsControl, string title)
+        {
+            itemsControl.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            var button = FindVisualChildren<Button>(itemsControl).FirstOrDefault();
+            Assert.IsNotNull(button);
+            Assert.AreEqual(title + "Page", AutomationProperties.GetName(button));
+
+            var titleText = FindVisualChildren<TextBlock>(button).FirstOrDefault(textBlock => string.Equals(textBlock.Text, title, StringComparison.Ordinal));
+            Assert.IsNotNull(titleText);
+            Assert.AreEqual(AutomationHeadingLevel.Level3, AutomationProperties.GetHeadingLevel(titleText));
+        }
+
+        private static void RenderPage(FrameworkElement page, Action assert)
+        {
+            var window = new Window
+            {
+                Width = 1180,
+                Height = 820,
+                Left = -32000,
+                Top = -32000,
+                ShowInTaskbar = false,
+                WindowStartupLocation = WindowStartupLocation.Manual,
+                Content = page
+            };
+
+            try
+            {
+                window.Show();
+                WpfTestHost.DoEvents();
+                window.UpdateLayout();
+                WpfTestHost.DoEvents();
+                assert();
+            }
+            finally
+            {
+                window.Content = null;
+                window.Close();
+                WpfTestHost.DoEvents();
+            }
+        }
+
+        private static IEnumerable<T> FindVisualChildren<T>(DependencyObject element)
+            where T : DependencyObject
+        {
+            if (element == null)
+            {
+                yield break;
+            }
+
+            for (var i = 0; i < VisualTreeHelper.GetChildrenCount(element); i++)
+            {
+                var child = VisualTreeHelper.GetChild(element, i);
+                if (child is T match)
+                {
+                    yield return match;
+                }
+
+                foreach (var descendant in FindVisualChildren<T>(child))
+                {
+                    yield return descendant;
+                }
+            }
         }
 
         private static IEnumerable<string> CatalogRoutes()

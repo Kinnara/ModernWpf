@@ -11,6 +11,7 @@ namespace ModernWpf.Gallery.Pages
         public HomePage()
         {
             InitializeComponent();
+            SetWpfGalleryAutomation();
             DataContext = this;
         }
 
@@ -26,6 +27,14 @@ namespace ModernWpf.Gallery.Pages
         public object Groups
         {
             get { return GalleryCatalog.OverviewGroups; }
+        }
+
+        private void SetWpfGalleryAutomation()
+        {
+            GalleryAutomation.SetHeadingLevel(HeroVersionText, GalleryAutomationHeadingLevel.Level1);
+            GalleryAutomation.SetHeadingLevel(HeroTitleText, GalleryAutomationHeadingLevel.Level1);
+            GalleryAutomation.SetHeadingLevel(OverviewHeaderText, GalleryAutomationHeadingLevel.Level2);
+            GalleryAutomation.SetHeadingLevel(RecentlyAddedHeaderText, GalleryAutomationHeadingLevel.Level2);
         }
 
         private void OnScrollBackButtonClick(object sender, RoutedEventArgs e)

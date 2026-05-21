@@ -29,15 +29,20 @@
                 Margin="0,0,0,40"
                 VerticalAlignment="Center">
                 <Label
+                    x:Name="TitleLabel"
+                    AutomationProperties.Name="All Controls Page"
                     Focusable="True"
-                    KeyboardNavigation.IsTabStop="True">
+                    KeyboardNavigation.IsTabStop="True"
+                    KeyboardNavigation.TabIndex="0">
                     <TextBlock
                         Style="{StaticResource TitleTextBlockStyle}"
                         Text="All Controls" />
                 </Label>
                 <Label
+                    x:Name="DescriptionLabel"
                     Focusable="True"
-                    KeyboardNavigation.IsTabStop="True">
+                    KeyboardNavigation.IsTabStop="True"
+                    KeyboardNavigation.TabIndex="1">
                     <TextBlock
                         Style="{StaticResource BodyTextBlockStyle}"
                         Text="" />
@@ -49,6 +54,9 @@
                 Margin="0"
                 VerticalScrollBarVisibility="Auto">
                 <ItemsControl
+                    x:Name="AllControlsItemsControl"
+                    AutomationProperties.Name="Items in group"
+                    Focusable="False"
                     Margin="-12,0,0,0"
                     ItemsSource="{Binding FilteredItems}">
                     <ItemsControl.ItemsPanel>
@@ -59,6 +67,7 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Button
+                                AutomationProperties.Name="{Binding Title, StringFormat='{}{0}Page'}"
                                 Click="OnItemCardClick"
                                 Content="{Binding}"
                                 ContentTemplate="{StaticResource GalleryItemCardTemplate}"

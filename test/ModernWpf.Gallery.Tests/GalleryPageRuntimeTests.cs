@@ -983,6 +983,33 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(68.0, displayRow.MinHeight);
                 Assert.AreEqual(new Thickness(0, 0, 0, 24), displayRow.Margin);
                 Assert.AreEqual("Consolas", GetTableText(displayRow, 3).FontFamily.Source);
+
+                var geometryPage = new ItemPage(GalleryCatalog.FindItem("Geometry"));
+                var geometryBody = (StackPanel)geometryPage.PageBodyContent;
+                Assert.AreEqual(new Thickness(0, 0, 0, 24), geometryBody.Margin);
+                Assert.AreEqual(5, geometryBody.Children.Count);
+                Assert.AreEqual("Geometry describes the shape, size and position of UI elements on screen.", ((TextBlock)geometryBody.Children[0]).Text);
+                Assert.AreEqual("These fundamental design elements help experiences feel coherent across the entire design system.", ((TextBlock)geometryBody.Children[1]).Text);
+                var geometryUsage = (TextBlock)geometryBody.Children[2];
+                Assert.AreEqual("You can reference built-in corner radii styles using: CornerRadius=\"{StaticResource ControlCornerRadius}\".", geometryUsage.Text);
+                Assert.AreEqual(new Thickness(0, 0, 0, 12), geometryUsage.Margin);
+
+                var geometryImageHost = (Border)geometryBody.Children[3];
+                Assert.AreEqual(500.0, geometryImageHost.Width);
+                Assert.AreEqual(300.0, geometryImageHost.Height);
+                Assert.AreEqual(HorizontalAlignment.Left, geometryImageHost.HorizontalAlignment);
+                var geometryImage = (Image)geometryImageHost.Child;
+                Assert.AreEqual(500.0, geometryImage.Width);
+                Assert.AreEqual(300.0, geometryImage.Height);
+                Assert.AreEqual(Stretch.Uniform, geometryImage.Stretch);
+                Assert.AreEqual("Example of corner radius.", AutomationProperties.GetName(geometryImage));
+                StringAssert.Contains(((BitmapImage)geometryImage.Source).UriSource.ToString(), "Geometry.dark.png");
+
+                var geometryExample = (ControlExample)geometryBody.Children[4];
+                Assert.IsNull(geometryExample.HeaderText);
+                StringAssert.Contains(geometryExample.XamlCode, "OverlayCornerRadius");
+                var cornerRadiusTable = (Grid)geometryExample.ExampleContent;
+                AssertCornerRadiusTable(cornerRadiusTable);
             });
         }
 
@@ -1255,6 +1282,45 @@ namespace ModernWpf.Gallery.Tests
             var item = (TreeViewItem)items[index];
             Assert.AreEqual(header, item.Header);
             return item;
+        }
+
+        private static void AssertCornerRadiusTable(Grid table)
+        {
+            Assert.AreEqual(HorizontalAlignment.Left, table.HorizontalAlignment);
+            Assert.AreEqual(new Thickness(0, 10, 0, 10), table.Margin);
+            Assert.AreEqual(3, table.ColumnDefinitions.Count);
+            Assert.AreEqual(4, table.RowDefinitions.Count);
+            CollectionAssert.AreEqual(new[] { 148.0, 400.0, 180.0 }, table.ColumnDefinitions.Select(column => column.Width.Value).ToArray());
+
+            CollectionAssert.AreEqual(
+                new[] { "Corner radius", "Usage", "Style" },
+                table.Children.OfType<TextBlock>().Where(textBlock => Grid.GetRow(textBlock) == 0).OrderBy(Grid.GetColumn).Select(textBlock => textBlock.Text).ToArray());
+
+            AssertCornerRadiusRow(table, 1, "8px", new CornerRadius(8), "Top-level containers such as app windows, flyouts, cards and dialogs.", "OverlayCornerRadius");
+            AssertCornerRadiusRow(table, 2, "4px", new CornerRadius(4), "In-page elements such as controls and list backplates.", "ControlCornerRadius");
+            AssertCornerRadiusRow(table, 3, "0px", new CornerRadius(0), "Straight edges that intersect with other straight edges.", "N/A");
+        }
+
+        private static void AssertCornerRadiusRow(Grid table, int row, string radiusText, CornerRadius radius, string usage, string styleName)
+        {
+            var rowGrid = table.Children.OfType<Grid>().Single(grid => Grid.GetRow(grid) == row);
+            Assert.AreEqual(60.0, rowGrid.MinHeight);
+            Assert.AreEqual(3, rowGrid.ColumnDefinitions.Count);
+            Assert.AreEqual(3, Grid.GetColumnSpan(rowGrid));
+
+            var sample = rowGrid.Children.OfType<StackPanel>().Single();
+            Assert.AreEqual(Orientation.Horizontal, sample.Orientation);
+            Assert.AreEqual(new Thickness(16, 0, 0, 0), sample.Margin);
+            var shape = (Border)sample.Children[0];
+            Assert.AreEqual(20.0, shape.Width);
+            Assert.AreEqual(20.0, shape.Height);
+            Assert.AreEqual(radius, shape.CornerRadius);
+            Assert.AreEqual(radiusText, ((TextBlock)sample.Children[1]).Text);
+
+            var usageText = rowGrid.Children.OfType<TextBlock>().Single(textBlock => Grid.GetColumn(textBlock) == 1);
+            var styleText = rowGrid.Children.OfType<TextBlock>().Single(textBlock => Grid.GetColumn(textBlock) == 2);
+            Assert.AreEqual(usage, usageText.Text);
+            Assert.AreEqual(styleName, styleText.Text);
         }
 
         private static void AssertExampleMargins(string uniqueId, params Thickness[] expectedMargins)

@@ -52,11 +52,13 @@
                         TextElement.Foreground="Black"
                         VerticalAlignment="Top">
                         <TextBlock
+                            x:Name="HeroVersionText"
                             Margin="0,0,0,2"
                             Foreground="Black"
                             Style="{StaticResource SubtitleTextBlockStyle}"
                             Text=".NET 10" />
                         <TextBlock
+                            x:Name="HeroTitleText"
                             Margin="0,0,0,8"
                             Foreground="Black"
                             Style="{StaticResource TitleLargeTextBlockStyle}"
@@ -292,21 +294,26 @@
                     Margin="32,24,0,0"
                     Orientation="Vertical">
                     <TextBlock
+                        x:Name="OverviewHeaderText"
                         FontSize="16"
                         Style="{StaticResource BodyStrongTextBlockStyle}"
                         Text="Overview" />
 
                     <ItemsControl
+                        x:Name="OverviewItemsControl"
+                        AutomationProperties.Name="Items in group"
+                        Focusable="False"
                         Margin="-20,0,0,0"
                         ItemsSource="{Binding Groups}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <WrapPanel />
+                                <WrapPanel Margin="10" />
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <Button
+                                    AutomationProperties.Name="{Binding Title, StringFormat='{}{0}Page'}"
                                     Click="OnGroupCardClick"
                                     Content="{Binding}"
                                     ContentTemplate="{StaticResource GalleryGroupCardTemplate}"
@@ -316,28 +323,33 @@
                     </ItemsControl>
 
                     <TextBlock
+                        x:Name="RecentlyAddedHeaderText"
                         FontSize="16"
                         Style="{StaticResource GallerySectionHeaderTextBlockStyle}"
                         Text="Recently added and updated" />
 
                     <ItemsControl
+                        x:Name="RecentlyAddedItemsControl"
+                        AutomationProperties.Name="Recently Added and Updated Samples Section"
+                        Focusable="False"
                         Margin="-18,0,0,0"
                         ItemsSource="{Binding FeaturedItems}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Button
-                                Click="OnItemCardClick"
-                                Content="{Binding}"
-                                ContentTemplate="{StaticResource GalleryItemCardTemplate}"
-                                Style="{StaticResource GalleryCardButtonStyle}" />
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Margin="10" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button
+                                    AutomationProperties.Name="{Binding Title, StringFormat='{}{0}Page'}"
+                                    Click="OnItemCardClick"
+                                    Content="{Binding}"
+                                    ContentTemplate="{StaticResource GalleryItemCardTemplate}"
+                                    Style="{StaticResource GalleryCardButtonStyle}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
                 </StackPanel>
             </Grid>
         </ScrollViewer>

@@ -1,5 +1,6 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:pages="clr-namespace:ModernWpf.Gallery.Pages"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <DataTemplate x:Key="GalleryItemCardTemplate">
@@ -13,6 +14,7 @@
             <StackPanel Orientation="Vertical">
                 <TextBlock
                     Margin="10,0,0,0"
+                    pages:GalleryAutomation.HeadingLevel="Level3"
                     Style="{StaticResource BodyStrongTextBlockStyle}"
                     Text="{Binding Title}" />
                 <TextBlock
@@ -38,6 +40,7 @@
                 <TextBlock
                     Width="240"
                     Margin="10,0,0,0"
+                    pages:GalleryAutomation.HeadingLevel="Level3"
                     Style="{StaticResource BodyStrongTextBlockStyle}"
                     Text="{Binding Title}" />
                 <TextBlock
