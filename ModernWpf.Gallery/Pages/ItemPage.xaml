@@ -17,7 +17,7 @@
         </Grid.RowDefinitions>
 
         <StackPanel
-            Margin="24,16,24,32"
+            Margin="0,0,0,32"
             Visibility="{Binding ShowPageHeader, Converter={StaticResource BooleanToVisibilityConverter}}">
             <Label
                 Focusable="True"
@@ -42,7 +42,7 @@
 
         <ScrollViewer
             Grid.Row="1"
-            Margin="24,0,0,24"
+            Margin="0,0,0,24"
             Padding="0,0,24,0"
             Visibility="{Binding ShowScrolledPageContent, Converter={StaticResource BooleanToVisibilityConverter}}">
             <StackPanel Margin="0,0,0,24">
@@ -201,7 +201,7 @@
 
         <ContentControl
             Grid.Row="1"
-            Margin="24,16,24,24"
+            Margin="0,0,0,24"
             Content="{Binding DirectPageContent}"
             Visibility="{Binding HasDirectPageContent, Converter={StaticResource BooleanToVisibilityConverter}}" />
     </Grid>

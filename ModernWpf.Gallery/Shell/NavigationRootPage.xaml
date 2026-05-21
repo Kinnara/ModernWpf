@@ -30,9 +30,19 @@
                     TextChanged="OnSearchTextChanged" />
             </ui:NavigationView.PaneCustomContent>
 
-            <ContentControl
-                x:Name="ContentHost"
-                AutomationProperties.AutomationId="GalleryContentHost" />
+            <Border
+                Margin="4,0,0,0"
+                Padding="24,16,24,0"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Background="{DynamicResource LayerFillColorDefaultBrush}"
+                BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="8,0,0,0">
+                <ContentControl
+                    x:Name="ContentHost"
+                    AutomationProperties.AutomationId="GalleryContentHost" />
+            </Border>
         </ui:NavigationView>
 
         <StackPanel
