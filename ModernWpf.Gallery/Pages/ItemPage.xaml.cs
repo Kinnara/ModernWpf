@@ -275,7 +275,6 @@ namespace ModernWpf.Gallery.Pages
                 case "Image":
                 case "Label":
                 case "PasswordBox":
-                case "RichEditBox":
                 case "RichTextEdit":
                 case "Spacing":
                 case "TextBlock":

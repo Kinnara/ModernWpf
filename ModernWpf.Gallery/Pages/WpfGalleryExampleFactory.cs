@@ -38,7 +38,6 @@ namespace ModernWpf.Gallery.Pages
                 case "Button":
                     return CreateButtonExamples();
                 case "Calendar":
-                case "CalendarView":
                     return CreateCalendarExamples();
                 case "Canvas":
                     return CreateCanvasExamples();
@@ -94,7 +93,6 @@ namespace ModernWpf.Gallery.Pages
                     return CreateRadioButtonExamples();
                 case "ResizeGrip":
                     return CreateResizeGripExamples();
-                case "RichEditBox":
                 case "RichTextEdit":
                     return CreateRichEditBoxExamples();
                 case "Slider":
