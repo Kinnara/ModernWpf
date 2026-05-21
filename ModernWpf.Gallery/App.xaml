@@ -9,6 +9,7 @@
                 <ui:ThemeResources />
                 <ui:FluentControlsResources UseCompactResources="False" />
                 <ResourceDictionary Source="Controls/ControlExample.xaml" />
+                <ResourceDictionary Source="Controls/PageHeader.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />

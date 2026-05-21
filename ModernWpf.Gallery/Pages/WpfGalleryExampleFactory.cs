@@ -122,6 +122,10 @@ namespace ModernWpf.Gallery.Pages
         {
             switch (uniqueId)
             {
+                case "Canvas":
+                    return new WpfGallery.Media.CanvasPage();
+                case "Image":
+                    return new WpfGallery.Media.ImagePage();
                 case "UserDashboard":
                     return CreateUserDashboardPageContent();
                 default:

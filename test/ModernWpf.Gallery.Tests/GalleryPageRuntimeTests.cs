@@ -124,8 +124,20 @@ namespace ModernWpf.Gallery.Tests
                 {
                     var page = new ItemPage(GalleryCatalog.FindItem(expectedDescription.Key));
 
-                    Assert.IsTrue(page.ShowPageDescription, expectedDescription.Key);
-                    Assert.AreEqual(expectedDescription.Value, page.Description, expectedDescription.Key);
+                    if (page.HasDirectPageContent)
+                    {
+                        var pageHeader = FindDescendant<PageHeader>((DependencyObject)page.DirectPageContent);
+
+                        Assert.IsFalse(page.ShowPageHeader, expectedDescription.Key);
+                        Assert.IsNotNull(pageHeader, expectedDescription.Key);
+                        Assert.AreEqual(expectedDescription.Key, pageHeader.Title, expectedDescription.Key);
+                        Assert.AreEqual(expectedDescription.Value, pageHeader.Description, expectedDescription.Key);
+                    }
+                    else
+                    {
+                        Assert.IsTrue(page.ShowPageDescription, expectedDescription.Key);
+                        Assert.AreEqual(expectedDescription.Value, page.Description, expectedDescription.Key);
+                    }
                 }
             });
         }
@@ -810,9 +822,16 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual("Submit", ((Button)groupStack.Children[2]).Content);
 
                 var canvasPage = new ItemPage(GalleryCatalog.FindItem("Canvas"));
-                Assert.AreEqual(1, canvasPage.Examples.Count);
-                Assert.AreEqual("A basic Canvas inside the ViewBox", canvasPage.Examples[0].HeaderText);
-                var viewbox = (Viewbox)canvasPage.Examples[0].ExampleContent;
+                Assert.IsTrue(canvasPage.HasDirectPageContent);
+                Assert.AreEqual(0, canvasPage.Examples.Count);
+                var canvasHeader = FindDescendant<PageHeader>((DependencyObject)canvasPage.DirectPageContent);
+                Assert.IsNotNull(canvasHeader);
+                Assert.AreEqual("Canvas", canvasHeader.Title);
+                Assert.AreEqual(string.Empty, canvasHeader.Description);
+                var canvasExample = FindDescendant<ControlExample>((DependencyObject)canvasPage.DirectPageContent);
+                Assert.IsNotNull(canvasExample);
+                Assert.AreEqual("A basic Canvas inside the ViewBox", canvasExample.HeaderText);
+                var viewbox = (Viewbox)canvasExample.ExampleContent;
                 Assert.AreEqual(200.0, viewbox.Width);
                 Assert.AreEqual(200.0, viewbox.Height);
                 var canvas = (Canvas)viewbox.Child;
@@ -821,12 +840,22 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(2, canvas.Children.OfType<Path>().Count());
 
                 var imagePage = new ItemPage(GalleryCatalog.FindItem("Image"));
-                Assert.AreEqual(1, imagePage.Examples.Count);
-                Assert.AreEqual("Standand Image from a local file.", imagePage.Examples[0].HeaderText);
-                var image = (Image)imagePage.Examples[0].ExampleContent;
+                Assert.IsTrue(imagePage.HasDirectPageContent);
+                Assert.AreEqual(0, imagePage.Examples.Count);
+                var imageHeader = FindDescendant<PageHeader>((DependencyObject)imagePage.DirectPageContent);
+                Assert.IsNotNull(imageHeader);
+                Assert.AreEqual("Image", imageHeader.Title);
+                Assert.AreEqual(string.Empty, imageHeader.Description);
+                var imageExample = FindDescendant<ControlExample>((DependencyObject)imagePage.DirectPageContent);
+                Assert.IsNotNull(imageExample);
+                Assert.AreEqual("Standand Image from a local file.", imageExample.HeaderText);
+                var image = (Image)imageExample.ExampleContent;
                 Assert.AreEqual(200.0, image.Height);
                 Assert.AreEqual(HorizontalAlignment.Left, image.HorizontalAlignment);
-                StringAssert.Contains(((BitmapImage)image.Source).UriSource.ToString(), "win11-dashboard");
+                var imageSource = (BitmapSource)image.Source;
+                Assert.IsTrue(imageSource.PixelWidth > 0);
+                Assert.IsTrue(imageSource.PixelHeight > 0);
+                StringAssert.Contains(imageExample.XamlCode, "Assets\\MyImage.jpg");
 
                 var resizeGripPage = new ItemPage(GalleryCatalog.FindItem("ResizeGrip"));
                 Assert.AreEqual(1, resizeGripPage.Examples.Count);
@@ -1604,6 +1633,77 @@ namespace ModernWpf.Gallery.Tests
             return null;
         }
 
+        private static T FindDescendant<T>(DependencyObject root)
+            where T : DependencyObject
+        {
+            if (root == null)
+            {
+                return null;
+            }
+
+            var element = root as T;
+            if (element != null)
+            {
+                return element;
+            }
+
+            var childCount = VisualTreeHelper.GetChildrenCount(root);
+            for (var i = 0; i < childCount; i++)
+            {
+                var result = FindDescendant<T>(VisualTreeHelper.GetChild(root, i));
+                if (result != null)
+                {
+                    return result;
+                }
+            }
+
+            foreach (var child in LogicalTreeHelper.GetChildren(root))
+            {
+                var dependencyObject = child as DependencyObject;
+                if (dependencyObject == null)
+                {
+                    continue;
+                }
+
+                var result = FindDescendant<T>(dependencyObject);
+                if (result != null)
+                {
+                    return result;
+                }
+            }
+
+            return null;
+        }
+
+        private static IEnumerable<T> FindDescendants<T>(DependencyObject root)
+            where T : DependencyObject
+        {
+            if (root == null)
+            {
+                yield break;
+            }
+
+            foreach (var child in LogicalTreeHelper.GetChildren(root))
+            {
+                var dependencyObject = child as DependencyObject;
+                if (dependencyObject == null)
+                {
+                    continue;
+                }
+
+                var element = dependencyObject as T;
+                if (element != null)
+                {
+                    yield return element;
+                }
+
+                foreach (var descendant in FindDescendants<T>(dependencyObject))
+                {
+                    yield return descendant;
+                }
+            }
+        }
+
         private static TextBlock GetTableText(Grid row, int column)
         {
             return row.Children.OfType<TextBlock>().Single(textBlock => Grid.GetColumn(textBlock) == column);
@@ -1681,10 +1781,23 @@ namespace ModernWpf.Gallery.Tests
         private static void AssertExampleMargins(string uniqueId, params Thickness[] expectedMargins)
         {
             var page = new ItemPage(GalleryCatalog.FindItem(uniqueId));
-            Assert.AreEqual(expectedMargins.Length, page.Examples.Count, uniqueId);
-            for (var i = 0; i < expectedMargins.Length; i++)
+            if (page.HasDirectPageContent)
             {
-                Assert.AreEqual(expectedMargins[i], page.Examples[i].Margin, uniqueId + " example " + i);
+                var examples = FindDescendants<ControlExample>((DependencyObject)page.DirectPageContent).ToArray();
+
+                Assert.AreEqual(expectedMargins.Length, examples.Length, uniqueId);
+                for (var i = 0; i < expectedMargins.Length; i++)
+                {
+                    Assert.AreEqual(expectedMargins[i], examples[i].Margin, uniqueId + " example " + i);
+                }
+            }
+            else
+            {
+                Assert.AreEqual(expectedMargins.Length, page.Examples.Count, uniqueId);
+                for (var i = 0; i < expectedMargins.Length; i++)
+                {
+                    Assert.AreEqual(expectedMargins[i], page.Examples[i].Margin, uniqueId + " example " + i);
+                }
             }
         }
 

@@ -74,11 +74,12 @@ record the checklist status below.
 
 Branch: `maintenance-reboot-1x`
 
-Latest implementation commit: `c4c31a18 Align WPF Gallery item descriptions`
+Latest implementation commit: see the current branch tip; this document is
+updated with each coherent round.
 
 Goal tracker status in Codex: paused, not complete.
 
-Local verification at `c4c31a18`:
+Latest local verification for the current branch tip:
 
 - `dotnet build test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Release -p:UseSharedCompilation=false`
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Release --no-build`
@@ -92,6 +93,7 @@ Local verification at `c4c31a18`:
 | WPF Gallery catalog sections | Done | WPF Gallery-equivalent sections are represented, including Design Guidance, Samples, Basic Input, Collections, Date & Calendar, Layout, Media, Navigation, Status & Info, Text, and System. |
 | ModernWpf/WinUI page preservation | Done | Distinct ModernWpf pages are kept where aliases overlap WPF pages. |
 | Page shell and header model | Mostly done | Item, section, support, and sample chrome have been moved toward WPF Gallery structure and spacing. |
+| WPF Gallery compatibility `PageHeader` | Done | ModernWpf Gallery has an adapted WPF Gallery-style `PageHeader` control for copied WPF-equivalent pages. |
 | Header descriptions | Done | Visible WPF item page descriptions now match official WPF Gallery view models, including empty description slots. |
 | Design Guidance pages | Mostly done | Color, Typography, Spacing, Geometry, and Iconography have WPF Gallery-oriented page coverage and tests. |
 | User Dashboard sample | Mostly done | WPF Gallery-style layout and behavior are represented and tested. |
@@ -99,7 +101,7 @@ Local verification at `c4c31a18`:
 | Collections pages | Mostly done | DataGrid, ListBox, ListView, and TreeView are covered by WPF Gallery parity tests. |
 | Date & Calendar pages | Mostly done | Calendar and DatePicker WPF pages are covered while keeping distinct WinUI-style pages. |
 | Layout pages | Mostly done | Expander, Grid, ResizeGrip, GridSplitter, GroupBox, StackPanel, Border, Canvas, and Image coverage exists through sample factories and tests. |
-| Media section | Done | Official WPF Gallery media pages are exposed in the catalog/navigation. |
+| Media section | Mostly done | Official WPF Gallery media pages are exposed in the catalog/navigation; Canvas and Image now use adapted WPF Gallery XAML pages. |
 | Navigation pages | Mostly done | Menu, TabControl, Frame, NavigationWindow, and Hyperlink coverage exists through sample factories and tests. |
 | Status & Info pages | Mostly done | ProgressBar and ToolTip coverage exists through sample factories and tests. |
 | Text pages | Mostly done | Label, TextBox, TextBlock, RichTextEdit, and PasswordBox coverage exists through sample factories and tests. |
@@ -111,7 +113,7 @@ Local verification at `c4c31a18`:
 | Area | Status | Next action |
 | --- | --- | --- |
 | Visual screenshot pass against official WPF Gallery | Open | Add or run a WPF Gallery reference capture pass and compare page-by-page screenshots, not just runtime structure. |
-| Page-by-page exact XAML audit | Open | For each WPF-equivalent page, compare ModernWpf sample factories against official WPF Gallery XAML and replace approximations with adapted copies where feasible. |
+| Page-by-page exact XAML audit | Open | For each WPF-equivalent page, compare ModernWpf sample factories against official WPF Gallery XAML and replace approximations with adapted copies where feasible. Canvas and Image are the first adapted XAML pages. |
 | Home page | Open | Compare first viewport, card layout, copy, and navigation affordances against official WPF Gallery. |
 | All controls page | Open | Verify grouping, sort order, card subtitles, tile sizing, and search behavior against official WPF Gallery. |
 | Section pages | Open | Verify each section's title, description, hero/card layout, item order, and empty-space behavior against official WPF Gallery. |
@@ -160,9 +162,9 @@ Use this checklist for future rounds.
 | GroupBox | Partial | Open | Open | Runtime parity checks exist. |
 | StackPanel | Partial | Open | Open | Runtime parity checks exist. |
 | Border | Partial | Open | Open | Runtime parity checks exist. |
-| Media section | Partial | Open | Open | Section exists; visual audit remains. |
-| Canvas | Partial | Open | Open | Header description aligned to official empty string. |
-| Image | Partial | Open | Open | Header description aligned to official empty string. |
+| Media section | Partial | Partial | Open | Canvas and Image now use adapted official WPF Gallery XAML; section visual audit remains. |
+| Canvas | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; screenshot parity remains. |
+| Image | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader`, `ControlExample`, and official image asset; screenshot parity remains. |
 | Navigation section | Partial | Open | Open | Section visual audit remains. |
 | Menu | Partial | Open | Open | Runtime parity checks exist. |
 | TabControl | Partial | Open | Open | Runtime parity checks exist. |
