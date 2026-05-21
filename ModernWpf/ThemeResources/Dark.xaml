@@ -144,6 +144,8 @@
     <SolidColorBrush x:Key="AcrylicInAppFillColorDefaultBrush" Color="{StaticResource SystemChromeMediumLowColor}" />
     <SolidColorBrush x:Key="AcrylicBackgroundFillColorDefaultInverseBrush" Color="#F2F2F2" />
     <SolidColorBrush x:Key="AcrylicBackgroundFillColorBaseBrush" Color="{StaticResource SystemChromeMediumLowColor}" />
+    <SolidColorBrush x:Key="AccentAcrylicBackgroundFillColorBaseBrush" Color="{m:DynamicColor SystemAccentColorLight3}" Opacity="0.8" />
+    <SolidColorBrush x:Key="AccentAcrylicBackgroundFillColorDefaultBrush" Color="{m:DynamicColor SystemAccentColorLight3}" Opacity="0.9" />
     <m:StaticResource x:Key="SystemControlDescriptionTextForegroundBrush" ResourceKey="SystemControlPageTextBaseMediumBrush" />
     <m:StaticResource x:Key="SystemControlTransientBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush" />
 
@@ -279,9 +281,11 @@
     <Color x:Key="LayerOnAccentAcrylicFillColorDefault">#09FFFFFF</Color>
     <Color x:Key="LayerOnMicaBaseAltFillColorDefault">#733A3A3A</Color>
     <Color x:Key="LayerOnMicaBaseAltFillColorSecondary">#0FFFFFFF</Color>
+    <Color x:Key="LayerOnMicaBaseAltFillColorTertiary">#FF2C2C2C</Color>
     <Color x:Key="LayerOnMicaBaseAltFillColorTransparent">#00FFFFFF</Color>
 
     <Color x:Key="SolidBackgroundFillColorBase">#202020</Color>
+    <Color x:Key="SolidBackgroundFillColorBaseAlt">#0A0A0A</Color>
     <Color x:Key="SolidBackgroundFillColorSecondary">#1C1C1C</Color>
     <Color x:Key="SolidBackgroundFillColorTertiary">#282828</Color>
     <Color x:Key="SolidBackgroundFillColorQuarternary">#2C2C2C</Color>
@@ -386,9 +390,11 @@
     <SolidColorBrush x:Key="LayerOnAccentAcrylicFillColorDefaultBrush" Color="{StaticResource LayerOnAccentAcrylicFillColorDefault}" />
     <SolidColorBrush x:Key="LayerOnMicaBaseAltFillColorDefaultBrush" Color="{StaticResource LayerOnMicaBaseAltFillColorDefault}" />
     <SolidColorBrush x:Key="LayerOnMicaBaseAltFillColorSecondaryBrush" Color="{StaticResource LayerOnMicaBaseAltFillColorSecondary}" />
+    <SolidColorBrush x:Key="LayerOnMicaBaseAltFillColorTertiaryBrush" Color="{StaticResource LayerOnMicaBaseAltFillColorTertiary}" />
     <SolidColorBrush x:Key="LayerOnMicaBaseAltFillColorTransparentBrush" Color="{StaticResource LayerOnMicaBaseAltFillColorTransparent}" />
 
     <SolidColorBrush x:Key="SolidBackgroundFillColorBaseBrush" Color="{StaticResource SolidBackgroundFillColorBase}" />
+    <SolidColorBrush x:Key="SolidBackgroundFillColorBaseAltBrush" Color="{StaticResource SolidBackgroundFillColorBaseAlt}" />
     <SolidColorBrush x:Key="SolidBackgroundFillColorSecondaryBrush" Color="{StaticResource SolidBackgroundFillColorSecondary}" />
     <SolidColorBrush x:Key="SolidBackgroundFillColorTertiaryBrush" Color="{StaticResource SolidBackgroundFillColorTertiary}" />
     <SolidColorBrush x:Key="SolidBackgroundFillColorQuarternaryBrush" Color="{StaticResource SolidBackgroundFillColorQuarternary}" />

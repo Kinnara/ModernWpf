@@ -1469,24 +1469,59 @@ namespace ModernWpf.Gallery.Pages
         private static StackPanel CreateBackgroundColorSection()
         {
             var root = new StackPanel();
-            root.Children.Add(CreateColorPageExample("Card Background", "For cards and elevated content surfaces", CreateBackgroundLayerExample("CardBackgroundFillColorDefaultBrush")));
-            root.Children.Add(CreateColorTilesPanel(
-                ColorTile("Card Background / Default", "CardBackgroundFillColorDefaultBrush", "Default card surface"),
-                ColorTile("Card Background / Secondary", "CardBackgroundFillColorSecondaryBrush", "Secondary card surface")));
 
-            root.Children.Add(CreateColorPageExample("Layer Background", "For layered surfaces in pages and acrylic", CreateBackgroundLayerExample("LayerFillColorDefaultBrush")));
+            root.Children.Add(CreateColorSectionPageExample("Card Background", "Used to create 'cards' - content blocks that live on page and layer backgrounds", CreateSimpleBackgroundExample("CardBackgroundFillColorDefaultBrush", 60, 30, new CornerRadius(4))));
             root.Children.Add(CreateColorTilesPanel(
-                ColorTile("Layer / Default", "LayerFillColorDefaultBrush", "Default layer"),
-                ColorTile("Layer / Alt", "LayerFillColorAltBrush", "Alternative layer"),
-                ColorTile("Layer On Acrylic / Default", "LayerOnAcrylicFillColorDefaultBrush", "On acrylic"),
-                ColorTile("Layer On Mica Base Alt / Default", "LayerOnMicaBaseAltFillColorDefaultBrush", "On mica base alt")));
+                ColorTile("Card Background / Default", "CardBackgroundFillColorDefaultBrush", "Default card color"),
+                ColorTile("Card Background / Secondary", "CardBackgroundFillColorSecondaryBrush", "Alternate card color: slightly darker"),
+                ColorTileWithBackground("Card Background / Tertiary", "CardBackgroundTertiaryBrush", "CardBackgroundFillColorDefaultBrush", "Default card hover and pressed color")));
 
-            root.Children.Add(CreateColorPageExample("Solid Background", "For base page and app backgrounds", CreateBackgroundLayerExample("SolidBackgroundFillColorBaseBrush")));
+            root.Children.Add(CreateColorPageExample("Smoke Background", "Used over windows and desktop to block them out as inaccessible.", CreateSimpleBackgroundExample("CardBackgroundFillColorDefaultBrush"), null, "SmokeFillColorDefaultBrush"));
             root.Children.Add(CreateColorTilesPanel(
-                ColorTile("Solid Background / Base", "SolidBackgroundFillColorBaseBrush", "App base"),
-                ColorTile("Solid Background / Secondary", "SolidBackgroundFillColorSecondaryBrush", "Secondary base"),
-                ColorTile("Solid Background / Tertiary", "SolidBackgroundFillColorTertiaryBrush", "Tertiary base"),
-                ColorTile("Solid Background / Quarternary", "SolidBackgroundFillColorQuarternaryBrush", "Quarternary base")));
+                ColorTile("Smoke / Default", "SmokeFillColorDefaultBrush", "Dims backgrounds behind dialogs")));
+
+            root.Children.Add(CreateColorSectionPageExample("Layer", "Used on background colors of any material to create layering", CreateLayerBackgroundExample("AcrylicBackgroundFillColorBaseBrush", "LayerFillColorDefaultBrush")));
+            root.Children.Add(CreateColorTilesPanel(
+                ColorTile("Layer / Default", "LayerFillColorDefaultBrush", "Content layer color"),
+                ColorTile("Layer / Alt", "LayerFillColorAltBrush", "Alternate content layer color")));
+
+            root.Children.Add(CreateColorSectionPageExample("Layer on Acrylic", "Used on background colors of any material to create layering.", CreateLayerBackgroundExample("AcrylicBackgroundFillColorBaseBrush", "LayerOnAcrylicFillColorDefaultBrush")));
+            root.Children.Add(CreateColorTilesPanel(
+                ColorTile("Layer On Acrylic / Default", "LayerOnAcrylicFillColorDefaultBrush", "Content layer color on acrylic surfaces")));
+
+            root.Children.Add(CreateColorSectionPageExample("Layer on Mica Base Alt", "Used for fills on Tab control.", CreateLayerOnMicaBaseAltExample()));
+            root.Children.Add(CreateColorTilesPanel(
+                ColorTile("Layer On Mica Base Alt / Default", "LayerOnMicaBaseAltFillColorDefaultBrush", "Active Tab Rest, Content layer", "TextFillColorPrimaryBrush"),
+                ColorTile("Layer On Mica Base Alt / Tertiary", "LayerOnMicaBaseAltFillColorTertiaryBrush", "Active Tab Drag", "TextFillColorPrimaryBrush")));
+            root.Children.Add(CreateColorTilesPanel(
+                ColorTile("Layer On Mica Base Alt / Transparent", "LayerOnMicaBaseAltFillColorTransparentBrush", "Inactive Tab Rest", "TextFillColorPrimaryBrush"),
+                ColorTile("Layer On Mica Base Alt / Secondary", "LayerOnMicaBaseAltFillColorSecondaryBrush", "Inactive Tab Hover", "TextFillColorPrimaryBrush")));
+
+            root.Children.Add(CreateColorSectionPageExample("Solid Background", "Solid background colors to place layers, cards or controls on.", CreateSimpleBackgroundExample("SolidBackgroundFillColorBaseBrush", 120, 40, new CornerRadius(4))));
+            root.Children.Add(CreateColorTilesPanel(
+                ColorTile("Solid Background / Base", "SolidBackgroundFillColorBaseBrush", "Used for the bottom most layer of an experience.", "TextFillColorPrimaryBrush"),
+                ColorTile("Solid Background / Base Alt", "SolidBackgroundFillColorBaseAltBrush", "Used for the bottom most layer of an experience.", "TextFillColorPrimaryBrush"),
+                ColorTile("Solid Background / Secondary", "SolidBackgroundFillColorSecondaryBrush", "Alternate base color for those who need a darker background color.", "TextFillColorPrimaryBrush"),
+                ColorTile("Solid Background / Tertiary", "SolidBackgroundFillColorTertiaryBrush", "Content layer color", "TextFillColorPrimaryBrush")));
+            root.Children.Add(CreateColorTilesPanel(
+                ColorTile("Solid Background / Quarternary", "SolidBackgroundFillColorQuarternaryBrush", "Alt content layer color.", "TextFillColorPrimaryBrush"),
+                ColorTileWithBackground("Solid Background / Quinary", "SolidBackgroundFillColorQuinaryBrush", "SolidBackgroundFillColorQuarternaryBrush", "Used for solid default card colors"),
+                ColorTileWithBackground("Solid Background / Senary", "SolidBackgroundFillColorSenaryBrush", "SolidBackgroundFillColorQuarternaryBrush", "Used for solid default card color")));
+
+            root.Children.Add(CreateColorSectionPageExample("Mica Background", "Mica background colors to place layers, cards, or controls on.", CreateSimpleBackgroundExample("AcrylicBackgroundFillColorBaseBrush")));
+            root.Children.Add(CreateColorTilesPanel(
+                ColorTileWithBackground("Mica Background / Base", "MicaBackgroundFillColorBaseBrush", "LayerOnAcrylicFillColorDefaultBrush", "Used for the bottom most layer of an experience."),
+                ColorTileWithBackground("Mica Background / Base Alt", "MicaBackgroundFillColorBaseAltBrush", "LayerOnAcrylicFillColorDefaultBrush", "Default tab band background color.")));
+
+            root.Children.Add(CreateColorSectionPageExample("Acrylic Background", "Acrylic background colors to place layers, cards, or controls on.", CreateSimpleBackgroundExample("AcrylicBackgroundFillColorBaseBrush")));
+            root.Children.Add(CreateColorTilesPanel(
+                ColorTile("Acrylic Background / Base", "AcrylicBackgroundFillColorBaseBrush", "Used for the bottom most layer of an acrylic surface only when the surface will use layers."),
+                ColorTile("Acrylic Background / Default", "AcrylicBackgroundFillColorDefaultBrush", "Default acrylic recipe used for control flyouts and surfaces that live with in the context of an app.")));
+
+            root.Children.Add(CreateColorSectionPageExample("Accent Acrylic Background", "Acrylic background colors to place layers, cards, or controls on.", CreateSimpleBackgroundExample("AccentAcrylicBackgroundFillColorBaseBrush")));
+            root.Children.Add(CreateColorTilesPanel(
+                ColorTile("Accent Acrylic Background / Base", "AccentAcrylicBackgroundFillColorBaseBrush", "Used for the bottom most layer of an acrylic surface only when the surface will use layers."),
+                ColorTile("Accent Acrylic Background / Default", "AccentAcrylicBackgroundFillColorDefaultBrush", "Default acrylic recipe used for control flyouts and surfaces that live with in the context of an app.")));
             return root;
         }
 
@@ -1817,27 +1852,58 @@ namespace ModernWpf.Gallery.Pages
             return outerFocus;
         }
 
-        private static UIElement CreateBackgroundLayerExample(string backgroundResource)
+        private static UIElement CreateSimpleBackgroundExample(string backgroundResource)
+        {
+            return CreateSimpleBackgroundExample(backgroundResource, 120, 40, null);
+        }
+
+        private static UIElement CreateSimpleBackgroundExample(string backgroundResource, double width, double height, CornerRadius? cornerRadius)
         {
             var border = new Border
             {
-                Width = 220,
-                Height = 96,
-                Padding = new Thickness(16),
-                CornerRadius = new CornerRadius(8),
-                Child = new Border
-                {
-                    CornerRadius = new CornerRadius(4),
-                    Child = new TextBlock
-                    {
-                        Text = "Layer",
-                        HorizontalAlignment = HorizontalAlignment.Center,
-                        VerticalAlignment = VerticalAlignment.Center
-                    }
-                }
+                Width = width,
+                Height = height,
+                BorderThickness = new Thickness(1),
+                CornerRadius = cornerRadius ?? new CornerRadius(8)
             };
             border.SetResourceReference(Border.BackgroundProperty, backgroundResource);
-            ((Border)border.Child).SetResourceReference(Border.BackgroundProperty, "CardBackgroundFillColorDefaultBrush");
+            border.SetResourceReference(Border.BorderBrushProperty, "ControlStrongStrokeColorDefaultBrush");
+            return border;
+        }
+
+        private static UIElement CreateLayerBackgroundExample(string backgroundResource, string layerResource)
+        {
+            var outer = new Border
+            {
+                Width = 120,
+                Height = 40,
+                BorderThickness = new Thickness(1)
+            };
+            outer.SetResourceReference(Border.BackgroundProperty, backgroundResource);
+            outer.SetResourceReference(Border.BorderBrushProperty, "ControlStrongStrokeColorDefaultBrush");
+            outer.SetResourceReference(Border.CornerRadiusProperty, "OverlayCornerRadius");
+
+            var layer = new Border
+            {
+                Width = 90,
+                HorizontalAlignment = HorizontalAlignment.Right,
+                BorderThickness = new Thickness(1, 0, 0, 0)
+            };
+            layer.SetResourceReference(Border.BackgroundProperty, layerResource);
+            layer.SetResourceReference(Border.BorderBrushProperty, "ControlStrongStrokeColorDefaultBrush");
+            outer.Child = layer;
+            return outer;
+        }
+
+        private static UIElement CreateLayerOnMicaBaseAltExample()
+        {
+            var border = new Border
+            {
+                Width = 150,
+                Height = 30,
+                BorderThickness = new Thickness(1)
+            };
+            border.SetResourceReference(Border.BorderBrushProperty, "ControlStrokeColorSecondaryBrush");
             return border;
         }
 

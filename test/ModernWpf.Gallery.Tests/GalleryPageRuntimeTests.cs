@@ -303,6 +303,30 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual("Focus / Outer", AutomationProperties.GetName((UIElement)focusTiles.Children[0]));
                 Assert.AreEqual("Focus / Inner", AutomationProperties.GetName((UIElement)focusTiles.Children[1]));
 
+                selector.SelectedIndex = 3;
+                WpfTestHost.DoEvents();
+                var backgroundSection = (StackPanel)sectionHost.Content;
+                Assert.AreEqual(20, backgroundSection.Children.Count);
+                Assert.AreEqual("Card Background", GetColorPageExampleTitle(backgroundSection, 0));
+                Assert.AreEqual("Smoke Background", GetColorPageExampleTitle(backgroundSection, 2));
+                Assert.AreEqual("Layer", GetColorPageExampleTitle(backgroundSection, 4));
+                Assert.AreEqual("Layer on Acrylic", GetColorPageExampleTitle(backgroundSection, 6));
+                Assert.AreEqual("Layer on Mica Base Alt", GetColorPageExampleTitle(backgroundSection, 8));
+                Assert.AreEqual("Solid Background", GetColorPageExampleTitle(backgroundSection, 11));
+                Assert.AreEqual("Mica Background", GetColorPageExampleTitle(backgroundSection, 14));
+                Assert.AreEqual("Acrylic Background", GetColorPageExampleTitle(backgroundSection, 16));
+                Assert.AreEqual("Accent Acrylic Background", GetColorPageExampleTitle(backgroundSection, 18));
+
+                var cardTiles = GetColorTilesGrid(backgroundSection, 1);
+                Assert.AreEqual(3, cardTiles.ColumnDefinitions.Count);
+                Assert.AreEqual("Card Background / Tertiary", AutomationProperties.GetName((UIElement)cardTiles.Children[2]));
+
+                var micaTiles = GetColorTilesGrid(backgroundSection, 15);
+                Assert.AreEqual("Mica Background / Base Alt", AutomationProperties.GetName((UIElement)micaTiles.Children[1]));
+
+                var accentAcrylicTiles = GetColorTilesGrid(backgroundSection, 19);
+                Assert.AreEqual("Accent Acrylic Background / Default", AutomationProperties.GetName((UIElement)accentAcrylicTiles.Children[1]));
+
                 selector.SelectedIndex = 4;
                 WpfTestHost.DoEvents();
                 Assert.AreEqual("System Fill", GetColorPageExampleTitle((StackPanel)sectionHost.Content, 0));
