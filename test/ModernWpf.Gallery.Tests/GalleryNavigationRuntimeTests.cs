@@ -12,6 +12,7 @@ using ModernWpf.Controls;
 using ModernWpf.Gallery.Controls;
 using ModernWpf.Gallery.Models;
 using ModernWpf.Gallery.Pages;
+using ModernWpf.Gallery.Pages.WpfGallery;
 using ModernWpf.Gallery.Shell;
 using ModernWpf.Gallery.Testing;
 
@@ -134,6 +135,76 @@ namespace ModernWpf.Gallery.Tests
                 CollectionAssert.AreEqual(
                     GalleryCatalog.NewOrUpdatedItems.Select(item => item.UniqueId).ToArray(),
                     ((IEnumerable<GalleryItem>)page.RecentlyAddedOrUpdatedSamplesInfo).Select(item => item.UniqueId).ToArray());
+            });
+        }
+
+        [TestMethod]
+        public void TopLevelPagesUseOfficialWpfGalleryViewModels()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var homePage = new HomePage();
+                Assert.IsInstanceOfType(homePage.ViewModel, typeof(DashboardPageViewModel));
+                AssertNavigationCardIds(GalleryCatalog.OverviewGroups, homePage.ViewModel.NavigationCards, "Home");
+                AssertNavigationCardIds(GalleryCatalog.NewOrUpdatedItems, homePage.ViewModel.RecentlyAddedOrUpdatedSamplesInfo, "Home recently added");
+
+                var whatsNewPage = new WhatsNewPage();
+                Assert.IsInstanceOfType(whatsNewPage.ViewModel, typeof(WhatsNewPageViewModel));
+                Assert.AreEqual("What's new in WPF", whatsNewPage.ViewModel.PageTitle);
+                Assert.AreEqual("Discover all the new features, enhancements and APIs introduced in WPF", whatsNewPage.ViewModel.PageDescription);
+
+                string requestedItemId = null;
+                whatsNewPage.ItemRequested = uniqueId => requestedItemId = uniqueId;
+                whatsNewPage.ViewModel.NavigateCommand.Execute("MessageBox");
+                Assert.AreEqual("MessageBox", requestedItemId);
+
+                var allControlsPage = new AllControlsPage();
+                Assert.IsInstanceOfType(allControlsPage.ViewModel, typeof(AllSamplesPageViewModel));
+                Assert.AreEqual("All Controls", allControlsPage.ViewModel.PageTitle);
+                Assert.AreEqual(string.Empty, allControlsPage.ViewModel.PageDescription);
+                AssertNavigationCardIds(GalleryCatalog.AllControlsItems, allControlsPage.ViewModel.NavigationCards, "All Controls");
+            });
+        }
+
+        [TestMethod]
+        public void SectionPagesUseOfficialWpfGalleryViewModels()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var expectedViewModels = new[]
+                {
+                    new { UniqueId = "DesignGuidance", ViewModelType = typeof(DesignGuidancePageViewModel) },
+                    new { UniqueId = "Samples", ViewModelType = typeof(SamplesPageViewModel) },
+                    new { UniqueId = "BasicInput", ViewModelType = typeof(BasicInputPageViewModel) },
+                    new { UniqueId = "Collections", ViewModelType = typeof(CollectionsPageViewModel) },
+                    new { UniqueId = "DateAndCalendar", ViewModelType = typeof(DateAndTimePageViewModel) },
+                    new { UniqueId = "Layout", ViewModelType = typeof(LayoutPageViewModel) },
+                    new { UniqueId = "Media", ViewModelType = typeof(MediaPageViewModel) },
+                    new { UniqueId = "Navigation", ViewModelType = typeof(NavigationPageViewModel) },
+                    new { UniqueId = "StatusAndInfo", ViewModelType = typeof(StatusAndInfoPageViewModel) },
+                    new { UniqueId = "Text", ViewModelType = typeof(TextPageViewModel) },
+                    new { UniqueId = "System", ViewModelType = typeof(SystemPageViewModel) }
+                };
+
+                foreach (var expected in expectedViewModels)
+                {
+                    var group = GalleryCatalog.FindGroup(expected.UniqueId);
+                    Assert.IsNotNull(group, expected.UniqueId);
+
+                    var page = new SectionPage(group);
+                    Assert.IsInstanceOfType(page.ViewModel, expected.ViewModelType, expected.UniqueId);
+                    Assert.AreEqual(group.Title, page.ViewModel.PageTitle, expected.UniqueId);
+                    Assert.AreEqual(group.PageDescription, page.ViewModel.PageDescription, expected.UniqueId);
+                    AssertNavigationCardIds(group.Items, page.ViewModel.NavigationCards, expected.UniqueId);
+                }
+
+                var modernWpfGroup = GalleryCatalog.FindGroup("ModernWpfControls");
+                Assert.IsNotNull(modernWpfGroup);
+
+                var modernWpfPage = new SectionPage(modernWpfGroup);
+
+                Assert.AreEqual(typeof(WpfGalleryNavigationPageViewModel), modernWpfPage.ViewModel.GetType());
+                AssertNavigationCardIds(modernWpfGroup.Items, modernWpfPage.ViewModel.NavigationCards, modernWpfGroup.UniqueId);
             });
         }
 
@@ -331,6 +402,22 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(240d, descriptionText.Width);
                 Assert.AreEqual(0.7, descriptionText.Opacity, 0.001);
             }
+        }
+
+        private static void AssertNavigationCardIds(IReadOnlyList<GalleryGroup> expected, IReadOnlyList<GalleryGroup> actual, string context)
+        {
+            CollectionAssert.AreEqual(
+                expected.Select(group => group.UniqueId).ToArray(),
+                actual.Select(group => group.UniqueId).ToArray(),
+                context);
+        }
+
+        private static void AssertNavigationCardIds(IReadOnlyList<GalleryItem> expected, IReadOnlyList<GalleryItem> actual, string context)
+        {
+            CollectionAssert.AreEqual(
+                expected.Select(item => item.UniqueId).ToArray(),
+                actual.Select(item => item.UniqueId).ToArray(),
+                context);
         }
 
         private static void RenderPage(FrameworkElement page, Action assert)

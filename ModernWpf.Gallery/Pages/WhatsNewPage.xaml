@@ -45,7 +45,7 @@
                     x:Name="WhatsNewTitleTextBlock"
                     AutomationProperties.AutomationId="GalleryWhatsNewPageTitle"
                     Style="{StaticResource TitleTextBlockStyle}"
-                    Text="What's new in WPF" />
+                    Text="{Binding ViewModel.PageTitle}" />
             </Label>
             <Label
                 x:Name="DescriptionLabel"
@@ -55,7 +55,7 @@
                 <TextBlock
                     x:Name="WhatsNewDescriptionTextBlock"
                     Style="{StaticResource BodyTextBlockStyle}"
-                    Text="Discover all the new features, enhancements and APIs introduced in WPF" />
+                    Text="{Binding ViewModel.PageDescription}" />
             </Label>
         </StackPanel>
 
@@ -100,7 +100,7 @@
                     x:Name="GridShorthandSyntaxExample"
                     Margin="2,10,2,24"
                     HeaderText="Grid Shorthand Syntax Sample"
-                    XamlCode="{Binding GridShorthandSyntaxXamlCode}">
+                    XamlCode="{Binding ViewModel.GridShorthandSyntaxXamlCode}">
                     <Grid HorizontalAlignment="Left">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -210,7 +210,7 @@
                     x:Name="AccentColorExample"
                     Margin="2,10"
                     HeaderText="AccentColor API"
-                    XamlCode="{Binding AccentColorXamlCode}">
+                    XamlCode="{Binding ViewModel.AccentColorXamlCode}">
                     <Grid>
                         <StackPanel
                             x:Name="AccentColorSwatches"
@@ -285,7 +285,7 @@
                     x:Name="HyphenLigatureExample"
                     Margin="2,10"
                     HeaderText="Hyphen based ligature example"
-                    XamlCode="{Binding HyphenBasedLigatureXamlCode}">
+                    XamlCode="{Binding ViewModel.HyphenBasedLigatureXamlCode}">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock
                             Margin="0,0,16,0"

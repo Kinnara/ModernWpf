@@ -10,13 +10,13 @@ namespace ModernWpf.Gallery.Pages
     {
         public AllControlsPage()
         {
-            ViewModel = new WpfGalleryNavigationPageViewModel("All Controls", string.Empty, GalleryCatalog.AllControlsItems, OnNavigateCard);
+            ViewModel = new AllSamplesPageViewModel(OnNavigateCard);
             InitializeComponent();
             DataContext = this;
         }
 
         public Action<GalleryItem> ItemRequested { get; set; }
-        public WpfGalleryNavigationPageViewModel ViewModel { get; }
+        public AllSamplesPageViewModel ViewModel { get; }
 
         public ICommand NavigateCommand
         {

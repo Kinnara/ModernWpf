@@ -15,7 +15,7 @@ namespace ModernWpf.Gallery.Pages
                 throw new ArgumentNullException(nameof(group));
             }
 
-            ViewModel = new WpfGalleryNavigationPageViewModel(group.Title, group.PageDescription, group.Items, OnNavigateCard);
+            ViewModel = WpfGalleryNavigationPageViewModel.CreateForGroup(group, OnNavigateCard);
             InitializeComponent();
             DataContext = this;
         }

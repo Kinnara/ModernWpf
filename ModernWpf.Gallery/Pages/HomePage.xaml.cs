@@ -12,7 +12,7 @@ namespace ModernWpf.Gallery.Pages
     {
         public HomePage()
         {
-            ViewModel = new WpfGalleryDashboardPageViewModel(OnNavigateCard);
+            ViewModel = new DashboardPageViewModel(OnNavigateCard);
             InitializeComponent();
             SetWpfGalleryAutomation();
             DataContext = this;
@@ -21,7 +21,7 @@ namespace ModernWpf.Gallery.Pages
         public Action<GalleryItem> ItemRequested { get; set; }
         public Action<GalleryGroup> GroupRequested { get; set; }
         public Action AllControlsRequested { get; set; }
-        public WpfGalleryDashboardPageViewModel ViewModel { get; }
+        public DashboardPageViewModel ViewModel { get; }
 
         public ICommand NavigateCommand
         {
