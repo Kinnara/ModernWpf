@@ -7,12 +7,12 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
     {
         public RadioButtonPage()
         {
-            ViewModel = new WpfGalleryBasicInputPageViewModel("RadioButton");
+            ViewModel = new RadioButtonPageViewModel();
             DataContext = this;
             InitializeComponent();
         }
 
-        public WpfGalleryBasicInputPageViewModel ViewModel { get; }
+        public RadioButtonPageViewModel ViewModel { get; }
 
         private void RadioButton_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {

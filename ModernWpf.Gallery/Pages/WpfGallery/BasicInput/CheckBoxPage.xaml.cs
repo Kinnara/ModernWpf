@@ -6,11 +6,11 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
     {
         public CheckBoxPage()
         {
-            ViewModel = new WpfGalleryBasicInputPageViewModel("CheckBox");
+            ViewModel = new CheckBoxPageViewModel();
             DataContext = this;
             InitializeComponent();
         }
 
-        public WpfGalleryBasicInputPageViewModel ViewModel { get; }
+        public CheckBoxPageViewModel ViewModel { get; }
     }
 }

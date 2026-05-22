@@ -16,6 +16,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Gallery.Controls;
 using ModernWpf.Gallery.Models;
 using ModernWpf.Gallery.Pages;
+using ModernWpf.Gallery.Pages.WpfGallery.BasicInput;
 
 namespace ModernWpf.Gallery.Tests
 {
@@ -457,6 +458,19 @@ namespace ModernWpf.Gallery.Tests
                 AssertExampleMargins("TreeView", new Thickness(10));
                 AssertExampleMargins("DataGrid", new Thickness(10));
                 AssertExampleMargins("Hyperlink", new Thickness(10));
+            });
+        }
+
+        [TestMethod]
+        public void BasicInputPagesUseOfficialPageSpecificViewModels()
+        {
+            WpfTestHost.Run(() =>
+            {
+                AssertBasicInputViewModel<ButtonPage, ButtonPageViewModel>("Button", "Button");
+                AssertBasicInputViewModel<CheckBoxPage, CheckBoxPageViewModel>("CheckBox", "CheckBox");
+                AssertBasicInputViewModel<ComboBoxPage, ComboBoxPageViewModel>("ComboBox", "ComboBox");
+                AssertBasicInputViewModel<RadioButtonPage, RadioButtonPageViewModel>("RadioButton", "RadioButton");
+                AssertBasicInputViewModel<SliderPage, SliderPageViewModel>("Slider", "Slider");
             });
         }
 
@@ -2047,6 +2061,19 @@ namespace ModernWpf.Gallery.Tests
             {
                 Assert.AreEqual(expectedMargins[i], examples[i].Margin, uniqueId + " example " + i);
             }
+        }
+
+        private static void AssertBasicInputViewModel<TPage, TViewModel>(string uniqueId, string expectedTitle)
+            where TPage : FrameworkElement
+            where TViewModel : BasicInputPageViewModelBase
+        {
+            var itemPage = new ItemPage(GalleryCatalog.FindItem(uniqueId));
+            var directPage = (TPage)itemPage.DirectPageContent;
+            var viewModel = (TViewModel)directPage.GetType().GetProperty("ViewModel").GetValue(directPage, null);
+
+            Assert.AreEqual(expectedTitle, viewModel.PageTitle, uniqueId);
+            Assert.AreEqual(string.Empty, viewModel.PageDescription, uniqueId);
+            Assert.AreEqual(uniqueId + "PageViewModel", viewModel.GetType().Name, uniqueId);
         }
 
         private static void AssertSettingsSectionHeader(TextBlock header, string expectedText)

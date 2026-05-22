@@ -6,11 +6,11 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
     {
         public ButtonPage()
         {
-            ViewModel = new WpfGalleryBasicInputPageViewModel("Button");
+            ViewModel = new ButtonPageViewModel();
             DataContext = this;
             InitializeComponent();
         }
 
-        public WpfGalleryBasicInputPageViewModel ViewModel { get; }
+        public ButtonPageViewModel ViewModel { get; }
     }
 }

@@ -6,11 +6,11 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
     {
         public ComboBoxPage()
         {
-            ViewModel = new WpfGalleryBasicInputPageViewModel("ComboBox");
+            ViewModel = new ComboBoxPageViewModel();
             DataContext = this;
             InitializeComponent();
         }
 
-        public WpfGalleryBasicInputPageViewModel ViewModel { get; }
+        public ComboBoxPageViewModel ViewModel { get; }
     }
 }

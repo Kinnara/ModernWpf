@@ -6,11 +6,11 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
     {
         public SliderPage()
         {
-            ViewModel = new WpfGalleryBasicInputPageViewModel("Slider");
+            ViewModel = new SliderPageViewModel();
             DataContext = this;
             InitializeComponent();
         }
 
-        public WpfGalleryBasicInputPageViewModel ViewModel { get; }
+        public SliderPageViewModel ViewModel { get; }
     }
 }
