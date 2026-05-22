@@ -232,6 +232,12 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
                     content = "\tvar result = MessageBox.Show(\"Message\", \"Title\", MessageBoxButton.OKCancel);\n" +
                         "\tif (result == MessageBoxResult.OK)\n\t{\n\t    // User clicked OK\n\t}";
                     break;
+                case 2:
+                    content = "\tvar result = MessageBox.Show(\"Message\", \"Title\", MessageBoxButton.AbortRetryIgnore);\n" +
+                        "\tif (result == MessageBoxResult.Abort)\n\t{\n\t    // User clicked Abort\n\t}\n" +
+                        "\telse if (result == MessageBoxResult.Retry)\n\t{\n\t    // User clicked Retry\n\t}\n" +
+                        "\telse if (result == MessageBoxResult.Ignore)\n\t{\n\t    // User clicked Ignore\n\t}";
+                    break;
                 case 3:
                     content = "\tvar result = MessageBox.Show(\"Message\", \"Title\", MessageBoxButton.YesNoCancel);\n" +
                         "\tif (result == MessageBoxResult.Yes)\n\t{\n\t    // User clicked Yes\n\t}\n" +
@@ -241,6 +247,15 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
                     content = "\tvar result = MessageBox.Show(\"Message\", \"Title\", MessageBoxButton.YesNo);\n" +
                         "\tif (result == MessageBoxResult.Yes)\n\t{\n\t    // User clicked Yes\n\t}\n" +
                         "\telse if (result == MessageBoxResult.No)\n\t{\n\t    // User clicked No\n\t}";
+                    break;
+                case 5:
+                    content = "\tvar result = MessageBox.Show(\"Message\", \"Title\", MessageBoxButton.RetryCancel);\n" +
+                        "\tif (result == MessageBoxResult.Retry)\n\t{\n\t    // User clicked Retry\n\t}";
+                    break;
+                case 6:
+                    content = "\tvar result = MessageBox.Show(\"Message\", \"Title\", MessageBoxButton.CancelTryContinue);\n" +
+                        "\tif (result == MessageBoxResult.TryAgain)\n\t{\n\t    // User clicked Try Again\n\t}\n" +
+                        "\telse if (result == MessageBoxResult.Continue)\n\t{\n\t    // User clicked Continue\n\t}";
                     break;
                 default:
                     content = "\tMessageBox.Show(\"Message\", \"Title\", MessageBoxButton.OK);";
