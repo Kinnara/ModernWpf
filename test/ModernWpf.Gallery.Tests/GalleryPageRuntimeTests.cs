@@ -1611,6 +1611,9 @@ namespace ModernWpf.Gallery.Tests
             {
                 var page = new ItemPage(GalleryCatalog.FindItem("UserDashboard"));
                 var directPage = (FrameworkElement)page.DirectPageContent;
+                var directPageHost = (ContentControl)page.FindName("DirectPageContentHost");
+                Assert.AreEqual(new Thickness(0), directPageHost.Margin);
+
                 var root = (Grid)directPage.FindName("ContentRootGrid");
                 var window = new Window
                 {

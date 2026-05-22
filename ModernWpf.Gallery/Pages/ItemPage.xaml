@@ -204,8 +204,9 @@
         </ScrollViewer>
 
         <ContentControl
+            x:Name="DirectPageContentHost"
             Grid.Row="1"
-            Margin="0,0,0,24"
+            Margin="{Binding DirectPageContentMargin}"
             AutomationProperties.AutomationId="GallerySampleHost"
             Content="{Binding DirectPageContent}"
             Visibility="{Binding HasDirectPageContent, Converter={StaticResource BooleanToVisibilityConverter}}" />

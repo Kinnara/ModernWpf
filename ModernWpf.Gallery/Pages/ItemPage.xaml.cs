@@ -119,6 +119,16 @@ namespace ModernWpf.Gallery.Pages
 
         public object DirectPageContent { get; }
 
+        public Thickness DirectPageContentMargin
+        {
+            get
+            {
+                return string.Equals(_item.UniqueId, "UserDashboard", StringComparison.OrdinalIgnoreCase)
+                    ? new Thickness(0)
+                    : new Thickness(0, 0, 0, 24);
+            }
+        }
+
         public object PageBodyContent { get; }
 
         public bool HasDirectPageContent

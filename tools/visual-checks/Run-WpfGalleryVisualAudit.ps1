@@ -628,6 +628,23 @@ function Get-OfficialWpfGalleryReadyText($case) {
 }
 
 function Wait-OfficialWpfGalleryContentReady($window, $case) {
+    if ($case.Id -eq "UserDashboard") {
+        Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "official WPF Gallery content 'User Dashboard'" -Probe {
+            $frame = Find-DescendantByAutomationId $window "RootContentFrame"
+            if ($null -eq $frame) {
+                return $null
+            }
+
+            $users = Find-DescendantByAutomationId $frame "UserList"
+            if ($null -ne $users) {
+                return $users
+            }
+
+            return Find-DescendantByAutomationId $frame "NewUserButton"
+        } | Out-Null
+        return
+    }
+
     $readyText = Get-OfficialWpfGalleryReadyText $case
     if ([string]::IsNullOrWhiteSpace($readyText)) {
         return
