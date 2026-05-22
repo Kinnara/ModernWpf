@@ -10,10 +10,10 @@ namespace ModernWpf.Gallery.Pages
         public WhatsNewPage()
         {
             ViewModel = new WhatsNewPageViewModel(OnNavigateCard);
+            DataContext = this;
             InitializeComponent();
             GalleryAutomation.SetHeadingLevel(TitleLabel, GalleryAutomationHeadingLevel.Level1);
             GalleryAutomation.SetHeadingLevel(DescriptionLabel, GalleryAutomationHeadingLevel.Level2);
-            DataContext = this;
         }
 
         public Action<string> ItemRequested { get; set; }
