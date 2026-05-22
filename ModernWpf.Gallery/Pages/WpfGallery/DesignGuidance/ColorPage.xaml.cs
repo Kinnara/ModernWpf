@@ -22,7 +22,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 
         private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ColorSubpageNavigationFrame.Content = WpfGalleryExampleFactory.CreateColorSection(PageSelector.SelectedIndex);
+            ColorSubpageNavigationFrame.Content = WpfGalleryColorSectionFactory.Create(PageSelector.SelectedIndex);
         }
     }
 }

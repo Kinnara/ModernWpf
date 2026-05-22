@@ -22,11 +22,10 @@ namespace ModernWpf.Gallery.Pages
             var xamlSnippet = FindSampleSnippet(SampleSnippets, IsXamlSnippet);
             var csharpSnippet = FindSampleSnippet(SampleSnippets, IsCSharpSnippet);
             DirectPageContent = WpfGalleryPageRegistry.CreatePageContent(_item.UniqueId);
-            PageBodyContent = DirectPageContent == null ? WpfGalleryExampleFactory.CreatePageBodyContent(_item.UniqueId) : null;
-            var examples = DirectPageContent == null && PageBodyContent == null ? WpfGalleryExampleFactory.Create(_item.UniqueId) : Array.Empty<GalleryExample>();
-            UsesWpfGalleryPageMode = DirectPageContent != null || PageBodyContent != null || examples.Count != 0;
-            NoticeContent = PageBodyContent == null ? WpfGalleryExampleFactory.CreateNotice(_item.UniqueId) : null;
-            if (examples.Count == 0 && DirectPageContent == null && PageBodyContent == null)
+            UsesWpfGalleryPageMode = DirectPageContent != null;
+
+            var examples = Array.Empty<GalleryExample>();
+            if (DirectPageContent == null)
             {
                 var sampleContent = CreateWorkingSampleContent(_item.UniqueId);
                 if (sampleContent != null)
@@ -115,8 +114,6 @@ namespace ModernWpf.Gallery.Pages
 
         public bool UsesWpfGalleryPageMode { get; }
 
-        public object NoticeContent { get; }
-
         public object DirectPageContent { get; }
 
         public Thickness DirectPageContentMargin
@@ -129,26 +126,14 @@ namespace ModernWpf.Gallery.Pages
             }
         }
 
-        public object PageBodyContent { get; }
-
         public bool HasDirectPageContent
         {
             get { return DirectPageContent != null; }
         }
 
-        public bool HasPageBodyContent
-        {
-            get { return PageBodyContent != null; }
-        }
-
-        public bool HasNoticeContent
-        {
-            get { return NoticeContent != null; }
-        }
-
         public bool HasWpfSampleContent
         {
-            get { return Examples.Count != 0 || DirectPageContent != null || PageBodyContent != null; }
+            get { return Examples.Count != 0 || DirectPageContent != null; }
         }
 
         public bool ShowExamples

@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Windows;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ModernWpf.Gallery.Models;
 using ModernWpf.Gallery.Pages;
 
 namespace ModernWpf.Gallery.Tests
@@ -82,6 +83,24 @@ namespace ModernWpf.Gallery.Tests
 
                 Assert.IsFalse(WpfGalleryPageRegistry.HasDirectPageContent("NavigationView"));
                 Assert.IsNull(WpfGalleryPageRegistry.CreatePageContent("NavigationView"));
+            });
+        }
+
+        [TestMethod]
+        public void DirectPageRegistryItemsUseDirectPageHosting()
+        {
+            WpfTestHost.Run(() =>
+            {
+                foreach (var uniqueId in WpfGalleryDirectPageIds)
+                {
+                    var page = new ItemPage(GalleryCatalog.FindItem(uniqueId));
+
+                    Assert.IsTrue(page.UsesWpfGalleryPageMode, uniqueId);
+                    Assert.IsTrue(page.HasDirectPageContent, uniqueId);
+                    Assert.AreEqual(0, page.Examples.Count, uniqueId);
+                    Assert.IsFalse(page.ShowScrolledPageContent, uniqueId);
+                    Assert.IsFalse(page.ShowCatalogDetails, uniqueId);
+                }
             });
         }
     }
