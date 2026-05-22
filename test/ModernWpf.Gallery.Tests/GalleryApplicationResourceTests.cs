@@ -9,6 +9,7 @@ using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls;
 using ModernWpf.Gallery.Controls;
+using ModernWpf.Gallery.Models;
 using ModernWpf.Gallery.Pages;
 
 namespace ModernWpf.Gallery.Tests
@@ -192,6 +193,44 @@ namespace ModernWpf.Gallery.Tests
             });
         }
 
+        [TestMethod]
+        public void WpfGalleryCatalogControlImagesResolveFromApplicationResources()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var wpfGalleryGroupIds = new[]
+                {
+                    "DesignGuidance",
+                    "Samples",
+                    "BasicInput",
+                    "Collections",
+                    "DateAndCalendar",
+                    "Layout",
+                    "Media",
+                    "Navigation",
+                    "StatusAndInfo",
+                    "Text",
+                    "System"
+                };
+
+                var imagePaths = wpfGalleryGroupIds
+                    .Select(GalleryCatalog.FindGroup)
+                    .Where(group => group != null)
+                    .SelectMany(group => new[] { group.ImagePath }.Concat(group.Items.Select(item => item.ImagePath)))
+                    .Where(path => path.IndexOf("/Assets/ControlImages/", StringComparison.OrdinalIgnoreCase) >= 0)
+                    .Select(GetGalleryComponentRelativePath)
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToArray();
+
+                Assert.IsTrue(imagePaths.Length > 0);
+
+                foreach (var imagePath in imagePaths)
+                {
+                    AssertGalleryResourceExists(imagePath);
+                }
+            });
+        }
+
         private static int CountPlatformFluentThemeDictionaries(ResourceDictionary resources)
         {
             var count = IsPlatformFluentThemeDictionary(resources) ? 1 : 0;
@@ -231,6 +270,19 @@ namespace ModernWpf.Gallery.Tests
 
             Assert.IsNotNull(dynamicResource);
             Assert.AreEqual(resourceKey, dynamicResource.ResourceKey);
+        }
+
+        private static string GetGalleryComponentRelativePath(string imagePath)
+        {
+            const string prefix = "pack://application:,,,/ModernWpf.Gallery;component/";
+
+            Assert.IsTrue(
+                imagePath.StartsWith(prefix, StringComparison.OrdinalIgnoreCase),
+                "Expected '{0}' to start with '{1}'.",
+                imagePath,
+                prefix);
+
+            return imagePath.Substring(prefix.Length);
         }
 
         private static void AssertGalleryResourceExists(string relativePath)

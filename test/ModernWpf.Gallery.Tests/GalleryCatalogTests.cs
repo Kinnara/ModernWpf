@@ -116,6 +116,60 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void WpfGalleryItemCardsMatchOfficialCatalogArtwork()
+        {
+            var expected = new[]
+            {
+                new { UniqueId = "Color", ImageFileName = "ColorPaletteResources.png" },
+                new { UniqueId = "Typography", ImageFileName = "TextBlock.png" },
+                new { UniqueId = "Spacing", ImageFileName = "CompactSizing.png" },
+                new { UniqueId = "Geometry", ImageFileName = "Border.png" },
+                new { UniqueId = "Iconography", ImageFileName = "IconElement.png" },
+                new { UniqueId = "UserDashboard", ImageFileName = "PersonPicture.png" },
+                new { UniqueId = "Button", ImageFileName = "Button.png" },
+                new { UniqueId = "CheckBox", ImageFileName = "Checkbox.png" },
+                new { UniqueId = "ComboBox", ImageFileName = "Checkbox.png" },
+                new { UniqueId = "RadioButton", ImageFileName = "RadioButton.png" },
+                new { UniqueId = "Slider", ImageFileName = "Slider.png" },
+                new { UniqueId = "DataGrid", ImageFileName = "DataGrid.png" },
+                new { UniqueId = "ListBox", ImageFileName = "ListBox.png" },
+                new { UniqueId = "ListView", ImageFileName = "ListView.png" },
+                new { UniqueId = "TreeView", ImageFileName = "TreeView.png" },
+                new { UniqueId = "Calendar", ImageFileName = "CalendarView.png" },
+                new { UniqueId = "DatePicker", ImageFileName = "DatePicker.png" },
+                new { UniqueId = "Expander", ImageFileName = "Expander.png" },
+                new { UniqueId = "Grid", ImageFileName = "Grid.png" },
+                new { UniqueId = "ResizeGrip", ImageFileName = "ResizeGrip.png" },
+                new { UniqueId = "GridSplitter", ImageFileName = "GridSplitter.png" },
+                new { UniqueId = "GroupBox", ImageFileName = "GroupBox.png" },
+                new { UniqueId = "StackPanel", ImageFileName = "StackPanel.png" },
+                new { UniqueId = "Border", ImageFileName = "Border.png" },
+                new { UniqueId = "Canvas", ImageFileName = "Canvas.png" },
+                new { UniqueId = "Image", ImageFileName = "Image.png" },
+                new { UniqueId = "Menu", ImageFileName = "Pivot.png" },
+                new { UniqueId = "TabControl", ImageFileName = "TabView.png" },
+                new { UniqueId = "Frame", ImageFileName = "MenuBar.png" },
+                new { UniqueId = "NavigationWindow", ImageFileName = "CreateMultipleWindows.png" },
+                new { UniqueId = "ProgressBar", ImageFileName = "ProgressBar.png" },
+                new { UniqueId = "ToolTip", ImageFileName = "ToolTip.png" },
+                new { UniqueId = "Label", ImageFileName = "Button.png" },
+                new { UniqueId = "TextBox", ImageFileName = "TextBox.png" },
+                new { UniqueId = "TextBlock", ImageFileName = "TextBlock.png" },
+                new { UniqueId = "RichTextEdit", ImageFileName = "RichEditBox.png" },
+                new { UniqueId = "PasswordBox", ImageFileName = "PasswordBox.png" },
+                new { UniqueId = "Hyperlink", ImageFileName = "HyperlinkButton.png" },
+                new { UniqueId = "FileAndFolderDialogs", ImageFileName = "FilePicker.png" },
+                new { UniqueId = "MessageBox", ImageFileName = "ContentDialog.png" },
+                new { UniqueId = "Clipboard", ImageFileName = "Clipboard.png" }
+            };
+
+            foreach (var item in expected)
+            {
+                AssertItemImage(item.UniqueId, item.ImageFileName);
+            }
+        }
+
+        [TestMethod]
         public void WpfGalleryOverviewGroupCardsMatchOfficialCatalogMetadata()
         {
             AssertGroupCard("BasicInput", "Basic Input", "Button, CheckBox, ComboBox, RadioButton, Slider", "Button.png");
