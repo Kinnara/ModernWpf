@@ -23,6 +23,7 @@ using ModernWpf.Gallery.Pages.WpfGallery.DateAndTime;
 using ModernWpf.Gallery.Pages.WpfGallery.Layout;
 using ModernWpf.Gallery.Pages.WpfGallery.Media;
 using ModernWpf.Gallery.Pages.WpfGallery.StatusAndInfo;
+using ModernWpf.Gallery.Pages.WpfGallery.Text;
 
 namespace ModernWpf.Gallery.Tests
 {
@@ -387,6 +388,25 @@ namespace ModernWpf.Gallery.Tests
                 AssertWpfGalleryPageViewModel<GroupBoxPage, GroupBoxPageViewModel>("GroupBox", "GroupBox", string.Empty);
                 AssertWpfGalleryPageViewModel<ResizeGripPage, ResizeGripPageViewModel>("ResizeGrip", "ResizeGrip", string.Empty);
                 AssertWpfGalleryPageViewModel<StackPanelPage, StackPanelPageViewModel>("StackPanel", "StackPanel", string.Empty);
+            });
+        }
+
+        [TestMethod]
+        public void TextPagesUseOfficialPageSpecificViewModels()
+        {
+            WpfTestHost.Run(() =>
+            {
+                AssertWpfGalleryPageViewModel<LabelPage, LabelPageViewModel>("Label", "Label", string.Empty);
+                AssertWpfGalleryPageViewModel<TextBoxPage, TextBoxPageViewModel>("TextBox", "TextBox", string.Empty);
+                AssertWpfGalleryPageViewModel<TextBlockPage, TextBlockPageViewModel>("TextBlock", "TextBlock", string.Empty);
+                AssertWpfGalleryPageViewModel<HyperlinkPage, HyperlinkPageViewModel>("Hyperlink", "Hyperlink", string.Empty);
+                AssertWpfGalleryPageViewModel<RichTextEditPage, RichTextEditPageViewModel>("RichTextEdit", "RichTextEdit", string.Empty);
+                AssertWpfGalleryPageViewModel<PasswordBoxPage, PasswordBoxPageViewModel>("PasswordBox", "PasswordBox", string.Empty);
+
+                var textBoxPage = (TextBoxPage)new ItemPage(GalleryCatalog.FindItem("TextBox")).DirectPageContent;
+                Assert.AreEqual(string.Empty, textBoxPage.ViewModel.ValidatedText);
+                textBoxPage.ViewModel.ValidatedText = "abc";
+                Assert.AreEqual("abc", textBoxPage.ViewModel.ValidatedText);
             });
         }
 

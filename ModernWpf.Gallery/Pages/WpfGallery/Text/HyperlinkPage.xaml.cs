@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using System.Windows.Controls;
 using System.Windows.Navigation;
-using ModernWpf.Gallery.Pages.WpfGallery;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.Text
 {
@@ -9,12 +8,12 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Text
     {
         public HyperlinkPage()
         {
-            ViewModel = new WpfGalleryPageViewModel("Hyperlink", string.Empty);
+            ViewModel = new HyperlinkPageViewModel();
             DataContext = this;
             InitializeComponent();
         }
 
-        public WpfGalleryPageViewModel ViewModel { get; }
+        public HyperlinkPageViewModel ViewModel { get; }
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
