@@ -122,6 +122,8 @@ namespace ModernWpf.Gallery.Pages
         {
             switch (uniqueId)
             {
+                case "Border":
+                    return new WpfGallery.Layout.BorderPage();
                 case "Button":
                     return new WpfGallery.BasicInput.ButtonPage();
                 case "Canvas":
@@ -136,8 +138,16 @@ namespace ModernWpf.Gallery.Pages
                     return new WpfGallery.Collections.DataGridPage();
                 case "DatePicker":
                     return new WpfGallery.DateAndTime.DatePickerPage();
+                case "Expander":
+                    return new WpfGallery.Layout.ExpanderPage();
                 case "Frame":
                     return new WpfGallery.Navigation.FramePage();
+                case "Grid":
+                    return new WpfGallery.Layout.GridPage();
+                case "GridSplitter":
+                    return new WpfGallery.Layout.GridSplitterPage();
+                case "GroupBox":
+                    return new WpfGallery.Layout.GroupBoxPage();
                 case "Hyperlink":
                     return new WpfGallery.Text.HyperlinkPage();
                 case "Image":
@@ -158,10 +168,14 @@ namespace ModernWpf.Gallery.Pages
                     return new WpfGallery.StatusAndInfo.ProgressBarPage();
                 case "RadioButton":
                     return new WpfGallery.BasicInput.RadioButtonPage();
+                case "ResizeGrip":
+                    return new WpfGallery.Layout.ResizeGripPage();
                 case "RichTextEdit":
                     return new WpfGallery.Text.RichTextEditPage();
                 case "Slider":
                     return new WpfGallery.BasicInput.SliderPage();
+                case "StackPanel":
+                    return new WpfGallery.Layout.StackPanelPage();
                 case "TabControl":
                     return new WpfGallery.Navigation.TabControlPage();
                 case "TextBlock":
