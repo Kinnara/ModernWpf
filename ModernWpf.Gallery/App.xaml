@@ -9,6 +9,7 @@
                 <ui:ThemeResources />
                 <ui:FluentControlsResources UseCompactResources="False" />
                 <ResourceDictionary Source="Resources/PageStyles.xaml" />
+                <ResourceDictionary Source="Resources/Templates.xaml" />
                 <ResourceDictionary Source="Controls/ControlExample.xaml" />
                 <ResourceDictionary Source="Controls/PageHeader.xaml" />
                 <ResourceDictionary Source="Controls/ColorPageExample.xaml" />

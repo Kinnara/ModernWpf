@@ -9,14 +9,6 @@
     d:DesignWidth="900"
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     mc:Ignorable="d">
-    <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="GalleryCard.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </UserControl.Resources>
-
     <Grid
         AutomationProperties.AutomationId="ContentRootGrid"
         Margin="-24,-16,-24,12"

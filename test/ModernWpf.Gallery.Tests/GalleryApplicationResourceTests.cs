@@ -83,6 +83,57 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void GalleryMergesWpfGalleryTemplatesResourceDictionary()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var app = Application.Current;
+                Assert.IsNotNull(app);
+
+                Assert.IsTrue(HasMergedDictionarySource(app.Resources, "Resources/Templates.xaml"));
+
+                var wrapPanelTemplate = (ItemsPanelTemplate)app.FindResource("WrapPanelTemplate");
+                var wrapPanel = (System.Windows.Controls.WrapPanel)wrapPanelTemplate.LoadContent();
+                Assert.AreEqual(new Thickness(10), wrapPanel.Margin);
+                Assert.AreEqual(Orientation.Horizontal, wrapPanel.Orientation);
+
+                var navigationCardTemplate = (DataTemplate)app.FindResource("NavigationCardTemplate");
+                var button = (Button)navigationCardTemplate.LoadContent();
+                Assert.AreEqual(360d, button.Width);
+                Assert.AreEqual(90d, button.Height);
+                Assert.AreEqual(new Thickness(7), button.Margin);
+                Assert.AreEqual(new Thickness(20, 10, 20, 10), button.Padding);
+                Assert.AreEqual(HorizontalAlignment.Left, button.HorizontalContentAlignment);
+                AssertBindingPath(button, Button.CommandProperty, "ViewModel.NavigateCommand");
+                AssertBindingPath(button, Button.CommandParameterProperty, string.Empty);
+
+                var automationNameBinding = BindingOperations.GetBindingExpression(button, AutomationProperties.NameProperty);
+                Assert.IsNotNull(automationNameBinding);
+                Assert.AreEqual("Title", automationNameBinding.ParentBinding.Path.Path);
+                Assert.AreEqual("{0}Page", automationNameBinding.ParentBinding.StringFormat);
+
+                var outerStack = (StackPanel)button.Content;
+                Assert.AreEqual(Orientation.Horizontal, outerStack.Orientation);
+
+                var image = (Image)outerStack.Children[0];
+                Assert.AreEqual(50d, image.Width);
+                Assert.AreEqual(50d, image.Height);
+                Assert.AreEqual(new Thickness(0, 0, 8, 0), image.Margin);
+                Assert.AreEqual(Stretch.Uniform, image.Stretch);
+
+                var innerStack = (StackPanel)outerStack.Children[1];
+                Assert.AreEqual(Orientation.Vertical, innerStack.Orientation);
+
+                var textBlocks = innerStack.Children.OfType<TextBlock>().ToArray();
+                Assert.AreEqual(2, textBlocks.Length);
+                Assert.AreEqual(new Thickness(10, 0, 0, 0), textBlocks[0].Margin);
+                Assert.AreEqual(AutomationHeadingLevel.Level3, AutomationProperties.GetHeadingLevel(textBlocks[0]));
+                Assert.AreEqual(240d, textBlocks[1].Width);
+                Assert.AreEqual(0.7, textBlocks[1].Opacity, 0.001);
+            });
+        }
+
+        [TestMethod]
         public void HomeHeaderTilesMatchWpfGalleryReferenceSlotGeometry()
         {
             WpfTestHost.Run(() =>
@@ -320,6 +371,13 @@ namespace ModernWpf.Gallery.Tests
 
             Assert.IsNotNull(dynamicResource);
             Assert.AreEqual(resourceKey, dynamicResource.ResourceKey);
+        }
+
+        private static void AssertBindingPath(DependencyObject target, DependencyProperty property, string expectedPath)
+        {
+            var bindingExpression = BindingOperations.GetBindingExpression(target, property);
+            Assert.IsNotNull(bindingExpression);
+            Assert.AreEqual(expectedPath, bindingExpression.ParentBinding.Path?.Path ?? string.Empty);
         }
 
         private static void AssertStyleSetter(Style style, DependencyProperty property, object value)
