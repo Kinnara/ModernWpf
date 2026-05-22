@@ -1,6 +1,5 @@
 using System.Windows;
 using System.Windows.Controls;
-using ModernWpf.Gallery.Pages.WpfGallery;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.Navigation
 {
@@ -8,12 +7,12 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Navigation
     {
         public FramePage()
         {
-            ViewModel = new WpfGalleryPageViewModel("Frame", string.Empty);
+            ViewModel = new FramePageViewModel();
             DataContext = this;
             InitializeComponent();
         }
 
-        public WpfGalleryPageViewModel ViewModel { get; }
+        public FramePageViewModel ViewModel { get; }
 
         private void OpenFrameWindow_Click(object sender, RoutedEventArgs e)
         {

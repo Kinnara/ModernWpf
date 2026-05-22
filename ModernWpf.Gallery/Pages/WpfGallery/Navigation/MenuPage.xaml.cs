@@ -1,6 +1,5 @@
 using System.Windows;
 using System.Windows.Controls;
-using ModernWpf.Gallery.Pages.WpfGallery;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.Navigation
 {
@@ -8,12 +7,12 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Navigation
     {
         public MenuPage()
         {
-            ViewModel = new WpfGalleryPageViewModel("Menu", string.Empty);
+            ViewModel = new MenuPageViewModel();
             DataContext = this;
             InitializeComponent();
         }
 
-        public WpfGalleryPageViewModel ViewModel { get; }
+        public MenuPageViewModel ViewModel { get; }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {

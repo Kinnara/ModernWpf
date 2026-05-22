@@ -2,7 +2,6 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
-using ModernWpf.Gallery.Pages.WpfGallery;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.Navigation
 {
@@ -10,12 +9,12 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Navigation
     {
         public NavigationWindowPage()
         {
-            ViewModel = new WpfGalleryPageViewModel("Navigation Window", string.Empty);
+            ViewModel = new NavigationWindowPageViewModel();
             DataContext = this;
             InitializeComponent();
         }
 
-        public WpfGalleryPageViewModel ViewModel { get; }
+        public NavigationWindowPageViewModel ViewModel { get; }
 
         private void OpenNavigationWindow_Click(object sender, RoutedEventArgs e)
         {

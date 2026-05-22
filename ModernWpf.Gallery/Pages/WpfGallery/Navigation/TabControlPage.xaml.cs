@@ -1,5 +1,4 @@
 using System.Windows.Controls;
-using ModernWpf.Gallery.Pages.WpfGallery;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.Navigation
 {
@@ -7,11 +6,11 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Navigation
     {
         public TabControlPage()
         {
-            ViewModel = new WpfGalleryPageViewModel("TabControl", string.Empty);
+            ViewModel = new TabControlPageViewModel();
             DataContext = this;
             InitializeComponent();
         }
 
-        public WpfGalleryPageViewModel ViewModel { get; }
+        public TabControlPageViewModel ViewModel { get; }
     }
 }

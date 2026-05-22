@@ -22,6 +22,7 @@ using ModernWpf.Gallery.Pages.WpfGallery.Collections;
 using ModernWpf.Gallery.Pages.WpfGallery.DateAndTime;
 using ModernWpf.Gallery.Pages.WpfGallery.Layout;
 using ModernWpf.Gallery.Pages.WpfGallery.Media;
+using ModernWpf.Gallery.Pages.WpfGallery.Navigation;
 using ModernWpf.Gallery.Pages.WpfGallery.StatusAndInfo;
 using ModernWpf.Gallery.Pages.WpfGallery.Text;
 
@@ -407,6 +408,18 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(string.Empty, textBoxPage.ViewModel.ValidatedText);
                 textBoxPage.ViewModel.ValidatedText = "abc";
                 Assert.AreEqual("abc", textBoxPage.ViewModel.ValidatedText);
+            });
+        }
+
+        [TestMethod]
+        public void NavigationPagesUseOfficialPageSpecificViewModels()
+        {
+            WpfTestHost.Run(() =>
+            {
+                AssertWpfGalleryPageViewModel<MenuPage, MenuPageViewModel>("Menu", "Menu", string.Empty);
+                AssertWpfGalleryPageViewModel<TabControlPage, TabControlPageViewModel>("TabControl", "TabControl", string.Empty);
+                AssertWpfGalleryPageViewModel<FramePage, FramePageViewModel>("Frame", "Frame", string.Empty);
+                AssertWpfGalleryPageViewModel<NavigationWindowPage, NavigationWindowPageViewModel>("NavigationWindow", "Navigation Window", string.Empty);
             });
         }
 
