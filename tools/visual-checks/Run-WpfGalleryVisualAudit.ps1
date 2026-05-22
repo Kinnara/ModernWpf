@@ -479,6 +479,19 @@ function Click-Element($element) {
     return $true
 }
 
+function Click-TreeItemHeader($item, [string]$name) {
+    if ($null -eq $item) {
+        return $false
+    }
+
+    $text = Find-DescendantByNameAndType $item $name ([System.Windows.Automation.ControlType]::Text)
+    if ($null -eq $text) {
+        return $false
+    }
+
+    return Click-Element $text
+}
+
 
 function Expand-Element($element) {
     if ($null -eq $element) {
@@ -540,10 +553,13 @@ function Navigate-OfficialWpfGallery($window, $case) {
 
             [WpfGalleryVisualNative]::PressEnter()
             Start-Sleep -Milliseconds 250
-            $clicked = Click-Element $item
-            $invoked = Invoke-Element $item
+            $clicked = Click-TreeItemHeader $item $name
+            if (!$clicked) {
+                $clicked = Click-Element $item
+            }
+
             $legacyInvoked = Invoke-LegacyDefaultAction $item
-            if (!$clicked -and !$invoked -and !$legacyInvoked) {
+            if (!$clicked -and !$legacyInvoked) {
                 throw "Could not invoke official WPF Gallery navigation item '$name'."
             }
         }
@@ -823,6 +839,21 @@ function Get-ImageArtifactInfo([string]$path, [string]$source) {
     }
 }
 
+function Test-ModernRenderedContentArtifact([string]$artifactDir) {
+    foreach ($fileName in @("ContentRootGrid.png", "GalleryContentHost.png")) {
+        $path = Join-Path $artifactDir $fileName
+        try {
+            if (Test-ImageNotBlank $path) {
+                return $true
+            }
+        }
+        catch {
+        }
+    }
+
+    return $false
+}
+
 function Capture-Window([IntPtr]$hwnd, [string]$path) {
     [WpfGalleryVisualNative]::Activate($hwnd)
     Start-Sleep -Milliseconds 300
@@ -1096,12 +1127,18 @@ function Capture-ModernWpf($case, [string]$caseDir) {
         [void][WpfGalleryVisualNative]::Move($window.Current.NativeWindowHandle, 60, 60, $Width, $Height)
         Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "ModernWpf route '$($case.ModernRoute)' to become ready" -Probe {
             $readyElement = Find-DescendantByAutomationId $window "GalleryVisualTestReadyState"
-            if ($null -eq $readyElement) {
+            if ($null -ne $readyElement -and $readyElement.Current.Name -eq "Ready:$($case.ModernRoute)") {
+                return $readyElement
+            }
+
+            if ($null -ne $readyElement -and $readyElement.Current.Name -like "Failed:*") {
                 return $null
             }
 
-            if ($readyElement.Current.Name -eq "Ready:$($case.ModernRoute)") {
-                return $readyElement
+            if (Test-ModernRenderedContentArtifact $artifactDir) {
+                return [pscustomobject]@{
+                    Source = "RenderedContentArtifact"
+                }
             }
 
             return $null
