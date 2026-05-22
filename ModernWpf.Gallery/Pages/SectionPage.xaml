@@ -55,22 +55,8 @@
             AutomationProperties.Name="Items in group"
             Focusable="False"
             Margin="-12,0,0,0"
-            ItemsSource="{Binding Items}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <WrapPanel Margin="10" />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Button
-                        AutomationProperties.Name="{Binding Title, StringFormat='{}{0}Page'}"
-                        Click="OnItemCardClick"
-                        Content="{Binding}"
-                        ContentTemplate="{StaticResource GalleryItemCardTemplate}"
-                        Style="{StaticResource GalleryCardButtonStyle}" />
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+            ItemsSource="{Binding Items}"
+            ItemsPanel="{StaticResource WrapPanelTemplate}"
+            ItemTemplate="{StaticResource NavigationCardTemplate}" />
     </Grid>
 </UserControl>

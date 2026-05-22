@@ -828,8 +828,18 @@ namespace ModernWpf.Gallery.Models
         public string UniqueId { get; }
         public string Title { get; }
         public string Subtitle { get; }
+        public string Description
+        {
+            get { return Subtitle; }
+        }
+
         public string PageDescription { get; }
         public string ImagePath { get; }
+        public Uri ImageSource
+        {
+            get { return string.IsNullOrEmpty(ImagePath) ? null : new Uri(ImagePath, UriKind.Absolute); }
+        }
+
         public bool IsSpecialSection { get; }
         public IReadOnlyList<GalleryItem> Items { get; }
 
@@ -874,6 +884,11 @@ namespace ModernWpf.Gallery.Models
         public string Title { get; }
         public string Subtitle { get; }
         public string ImagePath { get; }
+        public Uri ImageSource
+        {
+            get { return string.IsNullOrEmpty(ImagePath) ? null : new Uri(ImagePath, UriKind.Absolute); }
+        }
+
         public string Description { get; }
         public string ApiNamespace { get; }
         public bool IsNew { get; }

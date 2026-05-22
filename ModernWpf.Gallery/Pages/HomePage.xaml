@@ -103,23 +103,9 @@
                         AutomationProperties.Name="Items in group"
                         Focusable="False"
                         Margin="-20,0,0,0"
-                        ItemsSource="{Binding Groups}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <WrapPanel Margin="10" />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Button
-                                    AutomationProperties.Name="{Binding Title, StringFormat='{}{0}Page'}"
-                                    Click="OnGroupCardClick"
-                                    Content="{Binding}"
-                                    ContentTemplate="{StaticResource GalleryGroupCardTemplate}"
-                                    Style="{StaticResource GalleryCardButtonStyle}" />
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                        ItemsSource="{Binding Groups}"
+                        ItemsPanel="{StaticResource WrapPanelTemplate}"
+                        ItemTemplate="{StaticResource NavigationCardTemplate}" />
 
                     <TextBlock
                         x:Name="RecentlyAddedHeaderText"
@@ -132,23 +118,9 @@
                         AutomationProperties.Name="Recently Added and Updated Samples Section"
                         Focusable="False"
                         Margin="-18,0,0,0"
-                        ItemsSource="{Binding FeaturedItems}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <WrapPanel Margin="10" />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Button
-                                    AutomationProperties.Name="{Binding Title, StringFormat='{}{0}Page'}"
-                                    Click="OnItemCardClick"
-                                    Content="{Binding}"
-                                    ContentTemplate="{StaticResource GalleryItemCardTemplate}"
-                                    Style="{StaticResource GalleryCardButtonStyle}" />
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                        ItemsSource="{Binding FeaturedItems}"
+                        ItemsPanel="{StaticResource WrapPanelTemplate}"
+                        ItemTemplate="{StaticResource NavigationCardTemplate}" />
                 </StackPanel>
             </Grid>
         </ScrollViewer>

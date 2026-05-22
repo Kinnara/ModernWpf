@@ -1,5 +1,6 @@
 using System;
 using System.Windows.Automation;
+using System.Windows.Input;
 using ModernWpf.Gallery.Models;
 
 namespace ModernWpf.Gallery.Pages
@@ -8,6 +9,7 @@ namespace ModernWpf.Gallery.Pages
     {
         public SectionPage(GalleryGroup group)
         {
+            NavigateCommand = new GalleryCommand(OnNavigateCard);
             InitializeComponent();
             DataContext = group;
             AutomationProperties.SetName(TitleLabel, group.Title + " Page");
@@ -16,11 +18,11 @@ namespace ModernWpf.Gallery.Pages
         }
 
         public Action<GalleryItem> ItemRequested { get; set; }
+        public ICommand NavigateCommand { get; }
 
-        private void OnItemCardClick(object sender, System.Windows.RoutedEventArgs e)
+        private void OnNavigateCard(object parameter)
         {
-            var item = ((System.Windows.FrameworkElement)sender).DataContext as GalleryItem;
-            if (item != null)
+            if (parameter is GalleryItem item)
             {
                 ItemRequested?.Invoke(item);
             }

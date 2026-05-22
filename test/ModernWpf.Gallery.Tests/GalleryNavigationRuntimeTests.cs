@@ -148,7 +148,7 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(new Thickness(0), ((TextBlock)homePage.FindName("RecentlyAddedHeaderText")).Margin);
 
                     var firstGroup = GalleryCatalog.OverviewGroups.First();
-                    AssertRenderedNavigationCard((ItemsControl)homePage.FindName("OverviewItemsControl"), firstGroup.Title);
+                    AssertRenderedNavigationCard((ItemsControl)homePage.FindName("OverviewItemsControl"), firstGroup.Title, firstGroup.Description);
                 });
 
                 var basicInputGroup = GalleryCatalog.FindGroup("BasicInput");
@@ -159,7 +159,7 @@ namespace ModernWpf.Gallery.Tests
                     AssertPageHeaderLabel((Label)sectionPage.FindName("DescriptionLabel"), string.Empty, AutomationHeadingLevel.Level2, 1);
                     AssertNavigationItemsControl((ItemsControl)sectionPage.FindName("GroupItemsControl"), "Items in group");
                     AssertReferenceCategoryPageRoot((Grid)sectionPage.FindName("ContentRootGrid"), false);
-                    AssertRenderedNavigationCard((ItemsControl)sectionPage.FindName("GroupItemsControl"), basicInputGroup.Items.First().Title);
+                    AssertRenderedNavigationCard((ItemsControl)sectionPage.FindName("GroupItemsControl"), basicInputGroup.Items.First().Title, basicInputGroup.Items.First().Description);
                 });
 
                 var mediaGroup = GalleryCatalog.FindGroup("Media");
@@ -169,7 +169,7 @@ namespace ModernWpf.Gallery.Tests
                     AssertPageHeaderLabel((Label)mediaPage.FindName("TitleLabel"), "Media Controls Page", AutomationHeadingLevel.Level1, 0);
                     AssertPageHeaderLabel((Label)mediaPage.FindName("DescriptionLabel"), string.Empty, AutomationHeadingLevel.Level2, 1);
                     AssertReferenceCategoryPageRoot((Grid)mediaPage.FindName("ContentRootGrid"), false);
-                    AssertRenderedNavigationCard((ItemsControl)mediaPage.FindName("GroupItemsControl"), "Canvas");
+                    AssertRenderedNavigationCard((ItemsControl)mediaPage.FindName("GroupItemsControl"), "Canvas", GalleryCatalog.FindItem("Canvas").Description);
                 });
 
                 var allControlsPage = new AllControlsPage();
@@ -179,7 +179,7 @@ namespace ModernWpf.Gallery.Tests
                     AssertPageHeaderLabel((Label)allControlsPage.FindName("DescriptionLabel"), string.Empty, AutomationHeadingLevel.Level2, 1);
                     AssertNavigationItemsControl((ItemsControl)allControlsPage.FindName("AllControlsItemsControl"), "Items in group");
                     AssertReferenceCategoryPageRoot((Grid)allControlsPage.FindName("ContentRootGrid"), true);
-                    AssertRenderedNavigationCard((ItemsControl)allControlsPage.FindName("AllControlsItemsControl"), GalleryCatalog.AllControlsItems.First().Title);
+                    AssertRenderedNavigationCard((ItemsControl)allControlsPage.FindName("AllControlsItemsControl"), GalleryCatalog.AllControlsItems.First().Title, GalleryCatalog.AllControlsItems.First().Description);
                 });
 
                 var itemPage = new ItemPage(GalleryCatalog.FindItem("Color"));
@@ -244,18 +244,39 @@ namespace ModernWpf.Gallery.Tests
             }
         }
 
-        private static void AssertRenderedNavigationCard(ItemsControl itemsControl, string title)
+        private static void AssertRenderedNavigationCard(ItemsControl itemsControl, string title, string description)
         {
             itemsControl.UpdateLayout();
             WpfTestHost.DoEvents();
 
             var button = FindVisualChildren<Button>(itemsControl).FirstOrDefault();
             Assert.IsNotNull(button);
+            Assert.AreEqual(360d, button.Width);
+            Assert.AreEqual(90d, button.Height);
+            Assert.AreEqual(new Thickness(7), button.Margin);
+            Assert.AreEqual(new Thickness(20, 10, 20, 10), button.Padding);
+            Assert.AreEqual(HorizontalAlignment.Left, button.HorizontalContentAlignment);
+            Assert.IsNotNull(button.Command);
+            Assert.AreSame(itemsControl.Items[0], button.CommandParameter);
             Assert.AreEqual(title + "Page", AutomationProperties.GetName(button));
+
+            var image = FindVisualChildren<Image>(button).FirstOrDefault();
+            Assert.IsNotNull(image);
+            Assert.AreEqual(50d, image.Width);
+            Assert.AreEqual(50d, image.Height);
+            Assert.AreEqual(new Thickness(0, 0, 8, 0), image.Margin);
 
             var titleText = FindVisualChildren<TextBlock>(button).FirstOrDefault(textBlock => string.Equals(textBlock.Text, title, StringComparison.Ordinal));
             Assert.IsNotNull(titleText);
             Assert.AreEqual(AutomationHeadingLevel.Level3, AutomationProperties.GetHeadingLevel(titleText));
+
+            if (!string.IsNullOrEmpty(description))
+            {
+                var descriptionText = FindVisualChildren<TextBlock>(button).FirstOrDefault(textBlock => string.Equals(textBlock.Text, description, StringComparison.Ordinal));
+                Assert.IsNotNull(descriptionText);
+                Assert.AreEqual(240d, descriptionText.Width);
+                Assert.AreEqual(0.7, descriptionText.Opacity, 0.001);
+            }
         }
 
         private static void RenderPage(FrameworkElement page, Action assert)

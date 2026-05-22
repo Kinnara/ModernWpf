@@ -1,6 +1,7 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using ModernWpf.Gallery.Models;
 
 namespace ModernWpf.Gallery.Pages
@@ -9,6 +10,7 @@ namespace ModernWpf.Gallery.Pages
     {
         public HomePage()
         {
+            NavigateCommand = new GalleryCommand(OnNavigateCard);
             InitializeComponent();
             SetWpfGalleryAutomation();
             DataContext = this;
@@ -17,6 +19,7 @@ namespace ModernWpf.Gallery.Pages
         public Action<GalleryItem> ItemRequested { get; set; }
         public Action<GalleryGroup> GroupRequested { get; set; }
         public Action AllControlsRequested { get; set; }
+        public ICommand NavigateCommand { get; }
 
         public object FeaturedItems
         {
@@ -36,19 +39,13 @@ namespace ModernWpf.Gallery.Pages
             GalleryAutomation.SetHeadingLevel(RecentlyAddedHeaderText, GalleryAutomationHeadingLevel.Level2);
         }
 
-        private void OnItemCardClick(object sender, System.Windows.RoutedEventArgs e)
+        private void OnNavigateCard(object parameter)
         {
-            var item = ((System.Windows.FrameworkElement)sender).DataContext as GalleryItem;
-            if (item != null)
+            if (parameter is GalleryItem item)
             {
                 ItemRequested?.Invoke(item);
             }
-        }
-
-        private void OnGroupCardClick(object sender, System.Windows.RoutedEventArgs e)
-        {
-            var group = ((System.Windows.FrameworkElement)sender).DataContext as GalleryGroup;
-            if (group != null)
+            else if (parameter is GalleryGroup group)
             {
                 GroupRequested?.Invoke(group);
             }

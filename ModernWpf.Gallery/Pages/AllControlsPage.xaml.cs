@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Automation;
+using System.Windows.Input;
 using ModernWpf.Gallery.Models;
 
 namespace ModernWpf.Gallery.Pages
@@ -11,6 +12,7 @@ namespace ModernWpf.Gallery.Pages
 
         public AllControlsPage()
         {
+            NavigateCommand = new GalleryCommand(OnNavigateCard);
             InitializeComponent();
             FilteredItems = GalleryCatalog.AllControlsItems;
             DataContext = this;
@@ -21,6 +23,7 @@ namespace ModernWpf.Gallery.Pages
 
         public event PropertyChangedEventHandler PropertyChanged;
         public Action<GalleryItem> ItemRequested { get; set; }
+        public ICommand NavigateCommand { get; }
 
         public object FilteredItems
         {
@@ -32,10 +35,9 @@ namespace ModernWpf.Gallery.Pages
             }
         }
 
-        private void OnItemCardClick(object sender, System.Windows.RoutedEventArgs e)
+        private void OnNavigateCard(object parameter)
         {
-            var item = ((System.Windows.FrameworkElement)sender).DataContext as GalleryItem;
-            if (item != null)
+            if (parameter is GalleryItem item)
             {
                 ItemRequested?.Invoke(item);
             }

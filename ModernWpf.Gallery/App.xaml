@@ -102,55 +102,6 @@
             </Style>
 
             <Style
-                x:Key="GalleryCardButtonStyle"
-                BasedOn="{StaticResource DefaultButtonStyle}"
-                TargetType="Button">
-                <Setter Property="Width" Value="360" />
-                <Setter Property="Height" Value="90" />
-                <Setter Property="HorizontalContentAlignment" Value="Left" />
-                <Setter Property="VerticalContentAlignment" Value="Center" />
-                <Setter Property="Padding" Value="20,10" />
-                <Setter Property="Margin" Value="7" />
-            </Style>
-
-            <Style
-                x:Key="GalleryHeaderTileButtonStyle"
-                BasedOn="{StaticResource DefaultButtonStyle}"
-                TargetType="Button">
-                <Style.Resources>
-                    <SolidColorBrush
-                        x:Key="ButtonBackground"
-                        Color="{Binding Color, Source={StaticResource AcrylicBackgroundFillColorDefaultBrush}}"
-                        Opacity="0.8" />
-                    <SolidColorBrush
-                        x:Key="ButtonBackgroundPointerOver"
-                        Color="{Binding Color, Source={StaticResource AcrylicBackgroundFillColorDefaultBrush}}"
-                        Opacity="0.9" />
-                    <SolidColorBrush
-                        x:Key="ButtonBackgroundPressed"
-                        Color="{Binding Color, Source={StaticResource AcrylicBackgroundFillColorDefaultBrush}}" />
-                </Style.Resources>
-                <Setter Property="Width" Value="186" />
-                <Setter Property="Height" Value="208" />
-                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                <Setter Property="VerticalContentAlignment" Value="Stretch" />
-                <Setter Property="Padding" Value="24" />
-                <Setter Property="Margin" Value="6" />
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="Border.CornerRadius" Value="8" />
-            </Style>
-
-            <Style
-                x:Key="GalleryHeaderTileScrollButtonStyle"
-                BasedOn="{StaticResource DefaultButtonStyle}"
-                TargetType="Button">
-                <Setter Property="Width" Value="16" />
-                <Setter Property="Height" Value="38" />
-                <Setter Property="Padding" Value="0" />
-                <Setter Property="Border.CornerRadius" Value="4" />
-            </Style>
-
-            <Style
                 x:Key="GalleryMetaTextBlockStyle"
                 BasedOn="{StaticResource CaptionTextBlockStyle}"
                 TargetType="TextBlock">
