@@ -98,7 +98,7 @@ Latest local verification for the current branch tip:
 | Design Guidance pages | Mostly done | Color, Typography, Spacing, Geometry, and Iconography have WPF Gallery-oriented page coverage and tests. |
 | User Dashboard sample | Mostly done | WPF Gallery-style layout and behavior are represented and tested. |
 | Basic Input pages | Mostly done | Button, CheckBox, ComboBox, RadioButton, and Slider are covered by WPF Gallery parity tests. |
-| Collections pages | Mostly done | DataGrid, ListBox, ListView, and TreeView are covered by WPF Gallery parity tests. |
+| Collections pages | Mostly done | DataGrid, ListBox, ListView, and TreeView now use adapted official WPF Gallery XAML pages with direct-page runtime tests. |
 | Date & Calendar pages | Mostly done | Calendar and DatePicker now use adapted official WPF Gallery XAML pages while keeping distinct WinUI-style pages. |
 | Layout pages | Mostly done | Expander, Grid, ResizeGrip, GridSplitter, GroupBox, StackPanel, Border, Canvas, and Image coverage exists through sample factories and tests. |
 | Media section | Mostly done | Official WPF Gallery media pages are exposed in the catalog/navigation; Canvas and Image now use adapted WPF Gallery XAML pages. |
@@ -146,11 +146,11 @@ Use this checklist for future rounds.
 | ComboBox | Partial | Open | Open | Runtime parity checks exist. |
 | RadioButton | Partial | Open | Open | Runtime parity checks exist. |
 | Slider | Partial | Open | Open | Runtime parity checks exist. |
-| Collections section | Partial | Open | Open | Section visual audit remains. |
-| DataGrid | Partial | Open | Open | Runtime parity checks exist. |
-| ListBox | Partial | Open | Open | Runtime parity checks exist. |
-| ListView | Partial | Open | Open | Runtime parity checks exist. |
-| TreeView | Partial | Open | Open | Runtime parity checks exist. |
+| Collections section | Partial | Partial | Open | Collection item pages now use adapted official WPF Gallery XAML; section page visual audit remains. |
+| DataGrid | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; screenshot parity remains. |
+| ListBox | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; screenshot parity remains. |
+| ListView | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; screenshot parity remains. |
+| TreeView | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; screenshot parity remains. |
 | Date & Calendar section | Partial | Partial | Open | Date item pages now use adapted official WPF Gallery XAML; section page visual audit remains. |
 | Calendar | Done | Done | Open | Adapted from official WPF Gallery XAML; WPF page preserved separately from `CalendarView`; screenshot parity remains. |
 | DatePicker | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; screenshot parity remains. |

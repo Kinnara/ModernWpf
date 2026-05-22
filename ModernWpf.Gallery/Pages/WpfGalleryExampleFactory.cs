@@ -126,6 +126,8 @@ namespace ModernWpf.Gallery.Pages
                     return new WpfGallery.Media.CanvasPage();
                 case "Calendar":
                     return new WpfGallery.DateAndTime.CalendarPage();
+                case "DataGrid":
+                    return new WpfGallery.Collections.DataGridPage();
                 case "DatePicker":
                     return new WpfGallery.DateAndTime.DatePickerPage();
                 case "Hyperlink":
@@ -134,6 +136,10 @@ namespace ModernWpf.Gallery.Pages
                     return new WpfGallery.Media.ImagePage();
                 case "Label":
                     return new WpfGallery.Text.LabelPage();
+                case "ListBox":
+                    return new WpfGallery.Collections.ListBoxPage();
+                case "ListView":
+                    return new WpfGallery.Collections.ListViewPage();
                 case "PasswordBox":
                     return new WpfGallery.Text.PasswordBoxPage();
                 case "ProgressBar":
@@ -146,6 +152,8 @@ namespace ModernWpf.Gallery.Pages
                     return new WpfGallery.Text.TextBoxPage();
                 case "ToolTip":
                     return new WpfGallery.StatusAndInfo.ToolTipPage();
+                case "TreeView":
+                    return new WpfGallery.Collections.TreeViewPage();
                 case "UserDashboard":
                     return CreateUserDashboardPageContent();
                 default:
