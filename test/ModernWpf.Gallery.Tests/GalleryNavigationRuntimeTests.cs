@@ -105,6 +105,7 @@ namespace ModernWpf.Gallery.Tests
                 AssertFontIconGlyph(topLevelItems[3], "\uEF58");
                 AssertFontIconGlyph(topLevelItems[4], "\uE71D");
                 AssertFontIconGlyph(topLevelItems[5], "\uE73A");
+                AssertNavigationItemContentMargin(topLevelItems[0], 28);
                 Assert.IsFalse(topLevelItems[2].IsExpanded);
                 Assert.IsFalse(topLevelItems[3].IsExpanded);
                 Assert.IsFalse(topLevelItems[5].IsExpanded);
@@ -114,9 +115,11 @@ namespace ModernWpf.Gallery.Tests
                     new[] { "Colors", "Typography", "Spacing", "Geometry", "Icons" },
                     designGuidanceItems.Select(GetNavigationItemText).ToArray());
                 AssertFontIconGlyph(designGuidanceItems[0], "\uE790");
+                AssertNavigationItemContentMargin(designGuidanceItems[0], 15);
 
                 var basicInputItems = topLevelItems[5].MenuItems.OfType<NavigationViewItem>().ToList();
                 Assert.IsNull(basicInputItems[0].Icon);
+                AssertNavigationItemContentMargin(basicInputItems[0], 31);
 
                 var mediaItem = topLevelItems.Single(item => string.Equals(GetNavigationItemText(item), "Media Controls", StringComparison.Ordinal));
                 AssertFontIconGlyph(mediaItem, "\uE8B9");
@@ -322,15 +325,34 @@ namespace ModernWpf.Gallery.Tests
 
         private static string GetNavigationItemText(NavigationViewItem item)
         {
+            var automationName = AutomationProperties.GetName(item);
+            if (!string.IsNullOrEmpty(automationName))
+            {
+                return automationName;
+            }
+
             return item.Content as string;
         }
 
         private static void AssertFontIconGlyph(NavigationViewItem item, string expectedGlyph)
         {
             var icon = item.Icon as FontIcon;
+            if (icon != null)
+            {
+                Assert.AreEqual(expectedGlyph, icon.Glyph);
+                return;
+            }
 
-            Assert.IsNotNull(icon);
-            Assert.AreEqual(expectedGlyph, icon.Glyph);
+            var contentGrid = item.Content as Grid;
+            Assert.IsNotNull(contentGrid);
+            Assert.AreEqual(expectedGlyph, contentGrid.Tag as string);
+        }
+
+        private static void AssertNavigationItemContentMargin(NavigationViewItem item, double expectedLeft)
+        {
+            var contentGrid = item.Content as Grid;
+            Assert.IsNotNull(contentGrid);
+            Assert.AreEqual(expectedLeft, contentGrid.Margin.Left);
         }
 
         private static void AssertPageHeaderLabel(Label label, string automationName, AutomationHeadingLevel headingLevel, int tabIndex)
