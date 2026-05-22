@@ -1317,7 +1317,13 @@ namespace ModernWpf.Gallery.Tests
                 Assert.IsTrue(double.IsNaN(cardsImage.Width));
                 Assert.IsTrue(double.IsNaN(cardsImage.Height));
                 Assert.AreEqual("Example of spacing in a page with cards layout", AutomationProperties.GetName(cardsImage));
-                StringAssert.Contains(((BitmapImage)cardsImage.Source).UriSource.ToString(), "Cards.dark.png");
+                StringAssert.Contains(((BitmapImage)cardsImage.Source).UriSource.ToString(), "Cards.light.png");
+
+                Assert.AreEqual("Form layout", ((TextBlock)dialogFrame.Children[0]).Text);
+                Assert.AreEqual(500.0, ((Border)dialogFrame.Children[1]).Height);
+                var dialogImage = (Image)((Border)dialogFrame.Children[1]).Child;
+                Assert.AreEqual("Example of spacing in a form layout", AutomationProperties.GetName(dialogImage));
+                StringAssert.Contains(((BitmapImage)dialogImage.Source).UriSource.ToString(), "Dialog.light.png");
 
                 var typographyPage = new ItemPage(GalleryCatalog.FindItem("Typography"));
                 Assert.IsTrue(typographyPage.HasDirectPageContent);
@@ -1356,7 +1362,7 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(300.0, geometryImage.Height);
                 Assert.AreEqual(Stretch.Uniform, geometryImage.Stretch);
                 Assert.AreEqual("Example of corner radius.", AutomationProperties.GetName(geometryImage));
-                StringAssert.Contains(((BitmapImage)geometryImage.Source).UriSource.ToString(), "Geometry.dark.png");
+                StringAssert.Contains(((BitmapImage)geometryImage.Source).UriSource.ToString(), "Geometry.light.png");
 
                 var geometryExample = (ControlExample)geometryBody.Children[4];
                 Assert.IsNull(geometryExample.HeaderText);
