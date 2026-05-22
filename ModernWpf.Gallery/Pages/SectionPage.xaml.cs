@@ -1,5 +1,4 @@
 using System;
-using System.Windows.Automation;
 using System.Windows.Input;
 using ModernWpf.Gallery.Models;
 
@@ -12,9 +11,6 @@ namespace ModernWpf.Gallery.Pages
             NavigateCommand = new GalleryCommand(OnNavigateCard);
             InitializeComponent();
             DataContext = group;
-            AutomationProperties.SetName(TitleLabel, group.Title + " Page");
-            GalleryAutomation.SetHeadingLevel(TitleLabel, GalleryAutomationHeadingLevel.Level1);
-            GalleryAutomation.SetHeadingLevel(DescriptionLabel, GalleryAutomationHeadingLevel.Level2);
         }
 
         public Action<GalleryItem> ItemRequested { get; set; }

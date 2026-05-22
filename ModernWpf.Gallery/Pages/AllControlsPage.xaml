@@ -2,6 +2,7 @@
     x:Class="ModernWpf.Gallery.Pages.AllControlsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:ModernWpf.Gallery.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="700"
@@ -25,30 +26,12 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <StackPanel
+        <controls:PageHeader
+            x:Name="PageHeader"
             Grid.Row="0"
             Margin="0,0,0,40"
-            VerticalAlignment="Center">
-            <Label
-                x:Name="TitleLabel"
-                AutomationProperties.Name="All Controls Page"
-                Focusable="True"
-                KeyboardNavigation.IsTabStop="True"
-                KeyboardNavigation.TabIndex="0">
-                <TextBlock
-                    Style="{StaticResource TitleTextBlockStyle}"
-                    Text="All Controls" />
-            </Label>
-            <Label
-                x:Name="DescriptionLabel"
-                Focusable="True"
-                KeyboardNavigation.IsTabStop="True"
-                KeyboardNavigation.TabIndex="1">
-                <TextBlock
-                    Style="{StaticResource BodyTextBlockStyle}"
-                    Text="" />
-            </Label>
-        </StackPanel>
+            Title="{Binding PageTitle}"
+            Description="{Binding PageDescription}" />
 
         <ScrollViewer
             Grid.Row="1"
@@ -59,7 +42,7 @@
                 AutomationProperties.Name="Items in group"
                 Focusable="False"
                 Margin="-12,0,0,0"
-                ItemsSource="{Binding FilteredItems}"
+                ItemsSource="{Binding NavigationCards}"
                 ItemsPanel="{StaticResource WrapPanelTemplate}"
                 ItemTemplate="{StaticResource NavigationCardTemplate}" />
         </ScrollViewer>

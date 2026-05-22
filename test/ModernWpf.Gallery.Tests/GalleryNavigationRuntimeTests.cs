@@ -9,6 +9,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls;
+using ModernWpf.Gallery.Controls;
 using ModernWpf.Gallery.Models;
 using ModernWpf.Gallery.Pages;
 using ModernWpf.Gallery.Shell;
@@ -155,8 +156,7 @@ namespace ModernWpf.Gallery.Tests
                 var sectionPage = new SectionPage(basicInputGroup);
                 RenderPage(sectionPage, () =>
                 {
-                    AssertPageHeaderLabel((Label)sectionPage.FindName("TitleLabel"), "Basic Input Page", AutomationHeadingLevel.Level1, 0);
-                    AssertPageHeaderLabel((Label)sectionPage.FindName("DescriptionLabel"), string.Empty, AutomationHeadingLevel.Level2, 1);
+                    AssertReferencePageHeader((PageHeader)sectionPage.FindName("PageHeader"), basicInputGroup.Title, basicInputGroup.PageDescription);
                     AssertNavigationItemsControl((ItemsControl)sectionPage.FindName("GroupItemsControl"), "Items in group");
                     AssertReferenceCategoryPageRoot((Grid)sectionPage.FindName("ContentRootGrid"), false);
                     AssertRenderedNavigationCard((ItemsControl)sectionPage.FindName("GroupItemsControl"), basicInputGroup.Items.First().Title, basicInputGroup.Items.First().Description);
@@ -166,8 +166,7 @@ namespace ModernWpf.Gallery.Tests
                 var mediaPage = new SectionPage(mediaGroup);
                 RenderPage(mediaPage, () =>
                 {
-                    AssertPageHeaderLabel((Label)mediaPage.FindName("TitleLabel"), "Media Controls Page", AutomationHeadingLevel.Level1, 0);
-                    AssertPageHeaderLabel((Label)mediaPage.FindName("DescriptionLabel"), string.Empty, AutomationHeadingLevel.Level2, 1);
+                    AssertReferencePageHeader((PageHeader)mediaPage.FindName("PageHeader"), mediaGroup.Title, mediaGroup.PageDescription);
                     AssertReferenceCategoryPageRoot((Grid)mediaPage.FindName("ContentRootGrid"), false);
                     AssertRenderedNavigationCard((ItemsControl)mediaPage.FindName("GroupItemsControl"), "Canvas", GalleryCatalog.FindItem("Canvas").Description);
                 });
@@ -175,8 +174,7 @@ namespace ModernWpf.Gallery.Tests
                 var allControlsPage = new AllControlsPage();
                 RenderPage(allControlsPage, () =>
                 {
-                    AssertPageHeaderLabel((Label)allControlsPage.FindName("TitleLabel"), "All Controls Page", AutomationHeadingLevel.Level1, 0);
-                    AssertPageHeaderLabel((Label)allControlsPage.FindName("DescriptionLabel"), string.Empty, AutomationHeadingLevel.Level2, 1);
+                    AssertReferencePageHeader((PageHeader)allControlsPage.FindName("PageHeader"), "All Controls", string.Empty);
                     AssertNavigationItemsControl((ItemsControl)allControlsPage.FindName("AllControlsItemsControl"), "Items in group");
                     AssertReferenceCategoryPageRoot((Grid)allControlsPage.FindName("ContentRootGrid"), true);
                     AssertRenderedNavigationCard((ItemsControl)allControlsPage.FindName("AllControlsItemsControl"), GalleryCatalog.AllControlsItems.First().Title, GalleryCatalog.AllControlsItems.First().Description);
@@ -213,6 +211,28 @@ namespace ModernWpf.Gallery.Tests
             Assert.AreEqual(tabIndex, KeyboardNavigation.GetTabIndex(label));
             Assert.AreEqual(automationName, AutomationProperties.GetName(label));
             Assert.AreEqual(headingLevel, AutomationProperties.GetHeadingLevel(label));
+        }
+
+        private static void AssertReferencePageHeader(PageHeader pageHeader, string title, string description)
+        {
+            Assert.IsNotNull(pageHeader);
+            Assert.AreEqual(new Thickness(0, 0, 0, 40), pageHeader.Margin);
+            Assert.AreEqual(title, pageHeader.Title);
+            Assert.AreEqual(description, pageHeader.Description);
+
+            pageHeader.ApplyTemplate();
+
+            AssertPageHeaderLabel(
+                (Label)pageHeader.Template.FindName("TitleLabel", pageHeader),
+                title + " Page",
+                AutomationHeadingLevel.Level1,
+                0);
+
+            AssertPageHeaderLabel(
+                (Label)pageHeader.Template.FindName("DescriptionLabel", pageHeader),
+                string.Empty,
+                AutomationHeadingLevel.Level2,
+                1);
         }
 
         private static void AssertNavigationItemsControl(ItemsControl itemsControl, string automationName)
