@@ -47,6 +47,42 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void GalleryMergesWpfGalleryPageStylesResourceDictionary()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var app = Application.Current;
+                Assert.IsNotNull(app);
+
+                Assert.IsTrue(HasMergedDictionarySource(app.Resources, "Resources/PageStyles.xaml"));
+
+                Assert.AreEqual(12d, app.FindResource("CaptionTextBlockFontSize"));
+                Assert.AreEqual(14d, app.FindResource("BodyTextBlockFontSize"));
+                Assert.AreEqual(20d, app.FindResource("SubtitleTextBlockFontSize"));
+                Assert.AreEqual(28d, app.FindResource("TitleTextBlockFontSize"));
+                Assert.AreEqual(40d, app.FindResource("TitleLargeTextBlockFontSize"));
+                Assert.AreEqual(68d, app.FindResource("DisplayTextBlockFontSize"));
+
+                var baseTextStyle = (Style)app.FindResource("BaseTextBlockStyle");
+                AssertStyleSetter(baseTextStyle, TextBlock.FontSizeProperty, app.FindResource("BodyTextBlockFontSize"));
+                AssertStyleSetter(baseTextStyle, TextBlock.FontWeightProperty, FontWeights.SemiBold);
+                AssertStyleSetter(baseTextStyle, TextBlock.LineStackingStrategyProperty, LineStackingStrategy.MaxHeight);
+                AssertStyleSetter(baseTextStyle, TextBlock.TextTrimmingProperty, TextTrimming.CharacterEllipsis);
+                AssertStyleSetter(baseTextStyle, TextBlock.TextWrappingProperty, TextWrapping.Wrap);
+
+                var titleStyle = (Style)app.FindResource("TitleTextBlockStyle");
+                AssertStyleSetter(titleStyle, TextBlock.FontSizeProperty, app.FindResource("TitleTextBlockFontSize"));
+
+                var displayStyle = (Style)app.FindResource("DisplayTextBlockStyle");
+                AssertStyleSetter(displayStyle, TextBlock.FontSizeProperty, app.FindResource("DisplayTextBlockFontSize"));
+
+                var colorTilesStyle = (Style)app.FindResource("ColorTilesPanelStyle");
+                AssertStyleSetter(colorTilesStyle, Border.BorderThicknessProperty, new Thickness(1));
+                AssertStyleSetter(colorTilesStyle, Border.CornerRadiusProperty, new CornerRadius(8));
+            });
+        }
+
+        [TestMethod]
         public void HomeHeaderTilesMatchWpfGalleryReferenceSlotGeometry()
         {
             WpfTestHost.Run(() =>
@@ -248,6 +284,20 @@ namespace ModernWpf.Gallery.Tests
             return dictionary.Source?.ToString().StartsWith(PlatformFluentThemePrefix, StringComparison.OrdinalIgnoreCase) == true;
         }
 
+        private static bool HasMergedDictionarySource(ResourceDictionary resources, string sourceSuffix)
+        {
+            foreach (var dictionary in resources.MergedDictionaries)
+            {
+                if (dictionary.Source?.ToString().EndsWith(sourceSuffix, StringComparison.OrdinalIgnoreCase) == true ||
+                    HasMergedDictionarySource(dictionary, sourceSuffix))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private static void AssertHeaderTileBrush(object resource, SolidColorBrush acrylicBrush, double opacity)
         {
             var brush = resource as SolidColorBrush;
@@ -270,6 +320,12 @@ namespace ModernWpf.Gallery.Tests
 
             Assert.IsNotNull(dynamicResource);
             Assert.AreEqual(resourceKey, dynamicResource.ResourceKey);
+        }
+
+        private static void AssertStyleSetter(Style style, DependencyProperty property, object value)
+        {
+            var setter = style.Setters.OfType<Setter>().Single(item => item.Property == property);
+            Assert.AreEqual(value, setter.Value);
         }
 
         private static string GetGalleryComponentRelativePath(string imagePath)
