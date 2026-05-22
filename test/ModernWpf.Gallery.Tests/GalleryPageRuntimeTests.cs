@@ -904,24 +904,28 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual("Pick a date", AutomationProperties.GetName(datePicker));
 
                 var progressBarPage = new ItemPage(GalleryCatalog.FindItem("ProgressBar"));
-                Assert.AreEqual(2, progressBarPage.Examples.Count);
+                Assert.IsTrue(progressBarPage.HasDirectPageContent);
+                var progressBarExamples = GetRenderedExamples(progressBarPage);
+                Assert.AreEqual(2, progressBarExamples.Count);
                 CollectionAssert.AreEqual(
                     new[] { "A simple progress bar.", "An indeterminate progress bar." },
-                    progressBarPage.Examples.Select(example => example.HeaderText).ToArray());
-                var determinate = (ProgressBar)progressBarPage.Examples[0].ExampleContent;
+                    progressBarExamples.Select(example => example.HeaderText).ToArray());
+                var determinate = (ProgressBar)progressBarExamples[0].ExampleContent;
                 Assert.AreEqual(new Thickness(24), determinate.Margin);
                 Assert.AreEqual(40.0, determinate.Value);
                 Assert.IsFalse(determinate.IsIndeterminate);
                 Assert.AreEqual("A determinate", AutomationProperties.GetName(determinate));
-                var indeterminate = (ProgressBar)progressBarPage.Examples[1].ExampleContent;
+                var indeterminate = (ProgressBar)progressBarExamples[1].ExampleContent;
                 Assert.AreEqual(new Thickness(24), indeterminate.Margin);
                 Assert.IsTrue(indeterminate.IsIndeterminate);
                 Assert.AreEqual("An indeterminate", AutomationProperties.GetName(indeterminate));
 
                 var toolTipPage = new ItemPage(GalleryCatalog.FindItem("ToolTip"));
-                Assert.AreEqual(1, toolTipPage.Examples.Count);
-                Assert.AreEqual("A button with a simple ToolTip.", toolTipPage.Examples[0].HeaderText);
-                var toolTipButton = (Button)toolTipPage.Examples[0].ExampleContent;
+                Assert.IsTrue(toolTipPage.HasDirectPageContent);
+                var toolTipExamples = GetRenderedExamples(toolTipPage);
+                Assert.AreEqual(1, toolTipExamples.Count);
+                Assert.AreEqual("A button with a simple ToolTip.", toolTipExamples[0].HeaderText);
+                var toolTipButton = (Button)toolTipExamples[0].ExampleContent;
                 Assert.AreEqual("Button with a simple ToolTip.", toolTipButton.Content);
                 Assert.AreEqual("TooltipButton", AutomationProperties.GetName(toolTipButton));
                 Assert.AreEqual(100, ToolTipService.GetInitialShowDelay(toolTipButton));

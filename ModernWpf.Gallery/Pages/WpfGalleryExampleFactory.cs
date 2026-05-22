@@ -132,12 +132,16 @@ namespace ModernWpf.Gallery.Pages
                     return new WpfGallery.Text.LabelPage();
                 case "PasswordBox":
                     return new WpfGallery.Text.PasswordBoxPage();
+                case "ProgressBar":
+                    return new WpfGallery.StatusAndInfo.ProgressBarPage();
                 case "RichTextEdit":
                     return new WpfGallery.Text.RichTextEditPage();
                 case "TextBlock":
                     return new WpfGallery.Text.TextBlockPage();
                 case "TextBox":
                     return new WpfGallery.Text.TextBoxPage();
+                case "ToolTip":
+                    return new WpfGallery.StatusAndInfo.ToolTipPage();
                 case "UserDashboard":
                     return CreateUserDashboardPageContent();
                 default:
