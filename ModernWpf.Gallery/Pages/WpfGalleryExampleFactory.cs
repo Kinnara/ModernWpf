@@ -1445,15 +1445,15 @@ namespace ModernWpf.Gallery.Pages
             switch (index)
             {
                 case 1:
-                    return CreateFillColorSection();
+                    return new WpfGallery.DesignGuidance.FillSection();
                 case 2:
-                    return CreateStrokeColorSection();
+                    return new WpfGallery.DesignGuidance.StrokeSection();
                 case 3:
-                    return CreateBackgroundColorSection();
+                    return new WpfGallery.DesignGuidance.BackgroundSection();
                 case 4:
-                    return CreateSignalColorSection();
+                    return new WpfGallery.DesignGuidance.SignalSection();
                 case 5:
-                    return CreateHighContrastColorSection();
+                    return new WpfGallery.DesignGuidance.HighContrastSection();
                 default:
                     return new WpfGallery.DesignGuidance.TextSection();
             }

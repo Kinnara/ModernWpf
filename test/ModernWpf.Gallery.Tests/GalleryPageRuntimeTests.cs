@@ -1407,7 +1407,7 @@ namespace ModernWpf.Gallery.Tests
 
                 selector.SelectedIndex = 1;
                 WpfTestHost.DoEvents();
-                var fillSection = (StackPanel)sectionHost.Content;
+                var fillSection = GetColorSectionStack(sectionHost.Content);
                 Assert.AreEqual(17, fillSection.Children.Count);
                 Assert.AreEqual("Control Fill", GetColorPageExampleTitle(fillSection, 0));
                 Assert.AreEqual("Control Alt Fill", GetColorPageExampleTitle(fillSection, 3));
@@ -1432,7 +1432,7 @@ namespace ModernWpf.Gallery.Tests
 
                 selector.SelectedIndex = 2;
                 WpfTestHost.DoEvents();
-                var strokeSection = (StackPanel)sectionHost.Content;
+                var strokeSection = GetColorSectionStack(sectionHost.Content);
                 Assert.AreEqual(16, strokeSection.Children.Count);
                 Assert.AreEqual("Control Elevation (gradient strokes)", GetColorPageExampleTitle(strokeSection, 0));
                 Assert.AreEqual("Control Stroke", GetColorPageExampleTitle(strokeSection, 3));
@@ -1457,7 +1457,7 @@ namespace ModernWpf.Gallery.Tests
 
                 selector.SelectedIndex = 3;
                 WpfTestHost.DoEvents();
-                var backgroundSection = (StackPanel)sectionHost.Content;
+                var backgroundSection = GetColorSectionStack(sectionHost.Content);
                 Assert.AreEqual(20, backgroundSection.Children.Count);
                 Assert.AreEqual("Card Background", GetColorPageExampleTitle(backgroundSection, 0));
                 Assert.AreEqual("Smoke Background", GetColorPageExampleTitle(backgroundSection, 2));
@@ -1481,7 +1481,7 @@ namespace ModernWpf.Gallery.Tests
 
                 selector.SelectedIndex = 4;
                 WpfTestHost.DoEvents();
-                var signalSection = (StackPanel)sectionHost.Content;
+                var signalSection = GetColorSectionStack(sectionHost.Content);
                 Assert.AreEqual(6, signalSection.Children.Count);
                 Assert.AreEqual("System", GetColorPageExampleTitle(signalSection, 0));
                 var signalStatusTiles = GetColorTilesGrid(signalSection, 1);
@@ -1495,7 +1495,7 @@ namespace ModernWpf.Gallery.Tests
 
                 selector.SelectedIndex = 5;
                 WpfTestHost.DoEvents();
-                var highContrastSection = (StackPanel)sectionHost.Content;
+                var highContrastSection = GetColorSectionStack(sectionHost.Content);
                 Assert.AreEqual(9, highContrastSection.Children.Count);
                 StringAssert.StartsWith(((TextBlock)highContrastSection.Children[0]).Text, "Below are the default highcontrast themes shown.");
                 Assert.AreEqual("Aquatic", ((TextBlock)highContrastSection.Children[1]).Text);
