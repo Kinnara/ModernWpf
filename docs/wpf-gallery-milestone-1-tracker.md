@@ -81,7 +81,7 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
-- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Release --filter "BasicInputControlExamplesMatchOfficialWpfGallerySampleCode|CollectionsControlExamplesMatchOfficialWpfGallerySampleCode" -p:UseSharedCompilation=false`
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Release --filter "BasicInputControlExamplesMatchOfficialWpfGallerySampleCode|CollectionsControlExamplesMatchOfficialWpfGallerySampleCode|LayoutControlExamplesMatchOfficialWpfGallerySampleCode" -p:UseSharedCompilation=false`
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Release --no-build`
 - `dotnet build ModernWpf.sln --configuration Release -p:UseSharedCompilation=false`
 
@@ -107,6 +107,7 @@ Latest local verification for the current branch tip:
 | Collections sample code panes | Done | Runtime coverage now verifies the ordered `ControlExample` headers and XAML snippets for DataGrid, ListBox, ListView, and TreeView against the official WPF Gallery reference values; these pages do not expose C# snippet panes. |
 | Date & Calendar pages | Mostly done | Calendar and DatePicker now use adapted official WPF Gallery XAML pages while keeping distinct WinUI-style pages. |
 | Layout pages | Mostly done | Border, Expander, Grid, GridSplitter, GroupBox, ResizeGrip, and StackPanel now use adapted official WPF Gallery XAML pages with direct-page runtime tests. |
+| Layout sample code panes | Done | Runtime coverage now verifies the ordered `ControlExample` headers, XAML snippets, and the ResizeGrip C# snippet for Border, Expander, Grid, GridSplitter, GroupBox, ResizeGrip, and StackPanel against the official WPF Gallery reference values. |
 | Media section | Mostly done | Official WPF Gallery media pages are exposed in the catalog/navigation; Canvas and Image now use adapted WPF Gallery XAML pages. |
 | Navigation pages | Mostly done | Menu, TabControl, Frame, and NavigationWindow now use adapted official WPF Gallery XAML pages with direct-page runtime tests; Hyperlink follows the adapted WPF Gallery Text page path. |
 | Status & Info pages | Mostly done | ProgressBar and ToolTip now use adapted official WPF Gallery XAML pages with direct-page runtime tests. |
@@ -123,7 +124,7 @@ Latest local verification for the current branch tip:
 | Home page | Partial | Header tile strip, navigation cards, `ViewModel.NavigationCards` / `ViewModel.RecentlyAddedOrUpdatedSamplesInfo` bindings, and `ViewModel.NavigateCommand` card command binding now match adapted official dashboard shape; compare remaining first-viewport screenshot parity against official WPF Gallery. |
 | All controls page | Partial | Header, navigation cards, `ViewModel.PageTitle` / `ViewModel.NavigationCards` bindings, and `ViewModel.NavigateCommand` card command binding now use adapted official structure; official WPF Gallery has no in-page search on this page, so verify grouping, sort order, card subtitles, and tile sizing against `AllSamplesPage`. |
 | Section pages | Partial | Headers, navigation cards, `ViewModel.PageTitle` / `ViewModel.NavigationCards` bindings, and `ViewModel.NavigateCommand` card command binding now use adapted official structure; verify each section's title, description, hero/card layout, item order, and empty-space behavior against official WPF Gallery. |
-| Sample code panes | Partial | Basic Input and Collections `ControlExample` XAML snippets are now covered by runtime parity tests against the official WPF Gallery reference values; continue section-by-section coverage for remaining WPF-equivalent pages and C# snippets where present. |
+| Sample code panes | Partial | Basic Input, Collections, and Layout `ControlExample` snippets are now covered by runtime parity tests against the official WPF Gallery reference values, including the ResizeGrip C# pane; continue section-by-section coverage for remaining WPF-equivalent pages and C# snippets where present. |
 | Assets and thumbnails | Partial | Common `Assets/ControlImages` files now match the official checkout, and official-only reference assets are present locally; continue verifying item image choices and non-`ControlImages` visuals page-by-page. |
 | Typography and spacing metrics | Open | Audit page root margins, header spacing, card spacing, sample spacing, font sizes, and line heights against official WPF Gallery. |
 | Theme behavior | Open | Check Light, Dark, and High Contrast views for WPF Gallery-equivalent pages. |
@@ -160,14 +161,14 @@ Use this checklist for future rounds.
 | Date & Calendar section | Partial | Partial | Open | Date item pages now use adapted official WPF Gallery XAML; section page visual audit remains. |
 | Calendar | Done | Done | Open | Adapted from official WPF Gallery XAML; WPF page preserved separately from `CalendarView`; screenshot parity remains. |
 | DatePicker | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; screenshot parity remains. |
-| Layout section | Partial | Partial | Open | Layout item pages now use adapted official WPF Gallery XAML; section page visual audit remains. |
-| Expander | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; screenshot parity remains. |
-| Grid | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; live shorthand example uses explicit definitions for WPF target compatibility; screenshot parity remains. |
-| ResizeGrip | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader`, `ControlExample`, and support click handler; screenshot parity remains. |
-| GridSplitter | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; screenshot parity remains. |
-| GroupBox | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; screenshot parity remains. |
-| StackPanel | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; screenshot parity remains. |
-| Border | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; screenshot parity remains. |
+| Layout section | Partial | Partial | Open | Layout item pages and item-page sample code panes now use adapted official WPF Gallery XAML/C# snippets; section page visual audit remains. |
+| Expander | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; sample headers/snippets are runtime-covered; screenshot parity remains. |
+| Grid | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; live shorthand example uses explicit definitions for WPF target compatibility, while sample headers/snippets remain source-covered; screenshot parity remains. |
+| ResizeGrip | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader`, `ControlExample`, and support click handler; sample header, XAML snippet, and C# snippet are runtime-covered; screenshot parity remains. |
+| GridSplitter | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; sample headers/snippets are runtime-covered; screenshot parity remains. |
+| GroupBox | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; sample headers/snippets are runtime-covered; screenshot parity remains. |
+| StackPanel | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; sample headers/snippets are runtime-covered; screenshot parity remains. |
+| Border | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; sample headers/snippets are runtime-covered; screenshot parity remains. |
 | Media section | Partial | Partial | Open | Canvas and Image now use adapted official WPF Gallery XAML; section visual audit remains. |
 | Canvas | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; screenshot parity remains. |
 | Image | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader`, `ControlExample`, and official image asset; screenshot parity remains. |

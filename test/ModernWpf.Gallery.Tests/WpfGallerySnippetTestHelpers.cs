@@ -44,7 +44,17 @@ namespace ModernWpf.Gallery.Tests
                         NormalizeXaml(expected.XamlCode),
                         NormalizeXaml(actual.XamlCode),
                         context);
-                    Assert.IsNull(actual.CSharpCode, context);
+                    if (expected.CSharpCode == null)
+                    {
+                        Assert.IsNull(actual.CSharpCode, context);
+                    }
+                    else
+                    {
+                        Assert.AreEqual(
+                            NormalizeXaml(expected.CSharpCode),
+                            NormalizeXaml(actual.CSharpCode),
+                            context);
+                    }
                 }
             }
             finally
@@ -92,15 +102,18 @@ namespace ModernWpf.Gallery.Tests
 
         public sealed class ExpectedExample
         {
-            public ExpectedExample(string headerText, string xamlCode)
+            public ExpectedExample(string headerText, string xamlCode, string cSharpCode = null)
             {
                 HeaderText = headerText;
                 XamlCode = xamlCode;
+                CSharpCode = cSharpCode;
             }
 
             public string HeaderText { get; }
 
             public string XamlCode { get; }
+
+            public string CSharpCode { get; }
         }
     }
 }
