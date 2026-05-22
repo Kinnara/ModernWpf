@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Windows.Input;
 using ModernWpf.Gallery.Models;
+using ModernWpf.Gallery.Pages.WpfGallery;
 
 namespace ModernWpf.Gallery.Pages
 {
@@ -8,32 +10,32 @@ namespace ModernWpf.Gallery.Pages
     {
         public AllControlsPage()
         {
-            NavigateCommand = new GalleryCommand(OnNavigateCard);
+            ViewModel = new WpfGalleryNavigationPageViewModel("All Controls", string.Empty, GalleryCatalog.AllControlsItems, OnNavigateCard);
             InitializeComponent();
             DataContext = this;
         }
 
         public Action<GalleryItem> ItemRequested { get; set; }
-        public AllControlsPage ViewModel
-        {
-            get { return this; }
-        }
+        public WpfGalleryNavigationPageViewModel ViewModel { get; }
 
-        public ICommand NavigateCommand { get; }
+        public ICommand NavigateCommand
+        {
+            get { return ViewModel.NavigateCommand; }
+        }
 
         public string PageTitle
         {
-            get { return "All Controls"; }
+            get { return ViewModel.PageTitle; }
         }
 
         public string PageDescription
         {
-            get { return string.Empty; }
+            get { return ViewModel.PageDescription; }
         }
 
-        public object NavigationCards
+        public IReadOnlyList<GalleryItem> NavigationCards
         {
-            get { return GalleryCatalog.AllControlsItems; }
+            get { return ViewModel.NavigationCards; }
         }
 
         private void OnNavigateCard(object parameter)

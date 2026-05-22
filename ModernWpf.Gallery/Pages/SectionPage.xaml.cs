@@ -1,42 +1,46 @@
 using System;
+using System.Collections.Generic;
 using System.Windows.Input;
 using ModernWpf.Gallery.Models;
+using ModernWpf.Gallery.Pages.WpfGallery;
 
 namespace ModernWpf.Gallery.Pages
 {
     public sealed partial class SectionPage
     {
-        private readonly GalleryGroup _group;
-
         public SectionPage(GalleryGroup group)
         {
-            _group = group ?? throw new ArgumentNullException(nameof(group));
-            NavigateCommand = new GalleryCommand(OnNavigateCard);
+            if (group == null)
+            {
+                throw new ArgumentNullException(nameof(group));
+            }
+
+            ViewModel = new WpfGalleryNavigationPageViewModel(group.Title, group.PageDescription, group.Items, OnNavigateCard);
             InitializeComponent();
             DataContext = this;
         }
 
         public Action<GalleryItem> ItemRequested { get; set; }
-        public SectionPage ViewModel
-        {
-            get { return this; }
-        }
+        public WpfGalleryNavigationPageViewModel ViewModel { get; }
 
-        public ICommand NavigateCommand { get; }
+        public ICommand NavigateCommand
+        {
+            get { return ViewModel.NavigateCommand; }
+        }
 
         public string PageTitle
         {
-            get { return _group.Title; }
+            get { return ViewModel.PageTitle; }
         }
 
         public string PageDescription
         {
-            get { return _group.PageDescription; }
+            get { return ViewModel.PageDescription; }
         }
 
-        public object NavigationCards
+        public IReadOnlyList<GalleryItem> NavigationCards
         {
-            get { return _group.Items; }
+            get { return ViewModel.NavigationCards; }
         }
 
         private void OnNavigateCard(object parameter)

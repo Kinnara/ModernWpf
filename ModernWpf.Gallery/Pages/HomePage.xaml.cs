@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using ModernWpf.Gallery.Models;
+using ModernWpf.Gallery.Pages.WpfGallery;
 
 namespace ModernWpf.Gallery.Pages
 {
@@ -10,7 +12,7 @@ namespace ModernWpf.Gallery.Pages
     {
         public HomePage()
         {
-            NavigateCommand = new GalleryCommand(OnNavigateCard);
+            ViewModel = new WpfGalleryDashboardPageViewModel(OnNavigateCard);
             InitializeComponent();
             SetWpfGalleryAutomation();
             DataContext = this;
@@ -19,29 +21,29 @@ namespace ModernWpf.Gallery.Pages
         public Action<GalleryItem> ItemRequested { get; set; }
         public Action<GalleryGroup> GroupRequested { get; set; }
         public Action AllControlsRequested { get; set; }
-        public HomePage ViewModel
+        public WpfGalleryDashboardPageViewModel ViewModel { get; }
+
+        public ICommand NavigateCommand
         {
-            get { return this; }
+            get { return ViewModel.NavigateCommand; }
         }
 
-        public ICommand NavigateCommand { get; }
-
-        public object NavigationCards
+        public IReadOnlyList<GalleryGroup> NavigationCards
         {
-            get { return GalleryCatalog.OverviewGroups; }
+            get { return ViewModel.NavigationCards; }
         }
 
-        public object RecentlyAddedOrUpdatedSamplesInfo
+        public IReadOnlyList<GalleryItem> RecentlyAddedOrUpdatedSamplesInfo
         {
-            get { return GalleryCatalog.NewOrUpdatedItems; }
+            get { return ViewModel.RecentlyAddedOrUpdatedSamplesInfo; }
         }
 
-        public object FeaturedItems
+        public IReadOnlyList<GalleryItem> FeaturedItems
         {
             get { return RecentlyAddedOrUpdatedSamplesInfo; }
         }
 
-        public object Groups
+        public IReadOnlyList<GalleryGroup> Groups
         {
             get { return NavigationCards; }
         }
