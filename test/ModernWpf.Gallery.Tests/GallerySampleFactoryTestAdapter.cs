@@ -25,7 +25,7 @@ namespace ModernWpf.Gallery.Tests
                 ?? WindowingSampleFactory.Create(uniqueId)
                 ?? SystemSampleFactory.Create(uniqueId)
                 ?? ShellSampleFactory.Create(uniqueId)
-                ?? (WpfGalleryExampleFactory.CreatePageContent(uniqueId) as UIElement);
+                ?? WpfGalleryPageRegistry.CreatePageContent(uniqueId);
         }
     }
 }

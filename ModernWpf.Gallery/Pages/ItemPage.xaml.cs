@@ -21,7 +21,7 @@ namespace ModernWpf.Gallery.Pages
             SampleSnippets = LoadSampleSnippets(_item.UniqueId);
             var xamlSnippet = FindSampleSnippet(SampleSnippets, IsXamlSnippet);
             var csharpSnippet = FindSampleSnippet(SampleSnippets, IsCSharpSnippet);
-            DirectPageContent = WpfGalleryExampleFactory.CreatePageContent(_item.UniqueId);
+            DirectPageContent = WpfGalleryPageRegistry.CreatePageContent(_item.UniqueId);
             PageBodyContent = DirectPageContent == null ? WpfGalleryExampleFactory.CreatePageBodyContent(_item.UniqueId) : null;
             var examples = DirectPageContent == null && PageBodyContent == null ? WpfGalleryExampleFactory.Create(_item.UniqueId) : Array.Empty<GalleryExample>();
             UsesWpfGalleryPageMode = DirectPageContent != null || PageBodyContent != null || examples.Count != 0;
