@@ -19,16 +19,31 @@ namespace ModernWpf.Gallery.Pages
         public Action<GalleryItem> ItemRequested { get; set; }
         public Action<GalleryGroup> GroupRequested { get; set; }
         public Action AllControlsRequested { get; set; }
+        public HomePage ViewModel
+        {
+            get { return this; }
+        }
+
         public ICommand NavigateCommand { get; }
 
-        public object FeaturedItems
+        public object NavigationCards
+        {
+            get { return GalleryCatalog.OverviewGroups; }
+        }
+
+        public object RecentlyAddedOrUpdatedSamplesInfo
         {
             get { return GalleryCatalog.NewOrUpdatedItems; }
         }
 
+        public object FeaturedItems
+        {
+            get { return RecentlyAddedOrUpdatedSamplesInfo; }
+        }
+
         public object Groups
         {
-            get { return GalleryCatalog.OverviewGroups; }
+            get { return NavigationCards; }
         }
 
         private void SetWpfGalleryAutomation()

@@ -14,6 +14,11 @@ namespace ModernWpf.Gallery.Pages
         }
 
         public Action<GalleryItem> ItemRequested { get; set; }
+        public AllControlsPage ViewModel
+        {
+            get { return this; }
+        }
+
         public ICommand NavigateCommand { get; }
 
         public string PageTitle

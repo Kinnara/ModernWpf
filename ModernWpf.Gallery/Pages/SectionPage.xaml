@@ -30,8 +30,8 @@
             x:Name="PageHeader"
             Grid.Row="0"
             Margin="0,0,0,40"
-            Title="{Binding Title}"
-            Description="{Binding PageDescription}" />
+            Title="{Binding ViewModel.PageTitle}"
+            Description="{Binding ViewModel.PageDescription}" />
 
         <ItemsControl
             x:Name="GroupItemsControl"
@@ -39,7 +39,7 @@
             AutomationProperties.Name="Items in group"
             Focusable="False"
             Margin="-12,0,0,0"
-            ItemsSource="{Binding Items}"
+            ItemsSource="{Binding ViewModel.NavigationCards}"
             ItemsPanel="{StaticResource WrapPanelTemplate}"
             ItemTemplate="{StaticResource NavigationCardTemplate}" />
     </Grid>

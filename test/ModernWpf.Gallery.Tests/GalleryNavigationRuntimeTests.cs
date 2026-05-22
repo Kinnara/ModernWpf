@@ -123,11 +123,14 @@ namespace ModernWpf.Gallery.Tests
             {
                 var page = new HomePage();
                 var expected = GalleryCatalog.OverviewGroups.Select(group => group.UniqueId).ToArray();
-                var actual = ((IEnumerable<GalleryGroup>)page.Groups).Select(group => group.UniqueId).ToArray();
+                var actual = ((IEnumerable<GalleryGroup>)page.NavigationCards).Select(group => group.UniqueId).ToArray();
 
                 CollectionAssert.AreEqual(expected, actual);
                 Assert.IsFalse(actual.Contains("DesignGuidance"));
                 Assert.IsFalse(actual.Contains("Samples"));
+                CollectionAssert.AreEqual(
+                    GalleryCatalog.NewOrUpdatedItems.Select(item => item.UniqueId).ToArray(),
+                    ((IEnumerable<GalleryItem>)page.RecentlyAddedOrUpdatedSamplesInfo).Select(item => item.UniqueId).ToArray());
             });
         }
 
@@ -145,6 +148,8 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(AutomationHeadingLevel.Level2, AutomationProperties.GetHeadingLevel((TextBlock)homePage.FindName("RecentlyAddedHeaderText")));
                     AssertNavigationItemsControl((ItemsControl)homePage.FindName("OverviewItemsControl"), "Items in group");
                     AssertNavigationItemsControl((ItemsControl)homePage.FindName("RecentlyAddedItemsControl"), "Recently Added and Updated Samples Section");
+                    AssertBindingPath((ItemsControl)homePage.FindName("OverviewItemsControl"), ItemsControl.ItemsSourceProperty, "ViewModel.NavigationCards");
+                    AssertBindingPath((ItemsControl)homePage.FindName("RecentlyAddedItemsControl"), ItemsControl.ItemsSourceProperty, "ViewModel.RecentlyAddedOrUpdatedSamplesInfo");
                     Assert.AreEqual(new Thickness(0), ((Grid)homePage.FindName("HomeContentGrid")).Margin);
                     Assert.AreEqual(new Thickness(0), ((TextBlock)homePage.FindName("RecentlyAddedHeaderText")).Margin);
 
@@ -156,9 +161,12 @@ namespace ModernWpf.Gallery.Tests
                 var sectionPage = new SectionPage(basicInputGroup);
                 RenderPage(sectionPage, () =>
                 {
-                    AssertReferencePageHeader((PageHeader)sectionPage.FindName("PageHeader"), basicInputGroup.Title, basicInputGroup.PageDescription);
+                    AssertReferencePageHeader((PageHeader)sectionPage.FindName("PageHeader"), basicInputGroup.Title, basicInputGroup.PageDescription, true);
                     AssertNavigationItemsControl((ItemsControl)sectionPage.FindName("GroupItemsControl"), "Items in group");
+                    AssertBindingPath((ItemsControl)sectionPage.FindName("GroupItemsControl"), ItemsControl.ItemsSourceProperty, "ViewModel.NavigationCards");
                     AssertReferenceCategoryPageRoot((Grid)sectionPage.FindName("ContentRootGrid"), false);
+                    Assert.AreEqual(basicInputGroup.Title, sectionPage.PageTitle);
+                    Assert.AreEqual(basicInputGroup.PageDescription, sectionPage.PageDescription);
                     AssertRenderedNavigationCard((ItemsControl)sectionPage.FindName("GroupItemsControl"), basicInputGroup.Items.First().Title, basicInputGroup.Items.First().Description);
                 });
 
@@ -166,7 +174,7 @@ namespace ModernWpf.Gallery.Tests
                 var mediaPage = new SectionPage(mediaGroup);
                 RenderPage(mediaPage, () =>
                 {
-                    AssertReferencePageHeader((PageHeader)mediaPage.FindName("PageHeader"), mediaGroup.Title, mediaGroup.PageDescription);
+                    AssertReferencePageHeader((PageHeader)mediaPage.FindName("PageHeader"), mediaGroup.Title, mediaGroup.PageDescription, true);
                     AssertReferenceCategoryPageRoot((Grid)mediaPage.FindName("ContentRootGrid"), false);
                     AssertRenderedNavigationCard((ItemsControl)mediaPage.FindName("GroupItemsControl"), "Canvas", GalleryCatalog.FindItem("Canvas").Description);
                 });
@@ -174,9 +182,12 @@ namespace ModernWpf.Gallery.Tests
                 var allControlsPage = new AllControlsPage();
                 RenderPage(allControlsPage, () =>
                 {
-                    AssertReferencePageHeader((PageHeader)allControlsPage.FindName("PageHeader"), "All Controls", string.Empty);
+                    AssertReferencePageHeader((PageHeader)allControlsPage.FindName("PageHeader"), "All Controls", string.Empty, true);
                     AssertNavigationItemsControl((ItemsControl)allControlsPage.FindName("AllControlsItemsControl"), "Items in group");
+                    AssertBindingPath((ItemsControl)allControlsPage.FindName("AllControlsItemsControl"), ItemsControl.ItemsSourceProperty, "ViewModel.NavigationCards");
                     AssertReferenceCategoryPageRoot((Grid)allControlsPage.FindName("ContentRootGrid"), true);
+                    Assert.AreEqual("All Controls", allControlsPage.PageTitle);
+                    Assert.AreEqual(string.Empty, allControlsPage.PageDescription);
                     AssertRenderedNavigationCard((ItemsControl)allControlsPage.FindName("AllControlsItemsControl"), GalleryCatalog.AllControlsItems.First().Title, GalleryCatalog.AllControlsItems.First().Description);
                 });
 
@@ -213,12 +224,18 @@ namespace ModernWpf.Gallery.Tests
             Assert.AreEqual(headingLevel, AutomationProperties.GetHeadingLevel(label));
         }
 
-        private static void AssertReferencePageHeader(PageHeader pageHeader, string title, string description)
+        private static void AssertReferencePageHeader(PageHeader pageHeader, string title, string description, bool assertOfficialBindings = false)
         {
             Assert.IsNotNull(pageHeader);
             Assert.AreEqual(new Thickness(0, 0, 0, 40), pageHeader.Margin);
             Assert.AreEqual(title, pageHeader.Title);
             Assert.AreEqual(description, pageHeader.Description);
+
+            if (assertOfficialBindings)
+            {
+                AssertBindingPath(pageHeader, PageHeader.TitleProperty, "ViewModel.PageTitle");
+                AssertBindingPath(pageHeader, PageHeader.DescriptionProperty, "ViewModel.PageDescription");
+            }
 
             pageHeader.ApplyTemplate();
 
@@ -233,6 +250,13 @@ namespace ModernWpf.Gallery.Tests
                 string.Empty,
                 AutomationHeadingLevel.Level2,
                 1);
+        }
+
+        private static void AssertBindingPath(DependencyObject target, DependencyProperty property, string expectedPath)
+        {
+            var expression = BindingOperations.GetBindingExpression(target, property);
+            Assert.IsNotNull(expression);
+            Assert.AreEqual(expectedPath, expression.ParentBinding.Path.Path);
         }
 
         private static void AssertNavigationItemsControl(ItemsControl itemsControl, string automationName)

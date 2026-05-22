@@ -103,7 +103,7 @@
                         AutomationProperties.Name="Items in group"
                         Focusable="False"
                         Margin="-20,0,0,0"
-                        ItemsSource="{Binding Groups}"
+                        ItemsSource="{Binding ViewModel.NavigationCards}"
                         ItemsPanel="{StaticResource WrapPanelTemplate}"
                         ItemTemplate="{StaticResource NavigationCardTemplate}" />
 
@@ -118,7 +118,7 @@
                         AutomationProperties.Name="Recently Added and Updated Samples Section"
                         Focusable="False"
                         Margin="-18,0,0,0"
-                        ItemsSource="{Binding FeaturedItems}"
+                        ItemsSource="{Binding ViewModel.RecentlyAddedOrUpdatedSamplesInfo}"
                         ItemsPanel="{StaticResource WrapPanelTemplate}"
                         ItemTemplate="{StaticResource NavigationCardTemplate}" />
                 </StackPanel>
