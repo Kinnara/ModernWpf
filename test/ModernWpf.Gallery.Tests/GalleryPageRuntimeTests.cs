@@ -1388,7 +1388,8 @@ namespace ModernWpf.Gallery.Tests
                 selector.RaiseEvent(new RoutedEventArgs(FrameworkElement.LoadedEvent, selector));
                 WpfTestHost.DoEvents();
 
-                var textSection = (StackPanel)sectionHost.Content;
+                Assert.AreEqual("TextSection", sectionHost.Content.GetType().Name);
+                var textSection = GetColorSectionStack(sectionHost.Content);
                 Assert.AreEqual("Text", GetColorPageExampleTitle(textSection, 0));
                 Assert.AreEqual("Accent Text", GetColorPageExampleTitle(textSection, 2));
                 Assert.AreEqual("Text On Accent", GetColorPageExampleTitle(textSection, 4));
@@ -1399,10 +1400,10 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual("Text / Primary", AutomationProperties.GetName((UIElement)firstTilesGrid.Children[0]));
                 Assert.AreEqual("Text / Disabled", AutomationProperties.GetName((UIElement)firstTilesGrid.Children[3]));
 
-                var firstTextTile = (Border)firstTilesGrid.Children[0];
-                Assert.AreEqual(new CornerRadius(8, 0, 0, 8), firstTextTile.CornerRadius);
-                var lastTextTile = (Border)firstTilesGrid.Children[3];
-                Assert.AreEqual(new CornerRadius(0, 8, 8, 0), lastTextTile.CornerRadius);
+                var firstTextTile = (ColorTile)firstTilesGrid.Children[0];
+                Assert.AreEqual(new CornerRadius(8, 0, 0, 8), firstTextTile.TileRadius);
+                var lastTextTile = (ColorTile)firstTilesGrid.Children[3];
+                Assert.AreEqual(new CornerRadius(0, 8, 8, 0), lastTextTile.TileRadius);
 
                 selector.SelectedIndex = 1;
                 WpfTestHost.DoEvents();
@@ -1753,9 +1754,32 @@ namespace ModernWpf.Gallery.Tests
 
         private static string GetColorPageExampleTitle(StackPanel section, int childIndex)
         {
+            var colorPageExample = section.Children[childIndex] as ColorPageExample;
+            if (colorPageExample != null)
+            {
+                return colorPageExample.Title;
+            }
+
             var example = (Border)section.Children[childIndex];
             var grid = (Grid)example.Child;
             return ((TextBlock)grid.Children[0]).Text;
+        }
+
+        private static StackPanel GetColorSectionStack(object content)
+        {
+            var stack = content as StackPanel;
+            if (stack != null)
+            {
+                return stack;
+            }
+
+            var userControl = content as UserControl;
+            if (userControl != null)
+            {
+                return (StackPanel)userControl.Content;
+            }
+
+            return (StackPanel)((Page)content).Content;
         }
 
         private static Grid GetColorTilesGrid(StackPanel section, int childIndex)

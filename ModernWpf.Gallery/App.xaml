@@ -10,6 +10,8 @@
                 <ui:FluentControlsResources UseCompactResources="False" />
                 <ResourceDictionary Source="Controls/ControlExample.xaml" />
                 <ResourceDictionary Source="Controls/PageHeader.xaml" />
+                <ResourceDictionary Source="Controls/ColorPageExample.xaml" />
+                <ResourceDictionary Source="Controls/ColorTile.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
@@ -106,6 +108,13 @@
                 BasedOn="{StaticResource CaptionTextBlockStyle}"
                 TargetType="TextBlock">
                 <Setter Property="Opacity" Value="0.7" />
+            </Style>
+
+            <Style x:Key="ColorTilesPanelStyle" TargetType="{x:Type Border}">
+                <Setter Property="Background" Value="{DynamicResource SolidBackgroundFillColorBaseBrush}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource CardStrokeColorDefaultBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="8" />
             </Style>
         </ResourceDictionary>
     </Application.Resources>

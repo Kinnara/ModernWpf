@@ -1440,7 +1440,7 @@ namespace ModernWpf.Gallery.Pages
             return root;
         }
 
-        internal static StackPanel CreateColorSection(int index)
+        internal static FrameworkElement CreateColorSection(int index)
         {
             switch (index)
             {
@@ -1455,7 +1455,7 @@ namespace ModernWpf.Gallery.Pages
                 case 5:
                     return CreateHighContrastColorSection();
                 default:
-                    return CreateTextColorSection();
+                    return new WpfGallery.DesignGuidance.TextSection();
             }
         }
 
