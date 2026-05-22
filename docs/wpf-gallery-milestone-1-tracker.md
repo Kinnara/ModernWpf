@@ -81,7 +81,7 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
-- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Release --filter "BasicInputControlExamplesMatchOfficialWpfGallerySampleCode|CollectionsControlExamplesMatchOfficialWpfGallerySampleCode|DateMediaAndStatusControlExamplesMatchOfficialWpfGallerySampleCode|LayoutControlExamplesMatchOfficialWpfGallerySampleCode|NavigationControlExamplesMatchOfficialWpfGallerySampleCode" -p:UseSharedCompilation=false`
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Release --filter "BasicInputControlExamplesMatchOfficialWpfGallerySampleCode|CollectionsControlExamplesMatchOfficialWpfGallerySampleCode|DateMediaAndStatusControlExamplesMatchOfficialWpfGallerySampleCode|LayoutControlExamplesMatchOfficialWpfGallerySampleCode|NavigationControlExamplesMatchOfficialWpfGallerySampleCode|TextControlExamplesMatchOfficialWpfGallerySampleCode" -p:UseSharedCompilation=false`
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Release --no-build`
 - `dotnet build ModernWpf.sln --configuration Release -p:UseSharedCompilation=false`
 
@@ -116,6 +116,7 @@ Latest local verification for the current branch tip:
 | Status & Info pages | Mostly done | ProgressBar and ToolTip now use adapted official WPF Gallery XAML pages with direct-page runtime tests. |
 | Status & Info sample code panes | Done | Runtime coverage now verifies the ordered `ControlExample` headers and XAML snippets for ProgressBar and ToolTip against the official WPF Gallery reference values. |
 | Text pages | Mostly done | Label, TextBox, TextBlock, RichTextEdit, PasswordBox, and Hyperlink now use adapted official WPF Gallery XAML pages with direct-page runtime tests. |
+| Text sample code panes | Done | Runtime coverage now verifies the ordered `ControlExample` headers and XAML snippets for Label, TextBox, TextBlock, RichTextEdit, PasswordBox, and Hyperlink against the official WPF Gallery reference values. |
 | System pages | Mostly done | File and folder dialogs, MessageBox, and Clipboard now use adapted official WPF Gallery XAML pages with direct-page runtime tests. |
 | Runtime regression layer | Done for current scope | Gallery runtime tests currently cover page loading and many WPF Gallery layout/sample details. |
 
@@ -128,7 +129,7 @@ Latest local verification for the current branch tip:
 | Home page | Partial | Header tile strip, navigation cards, `ViewModel.NavigationCards` / `ViewModel.RecentlyAddedOrUpdatedSamplesInfo` bindings, and `ViewModel.NavigateCommand` card command binding now match adapted official dashboard shape; compare remaining first-viewport screenshot parity against official WPF Gallery. |
 | All controls page | Partial | Header, navigation cards, `ViewModel.PageTitle` / `ViewModel.NavigationCards` bindings, and `ViewModel.NavigateCommand` card command binding now use adapted official structure; official WPF Gallery has no in-page search on this page, so verify grouping, sort order, card subtitles, and tile sizing against `AllSamplesPage`. |
 | Section pages | Partial | Headers, navigation cards, `ViewModel.PageTitle` / `ViewModel.NavigationCards` bindings, and `ViewModel.NavigateCommand` card command binding now use adapted official structure; verify each section's title, description, hero/card layout, item order, and empty-space behavior against official WPF Gallery. |
-| Sample code panes | Partial | Basic Input, Collections, Date & Calendar, Layout, Media, Navigation, and Status & Info `ControlExample` snippets are now covered by runtime parity tests against the official WPF Gallery reference values, including ResizeGrip and NavigationWindow C# panes; continue section-by-section coverage for remaining WPF-equivalent pages and C# snippets where present. |
+| Sample code panes | Partial | Basic Input, Collections, Date & Calendar, Layout, Media, Navigation, Status & Info, and Text `ControlExample` snippets are now covered by runtime parity tests against the official WPF Gallery reference values, including ResizeGrip and NavigationWindow C# panes; continue section-by-section coverage for remaining WPF-equivalent pages and C# snippets where present. |
 | Assets and thumbnails | Partial | Common `Assets/ControlImages` files now match the official checkout, and official-only reference assets are present locally; continue verifying item image choices and non-`ControlImages` visuals page-by-page. |
 | Typography and spacing metrics | Open | Audit page root margins, header spacing, card spacing, sample spacing, font sizes, and line heights against official WPF Gallery. |
 | Theme behavior | Open | Check Light, Dark, and High Contrast views for WPF Gallery-equivalent pages. |
@@ -181,13 +182,13 @@ Use this checklist for future rounds.
 | TabControl | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; sample headers/snippets are runtime-covered; screenshot parity remains. |
 | Frame | Done | Done | Open | Adapted from official WPF Gallery XAML with support window/page content; sample headers/snippets are runtime-covered; screenshot parity remains. |
 | NavigationWindow | Done | Done | Open | Adapted from official WPF Gallery XAML with support navigation pages; sample header, XAML snippet, and C# snippet are runtime-covered; screenshot parity remains. |
-| Text section | Partial | Partial | Open | Text item pages now use adapted official WPF Gallery XAML; section page visual audit remains. |
-| Label | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; screenshot parity remains. |
-| TextBox | Done | Done | Open | Adapted from official WPF Gallery XAML, including input validation rule binding; screenshot parity remains. |
-| TextBlock | Done | Done | Open | Adapted from official WPF Gallery XAML with inline text examples; screenshot parity remains. |
-| RichTextEdit | Done | Done | Open | Adapted from official WPF Gallery XAML; WPF page preserved separately from `RichEditBox`; screenshot parity remains. |
-| PasswordBox | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; screenshot parity remains. |
-| Hyperlink | Done | Done | Open | Adapted from official WPF Gallery XAML under Text pages; screenshot parity remains. |
+| Text section | Partial | Partial | Open | Text item pages and item-page sample code panes now use adapted official WPF Gallery XAML; section page visual audit remains. |
+| Label | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; sample headers/snippets are runtime-covered; screenshot parity remains. |
+| TextBox | Done | Done | Open | Adapted from official WPF Gallery XAML, including input validation rule binding; sample headers/snippets are runtime-covered; screenshot parity remains. |
+| TextBlock | Done | Done | Open | Adapted from official WPF Gallery XAML with inline text examples; sample headers/snippets are runtime-covered; screenshot parity remains. |
+| RichTextEdit | Done | Done | Open | Adapted from official WPF Gallery XAML; WPF page preserved separately from `RichEditBox`; sample headers/snippets are runtime-covered; screenshot parity remains. |
+| PasswordBox | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; sample headers/snippets are runtime-covered; screenshot parity remains. |
+| Hyperlink | Done | Done | Open | Adapted from official WPF Gallery XAML under Text pages; sample headers/snippets are runtime-covered; screenshot parity remains. |
 | Status & Info section | Partial | Partial | Open | Status item pages and item-page sample code panes now use adapted official WPF Gallery XAML; section page visual audit remains. |
 | ProgressBar | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; sample headers/snippets are runtime-covered; screenshot parity remains. |
 | ToolTip | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; sample headers/snippets are runtime-covered; screenshot parity remains. |
