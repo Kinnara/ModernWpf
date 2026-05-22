@@ -124,6 +124,10 @@ namespace ModernWpf.Gallery.Pages
             {
                 case "Canvas":
                     return new WpfGallery.Media.CanvasPage();
+                case "Calendar":
+                    return new WpfGallery.DateAndTime.CalendarPage();
+                case "DatePicker":
+                    return new WpfGallery.DateAndTime.DatePickerPage();
                 case "Hyperlink":
                     return new WpfGallery.Text.HyperlinkPage();
                 case "Image":

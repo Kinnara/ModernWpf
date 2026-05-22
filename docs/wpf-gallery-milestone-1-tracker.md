@@ -99,7 +99,7 @@ Latest local verification for the current branch tip:
 | User Dashboard sample | Mostly done | WPF Gallery-style layout and behavior are represented and tested. |
 | Basic Input pages | Mostly done | Button, CheckBox, ComboBox, RadioButton, and Slider are covered by WPF Gallery parity tests. |
 | Collections pages | Mostly done | DataGrid, ListBox, ListView, and TreeView are covered by WPF Gallery parity tests. |
-| Date & Calendar pages | Mostly done | Calendar and DatePicker WPF pages are covered while keeping distinct WinUI-style pages. |
+| Date & Calendar pages | Mostly done | Calendar and DatePicker now use adapted official WPF Gallery XAML pages while keeping distinct WinUI-style pages. |
 | Layout pages | Mostly done | Expander, Grid, ResizeGrip, GridSplitter, GroupBox, StackPanel, Border, Canvas, and Image coverage exists through sample factories and tests. |
 | Media section | Mostly done | Official WPF Gallery media pages are exposed in the catalog/navigation; Canvas and Image now use adapted WPF Gallery XAML pages. |
 | Navigation pages | Mostly done | Menu, TabControl, Frame, and NavigationWindow coverage exists through sample factories and tests; Hyperlink now follows the adapted WPF Gallery Text page path. |
@@ -151,9 +151,9 @@ Use this checklist for future rounds.
 | ListBox | Partial | Open | Open | Runtime parity checks exist. |
 | ListView | Partial | Open | Open | Runtime parity checks exist. |
 | TreeView | Partial | Open | Open | Runtime parity checks exist. |
-| Date & Calendar section | Partial | Open | Open | Section visual audit remains. |
-| Calendar | Partial | Open | Open | WPF page preserved separately from `CalendarView`. |
-| DatePicker | Partial | Open | Open | Runtime parity checks exist. |
+| Date & Calendar section | Partial | Partial | Open | Date item pages now use adapted official WPF Gallery XAML; section page visual audit remains. |
+| Calendar | Done | Done | Open | Adapted from official WPF Gallery XAML; WPF page preserved separately from `CalendarView`; screenshot parity remains. |
+| DatePicker | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; screenshot parity remains. |
 | Layout section | Partial | Open | Open | Section visual audit remains. |
 | Expander | Partial | Open | Open | Runtime parity checks exist. |
 | Grid | Partial | Open | Open | Runtime parity checks exist. |

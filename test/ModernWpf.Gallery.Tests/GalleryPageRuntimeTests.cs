@@ -888,17 +888,21 @@ namespace ModernWpf.Gallery.Tests
             WpfTestHost.Run(() =>
             {
                 var calendarPage = new ItemPage(GalleryCatalog.FindItem("Calendar"));
-                Assert.AreEqual(1, calendarPage.Examples.Count);
-                Assert.AreEqual("A basic Calendar control.", calendarPage.Examples[0].HeaderText);
-                var calendar = (Calendar)calendarPage.Examples[0].ExampleContent;
+                Assert.IsTrue(calendarPage.HasDirectPageContent);
+                var calendarExamples = GetRenderedExamples(calendarPage);
+                Assert.AreEqual(1, calendarExamples.Count);
+                Assert.AreEqual("A basic Calendar control.", calendarExamples[0].HeaderText);
+                var calendar = (Calendar)calendarExamples[0].ExampleContent;
                 Assert.AreEqual(HorizontalAlignment.Left, calendar.HorizontalAlignment);
                 Assert.AreEqual("Default", AutomationProperties.GetName(calendar));
                 Assert.IsFalse(KeyboardNavigation.GetIsTabStop(calendar));
 
                 var datePickerPage = new ItemPage(GalleryCatalog.FindItem("DatePicker"));
-                Assert.AreEqual(1, datePickerPage.Examples.Count);
-                Assert.AreEqual("A basic DatePicker control.", datePickerPage.Examples[0].HeaderText);
-                var datePicker = (DatePicker)datePickerPage.Examples[0].ExampleContent;
+                Assert.IsTrue(datePickerPage.HasDirectPageContent);
+                var datePickerExamples = GetRenderedExamples(datePickerPage);
+                Assert.AreEqual(1, datePickerExamples.Count);
+                Assert.AreEqual("A basic DatePicker control.", datePickerExamples[0].HeaderText);
+                var datePicker = (DatePicker)datePickerExamples[0].ExampleContent;
                 Assert.AreEqual(200.0, datePicker.MinWidth);
                 Assert.AreEqual(HorizontalAlignment.Left, datePicker.HorizontalAlignment);
                 Assert.AreEqual("Pick a date", AutomationProperties.GetName(datePicker));
