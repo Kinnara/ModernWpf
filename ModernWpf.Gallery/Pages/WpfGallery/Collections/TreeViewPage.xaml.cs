@@ -6,11 +6,11 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
     {
         public TreeViewPage()
         {
-            ViewModel = new WpfGalleryCollectionsPageViewModel("TreeView");
+            ViewModel = new TreeViewPageViewModel();
             DataContext = this;
             InitializeComponent();
         }
 
-        public WpfGalleryCollectionsPageViewModel ViewModel { get; }
+        public TreeViewPageViewModel ViewModel { get; }
     }
 }

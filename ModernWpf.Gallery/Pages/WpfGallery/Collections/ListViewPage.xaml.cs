@@ -6,11 +6,11 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
     {
         public ListViewPage()
         {
-            ViewModel = new WpfGalleryCollectionsPageViewModel("ListView");
+            ViewModel = new ListViewPageViewModel();
             DataContext = this;
             InitializeComponent();
         }
 
-        public WpfGalleryCollectionsPageViewModel ViewModel { get; }
+        public ListViewPageViewModel ViewModel { get; }
     }
 }

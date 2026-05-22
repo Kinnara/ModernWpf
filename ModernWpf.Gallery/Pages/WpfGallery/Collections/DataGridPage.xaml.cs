@@ -6,11 +6,11 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
     {
         public DataGridPage()
         {
-            ViewModel = new WpfGalleryCollectionsPageViewModel("DataGrid");
+            ViewModel = new DataGridPageViewModel();
             DataContext = this;
             InitializeComponent();
         }
 
-        public WpfGalleryCollectionsPageViewModel ViewModel { get; }
+        public DataGridPageViewModel ViewModel { get; }
     }
 }

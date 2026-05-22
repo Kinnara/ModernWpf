@@ -17,6 +17,7 @@ using ModernWpf.Gallery.Controls;
 using ModernWpf.Gallery.Models;
 using ModernWpf.Gallery.Pages;
 using ModernWpf.Gallery.Pages.WpfGallery.BasicInput;
+using ModernWpf.Gallery.Pages.WpfGallery.Collections;
 
 namespace ModernWpf.Gallery.Tests
 {
@@ -324,6 +325,34 @@ namespace ModernWpf.Gallery.Tests
                     window.Close();
                     WpfTestHost.DoEvents();
                 }
+            });
+        }
+
+        [TestMethod]
+        public void CollectionsPagesUseOfficialPageSpecificViewModels()
+        {
+            WpfTestHost.Run(() =>
+            {
+                AssertCollectionsViewModel<DataGridPage, DataGridPageViewModel>("DataGrid", "DataGrid");
+                AssertCollectionsViewModel<ListBoxPage, ListBoxPageViewModel>("ListBox", "ListBox");
+                AssertCollectionsViewModel<ListViewPage, ListViewPageViewModel>("ListView", "ListView");
+                AssertCollectionsViewModel<TreeViewPage, TreeViewPageViewModel>("TreeView", "TreeView");
+
+                var dataGridPage = (DataGridPage)new ItemPage(GalleryCatalog.FindItem("DataGrid")).DirectPageContent;
+                Assert.AreEqual(50, dataGridPage.ViewModel.ProductsCollection.Count);
+
+                var listBoxPage = (ListBoxPage)new ItemPage(GalleryCatalog.FindItem("ListBox")).DirectPageContent;
+                CollectionAssert.AreEqual(
+                    new[] { "Arial", "Comic Sans MS", "Courier New", "Segoe UI", "Times New Roman" },
+                    listBoxPage.ViewModel.ListBoxItems.ToArray());
+
+                var listViewPage = (ListViewPage)new ItemPage(GalleryCatalog.FindItem("ListView")).DirectPageContent;
+                Assert.AreEqual(50, listViewPage.ViewModel.BasicListViewItems.Count);
+                Assert.AreEqual(50, listViewPage.ViewModel.GridViewItems.Count);
+                listViewPage.ViewModel.ListViewSelectionModeComboBoxSelectedIndex = 1;
+                Assert.AreEqual(SelectionMode.Multiple, listViewPage.ViewModel.ListViewSelectionMode);
+                listViewPage.ViewModel.ListViewSelectionModeComboBoxSelectedIndex = 2;
+                Assert.AreEqual(SelectionMode.Extended, listViewPage.ViewModel.ListViewSelectionMode);
             });
         }
 
@@ -2066,6 +2095,19 @@ namespace ModernWpf.Gallery.Tests
         private static void AssertBasicInputViewModel<TPage, TViewModel>(string uniqueId, string expectedTitle)
             where TPage : FrameworkElement
             where TViewModel : BasicInputPageViewModelBase
+        {
+            var itemPage = new ItemPage(GalleryCatalog.FindItem(uniqueId));
+            var directPage = (TPage)itemPage.DirectPageContent;
+            var viewModel = (TViewModel)directPage.GetType().GetProperty("ViewModel").GetValue(directPage, null);
+
+            Assert.AreEqual(expectedTitle, viewModel.PageTitle, uniqueId);
+            Assert.AreEqual(string.Empty, viewModel.PageDescription, uniqueId);
+            Assert.AreEqual(uniqueId + "PageViewModel", viewModel.GetType().Name, uniqueId);
+        }
+
+        private static void AssertCollectionsViewModel<TPage, TViewModel>(string uniqueId, string expectedTitle)
+            where TPage : FrameworkElement
+            where TViewModel : CollectionsPageViewModelBase
         {
             var itemPage = new ItemPage(GalleryCatalog.FindItem(uniqueId));
             var directPage = (TPage)itemPage.DirectPageContent;
