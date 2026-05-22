@@ -132,6 +132,8 @@ namespace ModernWpf.Gallery.Pages
                     return new WpfGallery.DateAndTime.CalendarPage();
                 case "CheckBox":
                     return new WpfGallery.BasicInput.CheckBoxPage();
+                case "Clipboard":
+                    return new WpfGallery.SystemPages.ClipboardPage();
                 case "ComboBox":
                     return new WpfGallery.BasicInput.ComboBoxPage();
                 case "DataGrid":
@@ -140,6 +142,8 @@ namespace ModernWpf.Gallery.Pages
                     return new WpfGallery.DateAndTime.DatePickerPage();
                 case "Expander":
                     return new WpfGallery.Layout.ExpanderPage();
+                case "FileAndFolderDialogs":
+                    return new WpfGallery.SystemPages.FileAndFolderDialogsPage();
                 case "Frame":
                     return new WpfGallery.Navigation.FramePage();
                 case "Grid":
@@ -160,6 +164,8 @@ namespace ModernWpf.Gallery.Pages
                     return new WpfGallery.Collections.ListViewPage();
                 case "Menu":
                     return new WpfGallery.Navigation.MenuPage();
+                case "MessageBox":
+                    return new WpfGallery.SystemPages.MessageBoxPage();
                 case "NavigationWindow":
                     return new WpfGallery.Navigation.NavigationWindowPage();
                 case "PasswordBox":

@@ -105,7 +105,7 @@ Latest local verification for the current branch tip:
 | Navigation pages | Mostly done | Menu, TabControl, Frame, and NavigationWindow now use adapted official WPF Gallery XAML pages with direct-page runtime tests; Hyperlink follows the adapted WPF Gallery Text page path. |
 | Status & Info pages | Mostly done | ProgressBar and ToolTip now use adapted official WPF Gallery XAML pages with direct-page runtime tests. |
 | Text pages | Mostly done | Label, TextBox, TextBlock, RichTextEdit, PasswordBox, and Hyperlink now use adapted official WPF Gallery XAML pages with direct-page runtime tests. |
-| System pages | Mostly done | File and folder dialogs, MessageBox, and Clipboard coverage exists through sample factories and tests. |
+| System pages | Mostly done | File and folder dialogs, MessageBox, and Clipboard now use adapted official WPF Gallery XAML pages with direct-page runtime tests. |
 | Runtime regression layer | Done for current scope | Gallery runtime tests currently cover page loading and many WPF Gallery layout/sample details. |
 
 ## Needs Work
@@ -180,10 +180,10 @@ Use this checklist for future rounds.
 | Status & Info section | Partial | Partial | Open | Status item pages now use adapted official WPF Gallery XAML; section page visual audit remains. |
 | ProgressBar | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; screenshot parity remains. |
 | ToolTip | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; screenshot parity remains. |
-| System section | Partial | Open | Open | Section visual audit remains. |
-| File and Folder Dialogs | Partial | Open | Open | Runtime parity checks exist. |
-| MessageBox | Partial | Open | Open | Runtime parity checks exist. |
-| Clipboard | Partial | Open | Open | Runtime parity checks exist. |
+| System section | Partial | Partial | Open | System item pages now use adapted official WPF Gallery XAML; section page visual audit remains. |
+| File and Folder Dialogs | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader`, `ControlExample`, and support file/folder handlers; screenshot parity remains. |
+| MessageBox | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader`, `ControlExample`, and support message-box handlers; screenshot parity remains. |
+| Clipboard | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader`, `ControlExample`, Clipboard note, and support clipboard handlers; screenshot parity remains. |
 
 ## Next Recommended Round
 

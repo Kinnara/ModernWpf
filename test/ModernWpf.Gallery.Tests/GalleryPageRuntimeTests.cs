@@ -998,113 +998,129 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual("Simple ToolTip", ToolTipService.GetToolTip(toolTipButton));
 
                 var clipboardPage = new ItemPage(GalleryCatalog.FindItem("Clipboard"));
-                Assert.AreEqual(6, clipboardPage.Examples.Count);
-                CollectionAssert.AreEqual(
-                    new[]
-                    {
-                        "Copy text to Clipboard",
-                        "Paste text from Clipboard",
-                        "Clear Clipboard",
-                        "Check Clipboard data formats",
-                        "Copy image to Clipboard",
-                        "Paste image from Clipboard"
-                    },
-                    clipboardPage.Examples.Select(example => example.HeaderText).ToArray());
+                WithRenderedPage(clipboardPage, () =>
+                {
+                    Assert.IsTrue(clipboardPage.HasDirectPageContent);
+                    var clipboardExamples = GetRenderedExamples(clipboardPage);
+                    Assert.AreEqual(6, clipboardExamples.Count);
+                    CollectionAssert.AreEqual(
+                        new[]
+                        {
+                            "Copy text to Clipboard",
+                            "Paste text from Clipboard",
+                            "Clear Clipboard",
+                            "Check Clipboard data formats",
+                            "Copy image to Clipboard",
+                            "Paste image from Clipboard"
+                        },
+                        clipboardExamples.Select(example => example.HeaderText).ToArray());
 
-                var copyClipboardStack = (StackPanel)clipboardPage.Examples[0].ExampleContent;
-                var copyTextBox = (TextBox)copyClipboardStack.Children[0];
-                Assert.AreEqual("CopyTextBox", copyTextBox.Name);
-                Assert.AreEqual("Hello, Clipboard!", copyTextBox.Text);
-                Assert.AreEqual(300.0, copyTextBox.Width);
-                Assert.AreEqual(HorizontalAlignment.Left, copyTextBox.HorizontalAlignment);
-                Assert.AreEqual("Copy To Clipboard TextBox", AutomationProperties.GetName(copyTextBox));
-                Assert.AreEqual("Copy to Clipboard", ((Button)copyClipboardStack.Children[1]).Content);
-                Assert.AreEqual(string.Empty, ((TextBlock)copyClipboardStack.Children[2]).Text);
+                    var copyClipboardStack = (StackPanel)clipboardExamples[0].ExampleContent;
+                    var copyTextBox = (TextBox)copyClipboardStack.Children[0];
+                    Assert.AreEqual("CopyTextBox", copyTextBox.Name);
+                    Assert.AreEqual("Hello, Clipboard!", copyTextBox.Text);
+                    Assert.AreEqual(300.0, copyTextBox.Width);
+                    Assert.AreEqual(HorizontalAlignment.Left, copyTextBox.HorizontalAlignment);
+                    Assert.AreEqual("Copy To Clipboard TextBox", AutomationProperties.GetName(copyTextBox));
+                    Assert.AreEqual("Copy to Clipboard", ((Button)copyClipboardStack.Children[1]).Content);
+                    Assert.AreEqual(string.Empty, ((TextBlock)copyClipboardStack.Children[2]).Text);
 
-                var pasteClipboardStack = (StackPanel)clipboardPage.Examples[1].ExampleContent;
-                Assert.AreEqual("Paste from Clipboard", ((Button)pasteClipboardStack.Children[0]).Content);
-                Assert.AreEqual("Pasted Content:", ((TextBlock)pasteClipboardStack.Children[1]).Text);
-                var pasteTextBox = (TextBox)pasteClipboardStack.Children[2];
-                Assert.AreEqual("PasteTextBox", pasteTextBox.Name);
-                Assert.IsTrue(pasteTextBox.IsReadOnly);
-                Assert.AreEqual(TextWrapping.Wrap, pasteTextBox.TextWrapping);
-                Assert.AreEqual(60.0, pasteTextBox.MinHeight);
-                Assert.AreEqual(300.0, pasteTextBox.Width);
-                Assert.AreEqual("Paste content textbox", AutomationProperties.GetName(pasteTextBox));
+                    var pasteClipboardStack = (StackPanel)clipboardExamples[1].ExampleContent;
+                    Assert.AreEqual("Paste from Clipboard", ((Button)pasteClipboardStack.Children[0]).Content);
+                    Assert.AreEqual("Pasted Content:", ((TextBlock)pasteClipboardStack.Children[1]).Text);
+                    var pasteTextBox = (TextBox)pasteClipboardStack.Children[2];
+                    Assert.AreEqual("PasteTextBox", pasteTextBox.Name);
+                    Assert.IsTrue(pasteTextBox.IsReadOnly);
+                    Assert.AreEqual(TextWrapping.Wrap, pasteTextBox.TextWrapping);
+                    Assert.AreEqual(60.0, pasteTextBox.MinHeight);
+                    Assert.AreEqual(300.0, pasteTextBox.Width);
+                    Assert.AreEqual("Paste content textbox", AutomationProperties.GetName(pasteTextBox));
 
-                AssertButtonResultExample((StackPanel)clipboardPage.Examples[2].ExampleContent, "Clear Clipboard", string.Empty);
-                AssertButtonResultExample((StackPanel)clipboardPage.Examples[3].ExampleContent, "Check Clipboard Formats", string.Empty);
+                    AssertButtonResultExample((StackPanel)clipboardExamples[2].ExampleContent, "Clear Clipboard", string.Empty);
+                    AssertButtonResultExample((StackPanel)clipboardExamples[3].ExampleContent, "Check Clipboard Formats", string.Empty);
 
-                var copyImageStack = (StackPanel)clipboardPage.Examples[4].ExampleContent;
-                var sourceImage = (Image)copyImageStack.Children[0];
-                Assert.AreEqual("SourceImage", sourceImage.Name);
-                Assert.AreEqual(100.0, sourceImage.Width);
-                Assert.AreEqual(100.0, sourceImage.Height);
-                Assert.AreEqual(HorizontalAlignment.Left, sourceImage.HorizontalAlignment);
-                StringAssert.Contains(((BitmapImage)sourceImage.Source).UriSource.ToString(), "ControlImages/Clipboard.png");
-                Assert.AreEqual("Copy Image to Clipboard", ((Button)copyImageStack.Children[1]).Content);
+                    var copyImageStack = (StackPanel)clipboardExamples[4].ExampleContent;
+                    var sourceImage = (Image)copyImageStack.Children[0];
+                    Assert.AreEqual("SourceImage", sourceImage.Name);
+                    Assert.AreEqual(100.0, sourceImage.Width);
+                    Assert.AreEqual(100.0, sourceImage.Height);
+                    Assert.AreEqual(HorizontalAlignment.Left, sourceImage.HorizontalAlignment);
+                    Assert.IsInstanceOfType(sourceImage.Source, typeof(BitmapSource));
+                    StringAssert.Contains(sourceImage.Source.ToString(), "ControlImages/Clipboard.png");
+                    Assert.AreEqual("Copy Image to Clipboard", ((Button)copyImageStack.Children[1]).Content);
 
-                var pasteImageStack = (StackPanel)clipboardPage.Examples[5].ExampleContent;
-                Assert.AreEqual("Paste Image from Clipboard", ((Button)pasteImageStack.Children[0]).Content);
-                Assert.AreEqual("Pasted Image:", ((TextBlock)pasteImageStack.Children[1]).Text);
-                var imageHost = (Border)pasteImageStack.Children[2];
-                Assert.AreEqual(Brushes.Gray, imageHost.BorderBrush);
-                Assert.AreEqual(new Thickness(1), imageHost.BorderThickness);
-                Assert.AreEqual(200.0, imageHost.Width);
-                Assert.AreEqual(200.0, imageHost.Height);
-                var pastedImage = (Image)imageHost.Child;
-                Assert.AreEqual("PastedImage", pastedImage.Name);
-                Assert.AreEqual(Stretch.Uniform, pastedImage.Stretch);
-                Assert.AreEqual(Visibility.Collapsed, pastedImage.Visibility);
+                    var pasteImageStack = (StackPanel)clipboardExamples[5].ExampleContent;
+                    Assert.AreEqual("Paste Image from Clipboard", ((Button)pasteImageStack.Children[0]).Content);
+                    Assert.AreEqual("Pasted Image:", ((TextBlock)pasteImageStack.Children[1]).Text);
+                    var imageHost = (Border)pasteImageStack.Children[2];
+                    Assert.AreEqual(Brushes.Gray, imageHost.BorderBrush);
+                    Assert.AreEqual(new Thickness(1), imageHost.BorderThickness);
+                    Assert.AreEqual(200.0, imageHost.Width);
+                    Assert.AreEqual(200.0, imageHost.Height);
+                    var pastedImage = (Image)imageHost.Child;
+                    Assert.AreEqual("PastedImage", pastedImage.Name);
+                    Assert.AreEqual(Stretch.Uniform, pastedImage.Stretch);
+                    Assert.AreEqual(Visibility.Collapsed, pastedImage.Visibility);
+                });
 
                 var dialogsPage = new ItemPage(GalleryCatalog.FindItem("FileAndFolderDialogs"));
-                Assert.AreEqual(4, dialogsPage.Examples.Count);
-                CollectionAssert.AreEqual(
-                    new[] { "Pick Single File", "Pick Multiple Files", "Save File", "Pick Folder" },
-                    dialogsPage.Examples.Select(example => example.HeaderText).ToArray());
-                AssertButtonResultExample((StackPanel)dialogsPage.Examples[0].ExampleContent, "Pick a single file", "No file selected");
-                AssertButtonResultExample((StackPanel)dialogsPage.Examples[1].ExampleContent, "Pick multiple files", "No files selected");
-                var saveFileStack = (StackPanel)dialogsPage.Examples[2].ExampleContent;
-                var saveTextBox = (TextBox)saveFileStack.Children[0];
-                Assert.AreEqual("Enter text here to save to a file...", saveTextBox.Text);
-                Assert.IsTrue(saveTextBox.AcceptsReturn);
-                Assert.AreEqual(TextWrapping.Wrap, saveTextBox.TextWrapping);
-                Assert.AreEqual(80.0, saveTextBox.MinHeight);
-                Assert.AreEqual(ScrollBarVisibility.Auto, saveTextBox.VerticalScrollBarVisibility);
-                Assert.AreEqual("Save File Text Box", AutomationProperties.GetName(saveTextBox));
-                Assert.AreEqual("The text in the textbox will be saved to a file on button click", AutomationProperties.GetHelpText(saveTextBox));
-                Assert.AreEqual("Save a file", ((Button)saveFileStack.Children[1]).Content);
-                Assert.AreEqual("No file saved", ((TextBlock)saveFileStack.Children[2]).Text);
-                AssertButtonResultExample((StackPanel)dialogsPage.Examples[3].ExampleContent, "Pick a folder", "No folder selected");
+                WithRenderedPage(dialogsPage, () =>
+                {
+                    Assert.IsTrue(dialogsPage.HasDirectPageContent);
+                    var dialogsExamples = GetRenderedExamples(dialogsPage);
+                    Assert.AreEqual(4, dialogsExamples.Count);
+                    CollectionAssert.AreEqual(
+                        new[] { "Pick Single File", "Pick Multiple Files", "Save File", "Pick Folder" },
+                        dialogsExamples.Select(example => example.HeaderText).ToArray());
+                    AssertButtonResultExample((StackPanel)dialogsExamples[0].ExampleContent, "Pick a single file", "No file selected");
+                    AssertButtonResultExample((StackPanel)dialogsExamples[1].ExampleContent, "Pick multiple files", "No files selected");
+                    var saveFileStack = (StackPanel)dialogsExamples[2].ExampleContent;
+                    var saveTextBox = (TextBox)saveFileStack.Children[0];
+                    Assert.AreEqual("Enter text here to save to a file...", saveTextBox.Text);
+                    Assert.IsTrue(saveTextBox.AcceptsReturn);
+                    Assert.AreEqual(TextWrapping.Wrap, saveTextBox.TextWrapping);
+                    Assert.AreEqual(80.0, saveTextBox.MinHeight);
+                    Assert.AreEqual(ScrollBarVisibility.Auto, saveTextBox.VerticalScrollBarVisibility);
+                    Assert.AreEqual("Save File Text Box", AutomationProperties.GetName(saveTextBox));
+                    Assert.AreEqual("The text in the textbox will be saved to a file on button click", AutomationProperties.GetHelpText(saveTextBox));
+                    Assert.AreEqual("Save a file", ((Button)saveFileStack.Children[1]).Content);
+                    Assert.AreEqual("No file saved", ((TextBlock)saveFileStack.Children[2]).Text);
+                    AssertButtonResultExample((StackPanel)dialogsExamples[3].ExampleContent, "Pick a folder", "No folder selected");
+                });
 
                 var messageBoxPage = new ItemPage(GalleryCatalog.FindItem("MessageBox"));
-                Assert.AreEqual(6, messageBoxPage.Examples.Count);
-                CollectionAssert.AreEqual(
-                    new[]
-                    {
-                        "Simple MessageBox",
-                        "MessageBox with Custom Title and Description",
-                        "MessageBox with Different Buttons",
-                        "MessageBox with Different Images",
-                        "Information, Error, and Warning MessageBox",
-                        "MessageBox with Custom Default Button"
-                    },
-                    messageBoxPage.Examples.Select(example => example.HeaderText).ToArray());
+                WithRenderedPage(messageBoxPage, () =>
+                {
+                    Assert.IsTrue(messageBoxPage.HasDirectPageContent);
+                    var messageBoxExamples = GetRenderedExamples(messageBoxPage);
+                    Assert.AreEqual(6, messageBoxExamples.Count);
+                    CollectionAssert.AreEqual(
+                        new[]
+                        {
+                            "Simple MessageBox",
+                            "MessageBox with Custom Title and Description",
+                            "MessageBox with Different Buttons",
+                            "MessageBox with Different Images",
+                            "Information, Error, and Warning MessageBox",
+                            "MessageBox with Custom Default Button"
+                        },
+                        messageBoxExamples.Select(example => example.HeaderText).ToArray());
 
-                AssertButtonResultExample((StackPanel)messageBoxPage.Examples[0].ExampleContent, "Simple MessageBox", "No message shown yet");
-                AssertButtonResultExample((StackPanel)messageBoxPage.Examples[1].ExampleContent, "Custom MessageBox", "No message shown yet");
-                AssertMessageBoxSelectorExample((Grid)messageBoxPage.Examples[2].ExampleContent, "Button Type:", "MessageBox with Different Buttons", "MessageBox Button Selector", "No button clicked yet", new[] { "OK", "OK/Cancel", "Abort/Retry/Ignore", "Yes/No/Cancel", "Yes/No", "Retry/Cancel", "Cancel/Try/Continue" });
-                AssertMessageBoxSelectorExample((Grid)messageBoxPage.Examples[3].ExampleContent, "Icon Type:", "MessageBox with different images", "MessageBox Image Selector", "No image example shown yet", new[] { "None", "Error", "Question", "Warning", "Information" });
+                    AssertButtonResultExample((StackPanel)messageBoxExamples[0].ExampleContent, "Simple MessageBox", "No message shown yet");
+                    AssertButtonResultExample((StackPanel)messageBoxExamples[1].ExampleContent, "Custom MessageBox", "No message shown yet");
+                    AssertMessageBoxSelectorExample((Grid)messageBoxExamples[2].ExampleContent, "Button Type:", "MessageBox with Different Buttons", "MessageBox Button Selector", "No button clicked yet", new[] { "OK", "OK/Cancel", "Abort/Retry/Ignore", "Yes/No/Cancel", "Yes/No", "Retry/Cancel", "Cancel/Try/Continue" });
+                    AssertMessageBoxSelectorExample((Grid)messageBoxExamples[3].ExampleContent, "Icon Type:", "MessageBox with different images", "MessageBox Image Selector", "No image example shown yet", new[] { "None", "Error", "Question", "Warning", "Information" });
 
-                var commonMessagesStack = (StackPanel)messageBoxPage.Examples[4].ExampleContent;
-                var commonButtons = ((WrapPanel)commonMessagesStack.Children[0]).Children.OfType<Button>().ToArray();
-                CollectionAssert.AreEqual(new[] { "Information", "Error", "Warning" }, commonButtons.Select(button => (string)button.Content).ToArray());
-                Assert.AreEqual(new Thickness(0, 0, 5, 0), commonButtons[0].Margin);
-                Assert.AreEqual(new Thickness(0, 0, 5, 0), commonButtons[1].Margin);
-                Assert.AreEqual(new Thickness(0), commonButtons[2].Margin);
-                Assert.AreEqual("No common message shown yet", ((TextBlock)commonMessagesStack.Children[1]).Text);
+                    var commonMessagesStack = (StackPanel)messageBoxExamples[4].ExampleContent;
+                    var commonButtons = ((WrapPanel)commonMessagesStack.Children[0]).Children.OfType<Button>().ToArray();
+                    CollectionAssert.AreEqual(new[] { "Information", "Error", "Warning" }, commonButtons.Select(button => (string)button.Content).ToArray());
+                    Assert.AreEqual(new Thickness(0, 0, 5, 0), commonButtons[0].Margin);
+                    Assert.AreEqual(new Thickness(0, 0, 5, 0), commonButtons[1].Margin);
+                    Assert.AreEqual(new Thickness(0), commonButtons[2].Margin);
+                    Assert.AreEqual("No common message shown yet", ((TextBlock)commonMessagesStack.Children[1]).Text);
 
-                AssertButtonResultExample((StackPanel)messageBoxPage.Examples[5].ExampleContent, "Show with 'No' as default", "No selection made");
+                    AssertButtonResultExample((StackPanel)messageBoxExamples[5].ExampleContent, "Show with 'No' as default", "No selection made");
+                });
             });
         }
 
@@ -2049,7 +2065,18 @@ namespace ModernWpf.Gallery.Tests
             Assert.AreEqual(expectedComboBoxName, AutomationProperties.GetName(comboBox));
             Assert.AreEqual(150.0, comboBox.MinWidth);
             Assert.AreEqual(0, comboBox.SelectedIndex);
-            CollectionAssert.AreEqual(expectedItems, comboBox.Items.Cast<object>().Select(item => item.ToString()).ToArray());
+            CollectionAssert.AreEqual(expectedItems, comboBox.Items.Cast<object>().Select(GetComboBoxItemText).ToArray());
+        }
+
+        private static string GetComboBoxItemText(object item)
+        {
+            var comboBoxItem = item as ComboBoxItem;
+            if (comboBoxItem != null)
+            {
+                return comboBoxItem.Content == null ? string.Empty : comboBoxItem.Content.ToString();
+            }
+
+            return item == null ? string.Empty : item.ToString();
         }
 
         private static void AssertGalleryComboBox(ComboBox comboBox, string automationName)

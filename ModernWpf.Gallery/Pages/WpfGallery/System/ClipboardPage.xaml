@@ -1,0 +1,201 @@
+<UserControl
+    x:Class="ModernWpf.Gallery.Pages.WpfGallery.SystemPages.ClipboardPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:ModernWpf.Gallery.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.SystemPages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    mc:Ignorable="d">
+
+    <Grid x:Name="ContentPagePane" Height="Auto">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <controls:PageHeader
+            Grid.Row="0"
+            Margin="0,0,0,32"
+            ShowDescription="False"
+            Title="{Binding ViewModel.PageTitle}" />
+
+        <Border
+            Grid.Row="1"
+            Margin="0,0,0,16"
+            Padding="16,12"
+            Background="{DynamicResource SubtleFillColorSecondaryBrush}"
+            BorderBrush="{DynamicResource AccentFillColorDefaultBrush}"
+            BorderThickness="1"
+            CornerRadius="4">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock
+                    Grid.Column="0"
+                    Margin="0,2,12,0"
+                    VerticalAlignment="Top"
+                    AutomationProperties.Name="Info"
+                    FontFamily="{StaticResource SymbolThemeFontFamily}"
+                    FontSize="16"
+                    Foreground="{DynamicResource AccentFillColorDefaultBrush}"
+                    Text="&#xE946;" />
+
+                <TextBlock
+                    Grid.Column="1"
+                    VerticalAlignment="Center"
+                    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                    TextWrapping="Wrap">
+                    <Run FontWeight="SemiBold">Note:</Run>
+                    <Run Text=" Since .NET 9, few of the Clipboard APIs have become obsolete. For more information please read " />
+                    <Hyperlink NavigateUri="https://learn.microsoft.com/en-us/dotnet/desktop/winforms/migration/clipboard-dataobject-net10" RequestNavigate="Hyperlink_RequestNavigate">
+                        <Run Text="here" />
+                    </Hyperlink>
+                    <Run Text="." />
+                </TextBlock>
+            </Grid>
+        </Border>
+
+        <ScrollViewer
+            Grid.Row="2"
+            Margin="0,0,0,24"
+            Padding="0,0,24,0">
+            <StackPanel Margin="0,0,0,24">
+                <controls:ControlExample
+                    Margin="10"
+                    CSharpCode="private void CopyToClipboard_Click(object sender, RoutedEventArgs e)&#x0a;{&#x0a;    Clipboard.SetText(textToCopy);&#x0a;}"
+                    HeaderText="Copy text to Clipboard"
+                    XamlCode="&lt;Button Content=&quot;Copy to Clipboard&quot; Click=&quot;CopyToClipboard_Click&quot; /&gt;">
+                    <StackPanel>
+                        <TextBox
+                            x:Name="CopyTextBox"
+                            Width="300"
+                            Margin="0,0,0,10"
+                            HorizontalAlignment="Left"
+                            AutomationProperties.Name="Copy To Clipboard TextBox"
+                            Text="Hello, Clipboard!" />
+                        <Button
+                            Margin="0,0,0,10"
+                            Click="CopyToClipboard_Click"
+                            Content="Copy to Clipboard" />
+                        <TextBlock Text="{Binding ViewModel.CopyStatus, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:ClipboardPage}}" TextWrapping="Wrap" />
+                    </StackPanel>
+                </controls:ControlExample>
+
+                <controls:ControlExample
+                    Margin="10,32,10,10"
+                    CSharpCode="private void PasteFromClipboard_Click(object sender, RoutedEventArgs e)&#x0a;{&#x0a;    if (Clipboard.ContainsText())&#x0a;    {&#x0a;        string text = Clipboard.GetText();&#x0a;    }&#x0a;}"
+                    HeaderText="Paste text from Clipboard"
+                    XamlCode="&lt;Button Content=&quot;Paste from Clipboard&quot; Click=&quot;PasteFromClipboard_Click&quot; /&gt;">
+                    <StackPanel>
+                        <Button
+                            Margin="0,0,0,10"
+                            Click="PasteFromClipboard_Click"
+                            Content="Paste from Clipboard" />
+                        <TextBlock
+                            Margin="0,0,0,5"
+                            FontWeight="SemiBold"
+                            Text="Pasted Content:" />
+                        <TextBox
+                            x:Name="PasteTextBox"
+                            Width="300"
+                            MinHeight="60"
+                            HorizontalAlignment="Left"
+                            AutomationProperties.Name="Paste content textbox"
+                            IsReadOnly="True"
+                            Text="{Binding ViewModel.PastedText, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:ClipboardPage}, Mode=TwoWay}"
+                            TextWrapping="Wrap" />
+                    </StackPanel>
+                </controls:ControlExample>
+
+                <controls:ControlExample
+                    Margin="10,32,10,10"
+                    CSharpCode="private void ClearClipboard_Click(object sender, RoutedEventArgs e)&#x0a;{&#x0a;    Clipboard.Clear();&#x0a;}"
+                    HeaderText="Clear Clipboard"
+                    XamlCode="&lt;Button Content=&quot;Clear Clipboard&quot; Click=&quot;ClearClipboard_Click&quot; /&gt;">
+                    <StackPanel>
+                        <Button
+                            Margin="0,0,0,10"
+                            Click="ClearClipboard_Click"
+                            Content="Clear Clipboard" />
+                        <TextBlock Text="{Binding ViewModel.ClearStatus, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:ClipboardPage}}" TextWrapping="Wrap" />
+                    </StackPanel>
+                </controls:ControlExample>
+
+                <controls:ControlExample
+                    Margin="10,32,10,10"
+                    CSharpCode="private void CheckFormats_Click(object sender, RoutedEventArgs e)&#x0a;{&#x0a;    bool hasText = Clipboard.ContainsText();&#x0a;    bool hasImage = Clipboard.ContainsImage();&#x0a;    bool hasFileDropList = Clipboard.ContainsFileDropList();&#x0a;}"
+                    HeaderText="Check Clipboard data formats"
+                    XamlCode="&lt;Button Content=&quot;Check Formats&quot; Click=&quot;CheckFormats_Click&quot; /&gt;">
+                    <StackPanel>
+                        <Button
+                            Margin="0,0,0,10"
+                            Click="CheckFormats_Click"
+                            Content="Check Clipboard Formats" />
+                        <TextBlock Text="{Binding ViewModel.FormatsInfo, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:ClipboardPage}}" TextWrapping="Wrap" />
+                    </StackPanel>
+                </controls:ControlExample>
+
+                <controls:ControlExample
+                    Margin="10,32,10,10"
+                    CSharpCode="private void CopyImageToClipboard_Click(object sender, RoutedEventArgs e)&#x0a;{&#x0a;    Clipboard.SetImage(bitmapSource);&#x0a;}"
+                    HeaderText="Copy image to Clipboard"
+                    XamlCode="&lt;Button Content=&quot;Copy Image&quot; Click=&quot;CopyImageToClipboard_Click&quot; /&gt;">
+                    <StackPanel>
+                        <Image
+                            x:Name="SourceImage"
+                            Width="100"
+                            Height="100"
+                            Margin="0,0,0,10"
+                            HorizontalAlignment="Left"
+                            Source="pack://application:,,,/ModernWpf.Gallery;component/Assets/ControlImages/Clipboard.png" />
+                        <Button
+                            Margin="0,0,0,10"
+                            Click="CopyImageToClipboard_Click"
+                            Content="Copy Image to Clipboard" />
+                        <TextBlock Text="{Binding ViewModel.CopyImageStatus, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:ClipboardPage}}" TextWrapping="Wrap" />
+                    </StackPanel>
+                </controls:ControlExample>
+
+                <controls:ControlExample
+                    Margin="10,32,10,10"
+                    CSharpCode="private void PasteImageFromClipboard_Click(object sender, RoutedEventArgs e)&#x0a;{&#x0a;    if (Clipboard.ContainsImage())&#x0a;    {&#x0a;        BitmapSource image = Clipboard.GetImage();&#x0a;    }&#x0a;}"
+                    HeaderText="Paste image from Clipboard"
+                    XamlCode="&lt;Button Content=&quot;Paste Image&quot; Click=&quot;PasteImageFromClipboard_Click&quot; /&gt;">
+                    <StackPanel>
+                        <Button
+                            Margin="0,0,0,10"
+                            Click="PasteImageFromClipboard_Click"
+                            Content="Paste Image from Clipboard" />
+                        <TextBlock
+                            Margin="0,0,0,5"
+                            FontWeight="SemiBold"
+                            Text="Pasted Image:" />
+                        <Border
+                            Width="200"
+                            Height="200"
+                            HorizontalAlignment="Left"
+                            BorderBrush="Gray"
+                            BorderThickness="1">
+                            <Image
+                                x:Name="PastedImage"
+                                Stretch="Uniform"
+                                Visibility="Collapsed" />
+                        </Border>
+                        <TextBlock
+                            Margin="0,10,0,0"
+                            Text="{Binding ViewModel.PasteImageStatus, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:ClipboardPage}}"
+                            TextWrapping="Wrap" />
+                    </StackPanel>
+                </controls:ControlExample>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>
