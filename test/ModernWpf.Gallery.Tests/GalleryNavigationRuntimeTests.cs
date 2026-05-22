@@ -87,6 +87,8 @@ namespace ModernWpf.Gallery.Tests
                 var navigation = (NavigationView)page.FindName("Navigation");
                 var topLevelItems = navigation.MenuItems.OfType<NavigationViewItem>().ToList();
 
+                Assert.AreEqual(260d, navigation.OpenPaneLength);
+
                 CollectionAssert.AreEqual(
                     new[] { "Home", "What's New", "Design Guidance", "Samples", "All controls", "Basic Input" },
                     topLevelItems.Take(6).Select(GetNavigationItemText).ToArray());

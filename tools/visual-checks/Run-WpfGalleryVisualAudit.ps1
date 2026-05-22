@@ -141,7 +141,7 @@ if ($BuildModern) {
 }
 
 if ($BuildOfficial) {
-    & dotnet build (Join-Path $OfficialWpfGalleryRoot "WPFGallery.csproj") -f net10.0-windows -c Debug --no-restore
+    & dotnet build (Join-Path $OfficialWpfGalleryRoot "WPFGallery.csproj") -f net10.0-windows -c Debug
     if ($LASTEXITCODE -ne 0) {
         throw "Official WPF Gallery build failed."
     }
@@ -204,6 +204,9 @@ public static class WpfGalleryVisualNative
     private static extern void mouse_event(uint flags, uint dx, uint dy, uint data, UIntPtr extraInfo);
 
     [DllImport("user32.dll")]
+    private static extern void keybd_event(byte virtualKey, byte scanCode, uint flags, UIntPtr extraInfo);
+
+    [DllImport("user32.dll")]
     private static extern IntPtr GetWindowDC(IntPtr hWnd);
 
     [DllImport("user32.dll")]
@@ -231,6 +234,12 @@ public static class WpfGalleryVisualNative
         SetCursorPos(x, y);
         mouse_event(0x0002, 0, 0, 0, UIntPtr.Zero);
         mouse_event(0x0004, 0, 0, 0, UIntPtr.Zero);
+    }
+
+    public static void PressEnter()
+    {
+        keybd_event(0x0D, 0, 0, UIntPtr.Zero);
+        keybd_event(0x0D, 0, 0x0002, UIntPtr.Zero);
     }
 
     public static RECT GetRect(IntPtr hWnd)
@@ -345,6 +354,21 @@ function Find-WindowByProcessId([int]$processId) {
     return $fallback
 }
 
+function Find-ElementByNameAndTypeInProcess([int]$processId, [string]$name, $controlType) {
+    $condition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ProcessIdProperty,
+        $processId)
+    $windows = (Get-RootElement).FindAll([System.Windows.Automation.TreeScope]::Children, $condition)
+    foreach ($window in $windows) {
+        $match = Find-DescendantByNameAndType $window $name $controlType
+        if ($null -ne $match) {
+            return $match
+        }
+    }
+
+    return $null
+}
+
 function Find-DescendantByAutomationId($root, [string]$automationId) {
     $condition = New-Object System.Windows.Automation.PropertyCondition(
         [System.Windows.Automation.AutomationElement]::AutomationIdProperty,
@@ -418,6 +442,23 @@ function Invoke-Element($element) {
     return $false
 }
 
+function Click-Element($element) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    $rect = $element.Current.BoundingRectangle
+    if ($rect.Width -le 0 -or $rect.Height -le 0) {
+        return $false
+    }
+
+    [WpfGalleryVisualNative]::Click(
+        [int][Math]::Round($rect.X + ($rect.Width / 2)),
+        [int][Math]::Round($rect.Y + ($rect.Height / 2)))
+    return $true
+}
+
+
 function Expand-Element($element) {
     if ($null -eq $element) {
         return $false
@@ -459,13 +500,128 @@ function Navigate-OfficialWpfGallery($window, $case) {
             [void](Expand-Element $item)
         }
         else {
-            if (!(Invoke-Element $item)) {
+            try {
+                $item.SetFocus()
+                $selectionPattern = $item.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern)
+                if ($null -ne $selectionPattern) {
+                    $selectionPattern.Select()
+                }
+            }
+            catch {
+            }
+
+            [WpfGalleryVisualNative]::PressEnter()
+            Start-Sleep -Milliseconds 250
+            if (!(Click-Element $item) -and !(Invoke-Element $item)) {
                 throw "Could not invoke official WPF Gallery navigation item '$name'."
             }
         }
     }
 
+    Wait-OfficialWpfGalleryContentReady $window $case
     Start-Sleep -Milliseconds 1000
+}
+
+function Get-OfficialWpfGalleryReadyText($case) {
+    switch ($case.Id) {
+        "Home" { return ".NET 10" }
+        "Settings" { return "Settings Page" }
+        default { return "$($case.OfficialPath[$case.OfficialPath.Count - 1]) Page" }
+    }
+}
+
+function Wait-OfficialWpfGalleryContentReady($window, $case) {
+    $readyText = Get-OfficialWpfGalleryReadyText $case
+    if ([string]::IsNullOrWhiteSpace($readyText)) {
+        return
+    }
+
+    Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "official WPF Gallery content '$readyText'" -Probe {
+        $frame = Find-DescendantByAutomationId $window "RootContentFrame"
+        if ($null -eq $frame) {
+            return $null
+        }
+
+        return Find-DescendantByNameAndType $frame $readyText ([System.Windows.Automation.ControlType]::Text)
+    } | Out-Null
+}
+
+function Return-OfficialWpfGalleryToHome($window) {
+    $homeCase = New-Case "Home" "home" @("Home")
+    $backButton = Find-DescendantByAutomationId $window "BackButton"
+    if ($null -ne $backButton) {
+        [void](Invoke-Element $backButton)
+        [void](Click-Element $backButton)
+        Start-Sleep -Milliseconds 700
+    }
+
+    try {
+        Wait-OfficialWpfGalleryContentReady $window $homeCase
+        return
+    }
+    catch {
+    }
+
+    $homeItem = Find-TreeItemByName $window "Home"
+    if ($null -ne $homeItem) {
+        try {
+            $homeItem.SetFocus()
+        }
+        catch {
+        }
+
+        [WpfGalleryVisualNative]::PressEnter()
+        [void](Click-Element $homeItem)
+        Wait-OfficialWpfGalleryContentReady $window $homeCase
+    }
+}
+
+function Ensure-OfficialWpfGalleryTheme([int]$processId, $window) {
+    if ($Theme -eq "Default") {
+        return [ordered]@{
+            RequestedTheme = $Theme
+            Status = "Skipped"
+            LastException = "Default theme requested."
+        }
+    }
+
+    try {
+        $settings = Find-DescendantByNameAndType $window "Settings" ([System.Windows.Automation.ControlType]::Button)
+        if ($null -eq $settings -or !(Invoke-Element $settings)) {
+            throw "Could not invoke official WPF Gallery Settings button."
+        }
+
+        $comboBox = Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "official WPF Gallery theme ComboBox" -Probe {
+            Find-DescendantByNameAndType $window "Change ThemeMode" ([System.Windows.Automation.ControlType]::ComboBox)
+        }
+
+        [void](Expand-Element $comboBox)
+        $item = Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "official WPF Gallery theme item '$Theme'" -Probe {
+            $match = Find-DescendantByNameAndType $comboBox $Theme ([System.Windows.Automation.ControlType]::ListItem)
+            if ($null -ne $match) {
+                return $match
+            }
+
+            return Find-ElementByNameAndTypeInProcess $processId $Theme ([System.Windows.Automation.ControlType]::ListItem)
+        }
+
+        [void](Invoke-Element $item)
+        [void](Click-Element $item)
+
+        Start-Sleep -Milliseconds 700
+        return [ordered]@{
+            RequestedTheme = $Theme
+            Status = "Passed"
+            LastException = ""
+        }
+    }
+    catch {
+        return [ordered]@{
+            RequestedTheme = $Theme
+            Status = "Failed"
+            LastException = $_.Exception.Message
+        }
+    }
 }
 
 function Get-AutomationText($root, [string]$automationId) {
@@ -863,8 +1019,12 @@ function Capture-ModernWpf($case, [string]$caseDir) {
         $contentCropPath = Join-Path $caseDir "modernwpf-$($case.Id)-content.png"
         Capture-Window $window.Current.NativeWindowHandle $screenshot
         Write-UiaTree $window $treePath 7
-        $renderedContentArtifact = Join-Path $artifactDir "GalleryContentHost.png"
-        $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "GalleryContentHostRenderedArtifact"
+        $renderedContentArtifact = Join-Path $artifactDir "ContentRootGrid.png"
+        $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "ContentRootGridRenderedArtifact"
+        if (!$contentCrop.NonBlank) {
+            $renderedContentArtifact = Join-Path $artifactDir "GalleryContentHost.png"
+            $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "GalleryContentHostRenderedArtifact"
+        }
         if (!$contentCrop.NonBlank) {
             $contentCrop = Save-ModernContentCrop $window $screenshot $contentCropPath
         }
@@ -909,6 +1069,10 @@ function Capture-OfficialWpfGallery($case, [string]$caseDir) {
         }
         [void][WpfGalleryVisualNative]::Move($window.Current.NativeWindowHandle, 60, 60, $Width, $Height)
         Start-Sleep -Milliseconds 700
+        $themeProbe = Ensure-OfficialWpfGalleryTheme $process.Id $window
+        if ($case.Id -ne "Settings") {
+            Return-OfficialWpfGalleryToHome $window
+        }
         Navigate-OfficialWpfGallery $window $case
         Start-Sleep -Milliseconds 500
 
@@ -919,15 +1083,17 @@ function Capture-OfficialWpfGallery($case, [string]$caseDir) {
         Write-UiaTree $window $treePath 7
         $contentCrop = Save-OfficialContentCrop $window $screenshot $contentCropPath
 
+        $status = if ((Test-ImageNotBlank $screenshot) -and $contentCrop.NonBlank -and $themeProbe.Status -ne "Failed") { "Passed" } else { "Failed" }
         return [ordered]@{
             App = "OfficialWpfGallery"
             Case = $case.Id
             Route = $case.OfficialPath -join " > "
-            Status = $(if ((Test-ImageNotBlank $screenshot) -and $contentCrop.NonBlank) { "Passed" } else { "Failed" })
+            Status = $status
             Screenshot = $screenshot
             ContentCrop = $contentCrop
             UiaTree = $treePath
-            LastException = ""
+            ThemeProbe = $themeProbe
+            LastException = $(if ($themeProbe.Status -eq "Failed") { $themeProbe.LastException } else { "" })
         }
     }
     finally {

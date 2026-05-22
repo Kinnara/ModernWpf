@@ -17,6 +17,7 @@
             IsBackButtonVisible="Auto"
             IsSettingsVisible="True"
             ItemInvoked="OnNavigationItemInvoked"
+            OpenPaneLength="260"
             PaneDisplayMode="Left"
             PaneTitle="WPF Gallery">
             <ui:NavigationView.PaneCustomContent>

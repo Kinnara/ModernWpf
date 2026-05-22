@@ -46,14 +46,17 @@ Run a ModernWpf-only smoke capture when the official WPF Gallery executable is n
 
 The WPF audit script defaults the official reference executable to
 `D:\repos\WPF-Samples\Sample Applications\WPFGallery\bin\Debug\net10.0-windows\WPFGallery.exe`.
-Pass `-BuildOfficial` to build the reference checkout first, or pass
+Pass `-BuildOfficial` to restore/build the reference checkout first, or pass
 `-WpfGalleryExe` when using a different official Gallery build. The script
 routes ModernWpf with `--visual-test --route`, drives the official WPF Gallery
-navigation tree through UI Automation, captures full windows, crops the main
-content region, and reports normalized content-crop deltas. ModernWpf visual
-test launches also render `GalleryContentHost.png` in-process so the audit can
-still inspect the page content when OS-level window capture returns black client
-pixels in the current execution context. Use
+Settings theme picker and navigation tree through UI Automation, captures full
+windows, crops the main content region, and reports normalized content-crop
+deltas. After changing the official theme through Settings, the audit returns
+the reference app to Home before navigating to the target case. ModernWpf visual
+test launches also render `ContentRootGrid.png` and `GalleryContentHost.png`
+in-process; the WPF Gallery audit prefers `ContentRootGrid.png` because it is
+the closest equivalent to the official `RootContentFrame` crop, then falls back
+to `GalleryContentHost.png` or a screenshot crop when needed. Use
 `-FailOnDifference` only for local triage once a machine has stable capture
 behavior; the first milestone uses the artifacts and report as manual visual
 evidence rather than a CI gate.
