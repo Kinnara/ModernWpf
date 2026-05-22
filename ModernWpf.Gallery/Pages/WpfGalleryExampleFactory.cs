@@ -134,6 +134,8 @@ namespace ModernWpf.Gallery.Pages
                     return new WpfGallery.BasicInput.CheckBoxPage();
                 case "Clipboard":
                     return new WpfGallery.SystemPages.ClipboardPage();
+                case "Color":
+                    return new WpfGallery.DesignGuidance.ColorPage();
                 case "ComboBox":
                     return new WpfGallery.BasicInput.ComboBoxPage();
                 case "DataGrid":
@@ -209,8 +211,6 @@ namespace ModernWpf.Gallery.Pages
         {
             switch (uniqueId)
             {
-                case "Color":
-                    return CreateColorPageBody();
                 case "Iconography":
                     return CreateIconographyPageBody();
                 default:
@@ -1445,7 +1445,7 @@ namespace ModernWpf.Gallery.Pages
             return root;
         }
 
-        private static StackPanel CreateColorSection(int index)
+        internal static StackPanel CreateColorSection(int index)
         {
             switch (index)
             {

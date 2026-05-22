@@ -95,7 +95,7 @@ Latest local verification for the current branch tip:
 | Page shell and header model | Mostly done | Item, section, support, and sample chrome have been moved toward WPF Gallery structure and spacing. |
 | WPF Gallery compatibility `PageHeader` | Done | ModernWpf Gallery has an adapted WPF Gallery-style `PageHeader` control for copied WPF-equivalent pages. |
 | Header descriptions | Done | Visible WPF item page descriptions now match official WPF Gallery view models, including empty description slots. |
-| Design Guidance pages | Mostly done | Typography, Spacing, and Geometry now use adapted official WPF Gallery XAML pages with direct-page runtime tests; Color and Iconography remain factory-backed pending source audit. |
+| Design Guidance pages | Mostly done | Color, Typography, Spacing, and Geometry now use adapted official WPF Gallery page shells/XAML with direct-page runtime tests; Iconography remains factory-backed pending source audit. |
 | User Dashboard sample | Mostly done | WPF Gallery-style layout and behavior are represented and tested. |
 | Basic Input pages | Mostly done | Button, CheckBox, ComboBox, RadioButton, and Slider now use adapted official WPF Gallery XAML pages with direct-page runtime tests. |
 | Collections pages | Mostly done | DataGrid, ListBox, ListView, and TreeView now use adapted official WPF Gallery XAML pages with direct-page runtime tests. |
@@ -113,7 +113,7 @@ Latest local verification for the current branch tip:
 | Area | Status | Next action |
 | --- | --- | --- |
 | Visual screenshot pass against official WPF Gallery | Open | Add or run a WPF Gallery reference capture pass and compare page-by-page screenshots, not just runtime structure. |
-| Page-by-page exact XAML audit | Open | For each WPF-equivalent page, compare ModernWpf sample factories against official WPF Gallery XAML and replace approximations with adapted copies where feasible. Color/Iconography, User Dashboard, Home, All controls, and section pages remain open. |
+| Page-by-page exact XAML audit | Open | For each WPF-equivalent page, compare ModernWpf sample factories against official WPF Gallery XAML and replace approximations with adapted copies where feasible. Color section controls, Iconography, User Dashboard, Home, All controls, and section pages remain open. |
 | Home page | Open | Compare first viewport, card layout, copy, and navigation affordances against official WPF Gallery. |
 | All controls page | Open | Verify grouping, sort order, card subtitles, tile sizing, and search behavior against official WPF Gallery. |
 | Section pages | Open | Verify each section's title, description, hero/card layout, item order, and empty-space behavior against official WPF Gallery. |
@@ -132,8 +132,8 @@ Use this checklist for future rounds.
 | --- | --- | --- | --- | --- |
 | Home | Open | Open | Open | Needs official first-viewport comparison. |
 | All controls | Partial | Open | Open | Runtime shell checks exist; exact visual audit still needed. |
-| Design Guidance section | Partial | Partial | Open | Typography, Spacing, and Geometry now use adapted official WPF Gallery XAML; Color/Iconography and section visual audit remain. |
-| Color | Partial | Open | Open | Selector/text layout tested; screenshot parity remains. |
+| Design Guidance section | Partial | Partial | Open | Color, Typography, Spacing, and Geometry now use adapted official WPF Gallery page shells/XAML; Color section controls, Iconography, and section visual audit remain. |
+| Color | Partial | Partial | Open | Direct page shell now matches official WPF Gallery Color page with `PageHeader`, selector, and section host; section controls and screenshot parity remain. |
 | Typography | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; screenshot parity remains. |
 | Spacing | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader`, spacing imagery, and spacing table; screenshot parity remains. |
 | Geometry | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader`, geometry imagery, and corner-radius table; screenshot parity remains. |

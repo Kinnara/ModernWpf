@@ -131,7 +131,10 @@ namespace ModernWpf.Gallery.Tests
 
                         Assert.IsFalse(page.ShowPageHeader, expectedDescription.Key);
                         Assert.IsNotNull(pageHeader, expectedDescription.Key);
-                        Assert.AreEqual(expectedDescription.Key, pageHeader.Title, expectedDescription.Key);
+                        var expectedTitle = expectedDescription.Key == "Color"
+                            ? "Colors"
+                            : expectedDescription.Key;
+                        Assert.AreEqual(expectedTitle, pageHeader.Title, expectedDescription.Key);
                         Assert.AreEqual(expectedDescription.Value, pageHeader.Description, expectedDescription.Key);
                     }
                     else
@@ -1367,7 +1370,9 @@ namespace ModernWpf.Gallery.Tests
             WpfTestHost.Run(() =>
             {
                 var page = new ItemPage(GalleryCatalog.FindItem("Color"));
-                var body = (StackPanel)page.PageBodyContent;
+                Assert.IsTrue(page.HasDirectPageContent);
+
+                var body = GetDirectPageBodyStack(page);
                 Assert.AreEqual(3, body.Children.Count);
                 var selector = (ComboBox)body.Children[1];
                 var sectionHost = (ContentControl)body.Children[2];
@@ -1377,6 +1382,9 @@ namespace ModernWpf.Gallery.Tests
                     selector.Items.Cast<string>().ToArray());
                 Assert.AreEqual(200.0, selector.Width);
                 Assert.AreEqual("Page Selector", AutomationProperties.GetName(selector));
+
+                selector.RaiseEvent(new RoutedEventArgs(FrameworkElement.LoadedEvent, selector));
+                WpfTestHost.DoEvents();
 
                 var textSection = (StackPanel)sectionHost.Content;
                 Assert.AreEqual("Text", GetColorPageExampleTitle(textSection, 0));
