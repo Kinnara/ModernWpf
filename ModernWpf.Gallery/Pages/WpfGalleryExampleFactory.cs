@@ -154,6 +154,8 @@ namespace ModernWpf.Gallery.Pages
                     return new WpfGallery.Layout.GridSplitterPage();
                 case "Geometry":
                     return new WpfGallery.DesignGuidance.GeometryPage();
+                case "Iconography":
+                    return new WpfGallery.DesignGuidance.IconographyPage();
                 case "GroupBox":
                     return new WpfGallery.Layout.GroupBoxPage();
                 case "Hyperlink":
@@ -211,8 +213,6 @@ namespace ModernWpf.Gallery.Pages
         {
             switch (uniqueId)
             {
-                case "Iconography":
-                    return CreateIconographyPageBody();
                 default:
                     return null;
             }
@@ -1317,11 +1317,6 @@ namespace ModernWpf.Gallery.Pages
                 "<Border CornerRadius=\"{StaticResource OverlayCornerRadius}\" />\n<Border CornerRadius=\"{StaticResource ControlCornerRadius}\" />",
                 null));
             return root;
-        }
-
-        private static StackPanel CreateIconographyPageBody()
-        {
-            return CreateIconographyExample();
         }
 
         private static StackPanel CreateSpacingPageBody()
