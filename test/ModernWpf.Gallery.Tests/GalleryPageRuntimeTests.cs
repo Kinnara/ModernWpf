@@ -20,6 +20,7 @@ using ModernWpf.Gallery.Pages.WpfGallery;
 using ModernWpf.Gallery.Pages.WpfGallery.BasicInput;
 using ModernWpf.Gallery.Pages.WpfGallery.Collections;
 using ModernWpf.Gallery.Pages.WpfGallery.DateAndTime;
+using ModernWpf.Gallery.Pages.WpfGallery.Layout;
 using ModernWpf.Gallery.Pages.WpfGallery.Media;
 using ModernWpf.Gallery.Pages.WpfGallery.StatusAndInfo;
 
@@ -371,6 +372,21 @@ namespace ModernWpf.Gallery.Tests
                 AssertWpfGalleryPageViewModel<ImagePage, ImagePageViewModel>("Image", "Image", string.Empty);
                 AssertWpfGalleryPageViewModel<ProgressBarPage, ProgressBarPageViewModel>("ProgressBar", "ProgressBar", string.Empty);
                 AssertWpfGalleryPageViewModel<ToolTipPage, ToolTipPageViewModel>("ToolTip", "ToolTip", string.Empty);
+            });
+        }
+
+        [TestMethod]
+        public void LayoutPagesUseOfficialPageSpecificViewModels()
+        {
+            WpfTestHost.Run(() =>
+            {
+                AssertWpfGalleryPageViewModel<BorderPage, BorderPageViewModel>("Border", "Border", string.Empty);
+                AssertWpfGalleryPageViewModel<ExpanderPage, ExpanderPageViewModel>("Expander", "Expander", string.Empty);
+                AssertWpfGalleryPageViewModel<GridPage, GridPageViewModel>("Grid", "Grid", string.Empty);
+                AssertWpfGalleryPageViewModel<GridSplitterPage, GridSplitterPageViewModel>("GridSplitter", "GridSplitter", string.Empty);
+                AssertWpfGalleryPageViewModel<GroupBoxPage, GroupBoxPageViewModel>("GroupBox", "GroupBox", string.Empty);
+                AssertWpfGalleryPageViewModel<ResizeGripPage, ResizeGripPageViewModel>("ResizeGrip", "ResizeGrip", string.Empty);
+                AssertWpfGalleryPageViewModel<StackPanelPage, StackPanelPageViewModel>("StackPanel", "StackPanel", string.Empty);
             });
         }
 

@@ -1,17 +1,15 @@
 using System.Windows.Controls;
-using ModernWpf.Gallery.Pages.WpfGallery;
-
 namespace ModernWpf.Gallery.Pages.WpfGallery.Layout
 {
     public sealed partial class StackPanelPage : UserControl
     {
         public StackPanelPage()
         {
-            ViewModel = new WpfGalleryPageViewModel("StackPanel", string.Empty);
+            ViewModel = new StackPanelPageViewModel();
             DataContext = this;
             InitializeComponent();
         }
 
-        public WpfGalleryPageViewModel ViewModel { get; }
+        public StackPanelPageViewModel ViewModel { get; }
     }
 }

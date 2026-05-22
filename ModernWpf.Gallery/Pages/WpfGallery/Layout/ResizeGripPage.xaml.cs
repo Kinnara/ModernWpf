@@ -1,6 +1,5 @@
 using System.Windows;
 using System.Windows.Controls;
-using ModernWpf.Gallery.Pages.WpfGallery;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.Layout
 {
@@ -8,12 +7,12 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Layout
     {
         public ResizeGripPage()
         {
-            ViewModel = new WpfGalleryPageViewModel("ResizeGrip", string.Empty);
+            ViewModel = new ResizeGripPageViewModel();
             DataContext = this;
             InitializeComponent();
         }
 
-        public WpfGalleryPageViewModel ViewModel { get; }
+        public ResizeGripPageViewModel ViewModel { get; }
 
         private void OpenResizeGripWindow_Click(object sender, RoutedEventArgs e)
         {
