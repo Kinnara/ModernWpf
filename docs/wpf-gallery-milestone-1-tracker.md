@@ -81,7 +81,7 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
-- `dotnet build test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Release -p:UseSharedCompilation=false`
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Release --filter BasicInputControlExamplesMatchOfficialWpfGallerySampleCode -p:UseSharedCompilation=false`
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Release --no-build`
 - `dotnet build ModernWpf.sln --configuration Release -p:UseSharedCompilation=false`
 
@@ -102,6 +102,7 @@ Latest local verification for the current branch tip:
 | Design Guidance pages | Mostly done | Color, Iconography, Typography, Spacing, and Geometry now use adapted official WPF Gallery page shells/XAML with direct-page runtime tests; Color subsections now use official-style color controls and XAML. |
 | User Dashboard sample | Mostly done | Uses an adapted official WPF Gallery XAML/code-behind/view-model page under `Pages/WpfGallery/Samples`; deterministic seed data, ModernWpf integration hooks, and runtime layout/behavior tests are in place. Screenshot parity remains. |
 | Basic Input pages | Mostly done | Button, CheckBox, ComboBox, RadioButton, and Slider now use adapted official WPF Gallery XAML pages with direct-page runtime tests. |
+| Basic Input sample code panes | Done | Runtime coverage now verifies the ordered `ControlExample` headers and XAML snippets for Button, CheckBox, ComboBox, RadioButton, and Slider against the official WPF Gallery reference values; these pages do not expose C# snippet panes. |
 | Collections pages | Mostly done | DataGrid, ListBox, ListView, and TreeView now use adapted official WPF Gallery XAML pages with direct-page runtime tests. |
 | Date & Calendar pages | Mostly done | Calendar and DatePicker now use adapted official WPF Gallery XAML pages while keeping distinct WinUI-style pages. |
 | Layout pages | Mostly done | Border, Expander, Grid, GridSplitter, GroupBox, ResizeGrip, and StackPanel now use adapted official WPF Gallery XAML pages with direct-page runtime tests. |
@@ -121,7 +122,7 @@ Latest local verification for the current branch tip:
 | Home page | Partial | Header tile strip, navigation cards, `ViewModel.NavigationCards` / `ViewModel.RecentlyAddedOrUpdatedSamplesInfo` bindings, and `ViewModel.NavigateCommand` card command binding now match adapted official dashboard shape; compare remaining first-viewport screenshot parity against official WPF Gallery. |
 | All controls page | Partial | Header, navigation cards, `ViewModel.PageTitle` / `ViewModel.NavigationCards` bindings, and `ViewModel.NavigateCommand` card command binding now use adapted official structure; official WPF Gallery has no in-page search on this page, so verify grouping, sort order, card subtitles, and tile sizing against `AllSamplesPage`. |
 | Section pages | Partial | Headers, navigation cards, `ViewModel.PageTitle` / `ViewModel.NavigationCards` bindings, and `ViewModel.NavigateCommand` card command binding now use adapted official structure; verify each section's title, description, hero/card layout, item order, and empty-space behavior against official WPF Gallery. |
-| Sample code panes | Open | Verify XAML and C# snippets match official WPF Gallery examples where the sample is WPF-equivalent. |
+| Sample code panes | Partial | Basic Input `ControlExample` XAML snippets are now covered by runtime parity tests against the official WPF Gallery reference values; continue section-by-section coverage for remaining WPF-equivalent pages and C# snippets where present. |
 | Assets and thumbnails | Partial | Common `Assets/ControlImages` files now match the official checkout, and official-only reference assets are present locally; continue verifying item image choices and non-`ControlImages` visuals page-by-page. |
 | Typography and spacing metrics | Open | Audit page root margins, header spacing, card spacing, sample spacing, font sizes, and line heights against official WPF Gallery. |
 | Theme behavior | Open | Check Light, Dark, and High Contrast views for WPF Gallery-equivalent pages. |
@@ -144,12 +145,12 @@ Use this checklist for future rounds.
 | Iconography | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader`, instructions, icon library, details pane, and pagination; screenshot parity remains. |
 | Samples section | Partial | Partial | Open | User Dashboard exact source audit is covered; section visual audit remains. |
 | User Dashboard | Done | Done | Open | Adapted from official WPF Gallery XAML/code-behind/view-model shape with deterministic seed data and local automation notification guards; runtime layout/behavior tested, screenshot parity remains. |
-| Basic Input section | Partial | Partial | Open | Basic Input section header, navigation cards, `ViewModel.*` bindings, and item pages now use adapted official WPF Gallery resources; section page visual audit remains. |
-| Button | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; screenshot parity remains. |
-| CheckBox | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; screenshot parity remains. |
-| ComboBox | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; screenshot parity remains. |
-| RadioButton | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; screenshot parity remains. |
-| Slider | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; screenshot parity remains. |
+| Basic Input section | Partial | Partial | Open | Basic Input section header, navigation cards, `ViewModel.*` bindings, item pages, and item-page sample code panes now use adapted official WPF Gallery resources; section page visual audit remains. |
+| Button | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; sample headers/snippets are runtime-covered; screenshot parity remains. |
+| CheckBox | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; sample headers/snippets are runtime-covered; screenshot parity remains. |
+| ComboBox | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; sample headers/snippets are runtime-covered; screenshot parity remains. |
+| RadioButton | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; sample headers/snippets are runtime-covered; screenshot parity remains. |
+| Slider | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; sample headers/snippets are runtime-covered; screenshot parity remains. |
 | Collections section | Partial | Partial | Open | Collection item pages now use adapted official WPF Gallery XAML; section page visual audit remains. |
 | DataGrid | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; screenshot parity remains. |
 | ListBox | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; screenshot parity remains. |
