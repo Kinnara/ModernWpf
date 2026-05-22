@@ -1059,64 +1059,91 @@ namespace ModernWpf.Gallery.Tests
             WpfTestHost.Run(() =>
             {
                 var menuPage = new ItemPage(GalleryCatalog.FindItem("Menu"));
-                Assert.AreEqual(1, menuPage.Examples.Count);
-                Assert.AreEqual("Standard Menu.", menuPage.Examples[0].HeaderText);
-                var menuStack = (StackPanel)menuPage.Examples[0].ExampleContent;
-                Assert.AreEqual(2, menuStack.Children.Count);
-                var statusMenuItem = (TextBlock)menuStack.Children[0];
-                Assert.AreEqual("StatusMenuItem", statusMenuItem.Name);
-                Assert.AreEqual(string.Empty, statusMenuItem.Text);
+                WithRenderedPage(menuPage, () =>
+                {
+                    Assert.IsTrue(menuPage.HasDirectPageContent);
+                    var menuExamples = GetRenderedExamples(menuPage);
+                    Assert.AreEqual(1, menuExamples.Count);
+                    Assert.AreEqual("Standard Menu.", menuExamples[0].HeaderText);
+                    var menuStack = (StackPanel)menuExamples[0].ExampleContent;
+                    Assert.AreEqual(2, menuStack.Children.Count);
+                    var statusMenuItem = (TextBlock)menuStack.Children[0];
+                    Assert.AreEqual("StatusMenuItem", statusMenuItem.Name);
+                    Assert.AreEqual(string.Empty, statusMenuItem.Text);
 
-                var menu = (Menu)menuStack.Children[1];
-                var menuItems = menu.Items.Cast<object>().ToArray();
-                Assert.AreEqual(6, menuItems.Length);
-                var fileMenu = (MenuItem)menuItems[0];
-                Assert.AreEqual("File", fileMenu.Header);
-                Assert.AreEqual(7, fileMenu.Items.Count);
-                CollectionAssert.AreEqual(new[] { "New", "New window", "Open", "Save", "Save As" }, fileMenu.Items.Cast<object>().Take(5).Cast<MenuItem>().Select(item => (string)item.Header).ToArray());
-                Assert.IsInstanceOfType(fileMenu.Items[5], typeof(Separator));
-                Assert.AreEqual("Exit", ((MenuItem)fileMenu.Items[6]).Header);
+                    var menu = (Menu)menuStack.Children[1];
+                    var menuItems = menu.Items.Cast<object>().ToArray();
+                    Assert.AreEqual(6, menuItems.Length);
+                    var fileMenu = (MenuItem)menuItems[0];
+                    Assert.AreEqual("File", fileMenu.Header);
+                    Assert.AreEqual(7, fileMenu.Items.Count);
+                    CollectionAssert.AreEqual(new[] { "New", "New window", "Open", "Save", "Save As" }, fileMenu.Items.Cast<object>().Take(5).Cast<MenuItem>().Select(item => (string)item.Header).ToArray());
+                    Assert.IsInstanceOfType(fileMenu.Items[5], typeof(Separator));
+                    Assert.AreEqual("Exit", ((MenuItem)fileMenu.Items[6]).Header);
 
-                var editMenu = (MenuItem)menuItems[1];
-                Assert.AreEqual("Edit", editMenu.Header);
-                Assert.AreEqual(12, editMenu.Items.Count);
-                Assert.AreEqual("Undo", ((MenuItem)editMenu.Items[0]).Header);
-                Assert.IsInstanceOfType(editMenu.Items[1], typeof(Separator));
-                CollectionAssert.AreEqual(new[] { "Cut", "Copy", "Paste" }, editMenu.Items.Cast<object>().Skip(2).Take(3).Cast<MenuItem>().Select(item => (string)item.Header).ToArray());
-                Assert.IsFalse(((MenuItem)editMenu.Items[5]).IsEnabled);
-                Assert.IsInstanceOfType(editMenu.Items[6], typeof(Separator));
-                CollectionAssert.AreEqual(new[] { "Search with browser", "Find", "Find next" }, editMenu.Items.Cast<object>().Skip(7).Take(3).Cast<MenuItem>().Select(item => (string)item.Header).ToArray());
-                Assert.IsInstanceOfType(editMenu.Items[10], typeof(Separator));
-                Assert.AreEqual("Select All", ((MenuItem)editMenu.Items[11]).Header);
-                Assert.IsInstanceOfType(menuItems[2], typeof(Separator));
-                AssertGlyphMenuItem((MenuItem)menuItems[3], "Bold", "\uE8DD");
-                AssertGlyphMenuItem((MenuItem)menuItems[4], "Italic", "\uE8DB");
-                AssertGlyphMenuItem((MenuItem)menuItems[5], "Underlined", "\uE8DC");
+                    var editMenu = (MenuItem)menuItems[1];
+                    Assert.AreEqual("Edit", editMenu.Header);
+                    Assert.AreEqual(12, editMenu.Items.Count);
+                    Assert.AreEqual("Undo", ((MenuItem)editMenu.Items[0]).Header);
+                    Assert.IsInstanceOfType(editMenu.Items[1], typeof(Separator));
+                    CollectionAssert.AreEqual(new[] { "Cut", "Copy", "Paste" }, editMenu.Items.Cast<object>().Skip(2).Take(3).Cast<MenuItem>().Select(item => (string)item.Header).ToArray());
+                    Assert.IsFalse(((MenuItem)editMenu.Items[5]).IsEnabled);
+                    Assert.IsInstanceOfType(editMenu.Items[6], typeof(Separator));
+                    CollectionAssert.AreEqual(new[] { "Search with browser", "Find", "Find next" }, editMenu.Items.Cast<object>().Skip(7).Take(3).Cast<MenuItem>().Select(item => (string)item.Header).ToArray());
+                    Assert.IsInstanceOfType(editMenu.Items[10], typeof(Separator));
+                    Assert.AreEqual("Select All", ((MenuItem)editMenu.Items[11]).Header);
+                    Assert.IsInstanceOfType(menuItems[2], typeof(Separator));
+                    AssertGlyphMenuItem((MenuItem)menuItems[3], "Bold", "\uE8DD");
+                    AssertGlyphMenuItem((MenuItem)menuItems[4], "Italic", "\uE8DB");
+                    AssertGlyphMenuItem((MenuItem)menuItems[5], "Underlined", "\uE8DC");
+                    StringAssert.Contains(menuExamples[0].XamlCode, "<MenuItem Header=\"File\">");
+                });
 
                 var framePage = new ItemPage(GalleryCatalog.FindItem("Frame"));
-                Assert.AreEqual("A Frame", framePage.Examples[0].HeaderText);
-                var frameButton = (Button)framePage.Examples[0].ExampleContent;
-                Assert.AreEqual("OpenFrameWindow", frameButton.Name);
-                Assert.AreEqual("Open window to view Frame", frameButton.Content);
-                Assert.AreEqual(HorizontalAlignment.Center, frameButton.HorizontalAlignment);
-                Assert.AreEqual(VerticalAlignment.Center, frameButton.VerticalAlignment);
+                WithRenderedPage(framePage, () =>
+                {
+                    Assert.IsTrue(framePage.HasDirectPageContent);
+                    var frameExamples = GetRenderedExamples(framePage);
+                    Assert.AreEqual(1, frameExamples.Count);
+                    Assert.AreEqual("A Frame", frameExamples[0].HeaderText);
+                    var frameButton = (Button)frameExamples[0].ExampleContent;
+                    Assert.AreEqual("OpenFrameWindow", frameButton.Name);
+                    Assert.AreEqual("Open window to view Frame", frameButton.Content);
+                    Assert.AreEqual(HorizontalAlignment.Center, frameButton.HorizontalAlignment);
+                    Assert.AreEqual(VerticalAlignment.Center, frameButton.VerticalAlignment);
+                    StringAssert.Contains(frameExamples[0].XamlCode, "NavigationUIVisibility=\"Visible\"");
+                });
 
                 var navigationWindowPage = new ItemPage(GalleryCatalog.FindItem("NavigationWindow"));
-                Assert.AreEqual("A Navigation Window", navigationWindowPage.Examples[0].HeaderText);
-                var navigationWindowButton = (Button)navigationWindowPage.Examples[0].ExampleContent;
-                Assert.AreEqual("OpenNavigationWindow", navigationWindowButton.Name);
-                Assert.AreEqual("Open window to view NavigationWindow", navigationWindowButton.Content);
-                Assert.AreEqual(HorizontalAlignment.Center, navigationWindowButton.HorizontalAlignment);
-                Assert.AreEqual(VerticalAlignment.Center, navigationWindowButton.VerticalAlignment);
+                WithRenderedPage(navigationWindowPage, () =>
+                {
+                    Assert.IsTrue(navigationWindowPage.HasDirectPageContent);
+                    var navigationWindowExamples = GetRenderedExamples(navigationWindowPage);
+                    Assert.AreEqual(1, navigationWindowExamples.Count);
+                    Assert.AreEqual("A Navigation Window", navigationWindowExamples[0].HeaderText);
+                    var navigationWindowButton = (Button)navigationWindowExamples[0].ExampleContent;
+                    Assert.AreEqual("OpenNavigationWindow", navigationWindowButton.Name);
+                    Assert.AreEqual("Open window to view NavigationWindow", navigationWindowButton.Content);
+                    Assert.AreEqual(HorizontalAlignment.Center, navigationWindowButton.HorizontalAlignment);
+                    Assert.AreEqual(VerticalAlignment.Center, navigationWindowButton.VerticalAlignment);
+                    StringAssert.Contains(navigationWindowExamples[0].XamlCode, "Source=\"/Views/Navigation/Page1.xaml\"");
+                    StringAssert.Contains(navigationWindowExamples[0].XamlCode, "Width=\"800\"");
+                });
 
                 var tabControlPage = new ItemPage(GalleryCatalog.FindItem("TabControl"));
-                Assert.AreEqual(1, tabControlPage.Examples.Count);
-                Assert.AreEqual("Standard TabControl.", tabControlPage.Examples[0].HeaderText);
-                var tabControl = (TabControl)tabControlPage.Examples[0].ExampleContent;
-                Assert.AreEqual(new Thickness(0, 8, 0, 0), tabControl.Margin);
-                Assert.AreEqual(2, tabControl.Items.Count);
-                AssertTabItem((TabItem)tabControl.Items[0], "Hello", "Hello Tab", "World", false);
-                AssertTabItem((TabItem)tabControl.Items[1], "The cake", "The cake Tab", "Is a lie.", true);
+                WithRenderedPage(tabControlPage, () =>
+                {
+                    Assert.IsTrue(tabControlPage.HasDirectPageContent);
+                    var tabControlExamples = GetRenderedExamples(tabControlPage);
+                    Assert.AreEqual(1, tabControlExamples.Count);
+                    Assert.AreEqual("Standard TabControl.", tabControlExamples[0].HeaderText);
+                    var tabControl = (TabControl)tabControlExamples[0].ExampleContent;
+                    Assert.AreEqual(new Thickness(0, 8, 0, 0), tabControl.Margin);
+                    Assert.AreEqual(2, tabControl.Items.Count);
+                    AssertTabItem((TabItem)tabControl.Items[0], "Hello", "Hello Tab", "World", false);
+                    AssertTabItem((TabItem)tabControl.Items[1], "The cake", "The cake Tab", "Is a lie.", true);
+                    StringAssert.Contains(tabControlExamples[0].XamlCode, "<TabControl Margin=\"0,8,0,0\">");
+                });
 
                 var listBoxPage = new ItemPage(GalleryCatalog.FindItem("ListBox"));
                 WithRenderedPage(listBoxPage, () =>

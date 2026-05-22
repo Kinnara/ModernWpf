@@ -130,6 +130,8 @@ namespace ModernWpf.Gallery.Pages
                     return new WpfGallery.Collections.DataGridPage();
                 case "DatePicker":
                     return new WpfGallery.DateAndTime.DatePickerPage();
+                case "Frame":
+                    return new WpfGallery.Navigation.FramePage();
                 case "Hyperlink":
                     return new WpfGallery.Text.HyperlinkPage();
                 case "Image":
@@ -140,12 +142,18 @@ namespace ModernWpf.Gallery.Pages
                     return new WpfGallery.Collections.ListBoxPage();
                 case "ListView":
                     return new WpfGallery.Collections.ListViewPage();
+                case "Menu":
+                    return new WpfGallery.Navigation.MenuPage();
+                case "NavigationWindow":
+                    return new WpfGallery.Navigation.NavigationWindowPage();
                 case "PasswordBox":
                     return new WpfGallery.Text.PasswordBoxPage();
                 case "ProgressBar":
                     return new WpfGallery.StatusAndInfo.ProgressBarPage();
                 case "RichTextEdit":
                     return new WpfGallery.Text.RichTextEditPage();
+                case "TabControl":
+                    return new WpfGallery.Navigation.TabControlPage();
                 case "TextBlock":
                     return new WpfGallery.Text.TextBlockPage();
                 case "TextBox":

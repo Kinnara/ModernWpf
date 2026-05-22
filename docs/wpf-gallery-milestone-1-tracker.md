@@ -102,7 +102,7 @@ Latest local verification for the current branch tip:
 | Date & Calendar pages | Mostly done | Calendar and DatePicker now use adapted official WPF Gallery XAML pages while keeping distinct WinUI-style pages. |
 | Layout pages | Mostly done | Expander, Grid, ResizeGrip, GridSplitter, GroupBox, StackPanel, Border, Canvas, and Image coverage exists through sample factories and tests. |
 | Media section | Mostly done | Official WPF Gallery media pages are exposed in the catalog/navigation; Canvas and Image now use adapted WPF Gallery XAML pages. |
-| Navigation pages | Mostly done | Menu, TabControl, Frame, and NavigationWindow coverage exists through sample factories and tests; Hyperlink now follows the adapted WPF Gallery Text page path. |
+| Navigation pages | Mostly done | Menu, TabControl, Frame, and NavigationWindow now use adapted official WPF Gallery XAML pages with direct-page runtime tests; Hyperlink follows the adapted WPF Gallery Text page path. |
 | Status & Info pages | Mostly done | ProgressBar and ToolTip now use adapted official WPF Gallery XAML pages with direct-page runtime tests. |
 | Text pages | Mostly done | Label, TextBox, TextBlock, RichTextEdit, PasswordBox, and Hyperlink now use adapted official WPF Gallery XAML pages with direct-page runtime tests. |
 | System pages | Mostly done | File and folder dialogs, MessageBox, and Clipboard coverage exists through sample factories and tests. |
@@ -165,11 +165,11 @@ Use this checklist for future rounds.
 | Media section | Partial | Partial | Open | Canvas and Image now use adapted official WPF Gallery XAML; section visual audit remains. |
 | Canvas | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; screenshot parity remains. |
 | Image | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader`, `ControlExample`, and official image asset; screenshot parity remains. |
-| Navigation section | Partial | Open | Open | Section visual audit remains. |
-| Menu | Partial | Open | Open | Runtime parity checks exist. |
-| TabControl | Partial | Open | Open | Runtime parity checks exist. |
-| Frame | Partial | Open | Open | Runtime parity checks exist. |
-| NavigationWindow | Partial | Open | Open | Runtime parity checks exist. |
+| Navigation section | Partial | Partial | Open | Navigation item pages now use adapted official WPF Gallery XAML; section page visual audit remains. |
+| Menu | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; screenshot parity remains. |
+| TabControl | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; screenshot parity remains. |
+| Frame | Done | Done | Open | Adapted from official WPF Gallery XAML with support window/page content; screenshot parity remains. |
+| NavigationWindow | Done | Done | Open | Adapted from official WPF Gallery XAML with support navigation pages; screenshot parity remains. |
 | Text section | Partial | Partial | Open | Text item pages now use adapted official WPF Gallery XAML; section page visual audit remains. |
 | Label | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; screenshot parity remains. |
 | TextBox | Done | Done | Open | Adapted from official WPF Gallery XAML, including input validation rule binding; screenshot parity remains. |
