@@ -21,6 +21,7 @@
                             KeyboardNavigation.TabIndex="0">
                             <TextBlock
                                 x:Name="TitleTextBlock"
+                                AutomationProperties.AutomationId="GalleryItemPageTitle"
                                 Style="{StaticResource TitleTextBlockStyle}"
                                 Text="{TemplateBinding Title}" />
                         </Label>

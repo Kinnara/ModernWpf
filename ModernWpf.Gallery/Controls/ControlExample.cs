@@ -1,5 +1,6 @@
 using System;
 using System.Windows;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Markup;
@@ -67,6 +68,11 @@ namespace ModernWpf.Gallery.Controls
             set { SetValue(CSharpCodeProperty, value); }
         }
 
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new ControlExampleAutomationPeer(this);
+        }
+
         private static void OnCopySourceCode(object sender, ExecutedRoutedEventArgs e)
         {
             var controlExample = sender as ControlExample;
@@ -96,6 +102,24 @@ namespace ModernWpf.Gallery.Controls
                 {
                     MessageBox.Show("Error copying to clipboard: " + ex.Message);
                 }
+            }
+        }
+
+        private sealed class ControlExampleAutomationPeer : FrameworkElementAutomationPeer
+        {
+            public ControlExampleAutomationPeer(ControlExample owner)
+                : base(owner)
+            {
+            }
+
+            protected override AutomationControlType GetAutomationControlTypeCore()
+            {
+                return AutomationControlType.Group;
+            }
+
+            protected override string GetClassNameCore()
+            {
+                return nameof(ControlExample);
             }
         }
     }

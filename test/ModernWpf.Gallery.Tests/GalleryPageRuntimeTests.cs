@@ -461,70 +461,92 @@ namespace ModernWpf.Gallery.Tests
             WpfTestHost.Run(() =>
             {
                 var buttonPage = new ItemPage(GalleryCatalog.FindItem("Button"));
-                Assert.AreEqual(2, buttonPage.Examples.Count);
-                CollectionAssert.AreEqual(
-                    new[] { "Simple Button", "WPF Accent Button" },
-                    buttonPage.Examples.Select(example => example.HeaderText).ToArray());
+                WithRenderedPage(buttonPage, () =>
+                {
+                    Assert.IsTrue(buttonPage.HasDirectPageContent);
+                    var buttonExamples = GetRenderedExamples(buttonPage);
+                    Assert.AreEqual(2, buttonExamples.Count);
+                    CollectionAssert.AreEqual(
+                        new[] { "Simple Button", "WPF Accent Button" },
+                        buttonExamples.Select(example => example.HeaderText).ToArray());
 
-                var simpleRoot = (Panel)buttonPage.Examples[0].ExampleContent;
-                var simpleGrid = (Grid)simpleRoot.Children[0];
-                Assert.AreEqual(2, simpleGrid.ColumnDefinitions.Count);
-                Assert.AreEqual(GridUnitType.Star, simpleGrid.ColumnDefinitions[0].Width.GridUnitType);
-                Assert.AreEqual(GridUnitType.Auto, simpleGrid.ColumnDefinitions[1].Width.GridUnitType);
+                    var simpleGrid = (Grid)buttonExamples[0].ExampleContent;
+                    Assert.AreEqual(2, simpleGrid.ColumnDefinitions.Count);
+                    Assert.AreEqual(GridUnitType.Star, simpleGrid.ColumnDefinitions[0].Width.GridUnitType);
+                    Assert.AreEqual(GridUnitType.Auto, simpleGrid.ColumnDefinitions[1].Width.GridUnitType);
 
-                var simpleButton = (Button)simpleGrid.Children[0];
-                var disableButton = (CheckBox)simpleGrid.Children[1];
-                Assert.AreEqual("Standard WPF button", simpleButton.Content);
-                Assert.AreEqual("Standard WPF", AutomationProperties.GetName(simpleButton));
-                Assert.AreEqual("Disable button", disableButton.Content);
-                Assert.AreEqual(1, Grid.GetColumn(disableButton));
-                disableButton.IsChecked = true;
-                Assert.IsFalse(simpleButton.IsEnabled);
-                disableButton.IsChecked = false;
-                Assert.IsTrue(simpleButton.IsEnabled);
+                    var simpleButton = (Button)simpleGrid.Children[0];
+                    var disableButton = (CheckBox)simpleGrid.Children[1];
+                    Assert.AreEqual("Standard WPF button", simpleButton.Content);
+                    Assert.AreEqual("Standard WPF", AutomationProperties.GetName(simpleButton));
+                    Assert.AreEqual("Disable button", disableButton.Content);
+                    Assert.AreEqual(1, Grid.GetColumn(disableButton));
+                    disableButton.IsChecked = true;
+                    disableButton.Command.Execute(disableButton.CommandParameter);
+                    WpfTestHost.DoEvents();
+                    Assert.IsFalse(simpleButton.IsEnabled);
+                    disableButton.IsChecked = false;
+                    disableButton.Command.Execute(disableButton.CommandParameter);
+                    WpfTestHost.DoEvents();
+                    Assert.IsTrue(simpleButton.IsEnabled);
 
-                var accentButton = (Button)buttonPage.Examples[1].ExampleContent;
-                Assert.AreEqual("WPF Accent", AutomationProperties.GetName(accentButton));
-                var accentContent = (StackPanel)accentButton.Content;
-                Assert.AreEqual(Orientation.Horizontal, accentContent.Orientation);
-                Assert.AreEqual("WPF Accent Button", ((TextBlock)accentContent.Children[0]).Text);
+                    var accentButton = (Button)buttonExamples[1].ExampleContent;
+                    Assert.AreEqual("WPF Accent", AutomationProperties.GetName(accentButton));
+                    var accentContent = (StackPanel)accentButton.Content;
+                    Assert.AreEqual(Orientation.Horizontal, accentContent.Orientation);
+                    Assert.AreEqual("WPF Accent Button", ((TextBlock)accentContent.Children[0]).Text);
+                });
 
                 var checkBoxPage = new ItemPage(GalleryCatalog.FindItem("CheckBox"));
-                Assert.AreEqual(3, checkBoxPage.Examples.Count);
-                CollectionAssert.AreEqual(
-                    new[] { "A 2-state CheckBox.", "A 3-state CheckBox.", "Using a 3-state CheckBox." },
-                    checkBoxPage.Examples.Select(example => example.HeaderText).ToArray());
+                WithRenderedPage(checkBoxPage, () =>
+                {
+                    Assert.IsTrue(checkBoxPage.HasDirectPageContent);
+                    var checkBoxExamples = GetRenderedExamples(checkBoxPage);
+                    Assert.AreEqual(3, checkBoxExamples.Count);
+                    CollectionAssert.AreEqual(
+                        new[] { "A 2-state CheckBox.", "A 3-state CheckBox.", "Using a 3-state CheckBox." },
+                        checkBoxExamples.Select(example => example.HeaderText).ToArray());
 
-                var twoState = (CheckBox)checkBoxPage.Examples[0].ExampleContent;
-                Assert.AreEqual("Two-state CheckBox", twoState.Content);
-                Assert.IsFalse(twoState.IsThreeState);
-                Assert.AreEqual(false, twoState.IsChecked);
-                Assert.AreEqual("Sample Two State", AutomationProperties.GetName(twoState));
+                    var twoState = (CheckBox)checkBoxExamples[0].ExampleContent;
+                    Assert.AreEqual("Two-state CheckBox", twoState.Content);
+                    Assert.IsFalse(twoState.IsThreeState);
+                    Assert.AreEqual(false, twoState.IsChecked);
+                    Assert.AreEqual("Sample Two State", AutomationProperties.GetName(twoState));
 
-                var threeState = (CheckBox)checkBoxPage.Examples[1].ExampleContent;
-                Assert.AreEqual("Three-state CheckBox", threeState.Content);
-                Assert.IsTrue(threeState.IsThreeState);
-                Assert.IsNull(threeState.IsChecked);
-                Assert.AreEqual("Sample Three State", AutomationProperties.GetName(threeState));
+                    var threeState = (CheckBox)checkBoxExamples[1].ExampleContent;
+                    Assert.AreEqual("Three-state CheckBox", threeState.Content);
+                    Assert.IsTrue(threeState.IsThreeState);
+                    Assert.IsNull(threeState.IsChecked);
+                    Assert.AreEqual("Sample Three State", AutomationProperties.GetName(threeState));
 
-                var group = (StackPanel)checkBoxPage.Examples[2].ExampleContent;
-                Assert.AreEqual(4, group.Children.Count);
-                var selectAll = (CheckBox)group.Children[0];
-                var options = group.Children.OfType<CheckBox>().Skip(1).ToArray();
-                Assert.AreEqual("Select all", selectAll.Content);
-                Assert.IsTrue(selectAll.IsThreeState);
-                CollectionAssert.AreEqual(new[] { "Option 1", "Option 2", "Option 3" }, options.Select(option => (string)option.Content).ToArray());
-                CollectionAssert.AreEqual(Enumerable.Repeat(new Thickness(24, 0, 0, 0), 3).ToArray(), options.Select(option => option.Margin).ToArray());
+                    var group = (StackPanel)checkBoxExamples[2].ExampleContent;
+                    Assert.AreEqual(4, group.Children.Count);
+                    var selectAll = (CheckBox)group.Children[0];
+                    var options = group.Children.OfType<CheckBox>().Skip(1).ToArray();
+                    Assert.AreEqual("Select all", selectAll.Content);
+                    Assert.IsTrue(selectAll.IsThreeState);
+                    Assert.IsNull(selectAll.IsChecked);
+                    CollectionAssert.AreEqual(new[] { "Option 1", "Option 2", "Option 3" }, options.Select(option => (string)option.Content).ToArray());
+                    CollectionAssert.AreEqual(Enumerable.Repeat(new Thickness(24, 0, 0, 0), 3).ToArray(), options.Select(option => option.Margin).ToArray());
+                    CollectionAssert.AreEqual(new bool?[] { false, true, false }, options.Select(option => option.IsChecked).ToArray());
 
-                options[0].IsChecked = true;
-                Assert.IsNull(selectAll.IsChecked);
-                options[1].IsChecked = true;
-                options[2].IsChecked = true;
-                Assert.AreEqual(true, selectAll.IsChecked);
-                options[1].IsChecked = false;
-                Assert.IsNull(selectAll.IsChecked);
-                selectAll.IsChecked = false;
-                CollectionAssert.AreEqual(new bool?[] { false, false, false }, options.Select(option => option.IsChecked).ToArray());
+                    options[0].IsChecked = true;
+                    options[0].Command.Execute(options[0].CommandParameter);
+                    WpfTestHost.DoEvents();
+                    Assert.IsNull(selectAll.IsChecked);
+                    options[2].IsChecked = true;
+                    options[2].Command.Execute(options[2].CommandParameter);
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(true, selectAll.IsChecked);
+                    options[1].IsChecked = false;
+                    options[1].Command.Execute(options[1].CommandParameter);
+                    WpfTestHost.DoEvents();
+                    Assert.IsNull(selectAll.IsChecked);
+                    selectAll.IsChecked = false;
+                    selectAll.Command.Execute(selectAll.CommandParameter);
+                    WpfTestHost.DoEvents();
+                    CollectionAssert.AreEqual(new bool?[] { false, false, false }, options.Select(option => option.IsChecked).ToArray());
+                });
             });
         }
 
@@ -534,86 +556,105 @@ namespace ModernWpf.Gallery.Tests
             WpfTestHost.Run(() =>
             {
                 var comboBoxPage = new ItemPage(GalleryCatalog.FindItem("ComboBox"));
-                Assert.AreEqual(3, comboBoxPage.Examples.Count);
-                CollectionAssert.AreEqual(
-                    new[]
-                    {
-                        "A ComboBox with items defined inline.",
-                        "A ComboBox with ItemsSource set.",
-                        "An editable ComboBox."
-                    },
-                    comboBoxPage.Examples.Select(example => example.HeaderText).ToArray());
+                WithRenderedPage(comboBoxPage, () =>
+                {
+                    Assert.IsTrue(comboBoxPage.HasDirectPageContent);
+                    var comboBoxExamples = GetRenderedExamples(comboBoxPage);
+                    Assert.AreEqual(3, comboBoxExamples.Count);
+                    CollectionAssert.AreEqual(
+                        new[]
+                        {
+                            "A ComboBox with items defined inline.",
+                            "A ComboBox with ItemsSource set.",
+                            "An editable ComboBox."
+                        },
+                        comboBoxExamples.Select(example => example.HeaderText).ToArray());
 
-                var inlineComboBox = (ComboBox)((Panel)comboBoxPage.Examples[0].ExampleContent).Children[0];
-                AssertGalleryComboBox(inlineComboBox, "Sample defined inline");
-                CollectionAssert.AreEqual(
-                    new[] { "Blue", "Green", "Red", "Yellow" },
-                    inlineComboBox.Items.Cast<ComboBoxItem>().Select(item => (string)item.Content).ToArray());
-                Assert.AreEqual(0, inlineComboBox.SelectedIndex);
+                    var inlineComboBox = (ComboBox)comboBoxExamples[0].ExampleContent;
+                    AssertGalleryComboBox(inlineComboBox, "Sample defined inline");
+                    CollectionAssert.AreEqual(
+                        new[] { "Blue", "Green", "Red", "Yellow" },
+                        inlineComboBox.Items.Cast<ComboBoxItem>().Select(item => (string)item.Content).ToArray());
+                    Assert.AreEqual(0, inlineComboBox.SelectedIndex);
 
-                var fontFamilyComboBox = (ComboBox)comboBoxPage.Examples[1].ExampleContent;
-                AssertGalleryComboBox(fontFamilyComboBox, "Sample item source set");
-                CollectionAssert.AreEqual(
-                    new[] { "Arial", "Comic Sans MS", "Segoe UI", "Times New Roman" },
-                    fontFamilyComboBox.ItemsSource.Cast<string>().ToArray());
-                Assert.IsNotNull(fontFamilyComboBox.ItemTemplate);
-                Assert.AreEqual(0, fontFamilyComboBox.SelectedIndex);
+                    var fontFamilyComboBox = (ComboBox)comboBoxExamples[1].ExampleContent;
+                    AssertGalleryComboBox(fontFamilyComboBox, "Sample item source set");
+                    CollectionAssert.AreEqual(
+                        new[] { "Arial", "Comic Sans MS", "Segoe UI", "Times New Roman" },
+                        fontFamilyComboBox.ItemsSource.Cast<string>().ToArray());
+                    Assert.IsNotNull(fontFamilyComboBox.ItemTemplate);
+                    Assert.AreEqual(0, fontFamilyComboBox.SelectedIndex);
 
-                var editableComboBox = (ComboBox)comboBoxPage.Examples[2].ExampleContent;
-                AssertGalleryComboBox(editableComboBox, "Editable");
-                Assert.IsTrue(editableComboBox.IsEditable);
-                CollectionAssert.AreEqual(
-                    new[] { 8, 9, 10, 11, 12, 14, 16, 18, 20, 24, 28, 36, 48, 72 },
-                    editableComboBox.ItemsSource.Cast<int>().ToArray());
-                Assert.AreEqual(0, editableComboBox.SelectedIndex);
+                    var editableComboBox = (ComboBox)comboBoxExamples[2].ExampleContent;
+                    AssertGalleryComboBox(editableComboBox, "Editable");
+                    Assert.IsTrue(editableComboBox.IsEditable);
+                    CollectionAssert.AreEqual(
+                        new[] { 8, 9, 10, 11, 12, 14, 16, 18, 20, 24, 28, 36, 48, 72 },
+                        editableComboBox.ItemsSource.Cast<int>().ToArray());
+                    Assert.AreEqual(0, editableComboBox.SelectedIndex);
+                });
 
                 var radioButtonPage = new ItemPage(GalleryCatalog.FindItem("RadioButton"));
-                Assert.AreEqual(2, radioButtonPage.Examples.Count);
-                CollectionAssert.AreEqual(
-                    new[] { "Standard RadioButton.", "RadioButton with right to left flow direction." },
-                    radioButtonPage.Examples.Select(example => example.HeaderText).ToArray());
+                WithRenderedPage(radioButtonPage, () =>
+                {
+                    Assert.IsTrue(radioButtonPage.HasDirectPageContent);
+                    var radioButtonExamples = GetRenderedExamples(radioButtonPage);
+                    Assert.AreEqual(2, radioButtonExamples.Count);
+                    CollectionAssert.AreEqual(
+                        new[] { "Standard RadioButton.", "RadioButton with right to left flow direction." },
+                        radioButtonExamples.Select(example => example.HeaderText).ToArray());
 
-                var radioGrid = (Grid)radioButtonPage.Examples[0].ExampleContent;
-                Assert.AreEqual(2, radioGrid.ColumnDefinitions.Count);
-                var defaultRadioStack = (StackPanel)radioGrid.Children[0];
-                Assert.AreEqual(KeyboardNavigationMode.Once, KeyboardNavigation.GetTabNavigation(defaultRadioStack));
-                Assert.AreEqual(KeyboardNavigationMode.Cycle, KeyboardNavigation.GetDirectionalNavigation(defaultRadioStack));
-                var defaultRadios = defaultRadioStack.Children.OfType<RadioButton>().ToArray();
-                AssertRadioButtons(defaultRadios, "Default", "radio_group_one", FlowDirection.LeftToRight);
+                    var radioGrid = (Grid)radioButtonExamples[0].ExampleContent;
+                    Assert.AreEqual(2, radioGrid.ColumnDefinitions.Count);
+                    var defaultRadioStack = (StackPanel)radioGrid.Children[0];
+                    Assert.AreEqual(KeyboardNavigationMode.Once, KeyboardNavigation.GetTabNavigation(defaultRadioStack));
+                    Assert.AreEqual(KeyboardNavigationMode.Cycle, KeyboardNavigation.GetDirectionalNavigation(defaultRadioStack));
+                    var defaultRadios = defaultRadioStack.Children.OfType<RadioButton>().ToArray();
+                    AssertRadioButtons(defaultRadios, "Default", "radio_group_one", FlowDirection.LeftToRight);
 
-                var disableRadioButtons = (CheckBox)radioGrid.Children[1];
-                Assert.AreEqual(1, Grid.GetColumn(disableRadioButtons));
-                Assert.AreEqual("Disable RadioButton's", disableRadioButtons.Content);
-                disableRadioButtons.IsChecked = true;
-                Assert.IsTrue(defaultRadios.All(radioButton => !radioButton.IsEnabled));
-                disableRadioButtons.IsChecked = false;
-                Assert.IsTrue(defaultRadios.All(radioButton => radioButton.IsEnabled));
+                    var disableRadioButtons = (CheckBox)radioGrid.Children[1];
+                    Assert.AreEqual(1, Grid.GetColumn(disableRadioButtons));
+                    Assert.AreEqual("Disable RadioButton's", disableRadioButtons.Content);
+                    disableRadioButtons.IsChecked = true;
+                    disableRadioButtons.Command.Execute(disableRadioButtons.CommandParameter);
+                    WpfTestHost.DoEvents();
+                    Assert.IsTrue(defaultRadios.All(radioButton => !radioButton.IsEnabled));
+                    disableRadioButtons.IsChecked = false;
+                    disableRadioButtons.Command.Execute(disableRadioButtons.CommandParameter);
+                    WpfTestHost.DoEvents();
+                    Assert.IsTrue(defaultRadios.All(radioButton => radioButton.IsEnabled));
 
-                RaiseGotKeyboardFocus(defaultRadios[1]);
-                Assert.AreEqual(true, defaultRadios[1].IsChecked);
-                Assert.AreEqual(false, defaultRadios[0].IsChecked);
+                    RaiseGotKeyboardFocus(defaultRadios[1]);
+                    Assert.AreEqual(true, defaultRadios[1].IsChecked);
+                    Assert.AreEqual(false, defaultRadios[0].IsChecked);
 
-                var leftFlowStack = (StackPanel)radioButtonPage.Examples[1].ExampleContent;
-                Assert.AreEqual(KeyboardNavigationMode.Once, KeyboardNavigation.GetTabNavigation(leftFlowStack));
-                Assert.AreEqual(KeyboardNavigationMode.Cycle, KeyboardNavigation.GetDirectionalNavigation(leftFlowStack));
-                AssertRadioButtons(leftFlowStack.Children.OfType<RadioButton>().ToArray(), "Left Flow", "radio_group_two", FlowDirection.RightToLeft);
+                    var leftFlowStack = (StackPanel)radioButtonExamples[1].ExampleContent;
+                    Assert.AreEqual(KeyboardNavigationMode.Once, KeyboardNavigation.GetTabNavigation(leftFlowStack));
+                    Assert.AreEqual(KeyboardNavigationMode.Cycle, KeyboardNavigation.GetDirectionalNavigation(leftFlowStack));
+                    AssertRadioButtons(leftFlowStack.Children.OfType<RadioButton>().ToArray(), "Left Flow", "radio_group_two", FlowDirection.RightToLeft);
+                });
 
                 var sliderPage = new ItemPage(GalleryCatalog.FindItem("Slider"));
-                Assert.AreEqual(4, sliderPage.Examples.Count);
-                CollectionAssert.AreEqual(
-                    new[]
-                    {
-                        "A simple slider.",
-                        "A slider with steps and range specified.",
-                        "A slider with tick marks.",
-                        "A vertical slider with range and tick marks specified."
-                    },
-                    sliderPage.Examples.Select(example => example.HeaderText).ToArray());
+                WithRenderedPage(sliderPage, () =>
+                {
+                    Assert.IsTrue(sliderPage.HasDirectPageContent);
+                    var sliderExamples = GetRenderedExamples(sliderPage);
+                    Assert.AreEqual(4, sliderExamples.Count);
+                    CollectionAssert.AreEqual(
+                        new[]
+                        {
+                            "A simple slider.",
+                            "A slider with steps and range specified.",
+                            "A slider with tick marks.",
+                            "A vertical slider with range and tick marks specified."
+                        },
+                        sliderExamples.Select(example => example.HeaderText).ToArray());
 
-                AssertSliderExample(sliderPage.Examples[0], "Simple", 0, 100, 0, 0, TickPlacement.None, Orientation.Horizontal);
-                AssertSliderExample(sliderPage.Examples[1], "Range and steps specified", 500, 1000, 500, 50, TickPlacement.None, Orientation.Horizontal);
-                AssertSliderExample(sliderPage.Examples[2], "Tick marks", 0, 100, 0, 20, TickPlacement.Both, Orientation.Horizontal);
-                AssertSliderExample(sliderPage.Examples[3], "Vertical", 0, 100, 0, 20, TickPlacement.Both, Orientation.Vertical);
+                    AssertSliderExample(sliderExamples[0], "Simple", 0, 100, 0, 1, TickPlacement.None, Orientation.Horizontal);
+                    AssertSliderExample(sliderExamples[1], "Range and steps specified", 500, 1000, 500, 50, TickPlacement.None, Orientation.Horizontal);
+                    AssertSliderExample(sliderExamples[2], "Tick marks", 0, 100, 0, 20, TickPlacement.Both, Orientation.Horizontal);
+                    AssertSliderExample(sliderExamples[3], "Vertical", 0, 100, 0, 20, TickPlacement.Both, Orientation.Vertical);
+                });
             });
         }
 
@@ -2026,7 +2067,7 @@ namespace ModernWpf.Gallery.Tests
             });
         }
 
-        private static void AssertSliderExample(GalleryExample example, string automationName, double minimum, double maximum, double value, double tickFrequency, TickPlacement tickPlacement, Orientation orientation)
+        private static void AssertSliderExample(RenderedExample example, string automationName, double minimum, double maximum, double value, double tickFrequency, TickPlacement tickPlacement, Orientation orientation)
         {
             var grid = (Grid)example.ExampleContent;
             Assert.AreEqual(2, grid.ColumnDefinitions.Count);

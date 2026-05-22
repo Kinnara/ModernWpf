@@ -122,10 +122,16 @@ namespace ModernWpf.Gallery.Pages
         {
             switch (uniqueId)
             {
+                case "Button":
+                    return new WpfGallery.BasicInput.ButtonPage();
                 case "Canvas":
                     return new WpfGallery.Media.CanvasPage();
                 case "Calendar":
                     return new WpfGallery.DateAndTime.CalendarPage();
+                case "CheckBox":
+                    return new WpfGallery.BasicInput.CheckBoxPage();
+                case "ComboBox":
+                    return new WpfGallery.BasicInput.ComboBoxPage();
                 case "DataGrid":
                     return new WpfGallery.Collections.DataGridPage();
                 case "DatePicker":
@@ -150,8 +156,12 @@ namespace ModernWpf.Gallery.Pages
                     return new WpfGallery.Text.PasswordBoxPage();
                 case "ProgressBar":
                     return new WpfGallery.StatusAndInfo.ProgressBarPage();
+                case "RadioButton":
+                    return new WpfGallery.BasicInput.RadioButtonPage();
                 case "RichTextEdit":
                     return new WpfGallery.Text.RichTextEditPage();
+                case "Slider":
+                    return new WpfGallery.BasicInput.SliderPage();
                 case "TabControl":
                     return new WpfGallery.Navigation.TabControlPage();
                 case "TextBlock":
