@@ -1,9 +1,10 @@
 # Gallery Visual Checks
 
-ModernWpf Gallery has two validation layers for WinUI parity work:
+ModernWpf Gallery has two local validation paths for visual parity work:
 
 - Always-run tests in `ModernWpf.Gallery.Tests` cover route parsing, every Gallery catalog route, page construction, layout, and stable automation hooks.
 - Local visual checks capture ModernWpf Gallery beside the installed official WinUI 3 Gallery and write screenshots, UIA tree dumps, control crops, and reports under ignored `artifacts/visual-checks/`.
+- Local WPF Gallery visual audits capture WPF-equivalent ModernWpf Gallery pages beside the official WPF Gallery checkout and write screenshots, content crops, UIA tree dumps, JSON, and Markdown reports under ignored `artifacts/wpf-gallery-visual-audit/`.
 
 Run the unit/runtime checks:
 
@@ -25,6 +26,38 @@ Run the TeachingTip interaction pass:
 .\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls TeachingTip -Reference InstalledWinUI3Gallery -IncludeInteractions
 ```
 
+List WPF Gallery visual audit cases:
+
+```powershell
+.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -ListCases
+```
+
+Run a focused WPF Gallery visual audit:
+
+```powershell
+.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -BuildModern -Cases Home,Button -Reference OfficialWpfGallery
+```
+
+Run a ModernWpf-only smoke capture when the official WPF Gallery executable is not built:
+
+```powershell
+.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -BuildModern -Cases Home -Reference None
+```
+
+The WPF audit script defaults the official reference executable to
+`D:\repos\WPF-Samples\Sample Applications\WPFGallery\bin\Debug\net10.0-windows\WPFGallery.exe`.
+Pass `-BuildOfficial` to build the reference checkout first, or pass
+`-WpfGalleryExe` when using a different official Gallery build. The script
+routes ModernWpf with `--visual-test --route`, drives the official WPF Gallery
+navigation tree through UI Automation, captures full windows, crops the main
+content region, and reports normalized content-crop deltas. ModernWpf visual
+test launches also render `GalleryContentHost.png` in-process so the audit can
+still inspect the page content when OS-level window capture returns black client
+pixels in the current execution context. Use
+`-FailOnDifference` only for local triage once a machine has stable capture
+behavior; the first milestone uses the artifacts and report as manual visual
+evidence rather than a CI gate.
+
 The script launches ModernWpf Gallery with `--visual-test`, `--route`, `--theme`, and `--visual-artifact-dir`. In that mode the Gallery exposes hidden UIA fields:
 
 - `GalleryVisualTestCurrentRoute`
@@ -35,7 +68,7 @@ With `-IncludeInteractions`, the TeachingTip pass captures a closed baseline, op
 
 Static window captures use `PrintWindow` first and fall back to an activated screen-rect capture when `PrintWindow` returns a blank image. If a capture returns a nonblank but invalid reference surface, such as a desktop/wallpaper or Mica backdrop crop from a WinUI composition window, the harness rejects the result when the primary crop has very low visible luminance variation and fails the run instead of reporting false parity.
 
-Static comparisons include primary sample crops for each curated control. The ModernWpf Gallery also writes rendered `GallerySample_*` element artifacts under `modernwpf-artifacts/` during visual-test launches; the harness uses those rendered element artifacts before falling back to window screenshot crops. The report ranks controls by primary crop delta plus crop-size mismatch so visual triage can focus on real control-level differences instead of full-window shell noise.
+Static comparisons include primary sample crops for each curated control. The ModernWpf Gallery also writes rendered `GallerySample_*` and `GalleryContentHost` element artifacts under `modernwpf-artifacts/` during visual-test launches; the harness uses those rendered element artifacts before falling back to window screenshot crops. The report ranks controls by primary crop delta plus crop-size mismatch so visual triage can focus on real control-level differences instead of full-window shell noise.
 
 The visual pass intentionally does not make strict screenshot diffs a default CI gate. It fails on blank captures, wrong or missing required sample elements, failed TeachingTip interaction probes, and Gallery exceptions; image deltas are reported for manual review and can be made strict with `-FailOnDifference` once the harness is stable across machines.
 

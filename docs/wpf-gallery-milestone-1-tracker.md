@@ -84,6 +84,9 @@ Latest local verification for the current branch tip:
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Release --filter "BasicInputControlExamplesMatchOfficialWpfGallerySampleCode|CollectionsControlExamplesMatchOfficialWpfGallerySampleCode|DateMediaAndStatusControlExamplesMatchOfficialWpfGallerySampleCode|LayoutControlExamplesMatchOfficialWpfGallerySampleCode|NavigationControlExamplesMatchOfficialWpfGallerySampleCode|TextControlExamplesMatchOfficialWpfGallerySampleCode|SystemControlExamplesMatchOfficialWpfGallerySampleCode|MessageBoxDynamicSnippetsMatchOfficialWpfGallerySampleCode|DesignGuidanceControlExamplesMatchOfficialWpfGallerySampleCode|WhatsNewControlExamplesMatchOfficialWpfGallerySampleCode" -p:UseSharedCompilation=false`
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Release --no-build`
 - `dotnet build ModernWpf.sln --configuration Release -p:UseSharedCompilation=false`
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Release --filter ContentHostWritesRenderedVisualArtifact -p:UseSharedCompilation=false`
+- `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -ListCases`
+- `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -BuildModern -Cases Home -Reference None`
 
 ## Done
 
@@ -98,6 +101,7 @@ Latest local verification for the current branch tip:
 | WPF Gallery compatibility `ControlExample` | Mostly done | Template resources follow the official WPF Gallery shape, source-code blocks have WPF Gallery-style URI-backed `XamlCodeSource` and `CSharpCodeSource` properties, and local automation/test hooks remain where needed. |
 | WPF Gallery compatibility color controls | Done | Adapted `ColorPageExample` and `ColorTile` controls plus `ColorTilesPanelStyle` are available; all six Color subsections now use adapted official WPF Gallery XAML instead of C# factory recreation. |
 | Official WPF Gallery ControlImages asset set | Partial | Shared `Assets/ControlImages` filenames were audited against the official checkout and the missing official-only reference assets were copied locally with pack-resource regression coverage. |
+| WPF Gallery visual audit harness | Done | `tools/visual-checks/Run-WpfGalleryVisualAudit.ps1` lists every WPF-equivalent route, can launch ModernWpf in visual-test mode, can UIA-drive the official WPF Gallery checkout, and writes screenshot/content-crop/UIA/report artifacts under ignored `artifacts/wpf-gallery-visual-audit/`; ModernWpf visual-test mode now writes an in-process `GalleryContentHost.png` artifact so local audits still have page-content pixels when OS-level capture returns black client content. |
 | Header descriptions | Done | Visible WPF item page descriptions now match official WPF Gallery view models, including empty description slots. |
 | What's New support page | Mostly done | Uses adapted official WPF Gallery page content and runtime checks; source panes now match official WPF Gallery snippet strings. Screenshot parity remains. |
 | Design Guidance pages | Mostly done | Color, Iconography, Typography, Spacing, and Geometry now use adapted official WPF Gallery page shells/XAML with direct-page runtime tests; Color subsections now use official-style color controls and XAML. |
@@ -127,7 +131,7 @@ Latest local verification for the current branch tip:
 
 | Area | Status | Next action |
 | --- | --- | --- |
-| Visual screenshot pass against official WPF Gallery | Open | Add or run a WPF Gallery reference capture pass and compare page-by-page screenshots, not just runtime structure. |
+| Visual screenshot pass against official WPF Gallery | Open | Run `Run-WpfGalleryVisualAudit.ps1` one section at a time against the official WPF Gallery executable, inspect content-crop reports, and record accepted artifact paths/findings. |
 | Page-by-page exact XAML audit | Open | For each WPF-equivalent page, compare ModernWpf sample factories against official WPF Gallery XAML and replace approximations with adapted copies where feasible. Remaining section page content, sample-code parity, and visual parity remain open. |
 | Home page | Partial | Header tile strip, navigation cards, `ViewModel.NavigationCards` / `ViewModel.RecentlyAddedOrUpdatedSamplesInfo` bindings, and `ViewModel.NavigateCommand` card command binding now match adapted official dashboard shape; compare remaining first-viewport screenshot parity against official WPF Gallery. |
 | All controls page | Partial | Header, navigation cards, `ViewModel.PageTitle` / `ViewModel.NavigationCards` bindings, and `ViewModel.NavigateCommand` card command binding now use adapted official structure; official WPF Gallery has no in-page search on this page, so verify grouping, sort order, card subtitles, and tile sizing against `AllSamplesPage`. |
@@ -203,14 +207,13 @@ Use this checklist for future rounds.
 
 ## Next Recommended Round
 
-Start with the page-by-page exact source audit for one section at a time. For
-each page:
+Start the visual screenshot audit one section at a time. For each section:
 
-1. Compare official WPF Gallery XAML, view model title/description, and code
-   snippets against the ModernWpf sample factory output.
-2. Copy or adapt the official page content where the ModernWpf page is still an
-   approximation.
-3. Add or tighten tests for labels, margins, sample headers, snippet text, and
-   page description behavior.
-4. Record the checklist status in this file.
-5. Commit a coherent section-sized change.
+1. Build ModernWpf Gallery and the official WPF Gallery checkout if needed.
+2. Run `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases <section-and-pages> -Reference OfficialWpfGallery`.
+3. Inspect the report, full screenshots, content crops, and UIA trees for shell,
+   spacing, typography, card, header, and sample-layout drift.
+4. Fix the highest-impact visible mismatch in that section, preferring adapted
+   official WPF Gallery XAML/resources where possible.
+5. Record accepted artifact paths/findings in this file and commit a coherent
+   section-sized change.

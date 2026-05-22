@@ -303,6 +303,70 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void ContentHostWritesRenderedVisualArtifact()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var artifactDirectory = Path.Combine(Path.GetTempPath(), "ModernWpfGalleryTests", Path.GetRandomFileName());
+                GalleryDiagnostics.Configure(GalleryLaunchOptions.Parse(new[] { "--visual-test", "--visual-artifact-dir", artifactDirectory }));
+
+                var contentHost = new ContentControl
+                {
+                    Width = 360,
+                    Height = 220,
+                    Content = new Border
+                    {
+                        Background = Brushes.White,
+                        Child = new TextBlock
+                        {
+                            Margin = new Thickness(24),
+                            Foreground = Brushes.Black,
+                            Text = "Visual audit content"
+                        }
+                    }
+                };
+                AutomationProperties.SetAutomationId(contentHost, "GalleryContentHost");
+
+                var window = new Window
+                {
+                    Width = 420,
+                    Height = 280,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = contentHost
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    GalleryDiagnostics.WriteVisualArtifacts(contentHost);
+
+                    var contentHostArtifact = Path.Combine(artifactDirectory, "GalleryContentHost.png");
+                    Assert.IsTrue(File.Exists(contentHostArtifact), contentHostArtifact + " was not written.");
+                    Assert.IsTrue(new FileInfo(contentHostArtifact).Length > 0);
+                    Assert.IsTrue(HasVisibleRgbPixels(contentHostArtifact), contentHostArtifact + " has no visible RGB content.");
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    GalleryDiagnostics.ResetForTests();
+                    if (Directory.Exists(artifactDirectory))
+                    {
+                        Directory.Delete(artifactDirectory, recursive: true);
+                    }
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
         public void TeachingTipInteractionModeWritesOpenContentArtifact()
         {
             WpfTestHost.Run(() =>
