@@ -16,8 +16,12 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Gallery.Controls;
 using ModernWpf.Gallery.Models;
 using ModernWpf.Gallery.Pages;
+using ModernWpf.Gallery.Pages.WpfGallery;
 using ModernWpf.Gallery.Pages.WpfGallery.BasicInput;
 using ModernWpf.Gallery.Pages.WpfGallery.Collections;
+using ModernWpf.Gallery.Pages.WpfGallery.DateAndTime;
+using ModernWpf.Gallery.Pages.WpfGallery.Media;
+using ModernWpf.Gallery.Pages.WpfGallery.StatusAndInfo;
 
 namespace ModernWpf.Gallery.Tests
 {
@@ -353,6 +357,20 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(SelectionMode.Multiple, listViewPage.ViewModel.ListViewSelectionMode);
                 listViewPage.ViewModel.ListViewSelectionModeComboBoxSelectedIndex = 2;
                 Assert.AreEqual(SelectionMode.Extended, listViewPage.ViewModel.ListViewSelectionMode);
+            });
+        }
+
+        [TestMethod]
+        public void SimpleItemPagesUseOfficialPageSpecificViewModels()
+        {
+            WpfTestHost.Run(() =>
+            {
+                AssertWpfGalleryPageViewModel<CalendarPage, CalendarPageViewModel>("Calendar", "Calendar", string.Empty);
+                AssertWpfGalleryPageViewModel<DatePickerPage, DatePickerPageViewModel>("DatePicker", "DatePicker", string.Empty);
+                AssertWpfGalleryPageViewModel<CanvasPage, CanvasPageViewModel>("Canvas", "Canvas", string.Empty);
+                AssertWpfGalleryPageViewModel<ImagePage, ImagePageViewModel>("Image", "Image", string.Empty);
+                AssertWpfGalleryPageViewModel<ProgressBarPage, ProgressBarPageViewModel>("ProgressBar", "ProgressBar", string.Empty);
+                AssertWpfGalleryPageViewModel<ToolTipPage, ToolTipPageViewModel>("ToolTip", "ToolTip", string.Empty);
             });
         }
 
@@ -2115,6 +2133,22 @@ namespace ModernWpf.Gallery.Tests
 
             Assert.AreEqual(expectedTitle, viewModel.PageTitle, uniqueId);
             Assert.AreEqual(string.Empty, viewModel.PageDescription, uniqueId);
+            Assert.AreEqual(uniqueId + "PageViewModel", viewModel.GetType().Name, uniqueId);
+        }
+
+        private static void AssertWpfGalleryPageViewModel<TPage, TViewModel>(
+            string uniqueId,
+            string expectedTitle,
+            string expectedDescription)
+            where TPage : FrameworkElement
+            where TViewModel : WpfGalleryPageViewModel
+        {
+            var itemPage = new ItemPage(GalleryCatalog.FindItem(uniqueId));
+            var directPage = (TPage)itemPage.DirectPageContent;
+            var viewModel = (TViewModel)directPage.GetType().GetProperty("ViewModel").GetValue(directPage, null);
+
+            Assert.AreEqual(expectedTitle, viewModel.PageTitle, uniqueId);
+            Assert.AreEqual(expectedDescription, viewModel.PageDescription, uniqueId);
             Assert.AreEqual(uniqueId + "PageViewModel", viewModel.GetType().Name, uniqueId);
         }
 

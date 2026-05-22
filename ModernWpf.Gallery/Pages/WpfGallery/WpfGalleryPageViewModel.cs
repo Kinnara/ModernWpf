@@ -1,6 +1,6 @@
 namespace ModernWpf.Gallery.Pages.WpfGallery
 {
-    public sealed class WpfGalleryPageViewModel
+    public class WpfGalleryPageViewModel
     {
         public WpfGalleryPageViewModel(string pageTitle, string pageDescription)
         {
