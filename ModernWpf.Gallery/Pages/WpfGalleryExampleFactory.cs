@@ -150,6 +150,8 @@ namespace ModernWpf.Gallery.Pages
                     return new WpfGallery.Layout.GridPage();
                 case "GridSplitter":
                     return new WpfGallery.Layout.GridSplitterPage();
+                case "Geometry":
+                    return new WpfGallery.DesignGuidance.GeometryPage();
                 case "GroupBox":
                     return new WpfGallery.Layout.GroupBoxPage();
                 case "Hyperlink":
@@ -180,6 +182,8 @@ namespace ModernWpf.Gallery.Pages
                     return new WpfGallery.Text.RichTextEditPage();
                 case "Slider":
                     return new WpfGallery.BasicInput.SliderPage();
+                case "Spacing":
+                    return new WpfGallery.DesignGuidance.SpacingPage();
                 case "StackPanel":
                     return new WpfGallery.Layout.StackPanelPage();
                 case "TabControl":
@@ -192,6 +196,8 @@ namespace ModernWpf.Gallery.Pages
                     return new WpfGallery.StatusAndInfo.ToolTipPage();
                 case "TreeView":
                     return new WpfGallery.Collections.TreeViewPage();
+                case "Typography":
+                    return new WpfGallery.DesignGuidance.TypographyPage();
                 case "UserDashboard":
                     return CreateUserDashboardPageContent();
                 default:
@@ -205,14 +211,8 @@ namespace ModernWpf.Gallery.Pages
             {
                 case "Color":
                     return CreateColorPageBody();
-                case "Geometry":
-                    return CreateGeometryPageBody();
                 case "Iconography":
                     return CreateIconographyPageBody();
-                case "Spacing":
-                    return CreateSpacingPageBody();
-                case "Typography":
-                    return CreateTypographyPageBody();
                 default:
                     return null;
             }

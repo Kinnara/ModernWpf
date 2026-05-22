@@ -1293,7 +1293,8 @@ namespace ModernWpf.Gallery.Tests
             WpfTestHost.Run(() =>
             {
                 var spacingPage = new ItemPage(GalleryCatalog.FindItem("Spacing"));
-                var spacingBody = (StackPanel)spacingPage.PageBodyContent;
+                Assert.IsTrue(spacingPage.HasDirectPageContent);
+                var spacingBody = GetDirectPageBodyStack(spacingPage);
                 var images = (StackPanel)spacingBody.Children[2];
                 Assert.AreEqual(Orientation.Horizontal, images.Orientation);
                 Assert.AreEqual(new Thickness(0, 0, 0, 16), images.Margin);
@@ -1314,7 +1315,8 @@ namespace ModernWpf.Gallery.Tests
                 StringAssert.Contains(((BitmapImage)cardsImage.Source).UriSource.ToString(), "Cards.dark.png");
 
                 var typographyPage = new ItemPage(GalleryCatalog.FindItem("Typography"));
-                var typographyBody = (StackPanel)typographyPage.PageBodyContent;
+                Assert.IsTrue(typographyPage.HasDirectPageContent);
+                var typographyBody = GetDirectPageBodyStack(typographyPage);
                 var typeRampExample = (ControlExample)typographyBody.Children[3];
                 var typeRamp = (Grid)typeRampExample.ExampleContent;
                 var rows = typeRamp.Children.OfType<Grid>().OrderBy(Grid.GetRow).ToArray();
@@ -1330,7 +1332,8 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual("Consolas", GetTableText(displayRow, 3).FontFamily.Source);
 
                 var geometryPage = new ItemPage(GalleryCatalog.FindItem("Geometry"));
-                var geometryBody = (StackPanel)geometryPage.PageBodyContent;
+                Assert.IsTrue(geometryPage.HasDirectPageContent);
+                var geometryBody = GetDirectPageBodyStack(geometryPage);
                 Assert.AreEqual(new Thickness(0, 0, 0, 24), geometryBody.Margin);
                 Assert.AreEqual(5, geometryBody.Children.Count);
                 Assert.AreEqual("Geometry describes the shape, size and position of UI elements on screen.", ((TextBlock)geometryBody.Children[0]).Text);
@@ -1846,6 +1849,14 @@ namespace ModernWpf.Gallery.Tests
         private static TextBlock GetTableText(Grid row, int column)
         {
             return row.Children.OfType<TextBlock>().Single(textBlock => Grid.GetColumn(textBlock) == column);
+        }
+
+        private static StackPanel GetDirectPageBodyStack(ItemPage page)
+        {
+            var scrollViewer = FindDescendants<ScrollViewer>((DependencyObject)page.DirectPageContent)
+                .FirstOrDefault(candidate => candidate.Content is StackPanel);
+            Assert.IsNotNull(scrollViewer, page.UniqueId);
+            return (StackPanel)scrollViewer.Content;
         }
 
         private static void AssertGlyphMenuItem(MenuItem item, string name, string glyph)
