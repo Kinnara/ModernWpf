@@ -100,6 +100,9 @@ namespace ModernWpf.Gallery.Tests
                 AssertFontIconGlyph(topLevelItems[3], "\uEF58");
                 AssertFontIconGlyph(topLevelItems[4], "\uE71D");
                 AssertFontIconGlyph(topLevelItems[5], "\uE73A");
+                Assert.IsFalse(topLevelItems[2].IsExpanded);
+                Assert.IsFalse(topLevelItems[3].IsExpanded);
+                Assert.IsFalse(topLevelItems[5].IsExpanded);
 
                 var designGuidanceItems = topLevelItems[2].MenuItems.OfType<NavigationViewItem>().ToList();
                 CollectionAssert.AreEqual(
@@ -116,6 +119,12 @@ namespace ModernWpf.Gallery.Tests
                     new[] { "Canvas", "Image" },
                     mediaItem.MenuItems.OfType<NavigationViewItem>().Select(GetNavigationItemText).ToArray());
                 Assert.IsNull(mediaItem.MenuItems.OfType<NavigationViewItem>().First().Icon);
+
+                page.NavigateTo("item/Color");
+                Assert.IsTrue(topLevelItems[2].IsExpanded);
+
+                page.NavigateTo("category/BasicInput");
+                Assert.IsTrue(topLevelItems[5].IsExpanded);
             });
         }
 

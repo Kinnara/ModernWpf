@@ -17,6 +17,7 @@ namespace ModernWpf.Gallery.Shell
     {
         private readonly Stack<NavigationTarget> _backStack = new Stack<NavigationTarget>();
         private readonly Dictionary<string, NavigationViewItem> _itemContainers = new Dictionary<string, NavigationViewItem>(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, NavigationViewItem> _parentContainers = new Dictionary<string, NavigationViewItem>(StringComparer.OrdinalIgnoreCase);
         private static readonly ISet<string> WpfGalleryGroupIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
             "DesignGuidance",
@@ -194,13 +195,14 @@ namespace ModernWpf.Gallery.Shell
             foreach (var group in GalleryCatalog.Groups)
             {
                 var groupItem = CreateNavigationItem(group.Title, NavigationTarget.Group(group.UniqueId), CreateNavigationIcon(group.UniqueId, true, false));
-                groupItem.IsExpanded = !group.IsSpecialSection;
+                groupItem.IsExpanded = false;
 
                 foreach (var item in group.Items)
                 {
                     var child = CreateNavigationItem(item.Title, NavigationTarget.Item(item.UniqueId), CreateNavigationIcon(item.UniqueId, false, WpfGalleryGroupIds.Contains(group.UniqueId)));
                     groupItem.MenuItems.Add(child);
                     _itemContainers[item.UniqueId] = child;
+                    _parentContainers[item.UniqueId] = groupItem;
                 }
 
                 Navigation.MenuItems.Add(groupItem);
@@ -415,8 +417,27 @@ namespace ModernWpf.Gallery.Shell
             }
 
             _isProgrammaticNavigation = true;
+            ExpandNavigationPath(target);
             Navigation.SelectedItem = selectedItem;
             _isProgrammaticNavigation = false;
+        }
+
+        private void ExpandNavigationPath(NavigationTarget target)
+        {
+            if (target.Kind == NavigationTargetKind.Group)
+            {
+                if (_itemContainers.TryGetValue(target.UniqueId, out var groupItem))
+                {
+                    groupItem.IsExpanded = true;
+                }
+            }
+            else if (target.Kind == NavigationTargetKind.Item)
+            {
+                if (_parentContainers.TryGetValue(target.UniqueId, out var parentItem))
+                {
+                    parentItem.IsExpanded = true;
+                }
+            }
         }
 
         private void UpdateBackButton()
