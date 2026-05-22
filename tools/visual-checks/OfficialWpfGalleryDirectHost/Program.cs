@@ -29,7 +29,9 @@ internal static class Program
     {
         var options = HostOptions.Parse(args);
         AppDomain.CurrentDomain.AssemblyResolve += (_, eventArgs) => ResolveOfficialAssembly(options.OfficialOutput, eventArgs);
-        var app = CreateOfficialApplication(options.OfficialOutput);
+        var officialAssembly = LoadOfficialAssembly(options.OfficialOutput);
+        SetApplicationResourceAssembly(officialAssembly);
+        var app = CreateOfficialApplication(officialAssembly);
         app.ShutdownMode = ShutdownMode.OnMainWindowClose;
         ApplyTheme(app, options.Theme);
 
@@ -71,9 +73,23 @@ internal static class Program
         app.Run(window);
     }
 
-    private static Application CreateOfficialApplication(string officialOutput)
+    private static Assembly LoadOfficialAssembly(string officialOutput)
     {
-        var officialAssembly = Assembly.LoadFrom(Path.Combine(officialOutput, "WPFGallery.dll"));
+        return Assembly.LoadFrom(Path.Combine(officialOutput, "WPFGallery.dll"));
+    }
+
+    private static void SetApplicationResourceAssembly(Assembly officialAssembly)
+    {
+        var resourceAssemblyField = typeof(Application).GetField(
+            "_resourceAssembly",
+            BindingFlags.NonPublic | BindingFlags.Static)
+            ?? throw new InvalidOperationException("Could not find Application.ResourceAssembly backing field.");
+
+        resourceAssemblyField.SetValue(null, officialAssembly);
+    }
+
+    private static Application CreateOfficialApplication(Assembly officialAssembly)
+    {
         var appType = officialAssembly.GetType("WPFGallery.App", throwOnError: true)
             ?? throw new InvalidOperationException("Could not load WPFGallery.App.");
         var app = (Application?)Activator.CreateInstance(appType)
