@@ -203,7 +203,7 @@ namespace ModernWpf.Gallery.Pages
                 case "Typography":
                     return new WpfGallery.DesignGuidance.TypographyPage();
                 case "UserDashboard":
-                    return CreateUserDashboardPageContent();
+                    return new WpfGallery.Samples.UserDashboardPage();
                 default:
                     return null;
             }

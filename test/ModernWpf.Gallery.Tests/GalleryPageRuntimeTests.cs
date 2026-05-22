@@ -1603,7 +1603,8 @@ namespace ModernWpf.Gallery.Tests
             WpfTestHost.Run(() =>
             {
                 var page = new ItemPage(GalleryCatalog.FindItem("UserDashboard"));
-                var root = (Grid)page.DirectPageContent;
+                var directPage = (FrameworkElement)page.DirectPageContent;
+                var root = (Grid)directPage.FindName("ContentRootGrid");
                 var window = new Window
                 {
                     Width = 900,
@@ -1612,7 +1613,7 @@ namespace ModernWpf.Gallery.Tests
                     Top = -32000,
                     ShowInTaskbar = false,
                     WindowStartupLocation = WindowStartupLocation.Manual,
-                    Content = root
+                    Content = directPage
                 };
 
                 try
@@ -1635,9 +1636,10 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(SelectionMode.Single, userList.SelectionMode);
                     Assert.AreEqual(20, userList.Items.Count);
                     Assert.AreEqual(0, userList.SelectedIndex);
-                    var firstUserItem = (ListViewItem)userList.Items[0];
+                    var firstUserItem = (ListViewItem)userList.ItemContainerGenerator.ContainerFromIndex(0);
+                    Assert.IsNotNull(firstUserItem);
                     Assert.AreEqual("John Doe", AutomationProperties.GetName(firstUserItem));
-                    var firstUserName = FindTextBlock((DependencyObject)firstUserItem.Content, "John Doe");
+                    var firstUserName = FindTextBlock(firstUserItem, "John Doe");
                     Assert.AreEqual(AutomationHeadingLevel.Level3, AutomationProperties.GetHeadingLevel(firstUserName));
 
                     var addUserButton = userListGrid.Children.OfType<Button>().Single();
@@ -1722,7 +1724,7 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(Visibility.Visible, editButton.Visibility);
                     Assert.AreEqual(Visibility.Collapsed, saveButton.Visibility);
 
-                    root.Width = 700;
+                    directPage.Width = 700;
                     window.UpdateLayout();
                     WpfTestHost.DoEvents();
                     Assert.AreEqual(240.0, userList.Width);
@@ -1731,7 +1733,7 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(1, Grid.GetRow(lastNamePanel));
                     Assert.AreEqual(2, Grid.GetColumnSpan(firstNamePanel));
 
-                    root.Width = 500;
+                    directPage.Width = 500;
                     window.UpdateLayout();
                     WpfTestHost.DoEvents();
                     Assert.AreSame(DependencyProperty.UnsetValue, userList.ReadLocalValue(FrameworkElement.WidthProperty));
