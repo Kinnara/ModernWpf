@@ -116,7 +116,8 @@ namespace ModernWpf.Gallery.Models
 
         private static bool IsAllControlsItem(GalleryItem item)
         {
-            return !string.Equals(item.GroupId, "Samples", StringComparison.OrdinalIgnoreCase);
+            return !string.Equals(item.GroupId, "Samples", StringComparison.OrdinalIgnoreCase) &&
+                !string.Equals(item.GroupId, "Media", StringComparison.OrdinalIgnoreCase);
         }
 
         private static IReadOnlyList<GalleryItem> CreateWpfGalleryItems()

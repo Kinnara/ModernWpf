@@ -59,11 +59,14 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void AllControlsItemsExcludeWpfGallerySamplesLikeReference()
+        public void AllControlsItemsFollowOfficialWpfGalleryCatalogFilter()
         {
             var allControlIds = GalleryCatalog.AllControlsItems.Select(item => item.UniqueId).ToArray();
 
             Assert.IsFalse(allControlIds.Contains("UserDashboard"), "The official WPF Gallery excludes the Samples section from All Controls.");
+            Assert.IsFalse(allControlIds.Contains("Canvas"), "The current official WPF Gallery catalog omits the orphaned Media group from All Controls.");
+            Assert.IsFalse(allControlIds.Contains("Image"), "The current official WPF Gallery catalog omits the orphaned Media group from All Controls.");
+            Assert.IsNotNull(GalleryCatalog.FindGroup("Media"), "ModernWpf still exposes the orphaned Media pages as a dedicated combined-gallery section.");
             Assert.IsTrue(allControlIds.Contains("Color"), "Design guidance items remain part of All Controls.");
             Assert.IsTrue(allControlIds.Contains("NavigationView"), "ModernWpf control pages remain part of the combined gallery.");
         }
