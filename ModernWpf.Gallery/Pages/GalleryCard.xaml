@@ -36,7 +36,7 @@
                         Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                         Opacity="0.7"
                         Style="{StaticResource CaptionTextBlockStyle}"
-                        Text="{Binding Description}" />
+                        Text="{Binding Subtitle}" />
                 </StackPanel>
             </StackPanel>
         </Button>

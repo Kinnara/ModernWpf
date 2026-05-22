@@ -232,7 +232,9 @@ public static class WpfGalleryVisualNative
     public static void Click(int x, int y)
     {
         SetCursorPos(x, y);
+        System.Threading.Thread.Sleep(80);
         mouse_event(0x0002, 0, 0, 0, UIntPtr.Zero);
+        System.Threading.Thread.Sleep(80);
         mouse_event(0x0004, 0, 0, 0, UIntPtr.Zero);
     }
 
@@ -442,6 +444,25 @@ function Invoke-Element($element) {
     return $false
 }
 
+function Invoke-LegacyDefaultAction($element) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.LegacyIAccessiblePattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.DoDefaultAction()
+            Start-Sleep -Milliseconds 250
+            return $true
+        }
+    }
+    catch {
+    }
+
+    return $false
+}
+
 function Click-Element($element) {
     if ($null -eq $element) {
         return $false
@@ -479,6 +500,7 @@ function Expand-Element($element) {
 }
 
 function Navigate-OfficialWpfGallery($window, $case) {
+    [WpfGalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
     $path = $case.OfficialPath
     if ($path.Count -eq 1 -and $path[0] -eq "Settings") {
         $settings = Find-DescendantByNameAndType $window "Settings" ([System.Windows.Automation.ControlType]::Button)
@@ -500,11 +522,17 @@ function Navigate-OfficialWpfGallery($window, $case) {
             [void](Expand-Element $item)
         }
         else {
+            [WpfGalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
             try {
                 $item.SetFocus()
                 $selectionPattern = $item.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern)
                 if ($null -ne $selectionPattern) {
                     $selectionPattern.Select()
+                }
+
+                $tree = Find-DescendantByAutomationId $window "ControlsList"
+                if ($null -ne $tree) {
+                    $tree.SetFocus()
                 }
             }
             catch {
@@ -512,19 +540,72 @@ function Navigate-OfficialWpfGallery($window, $case) {
 
             [WpfGalleryVisualNative]::PressEnter()
             Start-Sleep -Milliseconds 250
-            if (!(Click-Element $item) -and !(Invoke-Element $item)) {
+            $clicked = Click-Element $item
+            $invoked = Invoke-Element $item
+            $legacyInvoked = Invoke-LegacyDefaultAction $item
+            if (!$clicked -and !$invoked -and !$legacyInvoked) {
                 throw "Could not invoke official WPF Gallery navigation item '$name'."
             }
         }
     }
 
-    Wait-OfficialWpfGalleryContentReady $window $case
+    try {
+        Wait-OfficialWpfGalleryContentReady $window $case
+    }
+    catch {
+        $treeNavigationException = $_.Exception.Message
+        try {
+            Navigate-OfficialWpfGalleryByCards $window $case
+            Wait-OfficialWpfGalleryContentReady $window $case
+        }
+        catch {
+            throw "$treeNavigationException; card fallback: $($_.Exception.Message)"
+        }
+    }
+
     Start-Sleep -Milliseconds 1000
+}
+
+function Navigate-OfficialWpfGalleryByCards($window, $case) {
+    $path = $case.OfficialPath
+    if ($path.Count -eq 0 -or $path.Count -gt 2) {
+        throw "No card navigation fallback is defined for '$($path -join " > ")'."
+    }
+
+    if ($path.Count -eq 1) {
+        Invoke-OfficialContentButton $window ($path[0] + "Page")
+        return
+    }
+
+    Invoke-OfficialContentButton $window ($path[0] + "Page")
+    $parentCase = New-Case $path[0] "" @($path[0])
+    Wait-OfficialWpfGalleryContentReady $window $parentCase
+    Invoke-OfficialContentButton $window ($path[1] + "Page")
+}
+
+function Invoke-OfficialContentButton($window, [string]$name) {
+    $button = Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "official WPF Gallery content button '$name'" -Probe {
+        $frame = Find-DescendantByAutomationId $window "RootContentFrame"
+        if ($null -eq $frame) {
+            return $null
+        }
+
+        return Find-DescendantByNameAndType $frame $name ([System.Windows.Automation.ControlType]::Button)
+    }
+
+    if (!(Invoke-Element $button)) {
+        throw "Could not invoke official WPF Gallery content button '$name'."
+    }
+
+    Start-Sleep -Milliseconds 700
 }
 
 function Get-OfficialWpfGalleryReadyText($case) {
     switch ($case.Id) {
         "Home" { return ".NET 10" }
+        "WhatsNew" { return "What's new in WPF Page" }
+        "Media" { return "Media Controls Page" }
+        "NavigationWindow" { return "Navigation Window Page" }
         "Settings" { return "Settings Page" }
         default { return "$($case.OfficialPath[$case.OfficialPath.Count - 1]) Page" }
     }
@@ -547,6 +628,7 @@ function Wait-OfficialWpfGalleryContentReady($window, $case) {
 }
 
 function Return-OfficialWpfGalleryToHome($window) {
+    [WpfGalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
     $homeCase = New-Case "Home" "home" @("Home")
     $backButton = Find-DescendantByAutomationId $window "BackButton"
     if ($null -ne $backButton) {
@@ -586,6 +668,7 @@ function Ensure-OfficialWpfGalleryTheme([int]$processId, $window) {
     }
 
     try {
+        [WpfGalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
         $settings = Find-DescendantByNameAndType $window "Settings" ([System.Windows.Automation.ControlType]::Button)
         if ($null -eq $settings -or !(Invoke-Element $settings)) {
             throw "Could not invoke official WPF Gallery Settings button."
@@ -606,6 +689,7 @@ function Ensure-OfficialWpfGalleryTheme([int]$processId, $window) {
         }
 
         [void](Invoke-Element $item)
+        [WpfGalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
         [void](Click-Element $item)
 
         Start-Sleep -Milliseconds 700
@@ -890,7 +974,17 @@ function Save-ElementCrop($window, [string]$screenshot, [string]$path, $element,
         $source
 }
 
-function Save-OfficialContentCrop($window, [string]$screenshot, [string]$path) {
+function Save-OfficialContentCrop($window, [string]$screenshot, [string]$path, $case) {
+    if ($case.Id -ne "Home") {
+        $frame = Find-DescendantByAutomationId $window "RootContentFrame"
+        if ($null -ne $frame) {
+            $frameCrop = Save-ElementCrop $window $screenshot $path $frame "OfficialRootContentFrame" 0
+            if ($frameCrop.NonBlank) {
+                return $frameCrop
+            }
+        }
+    }
+
     $windowRect = [WpfGalleryVisualNative]::GetRect($window.Current.NativeWindowHandle)
     $windowWidth = $windowRect.Right - $windowRect.Left
     $windowHeight = $windowRect.Bottom - $windowRect.Top
@@ -1063,11 +1157,14 @@ function Capture-OfficialWpfGallery($case, [string]$caseDir) {
     }
 
     $process = Start-AppProcess $WpfGalleryExe @()
+    $window = $null
+    $themeProbe = $null
     try {
         $window = Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "official WPF Gallery window for $($case.Id)" -Probe {
             Find-WindowByProcessId $process.Id
         }
         [void][WpfGalleryVisualNative]::Move($window.Current.NativeWindowHandle, 60, 60, $Width, $Height)
+        [WpfGalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
         Start-Sleep -Milliseconds 700
         $themeProbe = Ensure-OfficialWpfGalleryTheme $process.Id $window
         if ($case.Id -ne "Settings") {
@@ -1081,7 +1178,7 @@ function Capture-OfficialWpfGallery($case, [string]$caseDir) {
         $contentCropPath = Join-Path $caseDir "official-wpf-$($case.Id)-content.png"
         Capture-Window $window.Current.NativeWindowHandle $screenshot
         Write-UiaTree $window $treePath 7
-        $contentCrop = Save-OfficialContentCrop $window $screenshot $contentCropPath
+        $contentCrop = Save-OfficialContentCrop $window $screenshot $contentCropPath $case
 
         $status = if ((Test-ImageNotBlank $screenshot) -and $contentCrop.NonBlank -and $themeProbe.Status -ne "Failed") { "Passed" } else { "Failed" }
         return [ordered]@{
@@ -1094,6 +1191,43 @@ function Capture-OfficialWpfGallery($case, [string]$caseDir) {
             UiaTree = $treePath
             ThemeProbe = $themeProbe
             LastException = $(if ($themeProbe.Status -eq "Failed") { $themeProbe.LastException } else { "" })
+        }
+    }
+    catch {
+        $lastException = $_.Exception.Message
+        $screenshot = ""
+        $treePath = ""
+        $contentCrop = $null
+
+        if ($null -ne $window) {
+            try {
+                $screenshot = Join-Path $caseDir "official-wpf-$($case.Id)-failure.png"
+                $treePath = Join-Path $caseDir "official-wpf-$($case.Id)-failure.uia.txt"
+                $contentCropPath = Join-Path $caseDir "official-wpf-$($case.Id)-failure-content.png"
+                Capture-Window $window.Current.NativeWindowHandle $screenshot
+                Write-UiaTree $window $treePath 7
+                $contentCrop = Save-OfficialContentCrop $window $screenshot $contentCropPath $case
+            }
+            catch {
+                if ([string]::IsNullOrWhiteSpace($lastException)) {
+                    $lastException = $_.Exception.Message
+                }
+                else {
+                    $lastException = "$lastException; failure capture: $($_.Exception.Message)"
+                }
+            }
+        }
+
+        return [ordered]@{
+            App = "OfficialWpfGallery"
+            Case = $case.Id
+            Route = $case.OfficialPath -join " > "
+            Status = "Failed"
+            Screenshot = $screenshot
+            ContentCrop = $contentCrop
+            UiaTree = $treePath
+            ThemeProbe = $themeProbe
+            LastException = $lastException
         }
     }
     finally {

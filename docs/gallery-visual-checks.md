@@ -52,14 +52,19 @@ routes ModernWpf with `--visual-test --route`, drives the official WPF Gallery
 Settings theme picker and navigation tree through UI Automation, captures full
 windows, crops the main content region, and reports normalized content-crop
 deltas. After changing the official theme through Settings, the audit returns
-the reference app to Home before navigating to the target case. ModernWpf visual
+the reference app to Home before navigating to the target case. Native mouse
+input to the official WPF Gallery tree can be unavailable in the current
+execution context, so section and item pages fall back to invoking official
+WPF Gallery navigation-card buttons inside `RootContentFrame`. ModernWpf visual
 test launches also render `ContentRootGrid.png` and `GalleryContentHost.png`
 in-process; the WPF Gallery audit prefers `ContentRootGrid.png` because it is
-the closest equivalent to the official `RootContentFrame` crop, then falls back
-to `GalleryContentHost.png` or a screenshot crop when needed. Use
-`-FailOnDifference` only for local triage once a machine has stable capture
-behavior; the first milestone uses the artifacts and report as manual visual
-evidence rather than a CI gate.
+the closest equivalent to the official page-root crop, then falls back to
+`GalleryContentHost.png` or a screenshot crop when needed. Non-Home official
+captures crop `RootContentFrame`; Home keeps the wider dashboard content region
+because its page intentionally uses negative margins. Use `-FailOnDifference`
+only for local triage once a machine has stable capture behavior; the first
+milestone uses the artifacts and report as manual visual evidence rather than a
+CI gate.
 
 The script launches ModernWpf Gallery with `--visual-test`, `--route`, `--theme`, and `--visual-artifact-dir`. In that mode the Gallery exposes hidden UIA fields:
 
