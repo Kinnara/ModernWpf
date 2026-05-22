@@ -6,6 +6,7 @@ param(
     [string]$Theme = "Light",
     [string]$ModernGalleryExe,
     [string]$WpfGalleryExe,
+    [string]$OfficialDirectHostExe,
     [string]$OutputRoot = "artifacts\wpf-gallery-visual-audit",
     [int]$Width = 1180,
     [int]$Height = 820,
@@ -28,6 +29,11 @@ if ([string]::IsNullOrWhiteSpace($ModernGalleryExe)) {
 
 if ([string]::IsNullOrWhiteSpace($WpfGalleryExe)) {
     $WpfGalleryExe = Join-Path $OfficialWpfGalleryRoot "bin\Debug\net10.0-windows\WPFGallery.exe"
+}
+$OfficialWpfGalleryOutput = Split-Path -Parent $WpfGalleryExe
+
+if ([string]::IsNullOrWhiteSpace($OfficialDirectHostExe)) {
+    $OfficialDirectHostExe = Join-Path $RepoRoot "tools\visual-checks\OfficialWpfGalleryDirectHost\bin\Debug\net10.0-windows\OfficialWpfGalleryDirectHost.exe"
 }
 
 function New-Case([string]$id, [string]$modernRoute, [string[]]$officialPath) {
@@ -120,6 +126,18 @@ function Select-Cases {
     return $selected.ToArray()
 }
 
+function Test-OfficialDirectReferenceCase($case) {
+    return $case.Id -eq "Canvas" -or $case.Id -eq "Image"
+}
+
+function Ensure-OfficialDirectHostBuilt {
+    $projectPath = Join-Path $RepoRoot "tools\visual-checks\OfficialWpfGalleryDirectHost\OfficialWpfGalleryDirectHost.csproj"
+    & dotnet build $projectPath -c Debug -p:OfficialWpfGalleryOutput="$OfficialWpfGalleryOutput"
+    if ($LASTEXITCODE -ne 0) {
+        throw "Official WPF Gallery direct reference host build failed."
+    }
+}
+
 if ($ListCases) {
     Select-Cases |
         ForEach-Object {
@@ -153,6 +171,11 @@ if (!(Test-Path $ModernGalleryExe)) {
 
 if ($Reference -eq "OfficialWpfGallery" -and !(Test-Path $WpfGalleryExe)) {
     throw "Official WPF Gallery executable was not found at '$WpfGalleryExe'. Build D:\repos\WPF-Samples\Sample Applications\WPFGallery or pass -WpfGalleryExe."
+}
+
+$selectedCases = Select-Cases
+if ($Reference -eq "OfficialWpfGallery" -and ($selectedCases | Where-Object { Test-OfficialDirectReferenceCase $_ } | Select-Object -First 1)) {
+    Ensure-OfficialDirectHostBuilt
 }
 
 Add-Type -AssemblyName UIAutomationClient
@@ -1196,6 +1219,52 @@ function Capture-ModernWpf($case, [string]$caseDir) {
     }
 }
 
+function Capture-OfficialWpfGalleryDirectHost($case, [string]$caseDir) {
+    $process = Start-AppProcess $OfficialDirectHostExe @(
+        "--page", $case.Id,
+        "--theme", $Theme,
+        "--official-output", $OfficialWpfGalleryOutput,
+        "--width", $Width,
+        "--height", $Height)
+    $window = $null
+    try {
+        $window = Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "official WPF Gallery direct reference window for $($case.Id)" -Probe {
+            Find-WindowByProcessId $process.Id
+        }
+        [void][WpfGalleryVisualNative]::Move($window.Current.NativeWindowHandle, 60, 60, $Width, $Height)
+        [WpfGalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+        Wait-OfficialWpfGalleryContentReady $window $case
+        Start-Sleep -Milliseconds 500
+
+        $screenshot = Join-Path $caseDir "official-wpf-$($case.Id).png"
+        $treePath = Join-Path $caseDir "official-wpf-$($case.Id).uia.txt"
+        $contentCropPath = Join-Path $caseDir "official-wpf-$($case.Id)-content.png"
+        Capture-Window $window.Current.NativeWindowHandle $screenshot
+        Write-UiaTree $window $treePath 7
+        $frame = Find-DescendantByAutomationId $window "RootContentFrame"
+        $contentCrop = Save-ElementCrop $window $screenshot $contentCropPath $frame "OfficialDirectRootContentFrame" 0
+
+        return [ordered]@{
+            App = "OfficialWpfGallery"
+            Case = $case.Id
+            Route = "Direct reference host: $($case.Id)"
+            Status = $(if ((Test-ImageNotBlank $screenshot) -and $contentCrop.Found) { "Passed" } else { "Failed" })
+            Screenshot = $screenshot
+            ContentCrop = $contentCrop
+            UiaTree = $treePath
+            ThemeProbe = [ordered]@{
+                RequestedTheme = $Theme
+                Status = "Passed"
+                LastException = "Direct reference host"
+            }
+            LastException = ""
+        }
+    }
+    finally {
+        Close-AppProcess $process
+    }
+}
+
 function Capture-OfficialWpfGallery($case, [string]$caseDir) {
     if ($Reference -eq "None") {
         return [ordered]@{
@@ -1208,6 +1277,10 @@ function Capture-OfficialWpfGallery($case, [string]$caseDir) {
             UiaTree = ""
             LastException = "Reference=None"
         }
+    }
+
+    if (Test-OfficialDirectReferenceCase $case) {
+        return Capture-OfficialWpfGalleryDirectHost $case $caseDir
     }
 
     $process = Start-AppProcess $WpfGalleryExe @()
@@ -1291,7 +1364,6 @@ function Capture-OfficialWpfGallery($case, [string]$caseDir) {
 
 $runDir = New-RunDirectory
 $results = New-Object System.Collections.Generic.List[object]
-$selectedCases = Select-Cases
 
 foreach ($case in $selectedCases) {
     $caseDir = Join-Path $runDir (ConvertTo-SafeName $case.Id)
@@ -1357,6 +1429,9 @@ $markdown.Add("- Reference: $Reference")
 $markdown.Add("- ModernWpf executable: $ModernGalleryExe")
 if ($Reference -eq "OfficialWpfGallery") {
     $markdown.Add("- Official WPF Gallery executable: $WpfGalleryExe")
+    if ($selectedCases | Where-Object { Test-OfficialDirectReferenceCase $_ } | Select-Object -First 1) {
+        $markdown.Add("- Official WPF Gallery direct reference host: $OfficialDirectHostExe")
+    }
 }
 $markdown.Add("")
 $markdown.Add("| Case | Modern status | Official status | Content delta | Modern crop | Official crop | Notes |")
