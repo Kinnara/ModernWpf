@@ -14,23 +14,12 @@
         <ui:NavigationView
             x:Name="Navigation"
             AutomationProperties.AutomationId="GalleryNavigationView"
-            IsBackButtonVisible="Auto"
+            IsBackButtonVisible="Collapsed"
+            IsPaneToggleButtonVisible="False"
             IsSettingsVisible="True"
             ItemInvoked="OnNavigationItemInvoked"
             OpenPaneLength="260"
-            PaneDisplayMode="Left"
-            PaneTitle="WPF Gallery">
-            <ui:NavigationView.PaneCustomContent>
-                <ui:AutoSuggestBox
-                    x:Name="SearchBox"
-                    AutomationProperties.AutomationId="GallerySearchBox"
-                    Margin="12,4,12,12"
-                    PlaceholderText="Search controls"
-                    QueryIcon="Find"
-                    QuerySubmitted="OnSearchQuerySubmitted"
-                    TextChanged="OnSearchTextChanged" />
-            </ui:NavigationView.PaneCustomContent>
-
+            PaneDisplayMode="Left">
             <Border
                 Margin="4,0,0,0"
                 Padding="24,16,24,0"

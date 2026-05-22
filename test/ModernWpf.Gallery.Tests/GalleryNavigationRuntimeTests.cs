@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Shell;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls;
 using ModernWpf.Gallery.Controls;
@@ -89,6 +90,10 @@ namespace ModernWpf.Gallery.Tests
                 var topLevelItems = navigation.MenuItems.OfType<NavigationViewItem>().ToList();
 
                 Assert.AreEqual(260d, navigation.OpenPaneLength);
+                Assert.AreEqual(NavigationViewBackButtonVisible.Collapsed, navigation.IsBackButtonVisible);
+                Assert.IsFalse(navigation.IsPaneToggleButtonVisible);
+                Assert.AreEqual(string.Empty, navigation.PaneTitle);
+                Assert.IsNull(navigation.PaneCustomContent);
 
                 CollectionAssert.AreEqual(
                     new[] { "Home", "What's New", "Design Guidance", "Samples", "All controls", "Basic Input" },
@@ -125,6 +130,38 @@ namespace ModernWpf.Gallery.Tests
 
                 page.NavigateTo("category/BasicInput");
                 Assert.IsTrue(topLevelItems[5].IsExpanded);
+            });
+        }
+
+        [TestMethod]
+        public void MainWindowUsesWpfGalleryTitleChrome()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var window = new MainWindow();
+                try
+                {
+                    var chrome = WindowChrome.GetWindowChrome(window);
+                    Assert.IsNotNull(chrome);
+                    Assert.AreEqual(44d, chrome.CaptionHeight);
+
+                    var mainGrid = (Grid)window.FindName("MainGrid");
+                    Assert.AreEqual(44d, mainGrid.RowDefinitions[0].Height.Value);
+
+                    var backButton = (Button)window.FindName("BackButton");
+                    Assert.AreEqual("Back", AutomationProperties.GetName(backButton));
+                    Assert.IsFalse(backButton.IsEnabled);
+
+                    var titleText = (TextBlock)window.FindName("TitleText");
+                    Assert.AreEqual("WPF Gallery", titleText.Text);
+                    Assert.AreEqual(AutomationHeadingLevel.Level1, AutomationProperties.GetHeadingLevel(titleText));
+
+                    Assert.IsInstanceOfType(window.FindName("RootPage"), typeof(NavigationRootPage));
+                }
+                finally
+                {
+                    window.Close();
+                }
             });
         }
 

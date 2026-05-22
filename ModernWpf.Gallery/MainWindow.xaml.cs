@@ -1,5 +1,5 @@
 using System.Windows;
-using ModernWpf.Controls;
+using ModernWpf.Gallery.Pages;
 
 namespace ModernWpf.Gallery
 {
@@ -8,16 +8,17 @@ namespace ModernWpf.Gallery
         public MainWindow()
         {
             InitializeComponent();
+            GalleryAutomation.SetHeadingLevel(TitleText, GalleryAutomationHeadingLevel.Level1);
         }
 
-        private void OnBackRequested(object sender, RoutedEventArgs e)
+        private void BackButton_Click(object sender, RoutedEventArgs e)
         {
             RootPage.GoBack();
         }
 
-        internal void SetBackButtonVisible(bool isVisible)
+        internal void SetBackButtonVisible(bool canGoBack)
         {
-            TitleBar.SetIsBackButtonVisible(this, isVisible);
+            BackButton.IsEnabled = canGoBack;
         }
 
         internal void NavigateTo(string uniqueId)
