@@ -1,0 +1,39 @@
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using GeometryPage = ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance.GeometryPage;
+using TypographyPage = ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance.TypographyPage;
+using static ModernWpf.Gallery.Tests.WpfGallerySnippetTestHelpers;
+
+namespace ModernWpf.Gallery.Tests
+{
+    [TestClass]
+    public class WpfGalleryDesignGuidanceSnippetTests
+    {
+        [TestMethod]
+        public void DesignGuidanceControlExamplesMatchOfficialWpfGallerySampleCode()
+        {
+            WpfTestHost.Run(() =>
+            {
+                AssertExamples(
+                    new TypographyPage(),
+                    new ExpectedExample(
+                        "Type ramp",
+                        Lines(
+                            "<TextBlock Text=\"Caption\" Style=\"{StaticResource CaptionTextBlockStyle}\" />",
+                            "<TextBlock Text=\"Body\" Style=\"{StaticResource BodyTextBlockStyle}\" />",
+                            "<TextBlock Text=\"Body Strong\" Style=\"{StaticResource BodyStrongTextBlockStyle}\" />",
+                            "<TextBlock Text=\"Subtitle\" Style=\"{StaticResource SubtitleTextBlockStyle}\" />",
+                            "<TextBlock Text=\"Title\" Style=\"{StaticResource TitleTextBlockStyle}\" />",
+                            "<TextBlock Text=\"Title Large\" Style=\"{StaticResource TitleLargeTextBlockStyle}\" />",
+                            "<TextBlock Text=\"Display\" Style=\"{StaticResource DisplayTextBlockStyle}\" />")));
+
+                AssertExamples(
+                    new GeometryPage(),
+                    new ExpectedExample(
+                        null,
+                        Lines(
+                            "<Border CornerRadius=\"{StaticResource OverlayCornerRadius}\" />",
+                            "<Border CornerRadius=\"{StaticResource ControlCornerRadius}\" />")));
+            });
+        }
+    }
+}
