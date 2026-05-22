@@ -2,7 +2,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ClipboardPage = ModernWpf.Gallery.Pages.WpfGallery.SystemPages.ClipboardPage;
 using FileAndFolderDialogsPage = ModernWpf.Gallery.Pages.WpfGallery.SystemPages.FileAndFolderDialogsPage;
 using MessageBoxPage = ModernWpf.Gallery.Pages.WpfGallery.SystemPages.MessageBoxPage;
-using SystemPageViewModel = ModernWpf.Gallery.Pages.WpfGallery.SystemPages.WpfGallerySystemPageViewModel;
+using MessageBoxPageViewModel = ModernWpf.Gallery.Pages.WpfGallery.SystemPages.MessageBoxPageViewModel;
 using static ModernWpf.Gallery.Tests.WpfGallerySnippetTestHelpers;
 
 namespace ModernWpf.Gallery.Tests
@@ -233,7 +233,7 @@ namespace ModernWpf.Gallery.Tests
         [TestMethod]
         public void MessageBoxDynamicSnippetsMatchOfficialWpfGallerySampleCode()
         {
-            var viewModel = new SystemPageViewModel("MessageBox", string.Empty);
+            var viewModel = new MessageBoxPageViewModel();
 
             var buttonSnippets = new[]
             {

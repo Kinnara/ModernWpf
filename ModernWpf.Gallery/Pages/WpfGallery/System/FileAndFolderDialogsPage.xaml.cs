@@ -11,14 +11,12 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
     {
         public FileAndFolderDialogsPage()
         {
-            ViewModel = new WpfGallerySystemPageViewModel(
-                "File and Folder Dialogs",
-                "Use the OpenFileDialog, SaveFileDialog, and OpenFolderDialog to let users select files and folders in a secure way.");
+            ViewModel = new FileAndFolderDialogsPageViewModel();
             DataContext = this;
             InitializeComponent();
         }
 
-        public WpfGallerySystemPageViewModel ViewModel { get; }
+        public FileAndFolderDialogsPageViewModel ViewModel { get; }
 
         private void PickSingleFileButton_Click(object sender, RoutedEventArgs e)
         {

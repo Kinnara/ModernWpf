@@ -1,38 +1,15 @@
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
 {
-    public sealed class WpfGallerySystemPageViewModel : INotifyPropertyChanged
+    public abstract class SystemPageViewModelBase : INotifyPropertyChanged
     {
-        private string _copyImageStatus = string.Empty;
-        private string _copyStatus = string.Empty;
-        private string _clearStatus = string.Empty;
-        private string _commonMessagesResult = "No common message shown yet";
-        private string _customDefaultResult = "No selection made";
-        private string _customTitleResult = "No message shown yet";
-        private string _defaultMessageResult = "No message shown yet";
-        private string _differentButtonsCSharpCode;
-        private string _differentButtonsResult = "No button clicked yet";
-        private string _differentImagesCSharpCode;
-        private string _differentImagesResult = "No image example shown yet";
-        private string _fileContent = "Enter text here to save to a file...";
-        private string _formatsInfo = string.Empty;
-        private string _multipleFilesPath = "No files selected";
-        private string _pastedText = string.Empty;
-        private string _pasteImageStatus = string.Empty;
-        private string _savedFilePath = "No file saved";
-        private int _selectedButtonIndex;
-        private int _selectedImageIndex;
-        private string _selectedFolderPath = "No folder selected";
-        private string _singleFilePath = "No file selected";
-
-        public WpfGallerySystemPageViewModel(string pageTitle, string pageDescription)
+        protected SystemPageViewModelBase(string pageTitle, string pageDescription)
         {
             PageTitle = pageTitle;
             PageDescription = pageDescription;
-            UpdateButtonCodeSnippets(0);
-            UpdateImageCodeSnippets(0);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -41,40 +18,41 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
 
         public string PageDescription { get; }
 
-        public string CopyStatus
+        protected bool SetProperty<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
         {
-            get { return _copyStatus; }
-            set { SetProperty(ref _copyStatus, value); }
+            if (EqualityComparer<T>.Default.Equals(field, value))
+            {
+                return false;
+            }
+
+            field = value;
+            OnPropertyChanged(propertyName);
+            return true;
         }
 
-        public string PastedText
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            get { return _pastedText; }
-            set { SetProperty(ref _pastedText, value); }
+            var handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
+    }
 
-        public string ClearStatus
-        {
-            get { return _clearStatus; }
-            set { SetProperty(ref _clearStatus, value); }
-        }
+    public sealed class FileAndFolderDialogsPageViewModel : SystemPageViewModelBase
+    {
+        private string _fileContent = "Enter text here to save to a file...";
+        private string _multipleFilesPath = "No files selected";
+        private string _savedFilePath = "No file saved";
+        private string _selectedFolderPath = "No folder selected";
+        private string _singleFilePath = "No file selected";
 
-        public string FormatsInfo
+        public FileAndFolderDialogsPageViewModel()
+            : base(
+                  "File and Folder Dialogs",
+                  "Use the OpenFileDialog, SaveFileDialog, and OpenFolderDialog to let users select files and folders in a secure way.")
         {
-            get { return _formatsInfo; }
-            set { SetProperty(ref _formatsInfo, value); }
-        }
-
-        public string CopyImageStatus
-        {
-            get { return _copyImageStatus; }
-            set { SetProperty(ref _copyImageStatus, value); }
-        }
-
-        public string PasteImageStatus
-        {
-            get { return _pasteImageStatus; }
-            set { SetProperty(ref _pasteImageStatus, value); }
         }
 
         public string SingleFilePath
@@ -105,6 +83,27 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
         {
             get { return _selectedFolderPath; }
             set { SetProperty(ref _selectedFolderPath, value); }
+        }
+    }
+
+    public sealed class MessageBoxPageViewModel : SystemPageViewModelBase
+    {
+        private string _commonMessagesResult = "No common message shown yet";
+        private string _customDefaultResult = "No selection made";
+        private string _customTitleResult = "No message shown yet";
+        private string _defaultMessageResult = "No message shown yet";
+        private string _differentButtonsCSharpCode;
+        private string _differentButtonsResult = "No button clicked yet";
+        private string _differentImagesCSharpCode;
+        private string _differentImagesResult = "No image example shown yet";
+        private int _selectedButtonIndex;
+        private int _selectedImageIndex;
+
+        public MessageBoxPageViewModel()
+            : base("MessageBox", string.Empty)
+        {
+            UpdateButtonCodeSnippets(0);
+            UpdateImageCodeSnippets(0);
         }
 
         public string DefaultMessageResult
@@ -294,28 +293,58 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
             DifferentImagesCSharpCode = string.Format(DifferentImagesMessageBoxSampleCSharpCodeString, content);
         }
 
-        private bool SetProperty<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
-        {
-            if (object.Equals(field, value))
-            {
-                return false;
-            }
-
-            field = value;
-            OnPropertyChanged(propertyName);
-            return true;
-        }
-
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            var handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-
         private const string DifferentButtonsMessageBoxSampleCSharpCodeString = "private void ShowMessageBoxButton_Click(object sender, RoutedEventArgs e)\n{{\n{0}\n}}";
         private const string DifferentImagesMessageBoxSampleCSharpCodeString = "private void ShowMessageBoxButton_Click(object sender, RoutedEventArgs e)\n{{\n{0}\n}}";
+    }
+
+    public sealed class ClipboardPageViewModel : SystemPageViewModelBase
+    {
+        private string _copyImageStatus = string.Empty;
+        private string _copyStatus = string.Empty;
+        private string _clearStatus = string.Empty;
+        private string _formatsInfo = string.Empty;
+        private string _pastedText = string.Empty;
+        private string _pasteImageStatus = string.Empty;
+
+        public ClipboardPageViewModel()
+            : base("Clipboard", string.Empty)
+        {
+        }
+
+        public string CopyStatus
+        {
+            get { return _copyStatus; }
+            set { SetProperty(ref _copyStatus, value); }
+        }
+
+        public string PastedText
+        {
+            get { return _pastedText; }
+            set { SetProperty(ref _pastedText, value); }
+        }
+
+        public string ClearStatus
+        {
+            get { return _clearStatus; }
+            set { SetProperty(ref _clearStatus, value); }
+        }
+
+        public string FormatsInfo
+        {
+            get { return _formatsInfo; }
+            set { SetProperty(ref _formatsInfo, value); }
+        }
+
+        public string CopyImageStatus
+        {
+            get { return _copyImageStatus; }
+            set { SetProperty(ref _copyImageStatus, value); }
+        }
+
+        public string PasteImageStatus
+        {
+            get { return _pasteImageStatus; }
+            set { SetProperty(ref _pasteImageStatus, value); }
+        }
     }
 }

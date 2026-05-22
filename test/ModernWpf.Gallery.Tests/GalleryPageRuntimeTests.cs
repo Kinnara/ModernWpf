@@ -25,6 +25,7 @@ using ModernWpf.Gallery.Pages.WpfGallery.Layout;
 using ModernWpf.Gallery.Pages.WpfGallery.Media;
 using ModernWpf.Gallery.Pages.WpfGallery.Navigation;
 using ModernWpf.Gallery.Pages.WpfGallery.StatusAndInfo;
+using ModernWpf.Gallery.Pages.WpfGallery.SystemPages;
 using ModernWpf.Gallery.Pages.WpfGallery.Text;
 
 namespace ModernWpf.Gallery.Tests
@@ -448,6 +449,51 @@ namespace ModernWpf.Gallery.Tests
                 Assert.IsInstanceOfType(iconographyPage.ViewModel, typeof(IconographyPageViewModel));
                 Assert.AreEqual("Icons", iconographyPage.ViewModel.PageTitle);
                 Assert.AreEqual("Guide showing how to use icons in your application.", iconographyPage.ViewModel.PageDescription);
+            });
+        }
+
+        [TestMethod]
+        public void SystemPagesUseOfficialPageSpecificViewModels()
+        {
+            WpfTestHost.Run(() =>
+            {
+                AssertSystemViewModel<FileAndFolderDialogsPage, FileAndFolderDialogsPageViewModel>(
+                    "FileAndFolderDialogs",
+                    "File and Folder Dialogs",
+                    "Use the OpenFileDialog, SaveFileDialog, and OpenFolderDialog to let users select files and folders in a secure way.");
+                AssertSystemViewModel<MessageBoxPage, MessageBoxPageViewModel>("MessageBox", "MessageBox", string.Empty);
+                AssertSystemViewModel<ClipboardPage, ClipboardPageViewModel>("Clipboard", "Clipboard", string.Empty);
+
+                var dialogsPage = (FileAndFolderDialogsPage)new ItemPage(GalleryCatalog.FindItem("FileAndFolderDialogs")).DirectPageContent;
+                Assert.AreEqual("No file selected", dialogsPage.ViewModel.SingleFilePath);
+                Assert.AreEqual("No files selected", dialogsPage.ViewModel.MultipleFilesPath);
+                Assert.AreEqual("Enter text here to save to a file...", dialogsPage.ViewModel.FileContent);
+                Assert.AreEqual("No file saved", dialogsPage.ViewModel.SavedFilePath);
+                Assert.AreEqual("No folder selected", dialogsPage.ViewModel.SelectedFolderPath);
+
+                var messageBoxPage = (MessageBoxPage)new ItemPage(GalleryCatalog.FindItem("MessageBox")).DirectPageContent;
+                Assert.AreEqual("No message shown yet", messageBoxPage.ViewModel.DefaultMessageResult);
+                Assert.AreEqual("No message shown yet", messageBoxPage.ViewModel.CustomTitleResult);
+                Assert.AreEqual("No button clicked yet", messageBoxPage.ViewModel.DifferentButtonsResult);
+                Assert.AreEqual("No image example shown yet", messageBoxPage.ViewModel.DifferentImagesResult);
+                Assert.AreEqual("No common message shown yet", messageBoxPage.ViewModel.CommonMessagesResult);
+                Assert.AreEqual("No selection made", messageBoxPage.ViewModel.CustomDefaultResult);
+                Assert.AreEqual("<Button Content=\"Show MessageBox\" Click=\"ShowMessageBoxButton_Click\" />", messageBoxPage.ViewModel.DifferentButtonsXamlCode);
+                Assert.AreEqual("<Button Content=\"Show MessageBox\" Click=\"ShowMessageButton_Click\" />", messageBoxPage.ViewModel.DifferentImagesXamlCode);
+                StringAssert.Contains(messageBoxPage.ViewModel.DifferentButtonsCSharpCode, "MessageBoxButton.OK");
+                StringAssert.Contains(messageBoxPage.ViewModel.DifferentImagesCSharpCode, "MessageBoxImage.None");
+                messageBoxPage.ViewModel.SelectedButtonIndex = 1;
+                StringAssert.Contains(messageBoxPage.ViewModel.DifferentButtonsCSharpCode, "MessageBoxButton.OKCancel");
+                messageBoxPage.ViewModel.SelectedImageIndex = 4;
+                StringAssert.Contains(messageBoxPage.ViewModel.DifferentImagesCSharpCode, "MessageBoxImage.Information");
+
+                var clipboardPage = (ClipboardPage)new ItemPage(GalleryCatalog.FindItem("Clipboard")).DirectPageContent;
+                Assert.AreEqual(string.Empty, clipboardPage.ViewModel.CopyStatus);
+                Assert.AreEqual(string.Empty, clipboardPage.ViewModel.PastedText);
+                Assert.AreEqual(string.Empty, clipboardPage.ViewModel.ClearStatus);
+                Assert.AreEqual(string.Empty, clipboardPage.ViewModel.FormatsInfo);
+                Assert.AreEqual(string.Empty, clipboardPage.ViewModel.CopyImageStatus);
+                Assert.AreEqual(string.Empty, clipboardPage.ViewModel.PasteImageStatus);
             });
         }
 
@@ -2210,6 +2256,22 @@ namespace ModernWpf.Gallery.Tests
 
             Assert.AreEqual(expectedTitle, viewModel.PageTitle, uniqueId);
             Assert.AreEqual(string.Empty, viewModel.PageDescription, uniqueId);
+            Assert.AreEqual(uniqueId + "PageViewModel", viewModel.GetType().Name, uniqueId);
+        }
+
+        private static void AssertSystemViewModel<TPage, TViewModel>(
+            string uniqueId,
+            string expectedTitle,
+            string expectedDescription)
+            where TPage : FrameworkElement
+            where TViewModel : SystemPageViewModelBase
+        {
+            var itemPage = new ItemPage(GalleryCatalog.FindItem(uniqueId));
+            var directPage = (TPage)itemPage.DirectPageContent;
+            var viewModel = (TViewModel)directPage.GetType().GetProperty("ViewModel").GetValue(directPage, null);
+
+            Assert.AreEqual(expectedTitle, viewModel.PageTitle, uniqueId);
+            Assert.AreEqual(expectedDescription, viewModel.PageDescription, uniqueId);
             Assert.AreEqual(uniqueId + "PageViewModel", viewModel.GetType().Name, uniqueId);
         }
 

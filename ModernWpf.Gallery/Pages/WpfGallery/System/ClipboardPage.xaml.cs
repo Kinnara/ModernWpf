@@ -11,12 +11,12 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
     {
         public ClipboardPage()
         {
-            ViewModel = new WpfGallerySystemPageViewModel("Clipboard", string.Empty);
+            ViewModel = new ClipboardPageViewModel();
             DataContext = this;
             InitializeComponent();
         }
 
-        public WpfGallerySystemPageViewModel ViewModel { get; }
+        public ClipboardPageViewModel ViewModel { get; }
 
         private void CopyToClipboard_Click(object sender, RoutedEventArgs e)
         {

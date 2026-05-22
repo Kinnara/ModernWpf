@@ -7,12 +7,12 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
     {
         public MessageBoxPage()
         {
-            ViewModel = new WpfGallerySystemPageViewModel("MessageBox", string.Empty);
+            ViewModel = new MessageBoxPageViewModel();
             DataContext = this;
             InitializeComponent();
         }
 
-        public WpfGallerySystemPageViewModel ViewModel { get; }
+        public MessageBoxPageViewModel ViewModel { get; }
 
         private void ShowDefaultMessageButton_Click(object sender, RoutedEventArgs e)
         {
