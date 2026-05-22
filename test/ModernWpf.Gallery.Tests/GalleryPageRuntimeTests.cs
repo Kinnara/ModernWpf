@@ -91,7 +91,7 @@ namespace ModernWpf.Gallery.Tests
 
                 Assert.IsTrue(richTextEditPage.UsesWpfGalleryPageMode);
                 Assert.IsFalse(richTextEditPage.ShowCatalogDetails);
-                Assert.IsTrue(richTextEditPage.ShowPageDescription);
+                Assert.IsFalse(richTextEditPage.ShowPageDescription);
 
                 Assert.IsFalse(richEditBoxPage.UsesWpfGalleryPageMode);
                 Assert.IsTrue(richEditBoxPage.ShowCatalogDetails);
@@ -617,7 +617,9 @@ namespace ModernWpf.Gallery.Tests
             WpfTestHost.Run(() =>
             {
                 var textBlockPage = new ItemPage(GalleryCatalog.FindItem("TextBlock"));
-                Assert.AreEqual(4, textBlockPage.Examples.Count);
+                Assert.IsTrue(textBlockPage.HasDirectPageContent);
+                var textBlockExamples = GetRenderedExamples(textBlockPage);
+                Assert.AreEqual(4, textBlockExamples.Count);
                 CollectionAssert.AreEqual(
                     new[]
                     {
@@ -626,43 +628,45 @@ namespace ModernWpf.Gallery.Tests
                         "A TextBlock with inline text elements.",
                         "A TextBlock with wrap property."
                     },
-                    textBlockPage.Examples.Select(example => example.HeaderText).ToArray());
+                    textBlockExamples.Select(example => example.HeaderText).ToArray());
 
-                var simpleTextBlock = (TextBlock)textBlockPage.Examples[0].ExampleContent;
+                var simpleTextBlock = (TextBlock)textBlockExamples[0].ExampleContent;
                 Assert.AreEqual("I am a text block.", simpleTextBlock.Text);
 
-                var styledTextBlock = (TextBlock)textBlockPage.Examples[1].ExampleContent;
+                var styledTextBlock = (TextBlock)textBlockExamples[1].ExampleContent;
                 Assert.AreEqual("I am a styled TextBlock.", styledTextBlock.Text);
                 Assert.AreEqual("Comic Sans MS", styledTextBlock.FontFamily.Source);
                 Assert.AreEqual(FontStyles.Italic, styledTextBlock.FontStyle);
 
-                var inlineTextBlock = (TextBlock)textBlockPage.Examples[2].ExampleContent;
+                var inlineTextBlock = (TextBlock)textBlockExamples[2].ExampleContent;
                 Assert.AreEqual(14.0, inlineTextBlock.FontSize);
                 var inlines = inlineTextBlock.Inlines.ToArray();
-                Assert.AreEqual(9, inlines.Length);
-                var firstRun = (Run)inlines[0];
-                Assert.AreEqual("Text in a TextBlock doesn't have to be a simple string.", firstRun.Text);
+                var firstRun = inlines.OfType<Run>().First(run => run.Text.Contains("Text in a TextBlock"));
+                Assert.AreEqual("Text in a TextBlock doesn't have to be a simple string.", firstRun.Text.Trim());
                 Assert.AreEqual("Times New Roman", firstRun.FontFamily.Source);
-                Assert.IsInstanceOfType(inlines[1], typeof(LineBreak));
-                Assert.AreEqual("bold", ((Bold)inlines[3]).Inlines.OfType<Run>().Single().Text);
-                Assert.AreEqual("italic", ((Italic)inlines[5]).Inlines.OfType<Run>().Single().Text);
-                Assert.AreEqual("underlined", ((Underline)inlines[7]).Inlines.OfType<Run>().Single().Text);
+                Assert.IsTrue(inlines.OfType<LineBreak>().Any());
+                var nestedInlines = inlines.OfType<Span>().SelectMany(span => span.Inlines.Cast<Inline>()).ToArray();
+                Assert.AreEqual("bold", nestedInlines.OfType<Bold>().Single().Inlines.OfType<Run>().Single().Text);
+                Assert.AreEqual("italic", nestedInlines.OfType<Italic>().Single().Inlines.OfType<Run>().Single().Text);
+                Assert.AreEqual("underlined", nestedInlines.OfType<Underline>().Single().Inlines.OfType<Run>().Single().Text);
 
-                var wrappedTextBlock = (TextBlock)textBlockPage.Examples[3].ExampleContent;
+                var wrappedTextBlock = (TextBlock)textBlockExamples[3].ExampleContent;
                 Assert.AreEqual(14.0, wrappedTextBlock.FontSize);
                 Assert.AreEqual(TextWrapping.Wrap, wrappedTextBlock.TextWrapping);
-                StringAssert.StartsWith(wrappedTextBlock.Text, "The TextBlock control provides flexible text support");
+                StringAssert.Contains(wrappedTextBlock.Text, "The TextBlock control provides flexible text support");
 
                 var textBoxPage = new ItemPage(GalleryCatalog.FindItem("TextBox"));
-                Assert.AreEqual(3, textBoxPage.Examples.Count);
+                Assert.IsTrue(textBoxPage.HasDirectPageContent);
+                var textBoxExamples = GetRenderedExamples(textBoxPage);
+                Assert.AreEqual(3, textBoxExamples.Count);
                 CollectionAssert.AreEqual(
                     new[] { "A simple TextBox.", "A TextBox with input validation.", "A multi-line TextBox." },
-                    textBoxPage.Examples.Select(example => example.HeaderText).ToArray());
+                    textBoxExamples.Select(example => example.HeaderText).ToArray());
 
-                var simpleTextBox = (TextBox)textBoxPage.Examples[0].ExampleContent;
+                var simpleTextBox = (TextBox)textBoxExamples[0].ExampleContent;
                 Assert.AreEqual("simple TextBox", AutomationProperties.GetName(simpleTextBox));
 
-                var validatedTextBox = (TextBox)textBoxPage.Examples[1].ExampleContent;
+                var validatedTextBox = (TextBox)textBoxExamples[1].ExampleContent;
                 Assert.AreEqual("validated TextBox", AutomationProperties.GetName(validatedTextBox));
                 var textBinding = BindingOperations.GetBinding(validatedTextBox, TextBox.TextProperty);
                 Assert.IsNotNull(textBinding);
@@ -670,22 +674,24 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(1, textBinding.ValidationRules.Count);
                 Assert.AreEqual("AlphabeticValidationRule", textBinding.ValidationRules[0].GetType().Name);
 
-                var multilineTextBox = (TextBox)textBoxPage.Examples[2].ExampleContent;
+                var multilineTextBox = (TextBox)textBoxExamples[2].ExampleContent;
                 Assert.IsTrue(multilineTextBox.AcceptsReturn);
                 Assert.AreEqual(TextWrapping.Wrap, multilineTextBox.TextWrapping);
                 Assert.AreEqual("multi-line TextBox", AutomationProperties.GetName(multilineTextBox));
 
                 var labelPage = new ItemPage(GalleryCatalog.FindItem("Label"));
-                Assert.AreEqual(2, labelPage.Examples.Count);
+                Assert.IsTrue(labelPage.HasDirectPageContent);
+                var labelExamples = GetRenderedExamples(labelPage);
+                Assert.AreEqual(2, labelExamples.Count);
                 CollectionAssert.AreEqual(
                     new[] { "A simple Label.", "A Label for TextBox." },
-                    labelPage.Examples.Select(example => example.HeaderText).ToArray());
+                    labelExamples.Select(example => example.HeaderText).ToArray());
 
-                var simpleLabel = (Label)labelPage.Examples[0].ExampleContent;
+                var simpleLabel = (Label)labelExamples[0].ExampleContent;
                 Assert.AreEqual("I am a Label.", simpleLabel.Content);
                 Assert.AreEqual(0.7, simpleLabel.Opacity);
 
-                var labelGrid = (Grid)labelPage.Examples[1].ExampleContent;
+                var labelGrid = (Grid)labelExamples[1].ExampleContent;
                 Assert.AreEqual(2, labelGrid.RowDefinitions.Count);
                 var textBoxLabel = labelGrid.Children.OfType<Label>().Single();
                 var labelledTextBox = labelGrid.Children.OfType<TextBox>().Single();
@@ -696,14 +702,18 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual("Simple Text Box", AutomationProperties.GetName(labelledTextBox));
 
                 var passwordBoxPage = new ItemPage(GalleryCatalog.FindItem("PasswordBox"));
-                Assert.AreEqual(1, passwordBoxPage.Examples.Count);
-                Assert.AreEqual("A simple PasswordBox.", passwordBoxPage.Examples[0].HeaderText);
-                Assert.AreEqual("Simple Password Box", AutomationProperties.GetName((PasswordBox)passwordBoxPage.Examples[0].ExampleContent));
+                Assert.IsTrue(passwordBoxPage.HasDirectPageContent);
+                var passwordBoxExamples = GetRenderedExamples(passwordBoxPage);
+                Assert.AreEqual(1, passwordBoxExamples.Count);
+                Assert.AreEqual("A simple PasswordBox.", passwordBoxExamples[0].HeaderText);
+                Assert.AreEqual("Simple Password Box", AutomationProperties.GetName((PasswordBox)passwordBoxExamples[0].ExampleContent));
 
                 var richTextPage = new ItemPage(GalleryCatalog.FindItem("RichTextEdit"));
-                Assert.AreEqual(1, richTextPage.Examples.Count);
-                Assert.AreEqual("A simple RichTextBox", richTextPage.Examples[0].HeaderText);
-                var richTextBox = (RichTextBox)richTextPage.Examples[0].ExampleContent;
+                Assert.IsTrue(richTextPage.HasDirectPageContent);
+                var richTextExamples = GetRenderedExamples(richTextPage);
+                Assert.AreEqual(1, richTextExamples.Count);
+                Assert.AreEqual("A simple RichTextBox", richTextExamples[0].HeaderText);
+                var richTextBox = (RichTextBox)richTextExamples[0].ExampleContent;
                 Assert.AreEqual("simple rich text editor", AutomationProperties.GetName(richTextBox));
                 Assert.IsTrue(double.IsNaN(richTextBox.Width));
                 Assert.IsTrue(double.IsNaN(richTextBox.Height));
@@ -1138,9 +1148,11 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(50, dataGrid.ItemsSource.Cast<object>().Count());
 
                 var hyperlinkPage = new ItemPage(GalleryCatalog.FindItem("Hyperlink"));
-                Assert.AreEqual(1, hyperlinkPage.Examples.Count);
-                Assert.AreEqual("A Hyperlink", hyperlinkPage.Examples[0].HeaderText);
-                var hyperlinkTextBlock = (TextBlock)hyperlinkPage.Examples[0].ExampleContent;
+                Assert.IsTrue(hyperlinkPage.HasDirectPageContent);
+                var hyperlinkExamples = GetRenderedExamples(hyperlinkPage);
+                Assert.AreEqual(1, hyperlinkExamples.Count);
+                Assert.AreEqual("A Hyperlink", hyperlinkExamples[0].HeaderText);
+                var hyperlinkTextBlock = (TextBlock)hyperlinkExamples[0].ExampleContent;
                 Assert.AreEqual(new Thickness(20), hyperlinkTextBlock.Margin);
                 var hyperlink = hyperlinkTextBlock.Inlines.OfType<Hyperlink>().Single();
                 Assert.AreEqual(new System.Uri("https://www.microsoft.com"), hyperlink.NavigateUri);
@@ -1778,26 +1790,47 @@ namespace ModernWpf.Gallery.Tests
             Assert.AreEqual(styleName, styleText.Text);
         }
 
+        private sealed class RenderedExample
+        {
+            public RenderedExample(string headerText, object exampleContent, string xamlCode, Thickness margin)
+            {
+                HeaderText = headerText;
+                ExampleContent = exampleContent;
+                XamlCode = xamlCode;
+                Margin = margin;
+            }
+
+            public string HeaderText { get; }
+
+            public object ExampleContent { get; }
+
+            public string XamlCode { get; }
+
+            public Thickness Margin { get; }
+        }
+
+        private static IReadOnlyList<RenderedExample> GetRenderedExamples(ItemPage page)
+        {
+            if (page.HasDirectPageContent)
+            {
+                return FindDescendants<ControlExample>((DependencyObject)page.DirectPageContent)
+                    .Select(example => new RenderedExample(example.HeaderText, example.ExampleContent, example.XamlCode, example.Margin))
+                    .ToArray();
+            }
+
+            return page.Examples
+                .Select(example => new RenderedExample(example.HeaderText, example.ExampleContent, example.XamlCode, example.Margin))
+                .ToArray();
+        }
+
         private static void AssertExampleMargins(string uniqueId, params Thickness[] expectedMargins)
         {
             var page = new ItemPage(GalleryCatalog.FindItem(uniqueId));
-            if (page.HasDirectPageContent)
+            var examples = GetRenderedExamples(page);
+            Assert.AreEqual(expectedMargins.Length, examples.Count, uniqueId);
+            for (var i = 0; i < expectedMargins.Length; i++)
             {
-                var examples = FindDescendants<ControlExample>((DependencyObject)page.DirectPageContent).ToArray();
-
-                Assert.AreEqual(expectedMargins.Length, examples.Length, uniqueId);
-                for (var i = 0; i < expectedMargins.Length; i++)
-                {
-                    Assert.AreEqual(expectedMargins[i], examples[i].Margin, uniqueId + " example " + i);
-                }
-            }
-            else
-            {
-                Assert.AreEqual(expectedMargins.Length, page.Examples.Count, uniqueId);
-                for (var i = 0; i < expectedMargins.Length; i++)
-                {
-                    Assert.AreEqual(expectedMargins[i], page.Examples[i].Margin, uniqueId + " example " + i);
-                }
+                Assert.AreEqual(expectedMargins[i], examples[i].Margin, uniqueId + " example " + i);
             }
         }
 

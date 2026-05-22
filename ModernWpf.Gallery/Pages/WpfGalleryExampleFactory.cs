@@ -124,8 +124,20 @@ namespace ModernWpf.Gallery.Pages
             {
                 case "Canvas":
                     return new WpfGallery.Media.CanvasPage();
+                case "Hyperlink":
+                    return new WpfGallery.Text.HyperlinkPage();
                 case "Image":
                     return new WpfGallery.Media.ImagePage();
+                case "Label":
+                    return new WpfGallery.Text.LabelPage();
+                case "PasswordBox":
+                    return new WpfGallery.Text.PasswordBoxPage();
+                case "RichTextEdit":
+                    return new WpfGallery.Text.RichTextEditPage();
+                case "TextBlock":
+                    return new WpfGallery.Text.TextBlockPage();
+                case "TextBox":
+                    return new WpfGallery.Text.TextBoxPage();
                 case "UserDashboard":
                     return CreateUserDashboardPageContent();
                 default:

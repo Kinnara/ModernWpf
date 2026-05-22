@@ -1,6 +1,6 @@
 # WPF Gallery Milestone 1 Tracker
 
-Last updated: 2026-05-21
+Last updated: 2026-05-22
 
 ## Goal
 
@@ -77,7 +77,7 @@ Branch: `maintenance-reboot-1x`
 Latest implementation commit: see the current branch tip; this document is
 updated with each coherent round.
 
-Goal tracker status in Codex: paused, not complete.
+Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
@@ -102,9 +102,9 @@ Latest local verification for the current branch tip:
 | Date & Calendar pages | Mostly done | Calendar and DatePicker WPF pages are covered while keeping distinct WinUI-style pages. |
 | Layout pages | Mostly done | Expander, Grid, ResizeGrip, GridSplitter, GroupBox, StackPanel, Border, Canvas, and Image coverage exists through sample factories and tests. |
 | Media section | Mostly done | Official WPF Gallery media pages are exposed in the catalog/navigation; Canvas and Image now use adapted WPF Gallery XAML pages. |
-| Navigation pages | Mostly done | Menu, TabControl, Frame, NavigationWindow, and Hyperlink coverage exists through sample factories and tests. |
+| Navigation pages | Mostly done | Menu, TabControl, Frame, and NavigationWindow coverage exists through sample factories and tests; Hyperlink now follows the adapted WPF Gallery Text page path. |
 | Status & Info pages | Mostly done | ProgressBar and ToolTip coverage exists through sample factories and tests. |
-| Text pages | Mostly done | Label, TextBox, TextBlock, RichTextEdit, and PasswordBox coverage exists through sample factories and tests. |
+| Text pages | Mostly done | Label, TextBox, TextBlock, RichTextEdit, PasswordBox, and Hyperlink now use adapted official WPF Gallery XAML pages with direct-page runtime tests. |
 | System pages | Mostly done | File and folder dialogs, MessageBox, and Clipboard coverage exists through sample factories and tests. |
 | Runtime regression layer | Done for current scope | Gallery runtime tests currently cover page loading and many WPF Gallery layout/sample details. |
 
@@ -170,13 +170,13 @@ Use this checklist for future rounds.
 | TabControl | Partial | Open | Open | Runtime parity checks exist. |
 | Frame | Partial | Open | Open | Runtime parity checks exist. |
 | NavigationWindow | Partial | Open | Open | Runtime parity checks exist. |
-| Text section | Partial | Open | Open | Section visual audit remains. |
-| Label | Partial | Open | Open | Header description aligned to official empty string. |
-| TextBox | Partial | Open | Open | Header description aligned to official empty string. |
-| TextBlock | Partial | Open | Open | Header description aligned to official empty string. |
-| RichTextEdit | Partial | Open | Open | WPF page preserved separately from `RichEditBox`. |
-| PasswordBox | Partial | Open | Open | Header description aligned to official empty string. |
-| Hyperlink | Partial | Open | Open | Runtime parity checks exist. |
+| Text section | Partial | Partial | Open | Text item pages now use adapted official WPF Gallery XAML; section page visual audit remains. |
+| Label | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; screenshot parity remains. |
+| TextBox | Done | Done | Open | Adapted from official WPF Gallery XAML, including input validation rule binding; screenshot parity remains. |
+| TextBlock | Done | Done | Open | Adapted from official WPF Gallery XAML with inline text examples; screenshot parity remains. |
+| RichTextEdit | Done | Done | Open | Adapted from official WPF Gallery XAML; WPF page preserved separately from `RichEditBox`; screenshot parity remains. |
+| PasswordBox | Done | Done | Open | Adapted from official WPF Gallery XAML with `PageHeader` and `ControlExample`; screenshot parity remains. |
+| Hyperlink | Done | Done | Open | Adapted from official WPF Gallery XAML under Text pages; screenshot parity remains. |
 | Status & Info section | Partial | Open | Open | Section visual audit remains. |
 | ProgressBar | Partial | Open | Open | Runtime parity checks exist. |
 | ToolTip | Partial | Open | Open | Runtime parity checks exist. |

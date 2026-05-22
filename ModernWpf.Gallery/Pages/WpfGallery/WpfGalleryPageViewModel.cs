@@ -11,5 +11,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery
         public string PageTitle { get; }
 
         public string PageDescription { get; }
+
+        public string ValidatedText { get; set; }
     }
 }
