@@ -3,7 +3,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using ModernWpf;
-using ModernWpf.Gallery.Pages.WpfGallery;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 {
@@ -11,14 +10,14 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
     {
         public GeometryPage()
         {
-            ViewModel = new WpfGalleryPageViewModel("Geometry", string.Empty);
+            ViewModel = new GeometryPageViewModel();
             DataContext = this;
             InitializeComponent();
             UpdateImageResources();
             ThemeManager.AddActualThemeChangedHandler(this, OnActualThemeChanged);
         }
 
-        public WpfGalleryPageViewModel ViewModel { get; }
+        public GeometryPageViewModel ViewModel { get; }
 
         private void OnActualThemeChanged(object sender, RoutedEventArgs e)
         {

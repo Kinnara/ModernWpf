@@ -20,6 +20,7 @@ using ModernWpf.Gallery.Pages.WpfGallery;
 using ModernWpf.Gallery.Pages.WpfGallery.BasicInput;
 using ModernWpf.Gallery.Pages.WpfGallery.Collections;
 using ModernWpf.Gallery.Pages.WpfGallery.DateAndTime;
+using ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance;
 using ModernWpf.Gallery.Pages.WpfGallery.Layout;
 using ModernWpf.Gallery.Pages.WpfGallery.Media;
 using ModernWpf.Gallery.Pages.WpfGallery.Navigation;
@@ -420,6 +421,33 @@ namespace ModernWpf.Gallery.Tests
                 AssertWpfGalleryPageViewModel<TabControlPage, TabControlPageViewModel>("TabControl", "TabControl", string.Empty);
                 AssertWpfGalleryPageViewModel<FramePage, FramePageViewModel>("Frame", "Frame", string.Empty);
                 AssertWpfGalleryPageViewModel<NavigationWindowPage, NavigationWindowPageViewModel>("NavigationWindow", "Navigation Window", string.Empty);
+            });
+        }
+
+        [TestMethod]
+        public void DesignGuidancePagesUseOfficialPageSpecificViewModels()
+        {
+            WpfTestHost.Run(() =>
+            {
+                AssertWpfGalleryPageViewModel<ColorPage, ColorsPageViewModel>(
+                    "Color",
+                    "Colors",
+                    "Guide showing how to use colors in your app",
+                    "ColorsPageViewModel");
+                AssertWpfGalleryPageViewModel<TypographyPage, TypographyPageViewModel>(
+                    "Typography",
+                    "Typography",
+                    "Guide showing how to use typography in your app");
+                AssertWpfGalleryPageViewModel<SpacingPage, SpacingPageViewModel>(
+                    "Spacing",
+                    "Spacing",
+                    "Guide showing how to use spacing in your app");
+                AssertWpfGalleryPageViewModel<GeometryPage, GeometryPageViewModel>("Geometry", "Geometry", string.Empty);
+
+                var iconographyPage = (IconographyPage)new ItemPage(GalleryCatalog.FindItem("Iconography")).DirectPageContent;
+                Assert.IsInstanceOfType(iconographyPage.ViewModel, typeof(IconographyPageViewModel));
+                Assert.AreEqual("Icons", iconographyPage.ViewModel.PageTitle);
+                Assert.AreEqual("Guide showing how to use icons in your application.", iconographyPage.ViewModel.PageDescription);
             });
         }
 
@@ -2188,7 +2216,8 @@ namespace ModernWpf.Gallery.Tests
         private static void AssertWpfGalleryPageViewModel<TPage, TViewModel>(
             string uniqueId,
             string expectedTitle,
-            string expectedDescription)
+            string expectedDescription,
+            string expectedViewModelTypeName = null)
             where TPage : FrameworkElement
             where TViewModel : WpfGalleryPageViewModel
         {
@@ -2198,7 +2227,7 @@ namespace ModernWpf.Gallery.Tests
 
             Assert.AreEqual(expectedTitle, viewModel.PageTitle, uniqueId);
             Assert.AreEqual(expectedDescription, viewModel.PageDescription, uniqueId);
-            Assert.AreEqual(uniqueId + "PageViewModel", viewModel.GetType().Name, uniqueId);
+            Assert.AreEqual(expectedViewModelTypeName ?? uniqueId + "PageViewModel", viewModel.GetType().Name, uniqueId);
         }
 
         private static void AssertSettingsSectionHeader(TextBlock header, string expectedText)

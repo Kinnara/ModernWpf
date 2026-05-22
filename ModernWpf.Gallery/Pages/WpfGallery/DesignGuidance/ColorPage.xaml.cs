@@ -1,6 +1,5 @@
 using System.Windows;
 using System.Windows.Controls;
-using ModernWpf.Gallery.Pages.WpfGallery;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 {
@@ -8,12 +7,12 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
     {
         public ColorPage()
         {
-            ViewModel = new WpfGalleryPageViewModel("Colors", "Guide showing how to use colors in your app");
+            ViewModel = new ColorsPageViewModel();
             DataContext = this;
             InitializeComponent();
         }
 
-        public WpfGalleryPageViewModel ViewModel { get; }
+        public ColorsPageViewModel ViewModel { get; }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {

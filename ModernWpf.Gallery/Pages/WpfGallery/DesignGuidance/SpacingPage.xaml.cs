@@ -3,7 +3,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using ModernWpf;
-using ModernWpf.Gallery.Pages.WpfGallery;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 {
@@ -11,14 +10,14 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
     {
         public SpacingPage()
         {
-            ViewModel = new WpfGalleryPageViewModel("Spacing", "Guide showing how to use spacing in your app");
+            ViewModel = new SpacingPageViewModel();
             DataContext = this;
             InitializeComponent();
             UpdateImageResources();
             ThemeManager.AddActualThemeChangedHandler(this, OnActualThemeChanged);
         }
 
-        public WpfGalleryPageViewModel ViewModel { get; }
+        public SpacingPageViewModel ViewModel { get; }
 
         private void OnActualThemeChanged(object sender, RoutedEventArgs e)
         {
