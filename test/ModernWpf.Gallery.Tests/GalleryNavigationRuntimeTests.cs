@@ -239,14 +239,21 @@ namespace ModernWpf.Gallery.Tests
 
             pageHeader.ApplyTemplate();
 
+            var labels = FindVisualChildren<Label>(pageHeader).ToArray();
+            Assert.AreEqual(2, labels.Length);
+
+            var titleLabel = (Label)pageHeader.Template.FindName("TitleTextBlock", pageHeader);
+            Assert.AreSame(labels[0], titleLabel);
+            Assert.AreEqual(string.Empty, labels[1].Name);
+
             AssertPageHeaderLabel(
-                (Label)pageHeader.Template.FindName("TitleLabel", pageHeader),
+                titleLabel,
                 title + " Page",
                 AutomationHeadingLevel.Level1,
                 0);
 
             AssertPageHeaderLabel(
-                (Label)pageHeader.Template.FindName("DescriptionLabel", pageHeader),
+                labels[1],
                 string.Empty,
                 AutomationHeadingLevel.Level2,
                 1);

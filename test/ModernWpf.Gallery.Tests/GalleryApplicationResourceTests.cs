@@ -154,6 +154,22 @@ namespace ModernWpf.Gallery.Tests
             });
         }
 
+        [TestMethod]
+        public void ControlExampleLoadsSourceCodeFromReferenceStyleUris()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var controlExample = new ControlExample
+                {
+                    XamlCodeSource = new Uri("Samples/SampleCode/XamlUICommand/XamlUICommandSample1_xaml.txt", UriKind.Relative),
+                    CSharpCodeSource = new Uri("Samples/SampleCode/XamlUICommand/XamlUICommandSample1_cs.txt", UriKind.Relative)
+                };
+
+                StringAssert.Contains(controlExample.XamlCode, "<XamlUICommand");
+                StringAssert.Contains(controlExample.CSharpCode, "ExecuteRequested");
+            });
+        }
+
         private static int CountPlatformFluentThemeDictionaries(ResourceDictionary resources)
         {
             var count = IsPlatformFluentThemeDictionary(resources) ? 1 : 0;

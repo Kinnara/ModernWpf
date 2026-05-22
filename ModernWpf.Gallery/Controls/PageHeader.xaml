@@ -4,7 +4,7 @@
     xmlns:controls="clr-namespace:ModernWpf.Gallery.Controls"
     xmlns:pages="clr-namespace:ModernWpf.Gallery.Pages">
 
-    <controls:NullToVisibilityConverter x:Key="PageHeaderNullToVisibilityConverter" />
+    <controls:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
 
     <Style TargetType="{x:Type controls:PageHeader}">
         <Setter Property="Focusable" Value="False" />
@@ -13,30 +13,28 @@
                 <ControlTemplate TargetType="{x:Type controls:PageHeader}">
                     <StackPanel VerticalAlignment="Center">
                         <Label
-                            x:Name="TitleLabel"
+                            x:Name="TitleTextBlock"
                             pages:GalleryAutomation.HeadingLevel="Level1"
-                            AutomationProperties.Name="{Binding Title, StringFormat='{}{0} Page', RelativeSource={RelativeSource TemplatedParent}}"
-                            Focusable="True"
+                            AutomationProperties.Name="{Binding Title, StringFormat='{}{0} Page', RelativeSource={RelativeSource Mode=TemplatedParent}}"
                             KeyboardNavigation.IsTabStop="True"
-                            KeyboardNavigation.TabIndex="0">
+                            KeyboardNavigation.TabIndex="0"
+                            Focusable="True">
                             <TextBlock
-                                x:Name="TitleTextBlock"
                                 AutomationProperties.AutomationId="GalleryItemPageTitle"
                                 Style="{StaticResource TitleTextBlockStyle}"
                                 Text="{TemplateBinding Title}" />
                         </Label>
 
                         <Label
-                            x:Name="DescriptionLabel"
                             pages:GalleryAutomation.HeadingLevel="Level2"
-                            Focusable="True"
                             KeyboardNavigation.IsTabStop="True"
                             KeyboardNavigation.TabIndex="1"
-                            Visibility="{TemplateBinding Description, Converter={StaticResource PageHeaderNullToVisibilityConverter}}">
+                            Visibility="{TemplateBinding Description, Converter={StaticResource NullToVisibilityConverter}}"
+                            Focusable="True">
                             <TextBlock
                                 x:Name="DescriptionTextBlock"
-                                Style="{StaticResource BodyTextBlockStyle}"
-                                Text="{TemplateBinding Description}" />
+                                Text="{TemplateBinding Description}"
+                                Style="{StaticResource BodyTextBlockStyle}" />
                         </Label>
                     </StackPanel>
                     <ControlTemplate.Triggers>

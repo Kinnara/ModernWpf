@@ -92,8 +92,9 @@ Latest local verification for the current branch tip:
 | Official WPF Gallery source checkout | Done | Cloned under `D:\repos\WPF-Samples`. |
 | WPF Gallery catalog sections | Done | WPF Gallery-equivalent sections are represented, including Design Guidance, Samples, Basic Input, Collections, Date & Calendar, Layout, Media, Navigation, Status & Info, Text, and System. |
 | ModernWpf/WinUI page preservation | Done | Distinct ModernWpf pages are kept where aliases overlap WPF pages. |
-| Page shell and header model | Mostly done | Item, section, support, sample chrome, Home header tile strip, navigation-card resources, category/all-controls headers, and WPF Gallery-style navigation page binding paths have been moved toward WPF Gallery structure and spacing. |
-| WPF Gallery compatibility `PageHeader` | Done | ModernWpf Gallery has an adapted WPF Gallery-style `PageHeader` control for copied WPF-equivalent pages. |
+| Page shell and header model | Mostly done | Item, section, support, sample chrome, Home header tile strip, navigation-card resources, category/all-controls headers, WPF Gallery-style navigation page binding paths, and shared compatibility-control source shape have been moved toward WPF Gallery structure and spacing. |
+| WPF Gallery compatibility `PageHeader` | Done | ModernWpf Gallery has an adapted WPF Gallery-style `PageHeader` control for copied WPF-equivalent pages; the shared template now uses the official `NullToVisibilityConverter` resource key and `TitleTextBlock` label name while keeping the local heading-level adapter and page-title automation ID for multi-target/test support. |
+| WPF Gallery compatibility `ControlExample` | Mostly done | Template resources follow the official WPF Gallery shape, source-code blocks have WPF Gallery-style URI-backed `XamlCodeSource` and `CSharpCodeSource` properties, and local automation/test hooks remain where needed. |
 | Header descriptions | Done | Visible WPF item page descriptions now match official WPF Gallery view models, including empty description slots. |
 | Design Guidance pages | Mostly done | Color, Iconography, Typography, Spacing, and Geometry now use adapted official WPF Gallery page shells/XAML with direct-page runtime tests. |
 | User Dashboard sample | Mostly done | WPF Gallery-style layout and behavior are represented and tested. |
@@ -121,7 +122,7 @@ Latest local verification for the current branch tip:
 | Assets and thumbnails | Open | Compare control images and icon choices against official WPF Gallery assets; copy/adapt missing official assets where license and repo structure allow. |
 | Typography and spacing metrics | Open | Audit page root margins, header spacing, card spacing, sample spacing, font sizes, and line heights against official WPF Gallery. |
 | Theme behavior | Open | Check Light, Dark, and High Contrast views for WPF Gallery-equivalent pages. |
-| Keyboard and automation details | Open | Continue aligning focus order, heading levels, names, and tab stops with official WPF Gallery where visible behavior depends on them. |
+| Keyboard and automation details | Open | Shared `PageHeader` label naming, focus order, tab stops, and heading behavior now match the official template shape through the local compatibility adapter; continue aligning remaining copied pages and controls. |
 | Manual visual acceptance checklist | Open | Record reviewed pages with screenshots or artifact paths once a visual pass exists. |
 
 ## Working Checklist
