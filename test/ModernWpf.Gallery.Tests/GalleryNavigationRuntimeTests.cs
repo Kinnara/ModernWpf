@@ -129,6 +129,7 @@ namespace ModernWpf.Gallery.Tests
 
                 CollectionAssert.AreEqual(expected, actual);
                 Assert.IsFalse(actual.Contains("DesignGuidance"));
+                Assert.IsFalse(actual.Contains("Media"));
                 Assert.IsFalse(actual.Contains("Samples"));
                 CollectionAssert.AreEqual(
                     GalleryCatalog.NewOrUpdatedItems.Select(item => item.UniqueId).ToArray(),

@@ -42,7 +42,6 @@ namespace ModernWpf.Gallery.Tests
                 "Collections",
                 "DateAndCalendar",
                 "Layout",
-                "Media",
                 "Navigation",
                 "StatusAndInfo",
                 "Text",
@@ -55,6 +54,7 @@ namespace ModernWpf.Gallery.Tests
 
             CollectionAssert.AreEqual(expected, actual);
             Assert.IsFalse(actual.Contains("DesignGuidance"));
+            Assert.IsFalse(actual.Contains("Media"));
             Assert.IsFalse(actual.Contains("Samples"));
         }
 

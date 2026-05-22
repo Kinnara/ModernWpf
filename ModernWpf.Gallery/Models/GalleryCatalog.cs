@@ -110,7 +110,8 @@ namespace ModernWpf.Gallery.Models
         private static bool IsOverviewGroup(GalleryGroup group)
         {
             return !string.Equals(group.UniqueId, "DesignGuidance", StringComparison.OrdinalIgnoreCase) &&
-                !string.Equals(group.UniqueId, "Samples", StringComparison.OrdinalIgnoreCase);
+                !string.Equals(group.UniqueId, "Samples", StringComparison.OrdinalIgnoreCase) &&
+                !string.Equals(group.UniqueId, "Media", StringComparison.OrdinalIgnoreCase);
         }
 
         private static bool IsAllControlsItem(GalleryItem item)
