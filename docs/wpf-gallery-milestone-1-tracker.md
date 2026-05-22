@@ -92,7 +92,7 @@ Latest local verification for the current branch tip:
 | Official WPF Gallery source checkout | Done | Cloned under `D:\repos\WPF-Samples`. |
 | WPF Gallery catalog sections | Done | WPF Gallery-equivalent sections are represented, including Design Guidance, Samples, Basic Input, Collections, Date & Calendar, Layout, Media, Navigation, Status & Info, Text, and System. |
 | ModernWpf/WinUI page preservation | Done | Distinct ModernWpf pages are kept where aliases overlap WPF pages. |
-| Page shell and header model | Mostly done | Item, section, support, and sample chrome have been moved toward WPF Gallery structure and spacing. |
+| Page shell and header model | Mostly done | Item, section, support, sample chrome, and the Home header tile strip have been moved toward WPF Gallery structure and spacing. |
 | WPF Gallery compatibility `PageHeader` | Done | ModernWpf Gallery has an adapted WPF Gallery-style `PageHeader` control for copied WPF-equivalent pages. |
 | Header descriptions | Done | Visible WPF item page descriptions now match official WPF Gallery view models, including empty description slots. |
 | Design Guidance pages | Mostly done | Color, Iconography, Typography, Spacing, and Geometry now use adapted official WPF Gallery page shells/XAML with direct-page runtime tests. |
@@ -113,8 +113,8 @@ Latest local verification for the current branch tip:
 | Area | Status | Next action |
 | --- | --- | --- |
 | Visual screenshot pass against official WPF Gallery | Open | Add or run a WPF Gallery reference capture pass and compare page-by-page screenshots, not just runtime structure. |
-| Page-by-page exact XAML audit | Open | For each WPF-equivalent page, compare ModernWpf sample factories against official WPF Gallery XAML and replace approximations with adapted copies where feasible. Color section controls, User Dashboard, Home, All controls, and section pages remain open. |
-| Home page | Open | Compare first viewport, card layout, copy, and navigation affordances against official WPF Gallery. |
+| Page-by-page exact XAML audit | Open | For each WPF-equivalent page, compare ModernWpf sample factories against official WPF Gallery XAML and replace approximations with adapted copies where feasible. Color section controls, User Dashboard, Home cards/data bindings, All controls, and section pages remain open. |
+| Home page | Partial | Header tile strip now uses adapted official `TileGallery`/`HeaderTile`; compare remaining card layout, data templates, copy, and navigation affordances against official WPF Gallery. |
 | All controls page | Open | Verify grouping, sort order, card subtitles, tile sizing, and search behavior against official WPF Gallery. |
 | Section pages | Open | Verify each section's title, description, hero/card layout, item order, and empty-space behavior against official WPF Gallery. |
 | Sample code panes | Open | Verify XAML and C# snippets match official WPF Gallery examples where the sample is WPF-equivalent. |
@@ -130,7 +130,7 @@ Use this checklist for future rounds.
 
 | Page or group | Structural tests | Exact source audit | Visual checked | Notes |
 | --- | --- | --- | --- | --- |
-| Home | Open | Open | Open | Needs official first-viewport comparison. |
+| Home | Partial | Partial | Open | Header tile strip now uses adapted official WPF Gallery `TileGallery`/`HeaderTile`; remaining cards/data binding and screenshot parity still need audit. |
 | All controls | Partial | Open | Open | Runtime shell checks exist; exact visual audit still needed. |
 | Design Guidance section | Partial | Partial | Open | Color, Iconography, Typography, Spacing, and Geometry now use adapted official WPF Gallery page shells/XAML; Color section controls and section visual audit remain. |
 | Color | Partial | Partial | Open | Direct page shell now matches official WPF Gallery Color page with `PageHeader`, selector, and section host; section controls and screenshot parity remain. |

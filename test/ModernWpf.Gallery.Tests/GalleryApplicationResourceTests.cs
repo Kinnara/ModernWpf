@@ -51,30 +51,32 @@ namespace ModernWpf.Gallery.Tests
             WpfTestHost.Run(() =>
             {
                 var page = new HomePage();
-                var tilesPanel = (StackPanel)page.FindName("TilesPanel");
-                var buttons = tilesPanel.Children.OfType<Button>().ToArray();
+                var tileGallery = (TileGallery)page.FindName("HomeTileGallery");
+                var tilesPanel = (StackPanel)tileGallery.FindName("TilesPanel");
+                var tiles = tilesPanel.Children.OfType<HeaderTile>().ToArray();
 
-                Assert.AreEqual(5, buttons.Length);
+                Assert.AreEqual(5, tiles.Length);
 
-                foreach (var button in buttons)
+                foreach (var tile in tiles)
                 {
-                    Assert.AreEqual(186d, button.Width);
-                    Assert.AreEqual(208d, button.Height);
+                    Assert.AreEqual(198d, tile.Width);
+                    Assert.AreEqual(220d, tile.Height);
+                    Assert.AreEqual(new Thickness(6), ((Button)tile.FindName("RootButton")).Margin);
                 }
 
-                Assert.AreEqual(new Thickness(6, 6, 12, 6), buttons[0].Margin);
+                Assert.AreEqual(new Thickness(24, 0, 6, 0), tiles[0].Margin);
 
-                foreach (var button in buttons.Skip(1))
+                foreach (var tile in tiles.Skip(1))
                 {
-                    Assert.AreEqual(new Thickness(6), button.Margin);
+                    Assert.AreEqual(new Thickness(0), tile.Margin);
                 }
 
                 CollectionAssert.AreEqual(
                     new[] { "Getting started", "Windows design", "WPF GitHub", "Code samples", "Partner Center" },
-                    buttons.Select(AutomationProperties.GetName).ToArray());
+                    tiles.Select(GetHeaderTileAutomationName).ToArray());
 
-                Assert.AreEqual("Scroll left", AutomationProperties.GetName((Button)page.FindName("ScrollBackButton")));
-                Assert.AreEqual("Scroll right", AutomationProperties.GetName((Button)page.FindName("ScrollForwardButton")));
+                Assert.AreEqual("Scroll left", AutomationProperties.GetName((Button)tileGallery.FindName("ScrollBackButton")));
+                Assert.AreEqual("Scroll right", AutomationProperties.GetName((Button)tileGallery.FindName("ScrollForwardButton")));
             });
         }
 
@@ -83,12 +85,13 @@ namespace ModernWpf.Gallery.Tests
         {
             WpfTestHost.Run(() =>
             {
-                var style = (Style)Application.Current.FindResource("GalleryHeaderTileButtonStyle");
-                var acrylicBrush = Application.Current.FindResource("AcrylicBackgroundFillColorDefaultBrush");
+                var tile = new HeaderTile();
+                var rootButton = (Button)tile.FindName("RootButton");
+                var acrylicBrush = (SolidColorBrush)Application.Current.FindResource("AcrylicBackgroundFillColorDefaultBrush");
 
-                AssertHeaderTileBrush(style.Resources["ButtonBackground"], acrylicBrush, 0.8);
-                AssertHeaderTileBrush(style.Resources["ButtonBackgroundPointerOver"], acrylicBrush, 0.9);
-                AssertHeaderTileBrush(style.Resources["ButtonBackgroundPressed"], acrylicBrush, 1.0);
+                AssertHeaderTileBrush(rootButton.Resources["ButtonBackground"], acrylicBrush, 0.8);
+                AssertHeaderTileBrush(rootButton.Resources["ButtonBackgroundPointerOver"], acrylicBrush, 0.9);
+                AssertHeaderTileBrush(rootButton.Resources["ButtonBackgroundPressed"], acrylicBrush, 1.0);
             });
         }
 
@@ -168,16 +171,19 @@ namespace ModernWpf.Gallery.Tests
             return dictionary.Source?.ToString().StartsWith(PlatformFluentThemePrefix, StringComparison.OrdinalIgnoreCase) == true;
         }
 
-        private static void AssertHeaderTileBrush(object resource, object acrylicBrush, double opacity)
+        private static void AssertHeaderTileBrush(object resource, SolidColorBrush acrylicBrush, double opacity)
         {
             var brush = resource as SolidColorBrush;
             Assert.IsNotNull(brush);
             Assert.AreEqual(opacity, brush.Opacity, 0.001);
+            Assert.AreEqual(acrylicBrush.Color, brush.Color);
+        }
 
-            var binding = BindingOperations.GetBinding(brush, SolidColorBrush.ColorProperty);
-            Assert.IsNotNull(binding);
-            Assert.AreEqual("Color", binding.Path.Path);
-            Assert.AreSame(acrylicBrush, binding.Source);
+        private static string GetHeaderTileAutomationName(HeaderTile tile)
+        {
+            var rootButton = (Button)tile.FindName("RootButton");
+            BindingOperations.GetBindingExpression(rootButton, AutomationProperties.NameProperty)?.UpdateTarget();
+            return AutomationProperties.GetName(rootButton);
         }
 
         private static void AssertDynamicResourceSetter(Style style, DependencyProperty property, object resourceKey)
