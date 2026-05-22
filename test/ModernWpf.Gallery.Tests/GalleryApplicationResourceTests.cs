@@ -170,6 +170,28 @@ namespace ModernWpf.Gallery.Tests
             });
         }
 
+        [TestMethod]
+        public void LocalControlImagesIncludeOfficialWpfGalleryReferenceAssets()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var officialOnlyAssets = new[]
+                {
+                    "AutomationProperties.png",
+                    "InkCanvas.png",
+                    "InkToolbar.png",
+                    "InputValidation.png",
+                    "RadioButtons.png",
+                    "RevealFocus.png"
+                };
+
+                foreach (var asset in officialOnlyAssets)
+                {
+                    AssertGalleryResourceExists("Assets/ControlImages/" + asset);
+                }
+            });
+        }
+
         private static int CountPlatformFluentThemeDictionaries(ResourceDictionary resources)
         {
             var count = IsPlatformFluentThemeDictionary(resources) ? 1 : 0;
@@ -209,6 +231,16 @@ namespace ModernWpf.Gallery.Tests
 
             Assert.IsNotNull(dynamicResource);
             Assert.AreEqual(resourceKey, dynamicResource.ResourceKey);
+        }
+
+        private static void AssertGalleryResourceExists(string relativePath)
+        {
+            var resource = Application.GetResourceStream(new Uri(
+                "pack://application:,,,/ModernWpf.Gallery;component/" + relativePath,
+                UriKind.Absolute));
+
+            Assert.IsNotNull(resource, relativePath);
+            resource.Stream.Dispose();
         }
     }
 }
