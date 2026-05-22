@@ -127,7 +127,7 @@ function Select-Cases {
 }
 
 function Test-OfficialDirectReferenceCase($case) {
-    return $case.Id -eq "Canvas" -or $case.Id -eq "Image"
+    return $case.Id -eq "DesignGuidance" -or $case.Id -eq "Canvas" -or $case.Id -eq "Image"
 }
 
 function Ensure-OfficialDirectHostBuilt {

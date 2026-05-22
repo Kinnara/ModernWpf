@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
+using WPFGallery.Navigation;
 using WPFGallery.ViewModels;
 using WPFGallery.Views;
 
@@ -147,10 +148,43 @@ internal static class Program
     {
         return page switch
         {
+            "DesignGuidance" => new DesignGuidancePage(new DesignGuidancePageViewModel(new NullNavigationService())),
             "Canvas" => new CanvasPage(new CanvasPageViewModel()),
             "Image" => new ImagePage(new ImagePageViewModel()),
             _ => throw new ArgumentOutOfRangeException(nameof(page), page, "Unsupported direct reference page.")
         };
+    }
+
+    private sealed class NullNavigationService : INavigationService
+    {
+        public event EventHandler<NavigatingEventArgs>? Navigating;
+
+        public void Navigate(Type type, bool adjustFocus = true)
+        {
+            Navigating?.Invoke(this, new NavigatingEventArgs(type));
+        }
+
+        public void NavigateTo(Type type)
+        {
+            Navigating?.Invoke(this, new NavigatingEventArgs(type));
+        }
+
+        public void SetFrame(Frame frame)
+        {
+        }
+
+        public void NavigateBack()
+        {
+        }
+
+        public void NavigateForward()
+        {
+        }
+
+        public bool IsBackHistoryNonEmpty()
+        {
+            return false;
+        }
     }
 
     private sealed record HostOptions(string Page, string Theme, string OfficialOutput, int Width, int Height)
