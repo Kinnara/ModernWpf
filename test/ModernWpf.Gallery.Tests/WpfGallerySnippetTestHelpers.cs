@@ -91,13 +91,31 @@ namespace ModernWpf.Gallery.Tests
 
         private static string NormalizeXaml(string xaml)
         {
+            var normalizedXaml = (xaml ?? string.Empty)
+                .Replace(@"\r\n", "\n")
+                .Replace(@"\n", "\n")
+                .Replace(@"\t", "\t")
+                .Replace("\r\n", "\n")
+                .Replace('\r', '\n');
+
+            var lines = normalizedXaml
+                .Split('\n')
+                .Select(line => line.Trim())
+                .ToList();
+
+            while (lines.Count > 0 && lines[0].Length == 0)
+            {
+                lines.RemoveAt(0);
+            }
+
+            while (lines.Count > 0 && lines[lines.Count - 1].Length == 0)
+            {
+                lines.RemoveAt(lines.Count - 1);
+            }
+
             return string.Join(
                 "\n",
-                (xaml ?? string.Empty)
-                    .Replace("\r\n", "\n")
-                    .Replace('\r', '\n')
-                    .Split('\n')
-                    .Select(line => line.Trim()));
+                lines);
         }
 
         public sealed class ExpectedExample
