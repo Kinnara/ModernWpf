@@ -61,7 +61,7 @@ namespace ModernWpf.Gallery.Pages
             get
             {
                 return "<StackPanel Orientation=\"Horizontal\">\n"
-                    + "    <TextBlock Margin=\"0 0 16 0\" FontFamily=\"Cascadia Code\" Text=\"--&gt;\" />\n"
+                    + "    <TextBlock Margin=\"0 0 16 0\" FontFamily=\"Cascadia Code\" Text=\"-->\" />\n"
                     + "    <TextBlock Margin=\"0 0 16 0\" FontFamily=\"Cascadia Code\" Text=\"&lt;!--\" />\n"
                     + "    <TextBlock Margin=\"0 0 16 0\" FontFamily=\"Cascadia Code\" Text=\"&lt;--\" />\n"
                     + "</StackPanel>";
