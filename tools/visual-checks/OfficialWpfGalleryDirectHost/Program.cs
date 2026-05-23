@@ -164,6 +164,7 @@ internal static class Program
     {
         return page switch
         {
+            "AllControls" => new AllSamplesPage(new AllSamplesPageViewModel(new NullNavigationService())),
             "DesignGuidance" => new DesignGuidancePage(new DesignGuidancePageViewModel(new NullNavigationService())),
             "Canvas" => new CanvasPage(new CanvasPageViewModel()),
             "Image" => new ImagePage(new ImagePageViewModel()),
