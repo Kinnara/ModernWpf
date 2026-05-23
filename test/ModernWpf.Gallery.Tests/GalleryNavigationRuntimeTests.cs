@@ -99,7 +99,7 @@ namespace ModernWpf.Gallery.Tests
                 Assert.IsNotNull(navigation.PaneFooter);
 
                 CollectionAssert.AreEqual(
-                    new[] { "Home", "What's New", "Design Guidance", "Samples", "All controls", "Basic Input" },
+                    new[] { "Home", "What's New", "Design Guidance", "Samples", "All Controls", "Basic Input" },
                     topLevelItems.Take(6).Select(GetNavigationItemText).ToArray());
 
                 AssertFontIconGlyph(topLevelItems[0], "\uE80F");
@@ -110,6 +110,8 @@ namespace ModernWpf.Gallery.Tests
                 AssertFontIconGlyph(topLevelItems[5], "\uE73A");
                 Assert.AreEqual(new Thickness(0, 1, 0, 1), topLevelItems[0].Margin);
                 AssertNavigationItemContentMargin(topLevelItems[0], 28);
+                AssertNavigationTitleTextLayout(topLevelItems[0], "Home");
+                AssertNavigationTitleTextLayout(topLevelItems[4], "All Controls");
                 Assert.IsFalse(topLevelItems[2].IsExpanded);
                 Assert.IsFalse(topLevelItems[3].IsExpanded);
                 Assert.IsFalse(topLevelItems[5].IsExpanded);
@@ -136,6 +138,8 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual("Settings", GetNavigationItemText(settingsItem));
                 AssertFontIconGlyph(settingsItem, "\uE713");
                 AssertNavigationItemContentMargin(settingsItem, 4);
+                AssertNavigationGlyphLayout(settingsItem, 14, 8, 14);
+                AssertNavigationTitleTextLayout(settingsItem, "Settings");
 
                 page.NavigateTo("item/Color");
                 Assert.IsTrue(topLevelItems[2].IsExpanded);
@@ -362,6 +366,33 @@ namespace ModernWpf.Gallery.Tests
             var contentGrid = item.Content as Grid;
             Assert.IsNotNull(contentGrid);
             Assert.AreEqual(expectedLeft, contentGrid.Margin.Left);
+        }
+
+        private static void AssertNavigationGlyphLayout(
+            NavigationViewItem item,
+            double expectedGlyphColumnWidth,
+            double expectedTextGap,
+            double expectedGlyphFontSize)
+        {
+            var contentGrid = item.Content as Grid;
+            Assert.IsNotNull(contentGrid);
+            Assert.AreEqual(expectedGlyphColumnWidth, contentGrid.ColumnDefinitions[0].Width.Value);
+            Assert.AreEqual(expectedTextGap, contentGrid.ColumnDefinitions[1].Width.Value);
+
+            var glyphText = contentGrid.Children.OfType<TextBlock>()
+                .Single(text => string.Equals(text.Text, contentGrid.Tag as string, StringComparison.Ordinal));
+            Assert.AreEqual(expectedGlyphColumnWidth, glyphText.MaxWidth);
+            Assert.AreEqual(expectedGlyphFontSize, glyphText.FontSize);
+        }
+
+        private static void AssertNavigationTitleTextLayout(NavigationViewItem item, string expectedTitle)
+        {
+            var contentGrid = item.Content as Grid;
+            Assert.IsNotNull(contentGrid);
+
+            var titleText = contentGrid.Children.OfType<TextBlock>()
+                .Single(text => string.Equals(text.Text, expectedTitle, StringComparison.Ordinal));
+            Assert.AreEqual(HorizontalAlignment.Left, titleText.HorizontalAlignment);
         }
 
         private static void AssertPageHeaderLabel(Label label, string automationName, AutomationHeadingLevel headingLevel, int tabIndex)

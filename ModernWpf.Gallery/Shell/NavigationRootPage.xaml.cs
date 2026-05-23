@@ -189,7 +189,7 @@ namespace ModernWpf.Gallery.Shell
         {
             _homeNavigationItem = CreateNavigationItem("Home", NavigationTarget.Home(), CreateWpfGalleryGlyphIcon("Home"));
             _whatsNewNavigationItem = CreateNavigationItem("What's New", NavigationTarget.WhatsNew(), CreateWpfGalleryGlyphIcon("WhatsNew"));
-            _allControlsNavigationItem = CreateNavigationItem("All controls", NavigationTarget.AllControls(), CreateWpfGalleryGlyphIcon("AllControls"));
+            _allControlsNavigationItem = CreateNavigationItem("All Controls", NavigationTarget.AllControls(), CreateWpfGalleryGlyphIcon("AllControls"));
             _settingsNavigationItem = CreateNavigationItem("Settings", NavigationTarget.Settings(), CreateWpfGalleryGlyphIcon("Settings"));
 
             Navigation.MenuItems.Add(_homeNavigationItem);
@@ -239,7 +239,7 @@ namespace ModernWpf.Gallery.Shell
             // These offsets preserve NavigationView behavior while matching the official WPF Gallery TreeView columns.
             if (target.Kind == NavigationTargetKind.Settings && glyph != null)
             {
-                return CreateNavigationGlyphContent(title, glyph, 4, 6);
+                return CreateNavigationGlyphContent(title, glyph, 4, 8, 14, 14);
             }
 
             if (glyph == null)
@@ -255,19 +255,25 @@ namespace ModernWpf.Gallery.Shell
             return (icon as FontIcon)?.Glyph;
         }
 
-        private static Grid CreateNavigationGlyphContent(string title, string glyph, double leftMargin, double textGap)
+        private static Grid CreateNavigationGlyphContent(
+            string title,
+            string glyph,
+            double leftMargin,
+            double textGap,
+            double glyphColumnWidth = 16,
+            double glyphFontSize = 16)
         {
             var grid = CreateNavigationContentGrid(leftMargin);
             grid.Tag = glyph;
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(16) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(glyphColumnWidth) });
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(textGap) });
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
 
             var glyphText = new TextBlock
             {
-                MaxWidth = 16,
+                MaxWidth = glyphColumnWidth,
                 VerticalAlignment = VerticalAlignment.Center,
-                FontSize = 16,
+                FontSize = glyphFontSize,
                 Text = glyph,
                 Focusable = false
             };
@@ -307,6 +313,7 @@ namespace ModernWpf.Gallery.Shell
         {
             return new TextBlock
             {
+                HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Center,
                 Text = title
             };
