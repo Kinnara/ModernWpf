@@ -14,9 +14,9 @@ namespace ModernWpf.Gallery.Pages
 
         public WhatsNewPage(WhatsNewPageViewModel viewModel)
         {
+            InitializeComponent();
             ViewModel = viewModel ?? new WhatsNewPageViewModel(OnNavigateCard);
             DataContext = this;
-            InitializeComponent();
         }
 
         public Action<string> ItemRequested { get; set; }

@@ -73,8 +73,12 @@ record the checklist status below.
 Current architecture status: top-level WPF Gallery-equivalent pages now keep
 their default ModernWpf routing constructors while also exposing official-style
 constructor-injected view-model paths for Home, All Controls, What's New,
-Settings, and generic Section pages. This keeps shell navigation unchanged while
-moving page construction closer to the official WPF Gallery `Views` pattern.
+Settings, and generic Section pages. Home, All Controls, What's New, and
+generic Section page constructors now follow the official WPF Gallery `Views`
+order of `InitializeComponent()`, then `ViewModel`, then `DataContext`; Settings
+keeps its matching official Settings order. This keeps shell navigation
+unchanged while moving page construction closer to the official WPF Gallery
+`Views` pattern.
 
 ## Commit Policy
 
@@ -94,6 +98,10 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryPageRuntimeTests.TopLevelWpfGalleryPagesAcceptInjectedViewModels|FullyQualifiedName~GalleryPageRuntimeTests.WhatsNewPageHeaderMatchesWpfGalleryReference|FullyQualifiedName~GalleryNavigationRuntimeTests.SectionPagesUseOfficialWpfGalleryViewModels|FullyQualifiedName~GalleryNavigationRuntimeTests.WpfGalleryPageShellCardsMatchReferenceAutomationAndLayout" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 4 tests per target. Home, All Controls, What's New, and generic Section page constructors now match the official WPF Gallery initialization order while preserving the default ModernWpf routing constructors, injected WPF Gallery-style view models, rendered binding values, section page titles, and navigation-card binding shape. Existing warning/output remains `NU1903`, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after aligning top-level and section constructor order with official WPF Gallery source shape. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages plus existing ModernWpf/ModernWpf.Controls warnings.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryPageRuntimeTests.WhatsNewPageHeaderMatchesWpfGalleryReference|FullyQualifiedName~GalleryPageRuntimeTests.WhatsNewPageAccentSwatchesUseSystemAccentResources|FullyQualifiedName~WpfGalleryWhatsNewSnippetTests" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 3 tests per target. What's New now uses the official WPF Gallery `Page.Title`, hyperlink handler names, MessageBox API proposal URL, .NET 9/.NET 10 what's-new URLs, and Fluent documentation shortcut while preserving the existing ModernWpf routing adaptation for the MessageBox sample link. Existing warning/output remains `NU1903`, generated WinRT warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`

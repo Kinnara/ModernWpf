@@ -20,9 +20,9 @@ namespace ModernWpf.Gallery.Pages
                 throw new ArgumentNullException(nameof(group));
             }
 
+            InitializeComponent();
             ViewModel = viewModel ?? WpfGalleryNavigationPageViewModel.CreateForGroup(group, OnNavigateCard);
             DataContext = this;
-            InitializeComponent();
             Title = GetOfficialSectionPageTitle(group.UniqueId);
         }
 

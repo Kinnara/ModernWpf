@@ -17,9 +17,9 @@ namespace ModernWpf.Gallery.Pages
 
         public HomePage(DashboardPageViewModel viewModel)
         {
+            InitializeComponent();
             ViewModel = viewModel ?? new DashboardPageViewModel(OnNavigateCard);
             DataContext = this;
-            InitializeComponent();
         }
 
         public Action<GalleryItem> ItemRequested { get; set; }

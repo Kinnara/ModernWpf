@@ -15,9 +15,9 @@ namespace ModernWpf.Gallery.Pages
 
         public AllControlsPage(AllSamplesPageViewModel viewModel)
         {
+            InitializeComponent();
             ViewModel = viewModel ?? new AllSamplesPageViewModel(OnNavigateCard);
             DataContext = this;
-            InitializeComponent();
         }
 
         public Action<GalleryItem> ItemRequested { get; set; }

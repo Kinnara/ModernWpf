@@ -169,18 +169,32 @@ namespace ModernWpf.Gallery.Tests
             {
                 var dashboardViewModel = new DashboardPageViewModel(_ => { });
                 var homePage = new HomePage(dashboardViewModel);
+                RenderPage(homePage);
                 Assert.AreSame(dashboardViewModel, homePage.ViewModel);
                 Assert.AreSame(homePage, homePage.DataContext);
+                var overviewItemsControl = (ItemsControl)homePage.FindName("OverviewItemsControl");
+                CollectionAssert.AreEqual(
+                    dashboardViewModel.NavigationCards.Select(group => group.UniqueId).ToArray(),
+                    overviewItemsControl.ItemsSource.Cast<GalleryGroup>().Select(group => group.UniqueId).ToArray());
 
                 var allSamplesViewModel = new AllSamplesPageViewModel(_ => { });
                 var allControlsPage = new AllControlsPage(allSamplesViewModel);
+                RenderPage(allControlsPage);
                 Assert.AreSame(allSamplesViewModel, allControlsPage.ViewModel);
                 Assert.AreSame(allControlsPage, allControlsPage.DataContext);
+                var allControlsItemsControl = (ItemsControl)allControlsPage.FindName("AllControlsItemsControl");
+                CollectionAssert.AreEqual(
+                    allSamplesViewModel.NavigationCards.Select(item => item.UniqueId).ToArray(),
+                    allControlsItemsControl.ItemsSource.Cast<GalleryItem>().Select(item => item.UniqueId).ToArray());
 
                 var whatsNewViewModel = new WhatsNewPageViewModel(_ => { });
                 var whatsNewPage = new WhatsNewPage(whatsNewViewModel);
+                RenderPage(whatsNewPage);
                 Assert.AreSame(whatsNewViewModel, whatsNewPage.ViewModel);
                 Assert.AreSame(whatsNewPage, whatsNewPage.DataContext);
+                var whatsNewHeader = (PageHeader)whatsNewPage.FindName("PageHeader");
+                Assert.AreEqual(whatsNewViewModel.PageTitle, whatsNewHeader.Title);
+                Assert.AreEqual(whatsNewViewModel.PageDescription, whatsNewHeader.Description);
 
                 var settingsViewModel = new SettingsPageViewModel();
                 var settingsPage = new SettingsPage(settingsViewModel);
@@ -190,9 +204,17 @@ namespace ModernWpf.Gallery.Tests
                 var designGuidanceGroup = GalleryCatalog.FindGroup("DesignGuidance");
                 var sectionViewModel = new DesignGuidancePageViewModel(_ => { });
                 var sectionPage = new SectionPage(designGuidanceGroup, sectionViewModel);
+                RenderPage(sectionPage);
                 Assert.AreSame(sectionViewModel, sectionPage.ViewModel);
                 Assert.AreSame(sectionPage, sectionPage.DataContext);
                 Assert.AreEqual("DesignGuidancePage", sectionPage.Title);
+                var sectionHeader = (PageHeader)sectionPage.FindName("PageHeader");
+                Assert.AreEqual(sectionViewModel.PageTitle, sectionHeader.Title);
+                Assert.AreEqual(sectionViewModel.PageDescription, sectionHeader.Description);
+                var groupItemsControl = (ItemsControl)sectionPage.FindName("GroupItemsControl");
+                CollectionAssert.AreEqual(
+                    sectionViewModel.NavigationCards.Select(item => item.UniqueId).ToArray(),
+                    groupItemsControl.ItemsSource.Cast<GalleryItem>().Select(item => item.UniqueId).ToArray());
             });
         }
 
@@ -202,6 +224,7 @@ namespace ModernWpf.Gallery.Tests
             WpfTestHost.Run(() =>
             {
                 var page = new WhatsNewPage();
+                RenderPage(page);
                 var pageHeader = (PageHeader)page.FindName("PageHeader");
 
                 Assert.AreEqual("What's New in WPF", page.Title);
@@ -2450,6 +2473,34 @@ namespace ModernWpf.Gallery.Tests
             }
 
             return null;
+        }
+
+        private static void RenderPage(Page page)
+        {
+            var window = new Window
+            {
+                Width = 1024,
+                Height = 768,
+                Left = -32000,
+                Top = -32000,
+                ShowInTaskbar = false,
+                WindowStartupLocation = WindowStartupLocation.Manual,
+                Content = page
+            };
+
+            try
+            {
+                window.Show();
+                WpfTestHost.DoEvents();
+                window.UpdateLayout();
+                WpfTestHost.DoEvents();
+            }
+            finally
+            {
+                window.Content = null;
+                window.Close();
+                WpfTestHost.DoEvents();
+            }
         }
 
         private static IEnumerable<T> FindDescendants<T>(DependencyObject root)
