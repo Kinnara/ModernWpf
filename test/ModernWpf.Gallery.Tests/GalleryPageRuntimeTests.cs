@@ -295,10 +295,12 @@ namespace ModernWpf.Gallery.Tests
                         themeMode.Items.Cast<ComboBoxItem>().Select(item => item.Content.ToString()).ToArray());
 
                     var aboutExpander = (Expander)page.FindName("AboutExpander");
-                    Assert.AreEqual("ModernWpf Gallery", AutomationProperties.GetName(aboutExpander));
+                    Assert.AreEqual("WPF Gallery Preview", AutomationProperties.GetName(aboutExpander));
                     var expanderHeader = (Grid)aboutExpander.Header;
                     Assert.AreEqual(3, expanderHeader.ColumnDefinitions.Count);
-                    Assert.AreEqual("ModernWpf Gallery", ((TextBlock)((StackPanel)expanderHeader.Children[1]).Children[0]).Text);
+                    var aboutHeaderText = (StackPanel)expanderHeader.Children[1];
+                    Assert.AreEqual("WPF Gallery", ((TextBlock)aboutHeaderText.Children[0]).Text);
+                    Assert.AreEqual("\u00A9 2025 Microsoft. All rights reserved.", ((TextBlock)aboutHeaderText.Children[1]).Text);
 
                     var cloneCommand = (TextBox)page.FindName("CloneCommandTextBox");
                     Assert.IsFalse(cloneCommand.Focusable);

@@ -116,7 +116,7 @@
 
                 <Expander
                     x:Name="AboutExpander"
-                    AutomationProperties.Name="ModernWpf Gallery">
+                    AutomationProperties.Name="WPF Gallery Preview">
                     <Expander.Header>
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -137,11 +137,11 @@
                                 Grid.Column="1"
                                 Margin="12"
                                 Orientation="Vertical">
-                                <TextBlock Text="ModernWpf Gallery" />
+                                <TextBlock Text="WPF Gallery" />
                                 <TextBlock
                                     Opacity="0.7"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="ModernWpf control gallery and WPF samples." />
+                                    Text="&#xA9; 2025 Microsoft. All rights reserved." />
                             </StackPanel>
                         </Grid>
                     </Expander.Header>
