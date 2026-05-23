@@ -102,9 +102,10 @@ public class ListBoxListViewVisualStateTests
             Assert.AreEqual(item.Content, presenter.Content);
             Assert.IsNull(VisualTreeTestHelper.FindDescendant<ContentPresenterEx>(item));
 
-            var activeRectangle = item.Template.FindName("ActiveRectangle", item) as FrameworkElement
+            var activeRectangle = item.Template.FindName("ActiveRectangle", item) as System.Windows.Shapes.Rectangle
                 ?? throw new AssertFailedException("Expected official WPF Fluent ListViewItem selection indicator.");
             Assert.AreEqual(Visibility.Visible, activeRectangle.Visibility);
+            Assert.AreSame(item.TryFindResource("ListViewItemPillFillBrush"), activeRectangle.Fill);
         });
     }
 

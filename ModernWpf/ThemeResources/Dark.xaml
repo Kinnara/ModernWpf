@@ -1147,6 +1147,7 @@
     <sys:Double x:Key="ListViewItemReorderTargetThemeScale">0.95</sys:Double>
     <sys:Double x:Key="ListViewItemReorderHintThemeOffset">10.0</sys:Double>
     <sys:Double x:Key="ListViewItemSelectedBorderThemeThickness">4</sys:Double>
+    <m:StaticResource x:Key="ListViewItemPillFillBrush" ResourceKey="AccentFillColorDefaultBrush" />
     <m:StaticResource x:Key="ListViewItemBorderBackground" ResourceKey="SubtleFillColorTertiaryBrush" />
     <m:StaticResource x:Key="ListViewBackground" ResourceKey="SubtleFillColorTransparentBrush" />
     <m:StaticResource x:Key="ListViewBorderBrush" ResourceKey="SubtleFillColorTransparentBrush" />
