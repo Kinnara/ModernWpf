@@ -66,6 +66,7 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(68d, app.FindResource("DisplayTextBlockFontSize"));
 
                 var baseTextStyle = (Style)app.FindResource("BaseTextBlockStyle");
+                AssertNoStyleSetter(baseTextStyle, TextBlock.ForegroundProperty);
                 AssertStyleSetter(baseTextStyle, TextBlock.FontSizeProperty, app.FindResource("BodyTextBlockFontSize"));
                 AssertStyleSetter(baseTextStyle, TextBlock.FontWeightProperty, FontWeights.SemiBold);
                 AssertStyleSetter(baseTextStyle, TextBlock.LineStackingStrategyProperty, LineStackingStrategy.MaxHeight);
@@ -514,6 +515,13 @@ namespace ModernWpf.Gallery.Tests
         {
             var setter = style.Setters.OfType<Setter>().Single(item => item.Property == property);
             Assert.AreEqual(value, setter.Value);
+        }
+
+        private static void AssertNoStyleSetter(Style style, DependencyProperty property)
+        {
+            Assert.IsFalse(
+                style.Setters.OfType<Setter>().Any(item => item.Property == property),
+                "Did not expect a setter for " + property.Name);
         }
 
         private static string GetGalleryComponentRelativePath(string imagePath)

@@ -43,7 +43,6 @@
     </Style>
 
     <Style x:Key="BaseTextBlockStyle" TargetType="TextBlock">
-        <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
         <Setter Property="FontSize" Value="{StaticResource BodyTextBlockFontSize}" />
         <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="LineStackingStrategy" Value="MaxHeight" />
