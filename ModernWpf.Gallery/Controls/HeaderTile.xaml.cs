@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Media;
 using Microsoft.Win32;
@@ -53,6 +55,11 @@ namespace ModernWpf.Gallery.Controls
         {
             get { return GetValue(SourceProperty); }
             set { SetValue(SourceProperty, value); }
+        }
+
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new HeaderTileAutomationPeer(this);
         }
 
         private void OnUserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
@@ -110,6 +117,40 @@ namespace ModernWpf.Gallery.Controls
             if (!string.IsNullOrEmpty(Link))
             {
                 Process.Start(new ProcessStartInfo(Link) { UseShellExecute = true });
+            }
+        }
+
+        private sealed class HeaderTileAutomationPeer : FrameworkElementAutomationPeer
+        {
+            public HeaderTileAutomationPeer(HeaderTile owner)
+                : base(owner)
+            {
+            }
+
+            protected override AutomationControlType GetAutomationControlTypeCore()
+            {
+                return AutomationControlType.Custom;
+            }
+
+            protected override string GetClassNameCore()
+            {
+                return nameof(HeaderTile);
+            }
+
+            protected override bool IsControlElementCore()
+            {
+                return false;
+            }
+
+            protected override List<AutomationPeer> GetChildrenCore()
+            {
+                var owner = (HeaderTile)Owner;
+                var rootButtonPeer = UIElementAutomationPeer.FromElement(owner.RootButton)
+                    ?? UIElementAutomationPeer.CreatePeerForElement(owner.RootButton);
+
+                return rootButtonPeer == null
+                    ? base.GetChildrenCore()
+                    : new List<AutomationPeer> { rootButtonPeer };
             }
         }
     }

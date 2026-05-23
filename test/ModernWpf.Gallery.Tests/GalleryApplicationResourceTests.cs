@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Automation;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
@@ -259,6 +260,31 @@ namespace ModernWpf.Gallery.Tests
                 {
                     ThemeManager.Current.ApplicationTheme = originalTheme;
                 }
+            });
+        }
+
+        [TestMethod]
+        public void HomeHeaderTilesExposeRootButtonAutomationPeer()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var tile = new HeaderTile
+                {
+                    Title = "Getting started",
+                    Description = "An overview of app development options, tools, and samples."
+                };
+
+                RenderElement(tile, () =>
+                {
+                    var peer = UIElementAutomationPeer.CreatePeerForElement(tile);
+                    var children = peer.GetChildren();
+
+                    Assert.IsNotNull(children);
+                    Assert.AreEqual(1, children.Count);
+                    Assert.AreEqual(AutomationControlType.Button, children[0].GetAutomationControlType());
+                    Assert.AreEqual("RootButton", children[0].GetAutomationId());
+                    Assert.AreEqual("Getting started", children[0].GetName());
+                });
             });
         }
 
