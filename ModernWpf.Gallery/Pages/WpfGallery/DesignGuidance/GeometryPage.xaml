@@ -48,9 +48,7 @@
                 </Border>
 
                 <controls:ControlExample XamlCode="&lt;Border CornerRadius=&quot;{StaticResource OverlayCornerRadius}&quot; /&gt;&#x0a;&lt;Border CornerRadius=&quot;{StaticResource ControlCornerRadius}&quot; /&gt;">
-                    <Grid
-                        Margin="0,10,0,10"
-                        HorizontalAlignment="Left">
+                    <Grid HorizontalAlignment="Left">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="148" />
                             <ColumnDefinition Width="400" />

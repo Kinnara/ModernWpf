@@ -1553,13 +1553,25 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual("Example of spacing in a form layout", AutomationProperties.GetName(dialogImage));
                 StringAssert.Contains(((BitmapImage)dialogImage.Source).UriSource.ToString(), "Dialog.light.png");
 
+                var spacingTableFrame = (Border)spacingBody.Children[3];
+                Assert.AreEqual(new Thickness(0, 10, 0, 10), spacingTableFrame.Margin);
+                Assert.AreEqual(new Thickness(16), spacingTableFrame.Padding);
+                var spacingTable = (Grid)spacingTableFrame.Child;
+                Assert.AreEqual(new Thickness(0), spacingTable.Margin);
+                Assert.AreEqual(HorizontalAlignment.Left, spacingTable.HorizontalAlignment);
+
                 var typographyPage = new ItemPage(GalleryCatalog.FindItem("Typography"));
                 Assert.IsTrue(typographyPage.HasDirectPageContent);
                 var typographyBody = GetDirectPageBodyStack(typographyPage);
                 var typeRampExample = (ControlExample)typographyBody.Children[3];
                 var typeRamp = (Grid)typeRampExample.ExampleContent;
+                Assert.AreEqual(new Thickness(0), typeRamp.Margin);
                 var rows = typeRamp.Children.OfType<Grid>().OrderBy(Grid.GetRow).ToArray();
                 Assert.AreEqual(7, rows.Length);
+                var headers = typeRamp.Children.OfType<TextBlock>().Where(textBlock => Grid.GetRow(textBlock) == 0).OrderBy(Grid.GetColumn).ToArray();
+                CollectionAssert.AreEqual(new[] { "Example", "Variable Font", "Size/Line height", "Style" }, headers.Select(header => header.Text).ToArray());
+                Assert.AreEqual(new Thickness(16, 0, 0, 24), headers[0].Margin);
+                CollectionAssert.AreEqual(Enumerable.Repeat(new Thickness(0, 0, 0, 24), 3).ToArray(), headers.Skip(1).Select(header => header.Margin).ToArray());
 
                 var bodyStrongStyleName = GetTableText(rows.Single(row => Grid.GetRow(row) == 3), 3);
                 Assert.AreEqual("CaptionTextBlockStyle", bodyStrongStyleName.Text);
@@ -2168,7 +2180,7 @@ namespace ModernWpf.Gallery.Tests
         private static void AssertCornerRadiusTable(Grid table)
         {
             Assert.AreEqual(HorizontalAlignment.Left, table.HorizontalAlignment);
-            Assert.AreEqual(new Thickness(0, 10, 0, 10), table.Margin);
+            Assert.AreEqual(new Thickness(0), table.Margin);
             Assert.AreEqual(3, table.ColumnDefinitions.Count);
             Assert.AreEqual(4, table.RowDefinitions.Count);
             CollectionAssert.AreEqual(new[] { 148.0, 400.0, 180.0 }, table.ColumnDefinitions.Select(column => column.Width.Value).ToArray());

@@ -39,9 +39,7 @@
                     Margin="10"
                     HeaderText="Type ramp"
                     XamlCode="&lt;TextBlock Text=&quot;Caption&quot; Style=&quot;{StaticResource CaptionTextBlockStyle}&quot; /&gt;&#x0a;&lt;TextBlock Text=&quot;Body&quot; Style=&quot;{StaticResource BodyTextBlockStyle}&quot; /&gt;&#x0a;&lt;TextBlock Text=&quot;Body Strong&quot; Style=&quot;{StaticResource BodyStrongTextBlockStyle}&quot; /&gt;&#x0a;&lt;TextBlock Text=&quot;Subtitle&quot; Style=&quot;{StaticResource SubtitleTextBlockStyle}&quot; /&gt;&#x0a;&lt;TextBlock Text=&quot;Title&quot; Style=&quot;{StaticResource TitleTextBlockStyle}&quot; /&gt;&#x0a;&lt;TextBlock Text=&quot;Title Large&quot; Style=&quot;{StaticResource TitleLargeTextBlockStyle}&quot; /&gt;&#x0a;&lt;TextBlock Text=&quot;Display&quot; Style=&quot;{StaticResource DisplayTextBlockStyle}&quot; /&gt;">
-                    <Grid
-                        Margin="0,10,0,10"
-                        HorizontalAlignment="Left">
+                    <Grid HorizontalAlignment="Left">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="272" />
                             <ColumnDefinition Width="136" />
@@ -60,9 +58,9 @@
                         </Grid.RowDefinitions>
 
                         <TextBlock Grid.Row="0" Grid.Column="0" Margin="16,0,0,24" Opacity="0.7" Style="{StaticResource CaptionTextBlockStyle}" Text="Example" />
-                        <TextBlock Grid.Row="0" Grid.Column="1" Margin="16,0,0,24" Opacity="0.7" Style="{StaticResource CaptionTextBlockStyle}" Text="Variable Font" />
-                        <TextBlock Grid.Row="0" Grid.Column="2" Margin="16,0,0,24" Opacity="0.7" Style="{StaticResource CaptionTextBlockStyle}" Text="Size/Line height" />
-                        <TextBlock Grid.Row="0" Grid.Column="3" Margin="16,0,0,24" Opacity="0.7" Style="{StaticResource CaptionTextBlockStyle}" Text="Style" />
+                        <TextBlock Grid.Row="0" Grid.Column="1" Margin="0,0,0,24" Opacity="0.7" Style="{StaticResource CaptionTextBlockStyle}" Text="Variable Font" />
+                        <TextBlock Grid.Row="0" Grid.Column="2" Margin="0,0,0,24" Opacity="0.7" Style="{StaticResource CaptionTextBlockStyle}" Text="Size/Line height" />
+                        <TextBlock Grid.Row="0" Grid.Column="3" Margin="0,0,0,24" Opacity="0.7" Style="{StaticResource CaptionTextBlockStyle}" Text="Style" />
 
                         <Grid
                             Grid.Row="1"

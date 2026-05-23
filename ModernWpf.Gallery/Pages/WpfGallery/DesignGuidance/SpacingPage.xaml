@@ -75,9 +75,7 @@
                     BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
                     BorderThickness="1,1,1,0"
                     CornerRadius="8,8,0,0">
-                    <Grid
-                        Margin="0,10,0,10"
-                        HorizontalAlignment="Left">
+                    <Grid HorizontalAlignment="Left">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="90" />
                             <ColumnDefinition Width="100" />
