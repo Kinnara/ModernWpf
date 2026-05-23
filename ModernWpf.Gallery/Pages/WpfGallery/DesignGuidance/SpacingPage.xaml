@@ -75,12 +75,7 @@
                     BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
                     BorderThickness="1,1,1,0"
                     CornerRadius="8,8,0,0">
-                    <Grid HorizontalAlignment="Left">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="90" />
-                            <ColumnDefinition Width="100" />
-                            <ColumnDefinition Width="400" />
-                        </Grid.ColumnDefinitions>
+                    <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
@@ -92,107 +87,122 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock
-                            Grid.Row="0"
-                            Grid.Column="0"
-                            Margin="16,0,0,24"
-                            Opacity="0.7"
-                            Style="{StaticResource CaptionTextBlockStyle}"
-                            Text="Value" />
-                        <TextBlock
-                            Grid.Row="0"
-                            Grid.Column="2"
-                            Margin="16,0,0,24"
-                            Opacity="0.7"
-                            Style="{StaticResource CaptionTextBlockStyle}"
-                            Text="Usage" />
+                        <StackPanel Grid.Row="0">
+                            <Grid Margin="0,0,0,24" HorizontalAlignment="Stretch">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="100" />
+                                    <ColumnDefinition Width="100" />
+                                    <ColumnDefinition Width="400" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Margin="16,0,0,0" Foreground="{DynamicResource TextFillColorPrimaryBrush}" Opacity="0.7" Style="{StaticResource CaptionTextBlockStyle}" Text="Value" />
+                                <TextBlock Grid.Column="2" Foreground="{DynamicResource TextFillColorPrimaryBrush}" Opacity="0.7" Style="{StaticResource CaptionTextBlockStyle}" Text="Usage" />
+                            </Grid>
+                        </StackPanel>
 
-                        <Grid
-                            Grid.Row="1"
-                            Grid.ColumnSpan="3"
-                            MinHeight="60"
-                            Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="90" />
-                                <ColumnDefinition Width="100" />
-                                <ColumnDefinition Width="400" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Margin="16,0,0,0" VerticalAlignment="Center" Style="{StaticResource BodyTextBlockStyle}" Text="4px" />
-                            <Border Grid.Column="1" Width="4" Height="24" HorizontalAlignment="Left" VerticalAlignment="Center" Background="{DynamicResource AccentFillColorDefaultBrush}" CornerRadius="4" />
-                            <TextBlock Grid.Column="2" Margin="0,0,16,0" VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" Text="Spacing used for compact sizing." TextWrapping="Wrap" />
-                        </Grid>
-                        <Grid Grid.Row="2" Grid.ColumnSpan="3" MinHeight="60">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="90" />
-                                <ColumnDefinition Width="100" />
-                                <ColumnDefinition Width="400" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Margin="16,0,0,0" VerticalAlignment="Center" Style="{StaticResource BodyTextBlockStyle}" Text="8px" />
-                            <Border Grid.Column="1" Width="8" Height="24" HorizontalAlignment="Left" VerticalAlignment="Center" Background="{DynamicResource AccentFillColorDefaultBrush}" CornerRadius="4" />
-                            <TextBlock Grid.Column="2" Margin="0,0,16,0" VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" Text="Spacing between UI controls, control + label." TextWrapping="Wrap" />
-                        </Grid>
-                        <Grid
-                            Grid.Row="3"
-                            Grid.ColumnSpan="3"
-                            MinHeight="60"
-                            Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="90" />
-                                <ColumnDefinition Width="100" />
-                                <ColumnDefinition Width="400" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Margin="16,0,0,0" VerticalAlignment="Center" Style="{StaticResource BodyTextBlockStyle}" Text="12px" />
-                            <Border Grid.Column="1" Width="12" Height="24" HorizontalAlignment="Left" VerticalAlignment="Center" Background="{DynamicResource AccentFillColorDefaultBrush}" CornerRadius="4" />
-                            <TextBlock Grid.Column="2" Margin="0,0,16,0" VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" Text="Spacing between control + header, surface and edge text, text sections." TextWrapping="Wrap" />
-                        </Grid>
-                        <Grid Grid.Row="4" Grid.ColumnSpan="3" MinHeight="60">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="90" />
-                                <ColumnDefinition Width="100" />
-                                <ColumnDefinition Width="400" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Margin="16,0,0,0" VerticalAlignment="Center" Style="{StaticResource BodyTextBlockStyle}" Text="16px" />
-                            <Border Grid.Column="1" Width="16" Height="24" HorizontalAlignment="Left" VerticalAlignment="Center" Background="{DynamicResource AccentFillColorDefaultBrush}" CornerRadius="4" />
-                            <TextBlock Grid.Column="2" Margin="0,0,16,0" VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" Text="Padding used in list styles, cards." TextWrapping="Wrap" />
-                        </Grid>
-                        <Grid
-                            Grid.Row="5"
-                            Grid.ColumnSpan="3"
-                            MinHeight="60"
-                            Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="90" />
-                                <ColumnDefinition Width="100" />
-                                <ColumnDefinition Width="400" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Margin="16,0,0,0" VerticalAlignment="Center" Style="{StaticResource BodyTextBlockStyle}" Text="24px" />
-                            <Border Grid.Column="1" Width="24" Height="24" HorizontalAlignment="Left" VerticalAlignment="Center" Background="{DynamicResource AccentFillColorDefaultBrush}" CornerRadius="4" />
-                            <TextBlock Grid.Column="2" Margin="0,0,16,0" VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" Text="Spacing between content sections." TextWrapping="Wrap" />
-                        </Grid>
-                        <Grid Grid.Row="6" Grid.ColumnSpan="3" MinHeight="60">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="90" />
-                                <ColumnDefinition Width="100" />
-                                <ColumnDefinition Width="400" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Margin="16,0,0,0" VerticalAlignment="Center" Style="{StaticResource BodyTextBlockStyle}" Text="32px" />
-                            <Border Grid.Column="1" Width="32" Height="24" HorizontalAlignment="Left" VerticalAlignment="Center" Background="{DynamicResource AccentFillColorDefaultBrush}" CornerRadius="4" />
-                            <TextBlock Grid.Column="2" Margin="0,0,16,0" VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" Text="Padding on pages." TextWrapping="Wrap" />
-                        </Grid>
-                        <Grid
-                            Grid.Row="7"
-                            Grid.ColumnSpan="3"
-                            MinHeight="60"
-                            Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="90" />
-                                <ColumnDefinition Width="100" />
-                                <ColumnDefinition Width="400" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Margin="16,0,0,0" VerticalAlignment="Center" Style="{StaticResource BodyTextBlockStyle}" Text="48px" />
-                            <Border Grid.Column="1" Width="48" Height="24" HorizontalAlignment="Left" VerticalAlignment="Center" Background="{DynamicResource AccentFillColorDefaultBrush}" CornerRadius="4" />
-                            <TextBlock Grid.Column="2" Margin="0,0,16,0" VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" Text="Spacing between page sections with title." TextWrapping="Wrap" />
-                        </Grid>
+                        <StackPanel Grid.Row="1">
+                            <Grid MinHeight="60" HorizontalAlignment="Stretch" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="90" />
+                                    <ColumnDefinition Width="100" />
+                                    <ColumnDefinition Width="400" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Margin="16,0,0,0" VerticalAlignment="Center" Style="{StaticResource BodyTextBlockStyle}" Text="4px" />
+                                <StackPanel Grid.Column="1" Margin="0,8" VerticalAlignment="Center" Orientation="Horizontal">
+                                    <Border Width="4" Height="24" Background="{DynamicResource AccentFillColorDefaultBrush}" CornerRadius="4" />
+                                </StackPanel>
+                                <TextBlock Grid.Column="2" VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" Text="Spacing used for compact sizing." TextWrapping="Wrap" />
+                            </Grid>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="2">
+                            <Grid MinHeight="60" HorizontalAlignment="Stretch">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="90" />
+                                    <ColumnDefinition Width="100" />
+                                    <ColumnDefinition Width="400" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Margin="16,0,0,0" VerticalAlignment="Center" Style="{StaticResource BodyTextBlockStyle}" Text="8px" />
+                                <StackPanel Grid.Column="1" Margin="0,8" VerticalAlignment="Center" Orientation="Horizontal">
+                                    <Border Width="8" Height="24" Background="{DynamicResource AccentFillColorDefaultBrush}" CornerRadius="4" />
+                                </StackPanel>
+                                <TextBlock Grid.Column="2" VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" Text="Spacing between UI controls, control + label." TextWrapping="Wrap" />
+                            </Grid>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="3">
+                            <Grid MinHeight="60" HorizontalAlignment="Stretch" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="90" />
+                                    <ColumnDefinition Width="100" />
+                                    <ColumnDefinition Width="400" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Margin="16,0,0,0" VerticalAlignment="Center" Style="{StaticResource BodyTextBlockStyle}" Text="12px" />
+                                <StackPanel Grid.Column="1" Margin="0,8" VerticalAlignment="Center" Orientation="Horizontal">
+                                    <Border Width="12" Height="24" Background="{DynamicResource AccentFillColorDefaultBrush}" CornerRadius="4" />
+                                </StackPanel>
+                                <TextBlock Grid.Column="2" VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" Text="Spacing between control + header, surface and edge text, text sections." TextWrapping="Wrap" />
+                            </Grid>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="4">
+                            <Grid MinHeight="60" HorizontalAlignment="Stretch">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="90" />
+                                    <ColumnDefinition Width="100" />
+                                    <ColumnDefinition Width="400" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Margin="16,0,0,0" VerticalAlignment="Center" Style="{StaticResource BodyTextBlockStyle}" Text="16px" />
+                                <StackPanel Grid.Column="1" Margin="0,8" VerticalAlignment="Center" Orientation="Horizontal">
+                                    <Border Width="16" Height="24" Background="{DynamicResource AccentFillColorDefaultBrush}" CornerRadius="4" />
+                                </StackPanel>
+                                <TextBlock Grid.Column="2" VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" Text="Padding used in list styles, cards." TextWrapping="Wrap" />
+                            </Grid>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="5">
+                            <Grid MinHeight="60" HorizontalAlignment="Stretch" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="90" />
+                                    <ColumnDefinition Width="100" />
+                                    <ColumnDefinition Width="400" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Margin="16,0,0,0" VerticalAlignment="Center" Style="{StaticResource BodyTextBlockStyle}" Text="24px" />
+                                <StackPanel Grid.Column="1" Margin="0,8" VerticalAlignment="Center" Orientation="Horizontal">
+                                    <Border Width="24" Height="24" Background="{DynamicResource AccentFillColorDefaultBrush}" CornerRadius="4" />
+                                </StackPanel>
+                                <TextBlock Grid.Column="2" VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" Text="Spacing between content sections." TextWrapping="Wrap" />
+                            </Grid>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="6">
+                            <Grid MinHeight="60" HorizontalAlignment="Stretch">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="90" />
+                                    <ColumnDefinition Width="100" />
+                                    <ColumnDefinition Width="400" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Margin="16,0,0,0" VerticalAlignment="Center" Style="{StaticResource BodyTextBlockStyle}" Text="32px" />
+                                <StackPanel Grid.Column="1" Margin="0,8" VerticalAlignment="Center" Orientation="Horizontal">
+                                    <Border Width="32" Height="24" Background="{DynamicResource AccentFillColorDefaultBrush}" CornerRadius="4" />
+                                </StackPanel>
+                                <TextBlock Grid.Column="2" VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" Text="Padding on pages." TextWrapping="Wrap" />
+                            </Grid>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="7">
+                            <Grid MinHeight="60" HorizontalAlignment="Stretch" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="90" />
+                                    <ColumnDefinition Width="100" />
+                                    <ColumnDefinition Width="400" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Margin="16,0,0,0" VerticalAlignment="Center" Style="{StaticResource BodyTextBlockStyle}" Text="48px" />
+                                <StackPanel Grid.Column="1" Margin="0,8" VerticalAlignment="Center" Orientation="Horizontal">
+                                    <Border Width="48" Height="24" Background="{DynamicResource AccentFillColorDefaultBrush}" CornerRadius="4" />
+                                </StackPanel>
+                                <TextBlock Grid.Column="2" VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" Text="Spacing between page sections with title." TextWrapping="Wrap" />
+                            </Grid>
+                        </StackPanel>
                     </Grid>
                 </Border>
             </StackPanel>

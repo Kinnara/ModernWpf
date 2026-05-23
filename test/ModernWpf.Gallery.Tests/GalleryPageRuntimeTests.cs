@@ -1618,7 +1618,34 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(new Thickness(16), spacingTableFrame.Padding);
                 var spacingTable = (Grid)spacingTableFrame.Child;
                 Assert.AreEqual(new Thickness(0), spacingTable.Margin);
-                Assert.AreEqual(HorizontalAlignment.Left, spacingTable.HorizontalAlignment);
+                Assert.AreEqual(HorizontalAlignment.Stretch, spacingTable.HorizontalAlignment);
+                Assert.AreEqual(0, spacingTable.ColumnDefinitions.Count);
+                Assert.AreEqual(8, spacingTable.RowDefinitions.Count);
+
+                var spacingHeader = GetTableRowGrid(spacingTable, 0);
+                Assert.AreEqual(new Thickness(0, 0, 0, 24), spacingHeader.Margin);
+                Assert.AreEqual(HorizontalAlignment.Stretch, spacingHeader.HorizontalAlignment);
+                CollectionAssert.AreEqual(new[] { 100.0, 100.0, 400.0 }, spacingHeader.ColumnDefinitions.Select(column => column.Width.Value).ToArray());
+                CollectionAssert.AreEqual(
+                    new[] { "Value", "Usage" },
+                    spacingHeader.Children.OfType<TextBlock>().OrderBy(Grid.GetColumn).Select(textBlock => textBlock.Text).ToArray());
+                CollectionAssert.AreEqual(
+                    new[] { new Thickness(16, 0, 0, 0), new Thickness(0) },
+                    spacingHeader.Children.OfType<TextBlock>().OrderBy(Grid.GetColumn).Select(textBlock => textBlock.Margin).ToArray());
+
+                var spacingRows = Enumerable.Range(1, 7).Select(row => GetTableRowGrid(spacingTable, row)).ToArray();
+                CollectionAssert.AreEqual(Enumerable.Repeat(60.0, 7).ToArray(), spacingRows.Select(row => row.MinHeight).ToArray());
+                CollectionAssert.AreEqual(Enumerable.Repeat(HorizontalAlignment.Stretch, 7).ToArray(), spacingRows.Select(row => row.HorizontalAlignment).ToArray());
+                CollectionAssert.AreEqual(
+                    Enumerable.Repeat(new[] { 90.0, 100.0, 400.0 }, 7).SelectMany(widths => widths).ToArray(),
+                    spacingRows.SelectMany(row => row.ColumnDefinitions.Select(column => column.Width.Value)).ToArray());
+                Assert.AreEqual("4px", GetTableText(spacingRows[0], 0).Text);
+                var firstSpacingBarHost = spacingRows[0].Children.OfType<StackPanel>().Single(panel => Grid.GetColumn(panel) == 1);
+                Assert.AreEqual(new Thickness(0, 8, 0, 8), firstSpacingBarHost.Margin);
+                Assert.AreEqual(Orientation.Horizontal, firstSpacingBarHost.Orientation);
+                Assert.AreEqual(4.0, ((Border)firstSpacingBarHost.Children[0]).Width);
+                Assert.AreEqual("48px", GetTableText(spacingRows[6], 0).Text);
+                Assert.AreEqual(48.0, ((Border)spacingRows[6].Children.OfType<StackPanel>().Single(panel => Grid.GetColumn(panel) == 1).Children[0]).Width);
 
                 var typographyPage = new ItemPage(GalleryCatalog.FindItem("Typography"));
                 Assert.IsTrue(typographyPage.HasDirectPageContent);
@@ -1626,20 +1653,25 @@ namespace ModernWpf.Gallery.Tests
                 var typeRampExample = (ControlExample)typographyBody.Children[3];
                 var typeRamp = (Grid)typeRampExample.ExampleContent;
                 Assert.AreEqual(new Thickness(0), typeRamp.Margin);
-                var rows = typeRamp.Children.OfType<Grid>().OrderBy(Grid.GetRow).ToArray();
-                Assert.AreEqual(7, rows.Length);
-                var headers = typeRamp.Children.OfType<TextBlock>().Where(textBlock => Grid.GetRow(textBlock) == 0).OrderBy(Grid.GetColumn).ToArray();
+                Assert.AreEqual(HorizontalAlignment.Stretch, typeRamp.HorizontalAlignment);
+                Assert.AreEqual(0, typeRamp.ColumnDefinitions.Count);
+                Assert.AreEqual(8, typeRamp.RowDefinitions.Count);
+                var typeRampRows = Enumerable.Range(0, 8).Select(row => GetTableRowGrid(typeRamp, row)).ToArray();
+                CollectionAssert.AreEqual(Enumerable.Repeat(HorizontalAlignment.Stretch, 8).ToArray(), typeRampRows.Select(row => row.HorizontalAlignment).ToArray());
+                var headers = typeRampRows[0].Children.OfType<TextBlock>().OrderBy(Grid.GetColumn).ToArray();
                 CollectionAssert.AreEqual(new[] { "Example", "Variable Font", "Size/Line height", "Style" }, headers.Select(header => header.Text).ToArray());
-                Assert.AreEqual(new Thickness(16, 0, 0, 24), headers[0].Margin);
-                CollectionAssert.AreEqual(Enumerable.Repeat(new Thickness(0, 0, 0, 24), 3).ToArray(), headers.Skip(1).Select(header => header.Margin).ToArray());
+                Assert.AreEqual(new Thickness(16, 0, 0, 0), headers[0].Margin);
+                CollectionAssert.AreEqual(Enumerable.Repeat(new Thickness(0), 3).ToArray(), headers.Skip(1).Select(header => header.Margin).ToArray());
+                Assert.AreEqual(new Thickness(0, 0, 0, 24), typeRampRows[0].Margin);
 
-                var bodyStrongStyleName = GetTableText(rows.Single(row => Grid.GetRow(row) == 3), 3);
+                var bodyStrongStyleName = GetTableText(typeRampRows[3], 3);
                 Assert.AreEqual("CaptionTextBlockStyle", bodyStrongStyleName.Text);
-                Assert.AreEqual(new Thickness(0, 0, 0, 24), rows.Single(row => Grid.GetRow(row) == 5).Margin);
-                Assert.AreEqual(new Thickness(0, 0, 0, 24), rows.Single(row => Grid.GetRow(row) == 6).Margin);
-                var displayRow = rows.Single(row => Grid.GetRow(row) == 7);
+                Assert.AreEqual(new Thickness(0, 0, 0, 24), typeRampRows[5].Margin);
+                Assert.AreEqual(new Thickness(0, 0, 0, 24), typeRampRows[6].Margin);
+                var displayRow = typeRampRows[7];
                 Assert.AreEqual(68.0, displayRow.MinHeight);
                 Assert.AreEqual(new Thickness(0, 0, 0, 24), displayRow.Margin);
+                Assert.AreEqual(5, displayRow.ColumnDefinitions.Count);
                 Assert.AreEqual("Consolas", GetTableText(displayRow, 3).FontFamily.Source);
 
                 var geometryPage = new ItemPage(GalleryCatalog.FindItem("Geometry"));
@@ -2230,6 +2262,12 @@ namespace ModernWpf.Gallery.Tests
         private static TextBlock GetTableText(Grid row, int column)
         {
             return row.Children.OfType<TextBlock>().Single(textBlock => Grid.GetColumn(textBlock) == column);
+        }
+
+        private static Grid GetTableRowGrid(Grid table, int row)
+        {
+            var frame = table.Children.OfType<StackPanel>().Single(panel => Grid.GetRow(panel) == row);
+            return frame.Children.OfType<Grid>().Single();
         }
 
         private static StackPanel GetDirectPageBodyStack(ItemPage page)
