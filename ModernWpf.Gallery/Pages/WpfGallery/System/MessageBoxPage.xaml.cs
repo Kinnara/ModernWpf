@@ -3,11 +3,11 @@ using System.Windows.Controls;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
 {
-    public sealed partial class MessageBoxPage : UserControl
+    public sealed partial class MessageBoxPage : Page
     {
-        public MessageBoxPage()
+        public MessageBoxPage(MessageBoxPageViewModel viewModel)
         {
-            ViewModel = new MessageBoxPageViewModel();
+            ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
         }

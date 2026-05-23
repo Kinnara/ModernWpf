@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ModernWpf.Gallery.Pages.WpfGallery.SystemPages;
 using ClipboardPage = ModernWpf.Gallery.Pages.WpfGallery.SystemPages.ClipboardPage;
 using FileAndFolderDialogsPage = ModernWpf.Gallery.Pages.WpfGallery.SystemPages.FileAndFolderDialogsPage;
 using MessageBoxPage = ModernWpf.Gallery.Pages.WpfGallery.SystemPages.MessageBoxPage;
@@ -16,7 +17,7 @@ namespace ModernWpf.Gallery.Tests
             WpfTestHost.Run(() =>
             {
                 AssertExamples(
-                    new FileAndFolderDialogsPage(),
+                    new FileAndFolderDialogsPage(new FileAndFolderDialogsPageViewModel()),
                     new ExpectedExample(
                         "Pick Single File",
                         "<Button Content=\"Pick Single File\" Click=\"PickSingleFileButton_Click\" />",
@@ -99,7 +100,7 @@ namespace ModernWpf.Gallery.Tests
                             "}")));
 
                 AssertExamples(
-                    new MessageBoxPage(),
+                    new MessageBoxPage(new MessageBoxPageViewModel()),
                     new ExpectedExample(
                         "Simple MessageBox",
                         "<Button Content=\"Simple MessageBox\" Click=\"ShowDefaultMessageButton_Click\" />",
@@ -170,7 +171,7 @@ namespace ModernWpf.Gallery.Tests
                             "}")));
 
                 AssertExamples(
-                    new ClipboardPage(),
+                    new ClipboardPage(new ClipboardPageViewModel()),
                     new ExpectedExample(
                         "Copy text to Clipboard",
                         "<Button Content=\"Copy to Clipboard\" Click=\"CopyToClipboard_Click\" />",

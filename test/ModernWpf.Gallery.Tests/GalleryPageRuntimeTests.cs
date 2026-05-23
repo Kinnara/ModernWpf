@@ -660,6 +660,17 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void SystemItemPagesUseOfficialPageRoots()
+        {
+            WpfTestHost.Run(() =>
+            {
+                AssertWpfGalleryPageRoot<FileAndFolderDialogsPage>("FileAndFolderDialogs", "File and Folder Dialogs");
+                AssertWpfGalleryPageRoot<MessageBoxPage>("MessageBox", "MessageBox");
+                AssertWpfGalleryPageRoot<ClipboardPage>("Clipboard", "ClipboardPage");
+            });
+        }
+
+        [TestMethod]
         public void ListViewPageExamplesMatchWpfGalleryReference()
         {
             WpfTestHost.Run(() =>

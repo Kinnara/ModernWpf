@@ -7,11 +7,11 @@ using System.Windows.Navigation;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
 {
-    public sealed partial class ClipboardPage : UserControl
+    public sealed partial class ClipboardPage : Page
     {
-        public ClipboardPage()
+        public ClipboardPage(ClipboardPageViewModel viewModel)
         {
-            ViewModel = new ClipboardPageViewModel();
+            ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
         }

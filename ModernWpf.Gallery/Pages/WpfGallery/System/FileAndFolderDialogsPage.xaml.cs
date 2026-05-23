@@ -7,11 +7,11 @@ using Microsoft.Win32;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
 {
-    public sealed partial class FileAndFolderDialogsPage : UserControl
+    public sealed partial class FileAndFolderDialogsPage : Page
     {
-        public FileAndFolderDialogsPage()
+        public FileAndFolderDialogsPage(FileAndFolderDialogsPageViewModel viewModel)
         {
-            ViewModel = new FileAndFolderDialogsPageViewModel();
+            ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
         }
