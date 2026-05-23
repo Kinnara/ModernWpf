@@ -628,6 +628,28 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void SamplesPagesUseOfficialPageSpecificViewModels()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = (UserDashboardPage)new ItemPage(GalleryCatalog.FindItem("UserDashboard")).DirectPageContent;
+
+                Assert.IsInstanceOfType(page.ViewModel, typeof(UserDashboardPageViewModel));
+                Assert.AreEqual(20, page.ViewModel.Users.Count);
+                Assert.IsNull(page.ViewModel.SelectedUser);
+            });
+        }
+
+        [TestMethod]
+        public void SamplesItemPagesUseOfficialPageRoots()
+        {
+            WpfTestHost.Run(() =>
+            {
+                AssertWpfGalleryPageRoot<UserDashboardPage>("UserDashboard");
+            });
+        }
+
+        [TestMethod]
         public void SystemPagesUseOfficialPageSpecificViewModels()
         {
             WpfTestHost.Run(() =>
@@ -2051,9 +2073,11 @@ namespace ModernWpf.Gallery.Tests
             WpfTestHost.Run(() =>
             {
                 var page = new ItemPage(GalleryCatalog.FindItem("UserDashboard"));
-                var directPage = (FrameworkElement)page.DirectPageContent;
+                var directPage = (UserDashboardPage)page.DirectPageContent;
                 var directPageHost = (ContentControl)page.FindName("DirectPageContentHost");
                 Assert.AreEqual(new Thickness(0), directPageHost.Margin);
+                Assert.AreEqual("UserDashboardPage", directPage.Title);
+                Assert.IsInstanceOfType(directPage.ViewModel, typeof(UserDashboardPageViewModel));
 
                 var root = (Grid)directPage.FindName("ContentRootGrid");
                 var window = new Window
@@ -2064,7 +2088,7 @@ namespace ModernWpf.Gallery.Tests
                     Top = -32000,
                     ShowInTaskbar = false,
                     WindowStartupLocation = WindowStartupLocation.Manual,
-                    Content = directPage
+                    Content = page
                 };
 
                 try

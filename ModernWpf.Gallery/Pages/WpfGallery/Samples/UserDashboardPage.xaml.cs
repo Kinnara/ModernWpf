@@ -6,11 +6,11 @@ using System.Windows.Controls.Primitives;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
 {
-    public sealed partial class UserDashboardPage : UserControl
+    public sealed partial class UserDashboardPage : Page
     {
-        public UserDashboardPage()
+        public UserDashboardPage(UserDashboardPageViewModel viewModel)
         {
-            ViewModel = new UserDashboardPageViewModel();
+            ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
         }

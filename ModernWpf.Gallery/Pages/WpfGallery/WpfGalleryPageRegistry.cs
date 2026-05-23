@@ -50,7 +50,7 @@ namespace ModernWpf.Gallery.Pages
                 { "ToolTip", () => new WpfGallery.StatusAndInfo.ToolTipPage(new WpfGallery.StatusAndInfo.ToolTipPageViewModel()) },
                 { "TreeView", () => new WpfGallery.Collections.TreeViewPage(new WpfGallery.Collections.TreeViewPageViewModel()) },
                 { "Typography", () => new WpfGallery.DesignGuidance.TypographyPage(new WpfGallery.DesignGuidance.TypographyPageViewModel()) },
-                { "UserDashboard", () => new WpfGallery.Samples.UserDashboardPage() }
+                { "UserDashboard", () => new WpfGallery.Samples.UserDashboardPage(new WpfGallery.Samples.UserDashboardPageViewModel()) }
             };
 
         public static IReadOnlyList<string> DirectPageIds
