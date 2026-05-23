@@ -202,7 +202,7 @@ namespace ModernWpf.Gallery.Testing
             using (var drawingContext = drawingVisual.RenderOpen())
             {
                 drawingContext.DrawRectangle(
-                    new SolidColorBrush(GetArtifactBackgroundColor()),
+                    GetArtifactBackgroundBrush(element),
                     null,
                     new Rect(0, 0, width, height));
                 drawingContext.DrawRectangle(
@@ -251,11 +251,15 @@ namespace ModernWpf.Gallery.Testing
             return null;
         }
 
-        private static Color GetArtifactBackgroundColor()
+        private static Brush GetArtifactBackgroundBrush(FrameworkElement element)
         {
-            return string.Equals(Theme, "Dark", StringComparison.OrdinalIgnoreCase)
-                ? Color.FromRgb(0x20, 0x20, 0x20)
-                : Color.FromRgb(0xF3, 0xF3, 0xF3);
+            return element.TryFindResource("LayerFillColorDefaultBrush") as Brush
+                ?? element.TryFindResource("ApplicationPageBackgroundThemeBrush") as Brush
+                ?? element.TryFindResource("SolidBackgroundFillColorBaseBrush") as Brush
+                ?? new SolidColorBrush(
+                    string.Equals(Theme, "Dark", StringComparison.OrdinalIgnoreCase)
+                        ? Color.FromRgb(0x20, 0x20, 0x20)
+                        : Color.FromRgb(0xF3, 0xF3, 0xF3));
         }
 
         private static string SanitizeFileName(string value)
