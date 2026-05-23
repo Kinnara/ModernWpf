@@ -1608,7 +1608,7 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual("Geometry describes the shape, size and position of UI elements on screen.", ((TextBlock)geometryBody.Children[0]).Text);
                 Assert.AreEqual("These fundamental design elements help experiences feel coherent across the entire design system.", ((TextBlock)geometryBody.Children[1]).Text);
                 var geometryUsage = (TextBlock)geometryBody.Children[2];
-                Assert.AreEqual("You can reference built-in corner radii styles using: CornerRadius=\"{StaticResource ControlCornerRadius}\".", geometryUsage.Text);
+                Assert.AreEqual("You can reference built-in corner radii styles using: CornerRadius=\"{StaticResource ControlCornerRadius}\" .", geometryUsage.Text);
                 Assert.AreEqual(new Thickness(0, 0, 0, 12), geometryUsage.Margin);
 
                 var geometryImageHost = (Border)geometryBody.Children[3];
@@ -2230,15 +2230,23 @@ namespace ModernWpf.Gallery.Tests
 
         private static void AssertCornerRadiusTable(Grid table)
         {
-            Assert.AreEqual(HorizontalAlignment.Left, table.HorizontalAlignment);
+            Assert.AreEqual(HorizontalAlignment.Stretch, table.HorizontalAlignment);
             Assert.AreEqual(new Thickness(0), table.Margin);
-            Assert.AreEqual(3, table.ColumnDefinitions.Count);
+            Assert.AreEqual(0, table.ColumnDefinitions.Count);
             Assert.AreEqual(4, table.RowDefinitions.Count);
-            CollectionAssert.AreEqual(new[] { 148.0, 400.0, 180.0 }, table.ColumnDefinitions.Select(column => column.Width.Value).ToArray());
+
+            var headerFrame = table.Children.OfType<StackPanel>().Single(panel => Grid.GetRow(panel) == 0);
+            var header = (Grid)headerFrame.Children[0];
+            Assert.AreEqual(new Thickness(0, 0, 0, 24), header.Margin);
+            AssertOfficialGeometryTableColumns(header);
 
             CollectionAssert.AreEqual(
                 new[] { "Corner radius", "Usage", "Style" },
-                table.Children.OfType<TextBlock>().Where(textBlock => Grid.GetRow(textBlock) == 0).OrderBy(Grid.GetColumn).Select(textBlock => textBlock.Text).ToArray());
+                header.Children.OfType<TextBlock>().OrderBy(Grid.GetColumn).Select(textBlock => textBlock.Text).ToArray());
+
+            CollectionAssert.AreEqual(
+                Enumerable.Repeat(new Thickness(16, 0, 0, 0), 3).ToArray(),
+                header.Children.OfType<TextBlock>().OrderBy(Grid.GetColumn).Select(textBlock => textBlock.Margin).ToArray());
 
             AssertCornerRadiusRow(table, 1, "8px", new CornerRadius(8), "Top-level containers such as app windows, flyouts, cards and dialogs.", "OverlayCornerRadius");
             AssertCornerRadiusRow(table, 2, "4px", new CornerRadius(4), "In-page elements such as controls and list backplates.", "ControlCornerRadius");
@@ -2247,24 +2255,36 @@ namespace ModernWpf.Gallery.Tests
 
         private static void AssertCornerRadiusRow(Grid table, int row, string radiusText, CornerRadius radius, string usage, string styleName)
         {
-            var rowGrid = table.Children.OfType<Grid>().Single(grid => Grid.GetRow(grid) == row);
+            var rowFrame = table.Children.OfType<StackPanel>().Single(panel => Grid.GetRow(panel) == row);
+            var rowBorder = (Border)rowFrame.Children[0];
+            var rowGrid = (Grid)rowBorder.Child;
             Assert.AreEqual(60.0, rowGrid.MinHeight);
-            Assert.AreEqual(3, rowGrid.ColumnDefinitions.Count);
-            Assert.AreEqual(3, Grid.GetColumnSpan(rowGrid));
+            AssertOfficialGeometryTableColumns(rowGrid);
 
             var sample = rowGrid.Children.OfType<StackPanel>().Single();
             Assert.AreEqual(Orientation.Horizontal, sample.Orientation);
-            Assert.AreEqual(new Thickness(16, 0, 0, 0), sample.Margin);
             var shape = (Border)sample.Children[0];
             Assert.AreEqual(20.0, shape.Width);
             Assert.AreEqual(20.0, shape.Height);
+            Assert.AreEqual(new Thickness(16, 0, 0, 0), shape.Margin);
             Assert.AreEqual(radius, shape.CornerRadius);
             Assert.AreEqual(radiusText, ((TextBlock)sample.Children[1]).Text);
 
             var usageText = rowGrid.Children.OfType<TextBlock>().Single(textBlock => Grid.GetColumn(textBlock) == 1);
             var styleText = rowGrid.Children.OfType<TextBlock>().Single(textBlock => Grid.GetColumn(textBlock) == 2);
+            Assert.AreEqual(new Thickness(16, 0, 0, 0), usageText.Margin);
+            Assert.AreEqual(new Thickness(16, 0, 0, 0), styleText.Margin);
             Assert.AreEqual(usage, usageText.Text);
             Assert.AreEqual(styleName, styleText.Text);
+        }
+
+        private static void AssertOfficialGeometryTableColumns(Grid grid)
+        {
+            Assert.AreEqual(3, grid.ColumnDefinitions.Count);
+            Assert.AreEqual(new GridLength(148), grid.ColumnDefinitions[0].Width);
+            Assert.AreEqual(new GridLength(400), grid.ColumnDefinitions[1].Width);
+            Assert.AreEqual(GridUnitType.Star, grid.ColumnDefinitions[2].Width.GridUnitType);
+            Assert.AreEqual(1.0, grid.ColumnDefinitions[2].Width.Value);
         }
 
         private static void WithRenderedPage(ItemPage page, Action assertions)

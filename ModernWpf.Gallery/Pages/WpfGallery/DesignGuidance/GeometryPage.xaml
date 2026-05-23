@@ -32,7 +32,7 @@
                 <TextBlock
                     Margin="0,0,0,12"
                     HorizontalAlignment="Left"
-                    Text="You can reference built-in corner radii styles using: CornerRadius=&quot;{StaticResource ControlCornerRadius}&quot;."
+                    Text="You can reference built-in corner radii styles using: CornerRadius=&quot;{StaticResource ControlCornerRadius}&quot; ."
                     TextWrapping="Wrap" />
 
                 <Border
@@ -48,12 +48,7 @@
                 </Border>
 
                 <controls:ControlExample XamlCode="&lt;Border CornerRadius=&quot;{StaticResource OverlayCornerRadius}&quot; /&gt;&#x0a;&lt;Border CornerRadius=&quot;{StaticResource ControlCornerRadius}&quot; /&gt;">
-                    <Grid HorizontalAlignment="Left">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="148" />
-                            <ColumnDefinition Width="400" />
-                            <ColumnDefinition Width="180" />
-                        </Grid.ColumnDefinitions>
+                    <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
@@ -61,154 +56,154 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock
-                            Grid.Row="0"
-                            Grid.Column="0"
-                            Margin="16,0,0,24"
-                            Opacity="0.7"
-                            Style="{StaticResource CaptionTextBlockStyle}"
-                            Text="Corner radius" />
-                        <TextBlock
-                            Grid.Row="0"
-                            Grid.Column="1"
-                            Margin="16,0,0,24"
-                            Opacity="0.7"
-                            Style="{StaticResource CaptionTextBlockStyle}"
-                            Text="Usage" />
-                        <TextBlock
-                            Grid.Row="0"
-                            Grid.Column="2"
-                            Margin="16,0,0,24"
-                            Opacity="0.7"
-                            Style="{StaticResource CaptionTextBlockStyle}"
-                            Text="Style" />
-
-                        <Grid
-                            Grid.Row="1"
-                            Grid.ColumnSpan="3"
-                            MinHeight="60"
-                            HorizontalAlignment="Stretch"
-                            Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="148" />
-                                <ColumnDefinition Width="400" />
-                                <ColumnDefinition Width="180" />
-                            </Grid.ColumnDefinitions>
-                            <StackPanel
-                                Margin="16,0,0,0"
-                                VerticalAlignment="Center"
-                                Orientation="Horizontal">
-                                <Border
-                                    Width="20"
-                                    Height="20"
-                                    VerticalAlignment="Center"
-                                    Background="{DynamicResource AccentFillColorDefaultBrush}"
-                                    CornerRadius="8" />
+                        <StackPanel Grid.Row="0">
+                            <Grid Margin="0,0,0,24" HorizontalAlignment="Stretch">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="148" />
+                                    <ColumnDefinition Width="400" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
                                 <TextBlock
                                     Margin="16,0,0,0"
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="8px" />
-                            </StackPanel>
-                            <TextBlock
-                                Grid.Column="1"
-                                Margin="16,0,16,0"
-                                VerticalAlignment="Center"
-                                Style="{StaticResource CaptionTextBlockStyle}"
-                                Text="Top-level containers such as app windows, flyouts, cards and dialogs."
-                                TextWrapping="Wrap" />
-                            <TextBlock
-                                Grid.Column="2"
-                                Margin="16,0,16,0"
-                                VerticalAlignment="Center"
-                                Style="{StaticResource CaptionTextBlockStyle}"
-                                Text="OverlayCornerRadius"
-                                TextWrapping="Wrap" />
-                        </Grid>
-
-                        <Grid
-                            Grid.Row="2"
-                            Grid.ColumnSpan="3"
-                            MinHeight="60"
-                            HorizontalAlignment="Stretch">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="148" />
-                                <ColumnDefinition Width="400" />
-                                <ColumnDefinition Width="180" />
-                            </Grid.ColumnDefinitions>
-                            <StackPanel
-                                Margin="16,0,0,0"
-                                VerticalAlignment="Center"
-                                Orientation="Horizontal">
-                                <Border
-                                    Width="20"
-                                    Height="20"
-                                    VerticalAlignment="Center"
-                                    Background="{DynamicResource AccentFillColorDefaultBrush}"
-                                    CornerRadius="4" />
+                                    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                    Opacity="0.7"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="Corner radius" />
                                 <TextBlock
+                                    Grid.Column="1"
                                     Margin="16,0,0,0"
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="4px" />
-                            </StackPanel>
-                            <TextBlock
-                                Grid.Column="1"
-                                Margin="16,0,16,0"
-                                VerticalAlignment="Center"
-                                Style="{StaticResource CaptionTextBlockStyle}"
-                                Text="In-page elements such as controls and list backplates."
-                                TextWrapping="Wrap" />
-                            <TextBlock
-                                Grid.Column="2"
-                                Margin="16,0,16,0"
-                                VerticalAlignment="Center"
-                                Style="{StaticResource CaptionTextBlockStyle}"
-                                Text="ControlCornerRadius"
-                                TextWrapping="Wrap" />
-                        </Grid>
-
-                        <Grid
-                            Grid.Row="3"
-                            Grid.ColumnSpan="3"
-                            MinHeight="60"
-                            HorizontalAlignment="Stretch"
-                            Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="148" />
-                                <ColumnDefinition Width="400" />
-                                <ColumnDefinition Width="180" />
-                            </Grid.ColumnDefinitions>
-                            <StackPanel
-                                Margin="16,0,0,0"
-                                VerticalAlignment="Center"
-                                Orientation="Horizontal">
-                                <Border
-                                    Width="20"
-                                    Height="20"
-                                    VerticalAlignment="Center"
-                                    Background="{DynamicResource AccentFillColorDefaultBrush}" />
+                                    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                    Opacity="0.7"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="Usage" />
                                 <TextBlock
+                                    Grid.Column="2"
                                     Margin="16,0,0,0"
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="0px" />
-                            </StackPanel>
-                            <TextBlock
-                                Grid.Column="1"
-                                Margin="16,0,16,0"
-                                VerticalAlignment="Center"
-                                Style="{StaticResource CaptionTextBlockStyle}"
-                                Text="Straight edges that intersect with other straight edges."
-                                TextWrapping="Wrap" />
-                            <TextBlock
-                                Grid.Column="2"
-                                Margin="16,0,16,0"
-                                VerticalAlignment="Center"
-                                Style="{StaticResource CaptionTextBlockStyle}"
-                                Text="N/A"
-                                TextWrapping="Wrap" />
-                        </Grid>
+                                    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                    Opacity="0.7"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="Style" />
+                            </Grid>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="1">
+                            <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
+                                <Grid MinHeight="60" HorizontalAlignment="Stretch">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="148" />
+                                        <ColumnDefinition Width="400" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                        <Border
+                                            Width="20"
+                                            Height="20"
+                                            Margin="16,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Background="{DynamicResource AccentFillColorDefaultBrush}"
+                                            CornerRadius="{DynamicResource OverlayCornerRadius}" />
+                                        <TextBlock
+                                            Margin="16,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Text="8px" />
+                                    </StackPanel>
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        Margin="16,0,0,0"
+                                        VerticalAlignment="Center"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="Top-level containers such as app windows, flyouts, cards and dialogs."
+                                        TextWrapping="Wrap" />
+                                    <TextBlock
+                                        Grid.Column="2"
+                                        Margin="16,0,0,0"
+                                        VerticalAlignment="Center"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="OverlayCornerRadius"
+                                        TextWrapping="Wrap" />
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="2">
+                            <Border>
+                                <Grid MinHeight="60" HorizontalAlignment="Stretch">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="148" />
+                                        <ColumnDefinition Width="400" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                        <Border
+                                            Width="20"
+                                            Height="20"
+                                            Margin="16,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Background="{DynamicResource AccentFillColorDefaultBrush}"
+                                            CornerRadius="{DynamicResource ControlCornerRadius}" />
+                                        <TextBlock
+                                            Margin="16,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Text="4px" />
+                                    </StackPanel>
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        Margin="16,0,0,0"
+                                        VerticalAlignment="Center"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="In-page elements such as controls and list backplates."
+                                        TextWrapping="Wrap" />
+                                    <TextBlock
+                                        Grid.Column="2"
+                                        Margin="16,0,0,0"
+                                        VerticalAlignment="Center"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="ControlCornerRadius"
+                                        TextWrapping="Wrap" />
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="3">
+                            <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
+                                <Grid MinHeight="60" HorizontalAlignment="Stretch">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="148" />
+                                        <ColumnDefinition Width="400" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                        <Border
+                                            Width="20"
+                                            Height="20"
+                                            Margin="16,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Background="{DynamicResource AccentFillColorDefaultBrush}" />
+                                        <TextBlock
+                                            Margin="16,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Text="0px" />
+                                    </StackPanel>
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        Margin="16,0,0,0"
+                                        VerticalAlignment="Center"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="Straight edges that intersect with other straight edges."
+                                        TextWrapping="Wrap" />
+                                    <TextBlock
+                                        Grid.Column="2"
+                                        Margin="16,0,0,0"
+                                        VerticalAlignment="Center"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="N/A"
+                                        TextWrapping="Wrap" />
+                                </Grid>
+                            </Border>
+                        </StackPanel>
                     </Grid>
                 </controls:ControlExample>
             </StackPanel>
