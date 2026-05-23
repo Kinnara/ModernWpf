@@ -14,7 +14,6 @@ namespace ModernWpf.Gallery.Pages
         {
             ViewModel = new DashboardPageViewModel(OnNavigateCard);
             InitializeComponent();
-            SetWpfGalleryAutomation();
             DataContext = this;
         }
 
@@ -46,14 +45,6 @@ namespace ModernWpf.Gallery.Pages
         public IReadOnlyList<GalleryGroup> Groups
         {
             get { return NavigationCards; }
-        }
-
-        private void SetWpfGalleryAutomation()
-        {
-            GalleryAutomation.SetHeadingLevel(HeroVersionText, GalleryAutomationHeadingLevel.Level1);
-            GalleryAutomation.SetHeadingLevel(HeroTitleText, GalleryAutomationHeadingLevel.Level1);
-            GalleryAutomation.SetHeadingLevel(OverviewHeaderText, GalleryAutomationHeadingLevel.Level2);
-            GalleryAutomation.SetHeadingLevel(RecentlyAddedHeaderText, GalleryAutomationHeadingLevel.Level2);
         }
 
         private void OnNavigateCard(object parameter)

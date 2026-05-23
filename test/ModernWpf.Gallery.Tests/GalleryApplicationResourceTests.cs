@@ -139,32 +139,37 @@ namespace ModernWpf.Gallery.Tests
             WpfTestHost.Run(() =>
             {
                 var page = new HomePage();
-                var tileGallery = (TileGallery)page.FindName("HomeTileGallery");
-                var tilesPanel = (StackPanel)tileGallery.FindName("TilesPanel");
-                var tiles = tilesPanel.Children.OfType<HeaderTile>().ToArray();
-
-                Assert.AreEqual(5, tiles.Length);
-
-                foreach (var tile in tiles)
+                RenderElement(page, () =>
                 {
-                    Assert.AreEqual(198d, tile.Width);
-                    Assert.AreEqual(220d, tile.Height);
-                    Assert.AreEqual(new Thickness(6), ((Button)tile.FindName("RootButton")).Margin);
-                }
+                    var tileGallery = (TileGallery)page.FindName("HomeTileGallery");
+                    var tilesPanel = (StackPanel)tileGallery.FindName("TilesPanel");
+                    var tiles = tilesPanel.Children.OfType<HeaderTile>().ToArray();
 
-                Assert.AreEqual(new Thickness(24, 0, 6, 0), tiles[0].Margin);
+                    Assert.AreEqual(5, tiles.Length);
 
-                foreach (var tile in tiles.Skip(1))
-                {
-                    Assert.AreEqual(new Thickness(0), tile.Margin);
-                }
+                    foreach (var tile in tiles)
+                    {
+                        Assert.AreEqual(198d, tile.Width);
+                        Assert.AreEqual(220d, tile.Height);
+                        var rootButton = (Button)tile.FindName("RootButton");
+                        Assert.AreEqual(new Thickness(6), rootButton.Margin);
+                        AssertBindingPath(rootButton, AutomationProperties.NameProperty, "Title");
+                    }
 
-                CollectionAssert.AreEqual(
-                    new[] { "Getting started", "Windows design", "WPF GitHub", "Code samples", "Partner Center" },
-                    tiles.Select(GetHeaderTileAutomationName).ToArray());
+                    Assert.AreEqual(new Thickness(24, 0, 6, 0), tiles[0].Margin);
 
-                Assert.AreEqual("Scroll left", AutomationProperties.GetName((Button)tileGallery.FindName("ScrollBackButton")));
-                Assert.AreEqual("Scroll right", AutomationProperties.GetName((Button)tileGallery.FindName("ScrollForwardButton")));
+                    foreach (var tile in tiles.Skip(1))
+                    {
+                        Assert.AreEqual(new Thickness(0), tile.Margin);
+                    }
+
+                    CollectionAssert.AreEqual(
+                        new[] { "Getting started", "Windows design", "WPF GitHub", "Code samples", "Partner Center" },
+                        tiles.Select(GetHeaderTileAutomationName).ToArray());
+
+                    Assert.AreEqual("Scroll left", AutomationProperties.GetName((Button)tileGallery.FindName("ScrollBackButton")));
+                    Assert.AreEqual("Scroll right", AutomationProperties.GetName((Button)tileGallery.FindName("ScrollForwardButton")));
+                });
             });
         }
 
@@ -362,6 +367,34 @@ namespace ModernWpf.Gallery.Tests
             var rootButton = (Button)tile.FindName("RootButton");
             BindingOperations.GetBindingExpression(rootButton, AutomationProperties.NameProperty)?.UpdateTarget();
             return AutomationProperties.GetName(rootButton);
+        }
+
+        private static void RenderElement(FrameworkElement element, Action assert)
+        {
+            var window = new Window
+            {
+                Width = 1180,
+                Height = 820,
+                Left = -32000,
+                Top = -32000,
+                ShowInTaskbar = false,
+                WindowStartupLocation = WindowStartupLocation.Manual,
+                Content = element
+            };
+
+            try
+            {
+                window.Show();
+                WpfTestHost.DoEvents();
+                window.UpdateLayout();
+                WpfTestHost.DoEvents();
+                assert();
+            }
+            finally
+            {
+                window.Content = null;
+                window.Close();
+            }
         }
 
         private static void AssertDynamicResourceSetter(Style style, DependencyProperty property, object resourceKey)

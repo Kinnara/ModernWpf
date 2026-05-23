@@ -18,6 +18,7 @@
         HorizontalContentAlignment="Stretch"
         VerticalAlignment="Stretch"
         VerticalContentAlignment="Stretch"
+        AutomationProperties.Name="{Binding Title, RelativeSource={RelativeSource AncestorType=local:HeaderTile}}"
         BorderThickness="1"
         Click="RootButton_Click">
         <Button.Resources>

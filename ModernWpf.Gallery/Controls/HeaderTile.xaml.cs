@@ -1,7 +1,6 @@
 using System;
 using System.Diagnostics;
 using System.Windows;
-using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Media;
 using Microsoft.Win32;
@@ -13,14 +12,13 @@ namespace ModernWpf.Gallery.Controls
         public HeaderTile()
         {
             InitializeComponent();
-            UpdateAutomationName();
             UpdateButtonResources();
             SystemEvents.UserPreferenceChanged += OnUserPreferenceChanged;
             Unloaded += OnUnloaded;
         }
 
         public static readonly DependencyProperty TitleProperty =
-            DependencyProperty.Register(nameof(Title), typeof(string), typeof(HeaderTile), new PropertyMetadata(string.Empty, OnTitleChanged));
+            DependencyProperty.Register(nameof(Title), typeof(string), typeof(HeaderTile), new PropertyMetadata(string.Empty));
 
         public static readonly DependencyProperty DescriptionProperty =
             DependencyProperty.Register(nameof(Description), typeof(string), typeof(HeaderTile), new PropertyMetadata(string.Empty));
@@ -58,19 +56,6 @@ namespace ModernWpf.Gallery.Controls
         private void OnUserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
         {
             Dispatcher.Invoke(UpdateButtonResources);
-        }
-
-        private static void OnTitleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((HeaderTile)d).UpdateAutomationName();
-        }
-
-        private void UpdateAutomationName()
-        {
-            if (RootButton != null)
-            {
-                AutomationProperties.SetName(RootButton, Title);
-            }
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)

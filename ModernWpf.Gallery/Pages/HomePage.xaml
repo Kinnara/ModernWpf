@@ -5,6 +5,7 @@
     xmlns:controls="clr-namespace:ModernWpf.Gallery.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:pages="clr-namespace:ModernWpf.Gallery.Pages"
     d:DesignHeight="700"
     d:DesignWidth="900"
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
@@ -48,12 +49,14 @@
                         <TextBlock
                             x:Name="HeroVersionText"
                             Margin="0,0,0,2"
+                            pages:GalleryAutomation.HeadingLevel="Level1"
                             Foreground="Black"
                             Style="{StaticResource SubtitleTextBlockStyle}"
                             Text=".NET 10" />
                         <TextBlock
                             x:Name="HeroTitleText"
                             Margin="0,0,0,8"
+                            pages:GalleryAutomation.HeadingLevel="Level1"
                             Foreground="Black"
                             Style="{StaticResource TitleLargeTextBlockStyle}"
                             Text="WPF Gallery" />
@@ -86,6 +89,7 @@
                     Orientation="Vertical">
                     <TextBlock
                         x:Name="OverviewHeaderText"
+                        pages:GalleryAutomation.HeadingLevel="Level2"
                         FontSize="16"
                         Style="{StaticResource BodyStrongTextBlockStyle}"
                         Text="Overview" />
@@ -101,6 +105,7 @@
 
                     <TextBlock
                         x:Name="RecentlyAddedHeaderText"
+                        pages:GalleryAutomation.HeadingLevel="Level2"
                         FontSize="16"
                         Style="{StaticResource BodyStrongTextBlockStyle}"
                         Text="Recently added and updated" />
