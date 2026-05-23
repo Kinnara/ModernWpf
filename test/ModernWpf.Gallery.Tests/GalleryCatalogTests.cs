@@ -19,11 +19,11 @@ namespace ModernWpf.Gallery.Tests
                 "Collections",
                 "Date & Calendar",
                 "Layout",
-                "Media Controls",
                 "Navigation",
                 "Status & Info",
                 "Text",
                 "System",
+                "Media Controls",
                 "ModernWpf controls",
                 "Platform & patterns"
             };

@@ -106,6 +106,9 @@ namespace ModernWpf.Gallery.Tests
                 CollectionAssert.AreEqual(
                     new[] { "Home", "What's New", "Design Guidance", "Samples", "All Controls", "Basic Input" },
                     topLevelItems.Take(6).Select(GetNavigationItemText).ToArray());
+                CollectionAssert.AreEqual(
+                    new[] { "Layout", "Navigation", "Status & Info", "Text", "System", "Media Controls", "ModernWpf controls", "Platform & patterns" },
+                    topLevelItems.Skip(8).Take(8).Select(GetNavigationItemText).ToArray());
 
                 AssertFontIconGlyph(topLevelItems[0], "\uE80F");
                 AssertFontIconGlyph(topLevelItems[1], "\uEB51");
@@ -132,7 +135,8 @@ namespace ModernWpf.Gallery.Tests
                 Assert.IsNull(basicInputItems[0].Icon);
                 AssertNavigationItemContentMargin(basicInputItems[0], 31);
 
-                var mediaItem = topLevelItems.Single(item => string.Equals(GetNavigationItemText(item), "Media Controls", StringComparison.Ordinal));
+                var mediaItem = topLevelItems[13];
+                Assert.AreEqual("Media Controls", GetNavigationItemText(mediaItem));
                 AssertFontIconGlyph(mediaItem, "\uE8B9");
                 CollectionAssert.AreEqual(
                     new[] { "Canvas", "Image" },

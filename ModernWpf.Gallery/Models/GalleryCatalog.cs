@@ -664,17 +664,6 @@ namespace ModernWpf.Gallery.Models
                     },
                     "Controls for layouting"),
                 CreateGroup(
-                    "Media",
-                    "Media Controls",
-                    "Canvas, Image",
-                    "pack://application:,,,/Assets/ControlImages/Image.png",
-                    new[]
-                    {
-                        "Canvas",
-                        "Image"
-                    },
-                    "Controls for media presentation"),
-                CreateGroup(
                     "Navigation",
                     "Navigation",
                     "Menu, TabControl, Frame, NavigationWindow",
@@ -725,6 +714,17 @@ namespace ModernWpf.Gallery.Models
                         "Clipboard"
                     },
                     "System-level controls and dialogs"),
+                CreateGroup(
+                    "Media",
+                    "Media Controls",
+                    "Canvas, Image",
+                    "pack://application:,,,/Assets/ControlImages/Image.png",
+                    new[]
+                    {
+                        "Canvas",
+                        "Image"
+                    },
+                    "Controls for media presentation"),
                 CreateGroup(
                     "ModernWpfControls",
                     "ModernWpf controls",
