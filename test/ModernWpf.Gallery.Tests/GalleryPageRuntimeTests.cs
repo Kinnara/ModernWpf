@@ -165,16 +165,29 @@ namespace ModernWpf.Gallery.Tests
             WpfTestHost.Run(() =>
             {
                 var page = new WhatsNewPage();
-                var titleLabel = (Label)page.FindName("TitleLabel");
-                var descriptionLabel = (Label)page.FindName("DescriptionLabel");
-                var title = (TextBlock)page.FindName("WhatsNewTitleTextBlock");
-                var description = (TextBlock)page.FindName("WhatsNewDescriptionTextBlock");
+                var pageHeader = (PageHeader)page.FindName("PageHeader");
 
+                Assert.AreEqual(new Thickness(0, 0, 0, 32), pageHeader.Margin);
+                Assert.AreEqual("What's new in WPF", pageHeader.Title);
+                Assert.AreEqual("Discover all the new features, enhancements and APIs introduced in WPF", pageHeader.Description);
+                Assert.IsTrue(pageHeader.ShowDescription);
+                AssertBindingPath(pageHeader, PageHeader.TitleProperty, "ViewModel.PageTitle");
+                AssertBindingPath(pageHeader, PageHeader.DescriptionProperty, "ViewModel.PageDescription");
+
+                pageHeader.ApplyTemplate();
+                var titleLabel = (Label)pageHeader.Template.FindName("TitleTextBlock", pageHeader);
+                Assert.IsNotNull(titleLabel);
                 Assert.AreEqual("What's new in WPF Page", AutomationProperties.GetName(titleLabel));
                 Assert.AreEqual(AutomationHeadingLevel.Level1, AutomationProperties.GetHeadingLevel(titleLabel));
-                Assert.AreEqual(AutomationHeadingLevel.Level2, AutomationProperties.GetHeadingLevel(descriptionLabel));
                 Assert.AreEqual(0, KeyboardNavigation.GetTabIndex(titleLabel));
+
+                var descriptionLabel = pageHeader.FindDescendants<Label>().Single(label => !ReferenceEquals(label, titleLabel));
+                Assert.AreEqual(AutomationHeadingLevel.Level2, AutomationProperties.GetHeadingLevel(descriptionLabel));
                 Assert.AreEqual(1, KeyboardNavigation.GetTabIndex(descriptionLabel));
+                Assert.AreEqual(Visibility.Visible, descriptionLabel.Visibility);
+
+                var title = (TextBlock)titleLabel.Content;
+                var description = (TextBlock)pageHeader.Template.FindName("DescriptionTextBlock", pageHeader);
                 Assert.AreEqual("What's new in WPF", title.Text);
                 Assert.AreEqual("Discover all the new features, enhancements and APIs introduced in WPF", description.Text);
 

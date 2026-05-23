@@ -12,8 +12,6 @@ namespace ModernWpf.Gallery.Pages
             ViewModel = new WhatsNewPageViewModel(OnNavigateCard);
             DataContext = this;
             InitializeComponent();
-            GalleryAutomation.SetHeadingLevel(TitleLabel, GalleryAutomationHeadingLevel.Level1);
-            GalleryAutomation.SetHeadingLevel(DescriptionLabel, GalleryAutomationHeadingLevel.Level2);
         }
 
         public Action<string> ItemRequested { get; set; }
