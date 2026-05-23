@@ -9,24 +9,9 @@
     d:DesignWidth="900"
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     mc:Ignorable="d">
-    <UserControl.Resources>
-        <Style
-            x:Key="WhatsNewSubHeaderTextStyle"
-            BasedOn="{StaticResource SubtitleTextBlockStyle}"
-            TargetType="TextBlock">
-            <Setter Property="Margin" Value="0,0,0,12" />
-        </Style>
-
-        <Style
-            x:Key="WhatsNewParagraphTextStyle"
-            BasedOn="{StaticResource BodyTextBlockStyle}"
-            TargetType="TextBlock">
-            <Setter Property="Margin" Value="0,0,0,12" />
-            <Setter Property="TextWrapping" Value="Wrap" />
-        </Style>
-    </UserControl.Resources>
 
     <Grid
+        x:Name="ContentRootGrid"
         AutomationProperties.AutomationId="ContentRootGrid"
         Style="{StaticResource GalleryPageRootStyle}">
         <Grid.RowDefinitions>
@@ -51,9 +36,12 @@
                     Style="{StaticResource TitleTextBlockStyle}"
                     Text=".NET 10" />
 
-                <TextBlock Style="{StaticResource WhatsNewSubHeaderTextStyle}" Text="New and Enhanced Fluent Styles" />
+                <TextBlock
+                    Margin="0,0,0,12"
+                    Style="{StaticResource SubtitleTextBlockStyle}"
+                    Text="New and Enhanced Fluent Styles" />
 
-                <TextBlock Style="{StaticResource WhatsNewParagraphTextStyle}">
+                <TextBlock Margin="0,0,0,12" TextWrapping="Wrap">
                     <Run>
                         Fluent styles for remaining PresentationFramework controls have been added in .NET 10, including GridSplitter, GridView,
                         GroupBox, Label, Frame, NavigationWindow, etc.
@@ -70,11 +58,17 @@
                     <LineBreak />
                 </TextBlock>
 
-                <TextBlock Style="{StaticResource WhatsNewSubHeaderTextStyle}" Text="Grid Shorthand Syntax" />
+                <TextBlock
+                    Margin="0,0,0,12"
+                    Style="{StaticResource SubtitleTextBlockStyle}"
+                    Text="Grid Shorthand Syntax" />
 
-                <TextBlock Style="{StaticResource WhatsNewParagraphTextStyle}">
+                <TextBlock
+                    x:Name="GridShorthandSyntaxParagraphText"
+                    Margin="0,0,0,12"
+                    TextWrapping="Wrap">
                     The WPF Grid supports a shorthand syntax for defining row and column sizes using the RowDefinitions and ColumnDefinitions attribute.
-                    Values are comma-separated and follow the same rules as the longhand RowDefinition and ColumnDefinition declarations. The new syntax
+                    Values are comma&#x2011;separated and follow the same rules as the longhand RowDefinition and ColumnDefinition declarations. The new syntax
                     comes with the XAML Hot Reload support.
                 </TextBlock>
 
@@ -139,9 +133,12 @@
                     </Grid>
                 </controls:ControlExample>
 
-                <TextBlock Style="{StaticResource WhatsNewSubHeaderTextStyle}" Text="Extended MessageBox Options" />
+                <TextBlock
+                    Margin="0,0,0,12"
+                    Style="{StaticResource SubtitleTextBlockStyle}"
+                    Text="Extended MessageBox Options" />
 
-                <TextBlock Style="{StaticResource WhatsNewParagraphTextStyle}">
+                <TextBlock Margin="0,0,0,12" TextWrapping="Wrap">
                     <Run>
                         MessageBox in WPF calls into the Win32 API for displaying the message dialog box, however some of the options provided by the API
                         was not exposed till now. Thanks to the help from the community we have exposed those options and results in WPF's Messagebox API,
@@ -158,7 +155,7 @@
 
                 <TextBlock
                     Margin="0,12,0,24"
-                    Style="{StaticResource WhatsNewParagraphTextStyle}">
+                    TextWrapping="Wrap">
                     <Run>See </Run>
                     <Hyperlink Click="OnWhatsNewNet10Click">What's New in WPF for .NET 10</Hyperlink>
                     <Run> for more details.</Run>
@@ -169,9 +166,12 @@
                     Style="{StaticResource TitleTextBlockStyle}"
                     Text=".NET 9" />
 
-                <TextBlock Style="{StaticResource WhatsNewSubHeaderTextStyle}" Text="Accent colors as SystemColors" />
+                <TextBlock
+                    Margin="0,0,0,12"
+                    Style="{StaticResource SubtitleTextBlockStyle}"
+                    Text="Accent colors as SystemColors" />
 
-                <TextBlock Style="{StaticResource WhatsNewParagraphTextStyle}">
+                <TextBlock Margin="0,0,0,12" TextWrapping="Wrap">
                     Since Windows 10, Accent Color became a cornerstone for visual
                     styling, enhancing consistency across apps by aligning with
                     the system theme.
@@ -181,7 +181,7 @@
                     system accent colors and their variations.
                 </TextBlock>
 
-                <TextBlock Style="{StaticResource WhatsNewParagraphTextStyle}">
+                <TextBlock Margin="0,0,0,12" TextWrapping="Wrap">
                     <Bold>NOTE : </Bold>
                     <Run>
                         In HighContrast mode, all the AccentColor brushes and colors have the same value, and we won't see a difference in the brushes.
@@ -224,7 +224,7 @@
                     Style="{StaticResource SubtitleTextBlockStyle}"
                     Text="[ Experimental ] ThemeMode API" />
 
-                <TextBlock Style="{StaticResource WhatsNewParagraphTextStyle}">
+                <TextBlock Margin="0,0,0,12" TextWrapping="Wrap">
                     <Run>
                         This experimental API enables easy switching between Fluent Themes in WPF
                         applications, improving user experience and accessibility.
@@ -258,7 +258,7 @@
                     Style="{StaticResource SubtitleTextBlockStyle}"
                     Text="Hyphen based ligature support" />
 
-                <TextBlock Style="{StaticResource WhatsNewParagraphTextStyle}">
+                <TextBlock Margin="0,0,0,12" TextWrapping="Wrap">
                     Based on the WPF community feedback, we have now fixed the
                     issue with Hyphen based ligatures not working in WPF.
                 </TextBlock>
@@ -286,7 +286,7 @@
 
                 <TextBlock
                     Margin="0,24,0,12"
-                    Style="{StaticResource WhatsNewParagraphTextStyle}">
+                    TextWrapping="Wrap">
                     <Run>See </Run>
                     <Hyperlink Click="OnWhatsNewNet9Click">What's New in WPF for .NET 9</Hyperlink>
                     <Run> for more details.</Run>

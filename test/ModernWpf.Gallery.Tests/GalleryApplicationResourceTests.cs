@@ -66,6 +66,9 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(40d, app.FindResource("TitleLargeTextBlockFontSize"));
                 Assert.AreEqual(68d, app.FindResource("DisplayTextBlockFontSize"));
 
+                var galleryRootStyle = (Style)app.FindResource("GalleryPageRootStyle");
+                AssertStyleSetter(galleryRootStyle, TextElement.FontSizeProperty, app.FindResource("BodyTextBlockFontSize"));
+
                 var baseTextStyle = (Style)app.FindResource("BaseTextBlockStyle");
                 AssertNoStyleSetter(baseTextStyle, TextBlock.ForegroundProperty);
                 AssertStyleSetter(baseTextStyle, TextBlock.FontSizeProperty, app.FindResource("BodyTextBlockFontSize"));

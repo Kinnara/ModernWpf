@@ -191,6 +191,19 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual("What's new in WPF", title.Text);
                 Assert.AreEqual("Discover all the new features, enhancements and APIs introduced in WPF", description.Text);
 
+                var root = (Grid)page.FindName("ContentRootGrid");
+                Assert.AreEqual(
+                    (double)Application.Current.FindResource("BodyTextBlockFontSize"),
+                    TextElement.GetFontSize(root));
+
+                var gridShorthandParagraph = (TextBlock)page.FindName("GridShorthandSyntaxParagraphText");
+                Assert.AreEqual(new Thickness(0, 0, 0, 12), gridShorthandParagraph.Margin);
+                Assert.AreEqual(TextWrapping.Wrap, gridShorthandParagraph.TextWrapping);
+                Assert.AreSame(DependencyProperty.UnsetValue, gridShorthandParagraph.ReadLocalValue(TextBlock.StyleProperty));
+                StringAssert.Contains(
+                    new TextRange(gridShorthandParagraph.ContentStart, gridShorthandParagraph.ContentEnd).Text,
+                    "comma\u2011separated");
+
                 var gridExample = (ControlExample)page.FindName("GridShorthandSyntaxExample");
                 var accentExample = (ControlExample)page.FindName("AccentColorExample");
                 var ligatureExample = (ControlExample)page.FindName("HyphenLigatureExample");
