@@ -47,7 +47,7 @@
                                 AutomationProperties.Name="{Binding Tag, StringFormat='{}Copy {0} to clipboard', RelativeSource={RelativeSource Mode=TemplatedParent}}"
                                 Command="ApplicationCommands.Copy"
                                 CommandParameter="{TemplateBinding Content}"
-                                CommandTarget="{Binding RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                CommandTarget="{Binding RelativeSource={RelativeSource AncestorType=Page}}"
                                 FocusManager.IsFocusScope="True"
                                 ToolTipService.ToolTip="Copy to clipboard">
                                 <Grid>
@@ -429,7 +429,7 @@
                                 <DataTemplate>
                                     <Button
                                         AutomationProperties.Name="{Binding}"
-                                        Command="{Binding DataContext.ViewModel.ApplyTagFilterCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        Command="{Binding ViewModel.ApplyTagFilterCommand, RelativeSource={RelativeSource AncestorType=Page}}"
                                         CommandParameter="{Binding}"
                                         Style="{StaticResource IconTagChipButtonStyle}">
                                         <TextBlock

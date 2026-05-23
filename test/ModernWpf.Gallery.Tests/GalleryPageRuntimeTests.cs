@@ -1993,11 +1993,11 @@ namespace ModernWpf.Gallery.Tests
                 var page = new ItemPage(GalleryCatalog.FindItem("Iconography"));
                 Assert.IsTrue(page.HasDirectPageContent);
 
-                var directPage = (FrameworkElement)page.DirectPageContent;
+                var directPage = (IconographyPage)page.DirectPageContent;
                 directPage.RaiseEvent(new RoutedEventArgs(FrameworkElement.LoadedEvent, directPage));
                 WpfTestHost.DoEvents();
 
-                var body = (Grid)((UserControl)page.DirectPageContent).Content;
+                var body = (Grid)directPage.Content;
                 Assert.AreEqual(6, body.RowDefinitions.Count);
 
                 var instructions = (Expander)body.Children.Cast<UIElement>().Single(child => Grid.GetRow(child) == 1);
@@ -2039,6 +2039,18 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual("E620", ((ContentControl)detailsStack.Children[5]).Content);
                 Assert.AreEqual("&#xE620;", ((ContentControl)detailsStack.Children[7]).Content);
                 Assert.AreEqual("\\xE620", ((ContentControl)detailsStack.Children[9]).Content);
+
+                var firstIconDataPresenter = (ContentControl)detailsStack.Children[3];
+                firstIconDataPresenter.ApplyTemplate();
+                var copyButton = FindDescendant<Button>(firstIconDataPresenter);
+                Assert.IsNotNull(copyButton);
+                Assert.AreEqual(ApplicationCommands.Copy, copyButton.Command);
+                AssertRelativeSourceAncestorBinding(copyButton, Button.CommandTargetProperty, typeof(Page));
+
+                var tagsItemsControl = (ItemsControl)directPage.FindName("TagsItemsControl");
+                Assert.AreEqual("Selected Icon Tags", AutomationProperties.GetName(tagsItemsControl));
+                var tagButton = (Button)tagsItemsControl.ItemTemplate.LoadContent();
+                AssertRelativeSourceAncestorBinding(tagButton, Button.CommandProperty, typeof(Page), "ViewModel.ApplyTagFilterCommand");
 
                 var pagination = (Grid)body.Children.Cast<UIElement>().Single(child => Grid.GetRow(child) == 5);
                 var navigation = (StackPanel)pagination.Children[0];
@@ -2692,6 +2704,23 @@ namespace ModernWpf.Gallery.Tests
             var expression = BindingOperations.GetBindingExpression(target, property);
             Assert.IsNotNull(expression);
             Assert.AreEqual(expectedPath, expression.ParentBinding.Path.Path);
+        }
+
+        private static void AssertRelativeSourceAncestorBinding(
+            DependencyObject target,
+            DependencyProperty property,
+            Type ancestorType,
+            string expectedPath = null)
+        {
+            var binding = BindingOperations.GetBinding(target, property);
+            Assert.IsNotNull(binding);
+            Assert.IsNotNull(binding.RelativeSource);
+            Assert.AreEqual(RelativeSourceMode.FindAncestor, binding.RelativeSource.Mode);
+            Assert.AreEqual(ancestorType, binding.RelativeSource.AncestorType);
+            if (expectedPath != null)
+            {
+                Assert.AreEqual(expectedPath, binding.Path.Path);
+            }
         }
 
         private static void AssertGridExample(Grid grid, double height, string[] expectedTexts)
