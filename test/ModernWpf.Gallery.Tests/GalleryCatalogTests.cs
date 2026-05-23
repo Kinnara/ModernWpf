@@ -69,6 +69,13 @@ namespace ModernWpf.Gallery.Tests
             Assert.IsNotNull(GalleryCatalog.FindGroup("Media"), "ModernWpf still exposes the orphaned Media pages as a dedicated combined-gallery section.");
             Assert.IsTrue(allControlIds.Contains("Color"), "Design guidance items remain part of All Controls.");
             Assert.IsTrue(allControlIds.Contains("NavigationView"), "ModernWpf control pages remain part of the combined gallery.");
+
+            CollectionAssert.AreEqual(
+                new[] { "Menu", "TabControl", "Frame", "NavigationWindow" },
+                allControlIds
+                    .Where(id => id == "Menu" || id == "TabControl" || id == "Frame" || id == "NavigationWindow")
+                    .ToArray(),
+                "The Navigation controls should retain the official WPF Gallery All Controls order.");
         }
 
         [TestMethod]
