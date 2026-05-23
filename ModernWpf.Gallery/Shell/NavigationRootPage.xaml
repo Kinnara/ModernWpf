@@ -60,6 +60,7 @@
         <ui:NavigationView
             x:Name="Navigation"
             AutomationProperties.AutomationId="GalleryNavigationView"
+            AutomationProperties.Name="Navigation Pane"
             IsBackButtonVisible="Collapsed"
             IsPaneToggleButtonVisible="False"
             IsSettingsVisible="False"

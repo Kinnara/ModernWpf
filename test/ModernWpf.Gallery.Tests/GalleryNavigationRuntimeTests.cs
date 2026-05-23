@@ -90,6 +90,7 @@ namespace ModernWpf.Gallery.Tests
                 var topLevelItems = navigation.MenuItems.OfType<NavigationViewItem>().ToList();
 
                 Assert.AreEqual(257d, navigation.OpenPaneLength);
+                Assert.AreEqual("Navigation Pane", AutomationProperties.GetName(navigation));
                 Assert.AreEqual(NavigationViewBackButtonVisible.Collapsed, navigation.IsBackButtonVisible);
                 Assert.IsFalse(navigation.IsPaneToggleButtonVisible);
                 Assert.IsFalse(navigation.IsSettingsVisible);

@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Automation;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
@@ -359,6 +360,14 @@ namespace ModernWpf.Gallery.Shell
         private void OnSettingsButtonClick(object sender, RoutedEventArgs e)
         {
             Navigate(NavigationTarget.Settings(), true);
+
+            var peer = UIElementAutomationPeer.FromElement(SettingsButton)
+                ?? UIElementAutomationPeer.CreatePeerForElement(SettingsButton);
+            peer?.RaiseNotificationEvent(
+                AutomationNotificationKind.Other,
+                AutomationNotificationProcessing.ImportantMostRecent,
+                "Settings Page Opened",
+                "ButtonClickedActivity");
         }
 
         private static IconElement CreateNavigationIcon(string uniqueId, bool isGroup, bool isWpfGalleryChild)
