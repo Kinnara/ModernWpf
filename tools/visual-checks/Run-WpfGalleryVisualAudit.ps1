@@ -1252,12 +1252,15 @@ function Capture-ModernWpf($case, [string]$caseDir) {
 }
 
 function Capture-OfficialWpfGalleryDirectHost($case, [string]$caseDir) {
+    $artifactDir = Join-Path $caseDir "official-wpf-artifacts"
+    New-Item -ItemType Directory -Force -Path $artifactDir | Out-Null
     $process = Start-AppProcess $OfficialDirectHostExe @(
         "--page", $case.Id,
         "--theme", $Theme,
         "--official-output", $OfficialWpfGalleryOutput,
         "--width", $Width,
-        "--height", $Height)
+        "--height", $Height,
+        "--visual-artifact-dir", $artifactDir)
     $window = $null
     try {
         $window = Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "official WPF Gallery direct reference window for $($case.Id)" -Probe {
@@ -1274,13 +1277,17 @@ function Capture-OfficialWpfGalleryDirectHost($case, [string]$caseDir) {
         Capture-Window $window.Current.NativeWindowHandle $screenshot
         Write-UiaTree $window $treePath 7
         $frame = Find-DescendantByAutomationId $window "RootContentFrame"
-        $contentCrop = Save-ElementCrop $window $screenshot $contentCropPath $frame "OfficialDirectRootContentFrame" 0
+        $renderedContentArtifact = Join-Path $artifactDir "RootContentFrame.png"
+        $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "OfficialDirectRootContentFrameRenderedArtifact"
+        if (!$contentCrop.NonBlank) {
+            $contentCrop = Save-ElementCrop $window $screenshot $contentCropPath $frame "OfficialDirectRootContentFrame" 0
+        }
 
         return [ordered]@{
             App = "OfficialWpfGallery"
             Case = $case.Id
             Route = "Direct reference host: $($case.Id)"
-            Status = $(if ((Test-ImageNotBlank $screenshot) -and $contentCrop.Found) { "Passed" } else { "Failed" })
+            Status = $(if ((Test-ImageNotBlank $screenshot) -and $contentCrop.NonBlank) { "Passed" } else { "Failed" })
             Screenshot = $screenshot
             ContentCrop = $contentCrop
             UiaTree = $treePath

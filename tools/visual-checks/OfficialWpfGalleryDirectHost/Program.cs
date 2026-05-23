@@ -3,6 +3,9 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using WPFGallery.Navigation;
 using WPFGallery.ViewModels;
 using WPFGallery.Views;
@@ -66,7 +69,13 @@ internal static class Program
             Content = contentHost
         };
         window.SetResourceReference(Control.BackgroundProperty, "ApplicationPageBackgroundThemeBrush");
-        window.Loaded += (_, _) => ApplyTheme(app, options.Theme);
+        window.Loaded += (_, _) =>
+        {
+            ApplyTheme(app, options.Theme);
+            window.Dispatcher.BeginInvoke(
+                DispatcherPriority.ContextIdle,
+                new Action(() => WriteVisualArtifact(frame, options.ArtifactDirectory)));
+        };
 
         app.MainWindow = window;
         ApplyTheme(app, options.Theme);
@@ -178,6 +187,63 @@ internal static class Program
         };
     }
 
+    private static void WriteVisualArtifact(FrameworkElement element, string artifactDirectory)
+    {
+        if (string.IsNullOrWhiteSpace(artifactDirectory))
+        {
+            return;
+        }
+
+        try
+        {
+            Directory.CreateDirectory(artifactDirectory);
+            WriteElementPng(element, Path.Combine(artifactDirectory, "RootContentFrame.png"));
+        }
+        catch (Exception ex)
+        {
+            File.WriteAllText(Path.Combine(AppContext.BaseDirectory, "last-artifact-error.txt"), ex.ToString());
+        }
+    }
+
+    private static void WriteElementPng(FrameworkElement element, string path)
+    {
+        element.UpdateLayout();
+        var width = (int)Math.Ceiling(element.ActualWidth);
+        var height = (int)Math.Ceiling(element.ActualHeight);
+        if (width <= 0 || height <= 0)
+        {
+            return;
+        }
+
+        var drawingVisual = new DrawingVisual();
+        using (var drawingContext = drawingVisual.RenderOpen())
+        {
+            drawingContext.DrawRectangle(
+                GetElementBackground(element),
+                null,
+                new Rect(0, 0, width, height));
+            drawingContext.DrawRectangle(
+                new VisualBrush(element),
+                null,
+                new Rect(0, 0, width, height));
+        }
+
+        var bitmap = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
+        bitmap.Render(drawingVisual);
+
+        var encoder = new PngBitmapEncoder();
+        encoder.Frames.Add(BitmapFrame.Create(bitmap));
+        using var stream = File.Create(path);
+        encoder.Save(stream);
+    }
+
+    private static Brush GetElementBackground(FrameworkElement element)
+    {
+        return element.TryFindResource("LayerFillColorDefaultBrush") as Brush
+            ?? element.TryFindResource("ApplicationPageBackgroundThemeBrush") as Brush
+            ?? Brushes.White;
+    }
+
     private sealed class NullNavigationService : INavigationService
     {
         public event EventHandler<NavigatingEventArgs>? Navigating;
@@ -210,7 +276,13 @@ internal static class Program
         }
     }
 
-    private sealed record HostOptions(string Page, string Theme, string OfficialOutput, int Width, int Height)
+    private sealed record HostOptions(
+        string Page,
+        string Theme,
+        string OfficialOutput,
+        int Width,
+        int Height,
+        string ArtifactDirectory)
     {
         public static HostOptions Parse(string[] args)
         {
@@ -219,6 +291,7 @@ internal static class Program
             var officialOutput = @"D:\repos\WPF-Samples\Sample Applications\WPFGallery\bin\Debug\net10.0-windows";
             var width = 1180;
             var height = 820;
+            var artifactDirectory = "";
 
             for (var i = 0; i < args.Length; i++)
             {
@@ -246,6 +319,10 @@ internal static class Program
                         height = int.Parse(value);
                         i++;
                         break;
+                    case "--visual-artifact-dir":
+                        artifactDirectory = value;
+                        i++;
+                        break;
                 }
             }
 
@@ -254,7 +331,7 @@ internal static class Program
                 throw new ArgumentException("--page is required.");
             }
 
-            return new HostOptions(page, theme, officialOutput, width, height);
+            return new HostOptions(page, theme, officialOutput, width, height, artifactDirectory);
         }
     }
 }
