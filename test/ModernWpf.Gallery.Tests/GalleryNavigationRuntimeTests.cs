@@ -366,17 +366,17 @@ namespace ModernWpf.Gallery.Tests
             {
                 var expectedViewModels = new[]
                 {
-                    new { UniqueId = "DesignGuidance", ViewModelType = typeof(DesignGuidancePageViewModel) },
-                    new { UniqueId = "Samples", ViewModelType = typeof(SamplesPageViewModel) },
-                    new { UniqueId = "BasicInput", ViewModelType = typeof(BasicInputPageViewModel) },
-                    new { UniqueId = "Collections", ViewModelType = typeof(CollectionsPageViewModel) },
-                    new { UniqueId = "DateAndCalendar", ViewModelType = typeof(DateAndTimePageViewModel) },
-                    new { UniqueId = "Layout", ViewModelType = typeof(LayoutPageViewModel) },
-                    new { UniqueId = "Media", ViewModelType = typeof(MediaPageViewModel) },
-                    new { UniqueId = "Navigation", ViewModelType = typeof(NavigationPageViewModel) },
-                    new { UniqueId = "StatusAndInfo", ViewModelType = typeof(StatusAndInfoPageViewModel) },
-                    new { UniqueId = "Text", ViewModelType = typeof(TextPageViewModel) },
-                    new { UniqueId = "System", ViewModelType = typeof(SystemPageViewModel) }
+                    new { UniqueId = "DesignGuidance", ViewModelType = typeof(DesignGuidancePageViewModel), PageTitle = "DesignGuidancePage" },
+                    new { UniqueId = "Samples", ViewModelType = typeof(SamplesPageViewModel), PageTitle = "SamplesPage" },
+                    new { UniqueId = "BasicInput", ViewModelType = typeof(BasicInputPageViewModel), PageTitle = "BasicInputPage" },
+                    new { UniqueId = "Collections", ViewModelType = typeof(CollectionsPageViewModel), PageTitle = "CollectionsPage" },
+                    new { UniqueId = "DateAndCalendar", ViewModelType = typeof(DateAndTimePageViewModel), PageTitle = "DateAndTimePage" },
+                    new { UniqueId = "Layout", ViewModelType = typeof(LayoutPageViewModel), PageTitle = "LayoutPage" },
+                    new { UniqueId = "Media", ViewModelType = typeof(MediaPageViewModel), PageTitle = "MediaPage" },
+                    new { UniqueId = "Navigation", ViewModelType = typeof(NavigationPageViewModel), PageTitle = "NavigationPage" },
+                    new { UniqueId = "StatusAndInfo", ViewModelType = typeof(StatusAndInfoPageViewModel), PageTitle = "StatusAndInfoPage" },
+                    new { UniqueId = "Text", ViewModelType = typeof(TextPageViewModel), PageTitle = "TextPage" },
+                    new { UniqueId = "System", ViewModelType = typeof(SystemPageViewModel), PageTitle = "SystemPage" }
                 };
 
                 foreach (var expected in expectedViewModels)
@@ -386,6 +386,7 @@ namespace ModernWpf.Gallery.Tests
 
                     var page = new SectionPage(group);
                     Assert.IsInstanceOfType(page, typeof(System.Windows.Controls.Page), expected.UniqueId);
+                    Assert.AreEqual(expected.PageTitle, page.Title, expected.UniqueId);
                     Assert.IsInstanceOfType(page.ViewModel, expected.ViewModelType, expected.UniqueId);
                     Assert.AreEqual(group.Title, page.ViewModel.PageTitle, expected.UniqueId);
                     Assert.AreEqual(group.PageDescription, page.ViewModel.PageDescription, expected.UniqueId);

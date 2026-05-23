@@ -17,6 +17,7 @@ namespace ModernWpf.Gallery.Pages
 
             ViewModel = WpfGalleryNavigationPageViewModel.CreateForGroup(group, OnNavigateCard);
             InitializeComponent();
+            Title = GetOfficialSectionPageTitle(group.UniqueId);
             DataContext = this;
         }
 
@@ -48,6 +49,37 @@ namespace ModernWpf.Gallery.Pages
             if (parameter is GalleryItem item)
             {
                 ItemRequested?.Invoke(item);
+            }
+        }
+
+        private static string GetOfficialSectionPageTitle(string uniqueId)
+        {
+            switch (uniqueId)
+            {
+                case "DesignGuidance":
+                    return "DesignGuidancePage";
+                case "Samples":
+                    return "SamplesPage";
+                case "BasicInput":
+                    return "BasicInputPage";
+                case "Collections":
+                    return "CollectionsPage";
+                case "DateAndCalendar":
+                    return "DateAndTimePage";
+                case "Layout":
+                    return "LayoutPage";
+                case "Media":
+                    return "MediaPage";
+                case "Navigation":
+                    return "NavigationPage";
+                case "StatusAndInfo":
+                    return "StatusAndInfoPage";
+                case "Text":
+                    return "TextPage";
+                case "System":
+                    return "SystemPage";
+                default:
+                    return uniqueId + "Page";
             }
         }
     }
