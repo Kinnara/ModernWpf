@@ -8,6 +8,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using WPFGallery.Navigation;
 using WPFGallery.ViewModels;
+using WPFGallery.ViewModels.Samples;
 using WPFGallery.Views;
 
 namespace OfficialWpfGalleryDirectHost;
@@ -180,6 +181,7 @@ internal static class Program
             "Spacing" => new SpacingPage(new SpacingPageViewModel()),
             "Geometry" => new GeometryPage(new GeometryPageViewModel()),
             "Iconography" => new IconsPage(new IconsPageViewModel()),
+            "UserDashboard" => new UserDashboardPage(new UserDashboardPageViewModel()),
             "Canvas" => new CanvasPage(new CanvasPageViewModel()),
             "Image" => new ImagePage(new ImagePageViewModel()),
             _ => throw new ArgumentOutOfRangeException(nameof(page), page, "Unsupported direct reference page.")
@@ -215,6 +217,17 @@ internal static class Program
         }
 
         var drawingVisual = new DrawingVisual();
+        var visualBrush = new VisualBrush(element)
+        {
+            AlignmentX = AlignmentX.Left,
+            AlignmentY = AlignmentY.Top,
+            Stretch = Stretch.None,
+            Viewbox = new Rect(0, 0, width, height),
+            ViewboxUnits = BrushMappingMode.Absolute,
+            Viewport = new Rect(0, 0, width, height),
+            ViewportUnits = BrushMappingMode.Absolute
+        };
+
         using (var drawingContext = drawingVisual.RenderOpen())
         {
             drawingContext.DrawRectangle(
@@ -222,7 +235,7 @@ internal static class Program
                 null,
                 new Rect(0, 0, width, height));
             drawingContext.DrawRectangle(
-                new VisualBrush(element),
+                visualBrush,
                 null,
                 new Rect(0, 0, width, height));
         }

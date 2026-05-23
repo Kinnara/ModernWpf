@@ -48,7 +48,6 @@
                 AutomationProperties.Name="Users"
                 Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
                 ItemsSource="{Binding ViewModel.Users, Mode=OneWay}"
-                SelectedIndex="0"
                 SelectedItem="{Binding ViewModel.SelectedUser, Mode=TwoWay}"
                 SelectionMode="Single">
                 <ListView.ItemContainerStyle>

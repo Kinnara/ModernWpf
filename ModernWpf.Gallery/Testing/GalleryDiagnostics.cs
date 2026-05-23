@@ -199,6 +199,17 @@ namespace ModernWpf.Gallery.Testing
             }
 
             var drawingVisual = new DrawingVisual();
+            var visualBrush = new VisualBrush(element)
+            {
+                AlignmentX = AlignmentX.Left,
+                AlignmentY = AlignmentY.Top,
+                Stretch = Stretch.None,
+                Viewbox = new Rect(0, 0, width, height),
+                ViewboxUnits = BrushMappingMode.Absolute,
+                Viewport = new Rect(0, 0, width, height),
+                ViewportUnits = BrushMappingMode.Absolute
+            };
+
             using (var drawingContext = drawingVisual.RenderOpen())
             {
                 drawingContext.DrawRectangle(
@@ -206,7 +217,7 @@ namespace ModernWpf.Gallery.Testing
                     null,
                     new Rect(0, 0, width, height));
                 drawingContext.DrawRectangle(
-                    new VisualBrush(element),
+                    visualBrush,
                     null,
                     new Rect(0, 0, width, height));
             }

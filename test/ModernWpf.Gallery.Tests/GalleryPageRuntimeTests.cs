@@ -24,6 +24,7 @@ using ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance;
 using ModernWpf.Gallery.Pages.WpfGallery.Layout;
 using ModernWpf.Gallery.Pages.WpfGallery.Media;
 using ModernWpf.Gallery.Pages.WpfGallery.Navigation;
+using ModernWpf.Gallery.Pages.WpfGallery.Samples;
 using ModernWpf.Gallery.Pages.WpfGallery.StatusAndInfo;
 using ModernWpf.Gallery.Pages.WpfGallery.SystemPages;
 using ModernWpf.Gallery.Pages.WpfGallery.Text;
@@ -1886,11 +1887,12 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(300.0, userList.Width);
                     Assert.AreEqual(SelectionMode.Single, userList.SelectionMode);
                     Assert.AreEqual(20, userList.Items.Count);
-                    Assert.AreEqual(0, userList.SelectedIndex);
+                    Assert.AreEqual(-1, userList.SelectedIndex);
+                    var firstUser = (UserDashboardUser)userList.Items[0];
                     var firstUserItem = (ListViewItem)userList.ItemContainerGenerator.ContainerFromIndex(0);
                     Assert.IsNotNull(firstUserItem);
-                    Assert.AreEqual("John Doe", AutomationProperties.GetName(firstUserItem));
-                    var firstUserName = FindTextBlock(firstUserItem, "John Doe");
+                    Assert.AreEqual(firstUser.Name, AutomationProperties.GetName(firstUserItem));
+                    var firstUserName = FindTextBlock(firstUserItem, firstUser.Name);
                     Assert.AreEqual(AutomationHeadingLevel.Level3, AutomationProperties.GetHeadingLevel(firstUserName));
 
                     var addUserButton = userListGrid.Children.OfType<Button>().Single();
@@ -1905,6 +1907,18 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(96.0, ((Ellipse)header.Children[0]).Width);
 
                     var formGrid = (Grid)detailsGrid.Children[1];
+                    Assert.AreEqual(Visibility.Collapsed, header.Visibility);
+                    Assert.AreEqual(Visibility.Collapsed, formGrid.Visibility);
+
+                    userList.SelectedIndex = 0;
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    var selectedUser = (UserDashboardUser)userList.SelectedItem;
+                    Assert.AreSame(firstUser, selectedUser);
+                    Assert.AreEqual(Visibility.Visible, header.Visibility);
+                    Assert.AreEqual(Visibility.Visible, formGrid.Visibility);
                     Assert.AreEqual(new Thickness(20, 10, 20, 10), formGrid.Margin);
                     var form = (StackPanel)((ScrollViewer)formGrid.Children[0]).Content;
                     Assert.AreEqual(new Thickness(20, 0, 20, 0), form.Margin);
@@ -1916,15 +1930,17 @@ namespace ModernWpf.Gallery.Tests
                     var lastNameBox = (TextBox)lastNamePanel.Children[1];
                     Assert.AreEqual("First Name", ((Label)firstNamePanel.Children[0]).Content);
                     Assert.AreEqual("First Name", AutomationProperties.GetName(firstNameBox));
-                    Assert.AreEqual("John", firstNameBox.Text);
+                    Assert.AreEqual(selectedUser.FirstName, firstNameBox.Text);
                     Assert.IsTrue(firstNameBox.IsReadOnly);
                     Assert.AreEqual("Last Name", AutomationProperties.GetName(lastNameBox));
-                    Assert.AreEqual("Doe", lastNameBox.Text);
+                    Assert.AreEqual(selectedUser.LastName, lastNameBox.Text);
 
                     var companyBox = (TextBox)form.Children[2];
                     var addressBox = (TextBox)form.Children[4];
                     Assert.AreEqual("Company", AutomationProperties.GetName(companyBox));
+                    Assert.AreEqual(selectedUser.Company, companyBox.Text);
                     Assert.AreEqual("Address", AutomationProperties.GetName(addressBox));
+                    Assert.AreEqual(selectedUser.Address, addressBox.Text);
 
                     var ageSlider = (Slider)form.Children[6];
                     Assert.AreEqual("Age", AutomationProperties.GetName(ageSlider));
@@ -1932,16 +1948,18 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(62.0, ageSlider.Maximum);
                     Assert.IsTrue(ageSlider.IsSnapToTickEnabled);
                     Assert.IsFalse(ageSlider.IsEnabled);
-                    Assert.AreEqual(37.0, ageSlider.Value);
+                    Assert.AreEqual((double)selectedUser.Age, ageSlider.Value);
 
                     var datePicker = (DatePicker)form.Children[8];
                     Assert.AreEqual("Date of Joining", AutomationProperties.GetName(datePicker));
                     Assert.IsFalse(datePicker.IsEnabled);
+                    Assert.AreEqual(selectedUser.DateOfJoining, datePicker.SelectedDate.GetValueOrDefault());
 
                     var graduatePanel = (StackPanel)form.Children[9];
                     var graduateCheckBox = (CheckBox)graduatePanel.Children[1];
                     Assert.AreEqual("Is user a new graduate ?", AutomationProperties.GetName(graduateCheckBox));
                     Assert.IsFalse(graduateCheckBox.IsEnabled);
+                    Assert.AreEqual(selectedUser.IsNewGraduate, graduateCheckBox.IsChecked.GetValueOrDefault());
 
                     var commands = (StackPanel)form.Children[10];
                     var savedStatus = (TextBlock)commands.Children[0];
@@ -1952,7 +1970,7 @@ namespace ModernWpf.Gallery.Tests
                     var cancelButton = (Button)commands.Children[5];
                     Assert.AreEqual("Saved!", savedStatus.Text);
                     Assert.AreEqual(Visibility.Collapsed, savedStatus.Visibility);
-                    Assert.AreEqual("User John Doe Deleted!", deletedStatus.Text);
+                    Assert.AreEqual("User " + selectedUser.Name + " Deleted!", deletedStatus.Text);
                     Assert.AreEqual(Visibility.Collapsed, deletedStatus.Visibility);
                     Assert.AreEqual("Edit", editButton.Content);
                     Assert.AreEqual("Delete", deleteButton.Content);

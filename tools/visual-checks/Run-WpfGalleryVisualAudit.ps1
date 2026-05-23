@@ -112,6 +112,7 @@ $OfficialDirectReferenceCaseIds = @(
     "Spacing",
     "Geometry",
     "Iconography",
+    "UserDashboard",
     "Canvas",
     "Image"
 )
