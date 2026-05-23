@@ -50,6 +50,18 @@ namespace ModernWpf.Gallery.Models
             "Clipboard"
         };
 
+        private static readonly string[] OfficialWpfGalleryOverviewGroupIds =
+        {
+            "BasicInput",
+            "Collections",
+            "DateAndCalendar",
+            "Layout",
+            "Navigation",
+            "StatusAndInfo",
+            "Text",
+            "System"
+        };
+
         private static readonly IReadOnlyList<GalleryItem> CatalogItems = CreateItems();
         private static readonly IReadOnlyList<GalleryGroup> DisplayGroups = CreateDisplayGroups();
 
@@ -151,9 +163,7 @@ namespace ModernWpf.Gallery.Models
 
         private static bool IsOverviewGroup(GalleryGroup group)
         {
-            return !string.Equals(group.UniqueId, "DesignGuidance", StringComparison.OrdinalIgnoreCase) &&
-                !string.Equals(group.UniqueId, "Samples", StringComparison.OrdinalIgnoreCase) &&
-                !string.Equals(group.UniqueId, "Media", StringComparison.OrdinalIgnoreCase);
+            return OfficialWpfGalleryOverviewGroupIds.Contains(group.UniqueId, StringComparer.OrdinalIgnoreCase);
         }
 
         private static bool IsAllControlsItem(GalleryItem item)

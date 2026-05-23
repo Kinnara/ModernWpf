@@ -34,7 +34,7 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void HomeOverviewGroupsMatchWpfGalleryReferenceWithModernExtensions()
+        public void HomeOverviewGroupsMatchWpfGalleryReference()
         {
             var expected = new[]
             {
@@ -45,9 +45,7 @@ namespace ModernWpf.Gallery.Tests
                 "Navigation",
                 "StatusAndInfo",
                 "Text",
-                "System",
-                "ModernWpfControls",
-                "PlatformAndPatterns"
+                "System"
             };
 
             var actual = GalleryCatalog.OverviewGroups.Select(group => group.UniqueId).ToArray();
@@ -56,6 +54,10 @@ namespace ModernWpf.Gallery.Tests
             Assert.IsFalse(actual.Contains("DesignGuidance"));
             Assert.IsFalse(actual.Contains("Media"));
             Assert.IsFalse(actual.Contains("Samples"));
+            Assert.IsFalse(actual.Contains("ModernWpfControls"));
+            Assert.IsFalse(actual.Contains("PlatformAndPatterns"));
+            Assert.IsNotNull(GalleryCatalog.FindGroup("ModernWpfControls"));
+            Assert.IsNotNull(GalleryCatalog.FindGroup("PlatformAndPatterns"));
         }
 
         [TestMethod]
