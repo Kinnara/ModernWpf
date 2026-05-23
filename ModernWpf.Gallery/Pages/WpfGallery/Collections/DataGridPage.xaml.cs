@@ -4,11 +4,11 @@ using Microsoft.Win32;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
 {
-    public sealed partial class DataGridPage : UserControl
+    public sealed partial class DataGridPage : Page
     {
-        public DataGridPage()
+        public DataGridPage(DataGridPageViewModel viewModel)
         {
-            ViewModel = new DataGridPageViewModel();
+            ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
             SystemEvents.UserPreferenceChanged += OnUserPreferenceChanged;

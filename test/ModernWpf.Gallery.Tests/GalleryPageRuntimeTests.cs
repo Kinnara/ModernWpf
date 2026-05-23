@@ -420,6 +420,18 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void CollectionsItemPagesUseOfficialPageRoots()
+        {
+            WpfTestHost.Run(() =>
+            {
+                AssertWpfGalleryPageRoot<DataGridPage>("DataGrid");
+                AssertWpfGalleryPageRoot<ListBoxPage>("ListBox");
+                AssertWpfGalleryPageRoot<ListViewPage>("ListView");
+                AssertWpfGalleryPageRoot<TreeViewPage>("TreeView");
+            });
+        }
+
+        [TestMethod]
         public void VisualTestModeUsesDeterministicWpfGallerySampleData()
         {
             WpfTestHost.Run(() =>

@@ -2,11 +2,11 @@ using System.Windows.Controls;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
 {
-    public sealed partial class TreeViewPage : UserControl
+    public sealed partial class TreeViewPage : Page
     {
-        public TreeViewPage()
+        public TreeViewPage(TreeViewPageViewModel viewModel)
         {
-            ViewModel = new TreeViewPageViewModel();
+            ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
         }

@@ -18,7 +18,7 @@ namespace ModernWpf.Gallery.Pages
                 { "Clipboard", () => new WpfGallery.SystemPages.ClipboardPage() },
                 { "Color", () => new WpfGallery.DesignGuidance.ColorPage() },
                 { "ComboBox", () => new WpfGallery.BasicInput.ComboBoxPage(new WpfGallery.BasicInput.ComboBoxPageViewModel()) },
-                { "DataGrid", () => new WpfGallery.Collections.DataGridPage() },
+                { "DataGrid", () => new WpfGallery.Collections.DataGridPage(new WpfGallery.Collections.DataGridPageViewModel()) },
                 { "DatePicker", () => new WpfGallery.DateAndTime.DatePickerPage(new WpfGallery.DateAndTime.DatePickerPageViewModel()) },
                 { "Expander", () => new WpfGallery.Layout.ExpanderPage(new WpfGallery.Layout.ExpanderPageViewModel()) },
                 { "FileAndFolderDialogs", () => new WpfGallery.SystemPages.FileAndFolderDialogsPage() },
@@ -31,8 +31,8 @@ namespace ModernWpf.Gallery.Pages
                 { "Iconography", () => new WpfGallery.DesignGuidance.IconographyPage() },
                 { "Image", () => new WpfGallery.Media.ImagePage(new WpfGallery.Media.ImagePageViewModel()) },
                 { "Label", () => new WpfGallery.Text.LabelPage() },
-                { "ListBox", () => new WpfGallery.Collections.ListBoxPage() },
-                { "ListView", () => new WpfGallery.Collections.ListViewPage() },
+                { "ListBox", () => new WpfGallery.Collections.ListBoxPage(new WpfGallery.Collections.ListBoxPageViewModel()) },
+                { "ListView", () => new WpfGallery.Collections.ListViewPage(new WpfGallery.Collections.ListViewPageViewModel()) },
                 { "Menu", () => new WpfGallery.Navigation.MenuPage() },
                 { "MessageBox", () => new WpfGallery.SystemPages.MessageBoxPage() },
                 { "NavigationWindow", () => new WpfGallery.Navigation.NavigationWindowPage() },
@@ -48,7 +48,7 @@ namespace ModernWpf.Gallery.Pages
                 { "TextBlock", () => new WpfGallery.Text.TextBlockPage() },
                 { "TextBox", () => new WpfGallery.Text.TextBoxPage() },
                 { "ToolTip", () => new WpfGallery.StatusAndInfo.ToolTipPage(new WpfGallery.StatusAndInfo.ToolTipPageViewModel()) },
-                { "TreeView", () => new WpfGallery.Collections.TreeViewPage() },
+                { "TreeView", () => new WpfGallery.Collections.TreeViewPage(new WpfGallery.Collections.TreeViewPageViewModel()) },
                 { "Typography", () => new WpfGallery.DesignGuidance.TypographyPage() },
                 { "UserDashboard", () => new WpfGallery.Samples.UserDashboardPage() }
             };

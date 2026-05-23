@@ -13,13 +13,13 @@ namespace ModernWpf.Gallery.Tests
             WpfTestHost.Run(() =>
             {
                 AssertExamples(
-                    new DataGridPage(),
+                    new DataGridPage(new DataGridPageViewModel()),
                     new ExpectedExample(
                         "Default DataGrid with ItemsSource.",
                         "<DataGrid ItemsSource=\"{Binding ViewModel.ProductsCollection, Mode=TwoWay}\" />"));
 
                 AssertExamples(
-                    new ListBoxPage(),
+                    new ListBoxPage(new ListBoxPageViewModel()),
                     new ExpectedExample(
                         "ListBox with items defined inline.",
                         Lines(
@@ -34,7 +34,7 @@ namespace ModernWpf.Gallery.Tests
                         "<ListBox Height=\"100\" ItemsSource=\"{Binding ViewModel.MyItems}\" SelectedIndex=\"2\" />"));
 
                 AssertExamples(
-                    new ListViewPage(),
+                    new ListViewPage(new ListViewPageViewModel()),
                     new ExpectedExample(
                         "Basic ListView with Simple DataTemplate.",
                         Lines(
@@ -137,7 +137,7 @@ namespace ModernWpf.Gallery.Tests
                             "</ListView>")));
 
                 AssertExamples(
-                    new TreeViewPage(),
+                    new TreeViewPage(new TreeViewPageViewModel()),
                     new ExpectedExample(
                         "Simple TreeView.",
                         Lines(

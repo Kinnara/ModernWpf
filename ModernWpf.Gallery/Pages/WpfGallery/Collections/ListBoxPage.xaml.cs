@@ -2,11 +2,11 @@ using System.Windows.Controls;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
 {
-    public sealed partial class ListBoxPage : UserControl
+    public sealed partial class ListBoxPage : Page
     {
-        public ListBoxPage()
+        public ListBoxPage(ListBoxPageViewModel viewModel)
         {
-            ViewModel = new ListBoxPageViewModel();
+            ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
         }
