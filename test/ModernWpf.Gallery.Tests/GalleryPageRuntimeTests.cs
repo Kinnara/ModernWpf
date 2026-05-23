@@ -1797,6 +1797,7 @@ namespace ModernWpf.Gallery.Tests
                 Assert.IsTrue(double.IsNaN(iconsListView.Height));
                 Assert.AreEqual(250, iconsListView.Items.Count);
                 Assert.AreEqual(0, iconsListView.SelectedIndex);
+                Assert.AreEqual("StopSlideShow", ((IconData)iconsListView.Items[0]).Name);
 
                 var detailsPane = libraryGrid.Children.OfType<Grid>().Single(child => Grid.GetColumn(child) == 1);
                 Assert.IsTrue(double.IsNaN(detailsPane.Width));
@@ -1804,12 +1805,12 @@ namespace ModernWpf.Gallery.Tests
                 var detailsStack = (StackPanel)((ScrollViewer)detailsPane.Children[0]).Content;
                 var selectedName = (TextBlock)detailsStack.Children[0];
                 var selectedGlyph = (TextBlock)detailsStack.Children[1];
-                Assert.AreEqual("GlobalNavButton", selectedName.Text);
+                Assert.AreEqual("StopSlideShow", selectedName.Text);
                 Assert.AreNotEqual(string.Empty, selectedGlyph.Text);
-                Assert.AreEqual("GlobalNavButton", ((ContentControl)detailsStack.Children[3]).Content);
-                Assert.AreEqual("E700", ((ContentControl)detailsStack.Children[5]).Content);
-                Assert.AreEqual("&#xE700;", ((ContentControl)detailsStack.Children[7]).Content);
-                Assert.AreEqual("\\xE700", ((ContentControl)detailsStack.Children[9]).Content);
+                Assert.AreEqual("StopSlideShow", ((ContentControl)detailsStack.Children[3]).Content);
+                Assert.AreEqual("E620", ((ContentControl)detailsStack.Children[5]).Content);
+                Assert.AreEqual("&#xE620;", ((ContentControl)detailsStack.Children[7]).Content);
+                Assert.AreEqual("\\xE620", ((ContentControl)detailsStack.Children[9]).Content);
 
                 var pagination = (Grid)body.Children.Cast<UIElement>().Single(child => Grid.GetRow(child) == 5);
                 var navigation = (StackPanel)pagination.Children[0];
@@ -1820,7 +1821,7 @@ namespace ModernWpf.Gallery.Tests
                 Assert.IsFalse(previousButton.IsEnabled);
                 Assert.IsTrue(nextButton.IsEnabled);
                 Assert.AreEqual("Page 1 of", currentPageText.Text);
-                Assert.AreEqual("7", totalPagesText.Text);
+                Assert.AreEqual("6", totalPagesText.Text);
 
                 var pageSize = (StackPanel)pagination.Children[1];
                 var pageSizeComboBox = (ComboBox)pageSize.Children[1];
@@ -1840,7 +1841,7 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(Visibility.Visible, searchPlaceholder.Visibility);
                 Assert.AreEqual(100, iconsListView.Items.Count);
                 Assert.AreEqual("Page 1 of", currentPageText.Text);
-                Assert.AreEqual("16", totalPagesText.Text);
+                Assert.AreEqual("15", totalPagesText.Text);
             });
         }
 
