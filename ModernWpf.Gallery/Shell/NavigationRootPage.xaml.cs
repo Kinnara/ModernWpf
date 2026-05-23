@@ -75,7 +75,7 @@ namespace ModernWpf.Gallery.Shell
             VisualTestStatusPanel.Visibility = GalleryDiagnostics.IsEnabled
                 ? Visibility.Visible
                 : Visibility.Collapsed;
-            Resources["NavigationViewItemExpandedPath"] = Geometry.Empty;
+            SuppressNavigationViewDefaultExpandGlyph();
 
             BuildNavigationMenu();
             Navigate(NavigationTarget.Home(), false);
@@ -275,8 +275,13 @@ namespace ModernWpf.Gallery.Shell
             double glyphColumnWidth = 16,
             double glyphFontSize = 16)
         {
-            var grid = CreateNavigationContentGrid(leftMargin);
+            var grid = CreateNavigationContentGrid(showDisclosureChevron ? 0 : leftMargin);
             grid.Tag = glyph;
+            if (showDisclosureChevron)
+            {
+                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(20) });
+            }
+
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(glyphColumnWidth) });
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(textGap) });
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
@@ -297,7 +302,9 @@ namespace ModernWpf.Gallery.Shell
             }
 
             var titleText = CreateNavigationTitleText(title);
-            Grid.SetColumn(titleText, 2);
+            var glyphColumn = showDisclosureChevron ? 1 : 0;
+            Grid.SetColumn(glyphText, glyphColumn);
+            Grid.SetColumn(titleText, glyphColumn + 2);
 
             grid.Children.Add(glyphText);
             grid.Children.Add(titleText);
@@ -307,9 +314,20 @@ namespace ModernWpf.Gallery.Shell
 
         private static Grid CreateNavigationTextContent(string title, double leftMargin, bool showDisclosureChevron)
         {
-            var grid = CreateNavigationContentGrid(leftMargin);
+            var grid = CreateNavigationContentGrid(showDisclosureChevron ? 0 : leftMargin);
+            if (showDisclosureChevron)
+            {
+                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(20) });
+            }
+
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-            grid.Children.Add(CreateNavigationTitleText(title));
+            var titleText = CreateNavigationTitleText(title);
+            if (showDisclosureChevron)
+            {
+                Grid.SetColumn(titleText, 1);
+            }
+
+            grid.Children.Add(titleText);
             AddDisclosureChevron(grid, showDisclosureChevron);
             return grid;
         }
@@ -343,7 +361,6 @@ namespace ModernWpf.Gallery.Shell
             var chevron = new TextBlock
             {
                 Width = 15,
-                Margin = new Thickness(-28, 0, 0, 0),
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Center,
                 FontSize = 10,
@@ -371,6 +388,12 @@ namespace ModernWpf.Gallery.Shell
 
             Grid.SetColumn(chevron, 0);
             grid.Children.Add(chevron);
+        }
+
+        private void SuppressNavigationViewDefaultExpandGlyph()
+        {
+            Resources["NavigationViewItemExpandedPath"] = Geometry.Empty;
+            Navigation.Resources["NavigationViewItemExpandedPath"] = Geometry.Empty;
         }
 
         private void OnSettingsButtonClick(object sender, RoutedEventArgs e)

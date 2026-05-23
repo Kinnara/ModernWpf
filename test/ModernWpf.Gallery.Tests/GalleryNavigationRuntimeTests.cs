@@ -101,6 +101,7 @@ namespace ModernWpf.Gallery.Tests
                 Assert.IsNotNull(navigation.PaneFooter);
                 Assert.AreEqual(0, navigation.FooterMenuItems.Count);
                 Assert.AreSame(Geometry.Empty, page.Resources["NavigationViewItemExpandedPath"]);
+                Assert.AreSame(Geometry.Empty, navigation.Resources["NavigationViewItemExpandedPath"]);
 
                 var contentFrameBorder = (Border)page.FindName("ContentFrameBorder");
                 Assert.AreEqual(new Thickness(4, -1, 0, 0), contentFrameBorder.Margin);
@@ -140,7 +141,7 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual("GalleryNavigationDisclosureChevron", AutomationProperties.GetAutomationId(designGuidanceChevron));
                 Assert.AreEqual("\uE76C", designGuidanceChevron.Text);
                 Assert.AreEqual(10d, designGuidanceChevron.FontSize);
-                Assert.AreEqual(new Thickness(-28, 0, 0, 0), designGuidanceChevron.Margin);
+                Assert.AreEqual(new Thickness(0), designGuidanceChevron.Margin);
                 Assert.AreEqual(0d, ((RotateTransform)designGuidanceChevron.RenderTransform).Angle);
 
                 var basicInputItems = topLevelItems[5].MenuItems.OfType<NavigationViewItem>().ToList();
@@ -251,6 +252,7 @@ namespace ModernWpf.Gallery.Tests
 
                     AssertTextLeft(page, homeItem, "\uE80F", 44, "Home glyph");
                     AssertTextLeft(page, homeItem, "Home", 76, "Home text");
+                    AssertTextLeft(page, navigationItem, "\uE76C", 26.5, "Navigation disclosure chevron");
                     AssertTextLeft(page, navigationItem, "\uE700", 44, "Navigation glyph");
                     AssertTextLeft(page, navigationItem, "Navigation", 76, "Navigation text");
                     AssertTextLeft(page, menuItem, "Menu", 79, "Menu child text");
