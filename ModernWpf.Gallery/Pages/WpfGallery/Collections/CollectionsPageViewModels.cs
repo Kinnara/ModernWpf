@@ -36,7 +36,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
 
         protected static ObservableCollection<Product> GenerateProducts()
         {
-            var random = new Random(0);
+            var random = new Random();
             var products = new ObservableCollection<Product>();
             var adjectives = new[] { "Red", "Blueberry" };
             var names = new[] { "Marmalade", "Dumplings", "Soup" };
@@ -58,7 +58,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
 
         protected static ObservableCollection<Person> GeneratePersons()
         {
-            var random = new Random(0);
+            var random = new Random();
             var persons = new ObservableCollection<Person>();
             var names = new[]
             {
