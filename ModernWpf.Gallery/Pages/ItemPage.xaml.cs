@@ -76,7 +76,7 @@ namespace ModernWpf.Gallery.Pages
 
         public string Description
         {
-            get { return _item.Description; }
+            get { return _item.PageDescription; }
         }
 
         public string ApiNamespace

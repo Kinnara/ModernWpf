@@ -182,6 +182,7 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(AutomationHeadingLevel.Level3, AutomationProperties.GetHeadingLevel(textBlocks[0]));
                 Assert.AreEqual(240d, textBlocks[1].Width);
                 Assert.AreEqual(0.7, textBlocks[1].Opacity, 0.001);
+                AssertBindingPath(textBlocks[1], TextBlock.TextProperty, "Description");
             });
         }
 

@@ -326,6 +326,7 @@ namespace ModernWpf.Gallery.Tests
 
             Assert.IsNotNull(item, uniqueId);
             Assert.AreEqual(subtitle, item.Subtitle, uniqueId);
+            Assert.AreEqual(subtitle, item.Description, uniqueId);
             AssertItemImage(item, imageFileName);
         }
 
@@ -336,6 +337,7 @@ namespace ModernWpf.Gallery.Tests
             Assert.IsNotNull(group, uniqueId);
             Assert.AreEqual(title, group.Title, uniqueId);
             Assert.AreEqual(subtitle, group.Subtitle, uniqueId);
+            Assert.AreEqual(subtitle, group.Description, uniqueId);
             AssertImagePath(group.ImagePath, imageFileName);
         }
 

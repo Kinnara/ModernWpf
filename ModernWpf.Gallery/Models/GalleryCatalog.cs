@@ -918,7 +918,7 @@ namespace ModernWpf.Gallery.Models
             Title = title;
             Subtitle = subtitle;
             ImagePath = GalleryAssetUri.Normalize(imagePath);
-            Description = description;
+            PageDescription = description;
             ApiNamespace = apiNamespace;
             IsNew = isNew;
             IsUpdated = isUpdated;
@@ -931,13 +931,18 @@ namespace ModernWpf.Gallery.Models
         public string UniqueId { get; }
         public string Title { get; }
         public string Subtitle { get; }
+        public string Description
+        {
+            get { return Subtitle; }
+        }
+
         public string ImagePath { get; }
         public Uri ImageSource
         {
             get { return string.IsNullOrEmpty(ImagePath) ? null : new Uri(ImagePath, UriKind.Absolute); }
         }
 
-        public string Description { get; }
+        public string PageDescription { get; }
         public string ApiNamespace { get; }
         public bool IsNew { get; }
         public bool IsUpdated { get; }
@@ -982,6 +987,7 @@ namespace ModernWpf.Gallery.Models
             return Contains(Title, token) ||
                 Contains(Subtitle, token) ||
                 Contains(Description, token) ||
+                Contains(PageDescription, token) ||
                 Contains(UniqueId, token) ||
                 Contains(ApiNamespace, token);
         }

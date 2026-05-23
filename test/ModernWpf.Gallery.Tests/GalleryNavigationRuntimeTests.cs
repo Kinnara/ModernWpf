@@ -321,7 +321,7 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(new Thickness(0), ((TextBlock)homePage.FindName("RecentlyAddedHeaderText")).Margin);
 
                     var firstGroup = GalleryCatalog.OverviewGroups.First();
-                    AssertRenderedNavigationCard((ItemsControl)homePage.FindName("OverviewItemsControl"), firstGroup.Title, firstGroup.Subtitle, homePage.ViewModel.NavigateCommand);
+                    AssertRenderedNavigationCard((ItemsControl)homePage.FindName("OverviewItemsControl"), firstGroup.Title, firstGroup.Description, homePage.ViewModel.NavigateCommand);
                 });
 
                 var basicInputGroup = GalleryCatalog.FindGroup("BasicInput");
@@ -334,7 +334,7 @@ namespace ModernWpf.Gallery.Tests
                     AssertReferenceCategoryPageRoot((Grid)sectionPage.FindName("ContentRootGrid"), false);
                     Assert.AreEqual(basicInputGroup.Title, sectionPage.PageTitle);
                     Assert.AreEqual(basicInputGroup.PageDescription, sectionPage.PageDescription);
-                    AssertRenderedNavigationCard((ItemsControl)sectionPage.FindName("GroupItemsControl"), basicInputGroup.Items.First().Title, basicInputGroup.Items.First().Subtitle, sectionPage.ViewModel.NavigateCommand);
+                    AssertRenderedNavigationCard((ItemsControl)sectionPage.FindName("GroupItemsControl"), basicInputGroup.Items.First().Title, basicInputGroup.Items.First().Description, sectionPage.ViewModel.NavigateCommand);
                 });
 
                 var mediaGroup = GalleryCatalog.FindGroup("Media");
@@ -343,7 +343,7 @@ namespace ModernWpf.Gallery.Tests
                 {
                     AssertReferencePageHeader((PageHeader)mediaPage.FindName("PageHeader"), mediaGroup.Title, mediaGroup.PageDescription, true);
                     AssertReferenceCategoryPageRoot((Grid)mediaPage.FindName("ContentRootGrid"), false);
-                    AssertRenderedNavigationCard((ItemsControl)mediaPage.FindName("GroupItemsControl"), "Canvas", GalleryCatalog.FindItem("Canvas").Subtitle, mediaPage.ViewModel.NavigateCommand);
+                    AssertRenderedNavigationCard((ItemsControl)mediaPage.FindName("GroupItemsControl"), "Canvas", GalleryCatalog.FindItem("Canvas").Description, mediaPage.ViewModel.NavigateCommand);
                 });
 
                 var allControlsPage = new AllControlsPage();
@@ -355,7 +355,7 @@ namespace ModernWpf.Gallery.Tests
                     AssertReferenceCategoryPageRoot((Grid)allControlsPage.FindName("ContentRootGrid"), true);
                     Assert.AreEqual("All Controls", allControlsPage.PageTitle);
                     Assert.AreEqual(string.Empty, allControlsPage.PageDescription);
-                    AssertRenderedNavigationCard((ItemsControl)allControlsPage.FindName("AllControlsItemsControl"), GalleryCatalog.AllControlsItems.First().Title, GalleryCatalog.AllControlsItems.First().Subtitle, allControlsPage.ViewModel.NavigateCommand);
+                    AssertRenderedNavigationCard((ItemsControl)allControlsPage.FindName("AllControlsItemsControl"), GalleryCatalog.AllControlsItems.First().Title, GalleryCatalog.AllControlsItems.First().Description, allControlsPage.ViewModel.NavigateCommand);
                 });
 
                 var navigationViewPage = new ItemPage(GalleryCatalog.FindItem("NavigationView"));
