@@ -8,6 +8,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shell;
+using System.Windows.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls;
 using ModernWpf.Gallery.Controls;
@@ -189,6 +190,34 @@ namespace ModernWpf.Gallery.Tests
                 WpfTestHost.DoEvents();
                 Assert.IsNull(navigation.SelectedItem);
                 Assert.IsInstanceOfType(((ContentControl)page.FindName("ContentHost")).Content, typeof(SettingsPage));
+            });
+        }
+
+        [TestMethod]
+        public void ShellVisualTestStatusHooksStayOutOfNormalAutomationTree()
+        {
+            WpfTestHost.Run(() =>
+            {
+                GalleryDiagnostics.ResetForTests();
+
+                try
+                {
+                    var normalPage = new NavigationRootPage();
+                    var normalPanel = (FrameworkElement)normalPage.FindName("VisualTestStatusPanel");
+                    Assert.AreEqual(Visibility.Collapsed, normalPanel.Visibility);
+
+                    GalleryDiagnostics.Configure(GalleryLaunchOptions.Parse(new[] { "--visual-test" }));
+                    var visualTestPage = new NavigationRootPage();
+                    Dispatcher.CurrentDispatcher.Invoke(DispatcherPriority.ContextIdle, new Action(() => { }));
+                    var visualTestPanel = (FrameworkElement)visualTestPage.FindName("VisualTestStatusPanel");
+                    Assert.AreEqual(Visibility.Visible, visualTestPanel.Visibility);
+                    Assert.AreEqual("home", ((TextBlock)visualTestPage.FindName("VisualTestCurrentRouteText")).Text);
+                    Assert.AreEqual("Ready:home", ((TextBlock)visualTestPage.FindName("VisualTestReadyStateText")).Text);
+                }
+                finally
+                {
+                    GalleryDiagnostics.ResetForTests();
+                }
             });
         }
 

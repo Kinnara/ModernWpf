@@ -118,6 +118,7 @@
         </ui:NavigationView>
 
         <StackPanel
+            x:Name="VisualTestStatusPanel"
             Width="1"
             Height="1"
             HorizontalAlignment="Left"

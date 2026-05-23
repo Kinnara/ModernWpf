@@ -69,6 +69,9 @@ namespace ModernWpf.Gallery.Shell
         public NavigationRootPage()
         {
             InitializeComponent();
+            VisualTestStatusPanel.Visibility = GalleryDiagnostics.IsEnabled
+                ? Visibility.Visible
+                : Visibility.Collapsed;
             Resources["NavigationViewItemExpandedPath"] = Geometry.Empty;
 
             BuildNavigationMenu();
