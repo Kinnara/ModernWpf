@@ -147,7 +147,9 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
 
         private static ObservableCollection<UserDashboardUser> GenerateUsers()
         {
-            var random = GalleryDiagnostics.IsEnabled ? new Random(UsersVisualTestSeed) : new Random();
+            var random = GalleryDiagnostics.IsEnabled
+                ? new GallerySampleRandom(UsersVisualTestSeed)
+                : new GallerySampleRandom();
             var users = new ObservableCollection<UserDashboardUser>();
 
             DateTime startDate = new DateTime(2020, 1, 1);

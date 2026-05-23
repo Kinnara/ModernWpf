@@ -131,9 +131,11 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
             return persons;
         }
 
-        private static Random CreateSampleRandom(int visualTestSeed)
+        private static GallerySampleRandom CreateSampleRandom(int visualTestSeed)
         {
-            return GalleryDiagnostics.IsEnabled ? new Random(visualTestSeed) : new Random();
+            return GalleryDiagnostics.IsEnabled
+                ? new GallerySampleRandom(visualTestSeed)
+                : new GallerySampleRandom();
         }
 
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)

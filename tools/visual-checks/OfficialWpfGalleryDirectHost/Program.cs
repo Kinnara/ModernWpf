@@ -273,7 +273,7 @@ internal static class Program
 
     private static ObservableCollection<Product> GenerateProducts(int seed)
     {
-        var random = new Random(seed);
+        var random = new StableSampleRandom(seed);
         var products = new ObservableCollection<Product>();
         var adjectives = new[] { "Red", "Blueberry" };
         var names = new[] { "Marmalade", "Dumplings", "Soup" };
@@ -295,7 +295,7 @@ internal static class Program
 
     private static ObservableCollection<Person> GeneratePersons(int seed)
     {
-        var random = new Random(seed);
+        var random = new StableSampleRandom(seed);
         var persons = new ObservableCollection<Person>();
         var names = new[]
         {
@@ -354,7 +354,7 @@ internal static class Program
 
     private static ObservableCollection<User> GenerateUsers(int seed)
     {
-        var random = new Random(seed);
+        var random = new StableSampleRandom(seed);
         var users = new ObservableCollection<User>();
 
         var startDate = new DateTime(2020, 1, 1);
@@ -472,6 +472,47 @@ internal static class Program
         };
 
         return new MediaPage(viewModel);
+    }
+
+    private sealed class StableSampleRandom
+    {
+        private uint _state;
+
+        public StableSampleRandom(int seed)
+        {
+            _state = unchecked((uint)seed);
+        }
+
+        public int Next(int minValue, int maxValue)
+        {
+            if (minValue >= maxValue)
+            {
+                throw new ArgumentOutOfRangeException(nameof(minValue));
+            }
+
+            return minValue + (int)(NextUInt32() % (uint)(maxValue - minValue));
+        }
+
+        public int Next(int maxValue)
+        {
+            if (maxValue <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(maxValue));
+            }
+
+            return (int)(NextUInt32() % (uint)maxValue);
+        }
+
+        public double NextDouble()
+        {
+            return NextUInt32() / ((double)uint.MaxValue + 1.0);
+        }
+
+        private uint NextUInt32()
+        {
+            _state = unchecked((_state * 1664525u) + 1013904223u);
+            return _state;
+        }
     }
 
     private static void WriteVisualArtifact(FrameworkElement element, string artifactDirectory)
