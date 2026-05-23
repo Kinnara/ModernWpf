@@ -169,9 +169,10 @@ namespace ModernWpf.Gallery.Testing
             if (element != null)
             {
                 var automationId = AutomationProperties.GetAutomationId(element);
-                if (ShouldWriteVisualArtifact(automationId))
+                var artifactId = ShouldWriteVisualArtifact(automationId) ? automationId : element.Name;
+                if (ShouldWriteVisualArtifact(artifactId))
                 {
-                    WriteElementPng(element, Path.Combine(ArtifactDirectory, SanitizeFileName(automationId) + ".png"));
+                    WriteElementPng(element, Path.Combine(ArtifactDirectory, SanitizeFileName(artifactId) + ".png"));
                 }
 
                 var popup = element as Popup;
@@ -238,7 +239,8 @@ namespace ModernWpf.Gallery.Testing
             return !string.IsNullOrEmpty(automationId) &&
                 (automationId.StartsWith("GallerySample_", StringComparison.Ordinal) ||
                     string.Equals(automationId, "GalleryContentHost", StringComparison.Ordinal) ||
-                    string.Equals(automationId, "ContentRootGrid", StringComparison.Ordinal));
+                    string.Equals(automationId, "ContentRootGrid", StringComparison.Ordinal) ||
+                    string.Equals(automationId, "ContentPagePane", StringComparison.Ordinal));
         }
 
         private static DependencyObject FindByAutomationId(DependencyObject root, string automationId)

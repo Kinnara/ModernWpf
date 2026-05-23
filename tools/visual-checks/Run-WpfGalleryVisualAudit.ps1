@@ -113,6 +113,8 @@ $OfficialDirectReferenceCaseIds = @(
     "Geometry",
     "Iconography",
     "UserDashboard",
+    "TextBlock",
+    "Border",
     "Canvas",
     "Image"
 )
@@ -907,7 +909,7 @@ function Get-ImageArtifactInfo([string]$path, [string]$source) {
 }
 
 function Test-ModernRenderedContentArtifact([string]$artifactDir) {
-    foreach ($fileName in @("ContentRootGrid.png", "GalleryContentHost.png")) {
+    foreach ($fileName in @("ContentRootGrid.png", "ContentPagePane.png", "GalleryContentHost.png")) {
         $path = Join-Path $artifactDir $fileName
         try {
             if (Test-ImageNotBlank $path) {
@@ -1267,6 +1269,10 @@ function Capture-ModernWpf($case, [string]$caseDir) {
             $renderedContentArtifact = Join-Path $artifactDir "ContentRootGrid.png"
             $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "ContentRootGridRenderedArtifact"
             if (!$contentCrop.NonBlank) {
+                $renderedContentArtifact = Join-Path $artifactDir "ContentPagePane.png"
+                $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "ContentPagePaneRenderedArtifact"
+            }
+            if (!$contentCrop.NonBlank) {
                 $renderedContentArtifact = Join-Path $artifactDir "GalleryContentHost.png"
                 $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "GalleryContentHostRenderedArtifact"
             }
@@ -1281,6 +1287,10 @@ function Capture-ModernWpf($case, [string]$caseDir) {
         if ($null -eq $contentCrop -or !$contentCrop.NonBlank) {
             $renderedContentArtifact = Join-Path $artifactDir "ContentRootGrid.png"
             $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "ContentRootGridRenderedArtifact"
+            if (!$contentCrop.NonBlank) {
+                $renderedContentArtifact = Join-Path $artifactDir "ContentPagePane.png"
+                $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "ContentPagePaneRenderedArtifact"
+            }
             if (!$contentCrop.NonBlank) {
                 $renderedContentArtifact = Join-Path $artifactDir "GalleryContentHost.png"
                 $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "GalleryContentHostRenderedArtifact"

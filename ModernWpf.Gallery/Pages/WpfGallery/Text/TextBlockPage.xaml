@@ -53,8 +53,8 @@
                         </Run>
                         <LineBreak />
                         <Span>
-                            Text can be <Bold>bold</Bold>,
-                            <Italic>italic</Italic>,
+                            Text can be <Bold>bold</Bold>,&#x20;
+                            <Italic>italic</Italic>,&#x20;
                             or <Underline>underlined</Underline>
                             .</Span>
                     </TextBlock>

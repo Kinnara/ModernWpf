@@ -8,6 +8,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using WPFGallery.Navigation;
 using WPFGallery.ViewModels;
+using WPFGallery.ViewModels.Layout;
 using WPFGallery.ViewModels.Samples;
 using WPFGallery.Views;
 
@@ -182,6 +183,8 @@ internal static class Program
             "Geometry" => new GeometryPage(new GeometryPageViewModel()),
             "Iconography" => new IconsPage(new IconsPageViewModel()),
             "UserDashboard" => new UserDashboardPage(new UserDashboardPageViewModel()),
+            "TextBlock" => new TextBlockPage(new TextBlockPageViewModel()),
+            "Border" => new BorderPage(new BorderPageViewModel()),
             "Canvas" => new CanvasPage(new CanvasPageViewModel()),
             "Image" => new ImagePage(new ImagePageViewModel()),
             _ => throw new ArgumentOutOfRangeException(nameof(page), page, "Unsupported direct reference page.")

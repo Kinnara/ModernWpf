@@ -367,6 +367,54 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void DirectWpfPageWritesContentPagePaneVisualArtifact()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var artifactDirectory = Path.Combine(Path.GetTempPath(), "ModernWpfGalleryTests", Path.GetRandomFileName());
+                GalleryDiagnostics.Configure(GalleryLaunchOptions.Parse(new[] { "--visual-test", "--visual-artifact-dir", artifactDirectory }));
+
+                var page = new ItemPage(GalleryCatalog.FindItem("TextBlock"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    GalleryDiagnostics.WriteVisualArtifacts(page);
+
+                    var contentPageArtifact = Path.Combine(artifactDirectory, "ContentPagePane.png");
+                    Assert.IsTrue(File.Exists(contentPageArtifact), contentPageArtifact + " was not written.");
+                    Assert.IsTrue(new FileInfo(contentPageArtifact).Length > 0);
+                    Assert.IsTrue(HasVisibleRgbPixels(contentPageArtifact), contentPageArtifact + " has no visible RGB content.");
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    GalleryDiagnostics.ResetForTests();
+                    if (Directory.Exists(artifactDirectory))
+                    {
+                        Directory.Delete(artifactDirectory, recursive: true);
+                    }
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
         public void TeachingTipInteractionModeWritesOpenContentArtifact()
         {
             WpfTestHost.Run(() =>
