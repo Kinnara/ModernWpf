@@ -204,6 +204,7 @@ namespace ModernWpf.Gallery.Tests
                 var page = new WhatsNewPage();
                 var pageHeader = (PageHeader)page.FindName("PageHeader");
 
+                Assert.AreEqual("What's New in WPF", page.Title);
                 Assert.AreEqual(new Thickness(0, 0, 0, 32), pageHeader.Margin);
                 Assert.AreEqual("What's new in WPF", pageHeader.Title);
                 Assert.AreEqual("Discover all the new features, enhancements and APIs introduced in WPF", pageHeader.Description);

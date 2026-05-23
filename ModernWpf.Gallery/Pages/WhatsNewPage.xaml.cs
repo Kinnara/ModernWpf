@@ -22,29 +22,29 @@ namespace ModernWpf.Gallery.Pages
         public Action<string> ItemRequested { get; set; }
         public WhatsNewPageViewModel ViewModel { get; }
 
-        private void OnMessageBoxSampleClick(object sender, RoutedEventArgs e)
+        private void Open_WhatsNewPageNET10(object sender, RoutedEventArgs e)
+        {
+            OpenUri("https://learn.microsoft.com/en-in/dotnet/desktop/wpf/whats-new/net100");
+        }
+
+        private void Open_WhatsNewPageNET9(object sender, RoutedEventArgs e)
+        {
+            OpenUri("https://learn.microsoft.com/en-in/dotnet/desktop/wpf/whats-new/net90");
+        }
+
+        private void Open_MessageBoxAPISpecNET10(object sender, RoutedEventArgs e)
+        {
+            OpenUri("https://github.com/dotnet/wpf/issues/9613");
+        }
+
+        private void NavigateToMessageBoxSample(object sender, RoutedEventArgs e)
         {
             ViewModel.NavigateCommand.Execute("MessageBox");
         }
 
-        private void OnMessageBoxSpecClick(object sender, RoutedEventArgs e)
+        private void Open_UsingFluentInWPFPage(object sender, RoutedEventArgs e)
         {
-            OpenUri("https://github.com/dotnet/wpf/issues/9542");
-        }
-
-        private void OnWhatsNewNet10Click(object sender, RoutedEventArgs e)
-        {
-            OpenUri("https://learn.microsoft.com/dotnet/desktop/wpf/whats-new/net100");
-        }
-
-        private void OnWhatsNewNet9Click(object sender, RoutedEventArgs e)
-        {
-            OpenUri("https://learn.microsoft.com/dotnet/desktop/wpf/whats-new/net90");
-        }
-
-        private void OnUsingFluentInWpfClick(object sender, RoutedEventArgs e)
-        {
-            OpenUri("https://learn.microsoft.com/dotnet/desktop/wpf/whats-new/net90#using-fluent-theme-in-wpf-in-net-9");
+            OpenUri("https://aka.ms/wpf-fluentdoc");
         }
 
         private static void OpenUri(string uri)

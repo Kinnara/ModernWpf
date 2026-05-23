@@ -8,7 +8,7 @@
     d:DesignHeight="700"
     d:DesignWidth="900"
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-    Title="WhatsNewPage"
+    Title="What's New in WPF"
     mc:Ignorable="d">
 
     <Grid
@@ -146,11 +146,11 @@
                         allowing developers to make full use of MessageBox in WPF without calling the Win32 API directly. Take a look at the API proposal
                         for complete details on what is added :
                     </Run>
-                    <Hyperlink Click="OnMessageBoxSpecClick">[API Proposal]: Make additional MessageBoxButton and MessagBoxResult values available</Hyperlink>
+                    <Hyperlink Click="Open_MessageBoxAPISpecNET10">[API Proposal]: Make additional MessageBoxButton and MessagBoxResult values available</Hyperlink>
                     <LineBreak />
                     <LineBreak />
                     <Run>Head over to the </Run>
-                    <Hyperlink Click="OnMessageBoxSampleClick">MessageBox sample </Hyperlink>
+                    <Hyperlink Click="NavigateToMessageBoxSample">MessageBox sample </Hyperlink>
                     <Run>for details on how to use the MessageBox in WPF.</Run>
                 </TextBlock>
 
@@ -158,7 +158,7 @@
                     Margin="0,12,0,24"
                     TextWrapping="Wrap">
                     <Run>See </Run>
-                    <Hyperlink Click="OnWhatsNewNet10Click">What's New in WPF for .NET 10</Hyperlink>
+                    <Hyperlink Click="Open_WhatsNewPageNET10">What's New in WPF for .NET 10</Hyperlink>
                     <Run> for more details.</Run>
                 </TextBlock>
 
@@ -250,7 +250,7 @@
                     <LineBreak />
                     <LineBreak />
                     <Run>See </Run>
-                    <Hyperlink Click="OnUsingFluentInWpfClick">Using Fluent theme in WPF in .NET 9</Hyperlink>
+                    <Hyperlink Click="Open_UsingFluentInWPFPage">Using Fluent theme in WPF in .NET 9</Hyperlink>
                     <Run> for more information.</Run>
                 </TextBlock>
 
@@ -289,7 +289,7 @@
                     Margin="0,24,0,12"
                     TextWrapping="Wrap">
                     <Run>See </Run>
-                    <Hyperlink Click="OnWhatsNewNet9Click">What's New in WPF for .NET 9</Hyperlink>
+                    <Hyperlink Click="Open_WhatsNewPageNET9">What's New in WPF for .NET 9</Hyperlink>
                     <Run> for more details.</Run>
                 </TextBlock>
             </StackPanel>
