@@ -284,6 +284,14 @@ namespace ModernWpf.Gallery.Tests
                     window.UpdateLayout();
                     WpfTestHost.DoEvents();
 
+                    var sourceCodeExpander = (Expander)controlExample.Template.FindName("SourceCodeExpander", controlExample);
+                    Assert.IsNotNull(sourceCodeExpander);
+                    Assert.AreEqual("Source code", sourceCodeExpander.Header);
+                    Assert.AreEqual(42.0, sourceCodeExpander.MinHeight);
+                    Assert.IsTrue(
+                        sourceCodeExpander.ActualHeight >= 42.0 && sourceCodeExpander.ActualHeight <= 43.5,
+                        "Expected collapsed source expander height near the official WPF Gallery 42-43px row; actual " + sourceCodeExpander.ActualHeight);
+
                     var divider = (Border)controlExample.Template.FindName("Border", controlExample);
                     Assert.IsNotNull(divider);
                     Assert.AreEqual(new Thickness(0, 20, 0, 20), divider.Margin);

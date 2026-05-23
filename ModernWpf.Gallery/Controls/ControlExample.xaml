@@ -53,7 +53,8 @@
                             x:Name="SourceCodeExpander"
                             Grid.Row="2"
                             AutomationProperties.Name="{Binding HeaderText, RelativeSource={RelativeSource TemplatedParent}, StringFormat=View Source Code for {0}}"
-                            Header="Source code">
+                            Header="Source code"
+                            MinHeight="42">
                             <StackPanel>
                                 <StackPanel x:Name="XamlCodeBlock">
                                     <Grid>
