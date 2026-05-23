@@ -5,7 +5,6 @@
 
     <Style TargetType="{x:Type controls:ColorTile}">
         <Setter Property="Focusable" Value="False" />
-        <Setter Property="MinHeight" Value="124" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="TileRadius" Value="0" />

@@ -83,6 +83,26 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void ColorTileStyleKeepsWpfGalleryNaturalHeight()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var app = Application.Current;
+                Assert.IsNotNull(app);
+
+                var colorTileStyle = (Style)app.FindResource(typeof(ColorTile));
+                Assert.IsNotNull(colorTileStyle);
+                Assert.IsFalse(colorTileStyle.Setters.OfType<Setter>()
+                    .Any(setter => setter.Property == FrameworkElement.MinHeightProperty));
+
+                AssertStyleSetter(colorTileStyle, Control.FocusableProperty, false);
+                AssertStyleSetter(colorTileStyle, UIElement.SnapsToDevicePixelsProperty, true);
+                AssertStyleSetter(colorTileStyle, FrameworkElement.OverridesDefaultStyleProperty, true);
+                AssertStyleSetter(colorTileStyle, ColorTile.TileRadiusProperty, new CornerRadius(0));
+            });
+        }
+
+        [TestMethod]
         public void GalleryMergesWpfGalleryTemplatesResourceDictionary()
         {
             WpfTestHost.Run(() =>
