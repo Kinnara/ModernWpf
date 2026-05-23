@@ -11,11 +11,14 @@ namespace ModernWpf.Gallery.Pages
 
         public SettingsPage()
         {
+            ViewModel = new SettingsPageViewModel();
+            DataContext = this;
             InitializeComponent();
-            GalleryAutomation.SetHeadingLevel(TitleLabel, GalleryAutomationHeadingLevel.Level1);
             SelectCurrentTheme();
             _canApplyThemeSelection = true;
         }
+
+        public SettingsPageViewModel ViewModel { get; }
 
         private void SelectCurrentTheme()
         {
@@ -87,6 +90,19 @@ namespace ModernWpf.Gallery.Pages
         private static void OpenUri(string uri)
         {
             Process.Start(new ProcessStartInfo(uri) { UseShellExecute = true });
+        }
+    }
+
+    public sealed class SettingsPageViewModel
+    {
+        public string PageTitle
+        {
+            get { return "Settings"; }
+        }
+
+        public string PageDescription
+        {
+            get { return null; }
         }
     }
 }

@@ -217,7 +217,21 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(GridUnitType.Auto, root.RowDefinitions[0].Height.GridUnitType);
                     Assert.AreEqual(GridUnitType.Star, root.RowDefinitions[1].Height.GridUnitType);
 
-                    var titleLabel = (Label)page.FindName("TitleLabel");
+                    Assert.IsInstanceOfType(page.ViewModel, typeof(SettingsPageViewModel));
+                    Assert.AreEqual("Settings", page.ViewModel.PageTitle);
+                    Assert.IsNull(page.ViewModel.PageDescription);
+
+                    var pageHeader = (PageHeader)page.FindName("PageHeader");
+                    Assert.AreEqual(0, Grid.GetRow(pageHeader));
+                    Assert.AreEqual(new Thickness(0, 0, 0, 40), pageHeader.Margin);
+                    Assert.AreEqual("Settings", pageHeader.Title);
+                    Assert.IsNull(pageHeader.Description);
+                    AssertBindingPath(pageHeader, PageHeader.TitleProperty, "ViewModel.PageTitle");
+                    AssertBindingPath(pageHeader, PageHeader.DescriptionProperty, "ViewModel.PageDescription");
+
+                    pageHeader.ApplyTemplate();
+                    var titleLabel = (Label)pageHeader.Template.FindName("TitleTextBlock", pageHeader);
+                    Assert.IsNotNull(titleLabel);
                     Assert.AreEqual("Settings Page", AutomationProperties.GetName(titleLabel));
                     Assert.AreEqual(AutomationHeadingLevel.Level1, AutomationProperties.GetHeadingLevel(titleLabel));
                     Assert.IsTrue(titleLabel.Focusable);
@@ -2298,6 +2312,13 @@ namespace ModernWpf.Gallery.Tests
             Assert.AreEqual(new Thickness(10), header.Margin);
             Assert.AreEqual(14.0, header.FontSize);
             Assert.AreEqual(FontWeights.SemiBold, header.FontWeight);
+        }
+
+        private static void AssertBindingPath(DependencyObject target, DependencyProperty property, string expectedPath)
+        {
+            var expression = BindingOperations.GetBindingExpression(target, property);
+            Assert.IsNotNull(expression);
+            Assert.AreEqual(expectedPath, expression.ParentBinding.Path.Path);
         }
 
         private static void AssertGridExample(Grid grid, double height, string[] expectedTexts)
