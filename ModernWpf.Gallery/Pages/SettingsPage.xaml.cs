@@ -47,22 +47,22 @@ namespace ModernWpf.Gallery.Pages
 
         private void OnOpenIssuesClick(object sender, RoutedEventArgs e)
         {
-            OpenUri("https://github.com/Kinnara/ModernWpf/issues");
+            OpenUri("https://github.com/microsoft/WPF-Samples/issues/new");
         }
 
-        private void OnModernWpfClick(object sender, RoutedEventArgs e)
+        private void Open_ToolkitInformation(object sender, RoutedEventArgs e)
         {
-            OpenUri("https://github.com/Kinnara/ModernWpf");
+            OpenUri("https://www.nuget.org/packages/CommunityToolkit.Mvvm/");
         }
 
-        private void OnWpfSamplesClick(object sender, RoutedEventArgs e)
+        private void Open_DIInformation(object sender, RoutedEventArgs e)
         {
-            OpenUri("https://github.com/microsoft/WPF-Samples");
+            OpenUri("https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/");
         }
 
-        private void OnWinUIGalleryClick(object sender, RoutedEventArgs e)
+        private void Open_HostingInformation(object sender, RoutedEventArgs e)
         {
-            OpenUri("https://github.com/microsoft/WinUI-Gallery");
+            OpenUri("https://www.nuget.org/packages/Microsoft.Extensions.Hosting");
         }
 
         private void OnServicesClick(object sender, RoutedEventArgs e)

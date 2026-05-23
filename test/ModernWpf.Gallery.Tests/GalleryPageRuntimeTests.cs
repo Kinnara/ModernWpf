@@ -344,7 +344,7 @@ namespace ModernWpf.Gallery.Tests
 
                     var cloneCommand = (TextBox)page.FindName("CloneCommandTextBox");
                     Assert.IsFalse(cloneCommand.Focusable);
-                    Assert.AreEqual("git clone https://github.com/Kinnara/ModernWpf.git", cloneCommand.Text);
+                    Assert.AreEqual("git clone https://github.com/microsoft/WPF-Samples.git", cloneCommand.Text);
 
                     var openIssues = (Button)page.FindName("OpenIssuesButton");
                     Assert.AreEqual("Open Issues", AutomationProperties.GetName(openIssues));
@@ -354,9 +354,18 @@ namespace ModernWpf.Gallery.Tests
                     var dependencies = (GroupBox)page.FindName("DependenciesGroupBox");
                     var warranty = (GroupBox)page.FindName("WarrantyGroupBox");
                     Assert.AreEqual("Dependencies and References", AutomationProperties.GetName(dependencies));
-                    Assert.AreEqual("THIS CODE AND INFORMATION IS PROVIDED AS IS WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.", AutomationProperties.GetName(warranty));
+                    Assert.AreEqual("THIS CODE AND INFORMATION IS PROVIDED \u2018AS IS\u2019 WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.", AutomationProperties.GetName(warranty));
                     Assert.AreEqual(new Thickness(0), dependencies.BorderThickness);
                     Assert.AreEqual(new Thickness(0), warranty.BorderThickness);
+
+                    var toolkitInformationLink = (Hyperlink)page.FindName("ToolkitInformationLink");
+                    var dependencyInjectionInformationLink = (Hyperlink)page.FindName("DependencyInjectionInformationLink");
+                    var hostingInformationLink = (Hyperlink)page.FindName("HostingInformationLink");
+                    Assert.AreEqual("CommunityToolkit.Mvvm", GetHyperlinkText(toolkitInformationLink));
+                    Assert.AreEqual("Microsoft.Extensions.DependencyInjection", GetHyperlinkText(dependencyInjectionInformationLink));
+                    Assert.AreEqual("Microsoft.Extensions.Hosting", GetHyperlinkText(hostingInformationLink));
+                    Assert.AreEqual("Link to Dependency Injection NuGet Package", AutomationProperties.GetName(dependencyInjectionInformationLink));
+                    Assert.AreEqual("Link to .NET Generic Host Package", AutomationProperties.GetName(hostingInformationLink));
                 }
                 finally
                 {
@@ -2763,6 +2772,11 @@ namespace ModernWpf.Gallery.Tests
             Assert.AreEqual(new Thickness(10), header.Margin);
             Assert.AreEqual(14.0, header.FontSize);
             Assert.AreEqual(FontWeights.SemiBold, header.FontWeight);
+        }
+
+        private static string GetHyperlinkText(Hyperlink hyperlink)
+        {
+            return new TextRange(hyperlink.ContentStart, hyperlink.ContentEnd).Text.Trim();
         }
 
         private static void AssertBindingPath(DependencyObject target, DependencyProperty property, string expectedPath)

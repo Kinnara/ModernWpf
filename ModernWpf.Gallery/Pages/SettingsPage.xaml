@@ -169,7 +169,7 @@
                                     Grid.Column="2"
                                     Focusable="False"
                                     Style="{StaticResource SelectionTextBox}"
-                                    Text="git clone https://github.com/Kinnara/ModernWpf.git" />
+                                    Text="git clone https://github.com/microsoft/WPF-Samples.git" />
                             </Grid>
                         </Border>
 
@@ -204,13 +204,19 @@
                                 <StackPanel Margin="48,0,16,0" Orientation="Vertical">
                                     <TextBlock Margin="0,0,0,12" Text="Dependencies and References" />
                                     <TextBlock Style="{StaticResource LinkTextBlockStyle}">
-                                        <Hyperlink Click="OnModernWpfClick">ModernWpf</Hyperlink>
+                                        <Hyperlink x:Name="ToolkitInformationLink" Click="Open_ToolkitInformation">CommunityToolkit.Mvvm</Hyperlink>
                                     </TextBlock>
                                     <TextBlock Style="{StaticResource LinkTextBlockStyle}">
-                                        <Hyperlink Click="OnWpfSamplesClick">WPF Samples</Hyperlink>
+                                        <Hyperlink
+                                            x:Name="DependencyInjectionInformationLink"
+                                            AutomationProperties.Name="Link to Dependency Injection NuGet Package"
+                                            Click="Open_DIInformation">Microsoft.Extensions.DependencyInjection</Hyperlink>
                                     </TextBlock>
                                     <TextBlock Style="{StaticResource LinkTextBlockStyle}">
-                                        <Hyperlink Click="OnWinUIGalleryClick">WinUI Gallery</Hyperlink>
+                                        <Hyperlink
+                                            x:Name="HostingInformationLink"
+                                            AutomationProperties.Name="Link to .NET Generic Host Package"
+                                            Click="Open_HostingInformation">Microsoft.Extensions.Hosting</Hyperlink>
                                     </TextBlock>
                                 </StackPanel>
                             </Border>
@@ -219,13 +225,13 @@
                         <GroupBox
                             x:Name="WarrantyGroupBox"
                             Grid.Row="3"
-                            AutomationProperties.Name="THIS CODE AND INFORMATION IS PROVIDED AS IS WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE."
+                            AutomationProperties.Name="THIS CODE AND INFORMATION IS PROVIDED &#x2018;AS IS&#x2019; WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE."
                             BorderThickness="0">
                             <Border Style="{StaticResource BottomSettingsCardStyle}">
                                 <StackPanel Margin="48,0,16,0" Orientation="Vertical">
                                     <TextBlock
                                         Margin="0,0,0,12"
-                                        Text="THIS CODE AND INFORMATION IS PROVIDED AS IS WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE."
+                                        Text="THIS CODE AND INFORMATION IS PROVIDED &#x2018;AS IS&#x2019; WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE."
                                         TextWrapping="Wrap" />
                                     <TextBlock Style="{StaticResource LinkTextBlockStyle}">
                                         <Hyperlink Click="OnServicesClick">Microsoft Services Agreement</Hyperlink>
