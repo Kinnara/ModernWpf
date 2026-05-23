@@ -1744,6 +1744,12 @@ namespace ModernWpf.Gallery.Tests
                 var dialogFrame = (Grid)images.Children[1];
                 Assert.AreEqual(VerticalAlignment.Top, cardsFrame.VerticalAlignment);
                 Assert.AreEqual(VerticalAlignment.Top, dialogFrame.VerticalAlignment);
+                Assert.AreEqual(2, cardsFrame.RowDefinitions.Count);
+                Assert.AreEqual(GridUnitType.Auto, cardsFrame.RowDefinitions[0].Height.GridUnitType);
+                Assert.AreEqual(GridUnitType.Star, cardsFrame.RowDefinitions[1].Height.GridUnitType);
+                Assert.AreEqual(2, dialogFrame.RowDefinitions.Count);
+                Assert.AreEqual(GridUnitType.Auto, dialogFrame.RowDefinitions[0].Height.GridUnitType);
+                Assert.AreEqual(GridUnitType.Star, dialogFrame.RowDefinitions[1].Height.GridUnitType);
                 Assert.AreEqual("Page with cards layout", ((TextBlock)cardsFrame.Children[0]).Text);
                 Assert.AreEqual(HorizontalAlignment.Center, ((TextBlock)cardsFrame.Children[0]).HorizontalAlignment);
                 Assert.AreEqual(new Thickness(0), ((TextBlock)cardsFrame.Children[0]).Margin);
@@ -1842,8 +1848,8 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(300.0, geometryImageHost.Height);
                 Assert.AreEqual(HorizontalAlignment.Left, geometryImageHost.HorizontalAlignment);
                 var geometryImage = (Image)geometryImageHost.Child;
-                Assert.AreEqual(500.0, geometryImage.Width);
-                Assert.AreEqual(300.0, geometryImage.Height);
+                Assert.IsTrue(double.IsNaN(geometryImage.Width));
+                Assert.IsTrue(double.IsNaN(geometryImage.Height));
                 Assert.AreEqual(Stretch.Uniform, geometryImage.Stretch);
                 Assert.AreEqual("Example of corner radius.", AutomationProperties.GetName(geometryImage));
                 var geometryLightBitmap = (BitmapImage)geometryImage.Source;

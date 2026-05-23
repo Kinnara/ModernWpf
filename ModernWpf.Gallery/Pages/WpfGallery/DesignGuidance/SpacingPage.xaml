@@ -39,7 +39,7 @@
                     <Grid VerticalAlignment="Top">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
                         <TextBlock
                             HorizontalAlignment="Center"
@@ -55,7 +55,7 @@
                     <Grid VerticalAlignment="Top">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
                         <TextBlock
                             HorizontalAlignment="Center"

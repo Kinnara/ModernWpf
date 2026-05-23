@@ -42,10 +42,7 @@
                     HorizontalAlignment="Left">
                     <Image
                         x:Name="GeometryImage"
-                        Width="500"
-                        Height="300"
-                        AutomationProperties.Name="Example of corner radius."
-                        Stretch="Uniform" />
+                        AutomationProperties.Name="Example of corner radius." />
                 </Border>
 
                 <controls:ControlExample XamlCode="&lt;Border CornerRadius=&quot;{StaticResource OverlayCornerRadius}&quot; /&gt;&#x0a;&lt;Border CornerRadius=&quot;{StaticResource ControlCornerRadius}&quot; /&gt;">
