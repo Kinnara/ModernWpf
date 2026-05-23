@@ -76,7 +76,13 @@ namespace ModernWpf.Gallery.Tests
                 var displayStyle = (Style)app.FindResource("DisplayTextBlockStyle");
                 AssertStyleSetter(displayStyle, TextBlock.FontSizeProperty, app.FindResource("DisplayTextBlockFontSize"));
 
+                Assert.AreSame(
+                    app.FindResource("SolidBackgroundFillColorBaseBrush"),
+                    app.FindResource("ControlExampleDisplayBrush"));
+
                 var colorTilesStyle = (Style)app.FindResource("ColorTilesPanelStyle");
+                AssertDynamicResourceSetter(colorTilesStyle, Border.BackgroundProperty, "ControlExampleDisplayBrush");
+                AssertDynamicResourceSetter(colorTilesStyle, Border.BorderBrushProperty, "CardStrokeColorDefaultBrush");
                 AssertStyleSetter(colorTilesStyle, Border.BorderThicknessProperty, new Thickness(1));
                 AssertStyleSetter(colorTilesStyle, Border.CornerRadiusProperty, new CornerRadius(8));
             });
