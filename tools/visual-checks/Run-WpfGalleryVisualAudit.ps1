@@ -103,6 +103,19 @@ $CaseCatalog = @(
     New-Case "Settings" "settings" @("Settings")
 )
 
+$OfficialDirectReferenceCaseIds = @(
+    "WhatsNew",
+    "AllControls",
+    "DesignGuidance",
+    "Color",
+    "Typography",
+    "Spacing",
+    "Geometry",
+    "Iconography",
+    "Canvas",
+    "Image"
+)
+
 function Select-Cases {
     if ($Cases.Count -eq 0) {
         return $CaseCatalog
@@ -127,7 +140,7 @@ function Select-Cases {
 }
 
 function Test-OfficialDirectReferenceCase($case) {
-    return $case.Id -eq "AllControls" -or $case.Id -eq "DesignGuidance" -or $case.Id -eq "Canvas" -or $case.Id -eq "Image"
+    return $OfficialDirectReferenceCaseIds -contains $case.Id
 }
 
 function Ensure-OfficialDirectHostBuilt {

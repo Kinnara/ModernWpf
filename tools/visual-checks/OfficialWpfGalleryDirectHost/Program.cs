@@ -164,8 +164,14 @@ internal static class Program
     {
         return page switch
         {
+            "WhatsNew" => new WhatsNewPage(new WhatsNewPageViewModel(new NullNavigationService())),
             "AllControls" => new AllSamplesPage(new AllSamplesPageViewModel(new NullNavigationService())),
             "DesignGuidance" => new DesignGuidancePage(new DesignGuidancePageViewModel(new NullNavigationService())),
+            "Color" => new ColorsPage(new ColorsPageViewModel()),
+            "Typography" => new TypographyPage(new TypographyPageViewModel()),
+            "Spacing" => new SpacingPage(new SpacingPageViewModel()),
+            "Geometry" => new GeometryPage(new GeometryPageViewModel()),
+            "Iconography" => new IconsPage(new IconsPageViewModel()),
             "Canvas" => new CanvasPage(new CanvasPageViewModel()),
             "Image" => new ImagePage(new ImagePageViewModel()),
             _ => throw new ArgumentOutOfRangeException(nameof(page), page, "Unsupported direct reference page.")
