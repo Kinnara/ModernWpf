@@ -98,6 +98,7 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(0, navigation.MenuItems.OfType<NavigationViewItemSeparator>().Count());
                 Assert.IsNotNull(navigation.PaneFooter);
                 Assert.AreEqual(0, navigation.FooterMenuItems.Count);
+                Assert.AreSame(Geometry.Empty, page.Resources["NavigationViewItemExpandedPath"]);
 
                 var contentFrameBorder = (Border)page.FindName("ContentFrameBorder");
                 Assert.AreEqual(new Thickness(4, -1, 0, 0), contentFrameBorder.Margin);
@@ -120,6 +121,7 @@ namespace ModernWpf.Gallery.Tests
                 AssertNavigationItemContentMargin(topLevelItems[0], 28);
                 AssertNavigationTitleTextLayout(topLevelItems[0], "Home");
                 AssertNavigationTitleTextLayout(topLevelItems[4], "All Controls");
+                Assert.IsNull(GetNavigationDisclosureChevron(topLevelItems[0]));
                 Assert.IsFalse(topLevelItems[2].IsExpanded);
                 Assert.IsFalse(topLevelItems[3].IsExpanded);
                 Assert.IsFalse(topLevelItems[5].IsExpanded);
@@ -130,6 +132,13 @@ namespace ModernWpf.Gallery.Tests
                     designGuidanceItems.Select(GetNavigationItemText).ToArray());
                 AssertFontIconGlyph(designGuidanceItems[0], "\uE790");
                 AssertNavigationItemContentMargin(designGuidanceItems[0], 15);
+                var designGuidanceChevron = GetNavigationDisclosureChevron(topLevelItems[2]);
+                Assert.IsNotNull(designGuidanceChevron);
+                Assert.AreEqual("GalleryNavigationDisclosureChevron", AutomationProperties.GetAutomationId(designGuidanceChevron));
+                Assert.AreEqual("\uE76C", designGuidanceChevron.Text);
+                Assert.AreEqual(10d, designGuidanceChevron.FontSize);
+                Assert.AreEqual(new Thickness(-28, 0, 0, 0), designGuidanceChevron.Margin);
+                Assert.AreEqual(0d, ((RotateTransform)designGuidanceChevron.RenderTransform).Angle);
 
                 var basicInputItems = topLevelItems[5].MenuItems.OfType<NavigationViewItem>().ToList();
                 Assert.IsNull(basicInputItems[0].Icon);
@@ -168,7 +177,9 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(new Thickness(8, 0, 0, 0), settingsText.Margin);
 
                 page.NavigateTo("item/Color");
+                WpfTestHost.DoEvents();
                 Assert.IsTrue(topLevelItems[2].IsExpanded);
+                Assert.AreEqual(90d, ((RotateTransform)designGuidanceChevron.RenderTransform).Angle);
 
                 page.NavigateTo("category/BasicInput");
                 Assert.IsTrue(topLevelItems[5].IsExpanded);
@@ -450,6 +461,18 @@ namespace ModernWpf.Gallery.Tests
             var titleText = contentGrid.Children.OfType<TextBlock>()
                 .Single(text => string.Equals(text.Text, expectedTitle, StringComparison.Ordinal));
             Assert.AreEqual(HorizontalAlignment.Left, titleText.HorizontalAlignment);
+        }
+
+        private static TextBlock GetNavigationDisclosureChevron(NavigationViewItem item)
+        {
+            var contentGrid = item.Content as Grid;
+            Assert.IsNotNull(contentGrid);
+
+            return contentGrid.Children.OfType<TextBlock>()
+                .SingleOrDefault(text => string.Equals(
+                    AutomationProperties.GetAutomationId(text),
+                    "GalleryNavigationDisclosureChevron",
+                    StringComparison.Ordinal));
         }
 
         private static void AssertPageHeaderLabel(Label label, string automationName, AutomationHeadingLevel headingLevel, int tabIndex)

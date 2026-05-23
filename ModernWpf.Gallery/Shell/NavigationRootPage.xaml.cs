@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Threading;
 using ModernWpf.Controls;
@@ -66,6 +68,7 @@ namespace ModernWpf.Gallery.Shell
         public NavigationRootPage()
         {
             InitializeComponent();
+            Resources["NavigationViewItemExpandedPath"] = Geometry.Empty;
 
             BuildNavigationMenu();
             Navigate(NavigationTarget.Home(), false);
@@ -231,13 +234,14 @@ namespace ModernWpf.Gallery.Shell
         private static object CreateNavigationItemContent(string title, NavigationTarget target, IconElement icon)
         {
             var glyph = GetFontIconGlyph(icon);
+            var showDisclosureChevron = target.Kind == NavigationTargetKind.Group;
             // These offsets preserve NavigationView behavior while matching the official WPF Gallery TreeView columns.
             if (glyph == null)
             {
-                return CreateNavigationTextContent(title, target.Kind == NavigationTargetKind.Item ? 31 : 28);
+                return CreateNavigationTextContent(title, target.Kind == NavigationTargetKind.Item ? 31 : 28, showDisclosureChevron);
             }
 
-            return CreateNavigationGlyphContent(title, glyph, target.Kind == NavigationTargetKind.Item ? 15 : 28, 16);
+            return CreateNavigationGlyphContent(title, glyph, target.Kind == NavigationTargetKind.Item ? 15 : 28, 16, showDisclosureChevron);
         }
 
         private static string GetFontIconGlyph(IconElement icon)
@@ -250,6 +254,7 @@ namespace ModernWpf.Gallery.Shell
             string glyph,
             double leftMargin,
             double textGap,
+            bool showDisclosureChevron,
             double glyphColumnWidth = 16,
             double glyphFontSize = 16)
         {
@@ -279,14 +284,16 @@ namespace ModernWpf.Gallery.Shell
 
             grid.Children.Add(glyphText);
             grid.Children.Add(titleText);
+            AddDisclosureChevron(grid, showDisclosureChevron);
             return grid;
         }
 
-        private static Grid CreateNavigationTextContent(string title, double leftMargin)
+        private static Grid CreateNavigationTextContent(string title, double leftMargin, bool showDisclosureChevron)
         {
             var grid = CreateNavigationContentGrid(leftMargin);
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
             grid.Children.Add(CreateNavigationTitleText(title));
+            AddDisclosureChevron(grid, showDisclosureChevron);
             return grid;
         }
 
@@ -307,6 +314,46 @@ namespace ModernWpf.Gallery.Shell
                 VerticalAlignment = VerticalAlignment.Center,
                 Text = title
             };
+        }
+
+        private static void AddDisclosureChevron(Grid grid, bool showDisclosureChevron)
+        {
+            if (!showDisclosureChevron)
+            {
+                return;
+            }
+
+            var chevron = new TextBlock
+            {
+                Width = 15,
+                Margin = new Thickness(-28, 0, 0, 0),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center,
+                FontSize = 10,
+                Focusable = false,
+                Text = "\uE76C",
+                RenderTransformOrigin = new Point(0.5, 0.5),
+                RenderTransform = new RotateTransform()
+            };
+            AutomationProperties.SetAutomationId(chevron, "GalleryNavigationDisclosureChevron");
+
+            var fontFamily = Application.Current.TryFindResource("SymbolThemeFontFamily") as FontFamily;
+            if (fontFamily != null)
+            {
+                chevron.FontFamily = fontFamily;
+            }
+
+            BindingOperations.SetBinding(
+                chevron.RenderTransform,
+                RotateTransform.AngleProperty,
+                new Binding(nameof(NavigationViewItem.IsExpanded))
+                {
+                    RelativeSource = new RelativeSource(RelativeSourceMode.FindAncestor, typeof(NavigationViewItem), 1),
+                    Converter = TreeViewChevronAngleConverter.Instance
+                });
+
+            Grid.SetColumn(chevron, 0);
+            grid.Children.Add(chevron);
         }
 
         private void OnSettingsButtonClick(object sender, RoutedEventArgs e)
@@ -572,6 +619,21 @@ namespace ModernWpf.Gallery.Shell
             }
 
             return "item/" + target.UniqueId;
+        }
+
+        private sealed class TreeViewChevronAngleConverter : IValueConverter
+        {
+            public static readonly TreeViewChevronAngleConverter Instance = new TreeViewChevronAngleConverter();
+
+            public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                return value is bool isExpanded && isExpanded ? 90d : 0d;
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                throw new NotSupportedException();
+            }
         }
     }
 
