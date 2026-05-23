@@ -1,11 +1,11 @@
 using System.Windows.Controls;
 namespace ModernWpf.Gallery.Pages.WpfGallery.Text
 {
-    public sealed partial class LabelPage : UserControl
+    public sealed partial class LabelPage : Page
     {
-        public LabelPage()
+        public LabelPage(LabelPageViewModel viewModel)
         {
-            ViewModel = new LabelPageViewModel();
+            ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
         }

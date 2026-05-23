@@ -1,11 +1,11 @@
 using System.Windows.Controls;
 namespace ModernWpf.Gallery.Pages.WpfGallery.Text
 {
-    public sealed partial class TextBlockPage : UserControl
+    public sealed partial class TextBlockPage : Page
     {
-        public TextBlockPage()
+        public TextBlockPage(TextBlockPageViewModel viewModel)
         {
-            ViewModel = new TextBlockPageViewModel();
+            ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
         }

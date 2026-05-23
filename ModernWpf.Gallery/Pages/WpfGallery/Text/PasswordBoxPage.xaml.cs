@@ -1,11 +1,11 @@
 using System.Windows.Controls;
 namespace ModernWpf.Gallery.Pages.WpfGallery.Text
 {
-    public sealed partial class PasswordBoxPage : UserControl
+    public sealed partial class PasswordBoxPage : Page
     {
-        public PasswordBoxPage()
+        public PasswordBoxPage(PasswordBoxPageViewModel viewModel)
         {
-            ViewModel = new PasswordBoxPageViewModel();
+            ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
         }

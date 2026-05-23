@@ -550,6 +550,20 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void TextItemPagesUseOfficialPageRoots()
+        {
+            WpfTestHost.Run(() =>
+            {
+                AssertWpfGalleryPageRoot<LabelPage>("Label");
+                AssertWpfGalleryPageRoot<TextBoxPage>("TextBox");
+                AssertWpfGalleryPageRoot<TextBlockPage>("TextBlock");
+                AssertWpfGalleryPageRoot<HyperlinkPage>("Hyperlink");
+                AssertWpfGalleryPageRoot<RichTextEditPage>("RichTextEdit");
+                AssertWpfGalleryPageRoot<PasswordBoxPage>("PasswordBox");
+            });
+        }
+
+        [TestMethod]
         public void NavigationPagesUseOfficialPageSpecificViewModels()
         {
             WpfTestHost.Run(() =>

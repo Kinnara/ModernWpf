@@ -1,11 +1,11 @@
 using System.Windows.Controls;
 namespace ModernWpf.Gallery.Pages.WpfGallery.Text
 {
-    public sealed partial class RichTextEditPage : UserControl
+    public sealed partial class RichTextEditPage : Page
     {
-        public RichTextEditPage()
+        public RichTextEditPage(RichTextEditPageViewModel viewModel)
         {
-            ViewModel = new RichTextEditPageViewModel();
+            ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
         }

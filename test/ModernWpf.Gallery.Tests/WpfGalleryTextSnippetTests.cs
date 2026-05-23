@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ModernWpf.Gallery.Pages.WpfGallery.Text;
 using HyperlinkPage = ModernWpf.Gallery.Pages.WpfGallery.Text.HyperlinkPage;
 using LabelPage = ModernWpf.Gallery.Pages.WpfGallery.Text.LabelPage;
 using PasswordBoxPage = ModernWpf.Gallery.Pages.WpfGallery.Text.PasswordBoxPage;
@@ -18,7 +19,7 @@ namespace ModernWpf.Gallery.Tests
             WpfTestHost.Run(() =>
             {
                 AssertExamples(
-                    new HyperlinkPage(),
+                    new HyperlinkPage(new HyperlinkPageViewModel()),
                     new ExpectedExample(
                         "A Hyperlink",
                         Lines(
@@ -29,7 +30,7 @@ namespace ModernWpf.Gallery.Tests
                             "</TextBlock>")));
 
                 AssertExamples(
-                    new LabelPage(),
+                    new LabelPage(new LabelPageViewModel()),
                     new ExpectedExample(
                         "A simple Label.",
                         "<Label Content=\"I am a Label.\" />"),
@@ -46,19 +47,19 @@ namespace ModernWpf.Gallery.Tests
                             "</Grid>")));
 
                 AssertExamples(
-                    new PasswordBoxPage(),
+                    new PasswordBoxPage(new PasswordBoxPageViewModel()),
                     new ExpectedExample(
                         "A simple PasswordBox.",
                         "<PasswordBox />"));
 
                 AssertExamples(
-                    new RichTextEditPage(),
+                    new RichTextEditPage(new RichTextEditPageViewModel()),
                     new ExpectedExample(
                         "A simple RichTextBox",
                         "<RichTextBox />"));
 
                 AssertExamples(
-                    new TextBoxPage(),
+                    new TextBoxPage(new TextBoxPageViewModel()),
                     new ExpectedExample(
                         "A simple TextBox.",
                         "<TextBox />"),
@@ -79,7 +80,7 @@ namespace ModernWpf.Gallery.Tests
                         "<TextBox TextWrapping=\"Wrap\" AcceptsReturn=\"True\" />"));
 
                 AssertExamples(
-                    new TextBlockPage(),
+                    new TextBlockPage(new TextBlockPageViewModel()),
                     new ExpectedExample(
                         "A simple TextBlock.",
                         "<TextBlock Text=\"I am a text block.\" />"),

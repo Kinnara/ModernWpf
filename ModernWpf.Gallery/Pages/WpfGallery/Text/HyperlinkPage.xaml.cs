@@ -4,11 +4,11 @@ using System.Windows.Navigation;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.Text
 {
-    public sealed partial class HyperlinkPage : UserControl
+    public sealed partial class HyperlinkPage : Page
     {
-        public HyperlinkPage()
+        public HyperlinkPage(HyperlinkPageViewModel viewModel)
         {
-            ViewModel = new HyperlinkPageViewModel();
+            ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
         }
