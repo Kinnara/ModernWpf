@@ -2,8 +2,6 @@ using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
 {
@@ -28,19 +26,14 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
             var imageKey = value as string;
             if (string.IsNullOrEmpty(imageKey))
             {
-                imageKey = "91";
+                imageKey = "p91";
+            }
+            else if (imageKey[0] != 'p' && imageKey[0] != 'P')
+            {
+                imageKey = "p" + imageKey;
             }
 
-            if (imageKey[0] == 'p' || imageKey[0] == 'P')
-            {
-                imageKey = imageKey.Substring(1);
-            }
-
-            return new ImageBrush
-            {
-                ImageSource = new BitmapImage(new Uri("pack://application:,,,/ModernWpf.Gallery;component/Assets/UserDashboard/" + imageKey + "-100x100.jpg")),
-                Stretch = Stretch.UniformToFill
-            };
+            return Application.Current.Resources[imageKey];
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

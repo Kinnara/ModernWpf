@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Automation;
@@ -11,6 +12,7 @@ using ModernWpf.Controls;
 using ModernWpf.Gallery.Controls;
 using ModernWpf.Gallery.Models;
 using ModernWpf.Gallery.Pages;
+using ModernWpf.Gallery.Pages.WpfGallery.Samples;
 
 namespace ModernWpf.Gallery.Tests
 {
@@ -80,11 +82,35 @@ namespace ModernWpf.Gallery.Tests
                     app.FindResource("SolidBackgroundFillColorBaseBrush"),
                     app.FindResource("ControlExampleDisplayBrush"));
 
+                AssertUserDashboardImageBrushResources(app);
+
                 var colorTilesStyle = (Style)app.FindResource("ColorTilesPanelStyle");
                 AssertDynamicResourceSetter(colorTilesStyle, Border.BackgroundProperty, "ControlExampleDisplayBrush");
                 AssertDynamicResourceSetter(colorTilesStyle, Border.BorderBrushProperty, "CardStrokeColorDefaultBrush");
                 AssertStyleSetter(colorTilesStyle, Border.BorderThicknessProperty, new Thickness(1));
                 AssertStyleSetter(colorTilesStyle, Border.CornerRadiusProperty, new CornerRadius(8));
+            });
+        }
+
+        [TestMethod]
+        public void UserDashboardImageConverterResolvesWpfGalleryPageStyleBrushes()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var app = Application.Current;
+                Assert.IsNotNull(app);
+
+                var converter = new ImageIdToBrushConverter();
+
+                Assert.AreSame(
+                    app.FindResource("p91"),
+                    converter.Convert("p91", typeof(ImageBrush), null, CultureInfo.InvariantCulture));
+                Assert.AreSame(
+                    app.FindResource("p91"),
+                    converter.Convert("91", typeof(ImageBrush), null, CultureInfo.InvariantCulture));
+                Assert.AreSame(
+                    app.FindResource("p91"),
+                    converter.Convert(null, typeof(ImageBrush), null, CultureInfo.InvariantCulture));
             });
         }
 
@@ -437,6 +463,42 @@ namespace ModernWpf.Gallery.Tests
             var bindingExpression = BindingOperations.GetBindingExpression(target, property);
             Assert.IsNotNull(bindingExpression);
             Assert.AreEqual(expectedPath, bindingExpression.ParentBinding.Path?.Path ?? string.Empty);
+        }
+
+        private static void AssertUserDashboardImageBrushResources(Application app)
+        {
+            var expectedImageIds = new[]
+            {
+                "64",
+                "65",
+                "91",
+                "103",
+                "177",
+                "334",
+                "338",
+                "342",
+                "349",
+                "366",
+                "367",
+                "373",
+                "375",
+                "378",
+                "399",
+                "447",
+                "453",
+                "473",
+                "469",
+                "505"
+            };
+
+            foreach (var imageId in expectedImageIds)
+            {
+                var brush = app.FindResource("p" + imageId) as ImageBrush;
+                Assert.IsNotNull(brush, "p" + imageId);
+                StringAssert.Contains(
+                    brush.ImageSource.ToString(),
+                    "ModernWpf.Gallery;component/Assets/UserDashboard/" + imageId + "-100x100.jpg");
+            }
         }
 
         private static void AssertStyleSetter(Style style, DependencyProperty property, object value)

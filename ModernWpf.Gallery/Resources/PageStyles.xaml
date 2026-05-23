@@ -17,6 +17,27 @@
 
     <m:StaticResource x:Key="ControlExampleDisplayBrush" ResourceKey="SolidBackgroundFillColorBaseBrush" />
 
+    <ImageBrush x:Key="p64" ImageSource="pack://application:,,,/ModernWpf.Gallery;component/Assets/UserDashboard/64-100x100.jpg" />
+    <ImageBrush x:Key="p65" ImageSource="pack://application:,,,/ModernWpf.Gallery;component/Assets/UserDashboard/65-100x100.jpg" />
+    <ImageBrush x:Key="p91" ImageSource="pack://application:,,,/ModernWpf.Gallery;component/Assets/UserDashboard/91-100x100.jpg" />
+    <ImageBrush x:Key="p103" ImageSource="pack://application:,,,/ModernWpf.Gallery;component/Assets/UserDashboard/103-100x100.jpg" />
+    <ImageBrush x:Key="p177" ImageSource="pack://application:,,,/ModernWpf.Gallery;component/Assets/UserDashboard/177-100x100.jpg" />
+    <ImageBrush x:Key="p334" ImageSource="pack://application:,,,/ModernWpf.Gallery;component/Assets/UserDashboard/334-100x100.jpg" />
+    <ImageBrush x:Key="p338" ImageSource="pack://application:,,,/ModernWpf.Gallery;component/Assets/UserDashboard/338-100x100.jpg" />
+    <ImageBrush x:Key="p342" ImageSource="pack://application:,,,/ModernWpf.Gallery;component/Assets/UserDashboard/342-100x100.jpg" />
+    <ImageBrush x:Key="p349" ImageSource="pack://application:,,,/ModernWpf.Gallery;component/Assets/UserDashboard/349-100x100.jpg" />
+    <ImageBrush x:Key="p366" ImageSource="pack://application:,,,/ModernWpf.Gallery;component/Assets/UserDashboard/366-100x100.jpg" />
+    <ImageBrush x:Key="p367" ImageSource="pack://application:,,,/ModernWpf.Gallery;component/Assets/UserDashboard/367-100x100.jpg" />
+    <ImageBrush x:Key="p373" ImageSource="pack://application:,,,/ModernWpf.Gallery;component/Assets/UserDashboard/373-100x100.jpg" />
+    <ImageBrush x:Key="p375" ImageSource="pack://application:,,,/ModernWpf.Gallery;component/Assets/UserDashboard/375-100x100.jpg" />
+    <ImageBrush x:Key="p378" ImageSource="pack://application:,,,/ModernWpf.Gallery;component/Assets/UserDashboard/378-100x100.jpg" />
+    <ImageBrush x:Key="p399" ImageSource="pack://application:,,,/ModernWpf.Gallery;component/Assets/UserDashboard/399-100x100.jpg" />
+    <ImageBrush x:Key="p447" ImageSource="pack://application:,,,/ModernWpf.Gallery;component/Assets/UserDashboard/447-100x100.jpg" />
+    <ImageBrush x:Key="p453" ImageSource="pack://application:,,,/ModernWpf.Gallery;component/Assets/UserDashboard/453-100x100.jpg" />
+    <ImageBrush x:Key="p473" ImageSource="pack://application:,,,/ModernWpf.Gallery;component/Assets/UserDashboard/473-100x100.jpg" />
+    <ImageBrush x:Key="p469" ImageSource="pack://application:,,,/ModernWpf.Gallery;component/Assets/UserDashboard/469-100x100.jpg" />
+    <ImageBrush x:Key="p505" ImageSource="pack://application:,,,/ModernWpf.Gallery;component/Assets/UserDashboard/505-100x100.jpg" />
+
     <Style x:Key="GalleryPageRootStyle" TargetType="Grid">
         <Setter Property="Background" Value="{DynamicResource LayerFillColorDefaultBrush}" />
     </Style>
