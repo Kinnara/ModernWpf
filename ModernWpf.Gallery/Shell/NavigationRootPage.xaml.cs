@@ -191,7 +191,6 @@ namespace ModernWpf.Gallery.Shell
 
             Navigation.MenuItems.Add(_homeNavigationItem);
             Navigation.MenuItems.Add(_whatsNewNavigationItem);
-            Navigation.MenuItems.Add(new NavigationViewItemSeparator());
 
             foreach (var group in GalleryCatalog.Groups)
             {
@@ -221,6 +220,7 @@ namespace ModernWpf.Gallery.Shell
             var item = new NavigationViewItem
             {
                 Content = CreateNavigationItemContent(title, target, icon),
+                Margin = new Thickness(0, 1, 0, 1),
                 Tag = target
             };
             AutomationProperties.SetName(item, title);

@@ -94,6 +94,7 @@ namespace ModernWpf.Gallery.Tests
                 Assert.IsFalse(navigation.IsPaneToggleButtonVisible);
                 Assert.AreEqual(string.Empty, navigation.PaneTitle);
                 Assert.IsNull(navigation.PaneCustomContent);
+                Assert.AreEqual(0, navigation.MenuItems.OfType<NavigationViewItemSeparator>().Count());
 
                 CollectionAssert.AreEqual(
                     new[] { "Home", "What's New", "Design Guidance", "Samples", "All controls", "Basic Input" },
@@ -105,6 +106,7 @@ namespace ModernWpf.Gallery.Tests
                 AssertFontIconGlyph(topLevelItems[3], "\uEF58");
                 AssertFontIconGlyph(topLevelItems[4], "\uE71D");
                 AssertFontIconGlyph(topLevelItems[5], "\uE73A");
+                Assert.AreEqual(new Thickness(0, 1, 0, 1), topLevelItems[0].Margin);
                 AssertNavigationItemContentMargin(topLevelItems[0], 28);
                 Assert.IsFalse(topLevelItems[2].IsExpanded);
                 Assert.IsFalse(topLevelItems[3].IsExpanded);
