@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:galleryShell="clr-namespace:ModernWpf.Gallery.Shell"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:pages="clr-namespace:ModernWpf.Gallery.Pages"
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:winShell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
     Title="WPF Gallery"
@@ -167,7 +168,7 @@
                         x:Name="TitleText"
                         Margin="16,0,0,0"
                         VerticalAlignment="Center"
-                        AutomationProperties.HeadingLevel="Level1"
+                        pages:GalleryAutomation.HeadingLevel="Level1"
                         Style="{StaticResource CaptionTextBlockStyle}"
                         Text="WPF Gallery" />
                 </StackPanel>

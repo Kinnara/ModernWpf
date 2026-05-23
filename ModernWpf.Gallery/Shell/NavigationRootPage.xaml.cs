@@ -376,14 +376,20 @@ namespace ModernWpf.Gallery.Shell
         private void OnSettingsButtonClick(object sender, RoutedEventArgs e)
         {
             Navigate(NavigationTarget.Settings(), true);
+            RaiseSettingsOpenedNotification(SettingsButton);
+        }
 
-            var peer = UIElementAutomationPeer.FromElement(SettingsButton)
-                ?? UIElementAutomationPeer.CreatePeerForElement(SettingsButton);
+        private static void RaiseSettingsOpenedNotification(UIElement element)
+        {
+#if NET8_0_OR_GREATER
+            var peer = UIElementAutomationPeer.FromElement(element)
+                ?? UIElementAutomationPeer.CreatePeerForElement(element);
             peer?.RaiseNotificationEvent(
                 AutomationNotificationKind.Other,
                 AutomationNotificationProcessing.ImportantMostRecent,
                 "Settings Page Opened",
                 "ButtonClickedActivity");
+#endif
         }
 
         private static IconElement CreateNavigationIcon(string uniqueId, bool isGroup, bool isWpfGalleryChild)
