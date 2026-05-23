@@ -83,9 +83,7 @@ namespace ModernWpf.Gallery.Tests
                 var displayStyle = (Style)app.FindResource("DisplayTextBlockStyle");
                 AssertStyleSetter(displayStyle, TextBlock.FontSizeProperty, app.FindResource("DisplayTextBlockFontSize"));
 
-                Assert.AreSame(
-                    app.FindResource("SolidBackgroundFillColorBaseBrush"),
-                    app.FindResource("ControlExampleDisplayBrush"));
+                Assert.IsNull(app.TryFindResource("ControlExampleDisplayBrush"));
 
                 AssertUserDashboardImageBrushResources(app);
 
