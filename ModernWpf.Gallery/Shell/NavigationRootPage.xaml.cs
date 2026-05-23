@@ -65,6 +65,9 @@ namespace ModernWpf.Gallery.Shell
         private NavigationViewItem _allControlsNavigationItem;
         private NavigationTarget _currentTarget;
         private bool _isProgrammaticNavigation;
+        private const double TopLevelNavigationContentLeftMargin = 20;
+        private const double ChildGlyphNavigationContentLeftMargin = -12;
+        private const double ChildTextNavigationContentLeftMargin = 4;
 
         public NavigationRootPage()
         {
@@ -227,7 +230,9 @@ namespace ModernWpf.Gallery.Shell
             var item = new NavigationViewItem
             {
                 Content = CreateNavigationItemContent(title, target, icon),
-                Margin = new Thickness(0, 1, 0, 1),
+                Margin = target.Kind == NavigationTargetKind.Item
+                    ? new Thickness(20, 1, 0, 1)
+                    : new Thickness(8, 1, 0, 1),
                 Tag = target
             };
             AutomationProperties.SetName(item, title);
@@ -242,10 +247,18 @@ namespace ModernWpf.Gallery.Shell
             // These offsets preserve NavigationView behavior while matching the official WPF Gallery TreeView columns.
             if (glyph == null)
             {
-                return CreateNavigationTextContent(title, target.Kind == NavigationTargetKind.Item ? 31 : 28, showDisclosureChevron);
+                return CreateNavigationTextContent(
+                    title,
+                    target.Kind == NavigationTargetKind.Item ? ChildTextNavigationContentLeftMargin : TopLevelNavigationContentLeftMargin,
+                    showDisclosureChevron);
             }
 
-            return CreateNavigationGlyphContent(title, glyph, target.Kind == NavigationTargetKind.Item ? 15 : 28, 16, showDisclosureChevron);
+            return CreateNavigationGlyphContent(
+                title,
+                glyph,
+                target.Kind == NavigationTargetKind.Item ? ChildGlyphNavigationContentLeftMargin : TopLevelNavigationContentLeftMargin,
+                16,
+                showDisclosureChevron);
         }
 
         private static string GetFontIconGlyph(IconElement icon)

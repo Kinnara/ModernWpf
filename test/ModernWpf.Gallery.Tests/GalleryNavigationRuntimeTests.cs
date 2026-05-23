@@ -119,8 +119,8 @@ namespace ModernWpf.Gallery.Tests
                 AssertFontIconGlyph(topLevelItems[3], "\uEF58");
                 AssertFontIconGlyph(topLevelItems[4], "\uE71D");
                 AssertFontIconGlyph(topLevelItems[5], "\uE73A");
-                Assert.AreEqual(new Thickness(0, 1, 0, 1), topLevelItems[0].Margin);
-                AssertNavigationItemContentMargin(topLevelItems[0], 28);
+                Assert.AreEqual(new Thickness(8, 1, 0, 1), topLevelItems[0].Margin);
+                AssertNavigationItemContentMargin(topLevelItems[0], 20);
                 AssertNavigationTitleTextLayout(topLevelItems[0], "Home");
                 AssertNavigationTitleTextLayout(topLevelItems[4], "All Controls");
                 Assert.IsNull(GetNavigationDisclosureChevron(topLevelItems[0]));
@@ -132,8 +132,9 @@ namespace ModernWpf.Gallery.Tests
                 CollectionAssert.AreEqual(
                     new[] { "Colors", "Typography", "Spacing", "Geometry", "Icons" },
                     designGuidanceItems.Select(GetNavigationItemText).ToArray());
+                Assert.AreEqual(new Thickness(20, 1, 0, 1), designGuidanceItems[0].Margin);
                 AssertFontIconGlyph(designGuidanceItems[0], "\uE790");
-                AssertNavigationItemContentMargin(designGuidanceItems[0], 15);
+                AssertNavigationItemContentMargin(designGuidanceItems[0], -12);
                 var designGuidanceChevron = GetNavigationDisclosureChevron(topLevelItems[2]);
                 Assert.IsNotNull(designGuidanceChevron);
                 Assert.AreEqual("GalleryNavigationDisclosureChevron", AutomationProperties.GetAutomationId(designGuidanceChevron));
@@ -143,8 +144,9 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(0d, ((RotateTransform)designGuidanceChevron.RenderTransform).Angle);
 
                 var basicInputItems = topLevelItems[5].MenuItems.OfType<NavigationViewItem>().ToList();
+                Assert.AreEqual(new Thickness(20, 1, 0, 1), basicInputItems[0].Margin);
                 Assert.IsNull(basicInputItems[0].Icon);
-                AssertNavigationItemContentMargin(basicInputItems[0], 31);
+                AssertNavigationItemContentMargin(basicInputItems[0], 4);
 
                 var mediaItem = topLevelItems[13];
                 Assert.AreEqual("Media Controls", GetNavigationItemText(mediaItem));
@@ -218,6 +220,41 @@ namespace ModernWpf.Gallery.Tests
                 {
                     GalleryDiagnostics.ResetForTests();
                 }
+            });
+        }
+
+        [TestMethod]
+        public void ShellNavigationPaneRowsUseWpfGalleryTreeViewInsets()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new NavigationRootPage();
+                RenderPage(page, () =>
+                {
+                    page.NavigateTo("category/Navigation");
+                    Dispatcher.CurrentDispatcher.Invoke(DispatcherPriority.ContextIdle, new Action(() => { }));
+                    page.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    var navigation = (NavigationView)page.FindName("Navigation");
+                    var topLevelItems = navigation.MenuItems.OfType<NavigationViewItem>().ToList();
+                    var homeItem = topLevelItems[0];
+                    var navigationItem = topLevelItems.Single(item => string.Equals(GetNavigationItemText(item), "Navigation", StringComparison.Ordinal));
+                    var menuItem = navigationItem.MenuItems.OfType<NavigationViewItem>()
+                        .Single(item => string.Equals(GetNavigationItemText(item), "Menu", StringComparison.Ordinal));
+                    var settingsButton = (Button)page.FindName("SettingsButton");
+
+                    AssertBounds(page, homeItem, 8, 248, "Home row");
+                    AssertBounds(page, navigationItem, 8, 248, "Navigation row");
+                    AssertBounds(page, menuItem, 28, 228, "Navigation child row");
+                    AssertBounds(page, settingsButton, 8, 250, "Settings row");
+
+                    AssertTextLeft(page, homeItem, "\uE80F", 44, "Home glyph");
+                    AssertTextLeft(page, homeItem, "Home", 76, "Home text");
+                    AssertTextLeft(page, navigationItem, "\uE700", 44, "Navigation glyph");
+                    AssertTextLeft(page, navigationItem, "Navigation", 76, "Navigation text");
+                    AssertTextLeft(page, menuItem, "Menu", 79, "Menu child text");
+                });
             });
         }
 
@@ -462,6 +499,28 @@ namespace ModernWpf.Gallery.Tests
             }
 
             return item.Content as string;
+        }
+
+        private static void AssertBounds(FrameworkElement root, FrameworkElement element, double expectedLeft, double expectedWidth, string context)
+        {
+            var bounds = GetElementBounds(root, element);
+            Assert.AreEqual(expectedLeft, bounds.Left, 1.0, context + " left");
+            Assert.AreEqual(expectedWidth, bounds.Width, 1.0, context + " width");
+        }
+
+        private static void AssertTextLeft(FrameworkElement root, DependencyObject scope, string text, double expectedLeft, string context)
+        {
+            var textBlock = FindVisualChildren<TextBlock>(scope)
+                .FirstOrDefault(block => string.Equals(block.Text, text, StringComparison.Ordinal));
+
+            Assert.IsNotNull(textBlock, context);
+            Assert.AreEqual(expectedLeft, GetElementBounds(root, textBlock).Left, 1.0, context + " left");
+        }
+
+        private static Rect GetElementBounds(FrameworkElement root, FrameworkElement element)
+        {
+            element.UpdateLayout();
+            return element.TransformToAncestor(root).TransformBounds(new Rect(0, 0, element.ActualWidth, element.ActualHeight));
         }
 
         private static void AssertFontIconGlyph(NavigationViewItem item, string expectedGlyph)
