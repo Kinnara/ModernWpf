@@ -13,7 +13,7 @@ namespace ModernWpf.Gallery.Tests
             WpfTestHost.Run(() =>
             {
                 AssertExamples(
-                    new BorderPage(),
+                    new BorderPage(new BorderPageViewModel()),
                     new ExpectedExample(
                         "A basic Border",
                         Lines(
@@ -34,13 +34,13 @@ namespace ModernWpf.Gallery.Tests
                             "</Border>")));
 
                 AssertExamples(
-                    new ExpanderPage(),
+                    new ExpanderPage(new ExpanderPageViewModel()),
                     new ExpectedExample(
                         "An Expander with text in the header and content areas",
                         "<Expander Header=\"This text is in the header\" Content=\"This is in the content\" />"));
 
                 AssertExamples(
-                    new GridPage(),
+                    new GridPage(new GridPageViewModel()),
                     new ExpectedExample(
                         "A simple 3x3 Grid",
                         Lines(
@@ -120,7 +120,7 @@ namespace ModernWpf.Gallery.Tests
                             "</Grid>")));
 
                 AssertExamples(
-                    new GridSplitterPage(),
+                    new GridSplitterPage(new GridSplitterPageViewModel()),
                     new ExpectedExample(
                         "A GridSplitter",
                         Lines(
@@ -160,7 +160,7 @@ namespace ModernWpf.Gallery.Tests
                             "</Grid>")));
 
                 AssertExamples(
-                    new GroupBoxPage(),
+                    new GroupBoxPage(new GroupBoxPageViewModel()),
                     new ExpectedExample(
                         "A GroupBox",
                         Lines(
@@ -183,7 +183,7 @@ namespace ModernWpf.Gallery.Tests
                             "</GroupBox>")));
 
                 AssertExamples(
-                    new ResizeGripPage(),
+                    new ResizeGripPage(new ResizeGripPageViewModel()),
                     new ExpectedExample(
                         "A ResizeGrip",
                         Lines(
@@ -217,7 +217,7 @@ namespace ModernWpf.Gallery.Tests
                             "}")));
 
                 AssertExamples(
-                    new StackPanelPage(),
+                    new StackPanelPage(new StackPanelPageViewModel()),
                     new ExpectedExample(
                         "A basic vertical StackPanel",
                         Lines(

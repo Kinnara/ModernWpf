@@ -1,11 +1,11 @@
 using System.Windows.Controls;
 namespace ModernWpf.Gallery.Pages.WpfGallery.Layout
 {
-    public sealed partial class GridPage : UserControl
+    public sealed partial class GridPage : Page
     {
-        public GridPage()
+        public GridPage(GridPageViewModel viewModel)
         {
-            ViewModel = new GridPageViewModel();
+            ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
         }

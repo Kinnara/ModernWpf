@@ -3,11 +3,11 @@ using System.Windows.Controls;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.Layout
 {
-    public sealed partial class ResizeGripPage : UserControl
+    public sealed partial class ResizeGripPage : Page
     {
-        public ResizeGripPage()
+        public ResizeGripPage(ResizeGripPageViewModel viewModel)
         {
-            ViewModel = new ResizeGripPageViewModel();
+            ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
         }

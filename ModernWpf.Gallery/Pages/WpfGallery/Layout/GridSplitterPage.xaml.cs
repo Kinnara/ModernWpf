@@ -1,11 +1,11 @@
 using System.Windows.Controls;
 namespace ModernWpf.Gallery.Pages.WpfGallery.Layout
 {
-    public sealed partial class GridSplitterPage : UserControl
+    public sealed partial class GridSplitterPage : Page
     {
-        public GridSplitterPage()
+        public GridSplitterPage(GridSplitterPageViewModel viewModel)
         {
-            ViewModel = new GridSplitterPageViewModel();
+            ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
         }

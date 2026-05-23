@@ -504,6 +504,21 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void LayoutItemPagesUseOfficialPageRoots()
+        {
+            WpfTestHost.Run(() =>
+            {
+                AssertWpfGalleryPageRoot<BorderPage>("Border");
+                AssertWpfGalleryPageRoot<ExpanderPage>("Expander");
+                AssertWpfGalleryPageRoot<GridPage>("Grid");
+                AssertWpfGalleryPageRoot<GridSplitterPage>("GridSplitter");
+                AssertWpfGalleryPageRoot<GroupBoxPage>("GroupBox");
+                AssertWpfGalleryPageRoot<ResizeGripPage>("ResizeGrip");
+                AssertWpfGalleryPageRoot<StackPanelPage>("StackPanel");
+            });
+        }
+
+        [TestMethod]
         public void TextPagesUseOfficialPageSpecificViewModels()
         {
             WpfTestHost.Run(() =>

@@ -1,11 +1,11 @@
 using System.Windows.Controls;
 namespace ModernWpf.Gallery.Pages.WpfGallery.Layout
 {
-    public sealed partial class ExpanderPage : UserControl
+    public sealed partial class ExpanderPage : Page
     {
-        public ExpanderPage()
+        public ExpanderPage(ExpanderPageViewModel viewModel)
         {
-            ViewModel = new ExpanderPageViewModel();
+            ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
         }

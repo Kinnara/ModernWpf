@@ -1,11 +1,11 @@
 using System.Windows.Controls;
 namespace ModernWpf.Gallery.Pages.WpfGallery.Layout
 {
-    public sealed partial class BorderPage : UserControl
+    public sealed partial class BorderPage : Page
     {
-        public BorderPage()
+        public BorderPage(BorderPageViewModel viewModel)
         {
-            ViewModel = new BorderPageViewModel();
+            ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
         }

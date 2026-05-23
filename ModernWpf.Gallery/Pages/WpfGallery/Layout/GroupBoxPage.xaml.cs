@@ -1,11 +1,11 @@
 using System.Windows.Controls;
 namespace ModernWpf.Gallery.Pages.WpfGallery.Layout
 {
-    public sealed partial class GroupBoxPage : UserControl
+    public sealed partial class GroupBoxPage : Page
     {
-        public GroupBoxPage()
+        public GroupBoxPage(GroupBoxPageViewModel viewModel)
         {
-            ViewModel = new GroupBoxPageViewModel();
+            ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
         }
