@@ -16,10 +16,13 @@
             AutomationProperties.AutomationId="GalleryNavigationView"
             IsBackButtonVisible="Collapsed"
             IsPaneToggleButtonVisible="False"
-            IsSettingsVisible="True"
+            IsSettingsVisible="False"
             ItemInvoked="OnNavigationItemInvoked"
             OpenPaneLength="260"
             PaneDisplayMode="Left">
+            <ui:NavigationView.PaneFooter>
+                <Separator Margin="8,0,2,1" />
+            </ui:NavigationView.PaneFooter>
             <Border
                 Margin="4,0,0,0"
                 Padding="24,16,24,0"

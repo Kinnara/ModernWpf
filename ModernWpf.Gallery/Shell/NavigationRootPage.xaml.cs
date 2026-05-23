@@ -54,12 +54,14 @@ namespace ModernWpf.Gallery.Shell
             { "Navigation", "\uE700" },
             { "StatusAndInfo", "\uE8F2" },
             { "Text", "\uE8D2" },
-            { "System", "\uE7F8" }
+            { "System", "\uE7F8" },
+            { "Settings", "\uE713" }
         };
 
         private NavigationViewItem _homeNavigationItem;
         private NavigationViewItem _whatsNewNavigationItem;
         private NavigationViewItem _allControlsNavigationItem;
+        private NavigationViewItem _settingsNavigationItem;
         private NavigationTarget _currentTarget;
         private bool _isProgrammaticNavigation;
 
@@ -188,6 +190,7 @@ namespace ModernWpf.Gallery.Shell
             _homeNavigationItem = CreateNavigationItem("Home", NavigationTarget.Home(), CreateWpfGalleryGlyphIcon("Home"));
             _whatsNewNavigationItem = CreateNavigationItem("What's New", NavigationTarget.WhatsNew(), CreateWpfGalleryGlyphIcon("WhatsNew"));
             _allControlsNavigationItem = CreateNavigationItem("All controls", NavigationTarget.AllControls(), CreateWpfGalleryGlyphIcon("AllControls"));
+            _settingsNavigationItem = CreateNavigationItem("Settings", NavigationTarget.Settings(), CreateWpfGalleryGlyphIcon("Settings"));
 
             Navigation.MenuItems.Add(_homeNavigationItem);
             Navigation.MenuItems.Add(_whatsNewNavigationItem);
@@ -213,6 +216,8 @@ namespace ModernWpf.Gallery.Shell
                     Navigation.MenuItems.Add(_allControlsNavigationItem);
                 }
             }
+
+            Navigation.FooterMenuItems.Add(_settingsNavigationItem);
         }
 
         private static NavigationViewItem CreateNavigationItem(string title, NavigationTarget target, IconElement icon)
@@ -232,12 +237,17 @@ namespace ModernWpf.Gallery.Shell
         {
             var glyph = GetFontIconGlyph(icon);
             // These offsets preserve NavigationView behavior while matching the official WPF Gallery TreeView columns.
+            if (target.Kind == NavigationTargetKind.Settings && glyph != null)
+            {
+                return CreateNavigationGlyphContent(title, glyph, 4, 6);
+            }
+
             if (glyph == null)
             {
                 return CreateNavigationTextContent(title, target.Kind == NavigationTargetKind.Item ? 31 : 28);
             }
 
-            return CreateNavigationGlyphContent(title, glyph, target.Kind == NavigationTargetKind.Item ? 15 : 28);
+            return CreateNavigationGlyphContent(title, glyph, target.Kind == NavigationTargetKind.Item ? 15 : 28, 16);
         }
 
         private static string GetFontIconGlyph(IconElement icon)
@@ -245,12 +255,12 @@ namespace ModernWpf.Gallery.Shell
             return (icon as FontIcon)?.Glyph;
         }
 
-        private static Grid CreateNavigationGlyphContent(string title, string glyph, double leftMargin)
+        private static Grid CreateNavigationGlyphContent(string title, string glyph, double leftMargin, double textGap)
         {
             var grid = CreateNavigationContentGrid(leftMargin);
             grid.Tag = glyph;
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(16) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(16) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(textGap) });
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
 
             var glyphText = new TextBlock
@@ -484,7 +494,7 @@ namespace ModernWpf.Gallery.Shell
             }
             else if (target.Kind == NavigationTargetKind.Settings)
             {
-                selectedItem = Navigation.SettingsItem as NavigationViewItem;
+                selectedItem = _settingsNavigationItem;
             }
             else if (!string.IsNullOrEmpty(target.UniqueId))
             {

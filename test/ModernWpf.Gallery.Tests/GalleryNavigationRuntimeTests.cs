@@ -92,9 +92,11 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(260d, navigation.OpenPaneLength);
                 Assert.AreEqual(NavigationViewBackButtonVisible.Collapsed, navigation.IsBackButtonVisible);
                 Assert.IsFalse(navigation.IsPaneToggleButtonVisible);
+                Assert.IsFalse(navigation.IsSettingsVisible);
                 Assert.AreEqual(string.Empty, navigation.PaneTitle);
                 Assert.IsNull(navigation.PaneCustomContent);
                 Assert.AreEqual(0, navigation.MenuItems.OfType<NavigationViewItemSeparator>().Count());
+                Assert.IsNotNull(navigation.PaneFooter);
 
                 CollectionAssert.AreEqual(
                     new[] { "Home", "What's New", "Design Guidance", "Samples", "All controls", "Basic Input" },
@@ -129,6 +131,11 @@ namespace ModernWpf.Gallery.Tests
                     new[] { "Canvas", "Image" },
                     mediaItem.MenuItems.OfType<NavigationViewItem>().Select(GetNavigationItemText).ToArray());
                 Assert.IsNull(mediaItem.MenuItems.OfType<NavigationViewItem>().First().Icon);
+
+                var settingsItem = navigation.FooterMenuItems.OfType<NavigationViewItem>().Single();
+                Assert.AreEqual("Settings", GetNavigationItemText(settingsItem));
+                AssertFontIconGlyph(settingsItem, "\uE713");
+                AssertNavigationItemContentMargin(settingsItem, 4);
 
                 page.NavigateTo("item/Color");
                 Assert.IsTrue(topLevelItems[2].IsExpanded);
