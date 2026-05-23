@@ -118,9 +118,7 @@ namespace ModernWpf.Gallery.Pages
         {
             get
             {
-                return string.Equals(_item.UniqueId, "UserDashboard", StringComparison.OrdinalIgnoreCase)
-                    ? new Thickness(0)
-                    : new Thickness(0, 0, 0, 24);
+                return new Thickness(0);
             }
         }
 

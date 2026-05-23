@@ -40,12 +40,14 @@
                             Visibility="{TemplateBinding HeaderText, Converter={StaticResource NullToVisibilityConverter}}" />
 
                         <Border
+                            x:Name="ExampleDisplayBorder"
                             Grid.Row="1"
                             Padding="16"
                             Background="{DynamicResource SolidBackgroundFillColorBaseBrush}"
                             BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
                             BorderThickness="1,1,1,0"
-                            CornerRadius="8,8,0,0">
+                            CornerRadius="8,8,0,0"
+                            TextElement.FontSize="{StaticResource BodyTextBlockFontSize}">
                             <ContentPresenter Content="{TemplateBinding ExampleContent}" />
                         </Border>
 

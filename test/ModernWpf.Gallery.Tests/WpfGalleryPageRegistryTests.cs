@@ -97,6 +97,7 @@ namespace ModernWpf.Gallery.Tests
 
                     Assert.IsTrue(page.UsesWpfGalleryPageMode, uniqueId);
                     Assert.IsTrue(page.HasDirectPageContent, uniqueId);
+                    Assert.AreEqual(new Thickness(0), page.DirectPageContentMargin, uniqueId);
                     Assert.AreEqual(0, page.Examples.Count, uniqueId);
                     Assert.IsFalse(page.ShowScrolledPageContent, uniqueId);
                     Assert.IsFalse(page.ShowCatalogDetails, uniqueId);

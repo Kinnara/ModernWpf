@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Markup;
 using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -284,6 +285,12 @@ namespace ModernWpf.Gallery.Tests
                     WpfTestHost.DoEvents();
                     window.UpdateLayout();
                     WpfTestHost.DoEvents();
+
+                    var displayBorder = (Border)controlExample.Template.FindName("ExampleDisplayBorder", controlExample);
+                    Assert.IsNotNull(displayBorder);
+                    Assert.AreEqual(
+                        (double)Application.Current.FindResource("BodyTextBlockFontSize"),
+                        TextElement.GetFontSize(displayBorder));
 
                     var sourceCodeExpander = (Expander)controlExample.Template.FindName("SourceCodeExpander", controlExample);
                     Assert.IsNotNull(sourceCodeExpander);
