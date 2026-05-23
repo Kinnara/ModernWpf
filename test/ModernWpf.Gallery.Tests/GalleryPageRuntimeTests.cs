@@ -1820,11 +1820,17 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(300.0, geometryImage.Height);
                 Assert.AreEqual(Stretch.Uniform, geometryImage.Stretch);
                 Assert.AreEqual("Example of corner radius.", AutomationProperties.GetName(geometryImage));
-                StringAssert.Contains(((BitmapImage)geometryImage.Source).UriSource.ToString(), "Geometry.light.png");
+                var geometryLightBitmap = (BitmapImage)geometryImage.Source;
+                StringAssert.Contains(geometryLightBitmap.UriSource.ToString(), "Geometry.light.png");
+                Assert.AreEqual(586, geometryLightBitmap.PixelWidth);
+                Assert.AreEqual(315, geometryLightBitmap.PixelHeight);
 
                 var geometryContent = (GeometryPage)geometryPage.DirectPageContent;
                 geometryContent.ApplyImageResources(ElementTheme.Dark);
-                StringAssert.Contains(((BitmapImage)geometryImage.Source).UriSource.ToString(), "Geometry.dark.png");
+                var geometryDarkBitmap = (BitmapImage)geometryImage.Source;
+                StringAssert.Contains(geometryDarkBitmap.UriSource.ToString(), "Geometry.dark.png");
+                Assert.AreEqual(585, geometryDarkBitmap.PixelWidth);
+                Assert.AreEqual(313, geometryDarkBitmap.PixelHeight);
 
                 var geometryExample = (ControlExample)geometryBody.Children[4];
                 Assert.IsNull(geometryExample.HeaderText);
