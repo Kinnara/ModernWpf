@@ -16,12 +16,12 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            PageSelector.SelectedIndex = 0;
+            PageSelector.SelectedItem = PageSelector.Items[0];
         }
 
         private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ColorSubpageNavigationFrame.Content = WpfGalleryColorSectionFactory.Create(PageSelector.SelectedIndex);
+            ColorSubpageNavigationFrame.Navigate(WpfGalleryColorSectionFactory.Create(PageSelector.SelectedIndex));
         }
     }
 }

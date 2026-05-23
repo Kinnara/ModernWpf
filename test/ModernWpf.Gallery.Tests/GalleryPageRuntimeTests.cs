@@ -1643,8 +1643,8 @@ namespace ModernWpf.Gallery.Tests
                 var firstTilesPanel = (Border)textSection.Children[1];
                 var firstTilesGrid = (Grid)firstTilesPanel.Child;
                 Assert.AreEqual(4, firstTilesGrid.ColumnDefinitions.Count);
-                Assert.AreEqual("Text / Primary", AutomationProperties.GetName((UIElement)firstTilesGrid.Children[0]));
-                Assert.AreEqual("Text / Disabled", AutomationProperties.GetName((UIElement)firstTilesGrid.Children[3]));
+                Assert.AreEqual("Text / Primary", GetColorTileName(firstTilesGrid.Children[0]));
+                Assert.AreEqual("Text / Disabled", GetColorTileName(firstTilesGrid.Children[3]));
 
                 var firstTextTile = (ColorTile)firstTilesGrid.Children[0];
                 Assert.AreEqual(new CornerRadius(8, 0, 0, 8), firstTextTile.TileRadius);
@@ -1665,16 +1665,16 @@ namespace ModernWpf.Gallery.Tests
 
                 var controlFillTiles = GetColorTilesGrid(fillSection, 1);
                 Assert.AreEqual(4, controlFillTiles.ColumnDefinitions.Count);
-                Assert.AreEqual("Control / Default", AutomationProperties.GetName((UIElement)controlFillTiles.Children[0]));
-                Assert.AreEqual("Control / Quartenary", AutomationProperties.GetName((UIElement)controlFillTiles.Children[3]));
+                Assert.AreEqual("Control / Default", GetColorTileName(controlFillTiles.Children[0]));
+                Assert.AreEqual("Control / Quartenary", GetColorTileName(controlFillTiles.Children[3]));
 
                 var controlFillSecondRow = GetColorTilesGrid(fillSection, 2);
                 Assert.AreEqual(3, controlFillSecondRow.ColumnDefinitions.Count);
-                Assert.AreEqual("Control / Disabled", AutomationProperties.GetName((UIElement)controlFillSecondRow.Children[0]));
-                Assert.AreEqual("Control / Input Active", AutomationProperties.GetName((UIElement)controlFillSecondRow.Children[2]));
+                Assert.AreEqual("Control / Disabled", GetColorTileName(controlFillSecondRow.Children[0]));
+                Assert.AreEqual("Control / Input Active", GetColorTileName(controlFillSecondRow.Children[2]));
 
                 var accentFillSecondRow = GetColorTilesGrid(fillSection, 16);
-                Assert.AreEqual("Accent / Selected Text Background", AutomationProperties.GetName((UIElement)accentFillSecondRow.Children[1]));
+                Assert.AreEqual("Accent / Selected Text Background", GetColorTileName(accentFillSecondRow.Children[1]));
 
                 selector.SelectedIndex = 2;
                 WpfTestHost.DoEvents();
@@ -1690,16 +1690,16 @@ namespace ModernWpf.Gallery.Tests
 
                 var elevationTiles = GetColorTilesGrid(strokeSection, 1);
                 Assert.AreEqual(3, elevationTiles.ColumnDefinitions.Count);
-                Assert.AreEqual("Control / Border", AutomationProperties.GetName((UIElement)elevationTiles.Children[0]));
-                Assert.AreEqual("Text Control / Border", AutomationProperties.GetName((UIElement)elevationTiles.Children[2]));
+                Assert.AreEqual("Control / Border", GetColorTileName(elevationTiles.Children[0]));
+                Assert.AreEqual("Text Control / Border", GetColorTileName(elevationTiles.Children[2]));
 
                 var controlStrokeSecondRow = GetColorTilesGrid(strokeSection, 5);
                 Assert.AreEqual(3, controlStrokeSecondRow.ColumnDefinitions.Count);
-                Assert.AreEqual("Control Stroke / For Strong Fill When On Image", AutomationProperties.GetName((UIElement)controlStrokeSecondRow.Children[2]));
+                Assert.AreEqual("Control Stroke / For Strong Fill When On Image", GetColorTileName(controlStrokeSecondRow.Children[2]));
 
                 var focusTiles = GetColorTilesGrid(strokeSection, 15);
-                Assert.AreEqual("Focus / Outer", AutomationProperties.GetName((UIElement)focusTiles.Children[0]));
-                Assert.AreEqual("Focus / Inner", AutomationProperties.GetName((UIElement)focusTiles.Children[1]));
+                Assert.AreEqual("Focus / Outer", GetColorTileName(focusTiles.Children[0]));
+                Assert.AreEqual("Focus / Inner", GetColorTileName(focusTiles.Children[1]));
 
                 selector.SelectedIndex = 3;
                 WpfTestHost.DoEvents();
@@ -1717,13 +1717,13 @@ namespace ModernWpf.Gallery.Tests
 
                 var cardTiles = GetColorTilesGrid(backgroundSection, 1);
                 Assert.AreEqual(3, cardTiles.ColumnDefinitions.Count);
-                Assert.AreEqual("Card Background / Tertiary", AutomationProperties.GetName((UIElement)cardTiles.Children[2]));
+                Assert.AreEqual("Card Background / Tertiary", GetColorTileName(cardTiles.Children[2]));
 
                 var micaTiles = GetColorTilesGrid(backgroundSection, 15);
-                Assert.AreEqual("Mica Background / Base Alt", AutomationProperties.GetName((UIElement)micaTiles.Children[1]));
+                Assert.AreEqual("Mica Background / Base Alt", GetColorTileName(micaTiles.Children[1]));
 
                 var accentAcrylicTiles = GetColorTilesGrid(backgroundSection, 19);
-                Assert.AreEqual("Accent Acrylic Background / Default", AutomationProperties.GetName((UIElement)accentAcrylicTiles.Children[1]));
+                Assert.AreEqual("Accent Acrylic Background / Default", GetColorTileName(accentAcrylicTiles.Children[1]));
 
                 selector.SelectedIndex = 4;
                 WpfTestHost.DoEvents();
@@ -1731,13 +1731,13 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(6, signalSection.Children.Count);
                 Assert.AreEqual("System", GetColorPageExampleTitle(signalSection, 0));
                 var signalStatusTiles = GetColorTilesGrid(signalSection, 1);
-                Assert.AreEqual("System / Success", AutomationProperties.GetName((UIElement)signalStatusTiles.Children[0]));
-                Assert.AreEqual("System / Critical", AutomationProperties.GetName((UIElement)signalStatusTiles.Children[2]));
+                Assert.AreEqual("System / Success", GetColorTileName(signalStatusTiles.Children[0]));
+                Assert.AreEqual("System / Critical", GetColorTileName(signalStatusTiles.Children[2]));
                 var signalNeutralTiles = GetColorTilesGrid(signalSection, 3);
-                Assert.AreEqual("System / Solid Neutral", AutomationProperties.GetName((UIElement)signalNeutralTiles.Children[2]));
+                Assert.AreEqual("System / Solid Neutral", GetColorTileName(signalNeutralTiles.Children[2]));
                 var signalSolidAttentionTiles = GetColorTilesGrid(signalSection, 5);
                 Assert.AreEqual(1, signalSolidAttentionTiles.ColumnDefinitions.Count);
-                Assert.AreEqual("System / Solid Attention Background", AutomationProperties.GetName((UIElement)signalSolidAttentionTiles.Children[0]));
+                Assert.AreEqual("System / Solid Attention Background", GetColorTileName(signalSolidAttentionTiles.Children[0]));
 
                 selector.SelectedIndex = 5;
                 WpfTestHost.DoEvents();
@@ -1749,11 +1749,11 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(4, aquaticTiles.ColumnDefinitions.Count);
                 Assert.AreEqual(2, aquaticTiles.RowDefinitions.Count);
                 Assert.AreEqual(8, aquaticTiles.Children.Count);
-                Assert.AreEqual("Window Text Color", AutomationProperties.GetName((UIElement)aquaticTiles.Children[0]));
-                Assert.AreEqual("Grey Text Color / Disabled", AutomationProperties.GetName((UIElement)aquaticTiles.Children[7]));
+                Assert.AreEqual("Window Text Color", GetColorTileName(aquaticTiles.Children[0]));
+                Assert.AreEqual("Grey Text Color / Disabled", GetColorTileName(aquaticTiles.Children[7]));
                 Assert.AreEqual("Night Sky", ((TextBlock)highContrastSection.Children[7]).Text);
                 var nightSkyTiles = (Grid)highContrastSection.Children[8];
-                Assert.AreEqual("Hotlight Color", AutomationProperties.GetName((UIElement)nightSkyTiles.Children[6]));
+                Assert.AreEqual("Hotlight Color", GetColorTileName(nightSkyTiles.Children[6]));
             });
         }
 
@@ -2036,6 +2036,17 @@ namespace ModernWpf.Gallery.Tests
         {
             var tilesPanel = (Border)section.Children[childIndex];
             return (Grid)tilesPanel.Child;
+        }
+
+        private static string GetColorTileName(UIElement element)
+        {
+            var tile = element as ColorTile;
+            if (tile != null)
+            {
+                return tile.ColorName;
+            }
+
+            return AutomationProperties.GetName(element);
         }
 
         private static TextBlock FindTextBlock(DependencyObject root, string text)

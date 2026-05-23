@@ -1,10 +1,10 @@
-using System.Windows;
+using System.Windows.Controls;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 {
     internal static class WpfGalleryColorSectionFactory
     {
-        public static FrameworkElement Create(int index)
+        public static Page Create(int index)
         {
             switch (index)
             {

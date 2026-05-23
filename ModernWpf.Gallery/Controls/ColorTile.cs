@@ -16,7 +16,7 @@ namespace ModernWpf.Gallery.Controls
             DependencyProperty.Register(nameof(ColorExplanation), typeof(string), typeof(ColorTile), new PropertyMetadata(string.Empty));
 
         public static readonly DependencyProperty ColorNameProperty =
-            DependencyProperty.Register(nameof(ColorName), typeof(string), typeof(ColorTile), new PropertyMetadata(string.Empty, OnColorNameChanged));
+            DependencyProperty.Register(nameof(ColorName), typeof(string), typeof(ColorTile), new PropertyMetadata(string.Empty));
 
         public static readonly DependencyProperty ColorValueProperty =
             DependencyProperty.Register(nameof(ColorValue), typeof(string), typeof(ColorTile), new PropertyMetadata(string.Empty));
@@ -94,12 +94,6 @@ namespace ModernWpf.Gallery.Controls
             {
                 MessageBox.Show("Error copying to clipboard: " + ex.Message);
             }
-        }
-
-        private static void OnColorNameChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var colorTile = (ColorTile)d;
-            AutomationProperties.SetName(colorTile, e.NewValue as string ?? string.Empty);
         }
 
         private static void RaiseNotification(ColorTile colorTile)

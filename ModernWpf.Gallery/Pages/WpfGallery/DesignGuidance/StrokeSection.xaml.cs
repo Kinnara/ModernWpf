@@ -2,7 +2,7 @@
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 {
-    public sealed partial class StrokeSection : UserControl
+    public sealed partial class StrokeSection : Page
     {
         public StrokeSection()
         {
