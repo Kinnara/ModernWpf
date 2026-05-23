@@ -63,12 +63,58 @@ namespace ModernWpf.Gallery.Tests
         {
             var allControlIds = GalleryCatalog.AllControlsItems.Select(item => item.UniqueId).ToArray();
 
+            CollectionAssert.AreEqual(
+                new[]
+                {
+                    "Color",
+                    "Typography",
+                    "Spacing",
+                    "Geometry",
+                    "Iconography",
+                    "Button",
+                    "CheckBox",
+                    "ComboBox",
+                    "RadioButton",
+                    "Slider",
+                    "DataGrid",
+                    "ListBox",
+                    "ListView",
+                    "TreeView",
+                    "Calendar",
+                    "DatePicker",
+                    "Expander",
+                    "Grid",
+                    "ResizeGrip",
+                    "GridSplitter",
+                    "GroupBox",
+                    "StackPanel",
+                    "Border",
+                    "Menu",
+                    "TabControl",
+                    "Frame",
+                    "NavigationWindow",
+                    "ProgressBar",
+                    "ToolTip",
+                    "Label",
+                    "TextBox",
+                    "TextBlock",
+                    "RichTextEdit",
+                    "PasswordBox",
+                    "Hyperlink",
+                    "FileAndFolderDialogs",
+                    "MessageBox",
+                    "Clipboard"
+                },
+                allControlIds,
+                "All Controls should keep the official WPF Gallery item sequence and content extent.");
+
             Assert.IsFalse(allControlIds.Contains("UserDashboard"), "The official WPF Gallery excludes the Samples section from All Controls.");
             Assert.IsFalse(allControlIds.Contains("Canvas"), "The current official WPF Gallery catalog omits the orphaned Media group from All Controls.");
             Assert.IsFalse(allControlIds.Contains("Image"), "The current official WPF Gallery catalog omits the orphaned Media group from All Controls.");
             Assert.IsNotNull(GalleryCatalog.FindGroup("Media"), "ModernWpf still exposes the orphaned Media pages as a dedicated combined-gallery section.");
             Assert.IsTrue(allControlIds.Contains("Color"), "Design guidance items remain part of All Controls.");
-            Assert.IsTrue(allControlIds.Contains("NavigationView"), "ModernWpf control pages remain part of the combined gallery.");
+            Assert.IsFalse(allControlIds.Contains("NavigationView"), "ModernWpf/WinUI extension pages stay in their own navigation sections so All Controls matches the official WPF Gallery.");
+            Assert.IsNotNull(GalleryCatalog.FindItem("NavigationView"), "ModernWpf control pages remain reachable outside the WPF Gallery All Controls page.");
 
             CollectionAssert.AreEqual(
                 new[] { "Menu", "TabControl", "Frame", "NavigationWindow" },

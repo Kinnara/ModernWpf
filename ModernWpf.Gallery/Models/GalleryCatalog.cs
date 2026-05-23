@@ -8,6 +8,48 @@ namespace ModernWpf.Gallery.Models
     {
         private const string ControlImagePath = "pack://application:,,,/Assets/ControlImages/";
 
+        private static readonly string[] OfficialWpfGalleryAllControlsItemIds =
+        {
+            "Color",
+            "Typography",
+            "Spacing",
+            "Geometry",
+            "Iconography",
+            "Button",
+            "CheckBox",
+            "ComboBox",
+            "RadioButton",
+            "Slider",
+            "DataGrid",
+            "ListBox",
+            "ListView",
+            "TreeView",
+            "Calendar",
+            "DatePicker",
+            "Expander",
+            "Grid",
+            "ResizeGrip",
+            "GridSplitter",
+            "GroupBox",
+            "StackPanel",
+            "Border",
+            "Menu",
+            "TabControl",
+            "Frame",
+            "NavigationWindow",
+            "ProgressBar",
+            "ToolTip",
+            "Label",
+            "TextBox",
+            "TextBlock",
+            "RichTextEdit",
+            "PasswordBox",
+            "Hyperlink",
+            "FileAndFolderDialogs",
+            "MessageBox",
+            "Clipboard"
+        };
+
         private static readonly IReadOnlyList<GalleryItem> CatalogItems = CreateItems();
         private static readonly IReadOnlyList<GalleryGroup> DisplayGroups = CreateDisplayGroups();
 
@@ -116,8 +158,12 @@ namespace ModernWpf.Gallery.Models
 
         private static bool IsAllControlsItem(GalleryItem item)
         {
-            return !string.Equals(item.GroupId, "Samples", StringComparison.OrdinalIgnoreCase) &&
-                !string.Equals(item.GroupId, "Media", StringComparison.OrdinalIgnoreCase);
+            return IsOfficialWpfGalleryAllControlsItem(item.UniqueId);
+        }
+
+        private static bool IsOfficialWpfGalleryAllControlsItem(string uniqueId)
+        {
+            return OfficialWpfGalleryAllControlsItemIds.Contains(uniqueId, StringComparer.OrdinalIgnoreCase);
         }
 
         private static IReadOnlyList<GalleryItem> CreateWpfGalleryItems()
