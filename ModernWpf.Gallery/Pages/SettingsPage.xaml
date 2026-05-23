@@ -99,6 +99,7 @@
                                 Margin="10"
                                 HorizontalAlignment="Right"
                                 AutomationProperties.Name="Change ThemeMode"
+                                SelectedIndex="2"
                                 SelectionChanged="OnThemeModeSelectionChanged">
                                 <ComboBoxItem Content="Light" />
                                 <ComboBoxItem Content="Dark" />

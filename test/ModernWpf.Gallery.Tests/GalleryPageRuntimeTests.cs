@@ -297,6 +297,8 @@ namespace ModernWpf.Gallery.Tests
                     CollectionAssert.AreEqual(
                         new[] { "Light", "Dark", "Use system setting" },
                         themeMode.Items.Cast<ComboBoxItem>().Select(item => item.Content.ToString()).ToArray());
+                    Assert.AreEqual(2, themeMode.SelectedIndex);
+                    Assert.AreEqual("Use system setting", ((ComboBoxItem)themeMode.SelectedItem).Content);
 
                     var aboutExpander = (Expander)page.FindName("AboutExpander");
                     Assert.AreEqual("WPF Gallery Preview", AutomationProperties.GetName(aboutExpander));
@@ -327,6 +329,30 @@ namespace ModernWpf.Gallery.Tests
                     window.Content = null;
                     window.Close();
                     WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void SettingsPageInitialThemeSelectionDoesNotOverrideForcedTheme()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var previousTheme = ThemeManager.Current.ApplicationTheme;
+                try
+                {
+                    ThemeManager.Current.ApplicationTheme = ApplicationTheme.Dark;
+
+                    var page = new SettingsPage();
+                    var themeMode = (ComboBox)page.FindName("Change_ThemeMode");
+
+                    Assert.AreEqual(2, themeMode.SelectedIndex);
+                    Assert.AreEqual("Use system setting", ((ComboBoxItem)themeMode.SelectedItem).Content);
+                    Assert.AreEqual(ApplicationTheme.Dark, ThemeManager.Current.ApplicationTheme);
+                }
+                finally
+                {
+                    ThemeManager.Current.ApplicationTheme = previousTheme;
                 }
             });
         }

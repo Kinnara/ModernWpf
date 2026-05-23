@@ -14,27 +14,10 @@ namespace ModernWpf.Gallery.Pages
             ViewModel = new SettingsPageViewModel();
             DataContext = this;
             InitializeComponent();
-            SelectCurrentTheme();
             _canApplyThemeSelection = true;
         }
 
         public SettingsPageViewModel ViewModel { get; }
-
-        private void SelectCurrentTheme()
-        {
-            switch (ThemeManager.Current.ApplicationTheme)
-            {
-                case ApplicationTheme.Light:
-                    Change_ThemeMode.SelectedIndex = 0;
-                    break;
-                case ApplicationTheme.Dark:
-                    Change_ThemeMode.SelectedIndex = 1;
-                    break;
-                default:
-                    Change_ThemeMode.SelectedIndex = 2;
-                    break;
-            }
-        }
 
         private void OnThemeModeSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
