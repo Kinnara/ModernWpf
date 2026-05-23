@@ -2270,6 +2270,8 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(2, root.RowDefinitions.Count);
                     Assert.AreEqual(280.0, root.RowDefinitions[0].MaxHeight);
                     Assert.AreEqual(new GridLength(2, GridUnitType.Star), root.RowDefinitions[1].Height);
+                    Assert.AreSame(Application.Current.FindResource("GalleryPageRootStyle"), root.Style);
+                    Assert.AreEqual(14.0, TextElement.GetFontSize(root));
 
                     var userListGrid = root.Children.OfType<Grid>().Single(child => Grid.GetColumn(child) == 0);
                     var userList = userListGrid.Children.OfType<ListView>().Single();
@@ -2284,11 +2286,13 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(firstUser.Name, AutomationProperties.GetName(firstUserItem));
                     var firstUserName = FindTextBlock(firstUserItem, firstUser.Name);
                     Assert.AreEqual(AutomationHeadingLevel.Level3, AutomationProperties.GetHeadingLevel(firstUserName));
+                    Assert.AreEqual(14.0, firstUserName.FontSize);
 
                     var addUserButton = userListGrid.Children.OfType<Button>().Single();
                     Assert.AreEqual("Add New User", addUserButton.Content);
                     Assert.AreEqual(new Thickness(10), addUserButton.Margin);
                     Assert.AreEqual(HorizontalAlignment.Center, addUserButton.HorizontalAlignment);
+                    Assert.AreEqual(14.0, addUserButton.FontSize);
 
                     var detailsGrid = root.Children.OfType<Grid>().Single(child => Grid.GetColumn(child) == 1);
                     var header = (StackPanel)detailsGrid.Children[0];
