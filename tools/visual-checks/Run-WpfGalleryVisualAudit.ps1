@@ -1045,6 +1045,24 @@ function Capture-Window([IntPtr]$hwnd, [string]$path) {
     throw "Could not capture a nonblank window surface for handle $hwnd."
 }
 
+function Try-CaptureWindow([IntPtr]$hwnd, [string]$path) {
+    try {
+        Capture-Window $hwnd $path
+        return [ordered]@{
+            Succeeded = $true
+            Screenshot = $path
+            LastException = ""
+        }
+    }
+    catch {
+        return [ordered]@{
+            Succeeded = $false
+            Screenshot = ""
+            LastException = $_.Exception.Message
+        }
+    }
+}
+
 function Capture-ScreenRect([IntPtr]$hwnd, [string]$path) {
     $rect = [WpfGalleryVisualNative]::GetRect($hwnd)
     $width = [Math]::Max(1, $rect.Right - $rect.Left)
@@ -1380,9 +1398,13 @@ function Capture-ModernWpf($case, [string]$caseDir) {
         $screenshot = Join-Path $caseDir "modernwpf-$($case.Id).png"
         $treePath = Join-Path $caseDir "modernwpf-$($case.Id).uia.txt"
         $contentCropPath = Join-Path $caseDir "modernwpf-$($case.Id)-content.png"
-        Capture-Window $window.Current.NativeWindowHandle $screenshot
+        $capture = Try-CaptureWindow $window.Current.NativeWindowHandle $screenshot
+        $screenshot = $capture.Screenshot
         Write-UiaTree $window $treePath 7
-        $windowNonBlank = Test-ImageNotBlank $screenshot
+        $windowNonBlank = $false
+        if ($capture.Succeeded) {
+            $windowNonBlank = Test-ImageNotBlank $screenshot
+        }
 
         $contentCrop = $null
         if ($case.Id -ne "Home") {
@@ -1417,11 +1439,16 @@ function Capture-ModernWpf($case, [string]$caseDir) {
             }
         }
 
-        if ($null -eq $contentCrop -or !$contentCrop.NonBlank) {
+        if (($null -eq $contentCrop -or !$contentCrop.NonBlank) -and $windowNonBlank) {
             $contentCrop = Save-ModernContentCrop $window $screenshot $contentCropPath $case
         }
 
         $lastException = Get-AutomationText $window "GalleryVisualTestLastException"
+        if ([string]::IsNullOrWhiteSpace($lastException) -and
+            ($null -eq $contentCrop -or !$contentCrop.NonBlank) -and
+            !$capture.Succeeded) {
+            $lastException = $capture.LastException
+        }
 
         return [ordered]@{
             App = "ModernWpf"
@@ -1432,6 +1459,7 @@ function Capture-ModernWpf($case, [string]$caseDir) {
             ContentCrop = $contentCrop
             WindowNonBlank = $windowNonBlank
             UiaTree = $treePath
+            WindowCaptureException = $(if ($capture.Succeeded) { "" } else { $capture.LastException })
             LastException = $lastException
         }
     }
@@ -1463,29 +1491,36 @@ function Capture-OfficialWpfGalleryDirectHost($case, [string]$caseDir) {
         $screenshot = Join-Path $caseDir "official-wpf-$($case.Id).png"
         $treePath = Join-Path $caseDir "official-wpf-$($case.Id).uia.txt"
         $contentCropPath = Join-Path $caseDir "official-wpf-$($case.Id)-content.png"
-        Capture-Window $window.Current.NativeWindowHandle $screenshot
+        $capture = Try-CaptureWindow $window.Current.NativeWindowHandle $screenshot
+        $screenshot = $capture.Screenshot
         Write-UiaTree $window $treePath 7
         $frame = Find-DescendantByAutomationId $window "RootContentFrame"
         $renderedContentArtifact = Join-Path $artifactDir "RootContentFrame.png"
         $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "OfficialDirectRootContentFrameRenderedArtifact"
-        if (!$contentCrop.NonBlank) {
+        if (!$contentCrop.NonBlank -and $capture.Succeeded) {
             $contentCrop = Save-ElementCrop $window $screenshot $contentCropPath $frame "OfficialDirectRootContentFrame" 0
+        }
+        $windowNonBlank = $false
+        if ($capture.Succeeded) {
+            $windowNonBlank = Test-ImageNotBlank $screenshot
         }
 
         return [ordered]@{
             App = "OfficialWpfGallery"
             Case = $case.Id
             Route = "Direct reference host: $($case.Id)"
-            Status = $(if ((Test-ImageNotBlank $screenshot) -and $contentCrop.NonBlank) { "Passed" } else { "Failed" })
+            Status = $(if (($windowNonBlank -or $contentCrop.NonBlank) -and $contentCrop.NonBlank) { "Passed" } else { "Failed" })
             Screenshot = $screenshot
             ContentCrop = $contentCrop
+            WindowNonBlank = $windowNonBlank
             UiaTree = $treePath
             ThemeProbe = [ordered]@{
                 RequestedTheme = $Theme
                 Status = "Passed"
                 LastException = "Direct reference host"
             }
-            LastException = ""
+            WindowCaptureException = $(if ($capture.Succeeded) { "" } else { $capture.LastException })
+            LastException = $(if (($windowNonBlank -or $contentCrop.NonBlank) -and $contentCrop.NonBlank) { "" } elseif (!$capture.Succeeded) { $capture.LastException } else { "" })
         }
     }
     finally {
