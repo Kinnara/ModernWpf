@@ -1105,7 +1105,7 @@ function Save-OfficialContentCrop($window, [string]$screenshot, [string]$path, $
     return Save-Crop $screenshot $path $left $top ($windowWidth - $left) ($windowHeight - $top) "OfficialContentRegion"
 }
 
-function Save-ModernContentCrop($window, [string]$screenshot, [string]$path) {
+function Save-ModernContentCrop($window, [string]$screenshot, [string]$path, $case) {
     $content = Find-DescendantByAutomationId $window "GalleryContentHost"
     if ($null -ne $content) {
         return Save-ElementCrop $window $screenshot $path $content "GalleryContentHost" 0
@@ -1113,16 +1113,46 @@ function Save-ModernContentCrop($window, [string]$screenshot, [string]$path) {
 
     $windowRect = [WpfGalleryVisualNative]::GetRect($window.Current.NativeWindowHandle)
     $windowWidth = $windowRect.Right - $windowRect.Left
+    $windowHeight = $windowRect.Bottom - $windowRect.Top
     $root = Find-DescendantByAutomationId $window "GalleryNavigationRoot"
     $menu = Find-DescendantByAutomationId $window "MenuItemsHost"
+
+    # Normal section pages compare against the official RootContentFrame, so trim
+    # ModernWpf's navigation host padding instead of using the broader Home crop.
+    $normalContentLeftInset = 31
+    $normalContentTopInset = 17
+    $normalContentRightInset = 25
+    $normalContentBottomInset = 1
+    if (($null -eq $case -or $case.Id -ne "Home") -and $null -ne $root -and $null -ne $menu) {
+        $rootRect = $root.Current.BoundingRectangle
+        $menuRect = $menu.Current.BoundingRectangle
+        $left = [int][Math]::Round(($menuRect.X + $menuRect.Width) - $windowRect.Left + $normalContentLeftInset)
+        $top = [int][Math]::Round($rootRect.Y - $windowRect.Top + $normalContentTopInset)
+        $right = [int][Math]::Round(($rootRect.X + $rootRect.Width) - $windowRect.Left - $normalContentRightInset)
+        $bottom = [int][Math]::Round(($rootRect.Y + $rootRect.Height) - $windowRect.Top - $normalContentBottomInset)
+        return Save-Crop $screenshot $path $left $top ($right - $left) ($bottom - $top) "ModernWpfGalleryContentHost"
+    }
+
+    $homeContentLeftInset = 7
+    $homeContentTopInset = 2
+    $homeContentRightInset = 1
+    $homeContentBottomInset = 1
     if ($null -ne $root -and $null -ne $menu) {
         $rootRect = $root.Current.BoundingRectangle
         $menuRect = $menu.Current.BoundingRectangle
-        $left = [int][Math]::Round(($menuRect.X + $menuRect.Width) - $windowRect.Left + 7)
-        $top = [int][Math]::Round($rootRect.Y - $windowRect.Top + 2)
-        $right = [int][Math]::Round(($rootRect.X + $rootRect.Width) - $windowRect.Left - 1)
-        $bottom = [int][Math]::Round(($rootRect.Y + $rootRect.Height) - $windowRect.Top - 1)
+        $left = [int][Math]::Round(($menuRect.X + $menuRect.Width) - $windowRect.Left + $homeContentLeftInset)
+        $top = [int][Math]::Round($rootRect.Y - $windowRect.Top + $homeContentTopInset)
+        $right = [int][Math]::Round(($rootRect.X + $rootRect.Width) - $windowRect.Left - $homeContentRightInset)
+        $bottom = [int][Math]::Round(($rootRect.Y + $rootRect.Height) - $windowRect.Top - $homeContentBottomInset)
         return Save-Crop $screenshot $path $left $top ($right - $left) ($bottom - $top) "ModernWpfContentRegion"
+    }
+
+    if ($null -eq $case -or $case.Id -ne "Home") {
+        $fallbackLeft = 287
+        $fallbackTop = 61
+        $fallbackRightInset = 312
+        $fallbackBottomInset = 62
+        return Save-Crop $screenshot $path $fallbackLeft $fallbackTop ($windowWidth - $fallbackRightInset) ($windowHeight - $fallbackBottomInset) "ModernWpfContentFallback"
     }
 
     return Save-Crop $screenshot $path 320 40 ($windowWidth - 320) 760 "ModernWpfContentFallback"
@@ -1222,16 +1252,26 @@ function Capture-ModernWpf($case, [string]$caseDir) {
         $contentCropPath = Join-Path $caseDir "modernwpf-$($case.Id)-content.png"
         Capture-Window $window.Current.NativeWindowHandle $screenshot
         Write-UiaTree $window $treePath 7
-        $renderedContentArtifact = Join-Path $artifactDir "ContentRootGrid.png"
-        $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "ContentRootGridRenderedArtifact"
-        if (!$contentCrop.NonBlank) {
-            $renderedContentArtifact = Join-Path $artifactDir "GalleryContentHost.png"
-            $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "GalleryContentHostRenderedArtifact"
-        }
-        if (!$contentCrop.NonBlank) {
-            $contentCrop = Save-ModernContentCrop $window $screenshot $contentCropPath
-        }
         $windowNonBlank = Test-ImageNotBlank $screenshot
+
+        $contentCrop = $null
+        if (!(Test-OfficialDirectReferenceCase $case) -and $windowNonBlank) {
+            $contentCrop = Save-ModernContentCrop $window $screenshot $contentCropPath $case
+        }
+
+        if ($null -eq $contentCrop -or !$contentCrop.NonBlank) {
+            $renderedContentArtifact = Join-Path $artifactDir "ContentRootGrid.png"
+            $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "ContentRootGridRenderedArtifact"
+            if (!$contentCrop.NonBlank) {
+                $renderedContentArtifact = Join-Path $artifactDir "GalleryContentHost.png"
+                $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "GalleryContentHostRenderedArtifact"
+            }
+        }
+
+        if (!$contentCrop.NonBlank) {
+            $contentCrop = Save-ModernContentCrop $window $screenshot $contentCropPath $case
+        }
+
         $lastException = Get-AutomationText $window "GalleryVisualTestLastException"
 
         return [ordered]@{
