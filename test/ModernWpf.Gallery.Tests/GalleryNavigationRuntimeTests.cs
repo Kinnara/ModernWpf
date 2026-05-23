@@ -358,11 +358,33 @@ namespace ModernWpf.Gallery.Tests
                     AssertRenderedNavigationCard((ItemsControl)allControlsPage.FindName("AllControlsItemsControl"), GalleryCatalog.AllControlsItems.First().Title, GalleryCatalog.AllControlsItems.First().Subtitle, allControlsPage.ViewModel.NavigateCommand);
                 });
 
+                var navigationViewPage = new ItemPage(GalleryCatalog.FindItem("NavigationView"));
+                RenderPage(navigationViewPage, () =>
+                {
+                    var pageHeader = (PageHeader)navigationViewPage.FindName("PageHeader");
+                    Assert.IsNotNull(pageHeader);
+                    Assert.AreEqual(Visibility.Visible, pageHeader.Visibility);
+                    Assert.AreEqual(new Thickness(0, 0, 0, 32), pageHeader.Margin);
+                    Assert.AreEqual(navigationViewPage.Title, pageHeader.Title);
+                    Assert.AreEqual(navigationViewPage.Description, pageHeader.Description);
+                    AssertBindingPath(pageHeader, PageHeader.TitleProperty, "Title");
+                    AssertBindingPath(pageHeader, PageHeader.DescriptionProperty, "PageHeaderDescription");
+
+                    pageHeader.ApplyTemplate();
+                    var labels = FindVisualChildren<Label>(pageHeader).ToArray();
+                    Assert.AreEqual(2, labels.Length);
+                    AssertPageHeaderLabel(labels[0], navigationViewPage.Title + " Page", AutomationHeadingLevel.Level1, 0);
+                    AssertPageHeaderLabel(labels[1], string.Empty, AutomationHeadingLevel.Level2, 1);
+                });
+
                 var itemPage = new ItemPage(GalleryCatalog.FindItem("Color"));
                 RenderPage(itemPage, () =>
                 {
-                    AssertPageHeaderLabel((Label)itemPage.FindName("TitleLabel"), "Colors Page", AutomationHeadingLevel.Level1, 0);
-                    AssertPageHeaderLabel((Label)itemPage.FindName("DescriptionLabel"), string.Empty, AutomationHeadingLevel.Level2, 1);
+                    var wrapperHeader = (PageHeader)itemPage.FindName("PageHeader");
+                    Assert.IsNotNull(wrapperHeader);
+                    Assert.AreEqual(Visibility.Collapsed, wrapperHeader.Visibility);
+                    Assert.AreEqual(itemPage.Title, wrapperHeader.Title);
+                    Assert.IsNull(wrapperHeader.Description);
                 });
             });
         }

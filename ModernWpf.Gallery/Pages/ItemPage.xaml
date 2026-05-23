@@ -17,32 +17,12 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <StackPanel
+        <controls:PageHeader
+            x:Name="PageHeader"
             Margin="0,0,0,32"
-            Visibility="{Binding ShowPageHeader, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <Label
-                x:Name="TitleLabel"
-                AutomationProperties.Name="{Binding Title, StringFormat='{}{0} Page'}"
-                Focusable="True"
-                KeyboardNavigation.IsTabStop="True"
-                KeyboardNavigation.TabIndex="0">
-                <TextBlock
-                    x:Name="TitleTextBlock"
-                    AutomationProperties.AutomationId="GalleryItemPageTitle"
-                    Style="{StaticResource TitleTextBlockStyle}"
-                    Text="{Binding Title}" />
-            </Label>
-            <Label
-                x:Name="DescriptionLabel"
-                Focusable="True"
-                KeyboardNavigation.IsTabStop="True"
-                KeyboardNavigation.TabIndex="1"
-                Visibility="{Binding ShowPageDescription, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <TextBlock
-                    Style="{StaticResource BodyTextBlockStyle}"
-                    Text="{Binding Description}" />
-            </Label>
-        </StackPanel>
+            Title="{Binding Title}"
+            Description="{Binding PageHeaderDescription}"
+            Visibility="{Binding ShowPageHeader, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
         <ScrollViewer
             Grid.Row="1"

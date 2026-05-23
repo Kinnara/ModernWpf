@@ -49,8 +49,6 @@ namespace ModernWpf.Gallery.Pages
                 .Select(GalleryCatalog.FindItem)
                 .Where(related => related != null)
                 .ToArray();
-            GalleryAutomation.SetHeadingLevel(TitleLabel, GalleryAutomationHeadingLevel.Level1);
-            GalleryAutomation.SetHeadingLevel(DescriptionLabel, GalleryAutomationHeadingLevel.Level2);
             DataContext = this;
         }
 
@@ -183,6 +181,11 @@ namespace ModernWpf.Gallery.Pages
         public bool ShowPageDescription
         {
             get { return ShowPageHeader && (!UsesWpfGalleryPageMode || OfficialWpfPageShowsDescription(_item.UniqueId)); }
+        }
+
+        public string PageHeaderDescription
+        {
+            get { return ShowPageDescription ? Description : null; }
         }
 
         public bool ShowScrolledPageContent
