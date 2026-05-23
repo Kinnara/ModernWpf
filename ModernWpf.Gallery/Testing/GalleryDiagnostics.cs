@@ -253,7 +253,8 @@ namespace ModernWpf.Gallery.Testing
 
         private static Brush GetArtifactBackgroundBrush(FrameworkElement element)
         {
-            return element.TryFindResource("LayerFillColorDefaultBrush") as Brush
+            return element.TryFindResource("SolidBackgroundFillColorTertiaryBrush") as Brush
+                ?? element.TryFindResource("LayerFillColorDefaultBrush") as Brush
                 ?? element.TryFindResource("ApplicationPageBackgroundThemeBrush") as Brush
                 ?? element.TryFindResource("SolidBackgroundFillColorBaseBrush") as Brush
                 ?? new SolidColorBrush(

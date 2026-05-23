@@ -36,7 +36,7 @@
     <ImageBrush x:Key="p505" ImageSource="pack://application:,,,/ModernWpf.Gallery;component/Assets/UserDashboard/505-100x100.jpg" />
 
     <Style x:Key="GalleryPageRootStyle" TargetType="Grid">
-        <Setter Property="Background" Value="{DynamicResource LayerFillColorDefaultBrush}" />
+        <Setter Property="Background" Value="{DynamicResource SolidBackgroundFillColorTertiaryBrush}" />
         <Setter Property="TextElement.FontSize" Value="{StaticResource BodyTextBlockFontSize}" />
     </Style>
 

@@ -39,7 +39,6 @@ internal static class Program
         ApplyTheme(app, options.Theme);
 
         var page = CreatePage(options.Page);
-        page.SetResourceReference(Control.BackgroundProperty, "LayerFillColorDefaultBrush");
 
         var frame = new Frame
         {
@@ -59,7 +58,7 @@ internal static class Program
             Height = frame.Height,
             Child = frame
         };
-        contentHost.SetResourceReference(Control.BackgroundProperty, "LayerFillColorDefaultBrush");
+        contentHost.SetResourceReference(Control.BackgroundProperty, "SolidBackgroundFillColorTertiaryBrush");
 
         var window = new Window
         {
@@ -239,7 +238,8 @@ internal static class Program
 
     private static Brush GetElementBackground(FrameworkElement element)
     {
-        return element.TryFindResource("LayerFillColorDefaultBrush") as Brush
+        return element.TryFindResource("SolidBackgroundFillColorTertiaryBrush") as Brush
+            ?? element.TryFindResource("LayerFillColorDefaultBrush") as Brush
             ?? element.TryFindResource("ApplicationPageBackgroundThemeBrush") as Brush
             ?? Brushes.White;
     }

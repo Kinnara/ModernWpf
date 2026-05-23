@@ -847,7 +847,9 @@ function Test-BitmapNotBlank([System.Drawing.Bitmap]$bitmap) {
         }
     }
 
-    return $colors.Count -gt 4 -and $visibleSamples -gt 0 -and $nonBlackSamples -gt 0
+    return $colors.Count -gt 4 -and
+        $visibleSamples -gt 0 -and
+        ($nonBlackSamples / [double]$visibleSamples) -gt 0.1
 }
 
 function Test-ImageNotBlank([string]$path) {
@@ -1106,9 +1108,11 @@ function Save-OfficialContentCrop($window, [string]$screenshot, [string]$path, $
 }
 
 function Save-ModernContentCrop($window, [string]$screenshot, [string]$path, $case) {
-    $content = Find-DescendantByAutomationId $window "GalleryContentHost"
-    if ($null -ne $content) {
-        return Save-ElementCrop $window $screenshot $path $content "GalleryContentHost" 0
+    if ($null -eq $case -or $case.Id -eq "Home") {
+        $content = Find-DescendantByAutomationId $window "GalleryContentHost"
+        if ($null -ne $content) {
+            return Save-ElementCrop $window $screenshot $path $content "GalleryContentHost" 0
+        }
     }
 
     $windowRect = [WpfGalleryVisualNative]::GetRect($window.Current.NativeWindowHandle)
