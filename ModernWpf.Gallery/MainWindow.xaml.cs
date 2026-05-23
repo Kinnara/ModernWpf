@@ -1,11 +1,16 @@
+using System;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Shell;
 using Microsoft.Win32;
 
 namespace ModernWpf.Gallery
 {
     public partial class MainWindow
     {
+        private static readonly Version OSVersion = GetOSVersion();
+
         public MainWindow()
         {
             InitializeComponent();
@@ -79,6 +84,12 @@ namespace ModernWpf.Gallery
                 HighContrastBorder.BorderBrush = Brushes.Transparent;
                 HighContrastBorder.BorderThickness = new Thickness(0);
             }
+
+            var chrome = WindowChrome.GetWindowChrome(this);
+            if (chrome != null)
+            {
+                chrome.NonClientFrameEdges = GetPreferredNonClientFrameEdges();
+            }
         }
 
         private void UpdateTitleBarButtonsVisibility()
@@ -86,6 +97,50 @@ namespace ModernWpf.Gallery
             MinimizeButton.Visibility = Visibility.Visible;
             MaximizeButton.Visibility = Visibility.Visible;
             CloseButton.Visibility = Visibility.Visible;
+        }
+
+        internal static NonClientFrameEdges GetPreferredNonClientFrameEdges()
+        {
+            if (SystemParameters.HighContrast || !IsWindows11OrGreater())
+            {
+                return NonClientFrameEdges.None;
+            }
+
+            return NonClientFrameEdges.Right | NonClientFrameEdges.Bottom | NonClientFrameEdges.Left;
+        }
+
+        private static bool IsWindows11OrGreater()
+        {
+            return Environment.OSVersion.Platform == PlatformID.Win32NT
+                && OSVersion >= new Version(10, 0, 22000);
+        }
+
+        private static Version GetOSVersion()
+        {
+            var versionInfo = new RTL_OSVERSIONINFOEX
+            {
+                dwOSVersionInfoSize = (uint)Marshal.SizeOf(typeof(RTL_OSVERSIONINFOEX))
+            };
+
+            return RtlGetVersion(out versionInfo) == 0
+                ? new Version((int)versionInfo.dwMajorVersion, (int)versionInfo.dwMinorVersion, (int)versionInfo.dwBuildNumber)
+                : Environment.OSVersion.Version;
+        }
+
+        [DllImport("ntdll.dll")]
+        private static extern int RtlGetVersion(out RTL_OSVERSIONINFOEX versionInfo);
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct RTL_OSVERSIONINFOEX
+        {
+            internal uint dwOSVersionInfoSize;
+            internal uint dwMajorVersion;
+            internal uint dwMinorVersion;
+            internal uint dwBuildNumber;
+            internal uint dwPlatformId;
+
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+            internal string szCSDVersion;
         }
 
         private void MinimizeWindow(object sender, RoutedEventArgs e)
