@@ -9,16 +9,21 @@ namespace ModernWpf.Gallery.Pages
     public sealed partial class SectionPage
     {
         public SectionPage(GalleryGroup group)
+            : this(group, null)
+        {
+        }
+
+        public SectionPage(GalleryGroup group, WpfGalleryNavigationPageViewModel viewModel)
         {
             if (group == null)
             {
                 throw new ArgumentNullException(nameof(group));
             }
 
-            ViewModel = WpfGalleryNavigationPageViewModel.CreateForGroup(group, OnNavigateCard);
+            ViewModel = viewModel ?? WpfGalleryNavigationPageViewModel.CreateForGroup(group, OnNavigateCard);
+            DataContext = this;
             InitializeComponent();
             Title = GetOfficialSectionPageTitle(group.UniqueId);
-            DataContext = this;
         }
 
         public Action<GalleryItem> ItemRequested { get; set; }

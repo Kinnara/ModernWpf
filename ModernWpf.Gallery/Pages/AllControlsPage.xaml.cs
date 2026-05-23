@@ -9,10 +9,15 @@ namespace ModernWpf.Gallery.Pages
     public sealed partial class AllControlsPage
     {
         public AllControlsPage()
+            : this(null)
         {
-            ViewModel = new AllSamplesPageViewModel(OnNavigateCard);
-            InitializeComponent();
+        }
+
+        public AllControlsPage(AllSamplesPageViewModel viewModel)
+        {
+            ViewModel = viewModel ?? new AllSamplesPageViewModel(OnNavigateCard);
             DataContext = this;
+            InitializeComponent();
         }
 
         public Action<GalleryItem> ItemRequested { get; set; }

@@ -11,10 +11,15 @@ namespace ModernWpf.Gallery.Pages
     public sealed partial class HomePage
     {
         public HomePage()
+            : this(null)
         {
-            ViewModel = new DashboardPageViewModel(OnNavigateCard);
-            InitializeComponent();
+        }
+
+        public HomePage(DashboardPageViewModel viewModel)
+        {
+            ViewModel = viewModel ?? new DashboardPageViewModel(OnNavigateCard);
             DataContext = this;
+            InitializeComponent();
         }
 
         public Action<GalleryItem> ItemRequested { get; set; }

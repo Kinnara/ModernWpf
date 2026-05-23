@@ -10,8 +10,13 @@ namespace ModernWpf.Gallery.Pages
         private bool _canApplyThemeSelection;
 
         public SettingsPage()
+            : this(new SettingsPageViewModel())
         {
-            ViewModel = new SettingsPageViewModel();
+        }
+
+        public SettingsPage(SettingsPageViewModel viewModel)
+        {
+            ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
             _canApplyThemeSelection = true;

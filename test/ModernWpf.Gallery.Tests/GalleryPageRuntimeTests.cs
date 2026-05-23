@@ -163,6 +163,40 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void TopLevelWpfGalleryPagesAcceptInjectedViewModels()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var dashboardViewModel = new DashboardPageViewModel(_ => { });
+                var homePage = new HomePage(dashboardViewModel);
+                Assert.AreSame(dashboardViewModel, homePage.ViewModel);
+                Assert.AreSame(homePage, homePage.DataContext);
+
+                var allSamplesViewModel = new AllSamplesPageViewModel(_ => { });
+                var allControlsPage = new AllControlsPage(allSamplesViewModel);
+                Assert.AreSame(allSamplesViewModel, allControlsPage.ViewModel);
+                Assert.AreSame(allControlsPage, allControlsPage.DataContext);
+
+                var whatsNewViewModel = new WhatsNewPageViewModel(_ => { });
+                var whatsNewPage = new WhatsNewPage(whatsNewViewModel);
+                Assert.AreSame(whatsNewViewModel, whatsNewPage.ViewModel);
+                Assert.AreSame(whatsNewPage, whatsNewPage.DataContext);
+
+                var settingsViewModel = new SettingsPageViewModel();
+                var settingsPage = new SettingsPage(settingsViewModel);
+                Assert.AreSame(settingsViewModel, settingsPage.ViewModel);
+                Assert.AreSame(settingsPage, settingsPage.DataContext);
+
+                var designGuidanceGroup = GalleryCatalog.FindGroup("DesignGuidance");
+                var sectionViewModel = new DesignGuidancePageViewModel(_ => { });
+                var sectionPage = new SectionPage(designGuidanceGroup, sectionViewModel);
+                Assert.AreSame(sectionViewModel, sectionPage.ViewModel);
+                Assert.AreSame(sectionPage, sectionPage.DataContext);
+                Assert.AreEqual("DesignGuidancePage", sectionPage.Title);
+            });
+        }
+
+        [TestMethod]
         public void WhatsNewPageHeaderMatchesWpfGalleryReference()
         {
             WpfTestHost.Run(() =>

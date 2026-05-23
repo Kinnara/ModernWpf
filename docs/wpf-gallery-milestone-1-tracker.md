@@ -70,6 +70,12 @@ This should make future parity rounds more mechanical: copy official page XAML
 and view-model state, adapt namespaces/resources/routes, add targeted tests, and
 record the checklist status below.
 
+Current architecture status: top-level WPF Gallery-equivalent pages now keep
+their default ModernWpf routing constructors while also exposing official-style
+constructor-injected view-model paths for Home, All Controls, What's New,
+Settings, and generic Section pages. This keeps shell navigation unchanged while
+moving page construction closer to the official WPF Gallery `Views` pattern.
+
 ## Commit Policy
 
 Commit after each coherent milestone round, but avoid small commits. Fold tiny
@@ -88,6 +94,12 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryPageRuntimeTests.TopLevelWpfGalleryPagesAcceptInjectedViewModels" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 1 test per target. Home, All Controls, What's New, Settings, and generic Section pages now accept injected WPF Gallery-style view models while preserving their default ModernWpf shell/routing constructors. Existing warning/output remains `NU1903` and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryNavigationRuntimeTests.SectionPagesUseOfficialWpfGalleryViewModels|FullyQualifiedName~GalleryNavigationRuntimeTests.WpfGalleryPageShellCardsMatchReferenceAutomationAndLayout" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 2 tests per target. Existing section view-model, page-header, navigation-card binding, and official section `Page.Title` coverage still passes after adding constructor injection to the generic Section page. Existing warning/output remains `NU1903` and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after aligning top-level page construction with official WPF Gallery constructor-injected view-model paths. Current build output ends with `0 Warning(s)` and `0 Error(s)` while still emitting recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryPageRuntimeTests.DesignGuidancePagesMatchWpfGalleryReferenceLayoutDetails" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 1 test per target. Spacing image preview grids now match official WPF Gallery's `Auto/*` row shape, and Geometry now lets the preview `Image` inherit sizing from the official fixed `500x300` host instead of setting ModernWpf-only image width/height/stretch values. Existing warning/output remains `NU1903`, generated WinRT warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`

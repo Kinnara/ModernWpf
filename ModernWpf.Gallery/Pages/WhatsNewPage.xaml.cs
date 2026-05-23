@@ -8,8 +8,13 @@ namespace ModernWpf.Gallery.Pages
     public sealed partial class WhatsNewPage
     {
         public WhatsNewPage()
+            : this(null)
         {
-            ViewModel = new WhatsNewPageViewModel(OnNavigateCard);
+        }
+
+        public WhatsNewPage(WhatsNewPageViewModel viewModel)
+        {
+            ViewModel = viewModel ?? new WhatsNewPageViewModel(OnNavigateCard);
             DataContext = this;
             InitializeComponent();
         }
