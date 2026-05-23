@@ -194,6 +194,10 @@ namespace ModernWpf.Gallery.Tests
 
                     var mainGrid = (Grid)window.FindName("MainGrid");
                     Assert.AreEqual(44d, mainGrid.RowDefinitions[0].Height.Value);
+                    Assert.AreEqual(new Thickness(0), mainGrid.Margin);
+
+                    var highContrastBorder = (Border)window.FindName("HighContrastBorder");
+                    Assert.AreEqual(new Thickness(0), highContrastBorder.BorderThickness);
 
                     var backButton = (Button)window.FindName("BackButton");
                     Assert.AreEqual("Back", AutomationProperties.GetName(backButton));
@@ -202,6 +206,17 @@ namespace ModernWpf.Gallery.Tests
                     var titleText = (TextBlock)window.FindName("TitleText");
                     Assert.AreEqual("WPF Gallery", titleText.Text);
                     Assert.AreEqual(AutomationHeadingLevel.Level1, AutomationProperties.GetHeadingLevel(titleText));
+
+                    var minimizeButton = (Button)window.FindName("MinimizeButton");
+                    var maximizeButton = (Button)window.FindName("MaximizeButton");
+                    var closeButton = (Button)window.FindName("CloseButton");
+                    Assert.AreEqual(Visibility.Collapsed, minimizeButton.Visibility);
+                    Assert.AreEqual(Visibility.Collapsed, maximizeButton.Visibility);
+                    Assert.AreEqual(Visibility.Collapsed, closeButton.Visibility);
+                    Assert.IsTrue(WindowChrome.GetIsHitTestVisibleInChrome(minimizeButton));
+                    Assert.IsTrue(WindowChrome.GetIsHitTestVisibleInChrome(maximizeButton));
+                    Assert.IsTrue(WindowChrome.GetIsHitTestVisibleInChrome(closeButton));
+                    Assert.AreEqual("\uE922", ((TextBlock)window.FindName("MaximizeIcon")).Text);
 
                     Assert.IsInstanceOfType(window.FindName("RootPage"), typeof(NavigationRootPage));
                 }

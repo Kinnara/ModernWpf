@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using Microsoft.Win32;
+using ModernWpf;
 
 namespace ModernWpf.Gallery.Controls
 {
@@ -14,6 +15,7 @@ namespace ModernWpf.Gallery.Controls
             InitializeComponent();
             UpdateButtonResources();
             SystemEvents.UserPreferenceChanged += OnUserPreferenceChanged;
+            ThemeManager.Current.ActualApplicationThemeChanged += OnActualApplicationThemeChanged;
             Unloaded += OnUnloaded;
         }
 
@@ -58,9 +60,15 @@ namespace ModernWpf.Gallery.Controls
             Dispatcher.Invoke(UpdateButtonResources);
         }
 
+        private void OnActualApplicationThemeChanged(ThemeManager sender, object args)
+        {
+            Dispatcher.Invoke(UpdateButtonResources);
+        }
+
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             SystemEvents.UserPreferenceChanged -= OnUserPreferenceChanged;
+            ThemeManager.Current.ActualApplicationThemeChanged -= OnActualApplicationThemeChanged;
             Unloaded -= OnUnloaded;
         }
 
@@ -74,11 +82,27 @@ namespace ModernWpf.Gallery.Controls
                 return;
             }
 
-            var acrylicBrush = Application.Current.TryFindResource("AcrylicBackgroundFillColorDefaultBrush") as SolidColorBrush;
-            var color = acrylicBrush == null ? Colors.Gray : acrylicBrush.Color;
+            var color = GetWpfGalleryAcrylicBackgroundColor();
             RootButton.Resources["ButtonBackground"] = new SolidColorBrush { Color = color, Opacity = 0.8 };
             RootButton.Resources["ButtonBackgroundPointerOver"] = new SolidColorBrush { Color = color, Opacity = 0.9 };
             RootButton.Resources["ButtonBackgroundPressed"] = new SolidColorBrush { Color = color, Opacity = 1.0 };
+        }
+
+        private static Color GetWpfGalleryAcrylicBackgroundColor()
+        {
+            var theme = ThemeManager.Current.ApplicationTheme ?? ThemeManager.Current.ActualApplicationTheme;
+            if (theme == ApplicationTheme.Light)
+            {
+                return Color.FromRgb(0xF9, 0xF9, 0xF9);
+            }
+
+            if (theme == ApplicationTheme.Dark)
+            {
+                return Color.FromRgb(0x2C, 0x2C, 0x2C);
+            }
+
+            var acrylicBrush = Application.Current.TryFindResource("AcrylicBackgroundFillColorDefaultBrush") as SolidColorBrush;
+            return acrylicBrush == null ? Colors.Gray : acrylicBrush.Color;
         }
 
         private void RootButton_Click(object sender, RoutedEventArgs e)

@@ -9,6 +9,7 @@ using System.Windows.Documents;
 using System.Windows.Markup;
 using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ModernWpf;
 using ModernWpf.Controls;
 using ModernWpf.Gallery.Controls;
 using ModernWpf.Gallery.Models;
@@ -235,13 +236,29 @@ namespace ModernWpf.Gallery.Tests
         {
             WpfTestHost.Run(() =>
             {
-                var tile = new HeaderTile();
-                var rootButton = (Button)tile.FindName("RootButton");
-                var acrylicBrush = (SolidColorBrush)Application.Current.FindResource("AcrylicBackgroundFillColorDefaultBrush");
+                var originalTheme = ThemeManager.Current.ApplicationTheme;
+                try
+                {
+                    ThemeManager.Current.ApplicationTheme = ApplicationTheme.Light;
+                    var lightTile = new HeaderTile();
+                    var lightRootButton = (Button)lightTile.FindName("RootButton");
+                    var lightColor = Color.FromRgb(0xF9, 0xF9, 0xF9);
+                    AssertHeaderTileBrush(lightRootButton.Resources["ButtonBackground"], lightColor, 0.8);
+                    AssertHeaderTileBrush(lightRootButton.Resources["ButtonBackgroundPointerOver"], lightColor, 0.9);
+                    AssertHeaderTileBrush(lightRootButton.Resources["ButtonBackgroundPressed"], lightColor, 1.0);
 
-                AssertHeaderTileBrush(rootButton.Resources["ButtonBackground"], acrylicBrush, 0.8);
-                AssertHeaderTileBrush(rootButton.Resources["ButtonBackgroundPointerOver"], acrylicBrush, 0.9);
-                AssertHeaderTileBrush(rootButton.Resources["ButtonBackgroundPressed"], acrylicBrush, 1.0);
+                    ThemeManager.Current.ApplicationTheme = ApplicationTheme.Dark;
+                    var darkTile = new HeaderTile();
+                    var darkRootButton = (Button)darkTile.FindName("RootButton");
+                    var darkColor = Color.FromRgb(0x2C, 0x2C, 0x2C);
+                    AssertHeaderTileBrush(darkRootButton.Resources["ButtonBackground"], darkColor, 0.8);
+                    AssertHeaderTileBrush(darkRootButton.Resources["ButtonBackgroundPointerOver"], darkColor, 0.9);
+                    AssertHeaderTileBrush(darkRootButton.Resources["ButtonBackgroundPressed"], darkColor, 1.0);
+                }
+                finally
+                {
+                    ThemeManager.Current.ApplicationTheme = originalTheme;
+                }
             });
         }
 
@@ -425,12 +442,12 @@ namespace ModernWpf.Gallery.Tests
             return false;
         }
 
-        private static void AssertHeaderTileBrush(object resource, SolidColorBrush acrylicBrush, double opacity)
+        private static void AssertHeaderTileBrush(object resource, Color expectedColor, double opacity)
         {
             var brush = resource as SolidColorBrush;
             Assert.IsNotNull(brush);
             Assert.AreEqual(opacity, brush.Opacity, 0.001);
-            Assert.AreEqual(acrylicBrush.Color, brush.Color);
+            Assert.AreEqual(expectedColor, brush.Color);
         }
 
         private static string GetHeaderTileAutomationName(HeaderTile tile)

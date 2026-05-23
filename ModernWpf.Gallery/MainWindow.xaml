@@ -43,17 +43,53 @@
                                 RecognizesAccessKey="True"
                                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                         </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="EnclosingBorder" Property="Background" Value="{DynamicResource ControlAltFillColorTertiaryBrush}" />
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="EnclosingBorder" Property="Background" Value="{DynamicResource ControlAltFillColorQuarternaryBrush}" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource ControlAltFillColorTertiaryBrush}" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource ControlAltFillColorQuarternaryBrush}" />
+                </Trigger>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding Path=(SystemParameters.HighContrast)}" Value="True" />
+                        <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Mode=Self}}" Value="True" />
+                    </MultiDataTrigger.Conditions>
+                    <Setter Property="Background" Value="{DynamicResource SystemColorHighlightColorBrush}" />
+                    <Setter Property="Foreground" Value="{DynamicResource SystemColorHighlightTextColorBrush}" />
+                </MultiDataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style
+            x:Key="GalleryTitleBarDefaultButtonStyle"
+            BasedOn="{StaticResource GalleryTitleBarButtonStyle}"
+            TargetType="Button">
+            <Setter Property="Border.CornerRadius" Value="0" />
+            <Setter Property="winShell:WindowChrome.IsHitTestVisibleInChrome" Value="True" />
+        </Style>
+
+        <Style
+            x:Key="GalleryTitleBarDefaultCloseButtonStyle"
+            BasedOn="{StaticResource GalleryTitleBarDefaultButtonStyle}"
+            TargetType="Button">
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#C42B1C" />
+                    <Setter Property="Foreground" Value="White" />
+                </Trigger>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding Path=(SystemParameters.HighContrast)}" Value="True" />
+                        <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Mode=Self}}" Value="True" />
+                    </MultiDataTrigger.Conditions>
+                    <Setter Property="Background" Value="{DynamicResource SystemColorHighlightColorBrush}" />
+                    <Setter Property="Foreground" Value="{DynamicResource SystemColorHighlightTextColorBrush}" />
+                </MultiDataTrigger>
+            </Style.Triggers>
         </Style>
     </Window.Resources>
 
@@ -83,6 +119,9 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
                 <Button
@@ -128,9 +167,50 @@
                         x:Name="TitleText"
                         Margin="16,0,0,0"
                         VerticalAlignment="Center"
+                        AutomationProperties.HeadingLevel="Level1"
                         Style="{StaticResource CaptionTextBlockStyle}"
                         Text="WPF Gallery" />
                 </StackPanel>
+
+                <Button
+                    x:Name="MinimizeButton"
+                    Grid.Column="2"
+                    Click="MinimizeWindow"
+                    Style="{StaticResource GalleryTitleBarDefaultButtonStyle}"
+                    Visibility="Collapsed">
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                        FontSize="10"
+                        Text="&#xE921;" />
+                </Button>
+
+                <Button
+                    x:Name="MaximizeButton"
+                    Grid.Column="3"
+                    Click="MaximizeWindow"
+                    Style="{StaticResource GalleryTitleBarDefaultButtonStyle}"
+                    Visibility="Collapsed">
+                    <TextBlock
+                        x:Name="MaximizeIcon"
+                        VerticalAlignment="Center"
+                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                        FontSize="10"
+                        Text="&#xE922;" />
+                </Button>
+
+                <Button
+                    x:Name="CloseButton"
+                    Grid.Column="4"
+                    Click="CloseWindow"
+                    Style="{StaticResource GalleryTitleBarDefaultCloseButtonStyle}"
+                    Visibility="Collapsed">
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                        FontSize="16"
+                        Text="&#xE711;" />
+                </Button>
             </Grid>
 
             <galleryShell:NavigationRootPage

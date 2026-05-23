@@ -1188,7 +1188,7 @@ function Save-ModernContentCrop($window, [string]$screenshot, [string]$path, $ca
     $homeContentLeftInset = 7
     $homeContentTopInset = 2
     $homeContentRightInset = 1
-    $homeContentBottomInset = 1
+    $homeContentBottomInset = 12
     if ($null -ne $root -and $null -ne $menu) {
         $rootRect = $root.Current.BoundingRectangle
         $menuRect = $menu.Current.BoundingRectangle
