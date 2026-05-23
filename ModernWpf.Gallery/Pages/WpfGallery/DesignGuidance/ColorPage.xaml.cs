@@ -7,9 +7,9 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
     {
         public ColorPage(ColorsPageViewModel viewModel)
         {
+            InitializeComponent();
             ViewModel = viewModel;
             DataContext = this;
-            InitializeComponent();
         }
 
         public ColorsPageViewModel ViewModel { get; }

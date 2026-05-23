@@ -16,9 +16,9 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 
         public IconographyPage(IconographyPageViewModel viewModel)
         {
+            InitializeComponent();
             ViewModel = viewModel;
             DataContext = this;
-            InitializeComponent();
         }
 
         public IconographyPageViewModel ViewModel { get; }

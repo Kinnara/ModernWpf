@@ -721,6 +721,56 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void SourceInitFirstCopiedPagesRenderInjectedViewModelBindings()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var colorsViewModel = new ColorsPageViewModel();
+                AssertRenderedPageHeader(
+                    new ColorPage(colorsViewModel),
+                    colorsViewModel,
+                    colorsViewModel.PageTitle,
+                    colorsViewModel.PageDescription);
+
+                var iconographyViewModel = new IconographyPageViewModel();
+                AssertRenderedPageHeader(
+                    new IconographyPage(iconographyViewModel),
+                    iconographyViewModel,
+                    iconographyViewModel.PageTitle,
+                    iconographyViewModel.PageDescription);
+
+                var typographyViewModel = new TypographyPageViewModel();
+                AssertRenderedPageHeader(
+                    new TypographyPage(typographyViewModel),
+                    typographyViewModel,
+                    typographyViewModel.PageTitle,
+                    typographyViewModel.PageDescription);
+
+                var spacingViewModel = new SpacingPageViewModel();
+                AssertRenderedPageHeader(
+                    new SpacingPage(spacingViewModel),
+                    spacingViewModel,
+                    spacingViewModel.PageTitle,
+                    spacingViewModel.PageDescription);
+
+                var geometryViewModel = new GeometryPageViewModel();
+                AssertRenderedPageHeader(
+                    new GeometryPage(geometryViewModel),
+                    geometryViewModel,
+                    geometryViewModel.PageTitle,
+                    geometryViewModel.PageDescription);
+
+                var userDashboardViewModel = new UserDashboardPageViewModel();
+                var userDashboardPage = new UserDashboardPage(userDashboardViewModel);
+                RenderPage(userDashboardPage);
+                Assert.AreSame(userDashboardViewModel, userDashboardPage.ViewModel);
+                Assert.AreSame(userDashboardPage, userDashboardPage.DataContext);
+                var userList = (ListView)userDashboardPage.FindName("UserList");
+                Assert.AreSame(userDashboardViewModel.Users, userList.ItemsSource);
+            });
+        }
+
+        [TestMethod]
         public void SamplesPagesUseOfficialPageSpecificViewModels()
         {
             WpfTestHost.Run(() =>
@@ -2500,6 +2550,29 @@ namespace ModernWpf.Gallery.Tests
                 window.Content = null;
                 window.Close();
                 WpfTestHost.DoEvents();
+            }
+        }
+
+        private static void AssertRenderedPageHeader<TViewModel>(
+            Page page,
+            TViewModel viewModel,
+            string expectedTitle,
+            string expectedDescription)
+        {
+            RenderPage(page);
+            Assert.AreSame(viewModel, page.GetType().GetProperty("ViewModel").GetValue(page, null));
+            Assert.AreSame(page, page.DataContext);
+
+            var pageHeader = FindDescendant<PageHeader>(page);
+            Assert.IsNotNull(pageHeader);
+            Assert.AreEqual(expectedTitle, pageHeader.Title);
+            if (string.IsNullOrEmpty(expectedDescription))
+            {
+                Assert.IsTrue(string.IsNullOrEmpty(pageHeader.Description));
+            }
+            else
+            {
+                Assert.AreEqual(expectedDescription, pageHeader.Description);
             }
         }
 

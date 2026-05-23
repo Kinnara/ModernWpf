@@ -76,9 +76,11 @@ constructor-injected view-model paths for Home, All Controls, What's New,
 Settings, and generic Section pages. Home, All Controls, What's New, and
 generic Section page constructors now follow the official WPF Gallery `Views`
 order of `InitializeComponent()`, then `ViewModel`, then `DataContext`; Settings
-keeps its matching official Settings order. This keeps shell navigation
-unchanged while moving page construction closer to the official WPF Gallery
-`Views` pattern.
+keeps its matching official Settings order. The copied WPF item pages that use
+this same official init-first constructor shape now match it as well: Colors,
+Icons, Typography, Spacing, Geometry, and User Dashboard. This keeps shell
+navigation unchanged while moving page construction closer to the official WPF
+Gallery `Views` pattern.
 
 ## Commit Policy
 
@@ -98,6 +100,10 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryPageRuntimeTests.SourceInitFirstCopiedPagesRenderInjectedViewModelBindings|FullyQualifiedName~GalleryPageRuntimeTests.DesignGuidancePagesUseOfficialPageSpecificViewModels|FullyQualifiedName~GalleryPageRuntimeTests.DesignGuidancePagesMatchWpfGalleryReferenceLayoutDetails|FullyQualifiedName~GalleryPageRuntimeTests.ColorPageUsesWpfGallerySelectorAndTextSectionLayout|FullyQualifiedName~GalleryPageRuntimeTests.IconographyPageUsesWpfGalleryIconLibraryLayout|FullyQualifiedName~GalleryPageRuntimeTests.SamplesPagesUseOfficialPageSpecificViewModels|FullyQualifiedName~GalleryPageRuntimeTests.UserDashboardPageMatchesWpfGalleryReferenceLayoutAndBehavior" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 7 tests per target. Colors, Icons, Typography, Spacing, Geometry, and User Dashboard now follow the official WPF Gallery init-first constructor source shape while preserving injected view-model identity, rendered PageHeader title/description bindings, User Dashboard list binding, and existing Design Guidance/User Dashboard layout behavior. Existing warning/output remains `NU1903`, generated WinRT warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after aligning the copied init-first item page constructors with official WPF Gallery source shape. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages plus existing ModernWpf/ModernWpf.Controls warnings.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryPageRuntimeTests.TopLevelWpfGalleryPagesAcceptInjectedViewModels|FullyQualifiedName~GalleryPageRuntimeTests.WhatsNewPageHeaderMatchesWpfGalleryReference|FullyQualifiedName~GalleryNavigationRuntimeTests.SectionPagesUseOfficialWpfGalleryViewModels|FullyQualifiedName~GalleryNavigationRuntimeTests.WpfGalleryPageShellCardsMatchReferenceAutomationAndLayout" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 4 tests per target. Home, All Controls, What's New, and generic Section page constructors now match the official WPF Gallery initialization order while preserving the default ModernWpf routing constructors, injected WPF Gallery-style view models, rendered binding values, section page titles, and navigation-card binding shape. Existing warning/output remains `NU1903`, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`

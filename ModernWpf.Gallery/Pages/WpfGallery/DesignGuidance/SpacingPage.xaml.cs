@@ -11,10 +11,10 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
     {
         public SpacingPage(SpacingPageViewModel viewModel)
         {
-            ViewModel = viewModel;
-            DataContext = this;
             InitializeComponent();
             UpdateImageResources();
+            ViewModel = viewModel;
+            DataContext = this;
             SystemEvents.UserPreferenceChanged += OnUserPreferenceChanged;
             ThemeManager.AddActualThemeChangedHandler(this, OnActualThemeChanged);
             Unloaded += OnUnloaded;
