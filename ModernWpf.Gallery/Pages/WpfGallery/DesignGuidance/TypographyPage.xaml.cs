@@ -2,11 +2,11 @@ using System.Windows.Controls;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 {
-    public sealed partial class TypographyPage : UserControl
+    public sealed partial class TypographyPage : Page
     {
-        public TypographyPage()
+        public TypographyPage(TypographyPageViewModel viewModel)
         {
-            ViewModel = new TypographyPageViewModel();
+            ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
         }

@@ -3,11 +3,11 @@ using System.Windows.Controls;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 {
-    public sealed partial class ColorPage : UserControl
+    public sealed partial class ColorPage : Page
     {
-        public ColorPage()
+        public ColorPage(ColorsPageViewModel viewModel)
         {
-            ViewModel = new ColorsPageViewModel();
+            ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
         }

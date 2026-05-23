@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance;
 using GeometryPage = ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance.GeometryPage;
 using TypographyPage = ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance.TypographyPage;
 using static ModernWpf.Gallery.Tests.WpfGallerySnippetTestHelpers;
@@ -14,7 +15,7 @@ namespace ModernWpf.Gallery.Tests
             WpfTestHost.Run(() =>
             {
                 AssertExamples(
-                    new TypographyPage(),
+                    new TypographyPage(new TypographyPageViewModel()),
                     new ExpectedExample(
                         "Type ramp",
                         Lines(
@@ -27,7 +28,7 @@ namespace ModernWpf.Gallery.Tests
                             "<TextBlock Text=\"Display\" Style=\"{StaticResource DisplayTextBlockStyle}\" />")));
 
                 AssertExamples(
-                    new GeometryPage(),
+                    new GeometryPage(new GeometryPageViewModel()),
                     new ExpectedExample(
                         null,
                         Lines(

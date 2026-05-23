@@ -615,6 +615,19 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void DesignGuidanceItemPagesUseOfficialPageRoots()
+        {
+            WpfTestHost.Run(() =>
+            {
+                AssertWpfGalleryPageRoot<ColorPage>("Color", "ColorsPage");
+                AssertWpfGalleryPageRoot<IconographyPage>("Iconography", "IconsPage");
+                AssertWpfGalleryPageRoot<TypographyPage>("Typography");
+                AssertWpfGalleryPageRoot<SpacingPage>("Spacing");
+                AssertWpfGalleryPageRoot<GeometryPage>("Geometry");
+            });
+        }
+
+        [TestMethod]
         public void SystemPagesUseOfficialPageSpecificViewModels()
         {
             WpfTestHost.Run(() =>

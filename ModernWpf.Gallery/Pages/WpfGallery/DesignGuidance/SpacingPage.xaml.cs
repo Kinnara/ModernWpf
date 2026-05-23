@@ -7,11 +7,11 @@ using ModernWpf;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 {
-    public sealed partial class SpacingPage : UserControl
+    public sealed partial class SpacingPage : Page
     {
-        public SpacingPage()
+        public SpacingPage(SpacingPageViewModel viewModel)
         {
-            ViewModel = new SpacingPageViewModel();
+            ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
             UpdateImageResources();

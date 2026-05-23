@@ -7,11 +7,11 @@ using ModernWpf;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 {
-    public sealed partial class GeometryPage : UserControl
+    public sealed partial class GeometryPage : Page
     {
-        public GeometryPage()
+        public GeometryPage(GeometryPageViewModel viewModel)
         {
-            ViewModel = new GeometryPageViewModel();
+            ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
             UpdateImageResources();

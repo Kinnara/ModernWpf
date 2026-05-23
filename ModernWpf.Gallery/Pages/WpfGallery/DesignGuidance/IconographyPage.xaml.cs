@@ -7,16 +7,16 @@ using System.Windows.Input;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 {
-    public sealed partial class IconographyPage : UserControl
+    public sealed partial class IconographyPage : Page
     {
         static IconographyPage()
         {
             CommandManager.RegisterClassCommandBinding(typeof(IconographyPage), new CommandBinding(ApplicationCommands.Copy, CopyContent));
         }
 
-        public IconographyPage()
+        public IconographyPage(IconographyPageViewModel viewModel)
         {
-            ViewModel = new IconographyPageViewModel();
+            ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
         }
