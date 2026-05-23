@@ -394,6 +394,13 @@ namespace ModernWpf.Gallery.Tests
 
                 var dataGridPage = (DataGridPage)new ItemPage(GalleryCatalog.FindItem("DataGrid")).DirectPageContent;
                 Assert.AreEqual(50, dataGridPage.ViewModel.ProductsCollection.Count);
+                var sampleDataGrid = (DataGrid)dataGridPage.FindName("SampleDataGrid");
+                dataGridPage.ApplyPageVisuals(true);
+                Assert.AreSame(SystemColors.ControlBrush, sampleDataGrid.Background);
+                Assert.AreSame(SystemColors.ControlTextBrush, sampleDataGrid.Foreground);
+                dataGridPage.ApplyPageVisuals(false);
+                Assert.AreNotSame(SystemColors.ControlBrush, sampleDataGrid.Background);
+                Assert.AreSame(Application.Current.FindResource("TextFillColorPrimaryBrush"), sampleDataGrid.Foreground);
 
                 var listBoxPage = (ListBoxPage)new ItemPage(GalleryCatalog.FindItem("ListBox")).DirectPageContent;
                 CollectionAssert.AreEqual(
