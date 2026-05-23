@@ -5,11 +5,13 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Input;
 using System.Windows.Threading;
+using ModernWpf.Gallery.Testing;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
 {
     public sealed class UserDashboardPageViewModel : INotifyPropertyChanged
     {
+        private const int UsersVisualTestSeed = 32043;
         private readonly RelayCommand _addUserCommand;
         private readonly RelayCommand _editUserCancelCommand;
         private readonly RelayCommand _editUserCommitCommand;
@@ -145,7 +147,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
 
         private static ObservableCollection<UserDashboardUser> GenerateUsers()
         {
-            var random = new Random();
+            var random = GalleryDiagnostics.IsEnabled ? new Random(UsersVisualTestSeed) : new Random();
             var users = new ObservableCollection<UserDashboardUser>();
 
             DateTime startDate = new DateTime(2020, 1, 1);

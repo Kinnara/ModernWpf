@@ -5,11 +5,17 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Controls;
 using ModernWpf.Gallery.Models;
+using ModernWpf.Gallery.Testing;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
 {
     public abstract class CollectionsPageViewModelBase : INotifyPropertyChanged
     {
+        // Visual audits compare two processes; fixed seeds remove false drift from source-matching random samples.
+        private const int ProductsVisualTestSeed = 12043;
+        private const int BasicListViewVisualTestSeed = 22043;
+        private const int GridViewVisualTestSeed = 22044;
+
         protected CollectionsPageViewModelBase(string pageTitle)
         {
             PageTitle = pageTitle;
@@ -36,7 +42,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
 
         protected static ObservableCollection<Product> GenerateProducts()
         {
-            var random = new Random();
+            var random = CreateSampleRandom(ProductsVisualTestSeed);
             var products = new ObservableCollection<Product>();
             var adjectives = new[] { "Red", "Blueberry" };
             var names = new[] { "Marmalade", "Dumplings", "Soup" };
@@ -56,9 +62,19 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
             return products;
         }
 
-        protected static ObservableCollection<Person> GeneratePersons()
+        protected static ObservableCollection<Person> GenerateBasicListViewPersons()
         {
-            var random = new Random();
+            return GeneratePersons(BasicListViewVisualTestSeed);
+        }
+
+        protected static ObservableCollection<Person> GenerateGridViewPersons()
+        {
+            return GeneratePersons(GridViewVisualTestSeed);
+        }
+
+        private static ObservableCollection<Person> GeneratePersons(int visualTestSeed)
+        {
+            var random = CreateSampleRandom(visualTestSeed);
             var persons = new ObservableCollection<Person>();
             var names = new[]
             {
@@ -113,6 +129,11 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
             }
 
             return persons;
+        }
+
+        private static Random CreateSampleRandom(int visualTestSeed)
+        {
+            return GalleryDiagnostics.IsEnabled ? new Random(visualTestSeed) : new Random();
         }
 
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -176,8 +197,8 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
         public ListViewPageViewModel()
             : base("ListView")
         {
-            BasicListViewItems = GeneratePersons();
-            GridViewItems = GeneratePersons();
+            BasicListViewItems = GenerateBasicListViewPersons();
+            GridViewItems = GenerateGridViewPersons();
         }
 
         public ObservableCollection<Person> BasicListViewItems

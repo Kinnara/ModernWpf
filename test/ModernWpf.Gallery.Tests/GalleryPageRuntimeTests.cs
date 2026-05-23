@@ -29,6 +29,7 @@ using ModernWpf.Gallery.Pages.WpfGallery.Samples;
 using ModernWpf.Gallery.Pages.WpfGallery.StatusAndInfo;
 using ModernWpf.Gallery.Pages.WpfGallery.SystemPages;
 using ModernWpf.Gallery.Pages.WpfGallery.Text;
+using ModernWpf.Gallery.Testing;
 
 namespace ModernWpf.Gallery.Tests
 {
@@ -415,6 +416,47 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(SelectionMode.Multiple, listViewPage.ViewModel.ListViewSelectionMode);
                 listViewPage.ViewModel.ListViewSelectionModeComboBoxSelectedIndex = 2;
                 Assert.AreEqual(SelectionMode.Extended, listViewPage.ViewModel.ListViewSelectionMode);
+            });
+        }
+
+        [TestMethod]
+        public void VisualTestModeUsesDeterministicWpfGallerySampleData()
+        {
+            WpfTestHost.Run(() =>
+            {
+                GalleryDiagnostics.Configure(GalleryLaunchOptions.Parse(new[] { "--visual-test" }));
+
+                try
+                {
+                    var firstDataGrid = new DataGridPageViewModel();
+                    var secondDataGrid = new DataGridPageViewModel();
+                    CollectionAssert.AreEqual(
+                        ProductSignatures(firstDataGrid.ProductsCollection.Take(8)),
+                        ProductSignatures(secondDataGrid.ProductsCollection.Take(8)));
+
+                    var firstListView = new ListViewPageViewModel();
+                    var secondListView = new ListViewPageViewModel();
+                    CollectionAssert.AreEqual(
+                        PersonSignatures(firstListView.BasicListViewItems.Take(8)),
+                        PersonSignatures(secondListView.BasicListViewItems.Take(8)));
+                    CollectionAssert.AreEqual(
+                        PersonSignatures(firstListView.GridViewItems.Take(8)),
+                        PersonSignatures(secondListView.GridViewItems.Take(8)));
+                    Assert.IsFalse(
+                        PersonSignatures(firstListView.BasicListViewItems.Take(8))
+                            .SequenceEqual(PersonSignatures(firstListView.GridViewItems.Take(8))),
+                        "Basic ListView and GridView samples should stay independently generated in visual-test mode.");
+
+                    var firstDashboard = new UserDashboardPageViewModel();
+                    var secondDashboard = new UserDashboardPageViewModel();
+                    CollectionAssert.AreEqual(
+                        UserDashboardSignatures(firstDashboard.Users.Take(8)),
+                        UserDashboardSignatures(secondDashboard.Users.Take(8)));
+                }
+                finally
+                {
+                    GalleryDiagnostics.ResetForTests();
+                }
             });
         }
 
@@ -2196,6 +2238,42 @@ namespace ModernWpf.Gallery.Tests
                 .FirstOrDefault(candidate => candidate.Content is StackPanel);
             Assert.IsNotNull(scrollViewer, page.UniqueId);
             return (StackPanel)scrollViewer.Content;
+        }
+
+        private static string[] ProductSignatures(IEnumerable<Product> products)
+        {
+            return products
+                .Select(product => string.Format(
+                    "{0}|{1}|{2}|{3:R}|{4}",
+                    product.ProductId,
+                    product.ProductCode,
+                    product.ProductName,
+                    product.UnitPrice,
+                    product.UnitsInStock))
+                .ToArray();
+        }
+
+        private static string[] PersonSignatures(IEnumerable<Person> persons)
+        {
+            return persons
+                .Select(person => person.FirstName + "|" + person.LastName + "|" + person.Company)
+                .ToArray();
+        }
+
+        private static string[] UserDashboardSignatures(IEnumerable<UserDashboardUser> users)
+        {
+            return users
+                .Select(user => string.Format(
+                    "{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}",
+                    user.ImageId,
+                    user.FirstName,
+                    user.LastName,
+                    user.Company,
+                    user.Address,
+                    user.Age,
+                    user.DateOfJoining.Ticks,
+                    user.IsNewGraduate))
+                .ToArray();
         }
 
         private static void AssertGlyphMenuItem(MenuItem item, string name, string glyph)

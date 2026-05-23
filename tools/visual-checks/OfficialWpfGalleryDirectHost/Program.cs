@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Reflection;
 using System.Windows;
@@ -17,6 +18,12 @@ namespace OfficialWpfGalleryDirectHost;
 
 internal static class Program
 {
+    // Keep source-matching random samples stable when comparing ModernWpf to this separate reference process.
+    private const int ProductsVisualTestSeed = 12043;
+    private const int BasicListViewVisualTestSeed = 22043;
+    private const int GridViewVisualTestSeed = 22044;
+    private const int UsersVisualTestSeed = 32043;
+
     [STAThread]
     public static void Main(string[] args)
     {
@@ -184,7 +191,7 @@ internal static class Program
             "Geometry" => new GeometryPage(new GeometryPageViewModel()),
             "Iconography" => new IconsPage(new IconsPageViewModel()),
             "Samples" => new SamplesPage(new SamplesPageViewModel(new NullNavigationService())),
-            "UserDashboard" => new UserDashboardPage(new UserDashboardPageViewModel()),
+            "UserDashboard" => CreateUserDashboardPage(),
             "BasicInput" => new BasicInputPage(new BasicInputPageViewModel(new NullNavigationService())),
             "Button" => new ButtonPage(new ButtonPageViewModel()),
             "CheckBox" => new CheckBoxPage(new CheckBoxPageViewModel()),
@@ -195,9 +202,9 @@ internal static class Program
             "DateAndCalendar" => new DateAndTimePage(new DateAndTimePageViewModel(new NullNavigationService())),
             "Calendar" => new CalendarPage(new CalendarPageViewModel()),
             "DatePicker" => new DatePickerPage(new DatePickerPageViewModel()),
-            "DataGrid" => new DataGridPage(new DataGridPageViewModel()),
+            "DataGrid" => CreateDataGridPage(),
             "ListBox" => new ListBoxPage(new ListBoxPageViewModel()),
-            "ListView" => new ListViewPage(new ListViewPageViewModel()),
+            "ListView" => CreateListViewPage(),
             "TreeView" => new TreeViewPage(new TreeViewPageViewModel()),
             "Layout" => new LayoutPage(new LayoutPageViewModel(new NullNavigationService())),
             "Media" => CreateMediaPage(),
@@ -231,6 +238,212 @@ internal static class Program
             "Image" => new ImagePage(new ImagePageViewModel()),
             _ => throw new ArgumentOutOfRangeException(nameof(page), page, "Unsupported direct reference page.")
         };
+    }
+
+    private static DataGridPage CreateDataGridPage()
+    {
+        var viewModel = new DataGridPageViewModel
+        {
+            ProductsCollection = GenerateProducts(ProductsVisualTestSeed)
+        };
+
+        return new DataGridPage(viewModel);
+    }
+
+    private static ListViewPage CreateListViewPage()
+    {
+        var viewModel = new ListViewPageViewModel
+        {
+            BasicListViewItems = GeneratePersons(BasicListViewVisualTestSeed),
+            GridViewItems = GeneratePersons(GridViewVisualTestSeed)
+        };
+
+        return new ListViewPage(viewModel);
+    }
+
+    private static UserDashboardPage CreateUserDashboardPage()
+    {
+        var viewModel = new UserDashboardPageViewModel
+        {
+            Users = GenerateUsers(UsersVisualTestSeed)
+        };
+
+        return new UserDashboardPage(viewModel);
+    }
+
+    private static ObservableCollection<Product> GenerateProducts(int seed)
+    {
+        var random = new Random(seed);
+        var products = new ObservableCollection<Product>();
+        var adjectives = new[] { "Red", "Blueberry" };
+        var names = new[] { "Marmalade", "Dumplings", "Soup" };
+
+        for (var i = 0; i < 50; i++)
+        {
+            products.Add(new Product
+            {
+                ProductId = i,
+                ProductCode = i,
+                ProductName = adjectives[random.Next(0, adjectives.Length)] + " " + names[random.Next(0, names.Length)],
+                UnitPrice = Math.Round(random.NextDouble() * 20.0, 3),
+                UnitsInStock = random.Next(0, 100)
+            });
+        }
+
+        return products;
+    }
+
+    private static ObservableCollection<Person> GeneratePersons(int seed)
+    {
+        var random = new Random(seed);
+        var persons = new ObservableCollection<Person>();
+        var names = new[]
+        {
+            "John",
+            "Winston",
+            "Adrianna",
+            "Spencer",
+            "Phoebe",
+            "Lucas",
+            "Carl",
+            "Marissa",
+            "Brandon",
+            "Antoine",
+            "Arielle",
+            "Arielle",
+            "Jamie",
+            "Alexander"
+        };
+        var surnames = new[]
+        {
+            "Doe",
+            "Tapia",
+            "Cisneros",
+            "Lynch",
+            "Munoz",
+            "Marsh",
+            "Hudson",
+            "Bartlett",
+            "Gregory",
+            "Banks",
+            "Hood",
+            "Fry",
+            "Carroll"
+        };
+        var companies = new[]
+        {
+            "Luminary Nexus",
+            "CrestWave Dynamics",
+            "Horizon Ventures",
+            "Sapphire Pulse Technologies",
+            "EmberLight Industries",
+            "StellarEdge Ventrues",
+            "Elysium Crest Holdings"
+        };
+
+        for (var i = 0; i < 50; i++)
+        {
+            persons.Add(new Person(
+                names[random.Next(0, names.Length)],
+                surnames[random.Next(0, surnames.Length)],
+                companies[random.Next(0, companies.Length)]));
+        }
+
+        return persons;
+    }
+
+    private static ObservableCollection<User> GenerateUsers(int seed)
+    {
+        var random = new Random(seed);
+        var users = new ObservableCollection<User>();
+
+        var startDate = new DateTime(2020, 1, 1);
+        var endDate = DateTime.Now.Date;
+        var range = (endDate - startDate).Days;
+
+        var imageids = new[]
+        {
+            "64", "65", "91", "103", "177", "334", "338", "342", "349", "366", "367", "373",
+            "375", "378", "399", "447", "453", "473", "469", "505"
+        };
+
+        var names = new[]
+        {
+            "John",
+            "Winston",
+            "Adrianna",
+            "Spencer",
+            "Phoebe",
+            "Lucas",
+            "Carl",
+            "Marissa",
+            "Brandon",
+            "Antoine",
+            "Arielle"
+        };
+
+        var surnames = new[]
+        {
+            "Doe",
+            "Tapia",
+            "Cisneros",
+            "Lynch",
+            "Munoz",
+            "Marsh",
+            "Hudson",
+            "Bartlett",
+            "Gregory",
+            "Banks",
+            "Hood",
+            "Fry",
+            "Carroll"
+        };
+
+        var companies = new[]
+        {
+            "Luminary Nexus",
+            "CrestWave Dynamics",
+            "Horizon Ventures",
+            "Sapphire Pulse Technologies",
+            "EmberLight Industries",
+            "StellarEdge Ventrues"
+        };
+
+        var addresses = new[]
+        {
+            "Room 1450, 9819 Rutledge Parkway, Saint Louis, Missouri, United States",
+            "18th Floor, 3631 Manitowish Point, Mobile, Alabama, United States",
+            "Apt 1145, Kansas, United States",
+            "PO Box 54647, 252 Derek Way, Flushing, New York, United States",
+            "Apt 687, 47182 Superior Avenue, Kansas City, Missouri, ",
+            "20th Floor, 5524 Badeau Pass, Glendale, Arizona, United States",
+            "Room 1121, 9 Kipling Terrace, Winston Salem, North Carolina, United States",
+            "16th Floor, Odessa, Texas, United States",
+            "Suite 82, 44 Shasta Terrace, Las Cruces, United States",
+            "Room 1930, 45779 Anhalt Junction, Detroit, Michigan, United States",
+            "PO Box 54206, 14 Waubesa Street, Greenville, South Carolina, United States",
+            "1st Floor, 78 Barby Park, South Dakota, United States",
+            "Room 1426, 7394 Welch Alley, Huntsville, Alabama, United States",
+            "20th Floor, 11 Eastwood Road, El Paso, Texas, United States",
+            "Suite 92, 9 Hermina Point, Bakersfield, United States",
+            string.Empty
+        };
+
+        for (var i = 0; i < 20; i++)
+        {
+            var randomDays = random.Next(range + 1);
+            users.Add(new User(
+                imageids[random.Next(0, imageids.Length)],
+                names[random.Next(0, names.Length)],
+                surnames[random.Next(0, surnames.Length)],
+                companies[random.Next(0, companies.Length)],
+                addresses[random.Next(0, addresses.Length)],
+                random.Next(21, 63),
+                startDate.AddDays(randomDays),
+                random.Next(2) == 1));
+        }
+
+        return users;
     }
 
     private static Page CreateMediaPage()
