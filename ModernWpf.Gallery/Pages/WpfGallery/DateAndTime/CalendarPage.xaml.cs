@@ -1,11 +1,11 @@
 using System.Windows.Controls;
 namespace ModernWpf.Gallery.Pages.WpfGallery.DateAndTime
 {
-    public sealed partial class CalendarPage : UserControl
+    public sealed partial class CalendarPage : Page
     {
-        public CalendarPage()
+        public CalendarPage(CalendarPageViewModel viewModel)
         {
-            ViewModel = new CalendarPageViewModel();
+            ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
         }

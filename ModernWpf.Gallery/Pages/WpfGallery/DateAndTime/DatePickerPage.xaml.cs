@@ -1,11 +1,11 @@
 using System.Windows.Controls;
 namespace ModernWpf.Gallery.Pages.WpfGallery.DateAndTime
 {
-    public sealed partial class DatePickerPage : UserControl
+    public sealed partial class DatePickerPage : Page
     {
-        public DatePickerPage()
+        public DatePickerPage(DatePickerPageViewModel viewModel)
         {
-            ViewModel = new DatePickerPageViewModel();
+            ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
         }

@@ -1,8 +1,12 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using CalendarPage = ModernWpf.Gallery.Pages.WpfGallery.DateAndTime.CalendarPage;
+using CalendarPageViewModel = ModernWpf.Gallery.Pages.WpfGallery.DateAndTime.CalendarPageViewModel;
 using CanvasPage = ModernWpf.Gallery.Pages.WpfGallery.Media.CanvasPage;
+using CanvasPageViewModel = ModernWpf.Gallery.Pages.WpfGallery.Media.CanvasPageViewModel;
 using DatePickerPage = ModernWpf.Gallery.Pages.WpfGallery.DateAndTime.DatePickerPage;
+using DatePickerPageViewModel = ModernWpf.Gallery.Pages.WpfGallery.DateAndTime.DatePickerPageViewModel;
 using ImagePage = ModernWpf.Gallery.Pages.WpfGallery.Media.ImagePage;
+using ImagePageViewModel = ModernWpf.Gallery.Pages.WpfGallery.Media.ImagePageViewModel;
 using ProgressBarPage = ModernWpf.Gallery.Pages.WpfGallery.StatusAndInfo.ProgressBarPage;
 using ProgressBarPageViewModel = ModernWpf.Gallery.Pages.WpfGallery.StatusAndInfo.ProgressBarPageViewModel;
 using ToolTipPage = ModernWpf.Gallery.Pages.WpfGallery.StatusAndInfo.ToolTipPage;
@@ -20,19 +24,19 @@ namespace ModernWpf.Gallery.Tests
             WpfTestHost.Run(() =>
             {
                 AssertExamples(
-                    new CalendarPage(),
+                    new CalendarPage(new CalendarPageViewModel()),
                     new ExpectedExample(
                         "A basic Calendar control.",
                         "<Calendar/>"));
 
                 AssertExamples(
-                    new DatePickerPage(),
+                    new DatePickerPage(new DatePickerPageViewModel()),
                     new ExpectedExample(
                         "A basic DatePicker control.",
                         "<DatePicker/>"));
 
                 AssertExamples(
-                    new CanvasPage(),
+                    new CanvasPage(new CanvasPageViewModel()),
                     new ExpectedExample(
                         "A basic Canvas inside the ViewBox",
                         Lines(
@@ -44,7 +48,7 @@ namespace ModernWpf.Gallery.Tests
                             "</Viewbox>")));
 
                 AssertExamples(
-                    new ImagePage(),
+                    new ImagePage(new ImagePageViewModel()),
                     new ExpectedExample(
                         "Standand Image from a local file.",
                         "<Image Height=\"100\" Source=\"Assets\\MyImage.jpg\" />"));

@@ -1,11 +1,11 @@
 using System.Windows.Controls;
 namespace ModernWpf.Gallery.Pages.WpfGallery.Media
 {
-    public sealed partial class CanvasPage : UserControl
+    public sealed partial class CanvasPage : Page
     {
-        public CanvasPage()
+        public CanvasPage(CanvasPageViewModel viewModel)
         {
-            ViewModel = new CanvasPageViewModel();
+            ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
         }

@@ -475,10 +475,14 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void StatusAndInfoItemPagesUseOfficialPageRoots()
+        public void SimpleItemPagesUseOfficialPageRoots()
         {
             WpfTestHost.Run(() =>
             {
+                AssertWpfGalleryPageRoot<CalendarPage>("Calendar");
+                AssertWpfGalleryPageRoot<DatePickerPage>("DatePicker", "DatePicker");
+                AssertWpfGalleryPageRoot<CanvasPage>("Canvas");
+                AssertWpfGalleryPageRoot<ImagePage>("Image");
                 AssertWpfGalleryPageRoot<ProgressBarPage>("ProgressBar");
                 AssertWpfGalleryPageRoot<ToolTipPage>("ToolTip");
             });
@@ -2545,14 +2549,14 @@ namespace ModernWpf.Gallery.Tests
             Assert.AreEqual(expectedViewModelTypeName ?? uniqueId + "PageViewModel", viewModel.GetType().Name, uniqueId);
         }
 
-        private static void AssertWpfGalleryPageRoot<TPage>(string uniqueId)
+        private static void AssertWpfGalleryPageRoot<TPage>(string uniqueId, string expectedTitle = null)
             where TPage : Page
         {
             var itemPage = new ItemPage(GalleryCatalog.FindItem(uniqueId));
             var directPage = itemPage.DirectPageContent;
 
             Assert.IsInstanceOfType(directPage, typeof(TPage), uniqueId);
-            Assert.AreEqual(uniqueId + "Page", ((Page)directPage).Title, uniqueId);
+            Assert.AreEqual(expectedTitle ?? uniqueId + "Page", ((Page)directPage).Title, uniqueId);
         }
 
         private static void AssertSettingsSectionHeader(TextBlock header, string expectedText)

@@ -1,11 +1,11 @@
 using System.Windows.Controls;
 namespace ModernWpf.Gallery.Pages.WpfGallery.Media
 {
-    public sealed partial class ImagePage : UserControl
+    public sealed partial class ImagePage : Page
     {
-        public ImagePage()
+        public ImagePage(ImagePageViewModel viewModel)
         {
-            ViewModel = new ImagePageViewModel();
+            ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
         }
