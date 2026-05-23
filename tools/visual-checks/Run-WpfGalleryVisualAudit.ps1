@@ -112,18 +112,25 @@ $OfficialDirectReferenceCaseIds = @(
     "Spacing",
     "Geometry",
     "Iconography",
+    "Samples",
     "UserDashboard",
+    "BasicInput",
     "Button",
     "CheckBox",
     "ComboBox",
     "RadioButton",
     "Slider",
+    "Collections",
+    "DateAndCalendar",
     "Calendar",
     "DatePicker",
     "DataGrid",
     "ListBox",
     "ListView",
     "TreeView",
+    "Layout",
+    "Media",
+    "Navigation",
     "Menu",
     "TabControl",
     "Frame",
@@ -134,8 +141,10 @@ $OfficialDirectReferenceCaseIds = @(
     "GridSplitter",
     "GroupBox",
     "StackPanel",
+    "StatusAndInfo",
     "ProgressBar",
     "ToolTip",
+    "Text",
     "Label",
     "TextBox",
     "TextBlock",
@@ -143,6 +152,7 @@ $OfficialDirectReferenceCaseIds = @(
     "PasswordBox",
     "Hyperlink",
     "Border",
+    "System",
     "FileAndFolderDialogs",
     "MessageBox",
     "Clipboard",
@@ -891,10 +901,11 @@ function Test-BitmapNotBlank([System.Drawing.Bitmap]$bitmap) {
         $dominantSamples = [Math]::Max($dominantSamples, $count)
     }
 
+    # Sparse section pages can be mostly background while still rendering valid text/card content.
     return $colors.Count -gt 4 -and
         $visibleSamples -gt 0 -and
         ($nonBlackSamples / [double]$visibleSamples) -gt 0.1 -and
-        ($dominantSamples / [double]$visibleSamples) -lt 0.95
+        ($dominantSamples / [double]$visibleSamples) -lt 0.995
 }
 
 function Test-ImageNotBlank([string]$path) {
