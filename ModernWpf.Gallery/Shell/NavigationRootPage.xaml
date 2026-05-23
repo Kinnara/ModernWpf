@@ -9,6 +9,52 @@
     d:DesignWidth="1180"
     AutomationProperties.AutomationId="GalleryNavigationRoot"
     mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style x:Key="GalleryNavigationFooterButtonStyle" TargetType="Button">
+            <Setter Property="MinWidth" Value="48" />
+            <Setter Property="MinHeight" Value="32" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="Border.CornerRadius" Value="{StaticResource ControlCornerRadius}" />
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            x:Name="EnclosingBorder"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding Border.CornerRadius}"
+                            SnapsToDevicePixels="True">
+                            <ContentPresenter
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                RecognizesAccessKey="True"
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource ControlAltFillColorTertiaryBrush}" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource ControlAltFillColorQuarternaryBrush}" />
+                </Trigger>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding Path=(SystemParameters.HighContrast)}" Value="True" />
+                        <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Mode=Self}}" Value="True" />
+                    </MultiDataTrigger.Conditions>
+                    <Setter Property="Background" Value="{DynamicResource SystemColorHighlightColorBrush}" />
+                    <Setter Property="Foreground" Value="{DynamicResource SystemColorHighlightTextColorBrush}" />
+                </MultiDataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
 
     <Grid>
         <ui:NavigationView
@@ -21,7 +67,37 @@
             OpenPaneLength="260"
             PaneDisplayMode="Left">
             <ui:NavigationView.PaneFooter>
-                <Separator Margin="8,0,2,1" />
+                <StackPanel Margin="8,10,0,2" Orientation="Vertical">
+                    <Separator
+                        Width="250"
+                        HorizontalAlignment="Left" />
+                    <Button
+                        x:Name="SettingsButton"
+                        Width="250"
+                        Height="36"
+                        Margin="-1,4,0,0"
+                        Padding="{StaticResource ButtonPadding}"
+                        HorizontalContentAlignment="Left"
+                        VerticalContentAlignment="Center"
+                        AutomationProperties.AutomationId="SettingsButton"
+                        AutomationProperties.Name="Settings"
+                        Click="OnSettingsButtonClick"
+                        Style="{StaticResource GalleryNavigationFooterButtonStyle}">
+                        <StackPanel Margin="11,0,0,0" Orientation="Horizontal">
+                            <TextBlock
+                                x:Name="SettingsIcon"
+                                VerticalAlignment="Center"
+                                AutomationProperties.AutomationId="SettingsIcon"
+                                FontSize="14"
+                                FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                Text="&#xE713;" />
+                            <TextBlock
+                                Margin="8,0,0,0"
+                                FontSize="14"
+                                Text="Settings" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
             </ui:NavigationView.PaneFooter>
             <Border
                 Margin="4,0,0,0"
