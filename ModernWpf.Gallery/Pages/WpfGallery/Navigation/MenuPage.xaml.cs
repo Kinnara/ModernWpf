@@ -3,11 +3,11 @@ using System.Windows.Controls;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.Navigation
 {
-    public sealed partial class MenuPage : UserControl
+    public sealed partial class MenuPage : Page
     {
-        public MenuPage()
+        public MenuPage(MenuPageViewModel viewModel)
         {
-            ViewModel = new MenuPageViewModel();
+            ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
         }

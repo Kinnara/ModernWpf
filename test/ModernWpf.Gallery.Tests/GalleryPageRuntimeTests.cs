@@ -576,6 +576,18 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void NavigationItemPagesUseOfficialPageRoots()
+        {
+            WpfTestHost.Run(() =>
+            {
+                AssertWpfGalleryPageRoot<MenuPage>("Menu");
+                AssertWpfGalleryPageRoot<TabControlPage>("TabControl");
+                AssertWpfGalleryPageRoot<FramePage>("Frame");
+                AssertWpfGalleryPageRoot<NavigationWindowPage>("NavigationWindow");
+            });
+        }
+
+        [TestMethod]
         public void DesignGuidancePagesUseOfficialPageSpecificViewModels()
         {
             WpfTestHost.Run(() =>

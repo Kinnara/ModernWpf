@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ModernWpf.Gallery.Pages.WpfGallery.Navigation;
 using FramePage = ModernWpf.Gallery.Pages.WpfGallery.Navigation.FramePage;
 using MenuPage = ModernWpf.Gallery.Pages.WpfGallery.Navigation.MenuPage;
 using NavigationWindowPage = ModernWpf.Gallery.Pages.WpfGallery.Navigation.NavigationWindowPage;
@@ -16,7 +17,7 @@ namespace ModernWpf.Gallery.Tests
             WpfTestHost.Run(() =>
             {
                 AssertExamples(
-                    new MenuPage(),
+                    new MenuPage(new MenuPageViewModel()),
                     new ExpectedExample(
                         "Standard Menu.",
                         Lines(
@@ -47,7 +48,7 @@ namespace ModernWpf.Gallery.Tests
                             "</Menu>")));
 
                 AssertExamples(
-                    new TabControlPage(),
+                    new TabControlPage(new TabControlPageViewModel()),
                     new ExpectedExample(
                         "Standard TabControl.",
                         Lines(
@@ -75,13 +76,13 @@ namespace ModernWpf.Gallery.Tests
                             "</TabControl>")));
 
                 AssertExamples(
-                    new FramePage(),
+                    new FramePage(new FramePageViewModel()),
                     new ExpectedExample(
                         "A Frame",
                         "<Frame Source=\"FramePage1.xaml\" NavigationUIVisibility=\"Visible\"/>"));
 
                 AssertExamples(
-                    new NavigationWindowPage(),
+                    new NavigationWindowPage(new NavigationWindowPageViewModel()),
                     new ExpectedExample(
                         "A Navigation Window",
                         Lines(

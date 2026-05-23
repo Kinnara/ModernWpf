@@ -5,11 +5,11 @@ using System.Windows.Navigation;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.Navigation
 {
-    public sealed partial class NavigationWindowPage : UserControl
+    public sealed partial class NavigationWindowPage : Page
     {
-        public NavigationWindowPage()
+        public NavigationWindowPage(NavigationWindowPageViewModel viewModel)
         {
-            ViewModel = new NavigationWindowPageViewModel();
+            ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
         }

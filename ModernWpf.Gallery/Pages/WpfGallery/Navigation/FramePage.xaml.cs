@@ -3,11 +3,11 @@ using System.Windows.Controls;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.Navigation
 {
-    public sealed partial class FramePage : UserControl
+    public sealed partial class FramePage : Page
     {
-        public FramePage()
+        public FramePage(FramePageViewModel viewModel)
         {
-            ViewModel = new FramePageViewModel();
+            ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
         }

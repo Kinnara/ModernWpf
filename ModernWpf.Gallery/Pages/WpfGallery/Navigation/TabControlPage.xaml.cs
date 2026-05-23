@@ -2,11 +2,11 @@ using System.Windows.Controls;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.Navigation
 {
-    public sealed partial class TabControlPage : UserControl
+    public sealed partial class TabControlPage : Page
     {
-        public TabControlPage()
+        public TabControlPage(TabControlPageViewModel viewModel)
         {
-            ViewModel = new TabControlPageViewModel();
+            ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
         }
