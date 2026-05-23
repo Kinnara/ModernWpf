@@ -163,7 +163,7 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(new Thickness(20, 10, 20, 10), button.Padding);
                 Assert.AreEqual(HorizontalAlignment.Left, button.HorizontalContentAlignment);
                 AssertBindingPath(button, Button.CommandProperty, "ViewModel.NavigateCommand");
-                AssertBindingPath(button, Button.CommandParameterProperty, string.Empty);
+                AssertBindingPath(button, Button.CommandParameterProperty, "PageType");
 
                 var automationNameBinding = BindingOperations.GetBindingExpression(button, AutomationProperties.NameProperty);
                 Assert.IsNotNull(automationNameBinding);

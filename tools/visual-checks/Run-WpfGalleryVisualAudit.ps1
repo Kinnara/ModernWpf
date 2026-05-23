@@ -1159,6 +1159,22 @@ function Save-ModernContentCrop($window, [string]$screenshot, [string]$path, $ca
     if ($null -eq $case -or $case.Id -eq "Home") {
         $content = Find-DescendantByAutomationId $window "GalleryContentHost"
         if ($null -ne $content) {
+            if ($null -ne $case -and $case.Id -eq "Home") {
+                $paneCondition = New-Object System.Windows.Automation.PropertyCondition(
+                    [System.Windows.Automation.AutomationElement]::ControlTypeProperty,
+                    [System.Windows.Automation.ControlType]::Pane)
+                $panes = $content.FindAll([System.Windows.Automation.TreeScope]::Children, $paneCondition)
+                foreach ($pane in $panes) {
+                    $paneRect = $pane.Current.BoundingRectangle
+                    if ($paneRect.Width -gt 0 -and $paneRect.Height -gt 0) {
+                        $paneCrop = Save-ElementCrop $window $screenshot $path $pane "ModernWpfHomeContentRootPane" 0
+                        if ($paneCrop.NonBlank) {
+                            return $paneCrop
+                        }
+                    }
+                }
+            }
+
             return Save-ElementCrop $window $screenshot $path $content "GalleryContentHost" 0
         }
     }

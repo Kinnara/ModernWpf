@@ -239,6 +239,8 @@ namespace ModernWpf.Gallery.Tests
                     window.UpdateLayout();
                     WpfTestHost.DoEvents();
 
+                    Assert.IsInstanceOfType(page, typeof(Page));
+
                     var root = (Grid)page.FindName("ContentRootGrid");
                     Assert.AreEqual(2, root.RowDefinitions.Count);
                     Assert.AreEqual(GridUnitType.Auto, root.RowDefinitions[0].Height.GridUnitType);

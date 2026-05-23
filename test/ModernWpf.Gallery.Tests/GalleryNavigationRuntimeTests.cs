@@ -254,11 +254,13 @@ namespace ModernWpf.Gallery.Tests
             WpfTestHost.Run(() =>
             {
                 var homePage = new HomePage();
+                Assert.IsInstanceOfType(homePage, typeof(System.Windows.Controls.Page));
                 Assert.IsInstanceOfType(homePage.ViewModel, typeof(DashboardPageViewModel));
                 AssertNavigationCardIds(GalleryCatalog.OverviewGroups, homePage.ViewModel.NavigationCards, "Home");
                 AssertNavigationCardIds(GalleryCatalog.NewOrUpdatedItems, homePage.ViewModel.RecentlyAddedOrUpdatedSamplesInfo, "Home recently added");
 
                 var whatsNewPage = new WhatsNewPage();
+                Assert.IsInstanceOfType(whatsNewPage, typeof(System.Windows.Controls.Page));
                 Assert.IsInstanceOfType(whatsNewPage.ViewModel, typeof(WhatsNewPageViewModel));
                 Assert.AreEqual("What's new in WPF", whatsNewPage.ViewModel.PageTitle);
                 Assert.AreEqual("Discover all the new features, enhancements and APIs introduced in WPF", whatsNewPage.ViewModel.PageDescription);
@@ -269,6 +271,7 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual("MessageBox", requestedItemId);
 
                 var allControlsPage = new AllControlsPage();
+                Assert.IsInstanceOfType(allControlsPage, typeof(System.Windows.Controls.Page));
                 Assert.IsInstanceOfType(allControlsPage.ViewModel, typeof(AllSamplesPageViewModel));
                 Assert.AreEqual("All Controls", allControlsPage.ViewModel.PageTitle);
                 Assert.AreEqual(string.Empty, allControlsPage.ViewModel.PageDescription);
@@ -302,6 +305,7 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsNotNull(group, expected.UniqueId);
 
                     var page = new SectionPage(group);
+                    Assert.IsInstanceOfType(page, typeof(System.Windows.Controls.Page), expected.UniqueId);
                     Assert.IsInstanceOfType(page.ViewModel, expected.ViewModelType, expected.UniqueId);
                     Assert.AreEqual(group.Title, page.ViewModel.PageTitle, expected.UniqueId);
                     Assert.AreEqual(group.PageDescription, page.ViewModel.PageDescription, expected.UniqueId);

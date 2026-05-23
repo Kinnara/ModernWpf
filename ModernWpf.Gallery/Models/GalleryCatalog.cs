@@ -898,6 +898,11 @@ namespace ModernWpf.Gallery.Models
             get { return string.IsNullOrEmpty(ImagePath) ? null : new Uri(ImagePath, UriKind.Absolute); }
         }
 
+        public object PageType
+        {
+            get { return this; }
+        }
+
         public bool IsSpecialSection { get; }
         public IReadOnlyList<GalleryItem> Items { get; }
 
@@ -950,6 +955,11 @@ namespace ModernWpf.Gallery.Models
         public Uri ImageSource
         {
             get { return string.IsNullOrEmpty(ImagePath) ? null : new Uri(ImagePath, UriKind.Absolute); }
+        }
+
+        public object PageType
+        {
+            get { return this; }
         }
 
         public string PageDescription { get; }

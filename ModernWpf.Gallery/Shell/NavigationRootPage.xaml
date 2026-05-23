@@ -109,9 +109,10 @@
                 BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
                 BorderThickness="1"
                 CornerRadius="8,0,0,0">
-                <ContentControl
+                <Frame
                     x:Name="ContentHost"
-                    AutomationProperties.AutomationId="GalleryContentHost" />
+                    AutomationProperties.AutomationId="GalleryContentHost"
+                    NavigationUIVisibility="Hidden" />
             </Border>
         </ui:NavigationView>
 
