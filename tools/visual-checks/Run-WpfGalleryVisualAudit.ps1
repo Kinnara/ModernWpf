@@ -119,8 +119,13 @@ $OfficialDirectReferenceCaseIds = @(
     "GridSplitter",
     "GroupBox",
     "StackPanel",
+    "ProgressBar",
+    "ToolTip",
     "TextBlock",
     "Border",
+    "FileAndFolderDialogs",
+    "MessageBox",
+    "Clipboard",
     "Canvas",
     "Image"
 )

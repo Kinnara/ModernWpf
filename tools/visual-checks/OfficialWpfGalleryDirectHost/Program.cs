@@ -189,8 +189,13 @@ internal static class Program
             "GridSplitter" => new GridSplitterPage(new GridSplitterPageViewModel()),
             "GroupBox" => new GroupBoxPage(new GroupBoxPageViewModel()),
             "StackPanel" => new StackPanelPage(new StackPanelPageViewModel()),
+            "ProgressBar" => new ProgressBarPage(new ProgressBarPageViewModel()),
+            "ToolTip" => new ToolTipPage(new ToolTipPageViewModel()),
             "TextBlock" => new TextBlockPage(new TextBlockPageViewModel()),
             "Border" => new BorderPage(new BorderPageViewModel()),
+            "FileAndFolderDialogs" => new FileAndFolderDialogsPage(new FileAndFolderDialogsPageViewModel()),
+            "MessageBox" => new MessageBoxPage(new MessageBoxPageViewModel()),
+            "Clipboard" => new ClipboardPage(new ClipboardPageViewModel()),
             "Canvas" => new CanvasPage(new CanvasPageViewModel()),
             "Image" => new ImagePage(new ImagePageViewModel()),
             _ => throw new ArgumentOutOfRangeException(nameof(page), page, "Unsupported direct reference page.")
