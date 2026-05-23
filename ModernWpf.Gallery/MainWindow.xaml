@@ -176,8 +176,7 @@
                     x:Name="MinimizeButton"
                     Grid.Column="2"
                     Click="MinimizeWindow"
-                    Style="{StaticResource GalleryTitleBarDefaultButtonStyle}"
-                    Visibility="Collapsed">
+                    Style="{StaticResource GalleryTitleBarDefaultButtonStyle}">
                     <TextBlock
                         VerticalAlignment="Center"
                         FontFamily="{StaticResource SymbolThemeFontFamily}"
@@ -189,8 +188,7 @@
                     x:Name="MaximizeButton"
                     Grid.Column="3"
                     Click="MaximizeWindow"
-                    Style="{StaticResource GalleryTitleBarDefaultButtonStyle}"
-                    Visibility="Collapsed">
+                    Style="{StaticResource GalleryTitleBarDefaultButtonStyle}">
                     <TextBlock
                         x:Name="MaximizeIcon"
                         VerticalAlignment="Center"
@@ -203,8 +201,7 @@
                     x:Name="CloseButton"
                     Grid.Column="4"
                     Click="CloseWindow"
-                    Style="{StaticResource GalleryTitleBarDefaultCloseButtonStyle}"
-                    Visibility="Collapsed">
+                    Style="{StaticResource GalleryTitleBarDefaultCloseButtonStyle}">
                     <TextBlock
                         VerticalAlignment="Center"
                         FontFamily="{StaticResource SymbolThemeFontFamily}"

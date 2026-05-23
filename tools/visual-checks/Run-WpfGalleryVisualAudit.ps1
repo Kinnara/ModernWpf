@@ -908,6 +908,32 @@ function Test-BitmapNotBlank([System.Drawing.Bitmap]$bitmap) {
         ($dominantSamples / [double]$visibleSamples) -lt 0.995
 }
 
+function Test-WindowBitmapNotBlank([System.Drawing.Bitmap]$bitmap) {
+    if (!(Test-BitmapNotBlank $bitmap)) {
+        return $false
+    }
+
+    if ($bitmap.Height -le 80) {
+        return $true
+    }
+
+    $clientTop = [Math]::Min(44, $bitmap.Height - 1)
+    $clientHeight = $bitmap.Height - $clientTop
+    if ($clientHeight -le 0) {
+        return $true
+    }
+
+    $clientBitmap = $bitmap.Clone(
+        [System.Drawing.Rectangle]::new(0, $clientTop, $bitmap.Width, $clientHeight),
+        [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+    try {
+        return Test-BitmapNotBlank $clientBitmap
+    }
+    finally {
+        $clientBitmap.Dispose()
+    }
+}
+
 function Test-ImageNotBlank([string]$path) {
     if (!(Test-Path $path)) {
         return $false
@@ -987,7 +1013,7 @@ function Capture-Window([IntPtr]$hwnd, [string]$path) {
                     $graphics.ReleaseHdc($hdc)
                 }
 
-                if ($printed -and (Test-BitmapNotBlank $bitmap)) {
+                if ($printed -and (Test-WindowBitmapNotBlank $bitmap)) {
                     $bitmap.Save($path, [System.Drawing.Imaging.ImageFormat]::Png)
                     return
                 }
@@ -1006,7 +1032,7 @@ function Capture-Window([IntPtr]$hwnd, [string]$path) {
             $graphics.ReleaseHdc($hdc)
         }
 
-        if ($copied -and (Test-BitmapNotBlank $bitmap)) {
+        if ($copied -and (Test-WindowBitmapNotBlank $bitmap)) {
             $bitmap.Save($path, [System.Drawing.Imaging.ImageFormat]::Png)
             return
         }
@@ -1108,6 +1134,35 @@ function Save-ElementCrop($window, [string]$screenshot, [string]$path, $element,
         $source
 }
 
+function Find-ModernHomeContentRootPane($window) {
+    $paneCondition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ControlTypeProperty,
+        [System.Windows.Automation.ControlType]::Pane)
+    $panes = $window.FindAll([System.Windows.Automation.TreeScope]::Descendants, $paneCondition)
+    $bestPane = $null
+    $bestArea = [double]::MaxValue
+
+    foreach ($pane in $panes) {
+        $paneRect = $pane.Current.BoundingRectangle
+        if ($paneRect.Width -lt 880 -or $paneRect.Height -lt 700) {
+            continue
+        }
+
+        $heroText = Find-DescendantByNameAndType $pane ".NET 10" ([System.Windows.Automation.ControlType]::Text)
+        if ($null -eq $heroText) {
+            continue
+        }
+
+        $area = [double]$paneRect.Width * [double]$paneRect.Height
+        if ($area -lt $bestArea) {
+            $bestArea = $area
+            $bestPane = $pane
+        }
+    }
+
+    return $bestPane
+}
+
 function Save-OfficialContentCrop($window, [string]$screenshot, [string]$path, $case) {
     if ($case.Id -eq "Home") {
         $frame = Find-DescendantByAutomationId $window "RootContentFrame"
@@ -1176,6 +1231,13 @@ function Save-ModernContentCrop($window, [string]$screenshot, [string]$path, $ca
             }
 
             return Save-ElementCrop $window $screenshot $path $content "GalleryContentHost" 0
+        }
+    }
+
+    if ($null -ne $case -and $case.Id -eq "Home") {
+        $homePane = Find-ModernHomeContentRootPane $window
+        if ($null -ne $homePane) {
+            return Save-ElementCrop $window $screenshot $path $homePane "ModernWpfHomeContentRootPane" 0
         }
     }
 

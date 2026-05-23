@@ -210,9 +210,9 @@ namespace ModernWpf.Gallery.Tests
                     var minimizeButton = (Button)window.FindName("MinimizeButton");
                     var maximizeButton = (Button)window.FindName("MaximizeButton");
                     var closeButton = (Button)window.FindName("CloseButton");
-                    Assert.AreEqual(Visibility.Collapsed, minimizeButton.Visibility);
-                    Assert.AreEqual(Visibility.Collapsed, maximizeButton.Visibility);
-                    Assert.AreEqual(Visibility.Collapsed, closeButton.Visibility);
+                    Assert.AreEqual(Visibility.Visible, minimizeButton.Visibility);
+                    Assert.AreEqual(Visibility.Visible, maximizeButton.Visibility);
+                    Assert.AreEqual(Visibility.Visible, closeButton.Visibility);
                     Assert.IsTrue(WindowChrome.GetIsHitTestVisibleInChrome(minimizeButton));
                     Assert.IsTrue(WindowChrome.GetIsHitTestVisibleInChrome(maximizeButton));
                     Assert.IsTrue(WindowChrome.GetIsHitTestVisibleInChrome(closeButton));

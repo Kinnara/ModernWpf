@@ -83,10 +83,9 @@ namespace ModernWpf.Gallery
 
         private void UpdateTitleBarButtonsVisibility()
         {
-            var visibility = SystemParameters.HighContrast ? Visibility.Visible : Visibility.Collapsed;
-            MinimizeButton.Visibility = visibility;
-            MaximizeButton.Visibility = visibility;
-            CloseButton.Visibility = visibility;
+            MinimizeButton.Visibility = Visibility.Visible;
+            MaximizeButton.Visibility = Visibility.Visible;
+            CloseButton.Visibility = Visibility.Visible;
         }
 
         private void MinimizeWindow(object sender, RoutedEventArgs e)
