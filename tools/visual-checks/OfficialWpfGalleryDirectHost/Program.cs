@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using WPFGallery.Models;
 using WPFGallery.Navigation;
 using WPFGallery.ViewModels;
 using WPFGallery.ViewModels.Layout;
@@ -199,7 +200,7 @@ internal static class Program
             "ListView" => new ListViewPage(new ListViewPageViewModel()),
             "TreeView" => new TreeViewPage(new TreeViewPageViewModel()),
             "Layout" => new LayoutPage(new LayoutPageViewModel(new NullNavigationService())),
-            "Media" => new MediaPage(new MediaPageViewModel(new NullNavigationService())),
+            "Media" => CreateMediaPage(),
             "Navigation" => new NavigationPage(new NavigationPageViewModel(new NullNavigationService())),
             "Menu" => new MenuPage(new MenuPageViewModel()),
             "TabControl" => new TabControlPage(new TabControlPageViewModel()),
@@ -230,6 +231,34 @@ internal static class Program
             "Image" => new ImagePage(new ImagePageViewModel()),
             _ => throw new ArgumentOutOfRangeException(nameof(page), page, "Unsupported direct reference page.")
         };
+    }
+
+    private static Page CreateMediaPage()
+    {
+        var viewModel = new MediaPageViewModel(new NullNavigationService())
+        {
+            NavigationCards = new List<ControlInfoDataItem>
+            {
+                new()
+                {
+                    UniqueId = "Canvas",
+                    Title = "Canvas",
+                    PageName = "CanvasPage",
+                    ImagePath = "Assets/ControlImages/Canvas.png",
+                    Description = "A layout panel that positions child elements by explicit coordinates."
+                },
+                new()
+                {
+                    UniqueId = "Image",
+                    Title = "Image",
+                    PageName = "ImagePage",
+                    ImagePath = "Assets/ControlImages/Image.png",
+                    Description = "A control that displays image content."
+                }
+            }
+        };
+
+        return new MediaPage(viewModel);
     }
 
     private static void WriteVisualArtifact(FrameworkElement element, string artifactDirectory)
