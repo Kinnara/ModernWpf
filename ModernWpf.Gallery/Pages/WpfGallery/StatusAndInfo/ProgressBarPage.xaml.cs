@@ -1,11 +1,11 @@
 using System.Windows.Controls;
 namespace ModernWpf.Gallery.Pages.WpfGallery.StatusAndInfo
 {
-    public sealed partial class ProgressBarPage : UserControl
+    public sealed partial class ProgressBarPage : Page
     {
-        public ProgressBarPage()
+        public ProgressBarPage(ProgressBarPageViewModel viewModel)
         {
-            ViewModel = new ProgressBarPageViewModel();
+            ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
         }

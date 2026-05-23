@@ -475,6 +475,16 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void StatusAndInfoItemPagesUseOfficialPageRoots()
+        {
+            WpfTestHost.Run(() =>
+            {
+                AssertWpfGalleryPageRoot<ProgressBarPage>("ProgressBar");
+                AssertWpfGalleryPageRoot<ToolTipPage>("ToolTip");
+            });
+        }
+
+        [TestMethod]
         public void LayoutPagesUseOfficialPageSpecificViewModels()
         {
             WpfTestHost.Run(() =>
@@ -2533,6 +2543,16 @@ namespace ModernWpf.Gallery.Tests
             Assert.AreEqual(expectedTitle, viewModel.PageTitle, uniqueId);
             Assert.AreEqual(expectedDescription, viewModel.PageDescription, uniqueId);
             Assert.AreEqual(expectedViewModelTypeName ?? uniqueId + "PageViewModel", viewModel.GetType().Name, uniqueId);
+        }
+
+        private static void AssertWpfGalleryPageRoot<TPage>(string uniqueId)
+            where TPage : Page
+        {
+            var itemPage = new ItemPage(GalleryCatalog.FindItem(uniqueId));
+            var directPage = itemPage.DirectPageContent;
+
+            Assert.IsInstanceOfType(directPage, typeof(TPage), uniqueId);
+            Assert.AreEqual(uniqueId + "Page", ((Page)directPage).Title, uniqueId);
         }
 
         private static void AssertSettingsSectionHeader(TextBlock header, string expectedText)

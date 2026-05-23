@@ -37,7 +37,7 @@ namespace ModernWpf.Gallery.Pages
                 { "MessageBox", () => new WpfGallery.SystemPages.MessageBoxPage() },
                 { "NavigationWindow", () => new WpfGallery.Navigation.NavigationWindowPage() },
                 { "PasswordBox", () => new WpfGallery.Text.PasswordBoxPage() },
-                { "ProgressBar", () => new WpfGallery.StatusAndInfo.ProgressBarPage() },
+                { "ProgressBar", () => new WpfGallery.StatusAndInfo.ProgressBarPage(new WpfGallery.StatusAndInfo.ProgressBarPageViewModel()) },
                 { "RadioButton", () => new WpfGallery.BasicInput.RadioButtonPage() },
                 { "ResizeGrip", () => new WpfGallery.Layout.ResizeGripPage() },
                 { "RichTextEdit", () => new WpfGallery.Text.RichTextEditPage() },
@@ -47,7 +47,7 @@ namespace ModernWpf.Gallery.Pages
                 { "TabControl", () => new WpfGallery.Navigation.TabControlPage() },
                 { "TextBlock", () => new WpfGallery.Text.TextBlockPage() },
                 { "TextBox", () => new WpfGallery.Text.TextBoxPage() },
-                { "ToolTip", () => new WpfGallery.StatusAndInfo.ToolTipPage() },
+                { "ToolTip", () => new WpfGallery.StatusAndInfo.ToolTipPage(new WpfGallery.StatusAndInfo.ToolTipPageViewModel()) },
                 { "TreeView", () => new WpfGallery.Collections.TreeViewPage() },
                 { "Typography", () => new WpfGallery.DesignGuidance.TypographyPage() },
                 { "UserDashboard", () => new WpfGallery.Samples.UserDashboardPage() }

@@ -1,11 +1,11 @@
 using System.Windows.Controls;
 namespace ModernWpf.Gallery.Pages.WpfGallery.StatusAndInfo
 {
-    public sealed partial class ToolTipPage : UserControl
+    public sealed partial class ToolTipPage : Page
     {
-        public ToolTipPage()
+        public ToolTipPage(ToolTipPageViewModel viewModel)
         {
-            ViewModel = new ToolTipPageViewModel();
+            ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
         }

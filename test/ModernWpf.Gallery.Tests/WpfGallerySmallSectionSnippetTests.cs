@@ -4,7 +4,9 @@ using CanvasPage = ModernWpf.Gallery.Pages.WpfGallery.Media.CanvasPage;
 using DatePickerPage = ModernWpf.Gallery.Pages.WpfGallery.DateAndTime.DatePickerPage;
 using ImagePage = ModernWpf.Gallery.Pages.WpfGallery.Media.ImagePage;
 using ProgressBarPage = ModernWpf.Gallery.Pages.WpfGallery.StatusAndInfo.ProgressBarPage;
+using ProgressBarPageViewModel = ModernWpf.Gallery.Pages.WpfGallery.StatusAndInfo.ProgressBarPageViewModel;
 using ToolTipPage = ModernWpf.Gallery.Pages.WpfGallery.StatusAndInfo.ToolTipPage;
+using ToolTipPageViewModel = ModernWpf.Gallery.Pages.WpfGallery.StatusAndInfo.ToolTipPageViewModel;
 using static ModernWpf.Gallery.Tests.WpfGallerySnippetTestHelpers;
 
 namespace ModernWpf.Gallery.Tests
@@ -48,7 +50,7 @@ namespace ModernWpf.Gallery.Tests
                         "<Image Height=\"100\" Source=\"Assets\\MyImage.jpg\" />"));
 
                 AssertExamples(
-                    new ProgressBarPage(),
+                    new ProgressBarPage(new ProgressBarPageViewModel()),
                     new ExpectedExample(
                         "A simple progress bar.",
                         "<ProgressBar Value=\"40\" />"),
@@ -57,7 +59,7 @@ namespace ModernWpf.Gallery.Tests
                         "<ProgressBar IsIndeterminate=\"True\" />"));
 
                 AssertExamples(
-                    new ToolTipPage(),
+                    new ToolTipPage(new ToolTipPageViewModel()),
                     new ExpectedExample(
                         "A button with a simple ToolTip.",
                         Lines(
