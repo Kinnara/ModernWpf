@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ModernWpf;
 using ModernWpf.Gallery.Controls;
 using ModernWpf.Gallery.Models;
 using ModernWpf.Gallery.Pages;
@@ -1565,6 +1566,11 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual("Example of spacing in a form layout", AutomationProperties.GetName(dialogImage));
                 StringAssert.Contains(((BitmapImage)dialogImage.Source).UriSource.ToString(), "Dialog.light.png");
 
+                var spacingContent = (SpacingPage)spacingPage.DirectPageContent;
+                spacingContent.ApplyImageResources(ElementTheme.Dark);
+                StringAssert.Contains(((BitmapImage)cardsImage.Source).UriSource.ToString(), "Cards.dark.png");
+                StringAssert.Contains(((BitmapImage)dialogImage.Source).UriSource.ToString(), "Dialog.dark.png");
+
                 var spacingTableFrame = (Border)spacingBody.Children[3];
                 Assert.AreEqual(new Thickness(0, 10, 0, 10), spacingTableFrame.Margin);
                 Assert.AreEqual(new Thickness(16), spacingTableFrame.Padding);
@@ -1615,6 +1621,10 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(Stretch.Uniform, geometryImage.Stretch);
                 Assert.AreEqual("Example of corner radius.", AutomationProperties.GetName(geometryImage));
                 StringAssert.Contains(((BitmapImage)geometryImage.Source).UriSource.ToString(), "Geometry.light.png");
+
+                var geometryContent = (GeometryPage)geometryPage.DirectPageContent;
+                geometryContent.ApplyImageResources(ElementTheme.Dark);
+                StringAssert.Contains(((BitmapImage)geometryImage.Source).UriSource.ToString(), "Geometry.dark.png");
 
                 var geometryExample = (ControlExample)geometryBody.Children[4];
                 Assert.IsNull(geometryExample.HeaderText);
