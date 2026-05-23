@@ -663,9 +663,9 @@ function Get-OfficialWpfGalleryReadyText($case) {
     }
 }
 
-function Wait-OfficialWpfGalleryContentReady($window, $case) {
+function Wait-OfficialWpfGalleryContentReady($window, $case, [int]$waitTimeoutSeconds = $TimeoutSeconds) {
     if ($case.Id -eq "UserDashboard") {
-        Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "official WPF Gallery content 'User Dashboard'" -Probe {
+        Wait-Until -TimeoutSeconds $waitTimeoutSeconds -Description "official WPF Gallery content 'User Dashboard'" -Probe {
             $frame = Find-DescendantByAutomationId $window "RootContentFrame"
             if ($null -eq $frame) {
                 return $null
@@ -686,7 +686,7 @@ function Wait-OfficialWpfGalleryContentReady($window, $case) {
         return
     }
 
-    Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "official WPF Gallery content '$readyText'" -Probe {
+    Wait-Until -TimeoutSeconds $waitTimeoutSeconds -Description "official WPF Gallery content '$readyText'" -Probe {
         $frame = Find-DescendantByAutomationId $window "RootContentFrame"
         if ($null -eq $frame) {
             return $null
@@ -707,7 +707,7 @@ function Return-OfficialWpfGalleryToHome($window) {
     }
 
     try {
-        Wait-OfficialWpfGalleryContentReady $window $homeCase
+        Wait-OfficialWpfGalleryContentReady $window $homeCase 3
         return
     }
     catch {
@@ -829,7 +829,7 @@ function Write-UiaTree($element, [string]$path, [int]$maxDepth) {
 }
 
 function Test-BitmapNotBlank([System.Drawing.Bitmap]$bitmap) {
-    $colors = New-Object "System.Collections.Generic.HashSet[int]"
+    $colors = New-Object "System.Collections.Generic.Dictionary[int,int]"
     $visibleSamples = 0
     $nonBlackSamples = 0
     $stepX = [Math]::Max(1, [int]($bitmap.Width / 32))
@@ -839,7 +839,12 @@ function Test-BitmapNotBlank([System.Drawing.Bitmap]$bitmap) {
             $pixel = $bitmap.GetPixel($x, $y)
             if ($pixel.A -gt 16) {
                 $visibleSamples++
-                [void]$colors.Add(($pixel.R -shl 16) -bor ($pixel.G -shl 8) -bor $pixel.B)
+                $colorKey = ($pixel.R -shl 16) -bor ($pixel.G -shl 8) -bor $pixel.B
+                if (!$colors.ContainsKey($colorKey)) {
+                    $colors[$colorKey] = 0
+                }
+
+                $colors[$colorKey]++
                 if (($pixel.R + $pixel.G + $pixel.B) -gt 36) {
                     $nonBlackSamples++
                 }
@@ -847,9 +852,15 @@ function Test-BitmapNotBlank([System.Drawing.Bitmap]$bitmap) {
         }
     }
 
+    $dominantSamples = 0
+    foreach ($count in $colors.Values) {
+        $dominantSamples = [Math]::Max($dominantSamples, $count)
+    }
+
     return $colors.Count -gt 4 -and
         $visibleSamples -gt 0 -and
-        ($nonBlackSamples / [double]$visibleSamples) -gt 0.1
+        ($nonBlackSamples / [double]$visibleSamples) -gt 0.1 -and
+        ($dominantSamples / [double]$visibleSamples) -lt 0.95
 }
 
 function Test-ImageNotBlank([string]$path) {
@@ -915,6 +926,7 @@ function Capture-Window([IntPtr]$hwnd, [string]$path) {
     $rect = [WpfGalleryVisualNative]::GetRect($hwnd)
     $width = [Math]::Max(1, $rect.Right - $rect.Left)
     $height = [Math]::Max(1, $rect.Bottom - $rect.Top)
+
     $bitmap = [System.Drawing.Bitmap]::new($width, $height, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
     $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
     try {
@@ -937,15 +949,6 @@ function Capture-Window([IntPtr]$hwnd, [string]$path) {
             }
 
             Start-Sleep -Milliseconds 250
-        }
-
-        try {
-            Capture-ScreenRect $hwnd $path
-            if (Test-ImageNotBlank $path) {
-                return
-            }
-        }
-        catch {
         }
 
         $graphics.Clear([System.Drawing.Color]::Transparent)
@@ -1259,7 +1262,18 @@ function Capture-ModernWpf($case, [string]$caseDir) {
         $windowNonBlank = Test-ImageNotBlank $screenshot
 
         $contentCrop = $null
-        if (!(Test-OfficialDirectReferenceCase $case) -and $windowNonBlank) {
+        if ($case.Id -ne "Home") {
+            $renderedContentArtifact = Join-Path $artifactDir "ContentRootGrid.png"
+            $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "ContentRootGridRenderedArtifact"
+            if (!$contentCrop.NonBlank) {
+                $renderedContentArtifact = Join-Path $artifactDir "GalleryContentHost.png"
+                $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "GalleryContentHostRenderedArtifact"
+            }
+        }
+
+        if (($null -eq $contentCrop -or !$contentCrop.NonBlank) -and
+            !(Test-OfficialDirectReferenceCase $case) -and
+            $windowNonBlank) {
             $contentCrop = Save-ModernContentCrop $window $screenshot $contentCropPath $case
         }
 
@@ -1272,7 +1286,7 @@ function Capture-ModernWpf($case, [string]$caseDir) {
             }
         }
 
-        if (!$contentCrop.NonBlank) {
+        if ($null -eq $contentCrop -or !$contentCrop.NonBlank) {
             $contentCrop = Save-ModernContentCrop $window $screenshot $contentCropPath $case
         }
 
