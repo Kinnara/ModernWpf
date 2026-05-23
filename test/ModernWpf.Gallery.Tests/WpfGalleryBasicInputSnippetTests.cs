@@ -13,7 +13,7 @@ namespace ModernWpf.Gallery.Tests
             WpfTestHost.Run(() =>
             {
                 AssertExamples(
-                    new ButtonPage(),
+                    new ButtonPage(new ButtonPageViewModel()),
                     new ExpectedExample(
                         "Simple Button",
                         "<Button Content=\"Standard WPF button\" />"),
@@ -22,7 +22,7 @@ namespace ModernWpf.Gallery.Tests
                         "<Button Style=\"{DynamicResource AccentButtonStyle}\" Content=\"WPF Accent Button\" />"));
 
                 AssertExamples(
-                    new CheckBoxPage(),
+                    new CheckBoxPage(new CheckBoxPageViewModel()),
                     new ExpectedExample(
                         "A 2-state CheckBox.",
                         "<CheckBox Content=\"Two-state CheckBox\" />"),
@@ -40,7 +40,7 @@ namespace ModernWpf.Gallery.Tests
                             "</StackPanel>")));
 
                 AssertExamples(
-                    new ComboBoxPage(),
+                    new ComboBoxPage(new ComboBoxPageViewModel()),
                     new ExpectedExample(
                         "A ComboBox with items defined inline.",
                         Lines(
@@ -58,7 +58,7 @@ namespace ModernWpf.Gallery.Tests
                         "<ComboBox MinWidth=\"200\" HorizontalAlignment=\"Left\" ItemsSource=\"{Binding FontSizes}\" SelectedIndex=\"0\" IsEditable=\"True\" />"));
 
                 AssertExamples(
-                    new RadioButtonPage(),
+                    new RadioButtonPage(new RadioButtonPageViewModel()),
                     new ExpectedExample(
                         "Standard RadioButton.",
                         Lines(
@@ -77,7 +77,7 @@ namespace ModernWpf.Gallery.Tests
                             "</StackPanel>")));
 
                 AssertExamples(
-                    new SliderPage(),
+                    new SliderPage(new SliderPageViewModel()),
                     new ExpectedExample(
                         "A simple slider.",
                         "<Slider Width=\"200\" Margin=\"0\" HorizontalAlignment=\"Left\" VerticalAlignment=\"Center\" Maximum=\"100\" Minimum=\"0\"/>"),

@@ -2,11 +2,11 @@ using System.Windows.Controls;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
 {
-    public sealed partial class ButtonPage : UserControl
+    public sealed partial class ButtonPage : Page
     {
-        public ButtonPage()
+        public ButtonPage(ButtonPageViewModel viewModel)
         {
-            ViewModel = new ButtonPageViewModel();
+            ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
         }

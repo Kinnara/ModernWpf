@@ -758,6 +758,19 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void BasicInputItemPagesUseOfficialPageRoots()
+        {
+            WpfTestHost.Run(() =>
+            {
+                AssertWpfGalleryPageRoot<ButtonPage>("Button", "Button");
+                AssertWpfGalleryPageRoot<CheckBoxPage>("CheckBox", "CheckBox");
+                AssertWpfGalleryPageRoot<ComboBoxPage>("ComboBox", "ComboBox");
+                AssertWpfGalleryPageRoot<RadioButtonPage>("RadioButton", "RadioButton");
+                AssertWpfGalleryPageRoot<SliderPage>("Slider");
+            });
+        }
+
+        [TestMethod]
         public void BasicInputButtonAndCheckBoxPagesMatchWpfGalleryReference()
         {
             WpfTestHost.Run(() =>

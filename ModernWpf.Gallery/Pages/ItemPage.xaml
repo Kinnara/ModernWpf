@@ -175,12 +175,13 @@
             </StackPanel>
         </ScrollViewer>
 
-        <ContentControl
+        <Frame
             x:Name="DirectPageContentHost"
             Grid.Row="1"
             Margin="{Binding DirectPageContentMargin}"
             AutomationProperties.AutomationId="GallerySampleHost"
             Content="{Binding DirectPageContent}"
+            NavigationUIVisibility="Hidden"
             Visibility="{Binding HasDirectPageContent, Converter={StaticResource BooleanToVisibilityConverter}}" />
     </Grid>
 </UserControl>

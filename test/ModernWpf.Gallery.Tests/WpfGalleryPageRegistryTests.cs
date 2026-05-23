@@ -1,6 +1,8 @@
 using System;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Navigation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Gallery.Models;
 using ModernWpf.Gallery.Pages;
@@ -101,6 +103,9 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(0, page.Examples.Count, uniqueId);
                     Assert.IsFalse(page.ShowScrolledPageContent, uniqueId);
                     Assert.IsFalse(page.ShowCatalogDetails, uniqueId);
+
+                    var directPageHost = (Frame)page.FindName("DirectPageContentHost");
+                    Assert.AreEqual(NavigationUIVisibility.Hidden, directPageHost.NavigationUIVisibility, uniqueId);
                 }
             });
         }

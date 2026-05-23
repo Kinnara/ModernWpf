@@ -3,11 +3,11 @@ using System.Windows.Input;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
 {
-    public sealed partial class RadioButtonPage : UserControl
+    public sealed partial class RadioButtonPage : Page
     {
-        public RadioButtonPage()
+        public RadioButtonPage(RadioButtonPageViewModel viewModel)
         {
-            ViewModel = new RadioButtonPageViewModel();
+            ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
         }

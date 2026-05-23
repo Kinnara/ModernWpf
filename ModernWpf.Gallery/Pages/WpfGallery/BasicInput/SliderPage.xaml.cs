@@ -2,11 +2,11 @@ using System.Windows.Controls;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
 {
-    public sealed partial class SliderPage : UserControl
+    public sealed partial class SliderPage : Page
     {
-        public SliderPage()
+        public SliderPage(SliderPageViewModel viewModel)
         {
-            ViewModel = new SliderPageViewModel();
+            ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
         }

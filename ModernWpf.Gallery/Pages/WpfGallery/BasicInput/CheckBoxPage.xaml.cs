@@ -2,11 +2,11 @@ using System.Windows.Controls;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
 {
-    public sealed partial class CheckBoxPage : UserControl
+    public sealed partial class CheckBoxPage : Page
     {
-        public CheckBoxPage()
+        public CheckBoxPage(CheckBoxPageViewModel viewModel)
         {
-            ViewModel = new CheckBoxPageViewModel();
+            ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
         }

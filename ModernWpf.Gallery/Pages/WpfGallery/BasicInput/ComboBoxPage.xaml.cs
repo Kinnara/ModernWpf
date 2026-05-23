@@ -2,11 +2,11 @@ using System.Windows.Controls;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
 {
-    public sealed partial class ComboBoxPage : UserControl
+    public sealed partial class ComboBoxPage : Page
     {
-        public ComboBoxPage()
+        public ComboBoxPage(ComboBoxPageViewModel viewModel)
         {
-            ViewModel = new ComboBoxPageViewModel();
+            ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
         }
