@@ -89,7 +89,7 @@ namespace ModernWpf.Gallery.Tests
                 var navigation = (NavigationView)page.FindName("Navigation");
                 var topLevelItems = navigation.MenuItems.OfType<NavigationViewItem>().ToList();
 
-                Assert.AreEqual(260d, navigation.OpenPaneLength);
+                Assert.AreEqual(257d, navigation.OpenPaneLength);
                 Assert.AreEqual(NavigationViewBackButtonVisible.Collapsed, navigation.IsBackButtonVisible);
                 Assert.IsFalse(navigation.IsPaneToggleButtonVisible);
                 Assert.IsFalse(navigation.IsSettingsVisible);
@@ -98,6 +98,10 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(0, navigation.MenuItems.OfType<NavigationViewItemSeparator>().Count());
                 Assert.IsNotNull(navigation.PaneFooter);
                 Assert.AreEqual(0, navigation.FooterMenuItems.Count);
+
+                var contentFrameBorder = (Border)page.FindName("ContentFrameBorder");
+                Assert.AreEqual(new Thickness(4, -1, 0, 0), contentFrameBorder.Margin);
+                Assert.AreEqual(new Thickness(24, 16, 24, 0), contentFrameBorder.Padding);
 
                 CollectionAssert.AreEqual(
                     new[] { "Home", "What's New", "Design Guidance", "Samples", "All Controls", "Basic Input" },
@@ -140,7 +144,7 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual("Settings", AutomationProperties.GetName(settingsButton));
                 Assert.AreEqual(250d, settingsButton.Width);
                 Assert.AreEqual(36d, settingsButton.Height);
-                Assert.AreEqual(new Thickness(-1, 4, 0, 0), settingsButton.Margin);
+                Assert.AreEqual(new Thickness(0, 4, 0, 0), settingsButton.Margin);
                 Assert.AreEqual(HorizontalAlignment.Left, settingsButton.HorizontalContentAlignment);
                 Assert.AreEqual(VerticalAlignment.Center, settingsButton.VerticalContentAlignment);
 

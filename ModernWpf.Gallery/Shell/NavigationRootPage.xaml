@@ -64,7 +64,7 @@
             IsPaneToggleButtonVisible="False"
             IsSettingsVisible="False"
             ItemInvoked="OnNavigationItemInvoked"
-            OpenPaneLength="260"
+            OpenPaneLength="257"
             PaneDisplayMode="Left">
             <ui:NavigationView.PaneFooter>
                 <StackPanel Margin="8,10,0,2" Orientation="Vertical">
@@ -75,7 +75,7 @@
                         x:Name="SettingsButton"
                         Width="250"
                         Height="36"
-                        Margin="-1,4,0,0"
+                        Margin="0,4,0,0"
                         Padding="{StaticResource ButtonPadding}"
                         HorizontalContentAlignment="Left"
                         VerticalContentAlignment="Center"
@@ -100,7 +100,8 @@
                 </StackPanel>
             </ui:NavigationView.PaneFooter>
             <Border
-                Margin="4,0,0,0"
+                x:Name="ContentFrameBorder"
+                Margin="4,-1,0,0"
                 Padding="24,16,24,0"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch"
