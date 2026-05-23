@@ -204,6 +204,7 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsNotNull(chrome);
                     Assert.AreEqual(44d, chrome.CaptionHeight);
                     Assert.AreEqual(MainWindow.GetPreferredNonClientFrameEdges(), chrome.NonClientFrameEdges);
+                    Assert.AreSame(Application.Current.FindResource("WindowBackground"), window.Background);
 
                     var mainGrid = (Grid)window.FindName("MainGrid");
                     Assert.AreEqual(44d, mainGrid.RowDefinitions[0].Height.Value);

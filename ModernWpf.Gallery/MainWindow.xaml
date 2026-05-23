@@ -14,7 +14,7 @@
     MinHeight="560"
     AutomationProperties.AutomationId="ModernWpfGalleryMainWindow"
     WindowStartupLocation="CenterScreen"
-    Background="{DynamicResource SolidBackgroundFillColorBaseBrush}"
+    Background="{DynamicResource WindowBackground}"
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     mc:Ignorable="d"
     ui:ThemeManager.IsThemeAware="True">
