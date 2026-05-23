@@ -1046,6 +1046,25 @@ function Save-ElementCrop($window, [string]$screenshot, [string]$path, $element,
 }
 
 function Save-OfficialContentCrop($window, [string]$screenshot, [string]$path, $case) {
+    if ($case.Id -eq "Home") {
+        $frame = Find-DescendantByAutomationId $window "RootContentFrame"
+        if ($null -ne $frame) {
+            $paneCondition = New-Object System.Windows.Automation.PropertyCondition(
+                [System.Windows.Automation.AutomationElement]::ControlTypeProperty,
+                [System.Windows.Automation.ControlType]::Pane)
+            $panes = $frame.FindAll([System.Windows.Automation.TreeScope]::Children, $paneCondition)
+            foreach ($pane in $panes) {
+                $paneRect = $pane.Current.BoundingRectangle
+                if ($paneRect.Width -gt 0 -and $paneRect.Height -gt 0) {
+                    $paneCrop = Save-ElementCrop $window $screenshot $path $pane "OfficialHomeContentRootPane" 0
+                    if ($paneCrop.NonBlank) {
+                        return $paneCrop
+                    }
+                }
+            }
+        }
+    }
+
     if ($case.Id -ne "Home") {
         $frame = Find-DescendantByAutomationId $window "RootContentFrame"
         if ($null -ne $frame) {
