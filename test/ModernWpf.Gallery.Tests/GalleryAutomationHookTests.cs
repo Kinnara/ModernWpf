@@ -34,6 +34,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "ProgressRing", "GallerySample_ProgressRing_Root", "GallerySample_ProgressRing_ProgressRing" };
             yield return new object[] { "PipsPager", "GallerySample_PipsPager_Root", "GallerySample_PipsPager_PipsPager" };
             yield return new object[] { "PullToRefresh", "GallerySample_PullToRefresh_Root", "GallerySample_PullToRefresh_RefreshContainer" };
+            yield return new object[] { "SplitView", "GallerySample_SplitView_Root", "GallerySample_SplitView_SplitView" };
             yield return new object[] { "FlipView", "GallerySample_FlipView_Root", "GallerySample_FlipView_FlipView" };
             yield return new object[] { "ItemsView", "GallerySample_ItemsView_Root", "GallerySample_ItemsView_ItemsView" };
             yield return new object[] { "CalendarDatePicker", "GallerySample_CalendarDatePicker_Root", "GallerySample_CalendarDatePicker_CalendarDatePicker" };
@@ -3358,6 +3359,103 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void SplitViewSampleMatchesWinUIGalleryExample()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("SplitView"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(1, page.Examples.Count);
+                    Assert.AreEqual("A basic SplitView.", page.Examples[0].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    var exampleRoot = (GallerySamplePanel)page.Examples[0].ExampleContent;
+                    Assert.AreEqual(Orientation.Horizontal, exampleRoot.Orientation);
+                    Assert.AreEqual(24d, ((FrameworkElement)exampleRoot.Children[1]).Margin.Left);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "x:Name=\"splitView\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "PaneBackground=\"$(PaneBackground)\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "NavLinksList");
+
+                    var splitView = (Mux.SplitView)FindByAutomationId(page, "GallerySample_SplitView_SplitView");
+                    var paneHeader = FindNamedDescendant<TextBlock>(page, "PaneHeader");
+                    var navLinksList = FindNamedDescendant<ListView>(page, "NavLinksList");
+                    var content = FindNamedDescendant<TextBlock>(page, "content");
+                    var togglePaneButton = FindNamedDescendant<ToggleButton>(page, "togglePaneButton");
+                    var displayMode = FindNamedDescendant<ComboBox>(page, "displayModeCombobox");
+                    var paneBackground = FindNamedDescendant<ComboBox>(page, "paneBackgroundCombobox");
+                    var openPaneLength = FindNamedDescendant<Slider>(page, "openPaneLengthSlider");
+                    var compactPaneLength = FindNamedDescendant<Slider>(page, "compactPaneLengthSlider");
+                    var placement = FindToggleSwitchByHeader(page, "Placement");
+                    Assert.IsNotNull(splitView);
+                    Assert.IsNotNull(paneHeader);
+                    Assert.IsNotNull(navLinksList);
+                    Assert.IsNotNull(content);
+                    Assert.IsNotNull(togglePaneButton);
+                    Assert.IsNotNull(displayMode);
+                    Assert.IsNotNull(paneBackground);
+                    Assert.IsNotNull(openPaneLength);
+                    Assert.IsNotNull(compactPaneLength);
+                    Assert.IsNotNull(placement);
+
+                    Assert.AreEqual("splitView", splitView.Name);
+                    Assert.IsTrue(splitView.IsPaneOpen);
+                    Assert.AreEqual(Mux.SplitViewDisplayMode.Inline, splitView.DisplayMode);
+                    Assert.AreEqual(Mux.SplitViewPanePlacement.Left, splitView.PanePlacement);
+                    Assert.AreEqual(256d, splitView.OpenPaneLength);
+                    Assert.AreEqual(48d, splitView.CompactPaneLength);
+                    Assert.AreEqual("PANE CONTENT", paneHeader.Text);
+                    Assert.AreEqual("NavLinksList", AutomationProperties.GetAutomationId(navLinksList));
+                    Assert.AreEqual(4, navLinksList.Items.Count);
+                    Assert.AreEqual("IsPaneOpen", togglePaneButton.Content);
+                    Assert.IsTrue(togglePaneButton.IsChecked.GetValueOrDefault());
+                    Assert.AreEqual(196d, displayMode.Width);
+                    Assert.AreEqual(4d, displayMode.Margin.Top);
+                    Assert.AreEqual(4, displayMode.Items.Count);
+                    Assert.AreEqual("Inline", displayMode.SelectedItem);
+                    Assert.AreEqual(196d, paneBackground.Width);
+                    Assert.AreEqual(4, paneBackground.Items.Count);
+                    Assert.AreEqual("SystemControlBackgroundChromeMediumLowBrush", paneBackground.SelectedItem);
+                    Assert.AreEqual(196d, openPaneLength.Width);
+                    Assert.AreEqual(128d, openPaneLength.Minimum);
+                    Assert.AreEqual(500d, openPaneLength.Maximum);
+                    Assert.AreEqual(196d, compactPaneLength.Width);
+                    Assert.AreEqual(24d, compactPaneLength.Minimum);
+                    Assert.AreEqual(128d, compactPaneLength.Maximum);
+
+                    navLinksList.SelectedIndex = 1;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual("Globe Page", content.Text);
+
+                    placement.IsOn = true;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(Mux.SplitViewPanePlacement.Right, splitView.PanePlacement);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
         public void RichEditBoxSampleMatchesWinUIGalleryExamples()
         {
             WpfTestHost.Run(() =>
@@ -4115,6 +4213,20 @@ namespace ModernWpf.Gallery.Tests
                 if (result != null)
                 {
                     return result;
+                }
+            }
+
+            return null;
+        }
+
+        private static Mux.ToggleSwitch FindToggleSwitchByHeader(DependencyObject root, string header)
+        {
+            var toggles = FindDescendants<Mux.ToggleSwitch>(root);
+            foreach (var toggle in toggles)
+            {
+                if (Equals(toggle.Header, header))
+                {
+                    return toggle;
                 }
             }
 

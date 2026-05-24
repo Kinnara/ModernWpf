@@ -106,6 +106,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.SplitViewSampleMatchesWinUIGalleryExample|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 46 tests per target. The generated ModernWpf SplitView extension page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\SplitViewPage.xaml` / `.xaml.cs`: one `A basic SplitView.` example with source-facing `splitView`, `PaneHeader`, `NavLinksList`, `content`, `togglePaneButton`, `displayModeCombobox`, `paneBackgroundCombobox`, `openPaneLengthSlider`, and `compactPaneLengthSlider` names. `LayoutSampleFactory.CreateExamples` now covers SplitView as a source-backed Layout WinUI extension page, `ItemPage` asks the Layout factory before falling back to generated sample content, and the sample exposes curated automation IDs `GallerySample_SplitView_Root` / `GallerySample_SplitView_SplitView` plus the source-backed `NavLinksList` crop hook.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls SplitView -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-234959-952-108984/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required SplitView sample element was found, primary crops use the shared `NavLinksList` automation ID, crop sizes are `255x258` vs `255x257`, and Light primary delta is `4.58`. The whole-window Light mean delta is `139.85` and remains diagnostic because the installed WinUI shell stayed dark while the sample content toggled light.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls SplitView -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-235024-293-91520/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required SplitView sample element was found, primary crops use `NavLinksList`, crop sizes are `255x258` vs `255x257`, Dark primary delta is `5.69`, and whole-window Dark mean delta is `18.45`.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the SplitView WinUI example alignment. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages and ends with `0 Warning(s)` and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.RichEditBoxSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 45 tests per target. The generated ModernWpf RichEditBox extension page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\RichEditBoxPage.xaml`: simple editor, custom CommandBarFlyout/Share editor, custom toolbar/find editor, math-mode editor, and MathML editor. `TextSampleFactory.CreateExamples` now covers RichEditBox as a source-backed Text WinUI extension page, adapts WinUI `RichEditBox` to WPF `RichTextBox` surfaces, keeps source-facing names such as `REBCustom`, `openFileButton`, `italicButton`, `fontColorButton`, `editor`, `findBox`, `MathEditor`, `mathEditor2`, `MathmlPresenter`, and `SetMathmlFormulaBtn`, consumes the local `Samples\SampleCode\Text\RichEditBox` snippets, and exposes curated automation IDs `GallerySample_RichEditBox_Root` / `GallerySample_RichEditBox_RichEditBox`.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls RichEditBox -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -2127,6 +2135,27 @@ WinUI reference automation ID `Control1` and lowers only AutoSuggestBox's
 primary-crop variation threshold because the empty resting field is nearly flat
 in Dark theme in both apps. Avoid reopening AutoSuggestBox's source shape
 unless a new WinUI source or crop regression appears.
+The generated ModernWpf SplitView extension page now uses the local official
+WinUI Gallery one-example structure from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\SplitViewPage.xaml`
+and `.xaml.cs`: a `400x300` `SplitView` with pane/content regions and a
+source-shaped options column for pane open state, placement, display mode, pane
+background, open pane length, and compact pane length. `LayoutSampleFactory`
+now exposes `CreateExamples` for SplitView, and `ItemPage` queries the Layout
+factory before falling back to generic generated content. The WPF adaptation
+keeps WinUI's visible sample header, snippet, source-facing names
+(`splitView`, `PaneHeader`, `NavLinksList`, `content`, `togglePaneButton`,
+`displayModeCombobox`, `paneBackgroundCombobox`, `openPaneLengthSlider`, and
+`compactPaneLengthSlider`), nav-item selection behavior, right/left placement
+layout switch, and option-driven property updates while exposing
+`GallerySample_SplitView_*` automation IDs for required sample capture and the
+shared source-backed `NavLinksList` primary crop. Current SplitView
+WinUI-reference evidence is
+`artifacts/visual-checks/20260524-234959-952-108984/report.md` for Light and
+`artifacts/visual-checks/20260524-235024-293-91520/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`, primary crops of
+`255x258` vs `255x257`, and primary deltas `4.58` / `5.69`. Avoid reopening
+SplitView's source shape unless a new WinUI source or crop regression appears.
 The generated ModernWpf RichTextBlock extension page now uses the local
 official WinUI Gallery four-example structure from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\RichTextBlockPage.xaml`:

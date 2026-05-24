@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
@@ -11,6 +13,33 @@ namespace ModernWpf.Gallery.Pages
 {
     internal static class LayoutSampleFactory
     {
+        private const string SplitViewBasicXaml =
+@"<SplitView x:Name=""splitView"" PaneBackground=""$(PaneBackground)""
+           IsPaneOpen=""$(IsPaneOpen)"" OpenPaneLength=""$(OpenPaneLength)"" CompactPaneLength=""$(CompactPaneLength)"" DisplayMode=""$(DisplayMode)"">
+    <SplitView.Pane>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height=""Auto""/>
+                <RowDefinition Height=""*""/>
+                <RowDefinition Height=""Auto""/>
+            </Grid.RowDefinitions>
+            <TextBlock Text=""PANE CONTENT"" x:Name=""PaneHeader"" Margin=""60,12,0,0"" Style=""{StaticResource BaseTextBlockStyle}""/>
+            <ListView x:Name=""NavLinksList"" Margin=""0,12,0,0"" SelectionMode=""Single"" Grid.Row=""1"" VerticalAlignment=""Stretch""
+                    ItemClick=""NavLinksList_ItemClick"" IsItemClickEnabled=""True""
+                    ItemsSource=""{x:Bind NavLinks}"" ItemTemplate=""{StaticResource NavLinkItemTemplate}""/>
+        </Grid>
+    </SplitView.Pane>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height=""Auto""/>
+            <RowDefinition Height=""*""/>
+        </Grid.RowDefinitions>
+        <TextBlock Text=""SPLITVIEW CONTENT"" Margin=""12,12,0,0"" Style=""{StaticResource BaseTextBlockStyle}""/>
+        <TextBlock x:Name=""content"" Grid.Row=""1"" Margin=""12,12,0,0"" Style=""{StaticResource BodyTextBlockStyle}"" />
+    </Grid>
+</SplitView>";
+
         public static UIElement Create(string uniqueId)
         {
             switch (uniqueId)
@@ -41,6 +70,24 @@ namespace ModernWpf.Gallery.Pages
                     return CreateViewboxSample();
                 default:
                     return null;
+            }
+        }
+
+        public static IReadOnlyList<GalleryExample> CreateExamples(string uniqueId)
+        {
+            switch (uniqueId)
+            {
+                case "SplitView":
+                    return new[]
+                    {
+                        new GalleryExample(
+                            "A basic SplitView.",
+                            CreateBasicSplitViewExampleContent(assignRootAutomationId: true),
+                            SplitViewBasicXaml,
+                            null)
+                    };
+                default:
+                    return Array.Empty<GalleryExample>();
             }
         }
 
@@ -357,102 +404,158 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateSplitViewSample()
         {
-            var panel = CreateSamplePanel("SplitView is provided by ModernWpf and hosts a pane beside app content.");
+            return CreateBasicSplitViewExampleContent(assignRootAutomationId: true);
+        }
+
+        private static GallerySamplePanel CreateBasicSplitViewExampleContent(bool assignRootAutomationId)
+        {
+            var panel = new GallerySamplePanel
+            {
+                Orientation = Orientation.Horizontal
+            };
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("SplitView"));
+            }
+
             var contentText = new TextBlock
             {
-                Text = "Select a pane item.",
-                Margin = new Thickness(12),
+                Name = "content",
+                Margin = new Thickness(12, 12, 0, 0),
                 TextWrapping = TextWrapping.Wrap
             };
+            Grid.SetRow(contentText, 1);
             var splitView = new Mux.SplitView
             {
-                Width = 460,
+                Name = "splitView",
+                MaxWidth = 400,
                 Height = 300,
                 IsPaneOpen = true,
-                DisplayMode = Mux.SplitViewDisplayMode.CompactOverlay,
+                IsTabStop = false,
+                DisplayMode = Mux.SplitViewDisplayMode.Inline,
                 CompactPaneLength = 48,
-                OpenPaneLength = 220,
-                PaneBackground = CreateBrush("#F3F3F3"),
+                OpenPaneLength = 256,
+                PaneBackground = GetThemeBrush("SystemControlBackgroundChromeMediumLowBrush", "#F3F3F3"),
                 Pane = CreateSplitViewPane(contentText),
-                Content = new Border
+                Content = new Grid
                 {
-                    Padding = new Thickness(12),
-                    Child = new StackPanel
+                    RowDefinitions =
                     {
-                        Children =
+                        new RowDefinition { Height = GridLength.Auto },
+                        new RowDefinition { Height = new GridLength(1, GridUnitType.Star) }
+                    },
+                    Children =
+                    {
+                        new TextBlock
                         {
-                            new TextBlock
-                            {
-                                Text = "SPLITVIEW CONTENT",
-                                FontWeight = FontWeights.SemiBold,
-                                Margin = new Thickness(0, 0, 0, 8)
-                            },
-                            contentText
-                        }
+                            Text = "SPLITVIEW CONTENT",
+                            FontWeight = FontWeights.SemiBold,
+                            Margin = new Thickness(12, 12, 0, 0),
+                            TextWrapping = TextWrapping.Wrap
+                        },
+                        contentText
                     }
                 }
             };
+            GalleryAutomation.WithAutomationId(splitView, GalleryAutomation.SampleElementId("SplitView", "SplitView"));
+
+            var splitViewHost = new Grid
+            {
+                Width = 400,
+                Height = 300,
+                VerticalAlignment = VerticalAlignment.Top
+            };
+            splitViewHost.Children.Add(splitView);
 
             var toggle = new ToggleButton
             {
+                Name = "togglePaneButton",
                 Content = "IsPaneOpen",
-                IsChecked = splitView.IsPaneOpen,
-                Margin = new Thickness(0, 12, 8, 0),
-                Padding = new Thickness(14, 5, 14, 5)
+                IsChecked = splitView.IsPaneOpen
             };
             toggle.Checked += delegate { splitView.IsPaneOpen = true; };
             toggle.Unchecked += delegate { splitView.IsPaneOpen = false; };
 
-            var placement = new ComboBox
+            var placement = new Mux.ToggleSwitch
             {
-                Width = 150,
+                MinWidth = 120,
                 Margin = new Thickness(0, 12, 8, 0),
-                ItemsSource = new[] { Mux.SplitViewPanePlacement.Left, Mux.SplitViewPanePlacement.Right },
-                SelectedItem = splitView.PanePlacement
+                Header = "Placement",
+                OffContent = "Left",
+                OnContent = "Right"
             };
-            ControlHelper.SetHeader(placement, "PanePlacement");
-            placement.SelectionChanged += delegate
+            placement.Toggled += delegate
             {
-                if (placement.SelectedItem is Mux.SplitViewPanePlacement)
-                {
-                    splitView.PanePlacement = (Mux.SplitViewPanePlacement)placement.SelectedItem;
-                }
+                splitView.PanePlacement = placement.IsOn
+                    ? Mux.SplitViewPanePlacement.Right
+                    : Mux.SplitViewPanePlacement.Left;
+                UpdateSplitViewNavLinkLayout(splitView.Pane as Grid, splitView.PanePlacement);
             };
 
             var mode = new ComboBox
             {
-                Width = 170,
-                Margin = new Thickness(0, 12, 0, 0),
-                ItemsSource = new[]
-                {
-                    Mux.SplitViewDisplayMode.Inline,
-                    Mux.SplitViewDisplayMode.CompactInline,
-                    Mux.SplitViewDisplayMode.Overlay,
-                    Mux.SplitViewDisplayMode.CompactOverlay
-                },
-                SelectedItem = splitView.DisplayMode
+                Name = "displayModeCombobox",
+                Width = 196,
+                Margin = new Thickness(0, 4, 0, 0)
             };
-            ControlHelper.SetHeader(mode, "DisplayMode");
+            mode.Items.Add("Inline");
+            mode.Items.Add("CompactInline");
+            mode.Items.Add("Overlay");
+            mode.Items.Add("CompactOverlay");
+            mode.SelectedIndex = 0;
             mode.SelectionChanged += delegate
             {
-                if (mode.SelectedItem is Mux.SplitViewDisplayMode)
+                if (mode.SelectedItem is string displayMode)
                 {
-                    splitView.DisplayMode = (Mux.SplitViewDisplayMode)mode.SelectedItem;
+                    splitView.DisplayMode = (Mux.SplitViewDisplayMode)Enum.Parse(typeof(Mux.SplitViewDisplayMode), displayMode);
                 }
             };
 
-            var openLength = CreateSlider("OpenPaneLength", 128, 320, splitView.OpenPaneLength);
-            openLength.Width = 180;
+            var paneBackground = new ComboBox
+            {
+                Name = "paneBackgroundCombobox",
+                Width = 196,
+                Margin = new Thickness(0, 4, 0, 0)
+            };
+            paneBackground.Items.Add("SystemControlBackgroundChromeMediumLowBrush");
+            paneBackground.Items.Add("Red");
+            paneBackground.Items.Add("Blue");
+            paneBackground.Items.Add("Green");
+            paneBackground.SelectedIndex = 0;
+            paneBackground.SelectionChanged += delegate
+            {
+                splitView.PaneBackground = GetSplitViewPaneBackground(paneBackground.SelectedItem as string);
+            };
+
+            var openLength = CreateSlider("OpenPaneLength", 128, 500, splitView.OpenPaneLength);
+            openLength.Name = "openPaneLengthSlider";
+            openLength.Width = 196;
+            openLength.TickFrequency = 8;
+            openLength.Margin = new Thickness(0, 4, 0, 0);
+            ControlHelper.SetHeader(openLength, null);
             openLength.ValueChanged += delegate { splitView.OpenPaneLength = openLength.Value; };
 
-            var controls = new StackPanel { Orientation = Orientation.Horizontal };
-            controls.Children.Add(toggle);
-            controls.Children.Add(placement);
-            controls.Children.Add(mode);
-            controls.Children.Add(openLength);
+            var compactLength = CreateSlider("CompactPaneLength", 24, 128, splitView.CompactPaneLength);
+            compactLength.Name = "compactPaneLengthSlider";
+            compactLength.Width = 196;
+            compactLength.TickFrequency = 8;
+            compactLength.Margin = new Thickness(0, 4, 0, 0);
+            ControlHelper.SetHeader(compactLength, null);
+            compactLength.ValueChanged += delegate { splitView.CompactPaneLength = compactLength.Value; };
 
-            panel.Children.Add(splitView);
-            panel.Children.Add(controls);
+            var options = new StackPanel
+            {
+                Margin = new Thickness(24, 0, 0, 0)
+            };
+            options.Children.Add(toggle);
+            options.Children.Add(placement);
+            options.Children.Add(CreateSplitViewOption("DisplayMode", mode));
+            options.Children.Add(CreateSplitViewOption("PaneBackground", paneBackground));
+            options.Children.Add(CreateSplitViewOption("OpenPaneLength", openLength));
+            options.Children.Add(CreateSplitViewOption("CompactPaneLength", compactLength));
+
+            panel.Children.Add(splitViewHost);
+            panel.Children.Add(options);
             return panel;
         }
 
@@ -581,33 +684,170 @@ namespace ModernWpf.Gallery.Pages
             return panel;
         }
 
+        private static StackPanel CreateSplitViewOption(string header, FrameworkElement control)
+        {
+            return new StackPanel
+            {
+                Margin = new Thickness(0, 12, 0, 0),
+                Children =
+                {
+                    new TextBlock
+                    {
+                        Text = header
+                    },
+                    control
+                }
+            };
+        }
+
         private static UIElement CreateSplitViewPane(TextBlock contentText)
         {
-            var pane = new StackPanel();
+            var pane = new Grid();
+            pane.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            pane.RowDefinitions.Add(new RowDefinition());
+            pane.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+
             pane.Children.Add(new TextBlock
             {
+                Name = "PaneHeader",
                 Text = "PANE CONTENT",
                 FontWeight = FontWeights.SemiBold,
-                Margin = new Thickness(60, 12, 0, 10)
+                Margin = new Thickness(60, 12, 0, 0)
             });
 
-            foreach (var item in new[] { "People", "Globe", "Message", "Mail" })
+            var navLinksList = new ListView
             {
-                var button = new Button
+                Name = "NavLinksList",
+                Margin = new Thickness(0, 12, 0, 0),
+                SelectionMode = SelectionMode.Single,
+                VerticalAlignment = VerticalAlignment.Stretch
+            };
+            AutomationProperties.SetAutomationId(navLinksList, "NavLinksList");
+            navLinksList.Items.Add(CreateSplitViewNavItem("People", Mux.Symbol.People, Mux.SplitViewPanePlacement.Left));
+            navLinksList.Items.Add(CreateSplitViewNavItem("Globe", Mux.Symbol.Globe, Mux.SplitViewPanePlacement.Left));
+            navLinksList.Items.Add(CreateSplitViewNavItem("Message", Mux.Symbol.Message, Mux.SplitViewPanePlacement.Left));
+            navLinksList.Items.Add(CreateSplitViewNavItem("Mail", Mux.Symbol.Mail, Mux.SplitViewPanePlacement.Left));
+            navLinksList.SelectionChanged += delegate
+            {
+                if (navLinksList.SelectedItem is ListViewItem item && item.Tag is string label)
                 {
-                    Content = item,
-                    HorizontalAlignment = HorizontalAlignment.Stretch,
-                    Padding = new Thickness(14, 8, 14, 8),
-                    Margin = new Thickness(4, 0, 4, 4)
-                };
-                button.Click += delegate
-                {
-                    contentText.Text = item + " Page";
-                };
-                pane.Children.Add(button);
-            }
+                    contentText.Text = label + " Page";
+                }
+            };
+            Grid.SetRow(navLinksList, 1);
+            pane.Children.Add(navLinksList);
+            pane.Tag = navLinksList;
 
             return pane;
+        }
+
+        private static ListViewItem CreateSplitViewNavItem(string label, Mux.Symbol symbol, Mux.SplitViewPanePlacement placement)
+        {
+            var item = new ListViewItem
+            {
+                Tag = label,
+                Content = CreateSplitViewNavItemContent(label, symbol, placement)
+            };
+            AutomationProperties.SetName(item, label);
+            return item;
+        }
+
+        private static Grid CreateSplitViewNavItemContent(string label, Mux.Symbol symbol, Mux.SplitViewPanePlacement placement)
+        {
+            var grid = new Grid
+            {
+                Margin = placement == Mux.SplitViewPanePlacement.Right
+                    ? new Thickness(0, 0, 2, 0)
+                    : new Thickness(2, 0, 0, 0)
+            };
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = placement == Mux.SplitViewPanePlacement.Right ? new GridLength(1, GridUnitType.Star) : GridLength.Auto });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = placement == Mux.SplitViewPanePlacement.Right ? GridLength.Auto : new GridLength(1, GridUnitType.Star) });
+            AutomationProperties.SetName(grid, label);
+
+            var icon = new Mux.SymbolIcon(symbol)
+            {
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            var text = new TextBlock
+            {
+                Text = label,
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin = placement == Mux.SplitViewPanePlacement.Right
+                    ? new Thickness(0, 0, 24, 0)
+                    : new Thickness(24, 0, 0, 0)
+            };
+
+            if (placement == Mux.SplitViewPanePlacement.Right)
+            {
+                grid.Children.Add(text);
+                Grid.SetColumn(icon, 1);
+                grid.Children.Add(icon);
+            }
+            else
+            {
+                grid.Children.Add(icon);
+                Grid.SetColumn(text, 1);
+                grid.Children.Add(text);
+            }
+
+            return grid;
+        }
+
+        private static void UpdateSplitViewNavLinkLayout(Grid pane, Mux.SplitViewPanePlacement placement)
+        {
+            if (pane == null)
+            {
+                return;
+            }
+
+            var navLinksList = pane.Tag as ListView;
+            if (navLinksList == null)
+            {
+                return;
+            }
+
+            foreach (var item in navLinksList.Items)
+            {
+                if (item is ListViewItem listViewItem && listViewItem.Tag is string label)
+                {
+                    listViewItem.Content = CreateSplitViewNavItemContent(label, GetSplitViewNavSymbol(label), placement);
+                }
+            }
+        }
+
+        private static Mux.Symbol GetSplitViewNavSymbol(string label)
+        {
+            switch (label)
+            {
+                case "People":
+                    return Mux.Symbol.People;
+                case "Globe":
+                    return Mux.Symbol.Globe;
+                case "Message":
+                    return Mux.Symbol.Message;
+                default:
+                    return Mux.Symbol.Mail;
+            }
+        }
+
+        private static Brush GetSplitViewPaneBackground(string color)
+        {
+            switch (color)
+            {
+                case "Red":
+                    return Brushes.Red;
+                case "Blue":
+                    return Brushes.Blue;
+                case "Green":
+                    return Brushes.Green;
+                default:
+                    return GetThemeBrush("SystemControlBackgroundChromeMediumLowBrush", "#F3F3F3");
+            }
+        }
+
+        private static Brush GetThemeBrush(string resourceKey, string fallbackColor)
+        {
+            return Application.Current?.TryFindResource(resourceKey) as Brush ?? CreateBrush(fallbackColor);
         }
 
         private static Grid CreateVariableGrid(Orientation orientation)
