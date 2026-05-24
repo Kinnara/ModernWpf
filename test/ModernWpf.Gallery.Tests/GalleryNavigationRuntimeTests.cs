@@ -338,6 +338,11 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsTrue(chrome.UseAeroCaptionButtons);
                     Assert.AreEqual(MainWindow.GetPreferredNonClientFrameEdges(), chrome.NonClientFrameEdges);
                     Assert.AreSame(Application.Current.FindResource("WindowBackground"), window.Background);
+                    Assert.AreSame(window, window.DataContext);
+                    Assert.AreEqual("WPF Gallery", window.ViewModel.ApplicationTitle);
+                    Assert.AreEqual("WPF Gallery", window.Title);
+                    Assert.AreEqual("ViewModel.ApplicationTitle",
+                        BindingOperations.GetBindingExpression(window, Window.TitleProperty)?.ParentBinding.Path.Path);
 
                     var mainGrid = (Grid)window.FindName("MainGrid");
                     Assert.AreEqual(44d, mainGrid.RowDefinitions[0].Height.Value);
@@ -352,6 +357,8 @@ namespace ModernWpf.Gallery.Tests
 
                     var titleText = (TextBlock)window.FindName("TitleText");
                     Assert.AreEqual("WPF Gallery", titleText.Text);
+                    Assert.AreEqual("ViewModel.ApplicationTitle",
+                        BindingOperations.GetBindingExpression(titleText, TextBlock.TextProperty)?.ParentBinding.Path.Path);
                     Assert.AreEqual(AutomationHeadingLevel.Level1, AutomationProperties.GetHeadingLevel(titleText));
 
                     var minimizeButton = (Button)window.FindName("MinimizeButton");

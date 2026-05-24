@@ -8,7 +8,7 @@
     xmlns:pages="clr-namespace:ModernWpf.Gallery.Pages"
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:winShell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
-    Title="WPF Gallery"
+    Title="{Binding ViewModel.ApplicationTitle}"
     Width="1180"
     Height="820"
     MinWidth="840"
@@ -161,7 +161,7 @@
                         VerticalAlignment="Center"
                         pages:GalleryAutomation.HeadingLevel="Level1"
                         Style="{StaticResource CaptionTextBlockStyle}"
-                        Text="WPF Gallery" />
+                        Text="{Binding ViewModel.ApplicationTitle}" />
                 </StackPanel>
 
                 <Button

@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Shell;
 using Microsoft.Win32;
+using ModernWpf.Gallery.ViewModels;
 
 namespace ModernWpf.Gallery
 {
@@ -11,8 +12,11 @@ namespace ModernWpf.Gallery
     {
         private static readonly Version OSVersion = GetOSVersion();
 
+        public MainWindowViewModel ViewModel { get; } = new MainWindowViewModel();
+
         public MainWindow()
         {
+            DataContext = this;
             InitializeComponent();
             ConfigureWindowChrome();
             UpdateMainWindowVisuals();
