@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Windows;
 using System.Windows.Automation;
@@ -29,6 +30,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "NavigationView", "GallerySample_NavigationView_Root", "GallerySample_NavigationView_NavigationView" };
             yield return new object[] { "ContentDialog", "GallerySample_ContentDialog_Root", "GallerySample_ContentDialog_ShowButton" };
             yield return new object[] { "HyperlinkButton", "GallerySample_HyperlinkButton_Root", "GallerySample_HyperlinkButton_HyperlinkButton" };
+            yield return new object[] { "RatingControl", "GallerySample_RatingControl_Root", "GallerySample_RatingControl_RatingControl" };
             yield return new object[] { "RepeatButton", "GallerySample_RepeatButton_Root", "GallerySample_RepeatButton_RepeatButton" };
             yield return new object[] { "ToggleButton", "GallerySample_ToggleButton_Root", "GallerySample_ToggleButton_ToggleButton" };
             yield return new object[] { "DropDownButton", "GallerySample_DropDownButton_Root", "GallerySample_DropDownButton_DropDownButton" };
@@ -659,6 +661,108 @@ namespace ModernWpf.Gallery.Tests
                     clickButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent, clickButton));
                     Assert.IsNotNull(requestedItem);
                     Assert.AreEqual("ToggleButton", requestedItem.UniqueId);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void RatingControlSampleMatchesWinUIGalleryExamples()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("RatingControl"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(2, page.Examples.Count);
+                    Assert.AreEqual("A simple RatingControl", page.Examples[0].HeaderText);
+                    Assert.AreEqual("PlaceholderValue of RatingControl", page.Examples[1].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "AutomationProperties.Name=\"Simple RatingControl\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "IsClearEnabled=\"$(IsClearEnabled)\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "IsReadOnly=\"$(IsReadOnly)\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "Caption=\"$(Caption)\"");
+                    Assert.AreEqual("<RatingControl AutomationProperties.Name=\"RatingControl with placeholder\" PlaceholderValue=\"$(Slider)\" />", page.Examples[1].XamlCode);
+                    Assert.IsNull(page.Examples[0].CSharpCode);
+                    Assert.IsNull(page.Examples[1].CSharpCode);
+
+                    var rating = (Mux.RatingControl)FindByAutomationId(page, "GallerySample_RatingControl_RatingControl");
+                    var placeholderRating = (Mux.RatingControl)FindByAutomationId(page, "GallerySample_RatingControl_PlaceholderRatingControl");
+                    var clearEnabledCheck = FindNamedDescendant<CheckBox>(page, "clearEnabledCheck");
+                    var readOnlyCheck = FindNamedDescendant<CheckBox>(page, "readOnlyCheck");
+                    var slider = FindNamedDescendant<Slider>(page, "slider");
+                    Assert.IsNotNull(rating);
+                    Assert.IsNotNull(placeholderRating);
+                    Assert.IsNotNull(clearEnabledCheck);
+                    Assert.IsNotNull(readOnlyCheck);
+                    Assert.IsNotNull(slider);
+
+                    Assert.AreEqual("RatingControl1", rating.Name);
+                    Assert.AreEqual(HorizontalAlignment.Left, rating.HorizontalAlignment);
+                    Assert.AreEqual("Simple RatingControl", AutomationProperties.GetName(rating));
+                    Assert.AreEqual("312 ratings", rating.Caption);
+                    Assert.IsFalse(rating.IsClearEnabled);
+                    Assert.IsFalse(rating.IsReadOnly);
+
+                    var firstExampleRoot = (GallerySamplePanel)page.Examples[0].ExampleContent;
+                    var firstLayout = (Grid)firstExampleRoot.Children[0];
+                    var output = (TextBlock)firstLayout.Children[1];
+                    Assert.AreEqual(FontWeights.Bold, output.FontWeight);
+                    Assert.AreEqual(new Thickness(0, 12, 0, 0), output.Margin);
+                    Assert.AreEqual(rating.Value.ToString(CultureInfo.InvariantCulture), output.Text);
+
+                    clearEnabledCheck.IsChecked = true;
+                    readOnlyCheck.IsChecked = true;
+                    WpfTestHost.DoEvents();
+                    Assert.IsTrue(rating.IsClearEnabled);
+                    Assert.IsTrue(rating.IsReadOnly);
+
+                    clearEnabledCheck.IsChecked = false;
+                    readOnlyCheck.IsChecked = false;
+                    WpfTestHost.DoEvents();
+                    Assert.IsFalse(rating.IsClearEnabled);
+                    Assert.IsFalse(rating.IsReadOnly);
+
+                    rating.Value = 3;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual("Your rating", rating.Caption);
+                    Assert.AreEqual("3", output.Text);
+
+                    Assert.AreEqual("RatingControl2", placeholderRating.Name);
+                    Assert.AreEqual(HorizontalAlignment.Left, placeholderRating.HorizontalAlignment);
+                    Assert.AreEqual(VerticalAlignment.Top, placeholderRating.VerticalAlignment);
+                    Assert.AreEqual("RatingControl with placeholder", AutomationProperties.GetName(placeholderRating));
+                    Assert.AreEqual(-1, placeholderRating.PlaceholderValue);
+                    Assert.AreEqual("slider", slider.Name);
+                    Assert.AreEqual(0, slider.Minimum);
+                    Assert.AreEqual(5, slider.Maximum);
+                    Assert.AreEqual(0.5, slider.SmallChange);
+                    Assert.AreEqual(0.5, slider.TickFrequency);
+
+                    slider.Value = 2.5;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(2.5, placeholderRating.PlaceholderValue);
                 }
                 finally
                 {

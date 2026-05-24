@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Automation.Peers;
@@ -30,6 +32,13 @@ namespace ModernWpf.Gallery.Pages
         private const string RepeatButtonSimpleXaml =
 @"<RepeatButton Content=""Click and hold"" Click=""RepeatButton_Click"" $(IsEnabled)/>";
 
+        private const string RatingControlSimpleXaml =
+@"<RatingControl AutomationProperties.Name=""Simple RatingControl"" IsClearEnabled=""$(IsClearEnabled)""
+    IsReadOnly=""$(IsReadOnly)"" Caption=""$(Caption)""/>";
+
+        private const string RatingControlPlaceholderXaml =
+@"<RatingControl AutomationProperties.Name=""RatingControl with placeholder"" PlaceholderValue=""$(Slider)"" />";
+
         private const string ToggleButtonSimpleXaml =
 @"<ToggleButton Content=""ToggleButton"" Click=""Button_Click"" $(IsEnabled)/>";
 
@@ -45,6 +54,8 @@ namespace ModernWpf.Gallery.Pages
             {
                 case "HyperlinkButton":
                     return CreateHyperlinkButtonExamples();
+                case "RatingControl":
+                    return CreateRatingControlExamples();
                 case "RepeatButton":
                     return CreateRepeatButtonExamples();
                 case "ToggleButton":
@@ -789,14 +800,165 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateRatingControlSample()
         {
-            var panel = CreateSamplePanel("RatingControl captures a weighted preference with optional clearing.");
-            panel.Children.Add(new Mux.RatingControl
+            var panel = new GallerySamplePanel
             {
-                Caption = "How useful is this sample?",
-                MaxRating = 5,
-                Value = 3,
-                HorizontalAlignment = HorizontalAlignment.Left
+                Margin = new Thickness(0, 0, 0, 12)
+            };
+            GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("RatingControl"));
+            panel.Children.Add(CreateSimpleRatingControlExampleContent(assignRootAutomationId: false));
+            return panel;
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateRatingControlExamples()
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "A simple RatingControl",
+                    CreateSimpleRatingControlExampleContent(assignRootAutomationId: true),
+                    RatingControlSimpleXaml,
+                    null),
+                new GalleryExample(
+                    "PlaceholderValue of RatingControl",
+                    CreatePlaceholderRatingControlExampleContent(),
+                    RatingControlPlaceholderXaml,
+                    null)
+            };
+        }
+
+        private static GallerySamplePanel CreateSimpleRatingControlExampleContent(bool assignRootAutomationId)
+        {
+            var panel = new GallerySamplePanel();
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("RatingControl"));
+            }
+
+            var layout = new Grid();
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(40) });
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            layout.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            layout.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+
+            var ratingStack = new StackPanel
+            {
+                VerticalAlignment = VerticalAlignment.Top
+            };
+            var rating = new Mux.RatingControl
+            {
+                Name = "RatingControl1",
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Caption = "312 ratings",
+                IsClearEnabled = false,
+                IsReadOnly = false
+            };
+            AutomationProperties.SetName(rating, "Simple RatingControl");
+            GalleryAutomation.WithAutomationId(rating, GalleryAutomation.SampleElementId("RatingControl", "RatingControl"));
+
+            var output = new TextBlock
+            {
+                FontWeight = FontWeights.Bold,
+                Margin = new Thickness(0, 12, 0, 0),
+                Text = FormatRatingValue(rating.Value)
+            };
+
+            rating.ValueChanged += delegate
+            {
+                UpdateSimpleRatingOutput(rating, output);
+            };
+            var ratingValueDescriptor = DependencyPropertyDescriptor.FromProperty(
+                Mux.RatingControl.ValueProperty,
+                typeof(Mux.RatingControl));
+            ratingValueDescriptor?.AddValueChanged(rating, delegate
+            {
+                UpdateSimpleRatingOutput(rating, output);
             });
+
+            ratingStack.Children.Add(rating);
+            layout.Children.Add(ratingStack);
+            Grid.SetRow(output, 1);
+            layout.Children.Add(output);
+
+            var options = new StackPanel
+            {
+                Width = 220
+            };
+            Grid.SetColumn(options, 2);
+            Grid.SetRowSpan(options, 2);
+            var clearEnabledCheck = new CheckBox
+            {
+                Name = "clearEnabledCheck",
+                Content = "IsClearEnabled"
+            };
+            clearEnabledCheck.Checked += delegate { rating.IsClearEnabled = true; };
+            clearEnabledCheck.Unchecked += delegate { rating.IsClearEnabled = false; };
+            options.Children.Add(clearEnabledCheck);
+            options.Children.Add(new TextBlock
+            {
+                Text = "Swipe left or click again to clear your rating.",
+                TextWrapping = TextWrapping.Wrap
+            });
+            var readOnlyCheck = new CheckBox
+            {
+                Name = "readOnlyCheck",
+                Content = "IsReadOnly",
+                Margin = new Thickness(0, 12, 0, 0)
+            };
+            readOnlyCheck.Checked += delegate { rating.IsReadOnly = true; };
+            readOnlyCheck.Unchecked += delegate { rating.IsReadOnly = false; };
+            options.Children.Add(readOnlyCheck);
+            layout.Children.Add(options);
+
+            panel.Children.Add(layout);
+            return panel;
+        }
+
+        private static GallerySamplePanel CreatePlaceholderRatingControlExampleContent()
+        {
+            var panel = new GallerySamplePanel();
+            var layout = new Grid();
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(40) });
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+            var rating = new Mux.RatingControl
+            {
+                Name = "RatingControl2",
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top
+            };
+            AutomationProperties.SetName(rating, "RatingControl with placeholder");
+            GalleryAutomation.WithAutomationId(rating, GalleryAutomation.SampleElementId("RatingControl", "PlaceholderRatingControl"));
+            layout.Children.Add(rating);
+
+            var options = new StackPanel
+            {
+                Width = 220
+            };
+            Grid.SetColumn(options, 2);
+            options.Children.Add(new TextBlock
+            {
+                Text = "PlaceholderValue",
+                Margin = new Thickness(0, 0, 0, 4),
+                FontWeight = FontWeights.SemiBold
+            });
+            var slider = new Slider
+            {
+                Name = "slider",
+                Minimum = 0,
+                Maximum = 5,
+                SmallChange = 0.5,
+                TickFrequency = 0.5
+            };
+            slider.ValueChanged += delegate
+            {
+                rating.PlaceholderValue = slider.Value <= 0 ? -1 : slider.Value;
+            };
+            options.Children.Add(slider);
+            layout.Children.Add(options);
+
+            panel.Children.Add(layout);
             return panel;
         }
 
@@ -953,6 +1115,17 @@ namespace ModernWpf.Gallery.Pages
                 Margin = new Thickness(0, 12, 0, 0),
                 TextWrapping = TextWrapping.Wrap
             };
+        }
+
+        private static string FormatRatingValue(double value)
+        {
+            return value.ToString(CultureInfo.InvariantCulture);
+        }
+
+        private static void UpdateSimpleRatingOutput(Mux.RatingControl rating, TextBlock output)
+        {
+            rating.Caption = "Your rating";
+            output.Text = FormatRatingValue(rating.Value);
         }
 
         private static void RequestItemNavigation(DependencyObject source, string uniqueId)

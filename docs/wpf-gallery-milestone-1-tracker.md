@@ -106,6 +106,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.RatingControlSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 18 tests per target. The generated ModernWpf RatingControl page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\RatingControlPage.xaml` / `.xaml.cs`: the simple RatingControl with caption/output/options and the placeholder-value RatingControl with a slider. `BasicInputSampleFactory.CreateExamples` now covers RatingControl as a source-backed Basic Input WinUI extension page, exposes curated automation IDs `GallerySample_RatingControl_Root` and `GallerySample_RatingControl_RatingControl`, keeps WinUI's `RatingControl1`, `RatingControl2`, `clearEnabledCheck`, `readOnlyCheck`, `slider`, `Simple RatingControl`, `RatingControl with placeholder`, and source XAML substitution placeholders, and adapts ModernWpf's placeholder sentinel so slider value `0` renders as the intended empty placeholder state. The shared RatingControl template now renders its caption with `ContentControlThemeFontFamily` so caption text no longer inherits the symbol font used for rating glyphs. Current warning/output remains `NU1903`, generated WinRT warnings when regeneration is triggered, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls RatingControl -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-142457-093-73764/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, primary crops match at `183x32`, and RatingControl Light primary delta is `24.27` after the caption-font fix.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls RatingControl -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-142551-280-72148/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, primary crops match at `183x32`, and RatingControl Dark primary delta is `29.21`. The visual harness now uses the WinUI reference automation ID `RatingControl1` for the RatingControl primary crop.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the RatingControl WinUI example alignment, shared caption-font fix, and reference crop mapping. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages, existing ModernWpf/ModernWpf.Controls warnings, `19 Warning(s)`, and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.ToggleButtonSampleMatchesWinUIGalleryExample|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 17 tests per target. The generated ModernWpf ToggleButton page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\ToggleButtonPage.xaml` / `.xaml.cs`: one simple ToggleButton example with output text that initializes to `Off`, changes to `On` when checked, and returns to `Off` when unchecked. `BasicInputSampleFactory.CreateExamples` now covers ToggleButton as a source-backed Basic Input WinUI extension page, exposes curated automation IDs `GallerySample_ToggleButton_Root` and `GallerySample_ToggleButton_ToggleButton`, and keeps WinUI's `Toggle1`, `Control1Output`, `ToggleButton`, `On`, `Off`, and source XAML `$(IsEnabled)` placeholder. Current warning/output remains `NU1903`, generated WinRT warnings when regeneration is triggered, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls ToggleButton -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -1391,6 +1399,28 @@ primary crops, and primary deltas `4.95` / `9.36`. The visual harness uses the
 WinUI reference automation ID `Toggle1` for the primary crop. Avoid reopening
 ToggleButton's source shape unless a new WinUI source or crop regression
 appears.
+The generated ModernWpf RatingControl extension page now uses the local official
+WinUI Gallery two-example structure from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\RatingControlPage.xaml`
+/ `.xaml.cs`: a simple captioned RatingControl with value output and options,
+plus a placeholder-value RatingControl driven by a slider. `BasicInputSampleFactory.CreateExamples`
+now covers RatingControl as a source-backed Basic Input WinUI example, keeps
+WinUI's `RatingControl1`, `RatingControl2`, `clearEnabledCheck`,
+`readOnlyCheck`, `slider`, automation names, and source XAML substitution
+placeholders, and adapts the placeholder slider's zero value to ModernWpf's
+negative no-placeholder sentinel so the initial visual state stays empty like
+the WinUI sample. The shared RatingControl template now uses
+`ContentControlThemeFontFamily` for the caption text while keeping the rating
+glyph stack on the symbol font; this fixes the prior tofu-box caption and brings
+the primary crop to the WinUI `183x32` extent. Current RatingControl
+WinUI-reference evidence is
+`artifacts/visual-checks/20260524-142457-093-73764/report.md` for Light and
+`artifacts/visual-checks/20260524-142551-280-72148/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`, matching `183x32`
+primary crops, and primary deltas `24.27` / `29.21`. The visual harness uses
+the WinUI reference automation ID `RatingControl1` for the primary crop. Avoid
+reopening RatingControl's source shape unless a new WinUI source or crop
+regression appears.
 The generated ModernWpf NumberBox extension page now uses the local official
 WinUI Gallery three-example structure from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\NumberBoxPage.xaml`:

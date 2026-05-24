@@ -70,7 +70,7 @@
                                 </ui:StackPanelEx.RenderTransform>
                             </ui:StackPanelEx>
                             <TextBlock x:Name="Caption" Margin="4,0,20,0" Style="{DynamicResource CaptionTextBlockStyle}"
-                                FontSize="12" Foreground="{TemplateBinding Foreground}" VerticalAlignment="Center" IsHitTestVisible="False"
+                                FontFamily="{DynamicResource ContentControlThemeFontFamily}" FontSize="12" Foreground="{TemplateBinding Foreground}" VerticalAlignment="Center" IsHitTestVisible="False"
                                 AutomationProperties.Name="RatingCaption" Text="{TemplateBinding Caption}"/>
                             <!-- 4 = 8 item spacing +4 of magic redline spacing -8 to compensate for scale of the last RatingItem -->
                             <!--
