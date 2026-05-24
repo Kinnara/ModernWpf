@@ -20,7 +20,6 @@
                             KeyboardNavigation.TabIndex="0"
                             Focusable="True">
                             <TextBlock
-                                AutomationProperties.AutomationId="GalleryItemPageTitle"
                                 Style="{StaticResource TitleTextBlockStyle}"
                                 Text="{TemplateBinding Title}" />
                         </Label>
