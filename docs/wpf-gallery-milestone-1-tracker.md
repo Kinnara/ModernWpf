@@ -209,13 +209,13 @@ Latest local verification for the current branch tip:
 - `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
   - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the TabView WinUI example alignment and visual harness mapping. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages, existing ModernWpf/ModernWpf.Controls warnings, `19 Warning(s)`, and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.PivotSampleMatchesWinUIGalleryExample|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
-  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 27 tests per target. The generated ModernWpf Pivot page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\PivotPage.xaml`: one `A basic pivot.` example with `Title="EMAIL"` and `All`, `Unread`, `Flagged`, and `Urgent` items. `NavigationSampleFactory.CreateExamples` now covers Pivot as a source-backed Navigation WinUI extension page, exposes curated automation IDs `GallerySample_Pivot_Root` and `GallerySample_Pivot_Pivot`, preserves the source snippet text, and adapts WinUI `Pivot` / `PivotItem` to WPF `TabControl` / `TabItem` using ModernWpf's `TabControlPivotStyle`, `TabItemPivotStyle`, and `PivotHelper.Title`. Current warning/output remains `NU1903`, recurring `Failed to resolve WinRT.Runtime.dll` messages, and existing ModernWpf warning noise.
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 43 tests per target. The generated ModernWpf Pivot page follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\PivotPage.xaml`: one `A basic pivot.` example with `Title="EMAIL"` and `All`, `Unread`, `Flagged`, and `Urgent` items. `NavigationSampleFactory.CreateExamples` covers Pivot as a source-backed Navigation WinUI extension page, exposes curated automation IDs `GallerySample_Pivot_Root` and `GallerySample_Pivot_Pivot`, preserves the source snippet text, and adapts WinUI `Pivot` / `PivotItem` to WPF `TabControl` / `TabItem` using ModernWpf's `TabControlPivotStyle`, `TabItemPivotStyle`, `PivotHelper.Title`, and a `721px` live-width cap so the WPF control crop matches the installed WinUI Gallery reference viewport. Current warning/output remains `NU1903`, recurring `Failed to resolve WinRT.Runtime.dll` messages, and existing ModernWpf warning noise.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls Pivot -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
-  - Passed at `artifacts/visual-checks/20260524-172513-638-105712/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, both apps were nonblank, the required ModernWpf element `GallerySample_Pivot_Pivot` was found, and the report records ModernWpf whole-sample mean delta `208.78`. The visual harness now includes Pivot in the default WinUI extension control set and maps ModernWpf primary/required automation to `GallerySample_Pivot_Pivot`; the installed WinUI Gallery source does not expose a stable named Pivot primary target, so the current report does not emit a primary-crop delta for Pivot.
+  - Passed at `artifacts/visual-checks/20260524-220857-074-114788/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, both apps were nonblank, the required ModernWpf element `GallerySample_Pivot_Pivot` was found, primary crops now match at `721x400`, Pivot Light primary delta is `7.11`, and whole-window mean delta is `141.1`. The visual harness now uses the installed WinUI Gallery `Tab` named `EMAIL` as Pivot's reference primary target.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls Pivot -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
-  - Passed at `artifacts/visual-checks/20260524-172624-222-84828/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, both apps were nonblank, the required ModernWpf element `GallerySample_Pivot_Pivot` was found, and the report records ModernWpf whole-sample mean delta `208.78`. The current report does not emit a primary-crop delta for Pivot.
+  - Passed at `artifacts/visual-checks/20260524-220932-952-102692/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, both apps were nonblank, the required ModernWpf element `GallerySample_Pivot_Pivot` was found, primary crops now match at `721x400`, Pivot Dark primary delta is `9.08`, and whole-window mean delta is `13.7`.
 - `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
-  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the Pivot WinUI example alignment and visual harness mapping. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages, existing ModernWpf/ModernWpf.Controls warnings, `19 Warning(s)`, and `0 Error(s)`.
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the Pivot primary-crop mapping and live-width refinement. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages, existing ModernWpf/ModernWpf.Controls warnings, `19 Warning(s)`, and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.SelectorBarSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 26 tests per target. The generated ModernWpf SelectorBar page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\SelectorBarPage.xaml` / `.xaml.cs`: `A Basic SelectorBar`, `SelectorBar with Frame Slide Transitions`, and `SelectorBar Displaying Different Collections Using ItemsView`. `NavigationSampleFactory.CreateExamples` now covers SelectorBar as a source-backed Navigation WinUI extension page, exposes curated automation IDs `GallerySample_SelectorBar_Root` and `GallerySample_SelectorBar_SelectorBar`, keeps WinUI's `SelectorBar1`, `SelectorBar2`, `ContentFrame`, `SelectorBar3`, and `ItemsView3` source-facing names, preserves the sample snippets, and verifies selection-driven frame/content changes. The WPF adaptation uses real `ModernWpf.Controls.SelectorBar` / `SelectorBarItem` controls and a sample-specific item template because the default library template rendered blank in the visual capture despite the live tree having item text/icons. Current warning/output remains `NU1903`, recurring `Failed to resolve WinRT.Runtime.dll` messages, and existing ModernWpf warning noise.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls SelectorBar -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -1441,17 +1441,20 @@ source-backed Navigation WinUI example, exposes `GallerySample_Pivot_Root` /
 `GallerySample_Pivot_Pivot` for runtime and visual checks, and adapts WinUI
 `Pivot` / `PivotItem` to WPF `TabControl` / `TabItem` through ModernWpf's
 existing `TabControlPivotStyle`, `TabItemPivotStyle`, and `PivotHelper.Title`.
+The live WPF Pivot is capped to the installed WinUI Gallery's `721px` primary
+viewport so visual checks compare the control template/content instead of the
+different ModernWpf host width.
 Current Pivot WinUI-reference evidence is
-`artifacts/visual-checks/20260524-172513-638-105712/report.md` for Light and
-`artifacts/visual-checks/20260524-172624-222-84828/report.md` for Dark, both
+`artifacts/visual-checks/20260524-220857-074-114788/report.md` for Light and
+`artifacts/visual-checks/20260524-220932-952-102692/report.md` for Dark, both
 with ModernWpf and installed WinUI 3 Gallery `Passed`, nonblank app captures,
-and required ModernWpf element `GallerySample_Pivot_Pivot` found. The installed
-WinUI Gallery source does not expose a stable named Pivot primary target, so the
-visual reports do not currently emit a primary-crop delta for Pivot; ModernWpf
-whole-sample mean delta is `208.78` in both runs. Avoid reopening Pivot's
-source shape unless a new WinUI source, runtime, or crop regression appears; a
-later round can separately investigate a stable reference crop target or
-remaining Pivot template drift.
+required ModernWpf element `GallerySample_Pivot_Pivot` found, matching
+`721x400` primary crops, and primary deltas `7.11` / `9.08`. The visual harness
+uses the installed WinUI Gallery `Tab` named `EMAIL` as Pivot's reference
+primary target because the source page does not expose a stable AutomationId on
+the Pivot itself. Avoid reopening Pivot's source shape unless a new WinUI
+source, runtime, or crop regression appears; a later round can separately
+investigate remaining font/glyph antialiasing drift.
 The generated ModernWpf SelectorBar extension page now uses the local official
 WinUI Gallery three-example structure from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\SelectorBarPage.xaml`

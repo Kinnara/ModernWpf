@@ -791,6 +791,7 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual("Pivot1", pivot.Name);
                     Assert.AreEqual("EMAIL", ModernWpf.Controls.Primitives.PivotHelper.GetTitle(pivot));
                     Assert.AreEqual(400, pivot.MinHeight);
+                    Assert.AreEqual(721, pivot.MaxWidth);
                     Assert.AreSame(pivot.TryFindResource("TabControlPivotStyle"), pivot.Style);
                     Assert.AreEqual(4, pivot.Items.Count);
                     Assert.AreEqual(0, pivot.SelectedIndex);

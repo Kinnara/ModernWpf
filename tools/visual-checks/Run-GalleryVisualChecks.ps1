@@ -251,6 +251,14 @@ function Find-DescendantButtonByName($root, [string]$name) {
     return $root.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $condition)
 }
 
+function Find-ReferencePrimaryByName($root, [string]$control, [string]$name) {
+    if ($control -eq "Pivot") {
+        return Find-DescendantByName $root $name
+    }
+
+    return Find-DescendantButtonByName $root $name
+}
+
 function Find-DescendantByAnyName($root, [string[]]$names) {
     foreach ($name in $names) {
         $element = Find-DescendantByName $root $name
@@ -568,6 +576,7 @@ function Get-ReferencePrimaryName([string]$control) {
         "DropDownButton" { return "Email" }
         "MenuFlyout" { return "Sort" }
         "Popup" { return "Show Popup (using Offset)" }
+        "Pivot" { return "EMAIL" }
         "RepeatButton" { return "Click and hold" }
         "CalendarDatePicker" { return "Calendar" }
         "ToggleSwitch" { return "simple ToggleSwitch" }
@@ -1255,7 +1264,7 @@ function Capture-StaticCrops([string]$app, [string]$control, [string]$caseDir, $
         else {
             $primarySource = Get-ReferencePrimaryName $control
             if (![string]::IsNullOrEmpty($primarySource)) {
-                $primaryElement = Find-DescendantButtonByName $window $primarySource
+                $primaryElement = Find-ReferencePrimaryByName $window $control $primarySource
             }
         }
         $sampleSource = "svPanel"
@@ -1965,7 +1974,7 @@ function Ensure-WinUIReferenceTheme([string]$control, [string]$caseDir, $window)
     }
     else {
         $primarySource = $primaryName
-        Find-DescendantButtonByName $window $primaryName
+        Find-ReferencePrimaryByName $window $control $primaryName
     }
     if ($null -eq $primaryElement) {
         return [ordered]@{

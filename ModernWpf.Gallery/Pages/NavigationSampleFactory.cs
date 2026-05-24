@@ -160,6 +160,8 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
     </PivotItem>
 </Pivot>";
 
+        private const double PivotReferenceWidth = 721.0;
+
         private const string TabViewBasicXaml =
 @"<TabView AddTabButtonClick=""TabView_AddButtonClick"" TabCloseRequested=""TabView_TabCloseRequested"" Loaded=""TabView_Loaded"" />";
 
@@ -941,6 +943,7 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             {
                 Name = "Pivot1",
                 MinHeight = 400,
+                MaxWidth = PivotReferenceWidth,
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 Style = FindStyleResource("TabControlPivotStyle")
             };
