@@ -106,6 +106,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.RichEditBoxSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 45 tests per target. The generated ModernWpf RichEditBox extension page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\RichEditBoxPage.xaml`: simple editor, custom CommandBarFlyout/Share editor, custom toolbar/find editor, math-mode editor, and MathML editor. `TextSampleFactory.CreateExamples` now covers RichEditBox as a source-backed Text WinUI extension page, adapts WinUI `RichEditBox` to WPF `RichTextBox` surfaces, keeps source-facing names such as `REBCustom`, `openFileButton`, `italicButton`, `fontColorButton`, `editor`, `findBox`, `MathEditor`, `mathEditor2`, `MathmlPresenter`, and `SetMathmlFormulaBtn`, consumes the local `Samples\SampleCode\Text\RichEditBox` snippets, and exposes curated automation IDs `GallerySample_RichEditBox_Root` / `GallerySample_RichEditBox_RichEditBox`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls RichEditBox -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-232304-296-87216/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required RichEditBox sample element was found, and ModernWpf's rendered content artifacts include nonblank `ContentRootGrid`, root, and first RichEditBox crops. The report records whole-window Light mean delta `201.95`; treat that as diagnostic only because the installed WinUI reference stayed dark while this ModernWpf run used Light.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls RichEditBox -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-232413-490-116744/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required RichEditBox sample element was found, ModernWpf's rendered content artifacts are nonblank, and the report records whole-window Dark mean delta `17.02`. Installed WinUI Gallery exposes the first editor by automation name rather than a stable automation ID, so no primary-crop delta is emitted.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the RichEditBox WinUI example alignment. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages, existing ModernWpf/ModernWpf.Controls warnings, `19 Warning(s)`, and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.RichTextBlockSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 44 tests per target. The generated ModernWpf RichTextBlock extension page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\RichTextBlockPage.xaml`: simple RichTextBlock, custom selection-highlight RichTextBlock, overflow layout, and custom text highlighting. `TextSampleFactory.CreateExamples` now covers RichTextBlock as a source-backed Text WinUI extension page, adapts WinUI `RichTextBlock` / `RichTextBlockOverflow` to WPF `TextBlock` surfaces, keeps source-facing names such as `SelectionHighlightRichTextBlock`, `firstOverflowContainer`, `secondOverflowContainer`, and `TextHighlightingRichTextBlock`, and exposes curated automation IDs `GallerySample_RichTextBlock_Root` / `GallerySample_RichTextBlock_RichTextBlock`.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls RichTextBlock -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -2139,6 +2147,30 @@ mean delta is `24.25`. The Light whole-window mean delta is `203.21` and should
 be treated as diagnostic only because the installed WinUI reference remained in
 Dark while ModernWpf was captured in Light. Avoid reopening RichTextBlock's
 source shape unless a new WinUI source or crop regression appears.
+The generated ModernWpf RichEditBox extension page now uses the local official
+WinUI Gallery five-example structure from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\RichEditBoxPage.xaml`:
+a simple editor, the custom CommandBarFlyout Share editor, the custom
+toolbar/find editor, math mode, and MathML. The WPF adaptation uses
+`RichTextBox` surfaces for WinUI `RichEditBox`, WPF `ContextMenu` for the Share
+customization, WPF toolbar buttons plus `DropDownButton` color swatches for the
+custom editor, and read-only textual MathML presentation for WinUI math APIs
+that WPF does not expose. It keeps WinUI's visible headers, local
+`Samples\SampleCode\Text\RichEditBox` source snippets, and source-facing names
+(`REBCustom`, `openFileButton`, `italicButton`, `fontColorButton`, `editor`,
+`findBox`, `MathEditor`, `mathEditor2`, `MathmlPresenter`, and
+`SetMathmlFormulaBtn`) while exposing `GallerySample_RichEditBox_*` automation
+IDs for the ModernWpf visual harness. Current RichEditBox WinUI-reference
+evidence is `artifacts/visual-checks/20260524-232304-296-87216/report.md` for
+Light and `artifacts/visual-checks/20260524-232413-490-116744/report.md` for
+Dark, both with ModernWpf and installed WinUI 3 Gallery `Passed`; the Dark
+whole-window mean delta is `17.02`. The Light whole-window mean delta is
+`201.95` and should be treated as diagnostic only because the installed WinUI
+reference remained in Dark while ModernWpf was captured in Light. The visual
+harness uses the WinUI reference name `simple text editor` and a
+RichEditBox-specific low-variation threshold because the first sample is an
+intentionally empty editor. Avoid reopening RichEditBox's source shape unless a
+new WinUI source or crop regression appears.
 Continue with the next highest-impact visible drift from the checklist, likely
 remaining High Contrast gaps, other NavigationView styling not covered
 by the TreeView token aliases or first-sample refresh, or other item pages that still lack current

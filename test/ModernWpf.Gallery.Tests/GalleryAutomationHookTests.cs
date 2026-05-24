@@ -13,6 +13,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ModernWpf.Controls.Primitives;
 using ModernWpf.Gallery.Controls;
 using ModernWpf.Gallery.Models;
 using ModernWpf.Gallery.Pages;
@@ -59,6 +60,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "ToggleSwitch", "GallerySample_ToggleSwitch_Root", "GallerySample_ToggleSwitch_ToggleSwitch" };
             yield return new object[] { "NumberBox", "GallerySample_NumberBox_Root", "GallerySample_NumberBox_SpinButtonNumberBox" };
             yield return new object[] { "AutoSuggestBox", "GallerySample_AutoSuggestBox_Root", "GallerySample_AutoSuggestBox_AutoSuggestBox" };
+            yield return new object[] { "RichEditBox", "GallerySample_RichEditBox_Root", "GallerySample_RichEditBox_RichEditBox" };
             yield return new object[] { "RichTextBlock", "GallerySample_RichTextBlock_Root", "GallerySample_RichTextBlock_RichTextBlock" };
             yield return new object[] { "MenuBar", "GallerySample_MenuBar_Root", "GallerySample_MenuBar_MenuBar" };
             yield return new object[] { "MenuFlyout", "GallerySample_MenuFlyout_Root", "GallerySample_MenuFlyout_AppBarButton" };
@@ -3345,6 +3347,91 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual("0.00", formattedBox.PlaceholderText);
                     Assert.IsNotNull(formattedBox.NumberFormatter);
                     Assert.AreEqual("1.25", formattedBox.NumberFormatter.FormatDouble(1.13));
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void RichEditBoxSampleMatchesWinUIGalleryExamples()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("RichEditBox"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(5, page.Examples.Count);
+                    Assert.AreEqual("A simple text editor using RichEditBox.", page.Examples[0].HeaderText);
+                    Assert.AreEqual("Customizing RichEditBox's CommandBarFlyout - Adding 'Share'", page.Examples[1].HeaderText);
+                    Assert.AreEqual("A custom editor with RichEditBox.", page.Examples[2].HeaderText);
+                    Assert.AreEqual("Rich edit box in math mode", page.Examples[3].HeaderText);
+                    Assert.AreEqual("Working with MathML in RichEditBox", page.Examples[4].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "simple text editor");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "REBCustom");
+                    StringAssert.Contains(page.Examples[1].CSharpCode, "StandardUICommandKind.Share");
+                    StringAssert.Contains(page.Examples[2].XamlCode, "fontColorButton");
+                    StringAssert.Contains(page.Examples[2].CSharpCode, "OpenButton_Click");
+                    StringAssert.Contains(page.Examples[3].CSharpCode, "SetMathMode");
+                    StringAssert.Contains(page.Examples[4].XamlCode, "mathEditor2");
+                    StringAssert.Contains(page.Examples[4].CSharpCode, "SetMathmlFormulaBtn_Click");
+
+                    var simple = (RichTextBox)FindByAutomationId(page, "GallerySample_RichEditBox_RichEditBox");
+                    var customMenu = FindNamedDescendant<RichTextBox>(page, "REBCustom");
+                    var openFileButton = FindNamedDescendant<Button>(page, "openFileButton");
+                    var italicButton = FindNamedDescendant<Button>(page, "italicButton");
+                    var fontColorButton = FindNamedDescendant<Mux.DropDownButton>(page, "fontColorButton");
+                    var findBox = FindNamedDescendant<TextBox>(page, "findBox");
+                    var mathEditor = FindNamedDescendant<RichTextBox>(page, "MathEditor");
+                    var mathEditor2 = FindNamedDescendant<RichTextBox>(page, "mathEditor2");
+                    var mathmlPresenter = FindNamedDescendant<TextBox>(page, "MathmlPresenter");
+                    var setFormulaButton = FindNamedDescendant<Button>(page, "SetMathmlFormulaBtn");
+                    Assert.IsNotNull(simple);
+                    Assert.IsNotNull(customMenu);
+                    Assert.IsNotNull(openFileButton);
+                    Assert.IsNotNull(italicButton);
+                    Assert.IsNotNull(fontColorButton);
+                    Assert.IsNotNull(findBox);
+                    Assert.IsNotNull(mathEditor);
+                    Assert.IsNotNull(mathEditor2);
+                    Assert.IsNotNull(mathmlPresenter);
+                    Assert.IsNotNull(setFormulaButton);
+
+                    Assert.AreEqual("editor", simple.Name);
+                    Assert.AreEqual("simple text editor", AutomationProperties.GetName(simple));
+                    Assert.AreEqual("editor with custom menu", AutomationProperties.GetName(customMenu));
+                    Assert.AreEqual("Open file", AutomationProperties.GetName(openFileButton));
+                    Assert.AreEqual("Italic", AutomationProperties.GetName(italicButton));
+                    Assert.AreEqual("Font color", AutomationProperties.GetName(fontColorButton));
+                    Assert.AreEqual("Enter search text", ControlHelper.GetPlaceholderText(findBox));
+                    Assert.AreEqual(16, mathEditor.FontSize);
+                    Assert.AreEqual(16, mathEditor2.FontSize);
+                    Assert.AreEqual("<!-- No MathML content -->", mathmlPresenter.Text);
+
+                    setFormulaButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                    WpfTestHost.DoEvents();
+                    StringAssert.Contains(mathmlPresenter.Text, "<mml:math");
                 }
                 finally
                 {

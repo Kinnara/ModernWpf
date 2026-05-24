@@ -148,6 +148,18 @@ private void AutoSuggestBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestB
     TextHighlightingRichTextBlock.TextHighlighters.Add(highlighter);
 }";
 
+        private const string RichEditBoxSimpleXaml =
+@"<RichEditBox x:Name=""editor"" AutomationProperties.Name=""simple text editor""/>";
+
+        private const string RichEditBoxMathModeXaml =
+@"<RichEditBox x:Name=""mathEditor"" FontSize=""16"" />";
+
+        private const string RichEditBoxMathModeCSharp =
+@"mathEditor.TextDocument.SetMathMode(RichEditMathMode.MathOnly);";
+
+        private const string RichEditBoxMathMLXaml =
+@"<RichEditBox x:Name=""mathEditor2"" FontSize=""16"" />";
+
         private static readonly string[] Cats =
         {
             "Abyssinian",
@@ -257,6 +269,8 @@ private void AutoSuggestBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestB
                     return CreateAutoSuggestBoxExamples();
                 case "NumberBox":
                     return CreateNumberBoxExamples(sampleSnippets);
+                case "RichEditBox":
+                    return CreateRichEditBoxExamples(sampleSnippets);
                 case "RichTextBlock":
                     return CreateRichTextBlockExamples();
                 default:
@@ -694,34 +708,400 @@ private void AutoSuggestBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestB
 
         private static UIElement CreateRichEditBoxSample()
         {
-            var panel = CreateSamplePanel("RichEditBox maps to WPF RichTextBox for editable formatted content.");
+            var panel = new GallerySamplePanel
+            {
+                Margin = new Thickness(0, 0, 0, 12)
+            };
+            GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("RichEditBox"));
+            panel.Children.Add(CreateSimpleRichEditBox(assignSampleAutomationId: true));
+            return panel;
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateRichEditBoxExamples(IReadOnlyList<SampleSnippet> sampleSnippets)
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "A simple text editor using RichEditBox.",
+                    CreateSimpleRichEditBoxExampleContent(assignRootAutomationId: true),
+                    RichEditBoxSimpleXaml,
+                    null),
+                new GalleryExample(
+                    "Customizing RichEditBox's CommandBarFlyout - Adding 'Share'",
+                    CreateCustomCommandFlyoutRichEditBoxExampleContent(),
+                    FindSampleCodeText(sampleSnippets, "RichEditBoxSample4_xaml.txt", System.IO.Path.Combine("Text", "RichEditBox")),
+                    FindSampleCodeText(sampleSnippets, "RichEditBoxSample4_cs.txt", System.IO.Path.Combine("Text", "RichEditBox"))),
+                new GalleryExample(
+                    "A custom editor with RichEditBox.",
+                    CreateCustomRichEditBoxExampleContent(),
+                    FindSampleCodeText(sampleSnippets, "RichEditBoxSample3_xaml.txt", System.IO.Path.Combine("Text", "RichEditBox")),
+                    FindSampleCodeText(sampleSnippets, "RichEditBoxSample3_cs.txt", System.IO.Path.Combine("Text", "RichEditBox"))),
+                new GalleryExample(
+                    "Rich edit box in math mode",
+                    CreateMathModeRichEditBoxExampleContent(),
+                    RichEditBoxMathModeXaml,
+                    RichEditBoxMathModeCSharp),
+                new GalleryExample(
+                    "Working with MathML in RichEditBox",
+                    CreateMathMLRichEditBoxExampleContent(),
+                    RichEditBoxMathMLXaml,
+                    FindSampleCodeText(sampleSnippets, "RichEditBoxSample6_cs.txt", System.IO.Path.Combine("Text", "RichEditBox")))
+            };
+        }
+
+        private static GallerySamplePanel CreateSimpleRichEditBoxExampleContent(bool assignRootAutomationId)
+        {
+            var panel = new GallerySamplePanel
+            {
+                HorizontalAlignment = HorizontalAlignment.Stretch
+            };
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("RichEditBox"));
+            }
+
+            panel.Children.Add(CreateSimpleRichEditBox(assignSampleAutomationId: true));
+            return panel;
+        }
+
+        private static RichTextBox CreateSimpleRichEditBox(bool assignSampleAutomationId)
+        {
             var richTextBox = new RichTextBox
             {
-                Width = 470,
-                Height = 220,
+                Name = "editor",
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                MinWidth = 300,
+                MinHeight = 32,
                 VerticalScrollBarVisibility = ScrollBarVisibility.Auto
             };
-            richTextBox.Document.Blocks.Clear();
-            richTextBox.Document.Blocks.Add(new Paragraph(new Run("Select text and apply formatting with the toolbar.")));
-            richTextBox.Document.Blocks.Add(new Paragraph(new Run("This WPF RichTextBox supports bold, italic, underline, and document flow.")));
-
-            var toolbar = CreateCommandRow();
-            toolbar.Children.Add(CreateCommandButton("Bold", EditingCommands.ToggleBold, richTextBox));
-            toolbar.Children.Add(CreateCommandButton("Italic", EditingCommands.ToggleItalic, richTextBox));
-            toolbar.Children.Add(CreateCommandButton("Underline", EditingCommands.ToggleUnderline, richTextBox));
-            var readOnly = new ToggleButton
+            AutomationProperties.SetName(richTextBox, "simple text editor");
+            if (assignSampleAutomationId)
             {
-                Content = "Read-only",
-                Padding = new Thickness(12, 6, 12, 6),
-                Margin = new Thickness(0, 0, 8, 0)
-            };
-            readOnly.Checked += delegate { richTextBox.IsReadOnly = true; };
-            readOnly.Unchecked += delegate { richTextBox.IsReadOnly = false; };
-            toolbar.Children.Add(readOnly);
+                GalleryAutomation.WithAutomationId(richTextBox, GalleryAutomation.SampleElementId("RichEditBox", "RichEditBox"));
+            }
 
-            panel.Children.Add(toolbar);
+            return richTextBox;
+        }
+
+        private static RichTextBox CreateRichEditBoxEditor(string name, string automationName, double width, double height)
+        {
+            var richTextBox = new RichTextBox
+            {
+                Name = name,
+                Width = width,
+                Height = height,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalScrollBarVisibility = ScrollBarVisibility.Auto
+            };
+            AutomationProperties.SetName(richTextBox, automationName);
+            return richTextBox;
+        }
+
+        private static GallerySamplePanel CreateCustomCommandFlyoutRichEditBoxExampleContent()
+        {
+            var panel = new GallerySamplePanel();
+            var richTextBox = CreateRichEditBoxEditor("REBCustom", "editor with custom menu", 800, 200);
+            richTextBox.ContextMenu = new ContextMenu();
+            richTextBox.ContextMenu.Items.Add(new MenuItem { Header = "Cut", Command = ApplicationCommands.Cut });
+            richTextBox.ContextMenu.Items.Add(new MenuItem { Header = "Copy", Command = ApplicationCommands.Copy });
+            richTextBox.ContextMenu.Items.Add(new MenuItem { Header = "Paste", Command = ApplicationCommands.Paste });
+            richTextBox.ContextMenu.Items.Add(new Separator());
+            richTextBox.ContextMenu.Items.Add(new MenuItem { Header = "Share" });
             panel.Children.Add(richTextBox);
             return panel;
+        }
+
+        private static Grid CreateCustomRichEditBoxExampleContent()
+        {
+            var grid = new Grid
+            {
+                Margin = new Thickness(0, 0, 0, 20),
+                HorizontalAlignment = HorizontalAlignment.Stretch
+            };
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            grid.ColumnDefinitions.Add(new ColumnDefinition());
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+            var editor = new RichTextBox
+            {
+                Name = "editor",
+                Height = 200,
+                MinWidth = 300,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalScrollBarVisibility = ScrollBarVisibility.Auto
+            };
+            AutomationProperties.SetName(editor, "Custom editor");
+
+            var openFileButton = CreateIconButton("openFileButton", "Open file", "\uE8E5");
+            openFileButton.Click += delegate { InsertRichEditBoxStatus(editor, "Open file"); };
+            grid.Children.Add(openFileButton);
+
+            var saveFileButton = CreateIconButton(null, "Save file", "\uE74E");
+            saveFileButton.Click += delegate { InsertRichEditBoxStatus(editor, "Save file"); };
+            Grid.SetColumn(saveFileButton, 1);
+            grid.Children.Add(saveFileButton);
+
+            var boldButton = CreateIconButton(null, "Bold", "\uE8DD");
+            boldButton.Click += delegate
+            {
+                EditingCommands.ToggleBold.Execute(null, editor);
+                editor.Focus();
+            };
+            Grid.SetColumn(boldButton, 3);
+            grid.Children.Add(boldButton);
+
+            var italicButton = CreateIconButton("italicButton", "Italic", "\uE8DB");
+            italicButton.Click += delegate
+            {
+                EditingCommands.ToggleItalic.Execute(null, editor);
+                editor.Focus();
+            };
+            Grid.SetColumn(italicButton, 4);
+            grid.Children.Add(italicButton);
+
+            var fontColorButton = new Mux.DropDownButton
+            {
+                Name = "fontColorButton",
+                Content = CreateIconGlyph("\uE8D3"),
+                BorderThickness = new Thickness(0),
+                Background = Brushes.Transparent,
+                VerticalAlignment = VerticalAlignment.Top
+            };
+            AutomationProperties.SetName(fontColorButton, "Font color");
+            fontColorButton.Flyout = CreateRichEditBoxColorFlyout(delegate(string colorName, SolidColorBrush brush)
+            {
+                ApplyRichTextBoxForeground(editor, brush);
+                fontColorButton.Flyout.Hide();
+                editor.Focus();
+            });
+            Grid.SetColumn(fontColorButton, 5);
+            grid.Children.Add(fontColorButton);
+
+            Grid.SetRow(editor, 1);
+            Grid.SetColumnSpan(editor, 6);
+            grid.Children.Add(editor);
+
+            var findPanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                Margin = new Thickness(0, 10, 0, 0)
+            };
+            findPanel.Children.Add(new TextBlock
+            {
+                Name = "findBoxLabel",
+                Text = "Find:",
+                VerticalAlignment = VerticalAlignment.Center
+            });
+            var findBox = new TextBox
+            {
+                Name = "findBox",
+                Width = 224,
+                Margin = new Thickness(10, 0, 0, 0)
+            };
+            ControlHelper.SetPlaceholderText(findBox, "Enter search text");
+            findBox.TextChanged += delegate
+            {
+                HighlightFindMatches(editor, findBox.Text);
+            };
+            findPanel.Children.Add(findBox);
+            Grid.SetRow(findPanel, 2);
+            Grid.SetColumnSpan(findPanel, 6);
+            grid.Children.Add(findPanel);
+
+            return grid;
+        }
+
+        private static GallerySamplePanel CreateMathModeRichEditBoxExampleContent()
+        {
+            var panel = new GallerySamplePanel();
+            panel.Children.Add(CreateRichEditBoxDescription(
+                "Math mode enables users to have input automatically recognized and converted to math expressions while being received.\n\n" +
+                "It uses Unicode Nearly Plain-Text Encoding of Mathematics, which allows mathematical notation to be represented in a linear format and automatically converted into proper math equations.\n\n" +
+                "For example, \"4^2\" is converted to a squared expression, and \"\\pi\" is converted to pi."));
+            var editor = CreateRichEditBoxEditor("MathEditor", "Math editor", 724, 80);
+            editor.FontSize = 16;
+            editor.Document.Blocks.Clear();
+            editor.Document.Blocks.Add(new Paragraph(new Run("4^2 + \\pi")));
+            panel.Children.Add(editor);
+            return panel;
+        }
+
+        private static GallerySamplePanel CreateMathMLRichEditBoxExampleContent()
+        {
+            var panel = new GallerySamplePanel();
+            panel.Children.Add(CreateRichEditBoxDescription(
+                "The SetMathML method takes a MathML string and displays the equation in the RichEditBox. It replaces any existing equation with the new one.\n\n" +
+                "The GetMathML method retrieves the MathML string of the equation from the RichEditBox when the equation is in a single line."));
+
+            var editor = CreateRichEditBoxEditor("mathEditor2", "MathML editor", 724, 80);
+            editor.FontSize = 16;
+            panel.Children.Add(editor);
+            panel.Children.Add(new TextBlock
+            {
+                Text = "MathML Code",
+                FontWeight = FontWeights.SemiBold,
+                Margin = new Thickness(0, 16, 0, 8)
+            });
+
+            var mathmlPresenter = new TextBox
+            {
+                Name = "MathmlPresenter",
+                Text = "<!-- No MathML content -->",
+                IsReadOnly = true,
+                AcceptsReturn = true,
+                TextWrapping = TextWrapping.Wrap,
+                FontFamily = new FontFamily("Consolas"),
+                MinHeight = 96,
+                MaxHeight = 220,
+                VerticalScrollBarVisibility = ScrollBarVisibility.Auto
+            };
+            panel.Children.Add(mathmlPresenter);
+
+            var setFormulaButton = CreateButton("Set sample formula");
+            setFormulaButton.Name = "SetMathmlFormulaBtn";
+            setFormulaButton.Margin = new Thickness(0, 12, 0, 0);
+            setFormulaButton.Click += delegate
+            {
+                var formulaText = "x in P(A) <=> x subset A";
+                editor.Document.Blocks.Clear();
+                editor.Document.Blocks.Add(new Paragraph(new Run(formulaText)));
+                mathmlPresenter.Text = CreateSampleMathML();
+            };
+            panel.Children.Add(setFormulaButton);
+            return panel;
+        }
+
+        private static TextBlock CreateRichEditBoxDescription(string text)
+        {
+            return new TextBlock
+            {
+                Text = text,
+                TextWrapping = TextWrapping.Wrap,
+                Margin = new Thickness(0, 0, 0, 12)
+            };
+        }
+
+        private static Button CreateIconButton(string name, string automationName, string glyph)
+        {
+            var button = new Button
+            {
+                Content = CreateIconGlyph(glyph),
+                BorderThickness = new Thickness(0),
+                Background = Brushes.Transparent,
+                Margin = new Thickness(0, 0, 8, 0),
+                Padding = new Thickness(8),
+                MinWidth = 32,
+                MinHeight = 32
+            };
+            if (name != null)
+            {
+                button.Name = name;
+            }
+
+            AutomationProperties.SetName(button, automationName);
+            ToolTipService.SetToolTip(button, automationName);
+            return button;
+        }
+
+        private static TextBlock CreateIconGlyph(string glyph)
+        {
+            return new TextBlock
+            {
+                Text = glyph,
+                FontFamily = new FontFamily("Segoe MDL2 Assets"),
+                FontSize = 16,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+        }
+
+        private static Mux.Flyout CreateRichEditBoxColorFlyout(Action<string, SolidColorBrush> colorSelected)
+        {
+            var grid = new Mux.VariableSizedWrapGrid
+            {
+                MaximumRowsOrColumns = 3,
+                Orientation = Orientation.Horizontal
+            };
+
+            foreach (var colorName in new[] { "Red", "Orange", "Yellow", "Green", "Blue", "Indigo", "Violet", "Gray" })
+            {
+                grid.Children.Add(CreateRichEditBoxColorButton(colorName, colorSelected));
+            }
+
+            return new Mux.Flyout
+            {
+                Placement = FlyoutPlacementMode.Bottom,
+                Content = grid
+            };
+        }
+
+        private static Button CreateRichEditBoxColorButton(string colorName, Action<string, SolidColorBrush> colorSelected)
+        {
+            var brush = new SolidColorBrush((Color)ColorConverter.ConvertFromString(colorName));
+            var rectangle = new System.Windows.Shapes.Rectangle
+            {
+                Width = 32,
+                Height = 32,
+                RadiusX = 4,
+                RadiusY = 4,
+                Fill = brush
+            };
+            var button = new Button
+            {
+                Content = rectangle,
+                Padding = new Thickness(0),
+                MinWidth = 0,
+                MinHeight = 0,
+                Margin = new Thickness(6)
+            };
+            AutomationProperties.SetName(button, colorName);
+            button.Click += delegate { colorSelected(colorName, brush); };
+            return button;
+        }
+
+        private static void ApplyRichTextBoxForeground(RichTextBox richTextBox, Brush brush)
+        {
+            if (richTextBox.Selection == null || richTextBox.Selection.IsEmpty)
+            {
+                richTextBox.SelectAll();
+            }
+
+            richTextBox.Selection.ApplyPropertyValue(TextElement.ForegroundProperty, brush);
+        }
+
+        private static void HighlightFindMatches(RichTextBox richTextBox, string textToFind)
+        {
+            if (string.IsNullOrEmpty(textToFind))
+            {
+                return;
+            }
+
+            var documentRange = new TextRange(richTextBox.Document.ContentStart, richTextBox.Document.ContentEnd);
+            if (documentRange.Text.IndexOf(textToFind, StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                richTextBox.Selection.ApplyPropertyValue(TextElement.BackgroundProperty, SystemColors.HighlightBrush);
+            }
+        }
+
+        private static void InsertRichEditBoxStatus(RichTextBox richTextBox, string status)
+        {
+            richTextBox.Document.Blocks.Clear();
+            richTextBox.Document.Blocks.Add(new Paragraph(new Run(status)));
+        }
+
+        private static string CreateSampleMathML()
+        {
+            return "<mml:math xmlns:mml=\"http://www.w3.org/1998/Math/MathML\" display=\"block\">\r\n" +
+                "  <mml:mi mathcolor=\"#000000\">x</mml:mi>\r\n" +
+                "  <mml:mo mathcolor=\"#000000\">&#x2208;</mml:mo>\r\n" +
+                "  <mml:mi mathcolor=\"#000000\">P</mml:mi>\r\n" +
+                "</mml:math>";
         }
 
         private static UIElement CreateRichTextBlockSample()
@@ -1034,17 +1414,22 @@ private void AutoSuggestBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestB
 
         private static string FindSampleCodeText(IReadOnlyList<SampleSnippet> snippets, string relativePath)
         {
+            return FindSampleCodeText(snippets, relativePath, "NumberBox");
+        }
+
+        private static string FindSampleCodeText(IReadOnlyList<SampleSnippet> snippets, string relativePath, string fallbackFolder)
+        {
             var fileName = System.IO.Path.GetFileName(relativePath);
             for (var i = 0; i < snippets.Count; i++)
             {
-                if (string.Equals(snippets[i].Title, fileName, StringComparison.Ordinal) ||
-                    string.Equals(snippets[i].Title, relativePath, StringComparison.Ordinal))
+                if (string.Equals(snippets[i].Title, fileName, StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(snippets[i].Title, relativePath, StringComparison.OrdinalIgnoreCase))
                 {
                     return snippets[i].Text;
                 }
             }
 
-            var path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Samples", "SampleCode", "NumberBox", relativePath);
+            var path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Samples", "SampleCode", fallbackFolder, relativePath);
             return System.IO.File.Exists(path) ? System.IO.File.ReadAllText(path) : null;
         }
 
