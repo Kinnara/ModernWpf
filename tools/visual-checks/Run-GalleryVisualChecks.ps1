@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "InfoBadge", "InfoBar", "ProgressRing", "NavigationView", "ContentDialog", "Flyout", "MenuBar", "CommandBar", "CommandBarFlyout"),
+    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "InfoBadge", "InfoBar", "ProgressRing", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "CommandBar", "CommandBarFlyout"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -441,6 +441,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "NavigationView" { return "GallerySample_NavigationView_NavigationView" }
         "ContentDialog" { return "GallerySample_ContentDialog_ShowButton" }
         "Flyout" { return "GallerySample_Flyout_Button" }
+        "Popup" { return "GallerySample_Popup_Button" }
         "MenuBar" { return "GallerySample_MenuBar_MenuBar" }
         "CommandBar" { return "GallerySample_CommandBar_CommandBar" }
         "CommandBarFlyout" { return "GallerySample_CommandBarFlyout_ShowButton" }
@@ -477,6 +478,7 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
         "InfoBadge" { return "GallerySample_InfoBadge_InfoBadge" }
         "ProgressRing" { return "GallerySample_ProgressRing_ProgressRing" }
         "Flyout" { return "GallerySample_Flyout_Button" }
+        "Popup" { return "GallerySample_Popup_Button" }
         "MenuBar" { return "GallerySample_MenuBar_MenuBar" }
         "CommandBar" { return "GallerySample_CommandBar_CommandBar" }
         "CommandBarFlyout" { return "GallerySample_CommandBarFlyout_ShowButton" }
@@ -511,6 +513,7 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
 function Get-ReferencePrimaryName([string]$control) {
     switch ($control) {
         "DropDownButton" { return "Email" }
+        "Popup" { return "Show Popup (using Offset)" }
         "RepeatButton" { return "Click and hold" }
         "ToggleSwitch" { return "simple ToggleSwitch" }
         default { return "" }

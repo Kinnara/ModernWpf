@@ -4,7 +4,6 @@ using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using ModernWpf.Gallery.Models;
 using ModernWpf.Controls.Primitives;
@@ -35,6 +34,35 @@ namespace ModernWpf.Gallery.Pages
     }
 }";
 
+        private const string PopupOffsetXaml =
+@"<Grid x:Name=""Output"" HorizontalAlignment=""Left"" VerticalAlignment=""Top"" >
+    <Button Content=""Show Popup (using Offset)"" Click=""ShowPopupOffsetClicked"" />
+    <Popup x:Name=""StandardPopup"" VerticalOffset=""$(VerticalOffset)"" HorizontalOffset=""$(HorizontalOffset)"" IsLightDismissEnabled=""$(IsLightDismissEnabled)"">
+        <Border Padding=""20"" CornerRadius=""{StaticResource OverlayCornerRadius}"" Width=""200"" Height=""160"" BorderThickness=""1"" BorderBrush=""{ThemeResource SurfaceStrokeColorDefaultBrush}""
+                Background=""{ThemeResource AcrylicBackgroundFillColorDefaultBrush}"">
+            <StackPanel HorizontalAlignment=""Center"" VerticalAlignment=""Center"" Spacing=""8"">
+                <TextBlock Text=""Simple Popup"" FontSize=""16"" HorizontalAlignment=""Center"" />
+                <Button Content=""Close"" Click=""ClosePopupClicked"" />
+            </StackPanel>
+        </Border>
+    </Popup>
+</Grid>";
+
+        private const string PopupOffsetCSharp =
+@"// Handles the Click event on the Button on the page and opens the Popup.
+private void ShowPopupOffsetClicked(object sender, RoutedEventArgs e)
+{
+    // open the Popup if it isn't open already
+    if (!StandardPopup.IsOpen) { StandardPopup.IsOpen = true; }
+}
+
+// Handles the Click event on the Button inside the Popup control and closes the Popup.
+private void ClosePopupClicked(object sender, RoutedEventArgs e)
+{
+    // if the Popup is open, then close it
+    if (StandardPopup.IsOpen) { StandardPopup.IsOpen = false; }
+}";
+
         public static IReadOnlyList<GalleryExample> CreateExamples(string uniqueId, IReadOnlyList<SampleSnippet> sampleSnippets)
         {
             switch (uniqueId)
@@ -43,6 +71,8 @@ namespace ModernWpf.Gallery.Pages
                     return CreateContentDialogExamples(sampleSnippets);
                 case "Flyout":
                     return CreateFlyoutExamples();
+                case "Popup":
+                    return CreatePopupExamples();
                 case "TeachingTip":
                     return CreateTeachingTipExamples(sampleSnippets);
                 default:
@@ -284,24 +314,177 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreatePopupSample()
         {
-            var panel = CreateSamplePanel("Popup is a low-level floating surface; use it when you need explicit placement control.");
-            var button = CreateButton("Toggle Popup");
-            var popup = new Popup
+            var panel = new GallerySamplePanel
             {
-                PlacementTarget = button,
-                Placement = PlacementMode.Bottom,
-                StaysOpen = false,
-                AllowsTransparency = true,
-                Child = CreateSurface(
-                    "Popup content",
-                    "This surface is positioned with WPF Popup placement.")
+                Margin = new Thickness(0, 0, 0, 12)
             };
-            button.Click += delegate
+            GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("Popup"));
+            panel.Children.Add(CreatePopupOffsetExampleContent(assignRootAutomationId: false));
+            return panel;
+        }
+
+        private static IReadOnlyList<GalleryExample> CreatePopupExamples()
+        {
+            return new[]
             {
-                popup.IsOpen = !popup.IsOpen;
+                new GalleryExample(
+                    "Popup with Offset Positioning",
+                    CreatePopupOffsetExampleContent(assignRootAutomationId: true),
+                    PopupOffsetXaml,
+                    PopupOffsetCSharp)
+            };
+        }
+
+        private static GallerySamplePanel CreatePopupOffsetExampleContent(bool assignRootAutomationId)
+        {
+            var root = new GallerySamplePanel();
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("Popup"));
+            }
+
+            var output = new Grid
+            {
+                Name = "Output",
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top
             };
 
-            panel.Children.Add(button);
+            var showButton = new Button
+            {
+                Content = "Show Popup (using Offset)"
+            };
+            GalleryAutomation.WithAutomationId(showButton, GalleryAutomation.SampleElementId("Popup", "Button"));
+
+            var lightDismiss = new Mux.ToggleSwitch
+            {
+                Name = "IsLightDismissEnabledToggleSwitch",
+                Header = "IsLightDismissEnabled",
+                IsOn = true,
+                OffContent = "False",
+                OnContent = "True"
+            };
+            var verticalOffset = CreatePopupOffsetNumberBox("VerticalOffset", -100, 100, 0);
+            var horizontalOffset = CreatePopupOffsetNumberBox("HorizontalOffset", -100, 500, 200);
+            var popup = new Popup
+            {
+                Name = "StandardPopup",
+                PlacementTarget = showButton,
+                Placement = PlacementMode.Bottom,
+                AllowsTransparency = true,
+                StaysOpen = false,
+                HorizontalOffset = horizontalOffset.Value,
+                VerticalOffset = verticalOffset.Value
+            };
+            popup.Child = CreatePopupSurface(popup);
+            popup.Closed += delegate
+            {
+                lightDismiss.IsEnabled = true;
+            };
+
+            lightDismiss.Toggled += delegate
+            {
+                popup.StaysOpen = !lightDismiss.IsOn;
+            };
+            verticalOffset.ValueChanged += delegate(Mux.NumberBox sender, Mux.NumberBoxValueChangedEventArgs args)
+            {
+                popup.VerticalOffset = args.NewValue;
+            };
+            horizontalOffset.ValueChanged += delegate(Mux.NumberBox sender, Mux.NumberBoxValueChangedEventArgs args)
+            {
+                popup.HorizontalOffset = args.NewValue;
+            };
+            showButton.Click += delegate
+            {
+                if (!popup.IsOpen)
+                {
+                    popup.IsOpen = true;
+                }
+
+                lightDismiss.IsEnabled = false;
+            };
+
+            output.Children.Add(showButton);
+            output.Children.Add(popup);
+            root.Children.Add(CreatePopupExampleLayout(
+                output,
+                CreatePopupOptionsPanel(lightDismiss, verticalOffset, horizontalOffset)));
+            return root;
+        }
+
+        private static Mux.NumberBox CreatePopupOffsetNumberBox(string name, double minimum, double maximum, double value)
+        {
+            return new Mux.NumberBox
+            {
+                Name = name,
+                Header = name,
+                LargeChange = 100,
+                Maximum = maximum,
+                Minimum = minimum,
+                SmallChange = 10,
+                SpinButtonPlacementMode = Mux.NumberBoxSpinButtonPlacementMode.Inline,
+                Value = value
+            };
+        }
+
+        private static UIElement CreatePopupSurface(Popup popup)
+        {
+            var border = new Border
+            {
+                MinWidth = 240,
+                Padding = new Thickness(16),
+                BorderThickness = new Thickness(1)
+            };
+            border.SetResourceReference(Border.BackgroundProperty, "AcrylicBackgroundFillColorDefaultBrush");
+            border.SetResourceReference(Border.BorderBrushProperty, "SurfaceStrokeColorDefaultBrush");
+            border.SetResourceReference(Border.CornerRadiusProperty, "OverlayCornerRadius");
+
+            var panel = new StackPanel();
+            panel.Children.Add(new TextBlock
+            {
+                FontSize = 16,
+                Text = "Simple Popup"
+            });
+            var closeButton = new Button
+            {
+                Content = "Close",
+                Margin = new Thickness(0, 8, 0, 0)
+            };
+            closeButton.Click += delegate
+            {
+                if (popup.IsOpen)
+                {
+                    popup.IsOpen = false;
+                }
+            };
+            panel.Children.Add(closeButton);
+            border.Child = panel;
+            return border;
+        }
+
+        private static Grid CreatePopupExampleLayout(UIElement sample, UIElement options)
+        {
+            var layout = new Grid();
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(40) });
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            layout.Children.Add(sample);
+            Grid.SetColumn(options, 2);
+            layout.Children.Add(options);
+            return layout;
+        }
+
+        private static StackPanel CreatePopupOptionsPanel(params UIElement[] children)
+        {
+            var panel = new StackPanel
+            {
+                Width = 160
+            };
+            foreach (var child in children)
+            {
+                panel.Children.Add(child);
+            }
+
             return panel;
         }
 
@@ -457,33 +640,6 @@ namespace ModernWpf.Gallery.Pages
             return null;
         }
 
-        private static Border CreateSurface(string title, string message)
-        {
-            var textPanel = new StackPanel();
-            textPanel.Children.Add(new TextBlock
-            {
-                Text = title,
-                FontWeight = FontWeights.SemiBold,
-                Margin = new Thickness(0, 0, 0, 4)
-            });
-            textPanel.Children.Add(new TextBlock
-            {
-                Text = message,
-                TextWrapping = TextWrapping.Wrap
-            });
-
-            return new Border
-            {
-                Width = 280,
-                Margin = new Thickness(0, 12, 0, 0),
-                Padding = new Thickness(14),
-                BorderThickness = new Thickness(1),
-                Background = CreateBrush("#FAFAFA"),
-                BorderBrush = CreateBrush("#D8D8D8"),
-                Child = textPanel
-            };
-        }
-
         private static StackPanel CreateSamplePanel(string description)
         {
             var panel = new GallerySamplePanel
@@ -520,9 +676,5 @@ namespace ModernWpf.Gallery.Pages
             };
         }
 
-        private static SolidColorBrush CreateBrush(string color)
-        {
-            return (SolidColorBrush)new BrushConverter().ConvertFromString(color);
-        }
     }
 }

@@ -32,6 +32,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "NavigationView", "GallerySample_NavigationView_Root", "GallerySample_NavigationView_NavigationView" };
             yield return new object[] { "ContentDialog", "GallerySample_ContentDialog_Root", "GallerySample_ContentDialog_ShowButton" };
             yield return new object[] { "Flyout", "GallerySample_Flyout_Root", "GallerySample_Flyout_Button" };
+            yield return new object[] { "Popup", "GallerySample_Popup_Root", "GallerySample_Popup_Button" };
             yield return new object[] { "ColorPicker", "GallerySample_ColorPicker_Root", "GallerySample_ColorPicker_ColorPicker" };
             yield return new object[] { "HyperlinkButton", "GallerySample_HyperlinkButton_Root", "GallerySample_HyperlinkButton_HyperlinkButton" };
             yield return new object[] { "RatingControl", "GallerySample_RatingControl_Root", "GallerySample_RatingControl_RatingControl" };
@@ -279,6 +280,111 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual("All items will be removed. Do you want to continue?", flyoutText.Text);
                     Assert.AreEqual(new Thickness(0, 0, 0, 12), flyoutText.Margin);
                     Assert.AreEqual("Yes, empty my cart", ((Button)flyoutPanel.Children[1]).Content);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void PopupSampleMatchesWinUIGalleryExample()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("Popup"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(1, page.Examples.Count);
+                    Assert.AreEqual("Popup with Offset Positioning", page.Examples[0].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "x:Name=\"StandardPopup\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "ShowPopupOffsetClicked");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "IsLightDismissEnabled=\"$(IsLightDismissEnabled)\"");
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "if (!StandardPopup.IsOpen) { StandardPopup.IsOpen = true; }");
+
+                    var root = (FrameworkElement)FindByAutomationId(page, "GallerySample_Popup_Root");
+                    var showButton = (Button)FindByAutomationId(page, "GallerySample_Popup_Button");
+                    var output = FindNamedDescendant<Grid>(page, "Output");
+                    var popup = FindNamedDescendant<Popup>(page, "StandardPopup");
+                    var lightDismiss = FindNamedDescendant<Mux.ToggleSwitch>(page, "IsLightDismissEnabledToggleSwitch");
+                    var verticalOffset = FindNamedDescendant<Mux.NumberBox>(page, "VerticalOffset");
+                    var horizontalOffset = FindNamedDescendant<Mux.NumberBox>(page, "HorizontalOffset");
+                    Assert.IsNotNull(root);
+                    Assert.IsNotNull(showButton);
+                    Assert.IsNotNull(output);
+                    Assert.IsNotNull(popup);
+                    Assert.IsNotNull(lightDismiss);
+                    Assert.IsNotNull(verticalOffset);
+                    Assert.IsNotNull(horizontalOffset);
+
+                    Assert.AreEqual("Show Popup (using Offset)", showButton.Content);
+                    Assert.AreEqual(HorizontalAlignment.Left, output.HorizontalAlignment);
+                    Assert.AreEqual(VerticalAlignment.Top, output.VerticalAlignment);
+                    Assert.AreSame(showButton, popup.PlacementTarget);
+                    Assert.AreEqual(PlacementMode.Bottom, popup.Placement);
+                    Assert.IsTrue(popup.AllowsTransparency);
+                    Assert.IsFalse(popup.StaysOpen);
+                    Assert.AreEqual(200.0, popup.HorizontalOffset);
+                    Assert.AreEqual(0.0, popup.VerticalOffset);
+
+                    Assert.AreEqual("IsLightDismissEnabled", lightDismiss.Header);
+                    Assert.AreEqual("True", lightDismiss.OnContent);
+                    Assert.AreEqual("False", lightDismiss.OffContent);
+                    Assert.IsTrue(lightDismiss.IsOn);
+                    Assert.IsTrue(lightDismiss.IsEnabled);
+
+                    AssertPopupOffsetNumberBox(verticalOffset, "VerticalOffset", -100, 100, 0);
+                    AssertPopupOffsetNumberBox(horizontalOffset, "HorizontalOffset", -100, 500, 200);
+
+                    var surface = popup.Child as Border;
+                    Assert.IsNotNull(surface);
+                    Assert.AreEqual(240.0, surface.MinWidth);
+                    Assert.AreEqual(new Thickness(16), surface.Padding);
+                    Assert.AreEqual(new Thickness(1), surface.BorderThickness);
+                    var surfacePanel = surface.Child as StackPanel;
+                    Assert.IsNotNull(surfacePanel);
+                    Assert.AreEqual(2, surfacePanel.Children.Count);
+                    Assert.AreEqual("Simple Popup", ((TextBlock)surfacePanel.Children[0]).Text);
+                    Assert.AreEqual(16.0, ((TextBlock)surfacePanel.Children[0]).FontSize);
+                    Assert.AreEqual("Close", ((Button)surfacePanel.Children[1]).Content);
+
+                    verticalOffset.Value = 25;
+                    horizontalOffset.Value = 175;
+                    lightDismiss.IsOn = false;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(25.0, popup.VerticalOffset);
+                    Assert.AreEqual(175.0, popup.HorizontalOffset);
+                    Assert.IsTrue(popup.StaysOpen);
+
+                    showButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                    WpfTestHost.DoEvents();
+                    Assert.IsTrue(popup.IsOpen);
+                    Assert.IsFalse(lightDismiss.IsEnabled);
+
+                    ((Button)surfacePanel.Children[1]).RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                    WpfTestHost.DoEvents();
+                    Assert.IsFalse(popup.IsOpen);
+                    Assert.IsTrue(lightDismiss.IsEnabled);
                 }
                 finally
                 {
@@ -2194,6 +2300,22 @@ namespace ModernWpf.Gallery.Tests
             }
 
             return null;
+        }
+
+        private static void AssertPopupOffsetNumberBox(
+            Mux.NumberBox numberBox,
+            string header,
+            double minimum,
+            double maximum,
+            double value)
+        {
+            Assert.AreEqual(header, numberBox.Header);
+            Assert.AreEqual(minimum, numberBox.Minimum);
+            Assert.AreEqual(maximum, numberBox.Maximum);
+            Assert.AreEqual(value, numberBox.Value);
+            Assert.AreEqual(10.0, numberBox.SmallChange);
+            Assert.AreEqual(100.0, numberBox.LargeChange);
+            Assert.AreEqual(Mux.NumberBoxSpinButtonPlacementMode.Inline, numberBox.SpinButtonPlacementMode);
         }
 
         private static StackPanel AssertListMarkerFlyout(ModernWpf.Controls.Primitives.FlyoutBase flyoutBase)
