@@ -14,6 +14,9 @@
     <sys:Double x:Key="TitleLargeTextBlockFontSize">40</sys:Double>
     <sys:Double x:Key="DisplayTextBlockFontSize">68</sys:Double>
 
+    <SolidColorBrush x:Key="SystemFillColorAttentionBrush" Color="#0078D4" />
+    <SolidColorBrush x:Key="SurfaceStrokeColorDefaultBrush" Color="#66757575" />
+
     <ImageBrush x:Key="p64" ImageSource="pack://application:,,,/ModernWpf.Gallery;component/Assets/UserDashboard/64-100x100.jpg" />
     <ImageBrush x:Key="p65" ImageSource="pack://application:,,,/ModernWpf.Gallery;component/Assets/UserDashboard/65-100x100.jpg" />
     <ImageBrush x:Key="p91" ImageSource="pack://application:,,,/ModernWpf.Gallery;component/Assets/UserDashboard/91-100x100.jpg" />

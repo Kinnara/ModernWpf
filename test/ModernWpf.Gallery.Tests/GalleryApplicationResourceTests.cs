@@ -68,6 +68,9 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(40d, app.FindResource("TitleLargeTextBlockFontSize"));
                 Assert.AreEqual(68d, app.FindResource("DisplayTextBlockFontSize"));
 
+                AssertSolidColorBrush(app, "SystemFillColorAttentionBrush", Color.FromRgb(0x00, 0x78, 0xD4));
+                AssertSolidColorBrush(app, "SurfaceStrokeColorDefaultBrush", Color.FromArgb(0x66, 0x75, 0x75, 0x75));
+
                 var galleryRootStyle = (Style)app.FindResource("GalleryPageRootStyle");
                 AssertDynamicResourceSetter(galleryRootStyle, Panel.BackgroundProperty, "SolidBackgroundFillColorTertiaryBrush");
                 AssertStyleSetter(galleryRootStyle, TextElement.FontSizeProperty, app.FindResource("BodyTextBlockFontSize"));
@@ -561,6 +564,13 @@ namespace ModernWpf.Gallery.Tests
                     brush.ImageSource.ToString(),
                     "ModernWpf.Gallery;component/Assets/UserDashboard/" + imageId + "-100x100.jpg");
             }
+        }
+
+        private static void AssertSolidColorBrush(Application app, string resourceKey, Color expectedColor)
+        {
+            var brush = app.FindResource(resourceKey) as SolidColorBrush;
+            Assert.IsNotNull(brush, resourceKey);
+            Assert.AreEqual(expectedColor, brush.Color, resourceKey);
         }
 
         private static void AssertStyleSetter(Style style, DependencyProperty property, object value)
