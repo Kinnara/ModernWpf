@@ -401,7 +401,7 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void NavigationViewSampleMatchesWinUIGalleryFirstExampleShape()
+        public void NavigationViewSampleMatchesWinUIGalleryExamples()
         {
             WpfTestHost.Run(() =>
             {
@@ -424,8 +424,30 @@ namespace ModernWpf.Gallery.Tests
                     window.UpdateLayout();
                     WpfTestHost.DoEvents();
 
+                    Assert.AreEqual(8, page.Examples.Count);
+                    Assert.AreEqual("NavigationView with default PaneDisplayMode", page.Examples[0].HeaderText);
+                    Assert.AreEqual("NavigationView with PaneDisplayMode set to Top", page.Examples[1].HeaderText);
+                    Assert.AreEqual("NavigationView that switches pane orientation based on window width", page.Examples[2].HeaderText);
+                    Assert.AreEqual("Tying selection and focus - Tabs", page.Examples[3].HeaderText);
+                    Assert.AreEqual("Data binding", page.Examples[4].HeaderText);
+                    Assert.AreEqual("NavigationView with Footer Menu Items", page.Examples[5].HeaderText);
+                    Assert.AreEqual("Hierarchical NavigationView", page.Examples[6].HeaderText);
+                    Assert.AreEqual("API in action", page.Examples[7].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "<NavigationView x:Name=\"nvSample\">");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "PaneDisplayMode=\"Top\"");
+                    StringAssert.Contains(page.Examples[2].XamlCode, "AdaptiveTrigger");
+                    StringAssert.Contains(page.Examples[3].XamlCode, "SelectionFollowsFocus=\"Enabled\"");
+                    StringAssert.Contains(page.Examples[3].CSharpCode, "FrameNavigationOptions");
+                    StringAssert.Contains(page.Examples[4].XamlCode, "MenuItemsSource");
+                    StringAssert.Contains(page.Examples[4].CSharpCode, "ObservableCollection<CategoryBase>");
+                    StringAssert.Contains(page.Examples[5].XamlCode, "FooterMenuItems");
+                    StringAssert.Contains(page.Examples[6].XamlCode, "SelectsOnInvoked=\"False\"");
+                    StringAssert.Contains(page.Examples[7].XamlCode, "PaneFooter");
+
                     var navigationView = (ModernWpf.Controls.NavigationView)FindByAutomationId(page, "GallerySample_NavigationView_NavigationView");
                     Assert.IsNotNull(navigationView);
+                    Assert.AreEqual("nvSample5", navigationView.Name);
                     Assert.AreEqual(745.0, navigationView.Width);
                     Assert.AreEqual(460.0, navigationView.Height);
                     Assert.AreEqual(HorizontalAlignment.Left, navigationView.HorizontalAlignment);
@@ -435,13 +457,110 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(0.0, navigationView.TemplateSettings.TopPadding);
                     Assert.AreEqual(ModernWpf.Controls.NavigationViewPaneDisplayMode.Auto, navigationView.PaneDisplayMode);
                     Assert.AreEqual(4, navigationView.MenuItems.Count);
-                    Assert.AreEqual(ScrollBarVisibility.Hidden, ((ScrollViewer)navigationView.Content).VerticalScrollBarVisibility);
+                    var contentFrame5 = FindNamedDescendant<Frame>(page, "contentFrame5");
+                    Assert.AreSame(contentFrame5, navigationView.Content);
+                    var firstContent = contentFrame5.Content as ScrollViewer;
+                    Assert.IsNotNull(firstContent);
+                    Assert.AreEqual(ScrollBarVisibility.Hidden, firstContent.VerticalScrollBarVisibility);
 
                     var firstItem = (ModernWpf.Controls.NavigationViewItem)navigationView.MenuItems[0];
                     Assert.AreEqual("Menu Item1", firstItem.Content);
                     Assert.AreEqual("SamplePage1", firstItem.Tag);
                     Assert.AreEqual(ModernWpf.Controls.Symbol.Play, ((ModernWpf.Controls.SymbolIcon)firstItem.Icon).Symbol);
                     Assert.AreSame(firstItem, navigationView.SelectedItem);
+
+                    var topNavigationView = FindNamedDescendant<Mux.NavigationView>(page, "nvSample6");
+                    Assert.AreEqual(Mux.NavigationViewPaneDisplayMode.Top, topNavigationView.PaneDisplayMode);
+                    Assert.AreEqual("This is Header Text", topNavigationView.Header);
+                    Assert.AreEqual(4, topNavigationView.MenuItems.Count);
+
+                    var adaptiveNavigationView = FindNamedDescendant<Mux.NavigationView>(page, "nvSample2");
+                    Assert.AreEqual(Mux.NavigationViewPaneDisplayMode.Auto, adaptiveNavigationView.PaneDisplayMode);
+                    Assert.AreEqual(4, adaptiveNavigationView.MenuItems.Count);
+
+                    var tabsNavigationView = FindNamedDescendant<Mux.NavigationView>(page, "nvSample7");
+                    Assert.AreEqual(Mux.NavigationViewPaneDisplayMode.Top, tabsNavigationView.PaneDisplayMode);
+                    Assert.AreEqual(Mux.NavigationViewBackButtonVisible.Collapsed, tabsNavigationView.IsBackButtonVisible);
+                    Assert.AreEqual(Mux.NavigationViewSelectionFollowsFocus.Enabled, tabsNavigationView.SelectionFollowsFocus);
+
+                    var boundNavigationView = FindNamedDescendant<Mux.NavigationView>(page, "nvSample4");
+                    Assert.IsNotNull(boundNavigationView.MenuItemsSource);
+                    Assert.IsNotNull(boundNavigationView.MenuItemTemplate);
+                    Assert.IsNotNull(boundNavigationView.SelectedItem);
+
+                    var footerNavigationView = FindNamedDescendant<Mux.NavigationView>(page, "nvSample9");
+                    Assert.IsFalse(footerNavigationView.IsSettingsVisible);
+                    Assert.AreEqual(3, footerNavigationView.MenuItems.Count);
+                    Assert.AreEqual(3, footerNavigationView.FooterMenuItems.Count);
+                    Assert.AreEqual(Mux.NavigationViewPaneDisplayMode.Left, footerNavigationView.PaneDisplayMode);
+                    var footerTop = FindNamedDescendant<RadioButton>(page, "nvSample9Top");
+                    footerTop.IsChecked = true;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(Mux.NavigationViewPaneDisplayMode.Top, footerNavigationView.PaneDisplayMode);
+                    Assert.IsFalse(footerNavigationView.IsPaneOpen);
+
+                    var hierarchicalNavigationView = FindNamedDescendant<Mux.NavigationView>(page, "nvSample8");
+                    Assert.AreEqual(3, hierarchicalNavigationView.MenuItems.Count);
+                    var accountItem = (Mux.NavigationViewItem)hierarchicalNavigationView.MenuItems[1];
+                    var documentOptionsItem = (Mux.NavigationViewItem)hierarchicalNavigationView.MenuItems[2];
+                    Assert.AreEqual(2, accountItem.MenuItems.Count);
+                    Assert.AreEqual(2, documentOptionsItem.MenuItems.Count);
+                    Assert.IsFalse(documentOptionsItem.SelectsOnInvoked);
+                    var hierarchicalLeftCompact = FindNamedDescendant<RadioButton>(page, "nvSample8LeftCompact");
+                    hierarchicalLeftCompact.IsChecked = true;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(Mux.NavigationViewPaneDisplayMode.LeftCompact, hierarchicalNavigationView.PaneDisplayMode);
+                    Assert.IsFalse(hierarchicalNavigationView.IsPaneOpen);
+
+                    var apiNavigationView = FindNamedDescendant<Mux.NavigationView>(page, "nvSample");
+                    var samplePage2Item = FindNamedDescendant<Mux.NavigationViewItem>(page, "SamplePage2Item");
+                    Assert.AreEqual("Header", apiNavigationView.Header);
+                    Assert.AreEqual("Pane Title", apiNavigationView.PaneTitle);
+                    Assert.AreEqual(Mux.NavigationViewBackButtonVisible.Visible, apiNavigationView.IsBackButtonVisible);
+                    Assert.IsNotNull(apiNavigationView.AutoSuggestBox);
+
+                    var headerText = FindNamedDescendant<TextBox>(page, "headerText");
+                    headerText.Text = "Updated Header";
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual("Updated Header", apiNavigationView.Header);
+
+                    var autoSuggestCheck = FindNamedDescendant<CheckBox>(page, "autoSuggestCheck");
+                    autoSuggestCheck.IsChecked = false;
+                    autoSuggestCheck.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                    WpfTestHost.DoEvents();
+                    Assert.IsNull(apiNavigationView.AutoSuggestBox);
+
+                    var paneHyperlink = FindNamedDescendant<Mux.HyperlinkButton>(page, "PaneHyperlink");
+                    var paneCustomContentCheck = FindNamedDescendant<CheckBox>(page, "panemc_Check");
+                    paneCustomContentCheck.IsChecked = true;
+                    paneCustomContentCheck.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(Visibility.Visible, paneHyperlink.Visibility);
+
+                    var footerStackPanel = FindNamedDescendant<StackPanel>(page, "FooterStackPanel");
+                    var paneFooterCheck = FindNamedDescendant<CheckBox>(page, "paneFooterCheck");
+                    paneFooterCheck.IsChecked = true;
+                    paneFooterCheck.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(Visibility.Visible, footerStackPanel.Visibility);
+
+                    var apiTop = FindNamedDescendant<RadioButton>(page, "nvSampleTop");
+                    apiTop.IsChecked = true;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(Mux.NavigationViewPaneDisplayMode.Top, apiNavigationView.PaneDisplayMode);
+                    Assert.AreEqual(Orientation.Horizontal, footerStackPanel.Orientation);
+
+                    var selectionFollowsFocus = FindNamedDescendant<CheckBox>(page, "sffCheck");
+                    selectionFollowsFocus.IsChecked = true;
+                    selectionFollowsFocus.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(Mux.NavigationViewSelectionFollowsFocus.Enabled, apiNavigationView.SelectionFollowsFocus);
+
+                    var suppressSelection = FindNamedDescendant<CheckBox>(page, "suppressselectionCheck_Checked");
+                    suppressSelection.IsChecked = true;
+                    suppressSelection.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                    WpfTestHost.DoEvents();
+                    Assert.IsFalse(samplePage2Item.SelectsOnInvoked);
                 }
                 finally
                 {

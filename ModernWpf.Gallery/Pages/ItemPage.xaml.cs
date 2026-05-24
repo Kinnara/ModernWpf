@@ -193,9 +193,13 @@ namespace ModernWpf.Gallery.Pages
                 return Array.Empty<SampleSnippet>();
             }
 
+            var maxSnippetCount = string.Equals(uniqueId, "NavigationView", StringComparison.Ordinal)
+                ? 12
+                : 6;
+
             return Directory.GetFiles(folder, "*.txt")
                 .OrderBy(Path.GetFileName)
-                .Take(6)
+                .Take(maxSnippetCount)
                 .Select(path => new SampleSnippet(Path.GetFileName(path), File.ReadAllText(path)))
                 .ToArray();
         }

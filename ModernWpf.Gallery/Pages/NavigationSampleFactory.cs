@@ -6,6 +6,7 @@ using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
+using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
@@ -262,6 +263,53 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
         private const string TabViewWindowingXaml =
 @"Check out the TabViewWindowingSamplePage.xaml and *.cs files to see the complete code.";
 
+        private const string NavigationViewApiXaml =
+@"<NavigationView x:Name=""nvSample""
+    IsSettingsVisible=""$(SettingsVis)""
+    IsBackButtonVisible=""$(BackButtonVis)""
+    IsBackEnabled=""$(BackButtonEn)""
+    SelectionChanged=""NavigationView_SelectionChanged""
+    Header=""$(HeaderText)""
+    AlwaysShowHeader=""$(ShowHeader)""
+    PaneTitle=""$(PaneTitleText)""
+    PaneDisplayMode=""$(PaneDisplayMode)""
+    ExpandedModeThresholdWidth=""500""
+    SelectionFollowsFocus=""$(SelectionFollowsFocus)""
+    IsTabStop=""False"">
+
+    <NavigationView.MenuItems>
+        <NavigationViewItem Content=""Menu Item1"" Tag=""SamplePage1"" x:Name=""SamplePage1Item"">
+            <NavigationViewItem.Icon>
+                <SymbolIcon Symbol=""Play"" />
+            </NavigationViewItem.Icon>
+        </NavigationViewItem>
+        <NavigationViewItemHeader Content=""Actions""/>
+        <NavigationViewItem Content=""Menu Item2"" Tag=""SamplePage2"" x:Name=""SamplePage2Item"" SelectsOnInvoked=""$(SelectsOnInvoked)"">
+            <NavigationViewItem.Icon>
+                <SymbolIcon Symbol=""Save"" />
+            </NavigationViewItem.Icon>
+        </NavigationViewItem>
+        <NavigationViewItem Content=""Menu Item3"" Tag=""SamplePage3"" x:Name=""SamplePage3Item"">
+            <NavigationViewItem.Icon>
+                <SymbolIcon Symbol=""Refresh"" />
+            </NavigationViewItem.Icon>
+        </NavigationViewItem>
+    </NavigationView.MenuItems>
+
+    <NavigationView.PaneCustomContent>
+        <HyperlinkButton x:Name=""PaneHyperlink"" Content=""More info"" Margin=""12,0"" Visibility=""$(PaneCustomContentVis)"" />
+    </NavigationView.PaneCustomContent>
+    $(NavViewASB)
+    <NavigationView.PaneFooter>
+        <StackPanel x:Name=""FooterStackPanel"" Orientation=""Vertical"" Visibility=""$(PaneFooterVis)"">
+            <NavigationViewItem Icon=""Download"" AutomationProperties.Name=""download"" />
+            <NavigationViewItem Icon=""Favorite"" AutomationProperties.Name=""favorite"" />
+        </StackPanel>
+    </NavigationView.PaneFooter>
+
+    <Frame x:Name=""contentFrame"" />
+</NavigationView>";
+
         private static readonly string[] BreadcrumbFoldersString =
         {
             "Home",
@@ -321,6 +369,8 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             {
                 case "BreadcrumbBar":
                     return CreateBreadcrumbBarExamples();
+                case "NavigationView":
+                    return CreateNavigationViewExamples(sampleSnippets);
                 case "Pivot":
                     return CreatePivotExamples();
                 case "SelectorBar":
@@ -568,54 +618,290 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
 
         private static UIElement CreateNavigationViewSample()
         {
-            var panel = CreateSamplePanel("NavigationView with default PaneDisplayMode");
+            var panel = new GallerySamplePanel
+            {
+                Margin = new Thickness(0, 0, 0, 12)
+            };
             GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("NavigationView"));
-            var root = new Grid();
-            root.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-            root.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            panel.Children.Add(CreateNavigationViewDefaultExampleContent(false));
+            return panel;
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateNavigationViewExamples(IReadOnlyList<SampleSnippet> sampleSnippets)
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "NavigationView with default PaneDisplayMode",
+                    CreateNavigationViewDefaultExampleContent(true),
+                    FindSampleCodeText(sampleSnippets, "NavigationViewSample1.txt"),
+                    null),
+                new GalleryExample(
+                    "NavigationView with PaneDisplayMode set to Top",
+                    CreateNavigationViewTopExampleContent(),
+                    FindSampleCodeText(sampleSnippets, "NavigationViewSample2.txt"),
+                    null),
+                new GalleryExample(
+                    "NavigationView that switches pane orientation based on window width",
+                    CreateNavigationViewAdaptiveExampleContent(),
+                    FindSampleCodeText(sampleSnippets, "NavigationViewSample3.txt"),
+                    null),
+                new GalleryExample(
+                    "Tying selection and focus - Tabs",
+                    CreateNavigationViewTabsExampleContent(),
+                    FindSampleCodeText(sampleSnippets, "NavigationViewSample4_xaml.txt"),
+                    FindSampleCodeText(sampleSnippets, "NavigationViewSample4_cs.txt")),
+                new GalleryExample(
+                    "Data binding",
+                    CreateNavigationViewDataBindingExampleContent(),
+                    FindSampleCodeText(sampleSnippets, "NavigationViewSample5_xaml.txt"),
+                    FindSampleCodeText(sampleSnippets, "NavigationViewSample5_cs.txt")),
+                new GalleryExample(
+                    "NavigationView with Footer Menu Items",
+                    CreateNavigationViewFooterExampleContent(),
+                    FindSampleCodeText(sampleSnippets, "NavigationViewSample9_xaml.txt"),
+                    null),
+                new GalleryExample(
+                    "Hierarchical NavigationView",
+                    CreateNavigationViewHierarchicalExampleContent(),
+                    FindSampleCodeText(sampleSnippets, "NavigationViewSample8_xaml.txt"),
+                    null),
+                new GalleryExample(
+                    "API in action",
+                    CreateNavigationViewApiExampleContent(),
+                    NavigationViewApiXaml,
+                    null)
+            };
+        }
+
+        private static UIElement CreateNavigationViewDefaultExampleContent(bool assignRootAutomationId)
+        {
+            var root = CreateNavigationViewDescriptionRoot(
+                "If you have five or more equally important navigation categories that should prominently appear on larger window widths, consider using a left navigation pane.",
+                assignRootAutomationId);
+
+            var navigationView = CreateNavigationViewShell(
+                "nvSample5",
+                "contentFrame5",
+                Mux.NavigationViewPaneDisplayMode.Auto,
+                "This is Header Text");
+            GalleryAutomation.WithAutomationId(navigationView, GalleryAutomation.SampleElementId("NavigationView", "NavigationView"));
+            AddStandardNavigationItems(navigationView, includeIcons: true, firstContent: "Menu Item1", remainingPrefix: "Menu Item");
+            HookNavigationHeaderSelection(navigationView);
+            SelectFirstNavigationItem(navigationView);
+            navigationView.Header = "Sample Page 1";
+            root.Children.Add(navigationView);
+            return root;
+        }
+
+        private static UIElement CreateNavigationViewTopExampleContent()
+        {
+            var root = CreateNavigationViewDescriptionRoot(
+                "If you have equally important navigation categories that should be de-emphasized relative to the content of your app, consider using a top navigation pane.",
+                false);
+
+            var navigationView = CreateNavigationViewShell(
+                "nvSample6",
+                "contentFrame6",
+                Mux.NavigationViewPaneDisplayMode.Top,
+                "This is Header Text");
+            AddStandardNavigationItems(navigationView, includeIcons: false, firstContent: "Menu Item1", remainingPrefix: "Menu Item");
+            SelectFirstNavigationItem(navigationView);
+            root.Children.Add(navigationView);
+            return root;
+        }
+
+        private static UIElement CreateNavigationViewAdaptiveExampleContent()
+        {
+            var root = CreateNavigationViewDescriptionRoot(
+                "If you have equally important navigation categories and limited app content space, consider using a top navigation pane on larger window widths and a minimal left navigation pane on smaller window widths.",
+                false);
+
+            var navigationView = CreateNavigationViewShell(
+                "nvSample2",
+                "contentFrame2",
+                Mux.NavigationViewPaneDisplayMode.Auto,
+                null);
+            AddStandardNavigationItems(navigationView, includeIcons: false, firstContent: "Menu Item1", remainingPrefix: "Menu Item");
+            SelectFirstNavigationItem(navigationView);
+            root.Children.Add(navigationView);
+            return root;
+        }
+
+        private static UIElement CreateNavigationViewTabsExampleContent()
+        {
+            var root = CreateNavigationViewDescriptionRoot(
+                "For the tabs pattern, ensure that you unify selection and focus by setting the SelectionFollowsFocus property to Enabled. If using a Frame to swap out content, then navigating between items shouldn't be recorded into the Frame's navigation stack. Please see the C# in the sample below to understand how to do this.",
+                false);
+
+            var navigationView = CreateNavigationViewShell(
+                "nvSample7",
+                "contentFrame7",
+                Mux.NavigationViewPaneDisplayMode.Top,
+                null);
+            navigationView.IsBackButtonVisible = Mux.NavigationViewBackButtonVisible.Collapsed;
+            navigationView.SelectionFollowsFocus = Mux.NavigationViewSelectionFollowsFocus.Enabled;
+            AddStandardNavigationItems(navigationView, includeIcons: false, firstContent: "Item1", remainingPrefix: "Item");
+            SelectFirstNavigationItem(navigationView);
+            root.Children.Add(navigationView);
+            return root;
+        }
+
+        private static UIElement CreateNavigationViewDataBindingExampleContent()
+        {
+            var root = CreateNavigationViewDescriptionRoot(
+                "When data binding, use the MenuItemsSource property to bind to an observable collection of items, and do not set the MenuItems property. In addition, set the MenuItemTemplate property and use a NavigationViewItem as the data template. If you wish to bind to the header content as well, use data template selectors via the MenuItemTemplateSelector property. ",
+                false);
+
+            var categories = new ObservableCollection<NavigationCategory>
+            {
+                new NavigationCategory("Category 1", Mux.Symbol.Home, "This is category 1", "SamplePage1"),
+                new NavigationCategory("Category 2", Mux.Symbol.Keyboard, "This is category 2", "SamplePage2"),
+                new NavigationCategory("Category 3", Mux.Symbol.Library, "This is category 3", "SamplePage3"),
+                new NavigationCategory("Category 4", Mux.Symbol.Mail, "This is category 4", "SamplePage4")
+            };
+
+            var navigationView = CreateNavigationViewShell(
+                "nvSample4",
+                "contentFrame4",
+                Mux.NavigationViewPaneDisplayMode.Auto,
+                null);
+            navigationView.MenuItemsSource = categories;
+            navigationView.MenuItemTemplate = CreateNavigationCategoryTemplate();
+            navigationView.SelectedItem = categories[0];
+            root.Children.Add(navigationView);
+            return root;
+        }
+
+        private static UIElement CreateNavigationViewFooterExampleContent()
+        {
+            var root = CreateNavigationViewDescriptionRoot(
+                "You can add clickable menu items to the footer of your NavigationView that participate in the same selection model as items in the main menu. In Top PaneDisplayMode, these items will appear aligned to the right of the NavigationView. In Left PaneDisplayMode, these items will appear aligned to the bottom of the NavigationView. ",
+                false);
+
+            var navigationView = CreateNavigationViewShell(
+                "nvSample9",
+                "contentFrame9",
+                Mux.NavigationViewPaneDisplayMode.Left,
+                "This is Header Text");
+            navigationView.IsSettingsVisible = false;
+            navigationView.MenuItems.Add(CreateNavigationItem("Browse", Mux.Symbol.Library, "SamplePage1"));
+            navigationView.MenuItems.Add(CreateNavigationItem("Track an Order", Mux.Symbol.Map, "SamplePage2"));
+            navigationView.MenuItems.Add(CreateNavigationItem("Order History", Mux.Symbol.Tag, "SamplePage3"));
+            navigationView.FooterMenuItems.Add(CreateNavigationItem("Account", Mux.Symbol.Contact, "SamplePage4"));
+            navigationView.FooterMenuItems.Add(CreateNavigationItem("Your Cart", Mux.Symbol.Shop, "SamplePage5"));
+            navigationView.FooterMenuItems.Add(CreateNavigationItem("Help", Mux.Symbol.Help, "SamplePage5"));
+            SelectFirstNavigationItem(navigationView);
+            root.Children.Add(navigationView);
+
+            return CreateNavigationViewExampleLayout(
+                root,
+                CreateNavigationPanePositionOptions(
+                    "Pane position:",
+                    "nvSample9Left",
+                    "nvSample9Top",
+                    null,
+                    navigationView));
+        }
+
+        private static UIElement CreateNavigationViewHierarchicalExampleContent()
+        {
+            var root = CreateNavigationViewDescriptionRoot(null, false);
             root.Children.Add(new TextBlock
             {
-                Text = "If you have five or more equally important navigation categories that should prominently appear on larger window widths, consider using a left navigation pane.",
-                Margin = new Thickness(0, 0, 0, 12),
-                TextWrapping = TextWrapping.Wrap
+                Text = "NavigationView supports hierarchy in Left, LeftCompact, and Top display modes.\n\nIn the example below, the \"Account\" tab navigates to its own page while \"Document options\" only opens up its subtree of items. This is done by setting the SelectsOnInvoked property to false on the Document options NavigationView Item.\n\nIn both Top and Left modes, clicking the arrows on NavigationViewItems will expand or collapse the subtree. Clicking or tapping elsewhere on the NavigationViewItem will collapse or expand the subtree.\n\nSwitch between the three pane display modes on the right.",
+                TextWrapping = TextWrapping.Wrap,
+                Margin = new Thickness(0, 0, 0, 15)
             });
 
-            var navigationView = new Mux.NavigationView
-            {
-                Width = 745,
-                Height = 460,
-                HorizontalAlignment = HorizontalAlignment.Left,
-                Header = "This is Header Text",
-                IsTitleBarAutoPaddingEnabled = false,
-                IsTabStop = false,
-                PaneDisplayMode = Mux.NavigationViewPaneDisplayMode.Auto,
-                Content = CreateNavigationSampleContent()
-            };
-            Grid.SetRow(navigationView, 1);
-            GalleryAutomation.WithAutomationId(navigationView, GalleryAutomation.SampleElementId("NavigationView", "NavigationView"));
+            var navigationView = CreateNavigationViewShell(
+                "nvSample8",
+                "contentFrame8",
+                Mux.NavigationViewPaneDisplayMode.Left,
+                null);
 
-            var item1 = CreateNavigationItem("Menu Item1", Mux.Symbol.Play, "SamplePage1");
-            navigationView.MenuItems.Add(item1);
-            navigationView.MenuItems.Add(CreateNavigationItem("Menu Item2", Mux.Symbol.Save, "SamplePage2"));
-            navigationView.MenuItems.Add(CreateNavigationItem("Menu Item3", Mux.Symbol.Refresh, "SamplePage3"));
-            navigationView.MenuItems.Add(CreateNavigationItem("Menu Item4", Mux.Symbol.Download, "SamplePage4"));
-            navigationView.SelectionChanged += delegate(Mux.NavigationView sender, Mux.NavigationViewSelectionChangedEventArgs args)
-            {
-                var item = args.SelectedItemContainer as Mux.NavigationViewItem;
-                if (item != null)
-                {
-                    var selectedItemTag = item.Tag as string;
-                    if (!string.IsNullOrEmpty(selectedItemTag))
-                    {
-                        sender.Header = "Sample Page " + selectedItemTag.Substring(selectedItemTag.Length - 1);
-                    }
-                }
-            };
-            navigationView.SelectedItem = item1;
+            var home = CreateNavigationItem("Home", Mux.Symbol.Home, "SamplePage1");
+            home.ToolTip = "Home";
+            var account = CreateNavigationItem("Account", Mux.Symbol.Contact, "SamplePage2");
+            account.ToolTip = "Account";
+            account.MenuItems.Add(CreateToolTippedNavigationItem("Mail", Mux.Symbol.Mail, "SamplePage3"));
+            account.MenuItems.Add(CreateToolTippedNavigationItem("Calendar", Mux.Symbol.Calendar, "SamplePage4"));
 
+            var documentOptions = CreateNavigationItem("Document options", Mux.Symbol.Page2, null);
+            documentOptions.ToolTip = "Document options";
+            documentOptions.SelectsOnInvoked = false;
+            documentOptions.MenuItems.Add(CreateToolTippedNavigationItem("Create new", Mux.Symbol.NewFolder, "SamplePage5"));
+            documentOptions.MenuItems.Add(CreateToolTippedNavigationItem("Upload file", Mux.Symbol.OpenLocal, "SamplePage6"));
+
+            navigationView.MenuItems.Add(home);
+            navigationView.MenuItems.Add(account);
+            navigationView.MenuItems.Add(documentOptions);
+            SelectFirstNavigationItem(navigationView);
             root.Children.Add(navigationView);
-            panel.Children.Add(root);
-            return panel;
+
+            return CreateNavigationViewExampleLayout(
+                root,
+                CreateNavigationPanePositionOptions(
+                    "PanePosition:",
+                    "nvSample8Left",
+                    "nvSample8Top",
+                    "nvSample8LeftCompact",
+                    navigationView));
+        }
+
+        private static UIElement CreateNavigationViewApiExampleContent()
+        {
+            var navigationView = CreateNavigationViewShell(
+                "nvSample",
+                "contentFrame",
+                Mux.NavigationViewPaneDisplayMode.Left,
+                "Header");
+            navigationView.Height = 540;
+            navigationView.Margin = new Thickness(0, 12, 0, 0);
+            navigationView.ExpandedModeThresholdWidth = 500;
+            navigationView.PaneTitle = "Pane Title";
+            navigationView.IsBackButtonVisible = Mux.NavigationViewBackButtonVisible.Visible;
+            navigationView.AutoSuggestBox = CreateNavigationAutoSuggestBox();
+
+            var samplePage1Item = CreateNavigationItem("Menu Item1", Mux.Symbol.Play, "SamplePage1");
+            samplePage1Item.Name = "SamplePage1Item";
+            var samplePage2Item = CreateNavigationItem("Menu Item2", Mux.Symbol.Save, "SamplePage2");
+            samplePage2Item.Name = "SamplePage2Item";
+            var samplePage3Item = CreateNavigationItem("Menu Item3", Mux.Symbol.Refresh, "SamplePage3");
+            samplePage3Item.Name = "SamplePage3Item";
+
+            var paneHyperlink = new Mux.HyperlinkButton
+            {
+                Name = "PaneHyperlink",
+                Content = "More info",
+                Margin = new Thickness(12, 0, 0, 0),
+                Visibility = Visibility.Collapsed
+            };
+
+            var footerStackPanel = new StackPanel
+            {
+                Name = "FooterStackPanel",
+                Orientation = Orientation.Vertical,
+                Visibility = Visibility.Collapsed
+            };
+            footerStackPanel.Children.Add(CreateNavigationItem(null, Mux.Symbol.Download, null, "download"));
+            footerStackPanel.Children.Add(CreateNavigationItem(null, Mux.Symbol.Favorite, null, "favorite"));
+
+            navigationView.MenuItems.Add(samplePage1Item);
+            navigationView.MenuItems.Add(new Mux.NavigationViewItemHeader { Content = "Actions" });
+            navigationView.MenuItems.Add(samplePage2Item);
+            navigationView.MenuItems.Add(samplePage3Item);
+            navigationView.PaneCustomContent = paneHyperlink;
+            navigationView.PaneFooter = footerStackPanel;
+            HookNavigationHeaderSelection(navigationView);
+
+            return CreateNavigationViewExampleLayout(
+                navigationView,
+                CreateNavigationViewApiOptions(
+                    navigationView,
+                    paneHyperlink,
+                    footerStackPanel,
+                    samplePage2Item));
         }
 
         private static UIElement CreatePivotSample()
@@ -1439,6 +1725,359 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             return null;
         }
 
+        private static GallerySamplePanel CreateNavigationViewDescriptionRoot(string description, bool assignRootAutomationId)
+        {
+            var root = new GallerySamplePanel();
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("NavigationView"));
+            }
+
+            if (!string.IsNullOrEmpty(description))
+            {
+                root.Children.Add(new TextBlock
+                {
+                    Text = description,
+                    Margin = new Thickness(0, 0, 0, 12),
+                    TextWrapping = TextWrapping.Wrap
+                });
+            }
+
+            return root;
+        }
+
+        private static Mux.NavigationView CreateNavigationViewShell(
+            string name,
+            string contentFrameName,
+            Mux.NavigationViewPaneDisplayMode paneDisplayMode,
+            string header)
+        {
+            return new Mux.NavigationView
+            {
+                Name = name,
+                Width = 745,
+                Height = 460,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Header = header,
+                IsTitleBarAutoPaddingEnabled = false,
+                IsTabStop = false,
+                PaneDisplayMode = paneDisplayMode,
+                Content = CreateNavigationFrame(contentFrameName)
+            };
+        }
+
+        private static Frame CreateNavigationFrame(string name)
+        {
+            return new Frame
+            {
+                Name = name,
+                NavigationUIVisibility = System.Windows.Navigation.NavigationUIVisibility.Hidden,
+                Content = CreateNavigationSampleContent()
+            };
+        }
+
+        private static void AddStandardNavigationItems(
+            Mux.NavigationView navigationView,
+            bool includeIcons,
+            string firstContent,
+            string remainingPrefix)
+        {
+            if (includeIcons)
+            {
+                navigationView.MenuItems.Add(CreateNavigationItem(firstContent, Mux.Symbol.Play, "SamplePage1"));
+                navigationView.MenuItems.Add(CreateNavigationItem(remainingPrefix + "2", Mux.Symbol.Save, "SamplePage2"));
+                navigationView.MenuItems.Add(CreateNavigationItem(remainingPrefix + "3", Mux.Symbol.Refresh, "SamplePage3"));
+                navigationView.MenuItems.Add(CreateNavigationItem(remainingPrefix + "4", Mux.Symbol.Download, "SamplePage4"));
+            }
+            else
+            {
+                navigationView.MenuItems.Add(CreateNavigationItem(firstContent, "SamplePage1"));
+                navigationView.MenuItems.Add(CreateNavigationItem(remainingPrefix + "2", "SamplePage2"));
+                navigationView.MenuItems.Add(CreateNavigationItem(remainingPrefix + "3", "SamplePage3"));
+                navigationView.MenuItems.Add(CreateNavigationItem(remainingPrefix + "4", "SamplePage4"));
+            }
+        }
+
+        private static void HookNavigationHeaderSelection(Mux.NavigationView navigationView)
+        {
+            navigationView.SelectionChanged += delegate(Mux.NavigationView sender, Mux.NavigationViewSelectionChangedEventArgs args)
+            {
+                var item = args.SelectedItemContainer as Mux.NavigationViewItem;
+                var selectedItemTag = item == null ? null : item.Tag as string;
+                if (!string.IsNullOrEmpty(selectedItemTag))
+                {
+                    sender.Header = "Sample Page " + selectedItemTag.Substring(selectedItemTag.Length - 1);
+                }
+            };
+        }
+
+        private static void SelectFirstNavigationItem(Mux.NavigationView navigationView)
+        {
+            if (navigationView.MenuItems.Count > 0)
+            {
+                navigationView.SelectedItem = navigationView.MenuItems[0];
+            }
+        }
+
+        private static DataTemplate CreateNavigationCategoryTemplate()
+        {
+            return (DataTemplate)XamlReader.Parse(
+@"<DataTemplate xmlns=""http://schemas.microsoft.com/winfx/2006/xaml/presentation""
+               xmlns:x=""http://schemas.microsoft.com/winfx/2006/xaml""
+               xmlns:controls=""clr-namespace:ModernWpf.Controls;assembly=ModernWpf.Controls""
+               xmlns:mux=""clr-namespace:ModernWpf.Controls;assembly=ModernWpf"">
+    <controls:NavigationViewItem Content=""{Binding Name}"" Tag=""{Binding Tag}"" ToolTip=""{Binding Tooltip}"">
+        <controls:NavigationViewItem.Icon>
+            <mux:SymbolIcon Symbol=""{Binding Symbol}"" />
+        </controls:NavigationViewItem.Icon>
+    </controls:NavigationViewItem>
+</DataTemplate>");
+        }
+
+        private static Grid CreateNavigationViewExampleLayout(UIElement sample, UIElement options)
+        {
+            var grid = new Grid();
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+            Grid.SetColumn(sample, 0);
+            grid.Children.Add(sample);
+
+            if (options != null)
+            {
+                var optionsHost = new Border
+                {
+                    Margin = new Thickness(24, 0, 0, 0),
+                    Child = options
+                };
+                Grid.SetColumn(optionsHost, 1);
+                grid.Children.Add(optionsHost);
+            }
+
+            return grid;
+        }
+
+        private static StackPanel CreateNavigationPanePositionOptions(
+            string header,
+            string leftName,
+            string topName,
+            string leftCompactName,
+            Mux.NavigationView navigationView)
+        {
+            var panel = new StackPanel();
+            panel.Children.Add(new TextBlock
+            {
+                Text = header,
+                Margin = new Thickness(0, 0, 0, 8)
+            });
+
+            var groupName = leftName + "Group";
+            var left = CreateNamedRadioButton(leftName, "Left mode", true, groupName);
+            left.Checked += delegate
+            {
+                if (left.IsChecked == true)
+                {
+                    navigationView.PaneDisplayMode = Mux.NavigationViewPaneDisplayMode.Left;
+                    navigationView.IsPaneOpen = true;
+                }
+            };
+            panel.Children.Add(left);
+
+            var top = CreateNamedRadioButton(topName, "Top mode", false, groupName);
+            top.Checked += delegate
+            {
+                if (top.IsChecked == true)
+                {
+                    navigationView.PaneDisplayMode = Mux.NavigationViewPaneDisplayMode.Top;
+                    navigationView.IsPaneOpen = false;
+                }
+            };
+            panel.Children.Add(top);
+
+            if (leftCompactName != null)
+            {
+                var leftCompact = CreateNamedRadioButton(leftCompactName, "LeftCompact mode", false, groupName);
+                leftCompact.Checked += delegate
+                {
+                    if (leftCompact.IsChecked == true)
+                    {
+                        navigationView.PaneDisplayMode = Mux.NavigationViewPaneDisplayMode.LeftCompact;
+                        navigationView.IsPaneOpen = false;
+                    }
+                };
+                panel.Children.Add(leftCompact);
+            }
+
+            return panel;
+        }
+
+        private static RadioButton CreateNamedRadioButton(string name, string content, bool isChecked, string groupName)
+        {
+            return new RadioButton
+            {
+                Name = name,
+                Content = content,
+                GroupName = groupName,
+                IsChecked = isChecked,
+                Margin = new Thickness(0, 0, 0, 4)
+            };
+        }
+
+        private static StackPanel CreateNavigationViewApiOptions(
+            Mux.NavigationView navigationView,
+            Mux.HyperlinkButton paneHyperlink,
+            StackPanel footerStackPanel,
+            Mux.NavigationViewItem samplePage2Item)
+        {
+            var panel = new StackPanel();
+
+            var settingsCheck = CreateNamedCheckBox("settingsCheck", "Settings item visible", true);
+            settingsCheck.Click += delegate { navigationView.IsSettingsVisible = settingsCheck.IsChecked == true; };
+            panel.Children.Add(settingsCheck);
+
+            var visibleCheck = CreateNamedCheckBox("visibleCheck", "Back button visible", true);
+            visibleCheck.Click += delegate
+            {
+                navigationView.IsBackButtonVisible = visibleCheck.IsChecked == true
+                    ? Mux.NavigationViewBackButtonVisible.Visible
+                    : Mux.NavigationViewBackButtonVisible.Collapsed;
+            };
+            panel.Children.Add(visibleCheck);
+
+            var enableCheck = CreateNamedCheckBox("enableCheck", "Back button enabled", false);
+            enableCheck.Click += delegate { navigationView.IsBackEnabled = enableCheck.IsChecked == true; };
+            panel.Children.Add(enableCheck);
+
+            var autoSuggestCheck = CreateNamedCheckBox("autoSuggestCheck", "AutoSuggestBox visible", true);
+            autoSuggestCheck.Click += delegate
+            {
+                navigationView.AutoSuggestBox = autoSuggestCheck.IsChecked == true ? CreateNavigationAutoSuggestBox() : null;
+            };
+            panel.Children.Add(autoSuggestCheck);
+
+            panel.Children.Add(CreateOptionText("Header:"));
+            var headerText = new TextBox
+            {
+                Name = "headerText",
+                Text = "Header",
+                MinWidth = 160,
+                Margin = new Thickness(0, 0, 0, 8)
+            };
+            AutomationProperties.SetName(headerText, "Header property");
+            headerText.TextChanged += delegate { navigationView.Header = headerText.Text; };
+            panel.Children.Add(headerText);
+
+            var headerCheck = CreateNamedCheckBox("headerCheck", "Always show header", true);
+            headerCheck.Click += delegate { navigationView.AlwaysShowHeader = headerCheck.IsChecked == true; };
+            panel.Children.Add(headerCheck);
+
+            panel.Children.Add(CreateOptionText("PaneTitle:"));
+            var paneText = new TextBox
+            {
+                Name = "paneText",
+                Text = "Pane Title",
+                MinWidth = 160,
+                Margin = new Thickness(0, 0, 0, 8)
+            };
+            AutomationProperties.SetName(paneText, "PaneTitle property");
+            paneText.TextChanged += delegate { navigationView.PaneTitle = paneText.Text; };
+            panel.Children.Add(paneText);
+
+            var paneCustomContentCheck = CreateNamedCheckBox("panemc_Check", "PaneCustomContent visible", false);
+            paneCustomContentCheck.Click += delegate
+            {
+                paneHyperlink.Visibility = paneCustomContentCheck.IsChecked == true
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            };
+            panel.Children.Add(paneCustomContentCheck);
+
+            var paneFooterCheck = CreateNamedCheckBox("paneFooterCheck", "PaneFooter visible", false);
+            paneFooterCheck.Click += delegate
+            {
+                footerStackPanel.Visibility = paneFooterCheck.IsChecked == true
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            };
+            panel.Children.Add(paneFooterCheck);
+
+            panel.Children.Add(CreateOptionText("PanePosition:"));
+            var left = CreateNamedRadioButton("nvSampleLeft", "Left", true, "nvSamplePanePosition");
+            var top = CreateNamedRadioButton("nvSampleTop", "Top", false, "nvSamplePanePosition");
+            left.Checked += delegate
+            {
+                if (left.IsChecked == true)
+                {
+                    navigationView.PaneDisplayMode = Mux.NavigationViewPaneDisplayMode.Left;
+                    navigationView.IsPaneOpen = true;
+                    footerStackPanel.Orientation = Orientation.Vertical;
+                }
+            };
+            top.Checked += delegate
+            {
+                if (top.IsChecked == true)
+                {
+                    navigationView.PaneDisplayMode = Mux.NavigationViewPaneDisplayMode.Top;
+                    navigationView.IsPaneOpen = false;
+                    footerStackPanel.Orientation = Orientation.Horizontal;
+                }
+            };
+            panel.Children.Add(left);
+            panel.Children.Add(top);
+
+            var selectionFollowsFocus = CreateNamedCheckBox("sffCheck", "Keyboard SelectionFollowsFocus", false);
+            selectionFollowsFocus.Click += delegate
+            {
+                navigationView.SelectionFollowsFocus = selectionFollowsFocus.IsChecked == true
+                    ? Mux.NavigationViewSelectionFollowsFocus.Enabled
+                    : Mux.NavigationViewSelectionFollowsFocus.Disabled;
+            };
+            panel.Children.Add(selectionFollowsFocus);
+
+            var suppressSelection = CreateNamedCheckBox("suppressselectionCheck_Checked", "Selection of Menu Item2 suppressed", false);
+            suppressSelection.Click += delegate { samplePage2Item.SelectsOnInvoked = suppressSelection.IsChecked != true; };
+            panel.Children.Add(suppressSelection);
+
+            return panel;
+        }
+
+        private static CheckBox CreateNamedCheckBox(string name, string content, bool isChecked)
+        {
+            return new CheckBox
+            {
+                Name = name,
+                Content = content,
+                IsChecked = isChecked,
+                Margin = new Thickness(0, 0, 0, 4)
+            };
+        }
+
+        private static TextBlock CreateOptionText(string text)
+        {
+            return new TextBlock
+            {
+                Text = text,
+                Margin = new Thickness(0, 12, 0, 4)
+            };
+        }
+
+        private static Mux.AutoSuggestBox CreateNavigationAutoSuggestBox()
+        {
+            var autoSuggestBox = new Mux.AutoSuggestBox
+            {
+                QueryIcon = new Mux.SymbolIcon(Mux.Symbol.Find)
+            };
+            AutomationProperties.SetName(autoSuggestBox, "Search");
+            return autoSuggestBox;
+        }
+
+        private static Mux.NavigationViewItem CreateToolTippedNavigationItem(string content, Mux.Symbol symbol, string tag)
+        {
+            var item = CreateNavigationItem(content, symbol, tag);
+            item.ToolTip = content;
+            return item;
+        }
+
         private static UIElement CreateNavigationSampleContent()
         {
             var grid = new Grid();
@@ -1500,14 +2139,29 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             grid.Children.Add(tile);
         }
 
-        private static Mux.NavigationViewItem CreateNavigationItem(string content, Mux.Symbol symbol, string tag)
+        private static Mux.NavigationViewItem CreateNavigationItem(string content, string tag)
         {
             return new Mux.NavigationViewItem
+            {
+                Content = content,
+                Tag = tag
+            };
+        }
+
+        private static Mux.NavigationViewItem CreateNavigationItem(string content, Mux.Symbol symbol, string tag, string automationName = null)
+        {
+            var item = new Mux.NavigationViewItem
             {
                 Content = content,
                 Icon = new Mux.SymbolIcon(symbol),
                 Tag = tag
             };
+            if (!string.IsNullOrEmpty(automationName))
+            {
+                AutomationProperties.SetName(item, automationName);
+            }
+
+            return item;
         }
 
         private static Page CreatePageContent(string title, string color)
@@ -1618,6 +2272,25 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
         private sealed class BreadcrumbFolder
         {
             public string Name { get; set; }
+        }
+
+        private sealed class NavigationCategory
+        {
+            public NavigationCategory(string name, Mux.Symbol symbol, string tooltip, string tag)
+            {
+                Name = name;
+                Symbol = symbol;
+                Tooltip = tooltip;
+                Tag = tag;
+            }
+
+            public string Name { get; }
+
+            public Mux.Symbol Symbol { get; }
+
+            public string Tooltip { get; }
+
+            public string Tag { get; }
         }
 
         private sealed class TabViewData

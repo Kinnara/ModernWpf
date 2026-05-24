@@ -106,6 +106,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.NavigationViewSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 28 tests per target. The generated ModernWpf NavigationView page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\NavigationViewPage.xaml` / `.xaml.cs`: default pane mode, top pane mode, adaptive pane orientation, tabs with selection/focus behavior, data binding, footer menu items, hierarchical menu items, and the API-in-action sample. `NavigationSampleFactory.CreateExamples` now covers NavigationView as a source-backed Navigation WinUI extension page, keeps WinUI's `nvSample5`, `nvSample6`, `nvSample2`, `nvSample7`, `nvSample4`, `nvSample9`, `nvSample8`, `nvSample`, and option-control names, consumes the currently referenced local sample-code files without extra additional-code expanders, and adapts the WinUI Frame/sample-page model to WPF `Frame` hosts containing the existing local tile sample content. `ItemPage` now allows NavigationView to load the full local snippet set instead of truncating at six files; the obsolete unreferenced legacy `NavigationViewSample4.txt`, `NavigationViewSample5.txt`, and `NavigationViewSample6.txt` copies were removed from the ModernWpf sample-code folder.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls NavigationView -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-180710-523-77744/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, both apps were nonblank, the required ModernWpf element `GallerySample_NavigationView_NavigationView` was found, the primary crops match at `745x460`, NavigationView Light primary delta is `6.41`, and whole-window mean delta is `137.8`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls NavigationView -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-180747-625-85880/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, both apps were nonblank, the required ModernWpf element `GallerySample_NavigationView_NavigationView` was found, the primary crops match at `745x460`, NavigationView Dark primary delta is `5.77`, and whole-window mean delta is `54.16`.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the full NavigationView WinUI example alignment. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages and ends with `0 Warning(s)` and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.TabViewSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 28 tests per target. The generated ModernWpf TabView page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\TabViewPage.xaml` / `.xaml.cs` and the paired local sample-code files under `D:\repos\WinUI-Gallery\WinUIGallery\Samples\SampleCode\TabView`: add/close/rearrange tabs, markup-defined tabs, `MyData` item-source tabs, keyboarding support, `TabStripHeader` / `TabStripFooter`, tab width options, close-button overlay options, color tab icons, accent tab-strip background, and the windowing launch sample. `NavigationSampleFactory.CreateExamples` now covers TabView as a source-backed Navigation WinUI extension page, consumes the two local TabView C# snippet files so no extra sample-code pane remains, exposes curated automation IDs `GallerySample_TabView_Root` and `GallerySample_TabView_TabView`, keeps WinUI's `TabView1`, `TabViewItemsSourceSample`, `TabView2`, `TabView3`, and `TabView4` source-facing names, and adapts WinUI `TabView` / `TabViewItem` APIs to WPF `TabControl` / `TabItem` plus ModernWpf's TabView resource styling. The WPF adaptation keeps add/close, item-source add/remove, width-mode, close-overlay, header/footer, color-icon, accent-background, and launch-button behavior, while noting that ModernWpf does not expose a native `TabView` control class or WinUI drag-rearrange surface. Current warning/output remains `NU1903`, recurring `Failed to resolve WinRT.Runtime.dll` messages, and existing ModernWpf warning noise.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls TabView -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -1284,17 +1292,30 @@ ListView's selection-support live XAML has also been rechecked against official
 source and refreshed at `artifacts/wpf-gallery-visual-audit/20260524-051340/report.md`
 and `artifacts/wpf-gallery-visual-audit/20260524-051409/report.md`, so avoid
 reopening that sample unless new source or visual evidence regresses.
-The generated ModernWpf NavigationView extension page now has WinUI Gallery
-first-sample Light/Dark evidence at
-`artifacts/visual-checks/20260524-093643-425-95132/report.md` and
-`artifacts/visual-checks/20260524-093726-380-106920/report.md`, with matching
-`745x460` primary crops and deltas `6.16` / `6.51` after restoring the default
-back-button behavior, suppressing nested title-bar padding, hiding the resting
-WPF sample scrollbar, and normalizing the rendered artifact crop for the
-sample's row offset. Avoid reopening that first NavigationView sample unless a
-new WinUI reference or rendered crop regression appears; remaining
-NavigationView work means other samples or broader control-template/resource
-drift.
+The generated ModernWpf NavigationView extension page now uses the local
+official WinUI Gallery eight-example structure from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\NavigationViewPage.xaml`
+/ `.xaml.cs`: default pane mode, top pane mode, adaptive pane orientation, tabs
+with selection/focus behavior, data binding, footer menu items, hierarchical
+menu items, and the API-in-action sample. `NavigationSampleFactory.CreateExamples`
+now covers NavigationView as a source-backed Navigation WinUI example, consumes
+the currently referenced local sample-code files without duplicate additional
+sample-code expanders, keeps WinUI's `nvSample5`, `nvSample6`, `nvSample2`,
+`nvSample7`, `nvSample4`, `nvSample9`, `nvSample8`, `nvSample`, and option
+control names, and exposes `GallerySample_NavigationView_Root` /
+`GallerySample_NavigationView_NavigationView` for runtime and visual checks.
+The WPF adaptation uses real `ModernWpf.Controls.NavigationView` instances,
+WPF `Frame` hosts, and the existing local tile sample content in place of
+WinUI sample pages while preserving pane modes, footer items, hierarchy,
+data-bound item templates, and option toggles. Current NavigationView
+WinUI-reference evidence is
+`artifacts/visual-checks/20260524-180710-523-77744/report.md` for Light and
+`artifacts/visual-checks/20260524-180747-625-85880/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`, nonblank app captures,
+matching `745x460` primary crops, and primary deltas `6.41` / `5.77`. Avoid
+reopening NavigationView's source shape unless a new WinUI source, runtime, or
+crop regression appears; later rounds can separately investigate broader
+NavigationView template/resource drift.
 The generated ModernWpf TabView extension page now uses the local official
 WinUI Gallery ten-example structure from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\TabViewPage.xaml`
