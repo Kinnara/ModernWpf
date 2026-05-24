@@ -38,7 +38,7 @@
                             Margin="0,0,0,10"
                             Click="ShowDefaultMessageButton_Click"
                             Content="Simple MessageBox" />
-                        <TextBlock Text="{Binding ViewModel.DefaultMessageResult, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:MessageBoxPage}}" TextWrapping="Wrap" />
+                        <TextBlock Text="{Binding ViewModel.DefaultMessageResult}" TextWrapping="Wrap" />
                     </StackPanel>
                 </controls:ControlExample>
 
@@ -52,15 +52,15 @@
                             Margin="0,0,0,10"
                             Click="ShowCustomTitleButton_Click"
                             Content="Custom MessageBox" />
-                        <TextBlock Text="{Binding ViewModel.CustomTitleResult, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:MessageBoxPage}}" TextWrapping="Wrap" />
+                        <TextBlock Text="{Binding ViewModel.CustomTitleResult}" TextWrapping="Wrap" />
                     </StackPanel>
                 </controls:ControlExample>
 
                 <controls:ControlExample
                     Margin="10,32,10,10"
-                    CSharpCode="{Binding ViewModel.DifferentButtonsCSharpCode, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:MessageBoxPage}}"
+                    CSharpCode="{Binding ViewModel.DifferentButtonsCSharpCode}"
                     HeaderText="MessageBox with Different Buttons"
-                    XamlCode="{Binding ViewModel.DifferentButtonsXamlCode, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:MessageBoxPage}}">
+                    XamlCode="{Binding ViewModel.DifferentButtonsXamlCode}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
@@ -72,7 +72,7 @@
                                 AutomationProperties.Name="MessageBox with Different Buttons"
                                 Click="ShowButtonFromComboBox_Click"
                                 Content="Show MessageBox" />
-                            <TextBlock Text="{Binding ViewModel.DifferentButtonsResult, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:MessageBoxPage}}" TextWrapping="Wrap" />
+                            <TextBlock Text="{Binding ViewModel.DifferentButtonsResult}" TextWrapping="Wrap" />
                         </StackPanel>
                         <StackPanel
                             Grid.Column="1"
@@ -82,7 +82,7 @@
                                 x:Name="ButtonTypeComboBox"
                                 MinWidth="150"
                                 AutomationProperties.Name="MessageBox Button Selector"
-                                SelectedIndex="{Binding ViewModel.SelectedButtonIndex, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:MessageBoxPage}}">
+                                SelectedIndex="{Binding ViewModel.SelectedButtonIndex}">
                                 <ComboBoxItem Content="OK" />
                                 <ComboBoxItem Content="OK/Cancel" />
                                 <ComboBoxItem Content="Abort/Retry/Ignore" />
@@ -97,9 +97,9 @@
 
                 <controls:ControlExample
                     Margin="10,32,10,10"
-                    CSharpCode="{Binding ViewModel.DifferentImagesCSharpCode, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:MessageBoxPage}}"
+                    CSharpCode="{Binding ViewModel.DifferentImagesCSharpCode}"
                     HeaderText="MessageBox with Different Images"
-                    XamlCode="{Binding ViewModel.DifferentImagesXamlCode, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:MessageBoxPage}}">
+                    XamlCode="{Binding ViewModel.DifferentImagesXamlCode}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
@@ -111,7 +111,7 @@
                                 AutomationProperties.Name="MessageBox with different images"
                                 Click="ShowImageFromComboBox_Click"
                                 Content="Show MessageBox" />
-                            <TextBlock Text="{Binding ViewModel.DifferentImagesResult, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:MessageBoxPage}}" TextWrapping="Wrap" />
+                            <TextBlock Text="{Binding ViewModel.DifferentImagesResult}" TextWrapping="Wrap" />
                         </StackPanel>
                         <StackPanel
                             Grid.Column="1"
@@ -121,7 +121,7 @@
                                 x:Name="ImageTypeComboBox"
                                 MinWidth="150"
                                 AutomationProperties.Name="MessageBox Image Selector"
-                                SelectedIndex="{Binding ViewModel.SelectedImageIndex, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:MessageBoxPage}}">
+                                SelectedIndex="{Binding ViewModel.SelectedImageIndex}">
                                 <ComboBoxItem Content="None" />
                                 <ComboBoxItem Content="Error" />
                                 <ComboBoxItem Content="Question" />
@@ -134,9 +134,9 @@
 
                 <controls:ControlExample
                     Margin="10,32,10,10"
-                    CSharpCode="{Binding ViewModel.CommonMessagesCSharpCode, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:MessageBoxPage}}"
+                    CSharpCode="{Binding ViewModel.CommonMessagesCSharpCode}"
                     HeaderText="Information, Error, and Warning MessageBox"
-                    XamlCode="{Binding ViewModel.CommonMessagesXamlCode, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:MessageBoxPage}}">
+                    XamlCode="{Binding ViewModel.CommonMessagesXamlCode}">
                     <StackPanel>
                         <WrapPanel Margin="0,0,0,10">
                             <Button
@@ -149,7 +149,7 @@
                                 Content="Error" />
                             <Button Click="ShowCommonWarning_Click" Content="Warning" />
                         </WrapPanel>
-                        <TextBlock Text="{Binding ViewModel.CommonMessagesResult, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:MessageBoxPage}}" TextWrapping="Wrap" />
+                        <TextBlock Text="{Binding ViewModel.CommonMessagesResult}" TextWrapping="Wrap" />
                     </StackPanel>
                 </controls:ControlExample>
 
@@ -163,7 +163,7 @@
                             Margin="0,0,0,10"
                             Click="ShowCustomDefaultButton_Click"
                             Content="Show with 'No' as default" />
-                        <TextBlock Text="{Binding ViewModel.CustomDefaultResult, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:MessageBoxPage}}" TextWrapping="Wrap" />
+                        <TextBlock Text="{Binding ViewModel.CustomDefaultResult}" TextWrapping="Wrap" />
                     </StackPanel>
                 </controls:ControlExample>
             </StackPanel>

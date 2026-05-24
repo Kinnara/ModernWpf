@@ -17,7 +17,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
         private void ShowDefaultMessageButton_Click(object sender, RoutedEventArgs e)
         {
             var result = MessageBox.Show(Window.GetWindow(this), "This is a simple message box!");
-            ViewModel.DefaultMessageResult = "Result: " + result;
+            ViewModel.DefaultMessageResult = $"Result: {result}";
         }
 
         private void ShowCustomTitleButton_Click(object sender, RoutedEventArgs e)
@@ -26,7 +26,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
                 Window.GetWindow(this),
                 "This is a detailed description of what happened or what action is needed.",
                 "Custom Title");
-            ViewModel.CustomTitleResult = "Result: " + result;
+            ViewModel.CustomTitleResult = $"Result: {result}";
         }
 
         private void ShowButtonFromComboBox_Click(object sender, RoutedEventArgs e)
@@ -38,7 +38,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
                 "This MessageBox has " + buttonName + " button(s).",
                 buttonName + " Button(s)",
                 buttonType);
-            ViewModel.DifferentButtonsResult = "Result: " + result;
+            ViewModel.DifferentButtonsResult = $"Result: {result}";
         }
 
         private void ShowImageFromComboBox_Click(object sender, RoutedEventArgs e)
@@ -51,25 +51,25 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
                 imageName + " Icon",
                 MessageBoxButton.OK,
                 imageType);
-            ViewModel.DifferentImagesResult = "Result: " + result;
+            ViewModel.DifferentImagesResult = $"Result: {result}";
         }
 
         private void ShowCommonInformation_Click(object sender, RoutedEventArgs e)
         {
             var result = MessageBox.Show(Window.GetWindow(this), "The operation completed successfully.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
-            ViewModel.CommonMessagesResult = "Type: Information | Result: " + result;
+            ViewModel.CommonMessagesResult = $"Type: Information | Result: {result}";
         }
 
         private void ShowCommonError_Click(object sender, RoutedEventArgs e)
         {
             var result = MessageBox.Show(Window.GetWindow(this), "An error occurred! The operation could not be completed.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            ViewModel.CommonMessagesResult = "Type: Error | Result: " + result;
+            ViewModel.CommonMessagesResult = $"Type: Error | Result: {result}";
         }
 
         private void ShowCommonWarning_Click(object sender, RoutedEventArgs e)
         {
             var result = MessageBox.Show(Window.GetWindow(this), "This action cannot be undone! Do you want to continue?", "Warning", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
-            ViewModel.CommonMessagesResult = "Type: Warning | Result: " + result;
+            ViewModel.CommonMessagesResult = $"Type: Warning | Result: {result}";
         }
 
         private void ShowCustomDefaultButton_Click(object sender, RoutedEventArgs e)
@@ -81,7 +81,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
                 MessageBoxButton.YesNoCancel,
                 MessageBoxImage.Question,
                 MessageBoxResult.No);
-            ViewModel.CustomDefaultResult = "User selected: " + result;
+            ViewModel.CustomDefaultResult = $"User selected: {result}";
         }
 
         private static MessageBoxButton GetMessageBoxButton(int index)

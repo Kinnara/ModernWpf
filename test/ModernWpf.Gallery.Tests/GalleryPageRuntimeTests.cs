@@ -1699,7 +1699,9 @@ namespace ModernWpf.Gallery.Tests
                 {
                     Assert.IsTrue(messageBoxPage.HasDirectPageContent);
                     var messageBoxExamples = GetRenderedExamples(messageBoxPage);
+                    var messageBoxControlExamples = FindDescendants<ControlExample>((DependencyObject)messageBoxPage.DirectPageContent).ToArray();
                     Assert.AreEqual(6, messageBoxExamples.Count);
+                    Assert.AreEqual(messageBoxExamples.Count, messageBoxControlExamples.Length);
                     CollectionAssert.AreEqual(
                         new[]
                         {
@@ -1712,20 +1714,47 @@ namespace ModernWpf.Gallery.Tests
                         },
                         messageBoxExamples.Select(example => example.HeaderText).ToArray());
 
-                    AssertButtonResultExample((StackPanel)messageBoxExamples[0].ExampleContent, "Simple MessageBox", "No message shown yet");
-                    AssertButtonResultExample((StackPanel)messageBoxExamples[1].ExampleContent, "Custom MessageBox", "No message shown yet");
-                    AssertMessageBoxSelectorExample((Grid)messageBoxExamples[2].ExampleContent, "Button Type:", "MessageBox with Different Buttons", "MessageBox Button Selector", "No button clicked yet", new[] { "OK", "OK/Cancel", "Abort/Retry/Ignore", "Yes/No/Cancel", "Yes/No", "Retry/Cancel", "Cancel/Try/Continue" });
-                    AssertMessageBoxSelectorExample((Grid)messageBoxExamples[3].ExampleContent, "Icon Type:", "MessageBox with different images", "MessageBox Image Selector", "No image example shown yet", new[] { "None", "Error", "Question", "Warning", "Information" });
+                    var defaultMessageStack = (StackPanel)messageBoxExamples[0].ExampleContent;
+                    AssertButtonResultExample(defaultMessageStack, "Simple MessageBox", "No message shown yet");
+                    AssertDirectBindingPath((TextBlock)defaultMessageStack.Children[1], TextBlock.TextProperty, "ViewModel.DefaultMessageResult");
+
+                    var customTitleStack = (StackPanel)messageBoxExamples[1].ExampleContent;
+                    AssertButtonResultExample(customTitleStack, "Custom MessageBox", "No message shown yet");
+                    AssertDirectBindingPath((TextBlock)customTitleStack.Children[1], TextBlock.TextProperty, "ViewModel.CustomTitleResult");
+
+                    var buttonsGrid = (Grid)messageBoxExamples[2].ExampleContent;
+                    AssertDirectBindingPath(messageBoxControlExamples[2], ControlExample.XamlCodeProperty, "ViewModel.DifferentButtonsXamlCode");
+                    AssertDirectBindingPath(messageBoxControlExamples[2], ControlExample.CSharpCodeProperty, "ViewModel.DifferentButtonsCSharpCode");
+                    AssertMessageBoxSelectorExample(buttonsGrid, "Button Type:", "MessageBox with Different Buttons", "MessageBox Button Selector", "No button clicked yet", new[] { "OK", "OK/Cancel", "Abort/Retry/Ignore", "Yes/No/Cancel", "Yes/No", "Retry/Cancel", "Cancel/Try/Continue" });
+                    var buttonsOutput = (TextBlock)((StackPanel)buttonsGrid.Children.OfType<StackPanel>().Single(stackPanel => Grid.GetColumn(stackPanel) == 0)).Children[1];
+                    var buttonsComboBox = (ComboBox)((StackPanel)buttonsGrid.Children.OfType<StackPanel>().Single(stackPanel => Grid.GetColumn(stackPanel) == 1)).Children[1];
+                    AssertDirectBindingPath(buttonsOutput, TextBlock.TextProperty, "ViewModel.DifferentButtonsResult");
+                    AssertDirectBindingPath(buttonsComboBox, Selector.SelectedIndexProperty, "ViewModel.SelectedButtonIndex");
+
+                    var imagesGrid = (Grid)messageBoxExamples[3].ExampleContent;
+                    AssertDirectBindingPath(messageBoxControlExamples[3], ControlExample.XamlCodeProperty, "ViewModel.DifferentImagesXamlCode");
+                    AssertDirectBindingPath(messageBoxControlExamples[3], ControlExample.CSharpCodeProperty, "ViewModel.DifferentImagesCSharpCode");
+                    AssertMessageBoxSelectorExample(imagesGrid, "Icon Type:", "MessageBox with different images", "MessageBox Image Selector", "No image example shown yet", new[] { "None", "Error", "Question", "Warning", "Information" });
+                    var imagesOutput = (TextBlock)((StackPanel)imagesGrid.Children.OfType<StackPanel>().Single(stackPanel => Grid.GetColumn(stackPanel) == 0)).Children[1];
+                    var imagesComboBox = (ComboBox)((StackPanel)imagesGrid.Children.OfType<StackPanel>().Single(stackPanel => Grid.GetColumn(stackPanel) == 1)).Children[1];
+                    AssertDirectBindingPath(imagesOutput, TextBlock.TextProperty, "ViewModel.DifferentImagesResult");
+                    AssertDirectBindingPath(imagesComboBox, Selector.SelectedIndexProperty, "ViewModel.SelectedImageIndex");
 
                     var commonMessagesStack = (StackPanel)messageBoxExamples[4].ExampleContent;
+                    AssertDirectBindingPath(messageBoxControlExamples[4], ControlExample.XamlCodeProperty, "ViewModel.CommonMessagesXamlCode");
+                    AssertDirectBindingPath(messageBoxControlExamples[4], ControlExample.CSharpCodeProperty, "ViewModel.CommonMessagesCSharpCode");
                     var commonButtons = ((WrapPanel)commonMessagesStack.Children[0]).Children.OfType<Button>().ToArray();
                     CollectionAssert.AreEqual(new[] { "Information", "Error", "Warning" }, commonButtons.Select(button => (string)button.Content).ToArray());
                     Assert.AreEqual(new Thickness(0, 0, 5, 0), commonButtons[0].Margin);
                     Assert.AreEqual(new Thickness(0, 0, 5, 0), commonButtons[1].Margin);
                     Assert.AreEqual(new Thickness(0), commonButtons[2].Margin);
-                    Assert.AreEqual("No common message shown yet", ((TextBlock)commonMessagesStack.Children[1]).Text);
+                    var commonOutput = (TextBlock)commonMessagesStack.Children[1];
+                    Assert.AreEqual("No common message shown yet", commonOutput.Text);
+                    AssertDirectBindingPath(commonOutput, TextBlock.TextProperty, "ViewModel.CommonMessagesResult");
 
-                    AssertButtonResultExample((StackPanel)messageBoxExamples[5].ExampleContent, "Show with 'No' as default", "No selection made");
+                    var customDefaultStack = (StackPanel)messageBoxExamples[5].ExampleContent;
+                    AssertButtonResultExample(customDefaultStack, "Show with 'No' as default", "No selection made");
+                    AssertDirectBindingPath((TextBlock)customDefaultStack.Children[1], TextBlock.TextProperty, "ViewModel.CustomDefaultResult");
                 });
             });
         }
