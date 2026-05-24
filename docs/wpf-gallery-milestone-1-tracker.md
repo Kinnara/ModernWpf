@@ -103,6 +103,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.ToggleSwitchSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 14 tests per target. The generated ModernWpf ToggleSwitch page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\ToggleSwitchPage.xaml`: simple ToggleSwitch plus custom header/content ToggleSwitch with ProgressRing. `BasicInputSampleFactory.CreateExamples` now covers ToggleSwitch as a source-backed Basic Input WinUI extension page, exposes curated automation IDs `GallerySample_ToggleSwitch_Root` and `GallerySample_ToggleSwitch_ToggleSwitch`, and keeps WinUI's `ToggleSwitch2` sample name. The WPF adaptation clears ModernWpf's default On/Off content and overrides the first sample min width so the live crop matches WinUI's contentless resting switch. Current warning/output remains `NU1903`, generated WinRT warnings when regeneration is triggered, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls ToggleSwitch -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-133843-637-110936/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, primary crops match at `72x40`, and ToggleSwitch Light primary delta is `10.62`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls ToggleSwitch -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-133907-232-112612/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, primary crops match at `72x40`, and ToggleSwitch Dark primary delta is `12.74`. The visual harness now uses the WinUI reference name `simple ToggleSwitch` for the ToggleSwitch primary crop.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the ToggleSwitch WinUI example alignment and reference crop mapping. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages and ends with `0 Warning(s)` and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.AutoSuggestBoxSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 13 tests per target. The generated ModernWpf AutoSuggestBox page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\AutoSuggestBoxPage.xaml` / `.xaml.cs`: the basic cat-breed suggestions example and the search-box experience example that queries the gallery catalog. `TextSampleFactory.CreateExamples` now hosts both source-backed Text WinUI pages aligned so far, exposes curated automation IDs `GallerySample_AutoSuggestBox_Root` and `GallerySample_AutoSuggestBox_AutoSuggestBox`, and keeps WinUI's `Control1`, `Control2`, `SuggestionOutput`, `ControlDetails`, and `ControlImage` sample names. Current warning/output remains `NU1903`, generated WinRT warnings when regeneration is triggered, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls AutoSuggestBox -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -1287,6 +1295,25 @@ Dark, both with ModernWpf and installed WinUI 3 Gallery `Passed`, matching
 uses the WinUI reference automation ID `myListButton` for the primary crop.
 Avoid reopening ToggleSplitButton's source shape unless a new WinUI source or
 crop regression appears.
+The generated ModernWpf ToggleSwitch extension page now uses the local official
+WinUI Gallery two-example structure from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\ToggleSwitchPage.xaml`:
+a simple ToggleSwitch and a custom header/content ToggleSwitch paired with a
+ProgressRing. `BasicInputSampleFactory.CreateExamples` now covers ToggleSwitch
+as a source-backed Basic Input WinUI example, keeps WinUI's inline source code
+strings and `ToggleSwitch2` sample name, and uses a WPF event link to keep the
+ProgressRing active state synchronized with the second switch. The first sample
+clears ModernWpf's default `On` / `Off` content and overrides the theme
+`MinWidth` because the WinUI reference's contentless resting switch crops at
+`72x40`; without that WPF adaptation ModernWpf measures the same sample at
+`154x40`. Current ToggleSwitch WinUI-reference evidence is
+`artifacts/visual-checks/20260524-133843-637-110936/report.md` for Light and
+`artifacts/visual-checks/20260524-133907-232-112612/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`, matching `72x40`
+primary crops, and primary deltas `10.62` / `12.74`. The visual harness uses
+the WinUI reference name `simple ToggleSwitch` for the primary crop. Avoid
+reopening ToggleSwitch's source shape unless a new WinUI source or crop
+regression appears.
 The generated ModernWpf NumberBox extension page now uses the local official
 WinUI Gallery three-example structure from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\NumberBoxPage.xaml`:

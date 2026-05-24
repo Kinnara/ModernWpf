@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "DropDownButton", "SplitButton", "ToggleSplitButton", "NumberBox", "AutoSuggestBox", "InfoBar", "NavigationView", "ContentDialog", "MenuBar", "CommandBar", "CommandBarFlyout"),
+    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "InfoBar", "NavigationView", "ContentDialog", "MenuBar", "CommandBar", "CommandBarFlyout"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -427,6 +427,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "DropDownButton" { return "GallerySample_DropDownButton_DropDownButton" }
         "SplitButton" { return "GallerySample_SplitButton_SplitButton" }
         "ToggleSplitButton" { return "GallerySample_ToggleSplitButton_ToggleSplitButton" }
+        "ToggleSwitch" { return "GallerySample_ToggleSwitch_ToggleSwitch" }
         "NumberBox" { return "GallerySample_NumberBox_SpinButtonNumberBox" }
         "AutoSuggestBox" { return "GallerySample_AutoSuggestBox_AutoSuggestBox" }
         "InfoBar" { return "GallerySample_InfoBar_InfoBar" }
@@ -457,6 +458,7 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
         "DropDownButton" { return "GallerySample_DropDownButton_DropDownButton" }
         "SplitButton" { return "GallerySample_SplitButton_SplitButton" }
         "ToggleSplitButton" { return "GallerySample_ToggleSplitButton_ToggleSplitButton" }
+        "ToggleSwitch" { return "GallerySample_ToggleSwitch_ToggleSwitch" }
         "NumberBox" { return "GallerySample_NumberBox_SpinButtonNumberBox" }
         "AutoSuggestBox" { return "GallerySample_AutoSuggestBox_AutoSuggestBox" }
         "MenuBar" { return "GallerySample_MenuBar_MenuBar" }
@@ -488,6 +490,7 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
 function Get-ReferencePrimaryName([string]$control) {
     switch ($control) {
         "DropDownButton" { return "Email" }
+        "ToggleSwitch" { return "simple ToggleSwitch" }
         default { return "" }
     }
 }

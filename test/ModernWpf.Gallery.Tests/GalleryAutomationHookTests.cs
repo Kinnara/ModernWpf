@@ -31,6 +31,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "DropDownButton", "GallerySample_DropDownButton_Root", "GallerySample_DropDownButton_DropDownButton" };
             yield return new object[] { "SplitButton", "GallerySample_SplitButton_Root", "GallerySample_SplitButton_SplitButton" };
             yield return new object[] { "ToggleSplitButton", "GallerySample_ToggleSplitButton_Root", "GallerySample_ToggleSplitButton_ToggleSplitButton" };
+            yield return new object[] { "ToggleSwitch", "GallerySample_ToggleSwitch_Root", "GallerySample_ToggleSwitch_ToggleSwitch" };
             yield return new object[] { "NumberBox", "GallerySample_NumberBox_Root", "GallerySample_NumberBox_SpinButtonNumberBox" };
             yield return new object[] { "AutoSuggestBox", "GallerySample_AutoSuggestBox_Root", "GallerySample_AutoSuggestBox_AutoSuggestBox" };
             yield return new object[] { "MenuBar", "GallerySample_MenuBar_Root", "GallerySample_MenuBar_MenuBar" };
@@ -595,6 +596,76 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsTrue(toggleSplitButton.IsChecked);
                     Assert.AreEqual(Mux.Symbol.Bullets, symbolIcon.Symbol);
                     Assert.AreEqual("Roman Numerals", AutomationProperties.GetName(toggleSplitButton));
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void ToggleSwitchSampleMatchesWinUIGalleryExamples()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("ToggleSwitch"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(2, page.Examples.Count);
+                    Assert.AreEqual("A simple ToggleSwitch.", page.Examples[0].HeaderText);
+                    Assert.AreEqual("A ToggleSwitch with custom header and content.", page.Examples[1].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    Assert.AreEqual("<ToggleSwitch AutomationProperties.Name=\"simple ToggleSwitch\"/>", page.Examples[0].XamlCode);
+                    StringAssert.Contains(page.Examples[1].XamlCode, "Header=\"Toggle work\"");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "OffContent=\"Do work\"");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "OnContent=\"Working\"");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "ProgressRing");
+                    Assert.IsNull(page.Examples[0].CSharpCode);
+                    Assert.IsNull(page.Examples[1].CSharpCode);
+
+                    var simpleToggle = (Mux.ToggleSwitch)FindByAutomationId(page, "GallerySample_ToggleSwitch_ToggleSwitch");
+                    var workToggle = (Mux.ToggleSwitch)FindByAutomationId(page, "GallerySample_ToggleSwitch_WorkToggleSwitch");
+                    var progressRing = FindNamedDescendant<Mux.ProgressRing>(page, "ToggleSwitchProgressRing");
+                    Assert.IsNotNull(simpleToggle);
+                    Assert.IsNotNull(workToggle);
+                    Assert.IsNotNull(progressRing);
+
+                    Assert.AreEqual("simple ToggleSwitch", AutomationProperties.GetName(simpleToggle));
+                    Assert.AreEqual(72.0, simpleToggle.Width);
+                    Assert.AreEqual(0.0, simpleToggle.MinWidth);
+                    Assert.IsFalse(simpleToggle.IsOn);
+                    Assert.AreEqual(string.Empty, simpleToggle.OffContent);
+                    Assert.AreEqual(string.Empty, simpleToggle.OnContent);
+                    Assert.AreEqual("ToggleSwitch2", workToggle.Name);
+                    Assert.AreEqual("Toggle work", workToggle.Header);
+                    Assert.IsTrue(workToggle.IsOn);
+                    Assert.AreEqual("Do work", workToggle.OffContent);
+                    Assert.AreEqual("Working", workToggle.OnContent);
+                    Assert.AreEqual(32.0, progressRing.Width);
+                    Assert.IsTrue(progressRing.IsActive);
+
+                    workToggle.IsOn = false;
+                    WpfTestHost.DoEvents();
+                    Assert.IsFalse(progressRing.IsActive);
                 }
                 finally
                 {

@@ -17,6 +17,15 @@ namespace ModernWpf.Gallery.Pages
     {
         private const double SwatchSize = 32;
 
+        private const string ToggleSwitchSimpleXaml =
+@"<ToggleSwitch AutomationProperties.Name=""simple ToggleSwitch""/>";
+
+        private const string ToggleSwitchWithProgressXaml =
+@"<StackPanel Orientation=""Horizontal"">
+    <ToggleSwitch Header=""Toggle work"" OffContent=""Do work"" OnContent=""Working"" IsOn=""$(isOn)$(isOff)"" />
+    <ProgressRing IsActive=""{x:Bind ToggleSwitch2.IsOn, Mode=OneWay}"" Width=""32""/>
+</StackPanel>";
+
         public static IReadOnlyList<GalleryExample> CreateExamples(string uniqueId, IReadOnlyList<SampleSnippet> sampleSnippets)
         {
             switch (uniqueId)
@@ -27,6 +36,8 @@ namespace ModernWpf.Gallery.Pages
                     return CreateSplitButtonExamples(sampleSnippets);
                 case "ToggleSplitButton":
                     return CreateToggleSplitButtonExamples(sampleSnippets);
+                case "ToggleSwitch":
+                    return CreateToggleSwitchExamples();
                 default:
                     return Array.Empty<GalleryExample>();
             }
@@ -647,15 +658,83 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateToggleSwitchSample()
         {
-            var panel = CreateSamplePanel("ToggleSwitch is a touch-friendly binary setting.");
-            panel.Children.Add(new Mux.ToggleSwitch
+            var panel = new GallerySamplePanel
             {
-                Header = "Notifications",
-                OffContent = "Off",
-                OnContent = "On",
+                Margin = new Thickness(0, 0, 0, 12)
+            };
+            GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("ToggleSwitch"));
+            panel.Children.Add(CreateSimpleToggleSwitch(assignRootAutomationId: false));
+            return panel;
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateToggleSwitchExamples()
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "A simple ToggleSwitch.",
+                    CreateSimpleToggleSwitch(assignRootAutomationId: true),
+                    ToggleSwitchSimpleXaml,
+                    null),
+                new GalleryExample(
+                    "A ToggleSwitch with custom header and content.",
+                    CreateToggleSwitchWithProgressRing(),
+                    ToggleSwitchWithProgressXaml,
+                    null)
+            };
+        }
+
+        private static GallerySamplePanel CreateSimpleToggleSwitch(bool assignRootAutomationId)
+        {
+            var panel = new GallerySamplePanel();
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("ToggleSwitch"));
+            }
+
+            var toggleSwitch = new Mux.ToggleSwitch
+            {
+                Width = 72,
+                MinWidth = 0,
+                OffContent = string.Empty,
+                OnContent = string.Empty
+            };
+            AutomationProperties.SetName(toggleSwitch, "simple ToggleSwitch");
+            GalleryAutomation.WithAutomationId(toggleSwitch, GalleryAutomation.SampleElementId("ToggleSwitch", "ToggleSwitch"));
+            panel.Children.Add(toggleSwitch);
+            return panel;
+        }
+
+        private static StackPanel CreateToggleSwitchWithProgressRing()
+        {
+            var panel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal
+            };
+
+            var toggleSwitch = new Mux.ToggleSwitch
+            {
+                Name = "ToggleSwitch2",
+                Header = "Toggle work",
                 IsOn = true,
-                HorizontalAlignment = HorizontalAlignment.Left
-            });
+                OffContent = "Do work",
+                OnContent = "Working"
+            };
+            GalleryAutomation.WithAutomationId(toggleSwitch, GalleryAutomation.SampleElementId("ToggleSwitch", "WorkToggleSwitch"));
+
+            var progressRing = new Mux.ProgressRing
+            {
+                Name = "ToggleSwitchProgressRing",
+                Width = 32,
+                IsActive = toggleSwitch.IsOn
+            };
+            toggleSwitch.Toggled += delegate
+            {
+                progressRing.IsActive = toggleSwitch.IsOn;
+            };
+
+            panel.Children.Add(toggleSwitch);
+            panel.Children.Add(progressRing);
             return panel;
         }
 
