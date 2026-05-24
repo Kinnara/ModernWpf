@@ -124,8 +124,8 @@
                     Margin="8,0"
                     VerticalAlignment="Center"
                     AutomationProperties.Name="Back"
-                    Click="BackButton_Click"
-                    IsEnabled="False"
+                    Command="{Binding ViewModel.BackCommand}"
+                    IsEnabled="{Binding ViewModel.CanNavigateback}"
                     Style="{StaticResource GalleryTitleBarButtonStyle}"
                     ToolTipService.ToolTip="Back"
                     winShell:WindowChrome.IsHitTestVisibleInChrome="True">

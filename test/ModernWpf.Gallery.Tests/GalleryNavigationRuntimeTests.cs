@@ -353,7 +353,17 @@ namespace ModernWpf.Gallery.Tests
 
                     var backButton = (Button)window.FindName("BackButton");
                     Assert.AreEqual("Back", AutomationProperties.GetName(backButton));
+                    Assert.AreSame(window.ViewModel.BackCommand, backButton.Command);
+                    Assert.AreEqual("ViewModel.BackCommand",
+                        BindingOperations.GetBindingExpression(backButton, System.Windows.Controls.Primitives.ButtonBase.CommandProperty)?.ParentBinding.Path.Path);
+                    Assert.AreEqual("ViewModel.CanNavigateback",
+                        BindingOperations.GetBindingExpression(backButton, UIElement.IsEnabledProperty)?.ParentBinding.Path.Path);
+                    Assert.IsFalse(window.ViewModel.CanNavigateback);
                     Assert.IsFalse(backButton.IsEnabled);
+                    window.SetBackButtonVisible(true);
+                    WpfTestHost.DoEvents();
+                    Assert.IsTrue(window.ViewModel.CanNavigateback);
+                    Assert.IsTrue(backButton.IsEnabled);
 
                     var titleText = (TextBlock)window.FindName("TitleText");
                     Assert.AreEqual("WPF Gallery", titleText.Text);

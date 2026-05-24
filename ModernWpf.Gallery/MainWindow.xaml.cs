@@ -12,10 +12,11 @@ namespace ModernWpf.Gallery
     {
         private static readonly Version OSVersion = GetOSVersion();
 
-        public MainWindowViewModel ViewModel { get; } = new MainWindowViewModel();
+        public MainWindowViewModel ViewModel { get; }
 
         public MainWindow()
         {
+            ViewModel = new MainWindowViewModel(GoBack);
             DataContext = this;
             InitializeComponent();
             ConfigureWindowChrome();
@@ -27,14 +28,14 @@ namespace ModernWpf.Gallery
             Closed += OnClosed;
         }
 
-        private void BackButton_Click(object sender, RoutedEventArgs e)
+        private void GoBack()
         {
             RootPage.GoBack();
         }
 
         internal void SetBackButtonVisible(bool canGoBack)
         {
-            BackButton.IsEnabled = canGoBack;
+            ViewModel.CanNavigateback = canGoBack;
         }
 
         internal void NavigateTo(string uniqueId)
