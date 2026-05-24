@@ -86,7 +86,7 @@
                             Margin="0,0,0,10"
                             Click="CopyToClipboard_Click"
                             Content="Copy to Clipboard" />
-                        <TextBlock Text="{Binding ViewModel.CopyStatus, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:ClipboardPage}}" TextWrapping="Wrap" />
+                        <TextBlock Text="{Binding ViewModel.CopyStatus}" TextWrapping="Wrap" />
                     </StackPanel>
                 </controls:ControlExample>
 
@@ -111,7 +111,7 @@
                             HorizontalAlignment="Left"
                             AutomationProperties.Name="Paste content textbox"
                             IsReadOnly="True"
-                            Text="{Binding ViewModel.PastedText, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:ClipboardPage}, Mode=TwoWay}"
+                            Text="{Binding ViewModel.PastedText, Mode=TwoWay}"
                             TextWrapping="Wrap" />
                     </StackPanel>
                 </controls:ControlExample>
@@ -126,7 +126,7 @@
                             Margin="0,0,0,10"
                             Click="ClearClipboard_Click"
                             Content="Clear Clipboard" />
-                        <TextBlock Text="{Binding ViewModel.ClearStatus, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:ClipboardPage}}" TextWrapping="Wrap" />
+                        <TextBlock Text="{Binding ViewModel.ClearStatus}" TextWrapping="Wrap" />
                     </StackPanel>
                 </controls:ControlExample>
 
@@ -140,7 +140,7 @@
                             Margin="0,0,0,10"
                             Click="CheckFormats_Click"
                             Content="Check Clipboard Formats" />
-                        <TextBlock Text="{Binding ViewModel.FormatsInfo, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:ClipboardPage}}" TextWrapping="Wrap" />
+                        <TextBlock Text="{Binding ViewModel.FormatsInfo}" TextWrapping="Wrap" />
                     </StackPanel>
                 </controls:ControlExample>
 
@@ -161,7 +161,7 @@
                             Margin="0,0,0,10"
                             Click="CopyImageToClipboard_Click"
                             Content="Copy Image to Clipboard" />
-                        <TextBlock Text="{Binding ViewModel.CopyImageStatus, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:ClipboardPage}}" TextWrapping="Wrap" />
+                        <TextBlock Text="{Binding ViewModel.CopyImageStatus}" TextWrapping="Wrap" />
                     </StackPanel>
                 </controls:ControlExample>
 
@@ -192,7 +192,7 @@
                         </Border>
                         <TextBlock
                             Margin="0,10,0,0"
-                            Text="{Binding ViewModel.PasteImageStatus, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:ClipboardPage}}"
+                            Text="{Binding ViewModel.PasteImageStatus}"
                             TextWrapping="Wrap" />
                     </StackPanel>
                 </controls:ControlExample>

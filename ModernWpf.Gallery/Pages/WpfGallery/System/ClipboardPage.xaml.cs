@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
@@ -24,7 +23,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
             if (!string.IsNullOrEmpty(text))
             {
                 Clipboard.SetText(text);
-                ViewModel.CopyStatus = "Copied \"" + text + "\" to clipboard!";
+                ViewModel.CopyStatus = $"Copied \"{text}\" to clipboard!";
             }
             else
             {
@@ -34,31 +33,37 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
 
         private void PasteFromClipboard_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.PastedText = Clipboard.ContainsText() ? Clipboard.GetText() : "(No text in clipboard)";
+            if (Clipboard.ContainsText())
+            {
+                ViewModel.PastedText = Clipboard.GetText();
+            }
+            else
+            {
+                ViewModel.PastedText = "(No text in clipboard)";
+            }
         }
 
         private void ClearClipboard_Click(object sender, RoutedEventArgs e)
         {
             Clipboard.Clear();
             ViewModel.ClearStatus = "Clipboard cleared!";
-            ViewModel.PastedText = string.Empty;
+            ViewModel.PastedText = "";
         }
 
         private void CheckFormats_Click(object sender, RoutedEventArgs e)
         {
-            var formats = new StringBuilder();
+            var formats = new System.Text.StringBuilder();
             formats.AppendLine("Clipboard contains:");
-            formats.AppendLine("  - Text: " + Clipboard.ContainsText());
-            formats.AppendLine("  - Image: " + Clipboard.ContainsImage());
-            formats.AppendLine("  - File Drop List: " + Clipboard.ContainsFileDropList());
-            formats.AppendLine("  - Audio: " + Clipboard.ContainsAudio());
+            formats.AppendLine($"  • Text: {Clipboard.ContainsText()}");
+            formats.AppendLine($"  • Image: {Clipboard.ContainsImage()}");
+            formats.AppendLine($"  • File Drop List: {Clipboard.ContainsFileDropList()}");
+            formats.AppendLine($"  • Audio: {Clipboard.ContainsAudio()}");
             ViewModel.FormatsInfo = formats.ToString();
         }
 
         private void CopyImageToClipboard_Click(object sender, RoutedEventArgs e)
         {
-            var bitmapSource = SourceImage.Source as BitmapSource;
-            if (bitmapSource != null)
+            if (SourceImage.Source is BitmapSource bitmapSource)
             {
                 Clipboard.SetImage(bitmapSource);
                 ViewModel.CopyImageStatus = "Image copied to clipboard!";
@@ -73,10 +78,10 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
         {
             if (Clipboard.ContainsImage())
             {
-                var image = Clipboard.GetImage();
+                BitmapSource image = Clipboard.GetImage();
                 PastedImage.Source = image;
                 PastedImage.Visibility = Visibility.Visible;
-                ViewModel.PasteImageStatus = "Image pasted! Size: " + image.PixelWidth + "x" + image.PixelHeight;
+                ViewModel.PasteImageStatus = $"Image pasted! Size: {image.PixelWidth}x{image.PixelHeight}";
             }
             else
             {

@@ -1619,7 +1619,9 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(HorizontalAlignment.Left, copyTextBox.HorizontalAlignment);
                     Assert.AreEqual("Copy To Clipboard TextBox", AutomationProperties.GetName(copyTextBox));
                     Assert.AreEqual("Copy to Clipboard", ((Button)copyClipboardStack.Children[1]).Content);
-                    Assert.AreEqual(string.Empty, ((TextBlock)copyClipboardStack.Children[2]).Text);
+                    var copyStatusText = (TextBlock)copyClipboardStack.Children[2];
+                    Assert.AreEqual(string.Empty, copyStatusText.Text);
+                    AssertDirectBindingPath(copyStatusText, TextBlock.TextProperty, "ViewModel.CopyStatus");
 
                     var pasteClipboardStack = (StackPanel)clipboardExamples[1].ExampleContent;
                     Assert.AreEqual("Paste from Clipboard", ((Button)pasteClipboardStack.Children[0]).Content);
@@ -1631,9 +1633,15 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(60.0, pasteTextBox.MinHeight);
                     Assert.AreEqual(300.0, pasteTextBox.Width);
                     Assert.AreEqual("Paste content textbox", AutomationProperties.GetName(pasteTextBox));
+                    AssertDirectBindingPath(pasteTextBox, TextBox.TextProperty, "ViewModel.PastedText", BindingMode.TwoWay);
 
-                    AssertButtonResultExample((StackPanel)clipboardExamples[2].ExampleContent, "Clear Clipboard", string.Empty);
-                    AssertButtonResultExample((StackPanel)clipboardExamples[3].ExampleContent, "Check Clipboard Formats", string.Empty);
+                    var clearClipboardStack = (StackPanel)clipboardExamples[2].ExampleContent;
+                    AssertButtonResultExample(clearClipboardStack, "Clear Clipboard", string.Empty);
+                    AssertDirectBindingPath((TextBlock)clearClipboardStack.Children[1], TextBlock.TextProperty, "ViewModel.ClearStatus");
+
+                    var formatsClipboardStack = (StackPanel)clipboardExamples[3].ExampleContent;
+                    AssertButtonResultExample(formatsClipboardStack, "Check Clipboard Formats", string.Empty);
+                    AssertDirectBindingPath((TextBlock)formatsClipboardStack.Children[1], TextBlock.TextProperty, "ViewModel.FormatsInfo");
 
                     var copyImageStack = (StackPanel)clipboardExamples[4].ExampleContent;
                     var sourceImage = (Image)copyImageStack.Children[0];
@@ -1644,6 +1652,7 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsInstanceOfType(sourceImage.Source, typeof(BitmapSource));
                     StringAssert.Contains(sourceImage.Source.ToString(), "ControlImages/Clipboard.png");
                     Assert.AreEqual("Copy Image to Clipboard", ((Button)copyImageStack.Children[1]).Content);
+                    AssertDirectBindingPath((TextBlock)copyImageStack.Children[2], TextBlock.TextProperty, "ViewModel.CopyImageStatus");
 
                     var pasteImageStack = (StackPanel)clipboardExamples[5].ExampleContent;
                     Assert.AreEqual("Paste Image from Clipboard", ((Button)pasteImageStack.Children[0]).Content);
@@ -1657,6 +1666,7 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual("PastedImage", pastedImage.Name);
                     Assert.AreEqual(Stretch.Uniform, pastedImage.Stretch);
                     Assert.AreEqual(Visibility.Collapsed, pastedImage.Visibility);
+                    AssertDirectBindingPath((TextBlock)pasteImageStack.Children[3], TextBlock.TextProperty, "ViewModel.PasteImageStatus");
                 });
 
                 var dialogsPage = new ItemPage(GalleryCatalog.FindItem("FileAndFolderDialogs"));
@@ -3126,6 +3136,24 @@ namespace ModernWpf.Gallery.Tests
             if (expectedPath != null)
             {
                 Assert.AreEqual(expectedPath, binding.Path.Path);
+            }
+        }
+
+        private static void AssertDirectBindingPath(
+            DependencyObject target,
+            DependencyProperty property,
+            string expectedPath,
+            BindingMode? expectedMode = null)
+        {
+            var binding = BindingOperations.GetBinding(target, property);
+            Assert.IsNotNull(binding);
+            Assert.AreEqual(expectedPath, binding.Path.Path);
+            Assert.IsNull(binding.RelativeSource);
+            Assert.IsNull(binding.ElementName);
+            Assert.IsNull(binding.Source);
+            if (expectedMode.HasValue)
+            {
+                Assert.AreEqual(expectedMode.Value, binding.Mode);
             }
         }
 
