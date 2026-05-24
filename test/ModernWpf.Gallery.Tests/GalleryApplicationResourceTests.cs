@@ -70,6 +70,7 @@ namespace ModernWpf.Gallery.Tests
 
                 AssertSolidColorBrush(app, "SystemFillColorAttentionBrush", Color.FromRgb(0x00, 0x78, 0xD4));
                 AssertSolidColorBrush(app, "SurfaceStrokeColorDefaultBrush", Color.FromArgb(0x66, 0x75, 0x75, 0x75));
+                AssertGalleryControlElevationBorderBrush(app);
 
                 var galleryRootStyle = (Style)app.FindResource("GalleryPageRootStyle");
                 AssertDynamicResourceSetter(galleryRootStyle, Panel.BackgroundProperty, "SolidBackgroundFillColorTertiaryBrush");
@@ -571,6 +572,44 @@ namespace ModernWpf.Gallery.Tests
             var brush = app.FindResource(resourceKey) as SolidColorBrush;
             Assert.IsNotNull(brush, resourceKey);
             Assert.AreEqual(expectedColor, brush.Color, resourceKey);
+        }
+
+        private static void AssertGalleryControlElevationBorderBrush(Application app)
+        {
+            var originalTheme = ThemeManager.Current.ApplicationTheme;
+
+            try
+            {
+                ThemeManager.Current.ApplicationTheme = ApplicationTheme.Light;
+                WpfTestHost.DoEvents();
+                AssertControlElevationBorderBrush(
+                    app,
+                    Color.FromArgb(0x29, 0x00, 0x00, 0x00),
+                    Color.FromArgb(0x0F, 0x00, 0x00, 0x00));
+            }
+            finally
+            {
+                ThemeManager.Current.ApplicationTheme = originalTheme;
+            }
+        }
+
+        private static void AssertControlElevationBorderBrush(
+            Application app,
+            Color expectedSecondary,
+            Color expectedDefault)
+        {
+            var brush = app.FindResource("ControlElevationBorderBrush") as LinearGradientBrush;
+            Assert.IsNotNull(brush);
+            Assert.AreEqual(BrushMappingMode.Absolute, brush.MappingMode);
+            Assert.AreEqual(new Point(0, 0), brush.StartPoint);
+            Assert.AreEqual(new Point(0, 3), brush.EndPoint);
+            Assert.IsFalse(brush.RelativeTransform is ScaleTransform);
+            Assert.AreEqual(2, brush.GradientStops.Count);
+
+            Assert.AreEqual(0.33, brush.GradientStops[0].Offset, 0.001);
+            Assert.AreEqual(expectedSecondary, brush.GradientStops[0].Color);
+            Assert.AreEqual(1.0, brush.GradientStops[1].Offset, 0.001);
+            Assert.AreEqual(expectedDefault, brush.GradientStops[1].Color);
         }
 
         private static void AssertStyleSetter(Style style, DependencyProperty property, object value)

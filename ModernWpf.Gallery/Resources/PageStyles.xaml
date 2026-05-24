@@ -16,6 +16,10 @@
 
     <SolidColorBrush x:Key="SystemFillColorAttentionBrush" Color="#0078D4" />
     <SolidColorBrush x:Key="SurfaceStrokeColorDefaultBrush" Color="#66757575" />
+    <LinearGradientBrush x:Key="ControlElevationBorderBrush" MappingMode="Absolute" StartPoint="0,0" EndPoint="0,3">
+        <GradientStop Offset="0.33" Color="{DynamicResource ControlStrokeColorSecondary}" />
+        <GradientStop Offset="1.0" Color="{DynamicResource ControlStrokeColorDefault}" />
+    </LinearGradientBrush>
 
     <ImageBrush x:Key="p64" ImageSource="pack://application:,,,/ModernWpf.Gallery;component/Assets/UserDashboard/64-100x100.jpg" />
     <ImageBrush x:Key="p65" ImageSource="pack://application:,,,/ModernWpf.Gallery;component/Assets/UserDashboard/65-100x100.jpg" />
