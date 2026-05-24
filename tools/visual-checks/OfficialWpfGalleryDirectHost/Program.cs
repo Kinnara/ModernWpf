@@ -82,7 +82,7 @@ internal static class Program
         {
             ApplyTheme(app, options.Theme);
             window.Dispatcher.BeginInvoke(
-                DispatcherPriority.ContextIdle,
+                DispatcherPriority.ApplicationIdle,
                 new Action(() => WriteVisualArtifact(frame, options.ArtifactDirectory)));
         };
 
@@ -186,6 +186,12 @@ internal static class Program
             "AllControls" => new AllSamplesPage(new AllSamplesPageViewModel(new NullNavigationService())),
             "DesignGuidance" => new DesignGuidancePage(new DesignGuidancePageViewModel(new NullNavigationService())),
             "Color" => new ColorsPage(new ColorsPageViewModel()),
+            "ColorText" => CreateColorPage("Text"),
+            "ColorFill" => CreateColorPage("Fill"),
+            "ColorStroke" => CreateColorPage("Stroke"),
+            "ColorBackground" => CreateColorPage("Background"),
+            "ColorSignal" => CreateColorPage("Signal"),
+            "ColorHighContrast" => CreateColorPage("HighContrast"),
             "Typography" => new TypographyPage(new TypographyPageViewModel()),
             "Spacing" => new SpacingPage(new SpacingPageViewModel()),
             "Geometry" => new GeometryPage(new GeometryPageViewModel()),
@@ -238,6 +244,57 @@ internal static class Program
             "Image" => new ImagePage(new ImagePageViewModel()),
             _ => throw new ArgumentOutOfRangeException(nameof(page), page, "Unsupported direct reference page.")
         };
+    }
+
+    private static ColorsPage CreateColorPage(string subpage)
+    {
+        var page = new ColorsPage(new ColorsPageViewModel());
+        page.Loaded += (_, _) =>
+        {
+            page.Dispatcher.BeginInvoke(
+                DispatcherPriority.ContextIdle,
+                new Action(() => SelectColorSubpage(page, subpage)));
+        };
+        return page;
+    }
+
+    private static void SelectColorSubpage(Page page, string subpage)
+    {
+        if (FindColorSelector(page) is not { } selector)
+        {
+            return;
+        }
+
+        foreach (var item in selector.Items)
+        {
+            if (string.Equals(item as string, subpage, StringComparison.OrdinalIgnoreCase))
+            {
+                selector.SelectedItem = item;
+                return;
+            }
+        }
+    }
+
+    private static ComboBox? FindColorSelector(DependencyObject root)
+    {
+        if (root is ComboBox comboBox &&
+            (comboBox.Name == "PageSelector" ||
+                AutomationProperties.GetName(comboBox) == "Page Selector"))
+        {
+            return comboBox;
+        }
+
+        var childCount = VisualTreeHelper.GetChildrenCount(root);
+        for (var i = 0; i < childCount; i++)
+        {
+            var result = FindColorSelector(VisualTreeHelper.GetChild(root, i));
+            if (result is not null)
+            {
+                return result;
+            }
+        }
+
+        return null;
     }
 
     private static DataGridPage CreateDataGridPage()

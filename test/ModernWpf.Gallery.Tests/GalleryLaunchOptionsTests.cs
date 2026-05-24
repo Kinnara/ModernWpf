@@ -24,6 +24,7 @@ namespace ModernWpf.Gallery.Tests
                 "--open-interactions",
                 "--route", "category/DialogsAndFlyouts",
                 "--theme=Dark",
+                "--color-subpage", "HighContrast",
                 "--visual-artifact-dir", "artifacts/visual-checks/run"
             });
 
@@ -31,6 +32,7 @@ namespace ModernWpf.Gallery.Tests
             Assert.IsTrue(options.OpenInteractions);
             Assert.AreEqual("category/DialogsAndFlyouts", options.InitialRoute);
             Assert.AreEqual("Dark", options.Theme);
+            Assert.AreEqual("HighContrast", options.ColorSubpage);
             Assert.AreEqual("artifacts/visual-checks/run", options.ArtifactDirectory);
         }
     }

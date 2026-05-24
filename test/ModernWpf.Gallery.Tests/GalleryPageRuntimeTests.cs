@@ -2215,6 +2215,42 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void ColorPageVisualTestCanOpenWpfGalleryHighContrastSubsection()
+        {
+            WpfTestHost.Run(() =>
+            {
+                try
+                {
+                    GalleryDiagnostics.Configure(GalleryLaunchOptions.Parse(new[]
+                    {
+                        "--visual-test",
+                        "--color-subpage",
+                        "HighContrast"
+                    }));
+
+                    var page = new ColorPage(new ColorsPageViewModel());
+                    var selector = (ComboBox)page.FindName("PageSelector");
+                    var sectionHost = (ContentControl)page.FindName("ColorSubpageNavigationFrame");
+
+                    selector.RaiseEvent(new RoutedEventArgs(FrameworkElement.LoadedEvent, selector));
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual("HighContrast", selector.SelectedItem);
+                    Assert.AreEqual("HighContrastSection", sectionHost.Content.GetType().Name);
+                    var highContrastSection = GetColorSectionStack(sectionHost.Content);
+                    Assert.AreEqual(9, highContrastSection.Children.Count);
+                    Assert.AreEqual(14.0, ((TextBlock)highContrastSection.Children[0]).FontSize);
+                    Assert.AreEqual("Aquatic", ((TextBlock)highContrastSection.Children[1]).Text);
+                    Assert.AreEqual("Night Sky", ((TextBlock)highContrastSection.Children[7]).Text);
+                }
+                finally
+                {
+                    GalleryDiagnostics.ResetForTests();
+                }
+            });
+        }
+
+        [TestMethod]
         public void IconographyPageUsesWpfGalleryIconLibraryLayout()
         {
             WpfTestHost.Run(() =>

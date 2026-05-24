@@ -1,5 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
+using ModernWpf.Gallery.Testing;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 {
@@ -16,12 +18,30 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            PageSelector.SelectedItem = PageSelector.Items[0];
+            PageSelector.SelectedItem = ResolveInitialSubpage();
         }
 
         private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ColorSubpageNavigationFrame.Navigate(WpfGalleryColorSectionFactory.Create(PageSelector.SelectedIndex));
+            var section = WpfGalleryColorSectionFactory.Create(PageSelector.SelectedIndex);
+            section.SetResourceReference(TextElement.FontSizeProperty, "BodyTextBlockFontSize");
+            ColorSubpageNavigationFrame.Navigate(section);
+        }
+
+        private object ResolveInitialSubpage()
+        {
+            if (GalleryDiagnostics.IsEnabled && !string.IsNullOrWhiteSpace(GalleryDiagnostics.ColorSubpage))
+            {
+                foreach (var item in PageSelector.Items)
+                {
+                    if (string.Equals(item as string, GalleryDiagnostics.ColorSubpage, System.StringComparison.OrdinalIgnoreCase))
+                    {
+                        return item;
+                    }
+                }
+            }
+
+            return PageSelector.Items[0];
         }
     }
 }

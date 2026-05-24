@@ -13,6 +13,7 @@ namespace ModernWpf.Gallery.Testing
         public string ArtifactDirectory { get; private set; }
         public string InitialRoute { get; private set; }
         public string Theme { get; private set; }
+        public string ColorSubpage { get; private set; }
 
         public static GalleryLaunchOptions Parse(string[] args)
         {
@@ -58,6 +59,12 @@ namespace ModernWpf.Gallery.Testing
                 if (TryReadValue(args, ref i, arg, "--theme", out var theme))
                 {
                     options.Theme = theme;
+                    continue;
+                }
+
+                if (TryReadValue(args, ref i, arg, "--color-subpage", out var colorSubpage))
+                {
+                    options.ColorSubpage = colorSubpage;
                     continue;
                 }
 

@@ -18,6 +18,7 @@ namespace ModernWpf.Gallery.Testing
         public static bool OpenInteractions { get; private set; }
         public static string ArtifactDirectory { get; private set; }
         public static string Theme { get; private set; }
+        public static string ColorSubpage { get; private set; }
         public static string CurrentRoute { get; private set; } = "home";
         public static string ReadyState { get; private set; } = "Starting";
         public static string LastException { get; private set; } = string.Empty;
@@ -35,6 +36,7 @@ namespace ModernWpf.Gallery.Testing
                 OpenInteractions = options.OpenInteractions;
                 ArtifactDirectory = options.ArtifactDirectory;
                 Theme = options.Theme;
+                ColorSubpage = options.ColorSubpage;
                 CurrentRoute = "home";
                 ReadyState = "Starting";
                 LastException = string.Empty;
@@ -49,6 +51,7 @@ namespace ModernWpf.Gallery.Testing
                 OpenInteractions = false;
                 ArtifactDirectory = null;
                 Theme = null;
+                ColorSubpage = null;
                 CurrentRoute = "home";
                 ReadyState = "Starting";
                 LastException = string.Empty;

@@ -36,11 +36,12 @@ if ([string]::IsNullOrWhiteSpace($OfficialDirectHostExe)) {
     $OfficialDirectHostExe = Join-Path $RepoRoot "tools\visual-checks\OfficialWpfGalleryDirectHost\bin\Debug\net10.0-windows\OfficialWpfGalleryDirectHost.exe"
 }
 
-function New-Case([string]$id, [string]$modernRoute, [string[]]$officialPath) {
+function New-Case([string]$id, [string]$modernRoute, [string[]]$officialPath, [string]$colorSubpage = "") {
     return [ordered]@{
         Id = $id
         ModernRoute = $modernRoute
         OfficialPath = $officialPath
+        ColorSubpage = $colorSubpage
     }
 }
 
@@ -50,6 +51,12 @@ $CaseCatalog = @(
     New-Case "AllControls" "AllControls" @("All Controls")
     New-Case "DesignGuidance" "category/DesignGuidance" @("Design Guidance")
     New-Case "Color" "item/Color" @("Design Guidance", "Colors")
+    New-Case "ColorText" "item/Color" @("Design Guidance", "Colors") "Text"
+    New-Case "ColorFill" "item/Color" @("Design Guidance", "Colors") "Fill"
+    New-Case "ColorStroke" "item/Color" @("Design Guidance", "Colors") "Stroke"
+    New-Case "ColorBackground" "item/Color" @("Design Guidance", "Colors") "Background"
+    New-Case "ColorSignal" "item/Color" @("Design Guidance", "Colors") "Signal"
+    New-Case "ColorHighContrast" "item/Color" @("Design Guidance", "Colors") "HighContrast"
     New-Case "Typography" "item/Typography" @("Design Guidance", "Typography")
     New-Case "Spacing" "item/Spacing" @("Design Guidance", "Spacing")
     New-Case "Geometry" "item/Geometry" @("Design Guidance", "Geometry")
@@ -108,6 +115,12 @@ $OfficialDirectReferenceCaseIds = @(
     "AllControls",
     "DesignGuidance",
     "Color",
+    "ColorText",
+    "ColorFill",
+    "ColorStroke",
+    "ColorBackground",
+    "ColorSignal",
+    "ColorHighContrast",
     "Typography",
     "Spacing",
     "Geometry",
@@ -1364,11 +1377,16 @@ function Compare-ImagesNormalized([string]$leftPath, [string]$rightPath, [int]$s
 function Capture-ModernWpf($case, [string]$caseDir) {
     $artifactDir = Join-Path $caseDir "modernwpf-artifacts"
     New-Item -ItemType Directory -Force -Path $artifactDir | Out-Null
-    $process = Start-AppProcess $ModernGalleryExe @(
+    $modernArgs = @(
         "--visual-test",
         "--route", $case.ModernRoute,
         "--theme", $Theme,
         "--visual-artifact-dir", $artifactDir)
+    if (![string]::IsNullOrWhiteSpace($case.ColorSubpage)) {
+        $modernArgs += @("--color-subpage", $case.ColorSubpage)
+    }
+
+    $process = Start-AppProcess $ModernGalleryExe $modernArgs
 
     try {
         $window = Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "ModernWpf Gallery window for $($case.Id)" -Probe {

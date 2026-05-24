@@ -57,7 +57,9 @@
                     <sys:String>HighContrast</sys:String>
                 </ComboBox>
 
-                <Frame x:Name="ColorSubpageNavigationFrame" />
+                <Frame
+                    x:Name="ColorSubpageNavigationFrame"
+                    TextElement.FontSize="{StaticResource BodyTextBlockFontSize}" />
             </StackPanel>
         </ScrollViewer>
     </Grid>
