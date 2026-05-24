@@ -141,6 +141,22 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
     }
 }";
 
+        private const string PivotBasicXaml =
+@"<Pivot Title=""EMAIL"">
+    <PivotItem Header=""All"">
+        <TextBlock Text=""all emails go here."" />
+    </PivotItem>
+    <PivotItem Header=""Unread"">
+        <TextBlock Text=""unread emails go here."" />
+    </PivotItem>
+    <PivotItem Header=""Flagged"">
+        <TextBlock Text=""flagged emails go here."" />
+    </PivotItem>
+    <PivotItem Header=""Urgent"">
+        <TextBlock Text=""urgent emails go here."" />
+    </PivotItem>
+</Pivot>";
+
         private static readonly string[] BreadcrumbFoldersString =
         {
             "Home",
@@ -195,6 +211,8 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             {
                 case "BreadcrumbBar":
                     return CreateBreadcrumbBarExamples();
+                case "Pivot":
+                    return CreatePivotExamples();
                 case "SelectorBar":
                     return CreateSelectorBarExamples();
                 default:
@@ -490,26 +508,51 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
 
         private static UIElement CreatePivotSample()
         {
-            var panel = CreateSamplePanel("Pivot maps to a styled WPF TabControl for switching between related views.");
-            var root = new StackPanel();
-            root.Children.Add(new TextBlock
+            var panel = new GallerySamplePanel
             {
-                Text = "EMAIL",
-                FontWeight = FontWeights.SemiBold,
-                Margin = new Thickness(0, 0, 0, 8)
-            });
-            var tabs = new TabControl
-            {
-                Width = 420,
-                Height = 220
+                Margin = new Thickness(0, 0, 0, 12)
             };
-            tabs.Items.Add(CreateTab("All", "all emails go here."));
-            tabs.Items.Add(CreateTab("Unread", "unread emails go here."));
-            tabs.Items.Add(CreateTab("Flagged", "flagged emails go here."));
-            tabs.Items.Add(CreateTab("Urgent", "urgent emails go here."));
-            root.Children.Add(tabs);
-            panel.Children.Add(root);
+            GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("Pivot"));
+            panel.Children.Add(CreatePivotBasicExampleContent(false));
             return panel;
+        }
+
+        private static IReadOnlyList<GalleryExample> CreatePivotExamples()
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "A basic pivot.",
+                    CreatePivotBasicExampleContent(true),
+                    PivotBasicXaml,
+                    null)
+            };
+        }
+
+        private static UIElement CreatePivotBasicExampleContent(bool assignRootAutomationId)
+        {
+            var root = new GallerySamplePanel();
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("Pivot"));
+            }
+
+            var pivot = new TabControl
+            {
+                Name = "Pivot1",
+                MinHeight = 400,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                Style = FindStyleResource("TabControlPivotStyle")
+            };
+            GalleryAutomation.WithAutomationId(pivot, GalleryAutomation.SampleElementId("Pivot", "Pivot"));
+            PivotHelper.SetTitle(pivot, "EMAIL");
+            pivot.Items.Add(CreatePivotItem("All", "all emails go here."));
+            pivot.Items.Add(CreatePivotItem("Unread", "unread emails go here."));
+            pivot.Items.Add(CreatePivotItem("Flagged", "flagged emails go here."));
+            pivot.Items.Add(CreatePivotItem("Urgent", "urgent emails go here."));
+            pivot.SelectedIndex = 0;
+            root.Children.Add(pivot);
+            return root;
         }
 
         private static UIElement CreateSelectorBarSample()
@@ -931,6 +974,25 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
                     }
                 }
             };
+        }
+
+        private static TabItem CreatePivotItem(string header, string text)
+        {
+            return new TabItem
+            {
+                Header = header,
+                Style = FindStyleResource("TabItemPivotStyle"),
+                Content = new TextBlock
+                {
+                    Text = text,
+                    TextWrapping = TextWrapping.Wrap
+                }
+            };
+        }
+
+        private static Style FindStyleResource(string key)
+        {
+            return Application.Current.TryFindResource(key) as Style;
         }
 
         private static StackPanel CreateSamplePanel(string description)

@@ -31,6 +31,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "ProgressRing", "GallerySample_ProgressRing_Root", "GallerySample_ProgressRing_ProgressRing" };
             yield return new object[] { "PipsPager", "GallerySample_PipsPager_Root", "GallerySample_PipsPager_PipsPager" };
             yield return new object[] { "BreadcrumbBar", "GallerySample_BreadcrumbBar_Root", "GallerySample_BreadcrumbBar_BreadcrumbBar" };
+            yield return new object[] { "Pivot", "GallerySample_Pivot_Root", "GallerySample_Pivot_Pivot" };
             yield return new object[] { "SelectorBar", "GallerySample_SelectorBar_Root", "GallerySample_SelectorBar_SelectorBar" };
             yield return new object[] { "NavigationView", "GallerySample_NavigationView_Root", "GallerySample_NavigationView_NavigationView" };
             yield return new object[] { "ContentDialog", "GallerySample_ContentDialog_Root", "GallerySample_ContentDialog_ShowButton" };
@@ -609,6 +610,59 @@ namespace ModernWpf.Gallery.Tests
                     selectorBar3.SelectedItem = selectorBar3.Items[2];
                     WpfTestHost.DoEvents();
                     Assert.AreEqual(4, CountItems(itemsView3.ItemsSource));
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void PivotSampleMatchesWinUIGalleryExample()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("Pivot"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(1, page.Examples.Count);
+                    Assert.AreEqual("A basic pivot.", page.Examples[0].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "<Pivot Title=\"EMAIL\">");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "<PivotItem Header=\"Unread\">");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "urgent emails go here.");
+
+                    var pivot = (TabControl)FindByAutomationId(page, "GallerySample_Pivot_Pivot");
+                    Assert.IsNotNull(pivot);
+                    Assert.AreEqual("Pivot1", pivot.Name);
+                    Assert.AreEqual("EMAIL", ModernWpf.Controls.Primitives.PivotHelper.GetTitle(pivot));
+                    Assert.AreEqual(400, pivot.MinHeight);
+                    Assert.AreSame(pivot.TryFindResource("TabControlPivotStyle"), pivot.Style);
+                    Assert.AreEqual(4, pivot.Items.Count);
+                    Assert.AreEqual(0, pivot.SelectedIndex);
+                    AssertPivotItem((TabItem)pivot.Items[0], "All", "all emails go here.");
+                    AssertPivotItem((TabItem)pivot.Items[1], "Unread", "unread emails go here.");
+                    AssertPivotItem((TabItem)pivot.Items[2], "Flagged", "flagged emails go here.");
+                    AssertPivotItem((TabItem)pivot.Items[3], "Urgent", "urgent emails go here.");
                 }
                 finally
                 {
@@ -2646,6 +2700,16 @@ namespace ModernWpf.Gallery.Tests
             {
                 Assert.IsNull(item.Icon);
             }
+        }
+
+        private static void AssertPivotItem(TabItem item, string header, string text)
+        {
+            Assert.IsNotNull(item);
+            Assert.AreEqual(header, item.Header);
+            Assert.AreSame(item.TryFindResource("TabItemPivotStyle"), item.Style);
+            var textBlock = item.Content as TextBlock;
+            Assert.IsNotNull(textBlock);
+            Assert.AreEqual(text, textBlock.Text);
         }
 
         private static string GetFramePageTitle(Frame frame)
