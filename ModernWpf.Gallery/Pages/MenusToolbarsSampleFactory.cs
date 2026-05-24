@@ -1,13 +1,27 @@
+using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using ModernWpf.Controls.Primitives;
+using ModernWpf.Gallery.Models;
 using Mux = ModernWpf.Controls;
 
 namespace ModernWpf.Gallery.Pages
 {
     internal static class MenusToolbarsSampleFactory
     {
+        public static IReadOnlyList<GalleryExample> CreateExamples(string uniqueId, IReadOnlyList<SampleSnippet> sampleSnippets)
+        {
+            switch (uniqueId)
+            {
+                case "MenuBar":
+                    return CreateMenuBarExamples(sampleSnippets);
+                default:
+                    return Array.Empty<GalleryExample>();
+            }
+        }
+
         public static UIElement Create(string uniqueId)
         {
             switch (uniqueId)
@@ -112,23 +126,151 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateMenuBarSample()
         {
-            var panel = CreateSamplePanel("MenuBar presents top-level menu items with flyout commands.");
-            var output = CreateOutput("No menu item selected.");
-            var menu = new Mux.MenuBar();
-            var file = new Mux.MenuBarItem { Title = "_File" };
-            file.Items.Add(CreateMenuItem("_New", output));
-            file.Items.Add(CreateMenuItem("_Open", output));
-            file.Items.Add(new Separator());
-            file.Items.Add(CreateMenuItem("E_xit", output));
+            var panel = new GallerySamplePanel
+            {
+                Margin = new Thickness(0, 0, 0, 12)
+            };
+            GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("MenuBar"));
+            panel.Children.Add(CreateSimpleMenuBarExampleContent(assignRootAutomationId: false));
+            return panel;
+        }
 
-            var edit = new Mux.MenuBarItem { Title = "_Edit" };
-            edit.Items.Add(CreateMenuItem("_Copy", output));
-            edit.Items.Add(CreateMenuItem("_Paste", output));
+        private static IReadOnlyList<GalleryExample> CreateMenuBarExamples(IReadOnlyList<SampleSnippet> sampleSnippets)
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "A simple MenuBar",
+                    CreateSimpleMenuBarExampleContent(assignRootAutomationId: true),
+                    FindSnippetText(sampleSnippets, "MenuBarSample1.txt"),
+                    null),
+                new GalleryExample(
+                    "MenuBar with keyboard accelerators",
+                    CreateKeyboardAcceleratorsMenuBarExampleContent(),
+                    FindSnippetText(sampleSnippets, "MenuBarSample3.txt"),
+                    null),
+                new GalleryExample(
+                    "MenuBar with submenus, separators, and radio items",
+                    CreateSubmenusMenuBarExampleContent(),
+                    FindSnippetText(sampleSnippets, "MenuBarSample2.txt"),
+                    null)
+            };
+        }
+
+        private static GallerySamplePanel CreateMenuBarExampleRoot(bool assignRootAutomationId)
+        {
+            var root = new GallerySamplePanel();
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("MenuBar"));
+            }
+
+            return root;
+        }
+
+        private static GallerySamplePanel CreateSimpleMenuBarExampleContent(bool assignRootAutomationId)
+        {
+            var panel = CreateMenuBarExampleRoot(assignRootAutomationId);
+            var output = CreateSelectionOutput("SelectedOptionText");
+            var menu = CreateMenuBar();
+            GalleryAutomation.WithAutomationId(menu, GalleryAutomation.SampleElementId("MenuBar", "MenuBar"));
+
+            var file = new Mux.MenuBarItem { Title = "File" };
+            file.Items.Add(CreateMenuItem("New", output));
+            file.Items.Add(CreateMenuItem("Open...", output));
+            file.Items.Add(CreateMenuItem("Save", output));
+            file.Items.Add(CreateMenuItem("Exit", output));
+
+            var edit = new Mux.MenuBarItem { Title = "Edit" };
+            edit.Items.Add(CreateMenuItem("Undo", output));
+            edit.Items.Add(CreateMenuItem("Cut", output));
+            edit.Items.Add(CreateMenuItem("Copy", output));
+            edit.Items.Add(CreateMenuItem("Paste", output));
+
+            var help = new Mux.MenuBarItem { Title = "Help" };
+            help.Items.Add(CreateMenuItem("About", output));
 
             menu.Items.Add(file);
             menu.Items.Add(edit);
-            panel.Children.Add(menu);
+            menu.Items.Add(help);
             panel.Children.Add(output);
+            panel.Children.Add(menu);
+            return panel;
+        }
+
+        private static GallerySamplePanel CreateKeyboardAcceleratorsMenuBarExampleContent()
+        {
+            var panel = CreateMenuBarExampleRoot(assignRootAutomationId: false);
+            var output = CreateSelectionOutput("SelectedOptionText1");
+            var menu = CreateMenuBar();
+            GalleryAutomation.WithAutomationId(menu, GalleryAutomation.SampleElementId("MenuBar", "KeyboardAcceleratorsMenuBar"));
+
+            var file = new Mux.MenuBarItem { Title = "File" };
+            file.Items.Add(CreateMenuItem("New", output, "Ctrl+N"));
+            file.Items.Add(CreateMenuItem("Open...", output, "Ctrl+O"));
+            file.Items.Add(CreateMenuItem("Save", output, "Ctrl+S"));
+            file.Items.Add(CreateMenuItem("Exit", output, "Ctrl+E"));
+
+            var edit = new Mux.MenuBarItem { Title = "Edit" };
+            edit.Items.Add(CreateMenuItem("Undo", output, "Ctrl+Z"));
+            edit.Items.Add(CreateMenuItem("Cut", output, "Ctrl+X"));
+            edit.Items.Add(CreateMenuItem("Copy", output, "Ctrl+C"));
+            edit.Items.Add(CreateMenuItem("Paste", output, "Ctrl+V"));
+
+            var help = new Mux.MenuBarItem { Title = "Help" };
+            help.Items.Add(CreateMenuItem("About", output, "Ctrl+I"));
+
+            menu.Items.Add(file);
+            menu.Items.Add(edit);
+            menu.Items.Add(help);
+            panel.Children.Add(output);
+            panel.Children.Add(menu);
+            return panel;
+        }
+
+        private static GallerySamplePanel CreateSubmenusMenuBarExampleContent()
+        {
+            var panel = CreateMenuBarExampleRoot(assignRootAutomationId: false);
+            var output = CreateSelectionOutput("SelectedOptionText2");
+            var menu = CreateMenuBar();
+            GalleryAutomation.WithAutomationId(menu, GalleryAutomation.SampleElementId("MenuBar", "SubmenusMenuBar"));
+
+            var file = new Mux.MenuBarItem { Title = "File" };
+            var newSubmenu = new MenuItem { Header = "New" };
+            newSubmenu.Items.Add(CreateMenuItem("Plain Text Document", output));
+            newSubmenu.Items.Add(CreateMenuItem("Rich Text Document", output));
+            newSubmenu.Items.Add(CreateMenuItem("Other Formats...", output));
+            file.Items.Add(newSubmenu);
+            file.Items.Add(CreateMenuItem("Open...", output));
+            file.Items.Add(CreateMenuItem("Save", output));
+            file.Items.Add(new Separator());
+            file.Items.Add(CreateMenuItem("Exit", output));
+
+            var edit = new Mux.MenuBarItem { Title = "Edit" };
+            edit.Items.Add(CreateMenuItem("Undo", output));
+            edit.Items.Add(CreateMenuItem("Cut", output));
+            edit.Items.Add(CreateMenuItem("Copy", output));
+            edit.Items.Add(CreateMenuItem("Paste", output));
+
+            var view = new Mux.MenuBarItem { Title = "View" };
+            view.Items.Add(CreateMenuItem("Output", output));
+            view.Items.Add(new Separator());
+            view.Items.Add(CreateRadioMenuItem("Landscape", "OrientationGroup", isChecked: false, output));
+            view.Items.Add(CreateRadioMenuItem("Portrait", "OrientationGroup", isChecked: true, output));
+            view.Items.Add(new Separator());
+            view.Items.Add(CreateRadioMenuItem("Small icons", "SizeGroup", isChecked: false, output));
+            view.Items.Add(CreateRadioMenuItem("Medium icons", "SizeGroup", isChecked: true, output));
+            view.Items.Add(CreateRadioMenuItem("Large icons", "SizeGroup", isChecked: false, output));
+
+            var help = new Mux.MenuBarItem { Title = "Help" };
+            help.Items.Add(CreateMenuItem("About", output));
+
+            menu.Items.Add(file);
+            menu.Items.Add(edit);
+            menu.Items.Add(view);
+            menu.Items.Add(help);
+            panel.Children.Add(output);
+            panel.Children.Add(menu);
             return panel;
         }
 
@@ -247,9 +389,62 @@ namespace ModernWpf.Gallery.Pages
 
         private static MenuItem CreateMenuItem(string header, TextBlock output)
         {
-            var item = new MenuItem { Header = header };
-            item.Click += delegate { output.Text = header.Replace("_", string.Empty) + " selected."; };
+            return CreateMenuItem(header, output, inputGestureText: null);
+        }
+
+        private static Mux.MenuBar CreateMenuBar()
+        {
+            return new Mux.MenuBar
+            {
+                HorizontalAlignment = HorizontalAlignment.Left,
+                MinWidth = 158
+            };
+        }
+
+        private static MenuItem CreateMenuItem(string header, TextBlock output, string inputGestureText)
+        {
+            var item = new MenuItem
+            {
+                Header = header,
+                InputGestureText = inputGestureText
+            };
+            item.Click += delegate { output.Text = "You clicked: " + header; };
             return item;
+        }
+
+        private static Mux.RadioMenuItem CreateRadioMenuItem(string header, string groupName, bool isChecked, TextBlock output)
+        {
+            var item = new Mux.RadioMenuItem
+            {
+                Header = header,
+                GroupName = groupName,
+                IsChecked = isChecked
+            };
+            item.Click += delegate { output.Text = "You clicked: " + header; };
+            return item;
+        }
+
+        private static TextBlock CreateSelectionOutput(string name)
+        {
+            return new TextBlock
+            {
+                Name = name,
+                Text = string.Empty,
+                TextWrapping = TextWrapping.Wrap
+            };
+        }
+
+        private static string FindSnippetText(IReadOnlyList<SampleSnippet> snippets, string title)
+        {
+            for (var i = 0; i < snippets.Count; i++)
+            {
+                if (string.Equals(snippets[i].Title, title, StringComparison.Ordinal))
+                {
+                    return snippets[i].Text;
+                }
+            }
+
+            return null;
         }
 
         private static Button CreateSmallButton(string text, TextBlock output)

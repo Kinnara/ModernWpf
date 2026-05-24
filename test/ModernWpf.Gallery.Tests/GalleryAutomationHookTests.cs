@@ -13,6 +13,7 @@ using ModernWpf.Gallery.Controls;
 using ModernWpf.Gallery.Models;
 using ModernWpf.Gallery.Pages;
 using ModernWpf.Gallery.Testing;
+using Mux = ModernWpf.Controls;
 using TeachingTipControl = ModernWpf.Controls.TeachingTip;
 
 namespace ModernWpf.Gallery.Tests
@@ -26,6 +27,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "InfoBar", "GallerySample_InfoBar_Root", "GallerySample_InfoBar_InfoBar" };
             yield return new object[] { "NavigationView", "GallerySample_NavigationView_Root", "GallerySample_NavigationView_NavigationView" };
             yield return new object[] { "ContentDialog", "GallerySample_ContentDialog_Root", "GallerySample_ContentDialog_ShowButton" };
+            yield return new object[] { "MenuBar", "GallerySample_MenuBar_Root", "GallerySample_MenuBar_MenuBar" };
         }
 
         [TestMethod]
@@ -317,6 +319,91 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(Visibility.Visible, contentRoot.Visibility);
                     Assert.IsNotNull(FindNamedDescendant<TextBlock>(infoBar, "Title"));
                     Assert.IsNotNull(FindNamedDescendant<TextBlock>(infoBar, "Message"));
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void MenuBarSampleMatchesWinUIGalleryExamples()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("MenuBar"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(3, page.Examples.Count);
+                    Assert.AreEqual("A simple MenuBar", page.Examples[0].HeaderText);
+                    Assert.AreEqual("MenuBar with keyboard accelerators", page.Examples[1].HeaderText);
+                    Assert.AreEqual("MenuBar with submenus, separators, and radio items", page.Examples[2].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "<MenuBar>");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "KeyboardAccelerator");
+                    StringAssert.Contains(page.Examples[2].XamlCode, "RadioMenuFlyoutItem");
+
+                    var simpleMenu = (Mux.MenuBar)FindByAutomationId(page, "GallerySample_MenuBar_MenuBar");
+                    var keyboardMenu = (Mux.MenuBar)FindByAutomationId(page, "GallerySample_MenuBar_KeyboardAcceleratorsMenuBar");
+                    var submenuMenu = (Mux.MenuBar)FindByAutomationId(page, "GallerySample_MenuBar_SubmenusMenuBar");
+                    Assert.IsNotNull(simpleMenu);
+                    Assert.IsNotNull(keyboardMenu);
+                    Assert.IsNotNull(submenuMenu);
+                    Assert.AreEqual(HorizontalAlignment.Left, simpleMenu.HorizontalAlignment);
+                    Assert.AreEqual(158.0, simpleMenu.MinWidth);
+
+                    Assert.AreEqual(3, simpleMenu.Items.Count);
+                    Assert.AreEqual("File", simpleMenu.Items[0].Title);
+                    Assert.AreEqual("Edit", simpleMenu.Items[1].Title);
+                    Assert.AreEqual("Help", simpleMenu.Items[2].Title);
+
+                    var simpleFile = simpleMenu.Items[0];
+                    Assert.AreEqual(4, simpleFile.Items.Count);
+                    Assert.AreEqual("Open...", ((MenuItem)simpleFile.Items[1]).Header);
+                    var selectedOptionText = FindNamedDescendant<TextBlock>(page, "SelectedOptionText");
+                    Assert.IsNotNull(selectedOptionText);
+                    ((MenuItem)simpleFile.Items[1]).RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+                    Assert.AreEqual("You clicked: Open...", selectedOptionText.Text);
+
+                    var keyboardFile = keyboardMenu.Items[0];
+                    var newItem = (MenuItem)keyboardFile.Items[0];
+                    Assert.AreEqual("New", newItem.Header);
+                    Assert.AreEqual("Ctrl+N", newItem.InputGestureText);
+
+                    var submenuFile = submenuMenu.Items[0];
+                    Assert.IsInstanceOfType(submenuFile.Items[0], typeof(MenuItem));
+                    Assert.AreEqual(3, ((MenuItem)submenuFile.Items[0]).Items.Count);
+                    Assert.IsInstanceOfType(submenuFile.Items[3], typeof(Separator));
+
+                    var viewMenu = submenuMenu.Items[2];
+                    Assert.AreEqual("View", viewMenu.Title);
+                    var landscape = (Mux.RadioMenuItem)viewMenu.Items[2];
+                    var portrait = (Mux.RadioMenuItem)viewMenu.Items[3];
+                    var mediumIcons = (Mux.RadioMenuItem)viewMenu.Items[6];
+                    Assert.AreEqual("OrientationGroup", landscape.GroupName);
+                    Assert.IsFalse(landscape.IsChecked);
+                    Assert.IsTrue(portrait.IsChecked);
+                    Assert.AreEqual("SizeGroup", mediumIcons.GroupName);
+                    Assert.IsTrue(mediumIcons.IsChecked);
                 }
                 finally
                 {

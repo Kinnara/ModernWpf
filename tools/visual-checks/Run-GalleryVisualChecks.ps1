@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "InfoBar", "NavigationView", "ContentDialog"),
+    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "InfoBar", "NavigationView", "ContentDialog", "MenuBar"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -427,6 +427,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "InfoBar" { return "GallerySample_InfoBar_InfoBar" }
         "NavigationView" { return "GallerySample_NavigationView_NavigationView" }
         "ContentDialog" { return "GallerySample_ContentDialog_ShowButton" }
+        "MenuBar" { return "GallerySample_MenuBar_MenuBar" }
         default { return "GalleryItemPageTitle" }
     }
 }
@@ -445,6 +446,7 @@ function Get-PrimaryCropMinimumVisibleStdDev([string]$control) {
 function Get-ModernPrimaryCropAutomationId([string]$control) {
     switch ($control) {
         "InfoBar" { return "GallerySample_InfoBar_InfoBar" }
+        "MenuBar" { return "GallerySample_MenuBar_MenuBar" }
         default { return Get-RequiredSampleAutomationId $control }
     }
 }
@@ -457,6 +459,7 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
         "InfoBar" { return "TestInfoBar1" }
         "NavigationView" { return "nvSample5" }
         "ContentDialog" { return "ShowDialog" }
+        "MenuBar" { return "Example1" }
         default { return "" }
     }
 }
@@ -1058,6 +1061,12 @@ function Capture-StaticCrops([string]$app, [string]$control, [string]$caseDir, $
         $sampleArtifact = Join-Path $artifactDir ($sampleSource + ".png")
         $primaryCrop = New-RenderedArtifactCrop $primaryArtifact $primarySource $null
         $sampleCrop = New-RenderedArtifactCrop $sampleArtifact $sampleSource $null
+        $menuBarArtifactCrop = $null
+
+        if ($control -eq "MenuBar") {
+            $menuBarArtifactCrop = $primaryCrop
+            $primaryCrop = $null
+        }
 
         if ($control -eq "InfoBar" -and $null -ne $primaryCrop -and !$primaryCrop.NonBlank) {
             $rootSlicePath = Join-Path $artifactDir ($primarySource + "_fromRoot.png")
@@ -1102,6 +1111,9 @@ function Capture-StaticCrops([string]$app, [string]$control, [string]$caseDir, $
         }
 
         $primaryResult = if ($null -ne $primaryCrop) { $primaryCrop } else { Save-ElementCrop $window $screenshot $primaryPath $primaryElement $primarySource 0 }
+        if ($control -eq "MenuBar" -and $primaryResult.Found -and !$primaryResult.NonBlank -and $null -ne $menuBarArtifactCrop -and $menuBarArtifactCrop.NonBlank) {
+            $primaryResult = $menuBarArtifactCrop
+        }
         if ($control -eq "InfoBar" -and $primaryResult.Found -and !$primaryResult.NonBlank -and $null -ne $primaryBounds -and (Test-Path $screenshot)) {
             $fallbackBounds = [ordered]@{
                 Found = $true

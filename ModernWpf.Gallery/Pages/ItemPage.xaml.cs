@@ -240,6 +240,12 @@ namespace ModernWpf.Gallery.Pages
                 return statusInfoExamples;
             }
 
+            var menuToolbarExamples = MenusToolbarsSampleFactory.CreateExamples(uniqueId, sampleSnippets);
+            if (menuToolbarExamples.Count != 0)
+            {
+                return menuToolbarExamples;
+            }
+
             var sampleContent = CreateWorkingSampleContent(uniqueId);
             if (sampleContent == null)
             {

@@ -14,6 +14,7 @@ interaction model.
 | Source | Local path | Use |
 | --- | --- | --- |
 | Official WPF Gallery | `D:\repos\WPF-Samples\Sample Applications\WPFGallery` | Primary visual, page, copy, sample, and catalog reference. |
+| Official WinUI Gallery | `D:\repos\WinUI-Gallery` | Primary source and visual reference for ModernWpf/WinUI extension pages and WinUI control pages implemented in WPF. |
 | ModernWpf Gallery | `ModernWpf.Gallery` | Target implementation. |
 | Gallery runtime tests | `test\ModernWpf.Gallery.Tests` | Main regression layer for route, page, shell, catalog, and sample parity checks. |
 
@@ -102,6 +103,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.MenuBarSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 6 tests per target. The generated ModernWpf MenuBar page now follows the local official WinUI Gallery three-example shape for the simple MenuBar, keyboard accelerators, and submenus/separators/radio items; the example source panes consume `MenuBarSample1.txt`, `MenuBarSample3.txt`, and `MenuBarSample2.txt` so no additional snippets remain below the examples. Curated automation IDs now include `GallerySample_MenuBar_Root` and `GallerySample_MenuBar_MenuBar`. Current warning/output remains `NU1903` and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls MenuBar -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-113917-423-112104/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, primary crops match at `158x40`, and MenuBar Light primary delta is `11.55`. The ModernWpf sample now left-aligns the generated MenuBar and pins the first-sample minimum width to match the WinUI reference crop. The visual harness prefers the real window crop for MenuBar, with a rendered-artifact fallback if that crop is blank.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls MenuBar -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-114041-397-84600/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, primary crops match at `158x40`, MenuBar Dark primary delta is `14.82`, and the full-window mean delta is `17.22`.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the MenuBar WinUI three-example alignment and visual-check harness crop fallback. Current build output includes the recurring `Failed to resolve WinRT.Runtime.dll` messages and ends with `0 Warning(s)` and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.InfoBarSampleUsesVisibleOpenInfoBarTemplate|FullyQualifiedName~GalleryAutomationHookTests.ContentDialogSampleMatchesWinUIGalleryFirstExampleButton|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds|FullyQualifiedName~GalleryAutomationHookTests.InfoBarSampleWritesRenderedVisualArtifacts|FullyQualifiedName~GalleryAutomationHookTests.FrameContentHostWritesDescendantVisualArtifacts|FullyQualifiedName~GalleryAutomationHookTests.VisualTestStatusFileWritesRouteAndReadyState|FullyQualifiedName~GalleryNavigationRuntimeTests.ShellVisualTestStatusHooksStayOutOfNormalAutomationTree" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 10 tests per target. The generated ModernWpf InfoBar page now follows the official WinUI Gallery three-example shape for severity, long-message/action-button, and icon/close-button variants; ContentDialog now exposes the two official WinUI Gallery examples for default primary button and no default button. Curated automation IDs remain stable, the visual-test status file records route readiness outside external UIA traversal, and the rendered artifact writer skips shell `Frame` surface captures while preserving descendant sample artifacts. Current warning/output remains `NU1903` and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls InfoBar,ContentDialog -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -1138,6 +1147,18 @@ screenshot-crop fallback because its automation bounds can point at a blank
 layout slot above the visible control. Avoid reopening these two first-sample
 structures unless a new WinUI source, visual crop, or readiness regression
 appears.
+The generated ModernWpf MenuBar extension page now uses the local official
+WinUI Gallery three-example structure for a simple MenuBar, keyboard
+accelerators, and submenus/separators/radio items, with WPF `MenuItem`,
+`Separator`, and `RadioMenuItem` equivalents behind the WinUI-style sample-code
+panes. Current MenuBar WinUI-reference evidence is
+`artifacts/visual-checks/20260524-113917-423-112104/report.md` for Light and
+`artifacts/visual-checks/20260524-114041-397-84600/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`, matching `158x40`
+primary crops, and primary deltas `11.55` / `14.82`. The visual harness now
+prefers a real window crop for MenuBar and falls back to the rendered artifact
+when that crop is blank. Avoid reopening MenuBar's first-sample/static
+structure unless a new WinUI source or visual crop regression appears.
 Continue with the next highest-impact visible drift from the checklist, likely
 remaining High Contrast gaps, other NavigationView styling not covered
 by the TreeView token aliases or first-sample refresh, or other item pages that still lack current
