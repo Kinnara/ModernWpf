@@ -582,7 +582,7 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
         "ItemsView" { return "BasicItemsView" }
         "GridView" { return "BasicGridView" }
         "BreadcrumbBar" { return "BreadcrumbBar1" }
-        "SelectorBar" { return "SelectorBar1" }
+        "SelectorBar" { return "PART_ItemsView" }
         "TabView" { return "TabView1" }
         default { return "" }
     }

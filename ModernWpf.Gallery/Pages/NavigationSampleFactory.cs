@@ -1162,6 +1162,8 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             icon.SetValue(ContentPresenter.ContentProperty, new TemplateBindingExtension(Mux.SelectorBarItem.IconProperty));
             icon.SetValue(FrameworkElement.MarginProperty, new Thickness(-2, 0, 8, 0));
             icon.SetValue(FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+            icon.SetValue(FrameworkElement.RenderTransformOriginProperty, new Point(0.5, 0.5));
+            icon.SetValue(UIElement.RenderTransformProperty, new ScaleTransform(0.8, 0.8));
             content.AppendChild(icon);
 
             var text = new FrameworkElementFactory(typeof(TextBlock));
