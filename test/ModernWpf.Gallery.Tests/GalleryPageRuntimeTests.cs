@@ -939,12 +939,11 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(2, textBlocks.Length);
                     Assert.AreEqual(0, Grid.GetRow(textBlocks[0]));
                     Assert.AreEqual(1, Grid.GetColumn(textBlocks[0]));
-                    Assert.AreSame(
-                        Application.Current.FindResource("BodyStrongTextBlockStyle"),
-                        textBlocks[0].Style);
+                    Assert.AreEqual(FontWeights.Bold, textBlocks[0].FontWeight);
+                    Assert.AreEqual(DependencyProperty.UnsetValue, textBlocks[0].ReadLocalValue(FrameworkElement.StyleProperty));
                     Assert.AreEqual(1, Grid.GetRow(textBlocks[1]));
                     Assert.AreEqual(1, Grid.GetColumn(textBlocks[1]));
-                    Assert.AreEqual(0.7, textBlocks[1].Opacity);
+                    Assert.AreEqual(1.0, textBlocks[1].Opacity);
 
                     var controls = selectionGrid.Children.OfType<StackPanel>().Single();
                     Assert.AreEqual(120.0, controls.MinWidth);
@@ -955,7 +954,7 @@ namespace ModernWpf.Gallery.Tests
                     var comboBox = (ComboBox)controls.Children[1];
                     Assert.AreEqual("Selection mode", label.Content);
                     Assert.AreSame(comboBox, label.Target);
-                    Assert.AreEqual(0.7, label.Opacity);
+                    Assert.AreEqual(1.0, label.Opacity);
                     Assert.AreEqual("Selection Mode", AutomationProperties.GetName(comboBox));
                     CollectionAssert.AreEqual(
                         new[] { "Single", "Multiple", "Extended" },
