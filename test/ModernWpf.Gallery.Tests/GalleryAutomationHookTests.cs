@@ -26,6 +26,7 @@ namespace ModernWpf.Gallery.Tests
         public static IEnumerable<object[]> CuratedSampleAutomationIds()
         {
             yield return new object[] { "TeachingTip", "GallerySample_TeachingTip_Root", "GallerySample_TeachingTip_ShowButton" };
+            yield return new object[] { "InfoBadge", "GallerySample_InfoBadge_Root", "GallerySample_InfoBadge_InfoBadge" };
             yield return new object[] { "InfoBar", "GallerySample_InfoBar_Root", "GallerySample_InfoBar_InfoBar" };
             yield return new object[] { "ProgressRing", "GallerySample_ProgressRing_Root", "GallerySample_ProgressRing_ProgressRing" };
             yield return new object[] { "NavigationView", "GallerySample_NavigationView_Root", "GallerySample_NavigationView_NavigationView" };
@@ -335,6 +336,149 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(Visibility.Visible, contentRoot.Visibility);
                     Assert.IsNotNull(FindNamedDescendant<TextBlock>(infoBar, "Title"));
                     Assert.IsNotNull(FindNamedDescendant<TextBlock>(infoBar, "Message"));
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void InfoBadgeSampleMatchesWinUIGalleryExamples()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("InfoBadge"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(4, page.Examples.Count);
+                    Assert.AreEqual("InfoBadge embedded in NavigationView ", page.Examples[0].HeaderText);
+                    Assert.AreEqual("Different InfoBadge Styles", page.Examples[1].HeaderText);
+                    Assert.AreEqual("Placing an InfoBadge Inside Another Control", page.Examples[2].HeaderText);
+                    Assert.AreEqual("InfoBadge with Dynamic Value", page.Examples[3].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "Inbox, 5 notifications");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "infoBadge1");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "$(Style)IconInfoBadgeStyle");
+                    StringAssert.Contains(page.Examples[2].XamlCode, "ToolTipService.ToolTip=\"Refresh required\"");
+                    StringAssert.Contains(page.Examples[3].XamlCode, "ValueNumberBox");
+                    StringAssert.Contains(page.Examples[3].CSharpCode, "DynamicInfoBadge.Value = (int)args.NewValue;");
+
+                    var navigationView = FindNamedDescendant<Mux.NavigationView>(page, "nvSample1");
+                    var inboxItem = FindNamedDescendant<Mux.NavigationViewItem>(page, "InboxPage");
+                    var infoBadge1 = (Mux.InfoBadge)FindByAutomationId(page, "GallerySample_InfoBadge_InfoBadge");
+                    var toggle = FindNamedDescendant<Mux.ToggleSwitch>(page, "ToggleInfoBadgeOpacity");
+                    var displayMode = FindNamedDescendant<ComboBox>(page, "NavigationViewDisplayMode");
+                    var contentFrame = FindNamedDescendant<Frame>(page, "contentFrame");
+                    Assert.IsNotNull(navigationView);
+                    Assert.IsNotNull(inboxItem);
+                    Assert.IsNotNull(infoBadge1);
+                    Assert.IsNotNull(toggle);
+                    Assert.IsNotNull(displayMode);
+                    Assert.IsNotNull(contentFrame);
+                    Assert.AreEqual(300.0, navigationView.Height);
+                    Assert.AreEqual(Mux.NavigationViewPaneDisplayMode.Left, navigationView.PaneDisplayMode);
+                    Assert.IsTrue(navigationView.IsPaneOpen);
+                    Assert.AreEqual(3, navigationView.MenuItems.Count);
+                    Assert.AreEqual("Inbox", inboxItem.Content);
+                    Assert.AreEqual("Inbox, 5 notifications", AutomationProperties.GetName(inboxItem));
+                    Assert.AreSame(infoBadge1, inboxItem.InfoBadge);
+                    Assert.AreEqual("infoBadge1", infoBadge1.Name);
+                    Assert.AreEqual(5, infoBadge1.Value);
+                    Assert.AreEqual(1.0, infoBadge1.Opacity);
+                    Assert.AreEqual("InfoBadge Opacity", toggle.Header);
+                    Assert.IsTrue(toggle.IsOn);
+                    Assert.AreEqual("LeftExpanded", displayMode.SelectedItem);
+                    Assert.AreEqual("LeftExpanded", displayMode.Items[0]);
+                    Assert.AreEqual("LeftCompact", displayMode.Items[1]);
+                    Assert.AreEqual("Top", displayMode.Items[2]);
+
+                    toggle.IsOn = false;
+                    displayMode.SelectedItem = "LeftCompact";
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(0.0, infoBadge1.Opacity);
+                    Assert.AreEqual(Mux.NavigationViewPaneDisplayMode.LeftCompact, navigationView.PaneDisplayMode);
+                    Assert.IsFalse(navigationView.IsPaneOpen);
+
+                    displayMode.SelectedItem = "Top";
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(Mux.NavigationViewPaneDisplayMode.Top, navigationView.PaneDisplayMode);
+                    Assert.IsTrue(navigationView.IsPaneOpen);
+
+                    var infoBadge2 = FindNamedDescendant<Mux.InfoBadge>(page, "infoBadge2");
+                    var infoBadge3 = FindNamedDescendant<Mux.InfoBadge>(page, "infoBadge3");
+                    var infoBadge4 = FindNamedDescendant<Mux.InfoBadge>(page, "infoBadge4");
+                    var styleCombo = FindNamedDescendant<ComboBox>(page, "InfoBadgeStyleComboBox");
+                    Assert.IsNotNull(infoBadge2);
+                    Assert.IsNotNull(infoBadge3);
+                    Assert.IsNotNull(infoBadge4);
+                    Assert.IsNotNull(styleCombo);
+                    Assert.AreEqual(HorizontalAlignment.Right, infoBadge2.HorizontalAlignment);
+                    Assert.AreEqual(HorizontalAlignment.Right, infoBadge3.HorizontalAlignment);
+                    Assert.AreEqual(10, infoBadge3.Value);
+                    Assert.AreEqual(VerticalAlignment.Center, infoBadge4.VerticalAlignment);
+                    Assert.AreEqual("Attention", styleCombo.SelectedItem);
+                    Assert.AreEqual("\uEA38", ((Mux.FontIconSource)infoBadge2.IconSource).Glyph);
+                    Assert.AreEqual(new Thickness(0, 4, 0, 2), infoBadge2.Padding);
+
+                    styleCombo.SelectedItem = "Critical";
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(Mux.Symbol.Cancel, ((Mux.SymbolIconSource)infoBadge2.IconSource).Symbol);
+                    Assert.AreEqual(new Thickness(0), infoBadge2.Padding);
+
+                    var exampleButton = FindNamedDescendant<Button>(page, "Example3Button");
+                    var exampleButtonBadge = FindNamedDescendant<Mux.InfoBadge>(page, "Example3InfoBadge");
+                    Assert.IsNotNull(exampleButton);
+                    Assert.IsNotNull(exampleButtonBadge);
+                    Assert.AreEqual(200.0, exampleButton.Width);
+                    Assert.AreEqual(60.0, exampleButton.Height);
+                    Assert.AreEqual(new Thickness(0), exampleButton.Padding);
+                    Assert.AreEqual(HorizontalAlignment.Center, exampleButton.HorizontalAlignment);
+                    Assert.AreEqual(HorizontalAlignment.Stretch, exampleButton.HorizontalContentAlignment);
+                    Assert.AreEqual(VerticalAlignment.Stretch, exampleButton.VerticalContentAlignment);
+                    Assert.AreEqual("Example3Button", AutomationProperties.GetName(exampleButton));
+                    Assert.AreEqual("Refresh required", exampleButton.ToolTip);
+                    Assert.AreEqual(HorizontalAlignment.Right, exampleButtonBadge.HorizontalAlignment);
+                    Assert.AreEqual(VerticalAlignment.Top, exampleButtonBadge.VerticalAlignment);
+                    Assert.AreEqual(Color.FromRgb(0xC4, 0x2B, 0x1C), ((SolidColorBrush)exampleButtonBadge.Background).Color);
+                    Assert.AreEqual("\uF13C", ((Mux.FontIconSource)exampleButtonBadge.IconSource).Glyph);
+
+                    var dynamicInfoBadge = FindNamedDescendant<Mux.InfoBadge>(page, "DynamicInfoBadge");
+                    var valueNumberBox = FindNamedDescendant<Mux.NumberBox>(page, "ValueNumberBox");
+                    Assert.IsNotNull(dynamicInfoBadge);
+                    Assert.IsNotNull(valueNumberBox);
+                    Assert.AreEqual(HorizontalAlignment.Center, dynamicInfoBadge.HorizontalAlignment);
+                    Assert.AreEqual(1, dynamicInfoBadge.Value);
+                    Assert.AreEqual("InfoBadge Value", valueNumberBox.Header);
+                    Assert.AreEqual(-1.0, valueNumberBox.Minimum);
+                    Assert.AreEqual(Mux.NumberBoxSpinButtonPlacementMode.Inline, valueNumberBox.SpinButtonPlacementMode);
+                    Assert.AreEqual(1.0, valueNumberBox.Value);
+
+                    valueNumberBox.Value = 12;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(12, dynamicInfoBadge.Value);
+                    valueNumberBox.Value = -1;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(-1, dynamicInfoBadge.Value);
                 }
                 finally
                 {

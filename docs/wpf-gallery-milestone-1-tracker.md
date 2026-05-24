@@ -106,6 +106,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.InfoBadgeSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 21 tests per target. The generated ModernWpf InfoBadge page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\InfoBadgePage.xaml` / `.xaml.cs`: the NavigationView inbox badge, style selector, badge-inside-button, and dynamic value examples. `StatusInfoSampleFactory.CreateExamples` now covers InfoBadge as a source-backed Status & Info WinUI extension page, exposes curated automation IDs `GallerySample_InfoBadge_Root` and `GallerySample_InfoBadge_InfoBadge`, keeps WinUI's `nvSample1`, `InboxPage`, `infoBadge1`, `ToggleInfoBadgeOpacity`, `NavigationViewDisplayMode`, `contentFrame`, `infoBadge2`, `infoBadge3`, `infoBadge4`, `InfoBadgeStyleComboBox`, `Example3Button`, `DynamicInfoBadge`, and `ValueNumberBox`, and adapts WinUI style selection through direct WPF property/resource updates because the keyed InfoBadge styles are not reliably resolvable in the test host. Current warning/output remains `NU1903`, generated WinRT warnings when regeneration is triggered, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls InfoBadge -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-151044-483-106400/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`; ModernWpf required element `GallerySample_InfoBadge_InfoBadge` was found, the ModernWpf primary crop is `16x16`, the sample crop is `790x300`, and whole-window Light mean delta is `206.3`. The installed WinUI Gallery does not expose source `x:Name="infoBadge1"` as a UIA automation element, so InfoBadge intentionally has no WinUI reference primary crop target.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls InfoBadge -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-151102-355-66552/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`; ModernWpf required element `GallerySample_InfoBadge_InfoBadge` was found, the ModernWpf primary crop is `16x16`, the sample crop is `790x300`, and whole-window Dark mean delta is `16.49`. The visual harness now includes InfoBadge in the default control set and keeps the WinUI reference primary target empty until a stable exposed UIA element exists.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the InfoBadge WinUI example alignment and visual harness mapping. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages, existing ModernWpf/ModernWpf.Controls warnings, `19 Warning(s)`, and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.ProgressRingSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 20 tests per target. The generated ModernWpf ProgressRing page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\ProgressRingPage.xaml` / `.xaml.cs`: an indeterminate `ProgressRing1` driven by `ProgressToggle` plus a determinate `ProgressRing2` driven by `ProgressValue`. `StatusInfoSampleFactory.CreateExamples` now covers ProgressRing as a source-backed Status & Info WinUI extension page, exposes curated automation IDs `GallerySample_ProgressRing_Root` and `GallerySample_ProgressRing_ProgressRing`, keeps WinUI's `ProgressRing1`, `ProgressRing2`, `ProgressToggle`, `BackgroundComboBox1`, `BackgroundComboBox2`, `Control2`, `ProgressValue`, `Progress image`, `Progress Options`, `Progress amount`, and source XAML substitution placeholders, and adapts WinUI's `ProgressRing.Background` option through a WPF host border because ModernWpf `ProgressRing` does not expose a `Background` property. Current warning/output remains `NU1903`, generated WinRT warnings when regeneration is triggered, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls ProgressRing -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -1262,6 +1270,28 @@ screenshot-crop fallback because its automation bounds can point at a blank
 layout slot above the visible control. Avoid reopening these two first-sample
 structures unless a new WinUI source, visual crop, or readiness regression
 appears.
+The generated ModernWpf InfoBadge extension page now uses the local official
+WinUI Gallery four-example structure from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\InfoBadgePage.xaml`
+/ `.xaml.cs`: InfoBadge embedded in NavigationView, different InfoBadge styles,
+InfoBadge inside another control, and InfoBadge with dynamic value.
+`StatusInfoSampleFactory.CreateExamples` now covers InfoBadge as a
+source-backed Status & Info WinUI example, keeps WinUI's `nvSample1`,
+`InboxPage`, `infoBadge1`, `ToggleInfoBadgeOpacity`,
+`NavigationViewDisplayMode`, `contentFrame`, `infoBadge2`, `infoBadge3`,
+`infoBadge4`, `InfoBadgeStyleComboBox`, `Example3Button`,
+`DynamicInfoBadge`, and `ValueNumberBox`, and adapts the style selector with
+direct WPF property/resource updates because the keyed InfoBadge styles are not
+reliably resolvable in the test host. Current InfoBadge WinUI-reference
+evidence is `artifacts/visual-checks/20260524-151044-483-106400/report.md`
+for Light and `artifacts/visual-checks/20260524-151102-355-66552/report.md`
+for Dark, both with ModernWpf and installed WinUI 3 Gallery `Passed`.
+ModernWpf exposes `GallerySample_InfoBadge_InfoBadge` as the required/primary
+crop target; installed WinUI Gallery does not expose source `x:Name="infoBadge1"`
+as a stable UIA element, so the visual harness intentionally leaves the WinUI
+reference primary target empty until a stable exposed node exists. Avoid
+reopening InfoBadge's source shape unless a new WinUI source, crop, or exposed
+reference automation regression appears.
 The generated ModernWpf ProgressRing extension page now uses the local official
 WinUI Gallery two-example structure from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\ProgressRingPage.xaml`

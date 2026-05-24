@@ -35,6 +35,47 @@ namespace ModernWpf.Gallery.Pages
     Title=""Title""
     Message=""Essential app message for your users to be informed of, acknowledge, or take action on."" />";
 
+        private const string InfoBadgeNavigationViewXaml =
+@"<NavigationViewItem x:Name=""InboxPage"" Content=""Inbox"" Icon=""Mail"" AutomationProperties.Name=""Inbox, 5 notifications"">
+    <NavigationViewItem.InfoBadge>
+        <InfoBadge x:Name=""infoBadge1"" Value=""5"" Opacity=""{x:Bind InfoBadgeOpacity, Mode=OneWay}""/>
+    </NavigationViewItem.InfoBadge>
+</NavigationViewItem>";
+
+        private const string InfoBadgeStylesXaml =
+@"<StackPanel Orientation=""Horizontal"" Spacing=""20"" HorizontalAlignment=""Center"">
+    <InfoBadge x:Name=""infoBadge2"" Style=""{StaticResource $(Style)IconInfoBadgeStyle}"" HorizontalAlignment=""Right""/>
+    <InfoBadge x:Name=""infoBadge3"" Style=""{StaticResource $(Style)ValueInfoBadgeStyle}"" HorizontalAlignment=""Right"" Value=""10"" />
+    <InfoBadge x:Name=""infoBadge4"" Style=""{StaticResource $(Style)DotInfoBadgeStyle}"" VerticalAlignment=""Center""/>
+</StackPanel>";
+
+        private const string InfoBadgeInsideControlXaml =
+@"<Button Padding=""0"" Width=""200"" Height=""60"" ToolTipService.ToolTip=""Refresh required""
+        HorizontalAlignment=""Center"" HorizontalContentAlignment=""Stretch"" VerticalContentAlignment=""Stretch"">
+    <Grid HorizontalAlignment=""Stretch"" VerticalAlignment=""Stretch"" Width=""Auto"" Height=""Auto"">
+        <SymbolIcon Symbol=""Sync"" HorizontalAlignment=""Center""/>
+        <InfoBadge Background=""#C42B1C"" HorizontalAlignment=""Right"" VerticalAlignment=""Top"">
+            <InfoBadge.IconSource>
+                <FontIconSource FontFamily=""{StaticResource SymbolThemeFontFamily}"" Glyph=""&#xF13C;"" />
+            </InfoBadge.IconSource>
+        </InfoBadge>
+    </Grid>
+</Button>";
+
+        private const string InfoBadgeDynamicValueXaml =
+@"<InfoBadge Value=""{Binding ElementName=ValueNumberBox, Path=Value, Mode=TwoWay}"" />
+<NumberBox x:Name=""ValueNumberBox"" Header=""InfoBadge Value"" Value=""1"" Minimum=""-1""
+    SpinButtonPlacementMode=""Inline"" ValueChanged=""ValueNumberBox_ValueChanged"" />";
+
+        private const string InfoBadgeDynamicValueCSharp =
+@"private void ValueNumberBox_ValueChanged(Microsoft.UI.Xaml.Controls.NumberBox sender, Microsoft.UI.Xaml.Controls.NumberBoxValueChangedEventArgs args)
+{
+    if((int)args.NewValue >= -1)
+    {
+        DynamicInfoBadge.Value = (int)args.NewValue;
+    }
+}";
+
         private const string ProgressRingIndeterminateXaml =
 @"<ProgressRing IsActive=""$(IsActive)"" $(Background)/>";
 
@@ -47,6 +88,8 @@ namespace ModernWpf.Gallery.Pages
         {
             switch (uniqueId)
             {
+                case "InfoBadge":
+                    return CreateInfoBadgeExamples();
                 case "InfoBar":
                     return CreateInfoBarExamples();
                 case "ProgressRing":
@@ -77,16 +120,326 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateInfoBadgeSample()
         {
-            var panel = CreateSamplePanel("InfoBadge highlights new, important, or attention-worthy state near related content.");
-            var row = new StackPanel { Orientation = Orientation.Horizontal };
-            row.Children.Add(CreateBadge("1", "#005FB8", "Unread"));
-            row.Children.Add(CreateBadge("99+", "#005FB8", "Many"));
-            row.Children.Add(CreateBadge("!", "#C42B1C", "Needs attention"));
-            panel.Children.Add(row);
-
-            var output = CreateOutput("Badges are decorative WPF elements in this port because ModernWpf does not currently expose InfoBadge.");
-            panel.Children.Add(output);
+            var panel = new GallerySamplePanel
+            {
+                Margin = new Thickness(0, 0, 0, 12)
+            };
+            GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("InfoBadge"));
+            panel.Children.Add(CreateNavigationViewInfoBadgeExampleContent(assignRootAutomationId: false));
             return panel;
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateInfoBadgeExamples()
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "InfoBadge embedded in NavigationView ",
+                    CreateNavigationViewInfoBadgeExampleContent(assignRootAutomationId: true),
+                    InfoBadgeNavigationViewXaml,
+                    null),
+                new GalleryExample(
+                    "Different InfoBadge Styles",
+                    CreateInfoBadgeStylesExampleContent(),
+                    InfoBadgeStylesXaml,
+                    null),
+                new GalleryExample(
+                    "Placing an InfoBadge Inside Another Control",
+                    CreateInfoBadgeInsideControlExampleContent(),
+                    InfoBadgeInsideControlXaml,
+                    null),
+                new GalleryExample(
+                    "InfoBadge with Dynamic Value",
+                    CreateDynamicInfoBadgeExampleContent(),
+                    InfoBadgeDynamicValueXaml,
+                    InfoBadgeDynamicValueCSharp)
+            };
+        }
+
+        private static GallerySamplePanel CreateNavigationViewInfoBadgeExampleContent(bool assignRootAutomationId)
+        {
+            var root = new GallerySamplePanel();
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("InfoBadge"));
+            }
+
+            var navigationView = new Mux.NavigationView
+            {
+                Name = "nvSample1",
+                Height = 300,
+                PaneDisplayMode = Mux.NavigationViewPaneDisplayMode.Left,
+                IsPaneOpen = true,
+                Content = new Frame { Name = "contentFrame" }
+            };
+            var infoBadge = new Mux.InfoBadge
+            {
+                Name = "infoBadge1",
+                Opacity = 1,
+                Value = 5
+            };
+            GalleryAutomation.WithAutomationId(infoBadge, GalleryAutomation.SampleElementId("InfoBadge", "InfoBadge"));
+
+            navigationView.MenuItems.Add(new Mux.NavigationViewItem
+            {
+                Content = "Home",
+                Icon = new Mux.SymbolIcon(Mux.Symbol.Home)
+            });
+            navigationView.MenuItems.Add(new Mux.NavigationViewItem
+            {
+                Content = "Account",
+                Icon = new Mux.SymbolIcon(Mux.Symbol.Contact)
+            });
+            var inboxItem = new Mux.NavigationViewItem
+            {
+                Name = "InboxPage",
+                Content = "Inbox",
+                Icon = new Mux.SymbolIcon(Mux.Symbol.Mail),
+                InfoBadge = infoBadge
+            };
+            AutomationProperties.SetName(inboxItem, "Inbox, 5 notifications");
+            navigationView.MenuItems.Add(inboxItem);
+
+            var toggle = new Mux.ToggleSwitch
+            {
+                Name = "ToggleInfoBadgeOpacity",
+                Header = "InfoBadge Opacity",
+                IsOn = true
+            };
+            toggle.Toggled += delegate
+            {
+                infoBadge.Opacity = toggle.IsOn ? 1.0 : 0.0;
+            };
+
+            var displayMode = new ComboBox
+            {
+                Name = "NavigationViewDisplayMode"
+            };
+            displayMode.Items.Add("LeftExpanded");
+            displayMode.Items.Add("LeftCompact");
+            displayMode.Items.Add("Top");
+            displayMode.SelectionChanged += delegate
+            {
+                switch (displayMode.SelectedItem as string)
+                {
+                    case "LeftCompact":
+                        navigationView.PaneDisplayMode = Mux.NavigationViewPaneDisplayMode.LeftCompact;
+                        navigationView.IsPaneOpen = false;
+                        break;
+                    case "Top":
+                        navigationView.PaneDisplayMode = Mux.NavigationViewPaneDisplayMode.Top;
+                        navigationView.IsPaneOpen = true;
+                        break;
+                    default:
+                        navigationView.PaneDisplayMode = Mux.NavigationViewPaneDisplayMode.Left;
+                        navigationView.IsPaneOpen = true;
+                        break;
+                }
+            };
+            displayMode.SelectedItem = "LeftExpanded";
+
+            root.Children.Add(CreateInfoBadgeExampleLayout(
+                navigationView,
+                CreateInfoBadgeOptionsPanel(toggle, CreateOptionBlock("Display Mode", displayMode))));
+            return root;
+        }
+
+        private static GallerySamplePanel CreateInfoBadgeStylesExampleContent()
+        {
+            var root = new GallerySamplePanel();
+            var infoBadge2 = new Mux.InfoBadge
+            {
+                Name = "infoBadge2",
+                HorizontalAlignment = HorizontalAlignment.Right
+            };
+            var infoBadge3 = new Mux.InfoBadge
+            {
+                Name = "infoBadge3",
+                HorizontalAlignment = HorizontalAlignment.Right,
+                Value = 10
+            };
+            var infoBadge4 = new Mux.InfoBadge
+            {
+                Name = "infoBadge4",
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            SetInfoBadgeStyles("Attention", infoBadge2, infoBadge3, infoBadge4);
+
+            var badges = new StackPanel
+            {
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Orientation = Orientation.Horizontal
+            };
+            badges.Children.Add(infoBadge2);
+            badges.Children.Add(infoBadge3);
+            badges.Children.Add(infoBadge4);
+            infoBadge2.Margin = new Thickness(0, 0, 20, 0);
+            infoBadge3.Margin = new Thickness(0, 0, 20, 0);
+
+            var styleCombo = new ComboBox
+            {
+                Name = "InfoBadgeStyleComboBox"
+            };
+            styleCombo.Items.Add("Attention");
+            styleCombo.Items.Add("Informational");
+            styleCombo.Items.Add("Success");
+            styleCombo.Items.Add("Critical");
+            styleCombo.SelectionChanged += delegate
+            {
+                SetInfoBadgeStyles(styleCombo.SelectedItem as string, infoBadge2, infoBadge3, infoBadge4);
+            };
+            styleCombo.SelectedItem = "Attention";
+
+            root.Children.Add(CreateInfoBadgeExampleLayout(
+                badges,
+                CreateInfoBadgeOptionsPanel(CreateOptionBlock("Styles", styleCombo))));
+            return root;
+        }
+
+        private static GallerySamplePanel CreateInfoBadgeInsideControlExampleContent()
+        {
+            var root = new GallerySamplePanel();
+            var button = new Button
+            {
+                Name = "Example3Button",
+                Width = 200,
+                Height = 60,
+                Padding = new Thickness(0),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                VerticalContentAlignment = VerticalAlignment.Stretch,
+                ToolTip = "Refresh required"
+            };
+            AutomationProperties.SetName(button, "Example3Button");
+
+            var grid = new Grid
+            {
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Stretch
+            };
+            grid.Children.Add(new Mux.SymbolIcon(Mux.Symbol.Sync)
+            {
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            });
+            grid.Children.Add(new Mux.InfoBadge
+            {
+                Name = "Example3InfoBadge",
+                HorizontalAlignment = HorizontalAlignment.Right,
+                VerticalAlignment = VerticalAlignment.Top,
+                Background = CreateBrush("#C42B1C"),
+                IconSource = new Mux.FontIconSource { Glyph = "\uF13C" }
+            });
+            button.Content = grid;
+            root.Children.Add(button);
+            return root;
+        }
+
+        private static GallerySamplePanel CreateDynamicInfoBadgeExampleContent()
+        {
+            var root = new GallerySamplePanel();
+            var dynamicInfoBadge = new Mux.InfoBadge
+            {
+                Name = "DynamicInfoBadge",
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+            var valueNumberBox = new Mux.NumberBox
+            {
+                Name = "ValueNumberBox",
+                Header = "InfoBadge Value",
+                Minimum = -1,
+                SpinButtonPlacementMode = Mux.NumberBoxSpinButtonPlacementMode.Inline,
+                Value = 1
+            };
+            valueNumberBox.ValueChanged += delegate(Mux.NumberBox sender, Mux.NumberBoxValueChangedEventArgs args)
+            {
+                if ((int)args.NewValue >= -1)
+                {
+                    dynamicInfoBadge.Value = (int)args.NewValue;
+                }
+            };
+            dynamicInfoBadge.Value = 1;
+
+            root.Children.Add(CreateInfoBadgeExampleLayout(
+                dynamicInfoBadge,
+                CreateInfoBadgeOptionsPanel(valueNumberBox)));
+            return root;
+        }
+
+        private static Grid CreateInfoBadgeExampleLayout(UIElement sample, UIElement options)
+        {
+            var layout = new Grid();
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(40) });
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            layout.Children.Add(sample);
+            Grid.SetColumn(options, 2);
+            layout.Children.Add(options);
+            return layout;
+        }
+
+        private static StackPanel CreateInfoBadgeOptionsPanel(params UIElement[] children)
+        {
+            var panel = new StackPanel
+            {
+                Width = 160
+            };
+            foreach (var child in children)
+            {
+                panel.Children.Add(child);
+            }
+
+            return panel;
+        }
+
+        private static void SetInfoBadgeStyles(
+            string style,
+            Mux.InfoBadge iconBadge,
+            Mux.InfoBadge valueBadge,
+            Mux.InfoBadge dotBadge)
+        {
+            var stylePrefix = string.IsNullOrEmpty(style) ? "Attention" : style;
+            ApplyInfoBadgeBackground(iconBadge, stylePrefix);
+            ApplyInfoBadgeBackground(valueBadge, stylePrefix);
+            ApplyInfoBadgeBackground(dotBadge, stylePrefix);
+
+            iconBadge.Padding = new Thickness(0);
+            switch (stylePrefix)
+            {
+                case "Informational":
+                    iconBadge.Padding = new Thickness(0, 4, 0, 2);
+                    iconBadge.IconSource = new Mux.FontIconSource { Glyph = "\uF13F" };
+                    break;
+                case "Success":
+                    iconBadge.IconSource = new Mux.SymbolIconSource { Symbol = Mux.Symbol.Accept };
+                    break;
+                case "Critical":
+                    iconBadge.IconSource = new Mux.SymbolIconSource { Symbol = Mux.Symbol.Cancel };
+                    break;
+                default:
+                    iconBadge.Padding = new Thickness(0, 4, 0, 2);
+                    iconBadge.IconSource = new Mux.FontIconSource { Glyph = "\uEA38" };
+                    break;
+            }
+        }
+
+        private static void ApplyInfoBadgeBackground(Mux.InfoBadge badge, string stylePrefix)
+        {
+            switch (stylePrefix)
+            {
+                case "Informational":
+                    badge.SetResourceReference(Control.BackgroundProperty, "SystemFillColorSolidNeutralBrush");
+                    break;
+                case "Success":
+                    badge.SetResourceReference(Control.BackgroundProperty, "SystemFillColorSuccessBrush");
+                    break;
+                case "Critical":
+                    badge.SetResourceReference(Control.BackgroundProperty, "SystemFillColorCriticalBrush");
+                    break;
+                default:
+                    badge.SetResourceReference(Control.BackgroundProperty, "SystemFillColorAttentionBrush");
+                    break;
+            }
         }
 
         private static UIElement CreateInfoBarSample()
@@ -567,29 +920,6 @@ namespace ModernWpf.Gallery.Pages
             return panel;
         }
 
-        private static Border CreateBadge(string text, string background, string toolTip)
-        {
-            return new Border
-            {
-                Background = CreateBrush(background),
-                CornerRadius = new CornerRadius(10),
-                MinWidth = 20,
-                Height = 20,
-                Padding = new Thickness(6, 0, 6, 1),
-                Margin = new Thickness(0, 0, 10, 0),
-                ToolTip = toolTip,
-                Child = new TextBlock
-                {
-                    Text = text,
-                    Foreground = Brushes.White,
-                    FontSize = 12,
-                    FontWeight = FontWeights.SemiBold,
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center
-                }
-            };
-        }
-
         private static StackPanel CreateSamplePanel(string description)
         {
             var panel = new GallerySamplePanel
@@ -604,16 +934,6 @@ namespace ModernWpf.Gallery.Pages
                 Margin = new Thickness(0, 0, 0, 12)
             });
             return panel;
-        }
-
-        private static TextBlock CreateOutput(string text)
-        {
-            return new TextBlock
-            {
-                Text = text,
-                Margin = new Thickness(0, 12, 0, 0),
-                TextWrapping = TextWrapping.Wrap
-            };
         }
 
         private static SolidColorBrush CreateBrush(string color)
