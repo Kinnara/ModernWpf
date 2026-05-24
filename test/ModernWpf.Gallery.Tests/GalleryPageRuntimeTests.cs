@@ -2214,8 +2214,18 @@ namespace ModernWpf.Gallery.Tests
             });
         }
 
-        [TestMethod]
-        public void ColorPageVisualTestCanOpenWpfGalleryHighContrastSubsection()
+        [DataTestMethod]
+        [DataRow("Text", "TextSection", 7, "Text")]
+        [DataRow("Fill", "FillSection", 17, "Control Fill")]
+        [DataRow("Stroke", "StrokeSection", 16, "Control Elevation (gradient strokes)")]
+        [DataRow("Background", "BackgroundSection", 20, "Card Background")]
+        [DataRow("Signal", "SignalSection", 6, "System")]
+        [DataRow("HighContrast", "HighContrastSection", 9, "Aquatic")]
+        public void ColorPageVisualTestCanOpenWpfGallerySubsection(
+            string colorSubpage,
+            string expectedSectionTypeName,
+            int expectedChildCount,
+            string expectedFirstVisibleTitle)
         {
             WpfTestHost.Run(() =>
             {
@@ -2225,7 +2235,7 @@ namespace ModernWpf.Gallery.Tests
                     {
                         "--visual-test",
                         "--color-subpage",
-                        "HighContrast"
+                        colorSubpage
                     }));
 
                     var page = new ColorPage(new ColorsPageViewModel());
@@ -2235,13 +2245,23 @@ namespace ModernWpf.Gallery.Tests
                     selector.RaiseEvent(new RoutedEventArgs(FrameworkElement.LoadedEvent, selector));
                     WpfTestHost.DoEvents();
 
-                    Assert.AreEqual("HighContrast", selector.SelectedItem);
-                    Assert.AreEqual("HighContrastSection", sectionHost.Content.GetType().Name);
-                    var highContrastSection = GetColorSectionStack(sectionHost.Content);
-                    Assert.AreEqual(9, highContrastSection.Children.Count);
-                    Assert.AreEqual(14.0, ((TextBlock)highContrastSection.Children[0]).FontSize);
-                    Assert.AreEqual("Aquatic", ((TextBlock)highContrastSection.Children[1]).Text);
-                    Assert.AreEqual("Night Sky", ((TextBlock)highContrastSection.Children[7]).Text);
+                    Assert.AreEqual(colorSubpage, selector.SelectedItem);
+                    Assert.AreEqual(expectedSectionTypeName, sectionHost.Content.GetType().Name);
+                    Assert.AreEqual(14.0, TextElement.GetFontSize((DependencyObject)sectionHost.Content));
+
+                    var section = GetColorSectionStack(sectionHost.Content);
+                    Assert.AreEqual(expectedChildCount, section.Children.Count);
+
+                    if (string.Equals(colorSubpage, "HighContrast", StringComparison.Ordinal))
+                    {
+                        Assert.AreEqual(14.0, ((TextBlock)section.Children[0]).FontSize);
+                        Assert.AreEqual(expectedFirstVisibleTitle, ((TextBlock)section.Children[1]).Text);
+                        Assert.AreEqual("Night Sky", ((TextBlock)section.Children[7]).Text);
+                    }
+                    else
+                    {
+                        Assert.AreEqual(expectedFirstVisibleTitle, GetColorPageExampleTitle(section, 0));
+                    }
                 }
                 finally
                 {
