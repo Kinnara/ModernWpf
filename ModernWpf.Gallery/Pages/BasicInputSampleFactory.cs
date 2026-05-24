@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using ModernWpf.Gallery.Models;
@@ -14,12 +15,16 @@ namespace ModernWpf.Gallery.Pages
 {
     internal static class BasicInputSampleFactory
     {
+        private const double SwatchSize = 32;
+
         public static IReadOnlyList<GalleryExample> CreateExamples(string uniqueId, IReadOnlyList<SampleSnippet> sampleSnippets)
         {
             switch (uniqueId)
             {
                 case "DropDownButton":
                     return CreateDropDownButtonExamples(sampleSnippets);
+                case "SplitButton":
+                    return CreateSplitButtonExamples(sampleSnippets);
                 default:
                     return Array.Empty<GalleryExample>();
             }
@@ -235,18 +240,176 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateSplitButtonSample()
         {
-            var panel = CreateSamplePanel("SplitButton exposes a default action and secondary choices.");
-            var output = CreateOutput("No save action selected.");
-            var button = new Mux.SplitButton
+            var panel = new GallerySamplePanel
             {
-                Content = "Save",
-                HorizontalAlignment = HorizontalAlignment.Left,
-                Flyout = CreateCommandFlyout(output, "Save as copy", "Save as template")
+                Margin = new Thickness(0, 0, 0, 12)
             };
-            button.Click += delegate { output.Text = "Default save selected."; };
-            panel.Children.Add(button);
-            panel.Children.Add(output);
+            GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("SplitButton"));
+            panel.Children.Add(CreateColorSplitButtonExampleContent(assignRootAutomationId: false));
             return panel;
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateSplitButtonExamples(IReadOnlyList<SampleSnippet> sampleSnippets)
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "A SplitButton controlling text color in a RichEditBox",
+                    CreateColorSplitButtonExampleContent(assignRootAutomationId: true),
+                    FindSampleCodeText(sampleSnippets, "Buttons\\SplitButton\\SplitButtonSample1.txt"),
+                    null),
+                new GalleryExample(
+                    "A SplitButton with text",
+                    CreateTextSplitButtonExampleContent(),
+                    FindSampleCodeText(sampleSnippets, "Buttons\\SplitButton\\SplitButtonSample2.txt"),
+                    null)
+            };
+        }
+
+        private static GallerySamplePanel CreateColorSplitButtonExampleContent(bool assignRootAutomationId)
+        {
+            var panel = new GallerySamplePanel();
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("SplitButton"));
+            }
+
+            var layout = new Grid();
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(24) });
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+            var richTextBox = CreateSplitButtonRichTextBox();
+            var currentColor = new Border
+            {
+                Name = "CurrentColor",
+                Width = SwatchSize,
+                Height = SwatchSize,
+                Margin = new Thickness(0),
+                Background = Brushes.Green,
+                CornerRadius = new CornerRadius(4, 0, 0, 4)
+            };
+
+            var splitButton = new Mux.SplitButton
+            {
+                Name = "myColorButton",
+                Content = currentColor,
+                MinWidth = 0,
+                MinHeight = 0,
+                Padding = new Thickness(0),
+                VerticalAlignment = VerticalAlignment.Top
+            };
+            AutomationProperties.SetName(splitButton, "Font color");
+            GalleryAutomation.WithAutomationId(splitButton, GalleryAutomation.SampleElementId("SplitButton", "SplitButton"));
+            splitButton.Click += delegate
+            {
+                ApplyRichTextBoxForeground(richTextBox, ((SolidColorBrush)currentColor.Background).Color);
+            };
+            splitButton.Flyout = CreateColorSwatchFlyout(delegate(string colorName, SolidColorBrush brush)
+            {
+                currentColor.Background = brush;
+                ApplyRichTextBoxForeground(richTextBox, brush.Color);
+                splitButton.Flyout.Hide();
+            }, includeBlack: false);
+
+            layout.Children.Add(splitButton);
+            Grid.SetColumn(richTextBox, 2);
+            layout.Children.Add(richTextBox);
+            panel.Children.Add(layout);
+            return panel;
+        }
+
+        private static GallerySamplePanel CreateTextSplitButtonExampleContent()
+        {
+            var panel = new GallerySamplePanel();
+            var splitButton = new Mux.SplitButton
+            {
+                Name = "myColorButtonReveal",
+                Content = "Choose color",
+                MinWidth = 0,
+                MinHeight = 0,
+                Padding = new Thickness(5),
+                VerticalAlignment = VerticalAlignment.Top,
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+            AutomationProperties.SetName(splitButton, "Font color with text");
+            GalleryAutomation.WithAutomationId(splitButton, GalleryAutomation.SampleElementId("SplitButton", "TextSplitButton"));
+            splitButton.Flyout = CreateColorSwatchFlyout(delegate
+            {
+                splitButton.Flyout.Hide();
+            }, includeBlack: true);
+            panel.Children.Add(splitButton);
+            return panel;
+        }
+
+        private static RichTextBox CreateSplitButtonRichTextBox()
+        {
+            var richTextBox = new RichTextBox
+            {
+                Name = "myRichEditBox",
+                Width = 240,
+                MinHeight = 96,
+                VerticalScrollBarVisibility = ScrollBarVisibility.Auto
+            };
+            richTextBox.Document.Blocks.Clear();
+            richTextBox.Document.Blocks.Add(new Paragraph(new Run(
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Tempor commodo ullamcorper a lacus.")));
+            ApplyRichTextBoxForeground(richTextBox, Colors.Green);
+            return richTextBox;
+        }
+
+        private static Mux.Flyout CreateColorSwatchFlyout(Action<string, SolidColorBrush> colorSelected, bool includeBlack)
+        {
+            var grid = new Mux.VariableSizedWrapGrid
+            {
+                MaximumRowsOrColumns = 3,
+                Orientation = Orientation.Horizontal
+            };
+
+            var colors = includeBlack
+                ? new[] { "Red", "Orange", "Yellow", "Green", "Blue", "Indigo", "Violet", "Gray", "Black" }
+                : new[] { "Red", "Orange", "Yellow", "Green", "Blue", "Indigo", "Violet", "Gray" };
+            foreach (var colorName in colors)
+            {
+                grid.Children.Add(CreateColorSwatchButton(colorName, colorSelected));
+            }
+
+            return new Mux.Flyout
+            {
+                Placement = FlyoutPlacementMode.Bottom,
+                Content = grid
+            };
+        }
+
+        private static Button CreateColorSwatchButton(string colorName, Action<string, SolidColorBrush> colorSelected)
+        {
+            var brush = new SolidColorBrush((Color)ColorConverter.ConvertFromString(colorName));
+            var rectangle = new Rectangle
+            {
+                Width = SwatchSize,
+                Height = SwatchSize,
+                RadiusX = 4,
+                RadiusY = 4,
+                Fill = brush
+            };
+            var button = new Button
+            {
+                Content = rectangle,
+                Padding = new Thickness(0),
+                MinWidth = 0,
+                MinHeight = 0,
+                Margin = new Thickness(6)
+            };
+            AutomationProperties.SetName(button, colorName);
+            button.Click += delegate { colorSelected(colorName, brush); };
+            return button;
+        }
+
+        private static void ApplyRichTextBoxForeground(RichTextBox richTextBox, Color color)
+        {
+            richTextBox.SelectAll();
+            richTextBox.Selection.ApplyPropertyValue(TextElement.ForegroundProperty, new SolidColorBrush(color));
         }
 
         private static UIElement CreateToggleSplitButtonSample()

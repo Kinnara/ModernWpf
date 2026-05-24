@@ -103,6 +103,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.SplitButtonSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 10 tests per target. The generated ModernWpf SplitButton page now follows the local official WinUI Gallery two-example shape for the RichEditBox color SplitButton and the text SplitButton, consumes the local `Buttons\SplitButton` source panes through `BasicInputSampleFactory.CreateExamples`, and exposes curated automation IDs `GallerySample_SplitButton_Root`, `GallerySample_SplitButton_SplitButton`, and `GallerySample_SplitButton_TextSplitButton`. The WPF adaptation uses a WPF `RichTextBox` and button-hosted color swatches while keeping the WinUI sample names, sizing, and flyout structure. Current warning/output remains `NU1903` and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls SplitButton -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-123925-164-99420/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, primary crops match at `71x32`, and SplitButton Light primary delta is `1.5`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls SplitButton -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-123949-366-106832/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, primary crops match at `71x32`, and SplitButton Dark primary delta is `4.59`. The visual harness now uses the WinUI reference automation ID `myColorButton` for SplitButton because the reference exposes it as UIA control type `SplitButton`, not a plain named Button.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the SplitButton WinUI example alignment and reference crop mapping. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages, existing ModernWpf/ModernWpf.Controls warnings, `19 Warning(s)`, and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.DropDownButtonSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 9 tests per target. The generated ModernWpf DropDownButton page now follows the local official WinUI Gallery two-example shape for the simple Email dropdown and icon-only Email dropdown, consumes the local `Buttons\DropDown` source panes through `BasicInputSampleFactory.CreateExamples`, and exposes curated automation IDs `GallerySample_DropDownButton_Root`, `GallerySample_DropDownButton_DropDownButton`, and `GallerySample_DropDownButton_IconDropDownButton`. Current warning/output remains `NU1903` and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls DropDownButton -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -1227,6 +1235,20 @@ supports reference primary crops by UIA name for WinUI samples that expose a
 stable name but no AutomationId; DropDownButton uses the first `Email` button
 for both the crop and theme probe. Avoid reopening DropDownButton's source
 shape unless a new WinUI source or crop regression appears.
+The generated ModernWpf SplitButton extension page now uses the local official
+WinUI Gallery two-example structure for the RichEditBox font-color SplitButton
+and the text SplitButton. `BasicInputSampleFactory.CreateExamples` consumes the
+local `Buttons\SplitButton` sample-code files, keeps WinUI's sample names and
+primary control sizing, and adapts the first sample to WPF with `RichTextBox`
+plus button-hosted swatches in a `Flyout`. Current SplitButton WinUI-reference
+evidence is `artifacts/visual-checks/20260524-123925-164-99420/report.md` for
+Light and `artifacts/visual-checks/20260524-123949-366-106832/report.md` for
+Dark, both with ModernWpf and installed WinUI 3 Gallery `Passed`, matching
+`71x32` primary crops, and primary deltas `1.5` / `4.59`. The visual harness
+uses the WinUI reference automation ID `myColorButton` because the installed
+reference exposes the crop target as UIA control type `SplitButton`, not as a
+plain named Button. Avoid reopening SplitButton's source shape unless a new
+WinUI source or crop regression appears.
 Continue with the next highest-impact visible drift from the checklist, likely
 remaining High Contrast gaps, other NavigationView styling not covered
 by the TreeView token aliases or first-sample refresh, or other item pages that still lack current

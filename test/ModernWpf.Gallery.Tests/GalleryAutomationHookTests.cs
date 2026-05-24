@@ -29,6 +29,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "NavigationView", "GallerySample_NavigationView_Root", "GallerySample_NavigationView_NavigationView" };
             yield return new object[] { "ContentDialog", "GallerySample_ContentDialog_Root", "GallerySample_ContentDialog_ShowButton" };
             yield return new object[] { "DropDownButton", "GallerySample_DropDownButton_Root", "GallerySample_DropDownButton_DropDownButton" };
+            yield return new object[] { "SplitButton", "GallerySample_SplitButton_Root", "GallerySample_SplitButton_SplitButton" };
             yield return new object[] { "MenuBar", "GallerySample_MenuBar_Root", "GallerySample_MenuBar_MenuBar" };
             yield return new object[] { "CommandBar", "GallerySample_CommandBar_Root", "GallerySample_CommandBar_CommandBar" };
             yield return new object[] { "CommandBarFlyout", "GallerySample_CommandBarFlyout_Root", "GallerySample_CommandBarFlyout_ShowButton" };
@@ -460,6 +461,76 @@ namespace ModernWpf.Gallery.Tests
 
                     AssertEmailDropDownFlyout(simpleButton.Flyout, includeIcons: false);
                     AssertEmailDropDownFlyout(iconButton.Flyout, includeIcons: true);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void SplitButtonSampleMatchesWinUIGalleryExamples()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("SplitButton"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(2, page.Examples.Count);
+                    Assert.AreEqual("A SplitButton controlling text color in a RichEditBox", page.Examples[0].HeaderText);
+                    Assert.AreEqual("A SplitButton with text", page.Examples[1].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "myColorButton");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "CurrentColor");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "Choose color");
+
+                    var colorButton = (Mux.SplitButton)FindByAutomationId(page, "GallerySample_SplitButton_SplitButton");
+                    var textButton = (Mux.SplitButton)FindByAutomationId(page, "GallerySample_SplitButton_TextSplitButton");
+                    var richTextBox = FindNamedDescendant<RichTextBox>(page, "myRichEditBox");
+                    Assert.IsNotNull(colorButton);
+                    Assert.IsNotNull(textButton);
+                    Assert.IsNotNull(richTextBox);
+
+                    Assert.AreEqual("Font color", AutomationProperties.GetName(colorButton));
+                    Assert.AreEqual(0.0, colorButton.MinWidth);
+                    Assert.AreEqual(0.0, colorButton.MinHeight);
+                    Assert.AreEqual(new Thickness(0), colorButton.Padding);
+                    Assert.AreEqual(VerticalAlignment.Top, colorButton.VerticalAlignment);
+                    var currentColor = (Border)colorButton.Content;
+                    Assert.AreEqual("CurrentColor", currentColor.Name);
+                    Assert.AreEqual(32.0, currentColor.Width);
+                    Assert.AreEqual(32.0, currentColor.Height);
+                    Assert.AreEqual(new CornerRadius(4, 0, 0, 4), currentColor.CornerRadius);
+                    Assert.AreEqual(Colors.Green, ((SolidColorBrush)currentColor.Background).Color);
+                    AssertColorSwatchFlyout(colorButton.Flyout, expectedCount: 8, includeBlack: false);
+
+                    Assert.AreEqual("Choose color", textButton.Content);
+                    Assert.AreEqual("Font color with text", AutomationProperties.GetName(textButton));
+                    Assert.AreEqual(0.0, textButton.MinWidth);
+                    Assert.AreEqual(0.0, textButton.MinHeight);
+                    Assert.AreEqual(new Thickness(5), textButton.Padding);
+                    Assert.AreEqual(VerticalAlignment.Top, textButton.VerticalAlignment);
+                    Assert.AreEqual(HorizontalAlignment.Left, textButton.HorizontalAlignment);
+                    AssertColorSwatchFlyout(textButton.Flyout, expectedCount: 9, includeBlack: true);
                 }
                 finally
                 {
@@ -1105,6 +1176,44 @@ namespace ModernWpf.Gallery.Tests
             }
 
             return null;
+        }
+
+        private static Mux.VariableSizedWrapGrid AssertColorSwatchFlyout(ModernWpf.Controls.Primitives.FlyoutBase flyoutBase, int expectedCount, bool includeBlack)
+        {
+            var flyout = flyoutBase as Mux.Flyout;
+            Assert.IsNotNull(flyout);
+            Assert.AreEqual(ModernWpf.Controls.Primitives.FlyoutPlacementMode.Bottom, flyout.Placement);
+
+            var grid = flyout.Content as Mux.VariableSizedWrapGrid;
+            Assert.IsNotNull(grid);
+            Assert.AreEqual(3, grid.MaximumRowsOrColumns);
+            Assert.AreEqual(Orientation.Horizontal, grid.Orientation);
+            Assert.AreEqual(expectedCount, grid.Children.Count);
+
+            var expectedNames = includeBlack
+                ? new[] { "Red", "Orange", "Yellow", "Green", "Blue", "Indigo", "Violet", "Gray", "Black" }
+                : new[] { "Red", "Orange", "Yellow", "Green", "Blue", "Indigo", "Violet", "Gray" };
+            Assert.AreEqual(expectedNames.Length, expectedCount);
+            for (var i = 0; i < expectedNames.Length; i++)
+            {
+                var button = grid.Children[i] as Button;
+                Assert.IsNotNull(button);
+                Assert.AreEqual(expectedNames[i], AutomationProperties.GetName(button));
+                Assert.AreEqual(new Thickness(0), button.Padding);
+                Assert.AreEqual(0.0, button.MinWidth);
+                Assert.AreEqual(0.0, button.MinHeight);
+                Assert.AreEqual(new Thickness(6), button.Margin);
+
+                var swatch = button.Content as System.Windows.Shapes.Rectangle;
+                Assert.IsNotNull(swatch);
+                Assert.AreEqual(32.0, swatch.Width);
+                Assert.AreEqual(32.0, swatch.Height);
+                Assert.AreEqual(4.0, swatch.RadiusX);
+                Assert.AreEqual(4.0, swatch.RadiusY);
+                Assert.AreEqual((Color)ColorConverter.ConvertFromString(expectedNames[i]), ((SolidColorBrush)swatch.Fill).Color);
+            }
+
+            return grid;
         }
 
         private static void AssertEmailDropDownFlyout(ModernWpf.Controls.Primitives.FlyoutBase flyoutBase, bool includeIcons)

@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "DropDownButton", "InfoBar", "NavigationView", "ContentDialog", "MenuBar", "CommandBar", "CommandBarFlyout"),
+    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "DropDownButton", "SplitButton", "InfoBar", "NavigationView", "ContentDialog", "MenuBar", "CommandBar", "CommandBarFlyout"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -425,6 +425,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "Button" { return "GallerySample_Button_PrimaryButton" }
         "ComboBox" { return "GallerySample_ComboBox_ComboBox" }
         "DropDownButton" { return "GallerySample_DropDownButton_DropDownButton" }
+        "SplitButton" { return "GallerySample_SplitButton_SplitButton" }
         "InfoBar" { return "GallerySample_InfoBar_InfoBar" }
         "NavigationView" { return "GallerySample_NavigationView_NavigationView" }
         "ContentDialog" { return "GallerySample_ContentDialog_ShowButton" }
@@ -450,6 +451,7 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
     switch ($control) {
         "InfoBar" { return "GallerySample_InfoBar_InfoBar" }
         "DropDownButton" { return "GallerySample_DropDownButton_DropDownButton" }
+        "SplitButton" { return "GallerySample_SplitButton_SplitButton" }
         "MenuBar" { return "GallerySample_MenuBar_MenuBar" }
         "CommandBar" { return "GallerySample_CommandBar_CommandBar" }
         "CommandBarFlyout" { return "GallerySample_CommandBarFlyout_ShowButton" }
@@ -468,6 +470,7 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
         "MenuBar" { return "Example1" }
         "CommandBar" { return "PrimaryCommandBar" }
         "CommandBarFlyout" { return "myImageButton" }
+        "SplitButton" { return "myColorButton" }
         default { return "" }
     }
 }
