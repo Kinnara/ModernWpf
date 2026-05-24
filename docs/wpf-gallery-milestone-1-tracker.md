@@ -106,6 +106,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.GridViewSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 37 tests per target. The generated ModernWpf GridView page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\GridViewPage.xaml` / `.xaml.cs`: `Basic GridView with Simple DataTemplate`, `GridView with Layout Customization`, and `Content inside of a GridView.` The old WPF `ListView` table fallback for the WinUI `GridView` item is replaced by real `ModernWpf.Controls.GridView` samples with image templates, `ItemsWrapGrid` layout options, source-facing names such as `BasicGridView`, `StyledGrid`, `MaxItemsWrapGrid`, `ContentGridView`, `Control2`, `ItemClickCheckBox`, `DropCheckBox`, `ClickOutput`, and `SelectionOutput`, plus stable automation IDs `GallerySample_GridView_Root` / `GallerySample_GridView_BasicGridView`. The copied WPF Gallery `ListView with GridView` sample remains on the WPF `ListView` page and is intentionally separate.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls GridView -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-201703-789-109012/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required GridView sample element was found, and primary crops now match at `657x412`; GridView Light primary delta is `69.52`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls GridView -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-201749-064-114644/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required GridView sample element was found, primary crops match at `657x412`, GridView Dark primary delta is `63.82`, and whole-window mean delta is `32.41`.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the GridView WinUI example alignment. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages, `0 Warning(s)`, and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.PullToRefreshSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 36 tests per target. The generated ModernWpf PullToRefresh page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\PullToRefreshPage.xaml` / `.xaml.cs`: `Basic PullToRefresh` plus `Custom Icon PullToRefresh`, backed by real `ModernWpf.Controls.RefreshContainer` and `RefreshVisualizer` instances instead of the previous explicit refresh-button placeholder. `CollectionsSampleFactory.CreateExamples` now covers PullToRefresh as a source-backed Collections WinUI extension page, keeps WinUI's `rc`, `lv`, `Ex2Grid`, `rc2`, `rv2`, and `lv2` source-facing names, preserves the source snippets, inserts `NewControl` / `New Friend` on refresh completion, and exposes curated automation IDs `GallerySample_PullToRefresh_Root` / `GallerySample_PullToRefresh_RefreshContainer`.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls PullToRefresh -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -1471,6 +1479,29 @@ ModernWpf primary from the rendered sample root because the control-only
 `VisualBrush` artifact is blank for the repeater-templated PipsPager. Avoid
 reopening PipsPager's source shape unless a new WinUI source or crop regression
 appears.
+The generated ModernWpf GridView extension page now uses the local official
+WinUI Gallery three-example structure from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\GridViewPage.xaml`
+/ `.xaml.cs`: `Basic GridView with Simple DataTemplate`, `GridView with
+Layout Customization`, and `Content inside of a GridView.` The old generated
+WinUI `GridView` item no longer falls back to the WPF `ListView` table sample;
+that WPF-equivalent `ListView with GridView` sample remains on the copied WPF
+Gallery `ListView` page. `CollectionsSampleFactory.CreateExamples` now covers
+GridView as a source-backed Collections WinUI example, uses real
+`ModernWpf.Controls.GridView` controls, preserves source-facing names such as
+`BasicGridView`, `StyledGrid`, `MaxItemsWrapGrid`, `ContentGridView`,
+`Control2`, `ItemClickCheckBox`, `DropCheckBox`, `ClickOutput`, and
+`SelectionOutput`, and exposes `GallerySample_GridView_Root` /
+`GallerySample_GridView_BasicGridView` for runtime and visual checks. Current
+GridView WinUI-reference evidence is
+`artifacts/visual-checks/20260524-201703-789-109012/report.md` for Light and
+`artifacts/visual-checks/20260524-201749-064-114644/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`, required sample element
+found, matching `657x412` primary crops, and primary deltas `69.52` / `63.82`.
+Avoid reopening GridView's source shape unless a new local WinUI source,
+runtime, or crop regression appears; next Collections WinUI candidates to
+inspect remain source-backed gaps such as `ItemsRepeater`, `ItemsView`, and
+`FlipView`.
 The generated ModernWpf PullToRefresh extension page now uses the local
 official WinUI Gallery two-example structure from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\PullToRefreshPage.xaml`

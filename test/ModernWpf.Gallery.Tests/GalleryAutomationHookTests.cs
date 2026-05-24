@@ -31,6 +31,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "ProgressRing", "GallerySample_ProgressRing_Root", "GallerySample_ProgressRing_ProgressRing" };
             yield return new object[] { "PipsPager", "GallerySample_PipsPager_Root", "GallerySample_PipsPager_PipsPager" };
             yield return new object[] { "PullToRefresh", "GallerySample_PullToRefresh_Root", "GallerySample_PullToRefresh_RefreshContainer" };
+            yield return new object[] { "GridView", "GallerySample_GridView_Root", "GallerySample_GridView_BasicGridView" };
             yield return new object[] { "BreadcrumbBar", "GallerySample_BreadcrumbBar_Root", "GallerySample_BreadcrumbBar_BreadcrumbBar" };
             yield return new object[] { "Pivot", "GallerySample_Pivot_Root", "GallerySample_Pivot_Pivot" };
             yield return new object[] { "SelectorBar", "GallerySample_SelectorBar_Root", "GallerySample_SelectorBar_SelectorBar" };
@@ -1415,6 +1416,156 @@ namespace ModernWpf.Gallery.Tests
                     customRefreshContainer.RequestRefresh();
                     WaitFor(() => customListView.Items.Count == 9);
                     Assert.AreEqual("New Friend", customListView.Items[0]);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void GridViewSampleMatchesWinUIGalleryExamples()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("GridView"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(3, page.Examples.Count);
+                    Assert.AreEqual("Basic GridView with Simple DataTemplate", page.Examples[0].HeaderText);
+                    Assert.AreEqual("GridView with Layout Customization", page.Examples[1].HeaderText);
+                    Assert.AreEqual("Content inside of a GridView.", page.Examples[2].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "x:Name=\"BasicGridView\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "ItemClick=\"BasicGridView_ItemClick\"");
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "CustomDataObject class definition");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "x:Name=\"StyledGrid\"");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "MaxItemsWrapGrid");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "ImageOverlayTemplate");
+                    StringAssert.Contains(page.Examples[2].XamlCode, "x:Name=\"ContentGridView\"");
+                    StringAssert.Contains(page.Examples[2].XamlCode, "CanDragItems=\"$(CanDragItems)\"");
+                    StringAssert.Contains(page.Examples[2].XamlCode, "ContentGridView_SelectionChanged");
+
+                    var basicGridView = (Mux.GridView)FindByAutomationId(page, "GallerySample_GridView_BasicGridView");
+                    var namedBasicGridView = FindNamedDescendant<Mux.GridView>(page, "BasicGridView");
+                    var clickOutput0 = FindNamedDescendant<TextBlock>(page, "ClickOutput0");
+                    Assert.IsNotNull(basicGridView);
+                    Assert.AreSame(basicGridView, namedBasicGridView);
+                    Assert.IsNotNull(clickOutput0);
+                    Assert.AreEqual(8, basicGridView.Items.Count);
+                    Assert.IsTrue(basicGridView.IsItemClickEnabled);
+                    Assert.AreEqual(SelectionMode.Single, basicGridView.SelectionMode);
+                    Assert.IsNotNull(basicGridView.ItemTemplate);
+
+                    WaitFor(() => basicGridView.ItemContainerGenerator.ContainerFromIndex(0) != null);
+                    InvokeListViewBaseItemClick(
+                        basicGridView,
+                        (Mux.ListViewBaseItem)basicGridView.ItemContainerGenerator.ContainerFromIndex(0));
+                    Assert.AreEqual("You clicked Item 1.", clickOutput0.Text);
+
+                    var styledGrid = FindNamedDescendant<Mux.GridView>(page, "StyledGrid");
+                    var maxItemsWrapGrid = FindNamedDescendant<Mux.ItemsWrapGrid>(page, "MaxItemsWrapGrid");
+                    var columnSpace = FindNamedDescendant<Mux.NumberBox>(page, "ColumnSpace");
+                    var rowSpace = FindNamedDescendant<Mux.NumberBox>(page, "RowSpace");
+                    var wrapItemCount = FindNamedDescendant<Mux.NumberBox>(page, "WrapItemCount");
+                    Assert.IsNotNull(styledGrid);
+                    Assert.IsNotNull(maxItemsWrapGrid);
+                    Assert.IsNotNull(columnSpace);
+                    Assert.IsNotNull(rowSpace);
+                    Assert.IsNotNull(wrapItemCount);
+                    Assert.AreEqual(8, styledGrid.Items.Count);
+                    Assert.AreEqual(3, maxItemsWrapGrid.MaximumRowsOrColumns);
+                    Assert.AreEqual("Space between columns", AutomationProperties.GetName(columnSpace));
+                    Assert.AreEqual("Space between rows", AutomationProperties.GetName(rowSpace));
+                    Assert.AreEqual("Maximum number of items before wrapping", AutomationProperties.GetName(wrapItemCount));
+
+                    WaitFor(() => styledGrid.ItemContainerGenerator.ContainerFromIndex(0) != null);
+                    columnSpace.Value = 9;
+                    rowSpace.Value = 7;
+                    wrapItemCount.Value = 4;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(4, maxItemsWrapGrid.MaximumRowsOrColumns);
+                    Assert.AreEqual(
+                        new Thickness(9, 7, 9, 7),
+                        ((Mux.GridViewItem)styledGrid.ItemContainerGenerator.ContainerFromIndex(0)).Margin);
+
+                    var contentGridView = FindNamedDescendant<Mux.GridView>(page, "ContentGridView");
+                    var clickOutput = FindNamedDescendant<TextBlock>(page, "ClickOutput");
+                    var selectionOutput = FindNamedDescendant<TextBlock>(page, "SelectionOutput");
+                    var control2 = FindNamedDescendant<StackPanel>(page, "Control2");
+                    var itemClickCheckBox = FindNamedDescendant<CheckBox>(page, "ItemClickCheckBox");
+                    var dropCheckBox = FindNamedDescendant<CheckBox>(page, "DropCheckBox");
+                    var selectionModeComboBox = FindNamedDescendant<ComboBox>(page, "SelectionModeComboBox");
+                    ToggleButton reverseFlowButton = null;
+                    foreach (var button in FindDescendants<ToggleButton>(page))
+                    {
+                        if (string.Equals(button.Content as string, "Reverse FlowDirection", StringComparison.Ordinal))
+                        {
+                            reverseFlowButton = button;
+                            break;
+                        }
+                    }
+                    Assert.IsNotNull(contentGridView);
+                    Assert.IsNotNull(clickOutput);
+                    Assert.IsNotNull(selectionOutput);
+                    Assert.IsNotNull(control2);
+                    Assert.IsNotNull(itemClickCheckBox);
+                    Assert.IsNotNull(dropCheckBox);
+                    Assert.IsNotNull(selectionModeComboBox);
+                    Assert.IsNotNull(reverseFlowButton);
+                    Assert.AreEqual(8, contentGridView.Items.Count);
+                    Assert.IsFalse(contentGridView.IsItemClickEnabled);
+                    Assert.AreEqual(FlowDirection.LeftToRight, contentGridView.FlowDirection);
+                    Assert.AreEqual(SelectionMode.Single, contentGridView.SelectionMode);
+                    Assert.IsTrue(contentGridView.IsSelectionEnabled);
+
+                    WaitFor(() => contentGridView.ItemContainerGenerator.ContainerFromIndex(0) != null);
+                    itemClickCheckBox.IsChecked = true;
+                    itemClickCheckBox.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent, itemClickCheckBox));
+                    InvokeListViewBaseItemClick(
+                        contentGridView,
+                        (Mux.ListViewBaseItem)contentGridView.ItemContainerGenerator.ContainerFromIndex(0));
+                    Assert.AreEqual("You clicked Item 1.", clickOutput.Text);
+
+                    contentGridView.SelectedIndex = 0;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual("You have selected 1 item(s).", selectionOutput.Text);
+
+                    reverseFlowButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent, reverseFlowButton));
+                    Assert.AreEqual(FlowDirection.RightToLeft, contentGridView.FlowDirection);
+
+                    dropCheckBox.IsChecked = true;
+                    dropCheckBox.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent, dropCheckBox));
+                    Assert.IsTrue(contentGridView.AllowDrop);
+
+                    selectionModeComboBox.SelectedItem = "Multiple";
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(SelectionMode.Multiple, contentGridView.SelectionMode);
+                    Assert.IsTrue(contentGridView.IsSelectionEnabled);
+
+                    selectionModeComboBox.SelectedItem = "None";
+                    WpfTestHost.DoEvents();
+                    Assert.IsFalse(contentGridView.IsSelectionEnabled);
+                    Assert.AreEqual(string.Empty, selectionOutput.Text);
                 }
                 finally
                 {
@@ -3419,6 +3570,18 @@ namespace ModernWpf.Gallery.Tests
                 System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
             Assert.IsNotNull(invokeMethod);
             invokeMethod.Invoke(item, new object[] { swipeControl });
+        }
+
+        private static void InvokeListViewBaseItemClick(Mux.ListViewBase listViewBase, Mux.ListViewBaseItem item)
+        {
+            var invokeMethod = typeof(Mux.ListViewBase).GetMethod(
+                "NotifyListItemClicked",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic,
+                null,
+                new[] { typeof(Mux.ListViewBaseItem) },
+                null);
+            Assert.IsNotNull(invokeMethod);
+            invokeMethod.Invoke(listViewBase, new object[] { item });
         }
 
         private static Button FindButtonByContent(DependencyObject root, string content)
