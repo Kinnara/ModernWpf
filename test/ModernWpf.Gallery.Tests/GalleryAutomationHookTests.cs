@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows;
@@ -28,6 +29,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "NavigationView", "GallerySample_NavigationView_Root", "GallerySample_NavigationView_NavigationView" };
             yield return new object[] { "ContentDialog", "GallerySample_ContentDialog_Root", "GallerySample_ContentDialog_ShowButton" };
             yield return new object[] { "MenuBar", "GallerySample_MenuBar_Root", "GallerySample_MenuBar_MenuBar" };
+            yield return new object[] { "CommandBar", "GallerySample_CommandBar_Root", "GallerySample_CommandBar_CommandBar" };
         }
 
         [TestMethod]
@@ -404,6 +406,96 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsTrue(portrait.IsChecked);
                     Assert.AreEqual("SizeGroup", mediumIcons.GroupName);
                     Assert.IsTrue(mediumIcons.IsChecked);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void CommandBarSampleMatchesWinUIGalleryExample()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("CommandBar"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(1, page.Examples.Count);
+                    Assert.AreEqual("A command bar with labels on the side free floating in a page", page.Examples[0].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "DefaultLabelPosition=\"Right\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "MultipleButtonsSecondaryCommands");
+
+                    var commandBar = (Mux.CommandBar)FindByAutomationId(page, "GallerySample_CommandBar_CommandBar");
+                    Assert.IsNotNull(commandBar);
+                    Assert.AreEqual(Mux.CommandBarDefaultLabelPosition.Right, commandBar.DefaultLabelPosition);
+                    Assert.AreEqual(HorizontalAlignment.Left, commandBar.HorizontalAlignment);
+                    Assert.IsFalse(commandBar.IsOpen);
+                    Assert.AreEqual(3, commandBar.PrimaryCommands.Count);
+                    Assert.AreEqual(1, commandBar.SecondaryCommands.Count);
+
+                    var addButton = (Mux.AppBarButton)commandBar.PrimaryCommands[0];
+                    var editButton = (Mux.AppBarButton)commandBar.PrimaryCommands[1];
+                    var shareButton = (Mux.AppBarButton)commandBar.PrimaryCommands[2];
+                    var settingsButton = (Mux.AppBarButton)commandBar.SecondaryCommands[0];
+                    Assert.AreEqual("Add", addButton.Label);
+                    Assert.AreEqual("Edit", editButton.Label);
+                    Assert.AreEqual("Share", shareButton.Label);
+                    Assert.AreEqual("Settings", settingsButton.Label);
+                    Assert.AreEqual("Ctrl+A", addButton.InputGestureText);
+                    Assert.AreEqual("Ctrl+E", editButton.InputGestureText);
+                    Assert.AreEqual("F4", shareButton.InputGestureText);
+                    Assert.AreEqual("Ctrl+I", settingsButton.InputGestureText);
+
+                    var selectedOptionText = FindNamedDescendant<TextBlock>(page, "SelectedOptionText");
+                    Assert.IsNotNull(selectedOptionText);
+                    addButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                    Assert.AreEqual("You clicked: Add", selectedOptionText.Text);
+
+                    var openButton = FindButtonByContent(page, "Open command bar");
+                    var closeButton = FindButtonByContent(page, "Close command bar");
+                    var addSecondaryCommandsButton = FindButtonByContent(page, "Add secondary commands");
+                    var removeSecondaryCommandsButton = FindButtonByContent(page, "Remove secondary commands");
+                    Assert.IsNotNull(openButton);
+                    Assert.IsNotNull(closeButton);
+                    Assert.IsNotNull(addSecondaryCommandsButton);
+                    Assert.IsNotNull(removeSecondaryCommandsButton);
+
+                    openButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                    Assert.IsTrue(commandBar.IsOpen);
+                    closeButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                    Assert.IsFalse(commandBar.IsOpen);
+
+                    addSecondaryCommandsButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                    Assert.AreEqual(6, commandBar.SecondaryCommands.Count);
+                    Assert.AreEqual("Button 1", ((Mux.AppBarButton)commandBar.SecondaryCommands[1]).Label);
+                    Assert.AreEqual("Ctrl+N", ((Mux.AppBarButton)commandBar.SecondaryCommands[1]).InputGestureText);
+                    Assert.IsInstanceOfType(commandBar.SecondaryCommands[3], typeof(Mux.AppBarSeparator));
+                    Assert.AreEqual("Button 4", ((Mux.AppBarButton)commandBar.SecondaryCommands[5]).Label);
+
+                    removeSecondaryCommandsButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                    Assert.AreEqual(1, commandBar.SecondaryCommands.Count);
+                    Assert.AreSame(settingsButton, commandBar.SecondaryCommands[0]);
                 }
                 finally
                 {
@@ -843,6 +935,32 @@ namespace ModernWpf.Gallery.Tests
             for (var i = 0; i < childCount; i++)
             {
                 var result = FindNamedDescendant<T>(VisualTreeHelper.GetChild(root, i), name);
+                if (result != null)
+                {
+                    return result;
+                }
+            }
+
+            return null;
+        }
+
+        private static Button FindButtonByContent(DependencyObject root, string content)
+        {
+            if (root == null)
+            {
+                return null;
+            }
+
+            var button = root as Button;
+            if (button != null && string.Equals(button.Content as string, content, StringComparison.Ordinal))
+            {
+                return button;
+            }
+
+            var childCount = VisualTreeHelper.GetChildrenCount(root);
+            for (var i = 0; i < childCount; i++)
+            {
+                var result = FindButtonByContent(VisualTreeHelper.GetChild(root, i), content);
                 if (result != null)
                 {
                     return result;

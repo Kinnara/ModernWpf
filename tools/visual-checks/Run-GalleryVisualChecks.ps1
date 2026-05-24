@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "InfoBar", "NavigationView", "ContentDialog", "MenuBar"),
+    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "InfoBar", "NavigationView", "ContentDialog", "MenuBar", "CommandBar"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -428,6 +428,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "NavigationView" { return "GallerySample_NavigationView_NavigationView" }
         "ContentDialog" { return "GallerySample_ContentDialog_ShowButton" }
         "MenuBar" { return "GallerySample_MenuBar_MenuBar" }
+        "CommandBar" { return "GallerySample_CommandBar_CommandBar" }
         default { return "GalleryItemPageTitle" }
     }
 }
@@ -447,6 +448,7 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
     switch ($control) {
         "InfoBar" { return "GallerySample_InfoBar_InfoBar" }
         "MenuBar" { return "GallerySample_MenuBar_MenuBar" }
+        "CommandBar" { return "GallerySample_CommandBar_CommandBar" }
         default { return Get-RequiredSampleAutomationId $control }
     }
 }
@@ -460,6 +462,7 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
         "NavigationView" { return "nvSample5" }
         "ContentDialog" { return "ShowDialog" }
         "MenuBar" { return "Example1" }
+        "CommandBar" { return "PrimaryCommandBar" }
         default { return "" }
     }
 }
@@ -477,6 +480,19 @@ function Write-UiaTree($element, [string]$path, [int]$maxDepth) {
         return ([int][Math]::Round($number)).ToString([System.Globalization.CultureInfo]::InvariantCulture)
     }
 
+    function Get-ControlTypeName($node) {
+        try {
+            $controlType = $node.Current.ControlType
+            if ($null -ne $controlType -and $null -ne $controlType.ProgrammaticName) {
+                return $controlType.ProgrammaticName
+            }
+        }
+        catch {
+        }
+
+        return ""
+    }
+
     function Append-Element($node, [int]$depth) {
         if ($null -eq $node -or $depth -gt $maxDepth) {
             return
@@ -486,7 +502,7 @@ function Write-UiaTree($element, [string]$path, [int]$maxDepth) {
         $rect = $node.Current.BoundingRectangle
         $line = "{0}{1} name='{2}' id='{3}' rect='{4},{5},{6},{7}'" -f `
             $indent,
-            $node.Current.ControlType.ProgrammaticName,
+            (Get-ControlTypeName $node),
             ($node.Current.Name -replace "'", "''"),
             ($node.Current.AutomationId -replace "'", "''"),
             (Format-RectCoordinate $rect.X),

@@ -11,10 +11,26 @@ namespace ModernWpf.Gallery.Pages
 {
     internal static class MenusToolbarsSampleFactory
     {
+        private const string CommandBarExampleXaml =
+@"<CommandBar Background=""Transparent"" IsOpen=""$(IsOpen)"" DefaultLabelPosition=""Right""$(IsSticky)>
+    <AppBarButton Icon=""Add"" Label=""Add""/>
+    <AppBarButton Icon=""Edit"" Label=""Edit""/>
+    <AppBarButton Icon=""Share"" Label=""Share""/>
+    <CommandBar.SecondaryCommands>
+        <AppBarButton Icon=""Setting"" Label=""Settings"">
+            <AppBarButton.KeyboardAccelerators>
+                    <KeyboardAccelerator Modifiers=""Control"" Key=""I"" />
+            </AppBarButton.KeyboardAccelerators>
+        </AppBarButton>$(MultipleButtonsSecondaryCommands)
+    </CommandBar.SecondaryCommands>
+</CommandBar>";
+
         public static IReadOnlyList<GalleryExample> CreateExamples(string uniqueId, IReadOnlyList<SampleSnippet> sampleSnippets)
         {
             switch (uniqueId)
             {
+                case "CommandBar":
+                    return CreateCommandBarExamples();
                 case "MenuBar":
                     return CreateMenuBarExamples(sampleSnippets);
                 default:
@@ -92,17 +108,146 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateCommandBarSample()
         {
-            var panel = CreateSamplePanel("CommandBar collects primary commands and overflow commands in one toolbar.");
-            var output = CreateOutput("No command selected.");
-            var bar = new Mux.CommandBar();
-            bar.PrimaryCommands.Add(CreateAppBarButton(Mux.Symbol.Add, "New", output));
-            bar.PrimaryCommands.Add(CreateAppBarButton(Mux.Symbol.Edit, "Edit", output));
-            bar.PrimaryCommands.Add(CreateAppBarButton(Mux.Symbol.Delete, "Delete", output));
-            bar.SecondaryCommands.Add(CreateAppBarButton(Mux.Symbol.Rename, "Rename", output));
-            bar.SecondaryCommands.Add(CreateAppBarButton(Mux.Symbol.Share, "Share", output));
-            panel.Children.Add(bar);
-            panel.Children.Add(output);
+            var panel = new GallerySamplePanel
+            {
+                Margin = new Thickness(0, 0, 0, 12)
+            };
+            GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("CommandBar"));
+            panel.Children.Add(CreateCommandBarExampleContent(assignRootAutomationId: false));
             return panel;
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateCommandBarExamples()
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "A command bar with labels on the side free floating in a page",
+                    CreateCommandBarExampleContent(assignRootAutomationId: true),
+                    CommandBarExampleXaml,
+                    null)
+            };
+        }
+
+        private static GallerySamplePanel CreateCommandBarExampleContent(bool assignRootAutomationId)
+        {
+            var root = new GallerySamplePanel();
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("CommandBar"));
+            }
+
+            var layout = new Grid();
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(32) });
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(180) });
+
+            var samplePanel = new StackPanel();
+            var output = new TextBlock
+            {
+                Name = "SelectedOptionText",
+                Padding = new Thickness(0, 8, 0, 0),
+                TextWrapping = TextWrapping.Wrap
+            };
+
+            var commandBar = new Mux.CommandBar
+            {
+                Name = "PrimaryCommandBar",
+                DefaultLabelPosition = Mux.CommandBarDefaultLabelPosition.Right,
+                IsOpen = false,
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+            GalleryAutomation.WithAutomationId(commandBar, GalleryAutomation.SampleElementId("CommandBar", "CommandBar"));
+
+            var addButton = CreateCommandBarAppBarButton(Mux.Symbol.Add, "Add", output, "Ctrl+A");
+            addButton.Name = "addButton";
+            var editButton = CreateCommandBarAppBarButton(Mux.Symbol.Edit, "Edit", output, "Ctrl+E");
+            editButton.Name = "editButton";
+            var shareButton = CreateCommandBarAppBarButton(Mux.Symbol.Share, "Share", output, "F4");
+            shareButton.Name = "shareButton";
+            commandBar.PrimaryCommands.Add(addButton);
+            commandBar.PrimaryCommands.Add(editButton);
+            commandBar.PrimaryCommands.Add(shareButton);
+
+            var settingsButton = CreateCommandBarAppBarButton(Mux.Symbol.Setting, "Settings", output, "Ctrl+I");
+            settingsButton.Name = "settingsButton";
+            commandBar.SecondaryCommands.Add(settingsButton);
+
+            samplePanel.Children.Add(commandBar);
+            samplePanel.Children.Add(output);
+            layout.Children.Add(samplePanel);
+
+            var options = CreateCommandBarOptions(commandBar, output);
+            Grid.SetColumn(options, 2);
+            layout.Children.Add(options);
+
+            root.Children.Add(layout);
+            return root;
+        }
+
+        private static StackPanel CreateCommandBarOptions(Mux.CommandBar commandBar, TextBlock output)
+        {
+            var options = new StackPanel
+            {
+                Width = 180,
+                VerticalAlignment = VerticalAlignment.Top
+            };
+            options.Children.Add(new TextBlock { Text = "Show or hide" });
+            options.Children.Add(CreateOptionButton("Open command bar", delegate
+            {
+                commandBar.IsOpen = true;
+            }));
+            options.Children.Add(CreateOptionButton("Close command bar", delegate
+            {
+                commandBar.IsOpen = false;
+            }));
+            options.Children.Add(new TextBlock
+            {
+                Text = "Modify content",
+                Margin = new Thickness(0, 16, 0, 0)
+            });
+            options.Children.Add(CreateOptionButton("Add secondary commands", delegate
+            {
+                AddCommandBarSecondaryCommands(commandBar, output);
+            }));
+            options.Children.Add(CreateOptionButton("Remove secondary commands", delegate
+            {
+                RemoveCommandBarSecondaryCommands(commandBar);
+            }));
+            return options;
+        }
+
+        private static Button CreateOptionButton(string content, RoutedEventHandler click)
+        {
+            var button = new Button
+            {
+                Content = content,
+                Margin = new Thickness(0, 12, 0, 0)
+            };
+            button.Click += click;
+            return button;
+        }
+
+        private static void AddCommandBarSecondaryCommands(Mux.CommandBar commandBar, TextBlock output)
+        {
+            if (commandBar.SecondaryCommands.Count != 1)
+            {
+                return;
+            }
+
+            commandBar.SecondaryCommands.Add(CreateCommandBarAppBarButton(Mux.Symbol.Add, "Button 1", output, "Ctrl+N"));
+            commandBar.SecondaryCommands.Add(CreateCommandBarAppBarButton(Mux.Symbol.Delete, "Button 2", output, "Delete"));
+            commandBar.SecondaryCommands.Add(new Mux.AppBarSeparator());
+            commandBar.SecondaryCommands.Add(CreateCommandBarAppBarButton(Mux.Symbol.FontDecrease, "Button 3", output, "Ctrl+-"));
+            commandBar.SecondaryCommands.Add(CreateCommandBarAppBarButton(Mux.Symbol.FontIncrease, "Button 4", output, "Ctrl++"));
+        }
+
+        private static void RemoveCommandBarSecondaryCommands(Mux.CommandBar commandBar)
+        {
+            while (commandBar.SecondaryCommands.Count > 1)
+            {
+                commandBar.SecondaryCommands.RemoveAt(commandBar.SecondaryCommands.Count - 1);
+            }
         }
 
         private static UIElement CreateCommandBarFlyoutSample()
@@ -384,6 +529,18 @@ namespace ModernWpf.Gallery.Pages
         {
             var button = CreateAppBarButton(symbol, label);
             button.Click += delegate { output.Text = label + " selected."; };
+            return button;
+        }
+
+        private static Mux.AppBarButton CreateCommandBarAppBarButton(Mux.Symbol symbol, string label, TextBlock output, string inputGestureText)
+        {
+            var button = new Mux.AppBarButton
+            {
+                Icon = new Mux.SymbolIcon(symbol),
+                Label = label,
+                InputGestureText = inputGestureText
+            };
+            button.Click += delegate { output.Text = "You clicked: " + label; };
             return button;
         }
 

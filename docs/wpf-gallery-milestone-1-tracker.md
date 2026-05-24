@@ -103,6 +103,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.CommandBarSampleMatchesWinUIGalleryExample|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 7 tests per target. The generated ModernWpf CommandBar page now follows the local official WinUI Gallery one-example shape for `PrimaryCommandBar`, with Add/Edit/Share primary commands, Settings as the initial secondary command, side options for opening/closing and adding/removing secondary commands, and WinUI-style source text. Curated automation IDs now include `GallerySample_CommandBar_Root` and `GallerySample_CommandBar_CommandBar`. Current warning/output remains `NU1903` and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls CommandBar -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-115122-985-112752/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, primary crops are `268x48` vs `271x48`, and CommandBar Light primary delta is `7.97`. The ModernWpf sample left-aligns the generated CommandBar to match the WinUI reference extent, and the visual harness now tolerates reference UIA nodes whose control type does not expose `ProgrammaticName` while writing diagnostics.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls CommandBar -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-115154-111-97836/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, primary crops are `268x48` vs `271x48`, CommandBar Dark primary delta is `10.49`, and the full-window mean delta is `17.4`.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the CommandBar WinUI example alignment and visual-check UIA diagnostic hardening. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages, existing ModernWpf/ModernWpf.Controls warnings, `19 Warning(s)`, and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.MenuBarSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 6 tests per target. The generated ModernWpf MenuBar page now follows the local official WinUI Gallery three-example shape for the simple MenuBar, keyboard accelerators, and submenus/separators/radio items; the example source panes consume `MenuBarSample1.txt`, `MenuBarSample3.txt`, and `MenuBarSample2.txt` so no additional snippets remain below the examples. Curated automation IDs now include `GallerySample_MenuBar_Root` and `GallerySample_MenuBar_MenuBar`. Current warning/output remains `NU1903` and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls MenuBar -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -1159,6 +1167,19 @@ primary crops, and primary deltas `11.55` / `14.82`. The visual harness now
 prefers a real window crop for MenuBar and falls back to the rendered artifact
 when that crop is blank. Avoid reopening MenuBar's first-sample/static
 structure unless a new WinUI source or visual crop regression appears.
+The generated ModernWpf CommandBar extension page now uses the local official
+WinUI Gallery one-example structure for `PrimaryCommandBar`, including
+Add/Edit/Share primary commands, Settings as the initial secondary command, and
+side options that open/close the bar and add/remove secondary commands. ModernWpf
+keeps a live-code adaptation because its `CommandBar` does not expose WinUI's
+`IsSticky` property. Current CommandBar WinUI-reference evidence is
+`artifacts/visual-checks/20260524-115122-985-112752/report.md` for Light and
+`artifacts/visual-checks/20260524-115154-111-97836/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`, primary crops `268x48`
+vs `271x48`, and primary deltas `7.97` / `10.49`. The visual harness now
+defensively writes UIA trees when a reference node's control type lacks
+`ProgrammaticName`. Avoid reopening CommandBar's first-sample/static structure
+unless a new WinUI source, visual crop, or UIA diagnostic regression appears.
 Continue with the next highest-impact visible drift from the checklist, likely
 remaining High Contrast gaps, other NavigationView styling not covered
 by the TreeView token aliases or first-sample refresh, or other item pages that still lack current
