@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "InfoBar", "NavigationView", "ContentDialog", "MenuBar", "CommandBar", "CommandBarFlyout"),
+    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "InfoBar", "ProgressRing", "NavigationView", "ContentDialog", "MenuBar", "CommandBar", "CommandBarFlyout"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -436,6 +436,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "NumberBox" { return "GallerySample_NumberBox_SpinButtonNumberBox" }
         "AutoSuggestBox" { return "GallerySample_AutoSuggestBox_AutoSuggestBox" }
         "InfoBar" { return "GallerySample_InfoBar_InfoBar" }
+        "ProgressRing" { return "GallerySample_ProgressRing_ProgressRing" }
         "NavigationView" { return "GallerySample_NavigationView_NavigationView" }
         "ContentDialog" { return "GallerySample_ContentDialog_ShowButton" }
         "MenuBar" { return "GallerySample_MenuBar_MenuBar" }
@@ -471,6 +472,7 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
         "ToggleSwitch" { return "GallerySample_ToggleSwitch_ToggleSwitch" }
         "NumberBox" { return "GallerySample_NumberBox_SpinButtonNumberBox" }
         "AutoSuggestBox" { return "GallerySample_AutoSuggestBox_AutoSuggestBox" }
+        "ProgressRing" { return "GallerySample_ProgressRing_ProgressRing" }
         "MenuBar" { return "GallerySample_MenuBar_MenuBar" }
         "CommandBar" { return "GallerySample_CommandBar_CommandBar" }
         "CommandBarFlyout" { return "GallerySample_CommandBarFlyout_ShowButton" }
@@ -496,6 +498,7 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
         "ToggleSplitButton" { return "myListButton" }
         "NumberBox" { return "NumberBoxSpinButtonPlacementExample" }
         "AutoSuggestBox" { return "Control1" }
+        "ProgressRing" { return "ProgressRing1" }
         default { return "" }
     }
 }

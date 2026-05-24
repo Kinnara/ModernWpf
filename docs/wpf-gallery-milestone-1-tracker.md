@@ -106,6 +106,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.ProgressRingSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 20 tests per target. The generated ModernWpf ProgressRing page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\ProgressRingPage.xaml` / `.xaml.cs`: an indeterminate `ProgressRing1` driven by `ProgressToggle` plus a determinate `ProgressRing2` driven by `ProgressValue`. `StatusInfoSampleFactory.CreateExamples` now covers ProgressRing as a source-backed Status & Info WinUI extension page, exposes curated automation IDs `GallerySample_ProgressRing_Root` and `GallerySample_ProgressRing_ProgressRing`, keeps WinUI's `ProgressRing1`, `ProgressRing2`, `ProgressToggle`, `BackgroundComboBox1`, `BackgroundComboBox2`, `Control2`, `ProgressValue`, `Progress image`, `Progress Options`, `Progress amount`, and source XAML substitution placeholders, and adapts WinUI's `ProgressRing.Background` option through a WPF host border because ModernWpf `ProgressRing` does not expose a `Background` property. Current warning/output remains `NU1903`, generated WinRT warnings when regeneration is triggered, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls ProgressRing -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-145159-225-66028/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, primary crops match at `60x60`, ProgressRing Light primary delta is `10.41`, and whole-window mean delta is `164.45`. The visual harness now uses WinUI reference automation ID `ProgressRing1` and ModernWpf automation ID `GallerySample_ProgressRing_ProgressRing` for the primary crop.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls ProgressRing -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-145227-799-102336/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, primary crops match at `60x60`, ProgressRing Dark primary delta is `19.32`, and whole-window mean delta is `16.95`. The dark report notes that the reference theme-probe crop was unavailable or blank, but the page, required sample element, nonblank screenshots, and reference primary crop all passed.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the ProgressRing WinUI example alignment and visual harness mapping. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages, existing ModernWpf/ModernWpf.Controls warnings, `19 Warning(s)`, and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.ColorPickerSampleMatchesWinUIGalleryExample|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 19 tests per target. The generated ModernWpf ColorPicker page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\ColorPickerPage.xaml` / `.xaml.cs`: one `ColorPicker Properties.` example with property checkboxes, color-spectrum shape radio buttons, and a preview rectangle. `BasicInputSampleFactory.CreateExamples` now covers ColorPicker as a source-backed Basic Input WinUI extension page, exposes curated automation IDs `GallerySample_ColorPicker_Root` and `GallerySample_ColorPicker_ColorPicker`, keeps WinUI's `colorPicker`, `moreBtn`, `colorSlider`, `colorChannelInput`, `hexInput`, `alpha`, `alphaSlider`, `alphaTextInput`, `ColorSpectrumShapeRadioButtons`, `previewRect`, and source XAML substitution placeholders, and adapts WinUI binding handlers to WPF event handlers. Current warning/output remains `NU1903`, generated WinRT warnings when regeneration is triggered, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls ColorPicker -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -1254,6 +1262,25 @@ screenshot-crop fallback because its automation bounds can point at a blank
 layout slot above the visible control. Avoid reopening these two first-sample
 structures unless a new WinUI source, visual crop, or readiness regression
 appears.
+The generated ModernWpf ProgressRing extension page now uses the local official
+WinUI Gallery two-example structure from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\ProgressRingPage.xaml`
+/ `.xaml.cs`: an indeterminate `ProgressRing1` controlled by `ProgressToggle`,
+and a determinate `ProgressRing2` controlled by `ProgressValue`. `StatusInfoSampleFactory.CreateExamples`
+now covers ProgressRing as a source-backed Status & Info WinUI example, keeps
+WinUI's `ProgressRing1`, `ProgressRing2`, `ProgressToggle`,
+`BackgroundComboBox1`, `BackgroundComboBox2`, `Control2`, `ProgressValue`,
+`Progress image`, `Progress Options`, `Progress amount`, and source XAML
+substitution placeholders, and adapts WinUI's `ProgressRing.Background` option
+to a WPF host border because ModernWpf `ProgressRing` has no `Background`
+property. Current ProgressRing WinUI-reference evidence is
+`artifacts/visual-checks/20260524-145159-225-66028/report.md` for Light and
+`artifacts/visual-checks/20260524-145227-799-102336/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`, matching `60x60`
+primary crops, and primary deltas `10.41` / `19.32`. The visual harness uses
+the WinUI reference automation ID `ProgressRing1` for the primary crop. Avoid
+reopening ProgressRing's source shape unless a new WinUI source or crop
+regression appears.
 The generated ModernWpf MenuBar extension page now uses the local official
 WinUI Gallery three-example structure for a simple MenuBar, keyboard
 accelerators, and submenus/separators/radio items, with WPF `MenuItem`,

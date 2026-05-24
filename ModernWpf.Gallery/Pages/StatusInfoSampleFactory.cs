@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Media;
 using ModernWpf.Gallery.Models;
@@ -34,12 +35,22 @@ namespace ModernWpf.Gallery.Pages
     Title=""Title""
     Message=""Essential app message for your users to be informed of, acknowledge, or take action on."" />";
 
+        private const string ProgressRingIndeterminateXaml =
+@"<ProgressRing IsActive=""$(IsActive)"" $(Background)/>";
+
+        private const string ProgressRingDeterminateXaml =
+@"<ProgressRing Width=""60"" Height=""60"" Value=""$(DeterminateProgressValue)""
+              IsIndeterminate=""False""
+              $(Background)/>";
+
         public static IReadOnlyList<GalleryExample> CreateExamples(string uniqueId, IReadOnlyList<SampleSnippet> sampleSnippets)
         {
             switch (uniqueId)
             {
                 case "InfoBar":
                     return CreateInfoBarExamples();
+                case "ProgressRing":
+                    return CreateProgressRingExamples();
                 default:
                     return Array.Empty<GalleryExample>();
             }
@@ -355,22 +366,192 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateProgressRingSample()
         {
-            var panel = CreateSamplePanel("ProgressRing shows that work is active when the completion amount is not known.");
-            var row = new StackPanel { Orientation = Orientation.Horizontal };
-            row.Children.Add(new Mux.ProgressRing
+            var panel = new GallerySamplePanel
             {
-                Width = 48,
-                Height = 48,
-                IsActive = true,
-                Margin = new Thickness(0, 0, 16, 0)
-            });
-            row.Children.Add(new TextBlock
-            {
-                Text = "Loading account details...",
-                VerticalAlignment = VerticalAlignment.Center
-            });
-            panel.Children.Add(row);
+                Margin = new Thickness(0, 0, 0, 12)
+            };
+            GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("ProgressRing"));
+            panel.Children.Add(CreateIndeterminateProgressRingExampleContent(assignRootAutomationId: false));
             return panel;
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateProgressRingExamples()
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "An indeterminate progress ring.",
+                    CreateIndeterminateProgressRingExampleContent(assignRootAutomationId: true),
+                    ProgressRingIndeterminateXaml,
+                    null),
+                new GalleryExample(
+                    "A determinate progress ring.",
+                    CreateDeterminateProgressRingExampleContent(),
+                    ProgressRingDeterminateXaml,
+                    null)
+            };
+        }
+
+        private static GallerySamplePanel CreateIndeterminateProgressRingExampleContent(bool assignRootAutomationId)
+        {
+            var root = new GallerySamplePanel();
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("ProgressRing"));
+            }
+
+            var progressRing = new Mux.ProgressRing
+            {
+                Name = "ProgressRing1",
+                Width = 60,
+                Height = 60,
+                Margin = new Thickness(10, 10, 0, 0),
+                VerticalAlignment = VerticalAlignment.Top,
+                IsActive = true
+            };
+            AutomationProperties.SetName(progressRing, "Progress image");
+            GalleryAutomation.WithAutomationId(progressRing, GalleryAutomation.SampleElementId("ProgressRing", "ProgressRing"));
+
+            var progressHost = CreateProgressRingBackgroundHost("ProgressRing1BackgroundHost", progressRing);
+            var toggle = new Mux.ToggleSwitch
+            {
+                Name = "ProgressToggle",
+                Header = "Progress Options",
+                IsOn = true,
+                OffContent = "Do work",
+                OnContent = "Working"
+            };
+            AutomationProperties.SetName(toggle, "Progress Options");
+            toggle.Toggled += delegate { progressRing.IsActive = toggle.IsOn; };
+
+            var background = CreateBackgroundComboBox("BackgroundComboBox1");
+            background.SelectionChanged += delegate
+            {
+                ApplyProgressRingBackground(progressHost, background.SelectedItem as string);
+            };
+
+            root.Children.Add(CreateProgressRingExampleLayout(
+                progressHost,
+                CreateOptionsPanel(toggle, CreateOptionBlock("Background color", background))));
+            return root;
+        }
+
+        private static GallerySamplePanel CreateDeterminateProgressRingExampleContent()
+        {
+            var root = new GallerySamplePanel();
+            var progressRing = new Mux.ProgressRing
+            {
+                Name = "ProgressRing2",
+                Width = 60,
+                Height = 60,
+                Margin = new Thickness(0, 0, 60, 0),
+                IsIndeterminate = false
+            };
+            AutomationProperties.SetName(progressRing, "Progress image");
+            GalleryAutomation.WithAutomationId(progressRing, GalleryAutomation.SampleElementId("ProgressRing", "DeterminateProgressRing"));
+
+            var progressValue = new Mux.NumberBox
+            {
+                Name = "ProgressValue",
+                MinWidth = 120,
+                VerticalAlignment = VerticalAlignment.Center,
+                Header = "Progress",
+                Minimum = 0,
+                Maximum = 100,
+                SpinButtonPlacementMode = Mux.NumberBoxSpinButtonPlacementMode.Inline,
+                Value = 0
+            };
+            AutomationProperties.SetName(progressValue, "Progress amount");
+            progressValue.ValueChanged += delegate(Mux.NumberBox sender, Mux.NumberBoxValueChangedEventArgs args)
+            {
+                if (!double.IsNaN(sender.Value))
+                {
+                    progressRing.Value = sender.Value;
+                }
+                else
+                {
+                    sender.Value = 0;
+                    progressRing.Value = 0;
+                }
+            };
+
+            var sample = new StackPanel
+            {
+                Name = "Control2",
+                Orientation = Orientation.Horizontal
+            };
+            var progressHost = CreateProgressRingBackgroundHost("ProgressRing2BackgroundHost", progressRing);
+            sample.Children.Add(progressHost);
+            sample.Children.Add(progressValue);
+
+            var background = CreateBackgroundComboBox("BackgroundComboBox2");
+            background.SelectionChanged += delegate
+            {
+                ApplyProgressRingBackground(progressHost, background.SelectedItem as string);
+            };
+
+            root.Children.Add(CreateProgressRingExampleLayout(
+                sample,
+                CreateOptionsPanel(CreateOptionBlock("Background color", background))));
+            return root;
+        }
+
+        private static Border CreateProgressRingBackgroundHost(string name, UIElement child)
+        {
+            return new Border
+            {
+                Name = name,
+                Background = Brushes.Transparent,
+                Child = child
+            };
+        }
+
+        private static Grid CreateProgressRingExampleLayout(UIElement sample, UIElement options)
+        {
+            var layout = new Grid();
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(40) });
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            layout.Children.Add(sample);
+            Grid.SetColumn(options, 2);
+            layout.Children.Add(options);
+            return layout;
+        }
+
+        private static StackPanel CreateOptionsPanel(params UIElement[] children)
+        {
+            var panel = new StackPanel();
+            foreach (var child in children)
+            {
+                panel.Children.Add(child);
+            }
+
+            return panel;
+        }
+
+        private static ComboBox CreateBackgroundComboBox(string name)
+        {
+            var comboBox = new ComboBox
+            {
+                Name = name,
+                Width = 200
+            };
+            comboBox.Items.Add("Transparent");
+            comboBox.Items.Add("LightGray");
+            return comboBox;
+        }
+
+        private static void ApplyProgressRingBackground(Border host, string colorName)
+        {
+            switch (colorName)
+            {
+                case "Transparent":
+                    host.Background = Brushes.Transparent;
+                    break;
+                case "LightGray":
+                    host.Background = Brushes.LightGray;
+                    break;
+            }
         }
 
         private static UIElement CreateToolTipSample()

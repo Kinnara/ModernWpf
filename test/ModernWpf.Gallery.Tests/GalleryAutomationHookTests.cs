@@ -27,6 +27,7 @@ namespace ModernWpf.Gallery.Tests
         {
             yield return new object[] { "TeachingTip", "GallerySample_TeachingTip_Root", "GallerySample_TeachingTip_ShowButton" };
             yield return new object[] { "InfoBar", "GallerySample_InfoBar_Root", "GallerySample_InfoBar_InfoBar" };
+            yield return new object[] { "ProgressRing", "GallerySample_ProgressRing_Root", "GallerySample_ProgressRing_ProgressRing" };
             yield return new object[] { "NavigationView", "GallerySample_NavigationView_Root", "GallerySample_NavigationView_NavigationView" };
             yield return new object[] { "ContentDialog", "GallerySample_ContentDialog_Root", "GallerySample_ContentDialog_ShowButton" };
             yield return new object[] { "ColorPicker", "GallerySample_ColorPicker_Root", "GallerySample_ColorPicker_ColorPicker" };
@@ -334,6 +335,126 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(Visibility.Visible, contentRoot.Visibility);
                     Assert.IsNotNull(FindNamedDescendant<TextBlock>(infoBar, "Title"));
                     Assert.IsNotNull(FindNamedDescendant<TextBlock>(infoBar, "Message"));
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void ProgressRingSampleMatchesWinUIGalleryExamples()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("ProgressRing"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(2, page.Examples.Count);
+                    Assert.AreEqual("An indeterminate progress ring.", page.Examples[0].HeaderText);
+                    Assert.AreEqual("A determinate progress ring.", page.Examples[1].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "IsActive=\"$(IsActive)\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "$(Background)");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "Value=\"$(DeterminateProgressValue)\"");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "IsIndeterminate=\"False\"");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "$(Background)");
+                    Assert.IsNull(page.Examples[0].CSharpCode);
+                    Assert.IsNull(page.Examples[1].CSharpCode);
+
+                    var progressRing1 = (Mux.ProgressRing)FindByAutomationId(page, "GallerySample_ProgressRing_ProgressRing");
+                    var progressRing2 = FindNamedDescendant<Mux.ProgressRing>(page, "ProgressRing2");
+                    var progressToggle = FindNamedDescendant<Mux.ToggleSwitch>(page, "ProgressToggle");
+                    var backgroundComboBox1 = FindNamedDescendant<ComboBox>(page, "BackgroundComboBox1");
+                    var backgroundComboBox2 = FindNamedDescendant<ComboBox>(page, "BackgroundComboBox2");
+                    var progressValue = FindNamedDescendant<Mux.NumberBox>(page, "ProgressValue");
+                    var control2 = FindNamedDescendant<StackPanel>(page, "Control2");
+                    var progressRing1Host = FindNamedDescendant<Border>(page, "ProgressRing1BackgroundHost");
+                    var progressRing2Host = FindNamedDescendant<Border>(page, "ProgressRing2BackgroundHost");
+                    Assert.IsNotNull(progressRing1);
+                    Assert.IsNotNull(progressRing2);
+                    Assert.IsNotNull(progressToggle);
+                    Assert.IsNotNull(backgroundComboBox1);
+                    Assert.IsNotNull(backgroundComboBox2);
+                    Assert.IsNotNull(progressValue);
+                    Assert.IsNotNull(control2);
+                    Assert.IsNotNull(progressRing1Host);
+                    Assert.IsNotNull(progressRing2Host);
+
+                    Assert.AreEqual("ProgressRing1", progressRing1.Name);
+                    Assert.AreEqual(60.0, progressRing1.Width);
+                    Assert.AreEqual(60.0, progressRing1.Height);
+                    Assert.AreEqual(new Thickness(10, 10, 0, 0), progressRing1.Margin);
+                    Assert.AreEqual(VerticalAlignment.Top, progressRing1.VerticalAlignment);
+                    Assert.IsTrue(progressRing1.IsActive);
+                    Assert.AreEqual("Progress image", AutomationProperties.GetName(progressRing1));
+                    Assert.AreEqual("Progress Options", AutomationProperties.GetName(progressToggle));
+                    Assert.AreEqual("Progress Options", progressToggle.Header);
+                    Assert.IsTrue(progressToggle.IsOn);
+                    Assert.AreEqual("Do work", progressToggle.OffContent);
+                    Assert.AreEqual("Working", progressToggle.OnContent);
+                    Assert.AreEqual(200.0, backgroundComboBox1.Width);
+                    Assert.AreEqual("Transparent", backgroundComboBox1.Items[0]);
+                    Assert.AreEqual("LightGray", backgroundComboBox1.Items[1]);
+                    Assert.AreEqual(Brushes.Transparent, progressRing1Host.Background);
+
+                    Assert.AreEqual("Control2", control2.Name);
+                    Assert.AreEqual(Orientation.Horizontal, control2.Orientation);
+                    Assert.AreEqual("ProgressRing2", progressRing2.Name);
+                    Assert.AreEqual(60.0, progressRing2.Width);
+                    Assert.AreEqual(60.0, progressRing2.Height);
+                    Assert.AreEqual(new Thickness(0, 0, 60, 0), progressRing2.Margin);
+                    Assert.IsFalse(progressRing2.IsIndeterminate);
+                    Assert.AreEqual(0.0, progressRing2.Value);
+                    Assert.AreEqual("Progress image", AutomationProperties.GetName(progressRing2));
+                    Assert.AreEqual("ProgressValue", progressValue.Name);
+                    Assert.AreEqual(120.0, progressValue.MinWidth);
+                    Assert.AreEqual(VerticalAlignment.Center, progressValue.VerticalAlignment);
+                    Assert.AreEqual("Progress", progressValue.Header);
+                    Assert.AreEqual("Progress amount", AutomationProperties.GetName(progressValue));
+                    Assert.AreEqual(0.0, progressValue.Minimum);
+                    Assert.AreEqual(100.0, progressValue.Maximum);
+                    Assert.AreEqual(Mux.NumberBoxSpinButtonPlacementMode.Inline, progressValue.SpinButtonPlacementMode);
+                    Assert.AreEqual(0.0, progressValue.Value);
+                    Assert.AreEqual(200.0, backgroundComboBox2.Width);
+                    Assert.AreEqual("Transparent", backgroundComboBox2.Items[0]);
+                    Assert.AreEqual("LightGray", backgroundComboBox2.Items[1]);
+                    Assert.AreEqual(Brushes.Transparent, progressRing2Host.Background);
+
+                    progressToggle.IsOn = false;
+                    backgroundComboBox1.SelectedItem = "LightGray";
+                    backgroundComboBox2.SelectedItem = "LightGray";
+                    progressValue.Value = 42;
+                    WpfTestHost.DoEvents();
+
+                    Assert.IsFalse(progressRing1.IsActive);
+                    Assert.AreEqual(Brushes.LightGray, progressRing1Host.Background);
+                    Assert.AreEqual(Brushes.LightGray, progressRing2Host.Background);
+                    Assert.AreEqual(42.0, progressRing2.Value);
+
+                    progressValue.Value = double.NaN;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(0.0, progressValue.Value);
+                    Assert.AreEqual(0.0, progressRing2.Value);
                 }
                 finally
                 {
