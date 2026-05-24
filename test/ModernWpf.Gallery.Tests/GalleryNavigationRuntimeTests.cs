@@ -17,6 +17,7 @@ using ModernWpf.Gallery.Pages;
 using ModernWpf.Gallery.Pages.WpfGallery;
 using ModernWpf.Gallery.Shell;
 using ModernWpf.Gallery.Testing;
+using ModernWpf.Gallery.ViewModels;
 
 namespace ModernWpf.Gallery.Tests
 {
@@ -94,6 +95,7 @@ namespace ModernWpf.Gallery.Tests
             WpfTestHost.Run(() =>
             {
                 var page = new NavigationRootPage();
+                page.DataContext = new { ViewModel = new MainWindowViewModel(page.GoBack, page.OpenSettings) };
                 var navigation = (NavigationView)page.FindName("Navigation");
                 var topLevelItems = navigation.MenuItems.OfType<NavigationViewItem>().ToList();
 
@@ -215,7 +217,7 @@ namespace ModernWpf.Gallery.Tests
                 page.NavigateTo("category/BasicInput");
                 Assert.IsTrue(topLevelItems[5].IsExpanded);
 
-                settingsButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                settingsButton.Command.Execute(settingsButton.CommandParameter);
                 WpfTestHost.DoEvents();
                 Assert.IsNull(navigation.SelectedItem);
                 Assert.IsInstanceOfType(((ContentControl)page.FindName("ContentHost")).Content, typeof(SettingsPage));

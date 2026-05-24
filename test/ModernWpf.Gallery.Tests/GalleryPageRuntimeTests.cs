@@ -138,6 +138,7 @@ namespace ModernWpf.Gallery.Tests
                 foreach (var expectedDescription in expectedDescriptions)
                 {
                     var page = new ItemPage(GalleryCatalog.FindItem(expectedDescription.Key));
+                    RenderPage(page);
 
                     if (page.HasDirectPageContent)
                     {
@@ -2733,7 +2734,7 @@ namespace ModernWpf.Gallery.Tests
             return null;
         }
 
-        private static void RenderPage(Page page)
+        private static void RenderPage(FrameworkElement page)
         {
             var window = new Window
             {
