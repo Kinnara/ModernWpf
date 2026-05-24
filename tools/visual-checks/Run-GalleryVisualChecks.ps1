@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "PullToRefresh", "FlipView", "GridView", "ItemsRepeater", "BreadcrumbBar", "Pivot", "SelectorBar", "TabView", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "SwipeControl", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout", "StandardUICommand", "XamlUICommand"),
+    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "PullToRefresh", "FlipView", "ItemsView", "GridView", "ItemsRepeater", "BreadcrumbBar", "Pivot", "SelectorBar", "TabView", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "SwipeControl", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout", "StandardUICommand", "XamlUICommand"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -441,6 +441,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "PipsPager" { return "GallerySample_PipsPager_PipsPager" }
         "PullToRefresh" { return "GallerySample_PullToRefresh_RefreshContainer" }
         "FlipView" { return "GallerySample_FlipView_FlipView" }
+        "ItemsView" { return "GallerySample_ItemsView_ItemsView" }
         "GridView" { return "GallerySample_GridView_BasicGridView" }
         "ItemsRepeater" { return "GallerySample_ItemsRepeater_ItemsRepeater" }
         "BreadcrumbBar" { return "GallerySample_BreadcrumbBar_BreadcrumbBar" }
@@ -497,6 +498,7 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
         "PipsPager" { return "GallerySample_PipsPager_PipsPager" }
         "PullToRefresh" { return "GallerySample_PullToRefresh_Root" }
         "FlipView" { return "GallerySample_FlipView_FlipView" }
+        "ItemsView" { return "GallerySample_ItemsView_ItemsView" }
         "GridView" { return "GallerySample_GridView_BasicGridView" }
         "ItemsRepeater" { return "GallerySample_ItemsRepeater_ItemsRepeater" }
         "BreadcrumbBar" { return "GallerySample_BreadcrumbBar_BreadcrumbBar" }
@@ -545,6 +547,7 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
         "AutoSuggestBox" { return "Control1" }
         "ProgressRing" { return "ProgressRing1" }
         "PipsPager" { return "FlipViewPipsPager" }
+        "ItemsView" { return "BasicItemsView" }
         "GridView" { return "BasicGridView" }
         "BreadcrumbBar" { return "BreadcrumbBar1" }
         "SelectorBar" { return "SelectorBar1" }

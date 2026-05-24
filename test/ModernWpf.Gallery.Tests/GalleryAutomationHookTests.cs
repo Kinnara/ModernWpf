@@ -32,6 +32,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "PipsPager", "GallerySample_PipsPager_Root", "GallerySample_PipsPager_PipsPager" };
             yield return new object[] { "PullToRefresh", "GallerySample_PullToRefresh_Root", "GallerySample_PullToRefresh_RefreshContainer" };
             yield return new object[] { "FlipView", "GallerySample_FlipView_Root", "GallerySample_FlipView_FlipView" };
+            yield return new object[] { "ItemsView", "GallerySample_ItemsView_Root", "GallerySample_ItemsView_ItemsView" };
             yield return new object[] { "GridView", "GallerySample_GridView_Root", "GallerySample_GridView_BasicGridView" };
             yield return new object[] { "ItemsRepeater", "GallerySample_ItemsRepeater_Root", "GallerySample_ItemsRepeater_ItemsRepeater" };
             yield return new object[] { "BreadcrumbBar", "GallerySample_BreadcrumbBar_Root", "GallerySample_BreadcrumbBar_BreadcrumbBar" };
@@ -1501,6 +1502,149 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual("Grapes", AutomationProperties.GetName(flipView1Content));
                     Assert.AreEqual("CalendarView", AutomationProperties.GetName(flipView2Content));
                     Assert.AreEqual("Grapes", AutomationProperties.GetName(flipView3Content));
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void ItemsViewSampleMatchesWinUIGalleryExamples()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("ItemsView"));
+                var window = new Window
+                {
+                    Width = 1120,
+                    Height = 820,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(3, page.Examples.Count);
+                    Assert.AreEqual("Basic ItemsView", page.Examples[0].HeaderText);
+                    Assert.AreEqual("ItemsView with swappable layouts", page.Examples[1].HeaderText);
+                    Assert.AreEqual("ItemsView item invocation and selection", page.Examples[2].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "x:Key=\"ImageTemplate\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "IsItemInvokedEnabled=\"True\"");
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "BasicItemsView_ItemInvoked");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "LinedFlowLayout");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "MinItemSpacing=\"5\"");
+                    StringAssert.Contains(page.Examples[2].XamlCode, "SelectionMode=\"$(SelectionMode)\"");
+                    StringAssert.Contains(page.Examples[2].CSharpCode, "SwappableSelectionModesItemsView_SelectionChanged");
+
+                    var itemsView = (ListBox)FindByAutomationId(page, "GallerySample_ItemsView_ItemsView");
+                    var basicItemsView = FindNamedDescendant<ListBox>(page, "BasicItemsView");
+                    var basicOutput = FindNamedDescendant<TextBlock>(page, "tblBasicInvokeOutput");
+                    var swappableLayoutsItemsView = FindNamedDescendant<ListBox>(page, "SwappableLayoutsItemsView");
+                    var linedFlowOptions = FindNamedDescendant<StackPanel>(page, "spLinedFlowLayoutOptions");
+                    var stackOptions = FindNamedDescendant<StackPanel>(page, "spStackLayoutOptions");
+                    var uniformGridOptions = FindNamedDescendant<StackPanel>(page, "spUniformGridLayoutOptions");
+                    var lineSpacing = FindNamedDescendant<Mux.NumberBox>(page, "nbLineSpacing");
+                    var minItemSpacing = FindNamedDescendant<Mux.NumberBox>(page, "nbMinItemSpacing");
+                    var smallLineHeight = FindNamedDescendant<RadioButton>(page, "rbSmallLineHeight");
+                    var largeLineHeight = FindNamedDescendant<RadioButton>(page, "rbLargeLineHeight");
+                    var rowSpacing = FindNamedDescendant<Mux.NumberBox>(page, "nbSpacing");
+                    var minColumnSpacing = FindNamedDescendant<Mux.NumberBox>(page, "nbMinColumnSpacing");
+                    var minRowSpacing = FindNamedDescendant<Mux.NumberBox>(page, "nbMinRowSpacing");
+                    var maximumRowsOrColumns = FindNamedDescendant<Mux.NumberBox>(page, "nbMaximumRowsOrColumns");
+                    var selectionItemsView = FindNamedDescendant<ListBox>(page, "SwappableSelectionModesItemsView");
+                    var invocationOutput = FindNamedDescendant<TextBlock>(page, "tblInvocationOutput");
+                    var selectionOutput = FindNamedDescendant<TextBlock>(page, "tblSelectionOutput");
+                    var selectionMode = FindNamedDescendant<ComboBox>(page, "cmbSelectionMode");
+                    var invocationEnabled = FindNamedDescendant<CheckBox>(page, "chkIsItemInvokedEnabled");
+                    Assert.IsNotNull(itemsView);
+                    Assert.AreSame(itemsView, basicItemsView);
+                    Assert.IsNotNull(basicOutput);
+                    Assert.IsNotNull(swappableLayoutsItemsView);
+                    Assert.IsNotNull(linedFlowOptions);
+                    Assert.IsNotNull(stackOptions);
+                    Assert.IsNotNull(uniformGridOptions);
+                    Assert.IsNotNull(lineSpacing);
+                    Assert.IsNotNull(minItemSpacing);
+                    Assert.IsNotNull(smallLineHeight);
+                    Assert.IsNotNull(largeLineHeight);
+                    Assert.IsNotNull(rowSpacing);
+                    Assert.IsNotNull(minColumnSpacing);
+                    Assert.IsNotNull(minRowSpacing);
+                    Assert.IsNotNull(maximumRowsOrColumns);
+                    Assert.IsNotNull(selectionItemsView);
+                    Assert.IsNotNull(invocationOutput);
+                    Assert.IsNotNull(selectionOutput);
+                    Assert.IsNotNull(selectionMode);
+                    Assert.IsNotNull(invocationEnabled);
+                    Assert.AreEqual(13, basicItemsView.Items.Count);
+                    Assert.AreEqual(220.0, basicItemsView.Width);
+                    Assert.AreEqual(400.0, basicItemsView.Height);
+                    Assert.AreEqual(500.0, swappableLayoutsItemsView.Width);
+                    Assert.AreEqual(400.0, swappableLayoutsItemsView.Height);
+                    Assert.AreEqual(500.0, selectionItemsView.Width);
+                    Assert.AreEqual(400.0, selectionItemsView.Height);
+                    Assert.AreEqual(SelectionMode.Multiple, selectionItemsView.SelectionMode);
+                    Assert.AreEqual(2, selectionMode.SelectedIndex);
+                    Assert.AreEqual(5.0, lineSpacing.Value);
+                    Assert.AreEqual(5.0, minItemSpacing.Value);
+                    Assert.IsTrue(largeLineHeight.IsChecked == true);
+                    Assert.AreEqual(5.0, rowSpacing.Value);
+                    Assert.AreEqual(5.0, minColumnSpacing.Value);
+                    Assert.AreEqual(5.0, minRowSpacing.Value);
+                    Assert.AreEqual(3.0, maximumRowsOrColumns.Value);
+
+                    basicItemsView.SelectedIndex = 0;
+                    WpfTestHost.DoEvents();
+                    var enterArgs = new KeyEventArgs(
+                        Keyboard.PrimaryDevice,
+                        PresentationSource.FromVisual(basicItemsView),
+                        0,
+                        Key.Enter)
+                    {
+                        RoutedEvent = Keyboard.KeyDownEvent
+                    };
+                    basicItemsView.RaiseEvent(enterArgs);
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual("You invoked Item 1.", basicOutput.Text);
+
+                    selectionItemsView.SelectedIndex = 0;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual("You have selected 1 item(s).", selectionOutput.Text);
+                    invocationEnabled.IsChecked = true;
+                    WpfTestHost.DoEvents();
+                    var selectionEnterArgs = new KeyEventArgs(
+                        Keyboard.PrimaryDevice,
+                        PresentationSource.FromVisual(selectionItemsView),
+                        0,
+                        Key.Enter)
+                    {
+                        RoutedEvent = Keyboard.KeyDownEvent
+                    };
+                    selectionItemsView.RaiseEvent(selectionEnterArgs);
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual("You invoked Item 1.", invocationOutput.Text);
+
+                    var layoutOptions = FindDescendants<Mux.RadioButtons>(page)
+                        .Find(candidate => string.Equals(candidate.Header as string, "Layout", StringComparison.Ordinal));
+                    Assert.IsNotNull(layoutOptions);
+                    layoutOptions.SelectedIndex = 2;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(Visibility.Collapsed, linedFlowOptions.Visibility);
+                    Assert.AreEqual(Visibility.Visible, stackOptions.Visibility);
+                    Assert.AreEqual(Visibility.Collapsed, uniformGridOptions.Visibility);
                 }
                 finally
                 {

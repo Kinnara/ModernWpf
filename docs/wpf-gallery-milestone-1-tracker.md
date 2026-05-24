@@ -106,6 +106,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.ItemsViewSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 40 tests per target. The generated ModernWpf ItemsView page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\ItemsViewPage.xaml` / `.xaml.cs`: `Basic ItemsView`, `ItemsView with swappable layouts`, and `ItemsView item invocation and selection`. `CollectionsSampleFactory.CreateExamples` now covers ItemsView as a source-backed Collections WinUI extension page, adapts the unavailable WinUI `ItemsView` control to WPF `ListBox`-based item surfaces, keeps the official snippet text, preserves source-facing names such as `BasicItemsView`, `tblBasicInvokeOutput`, `SwappableLayoutsItemsView`, `spLinedFlowLayoutOptions`, `nbLineSpacing`, `nbMinItemSpacing`, `rbSmallLineHeight`, `rbLargeLineHeight`, `spStackLayoutOptions`, `nbSpacing`, `spUniformGridLayoutOptions`, `nbMinColumnSpacing`, `nbMinRowSpacing`, `nbMaximumRowsOrColumns`, `SwappableSelectionModesItemsView`, `tblInvocationOutput`, `tblSelectionOutput`, `cmbSelectionMode`, and `chkIsItemInvokedEnabled`, and exposes curated automation IDs `GallerySample_ItemsView_Root` / `GallerySample_ItemsView_ItemsView`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls ItemsView -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-211059-393-116200/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required ItemsView sample element was found, primary crops match at `220x400`, Light primary delta is `84.12`, and whole-window mean delta is `129.38`. The remaining primary delta is expected for this WPF adaptation because ModernWpf does not expose WinUI's native `ItemsView` / layout engine.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls ItemsView -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-211151-327-44500/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required ItemsView sample element was found, primary crops match at `220x400`, Dark primary delta is `73.57`, and whole-window mean delta is `21.44`. The remaining primary delta is expected for this WPF adaptation because ModernWpf does not expose WinUI's native `ItemsView` / layout engine.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the ItemsView WinUI example alignment. Current build output still prints the recurring `Failed to resolve WinRT.Runtime.dll` messages, but ends with `0 Warning(s)` and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.FlipViewSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 39 tests per target. The generated ModernWpf FlipView page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\FlipViewPage.xaml` / `.xaml.cs`: inline image FlipView, bound data/template FlipView, and vertical FlipView. `CollectionsSampleFactory.CreateExamples` now covers FlipView as a source-backed Collections WinUI extension page, adapts the unavailable WinUI `FlipView` control to a WPF carousel with explicit previous/next or up/down buttons, uses the local `cliff`, `grapes`, `rainier`, `sunset`, and `valley` media assets plus local control-image assets, preserves source-facing names such as `FlipView1`, `FlipView2`, `FlipView3`, `FlipView1Content`, `FlipView2Content`, and `FlipView3Content`, and exposes curated automation IDs `GallerySample_FlipView_Root` / `GallerySample_FlipView_FlipView`.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls FlipView -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -1495,6 +1503,33 @@ ModernWpf primary from the rendered sample root because the control-only
 `VisualBrush` artifact is blank for the repeater-templated PipsPager. Avoid
 reopening PipsPager's source shape unless a new WinUI source or crop regression
 appears.
+The generated ModernWpf ItemsView extension page now uses the local official
+WinUI Gallery three-example structure from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\ItemsViewPage.xaml`
+/ `.xaml.cs`: `Basic ItemsView`, `ItemsView with swappable layouts`, and
+`ItemsView item invocation and selection`. `CollectionsSampleFactory.CreateExamples`
+now covers ItemsView as a source-backed Collections WinUI example and adapts
+WinUI's `ItemsView`, `ItemContainer`, `LinedFlowLayout`, `StackLayout`, and
+`UniformGridLayout` shape to WPF `ListBox` item surfaces because ModernWpf does
+not currently expose a native ItemsView control or the WinUI ItemsView layout
+engine. The live samples keep the official snippet text, use the local
+`LandscapeImage1` through `LandscapeImage13` media assets, preserve
+source-facing names such as `BasicItemsView`, `tblBasicInvokeOutput`,
+`SwappableLayoutsItemsView`, `spLinedFlowLayoutOptions`, `nbLineSpacing`,
+`nbMinItemSpacing`, `rbSmallLineHeight`, `rbLargeLineHeight`,
+`spStackLayoutOptions`, `nbSpacing`, `spUniformGridLayoutOptions`,
+`nbMinColumnSpacing`, `nbMinRowSpacing`, `nbMaximumRowsOrColumns`,
+`SwappableSelectionModesItemsView`, `tblInvocationOutput`,
+`tblSelectionOutput`, `cmbSelectionMode`, and `chkIsItemInvokedEnabled`, and
+expose `GallerySample_ItemsView_Root` / `GallerySample_ItemsView_ItemsView`
+for runtime and visual checks. Current ItemsView WinUI-reference evidence is
+`artifacts/visual-checks/20260524-211059-393-116200/report.md` for Light and
+`artifacts/visual-checks/20260524-211151-327-44500/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`, required sample element
+found, matching `220x400` primary crops, and primary deltas `84.12` / `73.57`;
+the remaining crop delta is expected for the WPF control/layout adaptation.
+Avoid reopening ItemsView's source shape unless a new local WinUI source,
+runtime, or crop regression appears.
 The generated ModernWpf FlipView extension page now uses the local official
 WinUI Gallery three-example structure from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\FlipViewPage.xaml`
@@ -1515,8 +1550,7 @@ found, ModernWpf nonblank `400x270` primary artifacts, and whole-window mean
 deltas `148.32` / `27.96`; installed WinUI Gallery does not expose a stable
 primary UIA element for this page, so the report intentionally has no
 primary-crop delta. Avoid reopening FlipView's source shape unless a new local
-WinUI source, runtime, or crop regression appears; the next Collections WinUI
-source-backed gap to inspect is `ItemsView`.
+WinUI source, runtime, or crop regression appears.
 The generated ModernWpf ItemsRepeater extension page now uses the local official
 WinUI Gallery six-example structure from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\ItemsRepeaterPage.xaml`

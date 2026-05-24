@@ -128,6 +128,83 @@ private void rv2_RefreshStateChanged()
         </FlipView.ItemsPanel>
 <FlipView>";
 
+        private const string ItemsViewBasicXaml =
+@"<DataTemplate x:Key=""ImageTemplate"" x:DataType=""local:CustomDataObject"">
+    <ItemContainer HorizontalAlignment=""Left"" Width=""200"" Height=""140"" AutomationProperties.Name=""{x:Bind Title}"">
+        <Image Stretch=""UniformToFill"" HorizontalAlignment=""Center"" VerticalAlignment=""Center"" Source=""{x:Bind ImageLocation}"" Margin=""4"" AutomationProperties.AccessibilityView=""Raw""/>
+    </ItemContainer>
+</DataTemplate>
+
+<ItemsView Width=""220"" Height=""400"" HorizontalAlignment=""Left""
+    ItemTemplate=""{StaticResource ImageTemplate}"" IsItemInvokedEnabled=""True"" ItemInvoked=""BasicItemsView_ItemInvoked""/>";
+
+        private const string ItemsViewBasicCSharp =
+@"private void BasicItemsView_ItemInvoked(ItemsView sender, ItemsViewItemInvokedEventArgs e)
+{
+    tblBasicInvokeOutput.Text = ""You invoked "" + (e.InvokedItem as CustomDataObject).Title + ""."";
+}";
+
+        private const string ItemsViewSwappableLayoutsXaml =
+@"<DataTemplate x:Key=""LinedFlowLayoutItemTemplate"" x:DataType=""local:CustomDataObject"">
+    <ItemContainer AutomationProperties.Name=""{x:Bind Title}"">
+        <Grid>
+            <Image Source=""{x:Bind ImageLocation}"" Stretch=""UniformToFill"" HorizontalAlignment=""Center"" VerticalAlignment=""Center"" MinWidth=""70""/>
+            <StackPanel Orientation=""Vertical"" Height=""40"" VerticalAlignment=""Bottom"" Padding=""5,1,5,1"" Background=""{ThemeResource SystemControlBackgroundBaseMediumBrush}"" Opacity="".75"">
+                <TextBlock Text=""{x:Bind Title}"" Foreground=""{ThemeResource SystemControlForegroundAltHighBrush}""/>
+                <StackPanel Orientation=""Horizontal"">
+                    <TextBlock Text=""{x:Bind Likes}"" Style=""{ThemeResource CaptionTextBlockStyle}"" Foreground=""{ThemeResource SystemControlForegroundAltHighBrush}""/>
+                    <TextBlock Text="" Likes"" Style=""{ThemeResource CaptionTextBlockStyle}"" Foreground=""{ThemeResource SystemControlForegroundAltHighBrush}""/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+    </ItemContainer>
+</DataTemplate>
+
+<ItemsView Width=""500"" Height=""400"" HorizontalAlignment=""Left""
+    ItemTemplate=""{StaticResource LinedFlowLayoutItemTemplate}"">
+    <ItemsView.Layout>
+        <LinedFlowLayout ItemsStretch=""Fill"" LineHeight=""160"" LineSpacing=""5"" MinItemSpacing=""5""/>
+    </ItemsView.Layout>
+</ItemsView>";
+
+        private const string ItemsViewSelectionXaml =
+@"<DataTemplate x:Key=""UniformGridLayoutItemTemplate"" x:DataType=""local:CustomDataObject"">
+    <ItemContainer AutomationProperties.Name=""{x:Bind Title}"">
+        <Grid Width=""150"">
+            <Image Source=""{x:Bind ImageLocation}"" Stretch=""UniformToFill"" HorizontalAlignment=""Center"" VerticalAlignment=""Center""/>
+            <StackPanel Orientation=""Vertical"" Height=""40"" VerticalAlignment=""Bottom"" Padding=""5,1,5,1"" Background=""{ThemeResource SystemControlBackgroundBaseMediumBrush}"" Opacity="".75"">
+                <TextBlock Text=""{x:Bind Title}"" Foreground=""{ThemeResource SystemControlForegroundAltHighBrush}""/>
+                <StackPanel Orientation=""Horizontal"">
+                    <TextBlock Text=""{x:Bind Likes}"" Style=""{ThemeResource CaptionTextBlockStyle}"" Foreground=""{ThemeResource SystemControlForegroundAltHighBrush}""/>
+                    <TextBlock Text="" Likes"" Style=""{ThemeResource CaptionTextBlockStyle}"" Foreground=""{ThemeResource SystemControlForegroundAltHighBrush}""/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+    </ItemContainer>
+</DataTemplate>
+
+<ItemsView Width=""500"" Height=""400"" HorizontalAlignment=""Left""
+    SelectionMode=""$(SelectionMode)""
+    IsItemInvokedEnabled=""$(IsItemInvokedEnabled)""
+    ItemTemplate=""{StaticResource UniformGridLayoutItemTemplate}""
+    ItemInvoked=""SwappableSelectionModesItemsView_ItemInvoked""
+    SelectionChanged=""SwappableSelectionModesItemsView_SelectionChanged"">
+    <ItemsView.Layout>
+        <UniformGridLayout MinRowSpacing=""5"" MinColumnSpacing=""5"" MaximumRowsOrColumns=""3""/>
+    </ItemsView.Layout>
+</ItemsView>";
+
+        private const string ItemsViewSelectionCSharp =
+@"private void SwappableSelectionModesItemsView_ItemInvoked(ItemsView sender, ItemsViewItemInvokedEventArgs e)
+{
+    tblInvocationOutput.Text = ""You invoked "" + (e.InvokedItem as CustomDataObject).Title + ""."";
+}
+
+private void SwappableSelectionModesItemsView_SelectionChanged(ItemsView sender, ItemsViewSelectionChangedEventArgs e)
+{
+    tblSelectionOutput.Text = string.Format(""You have selected {0} item(s)."", SwappableSelectionModesItemsView.SelectedItems.Count);
+}";
+
         private const string GridViewLayoutCustomizationXaml =
 @"<!-- The GridView used for this example is shown below. Setter properties are used to customize
 some parts of the GridViewItems (i.e. the margins). -->
@@ -264,6 +341,8 @@ private void InitializeData()
                     return CreateGridViewExamples(sampleSnippets);
                 case "ItemsRepeater":
                     return CreateItemsRepeaterExamples(sampleSnippets);
+                case "ItemsView":
+                    return CreateItemsViewExamples();
                 case "PullToRefresh":
                     return CreatePullToRefreshExamples();
                 default:
@@ -2034,17 +2113,618 @@ private void InitializeData()
 
         private static UIElement CreateItemsViewSample()
         {
-            var panel = CreateSamplePanel("ItemsView maps to a selectable WPF ListBox with tile-like items because ModernWpf does not currently expose ItemsView.");
-            var listBox = new ListBox
+            var root = new GallerySamplePanel
             {
-                Width = 420,
-                Height = 170,
-                ItemsPanel = CreateWrapItemsPanel(),
-                ItemTemplate = CreateTileTemplate(),
-                ItemsSource = new[] { "Contoso", "Fabrikam", "Northwind", "Tailspin", "AdventureWorks" }
+                Margin = new Thickness(0, 0, 0, 12)
             };
-            panel.Children.Add(listBox);
-            return panel;
+            GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("ItemsView"));
+            root.Children.Add(CreateBasicItemsViewExampleContent(assignRootAutomationId: false));
+            return root;
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateItemsViewExamples()
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "Basic ItemsView",
+                    CreateBasicItemsViewExampleContent(assignRootAutomationId: true),
+                    ItemsViewBasicXaml,
+                    ItemsViewBasicCSharp),
+                new GalleryExample(
+                    "ItemsView with swappable layouts",
+                    CreateSwappableLayoutsItemsViewExampleContent(),
+                    ItemsViewSwappableLayoutsXaml,
+                    null),
+                new GalleryExample(
+                    "ItemsView item invocation and selection",
+                    CreateSelectionItemsViewExampleContent(),
+                    ItemsViewSelectionXaml,
+                    ItemsViewSelectionCSharp)
+            };
+        }
+
+        private static GallerySamplePanel CreateBasicItemsViewExampleContent(bool assignRootAutomationId)
+        {
+            var root = CreateItemsViewExampleRoot(assignRootAutomationId);
+            root.Children.Add(new TextBlock
+            {
+                Text = "This is a basic ItemsView which uses its default StackLayout layout and a simple ItemTemplate.\nHit the Enter key, double-click or double-tap an item to invoke it.",
+                TextWrapping = TextWrapping.Wrap,
+                Margin = new Thickness(0, 0, 0, 15)
+            });
+
+            var output = CreateOutput("");
+            output.Name = "tblBasicInvokeOutput";
+            var itemsView = CreateItemsViewListBox(
+                "BasicItemsView",
+                width: 220,
+                height: 400,
+                itemTemplate: CreateItemsViewImageTemplate(),
+                itemsPanel: CreateItemsViewStackPanel(),
+                itemContainerStyle: CreateItemsViewItemContainerStyle(200, 140, new Thickness(0, 0, 0, 4)),
+                assignPrimaryAutomationId: true);
+            AttachItemsViewInvocation(itemsView, output, delegate { return true; });
+            root.Children.Add(itemsView);
+            root.Children.Add(output);
+            return root;
+        }
+
+        private static GallerySamplePanel CreateSwappableLayoutsItemsViewExampleContent()
+        {
+            var root = CreateItemsViewExampleRoot(assignRootAutomationId: false);
+            var layout = CreateGridViewOptionsLayout();
+
+            var sample = new StackPanel();
+            sample.Children.Add(new TextBlock
+            {
+                Text = "Use the options on the right to control different layout customizations to the ItemsView below.",
+                TextWrapping = TextWrapping.Wrap,
+                Margin = new Thickness(0, 0, 0, 15)
+            });
+
+            var itemsView = CreateItemsViewListBox(
+                "SwappableLayoutsItemsView",
+                width: 500,
+                height: 400,
+                itemTemplate: CreateItemsViewLinedFlowTemplate(),
+                itemsPanel: CreateItemsViewWrapPanel(),
+                itemContainerStyle: CreateItemsViewItemContainerStyle(150, 160, new Thickness(0, 0, 5, 5)),
+                assignPrimaryAutomationId: false);
+            sample.Children.Add(itemsView);
+            layout.Children.Add(sample);
+
+            var spacer = new Border();
+            Grid.SetColumn(spacer, 1);
+            layout.Children.Add(spacer);
+
+            var options = CreateItemsViewLayoutOptions(itemsView);
+            Grid.SetColumn(options, 2);
+            layout.Children.Add(options);
+            root.Children.Add(layout);
+            return root;
+        }
+
+        private static GallerySamplePanel CreateSelectionItemsViewExampleContent()
+        {
+            var root = CreateItemsViewExampleRoot(assignRootAutomationId: false);
+            var layout = CreateGridViewOptionsLayout();
+
+            var sample = new Grid();
+            sample.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            sample.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+            sample.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            sample.Children.Add(new TextBlock
+            {
+                Text = "You can enable four different selection modes on the right.\n\nNone disables selection all together.\nSingle allows for only one item to be selected in the collection.\nMultiple causes checkboxes to appear within the items, so that multiple items can be chosen from the collection.\nExtended allows the user to select multiple items by using Ctrl+Click to select the individual items they want, or Shift+Click to select a range of contiguous items.",
+                TextWrapping = TextWrapping.Wrap,
+                Margin = new Thickness(0, 0, 0, 15)
+            });
+
+            var invocationOutput = CreateOutput("");
+            invocationOutput.Name = "tblInvocationOutput";
+            var selectionOutput = CreateOutput("");
+            selectionOutput.Name = "tblSelectionOutput";
+            var itemsView = CreateItemsViewListBox(
+                "SwappableSelectionModesItemsView",
+                width: 500,
+                height: 400,
+                itemTemplate: CreateItemsViewUniformGridTemplate(),
+                itemsPanel: CreateItemsViewWrapPanel(),
+                itemContainerStyle: CreateItemsViewItemContainerStyle(150, 150, new Thickness(0, 0, 5, 5)),
+                assignPrimaryAutomationId: false);
+            itemsView.SelectionMode = SelectionMode.Multiple;
+            Grid.SetRow(itemsView, 1);
+            sample.Children.Add(itemsView);
+
+            var outputs = new StackPanel();
+            outputs.Children.Add(invocationOutput);
+            outputs.Children.Add(selectionOutput);
+            Grid.SetRow(outputs, 2);
+            sample.Children.Add(outputs);
+            layout.Children.Add(sample);
+
+            var spacer = new Border();
+            Grid.SetColumn(spacer, 1);
+            layout.Children.Add(spacer);
+
+            var options = CreateItemsViewSelectionOptions(itemsView, invocationOutput, selectionOutput);
+            Grid.SetColumn(options, 2);
+            layout.Children.Add(options);
+            AttachItemsViewInvocation(itemsView, invocationOutput, delegate
+            {
+                var checkBox = FindNameInElement<CheckBox>(options, "chkIsItemInvokedEnabled");
+                return checkBox != null && checkBox.IsChecked == true;
+            });
+            root.Children.Add(layout);
+            return root;
+        }
+
+        private static GallerySamplePanel CreateItemsViewExampleRoot(bool assignRootAutomationId)
+        {
+            var root = new GallerySamplePanel
+            {
+                HorizontalAlignment = HorizontalAlignment.Stretch
+            };
+
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("ItemsView"));
+            }
+
+            return root;
+        }
+
+        private static ListBox CreateItemsViewListBox(
+            string name,
+            double width,
+            double height,
+            DataTemplate itemTemplate,
+            ItemsPanelTemplate itemsPanel,
+            Style itemContainerStyle,
+            bool assignPrimaryAutomationId)
+        {
+            var itemsView = new ListBox
+            {
+                Name = name,
+                Width = width,
+                Height = height,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                ItemsSource = CreateItemsViewItems(),
+                ItemTemplate = itemTemplate,
+                ItemsPanel = itemsPanel,
+                ItemContainerStyle = itemContainerStyle
+            };
+            itemsView.BorderThickness = new Thickness(0);
+            ScrollViewer.SetHorizontalScrollBarVisibility(itemsView, ScrollBarVisibility.Disabled);
+            ScrollViewer.SetVerticalScrollBarVisibility(itemsView, ScrollBarVisibility.Hidden);
+            AutomationProperties.SetName(itemsView, name);
+            if (assignPrimaryAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(itemsView, GalleryAutomation.SampleElementId("ItemsView", "ItemsView"));
+            }
+
+            return itemsView;
+        }
+
+        private static StackPanel CreateItemsViewLayoutOptions(ListBox itemsView)
+        {
+            var options = new StackPanel
+            {
+                MinWidth = 300
+            };
+
+            var layoutOptions = new Mux.RadioButtons
+            {
+                Header = "Layout",
+                FontWeight = FontWeights.SemiBold,
+                SelectedIndex = 0
+            };
+            layoutOptions.Items.Add("LinedFlowLayout");
+            layoutOptions.Items.Add("UniformGridLayout");
+            layoutOptions.Items.Add("StackLayout");
+            options.Children.Add(layoutOptions);
+
+            var linedFlowOptions = new StackPanel
+            {
+                Name = "spLinedFlowLayoutOptions",
+                MinHeight = 300
+            };
+            linedFlowOptions.Children.Add(new TextBlock
+            {
+                Text = "LinedFlowLayout settings",
+                FontWeight = FontWeights.SemiBold,
+                Margin = new Thickness(0, 15, 0, 10)
+            });
+            var lineSpacing = CreateGridViewNumberBox("nbLineSpacing", "Space between lines", 0, 100, 5);
+            var minItemSpacing = CreateGridViewNumberBox("nbMinItemSpacing", "Minimum space between items on a line", 0, 100, 5);
+            linedFlowOptions.Children.Add(lineSpacing);
+            linedFlowOptions.Children.Add(minItemSpacing);
+            linedFlowOptions.Children.Add(new TextBlock
+            {
+                Text = "Line height",
+                Margin = new Thickness(0, 0, 0, 8)
+            });
+            var smallLineHeight = new RadioButton
+            {
+                Name = "rbSmallLineHeight",
+                Content = "Small",
+                GroupName = "LinedFlowLayoutLineHeights"
+            };
+            var largeLineHeight = new RadioButton
+            {
+                Name = "rbLargeLineHeight",
+                Content = "Large",
+                GroupName = "LinedFlowLayoutLineHeights",
+                IsChecked = true
+            };
+            linedFlowOptions.Children.Add(smallLineHeight);
+            linedFlowOptions.Children.Add(largeLineHeight);
+            options.Children.Add(linedFlowOptions);
+
+            var stackOptions = new StackPanel
+            {
+                Name = "spStackLayoutOptions",
+                MinHeight = 300,
+                Visibility = Visibility.Collapsed
+            };
+            stackOptions.Children.Add(new TextBlock
+            {
+                Text = "StackLayout settings",
+                FontWeight = FontWeights.SemiBold,
+                Margin = new Thickness(0, 15, 0, 10)
+            });
+            var rowSpacing = CreateGridViewNumberBox("nbSpacing", "Space between rows", 0, 100, 5);
+            stackOptions.Children.Add(rowSpacing);
+            options.Children.Add(stackOptions);
+
+            var uniformGridOptions = new StackPanel
+            {
+                Name = "spUniformGridLayoutOptions",
+                MinHeight = 300,
+                Visibility = Visibility.Collapsed
+            };
+            uniformGridOptions.Children.Add(new TextBlock
+            {
+                Text = "UniformGridLayout settings",
+                FontWeight = FontWeights.SemiBold,
+                Margin = new Thickness(0, 15, 0, 10)
+            });
+            var minColumnSpacing = CreateGridViewNumberBox("nbMinColumnSpacing", "Minimum space between columns", 0, 100, 5);
+            var minRowSpacing = CreateGridViewNumberBox("nbMinRowSpacing", "Minimum space between rows", 0, 100, 5);
+            var maximumRowsOrColumns = CreateGridViewNumberBox("nbMaximumRowsOrColumns", "Maximum number of items per row before wrapping", 1, 8, 3);
+            uniformGridOptions.Children.Add(minColumnSpacing);
+            uniformGridOptions.Children.Add(minRowSpacing);
+            uniformGridOptions.Children.Add(maximumRowsOrColumns);
+            options.Children.Add(uniformGridOptions);
+
+            Action applyLinedFlowSpacing = delegate
+            {
+                itemsView.ItemContainerStyle = CreateItemsViewItemContainerStyle(
+                    150,
+                    smallLineHeight.IsChecked == true ? 80 : 160,
+                    new Thickness(0, 0, minItemSpacing.Value, lineSpacing.Value));
+            };
+            lineSpacing.ValueChanged += delegate { applyLinedFlowSpacing(); };
+            minItemSpacing.ValueChanged += delegate { applyLinedFlowSpacing(); };
+            smallLineHeight.Checked += delegate { applyLinedFlowSpacing(); };
+            largeLineHeight.Checked += delegate { applyLinedFlowSpacing(); };
+            rowSpacing.ValueChanged += delegate
+            {
+                itemsView.ItemContainerStyle = CreateItemsViewItemContainerStyle(double.NaN, double.NaN, new Thickness(0, 0, 0, rowSpacing.Value));
+            };
+            minColumnSpacing.ValueChanged += delegate
+            {
+                itemsView.ItemContainerStyle = CreateItemsViewItemContainerStyle(150, 150, new Thickness(0, 0, minColumnSpacing.Value, minRowSpacing.Value));
+            };
+            minRowSpacing.ValueChanged += delegate
+            {
+                itemsView.ItemContainerStyle = CreateItemsViewItemContainerStyle(150, 150, new Thickness(0, 0, minColumnSpacing.Value, minRowSpacing.Value));
+            };
+
+            layoutOptions.SelectionChanged += delegate
+            {
+                switch (layoutOptions.SelectedIndex)
+                {
+                    case 1:
+                        itemsView.ItemsPanel = CreateItemsViewWrapPanel();
+                        itemsView.ItemTemplate = CreateItemsViewUniformGridTemplate();
+                        itemsView.ItemContainerStyle = CreateItemsViewItemContainerStyle(150, 150, new Thickness(0, 0, minColumnSpacing.Value, minRowSpacing.Value));
+                        linedFlowOptions.Visibility = Visibility.Collapsed;
+                        stackOptions.Visibility = Visibility.Collapsed;
+                        uniformGridOptions.Visibility = Visibility.Visible;
+                        break;
+                    case 2:
+                        itemsView.ItemsPanel = CreateItemsViewStackPanel();
+                        itemsView.ItemTemplate = CreateItemsViewStackTemplate();
+                        itemsView.ItemContainerStyle = CreateItemsViewItemContainerStyle(double.NaN, double.NaN, new Thickness(0, 0, 0, rowSpacing.Value));
+                        linedFlowOptions.Visibility = Visibility.Collapsed;
+                        stackOptions.Visibility = Visibility.Visible;
+                        uniformGridOptions.Visibility = Visibility.Collapsed;
+                        break;
+                    default:
+                        itemsView.ItemsPanel = CreateItemsViewWrapPanel();
+                        itemsView.ItemTemplate = CreateItemsViewLinedFlowTemplate();
+                        applyLinedFlowSpacing();
+                        linedFlowOptions.Visibility = Visibility.Visible;
+                        stackOptions.Visibility = Visibility.Collapsed;
+                        uniformGridOptions.Visibility = Visibility.Collapsed;
+                        break;
+                }
+            };
+
+            return options;
+        }
+
+        private static Grid CreateItemsViewSelectionOptions(ListBox itemsView, TextBlock invocationOutput, TextBlock selectionOutput)
+        {
+            var options = new Grid
+            {
+                MinWidth = 200
+            };
+            options.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            options.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            options.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            options.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+
+            options.Children.Add(new TextBlock
+            {
+                Text = "SelectionMode",
+                Margin = new Thickness(0, 0, 10, 0),
+                VerticalAlignment = VerticalAlignment.Center
+            });
+
+            var selectionMode = new ComboBox
+            {
+                Name = "cmbSelectionMode",
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                SelectedIndex = 2
+            };
+            AutomationProperties.SetName(selectionMode, "selection mode");
+            selectionMode.Items.Add(new ComboBoxItem { Content = "None" });
+            selectionMode.Items.Add(new ComboBoxItem { Content = "Single" });
+            selectionMode.Items.Add(new ComboBoxItem { Content = "Multiple" });
+            selectionMode.Items.Add(new ComboBoxItem { Content = "Extended" });
+            Grid.SetColumn(selectionMode, 1);
+            options.Children.Add(selectionMode);
+
+            var disabledSelection = false;
+            itemsView.SelectionChanged += delegate
+            {
+                if (disabledSelection)
+                {
+                    itemsView.SelectedIndex = -1;
+                    selectionOutput.Text = "You have selected 0 item(s).";
+                }
+                else
+                {
+                    selectionOutput.Text = string.Format("You have selected {0} item(s).", itemsView.SelectedItems.Count);
+                }
+            };
+            selectionMode.SelectionChanged += delegate
+            {
+                disabledSelection = false;
+                switch (selectionMode.SelectedIndex)
+                {
+                    case 0:
+                        disabledSelection = true;
+                        itemsView.SelectionMode = SelectionMode.Single;
+                        itemsView.SelectedIndex = -1;
+                        break;
+                    case 1:
+                        itemsView.SelectionMode = SelectionMode.Single;
+                        break;
+                    case 3:
+                        itemsView.SelectionMode = SelectionMode.Extended;
+                        break;
+                    default:
+                        itemsView.SelectionMode = SelectionMode.Multiple;
+                        break;
+                }
+
+                invocationOutput.Text = string.Empty;
+                selectionOutput.Text = string.Format("You have selected {0} item(s).", itemsView.SelectedItems.Count);
+            };
+
+            var invocationLabel = new TextBlock
+            {
+                Text = "IsItemInvokedEnabled",
+                Margin = new Thickness(0, 0, 10, 0),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            Grid.SetRow(invocationLabel, 1);
+            options.Children.Add(invocationLabel);
+
+            var invocationEnabled = new CheckBox
+            {
+                Name = "chkIsItemInvokedEnabled"
+            };
+            AutomationProperties.SetName(invocationEnabled, "is item invocation enabled?");
+            invocationEnabled.Checked += delegate { invocationOutput.Text = string.Empty; };
+            invocationEnabled.Unchecked += delegate { invocationOutput.Text = string.Empty; };
+            Grid.SetRow(invocationEnabled, 1);
+            Grid.SetColumn(invocationEnabled, 1);
+            options.Children.Add(invocationEnabled);
+
+            return options;
+        }
+
+        private static void AttachItemsViewInvocation(ListBox itemsView, TextBlock output, Func<bool> isInvocationEnabled)
+        {
+            Action invokeSelectedItem = delegate
+            {
+                if (!isInvocationEnabled())
+                {
+                    return;
+                }
+
+                var item = itemsView.SelectedItem as ItemsViewDataItem;
+                if (item != null)
+                {
+                    output.Text = "You invoked " + item.Title + ".";
+                }
+            };
+
+            itemsView.MouseDoubleClick += delegate { invokeSelectedItem(); };
+            itemsView.KeyDown += delegate(object sender, System.Windows.Input.KeyEventArgs args)
+            {
+                if (args.Key == System.Windows.Input.Key.Enter)
+                {
+                    invokeSelectedItem();
+                    args.Handled = true;
+                }
+            };
+        }
+
+        private static ObservableCollection<ItemsViewDataItem> CreateItemsViewItems()
+        {
+            var likes = new[] { "12", "45", "31", "68", "39", "72", "55", "84", "63", "28", "47", "91", "36" };
+            var items = new ObservableCollection<ItemsViewDataItem>();
+            for (var index = 1; index <= 13; index++)
+            {
+                items.Add(new ItemsViewDataItem
+                {
+                    Title = "Item " + index,
+                    ImageLocation = "/Assets/SampleMedia/LandscapeImage" + index + ".jpg",
+                    ImageSource = new BitmapImage(new Uri(ResourceUri("Assets/SampleMedia/LandscapeImage" + index + ".jpg"), UriKind.Absolute)),
+                    Likes = likes[index - 1],
+                    Description = GridViewDescriptions[(index - 1) % GridViewDescriptions.Length]
+                });
+            }
+
+            return items;
+        }
+
+        private static ItemsPanelTemplate CreateItemsViewStackPanel()
+        {
+            var factory = new FrameworkElementFactory(typeof(StackPanel));
+            return new ItemsPanelTemplate(factory);
+        }
+
+        private static ItemsPanelTemplate CreateItemsViewWrapPanel()
+        {
+            var factory = new FrameworkElementFactory(typeof(WrapPanel));
+            return new ItemsPanelTemplate(factory);
+        }
+
+        private static Style CreateItemsViewItemContainerStyle(double width, double height, Thickness margin)
+        {
+            var style = new Style(typeof(ListBoxItem));
+            style.Setters.Add(new Setter(Control.PaddingProperty, new Thickness(0)));
+            style.Setters.Add(new Setter(FrameworkElement.MarginProperty, margin));
+            style.Setters.Add(new Setter(FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Left));
+            style.Setters.Add(new Setter(Control.HorizontalContentAlignmentProperty, HorizontalAlignment.Stretch));
+            style.Setters.Add(new Setter(Control.VerticalContentAlignmentProperty, VerticalAlignment.Stretch));
+            if (!double.IsNaN(width))
+            {
+                style.Setters.Add(new Setter(FrameworkElement.WidthProperty, width));
+            }
+
+            if (!double.IsNaN(height))
+            {
+                style.Setters.Add(new Setter(FrameworkElement.HeightProperty, height));
+            }
+
+            return style;
+        }
+
+        private static DataTemplate CreateItemsViewImageTemplate()
+        {
+            return ParseRepeaterTemplate(
+                "<DataTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'>" +
+                "<Border HorizontalAlignment='Left' Width='200' Height='140' AutomationProperties.Name='{Binding Title}'>" +
+                "<Image Width='200' Height='140' HorizontalAlignment='Center' VerticalAlignment='Center' Source='{Binding ImageSource}' Stretch='UniformToFill'/>" +
+                "</Border>" +
+                "</DataTemplate>");
+        }
+
+        private static DataTemplate CreateItemsViewLinedFlowTemplate()
+        {
+            return ParseRepeaterTemplate(
+                "<DataTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'>" +
+                "<Grid AutomationProperties.Name='{Binding Title}'>" +
+                "<Image MinWidth='70' HorizontalAlignment='Center' VerticalAlignment='Center' Source='{Binding ImageSource}' Stretch='UniformToFill'/>" +
+                "<Border Height='40' Padding='5,1,5,1' VerticalAlignment='Bottom' Background='{DynamicResource SystemControlBackgroundBaseMediumBrush}' Opacity='.75'>" +
+                "<StackPanel Orientation='Vertical'>" +
+                "<TextBlock Foreground='{DynamicResource SystemControlForegroundAltHighBrush}' Text='{Binding Title}'/>" +
+                "<StackPanel Orientation='Horizontal'>" +
+                "<TextBlock Foreground='{DynamicResource SystemControlForegroundAltHighBrush}' Style='{DynamicResource CaptionTextBlockStyle}' Text='{Binding Likes}'/>" +
+                "<TextBlock Foreground='{DynamicResource SystemControlForegroundAltHighBrush}' Style='{DynamicResource CaptionTextBlockStyle}' Text=' Likes'/>" +
+                "</StackPanel>" +
+                "</StackPanel>" +
+                "</Border>" +
+                "</Grid>" +
+                "</DataTemplate>");
+        }
+
+        private static DataTemplate CreateItemsViewStackTemplate()
+        {
+            return ParseRepeaterTemplate(
+                "<DataTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'>" +
+                "<Grid Width='480' MinHeight='80' MaxHeight='100' AutomationProperties.Name='{Binding Title}'>" +
+                "<Grid.ColumnDefinitions><ColumnDefinition Width='Auto'/><ColumnDefinition Width='*'/></Grid.ColumnDefinitions>" +
+                "<Image Width='24' Height='16' Margin='0,4,0,0' HorizontalAlignment='Center' VerticalAlignment='Top' Source='{Binding ImageSource}' Stretch='UniformToFill'/>" +
+                "<StackPanel Grid.Column='1' Margin='8,0,0,0'>" +
+                "<TextBlock Style='{DynamicResource BaseTextBlockStyle}' Text='{Binding Title}'/>" +
+                "<TextBlock Margin='0,4,8,4' Style='{DynamicResource CaptionTextBlockStyle}' Text='{Binding Description}' TextTrimming='WordEllipsis' TextWrapping='Wrap'/>" +
+                "</StackPanel>" +
+                "</Grid>" +
+                "</DataTemplate>");
+        }
+
+        private static DataTemplate CreateItemsViewUniformGridTemplate()
+        {
+            return ParseRepeaterTemplate(
+                "<DataTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'>" +
+                "<Grid Width='150' AutomationProperties.Name='{Binding Title}'>" +
+                "<Image HorizontalAlignment='Center' VerticalAlignment='Center' Source='{Binding ImageSource}' Stretch='UniformToFill'/>" +
+                "<Border Height='40' Padding='5,1,5,1' VerticalAlignment='Bottom' Background='{DynamicResource SystemControlBackgroundBaseMediumBrush}' Opacity='.75'>" +
+                "<StackPanel Orientation='Vertical'>" +
+                "<TextBlock Foreground='{DynamicResource SystemControlForegroundAltHighBrush}' Text='{Binding Title}'/>" +
+                "<StackPanel Orientation='Horizontal'>" +
+                "<TextBlock Foreground='{DynamicResource SystemControlForegroundAltHighBrush}' Style='{DynamicResource CaptionTextBlockStyle}' Text='{Binding Likes}'/>" +
+                "<TextBlock Foreground='{DynamicResource SystemControlForegroundAltHighBrush}' Style='{DynamicResource CaptionTextBlockStyle}' Text=' Likes'/>" +
+                "</StackPanel>" +
+                "</StackPanel>" +
+                "</Border>" +
+                "</Grid>" +
+                "</DataTemplate>");
+        }
+
+        private static T FindNameInElement<T>(DependencyObject root, string name)
+            where T : FrameworkElement
+        {
+            if (root == null)
+            {
+                return null;
+            }
+
+            var frameworkElement = root as FrameworkElement;
+            if (frameworkElement != null && frameworkElement.Name == name)
+            {
+                return frameworkElement as T;
+            }
+
+            var count = VisualTreeHelper.GetChildrenCount(root);
+            for (var i = 0; i < count; i++)
+            {
+                var result = FindNameInElement<T>(VisualTreeHelper.GetChild(root, i), name);
+                if (result != null)
+                {
+                    return result;
+                }
+            }
+
+            return null;
+        }
+
+        private sealed class ItemsViewDataItem
+        {
+            public string Title { get; set; }
+            public string ImageLocation { get; set; }
+            public BitmapImage ImageSource { get; set; }
+            public string Likes { get; set; }
+            public string Description { get; set; }
         }
 
         private static UIElement CreateListBoxSample()
