@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
@@ -60,11 +61,53 @@ namespace ModernWpf.Gallery.Shell
             { "System", "\uE7F8" }
         };
 
+        private static readonly IReadOnlyDictionary<string, string> WpfGalleryNavigationResourceAliases = new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            { "NavigationViewItemBackground", "TreeViewItemBackground" },
+            { "NavigationViewItemBackgroundPointerOver", "TreeViewItemBackgroundPointerOver" },
+            { "NavigationViewItemBackgroundPressed", "TreeViewItemBackgroundPressed" },
+            { "NavigationViewItemBackgroundDisabled", "TreeViewItemBackgroundDisabled" },
+            { "NavigationViewItemBackgroundChecked", "TreeViewItemBackgroundSelected" },
+            { "NavigationViewItemBackgroundCheckedPointerOver", "TreeViewItemBackgroundSelectedPointerOver" },
+            { "NavigationViewItemBackgroundCheckedPressed", "TreeViewItemBackgroundSelectedPressed" },
+            { "NavigationViewItemBackgroundCheckedDisabled", "TreeViewItemBackgroundSelectedDisabled" },
+            { "NavigationViewItemBackgroundSelected", "TreeViewItemBackgroundSelected" },
+            { "NavigationViewItemBackgroundSelectedPointerOver", "TreeViewItemBackgroundSelectedPointerOver" },
+            { "NavigationViewItemBackgroundSelectedPressed", "TreeViewItemBackgroundSelectedPressed" },
+            { "NavigationViewItemBackgroundSelectedDisabled", "TreeViewItemBackgroundSelectedDisabled" },
+            { "NavigationViewItemForeground", "TreeViewItemForeground" },
+            { "NavigationViewItemForegroundPointerOver", "TreeViewItemForegroundPointerOver" },
+            { "NavigationViewItemForegroundPressed", "TreeViewItemForegroundPressed" },
+            { "NavigationViewItemForegroundDisabled", "TreeViewItemForegroundDisabled" },
+            { "NavigationViewItemForegroundChecked", "TreeViewItemForegroundSelected" },
+            { "NavigationViewItemForegroundCheckedPointerOver", "TreeViewItemForegroundSelectedPointerOver" },
+            { "NavigationViewItemForegroundCheckedPressed", "TreeViewItemForegroundSelectedPressed" },
+            { "NavigationViewItemForegroundCheckedDisabled", "TreeViewItemForegroundSelectedDisabled" },
+            { "NavigationViewItemForegroundSelected", "TreeViewItemForegroundSelected" },
+            { "NavigationViewItemForegroundSelectedPointerOver", "TreeViewItemForegroundSelectedPointerOver" },
+            { "NavigationViewItemForegroundSelectedPressed", "TreeViewItemForegroundSelectedPressed" },
+            { "NavigationViewItemForegroundSelectedDisabled", "TreeViewItemForegroundSelectedDisabled" },
+            { "NavigationViewItemBorderBrush", "TreeViewItemBorderBrush" },
+            { "NavigationViewItemBorderBrushPointerOver", "TreeViewItemBorderBrushPointerOver" },
+            { "NavigationViewItemBorderBrushPressed", "TreeViewItemBorderBrushPressed" },
+            { "NavigationViewItemBorderBrushDisabled", "TreeViewItemBorderBrushDisabled" },
+            { "NavigationViewItemBorderBrushChecked", "TreeViewItemBorderBrushSelected" },
+            { "NavigationViewItemBorderBrushCheckedPointerOver", "TreeViewItemBorderBrushSelectedPointerOver" },
+            { "NavigationViewItemBorderBrushCheckedPressed", "TreeViewItemBorderBrushSelectedPressed" },
+            { "NavigationViewItemBorderBrushCheckedDisabled", "TreeViewItemBorderBrushSelectedDisabled" },
+            { "NavigationViewItemBorderBrushSelected", "TreeViewItemBorderBrushSelected" },
+            { "NavigationViewItemBorderBrushSelectedPointerOver", "TreeViewItemBorderBrushSelectedPointerOver" },
+            { "NavigationViewItemBorderBrushSelectedPressed", "TreeViewItemBorderBrushSelectedPressed" },
+            { "NavigationViewItemBorderBrushSelectedDisabled", "TreeViewItemBorderBrushSelectedDisabled" },
+            { "NavigationViewSelectionIndicatorForeground", "TreeViewItemSelectionIndicatorForeground" }
+        };
+
         private NavigationViewItem _homeNavigationItem;
         private NavigationViewItem _whatsNewNavigationItem;
         private NavigationViewItem _allControlsNavigationItem;
         private NavigationTarget _currentTarget;
         private bool _isProgrammaticNavigation;
+        private bool _themeHandlersAttached;
         private const double TopLevelNavigationContentLeftMargin = 20;
         private const double ChildGlyphNavigationContentLeftMargin = -12;
         private const double ChildTextNavigationContentLeftMargin = 4;
@@ -72,6 +115,9 @@ namespace ModernWpf.Gallery.Shell
         public NavigationRootPage()
         {
             InitializeComponent();
+            AlignNavigationViewItemResourcesWithWpfGalleryTreeView();
+            Loaded += OnLoaded;
+            Unloaded += OnUnloaded;
             VisualTestStatusPanel.Visibility = GalleryDiagnostics.IsEnabled
                 ? Visibility.Visible
                 : Visibility.Collapsed;
@@ -394,6 +440,62 @@ namespace ModernWpf.Gallery.Shell
         {
             Resources["NavigationViewItemExpandedPath"] = Geometry.Empty;
             Navigation.Resources["NavigationViewItemExpandedPath"] = Geometry.Empty;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            AttachThemeHandlers();
+            AlignNavigationViewItemResourcesWithWpfGalleryTreeView();
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            DetachThemeHandlers();
+        }
+
+        private void AttachThemeHandlers()
+        {
+            if (_themeHandlersAttached)
+            {
+                return;
+            }
+
+            ThemeManager.Current.ActualApplicationThemeChanged += OnActualApplicationThemeChanged;
+            SystemParameters.StaticPropertyChanged += OnSystemParametersChanged;
+            _themeHandlersAttached = true;
+        }
+
+        private void DetachThemeHandlers()
+        {
+            if (!_themeHandlersAttached)
+            {
+                return;
+            }
+
+            ThemeManager.Current.ActualApplicationThemeChanged -= OnActualApplicationThemeChanged;
+            SystemParameters.StaticPropertyChanged -= OnSystemParametersChanged;
+            _themeHandlersAttached = false;
+        }
+
+        private void OnActualApplicationThemeChanged(ThemeManager sender, object args)
+        {
+            AlignNavigationViewItemResourcesWithWpfGalleryTreeView();
+        }
+
+        private void OnSystemParametersChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (string.Equals(e.PropertyName, nameof(SystemParameters.HighContrast), StringComparison.Ordinal))
+            {
+                AlignNavigationViewItemResourcesWithWpfGalleryTreeView();
+            }
+        }
+
+        private void AlignNavigationViewItemResourcesWithWpfGalleryTreeView()
+        {
+            foreach (var alias in WpfGalleryNavigationResourceAliases)
+            {
+                Navigation.Resources[alias.Key] = TryFindResource(alias.Value);
+            }
         }
 
         private void OnSettingsButtonClick(object sender, RoutedEventArgs e)

@@ -102,6 +102,22 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(0, navigation.FooterMenuItems.Count);
                 Assert.AreSame(Geometry.Empty, page.Resources["NavigationViewItemExpandedPath"]);
                 Assert.AreSame(Geometry.Empty, navigation.Resources["NavigationViewItemExpandedPath"]);
+                foreach (var resourcePair in new[]
+                {
+                    Tuple.Create("NavigationViewItemBackground", "TreeViewItemBackground"),
+                    Tuple.Create("NavigationViewItemBackgroundPointerOver", "TreeViewItemBackgroundPointerOver"),
+                    Tuple.Create("NavigationViewItemBackgroundSelected", "TreeViewItemBackgroundSelected"),
+                    Tuple.Create("NavigationViewItemForeground", "TreeViewItemForeground"),
+                    Tuple.Create("NavigationViewItemForegroundPointerOver", "TreeViewItemForegroundPointerOver"),
+                    Tuple.Create("NavigationViewItemForegroundSelected", "TreeViewItemForegroundSelected"),
+                    Tuple.Create("NavigationViewItemBorderBrush", "TreeViewItemBorderBrush"),
+                    Tuple.Create("NavigationViewItemBorderBrushPointerOver", "TreeViewItemBorderBrushPointerOver"),
+                    Tuple.Create("NavigationViewItemBorderBrushSelected", "TreeViewItemBorderBrushSelected"),
+                    Tuple.Create("NavigationViewSelectionIndicatorForeground", "TreeViewItemSelectionIndicatorForeground")
+                })
+                {
+                    AssertNavigationViewResourceAlias(navigation, resourcePair.Item1, resourcePair.Item2);
+                }
 
                 var contentFrameBorder = (Border)page.FindName("ContentFrameBorder");
                 Assert.AreEqual(new Thickness(4, -1, 0, 0), contentFrameBorder.Margin);
@@ -257,6 +273,39 @@ namespace ModernWpf.Gallery.Tests
                     AssertTextLeft(page, navigationItem, "Navigation", 76, "Navigation text");
                     AssertTextLeft(page, menuItem, "Menu", 79, "Menu child text");
                 });
+            });
+        }
+
+        [TestMethod]
+        public void ShellNavigationViewTreeViewResourceAliasesTrackThemeChanges()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var previousTheme = ThemeManager.Current.ApplicationTheme;
+                var page = new NavigationRootPage();
+
+                try
+                {
+                    RenderPage(page, () =>
+                    {
+                        var navigation = (NavigationView)page.FindName("Navigation");
+
+                        ThemeManager.Current.ApplicationTheme = ApplicationTheme.Light;
+                        WpfTestHost.DoEvents();
+                        AssertNavigationViewResourceAlias(navigation, "NavigationViewItemForeground", "TreeViewItemForeground");
+                        AssertNavigationViewResourceAlias(navigation, "NavigationViewSelectionIndicatorForeground", "TreeViewItemSelectionIndicatorForeground");
+
+                        ThemeManager.Current.ApplicationTheme = ApplicationTheme.Dark;
+                        WpfTestHost.DoEvents();
+                        AssertNavigationViewResourceAlias(navigation, "NavigationViewItemForeground", "TreeViewItemForeground");
+                        AssertNavigationViewResourceAlias(navigation, "NavigationViewSelectionIndicatorForeground", "TreeViewItemSelectionIndicatorForeground");
+                    });
+                }
+                finally
+                {
+                    ThemeManager.Current.ApplicationTheme = previousTheme;
+                    WpfTestHost.DoEvents();
+                }
             });
         }
 
@@ -602,6 +651,17 @@ namespace ModernWpf.Gallery.Tests
                     AutomationProperties.GetAutomationId(text),
                     "GalleryNavigationDisclosureChevron",
                     StringComparison.Ordinal));
+        }
+
+        private static void AssertNavigationViewResourceAlias(
+            FrameworkElement scope,
+            string navigationResourceKey,
+            string treeViewResourceKey)
+        {
+            Assert.AreSame(
+                scope.TryFindResource(treeViewResourceKey),
+                scope.TryFindResource(navigationResourceKey),
+                navigationResourceKey);
         }
 
         private static void AssertPageHeaderLabel(Label label, string automationName, AutomationHeadingLevel headingLevel, int tabIndex)
