@@ -501,8 +501,12 @@ namespace ModernWpf.Gallery.Shell
 
         private void OnSettingsButtonClick(object sender, RoutedEventArgs e)
         {
-            Navigate(NavigationTarget.Settings(), true);
             RaiseSettingsOpenedNotification(SettingsButton);
+        }
+
+        internal void OpenSettings()
+        {
+            Navigate(NavigationTarget.Settings(), true);
         }
 
         private static void RaiseSettingsOpenedNotification(UIElement element)

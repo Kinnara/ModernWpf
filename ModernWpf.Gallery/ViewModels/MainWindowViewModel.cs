@@ -8,14 +8,20 @@ namespace ModernWpf.Gallery.ViewModels
     {
         private bool _canNavigateback;
 
-        public MainWindowViewModel(Action backAction)
+        public MainWindowViewModel(Action backAction, Action settingsAction)
         {
             if (backAction == null)
             {
                 throw new ArgumentNullException(nameof(backAction));
             }
 
+            if (settingsAction == null)
+            {
+                throw new ArgumentNullException(nameof(settingsAction));
+            }
+
             BackCommand = new RelayCommand(delegate { backAction(); });
+            SettingsCommand = new RelayCommand(delegate { settingsAction(); });
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -23,6 +29,8 @@ namespace ModernWpf.Gallery.ViewModels
         public string ApplicationTitle { get; } = "WPF Gallery";
 
         public ICommand BackCommand { get; }
+
+        public ICommand SettingsCommand { get; }
 
         public bool CanNavigateback
         {

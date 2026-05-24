@@ -371,6 +371,16 @@ namespace ModernWpf.Gallery.Tests
                         BindingOperations.GetBindingExpression(titleText, TextBlock.TextProperty)?.ParentBinding.Path.Path);
                     Assert.AreEqual(AutomationHeadingLevel.Level1, AutomationProperties.GetHeadingLevel(titleText));
 
+                    var rootPage = (NavigationRootPage)window.FindName("RootPage");
+                    var settingsButton = (Button)rootPage.FindName("SettingsButton");
+                    Assert.AreSame(window.ViewModel.SettingsCommand, settingsButton.Command);
+                    Assert.AreEqual("Value.ViewModel.SettingsCommand",
+                        BindingOperations.GetBindingExpression(settingsButton, System.Windows.Controls.Primitives.ButtonBase.CommandProperty)?.ParentBinding.Path.Path);
+                    var contentHost = (ContentControl)rootPage.FindName("ContentHost");
+                    window.ViewModel.SettingsCommand.Execute(null);
+                    WpfTestHost.DoEvents();
+                    Assert.IsInstanceOfType(contentHost.Content, typeof(SettingsPage));
+
                     var minimizeButton = (Button)window.FindName("MinimizeButton");
                     var maximizeButton = (Button)window.FindName("MaximizeButton");
                     var closeButton = (Button)window.FindName("CloseButton");
@@ -382,7 +392,7 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsTrue(WindowChrome.GetIsHitTestVisibleInChrome(closeButton));
                     Assert.AreEqual("\uE922", ((TextBlock)window.FindName("MaximizeIcon")).Text);
 
-                    Assert.IsInstanceOfType(window.FindName("RootPage"), typeof(NavigationRootPage));
+                    Assert.IsInstanceOfType(rootPage, typeof(NavigationRootPage));
                 }
                 finally
                 {

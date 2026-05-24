@@ -10,6 +10,8 @@
     AutomationProperties.AutomationId="GalleryNavigationRoot"
     mc:Ignorable="d">
     <UserControl.Resources>
+        <ui:BindingProxy x:Key="NavigationRootDataContextProxy" Value="{Binding}" />
+
         <Style x:Key="GalleryNavigationFooterButtonStyle" TargetType="Button">
             <Setter Property="MinWidth" Value="48" />
             <Setter Property="MinHeight" Value="32" />
@@ -73,7 +75,9 @@
                 <SolidColorBrush x:Key="NavigationViewContentBackground" Color="Transparent" />
             </ui:NavigationView.Resources>
             <ui:NavigationView.PaneFooter>
-                <StackPanel Margin="8,10,0,2" Orientation="Vertical">
+                <StackPanel
+                    Margin="8,10,0,2"
+                    Orientation="Vertical">
                     <Separator
                         Width="250"
                         HorizontalAlignment="Left" />
@@ -88,6 +92,7 @@
                         AutomationProperties.AutomationId="SettingsButton"
                         AutomationProperties.Name="Settings"
                         Click="OnSettingsButtonClick"
+                        Command="{Binding Value.ViewModel.SettingsCommand, Source={StaticResource NavigationRootDataContextProxy}}"
                         Style="{StaticResource GalleryNavigationFooterButtonStyle}">
                         <StackPanel Margin="11,0,0,0" Orientation="Horizontal">
                             <TextBlock

@@ -16,7 +16,7 @@ namespace ModernWpf.Gallery
 
         public MainWindow()
         {
-            ViewModel = new MainWindowViewModel(GoBack);
+            ViewModel = new MainWindowViewModel(GoBack, OpenSettings);
             DataContext = this;
             InitializeComponent();
             ConfigureWindowChrome();
@@ -31,6 +31,11 @@ namespace ModernWpf.Gallery
         private void GoBack()
         {
             RootPage.GoBack();
+        }
+
+        private void OpenSettings()
+        {
+            RootPage.OpenSettings();
         }
 
         internal void SetBackButtonVisible(bool canGoBack)
