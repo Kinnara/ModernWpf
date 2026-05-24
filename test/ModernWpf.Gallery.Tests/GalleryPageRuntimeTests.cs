@@ -2411,11 +2411,13 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(2, root.RowDefinitions.Count);
                     Assert.AreEqual(280.0, root.RowDefinitions[0].MaxHeight);
                     Assert.AreEqual(new GridLength(2, GridUnitType.Star), root.RowDefinitions[1].Height);
+                    Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(root));
                     Assert.AreSame(Application.Current.FindResource("GalleryPageRootStyle"), root.Style);
                     Assert.AreEqual(14.0, TextElement.GetFontSize(root));
 
                     var userListGrid = root.Children.OfType<Grid>().Single(child => Grid.GetColumn(child) == 0);
                     var userList = userListGrid.Children.OfType<ListView>().Single();
+                    Assert.AreEqual(BindingMode.OneWay, BindingOperations.GetBinding(userList, ItemsControl.ItemsSourceProperty).Mode);
                     Assert.AreEqual("Users", AutomationProperties.GetName(userList));
                     Assert.AreEqual(300.0, userList.Width);
                     Assert.AreEqual(SelectionMode.Single, userList.SelectionMode);
@@ -2425,6 +2427,7 @@ namespace ModernWpf.Gallery.Tests
                     var firstUserItem = (ListViewItem)userList.ItemContainerGenerator.ContainerFromIndex(0);
                     Assert.IsNotNull(firstUserItem);
                     Assert.AreEqual(firstUser.Name, AutomationProperties.GetName(firstUserItem));
+                    Assert.AreEqual("Ellipse", FindDescendant<Ellipse>(firstUserItem).Name);
                     var firstUserName = FindTextBlock(firstUserItem, firstUser.Name);
                     Assert.AreEqual(AutomationHeadingLevel.Level3, AutomationProperties.GetHeadingLevel(firstUserName));
                     Assert.AreEqual(14.0, firstUserName.FontSize);
@@ -2466,6 +2469,7 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual("First Name", ((Label)firstNamePanel.Children[0]).Content);
                     Assert.AreEqual("First Name", AutomationProperties.GetName(firstNameBox));
                     Assert.AreEqual(selectedUser.FirstName, firstNameBox.Text);
+                    Assert.AreEqual(UpdateSourceTrigger.Default, BindingOperations.GetBinding(firstNameBox, TextBox.TextProperty).UpdateSourceTrigger);
                     Assert.IsTrue(firstNameBox.IsReadOnly);
                     Assert.AreEqual("Last Name", AutomationProperties.GetName(lastNameBox));
                     Assert.AreEqual(selectedUser.LastName, lastNameBox.Text);
@@ -2482,6 +2486,7 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(21.0, ageSlider.Minimum);
                     Assert.AreEqual(62.0, ageSlider.Maximum);
                     Assert.IsTrue(ageSlider.IsSnapToTickEnabled);
+                    Assert.AreEqual(BindingMode.Default, BindingOperations.GetBinding(ageSlider, RangeBase.ValueProperty).Mode);
                     Assert.IsFalse(ageSlider.IsEnabled);
                     Assert.AreEqual((double)selectedUser.Age, ageSlider.Value);
 

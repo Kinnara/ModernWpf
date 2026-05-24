@@ -28,7 +28,6 @@
 
     <Grid
         x:Name="ContentRootGrid"
-        AutomationProperties.AutomationId="ContentRootGrid"
         Style="{StaticResource GalleryPageRootStyle}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -71,6 +70,7 @@
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <Ellipse
+                                x:Name="Ellipse"
                                 Grid.RowSpan="2"
                                 Width="32"
                                 Height="32"
@@ -178,7 +178,7 @@
                                     Margin="0,5,0,15"
                                     AutomationProperties.Name="First Name"
                                     IsReadOnly="{Binding ViewModel.IsReadOnly}"
-                                    Text="{Binding ViewModel.EditableUser.FirstName, UpdateSourceTrigger=PropertyChanged}" />
+                                    Text="{Binding ViewModel.EditableUser.FirstName}" />
                             </StackPanel>
                             <StackPanel
                                 x:Name="LastNamePanel"
@@ -192,7 +192,7 @@
                                     Margin="0,5,0,15"
                                     AutomationProperties.Name="Last Name"
                                     IsReadOnly="{Binding ViewModel.IsReadOnly}"
-                                    Text="{Binding ViewModel.EditableUser.LastName, UpdateSourceTrigger=PropertyChanged}" />
+                                    Text="{Binding ViewModel.EditableUser.LastName}" />
                             </StackPanel>
                         </Grid>
 
@@ -204,7 +204,7 @@
                             Margin="0,5,0,15"
                             AutomationProperties.Name="Company"
                             IsReadOnly="{Binding ViewModel.IsReadOnly}"
-                            Text="{Binding ViewModel.EditableUser.Company, UpdateSourceTrigger=PropertyChanged}" />
+                            Text="{Binding ViewModel.EditableUser.Company}" />
 
                         <Label
                             Content="Address"
@@ -214,7 +214,7 @@
                             Margin="0,5,0,15"
                             AutomationProperties.Name="Address"
                             IsReadOnly="{Binding ViewModel.IsReadOnly}"
-                            Text="{Binding ViewModel.EditableUser.Address, UpdateSourceTrigger=PropertyChanged}" />
+                            Text="{Binding ViewModel.EditableUser.Address}" />
 
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -240,7 +240,7 @@
                             IsSnapToTickEnabled="True"
                             Maximum="62"
                             Minimum="21"
-                            Value="{Binding ViewModel.EditableUser.Age, Mode=TwoWay}"
+                            Value="{Binding ViewModel.EditableUser.Age}"
                             ValueChanged="AgeSlider_ValueChanged" />
 
                         <Label
