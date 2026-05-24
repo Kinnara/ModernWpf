@@ -106,6 +106,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.PersonPictureSampleMatchesWinUIGalleryExample|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 47 tests per target. The generated ModernWpf PersonPicture extension page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\PersonPicturePage.xaml` / `.xaml.cs`: one `Select different looks for the person picture.` example with source-facing `personPicture`, `ProfileImageRadio`, `DisplayNameRadio`, and `InitialsRadio` names, `ProfilePicture` / `DisplayName` / `Initials` substitutions, and matching selection behavior. `MediaSampleFactory.CreateExamples` now covers PersonPicture as a source-backed Media WinUI extension page, `ItemPage` asks the Media factory before falling back to generic generated content, and the sample exposes curated automation IDs `GallerySample_PersonPicture_Root` / `GallerySample_PersonPicture_PersonPicture` plus the shared `ProfileImageRadio` crop hook.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls PersonPicture -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-001258-575-48524/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required PersonPicture sample element was found, primary crops use `ProfileImageRadio` because the installed WinUI reference does not expose a stable `personPicture` automation ID, crop sizes are `120x32` vs `120x32`, and Light primary delta is `8.73`. The whole-window Light mean delta is `177.25` and remains diagnostic because the installed WinUI shell stayed dark while the sample content toggled light.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls PersonPicture -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-001321-104-116532/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required PersonPicture sample element was found, primary crops use `ProfileImageRadio`, crop sizes are `120x32` vs `120x32`, Dark primary delta is `11.4`, and whole-window Dark mean delta is `15.11`.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the PersonPicture WinUI example alignment. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages and ends with `0 Warning(s)` and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.SplitViewSampleMatchesWinUIGalleryExample|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 46 tests per target. The generated ModernWpf SplitView extension page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\SplitViewPage.xaml` / `.xaml.cs`: one `A basic SplitView.` example with source-facing `splitView`, `PaneHeader`, `NavLinksList`, `content`, `togglePaneButton`, `displayModeCombobox`, `paneBackgroundCombobox`, `openPaneLengthSlider`, and `compactPaneLengthSlider` names. `LayoutSampleFactory.CreateExamples` now covers SplitView as a source-backed Layout WinUI extension page, `ItemPage` asks the Layout factory before falling back to generated sample content, and the sample exposes curated automation IDs `GallerySample_SplitView_Root` / `GallerySample_SplitView_SplitView` plus the source-backed `NavLinksList` crop hook.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls SplitView -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -2156,6 +2164,31 @@ WinUI-reference evidence is
 with ModernWpf and installed WinUI 3 Gallery `Passed`, primary crops of
 `255x258` vs `255x257`, and primary deltas `4.58` / `5.69`. Avoid reopening
 SplitView's source shape unless a new WinUI source or crop regression appears.
+The generated ModernWpf PersonPicture extension page now uses the local
+official WinUI Gallery one-example structure from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\PersonPicturePage.xaml`
+and `.xaml.cs`: a `PersonPicture` with a `Profile type` radio group for
+profile image, display name, and initials. `MediaSampleFactory.CreateExamples`
+now exposes PersonPicture as a source-backed Media WinUI extension page, and
+`ItemPage` queries the Media factory before falling back to generic generated
+content. The WPF adaptation keeps WinUI's visible sample header, snippet,
+source-facing names (`personPicture`, `ProfileImageRadio`, `DisplayNameRadio`,
+and `InitialsRadio`), substitution behavior, and option-driven
+`ProfilePicture` / `DisplayName` / `Initials` updates while exposing
+`GallerySample_PersonPicture_*` automation IDs for required sample capture. The
+live WPF sample uses a local `Assets\UserDashboard\64-100x100.jpg` profile image
+instead of the WinUI sample's remote URL, and renders the control at `96x96` so
+ModernWpf's WPF template matches the installed WinUI visual size; the source
+snippet still records the official `Height="300"` sample shape. Current
+PersonPicture WinUI-reference evidence is
+`artifacts/visual-checks/20260525-001258-575-48524/report.md` for Light and
+`artifacts/visual-checks/20260525-001321-104-116532/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`, matching `120x32`
+`ProfileImageRadio` primary crops, and primary deltas `8.73` / `11.4`. The
+visual harness uses `ProfileImageRadio` for the primary crop because the
+installed WinUI reference does not expose a stable `personPicture` automation
+ID. Avoid reopening PersonPicture's source shape unless a new WinUI source or
+crop regression appears.
 The generated ModernWpf RichTextBlock extension page now uses the local
 official WinUI Gallery four-example structure from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\RichTextBlockPage.xaml`:

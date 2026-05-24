@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Media;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -13,6 +15,40 @@ namespace ModernWpf.Gallery.Pages
 {
     internal static class MediaSampleFactory
     {
+        private const string PersonPictureBasicXaml =
+@"<PersonPicture x:Name=""personPicture"" Height=""300"" VerticalAlignment=""Top"" />
+
+<RadioButtons SelectedIndex=""0"" Header=""Profile type"" SelectionChanged=""RadioButtons_SelectionChanged"">
+    <RadioButton x:Name=""ProfileImageRadio"" Content=""Profile Image"" IsChecked=""True""/>
+    <RadioButton x:Name=""DisplayNameRadio"" Content=""Display Name"" />
+    <RadioButton x:Name=""InitialsRadio"" Content=""Initials"" />
+</RadioButtons>
+
+<PersonPicture $(ProfilePicture)$(DisplayName)$(Initials) />";
+
+        private const string PersonPictureBasicCSharp =
+@"private void RadioButtons_SelectionChanged(object sender, SelectionChangedEventArgs e)
+{
+    if (ProfileImageRadio.IsChecked == true)
+    {
+        personPicture.ProfilePicture = new BitmapImage(new Uri(""https://learn.microsoft.com/windows/uwp/contacts-and-calendar/images/shoulder-tap-static-payload.png""));
+        personPicture.DisplayName = null;
+        personPicture.Initials = null;
+    }
+    else if (DisplayNameRadio.IsChecked == true)
+    {
+        personPicture.ProfilePicture = null;
+        personPicture.DisplayName = ""Jane Doe"";
+        personPicture.Initials = null;
+    }
+    else if (InitialsRadio.IsChecked == true)
+    {
+        personPicture.ProfilePicture = null;
+        personPicture.DisplayName = null;
+        personPicture.Initials = ""SB"";
+    }
+}";
+
         public static UIElement Create(string uniqueId)
         {
             switch (uniqueId)
@@ -35,6 +71,24 @@ namespace ModernWpf.Gallery.Pages
                     return CreateWebView2Sample();
                 default:
                     return null;
+            }
+        }
+
+        public static IReadOnlyList<GalleryExample> CreateExamples(string uniqueId)
+        {
+            switch (uniqueId)
+            {
+                case "PersonPicture":
+                    return new[]
+                    {
+                        new GalleryExample(
+                            "Select different looks for the person picture.",
+                            CreatePersonPictureExampleContent(assignRootAutomationId: true),
+                            PersonPictureBasicXaml,
+                            PersonPictureBasicCSharp)
+                    };
+                default:
+                    return Array.Empty<GalleryExample>();
             }
         }
 
@@ -351,39 +405,75 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreatePersonPictureSample()
         {
-            var panel = CreateSamplePanel("PersonPicture displays a profile image, initials, or group glyph with optional badges.");
-            var row = new StackPanel { Orientation = Orientation.Horizontal };
-            row.Children.Add(CreatePersonPictureColumn("Initials", new Mux.PersonPicture
+            return CreatePersonPictureExampleContent(assignRootAutomationId: true);
+        }
+
+        private static GallerySamplePanel CreatePersonPictureExampleContent(bool assignRootAutomationId)
+        {
+            var root = new GallerySamplePanel
             {
+                Orientation = Orientation.Horizontal
+            };
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("PersonPicture"));
+            }
+
+            var personPicture = new Mux.PersonPicture
+            {
+                Name = "personPicture",
                 Width = 96,
                 Height = 96,
-                DisplayName = "Avery Howard"
-            }));
-            row.Children.Add(CreatePersonPictureColumn("Photo", new Mux.PersonPicture
+                VerticalAlignment = VerticalAlignment.Top
+            };
+            GalleryAutomation.WithAutomationId(personPicture, GalleryAutomation.SampleElementId("PersonPicture", "PersonPicture"));
+
+            var profileImageRadio = new RadioButton
             {
-                Width = 96,
-                Height = 96,
-                DisplayName = "Mina Patel",
-                ProfilePicture = CreateBitmap(ResourceUri("Assets/SampleMedia/grapes.jpg"))
-            }));
-            row.Children.Add(CreatePersonPictureColumn("Badge", new Mux.PersonPicture
+                Name = "ProfileImageRadio",
+                Content = "Profile Image",
+                IsChecked = true
+            };
+            AutomationProperties.SetAutomationId(profileImageRadio, "ProfileImageRadio");
+            var displayNameRadio = new RadioButton
             {
-                Width = 96,
-                Height = 96,
-                Initials = "KM",
-                BadgeNumber = 4,
-                BadgeText = "unread messages"
-            }));
-            row.Children.Add(CreatePersonPictureColumn("Group", new Mux.PersonPicture
+                Name = "DisplayNameRadio",
+                Content = "Display Name"
+            };
+            AutomationProperties.SetAutomationId(displayNameRadio, "DisplayNameRadio");
+            var initialsRadio = new RadioButton
             {
-                Width = 96,
-                Height = 96,
-                IsGroup = true,
-                BadgeGlyph = "\xE73E",
-                BadgeText = "team"
-            }));
-            panel.Children.Add(row);
-            return panel;
+                Name = "InitialsRadio",
+                Content = "Initials"
+            };
+            AutomationProperties.SetAutomationId(initialsRadio, "InitialsRadio");
+
+            var profileType = new Mux.RadioButtons
+            {
+                Header = "Profile type",
+                SelectedIndex = 0
+            };
+            profileType.Items.Add(profileImageRadio);
+            profileType.Items.Add(displayNameRadio);
+            profileType.Items.Add(initialsRadio);
+            profileType.SelectionChanged += delegate
+            {
+                ApplyPersonPictureSelection(personPicture, profileImageRadio, displayNameRadio, initialsRadio);
+            };
+
+            var options = new StackPanel
+            {
+                Margin = new Thickness(24, 0, 0, 0),
+                Children =
+                {
+                    profileType
+                }
+            };
+
+            root.Children.Add(personPicture);
+            root.Children.Add(options);
+            ApplyPersonPictureSelection(personPicture, profileImageRadio, displayNameRadio, initialsRadio);
+            return root;
         }
 
         private static UIElement CreateSoundSample()
@@ -421,21 +511,30 @@ namespace ModernWpf.Gallery.Pages
             return panel;
         }
 
-        private static StackPanel CreatePersonPictureColumn(string label, Mux.PersonPicture personPicture)
+        private static void ApplyPersonPictureSelection(
+            Mux.PersonPicture personPicture,
+            RadioButton profileImageRadio,
+            RadioButton displayNameRadio,
+            RadioButton initialsRadio)
         {
-            var column = new StackPanel
+            if (profileImageRadio.IsChecked == true)
             {
-                Width = 120,
-                Margin = new Thickness(0, 0, 16, 0)
-            };
-            column.Children.Add(personPicture);
-            column.Children.Add(new TextBlock
+                personPicture.ProfilePicture = CreateBitmap(ResourceUri("Assets/UserDashboard/64-100x100.jpg"));
+                personPicture.DisplayName = null;
+                personPicture.Initials = null;
+            }
+            else if (displayNameRadio.IsChecked == true)
             {
-                Text = label,
-                Margin = new Thickness(0, 8, 0, 0),
-                HorizontalAlignment = HorizontalAlignment.Center
-            });
-            return column;
+                personPicture.ProfilePicture = null;
+                personPicture.DisplayName = "Jane Doe";
+                personPicture.Initials = null;
+            }
+            else if (initialsRadio.IsChecked == true)
+            {
+                personPicture.ProfilePicture = null;
+                personPicture.DisplayName = null;
+                personPicture.Initials = "SB";
+            }
         }
 
         private static Button CreateSoundButton(string text, Action play, TextBlock output)

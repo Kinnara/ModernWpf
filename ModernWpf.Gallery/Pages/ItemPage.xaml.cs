@@ -286,6 +286,12 @@ namespace ModernWpf.Gallery.Pages
                 return layoutExamples;
             }
 
+            var mediaExamples = MediaSampleFactory.CreateExamples(uniqueId);
+            if (mediaExamples.Count != 0)
+            {
+                return mediaExamples;
+            }
+
             var navigationExamples = NavigationSampleFactory.CreateExamples(uniqueId, sampleSnippets);
             if (navigationExamples.Count != 0)
             {

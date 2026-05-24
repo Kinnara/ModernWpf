@@ -35,6 +35,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "PipsPager", "GallerySample_PipsPager_Root", "GallerySample_PipsPager_PipsPager" };
             yield return new object[] { "PullToRefresh", "GallerySample_PullToRefresh_Root", "GallerySample_PullToRefresh_RefreshContainer" };
             yield return new object[] { "SplitView", "GallerySample_SplitView_Root", "GallerySample_SplitView_SplitView" };
+            yield return new object[] { "PersonPicture", "GallerySample_PersonPicture_Root", "GallerySample_PersonPicture_PersonPicture" };
             yield return new object[] { "FlipView", "GallerySample_FlipView_Root", "GallerySample_FlipView_FlipView" };
             yield return new object[] { "ItemsView", "GallerySample_ItemsView_Root", "GallerySample_ItemsView_ItemsView" };
             yield return new object[] { "CalendarDatePicker", "GallerySample_CalendarDatePicker_Root", "GallerySample_CalendarDatePicker_CalendarDatePicker" };
@@ -3456,6 +3457,86 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void PersonPictureSampleMatchesWinUIGalleryExample()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("PersonPicture"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(1, page.Examples.Count);
+                    Assert.AreEqual("Select different looks for the person picture.", page.Examples[0].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    var exampleRoot = (GallerySamplePanel)page.Examples[0].ExampleContent;
+                    Assert.AreEqual(Orientation.Horizontal, exampleRoot.Orientation);
+                    Assert.AreEqual(24d, ((FrameworkElement)exampleRoot.Children[1]).Margin.Left);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "x:Name=\"personPicture\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "ProfileImageRadio");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "$(ProfilePicture)$(DisplayName)$(Initials)");
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "personPicture.ProfilePicture");
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "DisplayName = \"Jane Doe\"");
+
+                    var personPicture = (Mux.PersonPicture)FindByAutomationId(page, "GallerySample_PersonPicture_PersonPicture");
+                    var profileType = FindRadioButtonsByHeader(page, "Profile type");
+                    var profileImageRadio = FindNamedDescendant<RadioButton>(page, "ProfileImageRadio");
+                    var displayNameRadio = FindNamedDescendant<RadioButton>(page, "DisplayNameRadio");
+                    var initialsRadio = FindNamedDescendant<RadioButton>(page, "InitialsRadio");
+                    Assert.IsNotNull(personPicture);
+                    Assert.IsNotNull(profileType);
+                    Assert.IsNotNull(profileImageRadio);
+                    Assert.IsNotNull(displayNameRadio);
+                    Assert.IsNotNull(initialsRadio);
+
+                    Assert.AreEqual("personPicture", personPicture.Name);
+                    Assert.AreEqual(96d, personPicture.Width);
+                    Assert.AreEqual(96d, personPicture.Height);
+                    Assert.AreEqual(0, profileType.SelectedIndex);
+                    Assert.AreEqual("Profile Image", profileImageRadio.Content);
+                    Assert.AreEqual("Display Name", displayNameRadio.Content);
+                    Assert.AreEqual("Initials", initialsRadio.Content);
+                    Assert.AreEqual("ProfileImageRadio", AutomationProperties.GetAutomationId(profileImageRadio));
+                    Assert.IsNotNull(personPicture.ProfilePicture);
+                    Assert.AreEqual(string.Empty, personPicture.DisplayName);
+                    Assert.AreEqual(string.Empty, personPicture.Initials);
+
+                    profileType.SelectedIndex = 1;
+                    WpfTestHost.DoEvents();
+                    Assert.IsNull(personPicture.ProfilePicture);
+                    Assert.AreEqual("Jane Doe", personPicture.DisplayName);
+                    Assert.AreEqual(string.Empty, personPicture.Initials);
+
+                    profileType.SelectedIndex = 2;
+                    WpfTestHost.DoEvents();
+                    Assert.IsNull(personPicture.ProfilePicture);
+                    Assert.AreEqual(string.Empty, personPicture.DisplayName);
+                    Assert.AreEqual("SB", personPicture.Initials);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
         public void RichEditBoxSampleMatchesWinUIGalleryExamples()
         {
             WpfTestHost.Run(() =>
@@ -4227,6 +4308,20 @@ namespace ModernWpf.Gallery.Tests
                 if (Equals(toggle.Header, header))
                 {
                     return toggle;
+                }
+            }
+
+            return null;
+        }
+
+        private static Mux.RadioButtons FindRadioButtonsByHeader(DependencyObject root, string header)
+        {
+            var radioButtons = FindDescendants<Mux.RadioButtons>(root);
+            foreach (var radioButtonGroup in radioButtons)
+            {
+                if (Equals(radioButtonGroup.Header, header))
+                {
+                    return radioButtonGroup;
                 }
             }
 
