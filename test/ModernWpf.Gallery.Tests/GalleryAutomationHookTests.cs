@@ -33,6 +33,9 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "PullToRefresh", "GallerySample_PullToRefresh_Root", "GallerySample_PullToRefresh_RefreshContainer" };
             yield return new object[] { "FlipView", "GallerySample_FlipView_Root", "GallerySample_FlipView_FlipView" };
             yield return new object[] { "ItemsView", "GallerySample_ItemsView_Root", "GallerySample_ItemsView_ItemsView" };
+            yield return new object[] { "CalendarDatePicker", "GallerySample_CalendarDatePicker_Root", "GallerySample_CalendarDatePicker_CalendarDatePicker" };
+            yield return new object[] { "CalendarView", "GallerySample_CalendarView_Root", "GallerySample_CalendarView_CalendarView" };
+            yield return new object[] { "TimePicker", "GallerySample_TimePicker_Root", "GallerySample_TimePicker_TimePicker" };
             yield return new object[] { "GridView", "GallerySample_GridView_Root", "GallerySample_GridView_BasicGridView" };
             yield return new object[] { "ItemsRepeater", "GallerySample_ItemsRepeater_Root", "GallerySample_ItemsRepeater_ItemsRepeater" };
             yield return new object[] { "BreadcrumbBar", "GallerySample_BreadcrumbBar_Root", "GallerySample_BreadcrumbBar_BreadcrumbBar" };
@@ -1645,6 +1648,99 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(Visibility.Collapsed, linedFlowOptions.Visibility);
                     Assert.AreEqual(Visibility.Visible, stackOptions.Visibility);
                     Assert.AreEqual(Visibility.Collapsed, uniformGridOptions.Visibility);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void DateAndCalendarExtensionSamplesMatchWinUIGalleryExamples()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var window = new Window
+                {
+                    Width = 1120,
+                    Height = 820,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual
+                };
+
+                try
+                {
+                    var calendarDatePickerPage = ShowItemPage(window, "CalendarDatePicker");
+                    Assert.AreEqual(1, calendarDatePickerPage.Examples.Count);
+                    Assert.AreEqual("CalendarDatePicker with a header and placeholder text.", calendarDatePickerPage.Examples[0].HeaderText);
+                    Assert.IsFalse(calendarDatePickerPage.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(calendarDatePickerPage.Examples[0].XamlCode, "CalendarDatePicker PlaceholderText=\"Pick a date\" Header=\"Calendar\"");
+                    var calendarDatePicker = (DatePicker)FindByAutomationId(calendarDatePickerPage, "GallerySample_CalendarDatePicker_CalendarDatePicker");
+                    Assert.AreSame(calendarDatePicker, FindNamedDescendant<DatePicker>(calendarDatePickerPage, "CalendarDatePicker1"));
+                    Assert.AreEqual("Calendar", ModernWpf.Controls.Primitives.ControlHelper.GetHeader(calendarDatePicker));
+                    Assert.AreEqual("Pick a date", ModernWpf.Controls.Primitives.ControlHelper.GetPlaceholderText(calendarDatePicker));
+
+                    var calendarViewPage = ShowItemPage(window, "CalendarView");
+                    Assert.AreEqual(1, calendarViewPage.Examples.Count);
+                    Assert.AreEqual("A basic calendar view.", calendarViewPage.Examples[0].HeaderText);
+                    Assert.IsFalse(calendarViewPage.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(calendarViewPage.Examples[0].XamlCode, "SelectionMode=\"$(SelectionMode)\"");
+                    StringAssert.Contains(calendarViewPage.Examples[0].XamlCode, "CalendarIdentifier=\"$(CalendarIdentifier)\"");
+                    var calendarView = (System.Windows.Controls.Calendar)FindByAutomationId(calendarViewPage, "GallerySample_CalendarView_CalendarView");
+                    Assert.AreSame(calendarView, FindNamedDescendant<System.Windows.Controls.Calendar>(calendarViewPage, "Control1"));
+                    var groupLabel = FindNamedDescendant<CheckBox>(calendarViewPage, "isGroupLabelVisible");
+                    var outOfScope = FindNamedDescendant<CheckBox>(calendarViewPage, "isOutOfScopeEnabled");
+                    var selectionMode = FindNamedDescendant<ComboBox>(calendarViewPage, "selectionMode");
+                    var calendarIdentifier = FindNamedDescendant<ComboBox>(calendarViewPage, "calendarIdentifier");
+                    var calendarLanguages = FindNamedDescendant<ComboBox>(calendarViewPage, "calendarLanguages");
+                    Assert.IsNotNull(groupLabel);
+                    Assert.IsNotNull(outOfScope);
+                    Assert.IsNotNull(selectionMode);
+                    Assert.IsNotNull(calendarIdentifier);
+                    Assert.IsNotNull(calendarLanguages);
+                    Assert.AreEqual(CalendarSelectionMode.SingleDate, calendarView.SelectionMode);
+                    Assert.AreEqual("Single", selectionMode.SelectedItem);
+                    Assert.AreEqual("GregorianCalendar", calendarIdentifier.SelectedItem);
+                    Assert.AreEqual(0, calendarLanguages.SelectedIndex);
+                    selectionMode.SelectedItem = "Multiple";
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(CalendarSelectionMode.MultipleRange, calendarView.SelectionMode);
+                    outOfScope.IsChecked = false;
+                    WpfTestHost.DoEvents();
+                    Assert.IsTrue(calendarView.DisplayDateStart.HasValue);
+                    Assert.IsTrue(calendarView.DisplayDateEnd.HasValue);
+
+                    var timePickerPage = ShowItemPage(window, "TimePicker");
+                    Assert.AreEqual(3, timePickerPage.Examples.Count);
+                    Assert.AreEqual("A simple TimePicker.", timePickerPage.Examples[0].HeaderText);
+                    Assert.AreEqual("A TimePicker with a header and minute increments specified.", timePickerPage.Examples[1].HeaderText);
+                    Assert.AreEqual("A TimePicker using a 24-hour clock, initialized to current time.", timePickerPage.Examples[2].HeaderText);
+                    Assert.IsFalse(timePickerPage.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(timePickerPage.Examples[0].XamlCode, "<TimePicker/>");
+                    StringAssert.Contains(timePickerPage.Examples[1].XamlCode, "MinuteIncrement=\"15\"");
+                    StringAssert.Contains(timePickerPage.Examples[2].XamlCode, "ClockIdentifier=\"24HourClock\"");
+                    var timePicker = (StackPanel)FindByAutomationId(timePickerPage, "GallerySample_TimePicker_TimePicker");
+                    Assert.AreSame(timePicker, FindNamedDescendant<StackPanel>(timePickerPage, "TimePicker1"));
+                    var timePicker1Hour = FindNamedDescendant<ComboBox>(timePickerPage, "TimePicker1HourComboBox");
+                    var timePicker1Minute = FindNamedDescendant<ComboBox>(timePickerPage, "TimePicker1MinuteComboBox");
+                    var timePicker1Period = FindNamedDescendant<ComboBox>(timePickerPage, "TimePicker1PeriodComboBox");
+                    var timePicker2Minute = FindNamedDescendant<ComboBox>(timePickerPage, "TimePicker2MinuteComboBox");
+                    var timePicker3Hour = FindNamedDescendant<ComboBox>(timePickerPage, "TimePicker3HourComboBox");
+                    Assert.IsNotNull(timePicker1Hour);
+                    Assert.IsNotNull(timePicker1Minute);
+                    Assert.IsNotNull(timePicker1Period);
+                    Assert.IsNotNull(timePicker2Minute);
+                    Assert.IsNotNull(timePicker3Hour);
+                    Assert.AreEqual("9", timePicker1Hour.SelectedItem);
+                    Assert.AreEqual("30", timePicker1Minute.SelectedItem);
+                    Assert.AreEqual("AM", timePicker1Period.SelectedItem);
+                    Assert.AreEqual(4, timePicker2Minute.Items.Count);
+                    Assert.AreEqual(24, timePicker3Hour.Items.Count);
                 }
                 finally
                 {
@@ -3789,6 +3885,21 @@ namespace ModernWpf.Gallery.Tests
 
             WpfTestHost.DoEvents();
             Assert.IsTrue(condition());
+        }
+
+        private static ItemPage ShowItemPage(Window window, string uniqueId)
+        {
+            var page = new ItemPage(GalleryCatalog.FindItem(uniqueId));
+            window.Content = page;
+            if (!window.IsVisible)
+            {
+                window.Show();
+            }
+
+            WpfTestHost.DoEvents();
+            window.UpdateLayout();
+            WpfTestHost.DoEvents();
+            return page;
         }
 
         private static DependencyObject FindByAutomationId(DependencyObject root, string automationId)

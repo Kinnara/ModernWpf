@@ -262,6 +262,12 @@ namespace ModernWpf.Gallery.Pages
                 return collectionsExamples;
             }
 
+            var dateTimeExamples = DateTimeSampleFactory.CreateExamples(uniqueId);
+            if (dateTimeExamples.Count != 0)
+            {
+                return dateTimeExamples;
+            }
+
             var textExamples = TextSampleFactory.CreateExamples(uniqueId, sampleSnippets);
             if (textExamples.Count != 0)
             {

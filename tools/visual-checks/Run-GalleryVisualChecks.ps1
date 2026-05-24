@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "PullToRefresh", "FlipView", "ItemsView", "GridView", "ItemsRepeater", "BreadcrumbBar", "Pivot", "SelectorBar", "TabView", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "SwipeControl", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout", "StandardUICommand", "XamlUICommand"),
+    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "CalendarDatePicker", "CalendarView", "TimePicker", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "PullToRefresh", "FlipView", "ItemsView", "GridView", "ItemsRepeater", "BreadcrumbBar", "Pivot", "SelectorBar", "TabView", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "SwipeControl", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout", "StandardUICommand", "XamlUICommand"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -435,6 +435,9 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "ToggleSwitch" { return "GallerySample_ToggleSwitch_ToggleSwitch" }
         "NumberBox" { return "GallerySample_NumberBox_SpinButtonNumberBox" }
         "AutoSuggestBox" { return "GallerySample_AutoSuggestBox_AutoSuggestBox" }
+        "CalendarDatePicker" { return "GallerySample_CalendarDatePicker_CalendarDatePicker" }
+        "CalendarView" { return "GallerySample_CalendarView_CalendarView" }
+        "TimePicker" { return "GallerySample_TimePicker_TimePicker" }
         "InfoBadge" { return "GallerySample_InfoBadge_InfoBadge" }
         "InfoBar" { return "GallerySample_InfoBar_InfoBar" }
         "ProgressRing" { return "GallerySample_ProgressRing_ProgressRing" }
@@ -493,6 +496,9 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
         "ToggleSwitch" { return "GallerySample_ToggleSwitch_ToggleSwitch" }
         "NumberBox" { return "GallerySample_NumberBox_SpinButtonNumberBox" }
         "AutoSuggestBox" { return "GallerySample_AutoSuggestBox_AutoSuggestBox" }
+        "CalendarDatePicker" { return "GallerySample_CalendarDatePicker_CalendarDatePicker" }
+        "CalendarView" { return "GallerySample_CalendarView_CalendarView" }
+        "TimePicker" { return "GallerySample_TimePicker_TimePicker" }
         "InfoBadge" { return "GallerySample_InfoBadge_InfoBadge" }
         "ProgressRing" { return "GallerySample_ProgressRing_ProgressRing" }
         "PipsPager" { return "GallerySample_PipsPager_PipsPager" }
@@ -545,6 +551,7 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
         "ToggleSplitButton" { return "myListButton" }
         "NumberBox" { return "NumberBoxSpinButtonPlacementExample" }
         "AutoSuggestBox" { return "Control1" }
+        "CalendarView" { return "Control1" }
         "ProgressRing" { return "ProgressRing1" }
         "PipsPager" { return "FlipViewPipsPager" }
         "ItemsView" { return "BasicItemsView" }
@@ -562,6 +569,7 @@ function Get-ReferencePrimaryName([string]$control) {
         "MenuFlyout" { return "Sort" }
         "Popup" { return "Show Popup (using Offset)" }
         "RepeatButton" { return "Click and hold" }
+        "CalendarDatePicker" { return "Calendar" }
         "ToggleSwitch" { return "simple ToggleSwitch" }
         default { return "" }
     }

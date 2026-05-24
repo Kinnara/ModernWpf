@@ -106,6 +106,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.DateAndCalendarExtensionSamplesMatchWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 43 tests per target. The generated ModernWpf `CalendarDatePicker`, `CalendarView`, and `TimePicker` extension pages now follow the local official WinUI Gallery sources at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\CalendarDatePickerPage.xaml`, `CalendarViewPage.xaml` / `.xaml.cs`, and `TimePickerPage.xaml`. `DateTimeSampleFactory.CreateExamples` now covers these Date & Calendar WinUI extension pages, keeps the official sample headers/snippets, preserves source-facing names such as `CalendarDatePicker1`, `Control1`, `isGroupLabelVisible`, `isOutOfScopeEnabled`, `selectionMode`, `calendarIdentifier`, `calendarLanguages`, `TimePicker1`, `TimePicker2`, `TimePicker3`, and their combo-box parts, and exposes curated automation IDs `GallerySample_CalendarDatePicker_Root` / `GallerySample_CalendarDatePicker_CalendarDatePicker`, `GallerySample_CalendarView_Root` / `GallerySample_CalendarView_CalendarView`, and `GallerySample_TimePicker_Root` / `GallerySample_TimePicker_TimePicker`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls CalendarDatePicker,CalendarView,TimePicker -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-212829-273-113956/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed` for all three controls, required sample elements were found, CalendarDatePicker primary crops were `127x32` vs `111x59` with Light primary delta `33.54`, CalendarView primary crops were `296x348` vs `300x352` with Light primary delta `8.49`, and TimePicker emitted no primary-crop delta because the installed reference does not expose a stable first TimePicker primary mapping. The remaining CalendarDatePicker delta is expected for the WPF `DatePicker` adaptation because ModernWpf does not currently expose a native WinUI `CalendarDatePicker`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls CalendarDatePicker,CalendarView,TimePicker -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-212922-688-95864/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed` for all three controls, required sample elements were found, CalendarDatePicker primary crops were `127x32` vs `111x59` with Dark primary delta `41.1`, CalendarView primary crops were `296x348` vs `300x352` with Dark primary delta `10.63`, and TimePicker recorded whole-window mean delta `16.73` without a primary-crop delta for the same reference-UIA reason.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the Date & Calendar WinUI extension alignment. Current build output still prints the recurring `Failed to resolve WinRT.Runtime.dll` messages, but ends with `0 Warning(s)` and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.ItemsViewSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 40 tests per target. The generated ModernWpf ItemsView page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\ItemsViewPage.xaml` / `.xaml.cs`: `Basic ItemsView`, `ItemsView with swappable layouts`, and `ItemsView item invocation and selection`. `CollectionsSampleFactory.CreateExamples` now covers ItemsView as a source-backed Collections WinUI extension page, adapts the unavailable WinUI `ItemsView` control to WPF `ListBox`-based item surfaces, keeps the official snippet text, preserves source-facing names such as `BasicItemsView`, `tblBasicInvokeOutput`, `SwappableLayoutsItemsView`, `spLinedFlowLayoutOptions`, `nbLineSpacing`, `nbMinItemSpacing`, `rbSmallLineHeight`, `rbLargeLineHeight`, `spStackLayoutOptions`, `nbSpacing`, `spUniformGridLayoutOptions`, `nbMinColumnSpacing`, `nbMinRowSpacing`, `nbMaximumRowsOrColumns`, `SwappableSelectionModesItemsView`, `tblInvocationOutput`, `tblSelectionOutput`, `cmbSelectionMode`, and `chkIsItemInvokedEnabled`, and exposes curated automation IDs `GallerySample_ItemsView_Root` / `GallerySample_ItemsView_ItemsView`.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls ItemsView -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -1503,6 +1511,34 @@ ModernWpf primary from the rendered sample root because the control-only
 `VisualBrush` artifact is blank for the repeater-templated PipsPager. Avoid
 reopening PipsPager's source shape unless a new WinUI source or crop regression
 appears.
+The generated ModernWpf CalendarDatePicker, CalendarView, and TimePicker
+extension pages now use the local official WinUI Gallery source structure from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\CalendarDatePickerPage.xaml`,
+`CalendarViewPage.xaml` / `.xaml.cs`, and `TimePickerPage.xaml`. These are
+WinUI extension pages; the WPF-equivalent `DatePicker` and `Calendar` pages
+remain direct official WPF Gallery pages through `WpfGalleryPageRegistry`.
+`DateTimeSampleFactory.CreateExamples` keeps the WinUI sample headers and
+snippets, preserves source-facing names such as `CalendarDatePicker1`,
+`Control1`, `isGroupLabelVisible`, `isOutOfScopeEnabled`, `selectionMode`,
+`calendarIdentifier`, `calendarLanguages`, `TimePicker1`, `TimePicker2`, and
+`TimePicker3`, and exposes `GallerySample_CalendarDatePicker_Root` /
+`GallerySample_CalendarDatePicker_CalendarDatePicker`,
+`GallerySample_CalendarView_Root` / `GallerySample_CalendarView_CalendarView`,
+and `GallerySample_TimePicker_Root` / `GallerySample_TimePicker_TimePicker`
+for runtime and visual checks. The WPF adaptation uses WPF `DatePicker` for
+CalendarDatePicker, WPF `Calendar` for CalendarView, and combo-box selector
+rows for TimePicker because ModernWpf does not currently expose native WinUI
+`CalendarDatePicker`, `CalendarView`, or `TimePicker` controls. Current
+Date & Calendar WinUI-reference evidence is
+`artifacts/visual-checks/20260524-212829-273-113956/report.md` for Light and
+`artifacts/visual-checks/20260524-212922-688-95864/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed` for all three controls.
+CalendarDatePicker primary crops are `127x32` vs `111x59` with primary deltas
+`33.54` / `41.1`; CalendarView primary crops are `296x348` vs `300x352` with
+primary deltas `8.49` / `10.63`; TimePicker has no primary-crop delta because
+the installed reference does not expose a stable first TimePicker primary UIA
+mapping. Avoid reopening these Date & Calendar extension source shapes unless a
+new local WinUI source, runtime, or crop regression appears.
 The generated ModernWpf ItemsView extension page now uses the local official
 WinUI Gallery three-example structure from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\ItemsViewPage.xaml`
