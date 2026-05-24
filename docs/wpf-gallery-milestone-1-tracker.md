@@ -106,6 +106,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.PullToRefreshSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 36 tests per target. The generated ModernWpf PullToRefresh page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\PullToRefreshPage.xaml` / `.xaml.cs`: `Basic PullToRefresh` plus `Custom Icon PullToRefresh`, backed by real `ModernWpf.Controls.RefreshContainer` and `RefreshVisualizer` instances instead of the previous explicit refresh-button placeholder. `CollectionsSampleFactory.CreateExamples` now covers PullToRefresh as a source-backed Collections WinUI extension page, keeps WinUI's `rc`, `lv`, `Ex2Grid`, `rc2`, `rv2`, and `lv2` source-facing names, preserves the source snippets, inserts `NewControl` / `New Friend` on refresh completion, and exposes curated automation IDs `GallerySample_PullToRefresh_Root` / `GallerySample_PullToRefresh_RefreshContainer`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls PullToRefresh -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-193520-175-90712/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required PullToRefresh sample element was found, and the report records ModernWpf whole-window Light mean delta `203.75`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls PullToRefresh -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-193545-122-107088/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required PullToRefresh sample element was found, and the report records ModernWpf whole-window Dark mean delta `14.2`.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the PullToRefresh WinUI example alignment. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages, existing ModernWpf/ModernWpf.Controls warnings, `19 Warning(s)`, and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.SwipeControlSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 35 tests per target. The generated ModernWpf SwipeControl page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\SwipeControlPage.xaml` / `.xaml.cs`: right reveal Accept/Flag actions with stateful text, left execute Archive action, custom swipe actions in a ListView with delete behavior, gradient Lock action, and custom Coffee icon action. `MenusToolbarsSampleFactory.CreateExamples` now covers SwipeControl as a source-backed Menu & Toolbar WinUI extension page, keeps the visible WinUI sample headers and source snippets, adapts WinUI's `SwipeControl` examples to `ModernWpf.Controls.SwipeControl`, exposes curated automation IDs `GallerySample_SwipeControl_Root` / `GallerySample_SwipeControl_SwipeControl`, and adds a stable `GallerySample_SwipeControl_ListView` hook for the custom list sample.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls SwipeControl -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -1463,6 +1471,27 @@ ModernWpf primary from the rendered sample root because the control-only
 `VisualBrush` artifact is blank for the repeater-templated PipsPager. Avoid
 reopening PipsPager's source shape unless a new WinUI source or crop regression
 appears.
+The generated ModernWpf PullToRefresh extension page now uses the local
+official WinUI Gallery two-example structure from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\PullToRefreshPage.xaml`
+/ `.xaml.cs`: `Basic PullToRefresh` plus `Custom Icon PullToRefresh`.
+`CollectionsSampleFactory.CreateExamples` now covers PullToRefresh as a
+source-backed Collections WinUI example, uses real
+`ModernWpf.Controls.RefreshContainer` / `RefreshVisualizer` controls, keeps
+WinUI's `rc`, `lv`, `Ex2Grid`, `rc2`, `rv2`, and `lv2` source-facing names,
+and preserves the refresh-completion behavior by inserting `NewControl` or
+`New Friend` after a dispatcher-timer deferral. Current PullToRefresh
+WinUI-reference evidence is
+`artifacts/visual-checks/20260524-193520-175-90712/report.md` for Light and
+`artifacts/visual-checks/20260524-193545-122-107088/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`, required sample elements
+found, and ModernWpf whole-window mean deltas `203.75` / `14.2`. The visual
+harness keeps `GallerySample_PullToRefresh_RefreshContainer` as the required
+element but uses the rendered sample root as ModernWpf's static crop because
+the `RefreshContainer`-only `VisualBrush` artifact is blank; installed WinUI
+Gallery does not expose source `x:Name="rc"` as a stable UIA element, so the
+reference primary target remains empty. Avoid reopening PullToRefresh's source
+shape unless a new WinUI source, runtime, or crop regression appears.
 The generated ModernWpf TeachingTip extension page now uses the official WinUI
 Gallery three-example structure for targeted, non-targeted, and hero-content
 TeachingTips, with source panes populated from the paired sample-code files

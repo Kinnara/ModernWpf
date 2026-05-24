@@ -30,6 +30,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "InfoBar", "GallerySample_InfoBar_Root", "GallerySample_InfoBar_InfoBar" };
             yield return new object[] { "ProgressRing", "GallerySample_ProgressRing_Root", "GallerySample_ProgressRing_ProgressRing" };
             yield return new object[] { "PipsPager", "GallerySample_PipsPager_Root", "GallerySample_PipsPager_PipsPager" };
+            yield return new object[] { "PullToRefresh", "GallerySample_PullToRefresh_Root", "GallerySample_PullToRefresh_RefreshContainer" };
             yield return new object[] { "BreadcrumbBar", "GallerySample_BreadcrumbBar_Root", "GallerySample_BreadcrumbBar_BreadcrumbBar" };
             yield return new object[] { "Pivot", "GallerySample_Pivot_Root", "GallerySample_Pivot_Pivot" };
             yield return new object[] { "SelectorBar", "GallerySample_SelectorBar_Root", "GallerySample_SelectorBar_SelectorBar" };
@@ -1336,6 +1337,84 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(Orientation.Vertical, optionsPipsPager.Orientation);
                     Assert.AreEqual(Mux.PipsPagerButtonVisibility.Collapsed, optionsPipsPager.PreviousButtonVisibility);
                     Assert.AreEqual(Mux.PipsPagerButtonVisibility.VisibleOnPointerOver, optionsPipsPager.NextButtonVisibility);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void PullToRefreshSampleMatchesWinUIGalleryExamples()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("PullToRefresh"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(2, page.Examples.Count);
+                    Assert.AreEqual("Basic PullToRefresh", page.Examples[0].HeaderText);
+                    Assert.AreEqual("Custom Icon PullToRefresh", page.Examples[1].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "<RefreshContainer x:Name=\"rc\" RefreshRequested=\"rc_RefreshRequested\">");
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "RefreshCompletionDeferral.Complete()");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "<RefreshVisualizer RefreshStateChanged=\"rv2_RefreshStateChanged\">");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "<SymbolIcon Symbol=\"AddFriend\"/>");
+                    StringAssert.Contains(page.Examples[1].CSharpCode, "ElementCompositionPreview.GetElementVisual(rv2.Content)");
+
+                    var refreshContainer = (Mux.RefreshContainer)FindByAutomationId(page, "GallerySample_PullToRefresh_RefreshContainer");
+                    var listView = FindNamedDescendant<ListView>(page, "lv");
+                    var customRefreshContainer = FindNamedDescendant<Mux.RefreshContainer>(page, "rc2");
+                    var customListView = FindNamedDescendant<ListView>(page, "lv2");
+                    var visualizer = FindNamedDescendant<Mux.RefreshVisualizer>(page, "rv2");
+                    Assert.IsNotNull(refreshContainer);
+                    Assert.IsNotNull(listView);
+                    Assert.IsNotNull(customRefreshContainer);
+                    Assert.IsNotNull(customListView);
+                    Assert.IsNotNull(visualizer);
+                    Assert.IsInstanceOfType(visualizer.Content, typeof(Image));
+
+                    Assert.AreEqual("rc", refreshContainer.Name);
+                    Assert.AreEqual(HorizontalAlignment.Center, refreshContainer.HorizontalAlignment);
+                    Assert.AreEqual(VerticalAlignment.Center, refreshContainer.VerticalAlignment);
+                    Assert.AreEqual("lv", listView.Name);
+                    Assert.AreEqual(200.0, listView.Height);
+                    Assert.AreEqual(200.0, listView.MinWidth);
+                    Assert.AreEqual(9, listView.Items.Count);
+                    Assert.AreEqual("AcrylicBrush", listView.Items[0]);
+
+                    refreshContainer.RequestRefresh();
+                    WaitFor(() => listView.Items.Count == 10);
+                    Assert.AreEqual("NewControl", listView.Items[0]);
+
+                    Assert.AreEqual("rc2", customRefreshContainer.Name);
+                    Assert.AreEqual("rv2", visualizer.Name);
+                    Assert.AreEqual("lv2", customListView.Name);
+                    Assert.AreEqual(8, customListView.Items.Count);
+                    Assert.AreEqual("Mike", customListView.Items[0]);
+
+                    customRefreshContainer.RequestRefresh();
+                    WaitFor(() => customListView.Items.Count == 9);
+                    Assert.AreEqual("New Friend", customListView.Items[0]);
                 }
                 finally
                 {
@@ -3208,6 +3287,19 @@ namespace ModernWpf.Gallery.Tests
                     WpfTestHost.DoEvents();
                 }
             });
+        }
+
+        private static void WaitFor(Func<bool> condition)
+        {
+            var deadline = DateTime.UtcNow.AddSeconds(3);
+            while (!condition() && DateTime.UtcNow < deadline)
+            {
+                WpfTestHost.DoEvents();
+                System.Threading.Thread.Sleep(25);
+            }
+
+            WpfTestHost.DoEvents();
+            Assert.IsTrue(condition());
         }
 
         private static DependencyObject FindByAutomationId(DependencyObject root, string automationId)
