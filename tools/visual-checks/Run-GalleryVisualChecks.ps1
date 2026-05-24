@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "BreadcrumbBar", "Pivot", "SelectorBar", "TabView", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout", "StandardUICommand", "XamlUICommand"),
+    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "BreadcrumbBar", "Pivot", "SelectorBar", "TabView", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "SwipeControl", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout", "StandardUICommand", "XamlUICommand"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -449,6 +449,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "Popup" { return "GallerySample_Popup_Button" }
         "MenuBar" { return "GallerySample_MenuBar_MenuBar" }
         "MenuFlyout" { return "GallerySample_MenuFlyout_AppBarButton" }
+        "SwipeControl" { return "GallerySample_SwipeControl_SwipeControl" }
         "AppBarButton" { return "GallerySample_AppBarButton_AppBarButton" }
         "AppBarSeparator" { return "GallerySample_AppBarSeparator_CommandBar" }
         "AppBarToggleButton" { return "GallerySample_AppBarToggleButton_AppBarToggleButton" }
@@ -498,6 +499,7 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
         "Popup" { return "GallerySample_Popup_Button" }
         "MenuBar" { return "GallerySample_MenuBar_MenuBar" }
         "MenuFlyout" { return "GallerySample_MenuFlyout_AppBarButton" }
+        "SwipeControl" { return "GallerySample_SwipeControl_SwipeControl" }
         "AppBarButton" { return "GallerySample_AppBarButton_AppBarButton" }
         "AppBarSeparator" { return "GallerySample_AppBarSeparator_CommandBar" }
         "AppBarToggleButton" { return "GallerySample_AppBarToggleButton_AppBarToggleButton" }

@@ -279,6 +279,114 @@ namespace ModernWpf.Gallery.Pages
     </Button.Flyout>
 </Button>";
 
+        private const string SwipeControlRightXaml =
+@"<Border>
+    <Border.Resources>
+        <FontIconSource x:Key=""AcceptIcon"" Glyph=""&#xE8FB;""/>
+        <FontIconSource x:Key=""FlagIcon"" Glyph=""&#xE7C1;""/>
+
+        <SwipeItems x:Key=""left"" Mode=""Reveal"">
+            <SwipeItem Text=""Accept"" IconSource=""{StaticResource AcceptIcon}"" Invoked=""Accept_ItemInvoked""/>
+            <SwipeItem Text=""Flag"" IconSource=""{StaticResource FlagIcon}"" Invoked=""Flag_ItemInvoked""/>
+        </SwipeItems>
+    </Border.Resources>
+    <SwipeControl BorderThickness=""1""
+        LeftItems=""{StaticResource left}"" BorderBrush=""{ThemeResource ButtonBackground}""
+        Width=""300"" Margin=""12"" Height=""68"">
+            <TextBlock Text=""Swipe Right"" Margin=""12""
+                       HorizontalAlignment=""Center"" VerticalAlignment=""Center""/>
+    </SwipeControl>
+</Border>";
+
+        private const string SwipeControlLeftExecuteXaml =
+@"<Border>
+    <Border.Resources>
+        <FontIconSource x:Key=""DeleteIcon"" Glyph=""&#xE74D;""/>
+        <SwipeItems x:Key=""right"" Mode=""Execute"">
+            <SwipeItem Text=""Archive"" IconSource=""{StaticResource ArchiveIcon}""
+                       BehaviorOnInvoked=""Close"" Invoked=""DeleteOne_ItemInvoked""/>
+        </SwipeItems>
+    </Border.Resources>
+    <SwipeControl BorderThickness=""1"" BorderBrush=""{ThemeResource ButtonBackground}""
+        RightItems=""{StaticResource right}""
+        Width=""300"" Margin=""12"" Height=""68"">
+        <TextBlock Text=""Swipe Left"" Margin=""12""
+                   HorizontalAlignment=""Center"" VerticalAlignment=""Center""/>
+    </SwipeControl>
+</Border>";
+
+        private const string SwipeControlListViewXaml =
+@"<ListView x:Name=""lv"" Width=""400"" Height=""300"" Margin=""12"">
+    <ListView.Resources>
+        <FontIconSource x:Key=""ReplyAllIcon"" Glyph=""&#xE8C2;""/>
+        <FontIconSource x:Key=""ReadIcon"" Glyph=""&#xE8C3;""/>
+        <FontIconSource x:Key=""DeleteIcon"" Glyph=""&#xE74D;""/>
+
+        <SwipeItems x:Key=""left"" Mode=""Reveal"">
+            <SwipeItem Text=""Reply All"" IconSource=""{StaticResource ReplyAllIcon}""
+                       Background=""#FF3e6fa7"" Foreground=""White""/>
+            <SwipeItem Text=""Open"" IconSource=""{StaticResource ReadIcon}""
+                       Background=""#FFff9501"" Foreground=""White""/>
+        </SwipeItems>
+        <SwipeItems x:Key=""right"" Mode=""Execute"">
+            <SwipeItem Text=""Delete"" IconSource=""{StaticResource DeleteIcon}""
+                       Background=""#FFF4B183"" Invoked=""DeleteItem_ItemInvoked""/>
+        </SwipeItems>
+    </ListView.Resources>
+
+    <ListView.ItemTemplate>
+        <DataTemplate>
+            <SwipeControl BorderThickness=""0,1,0,0"" BorderBrush=""{ThemeResource ButtonBackground}"" Height=""68""
+                       Width=""800"" MinWidth=""200"" LeftItems=""{StaticResource left}""
+                          RightItems=""{StaticResource right}"">
+                <TextBlock Text=""{Binding}"" FontSize=""24"" Margin=""12""
+                           HorizontalAlignment=""Stretch"" VerticalAlignment=""Center""/>
+            </SwipeControl>
+        </DataTemplate>
+    </ListView.ItemTemplate>
+</ListView>";
+
+        private const string SwipeControlGradientXaml =
+@"<Border>
+    <Border.Resources>
+        <FontIconSource x:Key=""LockIcon"" Glyph=""&#xE72E;""/>
+        <LinearGradientBrush x:Key=""PurpleGradient"" StartPoint=""0,0.5"" EndPoint=""1,0.5"">
+            <GradientStop Color=""#ff8990f9"" Offset=""0.0""/>
+            <GradientStop Color=""#ff5b66fb"" Offset=""0.5""/>
+            <GradientStop Color=""#ff5c1df4"" Offset=""1.0""/>
+        <LinearGradientBrush/>
+        <SwipeItems x:Key=""right"" Mode=""Execute"">
+            <SwipeItem Text=""Lock"" Background=""{StaticResource PurpleGradient}""
+                       BehaviorOnInvoked=""Close"" IconSource=""{StaticResource LockIcon}""/>
+        </SwipeItems>
+    </Border.Resources>
+    <SwipeControl BorderThickness=""1"" BorderBrush=""{ThemeResource ButtonBackground}""
+        RightItems=""{StaticResource right}""
+        Width=""500"" Margin=""12"" Height=""68"">
+        <TextBlock Text=""Swipe Left"" Margin=""12""
+                   HorizontalAlignment=""Center"" VerticalAlignment=""Center""/>
+    </SwipeControl>
+</Border>";
+
+        private const string SwipeControlCustomIconsXaml =
+@"<Border>
+    <Border.Resources>
+        <SwipeItems x:Key=""left"" Mode=""Reveal"">
+            <SwipeItem Text=""Coffee"">
+                <SwipeItem.IconSource>
+                    <BitmapIconSource UriSource=""ms-appx:///Assets/SampleMedia/CoffeeCup.png""/>
+                <SwipeItem.IconSource/>
+            <SwipeItem/>
+        </SwipeItems>
+    </Border.Resources>
+    <SwipeControl BorderThickness=""1""
+        LeftItems=""{StaticResource left}"" BorderBrush=""{ThemeResource ButtonBackground}""
+        Width=""300"" Margin=""12"" Height=""68"">
+            <TextBlock Text=""Swipe Right"" Margin=""12""
+                       HorizontalAlignment=""Center"" VerticalAlignment=""Center""/>
+    </SwipeControl>
+</Border>";
+
         public static IReadOnlyList<GalleryExample> CreateExamples(string uniqueId, IReadOnlyList<SampleSnippet> sampleSnippets)
         {
             switch (uniqueId)
@@ -297,6 +405,8 @@ namespace ModernWpf.Gallery.Pages
                     return CreateMenuFlyoutExamples();
                 case "MenuBar":
                     return CreateMenuBarExamples(sampleSnippets);
+                case "SwipeControl":
+                    return CreateSwipeControlExamples();
                 case "StandardUICommand":
                     return CreateStandardUICommandExamples(sampleSnippets);
                 case "XamlUICommand":
@@ -1226,27 +1336,323 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateSwipeControlSample()
         {
-            var panel = CreateSamplePanel("SwipeControl maps to an explicit WPF action strip because ModernWpf does not currently expose SwipeControl.");
-            var output = CreateOutput("No action selected.");
-            var row = new Grid { Width = 420, HorizontalAlignment = HorizontalAlignment.Left };
-            row.ColumnDefinitions.Add(new ColumnDefinition());
-            row.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            row.Children.Add(new Border
+            var panel = new GallerySamplePanel
             {
-                Padding = new Thickness(12),
-                BorderThickness = new Thickness(1),
-                Child = new TextBlock { Text = "Quarterly report.pdf" }
-            });
-
-            var actions = new StackPanel { Orientation = Orientation.Horizontal };
-            actions.Children.Add(CreateSmallButton("Archive", output));
-            actions.Children.Add(CreateSmallButton("Delete", output));
-            Grid.SetColumn(actions, 1);
-            row.Children.Add(actions);
-
-            panel.Children.Add(row);
-            panel.Children.Add(output);
+                Margin = new Thickness(0, 0, 0, 12)
+            };
+            GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("SwipeControl"));
+            panel.Children.Add(CreateSwipeControlRightExampleContent(assignRootAutomationId: false));
             return panel;
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateSwipeControlExamples()
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "Swipe right to reveal actions",
+                    CreateSwipeControlRightExampleContent(assignRootAutomationId: true),
+                    SwipeControlRightXaml,
+                    null),
+                new GalleryExample(
+                    "Swipe left to invoke an execute",
+                    CreateSwipeControlLeftExecuteExampleContent(),
+                    SwipeControlLeftExecuteXaml,
+                    null),
+                new GalleryExample(
+                    "Custom Swipe in a ListView",
+                    CreateSwipeControlListViewExampleContent(),
+                    SwipeControlListViewXaml,
+                    null),
+                new GalleryExample(
+                    "Gradient Background",
+                    CreateSwipeControlGradientExampleContent(),
+                    SwipeControlGradientXaml,
+                    null),
+                new GalleryExample(
+                    "Custom icons",
+                    CreateSwipeControlCustomIconsExampleContent(),
+                    SwipeControlCustomIconsXaml,
+                    null)
+            };
+        }
+
+        private static GallerySamplePanel CreateSwipeControlExampleRoot(bool assignRootAutomationId)
+        {
+            var root = new GallerySamplePanel();
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("SwipeControl"));
+            }
+
+            return root;
+        }
+
+        private static GallerySamplePanel CreateSwipeControlRightExampleContent(bool assignRootAutomationId)
+        {
+            var panel = CreateSwipeControlExampleRoot(assignRootAutomationId);
+            var text = CreateSwipeTextBlock("Swipe Right", 14);
+            var swipeControl = CreateSwipeControl(text);
+            GalleryAutomation.WithAutomationId(swipeControl, GalleryAutomation.SampleElementId("SwipeControl", "SwipeControl"));
+
+            var accepted = false;
+            var flagged = false;
+            var accept = CreateSwipeItem("Accept", "\uE8FB");
+            var flag = CreateSwipeItem("Flag", "\uE7C1");
+            accept.Invoked += delegate
+            {
+                accepted = !accepted;
+                UpdateSwipeControlRightState(text, accepted, flagged);
+                accept.IconSource = CreateFontIconSource(accepted ? "\uE711" : "\uE10B");
+                accept.Text = accepted ? "Cancel" : "Accept";
+            };
+            flag.Invoked += delegate
+            {
+                flagged = !flagged;
+                UpdateSwipeControlRightState(text, accepted, flagged);
+                flag.IconSource = CreateFontIconSource(flagged ? "\uEB4B" : "\uE129");
+                flag.Text = flagged ? "Unmark" : "Flag";
+            };
+            swipeControl.LeftItems = CreateSwipeItems(Mux.SwipeMode.Reveal, accept, flag);
+
+            panel.Children.Add(CreateSwipeControlHost(swipeControl));
+            return panel;
+        }
+
+        private static GallerySamplePanel CreateSwipeControlLeftExecuteExampleContent()
+        {
+            var panel = CreateSwipeControlExampleRoot(assignRootAutomationId: false);
+            var text = CreateSwipeTextBlock("Swipe Left", 14);
+            var swipeControl = CreateSwipeControl(text);
+            var archived = false;
+            var archive = CreateSwipeItem("Archive", "\uE7B8");
+            archive.BehaviorOnInvoked = Mux.SwipeBehaviorOnInvoked.Close;
+            archive.Invoked += delegate
+            {
+                archived = !archived;
+                text.Text = archived ? "Archived - Swipe Left" : "Swipe Left";
+            };
+            swipeControl.RightItems = CreateSwipeItems(Mux.SwipeMode.Execute, archive);
+            panel.Children.Add(CreateSwipeControlHost(swipeControl));
+            return panel;
+        }
+
+        private static GallerySamplePanel CreateSwipeControlListViewExampleContent()
+        {
+            var panel = CreateSwipeControlExampleRoot(assignRootAutomationId: false);
+            var items = new ObservableCollection<string>
+            {
+                "Swipe Item 1",
+                "Swipe Item 2",
+                "Swipe Item 3",
+                "Swipe Item 4"
+            };
+
+            var listView = new ListView
+            {
+                Name = "lv",
+                Width = 800,
+                Height = 300,
+                MinWidth = 200,
+                Margin = new Thickness(12),
+                ItemsSource = items,
+                ItemTemplate = CreateSwipeControlListViewItemTemplate(items),
+                ItemContainerStyle = CreateSwipeControlListViewItemContainerStyle()
+            };
+            GalleryAutomation.WithAutomationId(listView, GalleryAutomation.SampleElementId("SwipeControl", "ListView"));
+            panel.Children.Add(listView);
+            return panel;
+        }
+
+        private static GallerySamplePanel CreateSwipeControlGradientExampleContent()
+        {
+            var panel = CreateSwipeControlExampleRoot(assignRootAutomationId: false);
+            var swipeControl = CreateSwipeControl(CreateSwipeTextBlock("Swipe Left", 14));
+            var lockItem = CreateSwipeItem("Lock", "\uE72E");
+            lockItem.BehaviorOnInvoked = Mux.SwipeBehaviorOnInvoked.Close;
+            lockItem.Background = new LinearGradientBrush(
+                new GradientStopCollection
+                {
+                    new GradientStop((Color)ColorConverter.ConvertFromString("#ff8990f9"), 0.0),
+                    new GradientStop((Color)ColorConverter.ConvertFromString("#ff5b66fb"), 0.5),
+                    new GradientStop((Color)ColorConverter.ConvertFromString("#ff5c1df4"), 1.0)
+                },
+                new Point(0, 0.5),
+                new Point(1, 0.5));
+            swipeControl.RightItems = CreateSwipeItems(Mux.SwipeMode.Execute, lockItem);
+            panel.Children.Add(CreateSwipeControlHost(swipeControl));
+            return panel;
+        }
+
+        private static GallerySamplePanel CreateSwipeControlCustomIconsExampleContent()
+        {
+            var panel = CreateSwipeControlExampleRoot(assignRootAutomationId: false);
+            var swipeControl = CreateSwipeControl(CreateSwipeTextBlock("Swipe Right", 14));
+            var coffee = new Mux.SwipeItem
+            {
+                Text = "Coffee",
+                IconSource = new Mux.BitmapIconSource
+                {
+                    UriSource = new Uri(ResourceUri("Assets/SampleMedia/CoffeeCup.png"), UriKind.Absolute)
+                }
+            };
+            swipeControl.LeftItems = CreateSwipeItems(Mux.SwipeMode.Reveal, coffee);
+            panel.Children.Add(CreateSwipeControlHost(swipeControl));
+            return panel;
+        }
+
+        private static Border CreateSwipeControlHost(Mux.SwipeControl swipeControl)
+        {
+            var host = new Border
+            {
+                Width = 500,
+                Height = 68,
+                Margin = new Thickness(12),
+                BorderThickness = new Thickness(1),
+                Child = swipeControl
+            };
+            host.SetResourceReference(Border.BorderBrushProperty, "ButtonBackground");
+            return host;
+        }
+
+        private static Mux.SwipeControl CreateSwipeControl(TextBlock content)
+        {
+            return new Mux.SwipeControl
+            {
+                Content = content,
+                DataContext = content.Text
+            };
+        }
+
+        private static TextBlock CreateSwipeTextBlock(string text, double fontSize)
+        {
+            return new TextBlock
+            {
+                Text = text,
+                Margin = new Thickness(12),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                FontSize = fontSize
+            };
+        }
+
+        private static Mux.SwipeItem CreateSwipeItem(string text, string glyph)
+        {
+            return new Mux.SwipeItem
+            {
+                Text = text,
+                IconSource = CreateFontIconSource(glyph)
+            };
+        }
+
+        private static Mux.FontIconSource CreateFontIconSource(string glyph)
+        {
+            return new Mux.FontIconSource
+            {
+                Glyph = glyph
+            };
+        }
+
+        private static Mux.SwipeItems CreateSwipeItems(Mux.SwipeMode mode, params Mux.SwipeItem[] items)
+        {
+            var swipeItems = new Mux.SwipeItems
+            {
+                Mode = mode
+            };
+            for (var i = 0; i < items.Length; i++)
+            {
+                swipeItems.Add(items[i]);
+            }
+
+            return swipeItems;
+        }
+
+        private static DataTemplate CreateSwipeControlListViewItemTemplate(ObservableCollection<string> items)
+        {
+            var template = new DataTemplate();
+            var border = new FrameworkElementFactory(typeof(Border));
+            border.SetValue(Border.BorderThicknessProperty, new Thickness(0, 1, 0, 0));
+            border.SetResourceReference(Border.BorderBrushProperty, "ButtonBackground");
+
+            var swipeControl = new FrameworkElementFactory(typeof(Mux.SwipeControl));
+            swipeControl.SetValue(FrameworkElement.NameProperty, "ListViewSwipeContainer");
+            swipeControl.SetValue(FrameworkElement.HeightProperty, 68.0);
+            swipeControl.SetValue(FrameworkElement.MinWidthProperty, 200.0);
+            swipeControl.AddHandler(FrameworkElement.LoadedEvent, new RoutedEventHandler(delegate(object sender, RoutedEventArgs args)
+            {
+                var loadedSwipeControl = (Mux.SwipeControl)sender;
+                if (loadedSwipeControl.LeftItems != null || loadedSwipeControl.RightItems != null)
+                {
+                    return;
+                }
+
+                var delete = CreateSwipeItem("Delete", "\uE74D");
+                delete.Background = Brushes.Red;
+                delete.Invoked += delegate
+                {
+                    if (loadedSwipeControl.DataContext is string item)
+                    {
+                        items.Remove(item);
+                    }
+                };
+                loadedSwipeControl.LeftItems = CreateSwipeItems(
+                    Mux.SwipeMode.Reveal,
+                    new Mux.SwipeItem
+                    {
+                        Text = "Reply All",
+                        IconSource = CreateFontIconSource("\uE8C2"),
+                        Background = (Brush)new BrushConverter().ConvertFromString("#FF3e6fa7"),
+                        Foreground = Brushes.White
+                    },
+                    new Mux.SwipeItem
+                    {
+                        Text = "Open",
+                        IconSource = CreateFontIconSource("\uE8C3"),
+                        Background = (Brush)new BrushConverter().ConvertFromString("#FFff9501"),
+                        Foreground = Brushes.White
+                    });
+                loadedSwipeControl.RightItems = CreateSwipeItems(Mux.SwipeMode.Execute, delete);
+            }));
+
+            var textBlock = new FrameworkElementFactory(typeof(TextBlock));
+            textBlock.SetBinding(TextBlock.TextProperty, new System.Windows.Data.Binding());
+            textBlock.SetValue(FrameworkElement.MarginProperty, new Thickness(12));
+            textBlock.SetValue(FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Stretch);
+            textBlock.SetValue(FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+            textBlock.SetValue(TextBlock.FontSizeProperty, 24.0);
+            swipeControl.AppendChild(textBlock);
+            border.AppendChild(swipeControl);
+            template.VisualTree = border;
+            return template;
+        }
+
+        private static Style CreateSwipeControlListViewItemContainerStyle()
+        {
+            var style = new Style(typeof(ListViewItem));
+            style.Setters.Add(new Setter(Control.PaddingProperty, new Thickness(0)));
+            style.Setters.Add(new Setter(Control.HorizontalContentAlignmentProperty, HorizontalAlignment.Stretch));
+            style.Setters.Add(new Setter(Control.VerticalContentAlignmentProperty, VerticalAlignment.Stretch));
+            return style;
+        }
+
+        private static void UpdateSwipeControlRightState(TextBlock textBlock, bool accepted, bool flagged)
+        {
+            if (accepted && !flagged)
+            {
+                textBlock.Text = "Swipe Right - Accepted";
+            }
+            else if (accepted && flagged)
+            {
+                textBlock.Text = "Swipe Right - Accepted & Flagged";
+            }
+            else if (!accepted && flagged)
+            {
+                textBlock.Text = "Swipe Right - Flagged";
+            }
+            else
+            {
+                textBlock.Text = "Swipe Right";
+            }
         }
 
         private static UIElement CreateStandardCommandSample()

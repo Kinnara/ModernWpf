@@ -106,6 +106,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.SwipeControlSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 35 tests per target. The generated ModernWpf SwipeControl page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\SwipeControlPage.xaml` / `.xaml.cs`: right reveal Accept/Flag actions with stateful text, left execute Archive action, custom swipe actions in a ListView with delete behavior, gradient Lock action, and custom Coffee icon action. `MenusToolbarsSampleFactory.CreateExamples` now covers SwipeControl as a source-backed Menu & Toolbar WinUI extension page, keeps the visible WinUI sample headers and source snippets, adapts WinUI's `SwipeControl` examples to `ModernWpf.Controls.SwipeControl`, exposes curated automation IDs `GallerySample_SwipeControl_Root` / `GallerySample_SwipeControl_SwipeControl`, and adds a stable `GallerySample_SwipeControl_ListView` hook for the custom list sample.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls SwipeControl -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-191842-465-91208/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required SwipeControl sample element was found, and the report records ModernWpf whole-window Light mean delta `207.76`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls SwipeControl -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-191903-457-108672/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required SwipeControl sample element was found, and the report records ModernWpf whole-window Dark mean delta `14.47`.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the SwipeControl WinUI example alignment. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages, existing ModernWpf/ModernWpf.Controls warnings, `19 Warning(s)`, and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.MenuFlyoutSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 34 tests per target. The generated ModernWpf MenuFlyout page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\MenuFlyoutPage.xaml` / `.xaml.cs`: AppBarButton sort menu, toggle menu items with separator, cascading submenus, split-menu items adapted to WPF `MenuItem` submenus, icon menu items, icon menu items with keyboard accelerator text, and radio menu items. `MenusToolbarsSampleFactory.CreateExamples` now covers MenuFlyout as a source-backed Menu & Toolbar WinUI extension page, keeps WinUI's `Control1`, `Control1Output`, `Control2`, `RepeatToggleMenuFlyoutItem`, `ShuffleToggleMenuFlyoutItem`, `Control3`, `Control3b`, `Control3bOutput`, `SaveSplitItem`, `Control4`, `Control5`, and `Control6` names, and exposes curated automation IDs `GallerySample_MenuFlyout_Root` / `GallerySample_MenuFlyout_AppBarButton`.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls MenuFlyout -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -1619,6 +1627,27 @@ includes MenuFlyout in the default WinUI extension set and uses the first
 source `Sort` AppBarButton as the reference primary crop. Avoid reopening
 MenuFlyout's source shape unless a new WinUI source, visual crop, or interaction
 regression appears.
+The generated ModernWpf SwipeControl extension page now uses the local official
+WinUI Gallery five-example structure from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\SwipeControlPage.xaml`
+/ `.xaml.cs`: right reveal Accept/Flag actions, left execute Archive action,
+custom swipe actions in a ListView, the gradient Lock action, and the custom
+Coffee icon action. `MenusToolbarsSampleFactory.CreateExamples` now covers
+SwipeControl as a source-backed Menu & Toolbar WinUI example, keeps the visible
+WinUI sample headers and snippets, uses real `ModernWpf.Controls.SwipeControl`
+instances, preserves the stateful Accept/Flag/Archive/Delete behaviors, and
+exposes `GallerySample_SwipeControl_Root`,
+`GallerySample_SwipeControl_SwipeControl`, and
+`GallerySample_SwipeControl_ListView` for runtime and visual checks. Current
+SwipeControl WinUI-reference evidence is
+`artifacts/visual-checks/20260524-191842-465-91208/report.md` for Light and
+`artifacts/visual-checks/20260524-191903-457-108672/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`, required sample elements
+found, and ModernWpf whole-window mean deltas `207.76` / `14.47`. The visual
+reports do not currently emit a primary-crop delta for SwipeControl because the
+harness has a stable ModernWpf required/primary element but no stable exposed
+WinUI reference primary mapping yet. Avoid reopening SwipeControl's source
+shape unless a new WinUI source, runtime, or crop regression appears.
 The generated ModernWpf MenuBar extension page now uses the local official
 WinUI Gallery three-example structure for a simple MenuBar, keyboard
 accelerators, and submenus/separators/radio items, with WPF `MenuItem`,
