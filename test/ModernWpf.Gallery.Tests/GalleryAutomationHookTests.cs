@@ -875,10 +875,14 @@ namespace ModernWpf.Gallery.Tests
 
                     Assert.AreEqual("TabView1", tabView1.Name);
                     Assert.AreEqual(475, tabView1.MinHeight);
+                    Assert.AreEqual(767, tabView1.MaxWidth);
                     Assert.AreSame(tabView1.TryFindResource("DefaultTabControlStyle"), tabView1.Style);
                     AssertTabItem((TabItem)tabView1.Items[0], "Document 0");
                     AssertTabItem((TabItem)tabView1.Items[1], "Document 1");
                     AssertTabItem((TabItem)tabView1.Items[2], "Document 2");
+                    AssertTabViewSamplePage((TabItem)tabView1.Items[0], 3, 4);
+                    AssertTabViewSamplePage((TabItem)tabView1.Items[1], 2, 2);
+                    AssertTabViewSamplePage((TabItem)tabView1.Items[2], 3, 4);
 
                     var addButton = FindNamedDescendant<Button>(page, "TabView1AddButton");
                     var closeButton = FindNamedDescendant<Button>(page, "TabView1CloseButton");
@@ -4157,6 +4161,16 @@ namespace ModernWpf.Gallery.Tests
             Assert.IsNotNull(item);
             Assert.AreEqual(header, item.Header);
             Assert.AreSame(item.TryFindResource("DefaultTabItemStyle"), item.Style);
+        }
+
+        private static void AssertTabViewSamplePage(TabItem item, int expectedColumnCount, int expectedRowCount)
+        {
+            var scrollViewer = item.Content as ScrollViewer;
+            Assert.IsNotNull(scrollViewer);
+            var grid = scrollViewer.Content as Grid;
+            Assert.IsNotNull(grid);
+            Assert.AreEqual(expectedColumnCount, grid.ColumnDefinitions.Count);
+            Assert.AreEqual(expectedRowCount, grid.RowDefinitions.Count);
         }
 
         private static string GetFramePageTitle(Frame frame)

@@ -162,6 +162,11 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
 
         private const double PivotReferenceWidth = 721.0;
 
+        private const double TabViewReferenceWidth = 767.0;
+
+        private const string SamplePageLoremIpsum =
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+
         private const string TabViewBasicXaml =
 @"<TabView AddTabButtonClick=""TabView_AddButtonClick"" TabCloseRequested=""TabView_TabCloseRequested"" Loaded=""TabView_Loaded"" />";
 
@@ -1512,7 +1517,9 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             {
                 Name = name,
                 MinHeight = 475,
+                MaxWidth = TabViewReferenceWidth,
                 Margin = new Thickness(-12),
+                HorizontalAlignment = HorizontalAlignment.Stretch,
                 SelectedIndex = 0,
                 Style = FindStyleResource("DefaultTabControlStyle")
             };
@@ -1579,7 +1586,22 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             };
         }
 
-        private static Border CreateTabViewPageContent(string title)
+        private static UIElement CreateTabViewPageContent(string title)
+        {
+            switch (title)
+            {
+                case "SamplePage1":
+                    return CreateTabViewSamplePage1Content();
+                case "SamplePage2":
+                    return CreateTabViewSamplePage2Content();
+                case "SamplePage3":
+                    return CreateTabViewSamplePage3Content();
+                default:
+                    return CreateTabViewFallbackPageContent(title);
+            }
+        }
+
+        private static UIElement CreateTabViewFallbackPageContent(string title)
         {
             return new Border
             {
@@ -1595,20 +1617,160 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             };
         }
 
+        private static ScrollViewer CreateTabViewSamplePage1Content()
+        {
+            var grid = CreateTabViewSampleGrid(
+                GridLength.Auto,
+                new GridLength(1, GridUnitType.Star),
+                new GridLength(1, GridUnitType.Star));
+            AddTabViewSampleRows(grid, 4, true);
+
+            AddTabViewSampleTile(grid, 1, 1, 1, 1, CreateBrush("#A9A9A9"), 0, double.NaN, double.NaN, new Thickness(6));
+            AddTabViewSampleTile(grid, 1, 2, 1, 1, CreateBrush("#D3D3D3"), 0, double.NaN, double.NaN, new Thickness(6));
+            AddTabViewSampleTile(grid, 2, 1, 1, 1, CreateBrush("#D3D3D3"), 0, double.NaN, double.NaN, new Thickness(6));
+            AddTabViewSampleTile(grid, 2, 2, 1, 1, CreateBrush("#A9A9A9"), 0, double.NaN, double.NaN, new Thickness(6));
+            AddTabViewAccentSampleTile(grid, 1, 0, 2, 1, 250, double.NaN, double.NaN, new Thickness(5));
+            AddTabViewSampleText(grid, 3, 0, 3, SamplePageLoremIpsum, new Thickness(6, 12, 6, 12), 0, FontWeights.Normal);
+
+            return CreateTabViewSampleScrollViewer(grid);
+        }
+
+        private static ScrollViewer CreateTabViewSamplePage2Content()
+        {
+            var grid = CreateTabViewSampleGrid(
+                GridLength.Auto,
+                new GridLength(1, GridUnitType.Star));
+            AddTabViewSampleRows(grid, 2, false);
+
+            AddTabViewAccentSampleTile(grid, 1, 0, 1, 1, 0, 150, 200, new Thickness(12)).VerticalAlignment = VerticalAlignment.Top;
+
+            var panel = new StackPanel
+            {
+                MinHeight = 200,
+                Margin = new Thickness(12)
+            };
+            panel.Children.Add(new TextBlock
+            {
+                Margin = new Thickness(0, 0, 0, 12),
+                Text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
+                FontSize = 20,
+                FontWeight = FontWeights.SemiBold,
+                TextWrapping = TextWrapping.Wrap
+            });
+            panel.Children.Add(CreateTextBlock(SamplePageLoremIpsum, new Thickness(0)));
+            Grid.SetRow(panel, 1);
+            Grid.SetColumn(panel, 1);
+            grid.Children.Add(panel);
+
+            return CreateTabViewSampleScrollViewer(grid);
+        }
+
+        private static ScrollViewer CreateTabViewSamplePage3Content()
+        {
+            var grid = CreateTabViewSampleGrid(
+                new GridLength(2, GridUnitType.Star),
+                new GridLength(1, GridUnitType.Star),
+                new GridLength(1, GridUnitType.Star));
+            AddTabViewSampleRows(grid, 4, true);
+
+            AddTabViewSampleTile(grid, 1, 0, 2, 1, CreateBrush("#D3D3D3"), 0, double.NaN, double.NaN, new Thickness(5));
+            AddTabViewSampleTile(grid, 1, 1, 1, 1, CreateBrush("#A9A9A9"), 0, double.NaN, double.NaN, new Thickness(5));
+            AddTabViewSampleTile(grid, 2, 1, 1, 1, CreateBrush("#808080"), 0, double.NaN, double.NaN, new Thickness(5));
+            AddTabViewSampleTile(grid, 1, 2, 1, 1, CreateBrush("#D3D3D3"), 0, double.NaN, double.NaN, new Thickness(5));
+            AddTabViewSampleTile(grid, 2, 2, 1, 1, CreateBrush("#A9A9A9"), 0, double.NaN, double.NaN, new Thickness(5));
+            AddTabViewSampleText(grid, 3, 0, 3, SamplePageLoremIpsum, new Thickness(5), 0, FontWeights.Normal);
+
+            return CreateTabViewSampleScrollViewer(grid);
+        }
+
+        private static Grid CreateTabViewSampleGrid(params GridLength[] columns)
+        {
+            var grid = new Grid();
+            foreach (var width in columns)
+            {
+                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = width });
+            }
+
+            return grid;
+        }
+
+        private static void AddTabViewSampleRows(Grid grid, int count, bool lastRowStar)
+        {
+            for (var i = 0; i < count; i++)
+            {
+                grid.RowDefinitions.Add(new RowDefinition
+                {
+                    Height = lastRowStar && i == count - 1 ? new GridLength(1, GridUnitType.Star) : GridLength.Auto
+                });
+            }
+        }
+
+        private static Grid AddTabViewSampleTile(Grid grid, int row, int column, int rowSpan, int columnSpan, Brush background, double minWidth, double width, double height, Thickness margin)
+        {
+            var tile = new Grid
+            {
+                MinWidth = minWidth,
+                MinHeight = 150,
+                Width = width,
+                Height = height,
+                Margin = margin,
+                Background = background
+            };
+            Grid.SetRow(tile, row);
+            Grid.SetColumn(tile, column);
+            if (rowSpan > 1)
+            {
+                Grid.SetRowSpan(tile, rowSpan);
+            }
+            if (columnSpan > 1)
+            {
+                Grid.SetColumnSpan(tile, columnSpan);
+            }
+            grid.Children.Add(tile);
+            return tile;
+        }
+
+        private static Grid AddTabViewAccentSampleTile(Grid grid, int row, int column, int rowSpan, int columnSpan, double minWidth, double width, double height, Thickness margin)
+        {
+            var tile = AddTabViewSampleTile(grid, row, column, rowSpan, columnSpan, Brushes.Transparent, minWidth, width, height, margin);
+            tile.SetResourceReference(Panel.BackgroundProperty, "SystemControlBackgroundAccentBrush");
+            return tile;
+        }
+
+        private static void AddTabViewSampleText(Grid grid, int row, int column, int columnSpan, string text, Thickness margin, double fontSize, FontWeight fontWeight)
+        {
+            var textBlock = CreateTextBlock(text, margin);
+            if (fontSize > 0)
+            {
+                textBlock.FontSize = fontSize;
+            }
+            textBlock.FontWeight = fontWeight;
+            Grid.SetRow(textBlock, row);
+            Grid.SetColumn(textBlock, column);
+            if (columnSpan > 1)
+            {
+                Grid.SetColumnSpan(textBlock, columnSpan);
+            }
+            grid.Children.Add(textBlock);
+        }
+
+        private static ScrollViewer CreateTabViewSampleScrollViewer(UIElement content)
+        {
+            return new ScrollViewer
+            {
+                Content = content
+            };
+        }
+
         private static DataTemplate CreateTabViewDataContentTemplate()
         {
-            var textBlock = new FrameworkElementFactory(typeof(TextBlock));
-            textBlock.SetBinding(TextBlock.TextProperty, new Binding("DataContent"));
-            textBlock.SetValue(TextBlock.FontSizeProperty, 22.0);
-            textBlock.SetValue(TextBlock.FontWeightProperty, FontWeights.SemiBold);
-            textBlock.SetValue(FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Center);
-            textBlock.SetValue(FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
-            var border = new FrameworkElementFactory(typeof(Border));
-            border.SetValue(Border.PaddingProperty, new Thickness(18));
-            border.AppendChild(textBlock);
+            var contentControl = new FrameworkElementFactory(typeof(ContentControl));
+            contentControl.SetBinding(ContentControl.ContentProperty, new Binding("DataContent"));
+            contentControl.SetValue(Control.HorizontalContentAlignmentProperty, HorizontalAlignment.Stretch);
+            contentControl.SetValue(Control.VerticalContentAlignmentProperty, VerticalAlignment.Stretch);
             return new DataTemplate(typeof(TabViewData))
             {
-                VisualTree = border
+                VisualTree = contentControl
             };
         }
 
@@ -1617,7 +1779,7 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             return new TabViewData
             {
                 DataHeader = "MyData Doc " + index,
-                DataContent = "SamplePage" + (index % 3 + 1)
+                DataContent = CreateTabViewPageContent("SamplePage" + (index % 3 + 1))
             };
         }
 
@@ -2302,7 +2464,7 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
         {
             public string DataHeader { get; set; }
 
-            public string DataContent { get; set; }
+            public object DataContent { get; set; }
         }
     }
 }

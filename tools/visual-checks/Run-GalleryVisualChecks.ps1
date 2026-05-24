@@ -259,6 +259,23 @@ function Find-ReferencePrimaryByName($root, [string]$control, [string]$name) {
     return Find-DescendantButtonByName $root $name
 }
 
+function Reset-WinUIReferenceSampleScroll($window, [string]$control) {
+    if ($control -ne "TabView") {
+        return
+    }
+
+    $samplePanel = Find-DescendantByAutomationId $window "svPanel"
+    if ($null -eq $samplePanel) {
+        return
+    }
+
+    $scrollPattern = $null
+    if ($samplePanel.TryGetCurrentPattern([System.Windows.Automation.ScrollPattern]::Pattern, [ref]$scrollPattern)) {
+        $scrollPattern.SetScrollPercent([System.Windows.Automation.ScrollPattern]::NoScroll, 0)
+        Start-Sleep -Milliseconds 500
+    }
+}
+
 function Find-DescendantByAnyName($root, [string[]]$names) {
     foreach ($name in $names) {
         $element = Find-DescendantByName $root $name
@@ -1851,7 +1868,9 @@ function Capture-WinUIReference([string]$control, [string]$caseDir) {
         } | Out-Null
         Wait-WinUIReferenceReady $window $control
         Start-Sleep -Milliseconds 1200
+        Reset-WinUIReferenceSampleScroll $window $control
         $themeProbe = Ensure-WinUIReferenceTheme $control $caseDir $window
+        Reset-WinUIReferenceSampleScroll $window $control
 
         $showButton = if ($control -eq "TeachingTip") {
             Find-DescendantButtonByName $window "Show TeachingTip"
