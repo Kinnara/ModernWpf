@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Automation;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
@@ -20,6 +21,9 @@ namespace ModernWpf.Gallery.Pages
         private const string ToggleSwitchSimpleXaml =
 @"<ToggleSwitch AutomationProperties.Name=""simple ToggleSwitch""/>";
 
+        private const string RepeatButtonSimpleXaml =
+@"<RepeatButton Content=""Click and hold"" Click=""RepeatButton_Click"" $(IsEnabled)/>";
+
         private const string ToggleSwitchWithProgressXaml =
 @"<StackPanel Orientation=""Horizontal"">
     <ToggleSwitch Header=""Toggle work"" OffContent=""Do work"" OnContent=""Working"" IsOn=""$(isOn)$(isOff)"" />
@@ -30,6 +34,8 @@ namespace ModernWpf.Gallery.Pages
         {
             switch (uniqueId)
             {
+                case "RepeatButton":
+                    return CreateRepeatButtonExamples();
                 case "DropDownButton":
                     return CreateDropDownButtonExamples(sampleSnippets);
                 case "SplitButton":
@@ -213,25 +219,72 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateRepeatButtonSample()
         {
-            var panel = CreateSamplePanel("RepeatButton keeps firing while it is pressed.");
-            var output = CreateOutput("Hold the button to increment.");
-            var count = 0;
+            var panel = new GallerySamplePanel
+            {
+                Margin = new Thickness(0, 0, 0, 12)
+            };
+            GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("RepeatButton"));
+            panel.Children.Add(CreateSimpleRepeatButtonExampleContent(assignRootAutomationId: false));
+            return panel;
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateRepeatButtonExamples()
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "A simple RepeatButton with text content.",
+                    CreateSimpleRepeatButtonExampleContent(assignRootAutomationId: true),
+                    RepeatButtonSimpleXaml,
+                    null)
+            };
+        }
+
+        private static StackPanel CreateSimpleRepeatButtonExampleContent(bool assignRootAutomationId)
+        {
+            var root = new GallerySamplePanel
+            {
+                Orientation = Orientation.Horizontal
+            };
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("RepeatButton"));
+            }
+
             var button = new RepeatButton
             {
-                Content = "Hold to repeat",
-                Delay = 350,
-                Interval = 60,
-                Padding = new Thickness(18, 8, 18, 8),
-                HorizontalAlignment = HorizontalAlignment.Left
+                Name = "Control1",
+                Content = "Click and hold"
             };
+            GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("RepeatButton", "RepeatButton"));
+
+            var output = new TextBlock
+            {
+                Name = "Control1Output",
+                Margin = new Thickness(8, 0, 0, 0),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            AutomationProperties.SetName(output, "Control output");
+#if !NET462
+            AutomationProperties.SetLiveSetting(output, AutomationLiveSetting.Polite);
+#endif
+
+            var clicks = 0;
             button.Click += delegate
             {
-                count++;
-                output.Text = "Repeat count: " + count;
+                clicks += 1;
+                output.Text = "Number of clicks: " + clicks;
+
+#if !NET462
+                var peer = FrameworkElementAutomationPeer.FromElement(output) ??
+                    FrameworkElementAutomationPeer.CreatePeerForElement(output);
+                peer?.RaiseAutomationEvent(AutomationEvents.LiveRegionChanged);
+#endif
             };
-            panel.Children.Add(button);
-            panel.Children.Add(output);
-            return panel;
+
+            root.Children.Add(button);
+            root.Children.Add(output);
+            return root;
         }
 
         private static UIElement CreateToggleButtonSample()

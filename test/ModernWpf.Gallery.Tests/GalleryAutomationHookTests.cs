@@ -28,6 +28,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "InfoBar", "GallerySample_InfoBar_Root", "GallerySample_InfoBar_InfoBar" };
             yield return new object[] { "NavigationView", "GallerySample_NavigationView_Root", "GallerySample_NavigationView_NavigationView" };
             yield return new object[] { "ContentDialog", "GallerySample_ContentDialog_Root", "GallerySample_ContentDialog_ShowButton" };
+            yield return new object[] { "RepeatButton", "GallerySample_RepeatButton_Root", "GallerySample_RepeatButton_RepeatButton" };
             yield return new object[] { "DropDownButton", "GallerySample_DropDownButton_Root", "GallerySample_DropDownButton_DropDownButton" };
             yield return new object[] { "SplitButton", "GallerySample_SplitButton_Root", "GallerySample_SplitButton_SplitButton" };
             yield return new object[] { "ToggleSplitButton", "GallerySample_ToggleSplitButton_Root", "GallerySample_ToggleSplitButton_ToggleSplitButton" };
@@ -596,6 +597,64 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsTrue(toggleSplitButton.IsChecked);
                     Assert.AreEqual(Mux.Symbol.Bullets, symbolIcon.Symbol);
                     Assert.AreEqual("Roman Numerals", AutomationProperties.GetName(toggleSplitButton));
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void RepeatButtonSampleMatchesWinUIGalleryExample()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("RepeatButton"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(1, page.Examples.Count);
+                    Assert.AreEqual("A simple RepeatButton with text content.", page.Examples[0].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    Assert.AreEqual("<RepeatButton Content=\"Click and hold\" Click=\"RepeatButton_Click\" $(IsEnabled)/>", page.Examples[0].XamlCode);
+                    Assert.IsNull(page.Examples[0].CSharpCode);
+
+                    var button = (RepeatButton)FindByAutomationId(page, "GallerySample_RepeatButton_RepeatButton");
+                    var output = FindNamedDescendant<TextBlock>(page, "Control1Output");
+                    Assert.IsNotNull(button);
+                    Assert.IsNotNull(output);
+
+                    Assert.AreEqual("Control1", button.Name);
+                    Assert.AreEqual("Click and hold", button.Content);
+                    Assert.AreEqual("Control1Output", output.Name);
+                    Assert.AreEqual(new Thickness(8, 0, 0, 0), output.Margin);
+                    Assert.AreEqual(VerticalAlignment.Center, output.VerticalAlignment);
+                    Assert.AreEqual("Control output", AutomationProperties.GetName(output));
+                    Assert.AreEqual(AutomationLiveSetting.Polite, AutomationProperties.GetLiveSetting(output));
+                    Assert.AreEqual(string.Empty, output.Text);
+
+                    button.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent, button));
+                    Assert.AreEqual("Number of clicks: 1", output.Text);
+                    button.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent, button));
+                    Assert.AreEqual("Number of clicks: 2", output.Text);
                 }
                 finally
                 {

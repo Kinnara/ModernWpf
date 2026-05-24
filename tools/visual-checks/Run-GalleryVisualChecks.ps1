@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "InfoBar", "NavigationView", "ContentDialog", "MenuBar", "CommandBar", "CommandBarFlyout"),
+    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "RepeatButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "InfoBar", "NavigationView", "ContentDialog", "MenuBar", "CommandBar", "CommandBarFlyout"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -424,6 +424,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "TeachingTip" { return "GallerySample_TeachingTip_ShowButton" }
         "Button" { return "GallerySample_Button_PrimaryButton" }
         "ComboBox" { return "GallerySample_ComboBox_ComboBox" }
+        "RepeatButton" { return "GallerySample_RepeatButton_RepeatButton" }
         "DropDownButton" { return "GallerySample_DropDownButton_DropDownButton" }
         "SplitButton" { return "GallerySample_SplitButton_SplitButton" }
         "ToggleSplitButton" { return "GallerySample_ToggleSplitButton_ToggleSplitButton" }
@@ -455,6 +456,7 @@ function Get-PrimaryCropMinimumVisibleStdDev([string]$control) {
 function Get-ModernPrimaryCropAutomationId([string]$control) {
     switch ($control) {
         "InfoBar" { return "GallerySample_InfoBar_InfoBar" }
+        "RepeatButton" { return "GallerySample_RepeatButton_RepeatButton" }
         "DropDownButton" { return "GallerySample_DropDownButton_DropDownButton" }
         "SplitButton" { return "GallerySample_SplitButton_SplitButton" }
         "ToggleSplitButton" { return "GallerySample_ToggleSplitButton_ToggleSplitButton" }
@@ -490,6 +492,7 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
 function Get-ReferencePrimaryName([string]$control) {
     switch ($control) {
         "DropDownButton" { return "Email" }
+        "RepeatButton" { return "Click and hold" }
         "ToggleSwitch" { return "simple ToggleSwitch" }
         default { return "" }
     }
