@@ -106,13 +106,38 @@ namespace ModernWpf.Gallery.Tests
                     window.UpdateLayout();
                     WpfTestHost.DoEvents();
 
+                    Assert.AreEqual(3, page.Examples.Count);
+                    Assert.AreEqual("Show a targeted TeachingTip on a button.", page.Examples[0].HeaderText);
+                    Assert.AreEqual("Show a non-targeted TeachingTip with buttons.", page.Examples[1].HeaderText);
+                    Assert.AreEqual("Show a targeted TeachingTip with hero content on a button.", page.Examples[2].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "TestButton1TeachingTip");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "ActionButtonContent=\"Action button\"");
+                    StringAssert.Contains(page.Examples[2].XamlCode, "TeachingTip.HeroContent");
+
                     var button = (ButtonBase)FindByAutomationId(page, "GallerySample_TeachingTip_ShowButton");
                     var teachingTip = (TeachingTipControl)FindByAutomationId(page, "GallerySample_TeachingTip_TeachingTip");
+                    var nonTargetedButton = (ButtonBase)FindByAutomationId(page, "GallerySample_TeachingTip_NonTargetedShowButton");
+                    var nonTargetedTeachingTip = (TeachingTipControl)FindByAutomationId(page, "GallerySample_TeachingTip_NonTargetedTeachingTip");
+                    var heroButton = (ButtonBase)FindByAutomationId(page, "GallerySample_TeachingTip_HeroShowButton");
+                    var heroTeachingTip = (TeachingTipControl)FindByAutomationId(page, "GallerySample_TeachingTip_HeroTeachingTip");
 
                     Assert.IsNotNull(button);
                     Assert.IsNotNull(teachingTip);
+                    Assert.IsNotNull(nonTargetedButton);
+                    Assert.IsNotNull(nonTargetedTeachingTip);
+                    Assert.IsNotNull(heroButton);
+                    Assert.IsNotNull(heroTeachingTip);
                     Assert.AreSame(DependencyProperty.UnsetValue, ((Control)button).ReadLocalValue(Control.PaddingProperty));
                     Assert.AreEqual(48.0, teachingTip.TryFindResource("TeachingTipMinWidth"));
+                    Assert.IsTrue(nonTargetedTeachingTip.IsLightDismissEnabled);
+                    Assert.AreEqual("Action button", nonTargetedTeachingTip.ActionButtonContent);
+                    Assert.AreEqual("Close button", nonTargetedTeachingTip.CloseButtonContent);
+                    Assert.AreEqual(new Thickness(20), nonTargetedTeachingTip.PlacementMargin);
+                    Assert.AreEqual(ModernWpf.Controls.TeachingTipPlacementMode.Auto, nonTargetedTeachingTip.PreferredPlacement);
+                    Assert.AreEqual(ModernWpf.Controls.TeachingTipPlacementMode.Bottom, heroTeachingTip.PreferredPlacement);
+                    Assert.IsInstanceOfType(heroTeachingTip.HeroContent, typeof(Image));
+                    Assert.AreEqual("Sunset", AutomationProperties.GetName(heroTeachingTip.HeroContent));
 
                     button.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
                     WpfTestHost.DoEvents();

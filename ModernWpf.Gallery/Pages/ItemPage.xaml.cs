@@ -24,27 +24,11 @@ namespace ModernWpf.Gallery.Pages
             DirectPageContent = WpfGalleryPageRegistry.CreatePageContent(_item.UniqueId);
             UsesWpfGalleryPageMode = DirectPageContent != null;
 
-            var examples = Array.Empty<GalleryExample>();
-            if (DirectPageContent == null)
-            {
-                var sampleContent = CreateWorkingSampleContent(_item.UniqueId);
-                if (sampleContent != null)
-                {
-                    examples = new[]
-                    {
-                        new GalleryExample(
-                            "Working WPF sample",
-                            sampleContent,
-                            xamlSnippet == null ? null : xamlSnippet.Text,
-                            csharpSnippet == null ? null : csharpSnippet.Text)
-                    };
-                }
-            }
+            Examples = DirectPageContent == null
+                ? CreateWorkingSampleExamples(_item.UniqueId, SampleSnippets, xamlSnippet, csharpSnippet)
+                : Array.Empty<GalleryExample>();
 
-            Examples = examples;
-            AdditionalSampleSnippets = SampleSnippets
-                .Where(snippet => !ReferenceEquals(snippet, xamlSnippet) && !ReferenceEquals(snippet, csharpSnippet))
-                .ToArray();
+            AdditionalSampleSnippets = GetAdditionalSampleSnippets(SampleSnippets, Examples);
             RelatedItems = _item.RelatedControlIds
                 .Select(GalleryCatalog.FindItem)
                 .Where(related => related != null)
@@ -236,6 +220,57 @@ namespace ModernWpf.Gallery.Pages
                 ?? WindowingSampleFactory.Create(uniqueId)
                 ?? SystemSampleFactory.Create(uniqueId)
                 ?? ShellSampleFactory.Create(uniqueId);
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateWorkingSampleExamples(
+            string uniqueId,
+            IReadOnlyList<SampleSnippet> sampleSnippets,
+            SampleSnippet xamlSnippet,
+            SampleSnippet csharpSnippet)
+        {
+            var dialogFlyoutExamples = DialogsFlyoutsSampleFactory.CreateExamples(uniqueId, sampleSnippets);
+            if (dialogFlyoutExamples.Count != 0)
+            {
+                return dialogFlyoutExamples;
+            }
+
+            var sampleContent = CreateWorkingSampleContent(uniqueId);
+            if (sampleContent == null)
+            {
+                return Array.Empty<GalleryExample>();
+            }
+
+            return new[]
+            {
+                new GalleryExample(
+                    "Working WPF sample",
+                    sampleContent,
+                    xamlSnippet == null ? null : xamlSnippet.Text,
+                    csharpSnippet == null ? null : csharpSnippet.Text)
+            };
+        }
+
+        private static IReadOnlyList<SampleSnippet> GetAdditionalSampleSnippets(
+            IReadOnlyList<SampleSnippet> snippets,
+            IReadOnlyList<GalleryExample> examples)
+        {
+            var consumedText = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var example in examples)
+            {
+                if (example.XamlCode != null)
+                {
+                    consumedText.Add(example.XamlCode);
+                }
+
+                if (example.CSharpCode != null)
+                {
+                    consumedText.Add(example.CSharpCode);
+                }
+            }
+
+            return snippets
+                .Where(snippet => !consumedText.Contains(snippet.Text))
+                .ToArray();
         }
 
         private static SampleSnippet FindSampleSnippet(IReadOnlyList<SampleSnippet> snippets, Func<SampleSnippet, bool> predicate)

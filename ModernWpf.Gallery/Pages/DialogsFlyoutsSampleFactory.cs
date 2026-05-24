@@ -1,8 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using ModernWpf.Gallery.Models;
 using ModernWpf.Controls.Primitives;
 using Mux = ModernWpf.Controls;
 
@@ -10,6 +14,17 @@ namespace ModernWpf.Gallery.Pages
 {
     internal static class DialogsFlyoutsSampleFactory
     {
+        public static IReadOnlyList<GalleryExample> CreateExamples(string uniqueId, IReadOnlyList<SampleSnippet> sampleSnippets)
+        {
+            switch (uniqueId)
+            {
+                case "TeachingTip":
+                    return CreateTeachingTipExamples(sampleSnippets);
+                default:
+                    return Array.Empty<GalleryExample>();
+            }
+        }
+
         public static UIElement Create(string uniqueId)
         {
             switch (uniqueId)
@@ -151,6 +166,47 @@ namespace ModernWpf.Gallery.Pages
             GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("TeachingTip"));
             panel.Resources["TeachingTipMinWidth"] = 48.0;
 
+            panel.Children.Add(CreateTargetedTeachingTipExampleContent(assignRootAutomationId: false));
+            return panel;
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateTeachingTipExamples(IReadOnlyList<SampleSnippet> sampleSnippets)
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "Show a targeted TeachingTip on a button.",
+                    CreateTargetedTeachingTipExampleContent(assignRootAutomationId: true),
+                    FindSnippetText(sampleSnippets, "TeachingTipSample1_xaml.txt"),
+                    FindSnippetText(sampleSnippets, "TeachingTipSample1_cs.txt")),
+                new GalleryExample(
+                    "Show a non-targeted TeachingTip with buttons.",
+                    CreateNonTargetedTeachingTipExampleContent(),
+                    FindSnippetText(sampleSnippets, "TeachingTipSample2_xaml.txt"),
+                    FindSnippetText(sampleSnippets, "TeachingTipSample2_cs.txt")),
+                new GalleryExample(
+                    "Show a targeted TeachingTip with hero content on a button.",
+                    CreateHeroTeachingTipExampleContent(),
+                    FindSnippetText(sampleSnippets, "TeachingTipSample3_xaml.txt"),
+                    FindSnippetText(sampleSnippets, "TeachingTipSample3_cs.txt"))
+            };
+        }
+
+        private static GallerySamplePanel CreateTeachingTipExampleRoot()
+        {
+            var root = new GallerySamplePanel();
+            root.Resources["TeachingTipMinWidth"] = 48.0;
+            return root;
+        }
+
+        private static GallerySamplePanel CreateTargetedTeachingTipExampleContent(bool assignRootAutomationId)
+        {
+            var root = CreateTeachingTipExampleRoot();
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("TeachingTip"));
+            }
+
             var button = new Button
             {
                 Content = "Show TeachingTip",
@@ -170,9 +226,90 @@ namespace ModernWpf.Gallery.Pages
                 tip.IsOpen = true;
             };
 
-            panel.Children.Add(button);
-            panel.Children.Add(tip);
-            return panel;
+            root.Children.Add(button);
+            root.Children.Add(tip);
+            return root;
+        }
+
+        private static GallerySamplePanel CreateNonTargetedTeachingTipExampleContent()
+        {
+            var root = CreateTeachingTipExampleRoot();
+            var button = new Button
+            {
+                Content = "Show TeachingTip",
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+            GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("TeachingTip", "NonTargetedShowButton"));
+            var tip = new Mux.TeachingTip
+            {
+                Title = "This is the title",
+                Subtitle = "And this is the subtitle",
+                ActionButtonContent = "Action button",
+                CloseButtonContent = "Close button",
+                IsLightDismissEnabled = true,
+                PlacementMargin = new Thickness(20),
+                PreferredPlacement = Mux.TeachingTipPlacementMode.Auto
+            };
+            GalleryAutomation.WithAutomationId(tip, GalleryAutomation.SampleElementId("TeachingTip", "NonTargetedTeachingTip"));
+            button.Click += delegate
+            {
+                tip.IsOpen = true;
+            };
+
+            root.Children.Add(button);
+            root.Children.Add(tip);
+            return root;
+        }
+
+        private static GallerySamplePanel CreateHeroTeachingTipExampleContent()
+        {
+            var root = CreateTeachingTipExampleRoot();
+            var button = new Button
+            {
+                Content = "Show TeachingTip",
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+            GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("TeachingTip", "HeroShowButton"));
+            var tip = new Mux.TeachingTip
+            {
+                Target = button,
+                Title = "This is the title",
+                Subtitle = "And this is the subtitle",
+                PreferredPlacement = Mux.TeachingTipPlacementMode.Bottom,
+                HeroContent = new Image
+                {
+                    Source = new BitmapImage(new Uri("pack://application:,,,/ModernWpf.Gallery;component/Assets/SampleMedia/sunset.jpg", UriKind.Absolute))
+                },
+                Content = new TextBlock
+                {
+                    Margin = new Thickness(0, 16, 0, 0),
+                    Text = "Description can go here",
+                    TextWrapping = TextWrapping.Wrap
+                }
+            };
+            AutomationProperties.SetName(tip.HeroContent, "Sunset");
+            GalleryAutomation.WithAutomationId(tip, GalleryAutomation.SampleElementId("TeachingTip", "HeroTeachingTip"));
+            button.Click += delegate
+            {
+                tip.IsOpen = true;
+            };
+
+            root.Children.Add(button);
+            root.Children.Add(tip);
+            return root;
+        }
+
+        private static string FindSnippetText(IReadOnlyList<SampleSnippet> snippets, string title)
+        {
+            for (var i = 0; i < snippets.Count; i++)
+            {
+                if (string.Equals(snippets[i].Title, title, StringComparison.Ordinal))
+                {
+                    return snippets[i].Text;
+                }
+            }
+
+            return null;
         }
 
         private static Border CreateSurface(string title, string message)

@@ -102,6 +102,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.TeachingTipSampleButtonOpensTip|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds|FullyQualifiedName~GalleryAutomationHookTests.TeachingTipInteractionModeWritesOpenContentArtifact" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 7 tests per target. The generated ModernWpf TeachingTip page now follows the official WinUI Gallery three-example shape for targeted, non-targeted, and hero-content TeachingTips, consumes all six TeachingTip sample-code snippets inside those examples instead of duplicating them as an extra snippet list, preserves the curated visual-test automation IDs, and keeps the `TeachingTipMinWidth` runtime resource path covered. Current warning/output remains `NU1903` and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls TeachingTip -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-100101-226-69312/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, primary crops match at `135x32`, and TeachingTip Light primary delta is `5.43`, improved from the earlier failed blank rendered-artifact crop / `17.22` primary delta in `artifacts/visual-checks/20260524-094230-249-101660/report.md`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls TeachingTip -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-100135-839-87564/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, primary crops match at `135x32`, TeachingTip Dark primary delta is `9.7`, and the full-window mean delta is `19.97`.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the TeachingTip WinUI three-example alignment. Current build output ends with existing ModernWpf/ModernWpf.Controls warnings, recurring `Failed to resolve WinRT.Runtime.dll` messages, `19 Warning(s)`, and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.NavigationViewSampleMatchesWinUIGalleryFirstExampleShape|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 6 tests per target. The generated ModernWpf NavigationView page now follows the official WinUI Gallery first-sample shape by using the default `IsBackButtonVisible=Auto`, disabling title-bar auto-padding for the nested sample NavigationView, left-aligning the fixed-width sample crop, and hiding the WPF `ScrollViewer` bar to match WinUI's resting overlay-scrollbar appearance. The visual artifact writer also normalizes the `GallerySample_NavigationView_NavigationView` rendered crop by the sample element's parent-row offset so the comparison uses the visible NavigationView region rather than hidden row offset above it. Current warning/output remains `NU1903` and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls NavigationView -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -1091,6 +1099,20 @@ sample's row offset. Avoid reopening that first NavigationView sample unless a
 new WinUI reference or rendered crop regression appears; remaining
 NavigationView work means other samples or broader control-template/resource
 drift.
+The generated ModernWpf TeachingTip extension page now uses the official WinUI
+Gallery three-example structure for targeted, non-targeted, and hero-content
+TeachingTips, with source panes populated from the paired sample-code files
+instead of duplicating the remaining snippets below the sample. Current
+TeachingTip WinUI-reference evidence is
+`artifacts/visual-checks/20260524-100101-226-69312/report.md` for Light and
+`artifacts/visual-checks/20260524-100135-839-87564/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`, matching `135x32`
+primary crops, and primary deltas `5.43` / `9.7`. The earlier
+`artifacts/visual-checks/20260524-094230-249-101660/report.md` TeachingTip
+failure is superseded; its ModernWpf primary rendered crop was blank and the
+page only exposed a single generic working sample. Avoid reopening TeachingTip's
+first-sample/static structure unless a new WinUI source, visual crop, or
+interaction regression appears.
 Continue with the next highest-impact visible drift from the checklist, likely
 remaining High Contrast gaps, other NavigationView styling not covered
 by the TreeView token aliases or first-sample refresh, or other item pages that still lack current
