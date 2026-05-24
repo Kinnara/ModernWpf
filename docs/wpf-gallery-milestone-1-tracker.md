@@ -106,6 +106,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.PipsPagerSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 24 tests per target. The generated ModernWpf PipsPager page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\PipsPagerPage.xaml` / `.xaml.cs`: one `PipsPager integrated with a FlipView` example and one `PipsPager with options to change its orientation and button visibility.` example. `ScrollingSampleFactory.CreateExamples` now covers PipsPager as a source-backed Scrolling WinUI extension page, exposes curated automation IDs `GallerySample_PipsPager_Root` and `GallerySample_PipsPager_PipsPager`, keeps WinUI's `Gallery`, `FlipViewPipsPager`, `TestPipsPager2`, `OrientationComboBox`, `PrevButtonComboBox`, and `NextButtonComboBox` source-facing names, and adapts WinUI's `FlipView` dependency to a WPF image carousel because ModernWpf does not expose a FlipView control. Current warning/output remains `NU1903`, generated WinRT warnings when regeneration is triggered, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls PipsPager -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-155655-904-101368/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, required element `GallerySample_PipsPager_PipsPager` was found, primary crops match at `60x24`, PipsPager Light primary delta is `6.02`, and whole-window mean delta is `158.47`. The visual harness now includes PipsPager in the default control set, uses WinUI reference automation ID `FlipViewPipsPager`, and crops the ModernWpf primary from the rendered sample root because the control-only `VisualBrush` artifact is blank for the repeater-templated PipsPager.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls PipsPager -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-155726-351-108948/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, required element `GallerySample_PipsPager_PipsPager` was found, primary crops match at `60x24`, PipsPager Dark primary delta is `7.63`, and whole-window mean delta is `23.8`.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the PipsPager WinUI example alignment and visual harness mapping. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages, existing ModernWpf/ModernWpf.Controls warnings, `19 Warning(s)`, and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.PopupSampleMatchesWinUIGalleryExample|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 23 tests per target. The generated ModernWpf Popup page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\PopupPage.xaml` / `.xaml.cs`: one `Popup with Offset Positioning` example with `Output`, `StandardPopup`, `IsLightDismissEnabledToggleSwitch`, `VerticalOffset`, `HorizontalOffset`, the `Show Popup (using Offset)` button, and the `Close` popup button. `DialogsFlyoutsSampleFactory.CreateExamples` now covers Popup as a source-backed Dialogs & Flyouts WinUI extension page, exposes curated automation IDs `GallerySample_Popup_Root` and `GallerySample_Popup_Button`, and adapts WinUI's `Popup.IsLightDismissEnabled` to WPF `Popup.StaysOpen` while preserving the source-facing names, offset behavior, and source snippets. Current warning/output remains `NU1903`, generated WinRT warnings when regeneration is triggered, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls Popup -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -1255,6 +1263,25 @@ sample's row offset. Avoid reopening that first NavigationView sample unless a
 new WinUI reference or rendered crop regression appears; remaining
 NavigationView work means other samples or broader control-template/resource
 drift.
+The generated ModernWpf PipsPager extension page now uses the local official
+WinUI Gallery two-example structure from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\PipsPagerPage.xaml`
+/ `.xaml.cs`: `PipsPager integrated with a FlipView` plus the orientation and
+button-visibility options sample. `ScrollingSampleFactory.CreateExamples` now
+covers PipsPager as a source-backed Scrolling WinUI example, keeps WinUI's
+`Gallery`, `FlipViewPipsPager`, `TestPipsPager2`, `OrientationComboBox`,
+`PrevButtonComboBox`, and `NextButtonComboBox` names, and adapts the first
+sample's WinUI `FlipView` to a WPF image carousel because ModernWpf does not
+currently expose a FlipView control. Current PipsPager WinUI-reference evidence
+is `artifacts/visual-checks/20260524-155655-904-101368/report.md` for Light and
+`artifacts/visual-checks/20260524-155726-351-108948/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`, matching `60x24`
+primary crops, and primary deltas `6.02` / `7.63`. The visual harness now
+includes PipsPager in the default WinUI extension control set and crops the
+ModernWpf primary from the rendered sample root because the control-only
+`VisualBrush` artifact is blank for the repeater-templated PipsPager. Avoid
+reopening PipsPager's source shape unless a new WinUI source or crop regression
+appears.
 The generated ModernWpf TeachingTip extension page now uses the official WinUI
 Gallery three-example structure for targeted, non-targeted, and hero-content
 TeachingTips, with source panes populated from the paired sample-code files

@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "InfoBadge", "InfoBar", "ProgressRing", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "CommandBar", "CommandBarFlyout"),
+    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "CommandBar", "CommandBarFlyout"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -438,6 +438,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "InfoBadge" { return "GallerySample_InfoBadge_InfoBadge" }
         "InfoBar" { return "GallerySample_InfoBar_InfoBar" }
         "ProgressRing" { return "GallerySample_ProgressRing_ProgressRing" }
+        "PipsPager" { return "GallerySample_PipsPager_PipsPager" }
         "NavigationView" { return "GallerySample_NavigationView_NavigationView" }
         "ContentDialog" { return "GallerySample_ContentDialog_ShowButton" }
         "Flyout" { return "GallerySample_Flyout_Button" }
@@ -477,6 +478,7 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
         "AutoSuggestBox" { return "GallerySample_AutoSuggestBox_AutoSuggestBox" }
         "InfoBadge" { return "GallerySample_InfoBadge_InfoBadge" }
         "ProgressRing" { return "GallerySample_ProgressRing_ProgressRing" }
+        "PipsPager" { return "GallerySample_PipsPager_PipsPager" }
         "Flyout" { return "GallerySample_Flyout_Button" }
         "Popup" { return "GallerySample_Popup_Button" }
         "MenuBar" { return "GallerySample_MenuBar_MenuBar" }
@@ -506,6 +508,7 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
         "NumberBox" { return "NumberBoxSpinButtonPlacementExample" }
         "AutoSuggestBox" { return "Control1" }
         "ProgressRing" { return "ProgressRing1" }
+        "PipsPager" { return "FlipViewPipsPager" }
         default { return "" }
     }
 }
@@ -1142,6 +1145,28 @@ function Capture-StaticCrops([string]$app, [string]$control, [string]$caseDir, $
             $rootSlice = New-RenderedArtifactSliceCrop $sampleArtifact $rootSlicePath $primarySource $primaryCrop.Width $primaryCrop.Height
             if ($null -ne $rootSlice -and $rootSlice.NonBlank) {
                 $primaryCrop = $rootSlice
+            }
+            else {
+                $primaryCrop = $null
+            }
+        }
+
+        if ($control -eq "PipsPager" -and $null -ne $primaryCrop -and !$primaryCrop.NonBlank -and (Test-Path $sampleArtifact)) {
+            $sampleSize = Get-ImageSize $sampleArtifact
+            $fallbackBounds = [ordered]@{
+                Found = $true
+                Reason = "Cropped PipsPager from the rendered sample root because the control-only VisualBrush crop is blank."
+                X = [Math]::Max(0, [int](($sampleSize.Width - $primaryCrop.Width) / 2))
+                Y = [Math]::Max(0, $sampleSize.Height - $primaryCrop.Height)
+                Width = $primaryCrop.Width
+                Height = $primaryCrop.Height
+                ChangedSamples = 0
+            }
+            $fallbackPath = Join-Path $artifactDir ($primarySource + "_fromRoot.png")
+            $savedBounds = Save-Crop $sampleArtifact $fallbackBounds $fallbackPath 0
+            $fallbackCrop = New-RenderedArtifactCrop $fallbackPath $primarySource $savedBounds
+            if ($null -ne $fallbackCrop -and $fallbackCrop.NonBlank) {
+                $primaryCrop = $fallbackCrop
             }
             else {
                 $primaryCrop = $null

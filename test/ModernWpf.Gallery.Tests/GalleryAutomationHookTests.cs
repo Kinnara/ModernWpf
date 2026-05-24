@@ -29,6 +29,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "InfoBadge", "GallerySample_InfoBadge_Root", "GallerySample_InfoBadge_InfoBadge" };
             yield return new object[] { "InfoBar", "GallerySample_InfoBar_Root", "GallerySample_InfoBar_InfoBar" };
             yield return new object[] { "ProgressRing", "GallerySample_ProgressRing_Root", "GallerySample_ProgressRing_ProgressRing" };
+            yield return new object[] { "PipsPager", "GallerySample_PipsPager_Root", "GallerySample_PipsPager_PipsPager" };
             yield return new object[] { "NavigationView", "GallerySample_NavigationView_Root", "GallerySample_NavigationView_NavigationView" };
             yield return new object[] { "ContentDialog", "GallerySample_ContentDialog_Root", "GallerySample_ContentDialog_ShowButton" };
             yield return new object[] { "Flyout", "GallerySample_Flyout_Root", "GallerySample_Flyout_Button" };
@@ -771,6 +772,100 @@ namespace ModernWpf.Gallery.Tests
                     WpfTestHost.DoEvents();
                     Assert.AreEqual(0.0, progressValue.Value);
                     Assert.AreEqual(0.0, progressRing2.Value);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void PipsPagerSampleMatchesWinUIGalleryExamples()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("PipsPager"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(2, page.Examples.Count);
+                    Assert.AreEqual("PipsPager integrated with a FlipView", page.Examples[0].HeaderText);
+                    Assert.AreEqual("PipsPager with options to change its orientation and button visibility.", page.Examples[1].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "x:Name=\"FlipViewPipsPager\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "NumberOfPages=\"{x:Bind Pictures.Count}\"");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "Orientation=\"$(Orientation)\"");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "PreviousButtonVisibility=\"$(PrevButton)\"");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "NextButtonVisibility=\"$(NextButton)\"");
+                    Assert.IsNull(page.Examples[0].CSharpCode);
+                    Assert.IsNull(page.Examples[1].CSharpCode);
+
+                    var flipViewPipsPagerHost = (Border)FindByAutomationId(page, "GallerySample_PipsPager_PipsPager");
+                    var flipViewPipsPager = FindNamedDescendant<Mux.PipsPager>(page, "FlipViewPipsPager");
+                    var gallery = FindNamedDescendant<ContentControl>(page, "Gallery");
+                    var optionsPipsPager = FindNamedDescendant<Mux.PipsPager>(page, "TestPipsPager2");
+                    var orientationComboBox = FindNamedDescendant<ComboBox>(page, "OrientationComboBox");
+                    var previousButtonComboBox = FindNamedDescendant<ComboBox>(page, "PrevButtonComboBox");
+                    var nextButtonComboBox = FindNamedDescendant<ComboBox>(page, "NextButtonComboBox");
+                    Assert.IsNotNull(flipViewPipsPagerHost);
+                    Assert.IsNotNull(flipViewPipsPager);
+                    Assert.IsNotNull(gallery);
+                    Assert.IsNotNull(optionsPipsPager);
+                    Assert.IsNotNull(orientationComboBox);
+                    Assert.IsNotNull(previousButtonComboBox);
+                    Assert.IsNotNull(nextButtonComboBox);
+
+                    Assert.AreEqual("FlipViewPipsPager", flipViewPipsPager.Name);
+                    Assert.AreEqual(8, flipViewPipsPager.NumberOfPages);
+                    Assert.AreEqual(0, flipViewPipsPager.SelectedPageIndex);
+                    Assert.AreEqual(HorizontalAlignment.Center, flipViewPipsPager.HorizontalAlignment);
+                    Assert.AreEqual(HorizontalAlignment.Center, flipViewPipsPagerHost.HorizontalAlignment);
+                    Assert.AreEqual(new Thickness(0, 12, 0, 0), flipViewPipsPagerHost.Margin);
+                    Assert.AreSame(flipViewPipsPager, flipViewPipsPagerHost.Child);
+                    Assert.AreEqual("Gallery", gallery.Name);
+                    Assert.AreEqual(400.0, gallery.Width);
+                    Assert.AreEqual(270.0, gallery.Height);
+                    AssertPipsPagerImage(gallery, "LandscapeImage1.jpg");
+
+                    flipViewPipsPager.SelectedPageIndex = 2;
+                    WpfTestHost.DoEvents();
+                    AssertPipsPagerImage(gallery, "LandscapeImage3.jpg");
+
+                    Assert.AreEqual("TestPipsPager2", optionsPipsPager.Name);
+                    Assert.AreEqual(10, optionsPipsPager.NumberOfPages);
+                    Assert.AreEqual(Orientation.Horizontal, optionsPipsPager.Orientation);
+                    Assert.AreEqual(Mux.PipsPagerButtonVisibility.Visible, optionsPipsPager.PreviousButtonVisibility);
+                    Assert.AreEqual(Mux.PipsPagerButtonVisibility.Visible, optionsPipsPager.NextButtonVisibility);
+                    AssertPipsPagerComboBox(orientationComboBox, "Orientation", "Horizontal", "Vertical");
+                    AssertPipsPagerComboBox(previousButtonComboBox, "Previous Button Visibility", "Visible", "VisibleOnPointerOver", "Collapsed");
+                    AssertPipsPagerComboBox(nextButtonComboBox, "Next Button Visibility", "Visible", "VisibleOnPointerOver", "Collapsed");
+
+                    orientationComboBox.SelectedItem = "Vertical";
+                    previousButtonComboBox.SelectedItem = "Collapsed";
+                    nextButtonComboBox.SelectedItem = "VisibleOnPointerOver";
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(Orientation.Vertical, optionsPipsPager.Orientation);
+                    Assert.AreEqual(Mux.PipsPagerButtonVisibility.Collapsed, optionsPipsPager.PreviousButtonVisibility);
+                    Assert.AreEqual(Mux.PipsPagerButtonVisibility.VisibleOnPointerOver, optionsPipsPager.NextButtonVisibility);
                 }
                 finally
                 {
@@ -2300,6 +2395,28 @@ namespace ModernWpf.Gallery.Tests
             }
 
             return null;
+        }
+
+        private static void AssertPipsPagerImage(ContentControl gallery, string fileName)
+        {
+            var image = gallery.Content as Image;
+            Assert.IsNotNull(image);
+            var bitmapImage = image.Source as BitmapImage;
+            Assert.IsNotNull(bitmapImage);
+            StringAssert.Contains(bitmapImage.UriSource.ToString(), fileName);
+        }
+
+        private static void AssertPipsPagerComboBox(ComboBox comboBox, string header, params string[] expectedItems)
+        {
+            Assert.AreEqual(header, ModernWpf.Controls.Primitives.ControlHelper.GetHeader(comboBox));
+            Assert.AreEqual(220.0, comboBox.Width);
+            Assert.AreEqual(new Thickness(0, 0, 0, 12), comboBox.Margin);
+            Assert.AreEqual(expectedItems[0], comboBox.SelectedItem);
+            Assert.AreEqual(expectedItems.Length, comboBox.Items.Count);
+            for (var i = 0; i < expectedItems.Length; i++)
+            {
+                Assert.AreEqual(expectedItems[i], comboBox.Items[i]);
+            }
         }
 
         private static void AssertPopupOffsetNumberBox(

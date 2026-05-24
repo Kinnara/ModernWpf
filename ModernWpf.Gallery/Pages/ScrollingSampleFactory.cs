@@ -5,12 +5,36 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using ModernWpf.Controls.Primitives;
+using Mux = ModernWpf.Controls;
 
 namespace ModernWpf.Gallery.Pages
 {
     internal static class ScrollingSampleFactory
     {
+        private const string PipsPagerFlipViewXaml =
+@"<StackPanel>
+    <FlipView x:Name=""Gallery"" MaxWidth=""400"" Height=""270"" ItemsSource=""{x:Bind Pictures}"">
+        <FlipView.ItemTemplate>
+            <DataTemplate x:DataType=""x:String"">
+                <Image Source=""{x:Bind Mode=OneTime}"" />
+            </DataTemplate>
+        </FlipView.ItemTemplate>
+    </FlipView>
+    <PipsPager x:Name=""FlipViewPipsPager""
+        HorizontalAlignment=""Center""
+        Margin=""0, 12, 0, 0""
+        NumberOfPages=""{x:Bind Pictures.Count}""
+        SelectedPageIndex=""{x:Bind Path=Gallery.SelectedIndex, Mode=TwoWay}"" />
+</StackPanel>";
+
+        private const string PipsPagerOptionsXaml =
+@"<PipsPager
+    Orientation=""$(Orientation)""
+    PreviousButtonVisibility=""$(PrevButton)""
+    NextButtonVisibility=""$(NextButton)"" />";
+
         public static UIElement Create(string uniqueId)
         {
             switch (uniqueId)
@@ -27,6 +51,17 @@ namespace ModernWpf.Gallery.Pages
                     return CreateSemanticZoomSample();
                 default:
                     return null;
+            }
+        }
+
+        public static IReadOnlyList<GalleryExample> CreateExamples(string uniqueId)
+        {
+            switch (uniqueId)
+            {
+                case "PipsPager":
+                    return CreatePipsPagerExamples();
+                default:
+                    return Array.Empty<GalleryExample>();
             }
         }
 
@@ -88,78 +123,128 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreatePipsPagerSample()
         {
-            var panel = CreateSamplePanel("PipsPager maps to glyph-like buttons that page through independent content.");
-            var pages = new[]
+            var panel = new GallerySamplePanel
             {
-                "Overview",
-                "Details",
-                "Activity",
-                "Settings",
-                "Summary"
+                Margin = new Thickness(0, 0, 0, 12)
             };
-            var selectedIndex = 0;
-            var content = CreatePagerCard(pages[selectedIndex], selectedIndex + 1, pages.Length);
-            var pipRow = new StackPanel
-            {
-                Orientation = Orientation.Horizontal,
-                Margin = new Thickness(0, 12, 0, 0)
-            };
+            GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("PipsPager"));
+            panel.Children.Add(CreatePipsPagerFlipViewExampleContent(assignRootAutomationId: false));
+            panel.Children.Add(CreatePipsPagerOptionsExampleContent());
+            return panel;
+        }
 
-            Action refresh = null;
-            refresh = delegate
+        private static IReadOnlyList<GalleryExample> CreatePipsPagerExamples()
+        {
+            return new[]
             {
-                content.Child = CreatePagerCardContent(pages[selectedIndex], selectedIndex + 1, pages.Length);
-                for (var i = 0; i < pipRow.Children.Count; i++)
-                {
-                    var button = (Button)pipRow.Children[i];
-                    button.FontWeight = i == selectedIndex ? FontWeights.SemiBold : FontWeights.Normal;
-                    button.Content = i == selectedIndex ? "●" : "○";
-                }
+                new GalleryExample(
+                    "PipsPager integrated with a FlipView",
+                    CreatePipsPagerFlipViewExampleContent(assignRootAutomationId: true),
+                    PipsPagerFlipViewXaml,
+                    null),
+                new GalleryExample(
+                    "PipsPager with options to change its orientation and button visibility.",
+                    CreatePipsPagerOptionsExampleContent(),
+                    PipsPagerOptionsXaml,
+                    null)
             };
+        }
 
-            for (var i = 0; i < pages.Length; i++)
+        private static UIElement CreatePipsPagerFlipViewExampleContent(bool assignRootAutomationId)
+        {
+            var root = new GallerySamplePanel();
+            if (assignRootAutomationId)
             {
-                var pageIndex = i;
-                var pip = new Button
-                {
-                    Content = pageIndex == selectedIndex ? "●" : "○",
-                    Width = 34,
-                    Height = 34,
-                    Margin = new Thickness(0, 0, 6, 0),
-                    ToolTip = "Page " + (pageIndex + 1)
-                };
-                pip.Click += delegate
-                {
-                    selectedIndex = pageIndex;
-                    refresh();
-                };
-                pipRow.Children.Add(pip);
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("PipsPager"));
             }
 
-            var commands = new StackPanel
+            var pictures = CreatePipsPagerPictures();
+            var gallery = new ContentControl
             {
-                Orientation = Orientation.Horizontal,
-                Margin = new Thickness(0, 10, 0, 0)
+                Name = "Gallery",
+                Width = 400,
+                Height = 270,
+                MaxWidth = 400,
+                HorizontalAlignment = HorizontalAlignment.Left
             };
-            var previous = CreateButton("Previous");
-            var next = CreateButton("Next");
-            previous.Click += delegate
-            {
-                selectedIndex = Math.Max(0, selectedIndex - 1);
-                refresh();
-            };
-            next.Click += delegate
-            {
-                selectedIndex = Math.Min(pages.Length - 1, selectedIndex + 1);
-                refresh();
-            };
-            commands.Children.Add(previous);
-            commands.Children.Add(next);
 
-            panel.Children.Add(content);
-            panel.Children.Add(pipRow);
-            panel.Children.Add(commands);
-            return panel;
+            var pipsPager = new Mux.PipsPager
+            {
+                Name = "FlipViewPipsPager",
+                HorizontalAlignment = HorizontalAlignment.Center,
+                NumberOfPages = pictures.Count
+            };
+            var pipsPagerHost = new Border
+            {
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(0, 12, 0, 0),
+                Child = pipsPager
+            };
+            GalleryAutomation.WithAutomationId(pipsPagerHost, GalleryAutomation.SampleElementId("PipsPager", "PipsPager"));
+
+            Action updatePicture = delegate
+            {
+                gallery.Content = CreatePipsPagerImage(pictures[pipsPager.SelectedPageIndex]);
+            };
+            pipsPager.SelectedIndexChanged += delegate
+            {
+                updatePicture();
+            };
+            updatePicture();
+
+            var stack = new StackPanel();
+            stack.Children.Add(gallery);
+            stack.Children.Add(pipsPagerHost);
+            root.Children.Add(stack);
+            return root;
+        }
+
+        private static UIElement CreatePipsPagerOptionsExampleContent()
+        {
+            var pipsPager = new Mux.PipsPager
+            {
+                Name = "TestPipsPager2",
+                NumberOfPages = 10,
+                PreviousButtonVisibility = Mux.PipsPagerButtonVisibility.Visible,
+                NextButtonVisibility = Mux.PipsPagerButtonVisibility.Visible
+            };
+
+            var orientationComboBox = CreatePipsPagerComboBox(
+                "OrientationComboBox",
+                "Orientation",
+                new[] { "Horizontal", "Vertical" },
+                "Horizontal");
+            var previousButtonComboBox = CreatePipsPagerComboBox(
+                "PrevButtonComboBox",
+                "Previous Button Visibility",
+                new[] { "Visible", "VisibleOnPointerOver", "Collapsed" },
+                "Visible");
+            var nextButtonComboBox = CreatePipsPagerComboBox(
+                "NextButtonComboBox",
+                "Next Button Visibility",
+                new[] { "Visible", "VisibleOnPointerOver", "Collapsed" },
+                "Visible");
+
+            orientationComboBox.SelectionChanged += delegate
+            {
+                pipsPager.Orientation = string.Equals(orientationComboBox.SelectedItem as string, "Vertical", StringComparison.Ordinal)
+                    ? Orientation.Vertical
+                    : Orientation.Horizontal;
+            };
+            previousButtonComboBox.SelectionChanged += delegate
+            {
+                pipsPager.PreviousButtonVisibility = ToPipsPagerButtonVisibility(previousButtonComboBox.SelectedItem as string);
+            };
+            nextButtonComboBox.SelectionChanged += delegate
+            {
+                pipsPager.NextButtonVisibility = ToPipsPagerButtonVisibility(nextButtonComboBox.SelectedItem as string);
+            };
+
+            var options = new StackPanel();
+            options.Children.Add(orientationComboBox);
+            options.Children.Add(previousButtonComboBox);
+            options.Children.Add(nextButtonComboBox);
+            return CreatePipsPagerExampleLayout(pipsPager, options);
         }
 
         private static UIElement CreateScrollViewSample()
@@ -328,35 +413,81 @@ namespace ModernWpf.Gallery.Pages
             };
         }
 
-        private static Border CreatePagerCard(string title, int index, int total)
+        private static IReadOnlyList<string> CreatePipsPagerPictures()
         {
-            return new Border
+            return new[]
             {
-                Width = 320,
-                Height = 120,
-                Padding = new Thickness(16),
-                BorderThickness = new Thickness(1),
-                BorderBrush = CreateBrush("#D8D8D8"),
-                Child = CreatePagerCardContent(title, index, total)
+                "LandscapeImage1.jpg",
+                "LandscapeImage2.jpg",
+                "LandscapeImage3.jpg",
+                "LandscapeImage4.jpg",
+                "LandscapeImage5.jpg",
+                "LandscapeImage6.jpg",
+                "LandscapeImage7.jpg",
+                "LandscapeImage8.jpg"
             };
         }
 
-        private static UIElement CreatePagerCardContent(string title, int index, int total)
+        private static Image CreatePipsPagerImage(string fileName)
         {
-            var stack = new StackPanel();
-            stack.Children.Add(new TextBlock
+            return new Image
             {
-                Text = title,
-                FontSize = 22,
-                FontWeight = FontWeights.SemiBold
-            });
-            stack.Children.Add(new TextBlock
+                Source = new BitmapImage(new Uri(
+                    "pack://application:,,,/ModernWpf.Gallery;component/Assets/SampleMedia/" + fileName,
+                    UriKind.Absolute)),
+                Stretch = Stretch.UniformToFill
+            };
+        }
+
+        private static ComboBox CreatePipsPagerComboBox(string name, string header, IEnumerable<string> items, string selectedItem)
+        {
+            var comboBox = new ComboBox
             {
-                Text = "Page " + index + " of " + total,
-                Margin = new Thickness(0, 8, 0, 0),
-                Opacity = 0.72
-            });
-            return stack;
+                Name = name,
+                Width = 220,
+                Margin = new Thickness(0, 0, 0, 12),
+                ItemsSource = items.ToArray(),
+                SelectedItem = selectedItem
+            };
+            ControlHelper.SetHeader(comboBox, header);
+            return comboBox;
+        }
+
+        private static Mux.PipsPagerButtonVisibility ToPipsPagerButtonVisibility(string value)
+        {
+            switch (value)
+            {
+                case "Visible":
+                    return Mux.PipsPagerButtonVisibility.Visible;
+                case "VisibleOnPointerOver":
+                    return Mux.PipsPagerButtonVisibility.VisibleOnPointerOver;
+                case "Collapsed":
+                default:
+                    return Mux.PipsPagerButtonVisibility.Collapsed;
+            }
+        }
+
+        private static Grid CreatePipsPagerExampleLayout(UIElement sample, UIElement options)
+        {
+            var grid = new Grid();
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+            Grid.SetColumn(sample, 0);
+            grid.Children.Add(sample);
+
+            if (options != null)
+            {
+                var optionsHost = new Border
+                {
+                    Margin = new Thickness(24, 0, 0, 0),
+                    Child = options
+                };
+                Grid.SetColumn(optionsHost, 1);
+                grid.Children.Add(optionsHost);
+            }
+
+            return grid;
         }
 
         private static StackPanel CreateLargeDiagram()
