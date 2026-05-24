@@ -15,12 +15,18 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
             DataContext = this;
             InitializeComponent();
             UpdateImageResources();
+            Loaded += OnLoaded;
             SystemEvents.UserPreferenceChanged += OnUserPreferenceChanged;
             ThemeManager.AddActualThemeChangedHandler(this, OnActualThemeChanged);
             Unloaded += OnUnloaded;
         }
 
         public SpacingPageViewModel ViewModel { get; }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            UpdateImageResources();
+        }
 
         private void OnUserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
         {
@@ -34,6 +40,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
+            Loaded -= OnLoaded;
             SystemEvents.UserPreferenceChanged -= OnUserPreferenceChanged;
             ThemeManager.RemoveActualThemeChangedHandler(this, OnActualThemeChanged);
             Unloaded -= OnUnloaded;
@@ -41,7 +48,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 
         private void UpdateImageResources()
         {
-            ApplyImageResources(ThemeManager.GetActualTheme(this));
+            ApplyImageResources(DesignImageTheme.Resolve(this));
         }
 
         internal void ApplyImageResources(ElementTheme actualTheme)

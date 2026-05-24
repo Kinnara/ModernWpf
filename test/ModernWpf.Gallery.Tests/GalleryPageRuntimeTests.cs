@@ -1951,6 +1951,7 @@ namespace ModernWpf.Gallery.Tests
 
                 var geometryPage = new ItemPage(GalleryCatalog.FindItem("Geometry"));
                 Assert.IsTrue(geometryPage.HasDirectPageContent);
+                AssertDirectPagePane(geometryPage);
                 var geometryBody = GetDirectPageBodyStack(geometryPage);
                 Assert.AreEqual(new Thickness(0, 0, 0, 24), geometryBody.Margin);
                 Assert.AreEqual(5, geometryBody.Children.Count);
@@ -1959,6 +1960,7 @@ namespace ModernWpf.Gallery.Tests
                 var geometryUsage = (TextBlock)geometryBody.Children[2];
                 Assert.AreEqual("You can reference built-in corner radii styles using: CornerRadius=\"{StaticResource ControlCornerRadius}\" .", geometryUsage.Text);
                 Assert.AreEqual(new Thickness(0, 0, 0, 12), geometryUsage.Margin);
+                Assert.AreEqual(new Thickness(0, 0, 0, 8), geometryUsage.Padding);
 
                 var geometryImageHost = (Border)geometryBody.Children[3];
                 Assert.AreEqual(500.0, geometryImageHost.Width);
@@ -1986,6 +1988,35 @@ namespace ModernWpf.Gallery.Tests
                 StringAssert.Contains(geometryExample.XamlCode, "OverlayCornerRadius");
                 var cornerRadiusTable = (Grid)geometryExample.ExampleContent;
                 AssertCornerRadiusTable(cornerRadiusTable);
+            });
+        }
+
+        [TestMethod]
+        public void DesignGuidanceImagesUseForcedApplicationThemeBeforeLoaded()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var previousTheme = ThemeManager.Current.ApplicationTheme;
+                SpacingPage spacingPage = null;
+                GeometryPage geometryPage = null;
+
+                try
+                {
+                    ThemeManager.Current.ApplicationTheme = ApplicationTheme.Dark;
+
+                    spacingPage = new SpacingPage(new SpacingPageViewModel());
+                    AssertNamedImageSource(spacingPage, "CardImage", "Cards.dark.png");
+                    AssertNamedImageSource(spacingPage, "DialogImage", "Dialog.dark.png");
+
+                    geometryPage = new GeometryPage(new GeometryPageViewModel());
+                    AssertNamedImageSource(geometryPage, "GeometryImage", "Geometry.dark.png");
+                }
+                finally
+                {
+                    UnloadPageForEventCleanup(spacingPage);
+                    UnloadPageForEventCleanup(geometryPage);
+                    ThemeManager.Current.ApplicationTheme = previousTheme;
+                }
             });
         }
 
@@ -2626,6 +2657,54 @@ namespace ModernWpf.Gallery.Tests
                 .FirstOrDefault(candidate => candidate.Content is StackPanel);
             Assert.IsNotNull(scrollViewer, page.UniqueId);
             return (StackPanel)scrollViewer.Content;
+        }
+
+        private static void AssertDirectPagePane(ItemPage page)
+        {
+            var pane = ((FrameworkElement)page.DirectPageContent).FindName("ContentPagePane") as FrameworkElement;
+            Assert.IsNotNull(pane, page.UniqueId);
+            Assert.AreEqual("ContentPagePane", pane.Name);
+            Assert.IsTrue(double.IsNaN(pane.Height), page.UniqueId);
+        }
+
+        private static void AssertNamedImageSource(FrameworkElement root, string name, string fileName)
+        {
+            var image = root.FindName(name) as Image;
+            Assert.IsNotNull(image, name);
+            var bitmap = image.Source as BitmapImage;
+            Assert.IsNotNull(bitmap, name);
+            StringAssert.Contains(bitmap.UriSource.ToString(), fileName);
+        }
+
+        private static void UnloadPageForEventCleanup(Page page)
+        {
+            if (page == null)
+            {
+                return;
+            }
+
+            var window = new Window
+            {
+                Width = 1,
+                Height = 1,
+                Left = -32000,
+                Top = -32000,
+                ShowInTaskbar = false,
+                WindowStartupLocation = WindowStartupLocation.Manual,
+                Content = page
+            };
+
+            try
+            {
+                window.Show();
+                WpfTestHost.DoEvents();
+                window.Content = null;
+            }
+            finally
+            {
+                window.Close();
+                WpfTestHost.DoEvents();
+            }
         }
 
         private static string[] ProductSignatures(IEnumerable<Product> products)

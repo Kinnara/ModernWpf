@@ -11,7 +11,7 @@
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     mc:Ignorable="d">
 
-    <Grid>
+    <Grid x:Name="ContentPagePane" Height="Auto">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -28,13 +28,23 @@
             Padding="0,0,24,0"
             HorizontalScrollBarVisibility="Auto">
             <StackPanel Margin="0,0,0,24" Orientation="Vertical">
-                <TextBlock HorizontalAlignment="Left" Text="Geometry describes the shape, size and position of UI elements on screen." TextWrapping="Wrap" />
-                <TextBlock HorizontalAlignment="Left" Text="These fundamental design elements help experiences feel coherent across the entire design system." TextWrapping="Wrap" />
+                <TextBlock
+                    HorizontalAlignment="Left"
+                    TextWrapping="Wrap">
+                    Geometry describes the shape, size and position of UI elements on screen.
+                </TextBlock>
+                <TextBlock
+                    HorizontalAlignment="Left"
+                    TextWrapping="Wrap">
+                    These fundamental design elements help experiences feel coherent across the entire design system.
+                </TextBlock>
                 <TextBlock
                     Margin="0,0,0,12"
                     HorizontalAlignment="Left"
-                    Text="You can reference built-in corner radii styles using: CornerRadius=&quot;{StaticResource ControlCornerRadius}&quot; ."
-                    TextWrapping="Wrap" />
+                    Padding="0,0,0,8"
+                    TextWrapping="Wrap">
+                    You can reference built-in corner radii styles using: CornerRadius="{StaticResource ControlCornerRadius}" .
+                </TextBlock>
 
                 <Border
                     Width="500"
