@@ -103,6 +103,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.AutoSuggestBoxSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 13 tests per target. The generated ModernWpf AutoSuggestBox page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\AutoSuggestBoxPage.xaml` / `.xaml.cs`: the basic cat-breed suggestions example and the search-box experience example that queries the gallery catalog. `TextSampleFactory.CreateExamples` now hosts both source-backed Text WinUI pages aligned so far, exposes curated automation IDs `GallerySample_AutoSuggestBox_Root` and `GallerySample_AutoSuggestBox_AutoSuggestBox`, and keeps WinUI's `Control1`, `Control2`, `SuggestionOutput`, `ControlDetails`, and `ControlImage` sample names. Current warning/output remains `NU1903`, generated WinRT warnings when regeneration is triggered, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls AutoSuggestBox -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-132311-955-114128/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, primary crops match at `300x32`, and AutoSuggestBox Light primary delta is `2.21`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls AutoSuggestBox -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-132251-074-117324/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, primary crops match at `300x32`, and AutoSuggestBox Dark primary delta is `7.8`. The visual harness now uses the WinUI reference automation ID `Control1` and a control-specific low-variation threshold because the empty resting AutoSuggestBox field is nearly flat in Dark theme in both apps.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the AutoSuggestBox WinUI example alignment and reference crop mapping. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages, existing ModernWpf/ModernWpf.Controls warnings, `19 Warning(s)`, and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.NumberBoxSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 12 tests per target. The generated ModernWpf NumberBox page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\NumberBoxPage.xaml` / `.xaml.cs`: expression evaluation, spin-button placement options, and formatted quarter-increment rounding. `TextSampleFactory.CreateExamples` now hosts source-backed Text WinUI examples, consumes the local `NumberBox` sample-code snippets, exposes curated automation IDs `GallerySample_NumberBox_Root` and `GallerySample_NumberBox_SpinButtonNumberBox`, and adapts WinUI's `Windows.Globalization.NumberFormatting` formatter to the WPF `INumberBoxNumberFormatter` surface. Current warning/output remains `NU1903` and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls NumberBox -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -1296,6 +1304,23 @@ Light and `artifacts/visual-checks/20260524-130915-545-96112/report.md` for
 Dark, both with ModernWpf and installed WinUI 3 Gallery `Passed`, matching
 `132x59` primary crops, and primary deltas `7.31` / `11.25`. Avoid reopening
 NumberBox's source shape unless a new WinUI source or crop regression appears.
+The generated ModernWpf AutoSuggestBox extension page now uses the local
+official WinUI Gallery two-example structure from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\AutoSuggestBoxPage.xaml`:
+a basic cat-breed suggestion box and a SearchBox-style catalog lookup. The WPF
+adaptation keeps WinUI's inline sample code strings, `Control1`, `Control2`,
+`SuggestionOutput`, `ControlDetails`, and `ControlImage` names, maps the
+WinUI `RelativePanel` detail layout to a WPF `Grid`, and uses
+`GalleryCatalog.Search(...)` for the local catalog-backed suggestion source.
+Current AutoSuggestBox WinUI-reference evidence is
+`artifacts/visual-checks/20260524-132311-955-114128/report.md` for Light and
+`artifacts/visual-checks/20260524-132251-074-117324/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`, matching `300x32`
+primary crops, and primary deltas `2.21` / `7.8`. The visual harness uses the
+WinUI reference automation ID `Control1` and lowers only AutoSuggestBox's
+primary-crop variation threshold because the empty resting field is nearly flat
+in Dark theme in both apps. Avoid reopening AutoSuggestBox's source shape
+unless a new WinUI source or crop regression appears.
 Continue with the next highest-impact visible drift from the checklist, likely
 remaining High Contrast gaps, other NavigationView styling not covered
 by the TreeView token aliases or first-sample refresh, or other item pages that still lack current

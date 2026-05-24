@@ -9,6 +9,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using ModernWpf.Gallery.Models;
 using ModernWpf.Controls.Primitives;
 using Mux = ModernWpf.Controls;
@@ -17,10 +18,169 @@ namespace ModernWpf.Gallery.Pages
 {
     internal static class TextSampleFactory
     {
+        private const string AutoSuggestBoxBasicXaml =
+@"<AutoSuggestBox TextChanged=""AutoSuggestBox_TextChanged""
+                SuggestionChosen=""AutoSuggestBox_SuggestionChosen""
+                Width=""300"" AutomationProperties.Name=""Basic AutoSuggestBox""/>";
+
+        private const string AutoSuggestBoxBasicCSharp =
+@"// List of cats
+private List<string> Cats = new List<string>()
+{
+    ""Abyssinian"",
+    ""Aegean"",
+    ""American Bobtail"",
+    ...
+};
+
+// Handle text change and present suitable items
+private void AutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+{
+    // Since selecting an item will also change the text,
+    // only listen to changes caused by user entering text.
+    if(args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
+    {
+        var suitableItems = new List<string>();
+        var splitText = sender.Text.ToLower().Split("" "");
+        foreach(var cat in Cats)
+        {
+            var found = splitText.All((key)=>
+            {
+                return cat.ToLower().Contains(key);
+            });
+            if(found)
+            {
+                suitableItems.Add(cat);
+            }
+        }
+        if(suitableItems.Count == 0)
+        {
+            suitableItems.Add(""No results found"");
+        }
+        sender.ItemsSource = suitableItems;
+    }
+}
+
+// Handle user selecting an item, in our case just output the selected item.
+private void AutoSuggestBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+{
+    SuggestionOutput.Text = args.SelectedItem.ToString();
+}";
+
+        private const string AutoSuggestBoxSearchXaml =
+@"<AutoSuggestBox PlaceholderText=""Type a control name""
+        TextChanged=""Control2_TextChanged""
+        QueryIcon=""Find""
+        QuerySubmitted=""Control2_QuerySubmitted""
+        SuggestionChosen=""Control2_SuggestionChosen""/>";
+
+        private static readonly string[] Cats =
+        {
+            "Abyssinian",
+            "Aegean",
+            "American Bobtail",
+            "American Curl",
+            "American Ringtail",
+            "American Shorthair",
+            "American Wirehair",
+            "Aphrodite Giant",
+            "Arabian Mau",
+            "Asian cat",
+            "Asian Semi-longhair",
+            "Australian Mist",
+            "Balinese",
+            "Bambino",
+            "Bengal",
+            "Birman",
+            "Brazilian Shorthair",
+            "British Longhair",
+            "British Shorthair",
+            "Burmese",
+            "Burmilla",
+            "California Spangled",
+            "Chantilly-Tiffany",
+            "Chartreux",
+            "Chausie",
+            "Colorpoint Shorthair",
+            "Cornish Rex",
+            "Cymric",
+            "Cyprus",
+            "Devon Rex",
+            "Donskoy",
+            "Dragon Li",
+            "Dwelf",
+            "Egyptian Mau",
+            "European Shorthair",
+            "Exotic Shorthair",
+            "Foldex",
+            "German Rex",
+            "Havana Brown",
+            "Highlander",
+            "Himalayan",
+            "Japanese Bobtail",
+            "Javanese",
+            "Kanaani",
+            "Khao Manee",
+            "Kinkalow",
+            "Korat",
+            "Korean Bobtail",
+            "Korn Ja",
+            "Kurilian Bobtail",
+            "Lambkin",
+            "LaPerm",
+            "Lykoi",
+            "Maine Coon",
+            "Manx",
+            "Mekong Bobtail",
+            "Minskin",
+            "Napoleon",
+            "Munchkin",
+            "Nebelung",
+            "Norwegian Forest Cat",
+            "Ocicat",
+            "Ojos Azules",
+            "Oregon Rex",
+            "Persian (modern)",
+            "Persian (traditional)",
+            "Peterbald",
+            "Pixie-bob",
+            "Ragamuffin",
+            "Ragdoll",
+            "Raas",
+            "Russian Blue",
+            "Russian White",
+            "Sam Sawet",
+            "Savannah",
+            "Scottish Fold",
+            "Selkirk Rex",
+            "Serengeti",
+            "Serrade Petit",
+            "Siamese",
+            "Siberian or\u00b4Siberian Forest Cat",
+            "Singapura",
+            "Snowshoe",
+            "Sokoke",
+            "Somali",
+            "Sphynx",
+            "Suphalak",
+            "Thai",
+            "Thai Lilac",
+            "Tonkinese",
+            "Toyger",
+            "Turkish Angora",
+            "Turkish Van",
+            "Turkish Vankedisi",
+            "Ukrainian Levkoy",
+            "Wila Krungthep",
+            "York Chocolate"
+        };
+
         public static IReadOnlyList<GalleryExample> CreateExamples(string uniqueId, IReadOnlyList<SampleSnippet> sampleSnippets)
         {
             switch (uniqueId)
             {
+                case "AutoSuggestBox":
+                    return CreateAutoSuggestBoxExamples();
                 case "NumberBox":
                     return CreateNumberBoxExamples(sampleSnippets);
                 default:
@@ -103,44 +263,198 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateAutoSuggestBoxSample()
         {
-            var panel = CreateSamplePanel("AutoSuggestBox filters suggestions while the user types and raises query events.");
-            var suggestions = new[]
+            var panel = new GallerySamplePanel
             {
-                "Alpine Ski House",
-                "Blue Yonder Airlines",
-                "City Power and Light",
-                "Contoso Suites",
-                "Fabrikam Residences",
-                "Graphic Design Institute",
-                "Northwind Traders",
-                "Tailspin Toys"
+                Margin = new Thickness(0, 0, 0, 12)
             };
-            var output = CreateOutput("Type to filter suggestions.");
+            GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("AutoSuggestBox"));
+            panel.Children.Add(CreateBasicAutoSuggestBoxExampleContent(assignRootAutomationId: false));
+            return panel;
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateAutoSuggestBoxExamples()
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "A basic autosuggest box.",
+                    CreateBasicAutoSuggestBoxExampleContent(assignRootAutomationId: true),
+                    AutoSuggestBoxBasicXaml,
+                    AutoSuggestBoxBasicCSharp),
+                new GalleryExample(
+                    "An AutoSuggestBox that provides a SearchBox experience",
+                    CreateSearchAutoSuggestBoxExampleContent(),
+                    AutoSuggestBoxSearchXaml,
+                    null)
+            };
+        }
+
+        private static GallerySamplePanel CreateBasicAutoSuggestBoxExampleContent(bool assignRootAutomationId)
+        {
+            var panel = new GallerySamplePanel
+            {
+                Orientation = Orientation.Horizontal
+            };
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("AutoSuggestBox"));
+            }
+
+            var output = new TextBlock
+            {
+                Name = "SuggestionOutput",
+                FontFamily = new FontFamily("Global User Interface")
+            };
+
             var box = new Mux.AutoSuggestBox
             {
-                Width = 360,
-                Header = "Search",
-                PlaceholderText = "Search businesses",
-                QueryIcon = new Mux.SymbolIcon(Mux.Symbol.Find),
-                ItemsSource = suggestions
+                Name = "Control1",
+                Width = 300
             };
+            AutomationProperties.SetName(box, "Basic AutoSuggestBox");
+            GalleryAutomation.WithAutomationId(box, GalleryAutomation.SampleElementId("AutoSuggestBox", "AutoSuggestBox"));
             box.TextChanged += delegate(Mux.AutoSuggestBox sender, Mux.AutoSuggestBoxTextChangedEventArgs args)
             {
                 if (args.Reason == Mux.AutoSuggestionBoxTextChangeReason.UserInput)
                 {
-                    sender.ItemsSource = suggestions
-                        .Where(item => item.IndexOf(sender.Text, StringComparison.OrdinalIgnoreCase) >= 0)
-                        .ToArray();
+                    var suitableItems = new List<string>();
+                    var splitText = sender.Text.ToLowerInvariant().Split(new[] { ' ' });
+                    foreach (var cat in Cats)
+                    {
+                        var found = splitText.All(key => cat.ToLowerInvariant().Contains(key));
+                        if (found)
+                        {
+                            suitableItems.Add(cat);
+                        }
+                    }
+
+                    if (suitableItems.Count == 0)
+                    {
+                        suitableItems.Add("No results found");
+                    }
+
+                    sender.ItemsSource = suitableItems;
                 }
             };
-            box.QuerySubmitted += delegate(Mux.AutoSuggestBox sender, Mux.AutoSuggestBoxQuerySubmittedEventArgs args)
+            box.SuggestionChosen += delegate(Mux.AutoSuggestBox sender, Mux.AutoSuggestBoxSuggestionChosenEventArgs args)
             {
-                output.Text = "Query submitted: " + args.QueryText;
+                output.Text = args.SelectedItem == null ? string.Empty : args.SelectedItem.ToString();
             };
 
             panel.Children.Add(box);
             panel.Children.Add(output);
             return panel;
+        }
+
+        private static Grid CreateSearchAutoSuggestBoxExampleContent()
+        {
+            var grid = new Grid();
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+
+            var details = new Grid
+            {
+                Name = "ControlDetails",
+                Margin = new Thickness(0, 8, 0, 0),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Visibility = Visibility.Collapsed
+            };
+            details.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            details.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            details.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            details.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+
+            var image = new Image
+            {
+                Name = "ControlImage",
+                Height = 75
+            };
+            details.Children.Add(image);
+            Grid.SetRowSpan(image, 2);
+
+            var title = new TextBlock
+            {
+                Name = "ControlTitle",
+                Margin = new Thickness(8, 0, 0, 0)
+            };
+            Grid.SetColumn(title, 1);
+            details.Children.Add(title);
+
+            var subtitle = new TextBlock
+            {
+                Name = "ControlSubtitle",
+                Margin = new Thickness(8, 0, 0, 0),
+                TextWrapping = TextWrapping.Wrap
+            };
+            Grid.SetColumn(subtitle, 1);
+            Grid.SetRow(subtitle, 1);
+            details.Children.Add(subtitle);
+
+            var box = new Mux.AutoSuggestBox
+            {
+                Name = "Control2",
+                Width = 300,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                PlaceholderText = "Type a control name",
+                QueryIcon = new Mux.SymbolIcon(Mux.Symbol.Find)
+            };
+            GalleryAutomation.WithAutomationId(box, GalleryAutomation.SampleElementId("AutoSuggestBox", "SearchBox"));
+            box.TextChanged += delegate(Mux.AutoSuggestBox sender, Mux.AutoSuggestBoxTextChangedEventArgs args)
+            {
+                if (args.Reason == Mux.AutoSuggestionBoxTextChangeReason.UserInput)
+                {
+                    var suggestions = SearchControls(sender.Text);
+                    if (suggestions.Count > 0)
+                    {
+                        sender.ItemsSource = suggestions;
+                    }
+                    else
+                    {
+                        sender.ItemsSource = new[] { "No results found" };
+                    }
+                }
+            };
+            box.QuerySubmitted += delegate(Mux.AutoSuggestBox sender, Mux.AutoSuggestBoxQuerySubmittedEventArgs args)
+            {
+                if (args.ChosenSuggestion is GalleryItem chosenSuggestion)
+                {
+                    SelectControl(chosenSuggestion, details, image, title, subtitle);
+                }
+                else if (!string.IsNullOrEmpty(args.QueryText))
+                {
+                    var suggestions = SearchControls(sender.Text);
+                    var firstItem = suggestions.FirstOrDefault();
+                    if (firstItem != null)
+                    {
+                        SelectControl(firstItem, details, image, title, subtitle);
+                    }
+                }
+            };
+            box.SuggestionChosen += delegate(Mux.AutoSuggestBox sender, Mux.AutoSuggestBoxSuggestionChosenEventArgs args)
+            {
+                if (args.SelectedItem is GalleryItem control)
+                {
+                    sender.Text = control.Title;
+                }
+            };
+
+            grid.Children.Add(box);
+            Grid.SetRow(details, 1);
+            grid.Children.Add(details);
+            return grid;
+        }
+
+        private static void SelectControl(GalleryItem control, UIElement details, Image image, TextBlock title, TextBlock subtitle)
+        {
+            details.Visibility = Visibility.Visible;
+            image.Source = control.ImageSource == null ? null : new BitmapImage(control.ImageSource);
+            title.Text = control.Title;
+            subtitle.Text = control.Subtitle;
+        }
+
+        private static List<GalleryItem> SearchControls(string query)
+        {
+            return GalleryCatalog.Search(query).ToList();
         }
 
         private static UIElement CreateNumberBoxSample()

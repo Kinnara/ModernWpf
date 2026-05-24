@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "DropDownButton", "SplitButton", "ToggleSplitButton", "NumberBox", "InfoBar", "NavigationView", "ContentDialog", "MenuBar", "CommandBar", "CommandBarFlyout"),
+    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "DropDownButton", "SplitButton", "ToggleSplitButton", "NumberBox", "AutoSuggestBox", "InfoBar", "NavigationView", "ContentDialog", "MenuBar", "CommandBar", "CommandBarFlyout"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -428,6 +428,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "SplitButton" { return "GallerySample_SplitButton_SplitButton" }
         "ToggleSplitButton" { return "GallerySample_ToggleSplitButton_ToggleSplitButton" }
         "NumberBox" { return "GallerySample_NumberBox_SpinButtonNumberBox" }
+        "AutoSuggestBox" { return "GallerySample_AutoSuggestBox_AutoSuggestBox" }
         "InfoBar" { return "GallerySample_InfoBar_InfoBar" }
         "NavigationView" { return "GallerySample_NavigationView_NavigationView" }
         "ContentDialog" { return "GallerySample_ContentDialog_ShowButton" }
@@ -445,6 +446,7 @@ function Get-SampleRootAutomationId([string]$control) {
 function Get-PrimaryCropMinimumVisibleStdDev([string]$control) {
     switch ($control) {
         "NavigationView" { return 45.0 }
+        "AutoSuggestBox" { return 1.0 }
         default { return 6.0 }
     }
 }
@@ -456,6 +458,7 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
         "SplitButton" { return "GallerySample_SplitButton_SplitButton" }
         "ToggleSplitButton" { return "GallerySample_ToggleSplitButton_ToggleSplitButton" }
         "NumberBox" { return "GallerySample_NumberBox_SpinButtonNumberBox" }
+        "AutoSuggestBox" { return "GallerySample_AutoSuggestBox_AutoSuggestBox" }
         "MenuBar" { return "GallerySample_MenuBar_MenuBar" }
         "CommandBar" { return "GallerySample_CommandBar_CommandBar" }
         "CommandBarFlyout" { return "GallerySample_CommandBarFlyout_ShowButton" }
@@ -477,6 +480,7 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
         "SplitButton" { return "myColorButton" }
         "ToggleSplitButton" { return "myListButton" }
         "NumberBox" { return "NumberBoxSpinButtonPlacementExample" }
+        "AutoSuggestBox" { return "Control1" }
         default { return "" }
     }
 }

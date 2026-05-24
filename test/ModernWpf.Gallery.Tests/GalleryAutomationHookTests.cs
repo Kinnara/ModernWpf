@@ -32,6 +32,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "SplitButton", "GallerySample_SplitButton_Root", "GallerySample_SplitButton_SplitButton" };
             yield return new object[] { "ToggleSplitButton", "GallerySample_ToggleSplitButton_Root", "GallerySample_ToggleSplitButton_ToggleSplitButton" };
             yield return new object[] { "NumberBox", "GallerySample_NumberBox_Root", "GallerySample_NumberBox_SpinButtonNumberBox" };
+            yield return new object[] { "AutoSuggestBox", "GallerySample_AutoSuggestBox_Root", "GallerySample_AutoSuggestBox_AutoSuggestBox" };
             yield return new object[] { "MenuBar", "GallerySample_MenuBar_Root", "GallerySample_MenuBar_MenuBar" };
             yield return new object[] { "CommandBar", "GallerySample_CommandBar_Root", "GallerySample_CommandBar_CommandBar" };
             yield return new object[] { "CommandBarFlyout", "GallerySample_CommandBarFlyout_Root", "GallerySample_CommandBarFlyout_ShowButton" };
@@ -594,6 +595,80 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsTrue(toggleSplitButton.IsChecked);
                     Assert.AreEqual(Mux.Symbol.Bullets, symbolIcon.Symbol);
                     Assert.AreEqual("Roman Numerals", AutomationProperties.GetName(toggleSplitButton));
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void AutoSuggestBoxSampleMatchesWinUIGalleryExamples()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("AutoSuggestBox"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(2, page.Examples.Count);
+                    Assert.AreEqual("A basic autosuggest box.", page.Examples[0].HeaderText);
+                    Assert.AreEqual("An AutoSuggestBox that provides a SearchBox experience", page.Examples[1].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "AutomationProperties.Name=\"Basic AutoSuggestBox\"");
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "private List<string> Cats");
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "No results found");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "PlaceholderText=\"Type a control name\"");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "QueryIcon=\"Find\"");
+                    Assert.IsNull(page.Examples[1].CSharpCode);
+
+                    var basicBox = (Mux.AutoSuggestBox)FindByAutomationId(page, "GallerySample_AutoSuggestBox_AutoSuggestBox");
+                    var searchBox = (Mux.AutoSuggestBox)FindByAutomationId(page, "GallerySample_AutoSuggestBox_SearchBox");
+                    var suggestionOutput = FindNamedDescendant<TextBlock>(page, "SuggestionOutput");
+                    var controlDetails = FindNamedDescendant<Grid>(page, "ControlDetails");
+                    var controlImage = FindNamedDescendant<Image>(page, "ControlImage");
+                    var controlTitle = FindNamedDescendant<TextBlock>(page, "ControlTitle");
+                    var controlSubtitle = FindNamedDescendant<TextBlock>(page, "ControlSubtitle");
+                    Assert.IsNotNull(basicBox);
+                    Assert.IsNotNull(searchBox);
+                    Assert.IsNotNull(suggestionOutput);
+                    Assert.IsNotNull(controlDetails);
+                    Assert.IsNotNull(controlImage);
+                    Assert.IsNotNull(controlTitle);
+                    Assert.IsNotNull(controlSubtitle);
+
+                    Assert.AreEqual("Control1", basicBox.Name);
+                    Assert.AreEqual(300.0, basicBox.Width);
+                    Assert.AreEqual("Basic AutoSuggestBox", AutomationProperties.GetName(basicBox));
+                    Assert.AreEqual("SuggestionOutput", suggestionOutput.Name);
+
+                    Assert.AreEqual("Control2", searchBox.Name);
+                    Assert.AreEqual(300.0, searchBox.Width);
+                    Assert.AreEqual(HorizontalAlignment.Left, searchBox.HorizontalAlignment);
+                    Assert.AreEqual("Type a control name", searchBox.PlaceholderText);
+                    Assert.IsInstanceOfType(searchBox.QueryIcon, typeof(Mux.SymbolIcon));
+                    Assert.AreEqual(Mux.Symbol.Find, ((Mux.SymbolIcon)searchBox.QueryIcon).Symbol);
+                    Assert.AreEqual(Visibility.Collapsed, controlDetails.Visibility);
+                    Assert.AreEqual(75.0, controlImage.Height);
+                    Assert.AreEqual(TextWrapping.Wrap, controlSubtitle.TextWrapping);
                 }
                 finally
                 {
