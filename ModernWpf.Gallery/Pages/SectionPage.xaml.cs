@@ -6,7 +6,7 @@ using ModernWpf.Gallery.Pages.WpfGallery;
 
 namespace ModernWpf.Gallery.Pages
 {
-    public sealed partial class SectionPage
+    public partial class SectionPage
     {
         public SectionPage(GalleryGroup group)
             : this(group, null)

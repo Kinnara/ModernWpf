@@ -49,6 +49,7 @@ namespace ModernWpf.Gallery.Tests
                     window.UpdateLayout();
                     WpfTestHost.DoEvents();
 
+                    var contentHost = (ContentControl)page.FindName("ContentHost");
                     foreach (var route in CatalogRoutes())
                     {
                         try
@@ -61,6 +62,12 @@ namespace ModernWpf.Gallery.Tests
                             if (!string.IsNullOrWhiteSpace(GalleryDiagnostics.LastException))
                             {
                                 failures.Add(route + ": " + GalleryDiagnostics.LastException);
+                            }
+
+                            var expectedPageType = GetExpectedGroupPageType(route);
+                            if (expectedPageType != null && !expectedPageType.IsInstanceOfType(contentHost.Content))
+                            {
+                                failures.Add(route + ": expected " + expectedPageType.Name + " but got " + (contentHost.Content?.GetType().Name ?? "<null>"));
                             }
                         }
                         catch (Exception ex)
@@ -257,6 +264,7 @@ namespace ModernWpf.Gallery.Tests
                     WpfTestHost.DoEvents();
 
                     var navigation = (NavigationView)page.FindName("Navigation");
+                    var contentHost = (ContentControl)page.FindName("ContentHost");
                     var topLevelItems = navigation.MenuItems.OfType<NavigationViewItem>().ToList();
                     var homeItem = topLevelItems[0];
                     var navigationItem = topLevelItems.Single(item => string.Equals(GetNavigationItemText(item), "Navigation", StringComparison.Ordinal));
@@ -275,6 +283,7 @@ namespace ModernWpf.Gallery.Tests
                     AssertTextLeft(page, navigationItem, "\uE700", 44, "Navigation glyph");
                     AssertTextLeft(page, navigationItem, "Navigation", 76, "Navigation text");
                     AssertTextLeft(page, menuItem, "Menu", 79, "Menu child text");
+                    Assert.IsInstanceOfType(contentHost.Content, typeof(NavigationPage));
                 });
             });
         }
@@ -455,17 +464,17 @@ namespace ModernWpf.Gallery.Tests
             {
                 var expectedViewModels = new[]
                 {
-                    new { UniqueId = "DesignGuidance", ViewModelType = typeof(DesignGuidancePageViewModel), PageTitle = "DesignGuidancePage" },
-                    new { UniqueId = "Samples", ViewModelType = typeof(SamplesPageViewModel), PageTitle = "SamplesPage" },
-                    new { UniqueId = "BasicInput", ViewModelType = typeof(BasicInputPageViewModel), PageTitle = "BasicInputPage" },
-                    new { UniqueId = "Collections", ViewModelType = typeof(CollectionsPageViewModel), PageTitle = "CollectionsPage" },
-                    new { UniqueId = "DateAndCalendar", ViewModelType = typeof(DateAndTimePageViewModel), PageTitle = "DateAndTimePage" },
-                    new { UniqueId = "Layout", ViewModelType = typeof(LayoutPageViewModel), PageTitle = "LayoutPage" },
-                    new { UniqueId = "Media", ViewModelType = typeof(MediaPageViewModel), PageTitle = "MediaPage" },
-                    new { UniqueId = "Navigation", ViewModelType = typeof(NavigationPageViewModel), PageTitle = "NavigationPage" },
-                    new { UniqueId = "StatusAndInfo", ViewModelType = typeof(StatusAndInfoPageViewModel), PageTitle = "StatusAndInfoPage" },
-                    new { UniqueId = "Text", ViewModelType = typeof(TextPageViewModel), PageTitle = "TextPage" },
-                    new { UniqueId = "System", ViewModelType = typeof(SystemPageViewModel), PageTitle = "SystemPage" }
+                    new { UniqueId = "DesignGuidance", PageType = typeof(DesignGuidancePage), ViewModelType = typeof(DesignGuidancePageViewModel), PageTitle = "DesignGuidancePage" },
+                    new { UniqueId = "Samples", PageType = typeof(SamplesPage), ViewModelType = typeof(SamplesPageViewModel), PageTitle = "SamplesPage" },
+                    new { UniqueId = "BasicInput", PageType = typeof(BasicInputPage), ViewModelType = typeof(BasicInputPageViewModel), PageTitle = "BasicInputPage" },
+                    new { UniqueId = "Collections", PageType = typeof(CollectionsPage), ViewModelType = typeof(CollectionsPageViewModel), PageTitle = "CollectionsPage" },
+                    new { UniqueId = "DateAndCalendar", PageType = typeof(DateAndTimePage), ViewModelType = typeof(DateAndTimePageViewModel), PageTitle = "DateAndTimePage" },
+                    new { UniqueId = "Layout", PageType = typeof(LayoutPage), ViewModelType = typeof(LayoutPageViewModel), PageTitle = "LayoutPage" },
+                    new { UniqueId = "Media", PageType = typeof(MediaPage), ViewModelType = typeof(MediaPageViewModel), PageTitle = "MediaPage" },
+                    new { UniqueId = "Navigation", PageType = typeof(NavigationPage), ViewModelType = typeof(NavigationPageViewModel), PageTitle = "NavigationPage" },
+                    new { UniqueId = "StatusAndInfo", PageType = typeof(StatusAndInfoPage), ViewModelType = typeof(StatusAndInfoPageViewModel), PageTitle = "StatusAndInfoPage" },
+                    new { UniqueId = "Text", PageType = typeof(TextPage), ViewModelType = typeof(TextPageViewModel), PageTitle = "TextPage" },
+                    new { UniqueId = "System", PageType = typeof(SystemPage), ViewModelType = typeof(SystemPageViewModel), PageTitle = "SystemPage" }
                 };
 
                 foreach (var expected in expectedViewModels)
@@ -473,13 +482,19 @@ namespace ModernWpf.Gallery.Tests
                     var group = GalleryCatalog.FindGroup(expected.UniqueId);
                     Assert.IsNotNull(group, expected.UniqueId);
 
-                    var page = new SectionPage(group);
+                    var page = (SectionPage)Activator.CreateInstance(expected.PageType);
                     Assert.IsInstanceOfType(page, typeof(System.Windows.Controls.Page), expected.UniqueId);
+                    Assert.IsInstanceOfType(page, expected.PageType, expected.UniqueId);
                     Assert.AreEqual(expected.PageTitle, page.Title, expected.UniqueId);
                     Assert.IsInstanceOfType(page.ViewModel, expected.ViewModelType, expected.UniqueId);
                     Assert.AreEqual(group.Title, page.ViewModel.PageTitle, expected.UniqueId);
                     Assert.AreEqual(group.PageDescription, page.ViewModel.PageDescription, expected.UniqueId);
                     AssertNavigationCardIds(group.Items, page.ViewModel.NavigationCards, expected.UniqueId);
+
+                    GalleryItem requestedItem = null;
+                    page.ItemRequested = item => requestedItem = item;
+                    page.ViewModel.NavigateCommand.Execute(group.Items.First());
+                    Assert.AreSame(group.Items.First(), requestedItem, expected.UniqueId);
                 }
 
                 var modernWpfGroup = GalleryCatalog.FindGroup("ModernWpfControls");
@@ -516,7 +531,7 @@ namespace ModernWpf.Gallery.Tests
                 });
 
                 var basicInputGroup = GalleryCatalog.FindGroup("BasicInput");
-                var sectionPage = new SectionPage(basicInputGroup);
+                var sectionPage = new BasicInputPage();
                 RenderPage(sectionPage, () =>
                 {
                     AssertReferencePageHeader((PageHeader)sectionPage.FindName("PageHeader"), basicInputGroup.Title, basicInputGroup.PageDescription, true);
@@ -529,7 +544,7 @@ namespace ModernWpf.Gallery.Tests
                 });
 
                 var mediaGroup = GalleryCatalog.FindGroup("Media");
-                var mediaPage = new SectionPage(mediaGroup);
+                var mediaPage = new MediaPage();
                 RenderPage(mediaPage, () =>
                 {
                     AssertReferencePageHeader((PageHeader)mediaPage.FindName("PageHeader"), mediaGroup.Title, mediaGroup.PageDescription, true);
@@ -866,6 +881,43 @@ namespace ModernWpf.Gallery.Tests
             foreach (var item in GalleryCatalog.Items)
             {
                 yield return "item/" + item.UniqueId;
+            }
+        }
+
+        private static Type GetExpectedGroupPageType(string route)
+        {
+            const string categoryPrefix = "category/";
+            if (!route.StartsWith(categoryPrefix, StringComparison.Ordinal))
+            {
+                return null;
+            }
+
+            switch (route.Substring(categoryPrefix.Length))
+            {
+                case "DesignGuidance":
+                    return typeof(DesignGuidancePage);
+                case "Samples":
+                    return typeof(SamplesPage);
+                case "BasicInput":
+                    return typeof(BasicInputPage);
+                case "Collections":
+                    return typeof(CollectionsPage);
+                case "DateAndCalendar":
+                    return typeof(DateAndTimePage);
+                case "Layout":
+                    return typeof(LayoutPage);
+                case "Media":
+                    return typeof(MediaPage);
+                case "Navigation":
+                    return typeof(NavigationPage);
+                case "StatusAndInfo":
+                    return typeof(StatusAndInfoPage);
+                case "Text":
+                    return typeof(TextPage);
+                case "System":
+                    return typeof(SystemPage);
+                default:
+                    return null;
             }
         }
     }

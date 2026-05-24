@@ -15,6 +15,7 @@ using ModernWpf.Controls.Primitives;
 using ModernWpf.Gallery.Testing;
 using ModernWpf.Gallery.Models;
 using ModernWpf.Gallery.Pages;
+using ModernWpf.Gallery.Pages.WpfGallery;
 
 namespace ModernWpf.Gallery.Shell
 {
@@ -672,7 +673,7 @@ namespace ModernWpf.Gallery.Shell
             if (target.Kind == NavigationTargetKind.Group)
             {
                 var group = GalleryCatalog.FindGroup(target.UniqueId);
-                var page = new SectionPage(group);
+                var page = WpfGallerySectionPageFactory.Create(group);
                 page.ItemRequested = item => Navigate(NavigationTarget.Item(item.UniqueId), true);
                 return page;
             }
