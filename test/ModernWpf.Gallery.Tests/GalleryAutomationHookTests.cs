@@ -28,6 +28,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "InfoBar", "GallerySample_InfoBar_Root", "GallerySample_InfoBar_InfoBar" };
             yield return new object[] { "NavigationView", "GallerySample_NavigationView_Root", "GallerySample_NavigationView_NavigationView" };
             yield return new object[] { "ContentDialog", "GallerySample_ContentDialog_Root", "GallerySample_ContentDialog_ShowButton" };
+            yield return new object[] { "HyperlinkButton", "GallerySample_HyperlinkButton_Root", "GallerySample_HyperlinkButton_HyperlinkButton" };
             yield return new object[] { "RepeatButton", "GallerySample_RepeatButton_Root", "GallerySample_RepeatButton_RepeatButton" };
             yield return new object[] { "DropDownButton", "GallerySample_DropDownButton_Root", "GallerySample_DropDownButton_DropDownButton" };
             yield return new object[] { "SplitButton", "GallerySample_SplitButton_Root", "GallerySample_SplitButton_SplitButton" };
@@ -597,6 +598,66 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsTrue(toggleSplitButton.IsChecked);
                     Assert.AreEqual(Mux.Symbol.Bullets, symbolIcon.Symbol);
                     Assert.AreEqual("Roman Numerals", AutomationProperties.GetName(toggleSplitButton));
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void HyperlinkButtonSampleMatchesWinUIGalleryExamples()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("HyperlinkButton"));
+                GalleryItem requestedItem = null;
+                page.ItemRequested = item => requestedItem = item;
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(2, page.Examples.Count);
+                    Assert.AreEqual("A hyperlink button that navigates to a URI.", page.Examples[0].HeaderText);
+                    Assert.AreEqual("A hyperlink button that handles a Click event.", page.Examples[1].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    Assert.AreEqual("<HyperlinkButton Content=\"Microsoft home page\" NavigateUri=\"https://www.microsoft.com\" $(IsEnabled)/>", page.Examples[0].XamlCode);
+                    Assert.AreEqual("<HyperlinkButton Content=\"ToggleButton\" Click=\"HyperlinkButton_Click\"/>", page.Examples[1].XamlCode);
+                    Assert.IsNull(page.Examples[0].CSharpCode);
+                    Assert.IsNull(page.Examples[1].CSharpCode);
+
+                    var uriButton = (Mux.HyperlinkButton)FindByAutomationId(page, "GallerySample_HyperlinkButton_HyperlinkButton");
+                    var clickButton = (Mux.HyperlinkButton)FindByAutomationId(page, "GallerySample_HyperlinkButton_ClickHyperlinkButton");
+                    Assert.IsNotNull(uriButton);
+                    Assert.IsNotNull(clickButton);
+
+                    Assert.AreEqual("Control1", uriButton.Name);
+                    Assert.AreEqual("Microsoft home page", uriButton.Content);
+                    Assert.AreEqual("https://www.microsoft.com/", uriButton.NavigateUri.ToString());
+                    Assert.AreEqual("Control2", clickButton.Name);
+                    Assert.AreEqual("Go to ToggleButton", clickButton.Content);
+                    Assert.IsNull(clickButton.NavigateUri);
+
+                    clickButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent, clickButton));
+                    Assert.IsNotNull(requestedItem);
+                    Assert.AreEqual("ToggleButton", requestedItem.UniqueId);
                 }
                 finally
                 {

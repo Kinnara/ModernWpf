@@ -21,6 +21,12 @@ namespace ModernWpf.Gallery.Pages
         private const string ToggleSwitchSimpleXaml =
 @"<ToggleSwitch AutomationProperties.Name=""simple ToggleSwitch""/>";
 
+        private const string HyperlinkButtonNavigateUriXaml =
+@"<HyperlinkButton Content=""Microsoft home page"" NavigateUri=""https://www.microsoft.com"" $(IsEnabled)/>";
+
+        private const string HyperlinkButtonClickXaml =
+@"<HyperlinkButton Content=""ToggleButton"" Click=""HyperlinkButton_Click""/>";
+
         private const string RepeatButtonSimpleXaml =
 @"<RepeatButton Content=""Click and hold"" Click=""RepeatButton_Click"" $(IsEnabled)/>";
 
@@ -34,6 +40,8 @@ namespace ModernWpf.Gallery.Pages
         {
             switch (uniqueId)
             {
+                case "HyperlinkButton":
+                    return CreateHyperlinkButtonExamples();
                 case "RepeatButton":
                     return CreateRepeatButtonExamples();
                 case "DropDownButton":
@@ -207,13 +215,66 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateHyperlinkButtonSample()
         {
-            var panel = CreateSamplePanel("HyperlinkButton presents navigation as a button-shaped affordance.");
-            panel.Children.Add(new Mux.HyperlinkButton
+            var panel = new GallerySamplePanel
             {
-                Content = "Open ModernWpf project",
-                NavigateUri = new Uri("https://github.com/Kinnara/ModernWpf"),
-                HorizontalAlignment = HorizontalAlignment.Left
-            });
+                Margin = new Thickness(0, 0, 0, 12)
+            };
+            GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("HyperlinkButton"));
+            panel.Children.Add(CreateUriHyperlinkButtonExampleContent(assignRootAutomationId: false));
+            return panel;
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateHyperlinkButtonExamples()
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "A hyperlink button that navigates to a URI.",
+                    CreateUriHyperlinkButtonExampleContent(assignRootAutomationId: true),
+                    HyperlinkButtonNavigateUriXaml,
+                    null),
+                new GalleryExample(
+                    "A hyperlink button that handles a Click event.",
+                    CreateClickHyperlinkButtonExampleContent(),
+                    HyperlinkButtonClickXaml,
+                    null)
+            };
+        }
+
+        private static GallerySamplePanel CreateUriHyperlinkButtonExampleContent(bool assignRootAutomationId)
+        {
+            var panel = new GallerySamplePanel();
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("HyperlinkButton"));
+            }
+
+            var button = new Mux.HyperlinkButton
+            {
+                Name = "Control1",
+                Content = "Microsoft home page",
+                NavigateUri = new Uri("https://www.microsoft.com")
+            };
+            GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("HyperlinkButton", "HyperlinkButton"));
+            panel.Children.Add(button);
+            return panel;
+        }
+
+        private static GallerySamplePanel CreateClickHyperlinkButtonExampleContent()
+        {
+            var panel = new GallerySamplePanel();
+            var button = new Mux.HyperlinkButton
+            {
+                Name = "Control2",
+                Content = "Go to ToggleButton"
+            };
+            GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("HyperlinkButton", "ClickHyperlinkButton"));
+            button.Click += delegate
+            {
+                RequestItemNavigation(button, "ToggleButton");
+            };
+
+            panel.Children.Add(button);
             return panel;
         }
 
@@ -844,6 +905,34 @@ namespace ModernWpf.Gallery.Pages
                 Margin = new Thickness(0, 12, 0, 0),
                 TextWrapping = TextWrapping.Wrap
             };
+        }
+
+        private static void RequestItemNavigation(DependencyObject source, string uniqueId)
+        {
+            var page = FindVisualAncestor<ItemPage>(source);
+            var item = GalleryCatalog.FindItem(uniqueId);
+            if (page != null && item != null)
+            {
+                page.ItemRequested?.Invoke(item);
+            }
+        }
+
+        private static T FindVisualAncestor<T>(DependencyObject source)
+            where T : DependencyObject
+        {
+            var current = source;
+            while (current != null)
+            {
+                var match = current as T;
+                if (match != null)
+                {
+                    return match;
+                }
+
+                current = VisualTreeHelper.GetParent(current);
+            }
+
+            return null;
         }
 
         private static Brush CreateColorBrush(string colorName)

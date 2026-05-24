@@ -106,6 +106,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.HyperlinkButtonSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 16 tests per target. The generated ModernWpf HyperlinkButton page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\HyperlinkButtonPage.xaml` / `.xaml.cs`: a URI HyperlinkButton example and a Click-handled HyperlinkButton example that routes to ToggleButton. `BasicInputSampleFactory.CreateExamples` now covers HyperlinkButton as a source-backed Basic Input WinUI extension page, exposes curated automation IDs `GallerySample_HyperlinkButton_Root` and `GallerySample_HyperlinkButton_HyperlinkButton`, keeps WinUI's `Control1`, `Control2`, `Microsoft home page`, `Go to ToggleButton`, and source XAML `$(IsEnabled)` placeholder, and adapts WinUI's `App.MainWindow.Navigate(...)` handler to the retained ModernWpf `ItemPage.ItemRequested` route callback. Current warning/output remains `NU1903` and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls HyperlinkButton -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-140024-843-90384/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, primary crops match at `157x32`, and HyperlinkButton Light primary delta is `7.53`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls HyperlinkButton -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-140055-480-105152/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, primary crops match at `157x32`, and HyperlinkButton Dark primary delta is `9.1`. The visual harness now uses the WinUI reference automation ID `Control1` for the HyperlinkButton primary crop.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the HyperlinkButton WinUI example alignment and reference crop mapping. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages, existing ModernWpf/ModernWpf.Controls warnings, `19 Warning(s)`, and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.RepeatButtonSampleMatchesWinUIGalleryExample|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 15 tests per target. The generated ModernWpf RepeatButton page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\RepeatButtonPage.xaml` / `.xaml.cs`: one simple RepeatButton example with output text and live-region notification. `BasicInputSampleFactory.CreateExamples` now covers RepeatButton as a source-backed Basic Input WinUI extension page, exposes curated automation IDs `GallerySample_RepeatButton_Root` and `GallerySample_RepeatButton_RepeatButton`, and keeps WinUI's `Control1`, `Control1Output`, `Click and hold`, `Number of clicks: N`, `Control output`, and source XAML `$(IsEnabled)` placeholder. The WPF adaptation keeps live-region behavior for modern target frameworks and guards the live-region APIs out for `net462`. Current warning/output remains `NU1903`, generated WinRT warnings when regeneration is triggered, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls RepeatButton -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -1342,6 +1350,23 @@ Dark, both with ModernWpf and installed WinUI 3 Gallery `Passed`, matching
 uses the WinUI reference name `Click and hold` for the primary crop. Avoid
 reopening RepeatButton's source shape unless a new WinUI source or crop
 regression appears.
+The generated ModernWpf HyperlinkButton extension page now uses the local
+official WinUI Gallery two-example structure from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\HyperlinkButtonPage.xaml`
+/ `.xaml.cs`: a URI HyperlinkButton and a Click-handled HyperlinkButton.
+`BasicInputSampleFactory.CreateExamples` now covers HyperlinkButton as a
+source-backed Basic Input WinUI example, keeps WinUI's `Control1`, `Control2`,
+`Microsoft home page`, `Go to ToggleButton`, and source XAML substitution
+placeholder, and adapts the Click example from WinUI's `App.MainWindow.Navigate`
+call to the retained ModernWpf `ItemPage.ItemRequested` navigation callback.
+Current HyperlinkButton WinUI-reference evidence is
+`artifacts/visual-checks/20260524-140024-843-90384/report.md` for Light and
+`artifacts/visual-checks/20260524-140055-480-105152/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`, matching `157x32`
+primary crops, and primary deltas `7.53` / `9.1`. The visual harness uses the
+WinUI reference automation ID `Control1` for the primary crop. Avoid reopening
+HyperlinkButton's source shape unless a new WinUI source or crop regression
+appears.
 The generated ModernWpf NumberBox extension page now uses the local official
 WinUI Gallery three-example structure from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\NumberBoxPage.xaml`:

@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "RepeatButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "InfoBar", "NavigationView", "ContentDialog", "MenuBar", "CommandBar", "CommandBarFlyout"),
+    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "HyperlinkButton", "RepeatButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "InfoBar", "NavigationView", "ContentDialog", "MenuBar", "CommandBar", "CommandBarFlyout"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -424,6 +424,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "TeachingTip" { return "GallerySample_TeachingTip_ShowButton" }
         "Button" { return "GallerySample_Button_PrimaryButton" }
         "ComboBox" { return "GallerySample_ComboBox_ComboBox" }
+        "HyperlinkButton" { return "GallerySample_HyperlinkButton_HyperlinkButton" }
         "RepeatButton" { return "GallerySample_RepeatButton_RepeatButton" }
         "DropDownButton" { return "GallerySample_DropDownButton_DropDownButton" }
         "SplitButton" { return "GallerySample_SplitButton_SplitButton" }
@@ -456,6 +457,7 @@ function Get-PrimaryCropMinimumVisibleStdDev([string]$control) {
 function Get-ModernPrimaryCropAutomationId([string]$control) {
     switch ($control) {
         "InfoBar" { return "GallerySample_InfoBar_InfoBar" }
+        "HyperlinkButton" { return "GallerySample_HyperlinkButton_HyperlinkButton" }
         "RepeatButton" { return "GallerySample_RepeatButton_RepeatButton" }
         "DropDownButton" { return "GallerySample_DropDownButton_DropDownButton" }
         "SplitButton" { return "GallerySample_SplitButton_SplitButton" }
@@ -481,6 +483,7 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
         "MenuBar" { return "Example1" }
         "CommandBar" { return "PrimaryCommandBar" }
         "CommandBarFlyout" { return "myImageButton" }
+        "HyperlinkButton" { return "Control1" }
         "SplitButton" { return "myColorButton" }
         "ToggleSplitButton" { return "myListButton" }
         "NumberBox" { return "NumberBoxSpinButtonPlacementExample" }
