@@ -152,10 +152,28 @@ public static class GalleryVisualNative
 "@
 
 function New-RunDirectory {
-    $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
-    $path = Join-Path $RepoRoot (Join-Path $OutputRoot $timestamp)
-    New-Item -ItemType Directory -Force -Path $path | Out-Null
-    return $path
+    $timestamp = Get-Date -Format "yyyyMMdd-HHmmss-fff"
+    $root = Join-Path $RepoRoot $OutputRoot
+    $baseName = "$timestamp-$PID"
+    New-Item -ItemType Directory -Force -Path $root | Out-Null
+
+    for ($attempt = 0; $attempt -lt 100; $attempt++) {
+        $name = if ($attempt -eq 0) { $baseName } else { "$baseName-$attempt" }
+        $path = Join-Path $root $name
+        try {
+            New-Item -ItemType Directory -Path $path -ErrorAction Stop | Out-Null
+            return $path
+        }
+        catch {
+            if (Test-Path -LiteralPath $path) {
+                continue
+            }
+
+            throw
+        }
+    }
+
+    throw "Could not create a unique visual audit output directory under '$root'."
 }
 
 function ConvertTo-SafeName([string]$name) {
