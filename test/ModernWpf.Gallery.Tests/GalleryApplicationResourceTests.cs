@@ -335,6 +335,9 @@ namespace ModernWpf.Gallery.Tests
                     window.UpdateLayout();
                     WpfTestHost.DoEvents();
 
+                    var templateRoot = (DependencyObject)VisualTreeHelper.GetChild(controlExample, 0);
+                    Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(templateRoot));
+
                     var displayBorder = (Border)controlExample.Template.FindName("ExampleDisplayBorder", controlExample);
                     Assert.IsNotNull(displayBorder);
                     Assert.AreEqual(

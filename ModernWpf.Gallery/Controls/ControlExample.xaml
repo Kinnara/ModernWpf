@@ -24,7 +24,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type controls:ControlExample}">
-                    <Grid AutomationProperties.AutomationId="{Binding HeaderText, RelativeSource={RelativeSource TemplatedParent}, StringFormat=GallerySample_{0}}">
+                    <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
