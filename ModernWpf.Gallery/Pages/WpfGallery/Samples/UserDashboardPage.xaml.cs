@@ -10,9 +10,9 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
     {
         public UserDashboardPage(UserDashboardPageViewModel viewModel)
         {
+            InitializeComponent();
             ViewModel = viewModel;
             DataContext = this;
-            InitializeComponent();
         }
 
         public UserDashboardPageViewModel ViewModel { get; }

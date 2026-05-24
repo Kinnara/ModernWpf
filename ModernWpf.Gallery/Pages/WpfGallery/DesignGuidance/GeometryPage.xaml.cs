@@ -11,10 +11,10 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
     {
         public GeometryPage(GeometryPageViewModel viewModel)
         {
-            ViewModel = viewModel;
-            DataContext = this;
             InitializeComponent();
             UpdateImageResources();
+            ViewModel = viewModel;
+            DataContext = this;
             Loaded += OnLoaded;
             SystemEvents.UserPreferenceChanged += OnUserPreferenceChanged;
             ThemeManager.AddActualThemeChangedHandler(this, OnActualThemeChanged);

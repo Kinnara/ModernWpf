@@ -6,9 +6,9 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
     {
         public TypographyPage(TypographyPageViewModel viewModel)
         {
+            InitializeComponent();
             ViewModel = viewModel;
             DataContext = this;
-            InitializeComponent();
         }
 
         public TypographyPageViewModel ViewModel { get; }
