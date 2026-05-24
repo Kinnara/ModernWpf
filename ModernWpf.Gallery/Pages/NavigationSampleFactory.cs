@@ -524,6 +524,7 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
 
             var breadcrumbBar = new Mux.BreadcrumbBar
             {
+                HorizontalAlignment = HorizontalAlignment.Left,
                 Name = "BreadcrumbBar1",
                 ItemsSource = BreadcrumbFoldersString
             };
@@ -545,6 +546,7 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             var folders = new ObservableCollection<BreadcrumbFolder>(defaultFolders);
             var breadcrumbBar = new Mux.BreadcrumbBar
             {
+                HorizontalAlignment = HorizontalAlignment.Left,
                 Name = "BreadcrumbBar2",
                 ItemsSource = folders,
                 ItemTemplate = CreateBreadcrumbFolderTemplate()

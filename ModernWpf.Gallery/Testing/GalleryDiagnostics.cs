@@ -317,17 +317,19 @@ namespace ModernWpf.Gallery.Testing
                     FontStretches.Normal);
 
                 var x = 0.0;
+                var itemHorizontalPadding = 1.0;
+                var chevronHorizontalPadding = 2.0;
                 for (var i = 0; i < itemNames.Count; i++)
                 {
                     var text = CreateArtifactText(breadcrumbBar, itemNames[i], textTypeface, fontSize, foreground);
-                    drawingContext.DrawText(text, new Point(x, Math.Max(0, (height - text.Height) / 2)));
-                    x += text.WidthIncludingTrailingWhitespace;
+                    drawingContext.DrawText(text, new Point(x + itemHorizontalPadding, Math.Max(0, (height - text.Height) / 2)));
+                    x += text.WidthIncludingTrailingWhitespace + (itemHorizontalPadding * 2);
 
                     if (i < itemNames.Count - 1)
                     {
                         var chevron = CreateArtifactText(breadcrumbBar, "\uE974", chevronTypeface, 12.0, foreground);
-                        drawingContext.DrawText(chevron, new Point(x + 4, Math.Max(0, (height - chevron.Height) / 2)));
-                        x += chevron.WidthIncludingTrailingWhitespace + 12;
+                        drawingContext.DrawText(chevron, new Point(x + chevronHorizontalPadding, Math.Max(0, (height - chevron.Height) / 2)));
+                        x += chevron.WidthIncludingTrailingWhitespace + (chevronHorizontalPadding * 2);
                     }
                 }
             }
