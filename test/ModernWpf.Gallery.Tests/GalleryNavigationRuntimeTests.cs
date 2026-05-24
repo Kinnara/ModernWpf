@@ -102,6 +102,9 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(0, navigation.FooterMenuItems.Count);
                 Assert.AreSame(Geometry.Empty, page.Resources["NavigationViewItemExpandedPath"]);
                 Assert.AreSame(Geometry.Empty, navigation.Resources["NavigationViewItemExpandedPath"]);
+                Assert.AreEqual(new Thickness(0), navigation.Resources["NavigationViewContentGridBorderThickness"]);
+                Assert.AreEqual(new CornerRadius(0), navigation.Resources["NavigationViewContentGridCornerRadius"]);
+                Assert.AreEqual(Colors.Transparent, ((SolidColorBrush)navigation.Resources["NavigationViewContentBackground"]).Color);
                 foreach (var resourcePair in new[]
                 {
                     Tuple.Create("NavigationViewItemBackground", "TreeViewItemBackground"),
@@ -120,7 +123,7 @@ namespace ModernWpf.Gallery.Tests
                 }
 
                 var contentFrameBorder = (Border)page.FindName("ContentFrameBorder");
-                Assert.AreEqual(new Thickness(4, -1, 0, 0), contentFrameBorder.Margin);
+                Assert.AreEqual(new Thickness(5, 0, 0, 0), contentFrameBorder.Margin);
                 Assert.AreEqual(new Thickness(24, 16, 24, 0), contentFrameBorder.Padding);
 
                 CollectionAssert.AreEqual(

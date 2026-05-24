@@ -67,6 +67,11 @@
             ItemInvoked="OnNavigationItemInvoked"
             OpenPaneLength="257"
             PaneDisplayMode="Left">
+            <ui:NavigationView.Resources>
+                <Thickness x:Key="NavigationViewContentGridBorderThickness">0</Thickness>
+                <CornerRadius x:Key="NavigationViewContentGridCornerRadius">0</CornerRadius>
+                <SolidColorBrush x:Key="NavigationViewContentBackground" Color="Transparent" />
+            </ui:NavigationView.Resources>
             <ui:NavigationView.PaneFooter>
                 <StackPanel Margin="8,10,0,2" Orientation="Vertical">
                     <Separator
@@ -100,9 +105,10 @@
                     </Button>
                 </StackPanel>
             </ui:NavigationView.PaneFooter>
+            <!-- Retained NavigationView pane is one pixel narrower than the official TreeView shell. -->
             <Border
                 x:Name="ContentFrameBorder"
-                Margin="4,-1,0,0"
+                Margin="5,0,0,0"
                 Padding="24,16,24,0"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch"
