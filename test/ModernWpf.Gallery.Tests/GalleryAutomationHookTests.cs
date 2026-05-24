@@ -2405,6 +2405,8 @@ namespace ModernWpf.Gallery.Tests
                     var commandBar = (Mux.CommandBar)FindByAutomationId(appBarSeparatorPage, "GallerySample_AppBarSeparator_CommandBar");
                     Assert.IsNotNull(commandBar);
                     Assert.AreEqual("Control1", commandBar.Name);
+                    Assert.AreEqual(Mux.CommandBarDefaultLabelPosition.Collapsed, commandBar.DefaultLabelPosition);
+                    Assert.AreEqual(Mux.CommandBarOverflowButtonVisibility.Visible, commandBar.OverflowButtonVisibility);
                     Assert.AreEqual(6, commandBar.PrimaryCommands.Count);
                     AssertAppBarButton(commandBar.PrimaryCommands[0], Mux.Symbol.AttachCamera, "Attach Camera");
                     Assert.IsInstanceOfType(commandBar.PrimaryCommands[1], typeof(Mux.AppBarSeparator));

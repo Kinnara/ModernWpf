@@ -617,15 +617,17 @@ namespace ModernWpf.Gallery.Pages
             var bar = new Mux.CommandBar
             {
                 Name = "Control1",
+                DefaultLabelPosition = Mux.CommandBarDefaultLabelPosition.Collapsed,
+                OverflowButtonVisibility = Mux.CommandBarOverflowButtonVisibility.Visible,
                 HorizontalAlignment = HorizontalAlignment.Left
             };
             GalleryAutomation.WithAutomationId(bar, GalleryAutomation.SampleElementId("AppBarSeparator", "CommandBar"));
-            bar.PrimaryCommands.Add(CreateAppBarButton(Mux.Symbol.AttachCamera, "Attach Camera"));
+            bar.PrimaryCommands.Add(CreateAppBarSeparatorButton(Mux.Symbol.AttachCamera, "Attach Camera"));
             bar.PrimaryCommands.Add(new Mux.AppBarSeparator());
-            bar.PrimaryCommands.Add(CreateAppBarButton(Mux.Symbol.Like, "Like"));
-            bar.PrimaryCommands.Add(CreateAppBarButton(Mux.Symbol.Dislike, "Dislike"));
+            bar.PrimaryCommands.Add(CreateAppBarSeparatorButton(Mux.Symbol.Like, "Like"));
+            bar.PrimaryCommands.Add(CreateAppBarSeparatorButton(Mux.Symbol.Dislike, "Dislike"));
             bar.PrimaryCommands.Add(new Mux.AppBarSeparator());
-            bar.PrimaryCommands.Add(CreateAppBarButton(Mux.Symbol.Orientation, "Orientation"));
+            bar.PrimaryCommands.Add(CreateAppBarSeparatorButton(Mux.Symbol.Orientation, "Orientation"));
 
             scrollViewer.Content = bar;
             panel.Children.Add(scrollViewer);
@@ -1950,6 +1952,13 @@ namespace ModernWpf.Gallery.Pages
                 Icon = new Mux.SymbolIcon(symbol),
                 Label = label
             };
+        }
+
+        private static Mux.AppBarButton CreateAppBarSeparatorButton(Mux.Symbol symbol, string label)
+        {
+            var button = CreateAppBarButton(symbol, label);
+            button.Width = 68;
+            return button;
         }
 
         private static Mux.AppBarButton CreateSourceAppBarButton(string name, Mux.Symbol symbol, string label, TextBlock output)

@@ -106,6 +106,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.AppBarControlsMatchWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 43 tests per target. The source-backed AppBarSeparator sample now keeps the local official WinUI Gallery `AppBarSeparatorPage.xaml` structure and snippets while explicitly adapting the live ModernWpf `CommandBar` to the installed WinUI reference visual: collapsed labels, visible overflow button, and 68px primary command slots. Runtime coverage pins `Control1`, the collapsed label position, visible overflow button, the two separators, and all four source command labels/icons.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls AppBarSeparator -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-214409-917-93620/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required AppBarSeparator sample element was found, primary crops now match at `334x48`, and Light primary delta is `6.44`. This supersedes the older `artifacts/visual-checks/20260524-182323-334-106688/report.md` AppBarSeparator crop of `406x48` vs `334x48` with primary delta `15.12`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls AppBarSeparator -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-214441-448-49064/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required AppBarSeparator sample element was found, primary crops match at `334x48`, and Dark primary delta is `8.26`. This supersedes the older `artifacts/visual-checks/20260524-182421-190-76064/report.md` AppBarSeparator primary delta `17.43`.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the AppBarSeparator crop alignment. Current build output still prints the recurring `Failed to resolve WinRT.Runtime.dll` messages plus existing ModernWpf/ModernWpf.Controls warnings, and ends with `19 Warning(s)` and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.DateAndCalendarExtensionSamplesMatchWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 43 tests per target. The generated ModernWpf `CalendarDatePicker`, `CalendarView`, and `TimePicker` extension pages now follow the local official WinUI Gallery sources at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\CalendarDatePickerPage.xaml`, `CalendarViewPage.xaml` / `.xaml.cs`, and `TimePickerPage.xaml`. `DateTimeSampleFactory.CreateExamples` now covers these Date & Calendar WinUI extension pages, keeps the official sample headers/snippets, preserves source-facing names such as `CalendarDatePicker1`, `Control1`, `isGroupLabelVisible`, `isOutOfScopeEnabled`, `selectionMode`, `calendarIdentifier`, `calendarLanguages`, `TimePicker1`, `TimePicker2`, `TimePicker3`, and their combo-box parts, and exposes curated automation IDs `GallerySample_CalendarDatePicker_Root` / `GallerySample_CalendarDatePicker_CalendarDatePicker`, `GallerySample_CalendarView_Root` / `GallerySample_CalendarView_CalendarView`, and `GallerySample_TimePicker_Root` / `GallerySample_TimePicker_TimePicker`.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls CalendarDatePicker,CalendarView,TimePicker -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -1777,15 +1785,18 @@ now covers these three Menu & Toolbar WinUI examples, keeps source-facing names
 such as `Button1`-`Button6`, `Control1`, and the output TextBlocks, and exposes
 curated automation IDs for runtime and visual checks. Current AppBar
 WinUI-reference evidence is
-`artifacts/visual-checks/20260524-182323-334-106688/report.md` for Light and
-`artifacts/visual-checks/20260524-182421-190-76064/report.md` for Dark, both
-with ModernWpf and installed WinUI 3 Gallery `Passed`. AppBarButton and
-AppBarToggleButton have matching `68x64` primary crops with deltas
-`10.27` / `11.97` and `10.29` / `11.98`; AppBarSeparator is source-backed and
-passes with primary deltas `15.12` / `17.43`, but the retained ModernWpf
-CommandBar template currently measures wider than the installed WinUI reference
-(`406x48` vs `334x48`), so treat that as a known remaining control-template
-drift rather than a source-shape gap.
+`artifacts/visual-checks/20260524-182323-334-106688/report.md` /
+`artifacts/visual-checks/20260524-182421-190-76064/report.md` for AppBarButton
+and AppBarToggleButton, plus
+`artifacts/visual-checks/20260524-214409-917-93620/report.md` /
+`artifacts/visual-checks/20260524-214441-448-49064/report.md` for the refreshed
+AppBarSeparator crop. AppBarButton and AppBarToggleButton have matching
+`68x64` primary crops with deltas `10.27` / `11.97` and `10.29` / `11.98`.
+AppBarSeparator now explicitly adapts the live ModernWpf `CommandBar` to the
+installed WinUI reference visual with collapsed labels, visible overflow button,
+and 68px primary command slots while keeping the source XAML pane unchanged;
+primary crops now match at `334x48` with deltas `6.44` / `8.26`, superseding
+the older `406x48` vs `334x48` drift.
 The generated ModernWpf StandardUICommand and XamlUICommand extension pages now
 use the local official WinUI Gallery structures from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\StandardUICommandPage.xaml`
