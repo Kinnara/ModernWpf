@@ -18,6 +18,8 @@ namespace ModernWpf.Gallery.Pages
         {
             switch (uniqueId)
             {
+                case "ContentDialog":
+                    return CreateContentDialogExamples(sampleSnippets);
                 case "TeachingTip":
                     return CreateTeachingTipExamples(sampleSnippets);
                 default:
@@ -46,10 +48,74 @@ namespace ModernWpf.Gallery.Pages
         {
             var panel = CreateSamplePanel("A basic content dialog with content.");
             GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("ContentDialog"));
-            var row = new StackPanel
+            panel.Children.Add(CreateContentDialogExampleContent(
+                title: "Save your work?",
+                primaryButtonText: "Save",
+                secondaryButtonText: "Don't Save",
+                defaultButton: Mux.ContentDialogButton.Primary,
+                buttonContent: "Show dialog",
+                buttonAutomationId: GalleryAutomation.SampleElementId("ContentDialog", "ShowButton"),
+                primaryResultText: "User saved their work",
+                secondaryResultText: "User did not save their work",
+                assignRootAutomationId: false));
+            return panel;
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateContentDialogExamples(IReadOnlyList<SampleSnippet> sampleSnippets)
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "A basic content dialog with content.",
+                    CreateContentDialogExampleContent(
+                        title: "Save your work?",
+                        primaryButtonText: "Save",
+                        secondaryButtonText: "Don't Save",
+                        defaultButton: Mux.ContentDialogButton.Primary,
+                        buttonContent: "Show dialog",
+                        buttonAutomationId: GalleryAutomation.SampleElementId("ContentDialog", "ShowButton"),
+                        primaryResultText: "User saved their work",
+                        secondaryResultText: "User did not save their work",
+                        assignRootAutomationId: true),
+                    FindSnippetText(sampleSnippets, "ContentDialogSample1_xaml.txt"),
+                    FindSnippetText(sampleSnippets, "ContentDialogSample1_cs.txt")),
+                new GalleryExample(
+                    "A content dialog without a default button.",
+                    CreateContentDialogExampleContent(
+                        title: "Replace file?",
+                        primaryButtonText: "Replace",
+                        secondaryButtonText: "Keep",
+                        defaultButton: Mux.ContentDialogButton.None,
+                        buttonContent: "Show dialog without default button",
+                        buttonAutomationId: GalleryAutomation.SampleElementId("ContentDialog", "ShowNoDefaultButton"),
+                        primaryResultText: "User replaced the file",
+                        secondaryResultText: "User kept the file",
+                        assignRootAutomationId: false),
+                    FindSnippetText(sampleSnippets, "ContentDialogSample2_xaml.txt"),
+                    FindSnippetText(sampleSnippets, "ContentDialogSample2_cs.txt"))
+            };
+        }
+
+        private static GallerySamplePanel CreateContentDialogExampleContent(
+            string title,
+            string primaryButtonText,
+            string secondaryButtonText,
+            Mux.ContentDialogButton defaultButton,
+            string buttonContent,
+            string buttonAutomationId,
+            string primaryResultText,
+            string secondaryResultText,
+            bool assignRootAutomationId)
+        {
+            var row = new GallerySamplePanel
             {
                 Orientation = Orientation.Horizontal
             };
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(row, GalleryAutomation.SampleRootId("ContentDialog"));
+            }
+
             var output = new TextBlock
             {
                 Margin = new Thickness(12, 0, 0, 0),
@@ -58,44 +124,28 @@ namespace ModernWpf.Gallery.Pages
             };
             var button = new Button
             {
-                Content = "Show dialog"
+                Content = buttonContent
             };
-            GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("ContentDialog", "ShowButton"));
+            GalleryAutomation.WithAutomationId(button, buttonAutomationId);
             button.Click += async delegate
             {
                 var dialog = new Mux.ContentDialog
                 {
-                    Title = "Save your work?",
-                    Content = new StackPanel
-                    {
-                        VerticalAlignment = VerticalAlignment.Stretch,
-                        HorizontalAlignment = HorizontalAlignment.Stretch,
-                        Children =
-                        {
-                            new TextBlock
-                            {
-                                Text = "Lorem ipsum dolor sit amet, adipisicing elit.",
-                                TextWrapping = TextWrapping.Wrap
-                            },
-                            new CheckBox
-                            {
-                                Content = "Upload your content to the cloud."
-                            }
-                        }
-                    },
-                    PrimaryButtonText = "Save",
-                    SecondaryButtonText = "Don't Save",
+                    Title = title,
+                    Content = CreateContentDialogContent(),
+                    PrimaryButtonText = primaryButtonText,
+                    SecondaryButtonText = secondaryButtonText,
                     CloseButtonText = "Cancel",
-                    DefaultButton = Mux.ContentDialogButton.Primary
+                    DefaultButton = defaultButton
                 };
                 var result = await dialog.ShowAsync();
                 if (result == Mux.ContentDialogResult.Primary)
                 {
-                    output.Text = "User saved their work";
+                    output.Text = primaryResultText;
                 }
                 else if (result == Mux.ContentDialogResult.Secondary)
                 {
-                    output.Text = "User did not save their work";
+                    output.Text = secondaryResultText;
                 }
                 else
                 {
@@ -105,8 +155,28 @@ namespace ModernWpf.Gallery.Pages
 
             row.Children.Add(button);
             row.Children.Add(output);
-            panel.Children.Add(row);
-            return panel;
+            return row;
+        }
+
+        private static StackPanel CreateContentDialogContent()
+        {
+            return new StackPanel
+            {
+                VerticalAlignment = VerticalAlignment.Stretch,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                Children =
+                {
+                    new TextBlock
+                    {
+                        Text = "Lorem ipsum dolor sit amet, adipisicing elit.",
+                        TextWrapping = TextWrapping.Wrap
+                    },
+                    new CheckBox
+                    {
+                        Content = "Upload your content to the cloud."
+                    }
+                }
+            };
         }
 
         private static UIElement CreateFlyoutSample()

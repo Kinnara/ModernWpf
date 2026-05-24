@@ -623,7 +623,7 @@ namespace ModernWpf.Gallery.Shell
                 UpdateBackButton();
 
                 Dispatcher.BeginInvoke(
-                    DispatcherPriority.ContextIdle,
+                    DispatcherPriority.Background,
                     new Action(() =>
                     {
                         if (_currentTarget != null && _currentTarget.Equals(target))
@@ -631,8 +631,8 @@ namespace ModernWpf.Gallery.Shell
                             ContentHost.UpdateLayout();
                             GalleryDiagnostics.PrepareInteractiveVisualState(ContentHost);
                             ContentHost.UpdateLayout();
-                            GalleryDiagnostics.WriteVisualArtifacts(ContentHost);
                             SetVisualTestState(route, "Ready:" + route);
+                            GalleryDiagnostics.WriteVisualArtifacts(ContentHost);
                         }
                     }));
             }
@@ -750,6 +750,7 @@ namespace ModernWpf.Gallery.Shell
             VisualTestCurrentRouteText.Text = GalleryDiagnostics.CurrentRoute;
             VisualTestReadyStateText.Text = GalleryDiagnostics.ReadyState;
             VisualTestLastExceptionText.Text = GalleryDiagnostics.LastException;
+            GalleryDiagnostics.WriteStatusFile();
         }
 
         internal static string FormatRoute(NavigationTarget target)

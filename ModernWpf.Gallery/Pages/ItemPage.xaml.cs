@@ -234,6 +234,12 @@ namespace ModernWpf.Gallery.Pages
                 return dialogFlyoutExamples;
             }
 
+            var statusInfoExamples = StatusInfoSampleFactory.CreateExamples(uniqueId, sampleSnippets);
+            if (statusInfoExamples.Count != 0)
+            {
+                return statusInfoExamples;
+            }
+
             var sampleContent = CreateWorkingSampleContent(uniqueId);
             if (sampleContent == null)
             {

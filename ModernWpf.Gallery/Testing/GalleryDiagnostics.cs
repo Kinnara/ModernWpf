@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Automation;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Controls.Primitives;
@@ -12,6 +13,8 @@ namespace ModernWpf.Gallery.Testing
 {
     internal static class GalleryDiagnostics
     {
+        public const string StatusFileName = "modernwpf-gallery-status.txt";
+
         private static readonly object Gate = new object();
 
         public static bool IsEnabled { get; private set; }
@@ -41,6 +44,8 @@ namespace ModernWpf.Gallery.Testing
                 ReadyState = "Starting";
                 LastException = string.Empty;
             }
+
+            WriteStatusFile();
         }
 
         public static void ResetForTests()
@@ -90,6 +95,47 @@ namespace ModernWpf.Gallery.Testing
             if (IsEnabled && !string.IsNullOrWhiteSpace(ArtifactDirectory))
             {
                 TryAppendExceptionLog(text);
+                WriteStatusFile();
+            }
+        }
+
+        public static void WriteStatusFile()
+        {
+            string artifactDirectory;
+            string currentRoute;
+            string readyState;
+            string lastException;
+            bool isEnabled;
+
+            lock (Gate)
+            {
+                isEnabled = IsEnabled;
+                artifactDirectory = ArtifactDirectory;
+                currentRoute = CurrentRoute;
+                readyState = ReadyState;
+                lastException = LastException;
+            }
+
+            if (!isEnabled || string.IsNullOrWhiteSpace(artifactDirectory))
+            {
+                return;
+            }
+
+            try
+            {
+                Directory.CreateDirectory(artifactDirectory);
+                File.WriteAllLines(
+                    Path.Combine(artifactDirectory, StatusFileName),
+                    new[]
+                    {
+                        currentRoute ?? string.Empty,
+                        readyState ?? string.Empty,
+                        Convert.ToBase64String(Encoding.UTF8.GetBytes(lastException ?? string.Empty))
+                    });
+            }
+            catch
+            {
+                // File-backed status is a test aid and must not affect the Gallery runtime.
             }
         }
 
@@ -173,7 +219,7 @@ namespace ModernWpf.Gallery.Testing
             {
                 var automationId = AutomationProperties.GetAutomationId(element);
                 var artifactId = ShouldWriteVisualArtifact(automationId) ? automationId : element.Name;
-                if (ShouldWriteVisualArtifact(artifactId))
+                if (ShouldWriteVisualArtifact(artifactId) && !ShouldSkipVisualArtifact(element, artifactId))
                 {
                     WriteElementPng(element, Path.Combine(ArtifactDirectory, SanitizeFileName(artifactId) + ".png"));
                 }
@@ -264,6 +310,12 @@ namespace ModernWpf.Gallery.Testing
                     string.Equals(automationId, "GalleryContentHost", StringComparison.Ordinal) ||
                     string.Equals(automationId, "ContentRootGrid", StringComparison.Ordinal) ||
                     string.Equals(automationId, "ContentPagePane", StringComparison.Ordinal));
+        }
+
+        private static bool ShouldSkipVisualArtifact(FrameworkElement element, string artifactId)
+        {
+            return string.Equals(artifactId, "GalleryContentHost", StringComparison.Ordinal) &&
+                element is Frame;
         }
 
         private static DependencyObject FindByAutomationId(DependencyObject root, string automationId)

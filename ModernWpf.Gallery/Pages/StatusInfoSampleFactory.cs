@@ -1,12 +1,50 @@
+using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using ModernWpf.Gallery.Models;
 using Mux = ModernWpf.Controls;
 
 namespace ModernWpf.Gallery.Pages
 {
     internal static class StatusInfoSampleFactory
     {
+        private const string InfoBarLongMessage = "A long essential app message for your users to be informed of, acknowledge, or take action on. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin dapibus dolor vitae justo rutrum, ut lobortis nibh mattis. Aenean id elit commodo, semper felis nec.";
+
+        private const string InfoBarExample1Xaml =
+@"<InfoBar
+    IsOpen=""True""
+    Severity=""Informational""
+    Title=""Title""
+    Message=""Essential app message for your users to be informed of, acknowledge, or take action on."" />";
+
+        private const string InfoBarExample2Xaml =
+@"<InfoBar
+    IsOpen=""True""
+    Title=""Title""
+    Message=""A long essential app message..."">
+</InfoBar>";
+
+        private const string InfoBarExample3Xaml =
+@"<InfoBar
+    IsOpen=""True""
+    IsIconVisible=""True""
+    IsClosable=""True""
+    Title=""Title""
+    Message=""Essential app message for your users to be informed of, acknowledge, or take action on."" />";
+
+        public static IReadOnlyList<GalleryExample> CreateExamples(string uniqueId, IReadOnlyList<SampleSnippet> sampleSnippets)
+        {
+            switch (uniqueId)
+            {
+                case "InfoBar":
+                    return CreateInfoBarExamples();
+                default:
+                    return Array.Empty<GalleryExample>();
+            }
+        }
+
         public static UIElement Create(string uniqueId)
         {
             switch (uniqueId)
@@ -44,8 +82,46 @@ namespace ModernWpf.Gallery.Pages
         {
             var panel = CreateSamplePanel("InfoBar presents inline app status without blocking the current task.");
             GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("InfoBar"));
-            var host = new StackPanel();
-            GalleryAutomation.WithAutomationId(host, GalleryAutomation.SampleElementId("InfoBar", "Host"));
+            panel.Children.Add(CreateSeverityInfoBarExampleContent(assignRootAutomationId: false));
+            return panel;
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateInfoBarExamples()
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "A closable InfoBar with options to change its Severity.",
+                    CreateSeverityInfoBarExampleContent(assignRootAutomationId: true),
+                    InfoBarExample1Xaml,
+                    null),
+                new GalleryExample(
+                    "A closable InfoBar with a long or short message and various buttons",
+                    CreateMessageInfoBarExampleContent(),
+                    InfoBarExample2Xaml,
+                    null),
+                new GalleryExample(
+                    "A closable InfoBar with options to display the close button and icon",
+                    CreateIconAndCloseInfoBarExampleContent(),
+                    InfoBarExample3Xaml,
+                    null)
+            };
+        }
+
+        private static GallerySamplePanel CreateInfoBarExampleRoot(bool assignRootAutomationId)
+        {
+            var root = new GallerySamplePanel();
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("InfoBar"));
+            }
+
+            return root;
+        }
+
+        private static GallerySamplePanel CreateSeverityInfoBarExampleContent(bool assignRootAutomationId)
+        {
+            var root = CreateInfoBarExampleRoot(assignRootAutomationId);
             var infoBar = new Mux.InfoBar
             {
                 IsOpen = true,
@@ -56,23 +132,202 @@ namespace ModernWpf.Gallery.Pages
                 HorizontalAlignment = HorizontalAlignment.Left
             };
             GalleryAutomation.WithAutomationId(infoBar, GalleryAutomation.SampleElementId("InfoBar", "InfoBar"));
-            host.Children.Add(infoBar);
 
-            var reset = new Button
+            var isOpen = CreateOptionCheckBox("Is Open", isChecked: true);
+            isOpen.Name = "InfoBarIsOpenCheckBox1";
+            isOpen.Checked += delegate { infoBar.IsOpen = true; };
+            isOpen.Unchecked += delegate { infoBar.IsOpen = false; };
+
+            var severity = CreateOptionComboBox("InfoBarSeverityComboBox");
+            severity.Items.Add("Informational");
+            severity.Items.Add("Success");
+            severity.Items.Add("Warning");
+            severity.Items.Add("Error");
+            severity.SelectionChanged += delegate
             {
-                Content = "Show InfoBar",
-                Padding = new Thickness(16, 6, 16, 6),
-                Margin = new Thickness(0, 12, 0, 0),
+                var selectedSeverity = severity.SelectedItem as string;
+                switch (selectedSeverity)
+                {
+                    case "Error":
+                        infoBar.Severity = Mux.InfoBarSeverity.Error;
+                        break;
+                    case "Warning":
+                        infoBar.Severity = Mux.InfoBarSeverity.Warning;
+                        break;
+                    case "Success":
+                        infoBar.Severity = Mux.InfoBarSeverity.Success;
+                        break;
+                    default:
+                        infoBar.Severity = Mux.InfoBarSeverity.Informational;
+                        break;
+                }
+            };
+            severity.SelectedItem = "Informational";
+
+            var options = CreateOptionsPanel();
+            options.Children.Add(isOpen);
+            options.Children.Add(CreateOptionBlock("Severity", severity));
+
+            root.Children.Add(CreateInfoBarExampleLayout(infoBar, options));
+            return root;
+        }
+
+        private static GallerySamplePanel CreateMessageInfoBarExampleContent()
+        {
+            var root = CreateInfoBarExampleRoot(assignRootAutomationId: false);
+            var infoBar = new Mux.InfoBar
+            {
+                IsOpen = true,
+                Title = "Title",
+                Message = InfoBarLongMessage,
+                Width = 560,
                 HorizontalAlignment = HorizontalAlignment.Left
             };
-            GalleryAutomation.WithAutomationId(reset, GalleryAutomation.SampleElementId("InfoBar", "ShowButton"));
-            reset.Click += delegate
+            GalleryAutomation.WithAutomationId(infoBar, GalleryAutomation.SampleElementId("InfoBar", "LongMessageInfoBar"));
+
+            var isOpen = CreateOptionCheckBox("Is Open", isChecked: true);
+            isOpen.Name = "InfoBarIsOpenCheckBox2";
+            isOpen.Checked += delegate { infoBar.IsOpen = true; };
+            isOpen.Unchecked += delegate { infoBar.IsOpen = false; };
+
+            var messageLength = CreateOptionComboBox("InfoBarMessageComboBox");
+            messageLength.Items.Add(new ComboBoxItem { Content = "Short" });
+            messageLength.Items.Add(new ComboBoxItem { Content = "Long" });
+            messageLength.SelectionChanged += delegate
             {
-                infoBar.IsOpen = true;
+                infoBar.Message = messageLength.SelectedIndex == 0
+                    ? "A short essential app message."
+                    : InfoBarLongMessage;
             };
-            host.Children.Add(reset);
-            panel.Children.Add(host);
-            return panel;
+            messageLength.SelectedIndex = 1;
+
+            var actionButton = CreateOptionComboBox("InfoBarActionButtonComboBox");
+            actionButton.Items.Add(new ComboBoxItem { Content = "None" });
+            actionButton.Items.Add(new ComboBoxItem { Content = "Button" });
+            actionButton.Items.Add(new ComboBoxItem { Content = "Hyperlink" });
+            actionButton.SelectionChanged += delegate
+            {
+                if (actionButton.SelectedIndex == 1)
+                {
+                    infoBar.ActionButton = new Button { Content = "Action" };
+                }
+                else if (actionButton.SelectedIndex == 2)
+                {
+                    infoBar.ActionButton = new Mux.HyperlinkButton
+                    {
+                        Content = "Informational link",
+                        NavigateUri = new Uri("http://www.microsoft.com/")
+                    };
+                }
+                else
+                {
+                    infoBar.ActionButton = null;
+                }
+            };
+            actionButton.SelectedIndex = 0;
+
+            var options = CreateOptionsPanel();
+            options.Children.Add(isOpen);
+            options.Children.Add(CreateOptionBlock("Message Length", messageLength));
+            options.Children.Add(CreateOptionBlock("Action Button", actionButton));
+
+            root.Children.Add(CreateInfoBarExampleLayout(infoBar, options));
+            return root;
+        }
+
+        private static GallerySamplePanel CreateIconAndCloseInfoBarExampleContent()
+        {
+            var root = CreateInfoBarExampleRoot(assignRootAutomationId: false);
+            var infoBar = new Mux.InfoBar
+            {
+                IsOpen = true,
+                IsIconVisible = true,
+                IsClosable = true,
+                Title = "Title",
+                Message = "Essential app message for your users to be informed of, acknowledge, or take action on.",
+                Width = 560,
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+            GalleryAutomation.WithAutomationId(infoBar, GalleryAutomation.SampleElementId("InfoBar", "IconAndCloseInfoBar"));
+
+            var isOpen = CreateOptionCheckBox("Is Open", isChecked: true);
+            isOpen.Name = "InfoBarIsOpenCheckBox3";
+            isOpen.Checked += delegate { infoBar.IsOpen = true; };
+            isOpen.Unchecked += delegate { infoBar.IsOpen = false; };
+
+            var isIconVisible = CreateOptionCheckBox("Is Icon Visible", isChecked: true);
+            isIconVisible.Name = "InfoBarIsIconVisibleCheckBox";
+            isIconVisible.Checked += delegate { infoBar.IsIconVisible = true; };
+            isIconVisible.Unchecked += delegate { infoBar.IsIconVisible = false; };
+
+            var isClosable = CreateOptionCheckBox("Is Closable", isChecked: true);
+            isClosable.Name = "InfoBarIsClosableCheckBox";
+            isClosable.Checked += delegate { infoBar.IsClosable = true; };
+            isClosable.Unchecked += delegate { infoBar.IsClosable = false; };
+
+            var options = CreateOptionsPanel();
+            options.Children.Add(isOpen);
+            options.Children.Add(isIconVisible);
+            options.Children.Add(isClosable);
+
+            root.Children.Add(CreateInfoBarExampleLayout(infoBar, options));
+            return root;
+        }
+
+        private static Grid CreateInfoBarExampleLayout(UIElement infoBar, UIElement options)
+        {
+            var layout = new Grid();
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(560) });
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(32) });
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(150) });
+
+            layout.Children.Add(infoBar);
+            Grid.SetColumn(options, 2);
+            layout.Children.Add(options);
+            return layout;
+        }
+
+        private static StackPanel CreateOptionsPanel()
+        {
+            return new StackPanel
+            {
+                Width = 150,
+                VerticalAlignment = VerticalAlignment.Top
+            };
+        }
+
+        private static CheckBox CreateOptionCheckBox(string content, bool isChecked)
+        {
+            return new CheckBox
+            {
+                Content = content,
+                IsChecked = isChecked,
+                Margin = new Thickness(0, 0, 0, 8)
+            };
+        }
+
+        private static StackPanel CreateOptionBlock(string label, Control control)
+        {
+            var block = new StackPanel
+            {
+                Margin = new Thickness(0, 0, 0, 8)
+            };
+            block.Children.Add(new TextBlock
+            {
+                Text = label,
+                Margin = new Thickness(0, 0, 0, 4)
+            });
+            block.Children.Add(control);
+            return block;
+        }
+
+        private static ComboBox CreateOptionComboBox(string name)
+        {
+            return new ComboBox
+            {
+                Name = name,
+                HorizontalAlignment = HorizontalAlignment.Stretch
+            };
         }
 
         private static UIElement CreateProgressBarSample()

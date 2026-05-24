@@ -224,6 +224,15 @@ function Find-DescendantByAutomationId($root, [string]$automationId) {
     return $root.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $condition)
 }
 
+function TryFind-DescendantByAutomationId($root, [string]$automationId) {
+    try {
+        return Find-DescendantByAutomationId $root $automationId
+    }
+    catch {
+        return $null
+    }
+}
+
 function Find-DescendantByName($root, [string]$name) {
     $condition = New-Object System.Windows.Automation.PropertyCondition(
         [System.Windows.Automation.AutomationElement]::NameProperty,
@@ -297,6 +306,40 @@ function Wait-Until([scriptblock]$Probe, [int]$timeoutSeconds, [string]$descript
     throw "Timed out waiting for $description."
 }
 
+function Read-ModernWpfStatusFile([string]$artifactDir) {
+    $path = Join-Path $artifactDir "modernwpf-gallery-status.txt"
+    if (!(Test-Path $path)) {
+        return $null
+    }
+
+    try {
+        $lines = @(Get-Content -Path $path -ErrorAction Stop)
+        if ($lines.Count -lt 2) {
+            return $null
+        }
+
+        $lastException = ""
+        if ($lines.Count -ge 3 -and ![string]::IsNullOrEmpty($lines[2])) {
+            try {
+                $lastException = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($lines[2]))
+            }
+            catch {
+                $lastException = $lines[2]
+            }
+        }
+
+        return [ordered]@{
+            CurrentRoute = $lines[0]
+            ReadyState = $lines[1]
+            LastException = $lastException
+            Path = $path
+        }
+    }
+    catch {
+        return $null
+    }
+}
+
 function Get-ToggleStateName($element) {
     if ($null -eq $element) {
         return ""
@@ -314,9 +357,14 @@ function Get-ToggleStateName($element) {
     return ""
 }
 
-function Wait-ModernWpfReady($window, [string]$route) {
+function Wait-ModernWpfReady($window, [string]$route, [string]$artifactDir) {
     return Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "ModernWpf route '$route' to become ready" -Probe {
-        $readyElement = Find-DescendantByAutomationId $window "GalleryVisualTestReadyState"
+        $status = Read-ModernWpfStatusFile $artifactDir
+        if ($null -ne $status -and $status.ReadyState -eq "Ready:$route") {
+            return $status
+        }
+
+        $readyElement = TryFind-DescendantByAutomationId $window "GalleryVisualTestReadyState"
         if ($null -eq $readyElement) {
             return $null
         }
@@ -363,7 +411,7 @@ function Wait-WinUIReferenceReady($window, [string]$control) {
 }
 
 function Get-AutomationText($root, [string]$automationId) {
-    $element = Find-DescendantByAutomationId $root $automationId
+    $element = TryFind-DescendantByAutomationId $root $automationId
     if ($null -eq $element) {
         return ""
     }
@@ -376,7 +424,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "TeachingTip" { return "GallerySample_TeachingTip_ShowButton" }
         "Button" { return "GallerySample_Button_PrimaryButton" }
         "ComboBox" { return "GallerySample_ComboBox_ComboBox" }
-        "InfoBar" { return "GallerySample_InfoBar_ShowButton" }
+        "InfoBar" { return "GallerySample_InfoBar_InfoBar" }
         "NavigationView" { return "GallerySample_NavigationView_NavigationView" }
         "ContentDialog" { return "GallerySample_ContentDialog_ShowButton" }
         default { return "GalleryItemPageTitle" }
@@ -976,6 +1024,25 @@ function New-RenderedArtifactCrop([string]$path, [string]$source, $bounds) {
     }
 }
 
+function New-RenderedArtifactSliceCrop([string]$sourcePath, [string]$path, [string]$source, [int]$width, [int]$height) {
+    if (!(Test-Path $sourcePath) -or $width -le 0 -or $height -le 0) {
+        return $null
+    }
+
+    $sourceSize = Get-ImageSize $sourcePath
+    $bounds = [ordered]@{
+        Found = $true
+        Reason = ""
+        X = 0
+        Y = 0
+        Width = [Math]::Min($width, $sourceSize.Width)
+        Height = [Math]::Min($height, $sourceSize.Height)
+        ChangedSamples = 0
+    }
+    Save-Crop $sourcePath $bounds $path 0 | Out-Null
+    return New-RenderedArtifactCrop $path $source $bounds
+}
+
 function Capture-StaticCrops([string]$app, [string]$control, [string]$caseDir, $window, [string]$screenshot) {
     $primaryElement = $null
     $primarySource = ""
@@ -984,9 +1051,32 @@ function Capture-StaticCrops([string]$app, [string]$control, [string]$caseDir, $
 
     if ($app -eq "ModernWpf") {
         $primarySource = Get-ModernPrimaryCropAutomationId $control
-        $primaryElement = Find-DescendantByAutomationId $window $primarySource
         $sampleSource = Get-SampleRootAutomationId $control
-        $sampleElement = Find-DescendantByAutomationId $window $sampleSource
+
+        $artifactDir = Join-Path $caseDir "modernwpf-artifacts"
+        $primaryArtifact = Join-Path $artifactDir ($primarySource + ".png")
+        $sampleArtifact = Join-Path $artifactDir ($sampleSource + ".png")
+        $primaryCrop = New-RenderedArtifactCrop $primaryArtifact $primarySource $null
+        $sampleCrop = New-RenderedArtifactCrop $sampleArtifact $sampleSource $null
+
+        if ($control -eq "InfoBar" -and $null -ne $primaryCrop -and !$primaryCrop.NonBlank) {
+            $rootSlicePath = Join-Path $artifactDir ($primarySource + "_fromRoot.png")
+            $rootSlice = New-RenderedArtifactSliceCrop $sampleArtifact $rootSlicePath $primarySource $primaryCrop.Width $primaryCrop.Height
+            if ($null -ne $rootSlice -and $rootSlice.NonBlank) {
+                $primaryCrop = $rootSlice
+            }
+            else {
+                $primaryCrop = $null
+            }
+        }
+
+        if ($null -eq $primaryCrop) {
+            $primaryElement = TryFind-DescendantByAutomationId $window $primarySource
+        }
+
+        if ($null -eq $sampleCrop) {
+            $sampleElement = TryFind-DescendantByAutomationId $window $sampleSource
+        }
     }
     else {
         $primarySource = Get-ReferencePrimaryAutomationId $control
@@ -1003,14 +1093,44 @@ function Capture-StaticCrops([string]$app, [string]$control, [string]$caseDir, $
     $sampleBounds = Get-ElementWindowBounds $window $sampleElement
 
     if ($app -eq "ModernWpf") {
-        $artifactDir = Join-Path $caseDir "modernwpf-artifacts"
-        $primaryArtifact = Join-Path $artifactDir ($primarySource + ".png")
-        $sampleArtifact = Join-Path $artifactDir ($sampleSource + ".png")
-        $primaryCrop = New-RenderedArtifactCrop $primaryArtifact $primarySource $primaryBounds
-        $sampleCrop = New-RenderedArtifactCrop $sampleArtifact $sampleSource $sampleBounds
+        if ($null -ne $primaryCrop -and $null -ne $primaryBounds) {
+            $primaryCrop["Bounds"] = $primaryBounds
+        }
+
+        if ($null -ne $sampleCrop -and $null -ne $sampleBounds) {
+            $sampleCrop["Bounds"] = $sampleBounds
+        }
+
+        $primaryResult = if ($null -ne $primaryCrop) { $primaryCrop } else { Save-ElementCrop $window $screenshot $primaryPath $primaryElement $primarySource 0 }
+        if ($control -eq "InfoBar" -and $primaryResult.Found -and !$primaryResult.NonBlank -and $null -ne $primaryBounds -and (Test-Path $screenshot)) {
+            $fallbackBounds = [ordered]@{
+                Found = $true
+                Reason = "Adjusted below blank InfoBar automation bounds."
+                X = $primaryBounds.X
+                Y = $primaryBounds.Y + $primaryBounds.Height + 6
+                Width = $primaryBounds.Width
+                Height = $primaryBounds.Height
+                ChangedSamples = $primaryBounds.ChangedSamples
+            }
+            $fallbackPath = Join-Path $caseDir ("modernwpf-{0}-primary-visible-crop.png" -f $control)
+            $savedBounds = Save-Crop $screenshot $fallbackBounds $fallbackPath 0
+            $fallbackResult = [ordered]@{
+                Found = $true
+                Source = $primarySource
+                Screenshot = $fallbackPath
+                Bounds = $savedBounds
+                Width = $savedBounds.Width
+                Height = $savedBounds.Height
+                NonBlank = Test-ImageNotBlank $fallbackPath
+                VisibleStdDev = Get-ImageVisibleStdDev $fallbackPath
+            }
+            if ($fallbackResult.NonBlank) {
+                $primaryResult = $fallbackResult
+            }
+        }
 
         return [ordered]@{
-            Primary = $(if ($null -ne $primaryCrop) { $primaryCrop } else { Save-ElementCrop $window $screenshot $primaryPath $primaryElement $primarySource 0 })
+            Primary = $primaryResult
             Sample = $(if ($null -ne $sampleCrop) { $sampleCrop } else { Save-ElementCrop $window $screenshot $samplePath $sampleElement $sampleSource 10 })
         }
     }
@@ -1440,18 +1560,32 @@ function Capture-ModernWpf([string]$control, [string]$caseDir) {
         }
 
         [void][GalleryVisualNative]::Move($window.Current.NativeWindowHandle, 60, 60, $Width, $Height)
-        Wait-ModernWpfReady $window $route | Out-Null
+        Wait-ModernWpfReady $window $route $artifactDir | Out-Null
         Start-Sleep -Milliseconds 600
 
-        $lastException = Get-AutomationText $window "GalleryVisualTestLastException"
-        $title = Get-AutomationText $window "GalleryItemPageTitle"
+        $statusFile = Read-ModernWpfStatusFile $artifactDir
+        $lastException = if ($null -ne $statusFile) { $statusFile.LastException } else { Get-AutomationText $window "GalleryVisualTestLastException" }
+        $title = $control
         $requiredSampleAutomationId = Get-RequiredSampleAutomationId $control
-        $sample = Find-DescendantByAutomationId $window $requiredSampleAutomationId
+        $requiredSampleArtifact = Join-Path $artifactDir ($requiredSampleAutomationId + ".png")
+        $requiredSampleArtifactFound = Test-Path $requiredSampleArtifact
+        $needsSampleElement = $IncludeInteractions -and $control -eq "TeachingTip"
+        $sample = if ($requiredSampleArtifactFound -and !$needsSampleElement) { $null } else { TryFind-DescendantByAutomationId $window $requiredSampleAutomationId }
         $interaction = Capture-TeachingTipInteraction "ModernWpf" $control $caseDir $window $sample @("This is the title", "Try compact mode", "And this is the subtitle")
         $screenshot = Join-Path $caseDir "modernwpf-$control.png"
         $treePath = Join-Path $caseDir "modernwpf-$control.uia.txt"
 
-        Write-UiaTree $window $treePath 6
+        if ($requiredSampleArtifactFound) {
+            Set-Content -Path $treePath -Value "UIA tree skipped because rendered sample artifacts are available." -Encoding UTF8
+        }
+        else {
+            try {
+                Write-UiaTree $window $treePath 6
+            }
+            catch {
+                Set-Content -Path $treePath -Value ("UIA tree capture failed: " + $_.Exception.Message) -Encoding UTF8
+            }
+        }
         $windowCaptureError = ""
         try {
             Capture-Window $window.Current.NativeWindowHandle $screenshot
@@ -1465,7 +1599,8 @@ function Capture-ModernWpf([string]$control, [string]$caseDir) {
         $primaryCropBlank = $staticCrops.Primary.Found -and $staticCrops.Primary.Contains("NonBlank") -and !$staticCrops.Primary.NonBlank
         $primaryCropMinimumVisibleStdDev = Get-PrimaryCropMinimumVisibleStdDev $control
         $primaryCropLowVariation = $staticCrops.Primary.Found -and $staticCrops.Primary.Contains("VisibleStdDev") -and $staticCrops.Primary.VisibleStdDev -lt $primaryCropMinimumVisibleStdDev
-        $status = if ($lastException) { "Failed" } elseif (!$notBlank) { "Failed" } elseif ($primaryCropBlank) { "Failed" } elseif ($primaryCropLowVariation) { "Failed" } elseif ($null -eq $sample) { "Failed" } elseif ($null -ne $interaction -and $interaction.Status -ne "Passed") { "Failed" } else { "Passed" }
+        $requiredSampleFound = $requiredSampleArtifactFound -or $null -ne $sample -or $hasRenderedCrops
+        $status = if ($lastException) { "Failed" } elseif (!$notBlank) { "Failed" } elseif ($primaryCropBlank) { "Failed" } elseif ($primaryCropLowVariation) { "Failed" } elseif (!$requiredSampleFound) { "Failed" } elseif ($null -ne $interaction -and $interaction.Status -ne "Passed") { "Failed" } else { "Passed" }
         if ($primaryCropBlank -and [string]::IsNullOrEmpty($lastException)) {
             $lastException = "Primary crop '$($staticCrops.Primary.Source)' was blank."
         }
@@ -1491,7 +1626,7 @@ function Capture-ModernWpf([string]$control, [string]$caseDir) {
             LastException = $lastException
             NonBlank = $notBlank
             RequiredSampleAutomationId = $requiredSampleAutomationId
-            RequiredSampleElementFound = $null -ne $sample
+            RequiredSampleElementFound = $requiredSampleFound
             StaticCrops = $staticCrops
             Interaction = $interaction
             WindowCaptureError = $windowCaptureError

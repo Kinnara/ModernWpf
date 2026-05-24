@@ -102,6 +102,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.InfoBarSampleUsesVisibleOpenInfoBarTemplate|FullyQualifiedName~GalleryAutomationHookTests.ContentDialogSampleMatchesWinUIGalleryFirstExampleButton|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds|FullyQualifiedName~GalleryAutomationHookTests.InfoBarSampleWritesRenderedVisualArtifacts|FullyQualifiedName~GalleryAutomationHookTests.FrameContentHostWritesDescendantVisualArtifacts|FullyQualifiedName~GalleryAutomationHookTests.VisualTestStatusFileWritesRouteAndReadyState|FullyQualifiedName~GalleryNavigationRuntimeTests.ShellVisualTestStatusHooksStayOutOfNormalAutomationTree" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 10 tests per target. The generated ModernWpf InfoBar page now follows the official WinUI Gallery three-example shape for severity, long-message/action-button, and icon/close-button variants; ContentDialog now exposes the two official WinUI Gallery examples for default primary button and no default button. Curated automation IDs remain stable, the visual-test status file records route readiness outside external UIA traversal, and the rendered artifact writer skips shell `Frame` surface captures while preserving descendant sample artifacts. Current warning/output remains `NU1903` and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls InfoBar,ContentDialog -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-111127-287-52592/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed` for InfoBar and ContentDialog. InfoBar Light primary delta is `17.31` with `560x103` vs `560x95` crops after the harness uses the actual visible InfoBar crop when the automation slot is blank; ContentDialog Light primary delta remains `5.52` with matching `101x32` crops.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls InfoBar,ContentDialog -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-111211-700-112328/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed` for InfoBar and ContentDialog. InfoBar Dark primary delta is `19.44` with `560x103` vs `560x95` crops; ContentDialog Dark primary delta is `9.27` with matching `101x32` crops.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the InfoBar and ContentDialog WinUI example alignment. Current build output ends with existing ModernWpf/ModernWpf.Controls warnings, recurring `Failed to resolve WinRT.Runtime.dll` messages, `19 Warning(s)`, and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.TeachingTipSampleButtonOpensTip|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds|FullyQualifiedName~GalleryAutomationHookTests.TeachingTipInteractionModeWritesOpenContentArtifact" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 7 tests per target. The generated ModernWpf TeachingTip page now follows the official WinUI Gallery three-example shape for targeted, non-targeted, and hero-content TeachingTips, consumes all six TeachingTip sample-code snippets inside those examples instead of duplicating them as an extra snippet list, preserves the curated visual-test automation IDs, and keeps the `TeachingTipMinWidth` runtime resource path covered. Current warning/output remains `NU1903` and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls TeachingTip -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -1113,6 +1121,23 @@ failure is superseded; its ModernWpf primary rendered crop was blank and the
 page only exposed a single generic working sample. Avoid reopening TeachingTip's
 first-sample/static structure unless a new WinUI source, visual crop, or
 interaction regression appears.
+The generated ModernWpf InfoBar and ContentDialog extension pages now follow
+the official WinUI Gallery example structure for the covered samples: InfoBar
+has severity, long-message/action-button, and icon/close-button examples, and
+ContentDialog has the default-primary and no-default-button examples with source
+panes populated from the paired sample-code files. Current WinUI-reference
+evidence for the pair is
+`artifacts/visual-checks/20260524-111127-287-52592/report.md` for Light and
+`artifacts/visual-checks/20260524-111211-700-112328/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`. InfoBar primary deltas
+are `17.31` / `19.44` with `560x103` vs `560x95` crops; ContentDialog primary
+deltas are `5.52` / `9.27` with matching `101x32` crops. The visual harness now
+uses file-backed ModernWpf route readiness and avoids expensive external UIA
+traversal when rendered sample artifacts are available; InfoBar keeps a
+screenshot-crop fallback because its automation bounds can point at a blank
+layout slot above the visible control. Avoid reopening these two first-sample
+structures unless a new WinUI source, visual crop, or readiness regression
+appears.
 Continue with the next highest-impact visible drift from the checklist, likely
 remaining High Contrast gaps, other NavigationView styling not covered
 by the TreeView token aliases or first-sample refresh, or other item pages that still lack current

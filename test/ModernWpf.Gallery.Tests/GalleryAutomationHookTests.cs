@@ -23,7 +23,6 @@ namespace ModernWpf.Gallery.Tests
         public static IEnumerable<object[]> CuratedSampleAutomationIds()
         {
             yield return new object[] { "TeachingTip", "GallerySample_TeachingTip_Root", "GallerySample_TeachingTip_ShowButton" };
-            yield return new object[] { "InfoBar", "GallerySample_InfoBar_Root", "GallerySample_InfoBar_ShowButton" };
             yield return new object[] { "InfoBar", "GallerySample_InfoBar_Root", "GallerySample_InfoBar_InfoBar" };
             yield return new object[] { "NavigationView", "GallerySample_NavigationView_Root", "GallerySample_NavigationView_NavigationView" };
             yield return new object[] { "ContentDialog", "GallerySample_ContentDialog_Root", "GallerySample_ContentDialog_ShowButton" };
@@ -180,10 +179,21 @@ namespace ModernWpf.Gallery.Tests
                     window.UpdateLayout();
                     WpfTestHost.DoEvents();
 
+                    Assert.AreEqual(2, page.Examples.Count);
+                    Assert.AreEqual("A basic content dialog with content.", page.Examples[0].HeaderText);
+                    Assert.AreEqual("A content dialog without a default button.", page.Examples[1].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "DefaultButton = ContentDialogButton.Primary");
+                    StringAssert.Contains(page.Examples[1].CSharpCode, "DefaultButton = ContentDialogButton.None");
+
                     var button = (Button)FindByAutomationId(page, "GallerySample_ContentDialog_ShowButton");
+                    var noDefaultButton = (Button)FindByAutomationId(page, "GallerySample_ContentDialog_ShowNoDefaultButton");
                     Assert.IsNotNull(button);
+                    Assert.IsNotNull(noDefaultButton);
                     Assert.AreEqual("Show dialog", button.Content);
+                    Assert.AreEqual("Show dialog without default button", noDefaultButton.Content);
                     Assert.AreSame(DependencyProperty.UnsetValue, button.ReadLocalValue(Control.PaddingProperty));
+                    Assert.AreSame(DependencyProperty.UnsetValue, noDefaultButton.ReadLocalValue(Control.PaddingProperty));
                 }
                 finally
                 {
@@ -270,9 +280,37 @@ namespace ModernWpf.Gallery.Tests
                     window.UpdateLayout();
                     WpfTestHost.DoEvents();
 
+                    Assert.AreEqual(3, page.Examples.Count);
+                    Assert.AreEqual("A closable InfoBar with options to change its Severity.", page.Examples[0].HeaderText);
+                    Assert.AreEqual("A closable InfoBar with a long or short message and various buttons", page.Examples[1].HeaderText);
+                    Assert.AreEqual("A closable InfoBar with options to display the close button and icon", page.Examples[2].HeaderText);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "Severity=\"Informational\"");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "A long essential app message...");
+                    StringAssert.Contains(page.Examples[2].XamlCode, "IsIconVisible=\"True\"");
+
                     var infoBar = (ModernWpf.Controls.InfoBar)FindByAutomationId(page, "GallerySample_InfoBar_InfoBar");
+                    var longMessageInfoBar = (ModernWpf.Controls.InfoBar)FindByAutomationId(page, "GallerySample_InfoBar_LongMessageInfoBar");
+                    var iconAndCloseInfoBar = (ModernWpf.Controls.InfoBar)FindByAutomationId(page, "GallerySample_InfoBar_IconAndCloseInfoBar");
                     Assert.IsNotNull(infoBar);
+                    Assert.IsNotNull(longMessageInfoBar);
+                    Assert.IsNotNull(iconAndCloseInfoBar);
                     Assert.IsTrue(infoBar.IsOpen);
+                    Assert.IsTrue(longMessageInfoBar.IsOpen);
+                    Assert.IsTrue(iconAndCloseInfoBar.IsOpen);
+                    Assert.AreEqual(560.0, infoBar.Width);
+                    Assert.AreEqual(ModernWpf.Controls.InfoBarSeverity.Informational, infoBar.Severity);
+                    Assert.IsTrue(iconAndCloseInfoBar.IsIconVisible);
+                    Assert.IsTrue(iconAndCloseInfoBar.IsClosable);
+
+                    var severityComboBox = FindNamedDescendant<ComboBox>(page, "InfoBarSeverityComboBox");
+                    var messageComboBox = FindNamedDescendant<ComboBox>(page, "InfoBarMessageComboBox");
+                    var actionButtonComboBox = FindNamedDescendant<ComboBox>(page, "InfoBarActionButtonComboBox");
+                    Assert.IsNotNull(severityComboBox);
+                    Assert.IsNotNull(messageComboBox);
+                    Assert.IsNotNull(actionButtonComboBox);
+                    Assert.AreEqual("Informational", severityComboBox.SelectedItem);
+                    Assert.AreEqual(1, messageComboBox.SelectedIndex);
+                    Assert.AreEqual(0, actionButtonComboBox.SelectedIndex);
 
                     var contentRoot = FindNamedDescendant<Border>(infoBar, "ContentRoot");
                     Assert.IsNotNull(contentRoot);
@@ -403,6 +441,94 @@ namespace ModernWpf.Gallery.Tests
                     WpfTestHost.DoEvents();
                 }
             });
+        }
+
+        [TestMethod]
+        public void FrameContentHostWritesDescendantVisualArtifacts()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var artifactDirectory = Path.Combine(Path.GetTempPath(), "ModernWpfGalleryTests", Path.GetRandomFileName());
+                GalleryDiagnostics.Configure(GalleryLaunchOptions.Parse(new[] { "--visual-test", "--visual-artifact-dir", artifactDirectory }));
+
+                var frame = new Frame
+                {
+                    Width = 900,
+                    Height = 700,
+                    Content = new ItemPage(GalleryCatalog.FindItem("InfoBar")),
+                    NavigationUIVisibility = System.Windows.Navigation.NavigationUIVisibility.Hidden
+                };
+                AutomationProperties.SetAutomationId(frame, "GalleryContentHost");
+
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = frame
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    GalleryDiagnostics.WriteVisualArtifacts(frame);
+
+                    var contentHostArtifact = Path.Combine(artifactDirectory, "GalleryContentHost.png");
+                    var infoBarArtifact = Path.Combine(artifactDirectory, "GallerySample_InfoBar_InfoBar.png");
+                    Assert.IsFalse(File.Exists(contentHostArtifact), "Frame host surfaces are intentionally skipped.");
+                    Assert.IsTrue(File.Exists(infoBarArtifact), infoBarArtifact + " was not written.");
+                    Assert.IsTrue(new FileInfo(infoBarArtifact).Length > 0);
+                    Assert.IsTrue(HasVisibleRgbPixels(infoBarArtifact), infoBarArtifact + " has no visible RGB content.");
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    GalleryDiagnostics.ResetForTests();
+                    if (Directory.Exists(artifactDirectory))
+                    {
+                        Directory.Delete(artifactDirectory, recursive: true);
+                    }
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void VisualTestStatusFileWritesRouteAndReadyState()
+        {
+            var artifactDirectory = Path.Combine(Path.GetTempPath(), "ModernWpfGalleryTests", Path.GetRandomFileName());
+            GalleryDiagnostics.Configure(GalleryLaunchOptions.Parse(new[] { "--visual-test", "--visual-artifact-dir", artifactDirectory }));
+
+            try
+            {
+                GalleryDiagnostics.RecordRoute("item/InfoBar");
+                GalleryDiagnostics.SetReadyState("Ready:item/InfoBar");
+                GalleryDiagnostics.WriteStatusFile();
+
+                var statusPath = Path.Combine(artifactDirectory, GalleryDiagnostics.StatusFileName);
+                Assert.IsTrue(File.Exists(statusPath), statusPath + " was not written.");
+                var lines = File.ReadAllLines(statusPath);
+                Assert.IsTrue(lines.Length >= 3);
+                Assert.AreEqual("item/InfoBar", lines[0]);
+                Assert.AreEqual("Ready:item/InfoBar", lines[1]);
+                Assert.AreEqual(string.Empty, System.Text.Encoding.UTF8.GetString(System.Convert.FromBase64String(lines[2])));
+            }
+            finally
+            {
+                GalleryDiagnostics.ResetForTests();
+                if (Directory.Exists(artifactDirectory))
+                {
+                    Directory.Delete(artifactDirectory, recursive: true);
+                }
+            }
         }
 
         [TestMethod]
