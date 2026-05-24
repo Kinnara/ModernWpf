@@ -30,7 +30,6 @@
             <StackPanel Margin="0,0,0,24">
                 <TextBlock
                     Margin="0,0,0,24"
-                    Padding="0,0,0,16"
                     TextWrapping="Wrap">
                     <Run>
                         Color provides an intuitive way of communicating information to users in your app: it can be used to indicate interactivity, give feedback to user actions, and give your interface a sense of visual continuity.

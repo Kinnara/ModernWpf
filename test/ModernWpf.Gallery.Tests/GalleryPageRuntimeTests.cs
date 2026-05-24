@@ -1892,7 +1892,7 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual("Consistent spacing helps create visual harmony and improves the readability and usability of your application.", ((TextBlock)spacingBody.Children[0]).Text);
                 var spacingUsage = (TextBlock)spacingBody.Children[1];
                 Assert.AreEqual("Use the following spacing values to maintain a consistent layout throughout your app.", spacingUsage.Text);
-                Assert.AreEqual(new Thickness(0, 0, 0, 8), spacingUsage.Padding);
+                Assert.AreEqual(new Thickness(0), spacingUsage.Padding);
                 var images = (StackPanel)spacingBody.Children[2];
                 Assert.AreEqual(Orientation.Horizontal, images.Orientation);
                 Assert.AreEqual(new Thickness(0, 0, 0, 16), images.Margin);
@@ -1971,7 +1971,7 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual("Best practice is to use Regular weight for most text, use Semibold for titles.", ((TextBlock)typographyBody.Children[1]).Text);
                 var typographyMinimum = (TextBlock)typographyBody.Children[2];
                 Assert.AreEqual("The minimum values should be 12px Regular, 14px Semibold.", typographyMinimum.Text);
-                Assert.AreEqual(new Thickness(0, 0, 0, 8), typographyMinimum.Padding);
+                Assert.AreEqual(new Thickness(0), typographyMinimum.Padding);
                 var typeRampExample = (ControlExample)typographyBody.Children[3];
                 var typeRamp = (Grid)typeRampExample.ExampleContent;
                 Assert.AreEqual(new Thickness(0), typeRamp.Margin);
@@ -2007,7 +2007,7 @@ namespace ModernWpf.Gallery.Tests
                 var geometryUsage = (TextBlock)geometryBody.Children[2];
                 Assert.AreEqual("You can reference built-in corner radii styles using: CornerRadius=\"{StaticResource ControlCornerRadius}\" .", geometryUsage.Text);
                 Assert.AreEqual(new Thickness(0, 0, 0, 12), geometryUsage.Margin);
-                Assert.AreEqual(new Thickness(0, 0, 0, 8), geometryUsage.Padding);
+                Assert.AreEqual(new Thickness(0), geometryUsage.Padding);
 
                 var geometryImageHost = (Border)geometryBody.Children[3];
                 Assert.AreEqual(500.0, geometryImageHost.Width);
@@ -2078,7 +2078,7 @@ namespace ModernWpf.Gallery.Tests
 
                 var body = GetDirectPageBodyStack(page);
                 Assert.AreEqual(3, body.Children.Count);
-                Assert.AreEqual(new Thickness(0, 0, 0, 16), ((TextBlock)body.Children[0]).Padding);
+                Assert.AreEqual(new Thickness(0), ((TextBlock)body.Children[0]).Padding);
                 var selector = (ComboBox)body.Children[1];
                 var sectionHost = (ContentControl)body.Children[2];
 

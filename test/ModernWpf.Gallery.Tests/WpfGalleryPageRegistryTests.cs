@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Navigation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Gallery.Models;
@@ -81,6 +82,10 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsNotNull(page, uniqueId);
                     Assert.IsInstanceOfType(page, typeof(UIElement), uniqueId);
                     StringAssert.Contains(page.GetType().FullName, ".Pages.WpfGallery.");
+                    Assert.AreEqual(
+                        Application.Current.FindResource("BodyTextBlockFontSize"),
+                        TextElement.GetFontSize(page),
+                        uniqueId);
                 }
 
                 Assert.IsFalse(WpfGalleryPageRegistry.HasDirectPageContent("NavigationView"));

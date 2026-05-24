@@ -36,7 +36,6 @@
                 <TextBlock
                     Margin="0,0,0,12"
                     HorizontalAlignment="Left"
-                    Padding="0,0,0,8"
                     TextWrapping="Wrap">
                     Use the following spacing values to maintain a consistent layout throughout your app.
                 </TextBlock>

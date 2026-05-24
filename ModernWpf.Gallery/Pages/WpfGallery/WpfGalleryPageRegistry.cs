@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Documents;
 
 namespace ModernWpf.Gallery.Pages
 {
@@ -70,7 +71,22 @@ namespace ModernWpf.Gallery.Pages
                 return null;
             }
 
-            return DirectPageFactories.TryGetValue(uniqueId, out var factory) ? factory() : null;
+            if (!DirectPageFactories.TryGetValue(uniqueId, out var factory))
+            {
+                return null;
+            }
+
+            var page = factory();
+            ApplyOfficialDirectPageTextInheritance(page);
+            return page;
+        }
+
+        private static void ApplyOfficialDirectPageTextInheritance(UIElement page)
+        {
+            if (page is FrameworkElement element)
+            {
+                element.SetResourceReference(TextElement.FontSizeProperty, "BodyTextBlockFontSize");
+            }
         }
     }
 }
