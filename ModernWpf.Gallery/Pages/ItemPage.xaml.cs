@@ -264,7 +264,7 @@ namespace ModernWpf.Gallery.Pages
                 return scrollingExamples;
             }
 
-            var navigationExamples = NavigationSampleFactory.CreateExamples(uniqueId);
+            var navigationExamples = NavigationSampleFactory.CreateExamples(uniqueId, sampleSnippets);
             if (navigationExamples.Count != 0)
             {
                 return navigationExamples;

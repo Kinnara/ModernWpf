@@ -7,8 +7,10 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using ModernWpf.Controls.Primitives;
+using ModernWpf.Gallery.Models;
 using ModernWpf.Gallery.Testing;
 using Mux = ModernWpf.Controls;
 
@@ -157,6 +159,109 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
     </PivotItem>
 </Pivot>";
 
+        private const string TabViewBasicXaml =
+@"<TabView AddTabButtonClick=""TabView_AddButtonClick"" TabCloseRequested=""TabView_TabCloseRequested"" Loaded=""TabView_Loaded"" />";
+
+        private const string TabViewMarkupXaml =
+@"<TabView AddTabButtonClick=""TabView_AddButtonClick"" TabCloseRequested=""TabView_TabCloseRequested"">
+    <TabView.TabItems>
+        <TabViewItem Header=""Document 0"">
+            <TabViewItem.IconSource>
+                <SymbolIconSource Symbol=""Placeholder"" />
+            </TabViewItem.IconSource>
+            <samplepages:SamplePage1 />
+        </TabViewItem>
+        <TabViewItem Header=""Document 1"">
+            <TabViewItem.IconSource>
+                <SymbolIconSource Symbol=""Placeholder"" />
+            </TabViewItem.IconSource>
+            <samplepages:SamplePage2 />
+        </TabViewItem>
+        <TabViewItem Header=""Document 2"">
+            <TabViewItem.IconSource>
+                <SymbolIconSource Symbol=""Placeholder"" />
+            </TabViewItem.IconSource>
+            <samplepages:SamplePage3 />
+        </TabViewItem>
+    </TabView.TabItems>
+</TabView>";
+
+        private const string TabViewItemsSourceXaml =
+@"<TabView TabItemsSource=""{x:Bind myDatas, Mode=OneWay}"" AddTabButtonClick=""TabViewItemsSourceSample_AddTabButtonClick"" TabCloseRequested=""TabViewItemsSourceSample_TabCloseRequested"" />";
+
+        private const string TabViewKeyboardingXaml =
+@"<TabView AddTabButtonClick=""TabView_AddButtonClick"" TabCloseRequested=""TabView_TabCloseRequested"" Loaded=""TabView_Loaded"">
+    <TabView.KeyboardAccelerators>
+        <KeyboardAccelerator Key=""T"" Modifiers=""Control"" Invoked=""NewTabKeyboardAccelerator_Invoked"" />
+        <KeyboardAccelerator Key=""W"" Modifiers=""Control"" Invoked=""CloseSelectedTabKeyboardAccelerator_Invoked"" />
+        <KeyboardAccelerator Key=""Number1"" Modifiers=""Control"" Invoked=""NavigateToNumberedTabKeyboardAccelerator_Invoked"" />
+        <KeyboardAccelerator Key=""Number2"" Modifiers=""Control"" Invoked=""NavigateToNumberedTabKeyboardAccelerator_Invoked"" />
+        <KeyboardAccelerator Key=""Number3"" Modifiers=""Control"" Invoked=""NavigateToNumberedTabKeyboardAccelerator_Invoked"" />
+        <KeyboardAccelerator Key=""Number4"" Modifiers=""Control"" Invoked=""NavigateToNumberedTabKeyboardAccelerator_Invoked"" />
+        <KeyboardAccelerator Key=""Number5"" Modifiers=""Control"" Invoked=""NavigateToNumberedTabKeyboardAccelerator_Invoked"" />
+        <KeyboardAccelerator Key=""Number6"" Modifiers=""Control"" Invoked=""NavigateToNumberedTabKeyboardAccelerator_Invoked"" />
+        <KeyboardAccelerator Key=""Number7"" Modifiers=""Control"" Invoked=""NavigateToNumberedTabKeyboardAccelerator_Invoked"" />
+        <KeyboardAccelerator Key=""Number8"" Modifiers=""Control"" Invoked=""NavigateToNumberedTabKeyboardAccelerator_Invoked"" />
+        <KeyboardAccelerator Key=""Number9"" Modifiers=""Control"" Invoked=""NavigateToNumberedTabKeyboardAccelerator_Invoked"" />
+    </TabView.KeyboardAccelerators>
+</TabView>";
+
+        private const string TabViewHeaderFooterXaml =
+@"<TabView>
+    <TabView.TabStripHeader>
+        <TextBlock Text=""TabStripHeader Content"" VerticalAlignment=""Center"" Margin=""8,6"" Style=""{ThemeResource BaseTextBlockStyle}"" />
+    </TabView.TabStripHeader>
+    <TabView.TabStripFooter>
+        <TextBlock Text=""TabStripFooter Content"" VerticalAlignment=""Center"" HorizontalAlignment=""Right"" Margin=""6"" Style=""{ThemeResource BaseTextBlockStyle}"" />
+    </TabView.TabStripFooter>
+</TabView>";
+
+        private const string TabViewWidthModeXaml =
+@"<TabView TabWidthMode=""$(TabWidthMode)"" />";
+
+        private const string TabViewCloseButtonXaml =
+@"<TabView CloseButtonOverlayMode=""$(CloseButtonOverlayMode)"" />";
+
+        private const string TabViewColorIconsXaml =
+@"<TabView>
+    <TabView.TabItems>
+        <TabViewItem Header=""CMD Prompt"">
+            <TabViewItem.IconSource>
+                <BitmapIconSource UriSource=""/Assets/SampleMedia/cmd.png"" ShowAsMonochrome=""False"" />
+            </TabViewItem.IconSource>
+        </TabViewItem>
+        <TabViewItem Header=""PowerShell"">
+            <TabViewItem.IconSource>
+                <BitmapIconSource UriSource=""/Assets/SampleMedia/powershell.png"" ShowAsMonochrome=""False"" />
+            </TabViewItem.IconSource>
+        </TabViewItem>
+        <TabViewItem Header=""Windows Subsystem for Linux"">
+            <TabViewItem.IconSource>
+                <BitmapIconSource UriSource=""/Assets/SampleMedia/linux.png"" ShowAsMonochrome=""False"" />
+            </TabViewItem.IconSource>
+        </TabViewItem>
+    </TabView.TabItems>
+</TabView>";
+
+        private const string TabViewAccentBackgroundXaml =
+@"<TabView>
+    <TabView.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key=""Light"">
+                    <SolidColorBrush x:Key=""TabViewBackground"" Color=""{ThemeResource SystemAccentColorLight2}""/>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key=""Dark"">
+                    <SolidColorBrush x:Key=""TabViewBackground"" Color=""{ThemeResource SystemAccentColorDark2}""/>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </TabView.Resources>
+</TabView>";
+
+        private const string TabViewWindowingXaml =
+@"Check out the TabViewWindowingSamplePage.xaml and *.cs files to see the complete code.";
+
         private static readonly string[] BreadcrumbFoldersString =
         {
             "Home",
@@ -207,6 +312,11 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
 
         public static IReadOnlyList<GalleryExample> CreateExamples(string uniqueId)
         {
+            return CreateExamples(uniqueId, Array.Empty<SampleSnippet>());
+        }
+
+        public static IReadOnlyList<GalleryExample> CreateExamples(string uniqueId, IReadOnlyList<SampleSnippet> sampleSnippets)
+        {
             switch (uniqueId)
             {
                 case "BreadcrumbBar":
@@ -215,6 +325,8 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
                     return CreatePivotExamples();
                 case "SelectorBar":
                     return CreateSelectorBarExamples();
+                case "TabView":
+                    return CreateTabViewExamples(sampleSnippets);
                 default:
                     return Array.Empty<GalleryExample>();
             }
@@ -820,45 +932,511 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
 
         private static UIElement CreateTabViewSample()
         {
-            var panel = CreateSamplePanel("TabView maps to the ModernWpf-styled WPF TabControl with explicit add and close commands.");
-            var tabControl = new TabControl
+            var panel = new GallerySamplePanel
             {
-                Width = 520,
-                Height = 260
+                Margin = new Thickness(0, 0, 0, 12)
             };
-            tabControl.Items.Add(CreateTab("Document 0", "Document 0 content"));
-            tabControl.Items.Add(CreateTab("Document 1", "Document 1 content"));
-            tabControl.Items.Add(CreateTab("Document 2", "Document 2 content"));
+            GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("TabView"));
+            panel.Children.Add(CreateTabViewBasicExampleContent(false));
+            panel.Children.Add(CreateTabViewMarkupExampleContent());
+            panel.Children.Add(CreateTabViewItemsSourceExampleContent());
+            panel.Children.Add(CreateTabViewKeyboardingExampleContent());
+            panel.Children.Add(CreateTabViewHeaderFooterExampleContent());
+            panel.Children.Add(CreateTabViewWidthModeExampleContent());
+            panel.Children.Add(CreateTabViewCloseButtonExampleContent());
+            panel.Children.Add(CreateTabViewColorIconsExampleContent());
+            panel.Children.Add(CreateTabViewAccentBackgroundExampleContent());
+            panel.Children.Add(CreateTabViewWindowingExampleContent());
+            return panel;
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateTabViewExamples(IReadOnlyList<SampleSnippet> sampleSnippets)
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "A TabView with support for adding, closing, and rearranging tabs",
+                    CreateTabViewBasicExampleContent(true),
+                    TabViewBasicXaml,
+                    FindSampleCodeText(sampleSnippets, "TabViewBasicSample_cs.txt")),
+                new GalleryExample(
+                    "A TabView with TabViewItems defined in markup",
+                    CreateTabViewMarkupExampleContent(),
+                    TabViewMarkupXaml,
+                    null),
+                new GalleryExample(
+                    "A TabView bound to a collection of MyData objects",
+                    CreateTabViewItemsSourceExampleContent(),
+                    TabViewItemsSourceXaml,
+                    null),
+                new GalleryExample(
+                    "A TabView with keyboarding support",
+                    CreateTabViewKeyboardingExampleContent(),
+                    TabViewKeyboardingXaml,
+                    FindSampleCodeText(sampleSnippets, "TabViewKeyboardAcceleratorSample_cs.txt")),
+                new GalleryExample(
+                    "You can put custom content in TabStripHeader and TabStripFooter",
+                    CreateTabViewHeaderFooterExampleContent(),
+                    TabViewHeaderFooterXaml,
+                    null),
+                new GalleryExample(
+                    "Tab widths can either be equally sized, sized to the content of the tab, or sized to only show the icon when unselected",
+                    CreateTabViewWidthModeExampleContent(),
+                    TabViewWidthModeXaml,
+                    null),
+                new GalleryExample(
+                    "The close button can be persistent or only visible on hover",
+                    CreateTabViewCloseButtonExampleContent(),
+                    TabViewCloseButtonXaml,
+                    null),
+                new GalleryExample(
+                    "TabView with color tab icons",
+                    CreateTabViewColorIconsExampleContent(),
+                    TabViewColorIconsXaml,
+                    null),
+                new GalleryExample(
+                    "A TabView with accent colored TabStrip background",
+                    CreateTabViewAccentBackgroundExampleContent(),
+                    TabViewAccentBackgroundXaml,
+                    null),
+                new GalleryExample(
+                    "Complete TabView windowing sample",
+                    CreateTabViewWindowingExampleContent(),
+                    TabViewWindowingXaml,
+                    null)
+            };
+        }
+
+        private static UIElement CreateTabViewBasicExampleContent(bool assignRootAutomationId)
+        {
+            var root = CreateTabViewExampleRoot(assignRootAutomationId);
+            var tabControl = CreateTabViewControl("TabView1", true);
+            AddGeneratedDocumentTabs(tabControl);
+            root.Children.Add(tabControl);
+            root.Children.Add(CreateTabViewCommandBar(tabControl, "TabView1"));
+            return root;
+        }
+
+        private static UIElement CreateTabViewMarkupExampleContent()
+        {
+            var root = CreateTabViewExampleRoot(false);
+            var tabControl = CreateTabViewControl("TabViewMarkupSample", false);
+            tabControl.Items.Add(CreateTabViewTab("Document 0", "SamplePage1"));
+            tabControl.Items.Add(CreateTabViewTab("Document 1", "SamplePage2"));
+            tabControl.Items.Add(CreateTabViewTab("Document 2", "SamplePage3"));
             tabControl.SelectedIndex = 0;
+            root.Children.Add(tabControl);
+            root.Children.Add(CreateTabViewCommandBar(tabControl, "TabViewMarkupSample"));
+            return root;
+        }
+
+        private static UIElement CreateTabViewItemsSourceExampleContent()
+        {
+            var root = CreateTabViewExampleRoot(false);
+            var data = new ObservableCollection<TabViewData>();
+            for (var i = 0; i < 3; i++)
+            {
+                data.Add(CreateTabViewData(i));
+            }
+
+            var tabControl = CreateTabViewControl("TabViewItemsSourceSample", false);
+            tabControl.ItemsSource = data;
+            tabControl.DisplayMemberPath = "DataHeader";
+            tabControl.ContentTemplate = CreateTabViewDataContentTemplate();
+            tabControl.SelectedIndex = 0;
+            root.Children.Add(tabControl);
 
             var commands = new StackPanel
             {
                 Orientation = Orientation.Horizontal,
                 Margin = new Thickness(0, 12, 0, 0)
             };
+            var addButton = CreateButton("Add tab");
+            addButton.Name = "TabViewItemsSourceSampleAddButton";
+            addButton.Click += delegate
+            {
+                data.Add(CreateTabViewData(data.Count));
+                tabControl.SelectedIndex = data.Count - 1;
+            };
+            var closeButton = CreateButton("Close selected");
+            closeButton.Name = "TabViewItemsSourceSampleCloseButton";
+            closeButton.Click += delegate
+            {
+                if (tabControl.SelectedItem is TabViewData selected)
+                {
+                    data.Remove(selected);
+                }
+            };
+            commands.Children.Add(addButton);
+            commands.Children.Add(closeButton);
+            root.Children.Add(commands);
+            return root;
+        }
+
+        private static UIElement CreateTabViewKeyboardingExampleContent()
+        {
+            var root = CreateTabViewExampleRoot(false);
+            root.Children.Add(CreateTextBlock("- Ctrl+T opens a new tab", new Thickness(0)));
+            root.Children.Add(CreateTextBlock("- Ctrl+W closes the selected tab", new Thickness(0)));
+            root.Children.Add(CreateTextBlock("- Ctrl+1 to Ctrl+8 selects that number tab", new Thickness(0)));
+            root.Children.Add(CreateTextBlock("- Ctrl+9 selects the last tab (regardless of the number of tabs)", new Thickness(0, 0, 0, 24)));
+
+            var tabControl = CreateTabViewControl("TabView2", false);
+            AddGeneratedDocumentTabs(tabControl);
+            root.Children.Add(tabControl);
+            root.Children.Add(CreateTabViewCommandBar(tabControl, "TabView2"));
+            return root;
+        }
+
+        private static UIElement CreateTabViewHeaderFooterExampleContent()
+        {
+            var root = CreateTabViewExampleRoot(false);
+            root.Children.Add(CreateTextBlock("You can put any content in the TabStripHeader and TabStripFooter areas", new Thickness(0, 0, 0, 12)));
+            root.Children.Add(CreateTextBlock("If your TabView is used inside the app's titlebar area, use the TabStripFooter to specify a custom drag region", new Thickness(0, 0, 0, 12)));
+            root.Children.Add(CreateTextBlock("See TabViewWindowingSamplePage.xaml and *.cs files to see the complete code", new Thickness(0, 0, 0, 24)));
+
+            var stripContent = new DockPanel
+            {
+                LastChildFill = true
+            };
+            stripContent.Children.Add(CreateTabStripText("TabStripHeader Content", new Thickness(8, 6, 16, 6), Dock.Left));
+            stripContent.Children.Add(CreateTabStripText("TabStripFooter Content", new Thickness(16, 6, 6, 6), Dock.Right));
+            root.Children.Add(stripContent);
+
+            var tabControl = CreateTabViewControl("TabViewHeaderFooterSample", false);
+            AddGeneratedDocumentTabs(tabControl);
+            root.Children.Add(tabControl);
+            root.Children.Add(CreateTabViewCommandBar(tabControl, "TabViewHeaderFooterSample"));
+            return root;
+        }
+
+        private static UIElement CreateTabViewWidthModeExampleContent()
+        {
+            var root = CreateTabViewExampleRoot(false);
+            var tabControl = CreateTabViewControl("TabView3", false);
+            tabControl.Items.Add(CreateTabViewTab("Home", "SamplePage1"));
+            tabControl.Items.Add(CreateTabViewTab("Tab 2 Has Longer Text", "SamplePage2"));
+            tabControl.Items.Add(CreateTabViewTab("Third Tab", "SamplePage3"));
+            tabControl.SelectedIndex = 0;
+            root.Children.Add(tabControl);
+
+            var comboBox = CreateOptionComboBox("TabWidthBehaviorComboBox", "TabWidthBehavior", "SizeToContent", "Equal", "Compact");
+            comboBox.SelectionChanged += delegate
+            {
+                ApplyTabWidthMode(tabControl, ((ComboBoxItem)comboBox.SelectedItem).Content.ToString());
+            };
+            root.Children.Add(comboBox);
+            ApplyTabWidthMode(tabControl, "SizeToContent");
+            return root;
+        }
+
+        private static UIElement CreateTabViewCloseButtonExampleContent()
+        {
+            var root = CreateTabViewExampleRoot(false);
+            var tabControl = CreateTabViewControl("TabView4", false);
+            tabControl.Items.Add(CreateTabViewTab("Home", "SamplePage1"));
+            tabControl.Items.Add(CreateTabViewTab("Tab 2 Has Longer Text", "SamplePage2"));
+            tabControl.Items.Add(CreateTabViewTab("Third Tab", "SamplePage3"));
+            tabControl.SelectedIndex = 0;
+            root.Children.Add(tabControl);
+
+            var comboBox = CreateOptionComboBox("TabCloseButtonOverlayModeComboBox", "TabViewItem CloseButtonOverlayMode", "Auto", "Always", "OnHover");
+            comboBox.SelectedIndex = 1;
+            comboBox.SelectionChanged += delegate
+            {
+                ApplyCloseButtonOverlayMode(tabControl, ((ComboBoxItem)comboBox.SelectedItem).Content.ToString());
+            };
+            root.Children.Add(comboBox);
+            ApplyCloseButtonOverlayMode(tabControl, "Always");
+            return root;
+        }
+
+        private static UIElement CreateTabViewColorIconsExampleContent()
+        {
+            var root = CreateTabViewExampleRoot(false);
+            root.Children.Add(CreateTextBlock(@"Use BitmapIcon.ShowAsMonochrome=""False"" to display full color icons in the TabViewItem", new Thickness(0, 0, 0, 12)));
+            var tabControl = CreateTabViewControl("TabViewColorIconsSample", false);
+            tabControl.MinWidth = 490;
+            tabControl.MinHeight = 0;
+            tabControl.Items.Add(CreateTabViewTab(CreateBitmapHeader("CMD Prompt", "cmd.png"), "CMD Prompt"));
+            tabControl.Items.Add(CreateTabViewTab(CreateBitmapHeader("PowerShell", "powershell.png"), "PowerShell"));
+            tabControl.Items.Add(CreateTabViewTab(CreateBitmapHeader("Windows Subsystem for Linux", "linux.png"), "Windows Subsystem for Linux"));
+            tabControl.SelectedIndex = 0;
+            root.Children.Add(tabControl);
+            return root;
+        }
+
+        private static UIElement CreateTabViewAccentBackgroundExampleContent()
+        {
+            var root = CreateTabViewExampleRoot(false);
+            var tabControl = CreateTabViewControl("TabViewAccentSample", false);
+            tabControl.Resources["TabViewBackground"] = IsDarkGalleryTheme()
+                ? CreateBrush("#004275")
+                : CreateBrush("#99EBFF");
+            AddGeneratedDocumentTabs(tabControl);
+            root.Children.Add(tabControl);
+            root.Children.Add(CreateTabViewCommandBar(tabControl, "TabViewAccentSample"));
+            return root;
+        }
+
+        private static UIElement CreateTabViewWindowingExampleContent()
+        {
+            var root = CreateTabViewExampleRoot(false);
+            var button = CreateButton("Click here to launch the sample");
+            button.Name = "TabViewWindowingButton";
+            button.Click += delegate
+            {
+                var owner = Window.GetWindow(button);
+                var window = new Window
+                {
+                    Title = "TabView windowing sample",
+                    Width = 720,
+                    Height = 460,
+                    Content = CreateTabViewBasicExampleContent(false)
+                };
+                if (owner != null)
+                {
+                    window.Owner = owner;
+                }
+                window.Show();
+            };
+            root.Children.Add(button);
+            return root;
+        }
+
+        private static GallerySamplePanel CreateTabViewExampleRoot(bool assignRootAutomationId)
+        {
+            var root = new GallerySamplePanel();
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("TabView"));
+            }
+
+            return root;
+        }
+
+        private static TabControl CreateTabViewControl(string name, bool assignPrimaryAutomationId)
+        {
+            var tabControl = new TabControl
+            {
+                Name = name,
+                MinHeight = 475,
+                Margin = new Thickness(-12),
+                SelectedIndex = 0,
+                Style = FindStyleResource("DefaultTabControlStyle")
+            };
+            if (assignPrimaryAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(tabControl, GalleryAutomation.SampleElementId("TabView", "TabView"));
+            }
+
+            return tabControl;
+        }
+
+        private static void AddGeneratedDocumentTabs(TabControl tabControl)
+        {
+            for (var i = 0; i < 3; i++)
+            {
+                tabControl.Items.Add(CreateGeneratedTabViewTab(i));
+            }
+
+            tabControl.SelectedIndex = 0;
+        }
+
+        private static TabItem CreateGeneratedTabViewTab(int index)
+        {
+            return CreateTabViewTab("Document " + index, "SamplePage" + (index % 3 + 1));
+        }
+
+        private static StackPanel CreateTabViewCommandBar(TabControl tabControl, string namePrefix)
+        {
+            var commands = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                Margin = new Thickness(0, 12, 0, 0)
+            };
             var add = CreateButton("Add tab");
-            var close = CreateButton("Close selected");
+            add.Name = namePrefix + "AddButton";
             add.Click += delegate
             {
                 var index = tabControl.Items.Count;
-                var tab = CreateTab("Document " + index, "Document " + index + " content");
+                var tab = CreateGeneratedTabViewTab(index);
                 tabControl.Items.Add(tab);
                 tabControl.SelectedItem = tab;
             };
+            var close = CreateButton("Close selected");
+            close.Name = namePrefix + "CloseButton";
             close.Click += delegate
             {
-                if (tabControl.SelectedItem is TabItem && tabControl.Items.Count > 1)
+                if (tabControl.SelectedItem != null)
                 {
-                    var selected = (TabItem)tabControl.SelectedItem;
-                    tabControl.Items.Remove(selected);
+                    tabControl.Items.Remove(tabControl.SelectedItem);
                 }
             };
             commands.Children.Add(add);
             commands.Children.Add(close);
+            return commands;
+        }
 
-            panel.Children.Add(tabControl);
-            panel.Children.Add(commands);
-            return panel;
+        private static TabItem CreateTabViewTab(object header, string pageTitle)
+        {
+            return new TabItem
+            {
+                Header = header,
+                Style = FindStyleResource("DefaultTabItemStyle"),
+                Content = CreateTabViewPageContent(pageTitle)
+            };
+        }
+
+        private static Border CreateTabViewPageContent(string title)
+        {
+            return new Border
+            {
+                Padding = new Thickness(18),
+                Child = new TextBlock
+                {
+                    Text = title,
+                    FontSize = 22,
+                    FontWeight = FontWeights.SemiBold,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                }
+            };
+        }
+
+        private static DataTemplate CreateTabViewDataContentTemplate()
+        {
+            var textBlock = new FrameworkElementFactory(typeof(TextBlock));
+            textBlock.SetBinding(TextBlock.TextProperty, new Binding("DataContent"));
+            textBlock.SetValue(TextBlock.FontSizeProperty, 22.0);
+            textBlock.SetValue(TextBlock.FontWeightProperty, FontWeights.SemiBold);
+            textBlock.SetValue(FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Center);
+            textBlock.SetValue(FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+            var border = new FrameworkElementFactory(typeof(Border));
+            border.SetValue(Border.PaddingProperty, new Thickness(18));
+            border.AppendChild(textBlock);
+            return new DataTemplate(typeof(TabViewData))
+            {
+                VisualTree = border
+            };
+        }
+
+        private static TabViewData CreateTabViewData(int index)
+        {
+            return new TabViewData
+            {
+                DataHeader = "MyData Doc " + index,
+                DataContent = "SamplePage" + (index % 3 + 1)
+            };
+        }
+
+        private static TextBlock CreateTextBlock(string text, Thickness margin)
+        {
+            return new TextBlock
+            {
+                Text = text,
+                Margin = margin,
+                TextWrapping = TextWrapping.Wrap
+            };
+        }
+
+        private static TextBlock CreateTabStripText(string text, Thickness margin, Dock dock)
+        {
+            var textBlock = CreateTextBlock(text, margin);
+            textBlock.VerticalAlignment = VerticalAlignment.Center;
+            DockPanel.SetDock(textBlock, dock);
+            return textBlock;
+        }
+
+        private static ComboBox CreateOptionComboBox(string name, string header, params string[] options)
+        {
+            var comboBox = new ComboBox
+            {
+                Name = name,
+                Width = 190,
+                Margin = new Thickness(0, 12, 0, 0),
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+            ControlHelper.SetHeader(comboBox, header);
+            foreach (var option in options)
+            {
+                comboBox.Items.Add(new ComboBoxItem { Content = option });
+            }
+
+            comboBox.SelectedIndex = 0;
+            return comboBox;
+        }
+
+        private static void ApplyTabWidthMode(TabControl tabControl, string mode)
+        {
+            foreach (TabItem item in tabControl.Items)
+            {
+                if (string.Equals(mode, "Equal", StringComparison.Ordinal))
+                {
+                    item.Width = 160;
+                }
+                else if (string.Equals(mode, "Compact", StringComparison.Ordinal))
+                {
+                    item.Width = 48;
+                }
+                else
+                {
+                    item.ClearValue(FrameworkElement.WidthProperty);
+                }
+            }
+        }
+
+        private static void ApplyCloseButtonOverlayMode(TabControl tabControl, string mode)
+        {
+            foreach (TabItem item in tabControl.Items)
+            {
+                AutomationProperties.SetHelpText(item, "CloseButtonOverlayMode=" + mode);
+            }
+        }
+
+        private static object CreateBitmapHeader(string text, string fileName)
+        {
+            var stack = new StackPanel
+            {
+                Orientation = Orientation.Horizontal
+            };
+            var image = new Image
+            {
+                Width = 16,
+                Height = 16,
+                Margin = new Thickness(0, 0, 6, 0)
+            };
+            var imagePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "SampleMedia", fileName);
+            if (System.IO.File.Exists(imagePath))
+            {
+                image.Source = new BitmapImage(new Uri(imagePath, UriKind.Absolute));
+            }
+
+            stack.Children.Add(image);
+            stack.Children.Add(new TextBlock
+            {
+                Text = text,
+                VerticalAlignment = VerticalAlignment.Center
+            });
+            return stack;
+        }
+
+        private static string FindSampleCodeText(IReadOnlyList<SampleSnippet> snippets, string title)
+        {
+            if (snippets == null)
+            {
+                return null;
+            }
+
+            foreach (var snippet in snippets)
+            {
+                if (string.Equals(snippet.Title, title, StringComparison.OrdinalIgnoreCase))
+                {
+                    return snippet.Text;
+                }
+            }
+
+            return null;
         }
 
         private static UIElement CreateNavigationSampleContent()
@@ -1040,6 +1618,13 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
         private sealed class BreadcrumbFolder
         {
             public string Name { get; set; }
+        }
+
+        private sealed class TabViewData
+        {
+            public string DataHeader { get; set; }
+
+            public string DataContent { get; set; }
         }
     }
 }

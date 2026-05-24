@@ -33,6 +33,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "BreadcrumbBar", "GallerySample_BreadcrumbBar_Root", "GallerySample_BreadcrumbBar_BreadcrumbBar" };
             yield return new object[] { "Pivot", "GallerySample_Pivot_Root", "GallerySample_Pivot_Pivot" };
             yield return new object[] { "SelectorBar", "GallerySample_SelectorBar_Root", "GallerySample_SelectorBar_SelectorBar" };
+            yield return new object[] { "TabView", "GallerySample_TabView_Root", "GallerySample_TabView_TabView" };
             yield return new object[] { "NavigationView", "GallerySample_NavigationView_Root", "GallerySample_NavigationView_NavigationView" };
             yield return new object[] { "ContentDialog", "GallerySample_ContentDialog_Root", "GallerySample_ContentDialog_ShowButton" };
             yield return new object[] { "Flyout", "GallerySample_Flyout_Root", "GallerySample_Flyout_Button" };
@@ -663,6 +664,124 @@ namespace ModernWpf.Gallery.Tests
                     AssertPivotItem((TabItem)pivot.Items[1], "Unread", "unread emails go here.");
                     AssertPivotItem((TabItem)pivot.Items[2], "Flagged", "flagged emails go here.");
                     AssertPivotItem((TabItem)pivot.Items[3], "Urgent", "urgent emails go here.");
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void TabViewSampleMatchesWinUIGalleryExamples()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("TabView"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(10, page.Examples.Count);
+                    Assert.AreEqual("A TabView with support for adding, closing, and rearranging tabs", page.Examples[0].HeaderText);
+                    Assert.AreEqual("A TabView with TabViewItems defined in markup", page.Examples[1].HeaderText);
+                    Assert.AreEqual("A TabView bound to a collection of MyData objects", page.Examples[2].HeaderText);
+                    Assert.AreEqual("A TabView with keyboarding support", page.Examples[3].HeaderText);
+                    Assert.AreEqual("You can put custom content in TabStripHeader and TabStripFooter", page.Examples[4].HeaderText);
+                    Assert.AreEqual("Tab widths can either be equally sized, sized to the content of the tab, or sized to only show the icon when unselected", page.Examples[5].HeaderText);
+                    Assert.AreEqual("The close button can be persistent or only visible on hover", page.Examples[6].HeaderText);
+                    Assert.AreEqual("TabView with color tab icons", page.Examples[7].HeaderText);
+                    Assert.AreEqual("A TabView with accent colored TabStrip background", page.Examples[8].HeaderText);
+                    Assert.AreEqual("Complete TabView windowing sample", page.Examples[9].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "TabView_AddButtonClick");
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "private TabViewItem CreateNewTab");
+                    StringAssert.Contains(page.Examples[3].XamlCode, "KeyboardAccelerator Key=\"Number9\"");
+                    StringAssert.Contains(page.Examples[3].CSharpCode, "NewTabKeyboardAccelerator_Invoked");
+                    StringAssert.Contains(page.Examples[7].XamlCode, "BitmapIconSource UriSource=\"/Assets/SampleMedia/linux.png\"");
+                    StringAssert.Contains(page.Examples[9].XamlCode, "TabViewWindowingSamplePage.xaml");
+
+                    var tabView1 = (TabControl)FindByAutomationId(page, "GallerySample_TabView_TabView");
+                    var tabViewItemsSourceSample = FindNamedDescendant<TabControl>(page, "TabViewItemsSourceSample");
+                    var tabView2 = FindNamedDescendant<TabControl>(page, "TabView2");
+                    var tabView3 = FindNamedDescendant<TabControl>(page, "TabView3");
+                    var tabView4 = FindNamedDescendant<TabControl>(page, "TabView4");
+                    var tabViewColorIcons = FindNamedDescendant<TabControl>(page, "TabViewColorIconsSample");
+                    var tabViewAccent = FindNamedDescendant<TabControl>(page, "TabViewAccentSample");
+                    var widthModeCombo = FindNamedDescendant<ComboBox>(page, "TabWidthBehaviorComboBox");
+                    var closeModeCombo = FindNamedDescendant<ComboBox>(page, "TabCloseButtonOverlayModeComboBox");
+                    var windowingButton = FindNamedDescendant<Button>(page, "TabViewWindowingButton");
+                    Assert.IsNotNull(tabView1);
+                    Assert.IsNotNull(tabViewItemsSourceSample);
+                    Assert.IsNotNull(tabView2);
+                    Assert.IsNotNull(tabView3);
+                    Assert.IsNotNull(tabView4);
+                    Assert.IsNotNull(tabViewColorIcons);
+                    Assert.IsNotNull(tabViewAccent);
+                    Assert.IsNotNull(widthModeCombo);
+                    Assert.IsNotNull(closeModeCombo);
+                    Assert.IsNotNull(windowingButton);
+
+                    Assert.AreEqual("TabView1", tabView1.Name);
+                    Assert.AreEqual(475, tabView1.MinHeight);
+                    Assert.AreSame(tabView1.TryFindResource("DefaultTabControlStyle"), tabView1.Style);
+                    AssertTabItem((TabItem)tabView1.Items[0], "Document 0");
+                    AssertTabItem((TabItem)tabView1.Items[1], "Document 1");
+                    AssertTabItem((TabItem)tabView1.Items[2], "Document 2");
+
+                    var addButton = FindNamedDescendant<Button>(page, "TabView1AddButton");
+                    var closeButton = FindNamedDescendant<Button>(page, "TabView1CloseButton");
+                    Assert.IsNotNull(addButton);
+                    Assert.IsNotNull(closeButton);
+                    addButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(4, tabView1.Items.Count);
+                    Assert.AreEqual(3, tabView1.SelectedIndex);
+                    closeButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(3, tabView1.Items.Count);
+
+                    Assert.AreEqual(3, tabViewItemsSourceSample.Items.Count);
+                    var dataAddButton = FindNamedDescendant<Button>(page, "TabViewItemsSourceSampleAddButton");
+                    var dataCloseButton = FindNamedDescendant<Button>(page, "TabViewItemsSourceSampleCloseButton");
+                    dataAddButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(4, tabViewItemsSourceSample.Items.Count);
+                    dataCloseButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(3, tabViewItemsSourceSample.Items.Count);
+
+                    Assert.AreEqual(3, tabView2.Items.Count);
+                    Assert.AreEqual("TabWidthBehavior", ModernWpf.Controls.Primitives.ControlHelper.GetHeader(widthModeCombo));
+                    widthModeCombo.SelectedIndex = 1;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(160, ((TabItem)tabView3.Items[0]).Width);
+                    widthModeCombo.SelectedIndex = 2;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(48, ((TabItem)tabView3.Items[0]).Width);
+
+                    Assert.AreEqual("TabViewItem CloseButtonOverlayMode", ModernWpf.Controls.Primitives.ControlHelper.GetHeader(closeModeCombo));
+                    Assert.AreEqual(1, closeModeCombo.SelectedIndex);
+                    Assert.AreEqual("CloseButtonOverlayMode=Always", AutomationProperties.GetHelpText((TabItem)tabView4.Items[0]));
+                    Assert.AreEqual(3, tabViewColorIcons.Items.Count);
+                    Assert.AreEqual(3, tabViewAccent.Items.Count);
+                    Assert.AreEqual("Click here to launch the sample", windowingButton.Content);
                 }
                 finally
                 {
@@ -2710,6 +2829,13 @@ namespace ModernWpf.Gallery.Tests
             var textBlock = item.Content as TextBlock;
             Assert.IsNotNull(textBlock);
             Assert.AreEqual(text, textBlock.Text);
+        }
+
+        private static void AssertTabItem(TabItem item, string header)
+        {
+            Assert.IsNotNull(item);
+            Assert.AreEqual(header, item.Header);
+            Assert.AreSame(item.TryFindResource("DefaultTabItemStyle"), item.Style);
         }
 
         private static string GetFramePageTitle(Frame frame)

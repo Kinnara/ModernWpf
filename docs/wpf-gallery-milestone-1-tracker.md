@@ -106,6 +106,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.TabViewSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 28 tests per target. The generated ModernWpf TabView page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\TabViewPage.xaml` / `.xaml.cs` and the paired local sample-code files under `D:\repos\WinUI-Gallery\WinUIGallery\Samples\SampleCode\TabView`: add/close/rearrange tabs, markup-defined tabs, `MyData` item-source tabs, keyboarding support, `TabStripHeader` / `TabStripFooter`, tab width options, close-button overlay options, color tab icons, accent tab-strip background, and the windowing launch sample. `NavigationSampleFactory.CreateExamples` now covers TabView as a source-backed Navigation WinUI extension page, consumes the two local TabView C# snippet files so no extra sample-code pane remains, exposes curated automation IDs `GallerySample_TabView_Root` and `GallerySample_TabView_TabView`, keeps WinUI's `TabView1`, `TabViewItemsSourceSample`, `TabView2`, `TabView3`, and `TabView4` source-facing names, and adapts WinUI `TabView` / `TabViewItem` APIs to WPF `TabControl` / `TabItem` plus ModernWpf's TabView resource styling. The WPF adaptation keeps add/close, item-source add/remove, width-mode, close-overlay, header/footer, color-icon, accent-background, and launch-button behavior, while noting that ModernWpf does not expose a native `TabView` control class or WinUI drag-rearrange surface. Current warning/output remains `NU1903`, recurring `Failed to resolve WinRT.Runtime.dll` messages, and existing ModernWpf warning noise.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls TabView -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-174125-080-113596/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, both apps were nonblank, the required ModernWpf element `GallerySample_TabView_TabView` was found, and the report records ModernWpf whole-sample mean delta `186.77`. The visual harness now includes TabView in the default WinUI extension control set and maps ModernWpf primary/required automation to `GallerySample_TabView_TabView` with WinUI reference automation ID `TabView1`; the current report does not emit a primary-crop delta for TabView.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls TabView -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-174146-082-23280/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, both apps were nonblank, the required ModernWpf element `GallerySample_TabView_TabView` was found, and the report records ModernWpf whole-sample mean delta `36.49`. The current report does not emit a primary-crop delta for TabView.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the TabView WinUI example alignment and visual harness mapping. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages, existing ModernWpf/ModernWpf.Controls warnings, `19 Warning(s)`, and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.PivotSampleMatchesWinUIGalleryExample|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 27 tests per target. The generated ModernWpf Pivot page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\PivotPage.xaml`: one `A basic pivot.` example with `Title="EMAIL"` and `All`, `Unread`, `Flagged`, and `Urgent` items. `NavigationSampleFactory.CreateExamples` now covers Pivot as a source-backed Navigation WinUI extension page, exposes curated automation IDs `GallerySample_Pivot_Root` and `GallerySample_Pivot_Pivot`, preserves the source snippet text, and adapts WinUI `Pivot` / `PivotItem` to WPF `TabControl` / `TabItem` using ModernWpf's `TabControlPivotStyle`, `TabItemPivotStyle`, and `PivotHelper.Title`. Current warning/output remains `NU1903`, recurring `Failed to resolve WinRT.Runtime.dll` messages, and existing ModernWpf warning noise.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls Pivot -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -1287,6 +1295,36 @@ sample's row offset. Avoid reopening that first NavigationView sample unless a
 new WinUI reference or rendered crop regression appears; remaining
 NavigationView work means other samples or broader control-template/resource
 drift.
+The generated ModernWpf TabView extension page now uses the local official
+WinUI Gallery ten-example structure from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\TabViewPage.xaml`
+/ `.xaml.cs` and the paired local sample-code files under
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\SampleCode\TabView`: add/close
+tabs, markup-defined tabs, `MyData` item-source tabs, keyboarding support,
+`TabStripHeader` / `TabStripFooter`, tab-width options, close-button overlay
+options, color tab icons, accent tab-strip background, and the complete
+windowing sample launcher. `NavigationSampleFactory.CreateExamples` now covers
+TabView as a source-backed Navigation WinUI example, consumes the two TabView
+C# snippet files so the page no longer shows duplicate additional sample-code
+expanders, keeps WinUI's `TabView1`, `TabViewItemsSourceSample`, `TabView2`,
+`TabView3`, `TabView4`, `TabWidthBehaviorComboBox`, and
+`TabCloseButtonOverlayModeComboBox` source-facing names, and exposes
+`GallerySample_TabView_Root` / `GallerySample_TabView_TabView` for runtime and
+visual checks. The WPF adaptation uses styled `TabControl` / `TabItem` because
+ModernWpf has TabView resources but no native `TabView` control class; it keeps
+add/close, item-source add/remove, width-mode, close-overlay, header/footer,
+color-icon, accent-background, and launch-button behavior, while native WinUI
+drag-rearrange and multi-window TabView APIs remain approximated. Current
+TabView WinUI-reference evidence is
+`artifacts/visual-checks/20260524-174125-080-113596/report.md` for Light and
+`artifacts/visual-checks/20260524-174146-082-23280/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`, nonblank app captures,
+and required ModernWpf element `GallerySample_TabView_TabView` found. The
+visual reports do not currently emit a primary-crop delta for TabView;
+ModernWpf whole-sample mean deltas are `186.77` / `36.49`. Avoid reopening
+TabView's source shape unless a new WinUI source, runtime, or crop regression
+appears; later rounds can separately investigate a native TabView abstraction,
+drag-rearrange parity, or stable reference primary crops.
 The generated ModernWpf Pivot extension page now uses the local official WinUI
 Gallery one-example structure from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\PivotPage.xaml`:
