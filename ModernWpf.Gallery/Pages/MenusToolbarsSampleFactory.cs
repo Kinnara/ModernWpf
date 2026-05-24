@@ -157,6 +157,128 @@ namespace ModernWpf.Gallery.Pages
     </Grid>
 </DataTemplate>";
 
+        private const string MenuFlyoutAppBarButtonXaml =
+@"<AppBarButton Icon=""Sort"" IsCompact=""True"" ToolTipService.ToolTip=""Sort"" AutomationProperties.Name=""Sort"">
+    <AppBarButton.Flyout>
+        <MenuFlyout>
+            <MenuFlyoutItem Text=""By rating"" Click=""MenuFlyoutItem_Click"" Tag=""rating""/>
+            <MenuFlyoutItem Text=""By match"" Click=""MenuFlyoutItem_Click"" Tag=""match""/>
+            <MenuFlyoutItem Text=""By distance"" Click=""MenuFlyoutItem_Click"" Tag=""distance""/>
+        </MenuFlyout>
+    </AppBarButton.Flyout>
+</AppBarButton>";
+
+        private const string MenuFlyoutToggleXaml =
+@"<Button Content=""Options"">
+    <Button.Flyout>
+        <MenuFlyout>
+            <MenuFlyoutItem Text=""Reset""/>
+            <MenuFlyoutSeparator/>
+            <ToggleMenuFlyoutItem Text=""Repeat"" IsChecked=""$(RepeatToggle)""/>
+            <ToggleMenuFlyoutItem Text=""Shuffle"" IsChecked=""$(ShuffleToggle)""/>
+        </MenuFlyout>
+    </Button.Flyout>
+</Button>";
+
+        private const string MenuFlyoutCascadingXaml =
+@"<Button Content=""File Options"">
+    <Button.Flyout>
+        <MenuFlyout>
+            <MenuFlyoutItem Text=""Open""/>
+            <MenuFlyoutSubItem Text=""Send to"">
+                <MenuFlyoutItem Text=""Bluetooth"" />
+                <MenuFlyoutItem Text=""Desktop (shortcut)"" />
+                <MenuFlyoutSubItem Text=""Compressed file"">
+                    <MenuFlyoutItem Text=""Compress and email"" />
+                    <MenuFlyoutItem Text=""Compress to .7z"" />
+                    <MenuFlyoutItem Text=""Compress to .zip"" />
+                </MenuFlyoutSubItem>
+            </MenuFlyoutSubItem>
+        </MenuFlyout>
+    </Button.Flyout>
+</Button>";
+
+        private const string MenuFlyoutSplitXaml =
+@"<Button Content=""File Options"">
+    <Button.Flyout>
+        <MenuFlyout>
+            <SplitMenuFlyoutItem Text=""Save"" Click=""SplitMenuFlyoutItem_Click"">
+                <SplitMenuFlyoutItem.Icon>
+                    <FontIcon Glyph=""&#xE74E;""/>
+                </SplitMenuFlyoutItem.Icon>
+                <MenuFlyoutItem Text=""Save as .docx"" Click=""SplitMenuFlyoutItem_Click""/>
+                <MenuFlyoutItem Text=""Save as .pdf"" Click=""SplitMenuFlyoutItem_Click""/>
+                <MenuFlyoutItem Text=""Save as .txt"" Click=""SplitMenuFlyoutItem_Click""/>
+            </SplitMenuFlyoutItem>
+            <SplitMenuFlyoutItem Text=""Share"" Icon=""Share"" Click=""SplitMenuFlyoutItem_Click"">
+                <MenuFlyoutItem Text=""Share via email"" Click=""SplitMenuFlyoutItem_Click""/>
+                <MenuFlyoutItem Text=""Share via link"" Click=""SplitMenuFlyoutItem_Click""/>
+            </SplitMenuFlyoutItem>
+        </MenuFlyout>
+    </Button.Flyout>
+</Button>";
+
+        private const string MenuFlyoutIconsXaml =
+@"<Button Content=""Edit Options"">
+    <Button.Flyout>
+        <MenuFlyout>
+            <MenuFlyoutItem Text=""Share"">
+                <MenuFlyoutItem.Icon>
+                    <FontIcon Glyph=""&#xE72D;""/>
+                </MenuFlyoutItem.Icon>
+            </MenuFlyoutItem>
+            <MenuFlyoutItem Text=""Copy"" Icon=""Copy""/>
+            <MenuFlyoutItem Text=""Delete"" Icon=""Delete""/>
+            <MenuFlyoutSeparator/>
+            <MenuFlyoutItem Text=""Rename""/>
+            <MenuFlyoutItem Text=""Select""/>
+        </MenuFlyout>
+    </Button.Flyout>
+</Button>";
+
+        private const string MenuFlyoutKeyboardXaml =
+@"<Button Content=""Edit Options"">
+    <Button.Flyout>
+        <MenuFlyout>
+            <MenuFlyoutItem Text=""Share"">
+                <MenuFlyoutItem.Icon>
+                    <FontIcon Glyph=""&#xE72D;""/>
+                </MenuFlyoutItem.Icon>
+                <MenuFlyoutItem.KeyboardAccelerators>
+                    <KeyboardAccelerator Key=""S"" Modifiers=""Control""/>
+                </MenuFlyoutItem.KeyboardAccelerators>
+            </MenuFlyoutItem>
+            <MenuFlyoutItem Text=""Copy"" Icon=""Copy"">
+                <MenuFlyoutItem.KeyboardAccelerators>
+                    <KeyboardAccelerator Key=""C"" Modifiers=""Control""/>
+                </MenuFlyoutItem.KeyboardAccelerators>
+            </MenuFlyoutItem>
+            <MenuFlyoutItem Text=""Delete"" Icon=""Delete"">
+                <MenuFlyoutItem.KeyboardAccelerators>
+                    <KeyboardAccelerator Key=""Delete"" />
+                </MenuFlyoutItem.KeyboardAccelerators>
+            </MenuFlyoutItem>
+            <MenuFlyoutSeparator/>
+            <MenuFlyoutItem Text=""Rename""/>
+            <MenuFlyoutItem Text=""Select""/>
+        </MenuFlyout>
+    </Button.Flyout>
+</Button>";
+
+        private const string MenuFlyoutRadioXaml =
+@"<Button Content=""Options"">
+    <Button.Flyout>
+        <MenuFlyout>
+            <RadioMenuFlyoutItem Text=""Landscape"" GroupName=""OrientationGroup""/>
+            <RadioMenuFlyoutItem Text=""Portrait"" GroupName=""OrientationGroup"" IsChecked=""True""/>
+            <MenuFlyoutSeparator/>
+            <RadioMenuFlyoutItem Text=""Small icons"" GroupName=""SizeGroup""/>
+            <RadioMenuFlyoutItem Text=""Medium icons"" IsChecked=""True"" GroupName=""SizeGroup""/>
+            <RadioMenuFlyoutItem Text=""Large icons"" GroupName=""SizeGroup""/>
+        </MenuFlyout>
+    </Button.Flyout>
+</Button>";
+
         public static IReadOnlyList<GalleryExample> CreateExamples(string uniqueId, IReadOnlyList<SampleSnippet> sampleSnippets)
         {
             switch (uniqueId)
@@ -171,6 +293,8 @@ namespace ModernWpf.Gallery.Pages
                     return CreateCommandBarExamples();
                 case "CommandBarFlyout":
                     return CreateCommandBarFlyoutExamples(sampleSnippets);
+                case "MenuFlyout":
+                    return CreateMenuFlyoutExamples();
                 case "MenuBar":
                     return CreateMenuBarExamples(sampleSnippets);
                 case "StandardUICommand":
@@ -895,20 +1019,208 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateMenuFlyoutSample()
         {
-            var panel = CreateSamplePanel("MenuFlyout shows a menu of contextual actions anchored to a control.");
-            var output = CreateOutput("No menu item selected.");
-            var button = CreateButton("Open MenuFlyout");
-            var flyout = new Mux.MenuFlyout
+            var panel = new GallerySamplePanel
             {
-                Placement = FlyoutPlacementMode.Bottom
+                Margin = new Thickness(0, 0, 0, 12)
             };
-            flyout.Items.Add(CreateMenuItem("Open", output));
-            flyout.Items.Add(CreateMenuItem("Pin to top", output));
+            GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("MenuFlyout"));
+            panel.Children.Add(CreateMenuFlyoutAppBarButtonExampleContent(assignRootAutomationId: false));
+            return panel;
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateMenuFlyoutExamples()
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "An AppBarButton with a MenuFlyout.",
+                    CreateMenuFlyoutAppBarButtonExampleContent(assignRootAutomationId: true),
+                    MenuFlyoutAppBarButtonXaml,
+                    null),
+                new GalleryExample(
+                    "A MenuFlyout with ToggleMenuFlyoutItems and MenuFlyoutSeparator.",
+                    CreateMenuFlyoutToggleExampleContent(),
+                    MenuFlyoutToggleXaml,
+                    null),
+                new GalleryExample(
+                    "A MenuFlyout with cascading menus.",
+                    CreateMenuFlyoutCascadingExampleContent(),
+                    MenuFlyoutCascadingXaml,
+                    null),
+                new GalleryExample(
+                    "A MenuFlyout with SplitMenuFlyoutItems.",
+                    CreateMenuFlyoutSplitExampleContent(),
+                    MenuFlyoutSplitXaml,
+                    null),
+                new GalleryExample(
+                    "A MenuFlyout with icons.",
+                    CreateMenuFlyoutIconsExampleContent(includeKeyboardAccelerators: false),
+                    MenuFlyoutIconsXaml,
+                    null),
+                new GalleryExample(
+                    "A MenuFlyout with icons and Keyboard Accelerators.",
+                    CreateMenuFlyoutIconsExampleContent(includeKeyboardAccelerators: true),
+                    MenuFlyoutKeyboardXaml,
+                    null),
+                new GalleryExample(
+                    "A MenuFlyout with RadioMenuFlyoutItems",
+                    CreateMenuFlyoutRadioExampleContent(),
+                    MenuFlyoutRadioXaml,
+                    null)
+            };
+        }
+
+        private static GallerySamplePanel CreateMenuFlyoutExampleRoot(bool assignRootAutomationId)
+        {
+            var root = new GallerySamplePanel();
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("MenuFlyout"));
+            }
+
+            return root;
+        }
+
+        private static GallerySamplePanel CreateMenuFlyoutAppBarButtonExampleContent(bool assignRootAutomationId)
+        {
+            var panel = CreateMenuFlyoutExampleRoot(assignRootAutomationId);
+            var content = new StackPanel
+            {
+                Name = "Control1",
+                Orientation = Orientation.Horizontal
+            };
+            var output = CreateSelectionOutput("Control1Output");
+            var button = new Mux.AppBarButton
+            {
+                Icon = new Mux.SymbolIcon(Mux.Symbol.Sort),
+                IsCompact = true,
+                ToolTip = "Sort"
+            };
+            AutomationProperties.SetName(button, "Sort");
+            GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("MenuFlyout", "AppBarButton"));
+
+            var flyout = new Mux.MenuFlyout { Placement = FlyoutPlacementMode.Bottom };
+            flyout.Items.Add(CreateSortMenuFlyoutItem("By rating", "rating", output));
+            flyout.Items.Add(CreateSortMenuFlyoutItem("By match", "match", output));
+            flyout.Items.Add(CreateSortMenuFlyoutItem("By distance", "distance", output));
+            button.Flyout = flyout;
+
+            content.Children.Add(button);
+            content.Children.Add(output);
+            panel.Children.Add(content);
+            return panel;
+        }
+
+        private static GallerySamplePanel CreateMenuFlyoutToggleExampleContent()
+        {
+            var panel = CreateMenuFlyoutExampleRoot(assignRootAutomationId: false);
+            var button = CreateButton("Options");
+            button.Name = "Control2";
+            var flyout = new Mux.MenuFlyout { Placement = FlyoutPlacementMode.Bottom };
+            flyout.Items.Add(new MenuItem { Header = "Reset" });
             flyout.Items.Add(new Separator());
-            flyout.Items.Add(CreateMenuItem("Delete", output));
+            flyout.Items.Add(new MenuItem
+            {
+                Name = "RepeatToggleMenuFlyoutItem",
+                Header = "Repeat",
+                IsCheckable = true,
+                IsChecked = true
+            });
+            flyout.Items.Add(new MenuItem
+            {
+                Name = "ShuffleToggleMenuFlyoutItem",
+                Header = "Shuffle",
+                IsCheckable = true,
+                IsChecked = true
+            });
             Mux.FlyoutService.SetFlyout(button, flyout);
             panel.Children.Add(button);
-            panel.Children.Add(output);
+            return panel;
+        }
+
+        private static GallerySamplePanel CreateMenuFlyoutCascadingExampleContent()
+        {
+            var panel = CreateMenuFlyoutExampleRoot(assignRootAutomationId: false);
+            var button = CreateButton("File Options");
+            button.Name = "Control3";
+            var flyout = new Mux.MenuFlyout { Placement = FlyoutPlacementMode.Bottom };
+            flyout.Items.Add(new MenuItem { Header = "Open" });
+            var sendTo = new MenuItem { Header = "Send to" };
+            sendTo.Items.Add(new MenuItem { Header = "Bluetooth" });
+            sendTo.Items.Add(new MenuItem { Header = "Desktop (shortcut)" });
+            var compressedFile = new MenuItem { Header = "Compressed file" };
+            compressedFile.Items.Add(new MenuItem { Header = "Compress and email" });
+            compressedFile.Items.Add(new MenuItem { Header = "Compress to .7z" });
+            compressedFile.Items.Add(new MenuItem { Header = "Compress to .zip" });
+            sendTo.Items.Add(compressedFile);
+            flyout.Items.Add(sendTo);
+            Mux.FlyoutService.SetFlyout(button, flyout);
+            panel.Children.Add(button);
+            return panel;
+        }
+
+        private static GallerySamplePanel CreateMenuFlyoutSplitExampleContent()
+        {
+            var panel = CreateMenuFlyoutExampleRoot(assignRootAutomationId: false);
+            var content = new StackPanel
+            {
+                Name = "Control3b",
+                Orientation = Orientation.Horizontal
+            };
+            var button = CreateButton("File Options");
+            var output = CreateSelectionOutput("Control3bOutput");
+            var flyout = new Mux.MenuFlyout { Placement = FlyoutPlacementMode.Bottom };
+
+            var save = CreateSplitMenuFlyoutItem("Save", output, new Mux.FontIcon { Glyph = "\uE74E" });
+            save.Name = "SaveSplitItem";
+            save.Items.Add(CreateSplitMenuFlyoutItem("Save as .docx", output, null));
+            save.Items.Add(CreateSplitMenuFlyoutItem("Save as .pdf", output, null));
+            save.Items.Add(CreateSplitMenuFlyoutItem("Save as .txt", output, null));
+            flyout.Items.Add(save);
+
+            var share = CreateSplitMenuFlyoutItem("Share", output, new Mux.SymbolIcon(Mux.Symbol.Share));
+            share.Items.Add(CreateSplitMenuFlyoutItem("Share via email", output, null));
+            share.Items.Add(CreateSplitMenuFlyoutItem("Share via link", output, null));
+            flyout.Items.Add(share);
+
+            Mux.FlyoutService.SetFlyout(button, flyout);
+            content.Children.Add(button);
+            content.Children.Add(output);
+            panel.Children.Add(content);
+            return panel;
+        }
+
+        private static GallerySamplePanel CreateMenuFlyoutIconsExampleContent(bool includeKeyboardAccelerators)
+        {
+            var panel = CreateMenuFlyoutExampleRoot(assignRootAutomationId: false);
+            var button = CreateButton("Edit Options");
+            button.Name = includeKeyboardAccelerators ? "Control5" : "Control4";
+            var flyout = new Mux.MenuFlyout { Placement = FlyoutPlacementMode.Bottom };
+            flyout.Items.Add(CreateIconMenuFlyoutItem("Share", new Mux.FontIcon { Glyph = "\uE72D" }, includeKeyboardAccelerators ? "Ctrl+S" : null));
+            flyout.Items.Add(CreateIconMenuFlyoutItem("Copy", new Mux.SymbolIcon(Mux.Symbol.Copy), includeKeyboardAccelerators ? "Ctrl+C" : null));
+            flyout.Items.Add(CreateIconMenuFlyoutItem("Delete", new Mux.SymbolIcon(Mux.Symbol.Delete), includeKeyboardAccelerators ? "Delete" : null));
+            flyout.Items.Add(new Separator());
+            flyout.Items.Add(new MenuItem { Header = "Rename" });
+            flyout.Items.Add(new MenuItem { Header = "Select" });
+            Mux.FlyoutService.SetFlyout(button, flyout);
+            panel.Children.Add(button);
+            return panel;
+        }
+
+        private static GallerySamplePanel CreateMenuFlyoutRadioExampleContent()
+        {
+            var panel = CreateMenuFlyoutExampleRoot(assignRootAutomationId: false);
+            var button = CreateButton("Options");
+            button.Name = "Control6";
+            var flyout = new Mux.MenuFlyout { Placement = FlyoutPlacementMode.Bottom };
+            flyout.Items.Add(CreateRadioMenuItem("Landscape", "OrientationGroup", isChecked: false, output: null));
+            flyout.Items.Add(CreateRadioMenuItem("Portrait", "OrientationGroup", isChecked: true, output: null));
+            flyout.Items.Add(new Separator());
+            flyout.Items.Add(CreateRadioMenuItem("Small icons", "SizeGroup", isChecked: false, output: null));
+            flyout.Items.Add(CreateRadioMenuItem("Medium icons", "SizeGroup", isChecked: true, output: null));
+            flyout.Items.Add(CreateRadioMenuItem("Large icons", "SizeGroup", isChecked: false, output: null));
+            Mux.FlyoutService.SetFlyout(button, flyout);
+            panel.Children.Add(button);
             return panel;
         }
 
@@ -1329,6 +1641,44 @@ namespace ModernWpf.Gallery.Pages
             };
         }
 
+        private static MenuItem CreateSortMenuFlyoutItem(string header, string tag, TextBlock output)
+        {
+            var item = new MenuItem
+            {
+                Header = header,
+                Tag = tag
+            };
+            item.Click += delegate { output.Text = "Sort by: " + tag; };
+            return item;
+        }
+
+        private static MenuItem CreateSplitMenuFlyoutItem(string header, TextBlock output, UIElement icon)
+        {
+            var item = new MenuItem
+            {
+                Header = header,
+                Icon = icon
+            };
+            item.Click += delegate(object sender, RoutedEventArgs args)
+            {
+                if (ReferenceEquals(args.OriginalSource, sender))
+                {
+                    output.Text = "Clicked: " + header;
+                }
+            };
+            return item;
+        }
+
+        private static MenuItem CreateIconMenuFlyoutItem(string header, UIElement icon, string inputGestureText)
+        {
+            return new MenuItem
+            {
+                Header = header,
+                Icon = icon,
+                InputGestureText = inputGestureText
+            };
+        }
+
         private static MenuItem CreateMenuItem(string header, TextBlock output, string inputGestureText)
         {
             var item = new MenuItem
@@ -1348,7 +1698,10 @@ namespace ModernWpf.Gallery.Pages
                 GroupName = groupName,
                 IsChecked = isChecked
             };
-            item.Click += delegate { output.Text = "You clicked: " + header; };
+            if (output != null)
+            {
+                item.Click += delegate { output.Text = "You clicked: " + header; };
+            }
             return item;
         }
 

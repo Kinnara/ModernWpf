@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "BreadcrumbBar", "Pivot", "SelectorBar", "TabView", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout", "StandardUICommand", "XamlUICommand"),
+    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "BreadcrumbBar", "Pivot", "SelectorBar", "TabView", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout", "StandardUICommand", "XamlUICommand"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -448,6 +448,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "Flyout" { return "GallerySample_Flyout_Button" }
         "Popup" { return "GallerySample_Popup_Button" }
         "MenuBar" { return "GallerySample_MenuBar_MenuBar" }
+        "MenuFlyout" { return "GallerySample_MenuFlyout_AppBarButton" }
         "AppBarButton" { return "GallerySample_AppBarButton_AppBarButton" }
         "AppBarSeparator" { return "GallerySample_AppBarSeparator_CommandBar" }
         "AppBarToggleButton" { return "GallerySample_AppBarToggleButton_AppBarToggleButton" }
@@ -496,6 +497,7 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
         "Flyout" { return "GallerySample_Flyout_Button" }
         "Popup" { return "GallerySample_Popup_Button" }
         "MenuBar" { return "GallerySample_MenuBar_MenuBar" }
+        "MenuFlyout" { return "GallerySample_MenuFlyout_AppBarButton" }
         "AppBarButton" { return "GallerySample_AppBarButton_AppBarButton" }
         "AppBarSeparator" { return "GallerySample_AppBarSeparator_CommandBar" }
         "AppBarToggleButton" { return "GallerySample_AppBarToggleButton_AppBarToggleButton" }
@@ -543,6 +545,7 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
 function Get-ReferencePrimaryName([string]$control) {
     switch ($control) {
         "DropDownButton" { return "Email" }
+        "MenuFlyout" { return "Sort" }
         "Popup" { return "Show Popup (using Offset)" }
         "RepeatButton" { return "Click and hold" }
         "ToggleSwitch" { return "simple ToggleSwitch" }

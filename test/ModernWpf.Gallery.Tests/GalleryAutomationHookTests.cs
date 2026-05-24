@@ -50,6 +50,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "NumberBox", "GallerySample_NumberBox_Root", "GallerySample_NumberBox_SpinButtonNumberBox" };
             yield return new object[] { "AutoSuggestBox", "GallerySample_AutoSuggestBox_Root", "GallerySample_AutoSuggestBox_AutoSuggestBox" };
             yield return new object[] { "MenuBar", "GallerySample_MenuBar_Root", "GallerySample_MenuBar_MenuBar" };
+            yield return new object[] { "MenuFlyout", "GallerySample_MenuFlyout_Root", "GallerySample_MenuFlyout_AppBarButton" };
             yield return new object[] { "AppBarButton", "GallerySample_AppBarButton_Root", "GallerySample_AppBarButton_AppBarButton" };
             yield return new object[] { "AppBarSeparator", "GallerySample_AppBarSeparator_Root", "GallerySample_AppBarSeparator_CommandBar" };
             yield return new object[] { "AppBarToggleButton", "GallerySample_AppBarToggleButton_Root", "GallerySample_AppBarToggleButton_AppBarToggleButton" };
@@ -1414,6 +1415,130 @@ namespace ModernWpf.Gallery.Tests
                     var landscape = (Mux.RadioMenuItem)viewMenu.Items[2];
                     var portrait = (Mux.RadioMenuItem)viewMenu.Items[3];
                     var mediumIcons = (Mux.RadioMenuItem)viewMenu.Items[6];
+                    Assert.AreEqual("OrientationGroup", landscape.GroupName);
+                    Assert.IsFalse(landscape.IsChecked);
+                    Assert.IsTrue(portrait.IsChecked);
+                    Assert.AreEqual("SizeGroup", mediumIcons.GroupName);
+                    Assert.IsTrue(mediumIcons.IsChecked);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void MenuFlyoutSampleMatchesWinUIGalleryExamples()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("MenuFlyout"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(7, page.Examples.Count);
+                    Assert.AreEqual("An AppBarButton with a MenuFlyout.", page.Examples[0].HeaderText);
+                    Assert.AreEqual("A MenuFlyout with ToggleMenuFlyoutItems and MenuFlyoutSeparator.", page.Examples[1].HeaderText);
+                    Assert.AreEqual("A MenuFlyout with cascading menus.", page.Examples[2].HeaderText);
+                    Assert.AreEqual("A MenuFlyout with SplitMenuFlyoutItems.", page.Examples[3].HeaderText);
+                    Assert.AreEqual("A MenuFlyout with icons.", page.Examples[4].HeaderText);
+                    Assert.AreEqual("A MenuFlyout with icons and Keyboard Accelerators.", page.Examples[5].HeaderText);
+                    Assert.AreEqual("A MenuFlyout with RadioMenuFlyoutItems", page.Examples[6].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "MenuFlyoutItem Text=\"By rating\"");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "ToggleMenuFlyoutItem Text=\"Repeat\"");
+                    StringAssert.Contains(page.Examples[2].XamlCode, "MenuFlyoutSubItem Text=\"Send to\"");
+                    StringAssert.Contains(page.Examples[3].XamlCode, "SplitMenuFlyoutItem Text=\"Save\"");
+                    StringAssert.Contains(page.Examples[4].XamlCode, "MenuFlyoutItem Text=\"Copy\" Icon=\"Copy\"");
+                    StringAssert.Contains(page.Examples[5].XamlCode, "KeyboardAccelerator Key=\"Delete\"");
+                    StringAssert.Contains(page.Examples[6].XamlCode, "RadioMenuFlyoutItem Text=\"Portrait\"");
+
+                    var sortButton = (Mux.AppBarButton)FindByAutomationId(page, "GallerySample_MenuFlyout_AppBarButton");
+                    var control1 = FindNamedDescendant<StackPanel>(page, "Control1");
+                    var control1Output = FindNamedDescendant<TextBlock>(page, "Control1Output");
+                    Assert.IsNotNull(sortButton);
+                    Assert.IsNotNull(control1);
+                    Assert.IsNotNull(control1Output);
+                    Assert.AreEqual(Mux.Symbol.Sort, ((Mux.SymbolIcon)sortButton.Icon).Symbol);
+                    Assert.IsTrue(sortButton.IsCompact);
+                    Assert.AreEqual("Sort", AutomationProperties.GetName(sortButton));
+                    var sortFlyout = sortButton.Flyout as Mux.MenuFlyout;
+                    Assert.IsNotNull(sortFlyout);
+                    Assert.AreEqual(3, sortFlyout.Items.Count);
+                    var ratingItem = (MenuItem)sortFlyout.Items[0];
+                    Assert.AreEqual("By rating", ratingItem.Header);
+                    Assert.AreEqual("rating", ratingItem.Tag);
+                    ratingItem.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+                    Assert.AreEqual("Sort by: rating", control1Output.Text);
+
+                    var control2 = FindNamedDescendant<Button>(page, "Control2");
+                    var toggleFlyout = (Mux.MenuFlyout)Mux.FlyoutService.GetFlyout(control2);
+                    Assert.AreEqual(4, toggleFlyout.Items.Count);
+                    Assert.IsInstanceOfType(toggleFlyout.Items[1], typeof(Separator));
+                    var repeat = (MenuItem)toggleFlyout.Items[2];
+                    var shuffle = (MenuItem)toggleFlyout.Items[3];
+                    Assert.AreEqual("RepeatToggleMenuFlyoutItem", repeat.Name);
+                    Assert.IsTrue(repeat.IsCheckable);
+                    Assert.IsTrue(repeat.IsChecked);
+                    Assert.AreEqual("ShuffleToggleMenuFlyoutItem", shuffle.Name);
+                    Assert.IsTrue(shuffle.IsChecked);
+
+                    var control3 = FindNamedDescendant<Button>(page, "Control3");
+                    var cascadingFlyout = (Mux.MenuFlyout)Mux.FlyoutService.GetFlyout(control3);
+                    var sendTo = (MenuItem)cascadingFlyout.Items[1];
+                    Assert.AreEqual("Send to", sendTo.Header);
+                    Assert.AreEqual(3, sendTo.Items.Count);
+                    var compressedFile = (MenuItem)sendTo.Items[2];
+                    Assert.AreEqual("Compressed file", compressedFile.Header);
+                    Assert.AreEqual(3, compressedFile.Items.Count);
+
+                    var control3b = FindNamedDescendant<StackPanel>(page, "Control3b");
+                    var splitButton = (Button)control3b.Children[0];
+                    var splitOutput = FindNamedDescendant<TextBlock>(page, "Control3bOutput");
+                    var splitFlyout = (Mux.MenuFlyout)Mux.FlyoutService.GetFlyout(splitButton);
+                    var saveSplitItem = (MenuItem)splitFlyout.Items[0];
+                    Assert.AreEqual("SaveSplitItem", saveSplitItem.Name);
+                    Assert.AreEqual("Save", saveSplitItem.Header);
+                    Assert.AreEqual(3, saveSplitItem.Items.Count);
+                    ((MenuItem)saveSplitItem.Items[1]).RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+                    Assert.AreEqual("Clicked: Save as .pdf", splitOutput.Text);
+
+                    var control4 = FindNamedDescendant<Button>(page, "Control4");
+                    var iconsFlyout = (Mux.MenuFlyout)Mux.FlyoutService.GetFlyout(control4);
+                    Assert.AreEqual("Share", ((MenuItem)iconsFlyout.Items[0]).Header);
+                    Assert.AreEqual("\uE72D", ((Mux.FontIcon)((MenuItem)iconsFlyout.Items[0]).Icon).Glyph);
+                    Assert.AreEqual(Mux.Symbol.Copy, ((Mux.SymbolIcon)((MenuItem)iconsFlyout.Items[1]).Icon).Symbol);
+                    Assert.AreEqual(Mux.Symbol.Delete, ((Mux.SymbolIcon)((MenuItem)iconsFlyout.Items[2]).Icon).Symbol);
+
+                    var control5 = FindNamedDescendant<Button>(page, "Control5");
+                    var keyboardFlyout = (Mux.MenuFlyout)Mux.FlyoutService.GetFlyout(control5);
+                    Assert.AreEqual("Ctrl+S", ((MenuItem)keyboardFlyout.Items[0]).InputGestureText);
+                    Assert.AreEqual("Ctrl+C", ((MenuItem)keyboardFlyout.Items[1]).InputGestureText);
+                    Assert.AreEqual("Delete", ((MenuItem)keyboardFlyout.Items[2]).InputGestureText);
+
+                    var control6 = FindNamedDescendant<Button>(page, "Control6");
+                    var radioFlyout = (Mux.MenuFlyout)Mux.FlyoutService.GetFlyout(control6);
+                    var landscape = (Mux.RadioMenuItem)radioFlyout.Items[0];
+                    var portrait = (Mux.RadioMenuItem)radioFlyout.Items[1];
+                    var mediumIcons = (Mux.RadioMenuItem)radioFlyout.Items[4];
                     Assert.AreEqual("OrientationGroup", landscape.GroupName);
                     Assert.IsFalse(landscape.IsChecked);
                     Assert.IsTrue(portrait.IsChecked);

@@ -106,6 +106,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.MenuFlyoutSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 34 tests per target. The generated ModernWpf MenuFlyout page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\MenuFlyoutPage.xaml` / `.xaml.cs`: AppBarButton sort menu, toggle menu items with separator, cascading submenus, split-menu items adapted to WPF `MenuItem` submenus, icon menu items, icon menu items with keyboard accelerator text, and radio menu items. `MenusToolbarsSampleFactory.CreateExamples` now covers MenuFlyout as a source-backed Menu & Toolbar WinUI extension page, keeps WinUI's `Control1`, `Control1Output`, `Control2`, `RepeatToggleMenuFlyoutItem`, `ShuffleToggleMenuFlyoutItem`, `Control3`, `Control3b`, `Control3bOutput`, `SaveSplitItem`, `Control4`, `Control5`, and `Control6` names, and exposes curated automation IDs `GallerySample_MenuFlyout_Root` / `GallerySample_MenuFlyout_AppBarButton`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls MenuFlyout -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-190524-549-15984/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, required MenuFlyout sample element was found, primary crops match at `68x64`, and MenuFlyout Light primary delta is `6.41`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls MenuFlyout -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-190555-046-111936/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, required MenuFlyout sample element was found, primary crops match at `68x64`, and MenuFlyout Dark primary delta is `8.35`.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the MenuFlyout WinUI example alignment. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages, existing ModernWpf/ModernWpf.Controls warnings, `19 Warning(s)`, and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.CommandSamplesMatchWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 33 tests per target. The generated ModernWpf StandardUICommand and XamlUICommand pages now follow the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\StandardUICommandPage.xaml` / `.xaml.cs` and `XamlUICommandPage.xaml` / `.xaml.cs`: StandardUICommand exposes the shared delete command through `DeleteFlyoutItem`, a 15-item `ListViewRight`, source-shaped `DeleteSwipeItem`, and `HoverButton`; XamlUICommand exposes `CustomButton`, Favorite icon, `Ctrl+D`, description tooltip, and `XamlUICommandOutput`. `MenusToolbarsSampleFactory.CreateExamples` now covers these Menu & Toolbar WinUI extension pages, keeps the existing local WinUI sample-code snippets under `ModernWpf.Gallery\Samples\SampleCode\StandardUICommand` and `XamlUICommand`, and exposes curated automation IDs `GallerySample_StandardUICommand_Root` / `GallerySample_StandardUICommand_ListView` and `GallerySample_XamlUICommand_Root` / `GallerySample_XamlUICommand_AppBarButton`.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls StandardUICommand,XamlUICommand -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -1593,6 +1601,24 @@ viewport (`745x500` vs `745x406`), so treat that as known viewport/crop drift
 rather than a source-shape gap. The visual harness includes a narrow
 StandardUICommand sparse-list exception so the mostly empty light list crop is
 not misclassified as blank.
+The generated ModernWpf MenuFlyout extension page now uses the local official
+WinUI Gallery seven-example structure from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\MenuFlyoutPage.xaml`
+/ `.xaml.cs`: AppBarButton sort menu, toggle menu items with separator,
+cascading submenus, split-menu items, icons, icons with keyboard accelerator
+text, and radio menu items. ModernWpf keeps a WPF adaptation for unavailable
+WinUI-only menu item classes: `ToggleMenuFlyoutItem` maps to checkable
+`MenuItem`, `SplitMenuFlyoutItem` maps to WPF `MenuItem` submenus with matching
+output behavior, and `RadioMenuFlyoutItem` maps to `ModernWpf.Controls.RadioMenuItem`.
+Current MenuFlyout WinUI-reference evidence is
+`artifacts/visual-checks/20260524-190524-549-15984/report.md` for Light and
+`artifacts/visual-checks/20260524-190555-046-111936/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`, matching `68x64`
+primary crops, and primary deltas `6.41` / `8.35`. The visual harness now
+includes MenuFlyout in the default WinUI extension set and uses the first
+source `Sort` AppBarButton as the reference primary crop. Avoid reopening
+MenuFlyout's source shape unless a new WinUI source, visual crop, or interaction
+regression appears.
 The generated ModernWpf MenuBar extension page now uses the local official
 WinUI Gallery three-example structure for a simple MenuBar, keyboard
 accelerators, and submenus/separators/radio items, with WPF `MenuItem`,
