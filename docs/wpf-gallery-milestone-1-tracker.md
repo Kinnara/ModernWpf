@@ -106,6 +106,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.FlipViewSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 39 tests per target. The generated ModernWpf FlipView page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\FlipViewPage.xaml` / `.xaml.cs`: inline image FlipView, bound data/template FlipView, and vertical FlipView. `CollectionsSampleFactory.CreateExamples` now covers FlipView as a source-backed Collections WinUI extension page, adapts the unavailable WinUI `FlipView` control to a WPF carousel with explicit previous/next or up/down buttons, uses the local `cliff`, `grapes`, `rainier`, `sunset`, and `valley` media assets plus local control-image assets, preserves source-facing names such as `FlipView1`, `FlipView2`, `FlipView3`, `FlipView1Content`, `FlipView2Content`, and `FlipView3Content`, and exposes curated automation IDs `GallerySample_FlipView_Root` / `GallerySample_FlipView_FlipView`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls FlipView -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-205148-747-116384/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required FlipView sample element was found, ModernWpf's primary artifact is nonblank at `400x270`, and the report records whole-window Light mean delta `148.32`. Installed WinUI Gallery does not expose a stable primary UIA element for this page, so no primary-crop delta is emitted.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls FlipView -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-205212-274-115888/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required FlipView sample element was found, ModernWpf's primary artifact is nonblank at `400x270`, and the report records whole-window Dark mean delta `27.96`. Installed WinUI Gallery does not expose a stable primary UIA element for this page, so no primary-crop delta is emitted.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the FlipView WinUI example alignment. Current build output still prints the recurring `Failed to resolve WinRT.Runtime.dll` messages, but ends with `0 Warning(s)` and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.ItemsRepeaterSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 38 tests per target. The generated ModernWpf ItemsRepeater page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\ItemsRepeaterPage.xaml` / `.xaml.cs`: basic bar repeater with add/remove and layout options, virtualizing numbered repeater, mixed-type repeater, nested repeaters, animated color-list repeater, and content-heavy recipe repeater with filtering/sorting. `CollectionsSampleFactory.CreateExamples` now covers ItemsRepeater as a source-backed Collections WinUI extension page, uses real `ModernWpf.Controls.ItemsRepeater` and `ItemsRepeaterScrollHost` controls, preserves source-facing names such as `repeater`, `AddBtn`, `DeleteBtn`, `VStackBtn`, `HStackBtn`, `HGridBtn`, `repeater2`, `MixedTypeRepeater`, `outerRepeater`, `innerRepeater`, `animatedScrollRepeater`, `Animated_ScrollViewer`, `colorRectangle`, `tracker`, `VariedImageSizeRepeater`, and `FilterRecipes`, consumes the local sample-code files, and exposes curated automation IDs `GallerySample_ItemsRepeater_Root` / `GallerySample_ItemsRepeater_ItemsRepeater`.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls ItemsRepeater -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -1487,6 +1495,28 @@ ModernWpf primary from the rendered sample root because the control-only
 `VisualBrush` artifact is blank for the repeater-templated PipsPager. Avoid
 reopening PipsPager's source shape unless a new WinUI source or crop regression
 appears.
+The generated ModernWpf FlipView extension page now uses the local official
+WinUI Gallery three-example structure from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\FlipViewPage.xaml`
+/ `.xaml.cs`: inline image FlipView, bound data/template FlipView, and
+vertical FlipView. `CollectionsSampleFactory.CreateExamples` now covers
+FlipView as a source-backed Collections WinUI example and adapts WinUI's
+`FlipView` control to a WPF carousel because ModernWpf does not currently
+expose a native FlipView control. The live samples use the local `cliff`,
+`grapes`, `rainier`, `sunset`, and `valley` media assets plus local control
+image assets, keep source-facing names such as `FlipView1`, `FlipView2`,
+`FlipView3`, `FlipView1Content`, `FlipView2Content`, and `FlipView3Content`,
+and expose `GallerySample_FlipView_Root` / `GallerySample_FlipView_FlipView`
+for runtime and visual checks. Current FlipView WinUI-reference evidence is
+`artifacts/visual-checks/20260524-205148-747-116384/report.md` for Light and
+`artifacts/visual-checks/20260524-205212-274-115888/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`, required sample element
+found, ModernWpf nonblank `400x270` primary artifacts, and whole-window mean
+deltas `148.32` / `27.96`; installed WinUI Gallery does not expose a stable
+primary UIA element for this page, so the report intentionally has no
+primary-crop delta. Avoid reopening FlipView's source shape unless a new local
+WinUI source, runtime, or crop regression appears; the next Collections WinUI
+source-backed gap to inspect is `ItemsView`.
 The generated ModernWpf ItemsRepeater extension page now uses the local official
 WinUI Gallery six-example structure from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\ItemsRepeaterPage.xaml`
@@ -1515,9 +1545,7 @@ detector misclassifies this rendered repeater crop; when no reference primary
 element is configured, the harness now infers the installed WinUI Gallery theme
 from full-window luminance so Dark evidence does not silently reuse a Light
 reference. Avoid reopening ItemsRepeater's source shape unless a new local
-WinUI source, runtime, or crop regression appears; next Collections WinUI
-candidates to inspect remain source-backed gaps such as `ItemsView` and
-`FlipView`.
+WinUI source, runtime, or crop regression appears.
 The generated ModernWpf GridView extension page now uses the local official
 WinUI Gallery three-example structure from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\GridViewPage.xaml`

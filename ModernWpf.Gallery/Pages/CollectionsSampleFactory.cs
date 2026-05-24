@@ -84,6 +84,50 @@ private void rv2_RefreshStateChanged()
     visualizerContentVisual.StopAnimation(""RotationAngle"");
 }";
 
+        private const string FlipViewInlineXaml =
+@"<FlipView MaxWidth=""400"" Height=""270""
+          AutomationProperties.AutomationControlType=""List""
+          AutomationProperties.LocalizedControlType=""list"">
+    <Image Source=""ms-appx:///Assets/SampleMedia/cliff.jpg"" AutomationProperties.Name=""Cliff""/>
+    <Image Source=""ms-appx:///Assets/SampleMedia/grapes.jpg"" AutomationProperties.Name=""Grapes""/>
+    <Image Source=""ms-appx:///Assets/SampleMedia/rainier.jpg"" AutomationProperties.Name=""Rainier""/>
+    <Image Source=""ms-appx:///Assets/SampleMedia/sunset.jpg"" AutomationProperties.Name=""Sunset""/>
+    <Image Source=""ms-appx:///Assets/SampleMedia/valley.jpg"" AutomationProperties.Name=""Valley""/>
+</FlipView>";
+
+        private const string FlipViewBoundDataXaml =
+@"<FlipView MaxWidth=""400"" Height=""180"" BorderBrush=""Black"" BorderThickness=""1""
+          AutomationProperties.AutomationControlType=""List""
+          AutomationProperties.LocalizedControlType=""list""
+          ItemsSource=""{x:Bind Items, Mode=OneWay}"">
+    <FlipView.ItemTemplate>
+        <DataTemplate x:DataType=""data:ControlInfoDataItem"">
+            <Grid>
+                <Image Height=""120"" Source=""{x:Bind ImagePath}"" Stretch=""Uniform"" VerticalAlignment=""Top""/>
+                <Border Background=""#A5FFFFFF"" Height=""60"" VerticalAlignment=""Bottom"">
+                <TextBlock Text=""{x:Bind Title}"" Foreground=""#CCFFFFFF"" Padding=""12,12"" Style=""{StaticResource TitleTextBlockStyle}"" HorizontalAlignment=""Center""/>
+                </Border>
+            </Grid>
+        </DataTemplate>
+    </FlipView.ItemTemplate>
+</FlipView>";
+
+        private const string FlipViewVerticalXaml =
+@"<FlipView MaxWidth=""400"" Height=""270""
+          AutomationProperties.AutomationControlType=""List""
+          AutomationProperties.LocalizedControlType=""list"">
+    <Image Source=""ms-appx:///Assets/SampleMedia/cliff.jpg"" AutomationProperties.Name=""Cliff""/>
+    <Image Source=""ms-appx:///Assets/SampleMedia/grapes.jpg"" AutomationProperties.Name=""Grapes""/>
+    <Image Source=""ms-appx:///Assets/SampleMedia/rainier.jpg"" AutomationProperties.Name=""Rainier""/>
+    <Image Source=""ms-appx:///Assets/SampleMedia/sunset.jpg"" AutomationProperties.Name=""Sunset""/>
+    <Image Source=""ms-appx:///Assets/SampleMedia/valley.jpg"" AutomationProperties.Name=""Valley""/>
+        <FlipView.ItemsPanel >
+            <ItemsPanelTemplate>
+                <VirtualizingStackPanel Orientation=""Vertical""/>
+            </ItemsPanelTemplate>
+        </FlipView.ItemsPanel>
+<FlipView>";
+
         private const string GridViewLayoutCustomizationXaml =
 @"<!-- The GridView used for this example is shown below. Setter properties are used to customize
 some parts of the GridViewItems (i.e. the margins). -->
@@ -214,6 +258,8 @@ private void InitializeData()
         {
             switch (uniqueId)
             {
+                case "FlipView":
+                    return CreateFlipViewExamples();
                 case "GridView":
                     return CreateGridViewExamples(sampleSnippets);
                 case "ItemsRepeater":
@@ -272,34 +318,273 @@ private void InitializeData()
 
         private static UIElement CreateFlipViewSample()
         {
-            var panel = CreateSamplePanel("FlipView maps to explicit previous and next navigation because ModernWpf no longer carries the legacy MahApps FlipView adapter.");
-            var items = new[] { "Featured", "Recent", "Recommended" };
-            var index = 0;
-            var content = CreateCollectionCard(items[index]);
-            var output = CreateOutput("Item 1 of 3");
+            var root = new GallerySamplePanel
+            {
+                Margin = new Thickness(0, 0, 0, 12)
+            };
+            GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("FlipView"));
+            root.Children.Add(CreateInlineFlipViewExampleContent(assignRootAutomationId: false));
+            return root;
+        }
 
-            var row = new StackPanel { Orientation = Orientation.Horizontal };
-            var previous = CreateButton("Previous");
-            var next = CreateButton("Next");
+        private static IReadOnlyList<GalleryExample> CreateFlipViewExamples()
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "A simple FlipView with items declared inline.",
+                    CreateInlineFlipViewExampleContent(assignRootAutomationId: true),
+                    FlipViewInlineXaml,
+                    null),
+                new GalleryExample(
+                    "A FlipView showing bound data with a data template.",
+                    CreateBoundFlipViewExampleContent(),
+                    FlipViewBoundDataXaml,
+                    null),
+                new GalleryExample(
+                    "Vertical FlipView",
+                    CreateVerticalFlipViewExampleContent(),
+                    FlipViewVerticalXaml,
+                    null)
+            };
+        }
+
+        private static GallerySamplePanel CreateInlineFlipViewExampleContent(bool assignRootAutomationId)
+        {
+            var root = CreateFlipViewExampleRoot(assignRootAutomationId);
+            var carousel = CreateFlipViewCarousel(
+                "FlipView1",
+                "FlipView1Content",
+                "FlipView1PreviousButton",
+                "FlipView1NextButton",
+                CreateFlipViewPhotoItems(),
+                width: 400,
+                height: 270,
+                vertical: false,
+                itemTemplate: CreateFlipViewImageTemplate(),
+                assignPrimaryAutomationId: true);
+            root.Children.Add(carousel);
+            return root;
+        }
+
+        private static GallerySamplePanel CreateBoundFlipViewExampleContent()
+        {
+            var root = CreateFlipViewExampleRoot(assignRootAutomationId: false);
+            root.Children.Add(CreateFlipViewCarousel(
+                "FlipView2",
+                "FlipView2Content",
+                "FlipView2PreviousButton",
+                "FlipView2NextButton",
+                CreateFlipViewControlItems(),
+                width: 400,
+                height: 180,
+                vertical: false,
+                itemTemplate: CreateFlipViewBoundItemTemplate(),
+                assignPrimaryAutomationId: false));
+            return root;
+        }
+
+        private static GallerySamplePanel CreateVerticalFlipViewExampleContent()
+        {
+            var root = CreateFlipViewExampleRoot(assignRootAutomationId: false);
+            root.Children.Add(CreateFlipViewCarousel(
+                "FlipView3",
+                "FlipView3Content",
+                "FlipView3PreviousButton",
+                "FlipView3NextButton",
+                CreateFlipViewPhotoItems(),
+                width: 400,
+                height: 270,
+                vertical: true,
+                itemTemplate: CreateFlipViewImageTemplate(),
+                assignPrimaryAutomationId: false));
+            return root;
+        }
+
+        private static GallerySamplePanel CreateFlipViewExampleRoot(bool assignRootAutomationId)
+        {
+            var root = new GallerySamplePanel
+            {
+                HorizontalAlignment = HorizontalAlignment.Stretch
+            };
+
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("FlipView"));
+            }
+
+            return root;
+        }
+
+        private static FrameworkElement CreateFlipViewCarousel(
+            string name,
+            string contentName,
+            string previousName,
+            string nextName,
+            IReadOnlyList<FlipViewCarouselItem> items,
+            double width,
+            double height,
+            bool vertical,
+            DataTemplate itemTemplate,
+            bool assignPrimaryAutomationId)
+        {
+            var root = new Grid
+            {
+                Name = name,
+                Width = width,
+                Height = height,
+                MaxWidth = width,
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+            AutomationProperties.SetName(root, "FlipView");
+            if (assignPrimaryAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleElementId("FlipView", "FlipView"));
+            }
+
+            var content = new ContentControl
+            {
+                Name = contentName,
+                ContentTemplate = itemTemplate,
+                HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                VerticalContentAlignment = VerticalAlignment.Stretch
+            };
+            root.Children.Add(content);
+
+            var index = 0;
+            Action updateContent = delegate
+            {
+                var item = items[index];
+                content.Content = item;
+                AutomationProperties.SetName(content, item.Title);
+            };
+
+            var previous = CreateFlipViewNavigationButton(previousName, vertical ? "Up" : "Previous", vertical ? "\uE70E" : "\uE76B");
+            var next = CreateFlipViewNavigationButton(nextName, vertical ? "Down" : "Next", vertical ? "\uE70D" : "\uE76C");
+
+            if (vertical)
+            {
+                previous.VerticalAlignment = VerticalAlignment.Top;
+                previous.HorizontalAlignment = HorizontalAlignment.Center;
+                next.VerticalAlignment = VerticalAlignment.Bottom;
+                next.HorizontalAlignment = HorizontalAlignment.Center;
+            }
+            else
+            {
+                previous.HorizontalAlignment = HorizontalAlignment.Left;
+                previous.VerticalAlignment = VerticalAlignment.Center;
+                next.HorizontalAlignment = HorizontalAlignment.Right;
+                next.VerticalAlignment = VerticalAlignment.Center;
+            }
+
             previous.Click += delegate
             {
-                index = (index + items.Length - 1) % items.Length;
-                content.Child = CreateCardText(items[index]);
-                output.Text = "Item " + (index + 1) + " of " + items.Length;
+                index = (index + items.Count - 1) % items.Count;
+                updateContent();
             };
             next.Click += delegate
             {
-                index = (index + 1) % items.Length;
-                content.Child = CreateCardText(items[index]);
-                output.Text = "Item " + (index + 1) + " of " + items.Length;
+                index = (index + 1) % items.Count;
+                updateContent();
             };
-            row.Children.Add(previous);
-            row.Children.Add(next);
+            root.Children.Add(previous);
+            root.Children.Add(next);
 
-            panel.Children.Add(content);
-            panel.Children.Add(row);
-            panel.Children.Add(output);
-            return panel;
+            updateContent();
+            return root;
+        }
+
+        private static Button CreateFlipViewNavigationButton(string name, string automationName, string glyph)
+        {
+            var button = new Button
+            {
+                Name = name,
+                Content = new Mux.FontIcon
+                {
+                    Glyph = glyph,
+                    FontSize = 18
+                },
+                MinWidth = 32,
+                MinHeight = 32,
+                Width = 36,
+                Height = 36,
+                Padding = new Thickness(0),
+                Opacity = 0.86
+            };
+            AutomationProperties.SetName(button, automationName);
+            return button;
+        }
+
+        private static IReadOnlyList<FlipViewCarouselItem> CreateFlipViewPhotoItems()
+        {
+            return new[]
+            {
+                CreateFlipViewPhotoItem("Cliff", "cliff.jpg"),
+                CreateFlipViewPhotoItem("Grapes", "grapes.jpg"),
+                CreateFlipViewPhotoItem("Rainier", "rainier.jpg"),
+                CreateFlipViewPhotoItem("Sunset", "sunset.jpg"),
+                CreateFlipViewPhotoItem("Valley", "valley.jpg")
+            };
+        }
+
+        private static FlipViewCarouselItem CreateFlipViewPhotoItem(string title, string fileName)
+        {
+            return new FlipViewCarouselItem
+            {
+                Title = title,
+                ImageSource = new BitmapImage(new Uri(ResourceUri("Assets/SampleMedia/" + fileName), UriKind.Absolute))
+            };
+        }
+
+        private static IReadOnlyList<FlipViewCarouselItem> CreateFlipViewControlItems()
+        {
+            return new[]
+            {
+                CreateFlipViewControlItem("Button", "Button.png"),
+                CreateFlipViewControlItem("CalendarView", "CalendarView.png"),
+                CreateFlipViewControlItem("CheckBox", "Checkbox.png"),
+                CreateFlipViewControlItem("ComboBox", "ComboBox.png"),
+                CreateFlipViewControlItem("NavigationView", "NavigationView.png")
+            };
+        }
+
+        private static FlipViewCarouselItem CreateFlipViewControlItem(string title, string fileName)
+        {
+            return new FlipViewCarouselItem
+            {
+                Title = title,
+                ImageSource = new BitmapImage(new Uri(ResourceUri("Assets/ControlImages/" + fileName), UriKind.Absolute))
+            };
+        }
+
+        private static DataTemplate CreateFlipViewImageTemplate()
+        {
+            return ParseRepeaterTemplate(
+                "<DataTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'>" +
+                "<Image Source='{Binding ImageSource}' Stretch='UniformToFill'/>" +
+                "</DataTemplate>");
+        }
+
+        private static DataTemplate CreateFlipViewBoundItemTemplate()
+        {
+            return ParseRepeaterTemplate(
+                "<DataTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'>" +
+                "<Border BorderBrush='Black' BorderThickness='1'>" +
+                "<Grid>" +
+                "<Grid.RowDefinitions><RowDefinition Height='*'/><RowDefinition Height='Auto'/></Grid.RowDefinitions>" +
+                "<Image Width='36' VerticalAlignment='Center' Source='{Binding ImageSource}' Stretch='Uniform'/>" +
+                "<Border Grid.Row='1' Height='60' Background='#A5FFFFFF'>" +
+                "<TextBlock Padding='12,12' HorizontalAlignment='Center' Foreground='Black' Style='{DynamicResource TitleTextBlockStyle}' Text='{Binding Title}'/>" +
+                "</Border>" +
+                "</Grid>" +
+                "</Border>" +
+                "</DataTemplate>");
+        }
+
+        private sealed class FlipViewCarouselItem
+        {
+            public string Title { get; set; }
+            public BitmapImage ImageSource { get; set; }
         }
 
         private static UIElement CreateGridViewSample()

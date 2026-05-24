@@ -31,6 +31,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "ProgressRing", "GallerySample_ProgressRing_Root", "GallerySample_ProgressRing_ProgressRing" };
             yield return new object[] { "PipsPager", "GallerySample_PipsPager_Root", "GallerySample_PipsPager_PipsPager" };
             yield return new object[] { "PullToRefresh", "GallerySample_PullToRefresh_Root", "GallerySample_PullToRefresh_RefreshContainer" };
+            yield return new object[] { "FlipView", "GallerySample_FlipView_Root", "GallerySample_FlipView_FlipView" };
             yield return new object[] { "GridView", "GallerySample_GridView_Root", "GallerySample_GridView_BasicGridView" };
             yield return new object[] { "ItemsRepeater", "GallerySample_ItemsRepeater_Root", "GallerySample_ItemsRepeater_ItemsRepeater" };
             yield return new object[] { "BreadcrumbBar", "GallerySample_BreadcrumbBar_Root", "GallerySample_BreadcrumbBar_BreadcrumbBar" };
@@ -1417,6 +1418,89 @@ namespace ModernWpf.Gallery.Tests
                     customRefreshContainer.RequestRefresh();
                     WaitFor(() => customListView.Items.Count == 9);
                     Assert.AreEqual("New Friend", customListView.Items[0]);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void FlipViewSampleMatchesWinUIGalleryExamples()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("FlipView"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(3, page.Examples.Count);
+                    Assert.AreEqual("A simple FlipView with items declared inline.", page.Examples[0].HeaderText);
+                    Assert.AreEqual("A FlipView showing bound data with a data template.", page.Examples[1].HeaderText);
+                    Assert.AreEqual("Vertical FlipView", page.Examples[2].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "AutomationProperties.AutomationControlType=\"List\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "ms-appx:///Assets/SampleMedia/cliff.jpg");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "ItemsSource=\"{x:Bind Items, Mode=OneWay}\"");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "ControlInfoDataItem");
+                    StringAssert.Contains(page.Examples[2].XamlCode, "VirtualizingStackPanel Orientation=\"Vertical\"");
+
+                    var flipView = (Grid)FindByAutomationId(page, "GallerySample_FlipView_FlipView");
+                    var namedFlipView = FindNamedDescendant<Grid>(page, "FlipView1");
+                    var flipView1Content = FindNamedDescendant<ContentControl>(page, "FlipView1Content");
+                    var flipView1NextButton = FindNamedDescendant<Button>(page, "FlipView1NextButton");
+                    var flipView2 = FindNamedDescendant<Grid>(page, "FlipView2");
+                    var flipView2Content = FindNamedDescendant<ContentControl>(page, "FlipView2Content");
+                    var flipView2NextButton = FindNamedDescendant<Button>(page, "FlipView2NextButton");
+                    var flipView3 = FindNamedDescendant<Grid>(page, "FlipView3");
+                    var flipView3Content = FindNamedDescendant<ContentControl>(page, "FlipView3Content");
+                    var flipView3NextButton = FindNamedDescendant<Button>(page, "FlipView3NextButton");
+                    Assert.IsNotNull(flipView);
+                    Assert.AreSame(flipView, namedFlipView);
+                    Assert.IsNotNull(flipView1Content);
+                    Assert.IsNotNull(flipView1NextButton);
+                    Assert.IsNotNull(flipView2);
+                    Assert.IsNotNull(flipView2Content);
+                    Assert.IsNotNull(flipView2NextButton);
+                    Assert.IsNotNull(flipView3);
+                    Assert.IsNotNull(flipView3Content);
+                    Assert.IsNotNull(flipView3NextButton);
+                    Assert.AreEqual(400.0, flipView.Width);
+                    Assert.AreEqual(270.0, flipView.Height);
+                    Assert.AreEqual(400.0, flipView2.Width);
+                    Assert.AreEqual(180.0, flipView2.Height);
+                    Assert.AreEqual("Cliff", AutomationProperties.GetName(flipView1Content));
+                    Assert.AreEqual("Button", AutomationProperties.GetName(flipView2Content));
+                    Assert.AreEqual("Cliff", AutomationProperties.GetName(flipView3Content));
+                    Assert.AreEqual("Next", AutomationProperties.GetName(flipView1NextButton));
+                    Assert.AreEqual("Next", AutomationProperties.GetName(flipView2NextButton));
+                    Assert.AreEqual("Down", AutomationProperties.GetName(flipView3NextButton));
+
+                    flipView1NextButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent, flipView1NextButton));
+                    flipView2NextButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent, flipView2NextButton));
+                    flipView3NextButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent, flipView3NextButton));
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual("Grapes", AutomationProperties.GetName(flipView1Content));
+                    Assert.AreEqual("CalendarView", AutomationProperties.GetName(flipView2Content));
+                    Assert.AreEqual("Grapes", AutomationProperties.GetName(flipView3Content));
                 }
                 finally
                 {
