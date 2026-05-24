@@ -1815,6 +1815,10 @@ namespace ModernWpf.Gallery.Tests
                     AssertGlyphMenuItem((MenuItem)menuItems[3], "Bold", "\uE8DD");
                     AssertGlyphMenuItem((MenuItem)menuItems[4], "Italic", "\uE8DB");
                     AssertGlyphMenuItem((MenuItem)menuItems[5], "Underlined", "\uE8DC");
+                    var boldMenuItem = (MenuItem)menuItems[3];
+                    boldMenuItem.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent, boldMenuItem));
+                    Assert.AreEqual(Visibility.Visible, statusMenuItem.Visibility);
+                    Assert.AreEqual("You pressed Bold", statusMenuItem.Text);
                     StringAssert.Contains(menuExamples[0].XamlCode, "<MenuItem Header=\"File\">");
                 });
 

@@ -16,13 +16,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Navigation
 
         private void OpenFrameWindow_Click(object sender, RoutedEventArgs e)
         {
-            var window = new FrameWindow();
-            var owner = Window.GetWindow(this);
-            if (owner != null)
-            {
-                window.Owner = owner;
-            }
-
+            FrameWindow window = new FrameWindow();
             window.Show();
         }
     }

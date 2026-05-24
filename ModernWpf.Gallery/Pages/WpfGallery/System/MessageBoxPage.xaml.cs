@@ -16,14 +16,13 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
 
         private void ShowDefaultMessageButton_Click(object sender, RoutedEventArgs e)
         {
-            var result = MessageBox.Show(Window.GetWindow(this), "This is a simple message box!");
+            var result = MessageBox.Show("This is a simple message box!");
             ViewModel.DefaultMessageResult = $"Result: {result}";
         }
 
         private void ShowCustomTitleButton_Click(object sender, RoutedEventArgs e)
         {
             var result = MessageBox.Show(
-                Window.GetWindow(this),
                 "This is a detailed description of what happened or what action is needed.",
                 "Custom Title");
             ViewModel.CustomTitleResult = $"Result: {result}";
@@ -34,9 +33,8 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
             var buttonType = GetMessageBoxButton(ViewModel.SelectedButtonIndex);
             var buttonName = GetMessageBoxButtonName(ViewModel.SelectedButtonIndex);
             var result = MessageBox.Show(
-                Window.GetWindow(this),
-                "This MessageBox has " + buttonName + " button(s).",
-                buttonName + " Button(s)",
+                $"This MessageBox has {buttonName} button(s).",
+                $"{buttonName} Button(s)",
                 buttonType);
             ViewModel.DifferentButtonsResult = $"Result: {result}";
         }
@@ -46,9 +44,8 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
             var imageType = GetMessageBoxImage(ViewModel.SelectedImageIndex);
             var imageName = GetMessageBoxImageName(ViewModel.SelectedImageIndex);
             var result = MessageBox.Show(
-                Window.GetWindow(this),
-                "This MessageBox displays the " + imageName + " icon.",
-                imageName + " Icon",
+                $"This MessageBox displays the {imageName} icon.",
+                $"{imageName} Icon",
                 MessageBoxButton.OK,
                 imageType);
             ViewModel.DifferentImagesResult = $"Result: {result}";
@@ -56,26 +53,25 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
 
         private void ShowCommonInformation_Click(object sender, RoutedEventArgs e)
         {
-            var result = MessageBox.Show(Window.GetWindow(this), "The operation completed successfully.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+            var result = MessageBox.Show("The operation completed successfully.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
             ViewModel.CommonMessagesResult = $"Type: Information | Result: {result}";
         }
 
         private void ShowCommonError_Click(object sender, RoutedEventArgs e)
         {
-            var result = MessageBox.Show(Window.GetWindow(this), "An error occurred! The operation could not be completed.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            var result = MessageBox.Show("An error occurred! The operation could not be completed.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             ViewModel.CommonMessagesResult = $"Type: Error | Result: {result}";
         }
 
         private void ShowCommonWarning_Click(object sender, RoutedEventArgs e)
         {
-            var result = MessageBox.Show(Window.GetWindow(this), "This action cannot be undone! Do you want to continue?", "Warning", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
+            var result = MessageBox.Show("This action cannot be undone! Do you want to continue?", "Warning", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
             ViewModel.CommonMessagesResult = $"Type: Warning | Result: {result}";
         }
 
         private void ShowCustomDefaultButton_Click(object sender, RoutedEventArgs e)
         {
             var result = MessageBox.Show(
-                Window.GetWindow(this),
                 "Do you want to save changes? Press Enter to select the default 'No' button.",
                 "Save Changes",
                 MessageBoxButton.YesNoCancel,

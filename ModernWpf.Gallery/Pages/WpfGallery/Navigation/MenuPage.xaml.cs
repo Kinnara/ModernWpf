@@ -16,26 +16,22 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Navigation
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            var menuItem = sender as MenuItem;
-            if (menuItem == null)
+            if (sender is MenuItem menuItem)
             {
-                return;
-            }
+                if (e.OriginalSource is MenuItem originalMenuItem && originalMenuItem == menuItem)
+                {
+                    StatusMenuItem.Visibility = Visibility.Visible;
+                    StatusMenuItem.Text = menuItem.Tag != null ? $"You pressed {menuItem.Tag}" : $"You pressed {menuItem.Header}";
+                }
 
-            if (e.OriginalSource is MenuItem originalMenuItem && originalMenuItem == menuItem)
-            {
-                StatusMenuItem.Visibility = Visibility.Visible;
-                StatusMenuItem.Text = menuItem.Tag != null ? "You pressed " + menuItem.Tag : "You pressed " + menuItem.Header;
-            }
-
-            var parentMenuItem = menuItem.Parent as MenuItem;
-            if (parentMenuItem != null)
-            {
-                parentMenuItem.Focus();
-            }
-            else
-            {
-                menuItem.Focus();
+                if (menuItem.Parent is MenuItem parentMenuItem)
+                {
+                    parentMenuItem.Focus();
+                }
+                else
+                {
+                    menuItem.Focus();
+                }
             }
         }
     }

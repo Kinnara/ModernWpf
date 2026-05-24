@@ -18,18 +18,12 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Navigation
 
         private void OpenNavigationWindow_Click(object sender, RoutedEventArgs e)
         {
-            var window = new NavigationWindow
+            NavigationWindow window = new NavigationWindow
             {
                 Width = 800,
                 Height = 450,
                 Source = new Uri("/Pages/WpfGallery/Navigation/Page1.xaml", UriKind.Relative)
             };
-            var owner = Window.GetWindow(this);
-            if (owner != null)
-            {
-                window.Owner = owner;
-            }
-
             window.Show();
         }
     }
