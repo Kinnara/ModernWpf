@@ -542,6 +542,7 @@ namespace ModernWpf.Gallery.Tests
                 var homePage = new HomePage();
                 RenderPage(homePage, () =>
                 {
+                    Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId((Grid)homePage.FindName("ContentRootGrid")));
                     Assert.AreEqual(AutomationHeadingLevel.Level1, AutomationProperties.GetHeadingLevel((TextBlock)homePage.FindName("HeroVersionText")));
                     Assert.AreEqual(AutomationHeadingLevel.Level1, AutomationProperties.GetHeadingLevel((TextBlock)homePage.FindName("HeroTitleText")));
                     Assert.AreEqual(AutomationHeadingLevel.Level2, AutomationProperties.GetHeadingLevel((TextBlock)homePage.FindName("OverviewHeaderText")));
@@ -772,6 +773,7 @@ namespace ModernWpf.Gallery.Tests
 
         private static void AssertReferenceCategoryPageRoot(Grid root, bool hasItemsScrollViewer)
         {
+            Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(root));
             Assert.AreEqual(new Thickness(0), root.Margin);
             Assert.AreEqual(2, root.RowDefinitions.Count);
             Assert.AreEqual(GridUnitType.Auto, root.RowDefinitions[0].Height.GridUnitType);

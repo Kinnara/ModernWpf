@@ -253,6 +253,7 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual("Discover all the new features, enhancements and APIs introduced in WPF", description.Text);
 
                 var root = (Grid)page.FindName("ContentRootGrid");
+                Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(root));
                 Assert.AreEqual(
                     (double)Application.Current.FindResource("BodyTextBlockFontSize"),
                     TextElement.GetFontSize(root));
@@ -302,6 +303,7 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsInstanceOfType(page, typeof(Page));
 
                     var root = (Grid)page.FindName("ContentRootGrid");
+                    Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(root));
                     Assert.AreEqual(2, root.RowDefinitions.Count);
                     Assert.AreEqual(GridUnitType.Auto, root.RowDefinitions[0].Height.GridUnitType);
                     Assert.AreEqual(GridUnitType.Star, root.RowDefinitions[1].Height.GridUnitType);

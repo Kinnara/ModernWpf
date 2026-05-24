@@ -12,9 +12,7 @@
     Margin="-24,-16,-24,12"
     Title="DashboardPage"
     mc:Ignorable="d">
-    <Grid
-        AutomationProperties.AutomationId="ContentRootGrid"
-        x:Name="ContentRootGrid">
+    <Grid x:Name="ContentRootGrid">
         <ScrollViewer>
             <Grid x:Name="HomeContentGrid">
                 <Grid.RowDefinitions>

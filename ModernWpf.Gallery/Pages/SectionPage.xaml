@@ -12,7 +12,6 @@
     mc:Ignorable="d">
     <Grid
         x:Name="ContentRootGrid"
-        AutomationProperties.AutomationId="ContentRootGrid"
         Style="{StaticResource GalleryPageRootStyle}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
