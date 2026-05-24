@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using ModernWpf.Controls.Primitives;
 using ModernWpf.Gallery.Models;
@@ -27,10 +28,94 @@ namespace ModernWpf.Gallery.Pages
     </CommandBar.SecondaryCommands>
 </CommandBar>";
 
+        private const string AppBarButtonSymbolXaml =
+@"<AppBarButton Icon=""Like"" Label=""SymbolIcon"" Click=""AppBarButton_Click""/>";
+
+        private const string AppBarButtonBitmapXaml =
+@"<AppBarButton Label=""BitmapIcon"" Click=""AppBarButton_Click"">
+    <AppBarButton.Icon>
+        <BitmapIcon UriSource=""ms-appx:///Assets/SampleMedia/Slices2.png""/>
+    </AppBarButton.Icon>
+</AppBarButton>";
+
+        private const string AppBarButtonFontXaml =
+@"<AppBarButton Label=""FontIcon"" Click=""AppBarButton_Click"">
+    <AppBarButton.Icon>
+        <FontIcon FontFamily=""Candara"" Glyph=""&#x03A3;""/>
+    </AppBarButton.Icon>
+</AppBarButton>";
+
+        private const string AppBarButtonPathXaml =
+@"<AppBarButton Label=""PathIcon"" Click=""AppBarButton_Click"">
+    <AppBarButton.Content>
+        <Viewbox Stretch=""Uniform"">
+            <PathIcon Data=""F1 M 20,20L 24,10L 24,24L 5,24""/>
+        </Viewbox>
+    </AppBarButton.Content>
+</AppBarButton>";
+
+        private const string AppBarButtonKeyboardAcceleratorXaml =
+@"<AppBarButton Icon=""Save"" Label=""Save"" Click=""AppBarButton_Click"">
+    <AppBarButton.KeyboardAccelerators>
+        <KeyboardAccelerator Modifiers=""Control"" Key=""S""/>
+    <AppBarButton.KeyboardAccelerators/>
+</AppBarButton>";
+
+        private const string AppBarButtonFlyoutXaml =
+@"<AppBarButton AllowFocusOnInteraction=""True"" Icon=""Edit"" Label=""Edit"">
+    <AppBarButton.Flyout>
+        <Flyout/>
+            <TextBox MinWidth=""240"" PlaceholderText=""Input text here""/>
+        <Flyout/>
+    <AppBarButton.Flyout>
+</AppBarButton>";
+
+        private const string AppBarToggleButtonSymbolXaml =
+@"<AppBarToggleButton Icon=""Shuffle"" Label=""SymbolIcon"" Click=""AppBarButton_Click""/>";
+
+        private const string AppBarToggleButtonBitmapXaml =
+@"<AppBarToggleButton Label=""BitmapIcon"" Click=""AppBarButton_Click"">
+    <AppBarToggleButton.Icon>
+        <BitmapIcon UriSource=""ms-appx:///Assets/SampleMedia/Slices2.png""/>
+    </AppBarToggleButton.Icon>
+</AppBarToggleButton>";
+
+        private const string AppBarToggleButtonFontXaml =
+@"<AppBarToggleButton Label=""FontIcon"" Click=""AppBarButton_Click"">
+    <AppBarToggleButton.Icon>
+        <FontIcon FontFamily=""Candara"" Glyph=""&#x03A3;""/>
+    </AppBarToggleButton.Icon>
+</AppBarToggleButton>";
+
+        private const string AppBarToggleButtonPathXaml =
+@"<AppBarToggleButton Label=""PathIcon"" Click=""AppBarButton_Click"" IsThreeState=""True"">
+    <AppBarToggleButton.Icon>
+        <PathIcon Data=""F1 M 20,20L 24,10L 24,24L 5,24""/>
+    </AppBarToggleButton.Icon>
+</AppBarToggleButton>";
+
+        private const string AppBarSeparatorXaml =
+@"<CommandBar>
+    <CommandBar.PrimaryCommands>
+        <AppBarButton Icon=""AttachCamera"" Label=""Attach Camera""/>
+        <AppBarSeparator />
+        <AppBarButton Icon=""Like"" Label=""Like""/>
+        <AppBarButton Icon=""Dislike"" Label=""Dislike""/>
+        <AppBarSeparator />
+        <AppBarButton Icon=""Orientation"" Label=""Orientation""/>
+    </CommandBar.PrimaryCommands>
+</CommandBar>";
+
         public static IReadOnlyList<GalleryExample> CreateExamples(string uniqueId, IReadOnlyList<SampleSnippet> sampleSnippets)
         {
             switch (uniqueId)
             {
+                case "AppBarButton":
+                    return CreateAppBarButtonExamples();
+                case "AppBarSeparator":
+                    return CreateAppBarSeparatorExamples();
+                case "AppBarToggleButton":
+                    return CreateAppBarToggleButtonExamples();
                 case "CommandBar":
                     return CreateCommandBarExamples();
                 case "CommandBarFlyout":
@@ -73,41 +158,279 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateAppBarButtonSample()
         {
-            var panel = CreateSamplePanel("AppBarButton presents a command with a compact icon and label.");
-            var output = CreateOutput("Choose a command.");
-            var button = CreateAppBarButton(Mux.Symbol.Save, "Save");
-            button.Click += delegate { output.Text = "Save command selected."; };
-            panel.Children.Add(button);
-            panel.Children.Add(output);
+            var panel = new GallerySamplePanel
+            {
+                Margin = new Thickness(0, 0, 0, 12)
+            };
+            GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("AppBarButton"));
+            panel.Children.Add(CreateAppBarButtonSymbolExampleContent(assignRootAutomationId: false));
             return panel;
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateAppBarButtonExamples()
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "An AppBarButton with a symbol icon.",
+                    CreateAppBarButtonSymbolExampleContent(assignRootAutomationId: true),
+                    AppBarButtonSymbolXaml,
+                    null),
+                new GalleryExample(
+                    "An AppBarButton with a bitmap icon.",
+                    CreateAppBarButtonBitmapExampleContent(),
+                    AppBarButtonBitmapXaml,
+                    null),
+                new GalleryExample(
+                    "An AppBarButton with a font icon.",
+                    CreateAppBarButtonFontExampleContent(),
+                    AppBarButtonFontXaml,
+                    null),
+                new GalleryExample(
+                    "An AppBarButton with a path icon.",
+                    CreateAppBarButtonPathExampleContent(),
+                    AppBarButtonPathXaml,
+                    null),
+                new GalleryExample(
+                    "An AppBarButton with a KeyboardAccelerator",
+                    CreateAppBarButtonKeyboardAcceleratorExampleContent(),
+                    AppBarButtonKeyboardAcceleratorXaml,
+                    null),
+                new GalleryExample(
+                    "An AppBarButton that opens a Flyout containing an input control.",
+                    CreateAppBarButtonFlyoutExampleContent(),
+                    AppBarButtonFlyoutXaml,
+                    null)
+            };
+        }
+
+        private static GallerySamplePanel CreateAppBarButtonSymbolExampleContent(bool assignRootAutomationId)
+        {
+            var output = CreateAppBarOutput("Control1Output");
+            var button = CreateSourceAppBarButton("Button1", Mux.Symbol.Like, "SymbolIcon", output);
+            GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("AppBarButton", "AppBarButton"));
+            return CreateAppBarButtonExampleRoot(assignRootAutomationId, button, output);
+        }
+
+        private static GallerySamplePanel CreateAppBarButtonBitmapExampleContent()
+        {
+            var output = CreateAppBarOutput("Control2Output");
+            var button = CreateSourceAppBarButton("Button2", new Mux.BitmapIcon
+            {
+                UriSource = new Uri(ResourceUri("Assets/SampleMedia/Slices2.png"), UriKind.Absolute)
+            }, "BitmapIcon", output);
+            GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("AppBarButton", "BitmapIconButton"));
+            return CreateAppBarButtonExampleRoot(false, button, output);
+        }
+
+        private static GallerySamplePanel CreateAppBarButtonFontExampleContent()
+        {
+            var output = CreateAppBarOutput("Control3Output");
+            var button = CreateSourceAppBarButton("Button3", new Mux.FontIcon
+            {
+                FontFamily = new FontFamily("Candara"),
+                Glyph = "\u03A3"
+            }, "FontIcon", output);
+            GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("AppBarButton", "FontIconButton"));
+            return CreateAppBarButtonExampleRoot(false, button, output);
+        }
+
+        private static GallerySamplePanel CreateAppBarButtonPathExampleContent()
+        {
+            var output = CreateAppBarOutput("Control4Output");
+            var pathIcon = new Mux.PathIcon
+            {
+                Data = Geometry.Parse("F1 M 20,20L 24,10L 24,24L 5,24")
+            };
+            var button = new Mux.AppBarButton
+            {
+                Name = "Button4",
+                Content = new Viewbox
+                {
+                    Stretch = Stretch.Uniform,
+                    Child = pathIcon
+                },
+                Label = "PathIcon"
+            };
+            button.Click += delegate { output.Text = "You clicked: " + button.Name; };
+            GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("AppBarButton", "PathIconButton"));
+            return CreateAppBarButtonExampleRoot(false, button, output);
+        }
+
+        private static GallerySamplePanel CreateAppBarButtonKeyboardAcceleratorExampleContent()
+        {
+            var output = CreateAppBarOutput("Control5Output");
+            var button = CreateSourceAppBarButton("Button5", Mux.Symbol.Save, "Save", output);
+            button.InputGestureText = "Ctrl+S";
+            GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("AppBarButton", "KeyboardAcceleratorButton"));
+            return CreateAppBarButtonExampleRoot(false, button, output);
+        }
+
+        private static GallerySamplePanel CreateAppBarButtonFlyoutExampleContent()
+        {
+            var textBox = new TextBox
+            {
+                MinWidth = 240
+            };
+            ControlHelper.SetPlaceholderText(textBox, "Input text here");
+
+            var button = new Mux.AppBarButton
+            {
+                Name = "Button6",
+                Icon = new Mux.SymbolIcon(Mux.Symbol.Edit),
+                Label = "Edit",
+                Flyout = new Mux.Flyout
+                {
+                    Content = textBox
+                }
+            };
+            GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("AppBarButton", "FlyoutButton"));
+            return CreateAppBarButtonExampleRoot(false, button, null);
         }
 
         private static UIElement CreateAppBarSeparatorSample()
         {
-            var panel = CreateSamplePanel("AppBarSeparator visually groups related toolbar commands.");
-            var bar = new Mux.CommandBar();
-            bar.PrimaryCommands.Add(CreateAppBarButton(Mux.Symbol.Cut, "Cut"));
-            bar.PrimaryCommands.Add(CreateAppBarButton(Mux.Symbol.Copy, "Copy"));
+            var panel = new GallerySamplePanel
+            {
+                Margin = new Thickness(0, 0, 0, 12)
+            };
+            GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("AppBarSeparator"));
+            panel.Children.Add(CreateAppBarSeparatorExampleContent(assignRootAutomationId: false));
+            return panel;
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateAppBarSeparatorExamples()
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "AppBarButtons separated by AppBarSeparators.",
+                    CreateAppBarSeparatorExampleContent(assignRootAutomationId: true),
+                    AppBarSeparatorXaml,
+                    null)
+            };
+        }
+
+        private static GallerySamplePanel CreateAppBarSeparatorExampleContent(bool assignRootAutomationId)
+        {
+            var panel = new GallerySamplePanel();
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("AppBarSeparator"));
+            }
+
+            var scrollViewer = new ScrollViewer
+            {
+                HorizontalScrollBarVisibility = ScrollBarVisibility.Hidden,
+                VerticalScrollBarVisibility = ScrollBarVisibility.Hidden
+            };
+
+            var bar = new Mux.CommandBar
+            {
+                Name = "Control1",
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+            GalleryAutomation.WithAutomationId(bar, GalleryAutomation.SampleElementId("AppBarSeparator", "CommandBar"));
+            bar.PrimaryCommands.Add(CreateAppBarButton(Mux.Symbol.AttachCamera, "Attach Camera"));
             bar.PrimaryCommands.Add(new Mux.AppBarSeparator());
-            bar.PrimaryCommands.Add(CreateAppBarButton(Mux.Symbol.Paste, "Paste"));
-            panel.Children.Add(bar);
+            bar.PrimaryCommands.Add(CreateAppBarButton(Mux.Symbol.Like, "Like"));
+            bar.PrimaryCommands.Add(CreateAppBarButton(Mux.Symbol.Dislike, "Dislike"));
+            bar.PrimaryCommands.Add(new Mux.AppBarSeparator());
+            bar.PrimaryCommands.Add(CreateAppBarButton(Mux.Symbol.Orientation, "Orientation"));
+
+            scrollViewer.Content = bar;
+            panel.Children.Add(scrollViewer);
             return panel;
         }
 
         private static UIElement CreateAppBarToggleButtonSample()
         {
-            var panel = CreateSamplePanel("AppBarToggleButton keeps a checked state for toolbar options.");
-            var output = CreateOutput("Bold is off.");
+            var panel = new GallerySamplePanel
+            {
+                Margin = new Thickness(0, 0, 0, 12)
+            };
+            GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("AppBarToggleButton"));
+            panel.Children.Add(CreateAppBarToggleButtonSymbolExampleContent(assignRootAutomationId: false));
+            return panel;
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateAppBarToggleButtonExamples()
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "An AppBarToggleButton with a symbol icon.",
+                    CreateAppBarToggleButtonSymbolExampleContent(assignRootAutomationId: true),
+                    AppBarToggleButtonSymbolXaml,
+                    null),
+                new GalleryExample(
+                    "An AppBarToggleButton with a bitmap icon.",
+                    CreateAppBarToggleButtonBitmapExampleContent(),
+                    AppBarToggleButtonBitmapXaml,
+                    null),
+                new GalleryExample(
+                    "An AppBarToggleButton with a font icon.",
+                    CreateAppBarToggleButtonFontExampleContent(),
+                    AppBarToggleButtonFontXaml,
+                    null),
+                new GalleryExample(
+                    "A three-state AppBarToggleButton with a path icon.",
+                    CreateAppBarToggleButtonPathExampleContent(),
+                    AppBarToggleButtonPathXaml,
+                    null)
+            };
+        }
+
+        private static GallerySamplePanel CreateAppBarToggleButtonSymbolExampleContent(bool assignRootAutomationId)
+        {
+            var output = CreateAppBarOutput("Control1Output");
+            var button = CreateSourceAppBarToggleButton("Button1", Mux.Symbol.Shuffle, "SymbolIcon", output);
+            GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("AppBarToggleButton", "AppBarToggleButton"));
+            return CreateAppBarButtonExampleRoot(assignRootAutomationId, button, output);
+        }
+
+        private static GallerySamplePanel CreateAppBarToggleButtonBitmapExampleContent()
+        {
+            var output = CreateAppBarOutput("Control2Output");
+            var button = CreateSourceAppBarToggleButton("Button2", new Mux.BitmapIcon
+            {
+                UriSource = new Uri(ResourceUri("Assets/SampleMedia/Slices2.png"), UriKind.Absolute)
+            }, "BitmapIcon", output);
+            GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("AppBarToggleButton", "BitmapIconButton"));
+            return CreateAppBarButtonExampleRoot(false, button, output);
+        }
+
+        private static GallerySamplePanel CreateAppBarToggleButtonFontExampleContent()
+        {
+            var output = CreateAppBarOutput("Control3Output");
+            var button = CreateSourceAppBarToggleButton("Button3", new Mux.FontIcon
+            {
+                FontFamily = new FontFamily("Candara"),
+                Glyph = "\u03A3"
+            }, "FontIcon", output);
+            GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("AppBarToggleButton", "FontIconButton"));
+            return CreateAppBarButtonExampleRoot(false, button, output);
+        }
+
+        private static GallerySamplePanel CreateAppBarToggleButtonPathExampleContent()
+        {
+            var output = CreateAppBarOutput("Control4Output");
             var button = new Mux.AppBarToggleButton
             {
-                Icon = new Mux.SymbolIcon(Mux.Symbol.Bold),
-                Label = "Bold"
+                Name = "Button4",
+                Content = new Viewbox
+                {
+                    Child = new Mux.PathIcon
+                    {
+                        Data = Geometry.Parse("F1 M 20,20L 24,10L 24,24L 5,24")
+                    }
+                },
+                IsThreeState = true,
+                Label = "PathIcon"
             };
-            button.Checked += delegate { output.Text = "Bold is on."; };
-            button.Unchecked += delegate { output.Text = "Bold is off."; };
-            panel.Children.Add(button);
-            panel.Children.Add(output);
-            return panel;
+            button.Click += delegate { output.Text = "IsChecked = " + button.IsChecked.ToString(); };
+            GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("AppBarToggleButton", "PathIconButton"));
+            return CreateAppBarButtonExampleRoot(false, button, output);
         }
 
         private static UIElement CreateCommandBarSample()
@@ -187,6 +510,27 @@ namespace ModernWpf.Gallery.Pages
 
             root.Children.Add(layout);
             return root;
+        }
+
+        private static GallerySamplePanel CreateAppBarButtonExampleRoot(bool assignRootAutomationId, UIElement button, TextBlock output)
+        {
+            var panel = new GallerySamplePanel
+            {
+                Orientation = Orientation.Horizontal
+            };
+            if (assignRootAutomationId)
+            {
+                var controlName = button is Mux.AppBarToggleButton ? "AppBarToggleButton" : "AppBarButton";
+                GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId(controlName));
+            }
+
+            panel.Children.Add(button);
+            if (output != null)
+            {
+                panel.Children.Add(output);
+            }
+
+            return panel;
         }
 
         private static StackPanel CreateCommandBarOptions(Mux.CommandBar commandBar, TextBlock output)
@@ -600,6 +944,50 @@ namespace ModernWpf.Gallery.Pages
             };
         }
 
+        private static Mux.AppBarButton CreateSourceAppBarButton(string name, Mux.Symbol symbol, string label, TextBlock output)
+        {
+            return CreateSourceAppBarButton(name, new Mux.SymbolIcon(symbol), label, output);
+        }
+
+        private static Mux.AppBarButton CreateSourceAppBarButton(string name, Mux.IconElement icon, string label, TextBlock output)
+        {
+            var button = new Mux.AppBarButton
+            {
+                Name = name,
+                Icon = icon,
+                Label = label
+            };
+            button.Click += delegate { output.Text = "You clicked: " + name; };
+            return button;
+        }
+
+        private static Mux.AppBarToggleButton CreateSourceAppBarToggleButton(string name, Mux.Symbol symbol, string label, TextBlock output)
+        {
+            return CreateSourceAppBarToggleButton(name, new Mux.SymbolIcon(symbol), label, output);
+        }
+
+        private static Mux.AppBarToggleButton CreateSourceAppBarToggleButton(string name, Mux.IconElement icon, string label, TextBlock output)
+        {
+            var button = new Mux.AppBarToggleButton
+            {
+                Name = name,
+                Icon = icon,
+                Label = label
+            };
+            button.Click += delegate { output.Text = "IsChecked = " + button.IsChecked.ToString(); };
+            return button;
+        }
+
+        private static TextBlock CreateAppBarOutput(string name)
+        {
+            return new TextBlock
+            {
+                Name = name,
+                Margin = new Thickness(8, 0, 0, 0),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+        }
+
         private static Mux.AppBarButton CreateAppBarButton(Mux.Symbol symbol, string label, TextBlock output)
         {
             var button = CreateAppBarButton(symbol, label);
@@ -744,6 +1132,11 @@ namespace ModernWpf.Gallery.Pages
                 Margin = new Thickness(0, 12, 0, 0),
                 TextWrapping = TextWrapping.Wrap
             };
+        }
+
+        private static string ResourceUri(string path)
+        {
+            return "pack://application:,,,/ModernWpf.Gallery;component/" + path;
         }
     }
 }

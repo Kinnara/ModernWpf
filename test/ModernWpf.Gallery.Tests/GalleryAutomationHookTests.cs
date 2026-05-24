@@ -50,6 +50,9 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "NumberBox", "GallerySample_NumberBox_Root", "GallerySample_NumberBox_SpinButtonNumberBox" };
             yield return new object[] { "AutoSuggestBox", "GallerySample_AutoSuggestBox_Root", "GallerySample_AutoSuggestBox_AutoSuggestBox" };
             yield return new object[] { "MenuBar", "GallerySample_MenuBar_Root", "GallerySample_MenuBar_MenuBar" };
+            yield return new object[] { "AppBarButton", "GallerySample_AppBarButton_Root", "GallerySample_AppBarButton_AppBarButton" };
+            yield return new object[] { "AppBarSeparator", "GallerySample_AppBarSeparator_Root", "GallerySample_AppBarSeparator_CommandBar" };
+            yield return new object[] { "AppBarToggleButton", "GallerySample_AppBarToggleButton_Root", "GallerySample_AppBarToggleButton_AppBarToggleButton" };
             yield return new object[] { "CommandBar", "GallerySample_CommandBar_Root", "GallerySample_CommandBar_CommandBar" };
             yield return new object[] { "CommandBarFlyout", "GallerySample_CommandBarFlyout_Root", "GallerySample_CommandBarFlyout_ShowButton" };
         }
@@ -1414,6 +1417,148 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsTrue(portrait.IsChecked);
                     Assert.AreEqual("SizeGroup", mediumIcons.GroupName);
                     Assert.IsTrue(mediumIcons.IsChecked);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void AppBarControlsMatchWinUIGalleryExamples()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var appBarButtonPage = new ItemPage(GalleryCatalog.FindItem("AppBarButton"));
+                var appBarSeparatorPage = new ItemPage(GalleryCatalog.FindItem("AppBarSeparator"));
+                var appBarToggleButtonPage = new ItemPage(GalleryCatalog.FindItem("AppBarToggleButton"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual
+                };
+
+                try
+                {
+                    window.Content = appBarButtonPage;
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(6, appBarButtonPage.Examples.Count);
+                    Assert.AreEqual("An AppBarButton with a symbol icon.", appBarButtonPage.Examples[0].HeaderText);
+                    Assert.AreEqual("An AppBarButton with a bitmap icon.", appBarButtonPage.Examples[1].HeaderText);
+                    Assert.AreEqual("An AppBarButton with a font icon.", appBarButtonPage.Examples[2].HeaderText);
+                    Assert.AreEqual("An AppBarButton with a path icon.", appBarButtonPage.Examples[3].HeaderText);
+                    Assert.AreEqual("An AppBarButton with a KeyboardAccelerator", appBarButtonPage.Examples[4].HeaderText);
+                    Assert.AreEqual("An AppBarButton that opens a Flyout containing an input control.", appBarButtonPage.Examples[5].HeaderText);
+                    Assert.IsFalse(appBarButtonPage.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(appBarButtonPage.Examples[0].XamlCode, "Icon=\"Like\"");
+                    StringAssert.Contains(appBarButtonPage.Examples[1].XamlCode, "BitmapIcon UriSource=\"ms-appx:///Assets/SampleMedia/Slices2.png\"");
+                    StringAssert.Contains(appBarButtonPage.Examples[2].XamlCode, "FontFamily=\"Candara\"");
+                    StringAssert.Contains(appBarButtonPage.Examples[3].XamlCode, "PathIcon Data=\"F1 M 20,20L 24,10L 24,24L 5,24\"");
+                    StringAssert.Contains(appBarButtonPage.Examples[4].XamlCode, "KeyboardAccelerator Modifiers=\"Control\" Key=\"S\"");
+                    StringAssert.Contains(appBarButtonPage.Examples[5].XamlCode, "PlaceholderText=\"Input text here\"");
+
+                    var symbolButton = (Mux.AppBarButton)FindByAutomationId(appBarButtonPage, "GallerySample_AppBarButton_AppBarButton");
+                    var bitmapButton = FindNamedDescendant<Mux.AppBarButton>(appBarButtonPage, "Button2");
+                    var fontButton = FindNamedDescendant<Mux.AppBarButton>(appBarButtonPage, "Button3");
+                    var pathButton = FindNamedDescendant<Mux.AppBarButton>(appBarButtonPage, "Button4");
+                    var acceleratorButton = FindNamedDescendant<Mux.AppBarButton>(appBarButtonPage, "Button5");
+                    var flyoutButton = FindNamedDescendant<Mux.AppBarButton>(appBarButtonPage, "Button6");
+                    Assert.IsNotNull(symbolButton);
+                    Assert.IsNotNull(bitmapButton);
+                    Assert.IsNotNull(fontButton);
+                    Assert.IsNotNull(pathButton);
+                    Assert.IsNotNull(acceleratorButton);
+                    Assert.IsNotNull(flyoutButton);
+
+                    Assert.AreEqual("Button1", symbolButton.Name);
+                    Assert.AreEqual("SymbolIcon", symbolButton.Label);
+                    Assert.AreEqual(Mux.Symbol.Like, ((Mux.SymbolIcon)symbolButton.Icon).Symbol);
+                    var output1 = FindNamedDescendant<TextBlock>(appBarButtonPage, "Control1Output");
+                    symbolButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                    Assert.AreEqual("You clicked: Button1", output1.Text);
+
+                    Assert.AreEqual("BitmapIcon", bitmapButton.Label);
+                    StringAssert.Contains(((Mux.BitmapIcon)bitmapButton.Icon).UriSource.ToString(), "Slices2.png");
+                    Assert.AreEqual("FontIcon", fontButton.Label);
+                    Assert.AreEqual("Candara", ((Mux.FontIcon)fontButton.Icon).FontFamily.Source);
+                    Assert.AreEqual("\u03A3", ((Mux.FontIcon)fontButton.Icon).Glyph);
+                    Assert.AreEqual("PathIcon", pathButton.Label);
+                    Assert.IsInstanceOfType(pathButton.Content, typeof(Viewbox));
+                    Assert.AreEqual("Save", acceleratorButton.Label);
+                    Assert.AreEqual("Ctrl+S", acceleratorButton.InputGestureText);
+                    Assert.AreEqual("Edit", flyoutButton.Label);
+                    var flyout = flyoutButton.Flyout as Mux.Flyout;
+                    Assert.IsNotNull(flyout);
+                    var flyoutTextBox = flyout.Content as TextBox;
+                    Assert.IsNotNull(flyoutTextBox);
+                    Assert.AreEqual(240.0, flyoutTextBox.MinWidth);
+                    Assert.AreEqual("Input text here", ModernWpf.Controls.Primitives.ControlHelper.GetPlaceholderText(flyoutTextBox));
+
+                    window.Content = appBarSeparatorPage;
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(1, appBarSeparatorPage.Examples.Count);
+                    Assert.AreEqual("AppBarButtons separated by AppBarSeparators.", appBarSeparatorPage.Examples[0].HeaderText);
+                    Assert.IsFalse(appBarSeparatorPage.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(appBarSeparatorPage.Examples[0].XamlCode, "AppBarButton Icon=\"AttachCamera\"");
+                    StringAssert.Contains(appBarSeparatorPage.Examples[0].XamlCode, "<AppBarSeparator />");
+
+                    var commandBar = (Mux.CommandBar)FindByAutomationId(appBarSeparatorPage, "GallerySample_AppBarSeparator_CommandBar");
+                    Assert.IsNotNull(commandBar);
+                    Assert.AreEqual("Control1", commandBar.Name);
+                    Assert.AreEqual(6, commandBar.PrimaryCommands.Count);
+                    AssertAppBarButton(commandBar.PrimaryCommands[0], Mux.Symbol.AttachCamera, "Attach Camera");
+                    Assert.IsInstanceOfType(commandBar.PrimaryCommands[1], typeof(Mux.AppBarSeparator));
+                    AssertAppBarButton(commandBar.PrimaryCommands[2], Mux.Symbol.Like, "Like");
+                    AssertAppBarButton(commandBar.PrimaryCommands[3], Mux.Symbol.Dislike, "Dislike");
+                    Assert.IsInstanceOfType(commandBar.PrimaryCommands[4], typeof(Mux.AppBarSeparator));
+                    AssertAppBarButton(commandBar.PrimaryCommands[5], Mux.Symbol.Orientation, "Orientation");
+
+                    window.Content = appBarToggleButtonPage;
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(4, appBarToggleButtonPage.Examples.Count);
+                    Assert.AreEqual("An AppBarToggleButton with a symbol icon.", appBarToggleButtonPage.Examples[0].HeaderText);
+                    Assert.AreEqual("An AppBarToggleButton with a bitmap icon.", appBarToggleButtonPage.Examples[1].HeaderText);
+                    Assert.AreEqual("An AppBarToggleButton with a font icon.", appBarToggleButtonPage.Examples[2].HeaderText);
+                    Assert.AreEqual("A three-state AppBarToggleButton with a path icon.", appBarToggleButtonPage.Examples[3].HeaderText);
+                    Assert.IsFalse(appBarToggleButtonPage.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(appBarToggleButtonPage.Examples[0].XamlCode, "Icon=\"Shuffle\"");
+                    StringAssert.Contains(appBarToggleButtonPage.Examples[3].XamlCode, "IsThreeState=\"True\"");
+
+                    var symbolToggleButton = (Mux.AppBarToggleButton)FindByAutomationId(appBarToggleButtonPage, "GallerySample_AppBarToggleButton_AppBarToggleButton");
+                    var bitmapToggleButton = FindNamedDescendant<Mux.AppBarToggleButton>(appBarToggleButtonPage, "Button2");
+                    var fontToggleButton = FindNamedDescendant<Mux.AppBarToggleButton>(appBarToggleButtonPage, "Button3");
+                    var pathToggleButton = FindNamedDescendant<Mux.AppBarToggleButton>(appBarToggleButtonPage, "Button4");
+                    Assert.IsNotNull(symbolToggleButton);
+                    Assert.IsNotNull(bitmapToggleButton);
+                    Assert.IsNotNull(fontToggleButton);
+                    Assert.IsNotNull(pathToggleButton);
+                    Assert.AreEqual(Mux.Symbol.Shuffle, ((Mux.SymbolIcon)symbolToggleButton.Icon).Symbol);
+                    Assert.AreEqual("BitmapIcon", bitmapToggleButton.Label);
+                    StringAssert.Contains(((Mux.BitmapIcon)bitmapToggleButton.Icon).UriSource.ToString(), "Slices2.png");
+                    Assert.AreEqual("\u03A3", ((Mux.FontIcon)fontToggleButton.Icon).Glyph);
+                    Assert.IsTrue(pathToggleButton.IsThreeState);
+
+                    var toggleOutput = FindNamedDescendant<TextBlock>(appBarToggleButtonPage, "Control1Output");
+                    symbolToggleButton.IsChecked = true;
+                    symbolToggleButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                    Assert.AreEqual("IsChecked = True", toggleOutput.Text);
                 }
                 finally
                 {
@@ -3102,6 +3247,14 @@ namespace ModernWpf.Gallery.Tests
                 Assert.IsNull(reply.Icon);
                 Assert.IsNull(replyAll.Icon);
             }
+        }
+
+        private static void AssertAppBarButton(object command, Mux.Symbol symbol, string label)
+        {
+            var button = command as Mux.AppBarButton;
+            Assert.IsNotNull(button);
+            Assert.AreEqual(label, button.Label);
+            Assert.AreEqual(symbol, ((Mux.SymbolIcon)button.Icon).Symbol);
         }
     }
 }

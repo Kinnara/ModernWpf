@@ -106,6 +106,12 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.AppBarControlsMatchWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 31 tests per target. The generated ModernWpf AppBarButton, AppBarSeparator, and AppBarToggleButton pages now follow the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\AppBarButtonPage.xaml`, `AppBarSeparatorPage.xaml`, and `AppBarToggleButtonPage.xaml`: six AppBarButton examples covering symbol, bitmap, font, path, keyboard accelerator, and flyout/input variants; one AppBarSeparator CommandBar example; and four AppBarToggleButton examples covering symbol, bitmap, font, and three-state path variants. `MenusToolbarsSampleFactory.CreateExamples` now covers these three Menu & Toolbar WinUI extension pages, keeps WinUI's `Button1`-`Button6`, `Control1`, and output names, exposes curated automation IDs `GallerySample_AppBarButton_Root` / `GallerySample_AppBarButton_AppBarButton`, `GallerySample_AppBarSeparator_Root` / `GallerySample_AppBarSeparator_CommandBar`, and `GallerySample_AppBarToggleButton_Root` / `GallerySample_AppBarToggleButton_AppBarToggleButton`, and adapts WinUI `KeyboardAccelerator`, `AllowFocusOnInteraction`, and `PlaceholderText` shapes to existing ModernWpf/WPF APIs.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls AppBarButton,AppBarSeparator,AppBarToggleButton -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-182323-334-106688/report.md`: ModernWpf and installed WinUI 3 Gallery all `Passed`, required AppBar sample elements were found, AppBarButton and AppBarToggleButton primary crops match at `68x64` with deltas `10.27` and `10.29`, and AppBarSeparator compares the source-backed CommandBar at `406x48` vs `334x48` with primary delta `15.12`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls AppBarButton,AppBarSeparator,AppBarToggleButton -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-182421-190-76064/report.md`: ModernWpf and installed WinUI 3 Gallery all `Passed`, required AppBar sample elements were found, AppBarButton and AppBarToggleButton primary crops match at `68x64` with deltas `11.97` and `11.98`, and AppBarSeparator compares at `406x48` vs `334x48` with primary delta `17.43`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.NavigationViewSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 28 tests per target. The generated ModernWpf NavigationView page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\NavigationViewPage.xaml` / `.xaml.cs`: default pane mode, top pane mode, adaptive pane orientation, tabs with selection/focus behavior, data binding, footer menu items, hierarchical menu items, and the API-in-action sample. `NavigationSampleFactory.CreateExamples` now covers NavigationView as a source-backed Navigation WinUI extension page, keeps WinUI's `nvSample5`, `nvSample6`, `nvSample2`, `nvSample7`, `nvSample4`, `nvSample9`, `nvSample8`, `nvSample`, and option-control names, consumes the currently referenced local sample-code files without extra additional-code expanders, and adapts the WinUI Frame/sample-page model to WPF `Frame` hosts containing the existing local tile sample content. `ItemPage` now allows NavigationView to load the full local snippet set instead of truncating at six files; the obsolete unreferenced legacy `NavigationViewSample4.txt`, `NavigationViewSample5.txt`, and `NavigationViewSample6.txt` copies were removed from the ModernWpf sample-code folder.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls NavigationView -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -1541,6 +1547,26 @@ primary crops, and primary deltas `10.41` / `19.32`. The visual harness uses
 the WinUI reference automation ID `ProgressRing1` for the primary crop. Avoid
 reopening ProgressRing's source shape unless a new WinUI source or crop
 regression appears.
+The generated ModernWpf AppBarButton, AppBarSeparator, and AppBarToggleButton
+extension pages now use the local official WinUI Gallery structures from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\AppBarButtonPage.xaml`,
+`AppBarSeparatorPage.xaml`, and `AppBarToggleButtonPage.xaml`: AppBarButton's
+six symbol/bitmap/font/path/keyboard-accelerator/flyout examples,
+AppBarSeparator's CommandBar separator example, and AppBarToggleButton's four
+symbol/bitmap/font/three-state path examples. `MenusToolbarsSampleFactory.CreateExamples`
+now covers these three Menu & Toolbar WinUI examples, keeps source-facing names
+such as `Button1`-`Button6`, `Control1`, and the output TextBlocks, and exposes
+curated automation IDs for runtime and visual checks. Current AppBar
+WinUI-reference evidence is
+`artifacts/visual-checks/20260524-182323-334-106688/report.md` for Light and
+`artifacts/visual-checks/20260524-182421-190-76064/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`. AppBarButton and
+AppBarToggleButton have matching `68x64` primary crops with deltas
+`10.27` / `11.97` and `10.29` / `11.98`; AppBarSeparator is source-backed and
+passes with primary deltas `15.12` / `17.43`, but the retained ModernWpf
+CommandBar template currently measures wider than the installed WinUI reference
+(`406x48` vs `334x48`), so treat that as a known remaining control-template
+drift rather than a source-shape gap.
 The generated ModernWpf MenuBar extension page now uses the local official
 WinUI Gallery three-example structure for a simple MenuBar, keyboard
 accelerators, and submenus/separators/radio items, with WPF `MenuItem`,
