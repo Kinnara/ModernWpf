@@ -1071,6 +1071,8 @@ namespace ModernWpf.Gallery.Tests
                     var disableButton = (CheckBox)simpleGrid.Children[1];
                     Assert.AreEqual("Standard WPF button", simpleButton.Content);
                     Assert.AreEqual("Standard WPF", AutomationProperties.GetName(simpleButton));
+                    Assert.AreEqual(string.Empty, buttonExamples[0].AutomationId);
+                    Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(simpleButton));
                     Assert.AreEqual("Disable button", disableButton.Content);
                     Assert.AreEqual(1, Grid.GetColumn(disableButton));
                     disableButton.IsChecked = true;
@@ -1164,6 +1166,8 @@ namespace ModernWpf.Gallery.Tests
 
                     var inlineComboBox = (ComboBox)comboBoxExamples[0].ExampleContent;
                     AssertGalleryComboBox(inlineComboBox, "Sample defined inline");
+                    Assert.AreEqual(string.Empty, comboBoxExamples[0].AutomationId);
+                    Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(inlineComboBox));
                     CollectionAssert.AreEqual(
                         new[] { "Blue", "Green", "Red", "Yellow" },
                         inlineComboBox.Items.Cast<ComboBoxItem>().Select(item => (string)item.Content).ToArray());
@@ -2969,12 +2973,13 @@ namespace ModernWpf.Gallery.Tests
 
         private sealed class RenderedExample
         {
-            public RenderedExample(string headerText, object exampleContent, string xamlCode, Thickness margin)
+            public RenderedExample(string headerText, object exampleContent, string xamlCode, Thickness margin, string automationId)
             {
                 HeaderText = headerText;
                 ExampleContent = exampleContent;
                 XamlCode = xamlCode;
                 Margin = margin;
+                AutomationId = automationId;
             }
 
             public string HeaderText { get; }
@@ -2984,6 +2989,8 @@ namespace ModernWpf.Gallery.Tests
             public string XamlCode { get; }
 
             public Thickness Margin { get; }
+
+            public string AutomationId { get; }
         }
 
         private static IReadOnlyList<RenderedExample> GetRenderedExamples(ItemPage page)
@@ -2991,12 +2998,12 @@ namespace ModernWpf.Gallery.Tests
             if (page.HasDirectPageContent)
             {
                 return FindDescendants<ControlExample>((DependencyObject)page.DirectPageContent)
-                    .Select(example => new RenderedExample(example.HeaderText, example.ExampleContent, example.XamlCode, example.Margin))
+                    .Select(example => new RenderedExample(example.HeaderText, example.ExampleContent, example.XamlCode, example.Margin, AutomationProperties.GetAutomationId(example)))
                     .ToArray();
             }
 
             return page.Examples
-                .Select(example => new RenderedExample(example.HeaderText, example.ExampleContent, example.XamlCode, example.Margin))
+                .Select(example => new RenderedExample(example.HeaderText, example.ExampleContent, example.XamlCode, example.Margin, string.Empty))
                 .ToArray();
         }
 

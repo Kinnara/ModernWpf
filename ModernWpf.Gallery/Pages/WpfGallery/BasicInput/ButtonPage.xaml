@@ -29,7 +29,6 @@
             <StackPanel>
                 <controls:ControlExample
                     Margin="10"
-                    AutomationProperties.AutomationId="GallerySample_Button_Root"
                     HeaderText="Simple Button"
                     XamlCode="&lt;Button Content=&quot;Standard WPF button&quot; /&gt;">
                     <Grid>
@@ -39,7 +38,6 @@
                         </Grid.ColumnDefinitions>
                         <Button
                             Grid.Column="0"
-                            AutomationProperties.AutomationId="GallerySample_Button_PrimaryButton"
                             AutomationProperties.Name="Standard WPF"
                             Content="Standard WPF button"
                             IsEnabled="{Binding ViewModel.IsSimpleButtonEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:ButtonPage}, Mode=OneWay}" />

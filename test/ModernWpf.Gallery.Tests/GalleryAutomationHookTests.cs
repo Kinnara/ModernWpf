@@ -21,8 +21,6 @@ namespace ModernWpf.Gallery.Tests
         public static IEnumerable<object[]> CuratedSampleAutomationIds()
         {
             yield return new object[] { "TeachingTip", "GallerySample_TeachingTip_Root", "GallerySample_TeachingTip_ShowButton" };
-            yield return new object[] { "Button", "GallerySample_Button_Root", "GallerySample_Button_PrimaryButton" };
-            yield return new object[] { "ComboBox", "GallerySample_ComboBox_Root", "GallerySample_ComboBox_ComboBox" };
             yield return new object[] { "InfoBar", "GallerySample_InfoBar_Root", "GallerySample_InfoBar_ShowButton" };
             yield return new object[] { "InfoBar", "GallerySample_InfoBar_Root", "GallerySample_InfoBar_InfoBar" };
             yield return new object[] { "NavigationView", "GallerySample_NavigationView_Root", "GallerySample_NavigationView_NavigationView" };

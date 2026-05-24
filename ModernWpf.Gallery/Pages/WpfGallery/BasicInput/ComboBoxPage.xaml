@@ -29,13 +29,11 @@
             <StackPanel Margin="0,0,0,24">
                 <controls:ControlExample
                     Margin="10"
-                    AutomationProperties.AutomationId="GallerySample_ComboBox_Root"
                     HeaderText="A ComboBox with items defined inline."
                     XamlCode="&lt;ComboBox MinWidth=&quot;200&quot; HorizontalAlignment=&quot;Left&quot; SelectedIndex=&quot;0&quot;&gt;&#10;&#9;&lt;ComboBoxItem Content=&quot;Blue&quot; /&gt;&#10;&#9;&lt;ComboBoxItem Content=&quot;Green&quot; /&gt;&#10;&#9;&lt;ComboBoxItem Content=&quot;Red&quot; /&gt;&#10;&#9;&lt;ComboBoxItem Content=&quot;Yellow&quot; /&gt;&#10;&lt;/ComboBox&gt;">
                     <ComboBox
                         MinWidth="200"
                         HorizontalAlignment="Left"
-                        AutomationProperties.AutomationId="GallerySample_ComboBox_ComboBox"
                         AutomationProperties.Name="Sample defined inline"
                         SelectedIndex="0">
                         <ComboBoxItem Content="Blue" />
