@@ -1,6 +1,4 @@
 using System;
-using System.IO;
-using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Win32;
@@ -44,7 +42,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
 
             if (openFileDialog.ShowDialog() == true)
             {
-                ViewModel.MultipleFilesPath = "Selected " + openFileDialog.FileNames.Length + " file(s): " + string.Join(", ", openFileDialog.FileNames);
+                ViewModel.MultipleFilesPath = $"Selected {openFileDialog.FileNames.Length} file(s): {string.Join(", ", openFileDialog.FileNames)}";
             }
         }
 
@@ -61,25 +59,38 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
             {
                 try
                 {
-                    File.WriteAllText(saveFileDialog.FileName, ViewModel.FileContent);
-                    ViewModel.SavedFilePath = "File saved successfully: " + saveFileDialog.FileName;
+                    System.IO.File.WriteAllText(saveFileDialog.FileName, ViewModel.FileContent);
+                    ViewModel.SavedFilePath = $"File saved successfully: {saveFileDialog.FileName}";
                 }
                 catch (Exception ex)
                 {
-                    ViewModel.SavedFilePath = "Error saving file: " + ex.Message;
+                    ViewModel.SavedFilePath = $"Error saving file: {ex.Message}";
                 }
             }
         }
 
         private void PickFolderButton_Click(object sender, RoutedEventArgs e)
         {
+#if NET8_0_OR_GREATER
+            var folderBrowserDialog = new OpenFolderDialog
+            {
+                Title = "Select a folder"
+            };
+
+            if (folderBrowserDialog.ShowDialog() == true)
+            {
+                ViewModel.SelectedFolderPath = folderBrowserDialog.FolderName;
+            }
+#else
             var folderName = TryPickFolderWithOpenFolderDialog();
             if (!string.IsNullOrEmpty(folderName))
             {
                 ViewModel.SelectedFolderPath = folderName;
             }
+#endif
         }
 
+#if !NET8_0_OR_GREATER
         private static string TryPickFolderWithOpenFolderDialog()
         {
             var dialogType = Type.GetType("Microsoft.Win32.OpenFolderDialog, PresentationFramework");
@@ -99,5 +110,6 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
 
             return null;
         }
+#endif
     }
 }

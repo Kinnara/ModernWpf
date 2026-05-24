@@ -38,7 +38,7 @@
                             Margin="0,0,0,10"
                             Click="PickSingleFileButton_Click"
                             Content="Pick a single file" />
-                        <TextBlock Text="{Binding ViewModel.SingleFilePath, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:FileAndFolderDialogsPage}}" TextWrapping="Wrap" />
+                        <TextBlock Text="{Binding ViewModel.SingleFilePath}" TextWrapping="Wrap" />
                     </StackPanel>
                 </controls:ControlExample>
 
@@ -52,7 +52,7 @@
                             Margin="0,0,0,10"
                             Click="PickMultipleFilesButton_Click"
                             Content="Pick multiple files" />
-                        <TextBlock Text="{Binding ViewModel.MultipleFilesPath, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:FileAndFolderDialogsPage}}" TextWrapping="Wrap" />
+                        <TextBlock Text="{Binding ViewModel.MultipleFilesPath}" TextWrapping="Wrap" />
                     </StackPanel>
                 </controls:ControlExample>
 
@@ -68,14 +68,14 @@
                             AutomationProperties.HelpText="The text in the textbox will be saved to a file on button click"
                             AutomationProperties.Name="Save File Text Box"
                             AcceptsReturn="True"
-                            Text="{Binding ViewModel.FileContent, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:FileAndFolderDialogsPage}, UpdateSourceTrigger=PropertyChanged}"
+                            Text="{Binding ViewModel.FileContent, UpdateSourceTrigger=PropertyChanged}"
                             TextWrapping="Wrap"
                             VerticalScrollBarVisibility="Auto" />
                         <Button
                             Margin="0,0,0,10"
                             Click="SaveFileButton_Click"
                             Content="Save a file" />
-                        <TextBlock Text="{Binding ViewModel.SavedFilePath, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:FileAndFolderDialogsPage}}" TextWrapping="Wrap" />
+                        <TextBlock Text="{Binding ViewModel.SavedFilePath}" TextWrapping="Wrap" />
                     </StackPanel>
                 </controls:ControlExample>
 
@@ -89,7 +89,7 @@
                             Margin="0,0,0,10"
                             Click="PickFolderButton_Click"
                             Content="Pick a folder" />
-                        <TextBlock Text="{Binding ViewModel.SelectedFolderPath, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:FileAndFolderDialogsPage}}" TextWrapping="Wrap" />
+                        <TextBlock Text="{Binding ViewModel.SelectedFolderPath}" TextWrapping="Wrap" />
                     </StackPanel>
                 </controls:ControlExample>
             </StackPanel>

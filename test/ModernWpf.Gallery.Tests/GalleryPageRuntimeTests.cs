@@ -1678,11 +1678,19 @@ namespace ModernWpf.Gallery.Tests
                     CollectionAssert.AreEqual(
                         new[] { "Pick Single File", "Pick Multiple Files", "Save File", "Pick Folder" },
                         dialogsExamples.Select(example => example.HeaderText).ToArray());
-                    AssertButtonResultExample((StackPanel)dialogsExamples[0].ExampleContent, "Pick a single file", "No file selected");
-                    AssertButtonResultExample((StackPanel)dialogsExamples[1].ExampleContent, "Pick multiple files", "No files selected");
+                    var singleFileStack = (StackPanel)dialogsExamples[0].ExampleContent;
+                    AssertButtonResultExample(singleFileStack, "Pick a single file", "No file selected");
+                    AssertDirectBindingPath((TextBlock)singleFileStack.Children[1], TextBlock.TextProperty, "ViewModel.SingleFilePath");
+
+                    var multipleFilesStack = (StackPanel)dialogsExamples[1].ExampleContent;
+                    AssertButtonResultExample(multipleFilesStack, "Pick multiple files", "No files selected");
+                    AssertDirectBindingPath((TextBlock)multipleFilesStack.Children[1], TextBlock.TextProperty, "ViewModel.MultipleFilesPath");
+
                     var saveFileStack = (StackPanel)dialogsExamples[2].ExampleContent;
                     var saveTextBox = (TextBox)saveFileStack.Children[0];
                     Assert.AreEqual("Enter text here to save to a file...", saveTextBox.Text);
+                    AssertDirectBindingPath(saveTextBox, TextBox.TextProperty, "ViewModel.FileContent");
+                    Assert.AreEqual(UpdateSourceTrigger.PropertyChanged, BindingOperations.GetBinding(saveTextBox, TextBox.TextProperty).UpdateSourceTrigger);
                     Assert.IsTrue(saveTextBox.AcceptsReturn);
                     Assert.AreEqual(TextWrapping.Wrap, saveTextBox.TextWrapping);
                     Assert.AreEqual(80.0, saveTextBox.MinHeight);
@@ -1690,8 +1698,13 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual("Save File Text Box", AutomationProperties.GetName(saveTextBox));
                     Assert.AreEqual("The text in the textbox will be saved to a file on button click", AutomationProperties.GetHelpText(saveTextBox));
                     Assert.AreEqual("Save a file", ((Button)saveFileStack.Children[1]).Content);
-                    Assert.AreEqual("No file saved", ((TextBlock)saveFileStack.Children[2]).Text);
-                    AssertButtonResultExample((StackPanel)dialogsExamples[3].ExampleContent, "Pick a folder", "No folder selected");
+                    var savedFileOutput = (TextBlock)saveFileStack.Children[2];
+                    Assert.AreEqual("No file saved", savedFileOutput.Text);
+                    AssertDirectBindingPath(savedFileOutput, TextBlock.TextProperty, "ViewModel.SavedFilePath");
+
+                    var folderStack = (StackPanel)dialogsExamples[3].ExampleContent;
+                    AssertButtonResultExample(folderStack, "Pick a folder", "No folder selected");
+                    AssertDirectBindingPath((TextBlock)folderStack.Children[1], TextBlock.TextProperty, "ViewModel.SelectedFolderPath");
                 });
 
                 var messageBoxPage = new ItemPage(GalleryCatalog.FindItem("MessageBox"));
