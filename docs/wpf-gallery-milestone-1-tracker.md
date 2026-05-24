@@ -106,6 +106,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.RichTextBlockSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 44 tests per target. The generated ModernWpf RichTextBlock extension page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\RichTextBlockPage.xaml`: simple RichTextBlock, custom selection-highlight RichTextBlock, overflow layout, and custom text highlighting. `TextSampleFactory.CreateExamples` now covers RichTextBlock as a source-backed Text WinUI extension page, adapts WinUI `RichTextBlock` / `RichTextBlockOverflow` to WPF `TextBlock` surfaces, keeps source-facing names such as `SelectionHighlightRichTextBlock`, `firstOverflowContainer`, `secondOverflowContainer`, and `TextHighlightingRichTextBlock`, and exposes curated automation IDs `GallerySample_RichTextBlock_Root` / `GallerySample_RichTextBlock_RichTextBlock`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls RichTextBlock -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-230913-004-109664/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required RichTextBlock sample element was found, and ModernWpf's rendered content artifacts include nonblank `ContentRootGrid`, root, and first RichTextBlock crops. The report records whole-window Light mean delta `203.21`; treat that as diagnostic only because the installed WinUI reference stayed dark while this ModernWpf run used Light.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls RichTextBlock -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-230934-600-118348/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required RichTextBlock sample element was found, ModernWpf's rendered content artifacts are nonblank, and the report records whole-window Dark mean delta `24.25`. Installed WinUI Gallery exposes the first sample text by name rather than a stable automation ID, so no primary-crop delta is emitted.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the RichTextBlock WinUI example alignment. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages, existing ModernWpf/ModernWpf.Controls warnings, `19 Warning(s)`, and `0 Error(s)`.
 - `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases DataGrid,ListView -Reference OfficialWpfGallery -TimeoutSeconds 40`
   - Passed at `artifacts/wpf-gallery-visual-audit/20260524-224738-939-112236/report.md`: ModernWpf and official direct-host references both `Passed`, crops match at `868x758`, Modern uses `ContentPagePaneRenderedArtifact`, official uses `OfficialDirectRootContentFrameRenderedArtifact`, DataGrid Light delta is `0.13`, and ListView Light delta is `0`.
 - `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Theme Dark -Cases DataGrid,ListView -Reference OfficialWpfGallery -TimeoutSeconds 40`
@@ -2111,6 +2119,26 @@ WinUI reference automation ID `Control1` and lowers only AutoSuggestBox's
 primary-crop variation threshold because the empty resting field is nearly flat
 in Dark theme in both apps. Avoid reopening AutoSuggestBox's source shape
 unless a new WinUI source or crop regression appears.
+The generated ModernWpf RichTextBlock extension page now uses the local
+official WinUI Gallery four-example structure from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\RichTextBlockPage.xaml`:
+a simple RichTextBlock, a custom selection-highlight RichTextBlock, linked
+overflow text, and custom text highlighting. The WPF adaptation uses
+`TextBlock` surfaces for WinUI `RichTextBlock`, a three-column `Grid` for the
+`RichTextBlockOverflow` sample, and a highlighted `Run` controlled by the color
+combo box for the `TextHighlighter` sample. It keeps WinUI's visible headers,
+source snippets, and source-facing names (`SelectionHighlightRichTextBlock`,
+`firstOverflowContainer`, `secondOverflowContainer`,
+`TextHighlightingRichTextBlock`) while exposing `GallerySample_RichTextBlock_*`
+automation IDs for the ModernWpf visual harness. Current RichTextBlock
+WinUI-reference evidence is
+`artifacts/visual-checks/20260524-230913-004-109664/report.md` for Light and
+`artifacts/visual-checks/20260524-230934-600-118348/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`; the Dark whole-window
+mean delta is `24.25`. The Light whole-window mean delta is `203.21` and should
+be treated as diagnostic only because the installed WinUI reference remained in
+Dark while ModernWpf was captured in Light. Avoid reopening RichTextBlock's
+source shape unless a new WinUI source or crop regression appears.
 Continue with the next highest-impact visible drift from the checklist, likely
 remaining High Contrast gaps, other NavigationView styling not covered
 by the TreeView token aliases or first-sample refresh, or other item pages that still lack current

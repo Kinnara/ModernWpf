@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Text;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -57,6 +59,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "ToggleSwitch", "GallerySample_ToggleSwitch_Root", "GallerySample_ToggleSwitch_ToggleSwitch" };
             yield return new object[] { "NumberBox", "GallerySample_NumberBox_Root", "GallerySample_NumberBox_SpinButtonNumberBox" };
             yield return new object[] { "AutoSuggestBox", "GallerySample_AutoSuggestBox_Root", "GallerySample_AutoSuggestBox_AutoSuggestBox" };
+            yield return new object[] { "RichTextBlock", "GallerySample_RichTextBlock_Root", "GallerySample_RichTextBlock_RichTextBlock" };
             yield return new object[] { "MenuBar", "GallerySample_MenuBar_Root", "GallerySample_MenuBar_MenuBar" };
             yield return new object[] { "MenuFlyout", "GallerySample_MenuFlyout_Root", "GallerySample_MenuFlyout_AppBarButton" };
             yield return new object[] { "SwipeControl", "GallerySample_SwipeControl_Root", "GallerySample_SwipeControl_SwipeControl" };
@@ -3350,6 +3353,102 @@ namespace ModernWpf.Gallery.Tests
                     WpfTestHost.DoEvents();
                 }
             });
+        }
+
+        [TestMethod]
+        public void RichTextBlockSampleMatchesWinUIGalleryExamples()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("RichTextBlock"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(4, page.Examples.Count);
+                    Assert.AreEqual("A simple RichTextBlock.", page.Examples[0].HeaderText);
+                    Assert.AreEqual("A RichTextBlock with a custom selection highlight color.", page.Examples[1].HeaderText);
+                    Assert.AreEqual("A RichTextBlock with overflow.", page.Examples[2].HeaderText);
+                    Assert.AreEqual("RichTextBlock with custom TextHighlighting", page.Examples[3].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "<Paragraph>I am a RichTextBlock.</Paragraph>");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "SelectionHighlightColor=\"Green\"");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "formatted text");
+                    StringAssert.Contains(page.Examples[2].XamlCode, "firstOverflowContainer");
+                    StringAssert.Contains(page.Examples[3].XamlCode, "TextHighlightingRichTextBlock");
+                    StringAssert.Contains(page.Examples[3].CSharpCode, "TextHighlighter");
+
+                    var simple = (TextBlock)FindByAutomationId(page, "GallerySample_RichTextBlock_RichTextBlock");
+                    var selection = FindNamedDescendant<TextBlock>(page, "SelectionHighlightRichTextBlock");
+                    var firstOverflow = FindNamedDescendant<TextBlock>(page, "firstOverflowContainer");
+                    var secondOverflow = FindNamedDescendant<TextBlock>(page, "secondOverflowContainer");
+                    var highlighted = FindNamedDescendant<TextBlock>(page, "TextHighlightingRichTextBlock");
+                    Assert.IsNotNull(simple);
+                    Assert.IsNotNull(selection);
+                    Assert.IsNotNull(firstOverflow);
+                    Assert.IsNotNull(secondOverflow);
+                    Assert.IsNotNull(highlighted);
+
+                    Assert.AreEqual("SimpleRichTextBlock", simple.Name);
+                    Assert.AreEqual("I am a RichTextBlock.", simple.Text);
+                    Assert.AreEqual(TextWrapping.Wrap, selection.TextWrapping);
+                    Assert.AreEqual(TextAlignment.Justify, firstOverflow.TextAlignment);
+                    Assert.AreEqual(TextAlignment.Justify, secondOverflow.TextAlignment);
+                    StringAssert.Contains(GetInlineText(selection), "RichTextBlock provides a rich text display container");
+                    StringAssert.Contains(GetInlineText(highlighted), "Lorem ipsum dolor sit amet");
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        private static string GetInlineText(TextBlock textBlock)
+        {
+            var builder = new StringBuilder();
+            AppendInlineText(builder, textBlock.Inlines);
+            return builder.ToString();
+        }
+
+        private static void AppendInlineText(StringBuilder builder, InlineCollection inlines)
+        {
+            foreach (Inline inline in inlines)
+            {
+                AppendInlineText(builder, inline);
+            }
+        }
+
+        private static void AppendInlineText(StringBuilder builder, Inline inline)
+        {
+            switch (inline)
+            {
+                case Run run:
+                    builder.Append(run.Text);
+                    break;
+                case LineBreak:
+                    builder.AppendLine();
+                    break;
+                case Span span:
+                    AppendInlineText(builder, span.Inlines);
+                    break;
+            }
         }
 
         [TestMethod]

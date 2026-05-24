@@ -74,6 +74,80 @@ private void AutoSuggestBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestB
         QuerySubmitted=""Control2_QuerySubmitted""
         SuggestionChosen=""Control2_SuggestionChosen""/>";
 
+        private const string RichTextBlockSimpleXaml =
+@"<RichTextBlock>
+    <Paragraph>I am a RichTextBlock.</Paragraph>
+</RichTextBlock>";
+
+        private const string RichTextBlockSelectionXaml =
+@"<RichTextBlock SelectionHighlightColor=""Green"">
+    <Paragraph>RichTextBlock provides a rich text display container that supports
+        <Run FontStyle=""Italic"" FontWeight=""Bold"">formatted text</Run>,
+        <Hyperlink NavigateUri=""https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.Documents.Hyperlink"">hyperlinks</Hyperlink>, inline images, and other rich content.</Paragraph>
+    <Paragraph>RichTextBlock also supports a built-in overflow model.</Paragraph>
+</RichTextBlock>";
+
+        private const string RichTextBlockOverflowXaml =
+@"<Grid>
+    <Grid.ColumnDefinitions>
+        <ColumnDefinition/>
+        <ColumnDefinition/>
+        <ColumnDefinition/>
+    </Grid.ColumnDefinitions>
+    <RichTextBlock Grid.Column=""0"" OverflowContentTarget=""{x:Bind firstOverflowContainer}"" TextAlignment=""Justify"" Margin=""12,0"">
+        <Paragraph>
+            Linked text containers allow text which does not fit in one element to overflow into a different element on the page.
+            Creative use of linked text containers enables basic multicolumn support and other advanced page layouts.
+        </Paragraph>
+    <!-- Additional content not shown. -->
+    </RichTextBlock>
+    <RichTextBlockOverflow x:Name=""firstOverflowContainer"" OverflowContentTarget=""{x:Bind secondOverflowContainer}"" Grid.Column=""1"" Margin=""12,0""/>
+    <RichTextBlockOverflow x:Name=""secondOverflowContainer"" Grid.Column=""2"" Margin=""12,0""/>
+</Grid>";
+
+        private const string RichTextBlockHighlightXaml =
+@"<RichTextBlock x:Name=""TextHighlightingRichTextBlock"">
+    <Paragraph>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua
+    </Paragraph>
+</RichTextBlock>";
+
+        private const string RichTextBlockHighlightCSharp =
+@"private void HighlightColorCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+{
+    // Get color to use
+    var selectedItem = (sender as ComboBox).SelectedItem as ComboBoxItem;
+    var color = Colors.Yellow;
+    switch (selectedItem.Content as string)
+    {
+        case ""Yellow"":
+            color = Colors.Yellow;
+            break;
+        case ""Red"":
+            color = Colors.Red;
+            break;
+        case ""Blue"":
+            color = Colors.Blue;
+            break;
+    }
+
+    // Get text range and highlighter
+    TextRange textRange = new TextRange()
+    {
+        StartIndex = 28,
+        Length = 11
+    };
+    TextHighlighter highlighter = new TextHighlighter()
+    {
+        Background = new SolidColorBrush(color),
+        Ranges = { textRange }
+    };
+
+    // Switch texthighlighter
+    TextHighlightingRichTextBlock.TextHighlighters.Clear();
+    TextHighlightingRichTextBlock.TextHighlighters.Add(highlighter);
+}";
+
         private static readonly string[] Cats =
         {
             "Abyssinian",
@@ -183,6 +257,8 @@ private void AutoSuggestBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestB
                     return CreateAutoSuggestBoxExamples();
                 case "NumberBox":
                     return CreateNumberBoxExamples(sampleSnippets);
+                case "RichTextBlock":
+                    return CreateRichTextBlockExamples();
                 default:
                     return Array.Empty<GalleryExample>();
             }
@@ -650,33 +726,169 @@ private void AutoSuggestBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestB
 
         private static UIElement CreateRichTextBlockSample()
         {
-            var panel = CreateSamplePanel("RichTextBlock maps to a WPF read-only rich text surface with inline formatting and links.");
-            var rich = new TextBlock
+            var panel = new GallerySamplePanel
             {
-                Width = 470,
-                TextWrapping = TextWrapping.Wrap,
-                FontSize = 16
+                Margin = new Thickness(0, 0, 0, 12)
             };
-            rich.Inlines.Add(new Run("Rich text supports "));
-            rich.Inlines.Add(new Bold(new Run("bold")));
-            rich.Inlines.Add(new Run(", "));
-            rich.Inlines.Add(new Italic(new Run("italic")));
-            rich.Inlines.Add(new Run(", "));
-            rich.Inlines.Add(new Underline(new Run("underline")));
-            rich.Inlines.Add(new Run(", inline symbols, and "));
-            rich.Inlines.Add(new Hyperlink(new Run("links")) { NavigateUri = new Uri("https://learn.microsoft.com/windows/apps/design/controls/text-controls") });
-            rich.Inlines.Add(new Run("."));
-
-            var bordered = new Border
-            {
-                Width = 500,
-                Padding = new Thickness(18),
-                BorderThickness = new Thickness(1),
-                BorderBrush = CreateBrush("#D8D8D8"),
-                Child = rich
-            };
-            panel.Children.Add(bordered);
+            GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("RichTextBlock"));
+            panel.Children.Add(CreateSimpleRichTextBlock());
             return panel;
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateRichTextBlockExamples()
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "A simple RichTextBlock.",
+                    CreateSimpleRichTextBlockExampleContent(assignRootAutomationId: true),
+                    RichTextBlockSimpleXaml,
+                    null),
+                new GalleryExample(
+                    "A RichTextBlock with a custom selection highlight color.",
+                    CreateSelectionRichTextBlockExampleContent(),
+                    RichTextBlockSelectionXaml,
+                    null),
+                new GalleryExample(
+                    "A RichTextBlock with overflow.",
+                    CreateOverflowRichTextBlockExampleContent(),
+                    RichTextBlockOverflowXaml,
+                    null),
+                new GalleryExample(
+                    "RichTextBlock with custom TextHighlighting",
+                    CreateHighlightedRichTextBlockExampleContent(),
+                    RichTextBlockHighlightXaml,
+                    RichTextBlockHighlightCSharp)
+            };
+        }
+
+        private static GallerySamplePanel CreateSimpleRichTextBlockExampleContent(bool assignRootAutomationId)
+        {
+            var panel = new GallerySamplePanel();
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("RichTextBlock"));
+            }
+
+            panel.Children.Add(CreateSimpleRichTextBlock());
+            return panel;
+        }
+
+        private static TextBlock CreateSimpleRichTextBlock()
+        {
+            var textBlock = CreateRichTextBlockText();
+            textBlock.Name = "SimpleRichTextBlock";
+            textBlock.Text = "I am a RichTextBlock.";
+            GalleryAutomation.WithAutomationId(textBlock, GalleryAutomation.SampleElementId("RichTextBlock", "RichTextBlock"));
+            return textBlock;
+        }
+
+        private static TextBlock CreateSelectionRichTextBlockExampleContent()
+        {
+            var textBlock = CreateRichTextBlockText();
+            textBlock.Name = "SelectionHighlightRichTextBlock";
+            textBlock.Inlines.Add(new Run("RichTextBlock provides a rich text display container that supports "));
+            textBlock.Inlines.Add(new Italic(new Bold(new Run("formatted text"))));
+            textBlock.Inlines.Add(new Run(", "));
+            textBlock.Inlines.Add(new Hyperlink(new Run("hyperlinks"))
+            {
+                NavigateUri = new Uri("https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.Documents.Hyperlink")
+            });
+            textBlock.Inlines.Add(new Run(", inline images, and other rich content."));
+            textBlock.Inlines.Add(new LineBreak());
+            textBlock.Inlines.Add(new LineBreak());
+            textBlock.Inlines.Add(new Run("RichTextBlock also supports a built-in overflow model."));
+            return textBlock;
+        }
+
+        private static Grid CreateOverflowRichTextBlockExampleContent()
+        {
+            var grid = new Grid
+            {
+                Height = 300
+            };
+            grid.ColumnDefinitions.Add(new ColumnDefinition());
+            grid.ColumnDefinitions.Add(new ColumnDefinition());
+            grid.ColumnDefinitions.Add(new ColumnDefinition());
+
+            AddOverflowColumn(grid, 0, "Linked text containers allow text which does not fit in one element to overflow into a different element on the page. Creative use of linked text containers enables basic multicolumn support and other advanced page layouts.");
+            AddOverflowColumn(grid, 1, "Duis sed nulla metus, id hendrerit velit. Curabitur dolor purus, bibendum eu cursus lacinia, interdum vel augue. Aenean euismod eros et sapien vehicula dictum. Duis ullamcorper, turpis nec feugiat tincidunt, dui erat luctus risus, aliquam accumsan lacus est vel quam.");
+            AddOverflowColumn(grid, 2, "Nunc lacus massa, varius eget accumsan id, congue sed orci. Duis dignissim hendrerit egestas. Proin ut turpis magna, sit amet porta erat. Nunc semper metus nec magna imperdiet nec vestibulum dui fringilla.");
+            return grid;
+        }
+
+        private static GallerySamplePanel CreateHighlightedRichTextBlockExampleContent()
+        {
+            var panel = new GallerySamplePanel();
+            var highlightedRun = new Run("consectetur")
+            {
+                Background = Brushes.Yellow
+            };
+
+            var textBlock = CreateRichTextBlockText();
+            textBlock.Name = "TextHighlightingRichTextBlock";
+            textBlock.Inlines.Add(new Run("Lorem ipsum dolor sit amet, "));
+            textBlock.Inlines.Add(highlightedRun);
+            textBlock.Inlines.Add(new Run(" adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"));
+
+            var colorComboBox = new ComboBox
+            {
+                MinWidth = 160,
+                Margin = new Thickness(0, 12, 0, 0)
+            };
+            ControlHelper.SetHeader(colorComboBox, "Text highlighting color");
+            colorComboBox.Items.Add("Yellow");
+            colorComboBox.Items.Add("Red");
+            colorComboBox.Items.Add("Blue");
+            colorComboBox.SelectedIndex = 0;
+            colorComboBox.SelectionChanged += delegate
+            {
+                highlightedRun.Background = CreateHighlightBrush(colorComboBox.SelectedItem as string);
+            };
+
+            panel.Children.Add(textBlock);
+            panel.Children.Add(colorComboBox);
+            return panel;
+        }
+
+        private static void AddOverflowColumn(Grid grid, int column, string text)
+        {
+            var textBlock = CreateRichTextBlockText();
+            textBlock.Margin = new Thickness(12, 0, 12, 0);
+            textBlock.TextAlignment = TextAlignment.Justify;
+            textBlock.Text = text;
+            if (column == 1)
+            {
+                textBlock.Name = "firstOverflowContainer";
+            }
+            else if (column == 2)
+            {
+                textBlock.Name = "secondOverflowContainer";
+            }
+
+            Grid.SetColumn(textBlock, column);
+            grid.Children.Add(textBlock);
+        }
+
+        private static TextBlock CreateRichTextBlockText()
+        {
+            return new TextBlock
+            {
+                TextWrapping = TextWrapping.Wrap
+            };
+        }
+
+        private static Brush CreateHighlightBrush(string color)
+        {
+            switch (color)
+            {
+                case "Red":
+                    return Brushes.Red;
+                case "Blue":
+                    return Brushes.Blue;
+                default:
+                    return Brushes.Yellow;
+            }
         }
 
         private static UIElement CreateTextBlockSample()
