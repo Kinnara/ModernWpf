@@ -2185,12 +2185,14 @@ namespace ModernWpf.Gallery.Tests
             {
                 var page = new ItemPage(GalleryCatalog.FindItem("Iconography"));
                 Assert.IsTrue(page.HasDirectPageContent);
+                AssertDirectPagePane(page);
 
                 var directPage = (IconographyPage)page.DirectPageContent;
                 directPage.RaiseEvent(new RoutedEventArgs(FrameworkElement.LoadedEvent, directPage));
                 WpfTestHost.DoEvents();
 
                 var body = (Grid)directPage.Content;
+                Assert.AreEqual(new Thickness(0, 0, 0, 10), body.Margin);
                 Assert.AreEqual(6, body.RowDefinitions.Count);
 
                 var instructions = (Expander)body.Children.Cast<UIElement>().Single(child => Grid.GetRow(child) == 1);
