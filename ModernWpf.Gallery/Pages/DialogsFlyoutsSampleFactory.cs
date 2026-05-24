@@ -14,12 +14,35 @@ namespace ModernWpf.Gallery.Pages
 {
     internal static class DialogsFlyoutsSampleFactory
     {
+        private const string FlyoutButtonXaml =
+@"<Button Content=""Empty cart"">
+    <Button.Flyout>
+        <Flyout>
+            <StackPanel>
+                <TextBlock Style=""{ThemeResource BaseTextBlockStyle}"" Text=""All items will be removed. Do you want to continue?"" Margin=""0,0,0,12"" />
+                <Button Click=""DeleteConfirmation_Click"" Content=""Yes, empty my cart"" />
+            </StackPanel>
+        </Flyout>
+    </Button.Flyout>
+</Button>";
+
+        private const string FlyoutButtonCSharp =
+@"private void DeleteConfirmation_Click(object sender, RoutedEventArgs e)
+{
+    if (this.Control1.Flyout is Flyout f)
+    {
+        f.Hide();
+    }
+}";
+
         public static IReadOnlyList<GalleryExample> CreateExamples(string uniqueId, IReadOnlyList<SampleSnippet> sampleSnippets)
         {
             switch (uniqueId)
             {
                 case "ContentDialog":
                     return CreateContentDialogExamples(sampleSnippets);
+                case "Flyout":
+                    return CreateFlyoutExamples();
                 case "TeachingTip":
                     return CreateTeachingTipExamples(sampleSnippets);
                 default:
@@ -181,29 +204,81 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateFlyoutSample()
         {
-            var panel = CreateSamplePanel("Flyout shows lightweight contextual content anchored to a target.");
-            var button = CreateButton("Show Flyout");
-            var flyout = new Mux.Flyout
+            var panel = new GallerySamplePanel
             {
-                Placement = FlyoutPlacementMode.Bottom,
+                Margin = new Thickness(0, 0, 0, 12)
+            };
+            GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("Flyout"));
+            panel.Children.Add(CreateFlyoutButtonExampleContent(assignRootAutomationId: false));
+            return panel;
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateFlyoutExamples()
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "A button with a flyout",
+                    CreateFlyoutButtonExampleContent(assignRootAutomationId: true),
+                    FlyoutButtonXaml,
+                    FlyoutButtonCSharp)
+            };
+        }
+
+        private static GallerySamplePanel CreateFlyoutButtonExampleContent(bool assignRootAutomationId)
+        {
+            var root = new GallerySamplePanel();
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("Flyout"));
+            }
+
+            root.Resources["SharedFlyout"] = new Mux.Flyout
+            {
                 Content = new StackPanel
                 {
-                    Width = 220,
                     Children =
                     {
-                        new TextBlock
-                        {
-                            Text = "Quick actions",
-                            FontWeight = FontWeights.SemiBold,
-                            Margin = new Thickness(0, 0, 0, 8)
-                        },
-                        new Button { Content = "Archive", Margin = new Thickness(0, 0, 0, 6) },
-                        new Button { Content = "Pin" }
+                        new TextBlock { Text = "This Flyout is shared." }
                     }
                 }
             };
+
+            var button = new Button
+            {
+                Name = "Control1",
+                Content = "Empty cart"
+            };
+            GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("Flyout", "Button"));
+
+            var flyout = new Mux.Flyout();
+            flyout.Content = CreateFlyoutConfirmationContent(flyout);
             Mux.FlyoutService.SetFlyout(button, flyout);
-            panel.Children.Add(button);
+
+            root.Children.Add(button);
+            return root;
+        }
+
+        private static StackPanel CreateFlyoutConfirmationContent(Mux.Flyout flyout)
+        {
+            var panel = new StackPanel();
+            var message = new TextBlock
+            {
+                Margin = new Thickness(0, 0, 0, 12),
+                Text = "All items will be removed. Do you want to continue?"
+            };
+            message.SetResourceReference(FrameworkElement.StyleProperty, "BaseTextBlockStyle");
+            panel.Children.Add(message);
+
+            var confirm = new Button
+            {
+                Content = "Yes, empty my cart"
+            };
+            confirm.Click += delegate(object sender, RoutedEventArgs args)
+            {
+                flyout.Hide();
+            };
+            panel.Children.Add(confirm);
             return panel;
         }
 

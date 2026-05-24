@@ -106,6 +106,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.FlyoutSampleMatchesWinUIGalleryExample|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 22 tests per target. The generated ModernWpf Flyout page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\FlyoutPage.xaml` / `.xaml.cs`: one `A button with a flyout` example with `Control1`, the `Empty cart` button, shared `SharedFlyout` resource, confirmation text, and `Yes, empty my cart` confirmation button. `DialogsFlyoutsSampleFactory.CreateExamples` now covers Flyout as a source-backed Dialogs & Flyouts WinUI extension page, exposes curated automation IDs `GallerySample_Flyout_Root` and `GallerySample_Flyout_Button`, and adapts WinUI's `Button.Flyout` and `Control1.Flyout.Hide()` shape through ModernWpf's WPF `FlyoutService` while keeping the source snippet text aligned to WinUI. Current warning/output remains `NU1903`, generated WinRT warnings when regeneration is triggered, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls Flyout -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-152446-155-112616/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, required element `GallerySample_Flyout_Button` was found, primary crops match at `90x32`, Flyout Light primary delta is `4.64`, and whole-window mean delta is `197.42`. The visual harness now includes Flyout in the default control set and uses WinUI reference automation ID `Control1` for the primary crop.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls Flyout -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-152508-848-97972/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, required element `GallerySample_Flyout_Button` was found, primary crops match at `90x32`, Flyout Dark primary delta is `9.2`, and whole-window mean delta is `14.86`.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the Flyout WinUI example alignment and visual harness mapping. The latest incremental build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages, `0 Warning(s)`, and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.InfoBadgeSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 21 tests per target. The generated ModernWpf InfoBadge page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\InfoBadgePage.xaml` / `.xaml.cs`: the NavigationView inbox badge, style selector, badge-inside-button, and dynamic value examples. `StatusInfoSampleFactory.CreateExamples` now covers InfoBadge as a source-backed Status & Info WinUI extension page, exposes curated automation IDs `GallerySample_InfoBadge_Root` and `GallerySample_InfoBadge_InfoBadge`, keeps WinUI's `nvSample1`, `InboxPage`, `infoBadge1`, `ToggleInfoBadgeOpacity`, `NavigationViewDisplayMode`, `contentFrame`, `infoBadge2`, `infoBadge3`, `infoBadge4`, `InfoBadgeStyleComboBox`, `Example3Button`, `DynamicInfoBadge`, and `ValueNumberBox`, and adapts WinUI style selection through direct WPF property/resource updates because the keyed InfoBadge styles are not reliably resolvable in the test host. Current warning/output remains `NU1903`, generated WinRT warnings when regeneration is triggered, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls InfoBadge -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -1270,6 +1278,24 @@ screenshot-crop fallback because its automation bounds can point at a blank
 layout slot above the visible control. Avoid reopening these two first-sample
 structures unless a new WinUI source, visual crop, or readiness regression
 appears.
+The generated ModernWpf Flyout extension page now uses the local official
+WinUI Gallery one-example structure from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\FlyoutPage.xaml`
+/ `.xaml.cs`: `Control1`, the `Empty cart` button, the unused but source-backed
+`SharedFlyout` page resource, confirmation text, and the `Yes, empty my cart`
+confirmation button. `DialogsFlyoutsSampleFactory.CreateExamples` now covers
+Flyout as a source-backed Dialogs & Flyouts WinUI example, exposes
+`GallerySample_Flyout_Root` and `GallerySample_Flyout_Button`, and adapts
+WinUI's `Button.Flyout` and `Control1.Flyout.Hide()` shape through
+ModernWpf's WPF `FlyoutService` while keeping the displayed source snippet
+aligned to WinUI. Current Flyout WinUI-reference evidence is
+`artifacts/visual-checks/20260524-152446-155-112616/report.md` for Light and
+`artifacts/visual-checks/20260524-152508-848-97972/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`, matching `90x32`
+primary crops, and primary deltas `4.64` / `9.2`. The visual harness uses
+WinUI reference automation ID `Control1` for the primary crop. Avoid reopening
+Flyout's source shape unless a new WinUI source, crop, or flyout interaction
+regression appears.
 The generated ModernWpf InfoBadge extension page now uses the local official
 WinUI Gallery four-example structure from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\InfoBadgePage.xaml`

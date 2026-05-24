@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "InfoBadge", "InfoBar", "ProgressRing", "NavigationView", "ContentDialog", "MenuBar", "CommandBar", "CommandBarFlyout"),
+    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "InfoBadge", "InfoBar", "ProgressRing", "NavigationView", "ContentDialog", "Flyout", "MenuBar", "CommandBar", "CommandBarFlyout"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -440,6 +440,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "ProgressRing" { return "GallerySample_ProgressRing_ProgressRing" }
         "NavigationView" { return "GallerySample_NavigationView_NavigationView" }
         "ContentDialog" { return "GallerySample_ContentDialog_ShowButton" }
+        "Flyout" { return "GallerySample_Flyout_Button" }
         "MenuBar" { return "GallerySample_MenuBar_MenuBar" }
         "CommandBar" { return "GallerySample_CommandBar_CommandBar" }
         "CommandBarFlyout" { return "GallerySample_CommandBarFlyout_ShowButton" }
@@ -475,6 +476,7 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
         "AutoSuggestBox" { return "GallerySample_AutoSuggestBox_AutoSuggestBox" }
         "InfoBadge" { return "GallerySample_InfoBadge_InfoBadge" }
         "ProgressRing" { return "GallerySample_ProgressRing_ProgressRing" }
+        "Flyout" { return "GallerySample_Flyout_Button" }
         "MenuBar" { return "GallerySample_MenuBar_MenuBar" }
         "CommandBar" { return "GallerySample_CommandBar_CommandBar" }
         "CommandBarFlyout" { return "GallerySample_CommandBarFlyout_ShowButton" }
@@ -490,6 +492,7 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
         "InfoBar" { return "TestInfoBar1" }
         "NavigationView" { return "nvSample5" }
         "ContentDialog" { return "ShowDialog" }
+        "Flyout" { return "Control1" }
         "MenuBar" { return "Example1" }
         "CommandBar" { return "PrimaryCommandBar" }
         "CommandBarFlyout" { return "myImageButton" }

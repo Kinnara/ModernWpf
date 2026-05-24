@@ -31,6 +31,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "ProgressRing", "GallerySample_ProgressRing_Root", "GallerySample_ProgressRing_ProgressRing" };
             yield return new object[] { "NavigationView", "GallerySample_NavigationView_Root", "GallerySample_NavigationView_NavigationView" };
             yield return new object[] { "ContentDialog", "GallerySample_ContentDialog_Root", "GallerySample_ContentDialog_ShowButton" };
+            yield return new object[] { "Flyout", "GallerySample_Flyout_Root", "GallerySample_Flyout_Button" };
             yield return new object[] { "ColorPicker", "GallerySample_ColorPicker_Root", "GallerySample_ColorPicker_ColorPicker" };
             yield return new object[] { "HyperlinkButton", "GallerySample_HyperlinkButton_Root", "GallerySample_HyperlinkButton_HyperlinkButton" };
             yield return new object[] { "RatingControl", "GallerySample_RatingControl_Root", "GallerySample_RatingControl_RatingControl" };
@@ -213,6 +214,71 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual("Show dialog without default button", noDefaultButton.Content);
                     Assert.AreSame(DependencyProperty.UnsetValue, button.ReadLocalValue(Control.PaddingProperty));
                     Assert.AreSame(DependencyProperty.UnsetValue, noDefaultButton.ReadLocalValue(Control.PaddingProperty));
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void FlyoutSampleMatchesWinUIGalleryExample()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("Flyout"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(1, page.Examples.Count);
+                    Assert.AreEqual("A button with a flyout", page.Examples[0].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "<Button Content=\"Empty cart\">");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "DeleteConfirmation_Click");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "Yes, empty my cart");
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "this.Control1.Flyout is Flyout f");
+
+                    var root = (FrameworkElement)FindByAutomationId(page, "GallerySample_Flyout_Root");
+                    var button = (Button)FindByAutomationId(page, "GallerySample_Flyout_Button");
+                    Assert.IsNotNull(root);
+                    Assert.IsNotNull(button);
+                    Assert.AreEqual("Control1", button.Name);
+                    Assert.AreEqual("Empty cart", button.Content);
+
+                    var sharedFlyout = root.Resources["SharedFlyout"] as Mux.Flyout;
+                    Assert.IsNotNull(sharedFlyout);
+                    var sharedPanel = sharedFlyout.Content as StackPanel;
+                    Assert.IsNotNull(sharedPanel);
+                    Assert.AreEqual(1, sharedPanel.Children.Count);
+                    Assert.AreEqual("This Flyout is shared.", ((TextBlock)sharedPanel.Children[0]).Text);
+
+                    var flyout = Mux.FlyoutService.GetFlyout(button) as Mux.Flyout;
+                    Assert.IsNotNull(flyout);
+                    var flyoutPanel = flyout.Content as StackPanel;
+                    Assert.IsNotNull(flyoutPanel);
+                    Assert.AreEqual(2, flyoutPanel.Children.Count);
+                    var flyoutText = (TextBlock)flyoutPanel.Children[0];
+                    Assert.AreEqual("All items will be removed. Do you want to continue?", flyoutText.Text);
+                    Assert.AreEqual(new Thickness(0, 0, 0, 12), flyoutText.Margin);
+                    Assert.AreEqual("Yes, empty my cart", ((Button)flyoutPanel.Children[1]).Content);
                 }
                 finally
                 {
