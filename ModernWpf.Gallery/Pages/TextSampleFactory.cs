@@ -1,11 +1,15 @@
 using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using ModernWpf.Gallery.Models;
 using ModernWpf.Controls.Primitives;
 using Mux = ModernWpf.Controls;
 
@@ -13,6 +17,17 @@ namespace ModernWpf.Gallery.Pages
 {
     internal static class TextSampleFactory
     {
+        public static IReadOnlyList<GalleryExample> CreateExamples(string uniqueId, IReadOnlyList<SampleSnippet> sampleSnippets)
+        {
+            switch (uniqueId)
+            {
+                case "NumberBox":
+                    return CreateNumberBoxExamples(sampleSnippets);
+                default:
+                    return Array.Empty<GalleryExample>();
+            }
+        }
+
         public static UIElement Create(string uniqueId)
         {
             switch (uniqueId)
@@ -130,51 +145,118 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateNumberBoxSample()
         {
-            var panel = CreateSamplePanel("NumberBox provides numeric input, validation, expressions, and spin buttons.");
-            var output = CreateOutput("Current value: 42");
-            var box = new Mux.NumberBox
+            var panel = new GallerySamplePanel
             {
-                Width = 240,
-                Header = "Quantity",
-                PlaceholderText = "Enter a number",
-                Minimum = 0,
-                Maximum = 100,
-                Value = 42,
-                SmallChange = 1,
-                LargeChange = 10,
+                Margin = new Thickness(0, 0, 0, 12)
+            };
+            GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("NumberBox"));
+            panel.Children.Add(CreateExpressionNumberBoxExampleContent(assignRootAutomationId: false));
+            return panel;
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateNumberBoxExamples(IReadOnlyList<SampleSnippet> sampleSnippets)
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "A NumberBox that evaluates expressions.",
+                    CreateExpressionNumberBoxExampleContent(assignRootAutomationId: true),
+                    "<NumberBox Header=\"Enter an expression:\" Value=\"NaN\" PlaceholderText=\"1 + 2^2\" AcceptsExpression=\"True\" />",
+                    null),
+                new GalleryExample(
+                    "A NumberBox with a spin button.",
+                    CreateSpinButtonNumberBoxExampleContent(),
+                    "<NumberBox\r\n    x:Name=\"NumberBoxSpinButtonPlacementExample\"\r\n    Header=\"Enter an integer:\"\r\n    Value=\"1\"\r\n    SpinButtonPlacementMode=\"Inline\"\r\n    SmallChange=\"10\"\r\n    LargeChange=\"100\" />",
+                    null),
+                new GalleryExample(
+                    "A formatted NumberBox that rounds to the nearest 0.25.",
+                    CreateFormattedNumberBoxExampleContent(),
+                    FindSampleCodeText(sampleSnippets, "NumberBoxSample3_xaml.txt"),
+                    FindSampleCodeText(sampleSnippets, "NumberBoxSample3_cs.txt"))
+            };
+        }
+
+        private static GallerySamplePanel CreateExpressionNumberBoxExampleContent(bool assignRootAutomationId)
+        {
+            var panel = new GallerySamplePanel();
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("NumberBox"));
+            }
+
+            var numberBox = new Mux.NumberBox
+            {
+                Name = "ExpressionNumberBox",
+                Width = 124,
                 AcceptsExpression = true,
+                Header = "Enter an expression:",
+                PlaceholderText = "1 + 2^2",
+                Value = double.NaN,
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+            GalleryAutomation.WithAutomationId(numberBox, GalleryAutomation.SampleElementId("NumberBox", "ExpressionNumberBox"));
+            panel.Children.Add(numberBox);
+            return panel;
+        }
+
+        private static GallerySamplePanel CreateSpinButtonNumberBoxExampleContent()
+        {
+            var panel = new GallerySamplePanel();
+            var layout = new Grid();
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(40) });
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+            var numberBox = new Mux.NumberBox
+            {
+                Name = "NumberBoxSpinButtonPlacementExample",
+                Width = 132,
+                VerticalAlignment = VerticalAlignment.Top,
+                Header = "Enter an integer:",
+                LargeChange = 100,
+                SmallChange = 10,
                 SpinButtonPlacementMode = Mux.NumberBoxSpinButtonPlacementMode.Inline,
-                ValidationMode = Mux.NumberBoxValidationMode.InvalidInputOverwritten
+                Value = 10
             };
-            box.ValueChanged += delegate
+            AutomationProperties.SetName(numberBox, "NumberBox with spin button");
+            GalleryAutomation.WithAutomationId(numberBox, GalleryAutomation.SampleElementId("NumberBox", "SpinButtonNumberBox"));
+
+            var radioButtons = new Mux.RadioButtons
             {
-                output.Text = double.IsNaN(box.Value) ? "Current value: unset" : "Current value: " + box.Value.ToString("0.##");
+                Name = "SpinButtonPlacementGroup",
+                Header = "SpinButton placement",
+                SelectedIndex = 0
+            };
+            radioButtons.Items.Add("Inline");
+            radioButtons.Items.Add("Compact");
+            radioButtons.SelectionChanged += delegate
+            {
+                numberBox.SpinButtonPlacementMode = radioButtons.SelectedIndex == 0
+                    ? Mux.NumberBoxSpinButtonPlacementMode.Inline
+                    : Mux.NumberBoxSpinButtonPlacementMode.Compact;
             };
 
-            var placement = new ComboBox
-            {
-                Width = 220,
-                Margin = new Thickness(0, 12, 0, 0),
-                ItemsSource = new[]
-                {
-                    Mux.NumberBoxSpinButtonPlacementMode.Hidden,
-                    Mux.NumberBoxSpinButtonPlacementMode.Compact,
-                    Mux.NumberBoxSpinButtonPlacementMode.Inline
-                },
-                SelectedItem = box.SpinButtonPlacementMode
-            };
-            ControlHelper.SetHeader(placement, "Spin buttons");
-            placement.SelectionChanged += delegate
-            {
-                if (placement.SelectedItem is Mux.NumberBoxSpinButtonPlacementMode)
-                {
-                    box.SpinButtonPlacementMode = (Mux.NumberBoxSpinButtonPlacementMode)placement.SelectedItem;
-                }
-            };
+            layout.Children.Add(numberBox);
+            Grid.SetColumn(radioButtons, 2);
+            layout.Children.Add(radioButtons);
+            panel.Children.Add(layout);
+            return panel;
+        }
 
-            panel.Children.Add(box);
-            panel.Children.Add(placement);
-            panel.Children.Add(output);
+        private static GallerySamplePanel CreateFormattedNumberBoxExampleContent()
+        {
+            var panel = new GallerySamplePanel();
+            var numberBox = new Mux.NumberBox
+            {
+                Name = "FormattedNumberBox",
+                Width = 137,
+                Header = "Enter a dollar amount:",
+                PlaceholderText = "0.00",
+                NumberFormatter = new QuarterIncrementNumberFormatter(),
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+            GalleryAutomation.WithAutomationId(numberBox, GalleryAutomation.SampleElementId("NumberBox", "FormattedNumberBox"));
+            panel.Children.Add(numberBox);
             return panel;
         }
 
@@ -422,6 +504,42 @@ namespace ModernWpf.Gallery.Pages
                 Margin = new Thickness(0, 12, 0, 0),
                 TextWrapping = TextWrapping.Wrap
             };
+        }
+
+        private static string FindSampleCodeText(IReadOnlyList<SampleSnippet> snippets, string relativePath)
+        {
+            var fileName = System.IO.Path.GetFileName(relativePath);
+            for (var i = 0; i < snippets.Count; i++)
+            {
+                if (string.Equals(snippets[i].Title, fileName, StringComparison.Ordinal) ||
+                    string.Equals(snippets[i].Title, relativePath, StringComparison.Ordinal))
+                {
+                    return snippets[i].Text;
+                }
+            }
+
+            var path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Samples", "SampleCode", "NumberBox", relativePath);
+            return System.IO.File.Exists(path) ? System.IO.File.ReadAllText(path) : null;
+        }
+
+        private sealed class QuarterIncrementNumberFormatter : Mux.INumberBoxNumberFormatter
+        {
+            public string FormatDouble(double value)
+            {
+                var roundedValue = Math.Floor((value / 0.25) + 0.5) * 0.25;
+                return roundedValue.ToString("0.00", CultureInfo.InvariantCulture);
+            }
+
+            public double? ParseDouble(string text)
+            {
+                if (double.TryParse(text, NumberStyles.Float, CultureInfo.InvariantCulture, out var value) ||
+                    double.TryParse(text, NumberStyles.Float, CultureInfo.CurrentCulture, out value))
+                {
+                    return value;
+                }
+
+                return null;
+            }
         }
 
         private static SolidColorBrush CreateBrush(string color)

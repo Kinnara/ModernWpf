@@ -103,6 +103,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.NumberBoxSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 12 tests per target. The generated ModernWpf NumberBox page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\NumberBoxPage.xaml` / `.xaml.cs`: expression evaluation, spin-button placement options, and formatted quarter-increment rounding. `TextSampleFactory.CreateExamples` now hosts source-backed Text WinUI examples, consumes the local `NumberBox` sample-code snippets, exposes curated automation IDs `GallerySample_NumberBox_Root` and `GallerySample_NumberBox_SpinButtonNumberBox`, and adapts WinUI's `Windows.Globalization.NumberFormatting` formatter to the WPF `INumberBoxNumberFormatter` surface. Current warning/output remains `NU1903` and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls NumberBox -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-130855-649-115628/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, primary crops match at `132x59`, and NumberBox Light primary delta is `7.31`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls NumberBox -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-130915-545-96112/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, primary crops match at `132x59`, and NumberBox Dark primary delta is `11.25`. The visual harness now uses the WinUI reference automation ID `NumberBoxSpinButtonPlacementExample` for the NumberBox primary crop.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the NumberBox WinUI example alignment and reference crop mapping. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages, existing ModernWpf/ModernWpf.Controls warnings, `19 Warning(s)`, and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.ToggleSplitButtonSampleMatchesWinUIGalleryExample|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 11 tests per target. The generated ModernWpf ToggleSplitButton page now follows the local official WinUI Gallery one-example shape for list formatting in a RichEditBox, consumes the local `Buttons\ToggleSplitButton` source pane through `BasicInputSampleFactory.CreateExamples`, and exposes curated automation IDs `GallerySample_ToggleSplitButton_Root` and `GallerySample_ToggleSplitButton_ToggleSplitButton`. The WPF adaptation keeps the WinUI sample names, icon content, two-button flyout, and RichEditBox sizing while using WPF `RichTextBox` plus `EditingCommands.ToggleBullets` / `EditingCommands.ToggleNumbering` for list behavior. Current warning/output remains `NU1903` and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls ToggleSplitButton -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -1271,6 +1279,23 @@ Dark, both with ModernWpf and installed WinUI 3 Gallery `Passed`, matching
 uses the WinUI reference automation ID `myListButton` for the primary crop.
 Avoid reopening ToggleSplitButton's source shape unless a new WinUI source or
 crop regression appears.
+The generated ModernWpf NumberBox extension page now uses the local official
+WinUI Gallery three-example structure from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\NumberBoxPage.xaml`:
+an expression-evaluating NumberBox, a spin-button NumberBox with Inline/Compact
+options, and a formatted NumberBox that rounds to the nearest `0.25`.
+`TextSampleFactory.CreateExamples` now hosts source-backed Text WinUI examples,
+consumes the local `Samples\SampleCode\NumberBox` snippets, keeps WinUI's
+sample names, option group, and primary crop target, and adapts the WinUI
+number formatter to a local WPF `INumberBoxNumberFormatter`. The explicit
+`124` / `132` / `137` sample widths are copied from the local installed WinUI
+Gallery UIA reference so the spin-button primary crop matches the reference
+`NumberBoxSpinButtonPlacementExample` target. Current NumberBox WinUI-reference
+evidence is `artifacts/visual-checks/20260524-130855-649-115628/report.md` for
+Light and `artifacts/visual-checks/20260524-130915-545-96112/report.md` for
+Dark, both with ModernWpf and installed WinUI 3 Gallery `Passed`, matching
+`132x59` primary crops, and primary deltas `7.31` / `11.25`. Avoid reopening
+NumberBox's source shape unless a new WinUI source or crop regression appears.
 Continue with the next highest-impact visible drift from the checklist, likely
 remaining High Contrast gaps, other NavigationView styling not covered
 by the TreeView token aliases or first-sample refresh, or other item pages that still lack current

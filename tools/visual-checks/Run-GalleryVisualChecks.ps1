@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "DropDownButton", "SplitButton", "ToggleSplitButton", "InfoBar", "NavigationView", "ContentDialog", "MenuBar", "CommandBar", "CommandBarFlyout"),
+    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "DropDownButton", "SplitButton", "ToggleSplitButton", "NumberBox", "InfoBar", "NavigationView", "ContentDialog", "MenuBar", "CommandBar", "CommandBarFlyout"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -427,6 +427,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "DropDownButton" { return "GallerySample_DropDownButton_DropDownButton" }
         "SplitButton" { return "GallerySample_SplitButton_SplitButton" }
         "ToggleSplitButton" { return "GallerySample_ToggleSplitButton_ToggleSplitButton" }
+        "NumberBox" { return "GallerySample_NumberBox_SpinButtonNumberBox" }
         "InfoBar" { return "GallerySample_InfoBar_InfoBar" }
         "NavigationView" { return "GallerySample_NavigationView_NavigationView" }
         "ContentDialog" { return "GallerySample_ContentDialog_ShowButton" }
@@ -454,6 +455,7 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
         "DropDownButton" { return "GallerySample_DropDownButton_DropDownButton" }
         "SplitButton" { return "GallerySample_SplitButton_SplitButton" }
         "ToggleSplitButton" { return "GallerySample_ToggleSplitButton_ToggleSplitButton" }
+        "NumberBox" { return "GallerySample_NumberBox_SpinButtonNumberBox" }
         "MenuBar" { return "GallerySample_MenuBar_MenuBar" }
         "CommandBar" { return "GallerySample_CommandBar_CommandBar" }
         "CommandBarFlyout" { return "GallerySample_CommandBarFlyout_ShowButton" }
@@ -474,6 +476,7 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
         "CommandBarFlyout" { return "myImageButton" }
         "SplitButton" { return "myColorButton" }
         "ToggleSplitButton" { return "myListButton" }
+        "NumberBox" { return "NumberBoxSpinButtonPlacementExample" }
         default { return "" }
     }
 }

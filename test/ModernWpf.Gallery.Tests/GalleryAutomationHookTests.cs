@@ -31,6 +31,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "DropDownButton", "GallerySample_DropDownButton_Root", "GallerySample_DropDownButton_DropDownButton" };
             yield return new object[] { "SplitButton", "GallerySample_SplitButton_Root", "GallerySample_SplitButton_SplitButton" };
             yield return new object[] { "ToggleSplitButton", "GallerySample_ToggleSplitButton_Root", "GallerySample_ToggleSplitButton_ToggleSplitButton" };
+            yield return new object[] { "NumberBox", "GallerySample_NumberBox_Root", "GallerySample_NumberBox_SpinButtonNumberBox" };
             yield return new object[] { "MenuBar", "GallerySample_MenuBar_Root", "GallerySample_MenuBar_MenuBar" };
             yield return new object[] { "CommandBar", "GallerySample_CommandBar_Root", "GallerySample_CommandBar_CommandBar" };
             yield return new object[] { "CommandBarFlyout", "GallerySample_CommandBarFlyout_Root", "GallerySample_CommandBarFlyout_ShowButton" };
@@ -593,6 +594,86 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsTrue(toggleSplitButton.IsChecked);
                     Assert.AreEqual(Mux.Symbol.Bullets, symbolIcon.Symbol);
                     Assert.AreEqual("Roman Numerals", AutomationProperties.GetName(toggleSplitButton));
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void NumberBoxSampleMatchesWinUIGalleryExamples()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("NumberBox"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(3, page.Examples.Count);
+                    Assert.AreEqual("A NumberBox that evaluates expressions.", page.Examples[0].HeaderText);
+                    Assert.AreEqual("A NumberBox with a spin button.", page.Examples[1].HeaderText);
+                    Assert.AreEqual("A formatted NumberBox that rounds to the nearest 0.25.", page.Examples[2].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "AcceptsExpression=\"True\"");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "NumberBoxSpinButtonPlacementExample");
+                    StringAssert.Contains(page.Examples[2].XamlCode, "FormattedNumberBox");
+                    StringAssert.Contains(page.Examples[2].CSharpCode, "Increment = 0.25");
+
+                    var expressionBox = (Mux.NumberBox)FindByAutomationId(page, "GallerySample_NumberBox_ExpressionNumberBox");
+                    var spinButtonBox = (Mux.NumberBox)FindByAutomationId(page, "GallerySample_NumberBox_SpinButtonNumberBox");
+                    var formattedBox = (Mux.NumberBox)FindByAutomationId(page, "GallerySample_NumberBox_FormattedNumberBox");
+                    var placementGroup = FindNamedDescendant<Mux.RadioButtons>(page, "SpinButtonPlacementGroup");
+                    Assert.IsNotNull(expressionBox);
+                    Assert.IsNotNull(spinButtonBox);
+                    Assert.IsNotNull(formattedBox);
+                    Assert.IsNotNull(placementGroup);
+
+                    Assert.AreEqual("Enter an expression:", expressionBox.Header);
+                    Assert.AreEqual(124.0, expressionBox.Width);
+                    Assert.AreEqual("1 + 2^2", expressionBox.PlaceholderText);
+                    Assert.IsTrue(expressionBox.AcceptsExpression);
+                    Assert.IsTrue(double.IsNaN(expressionBox.Value));
+
+                    Assert.AreEqual("NumberBoxSpinButtonPlacementExample", spinButtonBox.Name);
+                    Assert.AreEqual(132.0, spinButtonBox.Width);
+                    Assert.AreEqual("NumberBox with spin button", AutomationProperties.GetName(spinButtonBox));
+                    Assert.AreEqual("Enter an integer:", spinButtonBox.Header);
+                    Assert.AreEqual(10.0, spinButtonBox.Value);
+                    Assert.AreEqual(10.0, spinButtonBox.SmallChange);
+                    Assert.AreEqual(100.0, spinButtonBox.LargeChange);
+                    Assert.AreEqual(Mux.NumberBoxSpinButtonPlacementMode.Inline, spinButtonBox.SpinButtonPlacementMode);
+                    Assert.AreEqual("SpinButton placement", placementGroup.Header);
+                    Assert.AreEqual(0, placementGroup.SelectedIndex);
+                    Assert.AreEqual("Inline", placementGroup.Items[0]);
+                    Assert.AreEqual("Compact", placementGroup.Items[1]);
+                    placementGroup.SelectedIndex = 1;
+                    Assert.AreEqual(Mux.NumberBoxSpinButtonPlacementMode.Compact, spinButtonBox.SpinButtonPlacementMode);
+
+                    Assert.AreEqual("FormattedNumberBox", formattedBox.Name);
+                    Assert.AreEqual(137.0, formattedBox.Width);
+                    Assert.AreEqual("Enter a dollar amount:", formattedBox.Header);
+                    Assert.AreEqual("0.00", formattedBox.PlaceholderText);
+                    Assert.IsNotNull(formattedBox.NumberFormatter);
+                    Assert.AreEqual("1.25", formattedBox.NumberFormatter.FormatDouble(1.13));
                 }
                 finally
                 {
