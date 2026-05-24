@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "CommandBar", "CommandBarFlyout"),
+    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "BreadcrumbBar", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "CommandBar", "CommandBarFlyout"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -439,6 +439,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "InfoBar" { return "GallerySample_InfoBar_InfoBar" }
         "ProgressRing" { return "GallerySample_ProgressRing_ProgressRing" }
         "PipsPager" { return "GallerySample_PipsPager_PipsPager" }
+        "BreadcrumbBar" { return "GallerySample_BreadcrumbBar_BreadcrumbBar" }
         "NavigationView" { return "GallerySample_NavigationView_NavigationView" }
         "ContentDialog" { return "GallerySample_ContentDialog_ShowButton" }
         "Flyout" { return "GallerySample_Flyout_Button" }
@@ -479,6 +480,7 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
         "InfoBadge" { return "GallerySample_InfoBadge_InfoBadge" }
         "ProgressRing" { return "GallerySample_ProgressRing_ProgressRing" }
         "PipsPager" { return "GallerySample_PipsPager_PipsPager" }
+        "BreadcrumbBar" { return "GallerySample_BreadcrumbBar_BreadcrumbBar" }
         "Flyout" { return "GallerySample_Flyout_Button" }
         "Popup" { return "GallerySample_Popup_Button" }
         "MenuBar" { return "GallerySample_MenuBar_MenuBar" }
@@ -509,6 +511,7 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
         "AutoSuggestBox" { return "Control1" }
         "ProgressRing" { return "ProgressRing1" }
         "PipsPager" { return "FlipViewPipsPager" }
+        "BreadcrumbBar" { return "BreadcrumbBar1" }
         default { return "" }
     }
 }
@@ -1170,6 +1173,16 @@ function Capture-StaticCrops([string]$app, [string]$control, [string]$caseDir, $
             }
             else {
                 $primaryCrop = $null
+            }
+        }
+
+        if ($control -eq "BreadcrumbBar") {
+            if ($null -ne $primaryCrop -and !$primaryCrop.NonBlank) {
+                $primaryCrop = $null
+            }
+
+            if ($null -ne $sampleCrop -and !$sampleCrop.NonBlank) {
+                $sampleCrop = $null
             }
         }
 

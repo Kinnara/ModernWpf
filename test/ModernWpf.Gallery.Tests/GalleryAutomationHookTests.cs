@@ -30,6 +30,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "InfoBar", "GallerySample_InfoBar_Root", "GallerySample_InfoBar_InfoBar" };
             yield return new object[] { "ProgressRing", "GallerySample_ProgressRing_Root", "GallerySample_ProgressRing_ProgressRing" };
             yield return new object[] { "PipsPager", "GallerySample_PipsPager_Root", "GallerySample_PipsPager_PipsPager" };
+            yield return new object[] { "BreadcrumbBar", "GallerySample_BreadcrumbBar_Root", "GallerySample_BreadcrumbBar_BreadcrumbBar" };
             yield return new object[] { "NavigationView", "GallerySample_NavigationView_Root", "GallerySample_NavigationView_NavigationView" };
             yield return new object[] { "ContentDialog", "GallerySample_ContentDialog_Root", "GallerySample_ContentDialog_ShowButton" };
             yield return new object[] { "Flyout", "GallerySample_Flyout_Root", "GallerySample_Flyout_Button" };
@@ -438,6 +439,90 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual("SamplePage1", firstItem.Tag);
                     Assert.AreEqual(ModernWpf.Controls.Symbol.Play, ((ModernWpf.Controls.SymbolIcon)firstItem.Icon).Symbol);
                     Assert.AreSame(firstItem, navigationView.SelectedItem);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void BreadcrumbBarSampleMatchesWinUIGalleryExamples()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("BreadcrumbBar"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(2, page.Examples.Count);
+                    Assert.AreEqual("A BreadcrumbBar control", page.Examples[0].HeaderText);
+                    Assert.AreEqual("BreadCrumbBar Control with Custom DataTemplate", page.Examples[1].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "<BreadcrumbBar x:Name=\"BreadcrumbBar1\"/>");
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "BreadcrumbBar1.ItemsSource = new string[]");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "<BreadcrumbBar x:Name=\"BreadcrumbBar2\">");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "BreadcrumbBarItem Content=\"{Binding}\"");
+                    StringAssert.Contains(page.Examples[1].CSharpCode, "ObservableCollection<Folder>");
+                    StringAssert.Contains(page.Examples[1].CSharpCode, "BreadcrumbBar2_ItemClicked");
+
+                    var breadcrumbBar1 = (Mux.BreadcrumbBar)FindByAutomationId(page, "GallerySample_BreadcrumbBar_BreadcrumbBar");
+                    var breadcrumbBar2 = FindNamedDescendant<Mux.BreadcrumbBar>(page, "BreadcrumbBar2");
+                    var resetSampleButton = FindNamedDescendant<Button>(page, "ResetSampleBtn");
+                    Assert.IsNotNull(breadcrumbBar1);
+                    Assert.IsNotNull(breadcrumbBar2);
+                    Assert.IsNotNull(resetSampleButton);
+
+                    Assert.AreEqual("BreadcrumbBar1", breadcrumbBar1.Name);
+                    AssertBreadcrumbItems(
+                        breadcrumbBar1.ItemsSource,
+                        "Home",
+                        "Documents",
+                        "Design",
+                        "Northwind",
+                        "Images",
+                        "Folder1",
+                        "Folder2",
+                        "Folder3");
+                    Assert.IsNotNull(FindTextBlockByText(breadcrumbBar1, "Home"));
+                    Assert.IsNotNull(FindTextBlockByText(breadcrumbBar1, "Folder3"));
+
+                    Assert.AreEqual("BreadcrumbBar2", breadcrumbBar2.Name);
+                    Assert.IsNotNull(breadcrumbBar2.ItemTemplate);
+                    AssertBreadcrumbItems(breadcrumbBar2.ItemsSource, "Home", "Folder1", "Folder2", "Folder3");
+                    Assert.IsNotNull(FindTextBlockByText(breadcrumbBar2, "Home"));
+                    Assert.IsNotNull(FindTextBlockByText(breadcrumbBar2, "Folder3"));
+                    Assert.AreEqual("Reset sample", resetSampleButton.Content);
+
+                    var folders = breadcrumbBar2.ItemsSource as System.Collections.IList;
+                    Assert.IsNotNull(folders);
+                    folders.RemoveAt(3);
+                    folders.RemoveAt(2);
+                    WpfTestHost.DoEvents();
+                    AssertBreadcrumbItems(breadcrumbBar2.ItemsSource, "Home", "Folder1");
+
+                    resetSampleButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                    WpfTestHost.DoEvents();
+                    AssertBreadcrumbItems(breadcrumbBar2.ItemsSource, "Home", "Folder1", "Folder2", "Folder3");
+                    Assert.IsNotNull(FindTextBlockByText(breadcrumbBar2, "Folder3"));
                 }
                 finally
                 {
@@ -2397,6 +2482,32 @@ namespace ModernWpf.Gallery.Tests
             return null;
         }
 
+        private static TextBlock FindTextBlockByText(DependencyObject root, string text)
+        {
+            if (root == null)
+            {
+                return null;
+            }
+
+            var textBlock = root as TextBlock;
+            if (textBlock != null && string.Equals(textBlock.Text, text, StringComparison.Ordinal))
+            {
+                return textBlock;
+            }
+
+            var childCount = VisualTreeHelper.GetChildrenCount(root);
+            for (var i = 0; i < childCount; i++)
+            {
+                var result = FindTextBlockByText(VisualTreeHelper.GetChild(root, i), text);
+                if (result != null)
+                {
+                    return result;
+                }
+            }
+
+            return null;
+        }
+
         private static void AssertPipsPagerImage(ContentControl gallery, string fileName)
         {
             var image = gallery.Content as Image;
@@ -2404,6 +2515,33 @@ namespace ModernWpf.Gallery.Tests
             var bitmapImage = image.Source as BitmapImage;
             Assert.IsNotNull(bitmapImage);
             StringAssert.Contains(bitmapImage.UriSource.ToString(), fileName);
+        }
+
+        private static void AssertBreadcrumbItems(object itemsSource, params string[] expectedItems)
+        {
+            var enumerable = itemsSource as System.Collections.IEnumerable;
+            Assert.IsNotNull(enumerable);
+
+            var actualItems = new List<string>();
+            foreach (var item in enumerable)
+            {
+                actualItems.Add(GetBreadcrumbItemName(item));
+            }
+
+            CollectionAssert.AreEqual(expectedItems, actualItems);
+        }
+
+        private static string GetBreadcrumbItemName(object item)
+        {
+            var text = item as string;
+            if (text != null)
+            {
+                return text;
+            }
+
+            var nameProperty = item.GetType().GetProperty("Name");
+            Assert.IsNotNull(nameProperty);
+            return (string)nameProperty.GetValue(item, null);
         }
 
         private static void AssertPipsPagerComboBox(ComboBox comboBox, string header, params string[] expectedItems)

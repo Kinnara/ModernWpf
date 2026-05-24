@@ -106,6 +106,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.BreadcrumbBarSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 25 tests per target. The generated ModernWpf BreadcrumbBar page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\BreadcrumbBarPage.xaml` / `.xaml.cs`: `A BreadcrumbBar control` plus `BreadCrumbBar Control with Custom DataTemplate`. `NavigationSampleFactory.CreateExamples` now covers BreadcrumbBar as a source-backed Navigation WinUI extension page, `ItemPage` now asks the Navigation factory for source-backed examples before falling back to generic generated sample content, and the old hand-made WPF button-trail fallback has been replaced with real `ModernWpf.Controls.BreadcrumbBar` instances. The page exposes curated automation IDs `GallerySample_BreadcrumbBar_Root` and `GallerySample_BreadcrumbBar_BreadcrumbBar`, keeps WinUI's `BreadcrumbBar1`, `BreadcrumbBar2`, and `ResetSampleBtn` names, preserves the source snippet text, and runtime coverage verifies the simple string path, custom `Folder` template path, reset behavior, and realized breadcrumb text. Current warning/output remains `NU1903` and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls BreadcrumbBar -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-162343-446-15512/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, required element `GallerySample_BreadcrumbBar_BreadcrumbBar` was found, the primary crop comparison is `790x25` vs `530x26`, BreadcrumbBar Light primary delta is `26.49`, and whole-window mean delta is `186.99`. The visual harness now includes BreadcrumbBar in the default WinUI extension control set, uses WinUI reference automation ID `BreadcrumbBar1`, and uses a BreadcrumbBar-specific diagnostics artifact renderer based on the real control `ItemsSource` because normal rendered `VisualBrush` artifacts are blank for this repeater-based BreadcrumbBar surface.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls BreadcrumbBar -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-162412-463-97580/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, required element `GallerySample_BreadcrumbBar_BreadcrumbBar` was found, the primary crop comparison is `790x25` vs `530x26`, BreadcrumbBar Dark primary delta is `30.2`, and whole-window mean delta is `16.83`.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the BreadcrumbBar WinUI example alignment and visual diagnostics mapping. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages, `0 Warning(s)`, and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.PipsPagerSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 24 tests per target. The generated ModernWpf PipsPager page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\PipsPagerPage.xaml` / `.xaml.cs`: one `PipsPager integrated with a FlipView` example and one `PipsPager with options to change its orientation and button visibility.` example. `ScrollingSampleFactory.CreateExamples` now covers PipsPager as a source-backed Scrolling WinUI extension page, exposes curated automation IDs `GallerySample_PipsPager_Root` and `GallerySample_PipsPager_PipsPager`, keeps WinUI's `Gallery`, `FlipViewPipsPager`, `TestPipsPager2`, `OrientationComboBox`, `PrevButtonComboBox`, and `NextButtonComboBox` source-facing names, and adapts WinUI's `FlipView` dependency to a WPF image carousel because ModernWpf does not expose a FlipView control. Current warning/output remains `NU1903`, generated WinRT warnings when regeneration is triggered, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls PipsPager -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -1263,6 +1271,29 @@ sample's row offset. Avoid reopening that first NavigationView sample unless a
 new WinUI reference or rendered crop regression appears; remaining
 NavigationView work means other samples or broader control-template/resource
 drift.
+The generated ModernWpf BreadcrumbBar extension page now uses the local
+official WinUI Gallery two-example structure from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\BreadcrumbBarPage.xaml`
+/ `.xaml.cs`: `A BreadcrumbBar control` plus the custom DataTemplate sample with
+`ResetSampleBtn`. `NavigationSampleFactory.CreateExamples` now covers
+BreadcrumbBar as a source-backed Navigation WinUI example and `ItemPage` calls
+that Navigation example path before generic fallback content. The page uses real
+`ModernWpf.Controls.BreadcrumbBar` controls instead of the previous hand-made
+button trail, keeps WinUI's `BreadcrumbBar1`, `BreadcrumbBar2`, and
+`ResetSampleBtn` names, and exposes `GallerySample_BreadcrumbBar_Root` /
+`GallerySample_BreadcrumbBar_BreadcrumbBar` for runtime and visual checks.
+Current BreadcrumbBar WinUI-reference evidence is
+`artifacts/visual-checks/20260524-162343-446-15512/report.md` for Light and
+`artifacts/visual-checks/20260524-162412-463-97580/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`; primary crop sizes are
+currently `790x25` vs `530x26`, with deltas `26.49` / `30.2`. The visual
+harness includes BreadcrumbBar in the default WinUI extension control set and
+uses a BreadcrumbBar-specific diagnostics artifact renderer from the real
+control `ItemsSource` because the generic rendered `VisualBrush` artifact path
+is blank for this repeater-based control. Avoid reopening BreadcrumbBar's source
+shape unless a new WinUI source, runtime, or crop regression appears; a later
+round can separately investigate the current ModernWpf-vs-WinUI natural-width
+crop difference.
 The generated ModernWpf PipsPager extension page now uses the local official
 WinUI Gallery two-example structure from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\PipsPagerPage.xaml`

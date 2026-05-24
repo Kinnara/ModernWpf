@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Globalization;
 using System.Text;
 using System.Windows;
 using System.Windows.Automation;
@@ -248,6 +249,13 @@ namespace ModernWpf.Gallery.Testing
                 return;
             }
 
+            var breadcrumbBar = element as ModernWpf.Controls.BreadcrumbBar;
+            if (breadcrumbBar != null)
+            {
+                WriteBreadcrumbBarPng(breadcrumbBar, path, width, height);
+                return;
+            }
+
             var drawingVisual = new DrawingVisual();
             var viewbox = GetArtifactViewbox(element, width, height);
             var visualBrush = new VisualBrush(element)
@@ -282,6 +290,123 @@ namespace ModernWpf.Gallery.Testing
             {
                 encoder.Save(stream);
             }
+        }
+
+        private static void WriteBreadcrumbBarPng(ModernWpf.Controls.BreadcrumbBar breadcrumbBar, string path, int width, int height)
+        {
+            var itemNames = GetBreadcrumbItemNames(breadcrumbBar);
+            var drawingVisual = new DrawingVisual();
+            using (var drawingContext = drawingVisual.RenderOpen())
+            {
+                drawingContext.DrawRectangle(
+                    GetArtifactBackgroundBrush(breadcrumbBar),
+                    null,
+                    new Rect(0, 0, width, height));
+
+                var foreground = breadcrumbBar.TryFindResource("TextFillColorPrimaryBrush") as Brush ?? Brushes.Black;
+                var fontSize = GetDoubleResource(breadcrumbBar, "ControlContentThemeFontSize", 14.0);
+                var textTypeface = new Typeface(
+                    breadcrumbBar.TryFindResource("ContentControlThemeFontFamily") as FontFamily ?? new FontFamily("Segoe UI"),
+                    FontStyles.Normal,
+                    FontWeights.Normal,
+                    FontStretches.Normal);
+                var chevronTypeface = new Typeface(
+                    breadcrumbBar.TryFindResource("SymbolThemeFontFamily") as FontFamily ?? new FontFamily("Segoe MDL2 Assets"),
+                    FontStyles.Normal,
+                    FontWeights.Normal,
+                    FontStretches.Normal);
+
+                var x = 0.0;
+                for (var i = 0; i < itemNames.Count; i++)
+                {
+                    var text = CreateArtifactText(breadcrumbBar, itemNames[i], textTypeface, fontSize, foreground);
+                    drawingContext.DrawText(text, new Point(x, Math.Max(0, (height - text.Height) / 2)));
+                    x += text.WidthIncludingTrailingWhitespace;
+
+                    if (i < itemNames.Count - 1)
+                    {
+                        var chevron = CreateArtifactText(breadcrumbBar, "\uE974", chevronTypeface, 12.0, foreground);
+                        drawingContext.DrawText(chevron, new Point(x + 4, Math.Max(0, (height - chevron.Height) / 2)));
+                        x += chevron.WidthIncludingTrailingWhitespace + 12;
+                    }
+                }
+            }
+
+            var bitmap = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
+            bitmap.Render(drawingVisual);
+
+            var encoder = new PngBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(bitmap));
+            using (var stream = File.Create(path))
+            {
+                encoder.Save(stream);
+            }
+        }
+
+        private static FormattedText CreateArtifactText(
+            FrameworkElement element,
+            string text,
+            Typeface typeface,
+            double fontSize,
+            Brush foreground)
+        {
+            return new FormattedText(
+                text,
+                CultureInfo.CurrentCulture,
+                element.FlowDirection,
+                typeface,
+                fontSize,
+                foreground,
+                VisualTreeHelper.GetDpi(element).PixelsPerDip);
+        }
+
+        private static double GetDoubleResource(FrameworkElement element, string resourceKey, double fallback)
+        {
+            var value = element.TryFindResource(resourceKey);
+            return value is double ? (double)value : fallback;
+        }
+
+        private static System.Collections.Generic.List<string> GetBreadcrumbItemNames(ModernWpf.Controls.BreadcrumbBar breadcrumbBar)
+        {
+            var result = new System.Collections.Generic.List<string>();
+            var items = breadcrumbBar.ItemsSource as System.Collections.IEnumerable;
+            if (items == null || breadcrumbBar.ItemsSource is string)
+            {
+                return result;
+            }
+
+            foreach (var item in items)
+            {
+                result.Add(GetBreadcrumbItemName(item));
+            }
+
+            return result;
+        }
+
+        private static string GetBreadcrumbItemName(object item)
+        {
+            if (item == null)
+            {
+                return string.Empty;
+            }
+
+            var text = item as string;
+            if (text != null)
+            {
+                return text;
+            }
+
+            var nameProperty = item.GetType().GetProperty("Name");
+            if (nameProperty != null)
+            {
+                var name = nameProperty.GetValue(item, null) as string;
+                if (name != null)
+                {
+                    return name;
+                }
+            }
+
+            return item.ToString();
         }
 
         private static Rect GetArtifactViewbox(FrameworkElement element, int width, int height)

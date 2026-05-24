@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Data;
 using System.Windows.Media;
 using ModernWpf.Controls.Primitives;
 using Mux = ModernWpf.Controls;
@@ -11,6 +14,62 @@ namespace ModernWpf.Gallery.Pages
 {
     internal static class NavigationSampleFactory
     {
+        private const string BreadcrumbBarSimpleXaml =
+@"<BreadcrumbBar x:Name=""BreadcrumbBar1""/>";
+
+        private const string BreadcrumbBarSimpleCSharp =
+@"BreadcrumbBar1.ItemsSource = new string[] { ""Home"", ""Documents"", ""Design"", ""Northwind"", ""Images"", ""Folder1"", ""Folder2"", ""Folder3"" };";
+
+        private const string BreadcrumbBarTemplateXaml =
+@"<BreadcrumbBar x:Name=""BreadcrumbBar2"">
+    <BreadcrumbBar.ItemTemplate>
+        <DataTemplate x:DataType=""l:Folder"">
+            <BreadcrumbBarItem Content=""{Binding}"" AutomationProperties.Name=""{Binding Name}"">
+                <BreadcrumbBarItem.ContentTemplate>
+                    <DataTemplate>
+                        <TextBlock Text=""{Binding Name}"" />
+                    </DataTemplate>
+                </BreadcrumbBarItem.ContentTemplate>
+            </BreadcrumbBarItem>
+        </DataTemplate>
+    </BreadcrumbBar.ItemTemplate>
+</BreadcrumbBar>";
+
+        private const string BreadcrumbBarTemplateCSharp =
+@"public class Folder
+{
+    public string Name { get; set; }
+}
+
+BreadcrumbBar2.ItemsSource = new ObservableCollection<Folder>{
+        new Folder { Name = ""Home""},
+        new Folder { Name = ""Folder1"" },
+        new Folder { Name = ""Folder2"" },
+        new Folder { Name = ""Folder3"" },
+};
+BreadcrumbBar2.ItemClicked += BreadcrumbBar2_ItemClicked;
+
+private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemClickedEventArgs args)
+{
+    var items = BreadcrumbBar2.ItemsSource as ObservableCollection<Folder>;
+    for (int i = items.Count - 1; i >= args.Index + 1; i--)
+    {
+        items.RemoveAt(i);
+    }
+}";
+
+        private static readonly string[] BreadcrumbFoldersString =
+        {
+            "Home",
+            "Documents",
+            "Design",
+            "Northwind",
+            "Images",
+            "Folder1",
+            "Folder2",
+            "Folder3"
+        };
+
         public static UIElement Create(string uniqueId)
         {
             switch (uniqueId)
@@ -35,6 +94,17 @@ namespace ModernWpf.Gallery.Pages
                     return CreateTabViewSample();
                 default:
                     return null;
+            }
+        }
+
+        public static IReadOnlyList<GalleryExample> CreateExamples(string uniqueId)
+        {
+            switch (uniqueId)
+            {
+                case "BreadcrumbBar":
+                    return CreateBreadcrumbBarExamples();
+                default:
+                    return Array.Empty<GalleryExample>();
             }
         }
 
@@ -143,62 +213,133 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateBreadcrumbBarSample()
         {
-            var panel = CreateSamplePanel("BreadcrumbBar maps to a clickable WPF breadcrumb trail because ModernWpf does not currently expose BreadcrumbBar.");
-            var folders = new List<string> { "Home", "Documents", "Design", "Northwind", "Images", "Folder1", "Folder2", "Folder3" };
-            var trail = new StackPanel
+            var panel = new GallerySamplePanel
             {
-                Orientation = Orientation.Horizontal
+                Margin = new Thickness(0, 0, 0, 12)
             };
-            var output = CreateOutput("Current location: " + string.Join(" / ", folders));
+            GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("BreadcrumbBar"));
+            panel.Children.Add(CreateBreadcrumbBarSimpleExampleContent(false));
+            panel.Children.Add(CreateBreadcrumbBarTemplateExampleContent());
+            return panel;
+        }
 
-            Action rebuild = null;
-            rebuild = delegate
+        private static IReadOnlyList<GalleryExample> CreateBreadcrumbBarExamples()
+        {
+            return new[]
             {
-                trail.Children.Clear();
-                for (var i = 0; i < folders.Count; i++)
+                new GalleryExample(
+                    "A BreadcrumbBar control",
+                    CreateBreadcrumbBarSimpleExampleContent(true),
+                    BreadcrumbBarSimpleXaml,
+                    BreadcrumbBarSimpleCSharp),
+                new GalleryExample(
+                    "BreadCrumbBar Control with Custom DataTemplate",
+                    CreateBreadcrumbBarTemplateExampleContent(),
+                    BreadcrumbBarTemplateXaml,
+                    BreadcrumbBarTemplateCSharp)
+            };
+        }
+
+        private static UIElement CreateBreadcrumbBarSimpleExampleContent(bool assignRootAutomationId)
+        {
+            var root = new GallerySamplePanel();
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("BreadcrumbBar"));
+            }
+
+            var breadcrumbBar = new Mux.BreadcrumbBar
+            {
+                Name = "BreadcrumbBar1",
+                ItemsSource = BreadcrumbFoldersString
+            };
+            GalleryAutomation.WithAutomationId(breadcrumbBar, GalleryAutomation.SampleElementId("BreadcrumbBar", "BreadcrumbBar"));
+
+            root.Children.Add(breadcrumbBar);
+            return root;
+        }
+
+        private static UIElement CreateBreadcrumbBarTemplateExampleContent()
+        {
+            var defaultFolders = new List<BreadcrumbFolder>
+            {
+                new BreadcrumbFolder { Name = "Home" },
+                new BreadcrumbFolder { Name = "Folder1" },
+                new BreadcrumbFolder { Name = "Folder2" },
+                new BreadcrumbFolder { Name = "Folder3" }
+            };
+            var folders = new ObservableCollection<BreadcrumbFolder>(defaultFolders);
+            var breadcrumbBar = new Mux.BreadcrumbBar
+            {
+                Name = "BreadcrumbBar2",
+                ItemsSource = folders,
+                ItemTemplate = CreateBreadcrumbFolderTemplate()
+            };
+            breadcrumbBar.ItemClicked += delegate(Mux.BreadcrumbBar sender, Mux.BreadcrumbBarItemClickedEventArgs args)
+            {
+                if (!(sender.ItemsSource is ObservableCollection<BreadcrumbFolder> items))
                 {
-                    var index = i;
-                    var button = new Button
+                    return;
+                }
+
+                for (var i = items.Count - 1; i >= args.Index + 1; i--)
+                {
+                    items.RemoveAt(i);
+                }
+            };
+
+            var resetSampleButton = new Button
+            {
+                Name = "ResetSampleBtn",
+                Content = "Reset sample"
+            };
+            resetSampleButton.Click += delegate
+            {
+                foreach (var folder in defaultFolders)
+                {
+                    if (!folders.Contains(folder))
                     {
-                        Content = folders[index],
-                        Padding = new Thickness(10, 4, 10, 4),
-                        Margin = new Thickness(0, 0, 4, 0)
-                    };
-                    button.Click += delegate
-                    {
-                        folders.RemoveRange(index + 1, folders.Count - index - 1);
-                        output.Text = "Current location: " + string.Join(" / ", folders);
-                        rebuild();
-                    };
-                    trail.Children.Add(button);
-                    if (i < folders.Count - 1)
-                    {
-                        trail.Children.Add(new TextBlock
-                        {
-                            Text = ">",
-                            VerticalAlignment = VerticalAlignment.Center,
-                            Margin = new Thickness(0, 0, 4, 0),
-                            Opacity = 0.72
-                        });
+                        folders.Add(folder);
                     }
                 }
             };
-            rebuild();
 
-            var reset = CreateButton("Reset sample");
-            reset.Margin = new Thickness(0, 12, 0, 0);
-            reset.Click += delegate
+            return CreateBreadcrumbBarExampleLayout(breadcrumbBar, resetSampleButton);
+        }
+
+        private static DataTemplate CreateBreadcrumbFolderTemplate()
+        {
+            var textBlock = new FrameworkElementFactory(typeof(TextBlock));
+            textBlock.SetBinding(TextBlock.TextProperty, new Binding(nameof(BreadcrumbFolder.Name)));
+            textBlock.SetBinding(AutomationProperties.NameProperty, new Binding(nameof(BreadcrumbFolder.Name)));
+
+            return new DataTemplate(typeof(BreadcrumbFolder))
             {
-                folders.Clear();
-                folders.AddRange(new[] { "Home", "Documents", "Design", "Northwind", "Images", "Folder1", "Folder2", "Folder3" });
-                output.Text = "Current location: " + string.Join(" / ", folders);
-                rebuild();
+                VisualTree = textBlock
             };
+        }
 
-            panel.Children.Add(trail);
-            panel.Children.Add(reset);
-            panel.Children.Add(output);
-            return panel;
+        private static Grid CreateBreadcrumbBarExampleLayout(UIElement sample, UIElement options)
+        {
+            var grid = new Grid();
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+            Grid.SetColumn(sample, 0);
+            grid.Children.Add(sample);
+
+            if (options != null)
+            {
+                var optionsHost = new Border
+                {
+                    Margin = new Thickness(24, 0, 0, 0),
+                    Child = options
+                };
+                Grid.SetColumn(optionsHost, 1);
+                grid.Children.Add(optionsHost);
+            }
+
+            return grid;
         }
 
         private static UIElement CreateNavigationViewSample()
@@ -527,6 +668,11 @@ namespace ModernWpf.Gallery.Pages
         private static SolidColorBrush CreateBrush(string color)
         {
             return (SolidColorBrush)new BrushConverter().ConvertFromString(color);
+        }
+
+        private sealed class BreadcrumbFolder
+        {
+            public string Name { get; set; }
         }
     }
 }
