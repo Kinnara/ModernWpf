@@ -30,6 +30,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "ContentDialog", "GallerySample_ContentDialog_Root", "GallerySample_ContentDialog_ShowButton" };
             yield return new object[] { "MenuBar", "GallerySample_MenuBar_Root", "GallerySample_MenuBar_MenuBar" };
             yield return new object[] { "CommandBar", "GallerySample_CommandBar_Root", "GallerySample_CommandBar_CommandBar" };
+            yield return new object[] { "CommandBarFlyout", "GallerySample_CommandBarFlyout_Root", "GallerySample_CommandBarFlyout_ShowButton" };
         }
 
         [TestMethod]
@@ -496,6 +497,89 @@ namespace ModernWpf.Gallery.Tests
                     removeSecondaryCommandsButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
                     Assert.AreEqual(1, commandBar.SecondaryCommands.Count);
                     Assert.AreSame(settingsButton, commandBar.SecondaryCommands[0]);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void CommandBarFlyoutSampleMatchesWinUIGalleryExample()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("CommandBarFlyout"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(1, page.Examples.Count);
+                    Assert.AreEqual("CommandBarFlyout for commands on an in-app object", page.Examples[0].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "CommandBarFlyout1");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "AutomationProperties.Name=\"mountain\"");
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "FlyoutShowMode.Transient");
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "ShowMenu(false)");
+
+                    var root = (FrameworkElement)FindByAutomationId(page, "GallerySample_CommandBarFlyout_Root");
+                    var button = (Button)FindByAutomationId(page, "GallerySample_CommandBarFlyout_ShowButton");
+                    var image = FindNamedDescendant<Image>(page, "Image1");
+                    var selectedOptionText = FindNamedDescendant<TextBlock>(page, "SelectedOptionText");
+                    Assert.IsNotNull(root);
+                    Assert.IsNotNull(button);
+                    Assert.IsNotNull(image);
+                    Assert.IsNotNull(selectedOptionText);
+                    Assert.AreEqual("mountain", AutomationProperties.GetName(button));
+                    Assert.AreEqual(new Thickness(0), button.Padding);
+                    Assert.AreEqual(new Thickness(0, 12, 0, 12), button.Margin);
+                    Assert.AreEqual(300.0, image.Height);
+                    StringAssert.Contains(((BitmapImage)image.Source).UriSource.ToString(), "Assets/SampleMedia/rainier.jpg");
+
+                    var flyout = (Mux.CommandBarFlyout)root.Resources["CommandBarFlyout1"];
+                    Assert.IsNotNull(flyout);
+                    Assert.AreEqual(ModernWpf.Controls.Primitives.FlyoutPlacementMode.Right, flyout.Placement);
+                    Assert.AreEqual(3, flyout.PrimaryCommands.Count);
+                    Assert.AreEqual(2, flyout.SecondaryCommands.Count);
+
+                    var shareButton = (Mux.AppBarButton)flyout.PrimaryCommands[0];
+                    var saveButton = (Mux.AppBarButton)flyout.PrimaryCommands[1];
+                    var deleteButton = (Mux.AppBarButton)flyout.PrimaryCommands[2];
+                    var resizeButton = (Mux.AppBarButton)flyout.SecondaryCommands[0];
+                    var moveButton = (Mux.AppBarButton)flyout.SecondaryCommands[1];
+                    Assert.AreEqual("Share", shareButton.Label);
+                    Assert.AreEqual("Save", saveButton.Label);
+                    Assert.AreEqual("Delete", deleteButton.Label);
+                    Assert.AreEqual("Resize", resizeButton.Label);
+                    Assert.AreEqual("Move", moveButton.Label);
+                    Assert.AreEqual(Mux.Symbol.Share, ((Mux.SymbolIcon)shareButton.Icon).Symbol);
+                    Assert.AreEqual(Mux.Symbol.Save, ((Mux.SymbolIcon)saveButton.Icon).Symbol);
+                    Assert.AreEqual(Mux.Symbol.Delete, ((Mux.SymbolIcon)deleteButton.Icon).Symbol);
+                    Assert.AreEqual("Share", shareButton.ToolTip);
+                    Assert.AreEqual("Save", saveButton.ToolTip);
+                    Assert.AreEqual("Delete", deleteButton.ToolTip);
+
+                    shareButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                    Assert.AreEqual("You clicked: Share", selectedOptionText.Text);
+                    resizeButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                    Assert.AreEqual("You clicked: Resize", selectedOptionText.Text);
                 }
                 finally
                 {

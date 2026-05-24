@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using ModernWpf.Controls.Primitives;
 using ModernWpf.Gallery.Models;
 using Mux = ModernWpf.Controls;
@@ -31,6 +33,8 @@ namespace ModernWpf.Gallery.Pages
             {
                 case "CommandBar":
                     return CreateCommandBarExamples();
+                case "CommandBarFlyout":
+                    return CreateCommandBarFlyoutExamples(sampleSnippets);
                 case "MenuBar":
                     return CreateMenuBarExamples(sampleSnippets);
                 default:
@@ -252,21 +256,92 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateCommandBarFlyoutSample()
         {
-            var panel = CreateSamplePanel("CommandBarFlyout opens a compact command surface from a button or selected content.");
-            var output = CreateOutput("No command selected.");
-            var button = CreateButton("Open CommandBarFlyout");
+            var panel = new GallerySamplePanel
+            {
+                Margin = new Thickness(0, 0, 0, 12)
+            };
+            GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("CommandBarFlyout"));
+            panel.Children.Add(CreateCommandBarFlyoutExampleContent(assignRootAutomationId: false));
+            return panel;
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateCommandBarFlyoutExamples(IReadOnlyList<SampleSnippet> sampleSnippets)
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "CommandBarFlyout for commands on an in-app object",
+                    CreateCommandBarFlyoutExampleContent(assignRootAutomationId: true),
+                    FindSnippetText(sampleSnippets, "CommandBarFlyoutSample1_xaml.txt"),
+                    FindSnippetText(sampleSnippets, "CommandBarFlyoutSample1_cs.txt"))
+            };
+        }
+
+        private static GallerySamplePanel CreateCommandBarFlyoutExampleContent(bool assignRootAutomationId)
+        {
+            var root = new GallerySamplePanel();
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("CommandBarFlyout"));
+            }
+
+            root.Children.Add(new TextBlock
+            {
+                Text = "Click or right click the image to open a CommandBarFlyout",
+                TextWrapping = TextWrapping.Wrap
+            });
+
+            var output = CreateSelectionOutput("SelectedOptionText");
             var flyout = new Mux.CommandBarFlyout
             {
-                Placement = FlyoutPlacementMode.Bottom
+                Placement = FlyoutPlacementMode.Right
             };
-            flyout.PrimaryCommands.Add(CreateAppBarButton(Mux.Symbol.Copy, "Copy", output));
-            flyout.PrimaryCommands.Add(CreateAppBarButton(Mux.Symbol.Paste, "Paste", output));
-            flyout.SecondaryCommands.Add(CreateAppBarButton(Mux.Symbol.SelectAll, "Select all", output));
-            flyout.SecondaryCommands.Add(CreateAppBarButton(Mux.Symbol.View, "Inspect", output));
-            button.Click += delegate { flyout.ShowAt(button); };
-            panel.Children.Add(button);
-            panel.Children.Add(output);
-            return panel;
+            flyout.PrimaryCommands.Add(CreateCommandBarFlyoutAppBarButton(Mux.Symbol.Share, "Share", output, "Share"));
+            flyout.PrimaryCommands.Add(CreateCommandBarFlyoutAppBarButton(Mux.Symbol.Save, "Save", output, "Save"));
+            flyout.PrimaryCommands.Add(CreateCommandBarFlyoutAppBarButton(Mux.Symbol.Delete, "Delete", output, "Delete"));
+            flyout.SecondaryCommands.Add(CreateCommandBarFlyoutAppBarButton("Resize", output));
+            flyout.SecondaryCommands.Add(CreateCommandBarFlyoutAppBarButton("Move", output));
+            root.Resources.Add("CommandBarFlyout1", flyout);
+
+            var image = new Image
+            {
+                Name = "Image1",
+                Height = 300,
+                Source = new BitmapImage(new Uri(
+                    "pack://application:,,,/ModernWpf.Gallery;component/Assets/SampleMedia/rainier.jpg",
+                    UriKind.Absolute))
+            };
+
+            var button = new Button
+            {
+                Name = "myImageButton",
+                Content = image,
+                Margin = new Thickness(0, 12, 0, 12),
+                Padding = new Thickness(0),
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+            AutomationProperties.SetName(button, "mountain");
+            GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("CommandBarFlyout", "ShowButton"));
+
+            void ShowMenu(bool isTransient)
+            {
+                var options = new FlyoutShowOptions
+                {
+                    ShowMode = isTransient ? FlyoutShowMode.Transient : FlyoutShowMode.Standard,
+                    Placement = FlyoutPlacementMode.RightEdgeAlignedTop
+                };
+                flyout.ShowAt(image, options);
+            }
+
+            button.Click += delegate { ShowMenu(true); };
+            button.MouseRightButtonUp += delegate
+            {
+                ShowMenu(false);
+            };
+
+            root.Children.Add(button);
+            root.Children.Add(output);
+            return root;
         }
 
         private static UIElement CreateMenuBarSample()
@@ -539,6 +614,24 @@ namespace ModernWpf.Gallery.Pages
                 Icon = new Mux.SymbolIcon(symbol),
                 Label = label,
                 InputGestureText = inputGestureText
+            };
+            button.Click += delegate { output.Text = "You clicked: " + label; };
+            return button;
+        }
+
+        private static Mux.AppBarButton CreateCommandBarFlyoutAppBarButton(Mux.Symbol symbol, string label, TextBlock output, string toolTip)
+        {
+            var button = CreateCommandBarFlyoutAppBarButton(label, output);
+            button.Icon = new Mux.SymbolIcon(symbol);
+            button.ToolTip = toolTip;
+            return button;
+        }
+
+        private static Mux.AppBarButton CreateCommandBarFlyoutAppBarButton(string label, TextBlock output)
+        {
+            var button = new Mux.AppBarButton
+            {
+                Label = label
             };
             button.Click += delegate { output.Text = "You clicked: " + label; };
             return button;

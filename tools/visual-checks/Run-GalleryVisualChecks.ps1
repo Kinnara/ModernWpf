@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "InfoBar", "NavigationView", "ContentDialog", "MenuBar", "CommandBar"),
+    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "InfoBar", "NavigationView", "ContentDialog", "MenuBar", "CommandBar", "CommandBarFlyout"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -429,6 +429,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "ContentDialog" { return "GallerySample_ContentDialog_ShowButton" }
         "MenuBar" { return "GallerySample_MenuBar_MenuBar" }
         "CommandBar" { return "GallerySample_CommandBar_CommandBar" }
+        "CommandBarFlyout" { return "GallerySample_CommandBarFlyout_ShowButton" }
         default { return "GalleryItemPageTitle" }
     }
 }
@@ -449,6 +450,7 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
         "InfoBar" { return "GallerySample_InfoBar_InfoBar" }
         "MenuBar" { return "GallerySample_MenuBar_MenuBar" }
         "CommandBar" { return "GallerySample_CommandBar_CommandBar" }
+        "CommandBarFlyout" { return "GallerySample_CommandBarFlyout_ShowButton" }
         default { return Get-RequiredSampleAutomationId $control }
     }
 }
@@ -463,6 +465,7 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
         "ContentDialog" { return "ShowDialog" }
         "MenuBar" { return "Example1" }
         "CommandBar" { return "PrimaryCommandBar" }
+        "CommandBarFlyout" { return "myImageButton" }
         default { return "" }
     }
 }
@@ -1401,8 +1404,8 @@ function Invoke-ElementPatternOnce($window, $element) {
     return $false
 }
 
-function Capture-TeachingTipInteraction([string]$app, [string]$control, [string]$caseDir, $window, $showButton, [string[]]$openNames) {
-    if (!$IncludeInteractions -or $control -ne "TeachingTip") {
+function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDir, $window, $showButton, [string[]]$openNames) {
+    if (!$IncludeInteractions -or ($control -ne "TeachingTip" -and $control -ne "CommandBarFlyout")) {
         return $null
     }
 
@@ -1535,7 +1538,7 @@ function Capture-TeachingTipInteraction([string]$app, [string]$control, [string]
     }
 
     $status = if (!$invoked) { "Failed" } elseif ($null -ne $openElement -or $visualOpened) { "Passed" } else { "Failed" }
-    $notes = if (!$invoked) { "Could not invoke the TeachingTip sample button." } elseif ($null -eq $openElement -and !$visualOpened) { "TeachingTip did not produce UIA or visual evidence of opening." } elseif ($null -eq $openElement -and $null -ne $crop -and $crop.Source -eq "ContentRootGrid") { "TeachingTip open content was verified from the in-app rendered artifact." } elseif ($null -eq $openElement) { "TeachingTip open content was not found in UIA; visual delta verified." } else { "" }
+    $notes = if (!$invoked) { "Could not invoke the $control sample button." } elseif ($null -eq $openElement -and !$visualOpened) { "$control did not produce UIA or visual evidence of opening." } elseif ($null -eq $openElement -and $null -ne $crop -and $crop.Source -eq "ContentRootGrid") { "$control open content was verified from the in-app rendered artifact." } elseif ($null -eq $openElement) { "$control open content was not found in UIA; visual delta verified." } else { "" }
 
     return [ordered]@{
         Status = $status
@@ -1597,9 +1600,10 @@ function Capture-ModernWpf([string]$control, [string]$caseDir) {
         $requiredSampleAutomationId = Get-RequiredSampleAutomationId $control
         $requiredSampleArtifact = Join-Path $artifactDir ($requiredSampleAutomationId + ".png")
         $requiredSampleArtifactFound = Test-Path $requiredSampleArtifact
-        $needsSampleElement = $IncludeInteractions -and $control -eq "TeachingTip"
+        $needsSampleElement = $IncludeInteractions -and ($control -eq "TeachingTip" -or $control -eq "CommandBarFlyout")
         $sample = if ($requiredSampleArtifactFound -and !$needsSampleElement) { $null } else { TryFind-DescendantByAutomationId $window $requiredSampleAutomationId }
-        $interaction = Capture-TeachingTipInteraction "ModernWpf" $control $caseDir $window $sample @("This is the title", "Try compact mode", "And this is the subtitle")
+        $openNames = if ($control -eq "TeachingTip") { @("This is the title", "Try compact mode", "And this is the subtitle") } elseif ($control -eq "CommandBarFlyout") { @("Share", "Save", "Delete", "Resize", "Move") } else { @() }
+        $interaction = Capture-OpenInteraction "ModernWpf" $control $caseDir $window $sample $openNames
         $screenshot = Join-Path $caseDir "modernwpf-$control.png"
         $treePath = Join-Path $caseDir "modernwpf-$control.uia.txt"
 
@@ -1693,8 +1697,17 @@ function Capture-WinUIReference([string]$control, [string]$caseDir) {
         Start-Sleep -Milliseconds 1200
         $themeProbe = Ensure-WinUIReferenceTheme $control $caseDir $window
 
-        $showButton = if ($control -eq "TeachingTip") { Find-DescendantButtonByName $window "Show TeachingTip" } else { $null }
-        $interaction = Capture-TeachingTipInteraction "WinUI3" $control $caseDir $window $showButton @("This is the title", "And this is the subtitle")
+        $showButton = if ($control -eq "TeachingTip") {
+            Find-DescendantButtonByName $window "Show TeachingTip"
+        }
+        elseif ($control -eq "CommandBarFlyout") {
+            Find-DescendantByAutomationId $window "myImageButton"
+        }
+        else {
+            $null
+        }
+        $openNames = if ($control -eq "TeachingTip") { @("This is the title", "And this is the subtitle") } elseif ($control -eq "CommandBarFlyout") { @("Share", "Save", "Delete", "Resize", "Move") } else { @() }
+        $interaction = Capture-OpenInteraction "WinUI3" $control $caseDir $window $showButton $openNames
         $screenshot = Join-Path $caseDir "winui3-$control.png"
         $treePath = Join-Path $caseDir "winui3-$control.uia.txt"
         Write-UiaTree $window $treePath 6

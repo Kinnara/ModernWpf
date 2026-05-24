@@ -103,6 +103,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.CommandBarFlyoutSampleMatchesWinUIGalleryExample|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 8 tests per target. The generated ModernWpf CommandBarFlyout page now follows the local official WinUI Gallery one-example shape with the `mountain` image button, `Image1`, `CommandBarFlyout1`, Share/Save/Delete primary commands, Resize/Move secondary commands, and the paired source panes. Curated automation IDs now include `GallerySample_CommandBarFlyout_Root` and `GallerySample_CommandBarFlyout_ShowButton`. Current warning/output remains `NU1903` and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls CommandBarFlyout -Reference InstalledWinUI3Gallery -Theme Light -IncludeInteractions -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-120715-537-91560/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, primary crops are `454x302` vs `453x302`, and CommandBarFlyout Light primary delta is `48.07`. The interaction report JSON confirms both apps opened the flyout and exposed the `Share` command through UIA. The `rainier.jpg` assets are byte-identical locally, so the high static primary delta is tracked as image renderer/JPEG crop drift rather than source media drift.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls CommandBarFlyout -Reference InstalledWinUI3Gallery -Theme Dark -IncludeInteractions -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-120755-146-2312/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, primary crops are `454x302` vs `453x302`, CommandBarFlyout Dark primary delta is `39.43`, and both apps expose the opened flyout `Share` command through UIA in `report.json`.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the CommandBarFlyout WinUI example alignment and visual-check interaction hook. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages, existing ModernWpf/ModernWpf.Controls warnings, `19 Warning(s)`, and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.CommandBarSampleMatchesWinUIGalleryExample|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 7 tests per target. The generated ModernWpf CommandBar page now follows the local official WinUI Gallery one-example shape for `PrimaryCommandBar`, with Add/Edit/Share primary commands, Settings as the initial secondary command, side options for opening/closing and adding/removing secondary commands, and WinUI-style source text. Curated automation IDs now include `GallerySample_CommandBar_Root` and `GallerySample_CommandBar_CommandBar`. Current warning/output remains `NU1903` and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls CommandBar -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -1180,6 +1188,22 @@ vs `271x48`, and primary deltas `7.97` / `10.49`. The visual harness now
 defensively writes UIA trees when a reference node's control type lacks
 `ProgrammaticName`. Avoid reopening CommandBar's first-sample/static structure
 unless a new WinUI source, visual crop, or UIA diagnostic regression appears.
+The generated ModernWpf CommandBarFlyout extension page now uses the local
+official WinUI Gallery one-example structure for commands on an in-app object:
+the `mountain` image button hosts `Image1`, opens `CommandBarFlyout1`, exposes
+Share/Save/Delete primary commands plus Resize/Move secondary commands, and
+populates the paired XAML/C# source panes from the local sample-code files.
+Current CommandBarFlyout WinUI-reference evidence is
+`artifacts/visual-checks/20260524-120715-537-91560/report.md` for Light and
+`artifacts/visual-checks/20260524-120755-146-2312/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`, primary crops `454x302`
+vs `453x302`, and primary deltas `48.07` / `39.43`. The local `rainier.jpg`
+files match byte-for-byte; the high static crop deltas are therefore tracked as
+photo renderer/JPEG crop drift. The visual harness now includes optional
+CommandBarFlyout interaction coverage, and both accepted interaction reports
+show the opened flyout's `Share` command through UIA. Avoid reopening
+CommandBarFlyout's source shape unless a new WinUI source, interaction, or
+non-photo visual regression appears.
 Continue with the next highest-impact visible drift from the checklist, likely
 remaining High Contrast gaps, other NavigationView styling not covered
 by the TreeView token aliases or first-sample refresh, or other item pages that still lack current
