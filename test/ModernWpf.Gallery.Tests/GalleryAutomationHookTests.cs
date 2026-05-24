@@ -32,6 +32,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "PipsPager", "GallerySample_PipsPager_Root", "GallerySample_PipsPager_PipsPager" };
             yield return new object[] { "PullToRefresh", "GallerySample_PullToRefresh_Root", "GallerySample_PullToRefresh_RefreshContainer" };
             yield return new object[] { "GridView", "GallerySample_GridView_Root", "GallerySample_GridView_BasicGridView" };
+            yield return new object[] { "ItemsRepeater", "GallerySample_ItemsRepeater_Root", "GallerySample_ItemsRepeater_ItemsRepeater" };
             yield return new object[] { "BreadcrumbBar", "GallerySample_BreadcrumbBar_Root", "GallerySample_BreadcrumbBar_BreadcrumbBar" };
             yield return new object[] { "Pivot", "GallerySample_Pivot_Root", "GallerySample_Pivot_Pivot" };
             yield return new object[] { "SelectorBar", "GallerySample_SelectorBar_Root", "GallerySample_SelectorBar_SelectorBar" };
@@ -1566,6 +1567,115 @@ namespace ModernWpf.Gallery.Tests
                     WpfTestHost.DoEvents();
                     Assert.IsFalse(contentGridView.IsSelectionEnabled);
                     Assert.AreEqual(string.Empty, selectionOutput.Text);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void ItemsRepeaterSampleMatchesWinUIGalleryExamples()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("ItemsRepeater"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(6, page.Examples.Count);
+                    Assert.AreEqual("Basic, non-interactive items laid out by ItemsRepeater", page.Examples[0].HeaderText);
+                    Assert.AreEqual("Virtualizing, scrollable list of items laid out by ItemsRepeater", page.Examples[1].HeaderText);
+                    Assert.AreEqual("ItemsRepeater with mixed-type collection", page.Examples[2].HeaderText);
+                    Assert.AreEqual("Laying out nested ItemsRepeaters", page.Examples[3].HeaderText);
+                    Assert.AreEqual("Animated Scrolling and Content Display", page.Examples[4].HeaderText);
+                    Assert.AreEqual("Virtualized, Content-Heavy Layout with Filtering and Sorting", page.Examples[5].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "ItemsSource=\"{x:Bind BarItems}\"");
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "public class Bar");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "ItemsSource=\"{x:Bind NumberedItems}\"");
+                    StringAssert.Contains(page.Examples[1].CSharpCode, "public class MyDataTemplateSelector");
+                    StringAssert.Contains(page.Examples[2].XamlCode, "x:Name=\"MixedTypeRepeater\"");
+                    StringAssert.Contains(page.Examples[2].CSharpCode, "StringOrIntTemplateSelector");
+                    StringAssert.Contains(page.Examples[3].XamlCode, "x:Name=\"outerRepeater\"");
+                    StringAssert.Contains(page.Examples[4].XamlCode, "x:Name=\"animatedScrollRepeater\"");
+                    StringAssert.Contains(page.Examples[4].CSharpCode, "OnElementPrepared");
+                    StringAssert.Contains(page.Examples[5].XamlCode, "x:Name=\"VariedImageSizeRepeater\"");
+                    StringAssert.Contains(page.Examples[5].CSharpCode, "public class Recipe");
+
+                    var repeater = (Mux.ItemsRepeater)FindByAutomationId(page, "GallerySample_ItemsRepeater_ItemsRepeater");
+                    var namedRepeater = FindNamedDescendant<Mux.ItemsRepeater>(page, "repeater");
+                    var addButton = FindNamedDescendant<Button>(page, "AddBtn");
+                    var deleteButton = FindNamedDescendant<Button>(page, "DeleteBtn");
+                    var horizontalStack = FindNamedDescendant<RadioButton>(page, "HStackBtn");
+                    var uniformGrid = FindNamedDescendant<RadioButton>(page, "HGridBtn");
+                    Assert.IsNotNull(repeater);
+                    Assert.AreSame(repeater, namedRepeater);
+                    Assert.IsNotNull(addButton);
+                    Assert.IsNotNull(deleteButton);
+                    Assert.IsNotNull(horizontalStack);
+                    Assert.IsNotNull(uniformGrid);
+                    Assert.AreEqual(3, CountItems(repeater.ItemsSource));
+                    Assert.IsInstanceOfType(repeater.Layout, typeof(Mux.StackLayout));
+                    Assert.AreEqual(Orientation.Vertical, ((Mux.StackLayout)repeater.Layout).Orientation);
+
+                    addButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent, addButton));
+                    Assert.AreEqual(4, CountItems(repeater.ItemsSource));
+                    deleteButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent, deleteButton));
+                    Assert.AreEqual(3, CountItems(repeater.ItemsSource));
+
+                    horizontalStack.IsChecked = true;
+                    WpfTestHost.DoEvents();
+                    Assert.IsInstanceOfType(repeater.Layout, typeof(Mux.StackLayout));
+                    Assert.AreEqual(Orientation.Horizontal, ((Mux.StackLayout)repeater.Layout).Orientation);
+                    uniformGrid.IsChecked = true;
+                    WpfTestHost.DoEvents();
+                    Assert.IsInstanceOfType(repeater.Layout, typeof(Mux.UniformGridLayout));
+
+                    var repeater2 = FindNamedDescendant<Mux.ItemsRepeater>(page, "repeater2");
+                    var mixedRepeater = FindNamedDescendant<Mux.ItemsRepeater>(page, "MixedTypeRepeater");
+                    var outerRepeater = FindNamedDescendant<Mux.ItemsRepeater>(page, "outerRepeater");
+                    var animatedRepeater = FindNamedDescendant<Mux.ItemsRepeater>(page, "animatedScrollRepeater");
+                    var colorRectangle = FindNamedDescendant<System.Windows.Shapes.Rectangle>(page, "colorRectangle");
+                    var recipeRepeater = FindNamedDescendant<Mux.ItemsRepeater>(page, "VariedImageSizeRepeater");
+                    var filterRecipes = FindNamedDescendant<TextBox>(page, "FilterRecipes");
+                    Assert.IsNotNull(repeater2);
+                    Assert.IsNotNull(mixedRepeater);
+                    Assert.IsNotNull(outerRepeater);
+                    Assert.IsNotNull(animatedRepeater);
+                    Assert.IsNotNull(colorRectangle);
+                    Assert.IsNotNull(recipeRepeater);
+                    Assert.IsNotNull(filterRecipes);
+                    Assert.AreEqual(500, CountItems(repeater2.ItemsSource));
+                    Assert.AreEqual(9, CountItems(mixedRepeater.ItemsSource));
+                    Assert.AreEqual(4, CountItems(outerRepeater.ItemsSource));
+                    Assert.AreEqual(20, CountItems(animatedRepeater.ItemsSource));
+                    Assert.AreEqual(120, CountItems(recipeRepeater.ItemsSource));
+                    Assert.IsInstanceOfType(mixedRepeater.Layout, typeof(Mux.UniformGridLayout));
+                    Assert.IsInstanceOfType(recipeRepeater.Layout, typeof(Mux.UniformGridLayout));
+
+                    filterRecipes.Text = "Garlic";
+                    WpfTestHost.DoEvents();
+                    Assert.IsTrue(CountItems(recipeRepeater.ItemsSource) > 0);
+                    Assert.IsTrue(CountItems(recipeRepeater.ItemsSource) < 120);
                 }
                 finally
                 {

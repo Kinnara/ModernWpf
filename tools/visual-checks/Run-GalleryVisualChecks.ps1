@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "PullToRefresh", "GridView", "BreadcrumbBar", "Pivot", "SelectorBar", "TabView", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "SwipeControl", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout", "StandardUICommand", "XamlUICommand"),
+    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "PullToRefresh", "GridView", "ItemsRepeater", "BreadcrumbBar", "Pivot", "SelectorBar", "TabView", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "SwipeControl", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout", "StandardUICommand", "XamlUICommand"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -441,6 +441,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "PipsPager" { return "GallerySample_PipsPager_PipsPager" }
         "PullToRefresh" { return "GallerySample_PullToRefresh_RefreshContainer" }
         "GridView" { return "GallerySample_GridView_BasicGridView" }
+        "ItemsRepeater" { return "GallerySample_ItemsRepeater_ItemsRepeater" }
         "BreadcrumbBar" { return "GallerySample_BreadcrumbBar_BreadcrumbBar" }
         "Pivot" { return "GallerySample_Pivot_Pivot" }
         "SelectorBar" { return "GallerySample_SelectorBar_SelectorBar" }
@@ -495,6 +496,7 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
         "PipsPager" { return "GallerySample_PipsPager_PipsPager" }
         "PullToRefresh" { return "GallerySample_PullToRefresh_Root" }
         "GridView" { return "GallerySample_GridView_BasicGridView" }
+        "ItemsRepeater" { return "GallerySample_ItemsRepeater_ItemsRepeater" }
         "BreadcrumbBar" { return "GallerySample_BreadcrumbBar_BreadcrumbBar" }
         "Pivot" { return "GallerySample_Pivot_Pivot" }
         "SelectorBar" { return "GallerySample_SelectorBar_SelectorBar" }
@@ -1210,7 +1212,7 @@ function Capture-StaticCrops([string]$app, [string]$control, [string]$caseDir, $
             }
         }
 
-        if ($control -eq "StandardUICommand" -and $null -ne $primaryCrop -and !$primaryCrop.NonBlank -and $primaryCrop.VisibleStdDev -ge (Get-PrimaryCropMinimumVisibleStdDev $control)) {
+        if (($control -eq "StandardUICommand" -or $control -eq "ItemsRepeater") -and $null -ne $primaryCrop -and !$primaryCrop.NonBlank -and $primaryCrop.VisibleStdDev -ge (Get-PrimaryCropMinimumVisibleStdDev $control)) {
             $primaryCrop["NonBlank"] = $true
         }
 
@@ -1899,11 +1901,49 @@ function Ensure-WinUIReferenceTheme([string]$control, [string]$caseDir, $window)
     $primarySource = Get-ReferencePrimaryAutomationId $control
     $primaryName = Get-ReferencePrimaryName $control
     if ([string]::IsNullOrEmpty($primarySource) -and [string]::IsNullOrEmpty($primaryName)) {
+        $probeScreenshot = Join-Path $caseDir ("winui3-$control-theme-probe.png")
+        Capture-Window $window.Current.NativeWindowHandle $probeScreenshot
+        $mean = Get-ImageMeanLuminance $probeScreenshot
+        if ($null -eq $mean) {
+            return [ordered]@{
+                RequestedTheme = $Theme
+                MeanLuminance = $null
+                Toggled = $false
+                Reason = "No reference primary element is configured, and the reference screenshot had no visible pixels."
+            }
+        }
+
+        $isDark = [double]$mean -lt 128.0
+        $wantsDark = $Theme -eq "Dark"
+        if ($isDark -eq $wantsDark) {
+            return [ordered]@{
+                RequestedTheme = $Theme
+                MeanLuminance = $mean
+                Toggled = $false
+                Reason = "Reference window theme already matched without a configured primary element."
+            }
+        }
+
+        $themeButton = Find-DescendantByAutomationId $window "ThemeButton"
+        if ($null -eq $themeButton) {
+            return [ordered]@{
+                RequestedTheme = $Theme
+                MeanLuminance = $mean
+                Toggled = $false
+                Reason = "No reference primary element is configured, and ThemeButton was not found."
+            }
+        }
+
+        $toggled = Invoke-ElementPatternOnce $window $themeButton
+        if ($toggled) {
+            Start-Sleep -Milliseconds 700
+        }
+
         return [ordered]@{
             RequestedTheme = $Theme
-            MeanLuminance = $null
-            Toggled = $false
-            Reason = "No reference primary element is configured."
+            MeanLuminance = $mean
+            Toggled = $toggled
+            Reason = "Reference window theme inferred from full screenshot because no primary element is configured."
         }
     }
 

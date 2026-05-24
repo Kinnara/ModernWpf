@@ -106,6 +106,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.ItemsRepeaterSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 38 tests per target. The generated ModernWpf ItemsRepeater page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\ItemsRepeaterPage.xaml` / `.xaml.cs`: basic bar repeater with add/remove and layout options, virtualizing numbered repeater, mixed-type repeater, nested repeaters, animated color-list repeater, and content-heavy recipe repeater with filtering/sorting. `CollectionsSampleFactory.CreateExamples` now covers ItemsRepeater as a source-backed Collections WinUI extension page, uses real `ModernWpf.Controls.ItemsRepeater` and `ItemsRepeaterScrollHost` controls, preserves source-facing names such as `repeater`, `AddBtn`, `DeleteBtn`, `VStackBtn`, `HStackBtn`, `HGridBtn`, `repeater2`, `MixedTypeRepeater`, `outerRepeater`, `innerRepeater`, `animatedScrollRepeater`, `Animated_ScrollViewer`, `colorRectangle`, `tracker`, `VariedImageSizeRepeater`, and `FilterRecipes`, consumes the local sample-code files, and exposes curated automation IDs `GallerySample_ItemsRepeater_Root` / `GallerySample_ItemsRepeater_ItemsRepeater`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls ItemsRepeater -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-204417-095-101896/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required ItemsRepeater sample element was found, ModernWpf's primary artifact is nonblank at `437x208`, and the report records whole-window Light mean delta `135.34`. Installed WinUI Gallery does not expose a stable primary UIA element for this page, so no primary-crop delta is emitted.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls ItemsRepeater -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-204441-478-19788/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required ItemsRepeater sample element was found, ModernWpf's primary artifact is nonblank at `437x208`, and the report records whole-window Dark mean delta `23.52`. Installed WinUI Gallery does not expose a stable primary UIA element for this page, so no primary-crop delta is emitted.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the ItemsRepeater WinUI example alignment. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages, `0 Warning(s)`, and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.GridViewSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 37 tests per target. The generated ModernWpf GridView page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\GridViewPage.xaml` / `.xaml.cs`: `Basic GridView with Simple DataTemplate`, `GridView with Layout Customization`, and `Content inside of a GridView.` The old WPF `ListView` table fallback for the WinUI `GridView` item is replaced by real `ModernWpf.Controls.GridView` samples with image templates, `ItemsWrapGrid` layout options, source-facing names such as `BasicGridView`, `StyledGrid`, `MaxItemsWrapGrid`, `ContentGridView`, `Control2`, `ItemClickCheckBox`, `DropCheckBox`, `ClickOutput`, and `SelectionOutput`, plus stable automation IDs `GallerySample_GridView_Root` / `GallerySample_GridView_BasicGridView`. The copied WPF Gallery `ListView with GridView` sample remains on the WPF `ListView` page and is intentionally separate.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls GridView -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -1479,6 +1487,37 @@ ModernWpf primary from the rendered sample root because the control-only
 `VisualBrush` artifact is blank for the repeater-templated PipsPager. Avoid
 reopening PipsPager's source shape unless a new WinUI source or crop regression
 appears.
+The generated ModernWpf ItemsRepeater extension page now uses the local official
+WinUI Gallery six-example structure from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\ItemsRepeaterPage.xaml`
+/ `.xaml.cs`: the basic bar repeater with add/remove and layout choices, the
+virtualizing numbered repeater, mixed-type collection, nested repeaters,
+animated color-list repeater, and the content-heavy recipe repeater with
+filtering/sorting. `CollectionsSampleFactory.CreateExamples` now covers
+ItemsRepeater as a source-backed Collections WinUI example, uses real
+`ModernWpf.Controls.ItemsRepeater` / `ItemsRepeaterScrollHost` controls, keeps
+source-facing names such as `repeater`, `AddBtn`, `DeleteBtn`, `VStackBtn`,
+`HStackBtn`, `HGridBtn`, `repeater2`, `MixedTypeRepeater`, `outerRepeater`,
+`innerRepeater`, `animatedScrollRepeater`, `Animated_ScrollViewer`,
+`colorRectangle`, `tracker`, `VariedImageSizeRepeater`, and `FilterRecipes`,
+and consumes the existing local ItemsRepeater sample-code files without extra
+additional-code panes. Current ItemsRepeater WinUI-reference evidence is
+`artifacts/visual-checks/20260524-204417-095-101896/report.md` for Light and
+`artifacts/visual-checks/20260524-204441-478-19788/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`, required sample element
+found, ModernWpf nonblank `437x208` primary artifacts, and whole-window mean
+deltas `135.34` / `23.52`; installed WinUI Gallery does not expose a stable
+primary UIA element for this page, so the report intentionally has no
+primary-crop delta. The visual harness includes ItemsRepeater in the default
+WinUI extension control set and accepts the repeater primary artifact when its
+visible variation is above the existing threshold because the generic blank
+detector misclassifies this rendered repeater crop; when no reference primary
+element is configured, the harness now infers the installed WinUI Gallery theme
+from full-window luminance so Dark evidence does not silently reuse a Light
+reference. Avoid reopening ItemsRepeater's source shape unless a new local
+WinUI source, runtime, or crop regression appears; next Collections WinUI
+candidates to inspect remain source-backed gaps such as `ItemsView` and
+`FlipView`.
 The generated ModernWpf GridView extension page now uses the local official
 WinUI Gallery three-example structure from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\GridViewPage.xaml`
@@ -1499,9 +1538,7 @@ GridView WinUI-reference evidence is
 with ModernWpf and installed WinUI 3 Gallery `Passed`, required sample element
 found, matching `657x412` primary crops, and primary deltas `69.52` / `63.82`.
 Avoid reopening GridView's source shape unless a new local WinUI source,
-runtime, or crop regression appears; next Collections WinUI candidates to
-inspect remain source-backed gaps such as `ItemsRepeater`, `ItemsView`, and
-`FlipView`.
+runtime, or crop regression appears.
 The generated ModernWpf PullToRefresh extension page now uses the local
 official WinUI Gallery two-example structure from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\PullToRefreshPage.xaml`

@@ -9,6 +9,7 @@ using System.Windows.Data;
 using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 using System.Windows.Threading;
 using ModernWpf.Gallery.Models;
 using Mux = ModernWpf.Controls;
@@ -149,12 +150,74 @@ to handle the events of when a selection changes on the GridView and when an ite
 <!-- The data template bound to this GridView's ItemTemplate property is based on which one you
 select from the options on the right. -->";
 
+        private const string ItemsRepeaterBasicXaml =
+@"<!-- The ItemsRepeater and ScrollViewer used: -->
+<ScrollViewer HorizontalScrollBarVisibility=""Auto""
+              HorizontalScrollMode=""Auto""
+              IsVerticalScrollChainingEnabled=""False""
+              MaxHeight=""500"">
+    <ItemsRepeater
+               ItemsSource=""{x:Bind BarItems}""
+               Layout=""{StaticResource $(Layout)}""
+               ItemTemplate=""{StaticResource $(ElementGenerator)}"" />
+</ScrollViewer>
+
+<!-- The Layout specifications used: -->
+
+$(SampleCodeLayout)
+
+<!-- The DataTemplate used: $(ElementGenerator)-->
+
+$(SampleCodeDT)";
+
+        private const string ItemsRepeaterBasicCSharp =
+@"// The ItemsSource used is a list of custom-class Bar objects called BarItems
+
+public class Bar
+{
+    public Bar(double length, int max)
+    {
+        Length = length;
+        MaxLength = max;
+
+        Height = length / 4;
+        MaxHeight = max / 4;
+
+        Diameter = length / 6;
+        MaxDiameter = max / 6;
+    }
+    public double Length { get; set; }
+    public int MaxLength { get; set; }
+
+    public double Height { get; set; }
+    public double MaxHeight { get; set; }
+
+    public double Diameter { get; set; }
+    public double MaxDiameter { get; set; }
+}
+
+public ObservableCollection<Bar> BarItems;
+private int MaxLength = 425;
+
+private void InitializeData()
+{
+    if (BarItems == null)
+    {
+        BarItems = new ObservableCollection<Bar>();
+    }
+    BarItems.Add(new Bar(300, this.MaxLength));
+    BarItems.Add(new Bar(25, this.MaxLength));
+    BarItems.Add(new Bar(175, this.MaxLength));
+}";
+
         public static IReadOnlyList<GalleryExample> CreateExamples(string uniqueId, IReadOnlyList<SampleSnippet> sampleSnippets)
         {
             switch (uniqueId)
             {
                 case "GridView":
                     return CreateGridViewExamples(sampleSnippets);
+                case "ItemsRepeater":
+                    return CreateItemsRepeaterExamples(sampleSnippets);
                 case "PullToRefresh":
                     return CreatePullToRefreshExamples();
                 default:
@@ -849,23 +912,839 @@ select from the options on the right. -->";
 
         private static UIElement CreateItemsRepeaterSample()
         {
-            var panel = CreateSamplePanel("ItemsRepeater renders repeated content from a data source with a reusable item template.");
+            var root = new GallerySamplePanel
+            {
+                Margin = new Thickness(0, 0, 0, 12)
+            };
+            GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("ItemsRepeater"));
+            root.Children.Add(CreateBasicItemsRepeaterExampleContent(assignRootAutomationId: false));
+            return root;
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateItemsRepeaterExamples(IReadOnlyList<SampleSnippet> sampleSnippets)
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "Basic, non-interactive items laid out by ItemsRepeater",
+                    CreateBasicItemsRepeaterExampleContent(assignRootAutomationId: true),
+                    ItemsRepeaterBasicXaml,
+                    ItemsRepeaterBasicCSharp),
+                new GalleryExample(
+                    "Virtualizing, scrollable list of items laid out by ItemsRepeater",
+                    CreateVirtualizingItemsRepeaterExampleContent(),
+                    FindSampleCodeText(sampleSnippets, "ItemsRepeater/ItemsRepeaterSample2_xaml.txt"),
+                    FindSampleCodeText(sampleSnippets, "ItemsRepeater/ItemsRepeaterSample2_cs.txt")),
+                new GalleryExample(
+                    "ItemsRepeater with mixed-type collection",
+                    CreateMixedItemsRepeaterExampleContent(),
+                    FindSampleCodeText(sampleSnippets, "ItemsRepeater/ItemsRepeaterSample1_xaml.txt"),
+                    FindSampleCodeText(sampleSnippets, "ItemsRepeater/ItemsRepeaterSample1_cs.txt")),
+                new GalleryExample(
+                    "Laying out nested ItemsRepeaters",
+                    CreateNestedItemsRepeaterExampleContent(),
+                    FindSampleCodeText(sampleSnippets, "ItemsRepeater/ItemsRepeaterNestedSample_xaml.txt"),
+                    null),
+                new GalleryExample(
+                    "Animated Scrolling and Content Display",
+                    CreateAnimatedItemsRepeaterExampleContent(),
+                    FindSampleCodeText(sampleSnippets, "ItemsRepeater/ItemsRepeaterSample3_xaml.txt"),
+                    FindSampleCodeText(sampleSnippets, "ItemsRepeater/ItemsRepeaterSample3_cs.txt")),
+                new GalleryExample(
+                    "Virtualized, Content-Heavy Layout with Filtering and Sorting",
+                    CreateRecipeItemsRepeaterExampleContent(),
+                    FindSampleCodeText(sampleSnippets, "ItemsRepeater/ItemsRepeaterSample4_xaml.txt"),
+                    FindSampleCodeText(sampleSnippets, "ItemsRepeater/ItemsRepeaterSample4_cs.txt"))
+            };
+        }
+
+        private static GallerySamplePanel CreateBasicItemsRepeaterExampleContent(bool assignRootAutomationId)
+        {
+            var root = CreateItemsRepeaterExampleRoot(assignRootAutomationId);
+            var layout = CreateRepeaterOptionsLayout();
+            var maxLength = 425;
+            var random = new Random(1);
+            var barItems = CreateRepeaterBars(maxLength);
+
             var repeater = new Mux.ItemsRepeater
             {
-                ItemsSource = new[] { "Inbox", "Archive", "Drafts", "Sent", "Deleted" },
-                ItemTemplate = CreateRepeaterTemplate()
+                Name = "repeater",
+                ItemsSource = barItems,
+                Layout = CreateVerticalStackLayout(),
+                ItemTemplate = CreateHorizontalBarTemplate(),
+                MaxWidth = maxLength + 12
             };
-            panel.Children.Add(new Mux.ItemsRepeaterScrollHost
+            GalleryAutomation.WithAutomationId(repeater, GalleryAutomation.SampleElementId("ItemsRepeater", "ItemsRepeater"));
+
+            var host = new Mux.ItemsRepeaterScrollHost
             {
-                Height = 190,
-                Width = 320,
+                ScrollViewer = new ScrollViewer
+                {
+                    MaxHeight = 500,
+                    HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
+                    VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+                    Content = repeater
+                }
+            };
+            layout.Children.Add(host);
+
+            var options = new StackPanel
+            {
+                Width = 250
+            };
+            Grid.SetColumn(options, 2);
+
+            Button deleteButton = null;
+            var addButton = CreateButton("Add Item");
+            addButton.Name = "AddBtn";
+            addButton.MinWidth = 150;
+            addButton.Click += delegate
+            {
+                barItems.Add(new RepeaterBar(random.Next(maxLength), maxLength));
+                if (deleteButton != null)
+                {
+                    deleteButton.IsEnabled = true;
+                }
+            };
+
+            deleteButton = CreateButton("Remove Item");
+            deleteButton.Name = "DeleteBtn";
+            deleteButton.MinWidth = 150;
+            deleteButton.Click += delegate
+            {
+                if (barItems.Count > 0)
+                {
+                    barItems.RemoveAt(0);
+                }
+
+                deleteButton.IsEnabled = barItems.Count > 0;
+            };
+            options.Children.Add(addButton);
+            options.Children.Add(deleteButton);
+
+            options.Children.Add(new TextBlock
+            {
+                Text = "Layout",
+                Margin = new Thickness(0, 12, 0, 4)
+            });
+
+            Action<string> applyLayout = delegate(string layoutKey)
+            {
+                switch (layoutKey)
+                {
+                    case "HorizontalStackLayout":
+                        repeater.Layout = CreateHorizontalStackLayout();
+                        repeater.ItemTemplate = CreateVerticalBarTemplate();
+                        repeater.MaxWidth = 6000;
+                        break;
+                    case "UniformGridLayout":
+                        repeater.Layout = CreateBasicUniformGridLayout();
+                        repeater.ItemTemplate = CreateCircularBarTemplate();
+                        repeater.MaxWidth = 540;
+                        break;
+                    default:
+                        repeater.Layout = CreateVerticalStackLayout();
+                        repeater.ItemTemplate = CreateHorizontalBarTemplate();
+                        repeater.MaxWidth = maxLength + 12;
+                        break;
+                }
+            };
+
+            options.Children.Add(CreateLayoutRadioButton("VStackBtn", "StackLayout - Vertical", "VerticalStackLayout", true, applyLayout));
+            options.Children.Add(CreateLayoutRadioButton("HStackBtn", "StackLayout - Horizontal", "HorizontalStackLayout", false, applyLayout));
+            options.Children.Add(CreateLayoutRadioButton("HGridBtn", "UniformGridLayout", "UniformGridLayout", false, applyLayout));
+
+            layout.Children.Add(options);
+            root.Children.Add(layout);
+            return root;
+        }
+
+        private static GallerySamplePanel CreateVirtualizingItemsRepeaterExampleContent()
+        {
+            var root = CreateItemsRepeaterExampleRoot(assignRootAutomationId: false);
+            var layout = CreateRepeaterOptionsLayout();
+
+            var repeater = new Mux.ItemsRepeater
+            {
+                Name = "repeater2",
+                Margin = new Thickness(0, 0, 12, 0),
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                ItemsSource = CreateNumberedItems(500),
+                ItemTemplate = new NumberTemplateSelector
+                {
+                    Normal = CreateNumberItemTemplate(accent: false),
+                    Accent = CreateNumberItemTemplate(accent: true)
+                },
+                Layout = CreateActivityFeedLayoutApproximation()
+            };
+
+            var scrollViewer = new ScrollViewer
+            {
+                Name = "scrollViewer",
+                Height = 400,
+                Padding = new Thickness(0, 0, 16, 0),
+                VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+                Content = repeater
+            };
+            layout.Children.Add(new Mux.ItemsRepeaterScrollHost { ScrollViewer = scrollViewer });
+
+            var options = new StackPanel
+            {
+                Width = 250
+            };
+            Grid.SetColumn(options, 2);
+            options.Children.Add(CreateLayoutRadioButton(null, "Uniform grid", "UniformGridLayout2", false, delegate
+            {
+                repeater.Layout = CreateUniformGridLayout2();
+            }));
+            options.Children.Add(CreateLayoutRadioButton(null, "Custom virtualizing layout", "MyFeedLayout", true, delegate
+            {
+                repeater.Layout = CreateActivityFeedLayoutApproximation();
+            }));
+            layout.Children.Add(options);
+
+            root.Children.Add(layout);
+            return root;
+        }
+
+        private static GallerySamplePanel CreateMixedItemsRepeaterExampleContent()
+        {
+            var root = CreateItemsRepeaterExampleRoot(assignRootAutomationId: false);
+            root.Children.Add(new TextBlock
+            {
+                Text = "This is an ItemsRepeater that displays both integer and string items. It uses a DataTemplateSelector to choose the correct layout for each of its items.",
+                TextWrapping = TextWrapping.Wrap,
+                Margin = new Thickness(0, 0, 0, 12)
+            });
+
+            root.Children.Add(new Mux.ItemsRepeater
+            {
+                Name = "MixedTypeRepeater",
+                Margin = new Thickness(0, 0, 12, 0),
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                ItemsSource = CreateMixedRepeaterItems(),
+                ItemTemplate = new StringOrIntTemplateSelector
+                {
+                    StringTemplate = CreateStringItemTemplate(),
+                    IntTemplate = CreateIntItemTemplate()
+                },
+                Layout = new Mux.UniformGridLayout
+                {
+                    MinItemWidth = 200,
+                    MinItemHeight = 200
+                }
+            });
+            return root;
+        }
+
+        private static GallerySamplePanel CreateNestedItemsRepeaterExampleContent()
+        {
+            var root = CreateItemsRepeaterExampleRoot(assignRootAutomationId: false);
+            var outerRepeater = new Mux.ItemsRepeater
+            {
+                Name = "outerRepeater",
+                VerticalAlignment = VerticalAlignment.Top,
+                ItemsSource = CreateNestedCategories(),
+                ItemTemplate = CreateCategoryTemplate(),
+                Layout = CreateVerticalStackLayout()
+            };
+            root.Children.Add(new ScrollViewer
+            {
+                HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
+                VerticalScrollBarVisibility = ScrollBarVisibility.Disabled,
+                Content = outerRepeater
+            });
+            return root;
+        }
+
+        private static GallerySamplePanel CreateAnimatedItemsRepeaterExampleContent()
+        {
+            var root = CreateItemsRepeaterExampleRoot(assignRootAutomationId: false);
+            var layout = new Grid();
+            layout.ColumnDefinitions.Add(new ColumnDefinition());
+            layout.ColumnDefinitions.Add(new ColumnDefinition());
+
+            Rectangle colorRectangle = null;
+            Action<RepeaterColorItem> selectColor = delegate(RepeaterColorItem item)
+            {
+                if (colorRectangle != null)
+                {
+                    colorRectangle.Fill = item.Brush;
+                }
+            };
+            var repeater = new Mux.ItemsRepeater
+            {
+                Name = "animatedScrollRepeater",
+                ItemsSource = CreateColorItems(selectColor),
+                ItemTemplate = CreateColorButtonTemplate(),
+                Layout = CreateVerticalStackLayout()
+            };
+            repeater.ElementPrepared += delegate(Mux.ItemsRepeater sender, Mux.ItemsRepeaterElementPreparedEventArgs args)
+            {
+                var element = args.Element as FrameworkElement;
+                if (element != null)
+                {
+                    element.Margin = new Thickness(0, 0, 0, 4);
+                }
+            };
+
+            var scrollViewer = new ScrollViewer
+            {
+                Name = "Animated_ScrollViewer",
+                Width = 250,
+                Height = 175,
+                VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+                Content = repeater
+            };
+            layout.Children.Add(scrollViewer);
+
+            colorRectangle = new Rectangle
+            {
+                Name = "colorRectangle",
+                Width = 150,
+                Height = 150,
+                Margin = new Thickness(10, 0, 0, 0),
+                StrokeThickness = 1
+            };
+            colorRectangle.SetResourceReference(Shape.StrokeProperty, "SystemControlForegroundBaseHighBrush");
+            AutomationProperties.SetName(colorRectangle, "ColorRectangle");
+            Grid.SetColumn(colorRectangle, 1);
+            layout.Children.Add(colorRectangle);
+
+            root.Children.Add(layout);
+            return root;
+        }
+
+        private static GallerySamplePanel CreateRecipeItemsRepeaterExampleContent()
+        {
+            var root = CreateItemsRepeaterExampleRoot(assignRootAutomationId: false);
+            var layout = new Grid
+            {
+                Height = 600
+            };
+            layout.ColumnDefinitions.Add(new ColumnDefinition());
+            layout.ColumnDefinitions.Add(new ColumnDefinition());
+
+            var sourceRecipes = CreateRecipeList();
+            var filteredRecipes = new ObservableCollection<RepeaterRecipe>(sourceRecipes);
+            var sortDescending = false;
+
+            var repeater = new Mux.ItemsRepeater
+            {
+                Name = "VariedImageSizeRepeater",
+                ItemsSource = filteredRecipes,
+                ItemTemplate = CreateRecipeTemplate(),
+                Layout = new Mux.UniformGridLayout
+                {
+                    MinItemWidth = 200,
+                    MinColumnSpacing = 12,
+                    MinRowSpacing = 12
+                }
+            };
+            var tracker = new Mux.ItemsRepeaterScrollHost
+            {
+                Name = "tracker",
                 ScrollViewer = new ScrollViewer
                 {
                     VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
                     Content = repeater
                 }
+            };
+            layout.Children.Add(tracker);
+
+            var options = new StackPanel
+            {
+                Margin = new Thickness(10, 0, 0, 0)
+            };
+            Grid.SetColumn(options, 1);
+
+            options.Children.Add(new TextBlock
+            {
+                Text = "Filter by ingredient...",
+                Margin = new Thickness(0, 0, 0, 4)
             });
-            return panel;
+            var filter = new TextBox
+            {
+                Name = "FilterRecipes",
+                Width = 200,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Margin = new Thickness(0, 0, 0, 20)
+            };
+            options.Children.Add(filter);
+            options.Children.Add(new TextBlock
+            {
+                Text = "Sort by number of ingredients",
+                Margin = new Thickness(0, 0, 0, 10)
+            });
+            var leastToMost = CreateButton("Least to most");
+            var mostToLeast = CreateButton("Most to least");
+            options.Children.Add(leastToMost);
+            options.Children.Add(mostToLeast);
+
+            Action updateSortAndFilter = delegate
+            {
+                var filterText = filter.Text ?? string.Empty;
+                var next = new List<RepeaterRecipe>();
+                foreach (var recipe in sourceRecipes)
+                {
+                    if (recipe.Ingredients.IndexOf(filterText, StringComparison.InvariantCultureIgnoreCase) >= 0)
+                    {
+                        next.Add(recipe);
+                    }
+                }
+
+                next.Sort(delegate(RepeaterRecipe left, RepeaterRecipe right)
+                {
+                    var result = left.NumIngredients.CompareTo(right.NumIngredients);
+                    return sortDescending ? -result : result;
+                });
+
+                filteredRecipes.Clear();
+                foreach (var recipe in next)
+                {
+                    filteredRecipes.Add(recipe);
+                }
+            };
+
+            filter.TextChanged += delegate { updateSortAndFilter(); };
+            leastToMost.Click += delegate
+            {
+                sortDescending = false;
+                updateSortAndFilter();
+            };
+            mostToLeast.Click += delegate
+            {
+                sortDescending = true;
+                updateSortAndFilter();
+            };
+
+            layout.Children.Add(options);
+            root.Children.Add(layout);
+            return root;
+        }
+
+        private static GallerySamplePanel CreateItemsRepeaterExampleRoot(bool assignRootAutomationId)
+        {
+            var root = new GallerySamplePanel
+            {
+                HorizontalAlignment = HorizontalAlignment.Stretch
+            };
+
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("ItemsRepeater"));
+            }
+
+            return root;
+        }
+
+        private static Grid CreateRepeaterOptionsLayout()
+        {
+            var layout = new Grid
+            {
+                HorizontalAlignment = HorizontalAlignment.Stretch
+            };
+            layout.ColumnDefinitions.Add(new ColumnDefinition());
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(40) });
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(250) });
+            return layout;
+        }
+
+        private static RadioButton CreateLayoutRadioButton(
+            string name,
+            string content,
+            string tag,
+            bool isChecked,
+            Action<string> checkedAction)
+        {
+            var radioButton = new RadioButton
+            {
+                Content = content,
+                Tag = tag,
+                IsChecked = isChecked,
+                Margin = new Thickness(0, 2, 0, 2)
+            };
+            if (name != null)
+            {
+                radioButton.Name = name;
+            }
+
+            radioButton.Checked += delegate { checkedAction(tag); };
+            return radioButton;
+        }
+
+        private static Mux.StackLayout CreateVerticalStackLayout()
+        {
+            return new Mux.StackLayout
+            {
+                Orientation = Orientation.Vertical,
+                Spacing = 8
+            };
+        }
+
+        private static Mux.StackLayout CreateHorizontalStackLayout()
+        {
+            return new Mux.StackLayout
+            {
+                Orientation = Orientation.Horizontal,
+                Spacing = 8
+            };
+        }
+
+        private static Mux.UniformGridLayout CreateBasicUniformGridLayout()
+        {
+            return new Mux.UniformGridLayout
+            {
+                MinColumnSpacing = 8,
+                MinRowSpacing = 8
+            };
+        }
+
+        private static Mux.UniformGridLayout CreateUniformGridLayout2()
+        {
+            return new Mux.UniformGridLayout
+            {
+                MinItemWidth = 108,
+                MinItemHeight = 108,
+                MinColumnSpacing = 12,
+                MinRowSpacing = 12
+            };
+        }
+
+        private static Mux.UniformGridLayout CreateActivityFeedLayoutApproximation()
+        {
+            return new Mux.UniformGridLayout
+            {
+                MinItemWidth = 80,
+                MinItemHeight = 108,
+                MinColumnSpacing = 12,
+                MinRowSpacing = 12
+            };
+        }
+
+        private static ObservableCollection<RepeaterBar> CreateRepeaterBars(int maxLength)
+        {
+            return new ObservableCollection<RepeaterBar>(new[]
+            {
+                new RepeaterBar(300, maxLength),
+                new RepeaterBar(25, maxLength),
+                new RepeaterBar(175, maxLength)
+            });
+        }
+
+        private static int[] CreateNumberedItems(int count)
+        {
+            var items = new int[count];
+            for (var i = 0; i < count; i++)
+            {
+                items[i] = i;
+            }
+
+            return items;
+        }
+
+        private static List<object> CreateMixedRepeaterItems()
+        {
+            return new List<object>
+            {
+                64,
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+                128,
+                "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+                256,
+                "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+                512,
+                "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+                1024
+            };
+        }
+
+        private static ObservableCollection<RepeaterNestedCategory> CreateNestedCategories()
+        {
+            return new ObservableCollection<RepeaterNestedCategory>(new[]
+            {
+                new RepeaterNestedCategory("Fruits", new[] { "Apricots", "Bananas", "Grapes", "Strawberries", "Watermelon", "Plums", "Blueberries" }),
+                new RepeaterNestedCategory("Vegetables", new[] { "Broccoli", "Spinach", "Sweet potato", "Cauliflower", "Onion", "Brussels sprouts", "Carrots" }),
+                new RepeaterNestedCategory("Grains", new[] { "Rice", "Quinoa", "Pasta", "Bread", "Farro", "Oats", "Barley" }),
+                new RepeaterNestedCategory("Proteins", new[] { "Steak", "Chicken", "Tofu", "Salmon", "Pork", "Chickpeas", "Eggs" })
+            });
+        }
+
+        private static List<RepeaterColorItem> CreateColorItems(Action<RepeaterColorItem> selectAction = null)
+        {
+            var colors = new[]
+            {
+                "Blue",
+                "BlueViolet",
+                "Crimson",
+                "DarkCyan",
+                "DarkGoldenrod",
+                "DarkMagenta",
+                "DarkOliveGreen",
+                "DarkRed",
+                "DarkSlateBlue",
+                "DeepPink",
+                "IndianRed",
+                "MediumSlateBlue",
+                "Maroon",
+                "MidnightBlue",
+                "Peru",
+                "SaddleBrown",
+                "SteelBlue",
+                "OrangeRed",
+                "Firebrick",
+                "DarkKhaki"
+            };
+
+            var items = new List<RepeaterColorItem>();
+            foreach (var color in colors)
+            {
+                items.Add(new RepeaterColorItem(color, selectAction));
+            }
+
+            return items;
+        }
+
+        private static List<RepeaterRecipe> CreateRecipeList()
+        {
+            var random = new Random(1);
+            var colors = CreateColorItems();
+            var fruits = new[] { "Apricots", "Bananas", "Grapes", "Strawberries", "Watermelon", "Plums", "Blueberries" };
+            var vegetables = new[] { "Broccoli", "Spinach", "Sweet potato", "Cauliflower", "Onion", "Brussels sprouts", "Carrots" };
+            var grains = new[] { "Rice", "Quinoa", "Pasta", "Bread", "Farro", "Oats", "Barley" };
+            var proteins = new[] { "Steak", "Chicken", "Tofu", "Salmon", "Pork", "Chickpeas", "Eggs" };
+            var extras = new[] { "Garlic", "Lemon", "Butter", "Lime", "Feta Cheese", "Parmesan Cheese", "Breadcrumbs" };
+            var recipes = new List<RepeaterRecipe>();
+
+            for (var i = 0; i < 120; i++)
+            {
+                var ingredients = new List<string>
+                {
+                    fruits[random.Next(fruits.Length)],
+                    vegetables[random.Next(vegetables.Length)],
+                    grains[random.Next(grains.Length)],
+                    proteins[random.Next(proteins.Length)]
+                };
+
+                var extraCount = random.Next(0, 4);
+                for (var j = 0; j < extraCount; j++)
+                {
+                    var extra = extras[random.Next(extras.Length)];
+                    if (!ingredients.Contains(extra))
+                    {
+                        ingredients.Add(extra);
+                    }
+                }
+
+                recipes.Add(new RepeaterRecipe
+                {
+                    Num = i,
+                    Name = "Recipe " + i,
+                    ColorBrush = colors[random.Next(colors.Count)].Brush,
+                    IngredientList = ingredients
+                });
+            }
+
+            return recipes;
+        }
+
+        private static DataTemplate CreateHorizontalBarTemplate()
+        {
+            return ParseRepeaterTemplate(
+                "<DataTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'>" +
+                "<Border Width='{Binding MaxLength}' Background='{DynamicResource SystemControlBackgroundChromeMediumBrush}'>" +
+                "<Rectangle Width='{Binding Length}' Height='24' HorizontalAlignment='Left' Fill='{DynamicResource SystemControlBackgroundAccentBrush}'/>" +
+                "</Border>" +
+                "</DataTemplate>");
+        }
+
+        private static DataTemplate CreateVerticalBarTemplate()
+        {
+            return ParseRepeaterTemplate(
+                "<DataTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'>" +
+                "<Border Height='{Binding MaxHeight}' Background='{DynamicResource SystemControlBackgroundChromeMediumBrush}'>" +
+                "<Rectangle Width='48' Height='{Binding Height}' VerticalAlignment='Top' Fill='{DynamicResource SystemControlBackgroundAccentBrush}'/>" +
+                "</Border>" +
+                "</DataTemplate>");
+        }
+
+        private static DataTemplate CreateCircularBarTemplate()
+        {
+            return ParseRepeaterTemplate(
+                "<DataTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'>" +
+                "<Grid>" +
+                "<Ellipse Width='{Binding MaxDiameter}' Height='{Binding MaxDiameter}' HorizontalAlignment='Center' VerticalAlignment='Center' Fill='{DynamicResource SystemControlBackgroundChromeMediumBrush}'/>" +
+                "<Ellipse Width='{Binding Diameter}' Height='{Binding Diameter}' HorizontalAlignment='Center' VerticalAlignment='Center' Fill='{DynamicResource SystemControlBackgroundAccentBrush}'/>" +
+                "</Grid>" +
+                "</DataTemplate>");
+        }
+
+        private static DataTemplate CreateNumberItemTemplate(bool accent)
+        {
+            var backgroundResource = accent ? "SystemControlBackgroundAccentBrush" : "SystemControlBackgroundChromeMediumBrush";
+            var foreground = accent ? " Foreground='{DynamicResource SystemControlForegroundChromeWhiteBrush}'" : string.Empty;
+            return ParseRepeaterTemplate(
+                "<DataTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'>" +
+                "<Button HorizontalAlignment='Stretch' VerticalAlignment='Stretch' Content='{Binding}' Background='{DynamicResource " + backgroundResource + "}'" + foreground + "/>" +
+                "</DataTemplate>");
+        }
+
+        private static DataTemplate CreateStringItemTemplate()
+        {
+            return ParseRepeaterTemplate(
+                "<DataTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'>" +
+                "<Grid Margin='10' Background='{DynamicResource SystemControlBackgroundAccentBrush}'>" +
+                "<TextBlock Padding='10' Text='{Binding}' Foreground='{DynamicResource SystemControlForegroundChromeWhiteBrush}' HorizontalAlignment='Center' TextWrapping='Wrap' VerticalAlignment='Center'/>" +
+                "</Grid>" +
+                "</DataTemplate>");
+        }
+
+        private static DataTemplate CreateIntItemTemplate()
+        {
+            return ParseRepeaterTemplate(
+                "<DataTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'>" +
+                "<Grid Margin='10' Background='{DynamicResource SystemControlBackgroundChromeMediumBrush}'>" +
+                "<TextBlock Padding='10' Text='{Binding}' Style='{DynamicResource HeaderTextBlockStyle}' HorizontalAlignment='Center' VerticalAlignment='Center'/>" +
+                "</Grid>" +
+                "</DataTemplate>");
+        }
+
+        private static DataTemplate CreateCategoryTemplate()
+        {
+            return ParseRepeaterTemplate(
+                "<DataTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation' " +
+                "xmlns:mux='clr-namespace:ModernWpf.Controls;assembly=ModernWpf.Controls'>" +
+                "<StackPanel>" +
+                "<TextBlock Padding='8' Style='{DynamicResource TitleTextBlockStyle}' Text='{Binding CategoryName}'/>" +
+                "<mux:ItemsRepeater Name='innerRepeater' ItemsSource='{Binding CategoryItems}'>" +
+                "<mux:ItemsRepeater.ItemTemplate>" +
+                "<DataTemplate><Grid Margin='10' Background='{DynamicResource SystemControlBackgroundAccentBrush}'><TextBlock Padding='10' Text='{Binding}' Foreground='{DynamicResource SystemControlForegroundChromeWhiteBrush}' HorizontalAlignment='Center' TextWrapping='Wrap' VerticalAlignment='Center'/></Grid></DataTemplate>" +
+                "</mux:ItemsRepeater.ItemTemplate>" +
+                "<mux:ItemsRepeater.Layout><mux:StackLayout Orientation='Horizontal' Spacing='8'/></mux:ItemsRepeater.Layout>" +
+                "</mux:ItemsRepeater>" +
+                "</StackPanel>" +
+                "</DataTemplate>");
+        }
+
+        private static DataTemplate CreateColorButtonTemplate()
+        {
+            return ParseRepeaterTemplate(
+                "<DataTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'>" +
+                "<Button HorizontalAlignment='Stretch' Content='{Binding Name}' Background='{Binding Brush}' Foreground='{DynamicResource TextFillColorInverseBrush}' Command='{Binding SelectCommand}' CommandParameter='{Binding}'/>" +
+                "</DataTemplate>");
+        }
+
+        private static DataTemplate CreateRecipeTemplate()
+        {
+            return ParseRepeaterTemplate(
+                "<DataTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'>" +
+                "<Border BorderThickness='1' Background='{DynamicResource SystemControlBackgroundBaseLowBrush}' Margin='5'>" +
+                "<StackPanel>" +
+                "<StackPanel Background='{Binding ColorBrush}' Margin='8' Height='75' Opacity='.8'>" +
+                "<TextBlock Text='{Binding Num}' FontSize='35' TextAlignment='Center' Padding='12' Foreground='{DynamicResource SystemControlForegroundAltHighBrush}'/>" +
+                "</StackPanel>" +
+                "<TextBlock Name='recipeName' Text='{Binding Name}' TextWrapping='Wrap' Margin='15,0,10,0' Style='{DynamicResource TitleTextBlockStyle}'/>" +
+                "<TextBlock Text='{Binding Ingredients}' Style='{DynamicResource BodyTextBlockStyle}' Margin='15,0,15,15'/>" +
+                "</StackPanel>" +
+                "</Border>" +
+                "</DataTemplate>");
+        }
+
+        private static DataTemplate ParseRepeaterTemplate(string xaml)
+        {
+            return (DataTemplate)XamlReader.Parse(xaml);
+        }
+
+        private sealed class NumberTemplateSelector : DataTemplateSelector
+        {
+            public DataTemplate Normal { get; set; }
+            public DataTemplate Accent { get; set; }
+
+            public override DataTemplate SelectTemplate(object item, DependencyObject container)
+            {
+                return item is int value && value % 2 != 0 ? Accent : Normal;
+            }
+        }
+
+        private sealed class StringOrIntTemplateSelector : DataTemplateSelector
+        {
+            public DataTemplate StringTemplate { get; set; }
+            public DataTemplate IntTemplate { get; set; }
+
+            public override DataTemplate SelectTemplate(object item, DependencyObject container)
+            {
+                return item is string ? StringTemplate : IntTemplate;
+            }
+        }
+
+        private sealed class RepeaterBar
+        {
+            public RepeaterBar(double length, int max)
+            {
+                Length = length;
+                MaxLength = max;
+                Height = length / 4;
+                MaxHeight = max / 4;
+                Diameter = length / 6;
+                MaxDiameter = max / 6;
+            }
+
+            public double Length { get; }
+            public int MaxLength { get; }
+            public double Height { get; }
+            public double MaxHeight { get; }
+            public double Diameter { get; }
+            public double MaxDiameter { get; }
+        }
+
+        private sealed class RepeaterNestedCategory
+        {
+            public RepeaterNestedCategory(string categoryName, IEnumerable<string> items)
+            {
+                CategoryName = categoryName;
+                CategoryItems = new ObservableCollection<string>(items);
+            }
+
+            public string CategoryName { get; }
+            public ObservableCollection<string> CategoryItems { get; }
+        }
+
+        private sealed class RepeaterColorItem
+        {
+            public RepeaterColorItem(string name, Action<RepeaterColorItem> selectAction)
+            {
+                Name = name;
+                Brush = (Brush)new BrushConverter().ConvertFromString(name);
+                if (selectAction != null)
+                {
+                    SelectCommand = new GalleryCommand(delegate(object parameter)
+                    {
+                        selectAction((RepeaterColorItem)parameter);
+                    });
+                }
+            }
+
+            public string Name { get; }
+            public Brush Brush { get; }
+            public GalleryCommand SelectCommand { get; }
+        }
+
+        private sealed class RepeaterRecipe
+        {
+            public int Num { get; set; }
+            public string Name { get; set; }
+            public Brush ColorBrush { get; set; }
+            public List<string> IngredientList { get; set; }
+
+            public string Ingredients
+            {
+                get { return "\n" + string.Join("\n", IngredientList); }
+            }
+
+            public int NumIngredients
+            {
+                get { return IngredientList.Count; }
+            }
         }
 
         private static UIElement CreateItemsViewSample()
