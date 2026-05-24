@@ -30,6 +30,9 @@ namespace ModernWpf.Gallery.Pages
         private const string RepeatButtonSimpleXaml =
 @"<RepeatButton Content=""Click and hold"" Click=""RepeatButton_Click"" $(IsEnabled)/>";
 
+        private const string ToggleButtonSimpleXaml =
+@"<ToggleButton Content=""ToggleButton"" Click=""Button_Click"" $(IsEnabled)/>";
+
         private const string ToggleSwitchWithProgressXaml =
 @"<StackPanel Orientation=""Horizontal"">
     <ToggleSwitch Header=""Toggle work"" OffContent=""Do work"" OnContent=""Working"" IsOn=""$(isOn)$(isOff)"" />
@@ -44,6 +47,8 @@ namespace ModernWpf.Gallery.Pages
                     return CreateHyperlinkButtonExamples();
                 case "RepeatButton":
                     return CreateRepeatButtonExamples();
+                case "ToggleButton":
+                    return CreateToggleButtonExamples();
                 case "DropDownButton":
                     return CreateDropDownButtonExamples(sampleSnippets);
                 case "SplitButton":
@@ -350,17 +355,60 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateToggleButtonSample()
         {
-            var panel = CreateSamplePanel("ToggleButton stores a binary checked state.");
-            var output = CreateOutput("Toggle is off.");
+            var panel = new GallerySamplePanel
+            {
+                Margin = new Thickness(0, 0, 0, 12)
+            };
+            GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("ToggleButton"));
+            panel.Children.Add(CreateSimpleToggleButtonExampleContent(assignRootAutomationId: false));
+            return panel;
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateToggleButtonExamples()
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "A simple ToggleButton with text content.",
+                    CreateSimpleToggleButtonExampleContent(assignRootAutomationId: true),
+                    ToggleButtonSimpleXaml,
+                    null)
+            };
+        }
+
+        private static GallerySamplePanel CreateSimpleToggleButtonExampleContent(bool assignRootAutomationId)
+        {
+            var panel = new GallerySamplePanel();
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("ToggleButton"));
+            }
+
+            var buttonRow = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                VerticalAlignment = VerticalAlignment.Top
+            };
+
             var button = new ToggleButton
             {
-                Content = "Toggle option",
-                Padding = new Thickness(18, 8, 18, 8),
-                HorizontalAlignment = HorizontalAlignment.Left
+                Name = "Toggle1",
+                Content = "ToggleButton"
             };
-            button.Checked += delegate { output.Text = "Toggle is on."; };
-            button.Unchecked += delegate { output.Text = "Toggle is off."; };
-            panel.Children.Add(button);
+            GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("ToggleButton", "ToggleButton"));
+
+            var output = new TextBlock
+            {
+                Name = "Control1Output",
+                Margin = new Thickness(0, 12, 0, 0),
+                Text = "Off"
+            };
+
+            button.Checked += delegate { output.Text = "On"; };
+            button.Unchecked += delegate { output.Text = "Off"; };
+
+            buttonRow.Children.Add(button);
+            panel.Children.Add(buttonRow);
             panel.Children.Add(output);
             return panel;
         }

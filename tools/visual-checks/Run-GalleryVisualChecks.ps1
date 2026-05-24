@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "HyperlinkButton", "RepeatButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "InfoBar", "NavigationView", "ContentDialog", "MenuBar", "CommandBar", "CommandBarFlyout"),
+    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "HyperlinkButton", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "InfoBar", "NavigationView", "ContentDialog", "MenuBar", "CommandBar", "CommandBarFlyout"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -426,6 +426,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "ComboBox" { return "GallerySample_ComboBox_ComboBox" }
         "HyperlinkButton" { return "GallerySample_HyperlinkButton_HyperlinkButton" }
         "RepeatButton" { return "GallerySample_RepeatButton_RepeatButton" }
+        "ToggleButton" { return "GallerySample_ToggleButton_ToggleButton" }
         "DropDownButton" { return "GallerySample_DropDownButton_DropDownButton" }
         "SplitButton" { return "GallerySample_SplitButton_SplitButton" }
         "ToggleSplitButton" { return "GallerySample_ToggleSplitButton_ToggleSplitButton" }
@@ -459,6 +460,7 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
         "InfoBar" { return "GallerySample_InfoBar_InfoBar" }
         "HyperlinkButton" { return "GallerySample_HyperlinkButton_HyperlinkButton" }
         "RepeatButton" { return "GallerySample_RepeatButton_RepeatButton" }
+        "ToggleButton" { return "GallerySample_ToggleButton_ToggleButton" }
         "DropDownButton" { return "GallerySample_DropDownButton_DropDownButton" }
         "SplitButton" { return "GallerySample_SplitButton_SplitButton" }
         "ToggleSplitButton" { return "GallerySample_ToggleSplitButton_ToggleSplitButton" }
@@ -484,6 +486,7 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
         "CommandBar" { return "PrimaryCommandBar" }
         "CommandBarFlyout" { return "myImageButton" }
         "HyperlinkButton" { return "Control1" }
+        "ToggleButton" { return "Toggle1" }
         "SplitButton" { return "myColorButton" }
         "ToggleSplitButton" { return "myListButton" }
         "NumberBox" { return "NumberBoxSpinButtonPlacementExample" }

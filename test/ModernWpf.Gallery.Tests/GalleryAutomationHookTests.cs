@@ -30,6 +30,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "ContentDialog", "GallerySample_ContentDialog_Root", "GallerySample_ContentDialog_ShowButton" };
             yield return new object[] { "HyperlinkButton", "GallerySample_HyperlinkButton_Root", "GallerySample_HyperlinkButton_HyperlinkButton" };
             yield return new object[] { "RepeatButton", "GallerySample_RepeatButton_Root", "GallerySample_RepeatButton_RepeatButton" };
+            yield return new object[] { "ToggleButton", "GallerySample_ToggleButton_Root", "GallerySample_ToggleButton_ToggleButton" };
             yield return new object[] { "DropDownButton", "GallerySample_DropDownButton_Root", "GallerySample_DropDownButton_DropDownButton" };
             yield return new object[] { "SplitButton", "GallerySample_SplitButton_Root", "GallerySample_SplitButton_SplitButton" };
             yield return new object[] { "ToggleSplitButton", "GallerySample_ToggleSplitButton_Root", "GallerySample_ToggleSplitButton_ToggleSplitButton" };
@@ -716,6 +717,65 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual("Number of clicks: 1", output.Text);
                     button.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent, button));
                     Assert.AreEqual("Number of clicks: 2", output.Text);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void ToggleButtonSampleMatchesWinUIGalleryExample()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("ToggleButton"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(1, page.Examples.Count);
+                    Assert.AreEqual("A simple ToggleButton with text content.", page.Examples[0].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    Assert.AreEqual("<ToggleButton Content=\"ToggleButton\" Click=\"Button_Click\" $(IsEnabled)/>", page.Examples[0].XamlCode);
+                    Assert.IsNull(page.Examples[0].CSharpCode);
+
+                    var button = (ToggleButton)FindByAutomationId(page, "GallerySample_ToggleButton_ToggleButton");
+                    var output = FindNamedDescendant<TextBlock>(page, "Control1Output");
+                    Assert.IsNotNull(button);
+                    Assert.IsNotNull(output);
+
+                    Assert.AreEqual("Toggle1", button.Name);
+                    Assert.AreEqual("ToggleButton", button.Content);
+                    Assert.AreEqual(false, button.IsChecked);
+                    Assert.AreEqual("Control1Output", output.Name);
+                    Assert.AreEqual(new Thickness(0, 12, 0, 0), output.Margin);
+                    Assert.AreEqual("Off", output.Text);
+
+                    button.IsChecked = true;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual("On", output.Text);
+
+                    button.IsChecked = false;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual("Off", output.Text);
                 }
                 finally
                 {

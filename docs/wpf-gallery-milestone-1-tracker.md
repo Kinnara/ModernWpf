@@ -106,6 +106,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.ToggleButtonSampleMatchesWinUIGalleryExample|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 17 tests per target. The generated ModernWpf ToggleButton page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\ToggleButtonPage.xaml` / `.xaml.cs`: one simple ToggleButton example with output text that initializes to `Off`, changes to `On` when checked, and returns to `Off` when unchecked. `BasicInputSampleFactory.CreateExamples` now covers ToggleButton as a source-backed Basic Input WinUI extension page, exposes curated automation IDs `GallerySample_ToggleButton_Root` and `GallerySample_ToggleButton_ToggleButton`, and keeps WinUI's `Toggle1`, `Control1Output`, `ToggleButton`, `On`, `Off`, and source XAML `$(IsEnabled)` placeholder. Current warning/output remains `NU1903`, generated WinRT warnings when regeneration is triggered, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls ToggleButton -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-140848-108-64420/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, primary crops match at `107x32`, and ToggleButton Light primary delta is `4.95`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls ToggleButton -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-140916-061-118720/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, primary crops match at `107x32`, and ToggleButton Dark primary delta is `9.36`. The visual harness now uses the WinUI reference automation ID `Toggle1` for the ToggleButton primary crop.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the ToggleButton WinUI example alignment and reference crop mapping. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages, existing ModernWpf/ModernWpf.Controls warnings, `19 Warning(s)`, and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.HyperlinkButtonSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 16 tests per target. The generated ModernWpf HyperlinkButton page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\HyperlinkButtonPage.xaml` / `.xaml.cs`: a URI HyperlinkButton example and a Click-handled HyperlinkButton example that routes to ToggleButton. `BasicInputSampleFactory.CreateExamples` now covers HyperlinkButton as a source-backed Basic Input WinUI extension page, exposes curated automation IDs `GallerySample_HyperlinkButton_Root` and `GallerySample_HyperlinkButton_HyperlinkButton`, keeps WinUI's `Control1`, `Control2`, `Microsoft home page`, `Go to ToggleButton`, and source XAML `$(IsEnabled)` placeholder, and adapts WinUI's `App.MainWindow.Navigate(...)` handler to the retained ModernWpf `ItemPage.ItemRequested` route callback. Current warning/output remains `NU1903` and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls HyperlinkButton -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -1366,6 +1374,22 @@ with ModernWpf and installed WinUI 3 Gallery `Passed`, matching `157x32`
 primary crops, and primary deltas `7.53` / `9.1`. The visual harness uses the
 WinUI reference automation ID `Control1` for the primary crop. Avoid reopening
 HyperlinkButton's source shape unless a new WinUI source or crop regression
+appears.
+The generated ModernWpf ToggleButton extension page now uses the local official
+WinUI Gallery one-example structure from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\ToggleButtonPage.xaml`
+/ `.xaml.cs`: a text ToggleButton plus output text initialized from the checked
+state. `BasicInputSampleFactory.CreateExamples` now covers ToggleButton as a
+source-backed Basic Input WinUI example, keeps WinUI's `Toggle1`,
+`Control1Output`, `ToggleButton`, `On`, `Off`, and source XAML substitution
+placeholder, and adapts the checked/unchecked handlers to WPF's ToggleButton
+events. Current ToggleButton WinUI-reference evidence is
+`artifacts/visual-checks/20260524-140848-108-64420/report.md` for Light and
+`artifacts/visual-checks/20260524-140916-061-118720/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`, matching `107x32`
+primary crops, and primary deltas `4.95` / `9.36`. The visual harness uses the
+WinUI reference automation ID `Toggle1` for the primary crop. Avoid reopening
+ToggleButton's source shape unless a new WinUI source or crop regression
 appears.
 The generated ModernWpf NumberBox extension page now uses the local official
 WinUI Gallery three-example structure from
