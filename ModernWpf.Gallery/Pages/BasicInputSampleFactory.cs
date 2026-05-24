@@ -39,6 +39,17 @@ namespace ModernWpf.Gallery.Pages
         private const string RatingControlPlaceholderXaml =
 @"<RatingControl AutomationProperties.Name=""RatingControl with placeholder"" PlaceholderValue=""$(Slider)"" />";
 
+        private const string ColorPickerPropertiesXaml =
+@"<ColorPicker
+      ColorSpectrumShape=""$(ColorSpectrumShape)""
+      IsMoreButtonVisible=""$(IsMoreButtonVisible)""
+      IsColorSliderVisible=""$(IsColorSliderVisible)""
+      IsColorChannelTextInputVisible=""$(IsColorChannelTextInputVisible)""
+      IsHexInputVisible=""$(IsHexInputVisible)""
+      IsAlphaEnabled=""$(IsAlphaEnabled)""
+      IsAlphaSliderVisible=""$(IsAlphaSliderVisible)""
+      IsAlphaTextInputVisible=""$(IsAlphaTextInputVisible)"" />";
+
         private const string ToggleButtonSimpleXaml =
 @"<ToggleButton Content=""ToggleButton"" Click=""Button_Click"" $(IsEnabled)/>";
 
@@ -54,6 +65,8 @@ namespace ModernWpf.Gallery.Pages
             {
                 case "HyperlinkButton":
                     return CreateHyperlinkButtonExamples();
+                case "ColorPicker":
+                    return CreateColorPickerExamples();
                 case "RatingControl":
                     return CreateRatingControlExamples();
                 case "RepeatButton":
@@ -746,14 +759,125 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateColorPickerSample()
         {
-            var panel = CreateSamplePanel("ColorPicker lets users inspect and adjust a color value with spectrum, slider, preview, and text input surfaces.");
-            panel.Children.Add(new Mux.ColorPicker
+            var panel = new GallerySamplePanel
             {
-                Color = System.Windows.Media.Color.FromRgb(51, 102, 204),
-                IsAlphaEnabled = true,
-                PreviousColor = System.Windows.Media.Colors.White,
-                HorizontalAlignment = HorizontalAlignment.Left
+                Margin = new Thickness(0, 0, 0, 12)
+            };
+            GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("ColorPicker"));
+            panel.Children.Add(CreateColorPickerPropertiesExampleContent(assignRootAutomationId: false));
+            return panel;
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateColorPickerExamples()
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "ColorPicker Properties.",
+                    CreateColorPickerPropertiesExampleContent(assignRootAutomationId: true),
+                    ColorPickerPropertiesXaml,
+                    null)
+            };
+        }
+
+        private static GallerySamplePanel CreateColorPickerPropertiesExampleContent(bool assignRootAutomationId)
+        {
+            var panel = new GallerySamplePanel();
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("ColorPicker"));
+            }
+
+            var layout = new Grid();
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(40) });
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+            var colorPicker = new Mux.ColorPicker
+            {
+                Name = "colorPicker",
+                IsAlphaEnabled = false,
+                IsAlphaSliderVisible = true,
+                IsAlphaTextInputVisible = true,
+                IsColorChannelTextInputVisible = true,
+                IsColorSliderVisible = true,
+                IsHexInputVisible = true,
+                IsMoreButtonVisible = false
+            };
+            GalleryAutomation.WithAutomationId(colorPicker, GalleryAutomation.SampleElementId("ColorPicker", "ColorPicker"));
+            layout.Children.Add(colorPicker);
+
+            var options = new StackPanel
+            {
+                Width = 250,
+                Margin = new Thickness(0, -5, 0, 0)
+            };
+            Grid.SetColumn(options, 2);
+
+            var moreButtonCheck = CreateOptionCheckBox("moreBtn", "IsMoreButtonVisible", isChecked: false, isEnabled: true, value => colorPicker.IsMoreButtonVisible = value);
+            var colorSliderCheck = CreateOptionCheckBox("colorSlider", "IsColorSliderVisible", isChecked: true, isEnabled: true, value => colorPicker.IsColorSliderVisible = value);
+            var colorChannelInputCheck = CreateOptionCheckBox("colorChannelInput", "IsColorChannelTextInputVisible", isChecked: true, isEnabled: true, value => colorPicker.IsColorChannelTextInputVisible = value);
+            var hexInputCheck = CreateOptionCheckBox("hexInput", "IsHexInputVisible", isChecked: true, isEnabled: true, value => colorPicker.IsHexInputVisible = value);
+            var alphaSliderCheck = CreateOptionCheckBox("alphaSlider", "IsAlphaSliderVisible", isChecked: true, isEnabled: false, value => colorPicker.IsAlphaSliderVisible = value);
+            var alphaTextInputCheck = CreateOptionCheckBox("alphaTextInput", "IsAlphaTextInputVisible", isChecked: true, isEnabled: false, value => colorPicker.IsAlphaTextInputVisible = value);
+            var alphaCheck = CreateOptionCheckBox("alpha", "Alpha Enabled", isChecked: false, isEnabled: true, value =>
+            {
+                colorPicker.IsAlphaEnabled = value;
+                alphaSliderCheck.IsEnabled = value;
+                alphaTextInputCheck.IsEnabled = value;
             });
+
+            options.Children.Add(moreButtonCheck);
+            options.Children.Add(colorSliderCheck);
+            options.Children.Add(colorChannelInputCheck);
+            options.Children.Add(hexInputCheck);
+            options.Children.Add(alphaCheck);
+            options.Children.Add(alphaSliderCheck);
+            options.Children.Add(alphaTextInputCheck);
+
+            var shapeRadioButtons = new Mux.RadioButtons
+            {
+                Name = "ColorSpectrumShapeRadioButtons",
+                Header = "Colorspectrum shape",
+                SelectedIndex = 0
+            };
+            shapeRadioButtons.Items.Add("Box");
+            shapeRadioButtons.Items.Add("Ring");
+            shapeRadioButtons.SelectionChanged += delegate
+            {
+                colorPicker.ColorSpectrumShape = shapeRadioButtons.SelectedIndex == 1
+                    ? Mux.ColorSpectrumShape.Ring
+                    : Mux.ColorSpectrumShape.Box;
+            };
+            options.Children.Add(shapeRadioButtons);
+
+            var previewStack = new StackPanel
+            {
+                Margin = new Thickness(0, 12, 0, 0)
+            };
+            previewStack.Children.Add(new TextBlock
+            {
+                Text = "ColorPicker applied on a Rectangle"
+            });
+            var previewFill = new SolidColorBrush(colorPicker.Color);
+            var previewRect = new Rectangle
+            {
+                Name = "previewRect",
+                Height = 100,
+                Margin = new Thickness(0, 12, 0, 0),
+                StrokeThickness = 1,
+                Fill = previewFill
+            };
+            previewRect.SetResourceReference(Shape.StrokeProperty, "TextControlBorderBrush");
+            colorPicker.ColorChanged += delegate
+            {
+                previewFill.Color = colorPicker.Color;
+            };
+            previewStack.Children.Add(previewRect);
+            options.Children.Add(previewStack);
+
+            layout.Children.Add(options);
+            panel.Children.Add(layout);
             return panel;
         }
 
@@ -1120,6 +1244,25 @@ namespace ModernWpf.Gallery.Pages
         private static string FormatRatingValue(double value)
         {
             return value.ToString(CultureInfo.InvariantCulture);
+        }
+
+        private static CheckBox CreateOptionCheckBox(
+            string name,
+            string content,
+            bool isChecked,
+            bool isEnabled,
+            Action<bool> valueChanged)
+        {
+            var checkBox = new CheckBox
+            {
+                Name = name,
+                Content = content,
+                IsChecked = isChecked,
+                IsEnabled = isEnabled
+            };
+            checkBox.Checked += delegate { valueChanged(true); };
+            checkBox.Unchecked += delegate { valueChanged(false); };
+            return checkBox;
         }
 
         private static void UpdateSimpleRatingOutput(Mux.RatingControl rating, TextBlock output)

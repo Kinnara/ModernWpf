@@ -106,6 +106,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.ColorPickerSampleMatchesWinUIGalleryExample|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 19 tests per target. The generated ModernWpf ColorPicker page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\ColorPickerPage.xaml` / `.xaml.cs`: one `ColorPicker Properties.` example with property checkboxes, color-spectrum shape radio buttons, and a preview rectangle. `BasicInputSampleFactory.CreateExamples` now covers ColorPicker as a source-backed Basic Input WinUI extension page, exposes curated automation IDs `GallerySample_ColorPicker_Root` and `GallerySample_ColorPicker_ColorPicker`, keeps WinUI's `colorPicker`, `moreBtn`, `colorSlider`, `colorChannelInput`, `hexInput`, `alpha`, `alphaSlider`, `alphaTextInput`, `ColorSpectrumShapeRadioButtons`, `previewRect`, and source XAML substitution placeholders, and adapts WinUI binding handlers to WPF event handlers. Current warning/output remains `NU1903`, generated WinRT warnings when regeneration is triggered, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls ColorPicker -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-144208-944-77976/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`; ModernWpf captured the ColorPicker primary artifact at `322x461` and sample root at `790x461`; the installed WinUI Gallery sample crop is `861x664`; whole-window Light mean delta is `188.47`. The installed WinUI Gallery does not expose the source `x:Name="colorPicker"` root as a UIA automation element, so ColorPicker currently has no reference primary crop delta.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls ColorPicker -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-144229-184-115376/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`; ModernWpf captured the ColorPicker primary artifact at `322x461` and sample root at `790x461`; the installed WinUI Gallery sample crop is `861x664`; whole-window Dark mean delta is `40.11`. The visual harness now includes ColorPicker in the default control set and uses `GallerySample_ColorPicker_ColorPicker` as the ModernWpf required/primary crop target, while intentionally leaving the WinUI reference primary target empty until a stable exposed UIA element exists.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the ColorPicker WinUI example alignment and visual harness mapping. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages, existing ModernWpf/ModernWpf.Controls warnings, `19 Warning(s)`, and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.RatingControlSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 18 tests per target. The generated ModernWpf RatingControl page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\RatingControlPage.xaml` / `.xaml.cs`: the simple RatingControl with caption/output/options and the placeholder-value RatingControl with a slider. `BasicInputSampleFactory.CreateExamples` now covers RatingControl as a source-backed Basic Input WinUI extension page, exposes curated automation IDs `GallerySample_RatingControl_Root` and `GallerySample_RatingControl_RatingControl`, keeps WinUI's `RatingControl1`, `RatingControl2`, `clearEnabledCheck`, `readOnlyCheck`, `slider`, `Simple RatingControl`, `RatingControl with placeholder`, and source XAML substitution placeholders, and adapts ModernWpf's placeholder sentinel so slider value `0` renders as the intended empty placeholder state. The shared RatingControl template now renders its caption with `ContentControlThemeFontFamily` so caption text no longer inherits the symbol font used for rating glyphs. Current warning/output remains `NU1903`, generated WinRT warnings when regeneration is triggered, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls RatingControl -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -1399,6 +1407,28 @@ primary crops, and primary deltas `4.95` / `9.36`. The visual harness uses the
 WinUI reference automation ID `Toggle1` for the primary crop. Avoid reopening
 ToggleButton's source shape unless a new WinUI source or crop regression
 appears.
+The generated ModernWpf ColorPicker extension page now uses the local official
+WinUI Gallery one-example structure from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\ColorPickerPage.xaml`
+/ `.xaml.cs`: a `ColorPicker Properties.` sample with property toggles,
+`ColorSpectrumShape` selection, and a preview rectangle. `BasicInputSampleFactory.CreateExamples`
+now covers ColorPicker as a source-backed Basic Input WinUI example, keeps
+WinUI's `colorPicker`, `moreBtn`, `colorSlider`, `colorChannelInput`,
+`hexInput`, `alpha`, `alphaSlider`, `alphaTextInput`,
+`ColorSpectrumShapeRadioButtons`, `previewRect`, and source XAML substitution
+placeholders, and adapts WinUI binding updates to WPF event handlers. The
+preview rectangle tracks `ColorPicker.ColorChanged`, and the WPF radio buttons
+map `Box` / `Ring` to `Mux.ColorSpectrumShape`. Current ColorPicker
+WinUI-reference evidence is
+`artifacts/visual-checks/20260524-144208-944-77976/report.md` for Light and
+`artifacts/visual-checks/20260524-144229-184-115376/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`; ModernWpf captures the
+ColorPicker primary artifact at `322x461` and sample root at `790x461`, while
+the installed WinUI Gallery sample crop is `861x664`. The installed reference
+does not expose the source `colorPicker` root as a UIA automation element, so
+the visual harness uses only `GallerySample_ColorPicker_ColorPicker` as the
+ModernWpf required/primary crop target for now. Avoid reopening ColorPicker's
+source shape unless a new WinUI source or crop regression appears.
 The generated ModernWpf RatingControl extension page now uses the local official
 WinUI Gallery two-example structure from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\RatingControlPage.xaml`

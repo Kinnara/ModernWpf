@@ -29,6 +29,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "InfoBar", "GallerySample_InfoBar_Root", "GallerySample_InfoBar_InfoBar" };
             yield return new object[] { "NavigationView", "GallerySample_NavigationView_Root", "GallerySample_NavigationView_NavigationView" };
             yield return new object[] { "ContentDialog", "GallerySample_ContentDialog_Root", "GallerySample_ContentDialog_ShowButton" };
+            yield return new object[] { "ColorPicker", "GallerySample_ColorPicker_Root", "GallerySample_ColorPicker_ColorPicker" };
             yield return new object[] { "HyperlinkButton", "GallerySample_HyperlinkButton_Root", "GallerySample_HyperlinkButton_HyperlinkButton" };
             yield return new object[] { "RatingControl", "GallerySample_RatingControl_Root", "GallerySample_RatingControl_RatingControl" };
             yield return new object[] { "RepeatButton", "GallerySample_RepeatButton_Root", "GallerySample_RepeatButton_RepeatButton" };
@@ -661,6 +662,119 @@ namespace ModernWpf.Gallery.Tests
                     clickButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent, clickButton));
                     Assert.IsNotNull(requestedItem);
                     Assert.AreEqual("ToggleButton", requestedItem.UniqueId);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void ColorPickerSampleMatchesWinUIGalleryExample()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("ColorPicker"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(1, page.Examples.Count);
+                    Assert.AreEqual("ColorPicker Properties.", page.Examples[0].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "ColorSpectrumShape=\"$(ColorSpectrumShape)\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "IsMoreButtonVisible=\"$(IsMoreButtonVisible)\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "IsColorSliderVisible=\"$(IsColorSliderVisible)\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "IsColorChannelTextInputVisible=\"$(IsColorChannelTextInputVisible)\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "IsHexInputVisible=\"$(IsHexInputVisible)\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "IsAlphaEnabled=\"$(IsAlphaEnabled)\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "IsAlphaSliderVisible=\"$(IsAlphaSliderVisible)\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "IsAlphaTextInputVisible=\"$(IsAlphaTextInputVisible)\"");
+                    Assert.IsNull(page.Examples[0].CSharpCode);
+
+                    var colorPicker = (Mux.ColorPicker)FindByAutomationId(page, "GallerySample_ColorPicker_ColorPicker");
+                    var moreButtonCheck = FindNamedDescendant<CheckBox>(page, "moreBtn");
+                    var colorSliderCheck = FindNamedDescendant<CheckBox>(page, "colorSlider");
+                    var colorChannelInputCheck = FindNamedDescendant<CheckBox>(page, "colorChannelInput");
+                    var hexInputCheck = FindNamedDescendant<CheckBox>(page, "hexInput");
+                    var alphaCheck = FindNamedDescendant<CheckBox>(page, "alpha");
+                    var alphaSliderCheck = FindNamedDescendant<CheckBox>(page, "alphaSlider");
+                    var alphaTextInputCheck = FindNamedDescendant<CheckBox>(page, "alphaTextInput");
+                    var shapeRadioButtons = FindNamedDescendant<Mux.RadioButtons>(page, "ColorSpectrumShapeRadioButtons");
+                    var previewRect = FindNamedDescendant<System.Windows.Shapes.Rectangle>(page, "previewRect");
+                    Assert.IsNotNull(colorPicker);
+                    Assert.IsNotNull(moreButtonCheck);
+                    Assert.IsNotNull(colorSliderCheck);
+                    Assert.IsNotNull(colorChannelInputCheck);
+                    Assert.IsNotNull(hexInputCheck);
+                    Assert.IsNotNull(alphaCheck);
+                    Assert.IsNotNull(alphaSliderCheck);
+                    Assert.IsNotNull(alphaTextInputCheck);
+                    Assert.IsNotNull(shapeRadioButtons);
+                    Assert.IsNotNull(previewRect);
+
+                    Assert.AreEqual("colorPicker", colorPicker.Name);
+                    Assert.IsFalse(colorPicker.IsMoreButtonVisible);
+                    Assert.IsTrue(colorPicker.IsColorSliderVisible);
+                    Assert.IsTrue(colorPicker.IsColorChannelTextInputVisible);
+                    Assert.IsTrue(colorPicker.IsHexInputVisible);
+                    Assert.IsFalse(colorPicker.IsAlphaEnabled);
+                    Assert.IsTrue(colorPicker.IsAlphaSliderVisible);
+                    Assert.IsTrue(colorPicker.IsAlphaTextInputVisible);
+                    Assert.AreEqual(Mux.ColorSpectrumShape.Box, colorPicker.ColorSpectrumShape);
+                    Assert.AreEqual("Colorspectrum shape", shapeRadioButtons.Header);
+                    Assert.AreEqual(0, shapeRadioButtons.SelectedIndex);
+                    Assert.AreEqual(2, shapeRadioButtons.Items.Count);
+                    Assert.AreEqual("Box", shapeRadioButtons.Items[0]);
+                    Assert.AreEqual("Ring", shapeRadioButtons.Items[1]);
+                    Assert.AreEqual(250.0, ((FrameworkElement)moreButtonCheck.Parent).Width);
+                    Assert.AreEqual(new Thickness(0, -5, 0, 0), ((FrameworkElement)moreButtonCheck.Parent).Margin);
+                    Assert.IsFalse(alphaSliderCheck.IsEnabled);
+                    Assert.IsFalse(alphaTextInputCheck.IsEnabled);
+                    Assert.AreEqual(100.0, previewRect.Height);
+                    Assert.AreEqual(new Thickness(0, 12, 0, 0), previewRect.Margin);
+                    Assert.AreEqual(1.0, previewRect.StrokeThickness);
+                    Assert.AreEqual(colorPicker.Color, ((SolidColorBrush)previewRect.Fill).Color);
+
+                    moreButtonCheck.IsChecked = true;
+                    colorSliderCheck.IsChecked = false;
+                    colorChannelInputCheck.IsChecked = false;
+                    hexInputCheck.IsChecked = false;
+                    alphaCheck.IsChecked = true;
+                    alphaSliderCheck.IsChecked = false;
+                    alphaTextInputCheck.IsChecked = false;
+                    shapeRadioButtons.SelectedIndex = 1;
+                    colorPicker.Color = Color.FromRgb(51, 102, 204);
+                    WpfTestHost.DoEvents();
+
+                    Assert.IsTrue(colorPicker.IsMoreButtonVisible);
+                    Assert.IsFalse(colorPicker.IsColorSliderVisible);
+                    Assert.IsFalse(colorPicker.IsColorChannelTextInputVisible);
+                    Assert.IsFalse(colorPicker.IsHexInputVisible);
+                    Assert.IsTrue(colorPicker.IsAlphaEnabled);
+                    Assert.IsTrue(alphaSliderCheck.IsEnabled);
+                    Assert.IsTrue(alphaTextInputCheck.IsEnabled);
+                    Assert.IsFalse(colorPicker.IsAlphaSliderVisible);
+                    Assert.IsFalse(colorPicker.IsAlphaTextInputVisible);
+                    Assert.AreEqual(Mux.ColorSpectrumShape.Ring, colorPicker.ColorSpectrumShape);
+                    Assert.AreEqual(Color.FromRgb(51, 102, 204), ((SolidColorBrush)previewRect.Fill).Color);
                 }
                 finally
                 {

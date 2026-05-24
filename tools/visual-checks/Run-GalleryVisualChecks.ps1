@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "InfoBar", "NavigationView", "ContentDialog", "MenuBar", "CommandBar", "CommandBarFlyout"),
+    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "InfoBar", "NavigationView", "ContentDialog", "MenuBar", "CommandBar", "CommandBarFlyout"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -424,6 +424,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "TeachingTip" { return "GallerySample_TeachingTip_ShowButton" }
         "Button" { return "GallerySample_Button_PrimaryButton" }
         "ComboBox" { return "GallerySample_ComboBox_ComboBox" }
+        "ColorPicker" { return "GallerySample_ColorPicker_ColorPicker" }
         "HyperlinkButton" { return "GallerySample_HyperlinkButton_HyperlinkButton" }
         "RatingControl" { return "GallerySample_RatingControl_RatingControl" }
         "RepeatButton" { return "GallerySample_RepeatButton_RepeatButton" }
@@ -459,6 +460,7 @@ function Get-PrimaryCropMinimumVisibleStdDev([string]$control) {
 function Get-ModernPrimaryCropAutomationId([string]$control) {
     switch ($control) {
         "InfoBar" { return "GallerySample_InfoBar_InfoBar" }
+        "ColorPicker" { return "GallerySample_ColorPicker_ColorPicker" }
         "HyperlinkButton" { return "GallerySample_HyperlinkButton_HyperlinkButton" }
         "RatingControl" { return "GallerySample_RatingControl_RatingControl" }
         "RepeatButton" { return "GallerySample_RepeatButton_RepeatButton" }
