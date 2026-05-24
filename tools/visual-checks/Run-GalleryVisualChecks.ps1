@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "BreadcrumbBar", "Pivot", "SelectorBar", "TabView", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout"),
+    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "BreadcrumbBar", "Pivot", "SelectorBar", "TabView", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout", "StandardUICommand", "XamlUICommand"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -453,6 +453,8 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "AppBarToggleButton" { return "GallerySample_AppBarToggleButton_AppBarToggleButton" }
         "CommandBar" { return "GallerySample_CommandBar_CommandBar" }
         "CommandBarFlyout" { return "GallerySample_CommandBarFlyout_ShowButton" }
+        "StandardUICommand" { return "GallerySample_StandardUICommand_ListView" }
+        "XamlUICommand" { return "GallerySample_XamlUICommand_AppBarButton" }
         default { return "GalleryItemPageTitle" }
     }
 }
@@ -465,6 +467,7 @@ function Get-PrimaryCropMinimumVisibleStdDev([string]$control) {
     switch ($control) {
         "NavigationView" { return 45.0 }
         "AutoSuggestBox" { return 1.0 }
+        "StandardUICommand" { return 1.0 }
         default { return 6.0 }
     }
 }
@@ -498,6 +501,8 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
         "AppBarToggleButton" { return "GallerySample_AppBarToggleButton_AppBarToggleButton" }
         "CommandBar" { return "GallerySample_CommandBar_CommandBar" }
         "CommandBarFlyout" { return "GallerySample_CommandBarFlyout_ShowButton" }
+        "StandardUICommand" { return "GallerySample_StandardUICommand_ListView" }
+        "XamlUICommand" { return "GallerySample_XamlUICommand_AppBarButton" }
         default { return Get-RequiredSampleAutomationId $control }
     }
 }
@@ -517,6 +522,8 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
         "AppBarToggleButton" { return "Button1" }
         "CommandBar" { return "PrimaryCommandBar" }
         "CommandBarFlyout" { return "myImageButton" }
+        "StandardUICommand" { return "ListViewRight" }
+        "XamlUICommand" { return "CustomButton" }
         "HyperlinkButton" { return "Control1" }
         "RatingControl" { return "RatingControl1" }
         "ToggleButton" { return "Toggle1" }
@@ -1191,6 +1198,10 @@ function Capture-StaticCrops([string]$app, [string]$control, [string]$caseDir, $
             else {
                 $primaryCrop = $null
             }
+        }
+
+        if ($control -eq "StandardUICommand" -and $null -ne $primaryCrop -and !$primaryCrop.NonBlank -and $primaryCrop.VisibleStdDev -ge (Get-PrimaryCropMinimumVisibleStdDev $control)) {
+            $primaryCrop["NonBlank"] = $true
         }
 
         if ($control -eq "BreadcrumbBar") {

@@ -55,6 +55,8 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "AppBarToggleButton", "GallerySample_AppBarToggleButton_Root", "GallerySample_AppBarToggleButton_AppBarToggleButton" };
             yield return new object[] { "CommandBar", "GallerySample_CommandBar_Root", "GallerySample_CommandBar_CommandBar" };
             yield return new object[] { "CommandBarFlyout", "GallerySample_CommandBarFlyout_Root", "GallerySample_CommandBarFlyout_ShowButton" };
+            yield return new object[] { "StandardUICommand", "GallerySample_StandardUICommand_Root", "GallerySample_StandardUICommand_ListView" };
+            yield return new object[] { "XamlUICommand", "GallerySample_XamlUICommand_Root", "GallerySample_XamlUICommand_AppBarButton" };
         }
 
         [TestMethod]
@@ -1559,6 +1561,97 @@ namespace ModernWpf.Gallery.Tests
                     symbolToggleButton.IsChecked = true;
                     symbolToggleButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
                     Assert.AreEqual("IsChecked = True", toggleOutput.Text);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void CommandSamplesMatchWinUIGalleryExamples()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var standardCommandPage = new ItemPage(GalleryCatalog.FindItem("StandardUICommand"));
+                var xamlCommandPage = new ItemPage(GalleryCatalog.FindItem("XamlUICommand"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual
+                };
+
+                try
+                {
+                    window.Content = standardCommandPage;
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(1, standardCommandPage.Examples.Count);
+                    Assert.AreEqual("Exposing a command in multiple controls using StandardUICommand", standardCommandPage.Examples[0].HeaderText);
+                    Assert.IsFalse(standardCommandPage.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(standardCommandPage.Examples[0].XamlCode, "DeleteSwipeItem");
+                    StringAssert.Contains(standardCommandPage.Examples[0].XamlCode, "HoverButton");
+                    StringAssert.Contains(standardCommandPage.Examples[0].CSharpCode, "StandardUICommandKind.Delete");
+
+                    var standardRoot = (FrameworkElement)FindByAutomationId(standardCommandPage, "GallerySample_StandardUICommand_Root");
+                    var listView = (ListView)FindByAutomationId(standardCommandPage, "GallerySample_StandardUICommand_ListView");
+                    var namedListView = FindNamedDescendant<ListView>(standardCommandPage, "ListViewRight");
+                    var menu = FindNamedDescendant<Mux.MenuBar>(standardCommandPage, "StandardUICommandMenuBar");
+                    Assert.IsNotNull(standardRoot);
+                    Assert.AreSame(listView, namedListView);
+                    Assert.IsNotNull(menu);
+                    var editMenu = (Mux.MenuBarItem)menu.Items[1];
+                    var deleteFlyoutItem = (MenuItem)editMenu.Items[0];
+                    Assert.AreEqual("DeleteFlyoutItem", deleteFlyoutItem.Name);
+                    Assert.IsNotNull(deleteFlyoutItem.Command);
+                    Assert.AreEqual("Delete", deleteFlyoutItem.InputGestureText);
+                    Assert.AreEqual(500.0, listView.Height);
+                    Assert.AreEqual(15, listView.Items.Count);
+                    Assert.AreEqual("List item 0", GetCommandListItemText(listView.Items[0]));
+                    Assert.IsNotNull(listView.ItemTemplate);
+                    var firstContainer = listView.ItemContainerGenerator.ContainerFromIndex(0) as ListViewItem;
+                    Assert.IsNotNull(firstContainer);
+                    Assert.IsNotNull(firstContainer.ContextMenu);
+                    Assert.AreEqual(1, firstContainer.ContextMenu.Items.Count);
+
+                    listView.SelectedIndex = 1;
+                    deleteFlyoutItem.Command.Execute(null);
+                    Assert.AreEqual(14, listView.Items.Count);
+                    Assert.AreEqual("List item 2", GetCommandListItemText(listView.Items[1]));
+
+                    window.Content = xamlCommandPage;
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(1, xamlCommandPage.Examples.Count);
+                    Assert.AreEqual("Creating a reusable command with XamlUICommand", xamlCommandPage.Examples[0].HeaderText);
+                    Assert.IsFalse(xamlCommandPage.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(xamlCommandPage.Examples[0].XamlCode, "CustomXamlUICommand");
+                    StringAssert.Contains(xamlCommandPage.Examples[0].XamlCode, "SymbolIconSource Symbol=\"Favorite\"");
+                    StringAssert.Contains(xamlCommandPage.Examples[0].CSharpCode, "You fired the custom command");
+
+                    var customButton = (Mux.AppBarButton)FindByAutomationId(xamlCommandPage, "GallerySample_XamlUICommand_AppBarButton");
+                    var namedCustomButton = FindNamedDescendant<Mux.AppBarButton>(xamlCommandPage, "CustomButton");
+                    var output = FindNamedDescendant<TextBlock>(xamlCommandPage, "XamlUICommandOutput");
+                    Assert.AreSame(customButton, namedCustomButton);
+                    Assert.AreEqual("Custom XamlUICommand", customButton.Label);
+                    Assert.AreEqual(Mux.Symbol.Favorite, ((Mux.SymbolIcon)customButton.Icon).Symbol);
+                    Assert.AreEqual("Ctrl+D", customButton.InputGestureText);
+                    Assert.IsNotNull(output);
+
+                    customButton.Command.Execute(null);
+                    Assert.AreEqual("You fired the custom command", output.Text);
                 }
                 finally
                 {
@@ -3247,6 +3340,13 @@ namespace ModernWpf.Gallery.Tests
                 Assert.IsNull(reply.Icon);
                 Assert.IsNull(replyAll.Icon);
             }
+        }
+
+        private static string GetCommandListItemText(object item)
+        {
+            var property = item.GetType().GetProperty("Text");
+            Assert.IsNotNull(property);
+            return (string)property.GetValue(item, null);
         }
 
         private static void AssertAppBarButton(object command, Mux.Symbol symbol, string label)

@@ -106,6 +106,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.CommandSamplesMatchWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 33 tests per target. The generated ModernWpf StandardUICommand and XamlUICommand pages now follow the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\StandardUICommandPage.xaml` / `.xaml.cs` and `XamlUICommandPage.xaml` / `.xaml.cs`: StandardUICommand exposes the shared delete command through `DeleteFlyoutItem`, a 15-item `ListViewRight`, source-shaped `DeleteSwipeItem`, and `HoverButton`; XamlUICommand exposes `CustomButton`, Favorite icon, `Ctrl+D`, description tooltip, and `XamlUICommandOutput`. `MenusToolbarsSampleFactory.CreateExamples` now covers these Menu & Toolbar WinUI extension pages, keeps the existing local WinUI sample-code snippets under `ModernWpf.Gallery\Samples\SampleCode\StandardUICommand` and `XamlUICommand`, and exposes curated automation IDs `GallerySample_StandardUICommand_Root` / `GallerySample_StandardUICommand_ListView` and `GallerySample_XamlUICommand_Root` / `GallerySample_XamlUICommand_AppBarButton`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls StandardUICommand,XamlUICommand -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-185421-822-115196/report.md`: ModernWpf and installed WinUI 3 Gallery all `Passed`, required command sample elements were found, XamlUICommand primary crops match at `68x90` with delta `13.3`, and StandardUICommand compares the source-backed list at `745x500` vs `745x406` with primary delta `7.93`. The remaining StandardUICommand height difference is viewport clipping around the 500px list rather than a source-shape gap.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls StandardUICommand,XamlUICommand -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-185508-320-111796/report.md`: ModernWpf and installed WinUI 3 Gallery all `Passed`, required command sample elements were found, XamlUICommand primary crops match at `68x90` with delta `14.99`, and StandardUICommand compares at `745x500` vs `745x406` with primary delta `10.08`.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the StandardUICommand and XamlUICommand WinUI example alignment. Current incremental build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages, `0 Warning(s)`, and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.AppBarControlsMatchWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 31 tests per target. The generated ModernWpf AppBarButton, AppBarSeparator, and AppBarToggleButton pages now follow the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\AppBarButtonPage.xaml`, `AppBarSeparatorPage.xaml`, and `AppBarToggleButtonPage.xaml`: six AppBarButton examples covering symbol, bitmap, font, path, keyboard accelerator, and flyout/input variants; one AppBarSeparator CommandBar example; and four AppBarToggleButton examples covering symbol, bitmap, font, and three-state path variants. `MenusToolbarsSampleFactory.CreateExamples` now covers these three Menu & Toolbar WinUI extension pages, keeps WinUI's `Button1`-`Button6`, `Control1`, and output names, exposes curated automation IDs `GallerySample_AppBarButton_Root` / `GallerySample_AppBarButton_AppBarButton`, `GallerySample_AppBarSeparator_Root` / `GallerySample_AppBarSeparator_CommandBar`, and `GallerySample_AppBarToggleButton_Root` / `GallerySample_AppBarToggleButton_AppBarToggleButton`, and adapts WinUI `KeyboardAccelerator`, `AllowFocusOnInteraction`, and `PlaceholderText` shapes to existing ModernWpf/WPF APIs.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls AppBarButton,AppBarSeparator,AppBarToggleButton -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -1567,6 +1575,24 @@ passes with primary deltas `15.12` / `17.43`, but the retained ModernWpf
 CommandBar template currently measures wider than the installed WinUI reference
 (`406x48` vs `334x48`), so treat that as a known remaining control-template
 drift rather than a source-shape gap.
+The generated ModernWpf StandardUICommand and XamlUICommand extension pages now
+use the local official WinUI Gallery structures from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\StandardUICommandPage.xaml`
+/ `.xaml.cs` and `XamlUICommandPage.xaml` / `.xaml.cs`. StandardUICommand keeps
+the shared delete command shape across `DeleteFlyoutItem`, `ListViewRight`,
+`DeleteSwipeItem`, and `HoverButton`; XamlUICommand keeps `CustomButton`, the
+Favorite icon, `Ctrl+D`, custom command description, and `XamlUICommandOutput`.
+Current command-page WinUI-reference evidence is
+`artifacts/visual-checks/20260524-185421-822-115196/report.md` for Light and
+`artifacts/visual-checks/20260524-185508-320-111796/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`. XamlUICommand has
+matching `68x90` primary crops with deltas `13.3` / `14.99`; StandardUICommand
+is source-backed and passes with primary deltas `7.93` / `10.08`, but its
+source `Height=500` list is clipped differently by the installed WinUI Gallery
+viewport (`745x500` vs `745x406`), so treat that as known viewport/crop drift
+rather than a source-shape gap. The visual harness includes a narrow
+StandardUICommand sparse-list exception so the mostly empty light list crop is
+not misclassified as blank.
 The generated ModernWpf MenuBar extension page now uses the local official
 WinUI Gallery three-example structure for a simple MenuBar, keyboard
 accelerators, and submenus/separators/radio items, with WPF `MenuItem`,
