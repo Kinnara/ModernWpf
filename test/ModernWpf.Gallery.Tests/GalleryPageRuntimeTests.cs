@@ -102,7 +102,8 @@ namespace ModernWpf.Gallery.Tests
                 Assert.IsFalse(calendarViewPage.UsesWpfGalleryPageMode);
                 Assert.IsTrue(calendarViewPage.ShowCatalogDetails);
                 Assert.IsTrue(calendarViewPage.ShowDocs);
-                Assert.AreEqual("Working WPF sample", calendarViewPage.Examples.Single().HeaderText);
+                Assert.IsTrue(calendarViewPage.ShowExamples);
+                Assert.AreEqual("A basic calendar view.", calendarViewPage.Examples.Single().HeaderText);
 
                 Assert.IsTrue(richTextEditPage.UsesWpfGalleryPageMode);
                 Assert.IsFalse(richTextEditPage.ShowCatalogDetails);
@@ -111,7 +112,8 @@ namespace ModernWpf.Gallery.Tests
                 Assert.IsFalse(richEditBoxPage.UsesWpfGalleryPageMode);
                 Assert.IsTrue(richEditBoxPage.ShowCatalogDetails);
                 Assert.IsTrue(richEditBoxPage.ShowDocs);
-                Assert.AreEqual("Working WPF sample", richEditBoxPage.Examples.Single().HeaderText);
+                Assert.IsTrue(richEditBoxPage.ShowExamples);
+                Assert.AreEqual("A simple text editor using RichEditBox.", richEditBoxPage.Examples.First().HeaderText);
             });
         }
 
