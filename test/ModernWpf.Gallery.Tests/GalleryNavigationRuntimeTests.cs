@@ -331,7 +331,7 @@ namespace ModernWpf.Gallery.Tests
                 {
                     var chrome = WindowChrome.GetWindowChrome(window);
                     Assert.IsNotNull(chrome);
-                    Assert.AreEqual(44d, chrome.CaptionHeight);
+                    Assert.AreEqual(50d, chrome.CaptionHeight);
                     Assert.AreEqual(new CornerRadius(12), chrome.CornerRadius);
                     Assert.AreEqual(new Thickness(-1), chrome.GlassFrameThickness);
                     Assert.AreEqual(new Thickness(4), chrome.ResizeBorderThickness);
@@ -380,7 +380,7 @@ namespace ModernWpf.Gallery.Tests
             WpfTestHost.Run(() =>
             {
                 var chrome = MainWindow.CreateWpfGalleryWindowChrome(ResizeMode.NoResize);
-                Assert.AreEqual(44d, chrome.CaptionHeight);
+                Assert.AreEqual(50d, chrome.CaptionHeight);
                 Assert.AreEqual(new CornerRadius(12), chrome.CornerRadius);
                 Assert.AreEqual(new Thickness(-1), chrome.GlassFrameThickness);
                 Assert.AreEqual(new Thickness(0), chrome.ResizeBorderThickness);

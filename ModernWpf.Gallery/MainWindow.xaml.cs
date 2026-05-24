@@ -98,7 +98,7 @@ namespace ModernWpf.Gallery
         {
             return new WindowChrome
             {
-                CaptionHeight = 44,
+                CaptionHeight = 50,
                 CornerRadius = new CornerRadius(12),
                 GlassFrameThickness = new Thickness(-1),
                 ResizeBorderThickness = resizeMode == ResizeMode.NoResize ? default : new Thickness(4),
@@ -198,7 +198,7 @@ namespace ModernWpf.Gallery
 
         private void CloseWindow(object sender, RoutedEventArgs e)
         {
-            Close();
+            Application.Current.Shutdown();
         }
     }
 }
