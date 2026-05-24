@@ -28,6 +28,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "InfoBar", "GallerySample_InfoBar_Root", "GallerySample_InfoBar_InfoBar" };
             yield return new object[] { "NavigationView", "GallerySample_NavigationView_Root", "GallerySample_NavigationView_NavigationView" };
             yield return new object[] { "ContentDialog", "GallerySample_ContentDialog_Root", "GallerySample_ContentDialog_ShowButton" };
+            yield return new object[] { "DropDownButton", "GallerySample_DropDownButton_Root", "GallerySample_DropDownButton_DropDownButton" };
             yield return new object[] { "MenuBar", "GallerySample_MenuBar_Root", "GallerySample_MenuBar_MenuBar" };
             yield return new object[] { "CommandBar", "GallerySample_CommandBar_Root", "GallerySample_CommandBar_CommandBar" };
             yield return new object[] { "CommandBarFlyout", "GallerySample_CommandBarFlyout_Root", "GallerySample_CommandBarFlyout_ShowButton" };
@@ -407,6 +408,58 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsTrue(portrait.IsChecked);
                     Assert.AreEqual("SizeGroup", mediumIcons.GroupName);
                     Assert.IsTrue(mediumIcons.IsChecked);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void DropDownButtonSampleMatchesWinUIGalleryExamples()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("DropDownButton"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(2, page.Examples.Count);
+                    Assert.AreEqual("Simple DropDownButton", page.Examples[0].HeaderText);
+                    Assert.AreEqual("DropDownButton with Icons", page.Examples[1].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "<DropDownButton Content=\"Email\">");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "AutomationProperties.Name=\"Email\"");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "Glyph=\"&#xE715;\"");
+
+                    var simpleButton = (Mux.DropDownButton)FindByAutomationId(page, "GallerySample_DropDownButton_DropDownButton");
+                    var iconButton = (Mux.DropDownButton)FindByAutomationId(page, "GallerySample_DropDownButton_IconDropDownButton");
+                    Assert.IsNotNull(simpleButton);
+                    Assert.IsNotNull(iconButton);
+                    Assert.AreEqual("Email", simpleButton.Content);
+                    Assert.AreEqual("Email", AutomationProperties.GetName(iconButton));
+                    Assert.AreEqual("\uE715", ((Mux.FontIcon)iconButton.Content).Glyph);
+
+                    AssertEmailDropDownFlyout(simpleButton.Flyout, includeIcons: false);
+                    AssertEmailDropDownFlyout(iconButton.Flyout, includeIcons: true);
                 }
                 finally
                 {
@@ -1052,6 +1105,34 @@ namespace ModernWpf.Gallery.Tests
             }
 
             return null;
+        }
+
+        private static void AssertEmailDropDownFlyout(ModernWpf.Controls.Primitives.FlyoutBase flyoutBase, bool includeIcons)
+        {
+            var flyout = flyoutBase as Mux.MenuFlyout;
+            Assert.IsNotNull(flyout);
+            Assert.AreEqual(ModernWpf.Controls.Primitives.FlyoutPlacementMode.BottomEdgeAlignedLeft, flyout.Placement);
+            Assert.AreEqual(3, flyout.Items.Count);
+
+            var send = (MenuItem)flyout.Items[0];
+            var reply = (MenuItem)flyout.Items[1];
+            var replyAll = (MenuItem)flyout.Items[2];
+            Assert.AreEqual("Send", send.Header);
+            Assert.AreEqual("Reply", reply.Header);
+            Assert.AreEqual("Reply All", replyAll.Header);
+
+            if (includeIcons)
+            {
+                Assert.AreEqual("\uE725", ((Mux.FontIcon)send.Icon).Glyph);
+                Assert.AreEqual("\uE8CA", ((Mux.FontIcon)reply.Icon).Glyph);
+                Assert.AreEqual("\uE8C2", ((Mux.FontIcon)replyAll.Icon).Glyph);
+            }
+            else
+            {
+                Assert.IsNull(send.Icon);
+                Assert.IsNull(reply.Icon);
+                Assert.IsNull(replyAll.Icon);
+            }
         }
     }
 }

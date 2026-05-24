@@ -1,9 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using ModernWpf.Gallery.Models;
 using ModernWpf.Controls.Primitives;
 using Mux = ModernWpf.Controls;
 
@@ -11,6 +14,17 @@ namespace ModernWpf.Gallery.Pages
 {
     internal static class BasicInputSampleFactory
     {
+        public static IReadOnlyList<GalleryExample> CreateExamples(string uniqueId, IReadOnlyList<SampleSnippet> sampleSnippets)
+        {
+            switch (uniqueId)
+            {
+                case "DropDownButton":
+                    return CreateDropDownButtonExamples(sampleSnippets);
+                default:
+                    return Array.Empty<GalleryExample>();
+            }
+        }
+
         public static UIElement Create(string uniqueId)
         {
             switch (uniqueId)
@@ -72,24 +86,99 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateDropDownButtonSample()
         {
-            var panel = CreateSamplePanel("Use DropDownButton when the primary action is choosing from a short command menu.");
-            var output = CreateOutput("Choose a message action.");
-            var menu = new Mux.MenuFlyout();
-            foreach (var label in new[] { "Send", "Reply", "Reply all" })
+            var panel = new GallerySamplePanel
             {
-                var item = new MenuItem { Header = label };
-                item.Click += delegate { output.Text = "Selected: " + label; };
-                menu.Items.Add(item);
-            }
+                Margin = new Thickness(0, 0, 0, 12)
+            };
+            GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("DropDownButton"));
+            panel.Children.Add(CreateSimpleDropDownButtonExampleContent(assignRootAutomationId: false));
+            return panel;
+        }
 
-            panel.Children.Add(new Mux.DropDownButton
+        private static IReadOnlyList<GalleryExample> CreateDropDownButtonExamples(IReadOnlyList<SampleSnippet> sampleSnippets)
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "Simple DropDownButton",
+                    CreateSimpleDropDownButtonExampleContent(assignRootAutomationId: true),
+                    FindSampleCodeText(sampleSnippets, "Buttons\\DropDown\\DropDownButton_Simple.txt"),
+                    null),
+                new GalleryExample(
+                    "DropDownButton with Icons",
+                    CreateIconDropDownButtonExampleContent(),
+                    FindSampleCodeText(sampleSnippets, "Buttons\\DropDown\\DropDownButton_Icon.txt"),
+                    null)
+            };
+        }
+
+        private static GallerySamplePanel CreateSimpleDropDownButtonExampleContent(bool assignRootAutomationId)
+        {
+            var panel = CreateDropDownButtonExampleRoot(assignRootAutomationId);
+            var button = new Mux.DropDownButton
             {
                 Content = "Email",
-                Flyout = menu,
+                Flyout = CreateEmailMenuFlyout(includeIcons: false),
                 HorizontalAlignment = HorizontalAlignment.Left
-            });
-            panel.Children.Add(output);
+            };
+            GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("DropDownButton", "DropDownButton"));
+            panel.Children.Add(button);
             return panel;
+        }
+
+        private static GallerySamplePanel CreateIconDropDownButtonExampleContent()
+        {
+            var panel = CreateDropDownButtonExampleRoot(assignRootAutomationId: false);
+            var button = new Mux.DropDownButton
+            {
+                Content = new Mux.FontIcon { Glyph = "\uE715" },
+                Flyout = CreateEmailMenuFlyout(includeIcons: true),
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+            AutomationProperties.SetName(button, "Email");
+            GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("DropDownButton", "IconDropDownButton"));
+            panel.Children.Add(button);
+            return panel;
+        }
+
+        private static GallerySamplePanel CreateDropDownButtonExampleRoot(bool assignRootAutomationId)
+        {
+            var panel = new GallerySamplePanel
+            {
+                Orientation = Orientation.Horizontal
+            };
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("DropDownButton"));
+            }
+
+            return panel;
+        }
+
+        private static Mux.MenuFlyout CreateEmailMenuFlyout(bool includeIcons)
+        {
+            var flyout = new Mux.MenuFlyout
+            {
+                Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft
+            };
+            flyout.Items.Add(CreateEmailMenuItem("Send", includeIcons ? "\uE725" : null));
+            flyout.Items.Add(CreateEmailMenuItem("Reply", includeIcons ? "\uE8CA" : null));
+            flyout.Items.Add(CreateEmailMenuItem("Reply All", includeIcons ? "\uE8C2" : null));
+            return flyout;
+        }
+
+        private static MenuItem CreateEmailMenuItem(string text, string iconGlyph)
+        {
+            var item = new MenuItem
+            {
+                Header = text
+            };
+            if (iconGlyph != null)
+            {
+                item.Icon = new Mux.FontIcon { Glyph = iconGlyph };
+            }
+
+            return item;
         }
 
         private static UIElement CreateHyperlinkButtonSample()
@@ -298,6 +387,22 @@ namespace ModernWpf.Gallery.Pages
             }
 
             return flyout;
+        }
+
+        private static string FindSampleCodeText(IReadOnlyList<SampleSnippet> snippets, string relativePath)
+        {
+            var fileName = System.IO.Path.GetFileName(relativePath);
+            for (var i = 0; i < snippets.Count; i++)
+            {
+                if (string.Equals(snippets[i].Title, fileName, StringComparison.Ordinal) ||
+                    string.Equals(snippets[i].Title, relativePath, StringComparison.Ordinal))
+                {
+                    return snippets[i].Text;
+                }
+            }
+
+            var path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Samples", "SampleCode", relativePath);
+            return System.IO.File.Exists(path) ? System.IO.File.ReadAllText(path) : null;
         }
 
         private static StackPanel CreateSamplePanel(string description)

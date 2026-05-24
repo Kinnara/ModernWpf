@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "InfoBar", "NavigationView", "ContentDialog", "MenuBar", "CommandBar", "CommandBarFlyout"),
+    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "DropDownButton", "InfoBar", "NavigationView", "ContentDialog", "MenuBar", "CommandBar", "CommandBarFlyout"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -424,6 +424,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "TeachingTip" { return "GallerySample_TeachingTip_ShowButton" }
         "Button" { return "GallerySample_Button_PrimaryButton" }
         "ComboBox" { return "GallerySample_ComboBox_ComboBox" }
+        "DropDownButton" { return "GallerySample_DropDownButton_DropDownButton" }
         "InfoBar" { return "GallerySample_InfoBar_InfoBar" }
         "NavigationView" { return "GallerySample_NavigationView_NavigationView" }
         "ContentDialog" { return "GallerySample_ContentDialog_ShowButton" }
@@ -448,6 +449,7 @@ function Get-PrimaryCropMinimumVisibleStdDev([string]$control) {
 function Get-ModernPrimaryCropAutomationId([string]$control) {
     switch ($control) {
         "InfoBar" { return "GallerySample_InfoBar_InfoBar" }
+        "DropDownButton" { return "GallerySample_DropDownButton_DropDownButton" }
         "MenuBar" { return "GallerySample_MenuBar_MenuBar" }
         "CommandBar" { return "GallerySample_CommandBar_CommandBar" }
         "CommandBarFlyout" { return "GallerySample_CommandBarFlyout_ShowButton" }
@@ -466,6 +468,13 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
         "MenuBar" { return "Example1" }
         "CommandBar" { return "PrimaryCommandBar" }
         "CommandBarFlyout" { return "myImageButton" }
+        default { return "" }
+    }
+}
+
+function Get-ReferencePrimaryName([string]$control) {
+    switch ($control) {
+        "DropDownButton" { return "Email" }
         default { return "" }
     }
 }
@@ -1110,6 +1119,12 @@ function Capture-StaticCrops([string]$app, [string]$control, [string]$caseDir, $
         $primarySource = Get-ReferencePrimaryAutomationId $control
         if (![string]::IsNullOrEmpty($primarySource)) {
             $primaryElement = Find-DescendantByAutomationId $window $primarySource
+        }
+        else {
+            $primarySource = Get-ReferencePrimaryName $control
+            if (![string]::IsNullOrEmpty($primarySource)) {
+                $primaryElement = Find-DescendantButtonByName $window $primarySource
+            }
         }
         $sampleSource = "svPanel"
         $sampleElement = Find-DescendantByAutomationId $window $sampleSource
@@ -1765,7 +1780,8 @@ function Ensure-WinUIReferenceTheme([string]$control, [string]$caseDir, $window)
     }
 
     $primarySource = Get-ReferencePrimaryAutomationId $control
-    if ([string]::IsNullOrEmpty($primarySource)) {
+    $primaryName = Get-ReferencePrimaryName $control
+    if ([string]::IsNullOrEmpty($primarySource) -and [string]::IsNullOrEmpty($primaryName)) {
         return [ordered]@{
             RequestedTheme = $Theme
             MeanLuminance = $null
@@ -1774,7 +1790,13 @@ function Ensure-WinUIReferenceTheme([string]$control, [string]$caseDir, $window)
         }
     }
 
-    $primaryElement = Find-DescendantByAutomationId $window $primarySource
+    $primaryElement = if (![string]::IsNullOrEmpty($primarySource)) {
+        Find-DescendantByAutomationId $window $primarySource
+    }
+    else {
+        $primarySource = $primaryName
+        Find-DescendantButtonByName $window $primaryName
+    }
     if ($null -eq $primaryElement) {
         return [ordered]@{
             RequestedTheme = $Theme

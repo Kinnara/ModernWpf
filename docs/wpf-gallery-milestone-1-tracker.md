@@ -103,6 +103,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.DropDownButtonSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 9 tests per target. The generated ModernWpf DropDownButton page now follows the local official WinUI Gallery two-example shape for the simple Email dropdown and icon-only Email dropdown, consumes the local `Buttons\DropDown` source panes through `BasicInputSampleFactory.CreateExamples`, and exposes curated automation IDs `GallerySample_DropDownButton_Root`, `GallerySample_DropDownButton_DropDownButton`, and `GallerySample_DropDownButton_IconDropDownButton`. Current warning/output remains `NU1903` and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls DropDownButton -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-122111-303-71660/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, primary crops match at `78x32`, and DropDownButton Light primary delta is `17.48`. The visual harness now supports reference primary crops by UIA name for WinUI samples such as DropDownButton where the target button exposes name `Email` but no AutomationId; the reference theme probe toggled successfully after that name-based target was available.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls DropDownButton -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-122134-342-97632/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, primary crops match at `78x32`, and DropDownButton Dark primary delta is `20.84`.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the DropDownButton WinUI example alignment and reference-name visual crop support. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages, existing ModernWpf/ModernWpf.Controls warnings, `19 Warning(s)`, and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.CommandBarFlyoutSampleMatchesWinUIGalleryExample|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 8 tests per target. The generated ModernWpf CommandBarFlyout page now follows the local official WinUI Gallery one-example shape with the `mountain` image button, `Image1`, `CommandBarFlyout1`, Share/Save/Delete primary commands, Resize/Move secondary commands, and the paired source panes. Curated automation IDs now include `GallerySample_CommandBarFlyout_Root` and `GallerySample_CommandBarFlyout_ShowButton`. Current warning/output remains `NU1903` and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls CommandBarFlyout -Reference InstalledWinUI3Gallery -Theme Light -IncludeInteractions -TimeoutSeconds 30`
@@ -1204,6 +1212,21 @@ CommandBarFlyout interaction coverage, and both accepted interaction reports
 show the opened flyout's `Share` command through UIA. Avoid reopening
 CommandBarFlyout's source shape unless a new WinUI source, interaction, or
 non-photo visual regression appears.
+The generated ModernWpf DropDownButton extension page now uses the local
+official WinUI Gallery two-example structure for the simple Email dropdown and
+the icon-only Email dropdown. `BasicInputSampleFactory.CreateExamples` now hosts
+source-backed Basic Input WinUI examples, consumes the local
+`Buttons\DropDown` sample-code files, and leaves the generic fallback path for
+other Basic Input controls until they are aligned. Current DropDownButton
+WinUI-reference evidence is
+`artifacts/visual-checks/20260524-122111-303-71660/report.md` for Light and
+`artifacts/visual-checks/20260524-122134-342-97632/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`, matching `78x32`
+primary crops, and primary deltas `17.48` / `20.84`. The visual harness now
+supports reference primary crops by UIA name for WinUI samples that expose a
+stable name but no AutomationId; DropDownButton uses the first `Email` button
+for both the crop and theme probe. Avoid reopening DropDownButton's source
+shape unless a new WinUI source or crop regression appears.
 Continue with the next highest-impact visible drift from the checklist, likely
 remaining High Contrast gaps, other NavigationView styling not covered
 by the TreeView token aliases or first-sample refresh, or other item pages that still lack current
