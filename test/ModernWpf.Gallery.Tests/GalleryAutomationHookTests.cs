@@ -197,9 +197,14 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsNotNull(navigationView);
                     Assert.AreEqual(745.0, navigationView.Width);
                     Assert.AreEqual(460.0, navigationView.Height);
+                    Assert.AreEqual(HorizontalAlignment.Left, navigationView.HorizontalAlignment);
                     Assert.AreEqual("Sample Page 1", navigationView.Header);
+                    Assert.AreEqual(ModernWpf.Controls.NavigationViewBackButtonVisible.Auto, navigationView.IsBackButtonVisible);
+                    Assert.IsFalse(navigationView.IsTitleBarAutoPaddingEnabled);
+                    Assert.AreEqual(0.0, navigationView.TemplateSettings.TopPadding);
                     Assert.AreEqual(ModernWpf.Controls.NavigationViewPaneDisplayMode.Auto, navigationView.PaneDisplayMode);
                     Assert.AreEqual(4, navigationView.MenuItems.Count);
+                    Assert.AreEqual(ScrollBarVisibility.Hidden, ((ScrollViewer)navigationView.Content).VerticalScrollBarVisibility);
 
                     var firstItem = (ModernWpf.Controls.NavigationViewItem)navigationView.MenuItems[0];
                     Assert.AreEqual("Menu Item1", firstItem.Content);

@@ -219,8 +219,9 @@ namespace ModernWpf.Gallery.Pages
             {
                 Width = 745,
                 Height = 460,
+                HorizontalAlignment = HorizontalAlignment.Left,
                 Header = "This is Header Text",
-                IsBackButtonVisible = Mux.NavigationViewBackButtonVisible.Collapsed,
+                IsTitleBarAutoPaddingEnabled = false,
                 IsTabStop = false,
                 PaneDisplayMode = Mux.NavigationViewPaneDisplayMode.Auto,
                 Content = CreateNavigationSampleContent()
@@ -405,6 +406,7 @@ namespace ModernWpf.Gallery.Pages
 
             return new ScrollViewer
             {
+                VerticalScrollBarVisibility = ScrollBarVisibility.Hidden,
                 Content = grid
             };
         }

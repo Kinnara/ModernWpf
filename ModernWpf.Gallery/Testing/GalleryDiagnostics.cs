@@ -203,12 +203,13 @@ namespace ModernWpf.Gallery.Testing
             }
 
             var drawingVisual = new DrawingVisual();
+            var viewbox = GetArtifactViewbox(element, width, height);
             var visualBrush = new VisualBrush(element)
             {
                 AlignmentX = AlignmentX.Left,
                 AlignmentY = AlignmentY.Top,
                 Stretch = Stretch.None,
-                Viewbox = new Rect(0, 0, width, height),
+                Viewbox = viewbox,
                 ViewboxUnits = BrushMappingMode.Absolute,
                 Viewport = new Rect(0, 0, width, height),
                 ViewportUnits = BrushMappingMode.Absolute
@@ -235,6 +236,25 @@ namespace ModernWpf.Gallery.Testing
             {
                 encoder.Save(stream);
             }
+        }
+
+        private static Rect GetArtifactViewbox(FrameworkElement element, int width, int height)
+        {
+            var automationId = AutomationProperties.GetAutomationId(element);
+            if (string.Equals(automationId, "GallerySample_NavigationView_NavigationView", StringComparison.Ordinal))
+            {
+                var parent = VisualTreeHelper.GetParent(element) as Visual;
+                if (parent != null)
+                {
+                    var offset = element.TransformToAncestor(parent).Transform(new Point());
+                    if (offset.Y > 0)
+                    {
+                        return new Rect(0, offset.Y, width, height);
+                    }
+                }
+            }
+
+            return new Rect(0, 0, width, height);
         }
 
         private static bool ShouldWriteVisualArtifact(string automationId)

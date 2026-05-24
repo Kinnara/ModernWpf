@@ -102,6 +102,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.NavigationViewSampleMatchesWinUIGalleryFirstExampleShape|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 6 tests per target. The generated ModernWpf NavigationView page now follows the official WinUI Gallery first-sample shape by using the default `IsBackButtonVisible=Auto`, disabling title-bar auto-padding for the nested sample NavigationView, left-aligning the fixed-width sample crop, and hiding the WPF `ScrollViewer` bar to match WinUI's resting overlay-scrollbar appearance. The visual artifact writer also normalizes the `GallerySample_NavigationView_NavigationView` rendered crop by the sample element's parent-row offset so the comparison uses the visible NavigationView region rather than hidden row offset above it. Current warning/output remains `NU1903` and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls NavigationView -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-093643-425-95132/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, primary crops match at `745x460`, and NavigationView Light primary delta is `6.16`, improved from the pre-alignment `28.57` in `artifacts/visual-checks/20260524-091710-513-108984/report.md`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls NavigationView -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-093726-380-106920/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, primary crops match at `745x460`, and NavigationView Dark primary delta is `6.51`.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the NavigationView WinUI first-sample alignment. Current build output ends with existing ModernWpf/ModernWpf.Controls warnings, recurring `Failed to resolve WinRT.Runtime.dll` messages, `19 Warning(s)`, and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~WpfGallery" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 62 tests per target. The broad WPF Gallery parity filter now covers the command-bound Settings footer navigation path in the standalone shell test and renders direct `ItemPage` hosts before asserting init-first WPF Gallery page header bindings such as `Colors` / color page description. Current warning/output remains `NU1903`, generated WinRT warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds|FullyQualifiedName~GalleryNavigationRuntimeTests.WpfGalleryPageShellCardsMatchReferenceAutomationAndLayout|FullyQualifiedName~GalleryPageRuntimeTests.WhatsNewPageHeaderMatchesWpfGalleryReference|FullyQualifiedName~GalleryPageRuntimeTests.SettingsPageMatchesWpfGalleryReferenceLayout" -p:UseSharedCompilation=false`
@@ -1034,7 +1042,7 @@ alignment. Home first-viewport Light/Dark
 is now accepted at `0` / `0.05` delta with matching dashboard-pane crops, and
 Settings Light/Dark have current matching-crop evidence at delta `0.23` / `1.15`
 with visual-test ComboBox state matching the requested theme, so avoid
-reworking Home or Settings unless a new visual or accessibility regression appears. Visual-audit run folders now use millisecond timestamps plus PowerShell PID with retry-on-collision, so parallel or near-parallel focused runs no longer share a timestamp-only artifact root; still prefer focused slices for clarity, not broad parallel runs just to save wall time. Navigation's shell/content-frame direct slice is also refreshed at
+reworking Home or Settings unless a new visual or accessibility regression appears. A later Settings experiment that removed the `GalleryPageRootStyle` root style was rejected and reverted because `artifacts/wpf-gallery-visual-audit/20260524-090657-380-82584/report.md` worsened Settings Light from accepted `0.23` to `0.62`, so do not retry that root-style removal without new evidence. Visual-audit run folders now use millisecond timestamps plus PowerShell PID with retry-on-collision, so parallel or near-parallel focused runs no longer share a timestamp-only artifact root; still prefer focused slices for clarity, not broad parallel runs just to save wall time. Navigation's shell/content-frame direct slice is also refreshed at
 `artifacts/wpf-gallery-visual-audit/20260524-033112/report.md` and
 `artifacts/wpf-gallery-visual-audit/20260524-033135/report.md` with delta `0`
 and matching `868x758` crops, so do not reopen that specific content-frame
@@ -1072,9 +1080,20 @@ ListView's selection-support live XAML has also been rechecked against official
 source and refreshed at `artifacts/wpf-gallery-visual-audit/20260524-051340/report.md`
 and `artifacts/wpf-gallery-visual-audit/20260524-051409/report.md`, so avoid
 reopening that sample unless new source or visual evidence regresses.
+The generated ModernWpf NavigationView extension page now has WinUI Gallery
+first-sample Light/Dark evidence at
+`artifacts/visual-checks/20260524-093643-425-95132/report.md` and
+`artifacts/visual-checks/20260524-093726-380-106920/report.md`, with matching
+`745x460` primary crops and deltas `6.16` / `6.51` after restoring the default
+back-button behavior, suppressing nested title-bar padding, hiding the resting
+WPF sample scrollbar, and normalizing the rendered artifact crop for the
+sample's row offset. Avoid reopening that first NavigationView sample unless a
+new WinUI reference or rendered crop regression appears; remaining
+NavigationView work means other samples or broader control-template/resource
+drift.
 Continue with the next highest-impact visible drift from the checklist, likely
-remaining High Contrast gaps, any residual NavigationView styling not covered
-by the TreeView token aliases, or other item pages that still lack current
+remaining High Contrast gaps, other NavigationView styling not covered
+by the TreeView token aliases or first-sample refresh, or other item pages that still lack current
 matching-crop Light/Dark evidence. For each round:
 
 1. Build ModernWpf Gallery and restore/build the official WPF Gallery checkout
