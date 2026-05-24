@@ -14,6 +14,7 @@ namespace ModernWpf.Gallery
         public MainWindow()
         {
             InitializeComponent();
+            ConfigureWindowChrome();
             UpdateMainWindowVisuals();
             SystemEvents.UserPreferenceChanged += OnUserPreferenceChanged;
             StateChanged += OnWindowStateChanged;
@@ -64,11 +65,7 @@ namespace ModernWpf.Gallery
 
         private void UpdateMainWindowVisuals()
         {
-            MainGrid.Margin = default;
-            if (WindowState == WindowState.Maximized)
-            {
-                MainGrid.Margin = SystemParameters.HighContrast ? new Thickness(0, 8, 0, 0) : new Thickness(8);
-            }
+            MainGrid.Margin = GetMainGridMargin(WindowState, SystemParameters.HighContrast);
 
             UpdateTitleBarButtonsVisibility();
 
@@ -77,19 +74,52 @@ namespace ModernWpf.Gallery
                 HighContrastBorder.SetResourceReference(
                     System.Windows.Controls.Border.BorderBrushProperty,
                     IsActive ? SystemColors.ActiveCaptionBrushKey : SystemColors.InactiveCaptionBrushKey);
-                HighContrastBorder.BorderThickness = new Thickness(8, 1, 8, 8);
             }
             else
             {
                 HighContrastBorder.BorderBrush = Brushes.Transparent;
-                HighContrastBorder.BorderThickness = new Thickness(0);
             }
+
+            HighContrastBorder.BorderThickness = GetHighContrastBorderThickness(SystemParameters.HighContrast);
 
             var chrome = WindowChrome.GetWindowChrome(this);
             if (chrome != null)
             {
                 chrome.NonClientFrameEdges = GetPreferredNonClientFrameEdges();
             }
+        }
+
+        private void ConfigureWindowChrome()
+        {
+            WindowChrome.SetWindowChrome(this, CreateWpfGalleryWindowChrome(ResizeMode));
+        }
+
+        internal static WindowChrome CreateWpfGalleryWindowChrome(ResizeMode resizeMode)
+        {
+            return new WindowChrome
+            {
+                CaptionHeight = 44,
+                CornerRadius = new CornerRadius(12),
+                GlassFrameThickness = new Thickness(-1),
+                ResizeBorderThickness = resizeMode == ResizeMode.NoResize ? default : new Thickness(4),
+                UseAeroCaptionButtons = true,
+                NonClientFrameEdges = GetPreferredNonClientFrameEdges()
+            };
+        }
+
+        internal static Thickness GetMainGridMargin(WindowState windowState, bool isHighContrast)
+        {
+            if (windowState == WindowState.Maximized)
+            {
+                return isHighContrast ? new Thickness(0, 8, 0, 0) : new Thickness(8);
+            }
+
+            return default;
+        }
+
+        internal static Thickness GetHighContrastBorderThickness(bool isHighContrast)
+        {
+            return isHighContrast ? new Thickness(8, 1, 8, 8) : new Thickness(0);
         }
 
         private void UpdateTitleBarButtonsVisibility()
@@ -101,7 +131,12 @@ namespace ModernWpf.Gallery
 
         internal static NonClientFrameEdges GetPreferredNonClientFrameEdges()
         {
-            if (SystemParameters.HighContrast || !IsWindows11OrGreater())
+            return GetPreferredNonClientFrameEdges(SystemParameters.HighContrast, IsWindows11OrGreater());
+        }
+
+        internal static NonClientFrameEdges GetPreferredNonClientFrameEdges(bool isHighContrast, bool isWindows11OrGreater)
+        {
+            if (isHighContrast || !isWindows11OrGreater)
             {
                 return NonClientFrameEdges.None;
             }

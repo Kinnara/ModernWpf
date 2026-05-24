@@ -94,19 +94,10 @@
         </Style>
     </Window.Resources>
 
-    <winShell:WindowChrome.WindowChrome>
-        <winShell:WindowChrome
-            CaptionHeight="44"
-            CornerRadius="12"
-            GlassFrameThickness="-1"
-            ResizeBorderThickness="4"
-            UseAeroCaptionButtons="True" />
-    </winShell:WindowChrome.WindowChrome>
-
     <Border
         x:Name="HighContrastBorder"
         BorderBrush="Transparent"
-        BorderThickness="0">
+        BorderThickness="8,1,8,8">
         <Grid x:Name="MainGrid">
             <Grid.RowDefinitions>
                 <RowDefinition Height="44" />

@@ -271,6 +271,10 @@ namespace ModernWpf.Gallery.Tests
                     var chrome = WindowChrome.GetWindowChrome(window);
                     Assert.IsNotNull(chrome);
                     Assert.AreEqual(44d, chrome.CaptionHeight);
+                    Assert.AreEqual(new CornerRadius(12), chrome.CornerRadius);
+                    Assert.AreEqual(new Thickness(-1), chrome.GlassFrameThickness);
+                    Assert.AreEqual(new Thickness(4), chrome.ResizeBorderThickness);
+                    Assert.IsTrue(chrome.UseAeroCaptionButtons);
                     Assert.AreEqual(MainWindow.GetPreferredNonClientFrameEdges(), chrome.NonClientFrameEdges);
                     Assert.AreSame(Application.Current.FindResource("WindowBackground"), window.Background);
 
@@ -306,6 +310,37 @@ namespace ModernWpf.Gallery.Tests
                 {
                     window.Close();
                 }
+            });
+        }
+
+        [TestMethod]
+        public void MainWindowChromePolicyMatchesWpfGalleryHighContrastPath()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var chrome = MainWindow.CreateWpfGalleryWindowChrome(ResizeMode.NoResize);
+                Assert.AreEqual(44d, chrome.CaptionHeight);
+                Assert.AreEqual(new CornerRadius(12), chrome.CornerRadius);
+                Assert.AreEqual(new Thickness(-1), chrome.GlassFrameThickness);
+                Assert.AreEqual(new Thickness(0), chrome.ResizeBorderThickness);
+                Assert.IsTrue(chrome.UseAeroCaptionButtons);
+                Assert.AreEqual(MainWindow.GetPreferredNonClientFrameEdges(), chrome.NonClientFrameEdges);
+
+                Assert.AreEqual(new Thickness(0), MainWindow.GetMainGridMargin(WindowState.Normal, false));
+                Assert.AreEqual(new Thickness(8), MainWindow.GetMainGridMargin(WindowState.Maximized, false));
+                Assert.AreEqual(new Thickness(0, 8, 0, 0), MainWindow.GetMainGridMargin(WindowState.Maximized, true));
+                Assert.AreEqual(new Thickness(0), MainWindow.GetHighContrastBorderThickness(false));
+                Assert.AreEqual(new Thickness(8, 1, 8, 8), MainWindow.GetHighContrastBorderThickness(true));
+
+                Assert.AreEqual(
+                    NonClientFrameEdges.Right | NonClientFrameEdges.Bottom | NonClientFrameEdges.Left,
+                    MainWindow.GetPreferredNonClientFrameEdges(isHighContrast: false, isWindows11OrGreater: true));
+                Assert.AreEqual(
+                    NonClientFrameEdges.None,
+                    MainWindow.GetPreferredNonClientFrameEdges(isHighContrast: true, isWindows11OrGreater: true));
+                Assert.AreEqual(
+                    NonClientFrameEdges.None,
+                    MainWindow.GetPreferredNonClientFrameEdges(isHighContrast: false, isWindows11OrGreater: false));
             });
         }
 
