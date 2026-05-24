@@ -11,7 +11,7 @@
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     mc:Ignorable="d">
 
-    <Grid>
+    <Grid x:Name="ContentPagePane" Height="Auto">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -28,13 +28,23 @@
             Padding="0,0,24,0"
             HorizontalScrollBarVisibility="Auto">
             <StackPanel Margin="0,0,0,24" Orientation="Vertical">
-                <TextBlock HorizontalAlignment="Left" Text="Type helps provide structure and hierarchy to UI. The default font for Windows is Segoe UI Variable." TextWrapping="Wrap" />
-                <TextBlock HorizontalAlignment="Left" Text="Best practice is to use Regular weight for most text, use Semibold for titles." TextWrapping="Wrap" />
+                <TextBlock
+                    HorizontalAlignment="Left"
+                    TextWrapping="Wrap">
+                    Type helps provide structure and hierarchy to UI. The default font for Windows is Segoe UI Variable.
+                </TextBlock>
+                <TextBlock
+                    HorizontalAlignment="Left"
+                    TextWrapping="Wrap">
+                    Best practice is to use Regular weight for most text, use Semibold for titles.
+                </TextBlock>
                 <TextBlock
                     Margin="0,0,0,12"
                     HorizontalAlignment="Left"
-                    Text="The minimum values should be 12px Regular, 14px Semibold."
-                    TextWrapping="Wrap" />
+                    Padding="0,0,0,8"
+                    TextWrapping="Wrap">
+                    The minimum values should be 12px Regular, 14px Semibold.
+                </TextBlock>
 
                 <controls:ControlExample
                     Margin="10"

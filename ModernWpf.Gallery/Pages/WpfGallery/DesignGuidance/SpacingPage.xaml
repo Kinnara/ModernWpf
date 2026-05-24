@@ -11,7 +11,7 @@
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     mc:Ignorable="d">
 
-    <Grid>
+    <Grid x:Name="ContentPagePane" Height="Auto">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -28,12 +28,18 @@
             Padding="0,0,24,0"
             HorizontalScrollBarVisibility="Auto">
             <StackPanel Margin="0,0,0,24" Orientation="Vertical">
-                <TextBlock HorizontalAlignment="Left" Text="Consistent spacing helps create visual harmony and improves the readability and usability of your application." TextWrapping="Wrap" />
+                <TextBlock
+                    HorizontalAlignment="Left"
+                    TextWrapping="Wrap">
+                    Consistent spacing helps create visual harmony and improves the readability and usability of your application.
+                </TextBlock>
                 <TextBlock
                     Margin="0,0,0,12"
                     HorizontalAlignment="Left"
-                    Text="Use the following spacing values to maintain a consistent layout throughout your app."
-                    TextWrapping="Wrap" />
+                    Padding="0,0,0,8"
+                    TextWrapping="Wrap">
+                    Use the following spacing values to maintain a consistent layout throughout your app.
+                </TextBlock>
 
                 <StackPanel Margin="0,0,0,16" Orientation="Horizontal">
                     <Grid VerticalAlignment="Top">

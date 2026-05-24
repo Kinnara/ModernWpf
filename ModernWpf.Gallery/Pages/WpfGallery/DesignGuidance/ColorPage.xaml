@@ -28,13 +28,20 @@
             Margin="0,0,0,24"
             Padding="0,0,24,0">
             <StackPanel Margin="0,0,0,24">
-                <TextBlock Margin="0,0,0,24" TextWrapping="Wrap">
-                    <Run>Color provides an intuitive way of communicating information to users in your app: it can be used to indicate interactivity, give feedback to user actions, and give your interface a sense of visual continuity.</Run>
+                <TextBlock
+                    Margin="0,0,0,24"
+                    Padding="0,0,0,16"
+                    TextWrapping="Wrap">
+                    <Run>
+                        Color provides an intuitive way of communicating information to users in your app: it can be used to indicate interactivity, give feedback to user actions, and give your interface a sense of visual continuity.
+                    </Run>
                     <LineBreak />
                     <LineBreak />
                     <Run FontWeight="SemiBold">Using Colors</Run>
                     <LineBreak />
-                    <Span>The colors below are provided as part of WPF .NET 9 onwards. You can reference them in your app using DynamicResource bindings. For example: Color="{DynamicResource CardBackgroundFillColorDefault}"</Span>
+                    <Span>
+                        The colors below are provided as part of WPF .NET 9 onwards. You can reference them in your app using DynamicResource bindings. For example: Color="{DynamicResource CardBackgroundFillColorDefault}"
+                    </Span>
                 </TextBlock>
 
                 <ComboBox

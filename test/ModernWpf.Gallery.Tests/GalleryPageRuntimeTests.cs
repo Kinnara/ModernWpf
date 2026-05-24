@@ -1851,7 +1851,12 @@ namespace ModernWpf.Gallery.Tests
             {
                 var spacingPage = new ItemPage(GalleryCatalog.FindItem("Spacing"));
                 Assert.IsTrue(spacingPage.HasDirectPageContent);
+                AssertDirectPagePane(spacingPage);
                 var spacingBody = GetDirectPageBodyStack(spacingPage);
+                Assert.AreEqual("Consistent spacing helps create visual harmony and improves the readability and usability of your application.", ((TextBlock)spacingBody.Children[0]).Text);
+                var spacingUsage = (TextBlock)spacingBody.Children[1];
+                Assert.AreEqual("Use the following spacing values to maintain a consistent layout throughout your app.", spacingUsage.Text);
+                Assert.AreEqual(new Thickness(0, 0, 0, 8), spacingUsage.Padding);
                 var images = (StackPanel)spacingBody.Children[2];
                 Assert.AreEqual(Orientation.Horizontal, images.Orientation);
                 Assert.AreEqual(new Thickness(0, 0, 0, 16), images.Margin);
@@ -1924,7 +1929,13 @@ namespace ModernWpf.Gallery.Tests
 
                 var typographyPage = new ItemPage(GalleryCatalog.FindItem("Typography"));
                 Assert.IsTrue(typographyPage.HasDirectPageContent);
+                AssertDirectPagePane(typographyPage);
                 var typographyBody = GetDirectPageBodyStack(typographyPage);
+                Assert.AreEqual("Type helps provide structure and hierarchy to UI. The default font for Windows is Segoe UI Variable.", ((TextBlock)typographyBody.Children[0]).Text);
+                Assert.AreEqual("Best practice is to use Regular weight for most text, use Semibold for titles.", ((TextBlock)typographyBody.Children[1]).Text);
+                var typographyMinimum = (TextBlock)typographyBody.Children[2];
+                Assert.AreEqual("The minimum values should be 12px Regular, 14px Semibold.", typographyMinimum.Text);
+                Assert.AreEqual(new Thickness(0, 0, 0, 8), typographyMinimum.Padding);
                 var typeRampExample = (ControlExample)typographyBody.Children[3];
                 var typeRamp = (Grid)typeRampExample.ExampleContent;
                 Assert.AreEqual(new Thickness(0), typeRamp.Margin);
@@ -2027,9 +2038,11 @@ namespace ModernWpf.Gallery.Tests
             {
                 var page = new ItemPage(GalleryCatalog.FindItem("Color"));
                 Assert.IsTrue(page.HasDirectPageContent);
+                AssertDirectPagePane(page);
 
                 var body = GetDirectPageBodyStack(page);
                 Assert.AreEqual(3, body.Children.Count);
+                Assert.AreEqual(new Thickness(0, 0, 0, 16), ((TextBlock)body.Children[0]).Padding);
                 var selector = (ComboBox)body.Children[1];
                 var sectionHost = (ContentControl)body.Children[2];
 
