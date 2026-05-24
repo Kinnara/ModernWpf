@@ -103,6 +103,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.ToggleSplitButtonSampleMatchesWinUIGalleryExample|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 11 tests per target. The generated ModernWpf ToggleSplitButton page now follows the local official WinUI Gallery one-example shape for list formatting in a RichEditBox, consumes the local `Buttons\ToggleSplitButton` source pane through `BasicInputSampleFactory.CreateExamples`, and exposes curated automation IDs `GallerySample_ToggleSplitButton_Root` and `GallerySample_ToggleSplitButton_ToggleSplitButton`. The WPF adaptation keeps the WinUI sample names, icon content, two-button flyout, and RichEditBox sizing while using WPF `RichTextBox` plus `EditingCommands.ToggleBullets` / `EditingCommands.ToggleNumbering` for list behavior. Current warning/output remains `NU1903` and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls ToggleSplitButton -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-124943-598-86008/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, primary crops match at `78x33`, and ToggleSplitButton Light primary delta is `3.44`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls ToggleSplitButton -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-125009-123-96140/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, primary crops match at `78x33`, and ToggleSplitButton Dark primary delta is `8.45`. The visual harness now uses the WinUI reference automation ID `myListButton` for the ToggleSplitButton primary crop.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the ToggleSplitButton WinUI example alignment and reference crop mapping. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages and ends with `0 Warning(s)` and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.SplitButtonSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 10 tests per target. The generated ModernWpf SplitButton page now follows the local official WinUI Gallery two-example shape for the RichEditBox color SplitButton and the text SplitButton, consumes the local `Buttons\SplitButton` source panes through `BasicInputSampleFactory.CreateExamples`, and exposes curated automation IDs `GallerySample_SplitButton_Root`, `GallerySample_SplitButton_SplitButton`, and `GallerySample_SplitButton_TextSplitButton`. The WPF adaptation uses a WPF `RichTextBox` and button-hosted color swatches while keeping the WinUI sample names, sizing, and flyout structure. Current warning/output remains `NU1903` and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls SplitButton -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -1249,6 +1257,20 @@ uses the WinUI reference automation ID `myColorButton` because the installed
 reference exposes the crop target as UIA control type `SplitButton`, not as a
 plain named Button. Avoid reopening SplitButton's source shape unless a new
 WinUI source or crop regression appears.
+The generated ModernWpf ToggleSplitButton extension page now uses the local
+official WinUI Gallery one-example structure for list formatting in a
+RichEditBox. `BasicInputSampleFactory.CreateExamples` consumes the local
+`Buttons\ToggleSplitButton` sample-code file, keeps WinUI's `myListButton`,
+`mySymbolIcon`, flyout button names, and primary control sizing, and adapts the
+RichEditBox behavior to WPF through `EditingCommands.ToggleBullets` /
+`EditingCommands.ToggleNumbering`. Current ToggleSplitButton WinUI-reference
+evidence is `artifacts/visual-checks/20260524-124943-598-86008/report.md` for
+Light and `artifacts/visual-checks/20260524-125009-123-96140/report.md` for
+Dark, both with ModernWpf and installed WinUI 3 Gallery `Passed`, matching
+`78x33` primary crops, and primary deltas `3.44` / `8.45`. The visual harness
+uses the WinUI reference automation ID `myListButton` for the primary crop.
+Avoid reopening ToggleSplitButton's source shape unless a new WinUI source or
+crop regression appears.
 Continue with the next highest-impact visible drift from the checklist, likely
 remaining High Contrast gaps, other NavigationView styling not covered
 by the TreeView token aliases or first-sample refresh, or other item pages that still lack current

@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "DropDownButton", "SplitButton", "InfoBar", "NavigationView", "ContentDialog", "MenuBar", "CommandBar", "CommandBarFlyout"),
+    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "DropDownButton", "SplitButton", "ToggleSplitButton", "InfoBar", "NavigationView", "ContentDialog", "MenuBar", "CommandBar", "CommandBarFlyout"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -426,6 +426,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "ComboBox" { return "GallerySample_ComboBox_ComboBox" }
         "DropDownButton" { return "GallerySample_DropDownButton_DropDownButton" }
         "SplitButton" { return "GallerySample_SplitButton_SplitButton" }
+        "ToggleSplitButton" { return "GallerySample_ToggleSplitButton_ToggleSplitButton" }
         "InfoBar" { return "GallerySample_InfoBar_InfoBar" }
         "NavigationView" { return "GallerySample_NavigationView_NavigationView" }
         "ContentDialog" { return "GallerySample_ContentDialog_ShowButton" }
@@ -452,6 +453,7 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
         "InfoBar" { return "GallerySample_InfoBar_InfoBar" }
         "DropDownButton" { return "GallerySample_DropDownButton_DropDownButton" }
         "SplitButton" { return "GallerySample_SplitButton_SplitButton" }
+        "ToggleSplitButton" { return "GallerySample_ToggleSplitButton_ToggleSplitButton" }
         "MenuBar" { return "GallerySample_MenuBar_MenuBar" }
         "CommandBar" { return "GallerySample_CommandBar_CommandBar" }
         "CommandBarFlyout" { return "GallerySample_CommandBarFlyout_ShowButton" }
@@ -471,6 +473,7 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
         "CommandBar" { return "PrimaryCommandBar" }
         "CommandBarFlyout" { return "myImageButton" }
         "SplitButton" { return "myColorButton" }
+        "ToggleSplitButton" { return "myListButton" }
         default { return "" }
     }
 }

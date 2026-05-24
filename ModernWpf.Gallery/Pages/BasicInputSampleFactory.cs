@@ -25,6 +25,8 @@ namespace ModernWpf.Gallery.Pages
                     return CreateDropDownButtonExamples(sampleSnippets);
                 case "SplitButton":
                     return CreateSplitButtonExamples(sampleSnippets);
+                case "ToggleSplitButton":
+                    return CreateToggleSplitButtonExamples(sampleSnippets);
                 default:
                     return Array.Empty<GalleryExample>();
             }
@@ -414,21 +416,139 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateToggleSplitButtonSample()
         {
-            var panel = CreateSamplePanel("ToggleSplitButton combines a checked state with secondary options.");
-            var output = CreateOutput("Preview is off.");
-            var button = new Mux.ToggleSplitButton
+            var panel = new GallerySamplePanel
             {
-                Content = "Preview",
-                HorizontalAlignment = HorizontalAlignment.Left,
-                Flyout = CreateCommandFlyout(output, "Preview left", "Preview right")
+                Margin = new Thickness(0, 0, 0, 12)
             };
-            button.IsCheckedChanged += delegate
-            {
-                output.Text = button.IsChecked ? "Preview is on." : "Preview is off.";
-            };
-            panel.Children.Add(button);
-            panel.Children.Add(output);
+            GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("ToggleSplitButton"));
+            panel.Children.Add(CreateToggleSplitButtonExampleContent(assignRootAutomationId: false));
             return panel;
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateToggleSplitButtonExamples(IReadOnlyList<SampleSnippet> sampleSnippets)
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "Using ToggleSplitButton to control bulleted list functionality in RichEditBox",
+                    CreateToggleSplitButtonExampleContent(assignRootAutomationId: true),
+                    FindSampleCodeText(sampleSnippets, "Buttons\\ToggleSplitButton\\ToggleSplitButtonSample1.txt"),
+                    null)
+            };
+        }
+
+        private static GallerySamplePanel CreateToggleSplitButtonExampleContent(bool assignRootAutomationId)
+        {
+            var panel = new GallerySamplePanel();
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("ToggleSplitButton"));
+            }
+
+            var layout = new Grid();
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(24) });
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+            var richTextBox = new RichTextBox
+            {
+                Name = "myRichEditBox",
+                Width = 240,
+                MinHeight = 96,
+                VerticalScrollBarVisibility = ScrollBarVisibility.Auto
+            };
+            AutomationProperties.SetName(richTextBox, "Text entry");
+
+            var symbolIcon = new Mux.SymbolIcon(Mux.Symbol.List)
+            {
+                Name = "mySymbolIcon"
+            };
+            var toggleSplitButton = new Mux.ToggleSplitButton
+            {
+                Name = "myListButton",
+                Content = symbolIcon,
+                VerticalAlignment = VerticalAlignment.Top
+            };
+            AutomationProperties.SetName(toggleSplitButton, "Bullets");
+            GalleryAutomation.WithAutomationId(toggleSplitButton, GalleryAutomation.SampleElementId("ToggleSplitButton", "ToggleSplitButton"));
+
+            var currentMarkerStyle = TextMarkerStyle.Disc;
+            toggleSplitButton.IsCheckedChanged += delegate
+            {
+                ApplyRichTextBoxListStyle(richTextBox, toggleSplitButton.IsChecked, currentMarkerStyle);
+            };
+            toggleSplitButton.Flyout = CreateToggleSplitButtonFlyout(delegate(Mux.Symbol symbol, string automationName, TextMarkerStyle markerStyle)
+            {
+                currentMarkerStyle = markerStyle;
+                symbolIcon.Symbol = symbol;
+                AutomationProperties.SetName(toggleSplitButton, automationName);
+                var wasChecked = toggleSplitButton.IsChecked;
+                toggleSplitButton.IsChecked = true;
+                if (wasChecked)
+                {
+                    ApplyRichTextBoxListStyle(richTextBox, isChecked: true, currentMarkerStyle);
+                }
+                toggleSplitButton.Flyout.Hide();
+                richTextBox.Focus();
+            });
+
+            layout.Children.Add(toggleSplitButton);
+            Grid.SetColumn(richTextBox, 2);
+            layout.Children.Add(richTextBox);
+            panel.Children.Add(layout);
+            return panel;
+        }
+
+        private static Mux.Flyout CreateToggleSplitButtonFlyout(Action<Mux.Symbol, string, TextMarkerStyle> markerSelected)
+        {
+            var stackPanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal
+            };
+            stackPanel.Children.Add(CreateListMarkerButton("Bulleted list", Mux.Symbol.List, TextMarkerStyle.Disc, markerSelected));
+            stackPanel.Children.Add(CreateListMarkerButton("Roman numerals list", Mux.Symbol.Bullets, TextMarkerStyle.UpperRoman, markerSelected));
+
+            return new Mux.Flyout
+            {
+                Placement = FlyoutPlacementMode.Bottom,
+                Content = stackPanel
+            };
+        }
+
+        private static Button CreateListMarkerButton(
+            string automationName,
+            Mux.Symbol symbol,
+            TextMarkerStyle markerStyle,
+            Action<Mux.Symbol, string, TextMarkerStyle> markerSelected)
+        {
+            var button = new Button
+            {
+                Content = new Mux.SymbolIcon(symbol),
+                Padding = new Thickness(4),
+                MinWidth = 0,
+                MinHeight = 0,
+                Margin = new Thickness(6)
+            };
+            AutomationProperties.SetName(button, automationName);
+            button.Click += delegate { markerSelected(symbol, symbol == Mux.Symbol.List ? "Bullets" : "Roman Numerals", markerStyle); };
+            return button;
+        }
+
+        private static void ApplyRichTextBoxListStyle(RichTextBox richTextBox, bool isChecked, TextMarkerStyle markerStyle)
+        {
+            if (!isChecked)
+            {
+                return;
+            }
+
+            richTextBox.Focus();
+            var command = markerStyle == TextMarkerStyle.Disc
+                ? EditingCommands.ToggleBullets
+                : EditingCommands.ToggleNumbering;
+            if (command.CanExecute(null, richTextBox))
+            {
+                command.Execute(null, richTextBox);
+            }
         }
 
         private static UIElement CreateCheckBoxSample()

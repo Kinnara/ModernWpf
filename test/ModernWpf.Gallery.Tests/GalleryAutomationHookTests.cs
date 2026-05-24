@@ -30,6 +30,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "ContentDialog", "GallerySample_ContentDialog_Root", "GallerySample_ContentDialog_ShowButton" };
             yield return new object[] { "DropDownButton", "GallerySample_DropDownButton_Root", "GallerySample_DropDownButton_DropDownButton" };
             yield return new object[] { "SplitButton", "GallerySample_SplitButton_Root", "GallerySample_SplitButton_SplitButton" };
+            yield return new object[] { "ToggleSplitButton", "GallerySample_ToggleSplitButton_Root", "GallerySample_ToggleSplitButton_ToggleSplitButton" };
             yield return new object[] { "MenuBar", "GallerySample_MenuBar_Root", "GallerySample_MenuBar_MenuBar" };
             yield return new object[] { "CommandBar", "GallerySample_CommandBar_Root", "GallerySample_CommandBar_CommandBar" };
             yield return new object[] { "CommandBarFlyout", "GallerySample_CommandBarFlyout_Root", "GallerySample_CommandBarFlyout_ShowButton" };
@@ -531,6 +532,67 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(VerticalAlignment.Top, textButton.VerticalAlignment);
                     Assert.AreEqual(HorizontalAlignment.Left, textButton.HorizontalAlignment);
                     AssertColorSwatchFlyout(textButton.Flyout, expectedCount: 9, includeBlack: true);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void ToggleSplitButtonSampleMatchesWinUIGalleryExample()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("ToggleSplitButton"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(1, page.Examples.Count);
+                    Assert.AreEqual("Using ToggleSplitButton to control bulleted list functionality in RichEditBox", page.Examples[0].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "myListButton");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "Symbol=\"List\"");
+
+                    var toggleSplitButton = (Mux.ToggleSplitButton)FindByAutomationId(page, "GallerySample_ToggleSplitButton_ToggleSplitButton");
+                    var symbolIcon = FindNamedDescendant<Mux.SymbolIcon>(page, "mySymbolIcon");
+                    var richTextBox = FindNamedDescendant<RichTextBox>(page, "myRichEditBox");
+                    Assert.IsNotNull(toggleSplitButton);
+                    Assert.IsNotNull(symbolIcon);
+                    Assert.IsNotNull(richTextBox);
+
+                    Assert.AreEqual("Bullets", AutomationProperties.GetName(toggleSplitButton));
+                    Assert.AreEqual(VerticalAlignment.Top, toggleSplitButton.VerticalAlignment);
+                    Assert.AreSame(symbolIcon, toggleSplitButton.Content);
+                    Assert.AreEqual(Mux.Symbol.List, symbolIcon.Symbol);
+                    Assert.AreEqual(240.0, richTextBox.Width);
+                    Assert.AreEqual(96.0, richTextBox.MinHeight);
+                    Assert.AreEqual("Text entry", AutomationProperties.GetName(richTextBox));
+
+                    var flyoutPanel = AssertListMarkerFlyout(toggleSplitButton.Flyout);
+                    var romanButton = (Button)flyoutPanel.Children[1];
+                    romanButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent, romanButton));
+                    Assert.IsTrue(toggleSplitButton.IsChecked);
+                    Assert.AreEqual(Mux.Symbol.Bullets, symbolIcon.Symbol);
+                    Assert.AreEqual("Roman Numerals", AutomationProperties.GetName(toggleSplitButton));
                 }
                 finally
                 {
@@ -1176,6 +1238,33 @@ namespace ModernWpf.Gallery.Tests
             }
 
             return null;
+        }
+
+        private static StackPanel AssertListMarkerFlyout(ModernWpf.Controls.Primitives.FlyoutBase flyoutBase)
+        {
+            var flyout = flyoutBase as Mux.Flyout;
+            Assert.IsNotNull(flyout);
+            Assert.AreEqual(ModernWpf.Controls.Primitives.FlyoutPlacementMode.Bottom, flyout.Placement);
+
+            var panel = flyout.Content as StackPanel;
+            Assert.IsNotNull(panel);
+            Assert.AreEqual(Orientation.Horizontal, panel.Orientation);
+            Assert.AreEqual(2, panel.Children.Count);
+
+            AssertListMarkerButton((Button)panel.Children[0], "Bulleted list", Mux.Symbol.List);
+            AssertListMarkerButton((Button)panel.Children[1], "Roman numerals list", Mux.Symbol.Bullets);
+            return panel;
+        }
+
+        private static void AssertListMarkerButton(Button button, string automationName, Mux.Symbol symbol)
+        {
+            Assert.IsNotNull(button);
+            Assert.AreEqual(automationName, AutomationProperties.GetName(button));
+            Assert.AreEqual(new Thickness(4), button.Padding);
+            Assert.AreEqual(0.0, button.MinWidth);
+            Assert.AreEqual(0.0, button.MinHeight);
+            Assert.AreEqual(new Thickness(6), button.Margin);
+            Assert.AreEqual(symbol, ((Mux.SymbolIcon)button.Content).Symbol);
         }
 
         private static Mux.VariableSizedWrapGrid AssertColorSwatchFlyout(ModernWpf.Controls.Primitives.FlyoutBase flyoutBase, int expectedCount, bool includeBlack)
