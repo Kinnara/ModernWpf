@@ -106,6 +106,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.SelectorBarSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 26 tests per target. The generated ModernWpf SelectorBar page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\SelectorBarPage.xaml` / `.xaml.cs`: `A Basic SelectorBar`, `SelectorBar with Frame Slide Transitions`, and `SelectorBar Displaying Different Collections Using ItemsView`. `NavigationSampleFactory.CreateExamples` now covers SelectorBar as a source-backed Navigation WinUI extension page, exposes curated automation IDs `GallerySample_SelectorBar_Root` and `GallerySample_SelectorBar_SelectorBar`, keeps WinUI's `SelectorBar1`, `SelectorBar2`, `ContentFrame`, `SelectorBar3`, and `ItemsView3` source-facing names, preserves the sample snippets, and verifies selection-driven frame/content changes. The WPF adaptation uses real `ModernWpf.Controls.SelectorBar` / `SelectorBarItem` controls and a sample-specific item template because the default library template rendered blank in the visual capture despite the live tree having item text/icons. Current warning/output remains `NU1903`, recurring `Failed to resolve WinRT.Runtime.dll` messages, and existing ModernWpf warning noise.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls SelectorBar -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-171057-299-90104/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, both apps were nonblank, the required ModernWpf element `GallerySample_SelectorBar_SelectorBar` was found, and the report records ModernWpf whole-sample mean delta `177.6`. The visual harness now includes SelectorBar in the default WinUI extension control set and maps ModernWpf primary/required automation to `GallerySample_SelectorBar_SelectorBar` with WinUI reference automation ID `SelectorBar1`; the current report does not emit a primary-crop delta for SelectorBar.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls SelectorBar -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260524-171126-271-99992/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, both apps were nonblank, the required ModernWpf element `GallerySample_SelectorBar_SelectorBar` was found, and the report records ModernWpf whole-sample mean delta `48.29`. The current report does not emit a primary-crop delta for SelectorBar.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the SelectorBar WinUI example alignment and visual harness mapping. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages, existing ModernWpf/ModernWpf.Controls warnings, `19 Warning(s)`, and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.BreadcrumbBarSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 25 tests per target. The generated ModernWpf BreadcrumbBar page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\BreadcrumbBarPage.xaml` / `.xaml.cs`: `A BreadcrumbBar control` plus `BreadCrumbBar Control with Custom DataTemplate`. `NavigationSampleFactory.CreateExamples` now covers BreadcrumbBar as a source-backed Navigation WinUI extension page, `ItemPage` now asks the Navigation factory for source-backed examples before falling back to generic generated sample content, and the old hand-made WPF button-trail fallback has been replaced with real `ModernWpf.Controls.BreadcrumbBar` instances. The page exposes curated automation IDs `GallerySample_BreadcrumbBar_Root` and `GallerySample_BreadcrumbBar_BreadcrumbBar`, keeps WinUI's `BreadcrumbBar1`, `BreadcrumbBar2`, and `ResetSampleBtn` names, preserves the source snippet text, and runtime coverage verifies the simple string path, custom `Folder` template path, reset behavior, and realized breadcrumb text. Current warning/output remains `NU1903` and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls BreadcrumbBar -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -1271,6 +1279,31 @@ sample's row offset. Avoid reopening that first NavigationView sample unless a
 new WinUI reference or rendered crop regression appears; remaining
 NavigationView work means other samples or broader control-template/resource
 drift.
+The generated ModernWpf SelectorBar extension page now uses the local official
+WinUI Gallery three-example structure from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\SelectorBarPage.xaml`
+/ `.xaml.cs`: `A Basic SelectorBar`, the frame slide-transition sample, and
+the ItemsView collection-switching sample. `NavigationSampleFactory.CreateExamples`
+now covers SelectorBar as a source-backed Navigation WinUI example, keeps
+WinUI's `SelectorBar1`, `SelectorBarItemRecent`, `SelectorBar2`,
+`ContentFrame`, `SelectorBar3`, `ItemsView3`, and color collection source-facing
+names, and exposes `GallerySample_SelectorBar_Root` /
+`GallerySample_SelectorBar_SelectorBar` for runtime and visual checks. The WPF
+adaptation uses real `ModernWpf.Controls.SelectorBar` / `SelectorBarItem`
+controls, WPF `Frame` content for the page sample, and WPF `ItemsControl`
+tiles for the ItemsView sample. The sample assigns a local WPF item template
+because the default library item template rendered blank in the visual capture
+even though the live tree had the source text and icons. Current SelectorBar
+WinUI-reference evidence is
+`artifacts/visual-checks/20260524-171057-299-90104/report.md` for Light and
+`artifacts/visual-checks/20260524-171126-271-99992/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`, nonblank app captures,
+and required ModernWpf element `GallerySample_SelectorBar_SelectorBar` found.
+The visual reports do not currently emit a primary-crop delta for SelectorBar;
+ModernWpf whole-sample mean deltas are `177.6` / `48.29`. Avoid reopening
+SelectorBar's source shape unless a new WinUI source, runtime, or crop
+regression appears; a later round can separately investigate the default
+SelectorBarItem template rendering gap.
 The generated ModernWpf BreadcrumbBar extension page now uses the local
 official WinUI Gallery two-example structure from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\BreadcrumbBarPage.xaml`

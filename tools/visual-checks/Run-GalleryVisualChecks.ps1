@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "BreadcrumbBar", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "CommandBar", "CommandBarFlyout"),
+    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "BreadcrumbBar", "SelectorBar", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "CommandBar", "CommandBarFlyout"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -440,6 +440,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "ProgressRing" { return "GallerySample_ProgressRing_ProgressRing" }
         "PipsPager" { return "GallerySample_PipsPager_PipsPager" }
         "BreadcrumbBar" { return "GallerySample_BreadcrumbBar_BreadcrumbBar" }
+        "SelectorBar" { return "GallerySample_SelectorBar_SelectorBar" }
         "NavigationView" { return "GallerySample_NavigationView_NavigationView" }
         "ContentDialog" { return "GallerySample_ContentDialog_ShowButton" }
         "Flyout" { return "GallerySample_Flyout_Button" }
@@ -481,6 +482,7 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
         "ProgressRing" { return "GallerySample_ProgressRing_ProgressRing" }
         "PipsPager" { return "GallerySample_PipsPager_PipsPager" }
         "BreadcrumbBar" { return "GallerySample_BreadcrumbBar_BreadcrumbBar" }
+        "SelectorBar" { return "GallerySample_SelectorBar_SelectorBar" }
         "Flyout" { return "GallerySample_Flyout_Button" }
         "Popup" { return "GallerySample_Popup_Button" }
         "MenuBar" { return "GallerySample_MenuBar_MenuBar" }
@@ -512,6 +514,7 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
         "ProgressRing" { return "ProgressRing1" }
         "PipsPager" { return "FlipViewPipsPager" }
         "BreadcrumbBar" { return "BreadcrumbBar1" }
+        "SelectorBar" { return "SelectorBar1" }
         default { return "" }
     }
 }

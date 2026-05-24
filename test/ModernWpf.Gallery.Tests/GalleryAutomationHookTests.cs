@@ -31,6 +31,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "ProgressRing", "GallerySample_ProgressRing_Root", "GallerySample_ProgressRing_ProgressRing" };
             yield return new object[] { "PipsPager", "GallerySample_PipsPager_Root", "GallerySample_PipsPager_PipsPager" };
             yield return new object[] { "BreadcrumbBar", "GallerySample_BreadcrumbBar_Root", "GallerySample_BreadcrumbBar_BreadcrumbBar" };
+            yield return new object[] { "SelectorBar", "GallerySample_SelectorBar_Root", "GallerySample_SelectorBar_SelectorBar" };
             yield return new object[] { "NavigationView", "GallerySample_NavigationView_Root", "GallerySample_NavigationView_NavigationView" };
             yield return new object[] { "ContentDialog", "GallerySample_ContentDialog_Root", "GallerySample_ContentDialog_ShowButton" };
             yield return new object[] { "Flyout", "GallerySample_Flyout_Root", "GallerySample_Flyout_Button" };
@@ -523,6 +524,91 @@ namespace ModernWpf.Gallery.Tests
                     WpfTestHost.DoEvents();
                     AssertBreadcrumbItems(breadcrumbBar2.ItemsSource, "Home", "Folder1", "Folder2", "Folder3");
                     Assert.IsNotNull(FindTextBlockByText(breadcrumbBar2, "Folder3"));
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void SelectorBarSampleMatchesWinUIGalleryExamples()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("SelectorBar"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(3, page.Examples.Count);
+                    Assert.AreEqual("A Basic SelectorBar", page.Examples[0].HeaderText);
+                    Assert.AreEqual("SelectorBar with Frame Slide Transitions", page.Examples[1].HeaderText);
+                    Assert.AreEqual("SelectorBar Displaying Different Collections Using ItemsView", page.Examples[2].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "SelectorBarItemRecent");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "Icon=\"Clock\"");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "ContentFrame");
+                    StringAssert.Contains(page.Examples[1].CSharpCode, "SelectorBar2_SelectionChanged");
+                    StringAssert.Contains(page.Examples[1].CSharpCode, "SlideNavigationTransitionInfo");
+                    StringAssert.Contains(page.Examples[2].XamlCode, "ItemsView3");
+                    StringAssert.Contains(page.Examples[2].CSharpCode, "PinkColorCollection");
+
+                    var selectorBar1 = (Mux.SelectorBar)FindByAutomationId(page, "GallerySample_SelectorBar_SelectorBar");
+                    var selectorBar2 = FindNamedDescendant<Mux.SelectorBar>(page, "SelectorBar2");
+                    var contentFrame = FindNamedDescendant<Frame>(page, "ContentFrame");
+                    var selectorBar3 = FindNamedDescendant<Mux.SelectorBar>(page, "SelectorBar3");
+                    var itemsView3 = FindNamedDescendant<ItemsControl>(page, "ItemsView3");
+                    Assert.IsNotNull(selectorBar1);
+                    Assert.IsNotNull(selectorBar2);
+                    Assert.IsNotNull(contentFrame);
+                    Assert.IsNotNull(selectorBar3);
+                    Assert.IsNotNull(itemsView3);
+
+                    Assert.AreEqual("SelectorBar1", selectorBar1.Name);
+                    AssertSelectorBarItem(selectorBar1.Items[0], "SelectorBarItemRecent", "Recent", Mux.Symbol.Clock, false);
+                    AssertSelectorBarItem(selectorBar1.Items[1], "SelectorBarItemShared", "Shared", Mux.Symbol.Share, false);
+                    AssertSelectorBarItem(selectorBar1.Items[2], "SelectorBarItemFavorites", "Favorites", Mux.Symbol.Favorite, false);
+
+                    Assert.AreEqual("SelectorBar2", selectorBar2.Name);
+                    Assert.AreEqual(5, selectorBar2.Items.Count);
+                    Assert.AreSame(selectorBar2.Items[0], selectorBar2.SelectedItem);
+                    Assert.AreEqual("SamplePage1", GetFramePageTitle(contentFrame));
+
+                    selectorBar2.SelectedItem = selectorBar2.Items[2];
+                    WpfTestHost.DoEvents();
+                    Assert.AreSame(selectorBar2.Items[2], selectorBar2.SelectedItem);
+                    Assert.AreEqual("SamplePage3", GetFramePageTitle(contentFrame));
+
+                    Assert.AreEqual("SelectorBar3", selectorBar3.Name);
+                    Assert.AreEqual(3, selectorBar3.Items.Count);
+                    Assert.AreSame(selectorBar3.Items[0], selectorBar3.SelectedItem);
+                    Assert.AreEqual(5, CountItems(itemsView3.ItemsSource));
+
+                    selectorBar3.SelectedItem = selectorBar3.Items[1];
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(7, CountItems(itemsView3.ItemsSource));
+
+                    selectorBar3.SelectedItem = selectorBar3.Items[2];
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(4, CountItems(itemsView3.ItemsSource));
                 }
                 finally
                 {
@@ -2542,6 +2628,49 @@ namespace ModernWpf.Gallery.Tests
             var nameProperty = item.GetType().GetProperty("Name");
             Assert.IsNotNull(nameProperty);
             return (string)nameProperty.GetValue(item, null);
+        }
+
+        private static void AssertSelectorBarItem(Mux.SelectorBarItem item, string name, string text, Mux.Symbol? symbol, bool isSelected)
+        {
+            Assert.IsNotNull(item);
+            Assert.AreEqual(name, item.Name);
+            Assert.AreEqual(text, item.Text);
+            Assert.AreEqual(isSelected, item.IsSelected);
+            if (symbol.HasValue)
+            {
+                var symbolIcon = item.Icon as Mux.SymbolIcon;
+                Assert.IsNotNull(symbolIcon);
+                Assert.AreEqual(symbol.Value, symbolIcon.Symbol);
+            }
+            else
+            {
+                Assert.IsNull(item.Icon);
+            }
+        }
+
+        private static string GetFramePageTitle(Frame frame)
+        {
+            var page = frame.Content as Page;
+            Assert.IsNotNull(page);
+            var border = page.Content as Border;
+            Assert.IsNotNull(border);
+            var textBlock = border.Child as TextBlock;
+            Assert.IsNotNull(textBlock);
+            return textBlock.Text;
+        }
+
+        private static int CountItems(object itemsSource)
+        {
+            var enumerable = itemsSource as System.Collections.IEnumerable;
+            Assert.IsNotNull(enumerable);
+
+            var count = 0;
+            foreach (var item in enumerable)
+            {
+                count++;
+            }
+
+            return count;
         }
 
         private static void AssertPipsPagerComboBox(ComboBox comboBox, string header, params string[] expectedItems)

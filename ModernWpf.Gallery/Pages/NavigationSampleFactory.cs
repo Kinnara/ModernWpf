@@ -7,7 +7,9 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using ModernWpf.Controls.Primitives;
+using ModernWpf.Gallery.Testing;
 using Mux = ModernWpf.Controls;
 
 namespace ModernWpf.Gallery.Pages
@@ -58,6 +60,87 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
     }
 }";
 
+        private const string SelectorBarBasicXaml =
+@"<SelectorBar x:Name=""SelectorBar1"">
+    <SelectorBarItem x:Name=""SelectorBarItemRecent"" Text=""Recent"" Icon=""Clock"" />
+    <SelectorBarItem x:Name=""SelectorBarItemShared"" Text=""Shared"" Icon=""Share"" />
+    <SelectorBarItem x:Name=""SelectorBarItemFavorites"" Text=""Favorites"" Icon=""Favorite"" />
+</SelectorBar>";
+
+        private const string SelectorBarFrameXaml =
+@"<SelectorBar x:Name=""SelectorBar2"" SelectionChanged=""SelectorBar2_SelectionChanged"">
+    <SelectorBarItem x:Name=""SelectorBarItemPage1"" Text=""Page1"" IsSelected=""True"" />
+    <SelectorBarItem x:Name=""SelectorBarItemPage2"" Text=""Page2"" />
+    <SelectorBarItem x:Name=""SelectorBarItemPage3"" Text=""Page3"" />
+    <SelectorBarItem x:Name=""SelectorBarItemPage4"" Text=""Page4"" />
+    <SelectorBarItem x:Name=""SelectorBarItemPage5"" Text=""Page5"" />
+</SelectorBar>
+
+<Frame x:Name=""ContentFrame"" IsNavigationStackEnabled=""False"" />";
+
+        private const string SelectorBarFrameCSharp =
+@"private void SelectorBar2_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
+        {
+            SelectorBarItem selectedItem = sender.SelectedItem;
+            int currentSelectedIndex = sender.Items.IndexOf(selectedItem);
+            System.Type pageType;
+
+            switch (currentSelectedIndex)
+            {
+                case 0:
+                    pageType = typeof(SamplePage1);
+                    break;
+                case 1:
+                    pageType = typeof(SamplePage2);
+                    break;
+                case 2:
+                    pageType = typeof(SamplePage3);
+                    break;
+                case 3:
+                    pageType = typeof(SamplePage4);
+                    break;
+                default:
+                    pageType = typeof(SamplePage5);
+                    break;
+            }
+
+            var slideNavigationTransitionEffect = currentSelectedIndex - previousSelectedIndex > 0 ? SlideNavigationTransitionEffect.FromRight : SlideNavigationTransitionEffect.FromLeft;
+
+            ContentFrame.Navigate(pageType, null, new SlideNavigationTransitionInfo() { Effect = slideNavigationTransitionEffect });
+
+            previousSelectedIndex = currentSelectedIndex;
+        }";
+
+        private const string SelectorBarItemsViewXaml =
+@"<SelectorBar x:Name=""SelectorBar3"" SelectionChanged=""SelectorBar3_SelectionChanged"" >
+    <SelectorBarItem x:Name=""SelectorBarItemPink"" Text=""Pink"" IsSelected=""True"" />
+    <SelectorBarItem x:Name=""SelectorBarItemPlum"" Text=""Plum"" />
+    <SelectorBarItem x:Name=""SelectorBarItemPowderBlue"" Text=""PowderBlue"" />
+</SelectorBar>
+
+<ItemsView x:Name=""ItemsView3"" ItemTemplate=""{StaticResource ColorsTemplate}"" />
+    <ItemsView.Layout>
+        <UniformGridLayout />
+    </ItemsView.Layout>
+</ItemsView/>";
+
+        private const string SelectorBarItemsViewCSharp =
+@"private void SelectorBar3_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
+{
+    if (sender.SelectedItem == SelectorBarItemPink)
+    {
+        ItemsView3.ItemsSource = PinkColorCollection;
+    }
+    else if (sender.SelectedItem == SelectorBarItemPlum)
+    {
+        ItemsView3.ItemsSource = PlumColorCollection;
+    }
+    else
+    {
+        ItemsView3.ItemsSource = PowderBlueColorCollection;
+    }
+}";
+
         private static readonly string[] BreadcrumbFoldersString =
         {
             "Home",
@@ -68,6 +151,15 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             "Folder1",
             "Folder2",
             "Folder3"
+        };
+
+        private static readonly string[] SelectorBarPageColors =
+        {
+            "#E8F3FF",
+            "#F2F2F2",
+            "#FFF4CE",
+            "#FDE7E9",
+            "#E7F6E7"
         };
 
         public static UIElement Create(string uniqueId)
@@ -103,6 +195,8 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             {
                 case "BreadcrumbBar":
                     return CreateBreadcrumbBarExamples();
+                case "SelectorBar":
+                    return CreateSelectorBarExamples();
                 default:
                     return Array.Empty<GalleryExample>();
             }
@@ -420,54 +514,265 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
 
         private static UIElement CreateSelectorBarSample()
         {
-            var panel = CreateSamplePanel("SelectorBar maps to a compact row of toggle buttons that swaps a finite content set.");
-            var selector = new StackPanel
+            var panel = new GallerySamplePanel
             {
-                Orientation = Orientation.Horizontal
+                Margin = new Thickness(0, 0, 0, 12)
             };
-            var content = new Border
-            {
-                Width = 420,
-                Height = 130,
-                Padding = new Thickness(16),
-                Margin = new Thickness(0, 12, 0, 0),
-                BorderThickness = new Thickness(1),
-                BorderBrush = CreateBrush("#D8D8D8")
-            };
-
-            var buttons = new List<ToggleButton>();
-            Action<string> select = delegate(string name)
-            {
-                foreach (var button in buttons)
-                {
-                    button.IsChecked = Equals(button.Content, name);
-                }
-                content.Child = new TextBlock
-                {
-                    Text = name + " content",
-                    FontSize = 22,
-                    FontWeight = FontWeights.SemiBold,
-                    VerticalAlignment = VerticalAlignment.Center
-                };
-            };
-
-            foreach (var name in new[] { "Recent", "Shared", "Favorites" })
-            {
-                var button = new ToggleButton
-                {
-                    Content = name,
-                    Padding = new Thickness(14, 6, 14, 6),
-                    Margin = new Thickness(0, 0, 8, 0)
-                };
-                button.Click += delegate { select((string)button.Content); };
-                buttons.Add(button);
-                selector.Children.Add(button);
-            }
-            select("Recent");
-
-            panel.Children.Add(selector);
-            panel.Children.Add(content);
+            GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("SelectorBar"));
+            panel.Children.Add(CreateSelectorBarBasicExampleContent(false));
+            panel.Children.Add(CreateSelectorBarFrameExampleContent());
+            panel.Children.Add(CreateSelectorBarItemsViewExampleContent());
             return panel;
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateSelectorBarExamples()
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "A Basic SelectorBar",
+                    CreateSelectorBarBasicExampleContent(true),
+                    SelectorBarBasicXaml,
+                    null),
+                new GalleryExample(
+                    "SelectorBar with Frame Slide Transitions",
+                    CreateSelectorBarFrameExampleContent(),
+                    SelectorBarFrameXaml,
+                    SelectorBarFrameCSharp),
+                new GalleryExample(
+                    "SelectorBar Displaying Different Collections Using ItemsView",
+                    CreateSelectorBarItemsViewExampleContent(),
+                    SelectorBarItemsViewXaml,
+                    SelectorBarItemsViewCSharp)
+            };
+        }
+
+        private static UIElement CreateSelectorBarBasicExampleContent(bool assignRootAutomationId)
+        {
+            var root = new GallerySamplePanel();
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("SelectorBar"));
+            }
+
+            var selectorBar = new Mux.SelectorBar
+            {
+                Name = "SelectorBar1"
+            };
+            GalleryAutomation.WithAutomationId(selectorBar, GalleryAutomation.SampleElementId("SelectorBar", "SelectorBar"));
+            selectorBar.Items.Add(CreateSelectorBarItem("SelectorBarItemRecent", "Recent", Mux.Symbol.Clock, false));
+            selectorBar.Items.Add(CreateSelectorBarItem("SelectorBarItemShared", "Shared", Mux.Symbol.Share, false));
+            selectorBar.Items.Add(CreateSelectorBarItem("SelectorBarItemFavorites", "Favorites", Mux.Symbol.Favorite, false));
+
+            root.Children.Add(selectorBar);
+            return root;
+        }
+
+        private static UIElement CreateSelectorBarFrameExampleContent()
+        {
+            var selectorBar = new Mux.SelectorBar
+            {
+                Name = "SelectorBar2"
+            };
+            selectorBar.Items.Add(CreateSelectorBarItem("SelectorBarItemPage1", "Page1", null, true));
+            selectorBar.Items.Add(CreateSelectorBarItem("SelectorBarItemPage2", "Page2", null, false));
+            selectorBar.Items.Add(CreateSelectorBarItem("SelectorBarItemPage3", "Page3", null, false));
+            selectorBar.Items.Add(CreateSelectorBarItem("SelectorBarItemPage4", "Page4", null, false));
+            selectorBar.Items.Add(CreateSelectorBarItem("SelectorBarItemPage5", "Page5", null, false));
+
+            var contentFrame = new Frame
+            {
+                Name = "ContentFrame",
+                Width = 520,
+                Height = 180,
+                Margin = new Thickness(0, 12, 0, 0),
+                NavigationUIVisibility = System.Windows.Navigation.NavigationUIVisibility.Hidden
+            };
+
+            Action updateContent = delegate
+            {
+                var currentSelectedIndex = selectorBar.Items.IndexOf(selectorBar.SelectedItem);
+                if (currentSelectedIndex < 0)
+                {
+                    currentSelectedIndex = 0;
+                }
+
+                contentFrame.Content = CreatePageContent("SamplePage" + (currentSelectedIndex + 1), SelectorBarPageColors[currentSelectedIndex]);
+            };
+            selectorBar.SelectionChanged += delegate { updateContent(); };
+            selectorBar.SelectedItem = selectorBar.Items[0];
+            updateContent();
+
+            var stack = new StackPanel();
+            stack.Children.Add(selectorBar);
+            stack.Children.Add(contentFrame);
+            return stack;
+        }
+
+        private static UIElement CreateSelectorBarItemsViewExampleContent()
+        {
+            var pinkColorCollection = CreateSelectorBarColorCollection(Brushes.Pink, 5);
+            var plumColorCollection = CreateSelectorBarColorCollection(Brushes.Plum, 7);
+            var powderBlueColorCollection = CreateSelectorBarColorCollection(Brushes.PowderBlue, 4);
+
+            var selectorBar = new Mux.SelectorBar
+            {
+                Name = "SelectorBar3"
+            };
+            var pinkItem = CreateSelectorBarItem("SelectorBarItemPink", "Pink", null, true);
+            var plumItem = CreateSelectorBarItem("SelectorBarItemPlum", "Plum", null, false);
+            var powderBlueItem = CreateSelectorBarItem("SelectorBarItemPowderBlue", "PowderBlue", null, false);
+            selectorBar.Items.Add(pinkItem);
+            selectorBar.Items.Add(plumItem);
+            selectorBar.Items.Add(powderBlueItem);
+
+            var itemsView = new ItemsControl
+            {
+                Name = "ItemsView3",
+                Margin = new Thickness(0, 12, 0, 0),
+                ItemTemplate = CreateSelectorBarColorTemplate(),
+                ItemsSource = pinkColorCollection
+            };
+            var itemsPanel = new FrameworkElementFactory(typeof(StackPanel));
+            itemsPanel.SetValue(StackPanel.OrientationProperty, Orientation.Horizontal);
+            itemsView.ItemsPanel = new ItemsPanelTemplate(itemsPanel);
+
+            selectorBar.SelectionChanged += delegate(Mux.SelectorBar sender, Mux.SelectorBarSelectionChangedEventArgs args)
+            {
+                if (sender.SelectedItem == pinkItem)
+                {
+                    itemsView.ItemsSource = pinkColorCollection;
+                }
+                else if (sender.SelectedItem == plumItem)
+                {
+                    itemsView.ItemsSource = plumColorCollection;
+                }
+                else
+                {
+                    itemsView.ItemsSource = powderBlueColorCollection;
+                }
+            };
+            selectorBar.SelectedItem = pinkItem;
+
+            var stack = new StackPanel();
+            stack.Children.Add(selectorBar);
+            stack.Children.Add(itemsView);
+            return stack;
+        }
+
+        private static Mux.SelectorBarItem CreateSelectorBarItem(string name, string text, Mux.Symbol? symbol, bool isSelected)
+        {
+            var item = new Mux.SelectorBarItem
+            {
+                Name = name,
+                Text = text,
+                Foreground = CreateSelectorBarItemForeground(),
+                IsSelected = isSelected
+            };
+            item.Template = CreateSelectorBarItemTemplate();
+            if (symbol.HasValue)
+            {
+                item.Icon = new Mux.SymbolIcon(symbol.Value);
+            }
+
+            return item;
+        }
+
+        private static Brush CreateSelectorBarItemForeground()
+        {
+            return IsDarkGalleryTheme()
+                ? Brushes.White
+                : CreateBrush("#E4000000");
+        }
+
+        private static bool IsDarkGalleryTheme()
+        {
+            if (!string.IsNullOrWhiteSpace(GalleryDiagnostics.Theme))
+            {
+                return string.Equals(GalleryDiagnostics.Theme, "Dark", StringComparison.OrdinalIgnoreCase);
+            }
+
+            return ModernWpf.ThemeManager.Current.ActualApplicationTheme == ModernWpf.ApplicationTheme.Dark;
+        }
+
+        private static ControlTemplate CreateSelectorBarItemTemplate()
+        {
+            var border = new FrameworkElementFactory(typeof(Border));
+            border.SetValue(Border.BackgroundProperty, Brushes.Transparent);
+
+            var root = new FrameworkElementFactory(typeof(StackPanel));
+            root.SetValue(StackPanel.OrientationProperty, Orientation.Vertical);
+
+            var content = new FrameworkElementFactory(typeof(StackPanel));
+            content.SetValue(StackPanel.OrientationProperty, Orientation.Horizontal);
+            content.SetValue(FrameworkElement.MarginProperty, new Thickness(12, 10, 12, 7));
+
+            var icon = new FrameworkElementFactory(typeof(ContentPresenter));
+            icon.SetValue(ContentPresenter.ContentProperty, new TemplateBindingExtension(Mux.SelectorBarItem.IconProperty));
+            icon.SetValue(FrameworkElement.MarginProperty, new Thickness(-2, 0, 8, 0));
+            icon.SetValue(FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+            content.AppendChild(icon);
+
+            var text = new FrameworkElementFactory(typeof(TextBlock));
+            text.SetValue(TextBlock.TextProperty, new TemplateBindingExtension(Mux.SelectorBarItem.TextProperty));
+            text.SetValue(TextBlock.ForegroundProperty, new TemplateBindingExtension(Control.ForegroundProperty));
+            text.SetValue(TextBlock.FontFamilyProperty, new TemplateBindingExtension(Control.FontFamilyProperty));
+            text.SetValue(TextBlock.FontWeightProperty, new TemplateBindingExtension(Control.FontWeightProperty));
+            text.SetValue(TextBlock.FontSizeProperty, new TemplateBindingExtension(Control.FontSizeProperty));
+            text.SetValue(FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+            content.AppendChild(text);
+
+            var selectionPill = new FrameworkElementFactory(typeof(Rectangle));
+            selectionPill.Name = "SelectionPill";
+            selectionPill.SetValue(FrameworkElement.WidthProperty, 16.0);
+            selectionPill.SetValue(FrameworkElement.HeightProperty, 3.0);
+            selectionPill.SetValue(FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Center);
+            selectionPill.SetValue(UIElement.VisibilityProperty, Visibility.Collapsed);
+            selectionPill.SetValue(Shape.FillProperty, CreateBrush("#0067C0"));
+            selectionPill.SetValue(Rectangle.RadiusXProperty, 1.0);
+            selectionPill.SetValue(Rectangle.RadiusYProperty, 1.0);
+
+            root.AppendChild(content);
+            root.AppendChild(selectionPill);
+            border.AppendChild(root);
+
+            var template = new ControlTemplate(typeof(Mux.SelectorBarItem))
+            {
+                VisualTree = border
+            };
+            var selectedTrigger = new Trigger
+            {
+                Property = Mux.SelectorBarItem.IsSelectedProperty,
+                Value = true
+            };
+            selectedTrigger.Setters.Add(new Setter(UIElement.VisibilityProperty, Visibility.Visible, "SelectionPill"));
+            template.Triggers.Add(selectedTrigger);
+            return template;
+        }
+
+        private static ObservableCollection<SolidColorBrush> CreateSelectorBarColorCollection(Brush brush, int count)
+        {
+            var colors = new ObservableCollection<SolidColorBrush>();
+            for (var i = 0; i < count; i++)
+            {
+                colors.Add((SolidColorBrush)brush);
+            }
+
+            return colors;
+        }
+
+        private static DataTemplate CreateSelectorBarColorTemplate()
+        {
+            var border = new FrameworkElementFactory(typeof(Border));
+            border.SetValue(FrameworkElement.WidthProperty, 112.0);
+            border.SetValue(FrameworkElement.HeightProperty, 82.0);
+            border.SetValue(FrameworkElement.MarginProperty, new Thickness(4));
+            border.SetBinding(Border.BackgroundProperty, new Binding());
+
+            return new DataTemplate(typeof(SolidColorBrush))
+            {
+                VisualTree = border
+            };
         }
 
         private static UIElement CreateTabViewSample()
