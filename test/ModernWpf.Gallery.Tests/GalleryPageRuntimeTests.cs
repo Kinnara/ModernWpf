@@ -425,6 +425,42 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void SettingsPageVisualTestThemeSelectionMatchesRequestedThemeWithoutApplyingSelection()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var previousTheme = ThemeManager.Current.ApplicationTheme;
+                try
+                {
+                    GalleryDiagnostics.Configure(GalleryLaunchOptions.Parse(new[] { "--visual-test", "--theme", "Light" }));
+                    ThemeManager.Current.ApplicationTheme = ApplicationTheme.Light;
+
+                    var lightPage = new SettingsPage();
+                    var lightThemeMode = (ComboBox)lightPage.FindName("Change_ThemeMode");
+
+                    Assert.AreEqual(0, lightThemeMode.SelectedIndex);
+                    Assert.AreEqual("Light", ((ComboBoxItem)lightThemeMode.SelectedItem).Content);
+                    Assert.AreEqual(ApplicationTheme.Light, ThemeManager.Current.ApplicationTheme);
+
+                    GalleryDiagnostics.Configure(GalleryLaunchOptions.Parse(new[] { "--visual-test", "--theme", "Dark" }));
+                    ThemeManager.Current.ApplicationTheme = ApplicationTheme.Dark;
+
+                    var darkPage = new SettingsPage();
+                    var darkThemeMode = (ComboBox)darkPage.FindName("Change_ThemeMode");
+
+                    Assert.AreEqual(1, darkThemeMode.SelectedIndex);
+                    Assert.AreEqual("Dark", ((ComboBoxItem)darkThemeMode.SelectedItem).Content);
+                    Assert.AreEqual(ApplicationTheme.Dark, ThemeManager.Current.ApplicationTheme);
+                }
+                finally
+                {
+                    ThemeManager.Current.ApplicationTheme = previousTheme;
+                    GalleryDiagnostics.ResetForTests();
+                }
+            });
+        }
+
+        [TestMethod]
         public void WhatsNewPageAccentSwatchesUseSystemAccentResources()
         {
             WpfTestHost.Run(() =>

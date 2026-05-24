@@ -1,7 +1,9 @@
+using System;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using ModernWpf;
+using ModernWpf.Gallery.Testing;
 
 namespace ModernWpf.Gallery.Pages
 {
@@ -19,6 +21,7 @@ namespace ModernWpf.Gallery.Pages
             ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
+            ApplyVisualTestThemeSelection();
             _canApplyThemeSelection = true;
         }
 
@@ -48,6 +51,23 @@ namespace ModernWpf.Gallery.Pages
         private void OnOpenIssuesClick(object sender, RoutedEventArgs e)
         {
             OpenUri("https://github.com/microsoft/WPF-Samples/issues/new");
+        }
+
+        private void ApplyVisualTestThemeSelection()
+        {
+            if (!GalleryDiagnostics.IsEnabled)
+            {
+                return;
+            }
+
+            if (string.Equals(GalleryDiagnostics.Theme, "Light", StringComparison.OrdinalIgnoreCase))
+            {
+                Change_ThemeMode.SelectedIndex = 0;
+            }
+            else if (string.Equals(GalleryDiagnostics.Theme, "Dark", StringComparison.OrdinalIgnoreCase))
+            {
+                Change_ThemeMode.SelectedIndex = 1;
+            }
         }
 
         private void Open_ToolkitInformation(object sender, RoutedEventArgs e)
