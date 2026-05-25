@@ -734,6 +734,7 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
                 null);
             AddStandardNavigationItems(navigationView, includeIcons: false, firstContent: "Menu Item1", remainingPrefix: "Menu Item");
             SelectFirstNavigationItem(navigationView);
+            AttachAdaptiveNavigationViewPaneMode(root, navigationView);
             root.Children.Add(navigationView);
             return root;
         }
@@ -2091,6 +2092,21 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             {
                 navigationView.SelectedItem = navigationView.MenuItems[0];
             }
+        }
+
+        private static void AttachAdaptiveNavigationViewPaneMode(FrameworkElement root, Mux.NavigationView navigationView)
+        {
+            void UpdatePaneMode()
+            {
+                var width = root.ActualWidth > 0 ? root.ActualWidth : navigationView.ActualWidth;
+                navigationView.PaneDisplayMode = width >= navigationView.CompactModeThresholdWidth
+                    ? Mux.NavigationViewPaneDisplayMode.Top
+                    : Mux.NavigationViewPaneDisplayMode.Auto;
+            }
+
+            root.Loaded += delegate { UpdatePaneMode(); };
+            root.SizeChanged += delegate { UpdatePaneMode(); };
+            navigationView.SizeChanged += delegate { UpdatePaneMode(); };
         }
 
         private static DataTemplate CreateNavigationCategoryTemplate()

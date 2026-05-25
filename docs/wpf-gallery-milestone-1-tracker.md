@@ -106,6 +106,12 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.NavigationViewSampleMatchesWinUIGalleryExamples" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 1 test per target. The generated ModernWpf NavigationView page still follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\NavigationViewPage.xaml` / `.xaml.cs`, and the live WPF adaptation now mirrors the source `VisualStateManager` adaptive sample path by switching `nvSample2.PaneDisplayMode` to `Top` when the rendered sample width crosses `nvSample2.CompactModeThresholdWidth`; the source XAML snippet continues to expose the official `AdaptiveTrigger`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls NavigationView -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-075704-742-52828/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required NavigationView sample element was found, primary crops remain `745x460` vs `745x460`, and Light primary delta remains at the accepted `6.41`; whole-window Light mean delta is diagnostic at `139.61`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls NavigationView -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-075732-573-52396/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required NavigationView sample element was found, primary crops remain `745x460` vs `745x460`, and Dark primary delta remains at the accepted `5.77`; whole-window Dark mean delta is `54.16`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.SelectorBarSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 66 tests per target. The generated ModernWpf SelectorBar page still follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\SelectorBarPage.xaml` / `.xaml.cs`, and the WPF runtime adaptation now maps the source `Icon="Favorite"` sample glyph to ModernWpf's outline-star symbol because ModernWpf's `Symbol.Favorite` renders filled while installed WinUI renders the first sample's Favorite icon as an outline star. The official source snippet text remains unchanged.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls SelectorBar -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -1639,12 +1645,15 @@ WPF `Frame` hosts, and the existing local tile sample content in place of
 WinUI sample pages while preserving pane modes, footer items, hierarchy,
 data-bound item templates, and option toggles. Current NavigationView
 WinUI-reference evidence is
-`artifacts/visual-checks/20260524-180710-523-77744/report.md` for Light and
-`artifacts/visual-checks/20260524-180747-625-85880/report.md` for Dark, both
+`artifacts/visual-checks/20260525-075704-742-52828/report.md` for Light and
+`artifacts/visual-checks/20260525-075732-573-52396/report.md` for Dark, both
 with ModernWpf and installed WinUI 3 Gallery `Passed`, nonblank app captures,
 matching `745x460` primary crops, and primary deltas `6.41` / `5.77`. Avoid
 reopening NavigationView's source shape unless a new WinUI source, runtime, or
-crop regression appears; later rounds can separately investigate broader
+crop regression appears. The live adaptive-orientation sample now mirrors the
+local WinUI source `VisualStateManager` path by switching `nvSample2` to
+`PaneDisplayMode=Top` once the rendered sample width crosses
+`CompactModeThresholdWidth`; later rounds can separately investigate broader
 NavigationView template/resource drift.
 The generated ModernWpf TabView extension page now uses the local official
 WinUI Gallery ten-example structure from

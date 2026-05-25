@@ -518,7 +518,8 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(4, topNavigationView.MenuItems.Count);
 
                     var adaptiveNavigationView = FindNamedDescendant<Mux.NavigationView>(page, "nvSample2");
-                    Assert.AreEqual(Mux.NavigationViewPaneDisplayMode.Auto, adaptiveNavigationView.PaneDisplayMode);
+                    Assert.IsTrue(adaptiveNavigationView.ActualWidth >= adaptiveNavigationView.CompactModeThresholdWidth);
+                    Assert.AreEqual(Mux.NavigationViewPaneDisplayMode.Top, adaptiveNavigationView.PaneDisplayMode);
                     Assert.AreEqual(4, adaptiveNavigationView.MenuItems.Count);
 
                     var tabsNavigationView = FindNamedDescendant<Mux.NavigationView>(page, "nvSample7");
