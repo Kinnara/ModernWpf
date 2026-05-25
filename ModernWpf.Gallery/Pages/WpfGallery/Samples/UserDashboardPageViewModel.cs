@@ -54,15 +54,9 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
             {
                 if (SetProperty(ref _deletedName, value, "DeletedName") && !string.IsNullOrEmpty(value))
                 {
-                    OnPropertyChanged("DeletedStatusText");
                     RestartTimer(_deletedMessageTimer);
                 }
             }
-        }
-
-        public string DeletedStatusText
-        {
-            get { return "User " + (string.IsNullOrEmpty(DeletedName) && SelectedUser != null ? SelectedUser.Name : DeletedName) + " Deleted!"; }
         }
 
         public UserDashboardUser EditableUser
@@ -125,7 +119,6 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
                     EditableUser = new UserDashboardUser(value);
                     IsReadOnly = true;
                     IsEditing = false;
-                    OnPropertyChanged("DeletedStatusText");
                 }
             }
         }

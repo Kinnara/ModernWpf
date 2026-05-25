@@ -2646,9 +2646,24 @@ namespace ModernWpf.Gallery.Tests
                     var deleteButton = (Button)commands.Children[3];
                     var saveButton = (Button)commands.Children[4];
                     var cancelButton = (Button)commands.Children[5];
-                    Assert.AreEqual("Saved!", savedStatus.Text);
+                    var savedStatusRuns = savedStatus.Inlines.OfType<Run>().ToArray();
+                    Assert.AreEqual(1, savedStatusRuns.Length);
+                    Assert.AreEqual("Saved!", savedStatusRuns[0].Text.Trim());
                     Assert.AreEqual(Visibility.Collapsed, savedStatus.Visibility);
-                    Assert.AreEqual("User " + selectedUser.Name + " Deleted!", deletedStatus.Text);
+                    var deletedStatusRuns = deletedStatus.Inlines
+                        .OfType<Run>()
+                        .Where(run => !string.IsNullOrWhiteSpace(run.Text) ||
+                            BindingOperations.GetBinding(run, Run.TextProperty) != null)
+                        .ToArray();
+                    Assert.AreEqual(3, deletedStatusRuns.Length);
+                    Assert.AreEqual("User", deletedStatusRuns[0].Text);
+                    Assert.AreEqual(string.Empty, deletedStatusRuns[1].Text);
+                    Assert.AreEqual("Deleted!", deletedStatusRuns[2].Text);
+                    var deletedNameBinding = BindingOperations.GetBinding(deletedStatusRuns[1], Run.TextProperty);
+                    Assert.IsNotNull(deletedNameBinding);
+                    Assert.AreEqual("ViewModel.DeletedName", deletedNameBinding.Path.Path);
+                    Assert.AreEqual(BindingMode.OneWay, deletedNameBinding.Mode);
+                    Assert.IsNull(typeof(UserDashboardPageViewModel).GetProperty("DeletedStatusText"));
                     Assert.AreEqual(Visibility.Collapsed, deletedStatus.Visibility);
                     Assert.AreEqual("Edit", editButton.Content);
                     Assert.AreEqual("Delete", deleteButton.Content);

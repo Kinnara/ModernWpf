@@ -271,16 +271,20 @@
                                 VerticalAlignment="Center"
                                 FontSize="14"
                                 FontStyle="Italic"
-                                Text="Saved!"
-                                Visibility="{Binding ViewModel.IsSaved, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                Visibility="{Binding ViewModel.IsSaved, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                Saved!
+                            </TextBlock>
 
                             <TextBlock
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Center"
                                 FontSize="14"
                                 FontStyle="Italic"
-                                Text="{Binding ViewModel.DeletedStatusText}"
-                                Visibility="{Binding ViewModel.DeletedName, Converter={StaticResource EmptyToVisibilityConverter}}" />
+                                Visibility="{Binding ViewModel.DeletedName, Converter={StaticResource EmptyToVisibilityConverter}}">
+                                <Run Text="User" />
+                                <Run Text="{Binding ViewModel.DeletedName, Mode=OneWay}" />
+                                <Run Text="Deleted!" />
+                            </TextBlock>
                             <Button
                                 x:Name="edit_button"
                                 Margin="10"
