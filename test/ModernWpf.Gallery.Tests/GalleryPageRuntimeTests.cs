@@ -2189,11 +2189,13 @@ namespace ModernWpf.Gallery.Tests
                     selector.Items.Cast<string>().ToArray());
                 Assert.AreEqual(200.0, selector.Width);
                 Assert.AreEqual("Page Selector", AutomationProperties.GetName(selector));
+                Assert.AreSame(DependencyProperty.UnsetValue, sectionHost.ReadLocalValue(TextElement.FontSizeProperty));
 
                 selector.RaiseEvent(new RoutedEventArgs(FrameworkElement.LoadedEvent, selector));
                 WpfTestHost.DoEvents();
 
                 Assert.AreEqual("TextSection", sectionHost.Content.GetType().Name);
+                Assert.AreEqual(14.0, TextElement.GetFontSize((DependencyObject)sectionHost.Content));
                 var textSection = GetColorSectionStack(sectionHost.Content);
                 Assert.AreEqual("Text", GetColorPageExampleTitle(textSection, 0));
                 Assert.AreEqual("Accent Text", GetColorPageExampleTitle(textSection, 2));

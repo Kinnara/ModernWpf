@@ -58,8 +58,7 @@
                 </ComboBox>
 
                 <Frame
-                    x:Name="ColorSubpageNavigationFrame"
-                    TextElement.FontSize="{StaticResource BodyTextBlockFontSize}" />
+                    x:Name="ColorSubpageNavigationFrame" />
             </StackPanel>
         </ScrollViewer>
     </Grid>
