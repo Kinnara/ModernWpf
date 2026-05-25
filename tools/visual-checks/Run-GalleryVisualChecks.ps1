@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "RichTextBlock", "RichEditBox", "SplitView", "PersonPicture", "Sound", "MediaPlayerElement", "MapControl", "WebView2", "Acrylic", "AnimatedIcon", "ParallaxView", "CompactSizing", "IconElement", "Line", "Shape", "RadialGradientBrush", "SystemBackdrops", "SystemBackdropElement", "ThemeShadow", "CreateMultipleWindows", "AppWindow", "AppWindowTitleBar", "TitleBar", "StoragePickers", "CalendarDatePicker", "CalendarView", "TimePicker", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "AnnotatedScrollBar", "ScrollView", "ScrollViewer", "SemanticZoom", "PullToRefresh", "FlipView", "ItemsView", "GridView", "ItemsRepeater", "BreadcrumbBar", "Pivot", "SelectorBar", "TabView", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "SwipeControl", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout", "StandardUICommand", "XamlUICommand"),
+    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "RichTextBlock", "RichEditBox", "SplitView", "PersonPicture", "Sound", "MediaPlayerElement", "MapControl", "WebView2", "Acrylic", "AnimatedIcon", "EasingFunction", "ParallaxView", "CompactSizing", "IconElement", "Line", "Shape", "RadialGradientBrush", "SystemBackdrops", "SystemBackdropElement", "ThemeShadow", "CreateMultipleWindows", "AppWindow", "AppWindowTitleBar", "TitleBar", "StoragePickers", "CalendarDatePicker", "CalendarView", "TimePicker", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "AnnotatedScrollBar", "ScrollView", "ScrollViewer", "SemanticZoom", "PullToRefresh", "FlipView", "ItemsView", "GridView", "ItemsRepeater", "BreadcrumbBar", "Pivot", "SelectorBar", "TabView", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "SwipeControl", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout", "StandardUICommand", "XamlUICommand"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -470,6 +470,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "WebView2" { return "GallerySample_WebView2_WebView2" }
         "Acrylic" { return "GallerySample_Acrylic_Example1Grid" }
         "AnimatedIcon" { return "GallerySample_AnimatedIcon_Button" }
+        "EasingFunction" { return "GallerySample_EasingFunction_StandardButton" }
         "ParallaxView" { return "GallerySample_ParallaxView_Root" }
         "CompactSizing" { return "GallerySample_CompactSizing_FirstName" }
         "IconElement" { return "GallerySample_IconElement_SlicesIcon" }
@@ -561,6 +562,7 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
         "WebView2" { return "GallerySample_WebView2_WebView2" }
         "Acrylic" { return "GallerySample_Acrylic_Root" }
         "AnimatedIcon" { return "GallerySample_AnimatedIcon_Root" }
+        "EasingFunction" { return "GallerySample_EasingFunction_StandardButton" }
         "ParallaxView" { return "GallerySample_ParallaxView_Root" }
         "CompactSizing" { return "GallerySample_CompactSizing_Root" }
         "IconElement" { return "GallerySample_IconElement_Root" }
@@ -644,6 +646,7 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
         "WebView2" { return "MyWebView2" }
         "Acrylic" { return "svPanel" }
         "AnimatedIcon" { return "svPanel" }
+        "EasingFunction" { return "" }
         "ParallaxView" { return "listView" }
         "CompactSizing" { return "svPanel" }
         "IconElement" { return "svPanel" }
@@ -686,6 +689,7 @@ function Get-ReferencePrimaryName([string]$control) {
         "ToggleSwitch" { return "simple ToggleSwitch" }
         "RichTextBlock" { return "I am a RichTextBlock." }
         "RichEditBox" { return "simple text editor" }
+        "EasingFunction" { return "Animate rectangle using Standard Easing Function" }
         default { return "" }
     }
 }
@@ -695,6 +699,7 @@ function Get-WinUIReferencePageTitle([string]$control) {
         "CompactSizing" { return "Compact Sizing" }
         "Acrylic" { return "AcrylicBrush" }
         "CreateMultipleWindows" { return "Multiple windows" }
+        "EasingFunction" { return "Easing Functions" }
         "SystemBackdrops" { return "System Backdrops (Mica/Acrylic)" }
         "StoragePickers" { return "Storage pickers" }
         default { return $control }

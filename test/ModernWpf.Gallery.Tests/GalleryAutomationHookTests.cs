@@ -48,6 +48,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "WebView2", "GallerySample_WebView2_Root", "GallerySample_WebView2_WebView2" };
             yield return new object[] { "Acrylic", "GallerySample_Acrylic_Root", "GallerySample_Acrylic_Example1Grid" };
             yield return new object[] { "AnimatedIcon", "GallerySample_AnimatedIcon_Root", "GallerySample_AnimatedIcon_Button" };
+            yield return new object[] { "EasingFunction", "GallerySample_EasingFunction_Root", "GallerySample_EasingFunction_StandardButton" };
             yield return new object[] { "ParallaxView", "GallerySample_ParallaxView_Root", "GallerySample_ParallaxView_ParallaxView" };
             yield return new object[] { "CompactSizing", "GallerySample_CompactSizing_Root", "GallerySample_CompactSizing_FirstName" };
             yield return new object[] { "IconElement", "GallerySample_IconElement_Root", "GallerySample_IconElement_SlicesIcon" };
@@ -1524,6 +1525,113 @@ namespace ModernWpf.Gallery.Tests
                     WpfTestHost.DoEvents();
                     Assert.AreEqual(250.0, annotatedScrollBar.MaxHeight);
                     Assert.AreEqual(5, annotatedScrollBar.Labels.Count);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void EasingFunctionSampleMatchesWinUIGalleryExamples()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("EasingFunction"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.IsTrue(page.HasIntroContent);
+                    var visibleTexts = FindDescendants<TextBlock>(page).Select(textBlock => textBlock.Text).ToArray();
+                    CollectionAssert.Contains(visibleTexts, "- Use the Standard easing function for animating general property changes.");
+                    CollectionAssert.Contains(visibleTexts, "- Use the Accelerate easing function to animate objects that are exiting the scene.");
+                    CollectionAssert.Contains(visibleTexts, "- Use the Decelerate easing function to animate objects that are entering the scene.");
+
+                    Assert.AreEqual(4, page.Examples.Count);
+                    Assert.AreEqual("Standard Easing Function", page.Examples[0].HeaderText);
+                    Assert.AreEqual("Accelerate Easing Function", page.Examples[1].HeaderText);
+                    Assert.AreEqual("Decelerate Easing Function", page.Examples[2].HeaderText);
+                    Assert.AreEqual("Other XAML Easing Functions", page.Examples[3].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "<CircleEase EasingMode=\"EaseInOut\" />");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "<ExponentialEase Exponent=\"$(AccelerateEasingExponent)\" EasingMode=\"EaseIn\" />");
+                    StringAssert.Contains(page.Examples[2].XamlCode, "<ExponentialEase Exponent=\"$(DecelerateEasingExponent)\" EasingMode=\"EaseOut\" />");
+                    StringAssert.Contains(page.Examples[3].XamlCode, "<$(EasingFunction)/>");
+                    Assert.IsNull(page.Examples[0].CSharpCode);
+                    Assert.IsNull(page.Examples[1].CSharpCode);
+                    Assert.IsNull(page.Examples[2].CSharpCode);
+                    Assert.IsNull(page.Examples[3].CSharpCode);
+
+                    var sampleRoot = FindByAutomationId(page, "GallerySample_EasingFunction_Root") as UIElement;
+                    Assert.IsNotNull(sampleRoot);
+                    var sampleRootPeer = UIElementAutomationPeer.CreatePeerForElement(sampleRoot);
+                    Assert.IsNotNull(sampleRootPeer);
+                    Assert.IsTrue(sampleRootPeer.IsControlElement());
+                    Assert.AreEqual(AutomationControlType.Group, sampleRootPeer.GetAutomationControlType());
+
+                    var standardButton = (Button)FindByAutomationId(page, "GallerySample_EasingFunction_StandardButton");
+                    var accelerateButton = (Button)FindByAutomationId(page, "GallerySample_EasingFunction_AccelerateButton");
+                    var decelerateButton = (Button)FindByAutomationId(page, "GallerySample_EasingFunction_DecelerateButton");
+                    var otherButton = (Button)FindByAutomationId(page, "GallerySample_EasingFunction_OtherButton");
+                    AssertEasingButton(standardButton, "Animate rectangle using Standard Easing Function");
+                    AssertEasingButton(accelerateButton, "Animate rectangle using Accelerate Easing Function");
+                    AssertEasingButton(decelerateButton, "Animate rectangle using Decelerate Easing Function");
+                    AssertEasingButton(otherButton, "Animate rectangle using an Easing Function");
+
+                    var standardRectangle = (WpfShapes.Rectangle)FindByAutomationId(page, "GallerySample_EasingFunction_StandardButtonRectangle");
+                    Assert.IsNotNull(standardRectangle);
+                    Assert.AreEqual(50.0, standardRectangle.Width);
+                    Assert.AreEqual(50.0, standardRectangle.Height);
+                    Assert.AreEqual(Color.FromRgb(0x00, 0x78, 0xD4), ((SolidColorBrush)standardRectangle.Fill).Color);
+                    Assert.IsInstanceOfType(standardRectangle.RenderTransform, typeof(TranslateTransform));
+
+                    var accelerateExponent = FindNamedDescendant<Mux.NumberBox>(page, "AccelerateEasingExponent");
+                    var decelerateExponent = FindNamedDescendant<Mux.NumberBox>(page, "DecelerateEasingExponent");
+                    AssertEasingNumberBox(accelerateExponent, "Accelerate easing exponent", 4.5);
+                    AssertEasingNumberBox(decelerateExponent, "Decelerate easing exponent", 7.0);
+
+                    var easingComboBox = FindNamedDescendant<ComboBox>(page, "EasingComboBox");
+                    Assert.IsNotNull(easingComboBox);
+                    Assert.AreEqual("Easing type", AutomationProperties.GetName(easingComboBox));
+                    Assert.AreEqual(0, easingComboBox.SelectedIndex);
+                    CollectionAssert.AreEqual(
+                        new[]
+                        {
+                            "BackEase",
+                            "BounceEase",
+                            "CircleEase",
+                            "CubicEase",
+                            "ElasticEase",
+                            "ExponentialEase",
+                            "PowerEase",
+                            "QuadraticEase",
+                            "QuarticEase",
+                            "QuinticEase",
+                            "SineEase"
+                        },
+                        easingComboBox.Items.Cast<string>().ToArray());
+
+                    Assert.IsTrue(FindNamedDescendant<RadioButton>(page, "easeOutRB").IsChecked == true);
+                    Assert.AreEqual("EaseIn", FindNamedDescendant<RadioButton>(page, "easeInRB").Content);
+                    Assert.AreEqual("EaseInOut", FindNamedDescendant<RadioButton>(page, "easeInOutRB").Content);
                 }
                 finally
                 {
@@ -7298,6 +7406,22 @@ namespace ModernWpf.Gallery.Tests
                 Assert.IsNotNull(item);
                 Assert.AreEqual(expectedItems[i], item.Content);
             }
+        }
+
+        private static void AssertEasingButton(Button button, string automationName)
+        {
+            Assert.IsNotNull(button);
+            Assert.AreEqual("Animate", button.Content);
+            Assert.AreEqual(automationName, AutomationProperties.GetName(button));
+        }
+
+        private static void AssertEasingNumberBox(Mux.NumberBox numberBox, string automationName, double value)
+        {
+            Assert.IsNotNull(numberBox);
+            Assert.AreEqual("Exponent", numberBox.Header);
+            Assert.AreEqual(automationName, AutomationProperties.GetName(numberBox));
+            Assert.AreEqual(value, numberBox.Value);
+            Assert.AreEqual(Mux.NumberBoxSpinButtonPlacementMode.Inline, numberBox.SpinButtonPlacementMode);
         }
 
         private static void AssertAnnotatedColorItem(WrapPanel itemsRepeater, int index, Color expectedColor)
