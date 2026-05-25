@@ -84,6 +84,17 @@ namespace ModernWpf.Gallery.Tests
             return null;
         }
 
+        public static void AssertContainsInOrder(string source, params string[] snippets)
+        {
+            var startIndex = 0;
+            foreach (var snippet in snippets)
+            {
+                var index = source.IndexOf(snippet, startIndex, StringComparison.Ordinal);
+                Assert.IsTrue(index >= 0, "Could not find expected source snippet after index {0}: {1}", startIndex, snippet);
+                startIndex = index + snippet.Length;
+            }
+        }
+
         public static string GetRepoRoot()
         {
             var directory = new DirectoryInfo(AppContext.BaseDirectory);

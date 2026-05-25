@@ -50,7 +50,7 @@ namespace ModernWpf.Gallery.Pages
 
         private void Open_Issues(object sender, RoutedEventArgs e)
         {
-            OpenUri("https://github.com/microsoft/WPF-Samples/issues/new");
+            Process.Start(new ProcessStartInfo("https://github.com/microsoft/WPF-Samples/issues/new") { UseShellExecute = true });
         }
 
         private void ApplyVisualTestThemeSelection()
@@ -72,32 +72,27 @@ namespace ModernWpf.Gallery.Pages
 
         private void Open_ToolkitInformation(object sender, RoutedEventArgs e)
         {
-            OpenUri("https://www.nuget.org/packages/CommunityToolkit.Mvvm/");
+            Process.Start(new ProcessStartInfo("https://www.nuget.org/packages/CommunityToolkit.Mvvm/") { UseShellExecute = true });
         }
 
         private void Open_DIInformation(object sender, RoutedEventArgs e)
         {
-            OpenUri("https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/");
+            Process.Start(new ProcessStartInfo("https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/") { UseShellExecute = true });
         }
 
         private void Open_HostingInformation(object sender, RoutedEventArgs e)
         {
-            OpenUri("https://www.nuget.org/packages/Microsoft.Extensions.Hosting");
+            Process.Start(new ProcessStartInfo("https://www.nuget.org/packages/Microsoft.Extensions.Hosting") { UseShellExecute = true });
         }
 
         private void Services_Click(object sender, RoutedEventArgs e)
         {
-            OpenUri("https://go.microsoft.com/fwlink/?LinkId=822631");
+            Process.Start(new ProcessStartInfo("https://go.microsoft.com/fwlink/?LinkId=822631") { UseShellExecute = true });
         }
 
         private void Privacy_Click(object sender, RoutedEventArgs e)
         {
-            OpenUri("https://go.microsoft.com/fwlink/?LinkId=521839");
-        }
-
-        private static void OpenUri(string uri)
-        {
-            Process.Start(new ProcessStartInfo(uri) { UseShellExecute = true });
+            Process.Start(new ProcessStartInfo("https://go.microsoft.com/fwlink/?LinkId=521839") { UseShellExecute = true });
         }
     }
 
