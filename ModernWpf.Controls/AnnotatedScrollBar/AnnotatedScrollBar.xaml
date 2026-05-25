@@ -81,6 +81,7 @@
                             Margin="0,-5,0,-2"
                             HorizontalAlignment="Right"
                             TextAlignment="Right"
+                            Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                             Style="{StaticResource BodyTextBlockStyle}"
                             Text="{Binding Content}"
                             TextWrapping="NoWrap" />

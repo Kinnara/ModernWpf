@@ -106,6 +106,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.AnnotatedScrollBarSampleMatchesWinUIGalleryExample" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 1 test per target. The generated ModernWpf AnnotatedScrollBar page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\AnnotatedScrollBarPage.xaml` / `.xaml.cs`: one `AnnotatedScrollBar linked to a ScrollView.` example, source-facing `scrollView`, `itemsRepeater`, `annotatedScrollBar`, and `AnnotatedScrollBarMaxHeightSlider` names, the official XAML/C# snippets, and the source color-section counts and label offsets. The WPF adaptation maps WinUI `ScrollView`/`ItemsRepeater` to WPF `ScrollViewer`/`WrapPanel`, keeps the side options layout used by the installed reference, and uses the real `ModernWpf.Controls.AnnotatedScrollBar` instead of the old placeholder marker rail. The test covers the source snippets, sample root automation peer, generated color items, label collection, rendered label presenters, themed thumb, and slider-driven height update.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls AnnotatedScrollBar -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-085248-042-118864/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required actual `GallerySample_AnnotatedScrollBar_AnnotatedScrollBar` element was found, primary crops use ModernWpf `GallerySample_AnnotatedScrollBar_Root` against WinUI `svPanel`, crop sizes are `790x500` vs `843x646`, Light primary delta is `56.19`, and whole-window Light mean delta is diagnostic at `120.41`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls AnnotatedScrollBar -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-085314-745-86412/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required actual `GallerySample_AnnotatedScrollBar_AnnotatedScrollBar` element was found, primary crops use the same full-sample mapping, crop sizes are `790x500` vs `843x646`, Dark primary delta is `30.89`, and whole-window Dark mean delta is `31.12`.
+- `git diff --check`
+  - Passed with only Git's normal LF-to-CRLF working-copy warnings for touched files.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.ScrollViewerSampleMatchesWinUIGalleryExample" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 1 test per target. The generated ModernWpf ScrollViewer page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\ScrollViewerPage.xaml` / `.xaml.cs`: the `Content inside of a ScrollViewer.` example uses the source `cliff.jpg` image viewport, source-facing names `ScrollViewerControl`, `zoomCombo`, `ZoomSlider`, `hsmCombo`, `vsmCombo`, `hsbvCombo`, and `vsbvCombo`, official XAML/C# snippets, and WPF-adapted zoom plus scroll policy controls. The test covers the source snippets, the sample root automation peer, `GallerySample_ScrollViewer_ScrollViewer`, option defaults, zoom mode behavior, scrollbar visibility mapping, and panning-mode mapping. A broader filtered run that also included `CuratedSamplesExposeStableAutomationIds` was attempted first and timed out after about 124 seconds because that dynamic test exercises every curated page; the targeted ScrollViewer test includes the relevant root/peer automation assertions for this round.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls ScrollViewer -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -2931,6 +2939,29 @@ control set and maps ModernWpf `GallerySample_ScrollViewer_ScrollViewer` to
 WinUI `ScrollViewerControl` for primary crops.
 Avoid reopening ScrollViewer's source shape unless a new local WinUI source,
 visual harness mapping, or crop regression appears.
+The generated ModernWpf AnnotatedScrollBar extension page now uses the local
+official WinUI Gallery source from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\AnnotatedScrollBarPage.xaml`
+and `.xaml.cs`: the source `AnnotatedScrollBar linked to a ScrollView.`
+example, color-section counts, source-facing `scrollView`, `itemsRepeater`,
+`annotatedScrollBar`, and `AnnotatedScrollBarMaxHeightSlider` names, official
+sample snippets, and the height-slider option. The WPF adaptation maps WinUI
+`ScrollView` and `ItemsRepeater` to WPF `ScrollViewer` and `WrapPanel`, keeps
+the installed reference's narrow one-column scroll layout beside the options
+pane, and uses the real `ModernWpf.Controls.AnnotatedScrollBar` control. The
+control template path also now keeps label presenters top-aligned and uses the
+theme primary text brush for label text so labels render correctly in both
+Light and Dark. Current AnnotatedScrollBar WinUI-reference evidence is
+`artifacts/visual-checks/20260525-085248-042-118864/report.md` for Light and
+`artifacts/visual-checks/20260525-085314-745-86412/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`; the visual harness keeps
+the actual `GallerySample_AnnotatedScrollBar_AnnotatedScrollBar` element as the
+required sample element while comparing the ModernWpf sample root against the
+installed WinUI `svPanel` sample region because the standalone rendered
+ModernWpf control artifact is blank for this templated control. Treat the Light
+sample-region delta as diagnostic unless a better stable crop becomes
+available. Avoid reopening AnnotatedScrollBar's source shape unless a new local
+WinUI source, label-layout regression, or crop regression appears.
 Continue with the next highest-impact visible drift from the checklist, likely
 remaining High Contrast gaps, other NavigationView styling not covered
 by the TreeView token aliases or first-sample refresh, or other item pages that still lack current

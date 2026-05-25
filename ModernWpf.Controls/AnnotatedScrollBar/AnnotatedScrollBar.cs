@@ -468,6 +468,7 @@ namespace ModernWpf.Controls
                 var labelContentPresenter = new ContentPresenter
                 {
                     HorizontalAlignment = HorizontalAlignment.Right,
+                    VerticalAlignment = VerticalAlignment.Top,
                     Content = label,
                     ContentTemplate = LabelTemplate
                 };

@@ -35,6 +35,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "InfoBar", "GallerySample_InfoBar_Root", "GallerySample_InfoBar_InfoBar" };
             yield return new object[] { "ProgressRing", "GallerySample_ProgressRing_Root", "GallerySample_ProgressRing_ProgressRing" };
             yield return new object[] { "PipsPager", "GallerySample_PipsPager_Root", "GallerySample_PipsPager_PipsPager" };
+            yield return new object[] { "AnnotatedScrollBar", "GallerySample_AnnotatedScrollBar_Root", "GallerySample_AnnotatedScrollBar_AnnotatedScrollBar" };
             yield return new object[] { "ScrollViewer", "GallerySample_ScrollViewer_Root", "GallerySample_ScrollViewer_ScrollViewer" };
             yield return new object[] { "PullToRefresh", "GallerySample_PullToRefresh_Root", "GallerySample_PullToRefresh_RefreshContainer" };
             yield return new object[] { "SplitView", "GallerySample_SplitView_Root", "GallerySample_SplitView_SplitView" };
@@ -1384,6 +1385,142 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(Orientation.Vertical, optionsPipsPager.Orientation);
                     Assert.AreEqual(Mux.PipsPagerButtonVisibility.Collapsed, optionsPipsPager.PreviousButtonVisibility);
                     Assert.AreEqual(Mux.PipsPagerButtonVisibility.VisibleOnPointerOver, optionsPipsPager.NextButtonVisibility);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void AnnotatedScrollBarSampleMatchesWinUIGalleryExample()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("AnnotatedScrollBar"));
+                var window = new Window
+                {
+                    Width = 1180,
+                    Height = 820,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(1, page.Examples.Count);
+                    Assert.AreEqual("AnnotatedScrollBar linked to a ScrollView.", page.Examples[0].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "ScrollView x:Name=\"scrollView\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "AnnotatedScrollBar x:Name=\"annotatedScrollBar\"");
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "scrollView.ScrollPresenter.VerticalScrollController = annotatedScrollBar.ScrollController;");
+
+                    var sampleRoot = FindByAutomationId(page, "GallerySample_AnnotatedScrollBar_Root") as UIElement;
+                    Assert.IsNotNull(sampleRoot);
+                    var sampleRootPeer = UIElementAutomationPeer.CreatePeerForElement(sampleRoot);
+                    Assert.IsNotNull(sampleRootPeer);
+                    Assert.IsTrue(sampleRootPeer.IsControlElement());
+                    Assert.AreEqual(AutomationControlType.Group, sampleRootPeer.GetAutomationControlType());
+
+                    var scrollViewer = (ScrollViewer)FindByAutomationId(page, "GallerySample_AnnotatedScrollBar_ScrollView");
+                    var annotatedScrollBar = (Mux.AnnotatedScrollBar)FindByAutomationId(page, "GallerySample_AnnotatedScrollBar_AnnotatedScrollBar");
+                    var itemsRepeater = FindNamedDescendant<WrapPanel>(page, "itemsRepeater");
+                    var heightSlider = FindNamedDescendant<Slider>(page, "AnnotatedScrollBarMaxHeightSlider");
+
+                    Assert.IsNotNull(scrollViewer);
+                    Assert.IsNotNull(annotatedScrollBar);
+                    Assert.IsNotNull(itemsRepeater);
+                    Assert.IsNotNull(heightSlider);
+
+                    Assert.AreEqual("scrollView", scrollViewer.Name);
+                    Assert.AreEqual(800.0, scrollViewer.MaxWidth);
+                    Assert.AreEqual(500.0, scrollViewer.MaxHeight);
+                    Assert.AreEqual(Brushes.LightGray, scrollViewer.Background);
+                    Assert.AreEqual(ScrollBarVisibility.Hidden, scrollViewer.VerticalScrollBarVisibility);
+                    Assert.AreEqual(ScrollBarVisibility.Disabled, scrollViewer.HorizontalScrollBarVisibility);
+                    Assert.AreSame(itemsRepeater, scrollViewer.Content);
+
+                    Assert.AreEqual("annotatedScrollBar", annotatedScrollBar.Name);
+                    Assert.AreEqual(500.0, annotatedScrollBar.MaxHeight);
+                    Assert.AreEqual(new Thickness(4, 0, 48, 0), annotatedScrollBar.Margin);
+                    Assert.AreEqual(HorizontalAlignment.Right, annotatedScrollBar.HorizontalAlignment);
+                    Assert.IsTrue(annotatedScrollBar.ScrollController.CanScroll);
+
+                    Assert.AreEqual(new Thickness(2), itemsRepeater.Margin);
+                    Assert.AreEqual(250, itemsRepeater.Children.Count);
+                    AssertAnnotatedColorItem(itemsRepeater, 0, Colors.Azure);
+                    AssertAnnotatedColorItem(itemsRepeater, 31, Colors.Azure);
+                    AssertAnnotatedColorItem(itemsRepeater, 32, Colors.Crimson);
+                    AssertAnnotatedColorItem(itemsRepeater, 81, Colors.Crimson);
+                    AssertAnnotatedColorItem(itemsRepeater, 82, Colors.Cyan);
+                    AssertAnnotatedColorItem(itemsRepeater, 89, Colors.Cyan);
+                    AssertAnnotatedColorItem(itemsRepeater, 90, Colors.Fuchsia);
+                    AssertAnnotatedColorItem(itemsRepeater, 159, Colors.Fuchsia);
+                    AssertAnnotatedColorItem(itemsRepeater, 160, Colors.Gold);
+                    AssertAnnotatedColorItem(itemsRepeater, 249, Colors.Gold);
+
+                    Assert.AreEqual(5, annotatedScrollBar.Labels.Count);
+                    var itemsPerRow = Math.Max((int)(itemsRepeater.ActualWidth / 120), 1);
+                    AssertAnnotatedLabel(annotatedScrollBar.Labels[0], "Azure", 0, itemsPerRow);
+                    AssertAnnotatedLabel(annotatedScrollBar.Labels[1], "Crimson", 32, itemsPerRow);
+                    AssertAnnotatedLabel(annotatedScrollBar.Labels[2], "Cyan", 82, itemsPerRow);
+                    AssertAnnotatedLabel(annotatedScrollBar.Labels[3], "Fuchsia", 90, itemsPerRow);
+                    AssertAnnotatedLabel(annotatedScrollBar.Labels[4], "Gold", 160, itemsPerRow);
+
+                    var labelDiagnostics = FindDescendants<TextBlock>(annotatedScrollBar)
+                        .Where(textBlock => !string.IsNullOrEmpty(textBlock.Text))
+                        .Select(textBlock => string.Format(
+                            "{0}:{1}:IsVisible={2}:Actual={3}x{4}",
+                            textBlock.Text,
+                            textBlock.Visibility,
+                            textBlock.IsVisible,
+                            textBlock.ActualWidth,
+                            textBlock.ActualHeight))
+                        .ToList();
+                    var allLabelTexts = FindDescendants<TextBlock>(annotatedScrollBar)
+                        .Select(textBlock => textBlock.Text)
+                        .Where(text => !string.IsNullOrEmpty(text))
+                        .ToList();
+                    CollectionAssert.Contains(allLabelTexts, "Azure");
+                    CollectionAssert.Contains(allLabelTexts, "Crimson");
+                    CollectionAssert.Contains(allLabelTexts, "Cyan");
+                    CollectionAssert.Contains(allLabelTexts, "Fuchsia");
+                    CollectionAssert.Contains(allLabelTexts, "Gold");
+
+                    var renderedLabelTexts = FindDescendants<TextBlock>(annotatedScrollBar)
+                        .Where(textBlock => textBlock.IsVisible && textBlock.Visibility == Visibility.Visible)
+                        .Select(textBlock => textBlock.Text)
+                        .Where(text => !string.IsNullOrEmpty(text))
+                        .ToList();
+                    Assert.IsTrue(renderedLabelTexts.Contains("Azure"), string.Join("; ", labelDiagnostics));
+                    Assert.IsTrue(renderedLabelTexts.Contains("Crimson"), string.Join("; ", labelDiagnostics));
+                    Assert.IsTrue(renderedLabelTexts.Count >= 3, string.Join("; ", labelDiagnostics));
+
+                    var thumb = FindNamedDescendant<Border>(annotatedScrollBar, "PART_VerticalThumb");
+                    Assert.IsNotNull(thumb);
+                    Assert.IsTrue(thumb.ActualWidth > 0);
+                    Assert.IsTrue(thumb.ActualHeight > 0);
+
+                    Assert.AreEqual("AnnotatedScrollBar maximum height:", ModernWpf.Controls.Primitives.ControlHelper.GetHeader(heightSlider));
+                    Assert.AreEqual(100.0, heightSlider.Minimum);
+                    Assert.AreEqual(500.0, heightSlider.Maximum);
+                    Assert.AreEqual(500.0, heightSlider.Value);
+
+                    heightSlider.Value = 250;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(250.0, annotatedScrollBar.MaxHeight);
+                    Assert.AreEqual(5, annotatedScrollBar.Labels.Count);
                 }
                 finally
                 {
@@ -6815,6 +6952,24 @@ namespace ModernWpf.Gallery.Tests
                 Assert.IsNotNull(item);
                 Assert.AreEqual(expectedItems[i], item.Content);
             }
+        }
+
+        private static void AssertAnnotatedColorItem(WrapPanel itemsRepeater, int index, Color expectedColor)
+        {
+            var item = itemsRepeater.Children[index] as Border;
+            Assert.IsNotNull(item);
+            Assert.AreEqual(112.0, item.Width);
+            Assert.AreEqual(82.0, item.Height);
+            Assert.AreEqual(new Thickness(4), item.Margin);
+            Assert.AreEqual(new CornerRadius(4), item.CornerRadius);
+            Assert.AreEqual(expectedColor, ((SolidColorBrush)item.Background).Color);
+        }
+
+        private static void AssertAnnotatedLabel(Mux.AnnotatedScrollBarLabel label, string content, int itemIndex, int itemsPerRow)
+        {
+            Assert.IsNotNull(label);
+            Assert.AreEqual(content, label.Content);
+            Assert.AreEqual(90 * (itemIndex / itemsPerRow), label.ScrollOffset);
         }
 
         private static void AssertPopupOffsetNumberBox(

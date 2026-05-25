@@ -14,6 +14,14 @@ namespace ModernWpf.Gallery.Pages
 {
     internal static class ScrollingSampleFactory
     {
+        private const int AnnotatedAzureCount = 32;
+        private const int AnnotatedCrimsonCount = 50;
+        private const int AnnotatedCyanCount = 8;
+        private const int AnnotatedFuchsiaCount = 70;
+        private const int AnnotatedGoldCount = 90;
+        private const int AnnotatedItemWidth = 120;
+        private const int AnnotatedItemHeight = 90;
+
         private const string PipsPagerFlipViewXaml =
 @"<StackPanel>
     <FlipView x:Name=""Gallery"" MaxWidth=""400"" Height=""270"" ItemsSource=""{x:Bind Pictures}"">
@@ -35,6 +43,24 @@ namespace ModernWpf.Gallery.Pages
     Orientation=""$(Orientation)""
     PreviousButtonVisibility=""$(PrevButton)""
     NextButtonVisibility=""$(NextButton)"" />";
+
+        private const string AnnotatedScrollBarXaml =
+@"<ScrollView x:Name=""scrollView""
+    Background=""LightGray"" MaxWidth=""800"" MaxHeight=""500""
+    VerticalScrollBarVisibility=""Hidden"">
+    <!-- ... -->
+</ScrollView>
+
+<AnnotatedScrollBar x:Name=""annotatedScrollBar""
+    Margin=""4,0,48,0"" MaxHeight=""500""
+    HorizontalAlignment=""Right""
+    DetailLabelRequested=""AnnotatedScrollBar_DetailLabelRequested""/>";
+
+        private const string AnnotatedScrollBarCSharp =
+@"private void AnnotatedScrollBarPage_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+{
+    scrollView.ScrollPresenter.VerticalScrollController = annotatedScrollBar.ScrollController;
+}";
 
         private const string ScrollViewerXaml =
 @"<ScrollViewer Height=""266"" Width=""400"" ZoomMode=""$(ZoomMode)""
@@ -159,6 +185,8 @@ private void ScrollViewerControl_ViewChanged(object sender, ScrollViewerViewChan
         {
             switch (uniqueId)
             {
+                case "AnnotatedScrollBar":
+                    return CreateAnnotatedScrollBarExamples();
                 case "PipsPager":
                     return CreatePipsPagerExamples();
                 case "ScrollViewer":
@@ -170,58 +198,146 @@ private void ScrollViewerControl_ViewChanged(object sender, ScrollViewerViewChan
 
         private static UIElement CreateAnnotatedScrollBarSample()
         {
-            var panel = CreateSamplePanel("AnnotatedScrollBar maps to a marker rail that jumps a WPF ScrollViewer to labeled sections.");
-            var sections = new[]
-            {
-                new ScrollSection("Azure", "#0078D4"),
-                new ScrollSection("Crimson", "#C50F1F"),
-                new ScrollSection("Cyan", "#00B7C3"),
-                new ScrollSection("Fuchsia", "#B146C2"),
-                new ScrollSection("Gold", "#FFB900")
-            };
+            return CreateAnnotatedScrollBarExampleContent(assignRootAutomationId: true);
+        }
 
-            var content = new StackPanel();
-            foreach (var section in sections)
+        private static IReadOnlyList<GalleryExample> CreateAnnotatedScrollBarExamples()
+        {
+            return new[]
             {
-                section.Anchor = CreateColorSection(section);
-                content.Children.Add(section.Anchor);
+                new GalleryExample(
+                    "AnnotatedScrollBar linked to a ScrollView.",
+                    CreateAnnotatedScrollBarExampleContent(assignRootAutomationId: true),
+                    AnnotatedScrollBarXaml,
+                    AnnotatedScrollBarCSharp)
+            };
+        }
+
+        private static GallerySamplePanel CreateAnnotatedScrollBarExampleContent(bool assignRootAutomationId)
+        {
+            var root = new GallerySamplePanel();
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("AnnotatedScrollBar"));
             }
 
+            var itemsRepeater = CreateAnnotatedColorItems();
             var scrollViewer = new ScrollViewer
             {
-                Width = 360,
-                Height = 260,
-                VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
-                Content = content
+                Name = "scrollView",
+                Width = AnnotatedItemWidth + 16,
+                MaxWidth = 800,
+                MaxHeight = 500,
+                Background = Brushes.LightGray,
+                VerticalScrollBarVisibility = ScrollBarVisibility.Hidden,
+                HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
+                Content = itemsRepeater
             };
+            GalleryAutomation.WithAutomationId(scrollViewer, GalleryAutomation.SampleElementId("AnnotatedScrollBar", "ScrollView"));
 
-            var rail = new StackPanel
+            var annotatedScrollBar = new Mux.AnnotatedScrollBar
             {
-                Width = 120,
-                Margin = new Thickness(14, 0, 0, 0)
+                Name = "annotatedScrollBar",
+                MaxHeight = 500,
+                Margin = new Thickness(4, 0, 48, 0),
+                HorizontalAlignment = HorizontalAlignment.Right
             };
-            foreach (var section in sections)
+            GalleryAutomation.WithAutomationId(annotatedScrollBar, GalleryAutomation.SampleElementId("AnnotatedScrollBar", "AnnotatedScrollBar"));
+
+            void PopulateLabelCollection()
             {
-                var marker = new Button
-                {
-                    Content = section.Label,
-                    Margin = new Thickness(0, 0, 0, 8),
-                    Padding = new Thickness(10, 5, 10, 5),
-                    HorizontalAlignment = HorizontalAlignment.Stretch,
-                    ToolTip = "Jump to " + section.Label
-                };
-                marker.Click += delegate
-                {
-                    section.Anchor.BringIntoView();
-                };
-                rail.Children.Add(marker);
+                PopulateAnnotatedScrollBarLabels(annotatedScrollBar, GetAnnotatedItemsPerRow(itemsRepeater));
             }
 
-            var row = new StackPanel { Orientation = Orientation.Horizontal };
-            row.Children.Add(scrollViewer);
-            row.Children.Add(rail);
-            panel.Children.Add(row);
-            return panel;
+            void UpdateScrollController()
+            {
+                var maxOffset = Math.Max(0, scrollViewer.ExtentHeight - scrollViewer.ViewportHeight);
+                annotatedScrollBar.ScrollController.SetIsScrollable(maxOffset > 0);
+                annotatedScrollBar.ScrollController.SetValues(0, maxOffset, scrollViewer.VerticalOffset, scrollViewer.ViewportHeight);
+            }
+
+            annotatedScrollBar.DetailLabelRequested += delegate(Mux.AnnotatedScrollBar sender, Mux.AnnotatedScrollBarDetailLabelRequestedEventArgs args)
+            {
+                args.Content = GetAnnotatedOffsetLabel(args.ScrollOffset, GetAnnotatedItemsPerRow(itemsRepeater));
+            };
+            annotatedScrollBar.Scrolling += delegate(Mux.AnnotatedScrollBar sender, Mux.AnnotatedScrollBarScrollingEventArgs args)
+            {
+                scrollViewer.ScrollToVerticalOffset(args.ScrollOffset);
+            };
+            scrollViewer.ScrollChanged += delegate
+            {
+                UpdateScrollController();
+            };
+            scrollViewer.Loaded += delegate
+            {
+                PopulateLabelCollection();
+                UpdateScrollController();
+            };
+            annotatedScrollBar.Loaded += delegate
+            {
+                PopulateLabelCollection();
+                UpdateScrollController();
+            };
+            itemsRepeater.SizeChanged += delegate
+            {
+                PopulateLabelCollection();
+                UpdateScrollController();
+            };
+
+            var sampleGrid = new Grid();
+            sampleGrid.HorizontalAlignment = HorizontalAlignment.Left;
+            sampleGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            sampleGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            Grid.SetColumn(scrollViewer, 0);
+            Grid.SetColumn(annotatedScrollBar, 1);
+            sampleGrid.Children.Add(scrollViewer);
+            sampleGrid.Children.Add(annotatedScrollBar);
+
+            var slider = new Slider
+            {
+                Name = "AnnotatedScrollBarMaxHeightSlider",
+                Minimum = 100,
+                Maximum = 500,
+                Value = 500,
+                Margin = new Thickness(0, 10, 0, 0)
+            };
+            ControlHelper.SetHeader(slider, "AnnotatedScrollBar maximum height:");
+            slider.ValueChanged += delegate
+            {
+                annotatedScrollBar.MaxHeight = slider.Value;
+                UpdateScrollController();
+            };
+
+            var options = new Grid
+            {
+                MinWidth = 200
+            };
+            options.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            options.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            options.Children.Add(new TextBlock
+            {
+                Text = "Changing the AnnotatedScrollBar height refreshes its Labels layout.",
+                TextWrapping = TextWrapping.Wrap,
+                VerticalAlignment = VerticalAlignment.Center
+            });
+            Grid.SetRow(slider, 1);
+            options.Children.Add(slider);
+
+            var layout = new Grid();
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            Grid.SetColumn(sampleGrid, 0);
+            layout.Children.Add(sampleGrid);
+            var optionsHost = new Border
+            {
+                Margin = new Thickness(24, 0, 0, 0),
+                Child = options
+            };
+            Grid.SetColumn(optionsHost, 1);
+            layout.Children.Add(optionsHost);
+
+            root.Children.Add(layout);
+            return root;
         }
 
         private static UIElement CreatePipsPagerSample()
@@ -573,49 +689,82 @@ private void ScrollViewerControl_ViewChanged(object sender, ScrollViewerViewChan
             return panel;
         }
 
-        private static Border CreateColorSection(ScrollSection section)
+        private static WrapPanel CreateAnnotatedColorItems()
         {
-            var brush = CreateBrush(section.Color);
-            var items = new UniformGrid
+            var itemsRepeater = new WrapPanel
             {
-                Columns = 3,
-                Margin = new Thickness(0, 10, 0, 0)
+                Name = "itemsRepeater",
+                Margin = new Thickness(2)
             };
-            for (var i = 1; i <= 6; i++)
+
+            AddAnnotatedColorItems(itemsRepeater, Brushes.Azure, AnnotatedAzureCount);
+            AddAnnotatedColorItems(itemsRepeater, Brushes.Crimson, AnnotatedCrimsonCount);
+            AddAnnotatedColorItems(itemsRepeater, Brushes.Cyan, AnnotatedCyanCount);
+            AddAnnotatedColorItems(itemsRepeater, Brushes.Fuchsia, AnnotatedFuchsiaCount);
+            AddAnnotatedColorItems(itemsRepeater, Brushes.Gold, AnnotatedGoldCount);
+            return itemsRepeater;
+        }
+
+        private static void AddAnnotatedColorItems(Panel panel, Brush brush, int count)
+        {
+            for (var i = 0; i < count; i++)
             {
-                items.Children.Add(new Border
+                panel.Children.Add(new Border
                 {
-                    Width = 86,
-                    Height = 42,
-                    Margin = new Thickness(0, 0, 8, 8),
+                    Width = 112,
+                    Height = 82,
+                    Margin = new Thickness(4),
                     Background = brush,
-                    Child = new TextBlock
-                    {
-                        Text = i.ToString(),
-                        Foreground = Brushes.White,
-                        HorizontalAlignment = HorizontalAlignment.Center,
-                        VerticalAlignment = VerticalAlignment.Center
-                    }
+                    CornerRadius = new CornerRadius(4)
                 });
             }
+        }
 
-            var stack = new StackPanel();
-            stack.Children.Add(new TextBlock
-            {
-                Text = section.Label,
-                FontSize = 18,
-                FontWeight = FontWeights.SemiBold
-            });
-            stack.Children.Add(items);
+        private static void PopulateAnnotatedScrollBarLabels(Mux.AnnotatedScrollBar annotatedScrollBar, int itemsPerRow)
+        {
+            annotatedScrollBar.Labels.Clear();
+            annotatedScrollBar.Labels.Add(new Mux.AnnotatedScrollBarLabel("Azure", GetAnnotatedOffsetOfItem(0, itemsPerRow)));
+            annotatedScrollBar.Labels.Add(new Mux.AnnotatedScrollBarLabel("Crimson", GetAnnotatedOffsetOfItem(AnnotatedAzureCount, itemsPerRow)));
+            annotatedScrollBar.Labels.Add(new Mux.AnnotatedScrollBarLabel("Cyan", GetAnnotatedOffsetOfItem(AnnotatedAzureCount + AnnotatedCrimsonCount, itemsPerRow)));
+            annotatedScrollBar.Labels.Add(new Mux.AnnotatedScrollBarLabel("Fuchsia", GetAnnotatedOffsetOfItem(AnnotatedAzureCount + AnnotatedCrimsonCount + AnnotatedCyanCount, itemsPerRow)));
+            annotatedScrollBar.Labels.Add(new Mux.AnnotatedScrollBarLabel("Gold", GetAnnotatedOffsetOfItem(AnnotatedAzureCount + AnnotatedCrimsonCount + AnnotatedCyanCount + AnnotatedFuchsiaCount, itemsPerRow)));
+        }
 
-            return new Border
+        private static int GetAnnotatedItemsPerRow(FrameworkElement itemsRepeater)
+        {
+            return itemsRepeater == null || itemsRepeater.ActualWidth == 0
+                ? 1
+                : (int)Math.Max(itemsRepeater.ActualWidth / AnnotatedItemWidth, 1);
+        }
+
+        private static int GetAnnotatedOffsetOfItem(int itemIndex, int itemsPerRow)
+        {
+            return AnnotatedItemHeight * (itemIndex / Math.Max(itemsPerRow, 1));
+        }
+
+        private static string GetAnnotatedOffsetLabel(double offset, int itemsPerRow)
+        {
+            if (offset <= GetAnnotatedOffsetOfItem(AnnotatedAzureCount - 1, itemsPerRow))
             {
-                Padding = new Thickness(12),
-                Margin = new Thickness(0, 0, 0, 12),
-                BorderThickness = new Thickness(1),
-                BorderBrush = CreateBrush("#D8D8D8"),
-                Child = stack
-            };
+                return "Azure";
+            }
+
+            if (offset <= GetAnnotatedOffsetOfItem(AnnotatedAzureCount + AnnotatedCrimsonCount - 1, itemsPerRow))
+            {
+                return "Crimson";
+            }
+
+            if (offset <= GetAnnotatedOffsetOfItem(AnnotatedAzureCount + AnnotatedCrimsonCount + AnnotatedCyanCount - 1, itemsPerRow))
+            {
+                return "Cyan";
+            }
+
+            if (offset <= GetAnnotatedOffsetOfItem(AnnotatedAzureCount + AnnotatedCrimsonCount + AnnotatedCyanCount + AnnotatedFuchsiaCount - 1, itemsPerRow))
+            {
+                return "Fuchsia";
+            }
+
+            return "Gold";
         }
 
         private static IReadOnlyList<string> CreatePipsPagerPictures()
@@ -956,21 +1105,6 @@ private void ScrollViewerControl_ViewChanged(object sender, ScrollViewerViewChan
         private static SolidColorBrush CreateBrush(string color)
         {
             return (SolidColorBrush)new BrushConverter().ConvertFromString(color);
-        }
-
-        private sealed class ScrollSection
-        {
-            public ScrollSection(string label, string color)
-            {
-                Label = label;
-                Color = color;
-            }
-
-            public string Label { get; private set; }
-
-            public string Color { get; private set; }
-
-            public FrameworkElement Anchor { get; set; }
         }
     }
 }
