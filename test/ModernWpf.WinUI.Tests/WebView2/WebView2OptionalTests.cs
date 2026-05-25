@@ -27,7 +27,7 @@ public class WebView2OptionalTests
     }
 
     [TestMethod]
-    public void GalleryDocumentsWpfSafeWebView2Fallback()
+    public void GalleryDoesNotShipWebView2FallbackPage()
     {
         var repoRoot = FindRepoRoot();
         var sampleFactoryPath = Path.Combine(repoRoot, "ModernWpf.Gallery", "Pages", "MediaSampleFactory.cs");
@@ -37,16 +37,13 @@ public class WebView2OptionalTests
         Assert.IsTrue(File.Exists(catalogPath), "Missing gallery control catalog.");
 
         var sampleFactory = File.ReadAllText(sampleFactoryPath);
-        StringAssert.Contains(sampleFactory, "CreateWebView2Surface");
-        StringAssert.Contains(sampleFactory, "https://learn.microsoft.com/windows/apps/winui/winui3/");
-        StringAssert.Contains(sampleFactory, "GalleryAutomation.SampleElementId(\"WebView2\", \"WebView2\")");
-        Assert.IsFalse(
-            sampleFactory.Contains("Microsoft.Web.WebView2", StringComparison.OrdinalIgnoreCase),
-            "The gallery fallback should not add a WebView2 package/runtime dependency.");
+        Assert.IsFalse(sampleFactory.Contains("WebView2", StringComparison.OrdinalIgnoreCase));
+        Assert.IsFalse(sampleFactory.Contains("CreateWebView2Surface", StringComparison.OrdinalIgnoreCase));
+        Assert.IsFalse(sampleFactory.Contains("Microsoft.Web.WebView2", StringComparison.OrdinalIgnoreCase));
 
         var catalog = File.ReadAllText(catalogPath);
-        StringAssert.Contains(catalog, "\"UniqueId\": \"WebView2\"");
-        StringAssert.Contains(catalog, "\"SourcePath\": \"/WebView2\"");
+        Assert.IsFalse(catalog.Contains("\"UniqueId\": \"WebView2\"", StringComparison.OrdinalIgnoreCase));
+        Assert.IsFalse(catalog.Contains("\"SourcePath\": \"/WebView2\"", StringComparison.OrdinalIgnoreCase));
     }
 
     [TestMethod]
@@ -58,8 +55,8 @@ public class WebView2OptionalTests
         Assert.IsTrue(File.Exists(matrixPath), "Missing WinUI 2.8.7 sync matrix.");
 
         var matrix = File.ReadAllText(matrixPath);
-        StringAssert.Contains(matrix, "| WebView2 | Optional WPF gallery fallback; core excluded | Ported optional dependency/catalog guard |");
-        StringAssert.Contains(matrix, "Edge/WebView2 runtime, registry, native CoreWebView2, network/install, and process-failure coverage");
+        StringAssert.Contains(matrix, "| WebView2 | Core excluded; gallery page pruned | No ModernWpf-owned control |");
+        StringAssert.Contains(matrix, "WebView2 is not a ModernWpf-implemented WinUI control surface in this gallery scope");
     }
 
     private static void AssertDoesNotReferenceWebView2(Assembly assembly)

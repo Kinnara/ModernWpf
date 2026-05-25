@@ -375,12 +375,12 @@ namespace ModernWpf.Gallery.Tests
             {
                 var controlExample = new ControlExample
                 {
-                    XamlCodeSource = new Uri("Samples/SampleCode/XamlUICommand/XamlUICommandSample1_xaml.txt", UriKind.Relative),
-                    CSharpCodeSource = new Uri("Samples/SampleCode/XamlUICommand/XamlUICommandSample1_cs.txt", UriKind.Relative)
+                    XamlCodeSource = new Uri("Samples/SampleCode/ContentDialog/ContentDialogSample1_xaml.txt", UriKind.Relative),
+                    CSharpCodeSource = new Uri("Samples/SampleCode/ContentDialog/ContentDialogSample1_cs.txt", UriKind.Relative)
                 };
 
-                StringAssert.Contains(controlExample.XamlCode, "<XamlUICommand");
-                StringAssert.Contains(controlExample.CSharpCode, "ExecuteRequested");
+                StringAssert.Contains(controlExample.XamlCode, "ContentDialogContent");
+                StringAssert.Contains(controlExample.CSharpCode, "ShowAsync");
             });
         }
 

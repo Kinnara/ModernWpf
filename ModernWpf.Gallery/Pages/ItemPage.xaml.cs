@@ -221,11 +221,9 @@ namespace ModernWpf.Gallery.Pages
 
         private static object CreateWorkingSampleContent(string uniqueId)
         {
-            return FundamentalsSampleFactory.Create(uniqueId)
-                ?? BasicInputSampleFactory.Create(uniqueId)
+            return BasicInputSampleFactory.Create(uniqueId)
                 ?? StatusInfoSampleFactory.Create(uniqueId)
                 ?? DialogsFlyoutsSampleFactory.Create(uniqueId)
-                ?? DesignAccessibilitySampleFactory.Create(uniqueId)
                 ?? MenusToolbarsSampleFactory.Create(uniqueId)
                 ?? CollectionsSampleFactory.Create(uniqueId)
                 ?? DateTimeSampleFactory.Create(uniqueId)
@@ -236,17 +234,12 @@ namespace ModernWpf.Gallery.Pages
                 ?? StylesSampleFactory.Create(uniqueId)
                 ?? TextSampleFactory.Create(uniqueId)
                 ?? MotionSampleFactory.Create(uniqueId)
-                ?? WindowingSampleFactory.Create(uniqueId)
-                ?? SystemSampleFactory.Create(uniqueId)
-                ?? ShellSampleFactory.Create(uniqueId);
+                ?? WindowingSampleFactory.Create(uniqueId);
         }
 
         private static object CreateWorkingSampleIntroContent(string uniqueId)
         {
-            return MediaSampleFactory.CreateIntroContent(uniqueId)
-                ?? WindowingSampleFactory.CreateIntroContent(uniqueId)
-                ?? SystemSampleFactory.CreateIntroContent(uniqueId)
-                ?? StylesSampleFactory.CreateIntroContent(uniqueId);
+            return WindowingSampleFactory.CreateIntroContent(uniqueId);
         }
 
         private static IReadOnlyList<GalleryExample> CreateWorkingSampleExamples(
@@ -309,16 +302,16 @@ namespace ModernWpf.Gallery.Pages
                 return layoutExamples;
             }
 
-            var mediaExamples = MediaSampleFactory.CreateExamples(uniqueId, sampleSnippets);
-            if (mediaExamples.Count != 0)
-            {
-                return mediaExamples;
-            }
-
             var navigationExamples = NavigationSampleFactory.CreateExamples(uniqueId, sampleSnippets);
             if (navigationExamples.Count != 0)
             {
                 return navigationExamples;
+            }
+
+            var mediaExamples = MediaSampleFactory.CreateExamples(uniqueId);
+            if (mediaExamples.Count != 0)
+            {
+                return mediaExamples;
             }
 
             var windowingExamples = WindowingSampleFactory.CreateExamples(uniqueId, sampleSnippets);
@@ -337,12 +330,6 @@ namespace ModernWpf.Gallery.Pages
             if (motionExamples.Count != 0)
             {
                 return motionExamples;
-            }
-
-            var systemExamples = SystemSampleFactory.CreateExamples(uniqueId);
-            if (systemExamples.Count != 0)
-            {
-                return systemExamples;
             }
 
             var sampleContent = CreateWorkingSampleContent(uniqueId);

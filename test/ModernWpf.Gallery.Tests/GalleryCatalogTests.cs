@@ -317,14 +317,25 @@ namespace ModernWpf.Gallery.Tests
         [TestMethod]
         public void WinUIExtensionCatalogKeepsOnlyImplementedModernWpfSurfaces()
         {
-            var omittedWinUIPlatformAndApiPages = new[]
+            var omittedWinUIPages = new[]
             {
+                "XamlResources",
+                "XamlStyles",
+                "Binding",
+                "Templates",
+                "CustomUserControls",
+                "CustomXamlConditionals",
+                "ScratchPad",
+                "AccessibilityColorContrast",
+                "AccessibilityKeyboard",
+                "AccessibilityScreenReader",
                 "XamlCompInterop",
                 "ConnectedAnimation",
                 "EasingFunction",
                 "ImplicitTransition",
                 "PageTransition",
                 "ThemeTransition",
+                "SemanticZoom",
                 "AppWindow",
                 "AppWindowTitleBar",
                 "CreateMultipleWindows",
@@ -335,6 +346,14 @@ namespace ModernWpf.Gallery.Tests
                 "Sound",
                 "MediaPlayerElement",
                 "MapControl",
+                "CaptureElementPreview",
+                "AnimatedVisualPlayer",
+                "Acrylic",
+                "AnimatedIcon",
+                "CompactSizing",
+                "Line",
+                "Shape",
+                "RadialGradientBrush",
                 "SystemBackdrops",
                 "SystemBackdropElement",
                 "StoragePickers",
@@ -342,7 +361,7 @@ namespace ModernWpf.Gallery.Tests
                 "XamlUICommand"
             };
 
-            foreach (var uniqueId in omittedWinUIPlatformAndApiPages)
+            foreach (var uniqueId in omittedWinUIPages)
             {
                 Assert.IsNull(GalleryCatalog.FindItem(uniqueId), uniqueId);
             }
@@ -350,6 +369,9 @@ namespace ModernWpf.Gallery.Tests
             var modernWpfGroup = GalleryCatalog.FindGroup("ModernWpfControls");
             Assert.IsNotNull(modernWpfGroup);
             CollectionAssert.Contains(modernWpfGroup.Items.Select(item => item.UniqueId).ToArray(), "ParallaxView");
+            Assert.IsNull(GalleryCatalog.FindGroup("FundamentalsItem"));
+            Assert.IsNull(GalleryCatalog.FindGroup("AccessibilityItem"));
+            Assert.IsNull(GalleryCatalog.FindGroup("Shell"));
             Assert.IsNull(GalleryCatalog.FindGroup("PlatformAndPatterns"));
         }
 
@@ -357,7 +379,24 @@ namespace ModernWpf.Gallery.Tests
         public void CatalogContainsWpfFirstGallerySurface()
         {
             Assert.AreEqual(12, GalleryCatalog.Groups.Count);
-            Assert.AreEqual(115, GalleryCatalog.Items.Count);
+            Assert.AreEqual(92, GalleryCatalog.Items.Count);
+        }
+
+        [TestMethod]
+        public void CatalogItemsMatchVisibleNavigationItems()
+        {
+            var visibleItemIds = GalleryCatalog.Groups
+                .SelectMany(group => group.Items)
+                .Select(item => item.UniqueId)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(id => id, StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+            var catalogItemIds = GalleryCatalog.Items
+                .Select(item => item.UniqueId)
+                .OrderBy(id => id, StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+
+            CollectionAssert.AreEqual(visibleItemIds, catalogItemIds);
         }
 
         private static void AssertNavigationItem(string uniqueId, string subtitle, string imageFileName)

@@ -62,23 +62,59 @@ namespace ModernWpf.Gallery.Models
             "System"
         };
 
-        private static readonly string[] OmittedWinUIExtensionItemIds =
+        private static readonly string[] ModernWpfExtensionItemIds =
         {
-            "AppWindow",
-            "AppWindowTitleBar",
-            "CreateMultipleWindows",
-            "AppNotification",
-            "BadgeNotificationManager",
-            "JumpList",
-            "WebView2",
-            "Sound",
-            "MediaPlayerElement",
-            "MapControl",
-            "SystemBackdrops",
-            "SystemBackdropElement",
-            "StoragePickers",
-            "StandardUICommand",
-            "XamlUICommand"
+            "NavigationView",
+            "InfoBar",
+            "NumberBox",
+            "AutoSuggestBox",
+            "ContentDialog",
+            "TeachingTip",
+            "CommandBar",
+            "CommandBarFlyout",
+            "AppBarButton",
+            "AppBarToggleButton",
+            "AppBarSeparator",
+            "DropDownButton",
+            "SplitButton",
+            "ToggleSplitButton",
+            "RepeatButton",
+            "ToggleButton",
+            "MenuBar",
+            "MenuFlyout",
+            "ItemsRepeater",
+            "PipsPager",
+            "RatingControl",
+            "ToggleSwitch",
+            "ColorPicker",
+            "HyperlinkButton",
+            "CalendarDatePicker",
+            "CalendarView",
+            "TimePicker",
+            "ProgressRing",
+            "InfoBadge",
+            "Flyout",
+            "Popup",
+            "Pivot",
+            "TabView",
+            "BreadcrumbBar",
+            "SelectorBar",
+            "RichEditBox",
+            "RichTextBlock",
+            "SplitView",
+            "ScrollViewer",
+            "ScrollView",
+            "AnnotatedScrollBar",
+            "ParallaxView",
+            "PullToRefresh",
+            "FlipView",
+            "ItemsView",
+            "GridView",
+            "SwipeControl",
+            "PersonPicture",
+            "IconElement",
+            "ThemeShadow",
+            "TitleBar"
         };
 
         private static readonly IReadOnlyList<GalleryItem> CatalogItems = CreateItems();
@@ -152,7 +188,7 @@ namespace ModernWpf.Gallery.Models
             var wpfItems = CreateWpfGalleryItems();
             var items = wpfItems
                 .Concat(sourceItems.Where(sourceItem =>
-                    !IsOmittedWinUIExtensionItem(sourceItem.UniqueId) &&
+                    IsModernWpfExtensionItem(sourceItem.UniqueId) &&
                     wpfItems.All(wpfItem => !string.Equals(sourceItem.UniqueId, wpfItem.UniqueId, StringComparison.OrdinalIgnoreCase))))
                 .ToArray();
             return NormalizeRelatedControlIds(items);
@@ -198,9 +234,9 @@ namespace ModernWpf.Gallery.Models
             return OfficialWpfGalleryAllControlsItemIds.Contains(uniqueId, StringComparer.OrdinalIgnoreCase);
         }
 
-        private static bool IsOmittedWinUIExtensionItem(string uniqueId)
+        private static bool IsModernWpfExtensionItem(string uniqueId)
         {
-            return OmittedWinUIExtensionItemIds.Contains(uniqueId, StringComparer.OrdinalIgnoreCase);
+            return ModernWpfExtensionItemIds.Contains(uniqueId, StringComparer.OrdinalIgnoreCase);
         }
 
         private static IReadOnlyList<GalleryItem> NormalizeRelatedControlIds(IReadOnlyList<GalleryItem> items)
@@ -551,7 +587,7 @@ namespace ModernWpf.Gallery.Models
                     "NavigationWindow hosts Page content in its own window and provides browser-style navigation chrome.",
                     "System.Windows.Navigation.NavigationWindow",
                     new[] { "Object", "DispatcherObject", "DependencyObject", "Visual", "UIElement", "FrameworkElement", "ContentControl", "Window", "NavigationWindow" },
-                    new[] { "Frame", "CreateMultipleWindows" },
+                    new[] { "Frame" },
                     isNew: true),
                 CreateWpfItem(
                     "StatusAndInfo",
@@ -643,7 +679,7 @@ namespace ModernWpf.Gallery.Models
                     "WPF apps use Microsoft.Win32 dialogs for common file and save picker workflows.",
                     "Microsoft.Win32.OpenFileDialog",
                     new[] { "Object", "CommonDialog", "FileDialog", "OpenFileDialog" },
-                    new[] { "StoragePickers" },
+                    new string[0],
                     isNew: true),
                 CreateWpfItem(
                     "System",
@@ -847,47 +883,7 @@ namespace ModernWpf.Gallery.Models
                     "ModernWpf controls",
                     "WinUI-style controls and patterns implemented or adapted for WPF.",
                     "pack://application:,,,/Assets/HomeHeaderTiles/Header-WinUI.png",
-                    new[]
-                    {
-                        "NavigationView",
-                        "InfoBar",
-                        "NumberBox",
-                        "AutoSuggestBox",
-                        "ContentDialog",
-                        "TeachingTip",
-                        "CommandBar",
-                        "CommandBarFlyout",
-                        "AppBarButton",
-                        "AppBarToggleButton",
-                        "AppBarSeparator",
-                        "DropDownButton",
-                        "SplitButton",
-                        "ToggleSplitButton",
-                        "MenuBar",
-                        "MenuFlyout",
-                        "ItemsRepeater",
-                        "PipsPager",
-                        "RatingControl",
-                        "ToggleSwitch",
-                        "ColorPicker",
-                        "HyperlinkButton",
-                        "CalendarDatePicker",
-                        "ProgressRing",
-                        "InfoBadge",
-                        "Flyout",
-                        "Pivot",
-                        "TabView",
-                        "RichEditBox",
-                        "RichTextBlock",
-                        "SplitView",
-                        "ScrollViewer",
-                        "AnnotatedScrollBar",
-                        "ParallaxView",
-                        "PersonPicture",
-                        "IconElement",
-                        "ThemeShadow",
-                        "TitleBar"
-                    }),
+                    ModernWpfExtensionItemIds),
             };
         }
 

@@ -30,6 +30,14 @@ notifications, WebView2, MapControl, MediaPlayerElement, Sound,
 StoragePickers, StandardUICommand, or XamlUICommand just because they exist in
 WinUI Gallery.
 
+Deleted page source ownership: when a page is intentionally removed from the
+gallery, remove its active source too. That includes catalog metadata,
+navigation routes, sample factory cases, sample-code files, curated automation
+rows, visual-check mappings, and documentation that describes the page as
+currently implemented. Keep only incidental API usage that belongs to a retained
+page, historical tracker notes, or explicit negative tests proving a deleted
+page is absent.
+
 ## Copy vs Adapt Rule
 
 Prefer copying official WPF Gallery page structure, sample XAML, page titles,
@@ -115,16 +123,11 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
-- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryCatalogTests" -p:UseSharedCompilation=false`
-  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 14 tests per target. The catalog now omits the non-control WinUI Motion concept pages plus non-ModernWpf platform/API pages (`AppWindow`, `AppWindowTitleBar`, `CreateMultipleWindows`, `AppNotification`, `BadgeNotificationManager`, `JumpList`, `WebView2`, `Sound`, `MediaPlayerElement`, `MapControl`, `SystemBackdrops`, `SystemBackdropElement`, `StoragePickers`, `StandardUICommand`, and `XamlUICommand`). `ParallaxView` is kept under `ModernWpfControls`, the old `PlatformAndPatterns` group is gone, the current total is 115 items / 12 groups, and related-control references are normalized to visible pages only.
-- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
-  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 58 tests per target. The curated automation list no longer includes the omitted platform/API pages.
-- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.SystemBackdropsSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.SystemBackdropElementSampleMatchesWinUIGalleryExample|FullyQualifiedName~GalleryAutomationHookTests.AppWindowSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CreateMultipleWindowsSampleMatchesWinUIGalleryExample|FullyQualifiedName~GalleryAutomationHookTests.AppWindowTitleBarSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.StoragePickersSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.WebView2SampleMatchesWinUIGalleryExample|FullyQualifiedName~GalleryAutomationHookTests.MapControlSampleMatchesWinUIGalleryExample" -p:UseSharedCompilation=false`
-  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 8 tests per target. These formerly page-specific tests now short-circuit when their catalog item has been intentionally omitted.
-- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryNavigationRuntimeTests.ShellCanNavigateEveryCatalogRouteWithoutExceptions" -p:UseSharedCompilation=false`
-  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 1 test per target. This confirms the shell routes still load after removing the `PlatformAndPatterns` group.
-- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.TitleBarSampleMatchesWinUIGalleryExamples" -p:UseSharedCompilation=false`
-  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 1 test per target. The retained `TitleBar` page no longer links to the omitted `AppWindowTitleBar` page.
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryCatalogTests|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds|FullyQualifiedName~GalleryAutomationHookTests.ParallaxViewSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.PullToRefreshSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GallerySampleFactoryTests|FullyQualifiedName~GalleryNavigationRuntimeTests.ShellCanNavigateEveryCatalogRouteWithoutExceptions|FullyQualifiedName~GalleryApplicationResourceTests.ControlExampleLoadsSourceCodeFromReferenceStyleUris" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 162 tests per target. The catalog now source-prunes deleted WinUI concept/API pages instead of only hiding them. Generated data and `ControlInfoData.json` are allowlisted to retained WPF/ModernWpf pages, the visible total is 92 items / 12 groups, related-control references are normalized to visible pages only, deleted-page sample factories/curated rows/visual-check defaults/navigation paths are gone, retained pages still navigate and expose stable automation IDs, and resource-loading coverage now uses retained `ContentDialog` sample code instead of deleted `XamlUICommand` files.
+- `dotnet test test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --configuration Debug --filter "FullyQualifiedName~WebView2OptionalTests" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0`: 3 tests. Core assemblies still avoid WebView2 references, and the gallery no longer carries WebView2 page metadata, fallback text, or source snippets.
+- Deleted-page source cleanup covers removed Fundamentals, Accessibility, Shell, System, non-control Motion, non-retained Styles, Windowing, WebView2/media/map, storage picker, command, template/resource/style, SemanticZoom, platform/API sample code, and the now-orphaned AnimatedIcon generated visual asset. The remaining hits for deleted identifiers are limited to retained-page incidental snippets, omitted-page assertions, WPF Gallery artwork filenames, historical notes, and negative tests.
 - `git diff --check`
   - Passed with only Git's normal LF-to-CRLF working-copy warnings for touched files.
 

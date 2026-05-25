@@ -2792,14 +2792,14 @@ private void InitializeData()
             var root = CreatePullToRefreshExampleRoot(assignRootAutomationId);
             var items = new ObservableCollection<string>(new[]
             {
-                "AcrylicBrush",
+                "AutoSuggestBox",
                 "ColorPicker",
                 "NavigationView",
                 "ParallaxView",
                 "PersonPicture",
-                "PullToRefreshPage",
-                "RatingsControl",
-                "RevealBrush",
+                "PullToRefresh",
+                "RatingControl",
+                "TeachingTip",
                 "TreeView"
             });
 

@@ -1,4 +1,0 @@
-﻿private void CustomXamlUICommand_ExecuteRequested(XamlUICommand sender, ExecuteRequestedEventArgs args)
-{
-    XamlUICommandOutput.Text = "You fired the custom command";
-}

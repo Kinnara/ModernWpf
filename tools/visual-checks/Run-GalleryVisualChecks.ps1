@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "RichTextBlock", "RichEditBox", "SplitView", "PersonPicture", "Acrylic", "AnimatedIcon", "ParallaxView", "CompactSizing", "IconElement", "Line", "Shape", "RadialGradientBrush", "ThemeShadow", "TitleBar", "CalendarDatePicker", "CalendarView", "TimePicker", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "AnnotatedScrollBar", "ScrollView", "ScrollViewer", "SemanticZoom", "PullToRefresh", "FlipView", "ItemsView", "GridView", "ItemsRepeater", "BreadcrumbBar", "Pivot", "SelectorBar", "TabView", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "SwipeControl", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout"),
+    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "RichTextBlock", "RichEditBox", "SplitView", "PersonPicture", "ParallaxView", "IconElement", "ThemeShadow", "TitleBar", "CalendarDatePicker", "CalendarView", "TimePicker", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "AnnotatedScrollBar", "ScrollView", "ScrollViewer", "PullToRefresh", "FlipView", "ItemsView", "GridView", "ItemsRepeater", "BreadcrumbBar", "Pivot", "SelectorBar", "TabView", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "SwipeControl", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -464,14 +464,8 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "RichEditBox" { return "GallerySample_RichEditBox_RichEditBox" }
         "SplitView" { return "GallerySample_SplitView_SplitView" }
         "PersonPicture" { return "GallerySample_PersonPicture_PersonPicture" }
-        "Acrylic" { return "GallerySample_Acrylic_Example1Grid" }
-        "AnimatedIcon" { return "GallerySample_AnimatedIcon_Button" }
         "ParallaxView" { return "GallerySample_ParallaxView_Root" }
-        "CompactSizing" { return "GallerySample_CompactSizing_FirstName" }
         "IconElement" { return "GallerySample_IconElement_SlicesIcon" }
-        "Line" { return "GallerySample_Line_Line" }
-        "Shape" { return "GallerySample_Shape_Ellipse" }
-        "RadialGradientBrush" { return "GallerySample_RadialGradientBrush_Rect" }
         "ThemeShadow" { return "GallerySample_ThemeShadow_ShadowRect" }
         "TitleBar" { return "GallerySample_TitleBar_TitleBarControl" }
         "CalendarDatePicker" { return "GallerySample_CalendarDatePicker_CalendarDatePicker" }
@@ -484,7 +478,6 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "AnnotatedScrollBar" { return "GallerySample_AnnotatedScrollBar_AnnotatedScrollBar" }
         "ScrollView" { return "GallerySample_ScrollView_ScrollView" }
         "ScrollViewer" { return "GallerySample_ScrollViewer_ScrollViewer" }
-        "SemanticZoom" { return "GallerySample_SemanticZoom_Control" }
         "PullToRefresh" { return "GallerySample_PullToRefresh_RefreshContainer" }
         "FlipView" { return "GallerySample_FlipView_FlipView" }
         "ItemsView" { return "GallerySample_ItemsView_ItemsView" }
@@ -541,14 +534,8 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
         "RichEditBox" { return "GallerySample_RichEditBox_RichEditBox" }
         "SplitView" { return "NavLinksList" }
         "PersonPicture" { return "ProfileImageRadio" }
-        "Acrylic" { return "GallerySample_Acrylic_Root" }
-        "AnimatedIcon" { return "GallerySample_AnimatedIcon_Root" }
         "ParallaxView" { return "GallerySample_ParallaxView_Root" }
-        "CompactSizing" { return "GallerySample_CompactSizing_Root" }
         "IconElement" { return "GallerySample_IconElement_Root" }
-        "Line" { return "GallerySample_Line_Root" }
-        "Shape" { return "GallerySample_Shape_Root" }
-        "RadialGradientBrush" { return "GallerySample_RadialGradientBrush_Root" }
         "ThemeShadow" { return "GallerySample_ThemeShadow_Root" }
         "TitleBar" { return "TitleBox" }
         "CalendarDatePicker" { return "GallerySample_CalendarDatePicker_CalendarDatePicker" }
@@ -560,7 +547,6 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
         "AnnotatedScrollBar" { return "GallerySample_AnnotatedScrollBar_Root" }
         "ScrollView" { return "GallerySample_ScrollView_ScrollView" }
         "ScrollViewer" { return "GallerySample_ScrollViewer_ScrollViewer" }
-        "SemanticZoom" { return "GallerySample_SemanticZoom_Control" }
         "PullToRefresh" { return "GallerySample_PullToRefresh_Root" }
         "FlipView" { return "GallerySample_FlipView_FlipView" }
         "ItemsView" { return "GallerySample_ItemsView_ItemsView" }
@@ -610,14 +596,8 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
         "RichEditBox" { return "" }
         "SplitView" { return "NavLinksList" }
         "PersonPicture" { return "ProfileImageRadio" }
-        "Acrylic" { return "svPanel" }
-        "AnimatedIcon" { return "svPanel" }
         "ParallaxView" { return "listView" }
-        "CompactSizing" { return "svPanel" }
         "IconElement" { return "svPanel" }
-        "Line" { return "svPanel" }
-        "Shape" { return "svPanel" }
-        "RadialGradientBrush" { return "svPanel" }
         "ThemeShadow" { return "svPanel" }
         "TitleBar" { return "TitleBox" }
         "CalendarView" { return "Control1" }
@@ -626,7 +606,6 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
         "AnnotatedScrollBar" { return "svPanel" }
         "ScrollView" { return "PART_ScrollPresenter" }
         "ScrollViewer" { return "ScrollViewerControl" }
-        "SemanticZoom" { return "Control1" }
         "ItemsView" { return "BasicItemsView" }
         "GridView" { return "BasicGridView" }
         "BreadcrumbBar" { return "BreadcrumbBar1" }
@@ -653,8 +632,6 @@ function Get-ReferencePrimaryName([string]$control) {
 
 function Get-WinUIReferencePageTitle([string]$control) {
     switch ($control) {
-        "CompactSizing" { return "Compact Sizing" }
-        "Acrylic" { return "AcrylicBrush" }
         default { return $control }
     }
 }

@@ -2,404 +2,10 @@
   "$schema": "ControlInfoDataSchema.json",
   "Groups": [
     {
-      "UniqueId": "FundamentalsItem",
-      "Title": "Fundamentals",
-      "IsSpecialSection": true,
-      "Folder": "Fundamentals",
-      "Items": [
-        {
-          "UniqueId": "XamlResources",
-          "Title": "Resources",
-          "IsNew": true,
-          "Subtitle": "Reusable definitions for shared values to ensure consistency and maintainability.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/CodeTagIcon.png",
-          "Description": "In WinUI 3, XAML resources are reusable objects like colors, brushes, or strings, defined once and used throughout your app to maintain consistency and simplify updates. These resources are typically stored in a ResourceDictionary for better organization and scalability. Special theme resources adapt automatically to light or dark modes, ensuring a seamless look across themes.",
-          "Docs": [
-            {
-              "Title": "ResourceDictionary and XAML resource references",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/style/xaml-resource-dictionary"
-            },
-            {
-              "Title": "ResourceDictionary - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.resourcedictionary"
-            },
-            {
-              "Title": "XAML theme resources",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/style/xaml-theme-resources"
-            }
-          ],
-          "RelatedControls": [
-            "XamlStyles",
-            "Templates",
-            "Binding"
-          ]
-        },
-        {
-          "UniqueId": "XamlStyles",
-          "Title": "Style",
-          "IsNew": true,
-          "Subtitle": "A XAML style is a Reusable property settings to define consistent UI design elements.",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml",
-          "ImagePath": "ms-appx:///Assets/ControlImages/CodeTagIcon.png",
-          "Description": "XAML Styles in WinUI 3 are reusable sets of property values that you can apply to multiple controls. They help maintain a consistent look and feel across your app. Instead of setting the same properties on every control, you define a style once and then reuse it wherever needed.",
-          "Docs": [
-            {
-              "Title": "Style - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.style"
-            },
-            {
-              "Title": "XAML styles",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/style/xaml-styles"
-            }
-          ],
-          "RelatedControls": [
-            "XamlResources",
-            "Templates",
-            "Binding"
-          ]
-        },
-        {
-          "UniqueId": "Binding",
-          "Title": "Binding",
-          "IsNew": true,
-          "Subtitle": "Connecting UI elements to data for automatic synchronization and updates.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/CodeTagIcon.png",
-          "Description": "Binding in WinUI 3 is a way to connect a property of a control to a source, such as another property, a data object, or a view model. It keeps the data synchronized between the source and the target control, enabling dynamic updates.",
-          "Docs": [
-            {
-              "Title": "Data binding",
-              "Uri": "https://learn.microsoft.com/windows/apps/develop/data-binding/"
-            },
-            {
-              "Title": "{x:Bind} markup extension",
-              "Uri": "https://learn.microsoft.com/windows/uwp/xaml-platform/x-bind-markup-extension"
-            },
-            {
-              "Title": "{Binding} markup extension",
-              "Uri": "https://learn.microsoft.com/windows/uwp/xaml-platform/binding-markup-extension"
-            },
-            {
-              "Title": "Binding - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.data.binding"
-            },
-            {
-              "Title": "IValueConverter Interface - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.data.ivalueconverter"
-            }
-          ],
-          "RelatedControls": [
-            "XamlResources",
-            "XamlStyles",
-            "Templates"
-          ]
-        },
-        {
-          "UniqueId": "Templates",
-          "Title": "Templates",
-          "IsNew": true,
-          "Subtitle": "Customize controls' visuals, item layouts, and data presentation in XAML.",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "FrameworkTemplate"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "ImagePath": "ms-appx:///Assets/ControlImages/CodeTagIcon.png",
-          "Description": "A template defines the structure and appearance of a control. Unlike styles, which set properties, templates allow you to completely customize how a control looks by redefining its visual tree (the XAML elements that make up the control). Templates provide the flexibility to change the look of controls while maintaining their functionality.",
-          "Docs": [
-            {
-              "Title": "XAML Control Templates",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/style/xaml-control-templates"
-            },
-            {
-              "Title": "ControlTemplate - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.controltemplate"
-            },
-            {
-              "Title": "DataTemplate - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.datatemplate"
-            },
-            {
-              "Title": "ItemsPanelTemplate - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.itemspaneltemplate"
-            }
-          ],
-          "RelatedControls": [
-            "Binding",
-            "XamlStyles",
-            "CustomUserControls"
-          ]
-        },
-        {
-          "UniqueId": "CustomUserControls",
-          "Title": "Custom & User Controls",
-          "IsNew": true,
-          "Subtitle": "Create reusable UI components with custom functionality and appearance.",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "FrameworkElement",
-            "Control"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "ImagePath": "ms-appx:///Assets/ControlImages/CustomControls.png",
-          "Description": "Custom controls and user controls allow to create reusable UI components with unique behavior and styling. A UserControl is a simple way to encapsulate a UI layout, while a custom control provides full styling and templating flexibility. Both approaches help in building modular and maintainable applications.",
-          "Docs": [
-            {
-              "Title": "Build XAML controls",
-              "Uri": "https://learn.microsoft.com/windows/apps/winui/winui3/xaml-templated-controls-csharp-winui-3"
-            },
-            {
-              "Title": "Control - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.control"
-            },
-            {
-              "Title": "UserControl - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.usercontrol"
-            }
-          ],
-          "RelatedControls": [
-            "Templates",
-            "XamlStyles"
-          ]
-        },
-        {
-          "UniqueId": "CustomXamlConditionals",
-          "Title": "XAML Conditions",
-          "IsNew": true,
-          "Subtitle": "Define custom XAML conditions evaluated at parse time using IXamlCondition.",
-          "ApiNamespace": "Microsoft.UI.Xaml.Markup",
-          "ImagePath": "ms-appx:///Assets/ControlImages/CodeTagIcon.png",
-          "Description": "XAML conditions let you conditionally include markup based on application-specific state such as feature flags, device capabilities, or configuration. Implement IXamlCondition (Windows App SDK 2.0) and reference your condition from a conditional XAML namespace. Conditions are evaluated by the XAML parser when a page is loaded and the result for each (condition, argument) pair is cached for the lifetime of the process.",
-          "Docs": [
-            {
-              "Title": "IXamlCondition - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.markup.ixamlcondition"
-            }
-          ]
-        },
-        {
-          "UniqueId": "ScratchPad",
-          "Title": "Scratch Pad",
-          "Subtitle": "Scratch pad for testing simple XAML markup",
-          "ImagePath": "ms-appx:///Assets/ControlImages/ScratchPad.png",
-          "Description": "Provides an edit box where you can type in some markup and load it to see how it looks and behaves.",
-
-          "Docs": [
-            {
-              "Title": "XamlReader - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.markup.xamlreader"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "UniqueId": "DesignItem",
-      "Title": "Design",
-      "IconGlyph": "",
-      "IsSpecialSection": true,
-      "Folder": "Design",
-      "Items": [
-        {
-          "UniqueId": "Color",
-          "Title": "Color",
-          "Subtitle": "Balanced color design creates clarity and aesthetic harmony.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/ColorPaletteResources.png",
-          "Docs": [
-            {
-              "Title": "Colors in Windows 11",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/signature-experiences/color"
-            },
-            {
-              "Title": "Windows UI Kit (Figma)",
-              "Uri": "https://aka.ms/WinUI/3.0-figma-toolkit"
-            },
-            {
-              "Title": "WinUI Theme Resources (GitHub)",
-              "Uri": "https://github.com/microsoft/microsoft-ui-xaml/blob/main/src/controls/dev/CommonStyles/Common_themeresources_any.xaml"
-            }
-          ]
-        },
-        {
-          "UniqueId": "Geometry",
-          "Title": "Geometry",
-          "Subtitle": "Clear geometric design ensures visual coherence and structure.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/Shape.png",
-          "Docs": [
-            {
-              "Title": "Geometry in Windows 11",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/signature-experiences/geometry"
-            },
-            {
-              "Title": "WinUI Theme Resources (GitHub)",
-              "Uri": "https://github.com/microsoft/microsoft-ui-xaml/blob/main/src/controls/dev/CommonStyles/Common_themeresources_any.xaml"
-            }
-          ]
-        },
-        {
-          "UniqueId": "Iconography",
-          "Title": "Iconography",
-          "IsUpdated": true,
-          "Subtitle": "Icons are a visual design language that can be used to communicate information quickly and effectively.",
-          "Description": "The icons below use Segoe Fluent Icons on Windows 11 and Segoe MDL2 Assets on Windows 10.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/IconElement.png",
-          "Docs": [
-            {
-              "Title": "Iconography in Windows",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/signature-experiences/iconography#system-icons"
-            },
-            {
-              "Title": "Segoe Fluent Icons font",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/style/segoe-fluent-icons-font"
-            },
-            {
-              "Title": "Segoe MDL2 Assets font",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/style/segoe-ui-symbol-font"
-            }
-          ]
-        },
-        {
-          "UniqueId": "Spacing",
-          "Title": "Spacing",
-          "Subtitle": "Thoughtful spacing design enhances readability and flow.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/CompactSizing.png",
-          "Docs": [
-            {
-              "Title": "Content design basics",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/basics/content-basics"
-            }
-          ]
-        },
-        {
-          "UniqueId": "Typography",
-          "Title": "Typography",
-          "Subtitle": "Typography design guides attention with intuitive fonts and hierarchy.",
-          "SourcePath": "/CommonStyles/TextBlock_themeresources.xaml",
-          "ImagePath": "ms-appx:///Assets/ControlImages/TextBlock.png",
-          "Docs": [
-            {
-              "Title": "Typography in Windows Apps",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/style/typography"
-            },
-            {
-              "Title": "XAML theme resources",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/style/xaml-theme-resources#the-xaml-type-ramp"
-            },
-            {
-              "Title": "Typography in Windows 11",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/signature-experiences/typography"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "UniqueId": "AccessibilityItem",
-      "Title": "Accessibility",
-      "IsSpecialSection": true,
-      "Folder": "Accessibility",
-      "Items": [
-        {
-          "UniqueId": "AccessibilityColorContrast",
-          "Title": "Color Contrast",
-          "Subtitle": "High contrast design ensures accessibility for all users.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/Accessibility.png",
-          "Docs": [
-            {
-              "Title": "Accessibility",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/accessibility/accessibility"
-            },
-            {
-              "Title": "Automation Properties - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.automation.automationproperties"
-            }
-          ]
-        },
-        {
-          "UniqueId": "AccessibilityKeyboard",
-          "Title": "Keyboard Navigation",
-          "Subtitle": "Keyboard-friendly design enables seamless interactions.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/Accessibility.png",
-          "Docs": [
-            {
-              "Title": "Accessibility",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/accessibility/accessibility"
-            },
-            {
-              "Title": "Accessibility overview",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/accessibility/accessibility-overview"
-            },
-            {
-              "Title": "Keyboard accessibility",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/accessibility/keyboard-accessibility"
-            },
-            {
-              "Title": "Keyboard interactions",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/input/keyboard-interactions"
-            },
-            {
-              "Title": "Access keys",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/input/access-keys"
-            },
-            {
-              "Title": "Keyboard accelerators",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/input/keyboard-accelerators"
-            },
-            {
-              "Title": "Focus navigation for keyboard, gamepad, remote control, and accessibility tools",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/input/focus-navigation"
-            },
-            {
-              "Title": "Automation Properties - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.automation.automationproperties"
-            }
-          ]
-        },
-        {
-          "UniqueId": "AccessibilityScreenReader",
-          "Title": "Screen Reader",
-          "Subtitle": "Inclusive design ensures meaningful content for assistive technologies.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/Accessibility.png",
-          "Docs": [
-            {
-              "Title": "Accessibility",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/accessibility/accessibility"
-            },
-            {
-              "Title": "Accessibility overview",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/accessibility/accessibility-overview"
-            },
-            {
-              "Title": "Expose basic accessibility information",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/accessibility/basic-accessibility-information"
-            },
-            {
-              "Title": "Landmarks and Headings",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/accessibility/landmarks-and-headings"
-            },
-            {
-              "Title": "Accessible text requirements",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/accessibility/accessible-text-requirements"
-            },
-            {
-              "Title": "Complete guide to Narrator",
-              "Uri": "https://support.microsoft.com/windows/complete-guide-to-narrator-e4397a0d-ef4f-b386-d8ae-c172f109bdb1"
-            }
-          ]
-        }
-      ]
-    },
-    {
       "UniqueId": "MenusAndToolbars",
       "Title": "Menus & toolbars",
       "IconGlyph": "",
       "Items": [
-
         {
           "UniqueId": "AppBarButton",
           "Title": "AppBarButton",
@@ -590,10 +196,7 @@
           "RelatedControls": [
             "CommandBar",
             "MenuFlyout",
-            "RichEditBox",
-            "TextBox",
-            "StandardUICommand",
-            "XamlUICommand"
+            "RichEditBox"
           ]
         },
         {
@@ -623,9 +226,7 @@
           ],
           "RelatedControls": [
             "CommandBar",
-            "MenuFlyout",
-            "StandardUICommand",
-            "XamlUICommand"
+            "MenuFlyout"
           ]
         },
         {
@@ -674,7 +275,6 @@
           "RelatedControls": [
             "Flyout",
             "ContentDialog",
-            "Button",
             "AppBarButton"
           ]
         },
@@ -712,65 +312,7 @@
             }
           ],
           "RelatedControls": [
-            "GridView",
-            "ListView"
-          ]
-        },
-        {
-          "UniqueId": "StandardUICommand",
-          "Title": "StandardUICommand",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "XamlUICommand"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Input",
-          "Subtitle": "A StandardUICommand is a built-in 'XamlUICommand' which represents a commonly used command, e.g. 'Save'.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/AppBarSeparator.png",
-          "Description": "StandardUICommands are a set of built-in XamlUICommands represeting commonly used commands. Including the look and feel of a given command, which can be reused across your app, and which is understood natively by the standard XAML controls. E.g. Save, Open, Copy, Paste, etc.",
-          "Docs": [
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/commanding#command-experiences-using-the-standarduicommand-class"
-            },
-            {
-              "Title": "StandardUICommand - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.input.standarduicommand"
-            }
-          ],
-          "RelatedControls": [
-            "XamlUICommand",
-            "AppBarButton",
-            "AppBarToggleButton",
-            "CommandBar"
-          ]
-        },
-        {
-          "UniqueId": "XamlUICommand",
-          "Title": "XamlUICommand",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Input",
-          "Subtitle": "An object which is used to define the look and feel of a given command.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/AppBarSeparator.png",
-          "Description": "An object which is used to define the look and feel of a given command, which can be reused across your app, and which is understood natively by the standard XAML controls.",
-          "Docs": [
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/commanding#command-experiences-using-the-xamluicommand-class"
-            },
-            {
-              "Title": "XamlUICommand - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.input.xamluicommand"
-            }
-          ],
-          "RelatedControls": [
-            "StandardUICommand",
-            "AppBarButton",
-            "AppBarToggleButton",
-            "CommandBar"
+            "GridView"
           ]
         }
       ]
@@ -808,9 +350,7 @@
             }
           ],
           "RelatedControls": [
-            "GridView",
-            "ListView",
-            "SemanticZoom"
+            "GridView"
           ]
         },
         {
@@ -843,9 +383,7 @@
           ],
           "RelatedControls": [
             "ItemsView",
-            "ListView",
-            "FlipView",
-            "SemanticZoom"
+            "FlipView"
           ]
         },
         {
@@ -883,7 +421,6 @@
             "ItemsView",
             "ScrollView",
             "ScrollViewer",
-            "ListView",
             "GridView"
           ]
         },
@@ -915,99 +452,8 @@
           "RelatedControls": [
             "AnnotatedScrollBar",
             "ItemsRepeater",
-            "ListView",
             "GridView",
             "ScrollView"
-          ]
-        },
-        {
-          "UniqueId": "ListBox",
-          "Title": "ListBox",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement",
-            "Control",
-            "ItemsControl",
-            "Selector"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "A control that presents an inline list of items that the user can select from.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/ListBox.png",
-          "Description": "Use a ListBox when you want the options to be visible all the time or when users can select more than one option at a time. ListBox controls are always open, which allows several items to be displayed to the user without user interaction.",
-          "SourcePath": "/CommonStyles/ListBox_themeresources.xaml",
-          "Docs": [
-            {
-              "Title": "ListBox - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.listbox"
-            },
-            {
-              "Title": "ListBoxItem - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.listboxitem"
-            }
-          ],
-          "RelatedControls": [
-            "ComboBox",
-            "RadioButton",
-            "CheckBox",
-            "AutoSuggestBox"
-          ]
-        },
-        {
-          "UniqueId": "ListView",
-          "Title": "ListView",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement",
-            "Control",
-            "ItemsControl",
-            "Selector",
-            "ListViewBase"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "A control that presents a collection of items in a vertical list.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/ListView.png",
-          "Description": "The ListView lets you show a collection of items in a list that scrolls vertically.",
-          "SourcePath": "/CommonStyles/ListViewItem_themeresources.xaml",
-          "Docs": [
-            {
-              "Title": "ListView - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.listview"
-            },
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/listview-and-gridview"
-            },
-            {
-              "Title": "Drag and Drop - Full Sample",
-              "Uri": "https://github.com/microsoft/Windows-universal-samples/tree/master/Samples/XamlDragAndDrop"
-            },
-            {
-              "Title": "CollectionViewSource - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.Data.CollectionViewSource"
-            },
-            {
-              "Title": "Filtering collections and lists through user input",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/listview-filtering"
-            },
-            {
-              "Title": "Inverted Lists",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/inverted-lists"
-            },
-            {
-              "Title": "Inverted Lists - Full Sample",
-              "Uri": "https://github.com/Microsoft/Windows-universal-samples/tree/master/Samples/XamlBottomUpList"
-            }
-          ],
-          "RelatedControls": [
-            "ItemsView",
-            "GridView",
-            "StandardUICommand",
-            "FlipView",
-            "SemanticZoom"
           ]
         },
         {
@@ -1034,38 +480,7 @@
           ],
           "RelatedControls": [
             "ScrollView",
-            "ScrollViewer",
-            "ListView"
-          ]
-        },
-        {
-          "UniqueId": "TreeView",
-          "Title": "TreeView",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement",
-            "Control"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "The  TreeView control is a hierarchical list pattern with expanding and collapsing nodes that contain nested items.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/TreeView.png",
-          "Description": "The TreeView control is a hierarchical list pattern with expanding and collapsing nodes that contain nested items. ",
-          "SourcePath": "/TreeView",
-          "Docs": [
-            {
-              "Title": "TreeView - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.Controls.TreeView"
-            },
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/tree-view"
-            }
-          ],
-          "RelatedControls": [
-            "ListView",
-            "ItemsRepeater"
+            "ScrollViewer"
           ]
         }
       ]
@@ -1101,7 +516,6 @@
             }
           ],
           "RelatedControls": [
-            "DatePicker",
             "CalendarView"
           ]
         },
@@ -1132,38 +546,6 @@
           ],
           "RelatedControls": [
             "CalendarDatePicker",
-            "DatePicker",
-            "TimePicker"
-          ]
-        },
-        {
-          "UniqueId": "DatePicker",
-          "Title": "DatePicker",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement",
-            "Control"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "A control that lets a user pick a date value.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/DatePicker.png",
-          "Description": "Use a DatePicker to let users set a date in your app, for example to schedule an appointment. The DatePicker displays three controls for month, date, and year. These controls are easy to use with touch or mouse, and they can be styled and configured in several different ways.",
-          "SourcePath": "/CommonStyles/DatePicker_themeresources.xaml",
-          "Docs": [
-            {
-              "Title": "DatePicker - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.datepicker"
-            },
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/date-picker"
-            }
-          ],
-          "RelatedControls": [
-            "CalendarDatePicker",
-            "CalendarView",
             "TimePicker"
           ]
         },
@@ -1193,7 +575,6 @@
             }
           ],
           "RelatedControls": [
-            "DatePicker",
             "CalendarView"
           ]
         }
@@ -1204,40 +585,6 @@
       "Title": "Basic input",
       "IconGlyph": "",
       "Items": [
-        {
-          "UniqueId": "Button",
-          "Title": "Button",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement",
-            "Control",
-            "ContentControl",
-            "ButtonBase"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "A control that responds to user input and raises a Click event.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/Button.png",
-          "Description": "The Button control provides a Click event to respond to user input from a touch, mouse, keyboard, stylus, or other input device. You can put different kinds of content in a button, such as text or an image, or you can restyle a button to give it a new look.",
-          "SourcePath": "/CommonStyles/Button_themeresources.xaml",
-          "Docs": [
-            {
-              "Title": "Button - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.button"
-            },
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/buttons"
-            }
-          ],
-          "RelatedControls": [
-            "ToggleButton",
-            "RepeatButton",
-            "HyperlinkButton",
-            "AppBarButton"
-          ]
-        },
         {
           "UniqueId": "DropDownButton",
           "Title": "DropDownButton",
@@ -1304,7 +651,6 @@
             }
           ],
           "RelatedControls": [
-            "Button",
             "ToggleButton",
             "RepeatButton",
             "AppBarButton"
@@ -1338,7 +684,6 @@
             }
           ],
           "RelatedControls": [
-            "Button",
             "ToggleButton",
             "HyperlinkButton",
             "AppBarButton"
@@ -1372,10 +717,8 @@
             }
           ],
           "RelatedControls": [
-            "Button",
             "AppBarToggleButton",
             "ToggleSwitch",
-            "CheckBox",
             "CommandBarFlyout",
             "CommandBar"
           ]
@@ -1407,7 +750,6 @@
             }
           ],
           "RelatedControls": [
-            "Button",
             "DropDownButton",
             "ToggleSplitButton",
             "AppBarButton",
@@ -1444,44 +786,8 @@
           "RelatedControls": [
             "SplitButton",
             "DropDownButton",
-            "Button",
             "ToggleButton",
-            "ToggleSwitch",
-            "CheckBox"
-          ]
-        },
-        {
-          "UniqueId": "CheckBox",
-          "Title": "CheckBox",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement",
-            "Control",
-            "ContentControl",
-            "ButtonBase",
-            "ToggleButton"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "A control that a user can select or clear.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/CheckBox.png",
-          "Description": "CheckBox controls let the user select a combination of binary options. In contrast, RadioButton controls allow the user to select from mutually exclusive options. The indeterminate state is used to indicate that an option is set for some, but not all, child options. Don't allow users to set an indeterminate state directly to indicate a third option.",
-          "SourcePath": "/CommonStyles/CheckBox_themeresources.xaml",
-          "Docs": [
-            {
-              "Title": "CheckBox - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.checkbox"
-            },
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/checkbox"
-            }
-          ],
-          "RelatedControls": [
-            "RadioButton",
-            "ToggleSwitch",
-            "ToggleButton"
+            "ToggleSwitch"
           ]
         },
         {
@@ -1509,87 +815,7 @@
               "Uri": "https://learn.microsoft.com/windows/apps/design/controls/color-picker"
             }
           ],
-          "RelatedControls": [
-            "ComboBox"
-          ]
-        },
-        {
-          "UniqueId": "ComboBox",
-          "Title": "ComboBox",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement",
-            "Control",
-            "ItemsControl",
-            "Selector"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "A drop-down list of items a user can select from.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/ComboBox.png",
-          "Description": "Use a ComboBox when you need to conserve on-screen space and when users select only one option at a time. A ComboBox shows only the currently selected item.",
-          "SourcePath": "/ComboBox",
-          "Docs": [
-            {
-              "Title": "ComboBox - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.combobox"
-            },
-            {
-              "Title": "ComboBoxItem - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.comboboxitem"
-            },
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/combo-box"
-            }
-          ],
-          "RelatedControls": [
-            "ListBox",
-            "RadioButton",
-            "CheckBox",
-            "ListView",
-            "AutoSuggestBox",
-            "RatingControl"
-          ]
-        },
-        {
-          "UniqueId": "RadioButton",
-          "Title": "RadioButton",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement",
-            "Control",
-            "ContentControl",
-            "ButtonBase",
-            "ToggleButton"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "A control that allows a user to select a single option from a group of options.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/RadioButton.png",
-          "Description": "Use RadioButton controls to let a user choose between mutually exclusive, related options. Generally contained within a RadioButtons group control.",
-          "SourcePath": "/CommonStyles/RadioButton_themeresources.xaml",
-          "Docs": [
-            {
-              "Title": "RadioButton - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.radiobutton"
-            },
-            {
-              "Title": "RadioButtons - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.radiobuttons"
-            },
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/radio-button"
-            }
-          ],
-          "RelatedControls": [
-            "CheckBox",
-            "ToggleSwitch",
-            "ToggleButton"
-          ]
+          "RelatedControls": []
         },
         {
           "UniqueId": "RatingControl",
@@ -1616,42 +842,7 @@
               "Uri": "https://learn.microsoft.com/windows/apps/design/controls/rating"
             }
           ],
-          "RelatedControls": [
-            "Slider",
-            "ComboBox"
-          ]
-        },
-        {
-          "UniqueId": "Slider",
-          "Title": "Slider",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement",
-            "Control",
-            "RangeBase"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "A control that lets the user select from a range of values by moving a Thumb control along a track.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/Slider.png",
-          "Description": "Use a Slider when you want your users to be able to set defined, contiguous values (such as volume or brightness) or a range of discrete values (such as screen resolution settings).",
-          "SourcePath": "/CommonStyles/Slider_themeresources.xaml",
-          "Docs": [
-            {
-              "Title": "Slider - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.slider"
-            },
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/slider"
-            }
-          ],
-          "RelatedControls": [
-            "ComboBox",
-            "ListBox",
-            "RatingControl"
-          ]
+          "RelatedControls": []
         },
         {
           "UniqueId": "ToggleSwitch",
@@ -1680,8 +871,6 @@
           ],
           "RelatedControls": [
             "ToggleButton",
-            "RadioButton",
-            "CheckBox",
             "AppBarToggleButton"
           ]
         }
@@ -1719,8 +908,7 @@
           ],
           "RelatedControls": [
             "InfoBar",
-            "TeachingTip",
-            "BadgeNotificationManager"
+            "TeachingTip"
           ]
         },
         {
@@ -1754,36 +942,6 @@
           ]
         },
         {
-          "UniqueId": "ProgressBar",
-          "Title": "ProgressBar",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement",
-            "Control",
-            "RangeBase"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "Shows the apps progress on a task, or that the app is performing ongoing work that doesn't block user interaction.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/ProgressBar.png",
-          "Description": "The ProgressBar has two different visual representations:\nIndeterminate - shows that a task is ongoing, but doesn't block user interaction.\nDeterminate - shows how much progress has been made on a known amount of work.",
-          "SourcePath": "/ProgressBar",
-          "Docs": [
-            {
-              "Title": "ProgressBar - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.Controls.ProgressBar"
-            },
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/progress-controls"
-            }
-          ],
-          "RelatedControls": [
-            "ProgressRing"
-          ]
-        },
-        {
           "UniqueId": "ProgressRing",
           "Title": "ProgressRing",
           "BaseClasses": [
@@ -1808,41 +966,7 @@
               "Uri": "https://learn.microsoft.com/windows/apps/design/controls/progress-controls"
             }
           ],
-          "RelatedControls": [
-            "ProgressBar"
-          ]
-        },
-        {
-          "UniqueId": "ToolTip",
-          "Title": "ToolTip",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement",
-            "Control",
-            "ContentControl"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "Displays information for an element in a pop-up window.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/ToolTip.png",
-          "Description": "A ToolTip shows more information about a UI element. You might show information about what the element does, or what the user should do. The ToolTip is shown when a user hovers over or presses and holds the UI element.",
-          "SourcePath": "/CommonStyles/ToolTip_themeresources.xaml",
-          "Docs": [
-            {
-              "Title": "ToolTip - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.tooltip"
-            },
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/tooltips"
-            }
-          ],
-          "RelatedControls": [
-            "TeachingTip",
-            "Flyout",
-            "ContentDialog"
-          ]
+          "RelatedControls": []
         }
       ]
     },
@@ -1880,8 +1004,7 @@
           "RelatedControls": [
             "Flyout",
             "MenuFlyout",
-            "TeachingTip",
-            "ToolTip"
+            "TeachingTip"
           ]
         },
         {
@@ -1911,7 +1034,6 @@
             "TeachingTip",
             "ContentDialog",
             "MenuFlyout",
-            "Button",
             "AppBarButton"
           ]
         },
@@ -1967,8 +1089,7 @@
           ],
           "RelatedControls": [
             "ContentDialog",
-            "Flyout",
-            "ToolTip"
+            "Flyout"
           ]
         }
       ]
@@ -2061,11 +1182,6 @@
             }
           ],
           "RelatedControls": [
-            "Viewbox",
-            "Canvas",
-            "Grid",
-            "StackPanel",
-            "RelativePanel",
             "ParallaxView",
             "ItemsView",
             "ScrollViewer"
@@ -2098,42 +1214,8 @@
             }
           ],
           "RelatedControls": [
-            "Viewbox",
-            "Canvas",
-            "Grid",
-            "StackPanel",
-            "RelativePanel",
             "ParallaxView",
             "ScrollView"
-          ]
-        },
-        {
-          "UniqueId": "SemanticZoom",
-          "Title": "SemanticZoom",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement",
-            "Control"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "Lets the user zoom between two different views of a collection, making it easier to navigate through large collections of items.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/SemanticZoom.png",
-          "Description": "The SemanticZoom lets you show grouped data in two different ways, and is useful for quickly navigating through large sets of data.",
-          "Docs": [
-            {
-              "Title": "SemanticZoom - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.semanticzoom"
-            },
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/semantic-zoom"
-            }
-          ],
-          "RelatedControls": [
-            "GridView",
-            "ListView"
           ]
         }
       ]
@@ -2143,166 +1225,6 @@
       "Title": "Layout",
       "IconGlyph": "",
       "Items": [
-        {
-          "UniqueId": "Border",
-          "Title": "Border",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "A container control that draws a boundary line, background, or both, around another object.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/Border.png",
-          "Description": "Use a Border control to draw a boundary line, background, or both, around another object. A Border can contain only one child object.",
-          "Docs": [
-            {
-              "Title": "Border - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.border"
-            }
-          ],
-          "RelatedControls": [
-            "Canvas",
-            "Grid",
-            "StackPanel",
-            "VariableSizedWrapGrid",
-            "RelativePanel"
-          ]
-        },
-        {
-          "UniqueId": "Canvas",
-          "Title": "Canvas",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement",
-            "Panel"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "A layout panel that supports absolute positioning of child elements relative to the top left corner of the canvas.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/Canvas.png",
-          "Description": "The Canvas provides absolute positioning of controls or content. Content is positioned relative to the Canvas using the Canvas.Top and Canvas.Left attached properties.",
-          "Docs": [
-            {
-              "Title": "Canvas - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.canvas"
-            },
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/layout/layout-panels"
-            }
-          ],
-          "RelatedControls": [
-            "Border",
-            "Grid",
-            "StackPanel",
-            "VariableSizedWrapGrid",
-            "RelativePanel"
-          ]
-        },
-        {
-          "UniqueId": "Expander",
-          "Title": "Expander",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement",
-            "Control",
-            "ContentControl"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "A container with a header that can be expanded to show a body with more content.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/Expander.png",
-          "Description": "The Expander has a header and can expand to show a body with more content. Use an Expander when some content is only relevant some of the time (for example to read more information or access additional options for an item).",
-          "SourcePath": "/Expander",
-          "Docs": [
-            {
-              "Title": "Expander - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.expander"
-            },
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/expander"
-            }
-          ],
-          "RelatedControls": [
-            "Flyout",
-            "ItemsRepeater",
-            "SplitView"
-          ]
-        },
-        {
-          "UniqueId": "Grid",
-          "Title": "Grid",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement",
-            "Panel"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "A layout panel that supports arranging child elements in rows and columns. ",
-          "ImagePath": "ms-appx:///Assets/ControlImages/Grid.png",
-          "Description": "The Grid is used to arrange controls and content in rows and columns. Content is positioned in the grid using Grid.Row and Grid.Column attached properties.",
-          "Docs": [
-            {
-              "Title": "Grid - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.grid"
-            },
-            {
-              "Title": "Tutorial",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/layout/grid-tutorial"
-            },
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/layout/layout-panels#grid"
-            }
-          ],
-          "RelatedControls": [
-            "Border",
-            "Canvas",
-            "StackPanel",
-            "VariableSizedWrapGrid",
-            "RelativePanel"
-          ]
-        },
-
-        {
-          "UniqueId": "RelativePanel",
-          "Title": "RelativePanel",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement",
-            "Panel"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "A panel that uses relationships between elements to define layout.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/RelativePanel.png",
-          "Description": "Use a RelativePanel to layout elements by defining the relationships between elements and in relation to the panel.",
-          "Docs": [
-            {
-              "Title": "RelativePanel - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.relativepanel"
-            },
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/layout/layout-panels"
-            }
-          ],
-          "RelatedControls": [
-            "Grid",
-            "StackPanel",
-            "Border",
-            "Canvas",
-            "Viewbox"
-          ]
-        },
         {
           "UniqueId": "SplitView",
           "Title": "SplitView",
@@ -2329,102 +1251,7 @@
             }
           ],
           "RelatedControls": [
-            "StackPanel",
-            "ListView",
-            "GridView",
-            "Grid",
-            "RelativePanel"
-          ]
-        },
-        {
-          "UniqueId": "StackPanel",
-          "Title": "StackPanel",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement",
-            "Panel"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "A layout panel that arranges child elements into a single line that can be oriented horizontally or vertically.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/StackPanel.png",
-          "Description": "A StackPanel is used to arrange items in a line, either horizontally or vertically.",
-          "Docs": [
-            {
-              "Title": "StackPanel - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.stackpanel"
-            },
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/layout/layout-panels"
-            }
-          ],
-          "RelatedControls": [
-            "Border",
-            "Canvas",
-            "Grid",
-            "VariableSizedWrapGrid",
-            "RelativePanel"
-          ]
-        },
-        {
-          "UniqueId": "VariableSizedWrapGrid",
-          "Title": "VariableSizedWrapGrid",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement",
-            "Panel"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "A layout panel that supports arranging child elements in rows and columns. Each child element can span multiple rows and columns.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/VariableSizedWrapGrid.png",
-          "Description": "A VariableSizedWrapGrip is used to create grid layouts where content can span multiple rows and columns.",
-          "Docs": [
-            {
-              "Title": "VariableSizedWrapGrid - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.variablesizedwrapgrid"
-            },
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/layout/layout-panels"
-            }
-          ],
-          "RelatedControls": [
-            "Border",
-            "Canvas",
-            "Grid",
-            "StackPanel",
-            "RelativePanel"
-          ]
-        },
-        {
-          "UniqueId": "Viewbox",
-          "Title": "Viewbox",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "A container control that scales its content to a specified size.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/Viewbox.png",
-          "Description": "Use a Viewbox control scale content up or down to a specified size.",
-          "Docs": [
-            {
-              "Title": "Viewbox - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.Viewbox"
-            }
-          ],
-          "RelatedControls": [
-            "ScrollViewer",
-            "Canvas",
-            "Grid",
-            "StackPanel",
-            "RelativePanel"
+            "GridView"
           ]
         }
       ]
@@ -2590,8 +1417,7 @@
           ],
           "RelatedControls": [
             "Pivot",
-            "NavigationView",
-            "ListView"
+            "NavigationView"
           ]
         }
       ]
@@ -2601,143 +1427,6 @@
       "Title": "Media",
       "IconGlyph": "",
       "Items": [
-        {
-          "UniqueId": "AnimatedVisualPlayer",
-          "Title": "AnimatedVisualPlayer",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "An element to render and control playback of motion graphics.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/AnimatedVisualPlayer.png",
-          "Description": "An element to render and control playback of motion graphics.",
-          "SourcePath": "/AnimatedVisualPlayer",
-          "Docs": [
-            {
-              "Title": "AnimatedVisualPlayer - API",
-              "Uri": "https://learn.microsoft.com/windows/winui/api/microsoft.ui.xaml.controls.animatedvisualplayer"
-            },
-            {
-              "Title": "Full Samples",
-              "Uri": "ms-windows-store://pdp/?productid=9N3J5TG8FF7F"
-            },
-            {
-              "Title": "Tutorials",
-              "Uri": "https://learn.microsoft.com/windows/communitytoolkit/animations/lottie#tutorials"
-            },
-            {
-              "Title": "Lottie Overview",
-              "Uri": "https://learn.microsoft.com/windows/communitytoolkit/animations/lottie"
-            },
-            {
-              "Title": "Lottie Windows - GitHub",
-              "Uri": "https://github.com/CommunityToolkit/Lottie-Windows"
-            }
-          ],
-          "RelatedControls": [
-            "AnimatedIcon"
-          ]
-        },
-        {
-          "UniqueId": "CaptureElementPreview",
-          "Title": "Capture Element / Camera Preview",
-          "Subtitle": "A sample for doing a camera preview.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/CaptureElement.png",
-          "Description": "You can use a MediaPlayerElement control to show a camera preview with a MediaCapture object.",
-          "IsNew": true,
-          "Docs": [
-            {
-              "Title": "MediaCapture - API",
-              "Uri": "https://learn.microsoft.com/uwp/api/windows.media.capture.mediacapture"
-            }
-          ],
-          "RelatedControls": [
-            "MediaPlayerElement",
-            "Image"
-          ]
-        },
-        {
-          "UniqueId": "Image",
-          "Title": "Image",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "A control to display image content.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/Image.png",
-          "Description": "You can use an Image control to show and scale images.",
-          "Docs": [
-            {
-              "Title": "Image - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.image"
-            },
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/images-imagebrushes"
-            }
-          ],
-          "RelatedControls": [
-            "MediaPlayerElement",
-            "PersonPicture"
-          ]
-        },
-        {
-          "UniqueId": "MapControl",
-          "Title": "MapControl",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement",
-            "Control"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "Displays a symbolic map of the Earth.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/MapControl.png",
-          "Description": "Displays a symbolic map of the Earth",
-          "Docs": [
-            {
-              "Title": "MapControl - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.mapcontrol"
-            }
-          ]
-        },
-        {
-          "UniqueId": "MediaPlayerElement",
-          "Title": "MediaPlayerElement",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement",
-            "Control"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "A control to display video and image content.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/MediaPlayerElement.png",
-          "Description": "You can use a MediaPlayerElement control to playback videos and show images. You can show transport controls or make the video autoplay.",
-          "SourcePath": "/CommonStyles/MediaTransportControls_themeresources.xaml",
-          "Docs": [
-            {
-              "Title": "MediaPlayerElement - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.MediaPlayerElement"
-            },
-            {
-              "Title": "Media Playback",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/media-playback"
-            }
-          ],
-          "RelatedControls": [
-            "Image",
-            "CaptureElementPreview"
-          ]
-        },
         {
           "UniqueId": "PersonPicture",
           "Title": "PersonPicture",
@@ -2763,56 +1452,7 @@
               "Uri": "https://learn.microsoft.com/windows/apps/design/controls/person-picture"
             }
           ],
-          "RelatedControls": [
-            "Image"
-          ]
-        },
-        {
-          "UniqueId": "Sound",
-          "Title": "Sound",
-          "ApiNamespace": "Microsoft.UI.Xaml",
-          "Subtitle": "A code-behind only API that enables 2D and 3D UI sounds on all XAML controls.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/Sound.png",
-          "Description": "Sound is enabled by default for UWP apps running on Xbox, but can be set to always play on all devices if desired. Sound may also be put into Spatial Audio mode for a more immersive 10ft experience.",
-          "Docs": [
-            {
-              "Title": "Sound - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.elementsoundplayer"
-            },
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/style/sound"
-            }
-          ]
-        },
-        {
-          "UniqueId": "WebView2",
-          "Title": "WebView2",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "A Microsoft Edge (Chromium) based control that hosts HTML content in an app.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/WebView.png",
-          "Description": "A Microsoft Edge (Chromium) based control that hosts HTML content in an app.",
-          "SourcePath": "/WebView2",
-          "Docs": [
-            {
-              "Title": "WebView2 - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.webview2"
-            },
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/microsoft-edge/webview2/gettingstarted/winui"
-            },
-            {
-              "Title": "Examples",
-              "Uri": "https://github.com/MicrosoftEdge/WebView2Samples"
-            }
-          ]
+          "RelatedControls": []
         }
       ]
     },
@@ -2821,83 +1461,6 @@
       "Title": "Styles",
       "IconGlyph": "",
       "Items": [
-        {
-          "UniqueId": "Acrylic",
-          "Title": "AcrylicBrush",
-          "ApiNamespace": "Microsoft.UI.Xaml.Media",
-          "Subtitle": "A translucent material recommended for panel backgrounds.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/Acrylic.png",
-          "Description": "A translucent material recommended for panel backgrounds.",
-          "IsUpdated": true,
-          "SourcePath": "/Materials/Acrylic",
-          "Docs": [
-            {
-              "Title": "AcrylicBrush - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.media.acrylicbrush"
-            },
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/style/acrylic"
-            }
-          ],
-          "RelatedControls": [
-            "SystemBackdrops",
-            "RadialGradientBrush",
-            "ThemeShadow"
-          ]
-        },
-        {
-          "UniqueId": "AnimatedIcon",
-          "Title": "AnimatedIcon",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement",
-            "IconElement"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "An element that displays and controls an icon that animates when the user interacts with the control.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/AnimatedIcon.png",
-          "Description": "An element that displays and controls an icon that animates when the user interacts with the control.",
-          "SourcePath": "/AnimatedIcon",
-          "Docs": [
-            {
-              "Title": "AnimatedIcon - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.animatedicon"
-            },
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/animated-icon"
-            },
-            {
-              "Title": "Lottie Overview",
-              "Uri": "https://learn.microsoft.com/windows/communitytoolkit/animations/lottie"
-            },
-            {
-              "Title": "Lottie Windows - GitHub",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.animatedvisualplayer"
-            }
-          ],
-          "RelatedControls": [
-            "AnimatedVisualPlayer",
-            "IconElement"
-          ]
-        },
-        {
-          "UniqueId": "CompactSizing",
-          "Title": "Compact Sizing",
-          "Subtitle": "How to use a Resource Dictionary to enable compact sizing.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/CompactSizing.png",
-          "Description": "Enables the creation of compact, smaller apps by adding a style resource at the app, page or control level.",
-          "IsUpdated": true,
-          "Docs": [
-            {
-              "Title": "Spacing",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/style/spacing"
-            }
-          ]
-        },
         {
           "UniqueId": "IconElement",
           "Title": "IconElement",
@@ -2939,147 +1502,7 @@
             }
           ],
           "RelatedControls": [
-            "AnimatedIcon",
             "AppBarButton"
-          ]
-        },
-        {
-          "UniqueId": "Line",
-          "Title": "Line",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement",
-            "Shape"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Shapes",
-          "Subtitle": "Draws a straight line between two points.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/Line.png",
-          "Description": "Draws a straight line between two points.",
-          "Docs": [
-            {
-              "Title": "Lines - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.shapes"
-            },
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/previous-versions/windows/apps/hh465055(v=win.10)"
-            }
-          ],
-          "RelatedControls": [
-            "Shape"
-          ]
-        },
-        {
-          "UniqueId": "Shape",
-          "Title": "Shape",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Shapes",
-          "Subtitle": "How to draw shapes, such as ellipses, rectangles, and polygons.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/Shape.png",
-          "Description": "Basic shapes are intended for decorative rendering or for compositing non-interactive parts of controls.",
-          "Docs": [
-            {
-              "Title": "Shapes - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.shapes"
-            },
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/previous-versions/windows/apps/hh465055(v=win.10)"
-            }
-          ],
-          "RelatedControls": [
-            "Line"
-          ]
-        },
-        {
-          "UniqueId": "RadialGradientBrush",
-          "Title": "RadialGradientBrush",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "Brush",
-            "XamlCompositionBrushBase"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Media",
-          "Subtitle": "A brush to show radial gradients.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/Canvas.png",
-          "Description": "Paints an area with a radial gradient. A center point defines the beginning of the gradient, and a radius defines the end point of the gradient.",
-          "Docs": [
-            {
-              "Title": "RadialGradientBrush - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.media.RadialGradientBrush"
-            }
-          ],
-          "RelatedControls": [
-            "Acrylic"
-          ]
-        },
-        {
-          "UniqueId": "SystemBackdrops",
-          "Title": "System Backdrops (Mica/Acrylic)",
-          "ApiNamespace": "Microsoft.UI.Composition.SystemBackdrops",
-          "Subtitle": "System backdrops, like Mica and Acrylic, for app windows.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/Acrylic.png",
-          "Description": "System backdrops apply a material effect to the window background. Mica is opaque and samples the desktop wallpaper; Desktop Acrylic is semi-transparent and shows a blurred view of what is behind the window. Available backdrop kinds: Mica, Mica Alt, Desktop Acrylic Base, and Desktop Acrylic Thin. Use the built-in MicaBackdrop or DesktopAcrylicBackdrop types for simplicity, or use MicaController / DesktopAcrylicController for full customization.",
-          "SourcePath": "/Materials",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject"
-          ],
-          "Docs": [
-            {
-              "Title": "SystemBackdrop - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.media.systembackdrop"
-            },
-            {
-              "Title": "MicaBackdrop - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.media.micabackdrop"
-            },
-            {
-              "Title": "DesktopAcrylicBackdrop - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.media.desktopacrylicbackdrop"
-            },
-            {
-              "Title": "MicaController - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.composition.systembackdrops.micacontroller"
-            },
-            {
-              "Title": "DesktopAcrylicController - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.composition.systembackdrops.desktopacryliccontroller"
-            }
-          ],
-          "RelatedControls": [
-            "Acrylic"
-          ]
-        },
-        {
-          "UniqueId": "SystemBackdropElement",
-          "Title": "SystemBackdropElement",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement",
-            "Control",
-            "ContentControl"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "An element to host system backdrop materials.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/Acrylic.png",
-          "Description": "SystemBackdropElement applies system backdrop materials (Mica and Acrylic) to specific areas inside the UI tree, extending these materials beyond the window background to enable more flexible and immersive designs.",
-          "IsNew": true,
-          "Docs": [
-            {
-              "Title": "SystemBackdropElement - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.systembackdropelement"
-            }
           ]
         },
         {
@@ -3105,10 +1528,8 @@
               "Uri": "https://learn.microsoft.com/en-us/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.media.themeshadow"
             }
           ],
-          "RelatedControls": [
-            "Acrylic"
-          ]
-        }      
+          "RelatedControls": []
+        }
       ]
     },
     {
@@ -3142,11 +1563,7 @@
               "Uri": "https://learn.microsoft.com/windows/apps/design/controls/auto-suggest-box"
             }
           ],
-          "RelatedControls": [
-            "ListBox",
-            "ComboBox",
-            "TextBox"
-          ]
+          "RelatedControls": []
         },
         {
           "UniqueId": "NumberBox",
@@ -3174,40 +1591,6 @@
             }
           ],
           "RelatedControls": [
-            "TextBox",
-            "TextBlock",
-            "RichTextBlock",
-            "RichEditBox"
-          ]
-        },
-        {
-          "UniqueId": "PasswordBox",
-          "Title": "PasswordBox",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement",
-            "Control"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "A control for entering passwords.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/PasswordBox.png",
-          "Description": "A user can enter a single line of non-wrapping text in a PasswordBox control. The text is masked by characters that you can specify by using the PasswordChar property, and you can specify the maximum number of characters that the user can enter by setting the MaxLength property.",
-          "SourcePath": "/CommonStyles/PasswordBox_themeresources.xaml",
-          "Docs": [
-            {
-              "Title": "PasswordBox - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.passwordbox"
-            },
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/text-controls"
-            }
-          ],
-          "RelatedControls": [
-            "TextBox",
-            "TextBlock",
             "RichTextBlock",
             "RichEditBox"
           ]
@@ -3240,9 +1623,7 @@
           ],
           "RelatedControls": [
             "NumberBox",
-            "TextBox",
-            "RichTextBlock",
-            "TextBlock"
+            "RichTextBlock"
           ]
         },
         {
@@ -3270,76 +1651,7 @@
           ],
           "RelatedControls": [
             "NumberBox",
-            "TextBlock",
-            "TextBox",
-            "PasswordBox",
             "RichEditBox"
-          ]
-        },
-        {
-          "UniqueId": "TextBlock",
-          "Title": "TextBlock",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "A lightweight control for displaying small amounts of text.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/TextBlock.png",
-          "Description": "TextBlock is the primary control for displaying read-only text in your app. You typically display text by setting the Text property to a simple string. You can also display a series of strings in Run elements and give each different formatting.",
-          "SourcePath": "/CommonStyles/TextBlock_themeresources.xaml",
-          "Docs": [
-            {
-              "Title": "TextBlock - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.textblock"
-            },
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/text-controls"
-            }
-          ],
-          "RelatedControls": [
-            "NumberBox",
-            "TextBox",
-            "RichTextBlock",
-            "PasswordBox",
-            "RichEditBox"
-          ]
-        },
-        {
-          "UniqueId": "TextBox",
-          "Title": "TextBox",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement",
-            "Control"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "A single-line or multi-line plain text field.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/TextBox.png",
-          "Description": "Use a TextBox to let a user enter simple text input in your app. You can add a header and placeholder text to let the user know what the TextBox is for, and you can customize it in other ways.",
-          "SourcePath": "/CommonStyles/TextBox_themeresources.xaml",
-          "Docs": [
-            {
-              "Title": "TextBox - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.textbox"
-            },
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/text-controls"
-            }
-          ],
-          "RelatedControls": [
-            "NumberBox",
-            "TextBlock",
-            "RichTextBlock",
-            "PasswordBox",
-            "RichEditBox",
-            "AutoSuggestBox"
           ]
         }
       ]
@@ -3386,97 +1698,6 @@
       "IconGlyph": "",
       "Items": [
         {
-          "UniqueId": "AppWindow",
-          "Title": "AppWindow",
-          "ApiNamespace": "Microsoft.UI.Windowing",
-          "Subtitle": "A flexible, customizable window management system for app development.",
-          "BaseClasses": [
-            "Object"
-          ],
-          "ImagePath": "ms-appx:///Assets/ControlImages/AppWindow.png",
-          "Description": "AppWindow provides advanced window management, allowing customization of size, position, and presentation. This sample showcases different ways to create, display, and control windows for enhanced flexibility.",
-          "IsNew": true,
-          "Docs": [
-            {
-              "Title": "AppWindow - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.windowing.appwindow"
-            },
-            {
-              "Title": "Window - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.window"
-            },
-            {
-              "Title": "AppWindowPresenter - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.windowing.appwindowpresenter"
-            },
-            {
-              "Title": "OverlappedPresenter - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.windowing.overlappedpresenter"
-            },
-            {
-              "Title": "FullScreenPresenter - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.windowing.fullscreenpresenter"
-            },
-            {
-              "Title": "CompactOverlayPresenter - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.windowing.compactoverlaypresenter"
-            }
-          ],
-          "RelatedControls": [
-            "AppWindowTitleBar",
-            "TitleBar",
-            "CreateMultipleWindows"
-          ]
-        },
-        {
-          "UniqueId": "AppWindowTitleBar",
-          "Title": "AppWindowTitleBar",
-          "BaseClasses": [
-            "Object"
-          ],
-          "ApiNamespace": "Microsoft.UI.Windowing",
-          "Subtitle": "Provides control over the app window title bar.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/TitleBar.png",
-          "Description": "Represents the title bar of an AppWindow and exposes APIs for deep, fine-grained customization, including advanced appearance changes, system button styling, and precise control over active and inactive window states.",
-          "Docs": [
-            {
-              "Title": "AppWindowTitleBar - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.windowing.appwindowtitlebar"
-            },
-            {
-              "Title": "Customize the title bar",
-              "Uri": "https://learn.microsoft.com/windows/apps/develop/title-bar"
-            }
-          ],
-          "RelatedControls": [
-            "AppWindow",
-            "TitleBar"
-          ]
-        },
-        {
-          "UniqueId": "CreateMultipleWindows",
-          "Title": "Multiple windows",
-          "ApiNamespace": "Microsoft.UI.Xaml",
-          "Subtitle": "An example showing the creation of single-threaded top level Xaml windows.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/CreateMultipleWindows.png",
-          "Description": "With Windows App SDK 1.0 we are allowing creation of single-threaded multiple top level Xaml windows in Desktop apps",
-          "Docs": [
-            {
-              "Title": "MultipleWindow - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.window"
-            },
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.window"
-            }
-          ],
-          "RelatedControls": [
-            "AppWindow",
-            "AppWindowTitleBar",
-            "TitleBar"
-          ]
-        },
-        {
           "UniqueId": "TitleBar",
           "Title": "TitleBar",
           "BaseClasses": [
@@ -3501,178 +1722,7 @@
               "Uri": "https://learn.microsoft.com/windows/apps/design/basics/titlebar-design"
             }
           ],
-          "RelatedControls": [
-            "AppWindow",
-            "AppWindowTitleBar"
-          ]
-        }
-      ]
-    },
-    {
-      "UniqueId": "System",
-      "Title": "System",
-      "IconGlyph": "",
-      "Items": [
-        {
-          "UniqueId": "Clipboard",
-          "Title": "Clipboard",
-          "ApiNamespace": "Windows.ApplicationModel.DataTransfer",
-          "Subtitle": "Copy and paste text, images, and files to and from the system Clipboard.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/Clipboard.png",
-          "Description": "Use the Clipboard API to copy and paste text, images, and files. Configure clipboard history and roaming options, monitor content changes, and inspect available formats.",
-          "Docs": [
-            {
-              "Title": "Clipboard - API",
-              "Uri": "https://learn.microsoft.com/uwp/api/windows.applicationmodel.datatransfer.clipboard"
-            },
-            {
-              "Title": "ClipboardContentOptions - API",
-              "Uri": "https://learn.microsoft.com/uwp/api/windows.applicationmodel.datatransfer.clipboardcontentoptions"
-            },
-            {
-              "Title": "Copy and paste - Guide",
-              "Uri": "https://learn.microsoft.com/windows/apps/develop/communication/copy-and-paste"
-            }
-          ],
-          "RelatedControls": [
-            "StoragePickers"
-          ]
-        },
-        {
-          "UniqueId": "ContentIsland",
-          "Title": "ContentIsland",
-          "ApiNamespace": "Microsoft.UI.Content",
-          "Subtitle": "Create ContentIslands to host other frameworks in your app.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/ContentIsland.png",
-          "Description": "Create ContentIslands to host other frameworks in your app.",
-          "IsNew": true,
-          "Docs": [
-            {
-              "Title": "ContentIsland - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.content.contentisland"
-            }
-          ]
-        },
-        {
-          "UniqueId": "StoragePickers",
-          "Title": "Storage pickers",
-          "ApiNamespace": "Microsoft.Windows.Storage.Pickers",
-          "BaseClasses": [
-            "Object"
-          ],
-          "Subtitle": "Select files and folders with modern system pickers.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/StoragePickers.png",
-          "Description": "Use the FileOpenPicker, FileSavePicker, and FolderPicker APIs to let users select files and folders in a secure way.",
-          "IsUpdated": true,
-          "Docs": [
-            {
-              "Title": "FileOpenPicker - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.windows.storage.pickers.fileopenpicker"
-            },
-            {
-              "Title": "FileSavePicker - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.windows.storage.pickers.filesavepicker"
-            },
-            {
-              "Title": "FolderPicker - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.windows.storage.pickers.folderpicker"
-            }
-          ],
-          "RelatedControls": [
-            "Clipboard"
-          ]
-        }
-      ]
-    },
-    {
-      "UniqueId": "Shell",
-      "Title": "Shell",
-      "IconGlyph": "",
-      "Items": [
-        {
-          "UniqueId": "AppNotification",
-          "Title": "App notifications",
-          "BaseClasses": [
-            "Object"
-          ],
-          "ApiNamespace": "Microsoft.Windows.Notifications",
-          "Subtitle": "Send notifications that appear in the Action Center and as toast popups.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/AppNotification.png",
-          "Description": "Send rich, interactive notifications from your app. Notifications can include text, images, and actions.",
-          "IsNew": true,
-          "Docs": [
-            {
-              "Title": "AppNotification - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.windows.appnotifications.appnotification"
-            },
-            {
-              "Title": "AppNotificationManager - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.windows.appnotifications.appnotificationmanager"
-            },
-            {
-              "Title": "AppNotificationBuilder - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.windows.appnotifications.builder.appnotificationbuilder"
-            },
-            {
-              "Title": "Toast notifications",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/shell/tiles-and-notifications/toast-notifications-overview"
-            }
-          ],
-          "RelatedControls": [
-            "BadgeNotificationManager"
-          ]
-        },
-        {
-          "UniqueId": "BadgeNotificationManager",
-          "Title": "Badge notifications",
-          "BaseClasses": [
-            "Object"
-          ],
-          "ApiNamespace": "Microsoft.Windows.BadgeNotifications",
-          "Subtitle": "Show numeric or icon badges on your app’s taskbar icon.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/BadgeNotification.png",
-          "Description": "Badge notifications are a lightweight way to show status or alerts as small overlays on your app's taskbar icon.",
-          "IsNew": true,
-          "Docs": [
-            {
-              "Title": "BadgeUpdateManager - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.windows.badgenotifications.badgenotificationmanager"
-            },
-            {
-              "Title": "BadgeNotificationGlyph Enum",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.windows.badgenotifications.badgenotificationglyph"
-            },
-            {
-              "Title": "Badge notifications",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/shell/tiles-and-notifications/badges"
-            }
-          ],
-          "RelatedControls": [
-            "AppNotification",
-            "InfoBadge"
-          ]
-        },
-        {
-          "UniqueId": "JumpList",
-          "Title": "JumpList",
-          "ApiNamespace": "Windows.UI.StartScreen",
-          "BaseClasses": [
-            "Object"
-          ],
-          "Subtitle": "Add custom tasks and groups to the app's taskbar jump list.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/JumpList.png",
-          "Description": "Jump lists let you add custom tasks and groups to the app's right-click menu on the taskbar. Use them to provide quick access to frequently used actions or recently opened items.",
-          "IsNew": true,
-          "Docs": [
-            {
-              "Title": "JumpList - API",
-              "Uri": "https://learn.microsoft.com/uwp/api/windows.ui.startscreen.jumplist"
-            },
-            {
-              "Title": "JumpListItem - API",
-              "Uri": "https://learn.microsoft.com/uwp/api/windows.ui.startscreen.jumplistitem"
-            }
-          ]
+          "RelatedControls": []
         }
       ]
     }

@@ -317,46 +317,6 @@ private void ScrollViewerControl_ViewChanged(object sender, ScrollViewerViewChan
     }
 }";
 
-        private const string SemanticZoomXaml =
-@"<SemanticZoom Height=""500"">
-    <SemanticZoom.ZoomedInView>
-        <GridView ItemsSource=""{x:Bind cvsGroups.View}"" SelectionMode=""None""
-                  ItemTemplate=""{StaticResource ZoomedInTemplate}"">
-            <GridView.GroupStyle>
-                <GroupStyle HeaderTemplate=""{StaticResource ZoomedInGroupHeaderTemplate}"" />
-            </GridView.GroupStyle>
-        </GridView>
-    </SemanticZoom.ZoomedInView>
-
-    <SemanticZoom.ZoomedOutView>
-        <ListView ItemsSource=""{x:Bind cvsGroups.View.CollectionGroups}"" HorizontalAlignment=""Stretch""
-                  SelectionMode=""None"" ItemTemplate=""{StaticResource ZoomedOutTemplate}"" />
-    </SemanticZoom.ZoomedOutView>
-</SemanticZoom>";
-
-        private static readonly string[] SemanticZoomGroupIds =
-        {
-            "FundamentalsItem",
-            "DesignItem",
-            "AccessibilityItem",
-            "MenusAndToolbars",
-            "Collections",
-            "DateAndTime",
-            "BasicInput",
-            "StatusAndInfo",
-            "DialogsAndFlyouts",
-            "Scrolling",
-            "Layout",
-            "Navigation",
-            "Media",
-            "Styles",
-            "Text",
-            "Motion",
-            "MultipleWindows",
-            "System",
-            "Shell"
-        };
-
         public static UIElement Create(string uniqueId)
         {
             switch (uniqueId)
@@ -369,8 +329,6 @@ private void ScrollViewerControl_ViewChanged(object sender, ScrollViewerViewChan
                     return CreateScrollViewSample();
                 case "ScrollViewer":
                     return CreateScrollViewerSample();
-                case "SemanticZoom":
-                    return CreateSemanticZoomSample();
                 default:
                     return null;
             }
@@ -388,8 +346,6 @@ private void ScrollViewerControl_ViewChanged(object sender, ScrollViewerViewChan
                     return CreateScrollViewExamples(sampleSnippets);
                 case "ScrollViewer":
                     return CreateScrollViewerExamples();
-                case "SemanticZoom":
-                    return CreateSemanticZoomExamples();
                 default:
                     return Array.Empty<GalleryExample>();
             }
@@ -1105,55 +1061,6 @@ private void ScrollViewerControl_ViewChanged(object sender, ScrollViewerViewChan
             return root;
         }
 
-        private static UIElement CreateSemanticZoomSample()
-        {
-            return CreateSemanticZoomExampleContent(assignRootAutomationId: true);
-        }
-
-        private static IReadOnlyList<GalleryExample> CreateSemanticZoomExamples()
-        {
-            return new[]
-            {
-                new GalleryExample(
-                    "A simple SemanticZoom",
-                    CreateSemanticZoomExampleContent(assignRootAutomationId: true),
-                    SemanticZoomXaml,
-                    null)
-            };
-        }
-
-        private static GallerySamplePanel CreateSemanticZoomExampleContent(bool assignRootAutomationId)
-        {
-            var root = new GallerySamplePanel();
-            if (assignRootAutomationId)
-            {
-                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("SemanticZoom"));
-            }
-
-            var groups = CreateSemanticZoomGroups();
-            var zoomedInView = CreateSemanticZoomedInView(groups);
-            var zoomedOutView = CreateSemanticZoomedOutView(groups);
-            zoomedOutView.Visibility = Visibility.Collapsed;
-
-            var control = new Grid
-            {
-                Name = "Control1",
-                Height = 500
-            };
-            GalleryAutomation.WithAutomationId(control, GalleryAutomation.SampleElementId("SemanticZoom", "Control"));
-            control.Children.Add(zoomedInView);
-            control.Children.Add(zoomedOutView);
-            control.MouseRightButtonUp += delegate
-            {
-                var showZoomedOut = zoomedOutView.Visibility != Visibility.Visible;
-                zoomedInView.Visibility = showZoomedOut ? Visibility.Collapsed : Visibility.Visible;
-                zoomedOutView.Visibility = showZoomedOut ? Visibility.Visible : Visibility.Collapsed;
-            };
-
-            root.Children.Add(control);
-            return root;
-        }
-
         private static WrapPanel CreateAnnotatedColorItems()
         {
             var itemsRepeater = new WrapPanel
@@ -1615,91 +1522,6 @@ private void ScrollViewerControl_ViewChanged(object sender, ScrollViewerViewChan
             }
 
             return canvas;
-        }
-
-        private static IReadOnlyList<GalleryGroup> CreateSemanticZoomGroups()
-        {
-            return SemanticZoomGroupIds
-                .Select(groupId => GalleryCatalogData.Groups.FirstOrDefault(group => string.Equals(group.UniqueId, groupId, StringComparison.Ordinal)))
-                .Where(group => group != null && group.Items.Count > 0)
-                .ToArray();
-        }
-
-        private static FrameworkElement CreateSemanticZoomedInView(IReadOnlyList<GalleryGroup> groups)
-        {
-            var stack = new StackPanel();
-            foreach (var group in groups)
-            {
-                stack.Children.Add(new TextBlock
-                {
-                    Text = group.Title,
-                    FontSize = 20,
-                    FontWeight = FontWeights.SemiBold,
-                    Margin = new Thickness(0, 0, 0, 6)
-                });
-
-                var itemsPanel = new WrapPanel();
-                foreach (var item in group.Items)
-                {
-                    itemsPanel.Children.Add(CreateSemanticZoomedInItem(item));
-                }
-
-                stack.Children.Add(itemsPanel);
-            }
-
-            return new ScrollViewer
-            {
-                Name = "SemanticZoomZoomedInView",
-                VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
-                HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
-                Content = stack
-            };
-        }
-
-        private static FrameworkElement CreateSemanticZoomedInItem(GalleryItem item)
-        {
-            var stack = new StackPanel
-            {
-                MinWidth = 200,
-                Margin = new Thickness(12, 6, 12, 6)
-            };
-            stack.Children.Add(new TextBlock
-            {
-                Text = item.Title,
-                FontWeight = FontWeights.SemiBold,
-                TextTrimming = TextTrimming.CharacterEllipsis
-            });
-            stack.Children.Add(new TextBlock
-            {
-                Text = item.Subtitle,
-                Width = 300,
-                HorizontalAlignment = HorizontalAlignment.Left,
-                TextWrapping = TextWrapping.Wrap,
-                TextTrimming = TextTrimming.CharacterEllipsis
-            });
-            return stack;
-        }
-
-        private static FrameworkElement CreateSemanticZoomedOutView(IReadOnlyList<GalleryGroup> groups)
-        {
-            var listView = new ListView
-            {
-                Name = "SemanticZoomZoomedOutView",
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                SelectionMode = SelectionMode.Single
-            };
-            foreach (var group in groups)
-            {
-                listView.Items.Add(new TextBlock
-                {
-                    Text = group.Title,
-                    FontSize = 20,
-                    FontWeight = FontWeights.SemiBold,
-                    TextWrapping = TextWrapping.Wrap
-                });
-            }
-
-            return listView;
         }
 
         private sealed class ScrollViewAnimator

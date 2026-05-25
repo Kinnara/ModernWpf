@@ -5,7 +5,6 @@ using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using ModernWpf.Controls.Primitives;
@@ -107,55 +106,6 @@ namespace ModernWpf.Gallery.Pages
         <AppBarButton Icon=""Orientation"" Label=""Orientation""/>
     </CommandBar.PrimaryCommands>
 </CommandBar>";
-
-        private const string StandardUICommandDescription =
-            "StandardUICommand allows the sharing of the UX associated with a command. " +
-            "In this instance we are using a StandardUICommand to quickly place the delete command in multiple controls. " +
-            "The StandardUICommand contains the icon, label, keyboard shortcut, and a description.";
-
-        private const string XamlUICommandDescription =
-            "XamlUICommand allows the sharing of the UX associated with a command. " +
-            "In this instance we create a simple Custom Command with a label, icon, shortcut, and description. " +
-            "It's defined as a resource and could be used in many controls, like this AppBarButton. " +
-            "The button (and other controls) automatically gets all these UI properties, without the need to define the properties again.";
-
-        private const string StandardUICommandItemTemplateXaml =
-@"<DataTemplate xmlns=""http://schemas.microsoft.com/winfx/2006/xaml/presentation""
-               xmlns:x=""http://schemas.microsoft.com/winfx/2006/xaml""
-               xmlns:core=""clr-namespace:ModernWpf.Controls;assembly=ModernWpf""
-               xmlns:ui=""clr-namespace:ModernWpf.Controls;assembly=ModernWpf.Controls"">
-    <Grid AutomationProperties.Name=""{Binding Text}"">
-        <ui:SwipeControl x:Name=""ListViewSwipeContainer"">
-            <ui:SwipeControl.RightItems>
-                <ui:SwipeItems Mode=""Execute"">
-                    <ui:SwipeItem x:Name=""DeleteSwipeItem""
-                                  Background=""Red""
-                                  Command=""{Binding Command}""
-                                  CommandParameter=""{Binding Text}""
-                                  Text=""Delete"" />
-                </ui:SwipeItems>
-            </ui:SwipeControl.RightItems>
-            <Grid MinHeight=""60"" VerticalAlignment=""Center"">
-                <TextBlock Margin=""10""
-                           HorizontalAlignment=""Left""
-                           VerticalAlignment=""Center""
-                           FontSize=""18""
-                           Text=""{Binding Text}"" />
-                <ui:AppBarButton x:Name=""HoverButton""
-                                 HorizontalAlignment=""Right""
-                                 Command=""{Binding Command}""
-                                 CommandParameter=""{Binding Text}""
-                                 IsTabStop=""False""
-                                 Label=""Delete""
-                                 Visibility=""Collapsed"">
-                    <ui:AppBarButton.Icon>
-                        <core:SymbolIcon Symbol=""Delete"" />
-                    </ui:AppBarButton.Icon>
-                </ui:AppBarButton>
-            </Grid>
-        </ui:SwipeControl>
-    </Grid>
-</DataTemplate>";
 
         private const string MenuFlyoutAppBarButtonXaml =
 @"<AppBarButton Icon=""Sort"" IsCompact=""True"" ToolTipService.ToolTip=""Sort"" AutomationProperties.Name=""Sort"">
@@ -407,10 +357,6 @@ namespace ModernWpf.Gallery.Pages
                     return CreateMenuBarExamples(sampleSnippets);
                 case "SwipeControl":
                     return CreateSwipeControlExamples();
-                case "StandardUICommand":
-                    return CreateStandardUICommandExamples(sampleSnippets);
-                case "XamlUICommand":
-                    return CreateXamlUICommandExamples(sampleSnippets);
                 default:
                     return Array.Empty<GalleryExample>();
             }
@@ -436,10 +382,6 @@ namespace ModernWpf.Gallery.Pages
                     return CreateMenuFlyoutSample();
                 case "SwipeControl":
                     return CreateSwipeControlSample();
-                case "StandardUICommand":
-                    return CreateStandardCommandSample();
-                case "XamlUICommand":
-                    return CreateXamlCommandSample();
                 default:
                     return null;
             }
@@ -1657,153 +1599,6 @@ namespace ModernWpf.Gallery.Pages
             }
         }
 
-        private static UIElement CreateStandardCommandSample()
-        {
-            var panel = new GallerySamplePanel
-            {
-                Margin = new Thickness(0, 0, 0, 12)
-            };
-            GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("StandardUICommand"));
-            panel.Children.Add(CreateStandardUICommandExampleContent(assignRootAutomationId: false));
-            return panel;
-        }
-
-        private static UIElement CreateXamlCommandSample()
-        {
-            var panel = new GallerySamplePanel
-            {
-                Margin = new Thickness(0, 0, 0, 12)
-            };
-            GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("XamlUICommand"));
-            panel.Children.Add(CreateXamlUICommandExampleContent(assignRootAutomationId: false));
-            return panel;
-        }
-
-        private static IReadOnlyList<GalleryExample> CreateStandardUICommandExamples(IReadOnlyList<SampleSnippet> sampleSnippets)
-        {
-            return new[]
-            {
-                new GalleryExample(
-                    "Exposing a command in multiple controls using StandardUICommand",
-                    CreateStandardUICommandExampleContent(assignRootAutomationId: true),
-                    FindSnippetText(sampleSnippets, "StandardUICommandSample1_xaml.txt"),
-                    FindSnippetText(sampleSnippets, "StandardUICommandSample1_cs.txt"))
-            };
-        }
-
-        private static GallerySamplePanel CreateStandardUICommandExampleContent(bool assignRootAutomationId)
-        {
-            var root = new GallerySamplePanel
-            {
-                Width = 745,
-                HorizontalAlignment = HorizontalAlignment.Left
-            };
-            if (assignRootAutomationId)
-            {
-                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("StandardUICommand"));
-            }
-
-            root.Children.Add(new TextBlock
-            {
-                Text = StandardUICommandDescription,
-                TextWrapping = TextWrapping.Wrap
-            });
-
-            var collection = new ObservableCollection<CommandListItemData>();
-            ListView listView = null;
-            var deleteCommand = new DelegateCommand(delegate(object parameter)
-            {
-                CommandListItemData item = null;
-                if (parameter is CommandListItemData dataItem)
-                {
-                    item = dataItem;
-                }
-                else if (parameter is string text)
-                {
-                    item = FindCommandListItem(collection, text);
-                }
-                else if (listView?.SelectedItem is CommandListItemData selectedItem)
-                {
-                    item = selectedItem;
-                }
-
-                if (item != null)
-                {
-                    collection.Remove(item);
-                }
-            });
-
-            for (var index = 0; index < 15; index++)
-            {
-                collection.Add(new CommandListItemData("List item " + index, deleteCommand));
-            }
-
-            var menu = CreateMenuBar();
-            menu.Name = "StandardUICommandMenuBar";
-            menu.Margin = new Thickness(0, 12, 0, 8);
-            var file = new Mux.MenuBarItem { Title = "File" };
-            file.Items.Add(new MenuItem { Header = "New" });
-            file.Items.Add(new MenuItem { Header = "Open..." });
-            file.Items.Add(new MenuItem { Header = "Save" });
-            file.Items.Add(new MenuItem { Header = "Exit" });
-
-            var deleteFlyoutItem = new MenuItem
-            {
-                Name = "DeleteFlyoutItem",
-                Header = "Delete",
-                Command = deleteCommand,
-                Icon = new Mux.SymbolIcon(Mux.Symbol.Delete),
-                InputGestureText = "Delete"
-            };
-            var edit = new Mux.MenuBarItem { Title = "Edit" };
-            edit.Items.Add(deleteFlyoutItem);
-
-            var help = new Mux.MenuBarItem { Title = "Help" };
-            help.Items.Add(new MenuItem { Header = "About" });
-
-            menu.Items.Add(file);
-            menu.Items.Add(edit);
-            menu.Items.Add(help);
-            root.Children.Add(menu);
-
-            listView = new ListView
-            {
-                Name = "ListViewRight",
-                Height = 500,
-                ItemsSource = collection,
-                ItemTemplate = CreateStandardUICommandItemTemplate(),
-                ItemContainerStyle = CreateStandardUICommandItemContainerStyle(),
-                HorizontalAlignment = HorizontalAlignment.Stretch
-            };
-            listView.Loaded += delegate { AttachStandardUICommandContextMenus(listView); };
-            listView.ItemContainerGenerator.StatusChanged += delegate
-            {
-                if (listView.ItemContainerGenerator.Status == System.Windows.Controls.Primitives.GeneratorStatus.ContainersGenerated)
-                {
-                    AttachStandardUICommandContextMenus(listView);
-                }
-            };
-            GalleryAutomation.WithAutomationId(listView, GalleryAutomation.SampleElementId("StandardUICommand", "ListView"));
-            root.Children.Add(listView);
-
-            return root;
-        }
-
-        private static DataTemplate CreateStandardUICommandItemTemplate()
-        {
-            return (DataTemplate)XamlReader.Parse(StandardUICommandItemTemplateXaml);
-        }
-
-        private static Style CreateStandardUICommandItemContainerStyle()
-        {
-            var style = new Style(typeof(ListViewItem));
-            style.Setters.Add(new Setter(Control.HorizontalContentAlignmentProperty, HorizontalAlignment.Stretch));
-            style.Setters.Add(new Setter(Control.VerticalContentAlignmentProperty, VerticalAlignment.Stretch));
-            style.Setters.Add(new Setter(Control.PaddingProperty, new Thickness(0)));
-            style.Setters.Add(new Setter(FrameworkElement.HeightProperty, 60.0));
-            return style;
-        }
-
         private static CommandListItemData FindCommandListItem(ObservableCollection<CommandListItemData> collection, string text)
         {
             for (var i = 0; i < collection.Count; i++)
@@ -1815,95 +1610,6 @@ namespace ModernWpf.Gallery.Pages
             }
 
             return null;
-        }
-
-        private static void AttachStandardUICommandContextMenus(ListView listView)
-        {
-            foreach (var item in listView.Items)
-            {
-                var data = item as CommandListItemData;
-                if (data == null)
-                {
-                    continue;
-                }
-
-                var container = listView.ItemContainerGenerator.ContainerFromItem(data) as ListViewItem;
-                if (container == null || container.ContextMenu != null)
-                {
-                    continue;
-                }
-
-                var contextMenu = new ContextMenu();
-                contextMenu.Items.Add(new MenuItem
-                {
-                    Header = "Delete",
-                    Command = data.Command,
-                    CommandParameter = data.Text,
-                    Icon = new Mux.SymbolIcon(Mux.Symbol.Delete)
-                });
-                container.ContextMenu = contextMenu;
-            }
-        }
-
-        private static IReadOnlyList<GalleryExample> CreateXamlUICommandExamples(IReadOnlyList<SampleSnippet> sampleSnippets)
-        {
-            return new[]
-            {
-                new GalleryExample(
-                    "Creating a reusable command with XamlUICommand",
-                    CreateXamlUICommandExampleContent(assignRootAutomationId: true),
-                    FindSnippetText(sampleSnippets, "XamlUICommandSample1_xaml.txt"),
-                    FindSnippetText(sampleSnippets, "XamlUICommandSample1_cs.txt"))
-            };
-        }
-
-        private static GallerySamplePanel CreateXamlUICommandExampleContent(bool assignRootAutomationId)
-        {
-            var root = new GallerySamplePanel();
-            if (assignRootAutomationId)
-            {
-                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("XamlUICommand"));
-            }
-
-            root.Children.Add(new TextBlock
-            {
-                Text = XamlUICommandDescription,
-                TextWrapping = TextWrapping.Wrap
-            });
-
-            var layout = new StackPanel
-            {
-                Orientation = Orientation.Horizontal,
-                Margin = new Thickness(0, 12, 0, 0)
-            };
-            var output = new TextBlock
-            {
-                Name = "XamlUICommandOutput",
-                Margin = new Thickness(8, 0, 0, 0),
-                VerticalAlignment = VerticalAlignment.Center,
-                TextWrapping = TextWrapping.Wrap
-            };
-            var command = new DelegateCommand(delegate
-            {
-                output.Text = "You fired the custom command";
-            });
-
-            var button = new Mux.AppBarButton
-            {
-                Name = "CustomButton",
-                Command = command,
-                Icon = new Mux.SymbolIcon(Mux.Symbol.Favorite),
-                InputGestureText = "Ctrl+D",
-                Label = "Custom XamlUICommand",
-                ToolTip = "This is a custom command"
-            };
-            GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("XamlUICommand", "AppBarButton"));
-            AutomationProperties.SetName(button, "Custom XamlUICommand");
-
-            layout.Children.Add(button);
-            layout.Children.Add(output);
-            root.Children.Add(layout);
-            return root;
         }
 
         private sealed class CommandListItemData
