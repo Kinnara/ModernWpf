@@ -326,6 +326,12 @@ namespace ModernWpf.Gallery.Pages
                 return windowingExamples;
             }
 
+            var stylesExamples = StylesSampleFactory.CreateExamples(uniqueId, sampleSnippets);
+            if (stylesExamples.Count != 0)
+            {
+                return stylesExamples;
+            }
+
             var systemExamples = SystemSampleFactory.CreateExamples(uniqueId);
             if (systemExamples.Count != 0)
             {
@@ -363,6 +369,11 @@ namespace ModernWpf.Gallery.Pages
                 if (example.CSharpCode != null)
                 {
                     consumedText.Add(example.CSharpCode);
+                }
+
+                foreach (var consumedSnippet in example.ConsumedSnippetTexts)
+                {
+                    consumedText.Add(consumedSnippet);
                 }
             }
 
@@ -434,17 +445,23 @@ namespace ModernWpf.Gallery.Pages
     public sealed class GalleryExample
     {
         public GalleryExample(string headerText, object exampleContent, string xamlCode, string csharpCode)
-            : this(headerText, exampleContent, xamlCode, csharpCode, new Thickness(10))
+            : this(headerText, exampleContent, xamlCode, csharpCode, new Thickness(10), Array.Empty<string>())
         {
         }
 
         public GalleryExample(string headerText, object exampleContent, string xamlCode, string csharpCode, Thickness margin)
+            : this(headerText, exampleContent, xamlCode, csharpCode, margin, Array.Empty<string>())
+        {
+        }
+
+        public GalleryExample(string headerText, object exampleContent, string xamlCode, string csharpCode, Thickness margin, IReadOnlyList<string> consumedSnippetTexts)
         {
             HeaderText = headerText;
             ExampleContent = exampleContent;
             XamlCode = xamlCode;
             CSharpCode = csharpCode;
             Margin = margin;
+            ConsumedSnippetTexts = consumedSnippetTexts ?? Array.Empty<string>();
         }
 
         public string HeaderText { get; }
@@ -452,10 +469,11 @@ namespace ModernWpf.Gallery.Pages
         public string XamlCode { get; }
         public string CSharpCode { get; }
         public Thickness Margin { get; }
+        public IReadOnlyList<string> ConsumedSnippetTexts { get; }
 
         public GalleryExample WithMargin(Thickness margin)
         {
-            return new GalleryExample(HeaderText, ExampleContent, XamlCode, CSharpCode, margin);
+            return new GalleryExample(HeaderText, ExampleContent, XamlCode, CSharpCode, margin, ConsumedSnippetTexts);
         }
     }
 }

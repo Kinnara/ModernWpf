@@ -41,6 +41,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "MediaPlayerElement", "GallerySample_MediaPlayerElement_Root", "GallerySample_MediaPlayerElement_MediaPlayerElement" };
             yield return new object[] { "MapControl", "GallerySample_MapControl_Root", "GallerySample_MapControl_MapControl" };
             yield return new object[] { "WebView2", "GallerySample_WebView2_Root", "GallerySample_WebView2_WebView2" };
+            yield return new object[] { "SystemBackdropElement", "GallerySample_SystemBackdropElement_Root", "GallerySample_SystemBackdropElement_Button" };
             yield return new object[] { "CreateMultipleWindows", "GallerySample_CreateMultipleWindows_Root", "GallerySample_CreateMultipleWindows_Control1" };
             yield return new object[] { "AppWindow", "GallerySample_AppWindow_Root", "GallerySample_AppWindow_ShowSampleWindow1Button" };
             yield return new object[] { "AppWindowTitleBar", "GallerySample_AppWindowTitleBar_Root", "GallerySample_AppWindowTitleBar_ShowWindowButton" };
@@ -3710,6 +3711,92 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void SystemBackdropElementSampleMatchesWinUIGalleryExample()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("SystemBackdropElement"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(1, page.Examples.Count);
+                    Assert.AreEqual("SystemBackdropElement Sample", page.Examples[0].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "<SystemBackdropElement CornerRadius=\"$(CornerRadius)\">");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "<DesktopAcrylicBackdrop />");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "<Button Content=\"Button\" HorizontalAlignment=\"Center\" VerticalAlignment=\"Center\"/>");
+                    Assert.IsNull(page.Examples[0].CSharpCode);
+
+                    var root = (GallerySamplePanel)page.Examples[0].ExampleContent;
+                    Assert.AreEqual(1, root.Children.Count);
+                    var layout = (Grid)root.Children[0];
+                    Assert.AreEqual(2, layout.ColumnDefinitions.Count);
+
+                    var example = FindDescendants<Grid>(page)
+                        .FirstOrDefault(grid => grid.Width == 300d && grid.Height == 200d && grid.HorizontalAlignment == HorizontalAlignment.Center);
+                    Assert.IsNotNull(example);
+                    var dynamicBackdropHost = FindNamedDescendant<Border>(page, "DynamicBackdropHost");
+                    Assert.IsNotNull(dynamicBackdropHost);
+                    Assert.AreEqual(new CornerRadius(8), dynamicBackdropHost.CornerRadius);
+
+                    var button = (Button)FindByAutomationId(page, "GallerySample_SystemBackdropElement_Button");
+                    Assert.IsNotNull(button);
+                    Assert.AreEqual("Click Me", button.Content);
+                    Assert.AreEqual(HorizontalAlignment.Center, button.HorizontalAlignment);
+                    Assert.AreEqual(VerticalAlignment.Center, button.VerticalAlignment);
+
+                    var backdropTypeComboBox = FindNamedDescendant<ComboBox>(page, "BackdropTypeComboBox");
+                    Assert.IsNotNull(backdropTypeComboBox);
+                    Assert.AreEqual("Backdrop Type", ModernWpf.Controls.Primitives.ControlHelper.GetHeader(backdropTypeComboBox));
+                    Assert.AreEqual(180d, backdropTypeComboBox.Width);
+                    Assert.AreEqual(0, backdropTypeComboBox.SelectedIndex);
+                    AssertSystemBackdropElementComboBoxItem(backdropTypeComboBox, 0, "Acrylic", "Acrylic");
+                    AssertSystemBackdropElementComboBoxItem(backdropTypeComboBox, 1, "Mica", "Mica");
+                    AssertSystemBackdropElementComboBoxItem(backdropTypeComboBox, 2, "Mica Alt", "MicaAlt");
+
+                    var cornerRadiusSlider = FindNamedDescendant<Slider>(page, "CornerRadiusSlider");
+                    Assert.IsNotNull(cornerRadiusSlider);
+                    Assert.AreEqual("Corner radius", ModernWpf.Controls.Primitives.ControlHelper.GetHeader(cornerRadiusSlider));
+                    Assert.AreEqual(0d, cornerRadiusSlider.Minimum);
+                    Assert.AreEqual(50d, cornerRadiusSlider.Maximum);
+                    Assert.AreEqual(1d, cornerRadiusSlider.TickFrequency);
+                    Assert.AreEqual(8d, cornerRadiusSlider.Value);
+
+                    cornerRadiusSlider.Value = 24;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(new CornerRadius(24), dynamicBackdropHost.CornerRadius);
+
+                    backdropTypeComboBox.SelectedIndex = 2;
+                    WpfTestHost.DoEvents();
+                    var brush = dynamicBackdropHost.Background as SolidColorBrush;
+                    Assert.IsNotNull(brush);
+                    Assert.AreEqual((Color)ColorConverter.ConvertFromString("#E9EEF5"), brush.Color);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
         public void AppWindowSampleMatchesWinUIGalleryExamples()
         {
             WpfTestHost.Run(() =>
@@ -5353,6 +5440,14 @@ namespace ModernWpf.Gallery.Tests
                 var item = comboBox.Items[i] as ComboBoxItem;
                 Assert.AreEqual(expectedItems[i], item == null ? comboBox.Items[i] : item.Content);
             }
+        }
+
+        private static void AssertSystemBackdropElementComboBoxItem(ComboBox comboBox, int index, string content, string tag)
+        {
+            var item = comboBox.Items[index] as ComboBoxItem;
+            Assert.IsNotNull(item);
+            Assert.AreEqual(content, item.Content);
+            Assert.AreEqual(tag, item.Tag);
         }
 
         private static void AssertAppWindowNumberBox(Mux.NumberBox numberBox, string header, double minimum, double maximum, double value)

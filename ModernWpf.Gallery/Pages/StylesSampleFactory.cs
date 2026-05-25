@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -7,6 +8,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using ModernWpf.Controls.Primitives;
+using ModernWpf.Gallery.Models;
 using Mux = ModernWpf.Controls;
 
 namespace ModernWpf.Gallery.Pages
@@ -39,6 +41,17 @@ namespace ModernWpf.Gallery.Pages
                     return CreateThemeShadowSample();
                 default:
                     return null;
+            }
+        }
+
+        public static IReadOnlyList<GalleryExample> CreateExamples(string uniqueId, IReadOnlyList<SampleSnippet> sampleSnippets)
+        {
+            switch (uniqueId)
+            {
+                case "SystemBackdropElement":
+                    return CreateSystemBackdropElementExamples(sampleSnippets);
+                default:
+                    return Array.Empty<GalleryExample>();
             }
         }
 
@@ -316,42 +329,119 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateSystemBackdropElementSample()
         {
-            var panel = CreateSamplePanel("SystemBackdropElement maps to a WPF content host that applies a material brush to one subtree.");
-            var host = new Border
+            return CreateSystemBackdropElementExampleContent(assignRootAutomationId: true);
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateSystemBackdropElementExamples(IReadOnlyList<SampleSnippet> sampleSnippets)
+        {
+            var acrylicXaml = FindSampleCodeText(sampleSnippets, "SystemBackdropElementAcrylic_xaml.txt");
+            var micaXaml = FindSampleCodeText(sampleSnippets, "SystemBackdropElementMica_xaml.txt");
+            var micaAltXaml = FindSampleCodeText(sampleSnippets, "SystemBackdropElementMicaAlt_xaml.txt");
+            return new[]
             {
-                Width = 420,
-                Padding = new Thickness(20),
-                Background = CreateBrush("#EAF6FF"),
-                BorderBrush = CreateBrush("#B8D7F0"),
-                BorderThickness = new Thickness(1),
+                new GalleryExample(
+                    "SystemBackdropElement Sample",
+                    CreateSystemBackdropElementExampleContent(assignRootAutomationId: true),
+                    acrylicXaml,
+                    null,
+                    new Thickness(10),
+                    new[] { micaXaml, micaAltXaml })
+            };
+        }
+
+        private static GallerySamplePanel CreateSystemBackdropElementExampleContent(bool assignRootAutomationId)
+        {
+            var root = new GallerySamplePanel();
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("SystemBackdropElement"));
+            }
+
+            var dynamicBackdropHost = new Border
+            {
+                Name = "DynamicBackdropHost",
                 CornerRadius = new CornerRadius(8),
-                Child = new StackPanel
+                Background = CreateBrush("#DDEEF6FF")
+            };
+            var button = new Button
+            {
+                Content = "Click Me",
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("SystemBackdropElement", "Button"));
+
+            var example = new Grid
+            {
+                Width = 300,
+                Height = 200,
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+            example.Children.Add(dynamicBackdropHost);
+            example.Children.Add(button);
+
+            var backdropTypeComboBox = new ComboBox
+            {
+                Name = "BackdropTypeComboBox",
+                SelectedIndex = 0,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Width = 180
+            };
+            ControlHelper.SetHeader(backdropTypeComboBox, "Backdrop Type");
+            backdropTypeComboBox.Items.Add(CreateComboBoxItem("Acrylic", "Acrylic"));
+            backdropTypeComboBox.Items.Add(CreateComboBoxItem("Mica", "Mica"));
+            backdropTypeComboBox.Items.Add(CreateComboBoxItem("Mica Alt", "MicaAlt"));
+
+            var cornerRadiusSlider = new Slider
+            {
+                Name = "CornerRadiusSlider",
+                Minimum = 0,
+                Maximum = 50,
+                TickFrequency = 1,
+                Value = 8,
+                Width = 220,
+                Margin = new Thickness(0, 12, 0, 0),
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+            ControlHelper.SetHeader(cornerRadiusSlider, "Corner radius");
+
+            backdropTypeComboBox.SelectionChanged += delegate
+            {
+                var selectedItem = backdropTypeComboBox.SelectedItem as ComboBoxItem;
+                switch (selectedItem == null ? null : selectedItem.Tag as string)
                 {
-                    Children =
-                    {
-                        new TextBlock
-                        {
-                            Text = "Backdrop element",
-                            FontSize = 22,
-                            FontWeight = FontWeights.SemiBold
-                        },
-                        new TextBlock
-                        {
-                            Text = "Only this content region receives the material background.",
-                            TextWrapping = TextWrapping.Wrap,
-                            Margin = new Thickness(0, 8, 0, 14)
-                        },
-                        new Button
-                        {
-                            Content = "Contained action",
-                            Padding = new Thickness(16, 6, 16, 6),
-                            HorizontalAlignment = HorizontalAlignment.Left
-                        }
-                    }
+                    case "Mica":
+                        dynamicBackdropHost.Background = CreateBrush("#F3F3F3");
+                        break;
+                    case "MicaAlt":
+                        dynamicBackdropHost.Background = CreateBrush("#E9EEF5");
+                        break;
+                    default:
+                        dynamicBackdropHost.Background = CreateBrush("#DDEEF6FF");
+                        break;
                 }
             };
-            panel.Children.Add(host);
-            return panel;
+            cornerRadiusSlider.ValueChanged += delegate
+            {
+                dynamicBackdropHost.CornerRadius = new CornerRadius(cornerRadiusSlider.Value);
+            };
+
+            var options = new StackPanel
+            {
+                Margin = new Thickness(24, 0, 0, 0)
+            };
+            options.Children.Add(backdropTypeComboBox);
+            options.Children.Add(cornerRadiusSlider);
+
+            var layout = new Grid();
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            Grid.SetColumn(example, 0);
+            Grid.SetColumn(options, 1);
+            layout.Children.Add(example);
+            layout.Children.Add(options);
+            root.Children.Add(layout);
+            return root;
         }
 
         private static UIElement CreateThemeShadowSample()
@@ -534,6 +624,15 @@ namespace ModernWpf.Gallery.Pages
             };
         }
 
+        private static ComboBoxItem CreateComboBoxItem(string content, string tag)
+        {
+            return new ComboBoxItem
+            {
+                Content = content,
+                Tag = tag
+            };
+        }
+
         private static StackPanel CreateSamplePanel(string description)
         {
             var panel = new StackPanel
@@ -580,6 +679,22 @@ namespace ModernWpf.Gallery.Pages
         private static SolidColorBrush CreateBrush(string color)
         {
             return (SolidColorBrush)new BrushConverter().ConvertFromString(color);
+        }
+
+        private static string FindSampleCodeText(IReadOnlyList<SampleSnippet> snippets, string fileName)
+        {
+            if (snippets != null)
+            {
+                foreach (var snippet in snippets)
+                {
+                    if (string.Equals(snippet.Title, fileName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return snippet.Text;
+                    }
+                }
+            }
+
+            return null;
         }
     }
 }

@@ -106,6 +106,16 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.SystemBackdropElementSampleMatchesWinUIGalleryExample|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 57 tests per target. The generated ModernWpf SystemBackdropElement extension page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\SystemBackdropElementPage.xaml` / `.xaml.cs`: the `SystemBackdropElement Sample`, source-facing `DynamicBackdropHost`, `BackdropTypeComboBox`, and `CornerRadiusSlider` names, the Acrylic/Mica/Mica Alt option set, and the corner-radius substitution. `StylesSampleFactory.CreateExamples` now covers SystemBackdropElement as a source-backed Platform & patterns WinUI extension page, `ItemPage` asks the Styles factory for WinUI-style examples before falling back to generic generated content, and `GalleryExample` can record additional consumed source snippets so alternate dynamic source files do not appear as duplicate additional-code panes.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls SystemBackdropElement -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-045535-981-118488/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required SystemBackdropElement `Click Me` button was found, primary crops use the rendered ModernWpf `GallerySample_SystemBackdropElement_Root` sample region against the installed WinUI `svPanel` sample region because the standalone rendered ModernWpf button artifact is flat, crop sizes are `790x200` vs `843x646`, and Light primary delta is `163.36`. The whole-window Light mean delta is `177.26` and remains diagnostic because the installed WinUI shell stayed dark while ModernWpf was captured in Light.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls SystemBackdropElement -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-045600-668-26416/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required `Click Me` button was found, primary crops use the same sample-region mapping, crop sizes are `790x200` vs `843x646`, Dark primary delta is `71.09`, and whole-window Dark mean delta is `26.38`.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the SystemBackdropElement WinUI example alignment. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages and existing compiler warnings, ending with `0 Error(s)`.
+- `git diff --check`
+  - Passed with only Git's normal LF-to-CRLF working-copy warnings for touched files.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.AppWindowSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 56 tests per target. The generated ModernWpf AppWindow extension page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\AppWindowPage.xaml` / `.xaml.cs`: the `General usage of AppWindow` section, `Creating and customizing an AppWindow from a Window instance`, `Centering AppWindow on the screen using the available display area`, the `AppWindow Presenters` examples for OverlapedPresenter, min/max sizing, modal, fullscreen, and compact overlay. `WindowingSampleFactory.CreateExamples` now covers AppWindow as a source-backed Windowing/Platform WinUI extension page, consumes the local AppWindow sample-code files loaded by `ItemPage` so additional code panes do not duplicate, preserves source-facing option names such as `WindowTitle`, `WindowWidth`, `WindowHeight`, `XPoint`, `YPoint`, `IsAlwaysOnTop`, `HasBorder`, `HasTitleBar`, `MinWidthBox`, `MaxHeightBox`, `InitialSize`, and `InitialSizeDescription`, and exposes `GallerySample_AppWindow_Root` / `GallerySample_AppWindow_ShowSampleWindow1Button`.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls AppWindow -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -2356,6 +2366,28 @@ with ModernWpf and installed WinUI 3 Gallery `Passed`, primary crops matching
 at `745x423`, and primary deltas `56.75` / `37.33`. Avoid reopening WebView2's
 source shape unless the repo decides to add an optional WebView2 package/runtime
 dependency or a new visual crop regression appears.
+The generated ModernWpf SystemBackdropElement extension page now uses the local
+official WinUI Gallery source from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\SystemBackdropElementPage.xaml`
+and `.xaml.cs`: one `SystemBackdropElement Sample` example with source-facing
+`DynamicBackdropHost`, `BackdropTypeComboBox`, and `CornerRadiusSlider` names,
+the Acrylic/Mica/Mica Alt option set, and the default 8px corner radius.
+`StylesSampleFactory.CreateExamples` now exposes SystemBackdropElement as a
+source-backed Platform & patterns WinUI extension page, and `ItemPage` asks the
+Styles factory for WinUI-style examples before falling back to generated sample
+content. The WPF adaptation renders the backdrop host with a `Border`, keeps the
+official source snippets, and records the alternate Mica/Mica Alt snippets as
+consumed so they do not appear as duplicate additional-code panes. Current
+SystemBackdropElement WinUI-reference evidence is
+`artifacts/visual-checks/20260525-045535-981-118488/report.md` for Light and
+`artifacts/visual-checks/20260525-045600-668-26416/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`; the required `Click Me`
+button is present, while the primary crop uses the ModernWpf sample root against
+the installed WinUI `svPanel` sample region because the standalone rendered
+ModernWpf button artifact is flat. Treat those sample-region deltas as
+diagnostic unless a better stable crop becomes available. Avoid reopening
+SystemBackdropElement's source shape unless a new local WinUI source, native
+backdrop strategy, or crop regression appears.
 The generated ModernWpf Multiple windows extension page now uses the local
 official WinUI Gallery source from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\CreateMultipleWindowsPage.xaml`
