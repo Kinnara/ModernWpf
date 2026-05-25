@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "RichTextBlock", "RichEditBox", "SplitView", "PersonPicture", "Sound", "MediaPlayerElement", "MapControl", "WebView2", "Line", "RadialGradientBrush", "SystemBackdrops", "SystemBackdropElement", "ThemeShadow", "CreateMultipleWindows", "AppWindow", "AppWindowTitleBar", "TitleBar", "StoragePickers", "CalendarDatePicker", "CalendarView", "TimePicker", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "PullToRefresh", "FlipView", "ItemsView", "GridView", "ItemsRepeater", "BreadcrumbBar", "Pivot", "SelectorBar", "TabView", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "SwipeControl", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout", "StandardUICommand", "XamlUICommand"),
+    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "RichTextBlock", "RichEditBox", "SplitView", "PersonPicture", "Sound", "MediaPlayerElement", "MapControl", "WebView2", "Line", "Shape", "RadialGradientBrush", "SystemBackdrops", "SystemBackdropElement", "ThemeShadow", "CreateMultipleWindows", "AppWindow", "AppWindowTitleBar", "TitleBar", "StoragePickers", "CalendarDatePicker", "CalendarView", "TimePicker", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "PullToRefresh", "FlipView", "ItemsView", "GridView", "ItemsRepeater", "BreadcrumbBar", "Pivot", "SelectorBar", "TabView", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "SwipeControl", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout", "StandardUICommand", "XamlUICommand"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -469,6 +469,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "MapControl" { return "GallerySample_MapControl_MapControl" }
         "WebView2" { return "GallerySample_WebView2_WebView2" }
         "Line" { return "GallerySample_Line_Line" }
+        "Shape" { return "GallerySample_Shape_Ellipse" }
         "RadialGradientBrush" { return "GallerySample_RadialGradientBrush_Rect" }
         "SystemBackdrops" { return "GallerySample_SystemBackdrops_ShowWindowButton" }
         "SystemBackdropElement" { return "GallerySample_SystemBackdropElement_Button" }
@@ -550,6 +551,7 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
         "MapControl" { return "GallerySample_MapControl_MapToken" }
         "WebView2" { return "GallerySample_WebView2_WebView2" }
         "Line" { return "GallerySample_Line_Root" }
+        "Shape" { return "GallerySample_Shape_Root" }
         "RadialGradientBrush" { return "GallerySample_RadialGradientBrush_Root" }
         "SystemBackdrops" { return "GallerySample_SystemBackdrops_Root" }
         "SystemBackdropElement" { return "GallerySample_SystemBackdropElement_Root" }
@@ -623,6 +625,7 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
         "MapControl" { return "MapToken" }
         "WebView2" { return "MyWebView2" }
         "Line" { return "svPanel" }
+        "Shape" { return "svPanel" }
         "RadialGradientBrush" { return "svPanel" }
         "SystemBackdrops" { return "svPanel" }
         "SystemBackdropElement" { return "svPanel" }

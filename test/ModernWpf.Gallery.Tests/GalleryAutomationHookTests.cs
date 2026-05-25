@@ -43,6 +43,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "MapControl", "GallerySample_MapControl_Root", "GallerySample_MapControl_MapControl" };
             yield return new object[] { "WebView2", "GallerySample_WebView2_Root", "GallerySample_WebView2_WebView2" };
             yield return new object[] { "Line", "GallerySample_Line_Root", "GallerySample_Line_Line" };
+            yield return new object[] { "Shape", "GallerySample_Shape_Root", "GallerySample_Shape_Ellipse" };
             yield return new object[] { "RadialGradientBrush", "GallerySample_RadialGradientBrush_Root", "GallerySample_RadialGradientBrush_Rect" };
             yield return new object[] { "SystemBackdrops", "GallerySample_SystemBackdrops_Root", "GallerySample_SystemBackdrops_ShowWindowButton" };
             yield return new object[] { "SystemBackdropElement", "GallerySample_SystemBackdropElement_Root", "GallerySample_SystemBackdropElement_Button" };
@@ -3705,6 +3706,129 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(225d, player2Poster.Height);
                     Assert.AreEqual(Stretch.Fill, player2Poster.Stretch);
                     StringAssert.Contains(((BitmapImage)player2Poster.Source).UriSource.ToString(), "fishes.poster.png");
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void ShapeSampleMatchesWinUIGalleryExamples()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("Shape"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(3, page.Examples.Count);
+                    Assert.AreEqual("Ellipse", page.Examples[0].HeaderText);
+                    Assert.AreEqual("Rectangle", page.Examples[1].HeaderText);
+                    Assert.AreEqual("Polygon", page.Examples[2].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+
+                    StringAssert.Contains(page.Examples[0].XamlCode, "<Ellipse Fill=\"SteelBlue\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "Height=\"$(Slider1)\" Width=\"$(Slider2)\"");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "<Rectangle Fill=\"SteelBlue\" Height=\"$(Slider1)\" Width=\"$(Slider2)\"");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "RadiusY=\"$(Slider4)\" RadiusX=\"$(Slider5)\"");
+                    StringAssert.Contains(page.Examples[2].XamlCode, "<Polygon Fill=\"SteelBlue\" Points=\"10,100 60,40 200,40 250,100\"");
+
+                    var shapeRoot = (GallerySamplePanel)page.Examples[0].ExampleContent;
+                    Assert.AreEqual(1, shapeRoot.Children.Count);
+                    var shapeLayout = (Grid)shapeRoot.Children[0];
+                    Assert.AreEqual(2, shapeLayout.ColumnDefinitions.Count);
+
+                    var ellipse = (WpfShapes.Ellipse)FindByAutomationId(page, "GallerySample_Shape_Ellipse");
+                    Assert.IsNotNull(ellipse);
+                    Assert.AreSame(ellipse, FindNamedDescendant<WpfShapes.Ellipse>(page, "EllipseElement"));
+                    Assert.AreEqual(100d, ellipse.Width);
+                    Assert.AreEqual(100d, ellipse.Height);
+                    Assert.AreEqual(Brushes.SteelBlue, ellipse.Fill);
+                    Assert.AreEqual(Brushes.Black, ellipse.Stroke);
+                    Assert.AreEqual(2d, ellipse.StrokeThickness);
+
+                    var ellipseHeightSlider = AssertLineSlider(page, "slider1", "Height", 100, 150, 100);
+                    var ellipseWidthSlider = AssertLineSlider(page, "slider2", "Width", 100, 150, 100);
+                    var ellipseStrokeSlider = AssertLineSlider(page, "slider3", "Stroke Thickness", 2, 10, 2);
+                    ellipseHeightSlider.Value = 132;
+                    ellipseWidthSlider.Value = 144;
+                    ellipseStrokeSlider.Value = 6;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(132d, ellipse.Height);
+                    Assert.AreEqual(144d, ellipse.Width);
+                    Assert.AreEqual(6d, ellipse.StrokeThickness);
+
+                    var rectangle = FindNamedDescendant<WpfShapes.Rectangle>(page, "RectangleElement");
+                    Assert.IsNotNull(rectangle);
+                    Assert.AreEqual(100d, rectangle.Width);
+                    Assert.AreEqual(100d, rectangle.Height);
+                    Assert.AreEqual(Brushes.SteelBlue, rectangle.Fill);
+                    Assert.AreEqual(Brushes.Black, rectangle.Stroke);
+                    Assert.AreEqual(2d, rectangle.StrokeThickness);
+                    Assert.AreEqual(0d, rectangle.RadiusX);
+                    Assert.AreEqual(0d, rectangle.RadiusY);
+
+                    var rectangleHeightSlider = AssertLineSlider(page, "recSlider1", "Height", 100, 150, 100);
+                    var rectangleWidthSlider = AssertLineSlider(page, "recSlider2", "Width", 100, 150, 100);
+                    var rectangleStrokeSlider = AssertLineSlider(page, "recSlider3", "Stroke Thickness", 2, 10, 2);
+                    var rectangleRadiusYSlider = AssertLineSlider(page, "recSlider4", "Radius Y", 0, 100, 0);
+                    var rectangleRadiusXSlider = AssertLineSlider(page, "recSlider5", "Radius X", 0, 100, 0);
+                    rectangleHeightSlider.Value = 128;
+                    rectangleWidthSlider.Value = 146;
+                    rectangleStrokeSlider.Value = 8;
+                    rectangleRadiusYSlider.Value = 36;
+                    rectangleRadiusXSlider.Value = 48;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(128d, rectangle.Height);
+                    Assert.AreEqual(146d, rectangle.Width);
+                    Assert.AreEqual(8d, rectangle.StrokeThickness);
+                    Assert.AreEqual(36d, rectangle.RadiusY);
+                    Assert.AreEqual(48d, rectangle.RadiusX);
+
+                    var polygonDescription = FindTextBlockByText(page, "A polygon is a connected series of lines that form a closed shape.");
+                    Assert.IsNotNull(polygonDescription);
+                    var polygon = FindNamedDescendant<WpfShapes.Polygon>(page, "PolygonElement");
+                    Assert.IsNotNull(polygon);
+                    Assert.AreEqual(4, polygon.Points.Count);
+                    Assert.AreEqual(new Point(10, 100), polygon.Points[0]);
+                    Assert.AreEqual(new Point(60, 40), polygon.Points[1]);
+                    Assert.AreEqual(new Point(200, 40), polygon.Points[2]);
+                    Assert.AreEqual(new Point(250, 100), polygon.Points[3]);
+                    Assert.AreEqual(Brushes.SteelBlue, polygon.Fill);
+                    Assert.AreEqual(Brushes.Black, polygon.Stroke);
+                    Assert.AreEqual(2d, polygon.StrokeThickness);
+                    AssertLineSlider(page, "polySlider1", "Stroke Thickness", 2, 10, 2).Value = 7;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(7d, polygon.StrokeThickness);
+
+                    var polygonToggle = FindNamedDescendant<Mux.ToggleSwitch>(page, "ToggleSwitchPoly");
+                    Assert.IsNotNull(polygonToggle);
+                    Assert.AreEqual("Show points", polygonToggle.Header);
+                    var polygonPoint = FindTextBlockByText(page, "Point #1: (10,100)");
+                    Assert.IsNotNull(polygonPoint);
+                    Assert.AreEqual(Visibility.Collapsed, polygonPoint.Visibility);
+                    polygonToggle.IsOn = true;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(Visibility.Visible, polygonPoint.Visibility);
                 }
                 finally
                 {

@@ -62,6 +62,18 @@ namespace ModernWpf.Gallery.Pages
     </Path.Data>
 </Path>";
 
+        private const string ShapeEllipseXaml =
+@"<Ellipse Fill=""SteelBlue"" Height=""$(Slider1)"" Width=""$(Slider2)"" StrokeThickness=""$(Slider3)"" Stroke=""Black""/>";
+
+        private const string ShapeRectangleXaml =
+@"<Rectangle Fill=""SteelBlue"" Height=""$(Slider1)"" Width=""$(Slider2)""
+           Stroke=""Black"" StrokeThickness=""$(Slider3)""
+           RadiusY=""$(Slider4)"" RadiusX=""$(Slider5)""/>";
+
+        private const string ShapePolygonXaml =
+@"<Polygon Fill=""SteelBlue"" Points=""10,100 60,40 200,40 250,100""
+         StrokeThickness=""$(Slider1)"" Stroke=""Black""/>";
+
         public static UIElement Create(string uniqueId)
         {
             switch (uniqueId)
@@ -97,6 +109,8 @@ namespace ModernWpf.Gallery.Pages
             {
                 case "Line":
                     return CreateLineExamples();
+                case "Shape":
+                    return CreateShapeExamples();
                 case "RadialGradientBrush":
                     return CreateRadialGradientBrushExamples(sampleSnippets);
                 case "SystemBackdrops":
@@ -537,39 +551,157 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateShapeSample()
         {
-            var panel = CreateSamplePanel("Shape maps directly to WPF Rectangle, Ellipse, Polygon, and Path elements.");
+            return CreateShapeEllipseExampleContent(assignRootAutomationId: true);
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateShapeExamples()
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "Ellipse",
+                    CreateShapeEllipseExampleContent(assignRootAutomationId: true),
+                    ShapeEllipseXaml,
+                    null),
+                new GalleryExample(
+                    "Rectangle",
+                    CreateShapeRectangleExampleContent(),
+                    ShapeRectangleXaml,
+                    null),
+                new GalleryExample(
+                    "Polygon",
+                    CreateShapePolygonExampleContent(),
+                    ShapePolygonXaml,
+                    null)
+            };
+        }
+
+        private static GallerySamplePanel CreateShapeEllipseExampleContent(bool assignRootAutomationId)
+        {
+            var root = new GallerySamplePanel();
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("Shape"));
+            }
+
+            var ellipse = new Ellipse
+            {
+                Name = "EllipseElement",
+                Width = 100,
+                Height = 100,
+                Fill = Brushes.SteelBlue,
+                Stroke = Brushes.Black,
+                StrokeThickness = 2
+            };
+            GalleryAutomation.WithAutomationId(ellipse, GalleryAutomation.SampleElementId("Shape", "Ellipse"));
+
+            var heightSlider = CreateLineSlider("slider1", "Height", 100, 150);
+            var widthSlider = CreateLineSlider("slider2", "Width", 100, 150);
+            var strokeSlider = CreateLineSlider("slider3", "Stroke Thickness", 2, 10);
+            heightSlider.ValueChanged += delegate { ellipse.Height = heightSlider.Value; };
+            widthSlider.ValueChanged += delegate { ellipse.Width = widthSlider.Value; };
+            strokeSlider.ValueChanged += delegate { ellipse.StrokeThickness = strokeSlider.Value; };
+
+            var options = CreateLineOptionsPanel();
+            options.Children.Add(heightSlider);
+            options.Children.Add(widthSlider);
+            options.Children.Add(strokeSlider);
+
+            root.Children.Add(CreateExampleWithOptions(ellipse, options));
+            return root;
+        }
+
+        private static GallerySamplePanel CreateShapeRectangleExampleContent()
+        {
+            var root = new GallerySamplePanel();
+            var rectangle = new Rectangle
+            {
+                Name = "RectangleElement",
+                Width = 100,
+                Height = 100,
+                Fill = Brushes.SteelBlue,
+                RadiusX = 0,
+                RadiusY = 0,
+                Stroke = Brushes.Black,
+                StrokeThickness = 2
+            };
+
+            var heightSlider = CreateLineSlider("recSlider1", "Height", 100, 150);
+            var widthSlider = CreateLineSlider("recSlider2", "Width", 100, 150);
+            var strokeSlider = CreateLineSlider("recSlider3", "Stroke Thickness", 2, 10);
+            var radiusYSlider = CreateLineSlider("recSlider4", "Radius Y", 0, 100);
+            var radiusXSlider = CreateLineSlider("recSlider5", "Radius X", 0, 100);
+            heightSlider.ValueChanged += delegate { rectangle.Height = heightSlider.Value; };
+            widthSlider.ValueChanged += delegate { rectangle.Width = widthSlider.Value; };
+            strokeSlider.ValueChanged += delegate { rectangle.StrokeThickness = strokeSlider.Value; };
+            radiusYSlider.ValueChanged += delegate { rectangle.RadiusY = radiusYSlider.Value; };
+            radiusXSlider.ValueChanged += delegate { rectangle.RadiusX = radiusXSlider.Value; };
+
+            var options = CreateLineOptionsPanel();
+            options.Children.Add(heightSlider);
+            options.Children.Add(widthSlider);
+            options.Children.Add(strokeSlider);
+            options.Children.Add(radiusYSlider);
+            options.Children.Add(radiusXSlider);
+
+            root.Children.Add(CreateExampleWithOptions(rectangle, options));
+            return root;
+        }
+
+        private static GallerySamplePanel CreateShapePolygonExampleContent()
+        {
+            var root = new GallerySamplePanel();
             var canvas = new Canvas
             {
-                Width = 420,
-                Height = 190,
-                Background = CreateBrush("#F3F3F3")
+                Width = 320,
+                Height = 200
             };
-            AddShape(canvas, new Rectangle
+            var stack = new StackPanel();
+            stack.Children.Add(new TextBlock
             {
-                Width = 86,
-                Height = 86,
-                RadiusX = 8,
-                RadiusY = 8,
-                Fill = CreateBrush("#0078D4")
-            }, 24, 52);
-            AddShape(canvas, new Ellipse
+                Text = "A polygon is a connected series of lines that form a closed shape.",
+                Margin = new Thickness(0, 0, 0, 15)
+            });
+            var polygon = new Polygon
             {
-                Width = 86,
-                Height = 86,
-                Fill = CreateBrush("#C239B3")
-            }, 132, 52);
-            AddShape(canvas, new Polygon
+                Name = "PolygonElement",
+                Fill = Brushes.SteelBlue,
+                Points = new PointCollection { new Point(10, 100), new Point(60, 40), new Point(200, 40), new Point(250, 100) },
+                Stroke = Brushes.Black,
+                StrokeThickness = 2
+            };
+            stack.Children.Add(polygon);
+            canvas.Children.Add(stack);
+
+            var pointLabels = new[]
             {
-                Points = new PointCollection { new Point(42, 0), new Point(84, 82), new Point(0, 82) },
-                Fill = CreateBrush("#107C10")
-            }, 240, 54);
-            AddShape(canvas, new Path
+                AddLinePointLabel(canvas, "Point #1: (10,100)", 0, 150),
+                AddLinePointLabel(canvas, "Point #2: (60,40)", 50, 40),
+                AddLinePointLabel(canvas, "Point #3: (200,40)", 200, 40),
+                AddLinePointLabel(canvas, "Point #4: (250,100)", 240, 150)
+            };
+            SetVisibility(pointLabels, Visibility.Collapsed);
+
+            var toggleSwitch = new Mux.ToggleSwitch
             {
-                Data = Geometry.Parse("M 6,42 C 24,0 64,0 82,42 C 64,84 24,84 6,42 Z"),
-                Fill = CreateBrush("#D83B01")
-            }, 328, 54);
-            panel.Children.Add(canvas);
-            return panel;
+                Name = "ToggleSwitchPoly",
+                Header = "Show points",
+                IsOn = false
+            };
+            toggleSwitch.Toggled += delegate
+            {
+                SetVisibility(pointLabels, toggleSwitch.IsOn ? Visibility.Visible : Visibility.Collapsed);
+            };
+
+            var slider = CreateLineSlider("polySlider1", "Stroke Thickness", 2, 10);
+            slider.ValueChanged += delegate { polygon.StrokeThickness = slider.Value; };
+
+            var options = CreateLineOptionsPanel();
+            options.Children.Add(toggleSwitch);
+            options.Children.Add(slider);
+
+            root.Children.Add(CreateExampleWithOptions(canvas, options));
+            return root;
         }
 
         private static UIElement CreateRadialGradientBrushSample()

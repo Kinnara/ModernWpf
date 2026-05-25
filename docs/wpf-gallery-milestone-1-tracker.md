@@ -106,6 +106,16 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.ShapeSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 62 tests per target. The generated ModernWpf Shape extension page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\ShapePage.xaml`: the `Ellipse`, `Rectangle`, and `Polygon` examples, source-facing `slider1`, `slider2`, `slider3`, `recSlider1` through `recSlider5`, `ToggleSwitchPoly`, and `polySlider1` names, the official inline XAML snippets, slider-driven dimension/stroke/radius updates, and polygon point-label toggle behavior. `StylesSampleFactory.CreateExamples` now covers Shape as a source-backed Platform & patterns WinUI extension page, and the first example exposes `GallerySample_Shape_Root` / `GallerySample_Shape_Ellipse`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls Shape -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-060500-213-110220/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required rendered Shape ellipse was found, primary crops use the rendered ModernWpf `GallerySample_Shape_Root` sample region against the installed WinUI `svPanel` sample region because the WinUI ellipse is not exposed as a stable automation target, crop sizes are `790x100` vs `843x646`, and Light primary delta is `91.04`. The whole-window Light mean delta is `135.87` and remains diagnostic because the installed WinUI shell stayed dark while ModernWpf was captured in Light.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls Shape -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-060522-608-57704/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required rendered Shape ellipse was found, primary crops use the same sample-region mapping, crop sizes are `790x100` vs `843x646`, Dark primary delta is `22.23`, and whole-window Dark mean delta is `19.12`.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the Shape WinUI example alignment. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages plus existing generated WinRT and ModernWpf/ModernWpf.Controls warnings, ending with `0 Error(s)`.
+- `git diff --check`
+  - Passed with only Git's normal LF-to-CRLF working-copy warnings for touched files.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.LineSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 61 tests per target. The generated ModernWpf Line extension page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\LinePage.xaml`: the `Line`, `Polyline`, `Path`, and `GeometryGroup` examples, source-facing `lineSlider1` through `lineSlider5`, `polyLineSlider1`, `pathSlider1`, `geogroupslider1`, `geogroupslider2`, `ToggleSwitch2`, and `ToggleSwitch` names, the official inline XAML snippets, slider-driven shape updates, and point-label toggle behavior. `StylesSampleFactory.CreateExamples` now covers Line as a source-backed Platform & patterns WinUI extension page, and the first example exposes `GallerySample_Line_Root` / `GallerySample_Line_Line`.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls Line -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -2428,6 +2438,28 @@ sample region because the WinUI line shape is not exposed as a stable
 automation target. Treat those sample-region deltas as diagnostic unless a
 better stable crop becomes available. Avoid reopening Line's source shape unless
 a new local WinUI source, WPF shape behavior gap, or crop regression appears.
+The generated ModernWpf Shape extension page now uses the local official WinUI
+Gallery source from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\ShapePage.xaml`: the
+`Ellipse`, `Rectangle`, and `Polygon` examples, source-facing `slider1`,
+`slider2`, `slider3`, `recSlider1` through `recSlider5`, `ToggleSwitchPoly`,
+and `polySlider1` names, the official inline XAML snippets, slider-driven
+dimension/stroke/radius updates, and polygon point-label toggle behavior.
+`StylesSampleFactory.CreateExamples` now exposes Shape as a source-backed
+Platform & patterns WinUI extension page. The WPF adaptation uses native WPF
+`Ellipse`, `Rectangle`, and `Polygon` surfaces while preserving the official
+SteelBlue fill, Black stroke, source points, initial slider values, and option
+panel structure. Current Shape WinUI-reference evidence is
+`artifacts/visual-checks/20260525-060500-213-110220/report.md` for Light and
+`artifacts/visual-checks/20260525-060522-608-57704/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`; the required
+`GallerySample_Shape_Ellipse` rendered artifact is present, while the primary
+crop uses the rendered ModernWpf sample root against the installed WinUI
+`svPanel` sample region because the WinUI ellipse is not exposed as a stable
+automation target. Treat those sample-region deltas as diagnostic unless a
+better stable crop becomes available. Avoid reopening Shape's source shape
+unless a new local WinUI source, WPF shape behavior gap, or crop regression
+appears.
 The generated ModernWpf RadialGradientBrush extension page now uses the local
 official WinUI Gallery source from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\RadialGradientBrushPage.xaml`,
