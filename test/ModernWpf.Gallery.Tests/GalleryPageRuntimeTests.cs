@@ -192,7 +192,7 @@ namespace ModernWpf.Gallery.Tests
                 RenderPage(whatsNewPage);
                 Assert.AreSame(whatsNewViewModel, whatsNewPage.ViewModel);
                 Assert.AreSame(whatsNewPage, whatsNewPage.DataContext);
-                var whatsNewHeader = (PageHeader)whatsNewPage.FindName("PageHeader");
+                var whatsNewHeader = FindDescendant<PageHeader>(whatsNewPage);
                 Assert.AreEqual(whatsNewViewModel.PageTitle, whatsNewHeader.Title);
                 Assert.AreEqual(whatsNewViewModel.PageDescription, whatsNewHeader.Description);
 
@@ -208,7 +208,7 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreSame(sectionViewModel, sectionPage.ViewModel);
                 Assert.AreSame(sectionPage, sectionPage.DataContext);
                 Assert.AreEqual("DesignGuidancePage", sectionPage.Title);
-                var sectionHeader = (PageHeader)sectionPage.FindName("PageHeader");
+                var sectionHeader = FindDescendant<PageHeader>(sectionPage);
                 Assert.AreEqual(sectionViewModel.PageTitle, sectionHeader.Title);
                 Assert.AreEqual(sectionViewModel.PageDescription, sectionHeader.Description);
                 var groupItemsControl = (ItemsControl)sectionPage.FindName("GroupItemsControl");
@@ -225,7 +225,7 @@ namespace ModernWpf.Gallery.Tests
             {
                 var page = new WhatsNewPage();
                 RenderPage(page);
-                var pageHeader = (PageHeader)page.FindName("PageHeader");
+                var pageHeader = FindDescendant<PageHeader>(page);
 
                 Assert.AreEqual("What's New in WPF", page.Title);
                 Assert.AreEqual(new Thickness(0, 0, 0, 32), pageHeader.Margin);

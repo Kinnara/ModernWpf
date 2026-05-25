@@ -564,7 +564,7 @@ namespace ModernWpf.Gallery.Tests
                 var sectionPage = new BasicInputPage();
                 RenderPage(sectionPage, () =>
                 {
-                    AssertReferencePageHeader((PageHeader)sectionPage.FindName("PageHeader"), basicInputGroup.Title, basicInputGroup.PageDescription, true);
+                    AssertReferencePageHeader(FindVisualChildren<PageHeader>(sectionPage).Single(), basicInputGroup.Title, basicInputGroup.PageDescription, true);
                     AssertNavigationItemsControl((ItemsControl)sectionPage.FindName("GroupItemsControl"), "Items in group");
                     AssertBindingPath((ItemsControl)sectionPage.FindName("GroupItemsControl"), ItemsControl.ItemsSourceProperty, "ViewModel.NavigationCards");
                     AssertReferenceCategoryPageRoot((Grid)sectionPage.FindName("ContentRootGrid"), false);
@@ -577,7 +577,7 @@ namespace ModernWpf.Gallery.Tests
                 var mediaPage = new MediaPage();
                 RenderPage(mediaPage, () =>
                 {
-                    AssertReferencePageHeader((PageHeader)mediaPage.FindName("PageHeader"), mediaGroup.Title, mediaGroup.PageDescription, true);
+                    AssertReferencePageHeader(FindVisualChildren<PageHeader>(mediaPage).Single(), mediaGroup.Title, mediaGroup.PageDescription, true);
                     AssertReferenceCategoryPageRoot((Grid)mediaPage.FindName("ContentRootGrid"), false);
                     AssertRenderedNavigationCard((ItemsControl)mediaPage.FindName("GroupItemsControl"), "Canvas", GalleryCatalog.FindItem("Canvas").Description, mediaPage.ViewModel.NavigateCommand);
                 });
@@ -585,7 +585,7 @@ namespace ModernWpf.Gallery.Tests
                 var allControlsPage = new AllControlsPage();
                 RenderPage(allControlsPage, () =>
                 {
-                    AssertReferencePageHeader((PageHeader)allControlsPage.FindName("PageHeader"), "All Controls", string.Empty, true);
+                    AssertReferencePageHeader(FindVisualChildren<PageHeader>(allControlsPage).Single(), "All Controls", string.Empty, true);
                     AssertNavigationItemsControl((ItemsControl)allControlsPage.FindName("AllControlsItemsControl"), "Items in group");
                     AssertBindingPath((ItemsControl)allControlsPage.FindName("AllControlsItemsControl"), ItemsControl.ItemsSourceProperty, "ViewModel.NavigationCards");
                     AssertReferenceCategoryPageRoot((Grid)allControlsPage.FindName("ContentRootGrid"), true);
@@ -598,7 +598,7 @@ namespace ModernWpf.Gallery.Tests
                 var modernWpfSectionPage = new SectionPage(modernWpfGroup);
                 RenderPage(modernWpfSectionPage, () =>
                 {
-                    AssertReferencePageHeader((PageHeader)modernWpfSectionPage.FindName("PageHeader"), modernWpfGroup.Title, modernWpfGroup.PageDescription, true);
+                    AssertReferencePageHeader(FindVisualChildren<PageHeader>(modernWpfSectionPage).Single(), modernWpfGroup.Title, modernWpfGroup.PageDescription, true);
                     Assert.AreEqual(Visibility.Collapsed, ((ItemsControl)modernWpfSectionPage.FindName("GroupItemsControl")).Visibility);
                     var scrollViewer = (ScrollViewer)modernWpfSectionPage.FindName("ModernWpfGroupScrollViewer");
                     Assert.AreEqual(Visibility.Visible, scrollViewer.Visibility);

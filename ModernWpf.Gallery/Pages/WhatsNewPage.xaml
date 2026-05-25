@@ -21,7 +21,6 @@
         </Grid.RowDefinitions>
 
         <controls:PageHeader
-            x:Name="PageHeader"
             Margin="0,0,0,32"
             Title="{Binding ViewModel.PageTitle}"
             Description="{Binding ViewModel.PageDescription}"
