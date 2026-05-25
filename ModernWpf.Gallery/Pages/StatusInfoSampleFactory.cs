@@ -107,12 +107,8 @@ namespace ModernWpf.Gallery.Pages
                     return CreateInfoBadgeSample();
                 case "InfoBar":
                     return CreateInfoBarSample();
-                case "ProgressBar":
-                    return CreateProgressBarSample();
                 case "ProgressRing":
                     return CreateProgressRingSample();
-                case "ToolTip":
-                    return CreateToolTipSample();
                 default:
                     return null;
             }
@@ -694,29 +690,6 @@ namespace ModernWpf.Gallery.Pages
             };
         }
 
-        private static UIElement CreateProgressBarSample()
-        {
-            var panel = CreateSamplePanel("ProgressBar communicates task completion for determinate and indeterminate work.");
-            panel.Children.Add(new TextBlock { Text = "Installing package", Margin = new Thickness(0, 0, 0, 6) });
-            panel.Children.Add(new Mux.ProgressBar
-            {
-                Minimum = 0,
-                Maximum = 100,
-                Value = 64,
-                Width = 320,
-                HorizontalAlignment = HorizontalAlignment.Left
-            });
-
-            panel.Children.Add(new TextBlock { Text = "Checking updates", Margin = new Thickness(0, 18, 0, 6) });
-            panel.Children.Add(new Mux.ProgressBar
-            {
-                IsIndeterminate = true,
-                Width = 320,
-                HorizontalAlignment = HorizontalAlignment.Left
-            });
-            return panel;
-        }
-
         private static UIElement CreateProgressRingSample()
         {
             var panel = new GallerySamplePanel
@@ -905,19 +878,6 @@ namespace ModernWpf.Gallery.Pages
                     host.Background = Brushes.LightGray;
                     break;
             }
-        }
-
-        private static UIElement CreateToolTipSample()
-        {
-            var panel = CreateSamplePanel("ToolTip gives lightweight context when the pointer rests on a control.");
-            panel.Children.Add(new Button
-            {
-                Content = "Hover for details",
-                Padding = new Thickness(16, 6, 16, 6),
-                HorizontalAlignment = HorizontalAlignment.Left,
-                ToolTip = new ToolTip { Content = "ToolTips should clarify, not replace, visible labels." }
-            });
-            return panel;
         }
 
         private static StackPanel CreateSamplePanel(string description)

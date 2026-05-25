@@ -354,8 +354,6 @@ private void InitializeData()
         {
             switch (uniqueId)
             {
-                case "DataGrid":
-                    return CreateDataGridSample();
                 case "FlipView":
                     return CreateFlipViewSample();
                 case "GridView":
@@ -364,35 +362,11 @@ private void InitializeData()
                     return CreateItemsRepeaterSample();
                 case "ItemsView":
                     return CreateItemsViewSample();
-                case "ListBox":
-                    return CreateListBoxSample();
-                case "ListView":
-                    return CreateListViewSample();
                 case "PullToRefresh":
                     return CreatePullToRefreshSample();
-                case "TreeView":
-                    return CreateTreeViewSample();
                 default:
                     return null;
             }
-        }
-
-        private static UIElement CreateDataGridSample()
-        {
-            var panel = CreateSamplePanel("DataGrid presents editable rows and columns with selection, sorting, and generated or explicit columns.");
-            var grid = new DataGrid
-            {
-                Width = 540,
-                Height = 190,
-                AutoGenerateColumns = false,
-                CanUserAddRows = false,
-                ItemsSource = CreatePeople()
-            };
-            grid.Columns.Add(new DataGridTextColumn { Header = "Name", Binding = new Binding("Name"), Width = 190 });
-            grid.Columns.Add(new DataGridTextColumn { Header = "Role", Binding = new Binding("Role"), Width = 160 });
-            grid.Columns.Add(new DataGridTextColumn { Header = "Status", Binding = new Binding("Status"), Width = 120 });
-            panel.Children.Add(grid);
-            return panel;
         }
 
         private static UIElement CreateFlipViewSample()
@@ -2732,33 +2706,6 @@ private void InitializeData()
             public string Description { get; set; }
         }
 
-        private static UIElement CreateListBoxSample()
-        {
-            var panel = CreateSamplePanel("ListBox lets users choose one or more values from a simple list.");
-            panel.Children.Add(new ListBox
-            {
-                Width = 260,
-                Height = 150,
-                SelectionMode = SelectionMode.Multiple,
-                ItemsSource = new[] { "Red", "Green", "Blue", "Yellow" }
-            });
-            return panel;
-        }
-
-        private static UIElement CreateListViewSample()
-        {
-            var panel = CreateSamplePanel("ListView presents rich rows that can include multiple pieces of data.");
-            var listView = new ListView
-            {
-                Width = 360,
-                Height = 170,
-                ItemsSource = CreatePeople(),
-                ItemTemplate = CreatePersonTemplate()
-            };
-            panel.Children.Add(listView);
-            return panel;
-        }
-
         private static UIElement CreatePullToRefreshSample()
         {
             var root = new GallerySamplePanel
@@ -2939,23 +2886,6 @@ private void InitializeData()
             refreshContainer.Unloaded += delegate { timer.Stop(); };
         }
 
-        private static UIElement CreateTreeViewSample()
-        {
-            var panel = CreateSamplePanel("TreeView displays hierarchical data with expandable nodes.");
-            var tree = new TreeView { Width = 320, Height = 180 };
-            var controls = new TreeViewItem { Header = "Controls", IsExpanded = true };
-            controls.Items.Add(new TreeViewItem { Header = "Button" });
-            controls.Items.Add(new TreeViewItem { Header = "ListView" });
-            controls.Items.Add(new TreeViewItem { Header = "NavigationView" });
-            var design = new TreeViewItem { Header = "Design", IsExpanded = true };
-            design.Items.Add(new TreeViewItem { Header = "Color" });
-            design.Items.Add(new TreeViewItem { Header = "Typography" });
-            tree.Items.Add(controls);
-            tree.Items.Add(design);
-            panel.Children.Add(tree);
-            return panel;
-        }
-
         private static GridViewColumn CreateGridViewColumn(string header, string bindingPath, double width)
         {
             return new GridViewColumn
@@ -3024,27 +2954,6 @@ private void InitializeData()
                 "</DataTemplate>");
         }
 
-        private static DataTemplate CreatePersonTemplate()
-        {
-            return (DataTemplate)XamlReader.Parse(
-                "<DataTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'>" +
-                "<StackPanel Margin='0,4,0,4'>" +
-                "<TextBlock Text='{Binding Name}' FontWeight='SemiBold' />" +
-                "<TextBlock Text='{Binding Role}' Opacity='0.72' />" +
-                "</StackPanel>" +
-                "</DataTemplate>");
-        }
-
-        private static object[] CreatePeople()
-        {
-            return new object[]
-            {
-                new { Name = "Avery Howard", Role = "Designer", Status = "Online" },
-                new { Name = "Kai Martin", Role = "Engineer", Status = "Busy" },
-                new { Name = "Mina Patel", Role = "PM", Status = "Away" }
-            };
-        }
-
         private static Button CreateButton(string text)
         {
             return new Button
@@ -3054,22 +2963,6 @@ private void InitializeData()
                 Margin = new Thickness(0, 0, 8, 0),
                 HorizontalAlignment = HorizontalAlignment.Left
             };
-        }
-
-        private static StackPanel CreateSamplePanel(string description)
-        {
-            var panel = new StackPanel
-            {
-                Margin = new Thickness(0, 0, 0, 12)
-            };
-            panel.Children.Add(new TextBlock
-            {
-                Text = description,
-                TextWrapping = TextWrapping.Wrap,
-                Opacity = 0.72,
-                Margin = new Thickness(0, 0, 0, 12)
-            });
-            return panel;
         }
 
         private static TextBlock CreateOutput(string text)

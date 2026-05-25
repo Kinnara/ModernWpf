@@ -53,24 +53,15 @@ namespace ModernWpf.Gallery.Pages
         {
             switch (uniqueId)
             {
-                case "Calendar":
-                    return CreateCalendarSample();
                 case "CalendarDatePicker":
                     return CreateCalendarDatePickerSample();
                 case "CalendarView":
                     return CreateCalendarViewSample();
-                case "DatePicker":
-                    return CreateDatePickerSample();
                 case "TimePicker":
                     return CreateTimePickerSample();
                 default:
                     return null;
             }
-        }
-
-        private static UIElement CreateCalendarSample()
-        {
-            return CreateCalendarViewSample();
         }
 
         private static UIElement CreateCalendarDatePickerSample()
@@ -282,48 +273,6 @@ namespace ModernWpf.Gallery.Pages
             root.Children.Add(row);
             root.Children.Add(output);
             return root;
-        }
-
-        private static UIElement CreateDatePickerSample()
-        {
-            var panel = CreateSamplePanel("DatePicker lets users set a date from a compact picker.");
-            var standardOutput = CreateOutput("Standard date: not selected.");
-            var standard = new DatePicker
-            {
-                Width = 260,
-                HorizontalAlignment = HorizontalAlignment.Left
-            };
-            ControlHelper.SetHeader(standard, "Pick a date");
-            standard.SelectedDateChanged += delegate
-            {
-                standardOutput.Text = FormatSelectedDate("Standard date", standard.SelectedDate);
-            };
-
-            var monthDayOutput = CreateOutput("Month/day selection: not selected.");
-            var monthDay = new DatePicker
-            {
-                Width = 260,
-                Margin = new Thickness(0, 18, 0, 0),
-                HorizontalAlignment = HorizontalAlignment.Left
-            };
-            ControlHelper.SetHeader(monthDay, "Month and day");
-            monthDay.SelectedDateChanged += delegate
-            {
-                if (monthDay.SelectedDate.HasValue)
-                {
-                    monthDayOutput.Text = "Month/day selection: " + monthDay.SelectedDate.Value.ToString("MMM d (ddd)", CultureInfo.CurrentCulture);
-                }
-                else
-                {
-                    monthDayOutput.Text = "Month/day selection: not selected.";
-                }
-            };
-
-            panel.Children.Add(standard);
-            panel.Children.Add(standardOutput);
-            panel.Children.Add(monthDay);
-            panel.Children.Add(monthDayOutput);
-            return panel;
         }
 
         private static UIElement CreateTimePickerSample()
@@ -579,22 +528,6 @@ namespace ModernWpf.Gallery.Pages
         private static int RoundMinute(int minute, int increment)
         {
             return Math.Min(60 - increment, (minute / increment) * increment);
-        }
-
-        private static StackPanel CreateSamplePanel(string description)
-        {
-            var panel = new StackPanel
-            {
-                Margin = new Thickness(0, 0, 0, 12)
-            };
-            panel.Children.Add(new TextBlock
-            {
-                Text = description,
-                TextWrapping = TextWrapping.Wrap,
-                Opacity = 0.72,
-                Margin = new Thickness(0, 0, 0, 12)
-            });
-            return panel;
         }
 
         private static TextBlock CreateOutput(string text)

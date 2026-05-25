@@ -116,21 +116,30 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void MigratedBasicInputDirectPagesDoNotUseLegacySampleFactoryRoutes()
+        public void DirectPagesDoNotUseLegacySampleFactoryRoutes()
         {
-            var migratedPageIds = new[]
+            foreach (var uniqueId in WpfGalleryDirectPageIds)
             {
-                "Button",
-                "CheckBox",
-                "ComboBox",
-                "RadioButton",
-                "Slider"
-            };
-
-            foreach (var uniqueId in migratedPageIds)
-            {
-                Assert.IsNull(BasicInputSampleFactory.Create(uniqueId), uniqueId);
+                Assert.IsNull(CreateLegacyFactoryContent(uniqueId), uniqueId);
             }
+        }
+
+        private static UIElement CreateLegacyFactoryContent(string uniqueId)
+        {
+            return BasicInputSampleFactory.Create(uniqueId)
+                ?? StatusInfoSampleFactory.Create(uniqueId)
+                ?? DialogsFlyoutsSampleFactory.Create(uniqueId)
+                ?? MenusToolbarsSampleFactory.Create(uniqueId)
+                ?? CollectionsSampleFactory.Create(uniqueId)
+                ?? DateTimeSampleFactory.Create(uniqueId)
+                ?? ScrollingSampleFactory.Create(uniqueId)
+                ?? LayoutSampleFactory.Create(uniqueId)
+                ?? NavigationSampleFactory.Create(uniqueId)
+                ?? MediaSampleFactory.Create(uniqueId)
+                ?? StylesSampleFactory.Create(uniqueId)
+                ?? TextSampleFactory.Create(uniqueId)
+                ?? MotionSampleFactory.Create(uniqueId)
+                ?? WindowingSampleFactory.Create(uniqueId);
         }
     }
 }
