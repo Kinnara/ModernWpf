@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "RichTextBlock", "RichEditBox", "SplitView", "PersonPicture", "Sound", "MediaPlayerElement", "MapControl", "WebView2", "AnimatedIcon", "CompactSizing", "IconElement", "Line", "Shape", "RadialGradientBrush", "SystemBackdrops", "SystemBackdropElement", "ThemeShadow", "CreateMultipleWindows", "AppWindow", "AppWindowTitleBar", "TitleBar", "StoragePickers", "CalendarDatePicker", "CalendarView", "TimePicker", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "PullToRefresh", "FlipView", "ItemsView", "GridView", "ItemsRepeater", "BreadcrumbBar", "Pivot", "SelectorBar", "TabView", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "SwipeControl", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout", "StandardUICommand", "XamlUICommand"),
+    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "RichTextBlock", "RichEditBox", "SplitView", "PersonPicture", "Sound", "MediaPlayerElement", "MapControl", "WebView2", "Acrylic", "AnimatedIcon", "CompactSizing", "IconElement", "Line", "Shape", "RadialGradientBrush", "SystemBackdrops", "SystemBackdropElement", "ThemeShadow", "CreateMultipleWindows", "AppWindow", "AppWindowTitleBar", "TitleBar", "StoragePickers", "CalendarDatePicker", "CalendarView", "TimePicker", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "PullToRefresh", "FlipView", "ItemsView", "GridView", "ItemsRepeater", "BreadcrumbBar", "Pivot", "SelectorBar", "TabView", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "SwipeControl", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout", "StandardUICommand", "XamlUICommand"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -468,6 +468,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "MediaPlayerElement" { return "GallerySample_MediaPlayerElement_MediaPlayerElement" }
         "MapControl" { return "GallerySample_MapControl_MapControl" }
         "WebView2" { return "GallerySample_WebView2_WebView2" }
+        "Acrylic" { return "GallerySample_Acrylic_Example1Grid" }
         "AnimatedIcon" { return "GallerySample_AnimatedIcon_Button" }
         "CompactSizing" { return "GallerySample_CompactSizing_FirstName" }
         "IconElement" { return "GallerySample_IconElement_SlicesIcon" }
@@ -553,6 +554,7 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
         "MediaPlayerElement" { return "GallerySample_MediaPlayerElement_OpenFileButton" }
         "MapControl" { return "GallerySample_MapControl_MapToken" }
         "WebView2" { return "GallerySample_WebView2_WebView2" }
+        "Acrylic" { return "GallerySample_Acrylic_Root" }
         "AnimatedIcon" { return "GallerySample_AnimatedIcon_Root" }
         "CompactSizing" { return "GallerySample_CompactSizing_Root" }
         "IconElement" { return "GallerySample_IconElement_Root" }
@@ -630,6 +632,7 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
         "MediaPlayerElement" { return "OpenFileButton" }
         "MapControl" { return "MapToken" }
         "WebView2" { return "MyWebView2" }
+        "Acrylic" { return "svPanel" }
         "AnimatedIcon" { return "svPanel" }
         "CompactSizing" { return "svPanel" }
         "IconElement" { return "svPanel" }
@@ -675,6 +678,7 @@ function Get-ReferencePrimaryName([string]$control) {
 function Get-WinUIReferencePageTitle([string]$control) {
     switch ($control) {
         "CompactSizing" { return "Compact Sizing" }
+        "Acrylic" { return "AcrylicBrush" }
         "CreateMultipleWindows" { return "Multiple windows" }
         "SystemBackdrops" { return "System Backdrops (Mica/Acrylic)" }
         "StoragePickers" { return "Storage pickers" }

@@ -42,6 +42,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "MediaPlayerElement", "GallerySample_MediaPlayerElement_Root", "GallerySample_MediaPlayerElement_MediaPlayerElement" };
             yield return new object[] { "MapControl", "GallerySample_MapControl_Root", "GallerySample_MapControl_MapControl" };
             yield return new object[] { "WebView2", "GallerySample_WebView2_Root", "GallerySample_WebView2_WebView2" };
+            yield return new object[] { "Acrylic", "GallerySample_Acrylic_Root", "GallerySample_Acrylic_Example1Grid" };
             yield return new object[] { "AnimatedIcon", "GallerySample_AnimatedIcon_Root", "GallerySample_AnimatedIcon_Button" };
             yield return new object[] { "CompactSizing", "GallerySample_CompactSizing_Root", "GallerySample_CompactSizing_FirstName" };
             yield return new object[] { "IconElement", "GallerySample_IconElement_Root", "GallerySample_IconElement_SlicesIcon" };
@@ -3720,6 +3721,121 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void AcrylicSampleMatchesWinUIGalleryExamples()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("Acrylic"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.IsTrue(page.ShowIntroContent);
+                    Assert.AreEqual(3, page.Examples.Count);
+                    Assert.AreEqual("Default in-app acrylic brush.", page.Examples[0].HeaderText);
+                    Assert.AreEqual("Custom acrylic in-app brush.", page.Examples[1].HeaderText);
+                    Assert.AreEqual("Luminosity with in-app Acrylic.", page.Examples[2].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    Assert.IsNotNull(FindTextBlockByText(page, "Acrylic Brush might fall back to SolidColorbrush in certain scenarios. If you can't see the Acrylic effect, please refer to Acrylic brush adaptability documentation. Acrylic Brush uses in-app acrylic. See SystemBackdrops (Mica/Acrylic) for background acrylic."));
+                    StringAssert.Contains(page.Examples[0].XamlCode, "AcrylicInAppFillColorDefaultBrush");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "CustomAcrylicInAppBrush");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "TintOpacity=\"$(OpacitySlider)\"");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "FallbackColor=\"$(FallbackColor)\"");
+                    StringAssert.Contains(page.Examples[2].XamlCode, "TintLuminosityOpacity=\"$(TintLuminositySlider)\"");
+
+                    var firstRoot = (GallerySamplePanel)page.Examples[0].ExampleContent;
+                    var example1Grid = FindNamedDescendant<Grid>(firstRoot, "Example1Grid");
+                    Assert.IsNotNull(example1Grid);
+                    Assert.AreEqual("GallerySample_Acrylic_Example1Grid", AutomationProperties.GetAutomationId(example1Grid));
+                    Assert.AreEqual(400d, example1Grid.Width);
+                    Assert.AreEqual(252d, example1Grid.Height);
+                    var defaultAcrylicRect = (WpfShapes.Rectangle)FindByAutomationId(page, "GallerySample_Acrylic_DefaultAcrylicRect");
+                    Assert.IsNotNull(defaultAcrylicRect);
+                    Assert.AreSame(defaultAcrylicRect, FindNamedDescendant<WpfShapes.Rectangle>(page, "DefaultAcrylicShapeInApp"));
+                    Assert.AreEqual(new Thickness(12), defaultAcrylicRect.Margin);
+                    Assert.AreEqual(0.72, defaultAcrylicRect.Opacity, 0.001);
+                    Assert.IsInstanceOfType(defaultAcrylicRect.Fill, typeof(SolidColorBrush));
+
+                    var customRoot = (GallerySamplePanel)page.Examples[1].ExampleContent;
+                    var example3Grid = FindNamedDescendant<Grid>(customRoot, "Example3Grid");
+                    Assert.IsNotNull(example3Grid);
+                    Assert.AreEqual(2, example3Grid.ColumnDefinitions.Count);
+                    Assert.AreEqual(652d, example3Grid.Width);
+                    Assert.AreEqual(252d, example3Grid.MinHeight);
+
+                    var customAcrylicRect = FindNamedDescendant<WpfShapes.Rectangle>(page, "CustomAcrylicShapeInApp");
+                    Assert.IsNotNull(customAcrylicRect);
+                    var customBrush = (SolidColorBrush)customAcrylicRect.Fill;
+                    Assert.AreEqual(Colors.Black, customBrush.Color);
+                    Assert.AreEqual(0.8, customBrush.Opacity, 0.001);
+                    Assert.AreEqual("FallbackColor=#FF008000", customAcrylicRect.Tag);
+
+                    var opacitySlider = FindNamedDescendant<Slider>(page, "OpacitySliderInApp");
+                    var colorSelector = FindNamedDescendant<ComboBox>(page, "ColorSelectorInApp");
+                    var fallbackSelector = FindNamedDescendant<ComboBox>(page, "FallbackColorSelectorInApp");
+                    Assert.IsNotNull(opacitySlider);
+                    Assert.IsNotNull(colorSelector);
+                    Assert.IsNotNull(fallbackSelector);
+                    AssertAcrylicSlider(opacitySlider, "tint opacity", 0.8);
+                    AssertAcrylicColorSelector(colorSelector, "tint color", Colors.Black, Colors.Red, Colors.Blue);
+                    AssertAcrylicColorSelector(fallbackSelector, "fallback color", Colors.Green, Colors.Yellow);
+
+                    opacitySlider.Value = 0.5;
+                    colorSelector.SelectedIndex = 1;
+                    fallbackSelector.SelectedIndex = 1;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(0.5, customBrush.Opacity, 0.001);
+                    Assert.AreEqual(Colors.Red, customBrush.Color);
+                    Assert.AreEqual("FallbackColor=#FFFFFF00", customAcrylicRect.Tag);
+
+                    var luminosityRoot = (GallerySamplePanel)page.Examples[2].ExampleContent;
+                    var example4Grid = FindNamedDescendant<Grid>(luminosityRoot, "Example4Grid");
+                    Assert.IsNotNull(example4Grid);
+                    Assert.AreEqual(2, example4Grid.ColumnDefinitions.Count);
+                    Assert.AreEqual(652d, example4Grid.Width);
+
+                    var luminosityAcrylicRect = FindNamedDescendant<WpfShapes.Rectangle>(page, "CustomAcrylicShapeLumin");
+                    Assert.IsNotNull(luminosityAcrylicRect);
+                    var luminosityBrush = (SolidColorBrush)luminosityAcrylicRect.Fill;
+                    Assert.AreEqual(Colors.SkyBlue, luminosityBrush.Color);
+                    Assert.AreEqual(0.64, luminosityBrush.Opacity, 0.001);
+                    Assert.AreEqual("TintLuminosityOpacity=0.8", luminosityAcrylicRect.Tag);
+
+                    var opacitySliderLumin = FindNamedDescendant<Slider>(page, "OpacitySliderLumin");
+                    var luminositySlider = FindNamedDescendant<Slider>(page, "LuminositySlider");
+                    AssertAcrylicSlider(opacitySliderLumin, "tint opacity", 0.8);
+                    AssertAcrylicSlider(luminositySlider, "tint luminosity", 0.8);
+
+                    opacitySliderLumin.Value = 0.5;
+                    luminositySlider.Value = 0.5;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(0.25, luminosityBrush.Opacity, 0.001);
+                    Assert.AreEqual("TintLuminosityOpacity=0.5", luminosityAcrylicRect.Tag);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
         public void AnimatedIconSampleMatchesWinUIGalleryExamples()
         {
             WpfTestHost.Run(() =>
@@ -6279,6 +6395,43 @@ namespace ModernWpf.Gallery.Tests
             }
 
             return null;
+        }
+
+        private static void AssertAcrylicSlider(Slider slider, string automationName, double value)
+        {
+            Assert.IsNotNull(slider);
+            Assert.AreEqual(automationName, AutomationProperties.GetName(slider));
+            Assert.AreEqual(200d, slider.Width);
+            Assert.AreEqual(HorizontalAlignment.Left, slider.HorizontalAlignment);
+            Assert.AreEqual(0d, slider.Minimum);
+            Assert.AreEqual(1d, slider.Maximum);
+            Assert.AreEqual(0.001, slider.SmallChange, 0.0001);
+            Assert.AreEqual(0.001, slider.TickFrequency, 0.0001);
+            Assert.AreEqual(value, slider.Value, 0.001);
+        }
+
+        private static void AssertAcrylicColorSelector(ComboBox comboBox, string automationName, params Color[] colors)
+        {
+            Assert.IsNotNull(comboBox);
+            Assert.AreEqual(automationName, AutomationProperties.GetName(comboBox));
+            Assert.AreEqual(0, comboBox.SelectedIndex);
+            Assert.AreEqual(colors.Length, comboBox.Items.Count);
+
+            for (var i = 0; i < colors.Length; i++)
+            {
+                var item = (ComboBoxItem)comboBox.Items[i];
+                Assert.AreEqual(colors[i], (Color)item.Tag);
+
+                var content = (StackPanel)item.Content;
+                Assert.AreEqual(Orientation.Horizontal, content.Orientation);
+                Assert.AreEqual(colors[i].ToString(), AutomationProperties.GetName(content));
+
+                var swatch = (WpfShapes.Rectangle)content.Children[0];
+                Assert.AreEqual(20d, swatch.Width);
+                Assert.AreEqual(20d, swatch.Height);
+                Assert.AreEqual(colors[i], ((SolidColorBrush)swatch.Fill).Color);
+                Assert.AreEqual(colors[i].ToString(), ((TextBlock)content.Children[1]).Text);
+            }
         }
 
         private static void AssertPipsPagerImage(ContentControl gallery, string fileName)

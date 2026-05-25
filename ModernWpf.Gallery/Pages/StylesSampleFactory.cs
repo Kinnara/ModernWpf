@@ -81,6 +81,25 @@ namespace ModernWpf.Gallery.Pages
     <ResourceDictionary Source=""ms-appx:///Microsoft.UI.Xaml/DensityStyles/Compact.xaml"" />
 </Page.Resources>";
 
+        private const string AcrylicDefaultInAppXaml =
+@"<Rectangle Fill=""{ThemeResource AcrylicInAppFillColorDefaultBrush}"" />";
+
+        private const string AcrylicCustomInAppXaml =
+@"<Rectangle Fill=""{ThemeResource CustomAcrylicInAppBrush}"" />
+
+<ResourceDictionary x:Key=""Default"">
+    <media:AcrylicBrush x:Key=""CustomAcrylicBrush""
+            TintOpacity=""$(OpacitySlider)"" TintColor=""$(TintColor)"" FallbackColor=""$(FallbackColor)"" />
+</ResourceDictionary>";
+
+        private const string AcrylicLuminosityXaml =
+@"<Rectangle Fill=""{ThemeResource CustomAcrylicInAppLuminosity}"" />
+
+<ResourceDictionary x:Key=""Default"">
+    <media:AcrylicBrush x:Key=""CustomAcrylicInAppLuminosity""
+            TintOpacity=""$(OpacitySlider)"" TintLuminosityOpacity=""$(TintLuminositySlider)"" TintColor=""SkyBlue"" FallbackColor=""SkyBlue"" />
+</ResourceDictionary>";
+
         private static readonly string[] AnimatedIconSourceKinds =
         {
             "AnimatedBackVisualSource",
@@ -125,6 +144,8 @@ namespace ModernWpf.Gallery.Pages
         {
             switch (uniqueId)
             {
+                case "Acrylic":
+                    return CreateAcrylicIntroContent();
                 case "CompactSizing":
                     return CreateCompactSizingIntroContent();
                 default:
@@ -136,6 +157,8 @@ namespace ModernWpf.Gallery.Pages
         {
             switch (uniqueId)
             {
+                case "Acrylic":
+                    return CreateAcrylicExamples();
                 case "CompactSizing":
                     return CreateCompactSizingExamples();
                 case "AnimatedIcon":
@@ -161,55 +184,311 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateAcrylicSample()
         {
-            var panel = CreateSamplePanel("AcrylicBrush maps to layered WPF brushes: a backdrop image, tint, and translucent content layer.");
-            var tint = CreateBrush("#CCF7F7F7");
-            var overlay = new Border
+            return CreateDefaultAcrylicExampleContent(assignRootAutomationId: true);
+        }
+
+        private static object CreateAcrylicIntroContent()
+        {
+            return new TextBlock
             {
-                Width = 300,
-                Height = 180,
-                CornerRadius = new CornerRadius(6),
-                BorderThickness = new Thickness(1),
-                BorderBrush = CreateBrush("#66FFFFFF"),
-                Background = tint,
-                Padding = new Thickness(18),
+                Text = "Acrylic Brush might fall back to SolidColorbrush in certain scenarios. If you can't see the Acrylic effect, please refer to Acrylic brush adaptability documentation. Acrylic Brush uses in-app acrylic. See SystemBackdrops (Mica/Acrylic) for background acrylic.",
+                TextWrapping = TextWrapping.Wrap,
+                Margin = new Thickness(0, 24, 0, 0)
+            };
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateAcrylicExamples()
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "Default in-app acrylic brush.",
+                    CreateDefaultAcrylicExampleContent(assignRootAutomationId: true),
+                    AcrylicDefaultInAppXaml,
+                    null),
+                new GalleryExample(
+                    "Custom acrylic in-app brush.",
+                    CreateCustomAcrylicExampleContent(),
+                    AcrylicCustomInAppXaml,
+                    null),
+                new GalleryExample(
+                    "Luminosity with in-app Acrylic.",
+                    CreateLuminosityAcrylicExampleContent(),
+                    AcrylicLuminosityXaml,
+                    null)
+            };
+        }
+
+        private static GallerySamplePanel CreateDefaultAcrylicExampleContent(bool assignRootAutomationId)
+        {
+            var root = new GallerySamplePanel();
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("Acrylic"));
+            }
+
+            var grid = CreateAcrylicPatternGrid("Example1Grid", 400, 252);
+            GalleryAutomation.WithAutomationId(grid, GalleryAutomation.SampleElementId("Acrylic", "Example1Grid"));
+            var acrylicRect = new Rectangle
+            {
+                Name = "DefaultAcrylicShapeInApp",
+                Margin = new Thickness(12),
+                Opacity = 0.72
+            };
+            acrylicRect.SetResourceReference(Shape.FillProperty, "AcrylicInAppFillColorDefaultBrush");
+            GalleryAutomation.WithAutomationId(acrylicRect, GalleryAutomation.SampleElementId("Acrylic", "DefaultAcrylicRect"));
+            grid.Children.Add(acrylicRect);
+
+            root.Children.Add(grid);
+            return root;
+        }
+
+        private static GallerySamplePanel CreateCustomAcrylicExampleContent()
+        {
+            var root = new GallerySamplePanel();
+            var brush = CreateMutableBrush("Black");
+            brush.Opacity = 0.8;
+
+            var acrylicRect = new Rectangle
+            {
+                Name = "CustomAcrylicShapeInApp",
+                Margin = new Thickness(12),
+                Fill = brush,
+                Tag = "FallbackColor=#FF008000"
+            };
+
+            var grid = CreateAcrylicExampleGrid("Example3Grid", acrylicRect);
+            var options = CreateCustomAcrylicOptions(brush, acrylicRect);
+            Grid.SetColumn(options, 1);
+            grid.Children.Add(options);
+
+            root.Children.Add(grid);
+            return root;
+        }
+
+        private static GallerySamplePanel CreateLuminosityAcrylicExampleContent()
+        {
+            var root = new GallerySamplePanel();
+            var brush = CreateMutableBrush("SkyBlue");
+            brush.Opacity = 0.64;
+
+            var acrylicRect = new Rectangle
+            {
+                Name = "CustomAcrylicShapeLumin",
+                Margin = new Thickness(12),
+                Fill = brush,
+                Tag = "TintLuminosityOpacity=0.8"
+            };
+
+            var grid = CreateAcrylicExampleGrid("Example4Grid", acrylicRect);
+            var options = CreateLuminosityAcrylicOptions(brush, acrylicRect);
+            Grid.SetColumn(options, 1);
+            grid.Children.Add(options);
+
+            root.Children.Add(grid);
+            return root;
+        }
+
+        private static Grid CreateAcrylicExampleGrid(string name, Rectangle acrylicRect)
+        {
+            var grid = new Grid
+            {
+                Name = name,
+                Width = 652,
+                MinWidth = 320,
+                MinHeight = 252
+            };
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(252) });
+
+            var pattern = CreateAcrylicPatternGrid(null, 400, 252);
+            pattern.Children.Add(acrylicRect);
+            Grid.SetColumn(pattern, 0);
+            grid.Children.Add(pattern);
+            return grid;
+        }
+
+        private static Grid CreateAcrylicPatternGrid(string name, double width, double height)
+        {
+            var grid = new Grid
+            {
+                Name = name,
+                Width = width,
+                Height = height,
+                MinWidth = 320
+            };
+            grid.Children.Add(new Rectangle
+            {
+                Width = 100,
+                Height = 200,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                Fill = Brushes.Aqua
+            });
+            grid.Children.Add(new Ellipse
+            {
+                Width = 152,
+                Height = 152,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
-                Child = new TextBlock
-                {
-                    Text = "Acrylic layer",
-                    FontSize = 24,
-                    FontWeight = FontWeights.SemiBold,
-                    VerticalAlignment = VerticalAlignment.Center,
-                    HorizontalAlignment = HorizontalAlignment.Center
-                }
-            };
-            var root = new Grid
-            {
-                Width = 430,
-                Height = 260
-            };
-            root.Children.Add(new Image
-            {
-                Source = CreateBitmap(ResourceUri("Assets/SampleMedia/rainier.jpg")),
-                Stretch = Stretch.UniformToFill
+                Fill = Brushes.Magenta
             });
-            root.Children.Add(overlay);
-
-            var opacity = new Slider
+            grid.Children.Add(new Rectangle
             {
-                Width = 240,
-                Minimum = 0.35,
-                Maximum = 0.95,
-                Value = tint.Opacity,
-                Margin = new Thickness(0, 12, 0, 0),
+                Width = 80,
+                Height = 100,
+                HorizontalAlignment = HorizontalAlignment.Right,
+                VerticalAlignment = VerticalAlignment.Bottom,
+                Fill = Brushes.Yellow
+            });
+            return grid;
+        }
+
+        private static StackPanel CreateCustomAcrylicOptions(SolidColorBrush brush, Rectangle acrylicRect)
+        {
+            var opacitySlider = CreateAcrylicSlider("OpacitySliderInApp", "tint opacity");
+            opacitySlider.Value = 0.8;
+            opacitySlider.ValueChanged += delegate { brush.Opacity = opacitySlider.Value; };
+
+            var colorSelector = CreateAcrylicColorSelector("ColorSelectorInApp", "tint color", "Black", "Red", "Blue");
+            colorSelector.SelectionChanged += delegate
+            {
+                brush.Color = GetSelectedAcrylicColor(colorSelector);
+            };
+            colorSelector.SelectedIndex = 0;
+
+            var fallbackSelector = CreateAcrylicColorSelector("FallbackColorSelectorInApp", "fallback color", "Green", "Yellow");
+            fallbackSelector.SelectionChanged += delegate
+            {
+                acrylicRect.Tag = "FallbackColor=" + GetSelectedAcrylicColor(fallbackSelector);
+            };
+            fallbackSelector.SelectedIndex = 0;
+
+            var options = CreateAcrylicOptionsPanel();
+            options.Children.Add(CreateAcrylicOptionsLabel("Tint Opacity :"));
+            options.Children.Add(opacitySlider);
+            options.Children.Add(CreateAcrylicOptionsLabel("Tint Color :", new Thickness(0, 12, 0, 12)));
+            options.Children.Add(colorSelector);
+            options.Children.Add(CreateAcrylicOptionsLabel("Fallback Color :", new Thickness(0, 12, 0, 12)));
+            options.Children.Add(fallbackSelector);
+            return options;
+        }
+
+        private static StackPanel CreateLuminosityAcrylicOptions(SolidColorBrush brush, Rectangle acrylicRect)
+        {
+            var opacitySlider = CreateAcrylicSlider("OpacitySliderLumin", "tint opacity");
+            var luminositySlider = CreateAcrylicSlider("LuminositySlider", "tint luminosity");
+
+            opacitySlider.ValueChanged += delegate { UpdateLuminosityAcrylicBrush(brush, acrylicRect, opacitySlider.Value, luminositySlider.Value); };
+            luminositySlider.ValueChanged += delegate { UpdateLuminosityAcrylicBrush(brush, acrylicRect, opacitySlider.Value, luminositySlider.Value); };
+            opacitySlider.Value = 0.8;
+            luminositySlider.Value = 0.8;
+
+            var options = CreateAcrylicOptionsPanel();
+            options.Children.Add(CreateAcrylicOptionsLabel("Tint Opacity :"));
+            options.Children.Add(opacitySlider);
+            options.Children.Add(CreateAcrylicOptionsLabel("Tint Luminosity Opacity :"));
+            options.Children.Add(luminositySlider);
+            return options;
+        }
+
+        private static StackPanel CreateAcrylicOptionsPanel()
+        {
+            return new StackPanel
+            {
+                Margin = new Thickness(24, 0, 0, 0)
+            };
+        }
+
+        private static TextBlock CreateAcrylicOptionsLabel(string text)
+        {
+            return CreateAcrylicOptionsLabel(text, new Thickness(0, 0, 0, 12));
+        }
+
+        private static TextBlock CreateAcrylicOptionsLabel(string text, Thickness margin)
+        {
+            return new TextBlock
+            {
+                Text = text,
+                Margin = margin
+            };
+        }
+
+        private static Slider CreateAcrylicSlider(string name, string automationName)
+        {
+            var slider = new Slider
+            {
+                Name = name,
+                Width = 200,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Minimum = 0,
+                Maximum = 1,
+                SmallChange = 0.001,
+                TickFrequency = 0.001
+            };
+            AutomationProperties.SetName(slider, automationName);
+            return slider;
+        }
+
+        private static ComboBox CreateAcrylicColorSelector(string name, string automationName, params string[] colors)
+        {
+            var comboBox = new ComboBox
+            {
+                Name = name,
                 HorizontalAlignment = HorizontalAlignment.Left
             };
-            ControlHelper.SetHeader(opacity, "Tint opacity");
-            opacity.ValueChanged += delegate { tint.Opacity = opacity.Value; };
+            AutomationProperties.SetName(comboBox, automationName);
+            foreach (var color in colors)
+            {
+                comboBox.Items.Add(CreateAcrylicColorItem(color));
+            }
 
-            panel.Children.Add(root);
-            panel.Children.Add(opacity);
-            return panel;
+            return comboBox;
+        }
+
+        private static ComboBoxItem CreateAcrylicColorItem(string color)
+        {
+            var brush = CreateBrush(color);
+            var swatch = new Rectangle
+            {
+                Width = 20,
+                Height = 20,
+                Fill = brush
+            };
+            var label = new TextBlock
+            {
+                Text = brush.Color.ToString(),
+                Margin = new Thickness(4, 0, 0, 0)
+            };
+            var content = new StackPanel
+            {
+                Orientation = Orientation.Horizontal
+            };
+            AutomationProperties.SetName(content, brush.Color.ToString());
+            content.Children.Add(swatch);
+            content.Children.Add(label);
+            return new ComboBoxItem
+            {
+                Content = content,
+                Tag = brush.Color
+            };
+        }
+
+        private static Color GetSelectedAcrylicColor(ComboBox comboBox)
+        {
+            return comboBox.SelectedItem is ComboBoxItem item && item.Tag is Color color ? color : Colors.Transparent;
+        }
+
+        private static void UpdateLuminosityAcrylicBrush(SolidColorBrush brush, Rectangle acrylicRect, double tintOpacity, double tintLuminosityOpacity)
+        {
+            brush.Opacity = Math.Max(0, Math.Min(1, tintOpacity * tintLuminosityOpacity));
+            acrylicRect.Tag = "TintLuminosityOpacity=" + tintLuminosityOpacity.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        }
+
+        private static SolidColorBrush CreateMutableBrush(string color)
+        {
+            var brush = CreateBrush(color);
+            return brush.IsFrozen ? brush.Clone() : brush;
         }
 
         private static UIElement CreateAnimatedIconSample()

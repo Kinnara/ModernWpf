@@ -106,6 +106,16 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.AcrylicSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 66 tests per target. The generated ModernWpf Acrylic extension page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\AcrylicPage.xaml` and `.xaml.cs`: the intro text, `Default in-app acrylic brush.`, `Custom acrylic in-app brush.`, and `Luminosity with in-app Acrylic.` examples, source-facing `Example1Grid`, `Example3Grid`, `Example4Grid`, `CustomAcrylicShapeInApp`, `CustomAcrylicShapeLumin`, `OpacitySliderInApp`, `ColorSelectorInApp`, `FallbackColorSelectorInApp`, `OpacitySliderLumin`, and `LuminositySlider` names, the official inline XAML snippets, initial values, tint/fallback color options, and slider-driven brush updates. `StylesSampleFactory.CreateIntroContent` and `CreateExamples` now cover Acrylic as a source-backed Platform & patterns WinUI extension page, and the first example exposes `GallerySample_Acrylic_Root` / `GallerySample_Acrylic_Example1Grid`. The WPF adaptation renders acrylic with layered ModernWpf/WPF `SolidColorBrush` opacity because WPF does not have WinUI's in-app `AcrylicBrush` composition surface.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls Acrylic -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-065733-578-115176/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required rendered Acrylic `Example1Grid` was found, primary crops use the rendered ModernWpf `GallerySample_Acrylic_Root` sample region against the installed WinUI `svPanel` sample region because the uniform acrylic overlay itself is not a good standalone crop target, crop sizes are `790x252` vs `843x654`, and Light primary delta is `109.78`. The whole-window Light mean delta is `143.23` and remains diagnostic because the installed WinUI shell stayed dark while ModernWpf was captured in Light.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls Acrylic -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-065734-063-117304/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required rendered Acrylic `Example1Grid` was found, primary crops use the same sample-region mapping, crop sizes are `790x252` vs `843x654`, Dark primary delta is `26.08`, and whole-window Dark mean delta is `21.05`.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the Acrylic WinUI example alignment. The final build output still includes recurring `Failed to resolve WinRT.Runtime.dll` messages, but MSBuild ends with `0 Warning(s)` and `0 Error(s)`.
+- `git diff --check`
+  - Passed with only Git's normal LF-to-CRLF working-copy warnings for touched files.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.AnimatedIconSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 65 tests per target. The generated ModernWpf AnimatedIcon extension page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\AnimatedIconPage.xaml`, `.xaml.cs`, and `D:\repos\WinUI-Gallery\WinUIGallery\Samples\SampleCode\Icons\AnimatedIconSample1_xaml.txt`, `AnimatedIconSample1_cs.txt`, and `AnimatedIconSample2_xaml.txt`: the `Adding AnimatedIcon to a button` and `Adding AnimatedIcon to a NavigationView` examples, source-facing `SearchAnimatedIcon`, `AnimatedVisualSourceSelection`, `GameSettingsIcon`, and `Game Settings` names/content, the seven official animated visual source options, the official source snippets, and pointer-over/normal state behavior through `AnimatedIcon.State`. `StylesSampleFactory.CreateExamples` now covers AnimatedIcon as a source-backed Platform & patterns WinUI extension page, and the first button exposes `GallerySample_AnimatedIcon_Root` / `GallerySample_AnimatedIcon_Button`. The WPF adaptation uses `SymbolIcon` / `FontIcon` fallbacks because ModernWpf has the WinUI-compatible `AnimatedIcon.State` attached property but not the WinUI Lottie `AnimatedIcon` control/source surface.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls AnimatedIcon -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -2446,6 +2456,32 @@ with ModernWpf and installed WinUI 3 Gallery `Passed`, primary crops matching
 at `745x423`, and primary deltas `56.75` / `37.33`. Avoid reopening WebView2's
 source shape unless the repo decides to add an optional WebView2 package/runtime
 dependency or a new visual crop regression appears.
+The generated ModernWpf Acrylic extension page now uses the local official
+WinUI Gallery source from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\AcrylicPage.xaml`
+and `.xaml.cs`: the intro copy, three `Default in-app acrylic brush.`,
+`Custom acrylic in-app brush.`, and `Luminosity with in-app Acrylic.` examples,
+source-facing `Example1Grid`, `Example3Grid`, `Example4Grid`,
+`CustomAcrylicShapeInApp`, `CustomAcrylicShapeLumin`, `OpacitySliderInApp`,
+`ColorSelectorInApp`, `FallbackColorSelectorInApp`, `OpacitySliderLumin`, and
+`LuminositySlider` names, the official inline XAML snippets, and the source
+initial values/options. `StylesSampleFactory.CreateIntroContent` and
+`StylesSampleFactory.CreateExamples` now expose Acrylic as a source-backed
+Platform & patterns WinUI extension page. The WPF adaptation uses layered
+ModernWpf/WPF `SolidColorBrush` opacity to represent in-app acrylic because WPF
+does not have WinUI's `AcrylicBrush` composition surface; custom tint/fallback
+and luminosity controls update the rendered brushes directly. Current Acrylic
+WinUI-reference evidence is
+`artifacts/visual-checks/20260525-065733-578-115176/report.md` for Light and
+`artifacts/visual-checks/20260525-065734-063-117304/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`; the required
+`GallerySample_Acrylic_Example1Grid` rendered artifact is present, while the
+primary crop uses the rendered ModernWpf sample root against the installed WinUI
+`svPanel` sample region because the uniform acrylic overlay is not a useful
+standalone crop target. Treat those sample-region deltas as diagnostic unless a
+better stable crop becomes available. Avoid reopening Acrylic's source shape
+unless a new local WinUI source, real WPF acrylic surface, or crop regression
+appears.
 The generated ModernWpf AnimatedIcon extension page now uses the local official
 WinUI Gallery source from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\AnimatedIconPage.xaml`,
