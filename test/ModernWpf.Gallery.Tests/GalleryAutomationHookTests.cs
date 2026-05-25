@@ -21,6 +21,7 @@ using ModernWpf.Gallery.Pages;
 using ModernWpf.Gallery.Testing;
 using Mux = ModernWpf.Controls;
 using TeachingTipControl = ModernWpf.Controls.TeachingTip;
+using WpfShapes = System.Windows.Shapes;
 
 namespace ModernWpf.Gallery.Tests
 {
@@ -41,6 +42,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "MediaPlayerElement", "GallerySample_MediaPlayerElement_Root", "GallerySample_MediaPlayerElement_MediaPlayerElement" };
             yield return new object[] { "MapControl", "GallerySample_MapControl_Root", "GallerySample_MapControl_MapControl" };
             yield return new object[] { "WebView2", "GallerySample_WebView2_Root", "GallerySample_WebView2_WebView2" };
+            yield return new object[] { "Line", "GallerySample_Line_Root", "GallerySample_Line_Line" };
             yield return new object[] { "RadialGradientBrush", "GallerySample_RadialGradientBrush_Root", "GallerySample_RadialGradientBrush_Rect" };
             yield return new object[] { "SystemBackdrops", "GallerySample_SystemBackdrops_Root", "GallerySample_SystemBackdrops_ShowWindowButton" };
             yield return new object[] { "SystemBackdropElement", "GallerySample_SystemBackdropElement_Root", "GallerySample_SystemBackdropElement_Button" };
@@ -3714,6 +3716,143 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void LineSampleMatchesWinUIGalleryExamples()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("Line"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(4, page.Examples.Count);
+                    Assert.AreEqual("Line", page.Examples[0].HeaderText);
+                    Assert.AreEqual("Polyline", page.Examples[1].HeaderText);
+                    Assert.AreEqual("Path", page.Examples[2].HeaderText);
+                    Assert.AreEqual("GeometryGroup", page.Examples[3].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+
+                    StringAssert.Contains(page.Examples[0].XamlCode, "<Line Stroke=\"SteelBlue\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "X1=\"$(Slider1)\" Y1=\"$(Slider2)\"");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "<Polyline Stroke=\"Black\" StrokeThickness=\"$(Slider1)\"");
+                    StringAssert.Contains(page.Examples[2].XamlCode, "Data=\"M 10,100 C 100,25 300,250 400,75 H 200\"");
+                    StringAssert.Contains(page.Examples[3].XamlCode, "<GeometryGroup FillRule=\"EvenOdd\">");
+
+                    var lineRoot = (GallerySamplePanel)page.Examples[0].ExampleContent;
+                    Assert.AreEqual(1, lineRoot.Children.Count);
+                    var lineLayout = (Grid)lineRoot.Children[0];
+                    Assert.AreEqual(2, lineLayout.ColumnDefinitions.Count);
+
+                    var line = (WpfShapes.Line)FindByAutomationId(page, "GallerySample_Line_Line");
+                    Assert.IsNotNull(line);
+                    Assert.AreSame(line, FindNamedDescendant<WpfShapes.Line>(page, "LineElement"));
+                    Assert.AreEqual(0d, line.X1);
+                    Assert.AreEqual(0d, line.Y1);
+                    Assert.AreEqual(200d, line.X2);
+                    Assert.AreEqual(0d, line.Y2);
+                    Assert.AreEqual(5d, line.StrokeThickness);
+                    Assert.AreEqual(Brushes.SteelBlue, line.Stroke);
+                    Assert.AreEqual(50d, Canvas.GetTop(line));
+
+                    var lineSlider1 = AssertLineSlider(page, "lineSlider1", "Start point X", 0, 100, 0);
+                    var lineSlider2 = AssertLineSlider(page, "lineSlider2", "Start point Y", 0, 100, 0);
+                    var lineSlider3 = AssertLineSlider(page, "lineSlider3", "End point X", 200, 300, 200);
+                    var lineSlider4 = AssertLineSlider(page, "lineSlider4", "End point Y", 0, 100, 0);
+                    var lineSlider5 = AssertLineSlider(page, "lineSlider5", "Stroke Thickness", 5, 10, 5);
+                    lineSlider1.Value = 12;
+                    lineSlider2.Value = 24;
+                    lineSlider3.Value = 260;
+                    lineSlider4.Value = 72;
+                    lineSlider5.Value = 8;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(12d, line.X1);
+                    Assert.AreEqual(24d, line.Y1);
+                    Assert.AreEqual(260d, line.X2);
+                    Assert.AreEqual(72d, line.Y2);
+                    Assert.AreEqual(8d, line.StrokeThickness);
+
+                    var polyline = FindNamedDescendant<WpfShapes.Polyline>(page, "PolylineElement");
+                    Assert.IsNotNull(polyline);
+                    Assert.AreEqual(4, polyline.Points.Count);
+                    Assert.AreEqual(new Point(10, 100), polyline.Points[0]);
+                    Assert.AreEqual(new Point(60, 40), polyline.Points[1]);
+                    Assert.AreEqual(new Point(200, 40), polyline.Points[2]);
+                    Assert.AreEqual(new Point(250, 100), polyline.Points[3]);
+                    Assert.AreEqual(Brushes.Black, polyline.Stroke);
+                    AssertLineSlider(page, "polyLineSlider1", "Stroke Thickness", 2, 10, 2).Value = 7;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(7d, polyline.StrokeThickness);
+                    var polylineToggle = FindNamedDescendant<Mux.ToggleSwitch>(page, "ToggleSwitch2");
+                    Assert.IsNotNull(polylineToggle);
+                    Assert.AreEqual("Show points", polylineToggle.Header);
+                    var point1 = FindTextBlockByText(page, "Point #1: (10,100)");
+                    Assert.IsNotNull(point1);
+                    Assert.AreEqual(Visibility.Collapsed, point1.Visibility);
+                    polylineToggle.IsOn = true;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(Visibility.Visible, point1.Visibility);
+
+                    var path = FindNamedDescendant<WpfShapes.Path>(page, "PathElement");
+                    Assert.IsNotNull(path);
+                    StringAssert.Contains(path.Data.ToString(CultureInfo.InvariantCulture), "M10,100C100,25");
+                    Assert.AreEqual(Brushes.DarkGoldenrod, path.Stroke);
+                    AssertLineSlider(page, "pathSlider1", "Stroke Thickness", 2, 10, 2).Value = 6;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(6d, path.StrokeThickness);
+                    var pathToggle = FindNamedDescendant<Mux.ToggleSwitch>(page, "ToggleSwitch");
+                    Assert.IsNotNull(pathToggle);
+                    Assert.AreEqual("Show points", pathToggle.Header);
+                    var pathPoint = FindTextBlockByText(page, "Point #5: (200,75)");
+                    Assert.IsNotNull(pathPoint);
+                    Assert.AreEqual(Visibility.Collapsed, pathPoint.Visibility);
+                    pathToggle.IsOn = true;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(Visibility.Visible, pathPoint.Visibility);
+
+                    var geometryPath = FindNamedDescendant<WpfShapes.Path>(page, "GeometryGroupPath");
+                    Assert.IsNotNull(geometryPath);
+                    Assert.AreEqual(Brushes.Black, geometryPath.Stroke);
+                    Assert.AreEqual(4d, geometryPath.StrokeThickness);
+                    Assert.AreEqual(CreateBrushForTest("#CCCCFF").Color, ((SolidColorBrush)geometryPath.Fill).Color);
+                    var geometryGroup = (GeometryGroup)geometryPath.Data;
+                    Assert.AreEqual(FillRule.EvenOdd, geometryGroup.FillRule);
+                    Assert.AreEqual(3, geometryGroup.Children.Count);
+                    Assert.IsInstanceOfType(geometryGroup.Children[0], typeof(LineGeometry));
+                    var ellipseGeometry = (EllipseGeometry)geometryGroup.Children[1];
+                    Assert.AreEqual(new Point(40, 70), ellipseGeometry.Center);
+                    Assert.AreEqual(30d, ellipseGeometry.RadiusX);
+                    Assert.AreEqual(30d, ellipseGeometry.RadiusY);
+                    Assert.IsInstanceOfType(geometryGroup.Children[2], typeof(RectangleGeometry));
+                    AssertLineSlider(page, "geogroupslider1", "RadiusX", 30, 40, 30).Value = 38;
+                    AssertLineSlider(page, "geogroupslider2", "RadiusY", 30, 50, 30).Value = 44;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(38d, ellipseGeometry.RadiusX);
+                    Assert.AreEqual(44d, ellipseGeometry.RadiusY);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
         public void RadialGradientBrushSampleMatchesWinUIGalleryExample()
         {
             WpfTestHost.Run(() =>
@@ -5728,6 +5867,24 @@ namespace ModernWpf.Gallery.Tests
             Assert.AreEqual(tickFrequency, slider.TickFrequency);
             Assert.AreEqual(smallChange, slider.SmallChange);
             return slider;
+        }
+
+        private static Slider AssertLineSlider(DependencyObject root, string name, string header, double minimum, double maximum, double value)
+        {
+            var slider = FindNamedDescendant<Slider>(root, name);
+            Assert.IsNotNull(slider);
+            Assert.AreEqual(header, ModernWpf.Controls.Primitives.ControlHelper.GetHeader(slider));
+            Assert.AreEqual(minimum, slider.Minimum);
+            Assert.AreEqual(maximum, slider.Maximum);
+            Assert.AreEqual(value, slider.Value);
+            Assert.AreEqual(1d, slider.SmallChange);
+            Assert.AreEqual(0.5d, slider.TickFrequency);
+            return slider;
+        }
+
+        private static SolidColorBrush CreateBrushForTest(string color)
+        {
+            return (SolidColorBrush)new BrushConverter().ConvertFromString(color);
         }
 
         private static void AssertStoragePickerComboBox(ComboBox comboBox, string header, double width, params string[] expectedItems)

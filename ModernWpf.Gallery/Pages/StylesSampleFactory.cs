@@ -33,6 +33,35 @@ namespace ModernWpf.Gallery.Pages
     shadow.Receivers.Add(ShadowCastGrid);
 }";
 
+        private const string LineLineXaml =
+@"<Line Stroke=""SteelBlue""
+      X1=""$(Slider1)"" Y1=""$(Slider2)""
+      X2=""$(Slider3)"" Y2=""$(Slider4)""
+      StrokeThickness=""$(Slider5)""/>";
+
+        private const string LinePolylineXaml =
+@"<Polyline Stroke=""Black"" StrokeThickness=""$(Slider1)""
+          Points=""10,100 60,40 200,40 250,100""/>";
+
+        private const string LinePathXaml =
+@"<!-- The first segment is a cubic Bezier curve that begins at Point #1 and ends at Point #4, which is drawn by using Point #2 and 3 as the two control points. This segment is indicated by the ""C"" command in the Data attribute string. -->
+<!-- The second segment begins with an absolute horizontal line command ""H"", which specifies a line drawn from the preceding subpath endpoint (Point #4) to a new endpoint (Point #5). Because it's a horizontal line command, the value specified is an x-coordinate. -->
+
+<Path Stroke=""DarkGoldenRod"" StrokeThickness=""$(Slider1)""
+      Data=""M 10,100 C 100,25 300,250 400,75 H 200""/>";
+
+        private const string LineGeometryGroupXaml =
+@"<Path Stroke=""Black"" StrokeThickness=""4"" Fill=""#CCCCFF"">
+    <Path.Data>
+        <!-- Creates a composite shape from three geometries. -->
+        <GeometryGroup FillRule=""EvenOdd"">
+            <LineGeometry StartPoint=""10,10"" EndPoint=""50,30"" />
+            <EllipseGeometry Center=""40,70"" RadiusX=""$(Slider1)"" RadiusY=""$(Slider2)"" />
+            <RectangleGeometry Rect=""30,55 100 30"" />
+        </GeometryGroup>
+    </Path.Data>
+</Path>";
+
         public static UIElement Create(string uniqueId)
         {
             switch (uniqueId)
@@ -66,6 +95,8 @@ namespace ModernWpf.Gallery.Pages
         {
             switch (uniqueId)
             {
+                case "Line":
+                    return CreateLineExamples();
                 case "RadialGradientBrush":
                     return CreateRadialGradientBrushExamples(sampleSnippets);
                 case "SystemBackdrops":
@@ -208,41 +239,300 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateLineSample()
         {
-            var panel = CreateSamplePanel("Line draws a straight segment between two points.");
-            var line = new Line
+            return CreateLineExampleContent(assignRootAutomationId: true);
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateLineExamples()
+        {
+            return new[]
             {
-                X1 = 20,
-                Y1 = 30,
-                X2 = 320,
-                Y2 = 130,
-                Stroke = CreateBrush("#0078D4"),
-                StrokeThickness = 6,
-                StrokeStartLineCap = PenLineCap.Round,
-                StrokeEndLineCap = PenLineCap.Round
+                new GalleryExample(
+                    "Line",
+                    CreateLineExampleContent(assignRootAutomationId: true),
+                    LineLineXaml,
+                    null),
+                new GalleryExample(
+                    "Polyline",
+                    CreatePolylineExampleContent(),
+                    LinePolylineXaml,
+                    null),
+                new GalleryExample(
+                    "Path",
+                    CreatePathExampleContent(),
+                    LinePathXaml,
+                    null),
+                new GalleryExample(
+                    "GeometryGroup",
+                    CreateGeometryGroupExampleContent(),
+                    LineGeometryGroupXaml,
+                    null)
             };
+        }
+
+        private static GallerySamplePanel CreateLineExampleContent(bool assignRootAutomationId)
+        {
+            var root = new GallerySamplePanel();
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("Line"));
+            }
+
             var canvas = new Canvas
             {
-                Width = 360,
-                Height = 160,
-                Background = CreateBrush("#F3F3F3")
+                Width = 100,
+                Height = 200
             };
+            var line = new Line
+            {
+                Name = "LineElement",
+                Stroke = Brushes.SteelBlue,
+                StrokeThickness = 5,
+                X1 = 0,
+                Y1 = 0,
+                X2 = 200,
+                Y2 = 0
+            };
+            Canvas.SetTop(line, 50);
+            GalleryAutomation.WithAutomationId(line, GalleryAutomation.SampleElementId("Line", "Line"));
             canvas.Children.Add(line);
 
-            var thickness = new Slider
-            {
-                Width = 220,
-                Minimum = 1,
-                Maximum = 16,
-                Value = line.StrokeThickness,
-                Margin = new Thickness(0, 12, 0, 0),
-                HorizontalAlignment = HorizontalAlignment.Left
-            };
-            ControlHelper.SetHeader(thickness, "StrokeThickness");
-            thickness.ValueChanged += delegate { line.StrokeThickness = thickness.Value; };
+            var lineSlider1 = CreateLineSlider("lineSlider1", "Start point X", 0, 100);
+            var lineSlider2 = CreateLineSlider("lineSlider2", "Start point Y", 0, 100);
+            var lineSlider3 = CreateLineSlider("lineSlider3", "End point X", 200, 300);
+            var lineSlider4 = CreateLineSlider("lineSlider4", "End point Y", 0, 100);
+            var lineSlider5 = CreateLineSlider("lineSlider5", "Stroke Thickness", 5, 10);
 
-            panel.Children.Add(canvas);
-            panel.Children.Add(thickness);
-            return panel;
+            lineSlider1.ValueChanged += delegate { line.X1 = lineSlider1.Value; };
+            lineSlider2.ValueChanged += delegate { line.Y1 = lineSlider2.Value; };
+            lineSlider3.ValueChanged += delegate { line.X2 = lineSlider3.Value; };
+            lineSlider4.ValueChanged += delegate { line.Y2 = lineSlider4.Value; };
+            lineSlider5.ValueChanged += delegate { line.StrokeThickness = lineSlider5.Value; };
+
+            var options = CreateLineOptionsPanel();
+            options.Children.Add(lineSlider1);
+            options.Children.Add(lineSlider2);
+            options.Children.Add(lineSlider3);
+            options.Children.Add(lineSlider4);
+            options.Children.Add(lineSlider5);
+
+            root.Children.Add(CreateExampleWithOptions(canvas, options));
+            return root;
+        }
+
+        private static GallerySamplePanel CreatePolylineExampleContent()
+        {
+            var root = new GallerySamplePanel();
+            var canvas = new Canvas
+            {
+                Width = 320,
+                Height = 170
+            };
+            var stack = new StackPanel();
+            stack.Children.Add(new TextBlock
+            {
+                Text = "Draws a series of connected straight lines.",
+                Margin = new Thickness(0, 0, 0, 10)
+            });
+            var polyline = new Polyline
+            {
+                Name = "PolylineElement",
+                Points = new PointCollection { new Point(10, 100), new Point(60, 40), new Point(200, 40), new Point(250, 100) },
+                Stroke = Brushes.Black,
+                StrokeThickness = 2
+            };
+            stack.Children.Add(polyline);
+            canvas.Children.Add(stack);
+
+            var pointLabels = new[]
+            {
+                AddLinePointLabel(canvas, "Point #1: (10,100)", 0, 140),
+                AddLinePointLabel(canvas, "Point #2: (60,40)", 50, 40),
+                AddLinePointLabel(canvas, "Point #3: (200,40)", 200, 40),
+                AddLinePointLabel(canvas, "Point #4: (250,100)", 240, 140)
+            };
+            SetVisibility(pointLabels, Visibility.Collapsed);
+
+            var toggleSwitch = new Mux.ToggleSwitch
+            {
+                Name = "ToggleSwitch2",
+                Header = "Show points",
+                IsOn = false
+            };
+            toggleSwitch.Toggled += delegate
+            {
+                SetVisibility(pointLabels, toggleSwitch.IsOn ? Visibility.Visible : Visibility.Collapsed);
+            };
+
+            var slider = CreateLineSlider("polyLineSlider1", "Stroke Thickness", 2, 10);
+            slider.ValueChanged += delegate { polyline.StrokeThickness = slider.Value; };
+
+            var options = CreateLineOptionsPanel();
+            options.Children.Add(toggleSwitch);
+            options.Children.Add(slider);
+
+            root.Children.Add(CreateExampleWithOptions(canvas, options));
+            return root;
+        }
+
+        private static GallerySamplePanel CreatePathExampleContent()
+        {
+            var root = new GallerySamplePanel();
+            var canvas = new Canvas
+            {
+                Width = 320,
+                Height = 200
+            };
+            var stack = new StackPanel();
+            stack.Children.Add(new TextBlock
+            {
+                Text = "Draws a series of connected lines and curves."
+            });
+            var path = new Path
+            {
+                Name = "PathElement",
+                Data = Geometry.Parse("M 10,100 C 100,25 300,250 400,75 H 200"),
+                Stroke = Brushes.DarkGoldenrod,
+                StrokeThickness = 2
+            };
+            stack.Children.Add(path);
+            canvas.Children.Add(stack);
+
+            var pointLabels = new[]
+            {
+                AddLinePointLabel(canvas, "Point #1: (10,100)", 0, 130),
+                AddLinePointLabel(canvas, "Point #2: (100,25)", 40, 75),
+                AddLinePointLabel(canvas, "Point #3: (300,250)", 280, 175),
+                AddLinePointLabel(canvas, "Point #4: (400,75)", 360, 60),
+                AddLinePointLabel(canvas, "Point #5: (200,75)", 170, 60)
+            };
+            SetVisibility(pointLabels, Visibility.Collapsed);
+
+            var toggleSwitch = new Mux.ToggleSwitch
+            {
+                Name = "ToggleSwitch",
+                Header = "Show points",
+                IsOn = false
+            };
+            toggleSwitch.Toggled += delegate
+            {
+                SetVisibility(pointLabels, toggleSwitch.IsOn ? Visibility.Visible : Visibility.Collapsed);
+            };
+
+            var slider = CreateLineSlider("pathSlider1", "Stroke Thickness", 2, 10);
+            slider.ValueChanged += delegate { path.StrokeThickness = slider.Value; };
+
+            var options = CreateLineOptionsPanel();
+            options.Children.Add(toggleSwitch);
+            options.Children.Add(slider);
+
+            root.Children.Add(CreateExampleWithOptions(canvas, options));
+            return root;
+        }
+
+        private static GallerySamplePanel CreateGeometryGroupExampleContent()
+        {
+            var root = new GallerySamplePanel();
+            var canvas = new Canvas
+            {
+                Width = 100,
+                Height = 170
+            };
+            var stack = new StackPanel();
+            stack.Children.Add(new TextBlock
+            {
+                Text = "Composite geometry objects can be created using a GeometryGroup.",
+                Margin = new Thickness(0, 0, 0, 15)
+            });
+
+            var ellipseGeometry = new EllipseGeometry
+            {
+                Center = new Point(40, 70),
+                RadiusX = 30,
+                RadiusY = 30
+            };
+            var geometryGroup = new GeometryGroup { FillRule = FillRule.EvenOdd };
+            geometryGroup.Children.Add(new LineGeometry(new Point(10, 10), new Point(50, 30)));
+            geometryGroup.Children.Add(ellipseGeometry);
+            geometryGroup.Children.Add(new RectangleGeometry(new Rect(30, 55, 100, 30)));
+
+            stack.Children.Add(new Path
+            {
+                Name = "GeometryGroupPath",
+                Data = geometryGroup,
+                Fill = CreateBrush("#CCCCFF"),
+                Stroke = Brushes.Black,
+                StrokeThickness = 4
+            });
+            canvas.Children.Add(stack);
+
+            var radiusXSlider = CreateLineSlider("geogroupslider1", "RadiusX", 30, 40);
+            var radiusYSlider = CreateLineSlider("geogroupslider2", "RadiusY", 30, 50);
+            radiusXSlider.ValueChanged += delegate { ellipseGeometry.RadiusX = radiusXSlider.Value; };
+            radiusYSlider.ValueChanged += delegate { ellipseGeometry.RadiusY = radiusYSlider.Value; };
+
+            var options = CreateLineOptionsPanel();
+            options.Children.Add(radiusXSlider);
+            options.Children.Add(radiusYSlider);
+
+            root.Children.Add(CreateExampleWithOptions(canvas, options));
+            return root;
+        }
+
+        private static Grid CreateExampleWithOptions(UIElement example, FrameworkElement options)
+        {
+            var layout = new Grid();
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            Grid.SetColumn(example, 0);
+            Grid.SetColumn(options, 1);
+            options.Margin = new Thickness(24, 0, 0, 0);
+            layout.Children.Add(example);
+            layout.Children.Add(options);
+            return layout;
+        }
+
+        private static StackPanel CreateLineOptionsPanel()
+        {
+            return new StackPanel
+            {
+                Width = 220
+            };
+        }
+
+        private static Slider CreateLineSlider(string name, string header, double minimum, double maximum)
+        {
+            var slider = new Slider
+            {
+                Name = name,
+                Minimum = minimum,
+                Maximum = maximum,
+                Value = minimum,
+                SmallChange = 1,
+                TickFrequency = 0.5
+            };
+            ControlHelper.SetHeader(slider, header);
+            return slider;
+        }
+
+        private static TextBlock AddLinePointLabel(Canvas canvas, string text, double left, double top)
+        {
+            var textBlock = new TextBlock
+            {
+                Text = text
+            };
+            Canvas.SetLeft(textBlock, left);
+            Canvas.SetTop(textBlock, top);
+            Panel.SetZIndex(textBlock, 1);
+            canvas.Children.Add(textBlock);
+            return textBlock;
+        }
+
+        private static void SetVisibility(IEnumerable<UIElement> elements, Visibility visibility)
+        {
+            foreach (var element in elements)
+            {
+                element.Visibility = visibility;
+            }
         }
 
         private static UIElement CreateShapeSample()
