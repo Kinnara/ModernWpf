@@ -9,6 +9,7 @@ using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Input;
 using System.Windows.Markup;
 using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -407,6 +408,24 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(new Thickness(1), divider.BorderThickness);
                     Assert.IsNull(divider.BorderBrush);
                     Assert.AreEqual(Visibility.Visible, divider.Visibility);
+
+                    sourceCodeExpander.IsExpanded = true;
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    var copyButtons = FindVisualChildren<Button>(controlExample)
+                        .Where(button => button.Command == ApplicationCommands.Copy)
+                        .ToArray();
+                    Assert.AreEqual(2, copyButtons.Length);
+
+                    var xamlCopyButton = copyButtons.Single(button => Equals(button.CommandParameter, "Copy_XamlCode"));
+                    Assert.AreEqual("Copy XAML Code", AutomationProperties.GetName(xamlCopyButton));
+                    Assert.AreEqual("Copy to clipboard", ToolTipService.GetToolTip(xamlCopyButton));
+
+                    var csharpCopyButton = copyButtons.Single(button => Equals(button.CommandParameter, "Copy_CSharpCode"));
+                    Assert.AreEqual(string.Empty, AutomationProperties.GetName(csharpCopyButton));
+                    Assert.IsNull(ToolTipService.GetToolTip(csharpCopyButton));
                 }
                 finally
                 {
@@ -589,6 +608,25 @@ namespace ModernWpf.Gallery.Tests
             {
                 window.Content = null;
                 window.Close();
+            }
+        }
+
+        private static IEnumerable<T> FindVisualChildren<T>(DependencyObject root)
+            where T : DependencyObject
+        {
+            var childCount = VisualTreeHelper.GetChildrenCount(root);
+            for (var i = 0; i < childCount; i++)
+            {
+                var child = VisualTreeHelper.GetChild(root, i);
+                if (child is T match)
+                {
+                    yield return match;
+                }
+
+                foreach (var descendant in FindVisualChildren<T>(child))
+                {
+                    yield return descendant;
+                }
             }
         }
 
