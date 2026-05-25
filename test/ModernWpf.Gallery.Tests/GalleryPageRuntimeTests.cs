@@ -1989,7 +1989,7 @@ namespace ModernWpf.Gallery.Tests
             {
                 var spacingPage = new ItemPage(GalleryCatalog.FindItem("Spacing"));
                 Assert.IsTrue(spacingPage.HasDirectPageContent);
-                AssertDirectPagePane(spacingPage);
+                AssertNoContentPagePaneHook(spacingPage);
                 var spacingBody = GetDirectPageBodyStack(spacingPage);
                 Assert.AreEqual("Consistent spacing helps create visual harmony and improves the readability and usability of your application.", ((TextBlock)spacingBody.Children[0]).Text);
                 var spacingUsage = (TextBlock)spacingBody.Children[1];
@@ -2067,7 +2067,7 @@ namespace ModernWpf.Gallery.Tests
 
                 var typographyPage = new ItemPage(GalleryCatalog.FindItem("Typography"));
                 Assert.IsTrue(typographyPage.HasDirectPageContent);
-                AssertDirectPagePane(typographyPage);
+                AssertNoContentPagePaneHook(typographyPage);
                 var typographyBody = GetDirectPageBodyStack(typographyPage);
                 Assert.AreEqual("Type helps provide structure and hierarchy to UI. The default font for Windows is Segoe UI Variable.", ((TextBlock)typographyBody.Children[0]).Text);
                 Assert.AreEqual("Best practice is to use Regular weight for most text, use Semibold for titles.", ((TextBlock)typographyBody.Children[1]).Text);
@@ -2100,7 +2100,7 @@ namespace ModernWpf.Gallery.Tests
 
                 var geometryPage = new ItemPage(GalleryCatalog.FindItem("Geometry"));
                 Assert.IsTrue(geometryPage.HasDirectPageContent);
-                AssertDirectPagePane(geometryPage);
+                AssertNoContentPagePaneHook(geometryPage);
                 var geometryBody = GetDirectPageBodyStack(geometryPage);
                 Assert.AreEqual(new Thickness(0, 0, 0, 24), geometryBody.Margin);
                 Assert.AreEqual(5, geometryBody.Children.Count);
@@ -2379,7 +2379,7 @@ namespace ModernWpf.Gallery.Tests
             {
                 var page = new ItemPage(GalleryCatalog.FindItem("Iconography"));
                 Assert.IsTrue(page.HasDirectPageContent);
-                AssertDirectPagePane(page);
+                AssertNoContentPagePaneHook(page);
 
                 var directPage = (IconographyPage)page.DirectPageContent;
                 directPage.RaiseEvent(new RoutedEventArgs(FrameworkElement.LoadedEvent, directPage));
@@ -2889,6 +2889,12 @@ namespace ModernWpf.Gallery.Tests
             Assert.IsNotNull(pane, page.UniqueId);
             Assert.AreEqual("ContentPagePane", pane.Name);
             Assert.IsTrue(double.IsNaN(pane.Height), page.UniqueId);
+        }
+
+        private static void AssertNoContentPagePaneHook(ItemPage page)
+        {
+            var pane = ((FrameworkElement)page.DirectPageContent).FindName("ContentPagePane") as FrameworkElement;
+            Assert.IsNull(pane, page.UniqueId);
         }
 
         private static void AssertNamedImageSource(FrameworkElement root, string name, string fileName)
