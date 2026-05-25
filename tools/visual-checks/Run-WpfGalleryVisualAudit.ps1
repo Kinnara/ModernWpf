@@ -1008,7 +1008,7 @@ function Get-ImageArtifactInfo([string]$path, [string]$source) {
 }
 
 function Test-ModernRenderedContentArtifact([string]$artifactDir) {
-    foreach ($fileName in @("ContentRootGrid.png", "ContentPagePane.png", "GalleryContentHost.png")) {
+    foreach ($fileName in @("ContentRootGrid.png", "ContentPagePane.png", "GalleryItemPageRoot.png", "GalleryContentHost.png")) {
         $path = Join-Path $artifactDir $fileName
         try {
             if (Test-ImageNotBlank $path) {
@@ -1465,6 +1465,10 @@ function Capture-ModernWpf($case, [string]$caseDir) {
             $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "ContentPagePaneRenderedArtifact"
         }
         if (!$contentCrop.NonBlank) {
+            $renderedContentArtifact = Join-Path $artifactDir "GalleryItemPageRoot.png"
+            $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "GalleryItemPageRootRenderedArtifact"
+        }
+        if (!$contentCrop.NonBlank) {
             $renderedContentArtifact = Join-Path $artifactDir "GalleryContentHost.png"
             $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "GalleryContentHostRenderedArtifact"
         }
@@ -1481,6 +1485,10 @@ function Capture-ModernWpf($case, [string]$caseDir) {
             if (!$contentCrop.NonBlank) {
                 $renderedContentArtifact = Join-Path $artifactDir "ContentPagePane.png"
                 $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "ContentPagePaneRenderedArtifact"
+            }
+            if (!$contentCrop.NonBlank) {
+                $renderedContentArtifact = Join-Path $artifactDir "GalleryItemPageRoot.png"
+                $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "GalleryItemPageRootRenderedArtifact"
             }
             if (!$contentCrop.NonBlank) {
                 $renderedContentArtifact = Join-Path $artifactDir "GalleryContentHost.png"

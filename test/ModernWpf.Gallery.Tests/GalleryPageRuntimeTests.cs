@@ -2498,7 +2498,8 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual("UserDashboardPage", directPage.Title);
                 Assert.IsInstanceOfType(directPage.ViewModel, typeof(UserDashboardPageViewModel));
 
-                var root = (Grid)directPage.FindName("ContentRootGrid");
+                Assert.IsNull(directPage.FindName("ContentRootGrid"));
+                var root = (Grid)directPage.Content;
                 var window = new Window
                 {
                     Width = 900,
@@ -2522,8 +2523,9 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(2, root.RowDefinitions.Count);
                     Assert.AreEqual(280.0, root.RowDefinitions[0].MaxHeight);
                     Assert.AreEqual(new GridLength(2, GridUnitType.Star), root.RowDefinitions[1].Height);
+                    Assert.AreEqual(string.Empty, root.Name);
                     Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(root));
-                    Assert.AreSame(Application.Current.FindResource("GalleryPageRootStyle"), root.Style);
+                    Assert.IsNull(root.Style);
                     Assert.AreEqual(14.0, TextElement.GetFontSize(root));
 
                     var userListGrid = root.Children.OfType<Grid>().Single(child => Grid.GetColumn(child) == 0);

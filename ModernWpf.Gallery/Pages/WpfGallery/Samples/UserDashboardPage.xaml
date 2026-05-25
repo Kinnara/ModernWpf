@@ -26,9 +26,7 @@
         </Style>
     </Page.Resources>
 
-    <Grid
-        x:Name="ContentRootGrid"
-        Style="{StaticResource GalleryPageRootStyle}">
+    <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />

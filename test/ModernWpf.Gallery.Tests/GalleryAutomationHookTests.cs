@@ -4018,7 +4018,7 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void UserDashboardWritesNamedContentRootGridVisualArtifact()
+        public void UserDashboardWritesItemPageRootVisualArtifact()
         {
             WpfTestHost.Run(() =>
             {
@@ -4046,10 +4046,10 @@ namespace ModernWpf.Gallery.Tests
 
                     GalleryDiagnostics.WriteVisualArtifacts(page);
 
-                    var contentRootArtifact = Path.Combine(artifactDirectory, "ContentRootGrid.png");
-                    Assert.IsTrue(File.Exists(contentRootArtifact), contentRootArtifact + " was not written.");
-                    Assert.IsTrue(new FileInfo(contentRootArtifact).Length > 0);
-                    Assert.IsTrue(HasVisibleRgbPixels(contentRootArtifact), contentRootArtifact + " has no visible RGB content.");
+                    var itemPageRootArtifact = Path.Combine(artifactDirectory, "GalleryItemPageRoot.png");
+                    Assert.IsTrue(File.Exists(itemPageRootArtifact), itemPageRootArtifact + " was not written.");
+                    Assert.IsTrue(new FileInfo(itemPageRootArtifact).Length > 0);
+                    Assert.IsTrue(HasVisibleRgbPixels(itemPageRootArtifact), itemPageRootArtifact + " has no visible RGB content.");
                 }
                 finally
                 {
