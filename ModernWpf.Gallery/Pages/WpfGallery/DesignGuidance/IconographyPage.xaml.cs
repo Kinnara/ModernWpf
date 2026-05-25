@@ -59,7 +59,6 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
         private void IconsSearchBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             UpdateSearchPlaceholder();
-            ViewModel.SearchText = IconsSearchBox.Text;
         }
 
         private void UpdateSearchPlaceholder()

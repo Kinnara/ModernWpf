@@ -2396,6 +2396,9 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual("Search Icons by Name, Tag", AutomationProperties.GetName(searchBox));
                 Assert.AreEqual("Search Icons by Name, Tag", searchPlaceholder.Text);
                 Assert.AreEqual(Visibility.Visible, searchPlaceholder.Visibility);
+                var searchTextBinding = searchBox.GetBindingExpression(TextBox.TextProperty);
+                Assert.IsNotNull(searchTextBinding);
+                Assert.AreEqual(string.Empty, directPage.ViewModel.SearchText);
 
                 var libraryGrid = (Grid)body.Children.Cast<UIElement>().Single(child => Grid.GetRow(child) == 4);
                 Assert.AreEqual(2, libraryGrid.ColumnDefinitions.Count);
@@ -2450,15 +2453,22 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(1, pageSizeComboBox.SelectedIndex);
 
                 searchBox.Text = "GlobalNavButton";
-                WpfTestHost.DoEvents();
                 Assert.AreEqual(Visibility.Hidden, searchPlaceholder.Visibility);
+                Assert.AreEqual(string.Empty, directPage.ViewModel.SearchText);
+                searchTextBinding.UpdateSource();
+                WpfTestHost.DoEvents();
+                Assert.AreEqual("GlobalNavButton", directPage.ViewModel.SearchText);
                 Assert.AreEqual("GlobalNavButton", selectedName.Text);
                 Assert.IsTrue(iconsListView.Items.Count > 0);
                 Assert.IsTrue(iconsListView.Items.Count < 250);
 
                 searchBox.Text = string.Empty;
+                Assert.AreEqual(Visibility.Visible, searchPlaceholder.Visibility);
+                Assert.AreEqual("GlobalNavButton", directPage.ViewModel.SearchText);
+                searchTextBinding.UpdateSource();
                 pageSizeComboBox.SelectedIndex = 0;
                 WpfTestHost.DoEvents();
+                Assert.AreEqual(string.Empty, directPage.ViewModel.SearchText);
                 Assert.AreEqual(Visibility.Visible, searchPlaceholder.Visibility);
                 Assert.AreEqual(100, iconsListView.Items.Count);
                 Assert.AreEqual("Page 1 of", currentPageText.Text);
