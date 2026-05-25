@@ -7,7 +7,6 @@
     xmlns:ui="http://schemas.modernwpf.com/2019"
     d:DesignHeight="820"
     d:DesignWidth="1180"
-    AutomationProperties.AutomationId="GalleryNavigationRoot"
     mc:Ignorable="d">
     <UserControl.Resources>
         <ui:BindingProxy x:Key="NavigationRootDataContextProxy" Value="{Binding}" />
@@ -83,7 +82,6 @@
 
         <ui:NavigationView
             x:Name="Navigation"
-            AutomationProperties.AutomationId="GalleryNavigationView"
             AutomationProperties.Name="Navigation Pane"
             IsBackButtonVisible="Collapsed"
             IsPaneToggleButtonVisible="False"
@@ -111,7 +109,6 @@
                         Padding="{StaticResource ButtonPadding}"
                         HorizontalContentAlignment="Left"
                         VerticalContentAlignment="Center"
-                        AutomationProperties.AutomationId="SettingsButton"
                         AutomationProperties.Name="Settings"
                         Click="OnSettingsButtonClick"
                         Command="{Binding Value.ViewModel.SettingsCommand, Source={StaticResource NavigationRootDataContextProxy}}"
@@ -120,7 +117,6 @@
                             <TextBlock
                                 x:Name="SettingsIcon"
                                 VerticalAlignment="Center"
-                                AutomationProperties.AutomationId="SettingsIcon"
                                 FontSize="14"
                                 FontFamily="{StaticResource SymbolThemeFontFamily}"
                                 Text="&#xE713;" />
@@ -145,7 +141,6 @@
                 CornerRadius="8,0,0,0">
                 <Frame
                     x:Name="ContentHost"
-                    AutomationProperties.AutomationId="GalleryContentHost"
                     NavigationUIVisibility="Hidden" />
             </Border>
         </ui:NavigationView>

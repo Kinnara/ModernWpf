@@ -116,6 +116,13 @@ namespace ModernWpf.Gallery.Shell
         public NavigationRootPage()
         {
             InitializeComponent();
+            if (GalleryDiagnostics.IsEnabled)
+            {
+                AutomationProperties.SetAutomationId(this, "GalleryNavigationRoot");
+                AutomationProperties.SetAutomationId(Navigation, "GalleryNavigationView");
+                AutomationProperties.SetAutomationId(ContentHost, "GalleryContentHost");
+            }
+
             AlignNavigationViewItemResourcesWithWpfGalleryTreeView();
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;

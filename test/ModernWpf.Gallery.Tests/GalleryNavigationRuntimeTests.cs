@@ -216,7 +216,7 @@ namespace ModernWpf.Gallery.Tests
                 Assert.IsNull(mediaItem.MenuItems.OfType<NavigationViewItem>().First().Icon);
 
                 var settingsButton = (Button)page.FindName("SettingsButton");
-                Assert.AreEqual("SettingsButton", AutomationProperties.GetAutomationId(settingsButton));
+                Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(settingsButton));
                 Assert.AreEqual("Settings", AutomationProperties.GetName(settingsButton));
                 Assert.AreEqual(250d, settingsButton.Width);
                 Assert.AreEqual(36d, settingsButton.Height);
@@ -229,7 +229,7 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(new Thickness(11, 0, 0, 0), settingsContent.Margin);
 
                 var settingsIcon = (TextBlock)page.FindName("SettingsIcon");
-                Assert.AreEqual("SettingsIcon", AutomationProperties.GetAutomationId(settingsIcon));
+                Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(settingsIcon));
                 Assert.AreEqual("\uE713", settingsIcon.Text);
                 Assert.AreEqual(14d, settingsIcon.FontSize);
                 Assert.AreEqual(VerticalAlignment.Center, settingsIcon.VerticalAlignment);
@@ -266,12 +266,18 @@ namespace ModernWpf.Gallery.Tests
                     var normalPage = new NavigationRootPage();
                     var normalPanel = (FrameworkElement)normalPage.FindName("VisualTestStatusPanel");
                     Assert.AreEqual(Visibility.Collapsed, normalPanel.Visibility);
+                    Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(normalPage));
+                    Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId((DependencyObject)normalPage.FindName("Navigation")));
+                    Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId((DependencyObject)normalPage.FindName("ContentHost")));
 
                     GalleryDiagnostics.Configure(GalleryLaunchOptions.Parse(new[] { "--visual-test" }));
                     var visualTestPage = new NavigationRootPage();
                     Dispatcher.CurrentDispatcher.Invoke(DispatcherPriority.ContextIdle, new Action(() => { }));
                     var visualTestPanel = (FrameworkElement)visualTestPage.FindName("VisualTestStatusPanel");
                     Assert.AreEqual(Visibility.Visible, visualTestPanel.Visibility);
+                    Assert.AreEqual("GalleryNavigationRoot", AutomationProperties.GetAutomationId(visualTestPage));
+                    Assert.AreEqual("GalleryNavigationView", AutomationProperties.GetAutomationId((DependencyObject)visualTestPage.FindName("Navigation")));
+                    Assert.AreEqual("GalleryContentHost", AutomationProperties.GetAutomationId((DependencyObject)visualTestPage.FindName("ContentHost")));
                     Assert.AreEqual("home", ((TextBlock)visualTestPage.FindName("VisualTestCurrentRouteText")).Text);
                     Assert.AreEqual("Ready:home", ((TextBlock)visualTestPage.FindName("VisualTestReadyStateText")).Text);
                 }
