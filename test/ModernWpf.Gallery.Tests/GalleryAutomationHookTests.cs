@@ -41,6 +41,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "MediaPlayerElement", "GallerySample_MediaPlayerElement_Root", "GallerySample_MediaPlayerElement_MediaPlayerElement" };
             yield return new object[] { "MapControl", "GallerySample_MapControl_Root", "GallerySample_MapControl_MapControl" };
             yield return new object[] { "WebView2", "GallerySample_WebView2_Root", "GallerySample_WebView2_WebView2" };
+            yield return new object[] { "RadialGradientBrush", "GallerySample_RadialGradientBrush_Root", "GallerySample_RadialGradientBrush_Rect" };
             yield return new object[] { "SystemBackdrops", "GallerySample_SystemBackdrops_Root", "GallerySample_SystemBackdrops_ShowWindowButton" };
             yield return new object[] { "SystemBackdropElement", "GallerySample_SystemBackdropElement_Root", "GallerySample_SystemBackdropElement_Button" };
             yield return new object[] { "ThemeShadow", "GallerySample_ThemeShadow_Root", "GallerySample_ThemeShadow_ShadowRect" };
@@ -3713,6 +3714,124 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void RadialGradientBrushSampleMatchesWinUIGalleryExample()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("RadialGradientBrush"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(1, page.Examples.Count);
+                    Assert.AreEqual("RadialGradientBrush Sample", page.Examples[0].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "<media:RadialGradientBrush");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "MappingMode=\"$(MappingMode)\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "Center=\"$(CenterX),$(CenterY)\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "GradientOrigin=\"$(OriginX),$(OriginY)\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "SpreadMethod=\"$(SpreadMethod)\"");
+
+                    var root = (GallerySamplePanel)page.Examples[0].ExampleContent;
+                    Assert.AreEqual(1, root.Children.Count);
+                    var layout = (Grid)root.Children[0];
+                    Assert.AreEqual(2, layout.ColumnDefinitions.Count);
+
+                    var rect = (System.Windows.Shapes.Rectangle)FindByAutomationId(page, "GallerySample_RadialGradientBrush_Rect");
+                    Assert.IsNotNull(rect);
+                    Assert.AreSame(rect, FindNamedDescendant<System.Windows.Shapes.Rectangle>(page, "Rect"));
+                    Assert.AreEqual(200d, rect.Width);
+                    Assert.AreEqual(200d, rect.Height);
+
+                    var brush = (RadialGradientBrush)rect.Fill;
+                    Assert.AreEqual(BrushMappingMode.RelativeToBoundingBox, brush.MappingMode);
+                    Assert.AreEqual(GradientSpreadMethod.Pad, brush.SpreadMethod);
+                    Assert.AreEqual(new Point(0.5, 0.5), brush.Center);
+                    Assert.AreEqual(new Point(0.5, 0.5), brush.GradientOrigin);
+                    Assert.AreEqual(0.5d, brush.RadiusX);
+                    Assert.AreEqual(0.5d, brush.RadiusY);
+                    Assert.AreEqual(2, brush.GradientStops.Count);
+                    Assert.AreEqual(Colors.Yellow, brush.GradientStops[0].Color);
+                    Assert.AreEqual(0d, brush.GradientStops[0].Offset);
+                    Assert.AreEqual(Colors.Blue, brush.GradientStops[1].Color);
+                    Assert.AreEqual(1d, brush.GradientStops[1].Offset);
+
+                    var mappingModeComboBox = FindNamedDescendant<ComboBox>(page, "MappingModeComboBox");
+                    Assert.IsNotNull(mappingModeComboBox);
+                    Assert.AreEqual("MappingMode", ModernWpf.Controls.Primitives.ControlHelper.GetHeader(mappingModeComboBox));
+                    Assert.AreEqual(0, mappingModeComboBox.SelectedIndex);
+                    Assert.AreEqual("RelativeToBoundingBox", mappingModeComboBox.Items[0]);
+                    Assert.AreEqual("Absolute", mappingModeComboBox.Items[1]);
+
+                    var centerXSlider = AssertRadialGradientSlider(page, "CenterXSlider", "Center.X", 1, 0.5, 0.02, 0.05);
+                    var centerYSlider = AssertRadialGradientSlider(page, "CenterYSlider", "Center.Y", 1, 0.5, 0.02, 0.05);
+                    var radiusXSlider = AssertRadialGradientSlider(page, "RadiusXSlider", "RadiusX", 1, 0.5, 0.02, 0.05);
+                    var radiusYSlider = AssertRadialGradientSlider(page, "RadiusYSlider", "RadiusY", 1, 0.5, 0.02, 0.05);
+                    var originXSlider = AssertRadialGradientSlider(page, "OriginXSlider", "GradientOrigin.X", 1, 0.5, 0.02, 0.05);
+                    var originYSlider = AssertRadialGradientSlider(page, "OriginYSlider", "GradientOrigin.Y", 1, 0.5, 0.02, 0.05);
+
+                    var spreadMethodComboBox = FindNamedDescendant<ComboBox>(page, "SpreadMethodComboBox");
+                    Assert.IsNotNull(spreadMethodComboBox);
+                    Assert.AreEqual("SpreadMethod", ModernWpf.Controls.Primitives.ControlHelper.GetHeader(spreadMethodComboBox));
+                    Assert.AreEqual(0, spreadMethodComboBox.SelectedIndex);
+                    Assert.AreEqual("Pad", spreadMethodComboBox.Items[0]);
+                    Assert.AreEqual("Reflect", spreadMethodComboBox.Items[1]);
+                    Assert.AreEqual("Repeat", spreadMethodComboBox.Items[2]);
+
+                    centerXSlider.Value = 0.25;
+                    centerYSlider.Value = 0.75;
+                    radiusXSlider.Value = 0.6;
+                    radiusYSlider.Value = 0.4;
+                    originXSlider.Value = 0.2;
+                    originYSlider.Value = 0.8;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(new Point(0.25, 0.75), brush.Center);
+                    Assert.AreEqual(new Point(0.2, 0.8), brush.GradientOrigin);
+                    Assert.AreEqual(0.6d, brush.RadiusX);
+                    Assert.AreEqual(0.4d, brush.RadiusY);
+
+                    spreadMethodComboBox.SelectedIndex = 1;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(GradientSpreadMethod.Reflect, brush.SpreadMethod);
+
+                    mappingModeComboBox.SelectedIndex = 1;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(BrushMappingMode.Absolute, brush.MappingMode);
+                    Assert.AreEqual(new Point(100, 100), brush.Center);
+                    Assert.AreEqual(new Point(100, 100), brush.GradientOrigin);
+                    Assert.AreEqual(100d, brush.RadiusX);
+                    Assert.AreEqual(100d, brush.RadiusY);
+                    AssertRadialGradientSlider(page, "CenterXSlider", "Center.X", 200, 100, 4, 10);
+                    AssertRadialGradientSlider(page, "CenterYSlider", "Center.Y", 200, 100, 4, 10);
+                    AssertRadialGradientSlider(page, "RadiusXSlider", "RadiusX", 200, 100, 4, 10);
+                    AssertRadialGradientSlider(page, "RadiusYSlider", "RadiusY", 200, 100, 4, 10);
+                    AssertRadialGradientSlider(page, "OriginXSlider", "GradientOrigin.X", 200, 100, 4, 10);
+                    AssertRadialGradientSlider(page, "OriginYSlider", "GradientOrigin.Y", 200, 100, 4, 10);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
         public void ThemeShadowSampleMatchesWinUIGalleryExample()
         {
             WpfTestHost.Run(() =>
@@ -5597,6 +5716,18 @@ namespace ModernWpf.Gallery.Tests
             Assert.AreEqual(32d, selector.Height);
             Assert.AreEqual(color, selector.Tag);
             Assert.AreEqual(automationName, AutomationProperties.GetName(selector));
+        }
+
+        private static Slider AssertRadialGradientSlider(DependencyObject root, string name, string header, double maximum, double value, double tickFrequency, double smallChange)
+        {
+            var slider = FindNamedDescendant<Slider>(root, name);
+            Assert.IsNotNull(slider);
+            Assert.AreEqual(header, ModernWpf.Controls.Primitives.ControlHelper.GetHeader(slider));
+            Assert.AreEqual(maximum, slider.Maximum);
+            Assert.AreEqual(value, slider.Value);
+            Assert.AreEqual(tickFrequency, slider.TickFrequency);
+            Assert.AreEqual(smallChange, slider.SmallChange);
+            return slider;
         }
 
         private static void AssertStoragePickerComboBox(ComboBox comboBox, string header, double width, params string[] expectedItems)

@@ -66,6 +66,8 @@ namespace ModernWpf.Gallery.Pages
         {
             switch (uniqueId)
             {
+                case "RadialGradientBrush":
+                    return CreateRadialGradientBrushExamples(sampleSnippets);
                 case "SystemBackdrops":
                     return CreateSystemBackdropsExamples(sampleSnippets);
                 case "SystemBackdropElement":
@@ -282,44 +284,200 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateRadialGradientBrushSample()
         {
-            var panel = CreateSamplePanel("RadialGradientBrush paints from a center point outward through gradient stops.");
+            return CreateRadialGradientBrushExampleContent(assignRootAutomationId: true);
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateRadialGradientBrushExamples(IReadOnlyList<SampleSnippet> sampleSnippets)
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "RadialGradientBrush Sample",
+                    CreateRadialGradientBrushExampleContent(assignRootAutomationId: true),
+                    FindSampleCodeText(sampleSnippets, "RadialGradientBrushSample_xaml.txt", System.IO.Path.Combine("Brushes", "RadialGradientBrushSample_xaml.txt")),
+                    null)
+            };
+        }
+
+        private static GallerySamplePanel CreateRadialGradientBrushExampleContent(bool assignRootAutomationId)
+        {
+            var root = new GallerySamplePanel();
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("RadialGradientBrush"));
+            }
+
             var brush = new RadialGradientBrush
             {
-                GradientOrigin = new Point(0.35, 0.28),
-                Center = new Point(0.5, 0.5),
-                RadiusX = 0.74,
-                RadiusY = 0.74
+                Center = new Point(0.25, 0.25),
+                GradientOrigin = new Point(0.5, 0.25),
+                MappingMode = BrushMappingMode.RelativeToBoundingBox,
+                RadiusX = 0.5,
+                RadiusY = 0.5,
+                SpreadMethod = GradientSpreadMethod.Pad
             };
-            brush.GradientStops.Add(new GradientStop(Colors.White, 0));
-            brush.GradientStops.Add(new GradientStop(Color.FromRgb(0, 120, 212), 0.42));
-            brush.GradientStops.Add(new GradientStop(Color.FromRgb(36, 36, 36), 1));
+            brush.GradientStops.Add(new GradientStop(Colors.Yellow, 0));
+            brush.GradientStops.Add(new GradientStop(Colors.Blue, 1));
 
-            var swatch = new Border
+            var rect = new Rectangle
             {
-                Width = 320,
-                Height = 190,
-                CornerRadius = new CornerRadius(8),
-                Background = brush
+                Name = "Rect",
+                Width = 200,
+                Height = 200,
+                Fill = brush
             };
-            var radius = new Slider
-            {
-                Width = 240,
-                Minimum = 0.25,
-                Maximum = 1,
-                Value = brush.RadiusX,
-                Margin = new Thickness(0, 12, 0, 0),
-                HorizontalAlignment = HorizontalAlignment.Left
-            };
-            ControlHelper.SetHeader(radius, "Radius");
-            radius.ValueChanged += delegate
-            {
-                brush.RadiusX = radius.Value;
-                brush.RadiusY = radius.Value;
-            };
+            GalleryAutomation.WithAutomationId(rect, GalleryAutomation.SampleElementId("RadialGradientBrush", "Rect"));
 
-            panel.Children.Add(swatch);
-            panel.Children.Add(radius);
-            return panel;
+            var sample = new StackPanel
+            {
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                Orientation = Orientation.Horizontal
+            };
+            sample.Children.Add(rect);
+
+            var mappingModeComboBox = new ComboBox
+            {
+                Name = "MappingModeComboBox"
+            };
+            ControlHelper.SetHeader(mappingModeComboBox, "MappingMode");
+            mappingModeComboBox.Items.Add("RelativeToBoundingBox");
+            mappingModeComboBox.Items.Add("Absolute");
+            mappingModeComboBox.SelectedIndex = 0;
+
+            var centerXSlider = CreateRadialGradientSlider("CenterXSlider", "Center.X");
+            var centerYSlider = CreateRadialGradientSlider("CenterYSlider", "Center.Y");
+            var radiusXSlider = CreateRadialGradientSlider("RadiusXSlider", "RadiusX");
+            var radiusYSlider = CreateRadialGradientSlider("RadiusYSlider", "RadiusY");
+            var originXSlider = CreateRadialGradientSlider("OriginXSlider", "GradientOrigin.X");
+            var originYSlider = CreateRadialGradientSlider("OriginYSlider", "GradientOrigin.Y");
+
+            var spreadMethodComboBox = new ComboBox
+            {
+                Name = "SpreadMethodComboBox",
+                Margin = new Thickness(0, 10, 0, 0)
+            };
+            ControlHelper.SetHeader(spreadMethodComboBox, "SpreadMethod");
+            spreadMethodComboBox.Items.Add("Pad");
+            spreadMethodComboBox.Items.Add("Reflect");
+            spreadMethodComboBox.Items.Add("Repeat");
+            spreadMethodComboBox.SelectedIndex = 0;
+
+            void UpdateBrushFromSliders()
+            {
+                brush.Center = new Point(centerXSlider.Value, centerYSlider.Value);
+                brush.RadiusX = radiusXSlider.Value;
+                brush.RadiusY = radiusYSlider.Value;
+                brush.GradientOrigin = new Point(originXSlider.Value, originYSlider.Value);
+            }
+
+            void InitializeSliders()
+            {
+                if (brush.MappingMode == BrushMappingMode.Absolute)
+                {
+                    InitializeRadialGradientSlider(centerXSlider, 200, 100, 4, 10);
+                    InitializeRadialGradientSlider(centerYSlider, 200, 100, 4, 10);
+                    InitializeRadialGradientSlider(radiusXSlider, 200, 100, 4, 10);
+                    InitializeRadialGradientSlider(radiusYSlider, 200, 100, 4, 10);
+                    InitializeRadialGradientSlider(originXSlider, 200, 100, 4, 10);
+                    InitializeRadialGradientSlider(originYSlider, 200, 100, 4, 10);
+                }
+                else
+                {
+                    InitializeRadialGradientSlider(centerXSlider, 1, 0.5, 0.02, 0.05);
+                    InitializeRadialGradientSlider(centerYSlider, 1, 0.5, 0.02, 0.05);
+                    InitializeRadialGradientSlider(radiusXSlider, 1, 0.5, 0.02, 0.05);
+                    InitializeRadialGradientSlider(radiusYSlider, 1, 0.5, 0.02, 0.05);
+                    InitializeRadialGradientSlider(originXSlider, 1, 0.5, 0.02, 0.05);
+                    InitializeRadialGradientSlider(originYSlider, 1, 0.5, 0.02, 0.05);
+                }
+
+                UpdateBrushFromSliders();
+            }
+
+            centerXSlider.ValueChanged += delegate { UpdateBrushFromSliders(); };
+            centerYSlider.ValueChanged += delegate { UpdateBrushFromSliders(); };
+            radiusXSlider.ValueChanged += delegate { UpdateBrushFromSliders(); };
+            radiusYSlider.ValueChanged += delegate { UpdateBrushFromSliders(); };
+            originXSlider.ValueChanged += delegate { UpdateBrushFromSliders(); };
+            originYSlider.ValueChanged += delegate { UpdateBrushFromSliders(); };
+            mappingModeComboBox.SelectionChanged += delegate
+            {
+                var modeString = mappingModeComboBox.SelectedItem as string;
+                if (!string.IsNullOrEmpty(modeString))
+                {
+                    brush.MappingMode = (BrushMappingMode)Enum.Parse(typeof(BrushMappingMode), modeString);
+                    InitializeSliders();
+                }
+            };
+            spreadMethodComboBox.SelectionChanged += delegate
+            {
+                var methodString = spreadMethodComboBox.SelectedItem as string;
+                if (!string.IsNullOrEmpty(methodString))
+                {
+                    brush.SpreadMethod = (GradientSpreadMethod)Enum.Parse(typeof(GradientSpreadMethod), methodString);
+                }
+            };
+            InitializeSliders();
+
+            var options = new Grid();
+            options.RowDefinitions.Add(new RowDefinition());
+            options.RowDefinitions.Add(new RowDefinition());
+            options.RowDefinitions.Add(new RowDefinition());
+            options.RowDefinitions.Add(new RowDefinition());
+            options.RowDefinitions.Add(new RowDefinition());
+            options.ColumnDefinitions.Add(new ColumnDefinition());
+            options.ColumnDefinitions.Add(new ColumnDefinition());
+            Grid.SetColumnSpan(mappingModeComboBox, 2);
+            Grid.SetRow(centerXSlider, 1);
+            Grid.SetRow(centerYSlider, 1);
+            Grid.SetColumn(centerYSlider, 1);
+            Grid.SetRow(radiusXSlider, 2);
+            Grid.SetRow(radiusYSlider, 2);
+            Grid.SetColumn(radiusYSlider, 1);
+            Grid.SetRow(originXSlider, 3);
+            Grid.SetRow(originYSlider, 3);
+            Grid.SetColumn(originYSlider, 1);
+            Grid.SetRow(spreadMethodComboBox, 4);
+            Grid.SetColumnSpan(spreadMethodComboBox, 2);
+            options.Children.Add(mappingModeComboBox);
+            options.Children.Add(centerXSlider);
+            options.Children.Add(centerYSlider);
+            options.Children.Add(radiusXSlider);
+            options.Children.Add(radiusYSlider);
+            options.Children.Add(originXSlider);
+            options.Children.Add(originYSlider);
+            options.Children.Add(spreadMethodComboBox);
+
+            var layout = new Grid();
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            Grid.SetColumn(sample, 0);
+            Grid.SetColumn(options, 1);
+            options.Margin = new Thickness(24, 0, 0, 0);
+            layout.Children.Add(sample);
+            layout.Children.Add(options);
+            root.Children.Add(layout);
+            return root;
+        }
+
+        private static Slider CreateRadialGradientSlider(string name, string header)
+        {
+            var slider = new Slider
+            {
+                Name = name,
+                SmallChange = 0.05
+            };
+            ControlHelper.SetHeader(slider, header);
+            return slider;
+        }
+
+        private static void InitializeRadialGradientSlider(Slider slider, double maximum, double value, double tickFrequency, double smallChange)
+        {
+            slider.Maximum = maximum;
+            slider.TickFrequency = tickFrequency;
+            slider.SmallChange = smallChange;
+            slider.Value = value;
         }
 
         private static UIElement CreateSystemBackdropsSample()
@@ -963,6 +1121,18 @@ namespace ModernWpf.Gallery.Pages
             }
 
             return null;
+        }
+
+        private static string FindSampleCodeText(IReadOnlyList<SampleSnippet> snippets, string fileName, string fallbackRelativePath)
+        {
+            var text = FindSampleCodeText(snippets, fileName);
+            if (text != null)
+            {
+                return text;
+            }
+
+            var path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Samples", "SampleCode", fallbackRelativePath);
+            return System.IO.File.Exists(path) ? System.IO.File.ReadAllText(path) : null;
         }
     }
 }

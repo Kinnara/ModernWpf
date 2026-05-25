@@ -106,6 +106,16 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.RadialGradientBrushSampleMatchesWinUIGalleryExample|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 60 tests per target. The generated ModernWpf RadialGradientBrush extension page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\RadialGradientBrushPage.xaml` / `.xaml.cs` and `D:\repos\WinUI-Gallery\WinUIGallery\Samples\SampleCode\Brushes\RadialGradientBrushSample_xaml.txt`: one `RadialGradientBrush Sample` example, source-facing `Rect`, `MappingModeComboBox`, `CenterXSlider`, `CenterYSlider`, `RadiusXSlider`, `RadiusYSlider`, `OriginXSlider`, `OriginYSlider`, and `SpreadMethodComboBox` names, matching `RadialGradientBrushExample` brush behavior, the official XAML snippet, and relative/absolute slider initialization. `StylesSampleFactory.CreateExamples` now covers RadialGradientBrush as a source-backed Platform & patterns WinUI extension page, and the sample exposes `GallerySample_RadialGradientBrush_Root` / `GallerySample_RadialGradientBrush_Rect`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls RadialGradientBrush -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-054353-285-89948/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required rendered gradient rectangle was found, primary crops use the rendered ModernWpf `GallerySample_RadialGradientBrush_Root` sample region against the installed WinUI `svPanel` sample region because the WinUI rectangle is not exposed as a stable automation target, crop sizes are `790x200` vs `843x646`, and Light primary delta is `120.58`. The whole-window Light mean delta is `157.98` and remains diagnostic because the installed WinUI shell stayed dark while ModernWpf was captured in Light.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls RadialGradientBrush -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-054415-707-118044/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required rendered gradient rectangle was found, primary crops use the same sample-region mapping, crop sizes are `790x200` vs `843x646`, Dark primary delta is `34.97`, and whole-window Dark mean delta is `22.11`.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the RadialGradientBrush WinUI example alignment. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages and existing net462 compiler warnings, ending with `0 Error(s)`.
+- `git diff --check`
+  - Passed with only Git's normal LF-to-CRLF working-copy warnings for touched files.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.ThemeShadowSampleMatchesWinUIGalleryExample|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 59 tests per target. The generated ModernWpf ThemeShadow extension page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\ThemeShadowPage.xaml` / `.xaml.cs`: one `ThemeShadow applied to a Border` example, source-facing `Example3Grid`, `ShadowCastGrid`, `ShadowRect`, `shadow`, and `TranslationSliderInApp` names, the official XAML/C# snippets, and the Z-translation slider behavior. `StylesSampleFactory.CreateExamples` now covers ThemeShadow as a source-backed Platform & patterns WinUI extension page, the WPF adaptation maps WinUI `ThemeShadow` to `ThemeShadowChrome`, and the sample exposes `GallerySample_ThemeShadow_Root` / `GallerySample_ThemeShadow_ShadowRect`.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls ThemeShadow -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -2386,6 +2396,31 @@ with ModernWpf and installed WinUI 3 Gallery `Passed`, primary crops matching
 at `745x423`, and primary deltas `56.75` / `37.33`. Avoid reopening WebView2's
 source shape unless the repo decides to add an optional WebView2 package/runtime
 dependency or a new visual crop regression appears.
+The generated ModernWpf RadialGradientBrush extension page now uses the local
+official WinUI Gallery source from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\RadialGradientBrushPage.xaml`,
+`.xaml.cs`, and
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\SampleCode\Brushes\RadialGradientBrushSample_xaml.txt`:
+one `RadialGradientBrush Sample` example with source-facing `Rect`,
+`MappingModeComboBox`, `CenterXSlider`, `CenterYSlider`, `RadiusXSlider`,
+`RadiusYSlider`, `OriginXSlider`, `OriginYSlider`, and `SpreadMethodComboBox`
+names plus matching `RadialGradientBrushExample` brush state. `StylesSampleFactory.CreateExamples`
+now exposes RadialGradientBrush as a source-backed Platform & patterns WinUI
+extension page. The WPF adaptation uses WPF's native `RadialGradientBrush`,
+keeps the official yellow/blue 200x200 rectangle and source snippet, and
+matches the WinUI code-behind behavior for relative vs absolute slider
+initialization, spread-method changes, mapping-mode changes, and center,
+radius, and origin updates. Current RadialGradientBrush WinUI-reference evidence is
+`artifacts/visual-checks/20260525-054353-285-89948/report.md` for Light and
+`artifacts/visual-checks/20260525-054415-707-118044/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`; the required
+`GallerySample_RadialGradientBrush_Rect` rendered artifact is present, while
+the primary crop uses the rendered ModernWpf sample root against the installed
+WinUI `svPanel` sample region because the WinUI rectangle is not exposed as a
+stable automation target. Treat those sample-region deltas as diagnostic unless
+a better stable crop becomes available. Avoid reopening RadialGradientBrush's
+source shape unless a new local WinUI source, WPF brush behavior gap, or crop
+regression appears.
 The generated ModernWpf System Backdrops extension page now uses the local
 official WinUI Gallery source from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\SystemBackdropsPage.xaml`
