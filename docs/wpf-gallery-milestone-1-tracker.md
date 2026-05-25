@@ -1,6 +1,6 @@
 # WPF Gallery Milestone 1 Tracker
 
-Last updated: 2026-05-24
+Last updated: 2026-05-25
 
 ## Goal
 
@@ -106,6 +106,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.MediaPlayerElementSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 49 tests per target. The generated ModernWpf MediaPlayerElement extension page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\MediaPlayerElementPage.xaml` / `.xaml.cs`: transport controls with `Player1` and `OpenFileButton`, plus the autoplay `Player2` example. `MediaSampleFactory.CreateExamples` now covers MediaPlayerElement as a source-backed Media WinUI extension page, preserves the official snippets and source-facing names, exposes `GallerySample_MediaPlayerElement_Root` / `GallerySample_MediaPlayerElement_MediaPlayerElement`, and uses WinUI-derived local poster assets so WPF visual captures do not depend on `MediaElement` child-window rendering.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls MediaPlayerElement -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-023148-597-92176/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required MediaPlayerElement sample element was found, primary crops use ModernWpf `GallerySample_MediaPlayerElement_OpenFileButton` against WinUI `OpenFileButton`, crop sizes are `102x33` vs `92x32`, and Light primary delta is `17.32`. The whole-window Light mean delta is `157.66` and remains diagnostic because the installed WinUI shell stayed dark while the ModernWpf run used Light.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls MediaPlayerElement -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-023212-347-112016/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required MediaPlayerElement sample element was found, primary crops use the same OpenFileButton mapping, crop sizes are `102x33` vs `92x32`, Dark primary delta is `17.48`, and whole-window Dark mean delta is `22.64`.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the MediaPlayerElement WinUI example alignment. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages and ends with `0 Warning(s)` and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.SoundSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 48 tests per target. The generated ModernWpf Sound extension page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\SoundPage.xaml` / `.xaml.cs`: `Toggling Sound`, `Toggling Spatial Audio`, and `Play Specific System Sound`. `MediaSampleFactory.CreateExamples` now covers Sound as a source-backed Media WinUI extension page, preserves source-facing names such as `soundToggle` and `spatialAudioBox`, keeps the official C# snippets, adapts WinUI `ElementSoundPlayer` behavior to WPF `SystemSounds`, and exposes curated automation IDs `GallerySample_Sound_Root` / `GallerySample_Sound_ToggleSwitch`.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls Sound -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -2217,6 +2225,27 @@ primary crops, and primary deltas `21.6` / `24.86`. The visual harness uses
 ModernWpf `GallerySample_Sound_ToggleSwitch` against WinUI `soundToggle` for
 the primary crop. Avoid reopening Sound's source shape unless a new WinUI
 source or crop regression appears.
+The generated ModernWpf MediaPlayerElement extension page now uses the local
+official WinUI Gallery two-example structure from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\MediaPlayerElementPage.xaml`
+and `.xaml.cs`: a `Player1` transport-controls example with `OpenFileButton`,
+and a `Player2` autoplay example. `MediaSampleFactory.CreateExamples` now
+exposes MediaPlayerElement as a source-backed Media WinUI extension page. The
+WPF adaptation keeps WinUI's visible sample headers, official snippets,
+source-facing names (`Player1`, `Player2`, and `OpenFileButton`), media source
+paths, and first-example horizontal options layout. The live sample uses local
+poster assets derived from the local WinUI Gallery reference capture because
+WPF `MediaElement` child-window rendering blanked the visual harness capture;
+the original `.wmv` source paths remain in each sample surface `Tag`, and the
+Open File button stores a selected file path there. Current MediaPlayerElement
+WinUI-reference evidence is
+`artifacts/visual-checks/20260525-023148-597-92176/report.md` for Light and
+`artifacts/visual-checks/20260525-023212-347-112016/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`, primary crops of
+`102x33` vs `92x32`, and primary deltas `17.32` / `17.48`. The visual harness
+uses ModernWpf `GallerySample_MediaPlayerElement_OpenFileButton` against WinUI
+`OpenFileButton` for the primary crop. Avoid reopening MediaPlayerElement's
+source shape unless a new WinUI source, media asset, or crop regression appears.
 The generated ModernWpf RichTextBlock extension page now uses the local
 official WinUI Gallery four-example structure from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\RichTextBlockPage.xaml`:

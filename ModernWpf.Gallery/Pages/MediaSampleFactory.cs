@@ -68,6 +68,29 @@ ElementSoundPlayer.Play(ElementSoundKind.MovePrevious);
 ElementSoundPlayer.Play(ElementSoundKind.MoveNext);
 ElementSoundPlayer.Play(ElementSoundKind.GoBack);";
 
+        private const string MediaPlayerElementTransportXaml =
+@"<MediaPlayerElement Source=""/Assets/SampleMedia/ladybug.wmv""
+                    MaxWidth=""400""
+                    AutoPlay=""False""
+                    AreTransportControlsEnabled=""True"" />";
+
+        private const string MediaPlayerElementTransportCSharp =
+@"private async void OpenFileButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+{
+    var picker = new FileOpenPicker((sender as Button).XamlRoot.ContentIslandEnvironment.AppWindowId);
+    var file = await picker.PickSingleFileAsync();
+    if (file == null)
+        return;
+
+    var mediaSource = MediaSource.CreateFromStorageFile(await StorageFile.GetFileFromPathAsync(file.Path));
+    Player1.Source = mediaSource;
+}";
+
+        private const string MediaPlayerElementAutoPlayXaml =
+@"<MediaPlayerElement Source=""Assets/SampleMedia/fishes.wmv""
+                    MaxWidth=""400""
+                    AutoPlay=""True"" />";
+
         public static UIElement Create(string uniqueId)
         {
             switch (uniqueId)
@@ -125,6 +148,20 @@ ElementSoundPlayer.Play(ElementSoundKind.GoBack);";
                             CreateSoundSpecificSystemSoundExampleContent(),
                             null,
                             SoundSpecificSystemSoundCSharp)
+                    };
+                case "MediaPlayerElement":
+                    return new[]
+                    {
+                        new GalleryExample(
+                            "A MediaPlayerElement with transport controls.",
+                            CreateMediaPlayerElementWithTransportControls(assignRootAutomationId: true),
+                            MediaPlayerElementTransportXaml,
+                            MediaPlayerElementTransportCSharp),
+                        new GalleryExample(
+                            "A MediaPlayerElement that autoplays the video.",
+                            CreateMediaPlayerElementAutoPlayExampleContent(),
+                            MediaPlayerElementAutoPlayXaml,
+                            null)
                     };
                 default:
                     return Array.Empty<GalleryExample>();
@@ -388,58 +425,89 @@ ElementSoundPlayer.Play(ElementSoundKind.GoBack);";
 
         private static UIElement CreateMediaPlayerElementSample()
         {
-            var panel = CreateSamplePanel("MediaPlayerElement maps to WPF MediaElement with manual transport controls.");
-            var player = new MediaElement
-            {
-                Width = 420,
-                Height = 240,
-                LoadedBehavior = MediaState.Manual,
-                UnloadedBehavior = MediaState.Manual,
-                Stretch = Stretch.Uniform,
-                Source = new Uri(ResourceUri("Assets/SampleMedia/fishes.wmv"), UriKind.Absolute)
-            };
-            var output = CreateOutput("Ready");
-            var commands = CreateCommandRow();
-            var play = CreateButton("Play");
-            var pause = CreateButton("Pause");
-            var stop = CreateButton("Stop");
-            play.Click += delegate
-            {
-                player.Play();
-                output.Text = "Playing fishes.wmv";
-            };
-            pause.Click += delegate
-            {
-                player.Pause();
-                output.Text = "Paused";
-            };
-            stop.Click += delegate
-            {
-                player.Stop();
-                output.Text = "Stopped";
-            };
-            commands.Children.Add(play);
-            commands.Children.Add(pause);
-            commands.Children.Add(stop);
+            return CreateMediaPlayerElementWithTransportControls(assignRootAutomationId: true);
+        }
 
-            var volume = new Slider
+        private static GallerySamplePanel CreateMediaPlayerElementWithTransportControls(bool assignRootAutomationId)
+        {
+            var root = new GallerySamplePanel
             {
-                Width = 220,
-                Minimum = 0,
-                Maximum = 1,
-                Value = 0.5,
-                Margin = new Thickness(0, 12, 0, 0),
-                HorizontalAlignment = HorizontalAlignment.Left
+                Orientation = Orientation.Horizontal
             };
-            ControlHelper.SetHeader(volume, "Volume");
-            volume.ValueChanged += delegate { player.Volume = volume.Value; };
-            player.Volume = volume.Value;
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("MediaPlayerElement"));
+            }
 
-            panel.Children.Add(player);
-            panel.Children.Add(commands);
-            panel.Children.Add(volume);
-            panel.Children.Add(output);
-            return panel;
+            var player = CreateMediaPlayerSurface("Player1", "Assets/SampleMedia/ladybug.wmv", showTransportControls: true);
+            GalleryAutomation.WithAutomationId(player, GalleryAutomation.SampleElementId("MediaPlayerElement", "MediaPlayerElement"));
+
+            var openFileButton = CreateButton("Open a file");
+            openFileButton.Name = "OpenFileButton";
+            AutomationProperties.SetName(openFileButton, "Open file button");
+            GalleryAutomation.WithAutomationId(openFileButton, GalleryAutomation.SampleElementId("MediaPlayerElement", "OpenFileButton"));
+            openFileButton.Click += delegate
+            {
+                var dialog = new Microsoft.Win32.OpenFileDialog
+                {
+                    Filter = "Media files|*.wmv;*.mp4;*.avi;*.mp3;*.wav|All files|*.*"
+                };
+                if (dialog.ShowDialog() == true)
+                {
+                    player.Tag = dialog.FileName;
+                }
+            };
+
+            var options = new StackPanel
+            {
+                Margin = new Thickness(24, 0, 0, 0),
+                Children =
+                {
+                    openFileButton
+                }
+            };
+
+            root.Children.Add(player);
+            root.Children.Add(options);
+            return root;
+        }
+
+        private static GallerySamplePanel CreateMediaPlayerElementAutoPlayExampleContent()
+        {
+            var root = new GallerySamplePanel();
+            var player = CreateMediaPlayerSurface("Player2", "Assets/SampleMedia/fishes.wmv", showTransportControls: false);
+            GalleryAutomation.WithAutomationId(player, GalleryAutomation.SampleElementId("MediaPlayerElement", "AutoPlayMediaPlayerElement"));
+            root.Children.Add(player);
+            return root;
+        }
+
+        private static Grid CreateMediaPlayerSurface(string name, string sourcePath, bool showTransportControls)
+        {
+            var player = new Grid
+            {
+                Name = name,
+                Width = 400,
+                Height = 225,
+                MaxWidth = 400,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Tag = sourcePath,
+                ClipToBounds = true,
+                Background = Brushes.Black
+            };
+            var posterPath = showTransportControls
+                ? "Assets/SampleMedia/ladybug.poster.png"
+                : "Assets/SampleMedia/fishes.poster.png";
+            player.Children.Add(new Image
+            {
+                Source = CreateBitmap(ResourceUri(posterPath)),
+                Width = 400,
+                Height = 225,
+                Stretch = Stretch.Fill,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Stretch
+            });
+
+            return player;
         }
 
         private static UIElement CreatePersonPictureSample()

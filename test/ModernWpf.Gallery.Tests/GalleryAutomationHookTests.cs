@@ -37,6 +37,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "SplitView", "GallerySample_SplitView_Root", "GallerySample_SplitView_SplitView" };
             yield return new object[] { "PersonPicture", "GallerySample_PersonPicture_Root", "GallerySample_PersonPicture_PersonPicture" };
             yield return new object[] { "Sound", "GallerySample_Sound_Root", "GallerySample_Sound_ToggleSwitch" };
+            yield return new object[] { "MediaPlayerElement", "GallerySample_MediaPlayerElement_Root", "GallerySample_MediaPlayerElement_MediaPlayerElement" };
             yield return new object[] { "FlipView", "GallerySample_FlipView_Root", "GallerySample_FlipView_FlipView" };
             yield return new object[] { "ItemsView", "GallerySample_ItemsView_Root", "GallerySample_ItemsView_ItemsView" };
             yield return new object[] { "CalendarDatePicker", "GallerySample_CalendarDatePicker_Root", "GallerySample_CalendarDatePicker_CalendarDatePicker" };
@@ -3608,6 +3609,88 @@ namespace ModernWpf.Gallery.Tests
                     WpfTestHost.DoEvents();
                     Assert.IsFalse(spatialAudioBox.IsEnabled);
                     Assert.AreEqual(false, spatialAudioBox.IsChecked);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void MediaPlayerElementSampleMatchesWinUIGalleryExamples()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("MediaPlayerElement"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(2, page.Examples.Count);
+                    Assert.AreEqual("A MediaPlayerElement with transport controls.", page.Examples[0].HeaderText);
+                    Assert.AreEqual("A MediaPlayerElement that autoplays the video.", page.Examples[1].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "Source=\"/Assets/SampleMedia/ladybug.wmv\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "AreTransportControlsEnabled=\"True\"");
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "FileOpenPicker");
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "Player1.Source = mediaSource;");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "Source=\"Assets/SampleMedia/fishes.wmv\"");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "AutoPlay=\"True\"");
+                    Assert.IsNull(page.Examples[1].CSharpCode);
+
+                    var firstRoot = (GallerySamplePanel)page.Examples[0].ExampleContent;
+                    Assert.AreEqual(Orientation.Horizontal, firstRoot.Orientation);
+                    Assert.AreEqual(24d, ((FrameworkElement)firstRoot.Children[1]).Margin.Left);
+
+                    var player1 = (FrameworkElement)FindByAutomationId(page, "GallerySample_MediaPlayerElement_MediaPlayerElement");
+                    var player2 = (FrameworkElement)FindByAutomationId(page, "GallerySample_MediaPlayerElement_AutoPlayMediaPlayerElement");
+                    var openFileButton = FindNamedDescendant<Button>(page, "OpenFileButton");
+                    Assert.IsNotNull(player1);
+                    Assert.IsNotNull(player2);
+                    Assert.IsNotNull(openFileButton);
+
+                    Assert.AreEqual("Player1", player1.Name);
+                    Assert.AreEqual(400d, player1.Width);
+                    Assert.AreEqual(225d, player1.Height);
+                    Assert.AreEqual(400d, player1.MaxWidth);
+                    Assert.AreEqual(HorizontalAlignment.Left, player1.HorizontalAlignment);
+                    Assert.AreEqual("Assets/SampleMedia/ladybug.wmv", player1.Tag);
+                    var player1Poster = (Image)((Grid)player1).Children[0];
+                    Assert.AreEqual(400d, player1Poster.Width);
+                    Assert.AreEqual(225d, player1Poster.Height);
+                    Assert.AreEqual(Stretch.Fill, player1Poster.Stretch);
+                    StringAssert.Contains(((BitmapImage)player1Poster.Source).UriSource.ToString(), "ladybug.poster.png");
+                    Assert.AreEqual("Open a file", openFileButton.Content);
+                    Assert.AreEqual("Open file button", AutomationProperties.GetName(openFileButton));
+                    Assert.AreEqual("GallerySample_MediaPlayerElement_OpenFileButton", AutomationProperties.GetAutomationId(openFileButton));
+
+                    Assert.AreEqual("Player2", player2.Name);
+                    Assert.AreEqual(400d, player2.Width);
+                    Assert.AreEqual(225d, player2.Height);
+                    Assert.AreEqual(HorizontalAlignment.Left, player2.HorizontalAlignment);
+                    Assert.AreEqual("Assets/SampleMedia/fishes.wmv", player2.Tag);
+                    var player2Poster = (Image)((Grid)player2).Children[0];
+                    Assert.AreEqual(400d, player2Poster.Width);
+                    Assert.AreEqual(225d, player2Poster.Height);
+                    Assert.AreEqual(Stretch.Fill, player2Poster.Stretch);
+                    StringAssert.Contains(((BitmapImage)player2Poster.Source).UriSource.ToString(), "fishes.poster.png");
                 }
                 finally
                 {
