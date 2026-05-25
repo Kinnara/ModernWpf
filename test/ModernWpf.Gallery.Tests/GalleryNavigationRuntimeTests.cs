@@ -414,6 +414,8 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(window));
                     Assert.AreEqual("WPF Gallery", window.ViewModel.ApplicationTitle);
                     Assert.AreEqual("WPF Gallery", window.Title);
+                    Assert.AreEqual(780d, window.MinWidth);
+                    Assert.AreEqual(470d, window.MinHeight);
                     Assert.AreEqual("ViewModel.ApplicationTitle",
                         BindingOperations.GetBindingExpression(window, Window.TitleProperty)?.ParentBinding.Path.Path);
 
