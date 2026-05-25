@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
@@ -13,6 +14,28 @@ namespace ModernWpf.Gallery.Pages
 {
     internal static class WindowingSampleFactory
     {
+        private const string CreateMultipleWindowsCSharp =
+@"// Ensure you close the child window before closing the parent window to avoid application crash.
+var childWindow = new Window()
+{
+    ExtendsContentIntoTitleBar = true,
+    SystemBackdrop = new MicaBackdrop(),
+    Content = new Page()
+    {
+        Content = new TextBlock()
+        {
+            Text = ""New child window!"",
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center,
+        },
+        // Get the theme from the parent.
+        RequestedTheme = this.ActualTheme,
+    }
+};
+
+childWindow.AppWindow.ResizeClient(new SizeInt32(500, 500));
+childWindow.Activate();";
+
         public static UIElement Create(string uniqueId)
         {
             switch (uniqueId)
@@ -27,6 +50,24 @@ namespace ModernWpf.Gallery.Pages
                     return CreateTitleBarSample();
                 default:
                     return null;
+            }
+        }
+
+        public static IReadOnlyList<GalleryExample> CreateExamples(string uniqueId)
+        {
+            switch (uniqueId)
+            {
+                case "CreateMultipleWindows":
+                    return new[]
+                    {
+                        new GalleryExample(
+                            "Create single threaded Multiple Top level Windows(MTW).",
+                            CreateMultipleWindowsExampleContent(assignRootAutomationId: true),
+                            null,
+                            CreateMultipleWindowsCSharp)
+                    };
+                default:
+                    return Array.Empty<GalleryExample>();
             }
         }
 
@@ -182,59 +223,42 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateMultipleWindowsSample()
         {
-            var panel = CreateSamplePanel("Multiple windows maps to creating several WPF Window instances on the current UI thread.");
-            var windows = new List<Window>();
-            var output = CreateOutput("Open windows: 0");
-            var preview = CreateWindowPreview("Main gallery window", "Creates owned child windows", CreateBrush("#605E5C"), Brushes.White);
+            return CreateMultipleWindowsExampleContent(assignRootAutomationId: true);
+        }
 
-            Action refresh = delegate { output.Text = "Open windows: " + windows.Count; };
-
-            var commands = CreateCommandRow();
-            var createChild = CreateButton("Create window");
-            var createTool = CreateButton("Create tool window");
-            var closeAll = CreateButton("Close all");
-            createChild.Click += delegate
+        private static GallerySamplePanel CreateMultipleWindowsExampleContent(bool assignRootAutomationId)
+        {
+            var root = new GallerySamplePanel();
+            if (assignRootAutomationId)
             {
-                var window = CreateNumberedWindow((FrameworkElement)createChild, windows.Count + 1, false);
-                windows.Add(window);
-                window.Closed += delegate
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("CreateMultipleWindows"));
+            }
+
+            var button = new Button
+            {
+                Name = "Control1",
+                Content = "Create new Window",
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+            AutomationProperties.SetName(button, "Create new Window");
+            GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("CreateMultipleWindows", "Control1"));
+            button.Click += delegate
+            {
+                var childWindow = CreateModernWindow((FrameworkElement)button, "New child window!", 500, 500);
+                childWindow.Content = new Page
                 {
-                    windows.Remove(window);
-                    refresh();
+                    Content = new TextBlock
+                    {
+                        Text = "New child window!",
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center
+                    }
                 };
-                window.Show();
-                refresh();
+                childWindow.Show();
             };
-            createTool.Click += delegate
-            {
-                var window = CreateNumberedWindow((FrameworkElement)createTool, windows.Count + 1, true);
-                windows.Add(window);
-                window.Closed += delegate
-                {
-                    windows.Remove(window);
-                    refresh();
-                };
-                window.Show();
-                refresh();
-            };
-            closeAll.Click += delegate
-            {
-                var copy = windows.ToArray();
-                foreach (var window in copy)
-                {
-                    window.Close();
-                }
-                windows.Clear();
-                refresh();
-            };
-            commands.Children.Add(createChild);
-            commands.Children.Add(createTool);
-            commands.Children.Add(closeAll);
 
-            panel.Children.Add(preview);
-            panel.Children.Add(commands);
-            panel.Children.Add(output);
-            return panel;
+            root.Children.Add(button);
+            return root;
         }
 
         private static UIElement CreateTitleBarSample()
@@ -328,18 +352,6 @@ namespace ModernWpf.Gallery.Pages
             panel.Children.Add(output);
             updatePreview();
             return panel;
-        }
-
-        private static Window CreateNumberedWindow(FrameworkElement ownerElement, int number, bool toolWindow)
-        {
-            var window = CreateModernWindow(ownerElement, toolWindow ? "Tool window " + number : "Child window " + number, toolWindow ? 420 : 520, toolWindow ? 260 : 340);
-            window.ShowInTaskbar = !toolWindow;
-            window.ResizeMode = toolWindow ? ResizeMode.CanResizeWithGrip : ResizeMode.CanResize;
-            Mux.TitleBar.SetIsIconVisible(window, true);
-            window.Content = CreateWindowBody(
-                toolWindow ? "Owned tool window" : "Owned child window",
-                "Window #" + number + " was created from the Gallery sample on the current WPF UI thread.");
-            return window;
         }
 
         private static Window CreateModernWindow(FrameworkElement ownerElement, string title, double width, double height)
@@ -727,15 +739,6 @@ namespace ModernWpf.Gallery.Pages
                 default:
                     return new Size(640, 420);
             }
-        }
-
-        private static StackPanel CreateCommandRow()
-        {
-            return new StackPanel
-            {
-                Orientation = Orientation.Horizontal,
-                Margin = new Thickness(0, 12, 0, 0)
-            };
         }
 
         private static StackPanel CreateSamplePanel(string description)

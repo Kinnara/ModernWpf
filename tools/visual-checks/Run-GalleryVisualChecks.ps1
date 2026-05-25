@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "RichTextBlock", "RichEditBox", "SplitView", "PersonPicture", "Sound", "MediaPlayerElement", "MapControl", "WebView2", "CalendarDatePicker", "CalendarView", "TimePicker", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "PullToRefresh", "FlipView", "ItemsView", "GridView", "ItemsRepeater", "BreadcrumbBar", "Pivot", "SelectorBar", "TabView", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "SwipeControl", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout", "StandardUICommand", "XamlUICommand"),
+    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "RichTextBlock", "RichEditBox", "SplitView", "PersonPicture", "Sound", "MediaPlayerElement", "MapControl", "WebView2", "CreateMultipleWindows", "CalendarDatePicker", "CalendarView", "TimePicker", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "PullToRefresh", "FlipView", "ItemsView", "GridView", "ItemsRepeater", "BreadcrumbBar", "Pivot", "SelectorBar", "TabView", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "SwipeControl", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout", "StandardUICommand", "XamlUICommand"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -468,6 +468,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "MediaPlayerElement" { return "GallerySample_MediaPlayerElement_MediaPlayerElement" }
         "MapControl" { return "GallerySample_MapControl_MapControl" }
         "WebView2" { return "GallerySample_WebView2_WebView2" }
+        "CreateMultipleWindows" { return "GallerySample_CreateMultipleWindows_Control1" }
         "CalendarDatePicker" { return "GallerySample_CalendarDatePicker_CalendarDatePicker" }
         "CalendarView" { return "GallerySample_CalendarView_CalendarView" }
         "TimePicker" { return "GallerySample_TimePicker_TimePicker" }
@@ -539,6 +540,7 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
         "MediaPlayerElement" { return "GallerySample_MediaPlayerElement_OpenFileButton" }
         "MapControl" { return "GallerySample_MapControl_MapToken" }
         "WebView2" { return "GallerySample_WebView2_WebView2" }
+        "CreateMultipleWindows" { return "GallerySample_CreateMultipleWindows_Control1" }
         "CalendarDatePicker" { return "GallerySample_CalendarDatePicker_CalendarDatePicker" }
         "CalendarView" { return "GallerySample_CalendarView_CalendarView" }
         "TimePicker" { return "GallerySample_TimePicker_TimePicker" }
@@ -602,6 +604,7 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
         "MediaPlayerElement" { return "OpenFileButton" }
         "MapControl" { return "MapToken" }
         "WebView2" { return "MyWebView2" }
+        "CreateMultipleWindows" { return "Control1" }
         "CalendarView" { return "Control1" }
         "ProgressRing" { return "ProgressRing1" }
         "PipsPager" { return "FlipViewPipsPager" }
@@ -626,6 +629,13 @@ function Get-ReferencePrimaryName([string]$control) {
         "RichTextBlock" { return "I am a RichTextBlock." }
         "RichEditBox" { return "simple text editor" }
         default { return "" }
+    }
+}
+
+function Get-WinUIReferencePageTitle([string]$control) {
+    switch ($control) {
+        "CreateMultipleWindows" { return "Multiple windows" }
+        default { return $control }
     }
 }
 
@@ -1882,6 +1892,7 @@ function Capture-ModernWpf([string]$control, [string]$caseDir) {
 
 function Capture-WinUIReference([string]$control, [string]$caseDir) {
     $route = "winui3gallery://item/$control"
+    $pageTitle = Get-WinUIReferencePageTitle $control
     Stop-WinUIReferenceProcesses
     Start-Process $route
 
@@ -1891,8 +1902,8 @@ function Capture-WinUIReference([string]$control, [string]$caseDir) {
 
     try {
         [void][GalleryVisualNative]::Move($window.Current.NativeWindowHandle, 60, 60, $Width, $Height)
-        Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "WinUI 3 Gallery page title '$control'" -Probe {
-            Find-DescendantByName $window $control
+        Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "WinUI 3 Gallery page title '$pageTitle'" -Probe {
+            Find-DescendantByName $window $pageTitle
         } | Out-Null
         Wait-WinUIReferenceReady $window $control
         Start-Sleep -Milliseconds 1200
@@ -1940,7 +1951,7 @@ function Capture-WinUIReference([string]$control, [string]$caseDir) {
             Control = $control
             Route = $route
             Status = $(if (!$notBlank) { "Failed" } elseif ($primaryCropBlank) { "Failed" } elseif ($primaryCropLowVariation) { "Failed" } elseif ($null -ne $interaction -and $interaction.Status -ne "Passed") { "Failed" } else { "Passed" })
-            Title = $control
+            Title = $pageTitle
             Screenshot = $screenshot
             UiaTree = $treePath
             LastException = $(if ($primaryCropBlank) { "Primary crop '$($staticCrops.Primary.Source)' was blank." } elseif ($primaryCropLowVariation) { "Primary crop '$($staticCrops.Primary.Source)' had low visible variation ($($staticCrops.Primary.VisibleStdDev), expected at least $primaryCropMinimumVisibleStdDev)." } elseif ($null -ne $interaction -and $interaction.Status -ne "Passed") { $interaction.Notes } else { "" })

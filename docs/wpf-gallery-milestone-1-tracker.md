@@ -106,6 +106,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.CreateMultipleWindowsSampleMatchesWinUIGalleryExample|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 52 tests per target. The generated ModernWpf Multiple windows extension page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\CreateMultipleWindowsPage.xaml` / `.xaml.cs`: one `Create single threaded Multiple Top level Windows(MTW).` example with a source-facing `Control1` button and the official `Window/CreateWindowSample1.txt` C# snippet text. `WindowingSampleFactory.CreateExamples` now covers CreateMultipleWindows as a source-backed Windowing/Platform WinUI extension page, `ItemPage` queries the Windowing factory before falling back to generic generated content, and the sample exposes `GallerySample_CreateMultipleWindows_Root` / `GallerySample_CreateMultipleWindows_Control1`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls CreateMultipleWindows -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-032651-266-17804/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required CreateMultipleWindows sample element was found, primary crops use ModernWpf `GallerySample_CreateMultipleWindows_Control1` against WinUI `Control1`, crop sizes match at `149x32`, and Light primary delta is `5.39`. The whole-window Light mean delta is `196.96` and remains diagnostic because the installed WinUI shell stayed dark while ModernWpf was captured in Light.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls CreateMultipleWindows -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-032724-402-88400/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required CreateMultipleWindows sample element was found, primary crops use the same button mapping, crop sizes match at `149x32`, Dark primary delta is `9.57`, and whole-window Dark mean delta is `14.71`.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the CreateMultipleWindows WinUI example alignment. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages and ends with `0 Warning(s)` and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.WebView2SampleMatchesWinUIGalleryExample|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 51 tests per target. The generated ModernWpf WebView2 extension page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\WebView2Page.xaml` / `.xaml.cs`: the `A simple WebView2 ` example, Chromium description text, source-facing `MyWebView2` name, WinUI source URL, and official XAML snippet. `MediaSampleFactory.CreateExamples` now covers WebView2 as a source-backed Media/Platform WinUI extension page, exposes `GallerySample_WebView2_Root` / `GallerySample_WebView2_WebView2`, and uses a WPF-rendered dark browser surface because the repo intentionally avoids a `Microsoft.Web.WebView2.Wpf` package/runtime dependency.
 - `dotnet test test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --configuration Debug --filter FullyQualifiedName~WebView2OptionalTests -p:UseSharedCompilation=false`
@@ -2308,6 +2316,26 @@ with ModernWpf and installed WinUI 3 Gallery `Passed`, primary crops matching
 at `745x423`, and primary deltas `56.75` / `37.33`. Avoid reopening WebView2's
 source shape unless the repo decides to add an optional WebView2 package/runtime
 dependency or a new visual crop regression appears.
+The generated ModernWpf Multiple windows extension page now uses the local
+official WinUI Gallery source from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\CreateMultipleWindowsPage.xaml`
+and `.xaml.cs`: one `Create single threaded Multiple Top level Windows(MTW).`
+example, source-facing `Control1` button, and the official
+`Window/CreateWindowSample1.txt` C# snippet. `WindowingSampleFactory.CreateExamples`
+now exposes CreateMultipleWindows as a source-backed Windowing/Platform WinUI
+extension page, and `ItemPage` queries the Windowing factory before falling back
+to generic generated content. The WPF adaptation keeps the visible source button
+shape while mapping the click action to a 500x500 ModernWpf-themed WPF
+`Window` with centered `New child window!` content. Current CreateMultipleWindows
+WinUI-reference evidence is
+`artifacts/visual-checks/20260525-032651-266-17804/report.md` for Light and
+`artifacts/visual-checks/20260525-032724-402-88400/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`, primary crops matching
+at `149x32`, and primary deltas `5.39` / `9.57`. The visual harness maps the
+WinUI route id `CreateMultipleWindows` to the displayed page title `Multiple
+windows` before waiting for the installed reference page. Avoid reopening this
+source shape unless a new local WinUI source, windowing behavior gap, or crop
+regression appears.
 The generated ModernWpf RichTextBlock extension page now uses the local
 official WinUI Gallery four-example structure from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\RichTextBlockPage.xaml`:

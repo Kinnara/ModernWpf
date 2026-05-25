@@ -318,6 +318,12 @@ namespace ModernWpf.Gallery.Pages
                 return navigationExamples;
             }
 
+            var windowingExamples = WindowingSampleFactory.CreateExamples(uniqueId);
+            if (windowingExamples.Count != 0)
+            {
+                return windowingExamples;
+            }
+
             var sampleContent = CreateWorkingSampleContent(uniqueId);
             if (sampleContent == null)
             {

@@ -40,6 +40,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "MediaPlayerElement", "GallerySample_MediaPlayerElement_Root", "GallerySample_MediaPlayerElement_MediaPlayerElement" };
             yield return new object[] { "MapControl", "GallerySample_MapControl_Root", "GallerySample_MapControl_MapControl" };
             yield return new object[] { "WebView2", "GallerySample_WebView2_Root", "GallerySample_WebView2_WebView2" };
+            yield return new object[] { "CreateMultipleWindows", "GallerySample_CreateMultipleWindows_Root", "GallerySample_CreateMultipleWindows_Control1" };
             yield return new object[] { "FlipView", "GallerySample_FlipView_Root", "GallerySample_FlipView_FlipView" };
             yield return new object[] { "ItemsView", "GallerySample_ItemsView_Root", "GallerySample_ItemsView_ItemsView" };
             yield return new object[] { "CalendarDatePicker", "GallerySample_CalendarDatePicker_Root", "GallerySample_CalendarDatePicker_CalendarDatePicker" };
@@ -3693,6 +3694,61 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(225d, player2Poster.Height);
                     Assert.AreEqual(Stretch.Fill, player2Poster.Stretch);
                     StringAssert.Contains(((BitmapImage)player2Poster.Source).UriSource.ToString(), "fishes.poster.png");
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void CreateMultipleWindowsSampleMatchesWinUIGalleryExample()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("CreateMultipleWindows"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(1, page.Examples.Count);
+                    Assert.AreEqual("Create single threaded Multiple Top level Windows(MTW).", page.Examples[0].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    Assert.IsNull(page.Examples[0].XamlCode);
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "ExtendsContentIntoTitleBar = true");
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "SystemBackdrop = new MicaBackdrop()");
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "Text = \"New child window!\"");
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "childWindow.AppWindow.ResizeClient(new SizeInt32(500, 500));");
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "childWindow.Activate();");
+
+                    var root = (GallerySamplePanel)page.Examples[0].ExampleContent;
+                    Assert.AreEqual(1, root.Children.Count);
+
+                    var button = (Button)FindByAutomationId(page, "GallerySample_CreateMultipleWindows_Control1");
+                    Assert.IsNotNull(button);
+                    Assert.AreSame(button, root.Children[0]);
+                    Assert.AreEqual("Control1", button.Name);
+                    Assert.AreEqual("Create new Window", button.Content);
+                    Assert.AreEqual(HorizontalAlignment.Left, button.HorizontalAlignment);
+                    Assert.AreEqual("Create new Window", AutomationProperties.GetName(button));
+                    Assert.AreEqual("GallerySample_CreateMultipleWindows_Control1", AutomationProperties.GetAutomationId(button));
                 }
                 finally
                 {
