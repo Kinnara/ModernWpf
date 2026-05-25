@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using System.Linq;
+using System.Resources;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Gallery.Models;
 
@@ -376,6 +378,65 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void OmittedWinUIPageControlImageResourcesAreNotShipped()
+        {
+            var omittedImageResources = new[]
+            {
+                "accessibility.png",
+                "acrylic.png",
+                "animatedicon.png",
+                "animatedvisualplayer.png",
+                "animationinterop.png",
+                "appnotification.png",
+                "appwindow.png",
+                "automationproperties.png",
+                "badgenotification.png",
+                "captureelement.png",
+                "codetagicon.png",
+                "connectedanimation.png",
+                "contentisland.png",
+                "customcontrols.png",
+                "easingfunction.png",
+                "implicittransition.png",
+                "inkcanvas.png",
+                "inktoolbar.png",
+                "inputvalidation.png",
+                "jumplist.png",
+                "line.png",
+                "mapcontrol.png",
+                "mediaplayerelement.png",
+                "pagetransition.png",
+                "radialgradientbrush.png",
+                "radiobuttons.png",
+                "relativepanel.png",
+                "revealfocus.png",
+                "scratchpad.png",
+                "semanticzoom.png",
+                "shape.png",
+                "sound.png",
+                "standarduicommand.png",
+                "storagepickers.png",
+                "themetransition.png",
+                "variablesizedwrapgrid.png",
+                "viewbox.png",
+                "webview.png",
+                "xamluicommand.png"
+            };
+            var resourceNames = GetGalleryResourceNames();
+
+            foreach (var imageName in omittedImageResources)
+            {
+                Assert.IsFalse(
+                    resourceNames.Contains("assets/controlimages/" + imageName),
+                    imageName);
+            }
+
+            Assert.IsTrue(resourceNames.Contains("assets/controlimages/titlebar.png"));
+            Assert.IsTrue(resourceNames.Contains("assets/controlimages/compactsizing.png"));
+            Assert.IsTrue(resourceNames.Contains("assets/controlimages/createmultiplewindows.png"));
+        }
+
+        [TestMethod]
         public void CatalogContainsWpfFirstGallerySurface()
         {
             Assert.AreEqual(12, GalleryCatalog.Groups.Count);
@@ -442,6 +503,24 @@ namespace ModernWpf.Gallery.Tests
                 "Expected '{0}' to end with '{1}'.",
                 imagePath,
                 expectedSuffix);
+        }
+
+        private static string[] GetGalleryResourceNames()
+        {
+            var assembly = typeof(GalleryCatalog).Assembly;
+            var resourceName = assembly.GetName().Name + ".g.resources";
+            using (var stream = assembly.GetManifestResourceStream(resourceName))
+            {
+                Assert.IsNotNull(stream, resourceName);
+
+                using (var reader = new ResourceReader(stream))
+                {
+                    return reader
+                        .Cast<DictionaryEntry>()
+                        .Select(entry => ((string)entry.Key).ToLowerInvariant())
+                        .ToArray();
+                }
+            }
         }
     }
 }
