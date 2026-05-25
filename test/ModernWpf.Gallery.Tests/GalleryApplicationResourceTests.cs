@@ -183,6 +183,7 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(50d, image.Width);
                 Assert.AreEqual(50d, image.Height);
                 Assert.AreEqual(new Thickness(0, 0, 8, 0), image.Margin);
+                Assert.AreEqual(DependencyProperty.UnsetValue, image.ReadLocalValue(Image.StretchProperty));
                 Assert.AreEqual(Stretch.Uniform, image.Stretch);
 
                 var innerStack = (StackPanel)outerStack.Children[1];

@@ -22,8 +22,7 @@
                     Width="50"
                     Height="50"
                     Margin="0,0,8,0"
-                    Source="{Binding ImageSource}"
-                    Stretch="Uniform" />
+                    Source="{Binding ImageSource}" />
                 <StackPanel Orientation="Vertical">
                     <TextBlock
                         Margin="10,0,0,0"

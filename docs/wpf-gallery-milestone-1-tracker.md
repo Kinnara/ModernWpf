@@ -41,14 +41,15 @@ prefer positive catalog/resource assertions for the retained surface.
 
 Current ModernWpf/WinUI extension surface: keep only extension pages backed by
 actual ModernWpf controls or explicitly retained WPF implementations:
-`ContentDialog`, `TeachingTip`, `CommandBar`, `CommandBarFlyout`,
-`AppBarButton`, `AppBarToggleButton`, `AppBarSeparator`, `DropDownButton`,
-`SplitButton`, `ToggleSplitButton`, `RepeatButton`, `ToggleButton`, `MenuBar`,
-`MenuFlyout`, `ItemsRepeater`, `PipsPager`, `RatingControl`, `ToggleSwitch`,
-`ColorPicker`, `HyperlinkButton`, `ProgressRing`, `InfoBadge`, `Flyout`,
-`Popup`, `Pivot`, `BreadcrumbBar`, `SelectorBar`, `SplitView`,
-`AnnotatedScrollBar`, `ParallaxView`, `PullToRefresh`, `GridView`,
-`SwipeControl`, `PersonPicture`, `IconElement`, `ThemeShadow`, and `TitleBar`.
+`NavigationView`, `InfoBar`, `NumberBox`, `AutoSuggestBox`, `ContentDialog`,
+`TeachingTip`, `CommandBar`, `CommandBarFlyout`, `AppBarButton`,
+`AppBarToggleButton`, `AppBarSeparator`, `DropDownButton`, `SplitButton`,
+`ToggleSplitButton`, `RepeatButton`, `ToggleButton`, `MenuBar`, `MenuFlyout`,
+`ItemsRepeater`, `PipsPager`, `RatingControl`, `ToggleSwitch`, `ColorPicker`,
+`HyperlinkButton`, `ProgressRing`, `InfoBadge`, `Flyout`, `Popup`, `Pivot`,
+`BreadcrumbBar`, `SelectorBar`, `SplitView`, `AnnotatedScrollBar`,
+`ParallaxView`, `PullToRefresh`, `GridView`, `SwipeControl`, `PersonPicture`,
+`IconElement`, `ThemeShadow`, and `TitleBar`.
 Do not keep WinUI alias pages for `CalendarDatePicker`, `CalendarView`,
 `TimePicker`, `TabView`, `RichEditBox`, `RichTextBlock`, `ScrollViewer`,
 `ScrollView`, `FlipView`, or `ItemsView`; retained WPF pages and retained
@@ -143,6 +144,8 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryCatalogTests.ActiveGallerySourceDoesNotKeepDeletedWinUIPageImplementationArtifacts|FullyQualifiedName~GalleryCatalogTests.TrackerCurrentModernWpfSurfaceMatchesRetainedCatalogGuard|FullyQualifiedName~GalleryCatalogTests.WinUIExtensionCatalogMatchesImplementedModernWpfSurfaces|FullyQualifiedName~GalleryCatalogTests.GeneratedWinUIMetadataOnlyContainsRetainedModernWpfSurfaces|FullyQualifiedName~GalleryCatalogTests.SourceWinUIControlInfoDataOnlyContainsRetainedModernWpfSurfaces|FullyQualifiedName~GalleryApplicationResourceTests.GalleryMergesWpfGalleryTemplatesResourceDictionary" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 6 tests per target. Active gallery source remains guarded against deleted WinUI page implementation markers; the tracker's current retained ModernWpf/WinUI extension surface now matches the positive catalog/generated/source-data retained page set, including `NavigationView`, `InfoBar`, `NumberBox`, and `AutoSuggestBox`; `NavigationCardTemplate` also drops the local explicit `Image.Stretch` setter and relies on WPF's official default `Uniform` behavior like the WPF Gallery source.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryCatalogTests.ActiveGallerySourceDoesNotKeepDeletedWinUIPageImplementationArtifacts|FullyQualifiedName~GalleryCatalogTests.WinUIExtensionCatalogMatchesImplementedModernWpfSurfaces|FullyQualifiedName~GalleryCatalogTests.GeneratedWinUIMetadataOnlyContainsRetainedModernWpfSurfaces|FullyQualifiedName~GalleryCatalogTests.SourceWinUIControlInfoDataOnlyContainsRetainedModernWpfSurfaces|FullyQualifiedName~GalleryCatalogTests.ControlImageResourcesMatchRetainedCatalogImages" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 5 tests per target. Active gallery source, generated catalog data, sample data/code, and visual-check tooling are now guarded against deleted-page implementation markers such as old routes, factory cases, page classes, sample automation IDs, and source metadata while retaining positive catalog/resource assertions for the allowed ModernWpf extension surface.
 - `rg -n "GallerySample_CalendarDatePicker|GallerySample_CalendarView|GallerySample_TimePicker|GallerySample_TabView|GallerySample_RichEditBox|GallerySample_RichTextBlock|GallerySample_ScrollViewer|GallerySample_ScrollView|GallerySample_FlipView|GallerySample_ItemsView|DateTimeSampleFactory|CreateCalendarDatePicker|CreateCalendarView|CreateTimePicker|CreateTabView|CreateRichEditBox|CreateRichTextBlock|CreateScrollViewer|CreateScrollView|CreateFlipView|CreateItemsView" ModernWpf.Gallery tools\visual-checks -g "!**/bin/**" -g "!**/obj/**"`

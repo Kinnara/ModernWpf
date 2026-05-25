@@ -465,6 +465,31 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void TrackerCurrentModernWpfSurfaceMatchesRetainedCatalogGuard()
+        {
+            var trackerPath = FindRepoFile("docs", "wpf-gallery-milestone-1-tracker.md");
+            var tracker = File.ReadAllText(trackerPath);
+            const string CurrentSurfaceStart = "Current ModernWpf/WinUI extension surface:";
+            const string CurrentSurfaceEnd = "Do not keep WinUI alias pages";
+            var startIndex = tracker.IndexOf(CurrentSurfaceStart, StringComparison.Ordinal);
+            Assert.IsTrue(startIndex >= 0, CurrentSurfaceStart);
+            var endIndex = tracker.IndexOf(CurrentSurfaceEnd, startIndex, StringComparison.Ordinal);
+            Assert.IsTrue(endIndex > startIndex, CurrentSurfaceEnd);
+
+            var currentSurfaceText = tracker.Substring(startIndex, endIndex - startIndex);
+            var trackerSurfaceIds = currentSurfaceText
+                .Split('`')
+                .Where((_, index) => index % 2 == 1)
+                .OrderBy(id => id, StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+            var expectedSurfaceIds = RetainedModernWpfExtensionItemIds
+                .OrderBy(id => id, StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+
+            CollectionAssert.AreEqual(expectedSurfaceIds, trackerSurfaceIds);
+        }
+
+        [TestMethod]
         public void ActiveGallerySourceDoesNotKeepDeletedWinUIPageImplementationArtifacts()
         {
             var sourceRoots = new[]
