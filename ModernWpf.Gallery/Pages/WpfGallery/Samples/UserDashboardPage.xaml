@@ -50,7 +50,7 @@
                 Width="300"
                 AutomationProperties.Name="Users"
                 Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
-                ItemsSource="{Binding ViewModel.Users, Mode=OneWay}"
+                ItemsSource="{Binding ViewModel.Users, Mode=TwoWay}"
                 SelectedItem="{Binding ViewModel.SelectedUser, Mode=TwoWay}"
                 SelectionMode="Single">
                 <ListView.ItemContainerStyle>

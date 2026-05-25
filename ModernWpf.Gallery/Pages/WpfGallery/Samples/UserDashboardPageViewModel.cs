@@ -25,6 +25,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
         private bool _isReadOnly = true;
         private bool _isSaved;
         private UserDashboardUser _selectedUser;
+        private ObservableCollection<UserDashboardUser> _users;
 
         public UserDashboardPageViewModel()
         {
@@ -129,7 +130,11 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
             }
         }
 
-        public ObservableCollection<UserDashboardUser> Users { get; }
+        public ObservableCollection<UserDashboardUser> Users
+        {
+            get { return _users; }
+            set { SetProperty(ref _users, value, "Users"); }
+        }
 
         private static DispatcherTimer CreateMessageTimer(Action tick)
         {

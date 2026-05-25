@@ -2518,7 +2518,7 @@ namespace ModernWpf.Gallery.Tests
 
                     var userListGrid = root.Children.OfType<Grid>().Single(child => Grid.GetColumn(child) == 0);
                     var userList = userListGrid.Children.OfType<ListView>().Single();
-                    Assert.AreEqual(BindingMode.OneWay, BindingOperations.GetBinding(userList, ItemsControl.ItemsSourceProperty).Mode);
+                    Assert.AreEqual(BindingMode.TwoWay, BindingOperations.GetBinding(userList, ItemsControl.ItemsSourceProperty).Mode);
                     Assert.AreEqual("Users", AutomationProperties.GetName(userList));
                     Assert.AreEqual(300.0, userList.Width);
                     Assert.AreEqual(SelectionMode.Single, userList.SelectionMode);
