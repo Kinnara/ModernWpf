@@ -5,7 +5,7 @@ using ModernWpf.Gallery.Pages.WpfGallery;
 
 namespace ModernWpf.Gallery.Pages
 {
-    public sealed partial class WhatsNewPage
+    public partial class WhatsNewPage
     {
         public WhatsNewPage()
             : this(null)

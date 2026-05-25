@@ -3,7 +3,7 @@ using System.Windows.Controls;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
 {
-    public sealed partial class MessageBoxPage : Page
+    public partial class MessageBoxPage : Page
     {
         public MessageBoxPage(MessageBoxPageViewModel viewModel)
         {

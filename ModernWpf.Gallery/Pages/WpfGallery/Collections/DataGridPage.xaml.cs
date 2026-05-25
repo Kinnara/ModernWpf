@@ -4,7 +4,7 @@ using Microsoft.Win32;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
 {
-    public sealed partial class DataGridPage : Page
+    public partial class DataGridPage : Page
     {
         public DataGridPage(DataGridPageViewModel viewModel)
         {

@@ -10,7 +10,7 @@ using ModernWpf;
 
 namespace ModernWpf.Gallery.Controls
 {
-    public sealed partial class HeaderTile : UserControl
+    public partial class HeaderTile : UserControl
     {
         public HeaderTile()
         {

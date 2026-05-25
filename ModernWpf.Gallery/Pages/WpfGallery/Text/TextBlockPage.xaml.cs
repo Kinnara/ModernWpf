@@ -1,7 +1,7 @@
 using System.Windows.Controls;
 namespace ModernWpf.Gallery.Pages.WpfGallery.Text
 {
-    public sealed partial class TextBlockPage : Page
+    public partial class TextBlockPage : Page
     {
         public TextBlockPage(TextBlockPageViewModel viewModel)
         {

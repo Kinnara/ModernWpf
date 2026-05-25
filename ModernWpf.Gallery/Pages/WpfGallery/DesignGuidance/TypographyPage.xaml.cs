@@ -2,7 +2,7 @@ using System.Windows.Controls;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 {
-    public sealed partial class TypographyPage : Page
+    public partial class TypographyPage : Page
     {
         public TypographyPage(TypographyPageViewModel viewModel)
         {

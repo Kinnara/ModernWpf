@@ -2,7 +2,7 @@ using System.Windows.Controls;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
 {
-    public sealed partial class CheckBoxPage : Page
+    public partial class CheckBoxPage : Page
     {
         public CheckBoxPage(CheckBoxPageViewModel viewModel)
         {

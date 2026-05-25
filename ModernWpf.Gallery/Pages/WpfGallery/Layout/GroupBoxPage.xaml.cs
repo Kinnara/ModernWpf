@@ -1,7 +1,7 @@
 using System.Windows.Controls;
 namespace ModernWpf.Gallery.Pages.WpfGallery.Layout
 {
-    public sealed partial class GroupBoxPage : Page
+    public partial class GroupBoxPage : Page
     {
         public GroupBoxPage(GroupBoxPageViewModel viewModel)
         {

@@ -3,7 +3,7 @@ using System.Windows.Controls;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.Navigation
 {
-    public sealed partial class FramePage : Page
+    public partial class FramePage : Page
     {
         public FramePage(FramePageViewModel viewModel)
         {

@@ -2,7 +2,7 @@
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 {
-    public sealed partial class BackgroundSection : Page
+    public partial class BackgroundSection : Page
     {
         public BackgroundSection()
         {

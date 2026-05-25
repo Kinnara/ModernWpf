@@ -2,7 +2,7 @@
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 {
-    public sealed partial class SignalSection : Page
+    public partial class SignalSection : Page
     {
         public SignalSection()
         {

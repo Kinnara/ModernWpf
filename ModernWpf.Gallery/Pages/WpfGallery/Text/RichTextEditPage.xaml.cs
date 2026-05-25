@@ -1,7 +1,7 @@
 using System.Windows.Controls;
 namespace ModernWpf.Gallery.Pages.WpfGallery.Text
 {
-    public sealed partial class RichTextEditPage : Page
+    public partial class RichTextEditPage : Page
     {
         public RichTextEditPage(RichTextEditPageViewModel viewModel)
         {

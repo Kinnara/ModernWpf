@@ -6,7 +6,7 @@ using ModernWpf.Gallery.Pages.WpfGallery;
 
 namespace ModernWpf.Gallery.Pages
 {
-    public sealed partial class AllControlsPage
+    public partial class AllControlsPage
     {
         public AllControlsPage()
             : this(null)

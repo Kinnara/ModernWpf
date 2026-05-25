@@ -1,7 +1,7 @@
 using System.Windows.Controls;
 namespace ModernWpf.Gallery.Pages.WpfGallery.DateAndTime
 {
-    public sealed partial class CalendarPage : Page
+    public partial class CalendarPage : Page
     {
         public CalendarPage(CalendarPageViewModel viewModel)
         {

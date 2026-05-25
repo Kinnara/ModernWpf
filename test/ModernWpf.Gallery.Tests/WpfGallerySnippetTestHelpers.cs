@@ -73,19 +73,32 @@ namespace ModernWpf.Gallery.Tests
 
         public static string ReadRepoFile(params string[] relativePath)
         {
+            var directory = new DirectoryInfo(GetRepoRoot());
+            var candidate = Path.Combine(new[] { directory.FullName }.Concat(relativePath).ToArray());
+            if (File.Exists(candidate))
+            {
+                return File.ReadAllText(candidate);
+            }
+
+            Assert.Fail("Could not find repository file '{0}'.", string.Join(Path.DirectorySeparatorChar.ToString(), relativePath));
+            return null;
+        }
+
+        public static string GetRepoRoot()
+        {
             var directory = new DirectoryInfo(AppContext.BaseDirectory);
             while (directory != null)
             {
-                var candidate = Path.Combine(new[] { directory.FullName }.Concat(relativePath).ToArray());
+                var candidate = Path.Combine(directory.FullName, "ModernWpf.sln");
                 if (File.Exists(candidate))
                 {
-                    return File.ReadAllText(candidate);
+                    return directory.FullName;
                 }
 
                 directory = directory.Parent;
             }
 
-            Assert.Fail("Could not find repository file '{0}'.", string.Join(Path.DirectorySeparatorChar.ToString(), relativePath));
+            Assert.Fail("Could not find repository root from '{0}'.", AppContext.BaseDirectory);
             return null;
         }
 

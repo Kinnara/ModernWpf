@@ -7,7 +7,7 @@ using ModernWpf;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 {
-    public sealed partial class GeometryPage : Page
+    public partial class GeometryPage : Page
     {
         public GeometryPage(GeometryPageViewModel viewModel)
         {

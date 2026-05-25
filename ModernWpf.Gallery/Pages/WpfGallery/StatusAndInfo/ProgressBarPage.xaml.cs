@@ -1,7 +1,7 @@
 using System.Windows.Controls;
 namespace ModernWpf.Gallery.Pages.WpfGallery.StatusAndInfo
 {
-    public sealed partial class ProgressBarPage : Page
+    public partial class ProgressBarPage : Page
     {
         public ProgressBarPage(ProgressBarPageViewModel viewModel)
         {

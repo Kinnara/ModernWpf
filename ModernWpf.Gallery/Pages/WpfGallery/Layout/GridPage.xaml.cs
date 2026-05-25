@@ -1,7 +1,7 @@
 using System.Windows.Controls;
 namespace ModernWpf.Gallery.Pages.WpfGallery.Layout
 {
-    public sealed partial class GridPage : Page
+    public partial class GridPage : Page
     {
         public GridPage(GridPageViewModel viewModel)
         {

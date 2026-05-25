@@ -125,6 +125,11 @@ WPF item pages that use this same official init-first constructor shape now
 match it as well: Colors, Icons, Typography, Spacing, Geometry, and User
 Dashboard. This keeps shell navigation unchanged while moving page construction
 closer to the official WPF Gallery `Views` pattern.
+Copied/adapted WPF Gallery page and support control code-behind declarations
+now also keep the official unsealed class shape (`public partial class`) for
+Home, All Controls, What's New, Settings, direct item/support pages, section
+page adapters, `HeaderTile`, and `TileGallery`, while local shell-only classes
+such as `ItemPage` remain outside that source-shape rule.
 
 ## Commit Policy
 
@@ -144,6 +149,10 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.CopiedWpfGalleryCodeBehindClassesStayUnsealedLikeOfficialSource|FullyQualifiedName~GalleryPageRuntimeTests.SourceInitFirstCopiedPagesRenderInjectedViewModelBindings|FullyQualifiedName~GalleryPageRuntimeTests.TopLevelWpfGalleryPagesAcceptInjectedViewModels|FullyQualifiedName~GalleryNavigationRuntimeTests.ShellCanNavigateEveryCatalogRouteWithoutExceptions" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 4 tests per target. Copied/adapted WPF Gallery page and support-control code-behind declarations now match the official unsealed `public partial class` / unsealed section page shape, with source-shape coverage preventing `public sealed partial class` from returning to WPF Gallery copied pages, top-level WPF Gallery pages, `HeaderTile`, or `TileGallery`; representative injected page creation, top-level view-model construction, and full shell route navigation still pass. Existing warning/output remains `NU1903` and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the unsealed copied/adapted class declaration source-shape update. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages and existing ModernWpf/ModernWpf.Controls warnings.
 - `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
   - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0`. The copied User Dashboard code-behind source-shape update still compiles on the legacy `net462` Gallery target with the local automation notification guard. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages and existing ModernWpf/ModernWpf.Controls warnings.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySamplesSnippetTests.UserDashboardCodeBehindUsesOfficialCommandAndNotificationShape|FullyQualifiedName~GalleryPageRuntimeTests.UserDashboardPageMatchesWpfGalleryReferenceLayoutAndBehavior" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`

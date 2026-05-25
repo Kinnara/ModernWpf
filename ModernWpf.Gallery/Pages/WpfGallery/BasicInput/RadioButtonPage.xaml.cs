@@ -3,7 +3,7 @@ using System.Windows.Input;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
 {
-    public sealed partial class RadioButtonPage : Page
+    public partial class RadioButtonPage : Page
     {
         public RadioButtonPage(RadioButtonPageViewModel viewModel)
         {

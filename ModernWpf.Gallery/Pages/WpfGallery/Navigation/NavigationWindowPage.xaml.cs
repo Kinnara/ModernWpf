@@ -5,7 +5,7 @@ using System.Windows.Navigation;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.Navigation
 {
-    public sealed partial class NavigationWindowPage : Page
+    public partial class NavigationWindowPage : Page
     {
         public NavigationWindowPage(NavigationWindowPageViewModel viewModel)
         {

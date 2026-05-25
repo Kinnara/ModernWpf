@@ -2,7 +2,7 @@ using System.Windows.Controls;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
 {
-    public sealed partial class ListBoxPage : Page
+    public partial class ListBoxPage : Page
     {
         public ListBoxPage(ListBoxPageViewModel viewModel)
         {

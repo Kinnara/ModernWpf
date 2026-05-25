@@ -5,7 +5,7 @@ using System.Windows.Controls;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
 {
-    public sealed partial class UserDashboardPage : Page
+    public partial class UserDashboardPage : Page
     {
         public UserDashboardPage(UserDashboardPageViewModel viewModel)
         {

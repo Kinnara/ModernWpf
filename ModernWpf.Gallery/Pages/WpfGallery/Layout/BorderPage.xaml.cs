@@ -1,7 +1,7 @@
 using System.Windows.Controls;
 namespace ModernWpf.Gallery.Pages.WpfGallery.Layout
 {
-    public sealed partial class BorderPage : Page
+    public partial class BorderPage : Page
     {
         public BorderPage(BorderPageViewModel viewModel)
         {

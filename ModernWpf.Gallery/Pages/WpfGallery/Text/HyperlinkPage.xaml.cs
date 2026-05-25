@@ -4,7 +4,7 @@ using System.Windows.Navigation;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.Text
 {
-    public sealed partial class HyperlinkPage : Page
+    public partial class HyperlinkPage : Page
     {
         public HyperlinkPage(HyperlinkPageViewModel viewModel)
         {

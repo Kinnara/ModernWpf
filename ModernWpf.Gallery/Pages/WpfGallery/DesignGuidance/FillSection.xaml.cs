@@ -2,7 +2,7 @@
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 {
-    public sealed partial class FillSection : Page
+    public partial class FillSection : Page
     {
         public FillSection()
         {

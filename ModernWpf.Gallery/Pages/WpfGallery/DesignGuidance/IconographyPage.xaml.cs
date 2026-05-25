@@ -7,7 +7,7 @@ using System.Windows.Input;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 {
-    public sealed partial class IconographyPage : Page
+    public partial class IconographyPage : Page
     {
         static IconographyPage()
         {

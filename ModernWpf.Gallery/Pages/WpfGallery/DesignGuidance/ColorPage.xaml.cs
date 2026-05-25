@@ -5,7 +5,7 @@ using ModernWpf.Gallery.Testing;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 {
-    public sealed partial class ColorPage : Page
+    public partial class ColorPage : Page
     {
         public ColorPage(ColorsPageViewModel viewModel)
         {

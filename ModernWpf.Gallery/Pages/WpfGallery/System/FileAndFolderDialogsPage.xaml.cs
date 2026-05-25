@@ -5,7 +5,7 @@ using Microsoft.Win32;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
 {
-    public sealed partial class FileAndFolderDialogsPage : Page
+    public partial class FileAndFolderDialogsPage : Page
     {
         public FileAndFolderDialogsPage(FileAndFolderDialogsPageViewModel viewModel)
         {

@@ -3,7 +3,7 @@ using System.Windows.Controls;
 
 namespace ModernWpf.Gallery.Controls
 {
-    public sealed partial class TileGallery : UserControl
+    public partial class TileGallery : UserControl
     {
         public TileGallery()
         {

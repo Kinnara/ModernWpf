@@ -6,7 +6,7 @@ using System.Windows.Navigation;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
 {
-    public sealed partial class ClipboardPage : Page
+    public partial class ClipboardPage : Page
     {
         public ClipboardPage(ClipboardPageViewModel viewModel)
         {

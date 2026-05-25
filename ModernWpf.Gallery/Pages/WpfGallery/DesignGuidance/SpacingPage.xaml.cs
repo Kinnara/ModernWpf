@@ -7,7 +7,7 @@ using ModernWpf;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 {
-    public sealed partial class SpacingPage : Page
+    public partial class SpacingPage : Page
     {
         public SpacingPage(SpacingPageViewModel viewModel)
         {
