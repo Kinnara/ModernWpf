@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "RichTextBlock", "RichEditBox", "SplitView", "PersonPicture", "Sound", "MediaPlayerElement", "MapControl", "WebView2", "Acrylic", "AnimatedIcon", "CompactSizing", "IconElement", "Line", "Shape", "RadialGradientBrush", "SystemBackdrops", "SystemBackdropElement", "ThemeShadow", "CreateMultipleWindows", "AppWindow", "AppWindowTitleBar", "TitleBar", "StoragePickers", "CalendarDatePicker", "CalendarView", "TimePicker", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "AnnotatedScrollBar", "ScrollView", "ScrollViewer", "SemanticZoom", "PullToRefresh", "FlipView", "ItemsView", "GridView", "ItemsRepeater", "BreadcrumbBar", "Pivot", "SelectorBar", "TabView", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "SwipeControl", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout", "StandardUICommand", "XamlUICommand"),
+    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "RichTextBlock", "RichEditBox", "SplitView", "PersonPicture", "Sound", "MediaPlayerElement", "MapControl", "WebView2", "Acrylic", "AnimatedIcon", "ParallaxView", "CompactSizing", "IconElement", "Line", "Shape", "RadialGradientBrush", "SystemBackdrops", "SystemBackdropElement", "ThemeShadow", "CreateMultipleWindows", "AppWindow", "AppWindowTitleBar", "TitleBar", "StoragePickers", "CalendarDatePicker", "CalendarView", "TimePicker", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "AnnotatedScrollBar", "ScrollView", "ScrollViewer", "SemanticZoom", "PullToRefresh", "FlipView", "ItemsView", "GridView", "ItemsRepeater", "BreadcrumbBar", "Pivot", "SelectorBar", "TabView", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "SwipeControl", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout", "StandardUICommand", "XamlUICommand"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -470,6 +470,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "WebView2" { return "GallerySample_WebView2_WebView2" }
         "Acrylic" { return "GallerySample_Acrylic_Example1Grid" }
         "AnimatedIcon" { return "GallerySample_AnimatedIcon_Button" }
+        "ParallaxView" { return "GallerySample_ParallaxView_Root" }
         "CompactSizing" { return "GallerySample_CompactSizing_FirstName" }
         "IconElement" { return "GallerySample_IconElement_SlicesIcon" }
         "Line" { return "GallerySample_Line_Line" }
@@ -560,6 +561,7 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
         "WebView2" { return "GallerySample_WebView2_WebView2" }
         "Acrylic" { return "GallerySample_Acrylic_Root" }
         "AnimatedIcon" { return "GallerySample_AnimatedIcon_Root" }
+        "ParallaxView" { return "GallerySample_ParallaxView_Root" }
         "CompactSizing" { return "GallerySample_CompactSizing_Root" }
         "IconElement" { return "GallerySample_IconElement_Root" }
         "Line" { return "GallerySample_Line_Root" }
@@ -642,6 +644,7 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
         "WebView2" { return "MyWebView2" }
         "Acrylic" { return "svPanel" }
         "AnimatedIcon" { return "svPanel" }
+        "ParallaxView" { return "listView" }
         "CompactSizing" { return "svPanel" }
         "IconElement" { return "svPanel" }
         "Line" { return "svPanel" }

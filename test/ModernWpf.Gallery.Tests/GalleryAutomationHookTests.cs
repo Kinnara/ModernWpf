@@ -48,6 +48,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "WebView2", "GallerySample_WebView2_Root", "GallerySample_WebView2_WebView2" };
             yield return new object[] { "Acrylic", "GallerySample_Acrylic_Root", "GallerySample_Acrylic_Example1Grid" };
             yield return new object[] { "AnimatedIcon", "GallerySample_AnimatedIcon_Root", "GallerySample_AnimatedIcon_Button" };
+            yield return new object[] { "ParallaxView", "GallerySample_ParallaxView_Root", "GallerySample_ParallaxView_ParallaxView" };
             yield return new object[] { "CompactSizing", "GallerySample_CompactSizing_Root", "GallerySample_CompactSizing_FirstName" };
             yield return new object[] { "IconElement", "GallerySample_IconElement_Root", "GallerySample_IconElement_SlicesIcon" };
             yield return new object[] { "Line", "GallerySample_Line_Root", "GallerySample_Line_Line" };
@@ -1523,6 +1524,104 @@ namespace ModernWpf.Gallery.Tests
                     WpfTestHost.DoEvents();
                     Assert.AreEqual(250.0, annotatedScrollBar.MaxHeight);
                     Assert.AreEqual(5, annotatedScrollBar.Labels.Count);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void ParallaxViewSampleMatchesWinUIGalleryExamples()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("ParallaxView"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(2, page.Examples.Count);
+                    Assert.AreEqual("Parallax on a ListView", page.Examples[0].HeaderText);
+                    Assert.AreEqual("Parallax with a ScrollView", page.Examples[1].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "Source=\"{Binding ElementName=listView}\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "VerticalShift=\"500\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "AutomationProperties.Name=\"all samples\"");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "<ScrollView x:Name=\"scrollView\" Width=\"150\"");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "<Rectangle Fill=\"AliceBlue\" Height=\"150\"/>");
+                    Assert.IsNull(page.Examples[0].CSharpCode);
+                    Assert.IsNull(page.Examples[1].CSharpCode);
+
+                    var sampleRoot = FindByAutomationId(page, "GallerySample_ParallaxView_Root") as UIElement;
+                    Assert.IsNotNull(sampleRoot);
+                    var sampleRootPeer = UIElementAutomationPeer.CreatePeerForElement(sampleRoot);
+                    Assert.IsNotNull(sampleRootPeer);
+                    Assert.IsTrue(sampleRootPeer.IsControlElement());
+                    Assert.AreEqual(AutomationControlType.Group, sampleRootPeer.GetAutomationControlType());
+
+                    var parallaxView = (Mux.ParallaxView)FindByAutomationId(page, "GallerySample_ParallaxView_ParallaxView");
+                    var listView = FindNamedDescendant<ListView>(page, "listView");
+                    Assert.IsNotNull(parallaxView);
+                    Assert.AreEqual("parallaxView", parallaxView.Name);
+                    Assert.AreEqual(500.0, parallaxView.VerticalShift);
+                    Assert.AreSame(listView, parallaxView.Source);
+                    Assert.IsInstanceOfType(parallaxView.Child, typeof(Image));
+                    StringAssert.Contains(((BitmapImage)((Image)parallaxView.Child).Source).UriSource.ToString(), "cliff.jpg");
+
+                    Assert.IsNotNull(listView);
+                    Assert.AreEqual("all samples", AutomationProperties.GetName(listView));
+                    Assert.AreEqual(475.0, listView.Height);
+                    Assert.AreEqual(new Thickness(0, 76, 0, 0), listView.Margin);
+                    Assert.AreEqual(Colors.Transparent, ((SolidColorBrush)listView.Background).Color);
+                    var overlay = FindNamedDescendant<Border>(page, "ParallaxOverlay");
+                    Assert.IsNotNull(overlay);
+                    Assert.AreEqual(Color.FromArgb(0x80, 0x00, 0x00, 0x00), ((SolidColorBrush)overlay.Background).Color);
+                    var itemTitles = listView.Items.Cast<string>().ToArray();
+                    Assert.IsTrue(itemTitles.Length > 60);
+                    CollectionAssert.AreEqual(itemTitles.OrderBy(title => title).ToArray(), itemTitles);
+                    CollectionAssert.Contains(itemTitles, "AcrylicBrush");
+                    CollectionAssert.Contains(itemTitles, "AnimatedIcon");
+                    CollectionAssert.Contains(itemTitles, "ParallaxView");
+
+                    var headerTexts = FindDescendants<TextBlock>(page).Select(textBlock => textBlock.Text).ToArray();
+                    CollectionAssert.Contains(headerTexts, "Scroll the list to see parallaxing of image");
+                    CollectionAssert.Contains(headerTexts, "Scroll the rectangles to see parallaxing of image");
+
+                    var scrollView = FindNamedDescendant<ScrollViewer>(page, "scrollView");
+                    Assert.IsNotNull(scrollView);
+                    Assert.AreEqual(150.0, scrollView.Width);
+                    Assert.AreEqual(551.0, scrollView.Height);
+                    Assert.AreEqual(HorizontalAlignment.Left, scrollView.HorizontalAlignment);
+                    Assert.AreEqual(ScrollBarVisibility.Disabled, scrollView.HorizontalScrollBarVisibility);
+                    Assert.AreEqual(ScrollBarVisibility.Auto, scrollView.VerticalScrollBarVisibility);
+                    var secondParallaxView = FindDescendants<Mux.ParallaxView>(page).Single(view => ReferenceEquals(view.Source, scrollView));
+                    Assert.AreEqual(500.0, secondParallaxView.VerticalShift);
+                    Assert.IsInstanceOfType(secondParallaxView.Child, typeof(Image));
+                    StringAssert.Contains(((BitmapImage)((Image)secondParallaxView.Child).Source).UriSource.ToString(), "cliff.jpg");
+
+                    var rectangles = ((StackPanel)scrollView.Content).Children.OfType<WpfShapes.Rectangle>().ToArray();
+                    Assert.AreEqual(19, rectangles.Length);
+                    Assert.AreEqual(150.0, rectangles[0].Height);
+                    Assert.AreEqual(Colors.AliceBlue, ((SolidColorBrush)rectangles[0].Fill).Color);
+                    Assert.AreEqual(Colors.Cyan, ((SolidColorBrush)rectangles[18].Fill).Color);
                 }
                 finally
                 {

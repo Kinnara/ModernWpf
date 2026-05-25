@@ -106,6 +106,16 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.ParallaxViewSampleMatchesWinUIGalleryExamples" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 1 test per target. The generated ModernWpf ParallaxView page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\ParallaxViewPage.xaml` / `.xaml.cs`: the `Parallax on a ListView` and `Parallax with a ScrollView` examples, source-facing `parallaxView`, `listView`, and `scrollView` names, the official inline XAML snippets, the `VerticalShift="500"` source behavior, and WinUI generated catalog item titles from `GalleryCatalogData.Groups`. The WPF adaptation uses the real `ModernWpf.Controls.ParallaxView`; it maps WinUI `ScrollView` to WPF `ScrollViewer` in the second example and uses an explicit image/list overlay host for the first viewport because WPF `ListView` has no built-in `Header` property matching WinUI `ListView.Header`. The test covers the source snippets, sample root automation peer, `GallerySample_ParallaxView_ParallaxView`, source data ordering, overlay brush, image asset, and rectangle stack.
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 70 tests per target, including the new ParallaxView root/control automation IDs.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls ParallaxView -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-101417-581-14696/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required `GallerySample_ParallaxView_Root` element was found, primary crops compare ModernWpf `GallerySample_ParallaxView_Root` against WinUI `listView`, crop sizes match at `745x551`, Light primary delta is `17.21`, and whole-window Light mean delta remains diagnostic at `189.89`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls ParallaxView -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-101516-741-122592/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the same ParallaxView crop mapping is used with matching `745x551` crops, Dark primary delta is `11.28`, and whole-window Dark mean delta is `20.82`.
+- `git diff --check`
+  - Passed with only Git's normal LF-to-CRLF working-copy warnings for touched files.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.ScrollViewSampleMatchesWinUIGalleryExamples" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 1 test per target. The generated ModernWpf ScrollView page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\ScrollViewPage.xaml` / `.xaml.cs`: the `Content inside of a ScrollView.`, `Constant velocity scrolling.`, and `Programmatic scroll with custom animation.` examples, source-facing names such as `scrollView1`, `cmbZoomMode`, `nbZoomFactor`, `scrollView2`, `nbVerticalVelocity`, `scrollView3`, `cmbVerticalAnimation`, `nbAnimationDuration`, and `btnScrollWithAnimation`, and the local `Samples\SampleCode\ScrollView` animation snippets. The WPF adaptation maps WinUI `ScrollView` to WPF `ScrollViewer` surfaces with a zoomed image viewport, timer-backed constant scrolling, and programmatic scroll animation choices because ModernWpf does not currently expose a native `ScrollView` / `ScrollPresenter` control. The test covers the source snippets, consumed dynamic animation snippets, sample root automation peer, `GallerySample_ScrollView_ScrollView`, option defaults, zoom behavior, scroll policy mapping, and image-stack examples.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
@@ -3033,6 +3043,26 @@ and now includes SemanticZoom in the default WinUI extension visual set. Treat
 the remaining crop width difference as diagnostic unless a native SemanticZoom
 port or a better source-sized host becomes available. Avoid reopening
 SemanticZoom's source shape unless a new local WinUI source, native control
+strategy, or crop regression appears.
+The generated ModernWpf ParallaxView extension page now uses the local official
+WinUI Gallery source from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\ParallaxViewPage.xaml`
+and `.xaml.cs`: the `Parallax on a ListView` and `Parallax with a ScrollView`
+examples, source-facing `parallaxView`, `listView`, and `scrollView` names,
+the official inline XAML snippets, `VerticalShift="500"`, the source `cliff.jpg`
+image, and the WinUI-generated catalog item titles used by the first sample.
+The WPF adaptation uses the real `ModernWpf.Controls.ParallaxView`, maps WinUI
+`ScrollView` to WPF `ScrollViewer` for the second example, and uses a layered
+image/overlay/list host for the first example because WPF `ListView` has no
+native `Header` property matching WinUI `ListView.Header`. Current ParallaxView
+WinUI-reference evidence is
+`artifacts/visual-checks/20260525-101417-581-14696/report.md` for Light and
+`artifacts/visual-checks/20260525-101516-741-122592/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`; the visual harness maps
+ModernWpf `GallerySample_ParallaxView_Root` to installed WinUI `listView`, both
+with matching `745x551` primary crops and deltas `17.21` / `11.28`. The
+remaining Light delta is mostly image/text rendering treatment, so avoid
+reopening ParallaxView unless a new local WinUI source, native WPF header
 strategy, or crop regression appears.
 Continue with the next highest-impact visible drift from the checklist, likely
 remaining High Contrast gaps, other NavigationView styling not covered

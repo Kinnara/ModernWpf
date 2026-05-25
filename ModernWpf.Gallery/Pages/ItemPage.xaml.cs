@@ -333,6 +333,12 @@ namespace ModernWpf.Gallery.Pages
                 return stylesExamples;
             }
 
+            var motionExamples = MotionSampleFactory.CreateExamples(uniqueId);
+            if (motionExamples.Count != 0)
+            {
+                return motionExamples;
+            }
+
             var systemExamples = SystemSampleFactory.CreateExamples(uniqueId);
             if (systemExamples.Count != 0)
             {
