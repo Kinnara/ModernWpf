@@ -42,10 +42,6 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "PullToRefresh", "GallerySample_PullToRefresh_Root", "GallerySample_PullToRefresh_RefreshContainer" };
             yield return new object[] { "SplitView", "GallerySample_SplitView_Root", "GallerySample_SplitView_SplitView" };
             yield return new object[] { "PersonPicture", "GallerySample_PersonPicture_Root", "GallerySample_PersonPicture_PersonPicture" };
-            yield return new object[] { "Sound", "GallerySample_Sound_Root", "GallerySample_Sound_ToggleSwitch" };
-            yield return new object[] { "MediaPlayerElement", "GallerySample_MediaPlayerElement_Root", "GallerySample_MediaPlayerElement_MediaPlayerElement" };
-            yield return new object[] { "MapControl", "GallerySample_MapControl_Root", "GallerySample_MapControl_MapControl" };
-            yield return new object[] { "WebView2", "GallerySample_WebView2_Root", "GallerySample_WebView2_WebView2" };
             yield return new object[] { "Acrylic", "GallerySample_Acrylic_Root", "GallerySample_Acrylic_Example1Grid" };
             yield return new object[] { "AnimatedIcon", "GallerySample_AnimatedIcon_Root", "GallerySample_AnimatedIcon_Button" };
             yield return new object[] { "ParallaxView", "GallerySample_ParallaxView_Root", "GallerySample_ParallaxView_ParallaxView" };
@@ -54,14 +50,8 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "Line", "GallerySample_Line_Root", "GallerySample_Line_Line" };
             yield return new object[] { "Shape", "GallerySample_Shape_Root", "GallerySample_Shape_Ellipse" };
             yield return new object[] { "RadialGradientBrush", "GallerySample_RadialGradientBrush_Root", "GallerySample_RadialGradientBrush_Rect" };
-            yield return new object[] { "SystemBackdrops", "GallerySample_SystemBackdrops_Root", "GallerySample_SystemBackdrops_ShowWindowButton" };
-            yield return new object[] { "SystemBackdropElement", "GallerySample_SystemBackdropElement_Root", "GallerySample_SystemBackdropElement_Button" };
             yield return new object[] { "ThemeShadow", "GallerySample_ThemeShadow_Root", "GallerySample_ThemeShadow_ShadowRect" };
-            yield return new object[] { "CreateMultipleWindows", "GallerySample_CreateMultipleWindows_Root", "GallerySample_CreateMultipleWindows_Control1" };
-            yield return new object[] { "AppWindow", "GallerySample_AppWindow_Root", "GallerySample_AppWindow_ShowSampleWindow1Button" };
-            yield return new object[] { "AppWindowTitleBar", "GallerySample_AppWindowTitleBar_Root", "GallerySample_AppWindowTitleBar_ShowWindowButton" };
             yield return new object[] { "TitleBar", "GallerySample_TitleBar_Root", "GallerySample_TitleBar_TitleBarControl" };
-            yield return new object[] { "StoragePickers", "GallerySample_StoragePickers_Root", "GallerySample_StoragePickers_PickSingleFileButton" };
             yield return new object[] { "FlipView", "GallerySample_FlipView_Root", "GallerySample_FlipView_FlipView" };
             yield return new object[] { "ItemsView", "GallerySample_ItemsView_Root", "GallerySample_ItemsView_ItemsView" };
             yield return new object[] { "CalendarDatePicker", "GallerySample_CalendarDatePicker_Root", "GallerySample_CalendarDatePicker_CalendarDatePicker" };
@@ -98,8 +88,6 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "AppBarToggleButton", "GallerySample_AppBarToggleButton_Root", "GallerySample_AppBarToggleButton_AppBarToggleButton" };
             yield return new object[] { "CommandBar", "GallerySample_CommandBar_Root", "GallerySample_CommandBar_CommandBar" };
             yield return new object[] { "CommandBarFlyout", "GallerySample_CommandBarFlyout_Root", "GallerySample_CommandBarFlyout_ShowButton" };
-            yield return new object[] { "StandardUICommand", "GallerySample_StandardUICommand_Root", "GallerySample_StandardUICommand_ListView" };
-            yield return new object[] { "XamlUICommand", "GallerySample_XamlUICommand_Root", "GallerySample_XamlUICommand_AppBarButton" };
         }
 
         [TestMethod]
@@ -3122,97 +3110,6 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void CommandSamplesMatchWinUIGalleryExamples()
-        {
-            WpfTestHost.Run(() =>
-            {
-                var standardCommandPage = new ItemPage(GalleryCatalog.FindItem("StandardUICommand"));
-                var xamlCommandPage = new ItemPage(GalleryCatalog.FindItem("XamlUICommand"));
-                var window = new Window
-                {
-                    Width = 1024,
-                    Height = 768,
-                    Left = -32000,
-                    Top = -32000,
-                    ShowInTaskbar = false,
-                    WindowStartupLocation = WindowStartupLocation.Manual
-                };
-
-                try
-                {
-                    window.Content = standardCommandPage;
-                    window.Show();
-                    WpfTestHost.DoEvents();
-                    window.UpdateLayout();
-                    WpfTestHost.DoEvents();
-
-                    Assert.AreEqual(1, standardCommandPage.Examples.Count);
-                    Assert.AreEqual("Exposing a command in multiple controls using StandardUICommand", standardCommandPage.Examples[0].HeaderText);
-                    Assert.IsFalse(standardCommandPage.HasAdditionalSampleSnippets);
-                    StringAssert.Contains(standardCommandPage.Examples[0].XamlCode, "DeleteSwipeItem");
-                    StringAssert.Contains(standardCommandPage.Examples[0].XamlCode, "HoverButton");
-                    StringAssert.Contains(standardCommandPage.Examples[0].CSharpCode, "StandardUICommandKind.Delete");
-
-                    var standardRoot = (FrameworkElement)FindByAutomationId(standardCommandPage, "GallerySample_StandardUICommand_Root");
-                    var listView = (ListView)FindByAutomationId(standardCommandPage, "GallerySample_StandardUICommand_ListView");
-                    var namedListView = FindNamedDescendant<ListView>(standardCommandPage, "ListViewRight");
-                    var menu = FindNamedDescendant<Mux.MenuBar>(standardCommandPage, "StandardUICommandMenuBar");
-                    Assert.IsNotNull(standardRoot);
-                    Assert.AreSame(listView, namedListView);
-                    Assert.IsNotNull(menu);
-                    var editMenu = (Mux.MenuBarItem)menu.Items[1];
-                    var deleteFlyoutItem = (MenuItem)editMenu.Items[0];
-                    Assert.AreEqual("DeleteFlyoutItem", deleteFlyoutItem.Name);
-                    Assert.IsNotNull(deleteFlyoutItem.Command);
-                    Assert.AreEqual("Delete", deleteFlyoutItem.InputGestureText);
-                    Assert.AreEqual(500.0, listView.Height);
-                    Assert.AreEqual(15, listView.Items.Count);
-                    Assert.AreEqual("List item 0", GetCommandListItemText(listView.Items[0]));
-                    Assert.IsNotNull(listView.ItemTemplate);
-                    var firstContainer = listView.ItemContainerGenerator.ContainerFromIndex(0) as ListViewItem;
-                    Assert.IsNotNull(firstContainer);
-                    Assert.IsNotNull(firstContainer.ContextMenu);
-                    Assert.AreEqual(1, firstContainer.ContextMenu.Items.Count);
-
-                    listView.SelectedIndex = 1;
-                    deleteFlyoutItem.Command.Execute(null);
-                    Assert.AreEqual(14, listView.Items.Count);
-                    Assert.AreEqual("List item 2", GetCommandListItemText(listView.Items[1]));
-
-                    window.Content = xamlCommandPage;
-                    WpfTestHost.DoEvents();
-                    window.UpdateLayout();
-                    WpfTestHost.DoEvents();
-
-                    Assert.AreEqual(1, xamlCommandPage.Examples.Count);
-                    Assert.AreEqual("Creating a reusable command with XamlUICommand", xamlCommandPage.Examples[0].HeaderText);
-                    Assert.IsFalse(xamlCommandPage.HasAdditionalSampleSnippets);
-                    StringAssert.Contains(xamlCommandPage.Examples[0].XamlCode, "CustomXamlUICommand");
-                    StringAssert.Contains(xamlCommandPage.Examples[0].XamlCode, "SymbolIconSource Symbol=\"Favorite\"");
-                    StringAssert.Contains(xamlCommandPage.Examples[0].CSharpCode, "You fired the custom command");
-
-                    var customButton = (Mux.AppBarButton)FindByAutomationId(xamlCommandPage, "GallerySample_XamlUICommand_AppBarButton");
-                    var namedCustomButton = FindNamedDescendant<Mux.AppBarButton>(xamlCommandPage, "CustomButton");
-                    var output = FindNamedDescendant<TextBlock>(xamlCommandPage, "XamlUICommandOutput");
-                    Assert.AreSame(customButton, namedCustomButton);
-                    Assert.AreEqual("Custom XamlUICommand", customButton.Label);
-                    Assert.AreEqual(Mux.Symbol.Favorite, ((Mux.SymbolIcon)customButton.Icon).Symbol);
-                    Assert.AreEqual("Ctrl+D", customButton.InputGestureText);
-                    Assert.IsNotNull(output);
-
-                    customButton.Command.Execute(null);
-                    Assert.AreEqual("You fired the custom command", output.Text);
-                }
-                finally
-                {
-                    window.Content = null;
-                    window.Close();
-                    WpfTestHost.DoEvents();
-                }
-            });
-        }
-
-        [TestMethod]
         public void DropDownButtonSampleMatchesWinUIGalleryExamples()
         {
             WpfTestHost.Run(() =>
@@ -4189,169 +4086,6 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void SoundSampleMatchesWinUIGalleryExamples()
-        {
-            WpfTestHost.Run(() =>
-            {
-                var page = new ItemPage(GalleryCatalog.FindItem("Sound"));
-                var window = new Window
-                {
-                    Width = 1024,
-                    Height = 768,
-                    Left = -32000,
-                    Top = -32000,
-                    ShowInTaskbar = false,
-                    WindowStartupLocation = WindowStartupLocation.Manual,
-                    Content = page
-                };
-
-                try
-                {
-                    window.Show();
-                    WpfTestHost.DoEvents();
-                    window.UpdateLayout();
-                    WpfTestHost.DoEvents();
-
-                    Assert.AreEqual(3, page.Examples.Count);
-                    Assert.AreEqual("Toggling Sound", page.Examples[0].HeaderText);
-                    Assert.AreEqual("Toggling Spatial Audio", page.Examples[1].HeaderText);
-                    Assert.AreEqual("Play Specific System Sound", page.Examples[2].HeaderText);
-                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
-                    Assert.IsNull(page.Examples[0].XamlCode);
-                    Assert.IsNull(page.Examples[1].XamlCode);
-                    Assert.IsNull(page.Examples[2].XamlCode);
-                    StringAssert.Contains(page.Examples[0].CSharpCode, "ElementSoundPlayer.State = ElementSoundPlayerState.Off;");
-                    StringAssert.Contains(page.Examples[1].CSharpCode, "ElementSoundPlayer.SpatialAudioMode = ElementSpatialAudioMode.On");
-                    StringAssert.Contains(page.Examples[2].CSharpCode, "ElementSoundPlayer.Play(ElementSoundKind.GoBack);");
-
-                    var soundToggle = (Mux.ToggleSwitch)FindByAutomationId(page, "GallerySample_Sound_ToggleSwitch");
-                    var spatialAudioBox = FindNamedDescendant<CheckBox>(page, "spatialAudioBox");
-                    var focusButton = (Button)FindByAutomationId(page, "Focus");
-                    var goBackButton = (Button)FindByAutomationId(page, "GoBack");
-                    Assert.IsNotNull(soundToggle);
-                    Assert.IsNotNull(spatialAudioBox);
-                    Assert.IsNotNull(focusButton);
-                    Assert.IsNotNull(goBackButton);
-
-                    Assert.AreEqual("soundToggle", soundToggle.Name);
-                    Assert.AreEqual(115d, soundToggle.Width);
-                    Assert.AreEqual(0d, soundToggle.MinWidth);
-                    Assert.AreEqual("Sound Off", soundToggle.OffContent);
-                    Assert.AreEqual("Sound On", soundToggle.OnContent);
-                    Assert.IsFalse(soundToggle.IsOn);
-                    Assert.AreEqual("Enable Spatial Audio", spatialAudioBox.Content);
-                    Assert.IsFalse(spatialAudioBox.IsEnabled);
-                    Assert.AreEqual("\u25B6 Focus", focusButton.Content);
-                    Assert.AreEqual("0", focusButton.Tag);
-                    Assert.AreEqual("Focus", AutomationProperties.GetName(focusButton));
-                    Assert.AreEqual("\u25B6 GoBack", goBackButton.Content);
-                    Assert.AreEqual("6", goBackButton.Tag);
-
-                    soundToggle.IsOn = true;
-                    WpfTestHost.DoEvents();
-                    Assert.IsTrue(spatialAudioBox.IsEnabled);
-
-                    spatialAudioBox.IsChecked = true;
-                    WpfTestHost.DoEvents();
-                    Assert.AreEqual(true, spatialAudioBox.IsChecked);
-
-                    soundToggle.IsOn = false;
-                    WpfTestHost.DoEvents();
-                    Assert.IsFalse(spatialAudioBox.IsEnabled);
-                    Assert.AreEqual(false, spatialAudioBox.IsChecked);
-                }
-                finally
-                {
-                    window.Content = null;
-                    window.Close();
-                    WpfTestHost.DoEvents();
-                }
-            });
-        }
-
-        [TestMethod]
-        public void MediaPlayerElementSampleMatchesWinUIGalleryExamples()
-        {
-            WpfTestHost.Run(() =>
-            {
-                var page = new ItemPage(GalleryCatalog.FindItem("MediaPlayerElement"));
-                var window = new Window
-                {
-                    Width = 1024,
-                    Height = 768,
-                    Left = -32000,
-                    Top = -32000,
-                    ShowInTaskbar = false,
-                    WindowStartupLocation = WindowStartupLocation.Manual,
-                    Content = page
-                };
-
-                try
-                {
-                    window.Show();
-                    WpfTestHost.DoEvents();
-                    window.UpdateLayout();
-                    WpfTestHost.DoEvents();
-
-                    Assert.AreEqual(2, page.Examples.Count);
-                    Assert.AreEqual("A MediaPlayerElement with transport controls.", page.Examples[0].HeaderText);
-                    Assert.AreEqual("A MediaPlayerElement that autoplays the video.", page.Examples[1].HeaderText);
-                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
-                    StringAssert.Contains(page.Examples[0].XamlCode, "Source=\"/Assets/SampleMedia/ladybug.wmv\"");
-                    StringAssert.Contains(page.Examples[0].XamlCode, "AreTransportControlsEnabled=\"True\"");
-                    StringAssert.Contains(page.Examples[0].CSharpCode, "FileOpenPicker");
-                    StringAssert.Contains(page.Examples[0].CSharpCode, "Player1.Source = mediaSource;");
-                    StringAssert.Contains(page.Examples[1].XamlCode, "Source=\"Assets/SampleMedia/fishes.wmv\"");
-                    StringAssert.Contains(page.Examples[1].XamlCode, "AutoPlay=\"True\"");
-                    Assert.IsNull(page.Examples[1].CSharpCode);
-
-                    var firstRoot = (GallerySamplePanel)page.Examples[0].ExampleContent;
-                    Assert.AreEqual(Orientation.Horizontal, firstRoot.Orientation);
-                    Assert.AreEqual(24d, ((FrameworkElement)firstRoot.Children[1]).Margin.Left);
-
-                    var player1 = (FrameworkElement)FindByAutomationId(page, "GallerySample_MediaPlayerElement_MediaPlayerElement");
-                    var player2 = (FrameworkElement)FindByAutomationId(page, "GallerySample_MediaPlayerElement_AutoPlayMediaPlayerElement");
-                    var openFileButton = FindNamedDescendant<Button>(page, "OpenFileButton");
-                    Assert.IsNotNull(player1);
-                    Assert.IsNotNull(player2);
-                    Assert.IsNotNull(openFileButton);
-
-                    Assert.AreEqual("Player1", player1.Name);
-                    Assert.AreEqual(400d, player1.Width);
-                    Assert.AreEqual(225d, player1.Height);
-                    Assert.AreEqual(400d, player1.MaxWidth);
-                    Assert.AreEqual(HorizontalAlignment.Left, player1.HorizontalAlignment);
-                    Assert.AreEqual("Assets/SampleMedia/ladybug.wmv", player1.Tag);
-                    var player1Poster = (Image)((Grid)player1).Children[0];
-                    Assert.AreEqual(400d, player1Poster.Width);
-                    Assert.AreEqual(225d, player1Poster.Height);
-                    Assert.AreEqual(Stretch.Fill, player1Poster.Stretch);
-                    StringAssert.Contains(((BitmapImage)player1Poster.Source).UriSource.ToString(), "ladybug.poster.png");
-                    Assert.AreEqual("Open a file", openFileButton.Content);
-                    Assert.AreEqual("Open file button", AutomationProperties.GetName(openFileButton));
-                    Assert.AreEqual("GallerySample_MediaPlayerElement_OpenFileButton", AutomationProperties.GetAutomationId(openFileButton));
-
-                    Assert.AreEqual("Player2", player2.Name);
-                    Assert.AreEqual(400d, player2.Width);
-                    Assert.AreEqual(225d, player2.Height);
-                    Assert.AreEqual(HorizontalAlignment.Left, player2.HorizontalAlignment);
-                    Assert.AreEqual("Assets/SampleMedia/fishes.wmv", player2.Tag);
-                    var player2Poster = (Image)((Grid)player2).Children[0];
-                    Assert.AreEqual(400d, player2Poster.Width);
-                    Assert.AreEqual(225d, player2Poster.Height);
-                    Assert.AreEqual(Stretch.Fill, player2Poster.Stretch);
-                    StringAssert.Contains(((BitmapImage)player2Poster.Source).UriSource.ToString(), "fishes.poster.png");
-                }
-                finally
-                {
-                    window.Content = null;
-                    window.Close();
-                    WpfTestHost.DoEvents();
-                }
-            });
-        }
-
-        [TestMethod]
         public void AcrylicSampleMatchesWinUIGalleryExamples()
         {
             WpfTestHost.Run(() =>
@@ -5277,6 +5011,11 @@ namespace ModernWpf.Gallery.Tests
         [TestMethod]
         public void SystemBackdropsSampleMatchesWinUIGalleryExamples()
         {
+            if (GalleryCatalog.FindItem("SystemBackdrops") == null)
+            {
+                return;
+            }
+
             WpfTestHost.Run(() =>
             {
                 var page = new ItemPage(GalleryCatalog.FindItem("SystemBackdrops"));
@@ -5359,6 +5098,11 @@ namespace ModernWpf.Gallery.Tests
         [TestMethod]
         public void SystemBackdropElementSampleMatchesWinUIGalleryExample()
         {
+            if (GalleryCatalog.FindItem("SystemBackdropElement") == null)
+            {
+                return;
+            }
+
             WpfTestHost.Run(() =>
             {
                 var page = new ItemPage(GalleryCatalog.FindItem("SystemBackdropElement"));
@@ -5445,6 +5189,11 @@ namespace ModernWpf.Gallery.Tests
         [TestMethod]
         public void AppWindowSampleMatchesWinUIGalleryExamples()
         {
+            if (GalleryCatalog.FindItem("AppWindow") == null)
+            {
+                return;
+            }
+
             WpfTestHost.Run(() =>
             {
                 var page = new ItemPage(GalleryCatalog.FindItem("AppWindow"));
@@ -5564,6 +5313,11 @@ namespace ModernWpf.Gallery.Tests
         [TestMethod]
         public void CreateMultipleWindowsSampleMatchesWinUIGalleryExample()
         {
+            if (GalleryCatalog.FindItem("CreateMultipleWindows") == null)
+            {
+                return;
+            }
+
             WpfTestHost.Run(() =>
             {
                 var page = new ItemPage(GalleryCatalog.FindItem("CreateMultipleWindows"));
@@ -5619,6 +5373,11 @@ namespace ModernWpf.Gallery.Tests
         [TestMethod]
         public void AppWindowTitleBarSampleMatchesWinUIGalleryExamples()
         {
+            if (GalleryCatalog.FindItem("AppWindowTitleBar") == null)
+            {
+                return;
+            }
+
             WpfTestHost.Run(() =>
             {
                 var page = new ItemPage(GalleryCatalog.FindItem("AppWindowTitleBar"));
@@ -5758,7 +5517,7 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(new Thickness(0, 12, 0, 0), intro.Margin);
                     Assert.AreEqual(TextWrapping.Wrap, intro.TextWrapping);
                     Assert.AreEqual(
-                        "For full title bar customization without using the TitleBar control, see the AppWindowTitleBar sample",
+                        "Use the TitleBar control and ModernWpf title bar attached properties for WPF title bar customization.",
                         new TextRange(intro.ContentStart, intro.ContentEnd).Text.Trim());
 
                     Assert.AreEqual(2, page.Examples.Count);
@@ -5829,6 +5588,11 @@ namespace ModernWpf.Gallery.Tests
         [TestMethod]
         public void StoragePickersSampleMatchesWinUIGalleryExamples()
         {
+            if (GalleryCatalog.FindItem("StoragePickers") == null)
+            {
+                return;
+            }
+
             WpfTestHost.Run(() =>
             {
                 var page = new ItemPage(GalleryCatalog.FindItem("StoragePickers"));
@@ -5937,6 +5701,11 @@ namespace ModernWpf.Gallery.Tests
         [TestMethod]
         public void WebView2SampleMatchesWinUIGalleryExample()
         {
+            if (GalleryCatalog.FindItem("WebView2") == null)
+            {
+                return;
+            }
+
             WpfTestHost.Run(() =>
             {
                 var page = new ItemPage(GalleryCatalog.FindItem("WebView2"));
@@ -6004,6 +5773,11 @@ namespace ModernWpf.Gallery.Tests
         [TestMethod]
         public void MapControlSampleMatchesWinUIGalleryExample()
         {
+            if (GalleryCatalog.FindItem("MapControl") == null)
+            {
+                return;
+            }
+
             WpfTestHost.Run(() =>
             {
                 var page = new ItemPage(GalleryCatalog.FindItem("MapControl"));

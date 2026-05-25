@@ -1173,15 +1173,9 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
             var textBlock = new TextBlock
             {
                 Margin = new Thickness(0, 12, 0, 0),
-                TextWrapping = TextWrapping.Wrap
+                TextWrapping = TextWrapping.Wrap,
+                Text = "Use the TitleBar control and ModernWpf title bar attached properties for WPF title bar customization."
             };
-            textBlock.Inlines.Add(new Run("For full title bar customization without using the TitleBar control, see the "));
-
-            var hyperlink = new Hyperlink(new Run("AppWindowTitleBar"));
-            hyperlink.Click += OnAppWindowTitleBarHyperlinkClick;
-            textBlock.Inlines.Add(hyperlink);
-
-            textBlock.Inlines.Add(new Run(" sample"));
             return textBlock;
         }
 

@@ -62,6 +62,25 @@ namespace ModernWpf.Gallery.Models
             "System"
         };
 
+        private static readonly string[] OmittedWinUIExtensionItemIds =
+        {
+            "AppWindow",
+            "AppWindowTitleBar",
+            "CreateMultipleWindows",
+            "AppNotification",
+            "BadgeNotificationManager",
+            "JumpList",
+            "WebView2",
+            "Sound",
+            "MediaPlayerElement",
+            "MapControl",
+            "SystemBackdrops",
+            "SystemBackdropElement",
+            "StoragePickers",
+            "StandardUICommand",
+            "XamlUICommand"
+        };
+
         private static readonly IReadOnlyList<GalleryItem> CatalogItems = CreateItems();
         private static readonly IReadOnlyList<GalleryGroup> DisplayGroups = CreateDisplayGroups();
 
@@ -131,9 +150,12 @@ namespace ModernWpf.Gallery.Models
         {
             var sourceItems = GalleryCatalogData.Items;
             var wpfItems = CreateWpfGalleryItems();
-            return wpfItems
-                .Concat(sourceItems.Where(sourceItem => wpfItems.All(wpfItem => !string.Equals(sourceItem.UniqueId, wpfItem.UniqueId, StringComparison.OrdinalIgnoreCase))))
+            var items = wpfItems
+                .Concat(sourceItems.Where(sourceItem =>
+                    !IsOmittedWinUIExtensionItem(sourceItem.UniqueId) &&
+                    wpfItems.All(wpfItem => !string.Equals(sourceItem.UniqueId, wpfItem.UniqueId, StringComparison.OrdinalIgnoreCase))))
                 .ToArray();
+            return NormalizeRelatedControlIds(items);
         }
 
         private static string NormalizeItemLookupId(string uniqueId)
@@ -174,6 +196,45 @@ namespace ModernWpf.Gallery.Models
         private static bool IsOfficialWpfGalleryAllControlsItem(string uniqueId)
         {
             return OfficialWpfGalleryAllControlsItemIds.Contains(uniqueId, StringComparer.OrdinalIgnoreCase);
+        }
+
+        private static bool IsOmittedWinUIExtensionItem(string uniqueId)
+        {
+            return OmittedWinUIExtensionItemIds.Contains(uniqueId, StringComparer.OrdinalIgnoreCase);
+        }
+
+        private static IReadOnlyList<GalleryItem> NormalizeRelatedControlIds(IReadOnlyList<GalleryItem> items)
+        {
+            var visibleIds = new HashSet<string>(items.Select(item => item.UniqueId), StringComparer.OrdinalIgnoreCase);
+            return items
+                .Select(item => CreateItemWithVisibleRelationships(item, visibleIds))
+                .ToArray();
+        }
+
+        private static GalleryItem CreateItemWithVisibleRelationships(GalleryItem item, ISet<string> visibleIds)
+        {
+            var relatedControlIds = item.RelatedControlIds
+                .Where(visibleIds.Contains)
+                .ToArray();
+
+            if (relatedControlIds.Length == item.RelatedControlIds.Count)
+            {
+                return item;
+            }
+
+            return new GalleryItem(
+                item.GroupId,
+                item.UniqueId,
+                item.Title,
+                item.Subtitle,
+                item.ImagePath,
+                item.PageDescription,
+                item.ApiNamespace,
+                item.IsNew,
+                item.IsUpdated,
+                item.BaseClasses,
+                item.Docs,
+                relatedControlIds);
         }
 
         private static IReadOnlyList<GalleryItem> CreateWpfGalleryItems()
@@ -821,35 +882,12 @@ namespace ModernWpf.Gallery.Models
                         "SplitView",
                         "ScrollViewer",
                         "AnnotatedScrollBar",
+                        "ParallaxView",
                         "PersonPicture",
                         "IconElement",
                         "ThemeShadow",
                         "TitleBar"
                     }),
-                CreateGroup(
-                    "PlatformAndPatterns",
-                    "Platform & patterns",
-                    "Windowing, shell, media, motion, system integration, and compatibility samples.",
-                    "pack://application:,,,/Assets/HomeHeaderTiles/Header-Store.light.png",
-                    new[]
-                    {
-                        "AppWindow",
-                        "AppWindowTitleBar",
-                        "CreateMultipleWindows",
-                        "AppNotification",
-                        "BadgeNotificationManager",
-                        "JumpList",
-                        "WebView2",
-                        "Sound",
-                        "MediaPlayerElement",
-                        "MapControl",
-                        "SystemBackdrops",
-                        "SystemBackdropElement",
-                        "StoragePickers",
-                        "ParallaxView",
-                        "StandardUICommand",
-                        "XamlUICommand"
-                    })
             };
         }
 

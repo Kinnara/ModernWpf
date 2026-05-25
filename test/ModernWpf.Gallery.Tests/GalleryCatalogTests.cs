@@ -24,8 +24,7 @@ namespace ModernWpf.Gallery.Tests
                 "Text",
                 "System",
                 "Media Controls",
-                "ModernWpf controls",
-                "Platform & patterns"
+                "ModernWpf controls"
             };
 
             var actual = GalleryCatalog.Groups.Select(group => group.Title).ToArray();
@@ -57,7 +56,7 @@ namespace ModernWpf.Gallery.Tests
             Assert.IsFalse(actual.Contains("ModernWpfControls"));
             Assert.IsFalse(actual.Contains("PlatformAndPatterns"));
             Assert.IsNotNull(GalleryCatalog.FindGroup("ModernWpfControls"));
-            Assert.IsNotNull(GalleryCatalog.FindGroup("PlatformAndPatterns"));
+            Assert.IsNull(GalleryCatalog.FindGroup("PlatformAndPatterns"));
         }
 
         [TestMethod]
@@ -316,36 +315,49 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void MotionSectionKeepsOnlyImplementedWinUIControls()
+        public void WinUIExtensionCatalogKeepsOnlyImplementedModernWpfSurfaces()
         {
-            var omittedMotionConceptPages = new[]
+            var omittedWinUIPlatformAndApiPages = new[]
             {
                 "XamlCompInterop",
                 "ConnectedAnimation",
                 "EasingFunction",
                 "ImplicitTransition",
                 "PageTransition",
-                "ThemeTransition"
+                "ThemeTransition",
+                "AppWindow",
+                "AppWindowTitleBar",
+                "CreateMultipleWindows",
+                "AppNotification",
+                "BadgeNotificationManager",
+                "JumpList",
+                "WebView2",
+                "Sound",
+                "MediaPlayerElement",
+                "MapControl",
+                "SystemBackdrops",
+                "SystemBackdropElement",
+                "StoragePickers",
+                "StandardUICommand",
+                "XamlUICommand"
             };
 
-            foreach (var uniqueId in omittedMotionConceptPages)
+            foreach (var uniqueId in omittedWinUIPlatformAndApiPages)
             {
                 Assert.IsNull(GalleryCatalog.FindItem(uniqueId), uniqueId);
             }
 
-            var platformGroup = GalleryCatalog.FindGroup("PlatformAndPatterns");
-            Assert.IsNotNull(platformGroup);
-            CollectionAssert.Contains(platformGroup.Items.Select(item => item.UniqueId).ToArray(), "ParallaxView");
-            CollectionAssert.DoesNotContain(
-                platformGroup.Items.Select(item => item.UniqueId).ToArray(),
-                "EasingFunction");
+            var modernWpfGroup = GalleryCatalog.FindGroup("ModernWpfControls");
+            Assert.IsNotNull(modernWpfGroup);
+            CollectionAssert.Contains(modernWpfGroup.Items.Select(item => item.UniqueId).ToArray(), "ParallaxView");
+            Assert.IsNull(GalleryCatalog.FindGroup("PlatformAndPatterns"));
         }
 
         [TestMethod]
         public void CatalogContainsWpfFirstGallerySurface()
         {
-            Assert.AreEqual(13, GalleryCatalog.Groups.Count);
-            Assert.AreEqual(130, GalleryCatalog.Items.Count);
+            Assert.AreEqual(12, GalleryCatalog.Groups.Count);
+            Assert.AreEqual(115, GalleryCatalog.Items.Count);
         }
 
         private static void AssertNavigationItem(string uniqueId, string subtitle, string imageFileName)

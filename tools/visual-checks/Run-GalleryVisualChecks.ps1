@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "RichTextBlock", "RichEditBox", "SplitView", "PersonPicture", "Sound", "MediaPlayerElement", "MapControl", "WebView2", "Acrylic", "AnimatedIcon", "ParallaxView", "CompactSizing", "IconElement", "Line", "Shape", "RadialGradientBrush", "SystemBackdrops", "SystemBackdropElement", "ThemeShadow", "CreateMultipleWindows", "AppWindow", "AppWindowTitleBar", "TitleBar", "StoragePickers", "CalendarDatePicker", "CalendarView", "TimePicker", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "AnnotatedScrollBar", "ScrollView", "ScrollViewer", "SemanticZoom", "PullToRefresh", "FlipView", "ItemsView", "GridView", "ItemsRepeater", "BreadcrumbBar", "Pivot", "SelectorBar", "TabView", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "SwipeControl", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout", "StandardUICommand", "XamlUICommand"),
+    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "RichTextBlock", "RichEditBox", "SplitView", "PersonPicture", "Acrylic", "AnimatedIcon", "ParallaxView", "CompactSizing", "IconElement", "Line", "Shape", "RadialGradientBrush", "ThemeShadow", "TitleBar", "CalendarDatePicker", "CalendarView", "TimePicker", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "AnnotatedScrollBar", "ScrollView", "ScrollViewer", "SemanticZoom", "PullToRefresh", "FlipView", "ItemsView", "GridView", "ItemsRepeater", "BreadcrumbBar", "Pivot", "SelectorBar", "TabView", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "SwipeControl", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -464,10 +464,6 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "RichEditBox" { return "GallerySample_RichEditBox_RichEditBox" }
         "SplitView" { return "GallerySample_SplitView_SplitView" }
         "PersonPicture" { return "GallerySample_PersonPicture_PersonPicture" }
-        "Sound" { return "GallerySample_Sound_ToggleSwitch" }
-        "MediaPlayerElement" { return "GallerySample_MediaPlayerElement_MediaPlayerElement" }
-        "MapControl" { return "GallerySample_MapControl_MapControl" }
-        "WebView2" { return "GallerySample_WebView2_WebView2" }
         "Acrylic" { return "GallerySample_Acrylic_Example1Grid" }
         "AnimatedIcon" { return "GallerySample_AnimatedIcon_Button" }
         "ParallaxView" { return "GallerySample_ParallaxView_Root" }
@@ -476,14 +472,8 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "Line" { return "GallerySample_Line_Line" }
         "Shape" { return "GallerySample_Shape_Ellipse" }
         "RadialGradientBrush" { return "GallerySample_RadialGradientBrush_Rect" }
-        "SystemBackdrops" { return "GallerySample_SystemBackdrops_ShowWindowButton" }
-        "SystemBackdropElement" { return "GallerySample_SystemBackdropElement_Button" }
         "ThemeShadow" { return "GallerySample_ThemeShadow_ShadowRect" }
-        "CreateMultipleWindows" { return "GallerySample_CreateMultipleWindows_Control1" }
-        "AppWindow" { return "GallerySample_AppWindow_ShowSampleWindow1Button" }
-        "AppWindowTitleBar" { return "GallerySample_AppWindowTitleBar_ShowWindowButton" }
         "TitleBar" { return "GallerySample_TitleBar_TitleBarControl" }
-        "StoragePickers" { return "GallerySample_StoragePickers_PickSingleFileButton" }
         "CalendarDatePicker" { return "GallerySample_CalendarDatePicker_CalendarDatePicker" }
         "CalendarView" { return "GallerySample_CalendarView_CalendarView" }
         "TimePicker" { return "GallerySample_TimePicker_TimePicker" }
@@ -516,8 +506,6 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "AppBarToggleButton" { return "GallerySample_AppBarToggleButton_AppBarToggleButton" }
         "CommandBar" { return "GallerySample_CommandBar_CommandBar" }
         "CommandBarFlyout" { return "GallerySample_CommandBarFlyout_ShowButton" }
-        "StandardUICommand" { return "GallerySample_StandardUICommand_ListView" }
-        "XamlUICommand" { return "GallerySample_XamlUICommand_AppBarButton" }
         default { return "GalleryItemPageTitle" }
     }
 }
@@ -531,8 +519,6 @@ function Get-PrimaryCropMinimumVisibleStdDev([string]$control) {
         "NavigationView" { return 45.0 }
         "AutoSuggestBox" { return 1.0 }
         "RichEditBox" { return 0.5 }
-        "MapControl" { return 1.0 }
-        "StandardUICommand" { return 1.0 }
         default { return 6.0 }
     }
 }
@@ -555,10 +541,6 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
         "RichEditBox" { return "GallerySample_RichEditBox_RichEditBox" }
         "SplitView" { return "NavLinksList" }
         "PersonPicture" { return "ProfileImageRadio" }
-        "Sound" { return "GallerySample_Sound_ToggleSwitch" }
-        "MediaPlayerElement" { return "GallerySample_MediaPlayerElement_OpenFileButton" }
-        "MapControl" { return "GallerySample_MapControl_MapToken" }
-        "WebView2" { return "GallerySample_WebView2_WebView2" }
         "Acrylic" { return "GallerySample_Acrylic_Root" }
         "AnimatedIcon" { return "GallerySample_AnimatedIcon_Root" }
         "ParallaxView" { return "GallerySample_ParallaxView_Root" }
@@ -567,14 +549,8 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
         "Line" { return "GallerySample_Line_Root" }
         "Shape" { return "GallerySample_Shape_Root" }
         "RadialGradientBrush" { return "GallerySample_RadialGradientBrush_Root" }
-        "SystemBackdrops" { return "GallerySample_SystemBackdrops_Root" }
-        "SystemBackdropElement" { return "GallerySample_SystemBackdropElement_Root" }
         "ThemeShadow" { return "GallerySample_ThemeShadow_Root" }
-        "CreateMultipleWindows" { return "GallerySample_CreateMultipleWindows_Control1" }
-        "AppWindow" { return "GallerySample_AppWindow_ShowSampleWindow1Button" }
-        "AppWindowTitleBar" { return "GallerySample_AppWindowTitleBar_ShowWindowButton" }
         "TitleBar" { return "TitleBox" }
-        "StoragePickers" { return "GallerySample_StoragePickers_PickSingleFileButton" }
         "CalendarDatePicker" { return "GallerySample_CalendarDatePicker_CalendarDatePicker" }
         "CalendarView" { return "GallerySample_CalendarView_CalendarView" }
         "TimePicker" { return "GallerySample_TimePicker_TimePicker" }
@@ -604,8 +580,6 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
         "AppBarToggleButton" { return "GallerySample_AppBarToggleButton_AppBarToggleButton" }
         "CommandBar" { return "GallerySample_CommandBar_CommandBar" }
         "CommandBarFlyout" { return "GallerySample_CommandBarFlyout_ShowButton" }
-        "StandardUICommand" { return "GallerySample_StandardUICommand_ListView" }
-        "XamlUICommand" { return "GallerySample_XamlUICommand_AppBarButton" }
         default { return Get-RequiredSampleAutomationId $control }
     }
 }
@@ -625,8 +599,6 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
         "AppBarToggleButton" { return "Button1" }
         "CommandBar" { return "PrimaryCommandBar" }
         "CommandBarFlyout" { return "myImageButton" }
-        "StandardUICommand" { return "ListViewRight" }
-        "XamlUICommand" { return "CustomButton" }
         "HyperlinkButton" { return "Control1" }
         "RatingControl" { return "RatingControl1" }
         "ToggleButton" { return "Toggle1" }
@@ -638,10 +610,6 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
         "RichEditBox" { return "" }
         "SplitView" { return "NavLinksList" }
         "PersonPicture" { return "ProfileImageRadio" }
-        "Sound" { return "soundToggle" }
-        "MediaPlayerElement" { return "OpenFileButton" }
-        "MapControl" { return "MapToken" }
-        "WebView2" { return "MyWebView2" }
         "Acrylic" { return "svPanel" }
         "AnimatedIcon" { return "svPanel" }
         "ParallaxView" { return "listView" }
@@ -650,14 +618,8 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
         "Line" { return "svPanel" }
         "Shape" { return "svPanel" }
         "RadialGradientBrush" { return "svPanel" }
-        "SystemBackdrops" { return "svPanel" }
-        "SystemBackdropElement" { return "svPanel" }
         "ThemeShadow" { return "svPanel" }
-        "CreateMultipleWindows" { return "Control1" }
-        "AppWindow" { return "" }
-        "AppWindowTitleBar" { return "ShowWindowButton" }
         "TitleBar" { return "TitleBox" }
-        "StoragePickers" { return "PickSingleFileButton" }
         "CalendarView" { return "Control1" }
         "ProgressRing" { return "ProgressRing1" }
         "PipsPager" { return "FlipViewPipsPager" }
@@ -681,7 +643,6 @@ function Get-ReferencePrimaryName([string]$control) {
         "Popup" { return "Show Popup (using Offset)" }
         "Pivot" { return "EMAIL" }
         "RepeatButton" { return "Click and hold" }
-        "AppWindow" { return "Show window" }
         "CalendarDatePicker" { return "Calendar" }
         "ToggleSwitch" { return "simple ToggleSwitch" }
         "RichTextBlock" { return "I am a RichTextBlock." }
@@ -694,9 +655,6 @@ function Get-WinUIReferencePageTitle([string]$control) {
     switch ($control) {
         "CompactSizing" { return "Compact Sizing" }
         "Acrylic" { return "AcrylicBrush" }
-        "CreateMultipleWindows" { return "Multiple windows" }
-        "SystemBackdrops" { return "System Backdrops (Mica/Acrylic)" }
-        "StoragePickers" { return "Storage pickers" }
         default { return $control }
     }
 }
@@ -1351,7 +1309,7 @@ function Capture-StaticCrops([string]$app, [string]$control, [string]$caseDir, $
             }
         }
 
-        if (($control -eq "StandardUICommand" -or $control -eq "ItemsRepeater") -and $null -ne $primaryCrop -and !$primaryCrop.NonBlank -and $primaryCrop.VisibleStdDev -ge (Get-PrimaryCropMinimumVisibleStdDev $control)) {
+        if ($control -eq "ItemsRepeater" -and $null -ne $primaryCrop -and !$primaryCrop.NonBlank -and $primaryCrop.VisibleStdDev -ge (Get-PrimaryCropMinimumVisibleStdDev $control)) {
             $primaryCrop["NonBlank"] = $true
         }
 
