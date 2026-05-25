@@ -106,6 +106,16 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.ScrollViewSampleMatchesWinUIGalleryExamples" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 1 test per target. The generated ModernWpf ScrollView page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\ScrollViewPage.xaml` / `.xaml.cs`: the `Content inside of a ScrollView.`, `Constant velocity scrolling.`, and `Programmatic scroll with custom animation.` examples, source-facing names such as `scrollView1`, `cmbZoomMode`, `nbZoomFactor`, `scrollView2`, `nbVerticalVelocity`, `scrollView3`, `cmbVerticalAnimation`, `nbAnimationDuration`, and `btnScrollWithAnimation`, and the local `Samples\SampleCode\ScrollView` animation snippets. The WPF adaptation maps WinUI `ScrollView` to WPF `ScrollViewer` surfaces with a zoomed image viewport, timer-backed constant scrolling, and programmatic scroll animation choices because ModernWpf does not currently expose a native `ScrollView` / `ScrollPresenter` control. The test covers the source snippets, consumed dynamic animation snippets, sample root automation peer, `GallerySample_ScrollView_ScrollView`, option defaults, zoom behavior, scroll policy mapping, and image-stack examples.
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 69 tests per target, including the new ScrollView root/control automation IDs.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls ScrollView -Reference InstalledWinUI3Gallery -Theme Light`
+  - Passed at `artifacts/visual-checks/20260525-094653-035-93744/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required `GallerySample_ScrollView_ScrollView` element was found, primary crops use ModernWpf `GallerySample_ScrollView_ScrollView` against WinUI `PART_ScrollPresenter`, crop sizes match at `400x266`, Light primary delta is `54.94`, and whole-window Light mean delta is diagnostic at `152.87`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls ScrollView -Reference InstalledWinUI3Gallery -Theme Dark`
+  - Passed at `artifacts/visual-checks/20260525-094722-446-108824/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required `GallerySample_ScrollView_ScrollView` element was found, primary crops use the same mapping, crop sizes match at `400x266`, Dark primary delta is `37.6`, and whole-window Dark mean delta is `24.64`.
+- `git diff --check`
+  - Passed with only Git's normal LF-to-CRLF working-copy warnings for touched files.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.SemanticZoomSampleMatchesWinUIGalleryExample" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 1 test per target. The generated ModernWpf SemanticZoom page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\SemanticZoomPage.xaml` / `.xaml.cs`: one `A simple SemanticZoom` example, source-facing `Control1` sample root, the official XAML snippet with `ZoomedInView` and `ZoomedOutView`, and the source `ControlInfoData` group/item data from the raw generated WinUI catalog data. The WPF adaptation maps WinUI `SemanticZoom` to a WPF grouped zoomed-in `ScrollViewer` plus a right-click-accessible zoomed-out group list because ModernWpf does not currently expose a native `SemanticZoom` control. The test covers the source snippet, sample root automation peer, `GallerySample_SemanticZoom_Control`, visible Fundamentals data, zoomed-out group list, and the view toggle.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
@@ -2949,6 +2959,39 @@ control set and maps ModernWpf `GallerySample_ScrollViewer_ScrollViewer` to
 WinUI `ScrollViewerControl` for primary crops.
 Avoid reopening ScrollViewer's source shape unless a new local WinUI source,
 visual harness mapping, or crop regression appears.
+The generated ModernWpf ScrollView extension page now uses the local official
+WinUI Gallery three-example structure from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\ScrollViewPage.xaml`
+and `.xaml.cs`, plus the local
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\SampleCode\ScrollView` animation
+snippets: `Content inside of a ScrollView.`, `Constant velocity scrolling.`,
+and `Programmatic scroll with custom animation.`. `ScrollingSampleFactory`
+now exposes ScrollView as a source-backed Scrolling WinUI extension page
+instead of falling back to the generic WPF ScrollViewer placeholder, and
+`ItemPage` passes sample snippets into the scrolling factory so the dynamic
+ScrollView animation snippets are consumed by the source pane rather than
+leaking into additional snippets. The WPF adaptation keeps WinUI's visible
+headers, option labels, source snippets, and source-facing names
+(`scrollView1`, `cmbZoomMode`, `nbZoomFactor`, `cmbHorizontalScrollMode`,
+`cmbVerticalScrollMode`, `cmbHorizontalScrollBarVisibility`,
+`cmbVerticalScrollBarVisibility`, `scrollView2`, `nbVerticalVelocity`,
+`scrollView3`, `cmbVerticalAnimation`, `nbAnimationDuration`, and
+`btnScrollWithAnimation`) while mapping WinUI `ScrollView` to WPF
+`ScrollViewer` surfaces with a calibrated zoomed image viewport, timer-backed
+constant scrolling, and WPF-timer programmatic scroll animations because
+ModernWpf does not currently ship a native `ScrollView` / `ScrollPresenter`.
+Current ScrollView WinUI-reference evidence is
+`artifacts/visual-checks/20260525-094653-035-93744/report.md` for Light and
+`artifacts/visual-checks/20260525-094722-446-108824/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`; primary crops match at
+`400x266`, with primary deltas `54.94` / `37.6`. The visual harness now
+includes ScrollView in the default WinUI extension visual set and maps ModernWpf
+`GallerySample_ScrollView_ScrollView` to installed WinUI `PART_ScrollPresenter`
+because WinUI's `scrollView1` name is not exposed through UIA. Treat the
+remaining crop delta as diagnostic unless a native ScrollView/ScrollPresenter
+port or better WPF zoom viewport emulation becomes available. Avoid reopening
+ScrollView's source shape unless a new local WinUI source, native control
+strategy, or crop regression appears.
 The generated ModernWpf AnnotatedScrollBar extension page now uses the local
 official WinUI Gallery source from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\AnnotatedScrollBarPage.xaml`

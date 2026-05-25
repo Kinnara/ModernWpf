@@ -36,6 +36,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "ProgressRing", "GallerySample_ProgressRing_Root", "GallerySample_ProgressRing_ProgressRing" };
             yield return new object[] { "PipsPager", "GallerySample_PipsPager_Root", "GallerySample_PipsPager_PipsPager" };
             yield return new object[] { "AnnotatedScrollBar", "GallerySample_AnnotatedScrollBar_Root", "GallerySample_AnnotatedScrollBar_AnnotatedScrollBar" };
+            yield return new object[] { "ScrollView", "GallerySample_ScrollView_Root", "GallerySample_ScrollView_ScrollView" };
             yield return new object[] { "ScrollViewer", "GallerySample_ScrollViewer_Root", "GallerySample_ScrollViewer_ScrollViewer" };
             yield return new object[] { "SemanticZoom", "GallerySample_SemanticZoom_Root", "GallerySample_SemanticZoom_Control" };
             yield return new object[] { "PullToRefresh", "GallerySample_PullToRefresh_Root", "GallerySample_PullToRefresh_RefreshContainer" };
@@ -1522,6 +1523,168 @@ namespace ModernWpf.Gallery.Tests
                     WpfTestHost.DoEvents();
                     Assert.AreEqual(250.0, annotatedScrollBar.MaxHeight);
                     Assert.AreEqual(5, annotatedScrollBar.Labels.Count);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void ScrollViewSampleMatchesWinUIGalleryExamples()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("ScrollView"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(3, page.Examples.Count);
+                    Assert.AreEqual("Content inside of a ScrollView.", page.Examples[0].HeaderText);
+                    Assert.AreEqual("Constant velocity scrolling.", page.Examples[1].HeaderText);
+                    Assert.AreEqual("Programmatic scroll with custom animation.", page.Examples[2].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "ContentOrientation=\"None\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "ZoomMode=\"$(ZoomMode)\"");
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "scrollView1.ZoomTo(4.0f");
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "scrollView1.HorizontalScrollMode = (ScrollingScrollMode)cmb.SelectedIndex;");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "AutomationProperties.Name=\"grapes\"");
+                    StringAssert.Contains(page.Examples[1].CSharpCode, "scrollView2.AddScrollVelocity");
+                    StringAssert.Contains(page.Examples[2].XamlCode, "ScrollAnimationStarting=\"ScrollView_ScrollAnimationStarting\"");
+                    StringAssert.Contains(page.Examples[2].CSharpCode, "Vector3KeyFrameAnimation?");
+
+                    var sampleRoot = FindByAutomationId(page, "GallerySample_ScrollView_Root") as UIElement;
+                    Assert.IsNotNull(sampleRoot);
+                    var sampleRootPeer = UIElementAutomationPeer.CreatePeerForElement(sampleRoot);
+                    Assert.IsNotNull(sampleRootPeer);
+                    Assert.IsTrue(sampleRootPeer.IsControlElement());
+                    Assert.AreEqual(AutomationControlType.Group, sampleRootPeer.GetAutomationControlType());
+
+                    var scrollView1 = (ScrollViewer)FindByAutomationId(page, "GallerySample_ScrollView_ScrollView");
+                    var zoomMode = FindNamedDescendant<ComboBox>(page, "cmbZoomMode");
+                    var zoomFactor = FindNamedDescendant<Mux.NumberBox>(page, "nbZoomFactor");
+                    var horizontalScrollMode = FindNamedDescendant<ComboBox>(page, "cmbHorizontalScrollMode");
+                    var verticalScrollMode = FindNamedDescendant<ComboBox>(page, "cmbVerticalScrollMode");
+                    var horizontalScrollBarVisibility = FindNamedDescendant<ComboBox>(page, "cmbHorizontalScrollBarVisibility");
+                    var verticalScrollBarVisibility = FindNamedDescendant<ComboBox>(page, "cmbVerticalScrollBarVisibility");
+
+                    Assert.IsNotNull(scrollView1);
+                    Assert.AreEqual("scrollView1", scrollView1.Name);
+                    Assert.AreEqual(400.0, scrollView1.Width);
+                    Assert.AreEqual(266.0, scrollView1.Height);
+                    Assert.AreEqual(HorizontalAlignment.Left, scrollView1.HorizontalAlignment);
+                    Assert.AreEqual(VerticalAlignment.Top, scrollView1.VerticalAlignment);
+                    Assert.IsTrue(scrollView1.Focusable);
+                    Assert.AreEqual(ScrollBarVisibility.Auto, scrollView1.HorizontalScrollBarVisibility);
+                    Assert.AreEqual(ScrollBarVisibility.Auto, scrollView1.VerticalScrollBarVisibility);
+                    Assert.AreEqual(PanningMode.Both, scrollView1.PanningMode);
+
+                    var zoomSurface = scrollView1.Content as Canvas;
+                    Assert.IsNotNull(zoomSurface);
+                    Assert.AreEqual("ScrollViewZoomSurface", zoomSurface.Name);
+                    var cliffImage = zoomSurface.Children.OfType<Image>().Single();
+                    Assert.IsNotNull(cliffImage);
+                    Assert.AreEqual("cliff", AutomationProperties.GetName(cliffImage));
+                    Assert.AreEqual(Stretch.Fill, cliffImage.Stretch);
+                    Assert.AreEqual(HorizontalAlignment.Left, cliffImage.HorizontalAlignment);
+                    Assert.AreEqual(VerticalAlignment.Top, cliffImage.VerticalAlignment);
+                    var cliffBitmap = (BitmapImage)cliffImage.Source;
+                    StringAssert.Contains(cliffBitmap.UriSource.ToString(), "cliff.jpg");
+                    Assert.AreEqual(cliffBitmap.Width * 4, zoomSurface.Width, 0.1);
+                    Assert.AreEqual(cliffBitmap.Height * 4, zoomSurface.Height, 0.1);
+                    Assert.AreEqual(zoomSurface.Width, cliffImage.Width);
+                    Assert.AreEqual(zoomSurface.Height, cliffImage.Height);
+
+                    AssertScrollViewerComboBox(zoomMode, "zoom mode", 0, "Enabled", "Disabled");
+                    AssertScrollViewerComboBox(horizontalScrollMode, "horizontal scroll mode", 2, "Enabled", "Disabled", "Auto");
+                    AssertScrollViewerComboBox(verticalScrollMode, "vertical scroll mode", 2, "Enabled", "Disabled", "Auto");
+                    AssertScrollViewerComboBox(horizontalScrollBarVisibility, "horizontal scroll bar visibility", 0, "Auto", "Visible", "Hidden");
+                    AssertScrollViewerComboBox(verticalScrollBarVisibility, "vertical scroll bar visibility", 0, "Auto", "Visible", "Hidden");
+
+                    Assert.IsNotNull(zoomFactor);
+                    Assert.AreEqual("zoom factor", AutomationProperties.GetName(zoomFactor));
+                    Assert.AreEqual(0.1, zoomFactor.Minimum);
+                    Assert.AreEqual(10.0, zoomFactor.Maximum);
+                    Assert.AreEqual(4.0, zoomFactor.Value);
+                    Assert.AreEqual(Mux.NumberBoxSpinButtonPlacementMode.Inline, zoomFactor.SpinButtonPlacementMode);
+
+                    zoomFactor.Value = 2;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(cliffBitmap.Width * 2, zoomSurface.Width, 0.1);
+                    Assert.AreEqual(cliffBitmap.Height * 2, zoomSurface.Height, 0.1);
+
+                    zoomMode.SelectedIndex = 1;
+                    zoomFactor.Value = 6;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(cliffBitmap.Width * 2, zoomSurface.Width, 0.1);
+                    Assert.AreEqual(cliffBitmap.Height * 2, zoomSurface.Height, 0.1);
+
+                    horizontalScrollMode.SelectedIndex = 1;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(ScrollBarVisibility.Disabled, scrollView1.HorizontalScrollBarVisibility);
+                    Assert.AreEqual(PanningMode.VerticalOnly, scrollView1.PanningMode);
+
+                    horizontalScrollMode.SelectedIndex = 0;
+                    horizontalScrollBarVisibility.SelectedIndex = 1;
+                    verticalScrollMode.SelectedIndex = 1;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(ScrollBarVisibility.Visible, scrollView1.HorizontalScrollBarVisibility);
+                    Assert.AreEqual(ScrollBarVisibility.Disabled, scrollView1.VerticalScrollBarVisibility);
+                    Assert.AreEqual(PanningMode.HorizontalOnly, scrollView1.PanningMode);
+
+                    var scrollView2 = FindNamedDescendant<ScrollViewer>(page, "scrollView2");
+                    var verticalVelocity = FindNamedDescendant<Mux.NumberBox>(page, "nbVerticalVelocity");
+                    Assert.IsNotNull(scrollView2);
+                    Assert.AreEqual(400.0, scrollView2.Width);
+                    Assert.AreEqual(300.0, scrollView2.Height);
+                    var example2Images = ((StackPanel)scrollView2.Content).Children.OfType<Image>().ToList();
+                    Assert.AreEqual(6, example2Images.Count);
+                    Assert.AreEqual("grapes", AutomationProperties.GetName(example2Images[0]));
+                    Assert.AreEqual("cliff", AutomationProperties.GetName(example2Images[5]));
+                    Assert.IsNotNull(verticalVelocity);
+                    Assert.AreEqual("vertical velocity", AutomationProperties.GetName(verticalVelocity));
+                    Assert.AreEqual(-200.0, verticalVelocity.Minimum);
+                    Assert.AreEqual(200.0, verticalVelocity.Maximum);
+                    Assert.AreEqual(30.0, verticalVelocity.Value);
+
+                    var scrollView3 = FindNamedDescendant<ScrollViewer>(page, "scrollView3");
+                    var verticalAnimation = FindNamedDescendant<ComboBox>(page, "cmbVerticalAnimation");
+                    var animationDuration = FindNamedDescendant<Mux.NumberBox>(page, "nbAnimationDuration");
+                    var scrollButton = FindNamedDescendant<Button>(page, "btnScrollWithAnimation");
+                    Assert.IsNotNull(scrollView3);
+                    Assert.AreEqual(400.0, scrollView3.Width);
+                    Assert.AreEqual(300.0, scrollView3.Height);
+                    var example3Images = ((StackPanel)scrollView3.Content).Children.OfType<Image>().ToList();
+                    Assert.AreEqual(8, example3Images.Count);
+                    Assert.AreEqual("leaves", AutomationProperties.GetName(example3Images[0]));
+                    Assert.AreEqual("mountain", AutomationProperties.GetName(example3Images[7]));
+                    AssertScrollViewerComboBox(verticalAnimation, "vertical animation options", 0, "Default", "Accordion", "Teleportation");
+                    Assert.IsNotNull(animationDuration);
+                    Assert.AreEqual("animation duration", AutomationProperties.GetName(animationDuration));
+                    Assert.AreEqual(1000.0, animationDuration.Minimum);
+                    Assert.AreEqual(5000.0, animationDuration.Maximum);
+                    Assert.AreEqual(1500.0, animationDuration.Value);
+                    Assert.IsNotNull(scrollButton);
+                    Assert.AreEqual("scroll with animation", AutomationProperties.GetName(scrollButton));
+                    Assert.AreEqual("Scroll with animation", scrollButton.Content);
                 }
                 finally
                 {
