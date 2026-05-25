@@ -96,11 +96,9 @@
             </ui:NavigationView.Resources>
             <ui:NavigationView.PaneFooter>
                 <StackPanel
-                    Margin="8,10,0,2"
+                    Margin="8,10,0,10"
                     Orientation="Vertical">
-                    <Separator
-                        Width="250"
-                        HorizontalAlignment="Left" />
+                    <Separator />
                     <Button
                         x:Name="SettingsButton"
                         Width="250"

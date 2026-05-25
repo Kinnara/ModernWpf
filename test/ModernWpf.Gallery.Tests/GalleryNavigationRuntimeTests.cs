@@ -150,6 +150,12 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(0, navigation.MenuItems.OfType<NavigationViewItemSeparator>().Count());
                 Assert.IsNotNull(navigation.PaneFooter);
                 Assert.AreEqual(0, navigation.FooterMenuItems.Count);
+                var footerPanel = (StackPanel)navigation.PaneFooter;
+                Assert.AreEqual(new Thickness(8, 10, 0, 10), footerPanel.Margin);
+                Assert.AreEqual(Orientation.Vertical, footerPanel.Orientation);
+                var footerSeparator = footerPanel.Children.OfType<Separator>().Single();
+                Assert.IsTrue(double.IsNaN(footerSeparator.Width));
+                Assert.AreEqual(HorizontalAlignment.Stretch, footerSeparator.HorizontalAlignment);
                 Assert.AreSame(Geometry.Empty, page.Resources["NavigationViewItemExpandedPath"]);
                 Assert.AreSame(Geometry.Empty, navigation.Resources["NavigationViewItemExpandedPath"]);
                 Assert.AreEqual(new Thickness(0), navigation.Resources["NavigationViewContentGridBorderThickness"]);
