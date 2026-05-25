@@ -687,13 +687,16 @@ namespace ModernWpf.Gallery.Tests
                 var allControlsPage = new AllControlsPage();
                 RenderPage(allControlsPage, () =>
                 {
+                    var allControlsRoot = (Grid)allControlsPage.Content;
                     var allControlsItemsControl = FindVisualChildren<ItemsControl>(allControlsPage)
                         .Single(itemsControl => string.Equals(AutomationProperties.GetName(itemsControl), "Items in group", StringComparison.Ordinal));
 
+                    Assert.AreEqual(string.Empty, allControlsRoot.Name);
                     AssertReferencePageHeader(FindVisualChildren<PageHeader>(allControlsPage).Single(), "All Controls", string.Empty, true);
                     AssertNavigationItemsControl(allControlsItemsControl, "Items in group");
+                    Assert.AreEqual(1, Grid.GetRow(allControlsItemsControl));
                     AssertBindingPath(allControlsItemsControl, ItemsControl.ItemsSourceProperty, "ViewModel.NavigationCards");
-                    AssertReferenceCategoryPageRoot((Grid)allControlsPage.FindName("ContentRootGrid"), true);
+                    AssertReferenceCategoryPageRoot(allControlsRoot, true);
                     Assert.AreEqual("All Controls", allControlsPage.PageTitle);
                     Assert.AreEqual(string.Empty, allControlsPage.PageDescription);
                     AssertRenderedNavigationCard(allControlsItemsControl, GalleryCatalog.AllControlsItems.First().Title, GalleryCatalog.AllControlsItems.First().Description, allControlsPage.ViewModel.NavigateCommand);

@@ -10,9 +10,7 @@
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     Title="AllSamplesPage"
     mc:Ignorable="d">
-    <Grid
-        x:Name="ContentRootGrid"
-        Style="{StaticResource GalleryPageRootStyle}">
+    <Grid Style="{StaticResource GalleryPageRootStyle}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -29,6 +27,7 @@
             Margin="0"
             VerticalScrollBarVisibility="Auto">
             <ItemsControl
+                Grid.Row="1"
                 AutomationProperties.Name="Items in group"
                 Focusable="False"
                 Margin="-12,0,0,0"
