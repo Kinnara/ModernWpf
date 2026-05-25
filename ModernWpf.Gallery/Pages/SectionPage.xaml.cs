@@ -24,6 +24,11 @@ namespace ModernWpf.Gallery.Pages
             ViewModel = viewModel ?? WpfGalleryNavigationPageViewModel.CreateForGroup(group, OnNavigateCard);
             DataContext = this;
             Title = GetOfficialSectionPageTitle(group.UniqueId);
+            if (IsModernWpfExtensionSection(group.UniqueId))
+            {
+                GroupItemsControl.Visibility = System.Windows.Visibility.Collapsed;
+                ModernWpfGroupScrollViewer.Visibility = System.Windows.Visibility.Visible;
+            }
         }
 
         public Action<GalleryItem> ItemRequested { get; set; }
@@ -86,6 +91,11 @@ namespace ModernWpf.Gallery.Pages
                 default:
                     return uniqueId + "Page";
             }
+        }
+
+        private static bool IsModernWpfExtensionSection(string uniqueId)
+        {
+            return string.Equals(uniqueId, "ModernWpfControls", StringComparison.OrdinalIgnoreCase);
         }
     }
 }

@@ -23,20 +23,14 @@ namespace ModernWpf.Gallery.Pages
         private const int AnnotatedGoldCount = 90;
         private const int AnnotatedItemWidth = 120;
         private const int AnnotatedItemHeight = 90;
-        private const string PipsPagerFlipViewXaml =
+        private const string PipsPagerGalleryXaml =
 @"<StackPanel>
-    <FlipView x:Name=""Gallery"" MaxWidth=""400"" Height=""270"" ItemsSource=""{x:Bind Pictures}"">
-        <FlipView.ItemTemplate>
-            <DataTemplate x:DataType=""x:String"">
-                <Image Source=""{x:Bind Mode=OneTime}"" />
-            </DataTemplate>
-        </FlipView.ItemTemplate>
-    </FlipView>
-    <PipsPager x:Name=""FlipViewPipsPager""
+    <ContentControl x:Name=""Gallery"" MaxWidth=""400"" Height=""270"" />
+    <PipsPager x:Name=""GalleryPipsPager""
         HorizontalAlignment=""Center""
         Margin=""0, 12, 0, 0""
         NumberOfPages=""{x:Bind Pictures.Count}""
-        SelectedPageIndex=""{x:Bind Path=Gallery.SelectedIndex, Mode=TwoWay}"" />
+        SelectedIndexChanged=""GalleryPipsPager_SelectedIndexChanged"" />
 </StackPanel>";
 
         private const string PipsPagerOptionsXaml =
@@ -46,11 +40,11 @@ namespace ModernWpf.Gallery.Pages
     NextButtonVisibility=""$(NextButton)"" />";
 
         private const string AnnotatedScrollBarXaml =
-@"<ScrollView x:Name=""scrollView""
+@"<ScrollViewer x:Name=""scrollViewer""
     Background=""LightGray"" MaxWidth=""800"" MaxHeight=""500""
     VerticalScrollBarVisibility=""Hidden"">
     <!-- ... -->
-</ScrollView>
+</ScrollViewer>
 
 <AnnotatedScrollBar x:Name=""annotatedScrollBar""
     Margin=""4,0,48,0"" MaxHeight=""500""
@@ -58,9 +52,18 @@ namespace ModernWpf.Gallery.Pages
     DetailLabelRequested=""AnnotatedScrollBar_DetailLabelRequested""/>";
 
         private const string AnnotatedScrollBarCSharp =
-@"private void AnnotatedScrollBarPage_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+@"private void AnnotatedScrollBarPage_Loaded(object sender, RoutedEventArgs e)
 {
-    scrollView.ScrollPresenter.VerticalScrollController = annotatedScrollBar.ScrollController;
+    scrollViewer.ScrollChanged += delegate
+    {
+        var maxOffset = Math.Max(0, scrollViewer.ExtentHeight - scrollViewer.ViewportHeight);
+        annotatedScrollBar.ScrollController.SetValues(0, maxOffset, scrollViewer.VerticalOffset, scrollViewer.ViewportHeight);
+    };
+
+    annotatedScrollBar.Scrolling += delegate(AnnotatedScrollBar sender, AnnotatedScrollBarScrollingEventArgs args)
+    {
+        scrollViewer.ScrollToVerticalOffset(args.ScrollOffset);
+    };
 }";
 
         public static UIElement Create(string uniqueId)
@@ -99,7 +102,7 @@ namespace ModernWpf.Gallery.Pages
             return new[]
             {
                 new GalleryExample(
-                    "AnnotatedScrollBar linked to a ScrollView.",
+                    "AnnotatedScrollBar linked to a ScrollViewer.",
                     CreateAnnotatedScrollBarExampleContent(assignRootAutomationId: true),
                     AnnotatedScrollBarXaml,
                     AnnotatedScrollBarCSharp)
@@ -117,7 +120,7 @@ namespace ModernWpf.Gallery.Pages
             var itemsRepeater = CreateAnnotatedColorItems();
             var scrollViewer = new ScrollViewer
             {
-                Name = "scrollView",
+                Name = "scrollViewer",
                 Width = AnnotatedItemWidth + 16,
                 MaxWidth = 800,
                 MaxHeight = 500,
@@ -126,7 +129,7 @@ namespace ModernWpf.Gallery.Pages
                 HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
                 Content = itemsRepeater
             };
-            GalleryAutomation.WithAutomationId(scrollViewer, GalleryAutomation.SampleElementId("AnnotatedScrollBar", "ScrollView"));
+            GalleryAutomation.WithAutomationId(scrollViewer, GalleryAutomation.SampleElementId("AnnotatedScrollBar", "ScrollViewer"));
 
             var annotatedScrollBar = new Mux.AnnotatedScrollBar
             {
@@ -240,7 +243,7 @@ namespace ModernWpf.Gallery.Pages
                 Margin = new Thickness(0, 0, 0, 12)
             };
             GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("PipsPager"));
-            panel.Children.Add(CreatePipsPagerFlipViewExampleContent(assignRootAutomationId: false));
+            panel.Children.Add(CreatePipsPagerGalleryExampleContent(assignRootAutomationId: false));
             panel.Children.Add(CreatePipsPagerOptionsExampleContent());
             return panel;
         }
@@ -250,9 +253,9 @@ namespace ModernWpf.Gallery.Pages
             return new[]
             {
                 new GalleryExample(
-                    "PipsPager integrated with a FlipView",
-                    CreatePipsPagerFlipViewExampleContent(assignRootAutomationId: true),
-                    PipsPagerFlipViewXaml,
+                    "PipsPager controlling a WPF content gallery",
+                    CreatePipsPagerGalleryExampleContent(assignRootAutomationId: true),
+                    PipsPagerGalleryXaml,
                     null),
                 new GalleryExample(
                     "PipsPager with options to change its orientation and button visibility.",
@@ -262,7 +265,7 @@ namespace ModernWpf.Gallery.Pages
             };
         }
 
-        private static UIElement CreatePipsPagerFlipViewExampleContent(bool assignRootAutomationId)
+        private static UIElement CreatePipsPagerGalleryExampleContent(bool assignRootAutomationId)
         {
             var root = new GallerySamplePanel();
             if (assignRootAutomationId)
@@ -282,7 +285,7 @@ namespace ModernWpf.Gallery.Pages
 
             var pipsPager = new Mux.PipsPager
             {
-                Name = "FlipViewPipsPager",
+                Name = "GalleryPipsPager",
                 HorizontalAlignment = HorizontalAlignment.Center,
                 NumberOfPages = pictures.Count
             };

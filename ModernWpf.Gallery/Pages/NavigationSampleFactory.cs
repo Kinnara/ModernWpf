@@ -114,33 +114,35 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             previousSelectedIndex = currentSelectedIndex;
         }";
 
-        private const string SelectorBarItemsViewXaml =
+        private const string SelectorBarItemsControlXaml =
 @"<SelectorBar x:Name=""SelectorBar3"" SelectionChanged=""SelectorBar3_SelectionChanged"" >
     <SelectorBarItem x:Name=""SelectorBarItemPink"" Text=""Pink"" IsSelected=""True"" />
     <SelectorBarItem x:Name=""SelectorBarItemPlum"" Text=""Plum"" />
     <SelectorBarItem x:Name=""SelectorBarItemPowderBlue"" Text=""PowderBlue"" />
 </SelectorBar>
 
-<ItemsView x:Name=""ItemsView3"" ItemTemplate=""{StaticResource ColorsTemplate}"" />
-    <ItemsView.Layout>
-        <UniformGridLayout />
-    </ItemsView.Layout>
-</ItemsView/>";
+<ItemsControl x:Name=""ItemsControl3"" ItemTemplate=""{StaticResource ColorsTemplate}"">
+    <ItemsControl.ItemsPanel>
+        <ItemsPanelTemplate>
+            <StackPanel Orientation=""Horizontal"" />
+        </ItemsPanelTemplate>
+    </ItemsControl.ItemsPanel>
+</ItemsControl>";
 
-        private const string SelectorBarItemsViewCSharp =
+        private const string SelectorBarItemsControlCSharp =
 @"private void SelectorBar3_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
 {
     if (sender.SelectedItem == SelectorBarItemPink)
     {
-        ItemsView3.ItemsSource = PinkColorCollection;
+        ItemsControl3.ItemsSource = PinkColorCollection;
     }
     else if (sender.SelectedItem == SelectorBarItemPlum)
     {
-        ItemsView3.ItemsSource = PlumColorCollection;
+        ItemsControl3.ItemsSource = PlumColorCollection;
     }
     else
     {
-        ItemsView3.ItemsSource = PowderBlueColorCollection;
+        ItemsControl3.ItemsSource = PowderBlueColorCollection;
     }
 }";
 
@@ -750,7 +752,7 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("SelectorBar"));
             panel.Children.Add(CreateSelectorBarBasicExampleContent(false));
             panel.Children.Add(CreateSelectorBarFrameExampleContent());
-            panel.Children.Add(CreateSelectorBarItemsViewExampleContent());
+            panel.Children.Add(CreateSelectorBarItemsControlExampleContent());
             return panel;
         }
 
@@ -769,10 +771,10 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
                     SelectorBarFrameXaml,
                     SelectorBarFrameCSharp),
                 new GalleryExample(
-                    "SelectorBar Displaying Different Collections Using ItemsView",
-                    CreateSelectorBarItemsViewExampleContent(),
-                    SelectorBarItemsViewXaml,
-                    SelectorBarItemsViewCSharp)
+                    "SelectorBar displaying different collections using ItemsControl",
+                    CreateSelectorBarItemsControlExampleContent(),
+                    SelectorBarItemsControlXaml,
+                    SelectorBarItemsControlCSharp)
             };
         }
 
@@ -838,7 +840,7 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             return stack;
         }
 
-        private static UIElement CreateSelectorBarItemsViewExampleContent()
+        private static UIElement CreateSelectorBarItemsControlExampleContent()
         {
             var pinkColorCollection = CreateSelectorBarColorCollection(Brushes.Pink, 5);
             var plumColorCollection = CreateSelectorBarColorCollection(Brushes.Plum, 7);
@@ -855,37 +857,37 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             selectorBar.Items.Add(plumItem);
             selectorBar.Items.Add(powderBlueItem);
 
-            var itemsView = new ItemsControl
+            var itemsControl = new ItemsControl
             {
-                Name = "ItemsView3",
+                Name = "ItemsControl3",
                 Margin = new Thickness(0, 12, 0, 0),
                 ItemTemplate = CreateSelectorBarColorTemplate(),
                 ItemsSource = pinkColorCollection
             };
             var itemsPanel = new FrameworkElementFactory(typeof(StackPanel));
             itemsPanel.SetValue(StackPanel.OrientationProperty, Orientation.Horizontal);
-            itemsView.ItemsPanel = new ItemsPanelTemplate(itemsPanel);
+            itemsControl.ItemsPanel = new ItemsPanelTemplate(itemsPanel);
 
             selectorBar.SelectionChanged += delegate(Mux.SelectorBar sender, Mux.SelectorBarSelectionChangedEventArgs args)
             {
                 if (sender.SelectedItem == pinkItem)
                 {
-                    itemsView.ItemsSource = pinkColorCollection;
+                    itemsControl.ItemsSource = pinkColorCollection;
                 }
                 else if (sender.SelectedItem == plumItem)
                 {
-                    itemsView.ItemsSource = plumColorCollection;
+                    itemsControl.ItemsSource = plumColorCollection;
                 }
                 else
                 {
-                    itemsView.ItemsSource = powderBlueColorCollection;
+                    itemsControl.ItemsSource = powderBlueColorCollection;
                 }
             };
             selectorBar.SelectedItem = pinkItem;
 
             var stack = new StackPanel();
             stack.Children.Add(selectorBar);
-            stack.Children.Add(itemsView);
+            stack.Children.Add(itemsControl);
             return stack;
         }
 

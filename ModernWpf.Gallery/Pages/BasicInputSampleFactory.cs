@@ -421,7 +421,7 @@ namespace ModernWpf.Gallery.Pages
             return new[]
             {
                 new GalleryExample(
-                    "A SplitButton controlling text color in a RichEditBox",
+                    "A SplitButton controlling text color in a RichTextBox",
                     CreateColorSplitButtonExampleContent(assignRootAutomationId: true),
                     FindSampleCodeText(sampleSnippets, "Buttons\\SplitButton\\SplitButtonSample1.txt"),
                     null),
@@ -513,7 +513,7 @@ namespace ModernWpf.Gallery.Pages
         {
             var richTextBox = new RichTextBox
             {
-                Name = "myRichEditBox",
+                Name = "myRichTextBox",
                 Width = 240,
                 MinHeight = 96,
                 VerticalScrollBarVisibility = ScrollBarVisibility.Auto
@@ -595,7 +595,7 @@ namespace ModernWpf.Gallery.Pages
             return new[]
             {
                 new GalleryExample(
-                    "Using ToggleSplitButton to control bulleted list functionality in RichEditBox",
+                    "Using ToggleSplitButton to control bulleted list functionality in RichTextBox",
                     CreateToggleSplitButtonExampleContent(assignRootAutomationId: true),
                     FindSampleCodeText(sampleSnippets, "Buttons\\ToggleSplitButton\\ToggleSplitButtonSample1.txt"),
                     null)
@@ -617,7 +617,7 @@ namespace ModernWpf.Gallery.Pages
 
             var richTextBox = new RichTextBox
             {
-                Name = "myRichEditBox",
+                Name = "myRichTextBox",
                 Width = 240,
                 MinHeight = 96,
                 VerticalScrollBarVisibility = ScrollBarVisibility.Auto

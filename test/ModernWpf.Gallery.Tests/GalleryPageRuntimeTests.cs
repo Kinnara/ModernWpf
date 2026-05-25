@@ -103,8 +103,14 @@ namespace ModernWpf.Gallery.Tests
 
                 Assert.IsNull(GalleryCatalog.FindItem("CalendarDatePicker"));
                 Assert.IsNull(GalleryCatalog.FindItem("CalendarView"));
+                Assert.IsNull(GalleryCatalog.FindItem("FlipView"));
+                Assert.IsNull(GalleryCatalog.FindItem("ItemsView"));
                 Assert.IsNull(GalleryCatalog.FindItem("RichEditBox"));
                 Assert.IsNull(GalleryCatalog.FindItem("RichTextBlock"));
+                Assert.IsNull(GalleryCatalog.FindItem("ScrollView"));
+                Assert.IsNull(GalleryCatalog.FindItem("ScrollViewer"));
+                Assert.IsNull(GalleryCatalog.FindItem("TabView"));
+                Assert.IsNull(GalleryCatalog.FindItem("TimePicker"));
             });
         }
 

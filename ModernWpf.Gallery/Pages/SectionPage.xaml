@@ -34,5 +34,21 @@
             ItemsSource="{Binding ViewModel.NavigationCards}"
             ItemsPanel="{StaticResource WrapPanelTemplate}"
             ItemTemplate="{StaticResource NavigationCardTemplate}" />
+
+        <ScrollViewer
+            x:Name="ModernWpfGroupScrollViewer"
+            Grid.Row="1"
+            Margin="0"
+            Visibility="Collapsed"
+            VerticalScrollBarVisibility="Auto">
+            <ItemsControl
+                x:Name="ModernWpfGroupItemsControl"
+                AutomationProperties.Name="Items in group"
+                Focusable="False"
+                Margin="-12,0,0,0"
+                ItemsSource="{Binding ViewModel.NavigationCards}"
+                ItemsPanel="{StaticResource WrapPanelTemplate}"
+                ItemTemplate="{StaticResource NavigationCardTemplate}" />
+        </ScrollViewer>
     </Grid>
 </Page>

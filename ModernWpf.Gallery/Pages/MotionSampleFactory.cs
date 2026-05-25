@@ -52,21 +52,21 @@ namespace ModernWpf.Gallery.Pages
     </ListView>
 </Grid>";
 
-        private const string ParallaxViewScrollViewXaml =
+        private const string ParallaxViewScrollViewerXaml =
 @"<Grid>
-    <ParallaxView Source=""{Binding ElementName=scrollView}"" VerticalShift=""500"">
+    <ParallaxView Source=""{Binding ElementName=scrollViewer}"" VerticalShift=""500"">
         <Image Source=""ms-appx:///Assets/SampleMedia/cliff.jpg""/>
     </ParallaxView>
     <TextBlock Text=""Scroll the rectangles to see parallaxing of image"" MaxWidth=""280""
         HorizontalAlignment=""Center"" VerticalAlignment=""Top"" Foreground=""White""
         FontSize=""28"" TextWrapping=""WrapWholeWords""/>
-    <ScrollView x:Name=""scrollView"" Width=""150"" HorizontalAlignment=""Left"">
+    <ScrollViewer x:Name=""scrollViewer"" Width=""150"" HorizontalAlignment=""Left"">
         <StackPanel>
             <Rectangle Fill=""AliceBlue"" Height=""150""/>
             <!-- ... -->
             <Rectangle Fill=""Cyan"" Height=""150""/>
         </StackPanel>
-    </ScrollView>
+    </ScrollViewer>
 </Grid>";
 
         private static readonly string[] ParallaxRectangleBrushes =
@@ -129,9 +129,9 @@ namespace ModernWpf.Gallery.Pages
                     ParallaxViewListViewXaml,
                     null),
                 new GalleryExample(
-                    "Parallax with a ScrollView",
-                    CreateParallaxScrollViewExampleContent(),
-                    ParallaxViewScrollViewXaml,
+                    "Parallax with a ScrollViewer",
+                    CreateParallaxScrollViewerExampleContent(),
+                    ParallaxViewScrollViewerXaml,
                     null)
             };
         }
@@ -180,7 +180,7 @@ namespace ModernWpf.Gallery.Pages
             return root;
         }
 
-        private static GallerySamplePanel CreateParallaxScrollViewExampleContent()
+        private static GallerySamplePanel CreateParallaxScrollViewerExampleContent()
         {
             var root = CreateParallaxExampleRoot(assignRootAutomationId: false);
             var grid = CreateParallaxHostGrid();
@@ -197,7 +197,7 @@ namespace ModernWpf.Gallery.Pages
 
             var scrollViewer = new ScrollViewer
             {
-                Name = "scrollView",
+                Name = "scrollViewer",
                 Width = 150,
                 Height = ParallaxExampleHeight,
                 HorizontalAlignment = HorizontalAlignment.Left,
@@ -206,7 +206,7 @@ namespace ModernWpf.Gallery.Pages
                 VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
                 Content = rectangles
             };
-            GalleryAutomation.WithAutomationId(scrollViewer, GalleryAutomation.SampleElementId("ParallaxView", "ScrollView"));
+            GalleryAutomation.WithAutomationId(scrollViewer, GalleryAutomation.SampleElementId("ParallaxView", "ScrollViewer"));
 
             var parallaxView = new Mux.ParallaxView
             {

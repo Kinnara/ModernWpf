@@ -594,6 +594,27 @@ namespace ModernWpf.Gallery.Tests
                     AssertRenderedNavigationCard((ItemsControl)allControlsPage.FindName("AllControlsItemsControl"), GalleryCatalog.AllControlsItems.First().Title, GalleryCatalog.AllControlsItems.First().Description, allControlsPage.ViewModel.NavigateCommand);
                 });
 
+                var modernWpfGroup = GalleryCatalog.FindGroup("ModernWpfControls");
+                var modernWpfSectionPage = new SectionPage(modernWpfGroup);
+                RenderPage(modernWpfSectionPage, () =>
+                {
+                    AssertReferencePageHeader((PageHeader)modernWpfSectionPage.FindName("PageHeader"), modernWpfGroup.Title, modernWpfGroup.PageDescription, true);
+                    Assert.AreEqual(Visibility.Collapsed, ((ItemsControl)modernWpfSectionPage.FindName("GroupItemsControl")).Visibility);
+                    var scrollViewer = (ScrollViewer)modernWpfSectionPage.FindName("ModernWpfGroupScrollViewer");
+                    Assert.AreEqual(Visibility.Visible, scrollViewer.Visibility);
+                    Assert.AreEqual(1, Grid.GetRow(scrollViewer));
+                    Assert.AreEqual(new Thickness(0), scrollViewer.Margin);
+                    Assert.AreEqual(ScrollBarVisibility.Auto, scrollViewer.VerticalScrollBarVisibility);
+                    var itemsControl = (ItemsControl)modernWpfSectionPage.FindName("ModernWpfGroupItemsControl");
+                    AssertNavigationItemsControl(itemsControl, "Items in group");
+                    AssertBindingPath(itemsControl, ItemsControl.ItemsSourceProperty, "ViewModel.NavigationCards");
+                    AssertRenderedNavigationCard(itemsControl, modernWpfGroup.Items.First().Title, modernWpfGroup.Items.First().Description, modernWpfSectionPage.ViewModel.NavigateCommand);
+                    Assert.IsTrue(scrollViewer.ExtentHeight > scrollViewer.ViewportHeight, "The retained ModernWpf controls section should scroll because it contains many cards.");
+                    scrollViewer.ScrollToEnd();
+                    WpfTestHost.DoEvents();
+                    Assert.IsTrue(scrollViewer.VerticalOffset > 0);
+                });
+
                 var navigationViewPage = new ItemPage(GalleryCatalog.FindItem("NavigationView"));
                 RenderPage(navigationViewPage, () =>
                 {
@@ -781,7 +802,10 @@ namespace ModernWpf.Gallery.Tests
             Assert.AreEqual(GridUnitType.Auto, root.RowDefinitions[0].Height.GridUnitType);
             Assert.AreEqual(GridUnitType.Star, root.RowDefinitions[1].Height.GridUnitType);
 
-            var scrollViewers = root.Children.OfType<ScrollViewer>().ToArray();
+            var scrollViewers = root.Children
+                .OfType<ScrollViewer>()
+                .Where(scrollViewer => scrollViewer.Visibility == Visibility.Visible)
+                .ToArray();
             if (hasItemsScrollViewer)
             {
                 Assert.AreEqual(1, scrollViewers.Length);

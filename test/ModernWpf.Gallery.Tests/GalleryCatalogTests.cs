@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Resources;
+using System.Text.Json;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Gallery.Models;
 
@@ -386,6 +389,45 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void SourceWinUIControlInfoDataOnlyContainsRetainedModernWpfSurfaces()
+        {
+            var controlInfoPath = FindRepoFile("ModernWpf.Gallery", "Samples", "Data", "ControlInfoData.json");
+            var retainedItemIds = new HashSet<string>(RetainedModernWpfExtensionItemIds, StringComparer.OrdinalIgnoreCase);
+            using (var document = JsonDocument.Parse(File.ReadAllText(controlInfoPath)))
+            {
+                var groups = document.RootElement.GetProperty("Groups").EnumerateArray().ToArray();
+                Assert.IsTrue(groups.All(group => group.GetProperty("Items").GetArrayLength() > 0), "Source data should not keep empty groups after page pruning.");
+
+                var sourceItemIds = groups
+                    .SelectMany(group => group.GetProperty("Items").EnumerateArray())
+                    .Select(item => item.GetProperty("UniqueId").GetString())
+                    .OrderBy(id => id, StringComparer.OrdinalIgnoreCase)
+                    .ToArray();
+                var expectedItemIds = RetainedModernWpfExtensionItemIds
+                    .OrderBy(id => id, StringComparer.OrdinalIgnoreCase)
+                    .ToArray();
+
+                CollectionAssert.AreEqual(expectedItemIds, sourceItemIds);
+
+                foreach (var item in groups.SelectMany(group => group.GetProperty("Items").EnumerateArray()))
+                {
+                    var itemId = item.GetProperty("UniqueId").GetString();
+                    if (item.TryGetProperty("RelatedControls", out var relatedControls))
+                    {
+                        foreach (var relatedControl in relatedControls.EnumerateArray().Select(value => value.GetString()))
+                        {
+                            Assert.IsTrue(
+                                retainedItemIds.Contains(relatedControl),
+                                "Source item '{0}' still references deleted page '{1}'.",
+                                itemId,
+                                relatedControl);
+                        }
+                    }
+                }
+            }
+        }
+
+        [TestMethod]
         public void CatalogImageResourcesAreShipped()
         {
             var resourceNames = GetGalleryResourceNames();
@@ -522,6 +564,24 @@ namespace ModernWpf.Gallery.Tests
                         .ToArray();
                 }
             }
+        }
+
+        private static string FindRepoFile(params string[] relativePath)
+        {
+            var directory = new DirectoryInfo(AppContext.BaseDirectory);
+            while (directory != null)
+            {
+                var candidate = Path.Combine(new[] { directory.FullName }.Concat(relativePath).ToArray());
+                if (File.Exists(candidate))
+                {
+                    return candidate;
+                }
+
+                directory = directory.Parent;
+            }
+
+            Assert.Fail("Could not find repository file '{0}'.", string.Join(Path.DirectorySeparatorChar.ToString(), relativePath));
+            return null;
         }
 
         private static string GetGalleryResourceKey(string imagePath)

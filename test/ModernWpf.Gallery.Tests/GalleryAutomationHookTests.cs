@@ -704,26 +704,26 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(3, page.Examples.Count);
                     Assert.AreEqual("A Basic SelectorBar", page.Examples[0].HeaderText);
                     Assert.AreEqual("SelectorBar with Frame Slide Transitions", page.Examples[1].HeaderText);
-                    Assert.AreEqual("SelectorBar Displaying Different Collections Using ItemsView", page.Examples[2].HeaderText);
+                    Assert.AreEqual("SelectorBar displaying different collections using ItemsControl", page.Examples[2].HeaderText);
                     Assert.IsFalse(page.HasAdditionalSampleSnippets);
                     StringAssert.Contains(page.Examples[0].XamlCode, "SelectorBarItemRecent");
                     StringAssert.Contains(page.Examples[0].XamlCode, "Icon=\"Clock\"");
                     StringAssert.Contains(page.Examples[1].XamlCode, "ContentFrame");
                     StringAssert.Contains(page.Examples[1].CSharpCode, "SelectorBar2_SelectionChanged");
                     StringAssert.Contains(page.Examples[1].CSharpCode, "SlideNavigationTransitionInfo");
-                    StringAssert.Contains(page.Examples[2].XamlCode, "ItemsView3");
+                    StringAssert.Contains(page.Examples[2].XamlCode, "ItemsControl3");
                     StringAssert.Contains(page.Examples[2].CSharpCode, "PinkColorCollection");
 
                     var selectorBar1 = (Mux.SelectorBar)FindByAutomationId(page, "GallerySample_SelectorBar_SelectorBar");
                     var selectorBar2 = FindNamedDescendant<Mux.SelectorBar>(page, "SelectorBar2");
                     var contentFrame = FindNamedDescendant<Frame>(page, "ContentFrame");
                     var selectorBar3 = FindNamedDescendant<Mux.SelectorBar>(page, "SelectorBar3");
-                    var itemsView3 = FindNamedDescendant<ItemsControl>(page, "ItemsView3");
+                    var itemsControl3 = FindNamedDescendant<ItemsControl>(page, "ItemsControl3");
                     Assert.IsNotNull(selectorBar1);
                     Assert.IsNotNull(selectorBar2);
                     Assert.IsNotNull(contentFrame);
                     Assert.IsNotNull(selectorBar3);
-                    Assert.IsNotNull(itemsView3);
+                    Assert.IsNotNull(itemsControl3);
 
                     Assert.AreEqual("SelectorBar1", selectorBar1.Name);
                     AssertSelectorBarItem(selectorBar1.Items[0], "SelectorBarItemRecent", "Recent", Mux.Symbol.Clock, false);
@@ -743,15 +743,15 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual("SelectorBar3", selectorBar3.Name);
                     Assert.AreEqual(3, selectorBar3.Items.Count);
                     Assert.AreSame(selectorBar3.Items[0], selectorBar3.SelectedItem);
-                    Assert.AreEqual(5, CountItems(itemsView3.ItemsSource));
+                    Assert.AreEqual(5, CountItems(itemsControl3.ItemsSource));
 
                     selectorBar3.SelectedItem = selectorBar3.Items[1];
                     WpfTestHost.DoEvents();
-                    Assert.AreEqual(7, CountItems(itemsView3.ItemsSource));
+                    Assert.AreEqual(7, CountItems(itemsControl3.ItemsSource));
 
                     selectorBar3.SelectedItem = selectorBar3.Items[2];
                     WpfTestHost.DoEvents();
-                    Assert.AreEqual(4, CountItems(itemsView3.ItemsSource));
+                    Assert.AreEqual(4, CountItems(itemsControl3.ItemsSource));
                 }
                 finally
                 {
@@ -1175,10 +1175,10 @@ namespace ModernWpf.Gallery.Tests
                     WpfTestHost.DoEvents();
 
                     Assert.AreEqual(2, page.Examples.Count);
-                    Assert.AreEqual("PipsPager integrated with a FlipView", page.Examples[0].HeaderText);
+                    Assert.AreEqual("PipsPager controlling a WPF content gallery", page.Examples[0].HeaderText);
                     Assert.AreEqual("PipsPager with options to change its orientation and button visibility.", page.Examples[1].HeaderText);
                     Assert.IsFalse(page.HasAdditionalSampleSnippets);
-                    StringAssert.Contains(page.Examples[0].XamlCode, "x:Name=\"FlipViewPipsPager\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "x:Name=\"GalleryPipsPager\"");
                     StringAssert.Contains(page.Examples[0].XamlCode, "NumberOfPages=\"{x:Bind Pictures.Count}\"");
                     StringAssert.Contains(page.Examples[1].XamlCode, "Orientation=\"$(Orientation)\"");
                     StringAssert.Contains(page.Examples[1].XamlCode, "PreviousButtonVisibility=\"$(PrevButton)\"");
@@ -1186,34 +1186,34 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsNull(page.Examples[0].CSharpCode);
                     Assert.IsNull(page.Examples[1].CSharpCode);
 
-                    var flipViewPipsPagerHost = (Border)FindByAutomationId(page, "GallerySample_PipsPager_PipsPager");
-                    var flipViewPipsPager = FindNamedDescendant<Mux.PipsPager>(page, "FlipViewPipsPager");
+                    var galleryPipsPagerHost = (Border)FindByAutomationId(page, "GallerySample_PipsPager_PipsPager");
+                    var galleryPipsPager = FindNamedDescendant<Mux.PipsPager>(page, "GalleryPipsPager");
                     var gallery = FindNamedDescendant<ContentControl>(page, "Gallery");
                     var optionsPipsPager = FindNamedDescendant<Mux.PipsPager>(page, "TestPipsPager2");
                     var orientationComboBox = FindNamedDescendant<ComboBox>(page, "OrientationComboBox");
                     var previousButtonComboBox = FindNamedDescendant<ComboBox>(page, "PrevButtonComboBox");
                     var nextButtonComboBox = FindNamedDescendant<ComboBox>(page, "NextButtonComboBox");
-                    Assert.IsNotNull(flipViewPipsPagerHost);
-                    Assert.IsNotNull(flipViewPipsPager);
+                    Assert.IsNotNull(galleryPipsPagerHost);
+                    Assert.IsNotNull(galleryPipsPager);
                     Assert.IsNotNull(gallery);
                     Assert.IsNotNull(optionsPipsPager);
                     Assert.IsNotNull(orientationComboBox);
                     Assert.IsNotNull(previousButtonComboBox);
                     Assert.IsNotNull(nextButtonComboBox);
 
-                    Assert.AreEqual("FlipViewPipsPager", flipViewPipsPager.Name);
-                    Assert.AreEqual(8, flipViewPipsPager.NumberOfPages);
-                    Assert.AreEqual(0, flipViewPipsPager.SelectedPageIndex);
-                    Assert.AreEqual(HorizontalAlignment.Center, flipViewPipsPager.HorizontalAlignment);
-                    Assert.AreEqual(HorizontalAlignment.Center, flipViewPipsPagerHost.HorizontalAlignment);
-                    Assert.AreEqual(new Thickness(0, 12, 0, 0), flipViewPipsPagerHost.Margin);
-                    Assert.AreSame(flipViewPipsPager, flipViewPipsPagerHost.Child);
+                    Assert.AreEqual("GalleryPipsPager", galleryPipsPager.Name);
+                    Assert.AreEqual(8, galleryPipsPager.NumberOfPages);
+                    Assert.AreEqual(0, galleryPipsPager.SelectedPageIndex);
+                    Assert.AreEqual(HorizontalAlignment.Center, galleryPipsPager.HorizontalAlignment);
+                    Assert.AreEqual(HorizontalAlignment.Center, galleryPipsPagerHost.HorizontalAlignment);
+                    Assert.AreEqual(new Thickness(0, 12, 0, 0), galleryPipsPagerHost.Margin);
+                    Assert.AreSame(galleryPipsPager, galleryPipsPagerHost.Child);
                     Assert.AreEqual("Gallery", gallery.Name);
                     Assert.AreEqual(400.0, gallery.Width);
                     Assert.AreEqual(270.0, gallery.Height);
                     AssertPipsPagerImage(gallery, "LandscapeImage1.jpg");
 
-                    flipViewPipsPager.SelectedPageIndex = 2;
+                    galleryPipsPager.SelectedPageIndex = 2;
                     WpfTestHost.DoEvents();
                     AssertPipsPagerImage(gallery, "LandscapeImage3.jpg");
 
@@ -1269,11 +1269,11 @@ namespace ModernWpf.Gallery.Tests
                     WpfTestHost.DoEvents();
 
                     Assert.AreEqual(1, page.Examples.Count);
-                    Assert.AreEqual("AnnotatedScrollBar linked to a ScrollView.", page.Examples[0].HeaderText);
+                    Assert.AreEqual("AnnotatedScrollBar linked to a ScrollViewer.", page.Examples[0].HeaderText);
                     Assert.IsFalse(page.HasAdditionalSampleSnippets);
-                    StringAssert.Contains(page.Examples[0].XamlCode, "ScrollView x:Name=\"scrollView\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "ScrollViewer x:Name=\"scrollViewer\"");
                     StringAssert.Contains(page.Examples[0].XamlCode, "AnnotatedScrollBar x:Name=\"annotatedScrollBar\"");
-                    StringAssert.Contains(page.Examples[0].CSharpCode, "scrollView.ScrollPresenter.VerticalScrollController = annotatedScrollBar.ScrollController;");
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "scrollViewer.ScrollChanged += delegate");
 
                     var sampleRoot = FindByAutomationId(page, "GallerySample_AnnotatedScrollBar_Root") as UIElement;
                     Assert.IsNotNull(sampleRoot);
@@ -1282,7 +1282,7 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsTrue(sampleRootPeer.IsControlElement());
                     Assert.AreEqual(AutomationControlType.Group, sampleRootPeer.GetAutomationControlType());
 
-                    var scrollViewer = (ScrollViewer)FindByAutomationId(page, "GallerySample_AnnotatedScrollBar_ScrollView");
+                    var scrollViewer = (ScrollViewer)FindByAutomationId(page, "GallerySample_AnnotatedScrollBar_ScrollViewer");
                     var annotatedScrollBar = (Mux.AnnotatedScrollBar)FindByAutomationId(page, "GallerySample_AnnotatedScrollBar_AnnotatedScrollBar");
                     var itemsRepeater = FindNamedDescendant<WrapPanel>(page, "itemsRepeater");
                     var heightSlider = FindNamedDescendant<Slider>(page, "AnnotatedScrollBarMaxHeightSlider");
@@ -1292,7 +1292,7 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsNotNull(itemsRepeater);
                     Assert.IsNotNull(heightSlider);
 
-                    Assert.AreEqual("scrollView", scrollViewer.Name);
+                    Assert.AreEqual("scrollViewer", scrollViewer.Name);
                     Assert.AreEqual(800.0, scrollViewer.MaxWidth);
                     Assert.AreEqual(500.0, scrollViewer.MaxHeight);
                     Assert.AreEqual(Brushes.LightGray, scrollViewer.Background);
@@ -1406,12 +1406,12 @@ namespace ModernWpf.Gallery.Tests
 
                     Assert.AreEqual(2, page.Examples.Count);
                     Assert.AreEqual("Parallax on a ListView", page.Examples[0].HeaderText);
-                    Assert.AreEqual("Parallax with a ScrollView", page.Examples[1].HeaderText);
+                    Assert.AreEqual("Parallax with a ScrollViewer", page.Examples[1].HeaderText);
                     Assert.IsFalse(page.HasAdditionalSampleSnippets);
                     StringAssert.Contains(page.Examples[0].XamlCode, "Source=\"{Binding ElementName=listView}\"");
                     StringAssert.Contains(page.Examples[0].XamlCode, "VerticalShift=\"500\"");
                     StringAssert.Contains(page.Examples[0].XamlCode, "AutomationProperties.Name=\"all samples\"");
-                    StringAssert.Contains(page.Examples[1].XamlCode, "<ScrollView x:Name=\"scrollView\" Width=\"150\"");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "<ScrollViewer x:Name=\"scrollViewer\" Width=\"150\"");
                     StringAssert.Contains(page.Examples[1].XamlCode, "<Rectangle Fill=\"AliceBlue\" Height=\"150\"/>");
                     Assert.IsNull(page.Examples[0].CSharpCode);
                     Assert.IsNull(page.Examples[1].CSharpCode);
@@ -1450,19 +1450,19 @@ namespace ModernWpf.Gallery.Tests
                     CollectionAssert.Contains(headerTexts, "Scroll the list to see parallaxing of image");
                     CollectionAssert.Contains(headerTexts, "Scroll the rectangles to see parallaxing of image");
 
-                    var scrollView = FindNamedDescendant<ScrollViewer>(page, "scrollView");
-                    Assert.IsNotNull(scrollView);
-                    Assert.AreEqual(150.0, scrollView.Width);
-                    Assert.AreEqual(551.0, scrollView.Height);
-                    Assert.AreEqual(HorizontalAlignment.Left, scrollView.HorizontalAlignment);
-                    Assert.AreEqual(ScrollBarVisibility.Disabled, scrollView.HorizontalScrollBarVisibility);
-                    Assert.AreEqual(ScrollBarVisibility.Auto, scrollView.VerticalScrollBarVisibility);
-                    var secondParallaxView = FindDescendants<Mux.ParallaxView>(page).Single(view => ReferenceEquals(view.Source, scrollView));
+                    var scrollViewer = FindNamedDescendant<ScrollViewer>(page, "scrollViewer");
+                    Assert.IsNotNull(scrollViewer);
+                    Assert.AreEqual(150.0, scrollViewer.Width);
+                    Assert.AreEqual(551.0, scrollViewer.Height);
+                    Assert.AreEqual(HorizontalAlignment.Left, scrollViewer.HorizontalAlignment);
+                    Assert.AreEqual(ScrollBarVisibility.Disabled, scrollViewer.HorizontalScrollBarVisibility);
+                    Assert.AreEqual(ScrollBarVisibility.Auto, scrollViewer.VerticalScrollBarVisibility);
+                    var secondParallaxView = FindDescendants<Mux.ParallaxView>(page).Single(view => ReferenceEquals(view.Source, scrollViewer));
                     Assert.AreEqual(500.0, secondParallaxView.VerticalShift);
                     Assert.IsInstanceOfType(secondParallaxView.Child, typeof(Image));
                     StringAssert.Contains(((BitmapImage)((Image)secondParallaxView.Child).Source).UriSource.ToString(), "cliff.jpg");
 
-                    var rectangles = ((StackPanel)scrollView.Content).Children.OfType<WpfShapes.Rectangle>().ToArray();
+                    var rectangles = ((StackPanel)scrollViewer.Content).Children.OfType<WpfShapes.Rectangle>().ToArray();
                     Assert.AreEqual(19, rectangles.Length);
                     Assert.AreEqual(150.0, rectangles[0].Height);
                     Assert.AreEqual(Colors.AliceBlue, ((SolidColorBrush)rectangles[0].Fill).Color);
@@ -2338,7 +2338,7 @@ namespace ModernWpf.Gallery.Tests
                     WpfTestHost.DoEvents();
 
                     Assert.AreEqual(2, page.Examples.Count);
-                    Assert.AreEqual("A SplitButton controlling text color in a RichEditBox", page.Examples[0].HeaderText);
+                    Assert.AreEqual("A SplitButton controlling text color in a RichTextBox", page.Examples[0].HeaderText);
                     Assert.AreEqual("A SplitButton with text", page.Examples[1].HeaderText);
                     Assert.IsFalse(page.HasAdditionalSampleSnippets);
                     StringAssert.Contains(page.Examples[0].XamlCode, "myColorButton");
@@ -2347,7 +2347,7 @@ namespace ModernWpf.Gallery.Tests
 
                     var colorButton = (Mux.SplitButton)FindByAutomationId(page, "GallerySample_SplitButton_SplitButton");
                     var textButton = (Mux.SplitButton)FindByAutomationId(page, "GallerySample_SplitButton_TextSplitButton");
-                    var richTextBox = FindNamedDescendant<RichTextBox>(page, "myRichEditBox");
+                    var richTextBox = FindNamedDescendant<RichTextBox>(page, "myRichTextBox");
                     Assert.IsNotNull(colorButton);
                     Assert.IsNotNull(textButton);
                     Assert.IsNotNull(richTextBox);
@@ -2408,14 +2408,14 @@ namespace ModernWpf.Gallery.Tests
                     WpfTestHost.DoEvents();
 
                     Assert.AreEqual(1, page.Examples.Count);
-                    Assert.AreEqual("Using ToggleSplitButton to control bulleted list functionality in RichEditBox", page.Examples[0].HeaderText);
+                    Assert.AreEqual("Using ToggleSplitButton to control bulleted list functionality in RichTextBox", page.Examples[0].HeaderText);
                     Assert.IsFalse(page.HasAdditionalSampleSnippets);
                     StringAssert.Contains(page.Examples[0].XamlCode, "myListButton");
                     StringAssert.Contains(page.Examples[0].XamlCode, "Symbol=\"List\"");
 
                     var toggleSplitButton = (Mux.ToggleSplitButton)FindByAutomationId(page, "GallerySample_ToggleSplitButton_ToggleSplitButton");
                     var symbolIcon = FindNamedDescendant<Mux.SymbolIcon>(page, "mySymbolIcon");
-                    var richTextBox = FindNamedDescendant<RichTextBox>(page, "myRichEditBox");
+                    var richTextBox = FindNamedDescendant<RichTextBox>(page, "myRichTextBox");
                     Assert.IsNotNull(toggleSplitButton);
                     Assert.IsNotNull(symbolIcon);
                     Assert.IsNotNull(richTextBox);

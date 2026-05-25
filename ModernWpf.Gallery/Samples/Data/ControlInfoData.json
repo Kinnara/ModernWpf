@@ -195,8 +195,7 @@
           ],
           "RelatedControls": [
             "CommandBar",
-            "MenuFlyout",
-            "RichEditBox"
+            "MenuFlyout"
           ]
         },
         {
@@ -323,37 +322,6 @@
       "IconGlyph": "",
       "Items": [
         {
-          "UniqueId": "FlipView",
-          "Title": "FlipView",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement",
-            "Control",
-            "ItemsControl",
-            "Selector"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "Presents a collection of items that the user can flip through, one item at a time.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/FlipView.png",
-          "Description": "The FlipView lets you flip through a collection of items, one at a time. It's great for displaying images from a gallery, pages of a magazine, or similar items.",
-          "SourcePath": "/CommonStyles/FlipView_themeresources.xaml",
-          "Docs": [
-            {
-              "Title": "FlipView - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.flipview"
-            },
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/flipview"
-            }
-          ],
-          "RelatedControls": [
-            "GridView"
-          ]
-        },
-        {
           "UniqueId": "GridView",
           "Title": "GridView",
           "BaseClasses": [
@@ -381,10 +349,7 @@
               "Uri": "https://learn.microsoft.com/windows/apps/design/controls/lists"
             }
           ],
-          "RelatedControls": [
-            "ItemsView",
-            "FlipView"
-          ]
+          "RelatedControls": []
         },
         {
           "UniqueId": "ItemsRepeater",
@@ -418,42 +383,7 @@
             }
           ],
           "RelatedControls": [
-            "ItemsView",
-            "ScrollView",
-            "ScrollViewer",
             "GridView"
-          ]
-        },
-        {
-          "UniqueId": "ItemsView",
-          "Title": "ItemsView",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement",
-            "Control"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "A control that presents a collection of items using various layouts.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/ItemsView.png",
-          "Description": "The ItemsView lets you show a collection of items using scrollable & swappable layouts.",
-          "SourcePath": "/ItemsView",
-          "Docs": [
-            {
-              "Title": "ItemsView - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.itemsview"
-            },
-            {
-              "Title": "CollectionViewSource - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.Data.CollectionViewSource"
-            }
-          ],
-          "RelatedControls": [
-            "AnnotatedScrollBar",
-            "ItemsRepeater",
-            "GridView",
-            "ScrollView"
           ]
         },
         {
@@ -478,105 +408,7 @@
               "Uri": "https://learn.microsoft.com/windows/apps/design/controls/pull-to-refresh"
             }
           ],
-          "RelatedControls": [
-            "ScrollView",
-            "ScrollViewer"
-          ]
-        }
-      ]
-    },
-    {
-      "UniqueId": "DateAndTime",
-      "Title": "Date & time",
-      "IconGlyph": "",
-      "Items": [
-        {
-          "UniqueId": "CalendarDatePicker",
-          "Title": "CalendarDatePicker",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement",
-            "Control"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "A control that lets users pick a date value using a calendar.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/CalendarDatePicker.png",
-          "Description": "A control that lets users pick a date value using a calendar.",
-          "SourcePath": "/CommonStyles/CalendarDatePicker_themeresources.xaml",
-          "Docs": [
-            {
-              "Title": "CalendarDatePicker - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.calendardatepicker"
-            },
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/calendar-date-picker"
-            }
-          ],
-          "RelatedControls": [
-            "CalendarView"
-          ]
-        },
-        {
-          "UniqueId": "CalendarView",
-          "Title": "CalendarView",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement",
-            "Control"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "A control that presents a calendar for a user to choose a date from.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/CalendarView.png",
-          "Description": "CalendarView shows a larger view for showing and selecting dates.  DatePicker by contrast has a compact view with inline selection.",
-          "SourcePath": "/CommonStyles/CalendarView_themeresources.xaml",
-          "Docs": [
-            {
-              "Title": "CalendarView - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.calendarview"
-            },
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/calendar-view"
-            }
-          ],
-          "RelatedControls": [
-            "CalendarDatePicker",
-            "TimePicker"
-          ]
-        },
-        {
-          "UniqueId": "TimePicker",
-          "Title": "TimePicker",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement",
-            "Control"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "A configurable control that lets a user pick a time value.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/TimePicker.png",
-          "Description": "Use a TimePicker to let users set a time in your app, for example to set a reminder. The TimePicker displays three controls for hour, minute, and AM/PM. These controls are easy to use with touch or mouse, and they can be styled and configured in several different ways.",
-          "SourcePath": "/CommonStyles/TimePicker_themeresources.xaml",
-          "Docs": [
-            {
-              "Title": "TimePicker - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.timepicker"
-            },
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/time-picker"
-            }
-          ],
-          "RelatedControls": [
-            "CalendarView"
-          ]
+          "RelatedControls": []
         }
       ]
     },
@@ -1120,10 +952,7 @@
               "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.annotatedscrollbar"
             }
           ],
-          "RelatedControls": [
-            "ItemsView",
-            "ScrollView"
-          ]
+          "RelatedControls": []
         },
         {
           "UniqueId": "PipsPager",
@@ -1151,71 +980,7 @@
             }
           ],
           "RelatedControls": [
-            "ScrollViewer",
-            "FlipView",
             "ItemsRepeater"
-          ]
-        },
-        {
-          "UniqueId": "ScrollView",
-          "Title": "ScrollView",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement",
-            "Control"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "A container control that lets the user pan and zoom its content.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/ScrollView.png",
-          "Description": "A ScrollView lets a user scroll, pan, and zoom to see content that's larger than the viewable area. The ItemsView has a ScrollView built into its control template to provide automatic scrolling.",
-          "SourcePath": "/ScrollView",
-          "Docs": [
-            {
-              "Title": "ScrollView - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.scrollview"
-            },
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/scroll-controls"
-            }
-          ],
-          "RelatedControls": [
-            "ParallaxView",
-            "ItemsView",
-            "ScrollViewer"
-          ]
-        },
-        {
-          "UniqueId": "ScrollViewer",
-          "Title": "ScrollViewer",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement",
-            "Control",
-            "ContentControl"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "A container control that lets the user pan and zoom its content.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/ScrollViewer.png",
-          "Description": "A ScrollViewer lets a user scroll, pan, and zoom to see content that's larger than the viewable area. Many content controls, like ListView, have ScrollViewers built into their control templates to provide automatic scrolling.",
-          "SourcePath": "/CommonStyles/ScrollViewer_themeresources.xaml",
-          "Docs": [
-            {
-              "Title": "ScrollViewer - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.scrollviewer"
-            },
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/scroll-controls"
-            }
-          ],
-          "RelatedControls": [
-            "ParallaxView",
-            "ScrollView"
           ]
         }
       ]
@@ -1288,8 +1053,7 @@
           ],
           "RelatedControls": [
             "NavigationView",
-            "Pivot",
-            "TabView"
+            "Pivot"
           ]
         },
         {
@@ -1383,41 +1147,6 @@
             "NavigationView",
             "PipsPager",
             "Pivot"
-          ]
-        },
-        {
-          "UniqueId": "TabView",
-          "Title": "TabView",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement",
-            "Control"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "A control that displays a collection of tabs that can be used to display several documents.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/TabView.png",
-          "Description": "TabView provides the user with a collection of tabs that can be used to display several documents.",
-          "IsUpdated": true,
-          "SourcePath": "/TabView",
-          "Docs": [
-            {
-              "Title": "TabView - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.tabview"
-            },
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/tab-view"
-            },
-            {
-              "Title": "Show multiple views for an app",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/layout/show-multiple-views"
-            }
-          ],
-          "RelatedControls": [
-            "Pivot",
-            "NavigationView"
           ]
         }
       ]
@@ -1590,69 +1319,7 @@
               "Uri": "https://learn.microsoft.com/windows/apps/design/controls/number-box"
             }
           ],
-          "RelatedControls": [
-            "RichTextBlock",
-            "RichEditBox"
-          ]
-        },
-        {
-          "UniqueId": "RichEditBox",
-          "Title": "RichEditBox",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement",
-            "Control"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "A rich text editing control that supports formatted text, hyperlinks, and other rich content.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/RichEditBox.png",
-          "Description": "You can use a RichEditBox control to enter and edit rich text documents that contain formatted text, hyperlinks, and images. By default, the RichEditBox supports spell checking. You can make a RichEditBox read-only by setting its IsReadOnly property to true.",
-          "IsUpdated": true,
-          "SourcePath": "/CommonStyles/RichEditBox_themeresources.xaml",
-          "Docs": [
-            {
-              "Title": "RichEditBox - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.richeditbox"
-            },
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/text-controls"
-            }
-          ],
-          "RelatedControls": [
-            "NumberBox",
-            "RichTextBlock"
-          ]
-        },
-        {
-          "UniqueId": "RichTextBlock",
-          "Title": "RichTextBlock",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "A control that displays formatted text, hyperlinks, inline images, and other rich content.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/RichTextBlock.png",
-          "Description": "RichTextBlock provides more advanced formatting features than the TextBlock control. You can apply character and paragraph formatting to the text in the RichTextBlock. For example, you can apply Bold, Italic, and Underline to any portion of the text in the control. You can use linked text containers (a RichTextBlock linked to RichTextBlockOverflow elements) to create advanced page layouts.",
-          "Docs": [
-            {
-              "Title": "RichTextBlock - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.richtextblock"
-            },
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/text-controls"
-            }
-          ],
-          "RelatedControls": [
-            "NumberBox",
-            "RichEditBox"
-          ]
+          "RelatedControls": []
         }
       ]
     },
@@ -1685,10 +1352,7 @@
               "Uri": "https://learn.microsoft.com/windows/apps/design/motion/parallax"
             }
           ],
-          "RelatedControls": [
-            "ScrollView",
-            "ScrollViewer"
-          ]
+          "RelatedControls": []
         }
       ]
     },
