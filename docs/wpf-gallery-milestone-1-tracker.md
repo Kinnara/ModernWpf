@@ -106,6 +106,16 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.AppWindowSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 56 tests per target. The generated ModernWpf AppWindow extension page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\AppWindowPage.xaml` / `.xaml.cs`: the `General usage of AppWindow` section, `Creating and customizing an AppWindow from a Window instance`, `Centering AppWindow on the screen using the available display area`, the `AppWindow Presenters` examples for OverlapedPresenter, min/max sizing, modal, fullscreen, and compact overlay. `WindowingSampleFactory.CreateExamples` now covers AppWindow as a source-backed Windowing/Platform WinUI extension page, consumes the local AppWindow sample-code files loaded by `ItemPage` so additional code panes do not duplicate, preserves source-facing option names such as `WindowTitle`, `WindowWidth`, `WindowHeight`, `XPoint`, `YPoint`, `IsAlwaysOnTop`, `HasBorder`, `HasTitleBar`, `MinWidthBox`, `MaxHeightBox`, `InitialSize`, and `InitialSizeDescription`, and exposes `GallerySample_AppWindow_Root` / `GallerySample_AppWindow_ShowSampleWindow1Button`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls AppWindow -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-044113-164-91932/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required AppWindow sample element was found, primary crops use ModernWpf `GallerySample_AppWindow_ShowSampleWindow1Button` against the WinUI `Show window` button name, crop sizes match at `110x32`, and Light primary delta is `4.72`. The whole-window Light mean delta is `148.7` and remains diagnostic because the installed WinUI shell stayed dark while ModernWpf was captured in Light.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls AppWindow -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-044140-837-35032/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required AppWindow sample element was found, primary crops use the same first `Show window` button mapping, crop sizes match at `110x32`, Dark primary delta is `9.21`, and whole-window Dark mean delta is `18.66`.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the AppWindow WinUI example alignment. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages and existing compiler warnings, ending with `0 Error(s)`.
+- `git diff --check`
+  - Passed with only Git's normal LF-to-CRLF working-copy warnings for touched files.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.StoragePickersSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 55 tests per target. The generated ModernWpf StoragePickers extension page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\StoragePickersPage.xaml` / `.xaml.cs`: the non-closable picker behavior `InfoBar`, `Pick single file`, `Pick multiple files`, `Save file`, and `Pick folder` examples, and source-facing names such as `PickSingleFileButton`, `PickedSingleFileTextBlock`, `FileTypeComboBox1`, `CommitButtonTextTextBox`, `FileContentTextBox`, `SaveFileButton`, `SuggestedFileNameTextBox`, `SelectSuggestedFolderButton`, and `PickFolderButton`. `SystemSampleFactory.CreateExamples` now covers StoragePickers as a source-backed System/Platform WinUI extension page, `ItemPage` asks the System factory for WinUI-style intro content and examples before falling back to generic generated content, and the live WPF adaptation maps file and save operations to `OpenFileDialog` / `SaveFileDialog` while preserving WinUI source snippets in the code panes.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls StoragePickers -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -2366,6 +2376,31 @@ WinUI route id `CreateMultipleWindows` to the displayed page title `Multiple
 windows` before waiting for the installed reference page. Avoid reopening this
 source shape unless a new local WinUI source, windowing behavior gap, or crop
 regression appears.
+The generated ModernWpf AppWindow extension page now uses the local official
+WinUI Gallery seven-example structure from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\AppWindowPage.xaml`
+and `.xaml.cs`: creating/customizing an AppWindow, centering it, OverlapedPresenter
+options, preferred min/max sizing, modal windows, fullscreen, and compact
+overlay. `WindowingSampleFactory.CreateExamples` now exposes AppWindow as a
+source-backed Windowing/Platform WinUI extension page and consumes the loaded
+local AppWindow sample-code files for matching source panes instead of leaving
+them as additional snippets. The WPF adaptation keeps WinUI's visible headers,
+sample-code text, source-facing option names (`WindowTitle`, `WindowWidth`,
+`WindowHeight`, `XPoint`, `YPoint`, `IsAlwaysOnTop`, `IsMaximizable`,
+`IsMinimizable`, `IsResizable`, `HasBorder`, `HasTitleBar`, `MinWidthBox`,
+`MinHeightBox`, `MaxWidthBox`, `MaxHeightBox`, `InitialSize`, and
+`InitialSizeDescription`), default option values, OverlapedPresenter
+border/title-bar coupling, and compact-overlay size description updates while
+mapping live windows to WPF `Window` sizing, ownership, modal, maximized, and
+topmost APIs. Current AppWindow WinUI-reference evidence is
+`artifacts/visual-checks/20260525-044113-164-91932/report.md` for Light and
+`artifacts/visual-checks/20260525-044140-837-35032/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`, primary crops matching
+at `110x32`, and primary deltas `4.72` / `9.21`. The visual harness uses
+ModernWpf `GallerySample_AppWindow_ShowSampleWindow1Button` against the WinUI
+first `Show window` button name for the primary crop. Avoid reopening
+AppWindow's source shape unless a new local WinUI source, native AppWindow
+strategy, or crop regression appears.
 The generated ModernWpf AppWindowTitleBar extension page now uses the local
 official WinUI Gallery three-example structure from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\AppWindowTitleBarPage.xaml`

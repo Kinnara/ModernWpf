@@ -39,6 +39,346 @@ var childWindow = new Window()
 childWindow.AppWindow.ResizeClient(new SizeInt32(500, 500));
 childWindow.Activate();";
 
+        private const string AppWindowSample1Xaml =
+@"<Window ...>
+    <Window.SystemBackdrop>
+        <MicaBackdrop />
+    </Window.SystemBackdrop>
+
+    <StackPanel HorizontalAlignment=""Center""
+                VerticalAlignment=""Center""
+                Spacing=""8"">
+        <Button x:Name=""Hide""
+                Content=""Hide""
+                Click=""Hide_Click""
+                Width=""200"" />
+        <Button x:Name=""Show""
+                Click=""Show_Click""
+                Width=""200"" >
+            <TextBlock Text=""Hide and show the window after 3 seconds"" TextWrapping=""WrapWholeWords"" TextAlignment=""Center""/>
+        </Button>
+        <Button x:Name=""Close""
+                Click=""Close_Click""
+                Width=""200""
+                Margin=""0,16,0,0"">
+            <StackPanel Orientation=""Horizontal"" VerticalAlignment=""Center"">
+                <SymbolIcon Symbol=""Cancel"" />
+                <TextBlock Text=""Close"" />
+            </StackPanel>
+        </Button>
+    </StackPanel>
+</Window>";
+
+        private const string AppWindowSample1CSharp =
+@"using Microsoft.UI.Windowing;
+using Microsoft.UI.Xaml;
+
+namespace YourNamespace;
+
+public sealed partial class SampleWindow1 : Window
+{
+    public SampleWindow1()
+    {
+        this.InitializeComponent();
+
+        // Set the window title
+        AppWindow.Title = ""$(WindowTitle)"";
+
+        // Set the window size (including borders)
+        AppWindow.Resize(new Windows.Graphics.SizeInt32($(Width), $(Height)));
+
+        // Set the window position on screen
+        AppWindow.Move(new Windows.Graphics.PointInt32($(X), $(Y)));
+
+        // Set the taskbar icon (displayed in the taskbar)
+        AppWindow.SetTaskbarIcon(""Assets/Tiles/GalleryIcon.ico"");
+
+        // Set the title bar icon (displayed in the window's title bar)
+        AppWindow.SetTitleBarIcon(""Assets/Tiles/GalleryIcon.ico"");
+
+        AppWindow.TitleBar.PreferredTheme = TitleBarTheme.UseDefaultAppMode;
+    }
+
+    private void Show_Click(object sender, RoutedEventArgs e)
+    {
+        AppWindow.Hide();
+        Task.Delay(3000).ContinueWith(t => AppWindow.Show());
+    }
+
+    private void Hide_Click(object sender, RoutedEventArgs e)
+    {
+        AppWindow.Hide();
+    }
+
+    private void Close_Click(object sender, RoutedEventArgs e)
+    {
+        this.Close();
+    }
+}";
+
+        private const string AppWindowSample2Xaml =
+@"<Window ...>
+    <Window.SystemBackdrop>
+        <MicaBackdrop />
+    </Window.SystemBackdrop>
+
+    <StackPanel HorizontalAlignment=""Center"" VerticalAlignment=""Center"" Spacing=""8"">
+        <TextBlock Text=""This is a centred sample window"" Style=""{ThemeResource TitleTextBlockStyle}"" TextAlignment=""Center"" />
+    </StackPanel>
+</Window>";
+
+        private const string AppWindowSample2CSharp =
+@"using Microsoft.UI.Windowing;
+using Microsoft.UI.Xaml;
+using Windows.Graphics;
+
+namespace YourNamesapace;
+
+public sealed partial class SampleWindow2 : Window
+{
+    public SampleWindow2()
+    {
+        this.InitializeComponent();
+        AppWindow.SetIcon(""Assets/Tiles/GalleryIcon.ico"");
+        AppWindow.TitleBar.PreferredTheme = TitleBarTheme.UseDefaultAppMode;
+
+        // Center the window on the screen.
+        CenterWindow();
+    }
+
+    // Centers the given AppWindow on the screen based on the available display area.
+    private void CenterWindow()
+    {
+        var area = DisplayArea.GetFromWindowId(AppWindow.Id, DisplayAreaFallback.Nearest)?.WorkArea;
+        if (area == null) return;
+        AppWindow.Move(new PointInt32((area.Value.Width - AppWindow.Size.Width) / 2, (area.Value.Height - AppWindow.Size.Height) / 2));
+    }
+}";
+
+        private const string AppWindowSample3Xaml =
+@"<Window ...>
+    <Window.SystemBackdrop>
+        <MicaBackdrop />
+    </Window.SystemBackdrop>
+
+    <StackPanel HorizontalAlignment=""Center""
+                VerticalAlignment=""Center""
+                Spacing=""10"">
+        <Button x:Name=""MaximizeBtn""
+                Content=""Maximize""
+                Click=""MaximizeBtn_Click""
+                Width=""200"" />
+        <Button x:Name=""MinimizeBtn""
+                Content=""Minimize""
+                Click=""MinimizeBtn_Click""
+                Width=""200"" />
+        <Button x:Name=""RestoreBtn""
+                Click=""RestoreBtn_Click""
+                Width=""200"" >
+            <TextBlock Text=""Minimize and restore the window after 3 seconds"" TextWrapping=""WrapWholeWords"" TextAlignment=""Center""/>
+        </Button>
+        <Button x:Name=""CloseBtn""
+                Click=""CloseBtn_Click""
+                Width=""200""
+                Margin=""0,16,0,0"">
+            <StackPanel Orientation=""Horizontal""
+                        VerticalAlignment=""Center"">
+                <SymbolIcon Symbol=""Cancel"" />
+                <TextBlock Text=""Close"" />
+            </StackPanel>
+        </Button>
+    </StackPanel>
+</Window>";
+
+        private const string AppWindowSample3CSharp =
+@"using Microsoft.UI.Windowing;
+using Microsoft.UI.Xaml;
+using System.Threading.Tasks;
+
+namespace YourNamespace;
+
+public sealed partial class SampleWindow3 : Window
+{
+    public SampleWindow3()
+    {
+        this.InitializeComponent();
+
+        AppWindow.SetIcon(""Assets/Tiles/GalleryIcon.ico"");
+        AppWindow.TitleBar.PreferredTheme = TitleBarTheme.UseDefaultAppMode;
+        OverlappedPresenter presenter = OverlappedPresenter.Create();
+
+        presenter.IsAlwaysOnTop = $(IsAlwaysOnTop);
+        presenter.IsMaximizable = $(IsMaximizable);
+        presenter.IsMinimizable = $(IsMinimizable);
+        presenter.IsResizable = $(IsResizable);
+        presenter.SetBorderAndTitleBar($(HasBorder), $(HasTitleBar));
+
+        AppWindow.SetPresenter(presenter);
+    }
+}";
+
+        private const string AppWindowSample4CSharp =
+@"using Microsoft.UI.Windowing;
+using Microsoft.UI.Xaml;
+using System.Threading.Tasks;
+
+namespace WinUIGallery.Samples.SamplePages;
+
+public sealed partial class SampleWindow4 : Window
+{
+    public SampleWindow4(int MinWidth, int MinHeight, int MaxWidth, int MaxHeight)
+    {
+        this.InitializeComponent();
+
+        AppWindow.Resize(new Windows.Graphics.SizeInt32(800, 500));
+        AppWindow.SetIcon(""Assets/Tiles/GalleryIcon.ico"");
+        AppWindow.TitleBar.PreferredTheme = TitleBarTheme.UseDefaultAppMode;
+
+        OverlappedPresenter presenter = OverlappedPresenter.Create();
+        presenter.PreferredMinimumWidth = MinWidth;
+        presenter.PreferredMinimumHeight = MinHeight;
+        presenter.PreferredMaximumWidth = MaxWidth;
+        presenter.PreferredMaximumHeight = MaxHeight;
+        presenter.IsMaximizable = false;
+
+        AppWindow.SetPresenter(presenter);
+    }
+}";
+
+        private const string AppWindowSample5Xaml =
+@"<Window ...>
+    <Window.SystemBackdrop>
+        <MicaBackdrop />
+    </Window.SystemBackdrop>
+
+    <StackPanel HorizontalAlignment=""Center"" VerticalAlignment=""Center"" Spacing=""8"">
+        <TextBlock Text=""Modal Window"" Style=""{ThemeResource TitleTextBlockStyle}"" TextAlignment=""Center"" />
+        <TextBlock Text=""This is a modal window created using AppWindow with OverlappedPresenter."" Style=""{ThemeResource BodyTextBlockStyle}"" TextAlignment=""Center"" TextWrapping=""Wrap"" />
+        <StackPanel Orientation=""Horizontal"" HorizontalAlignment=""Center"" Spacing=""8"">
+            <Button Content=""OK"" Width=""80"" Click=""OKButton_Click"" />
+            <Button Content=""Cancel"" Width=""80"" Click=""CancelButton_Click"" />
+        </StackPanel>
+    </StackPanel>
+</Window>";
+
+        private const string AppWindowSample5CSharp =
+@"using Microsoft.UI;
+using Microsoft.UI.Windowing;
+using Microsoft.UI.Xaml;
+using System;
+using System.Runtime.InteropServices;
+using WinRT.Interop;
+
+namespace YourNamespace;
+
+public sealed partial class ModalWindow : Window
+{
+    public ModalWindow()
+    {
+        this.InitializeComponent();
+
+        OverlappedPresenter presenter = OverlappedPresenter.CreateForDialog();
+
+        // Set this modal window's owner (the main application window).
+        SetWindowOwner(owner: App.StartupWindow);
+
+        // Make the window modal (blocks interaction with the owner window until closed).
+        presenter.IsModal = true;
+
+        // Apply the presenter settings to the AppWindow.
+        AppWindow.SetPresenter(presenter);
+
+        // Show the modal window.
+        AppWindow.Show();
+    }
+}";
+
+        private const string AppWindowSample6Xaml =
+@"<Window ...>
+    <Window.SystemBackdrop>
+        <MicaBackdrop />
+    </Window.SystemBackdrop>
+
+    <StackPanel HorizontalAlignment=""Center""
+                VerticalAlignment=""Center""
+                Spacing=""8"">
+        <TextBlock Text=""This window is running in Fullscreen mode""
+                   Style=""{ThemeResource TitleTextBlockStyle}""
+                   TextAlignment=""Center"" />
+        <Button x:Name=""Close""
+                Click=""Close_Click""
+                Width=""200""
+                HorizontalAlignment=""Center"">
+            <StackPanel Orientation=""Horizontal""
+                        VerticalAlignment=""Center"">
+                <SymbolIcon Symbol=""Cancel"" />
+                <TextBlock Text=""Close"" />
+            </StackPanel>
+        </Button>
+    </StackPanel>
+</Window>";
+
+        private const string AppWindowSample6CSharp =
+@"using Microsoft.UI.Windowing;
+using Microsoft.UI.Xaml;
+
+namespace YourNamespace;
+
+public sealed partial class SampleWindow6 : Window
+{
+    public SampleWindow6()
+    {
+        this.InitializeComponent();
+        AppWindow.SetIcon(""Assets/Tiles/GalleryIcon.ico"");
+        AppWindow.TitleBar.PreferredTheme = TitleBarTheme.UseDefaultAppMode;
+
+        // Set the window to Full-Screen mode
+        AppWindow.SetPresenter(AppWindowPresenterKind.FullScreen);
+    }
+
+    private void Close_Click(object sender, RoutedEventArgs e)
+    {
+        this.Close();
+    }
+}";
+
+        private const string AppWindowSample7Xaml =
+@"<Window ...>
+    <Window.SystemBackdrop>
+        <MicaBackdrop />
+    </Window.SystemBackdrop>
+
+    <StackPanel HorizontalAlignment=""Center"" VerticalAlignment=""Center"" Spacing=""8"">
+        <TextBlock Text=""This window is set to CompactOverlay (Picture-in-Picture) mode."" TextAlignment=""Center"" TextWrapping=""Wrap"" />
+    </StackPanel>
+</Window>";
+
+        private const string AppWindowSample7CSharp =
+@"using Microsoft.UI.Windowing;
+using Microsoft.UI.Xaml;
+
+namespace YourNamespace;
+
+public sealed partial class SampleWindow7 : Window
+{
+    public SampleWindow7(string InitialSize)
+    {
+        this.InitializeComponent();
+
+        AppWindow.SetIcon(""Assets/Tiles/GalleryIcon.ico"");
+        AppWindow.TitleBar.PreferredTheme = TitleBarTheme.UseDefaultAppMode;
+
+        // Creates a CompactOverlay (Picture-in-Picture) presenter
+        CompactOverlayPresenter presenter = CompactOverlayPresenter.Create();
+
+        // Sets the initial size of the CompactOverlay window
+        presenter.InitialSize = CompactOverlaySize.$(InitialSize);
+
+        // Applies the CompactOverlay presenter to the window
+        AppWindow.SetPresenter(presenter);
+    }
+}";
+
         private const string AppWindowTitleBarColorsCSharp =
 @"using Microsoft.UI;
 using Microsoft.UI.Windowing;
@@ -168,10 +508,12 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
             }
         }
 
-        public static IReadOnlyList<GalleryExample> CreateExamples(string uniqueId)
+        public static IReadOnlyList<GalleryExample> CreateExamples(string uniqueId, IReadOnlyList<SampleSnippet> sampleSnippets = null)
         {
             switch (uniqueId)
             {
+                case "AppWindow":
+                    return CreateAppWindowExamples(sampleSnippets);
                 case "AppWindowTitleBar":
                     return CreateAppWindowTitleBarExamples();
                 case "CreateMultipleWindows":
@@ -205,81 +547,308 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
 
         private static UIElement CreateAppWindowSample()
         {
-            var panel = CreateSamplePanel("AppWindow maps to WPF Window APIs for size, state, ownership, topmost behavior, and presentation style.");
-            var preview = CreateWindowPreview("AppWindow preview", "Overlapped", CreateBrush("#0078D4"), Brushes.White);
-            var output = CreateOutput("Ready to open a WPF Window equivalent.");
+            return CreateAppWindowCustomizeExampleContent(assignRootAutomationId: true);
+        }
 
-            var size = new ComboBox
+        private static IReadOnlyList<GalleryExample> CreateAppWindowExamples(IReadOnlyList<SampleSnippet> sampleSnippets)
+        {
+            return new[]
             {
-                Width = 210,
-                ItemsSource = new[] { "Default 640 x 420", "Wide 820 x 460", "Compact 380 x 280" },
-                SelectedIndex = 0,
-                Margin = new Thickness(0, 0, 12, 0)
+                new GalleryExample(
+                    "Creating and customizing an AppWindow from a Window instance",
+                    CreateAppWindowCustomizeExampleContent(assignRootAutomationId: true),
+                    FindSampleCodeText(sampleSnippets, "AppWindowSample1_xaml.txt", AppWindowSample1Xaml),
+                    AppWindowSample1CSharp),
+                new GalleryExample(
+                    "Centering AppWindow on the screen using the available display area",
+                    CreateAppWindowCenteredExampleContent(),
+                    FindSampleCodeText(sampleSnippets, "AppWindowSample2_xaml.txt", AppWindowSample2Xaml),
+                    FindSampleCodeText(sampleSnippets, "AppWindowSample2_cs.txt", AppWindowSample2CSharp)),
+                new GalleryExample(
+                    "AppWindow with OverlapedPresenter",
+                    CreateAppWindowOverlappedPresenterExampleContent(),
+                    FindSampleCodeText(sampleSnippets, "AppWindowSample3_xaml.txt", AppWindowSample3Xaml),
+                    AppWindowSample3CSharp),
+                new GalleryExample(
+                    "Setting the minimum and maximum width / height on an AppWindow using OverlappedPresenter",
+                    CreateAppWindowMinMaxExampleContent(),
+                    FindSampleCodeText(sampleSnippets, "AppWindowSample3_xaml.txt", AppWindowSample3Xaml),
+                    AppWindowSample4CSharp),
+                new GalleryExample(
+                    "Modal window with OverlappedPresenter using AppWindow",
+                    CreateAppWindowModalExampleContent(),
+                    FindSampleCodeText(sampleSnippets, "AppWindowSample5_xaml.txt", AppWindowSample5Xaml),
+                    FindSampleCodeText(sampleSnippets, "AppWindowSample5_cs.txt", AppWindowSample5CSharp)),
+                new GalleryExample(
+                    "AppWindow with FullScreenPresenter",
+                    CreateAppWindowFullScreenExampleContent(),
+                    AppWindowSample6Xaml,
+                    AppWindowSample6CSharp),
+                new GalleryExample(
+                    "AppWindow with CompactOverlayPresenter",
+                    CreateAppWindowCompactOverlayExampleContent(),
+                    AppWindowSample7Xaml,
+                    AppWindowSample7CSharp)
             };
-            ControlHelper.SetHeader(size, "Size");
+        }
 
-            var presenter = new ComboBox
+        private static GallerySamplePanel CreateAppWindowCustomizeExampleContent(bool assignRootAutomationId)
+        {
+            var root = CreateAppWindowExampleRoot(assignRootAutomationId);
+
+            var button = CreateAppWindowButton("ShowSampleWindow1Button", "Show window");
+            GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("AppWindow", "ShowSampleWindow1Button"));
+
+            var windowTitle = CreateAppWindowTextBox("WindowTitle", "Window title", "This is a title", "Enter window title");
+            var windowWidth = CreateAppWindowNumberBox("WindowWidth", "Width", 200, 1000, 800);
+            var windowHeight = CreateAppWindowNumberBox("WindowHeight", "Height", 200, 700, 500);
+            var xPoint = CreateAppWindowNumberBox("XPoint", "X", 0, 800, 50);
+            var yPoint = CreateAppWindowNumberBox("YPoint", "Y", 0, 300, 50);
+
+            button.Click += delegate
             {
-                Width = 190,
-                ItemsSource = new[] { "Overlapped", "Maximized", "Compact overlay" },
-                SelectedIndex = 0,
-                Margin = new Thickness(0, 0, 12, 0)
+                var sampleWindow = CreateModernWindow(
+                    (FrameworkElement)button,
+                    string.IsNullOrEmpty(windowTitle.Text) ? "SampleWindow1" : windowTitle.Text,
+                    CoerceWindowSize(windowWidth.Value, 800),
+                    CoerceWindowSize(windowHeight.Value, 500));
+                sampleWindow.Left = xPoint.Value;
+                sampleWindow.Top = yPoint.Value;
+                sampleWindow.WindowStartupLocation = WindowStartupLocation.Manual;
+                sampleWindow.Content = CreateAppWindowCommandBody();
+                sampleWindow.Show();
             };
-            ControlHelper.SetHeader(presenter, "Presenter");
 
-            var topmost = new ToggleButton
+            var options = CreateAppWindowOptionsPanel();
+            options.Children.Add(CreateAppWindowSectionLabel("Window title"));
+            options.Children.Add(windowTitle);
+            options.Children.Add(CreateAppWindowSectionLabel("Window size"));
+            options.Children.Add(CreateAppWindowNumberGrid(windowWidth, windowHeight));
+            options.Children.Add(CreateAppWindowSectionLabel("Window postion"));
+            options.Children.Add(CreateAppWindowNumberGrid(xPoint, yPoint));
+
+            root.Children.Add(CreateAppWindowExampleLayout(WrapInStack(button), options));
+            return root;
+        }
+
+        private static GallerySamplePanel CreateAppWindowCenteredExampleContent()
+        {
+            var root = CreateAppWindowExampleRoot(assignRootAutomationId: false);
+            var button = CreateAppWindowButton("ShowSampleWindow2Button", "Show centered sample window");
+            button.Click += delegate
             {
-                Content = "Topmost",
-                Padding = new Thickness(12, 6, 12, 6),
-                Margin = new Thickness(0, 22, 12, 0)
+                var sampleWindow = CreateModernWindow((FrameworkElement)button, "SampleWindow2", 520, 320);
+                sampleWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                sampleWindow.Content = CreateCenteredWindowBody("This is a centred sample window");
+                sampleWindow.Show();
             };
 
-            Action updatePreview = delegate
-            {
-                var selectedPresenter = presenter.SelectedItem as string ?? "Overlapped";
-                var selectedSize = size.SelectedItem as string ?? "Default 640 x 420";
-                SetPreviewText(preview, "AppWindow preview", selectedPresenter + ", " + selectedSize);
-            };
-            size.SelectionChanged += delegate { updatePreview(); };
-            presenter.SelectionChanged += delegate { updatePreview(); };
+            root.Children.Add(button);
+            return root;
+        }
 
-            var settings = new StackPanel
-            {
-                Orientation = Orientation.Horizontal,
-                Margin = new Thickness(0, 12, 0, 0)
-            };
-            settings.Children.Add(size);
-            settings.Children.Add(presenter);
-            settings.Children.Add(topmost);
+        private static GallerySamplePanel CreateAppWindowOverlappedPresenterExampleContent()
+        {
+            var root = CreateAppWindowExampleRoot(assignRootAutomationId: false);
+            var button = CreateAppWindowButton("ShowSampleWindow3Button", "Show window");
+            var isAlwaysOnTop = CreateAppWindowToggleSwitch("IsAlwaysOnTop", "IsAlwaysOnTop", false);
+            var isMaximizable = CreateAppWindowToggleSwitch("IsMaximizable", "IsMaximizable", true);
+            var isMinimizable = CreateAppWindowToggleSwitch("IsMinimizable", "IsMinimizable", true);
+            var isResizable = CreateAppWindowToggleSwitch("IsResizable", "IsResizable", true);
+            var hasBorder = CreateAppWindowToggleSwitch("HasBorder", "HasBorder", true);
+            var hasTitleBar = CreateAppWindowToggleSwitch("HasTitleBar", "HasTitleBar", true);
 
-            var open = CreateButton("Open window");
-            open.Margin = new Thickness(0, 12, 8, 0);
-            open.Click += delegate
+            hasBorder.Toggled += delegate
             {
-                var selectedSize = size.SelectedIndex;
-                var selectedPresenter = presenter.SelectedItem as string ?? "Overlapped";
-                var dimensions = GetWindowDimensions(selectedSize);
-                var window = CreateModernWindow((FrameworkElement)open, "AppWindow equivalent", dimensions.Width, dimensions.Height);
-                window.Topmost = topmost.IsChecked == true || selectedPresenter == "Compact overlay";
-                window.ResizeMode = selectedPresenter == "Compact overlay" ? ResizeMode.NoResize : ResizeMode.CanResize;
-                window.Content = CreateWindowBody(
-                    "AppWindow equivalent",
-                    "This WPF window uses ModernWpf chrome and standard Window APIs for sizing and presentation.");
-
-                if (selectedPresenter == "Maximized")
+                if (!hasBorder.IsOn)
                 {
-                    window.WindowState = WindowState.Maximized;
+                    hasTitleBar.IsOn = false;
                 }
-
-                window.Show();
-                output.Text = "Opened: " + selectedPresenter + " window (" + dimensions.Width + " x " + dimensions.Height + ").";
+            };
+            hasTitleBar.Toggled += delegate
+            {
+                if (hasTitleBar.IsOn)
+                {
+                    hasBorder.IsOn = true;
+                }
+            };
+            button.Click += delegate
+            {
+                var sampleWindow = CreateModernWindow((FrameworkElement)button, "SampleWindow3", 620, 420);
+                sampleWindow.Topmost = isAlwaysOnTop.IsOn;
+                sampleWindow.ResizeMode = isResizable.IsOn ? ResizeMode.CanResize : ResizeMode.NoResize;
+                if (!hasTitleBar.IsOn)
+                {
+                    WindowHelper.SetUseModernWindowStyle(sampleWindow, false);
+                    sampleWindow.WindowStyle = WindowStyle.None;
+                }
+                sampleWindow.Content = CreateAppWindowPresenterCommandBody();
+                sampleWindow.Show();
             };
 
-            panel.Children.Add(preview);
-            panel.Children.Add(settings);
-            panel.Children.Add(open);
-            panel.Children.Add(output);
-            return panel;
+            var example = CreateAppWindowStack();
+            example.Children.Add(new TextBlock
+            {
+                Text = "OverlappedPresenter is the default presenter for AppWindow, providing a standard resizable window with system buttons. It is used for typical app windows and can be customized to control resizing and button visibility.",
+                TextWrapping = TextWrapping.Wrap
+            });
+            example.Children.Add(new Mux.InfoBar
+            {
+                Title = "Warning",
+                IsClosable = false,
+                IsOpen = true,
+                Severity = Mux.InfoBarSeverity.Warning,
+                Message = "For an AppWindow with OverlappedPresenter, if the title bar is enabled, the window must have a border."
+            });
+            example.Children.Add(button);
+
+            var options = CreateAppWindowOptionsPanel();
+            options.Children.Add(isAlwaysOnTop);
+            options.Children.Add(isMaximizable);
+            options.Children.Add(isMinimizable);
+            options.Children.Add(isResizable);
+            options.Children.Add(hasBorder);
+            options.Children.Add(hasTitleBar);
+
+            root.Children.Add(CreateAppWindowExampleLayout(example, options));
+            return root;
+        }
+
+        private static GallerySamplePanel CreateAppWindowMinMaxExampleContent()
+        {
+            var root = CreateAppWindowExampleRoot(assignRootAutomationId: false);
+            var minWidth = CreateAppWindowNumberBox("MinWidthBox", "PreferredMinimumWidth", 0, double.PositiveInfinity, 400);
+            var minHeight = CreateAppWindowNumberBox("MinHeightBox", "PreferredMinimumHeight", 0, double.PositiveInfinity, 400);
+            var maxWidth = CreateAppWindowNumberBox("MaxWidthBox", "PreferredMaximumWidth", 0, double.PositiveInfinity, 1000);
+            var maxHeight = CreateAppWindowNumberBox("MaxHeightBox", "PreferredMaximumHeight", 0, double.PositiveInfinity, 1000);
+
+            var button = CreateAppWindowButton("ShowSampleWindow4Button", "Show window");
+            button.Click += delegate
+            {
+                var sampleWindow = CreateModernWindow((FrameworkElement)button, "SampleWindow4", 800, 500);
+                sampleWindow.MinWidth = CoerceWindowSize(minWidth.Value, 400);
+                sampleWindow.MinHeight = CoerceWindowSize(minHeight.Value, 400);
+                sampleWindow.MaxWidth = CoerceWindowSize(maxWidth.Value, 1000);
+                sampleWindow.MaxHeight = CoerceWindowSize(maxHeight.Value, 1000);
+                sampleWindow.ResizeMode = ResizeMode.CanResize;
+                sampleWindow.Content = CreateCenteredWindowBody("Minimum and maximum dimensions are applied to this WPF window.");
+                sampleWindow.Show();
+            };
+
+            var example = CreateAppWindowStack();
+            example.Children.Add(new TextBlock
+            {
+                Text = "The minimum and maximum width and height can be set on an AppWindow. When setting the maximum width or height, it's recommended to disable the window maximization.",
+                TextWrapping = TextWrapping.Wrap
+            });
+            example.Children.Add(button);
+
+            var options = CreateAppWindowOptionsPanel();
+            options.Children.Add(minWidth);
+            options.Children.Add(minHeight);
+            options.Children.Add(maxWidth);
+            options.Children.Add(maxHeight);
+
+            root.Children.Add(CreateAppWindowExampleLayout(example, options));
+            return root;
+        }
+
+        private static GallerySamplePanel CreateAppWindowModalExampleContent()
+        {
+            var root = CreateAppWindowExampleRoot(assignRootAutomationId: false);
+            var button = CreateAppWindowButton("ShowSampleWindow5Button", "Show modal window");
+            button.Click += delegate
+            {
+                var sampleWindow = CreateModernWindow((FrameworkElement)button, "Modal Window", 400, 300);
+                sampleWindow.Content = CreateModalWindowBody();
+                sampleWindow.ShowDialog();
+            };
+
+            var example = CreateAppWindowStack();
+            example.Children.Add(new TextBlock
+            {
+                Text = "A modal window is a separate window that blocks interaction with its owner window until it is closed, often used for critical actions like confirmations, authentication, or settings. Unlike a ContentDialog, which is a lightweight pop-up within the same window, a modal window is a fully independent window, making it suitable for multi-window applications or scenarios requiring more flexibility in layout and behavior.",
+                TextWrapping = TextWrapping.Wrap
+            });
+            example.Children.Add(button);
+            root.Children.Add(example);
+            return root;
+        }
+
+        private static GallerySamplePanel CreateAppWindowFullScreenExampleContent()
+        {
+            var root = CreateAppWindowExampleRoot(assignRootAutomationId: false);
+            var button = CreateAppWindowButton("ShowSampleWindow6Button", "Show window (Fullscreen mode)");
+            button.Click += delegate
+            {
+                var sampleWindow = CreateModernWindow((FrameworkElement)button, "SampleWindow6", 900, 600);
+                sampleWindow.WindowState = WindowState.Maximized;
+                sampleWindow.Content = CreateCenteredWindowBody("This window is running in Fullscreen mode");
+                sampleWindow.Show();
+            };
+
+            var example = CreateAppWindowStack();
+            example.Children.Add(new TextBlock
+            {
+                Text = "The FullScreenPresenter makes an AppWindow cover the entire screen, removing the title bar and system UI to create an immersive experience. To ensure usability, an exit mechanism, such as handling the Escape key or close button, should be included, and fullscreen mode should be used in scenarios like media playback or focused tasks.",
+                TextWrapping = TextWrapping.Wrap
+            });
+            example.Children.Add(button);
+            root.Children.Add(example);
+            return root;
+        }
+
+        private static GallerySamplePanel CreateAppWindowCompactOverlayExampleContent()
+        {
+            var root = CreateAppWindowExampleRoot(assignRootAutomationId: false);
+            var button = CreateAppWindowButton("ShowSampleWindow7Button", "Show window (Picture-in-Picture mode)");
+            var initialSize = new ComboBox
+            {
+                Name = "InitialSize",
+                Width = 150,
+                ItemsSource = new[] { "Small", "Medium", "Large" },
+                SelectedIndex = 0,
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+            ControlHelper.SetHeader(initialSize, "InitialSize");
+            var description = new TextBlock
+            {
+                Name = "InitialSizeDescription",
+                Width = 250,
+                Text = "Small: Window size is approximately 5% of the display's work area.",
+                TextWrapping = TextWrapping.Wrap,
+                Margin = new Thickness(0, 8, 0, 0)
+            };
+            initialSize.SelectionChanged += delegate
+            {
+                var size = initialSize.SelectedItem as string ?? "Small";
+                var percentage = size == "Medium" ? "15%" : size == "Large" ? "25%" : "5%";
+                description.Text = size + ": Window size is approximately " + percentage + " of the display's work area.";
+            };
+            button.Click += delegate
+            {
+                var dimensions = GetCompactOverlayDimensions(initialSize.SelectedItem as string);
+                var sampleWindow = CreateModernWindow((FrameworkElement)button, "SampleWindow7", dimensions.Width, dimensions.Height);
+                sampleWindow.Topmost = true;
+                sampleWindow.ResizeMode = ResizeMode.NoResize;
+                sampleWindow.Content = CreateCenteredWindowBody("This window is set to CompactOverlay (Picture-in-Picture) mode.");
+                sampleWindow.Show();
+            };
+
+            var example = CreateAppWindowStack();
+            example.Children.Add(new TextBlock
+            {
+                Text = "CompactOverlayPresenter (Picture-in-Picture mode) keeps an AppWindow always on top while using minimal screen space. To ensure a good user experience, the window should have a small yet functional size (e.g., for media players or floating tools).",
+                TextWrapping = TextWrapping.Wrap
+            });
+            example.Children.Add(button);
+
+            var options = CreateAppWindowOptionsPanel();
+            options.Children.Add(initialSize);
+            options.Children.Add(description);
+
+            root.Children.Add(CreateAppWindowExampleLayout(example, options));
+            return root;
         }
 
         private static UIElement CreateAppWindowTitleBarSample()
@@ -897,6 +1466,293 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
             });
 
             return navigationView;
+        }
+
+        private static GallerySamplePanel CreateAppWindowExampleRoot(bool assignRootAutomationId)
+        {
+            var root = new GallerySamplePanel();
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("AppWindow"));
+            }
+
+            return root;
+        }
+
+        private static Grid CreateAppWindowExampleLayout(UIElement example, UIElement options)
+        {
+            var layout = new Grid();
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+            Grid.SetColumn(example, 0);
+            layout.Children.Add(example);
+
+            if (options != null)
+            {
+                Grid.SetColumn(options, 1);
+                layout.Children.Add(options);
+            }
+
+            return layout;
+        }
+
+        private static StackPanel CreateAppWindowStack()
+        {
+            return new StackPanel
+            {
+                Orientation = Orientation.Vertical
+            };
+        }
+
+        private static StackPanel CreateAppWindowOptionsPanel()
+        {
+            return new StackPanel
+            {
+                Orientation = Orientation.Vertical,
+                Margin = new Thickness(24, 0, 0, 0),
+                Width = 272
+            };
+        }
+
+        private static StackPanel WrapInStack(UIElement child)
+        {
+            var stack = CreateAppWindowStack();
+            stack.Children.Add(child);
+            return stack;
+        }
+
+        private static Button CreateAppWindowButton(string name, string content)
+        {
+            var button = new Button
+            {
+                Name = name,
+                Content = content,
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+            AutomationProperties.SetName(button, content);
+            return button;
+        }
+
+        private static TextBlock CreateAppWindowSectionLabel(string text)
+        {
+            return new TextBlock
+            {
+                Text = text,
+                FontWeight = FontWeights.SemiBold,
+                Margin = new Thickness(0, 0, 0, 8)
+            };
+        }
+
+        private static TextBox CreateAppWindowTextBox(string name, string header, string text, string placeholder)
+        {
+            var textBox = new TextBox
+            {
+                Name = name,
+                Text = text,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                Margin = new Thickness(0, 0, 0, 16)
+            };
+            ControlHelper.SetHeader(textBox, header);
+            ControlHelper.SetPlaceholderText(textBox, placeholder);
+            return textBox;
+        }
+
+        private static Mux.NumberBox CreateAppWindowNumberBox(string name, string header, double minimum, double maximum, double value)
+        {
+            return new Mux.NumberBox
+            {
+                Name = name,
+                Header = header,
+                Minimum = minimum,
+                Maximum = maximum,
+                Value = value,
+                SmallChange = 10,
+                LargeChange = 100,
+                SpinButtonPlacementMode = Mux.NumberBoxSpinButtonPlacementMode.Inline,
+                Width = 120,
+                Margin = new Thickness(0, 0, 8, 16)
+            };
+        }
+
+        private static Grid CreateAppWindowNumberGrid(Mux.NumberBox first, Mux.NumberBox second)
+        {
+            var grid = new Grid();
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            Grid.SetColumn(first, 0);
+            Grid.SetColumn(second, 1);
+            grid.Children.Add(first);
+            grid.Children.Add(second);
+            return grid;
+        }
+
+        private static Mux.ToggleSwitch CreateAppWindowToggleSwitch(string name, string header, bool isOn)
+        {
+            return new Mux.ToggleSwitch
+            {
+                Name = name,
+                Header = header,
+                IsOn = isOn,
+                OnContent = "true",
+                OffContent = "false",
+                Margin = new Thickness(0, 0, 0, 8)
+            };
+        }
+
+        private static FrameworkElement CreateAppWindowCommandBody()
+        {
+            var stack = new StackPanel
+            {
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            stack.Children.Add(CreateWindowCommandButton("Hide", "Hide"));
+            stack.Children.Add(CreateWindowCommandButton("Show", "Hide and show the window after 3 seconds"));
+            stack.Children.Add(CreateWindowCommandButton("Close", "Close"));
+            return stack;
+        }
+
+        private static FrameworkElement CreateAppWindowPresenterCommandBody()
+        {
+            var stack = new StackPanel
+            {
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            stack.Children.Add(CreateWindowCommandButton("MaximizeBtn", "Maximize"));
+            stack.Children.Add(CreateWindowCommandButton("MinimizeBtn", "Minimize"));
+            stack.Children.Add(CreateWindowCommandButton("RestoreBtn", "Minimize and restore the window after 3 seconds"));
+            stack.Children.Add(CreateWindowCommandButton("CloseBtn", "Close"));
+            return stack;
+        }
+
+        private static Button CreateWindowCommandButton(string name, string text)
+        {
+            var button = new Button
+            {
+                Name = name,
+                Content = text,
+                Width = 200,
+                Margin = new Thickness(0, 0, 0, name == "Close" || name == "CloseBtn" ? 0 : 8)
+            };
+            button.Click += delegate
+            {
+                if (name == "Close" || name == "CloseBtn")
+                {
+                    var window = Window.GetWindow(button);
+                    if (window != null)
+                    {
+                        window.Close();
+                    }
+                }
+            };
+            return button;
+        }
+
+        private static FrameworkElement CreateCenteredWindowBody(string text)
+        {
+            return new Border
+            {
+                Child = new TextBlock
+                {
+                    Text = text,
+                    FontSize = 20,
+                    FontWeight = FontWeights.SemiBold,
+                    TextAlignment = TextAlignment.Center,
+                    TextWrapping = TextWrapping.Wrap,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Margin = new Thickness(32)
+                }
+            };
+        }
+
+        private static FrameworkElement CreateModalWindowBody()
+        {
+            var stack = new StackPanel
+            {
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            stack.Children.Add(new TextBlock
+            {
+                Text = "Modal Window",
+                FontSize = 20,
+                FontWeight = FontWeights.SemiBold,
+                TextAlignment = TextAlignment.Center
+            });
+            stack.Children.Add(new TextBlock
+            {
+                Text = "This is a modal window created using AppWindow with OverlappedPresenter.",
+                TextAlignment = TextAlignment.Center,
+                TextWrapping = TextWrapping.Wrap,
+                Margin = new Thickness(0, 8, 0, 12),
+                MaxWidth = 320
+            });
+
+            var buttons = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+            buttons.Children.Add(CreateDialogCloseButton("OK"));
+            buttons.Children.Add(CreateDialogCloseButton("Cancel"));
+            stack.Children.Add(buttons);
+            return stack;
+        }
+
+        private static Button CreateDialogCloseButton(string content)
+        {
+            var button = new Button
+            {
+                Content = content,
+                Width = 80,
+                Margin = new Thickness(0, 0, content == "OK" ? 8 : 0, 0)
+            };
+            button.Click += delegate
+            {
+                var window = Window.GetWindow(button);
+                if (window != null)
+                {
+                    window.Close();
+                }
+            };
+            return button;
+        }
+
+        private static Size GetCompactOverlayDimensions(string size)
+        {
+            switch (size)
+            {
+                case "Large":
+                    return new Size(480, 270);
+                case "Medium":
+                    return new Size(360, 220);
+                default:
+                    return new Size(280, 180);
+            }
+        }
+
+        private static double CoerceWindowSize(double value, double fallback)
+        {
+            return double.IsNaN(value) || double.IsInfinity(value) ? fallback : value;
+        }
+
+        private static string FindSampleCodeText(IReadOnlyList<SampleSnippet> snippets, string fileName, string fallback)
+        {
+            if (snippets != null)
+            {
+                foreach (var snippet in snippets)
+                {
+                    if (string.Equals(snippet.Title, fileName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return snippet.Text;
+                    }
+                }
+            }
+
+            return fallback;
         }
 
         private static Button CreateTitleBarColorSelector(string name, string automationName, string color)

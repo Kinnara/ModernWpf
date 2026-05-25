@@ -320,7 +320,7 @@ namespace ModernWpf.Gallery.Pages
                 return navigationExamples;
             }
 
-            var windowingExamples = WindowingSampleFactory.CreateExamples(uniqueId);
+            var windowingExamples = WindowingSampleFactory.CreateExamples(uniqueId, sampleSnippets);
             if (windowingExamples.Count != 0)
             {
                 return windowingExamples;

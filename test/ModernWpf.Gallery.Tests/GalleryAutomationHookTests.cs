@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Automation;
@@ -41,6 +42,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "MapControl", "GallerySample_MapControl_Root", "GallerySample_MapControl_MapControl" };
             yield return new object[] { "WebView2", "GallerySample_WebView2_Root", "GallerySample_WebView2_WebView2" };
             yield return new object[] { "CreateMultipleWindows", "GallerySample_CreateMultipleWindows_Root", "GallerySample_CreateMultipleWindows_Control1" };
+            yield return new object[] { "AppWindow", "GallerySample_AppWindow_Root", "GallerySample_AppWindow_ShowSampleWindow1Button" };
             yield return new object[] { "AppWindowTitleBar", "GallerySample_AppWindowTitleBar_Root", "GallerySample_AppWindowTitleBar_ShowWindowButton" };
             yield return new object[] { "TitleBar", "GallerySample_TitleBar_Root", "GallerySample_TitleBar_TitleBarControl" };
             yield return new object[] { "StoragePickers", "GallerySample_StoragePickers_Root", "GallerySample_StoragePickers_PickSingleFileButton" };
@@ -3708,6 +3710,125 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void AppWindowSampleMatchesWinUIGalleryExamples()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("AppWindow"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(7, page.Examples.Count);
+                    Assert.AreEqual("Creating and customizing an AppWindow from a Window instance", page.Examples[0].HeaderText);
+                    Assert.AreEqual("Centering AppWindow on the screen using the available display area", page.Examples[1].HeaderText);
+                    Assert.AreEqual("AppWindow with OverlapedPresenter", page.Examples[2].HeaderText);
+                    Assert.AreEqual("Setting the minimum and maximum width / height on an AppWindow using OverlappedPresenter", page.Examples[3].HeaderText);
+                    Assert.AreEqual("Modal window with OverlappedPresenter using AppWindow", page.Examples[4].HeaderText);
+                    Assert.AreEqual("AppWindow with FullScreenPresenter", page.Examples[5].HeaderText);
+                    Assert.AreEqual("AppWindow with CompactOverlayPresenter", page.Examples[6].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "x:Name=\"Hide\"");
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "AppWindow.Title = \"$(WindowTitle)\";");
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "AppWindow.Resize(new Windows.Graphics.SizeInt32($(Width), $(Height)));");
+                    StringAssert.Contains(page.Examples[1].CSharpCode, "DisplayArea.GetFromWindowId(AppWindow.Id, DisplayAreaFallback.Nearest)?.WorkArea");
+                    StringAssert.Contains(page.Examples[2].CSharpCode, "OverlappedPresenter presenter = OverlappedPresenter.Create();");
+                    StringAssert.Contains(page.Examples[2].CSharpCode, "presenter.SetBorderAndTitleBar($(HasBorder), $(HasTitleBar));");
+                    StringAssert.Contains(page.Examples[3].CSharpCode, "presenter.PreferredMinimumWidth = MinWidth;");
+                    StringAssert.Contains(page.Examples[4].CSharpCode, "OverlappedPresenter presenter = OverlappedPresenter.CreateForDialog();");
+                    StringAssert.Contains(page.Examples[5].CSharpCode, "AppWindow.SetPresenter(AppWindowPresenterKind.FullScreen);");
+                    StringAssert.Contains(page.Examples[6].CSharpCode, "CompactOverlayPresenter presenter = CompactOverlayPresenter.Create();");
+
+                    var root = (GallerySamplePanel)page.Examples[0].ExampleContent;
+                    Assert.AreEqual(1, root.Children.Count);
+                    var showSampleWindow1Button = (Button)FindByAutomationId(page, "GallerySample_AppWindow_ShowSampleWindow1Button");
+                    Assert.IsNotNull(showSampleWindow1Button);
+                    Assert.AreEqual("ShowSampleWindow1Button", showSampleWindow1Button.Name);
+                    Assert.AreEqual("Show window", showSampleWindow1Button.Content);
+                    Assert.AreEqual("Show window", AutomationProperties.GetName(showSampleWindow1Button));
+                    Assert.AreEqual("GallerySample_AppWindow_ShowSampleWindow1Button", AutomationProperties.GetAutomationId(showSampleWindow1Button));
+
+                    var titleTextBox = FindNamedDescendant<TextBox>(page, "WindowTitle");
+                    Assert.IsNotNull(titleTextBox);
+                    Assert.AreEqual("Window title", ModernWpf.Controls.Primitives.ControlHelper.GetHeader(titleTextBox));
+                    Assert.AreEqual("This is a title", titleTextBox.Text);
+                    AssertAppWindowNumberBox(FindNamedDescendant<Mux.NumberBox>(page, "WindowWidth"), "Width", 200, 1000, 800);
+                    AssertAppWindowNumberBox(FindNamedDescendant<Mux.NumberBox>(page, "WindowHeight"), "Height", 200, 700, 500);
+                    AssertAppWindowNumberBox(FindNamedDescendant<Mux.NumberBox>(page, "XPoint"), "X", 0, 800, 50);
+                    AssertAppWindowNumberBox(FindNamedDescendant<Mux.NumberBox>(page, "YPoint"), "Y", 0, 300, 50);
+
+                    var centeredButton = FindNamedDescendant<Button>(page, "ShowSampleWindow2Button");
+                    Assert.IsNotNull(centeredButton);
+                    Assert.AreEqual("Show centered sample window", centeredButton.Content);
+
+                    var overlappedWarning = FindDescendants<Mux.InfoBar>(page).FirstOrDefault(infoBar => string.Equals(infoBar.Title, "Warning", StringComparison.Ordinal));
+                    Assert.IsNotNull(overlappedWarning);
+                    Assert.IsTrue(overlappedWarning.IsOpen);
+                    Assert.IsFalse(overlappedWarning.IsClosable);
+                    Assert.AreEqual(Mux.InfoBarSeverity.Warning, overlappedWarning.Severity);
+                    StringAssert.Contains(overlappedWarning.Message, "OverlappedPresenter");
+                    var hasBorder = FindNamedDescendant<Mux.ToggleSwitch>(page, "HasBorder");
+                    var hasTitleBar = FindNamedDescendant<Mux.ToggleSwitch>(page, "HasTitleBar");
+                    AssertAppWindowToggleSwitch(FindNamedDescendant<Mux.ToggleSwitch>(page, "IsAlwaysOnTop"), "IsAlwaysOnTop", false);
+                    AssertAppWindowToggleSwitch(FindNamedDescendant<Mux.ToggleSwitch>(page, "IsMaximizable"), "IsMaximizable", true);
+                    AssertAppWindowToggleSwitch(FindNamedDescendant<Mux.ToggleSwitch>(page, "IsMinimizable"), "IsMinimizable", true);
+                    AssertAppWindowToggleSwitch(FindNamedDescendant<Mux.ToggleSwitch>(page, "IsResizable"), "IsResizable", true);
+                    AssertAppWindowToggleSwitch(hasBorder, "HasBorder", true);
+                    AssertAppWindowToggleSwitch(hasTitleBar, "HasTitleBar", true);
+                    hasBorder.IsOn = false;
+                    WpfTestHost.DoEvents();
+                    Assert.IsFalse(hasTitleBar.IsOn);
+                    hasTitleBar.IsOn = true;
+                    WpfTestHost.DoEvents();
+                    Assert.IsTrue(hasBorder.IsOn);
+
+                    AssertAppWindowNumberBox(FindNamedDescendant<Mux.NumberBox>(page, "MinWidthBox"), "PreferredMinimumWidth", 0, double.PositiveInfinity, 400);
+                    AssertAppWindowNumberBox(FindNamedDescendant<Mux.NumberBox>(page, "MinHeightBox"), "PreferredMinimumHeight", 0, double.PositiveInfinity, 400);
+                    AssertAppWindowNumberBox(FindNamedDescendant<Mux.NumberBox>(page, "MaxWidthBox"), "PreferredMaximumWidth", 0, double.PositiveInfinity, 1000);
+                    AssertAppWindowNumberBox(FindNamedDescendant<Mux.NumberBox>(page, "MaxHeightBox"), "PreferredMaximumHeight", 0, double.PositiveInfinity, 1000);
+                    Assert.AreEqual("Show modal window", FindNamedDescendant<Button>(page, "ShowSampleWindow5Button").Content);
+                    Assert.AreEqual("Show window (Fullscreen mode)", FindNamedDescendant<Button>(page, "ShowSampleWindow6Button").Content);
+
+                    var initialSize = FindNamedDescendant<ComboBox>(page, "InitialSize");
+                    Assert.IsNotNull(initialSize);
+                    Assert.AreEqual("InitialSize", ModernWpf.Controls.Primitives.ControlHelper.GetHeader(initialSize));
+                    Assert.AreEqual(150d, initialSize.Width);
+                    Assert.AreEqual(0, initialSize.SelectedIndex);
+                    Assert.AreEqual("Small", initialSize.Items[0]);
+                    Assert.AreEqual("Medium", initialSize.Items[1]);
+                    Assert.AreEqual("Large", initialSize.Items[2]);
+                    var initialSizeDescription = FindNamedDescendant<TextBlock>(page, "InitialSizeDescription");
+                    Assert.IsNotNull(initialSizeDescription);
+                    Assert.AreEqual(250d, initialSizeDescription.Width);
+                    Assert.AreEqual("Small: Window size is approximately 5% of the display's work area.", initialSizeDescription.Text);
+                    initialSize.SelectedIndex = 2;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual("Large: Window size is approximately 25% of the display's work area.", initialSizeDescription.Text);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
         public void CreateMultipleWindowsSampleMatchesWinUIGalleryExample()
         {
             WpfTestHost.Run(() =>
@@ -5232,6 +5353,27 @@ namespace ModernWpf.Gallery.Tests
                 var item = comboBox.Items[i] as ComboBoxItem;
                 Assert.AreEqual(expectedItems[i], item == null ? comboBox.Items[i] : item.Content);
             }
+        }
+
+        private static void AssertAppWindowNumberBox(Mux.NumberBox numberBox, string header, double minimum, double maximum, double value)
+        {
+            Assert.IsNotNull(numberBox);
+            Assert.AreEqual(header, numberBox.Header);
+            Assert.AreEqual(minimum, numberBox.Minimum);
+            Assert.AreEqual(maximum, numberBox.Maximum);
+            Assert.AreEqual(value, numberBox.Value);
+            Assert.AreEqual(10d, numberBox.SmallChange);
+            Assert.AreEqual(100d, numberBox.LargeChange);
+            Assert.AreEqual(Mux.NumberBoxSpinButtonPlacementMode.Inline, numberBox.SpinButtonPlacementMode);
+        }
+
+        private static void AssertAppWindowToggleSwitch(Mux.ToggleSwitch toggleSwitch, string header, bool isOn)
+        {
+            Assert.IsNotNull(toggleSwitch);
+            Assert.AreEqual(header, toggleSwitch.Header);
+            Assert.AreEqual(isOn, toggleSwitch.IsOn);
+            Assert.AreEqual("true", toggleSwitch.OnContent);
+            Assert.AreEqual("false", toggleSwitch.OffContent);
         }
 
         private static void AssertSelectorBarItem(Mux.SelectorBarItem item, string name, string text, Mux.Symbol? symbol, bool isSelected)
