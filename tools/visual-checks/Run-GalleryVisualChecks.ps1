@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "RichTextBlock", "RichEditBox", "SplitView", "PersonPicture", "Sound", "MediaPlayerElement", "MapControl", "WebView2", "Acrylic", "AnimatedIcon", "CompactSizing", "IconElement", "Line", "Shape", "RadialGradientBrush", "SystemBackdrops", "SystemBackdropElement", "ThemeShadow", "CreateMultipleWindows", "AppWindow", "AppWindowTitleBar", "TitleBar", "StoragePickers", "CalendarDatePicker", "CalendarView", "TimePicker", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "AnnotatedScrollBar", "ScrollViewer", "PullToRefresh", "FlipView", "ItemsView", "GridView", "ItemsRepeater", "BreadcrumbBar", "Pivot", "SelectorBar", "TabView", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "SwipeControl", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout", "StandardUICommand", "XamlUICommand"),
+    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "RichTextBlock", "RichEditBox", "SplitView", "PersonPicture", "Sound", "MediaPlayerElement", "MapControl", "WebView2", "Acrylic", "AnimatedIcon", "CompactSizing", "IconElement", "Line", "Shape", "RadialGradientBrush", "SystemBackdrops", "SystemBackdropElement", "ThemeShadow", "CreateMultipleWindows", "AppWindow", "AppWindowTitleBar", "TitleBar", "StoragePickers", "CalendarDatePicker", "CalendarView", "TimePicker", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "AnnotatedScrollBar", "ScrollViewer", "SemanticZoom", "PullToRefresh", "FlipView", "ItemsView", "GridView", "ItemsRepeater", "BreadcrumbBar", "Pivot", "SelectorBar", "TabView", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "SwipeControl", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout", "StandardUICommand", "XamlUICommand"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -492,6 +492,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "PipsPager" { return "GallerySample_PipsPager_PipsPager" }
         "AnnotatedScrollBar" { return "GallerySample_AnnotatedScrollBar_AnnotatedScrollBar" }
         "ScrollViewer" { return "GallerySample_ScrollViewer_ScrollViewer" }
+        "SemanticZoom" { return "GallerySample_SemanticZoom_Control" }
         "PullToRefresh" { return "GallerySample_PullToRefresh_RefreshContainer" }
         "FlipView" { return "GallerySample_FlipView_FlipView" }
         "ItemsView" { return "GallerySample_ItemsView_ItemsView" }
@@ -579,6 +580,7 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
         "PipsPager" { return "GallerySample_PipsPager_PipsPager" }
         "AnnotatedScrollBar" { return "GallerySample_AnnotatedScrollBar_Root" }
         "ScrollViewer" { return "GallerySample_ScrollViewer_ScrollViewer" }
+        "SemanticZoom" { return "GallerySample_SemanticZoom_Control" }
         "PullToRefresh" { return "GallerySample_PullToRefresh_Root" }
         "FlipView" { return "GallerySample_FlipView_FlipView" }
         "ItemsView" { return "GallerySample_ItemsView_ItemsView" }
@@ -656,6 +658,7 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
         "PipsPager" { return "FlipViewPipsPager" }
         "AnnotatedScrollBar" { return "svPanel" }
         "ScrollViewer" { return "ScrollViewerControl" }
+        "SemanticZoom" { return "Control1" }
         "ItemsView" { return "BasicItemsView" }
         "GridView" { return "BasicGridView" }
         "BreadcrumbBar" { return "BreadcrumbBar1" }

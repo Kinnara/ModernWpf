@@ -37,6 +37,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "PipsPager", "GallerySample_PipsPager_Root", "GallerySample_PipsPager_PipsPager" };
             yield return new object[] { "AnnotatedScrollBar", "GallerySample_AnnotatedScrollBar_Root", "GallerySample_AnnotatedScrollBar_AnnotatedScrollBar" };
             yield return new object[] { "ScrollViewer", "GallerySample_ScrollViewer_Root", "GallerySample_ScrollViewer_ScrollViewer" };
+            yield return new object[] { "SemanticZoom", "GallerySample_SemanticZoom_Root", "GallerySample_SemanticZoom_Control" };
             yield return new object[] { "PullToRefresh", "GallerySample_PullToRefresh_Root", "GallerySample_PullToRefresh_RefreshContainer" };
             yield return new object[] { "SplitView", "GallerySample_SplitView_Root", "GallerySample_SplitView_SplitView" };
             yield return new object[] { "PersonPicture", "GallerySample_PersonPicture_Root", "GallerySample_PersonPicture_PersonPicture" };
@@ -1652,6 +1653,89 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(ScrollBarVisibility.Visible, scrollViewer.HorizontalScrollBarVisibility);
                     Assert.AreEqual(ScrollBarVisibility.Hidden, scrollViewer.VerticalScrollBarVisibility);
                     Assert.AreEqual(PanningMode.Both, scrollViewer.PanningMode);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void SemanticZoomSampleMatchesWinUIGalleryExample()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("SemanticZoom"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(1, page.Examples.Count);
+                    Assert.AreEqual("A simple SemanticZoom", page.Examples[0].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "<SemanticZoom Height=\"500\">");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "GridView ItemsSource=\"{x:Bind cvsGroups.View}\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "ListView ItemsSource=\"{x:Bind cvsGroups.View.CollectionGroups}\"");
+                    Assert.IsNull(page.Examples[0].CSharpCode);
+
+                    var sampleRoot = FindByAutomationId(page, "GallerySample_SemanticZoom_Root") as UIElement;
+                    Assert.IsNotNull(sampleRoot);
+                    var sampleRootPeer = UIElementAutomationPeer.CreatePeerForElement(sampleRoot);
+                    Assert.IsNotNull(sampleRootPeer);
+                    Assert.IsTrue(sampleRootPeer.IsControlElement());
+                    Assert.AreEqual(AutomationControlType.Group, sampleRootPeer.GetAutomationControlType());
+
+                    var control = (Grid)FindByAutomationId(page, "GallerySample_SemanticZoom_Control");
+                    var zoomedInView = FindNamedDescendant<ScrollViewer>(control, "SemanticZoomZoomedInView");
+                    var zoomedOutView = FindNamedDescendant<ListView>(control, "SemanticZoomZoomedOutView");
+                    Assert.IsNotNull(control);
+                    Assert.AreEqual("Control1", control.Name);
+                    Assert.AreEqual(500.0, control.Height);
+                    Assert.IsNotNull(zoomedInView);
+                    Assert.IsNotNull(zoomedOutView);
+                    Assert.AreEqual(Visibility.Visible, zoomedInView.Visibility);
+                    Assert.AreEqual(Visibility.Collapsed, zoomedOutView.Visibility);
+
+                    var visibleTexts = FindDescendants<TextBlock>(zoomedInView)
+                        .Where(textBlock => textBlock.IsVisible && textBlock.Visibility == Visibility.Visible)
+                        .Select(textBlock => textBlock.Text)
+                        .Where(text => !string.IsNullOrEmpty(text))
+                        .ToList();
+                    CollectionAssert.Contains(visibleTexts, "Fundamentals");
+                    CollectionAssert.Contains(visibleTexts, "Resources");
+                    CollectionAssert.Contains(visibleTexts, "Reusable definitions for shared values to ensure consistency and maintainability.");
+                    CollectionAssert.Contains(visibleTexts, "Style");
+                    CollectionAssert.Contains(visibleTexts, "Templates");
+
+                    Assert.AreEqual(19, zoomedOutView.Items.Count);
+                    var firstZoomedOutGroup = zoomedOutView.Items[0] as TextBlock;
+                    Assert.IsNotNull(firstZoomedOutGroup);
+                    Assert.AreEqual("Fundamentals", firstZoomedOutGroup.Text);
+
+                    control.RaiseEvent(new MouseButtonEventArgs(Mouse.PrimaryDevice, 0, MouseButton.Right)
+                    {
+                        RoutedEvent = UIElement.MouseRightButtonUpEvent
+                    });
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(Visibility.Collapsed, zoomedInView.Visibility);
+                    Assert.AreEqual(Visibility.Visible, zoomedOutView.Visibility);
                 }
                 finally
                 {

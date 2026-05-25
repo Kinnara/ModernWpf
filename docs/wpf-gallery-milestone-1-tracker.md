@@ -106,6 +106,16 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.SemanticZoomSampleMatchesWinUIGalleryExample" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 1 test per target. The generated ModernWpf SemanticZoom page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\SemanticZoomPage.xaml` / `.xaml.cs`: one `A simple SemanticZoom` example, source-facing `Control1` sample root, the official XAML snippet with `ZoomedInView` and `ZoomedOutView`, and the source `ControlInfoData` group/item data from the raw generated WinUI catalog data. The WPF adaptation maps WinUI `SemanticZoom` to a WPF grouped zoomed-in `ScrollViewer` plus a right-click-accessible zoomed-out group list because ModernWpf does not currently expose a native `SemanticZoom` control. The test covers the source snippet, sample root automation peer, `GallerySample_SemanticZoom_Control`, visible Fundamentals data, zoomed-out group list, and the view toggle.
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 68 tests per target, including the new SemanticZoom root/control automation IDs.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls SemanticZoom -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-090942-944-120676/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required `GallerySample_SemanticZoom_Control` element was found, primary crops use ModernWpf `GallerySample_SemanticZoom_Control` against WinUI `Control1`, crop sizes are `790x500` vs `745x500`, Light primary delta is `21.44`, and whole-window Light mean delta is diagnostic at `124.84`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls SemanticZoom -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-091010-754-37336/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required `GallerySample_SemanticZoom_Control` element was found, primary crops use the same control mapping, crop sizes are `790x500` vs `745x500`, Dark primary delta is `24.22`, and whole-window Dark mean delta is `19.46`.
+- `git diff --check`
+  - Passed with only Git's normal LF-to-CRLF working-copy warnings for touched files.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.AnnotatedScrollBarSampleMatchesWinUIGalleryExample" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 1 test per target. The generated ModernWpf AnnotatedScrollBar page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\AnnotatedScrollBarPage.xaml` / `.xaml.cs`: one `AnnotatedScrollBar linked to a ScrollView.` example, source-facing `scrollView`, `itemsRepeater`, `annotatedScrollBar`, and `AnnotatedScrollBarMaxHeightSlider` names, the official XAML/C# snippets, and the source color-section counts and label offsets. The WPF adaptation maps WinUI `ScrollView`/`ItemsRepeater` to WPF `ScrollViewer`/`WrapPanel`, keeps the side options layout used by the installed reference, and uses the real `ModernWpf.Controls.AnnotatedScrollBar` instead of the old placeholder marker rail. The test covers the source snippets, sample root automation peer, generated color items, label collection, rendered label presenters, themed thumb, and slider-driven height update.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls AnnotatedScrollBar -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -2962,6 +2972,25 @@ ModernWpf control artifact is blank for this templated control. Treat the Light
 sample-region delta as diagnostic unless a better stable crop becomes
 available. Avoid reopening AnnotatedScrollBar's source shape unless a new local
 WinUI source, label-layout regression, or crop regression appears.
+The generated ModernWpf SemanticZoom extension page now uses the local official
+WinUI Gallery source from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\SemanticZoomPage.xaml`
+and `.xaml.cs`: the single `A simple SemanticZoom` example, source-facing
+`Control1` name, official `ZoomedInView` / `ZoomedOutView` XAML snippet, and
+the WinUI `ControlInfoData` groups/items carried by the raw generated WinUI
+catalog data. The WPF adaptation renders the source zoomed-in grouped GridView shape
+with a WPF `ScrollViewer`/`WrapPanel` layout and exposes the zoomed-out group
+list with a right-click toggle because ModernWpf does not currently ship a
+native `SemanticZoom` control. Current SemanticZoom WinUI-reference evidence is
+`artifacts/visual-checks/20260525-090942-944-120676/report.md` for Light and
+`artifacts/visual-checks/20260525-091010-754-37336/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`; the visual harness maps
+ModernWpf `GallerySample_SemanticZoom_Control` to installed WinUI `Control1`
+and now includes SemanticZoom in the default WinUI extension visual set. Treat
+the remaining crop width difference as diagnostic unless a native SemanticZoom
+port or a better source-sized host becomes available. Avoid reopening
+SemanticZoom's source shape unless a new local WinUI source, native control
+strategy, or crop regression appears.
 Continue with the next highest-impact visible drift from the checklist, likely
 remaining High Contrast gaps, other NavigationView styling not covered
 by the TreeView token aliases or first-sample refresh, or other item pages that still lack current

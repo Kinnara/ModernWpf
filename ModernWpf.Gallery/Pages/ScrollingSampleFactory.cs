@@ -8,6 +8,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using ModernWpf.Controls.Primitives;
+using ModernWpf.Gallery.Models;
 using Mux = ModernWpf.Controls;
 
 namespace ModernWpf.Gallery.Pages
@@ -162,6 +163,46 @@ private void ScrollViewerControl_ViewChanged(object sender, ScrollViewerViewChan
     }
 }";
 
+        private const string SemanticZoomXaml =
+@"<SemanticZoom Height=""500"">
+    <SemanticZoom.ZoomedInView>
+        <GridView ItemsSource=""{x:Bind cvsGroups.View}"" SelectionMode=""None""
+                  ItemTemplate=""{StaticResource ZoomedInTemplate}"">
+            <GridView.GroupStyle>
+                <GroupStyle HeaderTemplate=""{StaticResource ZoomedInGroupHeaderTemplate}"" />
+            </GridView.GroupStyle>
+        </GridView>
+    </SemanticZoom.ZoomedInView>
+
+    <SemanticZoom.ZoomedOutView>
+        <ListView ItemsSource=""{x:Bind cvsGroups.View.CollectionGroups}"" HorizontalAlignment=""Stretch""
+                  SelectionMode=""None"" ItemTemplate=""{StaticResource ZoomedOutTemplate}"" />
+    </SemanticZoom.ZoomedOutView>
+</SemanticZoom>";
+
+        private static readonly string[] SemanticZoomGroupIds =
+        {
+            "FundamentalsItem",
+            "DesignItem",
+            "AccessibilityItem",
+            "MenusAndToolbars",
+            "Collections",
+            "DateAndTime",
+            "BasicInput",
+            "StatusAndInfo",
+            "DialogsAndFlyouts",
+            "Scrolling",
+            "Layout",
+            "Navigation",
+            "Media",
+            "Styles",
+            "Text",
+            "Motion",
+            "MultipleWindows",
+            "System",
+            "Shell"
+        };
+
         public static UIElement Create(string uniqueId)
         {
             switch (uniqueId)
@@ -191,6 +232,8 @@ private void ScrollViewerControl_ViewChanged(object sender, ScrollViewerViewChan
                     return CreatePipsPagerExamples();
                 case "ScrollViewer":
                     return CreateScrollViewerExamples();
+                case "SemanticZoom":
+                    return CreateSemanticZoomExamples();
                 default:
                     return Array.Empty<GalleryExample>();
             }
@@ -644,49 +687,51 @@ private void ScrollViewerControl_ViewChanged(object sender, ScrollViewerViewChan
 
         private static UIElement CreateSemanticZoomSample()
         {
-            var panel = CreateSamplePanel("SemanticZoom maps to a toggle between detailed grouped content and a compact group overview.");
-            var groups = CreateGroupedItems();
-            var host = new ContentControl
-            {
-                Width = 430,
-                Height = 280
-            };
-            var output = CreateOutput("Showing detailed view.");
+            return CreateSemanticZoomExampleContent(assignRootAutomationId: true);
+        }
 
-            Action showDetailed = null;
-            Action showOverview = null;
-            showDetailed = delegate
+        private static IReadOnlyList<GalleryExample> CreateSemanticZoomExamples()
+        {
+            return new[]
             {
-                host.Content = CreateSemanticDetailedView(groups);
-                output.Text = "Showing detailed view.";
+                new GalleryExample(
+                    "A simple SemanticZoom",
+                    CreateSemanticZoomExampleContent(assignRootAutomationId: true),
+                    SemanticZoomXaml,
+                    null)
             };
-            showOverview = delegate
+        }
+
+        private static GallerySamplePanel CreateSemanticZoomExampleContent(bool assignRootAutomationId)
+        {
+            var root = new GallerySamplePanel();
+            if (assignRootAutomationId)
             {
-                host.Content = CreateSemanticOverview(groups, delegate(string group)
-                {
-                    host.Content = CreateSemanticDetailedView(groups, group);
-                    output.Text = "Showing " + group + ".";
-                });
-                output.Text = "Showing overview.";
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("SemanticZoom"));
+            }
+
+            var groups = CreateSemanticZoomGroups();
+            var zoomedInView = CreateSemanticZoomedInView(groups);
+            var zoomedOutView = CreateSemanticZoomedOutView(groups);
+            zoomedOutView.Visibility = Visibility.Collapsed;
+
+            var control = new Grid
+            {
+                Name = "Control1",
+                Height = 500
+            };
+            GalleryAutomation.WithAutomationId(control, GalleryAutomation.SampleElementId("SemanticZoom", "Control"));
+            control.Children.Add(zoomedInView);
+            control.Children.Add(zoomedOutView);
+            control.MouseRightButtonUp += delegate
+            {
+                var showZoomedOut = zoomedOutView.Visibility != Visibility.Visible;
+                zoomedInView.Visibility = showZoomedOut ? Visibility.Collapsed : Visibility.Visible;
+                zoomedOutView.Visibility = showZoomedOut ? Visibility.Visible : Visibility.Collapsed;
             };
 
-            var commands = new StackPanel
-            {
-                Orientation = Orientation.Horizontal,
-                Margin = new Thickness(0, 12, 0, 0)
-            };
-            var detailed = CreateButton("Detailed");
-            var overview = CreateButton("Overview");
-            detailed.Click += delegate { showDetailed(); };
-            overview.Click += delegate { showOverview(); };
-            commands.Children.Add(detailed);
-            commands.Children.Add(overview);
-
-            showDetailed();
-            panel.Children.Add(host);
-            panel.Children.Add(commands);
-            panel.Children.Add(output);
-            return panel;
+            root.Children.Add(control);
+            return root;
         }
 
         private static WrapPanel CreateAnnotatedColorItems()
@@ -1003,66 +1048,89 @@ private void ScrollViewerControl_ViewChanged(object sender, ScrollViewerViewChan
             return canvas;
         }
 
-        private static Dictionary<string, string[]> CreateGroupedItems()
+        private static IReadOnlyList<GalleryGroup> CreateSemanticZoomGroups()
         {
-            return new Dictionary<string, string[]>
-            {
-                { "Apps", new[] { "Mail", "Calendar", "Photos", "Terminal" } },
-                { "Controls", new[] { "Button", "ListView", "NavigationView", "TreeView" } },
-                { "Design", new[] { "Color", "Typography", "Spacing", "Iconography" } }
-            };
+            return SemanticZoomGroupIds
+                .Select(groupId => GalleryCatalogData.Groups.FirstOrDefault(group => string.Equals(group.UniqueId, groupId, StringComparison.Ordinal)))
+                .Where(group => group != null && group.Items.Count > 0)
+                .ToArray();
         }
 
-        private static UIElement CreateSemanticDetailedView(Dictionary<string, string[]> groups, string onlyGroup = null)
+        private static FrameworkElement CreateSemanticZoomedInView(IReadOnlyList<GalleryGroup> groups)
         {
             var stack = new StackPanel();
-            foreach (var pair in groups.Where(pair => onlyGroup == null || pair.Key == onlyGroup))
+            foreach (var group in groups)
             {
                 stack.Children.Add(new TextBlock
                 {
-                    Text = pair.Key,
-                    FontSize = 18,
+                    Text = group.Title,
+                    FontSize = 20,
                     FontWeight = FontWeights.SemiBold,
-                    Margin = new Thickness(0, 0, 0, 8)
+                    Margin = new Thickness(0, 0, 0, 6)
                 });
-                foreach (var item in pair.Value)
+
+                var itemsPanel = new WrapPanel();
+                foreach (var item in group.Items)
                 {
-                    stack.Children.Add(new TextBlock
-                    {
-                        Text = item,
-                        Margin = new Thickness(12, 0, 0, 6)
-                    });
+                    itemsPanel.Children.Add(CreateSemanticZoomedInItem(item));
                 }
+
+                stack.Children.Add(itemsPanel);
             }
 
             return new ScrollViewer
             {
+                Name = "SemanticZoomZoomedInView",
                 VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+                HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
                 Content = stack
             };
         }
 
-        private static UIElement CreateSemanticOverview(Dictionary<string, string[]> groups, Action<string> selected)
+        private static FrameworkElement CreateSemanticZoomedInItem(GalleryItem item)
         {
-            var wrap = new WrapPanel();
-            foreach (var pair in groups)
+            var stack = new StackPanel
             {
-                var button = new Button
+                MinWidth = 200,
+                Margin = new Thickness(12, 6, 12, 6)
+            };
+            stack.Children.Add(new TextBlock
+            {
+                Text = item.Title,
+                FontWeight = FontWeights.SemiBold,
+                TextTrimming = TextTrimming.CharacterEllipsis
+            });
+            stack.Children.Add(new TextBlock
+            {
+                Text = item.Subtitle,
+                Width = 300,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                TextWrapping = TextWrapping.Wrap,
+                TextTrimming = TextTrimming.CharacterEllipsis
+            });
+            return stack;
+        }
+
+        private static FrameworkElement CreateSemanticZoomedOutView(IReadOnlyList<GalleryGroup> groups)
+        {
+            var listView = new ListView
+            {
+                Name = "SemanticZoomZoomedOutView",
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                SelectionMode = SelectionMode.Single
+            };
+            foreach (var group in groups)
+            {
+                listView.Items.Add(new TextBlock
                 {
-                    Content = pair.Key + "\n" + pair.Value.Length + " items",
-                    Width = 120,
-                    Height = 74,
-                    Margin = new Thickness(0, 0, 10, 10)
-                };
-                var group = pair.Key;
-                button.Click += delegate
-                {
-                    selected(group);
-                };
-                wrap.Children.Add(button);
+                    Text = group.Title,
+                    FontSize = 20,
+                    FontWeight = FontWeights.SemiBold,
+                    TextWrapping = TextWrapping.Wrap
+                });
             }
 
-            return wrap;
+            return listView;
         }
 
         private static StackPanel CreateSamplePanel(string description)
