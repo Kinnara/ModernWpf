@@ -139,8 +139,9 @@ namespace ModernWpf.Gallery.Tests
                     new[] { "Home", "What's New", "Design Guidance", "Samples", "All Controls", "Basic Input" },
                     topLevelItems.Take(6).Select(GetNavigationItemText).ToArray());
                 CollectionAssert.AreEqual(
-                    new[] { "Layout", "Navigation", "Status & Info", "Text", "System", "Media Controls", "ModernWpf controls", "Platform & patterns" },
-                    topLevelItems.Skip(8).Take(8).Select(GetNavigationItemText).ToArray());
+                    new[] { "Layout", "Navigation", "Status & Info", "Text", "System", "Media Controls", "ModernWpf controls" },
+                    topLevelItems.Skip(8).Select(GetNavigationItemText).ToArray());
+                Assert.AreEqual(15, topLevelItems.Count, "Deleted navigation groups should not remain in the shell menu.");
 
                 AssertFontIconGlyph(topLevelItems[0], "\uE80F");
                 AssertFontIconGlyph(topLevelItems[1], "\uEB51");
