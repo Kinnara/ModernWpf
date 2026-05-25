@@ -2227,6 +2227,16 @@ namespace ModernWpf.Gallery.Tests
                 var lastTextTile = (ColorTile)firstTilesGrid.Children[3];
                 Assert.AreEqual(new CornerRadius(0, 8, 8, 0), lastTextTile.TileRadius);
 
+                var textOnAccentTiles = GetColorTilesGrid(textSection, 5);
+                Assert.AreEqual(2, textOnAccentTiles.ColumnDefinitions.Count);
+                Assert.AreEqual("Text on Accent / Secondary", GetColorTileName(textOnAccentTiles.Children[1]));
+                Assert.AreEqual(2, Grid.GetColumn(textOnAccentTiles.Children[1]));
+
+                var textOnAccentSelectedTiles = GetColorTilesGrid(textSection, 6);
+                Assert.AreEqual(2, textOnAccentSelectedTiles.ColumnDefinitions.Count);
+                Assert.AreEqual("Text on Accent / Selected Text", GetColorTileName(textOnAccentSelectedTiles.Children[1]));
+                Assert.AreEqual(2, Grid.GetColumn(textOnAccentSelectedTiles.Children[1]));
+
                 selector.SelectedIndex = 1;
                 WpfTestHost.DoEvents();
                 var fillSection = GetColorSectionStack(sectionHost.Content);
