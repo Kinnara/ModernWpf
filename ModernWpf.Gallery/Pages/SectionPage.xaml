@@ -10,9 +10,7 @@
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     Title="NavigationPage"
     mc:Ignorable="d">
-    <Grid
-        x:Name="ContentRootGrid"
-        Style="{StaticResource GalleryPageRootStyle}">
+    <Grid Style="{StaticResource GalleryPageRootStyle}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />

@@ -213,7 +213,8 @@ namespace ModernWpf.Gallery.Tests
                 var sectionHeader = FindDescendant<PageHeader>(sectionPage);
                 Assert.AreEqual(sectionViewModel.PageTitle, sectionHeader.Title);
                 Assert.AreEqual(sectionViewModel.PageDescription, sectionHeader.Description);
-                var sectionRoot = (Grid)sectionPage.FindName("ContentRootGrid");
+                var sectionRoot = (Grid)sectionPage.Content;
+                Assert.AreEqual(string.Empty, sectionRoot.Name);
                 var groupItemsControl = sectionRoot.Children.OfType<ItemsControl>().Single();
                 Assert.AreEqual(string.Empty, groupItemsControl.Name);
                 Assert.AreEqual("Items in group", AutomationProperties.GetName(groupItemsControl));

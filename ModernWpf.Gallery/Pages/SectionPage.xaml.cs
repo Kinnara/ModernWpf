@@ -102,7 +102,8 @@ namespace ModernWpf.Gallery.Pages
 
         private ItemsControl GetOfficialGroupItemsControl()
         {
-            return ContentRootGrid.Children.OfType<ItemsControl>().Single();
+            var root = (Grid)Content;
+            return root.Children.OfType<ItemsControl>().Single();
         }
     }
 }

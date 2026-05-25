@@ -668,7 +668,7 @@ namespace ModernWpf.Gallery.Tests
                     AssertReferencePageHeader(FindVisualChildren<PageHeader>(sectionPage).Single(), basicInputGroup.Title, basicInputGroup.PageDescription, true);
                     AssertNavigationItemsControl(sectionItemsControl, "Items in group");
                     AssertBindingPath(sectionItemsControl, ItemsControl.ItemsSourceProperty, "ViewModel.NavigationCards");
-                    AssertReferenceCategoryPageRoot((Grid)sectionPage.FindName("ContentRootGrid"), false);
+                    AssertReferenceCategoryPageRoot(GetOfficialSectionRoot(sectionPage), false);
                     Assert.AreEqual(basicInputGroup.Title, sectionPage.PageTitle);
                     Assert.AreEqual(basicInputGroup.PageDescription, sectionPage.PageDescription);
                     AssertRenderedNavigationCard(sectionItemsControl, basicInputGroup.Items.First().Title, basicInputGroup.Items.First().Description, sectionPage.ViewModel.NavigateCommand);
@@ -680,7 +680,7 @@ namespace ModernWpf.Gallery.Tests
                 {
                     var mediaItemsControl = GetOfficialSectionItemsControl(mediaPage);
                     AssertReferencePageHeader(FindVisualChildren<PageHeader>(mediaPage).Single(), mediaGroup.Title, mediaGroup.PageDescription, true);
-                    AssertReferenceCategoryPageRoot((Grid)mediaPage.FindName("ContentRootGrid"), false);
+                    AssertReferenceCategoryPageRoot(GetOfficialSectionRoot(mediaPage), false);
                     AssertRenderedNavigationCard(mediaItemsControl, "Canvas", GalleryCatalog.FindItem("Canvas").Description, mediaPage.ViewModel.NavigateCommand);
                 });
 
@@ -1095,10 +1095,17 @@ namespace ModernWpf.Gallery.Tests
 
         private static ItemsControl GetOfficialSectionItemsControl(SectionPage sectionPage)
         {
-            var root = (Grid)sectionPage.FindName("ContentRootGrid");
+            var root = GetOfficialSectionRoot(sectionPage);
             var itemsControl = root.Children.OfType<ItemsControl>().Single();
             Assert.AreEqual(string.Empty, itemsControl.Name);
             return itemsControl;
+        }
+
+        private static Grid GetOfficialSectionRoot(SectionPage sectionPage)
+        {
+            var root = (Grid)sectionPage.Content;
+            Assert.AreEqual(string.Empty, root.Name);
+            return root;
         }
 
         private static void AssertReferenceCategoryPageRoot(Grid root, bool hasItemsScrollViewer)
