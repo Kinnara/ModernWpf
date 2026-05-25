@@ -106,6 +106,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.SoundSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 48 tests per target. The generated ModernWpf Sound extension page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\SoundPage.xaml` / `.xaml.cs`: `Toggling Sound`, `Toggling Spatial Audio`, and `Play Specific System Sound`. `MediaSampleFactory.CreateExamples` now covers Sound as a source-backed Media WinUI extension page, preserves source-facing names such as `soundToggle` and `spatialAudioBox`, keeps the official C# snippets, adapts WinUI `ElementSoundPlayer` behavior to WPF `SystemSounds`, and exposes curated automation IDs `GallerySample_Sound_Root` / `GallerySample_Sound_ToggleSwitch`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls Sound -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-015131-307-76088/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required Sound sample element was found, primary crops use ModernWpf `GallerySample_Sound_ToggleSwitch` against WinUI `soundToggle`, crop sizes match at `115x40`, and Light primary delta is `21.6`. The whole-window Light mean delta is `153.14` and remains diagnostic because the installed WinUI shell stayed dark while the sample content toggled light.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls Sound -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-015201-492-115948/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required Sound sample element was found, primary crops use the same Sound toggle mapping, crop sizes match at `115x40`, Dark primary delta is `24.86`, and whole-window Dark mean delta is `16.35`.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the Sound WinUI example alignment. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages and ends with `0 Warning(s)` and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.PersonPictureSampleMatchesWinUIGalleryExample|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 47 tests per target. The generated ModernWpf PersonPicture extension page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\PersonPicturePage.xaml` / `.xaml.cs`: one `Select different looks for the person picture.` example with source-facing `personPicture`, `ProfileImageRadio`, `DisplayNameRadio`, and `InitialsRadio` names, `ProfilePicture` / `DisplayName` / `Initials` substitutions, and matching selection behavior. `MediaSampleFactory.CreateExamples` now covers PersonPicture as a source-backed Media WinUI extension page, `ItemPage` asks the Media factory before falling back to generic generated content, and the sample exposes curated automation IDs `GallerySample_PersonPicture_Root` / `GallerySample_PersonPicture_PersonPicture` plus the shared `ProfileImageRadio` crop hook.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls PersonPicture -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -2189,6 +2197,26 @@ visual harness uses `ProfileImageRadio` for the primary crop because the
 installed WinUI reference does not expose a stable `personPicture` automation
 ID. Avoid reopening PersonPicture's source shape unless a new WinUI source or
 crop regression appears.
+The generated ModernWpf Sound extension page now uses the local official WinUI
+Gallery three-example structure from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\SoundPage.xaml` and
+`.xaml.cs`: toggling sound, toggling spatial audio, and playing specific system
+sounds. `MediaSampleFactory.CreateExamples` now exposes Sound as a source-backed
+Media WinUI extension page. The WPF adaptation keeps WinUI's visible sample
+headers, C# snippets, source-facing names (`soundToggle` and
+`spatialAudioBox`), first-example toggle state, spatial-audio enable/reset
+behavior, button labels, tags, and automation names while mapping the live
+button behavior to WPF `SystemSounds` because ModernWpf/WPF does not expose
+WinUI `ElementSoundPlayer`. The `soundToggle` live control uses `Width=115`
+and `MinWidth=0` so the WPF toggle crop matches the installed WinUI reference
+extent. Current Sound WinUI-reference evidence is
+`artifacts/visual-checks/20260525-015131-307-76088/report.md` for Light and
+`artifacts/visual-checks/20260525-015201-492-115948/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`, matching `115x40`
+primary crops, and primary deltas `21.6` / `24.86`. The visual harness uses
+ModernWpf `GallerySample_Sound_ToggleSwitch` against WinUI `soundToggle` for
+the primary crop. Avoid reopening Sound's source shape unless a new WinUI
+source or crop regression appears.
 The generated ModernWpf RichTextBlock extension page now uses the local
 official WinUI Gallery four-example structure from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\RichTextBlockPage.xaml`:

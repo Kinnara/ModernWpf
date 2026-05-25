@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "RichTextBlock", "RichEditBox", "SplitView", "PersonPicture", "CalendarDatePicker", "CalendarView", "TimePicker", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "PullToRefresh", "FlipView", "ItemsView", "GridView", "ItemsRepeater", "BreadcrumbBar", "Pivot", "SelectorBar", "TabView", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "SwipeControl", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout", "StandardUICommand", "XamlUICommand"),
+    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "RichTextBlock", "RichEditBox", "SplitView", "PersonPicture", "Sound", "CalendarDatePicker", "CalendarView", "TimePicker", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "PullToRefresh", "FlipView", "ItemsView", "GridView", "ItemsRepeater", "BreadcrumbBar", "Pivot", "SelectorBar", "TabView", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "SwipeControl", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout", "StandardUICommand", "XamlUICommand"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -464,6 +464,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "RichEditBox" { return "GallerySample_RichEditBox_RichEditBox" }
         "SplitView" { return "GallerySample_SplitView_SplitView" }
         "PersonPicture" { return "GallerySample_PersonPicture_PersonPicture" }
+        "Sound" { return "GallerySample_Sound_ToggleSwitch" }
         "CalendarDatePicker" { return "GallerySample_CalendarDatePicker_CalendarDatePicker" }
         "CalendarView" { return "GallerySample_CalendarView_CalendarView" }
         "TimePicker" { return "GallerySample_TimePicker_TimePicker" }
@@ -530,6 +531,7 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
         "RichEditBox" { return "GallerySample_RichEditBox_RichEditBox" }
         "SplitView" { return "NavLinksList" }
         "PersonPicture" { return "ProfileImageRadio" }
+        "Sound" { return "GallerySample_Sound_ToggleSwitch" }
         "CalendarDatePicker" { return "GallerySample_CalendarDatePicker_CalendarDatePicker" }
         "CalendarView" { return "GallerySample_CalendarView_CalendarView" }
         "TimePicker" { return "GallerySample_TimePicker_TimePicker" }
@@ -589,6 +591,7 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
         "RichEditBox" { return "" }
         "SplitView" { return "NavLinksList" }
         "PersonPicture" { return "ProfileImageRadio" }
+        "Sound" { return "soundToggle" }
         "CalendarView" { return "Control1" }
         "ProgressRing" { return "ProgressRing1" }
         "PipsPager" { return "FlipViewPipsPager" }

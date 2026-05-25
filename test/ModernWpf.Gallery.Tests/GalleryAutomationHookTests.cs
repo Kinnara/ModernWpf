@@ -36,6 +36,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "PullToRefresh", "GallerySample_PullToRefresh_Root", "GallerySample_PullToRefresh_RefreshContainer" };
             yield return new object[] { "SplitView", "GallerySample_SplitView_Root", "GallerySample_SplitView_SplitView" };
             yield return new object[] { "PersonPicture", "GallerySample_PersonPicture_Root", "GallerySample_PersonPicture_PersonPicture" };
+            yield return new object[] { "Sound", "GallerySample_Sound_Root", "GallerySample_Sound_ToggleSwitch" };
             yield return new object[] { "FlipView", "GallerySample_FlipView_Root", "GallerySample_FlipView_FlipView" };
             yield return new object[] { "ItemsView", "GallerySample_ItemsView_Root", "GallerySample_ItemsView_ItemsView" };
             yield return new object[] { "CalendarDatePicker", "GallerySample_CalendarDatePicker_Root", "GallerySample_CalendarDatePicker_CalendarDatePicker" };
@@ -3526,6 +3527,87 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsNull(personPicture.ProfilePicture);
                     Assert.AreEqual(string.Empty, personPicture.DisplayName);
                     Assert.AreEqual("SB", personPicture.Initials);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void SoundSampleMatchesWinUIGalleryExamples()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("Sound"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(3, page.Examples.Count);
+                    Assert.AreEqual("Toggling Sound", page.Examples[0].HeaderText);
+                    Assert.AreEqual("Toggling Spatial Audio", page.Examples[1].HeaderText);
+                    Assert.AreEqual("Play Specific System Sound", page.Examples[2].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    Assert.IsNull(page.Examples[0].XamlCode);
+                    Assert.IsNull(page.Examples[1].XamlCode);
+                    Assert.IsNull(page.Examples[2].XamlCode);
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "ElementSoundPlayer.State = ElementSoundPlayerState.Off;");
+                    StringAssert.Contains(page.Examples[1].CSharpCode, "ElementSoundPlayer.SpatialAudioMode = ElementSpatialAudioMode.On");
+                    StringAssert.Contains(page.Examples[2].CSharpCode, "ElementSoundPlayer.Play(ElementSoundKind.GoBack);");
+
+                    var soundToggle = (Mux.ToggleSwitch)FindByAutomationId(page, "GallerySample_Sound_ToggleSwitch");
+                    var spatialAudioBox = FindNamedDescendant<CheckBox>(page, "spatialAudioBox");
+                    var focusButton = (Button)FindByAutomationId(page, "Focus");
+                    var goBackButton = (Button)FindByAutomationId(page, "GoBack");
+                    Assert.IsNotNull(soundToggle);
+                    Assert.IsNotNull(spatialAudioBox);
+                    Assert.IsNotNull(focusButton);
+                    Assert.IsNotNull(goBackButton);
+
+                    Assert.AreEqual("soundToggle", soundToggle.Name);
+                    Assert.AreEqual(115d, soundToggle.Width);
+                    Assert.AreEqual(0d, soundToggle.MinWidth);
+                    Assert.AreEqual("Sound Off", soundToggle.OffContent);
+                    Assert.AreEqual("Sound On", soundToggle.OnContent);
+                    Assert.IsFalse(soundToggle.IsOn);
+                    Assert.AreEqual("Enable Spatial Audio", spatialAudioBox.Content);
+                    Assert.IsFalse(spatialAudioBox.IsEnabled);
+                    Assert.AreEqual("\u25B6 Focus", focusButton.Content);
+                    Assert.AreEqual("0", focusButton.Tag);
+                    Assert.AreEqual("Focus", AutomationProperties.GetName(focusButton));
+                    Assert.AreEqual("\u25B6 GoBack", goBackButton.Content);
+                    Assert.AreEqual("6", goBackButton.Tag);
+
+                    soundToggle.IsOn = true;
+                    WpfTestHost.DoEvents();
+                    Assert.IsTrue(spatialAudioBox.IsEnabled);
+
+                    spatialAudioBox.IsChecked = true;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(true, spatialAudioBox.IsChecked);
+
+                    soundToggle.IsOn = false;
+                    WpfTestHost.DoEvents();
+                    Assert.IsFalse(spatialAudioBox.IsEnabled);
+                    Assert.AreEqual(false, spatialAudioBox.IsChecked);
                 }
                 finally
                 {

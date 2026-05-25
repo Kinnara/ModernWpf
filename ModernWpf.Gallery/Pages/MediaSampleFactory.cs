@@ -49,6 +49,25 @@ namespace ModernWpf.Gallery.Pages
     }
 }";
 
+        private const string SoundToggleCSharp =
+@"ElementSoundPlayer.State = ElementSoundPlayerState.Off;
+ElementSoundPlayer.State = ElementSoundPlayerState.On;";
+
+        private const string SoundSpatialAudioCSharp =
+@"ElementSoundPlayer.State = ElementSoundPlayerState.On;
+ElementSoundPlayer.SpatialAudioMode = ElementSpatialAudioMode.On";
+
+        private const string SoundSpecificSystemSoundCSharp =
+@"ElementSoundPlayer.State = ElementSoundPlayerState.On;
+
+ElementSoundPlayer.Play(ElementSoundKind.Focus);
+ElementSoundPlayer.Play(ElementSoundKind.Invoke);
+ElementSoundPlayer.Play(ElementSoundKind.Show);
+ElementSoundPlayer.Play(ElementSoundKind.Hide);
+ElementSoundPlayer.Play(ElementSoundKind.MovePrevious);
+ElementSoundPlayer.Play(ElementSoundKind.MoveNext);
+ElementSoundPlayer.Play(ElementSoundKind.GoBack);";
+
         public static UIElement Create(string uniqueId)
         {
             switch (uniqueId)
@@ -86,6 +105,26 @@ namespace ModernWpf.Gallery.Pages
                             CreatePersonPictureExampleContent(assignRootAutomationId: true),
                             PersonPictureBasicXaml,
                             PersonPictureBasicCSharp)
+                    };
+                case "Sound":
+                    var soundState = new SoundExampleState();
+                    return new[]
+                    {
+                        new GalleryExample(
+                            "Toggling Sound",
+                            CreateSoundToggleExampleContent(assignRootAutomationId: true, soundState),
+                            null,
+                            SoundToggleCSharp),
+                        new GalleryExample(
+                            "Toggling Spatial Audio",
+                            CreateSoundSpatialAudioExampleContent(soundState),
+                            null,
+                            SoundSpatialAudioCSharp),
+                        new GalleryExample(
+                            "Play Specific System Sound",
+                            CreateSoundSpecificSystemSoundExampleContent(),
+                            null,
+                            SoundSpecificSystemSoundCSharp)
                     };
                 default:
                     return Array.Empty<GalleryExample>();
@@ -478,15 +517,77 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateSoundSample()
         {
-            var panel = CreateSamplePanel("Sound maps to WPF system sound playback for short UI feedback cues.");
-            var output = CreateOutput("Choose a sound.");
-            var commands = CreateCommandRow();
-            commands.Children.Add(CreateSoundButton("Asterisk", delegate { SystemSounds.Asterisk.Play(); }, output));
-            commands.Children.Add(CreateSoundButton("Exclamation", delegate { SystemSounds.Exclamation.Play(); }, output));
-            commands.Children.Add(CreateSoundButton("Question", delegate { SystemSounds.Question.Play(); }, output));
-            commands.Children.Add(CreateSoundButton("Beep", delegate { SystemSounds.Beep.Play(); }, output));
-            panel.Children.Add(commands);
-            panel.Children.Add(output);
+            return CreateSoundToggleExampleContent(assignRootAutomationId: true, new SoundExampleState());
+        }
+
+        private static GallerySamplePanel CreateSoundToggleExampleContent(bool assignRootAutomationId, SoundExampleState soundState)
+        {
+            var panel = new GallerySamplePanel();
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("Sound"));
+            }
+
+            var soundToggle = new Mux.ToggleSwitch
+            {
+                Name = "soundToggle",
+                Width = 115,
+                MinWidth = 0,
+                OffContent = "Sound Off",
+                OnContent = "Sound On"
+            };
+            GalleryAutomation.WithAutomationId(soundToggle, GalleryAutomation.SampleElementId("Sound", "ToggleSwitch"));
+            soundToggle.Toggled += delegate
+            {
+                soundState.IsSoundOn = soundToggle.IsOn;
+                UpdateSoundSpatialAudioState(soundState);
+            };
+            panel.Children.Add(soundToggle);
+            return panel;
+        }
+
+        private static StackPanel CreateSoundSpatialAudioExampleContent(SoundExampleState soundState)
+        {
+            var spatialAudioBox = new CheckBox
+            {
+                Name = "spatialAudioBox",
+                Content = "Enable Spatial Audio",
+                IsEnabled = false
+            };
+            AutomationProperties.SetAutomationId(spatialAudioBox, "spatialAudioBox");
+            soundState.SpatialAudioBox = spatialAudioBox;
+            UpdateSoundSpatialAudioState(soundState);
+
+            return new StackPanel
+            {
+                Orientation = Orientation.Vertical,
+                Children =
+                {
+                    spatialAudioBox,
+                    new TextBlock
+                    {
+                        Margin = new Thickness(0, 5, 0, 0),
+                        FontStyle = FontStyles.Italic,
+                        Foreground = SystemColors.HotTrackBrush,
+                        Text = "Can only enable spatial audio when sound is on!"
+                    }
+                }
+            };
+        }
+
+        private static StackPanel CreateSoundSpecificSystemSoundExampleContent()
+        {
+            var panel = new StackPanel
+            {
+                Orientation = Orientation.Vertical
+            };
+            panel.Children.Add(CreateSoundButton("Focus", "0", delegate { SystemSounds.Asterisk.Play(); }));
+            panel.Children.Add(CreateSoundButton("Invoke", "1", delegate { SystemSounds.Beep.Play(); }));
+            panel.Children.Add(CreateSoundButton("Show", "2", delegate { SystemSounds.Exclamation.Play(); }));
+            panel.Children.Add(CreateSoundButton("Hide", "3", delegate { SystemSounds.Hand.Play(); }));
+            panel.Children.Add(CreateSoundButton("MovePrevious", "4", delegate { SystemSounds.Question.Play(); }));
+            panel.Children.Add(CreateSoundButton("MoveNext", "5", delegate { SystemSounds.Asterisk.Play(); }));
+            panel.Children.Add(CreateSoundButton("GoBack", "6", delegate { SystemSounds.Beep.Play(); }));
             return panel;
         }
 
@@ -537,15 +638,39 @@ namespace ModernWpf.Gallery.Pages
             }
         }
 
-        private static Button CreateSoundButton(string text, Action play, TextBlock output)
+        private static Button CreateSoundButton(string text, string tag, Action play)
         {
-            var button = CreateButton(text);
+            var button = CreateButton("\u25B6 " + text);
+            button.Tag = tag;
+            button.Margin = new Thickness(0, 0, 0, 5);
+            AutomationProperties.SetName(button, text);
+            AutomationProperties.SetAutomationId(button, text);
             button.Click += delegate
             {
                 play();
-                output.Text = "Played " + text;
             };
             return button;
+        }
+
+        private static void UpdateSoundSpatialAudioState(SoundExampleState soundState)
+        {
+            if (soundState.SpatialAudioBox == null)
+            {
+                return;
+            }
+
+            soundState.SpatialAudioBox.IsEnabled = soundState.IsSoundOn;
+            if (!soundState.IsSoundOn)
+            {
+                soundState.SpatialAudioBox.IsChecked = false;
+            }
+        }
+
+        private sealed class SoundExampleState
+        {
+            public CheckBox SpatialAudioBox { get; set; }
+
+            public bool IsSoundOn { get; set; }
         }
 
         private static StackPanel CreateCommandRow()
