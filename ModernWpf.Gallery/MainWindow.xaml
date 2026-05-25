@@ -104,10 +104,7 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <Grid
-                x:Name="AppTitleBar"
-                Grid.Row="0"
-                Height="44">
+            <Grid Grid.Row="0" Height="44">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
@@ -118,7 +115,6 @@
 
                 <Button
                     x:Name="BackButton"
-                    Width="36"
                     Height="36"
                     MinWidth="36"
                     Margin="8,0"
@@ -151,12 +147,10 @@
                     Margin="4,0,0,0"
                     Orientation="Horizontal">
                     <Image
-                        x:Name="TitleIcon"
                         Width="20"
                         VerticalAlignment="Center"
                         Source="pack://application:,,,/ModernWpf.Gallery;component/Assets/AppIcons/WPFGallery_48px.png" />
                     <TextBlock
-                        x:Name="TitleText"
                         Margin="16,0,0,0"
                         VerticalAlignment="Center"
                         pages:GalleryAutomation.HeadingLevel="Level1"

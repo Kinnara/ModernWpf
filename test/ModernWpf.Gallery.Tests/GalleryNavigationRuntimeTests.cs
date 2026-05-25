@@ -412,6 +412,10 @@ namespace ModernWpf.Gallery.Tests
 
                     var backButton = (Button)window.FindName("BackButton");
                     Assert.AreEqual("Back", AutomationProperties.GetName(backButton));
+                    Assert.IsTrue(double.IsNaN(backButton.Width));
+                    Assert.AreEqual(36d, backButton.Height);
+                    Assert.AreEqual(36d, backButton.MinWidth);
+                    Assert.AreEqual(new Thickness(8, 0, 8, 0), backButton.Margin);
                     Assert.AreSame(window.ViewModel.BackCommand, backButton.Command);
                     Assert.AreEqual("ViewModel.BackCommand",
                         BindingOperations.GetBindingExpression(backButton, System.Windows.Controls.Primitives.ButtonBase.CommandProperty)?.ParentBinding.Path.Path);
@@ -424,7 +428,13 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsTrue(window.ViewModel.CanNavigateback);
                     Assert.IsTrue(backButton.IsEnabled);
 
-                    var titleText = (TextBlock)window.FindName("TitleText");
+                    Assert.IsNull(window.FindName("AppTitleBar"));
+                    Assert.IsNull(window.FindName("TitleIcon"));
+                    Assert.IsNull(window.FindName("TitleText"));
+                    var titleBar = mainGrid.Children.OfType<Grid>()
+                        .Single(grid => Grid.GetRow(grid) == 0);
+                    var titleText = FindVisualChildren<TextBlock>(titleBar)
+                        .Single(text => string.Equals(text.Text, "WPF Gallery", StringComparison.Ordinal));
                     Assert.AreEqual("WPF Gallery", titleText.Text);
                     Assert.AreEqual("ViewModel.ApplicationTitle",
                         BindingOperations.GetBindingExpression(titleText, TextBlock.TextProperty)?.ParentBinding.Path.Path);
