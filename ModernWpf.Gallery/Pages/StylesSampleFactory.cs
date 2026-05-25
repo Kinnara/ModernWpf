@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
@@ -48,6 +50,8 @@ namespace ModernWpf.Gallery.Pages
         {
             switch (uniqueId)
             {
+                case "SystemBackdrops":
+                    return CreateSystemBackdropsExamples(sampleSnippets);
                 case "SystemBackdropElement":
                     return CreateSystemBackdropElementExamples(sampleSnippets);
                 default:
@@ -302,29 +306,146 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateSystemBackdropsSample()
         {
-            var panel = CreateSamplePanel("System backdrops map to WPF window material previews for Mica, Mica Alt, and Desktop Acrylic.");
-            var preview = CreateBackdropPreview("Mica", CreateBrush("#F3F3F3"));
-            var options = new ComboBox
-            {
-                Width = 240,
-                Margin = new Thickness(0, 12, 0, 0),
-                ItemsSource = new[] { "Mica", "Mica Alt", "Desktop Acrylic Base", "Desktop Acrylic Thin" },
-                SelectedIndex = 0
-            };
-            ControlHelper.SetHeader(options, "Backdrop");
-            options.SelectionChanged += delegate
-            {
-                var name = (string)options.SelectedItem;
-                var brush = name == "Mica Alt" ? CreateBrush("#E9EEF5") :
-                    name == "Desktop Acrylic Base" ? CreateBrush("#DDEEF6FF") :
-                    name == "Desktop Acrylic Thin" ? CreateBrush("#B8EEF6FF") :
-                    CreateBrush("#F3F3F3");
-                preview.Child = CreateBackdropCard(name, brush);
-            };
+            return CreateSystemBackdropsBackdropTypesExampleContent(assignRootAutomationId: true);
+        }
 
-            panel.Children.Add(preview);
-            panel.Children.Add(options);
-            return panel;
+        private static IReadOnlyList<GalleryExample> CreateSystemBackdropsExamples(IReadOnlyList<SampleSnippet> sampleSnippets)
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "Backdrop types",
+                    CreateSystemBackdropsBackdropTypesExampleContent(assignRootAutomationId: true),
+                    FindSampleCodeText(sampleSnippets, "SystemBackdropsSampleBackdropTypes_xaml.txt"),
+                    FindSampleCodeText(sampleSnippets, "SystemBackdropsSampleBackdropTypes_cs.txt")),
+                new GalleryExample(
+                    "MicaController",
+                    CreateSystemBackdropsMicaControllerExampleContent(),
+                    null,
+                    FindSampleCodeText(sampleSnippets, "SystemBackdropsSampleMicaController.txt")),
+                new GalleryExample(
+                    "DesktopAcrylicController",
+                    CreateSystemBackdropsDesktopAcrylicControllerExampleContent(),
+                    null,
+                    FindSampleCodeText(sampleSnippets, "SystemBackdropsSampleDesktopAcrylicController.txt"))
+            };
+        }
+
+        private static GallerySamplePanel CreateSystemBackdropsBackdropTypesExampleContent(bool assignRootAutomationId)
+        {
+            var root = CreateSystemBackdropsExampleRoot(assignRootAutomationId);
+            var stack = CreateSystemBackdropsStack();
+            var text = CreateSystemBackdropsTextBlock();
+            AddInlineText(text, "A window can use one of the following system backdrops:");
+            AddLineBreak(text);
+            AddInlineText(text, "1. ");
+            AddInlineBold(text, "Mica");
+            AddInlineText(text, " \u2014 An opaque material that samples the desktop wallpaper once to tint the window background. Best for main app windows.");
+            AddLineBreak(text);
+            AddInlineText(text, "2. ");
+            AddInlineBold(text, "Mica Alt");
+            AddInlineText(text, " \u2014 A variant of Mica with stronger tinting. Recommended for apps with a tabbed title bar.");
+            AddLineBreak(text);
+            AddInlineText(text, "3. ");
+            AddInlineBold(text, "Desktop Acrylic (Base)");
+            AddInlineText(text, " \u2014 A semi-transparent material that shows a blurred view of the content behind the window.");
+            AddLineBreak(text);
+            AddInlineText(text, "4. ");
+            AddInlineBold(text, "Desktop Acrylic (Thin)");
+            AddInlineText(text, " \u2014 A lighter variant of Desktop Acrylic with more transparency.");
+            AddLineBreak(text);
+            AddLineBreak(text);
+            AddInlineBold(text, "Mica vs. Acrylic:");
+            AddInlineText(text, " Mica is opaque and renders the desktop wallpaper within the window background. Desktop Acrylic is semi-transparent and reveals a blurred view of what is behind the window in real-time. Mica is more performant because it captures the wallpaper only once, while Acrylic updates continuously.");
+            AddLineBreak(text);
+            AddLineBreak(text);
+            AddInlineText(text, "There are three backdrop types in the API:");
+            AddLineBreak(text);
+            AddInlineText(text, "\u2022 ");
+            AddInlineBold(text, "SystemBackdrop");
+            AddInlineText(text, " \u2014 The base class of every backdrop type.");
+            AddLineBreak(text);
+            AddInlineText(text, "\u2022 ");
+            AddInlineBold(text, "MicaBackdrop");
+            AddInlineText(text, " \u2014 Applies the Mica material. Set the Kind property to switch between Base and Alt.");
+            AddLineBreak(text);
+            AddInlineText(text, "\u2022 ");
+            AddInlineBold(text, "DesktopAcrylicBackdrop");
+            AddInlineText(text, " \u2014 Applies the Desktop Acrylic material (Base type only).");
+            AddLineBreak(text);
+            AddLineBreak(text);
+            AddInlineText(text, "All Mica variants require Windows 11 build 22000 or later. In-app acrylic (AcrylicBrush) is a separate XAML brush used within UI elements, not a window backdrop.");
+            stack.Children.Add(text);
+
+            var button = CreateSystemBackdropsShowWindowButton("SystemBackdrops", "ShowWindowButton", "Show window");
+            button.Click += delegate
+            {
+                ShowSystemBackdropPreviewWindow(button, "Built-in system backdrops", "Mica", CreateBrush("#F3F3F3"));
+            };
+            stack.Children.Add(button);
+            root.Children.Add(stack);
+            return root;
+        }
+
+        private static GallerySamplePanel CreateSystemBackdropsMicaControllerExampleContent()
+        {
+            var root = CreateSystemBackdropsExampleRoot(assignRootAutomationId: false);
+            var stack = CreateSystemBackdropsStack();
+            var text = CreateSystemBackdropsTextBlock();
+            AddInlineText(text, "MicaController provides a customizable way to apply the Mica material. You can modify: FallbackColor, Kind, LuminosityOpacity, TintColor, and TintOpacity.");
+            AddLineBreak(text);
+            AddLineBreak(text);
+            AddInlineText(text, "There are 2 kinds of Mica:");
+            AddLineBreak(text);
+            AddInlineText(text, "1. ");
+            AddInlineBold(text, "Base");
+            AddInlineText(text, " \u2014 The default, lighter appearance.");
+            AddLineBreak(text);
+            AddInlineText(text, "2. ");
+            AddInlineBold(text, "Alt");
+            AddInlineText(text, " \u2014 A darker appearance with stronger tinting of the desktop wallpaper.");
+            stack.Children.Add(text);
+
+            var button = CreateSystemBackdropsShowWindowButton("SystemBackdrops", "MicaControllerShowWindowButton", "Show window");
+            button.Click += delegate
+            {
+                ShowSystemBackdropPreviewWindow(button, "MicaController", "Mica", CreateBrush("#F3F3F3"));
+            };
+            stack.Children.Add(button);
+            root.Children.Add(stack);
+            return root;
+        }
+
+        private static GallerySamplePanel CreateSystemBackdropsDesktopAcrylicControllerExampleContent()
+        {
+            var root = CreateSystemBackdropsExampleRoot(assignRootAutomationId: false);
+            var stack = CreateSystemBackdropsStack();
+            var text = CreateSystemBackdropsTextBlock();
+            AddInlineText(text, "DesktopAcrylicController provides a customizable way to apply the Desktop Acrylic material. It supports the same customization properties as MicaController.");
+            AddLineBreak(text);
+            AddLineBreak(text);
+            AddInlineText(text, "There are 2 kinds of Desktop Acrylic:");
+            AddLineBreak(text);
+            AddInlineText(text, "1. ");
+            AddInlineBold(text, "Base");
+            AddInlineText(text, " \u2014 The default, darker appearance with less transparency.");
+            AddLineBreak(text);
+            AddInlineText(text, "2. ");
+            AddInlineBold(text, "Thin");
+            AddInlineText(text, " \u2014 A lighter appearance with more transparency.");
+            AddLineBreak(text);
+            AddLineBreak(text);
+            AddInlineText(text, "Note: DesktopAcrylicBackdrop always uses the Base kind. To use the Thin kind, you must use DesktopAcrylicController directly.");
+            stack.Children.Add(text);
+
+            var button = CreateSystemBackdropsShowWindowButton("SystemBackdrops", "DesktopAcrylicControllerShowWindowButton", "Show window");
+            button.Click += delegate
+            {
+                ShowSystemBackdropPreviewWindow(button, "DesktopAcrylicController", "Desktop Acrylic", CreateBrush("#DDEEF6FF"));
+            };
+            stack.Children.Add(button);
+            root.Children.Add(stack);
+            return root;
         }
 
         private static UIElement CreateSystemBackdropElementSample()
@@ -503,22 +624,107 @@ namespace ModernWpf.Gallery.Pages
             return panel;
         }
 
-        private static Border CreateBackdropPreview(string name, Brush brush)
+        private static GallerySamplePanel CreateSystemBackdropsExampleRoot(bool assignRootAutomationId)
+        {
+            var root = new GallerySamplePanel();
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("SystemBackdrops"));
+            }
+
+            return root;
+        }
+
+        private static StackPanel CreateSystemBackdropsStack()
+        {
+            return new StackPanel();
+        }
+
+        private static TextBlock CreateSystemBackdropsTextBlock()
+        {
+            return new TextBlock
+            {
+                TextWrapping = TextWrapping.Wrap
+            };
+        }
+
+        private static Button CreateSystemBackdropsShowWindowButton(string controlId, string elementName, string content)
+        {
+            var button = new Button
+            {
+                Name = elementName,
+                Content = content,
+                Margin = new Thickness(0, 10, 0, 0),
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+            AutomationProperties.SetName(button, content);
+            GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId(controlId, elementName));
+            return button;
+        }
+
+        private static void AddInlineText(TextBlock textBlock, string text)
+        {
+            textBlock.Inlines.Add(new Run(text));
+        }
+
+        private static void AddInlineBold(TextBlock textBlock, string text)
+        {
+            textBlock.Inlines.Add(new Bold(new Run(text)));
+        }
+
+        private static void AddLineBreak(TextBlock textBlock)
+        {
+            textBlock.Inlines.Add(new LineBreak());
+        }
+
+        private static void ShowSystemBackdropPreviewWindow(FrameworkElement ownerElement, string title, string backdropName, Brush backdropBrush)
+        {
+            var window = new Window
+            {
+                Title = title,
+                Width = 560,
+                Height = 360,
+                MinWidth = 420,
+                MinHeight = 260,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                Background = CreateBrush("#F9F9F9"),
+                Content = CreateSystemBackdropPreviewWindowContent(title, backdropName, backdropBrush)
+            };
+            var owner = Window.GetWindow(ownerElement);
+            if (owner != null)
+            {
+                window.Owner = owner;
+            }
+
+            ThemeManager.SetIsThemeAware(window, true);
+            WindowHelper.SetUseModernWindowStyle(window, true);
+            Mux.TitleBar.SetIsIconVisible(window, true);
+            window.Show();
+        }
+
+        private static FrameworkElement CreateSystemBackdropPreviewWindowContent(string title, string backdropName, Brush backdropBrush)
+        {
+            var root = new Grid
+            {
+                Background = CreateBrush("#252525"),
+                Margin = new Thickness(0)
+            };
+            root.Children.Add(CreateBackdropCard(
+                backdropName,
+                backdropBrush,
+                title,
+                "This WPF preview represents the WinUI system backdrop sample window."));
+            return root;
+        }
+
+        private static Border CreateBackdropCard(string name, Brush brush, string title, string subtitle)
         {
             return new Border
             {
                 Width = 430,
                 Height = 260,
-                Background = CreateBrush("#252525"),
-                Padding = new Thickness(28),
-                Child = CreateBackdropCard(name, brush)
-            };
-        }
-
-        private static Border CreateBackdropCard(string name, Brush brush)
-        {
-            return new Border
-            {
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
                 CornerRadius = new CornerRadius(8),
                 Background = brush,
                 Padding = new Thickness(20),
@@ -528,15 +734,21 @@ namespace ModernWpf.Gallery.Pages
                     {
                         new TextBlock
                         {
-                            Text = name,
+                            Text = title,
                             FontSize = 24,
                             FontWeight = FontWeights.SemiBold
                         },
                         new TextBlock
                         {
-                            Text = "Window backdrop preview",
+                            Text = subtitle,
                             Opacity = 0.72,
                             Margin = new Thickness(0, 8, 0, 0)
+                        },
+                        new TextBlock
+                        {
+                            Text = name,
+                            FontWeight = FontWeights.SemiBold,
+                            Margin = new Thickness(0, 18, 0, 0)
                         }
                     }
                 }

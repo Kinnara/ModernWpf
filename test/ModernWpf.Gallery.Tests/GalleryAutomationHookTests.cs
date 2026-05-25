@@ -41,6 +41,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "MediaPlayerElement", "GallerySample_MediaPlayerElement_Root", "GallerySample_MediaPlayerElement_MediaPlayerElement" };
             yield return new object[] { "MapControl", "GallerySample_MapControl_Root", "GallerySample_MapControl_MapControl" };
             yield return new object[] { "WebView2", "GallerySample_WebView2_Root", "GallerySample_WebView2_WebView2" };
+            yield return new object[] { "SystemBackdrops", "GallerySample_SystemBackdrops_Root", "GallerySample_SystemBackdrops_ShowWindowButton" };
             yield return new object[] { "SystemBackdropElement", "GallerySample_SystemBackdropElement_Root", "GallerySample_SystemBackdropElement_Button" };
             yield return new object[] { "CreateMultipleWindows", "GallerySample_CreateMultipleWindows_Root", "GallerySample_CreateMultipleWindows_Control1" };
             yield return new object[] { "AppWindow", "GallerySample_AppWindow_Root", "GallerySample_AppWindow_ShowSampleWindow1Button" };
@@ -3711,6 +3712,88 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void SystemBackdropsSampleMatchesWinUIGalleryExamples()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("SystemBackdrops"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(3, page.Examples.Count);
+                    Assert.AreEqual("Backdrop types", page.Examples[0].HeaderText);
+                    Assert.AreEqual("MicaController", page.Examples[1].HeaderText);
+                    Assert.AreEqual("DesktopAcrylicController", page.Examples[2].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+
+                    StringAssert.Contains(page.Examples[0].XamlCode, "<MicaBackdrop/>");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "<MicaBackdrop Kind=\"BaseAlt\"/>");
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "bool TrySetMicaBackdrop(bool useMicaAlt)");
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "SystemBackdrop = micaBackdrop;");
+                    Assert.IsNull(page.Examples[1].XamlCode);
+                    StringAssert.Contains(page.Examples[1].CSharpCode, "MicaController micaController;");
+                    StringAssert.Contains(page.Examples[1].CSharpCode, "micaController.Kind = useMicaAlt ? MicaKind.BaseAlt : MicaKind.Base;");
+                    Assert.IsNull(page.Examples[2].XamlCode);
+                    StringAssert.Contains(page.Examples[2].CSharpCode, "DesktopAcrylicController acrylicController;");
+                    StringAssert.Contains(page.Examples[2].CSharpCode, "acrylicController.Kind = useAcrylicThin ? DesktopAcrylicKind.Thin : DesktopAcrylicKind.Base;");
+
+                    var root = (GallerySamplePanel)page.Examples[0].ExampleContent;
+                    Assert.AreEqual(1, root.Children.Count);
+                    var firstStack = (StackPanel)root.Children[0];
+                    Assert.AreEqual(2, firstStack.Children.Count);
+                    var firstText = (TextBlock)firstStack.Children[0];
+                    Assert.AreEqual(TextWrapping.Wrap, firstText.TextWrapping);
+                    var firstTextContent = new TextRange(firstText.ContentStart, firstText.ContentEnd).Text;
+                    StringAssert.Contains(firstTextContent, "A window can use one of the following system backdrops:");
+                    StringAssert.Contains(firstTextContent, "Mica vs. Acrylic:");
+                    StringAssert.Contains(firstTextContent, "SystemBackdrop");
+                    StringAssert.Contains(firstTextContent, "DesktopAcrylicBackdrop");
+
+                    var showWindowButton = (Button)FindByAutomationId(page, "GallerySample_SystemBackdrops_ShowWindowButton");
+                    AssertSystemBackdropsShowWindowButton(showWindowButton, "ShowWindowButton");
+                    Assert.AreSame(showWindowButton, firstStack.Children[1]);
+
+                    var micaRoot = (GallerySamplePanel)page.Examples[1].ExampleContent;
+                    var micaStack = (StackPanel)micaRoot.Children[0];
+                    var micaText = (TextBlock)micaStack.Children[0];
+                    var micaTextContent = new TextRange(micaText.ContentStart, micaText.ContentEnd).Text;
+                    StringAssert.Contains(micaTextContent, "MicaController provides a customizable way to apply the Mica material.");
+                    StringAssert.Contains(micaTextContent, "There are 2 kinds of Mica:");
+                    AssertSystemBackdropsShowWindowButton((Button)micaStack.Children[1], "MicaControllerShowWindowButton");
+
+                    var acrylicRoot = (GallerySamplePanel)page.Examples[2].ExampleContent;
+                    var acrylicStack = (StackPanel)acrylicRoot.Children[0];
+                    var acrylicText = (TextBlock)acrylicStack.Children[0];
+                    var acrylicTextContent = new TextRange(acrylicText.ContentStart, acrylicText.ContentEnd).Text;
+                    StringAssert.Contains(acrylicTextContent, "DesktopAcrylicController provides a customizable way to apply the Desktop Acrylic material.");
+                    StringAssert.Contains(acrylicTextContent, "Note: DesktopAcrylicBackdrop always uses the Base kind.");
+                    AssertSystemBackdropsShowWindowButton((Button)acrylicStack.Children[1], "DesktopAcrylicControllerShowWindowButton");
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
         public void SystemBackdropElementSampleMatchesWinUIGalleryExample()
         {
             WpfTestHost.Run(() =>
@@ -5448,6 +5531,17 @@ namespace ModernWpf.Gallery.Tests
             Assert.IsNotNull(item);
             Assert.AreEqual(content, item.Content);
             Assert.AreEqual(tag, item.Tag);
+        }
+
+        private static void AssertSystemBackdropsShowWindowButton(Button button, string elementName)
+        {
+            Assert.IsNotNull(button);
+            Assert.AreEqual(elementName, button.Name);
+            Assert.AreEqual("Show window", button.Content);
+            Assert.AreEqual(new Thickness(0, 10, 0, 0), button.Margin);
+            Assert.AreEqual(HorizontalAlignment.Left, button.HorizontalAlignment);
+            Assert.AreEqual("Show window", AutomationProperties.GetName(button));
+            Assert.AreEqual("GallerySample_SystemBackdrops_" + elementName, AutomationProperties.GetAutomationId(button));
         }
 
         private static void AssertAppWindowNumberBox(Mux.NumberBox numberBox, string header, double minimum, double maximum, double value)

@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "RichTextBlock", "RichEditBox", "SplitView", "PersonPicture", "Sound", "MediaPlayerElement", "MapControl", "WebView2", "SystemBackdropElement", "CreateMultipleWindows", "AppWindow", "AppWindowTitleBar", "TitleBar", "StoragePickers", "CalendarDatePicker", "CalendarView", "TimePicker", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "PullToRefresh", "FlipView", "ItemsView", "GridView", "ItemsRepeater", "BreadcrumbBar", "Pivot", "SelectorBar", "TabView", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "SwipeControl", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout", "StandardUICommand", "XamlUICommand"),
+    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "RichTextBlock", "RichEditBox", "SplitView", "PersonPicture", "Sound", "MediaPlayerElement", "MapControl", "WebView2", "SystemBackdrops", "SystemBackdropElement", "CreateMultipleWindows", "AppWindow", "AppWindowTitleBar", "TitleBar", "StoragePickers", "CalendarDatePicker", "CalendarView", "TimePicker", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "PullToRefresh", "FlipView", "ItemsView", "GridView", "ItemsRepeater", "BreadcrumbBar", "Pivot", "SelectorBar", "TabView", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "SwipeControl", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout", "StandardUICommand", "XamlUICommand"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -468,6 +468,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "MediaPlayerElement" { return "GallerySample_MediaPlayerElement_MediaPlayerElement" }
         "MapControl" { return "GallerySample_MapControl_MapControl" }
         "WebView2" { return "GallerySample_WebView2_WebView2" }
+        "SystemBackdrops" { return "GallerySample_SystemBackdrops_ShowWindowButton" }
         "SystemBackdropElement" { return "GallerySample_SystemBackdropElement_Button" }
         "CreateMultipleWindows" { return "GallerySample_CreateMultipleWindows_Control1" }
         "AppWindow" { return "GallerySample_AppWindow_ShowSampleWindow1Button" }
@@ -545,6 +546,7 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
         "MediaPlayerElement" { return "GallerySample_MediaPlayerElement_OpenFileButton" }
         "MapControl" { return "GallerySample_MapControl_MapToken" }
         "WebView2" { return "GallerySample_WebView2_WebView2" }
+        "SystemBackdrops" { return "GallerySample_SystemBackdrops_Root" }
         "SystemBackdropElement" { return "GallerySample_SystemBackdropElement_Root" }
         "CreateMultipleWindows" { return "GallerySample_CreateMultipleWindows_Control1" }
         "AppWindow" { return "GallerySample_AppWindow_ShowSampleWindow1Button" }
@@ -614,6 +616,7 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
         "MediaPlayerElement" { return "OpenFileButton" }
         "MapControl" { return "MapToken" }
         "WebView2" { return "MyWebView2" }
+        "SystemBackdrops" { return "svPanel" }
         "SystemBackdropElement" { return "svPanel" }
         "CreateMultipleWindows" { return "Control1" }
         "AppWindow" { return "" }
@@ -651,6 +654,7 @@ function Get-ReferencePrimaryName([string]$control) {
 function Get-WinUIReferencePageTitle([string]$control) {
     switch ($control) {
         "CreateMultipleWindows" { return "Multiple windows" }
+        "SystemBackdrops" { return "System Backdrops (Mica/Acrylic)" }
         "StoragePickers" { return "Storage pickers" }
         default { return $control }
     }
