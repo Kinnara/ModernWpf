@@ -1438,22 +1438,35 @@ function Capture-ModernWpf($case, [string]$caseDir) {
         $screenshot = $capture.Screenshot
         Write-UiaTree $window $treePath 7
         $windowNonBlank = $false
+        $windowScreenshotSource = ""
         if ($capture.Succeeded) {
             $windowNonBlank = Test-ImageNotBlank $screenshot
+            if ($windowNonBlank) {
+                $windowScreenshotSource = "Win32WindowCapture"
+            }
+        }
+
+        if (!$windowNonBlank) {
+            $renderedWindowArtifact = Get-ImageArtifactInfo `
+                (Join-Path $artifactDir "ModernWpfGalleryMainWindow.png") `
+                "ModernWpfGalleryMainWindowRenderedArtifact"
+            if ($renderedWindowArtifact.NonBlank) {
+                $screenshot = $renderedWindowArtifact.Screenshot
+                $windowNonBlank = $true
+                $windowScreenshotSource = $renderedWindowArtifact.Source
+            }
         }
 
         $contentCrop = $null
-        if ($case.Id -ne "Home") {
-            $renderedContentArtifact = Join-Path $artifactDir "ContentRootGrid.png"
-            $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "ContentRootGridRenderedArtifact"
-            if (!$contentCrop.NonBlank) {
-                $renderedContentArtifact = Join-Path $artifactDir "ContentPagePane.png"
-                $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "ContentPagePaneRenderedArtifact"
-            }
-            if (!$contentCrop.NonBlank) {
-                $renderedContentArtifact = Join-Path $artifactDir "GalleryContentHost.png"
-                $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "GalleryContentHostRenderedArtifact"
-            }
+        $renderedContentArtifact = Join-Path $artifactDir "ContentRootGrid.png"
+        $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "ContentRootGridRenderedArtifact"
+        if (!$contentCrop.NonBlank) {
+            $renderedContentArtifact = Join-Path $artifactDir "ContentPagePane.png"
+            $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "ContentPagePaneRenderedArtifact"
+        }
+        if (!$contentCrop.NonBlank) {
+            $renderedContentArtifact = Join-Path $artifactDir "GalleryContentHost.png"
+            $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "GalleryContentHostRenderedArtifact"
         }
 
         if (($null -eq $contentCrop -or !$contentCrop.NonBlank) -and
@@ -1494,6 +1507,7 @@ function Capture-ModernWpf($case, [string]$caseDir) {
             Screenshot = $screenshot
             ContentCrop = $contentCrop
             WindowNonBlank = $windowNonBlank
+            WindowScreenshotSource = $windowScreenshotSource
             UiaTree = $treePath
             WindowCaptureException = $(if ($capture.Succeeded) { "" } else { $capture.LastException })
             LastException = $lastException

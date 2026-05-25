@@ -4782,6 +4782,7 @@ namespace ModernWpf.Gallery.Tests
                     WindowStartupLocation = WindowStartupLocation.Manual,
                     Content = page
                 };
+                AutomationProperties.SetAutomationId(window, "ModernWpfGalleryMainWindow");
 
                 try
                 {
@@ -4792,13 +4793,16 @@ namespace ModernWpf.Gallery.Tests
                     window.UpdateLayout();
                     WpfTestHost.DoEvents();
 
+                    var windowArtifact = Path.Combine(artifactDirectory, "ModernWpfGalleryMainWindow.png");
                     var shellRootArtifact = Path.Combine(artifactDirectory, "GalleryNavigationRoot.png");
                     var navigationArtifact = Path.Combine(artifactDirectory, "GalleryNavigationView.png");
                     var contentRootArtifact = Path.Combine(artifactDirectory, "ContentRootGrid.png");
 
+                    Assert.IsTrue(File.Exists(windowArtifact), windowArtifact + " was not written.");
                     Assert.IsTrue(File.Exists(shellRootArtifact), shellRootArtifact + " was not written.");
                     Assert.IsTrue(File.Exists(navigationArtifact), navigationArtifact + " was not written.");
                     Assert.IsTrue(File.Exists(contentRootArtifact), contentRootArtifact + " was not written.");
+                    Assert.IsTrue(HasVisibleRgbPixels(windowArtifact), windowArtifact + " has no visible RGB content.");
                     Assert.IsTrue(HasVisibleRgbPixels(shellRootArtifact), shellRootArtifact + " has no visible RGB content.");
                     Assert.IsTrue(HasVisibleRgbPixels(navigationArtifact), navigationArtifact + " has no visible RGB content.");
                     Assert.IsTrue(HasVisibleRgbPixels(contentRootArtifact), contentRootArtifact + " has no visible RGB content.");

@@ -632,7 +632,7 @@ namespace ModernWpf.Gallery.Shell
                             GalleryDiagnostics.PrepareInteractiveVisualState(ContentHost);
                             ContentHost.UpdateLayout();
                             SetVisualTestState(route, "Ready:" + route);
-                            GalleryDiagnostics.WriteVisualArtifacts(this);
+                            GalleryDiagnostics.WriteVisualArtifacts(Window.GetWindow(this) ?? (DependencyObject)this);
                         }
                     }));
             }

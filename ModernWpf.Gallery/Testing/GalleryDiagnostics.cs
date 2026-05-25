@@ -435,6 +435,7 @@ namespace ModernWpf.Gallery.Testing
             return !string.IsNullOrEmpty(automationId) &&
                 (automationId.StartsWith("GallerySample_", StringComparison.Ordinal) ||
                     string.Equals(automationId, "GalleryContentHost", StringComparison.Ordinal) ||
+                    string.Equals(automationId, "ModernWpfGalleryMainWindow", StringComparison.Ordinal) ||
                     string.Equals(automationId, "GalleryNavigationRoot", StringComparison.Ordinal) ||
                     string.Equals(automationId, "GalleryNavigationView", StringComparison.Ordinal) ||
                     string.Equals(automationId, "ContentRootGrid", StringComparison.Ordinal) ||
