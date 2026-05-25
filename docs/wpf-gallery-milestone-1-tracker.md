@@ -106,6 +106,16 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.TitleBarSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 54 tests per target. The generated ModernWpf TitleBar extension page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\TitleBarPage.xaml` / `.xaml.cs`: the AppWindowTitleBar intro link text, `TitleBar configuration`, and `End to end TitleBar sample`. `WindowingSampleFactory.CreateExamples` now covers TitleBar as a source-backed Windowing/Platform WinUI extension page, preserves the official XAML/C# snippets, source-facing names such as `TitleBarControl`, `TitleBox`, `SubtitleBox`, `BackButtonToggle`, and `PaneToggle`, and exposes `GallerySample_TitleBar_Root` / `GallerySample_TitleBar_TitleBarControl`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls TitleBar -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-040529-211-104220/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required TitleBar sample element was found, primary crops use the shared `TitleBox` option target while retaining `GallerySample_TitleBar_TitleBarControl` as the required rendered title-bar surface, crop sizes are `240x32` vs `240x59`, and Light primary delta is `16.26`. The whole-window Light mean delta is `137.74` and remains diagnostic because the installed WinUI shell stayed dark while ModernWpf was captured in Light.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls TitleBar -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-040557-169-119068/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required TitleBar sample element was found, primary crops use the same `TitleBox` mapping, crop sizes are `240x32` vs `240x59`, Dark primary delta is `21.63`, and whole-window Dark mean delta is `18.35`.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the TitleBar WinUI example alignment. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages and ends with `0 Warning(s)` and `0 Error(s)`.
+- `git diff --check`
+  - Passed with only Git's normal LF-to-CRLF working-copy warnings for touched files.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.AppWindowTitleBarSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 53 tests per target. The generated ModernWpf AppWindowTitleBar extension page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\AppWindowTitleBarPage.xaml` / `.xaml.cs`: the `TitleBar` intro link text, `AppWindowTitleBar color customization`, `Extending content into the AppWindowTitleBar area`, and `AppWindowTitleBar preferred theme and height options` examples. `WindowingSampleFactory.CreateExamples` now covers AppWindowTitleBar as a source-backed Windowing/Platform WinUI extension page, preserves the official C# snippets and source-facing names such as `ShowWindowButton`, `Background`, `ExtendContentCheckBox`, `HeightComboBox`, `ShowThemeHeightButton`, and `ThemeComboBox`, maps AppWindow title-bar colors/theme to ModernWpf title-bar attached properties, and exposes `GallerySample_AppWindowTitleBar_Root` / `GallerySample_AppWindowTitleBar_ShowWindowButton`.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls AppWindowTitleBar -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -2368,6 +2378,27 @@ uses ModernWpf `GallerySample_AppWindowTitleBar_ShowWindowButton` against WinUI
 `ShowWindowButton` for the primary crop. Avoid reopening AppWindowTitleBar's
 source shape unless a new local WinUI source, ModernWpf title-bar capability,
 or crop regression appears.
+The generated ModernWpf TitleBar extension page now uses the local official
+WinUI Gallery two-example structure from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\TitleBarPage.xaml`
+and `.xaml.cs`: a configurable TitleBar surface and an end-to-end new-window
+sample. `WindowingSampleFactory.CreateExamples` now exposes TitleBar as a
+source-backed Windowing/Platform WinUI extension page. The WPF adaptation keeps
+WinUI's visible intro, example headers, official snippets, source-facing names
+(`TitleBarControl`, `TitleBox`, `SubtitleBox`, `BackButtonToggle`, and
+`PaneToggle`), default text values, toggle state, end-to-end `Show window`
+button, and AppWindowTitleBar navigation link while rendering the live TitleBar
+surface as a WPF/ModernWpf title-bar preview because ModernWpf does not expose
+WinUI's exact `TitleBar` control. Current TitleBar WinUI-reference evidence is
+`artifacts/visual-checks/20260525-040529-211-104220/report.md` for Light and
+`artifacts/visual-checks/20260525-040557-169-119068/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`; the required
+`GallerySample_TitleBar_TitleBarControl` surface is present, while the primary
+comparison crop uses the shared source `TitleBox` option because the local WPF
+artifact helper renders the full sample root correctly but produces a blank
+direct crop for the composed title-bar surface. Primary deltas are `16.26` /
+`21.63`. Avoid reopening TitleBar's source shape unless a new local WinUI
+source, a native ModernWpf TitleBar control, or crop regression appears.
 The generated ModernWpf RichTextBlock extension page now uses the local
 official WinUI Gallery four-example structure from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\RichTextBlockPage.xaml`:

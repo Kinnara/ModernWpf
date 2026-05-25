@@ -7,6 +7,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using ModernWpf.Controls.Primitives;
 using ModernWpf.Gallery.Models;
@@ -96,6 +97,60 @@ public sealed partial class AppWindowTitleBarThemeHeightWindow : Window
     }
 }";
 
+        private const string TitleBarConfigurationXaml =
+@"<TitleBar
+    Title=""$(Title)""
+    Subtitle=""$(Subtitle)""
+    IsBackButtonVisible=""$(BackButtonVisibility)""
+    IsPaneToggleButtonVisible=""$(PaneToggleVisibility)"">
+    <TitleBar.IconSource>
+        <ImageIconSource ImageSource=""/Assets/Tiles/GalleryIcon.ico"" />
+    </TitleBar.IconSource>
+    <TitleBar.Content>
+        <AutoSuggestBox
+            Width=""360""
+            VerticalAlignment=""Center""
+            PlaceholderText=""Search..""
+            QueryIcon=""Find"" />
+    </TitleBar.Content>
+    <TitleBar.RightHeader>
+        <PersonPicture
+            Width=""30""
+            Height=""30""
+            Initials=""JD"" />
+    </TitleBar.RightHeader>
+</TitleBar>";
+
+        private const string TitleBarEndToEndXaml =
+@"<Grid>
+    <Grid.RowDefinitions>
+        <RowDefinition Height=""Auto"" />
+        <!--  TitleBar  -->
+        <RowDefinition Height=""*"" />
+        <!--  NavigationView  -->
+    </Grid.RowDefinitions>
+
+    <TitleBar
+        x:Name=""titleBar""
+        BackRequested=""TitleBar_BackRequested""
+        IsBackButtonVisible=""{x:Bind navFrame.CanGoBack, Mode=OneWay}""
+        IsPaneToggleButtonVisible=""True""
+        PaneToggleRequested=""TitleBar_PaneToggleRequested"" />
+
+    <NavigationView
+        x:Name=""navView""
+        Grid.Row=""1""
+        IsBackButtonVisible=""Collapsed""
+        IsPaneToggleButtonVisible=""False"">
+        <NavigationView.MenuItems... />
+        <Frame x:Name=""navFrame"" />
+    </NavigationView>
+</Grid>";
+
+        private const string TitleBarEndToEndCSharp =
+@"this.ExtendsContentIntoTitleBar = true; // Extend the content into the title bar and hide the default titlebar
+this.SetTitleBar(titleBar); // Set the custom title bar";
+
         public static UIElement Create(string uniqueId)
         {
             switch (uniqueId)
@@ -128,6 +183,8 @@ public sealed partial class AppWindowTitleBarThemeHeightWindow : Window
                             null,
                             CreateMultipleWindowsCSharp)
                     };
+                case "TitleBar":
+                    return CreateTitleBarExamples();
                 default:
                     return Array.Empty<GalleryExample>();
             }
@@ -139,6 +196,8 @@ public sealed partial class AppWindowTitleBarThemeHeightWindow : Window
             {
                 case "AppWindowTitleBar":
                     return CreateAppWindowTitleBarIntroContent();
+                case "TitleBar":
+                    return CreateTitleBarIntroContent();
                 default:
                     return null;
             }
@@ -537,95 +596,307 @@ public sealed partial class AppWindowTitleBarThemeHeightWindow : Window
 
         private static UIElement CreateTitleBarSample()
         {
-            var panel = CreateSamplePanel("TitleBar provides ModernWpf chrome with optional icon, back button, and interactive content in the title area.");
-            var preview = CreateInteractiveTitleBarPreview();
-            var output = CreateOutput("Back button request will be reported here.");
+            return CreateTitleBarConfigurationExampleContent(assignRootAutomationId: true);
+        }
 
-            var showBack = new ToggleButton
+        private static TextBlock CreateTitleBarIntroContent()
+        {
+            var textBlock = new TextBlock
             {
-                Content = "Back button",
-                IsChecked = true,
-                Padding = new Thickness(12, 6, 12, 6),
-                Margin = new Thickness(0, 0, 12, 0)
+                Margin = new Thickness(0, 12, 0, 0),
+                TextWrapping = TextWrapping.Wrap
             };
-            var enableBack = new ToggleButton
+            textBlock.Inlines.Add(new Run("For full title bar customization without using the TitleBar control, see the "));
+
+            var hyperlink = new Hyperlink(new Run("AppWindowTitleBar"));
+            hyperlink.Click += OnAppWindowTitleBarHyperlinkClick;
+            textBlock.Inlines.Add(hyperlink);
+
+            textBlock.Inlines.Add(new Run(" sample"));
+            return textBlock;
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateTitleBarExamples()
+        {
+            return new[]
             {
-                Content = "Back enabled",
-                IsChecked = true,
-                Padding = new Thickness(12, 6, 12, 6),
-                Margin = new Thickness(0, 0, 12, 0)
+                new GalleryExample(
+                    "TitleBar configuration",
+                    CreateTitleBarConfigurationExampleContent(assignRootAutomationId: true),
+                    TitleBarConfigurationXaml,
+                    null),
+                new GalleryExample(
+                    "End to end TitleBar sample",
+                    CreateTitleBarEndToEndExampleContent(),
+                    TitleBarEndToEndXaml,
+                    TitleBarEndToEndCSharp)
             };
-            var showIcon = new ToggleButton
+        }
+
+        private static GallerySamplePanel CreateTitleBarConfigurationExampleContent(bool assignRootAutomationId)
+        {
+            var root = new GallerySamplePanel();
+            if (assignRootAutomationId)
             {
-                Content = "Icon",
-                IsChecked = true,
-                Padding = new Thickness(12, 6, 12, 6),
-                Margin = new Thickness(0, 0, 12, 0)
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("TitleBar"));
+            }
+
+            var titleText = new TextBlock
+            {
+                Name = "TitleText",
+                Text = "WinUI Gallery",
+                FontWeight = FontWeights.SemiBold,
+                VerticalAlignment = VerticalAlignment.Bottom
             };
-            var extend = new ToggleButton
+            var subtitleText = new TextBlock
             {
-                Content = "Extend content",
-                IsChecked = false,
-                Padding = new Thickness(12, 6, 12, 6)
+                Name = "SubtitleText",
+                Text = "Preview",
+                FontSize = 12,
+                Opacity = 0.72,
+                VerticalAlignment = VerticalAlignment.Top
+            };
+
+            var backButton = CreateTitleBarPreviewButton("BackButton", Mux.Symbol.Back);
+            var paneButton = CreateTitleBarPreviewButton("PaneToggleButton", Mux.Symbol.OpenPane);
+
+            var titleBarControl = new ContentControl
+            {
+                Name = "TitleBarControl",
+                Width = 470,
+                Height = 48,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                ClipToBounds = true,
+                Focusable = false
+            };
+            AutomationProperties.SetName(titleBarControl, "TitleBarControl");
+            GalleryAutomation.WithAutomationId(titleBarControl, GalleryAutomation.SampleElementId("TitleBar", "TitleBarControl"));
+            var titleBarRoot = new Grid();
+            var titleBarBackground = new Border
+            {
+                BorderThickness = new Thickness(1),
+                CornerRadius = new CornerRadius(4)
+            };
+            titleBarBackground.SetResourceReference(Border.BackgroundProperty, "CardBackgroundFillColorDefaultBrush");
+            titleBarBackground.SetResourceReference(Border.BorderBrushProperty, "SurfaceStrokeColorDefaultBrush");
+            titleBarRoot.Children.Add(titleBarBackground);
+
+            var titleBarGrid = new Grid();
+            titleBarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            titleBarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            titleBarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            titleBarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            titleBarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            titleBarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+            Grid.SetColumn(backButton, 0);
+            Grid.SetColumn(paneButton, 1);
+            titleBarGrid.Children.Add(backButton);
+            titleBarGrid.Children.Add(paneButton);
+
+            var icon = new Image
+            {
+                Name = "TitleBarIcon",
+                Width = 20,
+                Height = 20,
+                Margin = new Thickness(16, 0, 12, 0),
+                VerticalAlignment = VerticalAlignment.Center,
+                Source = CreateBitmap(ResourceUri("Assets/Tiles/GalleryIcon.ico"))
+            };
+            Grid.SetColumn(icon, 2);
+            titleBarGrid.Children.Add(icon);
+
+            var titleStack = new StackPanel
+            {
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            titleStack.Children.Add(titleText);
+            titleStack.Children.Add(subtitleText);
+            Grid.SetColumn(titleStack, 3);
+            titleBarGrid.Children.Add(titleStack);
+
+            var searchBox = new Mux.AutoSuggestBox
+            {
+                Name = "TitleBarSearchBox",
+                Width = 186,
+                VerticalAlignment = VerticalAlignment.Center,
+                PlaceholderText = "Search..",
+                QueryIcon = new Mux.SymbolIcon(Mux.Symbol.Find),
+                Margin = new Thickness(16, 0, 16, 0)
+            };
+            Grid.SetColumn(searchBox, 4);
+            titleBarGrid.Children.Add(searchBox);
+
+            var personPicture = new Mux.PersonPicture
+            {
+                Name = "TitleBarRightHeader",
+                Width = 30,
+                Height = 30,
+                Initials = "JD",
+                Margin = new Thickness(0, 0, 16, 0),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            Grid.SetColumn(personPicture, 5);
+            titleBarGrid.Children.Add(personPicture);
+            titleBarRoot.Children.Add(titleBarGrid);
+            titleBarControl.Content = titleBarRoot;
+
+            var titleBox = new TextBox
+            {
+                Name = "TitleBox",
+                Text = "WinUI Gallery"
+            };
+            ControlHelper.SetHeader(titleBox, "Title");
+
+            var subtitleBox = new TextBox
+            {
+                Name = "SubtitleBox",
+                Text = "Preview",
+                Margin = new Thickness(0, 12, 0, 0)
+            };
+            ControlHelper.SetHeader(subtitleBox, "Subtitle");
+
+            var backButtonToggle = new Mux.ToggleSwitch
+            {
+                Name = "BackButtonToggle",
+                Header = "IsBackButtonVisible",
+                IsOn = false,
+                Margin = new Thickness(0, 12, 0, 0)
+            };
+            var paneToggle = new Mux.ToggleSwitch
+            {
+                Name = "PaneToggle",
+                Header = "IsPaneToggleButtonVisible",
+                IsOn = false,
+                Margin = new Thickness(0, 12, 0, 0)
             };
 
             Action updatePreview = delegate
             {
-                SetNamedElementVisibility(preview, "BackButton", showBack.IsChecked == true);
-                SetNamedElementVisibility(preview, "Icon", showIcon.IsChecked == true);
-                SetNamedElementOpacity(preview, "BackButton", enableBack.IsChecked == true ? 1 : 0.42);
-                var root = preview.Child as Grid;
-                if (root != null)
-                {
-                    root.Background = extend.IsChecked == true ? CreateBrush("#EEF6FC") : Brushes.White;
-                }
+                titleText.Text = titleBox.Text;
+                subtitleText.Text = subtitleBox.Text;
+                backButton.Visibility = backButtonToggle.IsOn ? Visibility.Visible : Visibility.Collapsed;
+                paneButton.Visibility = paneToggle.IsOn ? Visibility.Visible : Visibility.Collapsed;
             };
-            showBack.Checked += delegate { updatePreview(); };
-            showBack.Unchecked += delegate { updatePreview(); };
-            enableBack.Checked += delegate { updatePreview(); };
-            enableBack.Unchecked += delegate { updatePreview(); };
-            showIcon.Checked += delegate { updatePreview(); };
-            showIcon.Unchecked += delegate { updatePreview(); };
-            extend.Checked += delegate { updatePreview(); };
-            extend.Unchecked += delegate { updatePreview(); };
+            titleBox.TextChanged += delegate { updatePreview(); };
+            subtitleBox.TextChanged += delegate { updatePreview(); };
+            backButtonToggle.Toggled += delegate { updatePreview(); };
+            paneToggle.Toggled += delegate { updatePreview(); };
 
-            var toggles = new StackPanel
+            var options = new StackPanel
             {
-                Orientation = Orientation.Horizontal,
+                Width = 240,
+                Orientation = Orientation.Vertical,
+                Margin = new Thickness(24, 0, 0, 0)
+            };
+            options.Children.Add(titleBox);
+            options.Children.Add(subtitleBox);
+            options.Children.Add(backButtonToggle);
+            options.Children.Add(paneToggle);
+
+            var layout = new Grid();
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            Grid.SetColumn(titleBarControl, 0);
+            Grid.SetColumn(options, 1);
+            layout.Children.Add(titleBarControl);
+            layout.Children.Add(options);
+            root.Children.Add(layout);
+            updatePreview();
+            return root;
+        }
+
+        private static GallerySamplePanel CreateTitleBarEndToEndExampleContent()
+        {
+            var root = new GallerySamplePanel();
+            var stack = new StackPanel
+            {
+                MaxWidth = 560,
+                Orientation = Orientation.Vertical,
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+            stack.Children.Add(new TextBlock
+            {
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Text = "Click the button below to see an end to end sample of a TitleBar in an new window, binding some of its properties to the NavigationView and navigation frame.",
+                TextAlignment = TextAlignment.Center,
+                TextWrapping = TextWrapping.Wrap
+            });
+
+            var showWindowButton = new Button
+            {
+                Content = "Show window",
+                HorizontalAlignment = HorizontalAlignment.Center,
                 Margin = new Thickness(0, 12, 0, 0)
             };
-            toggles.Children.Add(showBack);
-            toggles.Children.Add(enableBack);
-            toggles.Children.Add(showIcon);
-            toggles.Children.Add(extend);
-
-            var open = CreateButton("Open title bar window");
-            open.Margin = new Thickness(0, 12, 8, 0);
-            open.Click += delegate
+            showWindowButton.SetResourceReference(FrameworkElement.StyleProperty, "AccentButtonStyle");
+            showWindowButton.Click += delegate
             {
-                var window = CreateModernWindow((FrameworkElement)open, "TitleBar equivalent", 660, 390);
-                Mux.TitleBar.SetIsBackButtonVisible(window, showBack.IsChecked == true);
-                Mux.TitleBar.SetIsBackEnabled(window, enableBack.IsChecked == true);
-                Mux.TitleBar.SetIsIconVisible(window, showIcon.IsChecked == true);
-                Mux.TitleBar.SetExtendViewIntoTitleBar(window, extend.IsChecked == true);
-                Mux.TitleBar.AddBackRequestedHandler(window, delegate(object sender, Mux.BackRequestedEventArgs args)
-                {
-                    output.Text = "Back requested from child window at " + DateTime.Now.ToLongTimeString() + ".";
-                    args.Handled = true;
-                });
-                window.Content = CreateWindowBody(
-                    "ModernWpf TitleBar",
-                    "This window uses ModernWpf title bar attached properties from the sample controls.");
+                var window = CreateModernWindow((FrameworkElement)showWindowButton, "TitleBarWindow", 760, 520);
+                Mux.TitleBar.SetExtendViewIntoTitleBar(window, true);
+                Mux.TitleBar.SetIsBackButtonVisible(window, true);
+                Mux.TitleBar.SetIsBackEnabled(window, false);
+                window.Content = CreateTitleBarWindowBody();
                 window.Show();
-                output.Text = "Opened ModernWpf title bar window.";
+            };
+            stack.Children.Add(showWindowButton);
+            root.Children.Add(stack);
+            return root;
+        }
+
+        private static Button CreateTitleBarPreviewButton(string name, Mux.Symbol symbol)
+        {
+            return new Button
+            {
+                Name = name,
+                Width = 40,
+                Height = 40,
+                Padding = new Thickness(0),
+                Margin = new Thickness(4, 0, 0, 0),
+                VerticalAlignment = VerticalAlignment.Center,
+                Visibility = Visibility.Collapsed,
+                Content = new Mux.SymbolIcon(symbol)
+            };
+        }
+
+        private static FrameworkElement CreateTitleBarWindowBody()
+        {
+            var frame = new Frame
+            {
+                Name = "navFrame",
+                NavigationUIVisibility = System.Windows.Navigation.NavigationUIVisibility.Hidden,
+                Content = new Border
+                {
+                    Padding = new Thickness(32),
+                    Child = new TextBlock
+                    {
+                        Text = "Sample page content",
+                        FontSize = 24,
+                        FontWeight = FontWeights.SemiBold
+                    }
+                }
             };
 
-            panel.Children.Add(preview);
-            panel.Children.Add(toggles);
-            panel.Children.Add(open);
-            panel.Children.Add(output);
-            updatePreview();
-            return panel;
+            var navigationView = new Mux.NavigationView
+            {
+                Name = "navView",
+                IsBackButtonVisible = Mux.NavigationViewBackButtonVisible.Collapsed,
+                IsPaneToggleButtonVisible = false,
+                IsTitleBarAutoPaddingEnabled = false,
+                Content = frame
+            };
+            navigationView.MenuItems.Add(new Mux.NavigationViewItem
+            {
+                Content = "Home",
+                Icon = new Mux.SymbolIcon(Mux.Symbol.Home)
+            });
+            navigationView.MenuItems.Add(new Mux.NavigationViewItem
+            {
+                Content = "Documents",
+                Icon = new Mux.SymbolIcon(Mux.Symbol.Document)
+            });
+
+            return navigationView;
         }
 
         private static Button CreateTitleBarColorSelector(string name, string automationName, string color)
@@ -741,6 +1012,17 @@ public sealed partial class AppWindowTitleBarThemeHeightWindow : Window
         {
             var page = FindLogicalAncestor<ItemPage>(sender as DependencyObject);
             var target = GalleryCatalog.FindItem("TitleBar");
+            if (page != null && target != null)
+            {
+                page.ItemRequested?.Invoke(target);
+                e.Handled = true;
+            }
+        }
+
+        private static void OnAppWindowTitleBarHyperlinkClick(object sender, RoutedEventArgs e)
+        {
+            var page = FindLogicalAncestor<ItemPage>(sender as DependencyObject);
+            var target = GalleryCatalog.FindItem("AppWindowTitleBar");
             if (page != null && target != null)
             {
                 page.ItemRequested?.Invoke(target);
@@ -1192,6 +1474,16 @@ public sealed partial class AppWindowTitleBarThemeHeightWindow : Window
         private static SolidColorBrush CreateBrush(string color)
         {
             return (SolidColorBrush)new BrushConverter().ConvertFromString(color);
+        }
+
+        private static Uri ResourceUri(string relativePath)
+        {
+            return new Uri("pack://application:,,,/ModernWpf.Gallery;component/" + relativePath, UriKind.Absolute);
+        }
+
+        private static BitmapImage CreateBitmap(Uri uri)
+        {
+            return new BitmapImage(uri);
         }
     }
 }

@@ -42,6 +42,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "WebView2", "GallerySample_WebView2_Root", "GallerySample_WebView2_WebView2" };
             yield return new object[] { "CreateMultipleWindows", "GallerySample_CreateMultipleWindows_Root", "GallerySample_CreateMultipleWindows_Control1" };
             yield return new object[] { "AppWindowTitleBar", "GallerySample_AppWindowTitleBar_Root", "GallerySample_AppWindowTitleBar_ShowWindowButton" };
+            yield return new object[] { "TitleBar", "GallerySample_TitleBar_Root", "GallerySample_TitleBar_TitleBarControl" };
             yield return new object[] { "FlipView", "GallerySample_FlipView_Root", "GallerySample_FlipView_FlipView" };
             yield return new object[] { "ItemsView", "GallerySample_ItemsView_Root", "GallerySample_ItemsView_ItemsView" };
             yield return new object[] { "CalendarDatePicker", "GallerySample_CalendarDatePicker_Root", "GallerySample_CalendarDatePicker_CalendarDatePicker" };
@@ -3862,6 +3863,104 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual("UseDefaultAppMode", themeComboBox.Items[0]);
                     Assert.AreEqual("Light", themeComboBox.Items[1]);
                     Assert.AreEqual("Dark", themeComboBox.Items[2]);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void TitleBarSampleMatchesWinUIGalleryExamples()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("TitleBar"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.IsTrue(page.ShowIntroContent);
+                    var intro = page.IntroContent as TextBlock;
+                    Assert.IsNotNull(intro);
+                    Assert.AreEqual(new Thickness(0, 12, 0, 0), intro.Margin);
+                    Assert.AreEqual(TextWrapping.Wrap, intro.TextWrapping);
+                    Assert.AreEqual(
+                        "For full title bar customization without using the TitleBar control, see the AppWindowTitleBar sample",
+                        new TextRange(intro.ContentStart, intro.ContentEnd).Text.Trim());
+
+                    Assert.AreEqual(2, page.Examples.Count);
+                    Assert.AreEqual("TitleBar configuration", page.Examples[0].HeaderText);
+                    Assert.AreEqual("End to end TitleBar sample", page.Examples[1].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "<TitleBar");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "Title=\"$(Title)\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "Subtitle=\"$(Subtitle)\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "IsBackButtonVisible=\"$(BackButtonVisibility)\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "IsPaneToggleButtonVisible=\"$(PaneToggleVisibility)\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "<ImageIconSource ImageSource=\"/Assets/Tiles/GalleryIcon.ico\" />");
+                    Assert.IsNull(page.Examples[0].CSharpCode);
+                    StringAssert.Contains(page.Examples[1].XamlCode, "x:Name=\"titleBar\"");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "PaneToggleRequested=\"TitleBar_PaneToggleRequested\"");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "<NavigationView");
+                    StringAssert.Contains(page.Examples[1].CSharpCode, "this.ExtendsContentIntoTitleBar = true;");
+                    StringAssert.Contains(page.Examples[1].CSharpCode, "this.SetTitleBar(titleBar);");
+
+                    var root = (GallerySamplePanel)page.Examples[0].ExampleContent;
+                    Assert.AreEqual(1, root.Children.Count);
+                    var titleBarControl = (ContentControl)FindByAutomationId(page, "GallerySample_TitleBar_TitleBarControl");
+                    Assert.IsNotNull(titleBarControl);
+                    Assert.AreEqual("TitleBarControl", titleBarControl.Name);
+                    Assert.AreEqual(470d, titleBarControl.Width);
+                    Assert.AreEqual(48d, titleBarControl.Height);
+                    Assert.AreEqual("TitleBarControl", AutomationProperties.GetName(titleBarControl));
+
+                    var titleBox = FindNamedDescendant<TextBox>(page, "TitleBox");
+                    Assert.IsNotNull(titleBox);
+                    Assert.AreEqual("Title", ModernWpf.Controls.Primitives.ControlHelper.GetHeader(titleBox));
+                    Assert.AreEqual("WinUI Gallery", titleBox.Text);
+                    var subtitleBox = FindNamedDescendant<TextBox>(page, "SubtitleBox");
+                    Assert.IsNotNull(subtitleBox);
+                    Assert.AreEqual("Subtitle", ModernWpf.Controls.Primitives.ControlHelper.GetHeader(subtitleBox));
+                    Assert.AreEqual("Preview", subtitleBox.Text);
+                    var backButtonToggle = FindNamedDescendant<Mux.ToggleSwitch>(page, "BackButtonToggle");
+                    Assert.IsNotNull(backButtonToggle);
+                    Assert.AreEqual("IsBackButtonVisible", backButtonToggle.Header);
+                    Assert.IsFalse(backButtonToggle.IsOn);
+                    var paneToggle = FindNamedDescendant<Mux.ToggleSwitch>(page, "PaneToggle");
+                    Assert.IsNotNull(paneToggle);
+                    Assert.AreEqual("IsPaneToggleButtonVisible", paneToggle.Header);
+                    Assert.IsFalse(paneToggle.IsOn);
+
+                    var titleText = FindNamedDescendant<TextBlock>(page, "TitleText");
+                    var subtitleText = FindNamedDescendant<TextBlock>(page, "SubtitleText");
+                    Assert.IsNotNull(titleText);
+                    Assert.IsNotNull(subtitleText);
+                    Assert.AreEqual("WinUI Gallery", titleText.Text);
+                    Assert.AreEqual("Preview", subtitleText.Text);
+
+                    var endToEndRoot = (GallerySamplePanel)page.Examples[1].ExampleContent;
+                    Assert.AreEqual(1, endToEndRoot.Children.Count);
+                    var showWindowButton = FindButtonByContent(endToEndRoot, "Show window");
+                    Assert.IsNotNull(showWindowButton);
+                    Assert.AreSame(showWindowButton.TryFindResource("AccentButtonStyle"), showWindowButton.Style);
                 }
                 finally
                 {
