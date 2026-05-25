@@ -53,7 +53,8 @@ Do not keep WinUI alias pages for `CalendarDatePicker`, `CalendarView`,
 `TimePicker`, `TabView`, `RichEditBox`, `RichTextBlock`, `ScrollViewer`,
 `ScrollView`, `FlipView`, or `ItemsView`; retained WPF pages and retained
 ModernWpf pages may still use those words incidentally in examples or framework
-types.
+types. Older tracker notes for pruned pages are historical evidence only; do
+not treat them as current implementation status or as work to preserve.
 
 ## Copy vs Adapt Rule
 
@@ -142,6 +143,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryCatalogTests" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 18 tests per target. `GeneratedWinUIMetadataOnlyContainsRetainedModernWpfSurfaces` now pins `GalleryCatalogData.Items` to the retained ModernWpf/WinUI extension surface so hidden generated metadata cannot reintroduce deleted alias or concept pages while the visible catalog remains clean.
+- `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases Home,AllControls -Reference OfficialWpfGallery -Theme Light -TimeoutSeconds 25`
+  - Passed at `artifacts/wpf-gallery-visual-audit/20260525-154353-850-35240/report.md`: Home and All Controls both passed; Home crops match at `916x762` with delta `0.69`, and All Controls crops match at `868x758` with delta `0`.
+- `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases Home,AllControls -Reference OfficialWpfGallery -Theme Dark -TimeoutSeconds 25`
+  - Passed at `artifacts/wpf-gallery-visual-audit/20260525-154446-774-107376/report.md`: Home and All Controls both passed; Home crops match at `916x762` with delta `0.93`, and All Controls crops match at `868x758` with delta `0`.
+- `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases Settings -Reference OfficialWpfGallery -Theme Light -TimeoutSeconds 25` and `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases Settings -Reference OfficialWpfGallery -Theme Dark -TimeoutSeconds 25`
+  - Passed at `artifacts/wpf-gallery-visual-audit/20260525-154642-831-126896/report.md` and `artifacts/wpf-gallery-visual-audit/20260525-154714-474-37192/report.md`: Settings remains stable with matching `868x758` crops and accepted Light/Dark deltas `0.23` / `1.15`.
 - `dotnet build test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug -p:UseSharedCompilation=false --verbosity minimal`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0` with existing `NU1903` and `Failed to resolve WinRT.Runtime.dll` warnings.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-build --filter "FullyQualifiedName~GalleryCatalogTests|FullyQualifiedName~GalleryApplicationResourceTests|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds|FullyQualifiedName~GalleryNavigationRuntimeTests.ShellCanNavigateEveryCatalogRouteWithoutExceptions|FullyQualifiedName~GallerySampleFactoryTests|FullyQualifiedName~WpfGalleryPageRegistryTests|FullyQualifiedName~GalleryPageRuntimeTests.CatalogItemPageCanLoadAndLayout|FullyQualifiedName~GalleryPageRuntimeTests.RemovedWinUIAliasPagesDoNotRemainInCatalog" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`

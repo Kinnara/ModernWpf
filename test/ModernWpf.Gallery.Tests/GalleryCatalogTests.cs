@@ -9,6 +9,51 @@ namespace ModernWpf.Gallery.Tests
     [TestClass]
     public class GalleryCatalogTests
     {
+        private static readonly string[] RetainedModernWpfExtensionItemIds =
+        {
+            "NavigationView",
+            "InfoBar",
+            "NumberBox",
+            "AutoSuggestBox",
+            "ContentDialog",
+            "TeachingTip",
+            "CommandBar",
+            "CommandBarFlyout",
+            "AppBarButton",
+            "AppBarToggleButton",
+            "AppBarSeparator",
+            "DropDownButton",
+            "SplitButton",
+            "ToggleSplitButton",
+            "RepeatButton",
+            "ToggleButton",
+            "MenuBar",
+            "MenuFlyout",
+            "ItemsRepeater",
+            "PipsPager",
+            "RatingControl",
+            "ToggleSwitch",
+            "ColorPicker",
+            "HyperlinkButton",
+            "ProgressRing",
+            "InfoBadge",
+            "Flyout",
+            "Popup",
+            "Pivot",
+            "BreadcrumbBar",
+            "SelectorBar",
+            "SplitView",
+            "AnnotatedScrollBar",
+            "ParallaxView",
+            "PullToRefresh",
+            "GridView",
+            "SwipeControl",
+            "PersonPicture",
+            "IconElement",
+            "ThemeShadow",
+            "TitleBar"
+        };
+
         [TestMethod]
         public void GroupsMatchWpfFirstGalleryOrder()
         {
@@ -316,57 +361,28 @@ namespace ModernWpf.Gallery.Tests
         [TestMethod]
         public void WinUIExtensionCatalogMatchesImplementedModernWpfSurfaces()
         {
-            var expected = new[]
-            {
-                "NavigationView",
-                "InfoBar",
-                "NumberBox",
-                "AutoSuggestBox",
-                "ContentDialog",
-                "TeachingTip",
-                "CommandBar",
-                "CommandBarFlyout",
-                "AppBarButton",
-                "AppBarToggleButton",
-                "AppBarSeparator",
-                "DropDownButton",
-                "SplitButton",
-                "ToggleSplitButton",
-                "RepeatButton",
-                "ToggleButton",
-                "MenuBar",
-                "MenuFlyout",
-                "ItemsRepeater",
-                "PipsPager",
-                "RatingControl",
-                "ToggleSwitch",
-                "ColorPicker",
-                "HyperlinkButton",
-                "ProgressRing",
-                "InfoBadge",
-                "Flyout",
-                "Popup",
-                "Pivot",
-                "BreadcrumbBar",
-                "SelectorBar",
-                "SplitView",
-                "AnnotatedScrollBar",
-                "ParallaxView",
-                "PullToRefresh",
-                "GridView",
-                "SwipeControl",
-                "PersonPicture",
-                "IconElement",
-                "ThemeShadow",
-                "TitleBar"
-            };
-
             var modernWpfGroup = GalleryCatalog.FindGroup("ModernWpfControls");
             Assert.IsNotNull(modernWpfGroup);
-            CollectionAssert.AreEqual(expected, modernWpfGroup.Items.Select(item => item.UniqueId).ToArray());
+            CollectionAssert.AreEqual(
+                RetainedModernWpfExtensionItemIds,
+                modernWpfGroup.Items.Select(item => item.UniqueId).ToArray());
             CollectionAssert.IsSubsetOf(
-                expected,
+                RetainedModernWpfExtensionItemIds,
                 GalleryCatalog.Items.Select(item => item.UniqueId).ToArray());
+        }
+
+        [TestMethod]
+        public void GeneratedWinUIMetadataOnlyContainsRetainedModernWpfSurfaces()
+        {
+            var generatedItemIds = GalleryCatalogData.Items
+                .Select(item => item.UniqueId)
+                .OrderBy(id => id, StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+            var expectedItemIds = RetainedModernWpfExtensionItemIds
+                .OrderBy(id => id, StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+
+            CollectionAssert.AreEqual(expectedItemIds, generatedItemIds);
         }
 
         [TestMethod]
