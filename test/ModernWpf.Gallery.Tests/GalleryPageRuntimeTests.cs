@@ -279,6 +279,30 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void CopiedWpfGalleryPagesKeepReferencePageResources()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var whatsNewPage = new WhatsNewPage();
+                var subHeaderStyle = (Style)whatsNewPage.Resources["SubHeaderTextStyle"];
+                Assert.AreEqual(typeof(TextBlock), subHeaderStyle.TargetType);
+                AssertStyleSetter(subHeaderStyle, FrameworkElement.MarginProperty, new Thickness(0, 24, 0, 8));
+                AssertStyleSetter(subHeaderStyle, TextBlock.FontSizeProperty, 16d);
+                AssertStyleSetter(subHeaderStyle, TextBlock.FontWeightProperty, FontWeights.Bold);
+
+                var linkTextBlockStyle = (Style)whatsNewPage.Resources["LinkTextBlockStyle"];
+                Assert.AreEqual(typeof(TextBlock), linkTextBlockStyle.TargetType);
+                AssertStyleSetter(linkTextBlockStyle, FrameworkElement.MarginProperty, new Thickness(0, 4, 0, 4));
+
+                var imagePage = new ImagePage(new ImagePageViewModel());
+                Assert.AreEqual("https://github.com/dotnet/wpf", imagePage.Resources["PageXamlUrl"]);
+                Assert.AreEqual(
+                    "https://github.com/dotnet/wpf/blob/main/src/Microsoft.DotNet.Wpf/src/PresentationFramework/System/Windows/Controls/Image.cs",
+                    imagePage.Resources["PageCsharpUrl"]);
+            });
+        }
+
+        [TestMethod]
         public void SettingsPageMatchesWpfGalleryReferenceLayout()
         {
             WpfTestHost.Run(() =>
@@ -3356,6 +3380,12 @@ namespace ModernWpf.Gallery.Tests
 
             slider.Value = minimum == maximum ? value : minimum + 1;
             Assert.AreEqual(slider.Value.ToString("0"), outputValue.Text);
+        }
+
+        private static void AssertStyleSetter(Style style, DependencyProperty property, object expectedValue)
+        {
+            var setter = style.Setters.OfType<Setter>().Single(item => item.Property == property);
+            Assert.AreEqual(expectedValue, setter.Value);
         }
 
         private static void AssertGridViewColumn(GridViewColumn column, string header, double width, string path)

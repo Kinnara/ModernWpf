@@ -5,11 +5,17 @@
     xmlns:controls="clr-namespace:ModernWpf.Gallery.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:system="clr-namespace:System;assembly=System.Runtime"
     Title="ImagePage"
     d:DesignHeight="450"
     d:DesignWidth="800"
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     mc:Ignorable="d">
+
+    <Page.Resources>
+        <system:String x:Key="PageXamlUrl">https://github.com/dotnet/wpf</system:String>
+        <system:String x:Key="PageCsharpUrl">https://github.com/dotnet/wpf/blob/main/src/Microsoft.DotNet.Wpf/src/PresentationFramework/System/Windows/Controls/Image.cs</system:String>
+    </Page.Resources>
 
     <Grid x:Name="ContentPagePane" Height="Auto">
         <Grid.RowDefinitions>
