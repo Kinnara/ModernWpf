@@ -114,5 +114,23 @@ namespace ModernWpf.Gallery.Tests
                 }
             });
         }
+
+        [TestMethod]
+        public void MigratedBasicInputDirectPagesDoNotUseLegacySampleFactoryRoutes()
+        {
+            var migratedPageIds = new[]
+            {
+                "Button",
+                "CheckBox",
+                "ComboBox",
+                "RadioButton",
+                "Slider"
+            };
+
+            foreach (var uniqueId in migratedPageIds)
+            {
+                Assert.IsNull(BasicInputSampleFactory.Create(uniqueId), uniqueId);
+            }
+        }
     }
 }

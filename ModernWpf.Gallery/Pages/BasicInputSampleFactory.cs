@@ -90,8 +90,6 @@ namespace ModernWpf.Gallery.Pages
         {
             switch (uniqueId)
             {
-                case "Button":
-                    return CreateButtonSample();
                 case "DropDownButton":
                     return CreateDropDownButtonSample();
                 case "HyperlinkButton":
@@ -104,45 +102,15 @@ namespace ModernWpf.Gallery.Pages
                     return CreateSplitButtonSample();
                 case "ToggleSplitButton":
                     return CreateToggleSplitButtonSample();
-                case "CheckBox":
-                    return CreateCheckBoxSample();
                 case "ColorPicker":
                     return CreateColorPickerSample();
-                case "ComboBox":
-                    return CreateComboBoxSample();
-                case "RadioButton":
-                    return CreateRadioButtonSample();
                 case "RatingControl":
                     return CreateRatingControlSample();
-                case "Slider":
-                    return CreateSliderSample();
                 case "ToggleSwitch":
                     return CreateToggleSwitchSample();
                 default:
                     return null;
             }
-        }
-
-        private static UIElement CreateButtonSample()
-        {
-            var panel = CreateSamplePanel("A simple Button with text content.");
-            GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("Button"));
-            var output = CreateOutput("");
-            var count = 0;
-            var button = new Button
-            {
-                Content = "Standard XAML button",
-                HorizontalAlignment = HorizontalAlignment.Left
-            };
-            GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("Button", "PrimaryButton"));
-            button.Click += delegate
-            {
-                count++;
-                output.Text = "You clicked: Button1";
-            };
-            panel.Children.Add(button);
-            panel.Children.Add(output);
-            return panel;
         }
 
         private static UIElement CreateDropDownButtonSample()
@@ -748,15 +716,6 @@ namespace ModernWpf.Gallery.Pages
             }
         }
 
-        private static UIElement CreateCheckBoxSample()
-        {
-            var panel = CreateSamplePanel("CheckBox works well for independent options.");
-            panel.Children.Add(new CheckBox { Content = "Enable notifications", IsChecked = true });
-            panel.Children.Add(new CheckBox { Content = "Include preview text", Margin = new Thickness(0, 8, 0, 0) });
-            panel.Children.Add(new CheckBox { Content = "Send diagnostics", Margin = new Thickness(0, 8, 0, 0) });
-            return panel;
-        }
-
         private static UIElement CreateColorPickerSample()
         {
             var panel = new GallerySamplePanel
@@ -878,47 +837,6 @@ namespace ModernWpf.Gallery.Pages
 
             layout.Children.Add(options);
             panel.Children.Add(layout);
-            return panel;
-        }
-
-        private static UIElement CreateComboBoxSample()
-        {
-            var panel = CreateSamplePanel("A ComboBox with items defined inline and its width set.");
-            GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("ComboBox"));
-            var output = new Rectangle
-            {
-                Width = 100,
-                Height = 30,
-                Margin = new Thickness(0, 8, 0, 0),
-                HorizontalAlignment = HorizontalAlignment.Left
-            };
-            var comboBox = new ComboBox
-            {
-                Width = 200,
-                HorizontalAlignment = HorizontalAlignment.Left
-            };
-            ControlHelper.SetHeader(comboBox, "Colors");
-            ControlHelper.SetPlaceholderText(comboBox, "Pick a color");
-            comboBox.Items.Add("Blue");
-            comboBox.Items.Add("Green");
-            comboBox.Items.Add("Red");
-            comboBox.Items.Add("Yellow");
-            GalleryAutomation.WithAutomationId(comboBox, GalleryAutomation.SampleElementId("ComboBox", "ComboBox"));
-            comboBox.SelectionChanged += delegate
-            {
-                output.Fill = CreateColorBrush(Convert.ToString(comboBox.SelectedItem));
-            };
-            panel.Children.Add(comboBox);
-            panel.Children.Add(output);
-            return panel;
-        }
-
-        private static UIElement CreateRadioButtonSample()
-        {
-            var panel = CreateSamplePanel("RadioButton presents a mutually exclusive choice within a group.");
-            panel.Children.Add(new RadioButton { Content = "Daily", GroupName = "Frequency", IsChecked = true });
-            panel.Children.Add(new RadioButton { Content = "Weekly", GroupName = "Frequency", Margin = new Thickness(0, 8, 0, 0) });
-            panel.Children.Add(new RadioButton { Content = "Monthly", GroupName = "Frequency", Margin = new Thickness(0, 8, 0, 0) });
             return panel;
         }
 
@@ -1086,24 +1004,6 @@ namespace ModernWpf.Gallery.Pages
             return panel;
         }
 
-        private static UIElement CreateSliderSample()
-        {
-            var panel = CreateSamplePanel("Slider picks a numeric value from a bounded range.");
-            var output = CreateOutput("Value: 50");
-            var slider = new Slider
-            {
-                Minimum = 0,
-                Maximum = 100,
-                Value = 50,
-                Width = 320,
-                HorizontalAlignment = HorizontalAlignment.Left
-            };
-            slider.ValueChanged += delegate { output.Text = "Value: " + slider.Value.ToString("0"); };
-            panel.Children.Add(slider);
-            panel.Children.Add(output);
-            return panel;
-        }
-
         private static UIElement CreateToggleSwitchSample()
         {
             var panel = new GallerySamplePanel
@@ -1215,32 +1115,6 @@ namespace ModernWpf.Gallery.Pages
             return System.IO.File.Exists(path) ? System.IO.File.ReadAllText(path) : null;
         }
 
-        private static StackPanel CreateSamplePanel(string description)
-        {
-            var panel = new GallerySamplePanel
-            {
-                Margin = new Thickness(0, 0, 0, 12)
-            };
-            panel.Children.Add(new TextBlock
-            {
-                Text = description,
-                TextWrapping = TextWrapping.Wrap,
-                Opacity = 0.72,
-                Margin = new Thickness(0, 0, 0, 12)
-            });
-            return panel;
-        }
-
-        private static TextBlock CreateOutput(string text)
-        {
-            return new TextBlock
-            {
-                Text = text,
-                Margin = new Thickness(0, 12, 0, 0),
-                TextWrapping = TextWrapping.Wrap
-            };
-        }
-
         private static string FormatRatingValue(double value)
         {
             return value.ToString(CultureInfo.InvariantCulture);
@@ -1299,21 +1173,5 @@ namespace ModernWpf.Gallery.Pages
             return null;
         }
 
-        private static Brush CreateColorBrush(string colorName)
-        {
-            switch (colorName)
-            {
-                case "Yellow":
-                    return Brushes.Yellow;
-                case "Green":
-                    return Brushes.Green;
-                case "Blue":
-                    return Brushes.Blue;
-                case "Red":
-                    return Brushes.Red;
-                default:
-                    return Brushes.Transparent;
-            }
-        }
     }
 }

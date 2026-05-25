@@ -7,7 +7,8 @@ namespace ModernWpf.Gallery.Tests
     {
         public static UIElement Create(string uniqueId)
         {
-            return BasicInputSampleFactory.Create(uniqueId)
+            return WpfGalleryPageRegistry.CreatePageContent(uniqueId)
+                ?? BasicInputSampleFactory.Create(uniqueId)
                 ?? StatusInfoSampleFactory.Create(uniqueId)
                 ?? DialogsFlyoutsSampleFactory.Create(uniqueId)
                 ?? MenusToolbarsSampleFactory.Create(uniqueId)
@@ -20,8 +21,7 @@ namespace ModernWpf.Gallery.Tests
                 ?? StylesSampleFactory.Create(uniqueId)
                 ?? TextSampleFactory.Create(uniqueId)
                 ?? MotionSampleFactory.Create(uniqueId)
-                ?? WindowingSampleFactory.Create(uniqueId)
-                ?? WpfGalleryPageRegistry.CreatePageContent(uniqueId);
+                ?? WindowingSampleFactory.Create(uniqueId);
         }
     }
 }
