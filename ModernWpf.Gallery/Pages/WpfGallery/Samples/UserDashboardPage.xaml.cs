@@ -7,14 +7,14 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
 {
     public partial class UserDashboardPage : Page
     {
+        public UserDashboardPageViewModel ViewModel { get; }
+
         public UserDashboardPage(UserDashboardPageViewModel viewModel)
         {
             InitializeComponent();
             ViewModel = viewModel;
             DataContext = this;
         }
-
-        public UserDashboardPageViewModel ViewModel { get; }
 
         private void EditButton_Click(object sender, RoutedEventArgs e)
         {

@@ -3,13 +3,13 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Text
 {
     public partial class LabelPage : Page
     {
+        public LabelPageViewModel ViewModel { get; }
+
         public LabelPage(LabelPageViewModel viewModel)
         {
             ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
         }
-
-        public LabelPageViewModel ViewModel { get; }
     }
 }

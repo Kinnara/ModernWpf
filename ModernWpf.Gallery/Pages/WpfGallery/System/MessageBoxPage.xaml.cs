@@ -5,14 +5,14 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
 {
     public partial class MessageBoxPage : Page
     {
+        public MessageBoxPageViewModel ViewModel { get; }
+
         public MessageBoxPage(MessageBoxPageViewModel viewModel)
         {
             ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
         }
-
-        public MessageBoxPageViewModel ViewModel { get; }
 
         private void ShowDefaultMessageButton_Click(object sender, RoutedEventArgs e)
         {

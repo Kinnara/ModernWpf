@@ -8,14 +8,14 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
 {
     public partial class ClipboardPage : Page
     {
+        public ClipboardPageViewModel ViewModel { get; }
+
         public ClipboardPage(ClipboardPageViewModel viewModel)
         {
             ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
         }
-
-        public ClipboardPageViewModel ViewModel { get; }
 
         private void CopyToClipboard_Click(object sender, RoutedEventArgs e)
         {

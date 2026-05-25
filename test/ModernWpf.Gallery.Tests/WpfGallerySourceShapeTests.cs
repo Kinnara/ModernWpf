@@ -66,15 +66,35 @@ namespace ModernWpf.Gallery.Tests
         {
             foreach (var page in new[]
             {
-                Tuple.Create("BasicInput", "ButtonPage"),
-                Tuple.Create("BasicInput", "CheckBoxPage"),
-                Tuple.Create("BasicInput", "ComboBoxPage"),
-                Tuple.Create("BasicInput", "RadioButtonPage"),
-                Tuple.Create("BasicInput", "SliderPage"),
-                Tuple.Create("Collections", "DataGridPage"),
-                Tuple.Create("Collections", "ListBoxPage"),
-                Tuple.Create("Collections", "ListViewPage"),
-                Tuple.Create("Collections", "TreeViewPage")
+                Tuple.Create("BasicInput", "ButtonPage", "ButtonPageViewModel"),
+                Tuple.Create("BasicInput", "CheckBoxPage", "CheckBoxPageViewModel"),
+                Tuple.Create("BasicInput", "ComboBoxPage", "ComboBoxPageViewModel"),
+                Tuple.Create("BasicInput", "RadioButtonPage", "RadioButtonPageViewModel"),
+                Tuple.Create("BasicInput", "SliderPage", "SliderPageViewModel"),
+                Tuple.Create("Collections", "DataGridPage", "DataGridPageViewModel"),
+                Tuple.Create("Collections", "ListBoxPage", "ListBoxPageViewModel"),
+                Tuple.Create("Collections", "ListViewPage", "ListViewPageViewModel"),
+                Tuple.Create("Collections", "TreeViewPage", "TreeViewPageViewModel"),
+                Tuple.Create("DateAndTime", "CalendarPage", "CalendarPageViewModel"),
+                Tuple.Create("DateAndTime", "DatePickerPage", "DatePickerPageViewModel"),
+                Tuple.Create("DesignGuidance", "ColorPage", "ColorsPageViewModel"),
+                Tuple.Create("DesignGuidance", "GeometryPage", "GeometryPageViewModel"),
+                Tuple.Create("DesignGuidance", "SpacingPage", "SpacingPageViewModel"),
+                Tuple.Create("Media", "CanvasPage", "CanvasPageViewModel"),
+                Tuple.Create("Media", "ImagePage", "ImagePageViewModel"),
+                Tuple.Create("Navigation", "MenuPage", "MenuPageViewModel"),
+                Tuple.Create("Navigation", "TabControlPage", "TabControlPageViewModel"),
+                Tuple.Create("Samples", "UserDashboardPage", "UserDashboardPageViewModel"),
+                Tuple.Create("StatusAndInfo", "ProgressBarPage", "ProgressBarPageViewModel"),
+                Tuple.Create("StatusAndInfo", "ToolTipPage", "ToolTipPageViewModel"),
+                Tuple.Create("System", "ClipboardPage", "ClipboardPageViewModel"),
+                Tuple.Create("System", "FileAndFolderDialogsPage", "FileAndFolderDialogsPageViewModel"),
+                Tuple.Create("System", "MessageBoxPage", "MessageBoxPageViewModel"),
+                Tuple.Create("Text", "LabelPage", "LabelPageViewModel"),
+                Tuple.Create("Text", "PasswordBoxPage", "PasswordBoxPageViewModel"),
+                Tuple.Create("Text", "RichTextEditPage", "RichTextEditPageViewModel"),
+                Tuple.Create("Text", "TextBlockPage", "TextBlockPageViewModel"),
+                Tuple.Create("Text", "TextBoxPage", "TextBoxPageViewModel")
             })
             {
                 var source = ReadRepoFile(
@@ -84,7 +104,7 @@ namespace ModernWpf.Gallery.Tests
                     page.Item1,
                     page.Item2 + ".xaml.cs");
                 var viewModelIndex = source.IndexOf(
-                    "public " + page.Item2 + "ViewModel ViewModel { get; }",
+                    "public " + page.Item3 + " ViewModel { get; }",
                     StringComparison.Ordinal);
                 var constructorIndex = source.IndexOf(
                     "public " + page.Item2 + "(",

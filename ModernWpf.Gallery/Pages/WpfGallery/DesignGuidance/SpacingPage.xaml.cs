@@ -9,6 +9,8 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 {
     public partial class SpacingPage : Page
     {
+        public SpacingPageViewModel ViewModel { get; }
+
         public SpacingPage(SpacingPageViewModel viewModel)
         {
             InitializeComponent();
@@ -20,8 +22,6 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
             ThemeManager.AddActualThemeChangedHandler(this, OnActualThemeChanged);
             Unloaded += OnUnloaded;
         }
-
-        public SpacingPageViewModel ViewModel { get; }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {

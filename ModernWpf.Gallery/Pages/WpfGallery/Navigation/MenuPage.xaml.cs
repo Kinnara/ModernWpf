@@ -5,14 +5,14 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Navigation
 {
     public partial class MenuPage : Page
     {
+        public MenuPageViewModel ViewModel { get; }
+
         public MenuPage(MenuPageViewModel viewModel)
         {
             ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
         }
-
-        public MenuPageViewModel ViewModel { get; }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {

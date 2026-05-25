@@ -9,6 +9,8 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 {
     public partial class GeometryPage : Page
     {
+        public GeometryPageViewModel ViewModel { get; }
+
         public GeometryPage(GeometryPageViewModel viewModel)
         {
             InitializeComponent();
@@ -20,8 +22,6 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
             ThemeManager.AddActualThemeChangedHandler(this, OnActualThemeChanged);
             Unloaded += OnUnloaded;
         }
-
-        public GeometryPageViewModel ViewModel { get; }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {

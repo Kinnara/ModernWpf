@@ -7,14 +7,14 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 {
     public partial class ColorPage : Page
     {
+        public ColorsPageViewModel ViewModel { get; }
+
         public ColorPage(ColorsPageViewModel viewModel)
         {
             InitializeComponent();
             ViewModel = viewModel;
             DataContext = this;
         }
-
-        public ColorsPageViewModel ViewModel { get; }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {

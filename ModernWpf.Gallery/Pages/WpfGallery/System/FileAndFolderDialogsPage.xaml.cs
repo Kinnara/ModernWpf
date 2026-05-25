@@ -7,14 +7,14 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
 {
     public partial class FileAndFolderDialogsPage : Page
     {
+        public FileAndFolderDialogsPageViewModel ViewModel { get; }
+
         public FileAndFolderDialogsPage(FileAndFolderDialogsPageViewModel viewModel)
         {
             ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
         }
-
-        public FileAndFolderDialogsPageViewModel ViewModel { get; }
 
         private void PickSingleFileButton_Click(object sender, RoutedEventArgs e)
         {

@@ -130,9 +130,13 @@ now also keep the official unsealed class shape (`public partial class`) for
 Home, All Controls, What's New, Settings, direct item/support pages, section
 page adapters, `HeaderTile`, and `TileGallery`, while local shell-only classes
 such as `ItemPage` remain outside that source-shape rule.
-Basic Input and Collections item page code-behind now also keeps the official
-member order for the page-specific `ViewModel` property before the copied
-constructor.
+Copied item page code-behind now also keeps the official member order for the
+page-specific `ViewModel` property before the copied constructor where the WPF
+Gallery source uses that shape: Basic Input, Collections, Date & Time, selected
+Design Guidance pages, Media, selected Navigation pages, User Dashboard, Status
+& Info, System, and selected Text pages. Verified official constructor-first
+exceptions such as Layout pages, Hyperlink, Frame, NavigationWindow,
+Iconography, and Typography remain constructor-first.
 
 ## Commit Policy
 
@@ -152,10 +156,10 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
-- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.CopiedItemCodeBehindKeepsOfficialViewModelPropertyBeforeConstructorShape|FullyQualifiedName~GalleryPageRuntimeTests.CollectionsPagesUseOfficialPageSpecificViewModels|FullyQualifiedName~GalleryPageRuntimeTests.CollectionsItemPagesUseOfficialPageRoots" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
-  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 3 tests per target. Copied Basic Input and Collections item page code-behind now keeps the official WPF Gallery member order with the page-specific `ViewModel` property declared before the constructor, while existing Collections direct-page view-model and WPF `Page` root coverage still passes. Existing warning/output remains `NU1903`, generated WinRT warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.CopiedItemCodeBehindKeepsOfficialViewModelPropertyBeforeConstructorShape|FullyQualifiedName~GalleryPageRuntimeTests.SimpleItemPagesUseOfficialPageSpecificViewModels|FullyQualifiedName~GalleryPageRuntimeTests.DesignGuidancePagesUseOfficialPageSpecificViewModels|FullyQualifiedName~GalleryPageRuntimeTests.NavigationPagesUseOfficialPageSpecificViewModels|FullyQualifiedName~GalleryPageRuntimeTests.SamplesPagesUseOfficialPageSpecificViewModels|FullyQualifiedName~GalleryPageRuntimeTests.SystemPagesUseOfficialPageSpecificViewModels|FullyQualifiedName~GalleryPageRuntimeTests.TextPagesUseOfficialPageSpecificViewModels" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 7 tests per target. Copied item page source-shape coverage now includes the official WPF Gallery `ViewModel`-before-constructor member order for Basic Input, Collections, Date & Time, official-before Design Guidance pages, Media, official-before Navigation pages, User Dashboard, Status & Info, System, and official-before Text pages, while existing runtime page-specific view-model coverage for the touched groups still passes. Existing warning/output remains `NU1903`, generated WinRT warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
-  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the Basic Input and Collections copied code-behind member-order source-shape update. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages and existing ModernWpf/ModernWpf.Controls warnings.
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the expanded copied item code-behind member-order source-shape update. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages and existing ModernWpf/ModernWpf.Controls warnings.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySettingsSnippetTests.SettingsLinkHandlersUseOfficialProcessStartShape|FullyQualifiedName~GalleryPageRuntimeTests.SettingsPageMatchesWpfGalleryReferenceLayout|FullyQualifiedName~GalleryPageRuntimeTests.SettingsPageInitialThemeSelectionDoesNotOverrideForcedTheme|FullyQualifiedName~GalleryPageRuntimeTests.SettingsPageVisualTestThemeSelectionMatchesRequestedThemeWithoutApplyingSelection" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 4 tests per target. The copied Settings external link handlers now keep the official direct `Process.Start(new ProcessStartInfo(...){ UseShellExecute = true })` source shape instead of a local `OpenUri` helper, while the existing Settings layout and forced-theme behavior coverage still passes. Existing warning/output remains `NU1903`, generated WinRT warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
@@ -1879,7 +1883,10 @@ Basic Input, Collections, Date & Calendar, Design Guidance, Layout, Media,
 Navigation, Samples, Status & Info, System, and Text item pages now match the
 official WPF Gallery `Page` root and view-model constructor shape, with direct
 pages hosted in a chrome-hidden `Frame` so copied `Page` roots have valid WPF
-parenting. WPF-equivalent section group routes now instantiate official-named
+parenting. Copied item pages also keep the official `ViewModel`
+member-before-constructor source shape where their corresponding WPF Gallery
+source uses it, with verified constructor-first exceptions left intact.
+WPF-equivalent section group routes now instantiate official-named
 section page subclasses through a retained-shell factory, while the oversized
 ModernWpf extension group still uses generic `SectionPage` with its scoped
 scroll host so all retained ModernWpf cards remain reachable. Next, continue
