@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Controls;
 using System.Windows.Input;
 using ModernWpf.Gallery.Models;
 using ModernWpf.Gallery.Pages.WpfGallery;
@@ -26,7 +28,7 @@ namespace ModernWpf.Gallery.Pages
             Title = GetOfficialSectionPageTitle(group.UniqueId);
             if (IsModernWpfExtensionSection(group.UniqueId))
             {
-                GroupItemsControl.Visibility = System.Windows.Visibility.Collapsed;
+                GetOfficialGroupItemsControl().Visibility = System.Windows.Visibility.Collapsed;
                 ModernWpfGroupScrollViewer.Visibility = System.Windows.Visibility.Visible;
             }
         }
@@ -96,6 +98,11 @@ namespace ModernWpf.Gallery.Pages
         private static bool IsModernWpfExtensionSection(string uniqueId)
         {
             return string.Equals(uniqueId, "ModernWpfControls", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private ItemsControl GetOfficialGroupItemsControl()
+        {
+            return ContentRootGrid.Children.OfType<ItemsControl>().Single();
         }
     }
 }
