@@ -367,6 +367,16 @@ namespace ModernWpf.Gallery.Tests
                             themeName + " is missing the WPF Gallery TreeView token " + resourcePair.Item2 + " for " + resourcePair.Item1 + ".");
                     }
                 }
+
+                var highContrastDictionary = GetModernWpfThemeDictionary(themeResources, "HighContrast");
+                foreach (var resourcePair in WpfGalleryNavigationResourceAliases)
+                {
+                    AssertHighContrastTreeViewResourceReference(
+                        highContrastDictionary,
+                        resourcePair.Item2,
+                        GetExpectedHighContrastTreeViewResourceKey(resourcePair.Item2),
+                        resourcePair.Item1);
+                }
             });
         }
 
@@ -841,6 +851,68 @@ namespace ModernWpf.Gallery.Tests
                 System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
             Assert.IsNotNull(method, "ModernWpf.ThemeResources.GetThemeDictionary should remain available to verify shell resource tokens.");
             return (ResourceDictionary)method.Invoke(themeResources, new object[] { themeName });
+        }
+
+        private static object GetExpectedHighContrastTreeViewResourceKey(string treeViewResourceKey)
+        {
+            switch (treeViewResourceKey)
+            {
+                case "TreeViewItemBackground":
+                case "TreeViewItemBackgroundPointerOver":
+                case "TreeViewItemBackgroundPressed":
+                case "TreeViewItemBackgroundDisabled":
+                case "TreeViewItemBackgroundSelected":
+                case "TreeViewItemBackgroundSelectedDisabled":
+                case "TreeViewItemBorderBrush":
+                case "TreeViewItemBorderBrushPressed":
+                case "TreeViewItemBorderBrushDisabled":
+                    return "SystemColorWindowColorBrush";
+
+                case "TreeViewItemBackgroundSelectedPointerOver":
+                case "TreeViewItemBackgroundSelectedPressed":
+                case "TreeViewItemBorderBrushSelectedPressed":
+                    return "SystemColorButtonFaceColorBrush";
+
+                case "TreeViewItemForeground":
+                    return "SystemColorWindowTextColorBrush";
+
+                case "TreeViewItemForegroundPointerOver":
+                case "TreeViewItemForegroundPressed":
+                case "TreeViewItemForegroundSelected":
+                case "TreeViewItemBorderBrushPointerOver":
+                case "TreeViewItemBorderBrushSelected":
+                case "TreeViewItemSelectionIndicatorForeground":
+                    return "SystemColorHighlightColorBrush";
+
+                case "TreeViewItemForegroundDisabled":
+                case "TreeViewItemForegroundSelectedDisabled":
+                case "TreeViewItemBorderBrushSelectedDisabled":
+                    return "SystemColorGrayTextColorBrush";
+
+                case "TreeViewItemForegroundSelectedPointerOver":
+                case "TreeViewItemForegroundSelectedPressed":
+                case "TreeViewItemBorderBrushSelectedPointerOver":
+                    return "SystemColorButtonTextColorBrush";
+
+                default:
+                    Assert.Fail("No expected high-contrast TreeView resource mapping for " + treeViewResourceKey + ".");
+                    return null;
+            }
+        }
+
+        private static void AssertHighContrastTreeViewResourceReference(
+            ResourceDictionary themeDictionary,
+            string treeViewResourceKey,
+            object expectedResourceKey,
+            string navigationResourceKey)
+        {
+            Assert.IsTrue(
+                themeDictionary.Contains(expectedResourceKey),
+                "HighContrast is missing the expected WPF Fluent resource " + expectedResourceKey + " for " + treeViewResourceKey + ".");
+            Assert.AreSame(
+                themeDictionary[expectedResourceKey],
+                themeDictionary[treeViewResourceKey],
+                navigationResourceKey + " should inherit " + treeViewResourceKey + " from " + expectedResourceKey + " in HighContrast.");
         }
 
         private static void AssertPageHeaderLabel(Label label, string automationName, AutomationHeadingLevel headingLevel, int tabIndex)
