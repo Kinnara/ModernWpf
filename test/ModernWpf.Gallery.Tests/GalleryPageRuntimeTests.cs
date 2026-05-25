@@ -221,6 +221,21 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void ItemPageContentRootDoesNotExposeDiagnosticAutomationId()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var generatedPage = new ItemPage(GalleryCatalog.FindItem("InfoBar"));
+                var generatedRoot = (FrameworkElement)generatedPage.Content;
+                Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(generatedRoot));
+
+                var directPage = new ItemPage(GalleryCatalog.FindItem("UserDashboard"));
+                var directRoot = (FrameworkElement)directPage.Content;
+                Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(directRoot));
+            });
+        }
+
+        [TestMethod]
         public void WhatsNewPageHeaderMatchesWpfGalleryReference()
         {
             WpfTestHost.Run(() =>

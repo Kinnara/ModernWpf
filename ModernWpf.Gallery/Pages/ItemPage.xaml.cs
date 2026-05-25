@@ -190,7 +190,7 @@ namespace ModernWpf.Gallery.Pages
             get { return !HasDirectPageContent; }
         }
 
-        public string ContentRootAutomationId
+        internal string ContentRootArtifactId
         {
             get { return HasDirectPageContent ? "GalleryItemPageRoot" : "ContentRootGrid"; }
         }

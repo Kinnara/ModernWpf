@@ -9,9 +9,7 @@
     d:DesignWidth="900"
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     mc:Ignorable="d">
-    <Grid
-        AutomationProperties.AutomationId="{Binding ContentRootAutomationId}"
-        Style="{StaticResource GalleryPageRootStyle}">
+    <Grid Style="{StaticResource GalleryPageRootStyle}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />

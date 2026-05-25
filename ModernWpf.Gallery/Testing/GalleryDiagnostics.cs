@@ -9,6 +9,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Controls.Primitives;
 using System.Windows.Threading;
+using ModernWpf.Gallery.Pages;
 
 namespace ModernWpf.Gallery.Testing
 {
@@ -219,7 +220,7 @@ namespace ModernWpf.Gallery.Testing
             if (element != null)
             {
                 var automationId = AutomationProperties.GetAutomationId(element);
-                var artifactId = ShouldWriteVisualArtifact(automationId) ? automationId : element.Name;
+                var artifactId = GetVisualArtifactId(element, automationId);
                 if (ShouldWriteVisualArtifact(artifactId) && !ShouldSkipVisualArtifact(element, artifactId))
                 {
                     WriteElementPng(element, Path.Combine(ArtifactDirectory, SanitizeFileName(artifactId) + ".png"));
@@ -441,6 +442,22 @@ namespace ModernWpf.Gallery.Testing
                     string.Equals(automationId, "GalleryNavigationView", StringComparison.Ordinal) ||
                     string.Equals(automationId, "ContentRootGrid", StringComparison.Ordinal) ||
                     string.Equals(automationId, "ContentPagePane", StringComparison.Ordinal));
+        }
+
+        private static string GetVisualArtifactId(FrameworkElement element, string automationId)
+        {
+            if (ShouldWriteVisualArtifact(automationId))
+            {
+                return automationId;
+            }
+
+            var itemPage = element.DataContext as ItemPage;
+            if (itemPage != null && ReferenceEquals(element, itemPage.Content))
+            {
+                return itemPage.ContentRootArtifactId;
+            }
+
+            return element.Name;
         }
 
         private static bool ShouldSkipVisualArtifact(FrameworkElement element, string artifactId)
