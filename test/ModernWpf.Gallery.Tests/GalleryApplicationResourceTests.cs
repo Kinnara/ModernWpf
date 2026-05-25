@@ -147,6 +147,36 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void ColorTileHighContrastTemplateMatchesWpfGalleryReference()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var app = Application.Current;
+                Assert.IsNotNull(app);
+
+                var colorTileStyle = (Style)app.FindResource(typeof(ColorTile));
+                Assert.IsNotNull(colorTileStyle);
+
+                var templateSetter = colorTileStyle.Setters.OfType<Setter>()
+                    .Single(item => item.Property == Control.TemplateProperty);
+                var template = (ControlTemplate)templateSetter.Value;
+                var highContrastTrigger = template.Triggers.OfType<DataTrigger>()
+                    .Single(item =>
+                        string.Equals(item.Value?.ToString(), "True", StringComparison.OrdinalIgnoreCase) &&
+                        HasSystemParametersHighContrastBinding(item));
+
+                AssertDynamicResourceTriggerSetter(highContrastTrigger, "ColorExplanationTextBlock", "Foreground", "SystemColorWindowTextColorBrush");
+                AssertDynamicResourceTriggerSetter(highContrastTrigger, "ColorExplanationTextBlock", "Background", "SystemColorWindowColorBrush");
+                AssertDynamicResourceTriggerSetter(highContrastTrigger, "ColorBrushNameTextBlock", "Foreground", "SystemColorWindowTextColorBrush");
+                AssertDynamicResourceTriggerSetter(highContrastTrigger, "ColorBrushNameTextBlock", "Background", "SystemColorWindowColorBrush");
+                AssertDynamicResourceTriggerSetter(highContrastTrigger, "ColorNameTextBlock", "Foreground", "SystemColorWindowTextColorBrush");
+                AssertDynamicResourceTriggerSetter(highContrastTrigger, "ColorNameTextBlock", "Background", "SystemColorWindowColorBrush");
+                AssertDynamicResourceTriggerSetter(highContrastTrigger, "CopyBrushNameButton", "Foreground", "SystemColorWindowTextColorBrush");
+                AssertDynamicResourceTriggerSetter(highContrastTrigger, "CopyBrushNameButton", "Background", "SystemColorWindowColorBrush");
+            });
+        }
+
+        [TestMethod]
         public void GalleryMergesWpfGalleryTemplatesResourceDictionary()
         {
             WpfTestHost.Run(() =>
@@ -565,6 +595,32 @@ namespace ModernWpf.Gallery.Tests
         private static void AssertDynamicResourceSetter(Style style, DependencyProperty property, object resourceKey)
         {
             var setter = style.Setters.OfType<Setter>().Single(item => item.Property == property);
+            var dynamicResource = setter.Value as DynamicResourceExtension;
+
+            Assert.IsNotNull(dynamicResource);
+            Assert.AreEqual(resourceKey, dynamicResource.ResourceKey);
+        }
+
+        private static bool HasSystemParametersHighContrastBinding(DataTrigger trigger)
+        {
+            var binding = trigger.Binding as Binding;
+            var path = binding?.Path?.Path;
+            return string.Equals(path, "HighContrast", StringComparison.Ordinal) ||
+                string.Equals(path, "SystemParameters.HighContrast", StringComparison.Ordinal) ||
+                string.Equals(path, "(SystemParameters.HighContrast)", StringComparison.Ordinal) ||
+                string.Equals(path, "(System.Windows.SystemParameters.HighContrast)", StringComparison.Ordinal) ||
+                string.Equals(path, "(0)", StringComparison.Ordinal);
+        }
+
+        private static void AssertDynamicResourceTriggerSetter(
+            DataTrigger trigger,
+            string targetName,
+            string propertyName,
+            object resourceKey)
+        {
+            var setter = trigger.Setters.OfType<Setter>().Single(item =>
+                string.Equals(item.TargetName, targetName, StringComparison.Ordinal) &&
+                string.Equals(item.Property.Name, propertyName, StringComparison.Ordinal));
             var dynamicResource = setter.Value as DynamicResourceExtension;
 
             Assert.IsNotNull(dynamicResource);
