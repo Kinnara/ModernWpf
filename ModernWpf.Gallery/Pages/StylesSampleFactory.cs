@@ -249,35 +249,6 @@ namespace ModernWpf.Gallery.Pages
             return layout;
         }
 
-        private static TextBlock AddLinePointLabel(Canvas canvas, string text, double left, double top)
-        {
-            var textBlock = new TextBlock
-            {
-                Text = text
-            };
-            Canvas.SetLeft(textBlock, left);
-            Canvas.SetTop(textBlock, top);
-            Panel.SetZIndex(textBlock, 1);
-            canvas.Children.Add(textBlock);
-            return textBlock;
-        }
-
-        private static void SetVisibility(IEnumerable<UIElement> elements, Visibility visibility)
-        {
-            foreach (var element in elements)
-            {
-                element.Visibility = visibility;
-            }
-        }
-
-        private static void InitializeRadialGradientSlider(Slider slider, double maximum, double value, double tickFrequency, double smallChange)
-        {
-            slider.Maximum = maximum;
-            slider.TickFrequency = tickFrequency;
-            slider.SmallChange = smallChange;
-            slider.Value = value;
-        }
-
         private static UIElement CreateThemeShadowSample()
         {
             return CreateThemeShadowExampleContent(assignRootAutomationId: true);
@@ -398,33 +369,6 @@ namespace ModernWpf.Gallery.Pages
             var image = new DrawingImage(drawing);
             image.Freeze();
             return image;
-        }
-
-        private static StackPanel CreateIconColumn(string label, UIElement icon)
-        {
-            var column = new StackPanel
-            {
-                Width = 116,
-                Margin = new Thickness(0, 0, 16, 0)
-            };
-            var frame = new Border
-            {
-                Width = 80,
-                Height = 70,
-                BorderThickness = new Thickness(1),
-                BorderBrush = CreateBrush("#D8D8D8"),
-                Child = icon,
-                HorizontalAlignment = HorizontalAlignment.Center
-            };
-            column.Children.Add(frame);
-            column.Children.Add(new TextBlock
-            {
-                Text = label,
-                Margin = new Thickness(0, 8, 0, 0),
-                TextWrapping = TextWrapping.Wrap,
-                HorizontalAlignment = HorizontalAlignment.Center
-            });
-            return column;
         }
 
         private static BitmapImage CreateBitmap(string uri)
