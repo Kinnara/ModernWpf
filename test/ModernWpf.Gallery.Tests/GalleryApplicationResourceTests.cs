@@ -388,8 +388,12 @@ namespace ModernWpf.Gallery.Tests
                     var templateRoot = (DependencyObject)VisualTreeHelper.GetChild(controlExample, 0);
                     Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(templateRoot));
 
-                    var displayBorder = (Border)controlExample.Template.FindName("ExampleDisplayBorder", controlExample);
-                    Assert.IsNotNull(displayBorder);
+                    Assert.IsNull(controlExample.Template.FindName("ExampleDisplayBorder", controlExample));
+                    var displayBorder = FindVisualChildren<Border>(controlExample)
+                        .Single(border =>
+                            Grid.GetRow(border) == 1 &&
+                            border.Padding == new Thickness(16) &&
+                            border.CornerRadius == new CornerRadius(8, 8, 0, 0));
                     Assert.AreEqual(
                         (double)Application.Current.FindResource("BodyTextBlockFontSize"),
                         TextElement.GetFontSize(displayBorder));

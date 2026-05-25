@@ -40,7 +40,6 @@
                             Visibility="{TemplateBinding HeaderText, Converter={StaticResource NullToVisibilityConverter}}" />
 
                         <Border
-                            x:Name="ExampleDisplayBorder"
                             Grid.Row="1"
                             Padding="16"
                             Background="{DynamicResource SolidBackgroundFillColorBaseBrush}"
