@@ -1,4 +1,0 @@
-﻿<Grid>
-    <FontIcon Glyph="&#xEB51;" Foreground="#C72335" />
-    <FontIcon Glyph="&#xEB52;" />
-</Grid>

@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Automation;
@@ -385,28 +387,6 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void LocalControlImagesIncludeOfficialWpfGalleryReferenceAssets()
-        {
-            WpfTestHost.Run(() =>
-            {
-                var officialOnlyAssets = new[]
-                {
-                    "AutomationProperties.png",
-                    "InkCanvas.png",
-                    "InkToolbar.png",
-                    "InputValidation.png",
-                    "RadioButtons.png",
-                    "RevealFocus.png"
-                };
-
-                foreach (var asset in officialOnlyAssets)
-                {
-                    AssertGalleryResourceExists("Assets/ControlImages/" + asset);
-                }
-            });
-        }
-
-        [TestMethod]
         public void WpfGalleryCatalogControlImagesResolveFromApplicationResources()
         {
             WpfTestHost.Run(() =>
@@ -441,6 +421,53 @@ namespace ModernWpf.Gallery.Tests
                 {
                     AssertGalleryResourceExists(imagePath);
                 }
+            });
+        }
+
+        [TestMethod]
+        public void ShippedSampleCodeFilesAreConsumedByRetainedPages()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var sampleCodeRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Samples", "SampleCode");
+                Assert.IsTrue(Directory.Exists(sampleCodeRoot), sampleCodeRoot);
+
+                var consumedSampleCode = new HashSet<string>(StringComparer.Ordinal);
+                foreach (var item in GalleryCatalog.Items)
+                {
+                    var page = new ItemPage(item);
+                    foreach (var example in page.Examples)
+                    {
+                        if (!string.IsNullOrEmpty(example.XamlCode))
+                        {
+                            consumedSampleCode.Add(example.XamlCode);
+                        }
+
+                        if (!string.IsNullOrEmpty(example.CSharpCode))
+                        {
+                            consumedSampleCode.Add(example.CSharpCode);
+                        }
+
+                        foreach (var consumedSnippetText in example.ConsumedSnippetTexts)
+                        {
+                            if (!string.IsNullOrEmpty(consumedSnippetText))
+                            {
+                                consumedSampleCode.Add(consumedSnippetText);
+                            }
+                        }
+                    }
+                }
+
+                var unusedFiles = Directory.GetFiles(sampleCodeRoot, "*.txt", SearchOption.AllDirectories)
+                    .Where(path => !consumedSampleCode.Contains(File.ReadAllText(path)))
+                    .Select(path => path.Substring(sampleCodeRoot.Length + 1))
+                    .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
+                    .ToArray();
+
+                Assert.AreEqual(
+                    0,
+                    unusedFiles.Length,
+                    "Unused sample-code files should not be shipped for deleted or hidden gallery pages: " + string.Join(", ", unusedFiles));
             });
         }
 

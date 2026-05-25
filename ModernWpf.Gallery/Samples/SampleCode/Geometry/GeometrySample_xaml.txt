@@ -1,2 +1,0 @@
-﻿<Grid CornerRadius="{StaticResource OverlayCornerRadius}"/>
-<Grid CornerRadius="{StaticResource ControlCornerRadius}"/>

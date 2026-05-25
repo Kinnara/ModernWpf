@@ -397,7 +397,7 @@
           ],
           "ApiNamespace": "Microsoft.UI.Xaml.Controls",
           "Subtitle": "A flexible, primitive control for data-driven layouts.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/ListView.png",
+          "ImagePath": "ms-appx:///Assets/ControlImages/ItemsRepeater.png",
           "Description": "The ItemsRepeater is like a markup-based loop that supports virtualization.",
           "Docs": [
             {

@@ -153,7 +153,7 @@ namespace ModernWpf.Gallery.Models
                         "ItemsRepeater",
                         "ItemsRepeater",
                         "A flexible, primitive control for data-driven layouts.",
-                        "ms-appx:///Assets/ControlImages/ListView.png",
+                        "ms-appx:///Assets/ControlImages/ItemsRepeater.png",
                         "The ItemsRepeater is like a markup-based loop that supports virtualization.",
                         "Microsoft.UI.Xaml.Controls",
                         false,

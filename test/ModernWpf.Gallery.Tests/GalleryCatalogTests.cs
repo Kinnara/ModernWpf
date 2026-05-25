@@ -400,6 +400,36 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void ControlImageResourcesMatchRetainedCatalogImages()
+        {
+            var retainedSampleImageResources = new[]
+            {
+                "assets/controlimages/combobox.png"
+            };
+
+            var expectedImageResources = GalleryCatalog.Groups
+                .Select(group => group.ImagePath)
+                .Concat(GalleryCatalog.Items.Select(item => item.ImagePath))
+                .Concat(GalleryCatalogData.Groups.Select(group => group.ImagePath))
+                .Concat(GalleryCatalogData.Groups.SelectMany(group => group.Items.Select(item => item.ImagePath)))
+                .Where(path => path.IndexOf("/Assets/ControlImages/", StringComparison.OrdinalIgnoreCase) >= 0)
+                .Select(GetGalleryResourceKey)
+                .Concat(retainedSampleImageResources)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+
+            var actualImageResources = GetGalleryResourceNames()
+                .Where(name => name.StartsWith("assets/controlimages/", StringComparison.OrdinalIgnoreCase))
+                .Where(name => name.EndsWith(".png", StringComparison.OrdinalIgnoreCase))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(name => name, StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+
+            CollectionAssert.AreEqual(expectedImageResources, actualImageResources);
+        }
+
+        [TestMethod]
         public void CatalogContainsWpfFirstGallerySurface()
         {
             Assert.AreEqual(12, GalleryCatalog.Groups.Count);
