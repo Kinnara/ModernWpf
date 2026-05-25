@@ -1633,6 +1633,8 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(13, basicItemsView.Items.Count);
                     Assert.AreEqual(220.0, basicItemsView.Width);
                     Assert.AreEqual(400.0, basicItemsView.Height);
+                    Assert.AreEqual(Brushes.Transparent, basicItemsView.Background);
+                    Assert.AreEqual(Brushes.Transparent, basicItemsView.BorderBrush);
                     Assert.AreEqual(500.0, swappableLayoutsItemsView.Width);
                     Assert.AreEqual(400.0, swappableLayoutsItemsView.Height);
                     Assert.AreEqual(500.0, selectionItemsView.Width);
@@ -1646,6 +1648,14 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(5.0, minColumnSpacing.Value);
                     Assert.AreEqual(5.0, minRowSpacing.Value);
                     Assert.AreEqual(3.0, maximumRowsOrColumns.Value);
+                    basicItemsView.UpdateLayout();
+                    var firstItem = (ListBoxItem)basicItemsView.ItemContainerGenerator.ContainerFromIndex(0);
+                    Assert.IsNotNull(firstItem);
+                    Assert.AreEqual(200.0, firstItem.Width);
+                    Assert.AreEqual(140.0, firstItem.Height);
+                    Assert.AreEqual(new Thickness(0), firstItem.Margin);
+                    Assert.AreEqual(new Thickness(0), firstItem.Padding);
+                    Assert.AreEqual(new Thickness(0), firstItem.BorderThickness);
 
                     basicItemsView.SelectedIndex = 0;
                     WpfTestHost.DoEvents();

@@ -106,6 +106,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.ItemsViewSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 66 tests per target. The generated ModernWpf ItemsView page still follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\ItemsViewPage.xaml` / `.xaml.cs`, and the WPF `ListBox` adaptation now more closely matches the source `ItemsView` first sample: `BasicItemsView` uses a transparent host, source-default zero item spacing, zero WPF `ListBoxItem` chrome, and the runtime image template now renders the WinUI `Margin="4"` image inset instead of stretching the image edge-to-edge.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls ItemsView -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-072745-607-118176/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required ItemsView sample element was found, primary crops match at `220x400`, and Light primary delta improved from `84.12` to `82.77`; whole-window Light mean delta is `136.42`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls ItemsView -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-072809-896-106164/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required ItemsView sample element was found, primary crops match at `220x400`, and Dark primary delta improved from `73.57` to `68.82`; whole-window Dark mean delta is `21.02`.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the ItemsView visual follow-up. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages plus existing net462 ModernWpf/ModernWpf.Controls warnings, ending with `19 Warning(s)` and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.TabViewSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 66 tests per target. The generated ModernWpf TabView extension page keeps the local official WinUI Gallery source-backed ten-example structure while improving the first-sample visual match: generated document tabs now carry source-shaped document icons, close affordances, and source-facing automation names, and the primary rendered crop is now a `TabView1Host` wrapper with the in-header `Add New Tab` button instead of an external command row. Runtime coverage now finds `TabView1` by source name while the visual harness keeps `GallerySample_TabView_TabView` on the host crop.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls TabView -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -1820,14 +1828,18 @@ source-facing names such as `BasicItemsView`, `tblBasicInvokeOutput`,
 `SwappableSelectionModesItemsView`, `tblInvocationOutput`,
 `tblSelectionOutput`, `cmbSelectionMode`, and `chkIsItemInvokedEnabled`, and
 expose `GallerySample_ItemsView_Root` / `GallerySample_ItemsView_ItemsView`
-for runtime and visual checks. Current ItemsView WinUI-reference evidence is
-`artifacts/visual-checks/20260524-211059-393-116200/report.md` for Light and
-`artifacts/visual-checks/20260524-211151-327-44500/report.md` for Dark, both
+for runtime and visual checks. The current first-sample WPF adaptation uses a
+transparent `ListBox` host, removes WPF `ListBoxItem` border/padding chrome,
+uses source-default zero basic item spacing, and renders the WinUI source
+`Margin="4"` image inset at runtime. Current ItemsView WinUI-reference evidence
+is `artifacts/visual-checks/20260525-072745-607-118176/report.md` for Light and
+`artifacts/visual-checks/20260525-072809-896-106164/report.md` for Dark, both
 with ModernWpf and installed WinUI 3 Gallery `Passed`, required sample element
-found, matching `220x400` primary crops, and primary deltas `84.12` / `73.57`;
-the remaining crop delta is expected for the WPF control/layout adaptation.
-Avoid reopening ItemsView's source shape unless a new local WinUI source,
-runtime, or crop regression appears.
+found, matching `220x400` primary crops, and improved primary deltas
+`82.77` / `68.82` from the previous `84.12` / `73.57`; the remaining crop
+delta is expected for the WPF control/layout adaptation. Avoid reopening
+ItemsView's source shape unless a new local WinUI source, runtime, or crop
+regression appears.
 The generated ModernWpf FlipView extension page now uses the local official
 WinUI Gallery three-example structure from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\FlipViewPage.xaml`

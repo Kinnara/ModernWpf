@@ -2162,7 +2162,7 @@ private void InitializeData()
                 height: 400,
                 itemTemplate: CreateItemsViewImageTemplate(),
                 itemsPanel: CreateItemsViewStackPanel(),
-                itemContainerStyle: CreateItemsViewItemContainerStyle(200, 140, new Thickness(0, 0, 0, 4)),
+                itemContainerStyle: CreateItemsViewItemContainerStyle(200, 140, new Thickness(0)),
                 assignPrimaryAutomationId: true);
             AttachItemsViewInvocation(itemsView, output, delegate { return true; });
             root.Children.Add(itemsView);
@@ -2289,6 +2289,8 @@ private void InitializeData()
                 Name = name,
                 Width = width,
                 Height = height,
+                Background = Brushes.Transparent,
+                BorderBrush = Brushes.Transparent,
                 HorizontalAlignment = HorizontalAlignment.Left,
                 ItemsSource = CreateItemsViewItems(),
                 ItemTemplate = itemTemplate,
@@ -2610,6 +2612,9 @@ private void InitializeData()
         private static Style CreateItemsViewItemContainerStyle(double width, double height, Thickness margin)
         {
             var style = new Style(typeof(ListBoxItem));
+            style.Setters.Add(new Setter(Control.BackgroundProperty, Brushes.Transparent));
+            style.Setters.Add(new Setter(Control.BorderBrushProperty, Brushes.Transparent));
+            style.Setters.Add(new Setter(Control.BorderThicknessProperty, new Thickness(0)));
             style.Setters.Add(new Setter(Control.PaddingProperty, new Thickness(0)));
             style.Setters.Add(new Setter(FrameworkElement.MarginProperty, margin));
             style.Setters.Add(new Setter(FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Left));
@@ -2633,7 +2638,7 @@ private void InitializeData()
             return ParseRepeaterTemplate(
                 "<DataTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'>" +
                 "<Border HorizontalAlignment='Left' Width='200' Height='140' AutomationProperties.Name='{Binding Title}'>" +
-                "<Image Width='200' Height='140' HorizontalAlignment='Center' VerticalAlignment='Center' Source='{Binding ImageSource}' Stretch='UniformToFill'/>" +
+                "<Image Margin='4' HorizontalAlignment='Center' VerticalAlignment='Center' Source='{Binding ImageSource}' Stretch='UniformToFill'/>" +
                 "</Border>" +
                 "</DataTemplate>");
         }
