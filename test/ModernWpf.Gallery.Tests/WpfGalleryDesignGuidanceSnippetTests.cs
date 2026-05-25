@@ -36,5 +36,30 @@ namespace ModernWpf.Gallery.Tests
                             "<Border CornerRadius=\"{StaticResource ControlCornerRadius}\" />")));
             });
         }
+
+        [TestMethod]
+        public void IconographyLoadedHandlerUsesWpfGalleryLoadDataCommandPath()
+        {
+            var pageSource = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "DesignGuidance",
+                "IconographyPage.xaml.cs");
+
+            StringAssert.Contains(pageSource, "ViewModel.LoadDataCommand.Execute(null);");
+            Assert.IsFalse(
+                pageSource.Contains("ViewModel.LoadData();"),
+                "The copied Iconography page should preserve the official WPF Gallery load-command path; the retained Loaded handler only adapts the XAML behavior trigger.");
+
+            var viewModelSource = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "DesignGuidance",
+                "IconographyPageViewModel.cs");
+
+            StringAssert.Contains(viewModelSource, "private void LoadData()");
+        }
     }
 }

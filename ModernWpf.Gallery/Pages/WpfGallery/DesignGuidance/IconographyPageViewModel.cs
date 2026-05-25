@@ -137,7 +137,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
             get { return _nextPageCommand; }
         }
 
-        public void LoadData()
+        private void LoadData()
         {
             _allIcons = ReadIconData().ToList();
             _searchFilteredIcons = new List<IconData>(_allIcons);

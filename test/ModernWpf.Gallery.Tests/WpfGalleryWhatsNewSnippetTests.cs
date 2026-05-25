@@ -1,6 +1,3 @@
-using System;
-using System.IO;
-using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Gallery.Pages;
 using static ModernWpf.Gallery.Tests.WpfGallerySnippetTestHelpers;
@@ -63,7 +60,7 @@ namespace ModernWpf.Gallery.Tests
         [TestMethod]
         public void WhatsNewLinkHandlersUseOfficialProcessStartShape()
         {
-            var source = File.ReadAllText(FindRepoFile("ModernWpf.Gallery", "Pages", "WhatsNewPage.xaml.cs"));
+            var source = ReadRepoFile("ModernWpf.Gallery", "Pages", "WhatsNewPage.xaml.cs");
 
             Assert.IsFalse(source.Contains("OpenUri("), "Copied WhatsNew link handlers should keep the official direct Process.Start source shape.");
             StringAssert.Contains(source, "Process.Start(new ProcessStartInfo(\"https://learn.microsoft.com/en-in/dotnet/desktop/wpf/whats-new/net100\") { UseShellExecute = true });");
@@ -71,24 +68,6 @@ namespace ModernWpf.Gallery.Tests
             StringAssert.Contains(source, "Process.Start(new ProcessStartInfo(\"https://github.com/dotnet/wpf/issues/9613\") { UseShellExecute = true });");
             StringAssert.Contains(source, "Process.Start(new ProcessStartInfo(\"https://aka.ms/wpf-fluentdoc\") { UseShellExecute = true });");
             StringAssert.Contains(source, "ViewModel.NavigateCommand.Execute(\"MessageBox\");");
-        }
-
-        private static string FindRepoFile(params string[] relativePath)
-        {
-            var directory = new DirectoryInfo(AppContext.BaseDirectory);
-            while (directory != null)
-            {
-                var candidate = Path.Combine(new[] { directory.FullName }.Concat(relativePath).ToArray());
-                if (File.Exists(candidate))
-                {
-                    return candidate;
-                }
-
-                directory = directory.Parent;
-            }
-
-            Assert.Fail("Could not find repository file '{0}'.", string.Join(Path.DirectorySeparatorChar.ToString(), relativePath));
-            return null;
         }
     }
 }

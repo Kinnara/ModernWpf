@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
@@ -68,6 +69,24 @@ namespace ModernWpf.Gallery.Tests
         public static string Lines(params string[] lines)
         {
             return string.Join("\n", lines);
+        }
+
+        public static string ReadRepoFile(params string[] relativePath)
+        {
+            var directory = new DirectoryInfo(AppContext.BaseDirectory);
+            while (directory != null)
+            {
+                var candidate = Path.Combine(new[] { directory.FullName }.Concat(relativePath).ToArray());
+                if (File.Exists(candidate))
+                {
+                    return File.ReadAllText(candidate);
+                }
+
+                directory = directory.Parent;
+            }
+
+            Assert.Fail("Could not find repository file '{0}'.", string.Join(Path.DirectorySeparatorChar.ToString(), relativePath));
+            return null;
         }
 
         private static IEnumerable<T> FindDescendants<T>(DependencyObject root)

@@ -43,7 +43,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            ViewModel.LoadData();
+            ViewModel.LoadDataCommand.Execute(null);
         }
 
         private void IconsSearchBox_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
