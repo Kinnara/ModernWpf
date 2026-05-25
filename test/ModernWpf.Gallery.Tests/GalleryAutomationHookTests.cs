@@ -38,6 +38,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "PersonPicture", "GallerySample_PersonPicture_Root", "GallerySample_PersonPicture_PersonPicture" };
             yield return new object[] { "Sound", "GallerySample_Sound_Root", "GallerySample_Sound_ToggleSwitch" };
             yield return new object[] { "MediaPlayerElement", "GallerySample_MediaPlayerElement_Root", "GallerySample_MediaPlayerElement_MediaPlayerElement" };
+            yield return new object[] { "MapControl", "GallerySample_MapControl_Root", "GallerySample_MapControl_MapControl" };
             yield return new object[] { "FlipView", "GallerySample_FlipView_Root", "GallerySample_FlipView_FlipView" };
             yield return new object[] { "ItemsView", "GallerySample_ItemsView_Root", "GallerySample_ItemsView_ItemsView" };
             yield return new object[] { "CalendarDatePicker", "GallerySample_CalendarDatePicker_Root", "GallerySample_CalendarDatePicker_CalendarDatePicker" };
@@ -3691,6 +3692,84 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(225d, player2Poster.Height);
                     Assert.AreEqual(Stretch.Fill, player2Poster.Stretch);
                     StringAssert.Contains(((BitmapImage)player2Poster.Source).UriSource.ToString(), "fishes.poster.png");
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void MapControlSampleMatchesWinUIGalleryExample()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("MapControl"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    var intro = (StackPanel)page.IntroContent;
+                    Assert.IsNotNull(intro);
+                    Assert.AreEqual(2, intro.Children.Count);
+                    var instructions = (TextBlock)intro.Children[0];
+                    Assert.AreEqual(12d, instructions.Margin.Bottom);
+                    Assert.AreEqual("Follow instructions here to obtain your MapServiceToken.", new TextRange(instructions.ContentStart, instructions.ContentEnd).Text.Trim());
+                    var mapImage = (Image)intro.Children[1];
+                    Assert.AreEqual(320d, mapImage.Height);
+                    StringAssert.Contains(((BitmapImage)mapImage.Source).UriSource.ToString(), "MapExample.png");
+
+                    Assert.AreEqual(1, page.Examples.Count);
+                    Assert.AreEqual("Showing a pin on the map", page.Examples[0].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "<MapControl x:Name=\"map1\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "MapServiceToken=\"MapServiceToken\"");
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "map1.Center = centerPoint;");
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "map1.Layers.Add(LandmarksLayer);");
+
+                    var root = (GallerySamplePanel)page.Examples[0].ExampleContent;
+                    Assert.AreEqual(2, root.Children.Count);
+                    var tokenRow = (StackPanel)root.Children[0];
+                    Assert.AreEqual(Orientation.Horizontal, tokenRow.Orientation);
+                    Assert.AreEqual(12d, tokenRow.Margin.Bottom);
+
+                    var token = FindNamedDescendant<PasswordBox>(page, "MapToken");
+                    var map = (FrameworkElement)FindByAutomationId(page, "GallerySample_MapControl_MapControl");
+                    Assert.IsNotNull(token);
+                    Assert.IsNotNull(map);
+
+                    Assert.AreEqual(200d, token.MinWidth);
+                    Assert.AreEqual("Map service token", AutomationProperties.GetName(token));
+                    Assert.AreEqual("GallerySample_MapControl_MapToken", AutomationProperties.GetAutomationId(token));
+                    Assert.AreEqual("Map service token", ControlHelper.GetPlaceholderText(token));
+
+                    var setTokenButton = (Button)tokenRow.Children[1];
+                    Assert.AreEqual("Set token", setTokenButton.Content);
+                    Assert.AreEqual(8d, setTokenButton.Margin.Left);
+
+                    Assert.AreEqual("map1", map.Name);
+                    Assert.AreEqual(400d, map.Height);
+                    Assert.AreEqual(400d, map.MinWidth);
+                    Assert.AreEqual(HorizontalAlignment.Stretch, map.HorizontalAlignment);
+                    Assert.AreEqual("Map", AutomationProperties.GetName(map));
+                    Assert.AreEqual("Center=0,0; ZoomLevel=1; Pin=-30.034647,-51.217659", map.Tag);
                 }
                 finally
                 {

@@ -23,6 +23,9 @@ namespace ModernWpf.Gallery.Pages
             var csharpSnippet = FindSampleSnippet(SampleSnippets, IsCSharpSnippet);
             DirectPageContent = WpfGalleryPageRegistry.CreatePageContent(_item.UniqueId);
             UsesWpfGalleryPageMode = DirectPageContent != null;
+            IntroContent = DirectPageContent == null
+                ? CreateWorkingSampleIntroContent(_item.UniqueId)
+                : null;
 
             Examples = DirectPageContent == null
                 ? CreateWorkingSampleExamples(_item.UniqueId, SampleSnippets, xamlSnippet, csharpSnippet)
@@ -97,6 +100,18 @@ namespace ModernWpf.Gallery.Pages
         public bool UsesWpfGalleryPageMode { get; }
 
         public object DirectPageContent { get; }
+
+        public object IntroContent { get; }
+
+        public bool HasIntroContent
+        {
+            get { return IntroContent != null; }
+        }
+
+        public bool ShowIntroContent
+        {
+            get { return !UsesWpfGalleryPageMode && HasIntroContent; }
+        }
 
         public Thickness DirectPageContentMargin
         {
@@ -226,6 +241,11 @@ namespace ModernWpf.Gallery.Pages
                 ?? ShellSampleFactory.Create(uniqueId);
         }
 
+        private static object CreateWorkingSampleIntroContent(string uniqueId)
+        {
+            return MediaSampleFactory.CreateIntroContent(uniqueId);
+        }
+
         private static IReadOnlyList<GalleryExample> CreateWorkingSampleExamples(
             string uniqueId,
             IReadOnlyList<SampleSnippet> sampleSnippets,
@@ -286,7 +306,7 @@ namespace ModernWpf.Gallery.Pages
                 return layoutExamples;
             }
 
-            var mediaExamples = MediaSampleFactory.CreateExamples(uniqueId);
+            var mediaExamples = MediaSampleFactory.CreateExamples(uniqueId, sampleSnippets);
             if (mediaExamples.Count != 0)
             {
                 return mediaExamples;

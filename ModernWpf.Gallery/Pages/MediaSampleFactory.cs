@@ -4,10 +4,13 @@ using System.Media;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
+using System.Windows.Documents;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using ModernWpf.Gallery.Models;
 using ModernWpf.Controls.Primitives;
 using Mux = ModernWpf.Controls;
 
@@ -91,6 +94,35 @@ ElementSoundPlayer.Play(ElementSoundKind.GoBack);";
                     MaxWidth=""400""
                     AutoPlay=""True"" />";
 
+        private const string MapControlXaml =
+@"<MapControl x:Name=""map1"" MapServiceToken=""MapServiceToken"" Height=""600""/>";
+
+        private const string MapControlCSharp =
+@"
+BasicGeoposition centerPosition = new BasicGeoposition { Latitude = 0, Longitude = 0 };
+Geopoint centerPoint = new Geopoint(centerPosition);
+
+map1.Center = centerPoint;
+map1.ZoomLevel = 1;
+
+var myLandmarks = new List<MapElement>();
+BasicGeoposition position = new BasicGeoposition { Latitude = -30.034647, Longitude = -51.217659 };
+Geopoint point = new Geopoint(position);
+
+var icon = new MapIcon
+{
+    Location = point,
+};
+
+myLandmarks.Add(icon);
+
+var LandmarksLayer = new MapElementsLayer
+{
+    MapElements = myLandmarks
+};
+
+map1.Layers.Add(LandmarksLayer);";
+
         public static UIElement Create(string uniqueId)
         {
             switch (uniqueId)
@@ -116,10 +148,21 @@ ElementSoundPlayer.Play(ElementSoundKind.GoBack);";
             }
         }
 
-        public static IReadOnlyList<GalleryExample> CreateExamples(string uniqueId)
+        public static IReadOnlyList<GalleryExample> CreateExamples(
+            string uniqueId,
+            IReadOnlyList<SampleSnippet> sampleSnippets = null)
         {
             switch (uniqueId)
             {
+                case "MapControl":
+                    return new[]
+                    {
+                        new GalleryExample(
+                            "Showing a pin on the map",
+                            CreateMapControlExampleContent(assignRootAutomationId: true),
+                            MapControlXaml,
+                            FindSampleCodeText(sampleSnippets, "MapControlSample_cs.txt") ?? MapControlCSharp)
+                    };
                 case "PersonPicture":
                     return new[]
                     {
@@ -165,6 +208,17 @@ ElementSoundPlayer.Play(ElementSoundKind.GoBack);";
                     };
                 default:
                     return Array.Empty<GalleryExample>();
+            }
+        }
+
+        public static UIElement CreateIntroContent(string uniqueId)
+        {
+            switch (uniqueId)
+            {
+                case "MapControl":
+                    return CreateMapControlIntroContent();
+                default:
+                    return null;
             }
         }
 
@@ -361,66 +415,108 @@ ElementSoundPlayer.Play(ElementSoundKind.GoBack);";
 
         private static UIElement CreateMapControlSample()
         {
-            var panel = CreateSamplePanel("MapControl maps to a WPF map-image viewport with zoom and marker overlays.");
-            var mapScale = new ScaleTransform(1, 1);
-            var map = new Grid
+            return CreateMapControlExampleContent(assignRootAutomationId: true);
+        }
+
+        private static StackPanel CreateMapControlIntroContent()
+        {
+            var root = new StackPanel
             {
-                Width = 600,
-                Height = 360,
-                LayoutTransform = mapScale
+                Margin = new Thickness(0, 0, 0, 24)
             };
-            map.Children.Add(new Image
+
+            var instructions = new TextBlock
             {
-                Source = CreateBitmap(ResourceUri("Assets/SampleMedia/MapExample.png")),
-                Stretch = Stretch.UniformToFill
+                Margin = new Thickness(0, 0, 0, 12),
+                TextWrapping = TextWrapping.Wrap
+            };
+            instructions.Inlines.Add(new Run("Follow instructions "));
+            instructions.Inlines.Add(new Hyperlink(new Run("here"))
+            {
+                NavigateUri = new Uri("https://learn.microsoft.com/azure/azure-maps/how-to-manage-account-keys")
             });
-            var marker = new Border
+            instructions.Inlines.Add(new Run(" to obtain your MapServiceToken."));
+
+            root.Children.Add(instructions);
+            root.Children.Add(new Image
             {
-                Width = 112,
-                Height = 32,
-                CornerRadius = new CornerRadius(16),
-                Background = CreateBrush("#0078D4"),
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-                Child = new TextBlock
+                Height = 320,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Source = CreateBitmap(ResourceUri("Assets/SampleMedia/MapExample.png"))
+            });
+
+            return root;
+        }
+
+        private static GallerySamplePanel CreateMapControlExampleContent(bool assignRootAutomationId)
+        {
+            var root = new GallerySamplePanel();
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("MapControl"));
+            }
+
+            var token = new PasswordBox
+            {
+                Name = "MapToken",
+                MinWidth = 200
+            };
+            AutomationProperties.SetName(token, "Map service token");
+            GalleryAutomation.WithAutomationId(token, GalleryAutomation.SampleElementId("MapControl", "MapToken"));
+            ControlHelper.SetPlaceholderText(token, "Map service token");
+
+            var map = CreateMapControlSurface();
+            var setToken = new Button
+            {
+                Content = "Set token",
+                Margin = new Thickness(8, 0, 0, 0),
+                Padding = new Thickness(16, 6, 16, 6),
+                VerticalAlignment = VerticalAlignment.Top
+            };
+            RoutedEventHandler setTokenHandler = delegate
+            {
+                map.Tag = token.Password;
+            };
+            setToken.Click += setTokenHandler;
+            token.KeyDown += delegate(object sender, KeyEventArgs e)
+            {
+                if (e.Key == Key.Enter)
                 {
-                    Text = "Seattle",
-                    Foreground = Brushes.White,
-                    FontWeight = FontWeights.SemiBold,
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center
+                    setTokenHandler(sender, e);
                 }
             };
-            marker.RenderTransform = new TranslateTransform(80, -44);
-            map.Children.Add(marker);
 
-            var scrollViewer = new ScrollViewer
+            var tokenRow = new StackPanel
             {
-                Width = 430,
-                Height = 260,
-                HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
-                VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
-                Content = map
-            };
-            var zoom = new Slider
-            {
-                Width = 260,
-                Minimum = 0.75,
-                Maximum = 2,
-                Value = 1,
-                Margin = new Thickness(0, 12, 0, 0),
-                HorizontalAlignment = HorizontalAlignment.Left
-            };
-            ControlHelper.SetHeader(zoom, "Zoom");
-            zoom.ValueChanged += delegate
-            {
-                mapScale.ScaleX = zoom.Value;
-                mapScale.ScaleY = zoom.Value;
+                Orientation = Orientation.Horizontal,
+                Margin = new Thickness(0, 0, 0, 12),
+                Children =
+                {
+                    token,
+                    setToken
+                }
             };
 
-            panel.Children.Add(scrollViewer);
-            panel.Children.Add(zoom);
-            return panel;
+            root.Children.Add(tokenRow);
+            root.Children.Add(map);
+            return root;
+        }
+
+        private static Grid CreateMapControlSurface()
+        {
+            var map = new Grid
+            {
+                Name = "map1",
+                Height = 400,
+                MinWidth = 400,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                ClipToBounds = true,
+                Background = Brushes.Black,
+                Tag = "Center=0,0; ZoomLevel=1; Pin=-30.034647,-51.217659"
+            };
+            AutomationProperties.SetName(map, "Map");
+            GalleryAutomation.WithAutomationId(map, GalleryAutomation.SampleElementId("MapControl", "MapControl"));
+            return map;
         }
 
         private static UIElement CreateMediaPlayerElementSample()
@@ -785,6 +881,24 @@ ElementSoundPlayer.Play(ElementSoundKind.GoBack);";
                 Margin = new Thickness(0, 12, 0, 0),
                 TextWrapping = TextWrapping.Wrap
             };
+        }
+
+        private static string FindSampleCodeText(IReadOnlyList<SampleSnippet> snippets, string title)
+        {
+            if (snippets == null)
+            {
+                return null;
+            }
+
+            foreach (var snippet in snippets)
+            {
+                if (string.Equals(snippet.Title, title, StringComparison.OrdinalIgnoreCase))
+                {
+                    return snippet.Text;
+                }
+            }
+
+            return null;
         }
 
         private static BitmapImage CreateBitmap(string uri)

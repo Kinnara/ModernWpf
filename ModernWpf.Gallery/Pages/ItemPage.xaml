@@ -30,6 +30,10 @@
             Padding="0,0,24,0"
             Visibility="{Binding ShowScrolledPageContent, Converter={StaticResource BooleanToVisibilityConverter}}">
             <StackPanel Margin="0,0,0,24">
+                <ContentControl
+                    Content="{Binding IntroContent}"
+                    Visibility="{Binding ShowIntroContent, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
                 <ItemsControl
                     AlternationCount="2147483647"
                     AutomationProperties.AutomationId="GallerySampleHost"

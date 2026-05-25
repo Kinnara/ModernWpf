@@ -106,6 +106,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.MapControlSampleMatchesWinUIGalleryExample|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 50 tests per target. The generated ModernWpf MapControl extension page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\MapControlPage.xaml` / `.xaml.cs`: the source instruction text and `MapExample.png` preview before the example, plus the `Showing a pin on the map` sample with source-facing `MapToken` and `map1` names. `MediaSampleFactory.CreateExamples` now covers MapControl as a source-backed Media/Platform WinUI extension page, consumes the local `Samples\SampleCode\MapControl\MapControlSample_cs.txt` snippet, exposes `GallerySample_MapControl_Root` / `GallerySample_MapControl_MapControl`, and keeps a WPF-safe black map surface because WPF does not expose WinUI's native `MapControl`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls MapControl -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-025327-316-107908/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required MapControl sample element was found, primary crops use ModernWpf `GallerySample_MapControl_MapToken` against WinUI `MapToken`, crop sizes are `200x33` vs `200x32`, and Light primary delta is `9.23`. The whole-window Light mean delta is `175.71` and remains diagnostic because the installed WinUI shell stayed dark while the ModernWpf run used Light.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls MapControl -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-025359-488-112832/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required MapControl sample element was found, primary crops use the same token-field mapping, crop sizes are `200x33` vs `200x32`, Dark primary delta is `14.71`, and whole-window Dark mean delta is `28.42`.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the MapControl WinUI example alignment. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages and ends with `0 Warning(s)` and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.MediaPlayerElementSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 49 tests per target. The generated ModernWpf MediaPlayerElement extension page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\MediaPlayerElementPage.xaml` / `.xaml.cs`: transport controls with `Player1` and `OpenFileButton`, plus the autoplay `Player2` example. `MediaSampleFactory.CreateExamples` now covers MediaPlayerElement as a source-backed Media WinUI extension page, preserves the official snippets and source-facing names, exposes `GallerySample_MediaPlayerElement_Root` / `GallerySample_MediaPlayerElement_MediaPlayerElement`, and uses WinUI-derived local poster assets so WPF visual captures do not depend on `MediaElement` child-window rendering.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls MediaPlayerElement -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -2246,6 +2254,31 @@ with ModernWpf and installed WinUI 3 Gallery `Passed`, primary crops of
 uses ModernWpf `GallerySample_MediaPlayerElement_OpenFileButton` against WinUI
 `OpenFileButton` for the primary crop. Avoid reopening MediaPlayerElement's
 source shape unless a new WinUI source, media asset, or crop regression appears.
+The generated ModernWpf MapControl extension page now uses the local official
+WinUI Gallery source from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\MapControlPage.xaml`
+and `.xaml.cs`: the page-level instruction text, local `MapExample.png`
+preview, and the `Showing a pin on the map` example with `MapToken`, `Set
+token`, and `map1`. `MediaSampleFactory.CreateExamples` now exposes MapControl
+as a source-backed Media/Platform WinUI extension page and consumes the local
+`Samples\SampleCode\MapControl\MapControlSample_cs.txt` C# snippet so the
+source-code pane does not duplicate as an additional snippet. The WPF
+adaptation keeps the WinUI-visible header, source snippet, source-facing names,
+token key/button behavior, default center/zoom/pin metadata, and black unloaded
+map surface; it intentionally does not instantiate a native map because WPF
+does not expose WinUI's `MapControl`. `ItemPage` now has a small intro-content
+hook used by MapControl so generated WinUI extension pages can render source
+preface content before their `ControlExample` list when the local WinUI page
+does. Current MapControl WinUI-reference evidence is
+`artifacts/visual-checks/20260525-025327-316-107908/report.md` for Light and
+`artifacts/visual-checks/20260525-025359-488-112832/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`, primary crops of
+`200x33` vs `200x32`, and primary deltas `9.23` / `14.71`. The visual harness
+uses ModernWpf `GallerySample_MapControl_MapToken` against WinUI `MapToken` for
+the primary crop and lowers MapControl's primary low-variation threshold because
+the empty token field is intentionally visually quiet. Avoid reopening
+MapControl's source shape unless a new WinUI source, native-map strategy, or
+crop regression appears.
 The generated ModernWpf RichTextBlock extension page now uses the local
 official WinUI Gallery four-example structure from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\RichTextBlockPage.xaml`:
