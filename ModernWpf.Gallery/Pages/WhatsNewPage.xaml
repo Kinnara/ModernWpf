@@ -12,7 +12,8 @@
     mc:Ignorable="d">
 
     <Grid
-        x:Name="ContentRootGrid"
+        x:Name="ContentPagePane"
+        Height="Auto"
         Style="{StaticResource GalleryPageRootStyle}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

@@ -252,7 +252,9 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual("What's new in WPF", title.Text);
                 Assert.AreEqual("Discover all the new features, enhancements and APIs introduced in WPF", description.Text);
 
-                var root = (Grid)page.FindName("ContentRootGrid");
+                var root = (Grid)page.FindName("ContentPagePane");
+                Assert.AreEqual("ContentPagePane", root.Name);
+                Assert.IsTrue(double.IsNaN((double)root.ReadLocalValue(FrameworkElement.HeightProperty)));
                 Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(root));
                 Assert.AreEqual(
                     (double)Application.Current.FindResource("BodyTextBlockFontSize"),
