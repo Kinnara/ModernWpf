@@ -24,6 +24,47 @@ namespace ModernWpf.Gallery.Tests
     [TestClass]
     public class GalleryNavigationRuntimeTests
     {
+        private static readonly Tuple<string, string>[] WpfGalleryNavigationResourceAliases =
+        {
+            Tuple.Create("NavigationViewItemBackground", "TreeViewItemBackground"),
+            Tuple.Create("NavigationViewItemBackgroundPointerOver", "TreeViewItemBackgroundPointerOver"),
+            Tuple.Create("NavigationViewItemBackgroundPressed", "TreeViewItemBackgroundPressed"),
+            Tuple.Create("NavigationViewItemBackgroundDisabled", "TreeViewItemBackgroundDisabled"),
+            Tuple.Create("NavigationViewItemBackgroundChecked", "TreeViewItemBackgroundSelected"),
+            Tuple.Create("NavigationViewItemBackgroundCheckedPointerOver", "TreeViewItemBackgroundSelectedPointerOver"),
+            Tuple.Create("NavigationViewItemBackgroundCheckedPressed", "TreeViewItemBackgroundSelectedPressed"),
+            Tuple.Create("NavigationViewItemBackgroundCheckedDisabled", "TreeViewItemBackgroundSelectedDisabled"),
+            Tuple.Create("NavigationViewItemBackgroundSelected", "TreeViewItemBackgroundSelected"),
+            Tuple.Create("NavigationViewItemBackgroundSelectedPointerOver", "TreeViewItemBackgroundSelectedPointerOver"),
+            Tuple.Create("NavigationViewItemBackgroundSelectedPressed", "TreeViewItemBackgroundSelectedPressed"),
+            Tuple.Create("NavigationViewItemBackgroundSelectedDisabled", "TreeViewItemBackgroundSelectedDisabled"),
+            Tuple.Create("NavigationViewItemForeground", "TreeViewItemForeground"),
+            Tuple.Create("NavigationViewItemForegroundPointerOver", "TreeViewItemForegroundPointerOver"),
+            Tuple.Create("NavigationViewItemForegroundPressed", "TreeViewItemForegroundPressed"),
+            Tuple.Create("NavigationViewItemForegroundDisabled", "TreeViewItemForegroundDisabled"),
+            Tuple.Create("NavigationViewItemForegroundChecked", "TreeViewItemForegroundSelected"),
+            Tuple.Create("NavigationViewItemForegroundCheckedPointerOver", "TreeViewItemForegroundSelectedPointerOver"),
+            Tuple.Create("NavigationViewItemForegroundCheckedPressed", "TreeViewItemForegroundSelectedPressed"),
+            Tuple.Create("NavigationViewItemForegroundCheckedDisabled", "TreeViewItemForegroundSelectedDisabled"),
+            Tuple.Create("NavigationViewItemForegroundSelected", "TreeViewItemForegroundSelected"),
+            Tuple.Create("NavigationViewItemForegroundSelectedPointerOver", "TreeViewItemForegroundSelectedPointerOver"),
+            Tuple.Create("NavigationViewItemForegroundSelectedPressed", "TreeViewItemForegroundSelectedPressed"),
+            Tuple.Create("NavigationViewItemForegroundSelectedDisabled", "TreeViewItemForegroundSelectedDisabled"),
+            Tuple.Create("NavigationViewItemBorderBrush", "TreeViewItemBorderBrush"),
+            Tuple.Create("NavigationViewItemBorderBrushPointerOver", "TreeViewItemBorderBrushPointerOver"),
+            Tuple.Create("NavigationViewItemBorderBrushPressed", "TreeViewItemBorderBrushPressed"),
+            Tuple.Create("NavigationViewItemBorderBrushDisabled", "TreeViewItemBorderBrushDisabled"),
+            Tuple.Create("NavigationViewItemBorderBrushChecked", "TreeViewItemBorderBrushSelected"),
+            Tuple.Create("NavigationViewItemBorderBrushCheckedPointerOver", "TreeViewItemBorderBrushSelectedPointerOver"),
+            Tuple.Create("NavigationViewItemBorderBrushCheckedPressed", "TreeViewItemBorderBrushSelectedPressed"),
+            Tuple.Create("NavigationViewItemBorderBrushCheckedDisabled", "TreeViewItemBorderBrushSelectedDisabled"),
+            Tuple.Create("NavigationViewItemBorderBrushSelected", "TreeViewItemBorderBrushSelected"),
+            Tuple.Create("NavigationViewItemBorderBrushSelectedPointerOver", "TreeViewItemBorderBrushSelectedPointerOver"),
+            Tuple.Create("NavigationViewItemBorderBrushSelectedPressed", "TreeViewItemBorderBrushSelectedPressed"),
+            Tuple.Create("NavigationViewItemBorderBrushSelectedDisabled", "TreeViewItemBorderBrushSelectedDisabled"),
+            Tuple.Create("NavigationViewSelectionIndicatorForeground", "TreeViewItemSelectionIndicatorForeground")
+        };
+
         [TestMethod]
         public void ShellCanNavigateEveryCatalogRouteWithoutExceptions()
         {
@@ -114,19 +155,7 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(new Thickness(0), navigation.Resources["NavigationViewContentGridBorderThickness"]);
                 Assert.AreEqual(new CornerRadius(0), navigation.Resources["NavigationViewContentGridCornerRadius"]);
                 Assert.AreEqual(Colors.Transparent, ((SolidColorBrush)navigation.Resources["NavigationViewContentBackground"]).Color);
-                foreach (var resourcePair in new[]
-                {
-                    Tuple.Create("NavigationViewItemBackground", "TreeViewItemBackground"),
-                    Tuple.Create("NavigationViewItemBackgroundPointerOver", "TreeViewItemBackgroundPointerOver"),
-                    Tuple.Create("NavigationViewItemBackgroundSelected", "TreeViewItemBackgroundSelected"),
-                    Tuple.Create("NavigationViewItemForeground", "TreeViewItemForeground"),
-                    Tuple.Create("NavigationViewItemForegroundPointerOver", "TreeViewItemForegroundPointerOver"),
-                    Tuple.Create("NavigationViewItemForegroundSelected", "TreeViewItemForegroundSelected"),
-                    Tuple.Create("NavigationViewItemBorderBrush", "TreeViewItemBorderBrush"),
-                    Tuple.Create("NavigationViewItemBorderBrushPointerOver", "TreeViewItemBorderBrushPointerOver"),
-                    Tuple.Create("NavigationViewItemBorderBrushSelected", "TreeViewItemBorderBrushSelected"),
-                    Tuple.Create("NavigationViewSelectionIndicatorForeground", "TreeViewItemSelectionIndicatorForeground")
-                })
+                foreach (var resourcePair in WpfGalleryNavigationResourceAliases)
                 {
                     AssertNavigationViewResourceAlias(navigation, resourcePair.Item1, resourcePair.Item2);
                 }
@@ -307,19 +336,36 @@ namespace ModernWpf.Gallery.Tests
 
                         ThemeManager.Current.ApplicationTheme = ApplicationTheme.Light;
                         WpfTestHost.DoEvents();
-                        AssertNavigationViewResourceAlias(navigation, "NavigationViewItemForeground", "TreeViewItemForeground");
-                        AssertNavigationViewResourceAlias(navigation, "NavigationViewSelectionIndicatorForeground", "TreeViewItemSelectionIndicatorForeground");
+                        AssertWpfGalleryNavigationResourceAliases(navigation);
 
                         ThemeManager.Current.ApplicationTheme = ApplicationTheme.Dark;
                         WpfTestHost.DoEvents();
-                        AssertNavigationViewResourceAlias(navigation, "NavigationViewItemForeground", "TreeViewItemForeground");
-                        AssertNavigationViewResourceAlias(navigation, "NavigationViewSelectionIndicatorForeground", "TreeViewItemSelectionIndicatorForeground");
+                        AssertWpfGalleryNavigationResourceAliases(navigation);
                     });
                 }
                 finally
                 {
                     ThemeManager.Current.ApplicationTheme = previousTheme;
                     WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void ShellNavigationViewAliasesHaveWpfGalleryTreeViewHighContrastTokens()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var themeResources = new ModernWpf.ThemeResources();
+                foreach (var themeName in new[] { "Light", "Dark", "HighContrast" })
+                {
+                    var themeDictionary = GetModernWpfThemeDictionary(themeResources, themeName);
+                    foreach (var resourcePair in WpfGalleryNavigationResourceAliases)
+                    {
+                        Assert.IsTrue(
+                            themeDictionary.Contains(resourcePair.Item2),
+                            themeName + " is missing the WPF Gallery TreeView token " + resourcePair.Item2 + " for " + resourcePair.Item1 + ".");
+                    }
                 }
             });
         }
@@ -731,6 +777,23 @@ namespace ModernWpf.Gallery.Tests
                 scope.TryFindResource(treeViewResourceKey),
                 scope.TryFindResource(navigationResourceKey),
                 navigationResourceKey);
+        }
+
+        private static void AssertWpfGalleryNavigationResourceAliases(FrameworkElement scope)
+        {
+            foreach (var resourcePair in WpfGalleryNavigationResourceAliases)
+            {
+                AssertNavigationViewResourceAlias(scope, resourcePair.Item1, resourcePair.Item2);
+            }
+        }
+
+        private static ResourceDictionary GetModernWpfThemeDictionary(ModernWpf.ThemeResources themeResources, string themeName)
+        {
+            var method = typeof(ModernWpf.ThemeResources).GetMethod(
+                "GetThemeDictionary",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            Assert.IsNotNull(method, "ModernWpf.ThemeResources.GetThemeDictionary should remain available to verify shell resource tokens.");
+            return (ResourceDictionary)method.Invoke(themeResources, new object[] { themeName });
         }
 
         private static void AssertPageHeaderLabel(Label label, string automationName, AutomationHeadingLevel headingLevel, int tabIndex)
