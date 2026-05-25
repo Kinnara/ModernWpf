@@ -106,6 +106,16 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.AppWindowTitleBarSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 53 tests per target. The generated ModernWpf AppWindowTitleBar extension page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\AppWindowTitleBarPage.xaml` / `.xaml.cs`: the `TitleBar` intro link text, `AppWindowTitleBar color customization`, `Extending content into the AppWindowTitleBar area`, and `AppWindowTitleBar preferred theme and height options` examples. `WindowingSampleFactory.CreateExamples` now covers AppWindowTitleBar as a source-backed Windowing/Platform WinUI extension page, preserves the official C# snippets and source-facing names such as `ShowWindowButton`, `Background`, `ExtendContentCheckBox`, `HeightComboBox`, `ShowThemeHeightButton`, and `ThemeComboBox`, maps AppWindow title-bar colors/theme to ModernWpf title-bar attached properties, and exposes `GallerySample_AppWindowTitleBar_Root` / `GallerySample_AppWindowTitleBar_ShowWindowButton`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls AppWindowTitleBar -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-034556-057-105336/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required AppWindowTitleBar sample element was found, primary crops use ModernWpf `GallerySample_AppWindowTitleBar_ShowWindowButton` against WinUI `ShowWindowButton`, crop sizes match at `110x32`, and Light primary delta is `4.72`. The whole-window Light mean delta is `127.04` and remains diagnostic because the installed WinUI shell stayed dark while ModernWpf was captured in Light.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls AppWindowTitleBar -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-034621-390-84708/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required AppWindowTitleBar sample element was found, primary crops use the same button mapping, crop sizes match at `110x32`, Dark primary delta is `9.21`, and whole-window Dark mean delta is `23.8`.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the AppWindowTitleBar WinUI example alignment. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages and existing compiler warnings, ending with `0 Error(s)`.
+- `git diff --check`
+  - Passed with only Git's normal LF-to-CRLF working-copy warnings for touched files.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.CreateMultipleWindowsSampleMatchesWinUIGalleryExample|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 52 tests per target. The generated ModernWpf Multiple windows extension page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\CreateMultipleWindowsPage.xaml` / `.xaml.cs`: one `Create single threaded Multiple Top level Windows(MTW).` example with a source-facing `Control1` button and the official `Window/CreateWindowSample1.txt` C# snippet text. `WindowingSampleFactory.CreateExamples` now covers CreateMultipleWindows as a source-backed Windowing/Platform WinUI extension page, `ItemPage` queries the Windowing factory before falling back to generic generated content, and the sample exposes `GallerySample_CreateMultipleWindows_Root` / `GallerySample_CreateMultipleWindows_Control1`.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls CreateMultipleWindows -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -2336,6 +2346,28 @@ WinUI route id `CreateMultipleWindows` to the displayed page title `Multiple
 windows` before waiting for the installed reference page. Avoid reopening this
 source shape unless a new local WinUI source, windowing behavior gap, or crop
 regression appears.
+The generated ModernWpf AppWindowTitleBar extension page now uses the local
+official WinUI Gallery three-example structure from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\AppWindowTitleBarPage.xaml`
+and `.xaml.cs`: color customization, extending content into the title-bar area,
+and preferred theme/height options. `WindowingSampleFactory.CreateExamples` now
+exposes AppWindowTitleBar as a source-backed Windowing/Platform WinUI extension
+page, and `ItemPage` asks the Windowing factory for WinUI-style intro content
+after the Media intro hook. The WPF adaptation keeps WinUI's visible intro,
+example headers, official C# snippets, source-facing names (`ShowWindowButton`,
+`Background`, `Foreground`, `ButtonBackground`, `ExtendContentCheckBox`,
+`HeightComboBox`, `ShowThemeHeightButton`, and `ThemeComboBox`), default color
+values, combo-box items, and button disabling/re-enable behavior while mapping
+live windows to ModernWpf title-bar attached properties and a `TitleBarButton`
+style for system-button colors. Current AppWindowTitleBar WinUI-reference
+evidence is `artifacts/visual-checks/20260525-034556-057-105336/report.md` for
+Light and `artifacts/visual-checks/20260525-034621-390-84708/report.md` for
+Dark, both with ModernWpf and installed WinUI 3 Gallery `Passed`, primary crops
+matching at `110x32`, and primary deltas `4.72` / `9.21`. The visual harness
+uses ModernWpf `GallerySample_AppWindowTitleBar_ShowWindowButton` against WinUI
+`ShowWindowButton` for the primary crop. Avoid reopening AppWindowTitleBar's
+source shape unless a new local WinUI source, ModernWpf title-bar capability,
+or crop regression appears.
 The generated ModernWpf RichTextBlock extension page now uses the local
 official WinUI Gallery four-example structure from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\RichTextBlockPage.xaml`:

@@ -4,10 +4,12 @@ using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using ModernWpf.Controls.Primitives;
+using ModernWpf.Gallery.Models;
 using Mux = ModernWpf.Controls;
 
 namespace ModernWpf.Gallery.Pages
@@ -36,6 +38,64 @@ var childWindow = new Window()
 childWindow.AppWindow.ResizeClient(new SizeInt32(500, 500));
 childWindow.Activate();";
 
+        private const string AppWindowTitleBarColorsCSharp =
+@"using Microsoft.UI;
+using Microsoft.UI.Windowing;
+using Microsoft.UI.Xaml;
+using Windows.UI;
+
+public sealed partial class AppWindowTitleBarWindow : Window
+{
+    public AppWindowTitleBarWindow()
+    {
+        InitializeComponent();
+
+        AppWindow.TitleBar.BackgroundColor = ColorHelper.FromArgb($(BackgroundColor));
+        AppWindow.TitleBar.ForegroundColor = ColorHelper.FromArgb($(ForegroundColor));
+        AppWindow.TitleBar.ButtonBackgroundColor = ColorHelper.FromArgb($(ButtonBackgroundColor));
+        AppWindow.TitleBar.ButtonForegroundColor = ColorHelper.FromArgb($(ButtonForegroundColor));
+        AppWindow.TitleBar.ButtonHoverBackgroundColor = ColorHelper.FromArgb($(ButtonHoverBackgroundColor));
+        AppWindow.TitleBar.ButtonHoverForegroundColor = ColorHelper.FromArgb($(ButtonHoverForegroundColor));
+        AppWindow.TitleBar.InactiveBackgroundColor = ColorHelper.FromArgb($(InactiveBackgroundColor));
+        AppWindow.TitleBar.InactiveForegroundColor = ColorHelper.FromArgb($(InactiveForegroundColor));
+        AppWindow.TitleBar.ButtonInactiveBackgroundColor = ColorHelper.FromArgb($(ButtonInactiveBackgroundColor));
+        AppWindow.TitleBar.ButtonInactiveForegroundColor = ColorHelper.FromArgb($(ButtonInactiveForegroundColor));
+        AppWindow.TitleBar.ButtonPressedBackgroundColor = ColorHelper.FromArgb($(ButtonPressedBackgroundColor));
+        AppWindow.TitleBar.ButtonPressedForegroundColor = ColorHelper.FromArgb($(ButtonPressedForegroundColor));
+    }
+}";
+
+        private const string AppWindowTitleBarExtendCSharp =
+@"using Microsoft.UI.Windowing;
+using Microsoft.UI.Xaml;
+
+public sealed partial class AppWindowTitleBarExtendWindow : Window
+{
+    public AppWindowTitleBarExtendWindow()
+    {
+        InitializeComponent();
+        AppWindow.TitleBar.ExtendsContentIntoTitleBar = $(ExtendsContentIntoTitleBar);
+        if (AppWindow.TitleBar.ExtendsContentIntoTitleBar)
+        {
+            AppWindow.TitleBar.HeightOption = TitleBarHeightOption.$(TitleBarHeightOption);
+        }
+    }
+}";
+
+        private const string AppWindowTitleBarThemeCSharp =
+@"using Microsoft.UI;
+using Microsoft.UI.Windowing;
+using Microsoft.UI.Xaml;
+
+public sealed partial class AppWindowTitleBarThemeHeightWindow : Window
+{
+    public AppWindowTitleBarThemeHeightWindow()
+    {
+        InitializeComponent();
+        AppWindow.TitleBar.PreferredTheme = TitleBarTheme.$(PreferredTheme);
+    }
+}";
+
         public static UIElement Create(string uniqueId)
         {
             switch (uniqueId)
@@ -57,6 +117,8 @@ childWindow.Activate();";
         {
             switch (uniqueId)
             {
+                case "AppWindowTitleBar":
+                    return CreateAppWindowTitleBarExamples();
                 case "CreateMultipleWindows":
                     return new[]
                     {
@@ -68,6 +130,17 @@ childWindow.Activate();";
                     };
                 default:
                     return Array.Empty<GalleryExample>();
+            }
+        }
+
+        public static UIElement CreateIntroContent(string uniqueId)
+        {
+            switch (uniqueId)
+            {
+                case "AppWindowTitleBar":
+                    return CreateAppWindowTitleBarIntroContent();
+                default:
+                    return null;
             }
         }
 
@@ -152,73 +225,274 @@ childWindow.Activate();";
 
         private static UIElement CreateAppWindowTitleBarSample()
         {
-            var panel = CreateSamplePanel("AppWindowTitleBar maps to ModernWpf title bar attached properties for colors, inactive state, and system buttons.");
-            var preview = CreateWindowPreview("Title bar", "Active state", CreateBrush("#0078D4"), Brushes.White);
-            var output = CreateOutput("Choose a palette and open a themed WPF window.");
+            return CreateAppWindowTitleBarColorExampleContent(assignRootAutomationId: true);
+        }
 
-            var background = CreatePaletteCombo("Background", 0);
-            var foreground = CreatePaletteCombo("Foreground", 4);
-            var inactive = new ToggleButton
+        private static TextBlock CreateAppWindowTitleBarIntroContent()
+        {
+            var textBlock = new TextBlock
             {
-                Content = "Inactive preview",
-                Padding = new Thickness(12, 6, 12, 6),
-                Margin = new Thickness(0, 22, 12, 0)
+                Margin = new Thickness(0, 8, 0, 0),
+                TextWrapping = TextWrapping.Wrap
             };
-            var showIcon = new ToggleButton
+            textBlock.Inlines.Add(new Run("For the default title bar and basic scenarios, use the "));
+
+            var hyperlink = new Hyperlink(new Run("TitleBar"));
+            hyperlink.Click += OnTitleBarHyperlinkClick;
+            textBlock.Inlines.Add(hyperlink);
+
+            textBlock.Inlines.Add(new Run(" control."));
+            return textBlock;
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateAppWindowTitleBarExamples()
+        {
+            return new[]
             {
-                Content = "Icon",
-                IsChecked = true,
-                Padding = new Thickness(12, 6, 12, 6),
-                Margin = new Thickness(0, 22, 12, 0)
+                new GalleryExample(
+                    "AppWindowTitleBar color customization",
+                    CreateAppWindowTitleBarColorExampleContent(assignRootAutomationId: true),
+                    null,
+                    AppWindowTitleBarColorsCSharp),
+                new GalleryExample(
+                    "Extending content into the AppWindowTitleBar area",
+                    CreateAppWindowTitleBarExtendExampleContent(),
+                    null,
+                    AppWindowTitleBarExtendCSharp),
+                new GalleryExample(
+                    "AppWindowTitleBar preferred theme and height options",
+                    CreateAppWindowTitleBarThemeExampleContent(),
+                    null,
+                    AppWindowTitleBarThemeCSharp)
+            };
+        }
+
+        private static GallerySamplePanel CreateAppWindowTitleBarColorExampleContent(bool assignRootAutomationId)
+        {
+            var root = new GallerySamplePanel();
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("AppWindowTitleBar"));
+            }
+
+            var background = CreateTitleBarColorSelector("Background", "BackgroundColor", "#FFF2F6FA");
+            var foreground = CreateTitleBarColorSelector("Foreground", "ForegroundColor", "#FF1E2933");
+            var buttonBackground = CreateTitleBarColorSelector("ButtonBackground", "ButtonBackgroundColor", "#FF3B82F6");
+            var buttonForeground = CreateTitleBarColorSelector("ButtonForeground", "ButtonForegroundColor", "#FFFFFFFF");
+            var buttonHoverBackground = CreateTitleBarColorSelector("ButtonHoverBackground", "ButtonHoverBackgroundColor", "#FF2563EB");
+            var buttonHoverForeground = CreateTitleBarColorSelector("ButtonHoverForeground", "ButtonHoverForegroundColor", "#FFFFFFFF");
+            var inactiveBackground = CreateTitleBarColorSelector("InactiveBackground", "InactiveBackgroundColor", "#FFE5EAF0");
+            var inactiveForeground = CreateTitleBarColorSelector("InactiveForeground", "InactiveForegroundColor", "#FF6B7280");
+            var buttonInactiveBackground = CreateTitleBarColorSelector("ButtonInactiveBackground", "ButtonInactiveBackgroundColor", "#FFCBD5E1");
+            var buttonInactiveForeground = CreateTitleBarColorSelector("ButtonInactiveForeground", "ButtonInactiveForegroundColor", "#FF475569");
+            var buttonPressedBackground = CreateTitleBarColorSelector("ButtonPressedBackground", "ButtonPressedBackgroundColor", "#FF1D4ED8");
+            var buttonPressedForeground = CreateTitleBarColorSelector("ButtonPressedForeground", "ButtonPressedForegroundColor", "#FFFFFFFF");
+
+            Window sampleWindow = null;
+            var showWindowButton = new Button
+            {
+                Name = "ShowWindowButton",
+                Content = "Show window",
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+            AutomationProperties.SetName(showWindowButton, "Show window");
+            GalleryAutomation.WithAutomationId(showWindowButton, GalleryAutomation.SampleElementId("AppWindowTitleBar", "ShowWindowButton"));
+            showWindowButton.Click += delegate
+            {
+                showWindowButton.IsEnabled = false;
+                sampleWindow = CreateModernWindow((FrameworkElement)showWindowButton, "AppWindowTitleBarWindow", 620, 380);
+                ApplyAppWindowTitleBarColorSettings(
+                    sampleWindow,
+                    background,
+                    foreground,
+                    buttonBackground,
+                    buttonForeground,
+                    buttonHoverBackground,
+                    buttonHoverForeground,
+                    inactiveBackground,
+                    inactiveForeground,
+                    buttonInactiveBackground,
+                    buttonInactiveForeground,
+                    buttonPressedBackground,
+                    buttonPressedForeground);
+                sampleWindow.Content = CreateWindowBody(
+                    "AppWindowTitleBar color customization",
+                    "This WPF window maps WinUI AppWindowTitleBar colors to ModernWpf title bar attached properties.");
+                sampleWindow.Closed += delegate
+                {
+                    showWindowButton.IsEnabled = true;
+                    sampleWindow = null;
+                };
+                sampleWindow.Show();
             };
 
-            Action updatePreview = delegate
-            {
-                var bg = inactive.IsChecked == true ? CreateBrush("#E6E6E6") : GetPaletteBrush(background);
-                var fg = inactive.IsChecked == true ? CreateBrush("#606060") : GetPaletteBrush(foreground);
-                ApplyPreviewChrome(preview, bg, fg, showIcon.IsChecked == true);
-                SetPreviewText(preview, "Title bar", inactive.IsChecked == true ? "Inactive state" : "Active state");
-            };
-            background.SelectionChanged += delegate { updatePreview(); };
-            foreground.SelectionChanged += delegate { updatePreview(); };
-            inactive.Checked += delegate { updatePreview(); };
-            inactive.Unchecked += delegate { updatePreview(); };
-            showIcon.Checked += delegate { updatePreview(); };
-            showIcon.Unchecked += delegate { updatePreview(); };
+            root.Children.Add(showWindowButton);
 
-            var settings = new StackPanel
+            var options = new Grid
             {
-                Orientation = Orientation.Horizontal,
-                Margin = new Thickness(0, 12, 0, 0)
+                Margin = new Thickness(0, 16, 0, 0)
             };
-            settings.Children.Add(background);
-            settings.Children.Add(foreground);
-            settings.Children.Add(inactive);
-            settings.Children.Add(showIcon);
+            options.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            options.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            options.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 
-            var open = CreateButton("Open themed window");
-            open.Margin = new Thickness(0, 12, 8, 0);
-            open.Click += delegate
+            var normalStates = new StackPanel();
+            AddTitleBarColorOption(normalStates, "BackgroundColor", background);
+            AddTitleBarColorOption(normalStates, "ForegroundColor", foreground);
+            AddTitleBarColorOption(normalStates, "ButtonBackgroundColor", buttonBackground);
+            AddTitleBarColorOption(normalStates, "ButtonForegroundColor", buttonForeground);
+            AddTitleBarColorOption(normalStates, "ButtonHoverBackgroundColor", buttonHoverBackground);
+            AddTitleBarColorOption(normalStates, "ButtonHoverForegroundColor", buttonHoverForeground);
+            Grid.SetColumn(normalStates, 0);
+
+            var separator = new Border
             {
-                var window = CreateModernWindow((FrameworkElement)open, "AppWindowTitleBar equivalent", 620, 380);
-                Mux.TitleBar.SetBackground(window, GetPaletteBrush(background));
-                Mux.TitleBar.SetForeground(window, GetPaletteBrush(foreground));
-                Mux.TitleBar.SetInactiveBackground(window, CreateBrush("#E6E6E6"));
-                Mux.TitleBar.SetInactiveForeground(window, CreateBrush("#606060"));
-                Mux.TitleBar.SetIsIconVisible(window, showIcon.IsChecked == true);
-                window.Content = CreateWindowBody(
-                    "Custom title bar colors",
-                    "ModernWpf exposes WPF attached properties for active and inactive title bar appearance.");
-                window.Show();
-                output.Text = "Opened themed window using ModernWpf title bar attached properties.";
+                Width = 1,
+                Margin = new Thickness(16, 0, 16, 0)
+            };
+            separator.SetResourceReference(Border.BackgroundProperty, "DividerStrokeColorDefaultBrush");
+            Grid.SetColumn(separator, 1);
+
+            var inactiveStates = new StackPanel();
+            AddTitleBarColorOption(inactiveStates, "InactiveBackgroundColor", inactiveBackground);
+            AddTitleBarColorOption(inactiveStates, "InactiveForegroundColor", inactiveForeground);
+            AddTitleBarColorOption(inactiveStates, "ButtonInactiveBackgroundColor", buttonInactiveBackground);
+            AddTitleBarColorOption(inactiveStates, "ButtonInactiveForegroundColor", buttonInactiveForeground);
+            AddTitleBarColorOption(inactiveStates, "ButtonPressedBackgroundColor", buttonPressedBackground);
+            AddTitleBarColorOption(inactiveStates, "ButtonPressedForegroundColor", buttonPressedForeground);
+            Grid.SetColumn(inactiveStates, 2);
+
+            options.Children.Add(normalStates);
+            options.Children.Add(separator);
+            options.Children.Add(inactiveStates);
+            root.Children.Add(options);
+
+            return root;
+        }
+
+        private static GallerySamplePanel CreateAppWindowTitleBarExtendExampleContent()
+        {
+            var root = new GallerySamplePanel();
+            Window extendWindow = null;
+
+            var showExtendButton = new Button
+            {
+                Name = "ShowExtendButton",
+                Content = "Show window",
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+            AutomationProperties.SetName(showExtendButton, "Show window");
+
+            var extendContentCheckBox = new CheckBox
+            {
+                Name = "ExtendContentCheckBox",
+                Margin = new Thickness(0, 0, 0, 12),
+                Content = "Extend content into title bar",
+                IsChecked = true
+            };
+            var heightComboBox = new ComboBox
+            {
+                Name = "HeightComboBox",
+                Width = 200,
+                ItemsSource = new[] { "Standard", "Tall" },
+                SelectedIndex = 0,
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+            ControlHelper.SetHeader(heightComboBox, "TitleBarHeightOption");
+
+            showExtendButton.Click += delegate
+            {
+                showExtendButton.IsEnabled = false;
+                extendWindow = CreateModernWindow((FrameworkElement)showExtendButton, "AppWindowTitleBarExtendWindow", 620, 380);
+                Mux.TitleBar.SetExtendViewIntoTitleBar(extendWindow, extendContentCheckBox.IsChecked == true);
+                extendWindow.Content = CreateWindowBody(
+                    "Extending content into the AppWindowTitleBar area",
+                    "ModernWpf maps this to TitleBar.ExtendViewIntoTitleBar; the selected height option is represented in the sample source.");
+                extendWindow.Closed += delegate
+                {
+                    showExtendButton.IsEnabled = true;
+                    extendWindow = null;
+                };
+                extendWindow.Show();
             };
 
-            panel.Children.Add(preview);
-            panel.Children.Add(settings);
-            panel.Children.Add(open);
-            panel.Children.Add(output);
-            updatePreview();
-            return panel;
+            extendContentCheckBox.Checked += delegate
+            {
+                if (extendWindow != null)
+                {
+                    Mux.TitleBar.SetExtendViewIntoTitleBar(extendWindow, true);
+                }
+            };
+            extendContentCheckBox.Unchecked += delegate
+            {
+                if (extendWindow != null)
+                {
+                    Mux.TitleBar.SetExtendViewIntoTitleBar(extendWindow, false);
+                }
+            };
+
+            var options = new StackPanel
+            {
+                Margin = new Thickness(0, 16, 0, 0)
+            };
+            options.Children.Add(extendContentCheckBox);
+            options.Children.Add(heightComboBox);
+
+            root.Children.Add(showExtendButton);
+            root.Children.Add(options);
+            return root;
+        }
+
+        private static GallerySamplePanel CreateAppWindowTitleBarThemeExampleContent()
+        {
+            var root = new GallerySamplePanel();
+            Window themeWindow = null;
+
+            var showThemeHeightButton = new Button
+            {
+                Name = "ShowThemeHeightButton",
+                Content = "Show window",
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+            AutomationProperties.SetName(showThemeHeightButton, "Show window");
+
+            var themeComboBox = new ComboBox
+            {
+                Name = "ThemeComboBox",
+                Width = 200,
+                ItemsSource = new[] { "UseDefaultAppMode", "Light", "Dark" },
+                SelectedIndex = 1,
+                Margin = new Thickness(0, 16, 0, 0),
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+            ControlHelper.SetHeader(themeComboBox, "TitleBarTheme");
+
+            showThemeHeightButton.Click += delegate
+            {
+                showThemeHeightButton.IsEnabled = false;
+                themeWindow = CreateModernWindow((FrameworkElement)showThemeHeightButton, "AppWindowTitleBarThemeHeightWindow", 620, 380);
+                ThemeManager.SetRequestedTheme(themeWindow, GetElementTheme(themeComboBox.SelectedItem as string));
+                themeWindow.Content = CreateWindowBody(
+                    "AppWindowTitleBar preferred theme",
+                    "ModernWpf maps the title bar theme selection to the WPF window requested theme.");
+                themeWindow.Closed += delegate
+                {
+                    showThemeHeightButton.IsEnabled = true;
+                    themeWindow = null;
+                };
+                themeWindow.Show();
+            };
+            themeComboBox.SelectionChanged += delegate
+            {
+                if (themeWindow != null)
+                {
+                    ThemeManager.SetRequestedTheme(themeWindow, GetElementTheme(themeComboBox.SelectedItem as string));
+                }
+            };
+
+            root.Children.Add(showThemeHeightButton);
+            root.Children.Add(themeComboBox);
+            return root;
         }
 
         private static UIElement CreateMultipleWindowsSample()
@@ -352,6 +626,143 @@ childWindow.Activate();";
             panel.Children.Add(output);
             updatePreview();
             return panel;
+        }
+
+        private static Button CreateTitleBarColorSelector(string name, string automationName, string color)
+        {
+            var swatch = new Border
+            {
+                Width = 30,
+                Height = 18,
+                Background = CreateBrush(color),
+                BorderThickness = new Thickness(1),
+                CornerRadius = new CornerRadius(2)
+            };
+            swatch.SetResourceReference(Border.BorderBrushProperty, "ControlStrokeColorDefaultBrush");
+
+            var button = new Button
+            {
+                Name = name,
+                Width = 48,
+                Height = 32,
+                Padding = new Thickness(6),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Content = swatch,
+                Tag = color,
+                ToolTip = automationName
+            };
+            AutomationProperties.SetName(button, automationName);
+            return button;
+        }
+
+        private static void AddTitleBarColorOption(StackPanel stackPanel, string label, Button selector)
+        {
+            stackPanel.Children.Add(new TextBlock
+            {
+                Text = label,
+                Margin = stackPanel.Children.Count == 0 ? new Thickness(0) : new Thickness(0, 8, 0, 0)
+            });
+            stackPanel.Children.Add(selector);
+        }
+
+        private static void ApplyAppWindowTitleBarColorSettings(
+            Window window,
+            Button background,
+            Button foreground,
+            Button buttonBackground,
+            Button buttonForeground,
+            Button buttonHoverBackground,
+            Button buttonHoverForeground,
+            Button inactiveBackground,
+            Button inactiveForeground,
+            Button buttonInactiveBackground,
+            Button buttonInactiveForeground,
+            Button buttonPressedBackground,
+            Button buttonPressedForeground)
+        {
+            Mux.TitleBar.SetBackground(window, GetTitleBarColorBrush(background));
+            Mux.TitleBar.SetForeground(window, GetTitleBarColorBrush(foreground));
+            Mux.TitleBar.SetInactiveBackground(window, GetTitleBarColorBrush(inactiveBackground));
+            Mux.TitleBar.SetInactiveForeground(window, GetTitleBarColorBrush(inactiveForeground));
+            Mux.TitleBar.SetButtonStyle(
+                window,
+                CreateTitleBarButtonStyle(
+                    GetTitleBarColorBrush(buttonBackground),
+                    GetTitleBarColorBrush(buttonForeground),
+                    GetTitleBarColorBrush(buttonHoverBackground),
+                    GetTitleBarColorBrush(buttonHoverForeground),
+                    GetTitleBarColorBrush(buttonInactiveBackground),
+                    GetTitleBarColorBrush(buttonInactiveForeground),
+                    GetTitleBarColorBrush(buttonPressedBackground),
+                    GetTitleBarColorBrush(buttonPressedForeground)));
+        }
+
+        private static Style CreateTitleBarButtonStyle(
+            Brush background,
+            Brush foreground,
+            Brush hoverBackground,
+            Brush hoverForeground,
+            Brush inactiveBackground,
+            Brush inactiveForeground,
+            Brush pressedBackground,
+            Brush pressedForeground)
+        {
+            var style = new Style(typeof(TitleBarButton));
+            style.Setters.Add(new Setter(Control.BackgroundProperty, background));
+            style.Setters.Add(new Setter(Control.ForegroundProperty, foreground));
+            style.Setters.Add(new Setter(TitleBarButton.HoverBackgroundProperty, hoverBackground));
+            style.Setters.Add(new Setter(TitleBarButton.HoverForegroundProperty, hoverForeground));
+            style.Setters.Add(new Setter(TitleBarButton.InactiveBackgroundProperty, inactiveBackground));
+            style.Setters.Add(new Setter(TitleBarButton.InactiveForegroundProperty, inactiveForeground));
+            style.Setters.Add(new Setter(TitleBarButton.PressedBackgroundProperty, pressedBackground));
+            style.Setters.Add(new Setter(TitleBarButton.PressedForegroundProperty, pressedForeground));
+            return style;
+        }
+
+        private static Brush GetTitleBarColorBrush(Button selector)
+        {
+            return CreateBrush((string)selector.Tag);
+        }
+
+        private static ElementTheme GetElementTheme(string titleBarTheme)
+        {
+            switch (titleBarTheme)
+            {
+                case "Light":
+                    return ElementTheme.Light;
+                case "Dark":
+                    return ElementTheme.Dark;
+                default:
+                    return ElementTheme.Default;
+            }
+        }
+
+        private static void OnTitleBarHyperlinkClick(object sender, RoutedEventArgs e)
+        {
+            var page = FindLogicalAncestor<ItemPage>(sender as DependencyObject);
+            var target = GalleryCatalog.FindItem("TitleBar");
+            if (page != null && target != null)
+            {
+                page.ItemRequested?.Invoke(target);
+                e.Handled = true;
+            }
+        }
+
+        private static T FindLogicalAncestor<T>(DependencyObject current)
+            where T : class
+        {
+            while (current != null)
+            {
+                var match = current as T;
+                if (match != null)
+                {
+                    return match;
+                }
+
+                current = LogicalTreeHelper.GetParent(current);
+            }
+
+            return null;
         }
 
         private static Window CreateModernWindow(FrameworkElement ownerElement, string title, double width, double height)

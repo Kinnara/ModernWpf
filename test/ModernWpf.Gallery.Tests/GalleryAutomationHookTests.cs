@@ -41,6 +41,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "MapControl", "GallerySample_MapControl_Root", "GallerySample_MapControl_MapControl" };
             yield return new object[] { "WebView2", "GallerySample_WebView2_Root", "GallerySample_WebView2_WebView2" };
             yield return new object[] { "CreateMultipleWindows", "GallerySample_CreateMultipleWindows_Root", "GallerySample_CreateMultipleWindows_Control1" };
+            yield return new object[] { "AppWindowTitleBar", "GallerySample_AppWindowTitleBar_Root", "GallerySample_AppWindowTitleBar_ShowWindowButton" };
             yield return new object[] { "FlipView", "GallerySample_FlipView_Root", "GallerySample_FlipView_FlipView" };
             yield return new object[] { "ItemsView", "GallerySample_ItemsView_Root", "GallerySample_ItemsView_ItemsView" };
             yield return new object[] { "CalendarDatePicker", "GallerySample_CalendarDatePicker_Root", "GallerySample_CalendarDatePicker_CalendarDatePicker" };
@@ -3760,6 +3761,118 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void AppWindowTitleBarSampleMatchesWinUIGalleryExamples()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("AppWindowTitleBar"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.IsTrue(page.ShowIntroContent);
+                    var intro = page.IntroContent as TextBlock;
+                    Assert.IsNotNull(intro);
+                    Assert.AreEqual(new Thickness(0, 8, 0, 0), intro.Margin);
+                    Assert.AreEqual(TextWrapping.Wrap, intro.TextWrapping);
+                    Assert.AreEqual(
+                        "For the default title bar and basic scenarios, use the TitleBar control.",
+                        new TextRange(intro.ContentStart, intro.ContentEnd).Text.Trim());
+
+                    Assert.AreEqual(3, page.Examples.Count);
+                    Assert.AreEqual("AppWindowTitleBar color customization", page.Examples[0].HeaderText);
+                    Assert.AreEqual("Extending content into the AppWindowTitleBar area", page.Examples[1].HeaderText);
+                    Assert.AreEqual("AppWindowTitleBar preferred theme and height options", page.Examples[2].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    Assert.IsNull(page.Examples[0].XamlCode);
+                    Assert.IsNull(page.Examples[1].XamlCode);
+                    Assert.IsNull(page.Examples[2].XamlCode);
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "AppWindow.TitleBar.BackgroundColor = ColorHelper.FromArgb($(BackgroundColor));");
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "AppWindow.TitleBar.ButtonPressedForegroundColor = ColorHelper.FromArgb($(ButtonPressedForegroundColor));");
+                    StringAssert.Contains(page.Examples[1].CSharpCode, "AppWindow.TitleBar.ExtendsContentIntoTitleBar = $(ExtendsContentIntoTitleBar);");
+                    StringAssert.Contains(page.Examples[1].CSharpCode, "AppWindow.TitleBar.HeightOption = TitleBarHeightOption.$(TitleBarHeightOption);");
+                    StringAssert.Contains(page.Examples[2].CSharpCode, "AppWindow.TitleBar.PreferredTheme = TitleBarTheme.$(PreferredTheme);");
+
+                    var colorRoot = (GallerySamplePanel)page.Examples[0].ExampleContent;
+                    Assert.AreEqual(2, colorRoot.Children.Count);
+                    var showWindowButton = (Button)FindByAutomationId(page, "GallerySample_AppWindowTitleBar_ShowWindowButton");
+                    Assert.IsNotNull(showWindowButton);
+                    Assert.AreSame(showWindowButton, colorRoot.Children[0]);
+                    Assert.AreEqual("ShowWindowButton", showWindowButton.Name);
+                    Assert.AreEqual("Show window", showWindowButton.Content);
+                    Assert.AreEqual("Show window", AutomationProperties.GetName(showWindowButton));
+
+                    var options = (Grid)colorRoot.Children[1];
+                    Assert.AreEqual(3, options.ColumnDefinitions.Count);
+                    AssertTitleBarColorSelector(page, "Background", "BackgroundColor", "#FFF2F6FA");
+                    AssertTitleBarColorSelector(page, "Foreground", "ForegroundColor", "#FF1E2933");
+                    AssertTitleBarColorSelector(page, "ButtonBackground", "ButtonBackgroundColor", "#FF3B82F6");
+                    AssertTitleBarColorSelector(page, "ButtonForeground", "ButtonForegroundColor", "#FFFFFFFF");
+                    AssertTitleBarColorSelector(page, "ButtonHoverBackground", "ButtonHoverBackgroundColor", "#FF2563EB");
+                    AssertTitleBarColorSelector(page, "ButtonHoverForeground", "ButtonHoverForegroundColor", "#FFFFFFFF");
+                    AssertTitleBarColorSelector(page, "InactiveBackground", "InactiveBackgroundColor", "#FFE5EAF0");
+                    AssertTitleBarColorSelector(page, "InactiveForeground", "InactiveForegroundColor", "#FF6B7280");
+                    AssertTitleBarColorSelector(page, "ButtonInactiveBackground", "ButtonInactiveBackgroundColor", "#FFCBD5E1");
+                    AssertTitleBarColorSelector(page, "ButtonInactiveForeground", "ButtonInactiveForegroundColor", "#FF475569");
+                    AssertTitleBarColorSelector(page, "ButtonPressedBackground", "ButtonPressedBackgroundColor", "#FF1D4ED8");
+                    AssertTitleBarColorSelector(page, "ButtonPressedForeground", "ButtonPressedForegroundColor", "#FFFFFFFF");
+
+                    var extendRoot = (GallerySamplePanel)page.Examples[1].ExampleContent;
+                    Assert.AreEqual(2, extendRoot.Children.Count);
+                    var showExtendButton = FindNamedDescendant<Button>(page, "ShowExtendButton");
+                    Assert.IsNotNull(showExtendButton);
+                    Assert.AreEqual("Show window", showExtendButton.Content);
+                    var extendContentCheckBox = FindNamedDescendant<CheckBox>(page, "ExtendContentCheckBox");
+                    Assert.IsNotNull(extendContentCheckBox);
+                    Assert.AreEqual("Extend content into title bar", extendContentCheckBox.Content);
+                    Assert.AreEqual(true, extendContentCheckBox.IsChecked);
+                    Assert.AreEqual(new Thickness(0, 0, 0, 12), extendContentCheckBox.Margin);
+                    var heightComboBox = FindNamedDescendant<ComboBox>(page, "HeightComboBox");
+                    Assert.IsNotNull(heightComboBox);
+                    Assert.AreEqual(200d, heightComboBox.Width);
+                    Assert.AreEqual("TitleBarHeightOption", ModernWpf.Controls.Primitives.ControlHelper.GetHeader(heightComboBox));
+                    Assert.AreEqual(0, heightComboBox.SelectedIndex);
+                    Assert.AreEqual("Standard", heightComboBox.Items[0]);
+                    Assert.AreEqual("Tall", heightComboBox.Items[1]);
+
+                    var themeRoot = (GallerySamplePanel)page.Examples[2].ExampleContent;
+                    Assert.AreEqual(2, themeRoot.Children.Count);
+                    var showThemeHeightButton = FindNamedDescendant<Button>(page, "ShowThemeHeightButton");
+                    Assert.IsNotNull(showThemeHeightButton);
+                    Assert.AreEqual("Show window", showThemeHeightButton.Content);
+                    var themeComboBox = FindNamedDescendant<ComboBox>(page, "ThemeComboBox");
+                    Assert.IsNotNull(themeComboBox);
+                    Assert.AreEqual(200d, themeComboBox.Width);
+                    Assert.AreEqual("TitleBarTheme", ModernWpf.Controls.Primitives.ControlHelper.GetHeader(themeComboBox));
+                    Assert.AreEqual(1, themeComboBox.SelectedIndex);
+                    Assert.AreEqual("UseDefaultAppMode", themeComboBox.Items[0]);
+                    Assert.AreEqual("Light", themeComboBox.Items[1]);
+                    Assert.AreEqual("Dark", themeComboBox.Items[2]);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
         public void WebView2SampleMatchesWinUIGalleryExample()
         {
             WpfTestHost.Run(() =>
@@ -4887,6 +5000,16 @@ namespace ModernWpf.Gallery.Tests
             var nameProperty = item.GetType().GetProperty("Name");
             Assert.IsNotNull(nameProperty);
             return (string)nameProperty.GetValue(item, null);
+        }
+
+        private static void AssertTitleBarColorSelector(DependencyObject root, string name, string automationName, string color)
+        {
+            var selector = FindNamedDescendant<Button>(root, name);
+            Assert.IsNotNull(selector, name + " color selector is missing.");
+            Assert.AreEqual(48d, selector.Width);
+            Assert.AreEqual(32d, selector.Height);
+            Assert.AreEqual(color, selector.Tag);
+            Assert.AreEqual(automationName, AutomationProperties.GetName(selector));
         }
 
         private static void AssertSelectorBarItem(Mux.SelectorBarItem item, string name, string text, Mux.Symbol? symbol, bool isSelected)
