@@ -106,6 +106,16 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.ThemeShadowSampleMatchesWinUIGalleryExample|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 59 tests per target. The generated ModernWpf ThemeShadow extension page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\ThemeShadowPage.xaml` / `.xaml.cs`: one `ThemeShadow applied to a Border` example, source-facing `Example3Grid`, `ShadowCastGrid`, `ShadowRect`, `shadow`, and `TranslationSliderInApp` names, the official XAML/C# snippets, and the Z-translation slider behavior. `StylesSampleFactory.CreateExamples` now covers ThemeShadow as a source-backed Platform & patterns WinUI extension page, the WPF adaptation maps WinUI `ThemeShadow` to `ThemeShadowChrome`, and the sample exposes `GallerySample_ThemeShadow_Root` / `GallerySample_ThemeShadow_ShadowRect`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls ThemeShadow -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-052819-678-89860/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required ThemeShadow rectangle was found, primary crops use the rendered ModernWpf `GallerySample_ThemeShadow_Root` sample region against the installed WinUI `svPanel` sample region because the standalone slider UIA crop is flat/blank in WPF and the WinUI shadow rectangle is not exposed as a stable automation target, crop sizes are `790x304` vs `843x646`, and Light primary delta is `122.82`. The whole-window Light mean delta is `155.43` and remains diagnostic because shell/chrome/theme surfaces differ more than the sample content.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls ThemeShadow -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-052844-264-102916/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required ThemeShadow rectangle was found, primary crops use the same sample-region mapping, crop sizes are `790x304` vs `843x646`, Dark primary delta is `6.7`, and whole-window Dark mean delta is `13.63`.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the ThemeShadow WinUI example alignment. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages, ending with `0 Warning(s)` and `0 Error(s)`.
+- `git diff --check`
+  - Passed with only Git's normal LF-to-CRLF working-copy warnings for touched files.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.SystemBackdropsSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 58 tests per target. The generated ModernWpf System Backdrops extension page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\SystemBackdropsPage.xaml` / `.xaml.cs`: `Backdrop types`, `MicaController`, and `DesktopAcrylicController`, the source-facing backdrop explanation text, `Show window` buttons, and the official `SystemBackdrops` sample-code files. `StylesSampleFactory.CreateExamples` now covers SystemBackdrops as a source-backed Platform & patterns WinUI extension page before generic generated fallback content.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls SystemBackdrops -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -2420,6 +2430,29 @@ ModernWpf button artifact is flat. Treat those sample-region deltas as
 diagnostic unless a better stable crop becomes available. Avoid reopening
 SystemBackdropElement's source shape unless a new local WinUI source, native
 backdrop strategy, or crop regression appears.
+The generated ModernWpf ThemeShadow extension page now uses the local official
+WinUI Gallery source from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\ThemeShadowPage.xaml`
+and `.xaml.cs`: one `ThemeShadow applied to a Border` example with
+source-facing `Example3Grid`, `ShadowCastGrid`, `ShadowRect`, `shadow`, and
+`TranslationSliderInApp` names, the official source snippets, and the
+`ShadowRect_Loaded` receiver hookup. `StylesSampleFactory.CreateExamples` now
+exposes ThemeShadow as a source-backed Platform & patterns WinUI extension page.
+The WPF adaptation maps the WinUI `ThemeShadow` surface to ModernWpf
+`ThemeShadowChrome`, keeps the source-facing names and 200x200 card surface,
+and updates both `Depth` and `TranslationZ` from the Z-translation slider to
+track the WinUI `ShadowRect.Translation` behavior. Current ThemeShadow
+WinUI-reference evidence is
+`artifacts/visual-checks/20260525-052819-678-89860/report.md` for Light and
+`artifacts/visual-checks/20260525-052844-264-102916/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`; the required
+`GallerySample_ThemeShadow_ShadowRect` artifact is present, while the primary
+crop uses the rendered ModernWpf sample root against the installed WinUI
+`svPanel` sample region because the standalone WPF slider UIA crop is flat and
+the WinUI shadow rectangle is not exposed as a stable automation target. Treat
+the Light sample-region delta as diagnostic unless a better stable crop becomes
+available. Avoid reopening ThemeShadow's source shape unless a new local WinUI
+source, native WPF shadow capability, or crop regression appears.
 The generated ModernWpf Multiple windows extension page now uses the local
 official WinUI Gallery source from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\CreateMultipleWindowsPage.xaml`

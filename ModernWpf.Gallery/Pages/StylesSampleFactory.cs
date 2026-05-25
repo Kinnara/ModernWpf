@@ -17,6 +17,22 @@ namespace ModernWpf.Gallery.Pages
 {
     internal static class StylesSampleFactory
     {
+        private const string ThemeShadowXaml =
+@"<Grid>
+    <Grid x:Name=""ShadowCastGrid""/>
+    <Border x:Name=""ShadowRect"" Translation=""0,0,$(TranslationSlider)"" Loaded=""ShadowRect_Loaded"" Width=""200"" Height=""200"" CornerRadius=""{ThemeResource OverlayCornerRadius}"" Background=""{ThemeResource CardBackgroundFillColorDefaultBrush}""/>
+        <Border.Shadow>
+            <ThemeShadow x:Name=""shadow""/>
+        </Border.Shadow>
+    </Border>
+</Grid>";
+
+        private const string ThemeShadowCSharp =
+@"private void ShadowRect_Loaded(object sender, RoutedEventArgs e)
+{
+    shadow.Receivers.Add(ShadowCastGrid);
+}";
+
         public static UIElement Create(string uniqueId)
         {
             switch (uniqueId)
@@ -54,6 +70,8 @@ namespace ModernWpf.Gallery.Pages
                     return CreateSystemBackdropsExamples(sampleSnippets);
                 case "SystemBackdropElement":
                     return CreateSystemBackdropElementExamples(sampleSnippets);
+                case "ThemeShadow":
+                    return CreateThemeShadowExamples();
                 default:
                     return Array.Empty<GalleryExample>();
             }
@@ -567,61 +585,99 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateThemeShadowSample()
         {
-            var panel = CreateSamplePanel("ThemeShadow uses ModernWpf ThemeShadowChrome to draw a depth-aware shadow around a child.");
+            return CreateThemeShadowExampleContent(assignRootAutomationId: true);
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateThemeShadowExamples()
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "ThemeShadow applied to a Border",
+                    CreateThemeShadowExampleContent(assignRootAutomationId: true),
+                    ThemeShadowXaml,
+                    ThemeShadowCSharp)
+            };
+        }
+
+        private static GallerySamplePanel CreateThemeShadowExampleContent(bool assignRootAutomationId)
+        {
+            var root = new GallerySamplePanel();
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("ThemeShadow"));
+            }
+
+            var shadowCastGrid = new Grid
+            {
+                Name = "ShadowCastGrid"
+            };
+
+            var shadowRect = new Border
+            {
+                Name = "ShadowRect",
+                Width = 200,
+                Height = 200
+            };
+            shadowRect.SetResourceReference(Border.BackgroundProperty, "CardBackgroundFillColorDefaultBrush");
+            shadowRect.SetResourceReference(Border.CornerRadiusProperty, "OverlayCornerRadius");
+            GalleryAutomation.WithAutomationId(shadowRect, GalleryAutomation.SampleElementId("ThemeShadow", "ShadowRect"));
+
             var shadow = new ThemeShadowChrome
             {
+                Name = "shadow",
                 Depth = 32,
-                CornerRadius = new CornerRadius(8),
-                Child = new Border
-                {
-                    Width = 260,
-                    Height = 120,
-                    CornerRadius = new CornerRadius(8),
-                    Background = Brushes.White,
-                    Padding = new Thickness(18),
-                    Child = new TextBlock
-                    {
-                        Text = "Shadowed surface",
-                        FontSize = 22,
-                        FontWeight = FontWeights.SemiBold,
-                        VerticalAlignment = VerticalAlignment.Center,
-                        HorizontalAlignment = HorizontalAlignment.Center
-                    }
-                }
+                TranslationZ = 32,
+                Child = shadowRect,
+                Margin = new Thickness(36),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top
             };
-            var host = new Border
-            {
-                Width = 420,
-                Height = 220,
-                Background = CreateBrush("#F3F3F3"),
-                Padding = new Thickness(68, 42, 68, 42),
-                Child = shadow
-            };
-            var depth = new Slider
-            {
-                Width = 240,
-                Minimum = 8,
-                Maximum = 64,
-                Value = shadow.Depth,
-                Margin = new Thickness(0, 12, 0, 0),
-                HorizontalAlignment = HorizontalAlignment.Left
-            };
-            ControlHelper.SetHeader(depth, "Depth");
-            depth.ValueChanged += delegate { shadow.Depth = depth.Value; };
-            var enabled = new ToggleButton
-            {
-                Content = "Shadow enabled",
-                IsChecked = true,
-                Padding = new Thickness(12, 6, 12, 6),
-                Margin = new Thickness(0, 12, 0, 0)
-            };
-            enabled.Checked += delegate { shadow.IsShadowEnabled = true; };
-            enabled.Unchecked += delegate { shadow.IsShadowEnabled = false; };
+            shadow.SetResourceReference(ThemeShadowChrome.CornerRadiusProperty, "OverlayCornerRadius");
 
-            panel.Children.Add(host);
-            panel.Children.Add(depth);
-            panel.Children.Add(enabled);
-            return panel;
+            var exampleGrid = new Grid
+            {
+                Name = "Example3Grid",
+                MinWidth = 272,
+                MinHeight = 272
+            };
+            exampleGrid.Children.Add(shadowCastGrid);
+            exampleGrid.Children.Add(shadow);
+
+            var translationSlider = new Slider
+            {
+                Name = "TranslationSliderInApp",
+                Width = 200,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Minimum = 0,
+                Maximum = 64,
+                SmallChange = 1,
+                TickFrequency = 1,
+                Value = 32
+            };
+            AutomationProperties.SetName(translationSlider, "shadow intensity");
+            ControlHelper.SetHeader(translationSlider, "Z-translation");
+            translationSlider.ValueChanged += delegate
+            {
+                shadow.Depth = translationSlider.Value;
+                shadow.TranslationZ = translationSlider.Value;
+            };
+
+            var options = new StackPanel
+            {
+                Margin = new Thickness(24, 0, 0, 0)
+            };
+            options.Children.Add(translationSlider);
+
+            var layout = new Grid();
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            Grid.SetColumn(exampleGrid, 0);
+            Grid.SetColumn(options, 1);
+            layout.Children.Add(exampleGrid);
+            layout.Children.Add(options);
+            root.Children.Add(layout);
+            return root;
         }
 
         private static GallerySamplePanel CreateSystemBackdropsExampleRoot(bool assignRootAutomationId)

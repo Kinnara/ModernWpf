@@ -43,6 +43,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "WebView2", "GallerySample_WebView2_Root", "GallerySample_WebView2_WebView2" };
             yield return new object[] { "SystemBackdrops", "GallerySample_SystemBackdrops_Root", "GallerySample_SystemBackdrops_ShowWindowButton" };
             yield return new object[] { "SystemBackdropElement", "GallerySample_SystemBackdropElement_Root", "GallerySample_SystemBackdropElement_Button" };
+            yield return new object[] { "ThemeShadow", "GallerySample_ThemeShadow_Root", "GallerySample_ThemeShadow_ShadowRect" };
             yield return new object[] { "CreateMultipleWindows", "GallerySample_CreateMultipleWindows_Root", "GallerySample_CreateMultipleWindows_Control1" };
             yield return new object[] { "AppWindow", "GallerySample_AppWindow_Root", "GallerySample_AppWindow_ShowSampleWindow1Button" };
             yield return new object[] { "AppWindowTitleBar", "GallerySample_AppWindowTitleBar_Root", "GallerySample_AppWindowTitleBar_ShowWindowButton" };
@@ -3701,6 +3702,93 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(225d, player2Poster.Height);
                     Assert.AreEqual(Stretch.Fill, player2Poster.Stretch);
                     StringAssert.Contains(((BitmapImage)player2Poster.Source).UriSource.ToString(), "fishes.poster.png");
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void ThemeShadowSampleMatchesWinUIGalleryExample()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("ThemeShadow"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(1, page.Examples.Count);
+                    Assert.AreEqual("ThemeShadow applied to a Border", page.Examples[0].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "x:Name=\"ShadowCastGrid\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "x:Name=\"ShadowRect\" Translation=\"0,0,$(TranslationSlider)\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "<ThemeShadow x:Name=\"shadow\"/>");
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "shadow.Receivers.Add(ShadowCastGrid);");
+
+                    var root = (GallerySamplePanel)page.Examples[0].ExampleContent;
+                    Assert.AreEqual(1, root.Children.Count);
+                    var layout = (Grid)root.Children[0];
+                    Assert.AreEqual(2, layout.ColumnDefinitions.Count);
+
+                    var exampleGrid = FindNamedDescendant<Grid>(page, "Example3Grid");
+                    Assert.IsNotNull(exampleGrid);
+                    Assert.AreEqual(272d, exampleGrid.MinWidth);
+                    Assert.AreEqual(272d, exampleGrid.MinHeight);
+
+                    var shadowCastGrid = FindNamedDescendant<Grid>(page, "ShadowCastGrid");
+                    Assert.IsNotNull(shadowCastGrid);
+                    Assert.AreSame(shadowCastGrid, exampleGrid.Children[0]);
+
+                    var shadow = FindNamedDescendant<ThemeShadowChrome>(page, "shadow");
+                    Assert.IsNotNull(shadow);
+                    Assert.AreEqual(32d, shadow.Depth);
+                    Assert.AreEqual(32d, shadow.TranslationZ);
+                    Assert.AreEqual(new Thickness(36), shadow.Margin);
+                    Assert.AreEqual(HorizontalAlignment.Left, shadow.HorizontalAlignment);
+                    Assert.AreEqual(VerticalAlignment.Top, shadow.VerticalAlignment);
+
+                    var shadowRect = (Border)FindByAutomationId(page, "GallerySample_ThemeShadow_ShadowRect");
+                    Assert.IsNotNull(shadowRect);
+                    Assert.AreSame(shadowRect, shadow.Child);
+                    Assert.AreEqual("ShadowRect", shadowRect.Name);
+                    Assert.AreEqual(200d, shadowRect.Width);
+                    Assert.AreEqual(200d, shadowRect.Height);
+                    Assert.IsNotNull(shadowRect.Background);
+
+                    var slider = FindNamedDescendant<Slider>(page, "TranslationSliderInApp");
+                    Assert.IsNotNull(slider);
+                    Assert.AreEqual("shadow intensity", AutomationProperties.GetName(slider));
+                    Assert.AreEqual("Z-translation", ModernWpf.Controls.Primitives.ControlHelper.GetHeader(slider));
+                    Assert.AreEqual(200d, slider.Width);
+                    Assert.AreEqual(0d, slider.Minimum);
+                    Assert.AreEqual(64d, slider.Maximum);
+                    Assert.AreEqual(1d, slider.SmallChange);
+                    Assert.AreEqual(1d, slider.TickFrequency);
+                    Assert.AreEqual(32d, slider.Value);
+
+                    slider.Value = 48;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(48d, shadow.Depth);
+                    Assert.AreEqual(48d, shadow.TranslationZ);
                 }
                 finally
                 {
