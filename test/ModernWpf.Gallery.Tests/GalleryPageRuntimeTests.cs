@@ -172,7 +172,8 @@ namespace ModernWpf.Gallery.Tests
                 RenderPage(homePage);
                 Assert.AreSame(dashboardViewModel, homePage.ViewModel);
                 Assert.AreSame(homePage, homePage.DataContext);
-                var overviewItemsControl = (ItemsControl)homePage.FindName("OverviewItemsControl");
+                var overviewItemsControl = FindDescendants<ItemsControl>(homePage)
+                    .Single(itemsControl => string.Equals(AutomationProperties.GetName(itemsControl), "Items in group", StringComparison.Ordinal));
                 CollectionAssert.AreEqual(
                     dashboardViewModel.NavigationCards.Select(group => group.UniqueId).ToArray(),
                     overviewItemsControl.ItemsSource.Cast<GalleryGroup>().Select(group => group.UniqueId).ToArray());
@@ -182,7 +183,8 @@ namespace ModernWpf.Gallery.Tests
                 RenderPage(allControlsPage);
                 Assert.AreSame(allSamplesViewModel, allControlsPage.ViewModel);
                 Assert.AreSame(allControlsPage, allControlsPage.DataContext);
-                var allControlsItemsControl = (ItemsControl)allControlsPage.FindName("AllControlsItemsControl");
+                var allControlsItemsControl = FindDescendants<ItemsControl>(allControlsPage)
+                    .Single(itemsControl => string.Equals(AutomationProperties.GetName(itemsControl), "Items in group", StringComparison.Ordinal));
                 CollectionAssert.AreEqual(
                     allSamplesViewModel.NavigationCards.Select(item => item.UniqueId).ToArray(),
                     allControlsItemsControl.ItemsSource.Cast<GalleryItem>().Select(item => item.UniqueId).ToArray());

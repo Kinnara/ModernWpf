@@ -238,7 +238,7 @@ namespace ModernWpf.Gallery.Tests
                 var page = new HomePage();
                 RenderElement(page, () =>
                 {
-                    var tileGallery = (TileGallery)page.FindName("HomeTileGallery");
+                    var tileGallery = FindVisualChildren<TileGallery>(page).Single();
                     var tilesPanel = (StackPanel)tileGallery.FindName("TilesPanel");
                     var tiles = tilesPanel.Children.OfType<HeaderTile>().ToArray();
 

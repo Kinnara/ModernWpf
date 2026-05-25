@@ -29,7 +29,6 @@
             Margin="0"
             VerticalScrollBarVisibility="Auto">
             <ItemsControl
-                x:Name="AllControlsItemsControl"
                 AutomationProperties.Name="Items in group"
                 Focusable="False"
                 Margin="-12,0,0,0"

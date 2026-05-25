@@ -14,7 +14,7 @@
     mc:Ignorable="d">
     <Grid x:Name="ContentRootGrid">
         <ScrollViewer>
-            <Grid x:Name="HomeContentGrid">
+            <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -46,14 +46,12 @@
                         TextElement.Foreground="Black"
                         VerticalAlignment="Top">
                         <TextBlock
-                            x:Name="HeroVersionText"
                             Margin="0,0,0,2"
                             pages:GalleryAutomation.HeadingLevel="Level1"
                             Foreground="Black"
                             Style="{StaticResource SubtitleTextBlockStyle}"
                             Text=".NET 10" />
                         <TextBlock
-                            x:Name="HeroTitleText"
                             Margin="0,0,0,8"
                             pages:GalleryAutomation.HeadingLevel="Level1"
                             Foreground="Black"
@@ -77,7 +75,6 @@
                 </Border>
 
                 <controls:TileGallery
-                    x:Name="HomeTileGallery"
                     Grid.Row="1"
                     HorizontalAlignment="Stretch"
                     Margin="0" />
@@ -87,14 +84,12 @@
                     Margin="32,24,0,0"
                     Orientation="Vertical">
                     <TextBlock
-                        x:Name="OverviewHeaderText"
                         pages:GalleryAutomation.HeadingLevel="Level2"
                         FontSize="16"
                         Style="{StaticResource BodyStrongTextBlockStyle}"
                         Text="Overview" />
 
                     <ItemsControl
-                        x:Name="OverviewItemsControl"
                         AutomationProperties.Name="Items in group"
                         Focusable="False"
                         Margin="-20,0,0,0"
@@ -103,14 +98,12 @@
                         ItemTemplate="{StaticResource NavigationCardTemplate}" />
 
                     <TextBlock
-                        x:Name="RecentlyAddedHeaderText"
                         pages:GalleryAutomation.HeadingLevel="Level2"
                         FontSize="16"
                         Style="{StaticResource BodyStrongTextBlockStyle}"
                         Text="Recently added and updated" />
 
                     <ItemsControl
-                        x:Name="RecentlyAddedItemsControl"
                         AutomationProperties.Name="Recently Added and Updated Samples Section"
                         Focusable="False"
                         Margin="-18,0,0,0"
