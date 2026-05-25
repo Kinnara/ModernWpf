@@ -42,6 +42,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "MediaPlayerElement", "GallerySample_MediaPlayerElement_Root", "GallerySample_MediaPlayerElement_MediaPlayerElement" };
             yield return new object[] { "MapControl", "GallerySample_MapControl_Root", "GallerySample_MapControl_MapControl" };
             yield return new object[] { "WebView2", "GallerySample_WebView2_Root", "GallerySample_WebView2_WebView2" };
+            yield return new object[] { "IconElement", "GallerySample_IconElement_Root", "GallerySample_IconElement_SlicesIcon" };
             yield return new object[] { "Line", "GallerySample_Line_Root", "GallerySample_Line_Line" };
             yield return new object[] { "Shape", "GallerySample_Shape_Root", "GallerySample_Shape_Ellipse" };
             yield return new object[] { "RadialGradientBrush", "GallerySample_RadialGradientBrush_Root", "GallerySample_RadialGradientBrush_Rect" };
@@ -3706,6 +3707,117 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(225d, player2Poster.Height);
                     Assert.AreEqual(Stretch.Fill, player2Poster.Stretch);
                     StringAssert.Contains(((BitmapImage)player2Poster.Source).UriSource.ToString(), "fishes.poster.png");
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void IconElementSampleMatchesWinUIGalleryExamples()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("IconElement"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(6, page.Examples.Count);
+                    Assert.AreEqual("A BitmapIcon with a multicolor bitmap image", page.Examples[0].HeaderText);
+                    Assert.AreEqual("A FontIcon using a glyph from a specific font family in a button", page.Examples[1].HeaderText);
+                    Assert.AreEqual("A ImageIcon using a bitmap image in a button", page.Examples[2].HeaderText);
+                    Assert.AreEqual("A ImageIcon using a SVG image in a button", page.Examples[3].HeaderText);
+                    Assert.AreEqual("A PathIcon in a button", page.Examples[4].HeaderText);
+                    Assert.AreEqual("A SymbolIcon in a button", page.Examples[5].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+
+                    StringAssert.Contains(page.Examples[0].XamlCode, "<BitmapIcon x:Name=\"SlicesIcon\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "ShowAsMonochrome=\"$(ShowAsMonochrome)\"");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "<FontIcon FontFamily=\"Segoe MDL2 Assets\" Glyph=\"&#xE790;\"/>");
+                    StringAssert.Contains(page.Examples[2].XamlCode, "<ImageIcon Source=\"/Assets/SampleMedia/slices.png\"/>");
+                    StringAssert.Contains(page.Examples[3].XamlCode, "libre-camera-panorama.svg");
+                    StringAssert.Contains(page.Examples[4].XamlCode, "PathIcon Data=\"F1 M 16,12 20,2L 20,16 1,16\"");
+                    StringAssert.Contains(page.Examples[5].XamlCode, "<SymbolIcon Symbol=\"Accept\"/>");
+
+                    var bitmapRoot = (GallerySamplePanel)page.Examples[0].ExampleContent;
+                    Assert.AreEqual(1, bitmapRoot.Children.Count);
+                    var bitmapLayout = (Grid)bitmapRoot.Children[0];
+                    Assert.AreEqual(2, bitmapLayout.ColumnDefinitions.Count);
+
+                    var slicesIcon = (Mux.BitmapIcon)FindByAutomationId(page, "GallerySample_IconElement_SlicesIcon");
+                    Assert.IsNotNull(slicesIcon);
+                    Assert.AreSame(slicesIcon, FindNamedDescendant<Mux.BitmapIcon>(page, "SlicesIcon"));
+                    Assert.AreEqual(50d, slicesIcon.Width);
+                    Assert.AreEqual(HorizontalAlignment.Left, slicesIcon.HorizontalAlignment);
+                    Assert.IsFalse(slicesIcon.ShowAsMonochrome);
+                    StringAssert.Contains(slicesIcon.UriSource.ToString(), "Assets/SampleMedia/Slices.png");
+
+                    var monochromeButton = FindNamedDescendant<CheckBox>(page, "MonochromeButton");
+                    Assert.IsNotNull(monochromeButton);
+                    Assert.AreEqual("Monochrome", monochromeButton.Content);
+                    Assert.AreEqual(false, monochromeButton.IsChecked);
+                    monochromeButton.IsChecked = true;
+                    WpfTestHost.DoEvents();
+                    Assert.IsTrue(slicesIcon.ShowAsMonochrome);
+                    monochromeButton.IsChecked = false;
+                    WpfTestHost.DoEvents();
+                    Assert.IsFalse(slicesIcon.ShowAsMonochrome);
+
+                    var fontButton = (Button)FindByAutomationId(page, "GallerySample_IconElement_ExampleButton1");
+                    Assert.IsNotNull(fontButton);
+                    Assert.AreSame(fontButton, FindNamedDescendant<Button>(page, "ExampleButton1"));
+                    Assert.AreEqual("ExampleButton1", AutomationProperties.GetName(fontButton));
+                    var fontIcon = (Mux.FontIcon)fontButton.Content;
+                    Assert.AreEqual("Segoe MDL2 Assets", fontIcon.FontFamily.Source);
+                    Assert.AreEqual("\uE790", fontIcon.Glyph);
+
+                    var imageButton = (Button)FindByAutomationId(page, "GallerySample_IconElement_ImageExample1");
+                    Assert.IsNotNull(imageButton);
+                    Assert.AreEqual(100d, imageButton.Width);
+                    Assert.AreEqual("ImageExample1", AutomationProperties.GetName(imageButton));
+                    var imageIcon = (Mux.ImageIcon)imageButton.Content;
+                    StringAssert.Contains(((BitmapImage)imageIcon.Source).UriSource.ToString(), "Assets/SampleMedia/Slices.png");
+
+                    var svgButton = (Button)FindByAutomationId(page, "GallerySample_IconElement_ImageExample2");
+                    Assert.IsNotNull(svgButton);
+                    Assert.AreEqual("ImageExample2", AutomationProperties.GetName(svgButton));
+                    var svgIcon = (Mux.ImageIcon)svgButton.Content;
+                    Assert.AreEqual(50d, svgIcon.Width);
+                    Assert.IsInstanceOfType(svgIcon.Source, typeof(DrawingImage));
+
+                    var pathButton = (Button)FindByAutomationId(page, "GallerySample_IconElement_Example1Button");
+                    Assert.IsNotNull(pathButton);
+                    Assert.AreEqual("Example1Button", AutomationProperties.GetName(pathButton));
+                    var pathIcon = (Mux.PathIcon)pathButton.Content;
+                    Assert.AreEqual(HorizontalAlignment.Center, pathIcon.HorizontalAlignment);
+                    StringAssert.Contains(pathIcon.Data.ToString(CultureInfo.InvariantCulture), "M16,12L20,2");
+
+                    var acceptButton = (Button)FindByAutomationId(page, "GallerySample_IconElement_AcceptButton");
+                    Assert.IsNotNull(acceptButton);
+                    Assert.AreEqual("AcceptButton", AutomationProperties.GetName(acceptButton));
+                    var acceptStack = (StackPanel)acceptButton.Content;
+                    var symbolIcon = (Mux.SymbolIcon)acceptStack.Children[0];
+                    Assert.AreEqual(Mux.Symbol.Accept, symbolIcon.Symbol);
+                    Assert.AreEqual("Accept", ((TextBlock)acceptStack.Children[1]).Text);
                 }
                 finally
                 {

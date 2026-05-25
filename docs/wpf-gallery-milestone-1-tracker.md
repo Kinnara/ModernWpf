@@ -106,6 +106,16 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.IconElementSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 63 tests per target. The generated ModernWpf IconElement extension page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\IconElementPage.xaml`: the six `BitmapIcon`, `FontIcon`, bitmap `ImageIcon`, SVG `ImageIcon`, `PathIcon`, and `SymbolIcon` examples, source-facing `SlicesIcon`, `MonochromeButton`, `ExampleButton1`, `ImageExample1`, `ImageExample2`, `Example1Button`, and `AcceptButton` names, the official inline/file-backed XAML snippets from `D:\repos\WinUI-Gallery\WinUIGallery\Samples\SampleCode\Icons`, and the bitmap monochrome toggle behavior. `StylesSampleFactory.CreateExamples` now covers IconElement as a source-backed Platform & patterns WinUI extension page, and the first example exposes `GallerySample_IconElement_Root` / `GallerySample_IconElement_SlicesIcon`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls IconElement -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-061603-226-66812/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required rendered IconElement bitmap icon was found, primary crops use the rendered ModernWpf `GallerySample_IconElement_Root` sample region against the installed WinUI `svPanel` sample region because the WinUI bitmap icon is not exposed as a stable automation target, crop sizes are `790x118` vs `843x646`, and Light primary delta is `106.08`. The whole-window Light mean delta is `150.65` and remains diagnostic because the installed WinUI shell stayed dark while ModernWpf was captured in Light.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls IconElement -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-061628-756-110016/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required rendered IconElement bitmap icon was found, primary crops use the same sample-region mapping, crop sizes are `790x118` vs `843x646`, Dark primary delta is `22.45`, and whole-window Dark mean delta is `20.77`.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the IconElement WinUI example alignment. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages plus existing generated WinRT and ModernWpf/ModernWpf.Controls warnings, ending with `0 Error(s)`.
+- `git diff --check`
+  - Passed with only Git's normal LF-to-CRLF working-copy warnings for touched files.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.ShapeSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 62 tests per target. The generated ModernWpf Shape extension page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\ShapePage.xaml`: the `Ellipse`, `Rectangle`, and `Polygon` examples, source-facing `slider1`, `slider2`, `slider3`, `recSlider1` through `recSlider5`, `ToggleSwitchPoly`, and `polySlider1` names, the official inline XAML snippets, slider-driven dimension/stroke/radius updates, and polygon point-label toggle behavior. `StylesSampleFactory.CreateExamples` now covers Shape as a source-backed Platform & patterns WinUI extension page, and the first example exposes `GallerySample_Shape_Root` / `GallerySample_Shape_Ellipse`.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls Shape -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -2416,6 +2426,32 @@ with ModernWpf and installed WinUI 3 Gallery `Passed`, primary crops matching
 at `745x423`, and primary deltas `56.75` / `37.33`. Avoid reopening WebView2's
 source shape unless the repo decides to add an optional WebView2 package/runtime
 dependency or a new visual crop regression appears.
+The generated ModernWpf IconElement extension page now uses the local official
+WinUI Gallery source from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\IconElementPage.xaml`
+and the local icon snippets under
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\SampleCode\Icons`: six examples for
+`BitmapIcon`, `FontIcon`, bitmap `ImageIcon`, SVG `ImageIcon`, `PathIcon`, and
+`SymbolIcon`, source-facing `SlicesIcon`, `MonochromeButton`, `ExampleButton1`,
+`ImageExample1`, `ImageExample2`, `Example1Button`, and `AcceptButton` names,
+the official XAML snippets, and the `ShowAsMonochrome` checkbox behavior.
+`StylesSampleFactory.CreateExamples` now exposes IconElement as a source-backed
+Platform & patterns WinUI extension page. The WPF adaptation uses real
+ModernWpf `BitmapIcon`, `FontIcon`, `ImageIcon`, `PathIcon`, and `SymbolIcon`
+surfaces; the only intentional visual adaptation is the SVG ImageIcon live
+sample, which uses a `DrawingImage` because WPF `Image.Source` does not natively
+load SVG files, while the code pane keeps the official SVG-source snippet.
+Current IconElement WinUI-reference evidence is
+`artifacts/visual-checks/20260525-061603-226-66812/report.md` for Light and
+`artifacts/visual-checks/20260525-061628-756-110016/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`; the required
+`GallerySample_IconElement_SlicesIcon` rendered artifact is present, while the
+primary crop uses the rendered ModernWpf sample root against the installed WinUI
+`svPanel` sample region because the WinUI bitmap icon is not exposed as a stable
+automation target. Treat those sample-region deltas as diagnostic unless a
+better stable crop becomes available. Avoid reopening IconElement's source shape
+unless a new local WinUI source, WPF icon behavior gap, or crop regression
+appears.
 The generated ModernWpf Line extension page now uses the local official WinUI
 Gallery source from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\LinePage.xaml`: the

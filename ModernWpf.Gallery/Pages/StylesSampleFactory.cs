@@ -74,6 +74,9 @@ namespace ModernWpf.Gallery.Pages
 @"<Polygon Fill=""SteelBlue"" Points=""10,100 60,40 200,40 250,100""
          StrokeThickness=""$(Slider1)"" Stroke=""Black""/>";
 
+        private const string IconElementBitmapIconXaml =
+@"<BitmapIcon x:Name=""SlicesIcon"" UriSource=""ms-appx:///Assets/SampleMedia/Slices.png"" Width=""50"" ShowAsMonochrome=""$(ShowAsMonochrome)""/>";
+
         public static UIElement Create(string uniqueId)
         {
             switch (uniqueId)
@@ -107,6 +110,8 @@ namespace ModernWpf.Gallery.Pages
         {
             switch (uniqueId)
             {
+                case "IconElement":
+                    return CreateIconElementExamples(sampleSnippets);
                 case "Line":
                     return CreateLineExamples();
                 case "Shape":
@@ -230,25 +235,180 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateIconElementSample()
         {
-            var panel = CreateSamplePanel("IconElement is represented by ModernWpf icon elements for symbols, fonts, bitmaps, and paths.");
-            var row = new StackPanel { Orientation = Orientation.Horizontal };
-            row.Children.Add(CreateIconColumn("SymbolIcon", new Mux.SymbolIcon(Mux.Symbol.Favorite) { Width = 42, Height = 42 }));
-            row.Children.Add(CreateIconColumn("FontIcon", new Mux.FontIcon { Glyph = "\xE8D4", FontSize = 34, Width = 42, Height = 42 }));
-            row.Children.Add(CreateIconColumn("BitmapIcon", new Mux.BitmapIcon
+            return CreateBitmapIconExampleContent(assignRootAutomationId: true);
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateIconElementExamples(IReadOnlyList<SampleSnippet> sampleSnippets)
+        {
+            return new[]
             {
-                UriSource = new Uri(ResourceUri("Assets/SampleMedia/CoffeeCup.png"), UriKind.Absolute),
+                new GalleryExample(
+                    "A BitmapIcon with a multicolor bitmap image",
+                    CreateBitmapIconExampleContent(assignRootAutomationId: true),
+                    IconElementBitmapIconXaml,
+                    null),
+                new GalleryExample(
+                    "A FontIcon using a glyph from a specific font family in a button",
+                    CreateFontIconExampleContent(),
+                    FindSampleCodeText(sampleSnippets, "FontIconSample1_xaml.txt", System.IO.Path.Combine("Icons", "FontIconSample1_xaml.txt")),
+                    null),
+                new GalleryExample(
+                    "A ImageIcon using a bitmap image in a button",
+                    CreateImageIconBitmapExampleContent(),
+                    FindSampleCodeText(sampleSnippets, "ImageIconSample1_xaml.txt", System.IO.Path.Combine("Icons", "ImageIconSample1_xaml.txt")),
+                    null),
+                new GalleryExample(
+                    "A ImageIcon using a SVG image in a button",
+                    CreateImageIconSvgExampleContent(),
+                    FindSampleCodeText(sampleSnippets, "ImageIconSample2_xaml.txt", System.IO.Path.Combine("Icons", "ImageIconSample2_xaml.txt")),
+                    null),
+                new GalleryExample(
+                    "A PathIcon in a button",
+                    CreatePathIconExampleContent(),
+                    FindSampleCodeText(sampleSnippets, "PathIconSample1_xaml.txt", System.IO.Path.Combine("Icons", "PathIconSample1_xaml.txt")),
+                    null),
+                new GalleryExample(
+                    "A SymbolIcon in a button",
+                    CreateSymbolIconExampleContent(),
+                    FindSampleCodeText(sampleSnippets, "SymbolIconSample_1_xaml.txt", System.IO.Path.Combine("Icons", "SymbolIconSample_1_xaml.txt")),
+                    null)
+            };
+        }
+
+        private static GallerySamplePanel CreateBitmapIconExampleContent(bool assignRootAutomationId)
+        {
+            var root = new GallerySamplePanel();
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("IconElement"));
+            }
+
+            var slicesIcon = new Mux.BitmapIcon
+            {
+                Name = "SlicesIcon",
+                Width = 50,
+                HorizontalAlignment = HorizontalAlignment.Left,
                 ShowAsMonochrome = false,
-                Width = 42,
-                Height = 42
-            }));
-            row.Children.Add(CreateIconColumn("PathIcon", new Mux.PathIcon
+                UriSource = new Uri(ResourceUri("Assets/SampleMedia/Slices.png"), UriKind.Absolute)
+            };
+            GalleryAutomation.WithAutomationId(slicesIcon, GalleryAutomation.SampleElementId("IconElement", "SlicesIcon"));
+
+            var example = CreateIconElementStack("The ShowAsMonochrome property (true by default) will result in a solid block of the foreground color if the property is set to true and the icon is more than one color. This behavior can be ignored by setting the ShowAsMonochrome property to false.");
+            example.Children.Add(slicesIcon);
+
+            var monochromeButton = new CheckBox
             {
-                Data = Geometry.Parse("M 0,20 L 12,0 L 24,20 Z"),
-                Width = 42,
-                Height = 42
-            }));
-            panel.Children.Add(row);
-            return panel;
+                Name = "MonochromeButton",
+                Content = "Monochrome",
+                IsChecked = false
+            };
+            monochromeButton.Checked += delegate { slicesIcon.ShowAsMonochrome = true; };
+            monochromeButton.Unchecked += delegate { slicesIcon.ShowAsMonochrome = false; };
+
+            root.Children.Add(CreateExampleWithOptions(example, monochromeButton));
+            return root;
+        }
+
+        private static GallerySamplePanel CreateFontIconExampleContent()
+        {
+            var root = new GallerySamplePanel();
+            var button = new Button
+            {
+                Name = "ExampleButton1",
+                Content = new Mux.FontIcon
+                {
+                    FontFamily = new FontFamily("Segoe MDL2 Assets"),
+                    Glyph = "\uE790"
+                }
+            };
+            AutomationProperties.SetName(button, "ExampleButton1");
+            GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("IconElement", "ExampleButton1"));
+
+            var example = CreateIconElementStack("Use FontIcon as the icon for a control if you want to specify a Glyph value from a FontFamily. Windows 10 uses the Segoe MDL2 Assets FontFamily and that is what this example is showing.");
+            example.Children.Add(button);
+            root.Children.Add(example);
+            return root;
+        }
+
+        private static GallerySamplePanel CreateImageIconBitmapExampleContent()
+        {
+            var root = new GallerySamplePanel();
+            var button = new Button
+            {
+                Name = "ImageExample1",
+                Width = 100,
+                Content = new Mux.ImageIcon
+                {
+                    Source = CreateBitmap(ResourceUri("Assets/SampleMedia/Slices.png"))
+                }
+            };
+            AutomationProperties.SetName(button, "ImageExample1");
+            GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("IconElement", "ImageExample1"));
+
+            var example = CreateIconElementStack("To use an ImageIcon as the icon for a control, you can set image that has a file format supported by the Image class. The two examples here show a PNG and SVG image as the icon.");
+            example.Children.Add(button);
+            root.Children.Add(example);
+            return root;
+        }
+
+        private static GallerySamplePanel CreateImageIconSvgExampleContent()
+        {
+            var root = new GallerySamplePanel();
+            var button = new Button
+            {
+                Name = "ImageExample2",
+                Content = new Mux.ImageIcon
+                {
+                    Width = 50,
+                    Source = CreateCameraPanoramaDrawing()
+                }
+            };
+            AutomationProperties.SetName(button, "ImageExample2");
+            GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("IconElement", "ImageExample2"));
+            root.Children.Add(button);
+            return root;
+        }
+
+        private static GallerySamplePanel CreatePathIconExampleContent()
+        {
+            var root = new GallerySamplePanel();
+            var button = new Button
+            {
+                Name = "Example1Button",
+                Content = new Mux.PathIcon
+                {
+                    Data = Geometry.Parse("F1 M 16,12 20,2L 20,16 1,16"),
+                    HorizontalAlignment = HorizontalAlignment.Center
+                }
+            };
+            AutomationProperties.SetName(button, "Example1Button");
+            GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("IconElement", "Example1Button"));
+
+            var example = CreateIconElementStack("To use a PathIcon as the icon for a control, you specify the path data of the image you are trying to display. The path data draws a series of connected lines and curves.");
+            example.Children.Add(button);
+            root.Children.Add(example);
+            return root;
+        }
+
+        private static GallerySamplePanel CreateSymbolIconExampleContent()
+        {
+            var root = new GallerySamplePanel();
+            var content = new StackPanel();
+            content.Children.Add(new Mux.SymbolIcon(Mux.Symbol.Accept));
+            content.Children.Add(new TextBlock { Text = "Accept" });
+
+            var button = new Button
+            {
+                Name = "AcceptButton",
+                Content = content
+            };
+            AutomationProperties.SetName(button, "AcceptButton");
+            GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("IconElement", "AcceptButton"));
+
+            var example = CreateIconElementStack("To use a SymbolIcon as the icon for a control, you specify the enum value for the glyph you would like to display. SymbolIcon's enum is based off of icons from the Segoe MDL2 font used by Windows 10.");
+            example.Children.Add(button);
+            root.Children.Add(example);
+            return root;
         }
 
         private static UIElement CreateLineSample()
@@ -1427,6 +1587,31 @@ namespace ModernWpf.Gallery.Pages
                 Padding = padding
             });
             return column;
+        }
+
+        private static StackPanel CreateIconElementStack(string description)
+        {
+            var stack = new StackPanel();
+            stack.Children.Add(new TextBlock
+            {
+                Text = description,
+                TextWrapping = TextWrapping.Wrap,
+                Margin = new Thickness(0, 0, 0, 12)
+            });
+            return stack;
+        }
+
+        private static DrawingImage CreateCameraPanoramaDrawing()
+        {
+            var drawing = new DrawingGroup();
+            drawing.Children.Add(new GeometryDrawing(CreateBrush("#E6F4FF"), null, Geometry.Parse("M 0,0 L 50,0 L 50,32 L 0,32 Z")));
+            drawing.Children.Add(new GeometryDrawing(CreateBrush("#107C10"), null, Geometry.Parse("M 0,23 L 12,13 L 21,21 L 31,10 L 50,25 L 50,32 L 0,32 Z")));
+            drawing.Children.Add(new GeometryDrawing(CreateBrush("#FCE100"), null, new EllipseGeometry(new Point(37, 7), 4, 4)));
+            drawing.Children.Add(new GeometryDrawing(null, new Pen(CreateBrush("#1F1F1F"), 2), Geometry.Parse("M 1,1 L 49,1 L 49,31 L 1,31 Z")));
+
+            var image = new DrawingImage(drawing);
+            image.Freeze();
+            return image;
         }
 
         private static StackPanel CreateIconColumn(string label, UIElement icon)
