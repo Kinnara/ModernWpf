@@ -144,6 +144,8 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryNavigationRuntimeTests.MainWindowUsesWpfGalleryTitleChrome|FullyQualifiedName~GalleryNavigationRuntimeTests.MainWindowChromePolicyMatchesWpfGalleryHighContrastPath|FullyQualifiedName~GalleryNavigationRuntimeTests.ShellHighContrastHoverStylesMatchWpfGalleryReferenceChrome|FullyQualifiedName~GalleryNavigationRuntimeTests.ShellNavigationMenuMatchesWpfGalleryReferenceChrome" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 4 tests per target. The retained shell title-bar button styles, close-button style, and Settings footer button style now have structural coverage for the official WPF Gallery high-contrast hover path: `SystemParameters.HighContrast` plus self `IsMouseOver`, with dynamic `SystemColorHighlightColorBrush` / `SystemColorHighlightTextColorBrush` setters.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryApplicationResourceTests.HomeHeaderTilesMatchWpfGalleryReferenceSlotGeometry|FullyQualifiedName~GalleryApplicationResourceTests.HomeHeaderTilesUseWpfGalleryAcrylicFillResources|FullyQualifiedName~GalleryApplicationResourceTests.HomeHeaderTilesUseWpfGalleryHighContrastFillResources|FullyQualifiedName~GalleryApplicationResourceTests.HomeHeaderTilesExposeRootButtonAutomationPeer|FullyQualifiedName~GalleryApplicationResourceTests.ColorTileStyleKeepsWpfGalleryNaturalHeight" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 5 tests per target. Home header tiles now expose the official WPF Gallery high-contrast button fill mapping (`SystemColors.ControlBrush`) through a focused testable resource path while keeping existing Light/Dark acrylic fill, slot geometry, automation-peer, and ColorTile natural-height coverage intact.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryNavigationRuntimeTests.ShellNavigationMenuMatchesWpfGalleryReferenceChrome|FullyQualifiedName~GalleryNavigationRuntimeTests.ShellNavigationViewTreeViewResourceAliasesTrackThemeChanges|FullyQualifiedName~GalleryNavigationRuntimeTests.ShellNavigationViewAliasesHaveWpfGalleryTreeViewHighContrastTokens|FullyQualifiedName~GalleryNavigationRuntimeTests.MainWindowChromePolicyMatchesWpfGalleryHighContrastPath" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
@@ -1786,7 +1788,12 @@ styling not covered by the TreeView token aliases, aligned left disclosure chevr
 and high-drift item pages. Color Signal Dark is now refreshed at delta `0.1`
 after the WPF Fluent brush override, and Color Stroke Light is refreshed at
 delta `0.04` after the Gallery-level `ControlElevationBorderBrush` rendering
-alignment. Home first-viewport Light/Dark
+alignment. Shell title-bar and Settings footer high-contrast hover resources
+now have focused structural coverage against the official WPF Gallery button
+trigger pattern; remaining High Contrast work means broader OS high-contrast
+shell and control paths that are not already covered by title chrome,
+NavigationView TreeView token aliases, HeaderTile fills, DataGrid visuals, or
+Color subsection direct-reference evidence. Home first-viewport Light/Dark
 is now accepted at `0` / `0.05` delta with matching dashboard-pane crops, and
 Settings Light/Dark have current matching-crop evidence at delta `0.23` / `1.15`
 with visual-test ComboBox state matching the requested theme, so avoid

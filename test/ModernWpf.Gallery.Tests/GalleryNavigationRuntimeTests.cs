@@ -482,6 +482,34 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void ShellHighContrastHoverStylesMatchWpfGalleryReferenceChrome()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var window = new MainWindow();
+                try
+                {
+                    var titleBarButtonStyle = (Style)window.Resources["GalleryTitleBarButtonStyle"];
+                    AssertWpfGalleryHighContrastHoverTrigger(titleBarButtonStyle, "title bar button");
+
+                    var defaultButtonStyle = (Style)window.Resources["GalleryTitleBarDefaultButtonStyle"];
+                    Assert.AreSame(titleBarButtonStyle, defaultButtonStyle.BasedOn);
+
+                    var closeButtonStyle = (Style)window.Resources["GalleryTitleBarDefaultCloseButtonStyle"];
+                    AssertWpfGalleryHighContrastHoverTrigger(closeButtonStyle, "title bar close button");
+
+                    var rootPage = (NavigationRootPage)window.FindName("RootPage");
+                    var footerButtonStyle = (Style)rootPage.Resources["GalleryNavigationFooterButtonStyle"];
+                    AssertWpfGalleryHighContrastHoverTrigger(footerButtonStyle, "navigation footer button");
+                }
+                finally
+                {
+                    window.Close();
+                }
+            });
+        }
+
+        [TestMethod]
         public void HomePageOverviewUsesWpfReferenceGroupFilter()
         {
             WpfTestHost.Run(() =>
@@ -847,6 +875,121 @@ namespace ModernWpf.Gallery.Tests
             var expression = BindingOperations.GetBindingExpression(target, property);
             Assert.IsNotNull(expression);
             Assert.AreEqual(expectedPath, expression.ParentBinding.Path.Path);
+        }
+
+        private static void AssertWpfGalleryHighContrastHoverTrigger(Style style, string context)
+        {
+            Assert.IsNotNull(style, context);
+
+            var trigger = style.Triggers
+                .OfType<MultiDataTrigger>()
+                .SingleOrDefault(item =>
+                    HasDynamicResourceTriggerSetter(item, Control.BackgroundProperty, "SystemColorHighlightColorBrush") &&
+                    HasDynamicResourceTriggerSetter(item, Control.ForegroundProperty, "SystemColorHighlightTextColorBrush"));
+
+            Assert.IsNotNull(trigger, context + " high-contrast hover trigger");
+            Assert.AreEqual(2, trigger.Conditions.Count, context + " condition count");
+            AssertBindingCondition(
+                trigger,
+                path => string.Equals(path, "HighContrast", StringComparison.Ordinal) ||
+                        string.Equals(path, "SystemParameters.HighContrast", StringComparison.Ordinal) ||
+                        string.Equals(path, "(SystemParameters.HighContrast)", StringComparison.Ordinal) ||
+                        string.Equals(path, "(0)", StringComparison.Ordinal),
+                "True",
+                expectedSelfRelativeSource: false,
+                context,
+                "SystemParameters.HighContrast");
+            AssertBindingCondition(
+                trigger,
+                path => string.Equals(path, "IsMouseOver", StringComparison.Ordinal),
+                "True",
+                expectedSelfRelativeSource: true,
+                context,
+                "IsMouseOver");
+            AssertDynamicResourceTriggerSetter(
+                trigger,
+                Control.BackgroundProperty,
+                "SystemColorHighlightColorBrush",
+                context);
+            AssertDynamicResourceTriggerSetter(
+                trigger,
+                Control.ForegroundProperty,
+                "SystemColorHighlightTextColorBrush",
+                context);
+        }
+
+        private static void AssertBindingCondition(
+            MultiDataTrigger trigger,
+            Func<string, bool> pathMatches,
+            string expectedValue,
+            bool expectedSelfRelativeSource,
+            string context,
+            string conditionName)
+        {
+            Assert.IsTrue(
+                trigger.Conditions
+                .OfType<System.Windows.Condition>()
+                .Any(condition =>
+                {
+                    var binding = condition.Binding as Binding;
+                    if (binding == null)
+                    {
+                        return false;
+                    }
+
+                    var hasExpectedRelativeSource = expectedSelfRelativeSource
+                        ? binding.RelativeSource?.Mode == RelativeSourceMode.Self
+                        : binding.RelativeSource == null;
+
+                    return pathMatches(binding.Path?.Path ?? string.Empty) &&
+                           string.Equals(condition.Value?.ToString(), expectedValue, StringComparison.OrdinalIgnoreCase) &&
+                           hasExpectedRelativeSource;
+                }),
+                context + " " + conditionName + " condition. Actual conditions: " + DescribeConditions(trigger));
+        }
+
+        private static void AssertDynamicResourceTriggerSetter(
+            MultiDataTrigger trigger,
+            DependencyProperty property,
+            object resourceKey,
+            string context)
+        {
+            var setter = trigger.Setters.OfType<Setter>().Single(item => item.Property == property);
+            var dynamicResource = setter.Value as DynamicResourceExtension;
+            Assert.IsNotNull(dynamicResource, context + " " + property.Name);
+            Assert.AreEqual(resourceKey, dynamicResource.ResourceKey, context + " " + property.Name);
+        }
+
+        private static bool HasDynamicResourceTriggerSetter(
+            MultiDataTrigger trigger,
+            DependencyProperty property,
+            object resourceKey)
+        {
+            return trigger.Setters
+                .OfType<Setter>()
+                .Any(setter =>
+                {
+                    var dynamicResource = setter.Value as DynamicResourceExtension;
+                    return setter.Property == property &&
+                           dynamicResource != null &&
+                           Equals(resourceKey, dynamicResource.ResourceKey);
+                });
+        }
+
+        private static string DescribeConditions(MultiDataTrigger trigger)
+        {
+            return string.Join(
+                "; ",
+                trigger.Conditions
+                    .OfType<System.Windows.Condition>()
+                    .Select(condition =>
+                    {
+                        var binding = condition.Binding as Binding;
+                        var relativeSource = binding?.RelativeSource == null
+                            ? "<null>"
+                            : binding.RelativeSource.Mode.ToString();
+                        return (binding?.Path?.Path ?? "<null>") + "=" + (condition.Value ?? "<null>") + "@" + relativeSource;
+                    }));
         }
 
         private static void AssertNavigationItemsControl(ItemsControl itemsControl, string automationName)
