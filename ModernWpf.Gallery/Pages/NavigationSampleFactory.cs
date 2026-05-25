@@ -1124,10 +1124,17 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             item.Template = CreateSelectorBarItemTemplate();
             if (symbol.HasValue)
             {
-                item.Icon = new Mux.SymbolIcon(symbol.Value);
+                item.Icon = new Mux.SymbolIcon(GetSelectorBarRuntimeSymbol(symbol.Value));
             }
 
             return item;
+        }
+
+        private static Mux.Symbol GetSelectorBarRuntimeSymbol(Mux.Symbol sourceSymbol)
+        {
+            return sourceSymbol == Mux.Symbol.Favorite
+                ? Mux.Symbol.OutlineStar
+                : sourceSymbol;
         }
 
         private static Brush CreateSelectorBarItemForeground()

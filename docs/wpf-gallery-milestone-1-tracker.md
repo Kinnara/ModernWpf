@@ -106,6 +106,14 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.SelectorBarSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 66 tests per target. The generated ModernWpf SelectorBar page still follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\SelectorBarPage.xaml` / `.xaml.cs`, and the WPF runtime adaptation now maps the source `Icon="Favorite"` sample glyph to ModernWpf's outline-star symbol because ModernWpf's `Symbol.Favorite` renders filled while installed WinUI renders the first sample's Favorite icon as an outline star. The official source snippet text remains unchanged.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls SelectorBar -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-073823-607-7352/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required SelectorBar sample element was found, primary crops remain `292x47` vs `284x48`, and Light primary delta improved from `17.15` to `16.3`; whole-window Light mean delta remains diagnostic at `153.72`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls SelectorBar -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-073846-674-106168/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required SelectorBar sample element was found, primary crops remain `292x47` vs `284x48`, and Dark primary delta improved from `19.5` to `18.71`; whole-window Dark mean delta is `48.31`.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the SelectorBar glyph follow-up. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages plus existing net462 ModernWpf/ModernWpf.Controls warnings, ending with `19 Warning(s)` and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.ItemsViewSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 66 tests per target. The generated ModernWpf ItemsView page still follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\ItemsViewPage.xaml` / `.xaml.cs`, and the WPF `ListBox` adaptation now more closely matches the source `ItemsView` first sample: `BasicItemsView` uses a transparent host, source-default zero item spacing, zero WPF `ListBoxItem` chrome, and the runtime image template now renders the WinUI `Margin="4"` image inset instead of stretching the image edge-to-edge.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls ItemsView -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -1722,13 +1730,19 @@ tiles for the ItemsView sample. The sample assigns a local WPF item template
 because the default library item template rendered blank in the visual capture
 even though the live tree had the source text and icons; that local template
 now applies the same `0.8` icon scale used by ModernWpf's SelectorBar
-resources. Current SelectorBar WinUI-reference evidence is
-`artifacts/visual-checks/20260524-223810-852-92004/report.md` for Light and
-`artifacts/visual-checks/20260524-223838-383-115848/report.md` for Dark, both
+resources. The WPF runtime adaptation maps the source `Icon="Favorite"` glyph
+to ModernWpf's outline-star symbol while leaving the official snippet text
+unchanged, because installed WinUI renders that first-sample icon as an outline
+star while ModernWpf's `Symbol.Favorite` glyph is filled. Current SelectorBar
+WinUI-reference evidence is
+`artifacts/visual-checks/20260525-073823-607-7352/report.md` for Light and
+`artifacts/visual-checks/20260525-073846-674-106168/report.md` for Dark, both
 with ModernWpf and installed WinUI 3 Gallery `Passed`, nonblank app captures,
 required ModernWpf element `GallerySample_SelectorBar_SelectorBar` found,
-primary crops emitted at `292x47` vs `284x48`, and primary deltas `17.15` /
-`19.5`. The visual harness uses the installed WinUI Gallery's first
+primary crops emitted at `292x47` vs `284x48`, and primary deltas improved to
+`16.3` / `18.71` from the previous `17.15` / `19.5`. A same-round padding experiment that
+matched the reference `48px` height worsened the primary deltas, so it was not
+kept. The visual harness uses the installed WinUI Gallery's first
 `PART_ItemsView` template part as the SelectorBar reference primary target
 because the source `x:Name="SelectorBar1"` is not exposed as a UIA automation
 element. Avoid reopening SelectorBar's source shape unless a new WinUI source,

@@ -749,7 +749,7 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual("SelectorBar1", selectorBar1.Name);
                     AssertSelectorBarItem(selectorBar1.Items[0], "SelectorBarItemRecent", "Recent", Mux.Symbol.Clock, false);
                     AssertSelectorBarItem(selectorBar1.Items[1], "SelectorBarItemShared", "Shared", Mux.Symbol.Share, false);
-                    AssertSelectorBarItem(selectorBar1.Items[2], "SelectorBarItemFavorites", "Favorites", Mux.Symbol.Favorite, false);
+                    AssertSelectorBarItem(selectorBar1.Items[2], "SelectorBarItemFavorites", "Favorites", Mux.Symbol.OutlineStar, false);
 
                     Assert.AreEqual("SelectorBar2", selectorBar2.Name);
                     Assert.AreEqual(5, selectorBar2.Items.Count);
