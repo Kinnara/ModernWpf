@@ -57,6 +57,43 @@ namespace ModernWpf.Gallery.Tests
             "TitleBar"
         };
 
+        private static readonly string[] DeletedWinUIPageImplementationIds =
+        {
+            "CalendarDatePicker",
+            "CalendarView",
+            "TimePicker",
+            "TabView",
+            "RichEditBox",
+            "RichTextBlock",
+            "ScrollViewer",
+            "ScrollView",
+            "FlipView",
+            "ItemsView",
+            "EasingFunction",
+            "PageTransition",
+            "ThemeTransition",
+            "ImplicitTransition",
+            "ConnectedAnimation",
+            "SemanticZoom",
+            "StandardUICommand",
+            "XamlUICommand",
+            "RadialGradientBrush",
+            "SystemBackdrop",
+            "CompactSizing",
+            "AppWindow",
+            "AppWindowTitleBar",
+            "CreateMultipleWindows",
+            "StoragePickers",
+            "AnimatedIcon",
+            "MediaPlayerElement",
+            "MapControl",
+            "WebView2",
+            "Sound",
+            "Acrylic",
+            "LinePage",
+            "ShapePage"
+        };
+
         [TestMethod]
         public void GroupsMatchWpfFirstGalleryOrder()
         {
@@ -428,6 +465,56 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void ActiveGallerySourceDoesNotKeepDeletedWinUIPageImplementationArtifacts()
+        {
+            var sourceRoots = new[]
+            {
+                FindRepoDirectory("ModernWpf.Gallery", "Generated"),
+                FindRepoDirectory("ModernWpf.Gallery", "Models"),
+                FindRepoDirectory("ModernWpf.Gallery", "Pages"),
+                FindRepoDirectory("ModernWpf.Gallery", "Samples", "Data"),
+                FindRepoDirectory("ModernWpf.Gallery", "Samples", "SampleCode"),
+                FindRepoDirectory("tools", "visual-checks")
+            };
+            var sourceExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ".cs",
+                ".json",
+                ".ps1",
+                ".txt",
+                ".xaml"
+            };
+            var repoRoot = new DirectoryInfo(FindRepoDirectory("ModernWpf.Gallery")).Parent.FullName;
+            var violations = new List<string>();
+
+            foreach (var sourceFile in sourceRoots
+                .SelectMany(root => Directory.EnumerateFiles(root, "*.*", SearchOption.AllDirectories))
+                .Where(path => sourceExtensions.Contains(Path.GetExtension(path))))
+            {
+                var relativePath = Path.GetRelativePath(repoRoot, sourceFile);
+                var text = File.ReadAllText(sourceFile);
+
+                foreach (var deletedItemId in DeletedWinUIPageImplementationIds)
+                {
+                    foreach (var marker in CreateDeletedPageImplementationMarkers(deletedItemId))
+                    {
+                        if (relativePath.IndexOf(marker, StringComparison.OrdinalIgnoreCase) >= 0 ||
+                            text.IndexOf(marker, StringComparison.OrdinalIgnoreCase) >= 0)
+                        {
+                            violations.Add(relativePath + " contains deleted page implementation marker '" + marker + "'.");
+                        }
+                    }
+                }
+            }
+
+            Assert.AreEqual(
+                0,
+                violations.Count,
+                "Deleted gallery pages should not leave route/factory/sample/source markers in active gallery source:" + Environment.NewLine +
+                string.Join(Environment.NewLine, violations));
+        }
+
+        [TestMethod]
         public void CatalogImageResourcesAreShipped()
         {
             var resourceNames = GetGalleryResourceNames();
@@ -582,6 +669,38 @@ namespace ModernWpf.Gallery.Tests
 
             Assert.Fail("Could not find repository file '{0}'.", string.Join(Path.DirectorySeparatorChar.ToString(), relativePath));
             return null;
+        }
+
+        private static string FindRepoDirectory(params string[] relativePath)
+        {
+            var directory = new DirectoryInfo(AppContext.BaseDirectory);
+            while (directory != null)
+            {
+                var candidate = Path.Combine(new[] { directory.FullName }.Concat(relativePath).ToArray());
+                if (Directory.Exists(candidate))
+                {
+                    return candidate;
+                }
+
+                directory = directory.Parent;
+            }
+
+            Assert.Fail("Could not find repository directory '{0}'.", string.Join(Path.DirectorySeparatorChar.ToString(), relativePath));
+            return null;
+        }
+
+        private static IEnumerable<string> CreateDeletedPageImplementationMarkers(string itemId)
+        {
+            if (itemId.EndsWith("Page", StringComparison.OrdinalIgnoreCase))
+            {
+                yield return itemId;
+            }
+
+            yield return "GallerySample_" + itemId;
+            yield return "Create" + itemId;
+            yield return itemId + "Page";
+            yield return "case \"" + itemId + "\"";
+            yield return "\"UniqueId\": \"" + itemId + "\"";
         }
 
         private static string GetGalleryResourceKey(string imagePath)

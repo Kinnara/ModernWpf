@@ -143,6 +143,12 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryCatalogTests.ActiveGallerySourceDoesNotKeepDeletedWinUIPageImplementationArtifacts|FullyQualifiedName~GalleryCatalogTests.WinUIExtensionCatalogMatchesImplementedModernWpfSurfaces|FullyQualifiedName~GalleryCatalogTests.GeneratedWinUIMetadataOnlyContainsRetainedModernWpfSurfaces|FullyQualifiedName~GalleryCatalogTests.SourceWinUIControlInfoDataOnlyContainsRetainedModernWpfSurfaces|FullyQualifiedName~GalleryCatalogTests.ControlImageResourcesMatchRetainedCatalogImages" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 5 tests per target. Active gallery source, generated catalog data, sample data/code, and visual-check tooling are now guarded against deleted-page implementation markers such as old routes, factory cases, page classes, sample automation IDs, and source metadata while retaining positive catalog/resource assertions for the allowed ModernWpf extension surface.
+- `rg -n "GallerySample_CalendarDatePicker|GallerySample_CalendarView|GallerySample_TimePicker|GallerySample_TabView|GallerySample_RichEditBox|GallerySample_RichTextBlock|GallerySample_ScrollViewer|GallerySample_ScrollView|GallerySample_FlipView|GallerySample_ItemsView|DateTimeSampleFactory|CreateCalendarDatePicker|CreateCalendarView|CreateTimePicker|CreateTabView|CreateRichEditBox|CreateRichTextBlock|CreateScrollViewer|CreateScrollView|CreateFlipView|CreateItemsView" ModernWpf.Gallery tools\visual-checks -g "!**/bin/**" -g "!**/obj/**"`
+  - No matches. Removed WinUI alias page implementation markers remain absent from active gallery source and visual-check tooling.
+- `rg -n "EasingFunction|PageTransition|ThemeTransition|ImplicitTransition|ConnectedAnimation|SemanticZoom|StandardUICommand|XamlUICommand|RadialGradientBrush|SystemBackdrop|CompactSizing|AppWindow|StoragePickers|AnimatedIcon|LinePage|ShapePage|MediaPlayerElement|MapControl|WebView2" ModernWpf.Gallery\Generated\GalleryCatalogData.g.cs ModernWpf.Gallery\Models\GalleryCatalog.cs ModernWpf.Gallery\Pages tools\visual-checks -g "!**/bin/**" -g "!**/obj/**"`
+  - No matches. Deleted WinUI concept/API/media/map/webview page names remain absent from generated catalog metadata and active gallery source/tooling.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryPageRuntimeTests.TopLevelWpfGalleryPagesAcceptInjectedViewModels|FullyQualifiedName~GalleryPageRuntimeTests.WhatsNewPageHeaderMatchesWpfGalleryReference|FullyQualifiedName~GalleryNavigationRuntimeTests.WpfGalleryPageShellCardsMatchReferenceAutomationAndLayout" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 3 tests per target. All Controls, WPF-equivalent section pages, ModernWpf extension section pages, and What's New now find their `PageHeader` structurally instead of through local `x:Name="PageHeader"` hooks, matching the official WPF Gallery XAML source shape while preserving header binding, automation, and layout coverage. The generic ModernWpf `ItemPage` wrapper keeps its named `PageHeader` because it is a local shell component rather than copied WPF Gallery source.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryPageRuntimeTests.WhatsNewPageHeaderMatchesWpfGalleryReference|FullyQualifiedName~GalleryAutomationHookTests.DirectWpfPageWritesContentPagePaneVisualArtifact" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
@@ -1815,6 +1821,14 @@ ListView's selection-support live XAML has also been rechecked against official
 source and refreshed at `artifacts/wpf-gallery-visual-audit/20260524-051340/report.md`
 and `artifacts/wpf-gallery-visual-audit/20260524-051409/report.md`, so avoid
 reopening that sample unless new source or visual evidence regresses.
+
+## Historical WinUI Extension Notes (Superseded)
+
+The notes below record earlier WinUI-extension implementation rounds. They are
+historical evidence only. The retained ModernWpf/WinUI extension surface and
+deleted-page source-ownership rule at the top of this tracker supersede any
+older paragraph below that describes a pruned page, route, factory, sample-code
+file, automation mapping, or visual-check target as currently implemented.
 The generated ModernWpf NavigationView extension page now uses the local
 official WinUI Gallery eight-example structure from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\NavigationViewPage.xaml`
