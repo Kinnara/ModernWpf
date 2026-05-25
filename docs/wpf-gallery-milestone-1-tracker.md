@@ -21,6 +21,13 @@ interaction model.
 Use the local checkouts above as the source of truth. Do not web-search WinUI
 Gallery source while `D:\repos\WinUI-Gallery` is available.
 
+WinUI Gallery extension scope: include WinUI Gallery pages only when the page is
+for a ModernWpf-implemented WinUI control or a control surface intentionally
+implemented in WPF. Do not add standalone WinUI concept/API pages such as
+`EasingFunction`, `PageTransition`, animation interop, connected animation,
+implicit transitions, or theme transitions just because they exist in WinUI
+Gallery.
+
 ## Copy vs Adapt Rule
 
 Prefer copying official WPF Gallery page structure, sample XAML, page titles,
@@ -106,16 +113,19 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
-- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.EasingFunctionSampleMatchesWinUIGalleryExamples" -p:UseSharedCompilation=false`
-  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 1 test per target. The generated ModernWpf EasingFunction page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\EasingFunctionPage.xaml` / `.xaml.cs`: the three intro bullets, four `Standard Easing Function`, `Accelerate Easing Function`, `Decelerate Easing Function`, and `Other XAML Easing Functions` examples, source-facing `AccelerateEasingExponent`, `DecelerateEasingExponent`, `EasingComboBox`, `easeOutRB`, `easeInRB`, and `easeInOutRB` names, official inline XAML snippets, source automation names, and the official easing-function option list. The WPF adaptation uses WPF `DoubleAnimation` / `EasingFunctionBase` instances and `ModernWpf.Controls.NumberBox` because WPF does not host the exact WinUI storyboard runtime surface. The test covers the source snippets, intro content, example headers, sample root automation peer, button automation names, number box defaults, easing combo options, and radio-button defaults.
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryCatalogTests" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 14 tests per target. The catalog now omits the non-control WinUI Motion concept pages (`XamlCompInterop`, `ConnectedAnimation`, `EasingFunction`, `ImplicitTransition`, `PageTransition`, and `ThemeTransition`), keeps `ParallaxView`, updates the total item count to 130, and keeps related-control references resolvable.
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.ParallaxViewSampleMatchesWinUIGalleryExamples" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 1 test per target. This confirms the remaining Motion page still renders the source-backed ModernWpf `ParallaxView` sample after the catalog pruning.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
-  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 71 tests per target, including the new EasingFunction root/button automation IDs.
-- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls EasingFunction -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
-  - Passed at `artifacts/visual-checks/20260525-103954-459-120720/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required `GallerySample_EasingFunction_StandardButton` element was found, primary crops compare ModernWpf `GallerySample_EasingFunction_StandardButton` against WinUI's `Animate rectangle using Standard Easing Function` button name, crop sizes match at `76x32`, Light primary delta is `4.53`, and whole-window Light mean delta remains diagnostic at `165.87`.
-- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls EasingFunction -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
-  - Passed at `artifacts/visual-checks/20260525-104028-441-99792/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the same button crop mapping is used with matching `76x32` crops, Dark primary delta is `9.05`, and whole-window Dark mean delta is `16.76`.
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 70 tests per target. The curated automation list no longer includes `EasingFunction` or `PageTransition`.
 - `git diff --check`
   - Passed with only Git's normal LF-to-CRLF working-copy warnings for touched files.
+
+Verification note: do not run WPF gallery `dotnet test` builds in parallel for
+this repo. A parallel attempt can collide on generated WPF temp projects and
+lock `ModernWpf.Gallery.dll`; rerun the same checks sequentially.
+
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.ParallaxViewSampleMatchesWinUIGalleryExamples" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 1 test per target. The generated ModernWpf ParallaxView page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\ParallaxViewPage.xaml` / `.xaml.cs`: the `Parallax on a ListView` and `Parallax with a ScrollView` examples, source-facing `parallaxView`, `listView`, and `scrollView` names, the official inline XAML snippets, the `VerticalShift="500"` source behavior, and WinUI generated catalog item titles from `GalleryCatalogData.Groups`. The WPF adaptation uses the real `ModernWpf.Controls.ParallaxView`; it maps WinUI `ScrollView` to WPF `ScrollViewer` in the second example and uses an explicit image/list overlay host for the first viewport because WPF `ListView` has no built-in `Header` property matching WinUI `ListView.Header`. The test covers the source snippets, sample root automation peer, `GallerySample_ParallaxView_ParallaxView`, source data ordering, overlay brush, image asset, and rectangle stack.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
@@ -3054,29 +3064,13 @@ the remaining crop width difference as diagnostic unless a native SemanticZoom
 port or a better source-sized host becomes available. Avoid reopening
 SemanticZoom's source shape unless a new local WinUI source, native control
 strategy, or crop regression appears.
-The generated ModernWpf EasingFunction extension page now uses the local
-official WinUI Gallery source from
-`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\EasingFunctionPage.xaml`
-and `.xaml.cs`: the three intro bullets, the `Standard Easing Function`,
-`Accelerate Easing Function`, `Decelerate Easing Function`, and
-`Other XAML Easing Functions` examples, the official inline storyboard snippets,
-source-facing names (`AccelerateEasingExponent`, `DecelerateEasingExponent`,
-`EasingComboBox`, `easeOutRB`, `easeInRB`, and `easeInOutRB`), source
-automation names, and the source easing-function option list. The WPF adaptation
-keeps the visible WinUI page shape while using WPF `DoubleAnimation`,
-`EasingFunctionBase`, `TranslateTransform`, WPF `RadioButton` layout, and
-`ModernWpf.Controls.NumberBox` in place of WinUI's exact storyboard/runtime
-surface. The visual harness now includes EasingFunction in the default WinUI
-extension visual set, maps the ModernWpf `GallerySample_EasingFunction_StandardButton`
-crop to the installed WinUI button named `Animate rectangle using Standard
-Easing Function`, and maps the WinUI route id `EasingFunction` to the displayed
-page title `Easing Functions`. Current EasingFunction WinUI-reference evidence
-is `artifacts/visual-checks/20260525-103954-459-120720/report.md` for Light and
-`artifacts/visual-checks/20260525-104028-441-99792/report.md` for Dark, both
-with ModernWpf and installed WinUI 3 Gallery `Passed`, matching `76x32` primary
-crops and deltas `4.53` / `9.05`. Avoid reopening EasingFunction's source shape
-unless a new local WinUI source, WPF easing behavior gap, or crop regression
-appears.
+The Motion source group is intentionally limited to ModernWpf-implemented WinUI
+control surfaces. `ParallaxView` remains because it is a real ModernWpf control
+page; WinUI concept/API pages such as animation interop, connected animation,
+EasingFunction, implicit transitions, PageTransition, and theme transitions are
+omitted from the generated catalog, display group, curated automation list, and
+visual-check defaults. Do not re-add those pages as WinUI Gallery parity work
+unless ModernWpf exposes a corresponding user-facing control page.
 The generated ModernWpf ParallaxView extension page now uses the local official
 WinUI Gallery source from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\ParallaxViewPage.xaml`

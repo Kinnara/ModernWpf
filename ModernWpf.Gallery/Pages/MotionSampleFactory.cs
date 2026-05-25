@@ -22,46 +22,6 @@ namespace ModernWpf.Gallery.Pages
         private const double ParallaxHeaderHeight = 76;
         private const double ParallaxVerticalShift = 500;
 
-        private const string EasingIntroStandard = "- Use the Standard easing function for animating general property changes.";
-        private const string EasingIntroAccelerate = "- Use the Accelerate easing function to animate objects that are exiting the scene.";
-        private const string EasingIntroDecelerate = "- Use the Decelerate easing function to animate objects that are entering the scene.";
-
-        private const string EasingStandardXaml =
-@"<Storyboard x:Name=""Storyboard1"">
-    <DoubleAnimation Storyboard.TargetName=""Translation"" Storyboard.TargetProperty=""X"" From=""0"" To=""200"" >
-        <DoubleAnimation.EasingFunction>
-            <CircleEase EasingMode=""EaseInOut"" />
-        </DoubleAnimation.EasingFunction>
-    </DoubleAnimation>
-</Storyboard>";
-
-        private const string EasingAccelerateXaml =
-@"<Storyboard x:Name=""Storyboard2"">
-    <DoubleAnimation Storyboard.TargetName=""Translation"" Storyboard.TargetProperty=""X"" From=""0"" To=""200"" >
-        <DoubleAnimation.EasingFunction>
-            <ExponentialEase Exponent=""$(AccelerateEasingExponent)"" EasingMode=""EaseIn"" />
-        </DoubleAnimation.EasingFunction>
-    </DoubleAnimation>
-</Storyboard>";
-
-        private const string EasingDecelerateXaml =
-@"<Storyboard x:Name=""Storyboard3"">
-    <DoubleAnimation Storyboard.TargetName=""Translation"" Storyboard.TargetProperty=""X"" From=""0"" To=""200"" >
-        <DoubleAnimation.EasingFunction>
-            <ExponentialEase Exponent=""$(DecelerateEasingExponent)"" EasingMode=""EaseOut"" />
-        </DoubleAnimation.EasingFunction>
-    </DoubleAnimation>
-</Storyboard>";
-
-        private const string EasingOtherXaml =
-@"<Storyboard x:Name=""Storyboard3"">
-    <DoubleAnimation Storyboard.TargetName=""Translation"" Storyboard.TargetProperty=""X"" From=""0"" To=""200"" >
-        <DoubleAnimation.EasingFunction>
-            <$(EasingFunction)/>
-        </DoubleAnimation.EasingFunction>
-    </DoubleAnimation>
-</Storyboard>";
-
         private const string ParallaxViewListViewXaml =
 @"<Grid>
     <ParallaxView
@@ -134,50 +94,12 @@ namespace ModernWpf.Gallery.Pages
             "Cyan"
         };
 
-        private static readonly string[] EasingFunctionNames =
-        {
-            "BackEase",
-            "BounceEase",
-            "CircleEase",
-            "CubicEase",
-            "ElasticEase",
-            "ExponentialEase",
-            "PowerEase",
-            "QuadraticEase",
-            "QuarticEase",
-            "QuinticEase",
-            "SineEase"
-        };
-
         public static UIElement Create(string uniqueId)
         {
             switch (uniqueId)
             {
-                case "XamlCompInterop":
-                    return CreateAnimationInteropSample();
-                case "ConnectedAnimation":
-                    return CreateConnectedAnimationSample();
-                case "EasingFunction":
-                    return CreateEasingFunctionSample();
-                case "ImplicitTransition":
-                    return CreateImplicitTransitionSample();
-                case "PageTransition":
-                    return CreatePageTransitionSample();
-                case "ThemeTransition":
-                    return CreateThemeTransitionSample();
                 case "ParallaxView":
                     return CreateParallaxViewSample();
-                default:
-                    return null;
-            }
-        }
-
-        public static object CreateIntroContent(string uniqueId)
-        {
-            switch (uniqueId)
-            {
-                case "EasingFunction":
-                    return CreateEasingFunctionIntroContent();
                 default:
                     return null;
             }
@@ -187,8 +109,6 @@ namespace ModernWpf.Gallery.Pages
         {
             switch (uniqueId)
             {
-                case "EasingFunction":
-                    return CreateEasingFunctionExamples();
                 case "ParallaxView":
                     return CreateParallaxViewExamples();
                 default:
@@ -400,312 +320,6 @@ namespace ModernWpf.Gallery.Pages
             return panel;
         }
 
-        private static UIElement CreateEasingFunctionSample()
-        {
-            return CreateStandardEasingExampleContent(assignRootAutomationId: true);
-        }
-
-        private static object CreateEasingFunctionIntroContent()
-        {
-            var panel = new StackPanel
-            {
-                Margin = new Thickness(0, 0, 0, 24)
-            };
-            panel.Children.Add(CreateIntroLine(EasingIntroStandard));
-            panel.Children.Add(CreateIntroLine(EasingIntroAccelerate));
-            panel.Children.Add(CreateIntroLine(EasingIntroDecelerate));
-            return panel;
-        }
-
-        private static IReadOnlyList<GalleryExample> CreateEasingFunctionExamples()
-        {
-            return new[]
-            {
-                new GalleryExample(
-                    "Standard Easing Function",
-                    CreateStandardEasingExampleContent(assignRootAutomationId: true),
-                    EasingStandardXaml,
-                    null),
-                new GalleryExample(
-                    "Accelerate Easing Function",
-                    CreateAccelerateEasingExampleContent(),
-                    EasingAccelerateXaml,
-                    null),
-                new GalleryExample(
-                    "Decelerate Easing Function",
-                    CreateDecelerateEasingExampleContent(),
-                    EasingDecelerateXaml,
-                    null),
-                new GalleryExample(
-                    "Other XAML Easing Functions",
-                    CreateOtherEasingExampleContent(),
-                    EasingOtherXaml,
-                    null)
-            };
-        }
-
-        private static GallerySamplePanel CreateStandardEasingExampleContent(bool assignRootAutomationId)
-        {
-            return CreateEasingExampleContent(
-                assignRootAutomationId,
-                "Animate rectangle using Standard Easing Function",
-                "StandardButton",
-                500,
-                () => new CircleEase { EasingMode = EasingMode.EaseInOut },
-                null);
-        }
-
-        private static GallerySamplePanel CreateAccelerateEasingExampleContent()
-        {
-            var exponent = CreateEasingNumberBox(
-                "AccelerateEasingExponent",
-                "Accelerate easing exponent",
-                4.5);
-
-            return CreateEasingExampleContent(
-                assignRootAutomationId: false,
-                buttonAutomationName: "Animate rectangle using Accelerate Easing Function",
-                buttonElementName: "AccelerateButton",
-                durationMilliseconds: 150,
-                easingFactory: () => new ExponentialEase
-                {
-                    EasingMode = EasingMode.EaseIn,
-                    Exponent = exponent.Value
-                },
-                options: exponent);
-        }
-
-        private static GallerySamplePanel CreateDecelerateEasingExampleContent()
-        {
-            var exponent = CreateEasingNumberBox(
-                "DecelerateEasingExponent",
-                "Decelerate easing exponent",
-                7);
-
-            return CreateEasingExampleContent(
-                assignRootAutomationId: false,
-                buttonAutomationName: "Animate rectangle using Decelerate Easing Function",
-                buttonElementName: "DecelerateButton",
-                durationMilliseconds: 300,
-                easingFactory: () => new ExponentialEase
-                {
-                    EasingMode = EasingMode.EaseOut,
-                    Exponent = exponent.Value
-                },
-                options: exponent);
-        }
-
-        private static GallerySamplePanel CreateOtherEasingExampleContent()
-        {
-            var comboBox = new ComboBox
-            {
-                Name = "EasingComboBox",
-                ItemsSource = EasingFunctionNames,
-                SelectedIndex = 0,
-                MinWidth = 160,
-                Margin = new Thickness(0, 0, 0, 12)
-            };
-            AutomationProperties.SetName(comboBox, "Easing type");
-
-            var easeOut = new RadioButton
-            {
-                Name = "easeOutRB",
-                Content = "EaseOut",
-                IsChecked = true,
-                Margin = new Thickness(0, 0, 0, 4)
-            };
-            var easeIn = new RadioButton
-            {
-                Name = "easeInRB",
-                Content = "EaseIn",
-                Margin = new Thickness(0, 0, 0, 4)
-            };
-            var easeInOut = new RadioButton
-            {
-                Name = "easeInOutRB",
-                Content = "EaseInOut"
-            };
-
-            var options = new StackPanel();
-            options.Children.Add(comboBox);
-            options.Children.Add(easeOut);
-            options.Children.Add(easeIn);
-            options.Children.Add(easeInOut);
-
-            return CreateEasingExampleContent(
-                assignRootAutomationId: false,
-                buttonAutomationName: "Animate rectangle using an Easing Function",
-                buttonElementName: "OtherButton",
-                durationMilliseconds: 500,
-                easingFactory: () =>
-                {
-                    var easingFunction = CreateNamedEasingFunction(comboBox.SelectedItem as string);
-                    easingFunction.EasingMode = GetSelectedEasingMode(easeOut, easeIn, easeInOut);
-                    return easingFunction;
-                },
-                options: options);
-        }
-
-        private static GallerySamplePanel CreateEasingExampleContent(
-            bool assignRootAutomationId,
-            string buttonAutomationName,
-            string buttonElementName,
-            int durationMilliseconds,
-            Func<IEasingFunction> easingFactory,
-            UIElement options)
-        {
-            var root = new GallerySamplePanel();
-            if (assignRootAutomationId)
-            {
-                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("EasingFunction"));
-            }
-
-            var translation = new TranslateTransform();
-            var button = new Button
-            {
-                Content = "Animate",
-                VerticalAlignment = VerticalAlignment.Top,
-                Margin = new Thickness(0, 0, 12, 0)
-            };
-            AutomationProperties.SetName(button, buttonAutomationName);
-            GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("EasingFunction", buttonElementName));
-
-            button.Click += delegate
-            {
-                RunEasingAnimation(translation, durationMilliseconds, easingFactory());
-            };
-
-            var rectangle = new Rectangle
-            {
-                Width = 50,
-                Height = 50,
-                Fill = CreateBrush("#0078D4"),
-                RenderTransform = translation,
-                VerticalAlignment = VerticalAlignment.Center
-            };
-            GalleryAutomation.WithAutomationId(rectangle, GalleryAutomation.SampleElementId("EasingFunction", buttonElementName + "Rectangle"));
-
-            var sample = new Grid();
-            sample.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            sample.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star), MinWidth = 300 });
-            sample.Children.Add(button);
-            Grid.SetColumn(rectangle, 1);
-            sample.Children.Add(rectangle);
-
-            if (options == null)
-            {
-                root.Children.Add(sample);
-            }
-            else
-            {
-                root.Children.Add(CreateEasingTwoColumnLayout(sample, options));
-            }
-
-            return root;
-        }
-
-        private static TextBlock CreateIntroLine(string text)
-        {
-            return new TextBlock
-            {
-                Text = text,
-                TextWrapping = TextWrapping.Wrap,
-                Margin = new Thickness(0, 0, 0, 8)
-            };
-        }
-
-        private static Grid CreateEasingTwoColumnLayout(UIElement sample, UIElement options)
-        {
-            var layout = new Grid();
-            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star), MinWidth = 360 });
-            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(24) });
-            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            layout.Children.Add(sample);
-            Grid.SetColumn(options, 2);
-            layout.Children.Add(options);
-            return layout;
-        }
-
-        private static Mux.NumberBox CreateEasingNumberBox(string name, string automationName, double value)
-        {
-            var numberBox = new Mux.NumberBox
-            {
-                Name = name,
-                Header = "Exponent",
-                Value = value,
-                Width = 160,
-                SpinButtonPlacementMode = Mux.NumberBoxSpinButtonPlacementMode.Inline
-            };
-            AutomationProperties.SetName(numberBox, automationName);
-            return numberBox;
-        }
-
-        private static void RunEasingAnimation(TranslateTransform transform, int durationMilliseconds, IEasingFunction easingFunction)
-        {
-            var from = transform.X;
-            var to = from > 0 ? 0 : 200;
-            var animation = new DoubleAnimation
-            {
-                From = from,
-                To = to,
-                Duration = TimeSpan.FromMilliseconds(durationMilliseconds),
-                EasingFunction = easingFunction,
-                FillBehavior = FillBehavior.Stop
-            };
-            animation.Completed += delegate
-            {
-                transform.BeginAnimation(TranslateTransform.XProperty, null);
-                transform.X = to;
-            };
-            transform.BeginAnimation(TranslateTransform.XProperty, animation);
-        }
-
-        private static EasingFunctionBase CreateNamedEasingFunction(string name)
-        {
-            switch (name)
-            {
-                case "BackEase":
-                    return new BackEase();
-                case "BounceEase":
-                    return new BounceEase();
-                case "CircleEase":
-                    return new CircleEase();
-                case "CubicEase":
-                    return new CubicEase();
-                case "ElasticEase":
-                    return new ElasticEase();
-                case "ExponentialEase":
-                    return new ExponentialEase();
-                case "PowerEase":
-                    return new PowerEase();
-                case "QuadraticEase":
-                    return new QuadraticEase();
-                case "QuarticEase":
-                    return new QuarticEase();
-                case "QuinticEase":
-                    return new QuinticEase();
-                case "SineEase":
-                    return new SineEase();
-                default:
-                    return new BackEase();
-            }
-        }
-
-        private static EasingMode GetSelectedEasingMode(RadioButton easeOut, RadioButton easeIn, RadioButton easeInOut)
-        {
-            if (easeOut.IsChecked == true)
-            {
-                return EasingMode.EaseOut;
-            }
-
-            if (easeIn.IsChecked == true)
-            {
-                return EasingMode.EaseIn;
-            }
-
-            return EasingMode.EaseInOut;
-        }
-
         private static UIElement CreateImplicitTransitionSample()
         {
             var panel = CreateSamplePanel("Implicit transitions map to WPF animations that run when layout-affecting properties change.");
@@ -780,49 +394,6 @@ namespace ModernWpf.Gallery.Pages
 
             panel.Children.Add(canvas);
             panel.Children.Add(commands);
-            return panel;
-        }
-
-        private static UIElement CreatePageTransitionSample()
-        {
-            var panel = CreateSamplePanel("Page transitions animate content as navigation changes the current page.");
-            var host = new Border
-            {
-                Width = 460,
-                Height = 250,
-                CornerRadius = new CornerRadius(8),
-                BorderThickness = new Thickness(1),
-                BorderBrush = CreateBrush("#D8D8D8"),
-                Background = Brushes.White,
-                ClipToBounds = true
-            };
-            var grid = new Grid();
-            host.Child = grid;
-            var pageIndex = 0;
-            ShowTransitionPage(grid, pageIndex, 0);
-
-            var output = CreateOutput("Page 1 of 3");
-            var commands = CreateCommandRow();
-            var previous = CreateButton("Previous");
-            var next = CreateButton("Next");
-            previous.Click += delegate
-            {
-                pageIndex = pageIndex == 0 ? 2 : pageIndex - 1;
-                ShowTransitionPage(grid, pageIndex, -1);
-                output.Text = "Page " + (pageIndex + 1) + " of 3";
-            };
-            next.Click += delegate
-            {
-                pageIndex = pageIndex == 2 ? 0 : pageIndex + 1;
-                ShowTransitionPage(grid, pageIndex, 1);
-                output.Text = "Page " + (pageIndex + 1) + " of 3";
-            };
-            commands.Children.Add(previous);
-            commands.Children.Add(next);
-
-            panel.Children.Add(host);
-            panel.Children.Add(commands);
-            panel.Children.Add(output);
             return panel;
         }
 
@@ -1137,43 +708,6 @@ namespace ModernWpf.Gallery.Pages
             return border;
         }
 
-        private static void AddEasingRow(Canvas canvas, string name, Brush brush, double top, IEasingFunction easing, ICollection<TranslateTransform> transforms)
-        {
-            var label = new TextBlock
-            {
-                Text = name,
-                Width = 92,
-                VerticalAlignment = VerticalAlignment.Center
-            };
-            Canvas.SetLeft(label, 24);
-            Canvas.SetTop(label, top + 6);
-            canvas.Children.Add(label);
-
-            var line = new Rectangle
-            {
-                Width = 330,
-                Height = 2,
-                Fill = CreateBrush("#D0D0D0")
-            };
-            Canvas.SetLeft(line, 130);
-            Canvas.SetTop(line, top + 17);
-            canvas.Children.Add(line);
-
-            var transform = new TranslateTransform();
-            transform.SetValue(EasingFunctionProperty, easing);
-            var dot = new Ellipse
-            {
-                Width = 28,
-                Height = 28,
-                Fill = brush,
-                RenderTransform = transform
-            };
-            Canvas.SetLeft(dot, 124);
-            Canvas.SetTop(dot, top + 4);
-            canvas.Children.Add(dot);
-            transforms.Add(transform);
-        }
-
         private static Border AddImplicitCard(Canvas canvas, IList<Border> cards, int number)
         {
             var card = new Border
@@ -1216,77 +750,6 @@ namespace ModernWpf.Gallery.Pages
                     Canvas.SetTop(cards[i], top);
                 }
             }
-        }
-
-        private static void ShowTransitionPage(Grid host, int index, int direction)
-        {
-            host.Children.Clear();
-            var page = CreateTransitionPage(index);
-            var transform = new TranslateTransform(direction * 54, 0);
-            page.RenderTransform = transform;
-            page.Opacity = direction == 0 ? 1 : 0;
-            host.Children.Add(page);
-
-            if (direction != 0)
-            {
-                transform.BeginAnimation(TranslateTransform.XProperty, CreateAnimation(0, 360, new CubicEase { EasingMode = EasingMode.EaseOut }));
-                page.BeginAnimation(UIElement.OpacityProperty, CreateAnimation(1, 260, null));
-            }
-        }
-
-        private static Grid CreateTransitionPage(int index)
-        {
-            var imageNames = new[] { "LandscapeImage2.jpg", "LandscapeImage6.jpg", "LandscapeImage12.jpg" };
-            var titles = new[] { "Overview", "Details", "Confirmation" };
-            var colors = new[] { "#0078D4", "#8764B8", "#107C10" };
-            var grid = new Grid
-            {
-                Background = Brushes.White
-            };
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(180) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-
-            var image = new Border
-            {
-                Margin = new Thickness(18),
-                CornerRadius = new CornerRadius(8),
-                Background = new ImageBrush(CreateBitmap(ResourceUri("Assets/SampleMedia/" + imageNames[index])))
-                {
-                    Stretch = Stretch.UniformToFill
-                }
-            };
-            Grid.SetColumn(image, 0);
-
-            var copy = new StackPanel
-            {
-                Margin = new Thickness(8, 34, 30, 28)
-            };
-            copy.Children.Add(new TextBlock
-            {
-                Text = titles[index],
-                FontSize = 28,
-                FontWeight = FontWeights.SemiBold
-            });
-            copy.Children.Add(new Rectangle
-            {
-                Width = 52,
-                Height = 4,
-                RadiusX = 2,
-                RadiusY = 2,
-                Fill = CreateBrush(colors[index]),
-                HorizontalAlignment = HorizontalAlignment.Left,
-                Margin = new Thickness(0, 12, 0, 16)
-            });
-            copy.Children.Add(new TextBlock
-            {
-                Text = "NavigationThemeTransition-style motion helps communicate where the user is moving in the workflow.",
-                TextWrapping = TextWrapping.Wrap,
-                Opacity = 0.72
-            });
-            Grid.SetColumn(copy, 1);
-            grid.Children.Add(image);
-            grid.Children.Add(copy);
-            return grid;
         }
 
         private static Border CreateThemeTile(string text, string color)
@@ -1412,11 +875,5 @@ namespace ModernWpf.Gallery.Pages
             return (SolidColorBrush)new BrushConverter().ConvertFromString(color);
         }
 
-        private static readonly DependencyProperty EasingFunctionProperty =
-            DependencyProperty.RegisterAttached(
-                "EasingFunction",
-                typeof(IEasingFunction),
-                typeof(MotionSampleFactory),
-                new PropertyMetadata(null));
     }
 }

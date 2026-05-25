@@ -479,7 +479,7 @@ namespace ModernWpf.Gallery.Models
                     "Frame hosts navigable WPF Page instances and maintains a navigation journal.",
                     "System.Windows.Controls.Frame",
                     new[] { "Object", "DispatcherObject", "DependencyObject", "Visual", "UIElement", "FrameworkElement", "Control", "ContentControl", "Frame" },
-                    new[] { "NavigationView", "PageTransition" },
+                    new[] { "NavigationView" },
                     isNew: true),
                 CreateWpfItem(
                     "Navigation",
@@ -845,13 +845,7 @@ namespace ModernWpf.Gallery.Models
                         "MapControl",
                         "SystemBackdrops",
                         "SystemBackdropElement",
-                        "XamlCompInterop",
                         "StoragePickers",
-                        "ConnectedAnimation",
-                        "EasingFunction",
-                        "ImplicitTransition",
-                        "PageTransition",
-                        "ThemeTransition",
                         "ParallaxView",
                         "StandardUICommand",
                         "XamlUICommand"

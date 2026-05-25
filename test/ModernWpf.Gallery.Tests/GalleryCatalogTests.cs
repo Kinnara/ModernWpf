@@ -316,10 +316,36 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void MotionSectionKeepsOnlyImplementedWinUIControls()
+        {
+            var omittedMotionConceptPages = new[]
+            {
+                "XamlCompInterop",
+                "ConnectedAnimation",
+                "EasingFunction",
+                "ImplicitTransition",
+                "PageTransition",
+                "ThemeTransition"
+            };
+
+            foreach (var uniqueId in omittedMotionConceptPages)
+            {
+                Assert.IsNull(GalleryCatalog.FindItem(uniqueId), uniqueId);
+            }
+
+            var platformGroup = GalleryCatalog.FindGroup("PlatformAndPatterns");
+            Assert.IsNotNull(platformGroup);
+            CollectionAssert.Contains(platformGroup.Items.Select(item => item.UniqueId).ToArray(), "ParallaxView");
+            CollectionAssert.DoesNotContain(
+                platformGroup.Items.Select(item => item.UniqueId).ToArray(),
+                "EasingFunction");
+        }
+
+        [TestMethod]
         public void CatalogContainsWpfFirstGallerySurface()
         {
             Assert.AreEqual(13, GalleryCatalog.Groups.Count);
-            Assert.AreEqual(136, GalleryCatalog.Items.Count);
+            Assert.AreEqual(130, GalleryCatalog.Items.Count);
         }
 
         private static void AssertNavigationItem(string uniqueId, string subtitle, string imageFileName)
