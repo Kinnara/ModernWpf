@@ -18,7 +18,9 @@ using ModernWpf.Controls.Primitives;
 using ModernWpf.Gallery.Controls;
 using ModernWpf.Gallery.Models;
 using ModernWpf.Gallery.Pages;
+using ModernWpf.Gallery.Shell;
 using ModernWpf.Gallery.Testing;
+using ModernWpf.Gallery.ViewModels;
 using Mux = ModernWpf.Controls;
 using TeachingTipControl = ModernWpf.Controls.TeachingTip;
 using WpfShapes = System.Windows.Shapes;
@@ -4745,6 +4747,61 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsTrue(File.Exists(contentHostArtifact), contentHostArtifact + " was not written.");
                     Assert.IsTrue(new FileInfo(contentHostArtifact).Length > 0);
                     Assert.IsTrue(HasVisibleRgbPixels(contentHostArtifact), contentHostArtifact + " has no visible RGB content.");
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    GalleryDiagnostics.ResetForTests();
+                    if (Directory.Exists(artifactDirectory))
+                    {
+                        Directory.Delete(artifactDirectory, recursive: true);
+                    }
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void ShellNavigationRootWritesRenderedVisualArtifacts()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var artifactDirectory = Path.Combine(Path.GetTempPath(), "ModernWpfGalleryTests", Path.GetRandomFileName());
+                GalleryDiagnostics.Configure(GalleryLaunchOptions.Parse(new[] { "--visual-test", "--visual-artifact-dir", artifactDirectory }));
+
+                var page = new NavigationRootPage();
+                page.DataContext = new { ViewModel = new MainWindowViewModel(page.GoBack, page.OpenSettings) };
+                var window = new Window
+                {
+                    Width = 1180,
+                    Height = 820,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    page.NavigateTo("category/Navigation");
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    var shellRootArtifact = Path.Combine(artifactDirectory, "GalleryNavigationRoot.png");
+                    var navigationArtifact = Path.Combine(artifactDirectory, "GalleryNavigationView.png");
+                    var contentRootArtifact = Path.Combine(artifactDirectory, "ContentRootGrid.png");
+
+                    Assert.IsTrue(File.Exists(shellRootArtifact), shellRootArtifact + " was not written.");
+                    Assert.IsTrue(File.Exists(navigationArtifact), navigationArtifact + " was not written.");
+                    Assert.IsTrue(File.Exists(contentRootArtifact), contentRootArtifact + " was not written.");
+                    Assert.IsTrue(HasVisibleRgbPixels(shellRootArtifact), shellRootArtifact + " has no visible RGB content.");
+                    Assert.IsTrue(HasVisibleRgbPixels(navigationArtifact), navigationArtifact + " has no visible RGB content.");
+                    Assert.IsTrue(HasVisibleRgbPixels(contentRootArtifact), contentRootArtifact + " has no visible RGB content.");
                 }
                 finally
                 {
