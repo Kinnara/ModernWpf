@@ -262,7 +262,8 @@ namespace ModernWpf.Gallery.Tests
                     (double)Application.Current.FindResource("BodyTextBlockFontSize"),
                     TextElement.GetFontSize(root));
 
-                var gridShorthandParagraph = (TextBlock)page.FindName("GridShorthandSyntaxParagraphText");
+                var gridShorthandParagraph = FindDescendants<TextBlock>(page)
+                    .Single(textBlock => new TextRange(textBlock.ContentStart, textBlock.ContentEnd).Text.Contains("comma\u2011separated"));
                 Assert.AreEqual(new Thickness(0, 0, 0, 12), gridShorthandParagraph.Margin);
                 Assert.AreEqual(TextWrapping.Wrap, gridShorthandParagraph.TextWrapping);
                 Assert.AreSame(DependencyProperty.UnsetValue, gridShorthandParagraph.ReadLocalValue(TextBlock.StyleProperty));
@@ -270,9 +271,10 @@ namespace ModernWpf.Gallery.Tests
                     new TextRange(gridShorthandParagraph.ContentStart, gridShorthandParagraph.ContentEnd).Text,
                     "comma\u2011separated");
 
-                var gridExample = (ControlExample)page.FindName("GridShorthandSyntaxExample");
-                var accentExample = (ControlExample)page.FindName("AccentColorExample");
-                var ligatureExample = (ControlExample)page.FindName("HyphenLigatureExample");
+                var controlExamples = FindDescendants<ControlExample>(page).ToArray();
+                var gridExample = controlExamples.Single(example => string.Equals(example.HeaderText, "Grid Shorthand Syntax Sample", StringComparison.Ordinal));
+                var accentExample = controlExamples.Single(example => string.Equals(example.HeaderText, "AccentColor API", StringComparison.Ordinal));
+                var ligatureExample = controlExamples.Single(example => string.Equals(example.HeaderText, "Hyphen based ligature example", StringComparison.Ordinal));
                 Assert.AreEqual(new Thickness(2, 10, 2, 24), gridExample.Margin);
                 Assert.AreEqual(new Thickness(2, 10, 2, 10), accentExample.Margin);
                 Assert.AreEqual(new Thickness(2, 10, 2, 10), ligatureExample.Margin);
@@ -521,7 +523,11 @@ namespace ModernWpf.Gallery.Tests
                     window.UpdateLayout();
                     WpfTestHost.DoEvents();
 
-                    var swatches = (StackPanel)page.FindName("AccentColorSwatches");
+                    var accentExample = FindDescendants<ControlExample>(page)
+                        .Single(example => string.Equals(example.HeaderText, "AccentColor API", StringComparison.Ordinal));
+                    var swatches = (StackPanel)((Grid)accentExample.ExampleContent).Children[0];
+                    Assert.AreEqual(Orientation.Horizontal, swatches.Orientation);
+                    Assert.AreEqual(50d, swatches.Height);
                     var borders = swatches.Children.OfType<Border>().ToArray();
                     var expectedBrushKeys = new[]
                     {

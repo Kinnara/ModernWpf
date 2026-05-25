@@ -76,7 +76,6 @@
                     Text="Grid Shorthand Syntax" />
 
                 <TextBlock
-                    x:Name="GridShorthandSyntaxParagraphText"
                     Margin="0,0,0,12"
                     TextWrapping="Wrap">
                     The WPF Grid supports a shorthand syntax for defining row and column sizes using the RowDefinitions and ColumnDefinitions attribute.
@@ -85,7 +84,6 @@
                 </TextBlock>
 
                 <controls:ControlExample
-                    x:Name="GridShorthandSyntaxExample"
                     Margin="2,10,2,24"
                     HeaderText="Grid Shorthand Syntax Sample"
                     XamlCode="{Binding ViewModel.GridShorthandSyntaxXamlCode}">
@@ -201,13 +199,11 @@
                 </TextBlock>
 
                 <controls:ControlExample
-                    x:Name="AccentColorExample"
                     Margin="2,10"
                     HeaderText="AccentColor API"
                     XamlCode="{Binding ViewModel.AccentColorXamlCode}">
                     <Grid>
                         <StackPanel
-                            x:Name="AccentColorSwatches"
                             Height="50"
                             Orientation="Horizontal">
                             <StackPanel.Resources>
@@ -276,7 +272,6 @@
                 </TextBlock>
 
                 <controls:ControlExample
-                    x:Name="HyphenLigatureExample"
                     Margin="2,10"
                     HeaderText="Hyphen based ligature example"
                     XamlCode="{Binding ViewModel.HyphenBasedLigatureXamlCode}">
