@@ -106,6 +106,16 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.TabViewSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 66 tests per target. The generated ModernWpf TabView extension page keeps the local official WinUI Gallery source-backed ten-example structure while improving the first-sample visual match: generated document tabs now carry source-shaped document icons, close affordances, and source-facing automation names, and the primary rendered crop is now a `TabView1Host` wrapper with the in-header `Add New Tab` button instead of an external command row. Runtime coverage now finds `TabView1` by source name while the visual harness keeps `GallerySample_TabView_TabView` on the host crop.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls TabView -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-071251-038-93228/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required TabView host crop was found, primary crops still match at `767x475`, and Light primary delta improved from the previous `21.41` to `17.39`. Whole-window Light mean delta remains diagnostic because the installed WinUI shell stayed dark while ModernWpf was captured in Light.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls TabView -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-071354-452-112012/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required TabView host crop was found, primary crops match at `767x475`, and Dark primary delta improved from the previous `31.2` to `26.14`; whole-window Dark mean delta is `32.07`.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the TabView visual follow-up. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages plus existing generated WinRT and ModernWpf/ModernWpf.Controls warnings, ending with `104 Warning(s)` and `0 Error(s)`.
+- `git diff --check`
+  - Passed with only Git's normal LF-to-CRLF working-copy warnings for touched files.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.AcrylicSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 66 tests per target. The generated ModernWpf Acrylic extension page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\AcrylicPage.xaml` and `.xaml.cs`: the intro text, `Default in-app acrylic brush.`, `Custom acrylic in-app brush.`, and `Luminosity with in-app Acrylic.` examples, source-facing `Example1Grid`, `Example3Grid`, `Example4Grid`, `CustomAcrylicShapeInApp`, `CustomAcrylicShapeLumin`, `OpacitySliderInApp`, `ColorSelectorInApp`, `FallbackColorSelectorInApp`, `OpacitySliderLumin`, and `LuminositySlider` names, the official inline XAML snippets, initial values, tint/fallback color options, and slider-driven brush updates. `StylesSampleFactory.CreateIntroContent` and `CreateExamples` now cover Acrylic as a source-backed Platform & patterns WinUI extension page, and the first example exposes `GallerySample_Acrylic_Root` / `GallerySample_Acrylic_Example1Grid`. The WPF adaptation renders acrylic with layered ModernWpf/WPF `SolidColorBrush` opacity because WPF does not have WinUI's in-app `AcrylicBrush` composition surface.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls Acrylic -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -1643,24 +1653,28 @@ visual checks. The live WPF `TabControl` adaptation is capped to the installed
 WinUI Gallery's `767px` primary viewport so visual checks compare the
 control/content instead of the different ModernWpf host width, and runtime
 coverage asserts the first three generated tabs use source-shaped scroll/grid
-sample-page content. The WPF adaptation uses styled `TabControl` / `TabItem`
+sample-page content. The first generated TabView sample now captures a
+source-shaped `TabView1Host` wrapper so the primary visual crop includes the
+in-header `Add New Tab` button; generated document tabs also render document
+icons and close affordances while retaining `TabView1` as the named
+`TabControl`. The WPF adaptation uses styled `TabControl` / `TabItem`
 because ModernWpf has TabView
 resources but no native `TabView` control class; it keeps add/close,
 item-source add/remove, width-mode, close-overlay, header/footer, color-icon,
 accent-background, and launch-button behavior, while native WinUI
 drag-rearrange and multi-window TabView APIs remain approximated. Current
 TabView WinUI-reference evidence is
-`artifacts/visual-checks/20260524-222511-958-2224/report.md` for Light and
-`artifacts/visual-checks/20260524-222600-931-104104/report.md` for Dark, both
+`artifacts/visual-checks/20260525-071251-038-93228/report.md` for Light and
+`artifacts/visual-checks/20260525-071354-452-112012/report.md` for Dark, both
 with ModernWpf and installed WinUI 3 Gallery `Passed`, nonblank app captures,
 required ModernWpf element `GallerySample_TabView_TabView` found, matching
-`767x475` primary crops, and primary deltas `21.41` / `31.2`. The visual
-harness resets the installed WinUI Gallery sample scroll for TabView so
-reference `TabView1` is visible before capture. Avoid reopening TabView's
-source shape unless a new WinUI source, runtime, or crop regression appears; a
-later round can separately investigate a native TabView abstraction,
-drag-rearrange parity, tab-strip add/close button parity, or remaining header
-template drift.
+`767x475` primary crops, and primary deltas improved from `21.41` / `31.2` to
+`17.39` / `26.14`. The visual harness resets the installed WinUI Gallery
+sample scroll for TabView so reference `TabView1` is visible before capture.
+Avoid reopening TabView's source structure unless a new WinUI source, runtime,
+or crop regression appears; a later round can separately investigate a native
+TabView abstraction, drag-rearrange parity, the remaining generic markup and
+item-source header add/close alignment, or deeper template drift.
 The generated ModernWpf Pivot extension page now uses the local official WinUI
 Gallery one-example structure from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\PivotPage.xaml`:

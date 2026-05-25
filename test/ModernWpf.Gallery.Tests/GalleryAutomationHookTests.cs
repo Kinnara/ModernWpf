@@ -880,7 +880,8 @@ namespace ModernWpf.Gallery.Tests
                     StringAssert.Contains(page.Examples[7].XamlCode, "BitmapIconSource UriSource=\"/Assets/SampleMedia/linux.png\"");
                     StringAssert.Contains(page.Examples[9].XamlCode, "TabViewWindowingSamplePage.xaml");
 
-                    var tabView1 = (TabControl)FindByAutomationId(page, "GallerySample_TabView_TabView");
+                    var tabView1Host = (Grid)FindByAutomationId(page, "GallerySample_TabView_TabView");
+                    var tabView1 = FindNamedDescendant<TabControl>(page, "TabView1");
                     var tabViewItemsSourceSample = FindNamedDescendant<TabControl>(page, "TabViewItemsSourceSample");
                     var tabView2 = FindNamedDescendant<TabControl>(page, "TabView2");
                     var tabView3 = FindNamedDescendant<TabControl>(page, "TabView3");
@@ -890,6 +891,7 @@ namespace ModernWpf.Gallery.Tests
                     var widthModeCombo = FindNamedDescendant<ComboBox>(page, "TabWidthBehaviorComboBox");
                     var closeModeCombo = FindNamedDescendant<ComboBox>(page, "TabCloseButtonOverlayModeComboBox");
                     var windowingButton = FindNamedDescendant<Button>(page, "TabViewWindowingButton");
+                    Assert.IsNotNull(tabView1Host);
                     Assert.IsNotNull(tabView1);
                     Assert.IsNotNull(tabViewItemsSourceSample);
                     Assert.IsNotNull(tabView2);
@@ -901,6 +903,9 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsNotNull(closeModeCombo);
                     Assert.IsNotNull(windowingButton);
 
+                    Assert.AreEqual("TabView1Host", tabView1Host.Name);
+                    Assert.AreEqual(475, tabView1Host.MinHeight);
+                    Assert.AreEqual(767, tabView1Host.MaxWidth);
                     Assert.AreEqual("TabView1", tabView1.Name);
                     Assert.AreEqual(475, tabView1.MinHeight);
                     Assert.AreEqual(767, tabView1.MaxWidth);
@@ -6595,7 +6600,14 @@ namespace ModernWpf.Gallery.Tests
         private static void AssertTabItem(TabItem item, string header)
         {
             Assert.IsNotNull(item);
-            Assert.AreEqual(header, item.Header);
+            if (item.Header is string headerText)
+            {
+                Assert.AreEqual(header, headerText);
+            }
+            else
+            {
+                Assert.AreEqual(header, AutomationProperties.GetName(item));
+            }
             Assert.AreSame(item.TryFindResource("DefaultTabItemStyle"), item.Style);
         }
 

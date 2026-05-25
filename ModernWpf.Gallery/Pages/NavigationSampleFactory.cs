@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
@@ -1308,10 +1309,9 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
         private static UIElement CreateTabViewBasicExampleContent(bool assignRootAutomationId)
         {
             var root = CreateTabViewExampleRoot(assignRootAutomationId);
-            var tabControl = CreateTabViewControl("TabView1", true);
-            AddGeneratedDocumentTabs(tabControl);
-            root.Children.Add(tabControl);
-            root.Children.Add(CreateTabViewCommandBar(tabControl, "TabView1"));
+            var tabControl = CreateTabViewControl("TabView1", false);
+            AddGeneratedDocumentTabs(tabControl, "TabView1");
+            root.Children.Add(CreateTabViewHost(tabControl, "TabView1", assignPrimaryAutomationId: true, showAddButton: true));
             return root;
         }
 
@@ -1380,9 +1380,8 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             root.Children.Add(CreateTextBlock("- Ctrl+9 selects the last tab (regardless of the number of tabs)", new Thickness(0, 0, 0, 24)));
 
             var tabControl = CreateTabViewControl("TabView2", false);
-            AddGeneratedDocumentTabs(tabControl);
-            root.Children.Add(tabControl);
-            root.Children.Add(CreateTabViewCommandBar(tabControl, "TabView2"));
+            AddGeneratedDocumentTabs(tabControl, "TabView2");
+            root.Children.Add(CreateTabViewHost(tabControl, "TabView2", assignPrimaryAutomationId: false, showAddButton: true));
             return root;
         }
 
@@ -1402,9 +1401,8 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             root.Children.Add(stripContent);
 
             var tabControl = CreateTabViewControl("TabViewHeaderFooterSample", false);
-            AddGeneratedDocumentTabs(tabControl);
-            root.Children.Add(tabControl);
-            root.Children.Add(CreateTabViewCommandBar(tabControl, "TabViewHeaderFooterSample"));
+            AddGeneratedDocumentTabs(tabControl, "TabViewHeaderFooterSample");
+            root.Children.Add(CreateTabViewHost(tabControl, "TabViewHeaderFooterSample", assignPrimaryAutomationId: false, showAddButton: true));
             return root;
         }
 
@@ -1471,9 +1469,8 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             tabControl.Resources["TabViewBackground"] = IsDarkGalleryTheme()
                 ? CreateBrush("#004275")
                 : CreateBrush("#99EBFF");
-            AddGeneratedDocumentTabs(tabControl);
-            root.Children.Add(tabControl);
-            root.Children.Add(CreateTabViewCommandBar(tabControl, "TabViewAccentSample"));
+            AddGeneratedDocumentTabs(tabControl, "TabViewAccentSample");
+            root.Children.Add(CreateTabViewHost(tabControl, "TabViewAccentSample", assignPrimaryAutomationId: false, showAddButton: true));
             return root;
         }
 
@@ -1533,19 +1530,56 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             return tabControl;
         }
 
-        private static void AddGeneratedDocumentTabs(TabControl tabControl)
+        private static Grid CreateTabViewHost(TabControl tabControl, string namePrefix, bool assignPrimaryAutomationId, bool showAddButton)
+        {
+            var host = new Grid
+            {
+                Name = namePrefix + "Host",
+                MinHeight = 475,
+                MaxWidth = TabViewReferenceWidth,
+                HorizontalAlignment = HorizontalAlignment.Stretch
+            };
+            if (assignPrimaryAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(host, GalleryAutomation.SampleElementId("TabView", "TabView"));
+            }
+
+            host.Children.Add(tabControl);
+            if (showAddButton)
+            {
+                var addButton = CreateTabViewHeaderButton(namePrefix + "AddButton", Mux.Symbol.Add, "Add New Tab");
+                addButton.Margin = new Thickness(0, 13, 0, 0);
+                addButton.HorizontalAlignment = HorizontalAlignment.Right;
+                addButton.VerticalAlignment = VerticalAlignment.Top;
+                addButton.Click += delegate
+                {
+                    var tab = CreateGeneratedTabViewTab(tabControl.Items.Count, namePrefix);
+                    tabControl.Items.Add(tab);
+                    tabControl.SelectedItem = tab;
+                };
+                host.Children.Add(addButton);
+            }
+
+            return host;
+        }
+
+        private static void AddGeneratedDocumentTabs(TabControl tabControl, string namePrefix)
         {
             for (var i = 0; i < 3; i++)
             {
-                tabControl.Items.Add(CreateGeneratedTabViewTab(i));
+                tabControl.Items.Add(CreateGeneratedTabViewTab(i, namePrefix));
             }
 
             tabControl.SelectedIndex = 0;
         }
 
-        private static TabItem CreateGeneratedTabViewTab(int index)
+        private static TabItem CreateGeneratedTabViewTab(int index, string namePrefix)
         {
-            return CreateTabViewTab("Document " + index, "SamplePage" + (index % 3 + 1));
+            var headerText = "Document " + index;
+            var item = CreateTabViewTab(null, "SamplePage" + (index % 3 + 1));
+            item.Header = CreateTabViewDocumentHeader(item, headerText, namePrefix, index);
+            AutomationProperties.SetName(item, headerText);
+            return item;
         }
 
         private static StackPanel CreateTabViewCommandBar(TabControl tabControl, string namePrefix)
@@ -1560,7 +1594,7 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             add.Click += delegate
             {
                 var index = tabControl.Items.Count;
-                var tab = CreateGeneratedTabViewTab(index);
+                var tab = CreateGeneratedTabViewTab(index, namePrefix);
                 tabControl.Items.Add(tab);
                 tabControl.SelectedItem = tab;
             };
@@ -1586,6 +1620,70 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
                 Style = FindStyleResource("DefaultTabItemStyle"),
                 Content = CreateTabViewPageContent(pageTitle)
             };
+        }
+
+        private static StackPanel CreateTabViewDocumentHeader(TabItem item, string text, string namePrefix, int index)
+        {
+            var header = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            var icon = new Mux.SymbolIcon(Mux.Symbol.Document)
+            {
+                Width = 16,
+                Height = 16,
+                Margin = new Thickness(0, 0, 8, 0),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            icon.SetResourceReference(Control.ForegroundProperty, "TabViewItemIconForeground");
+            header.Children.Add(icon);
+            header.Children.Add(new TextBlock
+            {
+                Text = text,
+                VerticalAlignment = VerticalAlignment.Center
+            });
+            header.Children.Add(CreateTabViewItemCloseButton(item, namePrefix, index));
+            return header;
+        }
+
+        private static Button CreateTabViewItemCloseButton(TabItem item, string namePrefix, int index)
+        {
+            var button = CreateTabViewHeaderButton(
+                index == 0 ? namePrefix + "CloseButton" : namePrefix + "CloseButton" + index.ToString(CultureInfo.InvariantCulture),
+                Mux.Symbol.Cancel,
+                "Close tab");
+            button.Margin = new Thickness(8, 0, -2, 0);
+            button.Width = 24;
+            button.Height = 24;
+            button.Click += delegate
+            {
+                var parent = ItemsControl.ItemsControlFromItemContainer(item) as TabControl;
+                parent?.Items.Remove(item);
+            };
+            return button;
+        }
+
+        private static Button CreateTabViewHeaderButton(string name, Mux.Symbol symbol, string automationName)
+        {
+            var button = new Button
+            {
+                Name = name,
+                Width = 32,
+                Height = 24,
+                Padding = new Thickness(0),
+                BorderThickness = new Thickness(0),
+                Background = Brushes.Transparent,
+                HorizontalContentAlignment = HorizontalAlignment.Center,
+                VerticalContentAlignment = VerticalAlignment.Center,
+                Content = new Mux.SymbolIcon(symbol)
+                {
+                    Width = 16,
+                    Height = 16
+                }
+            };
+            AutomationProperties.SetName(button, automationName);
+            return button;
         }
 
         private static UIElement CreateTabViewPageContent(string title)
