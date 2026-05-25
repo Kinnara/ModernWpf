@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "RichTextBlock", "RichEditBox", "SplitView", "PersonPicture", "Sound", "MediaPlayerElement", "MapControl", "WebView2", "IconElement", "Line", "Shape", "RadialGradientBrush", "SystemBackdrops", "SystemBackdropElement", "ThemeShadow", "CreateMultipleWindows", "AppWindow", "AppWindowTitleBar", "TitleBar", "StoragePickers", "CalendarDatePicker", "CalendarView", "TimePicker", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "PullToRefresh", "FlipView", "ItemsView", "GridView", "ItemsRepeater", "BreadcrumbBar", "Pivot", "SelectorBar", "TabView", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "SwipeControl", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout", "StandardUICommand", "XamlUICommand"),
+    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "RichTextBlock", "RichEditBox", "SplitView", "PersonPicture", "Sound", "MediaPlayerElement", "MapControl", "WebView2", "CompactSizing", "IconElement", "Line", "Shape", "RadialGradientBrush", "SystemBackdrops", "SystemBackdropElement", "ThemeShadow", "CreateMultipleWindows", "AppWindow", "AppWindowTitleBar", "TitleBar", "StoragePickers", "CalendarDatePicker", "CalendarView", "TimePicker", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "PullToRefresh", "FlipView", "ItemsView", "GridView", "ItemsRepeater", "BreadcrumbBar", "Pivot", "SelectorBar", "TabView", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "SwipeControl", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout", "StandardUICommand", "XamlUICommand"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -468,6 +468,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "MediaPlayerElement" { return "GallerySample_MediaPlayerElement_MediaPlayerElement" }
         "MapControl" { return "GallerySample_MapControl_MapControl" }
         "WebView2" { return "GallerySample_WebView2_WebView2" }
+        "CompactSizing" { return "GallerySample_CompactSizing_FirstName" }
         "IconElement" { return "GallerySample_IconElement_SlicesIcon" }
         "Line" { return "GallerySample_Line_Line" }
         "Shape" { return "GallerySample_Shape_Ellipse" }
@@ -551,6 +552,7 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
         "MediaPlayerElement" { return "GallerySample_MediaPlayerElement_OpenFileButton" }
         "MapControl" { return "GallerySample_MapControl_MapToken" }
         "WebView2" { return "GallerySample_WebView2_WebView2" }
+        "CompactSizing" { return "GallerySample_CompactSizing_Root" }
         "IconElement" { return "GallerySample_IconElement_Root" }
         "Line" { return "GallerySample_Line_Root" }
         "Shape" { return "GallerySample_Shape_Root" }
@@ -626,6 +628,7 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
         "MediaPlayerElement" { return "OpenFileButton" }
         "MapControl" { return "MapToken" }
         "WebView2" { return "MyWebView2" }
+        "CompactSizing" { return "svPanel" }
         "IconElement" { return "svPanel" }
         "Line" { return "svPanel" }
         "Shape" { return "svPanel" }
@@ -668,6 +671,7 @@ function Get-ReferencePrimaryName([string]$control) {
 
 function Get-WinUIReferencePageTitle([string]$control) {
     switch ($control) {
+        "CompactSizing" { return "Compact Sizing" }
         "CreateMultipleWindows" { return "Multiple windows" }
         "SystemBackdrops" { return "System Backdrops (Mica/Acrylic)" }
         "StoragePickers" { return "Storage pickers" }

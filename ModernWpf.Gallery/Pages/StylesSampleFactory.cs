@@ -77,6 +77,11 @@ namespace ModernWpf.Gallery.Pages
         private const string IconElementBitmapIconXaml =
 @"<BitmapIcon x:Name=""SlicesIcon"" UriSource=""ms-appx:///Assets/SampleMedia/Slices.png"" Width=""50"" ShowAsMonochrome=""$(ShowAsMonochrome)""/>";
 
+        private const string CompactSizingXaml =
+@"<Page.Resources>
+    <ResourceDictionary Source=""ms-appx:///Microsoft.UI.Xaml/DensityStyles/Compact.xaml"" />
+</Page.Resources>";
+
         public static UIElement Create(string uniqueId)
         {
             switch (uniqueId)
@@ -106,10 +111,23 @@ namespace ModernWpf.Gallery.Pages
             }
         }
 
+        public static object CreateIntroContent(string uniqueId)
+        {
+            switch (uniqueId)
+            {
+                case "CompactSizing":
+                    return CreateCompactSizingIntroContent();
+                default:
+                    return null;
+            }
+        }
+
         public static IReadOnlyList<GalleryExample> CreateExamples(string uniqueId, IReadOnlyList<SampleSnippet> sampleSnippets)
         {
             switch (uniqueId)
             {
+                case "CompactSizing":
+                    return CreateCompactSizingExamples();
                 case "IconElement":
                     return CreateIconElementExamples(sampleSnippets);
                 case "Line":
@@ -225,12 +243,189 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateCompactSizingSample()
         {
-            var panel = CreateSamplePanel("Compact sizing maps to smaller WPF control heights, padding, and item spacing.");
-            var comparison = new StackPanel { Orientation = Orientation.Horizontal };
-            comparison.Children.Add(CreateSizingColumn("Default", 34, new Thickness(12, 6, 12, 6), 8));
-            comparison.Children.Add(CreateSizingColumn("Compact", 26, new Thickness(8, 3, 8, 3), 4));
-            panel.Children.Add(comparison);
-            return panel;
+            return CreateCompactSizingExampleContent(assignRootAutomationId: true);
+        }
+
+        private static object CreateCompactSizingIntroContent()
+        {
+            var stack = new StackPanel
+            {
+                Margin = new Thickness(0, 24, 0, 0)
+            };
+            stack.Children.Add(new TextBlock
+            {
+                Text = "Controls that support compact styling:",
+                FontWeight = FontWeights.SemiBold
+            });
+
+            foreach (var control in new[]
+            {
+                "ListView",
+                "TextBox",
+                "PasswordBox",
+                "AutoSuggestBox",
+                "ComboBox",
+                "DatePicker",
+                "TimePicker",
+                "TreeView",
+                "NavigationView",
+                "MenuBar"
+            })
+            {
+                stack.Children.Add(new TextBlock { Text = "\u2022 " + control });
+            }
+
+            return stack;
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateCompactSizingExamples()
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "Compact Sizing for controls",
+                    CreateCompactSizingExampleContent(assignRootAutomationId: true),
+                    CompactSizingXaml,
+                    null)
+            };
+        }
+
+        private static GallerySamplePanel CreateCompactSizingExampleContent(bool assignRootAutomationId)
+        {
+            var root = new GallerySamplePanel();
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("CompactSizing"));
+            }
+
+            var state = new CompactSizingState();
+            var contentFrame = new ContentControl
+            {
+                Name = "ContentFrame",
+                Content = CreateCompactSizingForm(compact: false, state)
+            };
+            GalleryAutomation.WithAutomationId(contentFrame, GalleryAutomation.SampleElementId("CompactSizing", "ContentFrame"));
+
+            var standardRadio = new RadioButton
+            {
+                Name = "StandardSizeRadioButton",
+                Content = "Standard",
+                GroupName = "ControlSize",
+                IsChecked = true,
+                Tag = "StandardSize"
+            };
+            var compactRadio = new RadioButton
+            {
+                Name = "CompactSizeRadioButton",
+                Content = "Compact",
+                GroupName = "ControlSize",
+                Tag = "CompactSize"
+            };
+
+            standardRadio.Checked += delegate { contentFrame.Content = CreateCompactSizingForm(compact: false, state); };
+            compactRadio.Checked += delegate { contentFrame.Content = CreateCompactSizingForm(compact: true, state); };
+
+            var options = new Mux.RadioButtons
+            {
+                Name = "ControlSizeRadioButtons",
+                Header = "Fluent Standard and Compact Sizing"
+            };
+            options.Items.Add(standardRadio);
+            options.Items.Add(compactRadio);
+
+            root.Children.Add(CreateExampleWithOptions(contentFrame, options));
+            return root;
+        }
+
+        private static Grid CreateCompactSizingForm(bool compact, CompactSizingState state)
+        {
+            var spacing = compact ? 8 : 16;
+            var height = compact ? 26 : 34;
+            var padding = compact ? new Thickness(8, 3, 8, 3) : new Thickness(12, 6, 12, 6);
+
+            var panel = new StackPanel
+            {
+                Name = "CompactPanel"
+            };
+            AddCompactSizingChild(panel, new TextBlock
+            {
+                Name = "HeaderBlock",
+                FontSize = 18,
+                Text = compact ? "Compact Size" : "Standard Size"
+            }, spacing);
+
+            var firstName = CreateCompactSizingTextBox("firstName", "First Name:", state.FirstName, height, padding);
+            GalleryAutomation.WithAutomationId(firstName, GalleryAutomation.SampleElementId("CompactSizing", "FirstName"));
+            firstName.TextChanged += delegate { state.FirstName = firstName.Text; };
+            AddCompactSizingChild(panel, firstName, spacing);
+
+            var lastName = CreateCompactSizingTextBox("lastName", "Last Name:", state.LastName, height, padding);
+            lastName.TextChanged += delegate { state.LastName = lastName.Text; };
+            AddCompactSizingChild(panel, lastName, spacing);
+
+            var password = CreateCompactSizingPasswordBox("password", "Password:", state.Password, height, padding);
+            password.PasswordChanged += delegate { state.Password = password.Password; };
+            AddCompactSizingChild(panel, password, spacing);
+
+            var confirmPassword = CreateCompactSizingPasswordBox("confirmPassword", "Confirm Password:", state.ConfirmPassword, height, padding);
+            confirmPassword.PasswordChanged += delegate { state.ConfirmPassword = confirmPassword.Password; };
+            AddCompactSizingChild(panel, confirmPassword, spacing);
+
+            var chosenDate = new DatePicker
+            {
+                Name = "chosenDate",
+                MinHeight = height,
+                Padding = padding,
+                SelectedDate = state.ChosenDate
+            };
+            ControlHelper.SetHeader(chosenDate, "Pick a date");
+            chosenDate.SelectedDateChanged += delegate { state.ChosenDate = chosenDate.SelectedDate; };
+            AddCompactSizingChild(panel, chosenDate, 0);
+
+            var root = new Grid();
+            root.Children.Add(panel);
+            return root;
+        }
+
+        private static TextBox CreateCompactSizingTextBox(string name, string header, string text, double height, Thickness padding)
+        {
+            var textBox = new TextBox
+            {
+                Name = name,
+                Text = text,
+                MinHeight = height,
+                Padding = padding
+            };
+            ControlHelper.SetHeader(textBox, header);
+            return textBox;
+        }
+
+        private static PasswordBox CreateCompactSizingPasswordBox(string name, string header, string password, double height, Thickness padding)
+        {
+            var passwordBox = new PasswordBox
+            {
+                Name = name,
+                MinHeight = height,
+                Padding = padding,
+                Password = password
+            };
+            ControlHelper.SetHeader(passwordBox, header);
+            return passwordBox;
+        }
+
+        private static void AddCompactSizingChild(StackPanel panel, FrameworkElement child, double bottomMargin)
+        {
+            child.Margin = new Thickness(0, 0, 0, bottomMargin);
+            panel.Children.Add(child);
+        }
+
+        private sealed class CompactSizingState
+        {
+            public string FirstName { get; set; } = string.Empty;
+            public string LastName { get; set; } = string.Empty;
+            public string Password { get; set; } = string.Empty;
+            public string ConfirmPassword { get; set; } = string.Empty;
+            public DateTime? ChosenDate { get; set; }
         }
 
         private static UIElement CreateIconElementSample()

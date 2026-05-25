@@ -106,6 +106,16 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.CompactSizingSampleMatchesWinUIGalleryExample|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 64 tests per target. The generated ModernWpf Compact Sizing extension page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\CompactSizingPage.xaml`, `.xaml.cs`, `D:\repos\WinUI-Gallery\WinUIGallery\Samples\SamplePages\SampleStandardSizingPage.xaml` / `.xaml.cs`, and `D:\repos\WinUI-Gallery\WinUIGallery\Samples\SamplePages\SampleCompactSizingPage.xaml` / `.xaml.cs`: the supported-controls intro text, one `Compact Sizing for controls` example, source-facing `ContentFrame`, `HeaderBlock`, `firstName`, `lastName`, `password`, `confirmPassword`, and `chosenDate` names, the Standard/Compact radio options, the official compact resource-dictionary snippet, and state preservation when switching between standard and compact density. `StylesSampleFactory.CreateExamples` now covers CompactSizing as a source-backed Platform & patterns WinUI extension page, `StylesSampleFactory.CreateIntroContent` supplies the source intro text through `ItemPage`, and the first form field exposes `GallerySample_CompactSizing_Root` / `GallerySample_CompactSizing_FirstName`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls CompactSizing -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-062640-251-103128/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required rendered CompactSizing first-name field was found, primary crops use the rendered ModernWpf `GallerySample_CompactSizing_Root` sample region against the installed WinUI `svPanel` sample region because the WinUI TextBox is not exposed as a stable automation target, crop sizes are `790x274` vs `843x646`, and Light primary delta is `111.45`. The whole-window Light mean delta is `151.56` and remains diagnostic because the installed WinUI shell stayed dark while ModernWpf was captured in Light.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls CompactSizing -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-062703-143-104468/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required rendered CompactSizing first-name field was found, primary crops use the same sample-region mapping, crop sizes are `790x274` vs `843x646`, Dark primary delta is `13.8`, and whole-window Dark mean delta is `16.56`.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the CompactSizing WinUI example alignment. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages plus existing generated WinRT and ModernWpf/ModernWpf.Controls warnings, ending with `0 Error(s)`.
+- `git diff --check`
+  - Passed with only Git's normal LF-to-CRLF working-copy warnings for touched files.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.IconElementSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 63 tests per target. The generated ModernWpf IconElement extension page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\IconElementPage.xaml`: the six `BitmapIcon`, `FontIcon`, bitmap `ImageIcon`, SVG `ImageIcon`, `PathIcon`, and `SymbolIcon` examples, source-facing `SlicesIcon`, `MonochromeButton`, `ExampleButton1`, `ImageExample1`, `ImageExample2`, `Example1Button`, and `AcceptButton` names, the official inline/file-backed XAML snippets from `D:\repos\WinUI-Gallery\WinUIGallery\Samples\SampleCode\Icons`, and the bitmap monochrome toggle behavior. `StylesSampleFactory.CreateExamples` now covers IconElement as a source-backed Platform & patterns WinUI extension page, and the first example exposes `GallerySample_IconElement_Root` / `GallerySample_IconElement_SlicesIcon`.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls IconElement -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -2426,6 +2436,35 @@ with ModernWpf and installed WinUI 3 Gallery `Passed`, primary crops matching
 at `745x423`, and primary deltas `56.75` / `37.33`. Avoid reopening WebView2's
 source shape unless the repo decides to add an optional WebView2 package/runtime
 dependency or a new visual crop regression appears.
+The generated ModernWpf Compact Sizing extension page now uses the local
+official WinUI Gallery source from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\CompactSizingPage.xaml`,
+`.xaml.cs`,
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\SamplePages\SampleStandardSizingPage.xaml`,
+`.xaml.cs`,
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\SamplePages\SampleCompactSizingPage.xaml`,
+and `.xaml.cs`: the supported-controls intro text, one `Compact Sizing for
+controls` example, source-facing `ContentFrame`, `HeaderBlock`, `firstName`,
+`lastName`, `password`, `confirmPassword`, and `chosenDate` names, the
+Standard/Compact density radio options, the official compact resource-dictionary
+snippet, and form state preservation when switching density. `StylesSampleFactory.CreateExamples`
+now exposes CompactSizing as a source-backed Platform & patterns WinUI extension
+page, while `StylesSampleFactory.CreateIntroContent` feeds the source intro text
+through `ItemPage` for Styles pages that need source content above examples. The
+WPF adaptation uses WPF/ModernWpf `TextBox`, `PasswordBox`, `DatePicker`, and
+`RadioButtons` surfaces with explicit standard vs compact height/padding/spacing
+because WinUI's `DensityStyles/Compact.xaml` resource dictionary is not available
+in WPF. Current CompactSizing WinUI-reference evidence is
+`artifacts/visual-checks/20260525-062640-251-103128/report.md` for Light and
+`artifacts/visual-checks/20260525-062703-143-104468/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`; the required
+`GallerySample_CompactSizing_FirstName` rendered artifact is present, while the
+primary crop uses the rendered ModernWpf sample root against the installed WinUI
+`svPanel` sample region because the WinUI TextBox is not exposed as a stable
+automation target. Treat those sample-region deltas as diagnostic unless a
+better stable crop becomes available. Avoid reopening CompactSizing's source
+shape unless a new local WinUI source, WPF density behavior gap, or crop
+regression appears.
 The generated ModernWpf IconElement extension page now uses the local official
 WinUI Gallery source from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\IconElementPage.xaml`

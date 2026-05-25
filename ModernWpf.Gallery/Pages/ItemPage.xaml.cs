@@ -245,7 +245,8 @@ namespace ModernWpf.Gallery.Pages
         {
             return MediaSampleFactory.CreateIntroContent(uniqueId)
                 ?? WindowingSampleFactory.CreateIntroContent(uniqueId)
-                ?? SystemSampleFactory.CreateIntroContent(uniqueId);
+                ?? SystemSampleFactory.CreateIntroContent(uniqueId)
+                ?? StylesSampleFactory.CreateIntroContent(uniqueId);
         }
 
         private static IReadOnlyList<GalleryExample> CreateWorkingSampleExamples(

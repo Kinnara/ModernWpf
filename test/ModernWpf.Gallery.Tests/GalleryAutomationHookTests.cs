@@ -42,6 +42,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "MediaPlayerElement", "GallerySample_MediaPlayerElement_Root", "GallerySample_MediaPlayerElement_MediaPlayerElement" };
             yield return new object[] { "MapControl", "GallerySample_MapControl_Root", "GallerySample_MapControl_MapControl" };
             yield return new object[] { "WebView2", "GallerySample_WebView2_Root", "GallerySample_WebView2_WebView2" };
+            yield return new object[] { "CompactSizing", "GallerySample_CompactSizing_Root", "GallerySample_CompactSizing_FirstName" };
             yield return new object[] { "IconElement", "GallerySample_IconElement_Root", "GallerySample_IconElement_SlicesIcon" };
             yield return new object[] { "Line", "GallerySample_Line_Root", "GallerySample_Line_Line" };
             yield return new object[] { "Shape", "GallerySample_Shape_Root", "GallerySample_Shape_Ellipse" };
@@ -3707,6 +3708,126 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(225d, player2Poster.Height);
                     Assert.AreEqual(Stretch.Fill, player2Poster.Stretch);
                     StringAssert.Contains(((BitmapImage)player2Poster.Source).UriSource.ToString(), "fishes.poster.png");
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void CompactSizingSampleMatchesWinUIGalleryExample()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("CompactSizing"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.IsTrue(page.ShowIntroContent);
+                    Assert.AreEqual(1, page.Examples.Count);
+                    Assert.AreEqual("Compact Sizing for controls", page.Examples[0].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "<ResourceDictionary Source=\"ms-appx:///Microsoft.UI.Xaml/DensityStyles/Compact.xaml\" />");
+                    Assert.IsNotNull(FindTextBlockByText(page, "Controls that support compact styling:"));
+                    Assert.IsNotNull(FindTextBlockByText(page, "\u2022 TextBox"));
+                    Assert.IsNotNull(FindTextBlockByText(page, "\u2022 NavigationView"));
+
+                    var root = (GallerySamplePanel)page.Examples[0].ExampleContent;
+                    Assert.AreEqual(1, root.Children.Count);
+                    var layout = (Grid)root.Children[0];
+                    Assert.AreEqual(2, layout.ColumnDefinitions.Count);
+
+                    var contentFrame = FindNamedDescendant<ContentControl>(page, "ContentFrame");
+                    Assert.IsNotNull(contentFrame);
+                    Assert.AreEqual("GallerySample_CompactSizing_ContentFrame", AutomationProperties.GetAutomationId(contentFrame));
+
+                    var header = FindNamedDescendant<TextBlock>(contentFrame, "HeaderBlock");
+                    Assert.IsNotNull(header);
+                    Assert.AreEqual("Standard Size", header.Text);
+
+                    var firstName = (TextBox)FindByAutomationId(page, "GallerySample_CompactSizing_FirstName");
+                    Assert.IsNotNull(firstName);
+                    Assert.AreSame(firstName, FindNamedDescendant<TextBox>(page, "firstName"));
+                    Assert.AreEqual("First Name:", ModernWpf.Controls.Primitives.ControlHelper.GetHeader(firstName));
+                    Assert.AreEqual(34d, firstName.MinHeight);
+                    Assert.AreEqual(new Thickness(12, 6, 12, 6), firstName.Padding);
+                    Assert.AreEqual(16d, firstName.Margin.Bottom);
+
+                    var lastName = FindNamedDescendant<TextBox>(page, "lastName");
+                    var password = FindNamedDescendant<PasswordBox>(page, "password");
+                    var confirmPassword = FindNamedDescendant<PasswordBox>(page, "confirmPassword");
+                    var chosenDate = FindNamedDescendant<DatePicker>(page, "chosenDate");
+                    Assert.IsNotNull(lastName);
+                    Assert.IsNotNull(password);
+                    Assert.IsNotNull(confirmPassword);
+                    Assert.IsNotNull(chosenDate);
+                    Assert.AreEqual("Last Name:", ModernWpf.Controls.Primitives.ControlHelper.GetHeader(lastName));
+                    Assert.AreEqual("Password:", ModernWpf.Controls.Primitives.ControlHelper.GetHeader(password));
+                    Assert.AreEqual("Confirm Password:", ModernWpf.Controls.Primitives.ControlHelper.GetHeader(confirmPassword));
+                    Assert.AreEqual("Pick a date", ModernWpf.Controls.Primitives.ControlHelper.GetHeader(chosenDate));
+
+                    var radioButtons = FindNamedDescendant<Mux.RadioButtons>(page, "ControlSizeRadioButtons");
+                    var standardRadio = FindNamedDescendant<RadioButton>(page, "StandardSizeRadioButton");
+                    var compactRadio = FindNamedDescendant<RadioButton>(page, "CompactSizeRadioButton");
+                    Assert.IsNotNull(radioButtons);
+                    Assert.AreEqual("Fluent Standard and Compact Sizing", radioButtons.Header);
+                    Assert.AreEqual("Standard", standardRadio.Content);
+                    Assert.AreEqual("Compact", compactRadio.Content);
+                    Assert.AreEqual("StandardSize", standardRadio.Tag);
+                    Assert.AreEqual("CompactSize", compactRadio.Tag);
+                    Assert.AreEqual(true, standardRadio.IsChecked);
+
+                    firstName.Text = "Ada";
+                    lastName.Text = "Lovelace";
+                    password.Password = "first-secret";
+                    confirmPassword.Password = "first-secret";
+                    chosenDate.SelectedDate = new DateTime(2026, 5, 25);
+                    compactRadio.IsChecked = true;
+                    WpfTestHost.DoEvents();
+
+                    header = FindNamedDescendant<TextBlock>(contentFrame, "HeaderBlock");
+                    Assert.AreEqual("Compact Size", header.Text);
+                    firstName = (TextBox)FindByAutomationId(page, "GallerySample_CompactSizing_FirstName");
+                    lastName = FindNamedDescendant<TextBox>(page, "lastName");
+                    password = FindNamedDescendant<PasswordBox>(page, "password");
+                    confirmPassword = FindNamedDescendant<PasswordBox>(page, "confirmPassword");
+                    chosenDate = FindNamedDescendant<DatePicker>(page, "chosenDate");
+                    Assert.AreEqual("Ada", firstName.Text);
+                    Assert.AreEqual("Lovelace", lastName.Text);
+                    Assert.AreEqual("first-secret", password.Password);
+                    Assert.AreEqual("first-secret", confirmPassword.Password);
+                    Assert.AreEqual(new DateTime(2026, 5, 25), chosenDate.SelectedDate);
+                    Assert.AreEqual(26d, firstName.MinHeight);
+                    Assert.AreEqual(new Thickness(8, 3, 8, 3), firstName.Padding);
+                    Assert.AreEqual(8d, firstName.Margin.Bottom);
+
+                    firstName.Text = "Grace";
+                    standardRadio.IsChecked = true;
+                    WpfTestHost.DoEvents();
+                    header = FindNamedDescendant<TextBlock>(contentFrame, "HeaderBlock");
+                    firstName = (TextBox)FindByAutomationId(page, "GallerySample_CompactSizing_FirstName");
+                    Assert.AreEqual("Standard Size", header.Text);
+                    Assert.AreEqual("Grace", firstName.Text);
+                    Assert.AreEqual(34d, firstName.MinHeight);
                 }
                 finally
                 {
