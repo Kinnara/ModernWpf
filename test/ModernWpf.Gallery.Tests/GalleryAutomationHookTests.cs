@@ -39,6 +39,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "Sound", "GallerySample_Sound_Root", "GallerySample_Sound_ToggleSwitch" };
             yield return new object[] { "MediaPlayerElement", "GallerySample_MediaPlayerElement_Root", "GallerySample_MediaPlayerElement_MediaPlayerElement" };
             yield return new object[] { "MapControl", "GallerySample_MapControl_Root", "GallerySample_MapControl_MapControl" };
+            yield return new object[] { "WebView2", "GallerySample_WebView2_Root", "GallerySample_WebView2_WebView2" };
             yield return new object[] { "FlipView", "GallerySample_FlipView_Root", "GallerySample_FlipView_FlipView" };
             yield return new object[] { "ItemsView", "GallerySample_ItemsView_Root", "GallerySample_ItemsView_ItemsView" };
             yield return new object[] { "CalendarDatePicker", "GallerySample_CalendarDatePicker_Root", "GallerySample_CalendarDatePicker_CalendarDatePicker" };
@@ -3692,6 +3693,73 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(225d, player2Poster.Height);
                     Assert.AreEqual(Stretch.Fill, player2Poster.Stretch);
                     StringAssert.Contains(((BitmapImage)player2Poster.Source).UriSource.ToString(), "fishes.poster.png");
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void WebView2SampleMatchesWinUIGalleryExample()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("WebView2"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(1, page.Examples.Count);
+                    Assert.AreEqual("A simple WebView2 ", page.Examples[0].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "<WebView2 x:Name=\"MyWebView2\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "Source=\"https://learn.microsoft.com/windows/apps/winui/winui3/\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "HorizontalAlignment=\"Stretch\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "Grid.Row=\"1\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "MinHeight=\"200\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "MinWidth=\"200\"");
+                    Assert.IsNull(page.Examples[0].CSharpCode);
+
+                    var root = (GallerySamplePanel)page.Examples[0].ExampleContent;
+                    Assert.AreEqual(1, root.Children.Count);
+                    var layout = (Grid)root.Children[0];
+                    Assert.AreEqual(2, layout.RowDefinitions.Count);
+                    Assert.AreEqual(GridLength.Auto, layout.RowDefinitions[0].Height);
+                    Assert.AreEqual(GridUnitType.Star, layout.RowDefinitions[1].Height.GridUnitType);
+
+                    var description = (TextBlock)layout.Children[0];
+                    Assert.AreEqual(new Thickness(0, 0, 0, 12), description.Margin);
+                    Assert.AreEqual(TextWrapping.Wrap, description.TextWrapping);
+                    Assert.AreEqual("WebView2 is powered by the Chromium engine.", description.Text);
+
+                    var browser = (Border)FindByAutomationId(page, "GallerySample_WebView2_WebView2");
+                    Assert.IsNotNull(browser);
+                    Assert.AreEqual("MyWebView2", browser.Name);
+                    Assert.AreEqual(200d, browser.MinWidth);
+                    Assert.AreEqual(200d, browser.MinHeight);
+                    Assert.AreEqual(HorizontalAlignment.Stretch, browser.HorizontalAlignment);
+                    Assert.AreEqual(VerticalAlignment.Stretch, browser.VerticalAlignment);
+                    Assert.AreEqual("https://learn.microsoft.com/windows/apps/winui/winui3/", browser.Tag);
+                    Assert.AreEqual("MyWebView2", AutomationProperties.GetName(browser));
+                    Assert.AreEqual("GallerySample_WebView2_WebView2", AutomationProperties.GetAutomationId(browser));
                 }
                 finally
                 {

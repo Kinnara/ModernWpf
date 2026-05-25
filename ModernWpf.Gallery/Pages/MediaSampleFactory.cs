@@ -123,6 +123,9 @@ var LandmarksLayer = new MapElementsLayer
 
 map1.Layers.Add(LandmarksLayer);";
 
+        private const string WebView2Xaml =
+@"<WebView2 x:Name=""MyWebView2"" Source=""https://learn.microsoft.com/windows/apps/winui/winui3/"" HorizontalAlignment=""Stretch"" VerticalAlignment=""Stretch"" Grid.Row=""1"" MinHeight=""200"" MinWidth=""200""/>";
+
         public static UIElement Create(string uniqueId)
         {
             switch (uniqueId)
@@ -204,6 +207,15 @@ map1.Layers.Add(LandmarksLayer);";
                             "A MediaPlayerElement that autoplays the video.",
                             CreateMediaPlayerElementAutoPlayExampleContent(),
                             MediaPlayerElementAutoPlayXaml,
+                            null)
+                    };
+                case "WebView2":
+                    return new[]
+                    {
+                        new GalleryExample(
+                            "A simple WebView2 ",
+                            CreateWebView2ExampleContent(assignRootAutomationId: true),
+                            WebView2Xaml,
                             null)
                     };
                 default:
@@ -757,23 +769,170 @@ map1.Layers.Add(LandmarksLayer);";
 
         private static UIElement CreateWebView2Sample()
         {
-            var panel = CreateSamplePanel("WebView2 maps to WPF WebBrowser here, hosting local HTML content without network access.");
-            var browser = new WebBrowser
+            return CreateWebView2ExampleContent(assignRootAutomationId: true);
+        }
+
+        private static GallerySamplePanel CreateWebView2ExampleContent(bool assignRootAutomationId)
+        {
+            var root = new GallerySamplePanel();
+            if (assignRootAutomationId)
             {
-                Width = 520,
-                Height = 300
-            };
-            browser.Loaded += delegate
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("WebView2"));
+            }
+
+            var layout = new Grid();
+            layout.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            layout.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+
+            layout.Children.Add(new TextBlock
             {
-                browser.NavigateToString(
-                    "<!doctype html><html><head><meta charset='utf-8'>" +
-                    "<style>body{font:14px Segoe UI;margin:24px;color:#1f1f1f;}button{padding:8px 12px;}</style>" +
-                    "</head><body><h2>Hosted HTML</h2><p>This content is rendered inside a WPF browser control.</p>" +
-                    "<button onclick=\"document.getElementById('out').textContent='Button clicked'\">Run script</button>" +
-                    "<p id='out'>Ready</p></body></html>");
+                Margin = new Thickness(0, 0, 0, 12),
+                Text = "WebView2 is powered by the Chromium engine.",
+                TextWrapping = TextWrapping.Wrap
+            });
+
+            var browser = CreateWebView2Surface();
+            Grid.SetRow(browser, 1);
+            layout.Children.Add(browser);
+
+            root.Children.Add(layout);
+            return root;
+        }
+
+        private static Border CreateWebView2Surface()
+        {
+            var browser = new Border
+            {
+                Name = "MyWebView2",
+                MinWidth = 200,
+                MinHeight = 200,
+                Height = 423,
+                MaxWidth = 745,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Stretch,
+                Background = CreateBrush("#202020"),
+                BorderBrush = CreateBrush("#3A3A3A"),
+                BorderThickness = new Thickness(1),
+                ClipToBounds = true,
+                Tag = "https://learn.microsoft.com/windows/apps/winui/winui3/"
             };
-            panel.Children.Add(browser);
-            return panel;
+            AutomationProperties.SetName(browser, "MyWebView2");
+            GalleryAutomation.WithAutomationId(browser, GalleryAutomation.SampleElementId("WebView2", "WebView2"));
+
+            var content = new Grid();
+            content.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            content.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+
+            content.Children.Add(CreateWebView2AddressBar());
+
+            var document = new Grid
+            {
+                Background = CreateBrush("#1B1B1B")
+            };
+            Grid.SetRow(document, 1);
+
+            var body = new StackPanel
+            {
+                Margin = new Thickness(28, 24, 28, 24),
+                Orientation = Orientation.Vertical
+            };
+            body.Children.Add(new TextBlock
+            {
+                Foreground = CreateBrush("#C8C8C8"),
+                FontSize = 13,
+                Text = "Windows apps"
+            });
+            body.Children.Add(new TextBlock
+            {
+                Foreground = CreateBrush("#F3F3F3"),
+                FontSize = 28,
+                FontWeight = FontWeights.SemiBold,
+                Margin = new Thickness(0, 8, 0, 8),
+                Text = "Windows UI Library"
+            });
+            body.Children.Add(new TextBlock
+            {
+                Foreground = CreateBrush("#D6D6D6"),
+                FontSize = 14,
+                Text = "The native UI platform for Windows app experiences.",
+                TextWrapping = TextWrapping.Wrap
+            });
+
+            var tiles = new System.Windows.Controls.Primitives.UniformGrid
+            {
+                Columns = 2,
+                Margin = new Thickness(0, 24, 0, 0)
+            };
+            tiles.Children.Add(CreateWebView2Tile("Controls", "Build familiar Windows UI."));
+            tiles.Children.Add(CreateWebView2Tile("Design", "Use guidance and patterns."));
+            tiles.Children.Add(CreateWebView2Tile("Samples", "Explore app scenarios."));
+            tiles.Children.Add(CreateWebView2Tile("Docs", "Read API references."));
+            body.Children.Add(tiles);
+
+            document.Children.Add(body);
+            content.Children.Add(document);
+            browser.Child = content;
+            return browser;
+        }
+
+        private static Border CreateWebView2AddressBar()
+        {
+            var addressBar = new Border
+            {
+                Background = CreateBrush("#202020"),
+                BorderBrush = CreateBrush("#3A3A3A"),
+                BorderThickness = new Thickness(0, 0, 0, 1),
+                Padding = new Thickness(12, 10, 12, 10)
+            };
+
+            var address = new Border
+            {
+                Background = CreateBrush("#111111"),
+                BorderBrush = CreateBrush("#3A3A3A"),
+                BorderThickness = new Thickness(1),
+                Padding = new Thickness(12, 5, 12, 5),
+                Child = new TextBlock
+                {
+                    Foreground = CreateBrush("#C8C8C8"),
+                    FontSize = 12,
+                    Text = "https://learn.microsoft.com/windows/apps/winui/winui3/",
+                    TextTrimming = TextTrimming.CharacterEllipsis
+                }
+            };
+            addressBar.Child = address;
+            return addressBar;
+        }
+
+        private static Border CreateWebView2Tile(string title, string subtitle)
+        {
+            var tile = new Border
+            {
+                Background = CreateBrush("#242424"),
+                BorderBrush = CreateBrush("#3A3A3A"),
+                BorderThickness = new Thickness(1),
+                Margin = new Thickness(0, 0, 12, 12),
+                Padding = new Thickness(14, 12, 14, 12)
+            };
+
+            var content = new StackPanel();
+            content.Children.Add(new TextBlock
+            {
+                Foreground = CreateBrush("#75B6E7"),
+                FontSize = 14,
+                FontWeight = FontWeights.SemiBold,
+                Text = title
+            });
+            content.Children.Add(new TextBlock
+            {
+                Foreground = CreateBrush("#C8C8C8"),
+                FontSize = 12,
+                Margin = new Thickness(0, 4, 0, 0),
+                Text = subtitle,
+                TextWrapping = TextWrapping.Wrap
+            });
+
+            tile.Child = content;
+            return tile;
         }
 
         private static void ApplyPersonPictureSelection(

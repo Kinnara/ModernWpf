@@ -106,6 +106,16 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.WebView2SampleMatchesWinUIGalleryExample|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 51 tests per target. The generated ModernWpf WebView2 extension page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\WebView2Page.xaml` / `.xaml.cs`: the `A simple WebView2 ` example, Chromium description text, source-facing `MyWebView2` name, WinUI source URL, and official XAML snippet. `MediaSampleFactory.CreateExamples` now covers WebView2 as a source-backed Media/Platform WinUI extension page, exposes `GallerySample_WebView2_Root` / `GallerySample_WebView2_WebView2`, and uses a WPF-rendered dark browser surface because the repo intentionally avoids a `Microsoft.Web.WebView2.Wpf` package/runtime dependency.
+- `dotnet test test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --configuration Debug --filter FullyQualifiedName~WebView2OptionalTests -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0`: 3 tests. The optional WebView2 guard still confirms core libraries do not reference WebView2, the gallery keeps a WebView2 catalog entry, and the gallery fallback stays WPF-safe without a `Microsoft.Web.WebView2` dependency.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls WebView2 -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-031458-307-76840/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required WebView2 sample element was found, primary crops use ModernWpf `GallerySample_WebView2_WebView2` against WinUI `MyWebView2`, crop sizes match at `745x423`, and Light primary delta is `56.75`. The whole-window Light mean delta is `193.16` and remains diagnostic because the installed WinUI shell stayed dark while ModernWpf was captured in Light.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls WebView2 -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-031525-807-39864/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required WebView2 sample element was found, primary crops use the same WebView2 mapping, crop sizes match at `745x423`, Dark primary delta is `37.33`, and whole-window Dark mean delta is `23.85`.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the WebView2 WinUI example alignment with `0 Warning(s)` and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.MapControlSampleMatchesWinUIGalleryExample|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 50 tests per target. The generated ModernWpf MapControl extension page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\MapControlPage.xaml` / `.xaml.cs`: the source instruction text and `MapExample.png` preview before the example, plus the `Showing a pin on the map` sample with source-facing `MapToken` and `map1` names. `MediaSampleFactory.CreateExamples` now covers MapControl as a source-backed Media/Platform WinUI extension page, consumes the local `Samples\SampleCode\MapControl\MapControlSample_cs.txt` snippet, exposes `GallerySample_MapControl_Root` / `GallerySample_MapControl_MapControl`, and keeps a WPF-safe black map surface because WPF does not expose WinUI's native `MapControl`.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls MapControl -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -2279,6 +2289,25 @@ the primary crop and lowers MapControl's primary low-variation threshold because
 the empty token field is intentionally visually quiet. Avoid reopening
 MapControl's source shape unless a new WinUI source, native-map strategy, or
 crop regression appears.
+The generated ModernWpf WebView2 extension page now uses the local official
+WinUI Gallery source from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\WebView2Page.xaml`
+and `.xaml.cs`: the `A simple WebView2 ` example, `WebView2 is powered by the
+Chromium engine.` text, source-facing `MyWebView2` name, and the official
+`https://learn.microsoft.com/windows/apps/winui/winui3/` source URL/snippet.
+`MediaSampleFactory.CreateExamples` now exposes WebView2 as a source-backed
+Media/Platform WinUI extension page. The WPF adaptation intentionally uses a
+rendered dark browser surface instead of `Microsoft.Web.WebView2.Wpf` or WPF
+`WebBrowser`: the repo's WebView2 guard keeps core and gallery code free of a
+WebView2 runtime/package dependency, while the visual harness still gets a
+stable rendered crop via `GallerySample_WebView2_WebView2`. Current WebView2
+WinUI-reference evidence is
+`artifacts/visual-checks/20260525-031458-307-76840/report.md` for Light and
+`artifacts/visual-checks/20260525-031525-807-39864/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`, primary crops matching
+at `745x423`, and primary deltas `56.75` / `37.33`. Avoid reopening WebView2's
+source shape unless the repo decides to add an optional WebView2 package/runtime
+dependency or a new visual crop regression appears.
 The generated ModernWpf RichTextBlock extension page now uses the local
 official WinUI Gallery four-example structure from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\RichTextBlockPage.xaml`:

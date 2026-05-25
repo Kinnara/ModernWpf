@@ -27,7 +27,7 @@ public class WebView2OptionalTests
     }
 
     [TestMethod]
-    public void GalleryDocumentsWpfWebBrowserFallback()
+    public void GalleryDocumentsWpfSafeWebView2Fallback()
     {
         var repoRoot = FindRepoRoot();
         var sampleFactoryPath = Path.Combine(repoRoot, "ModernWpf.Gallery", "Pages", "MediaSampleFactory.cs");
@@ -37,8 +37,9 @@ public class WebView2OptionalTests
         Assert.IsTrue(File.Exists(catalogPath), "Missing gallery control catalog.");
 
         var sampleFactory = File.ReadAllText(sampleFactoryPath);
-        StringAssert.Contains(sampleFactory, "WebView2 maps to WPF WebBrowser");
-        StringAssert.Contains(sampleFactory, "new WebBrowser");
+        StringAssert.Contains(sampleFactory, "CreateWebView2Surface");
+        StringAssert.Contains(sampleFactory, "https://learn.microsoft.com/windows/apps/winui/winui3/");
+        StringAssert.Contains(sampleFactory, "GalleryAutomation.SampleElementId(\"WebView2\", \"WebView2\")");
         Assert.IsFalse(
             sampleFactory.Contains("Microsoft.Web.WebView2", StringComparison.OrdinalIgnoreCase),
             "The gallery fallback should not add a WebView2 package/runtime dependency.");
