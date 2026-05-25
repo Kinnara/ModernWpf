@@ -117,5 +117,41 @@ namespace ModernWpf.Gallery.Tests
                     page.Item2 + " should match the official WPF Gallery code-behind member order by declaring ViewModel before the constructor.");
             }
         }
+
+        [TestMethod]
+        public void MenuPageKeepsOfficialMenuItemSourceShape()
+        {
+            var xaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Navigation",
+                "MenuPage.xaml");
+            StringAssert.Contains(
+                xaml,
+                "<Style TargetType=\"MenuItem\" BasedOn=\"{StaticResource DefaultMenuItemStyle}\">");
+            StringAssert.Contains(
+                xaml,
+                "<EventSetter Event=\"Click\" Handler=\"MenuItem_Click\"/>");
+            StringAssert.Contains(
+                xaml,
+                "<MenuItem AutomationProperties.Name=\"Bold\" Tag=\"Bold\" >");
+            StringAssert.Contains(
+                xaml,
+                "<MenuItem AutomationProperties.Name=\"Italic\" Tag=\"Italic\" >");
+            StringAssert.Contains(
+                xaml,
+                "<MenuItem AutomationProperties.Name=\"Underlined\" Tag=\"Underlined\" >");
+
+            var codeBehind = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Navigation",
+                "MenuPage.xaml.cs");
+            StringAssert.Contains(
+                codeBehind,
+                "StatusMenuItem.Text = (menuItem.Tag != null) ? $\"You pressed {menuItem.Tag}\" : $\"You pressed {menuItem.Header}\";");
+        }
     }
 }

@@ -11,6 +11,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Navigation
         {
             ViewModel = viewModel;
             DataContext = this;
+
             InitializeComponent();
         }
 
@@ -21,9 +22,8 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Navigation
                 if (e.OriginalSource is MenuItem originalMenuItem && originalMenuItem == menuItem)
                 {
                     StatusMenuItem.Visibility = Visibility.Visible;
-                    StatusMenuItem.Text = menuItem.Tag != null ? $"You pressed {menuItem.Tag}" : $"You pressed {menuItem.Header}";
+                    StatusMenuItem.Text = (menuItem.Tag != null) ? $"You pressed {menuItem.Tag}" : $"You pressed {menuItem.Header}";
                 }
-
                 if (menuItem.Parent is MenuItem parentMenuItem)
                 {
                     parentMenuItem.Focus();
