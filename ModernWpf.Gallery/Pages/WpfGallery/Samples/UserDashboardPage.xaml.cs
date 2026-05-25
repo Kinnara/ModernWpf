@@ -2,7 +2,6 @@ using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
 {
@@ -19,45 +18,56 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
 
         private void EditButton_Click(object sender, RoutedEventArgs e)
         {
-            ExecuteButtonCommand(sender);
+            var command = (sender as Button)?.Command;
+            var commandParameter = (sender as Button)?.CommandParameter;
+            if (command != null && command.CanExecute(commandParameter))
+            {
+                command.Execute(commandParameter);
+            }
+
             save_button.Focus();
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            var currentUserName = ViewModel.EditableUser == null ? string.Empty : ViewModel.EditableUser.Name;
+            var command = (sender as Button)?.Command;
+            var commandParameter = (sender as Button)?.CommandParameter;
 
-            ExecuteButtonCommand(sender);
-            RaiseNotification(sender as Button, "User " + currentUserName + " saved", "ButtonClickedActivity");
+            var currentUserName = ViewModel.EditableUser?.Name ?? string.Empty;
+
+            if (command != null && command.CanExecute(commandParameter))
+            {
+                command.Execute(commandParameter);
+            }
+
+            RaiseNotification(sender as Button, $"User {currentUserName} saved", "ButtonClickedActivity");
             edit_button.Focus();
         }
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
-            ExecuteButtonCommand(sender);
-            RaiseNotification(sender as Button, "User " + ViewModel.DeletedName + " deleted", "ButtonClickedActivity");
+            var command = (sender as Button)?.Command;
+            var commandParameter = (sender as Button)?.CommandParameter;
+
+            if (command != null && command.CanExecute(commandParameter))
+            {
+                command.Execute(commandParameter);
+            }
+
+            RaiseNotification(sender as Button, $"User {ViewModel.DeletedName} deleted", "ButtonClickedActivity");
             edit_button.Focus();
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            ExecuteButtonCommand(sender);
+            var command = (sender as Button)?.Command;
+            var commandParameter = (sender as Button)?.CommandParameter;
+            if (command != null && command.CanExecute(commandParameter))
+            {
+                command.Execute(commandParameter);
+            }
+
             edit_button.Focus();
-        }
-
-        private static void ExecuteButtonCommand(object sender)
-        {
-            var button = sender as ButtonBase;
-            if (button == null || button.Command == null)
-            {
-                return;
-            }
-
-            var commandParameter = button.CommandParameter;
-            if (button.Command.CanExecute(commandParameter))
-            {
-                button.Command.Execute(commandParameter);
-            }
         }
 
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -122,13 +132,14 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
 
         private void AgeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            var slider = sender as Slider;
-            if (slider == null)
+            if (!(sender is Slider slider))
             {
                 return;
             }
 
-            RaiseNotification(slider, "New age " + (int)e.NewValue, "SliderValueChangedActivity");
+            var newAge = (int)e.NewValue;
+
+            RaiseNotification(slider, $"New age {newAge}", "SliderValueChangedActivity");
         }
 
         private static void RaiseNotification(UIElement element, string notification, string activityId)
