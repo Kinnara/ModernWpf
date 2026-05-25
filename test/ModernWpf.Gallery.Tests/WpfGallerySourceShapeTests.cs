@@ -60,5 +60,38 @@ namespace ModernWpf.Gallery.Tests
                     className + " should remain unsealed like the official WPF Gallery section page type.");
             }
         }
+
+        [TestMethod]
+        public void BasicInputCodeBehindKeepsOfficialViewModelPropertyBeforeConstructorShape()
+        {
+            foreach (var pageName in new[]
+            {
+                "ButtonPage",
+                "CheckBoxPage",
+                "ComboBoxPage",
+                "RadioButtonPage",
+                "SliderPage"
+            })
+            {
+                var source = ReadRepoFile(
+                    "ModernWpf.Gallery",
+                    "Pages",
+                    "WpfGallery",
+                    "BasicInput",
+                    pageName + ".xaml.cs");
+                var viewModelIndex = source.IndexOf(
+                    "public " + pageName + "ViewModel ViewModel { get; }",
+                    StringComparison.Ordinal);
+                var constructorIndex = source.IndexOf(
+                    "public " + pageName + "(",
+                    StringComparison.Ordinal);
+
+                Assert.IsTrue(viewModelIndex >= 0, pageName + " should expose its copied page-specific ViewModel property.");
+                Assert.IsTrue(constructorIndex >= 0, pageName + " should keep its copied constructor.");
+                Assert.IsTrue(
+                    viewModelIndex < constructorIndex,
+                    pageName + " should match the official WPF Gallery code-behind member order by declaring ViewModel before the constructor.");
+            }
+        }
     }
 }
