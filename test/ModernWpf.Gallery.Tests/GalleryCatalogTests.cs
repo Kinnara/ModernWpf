@@ -342,27 +342,17 @@ namespace ModernWpf.Gallery.Tests
                 "ToggleSwitch",
                 "ColorPicker",
                 "HyperlinkButton",
-                "CalendarDatePicker",
-                "CalendarView",
-                "TimePicker",
                 "ProgressRing",
                 "InfoBadge",
                 "Flyout",
                 "Popup",
                 "Pivot",
-                "TabView",
                 "BreadcrumbBar",
                 "SelectorBar",
-                "RichEditBox",
-                "RichTextBlock",
                 "SplitView",
-                "ScrollViewer",
-                "ScrollView",
                 "AnnotatedScrollBar",
                 "ParallaxView",
                 "PullToRefresh",
-                "FlipView",
-                "ItemsView",
                 "GridView",
                 "SwipeControl",
                 "PersonPicture",
@@ -433,7 +423,7 @@ namespace ModernWpf.Gallery.Tests
         public void CatalogContainsWpfFirstGallerySurface()
         {
             Assert.AreEqual(12, GalleryCatalog.Groups.Count);
-            Assert.AreEqual(92, GalleryCatalog.Items.Count);
+            Assert.AreEqual(82, GalleryCatalog.Items.Count);
         }
 
         [TestMethod]

@@ -39,6 +39,22 @@ page, historical tracker notes, or generic WPF/framework type names used by a
 retained page. Do not keep hard-coded negative page lists as the primary guard;
 prefer positive catalog/resource assertions for the retained surface.
 
+Current ModernWpf/WinUI extension surface: keep only extension pages backed by
+actual ModernWpf controls or explicitly retained WPF implementations:
+`ContentDialog`, `TeachingTip`, `CommandBar`, `CommandBarFlyout`,
+`AppBarButton`, `AppBarToggleButton`, `AppBarSeparator`, `DropDownButton`,
+`SplitButton`, `ToggleSplitButton`, `RepeatButton`, `ToggleButton`, `MenuBar`,
+`MenuFlyout`, `ItemsRepeater`, `PipsPager`, `RatingControl`, `ToggleSwitch`,
+`ColorPicker`, `HyperlinkButton`, `ProgressRing`, `InfoBadge`, `Flyout`,
+`Popup`, `Pivot`, `BreadcrumbBar`, `SelectorBar`, `SplitView`,
+`AnnotatedScrollBar`, `ParallaxView`, `PullToRefresh`, `GridView`,
+`SwipeControl`, `PersonPicture`, `IconElement`, `ThemeShadow`, and `TitleBar`.
+Do not keep WinUI alias pages for `CalendarDatePicker`, `CalendarView`,
+`TimePicker`, `TabView`, `RichEditBox`, `RichTextBlock`, `ScrollViewer`,
+`ScrollView`, `FlipView`, or `ItemsView`; retained WPF pages and retained
+ModernWpf pages may still use those words incidentally in examples or framework
+types.
+
 ## Copy vs Adapt Rule
 
 Prefer copying official WPF Gallery page structure, sample XAML, page titles,
@@ -53,8 +69,10 @@ Adapt instead of raw-copying when the source depends on:
   to ModernWpf resource names or local helper controls.
 - ModernWpf-specific routing, catalog aliases, test hooks, or automation IDs.
 - Pages where ModernWpf intentionally keeps a distinct WinUI/ModernWpf control
-  page next to a WPF Gallery page, such as `Calendar` vs `CalendarView` and
-  `RichTextEdit` vs `RichEditBox`.
+  page next to WPF Gallery pages because the control is actually implemented in
+  ModernWpf, such as retained `TitleBar`, `ThemeShadow`, `Pivot`, or
+  `NavigationView` surfaces. Do not keep WinUI aliases for WPF-only pages such
+  as `CalendarView` or `RichEditBox`.
 - Controls or interactions that WPF Gallery implements with app-local helpers
   but ModernWpf already has an equivalent reusable control.
 
@@ -123,6 +141,21 @@ updated with each coherent round.
 Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
+
+- `dotnet build test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug -p:UseSharedCompilation=false --verbosity minimal`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0` with existing `NU1903` and `Failed to resolve WinRT.Runtime.dll` warnings.
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-build --filter "FullyQualifiedName~GalleryCatalogTests|FullyQualifiedName~GalleryApplicationResourceTests|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds|FullyQualifiedName~GalleryNavigationRuntimeTests.ShellCanNavigateEveryCatalogRouteWithoutExceptions|FullyQualifiedName~GallerySampleFactoryTests|FullyQualifiedName~WpfGalleryPageRegistryTests|FullyQualifiedName~GalleryPageRuntimeTests.CatalogItemPageCanLoadAndLayout|FullyQualifiedName~GalleryPageRuntimeTests.RemovedWinUIAliasPagesDoNotRemainInCatalog" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 241 tests per target. The visible gallery catalog is now 82 items / 12 groups after removing non-implemented WinUI alias pages from catalog metadata, generated hidden metadata, factory entry points, sample-code files, curated automation rows, visual-check defaults, and unused page thumbnails. The cleanup keeps retained WPF direct pages and retained ModernWpf pages intact; broad remaining text hits are only incidental retained-page examples/framework types such as WPF `ScrollViewer`, PipsPager's FlipView-named source sample, SelectorBar's ItemsView-named source sample, and WPF direct-page thumbnail aliases.
+- `rg -n "GallerySample_CalendarDatePicker|GallerySample_CalendarView|GallerySample_TimePicker|GallerySample_TabView|GallerySample_RichEditBox|GallerySample_RichTextBlock|GallerySample_ScrollViewer|GallerySample_ScrollView|GallerySample_FlipView|GallerySample_ItemsView|DateTimeSampleFactory|CreateCalendarDatePicker|CreateCalendarView|CreateTimePicker|CreateTabView|CreateRichEditBox|CreateRichTextBlock|CreateScrollViewer|CreateScrollView|CreateFlipView|CreateItemsView" ModernWpf.Gallery test\ModernWpf.Gallery.Tests tools\visual-checks -g "!**/bin/**" -g "!**/obj/**"`
+  - No matches. Removed WinUI alias page routes/factories/automation IDs remain absent from active gallery source and tests.
+- `rg -n "EasingFunction|PageTransition|ThemeTransition|ImplicitTransition|ConnectedAnimation|SemanticZoom|StandardUICommand|XamlUICommand|RadialGradientBrush|SystemBackdrop|CompactSizing|AppWindow|StoragePickers|AnimatedIcon|LinePage|ShapePage" ModernWpf.Gallery\Generated\GalleryCatalogData.g.cs ModernWpf.Gallery\Models\GalleryCatalog.cs ModernWpf.Gallery\Pages test\ModernWpf.Gallery.Tests tools\visual-checks -g "!**/bin/**" -g "!**/obj/**"`
+  - No matches. Deleted WinUI concept/API pages remain absent from generated catalog metadata and active gallery source.
+- `git diff --check`
+  - Passed with only Git's normal LF-to-CRLF working-copy warnings for touched files.
+
+The tracker is append-only for historical round notes below. When a historical
+entry conflicts with the current ModernWpf/WinUI extension surface above, the
+current retained-surface list wins.
 
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.ShellNavigationRootWritesRenderedVisualArtifacts|FullyQualifiedName~GalleryAutomationHookTests.ContentHostWritesRenderedVisualArtifact|FullyQualifiedName~GalleryAutomationHookTests.FrameContentHostWritesDescendantVisualArtifacts|FullyQualifiedName~GalleryNavigationRuntimeTests.ShellNavigationMenuMatchesWpfGalleryReferenceChrome" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 4 tests per target. Visual-test artifact output now starts from the containing `ModernWpfGalleryMainWindow` when available, so WPF-rendered audit evidence includes the title bar, `NavigationView`, footer `Settings`, and content region. The same pass still asserts nonblank `GalleryNavigationRoot`, `GalleryNavigationView`, and `ContentRootGrid` artifacts.

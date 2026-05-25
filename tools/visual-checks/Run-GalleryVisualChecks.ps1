@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "RichTextBlock", "RichEditBox", "SplitView", "PersonPicture", "ParallaxView", "IconElement", "ThemeShadow", "TitleBar", "CalendarDatePicker", "CalendarView", "TimePicker", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "AnnotatedScrollBar", "ScrollView", "ScrollViewer", "PullToRefresh", "FlipView", "ItemsView", "GridView", "ItemsRepeater", "BreadcrumbBar", "Pivot", "SelectorBar", "TabView", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "SwipeControl", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout"),
+    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "SplitView", "PersonPicture", "ParallaxView", "IconElement", "ThemeShadow", "TitleBar", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "AnnotatedScrollBar", "PullToRefresh", "GridView", "ItemsRepeater", "BreadcrumbBar", "Pivot", "SelectorBar", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "SwipeControl", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -260,20 +260,6 @@ function Find-ReferencePrimaryByName($root, [string]$control, [string]$name) {
 }
 
 function Reset-WinUIReferenceSampleScroll($window, [string]$control) {
-    if ($control -ne "TabView") {
-        return
-    }
-
-    $samplePanel = Find-DescendantByAutomationId $window "svPanel"
-    if ($null -eq $samplePanel) {
-        return
-    }
-
-    $scrollPattern = $null
-    if ($samplePanel.TryGetCurrentPattern([System.Windows.Automation.ScrollPattern]::Pattern, [ref]$scrollPattern)) {
-        $scrollPattern.SetScrollPercent([System.Windows.Automation.ScrollPattern]::NoScroll, 0)
-        Start-Sleep -Milliseconds 500
-    }
 }
 
 function Find-DescendantByAnyName($root, [string[]]$names) {
@@ -460,33 +446,23 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "ToggleSwitch" { return "GallerySample_ToggleSwitch_ToggleSwitch" }
         "NumberBox" { return "GallerySample_NumberBox_SpinButtonNumberBox" }
         "AutoSuggestBox" { return "GallerySample_AutoSuggestBox_AutoSuggestBox" }
-        "RichTextBlock" { return "GallerySample_RichTextBlock_RichTextBlock" }
-        "RichEditBox" { return "GallerySample_RichEditBox_RichEditBox" }
         "SplitView" { return "GallerySample_SplitView_SplitView" }
         "PersonPicture" { return "GallerySample_PersonPicture_PersonPicture" }
         "ParallaxView" { return "GallerySample_ParallaxView_Root" }
         "IconElement" { return "GallerySample_IconElement_SlicesIcon" }
         "ThemeShadow" { return "GallerySample_ThemeShadow_ShadowRect" }
         "TitleBar" { return "GallerySample_TitleBar_TitleBarControl" }
-        "CalendarDatePicker" { return "GallerySample_CalendarDatePicker_CalendarDatePicker" }
-        "CalendarView" { return "GallerySample_CalendarView_CalendarView" }
-        "TimePicker" { return "GallerySample_TimePicker_TimePicker" }
         "InfoBadge" { return "GallerySample_InfoBadge_InfoBadge" }
         "InfoBar" { return "GallerySample_InfoBar_InfoBar" }
         "ProgressRing" { return "GallerySample_ProgressRing_ProgressRing" }
         "PipsPager" { return "GallerySample_PipsPager_PipsPager" }
         "AnnotatedScrollBar" { return "GallerySample_AnnotatedScrollBar_AnnotatedScrollBar" }
-        "ScrollView" { return "GallerySample_ScrollView_ScrollView" }
-        "ScrollViewer" { return "GallerySample_ScrollViewer_ScrollViewer" }
         "PullToRefresh" { return "GallerySample_PullToRefresh_RefreshContainer" }
-        "FlipView" { return "GallerySample_FlipView_FlipView" }
-        "ItemsView" { return "GallerySample_ItemsView_ItemsView" }
         "GridView" { return "GallerySample_GridView_BasicGridView" }
         "ItemsRepeater" { return "GallerySample_ItemsRepeater_ItemsRepeater" }
         "BreadcrumbBar" { return "GallerySample_BreadcrumbBar_BreadcrumbBar" }
         "Pivot" { return "GallerySample_Pivot_Pivot" }
         "SelectorBar" { return "GallerySample_SelectorBar_SelectorBar" }
-        "TabView" { return "GallerySample_TabView_TabView" }
         "NavigationView" { return "GallerySample_NavigationView_NavigationView" }
         "ContentDialog" { return "GallerySample_ContentDialog_ShowButton" }
         "Flyout" { return "GallerySample_Flyout_Button" }
@@ -511,7 +487,6 @@ function Get-PrimaryCropMinimumVisibleStdDev([string]$control) {
     switch ($control) {
         "NavigationView" { return 45.0 }
         "AutoSuggestBox" { return 1.0 }
-        "RichEditBox" { return 0.5 }
         default { return 6.0 }
     }
 }
@@ -530,32 +505,22 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
         "ToggleSwitch" { return "GallerySample_ToggleSwitch_ToggleSwitch" }
         "NumberBox" { return "GallerySample_NumberBox_SpinButtonNumberBox" }
         "AutoSuggestBox" { return "GallerySample_AutoSuggestBox_AutoSuggestBox" }
-        "RichTextBlock" { return "GallerySample_RichTextBlock_RichTextBlock" }
-        "RichEditBox" { return "GallerySample_RichEditBox_RichEditBox" }
         "SplitView" { return "NavLinksList" }
         "PersonPicture" { return "ProfileImageRadio" }
         "ParallaxView" { return "GallerySample_ParallaxView_Root" }
         "IconElement" { return "GallerySample_IconElement_Root" }
         "ThemeShadow" { return "GallerySample_ThemeShadow_Root" }
         "TitleBar" { return "TitleBox" }
-        "CalendarDatePicker" { return "GallerySample_CalendarDatePicker_CalendarDatePicker" }
-        "CalendarView" { return "GallerySample_CalendarView_CalendarView" }
-        "TimePicker" { return "GallerySample_TimePicker_TimePicker" }
         "InfoBadge" { return "GallerySample_InfoBadge_InfoBadge" }
         "ProgressRing" { return "GallerySample_ProgressRing_ProgressRing" }
         "PipsPager" { return "GallerySample_PipsPager_PipsPager" }
         "AnnotatedScrollBar" { return "GallerySample_AnnotatedScrollBar_Root" }
-        "ScrollView" { return "GallerySample_ScrollView_ScrollView" }
-        "ScrollViewer" { return "GallerySample_ScrollViewer_ScrollViewer" }
         "PullToRefresh" { return "GallerySample_PullToRefresh_Root" }
-        "FlipView" { return "GallerySample_FlipView_FlipView" }
-        "ItemsView" { return "GallerySample_ItemsView_ItemsView" }
         "GridView" { return "GallerySample_GridView_BasicGridView" }
         "ItemsRepeater" { return "GallerySample_ItemsRepeater_ItemsRepeater" }
         "BreadcrumbBar" { return "GallerySample_BreadcrumbBar_BreadcrumbBar" }
         "Pivot" { return "GallerySample_Pivot_Pivot" }
         "SelectorBar" { return "GallerySample_SelectorBar_SelectorBar" }
-        "TabView" { return "GallerySample_TabView_TabView" }
         "Flyout" { return "GallerySample_Flyout_Button" }
         "Popup" { return "GallerySample_Popup_Button" }
         "MenuBar" { return "GallerySample_MenuBar_MenuBar" }
@@ -592,25 +557,18 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
         "ToggleSplitButton" { return "myListButton" }
         "NumberBox" { return "NumberBoxSpinButtonPlacementExample" }
         "AutoSuggestBox" { return "Control1" }
-        "RichTextBlock" { return "" }
-        "RichEditBox" { return "" }
         "SplitView" { return "NavLinksList" }
         "PersonPicture" { return "ProfileImageRadio" }
         "ParallaxView" { return "listView" }
         "IconElement" { return "svPanel" }
         "ThemeShadow" { return "svPanel" }
         "TitleBar" { return "TitleBox" }
-        "CalendarView" { return "Control1" }
         "ProgressRing" { return "ProgressRing1" }
         "PipsPager" { return "FlipViewPipsPager" }
         "AnnotatedScrollBar" { return "svPanel" }
-        "ScrollView" { return "PART_ScrollPresenter" }
-        "ScrollViewer" { return "ScrollViewerControl" }
-        "ItemsView" { return "BasicItemsView" }
         "GridView" { return "BasicGridView" }
         "BreadcrumbBar" { return "BreadcrumbBar1" }
         "SelectorBar" { return "PART_ItemsView" }
-        "TabView" { return "TabView1" }
         default { return "" }
     }
 }
@@ -622,10 +580,7 @@ function Get-ReferencePrimaryName([string]$control) {
         "Popup" { return "Show Popup (using Offset)" }
         "Pivot" { return "EMAIL" }
         "RepeatButton" { return "Click and hold" }
-        "CalendarDatePicker" { return "Calendar" }
         "ToggleSwitch" { return "simple ToggleSwitch" }
-        "RichTextBlock" { return "I am a RichTextBlock." }
-        "RichEditBox" { return "simple text editor" }
         default { return "" }
     }
 }

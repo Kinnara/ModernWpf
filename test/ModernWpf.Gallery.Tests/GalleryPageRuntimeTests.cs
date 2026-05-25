@@ -86,34 +86,25 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void DistinctModernWpfPagesDoNotUseWpfGalleryAliasContent()
+        public void RemovedWinUIAliasPagesDoNotRemainInCatalog()
         {
             WpfTestHost.Run(() =>
             {
                 var calendarPage = new ItemPage(GalleryCatalog.FindItem("Calendar"));
-                var calendarViewPage = new ItemPage(GalleryCatalog.FindItem("CalendarView"));
                 var richTextEditPage = new ItemPage(GalleryCatalog.FindItem("RichTextEdit"));
-                var richEditBoxPage = new ItemPage(GalleryCatalog.FindItem("RichEditBox"));
 
                 Assert.IsTrue(calendarPage.UsesWpfGalleryPageMode);
                 Assert.IsFalse(calendarPage.ShowCatalogDetails);
                 Assert.IsFalse(calendarPage.ShowPageDescription);
 
-                Assert.IsFalse(calendarViewPage.UsesWpfGalleryPageMode);
-                Assert.IsTrue(calendarViewPage.ShowCatalogDetails);
-                Assert.IsTrue(calendarViewPage.ShowDocs);
-                Assert.IsTrue(calendarViewPage.ShowExamples);
-                Assert.AreEqual("A basic calendar view.", calendarViewPage.Examples.Single().HeaderText);
-
                 Assert.IsTrue(richTextEditPage.UsesWpfGalleryPageMode);
                 Assert.IsFalse(richTextEditPage.ShowCatalogDetails);
                 Assert.IsFalse(richTextEditPage.ShowPageDescription);
 
-                Assert.IsFalse(richEditBoxPage.UsesWpfGalleryPageMode);
-                Assert.IsTrue(richEditBoxPage.ShowCatalogDetails);
-                Assert.IsTrue(richEditBoxPage.ShowDocs);
-                Assert.IsTrue(richEditBoxPage.ShowExamples);
-                Assert.AreEqual("A simple text editor using RichEditBox.", richEditBoxPage.Examples.First().HeaderText);
+                Assert.IsNull(GalleryCatalog.FindItem("CalendarDatePicker"));
+                Assert.IsNull(GalleryCatalog.FindItem("CalendarView"));
+                Assert.IsNull(GalleryCatalog.FindItem("RichEditBox"));
+                Assert.IsNull(GalleryCatalog.FindItem("RichTextBlock"));
             });
         }
 
