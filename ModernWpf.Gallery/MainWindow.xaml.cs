@@ -1,9 +1,11 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Media;
 using System.Windows.Shell;
 using Microsoft.Win32;
+using ModernWpf.Gallery.Testing;
 using ModernWpf.Gallery.ViewModels;
 
 namespace ModernWpf.Gallery
@@ -19,6 +21,11 @@ namespace ModernWpf.Gallery
             ViewModel = new MainWindowViewModel(GoBack, OpenSettings);
             DataContext = this;
             InitializeComponent();
+            if (GalleryDiagnostics.IsEnabled)
+            {
+                AutomationProperties.SetAutomationId(this, "ModernWpfGalleryMainWindow");
+            }
+
             ConfigureWindowChrome();
             UpdateMainWindowVisuals();
             SystemEvents.UserPreferenceChanged += OnUserPreferenceChanged;

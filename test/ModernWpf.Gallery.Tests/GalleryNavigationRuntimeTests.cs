@@ -398,6 +398,7 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(MainWindow.GetPreferredNonClientFrameEdges(), chrome.NonClientFrameEdges);
                     Assert.AreSame(Application.Current.FindResource("WindowBackground"), window.Background);
                     Assert.AreSame(window, window.DataContext);
+                    Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(window));
                     Assert.AreEqual("WPF Gallery", window.ViewModel.ApplicationTitle);
                     Assert.AreEqual("WPF Gallery", window.Title);
                     Assert.AreEqual("ViewModel.ApplicationTitle",
@@ -466,6 +467,25 @@ namespace ModernWpf.Gallery.Tests
                 finally
                 {
                     window.Close();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void MainWindowDiagnosticAutomationIdIsVisualTestOnly()
+        {
+            WpfTestHost.Run(() =>
+            {
+                GalleryDiagnostics.Configure(GalleryLaunchOptions.Parse(new[] { "--visual-test" }));
+                var window = new MainWindow();
+                try
+                {
+                    Assert.AreEqual("ModernWpfGalleryMainWindow", AutomationProperties.GetAutomationId(window));
+                }
+                finally
+                {
+                    window.Close();
+                    GalleryDiagnostics.ResetForTests();
                 }
             });
         }

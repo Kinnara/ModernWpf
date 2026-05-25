@@ -13,7 +13,6 @@
     Height="820"
     MinWidth="840"
     MinHeight="560"
-    AutomationProperties.AutomationId="ModernWpfGalleryMainWindow"
     WindowStartupLocation="CenterScreen"
     Background="{DynamicResource WindowBackground}"
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
