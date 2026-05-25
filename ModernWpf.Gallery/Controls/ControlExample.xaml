@@ -51,11 +51,23 @@
                         </Border>
 
                         <Expander
-                            x:Name="SourceCodeExpander"
                             Grid.Row="2"
                             AutomationProperties.Name="{Binding HeaderText, RelativeSource={RelativeSource TemplatedParent}, StringFormat=View Source Code for {0}}"
                             Header="Source code"
                             MinHeight="42">
+                            <Expander.Style>
+                                <Style TargetType="{x:Type Expander}">
+                                    <Style.Triggers>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding XamlCode, RelativeSource={RelativeSource TemplatedParent}}" Value="{x:Null}" />
+                                                <Condition Binding="{Binding CSharpCode, RelativeSource={RelativeSource TemplatedParent}}" Value="{x:Null}" />
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </MultiDataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Expander.Style>
                             <StackPanel>
                                 <StackPanel x:Name="XamlCodeBlock">
                                     <Grid>
@@ -175,14 +187,6 @@
                             <Setter TargetName="CSharpCodeBlock" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="Border" Property="Visibility" Value="Collapsed" />
                         </Trigger>
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="XamlCode" Value="{x:Null}" />
-                                <Condition Property="CSharpCode" Value="{x:Null}" />
-                            </MultiTrigger.Conditions>
-                            <Setter TargetName="SourceCodeExpander" Property="Visibility" Value="Collapsed" />
-                            <Setter TargetName="Border" Property="Visibility" Value="Collapsed" />
-                        </MultiTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

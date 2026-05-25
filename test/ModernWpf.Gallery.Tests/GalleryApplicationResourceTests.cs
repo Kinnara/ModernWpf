@@ -398,10 +398,11 @@ namespace ModernWpf.Gallery.Tests
                         (double)Application.Current.FindResource("BodyTextBlockFontSize"),
                         TextElement.GetFontSize(displayBorder));
 
-                    var sourceCodeExpander = (Expander)controlExample.Template.FindName("SourceCodeExpander", controlExample);
-                    Assert.IsNotNull(sourceCodeExpander);
+                    Assert.IsNull(controlExample.Template.FindName("SourceCodeExpander", controlExample));
+                    var sourceCodeExpander = FindVisualChildren<Expander>(controlExample).Single();
                     Assert.AreEqual("Source code", sourceCodeExpander.Header);
                     Assert.AreEqual(42.0, sourceCodeExpander.MinHeight);
+                    Assert.AreEqual(Visibility.Visible, sourceCodeExpander.Visibility);
                     Assert.IsTrue(
                         sourceCodeExpander.ActualHeight >= 42.0 && sourceCodeExpander.ActualHeight <= 43.5,
                         "Expected collapsed source expander height near the official WPF Gallery 42-43px row; actual " + sourceCodeExpander.ActualHeight);
@@ -430,6 +431,49 @@ namespace ModernWpf.Gallery.Tests
                     var csharpCopyButton = copyButtons.Single(button => Equals(button.CommandParameter, "Copy_CSharpCode"));
                     Assert.AreEqual(string.Empty, AutomationProperties.GetName(csharpCopyButton));
                     Assert.IsNull(ToolTipService.GetToolTip(csharpCopyButton));
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void ControlExampleTemplateHidesSourceExpanderWithoutLocalSourceName()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var controlExample = new ControlExample
+                {
+                    HeaderText = "No source sample",
+                    ExampleContent = new Button { Content = "Example" }
+                };
+
+                var window = new Window
+                {
+                    Width = 480,
+                    Height = 360,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = controlExample
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.IsNull(controlExample.Template.FindName("SourceCodeExpander", controlExample));
+                    var sourceCodeExpander = FindVisualChildren<Expander>(controlExample).Single();
+                    Assert.AreEqual("Source code", sourceCodeExpander.Header);
+                    Assert.AreEqual(Visibility.Collapsed, sourceCodeExpander.Visibility);
                 }
                 finally
                 {
