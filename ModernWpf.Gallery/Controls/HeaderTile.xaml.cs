@@ -81,7 +81,12 @@ namespace ModernWpf.Gallery.Controls
 
         private void UpdateButtonResources()
         {
-            if (SystemParameters.HighContrast)
+            ApplyButtonResources(SystemParameters.HighContrast);
+        }
+
+        internal void ApplyButtonResources(bool highContrast)
+        {
+            if (highContrast)
             {
                 RootButton.Resources["ButtonBackground"] = SystemColors.ControlBrush;
                 RootButton.Resources["ButtonBackgroundPointerOver"] = SystemColors.ControlBrush;

@@ -271,6 +271,22 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void HomeHeaderTilesUseWpfGalleryHighContrastFillResources()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var tile = new HeaderTile();
+                var rootButton = (Button)tile.FindName("RootButton");
+
+                tile.ApplyButtonResources(true);
+
+                Assert.AreSame(SystemColors.ControlBrush, rootButton.Resources["ButtonBackground"]);
+                Assert.AreSame(SystemColors.ControlBrush, rootButton.Resources["ButtonBackgroundPointerOver"]);
+                Assert.AreSame(SystemColors.ControlBrush, rootButton.Resources["ButtonBackgroundPressed"]);
+            });
+        }
+
+        [TestMethod]
         public void HomeHeaderTilesExposeRootButtonAutomationPeer()
         {
             WpfTestHost.Run(() =>
