@@ -42,6 +42,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "MediaPlayerElement", "GallerySample_MediaPlayerElement_Root", "GallerySample_MediaPlayerElement_MediaPlayerElement" };
             yield return new object[] { "MapControl", "GallerySample_MapControl_Root", "GallerySample_MapControl_MapControl" };
             yield return new object[] { "WebView2", "GallerySample_WebView2_Root", "GallerySample_WebView2_WebView2" };
+            yield return new object[] { "AnimatedIcon", "GallerySample_AnimatedIcon_Root", "GallerySample_AnimatedIcon_Button" };
             yield return new object[] { "CompactSizing", "GallerySample_CompactSizing_Root", "GallerySample_CompactSizing_FirstName" };
             yield return new object[] { "IconElement", "GallerySample_IconElement_Root", "GallerySample_IconElement_SlicesIcon" };
             yield return new object[] { "Line", "GallerySample_Line_Root", "GallerySample_Line_Line" };
@@ -3708,6 +3709,118 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(225d, player2Poster.Height);
                     Assert.AreEqual(Stretch.Fill, player2Poster.Stretch);
                     StringAssert.Contains(((BitmapImage)player2Poster.Source).UriSource.ToString(), "fishes.poster.png");
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void AnimatedIconSampleMatchesWinUIGalleryExamples()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("AnimatedIcon"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(2, page.Examples.Count);
+                    Assert.AreEqual("Adding AnimatedIcon to a button", page.Examples[0].HeaderText);
+                    Assert.AreEqual("Adding AnimatedIcon to a NavigationView", page.Examples[1].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "PointerEntered=\"Button_PointerEntered\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "animatedvisuals:$(AnimatedVisualSourceKind)");
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "AnimatedIcon.SetState(this.SearchAnimatedIcon, \"PointerOver\");");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "NavigationViewItem Content = \"Game Settings\"");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "animatedvisuals:AnimatedSettingsVisualSource");
+
+                    var firstRoot = (GallerySamplePanel)page.Examples[0].ExampleContent;
+                    Assert.AreEqual(1, firstRoot.Children.Count);
+                    var firstLayout = (Grid)firstRoot.Children[0];
+                    Assert.AreEqual(2, firstLayout.ColumnDefinitions.Count);
+
+                    var button = (Button)FindByAutomationId(page, "GallerySample_AnimatedIcon_Button");
+                    Assert.IsNotNull(button);
+                    Assert.AreEqual(75d, button.Width);
+                    Assert.AreEqual("AnimatedIcon Example", AutomationProperties.GetName(button));
+                    Assert.AreEqual("AnimatedFindVisualSource", button.Tag);
+
+                    var searchIcon = (Mux.SymbolIcon)button.Content;
+                    Assert.AreEqual("SearchAnimatedIcon", searchIcon.Name);
+                    Assert.AreEqual(Mux.Symbol.Find, searchIcon.Symbol);
+                    Assert.AreEqual("Normal", Mux.AnimatedIcon.GetState(searchIcon));
+                    Assert.AreEqual("AnimatedFindVisualSource", searchIcon.DataContext);
+
+                    button.RaiseEvent(new MouseEventArgs(Mouse.PrimaryDevice, Environment.TickCount)
+                    {
+                        RoutedEvent = UIElement.MouseEnterEvent
+                    });
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual("PointerOver", Mux.AnimatedIcon.GetState(searchIcon));
+
+                    button.RaiseEvent(new MouseEventArgs(Mouse.PrimaryDevice, Environment.TickCount)
+                    {
+                        RoutedEvent = UIElement.MouseLeaveEvent
+                    });
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual("Normal", Mux.AnimatedIcon.GetState(searchIcon));
+
+                    var sourceSelection = FindNamedDescendant<ComboBox>(page, "AnimatedVisualSourceSelection");
+                    Assert.IsNotNull(sourceSelection);
+                    Assert.AreEqual("Kind", ModernWpf.Controls.Primitives.ControlHelper.GetHeader(sourceSelection));
+                    Assert.AreEqual(340d, sourceSelection.MinWidth);
+                    Assert.AreEqual(4, sourceSelection.SelectedIndex);
+                    Assert.AreEqual(7, sourceSelection.Items.Count);
+                    CollectionAssert.AreEqual(
+                        new[]
+                        {
+                            "AnimatedBackVisualSource",
+                            "AnimatedChevronDownSmallVisualSource",
+                            "AnimatedChevronRightDownSmallVisualSource",
+                            "AnimatedChevronUpDownSmallVisualSource",
+                            "AnimatedFindVisualSource",
+                            "AnimatedGlobalNavigationButtonVisualSource",
+                            "AnimatedSettingsVisualSource"
+                        },
+                        sourceSelection.Items.Cast<string>().ToArray());
+
+                    sourceSelection.SelectedIndex = 6;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual("AnimatedSettingsVisualSource", button.Tag);
+                    Assert.AreEqual("AnimatedSettingsVisualSource", searchIcon.DataContext);
+
+                    var navigationView = (Mux.NavigationView)FindByAutomationId(page, "GallerySample_AnimatedIcon_NavigationView");
+                    Assert.IsNotNull(navigationView);
+                    Assert.AreEqual("AnimatedIconNavigationView", navigationView.Name);
+                    Assert.IsFalse(navigationView.IsSettingsVisible);
+                    Assert.AreEqual(1, navigationView.MenuItems.Count);
+
+                    var gameSettingsItem = (Mux.NavigationViewItem)navigationView.MenuItems[0];
+                    Assert.AreEqual("GameSettingsItem", gameSettingsItem.Name);
+                    Assert.AreEqual("Game Settings", gameSettingsItem.Content);
+                    var gameSettingsIcon = (Mux.FontIcon)gameSettingsItem.Icon;
+                    Assert.AreEqual("GameSettingsIcon", gameSettingsIcon.Name);
+                    Assert.AreEqual("\uE713", gameSettingsIcon.Glyph);
+                    Assert.AreEqual("Normal", Mux.AnimatedIcon.GetState(gameSettingsIcon));
                 }
                 finally
                 {

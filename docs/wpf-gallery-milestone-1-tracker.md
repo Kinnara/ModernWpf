@@ -106,6 +106,16 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.AnimatedIconSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 65 tests per target. The generated ModernWpf AnimatedIcon extension page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\AnimatedIconPage.xaml`, `.xaml.cs`, and `D:\repos\WinUI-Gallery\WinUIGallery\Samples\SampleCode\Icons\AnimatedIconSample1_xaml.txt`, `AnimatedIconSample1_cs.txt`, and `AnimatedIconSample2_xaml.txt`: the `Adding AnimatedIcon to a button` and `Adding AnimatedIcon to a NavigationView` examples, source-facing `SearchAnimatedIcon`, `AnimatedVisualSourceSelection`, `GameSettingsIcon`, and `Game Settings` names/content, the seven official animated visual source options, the official source snippets, and pointer-over/normal state behavior through `AnimatedIcon.State`. `StylesSampleFactory.CreateExamples` now covers AnimatedIcon as a source-backed Platform & patterns WinUI extension page, and the first button exposes `GallerySample_AnimatedIcon_Root` / `GallerySample_AnimatedIcon_Button`. The WPF adaptation uses `SymbolIcon` / `FontIcon` fallbacks because ModernWpf has the WinUI-compatible `AnimatedIcon.State` attached property but not the WinUI Lottie `AnimatedIcon` control/source surface.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls AnimatedIcon -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-063658-891-92216/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required rendered AnimatedIcon button was found, primary crops use the rendered ModernWpf `GallerySample_AnimatedIcon_Root` sample region against the installed WinUI `svPanel` sample region because the WinUI animated icon is not exposed as a stable automation target, crop sizes are `790x157` vs `843x646`, and Light primary delta is `82.78`. The whole-window Light mean delta is `134.58` and remains diagnostic because the installed WinUI shell stayed dark while ModernWpf was captured in Light.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls AnimatedIcon -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-063659-407-98592/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required rendered AnimatedIcon button was found, primary crops use the same sample-region mapping, crop sizes are `790x157` vs `843x646`, Dark primary delta is `23.44`, and whole-window Dark mean delta is `204.98`.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the AnimatedIcon WinUI example alignment. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages plus existing generated WinRT and ModernWpf/ModernWpf.Controls warnings, ending with `0 Error(s)`.
+- `git diff --check`
+  - Passed with only Git's normal LF-to-CRLF working-copy warnings for touched files.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.CompactSizingSampleMatchesWinUIGalleryExample|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 64 tests per target. The generated ModernWpf Compact Sizing extension page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\CompactSizingPage.xaml`, `.xaml.cs`, `D:\repos\WinUI-Gallery\WinUIGallery\Samples\SamplePages\SampleStandardSizingPage.xaml` / `.xaml.cs`, and `D:\repos\WinUI-Gallery\WinUIGallery\Samples\SamplePages\SampleCompactSizingPage.xaml` / `.xaml.cs`: the supported-controls intro text, one `Compact Sizing for controls` example, source-facing `ContentFrame`, `HeaderBlock`, `firstName`, `lastName`, `password`, `confirmPassword`, and `chosenDate` names, the Standard/Compact radio options, the official compact resource-dictionary snippet, and state preservation when switching between standard and compact density. `StylesSampleFactory.CreateExamples` now covers CompactSizing as a source-backed Platform & patterns WinUI extension page, `StylesSampleFactory.CreateIntroContent` supplies the source intro text through `ItemPage`, and the first form field exposes `GallerySample_CompactSizing_Root` / `GallerySample_CompactSizing_FirstName`.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls CompactSizing -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -2436,6 +2446,30 @@ with ModernWpf and installed WinUI 3 Gallery `Passed`, primary crops matching
 at `745x423`, and primary deltas `56.75` / `37.33`. Avoid reopening WebView2's
 source shape unless the repo decides to add an optional WebView2 package/runtime
 dependency or a new visual crop regression appears.
+The generated ModernWpf AnimatedIcon extension page now uses the local official
+WinUI Gallery source from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\AnimatedIconPage.xaml`,
+`.xaml.cs`, and the local icon snippets under
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\SampleCode\Icons`: the button
+example with `SearchAnimatedIcon`, `AnimatedVisualSourceSelection`, seven
+animated visual source choices, and pointer-entered/exited state changes, plus
+the NavigationView example with `GameSettingsIcon` and `Game Settings`.
+`StylesSampleFactory.CreateExamples` now exposes AnimatedIcon as a source-backed
+Platform & patterns WinUI extension page. The WPF adaptation keeps the official
+source panes and sample names but renders with ModernWpf `SymbolIcon` /
+`FontIcon` fallbacks because ModernWpf currently provides only the WinUI-compatible
+`AnimatedIcon.State` attached property, not WinUI's Lottie `AnimatedIcon` source
+surface. Current AnimatedIcon WinUI-reference evidence is
+`artifacts/visual-checks/20260525-063658-891-92216/report.md` for Light and
+`artifacts/visual-checks/20260525-063659-407-98592/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`; the required
+`GallerySample_AnimatedIcon_Button` rendered artifact is present, while the
+primary crop uses the rendered ModernWpf sample root against the installed WinUI
+`svPanel` sample region because the WinUI animated icon is not exposed as a
+stable automation target. Treat those sample-region deltas as diagnostic unless
+a better stable crop becomes available. Avoid reopening AnimatedIcon's source
+shape unless a new local WinUI source, real ModernWpf animated icon surface, or
+crop regression appears.
 The generated ModernWpf Compact Sizing extension page now uses the local
 official WinUI Gallery source from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\CompactSizingPage.xaml`,

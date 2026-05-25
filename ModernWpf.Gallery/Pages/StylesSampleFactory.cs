@@ -8,7 +8,6 @@ using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using System.Windows.Threading;
 using ModernWpf.Controls.Primitives;
 using ModernWpf.Gallery.Models;
 using Mux = ModernWpf.Controls;
@@ -82,6 +81,17 @@ namespace ModernWpf.Gallery.Pages
     <ResourceDictionary Source=""ms-appx:///Microsoft.UI.Xaml/DensityStyles/Compact.xaml"" />
 </Page.Resources>";
 
+        private static readonly string[] AnimatedIconSourceKinds =
+        {
+            "AnimatedBackVisualSource",
+            "AnimatedChevronDownSmallVisualSource",
+            "AnimatedChevronRightDownSmallVisualSource",
+            "AnimatedChevronUpDownSmallVisualSource",
+            "AnimatedFindVisualSource",
+            "AnimatedGlobalNavigationButtonVisualSource",
+            "AnimatedSettingsVisualSource"
+        };
+
         public static UIElement Create(string uniqueId)
         {
             switch (uniqueId)
@@ -128,6 +138,8 @@ namespace ModernWpf.Gallery.Pages
             {
                 case "CompactSizing":
                     return CreateCompactSizingExamples();
+                case "AnimatedIcon":
+                    return CreateAnimatedIconExamples(sampleSnippets);
                 case "IconElement":
                     return CreateIconElementExamples(sampleSnippets);
                 case "Line":
@@ -202,43 +214,120 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateAnimatedIconSample()
         {
-            var panel = CreateSamplePanel("AnimatedIcon maps to a ModernWpf FontIcon whose state changes over time.");
-            var icon = new Mux.FontIcon
+            return CreateAnimatedIconButtonExampleContent(assignRootAutomationId: true);
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateAnimatedIconExamples(IReadOnlyList<SampleSnippet> sampleSnippets)
+        {
+            return new[]
             {
-                Glyph = "\xE768",
-                FontSize = 54,
-                Width = 96,
-                Height = 96,
-                Foreground = CreateBrush("#0078D4")
+                new GalleryExample(
+                    "Adding AnimatedIcon to a button",
+                    CreateAnimatedIconButtonExampleContent(assignRootAutomationId: true),
+                    FindSampleCodeText(sampleSnippets, "AnimatedIconSample1_xaml.txt", System.IO.Path.Combine("Icons", "AnimatedIconSample1_xaml.txt")),
+                    FindSampleCodeText(sampleSnippets, "AnimatedIconSample1_cs.txt", System.IO.Path.Combine("Icons", "AnimatedIconSample1_cs.txt"))),
+                new GalleryExample(
+                    "Adding AnimatedIcon to a NavigationView",
+                    CreateAnimatedIconNavigationViewExampleContent(),
+                    FindSampleCodeText(sampleSnippets, "AnimatedIconSample2_xaml.txt", System.IO.Path.Combine("Icons", "AnimatedIconSample2_xaml.txt")),
+                    null)
             };
-            var frame = new Border
+        }
+
+        private static GallerySamplePanel CreateAnimatedIconButtonExampleContent(bool assignRootAutomationId)
+        {
+            var root = new GallerySamplePanel();
+            if (assignRootAutomationId)
             {
-                Width = 160,
-                Height = 130,
-                BorderThickness = new Thickness(1),
-                BorderBrush = CreateBrush("#D8D8D8"),
-                Child = icon
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("AnimatedIcon"));
+            }
+
+            var searchIcon = new Mux.SymbolIcon(Mux.Symbol.Find)
+            {
+                Name = "SearchAnimatedIcon",
+                DataContext = AnimatedIconSourceKinds[4]
             };
-            var states = new[] { "\xE768", "\xE895", "\xE72C", "\xE7C1" };
-            var index = 0;
-            var timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(450) };
-            timer.Tick += delegate
+            Mux.AnimatedIcon.SetState(searchIcon, "Normal");
+
+            var button = new Button
             {
-                index = (index + 1) % states.Length;
-                icon.Glyph = states[index];
+                Width = 75,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Content = searchIcon,
+                Tag = AnimatedIconSourceKinds[4]
+            };
+            AutomationProperties.SetName(button, "AnimatedIcon Example");
+            GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("AnimatedIcon", "Button"));
+
+            button.MouseEnter += delegate { Mux.AnimatedIcon.SetState(searchIcon, "PointerOver"); };
+            button.MouseLeave += delegate { Mux.AnimatedIcon.SetState(searchIcon, "Normal"); };
+
+            var example = new StackPanel();
+            example.Children.Add(new TextBlock
+            {
+                Text = "The following example is a button that the user clicks to load a search experience. The AnimatedIcon consumes the animation created using Adobe AfterEffects and translated into Microsoft.UI.Composition objects using Lottie-Windows. For guidance on how to properly structure your animation file see the AnimatedIcon Guidance page.",
+                TextWrapping = TextWrapping.Wrap,
+                Margin = new Thickness(0, 0, 0, 12)
+            });
+            example.Children.Add(button);
+
+            var sourceSelection = new ComboBox
+            {
+                Name = "AnimatedVisualSourceSelection",
+                MinWidth = 340,
+                VerticalAlignment = VerticalAlignment.Center,
+                SelectedIndex = 4,
+                ItemsSource = AnimatedIconSourceKinds
+            };
+            ControlHelper.SetHeader(sourceSelection, "Kind");
+            sourceSelection.SelectionChanged += delegate
+            {
+                var selectedKind = sourceSelection.SelectedItem as string;
+                button.Tag = selectedKind;
+                searchIcon.DataContext = selectedKind;
             };
 
-            var commands = CreateCommandRow();
-            var start = CreateButton("Start");
-            var stop = CreateButton("Stop");
-            start.Click += delegate { timer.Start(); };
-            stop.Click += delegate { timer.Stop(); };
-            commands.Children.Add(start);
-            commands.Children.Add(stop);
+            root.Children.Add(CreateExampleWithOptions(example, sourceSelection));
+            return root;
+        }
 
-            panel.Children.Add(frame);
-            panel.Children.Add(commands);
-            return panel;
+        private static GallerySamplePanel CreateAnimatedIconNavigationViewExampleContent()
+        {
+            var root = new GallerySamplePanel();
+
+            var gameSettingsIcon = new Mux.FontIcon
+            {
+                Name = "GameSettingsIcon",
+                Glyph = "\uE713"
+            };
+            Mux.AnimatedIcon.SetState(gameSettingsIcon, "Normal");
+
+            var navigationView = new Mux.NavigationView
+            {
+                Name = "AnimatedIconNavigationView",
+                IsSettingsVisible = false,
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+            GalleryAutomation.WithAutomationId(navigationView, GalleryAutomation.SampleElementId("AnimatedIcon", "NavigationView"));
+
+            navigationView.MenuItems.Add(new Mux.NavigationViewItem
+            {
+                Name = "GameSettingsItem",
+                Content = "Game Settings",
+                Icon = gameSettingsIcon
+            });
+
+            var example = new StackPanel();
+            example.Children.Add(new TextBlock
+            {
+                Text = "If you set an AnimatedIcon as the value of the Icon property, the NavigationViewItem will set the states of the AnimatedIcon for you, according to the states of the control. For guidance on how to properly structure your animation file see the AnimatedIcon Guidance page.\n\nFor this example, this sets a custom animation GameSettingsIcon that was generated by the LottieGen tool.",
+                TextWrapping = TextWrapping.Wrap,
+                Margin = new Thickness(0, 0, 0, 12)
+            });
+            example.Children.Add(navigationView);
+
+            root.Children.Add(example);
+            return root;
         }
 
         private static UIElement CreateCompactSizingSample()
