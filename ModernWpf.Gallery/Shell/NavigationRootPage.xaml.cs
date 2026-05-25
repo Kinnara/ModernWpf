@@ -290,7 +290,6 @@ namespace ModernWpf.Gallery.Shell
                 Tag = target
             };
             AutomationProperties.SetName(item, title);
-            AutomationProperties.SetAutomationId(item, "GalleryNav_" + FormatRoute(target).Replace("/", "_"));
             return item;
         }
 
@@ -423,7 +422,6 @@ namespace ModernWpf.Gallery.Shell
                 RenderTransformOrigin = new Point(0.5, 0.5),
                 RenderTransform = new RotateTransform()
             };
-            AutomationProperties.SetAutomationId(chevron, "GalleryNavigationDisclosureChevron");
 
             var fontFamily = Application.Current.TryFindResource("SymbolThemeFontFamily") as FontFamily;
             if (fontFamily != null)

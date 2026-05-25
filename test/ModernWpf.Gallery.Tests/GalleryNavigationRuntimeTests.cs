@@ -178,6 +178,7 @@ namespace ModernWpf.Gallery.Tests
                 AssertFontIconGlyph(topLevelItems[3], "\uEF58");
                 AssertFontIconGlyph(topLevelItems[4], "\uE71D");
                 AssertFontIconGlyph(topLevelItems[5], "\uE73A");
+                AssertNavigationItemsDoNotExposeLocalAutomationIds(topLevelItems);
                 Assert.AreEqual(new Thickness(8, 1, 0, 1), topLevelItems[0].Margin);
                 AssertNavigationItemContentMargin(topLevelItems[0], 20);
                 AssertNavigationTitleTextLayout(topLevelItems[0], "Home");
@@ -196,7 +197,7 @@ namespace ModernWpf.Gallery.Tests
                 AssertNavigationItemContentMargin(designGuidanceItems[0], -12);
                 var designGuidanceChevron = GetNavigationDisclosureChevron(topLevelItems[2]);
                 Assert.IsNotNull(designGuidanceChevron);
-                Assert.AreEqual("GalleryNavigationDisclosureChevron", AutomationProperties.GetAutomationId(designGuidanceChevron));
+                Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(designGuidanceChevron));
                 Assert.AreEqual("\uE76C", designGuidanceChevron.Text);
                 Assert.AreEqual(10d, designGuidanceChevron.FontSize);
                 Assert.AreEqual(new Thickness(0), designGuidanceChevron.Margin);
@@ -860,10 +861,16 @@ namespace ModernWpf.Gallery.Tests
             Assert.IsNotNull(contentGrid);
 
             return contentGrid.Children.OfType<TextBlock>()
-                .SingleOrDefault(text => string.Equals(
-                    AutomationProperties.GetAutomationId(text),
-                    "GalleryNavigationDisclosureChevron",
-                    StringComparison.Ordinal));
+                .SingleOrDefault(text => string.Equals(text.Text, "\uE76C", StringComparison.Ordinal));
+        }
+
+        private static void AssertNavigationItemsDoNotExposeLocalAutomationIds(IEnumerable<NavigationViewItem> items)
+        {
+            foreach (var item in items)
+            {
+                Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(item), GetNavigationItemText(item));
+                AssertNavigationItemsDoNotExposeLocalAutomationIds(item.MenuItems.OfType<NavigationViewItem>());
+            }
         }
 
         private static void AssertNavigationViewResourceAlias(
