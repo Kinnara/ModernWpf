@@ -62,35 +62,39 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void BasicInputCodeBehindKeepsOfficialViewModelPropertyBeforeConstructorShape()
+        public void CopiedItemCodeBehindKeepsOfficialViewModelPropertyBeforeConstructorShape()
         {
-            foreach (var pageName in new[]
+            foreach (var page in new[]
             {
-                "ButtonPage",
-                "CheckBoxPage",
-                "ComboBoxPage",
-                "RadioButtonPage",
-                "SliderPage"
+                Tuple.Create("BasicInput", "ButtonPage"),
+                Tuple.Create("BasicInput", "CheckBoxPage"),
+                Tuple.Create("BasicInput", "ComboBoxPage"),
+                Tuple.Create("BasicInput", "RadioButtonPage"),
+                Tuple.Create("BasicInput", "SliderPage"),
+                Tuple.Create("Collections", "DataGridPage"),
+                Tuple.Create("Collections", "ListBoxPage"),
+                Tuple.Create("Collections", "ListViewPage"),
+                Tuple.Create("Collections", "TreeViewPage")
             })
             {
                 var source = ReadRepoFile(
                     "ModernWpf.Gallery",
                     "Pages",
                     "WpfGallery",
-                    "BasicInput",
-                    pageName + ".xaml.cs");
+                    page.Item1,
+                    page.Item2 + ".xaml.cs");
                 var viewModelIndex = source.IndexOf(
-                    "public " + pageName + "ViewModel ViewModel { get; }",
+                    "public " + page.Item2 + "ViewModel ViewModel { get; }",
                     StringComparison.Ordinal);
                 var constructorIndex = source.IndexOf(
-                    "public " + pageName + "(",
+                    "public " + page.Item2 + "(",
                     StringComparison.Ordinal);
 
-                Assert.IsTrue(viewModelIndex >= 0, pageName + " should expose its copied page-specific ViewModel property.");
-                Assert.IsTrue(constructorIndex >= 0, pageName + " should keep its copied constructor.");
+                Assert.IsTrue(viewModelIndex >= 0, page.Item2 + " should expose its copied page-specific ViewModel property.");
+                Assert.IsTrue(constructorIndex >= 0, page.Item2 + " should keep its copied constructor.");
                 Assert.IsTrue(
                     viewModelIndex < constructorIndex,
-                    pageName + " should match the official WPF Gallery code-behind member order by declaring ViewModel before the constructor.");
+                    page.Item2 + " should match the official WPF Gallery code-behind member order by declaring ViewModel before the constructor.");
             }
         }
     }

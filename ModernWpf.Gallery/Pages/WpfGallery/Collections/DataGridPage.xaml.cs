@@ -6,6 +6,8 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
 {
     public partial class DataGridPage : Page
     {
+        public DataGridPageViewModel ViewModel { get; }
+
         public DataGridPage(DataGridPageViewModel viewModel)
         {
             ViewModel = viewModel;
@@ -15,8 +17,6 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
         }
-
-        public DataGridPageViewModel ViewModel { get; }
 
         private void OnUserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
         {
