@@ -1,16 +1,191 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Media;
 using Microsoft.Win32;
 using ModernWpf.Controls.Primitives;
+using Mux = ModernWpf.Controls;
 
 namespace ModernWpf.Gallery.Pages
 {
     internal static class SystemSampleFactory
     {
+        private const string StoragePickSingleFileXaml =
+@"<StackPanel Spacing=""8"">
+    <Button x:Name=""PickSingleFileButton"" Content=""Pick a single file"" Click=""PickSingleFileButton_Click""/>
+    <TextBlock x:Name=""PickedSingleFileTextBlock"" Text=""No file picked""/>
+</StackPanel>";
+
+        private const string StoragePickSingleFileCSharp =
+@"private async void PickSingleFileButton_Click(object sender, RoutedEventArgs e)
+{
+    if (sender is Button button)
+    {
+        //disable the button to avoid double-clicking
+        button.IsEnabled = false;
+
+        var picker = new FileOpenPicker(button.XamlRoot.ContentIslandEnvironment.AppWindowId);$(FileType)
+
+        picker.CommitButtonText = ""$(CommitButtonText)"";
+
+        picker.SuggestedStartLocation = PickerLocationId.$(SuggestedStartLocation);
+
+        picker.ViewMode = PickerViewMode.$(ViewMode);
+
+        // Show the picker dialog window
+        var file = await picker.PickSingleFileAsync();
+        PickedSingleFileTextBlock.Text = file != null
+            ? ""Picked: "" + file.Path
+            : ""No file selected."";
+
+        //re-enable the button
+        button.IsEnabled = true;
+    }
+}";
+
+        private const string StoragePickMultipleFilesXaml =
+@"<StackPanel Spacing=""8"">
+    <Button x:Name=""PickMultipleFilesButton"" Content=""Pick multiple files"" Click=""PickMultipleFilesButton_Click""/>
+    <TextBlock x:Name=""PickedMultipleFilesTextBlock"" Text=""No files picked""/>
+</StackPanel>";
+
+        private const string StoragePickMultipleFilesCSharp =
+@"private async void PickMultipleFilesButton_Click(object sender, RoutedEventArgs e)
+{
+    if (sender is Button button)
+    {
+        //disable the button to avoid double-clicking
+        button.IsEnabled = false;
+
+        var picker = new FileOpenPicker(button.XamlRoot.ContentIslandEnvironment.AppWindowId);$(FileType)
+
+        picker.CommitButtonText = ""$(CommitButtonText)"";
+
+        picker.SuggestedStartLocation = PickerLocationId.$(SuggestedStartLocation);
+
+        picker.ViewMode = PickerViewMode.$(ViewMode);
+
+        // Show the picker dialog window
+        var files = await picker.PickMultipleFilesAsync();
+
+        if (files.Count > 0)
+        {
+            PickedMultipleFilesTextBlock.Text = """";
+            foreach (var file in files)
+            {
+                PickedMultipleFilesTextBlock.Text += ""- Picked: "" + file.Path + Environment.NewLine;
+            }
+        }
+        else
+        {
+            PickedMultipleFilesTextBlock.Text = ""No files selected."";
+        }
+
+        //re-enable the button
+        button.IsEnabled = true;
+    }
+}";
+
+        private const string StorageSaveFileXaml =
+@"<StackPanel Spacing=""8"">
+    <TextBox x:Name=""FileContentTextBox"" Header=""File content"" TextWrapping=""Wrap"" AcceptsReturn=""True""
+                Width=""500"" Height=""200"" Text=""Hello, WinUI!"" IsSpellCheckEnabled=""False"" />
+    <Button x:Name=""SaveFileButton"" Content=""Save a file"" Click=""SaveFileButton_Click"" />
+    <TextBlock x:Name=""SavedFileTextBlock"" Grid.Column=""1"" Text=""No file saved"" />
+</StackPanel>";
+
+        private const string StorageSaveFileCSharp =
+@"private async void SaveFileButton_Click(object sender, RoutedEventArgs e)
+{
+    if (sender is Button button)
+    {
+        button.IsEnabled = false;
+
+        var picker = new FileSavePicker(button.XamlRoot.ContentIslandEnvironment.AppWindowId);
+$(TxtFileType)$(JsonFileType)$(XmlFileType)
+        picker.DefaultFileExtension = ""$(DefaultFileExtension)"";
+
+        picker.SuggestedFileName = ""$(SuggestedFileName)"";
+
+        picker.CommitButtonText = ""$(CommitButtonText)"";
+
+        picker.SuggestedStartLocation = PickerLocationId.$(SuggestedStartLocation);
+
+        picker.SuggestedFolder = ""$(SuggestedFolder)"";
+
+        // Show the picker dialog
+        var result = await picker.PickSaveFileAsync();
+
+        if (result != null)
+        {
+            string savePath = result.Path;
+            await File.WriteAllTextAsync(savePath, FileContentTextBox.Text);
+            SavedFileTextBlock.Text = ""File saved to: "" + savePath;
+        }
+        else
+        {
+            SavedFileTextBlock.Text = ""File save canceled."";
+        }
+
+        button.IsEnabled = true;
+    }
+}";
+
+        private const string StoragePickFolderXaml =
+@"<StackPanel Spacing=""8"">
+    <Button x:Name=""PickFolderButton"" Content=""Pick a folder"" Click=""PickFolderButton_Click"" />
+    <TextBlock x:Name=""PickedFolderTextBlock"" Text=""No folder picked"" />
+</StackPanel>";
+
+        private const string StoragePickFolderCSharp =
+@"private async void PickFolderButton_Click(object sender, RoutedEventArgs e)
+{
+    if (sender is Button button)
+    {
+        // disable the button to avoid double-clicking
+        button.IsEnabled = false;
+
+        // Clear previous returned folder name
+        PickedFolderTextBlock.Text = """";
+
+        var picker = new FolderPicker(button.XamlRoot.ContentIslandEnvironment.AppWindowId);
+
+        picker.CommitButtonText = ""$(CommitButtonText)"";
+        picker.SuggestedStartLocation = PickerLocationId.$(SuggestedStartLocation);
+        picker.ViewMode = PickerViewMode.$(ViewMode);
+
+        // Show the picker dialog window
+        var folder = await picker.PickSingleFolderAsync();
+        PickedFolderTextBlock.Text = folder != null
+            ? ""Picked: "" + folder.Path
+            : ""No folder selected."";
+
+        // re-enable the button
+        button.IsEnabled = true;
+    }
+}";
+
+        private static readonly string[] PickerLocationIds =
+        {
+            "DocumentsLibrary",
+            "ComputerFolder",
+            "Desktop",
+            "Downloads",
+            "MusicLibrary",
+            "PicturesLibrary",
+            "VideosLibrary"
+        };
+
+        private static readonly string[] PickerViewModes =
+        {
+            "List",
+            "Thumbnail"
+        };
+
         public static UIElement Create(string uniqueId)
         {
             switch (uniqueId)
@@ -25,6 +200,28 @@ namespace ModernWpf.Gallery.Pages
                     return CreateMessageBoxSample();
                 case "StoragePickers":
                     return CreateStoragePickersSample();
+                default:
+                    return null;
+            }
+        }
+
+        public static IReadOnlyList<GalleryExample> CreateExamples(string uniqueId)
+        {
+            switch (uniqueId)
+            {
+                case "StoragePickers":
+                    return CreateStoragePickersExamples();
+                default:
+                    return Array.Empty<GalleryExample>();
+            }
+        }
+
+        public static UIElement CreateIntroContent(string uniqueId)
+        {
+            switch (uniqueId)
+            {
+                case "StoragePickers":
+                    return CreateStoragePickersIntroContent();
                 default:
                     return null;
             }
@@ -273,91 +470,480 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateStoragePickersSample()
         {
-            var panel = CreateSamplePanel("WPF file and save dialogs use Microsoft.Win32 dialog types; folder selection is represented here as validated path input.");
-            var selectedFiles = new ListBox
-            {
-                Width = 520,
-                Height = 128
-            };
-            ControlHelper.SetHeader(selectedFiles, "Selected files");
+            return CreatePickSingleFileExampleContent(assignRootAutomationId: true);
+        }
 
-            var savePath = new TextBox
+        private static UIElement CreateStoragePickersIntroContent()
+        {
+            return new Mux.InfoBar
             {
-                Width = 520,
-                Margin = new Thickness(0, 12, 0, 0)
+                IsClosable = false,
+                IsOpen = true,
+                Margin = new Thickness(0, 8, 0, 0),
+                Message = "The picker reopens in the last selected location and view. The SuggestedStartLocation and ViewMode are only applied the first time the picker is opened (for example, right after app installation or when no previous selection exists)."
             };
-            ControlHelper.SetHeader(savePath, "Save path");
+        }
 
-            var folderPath = new TextBox
+        private static IReadOnlyList<GalleryExample> CreateStoragePickersExamples()
+        {
+            return new[]
             {
-                Width = 520,
-                Text = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                Margin = new Thickness(0, 12, 0, 0)
+                new GalleryExample(
+                    "Pick single file",
+                    CreatePickSingleFileExampleContent(assignRootAutomationId: true),
+                    StoragePickSingleFileXaml,
+                    StoragePickSingleFileCSharp),
+                new GalleryExample(
+                    "Pick multiple files",
+                    CreatePickMultipleFilesExampleContent(),
+                    StoragePickMultipleFilesXaml,
+                    StoragePickMultipleFilesCSharp),
+                new GalleryExample(
+                    "Save file",
+                    CreateSaveFileExampleContent(),
+                    StorageSaveFileXaml,
+                    StorageSaveFileCSharp),
+                new GalleryExample(
+                    "Pick folder",
+                    CreatePickFolderExampleContent(),
+                    StoragePickFolderXaml,
+                    StoragePickFolderCSharp)
             };
-            ControlHelper.SetHeader(folderPath, "Folder path");
-            var output = CreateOutput("Ready.");
+        }
 
-            var commands = CreateCommandRow();
-            var openFile = CreateButton("Open file");
-            var saveFile = CreateButton("Save file");
-            var useAppFolder = CreateButton("Use app folder");
-            var validateFolder = CreateButton("Validate folder");
-            openFile.Click += delegate
+        private static GallerySamplePanel CreatePickSingleFileExampleContent(bool assignRootAutomationId)
+        {
+            var root = CreateStoragePickerExampleRoot(assignRootAutomationId);
+            var pickedText = new TextBlock
             {
-                var dialog = new OpenFileDialog
-                {
-                    Title = "Open files",
-                    Filter = "All files (*.*)|*.*|Text files (*.txt)|*.txt|Images (*.png;*.jpg)|*.png;*.jpg",
-                    Multiselect = true
-                };
-                if (ShowDialog(dialog, (FrameworkElement)openFile) == true)
-                {
-                    selectedFiles.ItemsSource = dialog.FileNames;
-                    output.Text = "Selected " + dialog.FileNames.Length + " file(s).";
-                }
-                else
-                {
-                    output.Text = "Open file picker canceled.";
-                }
+                Name = "PickedSingleFileTextBlock",
+                Text = "No file picked",
+                Margin = new Thickness(0, 8, 0, 0)
             };
-            saveFile.Click += delegate
+            var button = CreateSourceButton("StoragePickers", "PickSingleFileButton", "Pick a single file");
+            button.Click += delegate
             {
-                var dialog = new SaveFileDialog
+                button.IsEnabled = false;
+                try
                 {
-                    Title = "Choose save path",
-                    Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*",
-                    FileName = "ModernWpfGallery.txt"
-                };
-                if (ShowDialog(dialog, (FrameworkElement)saveFile) == true)
-                {
-                    savePath.Text = dialog.FileName;
-                    output.Text = "Save path selected.";
+                    var dialog = new OpenFileDialog
+                    {
+                        Title = "Pick a single file",
+                        Filter = GetOpenFileDialogFilter(FindNamedElement<ComboBox>(root, "FileTypeComboBox1")),
+                        Multiselect = false
+                    };
+                    pickedText.Text = ShowDialog(dialog, button) == true
+                        ? "Picked: " + dialog.FileName
+                        : "No file selected.";
                 }
-                else
+                finally
                 {
-                    output.Text = "Save file picker canceled.";
+                    button.IsEnabled = true;
                 }
             };
-            useAppFolder.Click += delegate
-            {
-                folderPath.Text = AppDomain.CurrentDomain.BaseDirectory;
-                output.Text = "Folder path set to the running app folder.";
-            };
-            validateFolder.Click += delegate
-            {
-                output.Text = Directory.Exists(folderPath.Text) ? "Folder exists." : "Folder does not exist.";
-            };
-            commands.Children.Add(openFile);
-            commands.Children.Add(saveFile);
-            commands.Children.Add(useAppFolder);
-            commands.Children.Add(validateFolder);
 
-            panel.Children.Add(selectedFiles);
-            panel.Children.Add(savePath);
-            panel.Children.Add(folderPath);
-            panel.Children.Add(commands);
-            panel.Children.Add(output);
-            return panel;
+            var example = CreateStackPanelWithSpacing();
+            example.Children.Add(button);
+            example.Children.Add(pickedText);
+            root.Children.Add(CreateStoragePickerExampleLayout(example, CreateOpenPickerOptions("1", "Pick File")));
+            return root;
+        }
+
+        private static GallerySamplePanel CreatePickMultipleFilesExampleContent()
+        {
+            var root = CreateStoragePickerExampleRoot(assignRootAutomationId: false);
+            var pickedText = new TextBlock
+            {
+                Name = "PickedMultipleFilesTextBlock",
+                Text = "No files picked",
+                Margin = new Thickness(0, 8, 0, 0),
+                TextWrapping = TextWrapping.Wrap
+            };
+            var button = CreateSourceButton("StoragePickers", "PickMultipleFilesButton", "Pick multiple files");
+            button.Click += delegate
+            {
+                button.IsEnabled = false;
+                try
+                {
+                    var dialog = new OpenFileDialog
+                    {
+                        Title = "Pick multiple files",
+                        Filter = GetOpenFileDialogFilter(FindNamedElement<ComboBox>(root, "FileTypeComboBox2")),
+                        Multiselect = true
+                    };
+                    if (ShowDialog(dialog, button) == true && dialog.FileNames.Length > 0)
+                    {
+                        pickedText.Text = string.Join(Environment.NewLine, dialog.FileNames.Select(path => "- Picked: " + path));
+                    }
+                    else
+                    {
+                        pickedText.Text = "No files selected.";
+                    }
+                }
+                finally
+                {
+                    button.IsEnabled = true;
+                }
+            };
+
+            var example = CreateStackPanelWithSpacing();
+            example.Children.Add(button);
+            example.Children.Add(pickedText);
+            root.Children.Add(CreateStoragePickerExampleLayout(example, CreateOpenPickerOptions("2", "Pick Files")));
+            return root;
+        }
+
+        private static GallerySamplePanel CreateSaveFileExampleContent()
+        {
+            var root = CreateStoragePickerExampleRoot(assignRootAutomationId: false);
+            var fileContent = new TextBox
+            {
+                Name = "FileContentTextBox",
+                Width = 500,
+                Height = 200,
+                Text = "Hello, WinUI!",
+                TextWrapping = TextWrapping.Wrap,
+                AcceptsReturn = true,
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+            ControlHelper.SetHeader(fileContent, "File content");
+
+            var savedText = new TextBlock
+            {
+                Name = "SavedFileTextBlock",
+                Text = "No file saved",
+                Margin = new Thickness(0, 8, 0, 0),
+                TextWrapping = TextWrapping.Wrap
+            };
+
+            var button = CreateSourceButton("StoragePickers", "SaveFileButton", "Save a file");
+            button.Margin = new Thickness(0, 8, 0, 0);
+            button.Click += delegate
+            {
+                button.IsEnabled = false;
+                try
+                {
+                    var suggestedName = FindNamedElement<TextBox>(root, "SuggestedFileNameTextBox");
+                    var defaultExtension = FindNamedElement<ComboBox>(root, "DefaultExtensionComboBox");
+                    var dialog = new SaveFileDialog
+                    {
+                        Title = "Save a file",
+                        Filter = GetSaveFileDialogFilter(root),
+                        DefaultExt = Convert.ToString(defaultExtension.SelectedItem),
+                        FileName = string.IsNullOrEmpty(suggestedName.Text) ? "NewDocument" : suggestedName.Text
+                    };
+                    if (ShowDialog(dialog, button) == true)
+                    {
+                        File.WriteAllText(dialog.FileName, fileContent.Text ?? string.Empty);
+                        savedText.Text = "File saved to: " + dialog.FileName;
+                    }
+                    else
+                    {
+                        savedText.Text = "File save canceled.";
+                    }
+                }
+                finally
+                {
+                    button.IsEnabled = true;
+                }
+            };
+
+            var example = CreateStackPanelWithSpacing();
+            example.Children.Add(fileContent);
+            example.Children.Add(button);
+            example.Children.Add(savedText);
+            root.Children.Add(CreateStoragePickerExampleLayout(example, CreateSavePickerOptions(root)));
+            return root;
+        }
+
+        private static GallerySamplePanel CreatePickFolderExampleContent()
+        {
+            var root = CreateStoragePickerExampleRoot(assignRootAutomationId: false);
+            var pickedText = new TextBlock
+            {
+                Name = "PickedFolderTextBlock",
+                Text = "No folder picked",
+                Margin = new Thickness(0, 8, 0, 0),
+                TextWrapping = TextWrapping.Wrap
+            };
+            var button = CreateSourceButton("StoragePickers", "PickFolderButton", "Pick a folder");
+            button.Click += delegate
+            {
+                button.IsEnabled = false;
+                try
+                {
+                    var folder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                    pickedText.Text = string.IsNullOrEmpty(folder) ? "No folder selected." : "Picked: " + folder;
+                }
+                finally
+                {
+                    button.IsEnabled = true;
+                }
+            };
+
+            var example = CreateStackPanelWithSpacing();
+            example.Children.Add(button);
+            example.Children.Add(pickedText);
+            root.Children.Add(CreateStoragePickerExampleLayout(example, CreateFolderPickerOptions()));
+            return root;
+        }
+
+        private static GallerySamplePanel CreateStoragePickerExampleRoot(bool assignRootAutomationId)
+        {
+            var root = new GallerySamplePanel();
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("StoragePickers"));
+            }
+
+            return root;
+        }
+
+        private static Grid CreateStoragePickerExampleLayout(UIElement example, UIElement options)
+        {
+            var layout = new Grid();
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            Grid.SetColumn(example, 0);
+            Grid.SetColumn(options, 1);
+            layout.Children.Add(example);
+            layout.Children.Add(options);
+            return layout;
+        }
+
+        private static StackPanel CreateOpenPickerOptions(string suffix, string commitText)
+        {
+            var options = CreateOptionsPanel();
+            options.Children.Add(CreateFileTypeComboBox("FileTypeComboBox" + suffix));
+            options.Children.Add(CreateTextBox("CommitButtonTextTextBox" + (suffix == "1" ? string.Empty : suffix), "Commit button text", commitText, "Open"));
+            options.Children.Add(CreatePickerLocationComboBox("PickerLocationComboBox" + suffix));
+            options.Children.Add(CreatePickerViewModeComboBox("PickerViewModeComboBox" + suffix));
+            return options;
+        }
+
+        private static StackPanel CreateSavePickerOptions(DependencyObject root)
+        {
+            var options = CreateOptionsPanel();
+            options.Children.Add(new TextBlock { Text = "File types:" });
+            options.Children.Add(new CheckBox { Name = "TxtCheckBox", Content = "Text Files (*.txt)" });
+            options.Children.Add(new CheckBox { Name = "JsonCheckBox", Content = "JSON Files (*.json)" });
+            options.Children.Add(new CheckBox { Name = "XmlCheckBox", Content = "XML Files (*.xml)" });
+
+            var defaultExtension = new ComboBox
+            {
+                Name = "DefaultExtensionComboBox",
+                Width = 200,
+                SelectedIndex = 0,
+                Margin = new Thickness(0, 8, 0, 0)
+            };
+            ControlHelper.SetHeader(defaultExtension, "Default extension");
+            defaultExtension.Items.Add(".txt");
+            defaultExtension.Items.Add(".json");
+            defaultExtension.Items.Add(".xml");
+            options.Children.Add(defaultExtension);
+
+            options.Children.Add(CreateTextBox("SuggestedFileNameTextBox", "Suggested file name", "NewDocument", null));
+            options.Children.Add(CreateTextBox("CommitButtonTextTextBox3", "Commit button text", "Save File", "Save"));
+            options.Children.Add(CreatePickerLocationComboBox("PickerLocationComboBox3"));
+
+            var suggestedFolderGrid = new Grid();
+            suggestedFolderGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            suggestedFolderGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            var suggestedFolder = CreateTextBox("SuggestedFolderTextBox", "Suggested folder ", string.Empty, "Optional");
+            suggestedFolder.Width = 148;
+            suggestedFolder.IsReadOnly = true;
+            suggestedFolderGrid.Children.Add(suggestedFolder);
+            var selectFolder = new Button
+            {
+                Name = "SelectSuggestedFolderButton",
+                Margin = new Thickness(8, 0, 0, 0),
+                VerticalAlignment = VerticalAlignment.Bottom,
+                Content = "...",
+                ToolTip = "Select folder"
+            };
+            AutomationProperties.SetName(selectFolder, "Select folder");
+            selectFolder.Click += delegate
+            {
+                suggestedFolder.Text = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            };
+            Grid.SetColumn(selectFolder, 1);
+            suggestedFolderGrid.Children.Add(selectFolder);
+            options.Children.Add(suggestedFolderGrid);
+            return options;
+        }
+
+        private static StackPanel CreateFolderPickerOptions()
+        {
+            var options = CreateOptionsPanel();
+            options.Children.Add(CreateTextBox("CommitButtonTextTextBox4", "Commit button text", "Pick Folder", "Select Folder"));
+            options.Children.Add(CreatePickerLocationComboBox("PickerLocationComboBox4"));
+            options.Children.Add(CreatePickerViewModeComboBox("PickerViewModeComboBox3"));
+            return options;
+        }
+
+        private static StackPanel CreateOptionsPanel()
+        {
+            return new StackPanel
+            {
+                Width = 240,
+                Orientation = Orientation.Vertical,
+                Margin = new Thickness(24, 0, 0, 0)
+            };
+        }
+
+        private static StackPanel CreateStackPanelWithSpacing()
+        {
+            return new StackPanel
+            {
+                Orientation = Orientation.Vertical
+            };
+        }
+
+        private static ComboBox CreateFileTypeComboBox(string name)
+        {
+            var comboBox = new ComboBox
+            {
+                Name = name,
+                Width = 200
+            };
+            ControlHelper.SetHeader(comboBox, "File type");
+            comboBox.Items.Add(CreateComboBoxItem("All Files (*)", "*", true));
+            comboBox.Items.Add(CreateComboBoxItem("Text Files (*.txt)", ".txt", false));
+            comboBox.Items.Add(CreateComboBoxItem("Images (*.jpg, *.png)", "images", false));
+            comboBox.SelectedIndex = 0;
+            return comboBox;
+        }
+
+        private static ComboBoxItem CreateComboBoxItem(string content, string tag, bool isSelected)
+        {
+            return new ComboBoxItem
+            {
+                Content = content,
+                Tag = tag,
+                IsSelected = isSelected
+            };
+        }
+
+        private static TextBox CreateTextBox(string name, string header, string text, string placeholder)
+        {
+            var textBox = new TextBox
+            {
+                Name = name,
+                Text = text,
+                Margin = new Thickness(0, 8, 0, 0)
+            };
+            ControlHelper.SetHeader(textBox, header);
+            if (!string.IsNullOrEmpty(placeholder))
+            {
+                ControlHelper.SetPlaceholderText(textBox, placeholder);
+            }
+
+            return textBox;
+        }
+
+        private static ComboBox CreatePickerLocationComboBox(string name)
+        {
+            var comboBox = new ComboBox
+            {
+                Name = name,
+                Width = 200,
+                ItemsSource = PickerLocationIds,
+                SelectedIndex = 0,
+                Margin = new Thickness(0, 8, 0, 0)
+            };
+            ControlHelper.SetHeader(comboBox, "Suggested start location");
+            return comboBox;
+        }
+
+        private static ComboBox CreatePickerViewModeComboBox(string name)
+        {
+            var comboBox = new ComboBox
+            {
+                Name = name,
+                Width = 200,
+                ItemsSource = PickerViewModes,
+                SelectedIndex = 0,
+                Margin = new Thickness(0, 8, 0, 0)
+            };
+            ControlHelper.SetHeader(comboBox, "View mode");
+            return comboBox;
+        }
+
+        private static Button CreateSourceButton(string uniqueId, string name, string content)
+        {
+            var button = new Button
+            {
+                Name = name,
+                Content = content,
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+            AutomationProperties.SetName(button, content);
+            GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId(uniqueId, name));
+            return button;
+        }
+
+        private static string GetOpenFileDialogFilter(ComboBox fileTypeComboBox)
+        {
+            var item = fileTypeComboBox == null ? null : fileTypeComboBox.SelectedItem as ComboBoxItem;
+            switch (item == null ? null : item.Tag as string)
+            {
+                case ".txt":
+                    return "Text Files (*.txt)|*.txt";
+                case "images":
+                    return "Images (*.jpg;*.png)|*.jpg;*.png";
+                default:
+                    return "All Files (*.*)|*.*";
+            }
+        }
+
+        private static string GetSaveFileDialogFilter(DependencyObject root)
+        {
+            var filters = new List<string>();
+            var txtCheckBox = FindNamedElement<CheckBox>(root, "TxtCheckBox");
+            var jsonCheckBox = FindNamedElement<CheckBox>(root, "JsonCheckBox");
+            var xmlCheckBox = FindNamedElement<CheckBox>(root, "XmlCheckBox");
+            if (txtCheckBox != null && txtCheckBox.IsChecked == true)
+            {
+                filters.Add("Text Files (*.txt)|*.txt");
+            }
+            if (jsonCheckBox != null && jsonCheckBox.IsChecked == true)
+            {
+                filters.Add("JSON Files (*.json)|*.json");
+            }
+            if (xmlCheckBox != null && xmlCheckBox.IsChecked == true)
+            {
+                filters.Add("XML Files (*.xml)|*.xml");
+            }
+
+            return filters.Count == 0 ? "All Files (*.*)|*.*" : string.Join("|", filters);
+        }
+
+        private static T FindNamedElement<T>(DependencyObject root, string name)
+            where T : FrameworkElement
+        {
+            if (root == null)
+            {
+                return null;
+            }
+
+            var frameworkElement = root as FrameworkElement;
+            var typedElement = frameworkElement as T;
+            if (frameworkElement != null && frameworkElement.Name == name && typedElement != null)
+            {
+                return typedElement;
+            }
+
+            var childCount = VisualTreeHelper.GetChildrenCount(root);
+            for (var i = 0; i < childCount; i++)
+            {
+                var match = FindNamedElement<T>(VisualTreeHelper.GetChild(root, i), name);
+                if (match != null)
+                {
+                    return match;
+                }
+            }
+
+            return null;
         }
 
         private static bool? ShowDialog(FileDialog dialog, FrameworkElement ownerElement)

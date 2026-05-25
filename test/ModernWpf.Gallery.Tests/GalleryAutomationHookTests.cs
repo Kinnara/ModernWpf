@@ -43,6 +43,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "CreateMultipleWindows", "GallerySample_CreateMultipleWindows_Root", "GallerySample_CreateMultipleWindows_Control1" };
             yield return new object[] { "AppWindowTitleBar", "GallerySample_AppWindowTitleBar_Root", "GallerySample_AppWindowTitleBar_ShowWindowButton" };
             yield return new object[] { "TitleBar", "GallerySample_TitleBar_Root", "GallerySample_TitleBar_TitleBarControl" };
+            yield return new object[] { "StoragePickers", "GallerySample_StoragePickers_Root", "GallerySample_StoragePickers_PickSingleFileButton" };
             yield return new object[] { "FlipView", "GallerySample_FlipView_Root", "GallerySample_FlipView_FlipView" };
             yield return new object[] { "ItemsView", "GallerySample_ItemsView_Root", "GallerySample_ItemsView_ItemsView" };
             yield return new object[] { "CalendarDatePicker", "GallerySample_CalendarDatePicker_Root", "GallerySample_CalendarDatePicker_CalendarDatePicker" };
@@ -3972,6 +3973,114 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void StoragePickersSampleMatchesWinUIGalleryExamples()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("StoragePickers"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.IsTrue(page.ShowIntroContent);
+                    var intro = page.IntroContent as Mux.InfoBar;
+                    Assert.IsNotNull(intro);
+                    Assert.IsTrue(intro.IsOpen);
+                    Assert.IsFalse(intro.IsClosable);
+                    Assert.AreEqual(new Thickness(0, 8, 0, 0), intro.Margin);
+                    StringAssert.Contains(intro.Message, "The picker reopens in the last selected location and view.");
+                    StringAssert.Contains(intro.Message, "SuggestedStartLocation");
+                    StringAssert.Contains(intro.Message, "ViewMode");
+
+                    Assert.AreEqual(4, page.Examples.Count);
+                    Assert.AreEqual("Pick single file", page.Examples[0].HeaderText);
+                    Assert.AreEqual("Pick multiple files", page.Examples[1].HeaderText);
+                    Assert.AreEqual("Save file", page.Examples[2].HeaderText);
+                    Assert.AreEqual("Pick folder", page.Examples[3].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "PickSingleFileButton");
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "var picker = new FileOpenPicker(button.XamlRoot.ContentIslandEnvironment.AppWindowId);$(FileType)");
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "picker.CommitButtonText = \"$(CommitButtonText)\";");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "PickMultipleFilesButton");
+                    StringAssert.Contains(page.Examples[1].CSharpCode, "var files = await picker.PickMultipleFilesAsync();");
+                    StringAssert.Contains(page.Examples[2].XamlCode, "FileContentTextBox");
+                    StringAssert.Contains(page.Examples[2].CSharpCode, "var picker = new FileSavePicker(button.XamlRoot.ContentIslandEnvironment.AppWindowId);");
+                    StringAssert.Contains(page.Examples[2].CSharpCode, "picker.SuggestedFolder = \"$(SuggestedFolder)\";");
+                    StringAssert.Contains(page.Examples[3].XamlCode, "PickFolderButton");
+                    StringAssert.Contains(page.Examples[3].CSharpCode, "var picker = new FolderPicker(button.XamlRoot.ContentIslandEnvironment.AppWindowId);");
+
+                    var pickSingleButton = (Button)FindByAutomationId(page, "GallerySample_StoragePickers_PickSingleFileButton");
+                    Assert.IsNotNull(pickSingleButton);
+                    Assert.AreEqual("PickSingleFileButton", pickSingleButton.Name);
+                    Assert.AreEqual("Pick a single file", pickSingleButton.Content);
+                    Assert.AreEqual("Pick a single file", AutomationProperties.GetName(pickSingleButton));
+                    var pickedSingleText = FindNamedDescendant<TextBlock>(page, "PickedSingleFileTextBlock");
+                    Assert.IsNotNull(pickedSingleText);
+                    Assert.AreEqual("No file picked", pickedSingleText.Text);
+
+                    var fileTypeComboBox1 = FindNamedDescendant<ComboBox>(page, "FileTypeComboBox1");
+                    AssertStoragePickerComboBox(fileTypeComboBox1, "File type", 200, "All Files (*)", "Text Files (*.txt)", "Images (*.jpg, *.png)");
+                    var commitButtonTextTextBox = FindNamedDescendant<TextBox>(page, "CommitButtonTextTextBox");
+                    Assert.IsNotNull(commitButtonTextTextBox);
+                    Assert.AreEqual("Commit button text", ModernWpf.Controls.Primitives.ControlHelper.GetHeader(commitButtonTextTextBox));
+                    Assert.AreEqual("Pick File", commitButtonTextTextBox.Text);
+                    AssertStoragePickerComboBox(FindNamedDescendant<ComboBox>(page, "PickerLocationComboBox1"), "Suggested start location", 200, "DocumentsLibrary");
+                    AssertStoragePickerComboBox(FindNamedDescendant<ComboBox>(page, "PickerViewModeComboBox1"), "View mode", 200, "List", "Thumbnail");
+
+                    var pickMultipleButton = FindNamedDescendant<Button>(page, "PickMultipleFilesButton");
+                    Assert.IsNotNull(pickMultipleButton);
+                    Assert.AreEqual("Pick multiple files", pickMultipleButton.Content);
+                    Assert.AreEqual("No files picked", FindNamedDescendant<TextBlock>(page, "PickedMultipleFilesTextBlock").Text);
+                    Assert.AreEqual("Pick Files", FindNamedDescendant<TextBox>(page, "CommitButtonTextTextBox2").Text);
+
+                    var fileContentTextBox = FindNamedDescendant<TextBox>(page, "FileContentTextBox");
+                    Assert.IsNotNull(fileContentTextBox);
+                    Assert.AreEqual("File content", ModernWpf.Controls.Primitives.ControlHelper.GetHeader(fileContentTextBox));
+                    Assert.AreEqual(500d, fileContentTextBox.Width);
+                    Assert.AreEqual(200d, fileContentTextBox.Height);
+                    Assert.AreEqual("Hello, WinUI!", fileContentTextBox.Text);
+                    Assert.IsTrue(fileContentTextBox.AcceptsReturn);
+                    Assert.AreEqual("Save a file", FindNamedDescendant<Button>(page, "SaveFileButton").Content);
+                    Assert.AreEqual("No file saved", FindNamedDescendant<TextBlock>(page, "SavedFileTextBlock").Text);
+                    Assert.AreEqual("Text Files (*.txt)", FindNamedDescendant<CheckBox>(page, "TxtCheckBox").Content);
+                    Assert.AreEqual("JSON Files (*.json)", FindNamedDescendant<CheckBox>(page, "JsonCheckBox").Content);
+                    Assert.AreEqual("XML Files (*.xml)", FindNamedDescendant<CheckBox>(page, "XmlCheckBox").Content);
+                    AssertStoragePickerComboBox(FindNamedDescendant<ComboBox>(page, "DefaultExtensionComboBox"), "Default extension", 200, ".txt", ".json", ".xml");
+                    Assert.AreEqual("NewDocument", FindNamedDescendant<TextBox>(page, "SuggestedFileNameTextBox").Text);
+                    Assert.AreEqual("Save File", FindNamedDescendant<TextBox>(page, "CommitButtonTextTextBox3").Text);
+                    Assert.AreEqual("Select folder", AutomationProperties.GetName(FindNamedDescendant<Button>(page, "SelectSuggestedFolderButton")));
+
+                    var pickFolderButton = FindNamedDescendant<Button>(page, "PickFolderButton");
+                    Assert.IsNotNull(pickFolderButton);
+                    Assert.AreEqual("Pick a folder", pickFolderButton.Content);
+                    Assert.AreEqual("No folder picked", FindNamedDescendant<TextBlock>(page, "PickedFolderTextBlock").Text);
+                    Assert.AreEqual("Pick Folder", FindNamedDescendant<TextBox>(page, "CommitButtonTextTextBox4").Text);
+                    AssertStoragePickerComboBox(FindNamedDescendant<ComboBox>(page, "PickerViewModeComboBox3"), "View mode", 200, "List", "Thumbnail");
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
         public void WebView2SampleMatchesWinUIGalleryExample()
         {
             WpfTestHost.Run(() =>
@@ -5109,6 +5218,20 @@ namespace ModernWpf.Gallery.Tests
             Assert.AreEqual(32d, selector.Height);
             Assert.AreEqual(color, selector.Tag);
             Assert.AreEqual(automationName, AutomationProperties.GetName(selector));
+        }
+
+        private static void AssertStoragePickerComboBox(ComboBox comboBox, string header, double width, params string[] expectedItems)
+        {
+            Assert.IsNotNull(comboBox);
+            Assert.AreEqual(header, ModernWpf.Controls.Primitives.ControlHelper.GetHeader(comboBox));
+            Assert.AreEqual(width, comboBox.Width);
+            Assert.AreEqual(0, comboBox.SelectedIndex);
+            Assert.IsTrue(comboBox.Items.Count >= expectedItems.Length);
+            for (var i = 0; i < expectedItems.Length; i++)
+            {
+                var item = comboBox.Items[i] as ComboBoxItem;
+                Assert.AreEqual(expectedItems[i], item == null ? comboBox.Items[i] : item.Content);
+            }
         }
 
         private static void AssertSelectorBarItem(Mux.SelectorBarItem item, string name, string text, Mux.Symbol? symbol, bool isSelected)

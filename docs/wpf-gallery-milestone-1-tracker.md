@@ -106,6 +106,16 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.StoragePickersSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 55 tests per target. The generated ModernWpf StoragePickers extension page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\StoragePickersPage.xaml` / `.xaml.cs`: the non-closable picker behavior `InfoBar`, `Pick single file`, `Pick multiple files`, `Save file`, and `Pick folder` examples, and source-facing names such as `PickSingleFileButton`, `PickedSingleFileTextBlock`, `FileTypeComboBox1`, `CommitButtonTextTextBox`, `FileContentTextBox`, `SaveFileButton`, `SuggestedFileNameTextBox`, `SelectSuggestedFolderButton`, and `PickFolderButton`. `SystemSampleFactory.CreateExamples` now covers StoragePickers as a source-backed System/Platform WinUI extension page, `ItemPage` asks the System factory for WinUI-style intro content and examples before falling back to generic generated content, and the live WPF adaptation maps file and save operations to `OpenFileDialog` / `SaveFileDialog` while preserving WinUI source snippets in the code panes.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls StoragePickers -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-042159-512-118980/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required StoragePickers sample element was found, primary crops use ModernWpf `GallerySample_StoragePickers_PickSingleFileButton` against WinUI `PickSingleFileButton`, crop sizes match at `122x32`, and Light primary delta is `5.29`. The whole-window Light mean delta is `145.63` and remains diagnostic because the installed WinUI shell stayed dark while ModernWpf was captured in Light.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls StoragePickers -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-042223-575-106676/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, the required StoragePickers sample element was found, primary crops use the same button mapping, crop sizes match at `122x32`, Dark primary delta is `9.73`, and whole-window Dark mean delta is `17.34`.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the StoragePickers WinUI example alignment. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages and existing compiler warnings, ending with `0 Error(s)`.
+- `git diff --check`
+  - Passed with only Git's normal LF-to-CRLF working-copy warnings for touched files.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.TitleBarSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 54 tests per target. The generated ModernWpf TitleBar extension page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\TitleBarPage.xaml` / `.xaml.cs`: the AppWindowTitleBar intro link text, `TitleBar configuration`, and `End to end TitleBar sample`. `WindowingSampleFactory.CreateExamples` now covers TitleBar as a source-backed Windowing/Platform WinUI extension page, preserves the official XAML/C# snippets, source-facing names such as `TitleBarControl`, `TitleBox`, `SubtitleBox`, `BackButtonToggle`, and `PaneToggle`, and exposes `GallerySample_TitleBar_Root` / `GallerySample_TitleBar_TitleBarControl`.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls TitleBar -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -2399,6 +2409,30 @@ artifact helper renders the full sample root correctly but produces a blank
 direct crop for the composed title-bar surface. Primary deltas are `16.26` /
 `21.63`. Avoid reopening TitleBar's source shape unless a new local WinUI
 source, a native ModernWpf TitleBar control, or crop regression appears.
+The generated ModernWpf StoragePickers extension page now uses the local
+official WinUI Gallery four-example structure from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\StoragePickersPage.xaml`
+and `.xaml.cs`: the picker behavior `InfoBar`, pick-single-file,
+pick-multiple-files, save-file, and pick-folder samples. `SystemSampleFactory`
+now exposes StoragePickers as a source-backed System/Platform WinUI extension
+page, and `ItemPage` asks the System factory for WinUI-style intro content and
+examples before falling back to generic generated content. The WPF adaptation
+keeps WinUI's visible headers, official snippets, source-facing names
+(`PickSingleFileButton`, `PickMultipleFilesButton`, `FileContentTextBox`,
+`SaveFileButton`, `SelectSuggestedFolderButton`, and `PickFolderButton`),
+picker option controls, default text values, and button disable/re-enable
+behavior while mapping live file operations to WPF `OpenFileDialog` /
+`SaveFileDialog`; the folder sample reports the documents folder because WPF
+does not expose WinUI's modern `FolderPicker`. Current StoragePickers
+WinUI-reference evidence is
+`artifacts/visual-checks/20260525-042159-512-118980/report.md` for Light and
+`artifacts/visual-checks/20260525-042223-575-106676/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`, matching `122x32`
+primary crops, and primary deltas `5.29` / `9.73`. The visual harness maps the
+WinUI route id `StoragePickers` to the displayed page title `Storage pickers`
+before waiting for the installed reference page. Avoid reopening
+StoragePickers' source shape unless a new local WinUI source, native modern
+folder-picker strategy, or crop regression appears.
 The generated ModernWpf RichTextBlock extension page now uses the local
 official WinUI Gallery four-example structure from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\RichTextBlockPage.xaml`:

@@ -244,7 +244,8 @@ namespace ModernWpf.Gallery.Pages
         private static object CreateWorkingSampleIntroContent(string uniqueId)
         {
             return MediaSampleFactory.CreateIntroContent(uniqueId)
-                ?? WindowingSampleFactory.CreateIntroContent(uniqueId);
+                ?? WindowingSampleFactory.CreateIntroContent(uniqueId)
+                ?? SystemSampleFactory.CreateIntroContent(uniqueId);
         }
 
         private static IReadOnlyList<GalleryExample> CreateWorkingSampleExamples(
@@ -323,6 +324,12 @@ namespace ModernWpf.Gallery.Pages
             if (windowingExamples.Count != 0)
             {
                 return windowingExamples;
+            }
+
+            var systemExamples = SystemSampleFactory.CreateExamples(uniqueId);
+            if (systemExamples.Count != 0)
+            {
+                return systemExamples;
             }
 
             var sampleContent = CreateWorkingSampleContent(uniqueId);

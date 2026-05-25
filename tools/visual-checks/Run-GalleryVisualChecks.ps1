@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "RichTextBlock", "RichEditBox", "SplitView", "PersonPicture", "Sound", "MediaPlayerElement", "MapControl", "WebView2", "CreateMultipleWindows", "AppWindowTitleBar", "TitleBar", "CalendarDatePicker", "CalendarView", "TimePicker", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "PullToRefresh", "FlipView", "ItemsView", "GridView", "ItemsRepeater", "BreadcrumbBar", "Pivot", "SelectorBar", "TabView", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "SwipeControl", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout", "StandardUICommand", "XamlUICommand"),
+    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "RichTextBlock", "RichEditBox", "SplitView", "PersonPicture", "Sound", "MediaPlayerElement", "MapControl", "WebView2", "CreateMultipleWindows", "AppWindowTitleBar", "TitleBar", "StoragePickers", "CalendarDatePicker", "CalendarView", "TimePicker", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "PullToRefresh", "FlipView", "ItemsView", "GridView", "ItemsRepeater", "BreadcrumbBar", "Pivot", "SelectorBar", "TabView", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "SwipeControl", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout", "StandardUICommand", "XamlUICommand"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -471,6 +471,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "CreateMultipleWindows" { return "GallerySample_CreateMultipleWindows_Control1" }
         "AppWindowTitleBar" { return "GallerySample_AppWindowTitleBar_ShowWindowButton" }
         "TitleBar" { return "GallerySample_TitleBar_TitleBarControl" }
+        "StoragePickers" { return "GallerySample_StoragePickers_PickSingleFileButton" }
         "CalendarDatePicker" { return "GallerySample_CalendarDatePicker_CalendarDatePicker" }
         "CalendarView" { return "GallerySample_CalendarView_CalendarView" }
         "TimePicker" { return "GallerySample_TimePicker_TimePicker" }
@@ -545,6 +546,7 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
         "CreateMultipleWindows" { return "GallerySample_CreateMultipleWindows_Control1" }
         "AppWindowTitleBar" { return "GallerySample_AppWindowTitleBar_ShowWindowButton" }
         "TitleBar" { return "TitleBox" }
+        "StoragePickers" { return "GallerySample_StoragePickers_PickSingleFileButton" }
         "CalendarDatePicker" { return "GallerySample_CalendarDatePicker_CalendarDatePicker" }
         "CalendarView" { return "GallerySample_CalendarView_CalendarView" }
         "TimePicker" { return "GallerySample_TimePicker_TimePicker" }
@@ -611,6 +613,7 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
         "CreateMultipleWindows" { return "Control1" }
         "AppWindowTitleBar" { return "ShowWindowButton" }
         "TitleBar" { return "TitleBox" }
+        "StoragePickers" { return "PickSingleFileButton" }
         "CalendarView" { return "Control1" }
         "ProgressRing" { return "ProgressRing1" }
         "PipsPager" { return "FlipViewPipsPager" }
@@ -641,6 +644,7 @@ function Get-ReferencePrimaryName([string]$control) {
 function Get-WinUIReferencePageTitle([string]$control) {
     switch ($control) {
         "CreateMultipleWindows" { return "Multiple windows" }
+        "StoragePickers" { return "Storage pickers" }
         default { return $control }
     }
 }
