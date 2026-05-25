@@ -106,6 +106,12 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.ScrollViewerSampleMatchesWinUIGalleryExample" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 1 test per target. The generated ModernWpf ScrollViewer page now follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\ScrollViewerPage.xaml` / `.xaml.cs`: the `Content inside of a ScrollViewer.` example uses the source `cliff.jpg` image viewport, source-facing names `ScrollViewerControl`, `zoomCombo`, `ZoomSlider`, `hsmCombo`, `vsmCombo`, `hsbvCombo`, and `vsbvCombo`, official XAML/C# snippets, and WPF-adapted zoom plus scroll policy controls. The test covers the source snippets, the sample root automation peer, `GallerySample_ScrollViewer_ScrollViewer`, option defaults, zoom mode behavior, scrollbar visibility mapping, and panning-mode mapping. A broader filtered run that also included `CuratedSamplesExposeStableAutomationIds` was attempted first and timed out after about 124 seconds because that dynamic test exercises every curated page; the targeted ScrollViewer test includes the relevant root/peer automation assertions for this round.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls ScrollViewer -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-082000-811-111036/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, required element `GallerySample_ScrollViewer_ScrollViewer` was found, primary crops match at `400x266`, Light primary delta is `20.96`, and whole-window Light mean delta is diagnostic at `156.02`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls ScrollViewer -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/visual-checks/20260525-082036-544-59724/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, required element `GallerySample_ScrollViewer_ScrollViewer` was found, primary crops match at `400x266`, Dark primary delta is `20.96`, and whole-window Dark mean delta is `24.07`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.NavigationViewSampleMatchesWinUIGalleryExamples" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 1 test per target. The generated ModernWpf NavigationView page still follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\NavigationViewPage.xaml` / `.xaml.cs`, and the live WPF adaptation now mirrors the source `VisualStateManager` adaptive sample path by switching `nvSample2.PaneDisplayMode` to `Top` when the rendered sample width crosses `nvSample2.CompactModeThresholdWidth`; the source XAML snippet continues to expose the official `AdaptiveTrigger`.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls NavigationView -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -2902,6 +2908,29 @@ harness uses the WinUI reference name `simple text editor` and a
 RichEditBox-specific low-variation threshold because the first sample is an
 intentionally empty editor. Avoid reopening RichEditBox's source shape unless a
 new WinUI source or crop regression appears.
+The generated ModernWpf ScrollViewer extension page now uses the local official
+WinUI Gallery first-example structure from
+`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\ScrollViewerPage.xaml`
+and `.xaml.cs`: `Content inside of a ScrollViewer.` with the `cliff.jpg` image
+viewport, zoom mode combo, zoom slider, horizontal/vertical scroll-mode combos,
+and horizontal/vertical scrollbar-visibility combos. `ScrollingSampleFactory`
+now exposes ScrollViewer as a source-backed Scrolling WinUI extension page
+instead of falling back to the generic `Working WPF sample` path. The WPF
+adaptation keeps WinUI's source-facing names (`ScrollViewerControl`,
+`zoomCombo`, `ZoomSlider`, `hsmCombo`, `vsmCombo`, `hsbvCombo`, and
+`vsbvCombo`), official XAML/C# snippets, and `GallerySample_ScrollViewer_*`
+automation IDs while mapping WinUI zoom to a WPF image `ScaleTransform` and
+WinUI scroll modes to WPF `ScrollBarVisibility`/`PanningMode`. Current
+verification is the focused ScrollViewer runtime test for both `net8.0` and
+`net10.0`, plus WinUI-reference Light and Dark visual checks at
+`artifacts/visual-checks/20260525-082000-811-111036/report.md` and
+`artifacts/visual-checks/20260525-082036-544-59724/report.md`; both visual
+reports pass with matching `400x266` primary crops and primary delta `20.96`.
+The visual harness now includes ScrollViewer in the default WinUI extension
+control set and maps ModernWpf `GallerySample_ScrollViewer_ScrollViewer` to
+WinUI `ScrollViewerControl` for primary crops.
+Avoid reopening ScrollViewer's source shape unless a new local WinUI source,
+visual harness mapping, or crop regression appears.
 Continue with the next highest-impact visible drift from the checklist, likely
 remaining High Contrast gaps, other NavigationView styling not covered
 by the TreeView token aliases or first-sample refresh, or other item pages that still lack current

@@ -35,6 +35,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "InfoBar", "GallerySample_InfoBar_Root", "GallerySample_InfoBar_InfoBar" };
             yield return new object[] { "ProgressRing", "GallerySample_ProgressRing_Root", "GallerySample_ProgressRing_ProgressRing" };
             yield return new object[] { "PipsPager", "GallerySample_PipsPager_Root", "GallerySample_PipsPager_PipsPager" };
+            yield return new object[] { "ScrollViewer", "GallerySample_ScrollViewer_Root", "GallerySample_ScrollViewer_ScrollViewer" };
             yield return new object[] { "PullToRefresh", "GallerySample_PullToRefresh_Root", "GallerySample_PullToRefresh_RefreshContainer" };
             yield return new object[] { "SplitView", "GallerySample_SplitView_Root", "GallerySample_SplitView_SplitView" };
             yield return new object[] { "PersonPicture", "GallerySample_PersonPicture_Root", "GallerySample_PersonPicture_PersonPicture" };
@@ -1383,6 +1384,137 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(Orientation.Vertical, optionsPipsPager.Orientation);
                     Assert.AreEqual(Mux.PipsPagerButtonVisibility.Collapsed, optionsPipsPager.PreviousButtonVisibility);
                     Assert.AreEqual(Mux.PipsPagerButtonVisibility.VisibleOnPointerOver, optionsPipsPager.NextButtonVisibility);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void ScrollViewerSampleMatchesWinUIGalleryExample()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("ScrollViewer"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(1, page.Examples.Count);
+                    Assert.AreEqual("Content inside of a ScrollViewer.", page.Examples[0].HeaderText);
+                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "ZoomMode=\"$(ZoomMode)\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "HorizontalScrollMode=\"$(HorizontalScrollMode)\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "VerticalScrollBarVisibility=\"$(VerticalScrollBarVisibility)\"");
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "ScrollViewerControl.ZoomToFactor(4.0f);");
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "ScrollViewerControl.HorizontalScrollMode = (ScrollMode)cb.SelectedIndex;");
+
+                    var sampleRoot = FindByAutomationId(page, "GallerySample_ScrollViewer_Root") as UIElement;
+                    Assert.IsNotNull(sampleRoot);
+                    var sampleRootPeer = UIElementAutomationPeer.CreatePeerForElement(sampleRoot);
+                    Assert.IsNotNull(sampleRootPeer);
+                    Assert.IsTrue(sampleRootPeer.IsControlElement());
+                    Assert.AreEqual(AutomationControlType.Group, sampleRootPeer.GetAutomationControlType());
+
+                    var scrollViewer = (ScrollViewer)FindByAutomationId(page, "GallerySample_ScrollViewer_ScrollViewer");
+                    var zoomCombo = FindNamedDescendant<ComboBox>(page, "zoomCombo");
+                    var zoomSlider = FindNamedDescendant<Slider>(page, "ZoomSlider");
+                    var horizontalScrollMode = FindNamedDescendant<ComboBox>(page, "hsmCombo");
+                    var verticalScrollMode = FindNamedDescendant<ComboBox>(page, "vsmCombo");
+                    var horizontalScrollBarVisibility = FindNamedDescendant<ComboBox>(page, "hsbvCombo");
+                    var verticalScrollBarVisibility = FindNamedDescendant<ComboBox>(page, "vsbvCombo");
+
+                    Assert.IsNotNull(scrollViewer);
+                    Assert.AreEqual("ScrollViewerControl", scrollViewer.Name);
+                    Assert.AreEqual(400.0, scrollViewer.Width);
+                    Assert.AreEqual(266.0, scrollViewer.Height);
+                    Assert.AreEqual(HorizontalAlignment.Left, scrollViewer.HorizontalAlignment);
+                    Assert.AreEqual(VerticalAlignment.Top, scrollViewer.VerticalAlignment);
+                    Assert.IsTrue(scrollViewer.Focusable);
+                    Assert.AreEqual(ScrollBarVisibility.Auto, scrollViewer.HorizontalScrollBarVisibility);
+                    Assert.AreEqual(ScrollBarVisibility.Auto, scrollViewer.VerticalScrollBarVisibility);
+                    Assert.AreEqual(PanningMode.Both, scrollViewer.PanningMode);
+
+                    var image = scrollViewer.Content as Image;
+                    Assert.IsNotNull(image);
+                    Assert.AreEqual("cliff", AutomationProperties.GetName(image));
+                    Assert.AreEqual(Stretch.None, image.Stretch);
+                    Assert.AreEqual(HorizontalAlignment.Left, image.HorizontalAlignment);
+                    Assert.AreEqual(VerticalAlignment.Top, image.VerticalAlignment);
+
+                    var bitmap = image.Source as BitmapImage;
+                    Assert.IsNotNull(bitmap);
+                    StringAssert.Contains(bitmap.UriSource.ToString(), "cliff.jpg");
+
+                    var zoomTransform = image.LayoutTransform as ScaleTransform;
+                    Assert.IsNotNull(zoomTransform);
+                    Assert.AreEqual(4.0, zoomTransform.ScaleX);
+                    Assert.AreEqual(4.0, zoomTransform.ScaleY);
+
+                    Assert.IsNotNull(zoomSlider);
+                    Assert.AreEqual("Zoom", ModernWpf.Controls.Primitives.ControlHelper.GetHeader(zoomSlider));
+                    Assert.AreEqual(1.0, zoomSlider.Minimum);
+                    Assert.AreEqual(4.0, zoomSlider.Maximum);
+                    Assert.AreEqual(4.0, zoomSlider.Value);
+                    Assert.IsTrue(zoomSlider.IsEnabled);
+                    AssertScrollViewerComboBox(zoomCombo, "zoom mode", 1, "Disabled", "Enabled");
+                    AssertScrollViewerComboBox(horizontalScrollMode, "horizontal scroll mode", 1, "Disabled", "Enabled", "Auto");
+                    AssertScrollViewerComboBox(verticalScrollMode, "vertical scroll mode", 1, "Disabled", "Enabled", "Auto");
+                    AssertScrollViewerComboBox(horizontalScrollBarVisibility, "horizontal scroll bar visibility", 1, "Disabled", "Auto", "Hidden", "Visible");
+                    AssertScrollViewerComboBox(verticalScrollBarVisibility, "vertical scroll bar visibility", 1, "Disabled", "Auto", "Hidden", "Visible");
+
+                    zoomCombo.SelectedIndex = 0;
+                    WpfTestHost.DoEvents();
+                    Assert.IsFalse(zoomSlider.IsEnabled);
+                    Assert.AreEqual(2.0, zoomSlider.Value);
+                    Assert.AreEqual(2.0, zoomTransform.ScaleX);
+                    Assert.AreEqual(2.0, zoomTransform.ScaleY);
+
+                    zoomCombo.SelectedIndex = 1;
+                    zoomSlider.Value = 3;
+                    WpfTestHost.DoEvents();
+                    Assert.IsTrue(zoomSlider.IsEnabled);
+                    Assert.AreEqual(3.0, zoomTransform.ScaleX);
+                    Assert.AreEqual(3.0, zoomTransform.ScaleY);
+
+                    horizontalScrollMode.SelectedIndex = 0;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(ScrollBarVisibility.Disabled, scrollViewer.HorizontalScrollBarVisibility);
+                    Assert.AreEqual(ScrollBarVisibility.Auto, scrollViewer.VerticalScrollBarVisibility);
+                    Assert.AreEqual(PanningMode.VerticalOnly, scrollViewer.PanningMode);
+
+                    horizontalScrollMode.SelectedIndex = 2;
+                    horizontalScrollBarVisibility.SelectedIndex = 3;
+                    verticalScrollMode.SelectedIndex = 0;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(ScrollBarVisibility.Visible, scrollViewer.HorizontalScrollBarVisibility);
+                    Assert.AreEqual(ScrollBarVisibility.Disabled, scrollViewer.VerticalScrollBarVisibility);
+                    Assert.AreEqual(PanningMode.HorizontalOnly, scrollViewer.PanningMode);
+
+                    verticalScrollMode.SelectedIndex = 2;
+                    verticalScrollBarVisibility.SelectedIndex = 2;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(ScrollBarVisibility.Visible, scrollViewer.HorizontalScrollBarVisibility);
+                    Assert.AreEqual(ScrollBarVisibility.Hidden, scrollViewer.VerticalScrollBarVisibility);
+                    Assert.AreEqual(PanningMode.Both, scrollViewer.PanningMode);
                 }
                 finally
                 {
@@ -6667,6 +6799,21 @@ namespace ModernWpf.Gallery.Tests
             for (var i = 0; i < expectedItems.Length; i++)
             {
                 Assert.AreEqual(expectedItems[i], comboBox.Items[i]);
+            }
+        }
+
+        private static void AssertScrollViewerComboBox(ComboBox comboBox, string automationName, int selectedIndex, params string[] expectedItems)
+        {
+            Assert.IsNotNull(comboBox);
+            Assert.AreEqual(automationName, AutomationProperties.GetName(comboBox));
+            Assert.AreEqual(HorizontalAlignment.Stretch, comboBox.HorizontalAlignment);
+            Assert.AreEqual(selectedIndex, comboBox.SelectedIndex);
+            Assert.AreEqual(expectedItems.Length, comboBox.Items.Count);
+            for (var i = 0; i < expectedItems.Length; i++)
+            {
+                var item = comboBox.Items[i] as ComboBoxItem;
+                Assert.IsNotNull(item);
+                Assert.AreEqual(expectedItems[i], item.Content);
             }
         }
 

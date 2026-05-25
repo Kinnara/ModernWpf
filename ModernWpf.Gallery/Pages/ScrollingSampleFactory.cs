@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
@@ -35,6 +36,106 @@ namespace ModernWpf.Gallery.Pages
     PreviousButtonVisibility=""$(PrevButton)""
     NextButtonVisibility=""$(NextButton)"" />";
 
+        private const string ScrollViewerXaml =
+@"<ScrollViewer Height=""266"" Width=""400"" ZoomMode=""$(ZoomMode)""
+            IsTabStop=""True"" IsVerticalScrollChainingEnabled=""True""
+            HorizontalAlignment=""Left"" VerticalAlignment=""Top""
+            ViewChanged=""ScrollViewerControl_ViewChanged""
+            HorizontalScrollMode=""$(HorizontalScrollMode)"" HorizontalScrollBarVisibility=""$(HorizontalScrollBarVisibility)""
+            VerticalScrollMode=""$(VerticalScrollMode)"" VerticalScrollBarVisibility=""$(VerticalScrollBarVisibility)"">
+    <Image Source=""ms-appx:///Assets/SampleMedia/cliff.jpg"" AutomationProperties.Name=""cliff"" Stretch=""None""
+           HorizontalAlignment=""Left"" VerticalAlignment=""Top""/>
+</ScrollViewer>";
+
+        private const string ScrollViewerCSharp =
+@"public ScrollViewerPage()
+{
+    this.InitializeComponent();
+    ScrollViewerControl.ZoomToFactor(4.0f);
+}
+
+private void ZoomModeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+{
+    if (ScrollViewerControl != null && ZoomSlider != null)
+    {
+        if (sender is ComboBox cb)
+        {
+            ScrollViewerControl.ZoomMode = (ZoomMode)cb.SelectedIndex;
+            ZoomSlider.IsEnabled = cb.SelectedIndex == 1;
+
+            if (!ZoomSlider.IsEnabled)
+            {
+                ScrollViewerControl.ZoomToFactor(2.0f);
+            }
+        }
+    }
+}
+
+private void ZoomSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+{
+    if (ScrollViewerControl != null)
+    {
+        ScrollViewerControl.ChangeView(null, null, (float)e.NewValue);
+    }
+}
+
+private void hsmCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+{
+    if (ScrollViewerControl != null)
+    {
+        if (sender is ComboBox cb)
+        {
+            ScrollViewerControl.HorizontalScrollMode = (ScrollMode)cb.SelectedIndex;
+        }
+    }
+}
+
+private void hsbvCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+{
+    if (ScrollViewerControl != null)
+    {
+        if (sender is ComboBox cb)
+        {
+            ScrollViewerControl.HorizontalScrollBarVisibility = (ScrollBarVisibility)cb.SelectedIndex;
+        }
+    }
+}
+
+private void vsmCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+{
+    if (ScrollViewerControl != null)
+    {
+        if (sender is ComboBox cb)
+        {
+            ScrollViewerControl.VerticalScrollMode = (ScrollMode)cb.SelectedIndex;
+        }
+    }
+}
+
+private void vsbvCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+{
+    if (ScrollViewerControl != null)
+    {
+        if (sender is ComboBox cb)
+        {
+            ScrollViewerControl.VerticalScrollBarVisibility = (ScrollBarVisibility)cb.SelectedIndex;
+        }
+    }
+}
+
+private void ScrollViewerControl_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
+{
+    ZoomSlider.Value = ScrollViewerControl.ZoomFactor;
+}
+
+private void ScrollViewerControl_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+{
+    if (!e.IsIntermediate)
+    {
+        ZoomSlider.Value = ScrollViewerControl.ZoomFactor;
+    }
+}";
+
         public static UIElement Create(string uniqueId)
         {
             switch (uniqueId)
@@ -60,6 +161,8 @@ namespace ModernWpf.Gallery.Pages
             {
                 case "PipsPager":
                     return CreatePipsPagerExamples();
+                case "ScrollViewer":
+                    return CreateScrollViewerExamples();
                 default:
                     return Array.Empty<GalleryExample>();
             }
@@ -286,39 +389,141 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateScrollViewerSample()
         {
-            var panel = CreateSamplePanel("ScrollViewer displays content that is larger than its viewport and exposes scrollbar policy controls.");
+            return CreateScrollViewerExampleContent(assignRootAutomationId: true);
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateScrollViewerExamples()
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "Content inside of a ScrollViewer.",
+                    CreateScrollViewerExampleContent(assignRootAutomationId: true),
+                    ScrollViewerXaml,
+                    ScrollViewerCSharp)
+            };
+        }
+
+        private static GallerySamplePanel CreateScrollViewerExampleContent(bool assignRootAutomationId)
+        {
+            var root = new GallerySamplePanel();
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("ScrollViewer"));
+            }
+
+            var zoomTransform = new ScaleTransform(4, 4);
+            var image = new Image
+            {
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                Source = CreateSampleMediaBitmap("cliff.jpg"),
+                Stretch = Stretch.None,
+                LayoutTransform = zoomTransform
+            };
+            AutomationProperties.SetName(image, "cliff");
+
             var scrollViewer = new ScrollViewer
             {
-                Width = 420,
-                Height = 240,
+                Name = "ScrollViewerControl",
+                Width = 400,
+                Height = 266,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                Focusable = true,
                 HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
                 VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
-                Content = CreateWideTextContent()
+                Content = image
             };
-            var output = CreateOutput("Offset: 0, 0");
-            scrollViewer.ScrollChanged += delegate
-            {
-                output.Text = "Offset: " + scrollViewer.HorizontalOffset.ToString("0") + ", " + scrollViewer.VerticalOffset.ToString("0");
-            };
+            GalleryAutomation.WithAutomationId(scrollViewer, GalleryAutomation.SampleElementId("ScrollViewer", "ScrollViewer"));
 
-            var options = new StackPanel
+            var zoomCombo = CreateScrollViewerComboBox("zoomCombo", "zoom mode", 1, "Disabled", "Enabled");
+            var zoomSlider = new Slider
             {
-                Orientation = Orientation.Horizontal,
-                Margin = new Thickness(0, 12, 0, 0)
+                Name = "ZoomSlider",
+                IsEnabled = true,
+                Minimum = 1,
+                Maximum = 4,
+                Value = 4,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                Margin = new Thickness(0, 10, 0, 0)
             };
-            options.Children.Add(CreateVisibilityCombo("Horizontal", scrollViewer.HorizontalScrollBarVisibility, delegate(ScrollBarVisibility value)
-            {
-                scrollViewer.HorizontalScrollBarVisibility = value;
-            }));
-            options.Children.Add(CreateVisibilityCombo("Vertical", scrollViewer.VerticalScrollBarVisibility, delegate(ScrollBarVisibility value)
-            {
-                scrollViewer.VerticalScrollBarVisibility = value;
-            }));
+            ControlHelper.SetHeader(zoomSlider, "Zoom");
 
-            panel.Children.Add(scrollViewer);
-            panel.Children.Add(options);
-            panel.Children.Add(output);
-            return panel;
+            var horizontalScrollMode = CreateScrollViewerComboBox("hsmCombo", "horizontal scroll mode", 1, "Disabled", "Enabled", "Auto");
+            var verticalScrollMode = CreateScrollViewerComboBox("vsmCombo", "vertical scroll mode", 1, "Disabled", "Enabled", "Auto");
+            var horizontalScrollBarVisibility = CreateScrollViewerComboBox("hsbvCombo", "horizontal scroll bar visibility", 1, "Disabled", "Auto", "Hidden", "Visible");
+            var verticalScrollBarVisibility = CreateScrollViewerComboBox("vsbvCombo", "vertical scroll bar visibility", 1, "Disabled", "Auto", "Hidden", "Visible");
+
+            void ApplyZoom(double zoom)
+            {
+                zoomTransform.ScaleX = zoom;
+                zoomTransform.ScaleY = zoom;
+            }
+
+            void ApplyScrollSettings()
+            {
+                var horizontalEnabled = horizontalScrollMode.SelectedIndex != 0;
+                var verticalEnabled = verticalScrollMode.SelectedIndex != 0;
+                scrollViewer.HorizontalScrollBarVisibility = horizontalEnabled
+                    ? ToScrollBarVisibility(horizontalScrollBarVisibility)
+                    : ScrollBarVisibility.Disabled;
+                scrollViewer.VerticalScrollBarVisibility = verticalEnabled
+                    ? ToScrollBarVisibility(verticalScrollBarVisibility)
+                    : ScrollBarVisibility.Disabled;
+                scrollViewer.PanningMode = horizontalEnabled && verticalEnabled
+                    ? PanningMode.Both
+                    : horizontalEnabled
+                        ? PanningMode.HorizontalOnly
+                        : verticalEnabled
+                            ? PanningMode.VerticalOnly
+                            : PanningMode.None;
+            }
+
+            zoomCombo.SelectionChanged += delegate
+            {
+                var zoomEnabled = zoomCombo.SelectedIndex == 1;
+                zoomSlider.IsEnabled = zoomEnabled;
+                if (!zoomEnabled)
+                {
+                    zoomSlider.Value = 2;
+                    ApplyZoom(2);
+                }
+            };
+            zoomSlider.ValueChanged += delegate
+            {
+                ApplyZoom(zoomSlider.Value);
+            };
+            horizontalScrollMode.SelectionChanged += delegate { ApplyScrollSettings(); };
+            verticalScrollMode.SelectionChanged += delegate { ApplyScrollSettings(); };
+            horizontalScrollBarVisibility.SelectionChanged += delegate { ApplyScrollSettings(); };
+            verticalScrollBarVisibility.SelectionChanged += delegate { ApplyScrollSettings(); };
+            ApplyScrollSettings();
+
+            var layout = new Grid();
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+            Grid.SetColumn(scrollViewer, 0);
+            layout.Children.Add(scrollViewer);
+
+            var options = CreateScrollViewerOptionsGrid(
+                zoomCombo,
+                zoomSlider,
+                horizontalScrollMode,
+                verticalScrollMode,
+                horizontalScrollBarVisibility,
+                verticalScrollBarVisibility);
+            var optionsHost = new Border
+            {
+                Margin = new Thickness(24, 0, 0, 0),
+                Child = options
+            };
+            Grid.SetColumn(optionsHost, 1);
+            layout.Children.Add(optionsHost);
+
+            root.Children.Add(layout);
+            return root;
         }
 
         private static UIElement CreateSemanticZoomSample()
@@ -432,11 +637,22 @@ namespace ModernWpf.Gallery.Pages
         {
             return new Image
             {
-                Source = new BitmapImage(new Uri(
-                    "pack://application:,,,/ModernWpf.Gallery;component/Assets/SampleMedia/" + fileName,
-                    UriKind.Absolute)),
+                Source = CreateSampleMediaBitmap(fileName),
                 Stretch = Stretch.UniformToFill
             };
+        }
+
+        private static BitmapImage CreateSampleMediaBitmap(string fileName)
+        {
+            var bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.UriSource = new Uri(
+                "pack://application:,,,/ModernWpf.Gallery;component/Assets/SampleMedia/" + fileName,
+                UriKind.Absolute);
+            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+            bitmap.EndInit();
+            bitmap.Freeze();
+            return bitmap;
         }
 
         private static ComboBox CreatePipsPagerComboBox(string name, string header, IEnumerable<string> items, string selectedItem)
@@ -490,6 +706,109 @@ namespace ModernWpf.Gallery.Pages
             return grid;
         }
 
+        private static Grid CreateScrollViewerOptionsGrid(
+            ComboBox zoomCombo,
+            Slider zoomSlider,
+            ComboBox horizontalScrollMode,
+            ComboBox verticalScrollMode,
+            ComboBox horizontalScrollBarVisibility,
+            ComboBox verticalScrollBarVisibility)
+        {
+            var grid = new Grid
+            {
+                MinWidth = 200
+            };
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            for (var i = 0; i < 8; i++)
+            {
+                grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            }
+
+            AddScrollViewerOptionRow(grid, 0, "ZoomMode", zoomCombo, new Thickness(0, 0, 10, 0), new Thickness(0));
+
+            Grid.SetRow(zoomSlider, 1);
+            Grid.SetColumnSpan(zoomSlider, 2);
+            grid.Children.Add(zoomSlider);
+
+            AddScrollViewerOptionHeading(grid, 2, "ScrollMode", new Thickness(0, 12, 0, 12));
+            AddScrollViewerOptionRow(grid, 3, "Horizontal", horizontalScrollMode, new Thickness(0, 0, 10, 0), new Thickness(0));
+            AddScrollViewerOptionRow(grid, 4, "Vertical", verticalScrollMode, new Thickness(0, 8, 10, 0), new Thickness(0, 8, 0, 0));
+            AddScrollViewerOptionHeading(grid, 5, "ScrollbarVisibility", new Thickness(0, 20, 0, 12));
+            AddScrollViewerOptionRow(grid, 6, "Horizontal", horizontalScrollBarVisibility, new Thickness(0, 0, 10, 0), new Thickness(0));
+            AddScrollViewerOptionRow(grid, 7, "Vertical", verticalScrollBarVisibility, new Thickness(0, 8, 10, 0), new Thickness(0, 8, 0, 0));
+            return grid;
+        }
+
+        private static void AddScrollViewerOptionHeading(Grid grid, int row, string text, Thickness margin)
+        {
+            var textBlock = new TextBlock
+            {
+                Text = text,
+                Margin = margin,
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+            Grid.SetRow(textBlock, row);
+            Grid.SetColumnSpan(textBlock, 2);
+            grid.Children.Add(textBlock);
+        }
+
+        private static void AddScrollViewerOptionRow(Grid grid, int row, string labelText, FrameworkElement control, Thickness labelMargin, Thickness controlMargin)
+        {
+            var label = new TextBlock
+            {
+                Text = labelText,
+                Margin = labelMargin,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            Grid.SetRow(label, row);
+            grid.Children.Add(label);
+
+            control.Margin = controlMargin;
+            Grid.SetRow(control, row);
+            Grid.SetColumn(control, 1);
+            grid.Children.Add(control);
+        }
+
+        private static ComboBox CreateScrollViewerComboBox(string name, string automationName, int selectedIndex, params string[] items)
+        {
+            var comboBox = new ComboBox
+            {
+                Name = name,
+                HorizontalAlignment = HorizontalAlignment.Stretch
+            };
+            AutomationProperties.SetName(comboBox, automationName);
+            foreach (var item in items)
+            {
+                comboBox.Items.Add(new ComboBoxItem { Content = item });
+            }
+
+            comboBox.SelectedIndex = selectedIndex;
+            return comboBox;
+        }
+
+        private static ScrollBarVisibility ToScrollBarVisibility(ComboBox comboBox)
+        {
+            switch (GetSelectedComboText(comboBox))
+            {
+                case "Disabled":
+                    return ScrollBarVisibility.Disabled;
+                case "Hidden":
+                    return ScrollBarVisibility.Hidden;
+                case "Visible":
+                    return ScrollBarVisibility.Visible;
+                case "Auto":
+                default:
+                    return ScrollBarVisibility.Auto;
+            }
+        }
+
+        private static string GetSelectedComboText(ComboBox comboBox)
+        {
+            var item = comboBox.SelectedItem as ComboBoxItem;
+            return item == null ? null : item.Content as string;
+        }
+
         private static StackPanel CreateLargeDiagram()
         {
             var canvas = new StackPanel
@@ -533,51 +852,6 @@ namespace ModernWpf.Gallery.Pages
             }
 
             return canvas;
-        }
-
-        private static StackPanel CreateWideTextContent()
-        {
-            var content = new StackPanel
-            {
-                Width = 720
-            };
-            for (var i = 1; i <= 18; i++)
-            {
-                content.Children.Add(new TextBlock
-                {
-                    Text = "Row " + i + ": ScrollViewer keeps this long line readable without forcing the page layout to widen.",
-                    Margin = new Thickness(0, 0, 0, 8),
-                    TextWrapping = TextWrapping.NoWrap
-                });
-            }
-
-            return content;
-        }
-
-        private static UIElement CreateVisibilityCombo(string header, ScrollBarVisibility selected, Action<ScrollBarVisibility> changed)
-        {
-            var combo = new ComboBox
-            {
-                Width = 150,
-                Margin = new Thickness(0, 0, 12, 0),
-                ItemsSource = new[]
-                {
-                    ScrollBarVisibility.Auto,
-                    ScrollBarVisibility.Visible,
-                    ScrollBarVisibility.Hidden,
-                    ScrollBarVisibility.Disabled
-                },
-                SelectedItem = selected
-            };
-            ControlHelper.SetHeader(combo, header);
-            combo.SelectionChanged += delegate
-            {
-                if (combo.SelectedItem is ScrollBarVisibility)
-                {
-                    changed((ScrollBarVisibility)combo.SelectedItem);
-                }
-            };
-            return combo;
         }
 
         private static Dictionary<string, string[]> CreateGroupedItems()
