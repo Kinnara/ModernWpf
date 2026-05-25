@@ -35,7 +35,6 @@
         </Grid.RowDefinitions>
 
         <controls:PageHeader
-            x:Name="PageHeader"
             Grid.Row="0"
             Margin="0,0,0,40"
             Title="{Binding ViewModel.PageTitle}"
@@ -47,7 +46,6 @@
             Padding="0,0,24,0">
             <StackPanel>
                 <TextBlock
-                    x:Name="AppearanceHeaderText"
                     Margin="10"
                     FontSize="14"
                     FontWeight="SemiBold"
@@ -99,7 +97,7 @@
                                 HorizontalAlignment="Right"
                                 AutomationProperties.Name="Change ThemeMode"
                                 SelectedIndex="2"
-                                SelectionChanged="OnThemeModeSelectionChanged">
+                                SelectionChanged="ThemeMode_SelectionChanged">
                                 <ComboBoxItem Content="Light" />
                                 <ComboBoxItem Content="Dark" />
                                 <ComboBoxItem Content="Use system setting" />
@@ -109,15 +107,12 @@
                 </Grid>
 
                 <TextBlock
-                    x:Name="AboutHeaderText"
                     Margin="10"
                     FontSize="14"
                     FontWeight="SemiBold"
                     Text="About" />
 
-                <Expander
-                    x:Name="AboutExpander"
-                    AutomationProperties.Name="WPF Gallery Preview">
+                <Expander AutomationProperties.Name="WPF Gallery Preview">
                     <Expander.Header>
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -146,102 +141,97 @@
                             </StackPanel>
                         </Grid>
                     </Expander.Header>
+                    <Expander.Content>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
 
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-
-                        <Border Grid.Row="0" Style="{StaticResource SettingsCardStyle}">
-                            <Grid Margin="48,0,16,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" Text="To clone this repository" />
-                                <TextBox
-                                    x:Name="CloneCommandTextBox"
-                                    Grid.Column="2"
-                                    Focusable="False"
-                                    Style="{StaticResource SelectionTextBox}"
-                                    Text="git clone https://github.com/microsoft/WPF-Samples.git" />
-                            </Grid>
-                        </Border>
-
-                        <Border Grid.Row="1" Style="{StaticResource SettingsCardStyle}">
-                            <Grid Margin="48,0,16,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" Text="File a bug or request a new sample" />
-                                <Button
-                                    x:Name="OpenIssuesButton"
-                                    Grid.Column="2"
-                                    Padding="8"
-                                    AutomationProperties.Name="Open Issues"
-                                    Click="OnOpenIssuesClick"
-                                    FocusManager.IsFocusScope="True">
-                                    <TextBlock
-                                        FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                        Text="&#xE8A7;" />
-                                </Button>
-                            </Grid>
-                        </Border>
-
-                        <GroupBox
-                            x:Name="DependenciesGroupBox"
-                            Grid.Row="2"
-                            AutomationProperties.Name="Dependencies and References"
-                            BorderThickness="0">
-                            <Border Style="{StaticResource SettingsCardStyle}">
-                                <StackPanel Margin="48,0,16,0" Orientation="Vertical">
-                                    <TextBlock Margin="0,0,0,12" Text="Dependencies and References" />
-                                    <TextBlock Style="{StaticResource LinkTextBlockStyle}">
-                                        <Hyperlink x:Name="ToolkitInformationLink" Click="Open_ToolkitInformation">CommunityToolkit.Mvvm</Hyperlink>
-                                    </TextBlock>
-                                    <TextBlock Style="{StaticResource LinkTextBlockStyle}">
-                                        <Hyperlink
-                                            x:Name="DependencyInjectionInformationLink"
-                                            AutomationProperties.Name="Link to Dependency Injection NuGet Package"
-                                            Click="Open_DIInformation">Microsoft.Extensions.DependencyInjection</Hyperlink>
-                                    </TextBlock>
-                                    <TextBlock Style="{StaticResource LinkTextBlockStyle}">
-                                        <Hyperlink
-                                            x:Name="HostingInformationLink"
-                                            AutomationProperties.Name="Link to .NET Generic Host Package"
-                                            Click="Open_HostingInformation">Microsoft.Extensions.Hosting</Hyperlink>
-                                    </TextBlock>
-                                </StackPanel>
+                            <Border Grid.Row="0" Style="{StaticResource SettingsCardStyle}">
+                                <Grid Margin="48,0,16,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="To clone this repository" />
+                                    <TextBox
+                                        Grid.Column="2"
+                                        Focusable="False"
+                                        Style="{StaticResource SelectionTextBox}"
+                                        Text="git clone https://github.com/microsoft/WPF-Samples.git" />
+                                </Grid>
                             </Border>
-                        </GroupBox>
 
-                        <GroupBox
-                            x:Name="WarrantyGroupBox"
-                            Grid.Row="3"
-                            AutomationProperties.Name="THIS CODE AND INFORMATION IS PROVIDED &#x2018;AS IS&#x2019; WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE."
-                            BorderThickness="0">
-                            <Border Style="{StaticResource BottomSettingsCardStyle}">
-                                <StackPanel Margin="48,0,16,0" Orientation="Vertical">
-                                    <TextBlock
-                                        Margin="0,0,0,12"
-                                        Text="THIS CODE AND INFORMATION IS PROVIDED &#x2018;AS IS&#x2019; WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE."
-                                        TextWrapping="Wrap" />
-                                    <TextBlock Style="{StaticResource LinkTextBlockStyle}">
-                                        <Hyperlink Click="OnServicesClick">Microsoft Services Agreement</Hyperlink>
-                                    </TextBlock>
-                                    <TextBlock Style="{StaticResource LinkTextBlockStyle}">
-                                        <Hyperlink Click="OnPrivacyClick">Microsoft Privacy Statement</Hyperlink>
-                                    </TextBlock>
-                                </StackPanel>
+                            <Border Grid.Row="1" Style="{StaticResource SettingsCardStyle}">
+                                <Grid Margin="48,0,16,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="File a bug or request a new sample" />
+                                    <Button
+                                        Grid.Column="2"
+                                        Padding="8"
+                                        AutomationProperties.Name="Open Issues"
+                                        Click="Open_Issues"
+                                        FocusManager.IsFocusScope="True">
+                                        <TextBlock
+                                            FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                            Text="&#xE8A7;" />
+                                    </Button>
+                                </Grid>
                             </Border>
-                        </GroupBox>
-                    </Grid>
+
+                            <GroupBox
+                                Grid.Row="2"
+                                AutomationProperties.Name="Dependencies and References"
+                                BorderThickness="0">
+                                <Border Style="{StaticResource SettingsCardStyle}">
+                                    <StackPanel Margin="48,0,16,0" Orientation="Vertical">
+                                        <TextBlock Margin="0,0,0,12" Text="Dependencies and References" />
+                                        <TextBlock Style="{StaticResource LinkTextBlockStyle}">
+                                            <Hyperlink Click="Open_ToolkitInformation">CommunityToolkit.Mvvm</Hyperlink>
+                                        </TextBlock>
+                                        <TextBlock Style="{StaticResource LinkTextBlockStyle}">
+                                            <Hyperlink
+                                                AutomationProperties.Name="Link to Dependency Injection NuGet Package"
+                                                Click="Open_DIInformation">Microsoft.Extensions.DependencyInjection</Hyperlink>
+                                        </TextBlock>
+                                        <TextBlock Style="{StaticResource LinkTextBlockStyle}">
+                                            <Hyperlink
+                                                AutomationProperties.Name="Link to .NET Generic Host Package"
+                                                Click="Open_HostingInformation">Microsoft.Extensions.Hosting</Hyperlink>
+                                        </TextBlock>
+                                    </StackPanel>
+                                </Border>
+                            </GroupBox>
+
+                            <GroupBox
+                                Grid.Row="3"
+                                AutomationProperties.Name="THIS CODE AND INFORMATION IS PROVIDED &#x2018;AS IS&#x2019; WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE."
+                                BorderThickness="0">
+                                <Border Style="{StaticResource BottomSettingsCardStyle}">
+                                    <StackPanel Margin="48,0,16,0" Orientation="Vertical">
+                                        <TextBlock
+                                            Margin="0,0,0,12"
+                                            Text="THIS CODE AND INFORMATION IS PROVIDED &#x2018;AS IS&#x2019; WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE."
+                                            TextWrapping="Wrap" />
+                                        <TextBlock Style="{StaticResource LinkTextBlockStyle}">
+                                            <Hyperlink Click="Services_Click">Microsoft Services Agreement</Hyperlink>
+                                        </TextBlock>
+                                        <TextBlock Style="{StaticResource LinkTextBlockStyle}">
+                                            <Hyperlink Click="Privacy_Click">Microsoft Privacy Statement</Hyperlink>
+                                        </TextBlock>
+                                    </StackPanel>
+                                </Border>
+                            </GroupBox>
+                        </Grid>
+                    </Expander.Content>
                 </Expander>
             </StackPanel>
         </ScrollViewer>

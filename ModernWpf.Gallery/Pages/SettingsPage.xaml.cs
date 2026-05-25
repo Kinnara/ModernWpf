@@ -27,7 +27,7 @@ namespace ModernWpf.Gallery.Pages
 
         public SettingsPageViewModel ViewModel { get; }
 
-        private void OnThemeModeSelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ThemeMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!_canApplyThemeSelection)
             {
@@ -48,7 +48,7 @@ namespace ModernWpf.Gallery.Pages
             }
         }
 
-        private void OnOpenIssuesClick(object sender, RoutedEventArgs e)
+        private void Open_Issues(object sender, RoutedEventArgs e)
         {
             OpenUri("https://github.com/microsoft/WPF-Samples/issues/new");
         }
@@ -85,14 +85,14 @@ namespace ModernWpf.Gallery.Pages
             OpenUri("https://www.nuget.org/packages/Microsoft.Extensions.Hosting");
         }
 
-        private void OnServicesClick(object sender, RoutedEventArgs e)
+        private void Services_Click(object sender, RoutedEventArgs e)
         {
-            OpenUri("https://www.microsoft.com/servicesagreement");
+            OpenUri("https://go.microsoft.com/fwlink/?LinkId=822631");
         }
 
-        private void OnPrivacyClick(object sender, RoutedEventArgs e)
+        private void Privacy_Click(object sender, RoutedEventArgs e)
         {
-            OpenUri("https://privacy.microsoft.com/privacystatement");
+            OpenUri("https://go.microsoft.com/fwlink/?LinkId=521839");
         }
 
         private static void OpenUri(string uri)

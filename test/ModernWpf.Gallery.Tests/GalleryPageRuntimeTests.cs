@@ -315,7 +315,8 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual("Settings", page.ViewModel.PageTitle);
                     Assert.IsNull(page.ViewModel.PageDescription);
 
-                    var pageHeader = (PageHeader)page.FindName("PageHeader");
+                    var pageHeader = FindDescendant<PageHeader>(root);
+                    Assert.IsNotNull(pageHeader);
                     Assert.AreEqual(0, Grid.GetRow(pageHeader));
                     Assert.AreEqual(new Thickness(0, 0, 0, 40), pageHeader.Margin);
                     Assert.AreEqual("Settings", pageHeader.Title);
@@ -340,8 +341,9 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(new Thickness(0, 0, 0, 24), scrollViewer.Margin);
                     Assert.AreEqual(new Thickness(0, 0, 24, 0), scrollViewer.Padding);
 
-                    var appearanceHeader = (TextBlock)page.FindName("AppearanceHeaderText");
-                    var aboutHeader = (TextBlock)page.FindName("AboutHeaderText");
+                    var textBlocks = FindDescendants<TextBlock>(root).ToArray();
+                    var appearanceHeader = textBlocks.Single(textBlock => textBlock.Text == "Appearance & behavior");
+                    var aboutHeader = textBlocks.Single(textBlock => textBlock.Text == "About");
                     AssertSettingsSectionHeader(appearanceHeader, "Appearance & behavior");
                     AssertSettingsSectionHeader(aboutHeader, "About");
 
@@ -363,7 +365,8 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(2, themeMode.SelectedIndex);
                     Assert.AreEqual("Use system setting", ((ComboBoxItem)themeMode.SelectedItem).Content);
 
-                    var aboutExpander = (Expander)page.FindName("AboutExpander");
+                    var aboutExpander = FindDescendants<Expander>(root)
+                        .Single(expander => AutomationProperties.GetName(expander) == "WPF Gallery Preview");
                     Assert.AreEqual("WPF Gallery Preview", AutomationProperties.GetName(aboutExpander));
                     var expanderHeader = (Grid)aboutExpander.Header;
                     Assert.AreEqual(3, expanderHeader.ColumnDefinitions.Count);
@@ -371,25 +374,29 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual("WPF Gallery", ((TextBlock)aboutHeaderText.Children[0]).Text);
                     Assert.AreEqual("\u00A9 2025 Microsoft. All rights reserved.", ((TextBlock)aboutHeaderText.Children[1]).Text);
 
-                    var cloneCommand = (TextBox)page.FindName("CloneCommandTextBox");
+                    var cloneCommand = FindDescendants<TextBox>(root)
+                        .Single(textBox => textBox.Text == "git clone https://github.com/microsoft/WPF-Samples.git");
                     Assert.IsFalse(cloneCommand.Focusable);
                     Assert.AreEqual("git clone https://github.com/microsoft/WPF-Samples.git", cloneCommand.Text);
 
-                    var openIssues = (Button)page.FindName("OpenIssuesButton");
+                    var openIssues = FindDescendants<Button>(root)
+                        .Single(button => AutomationProperties.GetName(button) == "Open Issues");
                     Assert.AreEqual("Open Issues", AutomationProperties.GetName(openIssues));
                     Assert.AreEqual(new Thickness(8), openIssues.Padding);
                     Assert.IsTrue(FocusManager.GetIsFocusScope(openIssues));
 
-                    var dependencies = (GroupBox)page.FindName("DependenciesGroupBox");
-                    var warranty = (GroupBox)page.FindName("WarrantyGroupBox");
+                    var groupBoxes = FindDescendants<GroupBox>(root).ToArray();
+                    var dependencies = groupBoxes.Single(groupBox => AutomationProperties.GetName(groupBox) == "Dependencies and References");
+                    var warranty = groupBoxes.Single(groupBox => AutomationProperties.GetName(groupBox).StartsWith("THIS CODE AND INFORMATION IS PROVIDED", StringComparison.Ordinal));
                     Assert.AreEqual("Dependencies and References", AutomationProperties.GetName(dependencies));
                     Assert.AreEqual("THIS CODE AND INFORMATION IS PROVIDED \u2018AS IS\u2019 WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.", AutomationProperties.GetName(warranty));
                     Assert.AreEqual(new Thickness(0), dependencies.BorderThickness);
                     Assert.AreEqual(new Thickness(0), warranty.BorderThickness);
 
-                    var toolkitInformationLink = (Hyperlink)page.FindName("ToolkitInformationLink");
-                    var dependencyInjectionInformationLink = (Hyperlink)page.FindName("DependencyInjectionInformationLink");
-                    var hostingInformationLink = (Hyperlink)page.FindName("HostingInformationLink");
+                    var hyperlinks = FindDescendants<Hyperlink>(root).ToArray();
+                    var toolkitInformationLink = hyperlinks.Single(hyperlink => GetHyperlinkText(hyperlink) == "CommunityToolkit.Mvvm");
+                    var dependencyInjectionInformationLink = hyperlinks.Single(hyperlink => GetHyperlinkText(hyperlink) == "Microsoft.Extensions.DependencyInjection");
+                    var hostingInformationLink = hyperlinks.Single(hyperlink => GetHyperlinkText(hyperlink) == "Microsoft.Extensions.Hosting");
                     Assert.AreEqual("CommunityToolkit.Mvvm", GetHyperlinkText(toolkitInformationLink));
                     Assert.AreEqual("Microsoft.Extensions.DependencyInjection", GetHyperlinkText(dependencyInjectionInformationLink));
                     Assert.AreEqual("Microsoft.Extensions.Hosting", GetHyperlinkText(hostingInformationLink));
