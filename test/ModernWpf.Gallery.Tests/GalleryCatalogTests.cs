@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Linq;
 using System.Resources;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -56,9 +55,7 @@ namespace ModernWpf.Gallery.Tests
             Assert.IsFalse(actual.Contains("Media"));
             Assert.IsFalse(actual.Contains("Samples"));
             Assert.IsFalse(actual.Contains("ModernWpfControls"));
-            Assert.IsFalse(actual.Contains("PlatformAndPatterns"));
             Assert.IsNotNull(GalleryCatalog.FindGroup("ModernWpfControls"));
-            Assert.IsNull(GalleryCatalog.FindGroup("PlatformAndPatterns"));
         }
 
         [TestMethod]
@@ -161,7 +158,7 @@ namespace ModernWpf.Gallery.Tests
             AssertNavigationItem("Menu", "A classic menu, allowing the display of MenuItems containing MenuFlyoutItems.", "Pivot.png");
             AssertNavigationItem("TabControl", "A control that displays a collection of tabs.", "TabView.png");
             AssertNavigationItem("Frame", "A navigation control that allows displaying different Page content within an application.", "MenuBar.png");
-            AssertNavigationItem("NavigationWindow", "A control that supports navigation between pages, similar to a web browser.", "CreateMultipleWindows.png");
+            AssertNavigationItem("NavigationWindow", "A control that supports navigation between pages, similar to a web browser.", "NavigationWindow.png");
         }
 
         [TestMethod]
@@ -181,7 +178,7 @@ namespace ModernWpf.Gallery.Tests
             {
                 new { UniqueId = "Color", ImageFileName = "ColorPaletteResources.png" },
                 new { UniqueId = "Typography", ImageFileName = "TextBlock.png" },
-                new { UniqueId = "Spacing", ImageFileName = "CompactSizing.png" },
+                new { UniqueId = "Spacing", ImageFileName = "Spacing.png" },
                 new { UniqueId = "Geometry", ImageFileName = "Border.png" },
                 new { UniqueId = "Iconography", ImageFileName = "IconElement.png" },
                 new { UniqueId = "UserDashboard", ImageFileName = "PersonPicture.png" },
@@ -208,7 +205,7 @@ namespace ModernWpf.Gallery.Tests
                 new { UniqueId = "Menu", ImageFileName = "Pivot.png" },
                 new { UniqueId = "TabControl", ImageFileName = "TabView.png" },
                 new { UniqueId = "Frame", ImageFileName = "MenuBar.png" },
-                new { UniqueId = "NavigationWindow", ImageFileName = "CreateMultipleWindows.png" },
+                new { UniqueId = "NavigationWindow", ImageFileName = "NavigationWindow.png" },
                 new { UniqueId = "ProgressBar", ImageFileName = "ProgressBar.png" },
                 new { UniqueId = "ToolTip", ImageFileName = "ToolTip.png" },
                 new { UniqueId = "Label", ImageFileName = "Button.png" },
@@ -317,123 +314,89 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void WinUIExtensionCatalogKeepsOnlyImplementedModernWpfSurfaces()
+        public void WinUIExtensionCatalogMatchesImplementedModernWpfSurfaces()
         {
-            var omittedWinUIPages = new[]
+            var expected = new[]
             {
-                "XamlResources",
-                "XamlStyles",
-                "Binding",
-                "Templates",
-                "CustomUserControls",
-                "CustomXamlConditionals",
-                "ScratchPad",
-                "AccessibilityColorContrast",
-                "AccessibilityKeyboard",
-                "AccessibilityScreenReader",
-                "XamlCompInterop",
-                "ConnectedAnimation",
-                "EasingFunction",
-                "ImplicitTransition",
-                "PageTransition",
-                "ThemeTransition",
-                "SemanticZoom",
-                "AppWindow",
-                "AppWindowTitleBar",
-                "CreateMultipleWindows",
-                "AppNotification",
-                "BadgeNotificationManager",
-                "JumpList",
-                "WebView2",
-                "Sound",
-                "MediaPlayerElement",
-                "MapControl",
-                "CaptureElementPreview",
-                "AnimatedVisualPlayer",
-                "Acrylic",
-                "AnimatedIcon",
-                "CompactSizing",
-                "Line",
-                "Shape",
-                "RadialGradientBrush",
-                "SystemBackdrops",
-                "SystemBackdropElement",
-                "StoragePickers",
-                "StandardUICommand",
-                "XamlUICommand"
+                "NavigationView",
+                "InfoBar",
+                "NumberBox",
+                "AutoSuggestBox",
+                "ContentDialog",
+                "TeachingTip",
+                "CommandBar",
+                "CommandBarFlyout",
+                "AppBarButton",
+                "AppBarToggleButton",
+                "AppBarSeparator",
+                "DropDownButton",
+                "SplitButton",
+                "ToggleSplitButton",
+                "RepeatButton",
+                "ToggleButton",
+                "MenuBar",
+                "MenuFlyout",
+                "ItemsRepeater",
+                "PipsPager",
+                "RatingControl",
+                "ToggleSwitch",
+                "ColorPicker",
+                "HyperlinkButton",
+                "CalendarDatePicker",
+                "CalendarView",
+                "TimePicker",
+                "ProgressRing",
+                "InfoBadge",
+                "Flyout",
+                "Popup",
+                "Pivot",
+                "TabView",
+                "BreadcrumbBar",
+                "SelectorBar",
+                "RichEditBox",
+                "RichTextBlock",
+                "SplitView",
+                "ScrollViewer",
+                "ScrollView",
+                "AnnotatedScrollBar",
+                "ParallaxView",
+                "PullToRefresh",
+                "FlipView",
+                "ItemsView",
+                "GridView",
+                "SwipeControl",
+                "PersonPicture",
+                "IconElement",
+                "ThemeShadow",
+                "TitleBar"
             };
-
-            foreach (var uniqueId in omittedWinUIPages)
-            {
-                Assert.IsNull(GalleryCatalog.FindItem(uniqueId), uniqueId);
-            }
 
             var modernWpfGroup = GalleryCatalog.FindGroup("ModernWpfControls");
             Assert.IsNotNull(modernWpfGroup);
-            CollectionAssert.Contains(modernWpfGroup.Items.Select(item => item.UniqueId).ToArray(), "ParallaxView");
-            Assert.IsNull(GalleryCatalog.FindGroup("FundamentalsItem"));
-            Assert.IsNull(GalleryCatalog.FindGroup("AccessibilityItem"));
-            Assert.IsNull(GalleryCatalog.FindGroup("Shell"));
-            Assert.IsNull(GalleryCatalog.FindGroup("PlatformAndPatterns"));
+            CollectionAssert.AreEqual(expected, modernWpfGroup.Items.Select(item => item.UniqueId).ToArray());
+            CollectionAssert.IsSubsetOf(
+                expected,
+                GalleryCatalog.Items.Select(item => item.UniqueId).ToArray());
         }
 
         [TestMethod]
-        public void OmittedWinUIPageControlImageResourcesAreNotShipped()
+        public void CatalogImageResourcesAreShipped()
         {
-            var omittedImageResources = new[]
-            {
-                "accessibility.png",
-                "acrylic.png",
-                "animatedicon.png",
-                "animatedvisualplayer.png",
-                "animationinterop.png",
-                "appnotification.png",
-                "appwindow.png",
-                "automationproperties.png",
-                "badgenotification.png",
-                "captureelement.png",
-                "codetagicon.png",
-                "connectedanimation.png",
-                "contentisland.png",
-                "customcontrols.png",
-                "easingfunction.png",
-                "implicittransition.png",
-                "inkcanvas.png",
-                "inktoolbar.png",
-                "inputvalidation.png",
-                "jumplist.png",
-                "line.png",
-                "mapcontrol.png",
-                "mediaplayerelement.png",
-                "pagetransition.png",
-                "radialgradientbrush.png",
-                "radiobuttons.png",
-                "relativepanel.png",
-                "revealfocus.png",
-                "scratchpad.png",
-                "semanticzoom.png",
-                "shape.png",
-                "sound.png",
-                "standarduicommand.png",
-                "storagepickers.png",
-                "themetransition.png",
-                "variablesizedwrapgrid.png",
-                "viewbox.png",
-                "webview.png",
-                "xamluicommand.png"
-            };
             var resourceNames = GetGalleryResourceNames();
+            var imagePaths = GalleryCatalog.Groups
+                .Select(group => group.ImagePath)
+                .Concat(GalleryCatalog.Items.Select(item => item.ImagePath))
+                .Distinct()
+                .ToArray();
 
-            foreach (var imageName in omittedImageResources)
+            foreach (var imagePath in imagePaths)
             {
-                Assert.IsFalse(
-                    resourceNames.Contains("assets/controlimages/" + imageName),
-                    imageName);
+                var resourceKey = GetGalleryResourceKey(imagePath);
+                Assert.IsTrue(
+                    resourceNames.Contains(resourceKey),
+                    "Missing embedded resource for catalog image '{0}'.",
+                    imagePath);
             }
-
-            Assert.IsTrue(resourceNames.Contains("assets/controlimages/titlebar.png"));
-            Assert.IsTrue(resourceNames.Contains("assets/controlimages/compactsizing.png"));
-            Assert.IsTrue(resourceNames.Contains("assets/controlimages/createmultiplewindows.png"));
         }
 
         [TestMethod]
@@ -516,11 +479,32 @@ namespace ModernWpf.Gallery.Tests
                 using (var reader = new ResourceReader(stream))
                 {
                     return reader
-                        .Cast<DictionaryEntry>()
-                        .Select(entry => ((string)entry.Key).ToLowerInvariant())
+                        .Cast<object>()
+                        .Select(entry => ((System.Collections.DictionaryEntry)entry).Key)
+                        .Cast<string>()
+                        .Select(key => key.ToLowerInvariant())
                         .ToArray();
                 }
             }
+        }
+
+        private static string GetGalleryResourceKey(string imagePath)
+        {
+            const string PackPrefix = "pack://application:,,,/";
+            const string GalleryPackPrefix = "pack://application:,,,/ModernWpf.Gallery;component/";
+
+            Assert.IsTrue(
+                imagePath.StartsWith(PackPrefix, StringComparison.OrdinalIgnoreCase),
+                imagePath);
+
+            var resourcePath = imagePath.StartsWith(GalleryPackPrefix, StringComparison.OrdinalIgnoreCase)
+                ? imagePath.Substring(GalleryPackPrefix.Length)
+                : imagePath.Substring(PackPrefix.Length);
+
+            return resourcePath
+                .Replace('\\', '/')
+                .TrimStart('/')
+                .ToLowerInvariant();
         }
     }
 }

@@ -56,18 +56,12 @@ namespace ModernWpf.Gallery.Pages
                     return CreateGridSplitterSample();
                 case "GroupBox":
                     return CreateGroupBoxSample();
-                case "RelativePanel":
-                    return CreateRelativePanelSample();
                 case "ResizeGrip":
                     return CreateResizeGripSample();
                 case "SplitView":
                     return CreateSplitViewSample();
                 case "StackPanel":
                     return CreateStackPanelSample();
-                case "VariableSizedWrapGrid":
-                    return CreateVariableSizedWrapGridSample();
-                case "Viewbox":
-                    return CreateViewboxSample();
                 default:
                     return null;
             }
@@ -371,37 +365,6 @@ namespace ModernWpf.Gallery.Pages
             return panel;
         }
 
-        private static UIElement CreateRelativePanelSample()
-        {
-            var panel = CreateSamplePanel("RelativePanel maps to a WPF Canvas here, using explicit positions to show the same relationships.");
-            var canvas = new Canvas
-            {
-                Width = 300,
-                Height = 112,
-                Background = CreateBrush("#F3F3F3")
-            };
-            var red = CreateRect(50, 50, Brushes.Red);
-            var blue = CreateRect(50, 50, Brushes.Blue);
-            var green = CreateRect(50, 50, Brushes.Green);
-            var yellow = CreateRect(50, 50, Brushes.Gold);
-            Canvas.SetLeft(red, 0);
-            Canvas.SetTop(red, 0);
-            Canvas.SetLeft(blue, 58);
-            Canvas.SetTop(blue, 0);
-            Canvas.SetLeft(green, 250);
-            Canvas.SetTop(green, 0);
-            Canvas.SetLeft(yellow, 250);
-            Canvas.SetTop(yellow, 58);
-            canvas.Children.Add(red);
-            canvas.Children.Add(blue);
-            canvas.Children.Add(green);
-            canvas.Children.Add(yellow);
-
-            panel.Children.Add(canvas);
-            panel.Children.Add(CreateOutput("Blue is right of red; green is aligned right; yellow is below and centered on green."));
-            return panel;
-        }
-
         private static UIElement CreateSplitViewSample()
         {
             return CreateBasicSplitViewExampleContent(assignRootAutomationId: true);
@@ -598,92 +561,6 @@ namespace ModernWpf.Gallery.Pages
             return panel;
         }
 
-        private static UIElement CreateVariableSizedWrapGridSample()
-        {
-            var panel = CreateSamplePanel("VariableSizedWrapGrid maps to a WPF Grid with fixed cells and row/column spans.");
-            var gridHost = new ContentControl();
-            var orientation = new ComboBox
-            {
-                Width = 180,
-                Margin = new Thickness(0, 12, 0, 0),
-                ItemsSource = new[] { Orientation.Vertical, Orientation.Horizontal },
-                SelectedItem = Orientation.Vertical
-            };
-            ControlHelper.SetHeader(orientation, "Orientation");
-
-            Action rebuild = delegate
-            {
-                gridHost.Content = CreateVariableGrid((Orientation)orientation.SelectedItem);
-            };
-            orientation.SelectionChanged += delegate { rebuild(); };
-            rebuild();
-
-            panel.Children.Add(gridHost);
-            panel.Children.Add(orientation);
-            return panel;
-        }
-
-        private static UIElement CreateViewboxSample()
-        {
-            var panel = CreateSamplePanel("Viewbox scales one child to fit the available size.");
-            var viewbox = new Viewbox
-            {
-                Width = 200,
-                Height = 200,
-                Stretch = Stretch.Uniform,
-                StretchDirection = StretchDirection.Both,
-                Child = CreateViewboxContent()
-            };
-
-            var size = CreateSlider("Width/Height", 60, 300, 200);
-            size.ValueChanged += delegate
-            {
-                viewbox.Width = size.Value;
-                viewbox.Height = size.Value;
-            };
-
-            var stretch = new ComboBox
-            {
-                Width = 160,
-                Margin = new Thickness(0, 12, 8, 0),
-                ItemsSource = new[] { Stretch.None, Stretch.Fill, Stretch.Uniform, Stretch.UniformToFill },
-                SelectedItem = viewbox.Stretch
-            };
-            ControlHelper.SetHeader(stretch, "Stretch");
-            stretch.SelectionChanged += delegate
-            {
-                if (stretch.SelectedItem is Stretch)
-                {
-                    viewbox.Stretch = (Stretch)stretch.SelectedItem;
-                }
-            };
-
-            var direction = new ComboBox
-            {
-                Width = 160,
-                Margin = new Thickness(0, 12, 0, 0),
-                ItemsSource = new[] { StretchDirection.UpOnly, StretchDirection.DownOnly, StretchDirection.Both },
-                SelectedItem = viewbox.StretchDirection
-            };
-            ControlHelper.SetHeader(direction, "StretchDirection");
-            direction.SelectionChanged += delegate
-            {
-                if (direction.SelectedItem is StretchDirection)
-                {
-                    viewbox.StretchDirection = (StretchDirection)direction.SelectedItem;
-                }
-            };
-
-            var controls = new StackPanel { Orientation = Orientation.Horizontal };
-            controls.Children.Add(stretch);
-            controls.Children.Add(direction);
-
-            panel.Children.Add(viewbox);
-            panel.Children.Add(size);
-            panel.Children.Add(controls);
-            return panel;
-        }
-
         private static StackPanel CreateSplitViewOption(string header, FrameworkElement control)
         {
             return new StackPanel
@@ -848,91 +725,6 @@ namespace ModernWpf.Gallery.Pages
         private static Brush GetThemeBrush(string resourceKey, string fallbackColor)
         {
             return Application.Current?.TryFindResource(resourceKey) as Brush ?? CreateBrush(fallbackColor);
-        }
-
-        private static Grid CreateVariableGrid(Orientation orientation)
-        {
-            var grid = new Grid
-            {
-                Width = 400,
-                Height = 170,
-                Background = CreateBrush("#F3F3F3")
-            };
-            for (var i = 0; i < 4; i++)
-            {
-                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(48) });
-                grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(48) });
-            }
-
-            if (orientation == Orientation.Vertical)
-            {
-                AddVariableTile(grid, Brushes.Red, 0, 0, 1, 1);
-                AddVariableTile(grid, Brushes.Blue, 1, 0, 1, 2);
-                AddVariableTile(grid, Brushes.Green, 2, 0, 2, 1);
-                AddVariableTile(grid, Brushes.Gold, 0, 2, 2, 2);
-            }
-            else
-            {
-                AddVariableTile(grid, Brushes.Red, 0, 0, 1, 1);
-                AddVariableTile(grid, Brushes.Blue, 0, 1, 2, 1);
-                AddVariableTile(grid, Brushes.Green, 0, 2, 1, 2);
-                AddVariableTile(grid, Brushes.Gold, 2, 1, 2, 2);
-            }
-
-            return grid;
-        }
-
-        private static void AddVariableTile(Grid grid, Brush fill, int column, int row, int columnSpan, int rowSpan)
-        {
-            var tile = new Rectangle
-            {
-                Fill = fill,
-                Margin = new Thickness(4)
-            };
-            Grid.SetColumn(tile, column);
-            Grid.SetRow(tile, row);
-            Grid.SetColumnSpan(tile, columnSpan);
-            Grid.SetRowSpan(tile, rowSpan);
-            grid.Children.Add(tile);
-        }
-
-        private static UIElement CreateViewboxContent()
-        {
-            var stack = new StackPanel
-            {
-                Background = Brushes.DarkGray
-            };
-            var strip = new StackPanel { Orientation = Orientation.Horizontal };
-            strip.Children.Add(CreateRect(40, 10, Brushes.Blue));
-            strip.Children.Add(CreateRect(40, 10, Brushes.Green));
-            strip.Children.Add(CreateRect(40, 10, Brushes.Red));
-            strip.Children.Add(CreateRect(40, 10, Brushes.Gold));
-            stack.Children.Add(strip);
-            stack.Children.Add(new Border
-            {
-                Width = 160,
-                Height = 80,
-                Background = CreateBrush("#BDBDBD"),
-                Child = new TextBlock
-                {
-                    Text = "Sample media",
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center
-                }
-            });
-            stack.Children.Add(new TextBlock
-            {
-                Text = "This is text.",
-                HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(0, 4, 0, 4)
-            });
-
-            return new Border
-            {
-                BorderBrush = Brushes.Gray,
-                BorderThickness = new Thickness(15),
-                Child = stack
-            };
         }
 
         private static ComboBox CreateBrushCombo(string header, string selected, Action<Brush> changed)

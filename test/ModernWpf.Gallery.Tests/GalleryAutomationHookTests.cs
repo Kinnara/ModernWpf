@@ -4323,7 +4323,7 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsFalse(page.HasAdditionalSampleSnippets);
                     StringAssert.Contains(page.Examples[0].XamlCode, "simple text editor");
                     StringAssert.Contains(page.Examples[1].XamlCode, "REBCustom");
-                    StringAssert.Contains(page.Examples[1].CSharpCode, "StandardUICommandKind.Share");
+                    StringAssert.Contains(page.Examples[1].CSharpCode, "new MenuItem { Header = \"Share\" }");
                     StringAssert.Contains(page.Examples[2].XamlCode, "fontColorButton");
                     StringAssert.Contains(page.Examples[2].CSharpCode, "OpenButton_Click");
                     StringAssert.Contains(page.Examples[3].CSharpCode, "SetMathMode");

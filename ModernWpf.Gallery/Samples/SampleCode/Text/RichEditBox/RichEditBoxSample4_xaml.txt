@@ -1,5 +1,7 @@
-﻿<RichEditBox x:Name="REBCustom" 
+<RichTextBox
+    x:Name="REBCustom"
+    Width="800"
+    Height="200"
     AutomationProperties.Name="editor with custom menu"
-    Width="800" Height="200" 
-    Loaded="REBCustom_Loaded" 
-    Unloaded="REBCustom_Unloaded"/>
+    Loaded="REBCustom_Loaded"
+    Unloaded="REBCustom_Unloaded" />

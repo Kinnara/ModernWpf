@@ -630,12 +630,10 @@ private void ScrollViewerControl_ViewChanged(object sender, ScrollViewerViewChan
         {
             var defaultAnimationCSharp = FindSampleCodeText(sampleSnippets, "ScrollViewSample3_DefaultAnimation_cs.txt") ?? ScrollViewExample3CSharp;
             var accordionAnimationCSharp = FindSampleCodeText(sampleSnippets, "ScrollViewSample3_AccordionAnimation_cs.txt");
-            var teleportationAnimationCSharp = FindSampleCodeText(sampleSnippets, "ScrollViewSample3_TeleportationAnimation_cs.txt");
             var consumedAnimationSnippets = new[]
                 {
                     defaultAnimationCSharp,
-                    accordionAnimationCSharp,
-                    teleportationAnimationCSharp
+                    accordionAnimationCSharp
                 }
                 .Where(text => !string.IsNullOrEmpty(text))
                 .ToArray();

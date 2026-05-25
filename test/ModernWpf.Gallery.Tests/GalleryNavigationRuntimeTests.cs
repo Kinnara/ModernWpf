@@ -448,7 +448,6 @@ namespace ModernWpf.Gallery.Tests
                 Assert.IsFalse(actual.Contains("Media"));
                 Assert.IsFalse(actual.Contains("Samples"));
                 Assert.IsFalse(actual.Contains("ModernWpfControls"));
-                Assert.IsFalse(actual.Contains("PlatformAndPatterns"));
                 CollectionAssert.AreEqual(
                     GalleryCatalog.NewOrUpdatedItems.Select(item => item.UniqueId).ToArray(),
                     ((IEnumerable<GalleryItem>)page.RecentlyAddedOrUpdatedSamplesInfo).Select(item => item.UniqueId).ToArray());

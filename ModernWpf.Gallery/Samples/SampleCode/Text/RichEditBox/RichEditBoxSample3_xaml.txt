@@ -1,114 +1,73 @@
-﻿<RelativePanel Margin="0,0,0,20" HorizontalAlignment="Stretch">
-    <RelativePanel.Resources>
-        <Style TargetType="Button">
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Margin" Value="0,0,8,0" />
-        </Style>
-    </RelativePanel.Resources>
-    <Button x:Name="openFileButton" Click="OpenButton_Click" AutomationProperties.Name="Open file" ToolTipService.ToolTip="Open file">
-        <Button.Content>
-            <FontIcon Glyph="&#xE8E5;"/>
-        </Button.Content>
+<Grid Margin="0,0,0,20" HorizontalAlignment="Stretch">
+    <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+    <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="Auto" />
+    </Grid.ColumnDefinitions>
+
+    <Button x:Name="openFileButton" Click="OpenButton_Click" AutomationProperties.Name="Open file">
+        <TextBlock Text="&#xE8E5;" FontFamily="{StaticResource SymbolThemeFontFamily}" />
     </Button>
-    <Button Click="SaveButton_Click" AutomationProperties.Name="Save file" ToolTipService.ToolTip="Save file" 
-            RelativePanel.RightOf="openFileButton">
-        <Button.Content>
-            <FontIcon Glyph="&#xE74E;"/>
-        </Button.Content>
+    <Button Grid.Column="1" Click="SaveButton_Click" AutomationProperties.Name="Save file">
+        <TextBlock Text="&#xE74E;" FontFamily="{StaticResource SymbolThemeFontFamily}" />
     </Button>
-    <Button AutomationProperties.Name="Bold" ToolTipService.ToolTip="Bold" Click="BoldButton_Click" 
-            RelativePanel.LeftOf="italicButton" >
-        <Button.Content>
-            <FontIcon Glyph="&#xE8DD;"/>
-        </Button.Content>
+    <Button Grid.Column="3" Click="BoldButton_Click" AutomationProperties.Name="Bold">
+        <TextBlock Text="&#xE8DD;" FontFamily="{StaticResource SymbolThemeFontFamily}" />
     </Button>
-    <Button x:Name="italicButton" Click="ItalicButton_Click" AutomationProperties.Name="Italic" ToolTipService.ToolTip="Italic" 
-            RelativePanel.LeftOf="fontColorButton">
-        <Button.Content>
-            <FontIcon Glyph="&#xE8DB;"/>
-        </Button.Content>
+    <Button x:Name="italicButton" Grid.Column="4" Click="ItalicButton_Click" AutomationProperties.Name="Italic">
+        <TextBlock Text="&#xE8DB;" FontFamily="{StaticResource SymbolThemeFontFamily}" />
     </Button>
 
-    <DropDownButton x:Name="fontColorButton" AutomationProperties.Name="Font color"
-                                BorderThickness="0" ToolTipService.ToolTip="Font color"
-                                Background="Transparent" 
-                                RelativePanel.AlignRightWithPanel="True">
-        <SymbolIcon Symbol="FontColor"/>
+    <DropDownButton x:Name="fontColorButton" Grid.Column="5" AutomationProperties.Name="Font color">
+        <TextBlock Text="&#xE8D3;" FontFamily="{StaticResource SymbolThemeFontFamily}" />
         <DropDownButton.Flyout>
             <Flyout Placement="Bottom">
-                <VariableSizedWrapGrid Orientation="Horizontal" MaximumRowsOrColumns="3">
-                    <VariableSizedWrapGrid.Resources>
-                        <Style TargetType="Rectangle">
-                            <Setter Property="Width" Value="32"/>
-                            <Setter Property="Height" Value="32"/>
-                        </Style>
-                        <Style TargetType="Button">
-                            <Setter Property="Padding" Value="0"/>
-                            <Setter Property="MinWidth" Value="0"/>
-                            <Setter Property="MinHeight" Value="0"/>
-                            <Setter Property="Margin" Value="6"/>
-                        </Style>
-                    </VariableSizedWrapGrid.Resources>
+                <WrapPanel>
                     <Button Click="ColorButton_Click" AutomationProperties.Name="Red">
-                        <Button.Content>
-                            <Rectangle Fill="Red"/>
-                        </Button.Content>
+                        <Rectangle Width="32" Height="32" Fill="Red" />
                     </Button>
                     <Button Click="ColorButton_Click" AutomationProperties.Name="Orange">
-                        <Button.Content>
-                            <Rectangle Fill="Orange"/>
-                        </Button.Content>
+                        <Rectangle Width="32" Height="32" Fill="Orange" />
                     </Button>
                     <Button Click="ColorButton_Click" AutomationProperties.Name="Yellow">
-                        <Button.Content>
-                            <Rectangle Fill="Yellow"/>
-                        </Button.Content>
+                        <Rectangle Width="32" Height="32" Fill="Yellow" />
                     </Button>
                     <Button Click="ColorButton_Click" AutomationProperties.Name="Green">
-                        <Button.Content>
-                            <Rectangle Fill="Green"/>
-                        </Button.Content>
+                        <Rectangle Width="32" Height="32" Fill="Green" />
                     </Button>
                     <Button Click="ColorButton_Click" AutomationProperties.Name="Blue">
-                        <Button.Content>
-                            <Rectangle Fill="Blue"/>
-                        </Button.Content>
+                        <Rectangle Width="32" Height="32" Fill="Blue" />
                     </Button>
-                    <Button Click="ColorButton_Click" AutomationProperties.Name="Indigo">
-                        <Button.Content>
-                            <Rectangle Fill="Indigo"/>
-                        </Button.Content>
-                    </Button>
-                    <Button Click="ColorButton_Click" AutomationProperties.Name="Violet">
-                        <Button.Content>
-                            <Rectangle Fill="Violet"/>
-                        </Button.Content>
-                    </Button>
-                    <Button Click="ColorButton_Click" AutomationProperties.Name="Gray">
-                        <Button.Content>
-                            <Rectangle Fill="Gray"/>
-                        </Button.Content>
-                    </Button>
-                </VariableSizedWrapGrid>
+                </WrapPanel>
             </Flyout>
         </DropDownButton.Flyout>
     </DropDownButton>
 
-    <RichEditBox x:Name="editor" Height="200" AutomationProperties.Name="Custom editor"
-                    RelativePanel.Below="openFileButton" 
-                    RelativePanel.AlignLeftWithPanel="True" 
-                    RelativePanel.AlignRightWithPanel="True" 
-                    TextChanged="Editor_TextChanged"
-                    GotFocus="Editor_GotFocus"/>
-    <StackPanel Orientation="Horizontal" 
-                RelativePanel.Below="editor" 
-                RelativePanel.AlignLeftWith="editor" 
-                Margin="0,10,0,0">
-        <TextBlock x:Name="findBoxLabel" Text="Find:" Height="20"/>
-        <TextBox x:Name="findBox" Width="150" PlaceholderText="Enter search text" Margin="10,0,0,0"
-                TextChanged="{x:Bind FindBoxHighlightMatches}" 
-                GotFocus="{x:Bind FindBoxHighlightMatches}" 
-                LostFocus="{x:Bind FindBoxRemoveHighlights}"/>
+    <RichTextBox
+        x:Name="editor"
+        Grid.Row="1"
+        Grid.ColumnSpan="6"
+        Height="200"
+        AutomationProperties.Name="Custom editor"
+        GotFocus="Editor_GotFocus"
+        TextChanged="Editor_TextChanged" />
+
+    <StackPanel Grid.Row="2" Grid.ColumnSpan="6" Margin="0,10,0,0" Orientation="Horizontal">
+        <TextBlock x:Name="findBoxLabel" VerticalAlignment="Center" Text="Find:" />
+        <TextBox
+            x:Name="findBox"
+            Width="150"
+            Margin="10,0,0,0"
+            GotFocus="FindBoxHighlightMatches"
+            LostFocus="FindBoxRemoveHighlights"
+            TextChanged="FindBoxHighlightMatches" />
     </StackPanel>
-</RelativePanel>
+</Grid>

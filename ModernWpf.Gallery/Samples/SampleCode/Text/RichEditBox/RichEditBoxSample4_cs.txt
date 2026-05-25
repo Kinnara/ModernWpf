@@ -1,26 +1,17 @@
-﻿private void Menu_Opening(object sender, object e)
-{
-    if (sender is not CommandBarFlyout myFlyout)
-    {
-        return;
-    }
-
-    if (myFlyout.Target == REBCustom)
-    {
-        AppBarButton myButton = new AppBarButton();
-        myButton.Command = new StandardUICommand(StandardUICommandKind.Share);
-        myFlyout.PrimaryCommands.Add(myButton);
-    }
-}
-
 private void REBCustom_Loaded(object sender, RoutedEventArgs e)
 {
-    REBCustom.SelectionFlyout.Opening += Menu_Opening;
-    REBCustom.ContextFlyout.Opening += Menu_Opening;
+    var menu = new ContextMenu();
+
+    menu.Items.Add(new MenuItem { Header = "Cut", Command = ApplicationCommands.Cut });
+    menu.Items.Add(new MenuItem { Header = "Copy", Command = ApplicationCommands.Copy });
+    menu.Items.Add(new MenuItem { Header = "Paste", Command = ApplicationCommands.Paste });
+    menu.Items.Add(new Separator());
+    menu.Items.Add(new MenuItem { Header = "Share" });
+
+    REBCustom.ContextMenu = menu;
 }
 
 private void REBCustom_Unloaded(object sender, RoutedEventArgs e)
 {
-    REBCustom.SelectionFlyout.Opening -= Menu_Opening;
-    REBCustom.ContextFlyout.Opening -= Menu_Opening;
+    REBCustom.ContextMenu = null;
 }
