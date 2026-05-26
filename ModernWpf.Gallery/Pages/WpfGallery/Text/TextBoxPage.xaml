@@ -18,27 +18,17 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <controls:PageHeader
-            Margin="0,0,0,32"
-            Description="{Binding ViewModel.PageDescription}"
-            Title="{Binding ViewModel.PageTitle}" />
+        <controls:PageHeader Margin="0,0,0,32" Title="{Binding ViewModel.PageTitle}" Description="{Binding ViewModel.PageDescription}" />
 
-        <ScrollViewer
-            Grid.Row="1"
-            Margin="0,0,0,24"
-            Padding="0,0,24,0">
+        <ScrollViewer Grid.Row="1" Margin="0,0,0,24" Padding="0,0,24,0">
             <StackPanel Margin="0,0,0,24">
-                <controls:ControlExample
-                    Margin="10"
-                    HeaderText="A simple TextBox."
-                    XamlCode="&lt;TextBox /&gt;">
+                <controls:ControlExample Margin="10" HeaderText="A simple TextBox." XamlCode="&lt;TextBox /&gt;">
                     <TextBox AutomationProperties.Name="simple TextBox" />
                 </controls:ControlExample>
 
-                <controls:ControlExample
-                    Margin="10,36,10,10"
-                    HeaderText="A TextBox with input validation."
-                    XamlCode="&lt;TextBox&gt;&#xA;    &lt;TextBox.Text&gt;&#xA;        &lt;Binding Path=&quot;ViewModel.ValidatedText&quot; UpdateSourceTrigger=&quot;PropertyChanged&quot;&gt;&#xA;            &lt;Binding.ValidationRules&gt;&#xA;                &lt;helpers:AlphabeticValidationRule /&gt;&#xA;            &lt;/Binding.ValidationRules&gt;&#xA;        &lt;/Binding&gt;&#xA;    &lt;/TextBox.Text&gt;&#xA;&lt;/TextBox&gt;">
+                <controls:ControlExample Margin="10,36,10,10"
+                                         HeaderText="A TextBox with input validation."
+                                         XamlCode="&lt;TextBox&gt;&#xA;    &lt;TextBox.Text&gt;&#xA;        &lt;Binding Path=&quot;ViewModel.ValidatedText&quot; UpdateSourceTrigger=&quot;PropertyChanged&quot;&gt;&#xA;            &lt;Binding.ValidationRules&gt;&#xA;                &lt;helpers:AlphabeticValidationRule /&gt;&#xA;            &lt;/Binding.ValidationRules&gt;&#xA;        &lt;/Binding&gt;&#xA;    &lt;/TextBox.Text&gt;&#xA;&lt;/TextBox&gt;">
                     <TextBox x:Name="ValidatedTextBox" AutomationProperties.Name="validated TextBox">
                         <TextBox.Text>
                             <Binding Path="ViewModel.ValidatedText" UpdateSourceTrigger="PropertyChanged">

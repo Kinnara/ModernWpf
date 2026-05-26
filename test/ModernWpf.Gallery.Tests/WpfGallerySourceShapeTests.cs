@@ -255,5 +255,61 @@ namespace ModernWpf.Gallery.Tests
                 codeBehind.Replace("\r\n", "\n"),
                 "DataContext = this;\n\n            InitializeComponent();");
         }
+
+        [TestMethod]
+        public void TextPagesKeepOfficialHeaderAndInputSampleSourceShape()
+        {
+            foreach (var page in new[]
+            {
+                Tuple.Create("LabelPage.xaml", "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" Description=\"{Binding ViewModel.PageDescription}\" />"),
+                Tuple.Create("TextBoxPage.xaml", "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" Description=\"{Binding ViewModel.PageDescription}\" />"),
+                Tuple.Create("PasswordBoxPage.xaml", "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" Description=\"{Binding ViewModel.PageDescription}\" />"),
+                Tuple.Create("RichTextEditPage.xaml", "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" Description=\"{Binding ViewModel.PageDescription}\" />"),
+                Tuple.Create("TextBlockPage.xaml", "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" Description=\"{Binding ViewModel.PageDescription}\" />"),
+                Tuple.Create("HyperlinkPage.xaml", "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" ShowDescription=\"False\" />")
+            })
+            {
+                var xaml = ReadRepoFile(
+                    "ModernWpf.Gallery",
+                    "Pages",
+                    "WpfGallery",
+                    "Text",
+                    page.Item1);
+                StringAssert.Contains(
+                    xaml,
+                    page.Item2);
+                StringAssert.Contains(
+                    xaml,
+                    "<ScrollViewer Grid.Row=\"1\" Margin=\"0,0,0,24\" Padding=\"0,0,24,0\">");
+            }
+
+            var labelXaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Text",
+                "LabelPage.xaml");
+            StringAssert.Contains(
+                labelXaml,
+                "<Label Content=\"I am a Label.\" Foreground=\"{DynamicResource TextFillColorPrimaryBrush}\" Opacity=\"0.7\" />");
+            StringAssert.Contains(
+                labelXaml,
+                "<!--  Target=\"{Binding ElementName=TextBoxForLabel}\"  -->");
+
+            var textBoxXaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Text",
+                "TextBoxPage.xaml");
+            StringAssert.Contains(
+                textBoxXaml,
+                "<controls:ControlExample Margin=\"10\" HeaderText=\"A simple TextBox.\" XamlCode=\"&lt;TextBox /&gt;\">");
+            AssertContainsInOrder(
+                textBoxXaml,
+                "<controls:ControlExample Margin=\"10,36,10,10\"",
+                "HeaderText=\"A TextBox with input validation.\"",
+                "XamlCode=\"&lt;TextBox&gt;");
+        }
     }
 }

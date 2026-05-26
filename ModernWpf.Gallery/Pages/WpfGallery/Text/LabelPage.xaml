@@ -17,24 +17,15 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <controls:PageHeader
-            Margin="0,0,0,32"
-            Description="{Binding ViewModel.PageDescription}"
-            Title="{Binding ViewModel.PageTitle}" />
+        <controls:PageHeader Margin="0,0,0,32" Title="{Binding ViewModel.PageTitle}" Description="{Binding ViewModel.PageDescription}" />
 
-        <ScrollViewer
-            Grid.Row="1"
-            Margin="0,0,0,24"
-            Padding="0,0,24,0">
+        <ScrollViewer Grid.Row="1" Margin="0,0,0,24" Padding="0,0,24,0">
             <StackPanel Margin="0,0,0,24">
                 <controls:ControlExample
                     Margin="10"
                     HeaderText="A simple Label."
                     XamlCode="&lt;Label Content=&quot;I am a Label.&quot; /&gt;">
-                    <Label
-                        Content="I am a Label."
-                        Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-                        Opacity="0.7" />
+                    <Label Content="I am a Label." Foreground="{DynamicResource TextFillColorPrimaryBrush}" Opacity="0.7" />
                 </controls:ControlExample>
 
                 <controls:ControlExample
@@ -46,11 +37,8 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <Label
-                            Grid.Row="0"
-                            Content="I am a Label of the TextBox below."
-                            Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-                            Opacity="0.7" />
+                        <Label Grid.Row="0" Content="I am a Label of the TextBox below." Foreground="{DynamicResource TextFillColorPrimaryBrush}" Opacity="0.7" />
+                        <!--  Target="{Binding ElementName=TextBoxForLabel}"  -->
                         <TextBox Grid.Row="1" AutomationProperties.Name="Simple Text Box" />
                     </Grid>
                 </controls:ControlExample>
