@@ -23,7 +23,27 @@
                 <controls:ControlExample
                     Margin="10"
                     HeaderText="A simple 3x3 Grid"
-                    XamlCode="&lt;Grid ShowGridLines=&quot;True&quot;&gt;&#10;    &lt;Grid.RowDefinitions&gt;&#10;        &lt;RowDefinition Height=&quot;*&quot; /&gt;&#10;        &lt;RowDefinition Height=&quot;*&quot; /&gt;&#10;        &lt;RowDefinition Height=&quot;*&quot; /&gt;&#10;    &lt;/Grid.RowDefinitions&gt;&#10;    &lt;Grid.ColumnDefinitions&gt;&#10;        &lt;ColumnDefinition Width=&quot;*&quot; /&gt;&#10;        &lt;ColumnDefinition Width=&quot;*&quot; /&gt;&#10;        &lt;ColumnDefinition Width=&quot;*&quot; /&gt;&#10;    &lt;/Grid.ColumnDefinitions&gt;&#10;    &lt;TextBlock Grid.Row=&quot;0&quot; Grid.Column=&quot;0&quot; Text=&quot;Cell 1&quot; /&gt;&#10;    &lt;TextBlock Grid.Row=&quot;0&quot; Grid.Column=&quot;1&quot; Text=&quot;Cell 2&quot; /&gt;&#10;    &lt;TextBlock Grid.Row=&quot;0&quot; Grid.Column=&quot;2&quot; Text=&quot;Cell 3&quot; /&gt;&#10;    &lt;TextBlock Grid.Row=&quot;1&quot; Grid.Column=&quot;0&quot; Text=&quot;Cell 4&quot; /&gt;&#10;    &lt;TextBlock Grid.Row=&quot;1&quot; Grid.Column=&quot;1&quot; Text=&quot;Cell 5&quot; /&gt;&#10;    &lt;TextBlock Grid.Row=&quot;1&quot; Grid.Column=&quot;2&quot; Text=&quot;Cell 6&quot; /&gt;&#10;    &lt;TextBlock Grid.Row=&quot;2&quot; Grid.Column=&quot;0&quot; Text=&quot;Cell 7&quot; /&gt;&#10;    &lt;TextBlock Grid.Row=&quot;2&quot; Grid.Column=&quot;1&quot; Text=&quot;Cell 8&quot; /&gt;&#10;    &lt;TextBlock Grid.Row=&quot;2&quot; Grid.Column=&quot;2&quot; Text=&quot;Cell 9&quot; /&gt;&#10;&lt;/Grid&gt;">
+                    XamlCode="&lt;Grid ShowGridLines=&quot;True&quot;&gt;&#10;
+    &lt;Grid.RowDefinitions&gt;&#10;
+        &lt;RowDefinition Height=&quot;*&quot; /&gt;&#10;
+        &lt;RowDefinition Height=&quot;*&quot; /&gt;&#10;
+        &lt;RowDefinition Height=&quot;*&quot; /&gt;&#10;
+    &lt;/Grid.RowDefinitions&gt;&#10;
+    &lt;Grid.ColumnDefinitions&gt;&#10;
+        &lt;ColumnDefinition Width=&quot;*&quot; /&gt;&#10;
+        &lt;ColumnDefinition Width=&quot;*&quot; /&gt;&#10;
+        &lt;ColumnDefinition Width=&quot;*&quot; /&gt;&#10;
+    &lt;/Grid.ColumnDefinitions&gt;&#10;
+    &lt;TextBlock Grid.Row=&quot;0&quot; Grid.Column=&quot;0&quot; Text=&quot;Cell 1&quot; /&gt;&#10;
+    &lt;TextBlock Grid.Row=&quot;0&quot; Grid.Column=&quot;1&quot; Text=&quot;Cell 2&quot; /&gt;&#10;
+    &lt;TextBlock Grid.Row=&quot;0&quot; Grid.Column=&quot;2&quot; Text=&quot;Cell 3&quot; /&gt;&#10;
+    &lt;TextBlock Grid.Row=&quot;1&quot; Grid.Column=&quot;0&quot; Text=&quot;Cell 4&quot; /&gt;&#10;
+    &lt;TextBlock Grid.Row=&quot;1&quot; Grid.Column=&quot;1&quot; Text=&quot;Cell 5&quot; /&gt;&#10;
+    &lt;TextBlock Grid.Row=&quot;1&quot; Grid.Column=&quot;2&quot; Text=&quot;Cell 6&quot; /&gt;&#10;
+    &lt;TextBlock Grid.Row=&quot;2&quot; Grid.Column=&quot;0&quot; Text=&quot;Cell 7&quot; /&gt;&#10;
+    &lt;TextBlock Grid.Row=&quot;2&quot; Grid.Column=&quot;1&quot; Text=&quot;Cell 8&quot; /&gt;&#10;
+    &lt;TextBlock Grid.Row=&quot;2&quot; Grid.Column=&quot;2&quot; Text=&quot;Cell 9&quot; /&gt;&#10;
+&lt;/Grid&gt;">
                     <Grid Height="250" ShowGridLines="True">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*" />
@@ -50,7 +70,36 @@
                 <controls:ControlExample
                     Margin="10"
                     HeaderText="A Grid with custom sizing and spanning"
-                    XamlCode="&lt;Grid&gt;&#10;    &lt;Grid.RowDefinitions&gt;&#10;        &lt;RowDefinition Height=&quot;Auto&quot; /&gt;&#10;        &lt;RowDefinition Height=&quot;*&quot; /&gt;&#10;        &lt;RowDefinition Height=&quot;Auto&quot; /&gt;&#10;    &lt;/Grid.RowDefinitions&gt;&#10;    &lt;Grid.ColumnDefinitions&gt;&#10;        &lt;ColumnDefinition Width=&quot;*&quot; /&gt;&#10;        &lt;ColumnDefinition Width=&quot;2*&quot; /&gt;&#10;        &lt;ColumnDefinition Width=&quot;*&quot; /&gt;&#10;    &lt;/Grid.ColumnDefinitions&gt;&#10;    &lt;Border Grid.Row=&quot;0&quot; Grid.Column=&quot;0&quot; Background=&quot;{DynamicResource ControlFillColorDefaultBrush}&quot; Margin=&quot;5&quot; Padding=&quot;10&quot;&gt;&#10;        &lt;TextBlock Text=&quot;Row 0, Column 0&quot; /&gt;&#10;    &lt;/Border&gt;&#10;    &lt;Border Grid.Row=&quot;0&quot; Grid.Column=&quot;1&quot; Background=&quot;{DynamicResource ControlFillColorDefaultBrush}&quot; Margin=&quot;5&quot; Padding=&quot;10&quot;&gt;&#10;        &lt;TextBlock Text=&quot;Row 0, Column 1 (2x width)&quot; /&gt;&#10;    &lt;/Border&gt;&#10;    &lt;Border Grid.Row=&quot;0&quot; Grid.Column=&quot;2&quot; Background=&quot;{DynamicResource ControlFillColorDefaultBrush}&quot; Margin=&quot;5&quot; Padding=&quot;10&quot;&gt;&#10;        &lt;TextBlock Text=&quot;Row 0, Column 2&quot; /&gt;&#10;    &lt;/Border&gt;&#10;    &lt;Border Grid.Row=&quot;1&quot; Grid.Column=&quot;0&quot; Grid.ColumnSpan=&quot;3&quot; Background=&quot;{DynamicResource ControlFillColorSecondaryBrush}&quot; Margin=&quot;5&quot; Padding=&quot;10&quot;&gt;&#10;        &lt;TextBlock Text=&quot;Row 1, Spans all columns&quot; /&gt;&#10;    &lt;/Border&gt;&#10;    &lt;Border Grid.Row=&quot;2&quot; Grid.Column=&quot;0&quot; Grid.ColumnSpan=&quot;2&quot; Background=&quot;{DynamicResource ControlFillColorDefaultBrush}&quot; Margin=&quot;5&quot; Padding=&quot;10&quot;&gt;&#10;        &lt;TextBlock Text=&quot;Row 2, Spans 2 columns&quot; /&gt;&#10;    &lt;/Border&gt;&#10;    &lt;Border Grid.Row=&quot;2&quot; Grid.Column=&quot;2&quot; Background=&quot;{DynamicResource ControlFillColorDefaultBrush}&quot; Margin=&quot;5&quot; Padding=&quot;10&quot;&gt;&#10;        &lt;TextBlock Text=&quot;Row 2, Column 2&quot; /&gt;&#10;    &lt;/Border&gt;&#10;&lt;/Grid&gt;">
+                    XamlCode="&lt;Grid&gt;&#10;
+    &lt;Grid.RowDefinitions&gt;&#10;
+        &lt;RowDefinition Height=&quot;Auto&quot; /&gt;&#10;
+        &lt;RowDefinition Height=&quot;*&quot; /&gt;&#10;
+        &lt;RowDefinition Height=&quot;Auto&quot; /&gt;&#10;
+    &lt;/Grid.RowDefinitions&gt;&#10;
+    &lt;Grid.ColumnDefinitions&gt;&#10;
+        &lt;ColumnDefinition Width=&quot;*&quot; /&gt;&#10;
+        &lt;ColumnDefinition Width=&quot;2*&quot; /&gt;&#10;
+        &lt;ColumnDefinition Width=&quot;*&quot; /&gt;&#10;
+    &lt;/Grid.ColumnDefinitions&gt;&#10;
+    &lt;Border Grid.Row=&quot;0&quot; Grid.Column=&quot;0&quot; Background=&quot;{DynamicResource ControlFillColorDefaultBrush}&quot; Margin=&quot;5&quot; Padding=&quot;10&quot;&gt;&#10;
+        &lt;TextBlock Text=&quot;Row 0, Column 0&quot; /&gt;&#10;
+    &lt;/Border&gt;&#10;
+    &lt;Border Grid.Row=&quot;0&quot; Grid.Column=&quot;1&quot; Background=&quot;{DynamicResource ControlFillColorDefaultBrush}&quot; Margin=&quot;5&quot; Padding=&quot;10&quot;&gt;&#10;
+        &lt;TextBlock Text=&quot;Row 0, Column 1 (2x width)&quot; /&gt;&#10;
+    &lt;/Border&gt;&#10;
+    &lt;Border Grid.Row=&quot;0&quot; Grid.Column=&quot;2&quot; Background=&quot;{DynamicResource ControlFillColorDefaultBrush}&quot; Margin=&quot;5&quot; Padding=&quot;10&quot;&gt;&#10;
+        &lt;TextBlock Text=&quot;Row 0, Column 2&quot; /&gt;&#10;
+    &lt;/Border&gt;&#10;
+    &lt;Border Grid.Row=&quot;1&quot; Grid.Column=&quot;0&quot; Grid.ColumnSpan=&quot;3&quot; Background=&quot;{DynamicResource ControlFillColorSecondaryBrush}&quot; Margin=&quot;5&quot; Padding=&quot;10&quot;&gt;&#10;
+        &lt;TextBlock Text=&quot;Row 1, Spans all columns&quot; /&gt;&#10;
+    &lt;/Border&gt;&#10;
+    &lt;Border Grid.Row=&quot;2&quot; Grid.Column=&quot;0&quot; Grid.ColumnSpan=&quot;2&quot; Background=&quot;{DynamicResource ControlFillColorDefaultBrush}&quot; Margin=&quot;5&quot; Padding=&quot;10&quot;&gt;&#10;
+        &lt;TextBlock Text=&quot;Row 2, Spans 2 columns&quot; /&gt;&#10;
+    &lt;/Border&gt;&#10;
+    &lt;Border Grid.Row=&quot;2&quot; Grid.Column=&quot;2&quot; Background=&quot;{DynamicResource ControlFillColorDefaultBrush}&quot; Margin=&quot;5&quot; Padding=&quot;10&quot;&gt;&#10;
+        &lt;TextBlock Text=&quot;Row 2, Column 2&quot; /&gt;&#10;
+    &lt;/Border&gt;&#10;
+&lt;/Grid&gt;">
                     <Grid Height="300">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -86,7 +135,23 @@
                 <controls:ControlExample
                     Margin="10"
                     HeaderText="Grid using XAML shorthand syntax"
-                    XamlCode="&lt;Grid RowDefinitions=&quot;Auto,*,Auto&quot; ColumnDefinitions=&quot;100,2*,*&quot;&gt;&#10;    &lt;Border Grid.Row=&quot;0&quot; Grid.Column=&quot;0&quot; Background=&quot;{DynamicResource ControlFillColorDefaultBrush}&quot; Margin=&quot;5&quot; Padding=&quot;10&quot;&gt;&#10;        &lt;TextBlock Text=&quot;Header (100px)&quot; /&gt;&#10;    &lt;/Border&gt;&#10;    &lt;Border Grid.Row=&quot;0&quot; Grid.Column=&quot;1&quot; Background=&quot;{DynamicResource ControlFillColorSecondaryBrush}&quot; Margin=&quot;5&quot; Padding=&quot;10&quot;&gt;&#10;        &lt;TextBlock Text=&quot;Title (2*)&quot; /&gt;&#10;    &lt;/Border&gt;&#10;    &lt;Border Grid.Row=&quot;0&quot; Grid.Column=&quot;2&quot; Background=&quot;{DynamicResource ControlFillColorDefaultBrush}&quot; Margin=&quot;5&quot; Padding=&quot;10&quot;&gt;&#10;        &lt;TextBlock Text=&quot;Actions (*)&quot; /&gt;&#10;    &lt;/Border&gt;&#10;    &lt;Border Grid.Row=&quot;1&quot; Grid.Column=&quot;0&quot; Grid.ColumnSpan=&quot;3&quot; Background=&quot;{DynamicResource ControlAltFillColorSecondaryBrush}&quot; Margin=&quot;5&quot; Padding=&quot;10&quot;&gt;&#10;        &lt;TextBlock Text=&quot;Main Content Area (fills available space)&quot; VerticalAlignment=&quot;Center&quot; HorizontalAlignment=&quot;Center&quot; /&gt;&#10;    &lt;/Border&gt;&#10;    &lt;Border Grid.Row=&quot;2&quot; Grid.Column=&quot;0&quot; Grid.ColumnSpan=&quot;3&quot; Background=&quot;{DynamicResource ControlFillColorDefaultBrush}&quot; Margin=&quot;5&quot; Padding=&quot;10&quot;&gt;&#10;        &lt;TextBlock Text=&quot;Footer (Auto height, spans all columns)&quot; /&gt;&#10;    &lt;/Border&gt;&#10;&lt;/Grid&gt;">
+                    XamlCode="&lt;Grid RowDefinitions=&quot;Auto,*,Auto&quot; ColumnDefinitions=&quot;100,2*,*&quot;&gt;&#10;
+    &lt;Border Grid.Row=&quot;0&quot; Grid.Column=&quot;0&quot; Background=&quot;{DynamicResource ControlFillColorDefaultBrush}&quot; Margin=&quot;5&quot; Padding=&quot;10&quot;&gt;&#10;
+        &lt;TextBlock Text=&quot;Header (100px)&quot; /&gt;&#10;
+    &lt;/Border&gt;&#10;
+    &lt;Border Grid.Row=&quot;0&quot; Grid.Column=&quot;1&quot; Background=&quot;{DynamicResource ControlFillColorSecondaryBrush}&quot; Margin=&quot;5&quot; Padding=&quot;10&quot;&gt;&#10;
+        &lt;TextBlock Text=&quot;Title (2*)&quot; /&gt;&#10;
+    &lt;/Border&gt;&#10;
+    &lt;Border Grid.Row=&quot;0&quot; Grid.Column=&quot;2&quot; Background=&quot;{DynamicResource ControlFillColorDefaultBrush}&quot; Margin=&quot;5&quot; Padding=&quot;10&quot;&gt;&#10;
+        &lt;TextBlock Text=&quot;Actions (*)&quot; /&gt;&#10;
+    &lt;/Border&gt;&#10;
+    &lt;Border Grid.Row=&quot;1&quot; Grid.Column=&quot;0&quot; Grid.ColumnSpan=&quot;3&quot; Background=&quot;{DynamicResource ControlAltFillColorSecondaryBrush}&quot; Margin=&quot;5&quot; Padding=&quot;10&quot;&gt;&#10;
+        &lt;TextBlock Text=&quot;Main Content Area (fills available space)&quot; VerticalAlignment=&quot;Center&quot; HorizontalAlignment=&quot;Center&quot; /&gt;&#10;
+    &lt;/Border&gt;&#10;
+    &lt;Border Grid.Row=&quot;2&quot; Grid.Column=&quot;0&quot; Grid.ColumnSpan=&quot;3&quot; Background=&quot;{DynamicResource ControlFillColorDefaultBrush}&quot; Margin=&quot;5&quot; Padding=&quot;10&quot;&gt;&#10;
+        &lt;TextBlock Text=&quot;Footer (Auto height, spans all columns)&quot; /&gt;&#10;
+    &lt;/Border&gt;&#10;
+&lt;/Grid&gt;">
                     <Grid Height="300">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />

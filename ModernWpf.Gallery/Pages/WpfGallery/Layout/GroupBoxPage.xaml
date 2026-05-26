@@ -22,7 +22,22 @@
                     <controls:ControlExample
                         Margin="10"
                         HeaderText="A GroupBox"
-                        XamlCode="&lt;GroupBox &#10;   Header=&quot;User Information&quot; &#10;   HorizontalAlignment=&quot;Left&quot; &#10;   VerticalAlignment=&quot;Center&quot; &#10;   Width=&quot;400&quot;&gt;&#10;    &lt;StackPanel&gt;&#10;        &lt;StackPanel Orientation=&quot;Horizontal&quot;&gt;&#10;            &lt;TextBlock Width=&quot;100&quot; Text=&quot;Name:&quot; /&gt;&#10;            &lt;TextBox Name=&quot;NameTextBox&quot; Width=&quot;280&quot; Margin=&quot;10,0,0,20&quot;/&gt;&#10;        &lt;/StackPanel&gt;&#10;        &lt;StackPanel Orientation=&quot;Horizontal&quot;&gt;&#10;            &lt;TextBlock Width=&quot;100&quot; Text=&quot;Gender:&quot; Margin=&quot;0,10,0,0&quot;/&gt;&#10;            &lt;TextBox Name=&quot;GenderTextBox&quot; Width=&quot;280&quot; Margin=&quot;10,0,0,20&quot;/&gt;&#10;        &lt;/StackPanel&gt;&#10;        &lt;Button Content=&quot;Submit&quot; HorizontalAlignment=&quot;Right&quot; Width=&quot;100&quot; Margin=&quot;0,10,0,0&quot; /&gt;&#10;    &lt;/StackPanel&gt;&#10;&lt;/GroupBox&gt;">
+                        XamlCode="&lt;GroupBox &#10;
+   Header=&quot;User Information&quot; &#10;
+   HorizontalAlignment=&quot;Left&quot; &#10;
+   VerticalAlignment=&quot;Center&quot; &#10;
+   Width=&quot;400&quot;&gt;&#10;
+    &lt;StackPanel&gt;&#10;
+        &lt;StackPanel Orientation=&quot;Horizontal&quot;&gt;&#10;
+            &lt;TextBlock Width=&quot;100&quot; Text=&quot;Name:&quot; /&gt;&#10;
+            &lt;TextBox Name=&quot;NameTextBox&quot; Width=&quot;280&quot; Margin=&quot;10,0,0,20&quot;/&gt;&#10;
+        &lt;/StackPanel&gt;&#10;
+        &lt;StackPanel Orientation=&quot;Horizontal&quot;&gt;&#10;
+            &lt;TextBlock Width=&quot;100&quot; Text=&quot;Gender:&quot; Margin=&quot;0,10,0,0&quot;/&gt;&#10;
+            &lt;TextBox Name=&quot;GenderTextBox&quot; Width=&quot;280&quot; Margin=&quot;10,0,0,20&quot;/&gt;&#10;
+        &lt;/StackPanel&gt;&#10;
+        &lt;Button Content=&quot;Submit&quot; HorizontalAlignment=&quot;Right&quot; Width=&quot;100&quot; Margin=&quot;0,10,0,0&quot; /&gt;&#10;
+    &lt;/StackPanel&gt;&#10;&lt;/GroupBox&gt;">
                         <GroupBox
                             Header="User Information"
                             HorizontalAlignment="Left"

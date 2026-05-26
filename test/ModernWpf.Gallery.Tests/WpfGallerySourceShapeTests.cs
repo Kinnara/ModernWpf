@@ -1506,6 +1506,25 @@ namespace ModernWpf.Gallery.Tests
                 "WpfGallery",
                 "Layout",
                 "GridPage.xaml");
+            var normalizedGridXaml = gridXaml.Replace("\r\n", "\n").Replace('\r', '\n');
+            StringAssert.Contains(
+                normalizedGridXaml,
+                "XamlCode=\"&lt;Grid ShowGridLines=&quot;True&quot;&gt;&#10;\n    &lt;Grid.RowDefinitions&gt;&#10;\n        &lt;RowDefinition Height=&quot;*&quot; /&gt;&#10;");
+            StringAssert.Contains(
+                normalizedGridXaml,
+                "    &lt;TextBlock Grid.Row=&quot;2&quot; Grid.Column=&quot;2&quot; Text=&quot;Cell 9&quot; /&gt;&#10;\n&lt;/Grid&gt;\">");
+            StringAssert.Contains(
+                normalizedGridXaml,
+                "XamlCode=\"&lt;Grid&gt;&#10;\n    &lt;Grid.RowDefinitions&gt;&#10;\n        &lt;RowDefinition Height=&quot;Auto&quot; /&gt;&#10;");
+            StringAssert.Contains(
+                normalizedGridXaml,
+                "    &lt;Border Grid.Row=&quot;2&quot; Grid.Column=&quot;2&quot; Background=&quot;{DynamicResource ControlFillColorDefaultBrush}&quot; Margin=&quot;5&quot; Padding=&quot;10&quot;&gt;&#10;\n        &lt;TextBlock Text=&quot;Row 2, Column 2&quot; /&gt;&#10;\n    &lt;/Border&gt;&#10;\n&lt;/Grid&gt;\">");
+            StringAssert.Contains(
+                normalizedGridXaml,
+                "XamlCode=\"&lt;Grid RowDefinitions=&quot;Auto,*,Auto&quot; ColumnDefinitions=&quot;100,2*,*&quot;&gt;&#10;\n    &lt;Border Grid.Row=&quot;0&quot; Grid.Column=&quot;0&quot; Background=&quot;{DynamicResource ControlFillColorDefaultBrush}&quot; Margin=&quot;5&quot; Padding=&quot;10&quot;&gt;&#10;");
+            StringAssert.Contains(
+                normalizedGridXaml,
+                "    &lt;Border Grid.Row=&quot;2&quot; Grid.Column=&quot;0&quot; Grid.ColumnSpan=&quot;3&quot; Background=&quot;{DynamicResource ControlFillColorDefaultBrush}&quot; Margin=&quot;5&quot; Padding=&quot;10&quot;&gt;&#10;\n        &lt;TextBlock Text=&quot;Footer (Auto height, spans all columns)&quot; /&gt;&#10;\n    &lt;/Border&gt;&#10;\n&lt;/Grid&gt;\">");
             AssertContainsInOrder(
                 gridXaml,
                 "HeaderText=\"A Grid with custom sizing and spanning\"",
@@ -1548,6 +1567,13 @@ namespace ModernWpf.Gallery.Tests
                 "WpfGallery",
                 "Layout",
                 "GroupBoxPage.xaml");
+            var normalizedGroupBoxXaml = groupBoxXaml.Replace("\r\n", "\n").Replace('\r', '\n');
+            StringAssert.Contains(
+                normalizedGroupBoxXaml,
+                "XamlCode=\"&lt;GroupBox &#10;\n   Header=&quot;User Information&quot; &#10;\n   HorizontalAlignment=&quot;Left&quot; &#10;\n   VerticalAlignment=&quot;Center&quot; &#10;\n   Width=&quot;400&quot;&gt;&#10;");
+            StringAssert.Contains(
+                normalizedGroupBoxXaml,
+                "        &lt;Button Content=&quot;Submit&quot; HorizontalAlignment=&quot;Right&quot; Width=&quot;100&quot; Margin=&quot;0,10,0,0&quot; /&gt;&#10;\n    &lt;/StackPanel&gt;&#10;&lt;/GroupBox&gt;\">");
             AssertContainsInOrder(
                 groupBoxXaml,
                 "<GroupBox",
