@@ -18,15 +18,9 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <controls:PageHeader
-            Margin="0,0,0,32"
-            Description="{Binding ViewModel.PageDescription}"
-            Title="{Binding ViewModel.PageTitle}" />
+        <controls:PageHeader Margin="0,0,0,32" Title="{Binding ViewModel.PageTitle}" Description="{Binding ViewModel.PageDescription}" />
 
-        <ScrollViewer
-            Grid.Row="1"
-            Margin="0,0,0,24"
-            Padding="0,0,24,0">
+        <ScrollViewer Margin="0,0,0,24" Grid.Row="1" Padding="0,0,24,0">
             <StackPanel Margin="0,0,0,24">
                 <TextBlock
                     Margin="0,0,0,24"
@@ -43,12 +37,7 @@
                     </Span>
                 </TextBlock>
 
-                <ComboBox
-                    x:Name="PageSelector"
-                    Width="200"
-                    AutomationProperties.Name="Page Selector"
-                    Loaded="OnLoaded"
-                    SelectionChanged="OnSelectionChanged">
+                <ComboBox x:Name="PageSelector" SelectionChanged="OnSelectionChanged" Loaded="OnLoaded" Width="200" AutomationProperties.Name="Page Selector">
                     <sys:String>Text</sys:String>
                     <sys:String>Fill</sys:String>
                     <sys:String>Stroke</sys:String>
@@ -57,8 +46,7 @@
                     <sys:String>HighContrast</sys:String>
                 </ComboBox>
 
-                <Frame
-                    x:Name="ColorSubpageNavigationFrame" />
+                <Frame x:Name="ColorSubpageNavigationFrame" />
             </StackPanel>
         </ScrollViewer>
     </Grid>

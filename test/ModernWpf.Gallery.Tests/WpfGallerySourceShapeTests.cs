@@ -310,6 +310,91 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void DesignGuidancePagesKeepOfficialHeaderAndSampleSourceShape()
+        {
+            var colorXaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "DesignGuidance",
+                "ColorPage.xaml");
+            StringAssert.Contains(
+                colorXaml,
+                "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" Description=\"{Binding ViewModel.PageDescription}\" />");
+            StringAssert.Contains(
+                colorXaml,
+                "<ScrollViewer Margin=\"0,0,0,24\" Grid.Row=\"1\" Padding=\"0,0,24,0\">");
+            StringAssert.Contains(
+                colorXaml,
+                "<ComboBox x:Name=\"PageSelector\" SelectionChanged=\"OnSelectionChanged\" Loaded=\"OnLoaded\" Width=\"200\" AutomationProperties.Name=\"Page Selector\">");
+            StringAssert.Contains(
+                colorXaml,
+                "<Frame x:Name=\"ColorSubpageNavigationFrame\" />");
+
+            foreach (var page in new[]
+            {
+                "TypographyPage.xaml",
+                "SpacingPage.xaml"
+            })
+            {
+                var xaml = ReadRepoFile(
+                    "ModernWpf.Gallery",
+                    "Pages",
+                    "WpfGallery",
+                    "DesignGuidance",
+                    page);
+                StringAssert.Contains(
+                    xaml,
+                    "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" Description=\"{Binding ViewModel.PageDescription}\" />");
+                StringAssert.Contains(
+                    xaml,
+                    "<ScrollViewer Margin=\"0,0,0,24\" Padding=\"0,0,24,0\" HorizontalScrollBarVisibility=\"Auto\" Grid.Row=\"1\">");
+            }
+
+            var geometryXaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "DesignGuidance",
+                "GeometryPage.xaml");
+            StringAssert.Contains(
+                geometryXaml,
+                "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" ShowDescription=\"False\"/>");
+            StringAssert.Contains(
+                geometryXaml,
+                "<ScrollViewer Margin=\"0,0,0,24\" Padding=\"0,0,24,0\" HorizontalScrollBarVisibility=\"Auto\" Grid.Row=\"1\">");
+            StringAssert.Contains(
+                geometryXaml,
+                "<Border Height=\"300\" Width=\"500\" HorizontalAlignment=\"Left\">");
+
+            var iconographyXaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "DesignGuidance",
+                "IconographyPage.xaml");
+            StringAssert.Contains(
+                iconographyXaml,
+                "<controls:PageHeader Margin=\"2,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" Description=\"{Binding ViewModel.PageDescription}\" />");
+            AssertContainsInOrder(
+                iconographyXaml,
+                "<Expander Grid.Row=\"1\"",
+                "Header=\"Instructions on how to use Segoe Fluent Icons\"",
+                "IsExpanded=\"False\"",
+                "Margin=\"2 -8 0 0\">");
+            AssertContainsInOrder(
+                iconographyXaml,
+                "<TextBox x:Name=\"IconsSearchBox\" Text=\"{Binding ViewModel.SearchText, UpdateSourceTrigger=PropertyChanged, Delay=500}\"",
+                "AutomationProperties.Name=\"Search Icons by Name, Tag\"",
+                "Width=\"500\"",
+                "HorizontalAlignment=\"Left\"",
+                "VerticalAlignment=\"Center\"",
+                "GotKeyboardFocus=\"IconsSearchBox_GotKeyboardFocus\"",
+                "LostKeyboardFocus=\"IconsSearchBox_LostKeyboardFocus\"",
+                "TextChanged=\"IconsSearchBox_TextChanged\"/>");
+        }
+
+        [TestMethod]
         public void MenuPageKeepsOfficialMenuItemSourceShape()
         {
             var xaml = ReadRepoFile(
