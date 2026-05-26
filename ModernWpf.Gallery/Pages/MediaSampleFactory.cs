@@ -64,7 +64,7 @@ namespace ModernWpf.Gallery.Pages
                     return new[]
                     {
                         new GalleryExample(
-                            "PersonPicture",
+                            "Select different looks for the person picture.",
                             CreatePersonPictureExampleContent(assignRootAutomationId: true),
                             PersonPictureBasicXaml,
                             PersonPictureBasicCSharp)
