@@ -172,6 +172,32 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void ItemPageWrapperAvoidsLocalOnlyAutomationHooks()
+        {
+            var xaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "ItemPage.xaml");
+
+            Assert.IsFalse(
+                xaml.Contains("x:Name=\"PageHeader\"", StringComparison.Ordinal),
+                "The generic wrapper header should be located structurally instead of by a local-only name.");
+            Assert.IsFalse(
+                xaml.Contains("AutomationProperties.AutomationId=\"GallerySampleHost\"", StringComparison.Ordinal),
+                "The generic wrapper should not expose the local-only GallerySampleHost automation ID.");
+            AssertContainsInOrder(
+                xaml,
+                "<ItemsControl",
+                "ItemsSource=\"{Binding Examples}\"",
+                "<controls:ControlExample",
+                "HeaderText=\"{Binding HeaderText}\"",
+                "XamlCode=\"{Binding XamlCode}\"",
+                "CSharpCode=\"{Binding CSharpCode}\"",
+                "ExampleContent=\"{Binding ExampleContent}\"",
+                "Margin=\"{Binding Margin}\" />");
+        }
+
+        [TestMethod]
         public void HomePageKeepsOfficialDashboardCardListDeclarationSourceShape()
         {
             var xaml = ReadRepoFile(

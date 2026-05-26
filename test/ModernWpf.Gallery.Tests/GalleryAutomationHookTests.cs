@@ -100,7 +100,7 @@ namespace ModernWpf.Gallery.Tests
                     window.UpdateLayout();
                     WpfTestHost.DoEvents();
 
-                    var pageHeader = FindNamedDescendant<PageHeader>(page, "PageHeader");
+                    var pageHeader = FindDescendants<PageHeader>(page).Single();
                     Assert.IsNotNull(pageHeader, "Item page header is missing.");
                     pageHeader.ApplyTemplate();
                     var titleLabel = (Label)pageHeader.Template.FindName("TitleTextBlock", pageHeader);
@@ -110,7 +110,9 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsTrue(KeyboardNavigation.GetIsTabStop(titleLabel));
                     Assert.AreEqual(0, KeyboardNavigation.GetTabIndex(titleLabel));
                     Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId((TextBlock)titleLabel.Content));
-                    Assert.IsNotNull(FindByAutomationId(page, "GallerySampleHost"), "Sample host AutomationId is missing.");
+                    Assert.IsNull(
+                        FindByAutomationId(page, "GallerySampleHost"),
+                        "The generic ItemPage wrapper should not expose a local-only sample host AutomationId.");
                     var sampleRoot = FindByAutomationId(page, rootAutomationId) as UIElement;
                     Assert.IsNotNull(sampleRoot, rootAutomationId + " is missing.");
                     var sampleRootPeer = UIElementAutomationPeer.CreatePeerForElement(sampleRoot);

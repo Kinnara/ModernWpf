@@ -16,7 +16,6 @@
         </Grid.RowDefinitions>
 
         <controls:PageHeader
-            x:Name="PageHeader"
             Margin="0,0,0,32"
             Title="{Binding Title}"
             Description="{Binding PageHeaderDescription}"
@@ -34,7 +33,6 @@
 
                 <ItemsControl
                     AlternationCount="2147483647"
-                    AutomationProperties.AutomationId="GallerySampleHost"
                     ItemsSource="{Binding Examples}"
                     Visibility="{Binding ShowExamples, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <ItemsControl.ItemContainerStyle>
@@ -45,11 +43,11 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <controls:ControlExample
+                                HeaderText="{Binding HeaderText}"
+                                XamlCode="{Binding XamlCode}"
                                 CSharpCode="{Binding CSharpCode}"
                                 ExampleContent="{Binding ExampleContent}"
-                                HeaderText="{Binding HeaderText}"
-                                Margin="{Binding Margin}"
-                                XamlCode="{Binding XamlCode}" />
+                                Margin="{Binding Margin}" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
@@ -181,7 +179,6 @@
             x:Name="DirectPageContentHost"
             Grid.Row="1"
             Margin="{Binding DirectPageContentMargin}"
-            AutomationProperties.AutomationId="GallerySampleHost"
             Content="{Binding DirectPageContent}"
             NavigationUIVisibility="Hidden"
             Visibility="{Binding HasDirectPageContent, Converter={StaticResource BooleanToVisibilityConverter}}" />

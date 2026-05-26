@@ -771,8 +771,8 @@ namespace ModernWpf.Gallery.Tests
                 var navigationViewPage = new ItemPage(GalleryCatalog.FindItem("NavigationView"));
                 RenderPage(navigationViewPage, () =>
                 {
-                    var pageHeader = (PageHeader)navigationViewPage.FindName("PageHeader");
-                    Assert.IsNotNull(pageHeader);
+                    var pageHeader = FindVisualChildren<PageHeader>(navigationViewPage)
+                        .Single(header => ReferenceEquals(header.DataContext, navigationViewPage));
                     Assert.AreEqual(Visibility.Visible, pageHeader.Visibility);
                     Assert.AreEqual(new Thickness(0, 0, 0, 32), pageHeader.Margin);
                     Assert.AreEqual(navigationViewPage.Title, pageHeader.Title);
@@ -790,8 +790,8 @@ namespace ModernWpf.Gallery.Tests
                 var itemPage = new ItemPage(GalleryCatalog.FindItem("Color"));
                 RenderPage(itemPage, () =>
                 {
-                    var wrapperHeader = (PageHeader)itemPage.FindName("PageHeader");
-                    Assert.IsNotNull(wrapperHeader);
+                    var wrapperHeader = FindVisualChildren<PageHeader>(itemPage)
+                        .Single(header => ReferenceEquals(header.DataContext, itemPage));
                     Assert.AreEqual(Visibility.Collapsed, wrapperHeader.Visibility);
                     Assert.AreEqual(itemPage.Title, wrapperHeader.Title);
                     Assert.IsNull(wrapperHeader.Description);
