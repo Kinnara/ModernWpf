@@ -107,6 +107,34 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void WhatsNewPageKeepsOfficialDeclarationSourceShape()
+        {
+            var xaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WhatsNewPage.xaml");
+
+            StringAssert.Contains(
+                xaml,
+                "<Style x:Key=\"SubHeaderTextStyle\" TargetType=\"TextBlock\">");
+            StringAssert.Contains(
+                xaml,
+                "<Style x:Key=\"LinkTextBlockStyle\" TargetType=\"TextBlock\">");
+            AssertContainsInOrder(
+                xaml,
+                "<Grid x:Name=\"ContentPagePane\" Height=\"Auto\" Style=\"{StaticResource GalleryPageRootStyle}\">",
+                "<Grid.RowDefinitions>",
+                "<RowDefinition Height=\"Auto\" />",
+                "<RowDefinition Height=\"*\" />");
+            StringAssert.Contains(
+                xaml,
+                "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" Description=\"{Binding ViewModel.PageDescription}\" ShowDescription=\"True\" />");
+            StringAssert.Contains(
+                xaml,
+                "<ScrollViewer Grid.Row=\"1\" Margin=\"0,0,0,24\" Padding=\"0,0,24,0\">");
+        }
+
+        [TestMethod]
         public void SettingsPageKeepsOfficialSettingsDeclarationSourceShape()
         {
             var xaml = ReadRepoFile(
