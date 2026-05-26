@@ -918,6 +918,65 @@ namespace ModernWpf.Gallery.Tests
                 "Source = new Uri(\"/Pages/WpfGallery/Navigation/Page1.xaml\", UriKind.Relative)",
                 "};",
                 "window.Show();");
+
+            var frameWindowXaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Navigation",
+                "FrameWindow.xaml");
+            AssertContainsInOrder(
+                frameWindowXaml,
+                "<Window x:Class=\"ModernWpf.Gallery.Pages.WpfGallery.Navigation.FrameWindow\"",
+                "xmlns:d=\"http://schemas.microsoft.com/expression/blend/2008\"",
+                "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"",
+                "mc:Ignorable=\"d\"",
+                "Title=\"FrameWindow\" Height=\"450\" Width=\"800\">");
+            StringAssert.Contains(
+                frameWindowXaml,
+                "<Frame Source=\"/Pages/WpfGallery/Navigation/Page1.xaml\" NavigationUIVisibility=\"Visible\"/>");
+
+            var page1Xaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Navigation",
+                "Page1.xaml");
+            AssertContainsInOrder(
+                page1Xaml,
+                "<Page x:Class=\"ModernWpf.Gallery.Pages.WpfGallery.Navigation.Page1\"",
+                "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"",
+                "xmlns:d=\"http://schemas.microsoft.com/expression/blend/2008\"",
+                "mc:Ignorable=\"d\"",
+                "d:DesignHeight=\"450\" d:DesignWidth=\"800\"",
+                "Title=\"Page1\">");
+            StringAssert.Contains(
+                page1Xaml,
+                "<StackPanel HorizontalAlignment=\"Center\" VerticalAlignment=\"Center\">");
+            StringAssert.Contains(
+                page1Xaml,
+                "<TextBlock Text=\"This is Page 1\" FontSize=\"20\" Margin=\"10\" Foreground=\"{DynamicResource TextFillColorPrimaryBrush}\"/>");
+            StringAssert.Contains(
+                page1Xaml,
+                "<Hyperlink NavigateUri=\"Page2.xaml\">This is the link to Page 2</Hyperlink>");
+
+            var page2Xaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Navigation",
+                "Page2.xaml");
+            AssertContainsInOrder(
+                page2Xaml,
+                "<Page x:Class=\"ModernWpf.Gallery.Pages.WpfGallery.Navigation.Page2\"",
+                "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"",
+                "xmlns:d=\"http://schemas.microsoft.com/expression/blend/2008\"",
+                "mc:Ignorable=\"d\"",
+                "d:DesignHeight=\"450\" d:DesignWidth=\"800\"",
+                "Title=\"Page2\">");
+            StringAssert.Contains(
+                page2Xaml,
+                "<TextBlock Text=\"This is Page 2\" HorizontalAlignment=\"Center\" VerticalAlignment=\"Center\" Foreground=\"{DynamicResource TextFillColorPrimaryBrush}\" FontSize=\"20\"/>");
         }
 
         [TestMethod]
