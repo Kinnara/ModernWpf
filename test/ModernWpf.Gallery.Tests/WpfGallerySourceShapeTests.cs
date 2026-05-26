@@ -249,6 +249,67 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void LayoutPagesKeepOfficialHeaderAndSampleSourceShape()
+        {
+            foreach (var page in new[]
+            {
+                "BorderPage.xaml",
+                "ExpanderPage.xaml",
+                "GridPage.xaml",
+                "GridSplitterPage.xaml",
+                "GroupBoxPage.xaml",
+                "ResizeGripPage.xaml",
+                "StackPanelPage.xaml"
+            })
+            {
+                var xaml = ReadRepoFile(
+                    "ModernWpf.Gallery",
+                    "Pages",
+                    "WpfGallery",
+                    "Layout",
+                    page);
+                StringAssert.Contains(
+                    xaml,
+                    "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" ShowDescription=\"False\" />");
+                StringAssert.Contains(
+                    xaml,
+                    "<ScrollViewer Grid.Row=\"1\" Margin=\"0,0,0,24\" Padding=\"0,0,24,0\">");
+            }
+
+            var expanderXaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Layout",
+                "ExpanderPage.xaml");
+            StringAssert.Contains(
+                expanderXaml,
+                "<!--  TODO: ExpandDirection  -->");
+
+            var resizeGripXaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Layout",
+                "ResizeGripPage.xaml");
+            AssertContainsInOrder(
+                resizeGripXaml,
+                "<controls:ControlExample",
+                "Margin=\"10\"",
+                "HeaderText=\"A ResizeGrip\"",
+                "XamlCode=\"&lt;Window",
+                "CSharpCode=\"private void OpenResizeGripWindow_Click");
+            AssertContainsInOrder(
+                resizeGripXaml,
+                "<Button",
+                "x:Name=\"OpenResizeGripWindow\"",
+                "VerticalAlignment=\"Center\"",
+                "HorizontalAlignment=\"Center\"",
+                "Content=\"Open window with resize grip\"",
+                "Click=\"OpenResizeGripWindow_Click\" />");
+        }
+
+        [TestMethod]
         public void MenuPageKeepsOfficialMenuItemSourceShape()
         {
             var xaml = ReadRepoFile(
