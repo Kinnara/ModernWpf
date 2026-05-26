@@ -786,6 +786,60 @@ namespace ModernWpf.Gallery.Tests
                     StringAssert.Contains(
                         xaml,
                         "xmlns:sys=\"clr-namespace:System;assembly=System.Runtime\"");
+                    AssertContainsInOrder(
+                        xaml,
+                        "<Page x:Class=\"ModernWpf.Gallery.Pages.WpfGallery.Layout.GridSplitterPage\"",
+                        "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"",
+                        "xmlns:d=\"http://schemas.microsoft.com/expression/blend/2008\"",
+                        "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.Layout\"",
+                        "xmlns:sys=\"clr-namespace:System;assembly=System.Runtime\"",
+                        "xmlns:controls=\"clr-namespace:ModernWpf.Gallery.Controls\"",
+                        "mc:Ignorable=\"d\"",
+                        "d:DesignHeight=\"450\" d:DesignWidth=\"800\"",
+                        "Title=\"GridSplitterPage\"",
+                        "Foreground=\"{DynamicResource TextFillColorPrimaryBrush}\">");
+                }
+                else if (page.Item1 == "GridPage.xaml")
+                {
+                    AssertContainsInOrder(
+                        xaml,
+                        "<Page x:Class=\"ModernWpf.Gallery.Pages.WpfGallery.Layout.GridPage\"",
+                        "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"",
+                        "xmlns:d=\"http://schemas.microsoft.com/expression/blend/2008\"",
+                        "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.Layout\"",
+                        "xmlns:controls=\"clr-namespace:ModernWpf.Gallery.Controls\"",
+                        "mc:Ignorable=\"d\"",
+                        "d:DesignHeight=\"450\" d:DesignWidth=\"800\"",
+                        "Title=\"GridPage\"",
+                        "Foreground=\"{DynamicResource TextFillColorPrimaryBrush}\">");
+                }
+                else if (page.Item1 == "GroupBoxPage.xaml")
+                {
+                    AssertContainsInOrder(
+                        xaml,
+                        "<Page x:Class=\"ModernWpf.Gallery.Pages.WpfGallery.Layout.GroupBoxPage\"",
+                        "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"",
+                        "xmlns:d=\"http://schemas.microsoft.com/expression/blend/2008\"",
+                        "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.Layout\"",
+                        "xmlns:controls=\"clr-namespace:ModernWpf.Gallery.Controls\"",
+                        "mc:Ignorable=\"d\"",
+                        "d:DesignHeight=\"450\" d:DesignWidth=\"800\"",
+                        "Title=\"GroupBoxPage\"",
+                        "Foreground=\"{DynamicResource TextFillColorPrimaryBrush}\">");
+                }
+                else if (page.Item1 == "ResizeGripPage.xaml")
+                {
+                    AssertContainsInOrder(
+                        xaml,
+                        "<Page x:Class=\"ModernWpf.Gallery.Pages.WpfGallery.Layout.ResizeGripPage\"",
+                        "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"",
+                        "xmlns:d=\"http://schemas.microsoft.com/expression/blend/2008\"",
+                        "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.Layout\"",
+                        "xmlns:controls=\"clr-namespace:ModernWpf.Gallery.Controls\"",
+                        "mc:Ignorable=\"d\"",
+                        "d:DesignHeight=\"450\" d:DesignWidth=\"800\"",
+                        "Title=\"ResizeGripPage\"",
+                        "Foreground=\"{DynamicResource TextFillColorPrimaryBrush}\">");
                 }
 
                 if (page.Item2)
