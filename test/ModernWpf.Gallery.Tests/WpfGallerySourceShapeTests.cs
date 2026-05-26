@@ -890,7 +890,10 @@ namespace ModernWpf.Gallery.Tests
                 "<TextBox Name=\"NameTextBox\" Width=\"280\" Margin=\"10,0,0,20\" AutomationProperties.Name=\"Name Field\" />",
                 "<TextBlock Width=\"100\" Text=\"Gender:\" Margin=\"0,10,0,0\" />",
                 "<TextBox Name=\"GenderTextBox\" Width=\"280\" Margin=\"10,0,0,20\" AutomationProperties.Name=\"Gender Field\" />",
-                "<Button Content=\"Submit\" HorizontalAlignment=\"Right\" Width=\"100\" Margin=\"0,10,0,0\" />");
+                "<Button Content=\"Submit\" HorizontalAlignment=\"Right\" Margin=\"0,10,0,0\" />");
+            StringAssert.Contains(
+                groupBoxXaml,
+                "&lt;Button Content=&quot;Submit&quot; HorizontalAlignment=&quot;Right&quot; Width=&quot;100&quot; Margin=&quot;0,10,0,0&quot; /&gt;");
 
             var resizeGripXaml = ReadRepoFile(
                 "ModernWpf.Gallery",
