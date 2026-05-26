@@ -203,13 +203,14 @@ names; GroupBox also keeps the current official live Submit button declaration
 while preserving the official sample-code width text.
 Design Guidance item pages now preserve the official copied root namespace/content
 declaration and PageHeader/scroll-host source shape where the official pages use
-it, with Color keeping the official named `ContentPagePane` paragraph and
-selector/frame declaration order, Typography/Spacing/Geometry preserving the
-official compact page-root declaration order and unnamed root shape, Geometry
-keeping the official fixed image-host declaration order, and Iconography keeping
-the current official no-local root namespace shape plus representative
-instructions/search, details-pane, and pagination declaration order while
-retaining local behavior-trigger and asset adaptations.
+it, with Color keeping the official compact page-root declaration order, named
+`ContentPagePane` paragraph, and selector/frame declaration order,
+Typography/Spacing/Geometry preserving the official compact page-root
+declaration order and unnamed root shape, Geometry keeping the official fixed
+image-host declaration order, and Iconography keeping the official compact
+no-local page-root declaration order plus representative instructions/search,
+details-pane, and pagination declaration order while retaining the local
+Loaded-handler, behavior-trigger, and asset adaptations.
 Color's Text subsection now also preserves representative official copied
 root, comment, `ColorPageExample`, panel, and Text-on-Accent tile declaration
 order while retaining the ModernWpf namespace adaptation.
@@ -275,6 +276,10 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.DesignGuidancePagesKeepOfficialHeaderAndSampleSourceShape|FullyQualifiedName~WpfGalleryDesignGuidanceSnippetTests.IconographyLoadedHandlerUsesWpfGalleryLoadDataCommandPath|FullyQualifiedName~GalleryPageRuntimeTests.DesignGuidancePagesUseOfficialPageSpecificViewModels|FullyQualifiedName~GalleryPageRuntimeTests.DesignGuidanceItemPagesUseOfficialPageRoots|FullyQualifiedName~GalleryPageRuntimeTests.IconographyPageUsesWpfGalleryIconLibraryLayout|FullyQualifiedName~GalleryPageRuntimeTests.ColorPageUsesWpfGallerySelectorAndTextSectionLayout" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 6 tests per target. Color now keeps the official compact page-root declaration order, Iconography now keeps the official compact no-local page-root declaration order with its local Loaded-handler adaptation, and the targeted Design Guidance source-shape, copied-root, page-specific view-model, snippet, Color selector/text-section, and Iconography library runtime coverage still passes. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the remaining Design Guidance compact page-root source-shape alignment. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages and existing ModernWpf/ModernWpf.Controls warnings.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.DesignGuidancePagesKeepOfficialHeaderAndSampleSourceShape|FullyQualifiedName~WpfGalleryDesignGuidanceSnippetTests.DesignGuidanceControlExamplesMatchOfficialWpfGallerySampleCode|FullyQualifiedName~GalleryPageRuntimeTests.DesignGuidancePagesUseOfficialPageSpecificViewModels|FullyQualifiedName~GalleryPageRuntimeTests.DesignGuidanceItemPagesUseOfficialPageRoots|FullyQualifiedName~GalleryPageRuntimeTests.DesignGuidancePagesMatchWpfGalleryReferenceLayoutDetails|FullyQualifiedName~GalleryPageRuntimeTests.DesignGuidanceImagesUseForcedApplicationThemeBeforeLoaded" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 6 tests per target. Typography, Spacing, and Geometry now keep the official compact page-root declaration order while Design Guidance snippet, page-specific view-model, copied-root, image-theme, and reference layout coverage still passes. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
@@ -2330,14 +2335,14 @@ PageHeader/ScrollViewer shape, plus
 TextBlock/RichTextEdit/PasswordBox/Hyperlink representative sample
 declarations. Design Guidance
 pages now also pin official root namespace/content declaration source shape for
-Color, Typography, Spacing, and Geometry, Color's named `ContentPagePane`
-paragraph, Typography/Spacing/Geometry compact page-root declaration order and
-official unnamed root shape, and
-Iconography's current official no-local root namespace shape, while keeping the
-same copied declaration source shape for headers/scroll hosts and
-representative Color, Geometry, and Iconography declarations where local
-adaptations still remain; Iconography now also pins the official details-pane
-and pagination declaration order. The Color Text subsection now pins representative
+Color, Typography, Spacing, and Geometry, Color's compact page-root declaration
+order and named `ContentPagePane` paragraph, Typography/Spacing/Geometry compact
+page-root declaration order and official unnamed root shape, and Iconography's
+compact no-local page-root declaration order with its local Loaded-handler
+adaptation, while keeping the same copied declaration source shape for
+headers/scroll hosts and representative Color, Geometry, and Iconography
+declarations where local adaptations still remain; Iconography now also pins the
+official details-pane and pagination declaration order. The Color Text subsection now pins representative
 official root/comment/panel/tile declaration order.
 Samples/User Dashboard now also pins representative official copied XAML
 declaration source shape while retaining

@@ -1011,6 +1011,18 @@ namespace ModernWpf.Gallery.Tests
             StringAssert.Contains(
                 colorXaml,
                 "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance\"");
+            AssertContainsInOrder(
+                colorXaml,
+                "<Page x:Class=\"ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance.ColorPage\"",
+                "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"",
+                "xmlns:d=\"http://schemas.microsoft.com/expression/blend/2008\"",
+                "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance\"",
+                "xmlns:controls=\"clr-namespace:ModernWpf.Gallery.Controls\"",
+                "xmlns:sys=\"clr-namespace:System;assembly=mscorlib\"",
+                "mc:Ignorable=\"d\"",
+                "Foreground=\"{DynamicResource TextFillColorPrimaryBrush}\"",
+                "d:DesignHeight=\"450\" d:DesignWidth=\"800\"",
+                "Title=\"ColorsPage\">");
             StringAssert.Contains(
                 normalizedColorXaml,
                 "<Grid x:Name=\"ContentPagePane\" Height=\"Auto\">\n\n        <Grid.RowDefinitions>");
@@ -1122,6 +1134,19 @@ namespace ModernWpf.Gallery.Tests
                 "WpfGallery",
                 "DesignGuidance",
                 "IconographyPage.xaml");
+            AssertContainsInOrder(
+                iconographyXaml,
+                "<Page x:Class=\"ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance.IconographyPage\"",
+                "xmlns:d=\"http://schemas.microsoft.com/expression/blend/2008\"",
+                "xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\"",
+                "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"",
+                "xmlns:controls=\"clr-namespace:ModernWpf.Gallery.Controls\"",
+                "mc:Ignorable=\"d\"",
+                "Foreground=\"{DynamicResource TextFillColorPrimaryBrush}\"",
+                "d:DesignHeight=\"450\" d:DesignWidth=\"800\"",
+                "d:Background=\"White\"",
+                "Loaded=\"OnLoaded\"",
+                "Title=\"IconsPage\">");
             Assert.IsFalse(
                 iconographyXaml.Contains("xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance\"", StringComparison.Ordinal),
                 "IconographyPage.xaml should keep the current official root namespace shape, which has no local namespace declaration.");
