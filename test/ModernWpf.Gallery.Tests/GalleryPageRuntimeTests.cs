@@ -351,7 +351,8 @@ namespace ModernWpf.Gallery.Tests
 
                     Assert.IsInstanceOfType(page, typeof(Page));
 
-                    var root = (Grid)page.FindName("ContentRootGrid");
+                    Assert.IsNull(page.FindName("ContentRootGrid"));
+                    var root = (Grid)page.Content;
                     Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(root));
                     Assert.AreEqual(2, root.RowDefinitions.Count);
                     Assert.AreEqual(GridUnitType.Auto, root.RowDefinitions[0].Height.GridUnitType);

@@ -655,11 +655,12 @@ namespace ModernWpf.Gallery.Tests
                 "<Setter Property=\"Padding\" Value=\"0,16,0,16\" />",
                 "<Setter Property=\"BorderThickness\" Value=\"0,0,0,1\" />",
                 "<Setter Property=\"BorderBrush\" Value=\"{DynamicResource ExpanderHeaderBorderBrush}\" />");
-            AssertContainsInOrder(
+            Assert.IsFalse(
+                xaml.Contains("x:Name=\"ContentRootGrid\"", StringComparison.Ordinal),
+                "The copied Settings root should be located structurally instead of by a local-only name.");
+            StringAssert.Contains(
                 xaml,
-                "<Grid",
-                "x:Name=\"ContentRootGrid\"",
-                "Style=\"{StaticResource GalleryPageRootStyle}\">");
+                "<Grid Style=\"{StaticResource GalleryPageRootStyle}\">");
             AssertContainsInOrder(
                 xaml,
                 "<controls:PageHeader",
