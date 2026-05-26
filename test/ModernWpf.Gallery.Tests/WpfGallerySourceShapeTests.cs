@@ -2422,8 +2422,11 @@ namespace ModernWpf.Gallery.Tests
                 "WpfGallery",
                 "DateAndTime",
                 "CalendarPage.xaml");
-            StringAssert.Contains(
+            AssertContainsInOrder(
                 calendarXaml,
+                "<controls:ControlExample Margin=\"10\" HeaderText=\"A basic Calendar control.\">",
+                "<controls:ControlExample.XamlCode>",
+                "&lt;Calendar/&gt;",
                 "<Calendar HorizontalAlignment=\"Left\" AutomationProperties.Name=\"Default\" KeyboardNavigation.IsTabStop=\"False\"/>");
 
             var datePickerXaml = ReadRepoFile(
@@ -2471,6 +2474,16 @@ namespace ModernWpf.Gallery.Tests
             StringAssert.Contains(
                 imageXaml.Replace("\r\n", "\n").Replace('\r', '\n'),
                 "</Page.Resources>\n\n\n    <Grid x:Name=\"ContentPagePane\" Height=\"Auto\">");
+            AssertContainsInOrder(
+                imageXaml,
+                "<controls:ControlExample",
+                "Margin=\"10\"",
+                "HeaderText=\"Standand Image from a local file.\"",
+                "XamlCode=\"&lt;Image Height=&quot;100&quot; Source=&quot;Assets\\MyImage.jpg&quot; /&gt;\"",
+                "<Image",
+                "Height=\"200\"",
+                "HorizontalAlignment=\"Left\"",
+                "Source=\"pack://application:,,,/ModernWpf.Gallery;component/Assets/win11-dashboard.png\" />");
         }
 
         [TestMethod]
