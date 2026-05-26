@@ -10,6 +10,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Navigation
         {
             ViewModel = viewModel;
             DataContext = this;
+
             InitializeComponent();
         }
     }

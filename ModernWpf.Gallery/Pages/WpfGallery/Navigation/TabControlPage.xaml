@@ -17,15 +17,9 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <controls:PageHeader
-            Margin="0,0,0,32"
-            ShowDescription="False"
-            Title="{Binding ViewModel.PageTitle}" />
+        <controls:PageHeader Margin="0,0,0,32" Title="{Binding ViewModel.PageTitle}" ShowDescription="False" />
 
-        <ScrollViewer
-            Grid.Row="1"
-            Margin="0,0,0,24"
-            Padding="0,0,24,0">
+        <ScrollViewer Grid.Row="1" Margin="0,0,0,24" Padding="0,0,24,0">
             <Grid Margin="0,0,0,24">
                 <controls:ControlExample
                     Margin="10"
@@ -35,6 +29,7 @@
                         <TabItem AutomationProperties.Name="Hello Tab">
                             <TabItem.Header>
                                 <StackPanel Orientation="Horizontal">
+                                    <!--<SymbolIcon Margin="0,0,6,0" Symbol="XboxConsole24" />-->
                                     <TextBlock Text="Hello" />
                                 </StackPanel>
                             </TabItem.Header>
@@ -45,6 +40,7 @@
                         <TabItem AutomationProperties.Name="The cake Tab" IsSelected="True">
                             <TabItem.Header>
                                 <StackPanel Orientation="Horizontal">
+                                    <!--<SymbolIcon Margin="0,0,6,0" Symbol="StoreMicrosoft16" />-->
                                     <TextBlock Text="The cake" />
                                 </StackPanel>
                             </TabItem.Header>

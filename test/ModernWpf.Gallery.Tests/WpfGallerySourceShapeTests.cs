@@ -222,5 +222,38 @@ namespace ModernWpf.Gallery.Tests
                 "};",
                 "window.Show();");
         }
+
+        [TestMethod]
+        public void TabControlPageKeepsOfficialTabHeaderSourceShape()
+        {
+            var xaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Navigation",
+                "TabControlPage.xaml");
+            StringAssert.Contains(
+                xaml,
+                "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" ShowDescription=\"False\" />");
+            StringAssert.Contains(
+                xaml,
+                "<ScrollViewer Grid.Row=\"1\" Margin=\"0,0,0,24\" Padding=\"0,0,24,0\">");
+            StringAssert.Contains(
+                xaml,
+                "<!--<SymbolIcon Margin=\"0,0,6,0\" Symbol=\"XboxConsole24\" />-->");
+            StringAssert.Contains(
+                xaml,
+                "<!--<SymbolIcon Margin=\"0,0,6,0\" Symbol=\"StoreMicrosoft16\" />-->");
+
+            var codeBehind = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Navigation",
+                "TabControlPage.xaml.cs");
+            StringAssert.Contains(
+                codeBehind.Replace("\r\n", "\n"),
+                "DataContext = this;\n\n            InitializeComponent();");
+        }
     }
 }
