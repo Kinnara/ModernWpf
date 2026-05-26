@@ -368,6 +368,32 @@ namespace ModernWpf.Gallery.Tests
                     "<ScrollViewer Grid.Row=\"1\" Margin=\"0,0,0,24\" Padding=\"0,0,24,0\">");
             }
 
+            var buttonXaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "BasicInput",
+                "ButtonPage.xaml");
+            StringAssert.Contains(
+                buttonXaml.Replace("\r\n", "\n").Replace('\r', '\n'),
+                "<Grid x:Name=\"ContentPagePane\" Height=\"Auto\">\n\n        <Grid.RowDefinitions>");
+            AssertContainsInOrder(
+                buttonXaml,
+                "<!--<controls:ControlExample",
+                "HeaderText=\"Button with Icon\"",
+                "XamlCode=\"&lt;Button Content=&quot;Font Icon Button&quot; Icon=&quot;Fluent24&quot; /&gt;\"",
+                "IsEnabled=\"{Binding ViewModel.IsUiButtonEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:ButtonPage}, Mode=OneWay}\"",
+                "<!--<SymbolIcon Symbol=\"Fluent24\" />-->",
+                "</controls:ControlExample>-->");
+            AssertContainsInOrder(
+                buttonXaml,
+                "HeaderText=\"WPF Accent Button\"",
+                "<!--<SymbolIcon Symbol=\"Fluent24\" />-->",
+                "<TextBlock Text=\"WPF Accent Button\" />",
+                "HeaderText=\"WPF Button with FontIcon\"",
+                "HeaderText=\"WPF Button with FontIcon\"",
+                "HeaderText=\"WPF Button with ImageIcon\"");
+
             var checkBoxXaml = ReadRepoFile(
                 "ModernWpf.Gallery",
                 "Pages",
