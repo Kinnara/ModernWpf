@@ -108,11 +108,7 @@
                             MinWidth="120"
                             Margin="12,0,0,0"
                             VerticalAlignment="Top">
-                            <Label
-                                Content="Selection mode"
-                                Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-                                Opacity="0.7"
-                                Target="{Binding ElementName=SelectionModeComboBox}" />
+                            <Label Foreground="{DynamicResource TextFillColorPrimaryBrush}" Opacity="0.7" Content="Selection mode" Target="{Binding ElementName=SelectionModeComboBox}" />
                             <ComboBox
                                 x:Name="SelectionModeComboBox"
                                 AutomationProperties.Name="Selection Mode"

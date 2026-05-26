@@ -737,6 +737,9 @@ namespace ModernWpf.Gallery.Tests
             StringAssert.Contains(
                 listViewXaml,
                 "&lt;ListView ItemsSource=&quot;{Binding ViewModel.MyCollection}&quot;&gt;&lt;&gt;\\n");
+            StringAssert.Contains(
+                listViewXaml,
+                "<Label Foreground=\"{DynamicResource TextFillColorPrimaryBrush}\" Opacity=\"0.7\" Content=\"Selection mode\" Target=\"{Binding ElementName=SelectionModeComboBox}\" />");
             AssertContainsInOrder(
                 listViewXaml,
                 "AutomationProperties.Name=\"ListView with GridView\"",
