@@ -22,8 +22,8 @@
                 </Grid.RowDefinitions>
 
                 <Border
-                    Grid.RowSpan="2"
-                    CornerRadius="8,0,0,0">
+                    CornerRadius="8,0,0,0"
+                    Grid.RowSpan="2">
                     <Border.Background>
                         <ImageBrush
                             ImageSource="pack://application:,,,/ModernWpf.Gallery;component/Assets/win11-dashboard.light.png"
@@ -43,33 +43,31 @@
                     CornerRadius="8,0,0,0">
                     <StackPanel
                         Margin="36,48,0,0"
-                        TextElement.Foreground="Black"
-                        VerticalAlignment="Top">
+                        VerticalAlignment="Top"
+                        TextElement.Foreground="Black">
                         <TextBlock
-                            Margin="0,0,0,2"
-                            pages:GalleryAutomation.HeadingLevel="Level1"
-                            Foreground="Black"
                             Style="{StaticResource SubtitleTextBlockStyle}"
-                            Text=".NET 10" />
+                            Text=".NET 10"
+                            Margin="0,0,0,2"
+                            pages:GalleryAutomation.HeadingLevel="Level1" />
                         <TextBlock
-                            Margin="0,0,0,8"
-                            pages:GalleryAutomation.HeadingLevel="Level1"
-                            Foreground="Black"
                             Style="{StaticResource TitleLargeTextBlockStyle}"
-                            Text="WPF Gallery" />
+                            Text="WPF Gallery"
+                            Margin="0,0,0,8"
+                            pages:GalleryAutomation.HeadingLevel="Level1" />
                         <Border
-                            MaxWidth="300"
-                            HorizontalAlignment="Left"
                             Background="Transparent"
-                            CornerRadius="8">
+                            CornerRadius="8,8,8,8"
+                            MaxWidth="300"
+                            HorizontalAlignment="Left">
                             <TextBlock
                                 MaxWidth="300"
-                                Padding="0,8,12,8"
-                                HorizontalAlignment="Left"
-                                Foreground="Black"
+                                Margin="0,0,0,0"
                                 Style="{StaticResource BodyStrongTextBlockStyle}"
                                 Text="A collection of controls, guidelines and samples to build great WPF applications"
-                                TextAlignment="Left" />
+                                TextAlignment="Left"
+                                HorizontalAlignment="Left"
+                                Padding="0,8,12,8" />
                         </Border>
                     </StackPanel>
                 </Border>
