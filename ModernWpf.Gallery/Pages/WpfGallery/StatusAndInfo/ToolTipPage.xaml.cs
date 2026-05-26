@@ -9,6 +9,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.StatusAndInfo
         {
             ViewModel = viewModel;
             DataContext = this;
+
             InitializeComponent();
         }
     }

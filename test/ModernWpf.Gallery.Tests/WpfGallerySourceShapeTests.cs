@@ -518,6 +518,33 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void SimpleDateMediaAndStatusCodeBehindKeepOfficialConstructorParagraphShape()
+        {
+            foreach (var page in new[]
+            {
+                Tuple.Create("DateAndTime", "CalendarPage"),
+                Tuple.Create("DateAndTime", "DatePickerPage"),
+                Tuple.Create("Media", "CanvasPage"),
+                Tuple.Create("Media", "ImagePage"),
+                Tuple.Create("StatusAndInfo", "ProgressBarPage"),
+                Tuple.Create("StatusAndInfo", "ToolTipPage")
+            })
+            {
+                var source = ReadRepoFile(
+                    "ModernWpf.Gallery",
+                    "Pages",
+                    "WpfGallery",
+                    page.Item1,
+                    page.Item2 + ".xaml.cs");
+                var normalizedSource = source.Replace("\r\n", "\n").Replace('\r', '\n');
+
+                StringAssert.Contains(
+                    normalizedSource,
+                    "            DataContext = this;\n\n            InitializeComponent();");
+            }
+        }
+
+        [TestMethod]
         public void BasicInputPagesKeepOfficialHeaderAndSampleSourceShape()
         {
             foreach (var page in new[]

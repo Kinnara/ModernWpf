@@ -9,6 +9,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DateAndTime
         {
             ViewModel = viewModel;
             DataContext = this;
+
             InitializeComponent();
         }
     }

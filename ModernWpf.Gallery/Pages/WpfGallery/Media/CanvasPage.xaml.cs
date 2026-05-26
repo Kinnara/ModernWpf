@@ -9,6 +9,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Media
         {
             ViewModel = viewModel;
             DataContext = this;
+
             InitializeComponent();
         }
     }
