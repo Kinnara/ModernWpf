@@ -352,6 +352,52 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void DateAndMediaPagesKeepOfficialHeaderAndSimpleSampleSourceShape()
+        {
+            foreach (var page in new[]
+            {
+                Tuple.Create(
+                    "DateAndTime",
+                    "CalendarPage.xaml",
+                    "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" ShowDescription=\"False\" />"),
+                Tuple.Create(
+                    "DateAndTime",
+                    "DatePickerPage.xaml",
+                    "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" ShowDescription=\"False\" />"),
+                Tuple.Create(
+                    "Media",
+                    "CanvasPage.xaml",
+                    "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" Description=\"{Binding ViewModel.PageDescription}\" />"),
+                Tuple.Create(
+                    "Media",
+                    "ImagePage.xaml",
+                    "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" Description=\"{Binding ViewModel.PageDescription}\" />")
+            })
+            {
+                var xaml = ReadRepoFile(
+                    "ModernWpf.Gallery",
+                    "Pages",
+                    "WpfGallery",
+                    page.Item1,
+                    page.Item2);
+                StringAssert.Contains(xaml, page.Item3);
+                StringAssert.Contains(
+                    xaml,
+                    "<ScrollViewer Grid.Row=\"1\" Margin=\"0,0,0,24\" Padding=\"0,0,24,0\">");
+            }
+
+            var calendarXaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "DateAndTime",
+                "CalendarPage.xaml");
+            StringAssert.Contains(
+                calendarXaml,
+                "<Calendar HorizontalAlignment=\"Left\" AutomationProperties.Name=\"Default\" KeyboardNavigation.IsTabStop=\"False\"/>");
+        }
+
+        [TestMethod]
         public void SystemPagesKeepOfficialHeaderAndControlExampleSourceShape()
         {
             foreach (var page in new[]
