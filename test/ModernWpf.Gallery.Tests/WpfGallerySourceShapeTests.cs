@@ -180,6 +180,39 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void SectionPageKeepsOfficialSectionDeclarationSourceShape()
+        {
+            var xaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "SectionPage.xaml");
+
+            AssertContainsInOrder(
+                xaml,
+                "<Grid Style=\"{StaticResource GalleryPageRootStyle}\">",
+                "<Grid.RowDefinitions>",
+                "<RowDefinition Height=\"Auto\" />",
+                "<RowDefinition Height=\"*\" />");
+            AssertContainsInOrder(
+                xaml,
+                "<controls:PageHeader",
+                "Grid.Row=\"0\"",
+                "Margin=\"0,0,0,40\"",
+                "Title=\"{Binding ViewModel.PageTitle}\"",
+                "Description=\"{Binding ViewModel.PageDescription}\" />");
+            AssertContainsInOrder(
+                xaml,
+                "<ItemsControl",
+                "Grid.Row=\"1\"",
+                "Margin=\"-12,0,0,0\"",
+                "AutomationProperties.Name=\"Items in group\"",
+                "ItemsSource=\"{Binding ViewModel.NavigationCards}\"",
+                "Focusable=\"False\"",
+                "ItemsPanel=\"{StaticResource WrapPanelTemplate}\"",
+                "ItemTemplate=\"{StaticResource NavigationCardTemplate}\" />");
+        }
+
+        [TestMethod]
         public void CopiedItemCodeBehindKeepsOfficialViewModelPropertyBeforeConstructorShape()
         {
             foreach (var page in new[]
