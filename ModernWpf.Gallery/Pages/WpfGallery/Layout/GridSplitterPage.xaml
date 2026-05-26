@@ -35,21 +35,59 @@
         <ScrollViewer Grid.Row="1" Margin="0,0,0,24" Padding="0,0,24,0">
             <StackPanel Margin="0,0,0,24">
                 <controls:ControlExample
-                    Margin="10"
-                    HeaderText="A GridSplitter"
-                    XamlCode="&lt;Grid Height=&quot;400&quot;&gt;&#10;    &lt;Grid.RowDefinitions&gt;&#10;        &lt;RowDefinition Height=&quot;Auto&quot; /&gt;&#10;        &lt;RowDefinition Height=&quot;*&quot; /&gt;&#10;    &lt;/Grid.RowDefinitions&gt;&#10;    &lt;TextBlock Style=&quot;{DynamicResource TitleTextBlockStyle}&quot; Text=&quot;Grid Splitter&quot; Margin=&quot;0 0 0 10&quot;/&gt;&#10;    &lt;Border BorderBrush=&quot;{DynamicResource ControlElevationBorderBrush}&quot; BorderThickness=&quot;2&quot; Grid.Row=&quot;1&quot; Padding=&quot;10&quot; CornerRadius=&quot;4&quot;&gt;&#10;        &lt;Grid Background=&quot;{DynamicResource ControlAltFillColorSecondaryBrush}&quot;&gt;&#10;            &lt;Grid.RowDefinitions&gt;&#10;                &lt;RowDefinition Height=&quot;*&quot; /&gt;&#10;                &lt;RowDefinition Height=&quot;Auto&quot; /&gt;&#10;                &lt;RowDefinition Height=&quot;*&quot; /&gt;&#10;                &lt;RowDefinition Height=&quot;Auto&quot; /&gt;&#10;                &lt;RowDefinition Height=&quot;*&quot; /&gt;&#10;                &lt;RowDefinition Height=&quot;Auto&quot; /&gt;&#10;                &lt;RowDefinition Height=&quot;*&quot; /&gt;&#10;            &lt;/Grid.RowDefinitions&gt;&#10;            &lt;Grid.ColumnDefinitions&gt;&#10;                &lt;ColumnDefinition Width=&quot;*&quot; /&gt;&#10;                &lt;ColumnDefinition Width=&quot;Auto&quot; /&gt;&#10;                &lt;ColumnDefinition Width=&quot;*&quot; /&gt;&#10;            &lt;/Grid.ColumnDefinitions&gt;&#10;            &lt;TextBlock TextWrapping=&quot;Wrap&quot; Text=&quot;{StaticResource SampleText}&quot; /&gt;&#10;            &lt;TextBlock Grid.Row=&quot;0&quot; Grid.Column=&quot;2&quot; TextWrapping=&quot;Wrap&quot; Text=&quot;{StaticResource SampleText2}&quot;/&gt;&#10;            &lt;TextBlock Grid.Row=&quot;2&quot; Grid.Column=&quot;2&quot; TextWrapping=&quot;Wrap&quot; Text=&quot;{StaticResource SampleText}&quot;/&gt;&#10;            &lt;TextBlock Grid.Row=&quot;2&quot; Grid.Column=&quot;0&quot; TextWrapping=&quot;Wrap&quot; Text=&quot;{StaticResource SampleText2}&quot;/&gt;&#10;            &lt;TextBlock Grid.Row=&quot;4&quot; Grid.Column=&quot;2&quot; TextWrapping=&quot;Wrap&quot; Text=&quot;{StaticResource SampleText2}&quot;/&gt;&#10;            &lt;TextBlock Grid.Row=&quot;4&quot; Grid.Column=&quot;0&quot; TextWrapping=&quot;Wrap&quot; Text=&quot;{StaticResource SampleText}&quot;/&gt;&#10;            &lt;GridSplitter Grid.RowSpan=&quot;5&quot; Grid.Column=&quot;1&quot; /&gt;&#10;            &lt;GridSplitter Grid.Row=&quot;1&quot; Grid.ColumnSpan=&quot;3&quot;/&gt;&#10;            &lt;GridSplitter Grid.Row=&quot;3&quot; Grid.ColumnSpan=&quot;1&quot;/&gt;&#10;        &lt;/Grid&gt;&#10;    &lt;/Border&gt;&#10;&lt;/Grid&gt;">
+                Margin="10"
+                HeaderText="A GridSplitter"
+                XamlCode="&lt;Grid Height=&quot;400&quot;&gt;&#10;
+    &lt;Grid.RowDefinitions&gt;&#10;
+        &lt;RowDefinition Height=&quot;Auto&quot; /&gt;&#10;
+        &lt;RowDefinition Height=&quot;*&quot; /&gt;&#10;
+    &lt;/Grid.RowDefinitions&gt;&#10;
+    &lt;TextBlock Style=&quot;{DynamicResource TitleTextBlockStyle}&quot; Text=&quot;Grid Splitter&quot; Margin=&quot;0 0 0 10&quot;/&gt;&#10;
+    &lt;Border BorderBrush=&quot;{DynamicResource ControlElevationBorderBrush}&quot; &#10;
+        BorderThickness=&quot;2&quot; &#10;
+        Grid.Row=&quot;1&quot;&#10;
+        Padding=&quot;10&quot;&#10;
+        CornerRadius=&quot;4&quot;&gt;&#10;
+        &lt;Grid Background=&quot;{DynamicResource ControlAltFillColorSecondaryBrush}&quot;&gt;&#10;
+            &lt;Grid.RowDefinitions&gt;&#10;
+                &lt;RowDefinition Height=&quot;*&quot; /&gt;&#10;
+                &lt;RowDefinition Height=&quot;Auto&quot; /&gt;&#10;
+                &lt;RowDefinition Height=&quot;*&quot; /&gt;&#10;
+                &lt;RowDefinition Height=&quot;Auto&quot; /&gt;&#10;
+                &lt;RowDefinition Height=&quot;*&quot; /&gt;&#10;
+                &lt;RowDefinition Height=&quot;Auto&quot; /&gt;&#10;
+                &lt;RowDefinition Height=&quot;*&quot; /&gt;&#10;
+            &lt;/Grid.RowDefinitions&gt;&#10;
+
+            &lt;Grid.ColumnDefinitions&gt;&#10;
+                &lt;ColumnDefinition Width=&quot;*&quot; /&gt;&#10;
+                &lt;ColumnDefinition Width=&quot;Auto&quot; /&gt;&#10;
+                &lt;ColumnDefinition Width=&quot;*&quot; /&gt;&#10;
+            &lt;/Grid.ColumnDefinitions&gt;&#10;
+            &lt;TextBlock TextWrapping=&quot;Wrap&quot; Text=&quot;{StaticResource SampleText}&quot; /&gt;&#10;
+            &lt;TextBlock Grid.Row=&quot;0&quot; Grid.Column=&quot;2&quot; TextWrapping=&quot;Wrap&quot; Text=&quot;{StaticResource SampleText2}&quot;/&gt;&#10;
+            &lt;TextBlock Grid.Row=&quot;2&quot; Grid.Column=&quot;2&quot; TextWrapping=&quot;Wrap&quot; Text=&quot;{StaticResource SampleText}&quot;/&gt;&#10;
+            &lt;TextBlock Grid.Row=&quot;2&quot; Grid.Column=&quot;0&quot; TextWrapping=&quot;Wrap&quot; Text=&quot;{StaticResource SampleText2}&quot;/&gt;&#10;
+            &lt;TextBlock Grid.Row=&quot;4&quot; Grid.Column=&quot;2&quot; TextWrapping=&quot;Wrap&quot; Text=&quot;{StaticResource SampleText2}&quot;/&gt;&#10;
+            &lt;TextBlock Grid.Row=&quot;4&quot; Grid.Column=&quot;0&quot; TextWrapping=&quot;Wrap&quot; Text=&quot;{StaticResource SampleText}&quot;/&gt;&#10;
+            &lt;GridSplitter Grid.RowSpan=&quot;5&quot; Grid.Column=&quot;1&quot; /&gt;&#10;
+            &lt;GridSplitter Grid.Row=&quot;1&quot; Grid.ColumnSpan=&quot;3&quot;/&gt;&#10;
+            &lt;GridSplitter Grid.Row=&quot;3&quot; Grid.ColumnSpan=&quot;1&quot;/&gt;&#10;
+        &lt;/Grid&gt;&#10;
+    &lt;/Border&gt;&#10;
+&lt;/Grid&gt;
+">
                     <Grid Height="400">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
                         <TextBlock Style="{DynamicResource TitleTextBlockStyle}" Text="Grid Splitter" Margin="0 0 0 10"/>
-                        <Border
-                            BorderBrush="{DynamicResource ControlElevationBorderBrush}"
-                            BorderThickness="2"
-                            Grid.Row="1"
-                            Padding="10"
-                            CornerRadius="4">
+                        <Border BorderBrush="{DynamicResource ControlElevationBorderBrush}"
+                             BorderThickness="2"
+                             Grid.Row="1"
+                             Padding="10"
+                             CornerRadius="4">
                             <Grid Background="{DynamicResource ControlAltFillColorSecondaryBrush}">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*" />
@@ -60,20 +98,21 @@
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="*" />
                                 </Grid.RowDefinitions>
+
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
                                 <TextBlock TextWrapping="Wrap" Text="{StaticResource SampleText}" />
-                                <TextBlock Grid.Row="0" Grid.Column="2" TextWrapping="Wrap" Text="{StaticResource SampleText2}" />
-                                <TextBlock Grid.Row="2" Grid.Column="2" TextWrapping="Wrap" Text="{StaticResource SampleText}" />
-                                <TextBlock Grid.Row="2" Grid.Column="0" TextWrapping="Wrap" Text="{StaticResource SampleText2}" />
-                                <TextBlock Grid.Row="4" Grid.Column="2" TextWrapping="Wrap" Text="{StaticResource SampleText2}" />
-                                <TextBlock Grid.Row="4" Grid.Column="0" TextWrapping="Wrap" Text="{StaticResource SampleText}" />
-                                <GridSplitter Grid.RowSpan="5" Grid.Column="1" ResizeDirection="Columns" />
-                                <GridSplitter Grid.Row="1" Grid.ColumnSpan="3" ResizeDirection="Rows" />
-                                <GridSplitter Grid.Row="3" Grid.ColumnSpan="1" ResizeDirection="Rows" />
+                                <TextBlock Grid.Row="0" Grid.Column="2" TextWrapping="Wrap" Text="{StaticResource SampleText2}"/>
+                                <TextBlock Grid.Row="2" Grid.Column="2" TextWrapping="Wrap" Text="{StaticResource SampleText}"/>
+                                <TextBlock Grid.Row="2" Grid.Column="0" TextWrapping="Wrap" Text="{StaticResource SampleText2}"/>
+                                <TextBlock Grid.Row="4" Grid.Column="2" TextWrapping="Wrap" Text="{StaticResource SampleText2}"/>
+                                <TextBlock Grid.Row="4" Grid.Column="0" TextWrapping="Wrap" Text="{StaticResource SampleText}"/>
+                                <GridSplitter Grid.RowSpan="5" Grid.Column="1" ResizeDirection="Columns"/>
+                                <GridSplitter Grid.Row="1" Grid.ColumnSpan="3" ResizeDirection="Rows"/>
+                                <GridSplitter Grid.Row="3" Grid.ColumnSpan="1" ResizeDirection="Rows"/>
                             </Grid>
                         </Border>
                     </Grid>

@@ -860,6 +860,9 @@ namespace ModernWpf.Gallery.Tests
                 "WpfGallery",
                 "Layout",
                 "GridSplitterPage.xaml");
+            StringAssert.Contains(
+                gridSplitterXaml.Replace("\r\n", "\n").Replace('\r', '\n'),
+                "XamlCode=\"&lt;Grid Height=&quot;400&quot;&gt;&#10;\n    &lt;Grid.RowDefinitions&gt;&#10;");
             AssertContainsInOrder(
                 gridSplitterXaml,
                 "<TextBlock Style=\"{DynamicResource TitleTextBlockStyle}\" Text=\"Grid Splitter\" Margin=\"0 0 0 10\"/>",
@@ -870,9 +873,9 @@ namespace ModernWpf.Gallery.Tests
                 "Padding=\"10\"",
                 "CornerRadius=\"4\">",
                 "<TextBlock TextWrapping=\"Wrap\" Text=\"{StaticResource SampleText}\" />",
-                "<GridSplitter Grid.RowSpan=\"5\" Grid.Column=\"1\" ResizeDirection=\"Columns\" />",
-                "<GridSplitter Grid.Row=\"1\" Grid.ColumnSpan=\"3\" ResizeDirection=\"Rows\" />",
-                "<GridSplitter Grid.Row=\"3\" Grid.ColumnSpan=\"1\" ResizeDirection=\"Rows\" />");
+                "<GridSplitter Grid.RowSpan=\"5\" Grid.Column=\"1\" ResizeDirection=\"Columns\"/>",
+                "<GridSplitter Grid.Row=\"1\" Grid.ColumnSpan=\"3\" ResizeDirection=\"Rows\"/>",
+                "<GridSplitter Grid.Row=\"3\" Grid.ColumnSpan=\"1\" ResizeDirection=\"Rows\"/>");
 
             var groupBoxXaml = ReadRepoFile(
                 "ModernWpf.Gallery",
