@@ -311,5 +311,44 @@ namespace ModernWpf.Gallery.Tests
                 "HeaderText=\"A TextBox with input validation.\"",
                 "XamlCode=\"&lt;TextBox&gt;");
         }
+
+        [TestMethod]
+        public void StatusAndInfoPagesKeepOfficialHeaderAndToolTipSourceShape()
+        {
+            foreach (var page in new[]
+            {
+                "ProgressBarPage.xaml",
+                "ToolTipPage.xaml"
+            })
+            {
+                var xaml = ReadRepoFile(
+                    "ModernWpf.Gallery",
+                    "Pages",
+                    "WpfGallery",
+                    "StatusAndInfo",
+                    page);
+                StringAssert.Contains(
+                    xaml,
+                    "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" ShowDescription=\"False\" />");
+                StringAssert.Contains(
+                    xaml,
+                    "<ScrollViewer Grid.Row=\"1\" Margin=\"0,0,0,24\" Padding=\"0,0,24,0\">");
+            }
+
+            var toolTipXaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "StatusAndInfo",
+                "ToolTipPage.xaml");
+            AssertContainsInOrder(
+                toolTipXaml,
+                "<Button",
+                "Content=\"Button with a simple ToolTip.\"",
+                "ToolTipService.InitialShowDelay=\"100\"",
+                "ToolTipService.Placement=\"MousePoint\"",
+                "AutomationProperties.Name=\"TooltipButton\"",
+                "ToolTipService.ToolTip=\"Simple ToolTip\" />");
+        }
     }
 }
