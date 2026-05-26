@@ -364,8 +364,8 @@
             </ListView>
 
             <Grid
-                Grid.Row="0"
                 Grid.Column="1"
+                Grid.Row="0"
                 Background="{DynamicResource ButtonBackground}">
                 <ScrollViewer>
                     <StackPanel Margin="16" Orientation="Vertical">
@@ -406,10 +406,10 @@
                             Visibility="{Binding ElementName=TagsItemsControl, Path=HasItems, Converter={StaticResource BooleanToVisibilityConverter}}" />
                         <ItemsControl
                             x:Name="TagsItemsControl"
-                            Margin="0,0,0,12"
-                            AutomationProperties.Name="Selected Icon Tags"
                             ItemsSource="{Binding ViewModel.SelectedIcon.Tags}"
-                            Visibility="{Binding RelativeSource={RelativeSource Self}, Path=HasItems, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            Margin="0,0,0,12"
+                            Visibility="{Binding RelativeSource={RelativeSource Self}, Path=HasItems, Converter={StaticResource BooleanToVisibilityConverter}}"
+                            AutomationProperties.Name="Selected Icon Tags">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <WrapPanel />
@@ -418,14 +418,14 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Button
-                                        AutomationProperties.Name="{Binding}"
+                                        Style="{StaticResource IconTagChipButtonStyle}"
                                         Command="{Binding ViewModel.ApplyTagFilterCommand, RelativeSource={RelativeSource AncestorType=Page}}"
-                                        CommandParameter="{Binding}"
-                                        Style="{StaticResource IconTagChipButtonStyle}">
+                                        AutomationProperties.Name="{Binding}"
+                                        CommandParameter="{Binding}">
                                         <TextBlock
-                                            Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                            Text="{Binding}"
                                             Style="{StaticResource CaptionTextBlockStyle}"
-                                            Text="{Binding}" />
+                                            Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
                                     </Button>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
@@ -451,51 +451,51 @@
             </Grid.ColumnDefinitions>
             <StackPanel
                 Margin="0,0,0,0"
-                HorizontalAlignment="Left"
-                Orientation="Horizontal">
+                Orientation="Horizontal"
+                HorizontalAlignment="Left">
                 <Button
+                    Style="{StaticResource PaginationButtonStyle}"
+                    Command="{Binding ViewModel.PreviousPageCommand}"
                     Margin="0,0,8,0"
                     Padding="8"
-                    AutomationProperties.Name="Previous Page"
-                    Command="{Binding ViewModel.PreviousPageCommand}"
-                    Style="{StaticResource PaginationButtonStyle}"
-                    ToolTip="Previous Page">
+                    ToolTip="Previous Page"
+                    AutomationProperties.Name="Previous Page">
                     <TextBlock
                         FontFamily="{StaticResource SymbolThemeFontFamily}"
-                        FontSize="12"
-                        Text="&#xF08D;" />
+                        Text="&#xF08D;"
+                        FontSize="12" />
                 </Button>
                 <TextBlock
-                    Margin="0,0,4,0"
+                    Text="{Binding ViewModel.CurrentPage, StringFormat='Page {0} of'}"
                     VerticalAlignment="Center"
-                    Text="{Binding ViewModel.CurrentPage, StringFormat='Page {0} of'}" />
+                    Margin="0,0,4,0" />
                 <TextBlock
-                    Margin="0,0,8,0"
+                    Text="{Binding ViewModel.TotalPages}"
                     VerticalAlignment="Center"
-                    Text="{Binding ViewModel.TotalPages}" />
+                    Margin="0,0,8,0" />
                 <Button
-                    Padding="8"
-                    AutomationProperties.Name="Next Page"
-                    Command="{Binding ViewModel.NextPageCommand}"
                     Style="{StaticResource PaginationButtonStyle}"
-                    ToolTip="Next Page">
+                    Command="{Binding ViewModel.NextPageCommand}"
+                    Padding="8"
+                    ToolTip="Next Page"
+                    AutomationProperties.Name="Next Page">
                     <TextBlock
                         FontFamily="{StaticResource SymbolThemeFontFamily}"
-                        FontSize="12"
-                        Text="&#xF08F;" />
+                        Text="&#xF08F;"
+                        FontSize="12" />
                 </Button>
             </StackPanel>
-            <StackPanel Grid.Column="1" Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal" Grid.Column="1">
                 <TextBlock
-                    Margin="10,0,0,0"
-                    VerticalAlignment="Center"
                     Style="{StaticResource BodyTextBlockStyle}"
-                    Text="Icons per page" />
-                <ComboBox
+                    Text="Icons per page"
                     Margin="10,0,0,0"
-                    AutomationProperties.Name="Icons per page"
+                    VerticalAlignment="Center" />
+                <ComboBox
                     ItemsSource="{Binding ViewModel.PageSizeOptions}"
-                    SelectedIndex="{Binding ViewModel.SelectedPageSizeIndex}" />
+                    SelectedIndex="{Binding ViewModel.SelectedPageSizeIndex}"
+                    AutomationProperties.Name="Icons per page"
+                    Margin="10,0,0,0" />
             </StackPanel>
         </Grid>
     </Grid>
