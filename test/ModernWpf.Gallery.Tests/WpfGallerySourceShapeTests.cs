@@ -1366,6 +1366,32 @@ namespace ModernWpf.Gallery.Tests
                     "<ScrollViewer Grid.Row=\"1\" Margin=\"0,0,0,24\" Padding=\"0,0,24,0\">");
             }
 
+            var progressBarXaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "StatusAndInfo",
+                "ProgressBarPage.xaml");
+            AssertContainsInOrder(
+                progressBarXaml,
+                "<StackPanel Margin=\"0,0,0,24\">",
+                "<controls:ControlExample",
+                "Margin=\"10\"",
+                "HeaderText=\"A simple progress bar.\"",
+                "XamlCode=\"&lt;ProgressBar Value=&quot;40&quot; /&gt;\"",
+                "<ProgressBar",
+                "Margin=\"24\"",
+                "AutomationProperties.Name=\"A determinate\"",
+                "Value=\"40\" />",
+                "<controls:ControlExample",
+                "Margin=\"10,32,10,10\"",
+                "HeaderText=\"An indeterminate progress bar.\"",
+                "XamlCode=\"&lt;ProgressBar IsIndeterminate=&quot;True&quot; /&gt;\"",
+                "<ProgressBar",
+                "Margin=\"24\"",
+                "AutomationProperties.Name=\"An indeterminate\"",
+                "IsIndeterminate=\"True\" />");
+
             var toolTipXaml = ReadRepoFile(
                 "ModernWpf.Gallery",
                 "Pages",
@@ -1438,6 +1464,42 @@ namespace ModernWpf.Gallery.Tests
             StringAssert.Contains(
                 calendarXaml,
                 "<Calendar HorizontalAlignment=\"Left\" AutomationProperties.Name=\"Default\" KeyboardNavigation.IsTabStop=\"False\"/>");
+
+            var datePickerXaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "DateAndTime",
+                "DatePickerPage.xaml");
+            AssertContainsInOrder(
+                datePickerXaml,
+                "<controls:ControlExample Margin=\"10\" HeaderText=\"A basic DatePicker control.\">",
+                "<controls:ControlExample.XamlCode>",
+                "&lt;DatePicker/&gt;",
+                "<DatePicker",
+                "MinWidth=\"200\"",
+                "HorizontalAlignment=\"Left\"",
+                "AutomationProperties.Name=\"Pick a date\" />");
+
+            var canvasXaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Media",
+                "CanvasPage.xaml");
+            AssertContainsInOrder(
+                canvasXaml,
+                "<Grid Margin=\"0,0,0,24\">",
+                "<controls:ControlExample Margin=\"10\" HeaderText=\"A basic Canvas inside the ViewBox\">",
+                "<controls:ControlExample.XamlCode>",
+                "&lt;Viewbox Width=&quot;200&quot; Height=&quot;200&quot; &gt;\\n",
+                "\\t&lt;Canvas Width=&quot;47&quot; Height=&quot;123&quot;&gt;\\n",
+                "\\t\\t&lt;Path Data=&quot;M0,19H18V84h29v15H0V19Z&quot; Fill=&quot;White&quot; /&gt;\\n",
+                "\\t\\t&lt;Path Data=&quot;M46,80H29V15H0V0H46V80Z&quot; Fill=&quot;White&quot; /&gt;\\n",
+                "<Viewbox Width=\"200\" Height=\"200\">",
+                "<Canvas Width=\"47\" Height=\"123\">",
+                "<Path Data=\"M0,19H18V84h29v15H0V19Z\" Fill=\"{DynamicResource TextFillColorSecondaryBrush}\" />",
+                "<Path Data=\"M46,80H29V15H0V0H46V80Z\" Fill=\"{DynamicResource TextFillColorSecondaryBrush}\" />");
 
             var imageXaml = ReadRepoFile(
                 "ModernWpf.Gallery",
