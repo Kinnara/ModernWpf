@@ -297,6 +297,10 @@ The generic `ItemPage` wrapper now also avoids normal-runtime local-only
 `PageHeader` and `DirectPageContentHost` names plus `GallerySampleHost`
 automation IDs while keeping source-shaped `ControlExample` binding order and
 the retained `GallerySample_*` sample-level automation IDs used by diagnostics.
+The shared `PageHeader` template now also keeps the official compact
+converter/setter, title/description text, and hidden-description trigger source
+shape while retaining the local `GalleryAutomation.HeadingLevel` adapter that
+maps heading metadata to supported target frameworks.
 
 ## Commit Policy
 
@@ -316,6 +320,10 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.SharedPageHeaderKeepsOfficialTemplateSourceShape|FullyQualifiedName~GalleryPageRuntimeTests.WhatsNewPageHeaderMatchesWpfGalleryReference|FullyQualifiedName~GalleryNavigationRuntimeTests.ShellNavigationMenuMatchesWpfGalleryReferenceChrome|FullyQualifiedName~GalleryAutomationHookTests.WpfGalleryPagesExposeHeadingAutomation" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 3 tests per target. The shared `PageHeader` template now keeps official compact converter/setter, title/description text, and hidden-description trigger source shape while retaining the local `GalleryAutomation.HeadingLevel` target-framework adapter; runtime header and navigation chrome coverage still passes. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the shared `PageHeader` source-shape alignment. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages and existing ModernWpf/ModernWpf.Controls warnings.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.SharedColorPageExampleKeepsOfficialTemplateSourceShape|FullyQualifiedName~WpfGallerySourceShapeTests.DesignGuidanceColorTextSectionKeepsOfficialSourceShape|FullyQualifiedName~GalleryPageRuntimeTests.ColorPageUsesWpfGallerySelectorAndTextSectionLayout|FullyQualifiedName~GalleryPageRuntimeTests.ColorPageVisualTestCanOpenWpfGallerySubsection|FullyQualifiedName~GalleryPageRuntimeTests.DesignGuidancePagesUseOfficialPageSpecificViewModels|FullyQualifiedName~GalleryPageRuntimeTests.DesignGuidanceItemPagesUseOfficialPageRoots" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 11 tests per target. The shared `ColorPageExample` control now keeps the official compact template declaration shape and code-behind dependency-property member order while existing Design Guidance color subsection source-shape, page-specific view-model, copied-root, selector/text-section, and subsection runtime coverage still passes. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
@@ -2518,7 +2526,9 @@ ModernWpf extension group still uses generic `SectionPage` with its scoped
 scroll host so all retained ModernWpf cards remain reachable. The shared section
 page now also pins representative official section declaration source shape for
 root rows, PageHeader, and the direct navigation-card ItemsControl while keeping
-that local extension scroll host separate. Next, continue
+that local extension scroll host separate. The shared `PageHeader` template now
+pins official compact converter/setter, text, and hidden-description trigger
+source shape while retaining the local heading-level adapter. Next, continue
 source-backed structural alignment where copied
 pages still diverge from official XAML. The generic `ItemPage` wrapper now also
 drops local-only wrapper header/direct-frame names and `GallerySampleHost` automation IDs

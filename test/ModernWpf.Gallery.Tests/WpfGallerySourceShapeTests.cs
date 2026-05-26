@@ -201,6 +201,52 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void SharedPageHeaderKeepsOfficialTemplateSourceShape()
+        {
+            var xaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Controls",
+                "PageHeader.xaml");
+            var normalizedXaml = xaml.Replace("\r\n", "\n").Replace('\r', '\n');
+
+            StringAssert.Contains(
+                xaml,
+                "<controls:NullToVisibilityConverter x:Key=\"NullToVisibilityConverter\"/>");
+            StringAssert.Contains(
+                xaml,
+                "<Setter Property=\"Focusable\" Value=\"False\"/>");
+            StringAssert.Contains(
+                normalizedXaml,
+                "<StackPanel\n                        VerticalAlignment=\"Center\">");
+            AssertContainsInOrder(
+                xaml,
+                "<Label",
+                "x:Name=\"TitleTextBlock\"",
+                "AutomationProperties.Name=\"{Binding Title, StringFormat='{}{0} Page', RelativeSource={RelativeSource Mode=TemplatedParent}}\"",
+                "pages:GalleryAutomation.HeadingLevel=\"Level1\"",
+                "KeyboardNavigation.IsTabStop=\"True\"",
+                "KeyboardNavigation.TabIndex=\"0\"",
+                "Focusable=\"True\"",
+                "<TextBlock Style=\"{StaticResource TitleTextBlockStyle}\"",
+                "Text=\"{TemplateBinding Title}\" />");
+            AssertContainsInOrder(
+                xaml,
+                "<Label",
+                "pages:GalleryAutomation.HeadingLevel=\"Level2\"",
+                "KeyboardNavigation.IsTabStop=\"True\"",
+                "KeyboardNavigation.TabIndex=\"1\"",
+                "Visibility=\"{TemplateBinding Description, Converter={StaticResource NullToVisibilityConverter}}\"",
+                "Focusable=\"True\"",
+                "Style=\"{StaticResource BodyTextBlockStyle}\"/>");
+            AssertContainsInOrder(
+                xaml,
+                "<Trigger Property=\"ShowDescription\" Value=\"False\">",
+                "<Setter TargetName=\"DescriptionTextBlock\"",
+                "Property=\"Visibility\"",
+                "Value=\"Hidden\"/>");
+        }
+
+        [TestMethod]
         public void SharedColorPageExampleKeepsOfficialTemplateSourceShape()
         {
             var xaml = ReadRepoFile(
