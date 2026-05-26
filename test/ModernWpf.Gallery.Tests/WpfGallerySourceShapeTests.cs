@@ -545,6 +545,48 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void MessageBoxCodeBehindKeepsOfficialShowCallSourceShape()
+        {
+            var source = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "System",
+                "MessageBoxPage.xaml.cs");
+            var normalizedSource = source.Replace("\r\n", "\n").Replace('\r', '\n');
+
+            StringAssert.Contains(
+                normalizedSource,
+                "            var result = MessageBox.Show(\"This is a detailed description of what happened or what action is needed.\", \"Custom Title\");\n            ViewModel.CustomTitleResult = $\"Result: {result}\";");
+            StringAssert.Contains(
+                normalizedSource,
+                "            var result = MessageBox.Show($\"This MessageBox has {buttonName} button(s).\", $\"{buttonName} Button(s)\", buttonType);\n            ViewModel.DifferentButtonsResult = $\"Result: {result}\";");
+            StringAssert.Contains(
+                normalizedSource,
+                "            var result = MessageBox.Show($\"This MessageBox displays the {imageName} icon.\", $\"{imageName} Icon\", MessageBoxButton.OK, imageType);\n            ViewModel.DifferentImagesResult = $\"Result: {result}\";");
+            StringAssert.Contains(
+                normalizedSource,
+                "        // 6. Common Messages (Information, Error, Warning)\n        private void ShowCommonInformation_Click(object sender, RoutedEventArgs e)");
+            StringAssert.Contains(
+                normalizedSource,
+                "        // 7. Custom Default Button\n        private void ShowCustomDefaultButton_Click(object sender, RoutedEventArgs e)");
+            StringAssert.Contains(
+                normalizedSource,
+                "            var result = MessageBox.Show(\"Do you want to save changes? Press Enter to select the default 'No' button.\", \"Save Changes\", MessageBoxButton.YesNoCancel, MessageBoxImage.Question, MessageBoxResult.No);\n            ViewModel.CustomDefaultResult = $\"User selected: {result}\";");
+
+            AssertContainsInOrder(
+                normalizedSource,
+                "var buttonType = GetMessageBoxButton(ViewModel.SelectedButtonIndex);",
+                "var result = MessageBox.Show($\"This MessageBox has {buttonName} button(s).\", $\"{buttonName} Button(s)\", buttonType);",
+                "private static MessageBoxButton GetMessageBoxButton(int index)");
+            AssertContainsInOrder(
+                normalizedSource,
+                "var imageType = GetMessageBoxImage(ViewModel.SelectedImageIndex);",
+                "var result = MessageBox.Show($\"This MessageBox displays the {imageName} icon.\", $\"{imageName} Icon\", MessageBoxButton.OK, imageType);",
+                "private static MessageBoxImage GetMessageBoxImage(int index)");
+        }
+
+        [TestMethod]
         public void BasicInputPagesKeepOfficialHeaderAndSampleSourceShape()
         {
             foreach (var page in new[]

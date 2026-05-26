@@ -22,9 +22,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
 
         private void ShowCustomTitleButton_Click(object sender, RoutedEventArgs e)
         {
-            var result = MessageBox.Show(
-                "This is a detailed description of what happened or what action is needed.",
-                "Custom Title");
+            var result = MessageBox.Show("This is a detailed description of what happened or what action is needed.", "Custom Title");
             ViewModel.CustomTitleResult = $"Result: {result}";
         }
 
@@ -32,10 +30,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
         {
             var buttonType = GetMessageBoxButton(ViewModel.SelectedButtonIndex);
             var buttonName = GetMessageBoxButtonName(ViewModel.SelectedButtonIndex);
-            var result = MessageBox.Show(
-                $"This MessageBox has {buttonName} button(s).",
-                $"{buttonName} Button(s)",
-                buttonType);
+            var result = MessageBox.Show($"This MessageBox has {buttonName} button(s).", $"{buttonName} Button(s)", buttonType);
             ViewModel.DifferentButtonsResult = $"Result: {result}";
         }
 
@@ -43,14 +38,11 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
         {
             var imageType = GetMessageBoxImage(ViewModel.SelectedImageIndex);
             var imageName = GetMessageBoxImageName(ViewModel.SelectedImageIndex);
-            var result = MessageBox.Show(
-                $"This MessageBox displays the {imageName} icon.",
-                $"{imageName} Icon",
-                MessageBoxButton.OK,
-                imageType);
+            var result = MessageBox.Show($"This MessageBox displays the {imageName} icon.", $"{imageName} Icon", MessageBoxButton.OK, imageType);
             ViewModel.DifferentImagesResult = $"Result: {result}";
         }
 
+        // 6. Common Messages (Information, Error, Warning)
         private void ShowCommonInformation_Click(object sender, RoutedEventArgs e)
         {
             var result = MessageBox.Show("The operation completed successfully.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -69,14 +61,10 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
             ViewModel.CommonMessagesResult = $"Type: Warning | Result: {result}";
         }
 
+        // 7. Custom Default Button
         private void ShowCustomDefaultButton_Click(object sender, RoutedEventArgs e)
         {
-            var result = MessageBox.Show(
-                "Do you want to save changes? Press Enter to select the default 'No' button.",
-                "Save Changes",
-                MessageBoxButton.YesNoCancel,
-                MessageBoxImage.Question,
-                MessageBoxResult.No);
+            var result = MessageBox.Show("Do you want to save changes? Press Enter to select the default 'No' button.", "Save Changes", MessageBoxButton.YesNoCancel, MessageBoxImage.Question, MessageBoxResult.No);
             ViewModel.CustomDefaultResult = $"User selected: {result}";
         }
 
