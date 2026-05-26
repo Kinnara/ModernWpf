@@ -1141,19 +1141,23 @@ namespace ModernWpf.Gallery.Tests
                 Tuple.Create(
                     "DateAndTime",
                     "CalendarPage.xaml",
-                    "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" ShowDescription=\"False\" />"),
+                    "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" ShowDescription=\"False\" />",
+                    "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.DateAndTime\""),
                 Tuple.Create(
                     "DateAndTime",
                     "DatePickerPage.xaml",
-                    "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" ShowDescription=\"False\" />"),
+                    "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" ShowDescription=\"False\" />",
+                    "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.DateAndTime\""),
                 Tuple.Create(
                     "Media",
                     "CanvasPage.xaml",
-                    "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" Description=\"{Binding ViewModel.PageDescription}\" />"),
+                    "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" Description=\"{Binding ViewModel.PageDescription}\" />",
+                    "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.Media\""),
                 Tuple.Create(
                     "Media",
                     "ImagePage.xaml",
-                    "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" Description=\"{Binding ViewModel.PageDescription}\" />")
+                    "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" Description=\"{Binding ViewModel.PageDescription}\" />",
+                    "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.Media\"")
             })
             {
                 var xaml = ReadRepoFile(
@@ -1162,6 +1166,14 @@ namespace ModernWpf.Gallery.Tests
                     "WpfGallery",
                     page.Item1,
                     page.Item2);
+                var normalizedXaml = xaml.Replace("\r\n", "\n").Replace('\r', '\n');
+                StringAssert.Contains(xaml, page.Item4);
+                StringAssert.Contains(
+                    normalizedXaml,
+                    "<Grid x:Name=\"ContentPagePane\" Height=\"Auto\">\n\n        <Grid.RowDefinitions>");
+                StringAssert.Contains(
+                    normalizedXaml,
+                    "</Grid.RowDefinitions>\n        <controls:PageHeader");
                 StringAssert.Contains(xaml, page.Item3);
                 StringAssert.Contains(
                     xaml,
@@ -1177,6 +1189,16 @@ namespace ModernWpf.Gallery.Tests
             StringAssert.Contains(
                 calendarXaml,
                 "<Calendar HorizontalAlignment=\"Left\" AutomationProperties.Name=\"Default\" KeyboardNavigation.IsTabStop=\"False\"/>");
+
+            var imageXaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Media",
+                "ImagePage.xaml");
+            StringAssert.Contains(
+                imageXaml.Replace("\r\n", "\n").Replace('\r', '\n'),
+                "</Page.Resources>\n\n\n    <Grid x:Name=\"ContentPagePane\" Height=\"Auto\">");
         }
 
         [TestMethod]
