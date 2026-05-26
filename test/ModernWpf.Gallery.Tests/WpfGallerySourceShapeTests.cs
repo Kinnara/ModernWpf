@@ -1857,6 +1857,36 @@ namespace ModernWpf.Gallery.Tests
                     "<ScrollViewer Grid.Row=\"1\" Margin=\"0,0,0,24\" Padding=\"0,0,24,0\">");
             }
 
+            foreach (var page in new[]
+            {
+                Tuple.Create(
+                    "LabelPage.xaml",
+                    "                </controls:ControlExample>\n            </StackPanel>\n\n        </ScrollViewer>\n    </Grid>\n\n</Page>"),
+                Tuple.Create(
+                    "TextBoxPage.xaml",
+                    "                </controls:ControlExample>\n            </StackPanel>\n\n        </ScrollViewer>\n    </Grid>\n\n</Page>"),
+                Tuple.Create(
+                    "PasswordBoxPage.xaml",
+                    "                </controls:ControlExample>\n\n            </StackPanel>\n\n        </ScrollViewer>\n    </Grid>\n\n</Page>"),
+                Tuple.Create(
+                    "RichTextEditPage.xaml",
+                    "            </StackPanel>\n        </ScrollViewer>\n    </Grid>\n\n</Page>"),
+                Tuple.Create(
+                    "TextBlockPage.xaml",
+                    "                </controls:ControlExample>\n\n            </StackPanel>\n\n        </ScrollViewer>\n    </Grid>\n\n</Page>")
+            })
+            {
+                var xaml = ReadRepoFile(
+                    "ModernWpf.Gallery",
+                    "Pages",
+                    "WpfGallery",
+                    "Text",
+                    page.Item1);
+                StringAssert.Contains(
+                    xaml.Replace("\r\n", "\n").Replace('\r', '\n'),
+                    page.Item2);
+            }
+
             var labelXaml = ReadRepoFile(
                 "ModernWpf.Gallery",
                 "Pages",
@@ -1988,6 +2018,12 @@ namespace ModernWpf.Gallery.Tests
                 "<Hyperlink NavigateUri=\"https://www.microsoft.com\" RequestNavigate=\"Hyperlink_RequestNavigate\">",
                 "Hyperlink",
                 "</Hyperlink>");
+            StringAssert.Contains(
+                hyperlinkXaml.Replace("\r\n", "\n").Replace('\r', '\n'),
+                "<TextBlock Margin=\"20\">\n                                <Hyperlink NavigateUri=\"https://www.microsoft.com\" RequestNavigate=\"Hyperlink_RequestNavigate\">\n                                    Hyperlink\n                                </Hyperlink>\n                        </TextBlock>");
+            StringAssert.Contains(
+                hyperlinkXaml.Replace("\r\n", "\n").Replace('\r', '\n'),
+                "            </ScrollViewer>\n        </Grid>\n\n    </Grid>\n</Page>");
         }
 
         [TestMethod]

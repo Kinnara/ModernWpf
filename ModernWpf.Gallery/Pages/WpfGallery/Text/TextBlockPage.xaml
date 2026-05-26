@@ -65,7 +65,10 @@
                         It supports a number of properties that enable precise control of presentation, such as FontFamily, FontSize, FontWeight, TextEffects, and TextWrapping.
                     </TextBlock>
                 </controls:ControlExample>
+
             </StackPanel>
+
         </ScrollViewer>
     </Grid>
+
 </Page>

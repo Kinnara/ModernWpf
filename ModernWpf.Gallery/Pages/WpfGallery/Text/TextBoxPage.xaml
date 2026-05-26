@@ -50,6 +50,8 @@
                         TextWrapping="Wrap" />
                 </controls:ControlExample>
             </StackPanel>
+
         </ScrollViewer>
     </Grid>
+
 </Page>
