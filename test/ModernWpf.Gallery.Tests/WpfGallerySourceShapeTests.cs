@@ -622,6 +622,16 @@ namespace ModernWpf.Gallery.Tests
                 "WpfGallery",
                 "DesignGuidance",
                 "ColorPage.xaml");
+            var normalizedColorXaml = colorXaml.Replace("\r\n", "\n").Replace('\r', '\n');
+            StringAssert.Contains(
+                colorXaml,
+                "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance\"");
+            StringAssert.Contains(
+                normalizedColorXaml,
+                "<Grid x:Name=\"ContentPagePane\" Height=\"Auto\">\n\n        <Grid.RowDefinitions>");
+            StringAssert.Contains(
+                normalizedColorXaml,
+                "</Grid.RowDefinitions>\n\n        <controls:PageHeader");
             StringAssert.Contains(
                 colorXaml,
                 "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" Description=\"{Binding ViewModel.PageDescription}\" />");
@@ -647,6 +657,19 @@ namespace ModernWpf.Gallery.Tests
                     "WpfGallery",
                     "DesignGuidance",
                     page);
+                var normalizedXaml = xaml.Replace("\r\n", "\n").Replace('\r', '\n');
+                StringAssert.Contains(
+                    xaml,
+                    "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance\"");
+                Assert.IsFalse(
+                    xaml.Contains("x:Name=\"ContentPagePane\"", StringComparison.Ordinal),
+                    page + " should keep the official unnamed root Grid shape.");
+                StringAssert.Contains(
+                    normalizedXaml,
+                    "<Grid>\n        <Grid.RowDefinitions>");
+                StringAssert.Contains(
+                    normalizedXaml,
+                    "</Grid.RowDefinitions>\n\n        <controls:PageHeader");
                 StringAssert.Contains(
                     xaml,
                     "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" Description=\"{Binding ViewModel.PageDescription}\" />");
@@ -661,6 +684,19 @@ namespace ModernWpf.Gallery.Tests
                 "WpfGallery",
                 "DesignGuidance",
                 "GeometryPage.xaml");
+            var normalizedGeometryXaml = geometryXaml.Replace("\r\n", "\n").Replace('\r', '\n');
+            StringAssert.Contains(
+                geometryXaml,
+                "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance\"");
+            Assert.IsFalse(
+                geometryXaml.Contains("x:Name=\"ContentPagePane\"", StringComparison.Ordinal),
+                "GeometryPage.xaml should keep the official unnamed root Grid shape.");
+            StringAssert.Contains(
+                normalizedGeometryXaml,
+                "<Grid>\n        <Grid.RowDefinitions>");
+            StringAssert.Contains(
+                normalizedGeometryXaml,
+                "</Grid.RowDefinitions>\n\n        <controls:PageHeader");
             StringAssert.Contains(
                 geometryXaml,
                 "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" ShowDescription=\"False\"/>");
@@ -677,6 +713,9 @@ namespace ModernWpf.Gallery.Tests
                 "WpfGallery",
                 "DesignGuidance",
                 "IconographyPage.xaml");
+            Assert.IsFalse(
+                iconographyXaml.Contains("xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance\"", StringComparison.Ordinal),
+                "IconographyPage.xaml should keep the current official root namespace shape, which has no local namespace declaration.");
             StringAssert.Contains(
                 iconographyXaml,
                 "<controls:PageHeader Margin=\"2,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" Description=\"{Binding ViewModel.PageDescription}\" />");
