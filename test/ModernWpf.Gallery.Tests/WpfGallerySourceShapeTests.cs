@@ -527,13 +527,13 @@ namespace ModernWpf.Gallery.Tests
         {
             foreach (var page in new[]
             {
-                "BorderPage.xaml",
-                "ExpanderPage.xaml",
-                "GridPage.xaml",
-                "GridSplitterPage.xaml",
-                "GroupBoxPage.xaml",
-                "ResizeGripPage.xaml",
-                "StackPanelPage.xaml"
+                Tuple.Create("BorderPage.xaml", false),
+                Tuple.Create("ExpanderPage.xaml", false),
+                Tuple.Create("GridPage.xaml", false),
+                Tuple.Create("GridSplitterPage.xaml", false),
+                Tuple.Create("GroupBoxPage.xaml", true),
+                Tuple.Create("ResizeGripPage.xaml", true),
+                Tuple.Create("StackPanelPage.xaml", false)
             })
             {
                 var xaml = ReadRepoFile(
@@ -541,7 +541,37 @@ namespace ModernWpf.Gallery.Tests
                     "Pages",
                     "WpfGallery",
                     "Layout",
-                    page);
+                    page.Item1);
+                var normalizedXaml = xaml.Replace("\r\n", "\n").Replace('\r', '\n');
+                StringAssert.Contains(
+                    xaml,
+                    "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.Layout\"");
+                if (page.Item1 == "GridSplitterPage.xaml")
+                {
+                    StringAssert.Contains(
+                        xaml,
+                        "xmlns:sys=\"clr-namespace:System;assembly=System.Runtime\"");
+                }
+
+                if (page.Item2)
+                {
+                    StringAssert.Contains(
+                        normalizedXaml,
+                        "        <Grid x:Name=\"ContentPagePane\" Height=\"Auto\">\n            <Grid.RowDefinitions>");
+                    StringAssert.Contains(
+                        normalizedXaml,
+                        "            </Grid.RowDefinitions>\n            <controls:PageHeader");
+                }
+                else
+                {
+                    StringAssert.Contains(
+                        normalizedXaml,
+                        "<Grid x:Name=\"ContentPagePane\" Height=\"Auto\">\n\n        <Grid.RowDefinitions>");
+                    StringAssert.Contains(
+                        normalizedXaml,
+                        "</Grid.RowDefinitions>\n        <controls:PageHeader");
+                }
+
                 StringAssert.Contains(
                     xaml,
                     "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" ShowDescription=\"False\" />");

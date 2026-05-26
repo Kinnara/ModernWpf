@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="clr-namespace:ModernWpf.Gallery.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.Layout"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="GridPage"
     d:DesignHeight="450"
@@ -12,11 +13,11 @@
     mc:Ignorable="d">
 
     <Grid x:Name="ContentPagePane" Height="Auto">
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-
         <controls:PageHeader Margin="0,0,0,32" Title="{Binding ViewModel.PageTitle}" ShowDescription="False" />
 
         <ScrollViewer Grid.Row="1" Margin="0,0,0,24" Padding="0,0,24,0">
