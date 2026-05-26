@@ -40,54 +40,27 @@
                                 Style="{StaticResource CodeValuePresenterStyle}"
                                 Text="{TemplateBinding Content}"
                                 TextWrapping="Wrap" />
-                            <Button
-                                Grid.Column="1"
-                                Padding="8"
-                                AutomationProperties.Name="{Binding Tag, StringFormat='{}Copy {0} to clipboard', RelativeSource={RelativeSource Mode=TemplatedParent}}"
-                                Command="ApplicationCommands.Copy"
-                                CommandParameter="{TemplateBinding Content}"
-                                CommandTarget="{Binding RelativeSource={RelativeSource AncestorType=Page}}"
-                                FocusManager.IsFocusScope="True"
-                                ToolTipService.ToolTip="Copy to clipboard">
+                            <Button Grid.Column="1"
+                                    Padding="8"
+                                    FocusManager.IsFocusScope="True"
+                                    Command="ApplicationCommands.Copy"
+                                    AutomationProperties.Name="{Binding Tag, StringFormat='{}Copy {0} to clipboard', RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                    ToolTipService.ToolTip="Copy to clipboard"
+                                    CommandParameter="{TemplateBinding Content}"
+                                    CommandTarget="{Binding RelativeSource={RelativeSource AncestorType=Page}}">
                                 <Grid>
-                                    <TextBlock
-                                        x:Name="CopyGlyphTextBlock"
-                                        FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                        Text="&#xE8C8;" />
-                                    <TextBlock
-                                        x:Name="SuccessGlyphTextBlock"
-                                        FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                        Opacity="0"
-                                        Text="&#xE73E;" />
+                                    <TextBlock x:Name="CopyGlyphTextBlock" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE8C8;"/>
+                                    <TextBlock x:Name="SuccessGlyphTextBlock" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE73E;" Opacity="0" />
                                 </Grid>
                                 <Button.Triggers>
                                     <EventTrigger RoutedEvent="Button.Click">
                                         <EventTrigger.Actions>
                                             <BeginStoryboard>
                                                 <Storyboard BeginTime="00:00:00">
-                                                    <DoubleAnimation
-                                                        Storyboard.TargetName="CopyGlyphTextBlock"
-                                                        Storyboard.TargetProperty="Opacity"
-                                                        Duration="0:0:0.333"
-                                                        To="0" />
-                                                    <DoubleAnimation
-                                                        Storyboard.TargetName="SuccessGlyphTextBlock"
-                                                        Storyboard.TargetProperty="Opacity"
-                                                        BeginTime="0:0:0.333"
-                                                        Duration="0:0:0.666"
-                                                        To="1" />
-                                                    <DoubleAnimation
-                                                        Storyboard.TargetName="SuccessGlyphTextBlock"
-                                                        Storyboard.TargetProperty="Opacity"
-                                                        BeginTime="0:0:2"
-                                                        Duration="0:0:0.01"
-                                                        To="0" />
-                                                    <DoubleAnimation
-                                                        Storyboard.TargetName="CopyGlyphTextBlock"
-                                                        Storyboard.TargetProperty="Opacity"
-                                                        BeginTime="0:0:2.1"
-                                                        Duration="0:0:0.01"
-                                                        To="1" />
+                                                    <DoubleAnimation Duration="0:0:0.333" Storyboard.TargetName="CopyGlyphTextBlock" Storyboard.TargetProperty="Opacity" To="0" />
+                                                    <DoubleAnimation Duration="0:0:0.666" BeginTime="0:0:0.333" Storyboard.TargetName="SuccessGlyphTextBlock" Storyboard.TargetProperty="Opacity" To="1" />
+                                                    <DoubleAnimation Storyboard.TargetName="SuccessGlyphTextBlock" BeginTime="0:0:2" Duration="0:0:0.01" Storyboard.TargetProperty="Opacity" To="0" />
+                                                    <DoubleAnimation Storyboard.TargetName="CopyGlyphTextBlock" BeginTime="0:0:2.1" Duration="0:0:0.01" Storyboard.TargetProperty="Opacity" To="1" />
                                                 </Storyboard>
                                             </BeginStoryboard>
                                         </EventTrigger.Actions>

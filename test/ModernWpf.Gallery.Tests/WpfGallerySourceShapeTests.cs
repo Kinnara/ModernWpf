@@ -1394,6 +1394,7 @@ namespace ModernWpf.Gallery.Tests
                 "WpfGallery",
                 "DesignGuidance",
                 "IconographyPage.xaml");
+            var normalizedIconographyXaml = iconographyXaml.Replace("\r\n", "\n").Replace('\r', '\n');
             AssertContainsInOrder(
                 iconographyXaml,
                 "<Page x:Class=\"ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance.IconographyPage\"",
@@ -1413,6 +1414,25 @@ namespace ModernWpf.Gallery.Tests
             StringAssert.Contains(
                 iconographyXaml,
                 "<controls:PageHeader Margin=\"2,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" Description=\"{Binding ViewModel.PageDescription}\" />");
+            AssertContainsInOrder(
+                iconographyXaml,
+                "<Button Grid.Column=\"1\"",
+                "Padding=\"8\"",
+                "FocusManager.IsFocusScope=\"True\"",
+                "Command=\"ApplicationCommands.Copy\"",
+                "AutomationProperties.Name=\"{Binding Tag, StringFormat='{}Copy {0} to clipboard', RelativeSource={RelativeSource Mode=TemplatedParent}}\"",
+                "ToolTipService.ToolTip=\"Copy to clipboard\"",
+                "CommandParameter=\"{TemplateBinding Content}\"",
+                "CommandTarget=\"{Binding RelativeSource={RelativeSource AncestorType=Page}}\">");
+            StringAssert.Contains(
+                iconographyXaml,
+                "<TextBlock x:Name=\"CopyGlyphTextBlock\" FontFamily=\"{StaticResource SymbolThemeFontFamily}\" Text=\"&#xE8C8;\"/>");
+            StringAssert.Contains(
+                iconographyXaml,
+                "<TextBlock x:Name=\"SuccessGlyphTextBlock\" FontFamily=\"{StaticResource SymbolThemeFontFamily}\" Text=\"&#xE73E;\" Opacity=\"0\" />");
+            StringAssert.Contains(
+                normalizedIconographyXaml,
+                "                                                    <DoubleAnimation Duration=\"0:0:0.333\" Storyboard.TargetName=\"CopyGlyphTextBlock\" Storyboard.TargetProperty=\"Opacity\" To=\"0\" />\n                                                    <DoubleAnimation Duration=\"0:0:0.666\" BeginTime=\"0:0:0.333\" Storyboard.TargetName=\"SuccessGlyphTextBlock\" Storyboard.TargetProperty=\"Opacity\" To=\"1\" />\n                                                    <DoubleAnimation Storyboard.TargetName=\"SuccessGlyphTextBlock\" BeginTime=\"0:0:2\" Duration=\"0:0:0.01\" Storyboard.TargetProperty=\"Opacity\" To=\"0\" />\n                                                    <DoubleAnimation Storyboard.TargetName=\"CopyGlyphTextBlock\" BeginTime=\"0:0:2.1\" Duration=\"0:0:0.01\" Storyboard.TargetProperty=\"Opacity\" To=\"1\" />");
             AssertContainsInOrder(
                 iconographyXaml,
                 "<Expander Grid.Row=\"1\"",
