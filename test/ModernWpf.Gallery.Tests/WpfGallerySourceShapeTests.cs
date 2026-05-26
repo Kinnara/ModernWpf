@@ -1228,6 +1228,54 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void DesignGuidanceColorSubsectionRootsKeepOfficialSourceShape()
+        {
+            foreach (var section in new[]
+            {
+                "Text",
+                "Fill",
+                "Stroke",
+                "Background",
+                "Signal",
+                "HighContrast"
+            })
+            {
+                var sectionName = section + "Section";
+                var xaml = ReadRepoFile(
+                    "ModernWpf.Gallery",
+                    "Pages",
+                    "WpfGallery",
+                    "DesignGuidance",
+                    sectionName + ".xaml");
+
+                AssertContainsInOrder(
+                    xaml,
+                    "<Page x:Class=\"ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance." + sectionName + "\"",
+                    "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"",
+                    "xmlns:d=\"http://schemas.microsoft.com/expression/blend/2008\"",
+                    "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance\"",
+                    "xmlns:controls=\"clr-namespace:ModernWpf.Gallery.Controls\"",
+                    "mc:Ignorable=\"d\"",
+                    "d:DesignHeight=\"450\" d:DesignWidth=\"800\"");
+
+                if (section == "Background" || section == "Signal")
+                {
+                    AssertContainsInOrder(
+                        xaml,
+                        "Foreground=\"{DynamicResource WindowForeground}\"",
+                        "Title=\"" + sectionName + "\">");
+                }
+                else
+                {
+                    AssertContainsInOrder(
+                        xaml,
+                        "Title=\"" + sectionName + "\"",
+                        "Foreground=\"{DynamicResource WindowForeground}\">");
+                }
+            }
+        }
+
+        [TestMethod]
         public void DesignGuidanceColorTextSectionKeepsOfficialSourceShape()
         {
             var xaml = ReadRepoFile(
@@ -1242,6 +1290,7 @@ namespace ModernWpf.Gallery.Tests
                 "<Page x:Class=\"ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance.TextSection\"",
                 "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"",
                 "xmlns:d=\"http://schemas.microsoft.com/expression/blend/2008\"",
+                "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance\"",
                 "xmlns:controls=\"clr-namespace:ModernWpf.Gallery.Controls\"",
                 "mc:Ignorable=\"d\"",
                 "d:DesignHeight=\"450\" d:DesignWidth=\"800\"",
