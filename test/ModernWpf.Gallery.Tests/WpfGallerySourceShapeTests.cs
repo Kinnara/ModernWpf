@@ -1382,6 +1382,17 @@ namespace ModernWpf.Gallery.Tests
             StringAssert.Contains(
                 frameXaml,
                 "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.Navigation\"");
+            AssertContainsInOrder(
+                frameXaml,
+                "<Page x:Class=\"ModernWpf.Gallery.Pages.WpfGallery.Navigation.FramePage\"",
+                "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"",
+                "xmlns:d=\"http://schemas.microsoft.com/expression/blend/2008\"",
+                "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.Navigation\"",
+                "xmlns:controls=\"clr-namespace:ModernWpf.Gallery.Controls\"",
+                "mc:Ignorable=\"d\"",
+                "d:DesignHeight=\"450\" d:DesignWidth=\"800\"",
+                "Title=\"FramePage\"",
+                "Foreground=\"{DynamicResource TextFillColorPrimaryBrush}\">");
             StringAssert.Contains(
                 normalizedFrameXaml,
                 "        <Grid x:Name=\"ContentPagePane\" Height=\"Auto\">\n            <Grid.RowDefinitions>");
@@ -1416,6 +1427,17 @@ namespace ModernWpf.Gallery.Tests
             StringAssert.Contains(
                 navigationWindowXaml,
                 "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.Navigation\"");
+            AssertContainsInOrder(
+                navigationWindowXaml,
+                "<Page x:Class=\"ModernWpf.Gallery.Pages.WpfGallery.Navigation.NavigationWindowPage\"",
+                "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"",
+                "xmlns:d=\"http://schemas.microsoft.com/expression/blend/2008\"",
+                "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.Navigation\"",
+                "xmlns:controls=\"clr-namespace:ModernWpf.Gallery.Controls\"",
+                "mc:Ignorable=\"d\"",
+                "d:DesignHeight=\"450\" d:DesignWidth=\"800\"",
+                "Title=\"NavigationWindowPage\"",
+                "Foreground=\"{DynamicResource TextFillColorPrimaryBrush}\">");
             StringAssert.Contains(
                 normalizedNavigationWindowXaml,
                 "        <Grid x:Name=\"ContentPagePane\" Height=\"Auto\">\n            <Grid.RowDefinitions>");
@@ -1738,6 +1760,17 @@ namespace ModernWpf.Gallery.Tests
                 "WpfGallery",
                 "Text",
                 "HyperlinkPage.xaml");
+            AssertContainsInOrder(
+                hyperlinkXaml,
+                "<Page x:Class=\"ModernWpf.Gallery.Pages.WpfGallery.Text.HyperlinkPage\"",
+                "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"",
+                "xmlns:d=\"http://schemas.microsoft.com/expression/blend/2008\"",
+                "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.Text\"",
+                "xmlns:controls=\"clr-namespace:ModernWpf.Gallery.Controls\"",
+                "mc:Ignorable=\"d\"",
+                "d:DesignHeight=\"450\" d:DesignWidth=\"800\"",
+                "Title=\"HyperlinkPage\"",
+                "Foreground=\"{DynamicResource TextFillColorPrimaryBrush}\">");
             AssertContainsInOrder(
                 hyperlinkXaml,
                 "<controls:ControlExample",
