@@ -96,7 +96,7 @@
     <Border
         x:Name="HighContrastBorder"
         BorderBrush="Transparent"
-        BorderThickness="8,1,8,8">
+        BorderThickness="8 1 8 8">
         <Grid x:Name="MainGrid">
             <Grid.RowDefinitions>
                 <RowDefinition Height="44" />
@@ -119,11 +119,11 @@
                     Margin="8,0"
                     VerticalAlignment="Center"
                     AutomationProperties.Name="Back"
+                    Style="{StaticResource GalleryTitleBarButtonStyle}"
                     Command="{Binding ViewModel.BackCommand}"
                     IsEnabled="{Binding ViewModel.CanNavigateback}"
-                    Style="{StaticResource GalleryTitleBarButtonStyle}"
-                    ToolTipService.ToolTip="Back"
-                    winShell:WindowChrome.IsHitTestVisibleInChrome="True">
+                    winShell:WindowChrome.IsHitTestVisibleInChrome="True"
+                    ToolTipService.ToolTip="Back">
                     <TextBlock
                         VerticalAlignment="Center"
                         FontFamily="{StaticResource SymbolThemeFontFamily}"
@@ -152,8 +152,8 @@
                     <TextBlock
                         Margin="16,0,0,0"
                         VerticalAlignment="Center"
-                        pages:GalleryAutomation.HeadingLevel="Level1"
                         Style="{StaticResource CaptionTextBlockStyle}"
+                        pages:GalleryAutomation.HeadingLevel="Level1"
                         Text="{Binding ViewModel.ApplicationTitle}" />
                 </StackPanel>
 

@@ -62,6 +62,116 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void ShellChromeKeepsWpfGalleryHighContrastSourceShape()
+        {
+            var mainWindowXaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "MainWindow.xaml");
+
+            AssertContainsInOrder(
+                mainWindowXaml,
+                "x:Key=\"GalleryTitleBarButtonStyle\"",
+                "<MultiDataTrigger>",
+                "<Condition Binding=\"{Binding Path=(SystemParameters.HighContrast)}\" Value=\"True\" />",
+                "<Condition Binding=\"{Binding IsMouseOver, RelativeSource={RelativeSource Mode=Self}}\" Value=\"True\" />",
+                "<Setter Property=\"Background\" Value=\"{DynamicResource SystemColorHighlightColorBrush}\" />",
+                "<Setter Property=\"Foreground\" Value=\"{DynamicResource SystemColorHighlightTextColorBrush}\" />");
+            AssertContainsInOrder(
+                mainWindowXaml,
+                "x:Key=\"GalleryTitleBarDefaultCloseButtonStyle\"",
+                "<MultiDataTrigger>",
+                "<Condition Binding=\"{Binding Path=(SystemParameters.HighContrast)}\" Value=\"True\" />",
+                "<Condition Binding=\"{Binding IsMouseOver, RelativeSource={RelativeSource Mode=Self}}\" Value=\"True\" />",
+                "<Setter Property=\"Background\" Value=\"{DynamicResource SystemColorHighlightColorBrush}\" />",
+                "<Setter Property=\"Foreground\" Value=\"{DynamicResource SystemColorHighlightTextColorBrush}\" />");
+            AssertContainsInOrder(
+                mainWindowXaml,
+                "x:Name=\"HighContrastBorder\"",
+                "BorderBrush=\"Transparent\"",
+                "BorderThickness=\"8 1 8 8\"");
+            AssertContainsInOrder(
+                mainWindowXaml,
+                "x:Name=\"BackButton\"",
+                "Height=\"36\"",
+                "MinWidth=\"36\"",
+                "Margin=\"8,0\"",
+                "VerticalAlignment=\"Center\"",
+                "AutomationProperties.Name=\"Back\"",
+                "Style=\"{StaticResource GalleryTitleBarButtonStyle}\"",
+                "Command=\"{Binding ViewModel.BackCommand}\"",
+                "IsEnabled=\"{Binding ViewModel.CanNavigateback}\"",
+                "winShell:WindowChrome.IsHitTestVisibleInChrome=\"True\"",
+                "ToolTipService.ToolTip=\"Back\"");
+            AssertContainsInOrder(
+                mainWindowXaml,
+                "Text=\"&#xE72B;\"",
+                "Style=\"{StaticResource CaptionTextBlockStyle}\"",
+                "pages:GalleryAutomation.HeadingLevel=\"Level1\"",
+                "Text=\"{Binding ViewModel.ApplicationTitle}\"");
+
+            var navigationRootXaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Shell",
+                "NavigationRootPage.xaml");
+
+            AssertContainsInOrder(
+                navigationRootXaml,
+                "x:Key=\"GalleryNavigationFooterButtonStyle\"",
+                "<MultiDataTrigger>",
+                "<Condition Binding=\"{Binding Path=(SystemParameters.HighContrast)}\" Value=\"True\" />",
+                "<Condition Binding=\"{Binding IsMouseOver, RelativeSource={RelativeSource Mode=Self}}\" Value=\"True\" />",
+                "<Setter Property=\"Background\" Value=\"{DynamicResource SystemColorHighlightColorBrush}\" />",
+                "<Setter Property=\"Foreground\" Value=\"{DynamicResource SystemColorHighlightTextColorBrush}\" />");
+            AssertContainsInOrder(
+                navigationRootXaml,
+                "x:Name=\"SettingsButton\"",
+                "Width=\"250\"",
+                "Height=\"36\"",
+                "Margin=\"0,4,0,0\"",
+                "Padding=\"{StaticResource ButtonPadding}\"",
+                "HorizontalContentAlignment=\"Left\"",
+                "VerticalContentAlignment=\"Center\"",
+                "AutomationProperties.Name=\"Settings\"",
+                "Click=\"OnSettingsButtonClick\"",
+                "Command=\"{Binding Value.ViewModel.SettingsCommand, Source={StaticResource NavigationRootDataContextProxy}}\"",
+                "Style=\"{StaticResource GalleryNavigationFooterButtonStyle}\"");
+
+            var mainWindowCode = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "MainWindow.xaml.cs");
+
+            AssertContainsInOrder(
+                mainWindowCode,
+                "SystemEvents.UserPreferenceChanged += OnUserPreferenceChanged;",
+                "StateChanged += OnWindowStateChanged;",
+                "Activated += OnWindowActivationChanged;",
+                "Deactivated += OnWindowActivationChanged;",
+                "MainGrid.Margin = GetMainGridMargin(WindowState, SystemParameters.HighContrast);",
+                "UpdateTitleBarButtonsVisibility();",
+                "if (SystemParameters.HighContrast)",
+                "HighContrastBorder.SetResourceReference(",
+                "System.Windows.Controls.Border.BorderBrushProperty,",
+                "IsActive ? SystemColors.ActiveCaptionBrushKey : SystemColors.InactiveCaptionBrushKey);",
+                "HighContrastBorder.BorderThickness = GetHighContrastBorderThickness(SystemParameters.HighContrast);",
+                "return isHighContrast ? new Thickness(8, 1, 8, 8) : new Thickness(0);",
+                "if (isHighContrast || !isWindows11OrGreater)");
+
+            var navigationRootCode = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Shell",
+                "NavigationRootPage.xaml.cs");
+
+            AssertContainsInOrder(
+                navigationRootCode,
+                "ThemeManager.Current.ActualApplicationThemeChanged += OnActualApplicationThemeChanged;",
+                "SystemParameters.StaticPropertyChanged += OnSystemParametersChanged;",
+                "ThemeManager.Current.ActualApplicationThemeChanged -= OnActualApplicationThemeChanged;",
+                "SystemParameters.StaticPropertyChanged -= OnSystemParametersChanged;",
+                "if (string.Equals(e.PropertyName, nameof(SystemParameters.HighContrast), StringComparison.Ordinal))",
+                "AlignNavigationViewItemResourcesWithWpfGalleryTreeView();");
+        }
+
+        [TestMethod]
         public void HomePageKeepsOfficialDashboardCardListDeclarationSourceShape()
         {
             var xaml = ReadRepoFile(
