@@ -1109,6 +1109,16 @@ namespace ModernWpf.Gallery.Tests
                     "WpfGallery",
                     "StatusAndInfo",
                     page);
+                var normalizedXaml = xaml.Replace("\r\n", "\n").Replace('\r', '\n');
+                StringAssert.Contains(
+                    xaml,
+                    "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.StatusAndInfo\"");
+                StringAssert.Contains(
+                    normalizedXaml,
+                    "<Grid x:Name=\"ContentPagePane\" Height=\"Auto\">\n\n        <Grid.RowDefinitions>");
+                StringAssert.Contains(
+                    normalizedXaml,
+                    "</Grid.RowDefinitions>\n        <controls:PageHeader");
                 StringAssert.Contains(
                     xaml,
                     "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" ShowDescription=\"False\" />");
@@ -1226,6 +1236,26 @@ namespace ModernWpf.Gallery.Tests
                     "WpfGallery",
                     "System",
                     page.Item1);
+                var normalizedXaml = xaml.Replace("\r\n", "\n").Replace('\r', '\n');
+                StringAssert.Contains(
+                    xaml,
+                    "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.SystemPages\"");
+                StringAssert.Contains(
+                    normalizedXaml,
+                    "<Grid x:Name=\"ContentPagePane\" Height=\"Auto\">\n\n        <Grid.RowDefinitions>");
+                if (page.Item1 == "ClipboardPage.xaml")
+                {
+                    StringAssert.Contains(
+                        normalizedXaml,
+                        "</Grid.RowDefinitions>\n\n        <controls:PageHeader");
+                }
+                else
+                {
+                    StringAssert.Contains(
+                        normalizedXaml,
+                        "</Grid.RowDefinitions>\n        <controls:PageHeader");
+                }
+
                 StringAssert.Contains(xaml, page.Item2);
                 StringAssert.Contains(xaml, page.Item3);
                 AssertControlExamplesKeepOfficialSourceAttributeOrder(xaml, page.Item1);
