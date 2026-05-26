@@ -633,6 +633,43 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void TextCodeBehindKeepsOfficialConstructorAdjacencyShape()
+        {
+            foreach (var page in new[]
+            {
+                Tuple.Create("LabelPage", "LabelPageViewModel"),
+                Tuple.Create("PasswordBoxPage", "PasswordBoxPageViewModel"),
+                Tuple.Create("RichTextEditPage", "RichTextEditPageViewModel"),
+                Tuple.Create("TextBlockPage", "TextBlockPageViewModel"),
+                Tuple.Create("TextBoxPage", "TextBoxPageViewModel")
+            })
+            {
+                var source = ReadRepoFile(
+                    "ModernWpf.Gallery",
+                    "Pages",
+                    "WpfGallery",
+                    "Text",
+                    page.Item1 + ".xaml.cs").Replace("\r\n", "\n").Replace('\r', '\n');
+
+                StringAssert.Contains(
+                    source,
+                    "        public " + page.Item2 + " ViewModel { get; }\n        public " + page.Item1 + "(");
+            }
+
+            var hyperlinkSource = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Text",
+                "HyperlinkPage.xaml.cs").Replace("\r\n", "\n").Replace('\r', '\n');
+            AssertContainsInOrder(
+                hyperlinkSource,
+                "public HyperlinkPage(HyperlinkPageViewModel viewModel)",
+                "InitializeComponent();",
+                "public HyperlinkPageViewModel ViewModel { get; }");
+        }
+
+        [TestMethod]
         public void MessageBoxCodeBehindKeepsOfficialShowCallSourceShape()
         {
             var source = ReadRepoFile(
