@@ -109,7 +109,7 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsFalse(page.ShowScrolledPageContent, uniqueId);
                     Assert.IsFalse(page.ShowCatalogDetails, uniqueId);
 
-                    var directPageHost = (Frame)page.FindName("DirectPageContentHost");
+                    var directPageHost = FindDirectPageContentHost(page);
                     Assert.AreEqual(NavigationUIVisibility.Hidden, directPageHost.NavigationUIVisibility, uniqueId);
                 }
             });
@@ -139,6 +139,12 @@ namespace ModernWpf.Gallery.Tests
                 ?? TextSampleFactory.Create(uniqueId)
                 ?? MotionSampleFactory.Create(uniqueId)
                 ?? WindowingSampleFactory.Create(uniqueId);
+        }
+
+        private static Frame FindDirectPageContentHost(ItemPage page)
+        {
+            var root = (Grid)page.Content;
+            return root.Children.OfType<Frame>().Single(frame => Grid.GetRow(frame) == 1);
         }
     }
 }

@@ -185,6 +185,9 @@ namespace ModernWpf.Gallery.Tests
             Assert.IsFalse(
                 xaml.Contains("AutomationProperties.AutomationId=\"GallerySampleHost\"", StringComparison.Ordinal),
                 "The generic wrapper should not expose the local-only GallerySampleHost automation ID.");
+            Assert.IsFalse(
+                xaml.Contains("x:Name=\"DirectPageContentHost\"", StringComparison.Ordinal),
+                "The direct-page wrapper frame should be located structurally instead of by a local-only name.");
             AssertContainsInOrder(
                 xaml,
                 "<ItemsControl",

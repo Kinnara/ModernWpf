@@ -2523,7 +2523,9 @@ namespace ModernWpf.Gallery.Tests
             {
                 var page = new ItemPage(GalleryCatalog.FindItem("UserDashboard"));
                 var directPage = (UserDashboardPage)page.DirectPageContent;
-                var directPageHost = (ContentControl)page.FindName("DirectPageContentHost");
+                var directPageHost = ((Grid)page.Content).Children
+                    .OfType<Frame>()
+                    .Single(frame => Grid.GetRow(frame) == 1);
                 Assert.AreEqual(new Thickness(0), directPageHost.Margin);
                 Assert.AreEqual("UserDashboardPage", directPage.Title);
                 Assert.IsInstanceOfType(directPage.ViewModel, typeof(UserDashboardPageViewModel));

@@ -176,7 +176,6 @@
         </ScrollViewer>
 
         <Frame
-            x:Name="DirectPageContentHost"
             Grid.Row="1"
             Margin="{Binding DirectPageContentMargin}"
             Content="{Binding DirectPageContent}"
