@@ -305,6 +305,10 @@ The shared `HeaderTile` XAML now also keeps the official compact root sizing,
 RootButton attribute order, acrylic resource declarations, content grid, glyph,
 and title/description text declaration shape while retaining ModernWpf brush
 bindings plus the local High Contrast/theme-refresh resource adaptation.
+The shared `TileGallery` XAML now also keeps the official root/resource,
+ScrollViewer/StackPanel, HeaderTile list, compact GitHub icon, and scroll-button
+declaration shape while retaining ModernWpf asset pack URI adaptations and the
+local scroll offset guard in code-behind.
 
 ## Commit Policy
 
@@ -324,6 +328,10 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-build --filter "FullyQualifiedName~WpfGallerySourceShapeTests.SharedTileGalleryKeepsOfficialDeclarationSourceShape|FullyQualifiedName~GalleryApplicationResourceTests.HomeHeaderTilesMatchWpfGalleryReferenceSlotGeometry|FullyQualifiedName~GalleryNavigationRuntimeTests.HomePageOverviewUsesWpfReferenceGroupFilter|FullyQualifiedName~WpfGallerySourceShapeTests.HomePageKeepsOfficialDashboardCardListDeclarationSourceShape" --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 4 tests per target. The shared `TileGallery` XAML now keeps official root/resource, scroll host, HeaderTile list, compact icon, and scroll-button declaration shape while retaining local asset pack URI adaptations; Home dashboard source-shape, overview grouping, and header-tile slot geometry coverage still passes.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the shared `TileGallery` source-shape alignment. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages and existing ModernWpf/ModernWpf.Controls warnings.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.SharedHeaderTileKeepsOfficialDeclarationSourceShape|FullyQualifiedName~GalleryApplicationResourceTests.HomeHeaderTilesMatchWpfGalleryReferenceSlotGeometry|FullyQualifiedName~GalleryApplicationResourceTests.HomeHeaderTilesUseWpfGalleryAcrylicFillResources|FullyQualifiedName~GalleryApplicationResourceTests.HomeHeaderTilesUseWpfGalleryHighContrastFillResources|FullyQualifiedName~GalleryApplicationResourceTests.HomeHeaderTilesExposeRootButtonAutomationPeer" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 5 tests per target. The shared `HeaderTile` XAML now keeps official compact root/button/resource/content/text declaration shape while preserving the local brush binding, High Contrast fill resources, theme refresh behavior, slot geometry, and automation-peer coverage. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
@@ -2539,7 +2547,10 @@ pins official compact converter/setter, text, and hidden-description trigger
 source shape while retaining the local heading-level adapter. The shared
 `HeaderTile` XAML now also pins official root/button/resource/content/text
 declaration shape while retaining local brush binding and High Contrast/theme
-refresh behavior. Next, continue
+refresh behavior. The shared `TileGallery` XAML now also pins official
+root/resource, scroll host, HeaderTile list, compact icon, and scroll-button
+declaration shape while retaining local asset pack URI adaptations and scroll
+offset behavior. Next, continue
 source-backed structural alignment where copied
 pages still diverge from official XAML. The generic `ItemPage` wrapper now also
 drops local-only wrapper header/direct-frame names and `GallerySampleHost` automation IDs

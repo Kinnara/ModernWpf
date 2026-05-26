@@ -338,6 +338,80 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void SharedTileGalleryKeepsOfficialDeclarationSourceShape()
+        {
+            var xaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Controls",
+                "TileGallery.xaml");
+
+            AssertContainsInOrder(
+                xaml,
+                "<UserControl x:Class=\"ModernWpf.Gallery.Controls.TileGallery\"",
+                "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"",
+                "xmlns:d=\"http://schemas.microsoft.com/expression/blend/2008\"",
+                "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Controls\"",
+                "mc:Ignorable=\"d\"",
+                "d:DesignHeight=\"450\" d:DesignWidth=\"800\">",
+                "<Style x:Key=\"TileGalleryScrollButtonStyle\" BasedOn=\"{StaticResource DefaultButtonStyle}\" TargetType=\"Button\">");
+            AssertContainsInOrder(
+                xaml,
+                "<ScrollViewer x:Name=\"RootScrollViewer\"",
+                "VerticalScrollBarVisibility=\"Disabled\"",
+                "HorizontalScrollBarVisibility=\"Hidden\"",
+                "SizeChanged=\"RootScrollViewer_SizeChanged\">",
+                "<StackPanel x:Name=\"TilesPanel\"",
+                "Orientation=\"Horizontal\">");
+            AssertContainsInOrder(
+                xaml,
+                "<local:HeaderTile",
+                "Title=\"Getting started\"",
+                "Description=\"An overview of app development options, tools, and samples.\"",
+                "Link=\"https://learn.microsoft.com/windows/apps/get-started/\"",
+                "Margin=\"24 0 6 0\">",
+                "Source=\"pack://application:,,,/ModernWpf.Gallery;component/Assets/AppIcons/WPFGallery_48px.png\"");
+            AssertContainsInOrder(
+                xaml,
+                "Title=\"Windows design\"",
+                "Description=\"Design guidelines and toolkits for creating native app experiences.\"",
+                "Link=\"https://learn.microsoft.com/windows/apps/design/\">",
+                "Source=\"pack://application:,,,/ModernWpf.Gallery;component/Assets/HomeHeaderTiles/Header-WindowsDesign.png\"");
+            AssertContainsInOrder(
+                xaml,
+                "Title=\"WPF GitHub\"",
+                "Description=\"A robust UI framework for your desktop applications.\"",
+                "Link=\"https://github.com/dotnet/wpf\">",
+                "<Viewbox Height=\"52\" Margin=\"-20 0 0 0\">",
+                "<Path Data=\"{StaticResource GitHubIconGeometry}\" Fill=\"{DynamicResource TextFillColorPrimaryBrush}\"/>",
+                "Title=\"Code samples\"",
+                "Description=\"Find WPF samples that demonstrate specific tasks, features, and APIs.\"",
+                "Link=\"https://github.com/microsoft/WPF-Samples\">",
+                "<Viewbox Height=\"52\" Margin=\"-20 0 0 0\">",
+                "<Path Data=\"{StaticResource GitHubIconGeometry}\" Fill=\"{DynamicResource TextFillColorPrimaryBrush}\"/>",
+                "Title=\"Partner Center\"",
+                "Description=\"Upload your app to the Store.\"",
+                "Link=\"https://developer.microsoft.com/windows/\">",
+                "Source=\"pack://application:,,,/ModernWpf.Gallery;component/Assets/HomeHeaderTiles/Header-Store.dark.png\"");
+            AssertContainsInOrder(
+                xaml,
+                "<Button x:Name=\"ScrollBackButton\"",
+                "Style=\"{DynamicResource TileGalleryScrollButtonStyle}\"",
+                "Margin=\"8,-16,0,0\"",
+                "AutomationProperties.Name=\"Scroll left\"",
+                "Click=\"ScrollBackButton_Click\"",
+                "ToolTip=\"Scroll left\">",
+                "<TextBlock FontFamily=\"{StaticResource SymbolThemeFontFamily}\" FontSize=\"8\" Text=\"&#xEDD9;\" />",
+                "<Button x:Name=\"ScrollForwardButton\"",
+                "Style=\"{DynamicResource TileGalleryScrollButtonStyle}\"",
+                "Margin=\"0,-16,8,0\"",
+                "HorizontalAlignment=\"Right\"",
+                "AutomationProperties.Name=\"Scroll right\"",
+                "Click=\"ScrollForwardButton_Click\"",
+                "ToolTip=\"Scroll right\">",
+                "<TextBlock FontFamily=\"{StaticResource SymbolThemeFontFamily}\" FontSize=\"8\" Text=\"&#xEDDA;\" />");
+        }
+
+        [TestMethod]
         public void SharedColorPageExampleKeepsOfficialTemplateSourceShape()
         {
             var xaml = ReadRepoFile(
