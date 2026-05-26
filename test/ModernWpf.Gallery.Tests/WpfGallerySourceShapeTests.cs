@@ -360,6 +360,16 @@ namespace ModernWpf.Gallery.Tests
                     "WpfGallery",
                     "BasicInput",
                     page);
+                var normalizedXaml = xaml.Replace("\r\n", "\n").Replace('\r', '\n');
+                StringAssert.Contains(
+                    xaml,
+                    "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.BasicInput\"");
+                StringAssert.Contains(
+                    normalizedXaml,
+                    "<Grid x:Name=\"ContentPagePane\" Height=\"Auto\">\n\n        <Grid.RowDefinitions>");
+                StringAssert.Contains(
+                    normalizedXaml,
+                    "</Grid.RowDefinitions>\n        <controls:PageHeader");
                 StringAssert.Contains(
                     xaml,
                     "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" ShowDescription=\"False\" />");
@@ -374,9 +384,6 @@ namespace ModernWpf.Gallery.Tests
                 "WpfGallery",
                 "BasicInput",
                 "ButtonPage.xaml");
-            StringAssert.Contains(
-                buttonXaml.Replace("\r\n", "\n").Replace('\r', '\n'),
-                "<Grid x:Name=\"ContentPagePane\" Height=\"Auto\">\n\n        <Grid.RowDefinitions>");
             AssertContainsInOrder(
                 buttonXaml,
                 "<!--<controls:ControlExample",
