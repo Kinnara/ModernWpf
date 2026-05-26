@@ -72,28 +72,28 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
 
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (e.NewSize.Width < 600)
+            if(e.NewSize.Width < 600)
             {
                 Grid_SetProperties(UserListGrid, 0, 0, 1, 2);
                 Grid_SetProperties(UserDetailsGrid, 1, 0, 1, 2);
                 UserDetailsGrid.Margin = new Thickness(0);
-                UserDetailFormGrid.Margin = new Thickness(20, 10, 20, 10);
+                UserDetailFormGrid.Margin = new Thickness(20,10,20,10);
                 UserList.ClearValue(WidthProperty);
                 NewUserButton.HorizontalAlignment = HorizontalAlignment.Right;
                 Grid_SetProperties(FirstNamePanel, 0, 0, 2, 1);
                 Grid_SetProperties(LastNamePanel, 0, 1, 2, 1);
-                FirstNamePanel.Margin = new Thickness(0, 0, 10, 0);
+                FirstNamePanel.Margin = new Thickness(0,0,10,0);
                 UserDetailHeader.Orientation = Orientation.Horizontal;
                 UserDetailHeaderPanel.HorizontalAlignment = HorizontalAlignment.Left;
                 UserDetailHeaderNameBox.HorizontalAlignment = HorizontalAlignment.Left;
                 UserDetailHeaderCompanyBox.HorizontalAlignment = HorizontalAlignment.Left;
             }
-            else if (e.NewSize.Width >= 400 && e.NewSize.Width < 800)
+            else if(e.NewSize.Width >= 400 && e.NewSize.Width < 800)
             {
                 Grid_SetProperties(UserListGrid, 0, 0, 2, 1);
                 Grid_SetProperties(UserDetailsGrid, 0, 1, 2, 1);
-                UserDetailsGrid.Margin = new Thickness(-10, 0, -20, 0);
-                UserDetailFormGrid.Margin = new Thickness(0, 10, 0, 10);
+                UserDetailsGrid.Margin = new Thickness(-10,0,-20,0);
+                UserDetailFormGrid.Margin = new Thickness(0,10,0,10);
                 UserList.Width = 240;
                 NewUserButton.HorizontalAlignment = HorizontalAlignment.Center;
                 Grid_SetProperties(FirstNamePanel, 0, 0, 1, 2);
@@ -109,12 +109,12 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
                 Grid_SetProperties(UserListGrid, 0, 0, 2, 1);
                 Grid_SetProperties(UserDetailsGrid, 0, 1, 2, 1);
                 UserDetailsGrid.Margin = new Thickness(0);
-                UserDetailFormGrid.Margin = new Thickness(20, 10, 20, 10);
+                UserDetailFormGrid.Margin = new Thickness(20,10,20,10);
                 UserList.Width = 300;
                 NewUserButton.HorizontalAlignment = HorizontalAlignment.Center;
                 Grid_SetProperties(FirstNamePanel, 0, 0, 2, 1);
                 Grid_SetProperties(LastNamePanel, 0, 1, 2, 1);
-                FirstNamePanel.Margin = new Thickness(0, 0, 10, 0);
+                FirstNamePanel.Margin = new Thickness(0,0,10,0);
                 UserDetailHeader.Orientation = Orientation.Horizontal;
                 UserDetailHeaderPanel.HorizontalAlignment = HorizontalAlignment.Left;
                 UserDetailHeaderNameBox.HorizontalAlignment = HorizontalAlignment.Left;
@@ -137,7 +137,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
                 return;
             }
 
-            var newAge = (int)e.NewValue;
+            int newAge = (int)e.NewValue;
 
             RaiseNotification(slider, $"New age {newAge}", "SliderValueChangedActivity");
         }

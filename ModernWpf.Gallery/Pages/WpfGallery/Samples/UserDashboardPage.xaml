@@ -215,10 +215,10 @@
                                 Saved!
                             </TextBlock>
 
-                            <TextBlock FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center" Visibility="{Binding ViewModel.DeletedName, Converter={StaticResource EmptyToVisibilityConverter}}" FontStyle="Italic">
-                                <Run Text="User" />
-                                <Run Text="{Binding ViewModel.DeletedName, Mode=OneWay}" />
-                                <Run Text="Deleted!" />
+                            <TextBlock FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center" Visibility="{Binding ViewModel.DeletedName, Converter={StaticResource EmptyToVisibilityConverter }}" FontStyle="Italic">
+                                 <Run Text="User" />
+                                 <Run Text="{Binding ViewModel.DeletedName, Mode=OneWay}" />
+                                 <Run Text="Deleted!" />
                             </TextBlock>
                             <Button
                                 x:Name="edit_button"
@@ -249,7 +249,8 @@
                                 Visibility="{Binding ViewModel.IsEditing, Converter={StaticResource BooleanToVisibilityConverter}}"
                                 Click="CancelButton_Click"
                                 Content="Cancel" />
-                        </StackPanel>
+
+                      </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
             </Grid>

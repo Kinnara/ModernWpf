@@ -1503,7 +1503,10 @@ namespace ModernWpf.Gallery.Tests
                 "<TextBlock FontSize=\"14\" HorizontalAlignment=\"Left\" VerticalAlignment=\"Center\" Visibility=\"{Binding ViewModel.IsSaved, Converter={StaticResource BooleanToVisibilityConverter}}\" FontStyle=\"Italic\">");
             StringAssert.Contains(
                 xaml,
-                "<TextBlock FontSize=\"14\" HorizontalAlignment=\"Left\" VerticalAlignment=\"Center\" Visibility=\"{Binding ViewModel.DeletedName, Converter={StaticResource EmptyToVisibilityConverter}}\" FontStyle=\"Italic\">");
+                "<TextBlock FontSize=\"14\" HorizontalAlignment=\"Left\" VerticalAlignment=\"Center\" Visibility=\"{Binding ViewModel.DeletedName, Converter={StaticResource EmptyToVisibilityConverter }}\" FontStyle=\"Italic\">");
+            StringAssert.Contains(
+                normalizedXaml,
+                "                            <TextBlock FontSize=\"14\" HorizontalAlignment=\"Left\" VerticalAlignment=\"Center\" Visibility=\"{Binding ViewModel.DeletedName, Converter={StaticResource EmptyToVisibilityConverter }}\" FontStyle=\"Italic\">\n                                 <Run Text=\"User\" />\n                                 <Run Text=\"{Binding ViewModel.DeletedName, Mode=OneWay}\" />\n                                 <Run Text=\"Deleted!\" />\n                            </TextBlock>");
             AssertContainsInOrder(
                 xaml,
                 "x:Name=\"edit_button\"",
@@ -1520,6 +1523,9 @@ namespace ModernWpf.Gallery.Tests
                 "Visibility=\"{Binding ViewModel.IsEditing, Converter={StaticResource BooleanToVisibilityConverter}}\"",
                 "Click=\"SaveButton_Click\"",
                 "Content=\"Save\"/>");
+            StringAssert.Contains(
+                normalizedXaml,
+                "                                Content=\"Cancel\" />\n\n                      </StackPanel>\n                    </StackPanel>\n                </ScrollViewer>");
         }
 
         [TestMethod]

@@ -21,7 +21,14 @@ namespace ModernWpf.Gallery.Tests
             StringAssert.Contains(pageSource, "var currentUserName = ViewModel.EditableUser?.Name ?? string.Empty;");
             StringAssert.Contains(pageSource, "RaiseNotification(sender as Button, $\"User {currentUserName} saved\", \"ButtonClickedActivity\");");
             StringAssert.Contains(pageSource, "RaiseNotification(sender as Button, $\"User {ViewModel.DeletedName} deleted\", \"ButtonClickedActivity\");");
+            StringAssert.Contains(pageSource, "if(e.NewSize.Width < 600)");
+            StringAssert.Contains(pageSource, "UserDetailFormGrid.Margin = new Thickness(20,10,20,10);");
+            StringAssert.Contains(pageSource, "else if(e.NewSize.Width >= 400 && e.NewSize.Width < 800)");
+            StringAssert.Contains(pageSource, "UserDetailsGrid.Margin = new Thickness(-10,0,-20,0);");
+            StringAssert.Contains(pageSource, "UserDetailFormGrid.Margin = new Thickness(0,10,0,10);");
+            StringAssert.Contains(pageSource, "FirstNamePanel.Margin = new Thickness(0,0,10,0);");
             StringAssert.Contains(pageSource, "if (!(sender is Slider slider))");
+            StringAssert.Contains(pageSource, "int newAge = (int)e.NewValue;");
             StringAssert.Contains(pageSource, "RaiseNotification(slider, $\"New age {newAge}\", \"SliderValueChangedActivity\");");
             Assert.IsFalse(
                 pageSource.Contains("ExecuteButtonCommand"),
