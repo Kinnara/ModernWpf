@@ -297,6 +297,12 @@ The generic `ItemPage` wrapper now also avoids normal-runtime local-only
 `PageHeader` and `DirectPageContentHost` names plus `GallerySampleHost`
 automation IDs while keeping source-shaped `ControlExample` binding order and
 the retained `GallerySample_*` sample-level automation IDs used by diagnostics.
+The shared `ControlExample` template now also keeps official source-code panel
+declaration shape for the header visibility binding, copy buttons, glyphs,
+storyboard actions, code TextBoxes, divider visibility, and C# heading order
+while retaining local ModernWpf converter namespace/resource adaptations,
+source-expander collapse behavior, source-row minimum height, and display font
+inheritance.
 The shared `PageHeader` template now also keeps the official compact
 converter/setter, title/description text, and hidden-description trigger source
 shape while retaining the local `GalleryAutomation.HeadingLevel` adapter that
@@ -328,6 +334,10 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.SharedControlExampleKeepsOfficialSourceCodeTemplateShape|FullyQualifiedName~GalleryApplicationResourceTests.ControlExampleSourceCodeTextStyleUsesWpfGalleryReferenceResources|FullyQualifiedName~GalleryApplicationResourceTests.ControlExampleTemplateMatchesWpfGalleryReferenceDivider|FullyQualifiedName~GalleryApplicationResourceTests.ControlExampleTemplateHidesSourceExpanderWithoutLocalSourceName|FullyQualifiedName~GalleryApplicationResourceTests.ControlExampleLoadsSourceCodeFromReferenceStyleUris" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 5 tests per target. The shared `ControlExample` template now keeps official source-code panel declaration shape while preserving local source-expander collapse behavior, source-code URI loading, WPF Gallery text resources, divider metrics, copy-button names/tooltips, and display font inheritance. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the shared `ControlExample` source-shape alignment. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages and existing ModernWpf/ModernWpf.Controls warnings.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-build --filter "FullyQualifiedName~WpfGallerySourceShapeTests.SharedTileGalleryKeepsOfficialDeclarationSourceShape|FullyQualifiedName~GalleryApplicationResourceTests.HomeHeaderTilesMatchWpfGalleryReferenceSlotGeometry|FullyQualifiedName~GalleryNavigationRuntimeTests.HomePageOverviewUsesWpfReferenceGroupFilter|FullyQualifiedName~WpfGallerySourceShapeTests.HomePageKeepsOfficialDashboardCardListDeclarationSourceShape" --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 4 tests per target. The shared `TileGallery` XAML now keeps official root/resource, scroll host, HeaderTile list, compact icon, and scroll-button declaration shape while retaining local asset pack URI adaptations; Home dashboard source-shape, overview grouping, and header-tile slot geometry coverage still passes.
 - `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
@@ -2542,7 +2552,10 @@ ModernWpf extension group still uses generic `SectionPage` with its scoped
 scroll host so all retained ModernWpf cards remain reachable. The shared section
 page now also pins representative official section declaration source shape for
 root rows, PageHeader, and the direct navigation-card ItemsControl while keeping
-that local extension scroll host separate. The shared `PageHeader` template now
+that local extension scroll host separate. The shared `ControlExample` template
+now pins official source-code panel declaration shape while keeping local
+source-expander collapse, source-row height, ModernWpf resources, and display
+font inheritance adapters. The shared `PageHeader` template now
 pins official compact converter/setter, text, and hidden-description trigger
 source shape while retaining the local heading-level adapter. The shared
 `HeaderTile` XAML now also pins official root/button/resource/content/text

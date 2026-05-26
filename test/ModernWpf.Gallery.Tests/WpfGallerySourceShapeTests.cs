@@ -201,6 +201,91 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void SharedControlExampleKeepsOfficialSourceCodeTemplateShape()
+        {
+            var xaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Controls",
+                "ControlExample.xaml");
+            var normalizedXaml = xaml.Replace("\r\n", "\n").Replace('\r', '\n');
+
+            StringAssert.Contains(
+                xaml,
+                "<controls:NullToVisibilityConverter x:Key=\"NullToVisibilityConverter\" />");
+            StringAssert.Contains(
+                normalizedXaml,
+                "Visibility=\"{TemplateBinding HeaderText,\n                            Converter={StaticResource NullToVisibilityConverter}}\" />");
+            AssertContainsInOrder(
+                xaml,
+                "<Border",
+                "Grid.Row=\"1\"",
+                "Padding=\"16\"",
+                "Background=\"{DynamicResource SolidBackgroundFillColorBaseBrush}\"",
+                "BorderBrush=\"{DynamicResource CardStrokeColorDefaultBrush}\"",
+                "BorderThickness=\"1,1,1,0\"",
+                "CornerRadius=\"8,8,0,0\"",
+                "TextElement.FontSize=\"{StaticResource BodyTextBlockFontSize}\">");
+            AssertContainsInOrder(
+                xaml,
+                "<Expander",
+                "Grid.Row=\"2\"",
+                "AutomationProperties.Name=\"{Binding HeaderText, RelativeSource={RelativeSource TemplatedParent}, StringFormat=View Source Code for {0}}\"",
+                "Header=\"Source code\"",
+                "MinHeight=\"42\">",
+                "<MultiDataTrigger>",
+                "<Condition Binding=\"{Binding XamlCode, RelativeSource={RelativeSource TemplatedParent}}\" Value=\"{x:Null}\" />",
+                "<Condition Binding=\"{Binding CSharpCode, RelativeSource={RelativeSource TemplatedParent}}\" Value=\"{x:Null}\" />",
+                "<Setter Property=\"Visibility\" Value=\"Collapsed\" />");
+            StringAssert.Contains(
+                xaml,
+                "<Button Grid.Column=\"1\" Padding=\"8\" Command=\"ApplicationCommands.Copy\" CommandParameter=\"Copy_XamlCode\" ToolTipService.ToolTip=\"Copy to clipboard\" AutomationProperties.Name=\"Copy XAML Code\" >");
+            StringAssert.Contains(
+                xaml,
+                "<TextBlock x:Name=\"CopyGlyphTextBlock\" FontFamily=\"{StaticResource SymbolThemeFontFamily}\" Text=\"&#xE8C8;\"/>");
+            StringAssert.Contains(
+                xaml,
+                "<TextBlock x:Name=\"SuccessGlyphTextBlock\" FontFamily=\"{StaticResource SymbolThemeFontFamily}\" Text=\"&#xE73E;\" Opacity=\"0\" />");
+            AssertContainsInOrder(
+                xaml,
+                "<EventTrigger RoutedEvent=\"Button.Click\">",
+                "<EventTrigger.Actions>",
+                "<Storyboard BeginTime=\"00:00:00\">",
+                "<DoubleAnimation Duration=\"0:0:0.333\" Storyboard.TargetName=\"CopyGlyphTextBlock\" Storyboard.TargetProperty=\"Opacity\" To=\"0\" />",
+                "<DoubleAnimation Duration=\"0:0:0.666\" BeginTime=\"0:0:0.333\" Storyboard.TargetName=\"SuccessGlyphTextBlock\" Storyboard.TargetProperty=\"Opacity\" To=\"1\" />",
+                "<DoubleAnimation Storyboard.TargetName=\"SuccessGlyphTextBlock\" BeginTime=\"0:0:2\" Duration=\"0:0:0.01\" Storyboard.TargetProperty=\"Opacity\" To=\"0\" />",
+                "<DoubleAnimation Storyboard.TargetName=\"CopyGlyphTextBlock\" BeginTime=\"0:0:2.1\" Duration=\"0:0:0.01\" Storyboard.TargetProperty=\"Opacity\" To=\"1\" />",
+                "</EventTrigger.Actions>");
+            AssertContainsInOrder(
+                xaml,
+                "<TextBox",
+                "Style=\"{StaticResource SelectionTextBox}\"",
+                "AutomationProperties.Name=\"XAML Source Code\"",
+                "Text=\"{TemplateBinding XamlCode}\"/>",
+                "<Border",
+                "x:Name=\"Border\"",
+                "Margin=\"0,20\"",
+                "BorderThickness=\"1\"",
+                "Visibility=\"Visible\" />");
+            AssertContainsInOrder(
+                xaml,
+                "<StackPanel x:Name=\"CSharpCodeBlock\">",
+                "<TextBlock",
+                "Margin=\"0,0,0,5\"",
+                "Style=\"{StaticResource BodyStrongTextBlockStyle}\"",
+                "Foreground=\"{DynamicResource TextFillColorPrimaryBrush}\"",
+                "Text=\"C#\" />");
+            StringAssert.Contains(
+                xaml,
+                "<Button Grid.Column=\"1\" Padding=\"8\" Command=\"ApplicationCommands.Copy\" CommandParameter=\"Copy_CSharpCode\" FocusManager.IsFocusScope=\"True\" >");
+            AssertContainsInOrder(
+                xaml,
+                "<TextBox",
+                "Style=\"{StaticResource SelectionTextBox}\"",
+                "AutomationProperties.Name=\"CSharp Source Code\"",
+                "Text=\"{TemplateBinding CSharpCode}\" />");
+        }
+
+        [TestMethod]
         public void SharedPageHeaderKeepsOfficialTemplateSourceShape()
         {
             var xaml = ReadRepoFile(
