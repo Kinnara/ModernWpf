@@ -1331,6 +1331,93 @@ namespace ModernWpf.Gallery.Tests
                 "<controls:ControlExample Margin=\"10,36,10,10\"",
                 "HeaderText=\"A TextBox with input validation.\"",
                 "XamlCode=\"&lt;TextBox&gt;");
+
+            var passwordBoxXaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Text",
+                "PasswordBoxPage.xaml");
+            AssertContainsInOrder(
+                passwordBoxXaml,
+                "<controls:ControlExample",
+                "Margin=\"10\"",
+                "HeaderText=\"A simple PasswordBox.\"",
+                "XamlCode=\"&lt;PasswordBox /&gt;\"",
+                "<PasswordBox AutomationProperties.Name=\"Simple Password Box\" />");
+
+            var richTextEditXaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Text",
+                "RichTextEditPage.xaml");
+            AssertContainsInOrder(
+                richTextEditXaml,
+                "<controls:ControlExample",
+                "Margin=\"10\"",
+                "HeaderText=\"A simple RichTextBox\"",
+                "XamlCode=\"&lt;RichTextBox /&gt;\"",
+                "<RichTextBox AutomationProperties.Name=\"simple rich text editor\" />");
+
+            var textBlockXaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Text",
+                "TextBlockPage.xaml");
+            AssertContainsInOrder(
+                textBlockXaml,
+                "<StackPanel Margin=\"0,0,0,24\">",
+                "<controls:ControlExample",
+                "Margin=\"10\"",
+                "HeaderText=\"A simple TextBlock.\"",
+                "XamlCode=\"&lt;TextBlock Text=&quot;I am a text block.&quot; /&gt;\"",
+                "<TextBlock Text=\"I am a text block.\" />",
+                "<controls:ControlExample",
+                "Margin=\"10,36,10,10\"",
+                "HeaderText=\"A TextBlock with style applied.\"",
+                "XamlCode=\"&lt;TextBlock Text=&quot;I am a styled TextBlock.&quot; FontFamily=&quot;Comic Sans MS&quot; FontStyle=&quot;Italic&quot; /&gt;\"",
+                "<TextBlock",
+                "FontFamily=\"Comic Sans MS\"",
+                "FontStyle=\"Italic\"",
+                "Text=\"I am a styled TextBlock.\" />",
+                "<controls:ControlExample",
+                "Margin=\"10,36,10,10\"",
+                "HeaderText=\"A TextBlock with inline text elements.\"",
+                "XamlCode=\"&lt;TextBlock FontSize=&quot;14&quot;&gt;",
+                "<TextBlock FontSize=\"14\">",
+                "<Run FontFamily=\"Times New Roman\" Foreground=\"{DynamicResource TextFillColorPrimaryBrush}\" >",
+                "Text in a TextBlock doesn't have to be a simple string.",
+                "<LineBreak />",
+                "<Span>",
+                "Text can be <Bold>bold</Bold>,&#x20;",
+                "<Italic>italic</Italic>,&#x20;",
+                "or <Underline>underlined</Underline>",
+                "<controls:ControlExample",
+                "Margin=\"10,36,10,10\"",
+                "HeaderText=\"A TextBlock with wrap property.\"",
+                "XamlCode=\"&lt;TextBlock FontSize=&quot;14&quot; TextWrapping=&quot;Wrap&quot;&gt;",
+                "<TextBlock FontSize=\"14\" TextWrapping=\"Wrap\">",
+                "The TextBlock control provides flexible text support for WPF applications.",
+                "It supports a number of properties that enable precise control of presentation, such as FontFamily, FontSize, FontWeight, TextEffects, and TextWrapping.");
+
+            var hyperlinkXaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Text",
+                "HyperlinkPage.xaml");
+            AssertContainsInOrder(
+                hyperlinkXaml,
+                "<controls:ControlExample",
+                "Margin=\"10\"",
+                "HeaderText=\"A Hyperlink\"",
+                "XamlCode=\"&lt;TextBlock Margin=&quot;20&quot;&gt;&#10;    &lt;Hyperlink NavigateUri=&quot;https://www.microsoft.com&quot; RequestNavigate=&quot;Hyperlink_RequestNavigate&quot;&gt;&#10;        Lorem Ipsum link&#10;    &lt;/Hyperlink&gt;&#10;&lt;/TextBlock&gt;\"",
+                "<TextBlock Margin=\"20\">",
+                "<Hyperlink NavigateUri=\"https://www.microsoft.com\" RequestNavigate=\"Hyperlink_RequestNavigate\">",
+                "Hyperlink",
+                "</Hyperlink>");
         }
 
         [TestMethod]
