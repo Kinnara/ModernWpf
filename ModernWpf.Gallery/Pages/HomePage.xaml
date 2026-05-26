@@ -12,104 +12,102 @@
     Margin="-24,-16,-24,12"
     Title="DashboardPage"
     mc:Ignorable="d">
-    <Grid x:Name="ContentRootGrid">
-        <ScrollViewer>
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
+    <ScrollViewer>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
 
-                <Border
-                    CornerRadius="8,0,0,0"
-                    Grid.RowSpan="2">
-                    <Border.Background>
-                        <ImageBrush
-                            ImageSource="pack://application:,,,/ModernWpf.Gallery;component/Assets/win11-dashboard.light.png"
-                            Stretch="UniformToFill" />
-                    </Border.Background>
-                    <Border.OpacityMask>
-                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                            <GradientStop Color="Black" Offset="0.6" />
-                            <GradientStop Color="Transparent" Offset="0.9" />
-                        </LinearGradientBrush>
-                    </Border.OpacityMask>
-                </Border>
+            <Border
+                CornerRadius="8,0,0,0"
+                Grid.RowSpan="2">
+                <Border.Background>
+                    <ImageBrush
+                        ImageSource="pack://application:,,,/ModernWpf.Gallery;component/Assets/win11-dashboard.light.png"
+                        Stretch="UniformToFill" />
+                </Border.Background>
+                <Border.OpacityMask>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <GradientStop Color="Black" Offset="0.6" />
+                        <GradientStop Color="Transparent" Offset="0.9" />
+                    </LinearGradientBrush>
+                </Border.OpacityMask>
+            </Border>
 
-                <Border
-                    Height="220"
-                    BorderThickness="0,0,0,1"
-                    CornerRadius="8,0,0,0">
-                    <StackPanel
-                        Margin="36,48,0,0"
-                        VerticalAlignment="Top"
-                        TextElement.Foreground="Black">
-                        <TextBlock
-                            Style="{StaticResource SubtitleTextBlockStyle}"
-                            Text=".NET 10"
-                            Margin="0,0,0,2"
-                            pages:GalleryAutomation.HeadingLevel="Level1" />
-                        <TextBlock
-                            Style="{StaticResource TitleLargeTextBlockStyle}"
-                            Text="WPF Gallery"
-                            Margin="0,0,0,8"
-                            pages:GalleryAutomation.HeadingLevel="Level1" />
-                        <Border
-                            Background="Transparent"
-                            CornerRadius="8,8,8,8"
-                            MaxWidth="300"
-                            HorizontalAlignment="Left">
-                            <TextBlock
-                                MaxWidth="300"
-                                Margin="0,0,0,0"
-                                Style="{StaticResource BodyStrongTextBlockStyle}"
-                                Text="A collection of controls, guidelines and samples to build great WPF applications"
-                                TextAlignment="Left"
-                                HorizontalAlignment="Left"
-                                Padding="0,8,12,8" />
-                        </Border>
-                    </StackPanel>
-                </Border>
-
-                <controls:TileGallery
-                    Grid.Row="1"
-                    HorizontalAlignment="Stretch"
-                    Margin="0" />
-
+            <Border
+                Height="220"
+                BorderThickness="0,0,0,1"
+                CornerRadius="8,0,0,0">
                 <StackPanel
-                    Grid.Row="2"
-                    Margin="32,24,0,0"
-                    Orientation="Vertical">
+                    Margin="36,48,0,0"
+                    VerticalAlignment="Top"
+                    TextElement.Foreground="Black">
                     <TextBlock
-                        pages:GalleryAutomation.HeadingLevel="Level2"
-                        FontSize="16"
-                        Style="{StaticResource BodyStrongTextBlockStyle}"
-                        Text="Overview" />
-
-                    <ItemsControl
-                        Margin="-20,0,0,0"
-                        AutomationProperties.Name="Items in group"
-                        ItemsSource="{Binding ViewModel.NavigationCards}"
-                        Focusable="False"
-                        ItemsPanel="{StaticResource WrapPanelTemplate}"
-                        ItemTemplate="{StaticResource NavigationCardTemplate}" />
-
+                        Style="{StaticResource SubtitleTextBlockStyle}"
+                        Text=".NET 10"
+                        Margin="0,0,0,2"
+                        pages:GalleryAutomation.HeadingLevel="Level1" />
                     <TextBlock
-                        pages:GalleryAutomation.HeadingLevel="Level2"
-                        FontSize="16"
-                        Style="{StaticResource BodyStrongTextBlockStyle}"
-                        Text="Recently added and updated" />
-
-                    <ItemsControl
-                        Margin="-18,0,0,0"
-                        AutomationProperties.Name="Recently Added and Updated Samples Section"
-                        ItemsSource="{Binding ViewModel.RecentlyAddedOrUpdatedSamplesInfo}"
-                        Focusable="False"
-                        ItemsPanel="{StaticResource WrapPanelTemplate}"
-                        ItemTemplate="{StaticResource NavigationCardTemplate}" />
+                        Style="{StaticResource TitleLargeTextBlockStyle}"
+                        Text="WPF Gallery"
+                        Margin="0,0,0,8"
+                        pages:GalleryAutomation.HeadingLevel="Level1" />
+                    <Border
+                        Background="Transparent"
+                        CornerRadius="8,8,8,8"
+                        MaxWidth="300"
+                        HorizontalAlignment="Left">
+                        <TextBlock
+                            MaxWidth="300"
+                            Margin="0,0,0,0"
+                            Style="{StaticResource BodyStrongTextBlockStyle}"
+                            Text="A collection of controls, guidelines and samples to build great WPF applications"
+                            TextAlignment="Left"
+                            HorizontalAlignment="Left"
+                            Padding="0,8,12,8" />
+                    </Border>
                 </StackPanel>
-            </Grid>
-        </ScrollViewer>
-    </Grid>
+            </Border>
+
+            <controls:TileGallery
+                Grid.Row="1"
+                HorizontalAlignment="Stretch"
+                Margin="0" />
+
+            <StackPanel
+                Grid.Row="2"
+                Margin="32,24,0,0"
+                Orientation="Vertical">
+                <TextBlock
+                    pages:GalleryAutomation.HeadingLevel="Level2"
+                    FontSize="16"
+                    Style="{StaticResource BodyStrongTextBlockStyle}"
+                    Text="Overview" />
+
+                <ItemsControl
+                    Margin="-20,0,0,0"
+                    AutomationProperties.Name="Items in group"
+                    ItemsSource="{Binding ViewModel.NavigationCards}"
+                    Focusable="False"
+                    ItemsPanel="{StaticResource WrapPanelTemplate}"
+                    ItemTemplate="{StaticResource NavigationCardTemplate}" />
+
+                <TextBlock
+                    pages:GalleryAutomation.HeadingLevel="Level2"
+                    FontSize="16"
+                    Style="{StaticResource BodyStrongTextBlockStyle}"
+                    Text="Recently added and updated" />
+
+                <ItemsControl
+                    Margin="-18,0,0,0"
+                    AutomationProperties.Name="Recently Added and Updated Samples Section"
+                    ItemsSource="{Binding ViewModel.RecentlyAddedOrUpdatedSamplesInfo}"
+                    Focusable="False"
+                    ItemsPanel="{StaticResource WrapPanelTemplate}"
+                    ItemTemplate="{StaticResource NavigationCardTemplate}" />
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
 </Page>

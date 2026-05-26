@@ -673,8 +673,8 @@ namespace ModernWpf.Gallery.Tests
                 var homePage = new HomePage();
                 RenderPage(homePage, () =>
                 {
-                    var homeRoot = (Grid)homePage.FindName("ContentRootGrid");
-                    var homeScrollViewer = homeRoot.Children.OfType<ScrollViewer>().Single();
+                    Assert.IsNull(homePage.FindName("ContentRootGrid"));
+                    var homeScrollViewer = (ScrollViewer)homePage.Content;
                     var homeContentGrid = (Grid)homeScrollViewer.Content;
                     var heroVersionText = FindVisualChildren<TextBlock>(homeContentGrid)
                         .Single(textBlock => string.Equals(textBlock.Text, ".NET 10", StringComparison.Ordinal));
@@ -689,7 +689,7 @@ namespace ModernWpf.Gallery.Tests
                     var recentlyAddedItemsControl = FindVisualChildren<ItemsControl>(homeContentGrid)
                         .Single(itemsControl => string.Equals(AutomationProperties.GetName(itemsControl), "Recently Added and Updated Samples Section", StringComparison.Ordinal));
 
-                    Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(homeRoot));
+                    Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(homeScrollViewer));
                     Assert.AreEqual(AutomationHeadingLevel.Level1, AutomationProperties.GetHeadingLevel(heroVersionText));
                     Assert.AreEqual(AutomationHeadingLevel.Level1, AutomationProperties.GetHeadingLevel(heroTitleText));
                     Assert.AreEqual(AutomationHeadingLevel.Level2, AutomationProperties.GetHeadingLevel(overviewHeaderText));

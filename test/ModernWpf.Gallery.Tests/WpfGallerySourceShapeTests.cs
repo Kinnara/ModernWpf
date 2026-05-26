@@ -540,9 +540,11 @@ namespace ModernWpf.Gallery.Tests
                 "Pages",
                 "HomePage.xaml");
 
+            Assert.IsFalse(
+                xaml.Contains("x:Name=\"ContentRootGrid\"", StringComparison.Ordinal),
+                "The copied Home page should use the official Dashboard ScrollViewer root shape instead of a local-only root name.");
             AssertContainsInOrder(
                 xaml,
-                "<Grid x:Name=\"ContentRootGrid\">",
                 "<ScrollViewer>",
                 "<Grid>",
                 "<Grid.RowDefinitions>",
