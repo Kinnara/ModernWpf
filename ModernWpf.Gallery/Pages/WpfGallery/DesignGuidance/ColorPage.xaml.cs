@@ -8,7 +8,6 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
     public partial class ColorPage : Page
     {
         public ColorsPageViewModel ViewModel { get; }
-
         public ColorPage(ColorsPageViewModel viewModel)
         {
             InitializeComponent();
@@ -16,16 +15,16 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
             DataContext = this;
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
-        {
-            PageSelector.SelectedItem = ResolveInitialSubpage();
-        }
-
         private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var section = WpfGalleryColorSectionFactory.Create(PageSelector.SelectedIndex);
             section.SetResourceReference(TextElement.FontSizeProperty, "BodyTextBlockFontSize");
             ColorSubpageNavigationFrame.Navigate(section);
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            PageSelector.SelectedItem = ResolveInitialSubpage();
         }
 
         private object ResolveInitialSubpage()

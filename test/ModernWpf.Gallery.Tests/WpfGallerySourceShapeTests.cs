@@ -1477,6 +1477,33 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void DesignGuidanceColorCodeBehindKeepsOfficialConstructorAndHandlerOrderShape()
+        {
+            var source = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "DesignGuidance",
+                "ColorPage.xaml.cs").Replace("\r\n", "\n").Replace('\r', '\n');
+
+            StringAssert.Contains(
+                source,
+                "        public ColorsPageViewModel ViewModel { get; }\n        public ColorPage(ColorsPageViewModel viewModel)");
+            AssertContainsInOrder(
+                source,
+                "public ColorPage(ColorsPageViewModel viewModel)",
+                "InitializeComponent();",
+                "ViewModel = viewModel;",
+                "DataContext = this;",
+                "private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)",
+                "var section = WpfGalleryColorSectionFactory.Create(PageSelector.SelectedIndex);",
+                "ColorSubpageNavigationFrame.Navigate(section);",
+                "private void OnLoaded(object sender, RoutedEventArgs e)",
+                "PageSelector.SelectedItem = ResolveInitialSubpage();",
+                "private object ResolveInitialSubpage()");
+        }
+
+        [TestMethod]
         public void DesignGuidanceColorSubsectionRootsKeepOfficialSourceShape()
         {
             foreach (var section in new[]
