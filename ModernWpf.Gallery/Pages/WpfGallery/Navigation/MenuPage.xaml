@@ -17,15 +17,9 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <controls:PageHeader
-            Margin="0,0,0,32"
-            ShowDescription="False"
-            Title="{Binding ViewModel.PageTitle}" />
+        <controls:PageHeader Margin="0,0,0,32" Title="{Binding ViewModel.PageTitle}" ShowDescription="False" />
 
-        <ScrollViewer
-            Grid.Row="1"
-            Margin="0,0,0,24"
-            Padding="0,0,24,0">
+        <ScrollViewer Grid.Row="1" Margin="0,0,0,24" Padding="0,0,24,0">
             <Grid Margin="0,0,0,24">
                 <controls:ControlExample
                     Margin="10"
@@ -66,33 +60,33 @@
                             <MenuItem AutomationProperties.Name="Bold" Tag="Bold" >
                                 <MenuItem.Header>
                                     <TextBlock
-                                        AutomationProperties.Name="Bold"
-                                        Focusable="False"
-                                        FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                        FontSize="12"
-                                        Text="&#xE8DD;" />
+                                    AutomationProperties.Name="Bold"
+                                    Focusable="False"
+                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                    FontSize="12"
+                                    Text="&#xE8DD;" />
                                 </MenuItem.Header>
                             </MenuItem>
 
                             <MenuItem AutomationProperties.Name="Italic" Tag="Italic" >
                                 <MenuItem.Header>
                                     <TextBlock
-                                        AutomationProperties.Name="Italic"
-                                        Focusable="False"
-                                        FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                        FontSize="12"
-                                        Text="&#xE8DB;" />
+                                    AutomationProperties.Name="Italic"
+                                    Focusable="False"
+                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                    FontSize="12"
+                                    Text="&#xE8DB;" />
                                 </MenuItem.Header>
                             </MenuItem>
 
                             <MenuItem AutomationProperties.Name="Underlined" Tag="Underlined" >
                                 <MenuItem.Header>
                                     <TextBlock
-                                        AutomationProperties.Name="Underlined"
-                                        Focusable="False"
-                                        FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                        FontSize="12"
-                                        Text="&#xE8DC;" />
+                                    AutomationProperties.Name="Underlined"
+                                    Focusable="False"
+                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                    FontSize="12"
+                                    Text="&#xE8DC;" />
                                 </MenuItem.Header>
                             </MenuItem>
                         </Menu>

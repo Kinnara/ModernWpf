@@ -586,6 +586,13 @@ namespace ModernWpf.Gallery.Tests
                 "WpfGallery",
                 "Navigation",
                 "MenuPage.xaml");
+            var normalizedXaml = xaml.Replace("\r\n", "\n");
+            StringAssert.Contains(
+                xaml,
+                "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" ShowDescription=\"False\" />");
+            StringAssert.Contains(
+                xaml,
+                "<ScrollViewer Grid.Row=\"1\" Margin=\"0,0,0,24\" Padding=\"0,0,24,0\">");
             StringAssert.Contains(
                 xaml,
                 "<Style TargetType=\"MenuItem\" BasedOn=\"{StaticResource DefaultMenuItemStyle}\">");
@@ -601,6 +608,15 @@ namespace ModernWpf.Gallery.Tests
             StringAssert.Contains(
                 xaml,
                 "<MenuItem AutomationProperties.Name=\"Underlined\" Tag=\"Underlined\" >");
+            StringAssert.Contains(
+                normalizedXaml,
+                "<TextBlock\n                                    AutomationProperties.Name=\"Bold\"\n                                    Focusable=\"False\"\n                                    FontFamily=\"{StaticResource SymbolThemeFontFamily}\"\n                                    FontSize=\"12\"\n                                    Text=\"&#xE8DD;\" />");
+            StringAssert.Contains(
+                normalizedXaml,
+                "<TextBlock\n                                    AutomationProperties.Name=\"Italic\"\n                                    Focusable=\"False\"\n                                    FontFamily=\"{StaticResource SymbolThemeFontFamily}\"\n                                    FontSize=\"12\"\n                                    Text=\"&#xE8DB;\" />");
+            StringAssert.Contains(
+                normalizedXaml,
+                "<TextBlock\n                                    AutomationProperties.Name=\"Underlined\"\n                                    Focusable=\"False\"\n                                    FontFamily=\"{StaticResource SymbolThemeFontFamily}\"\n                                    FontSize=\"12\"\n                                    Text=\"&#xE8DC;\" />");
 
             var codeBehind = ReadRepoFile(
                 "ModernWpf.Gallery",
