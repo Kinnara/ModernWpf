@@ -2261,6 +2261,9 @@ namespace ModernWpf.Gallery.Tests
                 "WpfGallery",
                 "System",
                 "FileAndFolderDialogsPage.xaml");
+            StringAssert.Contains(
+                fileDialogsXaml.Replace("\r\n", "\n").Replace('\r', '\n'),
+                "                </controls:ControlExample>\n\n            </StackPanel>\n        </ScrollViewer>\n    </Grid>\n</Page>");
             AssertContainsInOrder(
                 fileDialogsXaml,
                 "<controls:ControlExample",
@@ -2295,6 +2298,9 @@ namespace ModernWpf.Gallery.Tests
                 "WpfGallery",
                 "System",
                 "MessageBoxPage.xaml");
+            StringAssert.Contains(
+                messageBoxXaml.Replace("\r\n", "\n").Replace('\r', '\n'),
+                "                </controls:ControlExample>\n\n            </StackPanel>\n        </ScrollViewer>\n    </Grid>\n</Page>");
             AssertContainsInOrder(
                 messageBoxXaml,
                 "<controls:ControlExample",

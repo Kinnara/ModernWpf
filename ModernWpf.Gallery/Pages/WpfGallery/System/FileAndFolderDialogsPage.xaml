@@ -94,6 +94,7 @@
                             TextWrapping="Wrap" />
                     </StackPanel>
                 </controls:ControlExample>
+
             </StackPanel>
         </ScrollViewer>
     </Grid>
