@@ -22,38 +22,36 @@
 
         <controls:PageHeader Grid.Row="0" Margin="0,0,0,32" Title="{Binding ViewModel.PageTitle}" ShowDescription="False" />
 
-        <Border
-            Grid.Row="1"
-            Background="{DynamicResource SubtleFillColorSecondaryBrush}"
-            BorderBrush="{DynamicResource AccentFillColorDefaultBrush}"
-            BorderThickness="1"
-            CornerRadius="4"
-            Padding="16,12"
-            Margin="0,0,0,16">
+        <Border Grid.Row="1"
+                Background="{DynamicResource SubtleFillColorSecondaryBrush}"
+                BorderBrush="{DynamicResource AccentFillColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="4"
+                Padding="16,12"
+                Margin="0,0,0,16">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <TextBlock
-                    Grid.Column="0"
-                    FontFamily="{StaticResource SymbolThemeFontFamily}"
-                    FontSize="16"
-                    Text="&#xE946;"
-                    AutomationProperties.Name="Info"
-                    Foreground="{DynamicResource AccentFillColorDefaultBrush}"
-                    VerticalAlignment="Top"
-                    Margin="0,2,12,0" />
+                <TextBlock Grid.Column="0"
+                           FontFamily="{StaticResource SymbolThemeFontFamily}"
+                           FontSize="16"
+                           Text="&#xE946;"
+                           AutomationProperties.Name="Info"
+                           Foreground="{DynamicResource AccentFillColorDefaultBrush}"
+                           VerticalAlignment="Top"
+                           Margin="0,2,12,0" />
 
-                <TextBlock
-                    Grid.Column="1"
-                    TextWrapping="Wrap"
-                    VerticalAlignment="Center"
-                    Foreground="{DynamicResource TextFillColorPrimaryBrush}">
+                <TextBlock Grid.Column="1"
+                           TextWrapping="Wrap"
+                           VerticalAlignment="Center"
+                           Foreground="{DynamicResource TextFillColorPrimaryBrush}">
                     <Run FontWeight="SemiBold">Note:</Run>
                     <Run Text=" Since .NET 9, few of the Clipboard APIs have become obsolete. For more information please read " />
-                    <Hyperlink NavigateUri="https://learn.microsoft.com/en-us/dotnet/desktop/winforms/migration/clipboard-dataobject-net10" RequestNavigate="Hyperlink_RequestNavigate">
+                    <Hyperlink NavigateUri="https://learn.microsoft.com/en-us/dotnet/desktop/winforms/migration/clipboard-dataobject-net10"
+                               RequestNavigate="Hyperlink_RequestNavigate">
                         <Run Text="here" />
                     </Hyperlink>
                     <Run Text="." />

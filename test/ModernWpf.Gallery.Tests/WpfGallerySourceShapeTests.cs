@@ -2574,18 +2574,29 @@ namespace ModernWpf.Gallery.Tests
                 "WpfGallery",
                 "System",
                 "ClipboardPage.xaml");
+            var normalizedClipboardXaml = clipboardXaml.Replace("\r\n", "\n").Replace('\r', '\n');
+            StringAssert.Contains(
+                normalizedClipboardXaml,
+                "<Border Grid.Row=\"1\"\n                Background=\"{DynamicResource SubtleFillColorSecondaryBrush}\"");
+            StringAssert.Contains(
+                normalizedClipboardXaml,
+                "<TextBlock Grid.Column=\"0\"\n                           FontFamily=\"{StaticResource SymbolThemeFontFamily}\"");
+            StringAssert.Contains(
+                normalizedClipboardXaml,
+                "<TextBlock Grid.Column=\"1\"\n                           TextWrapping=\"Wrap\"");
+            StringAssert.Contains(
+                normalizedClipboardXaml,
+                "<Hyperlink NavigateUri=\"https://learn.microsoft.com/en-us/dotnet/desktop/winforms/migration/clipboard-dataobject-net10\"\n                               RequestNavigate=\"Hyperlink_RequestNavigate\">");
             AssertContainsInOrder(
                 clipboardXaml,
-                "<Border",
-                "Grid.Row=\"1\"",
+                "<Border Grid.Row=\"1\"",
                 "Background=\"{DynamicResource SubtleFillColorSecondaryBrush}\"",
                 "BorderBrush=\"{DynamicResource AccentFillColorDefaultBrush}\"",
                 "BorderThickness=\"1\"",
                 "CornerRadius=\"4\"",
                 "Padding=\"16,12\"",
                 "Margin=\"0,0,0,16\">",
-                "<TextBlock",
-                "Grid.Column=\"0\"",
+                "<TextBlock Grid.Column=\"0\"",
                 "FontFamily=\"{StaticResource SymbolThemeFontFamily}\"",
                 "FontSize=\"16\"",
                 "Text=\"&#xE946;\"",
