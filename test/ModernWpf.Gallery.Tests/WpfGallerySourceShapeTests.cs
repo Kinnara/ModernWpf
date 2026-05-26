@@ -350,5 +350,69 @@ namespace ModernWpf.Gallery.Tests
                 "AutomationProperties.Name=\"TooltipButton\"",
                 "ToolTipService.ToolTip=\"Simple ToolTip\" />");
         }
+
+        [TestMethod]
+        public void SystemPagesKeepOfficialHeaderAndControlExampleSourceShape()
+        {
+            foreach (var page in new[]
+            {
+                Tuple.Create(
+                    "FileAndFolderDialogsPage.xaml",
+                    "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" ShowDescription=\"False\" />",
+                    "<ScrollViewer Grid.Row=\"1\" Margin=\"0,0,0,24\" Padding=\"0,0,24,0\">"),
+                Tuple.Create(
+                    "MessageBoxPage.xaml",
+                    "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" ShowDescription=\"False\" />",
+                    "<ScrollViewer Grid.Row=\"1\" Margin=\"0,0,0,24\" Padding=\"0,0,24,0\">"),
+                Tuple.Create(
+                    "ClipboardPage.xaml",
+                    "<controls:PageHeader Grid.Row=\"0\" Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" ShowDescription=\"False\" />",
+                    "<ScrollViewer Grid.Row=\"2\" Margin=\"0,0,0,24\" Padding=\"0,0,24,0\">")
+            })
+            {
+                var xaml = ReadRepoFile(
+                    "ModernWpf.Gallery",
+                    "Pages",
+                    "WpfGallery",
+                    "System",
+                    page.Item1);
+                StringAssert.Contains(xaml, page.Item2);
+                StringAssert.Contains(xaml, page.Item3);
+                AssertControlExamplesKeepOfficialSourceAttributeOrder(xaml, page.Item1);
+            }
+        }
+
+        private static void AssertControlExamplesKeepOfficialSourceAttributeOrder(string xaml, string pageName)
+        {
+            var searchIndex = 0;
+            var exampleCount = 0;
+            while (true)
+            {
+                var startIndex = xaml.IndexOf("<controls:ControlExample", searchIndex, StringComparison.Ordinal);
+                if (startIndex < 0)
+                {
+                    break;
+                }
+
+                var endIndex = xaml.IndexOf(">", startIndex, StringComparison.Ordinal);
+                Assert.IsTrue(endIndex > startIndex, pageName + " should have a closed ControlExample start tag.");
+                var startTag = xaml.Substring(startIndex, endIndex - startIndex + 1);
+                var headerIndex = startTag.IndexOf("HeaderText=", StringComparison.Ordinal);
+                var xamlCodeIndex = startTag.IndexOf("XamlCode=", StringComparison.Ordinal);
+                var csharpCodeIndex = startTag.IndexOf("CSharpCode=", StringComparison.Ordinal);
+
+                Assert.IsTrue(headerIndex >= 0, pageName + " ControlExample should keep an official HeaderText attribute.");
+                Assert.IsTrue(xamlCodeIndex >= 0, pageName + " ControlExample should keep an official XamlCode attribute.");
+                Assert.IsTrue(csharpCodeIndex >= 0, pageName + " ControlExample should keep an official CSharpCode attribute.");
+                Assert.IsTrue(
+                    headerIndex < xamlCodeIndex && xamlCodeIndex < csharpCodeIndex,
+                    pageName + " ControlExample should match the official HeaderText, XamlCode, CSharpCode attribute order.");
+
+                exampleCount++;
+                searchIndex = endIndex + 1;
+            }
+
+            Assert.IsTrue(exampleCount > 0, pageName + " should contain copied ControlExample samples.");
+        }
     }
 }

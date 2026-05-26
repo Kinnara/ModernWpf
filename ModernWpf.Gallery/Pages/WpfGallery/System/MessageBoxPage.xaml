@@ -18,21 +18,15 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <controls:PageHeader
-            Margin="0,0,0,32"
-            ShowDescription="False"
-            Title="{Binding ViewModel.PageTitle}" />
+        <controls:PageHeader Margin="0,0,0,32" Title="{Binding ViewModel.PageTitle}" ShowDescription="False" />
 
-        <ScrollViewer
-            Grid.Row="1"
-            Margin="0,0,0,24"
-            Padding="0,0,24,0">
+        <ScrollViewer Grid.Row="1" Margin="0,0,0,24" Padding="0,0,24,0">
             <StackPanel>
                 <controls:ControlExample
                     Margin="10"
-                    CSharpCode="private void ShowDefaultMessageButton_Click(object sender, RoutedEventArgs e)&#x0a;{&#x0a;    var result = MessageBox.Show(&quot;This is a simple message box!&quot;);&#x0a;}"
                     HeaderText="Simple MessageBox"
-                    XamlCode="&lt;Button Content=&quot;Simple MessageBox&quot; Click=&quot;ShowDefaultMessageButton_Click&quot; /&gt;">
+                    XamlCode="&lt;Button Content=&quot;Simple MessageBox&quot; Click=&quot;ShowDefaultMessageButton_Click&quot; /&gt;"
+                    CSharpCode="private void ShowDefaultMessageButton_Click(object sender, RoutedEventArgs e)&#x0a;{&#x0a;    var result = MessageBox.Show(&quot;This is a simple message box!&quot;);&#x0a;}">
                     <StackPanel>
                         <Button
                             Margin="0,0,0,10"
@@ -44,9 +38,9 @@
 
                 <controls:ControlExample
                     Margin="10,32,10,10"
-                    CSharpCode="private void ShowCustomTitleButton_Click(object sender, RoutedEventArgs e)&#x0a;{&#x0a;    var result = MessageBox.Show(&#x0a;        &quot;This is a detailed description of what happened or what action is needed.&quot;,&#x0a;        &quot;Custom Title&quot;);&#x0a;}"
                     HeaderText="MessageBox with Custom Title and Description"
-                    XamlCode="&lt;Button Content=&quot;Show MessageBox&quot; Click=&quot;ShowCustomTitleButton_Click&quot; /&gt;">
+                    XamlCode="&lt;Button Content=&quot;Show MessageBox&quot; Click=&quot;ShowCustomTitleButton_Click&quot; /&gt;"
+                    CSharpCode="private void ShowCustomTitleButton_Click(object sender, RoutedEventArgs e)&#x0a;{&#x0a;    var result = MessageBox.Show(&#x0a;        &quot;This is a detailed description of what happened or what action is needed.&quot;,&#x0a;        &quot;Custom Title&quot;);&#x0a;}">
                     <StackPanel>
                         <Button
                             Margin="0,0,0,10"
@@ -58,9 +52,9 @@
 
                 <controls:ControlExample
                     Margin="10,32,10,10"
-                    CSharpCode="{Binding ViewModel.DifferentButtonsCSharpCode}"
                     HeaderText="MessageBox with Different Buttons"
-                    XamlCode="{Binding ViewModel.DifferentButtonsXamlCode}">
+                    XamlCode="{Binding ViewModel.DifferentButtonsXamlCode}"
+                    CSharpCode="{Binding ViewModel.DifferentButtonsCSharpCode}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
@@ -97,9 +91,9 @@
 
                 <controls:ControlExample
                     Margin="10,32,10,10"
-                    CSharpCode="{Binding ViewModel.DifferentImagesCSharpCode}"
                     HeaderText="MessageBox with Different Images"
-                    XamlCode="{Binding ViewModel.DifferentImagesXamlCode}">
+                    XamlCode="{Binding ViewModel.DifferentImagesXamlCode}"
+                    CSharpCode="{Binding ViewModel.DifferentImagesCSharpCode}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
@@ -134,9 +128,9 @@
 
                 <controls:ControlExample
                     Margin="10,32,10,10"
-                    CSharpCode="{Binding ViewModel.CommonMessagesCSharpCode}"
                     HeaderText="Information, Error, and Warning MessageBox"
-                    XamlCode="{Binding ViewModel.CommonMessagesXamlCode}">
+                    XamlCode="{Binding ViewModel.CommonMessagesXamlCode}"
+                    CSharpCode="{Binding ViewModel.CommonMessagesCSharpCode}">
                     <StackPanel>
                         <WrapPanel Margin="0,0,0,10">
                             <Button
@@ -155,9 +149,9 @@
 
                 <controls:ControlExample
                     Margin="10,32,10,10"
-                    CSharpCode="private void ShowCustomDefaultButton_Click(object sender, RoutedEventArgs e)&#x0a;{&#x0a;    // Set 'No' as the default button (focused when dialog opens)&#x0a;    var result = MessageBox.Show(&#x0a;        &quot;Do you want to save changes? Press Enter to select the default 'No' button.&quot;,&#x0a;        &quot;Save Changes&quot;,&#x0a;        MessageBoxButton.YesNoCancel,&#x0a;        MessageBoxImage.Question,&#x0a;        MessageBoxResult.No);&#x0a;}"
                     HeaderText="MessageBox with Custom Default Button"
-                    XamlCode="&lt;Button Content=&quot;Show with 'No' as default&quot; Click=&quot;ShowCustomDefaultButton_Click&quot; /&gt;">
+                    XamlCode="&lt;Button Content=&quot;Show with 'No' as default&quot; Click=&quot;ShowCustomDefaultButton_Click&quot; /&gt;"
+                    CSharpCode="private void ShowCustomDefaultButton_Click(object sender, RoutedEventArgs e)&#x0a;{&#x0a;    // Set 'No' as the default button (focused when dialog opens)&#x0a;    var result = MessageBox.Show(&#x0a;        &quot;Do you want to save changes? Press Enter to select the default 'No' button.&quot;,&#x0a;        &quot;Save Changes&quot;,&#x0a;        MessageBoxButton.YesNoCancel,&#x0a;        MessageBoxImage.Question,&#x0a;        MessageBoxResult.No);&#x0a;}">
                     <StackPanel>
                         <Button
                             Margin="0,0,0,10"
