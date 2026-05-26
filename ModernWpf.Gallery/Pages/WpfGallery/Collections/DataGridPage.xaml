@@ -33,7 +33,10 @@
                         AutomationProperties.Name="Sample Data Grid"
                         ItemsSource="{Binding ViewModel.ProductsCollection, Mode=TwoWay}" />
                 </controls:ControlExample>
+
             </StackPanel>
         </ScrollViewer>
     </Grid>
+
+
 </Page>

@@ -755,6 +755,61 @@ namespace ModernWpf.Gallery.Tests
                 "Header=\"Company\"",
                 "Width=\"200\"",
                 "DisplayMemberBinding=\"{Binding Company}\" />");
+
+            var dataGridXaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Collections",
+                "DataGridPage.xaml");
+            var normalizedDataGridXaml = dataGridXaml.Replace("\r\n", "\n").Replace('\r', '\n');
+            AssertContainsInOrder(
+                dataGridXaml,
+                "<controls:ControlExample",
+                "Margin=\"10\"",
+                "HeaderText=\"Default DataGrid with ItemsSource.\"",
+                "XamlCode=\"&lt;DataGrid ItemsSource=&quot;{Binding ViewModel.ProductsCollection, Mode=TwoWay}&quot; /&gt;\"",
+                "<DataGrid",
+                "x:Name=\"SampleDataGrid\"",
+                "Height=\"400\"",
+                "AutomationProperties.Name=\"Sample Data Grid\"",
+                "ItemsSource=\"{Binding ViewModel.ProductsCollection, Mode=TwoWay}\" />");
+            StringAssert.Contains(
+                normalizedDataGridXaml,
+                "</controls:ControlExample>\n\n            </StackPanel>");
+            StringAssert.Contains(
+                normalizedDataGridXaml,
+                "</Grid>\n\n\n</Page>");
+
+            var treeViewXaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Collections",
+                "TreeViewPage.xaml");
+            AssertContainsInOrder(
+                treeViewXaml,
+                "<Grid Margin=\"0,0,0,24\">",
+                "<controls:ControlExample",
+                "Margin=\"10\"",
+                "HeaderText=\"Simple TreeView.\"",
+                "XamlCode=\"&lt;TreeView AllowDrop=&quot;True&quot; ScrollViewer.CanContentScroll=&quot;False&quot;&gt;",
+                "<TreeView",
+                "AllowDrop=\"True\"",
+                "AutomationProperties.Name=\"Sample TreeView\"",
+                "ScrollViewer.CanContentScroll=\"False\">",
+                "<TreeViewItem",
+                "Header=\"Work Documents\"",
+                "IsExpanded=\"True\"",
+                "IsSelected=\"True\">",
+                "<TreeViewItem Header=\"Feature Schedule\" />",
+                "<TreeViewItem Header=\"Overall Project Plan\" />",
+                "<TreeViewItem Header=\"Personal Documents\">",
+                "<TreeViewItem Header=\"Contractor contact info\" />",
+                "<TreeViewItem Header=\"Home Remodel\">",
+                "<TreeViewItem Header=\"Paint Color Scheme\" />",
+                "<TreeViewItem Header=\"Flooring Woodgrain Type\" />",
+                "<TreeViewItem Header=\"Kitchen Cabinet Style\" />");
         }
 
         [TestMethod]
