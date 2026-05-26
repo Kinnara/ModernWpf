@@ -888,7 +888,19 @@ namespace ModernWpf.Gallery.Tests
                 "WpfGallery",
                 "Navigation",
                 "MenuPage.xaml");
-            var normalizedXaml = xaml.Replace("\r\n", "\n");
+            var normalizedXaml = xaml.Replace("\r\n", "\n").Replace('\r', '\n');
+            StringAssert.Contains(
+                xaml,
+                "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.Navigation\"");
+            StringAssert.Contains(
+                normalizedXaml,
+                "<Grid x:Name=\"ContentPagePane\" Height=\"Auto\">\n\n        <Grid.RowDefinitions>");
+            StringAssert.Contains(
+                normalizedXaml,
+                "</Grid.RowDefinitions>\n        <controls:PageHeader");
+            StringAssert.Contains(
+                normalizedXaml,
+                "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" ShowDescription=\"False\" />\n\n        <ScrollViewer");
             StringAssert.Contains(
                 xaml,
                 "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" ShowDescription=\"False\" />");
@@ -940,6 +952,19 @@ namespace ModernWpf.Gallery.Tests
                 "WpfGallery",
                 "Navigation",
                 "FramePage.xaml");
+            var normalizedFrameXaml = frameXaml.Replace("\r\n", "\n").Replace('\r', '\n');
+            StringAssert.Contains(
+                frameXaml,
+                "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.Navigation\"");
+            StringAssert.Contains(
+                normalizedFrameXaml,
+                "        <Grid x:Name=\"ContentPagePane\" Height=\"Auto\">\n            <Grid.RowDefinitions>");
+            StringAssert.Contains(
+                normalizedFrameXaml,
+                "            </Grid.RowDefinitions>\n            <controls:PageHeader");
+            StringAssert.Contains(
+                normalizedFrameXaml,
+                "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" ShowDescription=\"False\" />\n            <ScrollViewer");
             StringAssert.Contains(
                 frameXaml,
                 "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" ShowDescription=\"False\" />");
@@ -961,6 +986,19 @@ namespace ModernWpf.Gallery.Tests
                 "WpfGallery",
                 "Navigation",
                 "NavigationWindowPage.xaml");
+            var normalizedNavigationWindowXaml = navigationWindowXaml.Replace("\r\n", "\n").Replace('\r', '\n');
+            StringAssert.Contains(
+                navigationWindowXaml,
+                "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.Navigation\"");
+            StringAssert.Contains(
+                normalizedNavigationWindowXaml,
+                "        <Grid x:Name=\"ContentPagePane\" Height=\"Auto\">\n            <Grid.RowDefinitions>");
+            StringAssert.Contains(
+                normalizedNavigationWindowXaml,
+                "            </Grid.RowDefinitions>\n            <controls:PageHeader");
+            StringAssert.Contains(
+                normalizedNavigationWindowXaml,
+                "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" ShowDescription=\"False\" />\n            <ScrollViewer");
             StringAssert.Contains(
                 navigationWindowXaml,
                 "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" ShowDescription=\"False\" />");
@@ -1010,6 +1048,7 @@ namespace ModernWpf.Gallery.Tests
                 "<Window x:Class=\"ModernWpf.Gallery.Pages.WpfGallery.Navigation.FrameWindow\"",
                 "xmlns:d=\"http://schemas.microsoft.com/expression/blend/2008\"",
                 "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"",
+                "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.Navigation\"",
                 "mc:Ignorable=\"d\"",
                 "Title=\"FrameWindow\" Height=\"450\" Width=\"800\">");
             StringAssert.Contains(
@@ -1027,6 +1066,7 @@ namespace ModernWpf.Gallery.Tests
                 "<Page x:Class=\"ModernWpf.Gallery.Pages.WpfGallery.Navigation.Page1\"",
                 "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"",
                 "xmlns:d=\"http://schemas.microsoft.com/expression/blend/2008\"",
+                "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.Navigation\"",
                 "mc:Ignorable=\"d\"",
                 "d:DesignHeight=\"450\" d:DesignWidth=\"800\"",
                 "Title=\"Page1\">");
@@ -1051,6 +1091,7 @@ namespace ModernWpf.Gallery.Tests
                 "<Page x:Class=\"ModernWpf.Gallery.Pages.WpfGallery.Navigation.Page2\"",
                 "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"",
                 "xmlns:d=\"http://schemas.microsoft.com/expression/blend/2008\"",
+                "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.Navigation\"",
                 "mc:Ignorable=\"d\"",
                 "d:DesignHeight=\"450\" d:DesignWidth=\"800\"",
                 "Title=\"Page2\">");
@@ -1068,6 +1109,19 @@ namespace ModernWpf.Gallery.Tests
                 "WpfGallery",
                 "Navigation",
                 "TabControlPage.xaml");
+            var normalizedXaml = xaml.Replace("\r\n", "\n").Replace('\r', '\n');
+            StringAssert.Contains(
+                xaml,
+                "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.Navigation\"");
+            StringAssert.Contains(
+                normalizedXaml,
+                "<Grid x:Name=\"ContentPagePane\" Height=\"Auto\">\n\n        <Grid.RowDefinitions>");
+            StringAssert.Contains(
+                normalizedXaml,
+                "</Grid.RowDefinitions>\n        <controls:PageHeader");
+            StringAssert.Contains(
+                normalizedXaml,
+                "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" ShowDescription=\"False\" />\n\n        <ScrollViewer");
             StringAssert.Contains(
                 xaml,
                 "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" ShowDescription=\"False\" />");
