@@ -182,6 +182,73 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void CollectionsPagesKeepOfficialHeaderAndSampleSourceShape()
+        {
+            foreach (var page in new[]
+            {
+                "DataGridPage.xaml",
+                "ListBoxPage.xaml",
+                "ListViewPage.xaml",
+                "TreeViewPage.xaml"
+            })
+            {
+                var xaml = ReadRepoFile(
+                    "ModernWpf.Gallery",
+                    "Pages",
+                    "WpfGallery",
+                    "Collections",
+                    page);
+                StringAssert.Contains(
+                    xaml,
+                    "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" ShowDescription=\"False\" />");
+                StringAssert.Contains(
+                    xaml,
+                    "<ScrollViewer Grid.Row=\"1\" Margin=\"0,0,0,24\" Padding=\"0,0,24,0\">");
+            }
+
+            var listBoxXaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Collections",
+                "ListBoxPage.xaml");
+            StringAssert.Contains(
+                listBoxXaml,
+                "<!--<controls:ControlExample.XamlCode>");
+            StringAssert.Contains(
+                listBoxXaml,
+                "\\t&lt;ListBoxItem Content=&quot;Blue&quot;/&gt;\\n");
+
+            var listViewXaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Collections",
+                "ListViewPage.xaml");
+            StringAssert.Contains(
+                listViewXaml,
+                "<!--<controls:ControlExample.XamlCode>");
+            StringAssert.Contains(
+                listViewXaml,
+                "&lt;ListView ItemsSource=&quot;{Binding ViewModel.MyCollection}&quot;&gt;&lt;&gt;\\n");
+            AssertContainsInOrder(
+                listViewXaml,
+                "AutomationProperties.Name=\"ListView with GridView\"",
+                "<GridViewColumn",
+                "Header=\"First Name\"",
+                "Width=\"150\"",
+                "DisplayMemberBinding=\"{Binding FirstName}\" />",
+                "<GridViewColumn",
+                "Header=\"Last Name\"",
+                "Width=\"150\"",
+                "DisplayMemberBinding=\"{Binding LastName}\" />",
+                "<GridViewColumn",
+                "Header=\"Company\"",
+                "Width=\"200\"",
+                "DisplayMemberBinding=\"{Binding Company}\" />");
+        }
+
+        [TestMethod]
         public void MenuPageKeepsOfficialMenuItemSourceShape()
         {
             var xaml = ReadRepoFile(

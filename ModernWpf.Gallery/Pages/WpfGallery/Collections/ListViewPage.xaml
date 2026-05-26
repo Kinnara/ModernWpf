@@ -18,20 +18,23 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <controls:PageHeader
-            Margin="0,0,0,32"
-            ShowDescription="False"
-            Title="{Binding ViewModel.PageTitle}" />
+        <controls:PageHeader Margin="0,0,0,32" Title="{Binding ViewModel.PageTitle}" ShowDescription="False" />
 
-        <ScrollViewer
-            Grid.Row="1"
-            Margin="0,0,0,24"
-            Padding="0,0,24,0">
+        <ScrollViewer Grid.Row="1" Margin="0,0,0,24" Padding="0,0,24,0">
             <StackPanel Margin="0,0,0,24">
                 <controls:ControlExample
                     Margin="10"
                     HeaderText="Basic ListView with Simple DataTemplate."
                     XamlCode="&lt;ListView             &#10;&#9;Height=&quot;200&quot;             &#10;&#9;ItemsSource=&quot;{Binding ViewModel.BasicListViewItems, Mode=TwoWay}&quot;             &#10;&#9;SelectedIndex=&quot;2&quot;             &#10;&#9;SelectionMode=&quot;Single&quot;&gt;             &#10;&#9;&lt;ListView.ItemTemplate&gt;             &#10;&#9;&#9;&lt;DataTemplate DataType=&quot;{x:Type models:Person}&quot;&gt;             &#10;&#9;&#9;&#9;&lt;TextBlock Margin=&quot;8,4&quot; Text=&quot;{Binding Name, Mode=OneWay}&quot; /&gt;             &#10;&#9;&#9;&lt;/DataTemplate&gt;             &#10;&#9;&lt;/ListView.ItemTemplate&gt;             &#10;&lt;/ListView&gt;">
+                    <!--<controls:ControlExample.XamlCode>
+                &lt;ListView ItemsSource=&quot;{Binding ViewModel.MyCollection}&quot;&gt;&lt;&gt;\n
+                \t&lt;ListView.ItemTemplate&gt;\n
+                \t\t&lt;DataTemplate DataType=&quot;{x:Type models:Person}&quot; &gt;\n
+                \t\t\t&lt;TextBlock Margin=&quot;8,4&quot; Text=&quot;{Binding Name}&quot;/&gt;\n
+                \t\t&lt;/DataTemplate&gt;\n
+                \t&lt;/ListView.ItemTemplate&gt;\n
+                &lt;/ListView&gt;
+            </controls:ControlExample.XamlCode>-->
                     <ListView
                         Height="200"
                         AutomationProperties.Name="Basic ListView"
@@ -132,17 +135,17 @@
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn
+                                    Header="First Name"
                                     Width="150"
-                                    DisplayMemberBinding="{Binding FirstName}"
-                                    Header="First Name" />
+                                    DisplayMemberBinding="{Binding FirstName}" />
                                 <GridViewColumn
+                                    Header="Last Name"
                                     Width="150"
-                                    DisplayMemberBinding="{Binding LastName}"
-                                    Header="Last Name" />
+                                    DisplayMemberBinding="{Binding LastName}" />
                                 <GridViewColumn
+                                    Header="Company"
                                     Width="200"
-                                    DisplayMemberBinding="{Binding Company}"
-                                    Header="Company" />
+                                    DisplayMemberBinding="{Binding Company}" />
                             </GridView>
                         </ListView.View>
                     </ListView>
