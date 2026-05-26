@@ -1547,6 +1547,7 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual("Gender:", ((TextBlock)genderRow.Children[0]).Text);
                 Assert.AreEqual("GenderTextBox", ((TextBox)genderRow.Children[1]).Name);
                 Assert.AreEqual("Submit", ((Button)groupStack.Children[2]).Content);
+                Assert.AreEqual(100.0, ((Button)groupStack.Children[2]).Width);
 
                 var canvasPage = new ItemPage(GalleryCatalog.FindItem("Canvas"));
                 Assert.IsTrue(canvasPage.HasDirectPageContent);

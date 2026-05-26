@@ -64,54 +64,22 @@
                             <ColumnDefinition Width="2*" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <Border
-                            Grid.Row="0"
-                            Grid.Column="0"
-                            Margin="5"
-                            Padding="10"
-                            Background="{DynamicResource ControlFillColorDefaultBrush}">
+                        <Border Grid.Row="0" Grid.Column="0" Background="{DynamicResource ControlFillColorDefaultBrush}" Margin="5" Padding="10">
                             <TextBlock Text="Row 0, Column 0" />
                         </Border>
-                        <Border
-                            Grid.Row="0"
-                            Grid.Column="1"
-                            Margin="5"
-                            Padding="10"
-                            Background="{DynamicResource ControlFillColorDefaultBrush}">
+                        <Border Grid.Row="0" Grid.Column="1" Background="{DynamicResource ControlFillColorDefaultBrush}" Margin="5" Padding="10">
                             <TextBlock Text="Row 0, Column 1 (2x width)" />
                         </Border>
-                        <Border
-                            Grid.Row="0"
-                            Grid.Column="2"
-                            Margin="5"
-                            Padding="10"
-                            Background="{DynamicResource ControlFillColorDefaultBrush}">
+                        <Border Grid.Row="0" Grid.Column="2" Background="{DynamicResource ControlFillColorDefaultBrush}" Margin="5" Padding="10">
                             <TextBlock Text="Row 0, Column 2" />
                         </Border>
-                        <Border
-                            Grid.Row="1"
-                            Grid.Column="0"
-                            Grid.ColumnSpan="3"
-                            Margin="5"
-                            Padding="10"
-                            Background="{DynamicResource ControlFillColorSecondaryBrush}">
+                        <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Background="{DynamicResource ControlFillColorSecondaryBrush}" Margin="5" Padding="10">
                             <TextBlock Text="Row 1, Spans all columns" />
                         </Border>
-                        <Border
-                            Grid.Row="2"
-                            Grid.Column="0"
-                            Grid.ColumnSpan="2"
-                            Margin="5"
-                            Padding="10"
-                            Background="{DynamicResource ControlFillColorDefaultBrush}">
+                        <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Background="{DynamicResource ControlFillColorDefaultBrush}" Margin="5" Padding="10">
                             <TextBlock Text="Row 2, Spans 2 columns" />
                         </Border>
-                        <Border
-                            Grid.Row="2"
-                            Grid.Column="2"
-                            Margin="5"
-                            Padding="10"
-                            Background="{DynamicResource ControlFillColorDefaultBrush}">
+                        <Border Grid.Row="2" Grid.Column="2" Background="{DynamicResource ControlFillColorDefaultBrush}" Margin="5" Padding="10">
                             <TextBlock Text="Row 2, Column 2" />
                         </Border>
                     </Grid>
@@ -132,49 +100,19 @@
                             <ColumnDefinition Width="2*" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <Border
-                            Grid.Row="0"
-                            Grid.Column="0"
-                            Margin="5"
-                            Padding="10"
-                            Background="{DynamicResource ControlFillColorDefaultBrush}">
+                        <Border Grid.Row="0" Grid.Column="0" Background="{DynamicResource ControlFillColorDefaultBrush}" Margin="5" Padding="10">
                             <TextBlock Text="Header (100px)" />
                         </Border>
-                        <Border
-                            Grid.Row="0"
-                            Grid.Column="1"
-                            Margin="5"
-                            Padding="10"
-                            Background="{DynamicResource ControlFillColorSecondaryBrush}">
+                        <Border Grid.Row="0" Grid.Column="1" Background="{DynamicResource ControlFillColorSecondaryBrush}" Margin="5" Padding="10">
                             <TextBlock Text="Title (2*)" />
                         </Border>
-                        <Border
-                            Grid.Row="0"
-                            Grid.Column="2"
-                            Margin="5"
-                            Padding="10"
-                            Background="{DynamicResource ControlFillColorDefaultBrush}">
+                        <Border Grid.Row="0" Grid.Column="2" Background="{DynamicResource ControlFillColorDefaultBrush}" Margin="5" Padding="10">
                             <TextBlock Text="Actions (*)" />
                         </Border>
-                        <Border
-                            Grid.Row="1"
-                            Grid.Column="0"
-                            Grid.ColumnSpan="3"
-                            Margin="5"
-                            Padding="10"
-                            Background="{DynamicResource ControlAltFillColorSecondaryBrush}">
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Text="Main Content Area (fills available space)" />
+                        <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Background="{DynamicResource ControlAltFillColorSecondaryBrush}" Margin="5" Padding="10">
+                            <TextBlock Text="Main Content Area (fills available space)" VerticalAlignment="Center" HorizontalAlignment="Center" />
                         </Border>
-                        <Border
-                            Grid.Row="2"
-                            Grid.Column="0"
-                            Grid.ColumnSpan="3"
-                            Margin="5"
-                            Padding="10"
-                            Background="{DynamicResource ControlFillColorDefaultBrush}">
+                        <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Background="{DynamicResource ControlFillColorDefaultBrush}" Margin="5" Padding="10">
                             <TextBlock Text="Footer (Auto height, spans all columns)" />
                         </Border>
                     </Grid>

@@ -27,21 +27,9 @@
                     HeaderText="A basic vertical StackPanel"
                     XamlCode="&lt;StackPanel Orientation=&quot;Vertical&quot;&gt;&#xA;    &lt;Rectangle Width=&quot;100&quot; Height=&quot;30&quot; Fill=&quot;CornflowerBlue&quot; /&gt;&#xA;    &lt;Rectangle Width=&quot;100&quot; Height=&quot;30&quot; Fill=&quot;LightCoral&quot; /&gt;&#xA;    &lt;Rectangle Width=&quot;100&quot; Height=&quot;30&quot; Fill=&quot;MediumSeaGreen&quot; /&gt;&#xA;&lt;/StackPanel&gt;">
                     <StackPanel Orientation="Vertical">
-                        <Rectangle
-                            Width="100"
-                            Height="30"
-                            Margin="5"
-                            Fill="CornflowerBlue" />
-                        <Rectangle
-                            Width="100"
-                            Height="30"
-                            Margin="5"
-                            Fill="LightCoral" />
-                        <Rectangle
-                            Width="100"
-                            Height="30"
-                            Margin="5"
-                            Fill="MediumSeaGreen" />
+                        <Rectangle Width="100" Height="30" Fill="CornflowerBlue" Margin="5" />
+                        <Rectangle Width="100" Height="30" Fill="LightCoral" Margin="5" />
+                        <Rectangle Width="100" Height="30" Fill="MediumSeaGreen" Margin="5" />
                     </StackPanel>
                 </controls:ControlExample>
 
@@ -50,21 +38,9 @@
                     HeaderText="A horizontal StackPanel"
                     XamlCode="&lt;StackPanel Orientation=&quot;Horizontal&quot;&gt;&#xA;    &lt;Rectangle Width=&quot;100&quot; Height=&quot;30&quot; Fill=&quot;CornflowerBlue&quot; /&gt;&#xA;    &lt;Rectangle Width=&quot;100&quot; Height=&quot;30&quot; Fill=&quot;LightCoral&quot; /&gt;&#xA;    &lt;Rectangle Width=&quot;100&quot; Height=&quot;30&quot; Fill=&quot;MediumSeaGreen&quot; /&gt;&#xA;&lt;/StackPanel&gt;">
                     <StackPanel Orientation="Horizontal">
-                        <Rectangle
-                            Width="100"
-                            Height="30"
-                            Margin="5"
-                            Fill="CornflowerBlue" />
-                        <Rectangle
-                            Width="100"
-                            Height="30"
-                            Margin="5"
-                            Fill="LightCoral" />
-                        <Rectangle
-                            Width="100"
-                            Height="30"
-                            Margin="5"
-                            Fill="MediumSeaGreen" />
+                        <Rectangle Width="100" Height="30" Fill="CornflowerBlue" Margin="5" />
+                        <Rectangle Width="100" Height="30" Fill="LightCoral" Margin="5" />
+                        <Rectangle Width="100" Height="30" Fill="MediumSeaGreen" Margin="5" />
                     </StackPanel>
                 </controls:ControlExample>
             </StackPanel>

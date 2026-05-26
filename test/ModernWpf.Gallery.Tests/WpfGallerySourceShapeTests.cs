@@ -647,12 +647,85 @@ namespace ModernWpf.Gallery.Tests
                 expanderXaml,
                 "<!--  TODO: ExpandDirection  -->");
 
+            var borderXaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Layout",
+                "BorderPage.xaml");
+            AssertContainsInOrder(
+                borderXaml,
+                "<Border BorderBrush=\"Gray\" BorderThickness=\"2\" Padding=\"10\">",
+                "<Border BorderBrush=\"CornflowerBlue\" BorderThickness=\"2\" CornerRadius=\"10\" Padding=\"15\" Background=\"LightBlue\">",
+                "<TextBlock Text=\"Rounded Border\" Foreground=\"Black\" />",
+                "<Border BorderBrush=\"DarkSlateGray\" BorderThickness=\"1,2,4,8\" Padding=\"10\">");
+
+            var gridXaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Layout",
+                "GridPage.xaml");
+            AssertContainsInOrder(
+                gridXaml,
+                "HeaderText=\"A Grid with custom sizing and spanning\"",
+                "<Border Grid.Row=\"0\" Grid.Column=\"0\" Background=\"{DynamicResource ControlFillColorDefaultBrush}\" Margin=\"5\" Padding=\"10\">",
+                "<Border Grid.Row=\"1\" Grid.Column=\"0\" Grid.ColumnSpan=\"3\" Background=\"{DynamicResource ControlFillColorSecondaryBrush}\" Margin=\"5\" Padding=\"10\">",
+                "HeaderText=\"Grid using XAML shorthand syntax\"",
+                "XamlCode=\"&lt;Grid RowDefinitions=&quot;Auto,*,Auto&quot; ColumnDefinitions=&quot;100,2*,*&quot;&gt;",
+                "<Grid Height=\"300\">",
+                "<Grid.RowDefinitions>",
+                "<Border Grid.Row=\"0\" Grid.Column=\"0\" Background=\"{DynamicResource ControlFillColorDefaultBrush}\" Margin=\"5\" Padding=\"10\">",
+                "<Border Grid.Row=\"1\" Grid.Column=\"0\" Grid.ColumnSpan=\"3\" Background=\"{DynamicResource ControlAltFillColorSecondaryBrush}\" Margin=\"5\" Padding=\"10\">",
+                "<TextBlock Text=\"Main Content Area (fills available space)\" VerticalAlignment=\"Center\" HorizontalAlignment=\"Center\" />");
+
+            var gridSplitterXaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Layout",
+                "GridSplitterPage.xaml");
+            AssertContainsInOrder(
+                gridSplitterXaml,
+                "<TextBlock Style=\"{DynamicResource TitleTextBlockStyle}\" Text=\"Grid Splitter\" Margin=\"0 0 0 10\"/>",
+                "<Border",
+                "BorderBrush=\"{DynamicResource ControlElevationBorderBrush}\"",
+                "BorderThickness=\"2\"",
+                "Grid.Row=\"1\"",
+                "Padding=\"10\"",
+                "CornerRadius=\"4\">",
+                "<TextBlock TextWrapping=\"Wrap\" Text=\"{StaticResource SampleText}\" />",
+                "<GridSplitter Grid.RowSpan=\"5\" Grid.Column=\"1\" ResizeDirection=\"Columns\" />",
+                "<GridSplitter Grid.Row=\"1\" Grid.ColumnSpan=\"3\" ResizeDirection=\"Rows\" />",
+                "<GridSplitter Grid.Row=\"3\" Grid.ColumnSpan=\"1\" ResizeDirection=\"Rows\" />");
+
+            var groupBoxXaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Layout",
+                "GroupBoxPage.xaml");
+            AssertContainsInOrder(
+                groupBoxXaml,
+                "<GroupBox",
+                "Header=\"User Information\"",
+                "HorizontalAlignment=\"Left\"",
+                "VerticalAlignment=\"Center\"",
+                "Width=\"400\">",
+                "<TextBox Name=\"NameTextBox\" Width=\"280\" Margin=\"10,0,0,20\" AutomationProperties.Name=\"Name Field\" />",
+                "<TextBlock Width=\"100\" Text=\"Gender:\" Margin=\"0,10,0,0\" />",
+                "<TextBox Name=\"GenderTextBox\" Width=\"280\" Margin=\"10,0,0,20\" AutomationProperties.Name=\"Gender Field\" />",
+                "<Button Content=\"Submit\" HorizontalAlignment=\"Right\" Width=\"100\" Margin=\"0,10,0,0\" />");
+
             var resizeGripXaml = ReadRepoFile(
                 "ModernWpf.Gallery",
                 "Pages",
                 "WpfGallery",
                 "Layout",
                 "ResizeGripPage.xaml");
+            StringAssert.Contains(
+                resizeGripXaml,
+                "<StackPanel Orientation=\"Vertical\" Grid.Row=\"1\">");
             AssertContainsInOrder(
                 resizeGripXaml,
                 "<controls:ControlExample",
@@ -668,6 +741,23 @@ namespace ModernWpf.Gallery.Tests
                 "HorizontalAlignment=\"Center\"",
                 "Content=\"Open window with resize grip\"",
                 "Click=\"OpenResizeGripWindow_Click\" />");
+
+            var stackPanelXaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Layout",
+                "StackPanelPage.xaml");
+            AssertContainsInOrder(
+                stackPanelXaml,
+                "<StackPanel Orientation=\"Vertical\">",
+                "<Rectangle Width=\"100\" Height=\"30\" Fill=\"CornflowerBlue\" Margin=\"5\" />",
+                "<Rectangle Width=\"100\" Height=\"30\" Fill=\"LightCoral\" Margin=\"5\" />",
+                "<Rectangle Width=\"100\" Height=\"30\" Fill=\"MediumSeaGreen\" Margin=\"5\" />",
+                "<StackPanel Orientation=\"Horizontal\">",
+                "<Rectangle Width=\"100\" Height=\"30\" Fill=\"CornflowerBlue\" Margin=\"5\" />",
+                "<Rectangle Width=\"100\" Height=\"30\" Fill=\"LightCoral\" Margin=\"5\" />",
+                "<Rectangle Width=\"100\" Height=\"30\" Fill=\"MediumSeaGreen\" Margin=\"5\" />");
         }
 
         [TestMethod]

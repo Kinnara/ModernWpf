@@ -26,10 +26,7 @@
                     Margin="10"
                     HeaderText="A basic Border"
                     XamlCode="&lt;Border BorderBrush=&quot;Gray&quot; BorderThickness=&quot;2&quot; Padding=&quot;10&quot;&gt;&#xA;    &lt;TextBlock Text=&quot;Content inside a Border&quot; /&gt;&#xA;&lt;/Border&gt;">
-                    <Border
-                        Padding="10"
-                        BorderBrush="Gray"
-                        BorderThickness="2">
+                    <Border BorderBrush="Gray" BorderThickness="2" Padding="10">
                         <TextBlock Text="Content inside a Border" />
                     </Border>
                 </controls:ControlExample>
@@ -38,13 +35,8 @@
                     Margin="10"
                     HeaderText="A Border with rounded corners"
                     XamlCode="&lt;Border BorderBrush=&quot;CornflowerBlue&quot; BorderThickness=&quot;2&quot; CornerRadius=&quot;10&quot; Padding=&quot;15&quot; Background=&quot;LightBlue&quot;&gt;&#xA;    &lt;TextBlock Text=&quot;Rounded Border&quot; /&gt;&#xA;&lt;/Border&gt;">
-                    <Border
-                        Padding="15"
-                        Background="LightBlue"
-                        BorderBrush="CornflowerBlue"
-                        BorderThickness="2"
-                        CornerRadius="10">
-                        <TextBlock Foreground="Black" Text="Rounded Border" />
+                    <Border BorderBrush="CornflowerBlue" BorderThickness="2" CornerRadius="10" Padding="15" Background="LightBlue">
+                        <TextBlock Text="Rounded Border" Foreground="Black" />
                     </Border>
                 </controls:ControlExample>
 
@@ -52,10 +44,7 @@
                     Margin="10"
                     HeaderText="A Border with different thickness on each side"
                     XamlCode="&lt;Border BorderBrush=&quot;DarkSlateGray&quot; BorderThickness=&quot;1,2,4,8&quot; Padding=&quot;10&quot;&gt;&#xA;    &lt;TextBlock Text=&quot;Different border thickness&quot; /&gt;&#xA;&lt;/Border&gt;">
-                    <Border
-                        Padding="10"
-                        BorderBrush="DarkSlateGray"
-                        BorderThickness="1,2,4,8">
+                    <Border BorderBrush="DarkSlateGray" BorderThickness="1,2,4,8" Padding="10">
                         <TextBlock Text="Different border thickness (Left=1, Top=2, Right=4, Bottom=8)" />
                     </Border>
                 </controls:ControlExample>

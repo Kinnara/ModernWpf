@@ -43,15 +43,12 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
-                        <TextBlock
-                            Margin="0 0 0 10"
-                            Style="{DynamicResource TitleTextBlockStyle}"
-                            Text="Grid Splitter" />
+                        <TextBlock Style="{DynamicResource TitleTextBlockStyle}" Text="Grid Splitter" Margin="0 0 0 10"/>
                         <Border
-                            Grid.Row="1"
-                            Padding="10"
                             BorderBrush="{DynamicResource ControlElevationBorderBrush}"
                             BorderThickness="2"
+                            Grid.Row="1"
+                            Padding="10"
                             CornerRadius="4">
                             <Grid Background="{DynamicResource ControlAltFillColorSecondaryBrush}">
                                 <Grid.RowDefinitions>
@@ -68,44 +65,15 @@
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Text="{StaticResource SampleText}" TextWrapping="Wrap" />
-                                <TextBlock
-                                    Grid.Row="0"
-                                    Grid.Column="2"
-                                    Text="{StaticResource SampleText2}"
-                                    TextWrapping="Wrap" />
-                                <TextBlock
-                                    Grid.Row="2"
-                                    Grid.Column="2"
-                                    Text="{StaticResource SampleText}"
-                                    TextWrapping="Wrap" />
-                                <TextBlock
-                                    Grid.Row="2"
-                                    Grid.Column="0"
-                                    Text="{StaticResource SampleText2}"
-                                    TextWrapping="Wrap" />
-                                <TextBlock
-                                    Grid.Row="4"
-                                    Grid.Column="2"
-                                    Text="{StaticResource SampleText2}"
-                                    TextWrapping="Wrap" />
-                                <TextBlock
-                                    Grid.Row="4"
-                                    Grid.Column="0"
-                                    Text="{StaticResource SampleText}"
-                                    TextWrapping="Wrap" />
-                                <GridSplitter
-                                    Grid.RowSpan="5"
-                                    Grid.Column="1"
-                                    ResizeDirection="Columns" />
-                                <GridSplitter
-                                    Grid.Row="1"
-                                    Grid.ColumnSpan="3"
-                                    ResizeDirection="Rows" />
-                                <GridSplitter
-                                    Grid.Row="3"
-                                    Grid.ColumnSpan="1"
-                                    ResizeDirection="Rows" />
+                                <TextBlock TextWrapping="Wrap" Text="{StaticResource SampleText}" />
+                                <TextBlock Grid.Row="0" Grid.Column="2" TextWrapping="Wrap" Text="{StaticResource SampleText2}" />
+                                <TextBlock Grid.Row="2" Grid.Column="2" TextWrapping="Wrap" Text="{StaticResource SampleText}" />
+                                <TextBlock Grid.Row="2" Grid.Column="0" TextWrapping="Wrap" Text="{StaticResource SampleText2}" />
+                                <TextBlock Grid.Row="4" Grid.Column="2" TextWrapping="Wrap" Text="{StaticResource SampleText2}" />
+                                <TextBlock Grid.Row="4" Grid.Column="0" TextWrapping="Wrap" Text="{StaticResource SampleText}" />
+                                <GridSplitter Grid.RowSpan="5" Grid.Column="1" ResizeDirection="Columns" />
+                                <GridSplitter Grid.Row="1" Grid.ColumnSpan="3" ResizeDirection="Rows" />
+                                <GridSplitter Grid.Row="3" Grid.ColumnSpan="1" ResizeDirection="Rows" />
                             </Grid>
                         </Border>
                     </Grid>
