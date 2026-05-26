@@ -62,6 +62,51 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void HomePageKeepsOfficialDashboardCardListDeclarationSourceShape()
+        {
+            var xaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "HomePage.xaml");
+
+            AssertContainsInOrder(
+                xaml,
+                "<Grid x:Name=\"ContentRootGrid\">",
+                "<ScrollViewer>",
+                "<Grid>",
+                "<Grid.RowDefinitions>",
+                "<RowDefinition Height=\"Auto\" />",
+                "<RowDefinition Height=\"Auto\" />",
+                "<RowDefinition Height=\"*\" />");
+            AssertContainsInOrder(
+                xaml,
+                "<controls:TileGallery",
+                "Grid.Row=\"1\"",
+                "HorizontalAlignment=\"Stretch\"",
+                "Margin=\"0\" />");
+            AssertContainsInOrder(
+                xaml,
+                "Text=\"Overview\" />",
+                "<ItemsControl",
+                "Margin=\"-20,0,0,0\"",
+                "AutomationProperties.Name=\"Items in group\"",
+                "ItemsSource=\"{Binding ViewModel.NavigationCards}\"",
+                "Focusable=\"False\"",
+                "ItemsPanel=\"{StaticResource WrapPanelTemplate}\"",
+                "ItemTemplate=\"{StaticResource NavigationCardTemplate}\" />");
+            AssertContainsInOrder(
+                xaml,
+                "Text=\"Recently added and updated\" />",
+                "<ItemsControl",
+                "Margin=\"-18,0,0,0\"",
+                "AutomationProperties.Name=\"Recently Added and Updated Samples Section\"",
+                "ItemsSource=\"{Binding ViewModel.RecentlyAddedOrUpdatedSamplesInfo}\"",
+                "Focusable=\"False\"",
+                "ItemsPanel=\"{StaticResource WrapPanelTemplate}\"",
+                "ItemTemplate=\"{StaticResource NavigationCardTemplate}\" />");
+        }
+
+        [TestMethod]
         public void SettingsPageKeepsOfficialSettingsDeclarationSourceShape()
         {
             var xaml = ReadRepoFile(

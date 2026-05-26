@@ -90,10 +90,10 @@
                         Text="Overview" />
 
                     <ItemsControl
-                        AutomationProperties.Name="Items in group"
-                        Focusable="False"
                         Margin="-20,0,0,0"
+                        AutomationProperties.Name="Items in group"
                         ItemsSource="{Binding ViewModel.NavigationCards}"
+                        Focusable="False"
                         ItemsPanel="{StaticResource WrapPanelTemplate}"
                         ItemTemplate="{StaticResource NavigationCardTemplate}" />
 
@@ -104,10 +104,10 @@
                         Text="Recently added and updated" />
 
                     <ItemsControl
-                        AutomationProperties.Name="Recently Added and Updated Samples Section"
-                        Focusable="False"
                         Margin="-18,0,0,0"
+                        AutomationProperties.Name="Recently Added and Updated Samples Section"
                         ItemsSource="{Binding ViewModel.RecentlyAddedOrUpdatedSamplesInfo}"
+                        Focusable="False"
                         ItemsPanel="{StaticResource WrapPanelTemplate}"
                         ItemTemplate="{StaticResource NavigationCardTemplate}" />
                 </StackPanel>
