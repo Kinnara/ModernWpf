@@ -18,7 +18,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Navigation
 
         private void OpenNavigationWindow_Click(object sender, RoutedEventArgs e)
         {
-            NavigationWindow window = new NavigationWindow
+            NavigationWindow window = new NavigationWindow()
             {
                 Width = 800,
                 Height = 450,

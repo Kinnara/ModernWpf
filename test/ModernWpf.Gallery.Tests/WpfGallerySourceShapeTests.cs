@@ -153,5 +153,74 @@ namespace ModernWpf.Gallery.Tests
                 codeBehind,
                 "StatusMenuItem.Text = (menuItem.Tag != null) ? $\"You pressed {menuItem.Tag}\" : $\"You pressed {menuItem.Header}\";");
         }
+
+        [TestMethod]
+        public void NavigationSupportPagesKeepOfficialWindowLauncherSourceShape()
+        {
+            var frameXaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Navigation",
+                "FramePage.xaml");
+            StringAssert.Contains(
+                frameXaml,
+                "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" ShowDescription=\"False\" />");
+            StringAssert.Contains(
+                frameXaml,
+                "<ScrollViewer Grid.Row=\"1\" Margin=\"0,0,0,24\" Padding=\"0,0,24,0\">");
+            AssertContainsInOrder(
+                frameXaml,
+                "<Button",
+                "x:Name=\"OpenFrameWindow\"",
+                "VerticalAlignment=\"Center\"",
+                "HorizontalAlignment=\"Center\"",
+                "Content=\"Open window to view Frame\"",
+                "Click=\"OpenFrameWindow_Click\" />");
+
+            var navigationWindowXaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Navigation",
+                "NavigationWindowPage.xaml");
+            StringAssert.Contains(
+                navigationWindowXaml,
+                "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" ShowDescription=\"False\" />");
+            StringAssert.Contains(
+                navigationWindowXaml,
+                "<ScrollViewer Grid.Row=\"1\" Margin=\"0,0,0,24\" Padding=\"0,0,24,0\">");
+            AssertContainsInOrder(
+                navigationWindowXaml,
+                "<controls:ControlExample",
+                "Margin=\"10\"",
+                "HeaderText=\"A Navigation Window\"",
+                "XamlCode=\"&lt;NavigationWindow",
+                "CSharpCode=\"private void OpenNavigationWindow_Click(object sender, RoutedEventArgs e)");
+            AssertContainsInOrder(
+                navigationWindowXaml,
+                "<Button",
+                "x:Name=\"OpenNavigationWindow\"",
+                "VerticalAlignment=\"Center\"",
+                "HorizontalAlignment=\"Center\"",
+                "Content=\"Open window to view NavigationWindow\"",
+                "Click=\"OpenNavigationWindow_Click\" />");
+
+            var navigationWindowCodeBehind = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Navigation",
+                "NavigationWindowPage.xaml.cs");
+            AssertContainsInOrder(
+                navigationWindowCodeBehind,
+                "NavigationWindow window = new NavigationWindow()",
+                "{",
+                "Width = 800,",
+                "Height = 450,",
+                "Source = new Uri(\"/Pages/WpfGallery/Navigation/Page1.xaml\", UriKind.Relative)",
+                "};",
+                "window.Show();");
+        }
     }
 }

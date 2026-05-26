@@ -17,26 +17,20 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <controls:PageHeader
-                Margin="0,0,0,32"
-                ShowDescription="False"
-                Title="{Binding ViewModel.PageTitle}" />
-            <ScrollViewer
-                Grid.Row="1"
-                Margin="0,0,0,24"
-                Padding="0,0,24,0">
+            <controls:PageHeader Margin="0,0,0,32" Title="{Binding ViewModel.PageTitle}" ShowDescription="False" />
+            <ScrollViewer Grid.Row="1" Margin="0,0,0,24" Padding="0,0,24,0">
                 <StackPanel Margin="0,0,0,24">
                     <controls:ControlExample
                         Margin="10"
-                        CSharpCode="private void OpenNavigationWindow_Click(object sender, RoutedEventArgs e)&#x0a;{&#x0a;    NavigationWindow window = new NavigationWindow()&#x0a;    {&#x0a;        Width = 800,&#x0a;        Height = 450,&#x0a;        Source = new Uri(&quot;/Views/Navigation/Page1.xaml&quot;, UriKind.Relative)&#x0a;    };&#x0a;    window.Show();&#x0a;}"
                         HeaderText="A Navigation Window"
-                        XamlCode="&lt;NavigationWindow&#x0a;    Width=&quot;800&quot;&#x0a;    Height=&quot;450&quot;&#x0a;    Source=&quot;/Views/Navigation/Page1.xaml&quot; /&gt;">
+                        XamlCode="&lt;NavigationWindow&#x0a;    Width=&quot;800&quot;&#x0a;    Height=&quot;450&quot;&#x0a;    Source=&quot;/Views/Navigation/Page1.xaml&quot; /&gt;"
+                        CSharpCode="private void OpenNavigationWindow_Click(object sender, RoutedEventArgs e)&#x0a;{&#x0a;    NavigationWindow window = new NavigationWindow()&#x0a;    {&#x0a;        Width = 800,&#x0a;        Height = 450,&#x0a;        Source = new Uri(&quot;/Views/Navigation/Page1.xaml&quot;, UriKind.Relative)&#x0a;    };&#x0a;    window.Show();&#x0a;}">
                         <Button
                             x:Name="OpenNavigationWindow"
-                            HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            Click="OpenNavigationWindow_Click"
-                            Content="Open window to view NavigationWindow" />
+                            HorizontalAlignment="Center"
+                            Content="Open window to view NavigationWindow"
+                            Click="OpenNavigationWindow_Click" />
                     </controls:ControlExample>
                 </StackPanel>
             </ScrollViewer>
