@@ -241,7 +241,9 @@ ModernWpf `ThemeResourceExtension` `SystemColor*` bindings now also refresh on
 both entering and exiting `SystemParameters.HighContrast`, and on any
 system-parameter change while High Contrast is active, so WPF Fluent
 HighContrast resource colors are not left stale after broader OS
-High Contrast palette transitions.
+High Contrast palette transitions. The theme test coverage also now pins that
+every `SystemColor*Color` key referenced by `HighContrast.xaml` is backed by a
+`ThemeResourceExtension` system-color source property.
 
 ## Commit Policy
 
@@ -262,7 +264,7 @@ Goal tracker status in Codex: active, not complete.
 Latest local verification for the current branch tip:
 
 - `dotnet test test\ModernWpf.Theme.Tests\ModernWpf.Theme.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~ThemeResourceExtensionTests" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
-  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 2 tests per target. `ThemeResourceExtension` now has focused coverage proving `SystemColor*` bindings refresh when `SystemParameters.HighContrast` toggles in either direction and when other system parameters change while High Contrast is active. Existing warning/output remains `NU1903`, generated WinRT warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 3 tests per target. `ThemeResourceExtension` now has focused coverage proving `SystemColor*` bindings refresh when `SystemParameters.HighContrast` toggles in either direction, when other system parameters change while High Contrast is active, and that every `SystemColor*Color` key referenced by `HighContrast.xaml` is backed by a system-color source property. Existing warning/output remains `NU1903`, generated WinRT warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
   - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the `SystemColor*` high-contrast refresh update. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages and existing ModernWpf/ModernWpf.Controls warnings.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-build --filter "FullyQualifiedName~WpfGallerySourceShapeTests.ShellChromeKeepsWpfGalleryHighContrastSourceShape|FullyQualifiedName~GalleryNavigationRuntimeTests.MainWindowUsesWpfGalleryTitleChrome|FullyQualifiedName~GalleryNavigationRuntimeTests.MainWindowChromePolicyMatchesWpfGalleryHighContrastPath|FullyQualifiedName~GalleryNavigationRuntimeTests.ShellHighContrastHoverStylesMatchWpfGalleryReferenceChrome" --logger "console;verbosity=minimal"`
@@ -2320,7 +2322,9 @@ Gallery button trigger pattern, and the shell source-shape guard also pins
 updates, and retained `NavigationView` alias refresh on
 `SystemParameters.HighContrast`. `ThemeResourceExtension` now refreshes
 `SystemColor*` bindings when High Contrast toggles in either direction and
-during active High Contrast system-parameter changes; remaining High Contrast
+during active High Contrast system-parameter changes, and theme tests now guard
+that all `SystemColor*Color` keys referenced by `HighContrast.xaml` have backing
+source properties; remaining High Contrast
 work means broader OS high-contrast shell and control paths that are not
 already covered by title chrome, NavigationView TreeView token aliases and
 their HighContrast system-brush references, HeaderTile fills, DataGrid visuals,
