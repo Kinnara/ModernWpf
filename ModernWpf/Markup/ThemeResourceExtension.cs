@@ -54,11 +54,17 @@ namespace ModernWpf.Markup
 
             private void OnSystemParametersPropertyChanged(object sender, PropertyChangedEventArgs e)
             {
-                if (e.PropertyName == nameof(SystemParameters.HighContrast) && SystemParameters.HighContrast)
+                if (ShouldRefreshSystemColorBindings(e.PropertyName, SystemParameters.HighContrast))
                 {
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(null));
                 }
             }
+        }
+
+        internal static bool ShouldRefreshSystemColorBindings(string propertyName, bool isHighContrast)
+        {
+            return string.Equals(propertyName, nameof(SystemParameters.HighContrast), StringComparison.Ordinal)
+                || isHighContrast;
         }
     }
 

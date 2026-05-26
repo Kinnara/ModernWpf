@@ -237,6 +237,11 @@ thickness literal, the Back/title source order, `MainWindow` high-contrast borde
 and non-client-frame update path, and the retained `NavigationView` alias refresh
 on `SystemParameters.HighContrast` while keeping the accepted NavigationView
 shell adaptation.
+ModernWpf `ThemeResourceExtension` `SystemColor*` bindings now also refresh on
+both entering and exiting `SystemParameters.HighContrast`, and on any
+system-parameter change while High Contrast is active, so WPF Fluent
+HighContrast resource colors are not left stale after broader OS
+High Contrast palette transitions.
 
 ## Commit Policy
 
@@ -256,6 +261,10 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Theme.Tests\ModernWpf.Theme.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~ThemeResourceExtensionTests" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 2 tests per target. `ThemeResourceExtension` now has focused coverage proving `SystemColor*` bindings refresh when `SystemParameters.HighContrast` toggles in either direction and when other system parameters change while High Contrast is active. Existing warning/output remains `NU1903`, generated WinRT warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the `SystemColor*` high-contrast refresh update. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages and existing ModernWpf/ModernWpf.Controls warnings.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-build --filter "FullyQualifiedName~WpfGallerySourceShapeTests.ShellChromeKeepsWpfGalleryHighContrastSourceShape|FullyQualifiedName~GalleryNavigationRuntimeTests.MainWindowUsesWpfGalleryTitleChrome|FullyQualifiedName~GalleryNavigationRuntimeTests.MainWindowChromePolicyMatchesWpfGalleryHighContrastPath|FullyQualifiedName~GalleryNavigationRuntimeTests.ShellHighContrastHoverStylesMatchWpfGalleryReferenceChrome" --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 4 tests per target. The retained shell now has source-shape coverage for the official WPF Gallery high-contrast title-bar/default-close/footer hover triggers, `HighContrastBorder` thickness literal, Back/title source order, `MainWindow` high-contrast border/non-client-frame update path, and the retained `NavigationView` high-contrast alias refresh hook, while existing runtime title chrome and hover policy coverage still passes. This no-build rerun followed an initial build-and-test invocation that timed out before returning output.
 - `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
@@ -2309,11 +2318,13 @@ now have focused runtime and source-shape coverage against the official WPF
 Gallery button trigger pattern, and the shell source-shape guard also pins
 `HighContrastBorder`, Back/title source order, high-contrast non-client-frame
 updates, and retained `NavigationView` alias refresh on
-`SystemParameters.HighContrast`; remaining High Contrast work means broader OS
-high-contrast shell and control paths that are not already covered by title
-chrome, NavigationView TreeView token aliases and their HighContrast
-system-brush references, HeaderTile fills, DataGrid visuals, or
-Color subsection direct-reference evidence. Home first-viewport Light/Dark
+`SystemParameters.HighContrast`. `ThemeResourceExtension` now refreshes
+`SystemColor*` bindings when High Contrast toggles in either direction and
+during active High Contrast system-parameter changes; remaining High Contrast
+work means broader OS high-contrast shell and control paths that are not
+already covered by title chrome, NavigationView TreeView token aliases and
+their HighContrast system-brush references, HeaderTile fills, DataGrid visuals,
+or Color subsection direct-reference evidence. Home first-viewport Light/Dark
 is now accepted at `0` / `0.05` delta with matching dashboard-pane crops, and
 Settings Light/Dark have current matching-crop evidence at delta `0.23` / `1.15`
 with visual-test ComboBox state matching the requested theme, so avoid
