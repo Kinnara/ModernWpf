@@ -87,7 +87,7 @@
             IsPaneToggleButtonVisible="False"
             IsSettingsVisible="False"
             ItemInvoked="OnNavigationItemInvoked"
-            OpenPaneLength="257"
+            OpenPaneLength="258"
             PaneDisplayMode="Left">
             <ui:NavigationView.Resources>
                 <Thickness x:Key="NavigationViewContentGridBorderThickness">0</Thickness>
@@ -126,13 +126,10 @@
                     </Button>
                 </StackPanel>
             </ui:NavigationView.PaneFooter>
-            <!-- Retained NavigationView pane is one pixel narrower than the official TreeView shell. -->
             <Border
                 x:Name="ContentFrameBorder"
-                Margin="5,0,0,0"
+                Margin="4,0,0,0"
                 Padding="24,16,24,0"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"
                 Background="{DynamicResource LayerFillColorDefaultBrush}"
                 BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
                 BorderThickness="1"

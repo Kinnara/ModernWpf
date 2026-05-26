@@ -116,6 +116,15 @@ namespace ModernWpf.Gallery.Tests
 
             AssertContainsInOrder(
                 navigationRootXaml,
+                "x:Name=\"Navigation\"",
+                "AutomationProperties.Name=\"Navigation Pane\"",
+                "IsBackButtonVisible=\"Collapsed\"",
+                "IsPaneToggleButtonVisible=\"False\"",
+                "IsSettingsVisible=\"False\"",
+                "OpenPaneLength=\"258\"",
+                "PaneDisplayMode=\"Left\"");
+            AssertContainsInOrder(
+                navigationRootXaml,
                 "x:Key=\"GalleryNavigationFooterButtonStyle\"",
                 "<MultiDataTrigger>",
                 "<Condition Binding=\"{Binding Path=(SystemParameters.HighContrast)}\" Value=\"True\" />",
@@ -135,6 +144,18 @@ namespace ModernWpf.Gallery.Tests
                 "Click=\"OnSettingsButtonClick\"",
                 "Command=\"{Binding Value.ViewModel.SettingsCommand, Source={StaticResource NavigationRootDataContextProxy}}\"",
                 "Style=\"{StaticResource GalleryNavigationFooterButtonStyle}\"");
+            AssertContainsInOrder(
+                navigationRootXaml,
+                "x:Name=\"ContentFrameBorder\"",
+                "Margin=\"4,0,0,0\"",
+                "Padding=\"24,16,24,0\"",
+                "Background=\"{DynamicResource LayerFillColorDefaultBrush}\"",
+                "BorderBrush=\"{DynamicResource CardStrokeColorDefaultBrush}\"",
+                "BorderThickness=\"1\"",
+                "CornerRadius=\"8,0,0,0\"");
+            Assert.IsFalse(
+                navigationRootXaml.Contains("one pixel narrower", StringComparison.Ordinal),
+                "The retained NavigationView pane should use the official 258px left shell width instead of a local one-pixel compensation comment.");
 
             var mainWindowCode = ReadRepoFile(
                 "ModernWpf.Gallery",

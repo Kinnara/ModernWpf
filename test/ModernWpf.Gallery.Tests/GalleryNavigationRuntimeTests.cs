@@ -140,7 +140,7 @@ namespace ModernWpf.Gallery.Tests
                 var navigation = (NavigationView)page.FindName("Navigation");
                 var topLevelItems = navigation.MenuItems.OfType<NavigationViewItem>().ToList();
 
-                Assert.AreEqual(257d, navigation.OpenPaneLength);
+                Assert.AreEqual(258d, navigation.OpenPaneLength);
                 Assert.AreEqual("Navigation Pane", AutomationProperties.GetName(navigation));
                 Assert.AreEqual(NavigationViewBackButtonVisible.Collapsed, navigation.IsBackButtonVisible);
                 Assert.IsFalse(navigation.IsPaneToggleButtonVisible);
@@ -167,7 +167,7 @@ namespace ModernWpf.Gallery.Tests
                 }
 
                 var contentFrameBorder = (Border)page.FindName("ContentFrameBorder");
-                Assert.AreEqual(new Thickness(5, 0, 0, 0), contentFrameBorder.Margin);
+                Assert.AreEqual(new Thickness(4, 0, 0, 0), contentFrameBorder.Margin);
                 Assert.AreEqual(new Thickness(24, 16, 24, 0), contentFrameBorder.Padding);
 
                 CollectionAssert.AreEqual(
