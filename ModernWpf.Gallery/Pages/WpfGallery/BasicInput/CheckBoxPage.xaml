@@ -16,20 +16,11 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <controls:PageHeader
-            Margin="0,0,0,32"
-            ShowDescription="False"
-            Title="{Binding ViewModel.PageTitle}" />
+        <controls:PageHeader Margin="0,0,0,32" Title="{Binding ViewModel.PageTitle}" ShowDescription="False" />
 
-        <ScrollViewer
-            Grid.Row="1"
-            Margin="0,0,0,24"
-            Padding="0,0,24,0">
+        <ScrollViewer Grid.Row="1" Margin="0,0,0,24" Padding="0,0,24,0">
             <StackPanel Margin="0,0,0,24">
-                <controls:ControlExample
-                    Margin="10"
-                    HeaderText="A 2-state CheckBox."
-                    XamlCode="&lt;CheckBox Content=&quot;Two-state CheckBox&quot; /&gt;">
+                <controls:ControlExample Margin="10" HeaderText="A 2-state CheckBox." XamlCode="&lt;CheckBox Content=&quot;Two-state CheckBox&quot; /&gt;">
                     <CheckBox AutomationProperties.Name="Sample Two State" Content="Two-state CheckBox" />
                 </controls:ControlExample>
 

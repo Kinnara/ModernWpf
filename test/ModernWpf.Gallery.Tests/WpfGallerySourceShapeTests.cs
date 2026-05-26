@@ -119,6 +119,69 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void BasicInputPagesKeepOfficialHeaderAndSampleSourceShape()
+        {
+            foreach (var page in new[]
+            {
+                "ButtonPage.xaml",
+                "CheckBoxPage.xaml",
+                "ComboBoxPage.xaml",
+                "RadioButtonPage.xaml",
+                "SliderPage.xaml"
+            })
+            {
+                var xaml = ReadRepoFile(
+                    "ModernWpf.Gallery",
+                    "Pages",
+                    "WpfGallery",
+                    "BasicInput",
+                    page);
+                StringAssert.Contains(
+                    xaml,
+                    "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" ShowDescription=\"False\" />");
+                StringAssert.Contains(
+                    xaml,
+                    "<ScrollViewer Grid.Row=\"1\" Margin=\"0,0,0,24\" Padding=\"0,0,24,0\">");
+            }
+
+            var checkBoxXaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "BasicInput",
+                "CheckBoxPage.xaml");
+            StringAssert.Contains(
+                checkBoxXaml,
+                "<controls:ControlExample Margin=\"10\" HeaderText=\"A 2-state CheckBox.\" XamlCode=\"&lt;CheckBox Content=&quot;Two-state CheckBox&quot; /&gt;\">");
+
+            var radioButtonXaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "BasicInput",
+                "RadioButtonPage.xaml");
+            StringAssert.Contains(
+                radioButtonXaml,
+                "<StackPanel Grid.Column=\"0\" KeyboardNavigation.TabNavigation=\"Once\" KeyboardNavigation.DirectionalNavigation=\"Cycle\">");
+            AssertContainsInOrder(
+                radioButtonXaml,
+                "AutomationProperties.Name=\"Default Radio Option 1\"",
+                "Content=\"Option 1\"",
+                "GroupName=\"radio_group_one\"",
+                "IsChecked=\"True\"",
+                "GotKeyboardFocus=\"RadioButton_GotKeyboardFocus\"",
+                "IsEnabled=");
+            AssertContainsInOrder(
+                radioButtonXaml,
+                "AutomationProperties.Name=\"Left Flow Radio Option 1\"",
+                "Content=\"Option 1\"",
+                "FlowDirection=\"RightToLeft\"",
+                "GroupName=\"radio_group_two\"",
+                "GotKeyboardFocus=\"RadioButton_GotKeyboardFocus\"",
+                "IsChecked=\"True\" />");
+        }
+
+        [TestMethod]
         public void MenuPageKeepsOfficialMenuItemSourceShape()
         {
             var xaml = ReadRepoFile(
