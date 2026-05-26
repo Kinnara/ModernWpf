@@ -201,6 +201,42 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void SharedColorPageExampleKeepsOfficialTemplateSourceShape()
+        {
+            var xaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Controls",
+                "ColorPageExample.xaml");
+            var normalizedXaml = xaml.Replace("\r\n", "\n").Replace('\r', '\n');
+
+            StringAssert.Contains(
+                xaml,
+                "<Setter Property=\"Background\" Value=\"{DynamicResource SolidBackgroundFillColorBaseBrush}\"/>");
+            StringAssert.Contains(
+                xaml,
+                "<Border BorderThickness=\"1\" Margin=\"0,36,0,0\" Padding=\"12\" CornerRadius=\"8\" BorderBrush=\"{DynamicResource CardStrokeColorDefaultBrush}\" Background=\"{TemplateBinding Background}\">");
+            StringAssert.Contains(
+                normalizedXaml,
+                "</Grid.RowDefinitions>\n\n                            <TextBlock Margin=\"0,0,0,12\" Style=\"{DynamicResource SubtitleTextBlockStyle}\" Text=\"{TemplateBinding Title}\" />");
+            StringAssert.Contains(
+                xaml,
+                "<TextBlock Style=\"{DynamicResource CaptionTextBlockStyle}\" Text=\"{TemplateBinding Description}\" Grid.Row=\"1\"/>");
+
+            var code = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Controls",
+                "ColorPageExample.cs");
+            AssertContainsInOrder(
+                code,
+                "public string Description",
+                "public static readonly DependencyProperty DescriptionProperty",
+                "public string Title",
+                "public static readonly DependencyProperty TitleProperty",
+                "public UIElement ExampleContent",
+                "public static readonly DependencyProperty ExampleContentProperty");
+        }
+
+        [TestMethod]
         public void HomePageKeepsOfficialDashboardCardListDeclarationSourceShape()
         {
             var xaml = ReadRepoFile(
