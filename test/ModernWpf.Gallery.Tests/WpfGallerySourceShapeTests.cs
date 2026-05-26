@@ -62,6 +62,85 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void SettingsPageKeepsOfficialSettingsDeclarationSourceShape()
+        {
+            var xaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "SettingsPage.xaml");
+
+            AssertContainsInOrder(
+                xaml,
+                "<Style x:Key=\"SettingsCardStyle\" TargetType=\"Border\">",
+                "<Setter Property=\"Padding\" Value=\"0,16,0,16\" />",
+                "<Setter Property=\"BorderThickness\" Value=\"0,0,0,1\" />",
+                "<Setter Property=\"BorderBrush\" Value=\"{DynamicResource ExpanderHeaderBorderBrush}\" />");
+            AssertContainsInOrder(
+                xaml,
+                "<Grid",
+                "x:Name=\"ContentRootGrid\"",
+                "Style=\"{StaticResource GalleryPageRootStyle}\">");
+            AssertContainsInOrder(
+                xaml,
+                "<controls:PageHeader",
+                "Grid.Row=\"0\"",
+                "Margin=\"0,0,0,40\"",
+                "Title=\"{Binding ViewModel.PageTitle}\"",
+                "Description=\"{Binding ViewModel.PageDescription}\"/>");
+            StringAssert.Contains(
+                xaml,
+                "<ScrollViewer Grid.Row=\"1\" Margin=\"0,0,0,24\" Padding=\"0,0,24,0\">");
+            StringAssert.Contains(
+                xaml,
+                "<TextBlock Text=\"Appearance &amp; behavior\" FontWeight=\"SemiBold\" Margin=\"10\" FontSize=\"14\"/>");
+            StringAssert.Contains(
+                xaml,
+                "<Grid Background=\"Transparent\" Margin=\"0,0,0,20\">");
+            StringAssert.Contains(
+                xaml,
+                "<Border Background=\"{DynamicResource ExpanderHeaderBackground}\" BorderBrush=\"{DynamicResource ExpanderHeaderBorderBrush}\" BorderThickness=\"{StaticResource ExpanderBorderThemeThickness}\" Padding=\"{StaticResource ExpanderPadding}\" CornerRadius=\"{DynamicResource ControlCornerRadius}\">");
+            StringAssert.Contains(
+                xaml,
+                "<TextBlock x:Name=\"AppIcon\" AutomationProperties.Name=\"App Icon\" Grid.Column=\"0\" Width=\"20\" Height=\"20\"  Margin=\"10,5,10,5\" VerticalAlignment=\"Center\" FontFamily=\"{StaticResource SymbolThemeFontFamily}\" Text=\"&#xE790;\" FontSize=\"20\"/>");
+            StringAssert.Contains(
+                xaml,
+                "<TextBlock Text=\"App theme\" FontSize=\"14\"/>");
+            StringAssert.Contains(
+                xaml,
+                "<TextBlock Opacity=\"0.7\" FontSize=\"12\" Style=\"{StaticResource CaptionTextBlockStyle}\">Select which app theme to display</TextBlock>");
+            StringAssert.Contains(
+                xaml,
+                "<ComboBox x:Name=\"Change_ThemeMode\" MinWidth=\"200\" HorizontalAlignment=\"Right\" SelectedIndex=\"2\" Grid.Column=\"2\" AutomationProperties.Name=\"Change ThemeMode\" SelectionChanged=\"ThemeMode_SelectionChanged\" Margin=\"10\">");
+            StringAssert.Contains(
+                xaml,
+                "<TextBlock Text=\"About\" FontWeight=\"SemiBold\" Margin=\"10\" FontSize=\"14\"/>");
+            StringAssert.Contains(
+                xaml,
+                "<TextBlock Opacity=\"0.7\" Style=\"{StaticResource CaptionTextBlockStyle}\">&#xA9; 2025 Microsoft. All rights reserved.</TextBlock>");
+            StringAssert.Contains(
+                xaml,
+                "<TextBox Grid.Column=\"2\" Style=\"{StaticResource SelectionTextBox}\" Text=\"git clone https://github.com/microsoft/WPF-Samples.git\" Focusable=\"False\"/>");
+            StringAssert.Contains(
+                xaml,
+                "<Button AutomationProperties.Name=\"Open Issues\" Grid.Column=\"2\" Padding=\"8\" FocusManager.IsFocusScope=\"True\" Click=\"Open_Issues\">");
+            StringAssert.Contains(
+                xaml,
+                "<TextBlock FontFamily=\"{StaticResource SymbolThemeFontFamily}\" Text=\"&#xe8a7;\" />");
+            StringAssert.Contains(
+                xaml,
+                "<GroupBox Grid.Row=\"2\" AutomationProperties.Name=\"Dependencies and References\" BorderThickness=\"0\">");
+            StringAssert.Contains(
+                xaml,
+                "<Hyperlink Click=\"Open_DIInformation\" AutomationProperties.Name=\"Link to Dependency Injection NuGet Package\">Microsoft.Extensions.DependencyInjection</Hyperlink>");
+            StringAssert.Contains(
+                xaml,
+                "<Hyperlink Click=\"Open_HostingInformation\" AutomationProperties.Name=\"Link to .NET Generic Host Package\">Microsoft.Extensions.Hosting</Hyperlink>");
+            StringAssert.Contains(
+                xaml,
+                "<GroupBox Grid.Row=\"3\" AutomationProperties.Name=\"THIS CODE AND INFORMATION IS PROVIDED &#x2018;AS IS&#x2019; WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.\" BorderThickness=\"0\">");
+        }
+
+        [TestMethod]
         public void CopiedItemCodeBehindKeepsOfficialViewModelPropertyBeforeConstructorShape()
         {
             foreach (var page in new[]

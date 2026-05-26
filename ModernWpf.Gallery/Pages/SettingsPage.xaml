@@ -17,8 +17,8 @@
 
         <Style x:Key="SettingsCardStyle" TargetType="Border">
             <Setter Property="Padding" Value="0,16,0,16" />
-            <Setter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderBrush}" />
             <Setter Property="BorderThickness" Value="0,0,0,1" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderBrush}" />
         </Style>
 
         <Style x:Key="BottomSettingsCardStyle" TargetType="Border">
@@ -38,26 +38,14 @@
             Grid.Row="0"
             Margin="0,0,0,40"
             Title="{Binding ViewModel.PageTitle}"
-            Description="{Binding ViewModel.PageDescription}" />
+            Description="{Binding ViewModel.PageDescription}"/>
 
-        <ScrollViewer
-            Grid.Row="1"
-            Margin="0,0,0,24"
-            Padding="0,0,24,0">
+        <ScrollViewer Grid.Row="1" Margin="0,0,0,24" Padding="0,0,24,0">
             <StackPanel>
-                <TextBlock
-                    Margin="10"
-                    FontSize="14"
-                    FontWeight="SemiBold"
-                    Text="Appearance &amp; behavior" />
+                <TextBlock Text="Appearance &amp; behavior" FontWeight="SemiBold" Margin="10" FontSize="14"/>
 
-                <Grid Margin="0,0,0,20" Background="Transparent">
-                    <Border
-                        Padding="{StaticResource ExpanderPadding}"
-                        Background="{DynamicResource ExpanderHeaderBackground}"
-                        BorderBrush="{DynamicResource ExpanderHeaderBorderBrush}"
-                        BorderThickness="{StaticResource ExpanderBorderThemeThickness}"
-                        CornerRadius="{DynamicResource ControlCornerRadius}">
+                <Grid Background="Transparent" Margin="0,0,0,20">
+                    <Border Background="{DynamicResource ExpanderHeaderBackground}" BorderBrush="{DynamicResource ExpanderHeaderBorderBrush}" BorderThickness="{StaticResource ExpanderBorderThemeThickness}" Padding="{StaticResource ExpanderPadding}" CornerRadius="{DynamicResource ControlCornerRadius}">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
@@ -65,39 +53,17 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
 
-                            <TextBlock
-                                x:Name="AppIcon"
-                                Grid.Column="0"
-                                Width="20"
-                                Height="20"
-                                Margin="10,5,10,5"
-                                VerticalAlignment="Center"
-                                AutomationProperties.Name="App Icon"
-                                FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                FontSize="20"
-                                Text="&#xE790;" />
+                            <TextBlock x:Name="AppIcon" AutomationProperties.Name="App Icon" Grid.Column="0" Width="20" Height="20"  Margin="10,5,10,5" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE790;" FontSize="20"/>
 
                             <StackPanel
                                 Grid.Column="1"
                                 Margin="12"
                                 Orientation="Vertical">
-                                <TextBlock FontSize="14" Text="App theme" />
-                                <TextBlock
-                                    FontSize="12"
-                                    Opacity="0.7"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="Select which app theme to display" />
+                                <TextBlock Text="App theme" FontSize="14"/>
+                                <TextBlock Opacity="0.7" FontSize="12" Style="{StaticResource CaptionTextBlockStyle}">Select which app theme to display</TextBlock>
                             </StackPanel>
 
-                            <ComboBox
-                                x:Name="Change_ThemeMode"
-                                Grid.Column="2"
-                                MinWidth="200"
-                                Margin="10"
-                                HorizontalAlignment="Right"
-                                AutomationProperties.Name="Change ThemeMode"
-                                SelectedIndex="2"
-                                SelectionChanged="ThemeMode_SelectionChanged">
+                            <ComboBox x:Name="Change_ThemeMode" MinWidth="200" HorizontalAlignment="Right" SelectedIndex="2" Grid.Column="2" AutomationProperties.Name="Change ThemeMode" SelectionChanged="ThemeMode_SelectionChanged" Margin="10">
                                 <ComboBoxItem Content="Light" />
                                 <ComboBoxItem Content="Dark" />
                                 <ComboBoxItem Content="Use system setting" />
@@ -106,11 +72,7 @@
                     </Border>
                 </Grid>
 
-                <TextBlock
-                    Margin="10"
-                    FontSize="14"
-                    FontWeight="SemiBold"
-                    Text="About" />
+                <TextBlock Text="About" FontWeight="SemiBold" Margin="10" FontSize="14"/>
 
                 <Expander AutomationProperties.Name="WPF Gallery Preview">
                     <Expander.Header>
@@ -134,10 +96,7 @@
                                 Margin="12"
                                 Orientation="Vertical">
                                 <TextBlock Text="WPF Gallery" />
-                                <TextBlock
-                                    Opacity="0.7"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="&#xA9; 2025 Microsoft. All rights reserved." />
+                                <TextBlock Opacity="0.7" Style="{StaticResource CaptionTextBlockStyle}">&#xA9; 2025 Microsoft. All rights reserved.</TextBlock>
                             </StackPanel>
                         </Grid>
                     </Expander.Header>
@@ -158,11 +117,7 @@
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Grid.Column="0" Text="To clone this repository" />
-                                    <TextBox
-                                        Grid.Column="2"
-                                        Focusable="False"
-                                        Style="{StaticResource SelectionTextBox}"
-                                        Text="git clone https://github.com/microsoft/WPF-Samples.git" />
+                                    <TextBox Grid.Column="2" Style="{StaticResource SelectionTextBox}" Text="git clone https://github.com/microsoft/WPF-Samples.git" Focusable="False"/>
                                 </Grid>
                             </Border>
 
@@ -174,23 +129,13 @@
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Grid.Column="0" Text="File a bug or request a new sample" />
-                                    <Button
-                                        Grid.Column="2"
-                                        Padding="8"
-                                        AutomationProperties.Name="Open Issues"
-                                        Click="Open_Issues"
-                                        FocusManager.IsFocusScope="True">
-                                        <TextBlock
-                                            FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                            Text="&#xE8A7;" />
+                                    <Button AutomationProperties.Name="Open Issues" Grid.Column="2" Padding="8" FocusManager.IsFocusScope="True" Click="Open_Issues">
+                                        <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xe8a7;" />
                                     </Button>
                                 </Grid>
                             </Border>
 
-                            <GroupBox
-                                Grid.Row="2"
-                                AutomationProperties.Name="Dependencies and References"
-                                BorderThickness="0">
+                            <GroupBox Grid.Row="2" AutomationProperties.Name="Dependencies and References" BorderThickness="0">
                                 <Border Style="{StaticResource SettingsCardStyle}">
                                     <StackPanel Margin="48,0,16,0" Orientation="Vertical">
                                         <TextBlock Margin="0,0,0,12" Text="Dependencies and References" />
@@ -198,23 +143,16 @@
                                             <Hyperlink Click="Open_ToolkitInformation">CommunityToolkit.Mvvm</Hyperlink>
                                         </TextBlock>
                                         <TextBlock Style="{StaticResource LinkTextBlockStyle}">
-                                            <Hyperlink
-                                                AutomationProperties.Name="Link to Dependency Injection NuGet Package"
-                                                Click="Open_DIInformation">Microsoft.Extensions.DependencyInjection</Hyperlink>
+                                            <Hyperlink Click="Open_DIInformation" AutomationProperties.Name="Link to Dependency Injection NuGet Package">Microsoft.Extensions.DependencyInjection</Hyperlink>
                                         </TextBlock>
                                         <TextBlock Style="{StaticResource LinkTextBlockStyle}">
-                                            <Hyperlink
-                                                AutomationProperties.Name="Link to .NET Generic Host Package"
-                                                Click="Open_HostingInformation">Microsoft.Extensions.Hosting</Hyperlink>
+                                            <Hyperlink Click="Open_HostingInformation" AutomationProperties.Name="Link to .NET Generic Host Package">Microsoft.Extensions.Hosting</Hyperlink>
                                         </TextBlock>
                                     </StackPanel>
                                 </Border>
                             </GroupBox>
 
-                            <GroupBox
-                                Grid.Row="3"
-                                AutomationProperties.Name="THIS CODE AND INFORMATION IS PROVIDED &#x2018;AS IS&#x2019; WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE."
-                                BorderThickness="0">
+                            <GroupBox Grid.Row="3" AutomationProperties.Name="THIS CODE AND INFORMATION IS PROVIDED &#x2018;AS IS&#x2019; WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE." BorderThickness="0">
                                 <Border Style="{StaticResource BottomSettingsCardStyle}">
                                     <StackPanel Margin="48,0,16,0" Orientation="Vertical">
                                         <TextBlock
