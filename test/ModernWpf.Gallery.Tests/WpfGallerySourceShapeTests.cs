@@ -622,6 +622,7 @@ namespace ModernWpf.Gallery.Tests
                 "ModernWpf.Gallery",
                 "Pages",
                 "WhatsNewPage.xaml");
+            var normalizedXaml = xaml.Replace("\r\n", "\n").Replace('\r', '\n');
 
             StringAssert.Contains(
                 xaml,
@@ -641,6 +642,18 @@ namespace ModernWpf.Gallery.Tests
             StringAssert.Contains(
                 xaml,
                 "<ScrollViewer Grid.Row=\"1\" Margin=\"0,0,0,24\" Padding=\"0,0,24,0\">");
+            AssertContainsInOrder(
+                normalizedXaml,
+                "<TextBlock Style=\"{StaticResource TitleTextBlockStyle}\" Margin=\"0 0 0 12\">\n                    .NET 10\n                </TextBlock>",
+                "<TextBlock Style=\"{StaticResource SubtitleTextBlockStyle}\" Margin=\"0 0 0 12\">\n                    New and Enhanced Fluent Styles\n                </TextBlock>",
+                "<TextBlock TextWrapping=\"Wrap\" Margin=\"0 0 0 12\">\n                    <Run>\n                        The WPF Grid supports a shorthand syntax for defining row and column sizes using the RowDefinitions and ColumnDefinitions attribute.",
+                "<controls:ControlExample\n                    Margin=\"2 10 2 24\"\n                    HeaderText=\"Grid Shorthand Syntax Sample\"",
+                "<TextBlock Style=\"{StaticResource TitleTextBlockStyle}\" Margin=\"0 0 0 12\">\n                    .NET 9\n                </TextBlock>",
+                "<TextBlock Style=\"{StaticResource SubtitleTextBlockStyle}\" Margin=\"0 24 0 12\">\n                    Hyphen based ligature support\n                </TextBlock>",
+                "<TextBlock Margin=\"0 0 16 0\" FontFamily=\"Cascadia Code\" Text=\"-->\" />");
+            StringAssert.Contains(
+                xaml,
+                "Background=\"{DynamicResource SystemControlBackgroundAccentBrush}\"");
         }
 
         [TestMethod]

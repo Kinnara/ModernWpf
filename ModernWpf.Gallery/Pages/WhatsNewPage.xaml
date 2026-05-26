@@ -33,17 +33,15 @@
 
         <ScrollViewer Grid.Row="1" Margin="0,0,0,24" Padding="0,0,24,0">
             <StackPanel>
-                <TextBlock
-                    Margin="0,0,0,12"
-                    Style="{StaticResource TitleTextBlockStyle}"
-                    Text=".NET 10" />
+                <TextBlock Style="{StaticResource TitleTextBlockStyle}" Margin="0 0 0 12">
+                    .NET 10
+                </TextBlock>
 
-                <TextBlock
-                    Margin="0,0,0,12"
-                    Style="{StaticResource SubtitleTextBlockStyle}"
-                    Text="New and Enhanced Fluent Styles" />
+                <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Margin="0 0 0 12">
+                    New and Enhanced Fluent Styles
+                </TextBlock>
 
-                <TextBlock Margin="0,0,0,12" TextWrapping="Wrap">
+                <TextBlock TextWrapping="Wrap" Margin="0 0 0 12">
                     <Run>
                         Fluent styles for remaining PresentationFramework controls have been added in .NET 10, including GridSplitter, GridView,
                         GroupBox, Label, Frame, NavigationWindow, etc.
@@ -60,21 +58,20 @@
                     <LineBreak />
                 </TextBlock>
 
-                <TextBlock
-                    Margin="0,0,0,12"
-                    Style="{StaticResource SubtitleTextBlockStyle}"
-                    Text="Grid Shorthand Syntax" />
+                <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Margin="0 0 0 12">
+                    Grid Shorthand Syntax
+                </TextBlock>
 
-                <TextBlock
-                    Margin="0,0,0,12"
-                    TextWrapping="Wrap">
-                    The WPF Grid supports a shorthand syntax for defining row and column sizes using the RowDefinitions and ColumnDefinitions attribute.
-                    Values are comma&#x2011;separated and follow the same rules as the longhand RowDefinition and ColumnDefinition declarations. The new syntax
-                    comes with the XAML Hot Reload support.
+                <TextBlock TextWrapping="Wrap" Margin="0 0 0 12">
+                    <Run>
+                        The WPF Grid supports a shorthand syntax for defining row and column sizes using the RowDefinitions and ColumnDefinitions attribute.
+                        Values are comma&#x2011;separated and follow the same rules as the longhand RowDefinition and ColumnDefinition declarations. The new syntax
+                        comes with the XAML Hot Reload support.
+                    </Run>
                 </TextBlock>
 
                 <controls:ControlExample
-                    Margin="2,10,2,24"
+                    Margin="2 10 2 24"
                     HeaderText="Grid Shorthand Syntax Sample"
                     XamlCode="{Binding ViewModel.GridShorthandSyntaxXamlCode}">
                     <Grid HorizontalAlignment="Left">
@@ -133,55 +130,56 @@
                     </Grid>
                 </controls:ControlExample>
 
-                <TextBlock
-                    Margin="0,0,0,12"
-                    Style="{StaticResource SubtitleTextBlockStyle}"
-                    Text="Extended MessageBox Options" />
+                <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Margin="0 0 0 12">
+                    Extended MessageBox Options
+                </TextBlock>
 
-                <TextBlock Margin="0,0,0,12" TextWrapping="Wrap">
+                <TextBlock TextWrapping="Wrap" Margin="0 0 0 12">
                     <Run>
                         MessageBox in WPF calls into the Win32 API for displaying the message dialog box, however some of the options provided by the API
                         was not exposed till now. Thanks to the help from the community we have exposed those options and results in WPF's Messagebox API,
                         allowing developers to make full use of MessageBox in WPF without calling the Win32 API directly. Take a look at the API proposal
                         for complete details on what is added :
                     </Run>
-                    <Hyperlink Click="Open_MessageBoxAPISpecNET10">[API Proposal]: Make additional MessageBoxButton and MessagBoxResult values available</Hyperlink>
-                    <LineBreak />
-                    <LineBreak />
+                    <Hyperlink Click="Open_MessageBoxAPISpecNET10">
+                        [API Proposal]: Make additional MessageBoxButton and MessagBoxResult values available
+                    </Hyperlink>
+                    <LineBreak/>
+                    <LineBreak/>
                     <Run>Head over to the </Run>
                     <Hyperlink Click="NavigateToMessageBoxSample">MessageBox sample </Hyperlink>
                     <Run>for details on how to use the MessageBox in WPF.</Run>
                 </TextBlock>
 
-                <TextBlock
-                    Margin="0,12,0,24"
-                    TextWrapping="Wrap">
+                <TextBlock TextWrapping="Wrap" Margin="0 12 0 24">
                     <Run>See </Run>
-                    <Hyperlink Click="Open_WhatsNewPageNET10">What's New in WPF for .NET 10</Hyperlink>
+                    <Hyperlink Click="Open_WhatsNewPageNET10">
+                        What's New in WPF for .NET 10
+                    </Hyperlink>
                     <Run> for more details.</Run>
                 </TextBlock>
 
-                <TextBlock
-                    Margin="0,0,0,12"
-                    Style="{StaticResource TitleTextBlockStyle}"
-                    Text=".NET 9" />
-
-                <TextBlock
-                    Margin="0,0,0,12"
-                    Style="{StaticResource SubtitleTextBlockStyle}"
-                    Text="Accent colors as SystemColors" />
-
-                <TextBlock Margin="0,0,0,12" TextWrapping="Wrap">
-                    Since Windows 10, Accent Color became a cornerstone for visual
-                    styling, enhancing consistency across apps by aligning with
-                    the system theme.
-                    The latest introduction of AccentColors and corresponding
-                    brushes in SystemColors simplifies this process
-                    for WPF developers, offering them direct access to
-                    system accent colors and their variations.
+                <TextBlock Style="{StaticResource TitleTextBlockStyle}" Margin="0 0 0 12">
+                    .NET 9
                 </TextBlock>
 
-                <TextBlock Margin="0,0,0,12" TextWrapping="Wrap">
+                <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Margin="0 0 0 12">
+                    Accent colors as SystemColors
+                </TextBlock>
+
+                <TextBlock TextWrapping="Wrap" Margin="0 0 0 12">
+                    <Run>
+                        Since Windows 10, Accent Color became a cornerstone for visual
+                        styling, enhancing consistency across apps by aligning with
+                        the system theme.
+                        The latest introduction of AccentColors and corresponding
+                        brushes in SystemColors simplifies this process
+                        for WPF developers, offering them direct access to
+                        system accent colors and their variations.
+                    </Run>
+                </TextBlock>
+
+                <TextBlock TextWrapping="Wrap" Margin="0 0 0 12">
                     <Bold>NOTE : </Bold>
                     <Run>
                         In HighContrast mode, all the AccentColor brushes and colors have the same value, and we won't see a difference in the brushes.
@@ -189,13 +187,11 @@
                 </TextBlock>
 
                 <controls:ControlExample
-                    Margin="2,10"
+                    Margin="2 10"
                     HeaderText="AccentColor API"
                     XamlCode="{Binding ViewModel.AccentColorXamlCode}">
                     <Grid>
-                        <StackPanel
-                            Height="50"
-                            Orientation="Horizontal">
+                        <StackPanel Orientation="Horizontal" Height="50">
                             <StackPanel.Resources>
                                 <Style TargetType="Border">
                                     <Setter Property="Height" Value="50" />
@@ -204,7 +200,7 @@
                             </StackPanel.Resources>
                             <Border
                                 Background="{DynamicResource SystemAccentColorDark3Brush}"
-                                CornerRadius="2,0,0,2" />
+                                CornerRadius="2 0 0 2" />
                             <Border Background="{DynamicResource SystemAccentColorDark2Brush}" />
                             <Border Background="{DynamicResource SystemAccentColorDark1Brush}" />
                             <Border Background="{DynamicResource SystemControlBackgroundAccentBrush}" />
@@ -212,17 +208,16 @@
                             <Border Background="{DynamicResource SystemAccentColorLight2Brush}" />
                             <Border
                                 Background="{DynamicResource SystemAccentColorLight3Brush}"
-                                CornerRadius="0,2,2,0" />
+                                CornerRadius="0 2 2 0" />
                         </StackPanel>
                     </Grid>
                 </controls:ControlExample>
 
-                <TextBlock
-                    Margin="0,24,0,12"
-                    Style="{StaticResource SubtitleTextBlockStyle}"
-                    Text="[ Experimental ] ThemeMode API" />
+                <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Margin="0 24 0 12">
+                    [ Experimental ] ThemeMode API
+                </TextBlock>
 
-                <TextBlock Margin="0,0,0,12" TextWrapping="Wrap">
+                <TextBlock TextWrapping="Wrap" Margin="0 0 0 12">
                     <Run>
                         This experimental API enables easy switching between Fluent Themes in WPF
                         applications, improving user experience and accessibility.
@@ -251,41 +246,33 @@
                     <Run> for more information.</Run>
                 </TextBlock>
 
-                <TextBlock
-                    Margin="0,24,0,12"
-                    Style="{StaticResource SubtitleTextBlockStyle}"
-                    Text="Hyphen based ligature support" />
+                <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Margin="0 24 0 12">
+                    Hyphen based ligature support
+                </TextBlock>
 
-                <TextBlock Margin="0,0,0,12" TextWrapping="Wrap">
-                    Based on the WPF community feedback, we have now fixed the
-                    issue with Hyphen based ligatures not working in WPF.
+                <TextBlock TextWrapping="Wrap" Margin="0 0 0 12">
+                    <Run>
+                        Based on the WPF community feedback, we have now fixed the
+                        issue with Hyphen based ligatures not working in WPF.
+                    </Run>
                 </TextBlock>
 
                 <controls:ControlExample
-                    Margin="2,10"
+                    Margin="2 10"
                     HeaderText="Hyphen based ligature example"
                     XamlCode="{Binding ViewModel.HyphenBasedLigatureXamlCode}">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock
-                            Margin="0,0,16,0"
-                            FontFamily="Cascadia Code"
-                            Text="--&gt;" />
-                        <TextBlock
-                            Margin="0,0,16,0"
-                            FontFamily="Cascadia Code"
-                            Text="&lt;!--" />
-                        <TextBlock
-                            Margin="0,0,16,0"
-                            FontFamily="Cascadia Code"
-                            Text="&lt;--" />
+                        <TextBlock Margin="0 0 16 0" FontFamily="Cascadia Code" Text="-->" />
+                        <TextBlock Margin="0 0 16 0" FontFamily="Cascadia Code" Text="&lt;!--" />
+                        <TextBlock Margin="0 0 16 0" FontFamily="Cascadia Code" Text="&lt;--" />
                     </StackPanel>
                 </controls:ControlExample>
 
-                <TextBlock
-                    Margin="0,24,0,12"
-                    TextWrapping="Wrap">
+                <TextBlock TextWrapping="Wrap" Margin="0 24 0 12">
                     <Run>See </Run>
-                    <Hyperlink Click="Open_WhatsNewPageNET9">What's New in WPF for .NET 9</Hyperlink>
+                    <Hyperlink Click="Open_WhatsNewPageNET9">
+                        What's New in WPF for .NET 9
+                    </Hyperlink>
                     <Run> for more details.</Run>
                 </TextBlock>
             </StackPanel>
