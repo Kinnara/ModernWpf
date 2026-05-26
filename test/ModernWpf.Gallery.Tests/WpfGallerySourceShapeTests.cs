@@ -1417,6 +1417,7 @@ namespace ModernWpf.Gallery.Tests
                 "WpfGallery",
                 "Samples",
                 "UserDashboardPage.xaml");
+            var normalizedXaml = xaml.Replace("\r\n", "\n").Replace('\r', '\n');
 
             AssertContainsInOrder(
                 xaml,
@@ -1455,11 +1456,20 @@ namespace ModernWpf.Gallery.Tests
             StringAssert.Contains(
                 xaml,
                 "<Setter Property=\"AutomationProperties.Name\" Value=\"{Binding Name, Mode=OneWay}\"/>");
+            StringAssert.Contains(
+                normalizedXaml,
+                "            </ListView>\n            <Button\n                x:Name=\"NewUserButton\"");
             AssertContainsInOrder(
                 xaml,
                 "Margin=\"12,6,0,0\"",
                 "Text=\"{Binding Name, Mode=OneWay}\"",
                 "pages:GalleryAutomation.HeadingLevel=\"Level3\" />");
+            StringAssert.Contains(
+                normalizedXaml,
+                "                Visibility=\"{Binding ViewModel.SelectedUser, Converter={StaticResource NullToVisibilityConverter}}\">\n                    <Ellipse\n                      x:Name=\"UserAvatar\"\n                      Width=\"96\"\n                      Height=\"96\"\n                      Margin=\"12\"\n                      HorizontalAlignment=\"Center\"\n                      VerticalAlignment=\"Center\">");
+            StringAssert.Contains(
+                normalizedXaml,
+                "                    <StackPanel x:Name=\"UserDetailHeaderPanel\" Orientation=\"Vertical\" VerticalAlignment=\"Center\">\n                        <TextBlock\n                          x:Name=\"UserDetailHeaderNameBox\"\n                          FontSize=\"24\" Text=\"{Binding ViewModel.SelectedUser.Name}\" />\n                        <TextBlock\n                          x:Name=\"UserDetailHeaderCompanyBox\"\n                          FontSize=\"16\" Text=\"{Binding ViewModel.SelectedUser.Company}\" />\n                    </StackPanel>\n            </StackPanel>");
             StringAssert.Contains(
                 xaml,
                 "<StackPanel Margin=\"20,0,20,0\" >");
