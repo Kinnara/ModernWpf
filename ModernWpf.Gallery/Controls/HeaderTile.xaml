@@ -1,45 +1,32 @@
-<UserControl
-    x:Class="ModernWpf.Gallery.Controls.HeaderTile"
+<UserControl x:Class="ModernWpf.Gallery.Controls.HeaderTile"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:ModernWpf.Gallery.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Width="198"
-    Height="220"
-    d:DesignHeight="220"
-    d:DesignWidth="198"
+    Width="198" Height="220"
     mc:Ignorable="d">
     <Button
         x:Name="RootButton"
         Margin="6"
-        Padding="24"
+        BorderThickness="1"
         HorizontalAlignment="Stretch"
-        HorizontalContentAlignment="Stretch"
         VerticalAlignment="Stretch"
+        HorizontalContentAlignment="Stretch"
         VerticalContentAlignment="Stretch"
         AutomationProperties.Name="{Binding Title, RelativeSource={RelativeSource AncestorType=local:HeaderTile}}"
-        BorderThickness="1"
-        Click="RootButton_Click">
+        Click="RootButton_Click"
+        Padding="24">
         <Button.Resources>
-            <SolidColorBrush
-                x:Key="ButtonBackground"
-                Color="{Binding Color, Source={StaticResource AcrylicBackgroundFillColorDefaultBrush}}"
-                Opacity="0.8" />
-            <SolidColorBrush
-                x:Key="ButtonBackgroundPointerOver"
-                Color="{Binding Color, Source={StaticResource AcrylicBackgroundFillColorDefaultBrush}}"
-                Opacity="0.9" />
-            <SolidColorBrush
-                x:Key="ButtonBackgroundPressed"
-                Color="{Binding Color, Source={StaticResource AcrylicBackgroundFillColorDefaultBrush}}" />
+            <SolidColorBrush x:Key="ButtonBackground" Color="{Binding Color, Source={StaticResource AcrylicBackgroundFillColorDefaultBrush}}" Opacity="0.8" />
+            <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="{Binding Color, Source={StaticResource AcrylicBackgroundFillColorDefaultBrush}}" Opacity="0.9" />
+            <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="{Binding Color, Source={StaticResource AcrylicBackgroundFillColorDefaultBrush}}" Opacity="1.0" />
 
             <Style BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">
                 <Setter Property="Border.CornerRadius" Value="8" />
             </Style>
         </Button.Resources>
-        <Grid
-            x:Name="ContentGrid"
+        <Grid x:Name="ContentGrid"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch">
             <Grid.RowDefinitions>
@@ -51,8 +38,8 @@
                 Margin="-12"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"
-                FontFamily="{StaticResource SymbolThemeFontFamily}"
                 FontSize="16"
+                FontFamily="{StaticResource SymbolThemeFontFamily}"
                 Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                 Text="&#xE8A7;" />
             <ContentPresenter
@@ -62,20 +49,20 @@
 
             <StackPanel
                 Grid.Row="1"
-                Margin="0,16,0,0"
-                Orientation="Vertical">
+                Orientation="Vertical"
+                Margin="0 16 0 0">
                 <TextBlock
                     x:Name="TitleText"
-                    Margin="0,0,0,8"
                     FontSize="18"
                     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                     Style="{StaticResource BodyTextBlockStyle}"
-                    Text="{Binding Title, RelativeSource={RelativeSource AncestorType=local:HeaderTile}}" />
+                    Text="{Binding Title, RelativeSource={RelativeSource AncestorType=local:HeaderTile}}"
+                    Margin="0 0 0 8"/>
                 <TextBlock
                     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                    TextTrimming="CharacterEllipsis"
                     Style="{StaticResource CaptionTextBlockStyle}"
-                    Text="{Binding Description, RelativeSource={RelativeSource AncestorType=local:HeaderTile}}"
-                    TextTrimming="CharacterEllipsis" />
+                    Text="{Binding Description, RelativeSource={RelativeSource AncestorType=local:HeaderTile}}" />
             </StackPanel>
         </Grid>
     </Button>

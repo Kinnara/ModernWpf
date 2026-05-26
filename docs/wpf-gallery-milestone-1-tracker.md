@@ -301,6 +301,10 @@ The shared `PageHeader` template now also keeps the official compact
 converter/setter, title/description text, and hidden-description trigger source
 shape while retaining the local `GalleryAutomation.HeadingLevel` adapter that
 maps heading metadata to supported target frameworks.
+The shared `HeaderTile` XAML now also keeps the official compact root sizing,
+RootButton attribute order, acrylic resource declarations, content grid, glyph,
+and title/description text declaration shape while retaining ModernWpf brush
+bindings plus the local High Contrast/theme-refresh resource adaptation.
 
 ## Commit Policy
 
@@ -320,6 +324,10 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.SharedHeaderTileKeepsOfficialDeclarationSourceShape|FullyQualifiedName~GalleryApplicationResourceTests.HomeHeaderTilesMatchWpfGalleryReferenceSlotGeometry|FullyQualifiedName~GalleryApplicationResourceTests.HomeHeaderTilesUseWpfGalleryAcrylicFillResources|FullyQualifiedName~GalleryApplicationResourceTests.HomeHeaderTilesUseWpfGalleryHighContrastFillResources|FullyQualifiedName~GalleryApplicationResourceTests.HomeHeaderTilesExposeRootButtonAutomationPeer" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 5 tests per target. The shared `HeaderTile` XAML now keeps official compact root/button/resource/content/text declaration shape while preserving the local brush binding, High Contrast fill resources, theme refresh behavior, slot geometry, and automation-peer coverage. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the shared `HeaderTile` source-shape alignment. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages and existing ModernWpf/ModernWpf.Controls warnings.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.SharedPageHeaderKeepsOfficialTemplateSourceShape|FullyQualifiedName~GalleryPageRuntimeTests.WhatsNewPageHeaderMatchesWpfGalleryReference|FullyQualifiedName~GalleryNavigationRuntimeTests.ShellNavigationMenuMatchesWpfGalleryReferenceChrome|FullyQualifiedName~GalleryAutomationHookTests.WpfGalleryPagesExposeHeadingAutomation" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 3 tests per target. The shared `PageHeader` template now keeps official compact converter/setter, title/description text, and hidden-description trigger source shape while retaining the local `GalleryAutomation.HeadingLevel` target-framework adapter; runtime header and navigation chrome coverage still passes. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
@@ -2528,7 +2536,10 @@ page now also pins representative official section declaration source shape for
 root rows, PageHeader, and the direct navigation-card ItemsControl while keeping
 that local extension scroll host separate. The shared `PageHeader` template now
 pins official compact converter/setter, text, and hidden-description trigger
-source shape while retaining the local heading-level adapter. Next, continue
+source shape while retaining the local heading-level adapter. The shared
+`HeaderTile` XAML now also pins official root/button/resource/content/text
+declaration shape while retaining local brush binding and High Contrast/theme
+refresh behavior. Next, continue
 source-backed structural alignment where copied
 pages still diverge from official XAML. The generic `ItemPage` wrapper now also
 drops local-only wrapper header/direct-frame names and `GallerySampleHost` automation IDs

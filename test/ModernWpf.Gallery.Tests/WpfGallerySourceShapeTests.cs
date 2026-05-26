@@ -247,6 +247,97 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void SharedHeaderTileKeepsOfficialDeclarationSourceShape()
+        {
+            var xaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Controls",
+                "HeaderTile.xaml");
+            var normalizedXaml = xaml.Replace("\r\n", "\n").Replace('\r', '\n');
+
+            StringAssert.Contains(
+                xaml,
+                "<UserControl x:Class=\"ModernWpf.Gallery.Controls.HeaderTile\"");
+            StringAssert.Contains(
+                xaml,
+                "Width=\"198\" Height=\"220\"");
+            Assert.IsFalse(
+                xaml.Contains("d:DesignHeight", StringComparison.Ordinal),
+                "The shared HeaderTile should keep the official root size declaration without local design-time dimensions.");
+            Assert.IsFalse(
+                xaml.Contains("d:DesignWidth", StringComparison.Ordinal),
+                "The shared HeaderTile should keep the official root size declaration without local design-time dimensions.");
+            AssertContainsInOrder(
+                xaml,
+                "<Button",
+                "x:Name=\"RootButton\"",
+                "Margin=\"6\"",
+                "BorderThickness=\"1\"",
+                "HorizontalAlignment=\"Stretch\"",
+                "VerticalAlignment=\"Stretch\"",
+                "HorizontalContentAlignment=\"Stretch\"",
+                "VerticalContentAlignment=\"Stretch\"",
+                "AutomationProperties.Name=\"{Binding Title, RelativeSource={RelativeSource AncestorType=local:HeaderTile}}\"",
+                "Click=\"RootButton_Click\"",
+                "Padding=\"24\">");
+            StringAssert.Contains(
+                xaml,
+                "<SolidColorBrush x:Key=\"ButtonBackground\" Color=\"{Binding Color, Source={StaticResource AcrylicBackgroundFillColorDefaultBrush}}\" Opacity=\"0.8\" />");
+            StringAssert.Contains(
+                xaml,
+                "<SolidColorBrush x:Key=\"ButtonBackgroundPointerOver\" Color=\"{Binding Color, Source={StaticResource AcrylicBackgroundFillColorDefaultBrush}}\" Opacity=\"0.9\" />");
+            StringAssert.Contains(
+                xaml,
+                "<SolidColorBrush x:Key=\"ButtonBackgroundPressed\" Color=\"{Binding Color, Source={StaticResource AcrylicBackgroundFillColorDefaultBrush}}\" Opacity=\"1.0\" />");
+            StringAssert.Contains(
+                normalizedXaml,
+                "<Grid x:Name=\"ContentGrid\"\n            HorizontalAlignment=\"Stretch\"");
+            AssertContainsInOrder(
+                xaml,
+                "<TextBlock",
+                "Grid.RowSpan=\"3\"",
+                "Margin=\"-12\"",
+                "HorizontalAlignment=\"Right\"",
+                "VerticalAlignment=\"Bottom\"",
+                "FontSize=\"16\"",
+                "FontFamily=\"{StaticResource SymbolThemeFontFamily}\"",
+                "Foreground=\"{DynamicResource TextFillColorPrimaryBrush}\"",
+                "Text=\"&#xE8A7;\" />");
+            AssertContainsInOrder(
+                xaml,
+                "<StackPanel",
+                "Grid.Row=\"1\"",
+                "Orientation=\"Vertical\"",
+                "Margin=\"0 16 0 0\">",
+                "<TextBlock",
+                "x:Name=\"TitleText\"",
+                "FontSize=\"18\"",
+                "Foreground=\"{DynamicResource TextFillColorPrimaryBrush}\"",
+                "Style=\"{StaticResource BodyTextBlockStyle}\"",
+                "Text=\"{Binding Title, RelativeSource={RelativeSource AncestorType=local:HeaderTile}}\"",
+                "Margin=\"0 0 0 8\"/>",
+                "<TextBlock",
+                "Foreground=\"{DynamicResource TextFillColorPrimaryBrush}\"",
+                "TextTrimming=\"CharacterEllipsis\"",
+                "Style=\"{StaticResource CaptionTextBlockStyle}\"",
+                "Text=\"{Binding Description, RelativeSource={RelativeSource AncestorType=local:HeaderTile}}\" />");
+
+            var code = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Controls",
+                "HeaderTile.xaml.cs");
+            AssertContainsInOrder(
+                code,
+                "ApplyButtonResources(SystemParameters.HighContrast);",
+                "RootButton.Resources[\"ButtonBackground\"] = SystemColors.ControlBrush;",
+                "RootButton.Resources[\"ButtonBackgroundPointerOver\"] = SystemColors.ControlBrush;",
+                "RootButton.Resources[\"ButtonBackgroundPressed\"] = SystemColors.ControlBrush;",
+                "RootButton.Resources[\"ButtonBackground\"] = new SolidColorBrush { Color = color, Opacity = 0.8 };",
+                "RootButton.Resources[\"ButtonBackgroundPointerOver\"] = new SolidColorBrush { Color = color, Opacity = 0.9 };",
+                "RootButton.Resources[\"ButtonBackgroundPressed\"] = new SolidColorBrush { Color = color, Opacity = 1.0 };");
+        }
+
+        [TestMethod]
         public void SharedColorPageExampleKeepsOfficialTemplateSourceShape()
         {
             var xaml = ReadRepoFile(
