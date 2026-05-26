@@ -776,9 +776,16 @@ namespace ModernWpf.Gallery.Tests
                 "WpfGallery",
                 "BasicInput",
                 "CheckBoxPage.xaml");
+            var normalizedCheckBoxXaml = checkBoxXaml.Replace("\r\n", "\n").Replace('\r', '\n');
             StringAssert.Contains(
                 checkBoxXaml,
                 "<controls:ControlExample Margin=\"10\" HeaderText=\"A 2-state CheckBox.\" XamlCode=\"&lt;CheckBox Content=&quot;Two-state CheckBox&quot; /&gt;\">");
+            StringAssert.Contains(
+                normalizedCheckBoxXaml,
+                "</controls:ControlExample>\n\n\n                <controls:ControlExample\n                    Margin=\"10,32,10,10\"\n                    HeaderText=\"A 3-state CheckBox.\"");
+            StringAssert.Contains(
+                normalizedCheckBoxXaml,
+                "</controls:ControlExample>\n            </StackPanel>\n\n        </ScrollViewer>");
 
             var comboBoxXaml = ReadRepoFile(
                 "ModernWpf.Gallery",
@@ -812,6 +819,7 @@ namespace ModernWpf.Gallery.Tests
                 "WpfGallery",
                 "BasicInput",
                 "RadioButtonPage.xaml");
+            var normalizedRadioButtonXaml = radioButtonXaml.Replace("\r\n", "\n").Replace('\r', '\n');
             StringAssert.Contains(
                 radioButtonXaml,
                 "<StackPanel Grid.Column=\"0\" KeyboardNavigation.TabNavigation=\"Once\" KeyboardNavigation.DirectionalNavigation=\"Cycle\">");
@@ -831,6 +839,9 @@ namespace ModernWpf.Gallery.Tests
                 "GroupName=\"radio_group_two\"",
                 "GotKeyboardFocus=\"RadioButton_GotKeyboardFocus\"",
                 "IsChecked=\"True\" />");
+            StringAssert.Contains(
+                normalizedRadioButtonXaml,
+                "</controls:ControlExample>\n            </StackPanel>\n\n        </ScrollViewer>");
 
             var sliderXaml = ReadRepoFile(
                 "ModernWpf.Gallery",

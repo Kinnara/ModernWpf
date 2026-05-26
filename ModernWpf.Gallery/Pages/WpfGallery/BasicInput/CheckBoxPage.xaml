@@ -26,6 +26,7 @@
                     <CheckBox AutomationProperties.Name="Sample Two State" Content="Two-state CheckBox" />
                 </controls:ControlExample>
 
+
                 <controls:ControlExample
                     Margin="10,32,10,10"
                     HeaderText="A 3-state CheckBox."
@@ -69,6 +70,7 @@
                     </StackPanel>
                 </controls:ControlExample>
             </StackPanel>
+
         </ScrollViewer>
     </Grid>
 </Page>
