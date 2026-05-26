@@ -411,6 +411,32 @@ namespace ModernWpf.Gallery.Tests
                 checkBoxXaml,
                 "<controls:ControlExample Margin=\"10\" HeaderText=\"A 2-state CheckBox.\" XamlCode=\"&lt;CheckBox Content=&quot;Two-state CheckBox&quot; /&gt;\">");
 
+            var comboBoxXaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "BasicInput",
+                "ComboBoxPage.xaml");
+            AssertContainsInOrder(
+                comboBoxXaml,
+                "<StackPanel Margin=\"0,0,0,24\">",
+                "HeaderText=\"A ComboBox with items defined inline.\"",
+                "AutomationProperties.Name=\"Sample defined inline\"",
+                "<ComboBoxItem Content=\"Blue\" />",
+                "<ComboBoxItem Content=\"Green\" />",
+                "<ComboBoxItem Content=\"Red\" />",
+                "<ComboBoxItem Content=\"Yellow\" />",
+                "HeaderText=\"A ComboBox with ItemsSource set.\"",
+                "AutomationProperties.Name=\"Sample item source set\"",
+                "ItemsSource=\"{Binding ViewModel.ComboBoxFontFamilies, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:ComboBoxPage}, Mode=OneWay}\"",
+                "<ComboBox.ItemTemplate>",
+                "<TextBlock FontFamily=\"{Binding}\" Text=\"{Binding}\" />",
+                "HeaderText=\"An editable ComboBox.\"",
+                "AutomationProperties.Name=\"Editable\"",
+                "IsEditable=\"True\"",
+                "ItemsSource=\"{Binding ViewModel.ComboBoxFontSizes, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:ComboBoxPage}, Mode=OneWay}\"",
+                "SelectedIndex=\"0\" />");
+
             var radioButtonXaml = ReadRepoFile(
                 "ModernWpf.Gallery",
                 "Pages",
@@ -436,6 +462,37 @@ namespace ModernWpf.Gallery.Tests
                 "GroupName=\"radio_group_two\"",
                 "GotKeyboardFocus=\"RadioButton_GotKeyboardFocus\"",
                 "IsChecked=\"True\" />");
+
+            var sliderXaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "BasicInput",
+                "SliderPage.xaml");
+            var normalizedSliderXaml = sliderXaml.Replace("\r\n", "\n").Replace('\r', '\n');
+            AssertContainsInOrder(
+                sliderXaml,
+                "<StackPanel Margin=\"0,0,0,24\">",
+                "HeaderText=\"A simple slider.\"",
+                "AutomationProperties.Name=\"Simple\"",
+                "Value=\"{Binding ViewModel.SimpleSliderValue, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:SliderPage}, Mode=TwoWay}\"",
+                "Text=\"{Binding ViewModel.SimpleSliderValue, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:SliderPage}, Mode=OneWay}\"",
+                "HeaderText=\"A slider with steps and range specified.\"",
+                "AutomationProperties.Name=\"Range and steps specified\"",
+                "TickFrequency=\"50\"",
+                "Value=\"{Binding ViewModel.RangeSliderValue, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:SliderPage}, Mode=TwoWay}\"",
+                "HeaderText=\"A slider with tick marks.\"",
+                "AutomationProperties.Name=\"Tick marks\"",
+                "TickFrequency=\"20\"",
+                "TickPlacement=\"Both\"",
+                "Value=\"{Binding ViewModel.MarksSliderValue, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:SliderPage}, Mode=TwoWay}\"",
+                "HeaderText=\"A vertical slider with range and tick marks specified.\"",
+                "AutomationProperties.Name=\"Vertical\"",
+                "Orientation=\"Vertical\"",
+                "Value=\"{Binding ViewModel.VerticalSliderValue, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:SliderPage}, Mode=TwoWay}\"");
+            StringAssert.Contains(
+                normalizedSliderXaml,
+                "</controls:ControlExample>\n            </StackPanel>\n\n        </ScrollViewer>");
         }
 
         [TestMethod]
