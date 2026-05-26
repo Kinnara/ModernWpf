@@ -395,6 +395,110 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void SamplesPageKeepsOfficialUserDashboardSourceShape()
+        {
+            var xaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Samples",
+                "UserDashboardPage.xaml");
+
+            AssertContainsInOrder(
+                xaml,
+                "d:DesignHeight=\"450\"",
+                "d:DesignWidth=\"800\"",
+                "d:DataContext=\"{d:DesignInstance Type=samples:UserDashboardPage}\"",
+                "Foreground=\"{DynamicResource TextFillColorPrimaryBrush}\"",
+                "mc:Ignorable=\"d\"",
+                "SizeChanged=\"Page_SizeChanged\"");
+            StringAssert.Contains(
+                xaml,
+                "<Style TargetType=\"Label\" x:Key=\"GenericLabelStyle\">");
+            StringAssert.Contains(
+                xaml,
+                "<Setter Property=\"Opacity\" Value=\"0.67\"/>");
+            StringAssert.Contains(
+                xaml,
+                "<RowDefinition Height=\"*\" MaxHeight=\"280\"/>");
+            StringAssert.Contains(
+                xaml,
+                "<Grid x:Name=\"UserListGrid\" Grid.Column=\"0\" Grid.RowSpan=\"2\" >");
+            AssertContainsInOrder(
+                xaml,
+                "<ListView",
+                "x:Name=\"UserList\"",
+                "AutomationProperties.Name=\"Users\"",
+                "Grid.Row=\"0\"",
+                "Width=\"300\"",
+                "Background=\"{DynamicResource CardBackgroundFillColorDefaultBrush}\"",
+                "ItemsSource=\"{Binding ViewModel.Users, Mode=TwoWay}\"",
+                "SelectedItem=\"{Binding ViewModel.SelectedUser, Mode=TwoWay}\"",
+                "SelectionMode=\"Single\">");
+            StringAssert.Contains(
+                xaml,
+                "<Style TargetType=\"ListViewItem\" BasedOn=\"{StaticResource DefaultListViewItemStyle}\">");
+            StringAssert.Contains(
+                xaml,
+                "<Setter Property=\"AutomationProperties.Name\" Value=\"{Binding Name, Mode=OneWay}\"/>");
+            AssertContainsInOrder(
+                xaml,
+                "Margin=\"12,6,0,0\"",
+                "Text=\"{Binding Name, Mode=OneWay}\"",
+                "pages:GalleryAutomation.HeadingLevel=\"Level3\" />");
+            StringAssert.Contains(
+                xaml,
+                "<StackPanel Margin=\"20,0,20,0\" >");
+            StringAssert.Contains(
+                xaml,
+                "<Label Content=\"First Name\" Style=\"{StaticResource GenericLabelStyle}\" FontWeight=\"SemiBold\" />");
+            StringAssert.Contains(
+                xaml,
+                "<TextBox AutomationProperties.Name=\"First Name\" Margin=\"0,5,0,15\" Text=\"{Binding ViewModel.EditableUser.FirstName}\" IsReadOnly=\"{Binding ViewModel.IsReadOnly}\"/>");
+            StringAssert.Contains(
+                xaml,
+                "<TextBlock x:Name=\"AgeIndicatorBox\" Padding=\"10 0 0 0\" Grid.Column=\"1\" Text=\"{Binding ViewModel.EditableUser.Age}\" VerticalAlignment=\"Center\" />");
+            AssertContainsInOrder(
+                xaml,
+                "<Slider",
+                "AutomationProperties.Name=\"Age\"",
+                "Maximum=\"62\"",
+                "Minimum=\"21\"",
+                "IsSnapToTickEnabled=\"True\"",
+                "Value=\"{Binding ViewModel.EditableUser.Age}\"",
+                "ValueChanged=\"AgeSlider_ValueChanged\"",
+                "IsEnabled=\"{Binding ViewModel.IsEditing}\"/>");
+            StringAssert.Contains(
+                xaml,
+                "<DatePicker AutomationProperties.Name=\"Date of Joining\" Margin=\"0,5,0,15\" SelectedDate=\"{Binding ViewModel.EditableUser.DateOfJoining}\" IsEnabled=\"{Binding ViewModel.IsEditing}\"/>");
+            StringAssert.Contains(
+                xaml,
+                "<CheckBox AutomationProperties.Name=\"Is user a new graduate ?\" VerticalAlignment=\"Center\" IsChecked=\"{Binding ViewModel.EditableUser.IsNewGraduate}\" IsEnabled=\"{Binding ViewModel.IsEditing}\"/>");
+            StringAssert.Contains(
+                xaml,
+                "<TextBlock FontSize=\"14\" HorizontalAlignment=\"Left\" VerticalAlignment=\"Center\" Visibility=\"{Binding ViewModel.IsSaved, Converter={StaticResource BooleanToVisibilityConverter}}\" FontStyle=\"Italic\">");
+            StringAssert.Contains(
+                xaml,
+                "<TextBlock FontSize=\"14\" HorizontalAlignment=\"Left\" VerticalAlignment=\"Center\" Visibility=\"{Binding ViewModel.DeletedName, Converter={StaticResource EmptyToVisibilityConverter}}\" FontStyle=\"Italic\">");
+            AssertContainsInOrder(
+                xaml,
+                "x:Name=\"edit_button\"",
+                "Margin=\"10\"",
+                "Command=\"{Binding ViewModel.EditUserStartCommand}\"",
+                "Visibility=\"{Binding ViewModel.IsReadOnly, Converter={StaticResource BooleanToVisibilityConverter}}\"",
+                "Click=\"EditButton_Click\"",
+                "Content=\"Edit\" />");
+            AssertContainsInOrder(
+                xaml,
+                "x:Name=\"save_button\"",
+                "Margin=\"10\"",
+                "Command=\"{Binding ViewModel.EditUserCommitCommand}\"",
+                "Visibility=\"{Binding ViewModel.IsEditing, Converter={StaticResource BooleanToVisibilityConverter}}\"",
+                "Click=\"SaveButton_Click\"",
+                "Content=\"Save\"/>");
+        }
+
+        [TestMethod]
         public void MenuPageKeepsOfficialMenuItemSourceShape()
         {
             var xaml = ReadRepoFile(
