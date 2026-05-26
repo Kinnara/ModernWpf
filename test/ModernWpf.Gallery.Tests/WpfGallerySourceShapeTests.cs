@@ -619,6 +619,83 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void DesignGuidanceColorTextSectionKeepsOfficialSourceShape()
+        {
+            var xaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "DesignGuidance",
+                "TextSection.xaml");
+
+            AssertContainsInOrder(
+                xaml,
+                "<Page x:Class=\"ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance.TextSection\"",
+                "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"",
+                "xmlns:d=\"http://schemas.microsoft.com/expression/blend/2008\"",
+                "xmlns:controls=\"clr-namespace:ModernWpf.Gallery.Controls\"",
+                "mc:Ignorable=\"d\"",
+                "d:DesignHeight=\"450\" d:DesignWidth=\"800\"",
+                "Title=\"TextSection\"",
+                "Foreground=\"{DynamicResource WindowForeground}\">");
+            StringAssert.Contains(xaml, "<!--  Colors section  -->");
+            AssertContainsInOrder(
+                xaml,
+                "<controls:ColorPageExample Title=\"Text\" Description=\"For UI labels and static text\">",
+                "<TextBlock",
+                "FontSize=\"42\"",
+                "FontWeight=\"SemiBold\"",
+                "Text=\"Aa\" />");
+            AssertContainsInOrder(
+                xaml,
+                "<Border Style=\"{StaticResource ColorTilesPanelStyle}\" Margin=\"0,8\">",
+                "<controls:ColorTile",
+                "Background=\"{DynamicResource TextFillColorPrimaryBrush}\"",
+                "ColorBrushName=\"TextFillColorPrimaryBrush\"",
+                "TileRadius=\"8,0,0,8\"",
+                "ColorExplanation=\"Rest or Hover\"",
+                "ColorName=\"Text / Primary\"",
+                "ColorValue=\"#000000 (E4, 89.56%)\"",
+                "Foreground=\"{DynamicResource TextOnAccentFillColorPrimaryBrush}\"",
+                "ShowSeparator=\"False\" />");
+            AssertContainsInOrder(
+                xaml,
+                "<!--  Accent text  -->",
+                "<Border Style=\"{StaticResource ColorTilesPanelStyle}\" Margin=\"0,8\">",
+                "Background=\"{DynamicResource AccentTextFillColorPrimaryBrush}\"",
+                "ColorBrushName=\"AccentTextFillColorPrimaryBrush\"",
+                "ColorExplanation=\"Rest or Hover\"",
+                "TileRadius=\"8,0,0,8\"",
+                "ColorName=\"Accent Text / Primary\"");
+            AssertContainsInOrder(
+                xaml,
+                "<!--  Text on accent  -->",
+                "<Border Style=\"{StaticResource ColorTilesPanelStyle}\" Margin=\"0,8\">",
+                "<controls:ColorTile",
+                "Background=\"{DynamicResource TextOnAccentFillColorPrimaryBrush}\"",
+                "ColorBrushName=\"TextOnAccentFillColorPrimaryBrush\"",
+                "TileRadius=\"8,0,0,8\"",
+                "ColorExplanation=\"Rest or Hover\"",
+                "ColorName=\"Text on Accent / Primary\"",
+                "Foreground=\"{DynamicResource TextFillColorPrimaryBrush}\" />",
+                "<controls:ColorTile",
+                "Grid.Column=\"2\"",
+                "Background=\"{DynamicResource TextOnAccentFillColorSecondaryBrush}\"",
+                "TileRadius=\"0,8,8,0\"",
+                "ColorBrushName=\"TextOnAccentFillColorSecondaryBrush\"");
+            AssertContainsInOrder(
+                xaml,
+                "<Border Style=\"{StaticResource ColorTilesPanelStyle}\" Margin=\"0,8,0,0\">",
+                "Background=\"{DynamicResource TextOnAccentFillColorDisabledBrush}\"",
+                "ColorBrushName=\"TextOnAccentFillColorDisabledBrush\"",
+                "TileRadius=\"8,0,0,8\"",
+                "ColorExplanation=\"Disabled only (not accessible)\"",
+                "Background=\"{DynamicResource TextOnAccentFillColorSelectedTextBrush}\"",
+                "TileRadius=\"0,8,8,0\"",
+                "ColorBrushName=\"TextOnAccentFillColorSelectedTextBrush\"");
+        }
+
+        [TestMethod]
         public void SamplesPageKeepsOfficialUserDashboardSourceShape()
         {
             var xaml = ReadRepoFile(
