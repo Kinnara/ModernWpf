@@ -545,6 +545,49 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void BasicInputCodeBehindKeepsOfficialConstructorParagraphShape()
+        {
+            var buttonSource = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "BasicInput",
+                "ButtonPage.xaml.cs").Replace("\r\n", "\n").Replace('\r', '\n');
+            StringAssert.Contains(
+                buttonSource,
+                "            DataContext = this;\n            InitializeComponent();");
+
+            var checkBoxSource = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "BasicInput",
+                "CheckBoxPage.xaml.cs").Replace("\r\n", "\n").Replace('\r', '\n');
+            StringAssert.Contains(
+                checkBoxSource,
+                "        public CheckBoxPageViewModel ViewModel { get; }\n        public CheckBoxPage(CheckBoxPageViewModel viewModel)");
+
+            foreach (var page in new[]
+            {
+                "ComboBoxPage",
+                "RadioButtonPage",
+                "SliderPage"
+            })
+            {
+                var source = ReadRepoFile(
+                    "ModernWpf.Gallery",
+                    "Pages",
+                    "WpfGallery",
+                    "BasicInput",
+                    page + ".xaml.cs").Replace("\r\n", "\n").Replace('\r', '\n');
+
+                StringAssert.Contains(
+                    source,
+                    "            DataContext = this;\n\n            InitializeComponent();");
+            }
+        }
+
+        [TestMethod]
         public void MessageBoxCodeBehindKeepsOfficialShowCallSourceShape()
         {
             var source = ReadRepoFile(

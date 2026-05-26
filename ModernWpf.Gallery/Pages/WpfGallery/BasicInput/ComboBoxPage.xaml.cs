@@ -10,6 +10,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
         {
             ViewModel = viewModel;
             DataContext = this;
+
             InitializeComponent();
         }
     }
