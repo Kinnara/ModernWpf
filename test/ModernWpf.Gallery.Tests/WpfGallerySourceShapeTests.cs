@@ -588,6 +588,51 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void CollectionsCodeBehindKeepsOfficialConstructorAdjacencyShape()
+        {
+            foreach (var page in new[]
+            {
+                Tuple.Create("DataGridPage", "DataGridPageViewModel"),
+                Tuple.Create("ListBoxPage", "ListBoxPageViewModel"),
+                Tuple.Create("TreeViewPage", "TreeViewPageViewModel")
+            })
+            {
+                var source = ReadRepoFile(
+                    "ModernWpf.Gallery",
+                    "Pages",
+                    "WpfGallery",
+                    "Collections",
+                    page.Item1 + ".xaml.cs").Replace("\r\n", "\n").Replace('\r', '\n');
+
+                StringAssert.Contains(
+                    source,
+                    "        public " + page.Item2 + " ViewModel { get; }\n        public " + page.Item1 + "(");
+            }
+
+            var listViewSource = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Collections",
+                "ListViewPage.xaml.cs").Replace("\r\n", "\n").Replace('\r', '\n');
+            StringAssert.Contains(
+                listViewSource,
+                "        public ListViewPageViewModel ViewModel { get; }\n\n        public ListViewPage(ListViewPageViewModel viewModel)");
+
+            var dataGridSource = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Collections",
+                "DataGridPage.xaml.cs");
+            AssertContainsInOrder(
+                dataGridSource,
+                "SystemEvents.UserPreferenceChanged += OnUserPreferenceChanged;",
+                "Loaded += OnLoaded;",
+                "Unloaded += OnUnloaded;");
+        }
+
+        [TestMethod]
         public void MessageBoxCodeBehindKeepsOfficialShowCallSourceShape()
         {
             var source = ReadRepoFile(
