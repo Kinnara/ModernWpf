@@ -443,10 +443,10 @@ namespace ModernWpf.Gallery.Tests
         {
             foreach (var page in new[]
             {
-                "DataGridPage.xaml",
-                "ListBoxPage.xaml",
-                "ListViewPage.xaml",
-                "TreeViewPage.xaml"
+                Tuple.Create("DataGridPage.xaml", true),
+                Tuple.Create("ListBoxPage.xaml", false),
+                Tuple.Create("ListViewPage.xaml", true),
+                Tuple.Create("TreeViewPage.xaml", false)
             })
             {
                 var xaml = ReadRepoFile(
@@ -454,7 +454,24 @@ namespace ModernWpf.Gallery.Tests
                     "Pages",
                     "WpfGallery",
                     "Collections",
-                    page);
+                    page.Item1);
+                var normalizedXaml = xaml.Replace("\r\n", "\n").Replace('\r', '\n');
+                StringAssert.Contains(
+                    xaml,
+                    "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.Collections\"");
+                if (page.Item2)
+                {
+                    StringAssert.Contains(
+                        xaml,
+                        "xmlns:models=\"clr-namespace:ModernWpf.Gallery.Models\"");
+                }
+
+                StringAssert.Contains(
+                    normalizedXaml,
+                    "<Grid x:Name=\"ContentPagePane\" Height=\"Auto\">\n\n        <Grid.RowDefinitions>");
+                StringAssert.Contains(
+                    normalizedXaml,
+                    "</Grid.RowDefinitions>\n        <controls:PageHeader");
                 StringAssert.Contains(
                     xaml,
                     "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" ShowDescription=\"False\" />");
