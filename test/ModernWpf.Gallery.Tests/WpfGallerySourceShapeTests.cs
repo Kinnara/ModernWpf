@@ -1046,6 +1046,20 @@ namespace ModernWpf.Gallery.Tests
                 StringAssert.Contains(
                     xaml,
                     "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance\"");
+                AssertContainsInOrder(
+                    xaml,
+                    page == "TypographyPage.xaml"
+                        ? "<Page x:Class=\"ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance.TypographyPage\""
+                        : "<Page x:Class=\"ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance.SpacingPage\"",
+                    "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"",
+                    "xmlns:d=\"http://schemas.microsoft.com/expression/blend/2008\"",
+                    "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance\"",
+                    "mc:Ignorable=\"d\" Foreground=\"{DynamicResource TextFillColorPrimaryBrush}\"",
+                    "xmlns:controls=\"clr-namespace:ModernWpf.Gallery.Controls\"",
+                    "d:DesignHeight=\"450\" d:DesignWidth=\"800\"",
+                    page == "TypographyPage.xaml"
+                        ? "Title=\"TypographyPage\">"
+                        : "Title=\"SpacingPage\">");
                 Assert.IsFalse(
                     xaml.Contains("x:Name=\"ContentPagePane\"", StringComparison.Ordinal),
                     page + " should keep the official unnamed root Grid shape.");
@@ -1073,6 +1087,16 @@ namespace ModernWpf.Gallery.Tests
             StringAssert.Contains(
                 geometryXaml,
                 "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance\"");
+            AssertContainsInOrder(
+                geometryXaml,
+                "<Page x:Class=\"ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance.GeometryPage\"",
+                "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"",
+                "xmlns:d=\"http://schemas.microsoft.com/expression/blend/2008\"",
+                "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance\"",
+                "mc:Ignorable=\"d\" Foreground=\"{DynamicResource TextFillColorPrimaryBrush}\"",
+                "xmlns:controls=\"clr-namespace:ModernWpf.Gallery.Controls\"",
+                "d:DesignHeight=\"450\" d:DesignWidth=\"800\"",
+                "Title=\"GeometryPage\">");
             Assert.IsFalse(
                 geometryXaml.Contains("x:Name=\"ContentPagePane\"", StringComparison.Ordinal),
                 "GeometryPage.xaml should keep the official unnamed root Grid shape.");
