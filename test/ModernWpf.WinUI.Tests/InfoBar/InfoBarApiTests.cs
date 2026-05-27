@@ -8,8 +8,10 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ModernWpf;
 using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
+using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
 
 namespace ModernWpf.WinUI.Tests.InfoBar;
@@ -258,6 +260,55 @@ public class InfoBarApiTests
     }
 
     [TestMethod]
+    public void InfoBarHighContrastTemplateResourcesUseSystemColorTokens()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var infoBar = new ModernWpf.Controls.InfoBar
+            {
+                IsOpen = true,
+                Severity = InfoBarSeverity.Error,
+                Title = "Title",
+                Message = "Message"
+            };
+
+            using var host = new TestWindowHost(infoBar, width: 400, height: 120);
+            var contentRoot = FindNamedDescendant<Border>(infoBar, "ContentRoot");
+            var iconBackground = FindNamedDescendant<TextBlock>(infoBar, "IconBackground");
+            var standardIcon = FindNamedDescendant<TextBlock>(infoBar, "StandardIcon");
+
+            Assert.IsTrue(ThemeManager.GetHasThemeResources(contentRoot));
+            var resources = contentRoot.Resources as ResourceDictionaryEx;
+            Assert.IsNotNull(resources);
+            resources!.Update("HighContrast");
+            host.UpdateLayout();
+
+            AssertResourceReference(contentRoot, "InfoBarBorderBrush", "SystemColorButtonTextColorBrush");
+            AssertResourceReference(contentRoot, "InfoBarTitleForeground", "SystemColorButtonTextColorBrush");
+            AssertResourceReference(contentRoot, "InfoBarMessageForeground", "SystemColorButtonTextColorBrush");
+            AssertSolidColorBrushColor(contentRoot, "InfoBarHyperlinkButtonForeground", SystemColors.HotTrackColor);
+            AssertResourceReference(contentRoot, "InfoBarErrorSeverityBackgroundBrush", "SystemColorWindowColorBrush");
+            AssertResourceReference(contentRoot, "InfoBarWarningSeverityBackgroundBrush", "SystemColorWindowColorBrush");
+            AssertResourceReference(contentRoot, "InfoBarSuccessSeverityBackgroundBrush", "SystemColorWindowColorBrush");
+            AssertResourceReference(contentRoot, "InfoBarInformationalSeverityBackgroundBrush", "SystemColorWindowColorBrush");
+            AssertResourceReference(contentRoot, "InfoBarErrorSeverityIconBackground", "SystemColorHighlightColorBrush");
+            AssertResourceReference(contentRoot, "InfoBarWarningSeverityIconBackground", "SystemColorHighlightColorBrush");
+            AssertResourceReference(contentRoot, "InfoBarSuccessSeverityIconBackground", "SystemColorHighlightColorBrush");
+            AssertResourceReference(contentRoot, "InfoBarInformationalSeverityIconBackground", "SystemColorHighlightColorBrush");
+            AssertResourceReference(contentRoot, "InfoBarErrorSeverityIconForeground", "SystemColorHighlightTextColorBrush");
+            AssertResourceReference(contentRoot, "InfoBarWarningSeverityIconForeground", "SystemColorHighlightTextColorBrush");
+            AssertResourceReference(contentRoot, "InfoBarSuccessSeverityIconForeground", "SystemColorHighlightTextColorBrush");
+            AssertResourceReference(contentRoot, "InfoBarInformationalSeverityIconForeground", "SystemColorHighlightTextColorBrush");
+
+            Assert.AreSame(contentRoot.TryFindResource("SystemColorWindowColorBrush"), contentRoot.Background);
+            Assert.AreSame(contentRoot.TryFindResource("SystemColorHighlightColorBrush"), iconBackground.Foreground);
+            Assert.AreSame(contentRoot.TryFindResource("SystemColorHighlightTextColorBrush"), standardIcon.Foreground);
+        });
+    }
+
+    [TestMethod]
     public void InfoBarAutomationPeerTest()
     {
         WpfTestHost.Run(() =>
@@ -378,5 +429,20 @@ public class InfoBarApiTests
             .Single(item => item.Name == groupName);
         Assert.IsNotNull(group.CurrentState);
         return group.CurrentState.Name;
+    }
+
+    private static void AssertResourceReference(FrameworkElement element, object resourceKey, object expectedResourceKey)
+    {
+        Assert.AreSame(
+            element.TryFindResource(expectedResourceKey),
+            element.TryFindResource(resourceKey),
+            $"{resourceKey} should resolve through {expectedResourceKey}.");
+    }
+
+    private static void AssertSolidColorBrushColor(FrameworkElement element, object resourceKey, Color expectedColor)
+    {
+        var brush = element.TryFindResource(resourceKey) as SolidColorBrush;
+        Assert.IsNotNull(brush, $"{resourceKey} should resolve to a SolidColorBrush.");
+        Assert.AreEqual(expectedColor, brush!.Color);
     }
 }

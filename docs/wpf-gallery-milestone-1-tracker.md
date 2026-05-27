@@ -445,6 +445,11 @@ HighContrast resource colors are not left stale after broader OS
 High Contrast palette transitions. The theme test coverage also now pins that
 every `SystemColor*Color` key referenced by `HighContrast.xaml` is backed by a
 `ThemeResourceExtension` system-color source property.
+ModernWpf `InfoBar` now also scopes a template-root High Contrast
+`ResourceDictionaryEx` override for the visible severity/background/foreground
+tokens so the retained generic template aliases cannot mask the system-color
+`InfoBar*` resources from `HighContrast.xaml`; focused `InfoBar` tests pin the
+template resources, severity visual-state brushes, and hyperlink hotlight brush.
 The generic `ItemPage` wrapper now also avoids normal-runtime local-only
 `PageHeader` and `DirectPageContentHost` names plus `GallerySampleHost`
 automation IDs while keeping source-shaped `ControlExample` binding order and
@@ -501,6 +506,10 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~InfoBarApiTests" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0`: 9 tests. `InfoBar` now has focused coverage that its template-root High Contrast resources resolve severity backgrounds through `SystemColorWindowColorBrush`, severity icon backgrounds through `SystemColorHighlightColorBrush`, severity icon foregrounds through `SystemColorHighlightTextColorBrush`, text/border resources through `SystemColorButtonTextColorBrush`, and hyperlink foreground through `SystemColors.HotTrackColor`; existing `InfoBar` template, automation, event, foreground, and panel tests still pass. Existing warning/output remains `NETSDK1137` and the recurring `Failed to resolve WinRT.Runtime.dll` message.
+- `dotnet build .\ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the `InfoBar` High Contrast template-resource override. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages, generated WinRT warnings for `net10.0-windows7.0`, and existing ModernWpf/ModernWpf.Controls warnings.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.ShellChromeKeepsWpfGalleryHighContrastSourceShape|FullyQualifiedName~GalleryNavigationRuntimeTests.MainWindowUsesWpfGalleryTitleChrome|FullyQualifiedName~GalleryNavigationRuntimeTests.MainWindowChromePolicyMatchesWpfGalleryHighContrastPath|FullyQualifiedName~GalleryNavigationRuntimeTests.ShellHighContrastHoverStylesMatchWpfGalleryReferenceChrome|FullyQualifiedName~GalleryNavigationRuntimeTests.ShellNavigationViewTreeViewResourceAliasesTrackThemeChanges|FullyQualifiedName~GalleryNavigationRuntimeTests.ShellNavigationViewAliasesHaveWpfGalleryTreeViewHighContrastTokens" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 6 tests per target. `MainWindow` now keeps the official WPF Gallery-style `UpdateWindowBackground()` code-behind path and source-shape coverage rejects restoring the root `Background="{DynamicResource WindowBackground}"` declaration, while title chrome, high-contrast chrome policy, title/footer high-contrast hover triggers, Light/Dark `NavigationView` resource alias refresh, and HighContrast TreeView token coverage still pass. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
@@ -3041,8 +3050,9 @@ source properties; remaining High Contrast
 work means broader OS high-contrast shell and control paths that are not
 already covered by title chrome, NavigationView TreeView token aliases and
 their HighContrast system-brush references, HeaderTile fills, DataGrid visual
-resource switching and official event-handler shape, or Color subsection
-direct-reference evidence. Home first-viewport Light/Dark
+resource switching and official event-handler shape, InfoBar template-root
+severity token overrides, or Color subsection direct-reference evidence. Home
+first-viewport Light/Dark
 is now accepted at `0` / `0.05` delta with matching dashboard-pane crops; the
 Home root cleanup removes only the local-only `ContentRootGrid` wrapper while
 relying on the existing structural Home crop path.

@@ -131,10 +131,35 @@
                     <Border
                         x:Name="ContentRoot"
                         VerticalAlignment="Top"
+                        ui:ThemeManager.HasThemeResources="True"
                         Background="{DynamicResource InfoBarInformationalSeverityBackgroundBrush}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{TemplateBinding CornerRadius}">
+                        <Border.Resources>
+                            <ui:ResourceDictionaryEx>
+                                <ui:ResourceDictionaryEx.ThemeDictionaries>
+                                    <ResourceDictionary x:Key="HighContrast" ui:ThemeDictionary.Key="HighContrast">
+                                        <m:StaticResource x:Key="InfoBarBorderBrush" ResourceKey="SystemColorButtonTextColorBrush" />
+                                        <m:StaticResource x:Key="InfoBarTitleForeground" ResourceKey="SystemColorButtonTextColorBrush" />
+                                        <m:StaticResource x:Key="InfoBarMessageForeground" ResourceKey="SystemColorButtonTextColorBrush" />
+                                        <SolidColorBrush x:Key="InfoBarHyperlinkButtonForeground" Color="{m:ThemeResource SystemColorHotlightColor}" />
+                                        <m:StaticResource x:Key="InfoBarErrorSeverityBackgroundBrush" ResourceKey="SystemColorWindowColorBrush" />
+                                        <m:StaticResource x:Key="InfoBarWarningSeverityBackgroundBrush" ResourceKey="SystemColorWindowColorBrush" />
+                                        <m:StaticResource x:Key="InfoBarSuccessSeverityBackgroundBrush" ResourceKey="SystemColorWindowColorBrush" />
+                                        <m:StaticResource x:Key="InfoBarInformationalSeverityBackgroundBrush" ResourceKey="SystemColorWindowColorBrush" />
+                                        <m:StaticResource x:Key="InfoBarErrorSeverityIconBackground" ResourceKey="SystemColorHighlightColorBrush" />
+                                        <m:StaticResource x:Key="InfoBarWarningSeverityIconBackground" ResourceKey="SystemColorHighlightColorBrush" />
+                                        <m:StaticResource x:Key="InfoBarSuccessSeverityIconBackground" ResourceKey="SystemColorHighlightColorBrush" />
+                                        <m:StaticResource x:Key="InfoBarInformationalSeverityIconBackground" ResourceKey="SystemColorHighlightColorBrush" />
+                                        <m:StaticResource x:Key="InfoBarErrorSeverityIconForeground" ResourceKey="SystemColorHighlightTextColorBrush" />
+                                        <m:StaticResource x:Key="InfoBarWarningSeverityIconForeground" ResourceKey="SystemColorHighlightTextColorBrush" />
+                                        <m:StaticResource x:Key="InfoBarSuccessSeverityIconForeground" ResourceKey="SystemColorHighlightTextColorBrush" />
+                                        <m:StaticResource x:Key="InfoBarInformationalSeverityIconForeground" ResourceKey="SystemColorHighlightTextColorBrush" />
+                                    </ResourceDictionary>
+                                </ui:ResourceDictionaryEx.ThemeDictionaries>
+                            </ui:ResourceDictionaryEx>
+                        </Border.Resources>
                         <VisualStateManager.CustomVisualStateManager>
                             <ui:VisualStateManagerEx />
                         </VisualStateManager.CustomVisualStateManager>
