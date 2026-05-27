@@ -221,7 +221,8 @@ declaration order, and current official multiline sample-code source shape,
 Expander also keeping the official copied ExpandDirection TODO marker,
 Grid/GroupBox/ResizeGrip also keeping the official compact page-root
 declaration order, and ResizeGrip keeping the official sample-code/button
-attribute order. Grid and GroupBox now also keep the official multiline
+attribute order, compact `LineBreak` declaration, and live support-window
+launcher source shape. Grid and GroupBox now also keep the official multiline
 sample-code source declaration shape for their copied `ControlExample`
 `XamlCode` attributes. Border, Grid, GridSplitter, GroupBox,
 ResizeGrip, and StackPanel now also keep representative official live sample
@@ -346,6 +347,10 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.LayoutPagesKeepOfficialHeaderAndSampleSourceShape|FullyQualifiedName~WpfGalleryLayoutSnippetTests|FullyQualifiedName~GalleryPageRuntimeTests.LayoutPagesUseOfficialPageSpecificViewModels|FullyQualifiedName~GalleryPageRuntimeTests.LayoutItemPagesUseOfficialPageRoots|FullyQualifiedName~GalleryPageRuntimeTests.LayoutAndMediaPagesMatchWpfGalleryReference" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 5 tests per target. The copied Layout ResizeGrip page now keeps the official compact `LineBreak` source shape and the live support-window launcher uses the official `Window window = new Window()` declaration while existing Layout source-shape, snippet, page-specific view-model, copied-root, and rendered-reference coverage still passes. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the ResizeGrip support-window source-shape alignment. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages and existing ModernWpf/ModernWpf.Controls warnings.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.ShellChromeKeepsWpfGalleryHighContrastSourceShape|FullyQualifiedName~GalleryNavigationRuntimeTests.ShellNavigationMenuMatchesWpfGalleryReferenceChrome|FullyQualifiedName~GalleryNavigationRuntimeTests.ShellNavigationPaneRowsUseWpfGalleryTreeViewInsets|FullyQualifiedName~GalleryNavigationRuntimeTests.ShellNavigationViewTreeViewResourceAliasesTrackThemeChanges|FullyQualifiedName~GalleryNavigationRuntimeTests.ShellNavigationViewAliasesHaveWpfGalleryTreeViewHighContrastTokens" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 5 tests per target. The retained shell `NavigationView` now uses the official WPF Gallery 258px left shell width with the official `ContentFrameBorder` 4px left inset, while shell source-shape, row-inset, Light/Dark resource alias, and HighContrast token coverage still passes. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`

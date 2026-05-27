@@ -27,7 +27,7 @@
                         <StackPanel Orientation="Vertical" Grid.Row="1">
                             <TextBlock Margin="0 10 0 40">
                                 Resize grip control is only used along with a Window in WPF.
-                                <LineBreak />
+                                <LineBreak/>
                                 It can not be used in other places as such.
                                 To see the resize grip in action click the button.
                             </TextBlock>

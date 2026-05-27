@@ -16,7 +16,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Layout
 
         private void OpenResizeGripWindow_Click(object sender, RoutedEventArgs e)
         {
-            var window = new Window
+            Window window = new Window()
             {
                 Width = 500,
                 Height = 300,

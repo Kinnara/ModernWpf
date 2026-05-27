@@ -1619,6 +1619,9 @@ namespace ModernWpf.Gallery.Tests
             StringAssert.Contains(
                 resizeGripXaml,
                 "<StackPanel Orientation=\"Vertical\" Grid.Row=\"1\">");
+            StringAssert.Contains(
+                resizeGripXaml,
+                "<LineBreak/>");
             AssertContainsInOrder(
                 resizeGripXaml,
                 "<controls:ControlExample",
@@ -1634,6 +1637,21 @@ namespace ModernWpf.Gallery.Tests
                 "HorizontalAlignment=\"Center\"",
                 "Content=\"Open window with resize grip\"",
                 "Click=\"OpenResizeGripWindow_Click\" />");
+
+            var resizeGripCode = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Layout",
+                "ResizeGripPage.xaml.cs");
+            AssertContainsInOrder(
+                resizeGripCode,
+                "private void OpenResizeGripWindow_Click(object sender, RoutedEventArgs e)",
+                "Window window = new Window()",
+                "ResizeMode = ResizeMode.CanResizeWithGrip,",
+                "Content = new TextBlock",
+                "Text = \"ResizeGrip is present at the bottom right corner of the window\",",
+                "window.Show();");
 
             var stackPanelXaml = ReadRepoFile(
                 "ModernWpf.Gallery",
