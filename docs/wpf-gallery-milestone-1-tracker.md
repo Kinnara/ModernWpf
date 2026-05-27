@@ -429,7 +429,11 @@ and non-client-frame update path including the official
 `GetPrefferedNonClientFrameEdges` helper spelling, the official
 `SystemEvents_UserPreferenceChanged` handler name and dispatcher-lambda refresh
 body, and the retained `NavigationView` alias refresh on `SystemParameters.HighContrast` while keeping the accepted
-NavigationView shell adaptation. The retained `NavigationView` pane now uses the official
+NavigationView shell adaptation. The retained shell title row now also keeps
+the official `Grid.ColumnSpan="2"` source shape, and the adapted Settings
+footer button keeps the official command/style/click attribute order while
+retaining the local `NavigationView` footer command binding. The retained
+`NavigationView` pane now uses the official
 WPF Gallery left-shell width of `258` with the official content-frame
 `Margin="4,0,0,0"` inset, removing the previous one-pixel compensation while
 preserving the established content-frame geometry.
@@ -506,6 +510,10 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.ShellChromeKeepsWpfGalleryHighContrastSourceShape|FullyQualifiedName~GalleryNavigationRuntimeTests.MainWindowUsesWpfGalleryTitleChrome|FullyQualifiedName~GalleryNavigationRuntimeTests.MainWindowChromePolicyMatchesWpfGalleryHighContrastPath|FullyQualifiedName~GalleryNavigationRuntimeTests.ShellHighContrastHoverStylesMatchWpfGalleryReferenceChrome|FullyQualifiedName~GalleryNavigationRuntimeTests.ShellNavigationViewTreeViewResourceAliasesTrackThemeChanges|FullyQualifiedName~GalleryNavigationRuntimeTests.ShellNavigationViewAliasesHaveWpfGalleryTreeViewHighContrastTokens" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 6 tests per target. The retained shell source-shape guard now also pins the official title-row `Grid.ColumnSpan="2"` shape and the adapted Settings footer button command/style/click attribute order, while title chrome, high-contrast chrome policy, title/footer high-contrast hover triggers, Light/Dark `NavigationView` resource alias refresh, and HighContrast TreeView token coverage still pass. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet build .\ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the retained shell title-row and Settings footer source-shape alignment. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages and existing ModernWpf/ModernWpf.Controls warnings.
 - `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~InfoBarApiTests" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0`: 9 tests. `InfoBar` now has focused coverage that its template-root High Contrast resources resolve severity backgrounds through `SystemColorWindowColorBrush`, severity icon backgrounds through `SystemColorHighlightColorBrush`, severity icon foregrounds through `SystemColorHighlightTextColorBrush`, text/border resources through `SystemColorButtonTextColorBrush`, and hyperlink foreground through `SystemColors.HotTrackColor`; existing `InfoBar` template, automation, event, foreground, and panel tests still pass. Existing warning/output remains `NETSDK1137` and the recurring `Failed to resolve WinRT.Runtime.dll` message.
 - `dotnet build .\ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`

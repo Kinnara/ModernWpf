@@ -108,10 +108,10 @@
                         HorizontalContentAlignment="Left"
                         VerticalContentAlignment="Center"
                         AutomationProperties.Name="Settings"
-                        Click="OnSettingsButtonClick"
                         Command="{Binding Value.ViewModel.SettingsCommand, Source={StaticResource NavigationRootDataContextProxy}}"
-                        Style="{StaticResource GalleryNavigationFooterButtonStyle}">
-                        <StackPanel Margin="11,0,0,0" Orientation="Horizontal">
+                        Style="{StaticResource GalleryNavigationFooterButtonStyle}"
+                        Click="OnSettingsButtonClick">
+                        <StackPanel Orientation="Horizontal" Margin="11,0,0,0">
                             <TextBlock
                                 x:Name="SettingsIcon"
                                 VerticalAlignment="Center"

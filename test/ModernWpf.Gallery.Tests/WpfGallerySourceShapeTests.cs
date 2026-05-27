@@ -1116,7 +1116,10 @@ namespace ModernWpf.Gallery.Tests
                 mainWindowXaml,
                 "x:Name=\"HighContrastBorder\"",
                 "BorderBrush=\"Transparent\"",
-                "BorderThickness=\"8 1 8 8\"");
+                "BorderThickness=\"8 1 8 8\"",
+                "Grid.Row=\"0\"",
+                "Grid.ColumnSpan=\"2\"",
+                "Height=\"44\"");
             Assert.IsFalse(
                 mainWindowXaml.Contains("Background=\"{DynamicResource WindowBackground}\"", StringComparison.Ordinal),
                 "MainWindow should keep the official WPF Gallery source shape by applying WindowBackground from code-behind instead of the Window root declaration.");
@@ -1172,9 +1175,10 @@ namespace ModernWpf.Gallery.Tests
                 "HorizontalContentAlignment=\"Left\"",
                 "VerticalContentAlignment=\"Center\"",
                 "AutomationProperties.Name=\"Settings\"",
-                "Click=\"OnSettingsButtonClick\"",
                 "Command=\"{Binding Value.ViewModel.SettingsCommand, Source={StaticResource NavigationRootDataContextProxy}}\"",
-                "Style=\"{StaticResource GalleryNavigationFooterButtonStyle}\"");
+                "Style=\"{StaticResource GalleryNavigationFooterButtonStyle}\"",
+                "Click=\"OnSettingsButtonClick\"",
+                "<StackPanel Orientation=\"Horizontal\" Margin=\"11,0,0,0\">");
             AssertContainsInOrder(
                 navigationRootXaml,
                 "x:Name=\"ContentFrameBorder\"",
