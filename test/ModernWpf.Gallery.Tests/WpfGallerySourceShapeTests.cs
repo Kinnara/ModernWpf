@@ -2080,6 +2080,48 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void DesignGuidanceDesignImageCodeBehindKeepsOfficialUserPreferenceHandlerShape()
+        {
+            foreach (var page in new[]
+            {
+                Tuple.Create("SpacingPage", "SpacingPageViewModel"),
+                Tuple.Create("GeometryPage", "GeometryPageViewModel")
+            })
+            {
+                var source = ReadRepoFile(
+                    "ModernWpf.Gallery",
+                    "Pages",
+                    "WpfGallery",
+                    "DesignGuidance",
+                    page.Item1 + ".xaml.cs").Replace("\r\n", "\n").Replace('\r', '\n');
+
+                AssertContainsInOrder(
+                    source,
+                    "public " + page.Item2 + " ViewModel { get; }",
+                    "public " + page.Item1 + "(" + page.Item2 + " viewModel)",
+                    "InitializeComponent();",
+                    "UpdateImageResources();",
+                    "ViewModel = viewModel;",
+                    "DataContext = this;",
+                    "Loaded += OnLoaded;",
+                    "SystemEvents.UserPreferenceChanged += SystemEvents_UserPreferenceChanged;",
+                    "ThemeManager.AddActualThemeChangedHandler(this, OnActualThemeChanged);",
+                    "Unloaded += OnUnloaded;",
+                    "private void OnLoaded(object sender, RoutedEventArgs e)",
+                    "UpdateImageResources();",
+                    "private void SystemEvents_UserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)",
+                    "Dispatcher.Invoke(() =>\n            {\n                UpdateImageResources();\n            });",
+                    "private void OnActualThemeChanged(object sender, RoutedEventArgs e)",
+                    "UpdateImageResources();",
+                    "private void OnUnloaded(object sender, RoutedEventArgs e)",
+                    "Loaded -= OnLoaded;",
+                    "SystemEvents.UserPreferenceChanged -= SystemEvents_UserPreferenceChanged;",
+                    "ThemeManager.RemoveActualThemeChangedHandler(this, OnActualThemeChanged);",
+                    "Unloaded -= OnUnloaded;");
+            }
+        }
+
+        [TestMethod]
         public void DesignGuidanceColorSubsectionRootsKeepOfficialSourceShape()
         {
             foreach (var section in new[]

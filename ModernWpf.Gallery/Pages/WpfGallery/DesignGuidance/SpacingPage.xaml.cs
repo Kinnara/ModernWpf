@@ -18,7 +18,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
             ViewModel = viewModel;
             DataContext = this;
             Loaded += OnLoaded;
-            SystemEvents.UserPreferenceChanged += OnUserPreferenceChanged;
+            SystemEvents.UserPreferenceChanged += SystemEvents_UserPreferenceChanged;
             ThemeManager.AddActualThemeChangedHandler(this, OnActualThemeChanged);
             Unloaded += OnUnloaded;
         }
@@ -28,9 +28,12 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
             UpdateImageResources();
         }
 
-        private void OnUserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
+        private void SystemEvents_UserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
         {
-            Dispatcher.Invoke(UpdateImageResources);
+            Dispatcher.Invoke(() =>
+            {
+                UpdateImageResources();
+            });
         }
 
         private void OnActualThemeChanged(object sender, RoutedEventArgs e)
@@ -41,7 +44,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             Loaded -= OnLoaded;
-            SystemEvents.UserPreferenceChanged -= OnUserPreferenceChanged;
+            SystemEvents.UserPreferenceChanged -= SystemEvents_UserPreferenceChanged;
             ThemeManager.RemoveActualThemeChangedHandler(this, OnActualThemeChanged);
             Unloaded -= OnUnloaded;
         }
