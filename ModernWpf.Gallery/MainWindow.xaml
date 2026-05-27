@@ -14,7 +14,6 @@
     MinWidth="780"
     MinHeight="470"
     WindowStartupLocation="CenterScreen"
-    Background="{DynamicResource WindowBackground}"
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     mc:Ignorable="d"
     ui:ThemeManager.IsThemeAware="True">

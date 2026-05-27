@@ -1117,6 +1117,9 @@ namespace ModernWpf.Gallery.Tests
                 "x:Name=\"HighContrastBorder\"",
                 "BorderBrush=\"Transparent\"",
                 "BorderThickness=\"8 1 8 8\"");
+            Assert.IsFalse(
+                mainWindowXaml.Contains("Background=\"{DynamicResource WindowBackground}\"", StringComparison.Ordinal),
+                "MainWindow should keep the official WPF Gallery source shape by applying WindowBackground from code-behind instead of the Window root declaration.");
             AssertContainsInOrder(
                 mainWindowXaml,
                 "x:Name=\"BackButton\"",
@@ -1191,10 +1194,16 @@ namespace ModernWpf.Gallery.Tests
 
             AssertContainsInOrder(
                 mainWindowCode,
+                "InitializeComponent();",
+                "UpdateWindowBackground();",
+                "ConfigureWindowChrome();",
+                "UpdateMainWindowVisuals();",
                 "SystemEvents.UserPreferenceChanged += SystemEvents_UserPreferenceChanged;",
                 "StateChanged += OnWindowStateChanged;",
                 "Activated += OnWindowActivationChanged;",
                 "Deactivated += OnWindowActivationChanged;",
+                "private void UpdateWindowBackground()",
+                "SetResourceReference(BackgroundProperty, \"WindowBackground\");",
                 "private void SystemEvents_UserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)",
                 "Dispatcher.Invoke(() =>",
                 "UpdateMainWindowVisuals();",

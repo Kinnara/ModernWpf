@@ -26,6 +26,7 @@ namespace ModernWpf.Gallery
                 AutomationProperties.SetAutomationId(this, "ModernWpfGalleryMainWindow");
             }
 
+            UpdateWindowBackground();
             ConfigureWindowChrome();
             UpdateMainWindowVisuals();
             SystemEvents.UserPreferenceChanged += SystemEvents_UserPreferenceChanged;
@@ -53,6 +54,11 @@ namespace ModernWpf.Gallery
         internal void NavigateTo(string uniqueId)
         {
             RootPage.NavigateTo(uniqueId);
+        }
+
+        private void UpdateWindowBackground()
+        {
+            SetResourceReference(BackgroundProperty, "WindowBackground");
         }
 
         private void SystemEvents_UserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
