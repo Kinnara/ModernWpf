@@ -401,11 +401,11 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsNull(controlExample.Template.FindName("SourceCodeExpander", controlExample));
                     var sourceCodeExpander = FindVisualChildren<Expander>(controlExample).Single();
                     Assert.AreEqual("Source code", sourceCodeExpander.Header);
-                    Assert.AreEqual(42.0, sourceCodeExpander.MinHeight);
+                    Assert.AreEqual(43.0, sourceCodeExpander.MinHeight);
                     Assert.AreEqual(Visibility.Visible, sourceCodeExpander.Visibility);
                     Assert.IsTrue(
-                        sourceCodeExpander.ActualHeight >= 42.0 && sourceCodeExpander.ActualHeight <= 43.5,
-                        "Expected collapsed source expander height near the official WPF Gallery 42-43px row; actual " + sourceCodeExpander.ActualHeight);
+                        sourceCodeExpander.ActualHeight >= 43.0 && sourceCodeExpander.ActualHeight <= 44.5,
+                        "Expected collapsed source expander height near the official WPF Gallery 43px row; actual " + sourceCodeExpander.ActualHeight);
 
                     var sourceHeaderToggle = FindVisualChildren<System.Windows.Controls.Primitives.ToggleButton>(sourceCodeExpander).Single();
                     Assert.IsFalse(sourceHeaderToggle.Focusable);

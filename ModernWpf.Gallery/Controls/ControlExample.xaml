@@ -151,7 +151,7 @@
                             Grid.Row="2"
                             AutomationProperties.Name="{Binding HeaderText, RelativeSource={RelativeSource TemplatedParent}, StringFormat=View Source Code for {0}}"
                             Header="Source code"
-                            MinHeight="42">
+                            MinHeight="43">
                             <Expander.Style>
                                 <Style BasedOn="{StaticResource ControlExampleSourceExpanderStyle}" TargetType="{x:Type Expander}">
                                     <Style.Triggers>

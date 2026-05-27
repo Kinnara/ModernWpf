@@ -1422,7 +1422,7 @@ namespace ModernWpf.Gallery.Tests
                 "Grid.Row=\"2\"",
                 "AutomationProperties.Name=\"{Binding HeaderText, RelativeSource={RelativeSource TemplatedParent}, StringFormat=View Source Code for {0}}\"",
                 "Header=\"Source code\"",
-                "MinHeight=\"42\">",
+                "MinHeight=\"43\">",
                 "<Style BasedOn=\"{StaticResource ControlExampleSourceExpanderStyle}\" TargetType=\"{x:Type Expander}\">",
                 "<MultiDataTrigger>",
                 "<Condition Binding=\"{Binding XamlCode, RelativeSource={RelativeSource TemplatedParent}}\" Value=\"{x:Null}\" />",
