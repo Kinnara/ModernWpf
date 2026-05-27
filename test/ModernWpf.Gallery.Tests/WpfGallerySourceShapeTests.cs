@@ -58,6 +58,9 @@ namespace ModernWpf.Gallery.Tests
                 Assert.IsFalse(
                     sectionSource.Contains("public sealed class " + className + " : SectionPage", StringComparison.Ordinal),
                     className + " should remain unsealed like the official WPF Gallery section page type.");
+                Assert.IsTrue(
+                    sectionSource.Contains("public partial class " + className + " : SectionPage", StringComparison.Ordinal),
+                    className + " should keep the official WPF Gallery partial section page declaration shape.");
             }
         }
 

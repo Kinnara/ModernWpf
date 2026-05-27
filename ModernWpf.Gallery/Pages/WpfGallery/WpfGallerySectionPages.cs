@@ -53,7 +53,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery
         }
     }
 
-    public class DesignGuidancePage : SectionPage
+    public partial class DesignGuidancePage : SectionPage
     {
         public DesignGuidancePage()
             : base(WpfGallerySectionPageFactory.GetRequiredGroup("DesignGuidance"))
@@ -66,7 +66,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery
         }
     }
 
-    public class SamplesPage : SectionPage
+    public partial class SamplesPage : SectionPage
     {
         public SamplesPage()
             : base(WpfGallerySectionPageFactory.GetRequiredGroup("Samples"))
@@ -79,7 +79,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery
         }
     }
 
-    public class BasicInputPage : SectionPage
+    public partial class BasicInputPage : SectionPage
     {
         public BasicInputPage()
             : base(WpfGallerySectionPageFactory.GetRequiredGroup("BasicInput"))
@@ -92,7 +92,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery
         }
     }
 
-    public class CollectionsPage : SectionPage
+    public partial class CollectionsPage : SectionPage
     {
         public CollectionsPage()
             : base(WpfGallerySectionPageFactory.GetRequiredGroup("Collections"))
@@ -105,7 +105,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery
         }
     }
 
-    public class DateAndTimePage : SectionPage
+    public partial class DateAndTimePage : SectionPage
     {
         public DateAndTimePage()
             : base(WpfGallerySectionPageFactory.GetRequiredGroup("DateAndCalendar"))
@@ -118,7 +118,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery
         }
     }
 
-    public class LayoutPage : SectionPage
+    public partial class LayoutPage : SectionPage
     {
         public LayoutPage()
             : base(WpfGallerySectionPageFactory.GetRequiredGroup("Layout"))
@@ -131,7 +131,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery
         }
     }
 
-    public class MediaPage : SectionPage
+    public partial class MediaPage : SectionPage
     {
         public MediaPage()
             : base(WpfGallerySectionPageFactory.GetRequiredGroup("Media"))
@@ -144,7 +144,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery
         }
     }
 
-    public class NavigationPage : SectionPage
+    public partial class NavigationPage : SectionPage
     {
         public NavigationPage()
             : base(WpfGallerySectionPageFactory.GetRequiredGroup("Navigation"))
@@ -157,7 +157,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery
         }
     }
 
-    public class StatusAndInfoPage : SectionPage
+    public partial class StatusAndInfoPage : SectionPage
     {
         public StatusAndInfoPage()
             : base(WpfGallerySectionPageFactory.GetRequiredGroup("StatusAndInfo"))
@@ -170,7 +170,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery
         }
     }
 
-    public class TextPage : SectionPage
+    public partial class TextPage : SectionPage
     {
         public TextPage()
             : base(WpfGallerySectionPageFactory.GetRequiredGroup("Text"))
@@ -183,7 +183,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery
         }
     }
 
-    public class SystemPage : SectionPage
+    public partial class SystemPage : SectionPage
     {
         public SystemPage()
             : base(WpfGallerySectionPageFactory.GetRequiredGroup("System"))
