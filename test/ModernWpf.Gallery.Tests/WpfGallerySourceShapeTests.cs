@@ -381,6 +381,86 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void SystemViewModelsKeepOfficialObservableStateSourceShape()
+        {
+            var source = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "System",
+                "SystemPageViewModels.cs");
+
+            AssertContainsInOrder(
+                source,
+                "public abstract class SystemPageViewModelBase : WpfGalleryPageViewModel",
+                "protected SystemPageViewModelBase(string pageTitle, string pageDescription)",
+                ": base(pageTitle, pageDescription)",
+                "public partial class FileAndFolderDialogsPageViewModel : SystemPageViewModelBase",
+                "private string _singleFilePath = \"No file selected\";",
+                "private string _multipleFilesPath = \"No files selected\";",
+                "private string _fileContent = \"Enter text here to save to a file...\";",
+                "private string _savedFilePath = \"No file saved\";",
+                "private string _selectedFolderPath = \"No folder selected\";",
+                ": base(",
+                "\"File and Folder Dialogs\",",
+                "\"Use the OpenFileDialog, SaveFileDialog, and OpenFolderDialog to let users select files and folders in a secure way.\")",
+                "public string SingleFilePath",
+                "SetProperty(ref _singleFilePath, value);",
+                "public string MultipleFilesPath",
+                "SetProperty(ref _multipleFilesPath, value);",
+                "public string FileContent",
+                "SetProperty(ref _fileContent, value);",
+                "public string SavedFilePath",
+                "SetProperty(ref _savedFilePath, value);",
+                "public string SelectedFolderPath",
+                "SetProperty(ref _selectedFolderPath, value);");
+            AssertContainsInOrder(
+                source,
+                "public partial class MessageBoxPageViewModel : SystemPageViewModelBase",
+                "private string _defaultMessageResult = \"No message shown yet\";",
+                "private string _customTitleResult = \"No message shown yet\";",
+                "private int _selectedButtonIndex = 0;",
+                "private string _differentButtonsResult = \"No button clicked yet\";",
+                "private string _differentButtonsXamlCode = \"<Button Content=\\\"Show MessageBox\\\" Click=\\\"ShowMessageBoxButton_Click\\\" />\";",
+                "private string _differentButtonsCSharpCode = string.Format(_differentButtonsMessageBoxSampleCSharpCodeString, \"\\tMessageBox.Show(\\\"Message\\\", \\\"Title\\\", MessageBoxButton.OK);\");",
+                "private int _selectedImageIndex = 0;",
+                "private string _differentImagesResult = \"No image example shown yet\";",
+                "private string _differentImagesXamlCode = \"<Button Content=\\\"Show MessageBox\\\" Click=\\\"ShowMessageButton_Click\\\" />\";",
+                "private string _differentImagesCSharpCode = string.Format(_differentImagesMessageBoxSampleCSharpCodeString, \"\\tMessageBox.Show(\\\"Message\\\", \\\"Title\\\", MessageBoxButton.OK, MessageBoxImage.None);\");",
+                "private string _commonMessagesResult = \"No common message shown yet\";",
+                "private string _commonMessagesXamlCode = \"<WrapPanel Margin=\\\"0,0,0,10\\\">\\n\" +",
+                "private string _commonMessagesCSharpCode = \"// Information\\n\" +",
+                "private string _customDefaultResult = \"No selection made\";",
+                "public string DifferentButtonsXamlCode",
+                "private set { SetProperty(ref _differentButtonsXamlCode, value); }",
+                "public string DifferentImagesXamlCode",
+                "private set { SetProperty(ref _differentImagesXamlCode, value); }",
+                "public string CommonMessagesXamlCode",
+                "private set { SetProperty(ref _commonMessagesXamlCode, value); }",
+                "public string CommonMessagesCSharpCode",
+                "private set { SetProperty(ref _commonMessagesCSharpCode, value); }",
+                "private const string _differentButtonsMessageBoxSampleCSharpCodeString =",
+                "private const string _differentImagesMessageBoxSampleCSharpCodeString =");
+            AssertContainsInOrder(
+                source,
+                "public partial class ClipboardPageViewModel : SystemPageViewModelBase",
+                "private string _copyStatus = string.Empty;",
+                "private string _pastedText = string.Empty;",
+                "private string _clearStatus = string.Empty;",
+                "private string _formatsInfo = string.Empty;",
+                "private string _copyImageStatus = string.Empty;",
+                "private string _pasteImageStatus = string.Empty;",
+                "public ClipboardPageViewModel()",
+                ": base(\"Clipboard\", string.Empty)");
+            Assert.IsFalse(
+                source.Contains("public event PropertyChangedEventHandler", StringComparison.Ordinal),
+                "System view models should use the shared observable page-view-model adapter instead of local event plumbing.");
+            Assert.IsFalse(
+                source.Contains("private void OnPropertyChanged", StringComparison.Ordinal),
+                "System view models should use the shared SetProperty adapter instead of local OnPropertyChanged plumbing.");
+        }
+
+        [TestMethod]
         public void WpfGalleryNavigationViewModelsKeepOfficialStateAndNavigateSourceShape()
         {
             var source = ReadRepoFile(

@@ -929,6 +929,11 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual("Enter text here to save to a file...", dialogsPage.ViewModel.FileContent);
                 Assert.AreEqual("No file saved", dialogsPage.ViewModel.SavedFilePath);
                 Assert.AreEqual("No folder selected", dialogsPage.ViewModel.SelectedFolderPath);
+                var changedProperties = new List<string>();
+                dialogsPage.ViewModel.PropertyChanged += (sender, args) => changedProperties.Add(args.PropertyName);
+                dialogsPage.ViewModel.FileContent = "Saved text";
+                Assert.AreEqual("Saved text", dialogsPage.ViewModel.FileContent);
+                CollectionAssert.Contains(changedProperties, nameof(FileAndFolderDialogsPageViewModel.FileContent));
 
                 var messageBoxPage = (MessageBoxPage)new ItemPage(GalleryCatalog.FindItem("MessageBox")).DirectPageContent;
                 Assert.AreEqual("No message shown yet", messageBoxPage.ViewModel.DefaultMessageResult);
@@ -941,7 +946,11 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual("<Button Content=\"Show MessageBox\" Click=\"ShowMessageButton_Click\" />", messageBoxPage.ViewModel.DifferentImagesXamlCode);
                 StringAssert.Contains(messageBoxPage.ViewModel.DifferentButtonsCSharpCode, "MessageBoxButton.OK");
                 StringAssert.Contains(messageBoxPage.ViewModel.DifferentImagesCSharpCode, "MessageBoxImage.None");
+                changedProperties.Clear();
+                messageBoxPage.ViewModel.PropertyChanged += (sender, args) => changedProperties.Add(args.PropertyName);
                 messageBoxPage.ViewModel.SelectedButtonIndex = 1;
+                CollectionAssert.Contains(changedProperties, nameof(MessageBoxPageViewModel.SelectedButtonIndex));
+                CollectionAssert.Contains(changedProperties, nameof(MessageBoxPageViewModel.DifferentButtonsCSharpCode));
                 StringAssert.Contains(messageBoxPage.ViewModel.DifferentButtonsCSharpCode, "MessageBoxButton.OKCancel");
                 messageBoxPage.ViewModel.SelectedImageIndex = 4;
                 StringAssert.Contains(messageBoxPage.ViewModel.DifferentImagesCSharpCode, "MessageBoxImage.Information");
@@ -953,6 +962,11 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(string.Empty, clipboardPage.ViewModel.FormatsInfo);
                 Assert.AreEqual(string.Empty, clipboardPage.ViewModel.CopyImageStatus);
                 Assert.AreEqual(string.Empty, clipboardPage.ViewModel.PasteImageStatus);
+                changedProperties.Clear();
+                clipboardPage.ViewModel.PropertyChanged += (sender, args) => changedProperties.Add(args.PropertyName);
+                clipboardPage.ViewModel.CopyStatus = "Copied";
+                Assert.AreEqual("Copied", clipboardPage.ViewModel.CopyStatus);
+                CollectionAssert.Contains(changedProperties, nameof(ClipboardPageViewModel.CopyStatus));
             });
         }
 
