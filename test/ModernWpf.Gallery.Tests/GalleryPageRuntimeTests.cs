@@ -815,6 +815,14 @@ namespace ModernWpf.Gallery.Tests
                 Assert.IsInstanceOfType(iconographyPage.ViewModel, typeof(IconographyPageViewModel));
                 Assert.AreEqual("Icons", iconographyPage.ViewModel.PageTitle);
                 Assert.AreEqual("Guide showing how to use icons in your application.", iconographyPage.ViewModel.PageDescription);
+                var changedProperties = new List<string>();
+                iconographyPage.ViewModel.PropertyChanged += (sender, args) => changedProperties.Add(args.PropertyName);
+                iconographyPage.ViewModel.LoadDataCommand.Execute(null);
+                Assert.IsTrue(iconographyPage.ViewModel.AllIcons.Count > 0);
+                Assert.IsTrue(iconographyPage.ViewModel.SearchFilteredIcons.Count > 0);
+                iconographyPage.ViewModel.ApplyTagFilterCommand.Execute("clipboard");
+                Assert.AreEqual("clipboard", iconographyPage.ViewModel.SearchText);
+                Assert.IsTrue(changedProperties.Contains("SearchText"));
             });
         }
 

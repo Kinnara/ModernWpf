@@ -312,6 +312,75 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void DesignGuidanceViewModelsKeepOfficialObservableStateSourceShape()
+        {
+            var simpleSource = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "DesignGuidance",
+                "DesignGuidancePageViewModels.cs");
+
+            AssertContainsInOrder(
+                simpleSource,
+                "public partial class ColorsPageViewModel : WpfGalleryPageViewModel",
+                ": base(\"Colors\", \"Guide showing how to use colors in your app\")",
+                "public partial class TypographyPageViewModel : WpfGalleryPageViewModel",
+                ": base(\"Typography\", \"Guide showing how to use typography in your app\")",
+                "public partial class SpacingPageViewModel : WpfGalleryPageViewModel",
+                ": base(\"Spacing\", \"Guide showing how to use spacing in your app\")",
+                "public partial class GeometryPageViewModel : WpfGalleryPageViewModel",
+                ": base(\"Geometry\", string.Empty)");
+
+            var iconographySource = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "DesignGuidance",
+                "IconographyPageViewModel.cs");
+
+            AssertContainsInOrder(
+                iconographySource,
+                "public partial class IconographyPageViewModel : WpfGalleryPageViewModel",
+                "private ICollection<IconData> _allIcons = new List<IconData>();",
+                "private IconData _selectedIcon;",
+                "private string _searchText = string.Empty;",
+                "private ObservableCollection<IconData> _searchFilteredIcons = new ObservableCollection<IconData>();",
+                "private ObservableCollection<IconData> _displayedIcons = new ObservableCollection<IconData>();",
+                "private int _currentPage = 1;",
+                "private int _totalPages = 1;",
+                "private int _selectedPageSizeIndex = 1;",
+                "public IconographyPageViewModel()",
+                ": base(\"Icons\", \"Guide showing how to use icons in your application.\")",
+                "public ICollection<IconData> AllIcons",
+                "SetProperty(ref _allIcons, value ?? new List<IconData>());",
+                "public ObservableCollection<IconData> SearchFilteredIcons",
+                "SetProperty(ref _searchFilteredIcons, value ?? new ObservableCollection<IconData>());",
+                "public ObservableCollection<IconData> DisplayedIcons",
+                "SetProperty(ref _displayedIcons, value ?? new ObservableCollection<IconData>());",
+                "public IconData SelectedIcon",
+                "SetProperty(ref _selectedIcon, value);",
+                "public string SearchText",
+                "if (SetProperty(ref _searchText, value))",
+                "public List<string> PageSizeOptions { get; } = new List<string> { \"100\", \"250\", \"500\", \"1000\", \"All\" };",
+                "AllIcons = ReadIconData().ToList();",
+                "SelectedIcon = AllIcons.FirstOrDefault();",
+                "SearchFilteredIcons = new ObservableCollection<IconData>(AllIcons);",
+                "SearchFilteredIcons.Clear();",
+                "var searchFilteredIconData = AllIcons.Where(icon =>",
+                "private void ApplyTagFilter(string tag)",
+                "var trimmedTag = tag.Trim();",
+                "if (string.Equals(trimmedTag, SearchText, StringComparison.Ordinal))",
+                "SearchText = trimmedTag;");
+            Assert.IsFalse(
+                iconographySource.Contains("public event PropertyChangedEventHandler", StringComparison.Ordinal),
+                "Iconography should use the shared observable page-view-model adapter instead of local event plumbing.");
+            Assert.IsFalse(
+                iconographySource.Contains("private void OnPropertyChanged", StringComparison.Ordinal),
+                "Iconography should use the shared SetProperty adapter instead of local OnPropertyChanged plumbing.");
+        }
+
+        [TestMethod]
         public void WpfGalleryNavigationViewModelsKeepOfficialStateAndNavigateSourceShape()
         {
             var source = ReadRepoFile(

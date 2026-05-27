@@ -163,6 +163,14 @@ The copied top-level `SettingsPageViewModel` now also reuses the shared
 observable page-state adapter for its official `PageTitle = "Settings"` source
 shape instead of keeping a computed string getter, while preserving the local
 null `PageDescription` binding used by the copied Settings page.
+Design Guidance page-specific view models now also keep the official
+observable state direction: simple Colors, Typography, Spacing, and Geometry
+view models continue to reuse the shared page-state adapter, and the copied
+Iconography view model now inherits that adapter, stores official-style
+`AllIcons`, `SelectedIcon`, `SearchText`, `SearchFilteredIcons`,
+`DisplayedIcons`, pagination, and page-size backing state, and removes its
+local `INotifyPropertyChanged` plumbing in favor of the shared `SetProperty`
+path while retaining the local JSON data loader and command adapter.
 Copied Basic Input page-specific view models now also keep the official WPF
 Gallery state/command source shape for Button, CheckBox, ComboBox, RadioButton,
 and Slider, including Button's `Message` state and second checkbox command
@@ -467,6 +475,10 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.DesignGuidanceViewModelsKeepOfficialObservableStateSourceShape|FullyQualifiedName~WpfGallerySourceShapeTests.CopiedWpfGalleryViewModelClassesKeepOfficialPartialDeclarationShape|FullyQualifiedName~WpfGallerySourceShapeTests.CopiedWpfGalleryIconDataModelKeepsOfficialPropertyAndGlyphShape|FullyQualifiedName~WpfGalleryDesignGuidanceSnippetTests.IconographyLoadedHandlerUsesWpfGalleryLoadDataCommandPath|FullyQualifiedName~WpfGalleryDesignGuidanceSnippetTests.DesignGuidanceControlExamplesMatchOfficialWpfGallerySampleCode|FullyQualifiedName~GalleryPageRuntimeTests.DesignGuidancePagesUseOfficialPageSpecificViewModels|FullyQualifiedName~GalleryPageRuntimeTests.DesignGuidanceItemPagesUseOfficialPageRoots|FullyQualifiedName~GalleryPageRuntimeTests.SourceInitFirstCopiedPagesRenderInjectedViewModelBindings|FullyQualifiedName~GalleryPageRuntimeTests.IconographyPageUsesWpfGalleryIconLibraryLayout" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 9 tests per target. The copied Iconography view model now inherits the shared observable page-view-model adapter and keeps official-style icon/pagination backing state while Design Guidance partial view-model declarations, IconData model source shape, Iconography load-command source path, Design Guidance snippets, page-specific view-model routing, direct page roots, injected view-model bindings, and icon-library layout coverage still pass. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the copied Iconography view-model observable-state alignment. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages and existing ModernWpf/ModernWpf.Controls warnings.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.SettingsViewModelKeepsOfficialObservableTitleSourceShape|FullyQualifiedName~WpfGallerySourceShapeTests.WpfGalleryPageViewModelProvidesObservableStateAdapter|FullyQualifiedName~WpfGallerySourceShapeTests.CopiedWpfGalleryViewModelClassesKeepOfficialPartialDeclarationShape|FullyQualifiedName~WpfGallerySourceShapeTests.TopLevelCodeBehindKeepsOfficialViewModelMemberOrderShape|FullyQualifiedName~WpfGallerySourceShapeTests.SettingsPageKeepsOfficialSettingsDeclarationSourceShape|FullyQualifiedName~GalleryPageRuntimeTests.TopLevelWpfGalleryPagesAcceptInjectedViewModels|FullyQualifiedName~GalleryPageRuntimeTests.SettingsPageMatchesWpfGalleryReferenceLayout|FullyQualifiedName~GalleryNavigationRuntimeTests.ShellNavigationMenuMatchesWpfGalleryReferenceChrome" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 8 tests per target. The copied Settings view model now reuses the shared observable page-title adapter for its official `Settings` title source shape while shared observable page-view-model source shape, copied partial view-model declarations, top-level code-behind member order, Settings source/layout coverage, injected top-level view-model paths, and shell Settings navigation still pass. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
@@ -2743,6 +2755,9 @@ official-style backing state and direct `Navigate(object pageType)` methods
 behind their local command adapters,
 with the copied Settings view-model adapter now also reusing observable
 page-title state for the official `Settings` title source shape,
+with the copied Iconography view-model adapter now also reusing shared
+observable state for official-style icon, search, and pagination backing
+collections while retaining local data-loading adaptations,
 with Basic Input view models now matching the official state-field and
 command-handler source shape for Button, CheckBox, ComboBox, RadioButton, and
 Slider while retaining local manual notification adapters,

@@ -1,27 +1,29 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Json;
 using System.Windows.Input;
+using ModernWpf.Gallery.Pages.WpfGallery;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 {
-    public partial class IconographyPageViewModel : INotifyPropertyChanged
+    public partial class IconographyPageViewModel : WpfGalleryPageViewModel
     {
         private readonly RelayCommand _previousPageCommand;
         private readonly RelayCommand _nextPageCommand;
-        private List<IconData> _allIcons = new List<IconData>();
-        private List<IconData> _searchFilteredIcons = new List<IconData>();
+        private ICollection<IconData> _allIcons = new List<IconData>();
         private IconData _selectedIcon;
         private string _searchText = string.Empty;
+        private ObservableCollection<IconData> _searchFilteredIcons = new ObservableCollection<IconData>();
+        private ObservableCollection<IconData> _displayedIcons = new ObservableCollection<IconData>();
         private int _currentPage = 1;
         private int _totalPages = 1;
         private int _selectedPageSizeIndex = 1;
 
         public IconographyPageViewModel()
+            : base("Icons", "Guide showing how to use icons in your application.")
         {
             LoadDataCommand = new RelayCommand(delegate { LoadData(); });
             ApplyTagFilterCommand = new RelayCommand(parameter => ApplyTagFilter(parameter as string));
@@ -29,31 +31,28 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
             _nextPageCommand = new RelayCommand(delegate { NextPage(); }, delegate { return CanGoToNextPage(); });
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public string PageTitle
+        public ICollection<IconData> AllIcons
         {
-            get { return "Icons"; }
+            get { return _allIcons; }
+            set { SetProperty(ref _allIcons, value ?? new List<IconData>()); }
         }
 
-        public string PageDescription
+        public ObservableCollection<IconData> SearchFilteredIcons
         {
-            get { return "Guide showing how to use icons in your application."; }
+            get { return _searchFilteredIcons; }
+            set { SetProperty(ref _searchFilteredIcons, value ?? new ObservableCollection<IconData>()); }
         }
 
-        public ObservableCollection<IconData> DisplayedIcons { get; } = new ObservableCollection<IconData>();
+        public ObservableCollection<IconData> DisplayedIcons
+        {
+            get { return _displayedIcons; }
+            set { SetProperty(ref _displayedIcons, value ?? new ObservableCollection<IconData>()); }
+        }
 
         public IconData SelectedIcon
         {
             get { return _selectedIcon; }
-            set
-            {
-                if (!ReferenceEquals(_selectedIcon, value))
-                {
-                    _selectedIcon = value;
-                    OnPropertyChanged("SelectedIcon");
-                }
-            }
+            set { SetProperty(ref _selectedIcon, value); }
         }
 
         public string SearchText
@@ -62,10 +61,8 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
             set
             {
                 value = value ?? string.Empty;
-                if (!string.Equals(_searchText, value, StringComparison.Ordinal))
+                if (SetProperty(ref _searchText, value))
                 {
-                    _searchText = value;
-                    OnPropertyChanged("SearchText");
                     UpdateSearchFilter();
                 }
             }
@@ -76,10 +73,8 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
             get { return _currentPage; }
             private set
             {
-                if (_currentPage != value)
+                if (SetProperty(ref _currentPage, value))
                 {
-                    _currentPage = value;
-                    OnPropertyChanged("CurrentPage");
                     _previousPageCommand.RaiseCanExecuteChanged();
                     _nextPageCommand.RaiseCanExecuteChanged();
                 }
@@ -91,10 +86,8 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
             get { return _totalPages; }
             private set
             {
-                if (_totalPages != value)
+                if (SetProperty(ref _totalPages, value))
                 {
-                    _totalPages = value;
-                    OnPropertyChanged("TotalPages");
                     _previousPageCommand.RaiseCanExecuteChanged();
                     _nextPageCommand.RaiseCanExecuteChanged();
                 }
@@ -113,15 +106,16 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 
                 if (_selectedPageSizeIndex != value)
                 {
-                    _selectedPageSizeIndex = value;
-                    OnPropertyChanged("SelectedPageSizeIndex");
-                    CurrentPage = 1;
-                    UpdatePagination();
+                    if (SetProperty(ref _selectedPageSizeIndex, value))
+                    {
+                        CurrentPage = 1;
+                        UpdatePagination();
+                    }
                 }
             }
         }
 
-        public IReadOnlyList<string> PageSizeOptions { get; } = new[] { "100", "250", "500", "1000", "All" };
+        public List<string> PageSizeOptions { get; } = new List<string> { "100", "250", "500", "1000", "All" };
 
         public ICommand LoadDataCommand { get; }
 
@@ -139,9 +133,9 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 
         private void LoadData()
         {
-            _allIcons = ReadIconData().ToList();
-            _searchFilteredIcons = new List<IconData>(_allIcons);
-            SelectedIcon = _allIcons.FirstOrDefault();
+            AllIcons = ReadIconData().ToList();
+            SelectedIcon = AllIcons.FirstOrDefault();
+            SearchFilteredIcons = new ObservableCollection<IconData>(AllIcons);
             CurrentPage = 1;
             UpdatePagination();
         }
@@ -165,21 +159,28 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 
             if (string.IsNullOrWhiteSpace(filterText))
             {
-                _searchFilteredIcons = new List<IconData>(_allIcons);
+                SearchFilteredIcons.Clear();
+                foreach (var icon in AllIcons)
+                {
+                    SearchFilteredIcons.Add(icon);
+                }
             }
             else
             {
-                _searchFilteredIcons = _allIcons
-                    .Where(icon =>
+                SearchFilteredIcons.Clear();
+                var searchFilteredIconData = AllIcons.Where(icon =>
                         icon.Name.IndexOf(filterText, comparison) >= 0 ||
-                        (icon.Tags != null && icon.Tags.Any(tag => tag.IndexOf(filterText, comparison) >= 0)))
-                    .ToList();
+                        (icon.Tags != null && icon.Tags.Any(tag => tag.IndexOf(filterText, comparison) >= 0)));
+                foreach (var icon in searchFilteredIconData)
+                {
+                    SearchFilteredIcons.Add(icon);
+                }
             }
 
             CurrentPage = 1;
             UpdatePagination(false);
 
-            if (_searchFilteredIcons.Count == 0)
+            if (SearchFilteredIcons.Count == 0)
             {
                 SelectedIcon = previousSelectedIcon;
                 return;
@@ -204,7 +205,13 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
                 return;
             }
 
-            SearchText = tag.Trim();
+            var trimmedTag = tag.Trim();
+            if (string.Equals(trimmedTag, SearchText, StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            SearchText = trimmedTag;
         }
 
         private void PreviousPage()
@@ -238,7 +245,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
         private void UpdatePagination(bool resetSelectedIcon = true)
         {
             var pageSize = PageSize;
-            TotalPages = pageSize == int.MaxValue ? 1 : (int)Math.Ceiling((double)_searchFilteredIcons.Count / pageSize);
+            TotalPages = pageSize == int.MaxValue ? 1 : (int)Math.Ceiling((double)SearchFilteredIcons.Count / pageSize);
             if (TotalPages == 0)
             {
                 TotalPages = 1;
@@ -258,8 +265,8 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 
             var pageSize = PageSize;
             var iconsToDisplay = pageSize == int.MaxValue
-                ? _searchFilteredIcons
-                : _searchFilteredIcons.Skip((CurrentPage - 1) * pageSize).Take(pageSize);
+                ? SearchFilteredIcons
+                : SearchFilteredIcons.Skip((CurrentPage - 1) * pageSize).Take(pageSize);
 
             foreach (var icon in iconsToDisplay)
             {
@@ -301,15 +308,6 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
                 new IconData { Code = "E73E", Name = "Accept", Tags = new List<string> { "check", "success" } },
                 new IconData { Code = "E721", Name = "Find", Tags = new List<string> { "search" } }
             };
-        }
-
-        private void OnPropertyChanged(string propertyName)
-        {
-            var handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
         }
 
         private sealed class RelayCommand : ICommand
