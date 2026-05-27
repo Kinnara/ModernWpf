@@ -325,9 +325,10 @@ constructor and local MessageBox route callback.
 Retained shell High Contrast source shape now also pins the official WPF Gallery
 title-bar/default-close/footer hover trigger pattern, the `HighContrastBorder`
 thickness literal, the Back/title source order, `MainWindow` high-contrast border
-and non-client-frame update path, the official `SystemEvents_UserPreferenceChanged`
-handler name and dispatcher-lambda refresh body, and the retained `NavigationView`
-alias refresh on `SystemParameters.HighContrast` while keeping the accepted
+and non-client-frame update path including the official
+`GetPrefferedNonClientFrameEdges` helper spelling, the official
+`SystemEvents_UserPreferenceChanged` handler name and dispatcher-lambda refresh
+body, and the retained `NavigationView` alias refresh on `SystemParameters.HighContrast` while keeping the accepted
 NavigationView shell adaptation. The retained `NavigationView` pane now uses the official
 WPF Gallery left-shell width of `258` with the official content-frame
 `Margin="4,0,0,0"` inset, removing the previous one-pixel compensation while
@@ -395,6 +396,10 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.ShellChromeKeepsWpfGalleryHighContrastSourceShape|FullyQualifiedName~GalleryNavigationRuntimeTests.MainWindowUsesWpfGalleryTitleChrome|FullyQualifiedName~GalleryNavigationRuntimeTests.MainWindowChromePolicyMatchesWpfGalleryHighContrastPath|FullyQualifiedName~GalleryNavigationRuntimeTests.ShellHighContrastHoverStylesMatchWpfGalleryReferenceChrome" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 4 tests per target. The retained shell high-contrast non-client-frame path now keeps the official WPF Gallery `GetPrefferedNonClientFrameEdges` helper spelling while title chrome, high-contrast chrome policy, and hover trigger coverage still passes. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the retained-shell non-client-frame helper source-shape alignment. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages and existing ModernWpf/ModernWpf.Controls warnings.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.ShellChromeKeepsWpfGalleryHighContrastSourceShape|FullyQualifiedName~WpfGallerySourceShapeTests.CollectionsCodeBehindKeepsOfficialConstructorAdjacencyShape|FullyQualifiedName~GalleryNavigationRuntimeTests.MainWindowUsesWpfGalleryTitleChrome|FullyQualifiedName~GalleryNavigationRuntimeTests.MainWindowChromePolicyMatchesWpfGalleryHighContrastPath|FullyQualifiedName~GalleryNavigationRuntimeTests.ShellHighContrastHoverStylesMatchWpfGalleryReferenceChrome|FullyQualifiedName~GalleryPageRuntimeTests.CollectionsPagesUseOfficialPageSpecificViewModels" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 6 tests per target. `MainWindow` and `DataGridPage` now keep the official `SystemEvents_UserPreferenceChanged` handler name and dispatcher-lambda refresh body while the retained shell high-contrast chrome, title/footer hover styles, DataGrid high-contrast resource switching, and local unload cleanup coverage still passes. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
@@ -2763,8 +2768,9 @@ alignment. Shell title-bar and Settings footer high-contrast hover resources
 now have focused runtime and source-shape coverage against the official WPF
 Gallery button trigger pattern, and the shell source-shape guard also pins
 `HighContrastBorder`, Back/title source order, high-contrast non-client-frame
-updates, the official `SystemEvents_UserPreferenceChanged` handler refresh
-body, and retained `NavigationView` alias refresh on `SystemParameters.HighContrast`.
+updates, the official `GetPrefferedNonClientFrameEdges` helper spelling, the
+official `SystemEvents_UserPreferenceChanged` handler refresh body, and retained
+`NavigationView` alias refresh on `SystemParameters.HighContrast`.
 `ThemeResourceExtension` now refreshes
 `SystemColor*` bindings when High Contrast toggles in either direction and
 during active High Contrast system-parameter changes, and theme tests now guard

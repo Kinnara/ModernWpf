@@ -105,7 +105,7 @@ namespace ModernWpf.Gallery
             var chrome = WindowChrome.GetWindowChrome(this);
             if (chrome != null)
             {
-                chrome.NonClientFrameEdges = GetPreferredNonClientFrameEdges();
+                chrome.NonClientFrameEdges = GetPrefferedNonClientFrameEdges();
             }
         }
 
@@ -123,7 +123,7 @@ namespace ModernWpf.Gallery
                 GlassFrameThickness = new Thickness(-1),
                 ResizeBorderThickness = resizeMode == ResizeMode.NoResize ? default : new Thickness(4),
                 UseAeroCaptionButtons = true,
-                NonClientFrameEdges = GetPreferredNonClientFrameEdges()
+                NonClientFrameEdges = GetPrefferedNonClientFrameEdges()
             };
         }
 
@@ -149,12 +149,12 @@ namespace ModernWpf.Gallery
             CloseButton.Visibility = Visibility.Visible;
         }
 
-        internal static NonClientFrameEdges GetPreferredNonClientFrameEdges()
+        internal static NonClientFrameEdges GetPrefferedNonClientFrameEdges()
         {
-            return GetPreferredNonClientFrameEdges(SystemParameters.HighContrast, IsWindows11OrGreater());
+            return GetPrefferedNonClientFrameEdges(SystemParameters.HighContrast, IsWindows11OrGreater());
         }
 
-        internal static NonClientFrameEdges GetPreferredNonClientFrameEdges(bool isHighContrast, bool isWindows11OrGreater)
+        internal static NonClientFrameEdges GetPrefferedNonClientFrameEdges(bool isHighContrast, bool isWindows11OrGreater)
         {
             if (isHighContrast || !isWindows11OrGreater)
             {

@@ -216,7 +216,10 @@ namespace ModernWpf.Gallery.Tests
                 "System.Windows.Controls.Border.BorderBrushProperty,",
                 "IsActive ? SystemColors.ActiveCaptionBrushKey : SystemColors.InactiveCaptionBrushKey);",
                 "HighContrastBorder.BorderThickness = GetHighContrastBorderThickness(SystemParameters.HighContrast);",
+                "chrome.NonClientFrameEdges = GetPrefferedNonClientFrameEdges();",
+                "NonClientFrameEdges = GetPrefferedNonClientFrameEdges()",
                 "return isHighContrast ? new Thickness(8, 1, 8, 8) : new Thickness(0);",
+                "internal static NonClientFrameEdges GetPrefferedNonClientFrameEdges()",
                 "if (isHighContrast || !isWindows11OrGreater)");
 
             var navigationRootCode = ReadRepoFile(

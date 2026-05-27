@@ -408,7 +408,7 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(new Thickness(-1), chrome.GlassFrameThickness);
                     Assert.AreEqual(new Thickness(4), chrome.ResizeBorderThickness);
                     Assert.IsTrue(chrome.UseAeroCaptionButtons);
-                    Assert.AreEqual(MainWindow.GetPreferredNonClientFrameEdges(), chrome.NonClientFrameEdges);
+                    Assert.AreEqual(MainWindow.GetPrefferedNonClientFrameEdges(), chrome.NonClientFrameEdges);
                     Assert.AreSame(Application.Current.FindResource("WindowBackground"), window.Background);
                     Assert.AreSame(window, window.DataContext);
                     Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(window));
@@ -516,7 +516,7 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(new Thickness(-1), chrome.GlassFrameThickness);
                 Assert.AreEqual(new Thickness(0), chrome.ResizeBorderThickness);
                 Assert.IsTrue(chrome.UseAeroCaptionButtons);
-                Assert.AreEqual(MainWindow.GetPreferredNonClientFrameEdges(), chrome.NonClientFrameEdges);
+                Assert.AreEqual(MainWindow.GetPrefferedNonClientFrameEdges(), chrome.NonClientFrameEdges);
 
                 Assert.AreEqual(new Thickness(0), MainWindow.GetMainGridMargin(WindowState.Normal, false));
                 Assert.AreEqual(new Thickness(8), MainWindow.GetMainGridMargin(WindowState.Maximized, false));
@@ -526,13 +526,13 @@ namespace ModernWpf.Gallery.Tests
 
                 Assert.AreEqual(
                     NonClientFrameEdges.Right | NonClientFrameEdges.Bottom | NonClientFrameEdges.Left,
-                    MainWindow.GetPreferredNonClientFrameEdges(isHighContrast: false, isWindows11OrGreater: true));
+                    MainWindow.GetPrefferedNonClientFrameEdges(isHighContrast: false, isWindows11OrGreater: true));
                 Assert.AreEqual(
                     NonClientFrameEdges.None,
-                    MainWindow.GetPreferredNonClientFrameEdges(isHighContrast: true, isWindows11OrGreater: true));
+                    MainWindow.GetPrefferedNonClientFrameEdges(isHighContrast: true, isWindows11OrGreater: true));
                 Assert.AreEqual(
                     NonClientFrameEdges.None,
-                    MainWindow.GetPreferredNonClientFrameEdges(isHighContrast: false, isWindows11OrGreater: false));
+                    MainWindow.GetPrefferedNonClientFrameEdges(isHighContrast: false, isWindows11OrGreater: false));
             });
         }
 
