@@ -3109,10 +3109,13 @@ namespace ModernWpf.Gallery.Tests
                 "HorizontalAlignment=\"Left\"",
                 "VerticalAlignment=\"Center\"",
                 "Width=\"400\">",
-                "<TextBox Name=\"NameTextBox\" Width=\"280\" Margin=\"10,0,0,20\" AutomationProperties.Name=\"Name Field\" />",
-                "<TextBlock Width=\"100\" Text=\"Gender:\" Margin=\"0,10,0,0\" />",
-                "<TextBox Name=\"GenderTextBox\" Width=\"280\" Margin=\"10,0,0,20\" AutomationProperties.Name=\"Gender Field\" />",
+                "<TextBox Name=\"NameTextBox\" Width=\"280\" Margin=\"10,0,0,20\" AutomationProperties.Name=\"Name Field\"/>",
+                "<TextBlock Width=\"100\" Text=\"Gender:\" Margin=\"0,10,0,0\"/>",
+                "<TextBox Name=\"GenderTextBox\" Width=\"280\" Margin=\"10,0,0,20\" AutomationProperties.Name=\"Gender Field\"/>",
                 "<Button Content=\"Submit\" HorizontalAlignment=\"Right\" Margin=\"0,10,0,0\" />");
+            StringAssert.Contains(
+                normalizedGroupBoxXaml,
+                "</StackPanel>\n                                <Button Content=\"Submit\" HorizontalAlignment=\"Right\" Margin=\"0,10,0,0\" />");
             StringAssert.Contains(
                 groupBoxXaml,
                 "&lt;Button Content=&quot;Submit&quot; HorizontalAlignment=&quot;Right&quot; Width=&quot;100&quot; Margin=&quot;0,10,0,0&quot; /&gt;");
