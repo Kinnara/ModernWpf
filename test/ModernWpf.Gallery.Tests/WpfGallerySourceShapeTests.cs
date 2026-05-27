@@ -1294,13 +1294,21 @@ namespace ModernWpf.Gallery.Tests
                 "</Style>");
             AssertContainsInOrder(
                 xaml,
+                "x:Key=\"DisplayTextBlockStyle\"",
+                "<Setter Property=\"FontSize\" Value=\"{StaticResource DisplayTextBlockFontSize}\" />",
+                "<ImageBrush x:Key=\"p64\" ImageSource=\"pack://application:,,,/ModernWpf.Gallery;component/Assets/UserDashboard/64-100x100.jpg\" />",
+                "<ImageBrush x:Key=\"p505\" ImageSource=\"pack://application:,,,/ModernWpf.Gallery;component/Assets/UserDashboard/505-100x100.jpg\" />",
+                "<Style x:Key=\"ColorTilesPanelStyle\" TargetType=\"{x:Type Border}\">");
+            AssertContainsInOrder(
+                xaml,
                 "<Style x:Key=\"ColorTilesPanelStyle\" TargetType=\"{x:Type Border}\">",
                 "<Style.Setters>",
                 "<Setter Property=\"Background\" Value=\"{DynamicResource ControlExampleDisplayBrush}\" />",
                 "<Setter Property=\"BorderThickness\" Value=\"1\" />",
                 "<Setter Property=\"BorderBrush\" Value=\"{DynamicResource CardStrokeColorDefaultBrush}\" />",
                 "<Setter Property=\"CornerRadius\" Value=\"8\" />",
-                "</Style.Setters>");
+                "</Style.Setters>",
+                "<Style x:Key=\"GalleryPageRootStyle\" TargetType=\"Grid\">");
         }
 
         [TestMethod]
