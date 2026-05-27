@@ -396,6 +396,10 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.SharedHeaderTileCodeBehindKeepsOfficialMemberAndUserPreferenceHandlerShape|FullyQualifiedName~WpfGallerySourceShapeTests.SharedHeaderTileKeepsOfficialDeclarationSourceShape|FullyQualifiedName~GalleryApplicationResourceTests.HomeHeaderTilesMatchWpfGalleryReferenceSlotGeometry|FullyQualifiedName~GalleryApplicationResourceTests.HomeHeaderTilesUseWpfGalleryAcrylicFillResources|FullyQualifiedName~GalleryApplicationResourceTests.HomeHeaderTilesUseWpfGalleryHighContrastFillResources|FullyQualifiedName~GalleryApplicationResourceTests.HomeHeaderTilesExposeRootButtonAutomationPeer" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 6 tests per target. The shared `HeaderTile` resource path now keeps the official WPF Gallery non-High-Contrast acrylic branch before the High Contrast system-brush fallback while retaining the local helper method, actual-theme refresh, static-event unload cleanup, launch guard, and automation-peer coverage. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the shared `HeaderTile` resource-branch source-shape alignment. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages and existing ModernWpf/ModernWpf.Controls warnings.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.ShellChromeKeepsWpfGalleryHighContrastSourceShape|FullyQualifiedName~GalleryNavigationRuntimeTests.MainWindowUsesWpfGalleryTitleChrome|FullyQualifiedName~GalleryNavigationRuntimeTests.MainWindowChromePolicyMatchesWpfGalleryHighContrastPath|FullyQualifiedName~GalleryNavigationRuntimeTests.ShellHighContrastHoverStylesMatchWpfGalleryReferenceChrome" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 4 tests per target. The retained shell high-contrast non-client-frame path now keeps the official WPF Gallery `GetPrefferedNonClientFrameEdges` helper spelling while title chrome, high-contrast chrome policy, and hover trigger coverage still passes. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
@@ -2746,8 +2750,10 @@ field-before-wrapper member order while keeping the local default-style adapter.
 declaration shape, and its code-behind now pins the official
 `SystemEvents_UserPreferenceChanged` handler and property/dependency-property
 member order, string-literal dependency-property registrations/defaults, and
-official `Source` getter cast while retaining local brush binding, High
-Contrast/theme refresh, unload cleanup, and automation-peer behavior. The shared `TileGallery` XAML now also pins official
+official `Source` getter cast plus the official non-High-Contrast acrylic
+resource branch before the High Contrast system-brush fallback while retaining
+local brush binding, High Contrast/theme refresh, unload cleanup, and
+automation-peer behavior. The shared `TileGallery` XAML now also pins official
 root/resource, scroll host, HeaderTile list, compact icon, and scroll-button
 declaration shape, and its code-behind now pins the official scroll handler
 local-variable declarations, helper-overload flow, and size-changed handler

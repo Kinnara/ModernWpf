@@ -51,18 +51,19 @@ namespace ModernWpf.Gallery.Controls
 
         internal void ApplyButtonResources(bool highContrast)
         {
-            if (highContrast)
+            if (!highContrast)
+            {
+                var color = GetWpfGalleryAcrylicBackgroundColor();
+                RootButton.Resources["ButtonBackground"] = new SolidColorBrush { Color = color, Opacity = 0.8 };
+                RootButton.Resources["ButtonBackgroundPointerOver"] = new SolidColorBrush { Color = color, Opacity = 0.9 };
+                RootButton.Resources["ButtonBackgroundPressed"] = new SolidColorBrush { Color = color, Opacity = 1.0 };
+            }
+            else
             {
                 RootButton.Resources["ButtonBackground"] = SystemColors.ControlBrush;
                 RootButton.Resources["ButtonBackgroundPointerOver"] = SystemColors.ControlBrush;
                 RootButton.Resources["ButtonBackgroundPressed"] = SystemColors.ControlBrush;
-                return;
             }
-
-            var color = GetWpfGalleryAcrylicBackgroundColor();
-            RootButton.Resources["ButtonBackground"] = new SolidColorBrush { Color = color, Opacity = 0.8 };
-            RootButton.Resources["ButtonBackgroundPointerOver"] = new SolidColorBrush { Color = color, Opacity = 0.9 };
-            RootButton.Resources["ButtonBackgroundPressed"] = new SolidColorBrush { Color = color, Opacity = 1.0 };
         }
 
         private static Color GetWpfGalleryAcrylicBackgroundColor()

@@ -553,12 +553,13 @@ namespace ModernWpf.Gallery.Tests
             AssertContainsInOrder(
                 code,
                 "ApplyButtonResources(SystemParameters.HighContrast);",
-                "RootButton.Resources[\"ButtonBackground\"] = SystemColors.ControlBrush;",
-                "RootButton.Resources[\"ButtonBackgroundPointerOver\"] = SystemColors.ControlBrush;",
-                "RootButton.Resources[\"ButtonBackgroundPressed\"] = SystemColors.ControlBrush;",
+                "if (!highContrast)",
                 "RootButton.Resources[\"ButtonBackground\"] = new SolidColorBrush { Color = color, Opacity = 0.8 };",
                 "RootButton.Resources[\"ButtonBackgroundPointerOver\"] = new SolidColorBrush { Color = color, Opacity = 0.9 };",
-                "RootButton.Resources[\"ButtonBackgroundPressed\"] = new SolidColorBrush { Color = color, Opacity = 1.0 };");
+                "RootButton.Resources[\"ButtonBackgroundPressed\"] = new SolidColorBrush { Color = color, Opacity = 1.0 };",
+                "RootButton.Resources[\"ButtonBackground\"] = SystemColors.ControlBrush;",
+                "RootButton.Resources[\"ButtonBackgroundPointerOver\"] = SystemColors.ControlBrush;",
+                "RootButton.Resources[\"ButtonBackgroundPressed\"] = SystemColors.ControlBrush;");
         }
 
         [TestMethod]
