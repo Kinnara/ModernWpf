@@ -86,31 +86,21 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void RemovedWinUIAliasPagesDoNotRemainInCatalog()
+        public void RetainedWpfAliasReplacementPagesUseWpfGalleryMode()
         {
             WpfTestHost.Run(() =>
             {
-                var calendarPage = new ItemPage(GalleryCatalog.FindItem("Calendar"));
-                var richTextEditPage = new ItemPage(GalleryCatalog.FindItem("RichTextEdit"));
+                foreach (var uniqueId in new[] { "Calendar", "RichTextEdit", "TabControl" })
+                {
+                    var item = GalleryCatalog.FindItem(uniqueId);
+                    Assert.IsNotNull(item, uniqueId);
 
-                Assert.IsTrue(calendarPage.UsesWpfGalleryPageMode);
-                Assert.IsFalse(calendarPage.ShowCatalogDetails);
-                Assert.IsFalse(calendarPage.ShowPageDescription);
+                    var page = new ItemPage(item);
 
-                Assert.IsTrue(richTextEditPage.UsesWpfGalleryPageMode);
-                Assert.IsFalse(richTextEditPage.ShowCatalogDetails);
-                Assert.IsFalse(richTextEditPage.ShowPageDescription);
-
-                Assert.IsNull(GalleryCatalog.FindItem("CalendarDatePicker"));
-                Assert.IsNull(GalleryCatalog.FindItem("CalendarView"));
-                Assert.IsNull(GalleryCatalog.FindItem("FlipView"));
-                Assert.IsNull(GalleryCatalog.FindItem("ItemsView"));
-                Assert.IsNull(GalleryCatalog.FindItem("RichEditBox"));
-                Assert.IsNull(GalleryCatalog.FindItem("RichTextBlock"));
-                Assert.IsNull(GalleryCatalog.FindItem("ScrollView"));
-                Assert.IsNull(GalleryCatalog.FindItem("ScrollViewer"));
-                Assert.IsNull(GalleryCatalog.FindItem("TabView"));
-                Assert.IsNull(GalleryCatalog.FindItem("TimePicker"));
+                    Assert.IsTrue(page.UsesWpfGalleryPageMode, uniqueId);
+                    Assert.IsFalse(page.ShowCatalogDetails, uniqueId);
+                    Assert.IsFalse(page.ShowPageDescription, uniqueId);
+                }
             });
         }
 
