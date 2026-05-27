@@ -2,13 +2,12 @@
     x:Class="ModernWpf.Gallery.Pages.AllControlsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:controls="clr-namespace:ModernWpf.Gallery.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ModernWpf.Gallery.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    d:DesignHeight="700"
-    d:DesignWidth="900"
-    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    xmlns:controls="clr-namespace:ModernWpf.Gallery.Controls"
     Title="AllSamplesPage"
+    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     mc:Ignorable="d">
     <Grid Style="{StaticResource GalleryPageRootStyle}">
         <Grid.RowDefinitions>

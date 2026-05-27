@@ -561,6 +561,21 @@ namespace ModernWpf.Gallery.Tests
                 "Pages",
                 "HomePage.xaml");
 
+            AssertContainsInOrder(
+                xaml,
+                "<Page",
+                "x:Class=\"ModernWpf.Gallery.Pages.HomePage\"",
+                "xmlns:d=\"http://schemas.microsoft.com/expression/blend/2008\"",
+                "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages\"",
+                "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"",
+                "xmlns:controls=\"clr-namespace:ModernWpf.Gallery.Controls\"",
+                "xmlns:pages=\"clr-namespace:ModernWpf.Gallery.Pages\"",
+                "Title=\"DashboardPage\"",
+                "d:DesignHeight=\"450\"",
+                "d:DesignWidth=\"800\"",
+                "Foreground=\"{DynamicResource TextFillColorPrimaryBrush}\"",
+                "mc:Ignorable=\"d\"",
+                "Margin=\"-24,-16,-24,12\">");
             Assert.IsFalse(
                 xaml.Contains("x:Name=\"ContentRootGrid\"", StringComparison.Ordinal),
                 "The copied Home page should use the official Dashboard ScrollViewer root shape instead of a local-only root name.");
@@ -645,6 +660,19 @@ namespace ModernWpf.Gallery.Tests
                 "WhatsNewPage.xaml");
             var normalizedXaml = xaml.Replace("\r\n", "\n").Replace('\r', '\n');
 
+            AssertContainsInOrder(
+                xaml,
+                "<Page",
+                "x:Class=\"ModernWpf.Gallery.Pages.WhatsNewPage\"",
+                "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"",
+                "xmlns:d=\"http://schemas.microsoft.com/expression/blend/2008\"",
+                "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages\"",
+                "xmlns:controls=\"clr-namespace:ModernWpf.Gallery.Controls\"",
+                "mc:Ignorable=\"d\"",
+                "Foreground=\"{DynamicResource TextFillColorPrimaryBrush}\"",
+                "d:DesignHeight=\"450\"",
+                "d:DesignWidth=\"800\"",
+                "Title=\"What's New in WPF\">");
             StringAssert.Contains(
                 xaml,
                 "<Style x:Key=\"SubHeaderTextStyle\" TargetType=\"TextBlock\">");
@@ -685,6 +713,19 @@ namespace ModernWpf.Gallery.Tests
                 "Pages",
                 "SettingsPage.xaml");
 
+            AssertContainsInOrder(
+                xaml,
+                "<Page",
+                "x:Class=\"ModernWpf.Gallery.Pages.SettingsPage\"",
+                "xmlns:d=\"http://schemas.microsoft.com/expression/blend/2008\"",
+                "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages\"",
+                "xmlns:controls=\"clr-namespace:ModernWpf.Gallery.Controls\"",
+                "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"",
+                "Title=\"SettingsPage\"",
+                "d:DesignHeight=\"450\"",
+                "d:DesignWidth=\"800\"",
+                "Foreground=\"{DynamicResource TextFillColorPrimaryBrush}\"",
+                "mc:Ignorable=\"d\">");
             AssertContainsInOrder(
                 xaml,
                 "<Style x:Key=\"SettingsCardStyle\" TargetType=\"Border\">",
@@ -767,6 +808,23 @@ namespace ModernWpf.Gallery.Tests
 
             AssertContainsInOrder(
                 xaml,
+                "<Page",
+                "x:Class=\"ModernWpf.Gallery.Pages.AllControlsPage\"",
+                "xmlns:d=\"http://schemas.microsoft.com/expression/blend/2008\"",
+                "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages\"",
+                "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"",
+                "xmlns:controls=\"clr-namespace:ModernWpf.Gallery.Controls\"",
+                "Title=\"AllSamplesPage\"",
+                "Foreground=\"{DynamicResource TextFillColorPrimaryBrush}\"",
+                "mc:Ignorable=\"d\">");
+            Assert.IsFalse(
+                xaml.Contains("d:DesignHeight=", StringComparison.Ordinal),
+                "All Controls should match the official AllSamples root without local design-time dimensions.");
+            Assert.IsFalse(
+                xaml.Contains("d:DesignWidth=", StringComparison.Ordinal),
+                "All Controls should match the official AllSamples root without local design-time dimensions.");
+            AssertContainsInOrder(
+                xaml,
                 "<Grid Style=\"{StaticResource GalleryPageRootStyle}\">",
                 "<Grid.RowDefinitions>",
                 "<RowDefinition Height=\"Auto\" />",
@@ -804,6 +862,19 @@ namespace ModernWpf.Gallery.Tests
                 "Pages",
                 "SectionPage.xaml");
 
+            AssertContainsInOrder(
+                xaml,
+                "<Page",
+                "x:Class=\"ModernWpf.Gallery.Pages.SectionPage\"",
+                "xmlns:d=\"http://schemas.microsoft.com/expression/blend/2008\"",
+                "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages\"",
+                "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"",
+                "xmlns:controls=\"clr-namespace:ModernWpf.Gallery.Controls\"",
+                "Title=\"NavigationPage\"",
+                "d:DesignHeight=\"450\"",
+                "d:DesignWidth=\"800\"",
+                "Foreground=\"{DynamicResource TextFillColorPrimaryBrush}\"",
+                "mc:Ignorable=\"d\">");
             AssertContainsInOrder(
                 xaml,
                 "<Grid Style=\"{StaticResource GalleryPageRootStyle}\">",
