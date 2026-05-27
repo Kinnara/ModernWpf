@@ -542,6 +542,119 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void SimpleItemViewModelsKeepOfficialObservableTitleSourceShape()
+        {
+            var dateSource = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "DateAndTime",
+                "DateAndTimePageViewModels.cs");
+            var mediaSource = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Media",
+                "MediaPageViewModels.cs");
+            var statusSource = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "StatusAndInfo",
+                "StatusAndInfoPageViewModels.cs");
+            var layoutSource = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Layout",
+                "LayoutPageViewModels.cs");
+            var navigationSource = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Navigation",
+                "NavigationPageViewModels.cs");
+            var textSource = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Text",
+                "TextPageViewModels.cs");
+
+            AssertContainsInOrder(
+                dateSource,
+                "public partial class CalendarPageViewModel : WpfGalleryPageViewModel",
+                ": base(\"Calendar\", string.Empty)",
+                "public partial class DatePickerPageViewModel : WpfGalleryPageViewModel",
+                ": base(\"DatePicker\", string.Empty)");
+            AssertContainsInOrder(
+                mediaSource,
+                "public partial class CanvasPageViewModel : WpfGalleryPageViewModel",
+                ": base(\"Canvas\", string.Empty)",
+                "public partial class ImagePageViewModel : WpfGalleryPageViewModel",
+                ": base(\"Image\", string.Empty)");
+            AssertContainsInOrder(
+                statusSource,
+                "public partial class ProgressBarPageViewModel : WpfGalleryPageViewModel",
+                ": base(\"ProgressBar\", string.Empty)",
+                "public partial class ToolTipPageViewModel : WpfGalleryPageViewModel",
+                ": base(\"ToolTip\", string.Empty)");
+            AssertContainsInOrder(
+                layoutSource,
+                "public partial class BorderPageViewModel : WpfGalleryPageViewModel",
+                ": base(\"Border\", string.Empty)",
+                "public partial class ExpanderPageViewModel : WpfGalleryPageViewModel",
+                ": base(\"Expander\", string.Empty)",
+                "public partial class GridPageViewModel : WpfGalleryPageViewModel",
+                ": base(\"Grid\", string.Empty)",
+                "public partial class GridSplitterPageViewModel : WpfGalleryPageViewModel",
+                ": base(\"GridSplitter\", string.Empty)",
+                "public partial class GroupBoxPageViewModel : WpfGalleryPageViewModel",
+                ": base(\"GroupBox\", string.Empty)",
+                "public partial class ResizeGripPageViewModel : WpfGalleryPageViewModel",
+                ": base(\"ResizeGrip\", string.Empty)",
+                "public partial class StackPanelPageViewModel : WpfGalleryPageViewModel",
+                ": base(\"StackPanel\", string.Empty)");
+            AssertContainsInOrder(
+                navigationSource,
+                "public partial class MenuPageViewModel : WpfGalleryPageViewModel",
+                ": base(\"Menu\", string.Empty)",
+                "public partial class TabControlPageViewModel : WpfGalleryPageViewModel",
+                ": base(\"TabControl\", string.Empty)",
+                "public partial class FramePageViewModel : WpfGalleryPageViewModel",
+                ": base(\"Frame\", string.Empty)",
+                "public partial class NavigationWindowPageViewModel : WpfGalleryPageViewModel",
+                ": base(\"Navigation Window\", string.Empty)");
+            AssertContainsInOrder(
+                textSource,
+                "public partial class LabelPageViewModel : WpfGalleryPageViewModel",
+                ": base(\"Label\", string.Empty)",
+                "public partial class TextBoxPageViewModel : WpfGalleryPageViewModel",
+                ": base(\"TextBox\", string.Empty)",
+                "public partial class TextBlockPageViewModel : WpfGalleryPageViewModel",
+                ": base(\"TextBlock\", string.Empty)",
+                "public partial class HyperlinkPageViewModel : WpfGalleryPageViewModel",
+                ": base(\"Hyperlink\", string.Empty)",
+                "public partial class RichTextEditPageViewModel : WpfGalleryPageViewModel",
+                ": base(\"RichTextEdit\", string.Empty)",
+                "public partial class PasswordBoxPageViewModel : WpfGalleryPageViewModel",
+                ": base(\"PasswordBox\", string.Empty)");
+
+            foreach (var source in new[] { dateSource, mediaSource, statusSource, layoutSource, navigationSource, textSource })
+            {
+                Assert.IsFalse(
+                    source.Contains("public event PropertyChangedEventHandler", StringComparison.Ordinal),
+                    "Simple copied item view models should use the shared observable page-view-model adapter.");
+                Assert.IsFalse(
+                    source.Contains("private void OnPropertyChanged", StringComparison.Ordinal),
+                    "Simple copied item view models should keep OnPropertyChanged on the shared observable adapter.");
+                Assert.IsFalse(
+                    source.Contains("private bool SetProperty", StringComparison.Ordinal),
+                    "Simple copied item view models should keep SetProperty on the shared observable adapter.");
+            }
+        }
+
+        [TestMethod]
         public void BasicInputViewModelsKeepOfficialStateAndCommandSourceShape()
         {
             var source = ReadRepoFile(

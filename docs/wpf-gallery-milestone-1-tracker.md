@@ -145,6 +145,12 @@ official WPF Gallery `ObservableObject` source-generator base. The shared
 `WpfGalleryPageViewModel` adapter inherits it for observable `PageTitle` and
 `PageDescription` backing-field state while retaining the local shared
 page-state integration point.
+Simple copied item page view models for Date & Calendar, Media, Status &
+Info, Layout, Navigation, and Text now also have source-shape coverage for
+their official title/empty-description initialization through that shared
+adapter, and the runtime page-view-model helpers prove `PageTitle` and
+`PageDescription` property-change notifications across the copied item-page
+view-model families.
 The shared `WpfGalleryNavigationPageViewModel` adapter now also inherits that
 observable page state, stores `NavigationCards` in an official-style backing
 field, and exposes a source-shaped `Navigate(object pageType)` method behind
@@ -490,6 +496,10 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.SimpleItemViewModelsKeepOfficialObservableTitleSourceShape|FullyQualifiedName~WpfGallerySourceShapeTests.WpfGalleryPageViewModelProvidesObservableStateAdapter|FullyQualifiedName~GalleryPageRuntimeTests.SimpleItemPagesUseOfficialPageSpecificViewModels|FullyQualifiedName~GalleryPageRuntimeTests.LayoutPagesUseOfficialPageSpecificViewModels|FullyQualifiedName~GalleryPageRuntimeTests.TextPagesUseOfficialPageSpecificViewModels|FullyQualifiedName~GalleryPageRuntimeTests.NavigationPagesUseOfficialPageSpecificViewModels|FullyQualifiedName~GalleryPageRuntimeTests.DesignGuidancePagesUseOfficialPageSpecificViewModels|FullyQualifiedName~GalleryPageRuntimeTests.BasicInputPagesUseOfficialPageSpecificViewModels|FullyQualifiedName~GalleryPageRuntimeTests.CollectionsPagesUseOfficialPageSpecificViewModels|FullyQualifiedName~GalleryPageRuntimeTests.SystemPagesUseOfficialPageSpecificViewModels" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 10 tests per target. Simple copied item page view-model sources now pin official title/empty-description initialization for Date & Calendar, Media, Status & Info, Layout, Navigation, and Text through the shared observable page-view-model adapter, and the runtime helper now proves `PageTitle` / `PageDescription` property-change notifications across simple, Layout, Text, Navigation, Design Guidance, Basic Input, Collections, and System copied page-specific view-model paths. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after broadening simple copied item view-model source/runtime coverage. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages and existing ModernWpf/ModernWpf.Controls warnings.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.WpfGalleryPageViewModelProvidesObservableStateAdapter|FullyQualifiedName~WpfGallerySourceShapeTests.UserDashboardViewModelKeepsOfficialObservableStateSourceShape|FullyQualifiedName~WpfGallerySourceShapeTests.CopiedWpfGalleryViewModelClassesKeepOfficialPartialDeclarationShape|FullyQualifiedName~WpfGallerySourceShapeTests.CopiedWpfGalleryUserDashboardUserKeepsOfficialMemberOrderShape|FullyQualifiedName~WpfGallerySourceShapeTests.SamplesPageKeepsOfficialUserDashboardSourceShape|FullyQualifiedName~WpfGallerySamplesSnippetTests.UserDashboardCodeBehindUsesOfficialCommandAndNotificationShape|FullyQualifiedName~GalleryPageRuntimeTests.SamplesPagesUseOfficialPageSpecificViewModels|FullyQualifiedName~GalleryPageRuntimeTests.SamplesItemPagesUseOfficialPageRoots|FullyQualifiedName~GalleryPageRuntimeTests.UserDashboardPageMatchesWpfGalleryReferenceLayoutAndBehavior|FullyQualifiedName~GalleryPageRuntimeTests.VisualTestModeUsesDeterministicWpfGallerySampleData|FullyQualifiedName~GalleryPageRuntimeTests.SourceInitFirstCopiedPagesRenderInjectedViewModelBindings" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 11 tests per target. The shared observable state plumbing now lives in `WpfGalleryObservableObject`, `WpfGalleryPageViewModel` inherits that adapter for page title/description state, and the copied User Dashboard page view model now reuses the same observable base while keeping official-style state-field order without adding page-title state. User Dashboard source shape, copied partial declarations, code-behind snippets, direct page roots, layout/behavior coverage, deterministic visual-test data, and init-first injected bindings still pass. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
@@ -2779,6 +2789,9 @@ with the shared `WpfGalleryObservableObject` adapter now owning the observable
 notification plumbing and the shared WPF Gallery page-view-model adapter now
 providing page title/description state through that base for simple copied view
 models,
+with simple Date & Calendar, Media, Status & Info, Layout, Navigation, and Text
+item view models now source-pinned for official title/empty-description
+initialization and runtime-pinned for shared title/description notifications,
 with the shared WPF Gallery navigation view-model adapter now providing
 official-style navigation-card backing state and a source-shaped
 `Navigate(object pageType)` method behind the local command adapter,

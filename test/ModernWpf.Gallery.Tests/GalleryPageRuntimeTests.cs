@@ -3264,8 +3264,7 @@ namespace ModernWpf.Gallery.Tests
             var directPage = (TPage)itemPage.DirectPageContent;
             var viewModel = (TViewModel)directPage.GetType().GetProperty("ViewModel").GetValue(directPage, null);
 
-            Assert.AreEqual(expectedTitle, viewModel.PageTitle, uniqueId);
-            Assert.AreEqual(string.Empty, viewModel.PageDescription, uniqueId);
+            AssertObservablePageState(viewModel, expectedTitle, string.Empty, uniqueId);
             Assert.AreEqual(uniqueId + "PageViewModel", viewModel.GetType().Name, uniqueId);
         }
 
@@ -3277,8 +3276,7 @@ namespace ModernWpf.Gallery.Tests
             var directPage = (TPage)itemPage.DirectPageContent;
             var viewModel = (TViewModel)directPage.GetType().GetProperty("ViewModel").GetValue(directPage, null);
 
-            Assert.AreEqual(expectedTitle, viewModel.PageTitle, uniqueId);
-            Assert.AreEqual(string.Empty, viewModel.PageDescription, uniqueId);
+            AssertObservablePageState(viewModel, expectedTitle, string.Empty, uniqueId);
             Assert.AreEqual(uniqueId + "PageViewModel", viewModel.GetType().Name, uniqueId);
         }
 
@@ -3293,8 +3291,7 @@ namespace ModernWpf.Gallery.Tests
             var directPage = (TPage)itemPage.DirectPageContent;
             var viewModel = (TViewModel)directPage.GetType().GetProperty("ViewModel").GetValue(directPage, null);
 
-            Assert.AreEqual(expectedTitle, viewModel.PageTitle, uniqueId);
-            Assert.AreEqual(expectedDescription, viewModel.PageDescription, uniqueId);
+            AssertObservablePageState(viewModel, expectedTitle, expectedDescription, uniqueId);
             Assert.AreEqual(uniqueId + "PageViewModel", viewModel.GetType().Name, uniqueId);
         }
 
@@ -3310,9 +3307,28 @@ namespace ModernWpf.Gallery.Tests
             var directPage = (TPage)itemPage.DirectPageContent;
             var viewModel = (TViewModel)directPage.GetType().GetProperty("ViewModel").GetValue(directPage, null);
 
+            AssertObservablePageState(viewModel, expectedTitle, expectedDescription, uniqueId);
+            Assert.AreEqual(expectedViewModelTypeName ?? uniqueId + "PageViewModel", viewModel.GetType().Name, uniqueId);
+        }
+
+        private static void AssertObservablePageState(
+            WpfGalleryPageViewModel viewModel,
+            string expectedTitle,
+            string expectedDescription,
+            string uniqueId)
+        {
             Assert.AreEqual(expectedTitle, viewModel.PageTitle, uniqueId);
             Assert.AreEqual(expectedDescription, viewModel.PageDescription, uniqueId);
-            Assert.AreEqual(expectedViewModelTypeName ?? uniqueId + "PageViewModel", viewModel.GetType().Name, uniqueId);
+
+            var changedProperties = new List<string>();
+            viewModel.PropertyChanged += (sender, args) => changedProperties.Add(args.PropertyName);
+            viewModel.PageTitle = expectedTitle + " Updated";
+            viewModel.PageDescription = (expectedDescription ?? string.Empty) + " Updated";
+
+            Assert.AreEqual(expectedTitle + " Updated", viewModel.PageTitle, uniqueId);
+            Assert.AreEqual((expectedDescription ?? string.Empty) + " Updated", viewModel.PageDescription, uniqueId);
+            CollectionAssert.Contains(changedProperties, nameof(WpfGalleryPageViewModel.PageTitle), uniqueId);
+            CollectionAssert.Contains(changedProperties, nameof(WpfGalleryPageViewModel.PageDescription), uniqueId);
         }
 
         private static void AssertWpfGalleryPageRoot<TPage>(string uniqueId, string expectedTitle = null)
