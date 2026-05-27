@@ -143,7 +143,10 @@ Copied Collections page-specific view models now also keep the official WPF
 Gallery constructor/backing-field initialization shape for DataGrid, ListBox,
 and ListView, plus the official ListView `UpdateListViewSelectionMode` helper
 flow, while retaining the local base class and deterministic visual-test sample
-random adapters.
+random adapters. Their shared DataGrid/ListView sample-generation helpers also
+keep the official collection initializer, placeholder units comment, loop, and
+multi-line item-addition source shape while still routing random creation
+through the deterministic visual-test adapter.
 Copied/adapted WPF Gallery model declarations now also stay unsealed like the
 official WPF Gallery model sources for `Product`, `Person`, `IconData`, and the
 User Dashboard user model while retaining local namespace/name/resource and
@@ -429,6 +432,10 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.CollectionsViewModelsKeepOfficialSampleGenerationSourceShape|FullyQualifiedName~WpfGallerySourceShapeTests.CollectionsViewModelsKeepOfficialConstructorAndSelectionModeSourceShape|FullyQualifiedName~WpfGalleryCollectionsSnippetTests.CollectionsControlExamplesMatchOfficialWpfGallerySampleCode|FullyQualifiedName~GalleryPageRuntimeTests.CollectionsPagesUseOfficialPageSpecificViewModels|FullyQualifiedName~GalleryPageRuntimeTests.VisualTestModeUsesDeterministicWpfGallerySampleData" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 5 tests per target. Copied Collections view-model sample-generation helpers now keep the official WPF Gallery DataGrid/ListView collection initializer, placeholder units comment, loop declaration, and multi-line `Product`/`Person` item-addition source shape while retaining deterministic visual-test random creation. Existing constructor/selection-mode source-shape coverage, Collections snippets, Collections runtime view-model routing, and deterministic visual-test sample data still pass. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the copied Collections sample-generation helper source-shape alignment. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages and existing ModernWpf/ModernWpf.Controls warnings.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.CollectionsViewModelsKeepOfficialConstructorAndSelectionModeSourceShape|FullyQualifiedName~WpfGallerySourceShapeTests.CopiedWpfGalleryViewModelClassesKeepOfficialPartialDeclarationShape|FullyQualifiedName~WpfGalleryCollectionsSnippetTests.CollectionsControlExamplesMatchOfficialWpfGallerySampleCode|FullyQualifiedName~GalleryPageRuntimeTests.CollectionsPagesUseOfficialPageSpecificViewModels|FullyQualifiedName~GalleryPageRuntimeTests.VisualTestModeUsesDeterministicWpfGallerySampleData" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 5 tests per target. Copied Collections page-specific view models now keep the official WPF Gallery backing-field constructor initialization shape for DataGrid/ListBox/ListView and the official ListView `UpdateListViewSelectionMode` helper flow while the copied partial view-model declaration guard, Collections snippets, Collections runtime view-model routing, and deterministic visual-test sample data still pass. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
@@ -2671,7 +2678,8 @@ classes like the official WPF Gallery section page declarations. Copied WPF
 Gallery page-specific view-model declarations now also stay unsealed partial
 classes like the official WPF Gallery `ObservableObject` view models,
 with Collections view models now also matching the official constructor
-backing-field initialization and ListView selection-mode helper source shape,
+backing-field initialization, ListView selection-mode helper, and shared
+sample-generation helper source shape,
 and copied/adapted model declarations now also stay unsealed like the official
 WPF Gallery `Product`, `Person`, `IconData`, and `User` model sources,
 with `Product` now matching the official DataGrid summary and placeholder

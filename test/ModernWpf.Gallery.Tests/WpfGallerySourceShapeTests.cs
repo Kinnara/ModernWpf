@@ -258,6 +258,51 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void CollectionsViewModelsKeepOfficialSampleGenerationSourceShape()
+        {
+            var source = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Collections",
+                "CollectionsPageViewModels.cs");
+
+            AssertContainsInOrder(
+                source,
+                "protected static ObservableCollection<Product> GenerateProducts()",
+                "var random = CreateSampleRandom(ProductsVisualTestSeed);",
+                "var products = new ObservableCollection<Product> { };",
+                "var adjectives = new[] { \"Red\", \"Blueberry\" };",
+                "var names = new[] { \"Marmalade\", \"Dumplings\", \"Soup\" };",
+                "//var units = new[] { \"grams\", \"kilograms\", \"milliliters\" };",
+                "for (int i = 0; i < 50; i++)",
+                "products.Add(",
+                "new Product",
+                "ProductName =",
+                "adjectives[random.Next(0, adjectives.Length)]",
+                "+ \" \"",
+                "+ names[random.Next(0, names.Length)],",
+                "UnitPrice = Math.Round(random.NextDouble() * 20.0, 3)",
+                "return products;");
+            AssertContainsInOrder(
+                source,
+                "protected static ObservableCollection<Person> GenerateBasicListViewPersons()",
+                "return GeneratePersons(BasicListViewVisualTestSeed);",
+                "protected static ObservableCollection<Person> GenerateGridViewPersons()",
+                "return GeneratePersons(GridViewVisualTestSeed);",
+                "private static ObservableCollection<Person> GeneratePersons(int visualTestSeed)",
+                "var random = CreateSampleRandom(visualTestSeed);",
+                "var persons = new ObservableCollection<Person>();",
+                "for (int i = 0; i < 50; i++)",
+                "persons.Add(",
+                "new Person(",
+                "names[random.Next(0, names.Length)],",
+                "surnames[random.Next(0, surnames.Length)],",
+                "companies[random.Next(0, companies.Length)]",
+                "return persons;");
+        }
+
+        [TestMethod]
         public void CopiedWpfGalleryModelClassesStayUnsealedLikeOfficialSource()
         {
             var repoRoot = GetRepoRoot();

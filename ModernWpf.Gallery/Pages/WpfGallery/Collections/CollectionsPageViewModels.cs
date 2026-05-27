@@ -43,20 +43,27 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
         protected static ObservableCollection<Product> GenerateProducts()
         {
             var random = CreateSampleRandom(ProductsVisualTestSeed);
-            var products = new ObservableCollection<Product>();
+            var products = new ObservableCollection<Product> { };
+
             var adjectives = new[] { "Red", "Blueberry" };
             var names = new[] { "Marmalade", "Dumplings", "Soup" };
+            //var units = new[] { "grams", "kilograms", "milliliters" };
 
-            for (var i = 0; i < 50; i++)
+            for (int i = 0; i < 50; i++)
             {
-                products.Add(new Product
-                {
-                    ProductId = i,
-                    ProductCode = i,
-                    ProductName = adjectives[random.Next(0, adjectives.Length)] + " " + names[random.Next(0, names.Length)],
-                    UnitPrice = Math.Round(random.NextDouble() * 20.0, 3),
-                    UnitsInStock = random.Next(0, 100)
-                });
+                products.Add(
+                    new Product
+                    {
+                        ProductId = i,
+                        ProductCode = i,
+                        ProductName =
+                            adjectives[random.Next(0, adjectives.Length)]
+                            + " "
+                            + names[random.Next(0, names.Length)],
+                        UnitPrice = Math.Round(random.NextDouble() * 20.0, 3),
+                        UnitsInStock = random.Next(0, 100)
+                    }
+                );
             }
 
             return products;
@@ -120,13 +127,14 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
                 "Elysium Crest Holdings"
             };
 
-            for (var i = 0; i < 50; i++)
-            {
-                persons.Add(new Person(
-                    names[random.Next(0, names.Length)],
-                    surnames[random.Next(0, surnames.Length)],
-                    companies[random.Next(0, companies.Length)]));
-            }
+            for (int i = 0; i < 50; i++)
+                persons.Add(
+                    new Person(
+                        names[random.Next(0, names.Length)],
+                        surnames[random.Next(0, surnames.Length)],
+                        companies[random.Next(0, companies.Length)]
+                    )
+                );
 
             return persons;
         }
