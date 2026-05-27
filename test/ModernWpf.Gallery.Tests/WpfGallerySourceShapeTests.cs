@@ -663,12 +663,17 @@ namespace ModernWpf.Gallery.Tests
                 "ColorPageExample.cs");
             AssertContainsInOrder(
                 code,
+                "[ContentProperty(nameof(ExampleContent))]",
+                "public partial class ColorPageExample : UserControl",
                 "public string Description",
                 "public static readonly DependencyProperty DescriptionProperty",
+                "DependencyProperty.Register(\"Description\", typeof(string), typeof(ColorPageExample), new PropertyMetadata(\"\"));",
                 "public string Title",
                 "public static readonly DependencyProperty TitleProperty",
+                "DependencyProperty.Register(\"Title\", typeof(string), typeof(ColorPageExample), new PropertyMetadata(\"\"));",
                 "public UIElement ExampleContent",
-                "public static readonly DependencyProperty ExampleContentProperty");
+                "public static readonly DependencyProperty ExampleContentProperty",
+                "DependencyProperty.Register(\"ExampleContent\", typeof(UIElement), typeof(ColorPageExample), new PropertyMetadata(null));");
         }
 
         [TestMethod]

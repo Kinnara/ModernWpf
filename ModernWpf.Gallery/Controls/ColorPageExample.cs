@@ -5,7 +5,7 @@ using System.Windows.Markup;
 namespace ModernWpf.Gallery.Controls
 {
     [ContentProperty(nameof(ExampleContent))]
-    public class ColorPageExample : UserControl
+    public partial class ColorPageExample : UserControl
     {
         public string Description
         {
@@ -14,7 +14,7 @@ namespace ModernWpf.Gallery.Controls
         }
 
         public static readonly DependencyProperty DescriptionProperty =
-            DependencyProperty.Register(nameof(Description), typeof(string), typeof(ColorPageExample), new PropertyMetadata(string.Empty));
+            DependencyProperty.Register("Description", typeof(string), typeof(ColorPageExample), new PropertyMetadata(""));
 
         public string Title
         {
@@ -23,7 +23,7 @@ namespace ModernWpf.Gallery.Controls
         }
 
         public static readonly DependencyProperty TitleProperty =
-            DependencyProperty.Register(nameof(Title), typeof(string), typeof(ColorPageExample), new PropertyMetadata(string.Empty));
+            DependencyProperty.Register("Title", typeof(string), typeof(ColorPageExample), new PropertyMetadata(""));
 
         public UIElement ExampleContent
         {
@@ -32,6 +32,6 @@ namespace ModernWpf.Gallery.Controls
         }
 
         public static readonly DependencyProperty ExampleContentProperty =
-            DependencyProperty.Register(nameof(ExampleContent), typeof(UIElement), typeof(ColorPageExample), new PropertyMetadata(null));
+            DependencyProperty.Register("ExampleContent", typeof(UIElement), typeof(ColorPageExample), new PropertyMetadata(null));
     }
 }
