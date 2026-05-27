@@ -1983,8 +1983,9 @@ namespace ModernWpf.Gallery.Tests
 
             AssertContainsInOrder(
                 xaml,
-                "<Page",
-                "x:Class=\"ModernWpf.Gallery.Pages.WhatsNewPage\"",
+                "<Page x:Class=\"ModernWpf.Gallery.Pages.WhatsNewPage\"",
+                "xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\"",
+                "xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\"",
                 "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"",
                 "xmlns:d=\"http://schemas.microsoft.com/expression/blend/2008\"",
                 "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages\"",
@@ -2018,12 +2019,24 @@ namespace ModernWpf.Gallery.Tests
                 "<TextBlock Style=\"{StaticResource SubtitleTextBlockStyle}\" Margin=\"0 0 0 12\">\n                    New and Enhanced Fluent Styles\n                </TextBlock>",
                 "<TextBlock TextWrapping=\"Wrap\" Margin=\"0 0 0 12\">\n                    <Run>\n                        The WPF Grid supports a shorthand syntax for defining row and column sizes using the RowDefinitions and ColumnDefinitions attribute.",
                 "<controls:ControlExample\n                    Margin=\"2 10 2 24\"\n                    HeaderText=\"Grid Shorthand Syntax Sample\"",
+                "<Grid HorizontalAlignment=\"Left\">\n                        <Grid.RowDefinitions>",
+                "<TextBlock Grid.Row=\"0\" Grid.Column=\"0\" FontWeight=\"Bold\" Margin=\"0 0 10 0\">Sl. No.</TextBlock>",
+                "<TextBlock Grid.Row=\"0\" Grid.Column=\"1\" FontWeight=\"Bold\">Name</TextBlock>",
+                "<TextBlock Grid.Row=\"0\" Grid.Column=\"2\" FontWeight=\"Bold\">Description</TextBlock>",
+                "<TextBlock Grid.Row=\"1\" Grid.Column=\"2\" TextWrapping=\"Wrap\">Quadrilateral where all the adjacent sides form a right angle.</TextBlock>",
+                "<TextBlock Grid.Row=\"2\" Grid.Column=\"2\" TextWrapping=\"Wrap\">Set of all points that are equidistant from a fixed point.</TextBlock>",
                 "<TextBlock Style=\"{StaticResource TitleTextBlockStyle}\" Margin=\"0 0 0 12\">\n                    .NET 9\n                </TextBlock>",
                 "<TextBlock Style=\"{StaticResource SubtitleTextBlockStyle}\" Margin=\"0 24 0 12\">\n                    Hyphen based ligature support\n                </TextBlock>",
                 "<TextBlock Margin=\"0 0 16 0\" FontFamily=\"Cascadia Code\" Text=\"-->\" />");
-            StringAssert.Contains(
+            AssertContainsInOrder(
                 xaml,
-                "Background=\"{DynamicResource SystemControlBackgroundAccentBrush}\"");
+                "<Border CornerRadius=\"2 0 0 2\" Background=\"{DynamicResource SystemAccentColorDark3Brush}\" />",
+                "<Border Background=\"{DynamicResource SystemAccentColorDark2Brush}\" />",
+                "<Border Background=\"{DynamicResource SystemAccentColorDark1Brush}\" />",
+                "<Border Background=\"{DynamicResource SystemControlBackgroundAccentBrush}\" />",
+                "<Border Background=\"{DynamicResource SystemAccentColorLight1Brush}\" />",
+                "<Border Background=\"{DynamicResource SystemAccentColorLight2Brush}\" />",
+                "<Border CornerRadius=\"0 2 2 0\" Background=\"{DynamicResource SystemAccentColorLight3Brush}\" />");
         }
 
         [TestMethod]
