@@ -1276,6 +1276,34 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void WpfGalleryPageStylesKeepOfficialResourceSetterSourceShape()
+        {
+            var xaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Resources",
+                "PageStyles.xaml");
+
+            AssertContainsInOrder(
+                xaml,
+                "<Style x:Key=\"BaseTextBlockStyle\" TargetType=\"TextBlock\">",
+                "<Setter Property=\"FontSize\" Value=\"{StaticResource BodyTextBlockFontSize}\" />",
+                "<Setter Property=\"FontWeight\" Value=\"SemiBold\" />",
+                "<Setter Property=\"TextTrimming\" Value=\"CharacterEllipsis\" />",
+                "<Setter Property=\"TextWrapping\" Value=\"Wrap\" />",
+                "<Setter Property=\"LineStackingStrategy\" Value=\"MaxHeight\" />",
+                "</Style>");
+            AssertContainsInOrder(
+                xaml,
+                "<Style x:Key=\"ColorTilesPanelStyle\" TargetType=\"{x:Type Border}\">",
+                "<Style.Setters>",
+                "<Setter Property=\"Background\" Value=\"{DynamicResource ControlExampleDisplayBrush}\" />",
+                "<Setter Property=\"BorderThickness\" Value=\"1\" />",
+                "<Setter Property=\"BorderBrush\" Value=\"{DynamicResource CardStrokeColorDefaultBrush}\" />",
+                "<Setter Property=\"CornerRadius\" Value=\"8\" />",
+                "</Style.Setters>");
+        }
+
+        [TestMethod]
         public void SharedControlExampleKeepsOfficialSourceCodeTemplateShape()
         {
             var xaml = ReadRepoFile(
