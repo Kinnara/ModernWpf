@@ -1884,6 +1884,7 @@ namespace ModernWpf.Gallery.Tests
                 "ModernWpf.Gallery",
                 "Pages",
                 "HomePage.xaml");
+            var normalizedXaml = xaml.Replace("\r\n", "\n").Replace('\r', '\n');
 
             AssertContainsInOrder(
                 xaml,
@@ -1905,36 +1906,26 @@ namespace ModernWpf.Gallery.Tests
                 "The copied Home page should use the official Dashboard ScrollViewer root shape instead of a local-only root name.");
             AssertContainsInOrder(
                 xaml,
-                "<ScrollViewer>",
+                "<ScrollViewer >",
                 "<Grid>",
                 "<Grid.RowDefinitions>",
                 "<RowDefinition Height=\"Auto\" />",
                 "<RowDefinition Height=\"Auto\" />",
                 "<RowDefinition Height=\"*\" />");
+            StringAssert.Contains(
+                normalizedXaml,
+                "<ScrollViewer >\n\n        <Grid>");
+            StringAssert.Contains(
+                normalizedXaml,
+                "<Border CornerRadius=\"8,0,0,0\"\n                    Grid.RowSpan=\"2\">\n                <Border.Background>\n                    <ImageBrush ImageSource=\"pack://application:,,,/ModernWpf.Gallery;component/Assets/win11-dashboard.light.png\" Stretch=\"UniformToFill\" />");
             AssertContainsInOrder(
                 xaml,
-                "<Border",
-                "CornerRadius=\"8,0,0,0\"",
+                "<Border CornerRadius=\"8,0,0,0\"",
                 "Grid.RowSpan=\"2\"",
-                "<StackPanel",
-                "Margin=\"36,48,0,0\"",
-                "VerticalAlignment=\"Top\"",
-                "TextElement.Foreground=\"Black\"",
-                "<TextBlock",
-                "Style=\"{StaticResource SubtitleTextBlockStyle}\"",
-                "Text=\".NET 10\"",
-                "Margin=\"0,0,0,2\"",
-                "pages:GalleryAutomation.HeadingLevel=\"Level1\" />",
-                "<TextBlock",
-                "Style=\"{StaticResource TitleLargeTextBlockStyle}\"",
-                "Text=\"WPF Gallery\"",
-                "Margin=\"0,0,0,8\"",
-                "pages:GalleryAutomation.HeadingLevel=\"Level1\" />",
-                "<Border",
-                "Background=\"Transparent\"",
-                "CornerRadius=\"8,8,8,8\"",
-                "MaxWidth=\"300\"",
-                "HorizontalAlignment=\"Left\"",
+                "<StackPanel Margin=\"36,48,0,0\" VerticalAlignment=\"Top\" TextElement.Foreground=\"Black\">",
+                "<TextBlock Style=\"{StaticResource SubtitleTextBlockStyle}\" Text=\".NET 10\" Margin=\"0,0,0,2\" pages:GalleryAutomation.HeadingLevel=\"Level1\" />",
+                "<TextBlock Style=\"{StaticResource TitleLargeTextBlockStyle}\" Text=\"WPF Gallery\" Margin=\"0,0,0,8\" pages:GalleryAutomation.HeadingLevel=\"Level1\" />",
+                "<Border Background=\"Transparent\" CornerRadius=\"8,8,8,8\" MaxWidth=\"300\" HorizontalAlignment=\"Left\">",
                 "<TextBlock",
                 "MaxWidth=\"300\"",
                 "Margin=\"0,0,0,0\"",
@@ -1942,20 +1933,22 @@ namespace ModernWpf.Gallery.Tests
                 "Text=\"A collection of controls, guidelines and samples to build great WPF applications\"",
                 "TextAlignment=\"Left\"",
                 "HorizontalAlignment=\"Left\"",
-                "Padding=\"0,8,12,8\" />");
+                "Padding=\"0,8,12,8\"/>");
             Assert.AreEqual(
                 1,
                 xaml.Split(new[] { "Foreground=\"Black\"" }, StringSplitOptions.None).Length - 1,
                 "Home hero text should inherit black foreground from the source-shaped StackPanel.");
             AssertContainsInOrder(
                 xaml,
-                "<controls:TileGallery",
-                "Grid.Row=\"1\"",
-                "HorizontalAlignment=\"Stretch\"",
-                "Margin=\"0\" />");
+                "<controls:TileGallery Grid.Row=\"1\" HorizontalAlignment=\"Stretch\" Margin=\"0\"/>",
+                "<StackPanel Grid.Row=\"2\" Margin=\"32,24,0,0\" Orientation=\"Vertical\">");
             AssertContainsInOrder(
                 xaml,
-                "Text=\"Overview\" />",
+                "<TextBlock",
+                "Style=\"{StaticResource BodyStrongTextBlockStyle}\"",
+                "Text=\"Overview\"",
+                "FontSize=\"16\"",
+                "pages:GalleryAutomation.HeadingLevel=\"Level2\" />",
                 "<ItemsControl",
                 "Margin=\"-20,0,0,0\"",
                 "AutomationProperties.Name=\"Items in group\"",
@@ -1965,7 +1958,11 @@ namespace ModernWpf.Gallery.Tests
                 "ItemTemplate=\"{StaticResource NavigationCardTemplate}\" />");
             AssertContainsInOrder(
                 xaml,
-                "Text=\"Recently added and updated\" />",
+                "<TextBlock",
+                "Style=\"{StaticResource BodyStrongTextBlockStyle}\"",
+                "Text=\"Recently added and updated\"",
+                "FontSize=\"16\"",
+                "pages:GalleryAutomation.HeadingLevel=\"Level2\" />",
                 "<ItemsControl",
                 "Margin=\"-18,0,0,0\"",
                 "AutomationProperties.Name=\"Recently Added and Updated Samples Section\"",
