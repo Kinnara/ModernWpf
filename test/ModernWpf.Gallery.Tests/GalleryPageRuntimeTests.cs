@@ -597,6 +597,11 @@ namespace ModernWpf.Gallery.Tests
 
                 var dataGridPage = (DataGridPage)new ItemPage(GalleryCatalog.FindItem("DataGrid")).DirectPageContent;
                 Assert.AreEqual(50, dataGridPage.ViewModel.ProductsCollection.Count);
+                var changedProperties = new List<string>();
+                dataGridPage.ViewModel.PropertyChanged += (sender, args) => changedProperties.Add(args.PropertyName);
+                dataGridPage.ViewModel.PageTitle = "Data Grids";
+                Assert.AreEqual("Data Grids", dataGridPage.ViewModel.PageTitle);
+                CollectionAssert.Contains(changedProperties, nameof(DataGridPageViewModel.PageTitle));
                 var sampleDataGrid = (DataGrid)dataGridPage.FindName("SampleDataGrid");
                 dataGridPage.ApplyPageVisuals(true);
                 Assert.AreSame(SystemColors.ControlBrush, sampleDataGrid.Background);
@@ -613,8 +618,12 @@ namespace ModernWpf.Gallery.Tests
                 var listViewPage = (ListViewPage)new ItemPage(GalleryCatalog.FindItem("ListView")).DirectPageContent;
                 Assert.AreEqual(50, listViewPage.ViewModel.BasicListViewItems.Count);
                 Assert.AreEqual(50, listViewPage.ViewModel.GridViewItems.Count);
+                changedProperties.Clear();
+                listViewPage.ViewModel.PropertyChanged += (sender, args) => changedProperties.Add(args.PropertyName);
                 listViewPage.ViewModel.ListViewSelectionModeComboBoxSelectedIndex = 1;
                 Assert.AreEqual(SelectionMode.Multiple, listViewPage.ViewModel.ListViewSelectionMode);
+                CollectionAssert.Contains(changedProperties, nameof(ListViewPageViewModel.ListViewSelectionModeComboBoxSelectedIndex));
+                CollectionAssert.Contains(changedProperties, nameof(ListViewPageViewModel.ListViewSelectionMode));
                 listViewPage.ViewModel.ListViewSelectionModeComboBoxSelectedIndex = 2;
                 Assert.AreEqual(SelectionMode.Extended, listViewPage.ViewModel.ListViewSelectionMode);
             });

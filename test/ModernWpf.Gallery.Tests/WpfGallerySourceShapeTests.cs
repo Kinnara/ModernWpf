@@ -623,6 +623,9 @@ namespace ModernWpf.Gallery.Tests
 
             AssertContainsInOrder(
                 source,
+                "public abstract class CollectionsPageViewModelBase : WpfGalleryPageViewModel",
+                "protected CollectionsPageViewModelBase(string pageTitle)",
+                ": base(pageTitle, string.Empty)",
                 "public partial class DataGridPageViewModel : CollectionsPageViewModelBase",
                 "private ObservableCollection<Product> _productsCollection;",
                 "public DataGridPageViewModel()",
@@ -654,6 +657,12 @@ namespace ModernWpf.Gallery.Tests
                 "1 => SelectionMode.Multiple,",
                 "2 => SelectionMode.Extended,",
                 "_ => SelectionMode.Single");
+            Assert.IsFalse(
+                source.Contains("public event PropertyChangedEventHandler", StringComparison.Ordinal),
+                "Collections view models should use the shared observable page-view-model adapter instead of local event plumbing.");
+            Assert.IsFalse(
+                source.Contains("private void OnPropertyChanged", StringComparison.Ordinal),
+                "Collections view models should use the shared SetProperty adapter instead of local OnPropertyChanged plumbing.");
         }
 
         [TestMethod]

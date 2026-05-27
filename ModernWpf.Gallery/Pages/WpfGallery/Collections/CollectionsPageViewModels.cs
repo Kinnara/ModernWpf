@@ -1,15 +1,13 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Windows.Controls;
 using ModernWpf.Gallery.Models;
+using ModernWpf.Gallery.Pages.WpfGallery;
 using ModernWpf.Gallery.Testing;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
 {
-    public abstract class CollectionsPageViewModelBase : INotifyPropertyChanged
+    public abstract class CollectionsPageViewModelBase : WpfGalleryPageViewModel
     {
         // Visual audits compare two processes; fixed seeds remove false drift from source-matching random samples.
         private const int ProductsVisualTestSeed = 12043;
@@ -17,27 +15,8 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
         private const int GridViewVisualTestSeed = 22044;
 
         protected CollectionsPageViewModelBase(string pageTitle)
+            : base(pageTitle, string.Empty)
         {
-            PageTitle = pageTitle;
-            PageDescription = string.Empty;
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public string PageTitle { get; }
-
-        public string PageDescription { get; }
-
-        protected bool SetProperty<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
-        {
-            if (EqualityComparer<T>.Default.Equals(field, value))
-            {
-                return false;
-            }
-
-            field = value;
-            OnPropertyChanged(propertyName);
-            return true;
         }
 
         protected static ObservableCollection<Product> GenerateProducts()
@@ -144,15 +123,6 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
             return GalleryDiagnostics.IsEnabled
                 ? new GallerySampleRandom(visualTestSeed)
                 : new GallerySampleRandom();
-        }
-
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            var handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
         }
     }
 
