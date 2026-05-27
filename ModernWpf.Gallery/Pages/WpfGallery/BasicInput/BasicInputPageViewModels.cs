@@ -77,6 +77,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
 
     public partial class ButtonPageViewModel : BasicInputPageViewModelBase
     {
+        private string _message = "Hello World!";
         private bool _isSimpleButtonEnabled = true;
         private bool _isUiButtonEnabled = true;
 
@@ -84,9 +85,18 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
             : base("Button")
         {
             SimpleButtonCheckboxCheckedCommand = CreateCommand(OnSimpleButtonCheckboxChecked);
+            UiButtonCheckboxCheckedCommand = CreateCommand(OnUiButtonCheckboxChecked);
         }
 
         public ICommand SimpleButtonCheckboxCheckedCommand { get; }
+
+        public ICommand UiButtonCheckboxCheckedCommand { get; }
+
+        public string Message
+        {
+            get { return _message; }
+            set { SetProperty(ref _message, value); }
+        }
 
         public bool IsSimpleButtonEnabled
         {
@@ -102,22 +112,27 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
 
         private void OnSimpleButtonCheckboxChecked(object sender)
         {
-            var checkbox = sender as CheckBox;
-            if (checkbox == null)
-            {
+            if (sender is not CheckBox checkbox)
                 return;
-            }
 
-            IsSimpleButtonEnabled = !(checkbox.IsChecked ?? false);
+            IsSimpleButtonEnabled = !(checkbox?.IsChecked ?? false);
+        }
+
+        private void OnUiButtonCheckboxChecked(object sender)
+        {
+            if (sender is not CheckBox checkbox)
+                return;
+
+            IsUiButtonEnabled = !(checkbox?.IsChecked ?? false);
         }
     }
 
     public partial class CheckBoxPageViewModel : BasicInputPageViewModelBase
     {
-        private bool _optionOneCheckBoxChecked;
-        private bool _optionThreeCheckBoxChecked;
+        private bool? _selectAllCheckBoxChecked = null;
+        private bool _optionOneCheckBoxChecked = false;
         private bool _optionTwoCheckBoxChecked = true;
-        private bool? _selectAllCheckBoxChecked;
+        private bool _optionThreeCheckBoxChecked = false;
 
         public CheckBoxPageViewModel()
             : base("CheckBox")
@@ -156,15 +171,14 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
 
         private void OnSelectAllChecked(object sender)
         {
-            var checkBox = sender as CheckBox;
-            if (checkBox == null)
-            {
+            if (sender is not CheckBox checkBox)
                 return;
-            }
 
             if (checkBox.IsChecked == null)
             {
-                checkBox.IsChecked = !(OptionOneCheckBoxChecked && OptionTwoCheckBoxChecked && OptionThreeCheckBoxChecked);
+                checkBox.IsChecked = !(
+                    OptionOneCheckBoxChecked && OptionTwoCheckBoxChecked && OptionThreeCheckBoxChecked
+                );
             }
 
             if (checkBox.IsChecked == true)
@@ -200,38 +214,48 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
 
     public partial class ComboBoxPageViewModel : BasicInputPageViewModelBase
     {
+        private IList<string> _comboBoxFontFamilies = new ObservableCollection<string>
+        {
+            "Arial",
+            "Comic Sans MS",
+            "Segoe UI",
+            "Times New Roman"
+        };
+
+        private IList<int> _comboBoxFontSizes = new ObservableCollection<int>
+        {
+            8,
+            9,
+            10,
+            11,
+            12,
+            14,
+            16,
+            18,
+            20,
+            24,
+            28,
+            36,
+            48,
+            72
+        };
+
         public ComboBoxPageViewModel()
             : base("ComboBox")
         {
-            ComboBoxFontFamilies = new ObservableCollection<string>
-            {
-                "Arial",
-                "Comic Sans MS",
-                "Segoe UI",
-                "Times New Roman"
-            };
-            ComboBoxFontSizes = new ObservableCollection<int>
-            {
-                8,
-                9,
-                10,
-                11,
-                12,
-                14,
-                16,
-                18,
-                20,
-                24,
-                28,
-                36,
-                48,
-                72
-            };
         }
 
-        public IList<string> ComboBoxFontFamilies { get; }
+        public IList<string> ComboBoxFontFamilies
+        {
+            get { return _comboBoxFontFamilies; }
+            set { SetProperty(ref _comboBoxFontFamilies, value); }
+        }
 
-        public IList<int> ComboBoxFontSizes { get; }
+        public IList<int> ComboBoxFontSizes
+        {
+            get { return _comboBoxFontSizes; }
+            set { SetProperty(ref _comboBoxFontSizes, value); }
+        }
     }
 
     public partial class RadioButtonPageViewModel : BasicInputPageViewModelBase
@@ -254,22 +278,19 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
 
         private void OnRadioButtonCheckboxChecked(object sender)
         {
-            var checkbox = sender as CheckBox;
-            if (checkbox == null)
-            {
+            if (sender is not CheckBox checkbox)
                 return;
-            }
 
-            IsRadioButtonEnabled = !(checkbox.IsChecked ?? false);
+            IsRadioButtonEnabled = !(checkbox?.IsChecked ?? false);
         }
     }
 
     public partial class SliderPageViewModel : BasicInputPageViewModelBase
     {
-        private int _marksSliderValue;
+        private int _simpleSliderValue = 0;
         private int _rangeSliderValue = 500;
-        private int _simpleSliderValue;
-        private int _verticalSliderValue;
+        private int _marksSliderValue = 0;
+        private int _verticalSliderValue = 0;
 
         public SliderPageViewModel()
             : base("Slider")

@@ -213,6 +213,80 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void BasicInputViewModelsKeepOfficialStateAndCommandSourceShape()
+        {
+            var source = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "BasicInput",
+                "BasicInputPageViewModels.cs").Replace("\r\n", "\n").Replace('\r', '\n');
+
+            AssertContainsInOrder(
+                source,
+                "public partial class ButtonPageViewModel : BasicInputPageViewModelBase",
+                "private string _message = \"Hello World!\";",
+                "private bool _isSimpleButtonEnabled = true;",
+                "private bool _isUiButtonEnabled = true;",
+                "SimpleButtonCheckboxCheckedCommand = CreateCommand(OnSimpleButtonCheckboxChecked);",
+                "UiButtonCheckboxCheckedCommand = CreateCommand(OnUiButtonCheckboxChecked);",
+                "public ICommand SimpleButtonCheckboxCheckedCommand { get; }",
+                "public ICommand UiButtonCheckboxCheckedCommand { get; }",
+                "public string Message",
+                "SetProperty(ref _message, value);",
+                "private void OnSimpleButtonCheckboxChecked(object sender)",
+                "if (sender is not CheckBox checkbox)",
+                "IsSimpleButtonEnabled = !(checkbox?.IsChecked ?? false);",
+                "private void OnUiButtonCheckboxChecked(object sender)",
+                "if (sender is not CheckBox checkbox)",
+                "IsUiButtonEnabled = !(checkbox?.IsChecked ?? false);");
+            AssertContainsInOrder(
+                source,
+                "public partial class CheckBoxPageViewModel : BasicInputPageViewModelBase",
+                "private bool? _selectAllCheckBoxChecked = null;",
+                "private bool _optionOneCheckBoxChecked = false;",
+                "private bool _optionTwoCheckBoxChecked = true;",
+                "private bool _optionThreeCheckBoxChecked = false;",
+                "private void OnSelectAllChecked(object sender)",
+                "if (sender is not CheckBox checkBox)",
+                "checkBox.IsChecked = !(\n                    OptionOneCheckBoxChecked && OptionTwoCheckBoxChecked && OptionThreeCheckBoxChecked\n                );",
+                "private void OnSingleChecked(object option)",
+                "if (OptionOneCheckBoxChecked && OptionTwoCheckBoxChecked && OptionThreeCheckBoxChecked)",
+                "SelectAllCheckBoxChecked = true;",
+                "else if (!OptionOneCheckBoxChecked && !OptionTwoCheckBoxChecked && !OptionThreeCheckBoxChecked)",
+                "SelectAllCheckBoxChecked = false;");
+            AssertContainsInOrder(
+                source,
+                "public partial class ComboBoxPageViewModel : BasicInputPageViewModelBase",
+                "private IList<string> _comboBoxFontFamilies = new ObservableCollection<string>",
+                "\"Arial\",",
+                "\"Comic Sans MS\",",
+                "\"Segoe UI\",",
+                "\"Times New Roman\"",
+                "private IList<int> _comboBoxFontSizes = new ObservableCollection<int>",
+                "8,",
+                "72",
+                "public IList<string> ComboBoxFontFamilies",
+                "SetProperty(ref _comboBoxFontFamilies, value);",
+                "public IList<int> ComboBoxFontSizes",
+                "SetProperty(ref _comboBoxFontSizes, value);");
+            AssertContainsInOrder(
+                source,
+                "public partial class RadioButtonPageViewModel : BasicInputPageViewModelBase",
+                "private bool _isRadioButtonEnabled = true;",
+                "private void OnRadioButtonCheckboxChecked(object sender)",
+                "if (sender is not CheckBox checkbox)",
+                "IsRadioButtonEnabled = !(checkbox?.IsChecked ?? false);");
+            AssertContainsInOrder(
+                source,
+                "public partial class SliderPageViewModel : BasicInputPageViewModelBase",
+                "private int _simpleSliderValue = 0;",
+                "private int _rangeSliderValue = 500;",
+                "private int _marksSliderValue = 0;",
+                "private int _verticalSliderValue = 0;");
+        }
+
+        [TestMethod]
         public void CollectionsViewModelsKeepOfficialConstructorAndSelectionModeSourceShape()
         {
             var source = ReadRepoFile(
