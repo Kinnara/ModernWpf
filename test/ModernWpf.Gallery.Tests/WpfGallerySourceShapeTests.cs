@@ -3326,6 +3326,37 @@ namespace ModernWpf.Gallery.Tests
                 "GotKeyboardFocus=\"IconsSearchBox_GotKeyboardFocus\"",
                 "LostKeyboardFocus=\"IconsSearchBox_LostKeyboardFocus\"",
                 "TextChanged=\"IconsSearchBox_TextChanged\"/>");
+            StringAssert.Contains(
+                iconographyXaml,
+                "<TextBlock Grid.Row=\"2\" Style=\"{StaticResource BodyStrongTextBlockStyle}\" Text=\"Fluent Icons Library\" Margin=\"2,24,0,10\" />");
+            StringAssert.Contains(
+                normalizedIconographyXaml,
+                "<TextBlock x:Name=\"IconsSearchBoxPlaceholder\" VerticalAlignment=\"Center\" Style=\"{StaticResource BodyTextBlockStyle}\" Text=\"Search Icons by Name, Tag\" Margin=\"14,0,0,0\"\n                       IsHitTestVisible=\"False\" Foreground=\"{DynamicResource TextFillColorSecondaryBrush}\"/>");
+            StringAssert.Contains(
+                normalizedIconographyXaml,
+                "<Grid Grid.Row=\"4\" Margin=\"2 10 2 10\">\n            <Grid.ColumnDefinitions>\n                <ColumnDefinition Width=\"*\"/>\n                <ColumnDefinition Width=\"300\"/>\n            </Grid.ColumnDefinitions>\n\n            <Border CornerRadius=\"8 0 0 8\" Background=\"{DynamicResource SubtleFillColorSecondaryBrush}\" Grid.Column=\"0\"/>");
+            AssertContainsInOrder(
+                iconographyXaml,
+                "<ListView AutomationProperties.Name=\"Icons\" ItemsSource=\"{Binding ViewModel.DisplayedIcons}\" ScrollViewer.HorizontalScrollBarVisibility=\"Disabled\" ScrollViewer.VerticalScrollBarVisibility=\"Visible\" Padding=\"4\" SelectedItem=\"{Binding ViewModel.SelectedIcon}\" SelectionMode=\"Single\" >",
+                "<WrapPanel Orientation=\"Horizontal\" Margin=\"10\" HorizontalAlignment=\"Stretch\" VerticalAlignment=\"Stretch\"/>",
+                "<Style TargetType=\"ListViewItem\" BasedOn=\"{StaticResource DefaultListViewItemStyle}\">",
+                "<Setter Property=\"AutomationProperties.Name\" Value=\"{Binding Name, Mode=OneWay}\"/>",
+                "<Border BorderThickness=\"4\" CornerRadius=\"8\" Background=\"{DynamicResource ButtonBackground}\">",
+                "<Grid Width=\"96\" Height=\"96\" ToolTip=\"{Binding Name}\" >",
+                "<TextBlock Focusable=\"False\" Grid.Row=\"0\" FontFamily=\"{StaticResource SymbolThemeFontFamily}\" Text=\"{Binding Character}\" AutomationProperties.Name=\"{Binding Name, StringFormat='{}{0} Icon'}\" FontSize=\"28\" Width=\"28\" Height=\"28\" VerticalAlignment=\"Center\" HorizontalAlignment=\"Center\"/>",
+                "<TextBlock Focusable=\"False\" Grid.Row=\"1\" Text=\"{Binding Name}\" Style=\"{StaticResource CaptionTextBlockStyle}\" HorizontalAlignment=\"Center\" VerticalAlignment=\"Bottom\" Foreground=\"{DynamicResource TextFillColorPrimaryBrush}\" TextTrimming=\"CharacterEllipsis\" TextWrapping=\"NoWrap\" Margin=\"6,-4,6,8\"/>");
+            AssertContainsInOrder(
+                iconographyXaml,
+                "<Grid Grid.Column=\"1\" Grid.Row=\"0\" Background=\"{DynamicResource ButtonBackground}\">",
+                "<StackPanel Orientation=\"Vertical\" Margin=\"16\">",
+                "<TextBlock Text=\"{Binding ViewModel.SelectedIcon.Name}\" Style=\"{StaticResource SubtitleTextBlockStyle}\" VerticalAlignment=\"Center\"/>",
+                "<TextBlock Text=\"{Binding ViewModel.SelectedIcon.Character}\" FontFamily=\"{StaticResource SymbolThemeFontFamily}\" FontSize=\"50\" Margin=\"0,12,0,32\"",
+                "AutomationProperties.Name=\"{Binding ViewModel.SelectedIcon.Name, StringFormat='{}{0} Icon'}\" HorizontalAlignment=\"Left\" VerticalAlignment=\"Center\"/>",
+                "<TextBlock Text=\"Icon Name\"/>",
+                "<ContentControl Style=\"{StaticResource IconData}\" Content=\"{Binding ViewModel.SelectedIcon.Name}\" Tag=\"Icon Name\"/>",
+                "<TextBlock Text=\"XAML\"/>",
+                "<TextBlock x:Name=\"XAMLCode\" Text=\"{Binding ViewModel.SelectedIcon.TextGlyph, StringFormat='&lt;TextBlock FontFamily=&#x22;{{StaticResource SymbolThemeFontFamily}}&#x22; Text=&#x22;{0}&#x22;/&gt;'}\" Visibility=\"Collapsed\"/>",
+                "<ContentControl Style=\"{StaticResource IconData}\" Content=\"{Binding ElementName=XAMLCode, Path=Text}\" Tag=\"XAML Code\"/>");
             AssertContainsInOrder(
                 iconographyXaml,
                 "<Grid",
@@ -3382,6 +3413,23 @@ namespace ModernWpf.Gallery.Tests
                 "SelectedIndex=\"{Binding ViewModel.SelectedPageSizeIndex}\"",
                 "AutomationProperties.Name=\"Icons per page\"",
                 "Margin=\"10,0,0,0\"");
+            AssertContainsInOrder(
+                iconographyXaml,
+                "<StackPanel Margin=\"0,0,0,0\" Orientation=\"Horizontal\" HorizontalAlignment=\"Left\">",
+                "<Button Style=\"{StaticResource PaginationButtonStyle}\" Command=\"{Binding ViewModel.PreviousPageCommand}\" Margin=\"0,0,8,0\" Padding=\"8\" ToolTip=\"Previous Page\"",
+                "AutomationProperties.Name=\"Previous Page\">",
+                "<TextBlock FontFamily=\"{StaticResource SymbolThemeFontFamily}\" Text=\"&#xF08D;\" FontSize=\"12\"/>",
+                "<TextBlock Text=\"{Binding ViewModel.CurrentPage, StringFormat='Page {0} of'}\" VerticalAlignment=\"Center\" Margin=\"0,0,4,0\"/>",
+                "<TextBlock Text=\"{Binding ViewModel.TotalPages}\" VerticalAlignment=\"Center\" Margin=\"0,0,8,0\"/>",
+                "<Button Style=\"{StaticResource PaginationButtonStyle}\" Command=\"{Binding ViewModel.NextPageCommand}\" Padding=\"8\" ToolTip=\"Next Page\"",
+                "AutomationProperties.Name=\"Next Page\">",
+                "<TextBlock FontFamily=\"{StaticResource SymbolThemeFontFamily}\" Text=\"&#xF08F;\" FontSize=\"12\"/>",
+                "<StackPanel Orientation=\"Horizontal\" Grid.Column=\"1\">",
+                "<TextBlock Style=\"{StaticResource BodyTextBlockStyle}\" Text=\"Icons per page\" Margin=\"10,0,0,0\"",
+                "VerticalAlignment=\"Center\"/>",
+                "<ComboBox ItemsSource=\"{Binding ViewModel.PageSizeOptions}\"",
+                "SelectedIndex=\"{Binding ViewModel.SelectedPageSizeIndex}\"",
+                "AutomationProperties.Name=\"Icons per page\" Margin=\"10,0,0,0\"/>");
         }
 
         [TestMethod]

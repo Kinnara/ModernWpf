@@ -189,185 +189,107 @@
             </TextBlock>
         </Expander>
 
-        <TextBlock
-            Grid.Row="2"
-            Margin="2,24,0,10"
-            Style="{StaticResource BodyStrongTextBlockStyle}"
-            Text="Fluent Icons Library" />
+        <TextBlock Grid.Row="2" Style="{StaticResource BodyStrongTextBlockStyle}" Text="Fluent Icons Library" Margin="2,24,0,10" />
 
         <Grid Grid.Row="3">
             <TextBox x:Name="IconsSearchBox" Text="{Binding ViewModel.SearchText, UpdateSourceTrigger=PropertyChanged, Delay=500}"
                      AutomationProperties.Name="Search Icons by Name, Tag" Width="500" HorizontalAlignment="Left" VerticalAlignment="Center"
                      GotKeyboardFocus="IconsSearchBox_GotKeyboardFocus" LostKeyboardFocus="IconsSearchBox_LostKeyboardFocus"
                      TextChanged="IconsSearchBox_TextChanged"/>
-            <TextBlock
-                x:Name="IconsSearchBoxPlaceholder"
-                Margin="14,0,0,0"
-                VerticalAlignment="Center"
-                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                IsHitTestVisible="False"
-                Style="{StaticResource BodyTextBlockStyle}"
-                Text="Search Icons by Name, Tag" />
+            <TextBlock x:Name="IconsSearchBoxPlaceholder" VerticalAlignment="Center" Style="{StaticResource BodyTextBlockStyle}" Text="Search Icons by Name, Tag" Margin="14,0,0,0"
+                       IsHitTestVisible="False" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
         </Grid>
 
-        <Grid Grid.Row="4" Margin="2,10,2,10">
+        <Grid Grid.Row="4" Margin="2 10 2 10">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="300" />
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="300"/>
             </Grid.ColumnDefinitions>
 
-            <Border
-                Grid.Column="0"
-                Background="{DynamicResource SubtleFillColorSecondaryBrush}"
-                CornerRadius="8,0,0,8" />
+            <Border CornerRadius="8 0 0 8" Background="{DynamicResource SubtleFillColorSecondaryBrush}" Grid.Column="0"/>
 
-            <ListView
-                Padding="4"
-                AutomationProperties.Name="Icons"
-                ItemsSource="{Binding ViewModel.DisplayedIcons}"
-                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                ScrollViewer.VerticalScrollBarVisibility="Visible"
-                SelectedItem="{Binding ViewModel.SelectedIcon}"
-                SelectionMode="Single">
-                <ListView.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <WrapPanel
-                            Margin="10"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Stretch"
-                            Orientation="Horizontal" />
-                    </ItemsPanelTemplate>
-                </ListView.ItemsPanel>
-                <ListView.ItemContainerStyle>
-                    <Style BasedOn="{StaticResource DefaultListViewItemStyle}" TargetType="ListViewItem">
-                        <Setter Property="FocusVisualStyle" Value="{StaticResource IconsListViewItemFocusVisualStyle}" />
-                        <Setter Property="AutomationProperties.Name" Value="{Binding Name, Mode=OneWay}" />
-                        <Setter Property="HorizontalAlignment" Value="Center" />
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                                    <Border
-                                        x:Name="Border"
-                                        Margin="5"
-                                        Padding="0"
-                                        HorizontalAlignment="Center"
-                                        Background="{TemplateBinding Background}"
-                                        BorderBrush="{TemplateBinding BorderBrush}"
-                                        BorderThickness="{TemplateBinding BorderThickness}"
-                                        CornerRadius="{TemplateBinding Border.CornerRadius}">
-                                        <ContentPresenter
-                                            Margin="-4"
+            <ListView AutomationProperties.Name="Icons" ItemsSource="{Binding ViewModel.DisplayedIcons}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible" Padding="4" SelectedItem="{Binding ViewModel.SelectedIcon}" SelectionMode="Single" >
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Horizontal" Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
+                            <Setter Property="FocusVisualStyle" Value="{StaticResource IconsListViewItemFocusVisualStyle}" />
+                            <Setter Property="AutomationProperties.Name" Value="{Binding Name, Mode=OneWay}"/>
+                            <Setter Property="HorizontalAlignment" Value="Center" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                        <Border x:Name="Border"
+                                            Margin="5" Padding="0"
                                             HorizontalAlignment="Center"
-                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
-                                    </Border>
-                                    <ControlTemplate.Triggers>
-                                        <MultiTrigger>
-                                            <MultiTrigger.Conditions>
-                                                <Condition Property="IsEnabled" Value="True" />
-                                                <Condition Property="IsMouseOver" Value="True" />
-                                            </MultiTrigger.Conditions>
-                                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource ListViewItemBackgroundPointerOver}" />
-                                        </MultiTrigger>
-                                        <Trigger Property="IsSelected" Value="True">
-                                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource ListViewItemPillFillBrush}" />
-                                            <Setter TargetName="Border" Property="BorderThickness" Value="2" />
-                                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource ListViewItemBackgroundPointerOver}" />
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </ListView.ItemContainerStyle>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Border
-                            Background="{DynamicResource ButtonBackground}"
-                            BorderThickness="4"
-                            CornerRadius="8">
-                            <Grid
-                                Width="96"
-                                Height="96"
-                                ToolTip="{Binding Name}">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="*" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-                                <TextBlock
-                                    Grid.Row="0"
-                                    Width="28"
-                                    Height="28"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    AutomationProperties.Name="{Binding Name, StringFormat='{}{0} Icon'}"
-                                    Focusable="False"
-                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                    FontSize="28"
-                                    Text="{Binding Character}" />
-                                <TextBlock
-                                    Grid.Row="1"
-                                    Margin="6,-4,6,8"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Bottom"
-                                    Focusable="False"
-                                    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{Binding Name}"
-                                    TextTrimming="CharacterEllipsis"
-                                    TextWrapping="NoWrap" />
-                            </Grid>
-                        </Border>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ListView>
+                                            Background="{TemplateBinding Background}"
+                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                            CornerRadius="{TemplateBinding Border.CornerRadius}">
+                                            <ContentPresenter
+                                                Margin="-4"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <MultiTrigger>
+                                                <MultiTrigger.Conditions>
+                                                    <Condition Property="IsEnabled" Value="True" />
+                                                    <Condition Property="IsMouseOver" Value="True" />
+                                                </MultiTrigger.Conditions>
+                                                <Setter TargetName="Border" Property="Background" Value="{DynamicResource ListViewItemBackgroundPointerOver}" />
+                                            </MultiTrigger>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource ListViewItemPillFillBrush}" />
+                                                <Setter TargetName="Border" Property="BorderThickness" Value="2" />
+                                                <Setter TargetName="Border" Property="Background" Value="{DynamicResource ListViewItemBackgroundPointerOver}" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border BorderThickness="4" CornerRadius="8" Background="{DynamicResource ButtonBackground}">
+                                <Grid Width="96" Height="96" ToolTip="{Binding Name}" >
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                <TextBlock Focusable="False" Grid.Row="0" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="{Binding Character}" AutomationProperties.Name="{Binding Name, StringFormat='{}{0} Icon'}" FontSize="28" Width="28" Height="28" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                    <TextBlock Focusable="False" Grid.Row="1" Text="{Binding Name}" Style="{StaticResource CaptionTextBlockStyle}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="{DynamicResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" Margin="6,-4,6,8"/>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ListView>
 
-            <Grid
-                Grid.Column="1"
-                Grid.Row="0"
-                Background="{DynamicResource ButtonBackground}">
+            <Grid Grid.Column="1" Grid.Row="0" Background="{DynamicResource ButtonBackground}">
                 <ScrollViewer>
-                    <StackPanel Margin="16" Orientation="Vertical">
-                        <TextBlock
-                            VerticalAlignment="Center"
-                            Style="{StaticResource SubtitleTextBlockStyle}"
-                            Text="{Binding ViewModel.SelectedIcon.Name}" />
-                        <TextBlock
-                            Margin="0,12,0,32"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
-                            AutomationProperties.Name="{Binding ViewModel.SelectedIcon.Name, StringFormat='{}{0} Icon'}"
-                            FontFamily="{StaticResource SymbolThemeFontFamily}"
-                            FontSize="50"
-                            Text="{Binding ViewModel.SelectedIcon.Character}" />
-                        <TextBlock Text="Icon Name" />
-                        <ContentControl
-                            Content="{Binding ViewModel.SelectedIcon.Name}"
-                            Style="{StaticResource IconData}"
-                            Tag="Icon Name" />
-                        <TextBlock Text="Unicode point" />
-                        <ContentControl
-                            Content="{Binding ViewModel.SelectedIcon.Code}"
-                            Style="{StaticResource IconData}"
-                            Tag="Unicode Point" />
-                        <TextBlock Text="Text glyph" />
-                        <ContentControl
-                            Content="{Binding ViewModel.SelectedIcon.TextGlyph}"
-                            Style="{StaticResource IconData}"
-                            Tag="Text Glyph" />
-                        <TextBlock Text="Code glyph" />
-                        <ContentControl
-                            Content="{Binding ViewModel.SelectedIcon.CodeGlyph}"
-                            Style="{StaticResource IconData}"
-                            Tag="Code Glyph" />
-                        <TextBlock
-                            Text="Tags"
-                            Visibility="{Binding ElementName=TagsItemsControl, Path=HasItems, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                        <ItemsControl
-                            x:Name="TagsItemsControl"
-                            ItemsSource="{Binding ViewModel.SelectedIcon.Tags}"
-                            Margin="0,0,0,12"
-                            Visibility="{Binding RelativeSource={RelativeSource Self}, Path=HasItems, Converter={StaticResource BooleanToVisibilityConverter}}"
-                            AutomationProperties.Name="Selected Icon Tags">
+                    <StackPanel Orientation="Vertical" Margin="16">
+                        <TextBlock Text="{Binding ViewModel.SelectedIcon.Name}" Style="{StaticResource SubtitleTextBlockStyle}" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding ViewModel.SelectedIcon.Character}" FontFamily="{StaticResource SymbolThemeFontFamily}" FontSize="50" Margin="0,12,0,32"
+                                   AutomationProperties.Name="{Binding ViewModel.SelectedIcon.Name, StringFormat='{}{0} Icon'}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                        <TextBlock Text="Icon Name"/>
+                        <ContentControl Style="{StaticResource IconData}" Content="{Binding ViewModel.SelectedIcon.Name}" Tag="Icon Name"/>
+                        <TextBlock Text="Unicode point"/>
+                        <ContentControl Style="{StaticResource IconData}" Content="{Binding ViewModel.SelectedIcon.Code}" Tag="Unicode Point"/>
+                        <TextBlock Text="Text glyph"/>
+                        <ContentControl Style="{StaticResource IconData}" Content="{Binding ViewModel.SelectedIcon.TextGlyph}" Tag="Text Glyph"/>
+                        <TextBlock Text="Code glyph"/>
+                        <ContentControl Style="{StaticResource IconData}" Content="{Binding ViewModel.SelectedIcon.CodeGlyph}" Tag="Code Glyph"/>
+                        <TextBlock Text="Tags"
+                                    Visibility="{Binding ElementName=TagsItemsControl, Path=HasItems, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                        <ItemsControl x:Name="TagsItemsControl"
+                                        ItemsSource="{Binding ViewModel.SelectedIcon.Tags}"
+                                        Margin="0,0,0,12"
+                                        Visibility="{Binding RelativeSource={RelativeSource Self}, Path=HasItems, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                        AutomationProperties.Name="Selected Icon Tags">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <WrapPanel />
@@ -375,31 +297,24 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Button
-                                        Style="{StaticResource IconTagChipButtonStyle}"
-                                        Command="{Binding ViewModel.ApplyTagFilterCommand, RelativeSource={RelativeSource AncestorType=Page}}"
-                                        AutomationProperties.Name="{Binding}"
-                                        CommandParameter="{Binding}">
-                                        <TextBlock
-                                            Text="{Binding}"
-                                            Style="{StaticResource CaptionTextBlockStyle}"
-                                            Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+                                    <Button Style="{StaticResource IconTagChipButtonStyle}"
+                                            Command="{Binding ViewModel.ApplyTagFilterCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                            AutomationProperties.Name="{Binding}"
+                                            CommandParameter="{Binding}">
+                                        <TextBlock Text="{Binding}"
+                                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                                    Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                                     </Button>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
-                        <TextBlock Text="XAML" />
-                        <TextBlock
-                            x:Name="XAMLCode"
-                            Text="{Binding ViewModel.SelectedIcon.TextGlyph, StringFormat='&lt;TextBlock FontFamily=&#x22;{{StaticResource SymbolThemeFontFamily}}&#x22; Text=&#x22;{0}&#x22;/&gt;'}"
-                            Visibility="Collapsed" />
-                        <ContentControl
-                            Content="{Binding ElementName=XAMLCode, Path=Text}"
-                            Style="{StaticResource IconData}"
-                            Tag="XAML Code" />
+                        <TextBlock Text="XAML"/>
+                        <TextBlock x:Name="XAMLCode" Text="{Binding ViewModel.SelectedIcon.TextGlyph, StringFormat='&lt;TextBlock FontFamily=&#x22;{{StaticResource SymbolThemeFontFamily}}&#x22; Text=&#x22;{0}&#x22;/&gt;'}" Visibility="Collapsed"/>
+                        <ContentControl Style="{StaticResource IconData}" Content="{Binding ElementName=XAMLCode, Path=Text}" Tag="XAML Code"/>
                     </StackPanel>
                 </ScrollViewer>
             </Grid>
+
         </Grid>
 
         <Grid Grid.Row="5">
@@ -407,53 +322,24 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <StackPanel
-                Margin="0,0,0,0"
-                Orientation="Horizontal"
-                HorizontalAlignment="Left">
-                <Button
-                    Style="{StaticResource PaginationButtonStyle}"
-                    Command="{Binding ViewModel.PreviousPageCommand}"
-                    Margin="0,0,8,0"
-                    Padding="8"
-                    ToolTip="Previous Page"
-                    AutomationProperties.Name="Previous Page">
-                    <TextBlock
-                        FontFamily="{StaticResource SymbolThemeFontFamily}"
-                        Text="&#xF08D;"
-                        FontSize="12" />
+            <StackPanel Margin="0,0,0,0" Orientation="Horizontal" HorizontalAlignment="Left">
+                <Button Style="{StaticResource PaginationButtonStyle}" Command="{Binding ViewModel.PreviousPageCommand}" Margin="0,0,8,0" Padding="8" ToolTip="Previous Page"
+                        AutomationProperties.Name="Previous Page">
+                    <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xF08D;" FontSize="12"/>
                 </Button>
-                <TextBlock
-                    Text="{Binding ViewModel.CurrentPage, StringFormat='Page {0} of'}"
-                    VerticalAlignment="Center"
-                    Margin="0,0,4,0" />
-                <TextBlock
-                    Text="{Binding ViewModel.TotalPages}"
-                    VerticalAlignment="Center"
-                    Margin="0,0,8,0" />
-                <Button
-                    Style="{StaticResource PaginationButtonStyle}"
-                    Command="{Binding ViewModel.NextPageCommand}"
-                    Padding="8"
-                    ToolTip="Next Page"
-                    AutomationProperties.Name="Next Page">
-                    <TextBlock
-                        FontFamily="{StaticResource SymbolThemeFontFamily}"
-                        Text="&#xF08F;"
-                        FontSize="12" />
+                <TextBlock Text="{Binding ViewModel.CurrentPage, StringFormat='Page {0} of'}" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                <TextBlock Text="{Binding ViewModel.TotalPages}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                <Button Style="{StaticResource PaginationButtonStyle}" Command="{Binding ViewModel.NextPageCommand}" Padding="8" ToolTip="Next Page"
+                        AutomationProperties.Name="Next Page">
+                    <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xF08F;" FontSize="12"/>
                 </Button>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Grid.Column="1">
-                <TextBlock
-                    Style="{StaticResource BodyTextBlockStyle}"
-                    Text="Icons per page"
-                    Margin="10,0,0,0"
-                    VerticalAlignment="Center" />
-                <ComboBox
-                    ItemsSource="{Binding ViewModel.PageSizeOptions}"
-                    SelectedIndex="{Binding ViewModel.SelectedPageSizeIndex}"
-                    AutomationProperties.Name="Icons per page"
-                    Margin="10,0,0,0" />
+                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Icons per page" Margin="10,0,0,0"
+                           VerticalAlignment="Center"/>
+                <ComboBox ItemsSource="{Binding ViewModel.PageSizeOptions}"
+                          SelectedIndex="{Binding ViewModel.SelectedPageSizeIndex}"
+                          AutomationProperties.Name="Icons per page" Margin="10,0,0,0"/>
             </StackPanel>
         </Grid>
     </Grid>
