@@ -1304,6 +1304,55 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void WpfGalleryTemplatesKeepOfficialNavigationCardSourceShape()
+        {
+            var xaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Resources",
+                "Templates.xaml");
+            var normalizedXaml = xaml.Replace("\r\n", "\n").Replace('\r', '\n');
+
+            AssertContainsInOrder(
+                xaml,
+                "<ResourceDictionary",
+                "xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\"",
+                "xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\"",
+                "xmlns:pages=\"clr-namespace:ModernWpf.Gallery.Pages\">",
+                "<ItemsPanelTemplate x:Key=\"WrapPanelTemplate\">");
+            StringAssert.Contains(
+                normalizedXaml,
+                "<WrapPanel Margin=\"10\"\n                Orientation=\"Horizontal\"/>");
+            AssertContainsInOrder(
+                xaml,
+                "<DataTemplate x:Key=\"NavigationCardTemplate\">",
+                "<Button",
+                "Width=\"360\"",
+                "Height=\"90\"",
+                "Margin=\"7\"",
+                "Padding=\"20,10\"",
+                "HorizontalContentAlignment=\"Left\"",
+                "AutomationProperties.Name=\"{Binding Title, StringFormat='{}{0}Page'}\"",
+                "Command=\"{Binding ViewModel.NavigateCommand, RelativeSource={RelativeSource AncestorType={x:Type Page}}}\"",
+                "CommandParameter=\"{Binding PageType}\">");
+            StringAssert.Contains(
+                normalizedXaml,
+                "<Image Source=\"{Binding ImageSource}\"\n                        Width=\"50\"\n                        Height=\"50\"\n                        Margin=\"0,0,8,0\"/>");
+            AssertContainsInOrder(
+                xaml,
+                "<TextBlock",
+                "Margin=\"10,0,0,0\"",
+                "Style=\"{StaticResource BodyStrongTextBlockStyle}\"",
+                "Text=\"{Binding Title}\" pages:GalleryAutomation.HeadingLevel=\"Level3\" />",
+                "<TextBlock",
+                "Width=\"240\"",
+                "Margin=\"10,0,0,0\"",
+                "Foreground=\"{DynamicResource TextFillColorPrimaryBrush}\"",
+                "Opacity=\"0.7\"",
+                "Style=\"{StaticResource CaptionTextBlockStyle}\"",
+                "Text=\"{Binding Description}\"/>");
+        }
+
+        [TestMethod]
         public void SharedControlExampleKeepsOfficialSourceCodeTemplateShape()
         {
             var xaml = ReadRepoFile(
