@@ -213,6 +213,53 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void WpfGalleryPageViewModelProvidesObservableStateAdapter()
+        {
+            var source = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "WpfGalleryPageViewModel.cs");
+
+            AssertContainsInOrder(
+                source,
+                "public class WpfGalleryPageViewModel : INotifyPropertyChanged",
+                "private string _pageTitle;",
+                "private string _pageDescription;",
+                "public event PropertyChangedEventHandler PropertyChanged;",
+                "public string PageTitle",
+                "SetProperty(ref _pageTitle, value);",
+                "public string PageDescription",
+                "SetProperty(ref _pageDescription, value);",
+                "protected bool SetProperty<T>(ref T field, T value, [CallerMemberName] string propertyName = null)",
+                "EqualityComparer<T>.Default.Equals(field, value)",
+                "OnPropertyChanged(propertyName);",
+                "private void OnPropertyChanged([CallerMemberName] string propertyName = null)",
+                "handler(this, new PropertyChangedEventArgs(propertyName));");
+        }
+
+        [TestMethod]
+        public void TextViewModelsKeepOfficialTextBoxValidatedTextSourceShape()
+        {
+            var source = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Text",
+                "TextPageViewModels.cs");
+
+            AssertContainsInOrder(
+                source,
+                "public partial class TextBoxPageViewModel : WpfGalleryPageViewModel",
+                "private string _validatedText = string.Empty;",
+                "public TextBoxPageViewModel()",
+                ": base(\"TextBox\", string.Empty)",
+                "public string ValidatedText",
+                "get { return _validatedText; }",
+                "set { SetProperty(ref _validatedText, value); }");
+        }
+
+        [TestMethod]
         public void BasicInputViewModelsKeepOfficialStateAndCommandSourceShape()
         {
             var source = ReadRepoFile(

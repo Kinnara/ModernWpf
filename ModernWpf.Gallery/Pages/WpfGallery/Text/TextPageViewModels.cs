@@ -12,13 +12,18 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Text
 
     public partial class TextBoxPageViewModel : WpfGalleryPageViewModel
     {
+        private string _validatedText = string.Empty;
+
         public TextBoxPageViewModel()
             : base("TextBox", string.Empty)
         {
-            ValidatedText = string.Empty;
         }
 
-        public string ValidatedText { get; set; }
+        public string ValidatedText
+        {
+            get { return _validatedText; }
+            set { SetProperty(ref _validatedText, value); }
+        }
     }
 
     public partial class TextBlockPageViewModel : WpfGalleryPageViewModel

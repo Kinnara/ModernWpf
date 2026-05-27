@@ -736,8 +736,11 @@ namespace ModernWpf.Gallery.Tests
 
                 var textBoxPage = (TextBoxPage)new ItemPage(GalleryCatalog.FindItem("TextBox")).DirectPageContent;
                 Assert.AreEqual(string.Empty, textBoxPage.ViewModel.ValidatedText);
+                var changedProperties = new List<string>();
+                textBoxPage.ViewModel.PropertyChanged += (sender, args) => changedProperties.Add(args.PropertyName);
                 textBoxPage.ViewModel.ValidatedText = "abc";
                 Assert.AreEqual("abc", textBoxPage.ViewModel.ValidatedText);
+                CollectionAssert.Contains(changedProperties, "ValidatedText");
             });
         }
 
