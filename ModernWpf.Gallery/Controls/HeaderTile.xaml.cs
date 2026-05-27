@@ -89,7 +89,7 @@ namespace ModernWpf.Gallery.Controls
         }
 
         public static readonly DependencyProperty TitleProperty =
-            DependencyProperty.Register(nameof(Title), typeof(string), typeof(HeaderTile), new PropertyMetadata(string.Empty));
+            DependencyProperty.Register("Title", typeof(string), typeof(HeaderTile), new PropertyMetadata(""));
 
         public string Description
         {
@@ -98,7 +98,7 @@ namespace ModernWpf.Gallery.Controls
         }
 
         public static readonly DependencyProperty DescriptionProperty =
-            DependencyProperty.Register(nameof(Description), typeof(string), typeof(HeaderTile), new PropertyMetadata(string.Empty));
+            DependencyProperty.Register("ColorExplanation", typeof(string), typeof(HeaderTile), new PropertyMetadata(""));
 
         public string Link
         {
@@ -107,16 +107,16 @@ namespace ModernWpf.Gallery.Controls
         }
 
         public static readonly DependencyProperty LinkProperty =
-            DependencyProperty.Register(nameof(Link), typeof(string), typeof(HeaderTile), new PropertyMetadata(null));
+            DependencyProperty.Register("Link", typeof(string), typeof(HeaderTile), new PropertyMetadata(null));
 
         public object Source
         {
-            get { return GetValue(SourceProperty); }
+            get { return (object)GetValue(SourceProperty); }
             set { SetValue(SourceProperty, value); }
         }
 
         public static readonly DependencyProperty SourceProperty =
-            DependencyProperty.Register(nameof(Source), typeof(object), typeof(HeaderTile), new PropertyMetadata(null));
+            DependencyProperty.Register("Source", typeof(object), typeof(HeaderTile), new PropertyMetadata(null));
 
         private void RootButton_Click(object sender, RoutedEventArgs e)
         {
