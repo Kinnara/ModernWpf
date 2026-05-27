@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
 {
-    public sealed class UserDashboardUser : INotifyPropertyChanged
+    public class UserDashboardUser : INotifyPropertyChanged
     {
         private string _address;
         private int _age;

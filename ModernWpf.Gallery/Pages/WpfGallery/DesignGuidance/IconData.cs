@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 {
     [DataContract]
-    public sealed class IconData
+    public class IconData
     {
         [DataMember]
         public string Code { get; set; }

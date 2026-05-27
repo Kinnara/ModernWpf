@@ -1,6 +1,6 @@
 namespace ModernWpf.Gallery.Models
 {
-    public sealed class Person
+    public class Person
     {
         public Person(string firstName, string lastName, string company)
         {

@@ -213,6 +213,49 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void CopiedWpfGalleryModelClassesStayUnsealedLikeOfficialSource()
+        {
+            var repoRoot = GetRepoRoot();
+            foreach (var file in new[]
+            {
+                new
+                {
+                    RelativePath = Path.Combine("ModernWpf.Gallery", "Models", "Product.cs"),
+                    SealedDeclaration = "public sealed class Product",
+                    UnsealedDeclaration = "public class Product"
+                },
+                new
+                {
+                    RelativePath = Path.Combine("ModernWpf.Gallery", "Models", "Person.cs"),
+                    SealedDeclaration = "public sealed class Person",
+                    UnsealedDeclaration = "public class Person"
+                },
+                new
+                {
+                    RelativePath = Path.Combine("ModernWpf.Gallery", "Pages", "WpfGallery", "DesignGuidance", "IconData.cs"),
+                    SealedDeclaration = "public sealed class IconData",
+                    UnsealedDeclaration = "public class IconData"
+                },
+                new
+                {
+                    RelativePath = Path.Combine("ModernWpf.Gallery", "Pages", "WpfGallery", "Samples", "UserDashboardUser.cs"),
+                    SealedDeclaration = "public sealed class UserDashboardUser",
+                    UnsealedDeclaration = "public class UserDashboardUser : INotifyPropertyChanged"
+                }
+            })
+            {
+                var path = Path.Combine(repoRoot, file.RelativePath);
+                var source = File.ReadAllText(path);
+                Assert.IsFalse(
+                    source.Contains(file.SealedDeclaration, StringComparison.Ordinal),
+                    Path.GetRelativePath(repoRoot, path) + " should match the official WPF Gallery unsealed model declaration shape.");
+                Assert.IsTrue(
+                    source.Contains(file.UnsealedDeclaration, StringComparison.Ordinal),
+                    Path.GetRelativePath(repoRoot, path) + " should keep the copied WPF Gallery model declaration shape.");
+            }
+        }
+
+        [TestMethod]
         public void TopLevelCodeBehindKeepsOfficialViewModelMemberOrderShape()
         {
             foreach (var page in new[]
