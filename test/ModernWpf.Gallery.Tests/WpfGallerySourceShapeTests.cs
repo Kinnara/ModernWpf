@@ -201,10 +201,14 @@ namespace ModernWpf.Gallery.Tests
 
             AssertContainsInOrder(
                 mainWindowCode,
-                "SystemEvents.UserPreferenceChanged += OnUserPreferenceChanged;",
+                "SystemEvents.UserPreferenceChanged += SystemEvents_UserPreferenceChanged;",
                 "StateChanged += OnWindowStateChanged;",
                 "Activated += OnWindowActivationChanged;",
                 "Deactivated += OnWindowActivationChanged;",
+                "private void SystemEvents_UserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)",
+                "Dispatcher.Invoke(() =>",
+                "UpdateMainWindowVisuals();",
+                "SystemEvents.UserPreferenceChanged -= SystemEvents_UserPreferenceChanged;",
                 "MainGrid.Margin = GetMainGridMargin(WindowState, SystemParameters.HighContrast);",
                 "UpdateTitleBarButtonsVisibility();",
                 "if (SystemParameters.HighContrast)",
@@ -1365,9 +1369,13 @@ namespace ModernWpf.Gallery.Tests
                 "DataGridPage.xaml.cs");
             AssertContainsInOrder(
                 dataGridSource,
-                "SystemEvents.UserPreferenceChanged += OnUserPreferenceChanged;",
+                "SystemEvents.UserPreferenceChanged += SystemEvents_UserPreferenceChanged;",
                 "Loaded += OnLoaded;",
-                "Unloaded += OnUnloaded;");
+                "Unloaded += OnUnloaded;",
+                "private void SystemEvents_UserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)",
+                "Dispatcher.Invoke(() =>",
+                "UpdatePageVisuals();",
+                "SystemEvents.UserPreferenceChanged -= SystemEvents_UserPreferenceChanged;");
         }
 
         [TestMethod]

@@ -28,7 +28,7 @@ namespace ModernWpf.Gallery
 
             ConfigureWindowChrome();
             UpdateMainWindowVisuals();
-            SystemEvents.UserPreferenceChanged += OnUserPreferenceChanged;
+            SystemEvents.UserPreferenceChanged += SystemEvents_UserPreferenceChanged;
             StateChanged += OnWindowStateChanged;
             Activated += OnWindowActivationChanged;
             Deactivated += OnWindowActivationChanged;
@@ -55,9 +55,12 @@ namespace ModernWpf.Gallery
             RootPage.NavigateTo(uniqueId);
         }
 
-        private void OnUserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
+        private void SystemEvents_UserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
         {
-            Dispatcher.Invoke(UpdateMainWindowVisuals);
+            Dispatcher.Invoke(() =>
+            {
+                UpdateMainWindowVisuals();
+            });
         }
 
         private void OnWindowStateChanged(object sender, System.EventArgs e)
@@ -73,7 +76,7 @@ namespace ModernWpf.Gallery
 
         private void OnClosed(object sender, System.EventArgs e)
         {
-            SystemEvents.UserPreferenceChanged -= OnUserPreferenceChanged;
+            SystemEvents.UserPreferenceChanged -= SystemEvents_UserPreferenceChanged;
             StateChanged -= OnWindowStateChanged;
             Activated -= OnWindowActivationChanged;
             Deactivated -= OnWindowActivationChanged;

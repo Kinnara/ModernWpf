@@ -12,14 +12,17 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
             ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
-            SystemEvents.UserPreferenceChanged += OnUserPreferenceChanged;
+            SystemEvents.UserPreferenceChanged += SystemEvents_UserPreferenceChanged;
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
         }
 
-        private void OnUserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
+        private void SystemEvents_UserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
         {
-            Dispatcher.Invoke(UpdatePageVisuals);
+            Dispatcher.Invoke(() =>
+            {
+                UpdatePageVisuals();
+            });
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -29,7 +32,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            SystemEvents.UserPreferenceChanged -= OnUserPreferenceChanged;
+            SystemEvents.UserPreferenceChanged -= SystemEvents_UserPreferenceChanged;
             Loaded -= OnLoaded;
             Unloaded -= OnUnloaded;
         }
