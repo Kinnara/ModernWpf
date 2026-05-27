@@ -3858,7 +3858,7 @@ namespace ModernWpf.Gallery.Tests
                     var windowArtifact = Path.Combine(artifactDirectory, "ModernWpfGalleryMainWindow.png");
                     var shellRootArtifact = Path.Combine(artifactDirectory, "GalleryNavigationRoot.png");
                     var navigationArtifact = Path.Combine(artifactDirectory, "GalleryNavigationView.png");
-                    var contentRootArtifact = Path.Combine(artifactDirectory, "ContentRootGrid.png");
+                    var contentRootArtifact = Path.Combine(artifactDirectory, "ContentPagePane.png");
 
                     Assert.IsTrue(File.Exists(windowArtifact), windowArtifact + " was not written.");
                     Assert.IsTrue(File.Exists(shellRootArtifact), shellRootArtifact + " was not written.");

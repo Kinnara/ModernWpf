@@ -457,6 +457,12 @@ namespace ModernWpf.Gallery.Testing
                 return itemPage.ContentRootArtifactId;
             }
 
+            var sectionPage = element.DataContext as SectionPage;
+            if (sectionPage != null && ReferenceEquals(element, sectionPage.Content))
+            {
+                return "ContentPagePane";
+            }
+
             return element.Name;
         }
 
