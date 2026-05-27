@@ -65,17 +65,24 @@ namespace ModernWpf.Gallery.Pages
                 return;
             }
 
-            switch (Change_ThemeMode.SelectedIndex)
+            if (Change_ThemeMode.SelectedItem is ComboBoxItem selectedItem)
             {
-                case 0:
-                    ThemeManager.Current.ApplicationTheme = ApplicationTheme.Light;
-                    break;
-                case 1:
-                    ThemeManager.Current.ApplicationTheme = ApplicationTheme.Dark;
-                    break;
-                default:
-                    ThemeManager.Current.ApplicationTheme = null;
-                    break;
+                string selectedValue = selectedItem.Content.ToString();
+
+                switch (selectedValue)
+                {
+                    case "Light":
+                        ThemeManager.Current.ApplicationTheme = ApplicationTheme.Light;
+                        break;
+                    case "Dark":
+                        ThemeManager.Current.ApplicationTheme = ApplicationTheme.Dark;
+                        break;
+                    case "Use system setting":
+                        ThemeManager.Current.ApplicationTheme = null;
+                        break;
+                    default:
+                        break;
+                }
             }
         }
 

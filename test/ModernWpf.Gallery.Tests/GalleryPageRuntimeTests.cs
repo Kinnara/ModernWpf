@@ -519,6 +519,36 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void SettingsPageThemeSelectionAppliesModernWpfTheme()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var previousTheme = ThemeManager.Current.ApplicationTheme;
+                try
+                {
+                    ThemeManager.Current.ApplicationTheme = null;
+
+                    var page = new SettingsPage();
+                    var themeMode = (ComboBox)page.FindName("Change_ThemeMode");
+
+                    themeMode.SelectedIndex = 0;
+                    Assert.AreEqual(ApplicationTheme.Light, ThemeManager.Current.ApplicationTheme);
+
+                    themeMode.SelectedIndex = 1;
+                    Assert.AreEqual(ApplicationTheme.Dark, ThemeManager.Current.ApplicationTheme);
+
+                    themeMode.SelectedIndex = 2;
+                    Assert.IsNull(ThemeManager.Current.ApplicationTheme);
+                }
+                finally
+                {
+                    ThemeManager.Current.ApplicationTheme = previousTheme;
+                    GalleryDiagnostics.ResetForTests();
+                }
+            });
+        }
+
+        [TestMethod]
         public void WhatsNewPageAccentSwatchesUseSystemAccentResources()
         {
             WpfTestHost.Run(() =>
