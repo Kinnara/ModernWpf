@@ -370,6 +370,15 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsNull(pageHeader.Description);
                     AssertBindingPath(pageHeader, PageHeader.TitleProperty, "ViewModel.PageTitle");
                     AssertBindingPath(pageHeader, PageHeader.DescriptionProperty, "ViewModel.PageDescription");
+                    var changedProperties = new List<string>();
+                    page.ViewModel.PropertyChanged += (sender, args) => changedProperties.Add(args.PropertyName);
+                    page.ViewModel.PageTitle = "Settings Preview";
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual("Settings Preview", pageHeader.Title);
+                    CollectionAssert.AreEqual(new[] { "PageTitle" }, changedProperties.ToArray());
+                    page.ViewModel.PageTitle = "Settings";
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual("Settings", pageHeader.Title);
 
                     pageHeader.ApplyTemplate();
                     var titleLabel = (Label)pageHeader.Template.FindName("TitleTextBlock", pageHeader);

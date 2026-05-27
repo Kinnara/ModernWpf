@@ -290,6 +290,28 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void SettingsViewModelKeepsOfficialObservableTitleSourceShape()
+        {
+            var source = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "SettingsPage.xaml.cs");
+
+            AssertContainsInOrder(
+                source,
+                "using ModernWpf.Gallery.Pages.WpfGallery;",
+                "public partial class SettingsPageViewModel : WpfGalleryPageViewModel",
+                "public SettingsPageViewModel()",
+                ": base(\"Settings\", null)");
+            Assert.IsFalse(
+                source.Contains("public string PageTitle", StringComparison.Ordinal),
+                "Settings should reuse the shared observable page-title adapter instead of a computed PageTitle getter.");
+            Assert.IsFalse(
+                source.Contains("public string PageDescription", StringComparison.Ordinal),
+                "Settings should reuse the shared observable page-description adapter instead of a computed PageDescription getter.");
+        }
+
+        [TestMethod]
         public void WpfGalleryNavigationViewModelsKeepOfficialStateAndNavigateSourceShape()
         {
             var source = ReadRepoFile(

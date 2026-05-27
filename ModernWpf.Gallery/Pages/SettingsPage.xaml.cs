@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using ModernWpf;
+using ModernWpf.Gallery.Pages.WpfGallery;
 using ModernWpf.Gallery.Testing;
 
 namespace ModernWpf.Gallery.Pages
@@ -96,16 +97,11 @@ namespace ModernWpf.Gallery.Pages
         }
     }
 
-    public partial class SettingsPageViewModel
+    public partial class SettingsPageViewModel : WpfGalleryPageViewModel
     {
-        public string PageTitle
+        public SettingsPageViewModel()
+            : base("Settings", null)
         {
-            get { return "Settings"; }
-        }
-
-        public string PageDescription
-        {
-            get { return null; }
         }
     }
 }

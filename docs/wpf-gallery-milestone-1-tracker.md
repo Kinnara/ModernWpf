@@ -159,6 +159,10 @@ retained local command adapters. This moves Home and What's New closer to the
 official WPF Gallery `[ObservableProperty]` / `[RelayCommand]` view-model
 sources while preserving ModernWpf catalog group/item and string route
 payloads.
+The copied top-level `SettingsPageViewModel` now also reuses the shared
+observable page-state adapter for its official `PageTitle = "Settings"` source
+shape instead of keeping a computed string getter, while preserving the local
+null `PageDescription` binding used by the copied Settings page.
 Copied Basic Input page-specific view models now also keep the official WPF
 Gallery state/command source shape for Button, CheckBox, ComboBox, RadioButton,
 and Slider, including Button's `Message` state and second checkbox command
@@ -463,6 +467,10 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.SettingsViewModelKeepsOfficialObservableTitleSourceShape|FullyQualifiedName~WpfGallerySourceShapeTests.WpfGalleryPageViewModelProvidesObservableStateAdapter|FullyQualifiedName~WpfGallerySourceShapeTests.CopiedWpfGalleryViewModelClassesKeepOfficialPartialDeclarationShape|FullyQualifiedName~WpfGallerySourceShapeTests.TopLevelCodeBehindKeepsOfficialViewModelMemberOrderShape|FullyQualifiedName~WpfGallerySourceShapeTests.SettingsPageKeepsOfficialSettingsDeclarationSourceShape|FullyQualifiedName~GalleryPageRuntimeTests.TopLevelWpfGalleryPagesAcceptInjectedViewModels|FullyQualifiedName~GalleryPageRuntimeTests.SettingsPageMatchesWpfGalleryReferenceLayout|FullyQualifiedName~GalleryNavigationRuntimeTests.ShellNavigationMenuMatchesWpfGalleryReferenceChrome" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 8 tests per target. The copied Settings view model now reuses the shared observable page-title adapter for its official `Settings` title source shape while shared observable page-view-model source shape, copied partial view-model declarations, top-level code-behind member order, Settings source/layout coverage, injected top-level view-model paths, and shell Settings navigation still pass. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the copied Settings view-model source-shape alignment. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages and existing ModernWpf/ModernWpf.Controls warnings.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.TopLevelWpfGalleryViewModelsKeepOfficialStateAndNavigateSourceShape|FullyQualifiedName~WpfGallerySourceShapeTests.WpfGalleryNavigationViewModelsKeepOfficialStateAndNavigateSourceShape|FullyQualifiedName~WpfGallerySourceShapeTests.WpfGalleryPageViewModelProvidesObservableStateAdapter|FullyQualifiedName~WpfGallerySourceShapeTests.CopiedWpfGalleryViewModelClassesKeepOfficialPartialDeclarationShape|FullyQualifiedName~GalleryNavigationRuntimeTests.TopLevelPagesUseOfficialWpfGalleryViewModels|FullyQualifiedName~GalleryNavigationRuntimeTests.HomePageOverviewUsesWpfReferenceGroupFilter|FullyQualifiedName~GalleryNavigationRuntimeTests.WpfGalleryPageShellCardsMatchReferenceAutomationAndLayout|FullyQualifiedName~WpfGalleryWhatsNewSnippetTests.WhatsNewControlExamplesMatchOfficialWpfGallerySampleCode" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 8 tests per target. Top-level WPF Gallery `DashboardPageViewModel` and `WhatsNewPageViewModel` now keep official-style backing state and source-shaped `Navigate(object pageType)` methods behind retained local command adapters while shared navigation/page view-model source shape, copied partial view-model declarations, top-level runtime routing, Home card filters/layout, and What's New snippet code still pass. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
@@ -2733,6 +2741,8 @@ official-style navigation-card backing state and a source-shaped
 with top-level Dashboard and What's New view-model adapters now also providing
 official-style backing state and direct `Navigate(object pageType)` methods
 behind their local command adapters,
+with the copied Settings view-model adapter now also reusing observable
+page-title state for the official `Settings` title source shape,
 with Basic Input view models now matching the official state-field and
 command-handler source shape for Button, CheckBox, ComboBox, RadioButton, and
 Slider while retaining local manual notification adapters,
