@@ -215,6 +215,11 @@ namespace ModernWpf.Gallery.Tests
         [TestMethod]
         public void WpfGalleryPageViewModelProvidesObservableStateAdapter()
         {
+            var observableSource = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "WpfGalleryObservableObject.cs");
             var source = ReadRepoFile(
                 "ModernWpf.Gallery",
                 "Pages",
@@ -222,20 +227,29 @@ namespace ModernWpf.Gallery.Tests
                 "WpfGalleryPageViewModel.cs");
 
             AssertContainsInOrder(
-                source,
-                "public class WpfGalleryPageViewModel : INotifyPropertyChanged",
-                "private string _pageTitle;",
-                "private string _pageDescription;",
+                observableSource,
+                "public class WpfGalleryObservableObject : INotifyPropertyChanged",
                 "public event PropertyChangedEventHandler PropertyChanged;",
-                "public string PageTitle",
-                "SetProperty(ref _pageTitle, value);",
-                "public string PageDescription",
-                "SetProperty(ref _pageDescription, value);",
                 "protected bool SetProperty<T>(ref T field, T value, [CallerMemberName] string propertyName = null)",
                 "EqualityComparer<T>.Default.Equals(field, value)",
                 "OnPropertyChanged(propertyName);",
-                "private void OnPropertyChanged([CallerMemberName] string propertyName = null)",
+                "protected void OnPropertyChanged([CallerMemberName] string propertyName = null)",
                 "handler(this, new PropertyChangedEventArgs(propertyName));");
+            AssertContainsInOrder(
+                source,
+                "public class WpfGalleryPageViewModel : WpfGalleryObservableObject",
+                "private string _pageTitle;",
+                "private string _pageDescription;",
+                "public string PageTitle",
+                "SetProperty(ref _pageTitle, value);",
+                "public string PageDescription",
+                "SetProperty(ref _pageDescription, value);");
+            Assert.IsFalse(
+                source.Contains("public event PropertyChangedEventHandler", StringComparison.Ordinal),
+                "WpfGalleryPageViewModel should use the shared observable adapter instead of duplicating notification plumbing.");
+            Assert.IsFalse(
+                source.Contains("protected bool SetProperty<T>", StringComparison.Ordinal),
+                "WpfGalleryPageViewModel should keep SetProperty on the shared observable adapter.");
         }
 
         [TestMethod]
@@ -870,6 +884,58 @@ namespace ModernWpf.Gallery.Tests
                 "OnPropertyChanged(nameof(Name));",
                 "if (SetProperty(ref _imageId, value, nameof(ImageId)))",
                 "OnPropertyChanged(nameof(ImageKey));");
+        }
+
+        [TestMethod]
+        public void UserDashboardViewModelKeepsOfficialObservableStateSourceShape()
+        {
+            var source = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Samples",
+                "UserDashboardPageViewModel.cs");
+
+            AssertContainsInOrder(
+                source,
+                "public partial class UserDashboardPageViewModel : WpfGalleryObservableObject",
+                "private const int UsersVisualTestSeed = 32043;",
+                "private ObservableCollection<UserDashboardUser> _users;",
+                "private UserDashboardUser _selectedUser;",
+                "private bool _isEditing;",
+                "private UserDashboardUser _editableUser;",
+                "private bool _isReadOnly = true;",
+                "private bool _isSaved;",
+                "private string _deletedName = string.Empty;",
+                "private readonly RelayCommand _addUserCommand;",
+                "private readonly DispatcherTimer _deletedMessageTimer;",
+                "public UserDashboardPageViewModel()",
+                "Users = GenerateUsers();",
+                "_addUserCommand = new RelayCommand(delegate { AddUser(); });",
+                "_deletedMessageTimer = CreateMessageTimer(delegate { DeletedName = string.Empty; });",
+                "public string DeletedName",
+                "if (SetProperty(ref _deletedName, value, \"DeletedName\") && !string.IsNullOrEmpty(value))",
+                "public UserDashboardUser EditableUser",
+                "set { SetProperty(ref _editableUser, value, \"EditableUser\"); }",
+                "public bool IsEditing",
+                "set { SetProperty(ref _isEditing, value, \"IsEditing\"); }",
+                "public bool IsReadOnly",
+                "set { SetProperty(ref _isReadOnly, value, \"IsReadOnly\"); }",
+                "public bool IsSaved",
+                "if (SetProperty(ref _isSaved, value, \"IsSaved\") && value)",
+                "public UserDashboardUser SelectedUser",
+                "if (SetProperty(ref _selectedUser, value, \"SelectedUser\") && value != null && value != EditableUser)",
+                "public ObservableCollection<UserDashboardUser> Users",
+                "set { SetProperty(ref _users, value, \"Users\"); }");
+            Assert.IsFalse(
+                source.Contains("public event PropertyChangedEventHandler", StringComparison.Ordinal),
+                "UserDashboardPageViewModel should use the shared observable adapter instead of local notification plumbing.");
+            Assert.IsFalse(
+                source.Contains("private void OnPropertyChanged", StringComparison.Ordinal),
+                "UserDashboardPageViewModel should keep OnPropertyChanged on the shared observable adapter.");
+            Assert.IsFalse(
+                source.Contains("private bool SetProperty", StringComparison.Ordinal),
+                "UserDashboardPageViewModel should keep SetProperty on the shared observable adapter.");
         }
 
         [TestMethod]

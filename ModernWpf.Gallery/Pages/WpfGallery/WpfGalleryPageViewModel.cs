@@ -1,10 +1,6 @@
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
 namespace ModernWpf.Gallery.Pages.WpfGallery
 {
-    public class WpfGalleryPageViewModel : INotifyPropertyChanged
+    public class WpfGalleryPageViewModel : WpfGalleryObservableObject
     {
         private string _pageTitle;
         private string _pageDescription;
@@ -14,8 +10,6 @@ namespace ModernWpf.Gallery.Pages.WpfGallery
             _pageTitle = pageTitle;
             _pageDescription = pageDescription;
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         public string PageTitle
         {
@@ -27,27 +21,6 @@ namespace ModernWpf.Gallery.Pages.WpfGallery
         {
             get { return _pageDescription; }
             set { SetProperty(ref _pageDescription, value); }
-        }
-
-        protected bool SetProperty<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
-        {
-            if (EqualityComparer<T>.Default.Equals(field, value))
-            {
-                return false;
-            }
-
-            field = value;
-            OnPropertyChanged(propertyName);
-            return true;
-        }
-
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            var handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
         }
     }
 }

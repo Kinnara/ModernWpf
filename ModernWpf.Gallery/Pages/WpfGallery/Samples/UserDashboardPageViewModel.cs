@@ -1,17 +1,23 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
 using System.Windows.Input;
 using System.Windows.Threading;
+using ModernWpf.Gallery.Pages.WpfGallery;
 using ModernWpf.Gallery.Testing;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
 {
-    public partial class UserDashboardPageViewModel : INotifyPropertyChanged
+    public partial class UserDashboardPageViewModel : WpfGalleryObservableObject
     {
         private const int UsersVisualTestSeed = 32043;
+        private ObservableCollection<UserDashboardUser> _users;
+        private UserDashboardUser _selectedUser;
+        private bool _isEditing;
+        private UserDashboardUser _editableUser;
+        private bool _isReadOnly = true;
+        private bool _isSaved;
+        private string _deletedName = string.Empty;
         private readonly RelayCommand _addUserCommand;
         private readonly RelayCommand _editUserCancelCommand;
         private readonly RelayCommand _editUserCommitCommand;
@@ -19,13 +25,6 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
         private readonly RelayCommand _removeUserCommand;
         private readonly DispatcherTimer _deletedMessageTimer;
         private readonly DispatcherTimer _savedMessageTimer;
-        private string _deletedName = string.Empty;
-        private UserDashboardUser _editableUser;
-        private bool _isEditing;
-        private bool _isReadOnly = true;
-        private bool _isSaved;
-        private UserDashboardUser _selectedUser;
-        private ObservableCollection<UserDashboardUser> _users;
 
         public UserDashboardPageViewModel()
         {
@@ -39,8 +38,6 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
             _deletedMessageTimer = CreateMessageTimer(delegate { DeletedName = string.Empty; });
             _savedMessageTimer = CreateMessageTimer(delegate { IsSaved = false; });
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         public ICommand AddUserCommand
         {
@@ -308,27 +305,6 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
         {
             timer.Stop();
             timer.Start();
-        }
-
-        private bool SetProperty<T>(ref T field, T value, string propertyName)
-        {
-            if (EqualityComparer<T>.Default.Equals(field, value))
-            {
-                return false;
-            }
-
-            field = value;
-            OnPropertyChanged(propertyName);
-            return true;
-        }
-
-        private void OnPropertyChanged(string propertyName)
-        {
-            var handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
         }
 
         private sealed class RelayCommand : ICommand

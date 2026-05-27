@@ -908,6 +908,19 @@ namespace ModernWpf.Gallery.Tests
                 Assert.IsInstanceOfType(page.ViewModel, typeof(UserDashboardPageViewModel));
                 Assert.AreEqual(20, page.ViewModel.Users.Count);
                 Assert.IsNull(page.ViewModel.SelectedUser);
+
+                var changedProperties = new List<string>();
+                page.ViewModel.PropertyChanged += (sender, args) => changedProperties.Add(args.PropertyName);
+                page.ViewModel.IsReadOnly = false;
+                Assert.IsFalse(page.ViewModel.IsReadOnly);
+                CollectionAssert.Contains(changedProperties, nameof(UserDashboardPageViewModel.IsReadOnly));
+
+                changedProperties.Clear();
+                page.ViewModel.SelectedUser = page.ViewModel.Users[0];
+                Assert.IsNotNull(page.ViewModel.EditableUser);
+                Assert.AreEqual(page.ViewModel.SelectedUser.Name, page.ViewModel.EditableUser.Name);
+                CollectionAssert.Contains(changedProperties, nameof(UserDashboardPageViewModel.SelectedUser));
+                CollectionAssert.Contains(changedProperties, nameof(UserDashboardPageViewModel.EditableUser));
             });
         }
 
