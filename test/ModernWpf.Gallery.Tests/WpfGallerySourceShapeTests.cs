@@ -239,6 +239,57 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void TopLevelWpfGalleryViewModelsKeepOfficialStateAndNavigateSourceShape()
+        {
+            var source = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "WpfGalleryNavigationPageViewModels.cs");
+
+            AssertContainsInOrder(
+                source,
+                "public partial class DashboardPageViewModel : WpfGalleryPageViewModel",
+                "private IReadOnlyList<GalleryGroup> _navigationCards = GalleryCatalog.OverviewGroups;",
+                "private IReadOnlyList<GalleryItem> _recentlyAddedOrUpdatedSamplesInfo = GalleryCatalog.NewOrUpdatedItems;",
+                "private readonly Action<object> _navigate;",
+                "public DashboardPageViewModel(Action<object> navigate)",
+                ": base(string.Empty, string.Empty)",
+                "_navigate = navigate;",
+                "NavigateCommand = new GalleryCommand(Navigate);",
+                "public IReadOnlyList<GalleryGroup> NavigationCards",
+                "SetProperty(ref _navigationCards, value ?? Array.Empty<GalleryGroup>());",
+                "public IReadOnlyList<GalleryItem> RecentlyAddedOrUpdatedSamplesInfo",
+                "SetProperty(ref _recentlyAddedOrUpdatedSamplesInfo, value ?? Array.Empty<GalleryItem>());",
+                "public ICommand NavigateCommand { get; }",
+                "public void Navigate(object pageType)",
+                "_navigate(pageType);");
+            AssertContainsInOrder(
+                source,
+                "public partial class WhatsNewPageViewModel : WpfGalleryPageViewModel",
+                "private string _accentColorXamlCode = _accentColorBrushApiXamlUsage;",
+                "private string _hyphenBasedLigatureXamlCode = _hyphenBasedLiagatureXamlUsage;",
+                "private string _gridShorthandSyntaxXamlCode = _gridShorthandSyntaxXamlUsage;",
+                "private readonly Action<object> _navigate;",
+                "public WhatsNewPageViewModel(Action<object> navigate)",
+                ": base(\"What's new in WPF\", \"Discover all the new features, enhancements and APIs introduced in WPF\")",
+                "_navigate = navigate;",
+                "NavigateCommand = new GalleryCommand(Navigate);",
+                "public string AccentColorXamlCode",
+                "SetProperty(ref _accentColorXamlCode, value);",
+                "public string HyphenBasedLigatureXamlCode",
+                "SetProperty(ref _hyphenBasedLigatureXamlCode, value);",
+                "public string GridShorthandSyntaxXamlCode",
+                "SetProperty(ref _gridShorthandSyntaxXamlCode, value);",
+                "public ICommand NavigateCommand { get; }",
+                "public void Navigate(object pageType)",
+                "_navigate(pageType);",
+                "private const string _accentColorBrushApiXamlUsage =",
+                "private const string _hyphenBasedLiagatureXamlUsage =",
+                "private const string _gridShorthandSyntaxXamlUsage =");
+        }
+
+        [TestMethod]
         public void WpfGalleryNavigationViewModelsKeepOfficialStateAndNavigateSourceShape()
         {
             var source = ReadRepoFile(

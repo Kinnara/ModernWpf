@@ -595,6 +595,21 @@ namespace ModernWpf.Gallery.Tests
                 AssertNavigationCardIds(GalleryCatalog.OverviewGroups, homePage.ViewModel.NavigationCards, "Home");
                 AssertNavigationCardIds(GalleryCatalog.NewOrUpdatedItems, homePage.ViewModel.RecentlyAddedOrUpdatedSamplesInfo, "Home recently added");
 
+                GalleryGroup requestedGroup = null;
+                GalleryItem requestedItem = null;
+                homePage.GroupRequested = group => requestedGroup = group;
+                homePage.ItemRequested = item => requestedItem = item;
+                homePage.ViewModel.NavigateCommand.Execute(GalleryCatalog.OverviewGroups.First());
+                Assert.AreSame(GalleryCatalog.OverviewGroups.First(), requestedGroup);
+                requestedGroup = null;
+                homePage.ViewModel.Navigate(GalleryCatalog.OverviewGroups.First());
+                Assert.AreSame(GalleryCatalog.OverviewGroups.First(), requestedGroup);
+                homePage.ViewModel.NavigateCommand.Execute(GalleryCatalog.NewOrUpdatedItems.First());
+                Assert.AreSame(GalleryCatalog.NewOrUpdatedItems.First(), requestedItem);
+                requestedItem = null;
+                homePage.ViewModel.Navigate(GalleryCatalog.NewOrUpdatedItems.First());
+                Assert.AreSame(GalleryCatalog.NewOrUpdatedItems.First(), requestedItem);
+
                 var whatsNewPage = new WhatsNewPage();
                 Assert.IsInstanceOfType(whatsNewPage, typeof(System.Windows.Controls.Page));
                 Assert.IsInstanceOfType(whatsNewPage.ViewModel, typeof(WhatsNewPageViewModel));
@@ -605,6 +620,9 @@ namespace ModernWpf.Gallery.Tests
                 whatsNewPage.ItemRequested = uniqueId => requestedItemId = uniqueId;
                 whatsNewPage.ViewModel.NavigateCommand.Execute("MessageBox");
                 Assert.AreEqual("MessageBox", requestedItemId);
+                requestedItemId = null;
+                whatsNewPage.ViewModel.Navigate("MessageBox");
+                Assert.AreEqual("MessageBox", requestedItemId);
 
                 var allControlsPage = new AllControlsPage();
                 Assert.IsInstanceOfType(allControlsPage, typeof(System.Windows.Controls.Page));
@@ -612,6 +630,10 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual("All Controls", allControlsPage.ViewModel.PageTitle);
                 Assert.AreEqual(string.Empty, allControlsPage.ViewModel.PageDescription);
                 AssertNavigationCardIds(GalleryCatalog.AllControlsItems, allControlsPage.ViewModel.NavigationCards, "All Controls");
+                requestedItem = null;
+                allControlsPage.ItemRequested = item => requestedItem = item;
+                allControlsPage.ViewModel.Navigate(GalleryCatalog.AllControlsItems.First());
+                Assert.AreSame(GalleryCatalog.AllControlsItems.First(), requestedItem);
             });
         }
 

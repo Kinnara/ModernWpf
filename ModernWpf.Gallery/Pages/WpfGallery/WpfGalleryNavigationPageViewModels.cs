@@ -5,61 +5,85 @@ using ModernWpf.Gallery.Models;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery
 {
-    public partial class DashboardPageViewModel
+    public partial class DashboardPageViewModel : WpfGalleryPageViewModel
     {
+        private IReadOnlyList<GalleryGroup> _navigationCards = GalleryCatalog.OverviewGroups;
+        private IReadOnlyList<GalleryItem> _recentlyAddedOrUpdatedSamplesInfo = GalleryCatalog.NewOrUpdatedItems;
+        private readonly Action<object> _navigate;
+
         public DashboardPageViewModel(Action<object> navigate)
+            : base(string.Empty, string.Empty)
         {
-            NavigateCommand = new GalleryCommand(navigate);
+            _navigate = navigate;
+            NavigateCommand = new GalleryCommand(Navigate);
         }
 
         public IReadOnlyList<GalleryGroup> NavigationCards
         {
-            get { return GalleryCatalog.OverviewGroups; }
+            get { return _navigationCards; }
+            set { SetProperty(ref _navigationCards, value ?? Array.Empty<GalleryGroup>()); }
         }
 
         public IReadOnlyList<GalleryItem> RecentlyAddedOrUpdatedSamplesInfo
         {
-            get { return GalleryCatalog.NewOrUpdatedItems; }
+            get { return _recentlyAddedOrUpdatedSamplesInfo; }
+            set { SetProperty(ref _recentlyAddedOrUpdatedSamplesInfo, value ?? Array.Empty<GalleryItem>()); }
         }
 
         public ICommand NavigateCommand { get; }
+
+        public void Navigate(object pageType)
+        {
+            if (_navigate != null)
+            {
+                _navigate(pageType);
+            }
+        }
     }
 
-    public partial class WhatsNewPageViewModel
+    public partial class WhatsNewPageViewModel : WpfGalleryPageViewModel
     {
+        private string _accentColorXamlCode = _accentColorBrushApiXamlUsage;
+        private string _hyphenBasedLigatureXamlCode = _hyphenBasedLiagatureXamlUsage;
+        private string _gridShorthandSyntaxXamlCode = _gridShorthandSyntaxXamlUsage;
+        private readonly Action<object> _navigate;
+
         public WhatsNewPageViewModel(Action<object> navigate)
+            : base("What's new in WPF", "Discover all the new features, enhancements and APIs introduced in WPF")
         {
-            NavigateCommand = new GalleryCommand(navigate);
-        }
-
-        public string PageTitle
-        {
-            get { return "What's new in WPF"; }
-        }
-
-        public string PageDescription
-        {
-            get { return "Discover all the new features, enhancements and APIs introduced in WPF"; }
+            _navigate = navigate;
+            NavigateCommand = new GalleryCommand(Navigate);
         }
 
         public string AccentColorXamlCode
         {
-            get { return AccentColorBrushApiXamlUsage; }
+            get { return _accentColorXamlCode; }
+            set { SetProperty(ref _accentColorXamlCode, value); }
         }
 
         public string HyphenBasedLigatureXamlCode
         {
-            get { return HyphenBasedLigatureXamlUsage; }
+            get { return _hyphenBasedLigatureXamlCode; }
+            set { SetProperty(ref _hyphenBasedLigatureXamlCode, value); }
         }
 
         public string GridShorthandSyntaxXamlCode
         {
-            get { return GridShorthandSyntaxXamlUsage; }
+            get { return _gridShorthandSyntaxXamlCode; }
+            set { SetProperty(ref _gridShorthandSyntaxXamlCode, value); }
         }
 
         public ICommand NavigateCommand { get; }
 
-        private const string AccentColorBrushApiXamlUsage =
+        public void Navigate(object pageType)
+        {
+            if (_navigate != null)
+            {
+                _navigate(pageType);
+            }
+        }
+
+        private const string _accentColorBrushApiXamlUsage =
             "<StackPanel Orientation=\"Horizontal\" Height=\"50\">\n"
             + "    <StackPanel.Resources>\n"
             + "        <Style TargetType=\"Border\">\n"
@@ -76,14 +100,14 @@ namespace ModernWpf.Gallery.Pages.WpfGallery
             + "    <Border CornerRadius=\"0 2 2 0\" Background=\"{DynamicResource {x:Static SystemColors.AccentColorLight3BrushKey}}\" />\n"
             + "</StackPanel>";
 
-        private const string HyphenBasedLigatureXamlUsage =
+        private const string _hyphenBasedLiagatureXamlUsage =
             "<StackPanel Orientation=\"Horizontal\">\n"
             + "    <TextBlock Margin=\"0 0 16 0\" FontFamily=\"Cascadia Code\" Text=\"-->\" />\n"
             + "    <TextBlock Margin=\"0 0 16 0\" FontFamily=\"Cascadia Code\" Text=\"&lt;!--\" />\n"
             + "    <TextBlock Margin=\"0 0 16 0\" FontFamily=\"Cascadia Code\" Text=\"&lt;--\" />\n"
             + "</StackPanel>";
 
-        private const string GridShorthandSyntaxXamlUsage =
+        private const string _gridShorthandSyntaxXamlUsage =
             "<Grid RowDefinitions=\"Auto,Auto,Auto\" ColumnDefinitions=\"Auto 80 *\" HorizontalAlignment=\"Left\">\n"
             + "    <TextBlock Grid.Row=\"0\" Grid.Column=\"0\" FontWeight=\"Bold\" Margin=\"0 0 10 0\">Sl. No.</TextBlock>\n"
             + "    <TextBlock Grid.Row=\"0\" Grid.Column=\"1\" FontWeight=\"Bold\">Name</TextBlock>\n"
