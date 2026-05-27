@@ -2961,6 +2961,17 @@ namespace ModernWpf.Gallery.Tests
             StringAssert.Contains(
                 gridSplitterXaml.Replace("\r\n", "\n").Replace('\r', '\n'),
                 "XamlCode=\"&lt;Grid Height=&quot;400&quot;&gt;&#10;\n    &lt;Grid.RowDefinitions&gt;&#10;");
+            StringAssert.Contains(
+                gridSplitterXaml.Replace("\r\n", "\n").Replace('\r', '\n'),
+                Lines(
+                    "        <sys:String x:Key=\"SampleText\">",
+                    "            Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+                    "        Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.",
+                    "        </sys:String>",
+                    "        <sys:String x:Key=\"SampleText2\">",
+                    "            When an unknown printer took a galley of type and scrambled it to",
+                    "        make a type specimen book.",
+                    "        </sys:String>"));
             AssertContainsInOrder(
                 gridSplitterXaml,
                 "<TextBlock Style=\"{DynamicResource TitleTextBlockStyle}\" Text=\"Grid Splitter\" Margin=\"0 0 0 10\"/>",
