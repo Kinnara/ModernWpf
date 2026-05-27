@@ -436,9 +436,10 @@ and non-client-frame update path including the official
 `SystemEvents_UserPreferenceChanged` handler name and dispatcher-lambda refresh
 body, and the retained `NavigationView` alias refresh on `SystemParameters.HighContrast` while keeping the accepted
 NavigationView shell adaptation. The retained shell title row now also keeps
-the official `Grid.ColumnSpan="2"` source shape, and the adapted Settings
-footer button keeps the official command/style/click attribute order while
-retaining the local `NavigationView` footer command binding. The retained
+the official `Grid.ColumnSpan="2"` source shape, the default/close title-bar
+button styles keep the official one-line declaration shape and setter order,
+and the adapted Settings footer button keeps the official command/style/click
+attribute order while retaining the local `NavigationView` footer command binding. The retained
 `NavigationView` pane now uses the official
 WPF Gallery left-shell width of `258` with the official content-frame
 `Margin="4,0,0,0"` inset, removing the previous one-pixel compensation while
@@ -516,6 +517,10 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.ShellChromeKeepsWpfGalleryHighContrastSourceShape|FullyQualifiedName~GalleryNavigationRuntimeTests.MainWindowUsesWpfGalleryTitleChrome|FullyQualifiedName~GalleryNavigationRuntimeTests.MainWindowChromePolicyMatchesWpfGalleryHighContrastPath|FullyQualifiedName~GalleryNavigationRuntimeTests.ShellHighContrastHoverStylesMatchWpfGalleryReferenceChrome" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 4 tests per target. The retained shell title-bar default/close button styles now keep the official one-line declaration shape plus the official hit-test-visible-before-corner-radius setter order while title chrome, high-contrast chrome policy, and high-contrast hover trigger coverage still passes. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet build .\ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the retained shell title-bar default style source-shape alignment. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages and existing ModernWpf/ModernWpf.Controls warnings.
 - `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.LayoutPagesKeepOfficialHeaderAndSampleSourceShape|FullyQualifiedName~GalleryPageRuntimeTests.LayoutAndMediaPagesMatchWpfGalleryReference|FullyQualifiedName~GalleryPageRuntimeTests.LayoutItemPagesUseOfficialPageRoots" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 3 tests per target. The copied Layout GridSplitter page now keeps the official second-line indentation inside the `SampleText` / `SampleText2` `sys:String` resources while Layout source-shape, copied-root, and rendered-reference coverage still passes. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `dotnet build .\ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
@@ -3061,9 +3066,10 @@ delta `0.04` after the Gallery-level `ControlElevationBorderBrush` rendering
 alignment. Shell title-bar and Settings footer high-contrast hover resources
 now have focused runtime and source-shape coverage against the official WPF
 Gallery button trigger pattern, and the shell source-shape guard also pins
-`HighContrastBorder`, Back/title source order, high-contrast non-client-frame
-updates, the official `GetPrefferedNonClientFrameEdges` helper spelling, the
-official `SystemEvents_UserPreferenceChanged` handler refresh body, and retained
+`HighContrastBorder`, default/close title-bar style declaration and setter
+order, Back/title source order, high-contrast non-client-frame updates, the
+official `GetPrefferedNonClientFrameEdges` helper spelling, the official
+`SystemEvents_UserPreferenceChanged` handler refresh body, and retained
 `NavigationView` alias refresh on `SystemParameters.HighContrast`.
 `ThemeResourceExtension` now refreshes
 `SystemColor*` bindings when High Contrast toggles in either direction and

@@ -1106,6 +1106,12 @@ namespace ModernWpf.Gallery.Tests
                 "<Setter Property=\"Foreground\" Value=\"{DynamicResource SystemColorHighlightTextColorBrush}\" />");
             AssertContainsInOrder(
                 mainWindowXaml,
+                "<Style x:Key=\"GalleryTitleBarDefaultButtonStyle\" BasedOn=\"{StaticResource GalleryTitleBarButtonStyle}\" TargetType=\"Button\">",
+                "<Setter Property=\"winShell:WindowChrome.IsHitTestVisibleInChrome\" Value=\"True\" />",
+                "<Setter Property=\"Border.CornerRadius\" Value=\"0\" />",
+                "<Style x:Key=\"GalleryTitleBarDefaultCloseButtonStyle\" BasedOn=\"{StaticResource GalleryTitleBarDefaultButtonStyle}\" TargetType=\"Button\">");
+            AssertContainsInOrder(
+                mainWindowXaml,
                 "x:Key=\"GalleryTitleBarDefaultCloseButtonStyle\"",
                 "<MultiDataTrigger>",
                 "<Condition Binding=\"{Binding Path=(SystemParameters.HighContrast)}\" Value=\"True\" />",

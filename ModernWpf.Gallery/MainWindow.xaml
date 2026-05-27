@@ -63,18 +63,12 @@
             </Style.Triggers>
         </Style>
 
-        <Style
-            x:Key="GalleryTitleBarDefaultButtonStyle"
-            BasedOn="{StaticResource GalleryTitleBarButtonStyle}"
-            TargetType="Button">
-            <Setter Property="Border.CornerRadius" Value="0" />
+        <Style x:Key="GalleryTitleBarDefaultButtonStyle" BasedOn="{StaticResource GalleryTitleBarButtonStyle}" TargetType="Button">
             <Setter Property="winShell:WindowChrome.IsHitTestVisibleInChrome" Value="True" />
+            <Setter Property="Border.CornerRadius" Value="0" />
         </Style>
 
-        <Style
-            x:Key="GalleryTitleBarDefaultCloseButtonStyle"
-            BasedOn="{StaticResource GalleryTitleBarDefaultButtonStyle}"
-            TargetType="Button">
+        <Style x:Key="GalleryTitleBarDefaultCloseButtonStyle" BasedOn="{StaticResource GalleryTitleBarDefaultButtonStyle}" TargetType="Button">
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Background" Value="#C42B1C" />
