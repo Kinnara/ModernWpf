@@ -1,23 +1,20 @@
 namespace ModernWpf.Gallery.Models
 {
-    public class Person
+    public record Person
     {
+        public string FirstName { get; init; }
+
+        public string LastName { get; init; }
+
+        public string Name => FirstName + " " + LastName;
+
+        public string Company { get; init; }
+
         public Person(string firstName, string lastName, string company)
         {
             FirstName = firstName;
             LastName = lastName;
             Company = company;
         }
-
-        public string FirstName { get; }
-
-        public string LastName { get; }
-
-        public string Name
-        {
-            get { return FirstName + " " + LastName; }
-        }
-
-        public string Company { get; }
     }
 }

@@ -228,7 +228,7 @@ namespace ModernWpf.Gallery.Tests
                 {
                     RelativePath = Path.Combine("ModernWpf.Gallery", "Models", "Person.cs"),
                     SealedDeclaration = "public sealed class Person",
-                    UnsealedDeclaration = "public class Person"
+                    UnsealedDeclaration = "public record Person"
                 },
                 new
                 {
@@ -253,6 +253,29 @@ namespace ModernWpf.Gallery.Tests
                     source.Contains(file.UnsealedDeclaration, StringComparison.Ordinal),
                     Path.GetRelativePath(repoRoot, path) + " should keep the copied WPF Gallery model declaration shape.");
             }
+        }
+
+        [TestMethod]
+        public void CopiedWpfGalleryPersonModelKeepsOfficialRecordAndInitShape()
+        {
+            var source = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Models",
+                "Person.cs");
+
+            Assert.IsTrue(
+                source.Contains("public record Person", StringComparison.Ordinal),
+                "Person should match the official WPF Gallery record model declaration shape.");
+            Assert.IsFalse(
+                source.Contains("public class Person", StringComparison.Ordinal),
+                "Person should not drift back to a local-only class declaration.");
+            AssertContainsInOrder(
+                source,
+                "public string FirstName { get; init; }",
+                "public string LastName { get; init; }",
+                "public string Name => FirstName + \" \" + LastName;",
+                "public string Company { get; init; }",
+                "public Person(string firstName, string lastName, string company)");
         }
 
         [TestMethod]
