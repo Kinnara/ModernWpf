@@ -17,6 +17,102 @@
         <Setter Property="KeyboardNavigation.IsTabStop" Value="False" />
     </Style>
 
+    <Style x:Key="ControlExampleSourceExpanderStyle" TargetType="{x:Type Expander}">
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Expander}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <ToggleButton
+                            x:Name="HeaderSite"
+                            Grid.Row="0"
+                            Height="{TemplateBinding MinHeight}"
+                            HorizontalAlignment="Stretch"
+                            Content="{TemplateBinding Header}"
+                            Focusable="False"
+                            IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}">
+                            <ToggleButton.Template>
+                                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                    <Border
+                                        x:Name="HeaderBorder"
+                                        Background="{DynamicResource ExpanderHeaderBackground}"
+                                        BorderBrush="{DynamicResource ExpanderHeaderBorderBrush}"
+                                        BorderThickness="{StaticResource ExpanderBorderThemeThickness}"
+                                        CornerRadius="{DynamicResource ControlCornerRadius}">
+                                        <Grid Margin="{StaticResource ExpanderPadding}">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <ContentPresenter
+                                                Grid.Column="0"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Center"
+                                                RecognizesAccessKey="True"
+                                                TextElement.FontSize="{StaticResource BodyTextBlockFontSize}"
+                                                TextElement.Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+
+                                            <Path
+                                                x:Name="Chevron"
+                                                Grid.Column="1"
+                                                Width="8"
+                                                Height="4"
+                                                Margin="16,0,0,0"
+                                                VerticalAlignment="Center"
+                                                Data="M 0 0 L 4 4 L 8 0"
+                                                RenderTransformOrigin="0.5,0.5"
+                                                Stroke="{DynamicResource TextFillColorPrimaryBrush}"
+                                                StrokeEndLineCap="Round"
+                                                StrokeLineJoin="Round"
+                                                StrokeStartLineCap="Round"
+                                                StrokeThickness="1" />
+                                        </Grid>
+                                    </Border>
+
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsChecked" Value="True">
+                                            <Setter TargetName="HeaderBorder" Property="CornerRadius" Value="8,8,0,0" />
+                                            <Setter TargetName="Chevron" Property="RenderTransform">
+                                                <Setter.Value>
+                                                    <RotateTransform Angle="180" />
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </ToggleButton.Template>
+                        </ToggleButton>
+
+                        <Border
+                            x:Name="ExpandSite"
+                            Grid.Row="1"
+                            Padding="16"
+                            Background="{DynamicResource SolidBackgroundFillColorBaseBrush}"
+                            BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="1,0,1,1"
+                            CornerRadius="0,0,8,8"
+                            Visibility="Collapsed">
+                            <ContentPresenter ContentSource="Content" />
+                        </Border>
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsExpanded" Value="True">
+                            <Setter TargetName="ExpandSite" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="{x:Type controls:ControlExample}">
         <Setter Property="Focusable" Value="False" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
@@ -57,7 +153,7 @@
                             Header="Source code"
                             MinHeight="42">
                             <Expander.Style>
-                                <Style TargetType="{x:Type Expander}">
+                                <Style BasedOn="{StaticResource ControlExampleSourceExpanderStyle}" TargetType="{x:Type Expander}">
                                     <Style.Triggers>
                                         <MultiDataTrigger>
                                             <MultiDataTrigger.Conditions>

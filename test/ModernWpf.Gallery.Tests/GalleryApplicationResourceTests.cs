@@ -407,6 +407,12 @@ namespace ModernWpf.Gallery.Tests
                         sourceCodeExpander.ActualHeight >= 42.0 && sourceCodeExpander.ActualHeight <= 43.5,
                         "Expected collapsed source expander height near the official WPF Gallery 42-43px row; actual " + sourceCodeExpander.ActualHeight);
 
+                    var sourceHeaderToggle = FindVisualChildren<System.Windows.Controls.Primitives.ToggleButton>(sourceCodeExpander).Single();
+                    Assert.IsFalse(sourceHeaderToggle.Focusable);
+                    Assert.IsTrue(
+                        sourceHeaderToggle.ActualWidth >= displayBorder.ActualWidth - 1.0,
+                        "Expected source header to span the official full-width row; actual " + sourceHeaderToggle.ActualWidth + " display " + displayBorder.ActualWidth);
+
                     var divider = (Border)controlExample.Template.FindName("Border", controlExample);
                     Assert.IsNotNull(divider);
                     Assert.AreEqual(new Thickness(0, 20, 0, 20), divider.Margin);
