@@ -345,6 +345,42 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void SharedSupportControlCodeBehindKeepsOfficialDependencyPropertyMemberOrderShape()
+        {
+            var controlExampleSource = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Controls",
+                "ControlExample.cs");
+            AssertContainsInOrder(
+                controlExampleSource,
+                "public static readonly DependencyProperty HeaderTextProperty",
+                "public static readonly DependencyProperty ExampleContentProperty",
+                "public static readonly DependencyProperty XamlCodeProperty",
+                "public static readonly DependencyProperty XamlCodeSourceProperty",
+                "public static readonly DependencyProperty CSharpCodeProperty",
+                "public static readonly DependencyProperty CSharpCodeSourceProperty",
+                "public string HeaderText",
+                "public object ExampleContent",
+                "public string XamlCode",
+                "public Uri XamlCodeSource",
+                "public string CSharpCode",
+                "public Uri CSharpCodeSource");
+
+            var pageHeaderSource = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Controls",
+                "PageHeader.cs");
+            AssertContainsInOrder(
+                pageHeaderSource,
+                "public static readonly DependencyProperty TitleProperty",
+                "public static readonly DependencyProperty DescriptionProperty",
+                "public static readonly DependencyProperty ShowDescriptionProperty",
+                "public string Title",
+                "public string Description",
+                "public bool ShowDescription");
+        }
+
+        [TestMethod]
         public void SharedPageHeaderKeepsOfficialTemplateSourceShape()
         {
             var xaml = ReadRepoFile(

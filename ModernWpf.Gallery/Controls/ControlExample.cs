@@ -28,24 +28,12 @@ namespace ModernWpf.Gallery.Controls
                 typeof(ControlExample),
                 new PropertyMetadata(null));
 
-        public string HeaderText
-        {
-            get { return (string)GetValue(HeaderTextProperty); }
-            set { SetValue(HeaderTextProperty, value); }
-        }
-
         public static readonly DependencyProperty ExampleContentProperty =
             DependencyProperty.Register(
                 nameof(ExampleContent),
                 typeof(object),
                 typeof(ControlExample),
                 new PropertyMetadata(null));
-
-        public object ExampleContent
-        {
-            get { return GetValue(ExampleContentProperty); }
-            set { SetValue(ExampleContentProperty, value); }
-        }
 
         public static readonly DependencyProperty XamlCodeProperty =
             DependencyProperty.Register(
@@ -54,24 +42,12 @@ namespace ModernWpf.Gallery.Controls
                 typeof(ControlExample),
                 new PropertyMetadata(null));
 
-        public string XamlCode
-        {
-            get { return (string)GetValue(XamlCodeProperty); }
-            set { SetValue(XamlCodeProperty, value); }
-        }
-
         public static readonly DependencyProperty XamlCodeSourceProperty =
             DependencyProperty.Register(
                 nameof(XamlCodeSource),
                 typeof(Uri),
                 typeof(ControlExample),
                 new PropertyMetadata(null, OnXamlCodeSourceChanged));
-
-        public Uri XamlCodeSource
-        {
-            get { return (Uri)GetValue(XamlCodeSourceProperty); }
-            set { SetValue(XamlCodeSourceProperty, value); }
-        }
 
         public static readonly DependencyProperty CSharpCodeProperty =
             DependencyProperty.Register(
@@ -80,18 +56,42 @@ namespace ModernWpf.Gallery.Controls
                 typeof(ControlExample),
                 new PropertyMetadata(null));
 
-        public string CSharpCode
-        {
-            get { return (string)GetValue(CSharpCodeProperty); }
-            set { SetValue(CSharpCodeProperty, value); }
-        }
-
         public static readonly DependencyProperty CSharpCodeSourceProperty =
             DependencyProperty.Register(
                 nameof(CSharpCodeSource),
                 typeof(Uri),
                 typeof(ControlExample),
                 new PropertyMetadata(null, OnCSharpCodeSourceChanged));
+
+        public string HeaderText
+        {
+            get { return (string)GetValue(HeaderTextProperty); }
+            set { SetValue(HeaderTextProperty, value); }
+        }
+
+        public object ExampleContent
+        {
+            get { return GetValue(ExampleContentProperty); }
+            set { SetValue(ExampleContentProperty, value); }
+        }
+
+        public string XamlCode
+        {
+            get { return (string)GetValue(XamlCodeProperty); }
+            set { SetValue(XamlCodeProperty, value); }
+        }
+
+        public Uri XamlCodeSource
+        {
+            get { return (Uri)GetValue(XamlCodeSourceProperty); }
+            set { SetValue(XamlCodeSourceProperty, value); }
+        }
+
+        public string CSharpCode
+        {
+            get { return (string)GetValue(CSharpCodeProperty); }
+            set { SetValue(CSharpCodeProperty, value); }
+        }
 
         public Uri CSharpCodeSource
         {

@@ -340,11 +340,15 @@ declaration shape for the header visibility binding, copy buttons, glyphs,
 storyboard actions, code TextBoxes, divider visibility, and C# heading order
 while retaining local ModernWpf converter namespace/resource adaptations,
 source-expander collapse behavior, source-row minimum height, and display font
-inheritance.
+inheritance. Its code-behind now also keeps the official dependency-property
+field-before-wrapper member order while retaining ModernWpf default-style,
+resource-loading, source-expander, and automation adapters.
 The shared `PageHeader` template now also keeps the official compact
 converter/setter, title/description text, and hidden-description trigger source
 shape while retaining the local `GalleryAutomation.HeadingLevel` adapter that
-maps heading metadata to supported target frameworks.
+maps heading metadata to supported target frameworks. Its code-behind now also
+keeps the official dependency-property field-before-wrapper member order while
+retaining the ModernWpf default-style adapter.
 The shared `HeaderTile` XAML now also keeps the official compact root sizing,
 RootButton attribute order, acrylic resource declarations, content grid, glyph,
 and title/description text declaration shape while retaining ModernWpf brush
@@ -379,6 +383,10 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.SharedSupportControlCodeBehindKeepsOfficialDependencyPropertyMemberOrderShape|FullyQualifiedName~WpfGallerySourceShapeTests.SharedControlExampleKeepsOfficialSourceCodeTemplateShape|FullyQualifiedName~WpfGallerySourceShapeTests.SharedPageHeaderKeepsOfficialTemplateSourceShape|FullyQualifiedName~GalleryApplicationResourceTests.ControlExampleSourceCodeTextStyleUsesWpfGalleryReferenceResources|FullyQualifiedName~GalleryApplicationResourceTests.ControlExampleTemplateMatchesWpfGalleryReferenceDivider|FullyQualifiedName~GalleryApplicationResourceTests.ControlExampleTemplateHidesSourceExpanderWithoutLocalSourceName|FullyQualifiedName~GalleryApplicationResourceTests.ControlExampleLoadsSourceCodeFromReferenceStyleUris|FullyQualifiedName~GalleryPageRuntimeTests.WhatsNewPageHeaderMatchesWpfGalleryReference|FullyQualifiedName~GalleryAutomationHookTests.WpfGalleryPagesExposeHeadingAutomation" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 8 tests per target. Shared `ControlExample` and `PageHeader` code-behind now keep the official dependency-property field-before-wrapper member order while existing ControlExample template/resource/source-loading and PageHeader template/runtime/automation coverage still passes. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the shared support-control code-behind member-order alignment. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages and existing ModernWpf/ModernWpf.Controls warnings.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.SharedColorPageExampleKeepsOfficialTemplateSourceShape|FullyQualifiedName~WpfGallerySourceShapeTests.DesignGuidanceColorTextSectionKeepsOfficialSourceShape|FullyQualifiedName~GalleryPageRuntimeTests.ColorPageUsesWpfGallerySelectorAndTextSectionLayout|FullyQualifiedName~GalleryPageRuntimeTests.ColorPageVisualTestCanOpenWpfGallerySubsection|FullyQualifiedName~GalleryPageRuntimeTests.DesignGuidancePagesUseOfficialPageSpecificViewModels|FullyQualifiedName~GalleryPageRuntimeTests.DesignGuidanceItemPagesUseOfficialPageRoots" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 11 tests per target. The shared `ColorPageExample` control now keeps the official `[ContentProperty]`, partial class declaration, string-literal dependency-property registrations/default values, and dependency-property member order while existing Design Guidance color subsection source-shape, page-specific view-model, copied-root, selector/text-section, and subsection runtime coverage still passes. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
@@ -2672,9 +2680,14 @@ navigation-card ItemsControl while keeping that local extension scroll host
 separate. The shared `ControlExample` template
 now pins official source-code panel declaration shape while keeping local
 source-expander collapse, source-row height, ModernWpf resources, and display
-font inheritance adapters. The shared `PageHeader` template now
+font inheritance adapters. Its code-behind now pins the official
+dependency-property field-before-wrapper member order while keeping local
+default-style, source-loading, source-expander, and automation adapters. The
+shared `PageHeader` template now
 pins official compact converter/setter, text, and hidden-description trigger
-source shape while retaining the local heading-level adapter. The shared
+source shape while retaining the local heading-level adapter, and its
+code-behind now pins the official dependency-property field-before-wrapper
+member order while keeping the local default-style adapter. The shared
 `HeaderTile` XAML now also pins official root/button/resource/content/text
 declaration shape, and its code-behind now pins the official
 `SystemEvents_UserPreferenceChanged` handler and property/dependency-property

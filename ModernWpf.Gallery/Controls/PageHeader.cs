@@ -17,12 +17,6 @@ namespace ModernWpf.Gallery.Controls
                 typeof(PageHeader),
                 new PropertyMetadata(null));
 
-        public string Title
-        {
-            get { return (string)GetValue(TitleProperty); }
-            set { SetValue(TitleProperty, value); }
-        }
-
         public static readonly DependencyProperty DescriptionProperty =
             DependencyProperty.Register(
                 nameof(Description),
@@ -30,18 +24,24 @@ namespace ModernWpf.Gallery.Controls
                 typeof(PageHeader),
                 new PropertyMetadata(null));
 
-        public string Description
-        {
-            get { return (string)GetValue(DescriptionProperty); }
-            set { SetValue(DescriptionProperty, value); }
-        }
-
         public static readonly DependencyProperty ShowDescriptionProperty =
             DependencyProperty.Register(
                 nameof(ShowDescription),
                 typeof(bool),
                 typeof(PageHeader),
                 new PropertyMetadata(true));
+
+        public string Title
+        {
+            get { return (string)GetValue(TitleProperty); }
+            set { SetValue(TitleProperty, value); }
+        }
+
+        public string Description
+        {
+            get { return (string)GetValue(DescriptionProperty); }
+            set { SetValue(DescriptionProperty, value); }
+        }
 
         public bool ShowDescription
         {
