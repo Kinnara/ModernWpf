@@ -305,6 +305,52 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void CopiedWpfGalleryUserDashboardUserKeepsOfficialMemberOrderShape()
+        {
+            var source = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Samples",
+                "UserDashboardUser.cs");
+
+            AssertContainsInOrder(
+                source,
+                "private string _firstName;",
+                "private string _lastName;",
+                "private string _company;",
+                "private string _address;",
+                "private bool _isNewGraduate;",
+                "private string _imageId = \"91\";",
+                "private int _age;",
+                "private DateTime _dateOfJoining;",
+                "public string FirstName",
+                "public string LastName",
+                "public string Name => $\"{FirstName} {LastName}\";",
+                "public string ImageId",
+                "public string ImageKey => $\"p{ImageId}\";",
+                "public string Company",
+                "public string Address",
+                "public int Age",
+                "public DateTime DateOfJoining",
+                "public bool IsNewGraduate",
+                "public event PropertyChangedEventHandler PropertyChanged;",
+                "protected void OnPropertyChanged(string propertyName)",
+                "PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));",
+                "public UserDashboardUser(string firstName, string lastName)",
+                "public UserDashboardUser(UserDashboardUser user)",
+                "public UserDashboardUser(string imageId, string firstName, string lastName, string company, string address, int age, DateTime dateOfJoining, bool isNewGraduate)");
+            AssertContainsInOrder(
+                source,
+                "if (SetProperty(ref _firstName, value, nameof(FirstName)))",
+                "OnPropertyChanged(nameof(Name));",
+                "if (SetProperty(ref _lastName, value, nameof(LastName)))",
+                "OnPropertyChanged(nameof(Name));",
+                "if (SetProperty(ref _imageId, value, nameof(ImageId)))",
+                "OnPropertyChanged(nameof(ImageKey));");
+        }
+
+        [TestMethod]
         public void TopLevelCodeBehindKeepsOfficialViewModelMemberOrderShape()
         {
             foreach (var page in new[]

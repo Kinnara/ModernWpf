@@ -5,14 +5,91 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
 {
     public class UserDashboardUser : INotifyPropertyChanged
     {
-        private string _address;
-        private int _age;
-        private string _company;
-        private DateTime _dateOfJoining;
         private string _firstName;
-        private string _imageId = "91";
-        private bool _isNewGraduate;
         private string _lastName;
+        private string _company;
+        private string _address;
+        private bool _isNewGraduate;
+        private string _imageId = "91";
+        private int _age;
+        private DateTime _dateOfJoining;
+
+        public string FirstName
+        {
+            get { return _firstName; }
+            set
+            {
+                if (SetProperty(ref _firstName, value, nameof(FirstName)))
+                {
+                    OnPropertyChanged(nameof(Name));
+                }
+            }
+        }
+
+        public string LastName
+        {
+            get { return _lastName; }
+            set
+            {
+                if (SetProperty(ref _lastName, value, nameof(LastName)))
+                {
+                    OnPropertyChanged(nameof(Name));
+                }
+            }
+        }
+
+        public string Name => $"{FirstName} {LastName}";
+
+        public string ImageId
+        {
+            get { return _imageId; }
+            set
+            {
+                if (SetProperty(ref _imageId, value, nameof(ImageId)))
+                {
+                    OnPropertyChanged(nameof(ImageKey));
+                }
+            }
+        }
+
+        public string ImageKey => $"p{ImageId}";
+
+        public string Company
+        {
+            get { return _company; }
+            set { SetProperty(ref _company, value, nameof(Company)); }
+        }
+
+        public string Address
+        {
+            get { return _address; }
+            set { SetProperty(ref _address, value, nameof(Address)); }
+        }
+
+        public int Age
+        {
+            get { return _age; }
+            set { SetProperty(ref _age, value, nameof(Age)); }
+        }
+
+        public DateTime DateOfJoining
+        {
+            get { return _dateOfJoining; }
+            set { SetProperty(ref _dateOfJoining, value, nameof(DateOfJoining)); }
+        }
+
+        public bool IsNewGraduate
+        {
+            get { return _isNewGraduate; }
+            set { SetProperty(ref _isNewGraduate, value, nameof(IsNewGraduate)); }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
         public UserDashboardUser(string firstName, string lastName)
         {
@@ -45,84 +122,6 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
             IsNewGraduate = isNewGraduate;
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public string Address
-        {
-            get { return _address; }
-            set { SetProperty(ref _address, value, "Address"); }
-        }
-
-        public int Age
-        {
-            get { return _age; }
-            set { SetProperty(ref _age, value, "Age"); }
-        }
-
-        public string Company
-        {
-            get { return _company; }
-            set { SetProperty(ref _company, value, "Company"); }
-        }
-
-        public DateTime DateOfJoining
-        {
-            get { return _dateOfJoining; }
-            set { SetProperty(ref _dateOfJoining, value, "DateOfJoining"); }
-        }
-
-        public string FirstName
-        {
-            get { return _firstName; }
-            set
-            {
-                if (SetProperty(ref _firstName, value, "FirstName"))
-                {
-                    OnPropertyChanged("Name");
-                }
-            }
-        }
-
-        public string ImageId
-        {
-            get { return _imageId; }
-            set
-            {
-                if (SetProperty(ref _imageId, value, "ImageId"))
-                {
-                    OnPropertyChanged("ImageKey");
-                }
-            }
-        }
-
-        public string ImageKey
-        {
-            get { return "p" + ImageId; }
-        }
-
-        public bool IsNewGraduate
-        {
-            get { return _isNewGraduate; }
-            set { SetProperty(ref _isNewGraduate, value, "IsNewGraduate"); }
-        }
-
-        public string LastName
-        {
-            get { return _lastName; }
-            set
-            {
-                if (SetProperty(ref _lastName, value, "LastName"))
-                {
-                    OnPropertyChanged("Name");
-                }
-            }
-        }
-
-        public string Name
-        {
-            get { return FirstName + " " + LastName; }
-        }
-
         private bool SetProperty<T>(ref T field, T value, string propertyName)
         {
             if (Equals(field, value))
@@ -133,15 +132,6 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
             field = value;
             OnPropertyChanged(propertyName);
             return true;
-        }
-
-        private void OnPropertyChanged(string propertyName)
-        {
-            var handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
         }
     }
 }

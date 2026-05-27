@@ -150,6 +150,11 @@ The copied Iconography `IconData` model now also keeps the official property
 order, initialized `Tags` collection, and expression-bodied glyph conversion
 properties while retaining local `DataContract`/`DataMember` serialization
 attributes for the shipped JSON loader.
+The adapted User Dashboard user model now also keeps the official WPF Gallery
+`User` field, property, event, notification, and constructor member-order
+shape, including expression-bodied `Name`/`ImageKey` members and `nameof`
+notification names, while retaining the local `UserDashboardUser` type name,
+non-nullable `net462`-friendly signatures, and shared `SetProperty` helper.
 Copied top-level code-behind now also keeps the official `ViewModel`
 member-before-constructor source shape for All Controls, What's New, and
 Settings while preserving their default ModernWpf routing constructors. Home
@@ -416,6 +421,10 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.CopiedWpfGalleryUserDashboardUserKeepsOfficialMemberOrderShape|FullyQualifiedName~WpfGallerySourceShapeTests.CopiedWpfGalleryModelClassesStayUnsealedLikeOfficialSource|FullyQualifiedName~WpfGallerySamplesSnippetTests.UserDashboardCodeBehindUsesOfficialCommandAndNotificationShape|FullyQualifiedName~GalleryPageRuntimeTests.SamplesPagesUseOfficialPageSpecificViewModels|FullyQualifiedName~GalleryPageRuntimeTests.UserDashboardPageMatchesWpfGalleryReferenceLayoutAndBehavior" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 5 tests per target. The adapted User Dashboard user model now keeps the official WPF Gallery `User` field/property/event/constructor member order, expression-bodied `Name` and `ImageKey`, and `nameof`/null-conditional notification source shape while the copied model unsealed guard, User Dashboard code-behind source shape, Samples view-model routing, and User Dashboard runtime layout/behavior coverage still pass. Existing warning/output on the latest rerun remains `NU1903` plus recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the adapted `UserDashboardUser` member-order source-shape alignment. Latest incremental rebuild output includes recurring `Failed to resolve WinRT.Runtime.dll` messages and reported 0 warnings.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.CopiedWpfGalleryModelClassesStayUnsealedLikeOfficialSource|FullyQualifiedName~WpfGallerySourceShapeTests.CopiedWpfGalleryIconDataModelKeepsOfficialPropertyAndGlyphShape|FullyQualifiedName~GalleryPageRuntimeTests.DesignGuidancePagesUseOfficialPageSpecificViewModels|FullyQualifiedName~GalleryPageRuntimeTests.IconographyPageUsesWpfGalleryIconLibraryLayout" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 4 tests per target. The copied Iconography `IconData` model now keeps the official WPF Gallery `Name`/`Code`/initialized `Tags` order and expression-bodied `Character`, `CodeGlyph`, and `TextGlyph` source shape while the copied model unsealed guard, Design Guidance view-model routing, and Iconography icon-library runtime coverage still pass. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
@@ -2651,6 +2660,9 @@ with `Person` now matching the official record/init property source shape
 through a `net462` compiler compatibility shim,
 and `IconData` now matching the official property/glyph member shape while
 retaining serializer attributes,
+and the adapted User Dashboard user model now matching the official `User`
+field/property/event/constructor member-order and notification source shape
+while retaining local naming and compatibility adapters,
 while copied item pages also keep the official `ViewModel`
 member-before-constructor source shape where their corresponding WPF Gallery
 source uses it, with verified constructor-first exceptions left intact; Basic
