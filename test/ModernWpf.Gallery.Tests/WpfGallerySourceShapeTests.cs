@@ -256,6 +256,30 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void CopiedWpfGalleryProductModelKeepsOfficialSummaryAndPlaceholderShape()
+        {
+            var source = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Models",
+                "Product.cs");
+
+            AssertContainsInOrder(
+                source,
+                "/// <summary>",
+                "/// Product class for DataGrid page",
+                "/// </summary>",
+                "public class Product",
+                "public int ProductId { get; set; }",
+                "public int ProductCode { get; set; }",
+                "public string ProductName { get; set; }",
+                "public string QuantityPerUnit { get; set; }",
+                "public double UnitPrice { get; set; }",
+                "// public string UnitPriceString => UnitPrice.ToString(\"F2\");",
+                "public int UnitsInStock { get; set; }",
+                "// public bool IsVirtual { get; set; }");
+        }
+
+        [TestMethod]
         public void CopiedWpfGalleryPersonModelKeepsOfficialRecordAndInitShape()
         {
             var source = ReadRepoFile(

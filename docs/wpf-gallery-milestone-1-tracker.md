@@ -146,6 +146,9 @@ User Dashboard user model while retaining local namespace/name/resource and
 also keeps the official record/init-only property shape, with a gallery-local
 `net462` `IsExternalInit` compiler shim so the official source shape remains
 available across all gallery target frameworks.
+The copied DataGrid `Product` model now also keeps the official WPF Gallery
+summary and placeholder commented `UnitPriceString`/`IsVirtual` member source
+shape while leaving the active data model unchanged.
 The copied Iconography `IconData` model now also keeps the official property
 order, initialized `Tags` collection, and expression-bodied glyph conversion
 properties while retaining local `DataContract`/`DataMember` serialization
@@ -421,6 +424,10 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.CopiedWpfGalleryProductModelKeepsOfficialSummaryAndPlaceholderShape|FullyQualifiedName~WpfGallerySourceShapeTests.CopiedWpfGalleryModelClassesStayUnsealedLikeOfficialSource|FullyQualifiedName~WpfGalleryCollectionsSnippetTests.CollectionsControlExamplesMatchOfficialWpfGallerySampleCode|FullyQualifiedName~GalleryPageRuntimeTests.CollectionsPagesUseOfficialPageSpecificViewModels|FullyQualifiedName~GalleryPageRuntimeTests.VisualTestModeUsesDeterministicWpfGallerySampleData" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 5 tests per target. The copied DataGrid `Product` model now keeps the official WPF Gallery summary and commented `UnitPriceString`/`IsVirtual` placeholder member shape while the copied model unsealed guard, Collections snippet coverage, Collections view-model routing, and deterministic visual-test sample data still pass. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the copied `Product` summary/placeholder source-shape alignment. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages and existing ModernWpf/ModernWpf.Controls warnings.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.CopiedWpfGalleryUserDashboardUserKeepsOfficialMemberOrderShape|FullyQualifiedName~WpfGallerySourceShapeTests.CopiedWpfGalleryModelClassesStayUnsealedLikeOfficialSource|FullyQualifiedName~WpfGallerySamplesSnippetTests.UserDashboardCodeBehindUsesOfficialCommandAndNotificationShape|FullyQualifiedName~GalleryPageRuntimeTests.SamplesPagesUseOfficialPageSpecificViewModels|FullyQualifiedName~GalleryPageRuntimeTests.UserDashboardPageMatchesWpfGalleryReferenceLayoutAndBehavior" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 5 tests per target. The adapted User Dashboard user model now keeps the official WPF Gallery `User` field/property/event/constructor member order, expression-bodied `Name` and `ImageKey`, and `nameof`/null-conditional notification source shape while the copied model unsealed guard, User Dashboard code-behind source shape, Samples view-model routing, and User Dashboard runtime layout/behavior coverage still pass. Existing warning/output on the latest rerun remains `NU1903` plus recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
@@ -2656,6 +2663,8 @@ Gallery page-specific view-model declarations now also stay unsealed partial
 classes like the official WPF Gallery `ObservableObject` view models,
 and copied/adapted model declarations now also stay unsealed like the official
 WPF Gallery `Product`, `Person`, `IconData`, and `User` model sources,
+with `Product` now matching the official DataGrid summary and placeholder
+commented-member source shape,
 with `Person` now matching the official record/init property source shape
 through a `net462` compiler compatibility shim,
 and `IconData` now matching the official property/glyph member shape while
