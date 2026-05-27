@@ -539,6 +539,10 @@ namespace ModernWpf.Gallery.Tests
 
             AssertContainsInOrder(
                 source,
+                "public abstract class BasicInputPageViewModelBase : WpfGalleryPageViewModel",
+                "protected BasicInputPageViewModelBase(string pageTitle)",
+                ": base(pageTitle, string.Empty)",
+                "protected static ICommand CreateCommand(Action<object> execute)",
                 "public partial class ButtonPageViewModel : BasicInputPageViewModelBase",
                 "private string _message = \"Hello World!\";",
                 "private bool _isSimpleButtonEnabled = true;",
@@ -599,6 +603,12 @@ namespace ModernWpf.Gallery.Tests
                 "private int _rangeSliderValue = 500;",
                 "private int _marksSliderValue = 0;",
                 "private int _verticalSliderValue = 0;");
+            Assert.IsFalse(
+                source.Contains("public event PropertyChangedEventHandler", StringComparison.Ordinal),
+                "Basic Input view models should use the shared observable page-view-model adapter instead of local event plumbing.");
+            Assert.IsFalse(
+                source.Contains("private void OnPropertyChanged", StringComparison.Ordinal),
+                "Basic Input view models should use the shared SetProperty adapter instead of local OnPropertyChanged plumbing.");
         }
 
         [TestMethod]

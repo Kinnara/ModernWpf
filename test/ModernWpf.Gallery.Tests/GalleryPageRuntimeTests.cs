@@ -1128,6 +1128,16 @@ namespace ModernWpf.Gallery.Tests
                 AssertBasicInputViewModel<ComboBoxPage, ComboBoxPageViewModel>("ComboBox", "ComboBox");
                 AssertBasicInputViewModel<RadioButtonPage, RadioButtonPageViewModel>("RadioButton", "RadioButton");
                 AssertBasicInputViewModel<SliderPage, SliderPageViewModel>("Slider", "Slider");
+
+                var buttonPage = (ButtonPage)new ItemPage(GalleryCatalog.FindItem("Button")).DirectPageContent;
+                var changedProperties = new List<string>();
+                buttonPage.ViewModel.PropertyChanged += (sender, args) => changedProperties.Add(args.PropertyName);
+                buttonPage.ViewModel.PageTitle = "Buttons";
+                buttonPage.ViewModel.Message = "Clicked";
+                Assert.AreEqual("Buttons", buttonPage.ViewModel.PageTitle);
+                Assert.AreEqual("Clicked", buttonPage.ViewModel.Message);
+                CollectionAssert.Contains(changedProperties, nameof(ButtonPageViewModel.PageTitle));
+                CollectionAssert.Contains(changedProperties, nameof(ButtonPageViewModel.Message));
             });
         }
 

@@ -1,51 +1,22 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Windows.Controls;
 using System.Windows.Input;
+using ModernWpf.Gallery.Pages.WpfGallery;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
 {
-    public abstract class BasicInputPageViewModelBase : INotifyPropertyChanged
+    public abstract class BasicInputPageViewModelBase : WpfGalleryPageViewModel
     {
         protected BasicInputPageViewModelBase(string pageTitle)
+            : base(pageTitle, string.Empty)
         {
-            PageTitle = pageTitle;
-            PageDescription = string.Empty;
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public string PageTitle { get; }
-
-        public string PageDescription { get; }
 
         protected static ICommand CreateCommand(Action<object> execute)
         {
             return new RelayCommand(execute);
-        }
-
-        protected bool SetProperty<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
-        {
-            if (EqualityComparer<T>.Default.Equals(field, value))
-            {
-                return false;
-            }
-
-            field = value;
-            OnPropertyChanged(propertyName);
-            return true;
-        }
-
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            var handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
         }
 
         private sealed class RelayCommand : ICommand
