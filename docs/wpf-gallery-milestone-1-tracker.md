@@ -139,6 +139,11 @@ Copied WPF Gallery page-specific view-model declarations now also keep the
 official unsealed partial class shape, including top-level, section, item-page,
 Design Guidance, Samples, Status & Info, System, and Settings view models,
 while local shell-only view models remain outside that source-shape rule.
+Copied Collections page-specific view models now also keep the official WPF
+Gallery constructor/backing-field initialization shape for DataGrid, ListBox,
+and ListView, plus the official ListView `UpdateListViewSelectionMode` helper
+flow, while retaining the local base class and deterministic visual-test sample
+random adapters.
 Copied/adapted WPF Gallery model declarations now also stay unsealed like the
 official WPF Gallery model sources for `Product`, `Person`, `IconData`, and the
 User Dashboard user model while retaining local namespace/name/resource and
@@ -424,6 +429,10 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.CollectionsViewModelsKeepOfficialConstructorAndSelectionModeSourceShape|FullyQualifiedName~WpfGallerySourceShapeTests.CopiedWpfGalleryViewModelClassesKeepOfficialPartialDeclarationShape|FullyQualifiedName~WpfGalleryCollectionsSnippetTests.CollectionsControlExamplesMatchOfficialWpfGallerySampleCode|FullyQualifiedName~GalleryPageRuntimeTests.CollectionsPagesUseOfficialPageSpecificViewModels|FullyQualifiedName~GalleryPageRuntimeTests.VisualTestModeUsesDeterministicWpfGallerySampleData" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 5 tests per target. Copied Collections page-specific view models now keep the official WPF Gallery backing-field constructor initialization shape for DataGrid/ListBox/ListView and the official ListView `UpdateListViewSelectionMode` helper flow while the copied partial view-model declaration guard, Collections snippets, Collections runtime view-model routing, and deterministic visual-test sample data still pass. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the copied Collections view-model constructor/selection-mode source-shape alignment. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages and existing ModernWpf/ModernWpf.Controls warnings.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.CopiedWpfGalleryProductModelKeepsOfficialSummaryAndPlaceholderShape|FullyQualifiedName~WpfGallerySourceShapeTests.CopiedWpfGalleryModelClassesStayUnsealedLikeOfficialSource|FullyQualifiedName~WpfGalleryCollectionsSnippetTests.CollectionsControlExamplesMatchOfficialWpfGallerySampleCode|FullyQualifiedName~GalleryPageRuntimeTests.CollectionsPagesUseOfficialPageSpecificViewModels|FullyQualifiedName~GalleryPageRuntimeTests.VisualTestModeUsesDeterministicWpfGallerySampleData" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 5 tests per target. The copied DataGrid `Product` model now keeps the official WPF Gallery summary and commented `UnitPriceString`/`IsVirtual` placeholder member shape while the copied model unsealed guard, Collections snippet coverage, Collections view-model routing, and deterministic visual-test sample data still pass. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
@@ -2661,6 +2670,8 @@ section page adapters now also stay unsealed partial
 classes like the official WPF Gallery section page declarations. Copied WPF
 Gallery page-specific view-model declarations now also stay unsealed partial
 classes like the official WPF Gallery `ObservableObject` view models,
+with Collections view models now also matching the official constructor
+backing-field initialization and ListView selection-mode helper source shape,
 and copied/adapted model declarations now also stay unsealed like the official
 WPF Gallery `Product`, `Person`, `IconData`, and `User` model sources,
 with `Product` now matching the official DataGrid summary and placeholder

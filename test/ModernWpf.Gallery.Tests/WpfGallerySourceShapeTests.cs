@@ -213,6 +213,51 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void CollectionsViewModelsKeepOfficialConstructorAndSelectionModeSourceShape()
+        {
+            var source = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Collections",
+                "CollectionsPageViewModels.cs");
+
+            AssertContainsInOrder(
+                source,
+                "public partial class DataGridPageViewModel : CollectionsPageViewModelBase",
+                "private ObservableCollection<Product> _productsCollection;",
+                "public DataGridPageViewModel()",
+                "_productsCollection = GenerateProducts();",
+                "public ObservableCollection<Product> ProductsCollection");
+            AssertContainsInOrder(
+                source,
+                "public partial class ListBoxPageViewModel : CollectionsPageViewModelBase",
+                "private ObservableCollection<string> _listBoxItems;",
+                "public ListBoxPageViewModel()",
+                "_listBoxItems = new ObservableCollection<string>",
+                "\"Arial\",",
+                "\"Times New Roman\"");
+            AssertContainsInOrder(
+                source,
+                "public partial class ListViewPageViewModel : CollectionsPageViewModelBase",
+                "private int _listViewSelectionModeComboBoxSelectedIndex = 0;",
+                "public int ListViewSelectionModeComboBoxSelectedIndex",
+                "SetProperty(ref _listViewSelectionModeComboBoxSelectedIndex, value);",
+                "UpdateListViewSelectionMode(value);",
+                "private SelectionMode _listViewSelectionMode = SelectionMode.Single;",
+                "private ObservableCollection<Person> _basicListViewItems;",
+                "private ObservableCollection<Person> _gridViewItems;",
+                "public ListViewPageViewModel()",
+                "_basicListViewItems = GenerateBasicListViewPersons();",
+                "_gridViewItems = GenerateGridViewPersons();",
+                "private void UpdateListViewSelectionMode(int selectionModeIndex)",
+                "ListViewSelectionMode = selectionModeIndex switch",
+                "1 => SelectionMode.Multiple,",
+                "2 => SelectionMode.Extended,",
+                "_ => SelectionMode.Single");
+        }
+
+        [TestMethod]
         public void CopiedWpfGalleryModelClassesStayUnsealedLikeOfficialSource()
         {
             var repoRoot = GetRepoRoot();

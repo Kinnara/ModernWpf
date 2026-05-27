@@ -155,7 +155,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
         public DataGridPageViewModel()
             : base("DataGrid")
         {
-            ProductsCollection = GenerateProducts();
+            _productsCollection = GenerateProducts();
         }
 
         public ObservableCollection<Product> ProductsCollection
@@ -172,7 +172,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
         public ListBoxPageViewModel()
             : base("ListBox")
         {
-            ListBoxItems = new ObservableCollection<string>
+            _listBoxItems = new ObservableCollection<string>
             {
                 "Arial",
                 "Comic Sans MS",
@@ -191,16 +191,33 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
 
     public partial class ListViewPageViewModel : CollectionsPageViewModelBase
     {
+        private int _listViewSelectionModeComboBoxSelectedIndex = 0;
+
+        public int ListViewSelectionModeComboBoxSelectedIndex
+        {
+            get { return _listViewSelectionModeComboBoxSelectedIndex; }
+            set
+            {
+                SetProperty(ref _listViewSelectionModeComboBoxSelectedIndex, value);
+                UpdateListViewSelectionMode(value);
+            }
+        }
+
+        private SelectionMode _listViewSelectionMode = SelectionMode.Single;
         private ObservableCollection<Person> _basicListViewItems;
         private ObservableCollection<Person> _gridViewItems;
-        private int _listViewSelectionModeComboBoxSelectedIndex;
-        private SelectionMode _listViewSelectionMode = SelectionMode.Single;
 
         public ListViewPageViewModel()
             : base("ListView")
         {
-            BasicListViewItems = GenerateBasicListViewPersons();
-            GridViewItems = GenerateGridViewPersons();
+            _basicListViewItems = GenerateBasicListViewPersons();
+            _gridViewItems = GenerateGridViewPersons();
+        }
+
+        public SelectionMode ListViewSelectionMode
+        {
+            get { return _listViewSelectionMode; }
+            set { SetProperty(ref _listViewSelectionMode, value); }
         }
 
         public ObservableCollection<Person> BasicListViewItems
@@ -215,24 +232,14 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
             set { SetProperty(ref _gridViewItems, value); }
         }
 
-        public int ListViewSelectionModeComboBoxSelectedIndex
+        private void UpdateListViewSelectionMode(int selectionModeIndex)
         {
-            get { return _listViewSelectionModeComboBoxSelectedIndex; }
-            set
+            ListViewSelectionMode = selectionModeIndex switch
             {
-                if (!SetProperty(ref _listViewSelectionModeComboBoxSelectedIndex, value))
-                {
-                    return;
-                }
-
-                ListViewSelectionMode = value == 1 ? SelectionMode.Multiple : value == 2 ? SelectionMode.Extended : SelectionMode.Single;
-            }
-        }
-
-        public SelectionMode ListViewSelectionMode
-        {
-            get { return _listViewSelectionMode; }
-            set { SetProperty(ref _listViewSelectionMode, value); }
+                1 => SelectionMode.Multiple,
+                2 => SelectionMode.Extended,
+                _ => SelectionMode.Single
+            };
         }
     }
 
