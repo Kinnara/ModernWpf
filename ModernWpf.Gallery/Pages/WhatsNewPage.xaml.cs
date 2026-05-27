@@ -7,6 +7,8 @@ namespace ModernWpf.Gallery.Pages
 {
     public partial class WhatsNewPage
     {
+        public WhatsNewPageViewModel ViewModel { get; }
+
         public WhatsNewPage()
             : this(null)
         {
@@ -20,7 +22,6 @@ namespace ModernWpf.Gallery.Pages
         }
 
         public Action<string> ItemRequested { get; set; }
-        public WhatsNewPageViewModel ViewModel { get; }
 
         private void Open_WhatsNewPageNET10(object sender, RoutedEventArgs e)
         {

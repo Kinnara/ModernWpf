@@ -62,6 +62,44 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void TopLevelCodeBehindKeepsOfficialViewModelMemberOrderShape()
+        {
+            foreach (var page in new[]
+            {
+                Tuple.Create("AllControlsPage", "AllSamplesPageViewModel"),
+                Tuple.Create("WhatsNewPage", "WhatsNewPageViewModel"),
+                Tuple.Create("SettingsPage", "SettingsPageViewModel")
+            })
+            {
+                var source = ReadRepoFile(
+                    "ModernWpf.Gallery",
+                    "Pages",
+                    page.Item1 + ".xaml.cs");
+                var viewModelIndex = source.IndexOf(
+                    "public " + page.Item2 + " ViewModel { get; }",
+                    StringComparison.Ordinal);
+                var constructorIndex = source.IndexOf(
+                    "public " + page.Item1 + "(",
+                    StringComparison.Ordinal);
+
+                Assert.IsTrue(viewModelIndex >= 0, page.Item1 + " should expose its copied page-specific ViewModel property.");
+                Assert.IsTrue(constructorIndex >= 0, page.Item1 + " should keep its copied view-model constructor.");
+                Assert.IsTrue(
+                    viewModelIndex < constructorIndex,
+                    page.Item1 + " should match the official WPF Gallery top-level code-behind member order by declaring ViewModel before the copied constructor.");
+            }
+
+            var homeSource = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "HomePage.xaml.cs");
+            AssertContainsInOrder(
+                homeSource,
+                "public HomePage(DashboardPageViewModel viewModel)",
+                "public DashboardPageViewModel ViewModel { get; }");
+        }
+
+        [TestMethod]
         public void ShellChromeKeepsWpfGalleryHighContrastSourceShape()
         {
             var mainWindowXaml = ReadRepoFile(

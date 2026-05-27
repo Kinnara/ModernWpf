@@ -8,6 +8,8 @@ namespace ModernWpf.Gallery.Pages
 {
     public partial class AllControlsPage
     {
+        public AllSamplesPageViewModel ViewModel { get; }
+
         public AllControlsPage()
             : this(null)
         {
@@ -21,7 +23,6 @@ namespace ModernWpf.Gallery.Pages
         }
 
         public Action<GalleryItem> ItemRequested { get; set; }
-        public AllSamplesPageViewModel ViewModel { get; }
 
         public ICommand NavigateCommand
         {

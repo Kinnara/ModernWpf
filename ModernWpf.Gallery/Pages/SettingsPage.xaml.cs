@@ -11,6 +11,8 @@ namespace ModernWpf.Gallery.Pages
     {
         private bool _canApplyThemeSelection;
 
+        public SettingsPageViewModel ViewModel { get; }
+
         public SettingsPage()
             : this(new SettingsPageViewModel())
         {
@@ -25,7 +27,35 @@ namespace ModernWpf.Gallery.Pages
             _canApplyThemeSelection = true;
         }
 
-        public SettingsPageViewModel ViewModel { get; }
+        private void Services_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo("https://go.microsoft.com/fwlink/?LinkId=822631") { UseShellExecute = true });
+        }
+
+        private void Privacy_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo("https://go.microsoft.com/fwlink/?LinkId=521839") { UseShellExecute = true });
+        }
+
+        private void Open_Issues(object sender, RoutedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo("https://github.com/microsoft/WPF-Samples/issues/new") { UseShellExecute = true });
+        }
+
+        private void Open_ToolkitInformation(object sender, RoutedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo("https://www.nuget.org/packages/CommunityToolkit.Mvvm/") { UseShellExecute = true });
+        }
+
+        private void Open_DIInformation(object sender, RoutedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo("https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/") { UseShellExecute = true });
+        }
+
+        private void Open_HostingInformation(object sender, RoutedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo("https://www.nuget.org/packages/Microsoft.Extensions.Hosting") { UseShellExecute = true });
+        }
 
         private void ThemeMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -48,11 +78,6 @@ namespace ModernWpf.Gallery.Pages
             }
         }
 
-        private void Open_Issues(object sender, RoutedEventArgs e)
-        {
-            Process.Start(new ProcessStartInfo("https://github.com/microsoft/WPF-Samples/issues/new") { UseShellExecute = true });
-        }
-
         private void ApplyVisualTestThemeSelection()
         {
             if (!GalleryDiagnostics.IsEnabled)
@@ -68,31 +93,6 @@ namespace ModernWpf.Gallery.Pages
             {
                 Change_ThemeMode.SelectedIndex = 1;
             }
-        }
-
-        private void Open_ToolkitInformation(object sender, RoutedEventArgs e)
-        {
-            Process.Start(new ProcessStartInfo("https://www.nuget.org/packages/CommunityToolkit.Mvvm/") { UseShellExecute = true });
-        }
-
-        private void Open_DIInformation(object sender, RoutedEventArgs e)
-        {
-            Process.Start(new ProcessStartInfo("https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/") { UseShellExecute = true });
-        }
-
-        private void Open_HostingInformation(object sender, RoutedEventArgs e)
-        {
-            Process.Start(new ProcessStartInfo("https://www.nuget.org/packages/Microsoft.Extensions.Hosting") { UseShellExecute = true });
-        }
-
-        private void Services_Click(object sender, RoutedEventArgs e)
-        {
-            Process.Start(new ProcessStartInfo("https://go.microsoft.com/fwlink/?LinkId=822631") { UseShellExecute = true });
-        }
-
-        private void Privacy_Click(object sender, RoutedEventArgs e)
-        {
-            Process.Start(new ProcessStartInfo("https://go.microsoft.com/fwlink/?LinkId=521839") { UseShellExecute = true });
         }
     }
 
