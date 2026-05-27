@@ -1670,7 +1670,9 @@ namespace ModernWpf.Gallery.Tests
             var source = ReadRepoFile(
                 "ModernWpf.Gallery",
                 "Controls",
-                "HeaderTile.xaml.cs");
+                "HeaderTile.xaml.cs")
+                .Replace("\r\n", "\n")
+                .Replace('\r', '\n');
 
             Assert.IsFalse(
                 source.Contains("OnUserPreferenceChanged", StringComparison.Ordinal),
