@@ -12,26 +12,22 @@ namespace ModernWpf.Gallery.Controls
 
         private void ScrollBackButton_Click(object sender, RoutedEventArgs e)
         {
-            var newOffset = RootScrollViewer.HorizontalOffset - 210;
-            RootScrollViewer.ScrollToHorizontalOffset(newOffset);
-            UpdateScrollButtonsVisibility(newOffset);
+            double newOffSet = RootScrollViewer.HorizontalOffset - 210;
+            RootScrollViewer.ScrollToHorizontalOffset(newOffSet);
+            UpdateScrollButtonsVisibility(newOffSet);
         }
 
         private void ScrollForwardButton_Click(object sender, RoutedEventArgs e)
         {
-            var newOffset = RootScrollViewer.HorizontalOffset + 210;
-            RootScrollViewer.ScrollToHorizontalOffset(newOffset);
-            UpdateScrollButtonsVisibility(newOffset);
-        }
-
-        private void RootScrollViewer_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            UpdateScrollButtonsVisibility();
+            double newOffSet = RootScrollViewer.HorizontalOffset + 210;
+            RootScrollViewer.ScrollToHorizontalOffset(newOffSet);
+            UpdateScrollButtonsVisibility(newOffSet);
         }
 
         private void UpdateScrollButtonsVisibility()
         {
-            UpdateScrollButtonsVisibility(RootScrollViewer.HorizontalOffset);
+            double offset = RootScrollViewer.HorizontalOffset;
+            UpdateScrollButtonsVisibility(offset);
         }
 
         private void UpdateScrollButtonsVisibility(double newOffset)
@@ -55,6 +51,11 @@ namespace ModernWpf.Gallery.Controls
                 ScrollBackButton.Visibility = Visibility.Collapsed;
                 ScrollForwardButton.Visibility = Visibility.Collapsed;
             }
+        }
+
+        private void RootScrollViewer_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            UpdateScrollButtonsVisibility();
         }
     }
 }
