@@ -3239,6 +3239,16 @@ namespace ModernWpf.Gallery.Tests
                 "<controls:PageHeader Margin=\"2,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" Description=\"{Binding ViewModel.PageDescription}\" />");
             AssertContainsInOrder(
                 iconographyXaml,
+                "<Style x:Key=\"CodeValuePresenterStyle\" TargetType=\"TextBlock\">",
+                "<Setter Property=\"Padding\" Value=\"0 0 0 4\" />",
+                "<Setter Property=\"Opacity\" Value=\"0.7\"/>",
+                "<Setter Property=\"FontSize\" Value=\"14\"/>",
+                "<Style x:Key=\"IconData\" TargetType=\"{x:Type ContentControl}\">",
+                "<Setter Property=\"Focusable\" Value=\"False\"/>",
+                "<Grid >",
+                "<TextBlock Padding=\"0,6\" Grid.Column=\"0\" VerticalAlignment=\"Center\" Text=\"{TemplateBinding Content}\" Style=\"{StaticResource CodeValuePresenterStyle}\" TextWrapping=\"Wrap\"/>");
+            AssertContainsInOrder(
+                iconographyXaml,
                 "<Button Grid.Column=\"1\"",
                 "Padding=\"8\"",
                 "FocusManager.IsFocusScope=\"True\"",
@@ -3256,6 +3266,27 @@ namespace ModernWpf.Gallery.Tests
             StringAssert.Contains(
                 normalizedIconographyXaml,
                 "                                                    <DoubleAnimation Duration=\"0:0:0.333\" Storyboard.TargetName=\"CopyGlyphTextBlock\" Storyboard.TargetProperty=\"Opacity\" To=\"0\" />\n                                                    <DoubleAnimation Duration=\"0:0:0.666\" BeginTime=\"0:0:0.333\" Storyboard.TargetName=\"SuccessGlyphTextBlock\" Storyboard.TargetProperty=\"Opacity\" To=\"1\" />\n                                                    <DoubleAnimation Storyboard.TargetName=\"SuccessGlyphTextBlock\" BeginTime=\"0:0:2\" Duration=\"0:0:0.01\" Storyboard.TargetProperty=\"Opacity\" To=\"0\" />\n                                                    <DoubleAnimation Storyboard.TargetName=\"CopyGlyphTextBlock\" BeginTime=\"0:0:2.1\" Duration=\"0:0:0.01\" Storyboard.TargetProperty=\"Opacity\" To=\"1\" />");
+            AssertContainsInOrder(
+                iconographyXaml,
+                "<Style x:Key=\"IconTagChipButtonStyle\" TargetType=\"Button\" BasedOn=\"{StaticResource DefaultButtonStyle}\">",
+                "<Style x:Key=\"IconsListViewItemFocusVisualStyle\">",
+                "<Rectangle",
+                "RadiusX=\"4\"",
+                "RadiusY=\"4\"",
+                "Margin=\"5\"",
+                "Stroke=\"{DynamicResource KeyboardFocusBorderColorBrush}\"",
+                "StrokeThickness=\"2\" />",
+                "<Style x:Key=\"PaginationButtonStyle\" TargetType=\"Button\" BasedOn=\"{StaticResource DefaultButtonStyle}\">",
+                "<Border x:Name=\"ContentBorder\"",
+                "<ContentPresenter x:Name=\"ContentPresenter\"",
+                "RecognizesAccessKey=\"True\"",
+                "HorizontalAlignment=\"{TemplateBinding HorizontalContentAlignment}\"",
+                "VerticalAlignment=\"{TemplateBinding VerticalContentAlignment}\"",
+                "Content=\"{TemplateBinding Content}\"",
+                "ContentTemplate=\"{TemplateBinding ContentTemplate}\"");
+            StringAssert.Contains(
+                normalizedIconographyXaml,
+                "<Grid Margin=\"0 0 0 10\">\n        <Grid.RowDefinitions>");
             AssertContainsInOrder(
                 iconographyXaml,
                 "<Expander Grid.Row=\"1\"",
