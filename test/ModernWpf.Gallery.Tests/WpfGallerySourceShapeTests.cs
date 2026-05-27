@@ -279,6 +279,32 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void CopiedWpfGalleryIconDataModelKeepsOfficialPropertyAndGlyphShape()
+        {
+            var source = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "DesignGuidance",
+                "IconData.cs");
+
+            AssertContainsInOrder(
+                source,
+                "[DataMember]",
+                "public string Name { get; set; }",
+                "[DataMember]",
+                "public string Code { get; set; }",
+                "[DataMember]",
+                "public List<string> Tags { get; set; } = [];",
+                "public string Character => char.ConvertFromUtf32(Convert.ToInt32(Code, 16));",
+                "public string CodeGlyph => \"\\\\x\" + Code;",
+                "public string TextGlyph => \"&#x\" + Code + \";\";");
+            Assert.IsFalse(
+                source.Contains("catch (Exception)", StringComparison.Ordinal),
+                "IconData.Character should keep the official expression-bodied glyph conversion shape.");
+        }
+
+        [TestMethod]
         public void TopLevelCodeBehindKeepsOfficialViewModelMemberOrderShape()
         {
             foreach (var page in new[]
