@@ -346,7 +346,11 @@ maps heading metadata to supported target frameworks.
 The shared `HeaderTile` XAML now also keeps the official compact root sizing,
 RootButton attribute order, acrylic resource declarations, content grid, glyph,
 and title/description text declaration shape while retaining ModernWpf brush
-bindings plus the local High Contrast/theme-refresh resource adaptation.
+bindings plus the local High Contrast/theme-refresh resource adaptation. Its
+code-behind now also keeps the official `SystemEvents_UserPreferenceChanged`
+handler name/dispatcher-lambda body and property-before-dependency-property
+member order while retaining ModernWpf actual-theme refresh, unload cleanup, and
+automation-peer adapters.
 The shared `TileGallery` XAML now also keeps the official root/resource,
 ScrollViewer/StackPanel, HeaderTile list, compact GitHub icon, and scroll-button
 declaration shape while retaining ModernWpf asset pack URI adaptations and the
@@ -373,6 +377,10 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.SharedHeaderTileCodeBehindKeepsOfficialMemberAndUserPreferenceHandlerShape|FullyQualifiedName~WpfGallerySourceShapeTests.SharedHeaderTileKeepsOfficialDeclarationSourceShape|FullyQualifiedName~GalleryApplicationResourceTests.HomeHeaderTilesMatchWpfGalleryReferenceSlotGeometry|FullyQualifiedName~GalleryApplicationResourceTests.HomeHeaderTilesUseWpfGalleryAcrylicFillResources|FullyQualifiedName~GalleryApplicationResourceTests.HomeHeaderTilesUseWpfGalleryHighContrastFillResources|FullyQualifiedName~GalleryApplicationResourceTests.HomeHeaderTilesExposeRootButtonAutomationPeer" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 6 tests per target. The shared `HeaderTile` code-behind now keeps the official WPF Gallery `SystemEvents_UserPreferenceChanged` handler name, dispatcher-lambda refresh body, and property-before-dependency-property member order while retaining ModernWpf actual-theme refresh, static-event unload cleanup, high-contrast/acrylic resource adapters, slot geometry, and automation-peer coverage. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the shared `HeaderTile` code-behind source-shape alignment. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages and existing ModernWpf/ModernWpf.Controls warnings.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.SharedTileGalleryCodeBehindKeepsOfficialScrollHandlerSourceShape|FullyQualifiedName~WpfGallerySourceShapeTests.SharedTileGalleryKeepsOfficialDeclarationSourceShape|FullyQualifiedName~GalleryApplicationResourceTests.HomeHeaderTilesMatchWpfGalleryReferenceSlotGeometry|FullyQualifiedName~WpfGallerySourceShapeTests.HomePageKeepsOfficialDashboardCardListDeclarationSourceShape" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 4 tests per target. The shared `TileGallery` code-behind now keeps the official WPF Gallery scroll-handler source shape for explicit `double newOffSet` declarations, helper-overload flow, and `RootScrollViewer_SizeChanged` placement while retaining the local `<= 0` back-button clamp; existing TileGallery XAML, Home header-tile geometry, and Home source-shape coverage still passes. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
@@ -2661,8 +2669,10 @@ font inheritance adapters. The shared `PageHeader` template now
 pins official compact converter/setter, text, and hidden-description trigger
 source shape while retaining the local heading-level adapter. The shared
 `HeaderTile` XAML now also pins official root/button/resource/content/text
-declaration shape while retaining local brush binding and High Contrast/theme
-refresh behavior. The shared `TileGallery` XAML now also pins official
+declaration shape, and its code-behind now pins the official
+`SystemEvents_UserPreferenceChanged` handler and property/dependency-property
+member order while retaining local brush binding, High Contrast/theme refresh,
+unload cleanup, and automation-peer behavior. The shared `TileGallery` XAML now also pins official
 root/resource, scroll host, HeaderTile list, compact icon, and scroll-button
 declaration shape, and its code-behind now pins the official scroll handler
 local-variable declarations, helper-overload flow, and size-changed handler

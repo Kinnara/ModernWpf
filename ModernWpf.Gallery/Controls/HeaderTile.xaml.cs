@@ -16,65 +16,30 @@ namespace ModernWpf.Gallery.Controls
         {
             InitializeComponent();
             UpdateButtonResources();
-            SystemEvents.UserPreferenceChanged += OnUserPreferenceChanged;
+            SystemEvents.UserPreferenceChanged += SystemEvents_UserPreferenceChanged;
             ThemeManager.Current.ActualApplicationThemeChanged += OnActualApplicationThemeChanged;
             Unloaded += OnUnloaded;
         }
 
-        public static readonly DependencyProperty TitleProperty =
-            DependencyProperty.Register(nameof(Title), typeof(string), typeof(HeaderTile), new PropertyMetadata(string.Empty));
-
-        public static readonly DependencyProperty DescriptionProperty =
-            DependencyProperty.Register(nameof(Description), typeof(string), typeof(HeaderTile), new PropertyMetadata(string.Empty));
-
-        public static readonly DependencyProperty LinkProperty =
-            DependencyProperty.Register(nameof(Link), typeof(string), typeof(HeaderTile), new PropertyMetadata(null));
-
-        public static readonly DependencyProperty SourceProperty =
-            DependencyProperty.Register(nameof(Source), typeof(object), typeof(HeaderTile), new PropertyMetadata(null));
-
-        public string Title
+        private void SystemEvents_UserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
         {
-            get { return (string)GetValue(TitleProperty); }
-            set { SetValue(TitleProperty, value); }
-        }
-
-        public string Description
-        {
-            get { return (string)GetValue(DescriptionProperty); }
-            set { SetValue(DescriptionProperty, value); }
-        }
-
-        public string Link
-        {
-            get { return (string)GetValue(LinkProperty); }
-            set { SetValue(LinkProperty, value); }
-        }
-
-        public object Source
-        {
-            get { return GetValue(SourceProperty); }
-            set { SetValue(SourceProperty, value); }
-        }
-
-        protected override AutomationPeer OnCreateAutomationPeer()
-        {
-            return new HeaderTileAutomationPeer(this);
-        }
-
-        private void OnUserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
-        {
-            Dispatcher.Invoke(UpdateButtonResources);
+            Dispatcher.Invoke(() =>
+            {
+                UpdateButtonResources();
+            });
         }
 
         private void OnActualApplicationThemeChanged(ThemeManager sender, object args)
         {
-            Dispatcher.Invoke(UpdateButtonResources);
+            Dispatcher.Invoke(() =>
+            {
+                UpdateButtonResources();
+            });
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            SystemEvents.UserPreferenceChanged -= OnUserPreferenceChanged;
+            SystemEvents.UserPreferenceChanged -= SystemEvents_UserPreferenceChanged;
             ThemeManager.Current.ActualApplicationThemeChanged -= OnActualApplicationThemeChanged;
             Unloaded -= OnUnloaded;
         }
@@ -117,12 +82,53 @@ namespace ModernWpf.Gallery.Controls
             return acrylicBrush == null ? Colors.Gray : acrylicBrush.Color;
         }
 
+        public string Title
+        {
+            get { return (string)GetValue(TitleProperty); }
+            set { SetValue(TitleProperty, value); }
+        }
+
+        public static readonly DependencyProperty TitleProperty =
+            DependencyProperty.Register(nameof(Title), typeof(string), typeof(HeaderTile), new PropertyMetadata(string.Empty));
+
+        public string Description
+        {
+            get { return (string)GetValue(DescriptionProperty); }
+            set { SetValue(DescriptionProperty, value); }
+        }
+
+        public static readonly DependencyProperty DescriptionProperty =
+            DependencyProperty.Register(nameof(Description), typeof(string), typeof(HeaderTile), new PropertyMetadata(string.Empty));
+
+        public string Link
+        {
+            get { return (string)GetValue(LinkProperty); }
+            set { SetValue(LinkProperty, value); }
+        }
+
+        public static readonly DependencyProperty LinkProperty =
+            DependencyProperty.Register(nameof(Link), typeof(string), typeof(HeaderTile), new PropertyMetadata(null));
+
+        public object Source
+        {
+            get { return GetValue(SourceProperty); }
+            set { SetValue(SourceProperty, value); }
+        }
+
+        public static readonly DependencyProperty SourceProperty =
+            DependencyProperty.Register(nameof(Source), typeof(object), typeof(HeaderTile), new PropertyMetadata(null));
+
         private void RootButton_Click(object sender, RoutedEventArgs e)
         {
             if (!string.IsNullOrEmpty(Link))
             {
                 Process.Start(new ProcessStartInfo(Link) { UseShellExecute = true });
             }
+        }
+
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new HeaderTileAutomationPeer(this);
         }
 
         private sealed class HeaderTileAutomationPeer : FrameworkElementAutomationPeer

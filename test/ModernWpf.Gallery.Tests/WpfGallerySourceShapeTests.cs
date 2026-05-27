@@ -482,6 +482,50 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void SharedHeaderTileCodeBehindKeepsOfficialMemberAndUserPreferenceHandlerShape()
+        {
+            var source = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Controls",
+                "HeaderTile.xaml.cs");
+
+            Assert.IsFalse(
+                source.Contains("OnUserPreferenceChanged", StringComparison.Ordinal),
+                "HeaderTile should keep the official SystemEvents_UserPreferenceChanged handler name.");
+            AssertContainsInOrder(
+                source,
+                "InitializeComponent();",
+                "UpdateButtonResources();",
+                "SystemEvents.UserPreferenceChanged += SystemEvents_UserPreferenceChanged;",
+                "ThemeManager.Current.ActualApplicationThemeChanged += OnActualApplicationThemeChanged;",
+                "Unloaded += OnUnloaded;",
+                "private void SystemEvents_UserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)",
+                "Dispatcher.Invoke(() =>\n            {\n                UpdateButtonResources();\n            });",
+                "private void OnActualApplicationThemeChanged(ThemeManager sender, object args)",
+                "Dispatcher.Invoke(() =>\n            {\n                UpdateButtonResources();\n            });",
+                "private void OnUnloaded(object sender, RoutedEventArgs e)",
+                "SystemEvents.UserPreferenceChanged -= SystemEvents_UserPreferenceChanged;",
+                "ThemeManager.Current.ActualApplicationThemeChanged -= OnActualApplicationThemeChanged;",
+                "private void UpdateButtonResources()",
+                "ApplyButtonResources(SystemParameters.HighContrast);",
+                "public string Title",
+                "public static readonly DependencyProperty TitleProperty",
+                "DependencyProperty.Register(nameof(Title), typeof(string), typeof(HeaderTile), new PropertyMetadata(string.Empty));",
+                "public string Description",
+                "public static readonly DependencyProperty DescriptionProperty",
+                "DependencyProperty.Register(nameof(Description), typeof(string), typeof(HeaderTile), new PropertyMetadata(string.Empty));",
+                "public string Link",
+                "public static readonly DependencyProperty LinkProperty",
+                "DependencyProperty.Register(nameof(Link), typeof(string), typeof(HeaderTile), new PropertyMetadata(null));",
+                "public object Source",
+                "public static readonly DependencyProperty SourceProperty",
+                "DependencyProperty.Register(nameof(Source), typeof(object), typeof(HeaderTile), new PropertyMetadata(null));",
+                "private void RootButton_Click(object sender, RoutedEventArgs e)",
+                "Process.Start(new ProcessStartInfo(Link) { UseShellExecute = true });",
+                "protected override AutomationPeer OnCreateAutomationPeer()");
+        }
+
+        [TestMethod]
         public void SharedTileGalleryKeepsOfficialDeclarationSourceShape()
         {
             var xaml = ReadRepoFile(
