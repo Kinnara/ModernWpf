@@ -722,6 +722,61 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void SharedColorTileTemplateKeepsOfficialDeclarationSourceShape()
+        {
+            var xaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Controls",
+                "ColorTile.xaml");
+
+            AssertContainsInOrder(
+                xaml,
+                "<Border Style=\"{DynamicResource ColorTilesPanelStyle}\" BorderThickness=\"0\" CornerRadius=\"{TemplateBinding TileRadius}\" Background=\"{TemplateBinding Background}\">",
+                "Name=\"ColorNameTextBlock\"",
+                "Foreground=\"{TemplateBinding Foreground}\"",
+                "Style=\"{DynamicResource BodyStrongTextBlockStyle}\"",
+                "Text=\"{TemplateBinding ColorName}\"",
+                "x:Name=\"CopyBrushNameButton\"",
+                "AutomationProperties.Name=\"{Binding ColorBrushName, StringFormat='{}Copy brush name {0} to clipboard', RelativeSource={RelativeSource Mode=TemplatedParent}}\"",
+                "Grid.RowSpan=\"4\"",
+                "Grid.Column=\"1\"",
+                "Grid.ColumnSpan=\"2\"",
+                "Padding=\"4\"",
+                "Margin=\"0,12,12,0\"",
+                "Background=\"Transparent\"",
+                "BorderBrush=\"Transparent\"",
+                "Foreground=\"{TemplateBinding Foreground}\"",
+                "Command=\"ApplicationCommands.Copy\"",
+                "CommandTarget=\"{Binding RelativeSource={RelativeSource AncestorType={x:Type controls:ColorTile}}}\"",
+                "FocusManager.IsFocusScope=\"True\"",
+                "ToolTipService.ToolTip=\"Copy brush name\"",
+                "Name=\"ColorExplanationTextBlock\"",
+                "Text=\"{TemplateBinding ColorExplanation}\"",
+                "Name=\"ColorBrushNameTextBlock\"",
+                "Text=\"{TemplateBinding ColorBrushName}\"",
+                "Visibility=\"{Binding ShowWarning, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource TemplatedParent}}\"",
+                "Visibility=\"{Binding ShowSeparator, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource TemplatedParent}}\"",
+                "<Setter Property=\"Foreground\" Value=\"{DynamicResource SystemColorWindowTextColorBrush}\" TargetName=\"ColorExplanationTextBlock\" />",
+                "<Setter Property=\"Background\" Value=\"{DynamicResource SystemColorWindowColorBrush}\" TargetName=\"ColorExplanationTextBlock\" />",
+                "<Setter Property=\"Foreground\" Value=\"{DynamicResource SystemColorWindowTextColorBrush}\" TargetName=\"ColorBrushNameTextBlock\" />",
+                "<Setter Property=\"Background\" Value=\"{DynamicResource SystemColorWindowColorBrush}\" TargetName=\"ColorBrushNameTextBlock\" />",
+                "<Setter Property=\"Foreground\" Value=\"{DynamicResource SystemColorWindowTextColorBrush}\" TargetName=\"ColorNameTextBlock\" />",
+                "<Setter Property=\"Background\" Value=\"{DynamicResource SystemColorWindowColorBrush}\" TargetName=\"ColorNameTextBlock\" />",
+                "<Setter Property=\"Foreground\" Value=\"{DynamicResource SystemColorWindowTextColorBrush}\" TargetName=\"CopyBrushNameButton\" />",
+                "<Setter Property=\"Background\" Value=\"{DynamicResource SystemColorWindowColorBrush}\" TargetName=\"CopyBrushNameButton\" />");
+
+            Assert.IsFalse(
+                xaml.Contains("x:Name=\"ColorNameTextBlock\"", StringComparison.Ordinal),
+                "The copied ColorTile template should keep the official Name= source shape for the color name TextBlock.");
+            Assert.IsFalse(
+                xaml.Contains("x:Name=\"ColorExplanationTextBlock\"", StringComparison.Ordinal),
+                "The copied ColorTile template should keep the official Name= source shape for the color explanation TextBlock.");
+            Assert.IsFalse(
+                xaml.Contains("x:Name=\"ColorBrushNameTextBlock\"", StringComparison.Ordinal),
+                "The copied ColorTile template should keep the official Name= source shape for the color brush name TextBlock.");
+        }
+
+        [TestMethod]
         public void SharedColorTileCodeBehindKeepsOfficialMemberAndCopyHandlerSourceShape()
         {
             var source = ReadRepoFile(

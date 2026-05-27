@@ -11,11 +11,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type controls:ColorTile}">
-                    <Border
-                        Background="{TemplateBinding Background}"
-                        BorderThickness="0"
-                        CornerRadius="{TemplateBinding TileRadius}"
-                        Style="{DynamicResource ColorTilesPanelStyle}">
+                    <Border Style="{DynamicResource ColorTilesPanelStyle}" BorderThickness="0" CornerRadius="{TemplateBinding TileRadius}" Background="{TemplateBinding Background}">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -37,7 +33,7 @@
                                 </Grid.ColumnDefinitions>
 
                                 <TextBlock
-                                    x:Name="ColorNameTextBlock"
+                                    Name="ColorNameTextBlock"
                                     Margin="12,12,0,6"
                                     Foreground="{TemplateBinding Foreground}"
                                     Style="{DynamicResource BodyStrongTextBlockStyle}"
@@ -46,20 +42,20 @@
 
                                 <Button
                                     x:Name="CopyBrushNameButton"
+                                    AutomationProperties.Name="{Binding ColorBrushName, StringFormat='{}Copy brush name {0} to clipboard', RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                    Grid.RowSpan="4"
                                     Grid.Column="1"
                                     Grid.ColumnSpan="2"
-                                    Grid.RowSpan="4"
-                                    Margin="0,12,12,0"
                                     Padding="4"
+                                    Margin="0,12,12,0"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Top"
-                                    AutomationProperties.Name="{Binding ColorBrushName, StringFormat='{}Copy brush name {0} to clipboard', RelativeSource={RelativeSource Mode=TemplatedParent}}"
                                     Background="Transparent"
                                     BorderBrush="Transparent"
+                                    Foreground="{TemplateBinding Foreground}"
                                     Command="ApplicationCommands.Copy"
                                     CommandTarget="{Binding RelativeSource={RelativeSource AncestorType={x:Type controls:ColorTile}}}"
                                     FocusManager.IsFocusScope="True"
-                                    Foreground="{TemplateBinding Foreground}"
                                     ToolTipService.ToolTip="Copy brush name">
                                     <Grid>
                                         <TextBlock
@@ -110,7 +106,7 @@
                                 </Button>
 
                                 <TextBlock
-                                    x:Name="ColorExplanationTextBlock"
+                                    Name="ColorExplanationTextBlock"
                                     Grid.Row="1"
                                     Margin="12,-4,0,0"
                                     Style="{DynamicResource CaptionTextBlockStyle}"
@@ -118,10 +114,10 @@
                                     TextWrapping="Wrap" />
 
                                 <TextBlock
-                                    x:Name="ColorBrushNameTextBlock"
+                                    Name="ColorBrushNameTextBlock"
+                                    Margin="12,0,0,18"
                                     Grid.Row="3"
                                     Grid.ColumnSpan="2"
-                                    Margin="12,0,0,18"
                                     Style="{DynamicResource CaptionTextBlockStyle}"
                                     Text="{TemplateBinding ColorBrushName}"
                                     TextWrapping="Wrap" />
@@ -153,14 +149,14 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <DataTrigger Binding="{Binding Path=(SystemParameters.HighContrast)}" Value="True">
-                            <Setter TargetName="ColorExplanationTextBlock" Property="Foreground" Value="{DynamicResource SystemColorWindowTextColorBrush}" />
-                            <Setter TargetName="ColorExplanationTextBlock" Property="Background" Value="{DynamicResource SystemColorWindowColorBrush}" />
-                            <Setter TargetName="ColorBrushNameTextBlock" Property="Foreground" Value="{DynamicResource SystemColorWindowTextColorBrush}" />
-                            <Setter TargetName="ColorBrushNameTextBlock" Property="Background" Value="{DynamicResource SystemColorWindowColorBrush}" />
-                            <Setter TargetName="ColorNameTextBlock" Property="Foreground" Value="{DynamicResource SystemColorWindowTextColorBrush}" />
-                            <Setter TargetName="ColorNameTextBlock" Property="Background" Value="{DynamicResource SystemColorWindowColorBrush}" />
-                            <Setter TargetName="CopyBrushNameButton" Property="Foreground" Value="{DynamicResource SystemColorWindowTextColorBrush}" />
-                            <Setter TargetName="CopyBrushNameButton" Property="Background" Value="{DynamicResource SystemColorWindowColorBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource SystemColorWindowTextColorBrush}" TargetName="ColorExplanationTextBlock" />
+                            <Setter Property="Background" Value="{DynamicResource SystemColorWindowColorBrush}" TargetName="ColorExplanationTextBlock" />
+                            <Setter Property="Foreground" Value="{DynamicResource SystemColorWindowTextColorBrush}" TargetName="ColorBrushNameTextBlock" />
+                            <Setter Property="Background" Value="{DynamicResource SystemColorWindowColorBrush}" TargetName="ColorBrushNameTextBlock" />
+                            <Setter Property="Foreground" Value="{DynamicResource SystemColorWindowTextColorBrush}" TargetName="ColorNameTextBlock" />
+                            <Setter Property="Background" Value="{DynamicResource SystemColorWindowColorBrush}" TargetName="ColorNameTextBlock" />
+                            <Setter Property="Foreground" Value="{DynamicResource SystemColorWindowTextColorBrush}" TargetName="CopyBrushNameButton" />
+                            <Setter Property="Background" Value="{DynamicResource SystemColorWindowColorBrush}" TargetName="CopyBrushNameButton" />
                         </DataTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
