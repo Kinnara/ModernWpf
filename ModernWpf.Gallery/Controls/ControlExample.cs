@@ -18,7 +18,7 @@ namespace ModernWpf.Gallery.Controls
         static ControlExample()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(ControlExample), new FrameworkPropertyMetadata(typeof(ControlExample)));
-            CommandManager.RegisterClassCommandBinding(typeof(ControlExample), new CommandBinding(ApplicationCommands.Copy, OnCopySourceCode));
+            CommandManager.RegisterClassCommandBinding(typeof(ControlExample), new CommandBinding(ApplicationCommands.Copy, Copy_SourceCode));
         }
 
         public static readonly DependencyProperty HeaderTextProperty =
@@ -47,7 +47,9 @@ namespace ModernWpf.Gallery.Controls
                 nameof(XamlCodeSource),
                 typeof(Uri),
                 typeof(ControlExample),
-                new PropertyMetadata(null, OnXamlCodeSourceChanged));
+                new PropertyMetadata(
+                    null,
+                    static (o, args) => ((ControlExample)o).OnXamlCodeSourceChanged((Uri)args.NewValue)));
 
         public static readonly DependencyProperty CSharpCodeProperty =
             DependencyProperty.Register(
@@ -61,7 +63,9 @@ namespace ModernWpf.Gallery.Controls
                 nameof(CSharpCodeSource),
                 typeof(Uri),
                 typeof(ControlExample),
-                new PropertyMetadata(null, OnCSharpCodeSourceChanged));
+                new PropertyMetadata(
+                    null,
+                    static (o, args) => ((ControlExample)o).OnCSharpCodeSourceChanged((Uri)args.NewValue)));
 
         public string HeaderText
         {
@@ -99,21 +103,27 @@ namespace ModernWpf.Gallery.Controls
             set { SetValue(CSharpCodeSourceProperty, value); }
         }
 
-        protected override AutomationPeer OnCreateAutomationPeer()
+        private void OnXamlCodeSourceChanged(Uri uri)
         {
-            return new ControlExampleAutomationPeer(this);
+            XamlCode = LoadResource(uri);
         }
 
-        private static void OnCopySourceCode(object sender, ExecutedRoutedEventArgs e)
+        private void OnCSharpCodeSourceChanged(Uri uri)
         {
+            CSharpCode = LoadResource(uri);
+        }
+
+        private static void Copy_SourceCode(object sender, RoutedEventArgs e)
+        {
+            var executedArgs = (ExecutedRoutedEventArgs)e;
             var controlExample = sender as ControlExample;
-            if (controlExample == null || e.Parameter == null)
+            if (controlExample == null || executedArgs.Parameter == null)
             {
                 return;
             }
 
             string text = null;
-            switch (e.Parameter.ToString())
+            switch (executedArgs.Parameter.ToString())
             {
                 case "Copy_XamlCode":
                     text = controlExample.XamlCode;
@@ -128,7 +138,7 @@ namespace ModernWpf.Gallery.Controls
                 try
                 {
                     Clipboard.SetText(text);
-                    RaiseCopyNotification(e);
+                    RaiseCopyNotification(executedArgs);
                 }
                 catch (Exception ex)
                 {
@@ -137,16 +147,9 @@ namespace ModernWpf.Gallery.Controls
             }
         }
 
-        private static void OnXamlCodeSourceChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        protected override AutomationPeer OnCreateAutomationPeer()
         {
-            var controlExample = (ControlExample)sender;
-            controlExample.XamlCode = LoadResource(e.NewValue as Uri);
-        }
-
-        private static void OnCSharpCodeSourceChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
-        {
-            var controlExample = (ControlExample)sender;
-            controlExample.CSharpCode = LoadResource(e.NewValue as Uri);
+            return new ControlExampleAutomationPeer(this);
         }
 
         private static string LoadResource(Uri uri)

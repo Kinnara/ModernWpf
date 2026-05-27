@@ -353,18 +353,26 @@ namespace ModernWpf.Gallery.Tests
                 "ControlExample.cs");
             AssertContainsInOrder(
                 controlExampleSource,
+                "CommandManager.RegisterClassCommandBinding(typeof(ControlExample), new CommandBinding(ApplicationCommands.Copy, Copy_SourceCode));",
                 "public static readonly DependencyProperty HeaderTextProperty",
                 "public static readonly DependencyProperty ExampleContentProperty",
                 "public static readonly DependencyProperty XamlCodeProperty",
                 "public static readonly DependencyProperty XamlCodeSourceProperty",
+                "static (o, args) => ((ControlExample)o).OnXamlCodeSourceChanged((Uri)args.NewValue)",
                 "public static readonly DependencyProperty CSharpCodeProperty",
                 "public static readonly DependencyProperty CSharpCodeSourceProperty",
+                "static (o, args) => ((ControlExample)o).OnCSharpCodeSourceChanged((Uri)args.NewValue)",
                 "public string HeaderText",
                 "public object ExampleContent",
                 "public string XamlCode",
                 "public Uri XamlCodeSource",
                 "public string CSharpCode",
-                "public Uri CSharpCodeSource");
+                "public Uri CSharpCodeSource",
+                "private void OnXamlCodeSourceChanged(Uri uri)",
+                "XamlCode = LoadResource(uri);",
+                "private void OnCSharpCodeSourceChanged(Uri uri)",
+                "CSharpCode = LoadResource(uri);",
+                "private static void Copy_SourceCode(object sender, RoutedEventArgs e)");
 
             var pageHeaderSource = ReadRepoFile(
                 "ModernWpf.Gallery",

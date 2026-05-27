@@ -341,8 +341,9 @@ storyboard actions, code TextBoxes, divider visibility, and C# heading order
 while retaining local ModernWpf converter namespace/resource adaptations,
 source-expander collapse behavior, source-row minimum height, and display font
 inheritance. Its code-behind now also keeps the official dependency-property
-field-before-wrapper member order while retaining ModernWpf default-style,
-resource-loading, source-expander, and automation adapters.
+field-before-wrapper member order, instance source-change callback shape, and
+`Copy_SourceCode` command handler name while retaining ModernWpf default-style,
+resource-loading fallback, source-expander, and automation adapters.
 The shared `PageHeader` template now also keeps the official compact
 converter/setter, title/description text, and hidden-description trigger source
 shape while retaining the local `GalleryAutomation.HeadingLevel` adapter that
@@ -383,6 +384,10 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.SharedSupportControlCodeBehindKeepsOfficialDependencyPropertyMemberOrderShape|FullyQualifiedName~WpfGallerySourceShapeTests.SharedControlExampleKeepsOfficialSourceCodeTemplateShape|FullyQualifiedName~WpfGallerySourceShapeTests.SharedPageHeaderKeepsOfficialTemplateSourceShape|FullyQualifiedName~GalleryApplicationResourceTests.ControlExampleSourceCodeTextStyleUsesWpfGalleryReferenceResources|FullyQualifiedName~GalleryApplicationResourceTests.ControlExampleTemplateMatchesWpfGalleryReferenceDivider|FullyQualifiedName~GalleryApplicationResourceTests.ControlExampleTemplateHidesSourceExpanderWithoutLocalSourceName|FullyQualifiedName~GalleryApplicationResourceTests.ControlExampleLoadsSourceCodeFromReferenceStyleUris|FullyQualifiedName~GalleryPageRuntimeTests.WhatsNewPageHeaderMatchesWpfGalleryReference|FullyQualifiedName~GalleryAutomationHookTests.WpfGalleryPagesExposeHeadingAutomation" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 8 tests per target. Shared `ControlExample` code-behind now keeps the official instance source-change callback shape and `Copy_SourceCode` command handler name while the shared support-control member-order, ControlExample template/resource/source-loading, and PageHeader template/runtime/automation coverage still passes. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the shared `ControlExample` callback/command-handler source-shape alignment. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages and existing ModernWpf/ModernWpf.Controls warnings.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.SharedSupportControlCodeBehindKeepsOfficialDependencyPropertyMemberOrderShape|FullyQualifiedName~WpfGallerySourceShapeTests.SharedControlExampleKeepsOfficialSourceCodeTemplateShape|FullyQualifiedName~WpfGallerySourceShapeTests.SharedPageHeaderKeepsOfficialTemplateSourceShape|FullyQualifiedName~GalleryApplicationResourceTests.ControlExampleSourceCodeTextStyleUsesWpfGalleryReferenceResources|FullyQualifiedName~GalleryApplicationResourceTests.ControlExampleTemplateMatchesWpfGalleryReferenceDivider|FullyQualifiedName~GalleryApplicationResourceTests.ControlExampleTemplateHidesSourceExpanderWithoutLocalSourceName|FullyQualifiedName~GalleryApplicationResourceTests.ControlExampleLoadsSourceCodeFromReferenceStyleUris|FullyQualifiedName~GalleryPageRuntimeTests.WhatsNewPageHeaderMatchesWpfGalleryReference|FullyQualifiedName~GalleryAutomationHookTests.WpfGalleryPagesExposeHeadingAutomation" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 8 tests per target. Shared `ControlExample` and `PageHeader` code-behind now keep the official dependency-property field-before-wrapper member order while existing ControlExample template/resource/source-loading and PageHeader template/runtime/automation coverage still passes. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
@@ -2681,8 +2686,9 @@ separate. The shared `ControlExample` template
 now pins official source-code panel declaration shape while keeping local
 source-expander collapse, source-row height, ModernWpf resources, and display
 font inheritance adapters. Its code-behind now pins the official
-dependency-property field-before-wrapper member order while keeping local
-default-style, source-loading, source-expander, and automation adapters. The
+dependency-property field-before-wrapper member order, instance source-change
+callback shape, and `Copy_SourceCode` command handler name while keeping local
+default-style, source-loading fallback, source-expander, and automation adapters. The
 shared `PageHeader` template now
 pins official compact converter/setter, text, and hidden-description trigger
 source shape while retaining the local heading-level adapter, and its
