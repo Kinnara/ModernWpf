@@ -653,6 +653,9 @@ namespace ModernWpf.Gallery.Tests
                     page.ItemRequested = item => requestedItem = item;
                     page.ViewModel.NavigateCommand.Execute(group.Items.First());
                     Assert.AreSame(group.Items.First(), requestedItem, expected.UniqueId);
+                    requestedItem = null;
+                    page.ViewModel.Navigate(group.Items.First());
+                    Assert.AreSame(group.Items.First(), requestedItem, expected.UniqueId);
                 }
 
                 var modernWpfGroup = GalleryCatalog.FindGroup("ModernWpfControls");

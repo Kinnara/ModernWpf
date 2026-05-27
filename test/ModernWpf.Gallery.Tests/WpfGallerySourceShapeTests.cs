@@ -239,6 +239,52 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void WpfGalleryNavigationViewModelsKeepOfficialStateAndNavigateSourceShape()
+        {
+            var source = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "WpfGalleryNavigationPageViewModels.cs");
+
+            AssertContainsInOrder(
+                source,
+                "public class WpfGalleryNavigationPageViewModel : WpfGalleryPageViewModel",
+                "private IReadOnlyList<GalleryItem> _navigationCards;",
+                "private readonly Action<object> _navigate;",
+                "public WpfGalleryNavigationPageViewModel(",
+                ": base(pageTitle, pageDescription)",
+                "_navigationCards = navigationCards ?? Array.Empty<GalleryItem>();",
+                "_navigate = navigate;",
+                "NavigateCommand = new GalleryCommand(Navigate);",
+                "public IReadOnlyList<GalleryItem> NavigationCards",
+                "SetProperty(ref _navigationCards, value ?? Array.Empty<GalleryItem>());",
+                "public ICommand NavigateCommand { get; }",
+                "public void Navigate(object pageType)",
+                "_navigate(pageType);");
+            foreach (var className in new[]
+            {
+                "AllSamplesPageViewModel",
+                "DesignGuidancePageViewModel",
+                "SamplesPageViewModel",
+                "BasicInputPageViewModel",
+                "CollectionsPageViewModel",
+                "DateAndTimePageViewModel",
+                "LayoutPageViewModel",
+                "MediaPageViewModel",
+                "NavigationPageViewModel",
+                "StatusAndInfoPageViewModel",
+                "TextPageViewModel",
+                "SystemPageViewModel"
+            })
+            {
+                StringAssert.Contains(
+                    source,
+                    "public partial class " + className + " : WpfGalleryNavigationPageViewModel");
+            }
+        }
+
+        [TestMethod]
         public void TextViewModelsKeepOfficialTextBoxValidatedTextSourceShape()
         {
             var source = ReadRepoFile(

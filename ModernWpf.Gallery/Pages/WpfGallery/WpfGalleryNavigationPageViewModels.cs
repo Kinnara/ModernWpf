@@ -97,27 +97,38 @@ namespace ModernWpf.Gallery.Pages.WpfGallery
             + "</Grid>";
     }
 
-    public class WpfGalleryNavigationPageViewModel
+    public class WpfGalleryNavigationPageViewModel : WpfGalleryPageViewModel
     {
+        private IReadOnlyList<GalleryItem> _navigationCards;
+        private readonly Action<object> _navigate;
+
         public WpfGalleryNavigationPageViewModel(
             string pageTitle,
             string pageDescription,
             IReadOnlyList<GalleryItem> navigationCards,
             Action<object> navigate)
+            : base(pageTitle, pageDescription)
         {
-            PageTitle = pageTitle;
-            PageDescription = pageDescription;
-            NavigationCards = navigationCards ?? Array.Empty<GalleryItem>();
-            NavigateCommand = new GalleryCommand(navigate);
+            _navigationCards = navigationCards ?? Array.Empty<GalleryItem>();
+            _navigate = navigate;
+            NavigateCommand = new GalleryCommand(Navigate);
         }
 
-        public string PageTitle { get; }
-
-        public string PageDescription { get; }
-
-        public IReadOnlyList<GalleryItem> NavigationCards { get; }
+        public IReadOnlyList<GalleryItem> NavigationCards
+        {
+            get { return _navigationCards; }
+            set { SetProperty(ref _navigationCards, value ?? Array.Empty<GalleryItem>()); }
+        }
 
         public ICommand NavigateCommand { get; }
+
+        public void Navigate(object pageType)
+        {
+            if (_navigate != null)
+            {
+                _navigate(pageType);
+            }
+        }
 
         public static WpfGalleryNavigationPageViewModel CreateForGroup(GalleryGroup group, Action<object> navigate)
         {
