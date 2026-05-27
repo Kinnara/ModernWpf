@@ -399,7 +399,15 @@ namespace ModernWpf.Gallery.Tests
                 "XamlCode = LoadResource(uri);",
                 "private void OnCSharpCodeSourceChanged(Uri uri)",
                 "CSharpCode = LoadResource(uri);",
-                "private static void Copy_SourceCode(object sender, RoutedEventArgs e)");
+                "private static void Copy_SourceCode(object sender, RoutedEventArgs e)",
+                "if (sender is ControlExample controlExample)",
+                "var executedArgs = (ExecutedRoutedEventArgs)e;",
+                "switch (executedArgs.Parameter.ToString())",
+                "case \"Copy_XamlCode\":",
+                "Clipboard.SetText(controlExample.XamlCode);",
+                "RaiseCopyNotification(executedArgs);",
+                "case \"Copy_CSharpCode\":",
+                "Clipboard.SetText(controlExample.CSharpCode);");
 
             var pageHeaderSource = ReadRepoFile(
                 "ModernWpf.Gallery",
@@ -854,7 +862,8 @@ namespace ModernWpf.Gallery.Tests
                 "public static readonly DependencyProperty ShowWarningProperty",
                 "DependencyProperty.Register(\"ShowWarning\", typeof(bool), typeof(ColorTile), new PropertyMetadata(false));",
                 "private static void Copy_ColorBrushName(object sender, RoutedEventArgs e)",
-                "if (!(sender is ColorTile colorTile))",
+                "if (sender is ColorTile colorTile)",
+                "if (!string.IsNullOrEmpty(colorTile.ColorBrushName))",
                 "Clipboard.SetText(colorTile.ColorBrushName);",
                 "RaiseNotification(colorTile);");
         }

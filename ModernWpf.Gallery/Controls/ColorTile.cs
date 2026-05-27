@@ -79,24 +79,20 @@ namespace ModernWpf.Gallery.Controls
 
         private static void Copy_ColorBrushName(object sender, RoutedEventArgs e)
         {
-            if (!(sender is ColorTile colorTile))
+            if (sender is ColorTile colorTile)
             {
-                return;
-            }
-
-            if (string.IsNullOrEmpty(colorTile.ColorBrushName))
-            {
-                return;
-            }
-
-            try
-            {
-                Clipboard.SetText(colorTile.ColorBrushName);
-                RaiseNotification(colorTile);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error copying to clipboard: " + ex.Message);
+                if (!string.IsNullOrEmpty(colorTile.ColorBrushName))
+                {
+                    try
+                    {
+                        Clipboard.SetText(colorTile.ColorBrushName);
+                        RaiseNotification(colorTile);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error copying to clipboard: " + ex.Message);
+                    }
+                }
             }
         }
 

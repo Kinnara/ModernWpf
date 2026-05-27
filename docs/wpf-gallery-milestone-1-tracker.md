@@ -396,6 +396,10 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.SharedSupportControlCodeBehindKeepsOfficialDependencyPropertyMemberOrderShape|FullyQualifiedName~WpfGallerySourceShapeTests.SharedColorTileCodeBehindKeepsOfficialMemberAndCopyHandlerSourceShape|FullyQualifiedName~GalleryApplicationResourceTests.ControlExampleTemplateMatchesWpfGalleryReferenceDivider|FullyQualifiedName~GalleryApplicationResourceTests.ControlExampleTemplateHidesSourceExpanderWithoutLocalSourceName|FullyQualifiedName~GalleryApplicationResourceTests.ControlExampleLoadsSourceCodeFromReferenceStyleUris|FullyQualifiedName~GalleryApplicationResourceTests.ColorTileHighContrastTemplateMatchesWpfGalleryReference|FullyQualifiedName~GalleryApplicationResourceTests.ColorTileStyleKeepsWpfGalleryNaturalHeight" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 7 tests per target. Shared `ControlExample` and `ColorTile` copy command handlers now keep the official WPF Gallery nested `sender is ...` / non-empty source shape while retaining local notification helper guards, source-loading fallback, source-expander behavior, and ColorTile resource/style coverage. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the shared support-control copy-handler source-shape alignment. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages and existing ModernWpf/ModernWpf.Controls warnings.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.SharedHeaderTileCodeBehindKeepsOfficialMemberAndUserPreferenceHandlerShape|FullyQualifiedName~WpfGallerySourceShapeTests.SharedHeaderTileKeepsOfficialDeclarationSourceShape|FullyQualifiedName~GalleryApplicationResourceTests.HomeHeaderTilesMatchWpfGalleryReferenceSlotGeometry|FullyQualifiedName~GalleryApplicationResourceTests.HomeHeaderTilesUseWpfGalleryAcrylicFillResources|FullyQualifiedName~GalleryApplicationResourceTests.HomeHeaderTilesUseWpfGalleryHighContrastFillResources|FullyQualifiedName~GalleryApplicationResourceTests.HomeHeaderTilesExposeRootButtonAutomationPeer" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 6 tests per target. The shared `HeaderTile` resource path now keeps the official WPF Gallery non-High-Contrast acrylic branch before the High Contrast system-brush fallback while retaining the local helper method, actual-theme refresh, static-event unload cleanup, launch guard, and automation-peer coverage. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
@@ -2738,8 +2742,9 @@ source-expander collapse, source-row height, ModernWpf resources, and display
 font inheritance adapters. Its code-behind now pins the official
 dependency-property `DependencyProperty.Register(...)` registration block
 shape, field-before-wrapper member order, instance source-change callback shape,
-and `Copy_SourceCode` command handler name while keeping local default-style,
-source-loading fallback, source-expander, and automation adapters. The
+and `Copy_SourceCode` command handler name plus nested copy-command flow while
+keeping local default-style, source-loading fallback, source-expander, and
+automation adapters. The
 shared `PageHeader` template now
 pins official compact converter/setter, text, and hidden-description trigger
 source shape while retaining the local heading-level adapter, and its
@@ -2758,7 +2763,9 @@ root/resource, scroll host, HeaderTile list, compact icon, and scroll-button
 declaration shape, and its code-behind now pins the official scroll handler
 local-variable declarations, helper-overload flow, and size-changed handler
 placement while retaining local asset pack URI adaptations and scroll offset
-behavior. Next, continue
+behavior. `ColorTile` copy-command code now also keeps the official nested
+sender/non-empty branch shape while retaining the local null-safe notification
+helper. Next, continue
 source-backed structural alignment where copied
 pages still diverge from official XAML. The generic `ItemPage` wrapper now also
 drops local-only wrapper header/direct-frame names and `GallerySampleHost` automation IDs

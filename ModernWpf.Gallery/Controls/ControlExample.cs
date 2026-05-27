@@ -117,30 +117,32 @@ namespace ModernWpf.Gallery.Controls
 
         private static void Copy_SourceCode(object sender, RoutedEventArgs e)
         {
-            var executedArgs = (ExecutedRoutedEventArgs)e;
-            var controlExample = sender as ControlExample;
-            if (controlExample == null || executedArgs.Parameter == null)
+            if (sender is ControlExample controlExample)
             {
-                return;
-            }
+                var executedArgs = (ExecutedRoutedEventArgs)e;
+                if (executedArgs.Parameter == null)
+                {
+                    return;
+                }
 
-            string text = null;
-            switch (executedArgs.Parameter.ToString())
-            {
-                case "Copy_XamlCode":
-                    text = controlExample.XamlCode;
-                    break;
-                case "Copy_CSharpCode":
-                    text = controlExample.CSharpCode;
-                    break;
-            }
-
-            if (!string.IsNullOrEmpty(text))
-            {
                 try
                 {
-                    Clipboard.SetText(text);
-                    RaiseCopyNotification(executedArgs);
+                    switch (executedArgs.Parameter.ToString())
+                    {
+                        case "Copy_XamlCode":
+                            if (!string.IsNullOrEmpty(controlExample.XamlCode))
+                            {
+                                Clipboard.SetText(controlExample.XamlCode);
+                                RaiseCopyNotification(executedArgs);
+                            }
+                            break;
+                        case "Copy_CSharpCode":
+                            if (!string.IsNullOrEmpty(controlExample.CSharpCode))
+                            {
+                                Clipboard.SetText(controlExample.CSharpCode);
+                            }
+                            break;
+                    }
                 }
                 catch (Exception ex)
                 {
