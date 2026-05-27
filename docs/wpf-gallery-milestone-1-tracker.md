@@ -132,6 +132,9 @@ page adapters, `HeaderTile`, and `TileGallery`, with the official-named
 section page adapters also keeping the official partial declaration shape,
 while local shell-only classes
 such as `ItemPage` remain outside that source-shape rule.
+Copied top-level WPF Gallery-equivalent code-behind declarations now also keep
+the official explicit WPF `Page` base class shape for Home, All Controls,
+What's New, and Settings while retaining their local adapter class names.
 Copied WPF Gallery page-specific view-model declarations now also keep the
 official unsealed partial class shape, including top-level, section, item-page,
 Design Guidance, Samples, Status & Info, System, and Settings view models,
@@ -402,6 +405,10 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.TopLevelCodeBehindKeepsOfficialPageBaseDeclarationShape|FullyQualifiedName~WpfGallerySourceShapeTests.CopiedWpfGalleryCodeBehindClassesStayUnsealedLikeOfficialSource|FullyQualifiedName~WpfGallerySourceShapeTests.TopLevelCodeBehindKeepsOfficialViewModelMemberOrderShape|FullyQualifiedName~GalleryNavigationRuntimeTests.TopLevelPagesUseOfficialWpfGalleryViewModels|FullyQualifiedName~GalleryPageRuntimeTests.SettingsPageMatchesWpfGalleryReferenceLayout" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 5 tests per target. Copied top-level WPF Gallery-equivalent page code-behind declarations now keep the official explicit `: Page` base shape while existing unsealed code-behind, ViewModel member order, top-level view-model runtime, and Settings layout coverage still passes. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the copied top-level page base declaration source-shape alignment. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages and existing ModernWpf/ModernWpf.Controls warnings.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.CopiedWpfGalleryCodeBehindClassesStayUnsealedLikeOfficialSource|FullyQualifiedName~GalleryNavigationRuntimeTests.SectionPagesUseOfficialWpfGalleryViewModels" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 2 tests per target. Official-named WPF Gallery section page adapters now keep the official unsealed `public partial class` source shape while section-page view-model construction/runtime coverage still passes. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
@@ -2609,7 +2616,9 @@ Basic Input, Collections, Date & Calendar, Design Guidance, Layout, Media,
 Navigation, Samples, Status & Info, System, and Text item pages now match the
 official WPF Gallery `Page` root and view-model constructor shape, with direct
 pages hosted in a chrome-hidden `Frame` so copied `Page` roots have valid WPF
-parenting. Official-named section page adapters now also stay unsealed partial
+parenting. Copied top-level WPF Gallery-equivalent code-behind declarations now
+also keep the official explicit `Page` base class shape. Official-named
+section page adapters now also stay unsealed partial
 classes like the official WPF Gallery section page declarations. Copied WPF
 Gallery page-specific view-model declarations now also stay unsealed partial
 classes like the official WPF Gallery `ObservableObject` view models,

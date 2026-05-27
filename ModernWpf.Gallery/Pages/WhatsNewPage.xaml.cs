@@ -1,11 +1,12 @@
 using System;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Controls;
 using ModernWpf.Gallery.Pages.WpfGallery;
 
 namespace ModernWpf.Gallery.Pages
 {
-    public partial class WhatsNewPage
+    public partial class WhatsNewPage : Page
     {
         public WhatsNewPageViewModel ViewModel { get; }
 

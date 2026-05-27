@@ -65,6 +65,28 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void TopLevelCodeBehindKeepsOfficialPageBaseDeclarationShape()
+        {
+            foreach (var page in new[]
+            {
+                "HomePage",
+                "AllControlsPage",
+                "WhatsNewPage",
+                "SettingsPage"
+            })
+            {
+                var source = ReadRepoFile(
+                    "ModernWpf.Gallery",
+                    "Pages",
+                    page + ".xaml.cs");
+
+                Assert.IsTrue(
+                    source.Contains("public partial class " + page + " : Page", StringComparison.Ordinal),
+                    page + " should match the official WPF Gallery top-level page base declaration shape.");
+            }
+        }
+
+        [TestMethod]
         public void CopiedWpfGalleryViewModelClassesStayUnsealedLikeOfficialSource()
         {
             var repoRoot = GetRepoRoot();

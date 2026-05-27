@@ -7,7 +7,7 @@ using ModernWpf.Gallery.Testing;
 
 namespace ModernWpf.Gallery.Pages
 {
-    public partial class SettingsPage
+    public partial class SettingsPage : Page
     {
         private bool _canApplyThemeSelection;
 

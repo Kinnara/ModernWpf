@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Windows.Controls;
 using System.Windows.Input;
 using ModernWpf.Gallery.Models;
 using ModernWpf.Gallery.Pages.WpfGallery;
 
 namespace ModernWpf.Gallery.Pages
 {
-    public partial class AllControlsPage
+    public partial class AllControlsPage : Page
     {
         public AllSamplesPageViewModel ViewModel { get; }
 

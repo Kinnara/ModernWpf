@@ -8,7 +8,7 @@ using ModernWpf.Gallery.Pages.WpfGallery;
 
 namespace ModernWpf.Gallery.Pages
 {
-    public partial class HomePage
+    public partial class HomePage : Page
     {
         public HomePage()
             : this(null)
