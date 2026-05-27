@@ -75,7 +75,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
         }
     }
 
-    public sealed class ButtonPageViewModel : BasicInputPageViewModelBase
+    public class ButtonPageViewModel : BasicInputPageViewModelBase
     {
         private bool _isSimpleButtonEnabled = true;
         private bool _isUiButtonEnabled = true;
@@ -112,7 +112,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
         }
     }
 
-    public sealed class CheckBoxPageViewModel : BasicInputPageViewModelBase
+    public class CheckBoxPageViewModel : BasicInputPageViewModelBase
     {
         private bool _optionOneCheckBoxChecked;
         private bool _optionThreeCheckBoxChecked;
@@ -198,7 +198,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
         }
     }
 
-    public sealed class ComboBoxPageViewModel : BasicInputPageViewModelBase
+    public class ComboBoxPageViewModel : BasicInputPageViewModelBase
     {
         public ComboBoxPageViewModel()
             : base("ComboBox")
@@ -234,7 +234,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
         public IList<int> ComboBoxFontSizes { get; }
     }
 
-    public sealed class RadioButtonPageViewModel : BasicInputPageViewModelBase
+    public class RadioButtonPageViewModel : BasicInputPageViewModelBase
     {
         private bool _isRadioButtonEnabled = true;
 
@@ -264,7 +264,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
         }
     }
 
-    public sealed class SliderPageViewModel : BasicInputPageViewModelBase
+    public class SliderPageViewModel : BasicInputPageViewModelBase
     {
         private int _marksSliderValue;
         private int _rangeSliderValue = 500;

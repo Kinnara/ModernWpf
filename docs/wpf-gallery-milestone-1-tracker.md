@@ -130,6 +130,10 @@ now also keep the official unsealed class shape (`public partial class`) for
 Home, All Controls, What's New, Settings, direct item/support pages, section
 page adapters, `HeaderTile`, and `TileGallery`, while local shell-only classes
 such as `ItemPage` remain outside that source-shape rule.
+Copied WPF Gallery page-specific view-model declarations now also keep the
+official unsealed class shape, including top-level, section, item-page,
+Design Guidance, Samples, Status & Info, System, and Settings view models,
+while local shell-only view models remain outside that source-shape rule.
 Copied top-level code-behind now also keeps the official `ViewModel`
 member-before-constructor source shape for All Controls, What's New, and
 Settings while preserving their default ModernWpf routing constructors. Home
@@ -396,6 +400,10 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.CopiedWpfGalleryViewModelClassesStayUnsealedLikeOfficialSource|FullyQualifiedName~UseOfficialPageSpecificViewModels|FullyQualifiedName~TopLevelPagesUseOfficialWpfGalleryViewModels|FullyQualifiedName~SectionPagesUseOfficialWpfGalleryViewModels" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 12 tests per target. Copied WPF Gallery view-model declarations now keep the official unsealed source shape while existing top-level, section, item-page, system, samples, and design-guidance view-model routing/runtime coverage still passes. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the copied WPF Gallery view-model declaration source-shape alignment. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages and existing ModernWpf/ModernWpf.Controls warnings.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.SharedSupportControlCodeBehindKeepsOfficialDependencyPropertyMemberOrderShape|FullyQualifiedName~WpfGallerySourceShapeTests.SharedColorTileCodeBehindKeepsOfficialMemberAndCopyHandlerSourceShape|FullyQualifiedName~GalleryApplicationResourceTests.ControlExampleTemplateMatchesWpfGalleryReferenceDivider|FullyQualifiedName~GalleryApplicationResourceTests.ControlExampleTemplateHidesSourceExpanderWithoutLocalSourceName|FullyQualifiedName~GalleryApplicationResourceTests.ControlExampleLoadsSourceCodeFromReferenceStyleUris|FullyQualifiedName~GalleryApplicationResourceTests.ColorTileHighContrastTemplateMatchesWpfGalleryReference|FullyQualifiedName~GalleryApplicationResourceTests.ColorTileStyleKeepsWpfGalleryNaturalHeight" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 7 tests per target. Shared `ControlExample` and `ColorTile` copy command handlers now keep the official WPF Gallery nested `sender is ...` / non-empty source shape while retaining local notification helper guards, source-loading fallback, source-expander behavior, and ColorTile resource/style coverage. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
@@ -2591,7 +2599,9 @@ Basic Input, Collections, Date & Calendar, Design Guidance, Layout, Media,
 Navigation, Samples, Status & Info, System, and Text item pages now match the
 official WPF Gallery `Page` root and view-model constructor shape, with direct
 pages hosted in a chrome-hidden `Frame` so copied `Page` roots have valid WPF
-parenting. Copied item pages also keep the official `ViewModel`
+parenting. Copied WPF Gallery page-specific view-model declarations now also
+stay unsealed like the official WPF Gallery `ObservableObject` view models,
+while copied item pages also keep the official `ViewModel`
 member-before-constructor source shape where their corresponding WPF Gallery
 source uses it, with verified constructor-first exceptions left intact; Basic
 Input item pages also now pin the official copied root namespace/content

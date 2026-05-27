@@ -62,6 +62,28 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void CopiedWpfGalleryViewModelClassesStayUnsealedLikeOfficialSource()
+        {
+            var repoRoot = GetRepoRoot();
+            var wpfGalleryViewModels = Directory.EnumerateFiles(
+                Path.Combine(repoRoot, "ModernWpf.Gallery", "Pages", "WpfGallery"),
+                "*ViewModel*.cs",
+                SearchOption.AllDirectories);
+            var copiedTopLevelViewModels = new[]
+            {
+                Path.Combine(repoRoot, "ModernWpf.Gallery", "Pages", "SettingsPage.xaml.cs")
+            };
+
+            foreach (var path in wpfGalleryViewModels.Concat(copiedTopLevelViewModels))
+            {
+                var source = File.ReadAllText(path);
+                Assert.IsFalse(
+                    source.Contains("public sealed class ", StringComparison.Ordinal),
+                    Path.GetRelativePath(repoRoot, path) + " should match the official WPF Gallery unsealed viewmodel class shape.");
+            }
+        }
+
+        [TestMethod]
         public void TopLevelCodeBehindKeepsOfficialViewModelMemberOrderShape()
         {
             foreach (var page in new[]

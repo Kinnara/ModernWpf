@@ -96,7 +96,7 @@ namespace ModernWpf.Gallery.Pages
         }
     }
 
-    public sealed class SettingsPageViewModel
+    public class SettingsPageViewModel
     {
         public string PageTitle
         {

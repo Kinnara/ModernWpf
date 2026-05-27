@@ -40,7 +40,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
         }
     }
 
-    public sealed class FileAndFolderDialogsPageViewModel : SystemPageViewModelBase
+    public class FileAndFolderDialogsPageViewModel : SystemPageViewModelBase
     {
         private string _fileContent = "Enter text here to save to a file...";
         private string _multipleFilesPath = "No files selected";
@@ -86,7 +86,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
         }
     }
 
-    public sealed class MessageBoxPageViewModel : SystemPageViewModelBase
+    public class MessageBoxPageViewModel : SystemPageViewModelBase
     {
         private string _commonMessagesResult = "No common message shown yet";
         private string _customDefaultResult = "No selection made";
@@ -297,7 +297,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
         private const string DifferentImagesMessageBoxSampleCSharpCodeString = "private void ShowMessageBoxButton_Click(object sender, RoutedEventArgs e)\n{{\n{0}\n}}";
     }
 
-    public sealed class ClipboardPageViewModel : SystemPageViewModelBase
+    public class ClipboardPageViewModel : SystemPageViewModelBase
     {
         private string _copyImageStatus = string.Empty;
         private string _copyStatus = string.Empty;

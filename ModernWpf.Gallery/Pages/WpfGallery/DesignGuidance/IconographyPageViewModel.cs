@@ -9,7 +9,7 @@ using System.Windows.Input;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 {
-    public sealed class IconographyPageViewModel : INotifyPropertyChanged
+    public class IconographyPageViewModel : INotifyPropertyChanged
     {
         private readonly RelayCommand _previousPageCommand;
         private readonly RelayCommand _nextPageCommand;

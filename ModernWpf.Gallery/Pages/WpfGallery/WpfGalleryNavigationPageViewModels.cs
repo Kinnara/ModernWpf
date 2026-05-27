@@ -5,7 +5,7 @@ using ModernWpf.Gallery.Models;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery
 {
-    public sealed class DashboardPageViewModel
+    public class DashboardPageViewModel
     {
         public DashboardPageViewModel(Action<object> navigate)
         {
@@ -25,7 +25,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery
         public ICommand NavigateCommand { get; }
     }
 
-    public sealed class WhatsNewPageViewModel
+    public class WhatsNewPageViewModel
     {
         public WhatsNewPageViewModel(Action<object> navigate)
         {
@@ -162,7 +162,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery
         }
     }
 
-    public sealed class AllSamplesPageViewModel : WpfGalleryNavigationPageViewModel
+    public class AllSamplesPageViewModel : WpfGalleryNavigationPageViewModel
     {
         public AllSamplesPageViewModel(Action<object> navigate)
             : base("All Controls", string.Empty, GalleryCatalog.AllControlsItems, navigate)
@@ -170,7 +170,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery
         }
     }
 
-    public sealed class DesignGuidancePageViewModel : WpfGalleryNavigationPageViewModel
+    public class DesignGuidancePageViewModel : WpfGalleryNavigationPageViewModel
     {
         public DesignGuidancePageViewModel(Action<object> navigate)
             : base("Design Guidance", "Design guidelines on how to use colors, typography, and icons in your app.", GetControlsInfo("DesignGuidance"), navigate)
@@ -178,7 +178,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery
         }
     }
 
-    public sealed class SamplesPageViewModel : WpfGalleryNavigationPageViewModel
+    public class SamplesPageViewModel : WpfGalleryNavigationPageViewModel
     {
         public SamplesPageViewModel(Action<object> navigate)
             : base("Samples", "Sample pages for common scenarios", GetControlsInfo("Samples"), navigate)
@@ -186,7 +186,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery
         }
     }
 
-    public sealed class BasicInputPageViewModel : WpfGalleryNavigationPageViewModel
+    public class BasicInputPageViewModel : WpfGalleryNavigationPageViewModel
     {
         public BasicInputPageViewModel(Action<object> navigate)
             : base("Basic Input", "Controls for getting user input", GetControlsInfo("BasicInput"), navigate)
@@ -194,7 +194,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery
         }
     }
 
-    public sealed class CollectionsPageViewModel : WpfGalleryNavigationPageViewModel
+    public class CollectionsPageViewModel : WpfGalleryNavigationPageViewModel
     {
         public CollectionsPageViewModel(Action<object> navigate)
             : base("Collections", "Controls for collection presentation", GetControlsInfo("Collections"), navigate)
@@ -202,7 +202,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery
         }
     }
 
-    public sealed class DateAndTimePageViewModel : WpfGalleryNavigationPageViewModel
+    public class DateAndTimePageViewModel : WpfGalleryNavigationPageViewModel
     {
         public DateAndTimePageViewModel(Action<object> navigate)
             : base("Date & Calendar", "Controls for date and calendar", GetControlsInfo("DateAndCalendar"), navigate)
@@ -210,7 +210,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery
         }
     }
 
-    public sealed class LayoutPageViewModel : WpfGalleryNavigationPageViewModel
+    public class LayoutPageViewModel : WpfGalleryNavigationPageViewModel
     {
         public LayoutPageViewModel(Action<object> navigate)
             : base("Layout", "Controls for layouting", GetControlsInfo("Layout"), navigate)
@@ -218,7 +218,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery
         }
     }
 
-    public sealed class MediaPageViewModel : WpfGalleryNavigationPageViewModel
+    public class MediaPageViewModel : WpfGalleryNavigationPageViewModel
     {
         public MediaPageViewModel(Action<object> navigate)
             : base("Media Controls", "Controls for media presentation", GetControlsInfo("Media"), navigate)
@@ -226,7 +226,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery
         }
     }
 
-    public sealed class NavigationPageViewModel : WpfGalleryNavigationPageViewModel
+    public class NavigationPageViewModel : WpfGalleryNavigationPageViewModel
     {
         public NavigationPageViewModel(Action<object> navigate)
             : base("Navigation", "Controls for navigation and actions", GetControlsInfo("Navigation"), navigate)
@@ -234,7 +234,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery
         }
     }
 
-    public sealed class StatusAndInfoPageViewModel : WpfGalleryNavigationPageViewModel
+    public class StatusAndInfoPageViewModel : WpfGalleryNavigationPageViewModel
     {
         public StatusAndInfoPageViewModel(Action<object> navigate)
             : base("Status & Info", "Controls to show progress and extra information", GetControlsInfo("StatusAndInfo"), navigate)
@@ -242,7 +242,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery
         }
     }
 
-    public sealed class TextPageViewModel : WpfGalleryNavigationPageViewModel
+    public class TextPageViewModel : WpfGalleryNavigationPageViewModel
     {
         public TextPageViewModel(Action<object> navigate)
             : base("Text", "Controls for displaying and editing text", GetControlsInfo("Text"), navigate)
@@ -250,7 +250,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery
         }
     }
 
-    public sealed class SystemPageViewModel : WpfGalleryNavigationPageViewModel
+    public class SystemPageViewModel : WpfGalleryNavigationPageViewModel
     {
         public SystemPageViewModel(Action<object> navigate)
             : base("System", "System-level controls and dialogs", GetControlsInfo("System"), navigate)

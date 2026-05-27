@@ -2,7 +2,7 @@ using ModernWpf.Gallery.Pages.WpfGallery;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 {
-    public sealed class ColorsPageViewModel : WpfGalleryPageViewModel
+    public class ColorsPageViewModel : WpfGalleryPageViewModel
     {
         public ColorsPageViewModel()
             : base("Colors", "Guide showing how to use colors in your app")
@@ -10,7 +10,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
         }
     }
 
-    public sealed class TypographyPageViewModel : WpfGalleryPageViewModel
+    public class TypographyPageViewModel : WpfGalleryPageViewModel
     {
         public TypographyPageViewModel()
             : base("Typography", "Guide showing how to use typography in your app")
@@ -18,7 +18,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
         }
     }
 
-    public sealed class SpacingPageViewModel : WpfGalleryPageViewModel
+    public class SpacingPageViewModel : WpfGalleryPageViewModel
     {
         public SpacingPageViewModel()
             : base("Spacing", "Guide showing how to use spacing in your app")
@@ -26,7 +26,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
         }
     }
 
-    public sealed class GeometryPageViewModel : WpfGalleryPageViewModel
+    public class GeometryPageViewModel : WpfGalleryPageViewModel
     {
         public GeometryPageViewModel()
             : base("Geometry", string.Empty)
