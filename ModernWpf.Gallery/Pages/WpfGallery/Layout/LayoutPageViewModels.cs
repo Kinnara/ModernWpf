@@ -2,7 +2,7 @@ using ModernWpf.Gallery.Pages.WpfGallery;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.Layout
 {
-    public class BorderPageViewModel : WpfGalleryPageViewModel
+    public partial class BorderPageViewModel : WpfGalleryPageViewModel
     {
         public BorderPageViewModel()
             : base("Border", string.Empty)
@@ -10,7 +10,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Layout
         }
     }
 
-    public class ExpanderPageViewModel : WpfGalleryPageViewModel
+    public partial class ExpanderPageViewModel : WpfGalleryPageViewModel
     {
         public ExpanderPageViewModel()
             : base("Expander", string.Empty)
@@ -18,7 +18,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Layout
         }
     }
 
-    public class GridPageViewModel : WpfGalleryPageViewModel
+    public partial class GridPageViewModel : WpfGalleryPageViewModel
     {
         public GridPageViewModel()
             : base("Grid", string.Empty)
@@ -26,7 +26,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Layout
         }
     }
 
-    public class GridSplitterPageViewModel : WpfGalleryPageViewModel
+    public partial class GridSplitterPageViewModel : WpfGalleryPageViewModel
     {
         public GridSplitterPageViewModel()
             : base("GridSplitter", string.Empty)
@@ -34,7 +34,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Layout
         }
     }
 
-    public class GroupBoxPageViewModel : WpfGalleryPageViewModel
+    public partial class GroupBoxPageViewModel : WpfGalleryPageViewModel
     {
         public GroupBoxPageViewModel()
             : base("GroupBox", string.Empty)
@@ -42,7 +42,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Layout
         }
     }
 
-    public class ResizeGripPageViewModel : WpfGalleryPageViewModel
+    public partial class ResizeGripPageViewModel : WpfGalleryPageViewModel
     {
         public ResizeGripPageViewModel()
             : base("ResizeGrip", string.Empty)
@@ -50,7 +50,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Layout
         }
     }
 
-    public class StackPanelPageViewModel : WpfGalleryPageViewModel
+    public partial class StackPanelPageViewModel : WpfGalleryPageViewModel
     {
         public StackPanelPageViewModel()
             : base("StackPanel", string.Empty)

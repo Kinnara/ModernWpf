@@ -2,7 +2,7 @@ using ModernWpf.Gallery.Pages.WpfGallery;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.Navigation
 {
-    public class MenuPageViewModel : WpfGalleryPageViewModel
+    public partial class MenuPageViewModel : WpfGalleryPageViewModel
     {
         public MenuPageViewModel()
             : base("Menu", string.Empty)
@@ -10,7 +10,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Navigation
         }
     }
 
-    public class TabControlPageViewModel : WpfGalleryPageViewModel
+    public partial class TabControlPageViewModel : WpfGalleryPageViewModel
     {
         public TabControlPageViewModel()
             : base("TabControl", string.Empty)
@@ -18,7 +18,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Navigation
         }
     }
 
-    public class FramePageViewModel : WpfGalleryPageViewModel
+    public partial class FramePageViewModel : WpfGalleryPageViewModel
     {
         public FramePageViewModel()
             : base("Frame", string.Empty)
@@ -26,7 +26,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Navigation
         }
     }
 
-    public class NavigationWindowPageViewModel : WpfGalleryPageViewModel
+    public partial class NavigationWindowPageViewModel : WpfGalleryPageViewModel
     {
         public NavigationWindowPageViewModel()
             : base("Navigation Window", string.Empty)

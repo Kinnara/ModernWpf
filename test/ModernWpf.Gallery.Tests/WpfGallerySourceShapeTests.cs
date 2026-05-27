@@ -84,6 +84,110 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void CopiedWpfGalleryViewModelClassesKeepOfficialPartialDeclarationShape()
+        {
+            var repoRoot = GetRepoRoot();
+            foreach (var file in new[]
+            {
+                new
+                {
+                    RelativePath = Path.Combine("ModernWpf.Gallery", "Pages", "SettingsPage.xaml.cs"),
+                    ClassNames = new[] { "SettingsPageViewModel" }
+                },
+                new
+                {
+                    RelativePath = Path.Combine("ModernWpf.Gallery", "Pages", "WpfGallery", "WpfGalleryNavigationPageViewModels.cs"),
+                    ClassNames = new[]
+                    {
+                        "DashboardPageViewModel",
+                        "WhatsNewPageViewModel",
+                        "AllSamplesPageViewModel",
+                        "DesignGuidancePageViewModel",
+                        "SamplesPageViewModel",
+                        "BasicInputPageViewModel",
+                        "CollectionsPageViewModel",
+                        "DateAndTimePageViewModel",
+                        "LayoutPageViewModel",
+                        "MediaPageViewModel",
+                        "NavigationPageViewModel",
+                        "StatusAndInfoPageViewModel",
+                        "TextPageViewModel",
+                        "SystemPageViewModel"
+                    }
+                },
+                new
+                {
+                    RelativePath = Path.Combine("ModernWpf.Gallery", "Pages", "WpfGallery", "BasicInput", "BasicInputPageViewModels.cs"),
+                    ClassNames = new[] { "ButtonPageViewModel", "CheckBoxPageViewModel", "ComboBoxPageViewModel", "RadioButtonPageViewModel", "SliderPageViewModel" }
+                },
+                new
+                {
+                    RelativePath = Path.Combine("ModernWpf.Gallery", "Pages", "WpfGallery", "Collections", "CollectionsPageViewModels.cs"),
+                    ClassNames = new[] { "DataGridPageViewModel", "ListBoxPageViewModel", "ListViewPageViewModel", "TreeViewPageViewModel" }
+                },
+                new
+                {
+                    RelativePath = Path.Combine("ModernWpf.Gallery", "Pages", "WpfGallery", "DateAndTime", "DateAndTimePageViewModels.cs"),
+                    ClassNames = new[] { "CalendarPageViewModel", "DatePickerPageViewModel" }
+                },
+                new
+                {
+                    RelativePath = Path.Combine("ModernWpf.Gallery", "Pages", "WpfGallery", "DesignGuidance", "DesignGuidancePageViewModels.cs"),
+                    ClassNames = new[] { "ColorsPageViewModel", "TypographyPageViewModel", "SpacingPageViewModel", "GeometryPageViewModel" }
+                },
+                new
+                {
+                    RelativePath = Path.Combine("ModernWpf.Gallery", "Pages", "WpfGallery", "DesignGuidance", "IconographyPageViewModel.cs"),
+                    ClassNames = new[] { "IconographyPageViewModel" }
+                },
+                new
+                {
+                    RelativePath = Path.Combine("ModernWpf.Gallery", "Pages", "WpfGallery", "Layout", "LayoutPageViewModels.cs"),
+                    ClassNames = new[] { "BorderPageViewModel", "ExpanderPageViewModel", "GridPageViewModel", "GridSplitterPageViewModel", "GroupBoxPageViewModel", "ResizeGripPageViewModel", "StackPanelPageViewModel" }
+                },
+                new
+                {
+                    RelativePath = Path.Combine("ModernWpf.Gallery", "Pages", "WpfGallery", "Media", "MediaPageViewModels.cs"),
+                    ClassNames = new[] { "CanvasPageViewModel", "ImagePageViewModel" }
+                },
+                new
+                {
+                    RelativePath = Path.Combine("ModernWpf.Gallery", "Pages", "WpfGallery", "Navigation", "NavigationPageViewModels.cs"),
+                    ClassNames = new[] { "MenuPageViewModel", "TabControlPageViewModel", "FramePageViewModel", "NavigationWindowPageViewModel" }
+                },
+                new
+                {
+                    RelativePath = Path.Combine("ModernWpf.Gallery", "Pages", "WpfGallery", "Samples", "UserDashboardPageViewModel.cs"),
+                    ClassNames = new[] { "UserDashboardPageViewModel" }
+                },
+                new
+                {
+                    RelativePath = Path.Combine("ModernWpf.Gallery", "Pages", "WpfGallery", "StatusAndInfo", "StatusAndInfoPageViewModels.cs"),
+                    ClassNames = new[] { "ProgressBarPageViewModel", "ToolTipPageViewModel" }
+                },
+                new
+                {
+                    RelativePath = Path.Combine("ModernWpf.Gallery", "Pages", "WpfGallery", "System", "SystemPageViewModels.cs"),
+                    ClassNames = new[] { "FileAndFolderDialogsPageViewModel", "MessageBoxPageViewModel", "ClipboardPageViewModel" }
+                },
+                new
+                {
+                    RelativePath = Path.Combine("ModernWpf.Gallery", "Pages", "WpfGallery", "Text", "TextPageViewModels.cs"),
+                    ClassNames = new[] { "LabelPageViewModel", "TextBoxPageViewModel", "TextBlockPageViewModel", "HyperlinkPageViewModel", "RichTextEditPageViewModel", "PasswordBoxPageViewModel" }
+                }
+            })
+            {
+                var source = File.ReadAllText(Path.Combine(repoRoot, file.RelativePath));
+                foreach (var className in file.ClassNames)
+                {
+                    Assert.IsTrue(
+                        source.Contains("public partial class " + className, StringComparison.Ordinal),
+                        className + " should match the official WPF Gallery partial viewmodel declaration shape.");
+                }
+            }
+        }
+
+        [TestMethod]
         public void TopLevelCodeBehindKeepsOfficialViewModelMemberOrderShape()
         {
             foreach (var page in new[]

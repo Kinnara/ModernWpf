@@ -2,7 +2,7 @@ using ModernWpf.Gallery.Pages.WpfGallery;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.DateAndTime
 {
-    public class CalendarPageViewModel : WpfGalleryPageViewModel
+    public partial class CalendarPageViewModel : WpfGalleryPageViewModel
     {
         public CalendarPageViewModel()
             : base("Calendar", string.Empty)
@@ -10,7 +10,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DateAndTime
         }
     }
 
-    public class DatePickerPageViewModel : WpfGalleryPageViewModel
+    public partial class DatePickerPageViewModel : WpfGalleryPageViewModel
     {
         public DatePickerPageViewModel()
             : base("DatePicker", string.Empty)

@@ -148,7 +148,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
         }
     }
 
-    public class DataGridPageViewModel : CollectionsPageViewModelBase
+    public partial class DataGridPageViewModel : CollectionsPageViewModelBase
     {
         private ObservableCollection<Product> _productsCollection;
 
@@ -165,7 +165,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
         }
     }
 
-    public class ListBoxPageViewModel : CollectionsPageViewModelBase
+    public partial class ListBoxPageViewModel : CollectionsPageViewModelBase
     {
         private ObservableCollection<string> _listBoxItems;
 
@@ -189,7 +189,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
         }
     }
 
-    public class ListViewPageViewModel : CollectionsPageViewModelBase
+    public partial class ListViewPageViewModel : CollectionsPageViewModelBase
     {
         private ObservableCollection<Person> _basicListViewItems;
         private ObservableCollection<Person> _gridViewItems;
@@ -236,7 +236,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
         }
     }
 
-    public class TreeViewPageViewModel : CollectionsPageViewModelBase
+    public partial class TreeViewPageViewModel : CollectionsPageViewModelBase
     {
         public TreeViewPageViewModel()
             : base("TreeView")

@@ -9,7 +9,7 @@ using ModernWpf.Gallery.Testing;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
 {
-    public class UserDashboardPageViewModel : INotifyPropertyChanged
+    public partial class UserDashboardPageViewModel : INotifyPropertyChanged
     {
         private const int UsersVisualTestSeed = 32043;
         private readonly RelayCommand _addUserCommand;
