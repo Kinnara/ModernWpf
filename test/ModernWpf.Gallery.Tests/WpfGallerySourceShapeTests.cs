@@ -351,16 +351,36 @@ namespace ModernWpf.Gallery.Tests
                 "ModernWpf.Gallery",
                 "Controls",
                 "ControlExample.cs");
+            var normalizedControlExampleSource = controlExampleSource.Replace("\r\n", "\n").Replace('\r', '\n');
+            StringAssert.Contains(
+                normalizedControlExampleSource,
+                "public static readonly DependencyProperty HeaderTextProperty = DependencyProperty.Register(\n" +
+                "            nameof(HeaderText),\n" +
+                "            typeof(string),\n" +
+                "            typeof(ControlExample),\n" +
+                "            new PropertyMetadata(null)\n" +
+                "        );");
+            StringAssert.Contains(
+                normalizedControlExampleSource,
+                "public static readonly DependencyProperty XamlCodeSourceProperty = DependencyProperty.Register(\n" +
+                "            nameof(XamlCodeSource),\n" +
+                "            typeof(Uri),\n" +
+                "            typeof(ControlExample),\n" +
+                "            new PropertyMetadata(\n" +
+                "                null,\n" +
+                "                static (o, args) => ((ControlExample)o).OnXamlCodeSourceChanged((Uri)args.NewValue)\n" +
+                "            )\n" +
+                "        );");
             AssertContainsInOrder(
                 controlExampleSource,
                 "CommandManager.RegisterClassCommandBinding(typeof(ControlExample), new CommandBinding(ApplicationCommands.Copy, Copy_SourceCode));",
-                "public static readonly DependencyProperty HeaderTextProperty",
-                "public static readonly DependencyProperty ExampleContentProperty",
-                "public static readonly DependencyProperty XamlCodeProperty",
-                "public static readonly DependencyProperty XamlCodeSourceProperty",
+                "public static readonly DependencyProperty HeaderTextProperty = DependencyProperty.Register(",
+                "public static readonly DependencyProperty ExampleContentProperty = DependencyProperty.Register(",
+                "public static readonly DependencyProperty XamlCodeProperty = DependencyProperty.Register(",
+                "public static readonly DependencyProperty XamlCodeSourceProperty = DependencyProperty.Register(",
                 "static (o, args) => ((ControlExample)o).OnXamlCodeSourceChanged((Uri)args.NewValue)",
-                "public static readonly DependencyProperty CSharpCodeProperty",
-                "public static readonly DependencyProperty CSharpCodeSourceProperty",
+                "public static readonly DependencyProperty CSharpCodeProperty = DependencyProperty.Register(",
+                "public static readonly DependencyProperty CSharpCodeSourceProperty = DependencyProperty.Register(",
                 "static (o, args) => ((ControlExample)o).OnCSharpCodeSourceChanged((Uri)args.NewValue)",
                 "public string HeaderText",
                 "public object ExampleContent",
@@ -378,11 +398,20 @@ namespace ModernWpf.Gallery.Tests
                 "ModernWpf.Gallery",
                 "Controls",
                 "PageHeader.cs");
+            var normalizedPageHeaderSource = pageHeaderSource.Replace("\r\n", "\n").Replace('\r', '\n');
+            StringAssert.Contains(
+                normalizedPageHeaderSource,
+                "public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(\n" +
+                "            nameof(Title),\n" +
+                "            typeof(string),\n" +
+                "            typeof(PageHeader),\n" +
+                "            new PropertyMetadata(null)\n" +
+                "        );");
             AssertContainsInOrder(
                 pageHeaderSource,
-                "public static readonly DependencyProperty TitleProperty",
-                "public static readonly DependencyProperty DescriptionProperty",
-                "public static readonly DependencyProperty ShowDescriptionProperty",
+                "public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(",
+                "public static readonly DependencyProperty DescriptionProperty = DependencyProperty.Register(",
+                "public static readonly DependencyProperty ShowDescriptionProperty = DependencyProperty.Register(",
                 "public string Title",
                 "public string Description",
                 "public bool ShowDescription");

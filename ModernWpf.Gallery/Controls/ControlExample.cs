@@ -21,51 +21,53 @@ namespace ModernWpf.Gallery.Controls
             CommandManager.RegisterClassCommandBinding(typeof(ControlExample), new CommandBinding(ApplicationCommands.Copy, Copy_SourceCode));
         }
 
-        public static readonly DependencyProperty HeaderTextProperty =
-            DependencyProperty.Register(
-                nameof(HeaderText),
-                typeof(string),
-                typeof(ControlExample),
-                new PropertyMetadata(null));
+        public static readonly DependencyProperty HeaderTextProperty = DependencyProperty.Register(
+            nameof(HeaderText),
+            typeof(string),
+            typeof(ControlExample),
+            new PropertyMetadata(null)
+        );
 
-        public static readonly DependencyProperty ExampleContentProperty =
-            DependencyProperty.Register(
-                nameof(ExampleContent),
-                typeof(object),
-                typeof(ControlExample),
-                new PropertyMetadata(null));
+        public static readonly DependencyProperty ExampleContentProperty = DependencyProperty.Register(
+            nameof(ExampleContent),
+            typeof(object),
+            typeof(ControlExample),
+            new PropertyMetadata(null)
+        );
 
-        public static readonly DependencyProperty XamlCodeProperty =
-            DependencyProperty.Register(
-                nameof(XamlCode),
-                typeof(string),
-                typeof(ControlExample),
-                new PropertyMetadata(null));
+        public static readonly DependencyProperty XamlCodeProperty = DependencyProperty.Register(
+            nameof(XamlCode),
+            typeof(string),
+            typeof(ControlExample),
+            new PropertyMetadata(null)
+        );
 
-        public static readonly DependencyProperty XamlCodeSourceProperty =
-            DependencyProperty.Register(
-                nameof(XamlCodeSource),
-                typeof(Uri),
-                typeof(ControlExample),
-                new PropertyMetadata(
-                    null,
-                    static (o, args) => ((ControlExample)o).OnXamlCodeSourceChanged((Uri)args.NewValue)));
+        public static readonly DependencyProperty XamlCodeSourceProperty = DependencyProperty.Register(
+            nameof(XamlCodeSource),
+            typeof(Uri),
+            typeof(ControlExample),
+            new PropertyMetadata(
+                null,
+                static (o, args) => ((ControlExample)o).OnXamlCodeSourceChanged((Uri)args.NewValue)
+            )
+        );
 
-        public static readonly DependencyProperty CSharpCodeProperty =
-            DependencyProperty.Register(
-                nameof(CSharpCode),
-                typeof(string),
-                typeof(ControlExample),
-                new PropertyMetadata(null));
+        public static readonly DependencyProperty CSharpCodeProperty = DependencyProperty.Register(
+            nameof(CSharpCode),
+            typeof(string),
+            typeof(ControlExample),
+            new PropertyMetadata(null)
+        );
 
-        public static readonly DependencyProperty CSharpCodeSourceProperty =
-            DependencyProperty.Register(
-                nameof(CSharpCodeSource),
-                typeof(Uri),
-                typeof(ControlExample),
-                new PropertyMetadata(
-                    null,
-                    static (o, args) => ((ControlExample)o).OnCSharpCodeSourceChanged((Uri)args.NewValue)));
+        public static readonly DependencyProperty CSharpCodeSourceProperty = DependencyProperty.Register(
+            nameof(CSharpCodeSource),
+            typeof(Uri),
+            typeof(ControlExample),
+            new PropertyMetadata(
+                null,
+                static (o, args) => ((ControlExample)o).OnCSharpCodeSourceChanged((Uri)args.NewValue)
+            )
+        );
 
         public string HeaderText
         {

@@ -10,26 +10,26 @@ namespace ModernWpf.Gallery.Controls
             DefaultStyleKeyProperty.OverrideMetadata(typeof(PageHeader), new FrameworkPropertyMetadata(typeof(PageHeader)));
         }
 
-        public static readonly DependencyProperty TitleProperty =
-            DependencyProperty.Register(
-                nameof(Title),
-                typeof(string),
-                typeof(PageHeader),
-                new PropertyMetadata(null));
+        public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(
+            nameof(Title),
+            typeof(string),
+            typeof(PageHeader),
+            new PropertyMetadata(null)
+        );
 
-        public static readonly DependencyProperty DescriptionProperty =
-            DependencyProperty.Register(
-                nameof(Description),
-                typeof(string),
-                typeof(PageHeader),
-                new PropertyMetadata(null));
+        public static readonly DependencyProperty DescriptionProperty = DependencyProperty.Register(
+            nameof(Description),
+            typeof(string),
+            typeof(PageHeader),
+            new PropertyMetadata(null)
+        );
 
-        public static readonly DependencyProperty ShowDescriptionProperty =
-            DependencyProperty.Register(
-                nameof(ShowDescription),
-                typeof(bool),
-                typeof(PageHeader),
-                new PropertyMetadata(true));
+        public static readonly DependencyProperty ShowDescriptionProperty = DependencyProperty.Register(
+            nameof(ShowDescription),
+            typeof(bool),
+            typeof(PageHeader),
+            new PropertyMetadata(true)
+        );
 
         public string Title
         {
