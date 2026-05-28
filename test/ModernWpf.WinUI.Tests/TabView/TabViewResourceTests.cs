@@ -1,6 +1,8 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using System.Windows.Markup;
 using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -51,10 +53,35 @@ public class TabViewResourceTests
             AssertDynamicResourceSetter(tabControlStyle, Control.BackgroundProperty, "TabViewBackground");
             AssertDynamicResourceSetter(tabControlStyle, Control.BorderBrushProperty, "TabViewBorderBrush");
             AssertSetterValue(tabControlStyle, Control.BorderThicknessProperty, new Thickness(0, 1, 0, 0));
+            AssertSetterValue(tabControlStyle, Control.VerticalContentAlignmentProperty, VerticalAlignment.Center);
+            AssertSetterValue(tabControlStyle, Control.PaddingProperty, new Thickness(0));
+            AssertSetterValue(tabControlStyle, FrameworkElement.OverridesDefaultStyleProperty, true);
+            AssertSetterValue(tabControlStyle, UIElement.SnapsToDevicePixelsProperty, true);
+            AssertSetterValue(tabControlStyle, Control.TemplateProperty, Application.Current.TryFindResource("DefaultTopTabControlStyle"));
+
+            var implicitTabControlStyle = (Style)Application.Current.TryFindResource(typeof(TabControl));
+            Assert.IsNotNull(implicitTabControlStyle);
+            Assert.AreSame(tabControlStyle, implicitTabControlStyle!.BasedOn);
+
+            AssertDynamicResourceSetter(tabItemStyle, Control.BackgroundProperty, "TabViewItemHeaderBackground");
+            AssertBrushSetter(tabItemStyle, Control.BorderBrushProperty, Brushes.Transparent);
+            AssertSetterValue(tabItemStyle, FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Stretch);
+            AssertSetterValue(tabItemStyle, FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Stretch);
+            AssertSetterValue(tabItemStyle, Control.VerticalContentAlignmentProperty, VerticalAlignment.Stretch);
+            AssertSetterValue(tabItemStyle, Control.HorizontalContentAlignmentProperty, HorizontalAlignment.Stretch);
             AssertDynamicResourceSetter(tabItemStyle, Control.FocusVisualStyleProperty, "DefaultControlFocusVisualStyle");
+            AssertSetterValue(tabItemStyle, KeyboardNavigation.IsTabStopProperty, true);
+            AssertSetterValue(tabItemStyle, UIElement.FocusableProperty, true);
+            AssertSetterValue(tabItemStyle, FrameworkElement.OverridesDefaultStyleProperty, true);
+            AssertSetterValue(tabItemStyle, UIElement.SnapsToDevicePixelsProperty, true);
+            Assert.IsInstanceOfType(FindSetter(tabItemStyle, Control.TemplateProperty)?.Value, typeof(ControlTemplate));
             AssertNoSetter(tabItemStyle, FrameworkElement.MinHeightProperty);
             AssertNoSetter(tabItemStyle, FrameworkElement.MaxWidthProperty);
             AssertNoSetter(tabItemStyle, FrameworkElement.MinWidthProperty);
+
+            var implicitTabItemStyle = (Style)Application.Current.TryFindResource(typeof(TabItem));
+            Assert.IsNotNull(implicitTabItemStyle);
+            Assert.AreSame(tabItemStyle, implicitTabItemStyle!.BasedOn);
         });
     }
 
@@ -90,18 +117,48 @@ public class TabViewResourceTests
             using var host = new TestWindowHost(tabControl, width: 420, height: 240);
             host.UpdateLayout();
 
+            Assert.AreSame(tabControl.TryFindResource("TabViewForeground"), tabControl.Foreground);
+            Assert.AreSame(tabControl.TryFindResource("TabViewBackground"), tabControl.Background);
+            Assert.AreSame(tabControl.TryFindResource("TabViewBorderBrush"), tabControl.BorderBrush);
+            Assert.AreEqual(new Thickness(0, 1, 0, 0), tabControl.BorderThickness);
+            Assert.AreEqual(new Thickness(0), tabControl.Padding);
+            Assert.IsTrue(tabControl.OverridesDefaultStyle);
+            Assert.IsTrue(tabControl.SnapsToDevicePixels);
+
+            var tabControlBorder = FindTemplateChild<Border>(tabControl, "Border");
+            Assert.AreSame(tabControl.Background, tabControlBorder.Background);
+            Assert.AreSame(tabControl.BorderBrush, tabControlBorder.BorderBrush);
+            Assert.AreEqual(tabControl.BorderThickness, tabControlBorder.BorderThickness);
+            Assert.AreEqual(new CornerRadius(0, 4, 4, 4), tabControlBorder.CornerRadius);
+
+            var headerPanel = FindTemplateChild<TabPanel>(tabControl, "HeaderPanel");
+            Assert.AreEqual(new Thickness(0), headerPanel.Margin);
+            AssertBrushEquals(Brushes.Transparent, headerPanel.Background);
+            Assert.IsTrue(headerPanel.IsItemsHost);
+            Assert.AreEqual(1, Panel.GetZIndex(headerPanel));
+
             var headerPresenter = FindTemplateChild<ContentPresenter>(tabItem, "ContentSite");
             Assert.AreEqual(tabItem.Header, headerPresenter.Content);
             Assert.IsNull(FindVisualChild<ContentPresenterEx>(tabItem));
 
             var headerBorder = FindTemplateChild<Border>(tabItem, "Border");
             Assert.AreSame(tabItem.TryFindResource("TabViewItemHeaderBackgroundSelected"), headerBorder.Background);
+            Assert.AreEqual(new Thickness(1, 1, 1, 0), headerBorder.BorderThickness);
+            Assert.AreEqual(new CornerRadius(8, 8, 0, 0), headerBorder.CornerRadius);
+            Assert.AreEqual(new Thickness(6), headerBorder.Padding);
+            Assert.AreEqual(32d, headerBorder.MinHeight);
             Assert.AreSame(tabItem.TryFindResource("TabViewSelectedItemBorderBrush"), headerBorder.BorderBrush);
             Assert.AreSame(tabItem.TryFindResource("TabViewItemForegroundSelected"), tabItem.Foreground);
             Assert.AreEqual(100, Panel.GetZIndex(tabItem));
+            Assert.AreEqual(tabItem.Header, headerPresenter.Content);
+            Assert.AreEqual(tabItem.HorizontalContentAlignment, headerPresenter.HorizontalAlignment);
+            Assert.AreEqual(tabItem.VerticalContentAlignment, headerPresenter.VerticalAlignment);
+            Assert.AreEqual(tabItem.Padding, headerPresenter.Margin);
 
             var selectedContentHost = FindTemplateChild<ContentPresenter>(tabControl, "PART_SelectedContentHost");
             Assert.AreEqual(tabItem.Content, selectedContentHost.Content);
+            Assert.AreEqual(tabControl.Padding, selectedContentHost.Margin);
+            Assert.IsTrue(selectedContentHost.SnapsToDevicePixels);
             Assert.IsNull(FindVisualChild<ContentPresenterEx>(tabControl));
         });
     }
@@ -252,7 +309,7 @@ public class TabViewResourceTests
 
     private static void AssertDynamicResourceSetter(Style style, DependencyProperty property, object expectedResourceKey)
     {
-        var setter = style.Setters.OfType<Setter>().SingleOrDefault(setter => setter.Property == property);
+        var setter = FindSetter(style, property);
         Assert.IsNotNull(setter, $"Expected local setter for {property.Name}.");
 
         var dynamicResource = setter!.Value as DynamicResourceExtension;
@@ -262,9 +319,17 @@ public class TabViewResourceTests
 
     private static void AssertSetterValue<T>(Style style, DependencyProperty property, T expectedValue)
     {
-        var setter = style.Setters.OfType<Setter>().SingleOrDefault(setter => setter.Property == property);
+        var setter = FindSetter(style, property);
         Assert.IsNotNull(setter, $"Expected local setter for {property.Name}.");
         Assert.AreEqual(expectedValue, setter!.Value);
+    }
+
+    private static void AssertBrushSetter(Style style, DependencyProperty property, Brush expectedBrush)
+    {
+        var setter = FindSetter(style, property);
+        Assert.IsNotNull(setter, $"Expected local setter for {property.Name}.");
+        Assert.IsInstanceOfType(setter!.Value, typeof(Brush));
+        AssertBrushEquals(expectedBrush, (Brush)setter.Value);
     }
 
     private static void AssertNoSetter(Style style, DependencyProperty property)
@@ -272,6 +337,35 @@ public class TabViewResourceTests
         Assert.IsFalse(
             style.Setters.OfType<Setter>().Any(setter => setter.Property == property),
             $"Official WPF Fluent TabItem style should not set {property.Name}.");
+    }
+
+    private static Setter? FindSetter(Style style, DependencyProperty property)
+    {
+        for (var current = style; current != null; current = current.BasedOn)
+        {
+            var setter = current.Setters.OfType<Setter>().SingleOrDefault(setter => setter.Property == property);
+            if (setter != null)
+            {
+                return setter;
+            }
+        }
+
+        return null;
+    }
+
+    private static void AssertBrushEquals(Brush expected, Brush actual)
+    {
+        Assert.IsNotNull(expected);
+        Assert.IsNotNull(actual);
+
+        if (expected is SolidColorBrush expectedSolid && actual is SolidColorBrush actualSolid)
+        {
+            Assert.AreEqual(expectedSolid.Color, actualSolid.Color);
+            Assert.AreEqual(expectedSolid.Opacity, actualSolid.Opacity);
+            return;
+        }
+
+        Assert.AreEqual(expected.ToString(), actual.ToString());
     }
 
     private static T FindTemplateChild<T>(Control control, string name)
