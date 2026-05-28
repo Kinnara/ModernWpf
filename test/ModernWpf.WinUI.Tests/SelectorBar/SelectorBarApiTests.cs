@@ -114,21 +114,59 @@ public class SelectorBarApiTests
                 Icon = new SymbolIcon(Symbol.Clock),
                 Style = itemStyle
             };
+            var selectorBar = new ModernWpf.Controls.SelectorBar
+            {
+                Style = selectorBarStyle
+            };
             item.Resources.MergedDictionaries.Add(resources);
+            selectorBar.Resources.MergedDictionaries.Add(resources);
 
-            using var host = new TestWindowHost(item, width: 240, height: 80);
+            var testRoot = new StackPanel();
+            testRoot.Children.Add(selectorBar);
+            testRoot.Children.Add(item);
+
+            using var host = new TestWindowHost(testRoot, width: 240, height: 120);
             host.UpdateLayout();
 
+            Assert.AreEqual(typeof(ModernWpf.Controls.SelectorBar), selectorBarStyle.TargetType);
+            AssertSetterValue(selectorBarStyle, FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Left);
+            AssertSetterValue(selectorBarStyle, FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Top);
+            AssertSetterValue(selectorBarStyle, Control.IsTabStopProperty, false);
+            AssertSetterValue(selectorBarStyle, Control.PaddingProperty, selectorBar.TryFindResource("SelectorBarPadding"));
             AssertDynamicResourceSetter(selectorBarStyle, Control.BackgroundProperty, "SelectorBarBackground");
+            AssertSetterValue(selectorBarStyle, Control.BorderThicknessProperty, selectorBar.TryFindResource("SelectorBarBorderThickness"));
             AssertDynamicResourceSetter(selectorBarStyle, ModernWpf.Controls.SelectorBar.CornerRadiusProperty, "ControlCornerRadius");
+            Assert.IsInstanceOfType(GetSetterValue(selectorBarStyle, Control.TemplateProperty), typeof(ControlTemplate));
+
+            Assert.AreSame(selectorBar.TryFindResource("SelectorBarBackground"), selectorBar.Background);
+            Assert.AreEqual(selectorBar.TryFindResource("SelectorBarPadding"), selectorBar.Padding);
+            Assert.AreEqual(selectorBar.TryFindResource("SelectorBarBorderThickness"), selectorBar.BorderThickness);
+            Assert.AreEqual(selectorBar.TryFindResource("ControlCornerRadius"), selectorBar.CornerRadius);
+
+            Assert.AreEqual(typeof(SelectorBarItem), itemStyle.TargetType);
+            AssertSetterValue(itemStyle, SelectorBarItem.BackgroundSizingProperty, BackgroundSizing.OuterBorderEdge);
             AssertDynamicResourceSetter(itemStyle, Control.ForegroundProperty, "SelectorBarItemForeground");
             AssertDynamicResourceSetter(itemStyle, Control.BorderBrushProperty, "SelectorBarItemBorderBrush");
+            AssertSetterValue(itemStyle, Control.BorderThicknessProperty, item.TryFindResource("SelectorBarItemBorderThickness"));
+            AssertSetterValue(itemStyle, Control.PaddingProperty, item.TryFindResource("SelectorBarItemPadding"));
             AssertDynamicResourceSetter(itemStyle, SelectorBarItem.CornerRadiusProperty, "ControlCornerRadius");
+            AssertSetterValue(itemStyle, FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Left);
+            AssertSetterValue(itemStyle, FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+            AssertSetterValue(itemStyle, SelectorBarItem.FocusVisualMarginProperty, item.TryFindResource("SelectorBarItemFocusVisualMargin"));
             AssertDynamicResourceSetter(itemStyle, Control.FontFamilyProperty, "ContentControlThemeFontFamily");
+            AssertSetterValue(itemStyle, Control.FontWeightProperty, FontWeights.Normal);
             AssertDynamicResourceSetter(itemStyle, Control.FontSizeProperty, "ControlContentThemeFontSize");
             AssertDynamicResourceSetter(itemStyle, SelectorBarItem.UseSystemFocusVisualsProperty, "UseSystemFocusVisuals");
+            AssertSetterValue(itemStyle, UIElement.FocusableProperty, true);
+            Assert.IsInstanceOfType(GetSetterValue(itemStyle, Control.TemplateProperty), typeof(ControlTemplate));
             AssertDynamicResourceSetter(itemStyle, Control.BackgroundProperty, "SelectorBarItemBackground");
+
+            Assert.AreEqual(typeof(Rectangle), pillStyle.TargetType);
             AssertDynamicResourceSetter(pillStyle, Shape.FillProperty, "SelectorBarItemPillFill");
+            AssertSetterValue(pillStyle, FrameworkElement.HeightProperty, item.TryFindResource("SelectorBarItemPillHeight"));
+            AssertSetterValue(pillStyle, FrameworkElement.WidthProperty, item.TryFindResource("SelectorBarItemPillWidth"));
+            AssertSetterValue(pillStyle, FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Stretch);
+            AssertSetterValue(pillStyle, UIElement.RenderTransformOriginProperty, new Point(0.5, 0.5));
 
             AssertResourceAlias(item, "SelectorBarBackground", "SystemControlTransparentBrush");
             AssertResourceAlias(item, "SelectorBarItemPillFill", "AccentFillColorDefaultBrush");
@@ -186,6 +224,7 @@ public class SelectorBarApiTests
             Assert.AreEqual(new Thickness(-2, 0, -2, 0), iconPresenter.Margin);
             Assert.AreEqual(0.8, iconScale.ScaleX);
             Assert.AreEqual(0.8, iconScale.ScaleY);
+            Assert.AreSame(pillStyle, selectionVisual.Style);
             Assert.AreSame(item.TryFindResource("SelectorBarItemPillFill"), selectionVisual.Fill);
             Assert.AreEqual(3.0, selectionVisual.Height);
             Assert.AreEqual(4.0, selectionVisual.Width);
@@ -346,12 +385,23 @@ public class SelectorBarApiTests
 
     private static void AssertDynamicResourceSetter(Style style, DependencyProperty property, object expectedResourceKey)
     {
-        var setter = style.Setters.OfType<Setter>().SingleOrDefault(setter => setter.Property == property);
-        Assert.IsNotNull(setter, $"Expected local setter for {property.Name}.");
+        var setterValue = GetSetterValue(style, property);
 
-        var dynamicResource = setter!.Value as DynamicResourceExtension;
+        var dynamicResource = setterValue as DynamicResourceExtension;
         Assert.IsNotNull(dynamicResource, $"Expected {property.Name} to use a dynamic resource.");
         Assert.AreEqual(expectedResourceKey, dynamicResource!.ResourceKey);
+    }
+
+    private static void AssertSetterValue(Style style, DependencyProperty property, object? expectedValue)
+    {
+        Assert.AreEqual(expectedValue, GetSetterValue(style, property));
+    }
+
+    private static object? GetSetterValue(Style style, DependencyProperty property)
+    {
+        var setter = style.Setters.OfType<Setter>().SingleOrDefault(setter => setter.Property == property);
+        Assert.IsNotNull(setter, $"Expected local setter for {property.Name}.");
+        return setter!.Value;
     }
 
     private static void AssertResourceAlias(FrameworkElement element, object resourceKey, object expectedResourceKey)
