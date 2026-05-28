@@ -149,18 +149,154 @@ public class ComboBoxApiTests
     }
 
     [TestMethod]
-    public void ComboBoxThemeResourcesRemainMapped()
+    public void ThemeResourcesUseOfficialComboBoxHighContrastTokens()
     {
         WpfTestHost.Run(() =>
         {
             TestApplication.EnsureInitialized();
 
-            AssertThemeResourceReference("Light", "ComboBoxDropDownBackground", "AcrylicInAppFillColorDefaultBrush");
-            AssertThemeResourceReference("Dark", "ComboBoxDropDownBackground", "AcrylicInAppFillColorDefaultBrush");
-            AssertThemeResourceReference("Light", "ComboBoxDropDownBorderBrush", "SurfaceStrokeColorFlyoutBrush");
-            AssertThemeResourceReference("Dark", "ComboBoxDropDownBorderBrush", "SurfaceStrokeColorFlyoutBrush");
-            AssertThemeResourceReference("HighContrast", "ComboBoxDropDownBackground", "SystemControlBackgroundChromeMediumLowBrush");
-            AssertThemeResourceReference("HighContrast", "ComboBoxDropDownBorderBrush", "SystemControlForegroundChromeHighBrush");
+            foreach (var themeName in new[] { "Light", "Dark" })
+            {
+                AssertThemeResourceReferences(
+                    themeName,
+                    ("ComboBoxItemForeground", "TextFillColorPrimaryBrush"),
+                    ("ComboBoxItemForegroundPressed", "TextFillColorSecondaryBrush"),
+                    ("ComboBoxItemForegroundPointerOver", "TextFillColorPrimaryBrush"),
+                    ("ComboBoxItemForegroundDisabled", "TextFillColorDisabledBrush"),
+                    ("ComboBoxItemForegroundSelected", "TextFillColorPrimaryBrush"),
+                    ("ComboBoxItemForegroundSelectedUnfocused", "TextFillColorPrimaryBrush"),
+                    ("ComboBoxItemForegroundSelectedPressed", "TextFillColorSecondaryBrush"),
+                    ("ComboBoxItemForegroundSelectedPointerOver", "TextFillColorPrimaryBrush"),
+                    ("ComboBoxItemForegroundSelectedDisabled", "TextFillColorDisabledBrush"),
+                    ("ComboBoxItemBackground", "SubtleFillColorTransparentBrush"),
+                    ("ComboBoxItemBackgroundPressed", "SubtleFillColorTertiaryBrush"),
+                    ("ComboBoxItemBackgroundPointerOver", "SubtleFillColorSecondaryBrush"),
+                    ("ComboBoxItemBackgroundDisabled", "SubtleFillColorDisabledBrush"),
+                    ("ComboBoxItemBackgroundSelected", "SubtleFillColorSecondaryBrush"),
+                    ("ComboBoxItemBackgroundSelectedUnfocused", "SubtleFillColorTertiaryBrush"),
+                    ("ComboBoxItemBackgroundSelectedPressed", "SubtleFillColorSecondaryBrush"),
+                    ("ComboBoxItemBackgroundSelectedPointerOver", "SubtleFillColorTertiaryBrush"),
+                    ("ComboBoxItemBackgroundSelectedDisabled", "SubtleFillColorSecondaryBrush"),
+                    ("ComboBoxItemBorderBrush", "SubtleFillColorTransparentBrush"),
+                    ("ComboBoxItemBorderBrushPressed", "SubtleFillColorTertiaryBrush"),
+                    ("ComboBoxItemBorderBrushPointerOver", "SubtleFillColorSecondaryBrush"),
+                    ("ComboBoxItemBorderBrushDisabled", "SubtleFillColorDisabledBrush"),
+                    ("ComboBoxItemBorderBrushSelected", "SubtleFillColorSecondaryBrush"),
+                    ("ComboBoxItemBorderBrushSelectedUnfocused", "SubtleFillColorTransparentBrush"),
+                    ("ComboBoxItemBorderBrushSelectedPressed", "SubtleFillColorSecondaryBrush"),
+                    ("ComboBoxItemBorderBrushSelectedPointerOver", "SubtleFillColorTertiaryBrush"),
+                    ("ComboBoxItemBorderBrushSelectedDisabled", "SubtleFillColorSecondaryBrush"),
+                    ("ComboBoxBackground", "ControlFillColorDefaultBrush"),
+                    ("ComboBoxBackgroundPointerOver", "ControlFillColorSecondaryBrush"),
+                    ("ComboBoxBackgroundPressed", "ControlFillColorTertiaryBrush"),
+                    ("ComboBoxBackgroundDisabled", "ControlFillColorDisabledBrush"),
+                    ("ComboBoxBackgroundUnfocused", "ControlFillColorDefaultBrush"),
+                    ("ComboBoxBackgroundFocused", "ControlFillColorDefaultBrush"),
+                    ("ComboBoxBackgroundBorderBrushFocused", "FocusStrokeColorOuterBrush"),
+                    ("ComboBoxBackgroundBorderBrushUnfocused", "ControlStrokeColorDefaultBrush"),
+                    ("ComboBoxForeground", "TextFillColorPrimaryBrush"),
+                    ("ComboBoxForegroundPointerOver", "TextFillColorPrimaryBrush"),
+                    ("ComboBoxForegroundPressed", "TextFillColorSecondaryBrush"),
+                    ("ComboBoxForegroundDisabled", "TextFillColorDisabledBrush"),
+                    ("ComboBoxForegroundFocused", "TextFillColorPrimaryBrush"),
+                    ("ComboBoxForegroundFocusedPressed", "TextFillColorPrimaryBrush"),
+                    ("ComboBoxHeaderForeground", "TextFillColorPrimaryBrush"),
+                    ("ComboBoxHeaderForegroundDisabled", "TextFillColorDisabledBrush"),
+                    ("ComboBoxPlaceHolderForeground", "TextFillColorSecondaryBrush"),
+                    ("ComboBoxPlaceHolderForegroundPointerOver", "TextFillColorSecondaryBrush"),
+                    ("ComboBoxPlaceHolderForegroundPressed", "TextFillColorTertiaryBrush"),
+                    ("ComboBoxPlaceHolderForegroundDisabled", "TextFillColorDisabledBrush"),
+                    ("ComboBoxPlaceHolderForegroundFocused", "TextFillColorSecondaryBrush"),
+                    ("ComboBoxPlaceHolderForegroundFocusedPressed", "TextFillColorSecondaryBrush"),
+                    ("ComboBoxBorderBrush", "ControlElevationBorderBrush"),
+                    ("ComboBoxBorderBrushPointerOver", "ControlElevationBorderBrush"),
+                    ("ComboBoxBorderBrushPressed", "ControlStrokeColorDefaultBrush"),
+                    ("ComboBoxBorderBrushDisabled", "ControlStrokeColorDefaultBrush"),
+                    ("ComboBoxDropDownGlyphForeground", "TextFillColorSecondaryBrush"),
+                    ("ComboBoxDropDownGlyphForegroundDisabled", "TextFillColorDisabledBrush"),
+                    ("ComboBoxDropDownGlyphForegroundFocused", "TextFillColorSecondaryBrush"),
+                    ("ComboBoxDropDownGlyphForegroundFocusedPressed", "SystemControlHighlightAltBaseMediumHighBrush"),
+                    ("ComboBoxDropDownForeground", "TextFillColorPrimaryBrush"),
+                    ("ComboBoxDropDownBackground", "AcrylicInAppFillColorDefaultBrush"),
+                    ("ComboBoxDropDownBorderBrush", "SurfaceStrokeColorFlyoutBrush"),
+                    ("ComboBoxLightDismissOverlayBackground", "SystemControlPageBackgroundMediumAltMediumBrush"),
+                    ("ComboBoxDropDownBackgroundPointerOver", "SubtleFillColorSecondaryBrush"),
+                    ("ComboBoxDropDownBackgroundPointerPressed", "SubtleFillColorTertiaryBrush"),
+                    ("ComboBoxFocusedDropDownBackgroundPointerOver", "ControlFillColorTertiaryBrush"),
+                    ("ComboBoxFocusedDropDownBackgroundPointerPressed", "ControlAltFillColorQuarternaryBrush"),
+                    ("ComboBoxEditableDropDownGlyphForeground", "TextFillColorSecondaryBrush"),
+                    ("ComboBoxItemPillFillBrush", "AccentFillColorDefaultBrush"));
+                AssertThemeResourceValue(themeName, "ComboBoxDropdownBorderPadding", new Thickness(0));
+            }
+
+            AssertThemeResourceReferences(
+                "HighContrast",
+                ("ComboBoxItemForeground", "SystemControlForegroundBaseHighBrush"),
+                ("ComboBoxItemForegroundPressed", "SystemControlHighlightAltBaseHighBrush"),
+                ("ComboBoxItemForegroundPointerOver", "SystemControlHighlightAltBaseHighBrush"),
+                ("ComboBoxItemForegroundDisabled", "SystemControlDisabledBaseMediumLowBrush"),
+                ("ComboBoxItemForegroundSelected", "SystemControlHighlightAltBaseHighBrush"),
+                ("ComboBoxItemForegroundSelectedUnfocused", "SystemControlHighlightAltBaseHighBrush"),
+                ("ComboBoxItemForegroundSelectedPressed", "SystemControlHighlightAltBaseHighBrush"),
+                ("ComboBoxItemForegroundSelectedPointerOver", "SystemControlHighlightAltBaseHighBrush"),
+                ("ComboBoxItemForegroundSelectedDisabled", "SystemControlDisabledBaseMediumLowBrush"),
+                ("ComboBoxItemBackground", "SystemControlTransparentBrush"),
+                ("ComboBoxItemBackgroundPressed", "SystemControlHighlightListMediumBrush"),
+                ("ComboBoxItemBackgroundPointerOver", "SystemControlHighlightListLowBrush"),
+                ("ComboBoxItemBackgroundDisabled", "SystemControlTransparentBrush"),
+                ("ComboBoxItemBackgroundSelected", "SystemControlHighlightListAccentLowBrush"),
+                ("ComboBoxItemBackgroundSelectedUnfocused", "SystemControlHighlightListAccentLowBrush"),
+                ("ComboBoxItemBackgroundSelectedPressed", "SystemControlHighlightListAccentHighBrush"),
+                ("ComboBoxItemBackgroundSelectedPointerOver", "SystemControlHighlightListAccentMediumBrush"),
+                ("ComboBoxItemBackgroundSelectedDisabled", "SystemControlTransparentBrush"),
+                ("ComboBoxItemBorderBrush", "SystemControlTransparentBrush"),
+                ("ComboBoxItemBorderBrushPressed", "SystemControlTransparentBrush"),
+                ("ComboBoxItemBorderBrushPointerOver", "SystemControlTransparentBrush"),
+                ("ComboBoxItemBorderBrushDisabled", "SystemControlTransparentBrush"),
+                ("ComboBoxItemBorderBrushSelected", "SystemControlTransparentBrush"),
+                ("ComboBoxItemBorderBrushSelectedUnfocused", "SystemControlTransparentBrush"),
+                ("ComboBoxItemBorderBrushSelectedPressed", "SystemControlTransparentBrush"),
+                ("ComboBoxItemBorderBrushSelectedPointerOver", "SystemControlTransparentBrush"),
+                ("ComboBoxItemBorderBrushSelectedDisabled", "SystemControlTransparentBrush"),
+                ("ComboBoxBackground", "SystemControlBackgroundAltMediumLowBrush"),
+                ("ComboBoxBackgroundPointerOver", "SystemControlPageBackgroundAltMediumBrush"),
+                ("ComboBoxBackgroundPressed", "SystemControlBackgroundListMediumBrush"),
+                ("ComboBoxBackgroundDisabled", "SystemControlBackgroundBaseLowBrush"),
+                ("ComboBoxBackgroundUnfocused", "SystemControlHighlightListAccentLowBrush"),
+                ("ComboBoxBackgroundFocused", "ComboBoxBackgroundUnfocused"),
+                ("ComboBoxBackgroundBorderBrushFocused", "SystemControlHighlightTransparentBrush"),
+                ("ComboBoxBackgroundBorderBrushUnfocused", "SystemControlHighlightBaseMediumLowBrush"),
+                ("ComboBoxForeground", "SystemControlForegroundBaseHighBrush"),
+                ("ComboBoxForegroundPointerOver", "SystemControlForegroundBaseHighBrush"),
+                ("ComboBoxForegroundPressed", "SystemControlForegroundBaseHighBrush"),
+                ("ComboBoxForegroundDisabled", "SystemControlDisabledBaseMediumLowBrush"),
+                ("ComboBoxForegroundFocused", "SystemControlForegroundBaseHighBrush"),
+                ("ComboBoxForegroundFocusedPressed", "SystemControlForegroundBaseHighBrush"),
+                ("ComboBoxHeaderForeground", "SystemControlForegroundBaseHighBrush"),
+                ("ComboBoxHeaderForegroundDisabled", "SystemControlDisabledBaseMediumLowBrush"),
+                ("ComboBoxPlaceHolderForeground", "SystemControlPageTextBaseMediumBrush"),
+                ("ComboBoxPlaceHolderForegroundPointerOver", "SystemControlPageTextBaseMediumBrush"),
+                ("ComboBoxPlaceHolderForegroundPressed", "SystemControlPageTextBaseMediumBrush"),
+                ("ComboBoxPlaceHolderForegroundDisabled", "SystemControlDisabledChromeDisabledLowBrush"),
+                ("ComboBoxPlaceHolderForegroundFocused", "SystemControlPageTextBaseMediumBrush"),
+                ("ComboBoxPlaceHolderForegroundFocusedPressed", "SystemControlHighlightAltBaseHighBrush"),
+                ("ComboBoxBorderBrush", "SystemControlForegroundBaseMediumBrush"),
+                ("ComboBoxBorderBrushPointerOver", "SystemControlHighlightBaseMediumHighBrush"),
+                ("ComboBoxBorderBrushPressed", "SystemControlHighlightBaseMediumBrush"),
+                ("ComboBoxBorderBrushDisabled", "SystemControlDisabledBaseLowBrush"),
+                ("ComboBoxDropDownGlyphForeground", "SystemControlForegroundBaseMediumHighBrush"),
+                ("ComboBoxDropDownGlyphForegroundDisabled", "SystemControlDisabledBaseMediumLowBrush"),
+                ("ComboBoxDropDownGlyphForegroundFocused", "SystemControlForegroundBaseHighBrush"),
+                ("ComboBoxDropDownGlyphForegroundFocusedPressed", "SystemControlForegroundBaseHighBrush"),
+                ("ComboBoxDropDownForeground", "SystemControlForegroundBaseHighBrush"),
+                ("ComboBoxDropDownBackground", "SystemControlBackgroundChromeMediumLowBrush"),
+                ("ComboBoxDropDownBorderBrush", "SystemControlForegroundChromeHighBrush"),
+                ("ComboBoxLightDismissOverlayBackground", "SystemControlPageBackgroundMediumAltMediumBrush"),
+                ("ComboBoxDropDownBackgroundPointerOver", "SystemControlPageBackgroundAltMediumBrush"),
+                ("ComboBoxDropDownBackgroundPointerPressed", "SystemControlBackgroundListMediumBrush"),
+                ("ComboBoxEditableDropDownGlyphForeground", "SystemControlForegroundBaseMediumHighBrush"),
+                ("ComboBoxItemPillFillBrush", "SystemControlHighlightListAccentLowBrush"));
+            AssertThemeResourceValue("HighContrast", "ComboBoxDropdownBorderPadding", new Thickness(0));
         });
     }
 
@@ -220,6 +356,23 @@ public class ComboBoxApiTests
         Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
         Assert.IsTrue(themeDictionary.Contains(expectedResourceKey), $"{themeName} is missing {expectedResourceKey}.");
         Assert.AreSame(themeDictionary[expectedResourceKey], themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
+    }
+
+    private static void AssertThemeResourceReferences(
+        string themeName,
+        params (string ResourceKey, string ExpectedResourceKey)[] expectedResources)
+    {
+        foreach (var expectedResource in expectedResources)
+        {
+            AssertThemeResourceReference(themeName, expectedResource.ResourceKey, expectedResource.ExpectedResourceKey);
+        }
+    }
+
+    private static void AssertThemeResourceValue(string themeName, string resourceKey, object expectedValue)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.AreEqual(expectedValue, themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
     }
 
     private static string FindRepoRoot()

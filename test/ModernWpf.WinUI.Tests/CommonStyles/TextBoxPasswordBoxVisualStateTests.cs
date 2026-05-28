@@ -5,6 +5,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Markup;
+using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
@@ -143,6 +144,80 @@ public class TextBoxPasswordBoxVisualStateTests
         Assert.IsFalse(text.Contains("TemplateButtonCommand", System.StringComparison.Ordinal));
         Assert.IsFalse(text.Contains("ControlHelper.CornerRadius", System.StringComparison.Ordinal));
         Assert.IsFalse(text.Contains("DefaultControlContextMenu", System.StringComparison.Ordinal));
+    }
+
+    [TestMethod]
+    public void ThemeResourcesUseOfficialTextControlHighContrastTokens()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            foreach (var themeName in new[] { "Light", "Dark" })
+            {
+                AssertThemeResourceReferences(
+                    themeName,
+                    ("TextControlBackground", "ControlFillColorDefaultBrush"),
+                    ("TextControlBackgroundPointerOver", "ControlFillColorSecondaryBrush"),
+                    ("TextControlBackgroundFocused", "ControlFillColorInputActiveBrush"),
+                    ("TextControlBackgroundDisabled", "ControlFillColorDisabledBrush"),
+                    ("TextControlBorderBrush", "TextControlElevationBorderBrush"),
+                    ("TextControlBorderBrushPointerOver", "TextControlElevationBorderBrush"),
+                    ("TextControlBorderBrushFocused", "TextControlElevationBorderFocusedBrush"),
+                    ("TextControlBorderBrushDisabled", "ControlStrokeColorDefaultBrush"),
+                    ("TextControlForeground", "TextFillColorPrimaryBrush"),
+                    ("TextControlForegroundPointerOver", "TextFillColorPrimaryBrush"),
+                    ("TextControlForegroundFocused", "TextFillColorPrimaryBrush"),
+                    ("TextControlPlaceholderForeground", "TextFillColorSecondaryBrush"),
+                    ("TextControlPlaceholderForegroundPointerOver", "TextFillColorSecondaryBrush"),
+                    ("TextControlPlaceholderForegroundFocused", "TextFillColorTertiaryBrush"),
+                    ("TextControlPlaceholderForegroundDisabled", "TextFillColorDisabledBrush"),
+                    ("TextControlSelectionHighlightColor", "AccentFillColorSelectedTextBackgroundBrush"),
+                    ("TextControlButtonBackground", "SubtleFillColorTransparentBrush"),
+                    ("TextControlButtonBackgroundPointerOver", "SubtleFillColorSecondaryBrush"),
+                    ("TextControlButtonBackgroundPressed", "SubtleFillColorTertiaryBrush"),
+                    ("TextControlButtonBorderBrush", "ControlFillColorTransparentBrush"),
+                    ("TextControlButtonBorderBrushPointerOver", "ControlFillColorTransparentBrush"),
+                    ("TextControlButtonBorderBrushPressed", "ControlFillColorTransparentBrush"),
+                    ("TextControlButtonForeground", "TextFillColorSecondaryBrush"),
+                    ("TextControlButtonForegroundPointerOver", "TextFillColorSecondaryBrush"),
+                    ("TextControlButtonForegroundPressed", "TextFillColorTertiaryBrush"));
+                AssertThemeSolidColorBrushColorReference(themeName, "TextControlForegroundDisabled", "TemporaryTextFillColorDisabled");
+                AssertTextControlMetricResources(themeName, new Thickness(1, 1, 1, 2));
+            }
+
+            AssertThemeResourceReferences(
+                "HighContrast",
+                ("TextControlForeground", "SystemControlForegroundBaseHighBrush"),
+                ("TextControlForegroundPointerOver", "SystemControlForegroundBaseHighBrush"),
+                ("TextControlForegroundFocused", "SystemControlForegroundBaseHighBrush"),
+                ("TextControlForegroundDisabled", "SystemControlDisabledChromeDisabledLowBrush"),
+                ("TextControlBackground", "SystemControlBackgroundAltMediumLowBrush"),
+                ("TextControlBackgroundPointerOver", "SystemControlBackgroundAltMediumBrush"),
+                ("TextControlBackgroundFocused", "SystemControlBackgroundAltHighBrush"),
+                ("TextControlBackgroundDisabled", "SystemControlBackgroundBaseLowBrush"),
+                ("TextControlBorderBrush", "SystemControlForegroundBaseMediumBrush"),
+                ("TextControlBorderBrushPointerOver", "SystemControlHighlightBaseMediumHighBrush"),
+                ("TextControlBorderBrushFocused", "SystemControlHighlightAccentBrush"),
+                ("TextControlBorderBrushDisabled", "SystemControlDisabledBaseLowBrush"),
+                ("TextControlPlaceholderForeground", "SystemControlPageTextBaseMediumBrush"),
+                ("TextControlPlaceholderForegroundPointerOver", "SystemControlPageTextBaseMediumBrush"),
+                ("TextControlPlaceholderForegroundFocused", "SystemControlForegroundBaseMediumLowBrush"),
+                ("TextControlPlaceholderForegroundDisabled", "SystemControlDisabledChromeDisabledLowBrush"),
+                ("TextControlHeaderForeground", "SystemControlForegroundBaseHighBrush"),
+                ("TextControlHeaderForegroundDisabled", "SystemControlDisabledBaseMediumLowBrush"),
+                ("TextControlSelectionHighlightColor", "SystemControlHighlightAccentBrush"),
+                ("TextControlButtonBackground", "SystemControlTransparentBrush"),
+                ("TextControlButtonBackgroundPointerOver", "SystemControlTransparentBrush"),
+                ("TextControlButtonBackgroundPressed", "SystemControlHighlightAccentBrush"),
+                ("TextControlButtonBorderBrush", "SystemControlTransparentBrush"),
+                ("TextControlButtonBorderBrushPointerOver", "SystemControlTransparentBrush"),
+                ("TextControlButtonBorderBrushPressed", "SystemControlTransparentBrush"),
+                ("TextControlButtonForeground", "SystemControlForegroundBaseMediumHighBrush"),
+                ("TextControlButtonForegroundPointerOver", "SystemControlHighlightAccentBrush"),
+                ("TextControlButtonForegroundPressed", "SystemControlHighlightAltChromeWhiteBrush"));
+            AssertTextControlMetricResources("HighContrast", new Thickness(2));
+        });
     }
 
     private static void AssertTextBoxStyleSetters(TextBox textBox)
@@ -347,6 +422,54 @@ public class TextBoxPasswordBoxVisualStateTests
         Assert.IsInstanceOfType(setter.Value, typeof(DynamicResourceExtension));
         var dynamicResource = (DynamicResourceExtension)setter.Value;
         Assert.AreEqual(resourceKey, dynamicResource.ResourceKey);
+    }
+
+    private static void AssertTextControlMetricResources(string themeName, Thickness focusedBorderThickness)
+    {
+        AssertThemeResourceValue(themeName, "TextControlBorderThemeThickness", new Thickness(1));
+        AssertThemeResourceValue(themeName, "TextControlBorderThemeThicknessFocused", focusedBorderThickness);
+        AssertThemeResourceValue(themeName, "TextControlThemePadding", new Thickness(10, 5, 6, 6));
+        AssertThemeResourceValue(themeName, "TextControlThemeMinWidth", 64.0);
+        AssertThemeResourceValue(themeName, "TextControlMarginThemeThickness", new Thickness(0, 9.5, 0, 9.5));
+        AssertThemeResourceValue(themeName, "HelperButtonThemePadding", new Thickness(0, 0, -2, 0));
+    }
+
+    private static void AssertThemeResourceReferences(
+        string themeName,
+        params (string ResourceKey, string ExpectedResourceKey)[] expectedResources)
+    {
+        foreach (var expectedResource in expectedResources)
+        {
+            AssertThemeResourceReference(themeName, expectedResource.ResourceKey, expectedResource.ExpectedResourceKey);
+        }
+    }
+
+    private static void AssertThemeResourceReference(string themeName, string resourceKey, string expectedResourceKey)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.IsTrue(themeDictionary.Contains(expectedResourceKey), $"{themeName} is missing {expectedResourceKey}.");
+        Assert.AreSame(themeDictionary[expectedResourceKey], themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
+    }
+
+    private static void AssertThemeResourceValue(string themeName, string resourceKey, object expectedValue)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.AreEqual(expectedValue, themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
+    }
+
+    private static void AssertThemeSolidColorBrushColorReference(string themeName, string resourceKey, string expectedColorResourceKey)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.IsTrue(themeDictionary.Contains(expectedColorResourceKey), $"{themeName} is missing {expectedColorResourceKey}.");
+        Assert.IsInstanceOfType(themeDictionary[resourceKey], typeof(SolidColorBrush), $"{themeName}:{resourceKey}");
+        Assert.AreEqual(
+            themeDictionary[expectedColorResourceKey],
+            ((SolidColorBrush)themeDictionary[resourceKey]).Color,
+            $"{themeName}:{resourceKey}");
     }
 
     private static T GetTemplateChild<T>(Control control, string name)

@@ -2,6 +2,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Markup;
+using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls.Primitives;
 using ModernWpf.WinUI.TestApp;
@@ -59,11 +60,13 @@ public class HyperlinkVisualStateTests
             {
                 AssertThemeResourceReference(themeName, "HyperlinkForeground", "AccentTextFillColorPrimaryBrush");
                 AssertThemeResourceReference(themeName, "HyperlinkForegroundPointerOver", "AccentTextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "HyperlinkForegroundPressed", "AccentTextFillColorTertiaryBrush");
                 AssertThemeResourceReference(themeName, "HyperlinkForegroundDisabled", "TextFillColorDisabledBrush");
             }
 
             AssertThemeResourceReference("HighContrast", "HyperlinkForeground", "SystemControlHyperlinkTextBrush");
             AssertThemeResourceReference("HighContrast", "HyperlinkForegroundPointerOver", "SystemControlHyperlinkTextBrush");
+            AssertThemeSolidColorBrushColorReference("HighContrast", "HyperlinkForegroundPressed", "SystemColorHighlightColor");
             AssertThemeResourceReference("HighContrast", "HyperlinkForegroundDisabled", "SystemColorGrayTextColorBrush");
         });
     }
@@ -152,7 +155,18 @@ public class HyperlinkVisualStateTests
     private static void AssertThemeResourceReference(string themeName, string key, object expectedResourceKey)
     {
         var theme = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(theme.Contains(key), $"Theme is missing {key}.");
         Assert.IsTrue(theme.Contains(expectedResourceKey), $"Theme is missing {expectedResourceKey}.");
         Assert.AreSame(theme[expectedResourceKey], theme[key], key);
+    }
+
+    private static void AssertThemeSolidColorBrushColorReference(string themeName, string key, object expectedColorResourceKey)
+    {
+        var theme = ThemeResources.Current.GetThemeDictionary(themeName);
+
+        Assert.IsTrue(theme.Contains(key), $"Theme is missing {key}.");
+        Assert.IsTrue(theme.Contains(expectedColorResourceKey), $"Theme is missing {expectedColorResourceKey}.");
+        Assert.IsInstanceOfType(theme[key], typeof(SolidColorBrush), $"{themeName}:{key}");
+        Assert.AreEqual(theme[expectedColorResourceKey], ((SolidColorBrush)theme[key]).Color, $"{themeName}:{key}");
     }
 }
