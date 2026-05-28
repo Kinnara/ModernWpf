@@ -1,3 +1,4 @@
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
@@ -190,6 +191,90 @@ public class BreadcrumbBarApiTests
             Assert.IsFalse(FocusVisualHelper.GetIsTemplateFocusTarget(itemButton));
             Assert.IsTrue(FocusVisualHelper.GetIsTemplateFocusTarget(root));
             Assert.AreEqual(new Thickness(-3), FocusVisualHelper.GetFocusVisualMargin(root));
+        });
+    }
+
+    [TestMethod]
+    public void BreadcrumbBarItemStyleUsesWinUIResourceAliases()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var resources = new ResourceDictionary
+            {
+                Source = new Uri("/ModernWpf.Controls;component/BreadcrumbBar/BreadcrumbBar.xaml", UriKind.Relative)
+            };
+            var itemStyle = (Style)resources["DefaultBreadcrumbBarItemStyle"];
+            var item = new ModernWpf.Controls.BreadcrumbBarItem
+            {
+                Content = "Node",
+                Style = itemStyle
+            };
+            item.Resources.MergedDictionaries.Add(resources);
+
+            using var host = new TestWindowHost(item, width: 240, height: 80);
+            host.UpdateLayout();
+
+            AssertDynamicResourceSetter(itemStyle, Control.BackgroundProperty, "BreadcrumbBarBackgroundBrush");
+            AssertDynamicResourceSetter(itemStyle, Control.BorderBrushProperty, "BreadcrumbBarBorderBrush");
+            AssertDynamicResourceSetter(itemStyle, Control.FontFamilyProperty, "ContentControlThemeFontFamily");
+            AssertDynamicResourceSetter(itemStyle, Control.FontSizeProperty, "BreadcrumbBarItemThemeFontSize");
+            AssertDynamicResourceSetter(itemStyle, Control.ForegroundProperty, "BreadcrumbBarForegroundBrush");
+            AssertDynamicResourceSetter(itemStyle, BreadcrumbBarItem.UseSystemFocusVisualsProperty, "UseSystemFocusVisuals");
+            AssertDynamicResourceSetter(itemStyle, BreadcrumbBarItem.CornerRadiusProperty, "ControlCornerRadius");
+
+            Assert.AreSame(item.TryFindResource("BreadcrumbBarBackgroundBrush"), item.Background);
+            Assert.AreSame(item.TryFindResource("BreadcrumbBarBorderBrush"), item.BorderBrush);
+            Assert.AreSame(item.TryFindResource("ContentControlThemeFontFamily"), item.FontFamily);
+            Assert.AreEqual(item.TryFindResource("BreadcrumbBarItemThemeFontSize"), item.FontSize);
+            Assert.AreEqual(item.TryFindResource("BreadcrumbBarItemFontWeight"), item.FontWeight);
+            Assert.AreSame(item.TryFindResource("BreadcrumbBarForegroundBrush"), item.Foreground);
+            Assert.AreEqual(item.TryFindResource("UseSystemFocusVisuals"), item.UseSystemFocusVisuals);
+            Assert.AreEqual(item.TryFindResource("ControlCornerRadius"), item.CornerRadius);
+            Assert.AreEqual(new Thickness(1), item.FocusVisualMargin);
+
+            AssertResourceAlias(item, "BreadcrumbBarNormalForegroundBrush", "TextFillColorPrimaryBrush");
+            AssertResourceAlias(item, "BreadcrumbBarHoverForegroundBrush", "TextFillColorSecondaryBrush");
+            AssertResourceAlias(item, "BreadcrumbBarPressedForegroundBrush", "TextFillColorTertiaryBrush");
+            AssertResourceAlias(item, "BreadcrumbBarDisabledForegroundBrush", "TextFillColorDisabledBrush");
+            AssertResourceAlias(item, "BreadcrumbBarFocusForegroundBrush", "TextFillColorPrimaryBrush");
+            AssertResourceAlias(item, "BreadcrumbBarCurrentNormalForegroundBrush", "TextFillColorPrimaryBrush");
+            AssertResourceAlias(item, "BreadcrumbBarCurrentHoverForegroundBrush", "TextFillColorSecondaryBrush");
+            AssertResourceAlias(item, "BreadcrumbBarCurrentPressedForegroundBrush", "TextFillColorTertiaryBrush");
+            AssertResourceAlias(item, "BreadcrumbBarCurrentDisabledForegroundBrush", "TextFillColorDisabledBrush");
+            AssertResourceAlias(item, "BreadcrumbBarCurrentFocusForegroundBrush", "TextFillColorPrimaryBrush");
+            AssertResourceAlias(item, "BreadcrumbBarEllipsisDropDownItemBackground", "SubtleFillColorTransparentBrush");
+            AssertResourceAlias(item, "BreadcrumbBarEllipsisDropDownItemBackgroundPointerOver", "SubtleFillColorSecondaryBrush");
+            AssertResourceAlias(item, "BreadcrumbBarEllipsisDropDownItemBackgroundPressed", "SubtleFillColorTertiaryBrush");
+            AssertResourceAlias(item, "BreadcrumbBarEllipsisDropDownItemBackgroundDisabled", "SubtleFillColorTransparentBrush");
+            AssertResourceAlias(item, "BreadcrumbBarEllipsisDropDownItemForegroundPointerOver", "TextFillColorPrimaryBrush");
+            AssertResourceAlias(item, "BreadcrumbBarEllipsisDropDownItemForegroundPressed", "TextFillColorPrimaryBrush");
+            AssertResourceAlias(item, "BreadcrumbBarEllipsisDropDownItemForegroundDisabled", "TextFillColorDisabledBrush");
+            AssertResourceAlias(item, "BreadcrumbBarForegroundBrush", "TextFillColorPrimaryBrush");
+            AssertResourceAlias(item, "BreadcrumbBarEllipsisFlyoutPresenterBackground", "AcrylicBackgroundFillColorDefaultBrush");
+            AssertResourceAlias(item, "BreadcrumbBarEllipsisFlyoutPresenterBorderBrush", "SurfaceStrokeColorFlyoutBrush");
+            AssertResourceAlias(item, "BreadcrumbBarItemThemeFontSize", "ControlContentThemeFontSize");
+            AssertSolidColorBrush(item.TryFindResource("BreadcrumbBarBackgroundBrush"), Colors.Transparent);
+            AssertSolidColorBrush(item.TryFindResource("BreadcrumbBarBorderBrush"), Colors.Transparent);
+            Assert.AreEqual(new Thickness(1), item.TryFindResource("BreadcrumbBarEllipsisFlyoutPresenterBorderThemeThickness"));
+            Assert.AreEqual(12.0, item.TryFindResource("BreadcrumbBarChevronFontSize"));
+            Assert.AreEqual(new Thickness(2, 0, 2, 0), item.TryFindResource("BreadcrumbBarChevronPadding"));
+            Assert.AreEqual("\uE974", item.TryFindResource("BreadcrumbBarChevronLeftToRight"));
+            Assert.AreEqual("\uE973", item.TryFindResource("BreadcrumbBarChevronRightToLeft"));
+
+            var itemButton = FindTemplatePart<Button>(item, "PART_ItemButton");
+            AssertDynamicResourceSetter(itemButton.Style!, Control.ForegroundProperty, "BreadcrumbBarNormalForegroundBrush");
+            AssertDynamicResourceSetter(itemButton.Style!, Control.BackgroundProperty, "BreadcrumbBarBackgroundBrush");
+            AssertDynamicResourceSetter(itemButton.Style!, Control.BorderBrushProperty, "BreadcrumbBarBorderBrush");
+            AssertDynamicResourceSetter(itemButton.Style!, Control.FontFamilyProperty, "ContentControlThemeFontFamily");
+            AssertDynamicResourceSetter(itemButton.Style!, Control.FontSizeProperty, "BreadcrumbBarItemThemeFontSize");
+
+            var lastItemPresenter = FindTemplatePart<ContentPresenterEx>(item, "PART_LastItemContentPresenter");
+            Assert.AreSame(item.TryFindResource("BreadcrumbBarCurrentNormalForegroundBrush"), lastItemPresenter.Foreground);
+
+            var chevronTextBlock = FindTemplatePart<TextBlock>(item, "PART_ChevronTextBlock");
+            Assert.AreEqual(item.TryFindResource("BreadcrumbBarChevronFontSize"), chevronTextBlock.FontSize);
+            Assert.AreSame(item.TryFindResource("BreadcrumbBarNormalForegroundBrush"), chevronTextBlock.Foreground);
+            Assert.AreEqual(item.TryFindResource("BreadcrumbBarChevronPadding"), chevronTextBlock.Padding);
         });
     }
 
@@ -419,6 +504,31 @@ public class BreadcrumbBarApiTests
         }
 
         Assert.Fail($"Expected visual state '{groupName}.{stateName}' to contain setter '{expectedTarget}'.");
+    }
+
+    private static void AssertDynamicResourceSetter(Style style, DependencyProperty property, object expectedResourceKey)
+    {
+        Assert.IsNotNull(style, $"Expected style for {property.Name}.");
+        var setter = style.Setters.OfType<Setter>().SingleOrDefault(setter => setter.Property == property);
+        Assert.IsNotNull(setter, $"Expected local setter for {property.Name}.");
+
+        var dynamicResource = setter!.Value as DynamicResourceExtension;
+        Assert.IsNotNull(dynamicResource, $"Expected {property.Name} to use a dynamic resource.");
+        Assert.AreEqual(expectedResourceKey, dynamicResource!.ResourceKey);
+    }
+
+    private static void AssertResourceAlias(FrameworkElement element, object resourceKey, object expectedResourceKey)
+    {
+        Assert.AreSame(
+            element.TryFindResource(expectedResourceKey),
+            element.TryFindResource(resourceKey),
+            $"Unexpected resource alias for {resourceKey}.");
+    }
+
+    private static void AssertSolidColorBrush(object value, Color expectedColor)
+    {
+        Assert.IsInstanceOfType(value, typeof(SolidColorBrush));
+        Assert.AreEqual(expectedColor, ((SolidColorBrush)value).Color);
     }
 
     private static VisualStateGroup? FindVisualStateGroup(FrameworkElement stateGroupsRoot, string groupName)
