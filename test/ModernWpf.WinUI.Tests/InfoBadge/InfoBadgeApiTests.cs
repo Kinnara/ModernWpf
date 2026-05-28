@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -106,6 +107,29 @@ public class InfoBadgeApiTests
     {
         WpfTestHost.Run(() =>
         {
+            TestApplication.EnsureInitialized();
+
+            var resources = (ResourceDictionary)Application.LoadComponent(
+                new Uri("/ModernWpf.Controls;component/InfoBadge/InfoBadge.xaml", UriKind.Relative));
+            var defaultStyle = (Style)resources["DefaultInfoBadgeStyle"];
+            var implicitStyle = (Style)resources[typeof(ModernWpf.Controls.InfoBadge)];
+
+            Assert.AreEqual(typeof(ModernWpf.Controls.InfoBadge), defaultStyle.TargetType);
+            Assert.AreEqual(typeof(ModernWpf.Controls.InfoBadge), implicitStyle.TargetType);
+            Assert.AreSame(defaultStyle, implicitStyle.BasedOn);
+            AssertDynamicResourceSetter(defaultStyle, FrameworkElement.MinHeightProperty, "InfoBadgeMinHeight");
+            AssertDynamicResourceSetter(defaultStyle, FrameworkElement.MinWidthProperty, "InfoBadgeMinWidth");
+            AssertDynamicResourceSetter(defaultStyle, FrameworkElement.MaxHeightProperty, "InfoBadgeMaxHeight");
+            AssertDynamicResourceSetter(defaultStyle, Control.BackgroundProperty, "InfoBadgeBackground");
+            AssertDynamicResourceSetter(defaultStyle, Control.ForegroundProperty, "InfoBadgeForeground");
+            AssertDynamicResourceSetter(defaultStyle, Control.PaddingProperty, "InfoBadgePadding");
+            AssertSetterValue(defaultStyle, Control.IsTabStopProperty, false);
+
+            var template = GetSetterValue(defaultStyle, Control.TemplateProperty) as ControlTemplate;
+            Assert.IsNotNull(template);
+            Assert.AreEqual(typeof(ModernWpf.Controls.InfoBadge), template!.TargetType);
+            AssertInfoBadgeVariantStyles(resources, defaultStyle);
+
             var infoBadge = new ModernWpf.Controls.InfoBadge
             {
                 IconSource = new SymbolIconSource { Symbol = Symbol.Setting }
@@ -132,6 +156,63 @@ public class InfoBadgeApiTests
             Assert.IsInstanceOfType(presenter.Content, typeof(SymbolIcon));
             Assert.IsFalse(ContainsPlainContentPresenter(infoBadge));
         });
+    }
+
+    private static void AssertInfoBadgeVariantStyles(ResourceDictionary resources, Style defaultStyle)
+    {
+        AssertDotStyle(resources, "AttentionDotInfoBadgeStyle", defaultStyle, "SystemFillColorAttentionBrush");
+        AssertValueStyle(resources, "AttentionValueInfoBadgeStyle", "AttentionDotInfoBadgeStyle");
+        AssertFontIconStyle(resources, "AttentionIconInfoBadgeStyle", "AttentionDotInfoBadgeStyle", "\uEA38");
+
+        AssertDotStyle(resources, "InformationalDotInfoBadgeStyle", defaultStyle, "SystemFillColorSolidNeutralBrush");
+        AssertValueStyle(resources, "InformationalValueInfoBadgeStyle", "InformationalDotInfoBadgeStyle");
+        AssertFontIconStyle(resources, "InformationalIconInfoBadgeStyle", "InformationalDotInfoBadgeStyle", "\uF13F");
+
+        AssertDotStyle(resources, "SuccessDotInfoBadgeStyle", defaultStyle, "SystemFillColorSuccessBrush");
+        AssertValueStyle(resources, "SuccessValueInfoBadgeStyle", "SuccessDotInfoBadgeStyle");
+        AssertSymbolIconStyle(resources, "SuccessIconInfoBadgeStyle", "SuccessDotInfoBadgeStyle", Symbol.Accept);
+
+        AssertDotStyle(resources, "CautionDotInfoBadgeStyle", defaultStyle, "SystemFillColorCautionBrush");
+        AssertValueStyle(resources, "CautionValueInfoBadgeStyle", "CautionDotInfoBadgeStyle");
+        AssertSymbolIconStyle(resources, "CautionIconInfoBadgeStyle", "CautionDotInfoBadgeStyle", Symbol.Important);
+
+        AssertDotStyle(resources, "CriticalDotInfoBadgeStyle", defaultStyle, "SystemFillColorCriticalBrush");
+        AssertValueStyle(resources, "CriticalValueInfoBadgeStyle", "CriticalDotInfoBadgeStyle");
+        AssertSymbolIconStyle(resources, "CriticalIconInfoBadgeStyle", "CriticalDotInfoBadgeStyle", Symbol.Cancel);
+    }
+
+    private static void AssertDotStyle(ResourceDictionary resources, string styleKey, Style expectedBasedOn, object expectedBackgroundResourceKey)
+    {
+        var style = (Style)resources[styleKey];
+        Assert.AreSame(expectedBasedOn, style.BasedOn, styleKey);
+        AssertDynamicResourceSetter(style, Control.BackgroundProperty, expectedBackgroundResourceKey);
+    }
+
+    private static void AssertValueStyle(ResourceDictionary resources, string styleKey, string expectedBasedOnKey)
+    {
+        var style = (Style)resources[styleKey];
+        Assert.AreSame(resources[expectedBasedOnKey], style.BasedOn, styleKey);
+    }
+
+    private static void AssertFontIconStyle(ResourceDictionary resources, string styleKey, string expectedBasedOnKey, string expectedGlyph)
+    {
+        var style = (Style)resources[styleKey];
+        Assert.AreSame(resources[expectedBasedOnKey], style.BasedOn, styleKey);
+        AssertSetterValue(style, Control.PaddingProperty, new Thickness(0, 4, 0, 2));
+
+        var iconSource = GetSetterValue(style, ModernWpf.Controls.InfoBadge.IconSourceProperty) as FontIconSource;
+        Assert.IsNotNull(iconSource, styleKey);
+        Assert.AreEqual(expectedGlyph, iconSource!.Glyph, styleKey);
+    }
+
+    private static void AssertSymbolIconStyle(ResourceDictionary resources, string styleKey, string expectedBasedOnKey, Symbol expectedSymbol)
+    {
+        var style = (Style)resources[styleKey];
+        Assert.AreSame(resources[expectedBasedOnKey], style.BasedOn, styleKey);
+
+        var iconSource = GetSetterValue(style, ModernWpf.Controls.InfoBadge.IconSourceProperty) as SymbolIconSource;
+        Assert.IsNotNull(iconSource, styleKey);
+        Assert.AreEqual(expectedSymbol, iconSource!.Symbol, styleKey);
     }
 
     [TestMethod]
@@ -246,6 +327,42 @@ public class InfoBadgeApiTests
         }
 
         return false;
+    }
+
+    private static object GetSetterValue(Style style, DependencyProperty property)
+    {
+        var setter = FindSetter(style, property);
+        Assert.IsNotNull(setter, $"Expected setter for {property.Name}.");
+        return setter!.Value;
+    }
+
+    private static void AssertSetterValue(Style style, DependencyProperty property, object expectedValue)
+    {
+        Assert.AreEqual(expectedValue, GetSetterValue(style, property));
+    }
+
+    private static void AssertDynamicResourceSetter(Style style, DependencyProperty property, object expectedResourceKey)
+    {
+        var dynamicResource = GetSetterValue(style, property) as DynamicResourceExtension;
+        Assert.IsNotNull(dynamicResource, $"Expected dynamic resource setter for {property.Name}.");
+        Assert.AreEqual(expectedResourceKey, dynamicResource!.ResourceKey);
+    }
+
+    private static Setter? FindSetter(Style style, DependencyProperty property)
+    {
+        for (var current = style; current != null; current = current.BasedOn)
+        {
+            var setter = current.Setters
+                .OfType<Setter>()
+                .FirstOrDefault(item => item.Property == property);
+
+            if (setter != null)
+            {
+                return setter;
+            }
+        }
+
+        return null;
     }
 
     private static void AssertThemeResourceReference(string themeName, string resourceKey, object expectedResourceKey)
