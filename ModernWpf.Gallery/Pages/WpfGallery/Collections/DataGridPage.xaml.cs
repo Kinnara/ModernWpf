@@ -12,8 +12,9 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
             ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
+
             SystemEvents.UserPreferenceChanged += SystemEvents_UserPreferenceChanged;
-            Loaded += OnLoaded;
+            this.Loaded += (s, e) => UpdatePageVisuals();
             Unloaded += OnUnloaded;
         }
 
@@ -25,15 +26,9 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
             });
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
-        {
-            UpdatePageVisuals();
-        }
-
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             SystemEvents.UserPreferenceChanged -= SystemEvents_UserPreferenceChanged;
-            Loaded -= OnLoaded;
             Unloaded -= OnUnloaded;
         }
 

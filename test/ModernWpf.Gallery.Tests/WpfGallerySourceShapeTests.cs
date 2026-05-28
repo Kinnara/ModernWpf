@@ -2520,8 +2520,9 @@ namespace ModernWpf.Gallery.Tests
                 "DataGridPage.xaml.cs");
             AssertContainsInOrder(
                 dataGridSource,
+                "InitializeComponent();",
                 "SystemEvents.UserPreferenceChanged += SystemEvents_UserPreferenceChanged;",
-                "Loaded += OnLoaded;",
+                "this.Loaded += (s, e) => UpdatePageVisuals();",
                 "Unloaded += OnUnloaded;",
                 "private void SystemEvents_UserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)",
                 "Dispatcher.Invoke(() =>",
