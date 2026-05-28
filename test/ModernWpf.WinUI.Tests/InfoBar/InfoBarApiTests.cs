@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Automation.Peers;
@@ -260,6 +261,130 @@ public class InfoBarApiTests
     }
 
     [TestMethod]
+    public void InfoBarStyleUsesWinUIResourceAliases()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var resources = new ResourceDictionary
+            {
+                Source = new Uri("/ModernWpf.Controls;component/InfoBar/InfoBar.xaml", UriKind.Relative)
+            };
+            var infoBarStyle = (Style)resources[typeof(ModernWpf.Controls.InfoBar)];
+            var closeButtonStyle = (Style)resources["InfoBarCloseButtonStyle"];
+            var infoBar = new ModernWpf.Controls.InfoBar
+            {
+                IsOpen = true,
+                Style = infoBarStyle
+            };
+            infoBar.Resources.MergedDictionaries.Add(resources);
+
+            using var host = new TestWindowHost(infoBar, width: 400, height: 120);
+            host.UpdateLayout();
+
+            Assert.AreEqual(typeof(ModernWpf.Controls.InfoBar), infoBarStyle.TargetType);
+            AssertSetterValue(infoBarStyle, Control.IsTabStopProperty, false);
+            AssertSetterValue(infoBarStyle, ModernWpf.Controls.InfoBar.CloseButtonStyleProperty, closeButtonStyle);
+            AssertSolidColorBrushSetterColor(infoBarStyle, Control.BackgroundProperty, Colors.Transparent);
+            AssertDynamicResourceSetter(infoBarStyle, Control.BorderBrushProperty, "InfoBarBorderBrush");
+            AssertDynamicResourceSetter(infoBarStyle, Control.BorderThicknessProperty, "InfoBarBorderThickness");
+            AssertDynamicResourceSetter(infoBarStyle, ModernWpf.Controls.InfoBar.CornerRadiusProperty, "ControlCornerRadius");
+            var infoBarTemplate = GetSetterValue(infoBarStyle, Control.TemplateProperty) as ControlTemplate;
+            Assert.IsNotNull(infoBarTemplate);
+            Assert.AreEqual(typeof(ModernWpf.Controls.InfoBar), infoBarTemplate!.TargetType);
+
+            Assert.AreEqual(typeof(ButtonBase), closeButtonStyle.TargetType);
+            AssertDynamicResourceSetter(closeButtonStyle, Control.FocusVisualStyleProperty, SystemParameters.FocusVisualStyleKey);
+            AssertDynamicResourceSetter(closeButtonStyle, Control.BackgroundProperty, "ButtonBackground");
+            AssertDynamicResourceSetter(closeButtonStyle, Control.ForegroundProperty, "ButtonForeground");
+            AssertDynamicResourceSetter(closeButtonStyle, Control.BorderBrushProperty, "ButtonBorderBrush");
+            AssertDynamicResourceSetter(closeButtonStyle, Control.BorderThicknessProperty, "ButtonBorderThemeThickness");
+            AssertDynamicResourceSetter(closeButtonStyle, Control.PaddingProperty, "ButtonPadding");
+            AssertDynamicResourceSetter(closeButtonStyle, FocusVisualHelper.UseSystemFocusVisualsProperty, "UseSystemFocusVisuals");
+            AssertDynamicResourceSetter(closeButtonStyle, System.Windows.Controls.Border.CornerRadiusProperty, "ControlCornerRadius");
+            AssertSetterValue(closeButtonStyle, FocusVisualHelper.FocusVisualMarginProperty, new Thickness(-3));
+            AssertSetterValue(closeButtonStyle, FrameworkElement.WidthProperty, resources["InfoBarCloseButtonSize"]);
+            AssertSetterValue(closeButtonStyle, FrameworkElement.HeightProperty, resources["InfoBarCloseButtonSize"]);
+            AssertSetterValue(closeButtonStyle, FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Top);
+            AssertSetterValue(closeButtonStyle, FrameworkElement.MarginProperty, new Thickness(5));
+            var closeButtonTemplate = GetSetterValue(closeButtonStyle, Control.TemplateProperty) as ControlTemplate;
+            Assert.IsNotNull(closeButtonTemplate);
+            Assert.AreEqual(typeof(ButtonBase), closeButtonTemplate!.TargetType);
+
+            AssertResourceReference(infoBar, "InfoBarBorderBrush", "CardStrokeColorDefaultBrush");
+            AssertResourceReference(infoBar, "InfoBarTitleForeground", "TextFillColorPrimaryBrush");
+            AssertResourceReference(infoBar, "InfoBarMessageForeground", "TextFillColorPrimaryBrush");
+            AssertResourceReference(infoBar, "InfoBarHyperlinkButtonForeground", "AccentTextFillColorPrimaryBrush");
+            AssertResourceReference(infoBar, "InfoBarErrorSeverityBackgroundBrush", "SystemFillColorCriticalBackgroundBrush");
+            AssertResourceReference(infoBar, "InfoBarWarningSeverityBackgroundBrush", "SystemFillColorCautionBackgroundBrush");
+            AssertResourceReference(infoBar, "InfoBarSuccessSeverityBackgroundBrush", "SystemFillColorSuccessBackgroundBrush");
+            AssertResourceReference(infoBar, "InfoBarInformationalSeverityBackgroundBrush", "SystemFillColorAttentionBackgroundBrush");
+            AssertResourceReference(infoBar, "InfoBarErrorSeverityIconBackground", "SystemFillColorCriticalBrush");
+            AssertResourceReference(infoBar, "InfoBarWarningSeverityIconBackground", "SystemFillColorCautionBrush");
+            AssertResourceReference(infoBar, "InfoBarSuccessSeverityIconBackground", "SystemFillColorSuccessBrush");
+            AssertResourceReference(infoBar, "InfoBarInformationalSeverityIconBackground", "SystemFillColorAttentionBrush");
+            AssertResourceReference(infoBar, "InfoBarErrorSeverityIconForeground", "TextFillColorInverseBrush");
+            AssertResourceReference(infoBar, "InfoBarWarningSeverityIconForeground", "TextFillColorInverseBrush");
+            AssertResourceReference(infoBar, "InfoBarSuccessSeverityIconForeground", "TextFillColorInverseBrush");
+            AssertResourceReference(infoBar, "InfoBarInformationalSeverityIconForeground", "TextFillColorInverseBrush");
+
+            Assert.IsFalse(infoBar.IsTabStop);
+            Assert.AreSame(closeButtonStyle, infoBar.CloseButtonStyle);
+            Assert.AreSame(infoBar.TryFindResource("InfoBarBorderBrush"), infoBar.BorderBrush);
+            Assert.AreEqual(infoBar.TryFindResource("InfoBarBorderThickness"), infoBar.BorderThickness);
+            Assert.AreEqual(infoBar.TryFindResource("ControlCornerRadius"), infoBar.CornerRadius);
+
+            var contentRoot = FindNamedDescendant<Border>(infoBar, "ContentRoot");
+            var layoutRoot = FindDescendant<GridEx>(infoBar);
+            var iconBackground = FindNamedDescendant<TextBlock>(infoBar, "IconBackground");
+            var standardIcon = FindNamedDescendant<TextBlock>(infoBar, "StandardIcon");
+            var closeButton = FindNamedDescendant<Button>(infoBar, "CloseButton");
+
+            Assert.AreSame(infoBar.TryFindResource("InfoBarInformationalSeverityBackgroundBrush"), contentRoot.Background);
+            Assert.AreSame(infoBar.BorderBrush, contentRoot.BorderBrush);
+            Assert.AreEqual(infoBar.BorderThickness, contentRoot.BorderThickness);
+            Assert.AreEqual(infoBar.CornerRadius, contentRoot.CornerRadius);
+            Assert.AreEqual(resources["InfoBarMinHeight"], layoutRoot.MinHeight);
+            Assert.AreEqual(resources["InfoBarContentRootPadding"], layoutRoot.Padding);
+            Assert.AreEqual(infoBar.CornerRadius, layoutRoot.CornerRadius);
+            Assert.AreSame(infoBar.TryFindResource("InfoBarInformationalSeverityIconBackground"), iconBackground.Foreground);
+            Assert.AreSame(infoBar.TryFindResource("InfoBarInformationalSeverityIconForeground"), standardIcon.Foreground);
+            Assert.AreEqual(resources["InfoBarInformationalIconGlyph"], standardIcon.Text);
+
+            Assert.AreSame(closeButtonStyle, closeButton.Style);
+            AssertResourceReference(closeButton, "ButtonBackground", "AppBarButtonBackground");
+            AssertResourceReference(closeButton, "ButtonForeground", "AppBarButtonForeground");
+            AssertResourceReference(closeButton, "ButtonBorderBrush", "AppBarButtonBorderBrush");
+            Assert.AreSame(closeButton.TryFindResource("ButtonBackground"), closeButton.Background);
+            Assert.AreSame(closeButton.TryFindResource("ButtonForeground"), closeButton.Foreground);
+            Assert.AreSame(closeButton.TryFindResource("ButtonBorderBrush"), closeButton.BorderBrush);
+            Assert.AreEqual(closeButton.TryFindResource("ButtonBorderThemeThickness"), closeButton.BorderThickness);
+            Assert.AreEqual(closeButton.TryFindResource("ButtonPadding"), closeButton.Padding);
+            Assert.AreEqual(resources["InfoBarCloseButtonSize"], closeButton.Width);
+            Assert.AreEqual(resources["InfoBarCloseButtonSize"], closeButton.Height);
+            Assert.AreEqual(new Thickness(5), closeButton.Margin);
+            Assert.AreEqual(VerticalAlignment.Top, closeButton.VerticalAlignment);
+            Assert.AreEqual(closeButton.TryFindResource("UseSystemFocusVisuals"), FocusVisualHelper.GetUseSystemFocusVisuals(closeButton));
+            Assert.AreEqual(new Thickness(-3), FocusVisualHelper.GetFocusVisualMargin(closeButton));
+            Assert.AreEqual(closeButton.TryFindResource("ControlCornerRadius"), closeButton.GetValue(System.Windows.Controls.Border.CornerRadiusProperty));
+
+            AssertStateSetterDynamicResource(contentRoot, "SeverityLevels", "Error", "ContentRoot.Background", "InfoBarErrorSeverityBackgroundBrush");
+            AssertStateSetterDynamicResource(contentRoot, "SeverityLevels", "Error", "IconBackground.Foreground", "InfoBarErrorSeverityIconBackground");
+            AssertStateSetterValue(contentRoot, "SeverityLevels", "Error", "StandardIcon.Text", resources["InfoBarErrorIconGlyph"]);
+            AssertStateSetterDynamicResource(contentRoot, "SeverityLevels", "Error", "StandardIcon.Foreground", "InfoBarErrorSeverityIconForeground");
+            AssertStateSetterDynamicResource(contentRoot, "SeverityLevels", "Warning", "ContentRoot.Background", "InfoBarWarningSeverityBackgroundBrush");
+            AssertStateSetterDynamicResource(contentRoot, "SeverityLevels", "Warning", "IconBackground.Foreground", "InfoBarWarningSeverityIconBackground");
+            AssertStateSetterValue(contentRoot, "SeverityLevels", "Warning", "StandardIcon.Text", resources["InfoBarWarningIconGlyph"]);
+            AssertStateSetterDynamicResource(contentRoot, "SeverityLevels", "Warning", "StandardIcon.Foreground", "InfoBarWarningSeverityIconForeground");
+            AssertStateSetterDynamicResource(contentRoot, "SeverityLevels", "Success", "ContentRoot.Background", "InfoBarSuccessSeverityBackgroundBrush");
+            AssertStateSetterDynamicResource(contentRoot, "SeverityLevels", "Success", "IconBackground.Foreground", "InfoBarSuccessSeverityIconBackground");
+            AssertStateSetterValue(contentRoot, "SeverityLevels", "Success", "StandardIcon.Text", resources["InfoBarSuccessIconGlyph"]);
+            AssertStateSetterDynamicResource(contentRoot, "SeverityLevels", "Success", "StandardIcon.Foreground", "InfoBarSuccessSeverityIconForeground");
+        });
+    }
+
+    [TestMethod]
     public void InfoBarHighContrastTemplateResourcesUseSystemColorTokens()
     {
         WpfTestHost.Run(() =>
@@ -444,5 +569,83 @@ public class InfoBarApiTests
         var brush = element.TryFindResource(resourceKey) as SolidColorBrush;
         Assert.IsNotNull(brush, $"{resourceKey} should resolve to a SolidColorBrush.");
         Assert.AreEqual(expectedColor, brush!.Color);
+    }
+
+    private static object? GetSetterValue(Style style, DependencyProperty property)
+    {
+        var setter = style.Setters.OfType<Setter>().SingleOrDefault(setter => setter.Property == property);
+        Assert.IsNotNull(setter, $"Expected local setter for {property.Name}.");
+        return setter!.Value;
+    }
+
+    private static void AssertSetterValue(Style style, DependencyProperty property, object? expectedValue)
+    {
+        Assert.AreEqual(expectedValue, GetSetterValue(style, property));
+    }
+
+    private static void AssertDynamicResourceSetter(Style style, DependencyProperty property, object expectedResourceKey)
+    {
+        var dynamicResource = GetSetterValue(style, property) as DynamicResourceExtension;
+        Assert.IsNotNull(dynamicResource, $"Expected {property.Name} to use a dynamic resource.");
+        Assert.AreEqual(expectedResourceKey, dynamicResource!.ResourceKey);
+    }
+
+    private static void AssertSolidColorBrushSetterColor(Style style, DependencyProperty property, Color expectedColor)
+    {
+        var brush = GetSetterValue(style, property) as SolidColorBrush;
+        Assert.IsNotNull(brush, $"Expected {property.Name} to use a SolidColorBrush.");
+        Assert.AreEqual(expectedColor, brush!.Color);
+    }
+
+    private static void AssertStateSetterDynamicResource(
+        FrameworkElement stateGroupsRoot,
+        string groupName,
+        string stateName,
+        string target,
+        object expectedResourceKey)
+    {
+        var setter = FindStateSetter(stateGroupsRoot, groupName, stateName, target);
+
+        AssertResourceReferenceExpression(
+            setter.ReadLocalValue(VisualStateSetter.ValueProperty),
+            expectedResourceKey);
+    }
+
+    private static void AssertStateSetterValue(
+        FrameworkElement stateGroupsRoot,
+        string groupName,
+        string stateName,
+        string target,
+        object expectedValue)
+    {
+        var setter = FindStateSetter(stateGroupsRoot, groupName, stateName, target);
+
+        Assert.AreEqual(expectedValue, setter.Value);
+    }
+
+    private static VisualStateSetter FindStateSetter(
+        FrameworkElement stateGroupsRoot,
+        string groupName,
+        string stateName,
+        string target)
+    {
+        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
+            .OfType<VisualStateGroup>()
+            .Single(candidate => candidate.Name == groupName);
+        var state = group.States
+            .OfType<VisualStateEx>()
+            .Single(candidate => candidate.Name == stateName);
+        return state.Setters.Single(candidate => candidate.Target == target);
+    }
+
+    private static void AssertResourceReferenceExpression(object value, object expectedResourceKey)
+    {
+        Assert.IsNotNull(value, "Expected dynamic resource local value.");
+        Assert.AreEqual("System.Windows.ResourceReferenceExpression", value.GetType().FullName);
+        var resourceKeyProperty = value.GetType().GetProperty(
+            "ResourceKey",
+            BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+        Assert.IsNotNull(resourceKeyProperty, "Expected ResourceReferenceExpression.ResourceKey.");
+        Assert.AreEqual(expectedResourceKey, resourceKeyProperty!.GetValue(value));
     }
 }
