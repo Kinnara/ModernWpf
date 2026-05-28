@@ -654,6 +654,8 @@ Latest local verification for the current branch tip:
   - Passed for `net8.0-windows7.0`: 6 tests. `ScrollBar` resource coverage now pins Light/Dark/HighContrast track-border thickness, background/foreground/border aliases, button background/border/arrow aliases, thumb fill/border aliases, track fill/stroke aliases, panning-thumb aliases, separator aliases, and the HighContrast system thumb color values while the official WPF Fluent setter, trigger, and template-shape coverage still passes. Existing warning/output remains `NETSDK1137`, generated WinRT warnings, existing ModernWpf/ModernWpf.Controls warnings, and the recurring `Failed to resolve WinRT.Runtime.dll` message.
 - `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~MenuFlyoutApiTests" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0`: 9 tests. `MenuFlyout` resource coverage now pins Light/Dark/HighContrast separator, presenter, item, toggle-item, subitem, reveal, keyboard-accelerator, chevron, padding, placeholder, and border-thickness aliases while existing MenuFlyout open/close, placement, shadow, presenter, and WinUI source-behavior coverage still passes. Existing warning/output remains `NETSDK1137`, generated WinRT warnings, existing ModernWpf/ModernWpf.Controls warnings, and the recurring `Failed to resolve WinRT.Runtime.dll` message.
+- `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~TabViewResourceTests" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0`: 3 tests. `TabView` / WPF `TabControl` resource coverage now pins the full Light/Dark/HighContrast background, foreground, border, selected-item, header, icon, add/scroll button, close-button, disabled, pressed, pointer-over, and separator alias family while existing WPF Fluent style/template coverage still passes. Existing warning/output remains `NETSDK1137`, generated WinRT warnings, existing ModernWpf/ModernWpf.Controls warnings, and the recurring `Failed to resolve WinRT.Runtime.dll` message.
 - `dotnet build .\ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
   - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the `InfoBar` High Contrast template-resource override. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages, generated WinRT warnings for `net10.0-windows7.0`, and existing ModernWpf/ModernWpf.Controls warnings.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.ShellChromeKeepsWpfGalleryHighContrastSourceShape|FullyQualifiedName~GalleryNavigationRuntimeTests.MainWindowUsesWpfGalleryTitleChrome|FullyQualifiedName~GalleryNavigationRuntimeTests.MainWindowChromePolicyMatchesWpfGalleryHighContrastPath|FullyQualifiedName~GalleryNavigationRuntimeTests.ShellHighContrastHoverStylesMatchWpfGalleryReferenceChrome|FullyQualifiedName~GalleryNavigationRuntimeTests.ShellNavigationViewTreeViewResourceAliasesTrackThemeChanges|FullyQualifiedName~GalleryNavigationRuntimeTests.ShellNavigationViewAliasesHaveWpfGalleryTreeViewHighContrastTokens" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
@@ -3229,8 +3231,7 @@ work means broader OS high-contrast shell and control paths that are not
 already covered by title chrome, NavigationView TreeView token aliases and
 their HighContrast system-brush references, HeaderTile fills, DataGrid visual
 resource switching and official event-handler shape, InfoBar template-root
-severity token overrides, SplitView pane/light-dismiss
-theme-resource aliases, TeachingTip body/alternate-close theme-resource
+severity token overrides, TeachingTip body/alternate-close theme-resource
 aliases, CommandBar overflow/theme-resource aliases, MenuBar shell/item
 theme-resource aliases, PipsPager selection/navigation theme-resource aliases,
 DropDownButton chevron aliases, Pivot style theme-resource aliases,
@@ -3244,6 +3245,8 @@ RepeatButton and ToggleButton theme-resource aliases,
 ScrollBar theme-resource aliases,
 ContentDialog theme-resource aliases,
 MenuFlyout presenter/item/toggle/subitem theme-resource aliases,
+SplitView pane/light-dismiss theme-resource aliases,
+TabView theme-resource aliases,
 or Color subsection
 direct-reference evidence. Home
 first-viewport Light/Dark previously had accepted `0` / `0.05` deltas with

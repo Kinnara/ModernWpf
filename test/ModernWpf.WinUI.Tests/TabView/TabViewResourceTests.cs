@@ -23,18 +23,10 @@ public class TabViewResourceTests
 
             foreach (var themeName in new[] { "Light", "Dark" })
             {
-                AssertThemeResourceReference(themeName, "TabViewBackground", "SubtleFillColorTransparentBrush");
-                AssertThemeResourceReference(themeName, "TabViewForeground", "TextFillColorPrimaryBrush");
-                AssertThemeResourceReference(themeName, "TabViewItemForegroundSelected", "TextFillColorPrimaryBrush");
-                AssertThemeResourceReference(themeName, "TabViewBorderBrush", "CardStrokeColorDefaultBrush");
-                AssertThemeResourceReference(themeName, "TabViewSelectedItemBorderBrush", "CardStrokeColorDefaultBrush");
+                AssertLightDarkTabViewTheme(themeName);
             }
 
-            AssertThemeResourceReference("HighContrast", "TabViewBackground", "SystemColorWindowColorBrush");
-            AssertThemeResourceReference("HighContrast", "TabViewForeground", "SystemColorWindowTextColorBrush");
-            AssertThemeResourceReference("HighContrast", "TabViewItemForegroundSelected", "SystemColorHighlightColorBrush");
-            AssertThemeResourceReference("HighContrast", "TabViewBorderBrush", "SystemColorWindowTextColorBrush");
-            AssertThemeResourceReference("HighContrast", "TabViewSelectedItemBorderBrush", "SystemColorHighlightColorBrush");
+            AssertHighContrastTabViewTheme();
         });
     }
 
@@ -120,6 +112,142 @@ public class TabViewResourceTests
         Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
         Assert.IsTrue(themeDictionary.Contains(expectedResourceKey), $"{themeName} is missing {expectedResourceKey}.");
         Assert.AreSame(themeDictionary[expectedResourceKey], themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
+    }
+
+    private static void AssertLightDarkTabViewTheme(string themeName)
+    {
+        AssertThemeResourceReference(themeName, "TabViewBackground", "SubtleFillColorTransparentBrush");
+        AssertThemeResourceReference(themeName, "TabViewForeground", "TextFillColorPrimaryBrush");
+        AssertThemeResourceReference(themeName, "TabViewItemForegroundSelected", "TextFillColorPrimaryBrush");
+        AssertThemeResourceReference(themeName, "TabViewBorderBrush", "CardStrokeColorDefaultBrush");
+        AssertThemeResourceReference(themeName, "TabViewSelectedItemBorderBrush", "CardStrokeColorDefaultBrush");
+        AssertThemeResourceReference(themeName, "TabViewItemHeaderBackground", "LayerOnMicaBaseAltFillColorTransparentBrush");
+        AssertThemeResourceReference(themeName, "TabViewItemHeaderBackgroundSelected", "SolidBackgroundFillColorTertiaryBrush");
+        AssertThemeResourceReference(themeName, "TabViewItemHeaderBackgroundPointerOver", "LayerOnMicaBaseAltFillColorSecondaryBrush");
+        AssertThemeResourceReference(themeName, "TabViewItemHeaderBackgroundPressed", "LayerOnMicaBaseAltFillColorDefaultBrush");
+        AssertThemeResourceReference(themeName, "TabViewItemHeaderBackgroundDisabled", "LayerOnMicaBaseAltFillColorTransparentBrush");
+        AssertThemeResourceReference(themeName, "TabViewItemHeaderForeground", "TextFillColorSecondaryBrush");
+        AssertThemeResourceReference(themeName, "TabViewItemHeaderForegroundPressed", "TextFillColorTertiaryBrush");
+        AssertThemeResourceReference(themeName, "TabViewItemHeaderForegroundSelected", "TextFillColorPrimaryBrush");
+        AssertThemeResourceReference(themeName, "TabViewItemHeaderForegroundPointerOver", "TextFillColorSecondaryBrush");
+        AssertThemeResourceReference(themeName, "TabViewItemHeaderForegroundDisabled", "TextFillColorDisabledBrush");
+        AssertThemeResourceReference(themeName, "TabViewItemIconForeground", "TextFillColorSecondaryBrush");
+        AssertThemeResourceReference(themeName, "TabViewItemIconForegroundPressed", "TextFillColorTertiaryBrush");
+        AssertThemeResourceReference(themeName, "TabViewItemIconForegroundSelected", "TextFillColorPrimaryBrush");
+        AssertThemeResourceReference(themeName, "TabViewItemIconForegroundPointerOver", "TextFillColorSecondaryBrush");
+        AssertThemeResourceReference(themeName, "TabViewItemIconForegroundDisabled", "TextFillColorDisabledBrush");
+        AssertThemeResourceReference(themeName, "TabViewButtonBackground", "SubtleFillColorTransparentBrush");
+        AssertThemeResourceReference(themeName, "TabViewButtonBackgroundPressed", "SubtleFillColorTertiaryBrush");
+        AssertThemeResourceReference(themeName, "TabViewButtonBackgroundPointerOver", "SubtleFillColorSecondaryBrush");
+        AssertThemeResourceReference(themeName, "TabViewButtonBackgroundDisabled", "SubtleFillColorTransparentBrush");
+        AssertThemeResourceReference(themeName, "TabViewButtonForeground", "TextFillColorPrimaryBrush");
+        AssertThemeResourceReference(themeName, "TabViewButtonForegroundPressed", "TextFillColorSecondaryBrush");
+        AssertThemeResourceReference(themeName, "TabViewButtonForegroundPointerOver", "TextFillColorPrimaryBrush");
+        AssertThemeResourceReference(themeName, "TabViewButtonForegroundDisabled", "TextFillColorDisabledBrush");
+        AssertThemeResourceReference(themeName, "TabViewButtonBorderBrush", "SubtleFillColorTransparentBrush");
+        AssertThemeResourceReference(themeName, "TabViewButtonBorderBrushPressed", "SubtleFillColorTransparentBrush");
+        AssertThemeResourceReference(themeName, "TabViewButtonBorderBrushPointerOver", "SubtleFillColorTransparentBrush");
+        AssertThemeResourceReference(themeName, "TabViewButtonBorderBrushDisabled", "SubtleFillColorTransparentBrush");
+        AssertThemeResourceReference(themeName, "TabViewScrollButtonBackground", "SubtleFillColorTransparentBrush");
+        AssertThemeResourceReference(themeName, "TabViewScrollButtonBackgroundPressed", "SubtleFillColorTertiaryBrush");
+        AssertThemeResourceReference(themeName, "TabViewScrollButtonBackgroundPointerOver", "SubtleFillColorSecondaryBrush");
+        AssertThemeResourceReference(themeName, "TabViewScrollButtonBackgroundDisabled", "SubtleFillColorTransparentBrush");
+        AssertThemeResourceReference(themeName, "TabViewScrollButtonForeground", "TextFillColorSecondaryBrush");
+        AssertThemeResourceReference(themeName, "TabViewScrollButtonForegroundPressed", "TextFillColorSecondaryBrush");
+        AssertThemeResourceReference(themeName, "TabViewScrollButtonForegroundPointerOver", "TextFillColorSecondaryBrush");
+        AssertThemeResourceReference(themeName, "TabViewScrollButtonForegroundDisabled", "TextFillColorDisabledBrush");
+        AssertThemeResourceReference(themeName, "TabViewScrollButtonBorderBrush", "SubtleFillColorTransparentBrush");
+        AssertThemeResourceReference(themeName, "TabViewScrollButtonBorderBrushPressed", "SubtleFillColorTransparentBrush");
+        AssertThemeResourceReference(themeName, "TabViewScrollButtonBorderBrushPointerOver", "SubtleFillColorTransparentBrush");
+        AssertThemeResourceReference(themeName, "TabViewScrollButtonBorderBrushDisabled", "SubtleFillColorTransparentBrush");
+        AssertThemeResourceReference(themeName, "TabViewItemSeparator", "DividerStrokeColorDefaultBrush");
+        AssertThemeResourceReference(themeName, "TabViewItemHeaderCloseButtonBackground", "SubtleFillColorTransparentBrush");
+        AssertThemeResourceReference(themeName, "TabViewItemHeaderCloseButtonBackgroundPressed", "SubtleFillColorTertiaryBrush");
+        AssertThemeResourceReference(themeName, "TabViewItemHeaderCloseButtonBackgroundPointerOver", "SubtleFillColorSecondaryBrush");
+        AssertThemeResourceReference(themeName, "TabViewItemHeaderPressedCloseButtonBackground", "SubtleFillColorTransparentBrush");
+        AssertThemeResourceReference(themeName, "TabViewItemHeaderPointerOverCloseButtonBackground", "SubtleFillColorTransparentBrush");
+        AssertThemeResourceReference(themeName, "TabViewItemHeaderSelectedCloseButtonBackground", "SubtleFillColorTransparentBrush");
+        AssertThemeResourceReference(themeName, "TabViewItemHeaderDisabledCloseButtonBackground", "SubtleFillColorTransparentBrush");
+        AssertThemeResourceReference(themeName, "TabViewItemHeaderCloseButtonForeground", "TextFillColorPrimaryBrush");
+        AssertThemeResourceReference(themeName, "TabViewItemHeaderCloseButtonForegroundPressed", "TextFillColorSecondaryBrush");
+        AssertThemeResourceReference(themeName, "TabViewItemHeaderCloseButtonForegroundPointerOver", "TextFillColorPrimaryBrush");
+        AssertThemeResourceReference(themeName, "TabViewItemHeaderPressedCloseButtonForeground", "TextFillColorPrimaryBrush");
+        AssertThemeResourceReference(themeName, "TabViewItemHeaderPointerOverCloseButtonForeground", "TextFillColorPrimaryBrush");
+        AssertThemeResourceReference(themeName, "TabViewItemHeaderSelectedCloseButtonForeground", "TextFillColorPrimaryBrush");
+        AssertThemeResourceReference(themeName, "TabViewItemHeaderDisabledCloseButtonForeground", "TextFillColorDisabledBrush");
+        AssertThemeResourceReference(themeName, "TabViewItemHeaderCloseButtonBorderBrush", "SubtleFillColorTransparentBrush");
+        AssertThemeResourceReference(themeName, "TabViewItemHeaderCloseButtonBorderBrushPointerOver", "SubtleFillColorTransparentBrush");
+        AssertThemeResourceReference(themeName, "TabViewItemHeaderCloseButtonBorderBrushPressed", "SubtleFillColorTransparentBrush");
+        AssertThemeResourceReference(themeName, "TabViewItemHeaderCloseButtonBorderBrushSelected", "SubtleFillColorTransparentBrush");
+        AssertThemeResourceReference(themeName, "TabViewItemHeaderCloseButtonBorderBrushDisabled", "SubtleFillColorTransparentBrush");
+    }
+
+    private static void AssertHighContrastTabViewTheme()
+    {
+        AssertThemeResourceReference("HighContrast", "TabViewBackground", "SystemColorWindowColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewForeground", "SystemColorWindowTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewItemForegroundSelected", "SystemColorHighlightColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewBorderBrush", "SystemColorWindowTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewSelectedItemBorderBrush", "SystemColorHighlightColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewItemHeaderBackground", "SystemColorButtonFaceColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewItemHeaderBackgroundSelected", "SystemColorWindowColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewItemHeaderBackgroundPointerOver", "SystemColorHighlightColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewItemHeaderBackgroundPressed", "SystemColorHighlightColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewItemHeaderBackgroundDisabled", "SystemColorWindowColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewItemHeaderForeground", "SystemColorWindowTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewItemHeaderForegroundPressed", "SystemColorHighlightTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewItemHeaderForegroundSelected", "SystemColorHighlightColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewItemHeaderForegroundPointerOver", "SystemColorHighlightTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewItemHeaderForegroundDisabled", "SystemColorGrayTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewItemIconForeground", "SystemColorWindowTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewItemIconForegroundPressed", "SystemColorHighlightTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewItemIconForegroundSelected", "SystemColorHighlightColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewItemIconForegroundPointerOver", "SystemColorHighlightTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewItemIconForegroundDisabled", "SystemColorGrayTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewButtonBackground", "SystemColorButtonFaceColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewButtonBackgroundPressed", "SystemColorHighlightColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewButtonBackgroundPointerOver", "SystemColorHighlightColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewButtonBackgroundDisabled", "SystemColorWindowColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewButtonForeground", "SystemColorButtonTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewButtonForegroundPressed", "SystemColorHighlightTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewButtonForegroundPointerOver", "SystemColorHighlightTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewButtonForegroundDisabled", "SystemColorGrayTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewButtonBorderBrush", "SystemColorButtonTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewButtonBorderBrushPressed", "SystemColorHighlightColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewButtonBorderBrushPointerOver", "SystemColorHighlightColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewButtonBorderBrushDisabled", "SystemColorGrayTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewScrollButtonBackground", "SystemColorButtonFaceColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewScrollButtonBackgroundPressed", "SystemColorHighlightColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewScrollButtonBackgroundPointerOver", "SystemColorHighlightColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewScrollButtonBackgroundDisabled", "SystemColorWindowColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewScrollButtonForeground", "SystemColorButtonTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewScrollButtonForegroundPressed", "SystemColorHighlightTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewScrollButtonForegroundPointerOver", "SystemColorHighlightTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewScrollButtonForegroundDisabled", "SystemColorGrayTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewScrollButtonBorderBrush", "SystemColorButtonTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewScrollButtonBorderBrushPressed", "SystemColorHighlightColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewScrollButtonBorderBrushPointerOver", "SystemColorHighlightColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewScrollButtonBorderBrushDisabled", "SystemColorGrayTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewItemSeparator", "SystemColorWindowTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewItemHeaderCloseButtonBackground", "SystemColorButtonFaceColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewItemHeaderCloseButtonBackgroundPressed", "SystemColorButtonFaceColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewItemHeaderCloseButtonBackgroundPointerOver", "SystemColorButtonFaceColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewItemHeaderPressedCloseButtonBackground", "SubtleFillColorTransparentBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewItemHeaderPointerOverCloseButtonBackground", "SubtleFillColorTransparentBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewItemHeaderSelectedCloseButtonBackground", "SubtleFillColorTransparentBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewItemHeaderDisabledCloseButtonBackground", "SystemColorWindowColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewItemHeaderCloseButtonForeground", "SystemColorButtonTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewItemHeaderCloseButtonForegroundPressed", "SystemColorButtonTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewItemHeaderCloseButtonForegroundPointerOver", "SystemColorButtonTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewItemHeaderPressedCloseButtonForeground", "SystemColorHighlightTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewItemHeaderPointerOverCloseButtonForeground", "SystemColorHighlightTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewItemHeaderSelectedCloseButtonForeground", "SystemColorHighlightColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewItemHeaderDisabledCloseButtonForeground", "SystemColorGrayTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewItemHeaderCloseButtonBorderBrush", "SubtleFillColorTransparentBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewItemHeaderCloseButtonBorderBrushPointerOver", "SystemColorButtonTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewItemHeaderCloseButtonBorderBrushPressed", "SystemColorButtonTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewItemHeaderCloseButtonBorderBrushSelected", "SystemColorButtonTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "TabViewItemHeaderCloseButtonBorderBrushDisabled", "SubtleFillColorTransparentBrush");
     }
 
     private static void AssertDynamicResourceSetter(Style style, DependencyProperty property, object expectedResourceKey)
