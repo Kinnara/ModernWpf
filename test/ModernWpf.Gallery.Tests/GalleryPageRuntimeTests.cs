@@ -1436,8 +1436,15 @@ namespace ModernWpf.Gallery.Tests
                 var firstRun = inlines.OfType<Run>().First(run => run.Text.Contains("Text in a TextBlock"));
                 Assert.AreEqual("Text in a TextBlock doesn't have to be a simple string.", firstRun.Text.Trim());
                 Assert.AreEqual("Times New Roman", firstRun.FontFamily.Source);
+                Assert.AreSame(Application.Current.FindResource("TextFillColorPrimaryBrush"), firstRun.Foreground);
                 Assert.IsTrue(inlines.OfType<LineBreak>().Any());
-                var nestedInlines = inlines.OfType<Span>().SelectMany(span => span.Inlines.Cast<Inline>()).ToArray();
+                var nestedSpan = inlines.OfType<Span>().Single();
+                var nestedText = new TextRange(nestedSpan.ContentStart, nestedSpan.ContentEnd).Text;
+                StringAssert.Contains(nestedText, "Text can be ");
+                StringAssert.Contains(nestedText, "bold, ");
+                StringAssert.Contains(nestedText, "italic, ");
+                StringAssert.Contains(nestedText, "or underlined");
+                var nestedInlines = nestedSpan.Inlines.Cast<Inline>().ToArray();
                 Assert.AreEqual("bold", nestedInlines.OfType<Bold>().Single().Inlines.OfType<Run>().Single().Text);
                 Assert.AreEqual("italic", nestedInlines.OfType<Italic>().Single().Inlines.OfType<Run>().Single().Text);
                 Assert.AreEqual("underlined", nestedInlines.OfType<Underline>().Single().Inlines.OfType<Run>().Single().Text);
@@ -1530,16 +1537,28 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(new Thickness(2), basicBorder.BorderThickness);
                 Assert.AreEqual(new Thickness(10), basicBorder.Padding);
                 Assert.AreEqual("Content inside a Border", ((TextBlock)basicBorder.Child).Text);
+                StringAssert.Contains(borderExamples[0].XamlCode, "<Border BorderBrush=\"Gray\" BorderThickness=\"2\" Padding=\"10\">");
+                StringAssert.Contains(borderExamples[0].XamlCode, "<TextBlock Text=\"Content inside a Border\" />");
 
                 var roundedBorder = (Border)borderExamples[1].ExampleContent;
                 Assert.AreEqual(Brushes.LightBlue, roundedBorder.Background);
                 Assert.AreEqual(Brushes.CornflowerBlue, roundedBorder.BorderBrush);
+                Assert.AreEqual(new Thickness(2), roundedBorder.BorderThickness);
                 Assert.AreEqual(new CornerRadius(10), roundedBorder.CornerRadius);
                 Assert.AreEqual(new Thickness(15), roundedBorder.Padding);
+                var roundedBorderText = (TextBlock)roundedBorder.Child;
+                Assert.AreEqual("Rounded Border", roundedBorderText.Text);
+                Assert.AreEqual(Brushes.Black, roundedBorderText.Foreground);
+                StringAssert.Contains(borderExamples[1].XamlCode, "<Border BorderBrush=\"CornflowerBlue\" BorderThickness=\"2\" CornerRadius=\"10\" Padding=\"15\" Background=\"LightBlue\">");
+                StringAssert.Contains(borderExamples[1].XamlCode, "<TextBlock Text=\"Rounded Border\" />");
 
                 var variedBorder = (Border)borderExamples[2].ExampleContent;
                 Assert.AreEqual(Brushes.DarkSlateGray, variedBorder.BorderBrush);
                 Assert.AreEqual(new Thickness(1, 2, 4, 8), variedBorder.BorderThickness);
+                Assert.AreEqual(new Thickness(10), variedBorder.Padding);
+                Assert.AreEqual("Different border thickness (Left=1, Top=2, Right=4, Bottom=8)", ((TextBlock)variedBorder.Child).Text);
+                StringAssert.Contains(borderExamples[2].XamlCode, "<Border BorderBrush=\"DarkSlateGray\" BorderThickness=\"1,2,4,8\" Padding=\"10\">");
+                StringAssert.Contains(borderExamples[2].XamlCode, "<TextBlock Text=\"Different border thickness\" />");
 
                 var gridPage = new ItemPage(GalleryCatalog.FindItem("Grid"));
                 Assert.IsTrue(gridPage.HasDirectPageContent);
