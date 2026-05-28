@@ -45,6 +45,69 @@ public class RefreshContainerApiTests
     }
 
     [TestMethod]
+    public void RefreshStylesUseWinUIResourceAliases()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var containerResources = new ResourceDictionary
+            {
+                Source = new Uri("/ModernWpf.Controls;component/PullToRefresh/RefreshContainer.xaml", UriKind.Relative)
+            };
+            var visualizerResources = new ResourceDictionary
+            {
+                Source = new Uri("/ModernWpf.Controls;component/PullToRefresh/RefreshVisualizer.xaml", UriKind.Relative)
+            };
+            var containerStyle = (Style)containerResources["DefaultRefreshContainerStyle"];
+            var implicitContainerStyle = (Style)containerResources[typeof(RefreshContainer)];
+            var visualizerStyle = (Style)visualizerResources[typeof(RefreshVisualizer)];
+            var visualizer = new RefreshVisualizer
+            {
+                Style = visualizerStyle
+            };
+            var container = new RefreshContainer
+            {
+                Content = new TextBlock { Text = "Refreshable content" },
+                Style = containerStyle,
+                Visualizer = visualizer
+            };
+            container.Resources.MergedDictionaries.Add(containerResources);
+            visualizer.Resources.MergedDictionaries.Add(visualizerResources);
+
+            using var host = new TestWindowHost(container, width: 240, height: 180);
+            host.UpdateLayout();
+
+            Assert.AreSame(containerStyle, implicitContainerStyle.BasedOn);
+            AssertDynamicResourceSetter(containerStyle, Control.ForegroundProperty, "RefreshContainerForegroundBrush");
+            AssertDynamicResourceSetter(containerStyle, Control.BackgroundProperty, "RefreshContainerBackgroundBrush");
+            Assert.AreEqual(false, GetSetterValue(containerStyle, Control.IsTabStopProperty));
+            AssertDynamicResourceSetter(visualizerStyle, Control.BackgroundProperty, "RefreshVisualizerBackground");
+            AssertDynamicResourceSetter(visualizerStyle, Control.ForegroundProperty, "RefreshVisualizerForeground");
+            Assert.AreEqual(false, GetSetterValue(visualizerStyle, Control.IsTabStopProperty));
+            Assert.AreEqual(100.0, GetSetterValue(visualizerStyle, FrameworkElement.HeightProperty));
+
+            Assert.AreSame(container.TryFindResource("RefreshContainerForegroundBrush"), container.Foreground);
+            Assert.AreSame(container.TryFindResource("RefreshContainerBackgroundBrush"), container.Background);
+            Assert.IsFalse(container.IsTabStop);
+            Assert.AreSame(visualizer.TryFindResource("RefreshVisualizerForeground"), visualizer.Foreground);
+            Assert.AreSame(visualizer.TryFindResource("RefreshVisualizerBackground"), visualizer.Background);
+            Assert.IsFalse(visualizer.IsTabStop);
+            Assert.AreEqual(100.0, visualizer.Height);
+
+            var contentPresenter = FindNamedDescendant<ContentPresenterEx>(container, "ContentPresenter");
+            var refreshPresenter = FindNamedDescendant<Panel>(container, "RefreshVisualizerPresenter");
+            var visualizerRoot = FindNamedDescendant<Panel>(visualizer, "Root");
+
+            Assert.AreSame(container.Content, contentPresenter.Content);
+            AssertTransparentBrush(contentPresenter.Background);
+            Assert.IsFalse(refreshPresenter.IsHitTestVisible);
+            Assert.AreEqual(80.0, visualizerRoot.MinHeight);
+            Assert.AreSame(visualizer.Background, visualizerRoot.Background);
+        });
+    }
+
+    [TestMethod]
     public void RefreshVisualizerHostsContentInWinUIRootPanel()
     {
         WpfTestHost.Run(() =>
@@ -444,6 +507,20 @@ public class RefreshContainerApiTests
         Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
         Assert.IsTrue(themeDictionary.Contains(expectedResourceKey), $"{themeName} is missing {expectedResourceKey}.");
         Assert.AreSame(themeDictionary[expectedResourceKey], themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
+    }
+
+    private static object? GetSetterValue(Style style, DependencyProperty property)
+    {
+        var setter = style.Setters.OfType<Setter>().SingleOrDefault(setter => setter.Property == property);
+        Assert.IsNotNull(setter, $"Expected local setter for {property.Name}.");
+        return setter!.Value;
+    }
+
+    private static void AssertDynamicResourceSetter(Style style, DependencyProperty property, object expectedResourceKey)
+    {
+        var dynamicResource = GetSetterValue(style, property) as DynamicResourceExtension;
+        Assert.IsNotNull(dynamicResource, $"Expected {property.Name} to use a dynamic resource.");
+        Assert.AreEqual(expectedResourceKey, dynamicResource!.ResourceKey);
     }
 
     private static void AssertTransparentBrush(Brush brush)
