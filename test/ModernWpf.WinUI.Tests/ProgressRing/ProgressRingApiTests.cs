@@ -30,6 +30,7 @@ public class ProgressRingApiTests
             };
             var style = (Style)resources[typeof(ModernWpf.Controls.ProgressRing)];
 
+            Assert.AreEqual(typeof(ModernWpf.Controls.ProgressRing), style.TargetType);
             AssertDynamicResourceSetter(style, Control.ForegroundProperty, "ProgressRingForegroundThemeBrush");
             AssertDynamicResourceSetter(style, Control.BackgroundProperty, "ProgressRingBackgroundThemeBrush");
             AssertSetterValue(style, UIElement.IsHitTestVisibleProperty, false);
@@ -41,7 +42,10 @@ public class ProgressRingApiTests
             AssertSetterValue(style, FrameworkElement.WidthProperty, 32.0);
             AssertSetterValue(style, FrameworkElement.HeightProperty, 32.0);
             AssertSetterValue(style, ModernWpf.Controls.ProgressRing.MaximumProperty, 100.0);
-            Assert.IsInstanceOfType(FindSetter(style, Control.TemplateProperty)?.Value, typeof(ControlTemplate));
+
+            var template = FindSetter(style, Control.TemplateProperty)?.Value as ControlTemplate;
+            Assert.IsNotNull(template);
+            Assert.AreEqual(typeof(ModernWpf.Controls.ProgressRing), template!.TargetType);
 
             var progressRing = new ModernWpf.Controls.ProgressRing
             {
@@ -65,6 +69,8 @@ public class ProgressRingApiTests
 
             var layoutRoot = FindNamedDescendant<Grid>(progressRing, "LayoutRoot");
             var lottiePlayer = FindNamedDescendant<Grid>(progressRing, "LottiePlayer");
+            Assert.IsInstanceOfType(VisualStateManager.GetCustomVisualStateManager(layoutRoot), typeof(VisualStateManagerEx));
+            AssertVisualStateNames(layoutRoot, "CommonStates", "Inactive", "DeterminateActive", "Active");
             AssertBrushEquals(Brushes.Transparent, layoutRoot.Background);
             Assert.AreEqual(FlowDirection.LeftToRight, lottiePlayer.FlowDirection);
             Assert.AreEqual(progressRing.TemplateSettings.MaxSideLength, lottiePlayer.MaxWidth);
@@ -246,6 +252,17 @@ public class ProgressRingApiTests
             .ToArray();
 
         CollectionAssert.IsSubsetOf(expectedTargets, actualTargets);
+    }
+
+    private static void AssertVisualStateNames(FrameworkElement stateGroupsRoot, string groupName, params string[] expectedStateNames)
+    {
+        var group = FindVisualStateGroup(stateGroupsRoot, groupName);
+        var actualStateNames = group.States
+            .OfType<VisualState>()
+            .Select(state => state.Name)
+            .ToArray();
+
+        CollectionAssert.AreEqual(expectedStateNames, actualStateNames);
     }
 
     private static void AssertCurrentState(FrameworkElement stateGroupsRoot, string groupName, string expectedStateName)
