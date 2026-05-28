@@ -92,6 +92,64 @@ public class CommonStylesResourceTests
     }
 
     [TestMethod]
+    public void ThemeResourcesUseWinUI2DateTimeAndFlipViewHighContrastTokens()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            foreach (var themeName in new[] { "Light", "Dark", "HighContrast" })
+            {
+                AssertThemeResourceValue(themeName, "DatePickerHeaderThemeMargin", new Thickness(0, 0, 0, 4));
+                AssertThemeResourceValue(themeName, "DateTimeFlyoutBorderThickness", new Thickness(1));
+                AssertThemeResourceValue(themeName, "DateTimeFlyoutBorderPadding", new Thickness(0));
+                AssertThemeResourceValue(themeName, "DateTimeFlyoutButtonBorderThickness", new Thickness(0));
+                AssertThemeResourceValue(themeName, "FlipViewButtonBorderThemeThickness", new Thickness(0));
+                AssertThemeResourceReference(themeName, "FlipViewNextPreviousButtonBackground", "AcrylicInAppFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "FlipViewNextPreviousButtonBackgroundPointerOver", "AcrylicInAppFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "FlipViewNextPreviousButtonBackgroundPressed", "AcrylicInAppFillColorDefaultBrush");
+            }
+
+            foreach (var themeName in new[] { "Light", "Dark" })
+            {
+                AssertThemeResourceReference(themeName, "DateTimePickerFlyoutButtonBackground", "SubtleFillColorTransparentBrush");
+                AssertThemeResourceReference(themeName, "DateTimePickerFlyoutButtonBackgroundPointerOver", "SubtleFillColorSecondaryBrush");
+                AssertThemeResourceReference(themeName, "DateTimePickerFlyoutButtonBackgroundPressed", "SubtleFillColorTertiaryBrush");
+                AssertThemeResourceReference(themeName, "DateTimePickerFlyoutButtonBorderBrush", "ControlStrokeColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "DateTimePickerFlyoutButtonBorderBrushPointerOver", "ControlStrokeColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "DateTimePickerFlyoutButtonBorderBrushPressed", "ControlStrokeColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "DateTimePickerFlyoutButtonForegroundPointerOver", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "DateTimePickerFlyoutButtonForegroundPressed", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "FlipViewBackground", "SolidBackgroundFillColorBaseBrush");
+                AssertThemeResourceReference(themeName, "FlipViewNextPreviousArrowForeground", "ControlStrongFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "FlipViewNextPreviousArrowForegroundPointerOver", "TextFillColorSecondaryBrush");
+                AssertThemeResourceReference(themeName, "FlipViewNextPreviousArrowForegroundPressed", "TextFillColorSecondaryBrush");
+                AssertThemeResourceReference(themeName, "FlipViewNextPreviousButtonBorderBrush", "ControlStrokeColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "FlipViewNextPreviousButtonBorderBrushPointerOver", "ControlStrokeColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "FlipViewNextPreviousButtonBorderBrushPressed", "ControlStrokeColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "FlipViewItemBackground", "SubtleFillColorTransparentBrush");
+            }
+
+            AssertThemeResourceReference("HighContrast", "DateTimePickerFlyoutButtonBackground", "SystemControlTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "DateTimePickerFlyoutButtonBackgroundPointerOver", "SystemControlHighlightListLowBrush");
+            AssertThemeResourceReference("HighContrast", "DateTimePickerFlyoutButtonBackgroundPressed", "SystemControlHighlightListMediumBrush");
+            AssertThemeResourceReference("HighContrast", "DateTimePickerFlyoutButtonBorderBrush", "SystemControlForegroundTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "DateTimePickerFlyoutButtonBorderBrushPointerOver", "SystemControlHighlightTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "DateTimePickerFlyoutButtonBorderBrushPressed", "SystemControlHighlightTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "DateTimePickerFlyoutButtonForegroundPointerOver", "SystemControlHighlightAltBaseHighBrush");
+            AssertThemeResourceReference("HighContrast", "DateTimePickerFlyoutButtonForegroundPressed", "SystemControlHighlightAltBaseHighBrush");
+            AssertThemeResourceReference("HighContrast", "FlipViewBackground", "SystemControlPageBackgroundListLowBrush");
+            AssertThemeResourceReference("HighContrast", "FlipViewNextPreviousArrowForeground", "SystemControlForegroundAltMediumHighBrush");
+            AssertThemeResourceReference("HighContrast", "FlipViewNextPreviousArrowForegroundPointerOver", "SystemControlHighlightAltAltMediumHighBrush");
+            AssertThemeResourceReference("HighContrast", "FlipViewNextPreviousArrowForegroundPressed", "SystemControlHighlightAltAltMediumHighBrush");
+            AssertThemeResourceReference("HighContrast", "FlipViewNextPreviousButtonBorderBrush", "SystemControlForegroundTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "FlipViewNextPreviousButtonBorderBrushPointerOver", "SystemControlForegroundTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "FlipViewNextPreviousButtonBorderBrushPressed", "SystemControlForegroundTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "FlipViewItemBackground", "SystemControlTransparentBrush");
+        });
+    }
+
+    [TestMethod]
     public void CornerRadiusFilterConverterTest()
     {
         WpfTestHost.Run(() =>
@@ -128,6 +186,21 @@ public class CommonStylesResourceTests
     {
         Assert.IsTrue(resources.Contains(key), $"Expected compact resource '{key}' to exist.");
         Assert.AreEqual(expected, resources[key], $"Unexpected compact resource value for '{key}'.");
+    }
+
+    private static void AssertThemeResourceReference(string themeName, object resourceKey, object expectedResourceKey)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.IsTrue(themeDictionary.Contains(expectedResourceKey), $"{themeName} is missing {expectedResourceKey}.");
+        Assert.AreSame(themeDictionary[expectedResourceKey], themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
+    }
+
+    private static void AssertThemeResourceValue<T>(string themeName, object resourceKey, T expectedValue)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.AreEqual(expectedValue, themeDictionary[resourceKey]);
     }
 
     private static ResourceDictionaryEx CreateThemeResourceSnapshot()
