@@ -4,6 +4,7 @@ using System.Windows.Automation;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf;
 using ModernWpf.Controls;
@@ -43,9 +44,12 @@ public class ProgressRingApiTests
             var lottiePlayer = FindNamedDescendant<Grid>(progressRing, "LottiePlayer");
             AssertBrushEquals(Brushes.Transparent, layoutRoot.Background);
             Assert.AreEqual(FlowDirection.LeftToRight, lottiePlayer.FlowDirection);
+            Assert.AreEqual(progressRing.TemplateSettings.MaxSideLength, lottiePlayer.MaxWidth);
+            Assert.AreEqual(progressRing.TemplateSettings.MaxSideLength, lottiePlayer.MaxHeight);
             Assert.AreEqual(Visibility.Visible, layoutRoot.Visibility);
             Assert.AreEqual(1.0, layoutRoot.Opacity);
             Assert.IsNull(TryFindNamedDescendant<FrameworkElement>(progressRing, "Ring"));
+            AssertTemplateEllipses(progressRing);
 
             foreach (var themeName in new[] { "Light", "Dark" })
             {
@@ -187,6 +191,27 @@ public class ProgressRingApiTests
     private static void AssertCurrentState(FrameworkElement stateGroupsRoot, string groupName, string expectedStateName)
     {
         Assert.AreEqual(expectedStateName, FindVisualStateGroup(stateGroupsRoot, groupName).CurrentState?.Name);
+    }
+
+    private static void AssertTemplateEllipses(ModernWpf.Controls.ProgressRing progressRing)
+    {
+        var ellipses = Enumerable.Range(1, 6)
+            .Select(index => FindNamedDescendant<Ellipse>(progressRing, $"E{index}"))
+            .ToArray();
+
+        Assert.AreEqual(6, ellipses.Length);
+        foreach (var ellipse in ellipses)
+        {
+            Assert.AreEqual(progressRing.TemplateSettings.EllipseDiameter, ellipse.Width);
+            Assert.AreEqual(progressRing.TemplateSettings.EllipseDiameter, ellipse.Height);
+            Assert.AreEqual(progressRing.TemplateSettings.EllipseOffset, ellipse.Margin);
+            AssertBrushEquals(progressRing.Foreground, ellipse.Fill);
+
+            var canvas = VisualTreeHelper.GetParent(ellipse) as Canvas;
+            Assert.IsNotNull(canvas, ellipse.Name);
+            Assert.AreEqual(new Point(0.5, 0.5), canvas!.RenderTransformOrigin);
+            Assert.IsInstanceOfType(canvas.RenderTransform, typeof(RotateTransform), ellipse.Name);
+        }
     }
 
     private static VisualStateGroup FindVisualStateGroup(FrameworkElement stateGroupsRoot, string groupName)
