@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Shapes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf;
 using ModernWpf.Controls;
@@ -184,6 +185,122 @@ public class ContentDialogApiTests
             AssertThemeResourceReference("HighContrast", "ContentDialogBorderBrush", "SystemColorWindowTextColorBrush");
             AssertThemeResourceReference("HighContrast", "ContentDialogSeparatorBorderBrush", "SystemColorWindowTextColorBrush");
             AssertThemeResourceValue("HighContrast", "ContentDialogBorderWidth", new Thickness(2));
+        });
+    }
+
+    [TestMethod]
+    public void ContentDialogStyleUsesWinUIResourceAliases()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var resources = GetContentDialogResources();
+            var style = (Style)resources[typeof(ContentDialog)];
+            var contentDialogPadding = (Thickness)resources["ContentDialogPadding"];
+            var contentDialogSeparatorThickness = (Thickness)resources["ContentDialogSeparatorThickness"];
+            var contentDialogTitleMargin = (Thickness)resources["ContentDialogTitleMargin"];
+
+            AssertDynamicResourceSetter(style, Control.ForegroundProperty, "ContentDialogForeground");
+            AssertDynamicResourceSetter(style, Control.BackgroundProperty, "ContentDialogBackground");
+            AssertDynamicResourceSetter(style, Control.BorderThicknessProperty, "ContentDialogBorderWidth");
+            AssertDynamicResourceSetter(style, Control.BorderBrushProperty, "ContentDialogBorderBrush");
+            AssertDynamicResourceSetter(style, ContentDialog.CornerRadiusProperty, "OverlayCornerRadius");
+            AssertDynamicResourceSetter(style, ContentDialog.PrimaryButtonStyleProperty, "DefaultButtonStyle");
+            AssertDynamicResourceSetter(style, ContentDialog.SecondaryButtonStyleProperty, "DefaultButtonStyle");
+            AssertDynamicResourceSetter(style, ContentDialog.CloseButtonStyleProperty, "DefaultButtonStyle");
+            AssertDynamicResourceSetter(style, ContentDialog.IsShadowEnabledProperty, SystemParameters.DropShadowKey);
+            AssertSetterValue(style, Control.IsTabStopProperty, false);
+            AssertSetterValue(style, Control.FocusVisualStyleProperty, null);
+
+            var dialog = CreateDialog();
+            using var host = CreateInPlaceHost(dialog);
+            host.UpdateLayout();
+            var showTask = ShowInPlace(dialog);
+            host.UpdateLayout();
+
+            Assert.AreSame(dialog.TryFindResource("ContentDialogForeground"), dialog.Foreground);
+            Assert.AreSame(dialog.TryFindResource("ContentDialogBackground"), dialog.Background);
+            Assert.AreEqual(dialog.TryFindResource("ContentDialogBorderWidth"), dialog.BorderThickness);
+            Assert.AreSame(dialog.TryFindResource("ContentDialogBorderBrush"), dialog.BorderBrush);
+            Assert.AreEqual(dialog.TryFindResource("OverlayCornerRadius"), dialog.CornerRadius);
+            Assert.AreSame(dialog.TryFindResource("DefaultButtonStyle"), dialog.PrimaryButtonStyle);
+            Assert.AreSame(dialog.TryFindResource("DefaultButtonStyle"), dialog.SecondaryButtonStyle);
+            Assert.AreSame(dialog.TryFindResource("DefaultButtonStyle"), dialog.CloseButtonStyle);
+            Assert.AreEqual(dialog.TryFindResource(SystemParameters.DropShadowKey), dialog.IsShadowEnabled);
+            Assert.IsFalse(dialog.IsTabStop);
+            Assert.IsNull(dialog.FocusVisualStyle);
+
+            var layoutRoot = GetTemplateChild<Border>(dialog, "LayoutRoot");
+            var smokeLayer = GetTemplateChild<Rectangle>(dialog, "SmokeLayerBackground");
+            var backgroundElement = GetTemplateChild<Grid>(dialog, "BackgroundElement");
+            var shadow = GetTemplateChild<ThemeShadowChrome>(dialog, "Shdw");
+            var chrome = VisualTreeTestHelper.EnumerateDescendants(dialog).OfType<BorderEx>().Single();
+            var dialogSpace = GetTemplateChild<Border>(dialog, "DialogSpace");
+            var contentScrollViewer = GetTemplateChild<ScrollViewer>(dialog, "ContentScrollViewer");
+            contentScrollViewer.ApplyTemplate();
+            host.UpdateLayout();
+
+            var contentBorder = VisualTreeTestHelper.EnumerateDescendants(contentScrollViewer)
+                .OfType<Border>()
+                .Single(item => Equals(item.Padding, contentDialogPadding));
+            var title = GetTemplateChild<ContentControl>(dialog, "Title");
+            var contentPresenter = GetTemplateChild<ContentPresenterEx>(dialog, "Content");
+            var commandSpace = GetTemplateChild<Grid>(dialog, "CommandSpace");
+            var primaryButton = GetTemplateButton(dialog, "PrimaryButton");
+            var secondaryButton = GetTemplateButton(dialog, "SecondaryButton");
+            var closeButton = GetTemplateButton(dialog, "CloseButton");
+
+            Assert.AreEqual(dialog.TryFindResource("OverlayCornerRadius"), layoutRoot.CornerRadius);
+            Assert.AreSame(dialog.TryFindResource("ContentDialogSmokeFill"), smokeLayer.Fill);
+
+            Assert.AreEqual(resources["ContentDialogMinWidth"], backgroundElement.MinWidth);
+            Assert.AreEqual(resources["ContentDialogMaxWidth"], backgroundElement.MaxWidth);
+            Assert.AreEqual(resources["ContentDialogMinHeight"], backgroundElement.MinHeight);
+            Assert.AreEqual(resources["ContentDialogMaxHeight"], backgroundElement.MaxHeight);
+
+            Assert.AreEqual(dialog.IsShadowEnabled, shadow.IsShadowEnabled);
+            Assert.AreEqual(dialog.CornerRadius, shadow.CornerRadius);
+            Assert.AreEqual(dialog.BorderThickness, shadow.Margin);
+
+            Assert.AreSame(dialog.Background, chrome.Background);
+            Assert.AreEqual(dialog.BorderThickness, chrome.BorderThickness);
+            Assert.AreSame(dialog.BorderBrush, chrome.BorderBrush);
+            Assert.AreEqual(dialog.CornerRadius, chrome.CornerRadius);
+            Assert.AreEqual(dialog.TryFindResource("OverlayCornerRadius"), dialogSpace.CornerRadius);
+
+            Assert.AreSame(dialog.TryFindResource("ContentDialogTopOverlay"), contentBorder.Background);
+            Assert.AreEqual(contentDialogPadding, contentBorder.Padding);
+            Assert.AreEqual(contentDialogSeparatorThickness, contentBorder.BorderThickness);
+            Assert.AreSame(dialog.TryFindResource("ContentDialogSeparatorBorderBrush"), contentBorder.BorderBrush);
+
+            Assert.AreEqual(contentDialogTitleMargin, title.Margin);
+            Assert.AreEqual(dialog.Title, title.Content);
+            Assert.AreSame(dialog.TitleTemplate, title.ContentTemplate);
+            Assert.AreSame(dialog.Foreground, title.Foreground);
+            Assert.AreSame(dialog.TryFindResource(SystemFonts.MessageFontFamilyKey), title.FontFamily);
+
+            Assert.AreEqual(dialog.Content, contentPresenter.Content);
+            Assert.AreSame(dialog.ContentTemplate, contentPresenter.ContentTemplate);
+            Assert.AreSame(dialog.Foreground, contentPresenter.Foreground);
+            Assert.AreEqual(dialog.TryFindResource("ControlContentThemeFontSize"), contentPresenter.FontSize);
+            Assert.AreSame(dialog.TryFindResource("ContentControlThemeFontFamily"), contentPresenter.FontFamily);
+
+            Assert.AreEqual(contentDialogPadding, commandSpace.Margin);
+            Assert.AreSame(dialog.Background, commandSpace.Background);
+
+            Assert.AreSame(dialog.PrimaryButtonStyle, primaryButton.Style);
+            Assert.AreSame(dialog.SecondaryButtonStyle, secondaryButton.Style);
+            Assert.AreSame(dialog.CloseButtonStyle, closeButton.Style);
+            Assert.AreEqual(dialog.PrimaryButtonText, primaryButton.Content);
+            Assert.AreEqual(dialog.SecondaryButtonText, secondaryButton.Content);
+            Assert.AreEqual(dialog.CloseButtonText, closeButton.Content);
+            Assert.AreEqual(HorizontalAlignment.Stretch, primaryButton.HorizontalAlignment);
+            Assert.AreEqual(HorizontalAlignment.Stretch, secondaryButton.HorizontalAlignment);
+            Assert.AreEqual(HorizontalAlignment.Stretch, closeButton.HorizontalAlignment);
+
+            dialog.Hide();
+            Assert.AreEqual(ContentDialogResult.None, WaitForResult(showTask));
         });
     }
 
@@ -734,6 +851,28 @@ public class ContentDialogApiTests
         var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
         Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
         Assert.AreEqual(expectedValue, themeDictionary[resourceKey]);
+    }
+
+    private static ResourceDictionary GetContentDialogResources()
+    {
+        return new ResourceDictionary
+        {
+            Source = new Uri("/ModernWpf.Controls;component/ContentDialog/ContentDialog.xaml", UriKind.Relative)
+        };
+    }
+
+    private static void AssertDynamicResourceSetter(Style style, DependencyProperty property, object expectedResourceKey)
+    {
+        var setter = style.Setters.OfType<Setter>().Single(item => item.Property == property);
+        Assert.IsInstanceOfType(setter.Value, typeof(DynamicResourceExtension));
+        var dynamicResource = (DynamicResourceExtension)setter.Value;
+        Assert.AreEqual(expectedResourceKey, dynamicResource.ResourceKey);
+    }
+
+    private static void AssertSetterValue(Style style, DependencyProperty property, object? expectedValue)
+    {
+        var setter = style.Setters.OfType<Setter>().Single(item => item.Property == property);
+        Assert.AreEqual(expectedValue, setter.Value);
     }
 
     private static void AssertStateSetter(
