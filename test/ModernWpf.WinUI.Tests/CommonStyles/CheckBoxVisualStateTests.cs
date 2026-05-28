@@ -27,14 +27,63 @@ public class CheckBoxVisualStateTests
             Assert.AreEqual(typeof(CheckBox), implicitCheckBoxStyle.TargetType);
             Assert.AreSame(defaultStyle, implicitCheckBoxStyle.BasedOn);
 
+            AssertDynamicResourceSetter(defaultStyle, Control.FocusVisualStyleProperty, SystemParameters.FocusVisualStyleKey);
+            AssertDynamicResourceSetter(defaultStyle, Control.BackgroundProperty, "CheckBoxBackgroundUnchecked");
+            AssertDynamicResourceSetter(defaultStyle, Control.ForegroundProperty, "CheckBoxForegroundUnchecked");
+            AssertDynamicResourceSetter(defaultStyle, Control.BorderBrushProperty, "CheckBoxBorderBrushUnchecked");
+            AssertResourceSetterValue(defaultStyle, Control.BorderThicknessProperty, "CheckBoxBorderThickness");
+            AssertResourceSetterValue(defaultStyle, Control.PaddingProperty, "CheckBoxPadding");
+            AssertSetterValue(defaultStyle, FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Left);
+            AssertSetterValue(defaultStyle, FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+            AssertSetterValue(defaultStyle, Control.HorizontalContentAlignmentProperty, HorizontalAlignment.Left);
+            AssertSetterValue(defaultStyle, Control.VerticalContentAlignmentProperty, VerticalAlignment.Top);
+            AssertSetterValue(defaultStyle, Control.FontWeightProperty, FontWeights.Normal);
+            AssertSetterValue(defaultStyle, KeyboardNavigation.IsTabStopProperty, true);
+            AssertSetterValue(defaultStyle, UIElement.FocusableProperty, true);
+            AssertResourceSetterValue(defaultStyle, FrameworkElement.MinWidthProperty, "CheckBoxMinWidth");
+            AssertResourceSetterValue(defaultStyle, FrameworkElement.MinHeightProperty, "CheckBoxHeight");
+            AssertDynamicResourceSetter(defaultStyle, FocusVisualHelper.UseSystemFocusVisualsProperty, "UseSystemFocusVisuals");
+            AssertResourceSetterValue(defaultStyle, FocusVisualHelper.FocusVisualMarginProperty, "CheckBoxFocusVisualMargin");
+            AssertDynamicResourceSetter(defaultStyle, System.Windows.Controls.Border.CornerRadiusProperty, "ControlCornerRadius");
+            AssertSetterValue(defaultStyle, UIElement.SnapsToDevicePixelsProperty, true);
+            AssertSetterValue(defaultStyle, FrameworkElement.OverridesDefaultStyleProperty, true);
+            AssertSetterValue(defaultStyle, Stylus.IsPressAndHoldEnabledProperty, false);
+            Assert.IsInstanceOfType(FindSetter(defaultStyle, Control.TemplateProperty)?.Value, typeof(ControlTemplate));
+
+            var dataGridStyle = (Style)Application.Current.FindResource("DataGridCheckBoxStyle");
+            Assert.AreSame(defaultStyle, dataGridStyle.BasedOn);
+            AssertSetterValue(dataGridStyle, FrameworkElement.MinWidthProperty, 0.0);
+            AssertSetterValue(dataGridStyle, FrameworkElement.MinHeightProperty, 0.0);
+            AssertSetterValue(dataGridStyle, FrameworkElement.MarginProperty, new Thickness(12, 0, 12, 0));
+            AssertSetterValue(dataGridStyle, Control.FocusVisualStyleProperty, null);
+
+            var readOnlyDataGridStyle = (Style)Application.Current.FindResource("DataGridReadOnlyCheckBoxStyle");
+            Assert.AreSame(dataGridStyle, readOnlyDataGridStyle.BasedOn);
+            AssertSetterValue(readOnlyDataGridStyle, UIElement.IsHitTestVisibleProperty, false);
+            AssertSetterValue(readOnlyDataGridStyle, UIElement.FocusableProperty, false);
+
             var checkBox = CreateCheckBox();
             using var host = new TestWindowHost(checkBox, width: 180, height: 80);
 
+            Assert.AreSame(checkBox.TryFindResource("CheckBoxBackgroundUnchecked"), checkBox.Background);
+            Assert.AreSame(checkBox.TryFindResource("CheckBoxForegroundUnchecked"), checkBox.Foreground);
+            Assert.AreSame(checkBox.TryFindResource("CheckBoxBorderBrushUnchecked"), checkBox.BorderBrush);
             Assert.AreEqual((Thickness)Application.Current.FindResource("CheckBoxPadding"), checkBox.Padding);
             Assert.AreEqual((Thickness)Application.Current.FindResource("CheckBoxBorderThickness"), checkBox.BorderThickness);
             Assert.AreEqual((double)Application.Current.FindResource("CheckBoxHeight"), checkBox.MinHeight);
+            Assert.AreEqual((double)Application.Current.FindResource("CheckBoxMinWidth"), checkBox.MinWidth);
+            Assert.AreEqual(HorizontalAlignment.Left, checkBox.HorizontalAlignment);
+            Assert.AreEqual(VerticalAlignment.Center, checkBox.VerticalAlignment);
+            Assert.AreEqual(HorizontalAlignment.Left, checkBox.HorizontalContentAlignment);
+            Assert.AreEqual(VerticalAlignment.Top, checkBox.VerticalContentAlignment);
+            Assert.AreEqual(FontWeights.Normal, checkBox.FontWeight);
             Assert.IsTrue(checkBox.Focusable);
             Assert.IsTrue(KeyboardNavigation.GetIsTabStop(checkBox));
+            Assert.AreEqual(checkBox.TryFindResource("UseSystemFocusVisuals"), FocusVisualHelper.GetUseSystemFocusVisuals(checkBox));
+            Assert.AreEqual(checkBox.TryFindResource("CheckBoxFocusVisualMargin"), FocusVisualHelper.GetFocusVisualMargin(checkBox));
+            Assert.AreEqual(checkBox.TryFindResource("ControlCornerRadius"), checkBox.GetValue(System.Windows.Controls.Border.CornerRadiusProperty));
+            Assert.IsTrue(checkBox.SnapsToDevicePixels);
+            Assert.IsTrue(checkBox.OverridesDefaultStyle);
             AssertTemplateUsesOfficialWpfPresenter(checkBox);
             AssertOfficialTriggerShape(checkBox.Template);
             AssertUncheckedDisabledTriggerAppliesResources(checkBox);
@@ -285,14 +334,25 @@ public class CheckBoxVisualStateTests
         Assert.AreEqual(typeof(Grid), rootGrid.GetType());
         Assert.AreEqual(typeof(ContentPresenter), contentPresenter.GetType());
         Assert.AreEqual(checkBox.Content, contentPresenter.Content);
+        Assert.AreEqual(checkBox.Padding, contentPresenter.Margin);
+        Assert.AreEqual(checkBox.HorizontalContentAlignment, contentPresenter.HorizontalAlignment);
+        Assert.AreEqual(checkBox.VerticalContentAlignment, contentPresenter.VerticalAlignment);
         Assert.IsTrue(contentPresenter.RecognizesAccessKey);
+        Assert.AreSame(checkBox.Background, rootBorder.Background);
+        Assert.AreSame(checkBox.BorderBrush, rootBorder.BorderBrush);
+        Assert.AreEqual(checkBox.BorderThickness, rootBorder.BorderThickness);
         Assert.AreEqual(((CornerRadius)checkBox.GetValue(System.Windows.Controls.Border.CornerRadiusProperty)), rootBorder.CornerRadius);
         Assert.AreEqual(((CornerRadius)checkBox.GetValue(System.Windows.Controls.Border.CornerRadiusProperty)), iconPresenter.CornerRadius);
         Assert.AreEqual(((CornerRadius)checkBox.GetValue(System.Windows.Controls.Border.CornerRadiusProperty)), strokeBorder.CornerRadius);
         Assert.AreEqual((Thickness)Application.Current.FindResource("CheckBoxBorderThickness"), strokeBorder.BorderThickness);
         Assert.AreEqual((double)Application.Current.FindResource("CheckBoxSize"), iconPresenter.Width);
         Assert.AreEqual((double)Application.Current.FindResource("CheckBoxSize"), iconPresenter.Height);
+        Assert.AreSame(iconPresenter.TryFindResource("CheckBoxCheckBackgroundFillUnchecked"), iconPresenter.Background);
+        Assert.AreSame(strokeBorder.TryFindResource("CheckBoxCheckBackgroundStrokeUnchecked"), strokeBorder.BorderBrush);
         Assert.AreEqual((double)Application.Current.FindResource("CheckBoxIconSize"), controlIcon.FontSize);
+        Assert.AreSame(controlIcon.TryFindResource("SymbolThemeFontFamily"), controlIcon.FontFamily);
+        Assert.AreEqual(FontWeights.Bold, controlIcon.FontWeight);
+        Assert.AreSame(controlIcon.TryFindResource("CheckBoxCheckGlyphForeground"), controlIcon.Foreground);
         Assert.AreEqual((string)Application.Current.FindResource("CheckBoxCheckedGlyph"), controlIcon.Text);
         Assert.AreEqual(Visibility.Collapsed, controlIcon.Visibility);
         Assert.AreEqual(0, VisualStateManager.GetVisualStateGroups(rootBorder).Count);
@@ -435,6 +495,54 @@ public class CheckBoxVisualStateTests
         return trigger.Conditions.Cast<Condition>().Any(item =>
             item.Property.Name == propertyName &&
             Equals(item.Value, value));
+    }
+
+    private static void AssertDynamicResourceSetter(Style style, DependencyProperty property, object resourceKey)
+    {
+        var setter = FindSetter(style, property);
+        Assert.IsNotNull(setter, $"Expected setter for {property.Name}.");
+        Assert.IsInstanceOfType(setter!.Value, typeof(DynamicResourceExtension));
+
+        var dynamicResource = (DynamicResourceExtension)setter.Value;
+        Assert.AreEqual(resourceKey, dynamicResource.ResourceKey);
+    }
+
+    private static void AssertResourceSetterValue(Style style, DependencyProperty property, object resourceKey)
+    {
+        var setter = FindSetter(style, property);
+        Assert.IsNotNull(setter, $"Expected setter for {property.Name}.");
+
+        if (setter!.Value is StaticResourceExtension staticResource)
+        {
+            Assert.AreEqual(resourceKey, staticResource.ResourceKey);
+            return;
+        }
+
+        Assert.AreEqual(Application.Current.FindResource(resourceKey), setter.Value);
+    }
+
+    private static void AssertSetterValue(Style style, DependencyProperty property, object? value)
+    {
+        var setter = FindSetter(style, property);
+        Assert.IsNotNull(setter, $"Expected setter for {property.Name}.");
+        Assert.AreEqual(value, setter!.Value);
+    }
+
+    private static Setter? FindSetter(Style style, DependencyProperty property)
+    {
+        for (var current = style; current != null; current = current.BasedOn)
+        {
+            var setter = current.Setters
+                .OfType<Setter>()
+                .SingleOrDefault(item => item.Property == property);
+
+            if (setter != null)
+            {
+                return setter;
+            }
+        }
+
+        return null;
     }
 
     private static void AssertSetter(Setter[] setters, string targetName, string propertyName, object value)

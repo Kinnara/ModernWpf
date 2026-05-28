@@ -30,12 +30,49 @@ public class RadioButtonVisualStateTests
             Assert.AreEqual(typeof(RadioButton), implicitRadioButtonStyle.TargetType);
             Assert.AreSame(defaultStyle, implicitRadioButtonStyle.BasedOn);
 
+            AssertDynamicResourceSetter(defaultStyle, Control.FocusVisualStyleProperty, SystemParameters.FocusVisualStyleKey);
+            AssertDynamicResourceSetter(defaultStyle, Control.BackgroundProperty, "RadioButtonBackground");
+            AssertDynamicResourceSetter(defaultStyle, Control.ForegroundProperty, "RadioButtonForeground");
+            AssertDynamicResourceSetter(defaultStyle, Control.BorderBrushProperty, "RadioButtonBorderBrush");
+            AssertSetterValue(defaultStyle, FrameworkElement.MarginProperty, new Thickness(0));
+            AssertResourceSetterValue(defaultStyle, Control.PaddingProperty, "RadioButtonPadding");
+            AssertSetterValue(defaultStyle, FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Left);
+            AssertSetterValue(defaultStyle, FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+            AssertSetterValue(defaultStyle, Control.HorizontalContentAlignmentProperty, HorizontalAlignment.Left);
+            AssertSetterValue(defaultStyle, Control.VerticalContentAlignmentProperty, VerticalAlignment.Top);
+            AssertSetterValue(defaultStyle, Control.FontWeightProperty, FontWeights.Normal);
+            AssertSetterValue(defaultStyle, FrameworkElement.MinWidthProperty, 120.0);
+            AssertSetterValue(defaultStyle, KeyboardNavigation.IsTabStopProperty, true);
+            AssertSetterValue(defaultStyle, UIElement.FocusableProperty, true);
+            AssertDynamicResourceSetter(defaultStyle, FocusVisualHelper.UseSystemFocusVisualsProperty, "UseSystemFocusVisuals");
+            AssertSetterValue(defaultStyle, FocusVisualHelper.FocusVisualMarginProperty, new Thickness(-7, -3, -7, -3));
+            AssertDynamicResourceSetter(defaultStyle, System.Windows.Controls.Border.CornerRadiusProperty, "ControlCornerRadius");
+            AssertSetterValue(defaultStyle, UIElement.SnapsToDevicePixelsProperty, true);
+            AssertSetterValue(defaultStyle, FrameworkElement.OverridesDefaultStyleProperty, true);
+            AssertSetterValue(defaultStyle, Stylus.IsPressAndHoldEnabledProperty, false);
+            Assert.IsInstanceOfType(FindSetter(defaultStyle, Control.TemplateProperty)?.Value, typeof(ControlTemplate));
+
             var radioButton = CreateRadioButton();
             using var host = new TestWindowHost(radioButton, width: 180, height: 80);
 
+            Assert.AreSame(radioButton.TryFindResource("RadioButtonBackground"), radioButton.Background);
+            Assert.AreSame(radioButton.TryFindResource("RadioButtonForeground"), radioButton.Foreground);
+            Assert.AreSame(radioButton.TryFindResource("RadioButtonBorderBrush"), radioButton.BorderBrush);
+            Assert.AreEqual(new Thickness(0), radioButton.Margin);
             Assert.AreEqual((Thickness)Application.Current.FindResource("RadioButtonPadding"), radioButton.Padding);
+            Assert.AreEqual(HorizontalAlignment.Left, radioButton.HorizontalAlignment);
+            Assert.AreEqual(VerticalAlignment.Center, radioButton.VerticalAlignment);
+            Assert.AreEqual(HorizontalAlignment.Left, radioButton.HorizontalContentAlignment);
+            Assert.AreEqual(VerticalAlignment.Top, radioButton.VerticalContentAlignment);
+            Assert.AreEqual(FontWeights.Normal, radioButton.FontWeight);
+            Assert.AreEqual(120.0, radioButton.MinWidth);
             Assert.IsTrue(radioButton.Focusable);
             Assert.IsTrue(KeyboardNavigation.GetIsTabStop(radioButton));
+            Assert.AreEqual(radioButton.TryFindResource("UseSystemFocusVisuals"), FocusVisualHelper.GetUseSystemFocusVisuals(radioButton));
+            Assert.AreEqual(new Thickness(-7, -3, -7, -3), FocusVisualHelper.GetFocusVisualMargin(radioButton));
+            Assert.AreEqual(radioButton.TryFindResource("ControlCornerRadius"), radioButton.GetValue(System.Windows.Controls.Border.CornerRadiusProperty));
+            Assert.IsTrue(radioButton.SnapsToDevicePixels);
+            Assert.IsTrue(radioButton.OverridesDefaultStyle);
             AssertTemplateUsesOfficialWpfPresenter(radioButton);
             Assert.IsFalse(ButtonHelper.GetVisualStateSettersEnabled(radioButton));
             AssertOfficialVisualStateShape(radioButton);
@@ -225,17 +262,40 @@ public class RadioButtonVisualStateTests
 
         Assert.AreEqual(radioButton.Content, contentPresenter.Content);
         Assert.AreEqual(typeof(ContentPresenter), contentPresenter.GetType());
+        Assert.AreEqual(radioButton.Padding, contentPresenter.Margin);
+        Assert.AreEqual(radioButton.HorizontalContentAlignment, contentPresenter.HorizontalAlignment);
+        Assert.AreEqual(radioButton.VerticalContentAlignment, contentPresenter.VerticalAlignment);
         Assert.IsTrue(contentPresenter.RecognizesAccessKey);
         Assert.AreSame(radioButton.Foreground, TextElement.GetForeground(contentPresenter));
+        Assert.AreSame(radioButton.Background, rootBorder.Background);
+        Assert.AreSame(radioButton.BorderBrush, rootBorder.BorderBrush);
+        Assert.AreEqual(radioButton.BorderThickness, rootBorder.BorderThickness);
         Assert.AreEqual(((CornerRadius)radioButton.GetValue(System.Windows.Controls.Border.CornerRadiusProperty)), rootBorder.CornerRadius);
         Assert.AreEqual(0, VisualStateManager.GetVisualStateGroups(rootGrid).Count);
 
         var strokeThickness = (double)Application.Current.FindResource("RadioButtonStrokeThickness");
+        Assert.AreEqual((double)Application.Current.FindResource("RadioButtonOuterEllipseSize"), outerEllipse.Width);
+        Assert.AreEqual((double)Application.Current.FindResource("RadioButtonOuterEllipseSize"), outerEllipse.Height);
+        Assert.AreSame(outerEllipse.TryFindResource("RadioButtonOuterEllipseFill"), outerEllipse.Fill);
+        Assert.AreSame(outerEllipse.TryFindResource("RadioButtonOuterEllipseStroke"), outerEllipse.Stroke);
         Assert.AreEqual(strokeThickness, outerEllipse.StrokeThickness);
+        Assert.AreEqual((double)Application.Current.FindResource("RadioButtonOuterEllipseSize"), checkOuterEllipse.Width);
+        Assert.AreEqual((double)Application.Current.FindResource("RadioButtonOuterEllipseSize"), checkOuterEllipse.Height);
+        Assert.AreSame(checkOuterEllipse.TryFindResource("RadioButtonOuterEllipseCheckedFill"), checkOuterEllipse.Fill);
+        Assert.AreSame(checkOuterEllipse.TryFindResource("RadioButtonOuterEllipseCheckedStroke"), checkOuterEllipse.Stroke);
+        Assert.AreEqual(0.0, checkOuterEllipse.Opacity);
         Assert.AreEqual(strokeThickness, checkOuterEllipse.StrokeThickness);
+        Assert.AreEqual((double)Application.Current.FindResource("RadioButtonCheckGlyphSize"), checkGlyph.Width);
+        Assert.AreEqual((double)Application.Current.FindResource("RadioButtonCheckGlyphSize"), checkGlyph.Height);
+        Assert.AreSame(checkGlyph.TryFindResource("RadioButtonCheckGlyphFill"), checkGlyph.Fill);
+        Assert.AreSame(checkGlyph.TryFindResource("CircleElevationBorderBrush"), checkGlyph.Stroke);
+        Assert.AreEqual(0.0, checkGlyph.Opacity);
         Assert.IsInstanceOfType(checkGlyph.RenderTransform, typeof(ScaleTransform));
         Assert.AreEqual(4.0, pressedCheckGlyph.Width);
         Assert.AreEqual(4.0, pressedCheckGlyph.Height);
+        Assert.AreSame(pressedCheckGlyph.TryFindResource("RadioButtonCheckGlyphFill"), pressedCheckGlyph.Background);
+        Assert.AreSame(pressedCheckGlyph.TryFindResource("CircleElevationBorderBrush"), pressedCheckGlyph.BorderBrush);
+        Assert.AreEqual(new CornerRadius(6), pressedCheckGlyph.CornerRadius);
     }
 
     private static void AssertOfficialVisualStateShape(RadioButton radioButton)
@@ -351,6 +411,54 @@ public class RadioButtonVisualStateTests
         return trigger.Conditions.Cast<Condition>().Any(item =>
             item.Property.Name == propertyName &&
             Equals(item.Value, value));
+    }
+
+    private static void AssertDynamicResourceSetter(Style style, DependencyProperty property, object resourceKey)
+    {
+        var setter = FindSetter(style, property);
+        Assert.IsNotNull(setter, $"Expected setter for {property.Name}.");
+        Assert.IsInstanceOfType(setter!.Value, typeof(DynamicResourceExtension));
+
+        var dynamicResource = (DynamicResourceExtension)setter.Value;
+        Assert.AreEqual(resourceKey, dynamicResource.ResourceKey);
+    }
+
+    private static void AssertResourceSetterValue(Style style, DependencyProperty property, object resourceKey)
+    {
+        var setter = FindSetter(style, property);
+        Assert.IsNotNull(setter, $"Expected setter for {property.Name}.");
+
+        if (setter!.Value is StaticResourceExtension staticResource)
+        {
+            Assert.AreEqual(resourceKey, staticResource.ResourceKey);
+            return;
+        }
+
+        Assert.AreEqual(Application.Current.FindResource(resourceKey), setter.Value);
+    }
+
+    private static void AssertSetterValue(Style style, DependencyProperty property, object? value)
+    {
+        var setter = FindSetter(style, property);
+        Assert.IsNotNull(setter, $"Expected setter for {property.Name}.");
+        Assert.AreEqual(value, setter!.Value);
+    }
+
+    private static Setter? FindSetter(Style style, DependencyProperty property)
+    {
+        for (var current = style; current != null; current = current.BasedOn)
+        {
+            var setter = current.Setters
+                .OfType<Setter>()
+                .SingleOrDefault(item => item.Property == property);
+
+            if (setter != null)
+            {
+                return setter;
+            }
+        }
+
+        return null;
     }
 
     private static void AssertSetter(Setter[] setters, string targetName, string propertyName, object value)
