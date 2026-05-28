@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Automation;
@@ -23,7 +24,29 @@ public class ProgressRingApiTests
         {
             TestApplication.EnsureInitialized();
 
-            var progressRing = new ModernWpf.Controls.ProgressRing();
+            var resources = new ResourceDictionary
+            {
+                Source = new Uri("/ModernWpf.Controls;component/ProgressRing/ProgressRing.xaml", UriKind.Relative)
+            };
+            var style = (Style)resources[typeof(ModernWpf.Controls.ProgressRing)];
+
+            AssertDynamicResourceSetter(style, Control.ForegroundProperty, "ProgressRingForegroundThemeBrush");
+            AssertDynamicResourceSetter(style, Control.BackgroundProperty, "ProgressRingBackgroundThemeBrush");
+            AssertSetterValue(style, UIElement.IsHitTestVisibleProperty, false);
+            AssertSetterValue(style, FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Center);
+            AssertSetterValue(style, FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+            AssertSetterValue(style, FrameworkElement.MinHeightProperty, 16.0);
+            AssertSetterValue(style, FrameworkElement.MinWidthProperty, 16.0);
+            AssertSetterValue(style, Control.IsTabStopProperty, false);
+            AssertSetterValue(style, FrameworkElement.WidthProperty, 32.0);
+            AssertSetterValue(style, FrameworkElement.HeightProperty, 32.0);
+            AssertSetterValue(style, ModernWpf.Controls.ProgressRing.MaximumProperty, 100.0);
+            Assert.IsInstanceOfType(FindSetter(style, Control.TemplateProperty)?.Value, typeof(ControlTemplate));
+
+            var progressRing = new ModernWpf.Controls.ProgressRing
+            {
+                Style = style
+            };
 
             using var host = new TestWindowHost(progressRing, width: 240, height: 180);
             host.UpdateLayout();
@@ -46,6 +69,9 @@ public class ProgressRingApiTests
             Assert.AreEqual(FlowDirection.LeftToRight, lottiePlayer.FlowDirection);
             Assert.AreEqual(progressRing.TemplateSettings.MaxSideLength, lottiePlayer.MaxWidth);
             Assert.AreEqual(progressRing.TemplateSettings.MaxSideLength, lottiePlayer.MaxHeight);
+            Assert.AreEqual(1.0, lottiePlayer.Opacity);
+            Assert.AreEqual(new Point(0.5, 0.5), lottiePlayer.RenderTransformOrigin);
+            Assert.IsTrue(lottiePlayer.SnapsToDevicePixels);
             Assert.AreEqual(Visibility.Visible, layoutRoot.Visibility);
             Assert.AreEqual(1.0, layoutRoot.Opacity);
             Assert.IsNull(TryFindNamedDescendant<FrameworkElement>(progressRing, "Ring"));
@@ -177,6 +203,40 @@ public class ProgressRingApiTests
         Assert.AreEqual(expected.ToString(), actual.ToString());
     }
 
+    private static void AssertDynamicResourceSetter(Style style, DependencyProperty property, object expectedResourceKey)
+    {
+        var setter = FindSetter(style, property);
+        Assert.IsNotNull(setter, $"Expected setter for {property.Name}.");
+        Assert.IsInstanceOfType(setter!.Value, typeof(DynamicResourceExtension));
+
+        var dynamicResource = (DynamicResourceExtension)setter.Value;
+        Assert.AreEqual(expectedResourceKey, dynamicResource.ResourceKey);
+    }
+
+    private static void AssertSetterValue(Style style, DependencyProperty property, object expectedValue)
+    {
+        var setter = FindSetter(style, property);
+        Assert.IsNotNull(setter, $"Expected setter for {property.Name}.");
+        Assert.AreEqual(expectedValue, setter!.Value);
+    }
+
+    private static Setter? FindSetter(Style style, DependencyProperty property)
+    {
+        for (var current = style; current != null; current = current.BasedOn)
+        {
+            var setter = current.Setters
+                .OfType<Setter>()
+                .FirstOrDefault(item => item.Property == property);
+
+            if (setter != null)
+            {
+                return setter;
+            }
+        }
+
+        return null;
+    }
+
     private static void AssertStateSetter(FrameworkElement stateGroupsRoot, string groupName, string stateName, params string[] expectedTargets)
     {
         var group = FindVisualStateGroup(stateGroupsRoot, groupName);
@@ -202,6 +262,10 @@ public class ProgressRingApiTests
         Assert.AreEqual(6, ellipses.Length);
         foreach (var ellipse in ellipses)
         {
+            Assert.IsNotNull(ellipse.Style, ellipse.Name);
+            AssertSetterValue(ellipse.Style!, UIElement.OpacityProperty, 0.0);
+            AssertSetterValue(ellipse.Style!, FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Left);
+            AssertSetterValue(ellipse.Style!, FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Top);
             Assert.AreEqual(progressRing.TemplateSettings.EllipseDiameter, ellipse.Width);
             Assert.AreEqual(progressRing.TemplateSettings.EllipseDiameter, ellipse.Height);
             Assert.AreEqual(progressRing.TemplateSettings.EllipseOffset, ellipse.Margin);
