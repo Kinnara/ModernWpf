@@ -89,6 +89,55 @@ public class ScrollBarVisualStateTests
     }
 
     [TestMethod]
+    public void ScrollBarStylesUseWinUIResourceAliases()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var defaultStyle = (Style)Application.Current.FindResource("DefaultScrollBarStyle");
+            var lineButtonStyle = (Style)Application.Current.FindResource("ScrollBarLineButtonStyle");
+            var pageButtonStyle = (Style)Application.Current.FindResource("ScrollBarPageButtonStyle");
+            var thumbStyle = (Style)Application.Current.FindResource("ScrollBarThumbStyle");
+            var verticalTemplate = (ControlTemplate)Application.Current.FindResource("VerticalScrollBarTemplate");
+            var horizontalTemplate = (ControlTemplate)Application.Current.FindResource("HorizontalScrollBarTemplate");
+
+            AssertDynamicResourceSetter(defaultStyle.Setters.OfType<Setter>().ToArray(), Control.BackgroundProperty, "ScrollBarTrackFill");
+            AssertDynamicResourceSetter(defaultStyle.Setters.OfType<Setter>().ToArray(), Control.BorderBrushProperty, "ScrollBarTrackStroke");
+            AssertDynamicResourceSetter(lineButtonStyle.Setters.OfType<Setter>().ToArray(), Control.ForegroundProperty, "ScrollBarButtonArrowForeground");
+            AssertDynamicResourceSetter(thumbStyle.Setters.OfType<Setter>().ToArray(), Control.BackgroundProperty, "ScrollBarThumbFill");
+            AssertMouseOverTrackFillSetter(verticalTemplate, "ScrollBarTrackFillPointerOver");
+            AssertMouseOverTrackFillSetter(horizontalTemplate, "ScrollBarTrackFillPointerOver");
+
+            var verticalScrollBar = CreateScrollBar(Orientation.Vertical);
+            using (var host = new TestWindowHost(verticalScrollBar, width: 80, height: 180))
+            {
+                host.UpdateLayout();
+                AssertScrollBarLiveResources(verticalScrollBar, verticalTemplate, lineButtonStyle, pageButtonStyle, thumbStyle);
+                AssertLineButtonLiveResources(
+                    FindTemplatePart<RepeatButton>(verticalScrollBar, "PART_ButtonScrollUp"),
+                    verticalScrollBar.TryFindResource("ScrollBarCaretUpGlyph"));
+                AssertLineButtonLiveResources(
+                    FindTemplatePart<RepeatButton>(verticalScrollBar, "PART_ButtonScrollDown"),
+                    verticalScrollBar.TryFindResource("ScrollBarCaretDownGlyph"));
+            }
+
+            var horizontalScrollBar = CreateScrollBar(Orientation.Horizontal);
+            using (var host = new TestWindowHost(horizontalScrollBar, width: 180, height: 80))
+            {
+                host.UpdateLayout();
+                AssertScrollBarLiveResources(horizontalScrollBar, horizontalTemplate, lineButtonStyle, pageButtonStyle, thumbStyle);
+                AssertLineButtonLiveResources(
+                    FindTemplatePart<RepeatButton>(horizontalScrollBar, "PART_ButtonScrollLeft"),
+                    horizontalScrollBar.TryFindResource("ScrollBarCaretLeftGlyph"));
+                AssertLineButtonLiveResources(
+                    FindTemplatePart<RepeatButton>(horizontalScrollBar, "PART_ButtonScrollRight"),
+                    horizontalScrollBar.TryFindResource("ScrollBarCaretRightGlyph"));
+            }
+        });
+    }
+
+    [TestMethod]
     public void VerticalScrollBarAppliesOfficialWpfFluentTemplateParts()
     {
         WpfTestHost.Run(() =>
@@ -282,9 +331,95 @@ public class ScrollBarVisualStateTests
     private static void AssertDynamicResourceSetter(Setter[] setters, DependencyProperty property, object resourceKey)
     {
         var setter = setters.Single(item => item.Property == property);
+        AssertDynamicResourceSetter(setter, resourceKey);
+    }
+
+    private static void AssertDynamicResourceSetter(Setter setter, object resourceKey)
+    {
         Assert.IsInstanceOfType(setter.Value, typeof(DynamicResourceExtension));
         var dynamicResource = (DynamicResourceExtension)setter.Value;
         Assert.AreEqual(resourceKey, dynamicResource.ResourceKey);
+    }
+
+    private static void AssertMouseOverTrackFillSetter(ControlTemplate template, object resourceKey)
+    {
+        var trigger = template.Triggers.OfType<Trigger>()
+            .Single(item => item.Property == UIElement.IsMouseOverProperty && Equals(item.Value, true));
+        var setter = trigger.Setters.OfType<Setter>().Single(item => item.Property == Control.BackgroundProperty);
+        AssertDynamicResourceSetter(setter, resourceKey);
+    }
+
+    private static void AssertScrollBarLiveResources(
+        ScrollBar scrollBar,
+        ControlTemplate expectedTemplate,
+        Style lineButtonStyle,
+        Style pageButtonStyle,
+        Style thumbStyle)
+    {
+        Assert.AreSame(expectedTemplate, scrollBar.Template);
+        Assert.AreSame(scrollBar.TryFindResource("ScrollBarTrackFill"), scrollBar.Background);
+        Assert.AreSame(scrollBar.TryFindResource("ScrollBarTrackStroke"), scrollBar.BorderBrush);
+
+        var track = FindTemplatePart<Track>(scrollBar, "PART_Track");
+        Assert.AreSame(pageButtonStyle, track.DecreaseRepeatButton.Style);
+        Assert.AreSame(pageButtonStyle, track.IncreaseRepeatButton.Style);
+        Assert.IsFalse(track.DecreaseRepeatButton.IsTabStop);
+        Assert.IsFalse(track.DecreaseRepeatButton.Focusable);
+        Assert.IsFalse(track.IncreaseRepeatButton.IsTabStop);
+        Assert.IsFalse(track.IncreaseRepeatButton.Focusable);
+
+        var thumb = track.Thumb;
+        Assert.AreSame(thumbStyle, thumb.Style);
+        Assert.AreSame(thumb.TryFindResource("ScrollBarThumbFill"), thumb.Background);
+        Assert.AreEqual(new CornerRadius(4), thumb.GetValue(System.Windows.Controls.Border.CornerRadiusProperty));
+        Assert.IsFalse(thumb.IsTabStop);
+        Assert.IsFalse(thumb.Focusable);
+
+        thumb.ApplyTemplate();
+        var thumbBorder = FindVisualDescendant<Border>(thumb);
+        Assert.AreSame(thumb.Background, thumbBorder.Background);
+        Assert.AreSame(thumb.BorderBrush, thumbBorder.BorderBrush);
+        Assert.AreEqual(new Thickness(1), thumbBorder.BorderThickness);
+        Assert.AreEqual(thumb.GetValue(System.Windows.Controls.Border.CornerRadiusProperty), thumbBorder.CornerRadius);
+
+        foreach (var lineButton in GetLineButtons(scrollBar))
+        {
+            Assert.AreSame(lineButtonStyle, lineButton.Style);
+            Assert.AreSame(lineButton.TryFindResource("ScrollBarButtonArrowForeground"), lineButton.Foreground);
+            Assert.AreEqual(lineButton.TryFindResource("LineButtonWidth"), lineButton.Width);
+            Assert.AreEqual(lineButton.TryFindResource("LineButtonHeight"), lineButton.Height);
+            Assert.AreEqual(lineButton.TryFindResource("ScrollBarButtonArrowIconFontSize"), lineButton.FontSize);
+            Assert.IsFalse(lineButton.Focusable);
+        }
+    }
+
+    private static void AssertLineButtonLiveResources(RepeatButton button, object glyph)
+    {
+        button.ApplyTemplate();
+
+        var border = FindTemplatePart<Border>(button, "Border");
+        var textBlock = FindVisualDescendant<TextBlock>(button);
+
+        Assert.AreSame(button.TryFindResource("ScrollBarButtonBackground"), border.Background);
+        Assert.AreSame(button.Foreground, textBlock.Foreground);
+        Assert.AreSame(button.TryFindResource("SymbolThemeFontFamily"), textBlock.FontFamily);
+        Assert.AreEqual(button.FontSize, textBlock.FontSize);
+        Assert.AreEqual(glyph, textBlock.Text);
+    }
+
+    private static RepeatButton[] GetLineButtons(ScrollBar scrollBar)
+    {
+        return scrollBar.Orientation == Orientation.Vertical
+            ? new[]
+            {
+                FindTemplatePart<RepeatButton>(scrollBar, "PART_ButtonScrollUp"),
+                FindTemplatePart<RepeatButton>(scrollBar, "PART_ButtonScrollDown")
+            }
+            : new[]
+            {
+                FindTemplatePart<RepeatButton>(scrollBar, "PART_ButtonScrollLeft"),
+                FindTemplatePart<RepeatButton>(scrollBar, "PART_ButtonScrollRight")
+            };
     }
 
     private static T FindTemplatePart<T>(ScrollBar scrollBar, string name)
@@ -292,6 +427,20 @@ public class ScrollBarVisualStateTests
     {
         return scrollBar.Template.FindName(name, scrollBar) as T
             ?? throw new AssertFailedException($"Expected ScrollBar template part '{name}' to be a {typeof(T).Name}.");
+    }
+
+    private static T FindTemplatePart<T>(Control control, string name)
+        where T : DependencyObject
+    {
+        return control.Template.FindName(name, control) as T
+            ?? throw new AssertFailedException($"Expected {control.GetType().Name} template part '{name}' to be a {typeof(T).Name}.");
+    }
+
+    private static T FindVisualDescendant<T>(DependencyObject root)
+        where T : DependencyObject
+    {
+        return VisualTreeTestHelper.FindDescendant<T>(root)
+            ?? throw new AssertFailedException($"Expected visual descendant of type {typeof(T).Name}.");
     }
 
     private static void AssertThemeResourceReference(string themeName, string key, object expectedResourceKey)
