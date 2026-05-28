@@ -39,6 +39,44 @@ public class RepeatButtonVisualStateTests
         });
     }
 
+    [TestMethod]
+    public void ThemeResourcesUseWinUI2RepeatButtonHighContrastTokens()
+    {
+        WpfTestHost.Run(() =>
+        {
+            foreach (var themeName in new[] { "Light", "Dark" })
+            {
+                AssertThemeResourceValue(themeName, "RepeatButtonBorderThemeThickness", new Thickness(1));
+                AssertThemeResourceReference(themeName, "RepeatButtonBackground", "ControlFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "RepeatButtonBackgroundPointerOver", "ControlFillColorSecondaryBrush");
+                AssertThemeResourceReference(themeName, "RepeatButtonBackgroundPressed", "ControlFillColorTertiaryBrush");
+                AssertThemeResourceReference(themeName, "RepeatButtonBackgroundDisabled", "ControlFillColorDisabledBrush");
+                AssertThemeResourceReference(themeName, "RepeatButtonForeground", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "RepeatButtonForegroundPointerOver", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "RepeatButtonForegroundPressed", "TextFillColorSecondaryBrush");
+                AssertThemeResourceReference(themeName, "RepeatButtonForegroundDisabled", "TextFillColorDisabledBrush");
+                AssertThemeResourceReference(themeName, "RepeatButtonBorderBrush", "ControlElevationBorderBrush");
+                AssertThemeResourceReference(themeName, "RepeatButtonBorderBrushPointerOver", "ControlElevationBorderBrush");
+                AssertThemeResourceReference(themeName, "RepeatButtonBorderBrushPressed", "ControlStrokeColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "RepeatButtonBorderBrushDisabled", "ControlStrokeColorDefaultBrush");
+            }
+
+            AssertThemeResourceValue("HighContrast", "RepeatButtonBorderThemeThickness", new Thickness(1));
+            AssertThemeResourceReference("HighContrast", "RepeatButtonBackground", "SystemControlBackgroundBaseLowBrush");
+            AssertThemeResourceReference("HighContrast", "RepeatButtonBackgroundPointerOver", "SystemControlBackgroundBaseLowBrush");
+            AssertThemeResourceReference("HighContrast", "RepeatButtonBackgroundPressed", "SystemControlBackgroundBaseMediumLowBrush");
+            AssertThemeResourceReference("HighContrast", "RepeatButtonBackgroundDisabled", "SystemControlBackgroundBaseLowBrush");
+            AssertThemeResourceReference("HighContrast", "RepeatButtonForeground", "SystemControlForegroundBaseHighBrush");
+            AssertThemeResourceReference("HighContrast", "RepeatButtonForegroundPointerOver", "SystemControlHighlightBaseHighBrush");
+            AssertThemeResourceReference("HighContrast", "RepeatButtonForegroundPressed", "SystemControlHighlightBaseHighBrush");
+            AssertThemeResourceReference("HighContrast", "RepeatButtonForegroundDisabled", "SystemControlDisabledBaseMediumLowBrush");
+            AssertThemeResourceReference("HighContrast", "RepeatButtonBorderBrush", "SystemControlForegroundTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "RepeatButtonBorderBrushPointerOver", "SystemControlHighlightBaseMediumLowBrush");
+            AssertThemeResourceReference("HighContrast", "RepeatButtonBorderBrushPressed", "SystemControlHighlightTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "RepeatButtonBorderBrushDisabled", "SystemControlDisabledTransparentBrush");
+        });
+    }
+
     private static RepeatButton CreateRepeatButton()
     {
         return new RepeatButton
@@ -129,5 +167,20 @@ public class RepeatButtonVisualStateTests
     {
         return control.Template.FindName(name, control) as T
             ?? throw new AssertFailedException($"Expected {control.GetType().Name} template child '{name}' to be a {typeof(T).Name}.");
+    }
+
+    private static void AssertThemeResourceReference(string themeName, string resourceKey, object expectedResourceKey)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.IsTrue(themeDictionary.Contains(expectedResourceKey), $"{themeName} is missing {expectedResourceKey}.");
+        Assert.AreSame(themeDictionary[expectedResourceKey], themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
+    }
+
+    private static void AssertThemeResourceValue<T>(string themeName, string resourceKey, T expectedValue)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.AreEqual(expectedValue, themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
     }
 }

@@ -93,6 +93,58 @@ public class ToggleButtonVisualStateTests
         });
     }
 
+    [TestMethod]
+    public void ThemeResourcesUseWinUI2ToggleButtonHighContrastTokens()
+    {
+        WpfTestHost.Run(() =>
+        {
+            foreach (var themeName in new[] { "Light", "Dark" })
+            {
+                AssertThemeResourceValue(themeName, "ToggleButtonBorderThemeThickness", new Thickness(1));
+                AssertLightDarkToggleButtonTheme(themeName);
+            }
+
+            AssertThemeResourceValue("HighContrast", "ToggleButtonBorderThemeThickness", new Thickness(1));
+
+            AssertThemeResourceReference("HighContrast", "ToggleButtonBackground", "SystemControlBackgroundBaseLowBrush");
+            AssertThemeResourceReference("HighContrast", "ToggleButtonBackgroundPointerOver", "SystemColorHighlightTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "ToggleButtonBackgroundPressed", "SystemColorHighlightTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "ToggleButtonBackgroundDisabled", "SystemControlBackgroundBaseLowBrush");
+            AssertThemeResourceReference("HighContrast", "ToggleButtonBackgroundChecked", "SystemControlHighlightAccentBrush");
+            AssertThemeResourceReference("HighContrast", "ToggleButtonBackgroundCheckedPointerOver", "SystemColorButtonTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "ToggleButtonBackgroundCheckedPressed", "SystemColorHighlightTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "ToggleButtonBackgroundCheckedDisabled", "SystemControlBackgroundBaseLowBrush");
+            AssertThemeResourceReference("HighContrast", "ToggleButtonBackgroundIndeterminate", "SystemControlBackgroundBaseLowBrush");
+            AssertThemeResourceReference("HighContrast", "ToggleButtonBackgroundIndeterminatePointerOver", "SystemControlBackgroundBaseLowBrush");
+            AssertThemeResourceReference("HighContrast", "ToggleButtonBackgroundIndeterminatePressed", "SystemControlBackgroundBaseMediumLowBrush");
+            AssertThemeResourceReference("HighContrast", "ToggleButtonBackgroundIndeterminateDisabled", "SystemControlBackgroundBaseLowBrush");
+            AssertThemeResourceReference("HighContrast", "ToggleButtonForeground", "SystemControlForegroundBaseHighBrush");
+            AssertThemeResourceReference("HighContrast", "ToggleButtonForegroundPointerOver", "SystemControlHighlightBaseHighBrush");
+            AssertThemeResourceReference("HighContrast", "ToggleButtonForegroundPressed", "SystemControlHighlightBaseHighBrush");
+            AssertThemeResourceReference("HighContrast", "ToggleButtonForegroundDisabled", "SystemControlDisabledBaseMediumLowBrush");
+            AssertThemeResourceReference("HighContrast", "ToggleButtonForegroundChecked", "SystemControlHighlightAltChromeWhiteBrush");
+            AssertThemeResourceReference("HighContrast", "ToggleButtonForegroundCheckedPointerOver", "SystemColorButtonFaceColorBrush");
+            AssertThemeResourceReference("HighContrast", "ToggleButtonForegroundCheckedPressed", "SystemColorHighlightColorBrush");
+            AssertThemeResourceReference("HighContrast", "ToggleButtonForegroundCheckedDisabled", "SystemControlDisabledBaseMediumLowBrush");
+            AssertThemeResourceReference("HighContrast", "ToggleButtonForegroundIndeterminate", "SystemControlForegroundBaseHighBrush");
+            AssertThemeResourceReference("HighContrast", "ToggleButtonForegroundIndeterminatePointerOver", "SystemControlHighlightBaseHighBrush");
+            AssertThemeResourceReference("HighContrast", "ToggleButtonForegroundIndeterminatePressed", "SystemControlHighlightBaseHighBrush");
+            AssertThemeResourceReference("HighContrast", "ToggleButtonForegroundIndeterminateDisabled", "SystemControlDisabledBaseMediumLowBrush");
+            AssertThemeResourceReference("HighContrast", "ToggleButtonBorderBrush", "SystemControlForegroundTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "ToggleButtonBorderBrushPointerOver", "SystemControlHighlightBaseMediumLowBrush");
+            AssertThemeResourceReference("HighContrast", "ToggleButtonBorderBrushPressed", "SystemColorHighlightTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "ToggleButtonBorderBrushDisabled", "SystemControlDisabledTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "ToggleButtonBorderBrushChecked", "SystemControlHighlightAltTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "ToggleButtonBorderBrushCheckedPointerOver", "SystemColorButtonTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "ToggleButtonBorderBrushCheckedPressed", "SystemColorHighlightTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "ToggleButtonBorderBrushCheckedDisabled", "SystemControlDisabledTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "ToggleButtonBorderBrushIndeterminate", "SystemControlForegroundTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "ToggleButtonBorderBrushIndeterminatePointerOver", "SystemControlHighlightBaseMediumLowBrush");
+            AssertThemeResourceReference("HighContrast", "ToggleButtonBorderBrushIndeterminatePressed", "SystemControlHighlightTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "ToggleButtonBorderBrushIndeterminateDisabled", "SystemControlDisabledTransparentBrush");
+        });
+    }
+
     private static ToggleButton CreateToggleButton()
     {
         return new ToggleButton
@@ -226,5 +278,60 @@ public class ToggleButtonVisualStateTests
     {
         return control.Template.FindName(name, control) as T
             ?? throw new AssertFailedException($"Expected {control.GetType().Name} template child '{name}' to be a {typeof(T).Name}.");
+    }
+
+    private static void AssertLightDarkToggleButtonTheme(string themeName)
+    {
+        AssertThemeResourceReference(themeName, "ToggleButtonBackground", "ControlFillColorDefaultBrush");
+        AssertThemeResourceReference(themeName, "ToggleButtonBackgroundPointerOver", "ControlFillColorSecondaryBrush");
+        AssertThemeResourceReference(themeName, "ToggleButtonBackgroundPressed", "ControlFillColorTertiaryBrush");
+        AssertThemeResourceReference(themeName, "ToggleButtonBackgroundDisabled", "ControlFillColorDisabledBrush");
+        AssertThemeResourceReference(themeName, "ToggleButtonBackgroundChecked", "AccentFillColorDefaultBrush");
+        AssertThemeResourceReference(themeName, "ToggleButtonBackgroundCheckedPointerOver", "AccentFillColorSecondaryBrush");
+        AssertThemeResourceReference(themeName, "ToggleButtonBackgroundCheckedPressed", "AccentFillColorTertiaryBrush");
+        AssertThemeResourceReference(themeName, "ToggleButtonBackgroundCheckedDisabled", "AccentFillColorDisabledBrush");
+        AssertThemeResourceReference(themeName, "ToggleButtonBackgroundIndeterminate", "ControlFillColorDefaultBrush");
+        AssertThemeResourceReference(themeName, "ToggleButtonBackgroundIndeterminatePointerOver", "ControlFillColorSecondaryBrush");
+        AssertThemeResourceReference(themeName, "ToggleButtonBackgroundIndeterminatePressed", "ControlFillColorTertiaryBrush");
+        AssertThemeResourceReference(themeName, "ToggleButtonBackgroundIndeterminateDisabled", "ControlFillColorDisabledBrush");
+        AssertThemeResourceReference(themeName, "ToggleButtonForeground", "TextFillColorPrimaryBrush");
+        AssertThemeResourceReference(themeName, "ToggleButtonForegroundPointerOver", "TextFillColorPrimaryBrush");
+        AssertThemeResourceReference(themeName, "ToggleButtonForegroundPressed", "TextFillColorSecondaryBrush");
+        AssertThemeResourceReference(themeName, "ToggleButtonForegroundDisabled", "TextFillColorDisabledBrush");
+        AssertThemeResourceReference(themeName, "ToggleButtonForegroundChecked", "TextOnAccentFillColorPrimaryBrush");
+        AssertThemeResourceReference(themeName, "ToggleButtonForegroundCheckedPointerOver", "TextOnAccentFillColorPrimaryBrush");
+        AssertThemeResourceReference(themeName, "ToggleButtonForegroundCheckedPressed", "TextOnAccentFillColorSecondaryBrush");
+        AssertThemeResourceReference(themeName, "ToggleButtonForegroundCheckedDisabled", "TextOnAccentFillColorDisabledBrush");
+        AssertThemeResourceReference(themeName, "ToggleButtonForegroundIndeterminate", "TextFillColorPrimaryBrush");
+        AssertThemeResourceReference(themeName, "ToggleButtonForegroundIndeterminatePointerOver", "TextFillColorPrimaryBrush");
+        AssertThemeResourceReference(themeName, "ToggleButtonForegroundIndeterminatePressed", "TextFillColorSecondaryBrush");
+        AssertThemeResourceReference(themeName, "ToggleButtonForegroundIndeterminateDisabled", "TextFillColorDisabledBrush");
+        AssertThemeResourceReference(themeName, "ToggleButtonBorderBrush", "ControlElevationBorderBrush");
+        AssertThemeResourceReference(themeName, "ToggleButtonBorderBrushPointerOver", "ControlElevationBorderBrush");
+        AssertThemeResourceReference(themeName, "ToggleButtonBorderBrushPressed", "ControlStrokeColorDefaultBrush");
+        AssertThemeResourceReference(themeName, "ToggleButtonBorderBrushDisabled", "ControlStrokeColorDefaultBrush");
+        AssertThemeResourceReference(themeName, "ToggleButtonBorderBrushChecked", "AccentControlElevationBorderBrush");
+        AssertThemeResourceReference(themeName, "ToggleButtonBorderBrushCheckedPointerOver", "AccentControlElevationBorderBrush");
+        AssertThemeResourceReference(themeName, "ToggleButtonBorderBrushCheckedPressed", "ControlFillColorTransparentBrush");
+        AssertThemeResourceReference(themeName, "ToggleButtonBorderBrushCheckedDisabled", "ControlFillColorTransparentBrush");
+        AssertThemeResourceReference(themeName, "ToggleButtonBorderBrushIndeterminate", "ControlElevationBorderBrush");
+        AssertThemeResourceReference(themeName, "ToggleButtonBorderBrushIndeterminatePointerOver", "ControlElevationBorderBrush");
+        AssertThemeResourceReference(themeName, "ToggleButtonBorderBrushIndeterminatePressed", "ControlStrokeColorDefaultBrush");
+        AssertThemeResourceReference(themeName, "ToggleButtonBorderBrushIndeterminateDisabled", "ControlStrokeColorDefaultBrush");
+    }
+
+    private static void AssertThemeResourceReference(string themeName, string resourceKey, object expectedResourceKey)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.IsTrue(themeDictionary.Contains(expectedResourceKey), $"{themeName} is missing {expectedResourceKey}.");
+        Assert.AreSame(themeDictionary[expectedResourceKey], themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
+    }
+
+    private static void AssertThemeResourceValue<T>(string themeName, string resourceKey, T expectedValue)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.AreEqual(expectedValue, themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
     }
 }
