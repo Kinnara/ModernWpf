@@ -95,6 +95,112 @@ public class RadioButtonVisualStateTests
         });
     }
 
+    [TestMethod]
+    public void ThemeResourcesUseOfficialRadioButtonHighContrastTokens()
+    {
+        WpfTestHost.Run(() =>
+        {
+            foreach (var themeName in new[] { "Light", "Dark" })
+            {
+                AssertThemeResourceValue(themeName, "RadioButtonBorderThemeThickness", 1.0);
+                AssertThemeResourceReferences(themeName,
+                    ("RadioButtonForeground", "TextFillColorPrimaryBrush"),
+                    ("RadioButtonForegroundPointerOver", "TextFillColorPrimaryBrush"),
+                    ("RadioButtonForegroundPressed", "TextFillColorPrimaryBrush"),
+                    ("RadioButtonForegroundDisabled", "TextFillColorDisabledBrush"),
+                    ("RadioButtonBackground", "ControlFillColorTransparentBrush"),
+                    ("RadioButtonBackgroundPointerOver", "ControlFillColorTransparentBrush"),
+                    ("RadioButtonBackgroundPressed", "ControlFillColorTransparentBrush"),
+                    ("RadioButtonBackgroundDisabled", "ControlFillColorTransparentBrush"),
+                    ("RadioButtonBorderBrush", "ControlFillColorTransparentBrush"),
+                    ("RadioButtonBorderBrushPointerOver", "ControlFillColorTransparentBrush"),
+                    ("RadioButtonBorderBrushPressed", "ControlFillColorTransparentBrush"),
+                    ("RadioButtonBorderBrushDisabled", "ControlFillColorTransparentBrush"),
+                    ("RadioButtonOuterEllipseStroke", "ControlStrongStrokeColorDefaultBrush"),
+                    ("RadioButtonOuterEllipseStrokePointerOver", "ControlStrongStrokeColorDefaultBrush"),
+                    ("RadioButtonOuterEllipseStrokePressed", "ControlStrongStrokeColorDisabledBrush"),
+                    ("RadioButtonOuterEllipseStrokeDisabled", "ControlStrongStrokeColorDisabledBrush"),
+                    ("RadioButtonOuterEllipseFill", "ControlAltFillColorSecondaryBrush"),
+                    ("RadioButtonOuterEllipseFillPointerOver", "ControlAltFillColorTertiaryBrush"),
+                    ("RadioButtonOuterEllipseFillPressed", "ControlAltFillColorQuarternaryBrush"),
+                    ("RadioButtonOuterEllipseFillDisabled", "ControlAltFillColorDisabledBrush"),
+                    ("RadioButtonOuterEllipseCheckedStroke", "AccentFillColorDefaultBrush"),
+                    ("RadioButtonOuterEllipseCheckedStrokePointerOver", "AccentFillColorSecondaryBrush"),
+                    ("RadioButtonOuterEllipseCheckedStrokePressed", "AccentFillColorTertiaryBrush"),
+                    ("RadioButtonOuterEllipseCheckedStrokeDisabled", "AccentFillColorDisabledBrush"),
+                    ("RadioButtonCheckOuterEllipseCheckedStrokePressed", "AccentFillColorTertiaryBrush"),
+                    ("RadioButtonOuterEllipseCheckedFill", "AccentFillColorDefaultBrush"),
+                    ("RadioButtonOuterEllipseCheckedFillPointerOver", "AccentFillColorSecondaryBrush"),
+                    ("RadioButtonOuterEllipseCheckedFillPressed", "AccentFillColorTertiaryBrush"),
+                    ("RadioButtonOuterEllipseCheckedFillDisabled", "AccentFillColorDisabledBrush"),
+                    ("RadioButtonCheckOuterEllipseCheckedFillPointerOver", "AccentFillColorSecondaryBrush"),
+                    ("RadioButtonCheckOuterEllipseCheckedFillPressed", "AccentFillColorTertiaryBrush"),
+                    ("RadioButtonCheckGlyphFill", "TextOnAccentFillColorPrimaryBrush"),
+                    ("RadioButtonCheckGlyphFillPointerOver", "TextOnAccentFillColorPrimaryBrush"),
+                    ("RadioButtonCheckGlyphFillPressed", "TextOnAccentFillColorPrimaryBrush"),
+                    ("RadioButtonCheckGlyphFillDisabled", "TextOnAccentFillColorPrimaryBrush"),
+                    ("RadioButtonCheckGlyphStroke", "CircleElevationBorderBrush"),
+                    ("RadioButtonCheckGlyphStrokePointerOver", "CircleElevationBorderBrush"),
+                    ("RadioButtonCheckGlyphStrokePressed", "CircleElevationBorderBrush"),
+                    ("RadioButtonCheckGlyphStrokeDisabled", "CircleElevationBorderBrush"),
+                    ("RadioButtonCheckGlyphStrokeChecked", "AccentControlElevationBorderBrush"),
+                    ("RadioButtonCheckGlyphStrokeCheckedPointerOver", "AccentControlElevationBorderBrush"),
+                    ("RadioButtonCheckGlyphStrokeCheckedPressed", "AccentControlElevationBorderBrush"),
+                    ("RadioButtonCheckGlyphStrokeCheckedDisabled", "ControlElevationBorderBrush"),
+                    ("RadioButtonsHeaderForeground", "TextFillColorPrimaryBrush"),
+                    ("RadioButtonsHeaderForegroundDisabled", "TextFillColorDisabledBrush"));
+            }
+
+            AssertThemeResourceValue("HighContrast", "RadioButtonBorderThemeThickness", 1.0);
+            AssertThemeResourceReferences("HighContrast",
+                ("RadioButtonForeground", "SystemControlForegroundBaseHighBrush"),
+                ("RadioButtonForegroundPointerOver", "SystemControlForegroundBaseHighBrush"),
+                ("RadioButtonForegroundPressed", "SystemControlForegroundBaseHighBrush"),
+                ("RadioButtonForegroundDisabled", "SystemControlDisabledBaseMediumLowBrush"),
+                ("RadioButtonBackground", "SystemControlTransparentBrush"),
+                ("RadioButtonBackgroundPointerOver", "SystemControlTransparentBrush"),
+                ("RadioButtonBackgroundPressed", "SystemControlTransparentBrush"),
+                ("RadioButtonBackgroundDisabled", "SystemControlTransparentBrush"),
+                ("RadioButtonBorderBrush", "SystemControlTransparentBrush"),
+                ("RadioButtonBorderBrushPointerOver", "SystemControlTransparentBrush"),
+                ("RadioButtonBorderBrushPressed", "SystemControlTransparentBrush"),
+                ("RadioButtonBorderBrushDisabled", "SystemControlTransparentBrush"),
+                ("RadioButtonOuterEllipseStroke", "SystemControlForegroundBaseMediumBrush"),
+                ("RadioButtonOuterEllipseStrokePointerOver", "SystemColorHighlightColorBrush"),
+                ("RadioButtonOuterEllipseStrokePressed", "SystemColorHighlightTextColorBrush"),
+                ("RadioButtonOuterEllipseStrokeDisabled", "SystemColorGrayTextColorBrush"),
+                ("RadioButtonOuterEllipseFill", "SystemColorButtonFaceColorBrush"),
+                ("RadioButtonOuterEllipseFillPointerOver", "SystemColorHighlightTextColorBrush"),
+                ("RadioButtonOuterEllipseFillPressed", "SystemColorHighlightTextColorBrush"),
+                ("RadioButtonOuterEllipseFillDisabled", "SystemColorButtonFaceColorBrush"),
+                ("RadioButtonOuterEllipseCheckedStroke", "SystemControlHighlightAccentBrush"),
+                ("RadioButtonOuterEllipseCheckedStrokePointerOver", "SystemColorButtonTextColorBrush"),
+                ("RadioButtonOuterEllipseCheckedStrokePressed", "SystemColorButtonFaceColorBrush"),
+                ("RadioButtonOuterEllipseCheckedStrokeDisabled", "SystemColorGrayTextColorBrush"),
+                ("RadioButtonCheckOuterEllipseCheckedStrokePressed", "SystemColorButtonTextColorBrush"),
+                ("RadioButtonOuterEllipseCheckedFill", "SystemControlHighlightAltTransparentBrush"),
+                ("RadioButtonOuterEllipseCheckedFillPointerOver", "SystemColorButtonFaceColorBrush"),
+                ("RadioButtonOuterEllipseCheckedFillPressed", "SystemColorButtonFaceColorBrush"),
+                ("RadioButtonOuterEllipseCheckedFillDisabled", "SystemColorButtonFaceColorBrush"),
+                ("RadioButtonCheckOuterEllipseCheckedFillPointerOver", "SystemColorButtonTextColorBrush"),
+                ("RadioButtonCheckOuterEllipseCheckedFillPressed", "SystemColorButtonTextColorBrush"),
+                ("RadioButtonCheckGlyphFill", "SystemControlHighlightBaseMediumHighBrush"),
+                ("RadioButtonCheckGlyphFillPointerOver", "SystemControlHighlightAltBaseHighBrush"),
+                ("RadioButtonCheckGlyphFillPressed", "SystemControlHighlightAltBaseMediumBrush"),
+                ("RadioButtonCheckGlyphFillDisabled", "SystemControlDisabledBaseMediumLowBrush"),
+                ("RadioButtonCheckGlyphStroke", "SystemControlTransparentBrush"),
+                ("RadioButtonCheckGlyphStrokePointerOver", "SystemControlTransparentBrush"),
+                ("RadioButtonCheckGlyphStrokePressed", "SystemControlTransparentBrush"),
+                ("RadioButtonCheckGlyphStrokeDisabled", "SystemControlTransparentBrush"),
+                ("RadioButtonCheckGlyphStrokeChecked", "SystemControlTransparentBrush"),
+                ("RadioButtonCheckGlyphStrokeCheckedPointerOver", "SystemColorButtonTextColorBrush"),
+                ("RadioButtonCheckGlyphStrokeCheckedPressed", "SystemColorButtonTextColorBrush"),
+                ("RadioButtonCheckGlyphStrokeCheckedDisabled", "SystemControlTransparentBrush"),
+                ("RadioButtonsHeaderForeground", "SystemControlForegroundBaseHighBrush"),
+                ("RadioButtonsHeaderForegroundDisabled", "SystemControlDisabledBaseMediumLowBrush"));
+        });
+    }
+
     private static RadioButton CreateRadioButton()
     {
         return new RadioButton
@@ -281,8 +387,26 @@ public class RadioButtonVisualStateTests
     private static void AssertThemeResourceReference(string themeName, string key, object expectedResourceKey)
     {
         var theme = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(theme.Contains(key), $"Theme is missing {key}.");
         Assert.IsTrue(theme.Contains(expectedResourceKey), $"Theme is missing {expectedResourceKey}.");
         Assert.AreSame(theme[expectedResourceKey], theme[key], key);
+    }
+
+    private static void AssertThemeResourceReferences(
+        string themeName,
+        params (string ResourceKey, object ExpectedResourceKey)[] references)
+    {
+        foreach (var reference in references)
+        {
+            AssertThemeResourceReference(themeName, reference.ResourceKey, reference.ExpectedResourceKey);
+        }
+    }
+
+    private static void AssertThemeResourceValue<T>(string themeName, string resourceKey, T expectedValue)
+    {
+        var theme = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(theme.Contains(resourceKey), $"Theme is missing {resourceKey}.");
+        Assert.AreEqual(expectedValue, theme[resourceKey], $"{themeName}:{resourceKey}");
     }
 
     private static T GetTemplateChild<T>(Control control, string name)

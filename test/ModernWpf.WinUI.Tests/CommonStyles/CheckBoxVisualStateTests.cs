@@ -97,6 +97,170 @@ public class CheckBoxVisualStateTests
         });
     }
 
+    [TestMethod]
+    public void ThemeResourcesUseOfficialCheckBoxHighContrastTokens()
+    {
+        WpfTestHost.Run(() =>
+        {
+            foreach (var themeName in new[] { "Light", "Dark" })
+            {
+                AssertThemeResourceReferences(themeName,
+                    ("CheckBoxForegroundUnchecked", "TextFillColorPrimaryBrush"),
+                    ("CheckBoxForegroundUncheckedPointerOver", "TextFillColorPrimaryBrush"),
+                    ("CheckBoxForegroundUncheckedPressed", "TextFillColorPrimaryBrush"),
+                    ("CheckBoxForegroundUncheckedDisabled", "TextFillColorDisabledBrush"),
+                    ("CheckBoxForegroundChecked", "TextFillColorPrimaryBrush"),
+                    ("CheckBoxForegroundCheckedPointerOver", "TextFillColorPrimaryBrush"),
+                    ("CheckBoxForegroundCheckedPressed", "TextFillColorPrimaryBrush"),
+                    ("CheckBoxForegroundCheckedDisabled", "TextFillColorDisabledBrush"),
+                    ("CheckBoxForegroundIndeterminate", "TextFillColorPrimaryBrush"),
+                    ("CheckBoxForegroundIndeterminatePointerOver", "TextFillColorPrimaryBrush"),
+                    ("CheckBoxForegroundIndeterminatePressed", "TextFillColorPrimaryBrush"),
+                    ("CheckBoxForegroundIndeterminateDisabled", "TextFillColorDisabledBrush"),
+                    ("CheckBoxBackgroundUnchecked", "SubtleFillColorTransparentBrush"),
+                    ("CheckBoxBackgroundUncheckedPointerOver", "SubtleFillColorTransparentBrush"),
+                    ("CheckBoxBackgroundUncheckedPressed", "SubtleFillColorTransparentBrush"),
+                    ("CheckBoxBackgroundUncheckedDisabled", "SubtleFillColorTransparentBrush"),
+                    ("CheckBoxBackgroundChecked", "SubtleFillColorTransparentBrush"),
+                    ("CheckBoxBackgroundCheckedPointerOver", "SubtleFillColorTransparentBrush"),
+                    ("CheckBoxBackgroundCheckedPressed", "SubtleFillColorTransparentBrush"),
+                    ("CheckBoxBackgroundCheckedDisabled", "SubtleFillColorTransparentBrush"),
+                    ("CheckBoxBackgroundIndeterminate", "SubtleFillColorTransparentBrush"),
+                    ("CheckBoxBackgroundIndeterminatePointerOver", "SubtleFillColorTransparentBrush"),
+                    ("CheckBoxBackgroundIndeterminatePressed", "SubtleFillColorTransparentBrush"),
+                    ("CheckBoxBackgroundIndeterminateDisabled", "SubtleFillColorTransparentBrush"),
+                    ("CheckBoxBorderBrushUnchecked", "SubtleFillColorTransparentBrush"),
+                    ("CheckBoxBorderBrushUncheckedPointerOver", "SubtleFillColorTransparentBrush"),
+                    ("CheckBoxBorderBrushUncheckedPressed", "SubtleFillColorTransparentBrush"),
+                    ("CheckBoxBorderBrushUncheckedDisabled", "SubtleFillColorTransparentBrush"),
+                    ("CheckBoxBorderBrushChecked", "SubtleFillColorTransparentBrush"),
+                    ("CheckBoxBorderBrushCheckedPointerOver", "SubtleFillColorTransparentBrush"),
+                    ("CheckBoxBorderBrushCheckedPressed", "SubtleFillColorTransparentBrush"),
+                    ("CheckBoxBorderBrushCheckedDisabled", "SubtleFillColorTransparentBrush"),
+                    ("CheckBoxBorderBrushIndeterminate", "SubtleFillColorTransparentBrush"),
+                    ("CheckBoxBorderBrushIndeterminatePointerOver", "SubtleFillColorTransparentBrush"),
+                    ("CheckBoxBorderBrushIndeterminatePressed", "SubtleFillColorTransparentBrush"),
+                    ("CheckBoxBorderBrushIndeterminateDisabled", "SubtleFillColorTransparentBrush"),
+                    ("CheckBoxCheckBackgroundStrokeUnchecked", "ControlStrongStrokeColorDefaultBrush"),
+                    ("CheckBoxCheckBackgroundStrokeUncheckedPointerOver", "ControlStrongStrokeColorDefaultBrush"),
+                    ("CheckBoxCheckBackgroundStrokeUncheckedPressed", "ControlStrongStrokeColorDisabledBrush"),
+                    ("CheckBoxCheckBackgroundStrokeUncheckedDisabled", "ControlStrongStrokeColorDisabledBrush"),
+                    ("CheckBoxCheckBackgroundStrokeChecked", "AccentFillColorDefaultBrush"),
+                    ("CheckBoxCheckBackgroundStrokeCheckedPointerOver", "AccentFillColorSecondaryBrush"),
+                    ("CheckBoxCheckBackgroundStrokeCheckedPressed", "AccentFillColorTertiaryBrush"),
+                    ("CheckBoxCheckBackgroundStrokeCheckedDisabled", "ControlStrongStrokeColorDisabledBrush"),
+                    ("CheckBoxCheckBackgroundStrokeIndeterminate", "AccentFillColorDefaultBrush"),
+                    ("CheckBoxCheckBackgroundStrokeIndeterminatePointerOver", "AccentFillColorSecondaryBrush"),
+                    ("CheckBoxCheckBackgroundStrokeIndeterminatePressed", "AccentFillColorTertiaryBrush"),
+                    ("CheckBoxCheckBackgroundStrokeIndeterminateDisabled", "ControlStrongStrokeColorDisabledBrush"),
+                    ("CheckBoxCheckBackgroundFillUnchecked", "ControlAltFillColorSecondaryBrush"),
+                    ("CheckBoxCheckBackgroundFillUncheckedPointerOver", "ControlAltFillColorTertiaryBrush"),
+                    ("CheckBoxCheckBackgroundFillUncheckedPressed", "ControlAltFillColorQuarternaryBrush"),
+                    ("CheckBoxCheckBackgroundFillUncheckedDisabled", "ControlAltFillColorDisabledBrush"),
+                    ("CheckBoxCheckBackgroundFillChecked", "AccentFillColorDefaultBrush"),
+                    ("CheckBoxCheckBackgroundFillCheckedPointerOver", "AccentFillColorSecondaryBrush"),
+                    ("CheckBoxCheckBackgroundFillCheckedPressed", "AccentFillColorTertiaryBrush"),
+                    ("CheckBoxCheckBackgroundFillCheckedDisabled", "AccentFillColorDisabledBrush"),
+                    ("CheckBoxCheckBackgroundFillIndeterminate", "AccentFillColorDefaultBrush"),
+                    ("CheckBoxCheckBackgroundFillIndeterminatePointerOver", "AccentFillColorSecondaryBrush"),
+                    ("CheckBoxCheckBackgroundFillIndeterminatePressed", "AccentFillColorTertiaryBrush"),
+                    ("CheckBoxCheckBackgroundFillIndeterminateDisabled", "AccentFillColorDisabledBrush"),
+                    ("CheckBoxCheckGlyphForeground", "TextOnAccentFillColorPrimaryBrush"),
+                    ("CheckBoxCheckGlyphForegroundPressed", "TextOnAccentFillColorSecondaryBrush"),
+                    ("CheckBoxCheckGlyphForegroundDisabled", "TextFillColorDisabledBrush"),
+                    ("CheckBoxCheckGlyphForegroundUnchecked", "TextOnAccentFillColorPrimaryBrush"),
+                    ("CheckBoxCheckGlyphForegroundUncheckedPointerOver", "TextOnAccentFillColorPrimaryBrush"),
+                    ("CheckBoxCheckGlyphForegroundUncheckedPressed", "TextOnAccentFillColorPrimaryBrush"),
+                    ("CheckBoxCheckGlyphForegroundUncheckedDisabled", "TextOnAccentFillColorDisabledBrush"),
+                    ("CheckBoxCheckGlyphForegroundChecked", "TextOnAccentFillColorPrimaryBrush"),
+                    ("CheckBoxCheckGlyphForegroundCheckedPointerOver", "TextOnAccentFillColorPrimaryBrush"),
+                    ("CheckBoxCheckGlyphForegroundCheckedPressed", "TextOnAccentFillColorSecondaryBrush"),
+                    ("CheckBoxCheckGlyphForegroundCheckedDisabled", "TextOnAccentFillColorDisabledBrush"),
+                    ("CheckBoxCheckGlyphForegroundIndeterminate", "TextOnAccentFillColorPrimaryBrush"),
+                    ("CheckBoxCheckGlyphForegroundIndeterminatePointerOver", "TextOnAccentFillColorPrimaryBrush"),
+                    ("CheckBoxCheckGlyphForegroundIndeterminatePressed", "TextOnAccentFillColorSecondaryBrush"),
+                    ("CheckBoxCheckGlyphForegroundIndeterminateDisabled", "TextOnAccentFillColorDisabledBrush"));
+            }
+
+            AssertThemeResourceReferences("HighContrast",
+                ("CheckBoxForegroundUnchecked", "SystemColorButtonTextColorBrush"),
+                ("CheckBoxForegroundUncheckedPointerOver", "SystemColorButtonTextColorBrush"),
+                ("CheckBoxForegroundUncheckedPressed", "SystemColorButtonTextColorBrush"),
+                ("CheckBoxForegroundUncheckedDisabled", "SystemColorGrayTextColorBrush"),
+                ("CheckBoxForegroundChecked", "SystemColorButtonTextColorBrush"),
+                ("CheckBoxForegroundCheckedPointerOver", "SystemColorButtonTextColorBrush"),
+                ("CheckBoxForegroundCheckedPressed", "SystemColorButtonTextColorBrush"),
+                ("CheckBoxForegroundCheckedDisabled", "SystemColorGrayTextColorBrush"),
+                ("CheckBoxForegroundIndeterminate", "SystemColorWindowTextColorBrush"),
+                ("CheckBoxForegroundIndeterminatePointerOver", "SystemColorWindowTextColorBrush"),
+                ("CheckBoxForegroundIndeterminatePressed", "SystemColorWindowTextColorBrush"),
+                ("CheckBoxForegroundIndeterminateDisabled", "SystemColorGrayTextColorBrush"),
+                ("CheckBoxBackgroundUnchecked", "SystemColorWindowColorBrush"),
+                ("CheckBoxBackgroundUncheckedPointerOver", "SystemColorWindowColorBrush"),
+                ("CheckBoxBackgroundUncheckedPressed", "SystemColorWindowColorBrush"),
+                ("CheckBoxBackgroundUncheckedDisabled", "SystemColorWindowColorBrush"),
+                ("CheckBoxBackgroundChecked", "SystemColorWindowColorBrush"),
+                ("CheckBoxBackgroundCheckedPointerOver", "SystemColorWindowColorBrush"),
+                ("CheckBoxBackgroundCheckedPressed", "SystemColorWindowColorBrush"),
+                ("CheckBoxBackgroundCheckedDisabled", "SystemColorWindowColorBrush"),
+                ("CheckBoxBackgroundIndeterminate", "SystemColorWindowColorBrush"),
+                ("CheckBoxBackgroundIndeterminatePointerOver", "SystemColorWindowColorBrush"),
+                ("CheckBoxBackgroundIndeterminatePressed", "SystemColorWindowColorBrush"),
+                ("CheckBoxBackgroundIndeterminateDisabled", "SystemColorWindowColorBrush"),
+                ("CheckBoxBorderBrushUnchecked", "SystemColorWindowColorBrush"),
+                ("CheckBoxBorderBrushUncheckedPointerOver", "SystemColorWindowColorBrush"),
+                ("CheckBoxBorderBrushUncheckedPressed", "SystemColorWindowColorBrush"),
+                ("CheckBoxBorderBrushUncheckedDisabled", "SystemColorWindowColorBrush"),
+                ("CheckBoxBorderBrushChecked", "SystemColorWindowColorBrush"),
+                ("CheckBoxBorderBrushCheckedPointerOver", "SystemColorWindowColorBrush"),
+                ("CheckBoxBorderBrushCheckedPressed", "SystemColorWindowColorBrush"),
+                ("CheckBoxBorderBrushCheckedDisabled", "SystemColorWindowColorBrush"),
+                ("CheckBoxBorderBrushIndeterminate", "SystemColorWindowColorBrush"),
+                ("CheckBoxBorderBrushIndeterminatePointerOver", "SystemColorWindowColorBrush"),
+                ("CheckBoxBorderBrushIndeterminatePressed", "SystemColorWindowColorBrush"),
+                ("CheckBoxBorderBrushIndeterminateDisabled", "SystemColorWindowColorBrush"),
+                ("CheckBoxCheckBackgroundStrokeUnchecked", "SystemColorButtonTextColorBrush"),
+                ("CheckBoxCheckBackgroundStrokeUncheckedPointerOver", "SystemColorHighlightColorBrush"),
+                ("CheckBoxCheckBackgroundStrokeUncheckedPressed", "SystemColorHighlightColorBrush"),
+                ("CheckBoxCheckBackgroundStrokeUncheckedDisabled", "SystemColorGrayTextColorBrush"),
+                ("CheckBoxCheckBackgroundStrokeChecked", "SystemColorHighlightColorBrush"),
+                ("CheckBoxCheckBackgroundStrokeCheckedPointerOver", "SystemColorButtonTextColorBrush"),
+                ("CheckBoxCheckBackgroundStrokeCheckedPressed", "SystemColorButtonFaceColorBrush"),
+                ("CheckBoxCheckBackgroundStrokeCheckedDisabled", "SystemColorGrayTextColorBrush"),
+                ("CheckBoxCheckBackgroundStrokeIndeterminate", "SystemColorHighlightColorBrush"),
+                ("CheckBoxCheckBackgroundStrokeIndeterminatePointerOver", "SystemColorHighlightColorBrush"),
+                ("CheckBoxCheckBackgroundStrokeIndeterminatePressed", "SystemColorHighlightColorBrush"),
+                ("CheckBoxCheckBackgroundStrokeIndeterminateDisabled", "SystemColorGrayTextColorBrush"),
+                ("CheckBoxCheckBackgroundFillUnchecked", "SystemColorButtonFaceColorBrush"),
+                ("CheckBoxCheckBackgroundFillUncheckedPointerOver", "SystemColorHighlightTextColorBrush"),
+                ("CheckBoxCheckBackgroundFillUncheckedPressed", "SystemColorHighlightColorBrush"),
+                ("CheckBoxCheckBackgroundFillUncheckedDisabled", "SystemColorWindowColorBrush"),
+                ("CheckBoxCheckBackgroundFillChecked", "SystemColorHighlightColorBrush"),
+                ("CheckBoxCheckBackgroundFillCheckedPointerOver", "SystemColorButtonTextColorBrush"),
+                ("CheckBoxCheckBackgroundFillCheckedPressed", "SystemColorButtonFaceColorBrush"),
+                ("CheckBoxCheckBackgroundFillCheckedDisabled", "SystemColorGrayTextColorBrush"),
+                ("CheckBoxCheckBackgroundFillIndeterminate", "SystemColorHighlightColorBrush"),
+                ("CheckBoxCheckBackgroundFillIndeterminatePointerOver", "SystemColorHighlightTextColorBrush"),
+                ("CheckBoxCheckBackgroundFillIndeterminatePressed", "SystemColorHighlightColorBrush"),
+                ("CheckBoxCheckBackgroundFillIndeterminateDisabled", "SystemColorGrayTextColorBrush"),
+                ("CheckBoxCheckGlyphForeground", "SystemColorButtonFaceColorBrush"),
+                ("CheckBoxCheckGlyphForegroundPressed", "SystemColorHighlightTextColorBrush"),
+                ("CheckBoxCheckGlyphForegroundDisabled", "SystemColorWindowColorBrush"),
+                ("CheckBoxCheckGlyphForegroundUnchecked", "SystemColorButtonFaceColorBrush"),
+                ("CheckBoxCheckGlyphForegroundUncheckedPointerOver", "SystemColorHighlightColorBrush"),
+                ("CheckBoxCheckGlyphForegroundUncheckedPressed", "SystemColorHighlightTextColorBrush"),
+                ("CheckBoxCheckGlyphForegroundUncheckedDisabled", "SystemColorGrayTextColorBrush"),
+                ("CheckBoxCheckGlyphForegroundChecked", "SystemColorHighlightTextColorBrush"),
+                ("CheckBoxCheckGlyphForegroundCheckedPointerOver", "SystemColorButtonFaceColorBrush"),
+                ("CheckBoxCheckGlyphForegroundCheckedPressed", "SystemColorButtonTextColorBrush"),
+                ("CheckBoxCheckGlyphForegroundCheckedDisabled", "SystemColorWindowColorBrush"),
+                ("CheckBoxCheckGlyphForegroundIndeterminate", "SystemColorHighlightTextColorBrush"),
+                ("CheckBoxCheckGlyphForegroundIndeterminatePointerOver", "SystemColorHighlightColorBrush"),
+                ("CheckBoxCheckGlyphForegroundIndeterminatePressed", "SystemColorHighlightTextColorBrush"),
+                ("CheckBoxCheckGlyphForegroundIndeterminateDisabled", "SystemColorWindowColorBrush"));
+        });
+    }
+
     private static CheckBox CreateCheckBox()
     {
         return new CheckBox
@@ -325,8 +489,19 @@ public class CheckBoxVisualStateTests
     private static void AssertThemeResourceReference(string themeName, string key, object expectedResourceKey)
     {
         var theme = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(theme.Contains(key), $"Theme is missing {key}.");
         Assert.IsTrue(theme.Contains(expectedResourceKey), $"Theme is missing {expectedResourceKey}.");
         Assert.AreSame(theme[expectedResourceKey], theme[key], key);
+    }
+
+    private static void AssertThemeResourceReferences(
+        string themeName,
+        params (string ResourceKey, object ExpectedResourceKey)[] references)
+    {
+        foreach (var reference in references)
+        {
+            AssertThemeResourceReference(themeName, reference.ResourceKey, reference.ExpectedResourceKey);
+        }
     }
 
     private static T GetTemplateChild<T>(Control control, string name)
