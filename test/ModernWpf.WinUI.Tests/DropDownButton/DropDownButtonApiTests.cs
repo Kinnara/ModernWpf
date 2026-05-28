@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Automation.Peers;
@@ -89,6 +90,96 @@ public class DropDownButtonApiTests
             Assert.AreEqual(12d, chevron.Width);
             Assert.AreEqual(12d, chevron.Height);
             Assert.IsNotNull(chevron.Foreground);
+        });
+    }
+
+    [TestMethod]
+    public void DropDownButtonStyleUsesWinUIResourceAliases()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var resources = new ResourceDictionary
+            {
+                Source = new Uri("/ModernWpf.Controls;component/DropDownButton/DropDownButton.xaml", UriKind.Relative)
+            };
+            var style = (Style)resources[typeof(ModernWpf.Controls.DropDownButton)];
+            var button = new ModernWpf.Controls.DropDownButton
+            {
+                Content = "Options",
+                Style = style
+            };
+            button.Resources.MergedDictionaries.Add(resources);
+
+            using var host = new TestWindowHost(button, width: 320, height: 160);
+            host.UpdateLayout();
+
+            AssertDynamicResourceSetter(style, Control.BackgroundProperty, "ButtonBackground");
+            AssertDynamicResourceSetter(style, Control.ForegroundProperty, "ButtonForeground");
+            AssertDynamicResourceSetter(style, Control.BorderBrushProperty, "ButtonBorderBrush");
+            AssertDynamicResourceSetter(style, Control.BorderThicknessProperty, "ButtonBorderThemeThickness");
+            AssertDynamicResourceSetter(style, Control.PaddingProperty, "ButtonPadding");
+            AssertDynamicResourceSetter(style, Control.FontFamilyProperty, "ContentControlThemeFontFamily");
+            AssertDynamicResourceSetter(style, Control.FontSizeProperty, "ControlContentThemeFontSize");
+            AssertDynamicResourceSetter(style, ModernWpf.Controls.DropDownButton.UseSystemFocusVisualsProperty, "UseSystemFocusVisuals");
+            AssertDynamicResourceSetter(style, Control.FocusVisualStyleProperty, SystemParameters.FocusVisualStyleKey);
+            AssertDynamicResourceSetter(style, ModernWpf.Controls.DropDownButton.CornerRadiusProperty, "ControlCornerRadius");
+            AssertSetterValue(style, FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Left);
+            AssertSetterValue(style, FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+            AssertSetterValue(style, Control.HorizontalContentAlignmentProperty, HorizontalAlignment.Center);
+            AssertSetterValue(style, Control.VerticalContentAlignmentProperty, VerticalAlignment.Center);
+            AssertSetterValue(style, Control.FontWeightProperty, FontWeights.Normal);
+            AssertSetterValue(style, ModernWpf.Controls.DropDownButton.FocusVisualMarginProperty, new Thickness(-3));
+            AssertSetterValue(style, ModernWpf.Controls.DropDownButton.BackgroundSizingProperty, BackgroundSizing.InnerBorderEdge);
+            AssertSetterValue(style, ModernWpf.Controls.Primitives.ButtonHelper.VisualStateSettersEnabledProperty, true);
+
+            Assert.AreSame(button.TryFindResource("ButtonBackground"), button.Background);
+            Assert.AreSame(button.TryFindResource("ButtonForeground"), button.Foreground);
+            Assert.AreSame(button.TryFindResource("ButtonBorderBrush"), button.BorderBrush);
+            Assert.AreEqual(button.TryFindResource("ButtonBorderThemeThickness"), button.BorderThickness);
+            Assert.AreEqual(button.TryFindResource("ButtonPadding"), button.Padding);
+            Assert.AreSame(button.TryFindResource("ContentControlThemeFontFamily"), button.FontFamily);
+            Assert.AreEqual(button.TryFindResource("ControlContentThemeFontSize"), button.FontSize);
+            Assert.AreEqual(button.TryFindResource("UseSystemFocusVisuals"), button.UseSystemFocusVisuals);
+            Assert.AreEqual(new Thickness(-3), button.FocusVisualMargin);
+            Assert.AreEqual(BackgroundSizing.InnerBorderEdge, button.BackgroundSizing);
+            Assert.IsTrue(ModernWpf.Controls.Primitives.ButtonHelper.GetVisualStateSettersEnabled(button));
+
+            var rootGrid = VisualTreeTestHelper.FindDescendant<GridEx>(button)
+                ?? throw new AssertFailedException("Expected DropDownButton template root to use GridEx chrome.");
+            var presenter = VisualTreeTestHelper.FindDescendant<ContentPresenterEx>(button)
+                ?? throw new AssertFailedException("Expected DropDownButton template to use ContentPresenterEx.");
+            var chevron = VisualTreeTestHelper.FindDescendant<FontIconFallback>(button)
+                ?? throw new AssertFailedException("Expected DropDownButton chevron icon.");
+
+            Assert.AreSame(button.Background, rootGrid.Background);
+            Assert.AreSame(button.BorderBrush, rootGrid.BorderBrush);
+            Assert.AreEqual(button.BorderThickness, rootGrid.BorderThickness);
+            Assert.AreEqual(button.Padding, rootGrid.Padding);
+            Assert.AreEqual(button.CornerRadius, rootGrid.CornerRadius);
+            Assert.AreEqual(button.BackgroundSizing, rootGrid.BackgroundSizing);
+            Assert.AreSame(button.Foreground, presenter.Foreground);
+            Assert.AreSame(button.TryFindResource("DropDownButtonForegroundSecondary"), chevron.Foreground);
+            Assert.AreSame(button.TryFindResource("SymbolThemeFontFamily"), chevron.FontFamily);
+            Assert.AreEqual(12d, chevron.Width);
+            Assert.AreEqual(12d, chevron.Height);
+            Assert.AreEqual(8d, chevron.FontSize);
+            Assert.AreEqual(new Thickness(8, 0, 0, 0), chevron.Margin);
+            Assert.AreEqual("Normal", AnimatedIcon.GetState(chevron));
+
+            AssertStateSetterDynamicResource(rootGrid, "CommonStates", "PointerOver", "RootGrid.Background", "ButtonBackgroundPointerOver");
+            AssertStateSetterDynamicResource(rootGrid, "CommonStates", "PointerOver", "RootGrid.BorderBrush", "ButtonBorderBrushPointerOver");
+            AssertStateSetterDynamicResource(rootGrid, "CommonStates", "PointerOver", "ContentPresenter.Foreground", "ButtonForegroundPointerOver");
+            AssertStateSetterDynamicResource(rootGrid, "CommonStates", "PointerOver", "ChevronIcon.Foreground", "DropDownButtonForegroundSecondaryPointerOver");
+            AssertStateSetterDynamicResource(rootGrid, "CommonStates", "Pressed", "RootGrid.Background", "ButtonBackgroundPressed");
+            AssertStateSetterDynamicResource(rootGrid, "CommonStates", "Pressed", "RootGrid.BorderBrush", "ButtonBorderBrushPressed");
+            AssertStateSetterDynamicResource(rootGrid, "CommonStates", "Pressed", "ContentPresenter.Foreground", "ButtonForegroundPressed");
+            AssertStateSetterDynamicResource(rootGrid, "CommonStates", "Pressed", "ChevronIcon.Foreground", "DropDownButtonForegroundSecondaryPressed");
+            AssertStateSetterDynamicResource(rootGrid, "CommonStates", "Disabled", "RootGrid.Background", "ButtonBackgroundDisabled");
+            AssertStateSetterDynamicResource(rootGrid, "CommonStates", "Disabled", "RootGrid.BorderBrush", "ButtonBorderBrushDisabled");
+            AssertStateSetterDynamicResource(rootGrid, "CommonStates", "Disabled", "ContentPresenter.Foreground", "ButtonForegroundDisabled");
+            AssertStateSetterDynamicResource(rootGrid, "CommonStates", "Disabled", "ChevronIcon.Foreground", "ButtonForegroundDisabled");
         });
     }
 
@@ -257,6 +348,52 @@ public class DropDownButtonApiTests
         var setter = state.Setters.Single(item => item.Target == target);
 
         Assert.AreEqual(expectedValue, setter.Value);
+    }
+
+    private static void AssertSetterValue(Style style, DependencyProperty property, object expectedValue)
+    {
+        var setter = style.Setters.OfType<Setter>().SingleOrDefault(item => item.Property == property);
+        Assert.IsNotNull(setter, $"Expected setter for {property.Name}.");
+        Assert.AreEqual(expectedValue, setter!.Value);
+    }
+
+    private static void AssertDynamicResourceSetter(Style style, DependencyProperty property, object expectedResourceKey)
+    {
+        var setter = style.Setters.OfType<Setter>().SingleOrDefault(item => item.Property == property);
+        Assert.IsNotNull(setter, $"Expected setter for {property.Name}.");
+        Assert.IsInstanceOfType(setter!.Value, typeof(DynamicResourceExtension));
+
+        var dynamicResource = (DynamicResourceExtension)setter.Value;
+        Assert.AreEqual(expectedResourceKey, dynamicResource.ResourceKey);
+    }
+
+    private static void AssertStateSetterDynamicResource(
+        FrameworkElement stateGroupsRoot,
+        string groupName,
+        string stateName,
+        string target,
+        object expectedResourceKey)
+    {
+        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
+            .OfType<VisualStateGroup>()
+            .Single(item => item.Name == groupName);
+        var state = group.States.OfType<VisualStateEx>().Single(item => item.Name == stateName);
+        var setter = state.Setters.Single(item => item.Target == target);
+
+        AssertResourceReferenceExpression(
+            setter.ReadLocalValue(VisualStateSetter.ValueProperty),
+            expectedResourceKey);
+    }
+
+    private static void AssertResourceReferenceExpression(object value, object expectedResourceKey)
+    {
+        Assert.IsNotNull(value, "Expected dynamic resource local value.");
+        Assert.AreEqual("System.Windows.ResourceReferenceExpression", value.GetType().FullName);
+        var resourceKeyProperty = value.GetType().GetProperty(
+            "ResourceKey",
+            BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+        Assert.IsNotNull(resourceKeyProperty, "Expected ResourceReferenceExpression.ResourceKey.");
+        Assert.AreEqual(expectedResourceKey, resourceKeyProperty!.GetValue(value));
     }
 
     private static void AssertThemeResourceReference(string themeName, object resourceKey, object expectedResourceKey)
