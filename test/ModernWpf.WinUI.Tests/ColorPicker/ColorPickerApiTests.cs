@@ -866,8 +866,12 @@ public class ColorPickerApiTests
             AssertResource(resources, "ColorPickerTextInputHorizontalOrientationMargin", 122.0);
 
             var borderStyle = (Style)resources["ColorPickerBorderStyle"];
+            AssertDynamicResourceSetter(borderStyle, Shape.StrokeProperty, "ColorPickerBorderBrush");
             var strokeThicknessSetter = borderStyle.Setters.OfType<Setter>().Single(setter => setter.Property == Shape.StrokeThicknessProperty);
             Assert.AreEqual(2.0, strokeThicknessSetter.Value);
+
+            var sliderThumbStyle = (Style)resources["ColorPickerSliderThumbStyle"];
+            AssertDynamicResourceSetter(sliderThumbStyle, Control.BackgroundProperty, "ColorPickerSliderThumbBackground");
 
             foreach (var themeName in new[] { "Light", "Dark" })
             {
@@ -899,6 +903,16 @@ public class ColorPickerApiTests
     {
         Assert.IsTrue(resources.Contains(key), $"Expected resource '{key}' to exist.");
         Assert.AreEqual(expected, resources[key], $"Unexpected value for '{key}'.");
+    }
+
+    private static void AssertDynamicResourceSetter(Style style, DependencyProperty property, object expectedResourceKey)
+    {
+        var setter = style.Setters.OfType<Setter>().SingleOrDefault(setter => setter.Property == property);
+        Assert.IsNotNull(setter, $"Expected local setter for {property.Name}.");
+
+        var dynamicResource = setter!.Value as DynamicResourceExtension;
+        Assert.IsNotNull(dynamicResource, $"Expected {property.Name} to use a dynamic resource.");
+        Assert.AreEqual(expectedResourceKey, dynamicResource!.ResourceKey);
     }
 
     private static void AssertThemeResourceReference(string themeName, string resourceKey, object expectedResourceKey)
