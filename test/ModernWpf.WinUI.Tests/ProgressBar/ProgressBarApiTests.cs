@@ -1,6 +1,8 @@
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -21,8 +23,30 @@ public class ProgressBarApiTests
         {
             TestApplication.EnsureInitialized();
 
+            var resources = new ResourceDictionary
+            {
+                Source = new Uri("/ModernWpf;component/ProgressBar/ProgressBar.xaml", UriKind.Relative)
+            };
+            AssertResource(resources, "ProgressBarMinHeight", 3.0);
+            AssertResource(resources, "ProgressBarTrackHeight", 1.0);
+            AssertResource(resources, "ProgressBarCornerRadius", new CornerRadius(1.5));
+            AssertResource(resources, "ProgressBarTrackCornerRadius", new CornerRadius(0.5));
+
+            var style = (Style)resources[typeof(ProgressBar)];
+            AssertDynamicResourceSetter(style, Control.ForegroundProperty, "ProgressBarForeground");
+            AssertDynamicResourceSetter(style, Control.BackgroundProperty, "ProgressBarBackground");
+            AssertDynamicResourceSetter(style, Control.BorderThicknessProperty, "ProgressBarBorderThemeThickness");
+            AssertDynamicResourceSetter(style, Control.BorderBrushProperty, "ProgressBarBorderBrush");
+            AssertSetterValue(style, FrameworkElement.MinHeightProperty, 3.0);
+            AssertSetterValue(style, RangeBase.MaximumProperty, 100.0);
+            AssertSetterValue(style, Control.IsTabStopProperty, false);
+            AssertSetterValue(style, FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+            AssertSetterValue(style, ProgressBar.CornerRadiusProperty, new CornerRadius(1.5));
+            Assert.IsInstanceOfType(FindSetter(style, Control.TemplateProperty)?.Value, typeof(ControlTemplate));
+
             var progressBar = new ProgressBar
             {
+                Style = style,
                 Width = 120,
                 Value = 60
             };
@@ -34,17 +58,22 @@ public class ProgressBarApiTests
             AssertBrushEquals((Brush)progressBar.TryFindResource("ProgressBarBackground"), progressBar.Background);
             Assert.AreSame(progressBar.TryFindResource("ProgressBarBorderBrush"), progressBar.BorderBrush);
             Assert.AreEqual(progressBar.TryFindResource("ProgressBarBorderThemeThickness"), progressBar.BorderThickness);
+            Assert.AreSame(style, progressBar.Style);
             Assert.AreEqual(3.0, progressBar.MinHeight);
             Assert.AreEqual(new CornerRadius(1.5), progressBar.CornerRadius);
             Assert.AreEqual(100.0, progressBar.Maximum);
             Assert.IsFalse(progressBar.IsTabStop);
             Assert.AreEqual(VerticalAlignment.Center, progressBar.VerticalAlignment);
 
+            var layoutRoot = FindNamedDescendant<Grid>(progressBar, "LayoutRoot");
+            Assert.IsTrue(layoutRoot.SnapsToDevicePixels);
+
             var rootBorder = FindNamedDescendant<Border>(progressBar, "ProgressBarRoot");
             Assert.IsNull(rootBorder.Background);
             Assert.AreSame(progressBar.BorderBrush, rootBorder.BorderBrush);
             Assert.AreEqual(progressBar.BorderThickness, rootBorder.BorderThickness);
             Assert.AreEqual(progressBar.CornerRadius, rootBorder.CornerRadius);
+            Assert.AreEqual(progressBar.Padding, rootBorder.Padding);
 
             var track = FindNamedDescendant<Rectangle>(progressBar, "ProgressBarTrack");
             AssertBrushEquals(progressBar.Background, track.Fill);
@@ -52,6 +81,8 @@ public class ProgressBarApiTests
             Assert.AreEqual(VerticalAlignment.Center, track.VerticalAlignment);
             Assert.AreEqual(0.5, track.RadiusX);
             Assert.AreEqual(0.5, track.RadiusY);
+            Assert.AreEqual(progressBar.Width, track.Width);
+            Assert.IsInstanceOfType(track.RenderTransform, typeof(TranslateTransform));
 
             AssertProgressIndicator(progressBar, "DeterminateProgressBarIndicator");
             AssertProgressIndicator(progressBar, "IndeterminateProgressBarIndicator");
@@ -114,6 +145,47 @@ public class ProgressBarApiTests
         Assert.AreEqual(HorizontalAlignment.Left, indicator.HorizontalAlignment);
         Assert.AreEqual(1.5, indicator.RadiusX);
         Assert.AreEqual(1.5, indicator.RadiusY);
+        Assert.IsInstanceOfType(indicator.RenderTransform, typeof(TranslateTransform));
+    }
+
+    private static void AssertResource(ResourceDictionary resources, string key, object expected)
+    {
+        Assert.IsTrue(resources.Contains(key), $"Expected resource '{key}' to exist.");
+        Assert.AreEqual(expected, resources[key], $"Unexpected value for '{key}'.");
+    }
+
+    private static void AssertDynamicResourceSetter(Style style, DependencyProperty property, object expectedResourceKey)
+    {
+        var setter = FindSetter(style, property);
+        Assert.IsNotNull(setter, $"Expected local setter for {property.Name}.");
+        Assert.IsInstanceOfType(setter!.Value, typeof(DynamicResourceExtension));
+
+        var dynamicResource = (DynamicResourceExtension)setter.Value;
+        Assert.AreEqual(expectedResourceKey, dynamicResource.ResourceKey);
+    }
+
+    private static void AssertSetterValue(Style style, DependencyProperty property, object expectedValue)
+    {
+        var setter = FindSetter(style, property);
+        Assert.IsNotNull(setter, $"Expected local setter for {property.Name}.");
+        Assert.AreEqual(expectedValue, setter!.Value);
+    }
+
+    private static Setter? FindSetter(Style style, DependencyProperty property)
+    {
+        for (var current = style; current != null; current = current.BasedOn)
+        {
+            var setter = current.Setters
+                .OfType<Setter>()
+                .FirstOrDefault(item => item.Property == property);
+
+            if (setter != null)
+            {
+                return setter;
+            }
+        }
+
+        return null;
     }
 
     private static void AssertThemeResourceReference(string themeName, string resourceKey, object expectedResourceKey)
