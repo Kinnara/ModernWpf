@@ -118,15 +118,25 @@ public class AnnotatedScrollBarApiTests
             using var host = new TestWindowHost(annotatedScrollBar, width: 160, height: 220);
             host.UpdateLayout();
 
-            Assert.AreEqual(false, GetSetterValue(scrollBarStyle, UIElement.FocusableProperty));
-            Assert.AreEqual(resources["LabelsGridMinWidth"], GetSetterValue(scrollBarStyle, FrameworkElement.MinWidthProperty));
+            Assert.AreEqual(typeof(ModernWpf.Controls.AnnotatedScrollBar), scrollBarStyle.TargetType);
+            AssertSetterValue(scrollBarStyle, UIElement.FocusableProperty, false);
+            AssertSetterValue(scrollBarStyle, FrameworkElement.MinWidthProperty, resources["LabelsGridMinWidth"]);
+            Assert.IsInstanceOfType(GetSetterValue(scrollBarStyle, ModernWpf.Controls.AnnotatedScrollBar.LabelTemplateProperty), typeof(DataTemplate));
+            Assert.IsInstanceOfType(GetSetterValue(scrollBarStyle, Control.TemplateProperty), typeof(ControlTemplate));
+
+            Assert.AreEqual(typeof(RepeatButton), scrollButtonStyle.TargetType);
+            Assert.AreSame(resources["DefaultRepeatButtonStyle"], scrollButtonStyle.BasedOn);
+            AssertSetterValue(scrollButtonStyle, FrameworkElement.MinWidthProperty, 16.0);
+            AssertSetterValue(scrollButtonStyle, FrameworkElement.MinHeightProperty, 16.0);
             AssertDynamicResourceSetter(scrollButtonStyle, Control.BackgroundProperty, "ScrollButtonBackground");
             AssertDynamicResourceSetter(scrollButtonStyle, Control.ForegroundProperty, "ScrollButtonForeground");
             AssertDynamicResourceSetter(scrollButtonStyle, Control.BorderBrushProperty, "ScrollButtonBorderBrush");
             AssertDynamicResourceSetter(scrollButtonStyle, System.Windows.Controls.Border.CornerRadiusProperty, "ControlCornerRadius");
             AssertDynamicResourceSetter(scrollButtonStyle, Control.FontFamilyProperty, "SymbolThemeFontFamily");
-            Assert.AreEqual(resources["ScrollButtonStyleBorderThickness"], GetSetterValue(scrollButtonStyle, Control.BorderThicknessProperty));
-            Assert.AreEqual(resources["ScrollButtonFontSize"], GetSetterValue(scrollButtonStyle, Control.FontSizeProperty));
+            AssertSetterValue(scrollButtonStyle, Control.BorderThicknessProperty, resources["ScrollButtonStyleBorderThickness"]);
+            AssertSetterValue(scrollButtonStyle, Control.FontSizeProperty, resources["ScrollButtonFontSize"]);
+            AssertSetterValue(scrollButtonStyle, Control.PaddingProperty, new Thickness(0));
+            Assert.IsInstanceOfType(GetSetterValue(scrollButtonStyle, Control.TemplateProperty), typeof(ControlTemplate));
 
             AssertResourceAlias(annotatedScrollBar, "ScrollButtonBackground", "SubtleFillColorTransparentBrush");
             AssertResourceAlias(annotatedScrollBar, "ScrollButtonForeground", "TextFillColorPrimaryBrush");
@@ -404,6 +414,11 @@ public class AnnotatedScrollBarApiTests
         var setter = style.Setters.OfType<Setter>().SingleOrDefault(setter => setter.Property == property);
         Assert.IsNotNull(setter, $"Expected local setter for {property.Name}.");
         return setter!.Value;
+    }
+
+    private static void AssertSetterValue(Style style, DependencyProperty property, object? expectedValue)
+    {
+        Assert.AreEqual(expectedValue, GetSetterValue(style, property));
     }
 
     private static void AssertDynamicResourceSetter(Style style, DependencyProperty property, object expectedResourceKey)
