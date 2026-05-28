@@ -3,6 +3,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Data;
 using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf;
@@ -10,8 +11,10 @@ using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
 using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
+using WpfGridView = System.Windows.Controls.GridView;
 using WpfListView = System.Windows.Controls.ListView;
 using WpfListViewItem = System.Windows.Controls.ListViewItem;
+using WpfRectangle = System.Windows.Shapes.Rectangle;
 
 namespace ModernWpf.WinUI.Tests.CommonStyles;
 
@@ -30,6 +33,60 @@ public class ListBoxListViewVisualStateTests
             Assert.AreEqual(typeof(ListBox), defaultListBoxStyle.TargetType);
             Assert.AreSame(defaultListBoxStyle, implicitListBoxStyle.BasedOn);
 
+            AssertDynamicResourceSetter(defaultListBoxStyle, Control.BackgroundProperty, "ListBoxBackground");
+            AssertSetterValue(defaultListBoxStyle, FrameworkElement.MarginProperty, new Thickness(0));
+            AssertSetterValue(defaultListBoxStyle, Control.PaddingProperty, new Thickness(0));
+            AssertSetterValue(defaultListBoxStyle, Control.BorderThicknessProperty, new Thickness(0));
+            AssertSetterValue(defaultListBoxStyle, ScrollViewer.VerticalScrollBarVisibilityProperty, ScrollBarVisibility.Auto);
+            AssertSetterValue(defaultListBoxStyle, ScrollViewer.HorizontalScrollBarVisibilityProperty, ScrollBarVisibility.Auto);
+            AssertSetterValue(defaultListBoxStyle, ScrollViewer.CanContentScrollProperty, true);
+            AssertSetterValue(defaultListBoxStyle, Control.VerticalContentAlignmentProperty, VerticalAlignment.Center);
+            AssertSetterValue(defaultListBoxStyle, VirtualizingPanel.IsVirtualizingProperty, true);
+            AssertSetterValue(defaultListBoxStyle, VirtualizingPanel.VirtualizationModeProperty, VirtualizationMode.Standard);
+            AssertSetterValue(defaultListBoxStyle, UIElement.SnapsToDevicePixelsProperty, true);
+            AssertSetterValue(defaultListBoxStyle, FrameworkElement.OverridesDefaultStyleProperty, true);
+            Assert.IsInstanceOfType(FindSetter(defaultListBoxStyle, ItemsControl.ItemsPanelProperty)?.Value, typeof(ItemsPanelTemplate));
+            Assert.IsInstanceOfType(FindSetter(defaultListBoxStyle, Control.TemplateProperty)?.Value, typeof(ControlTemplate));
+
+            var listBox = new ListBox
+            {
+                Width = 180,
+                Height = 80
+            };
+            listBox.Items.Add("First");
+            using (var listBoxHost = new TestWindowHost(listBox, width: 220, height: 120))
+            {
+                listBoxHost.UpdateLayout();
+
+                Assert.AreSame(listBox.TryFindResource("ListBoxBackground"), listBox.Background);
+                Assert.AreEqual(new Thickness(0), listBox.Margin);
+                Assert.AreEqual(new Thickness(0), listBox.Padding);
+                Assert.AreEqual(new Thickness(0), listBox.BorderThickness);
+                Assert.AreEqual(ScrollBarVisibility.Auto, ScrollViewer.GetVerticalScrollBarVisibility(listBox));
+                Assert.AreEqual(ScrollBarVisibility.Auto, ScrollViewer.GetHorizontalScrollBarVisibility(listBox));
+                Assert.IsTrue(ScrollViewer.GetCanContentScroll(listBox));
+                Assert.AreEqual(VerticalAlignment.Center, listBox.VerticalContentAlignment);
+                Assert.IsTrue(VirtualizingPanel.GetIsVirtualizing(listBox));
+                Assert.AreEqual(VirtualizationMode.Standard, VirtualizingPanel.GetVirtualizationMode(listBox));
+                Assert.IsTrue(listBox.SnapsToDevicePixels);
+                Assert.IsTrue(listBox.OverridesDefaultStyle);
+
+                var rootBorder = FindTemplateChild<Border>(listBox, "Bd");
+                Assert.AreSame(listBox.Background, rootBorder.Background);
+                Assert.AreSame(listBox.BorderBrush, rootBorder.BorderBrush);
+                Assert.AreEqual(listBox.BorderThickness, rootBorder.BorderThickness);
+
+                var scrollViewer = FindTemplateChild<ScrollViewer>(listBox, "PART_ContentHost");
+                Assert.AreEqual(listBox.Padding, scrollViewer.Padding);
+                Assert.AreEqual(ScrollViewer.GetCanContentScroll(listBox), scrollViewer.CanContentScroll);
+                Assert.AreEqual(ScrollViewer.GetHorizontalScrollBarVisibility(listBox), scrollViewer.HorizontalScrollBarVisibility);
+                Assert.AreEqual(ScrollViewer.GetVerticalScrollBarVisibility(listBox), scrollViewer.VerticalScrollBarVisibility);
+
+                var itemsPresenter = VisualTreeTestHelper.FindDescendant<ItemsPresenter>(listBox)
+                    ?? throw new AssertFailedException("Expected ListBox template ItemsPresenter.");
+                Assert.AreEqual(listBox.SnapsToDevicePixels, itemsPresenter.SnapsToDevicePixels);
+            }
+
             var defaultItemStyle = (Style)Application.Current.FindResource("DefaultListBoxItemStyle");
             var implicitItemStyle = (Style)Application.Current.FindResource(typeof(ListBoxItem));
             Assert.AreEqual(typeof(ListBoxItem), defaultItemStyle.TargetType);
@@ -37,8 +94,18 @@ public class ListBoxListViewVisualStateTests
 
             var itemSetters = defaultItemStyle.Setters.OfType<Setter>().ToArray();
             AssertDynamicResourceSetter(itemSetters, Control.ForegroundProperty, "ListBoxItemForeground");
+            AssertBrushSetter(defaultItemStyle, Control.BackgroundProperty, Brushes.Transparent);
+            AssertBrushSetter(defaultItemStyle, Control.BorderBrushProperty, Brushes.Transparent);
+            Assert.IsInstanceOfType(FindSetter(defaultItemStyle, Control.HorizontalContentAlignmentProperty)?.Value, typeof(BindingBase));
+            Assert.IsInstanceOfType(FindSetter(defaultItemStyle, Control.VerticalContentAlignmentProperty)?.Value, typeof(BindingBase));
             AssertDynamicResourceSetter(itemSetters, Control.FocusVisualStyleProperty, "DefaultCollectionFocusVisualStyle");
+            AssertDynamicResourceSetter(defaultItemStyle, FrameworkElement.MarginProperty, "ListBoxItemMargin");
+            AssertSetterValue(defaultItemStyle, Control.BorderThicknessProperty, new Thickness(1));
+            AssertDynamicResourceSetter(defaultItemStyle, Control.PaddingProperty, "ListBoxItemPadding");
             AssertSetter(itemSetters, System.Windows.Controls.Border.CornerRadiusProperty, new CornerRadius(0));
+            AssertSetterValue(defaultItemStyle, UIElement.SnapsToDevicePixelsProperty, true);
+            AssertSetterValue(defaultItemStyle, FrameworkElement.OverridesDefaultStyleProperty, true);
+            Assert.IsInstanceOfType(FindSetter(defaultItemStyle, Control.TemplateProperty)?.Value, typeof(ControlTemplate));
             AssertNoSetter(itemSetters, FocusVisualHelper.UseSystemFocusVisualsProperty);
 
             var item = new ListBoxItem
@@ -59,6 +126,10 @@ public class ListBoxListViewVisualStateTests
             var border = VisualTreeTestHelper.FindDescendant<Border>(item)
                 ?? throw new AssertFailedException("Expected official WPF Fluent ListBoxItem template root Border.");
             Assert.AreSame(item.TryFindResource("ListBoxItemSelectedBackgroundThemeBrush"), border.Background);
+            Assert.AreSame(item.BorderBrush, border.BorderBrush);
+            Assert.AreEqual(item.BorderThickness, border.BorderThickness);
+            Assert.AreEqual(item.Padding, border.Padding);
+            Assert.AreEqual(item.GetValue(System.Windows.Controls.Border.CornerRadiusProperty), border.CornerRadius);
             Assert.AreSame(item.TryFindResource("ListBoxItemSelectedForegroundThemeBrush"), item.Foreground);
         });
     }
@@ -77,6 +148,70 @@ public class ListBoxListViewVisualStateTests
             Assert.IsInstanceOfType(Application.Current.FindResource("ViewIsGridViewConverter"), typeof(IsGridViewConverter));
             Assert.IsInstanceOfType(Application.Current.FindResource("GridViewTemplate"), typeof(ControlTemplate));
 
+            var baseListViewStyle = (Style)Application.Current.FindResource("BaseListViewStyle");
+            Assert.AreSame(baseListViewStyle, defaultListViewStyle.BasedOn);
+            AssertSetterValue(baseListViewStyle, FrameworkElement.MarginProperty, new Thickness(0));
+            AssertSetterValue(baseListViewStyle, Control.PaddingProperty, new Thickness(0));
+            AssertDynamicResourceSetter(baseListViewStyle, Control.BackgroundProperty, "ListViewBackground");
+            AssertDynamicResourceSetter(baseListViewStyle, Control.BorderBrushProperty, "ListViewBorderBrush");
+            AssertSetterValue(baseListViewStyle, Control.BorderThicknessProperty, new Thickness(1));
+            AssertSetterValue(baseListViewStyle, ScrollViewer.VerticalScrollBarVisibilityProperty, ScrollBarVisibility.Auto);
+            AssertSetterValue(baseListViewStyle, ScrollViewer.HorizontalScrollBarVisibilityProperty, ScrollBarVisibility.Auto);
+            AssertSetterValue(baseListViewStyle, ScrollViewer.CanContentScrollProperty, true);
+            AssertSetterValue(baseListViewStyle, Control.VerticalContentAlignmentProperty, VerticalAlignment.Center);
+            AssertSetterValue(baseListViewStyle, VirtualizingPanel.IsVirtualizingProperty, true);
+            AssertSetterValue(baseListViewStyle, VirtualizingPanel.VirtualizationModeProperty, VirtualizationMode.Standard);
+            AssertSetterValue(baseListViewStyle, UIElement.SnapsToDevicePixelsProperty, true);
+            AssertSetterValue(baseListViewStyle, FrameworkElement.OverridesDefaultStyleProperty, true);
+            Assert.IsInstanceOfType(FindSetter(baseListViewStyle, ItemsControl.ItemsPanelProperty)?.Value, typeof(ItemsPanelTemplate));
+            AssertSetterValue(defaultListViewStyle, Control.TemplateProperty, Application.Current.FindResource("ListViewTemplate"));
+            AssertGridViewDataTrigger(defaultListViewStyle);
+
+            var listView = new WpfListView
+            {
+                Width = 180,
+                Height = 80
+            };
+            listView.Items.Add("First");
+            using (var listViewHost = new TestWindowHost(listView, width: 220, height: 120))
+            {
+                listViewHost.UpdateLayout();
+
+                Assert.AreSame(listView.TryFindResource("ListViewBackground"), listView.Background);
+                Assert.AreSame(listView.TryFindResource("ListViewBorderBrush"), listView.BorderBrush);
+                Assert.AreEqual(new Thickness(1), listView.BorderThickness);
+                Assert.AreEqual(new Thickness(0), listView.Margin);
+                Assert.AreEqual(new Thickness(0), listView.Padding);
+                Assert.AreEqual(ScrollBarVisibility.Auto, ScrollViewer.GetVerticalScrollBarVisibility(listView));
+                Assert.AreEqual(ScrollBarVisibility.Auto, ScrollViewer.GetHorizontalScrollBarVisibility(listView));
+                Assert.IsTrue(ScrollViewer.GetCanContentScroll(listView));
+                Assert.IsTrue(VirtualizingPanel.GetIsVirtualizing(listView));
+                Assert.AreEqual(VirtualizationMode.Standard, VirtualizingPanel.GetVirtualizationMode(listView));
+                Assert.IsTrue(listView.SnapsToDevicePixels);
+                Assert.IsTrue(listView.OverridesDefaultStyle);
+
+                var rootBorder = VisualTreeTestHelper.FindDescendant<Border>(listView)
+                    ?? throw new AssertFailedException("Expected ListView template root Border.");
+                Assert.AreSame(listView.Background, rootBorder.Background);
+                Assert.AreSame(listView.BorderBrush, rootBorder.BorderBrush);
+                Assert.AreEqual(listView.BorderThickness, rootBorder.BorderThickness);
+
+                var scrollViewer = FindTemplateChild<ScrollViewer>(listView, "PART_ContentHost");
+                Assert.AreEqual(listView.Padding, scrollViewer.Padding);
+                Assert.AreEqual(ScrollViewer.GetCanContentScroll(listView), scrollViewer.CanContentScroll);
+
+                listView.IsEnabled = false;
+                listViewHost.UpdateLayout();
+                var disabledVisual = FindTemplateChild<WpfRectangle>(listView, "PART_DisabledVisual");
+                Assert.AreEqual(Visibility.Visible, disabledVisual.Visibility);
+            }
+
+            var gridViewStyle = (Style)Application.Current.FindResource(WpfGridView.GridViewStyleKey);
+            Assert.AreSame(baseListViewStyle, gridViewStyle.BasedOn);
+            AssertSetterValue(gridViewStyle, ItemsControl.ItemContainerStyleProperty, Application.Current.FindResource(WpfGridView.GridViewItemContainerStyleKey));
+            AssertSetterValue(gridViewStyle, Control.TemplateProperty, Application.Current.FindResource("GridViewTemplate"));
+            AssertSetterValue(gridViewStyle, WpfGridView.ColumnHeaderContainerStyleProperty, Application.Current.FindResource("DefaultGridViewColumnHeaderStyle"));
+
             var defaultItemStyle = (Style)Application.Current.FindResource("DefaultListViewItemStyle");
             var implicitItemStyle = (Style)Application.Current.FindResource(typeof(WpfListViewItem));
             Assert.AreEqual(typeof(WpfListViewItem), defaultItemStyle.TargetType);
@@ -84,9 +219,18 @@ public class ListBoxListViewVisualStateTests
 
             var itemSetters = defaultItemStyle.Setters.OfType<Setter>().ToArray();
             AssertDynamicResourceSetter(itemSetters, Control.ForegroundProperty, "ListViewItemForeground");
+            AssertBrushSetter(defaultItemStyle, Control.BackgroundProperty, Brushes.Transparent);
             AssertDynamicResourceSetter(itemSetters, System.Windows.Controls.Border.CornerRadiusProperty, "ControlCornerRadius");
+            AssertSetterValue(defaultItemStyle, FrameworkElement.MinHeightProperty, 40.0);
+            AssertSetterValue(defaultItemStyle, FrameworkElement.MinWidthProperty, 88.0);
+            AssertSetterValue(defaultItemStyle, Control.BorderThicknessProperty, new Thickness(1));
+            AssertDynamicResourceSetter(defaultItemStyle, FrameworkElement.MarginProperty, "ListViewItemMargin");
+            AssertDynamicResourceSetter(defaultItemStyle, Control.PaddingProperty, "ListViewItemPadding");
+            AssertSetterValue(defaultItemStyle, Control.HorizontalContentAlignmentProperty, HorizontalAlignment.Stretch);
+            AssertSetterValue(defaultItemStyle, Control.VerticalContentAlignmentProperty, VerticalAlignment.Center);
             AssertDynamicResourceSetter(itemSetters, Control.FocusVisualStyleProperty, "DefaultCollectionFocusVisualStyle");
             AssertSetter(itemSetters, Control.OverridesDefaultStyleProperty, true);
+            Assert.IsInstanceOfType(FindSetter(defaultItemStyle, Control.TemplateProperty)?.Value, typeof(ControlTemplate));
             AssertNoSetter(itemSetters, FocusVisualHelper.UseSystemFocusVisualsProperty);
 
             var item = new WpfListViewItem
@@ -108,6 +252,33 @@ public class ListBoxListViewVisualStateTests
                 ?? throw new AssertFailedException("Expected official WPF Fluent ListViewItem selection indicator.");
             Assert.AreEqual(Visibility.Visible, activeRectangle.Visibility);
             Assert.AreSame(item.TryFindResource("ListViewItemPillFillBrush"), activeRectangle.Fill);
+            var itemBorder = item.Template.FindName("Border", item) as Border
+                ?? throw new AssertFailedException("Expected ListViewItem template Border.");
+            Assert.AreSame(item.TryFindResource("ListViewItemBackgroundPointerOver"), itemBorder.Background);
+            Assert.AreEqual(item.GetValue(System.Windows.Controls.Border.CornerRadiusProperty), itemBorder.CornerRadius);
+
+            var gridViewItemStyle = (Style)Application.Current.FindResource(WpfGridView.GridViewItemContainerStyleKey);
+            Assert.AreSame(defaultItemStyle, gridViewItemStyle.BasedOn);
+            AssertSetterValue(gridViewItemStyle, Control.PaddingProperty, new Thickness(6, 0, 6, 0));
+            AssertDynamicResourceSetter(gridViewItemStyle, FrameworkElement.MinHeightProperty, "GridViewItemContainerMinHeight");
+            Assert.IsInstanceOfType(FindSetter(gridViewItemStyle, Control.TemplateProperty)?.Value, typeof(ControlTemplate));
+
+            var gridViewItem = new WpfListViewItem
+            {
+                Style = gridViewItemStyle,
+                Content = "GridView content",
+                IsSelected = true
+            };
+            using var gridViewItemHost = new TestWindowHost(gridViewItem);
+            gridViewItemHost.UpdateLayout();
+
+            var gridViewItemRoot = FindTemplateChild<Border>(gridViewItem, "RootBorder");
+            Assert.AreSame(gridViewItem.TryFindResource("ListViewItemBackgroundPointerOver"), gridViewItemRoot.Background);
+            Assert.AreEqual(gridViewItem.GetValue(System.Windows.Controls.Border.CornerRadiusProperty), gridViewItemRoot.CornerRadius);
+            var gridViewActiveRectangle = FindTemplateChild<WpfRectangle>(gridViewItem, "ActiveRectangle");
+            Assert.AreEqual(Visibility.Visible, gridViewActiveRectangle.Visibility);
+            Assert.AreSame(gridViewItem.TryFindResource("ListViewItemPillFillBrush"), gridViewActiveRectangle.Fill);
+            Assert.IsNotNull(VisualTreeTestHelper.FindDescendant<GridViewRowPresenter>(gridViewItem));
         });
     }
 
@@ -120,6 +291,23 @@ public class ListBoxListViewVisualStateTests
 
             var defaultHeaderStyle = (Style)Application.Current.FindResource("DefaultGridViewColumnHeaderStyle");
             Assert.AreEqual(typeof(GridViewColumnHeader), defaultHeaderStyle.TargetType);
+            AssertDynamicResourceSetter(defaultHeaderStyle, Control.BackgroundProperty, "GridViewColumnHeaderBackground");
+            AssertDynamicResourceSetter(defaultHeaderStyle, Control.BorderBrushProperty, "GridViewColumnHeaderBorderBrush");
+            AssertDynamicResourceSetter(defaultHeaderStyle, Control.ForegroundProperty, "GridViewColumnHeaderForeground");
+            AssertSetterValue(defaultHeaderStyle, Control.HorizontalContentAlignmentProperty, HorizontalAlignment.Stretch);
+            AssertSetterValue(defaultHeaderStyle, Control.VerticalContentAlignmentProperty, VerticalAlignment.Center);
+            AssertSetterValue(defaultHeaderStyle, Control.BorderThicknessProperty, new Thickness(0, 2, 0, 2));
+            AssertSetterValue(defaultHeaderStyle, Control.PaddingProperty, new Thickness(12, 0, 12, 0));
+            AssertSetterValue(defaultHeaderStyle, FrameworkElement.OverridesDefaultStyleProperty, true);
+            Assert.IsInstanceOfType(FindSetter(defaultHeaderStyle, Control.TemplateProperty)?.Value, typeof(ControlTemplate));
+            AssertGridViewColumnHeaderRoleTriggers(defaultHeaderStyle);
+
+            var gripperStyle = (Style)Application.Current.FindResource("DefaultGridViewColumnHeaderGripper");
+            AssertSetterValue(gripperStyle, Canvas.RightProperty, -4.0);
+            AssertSetterValue(gripperStyle, FrameworkElement.WidthProperty, 8.0);
+            Assert.IsInstanceOfType(FindSetter(gripperStyle, FrameworkElement.HeightProperty)?.Value, typeof(BindingBase));
+            AssertDynamicResourceSetter(gripperStyle, System.Windows.Controls.Border.CornerRadiusProperty, "ControlCornerRadius");
+            Assert.IsInstanceOfType(FindSetter(gripperStyle, Control.TemplateProperty)?.Value, typeof(ControlTemplate));
 
             var header = new GridViewColumnHeader
             {
@@ -135,7 +323,34 @@ public class ListBoxListViewVisualStateTests
             Assert.IsNotInstanceOfType(presenter, typeof(ContentPresenterEx));
             Assert.AreEqual(header.Content, presenter.Content);
             Assert.IsNull(VisualTreeTestHelper.FindDescendant<ContentPresenterEx>(header));
-            Assert.IsInstanceOfType(header.Template.FindName("PART_HeaderGripper", header), typeof(Thumb));
+
+            Assert.AreSame(header.TryFindResource("GridViewColumnHeaderBackground"), header.Background);
+            Assert.AreSame(header.TryFindResource("GridViewColumnHeaderBorderBrush"), header.BorderBrush);
+            Assert.AreSame(header.TryFindResource("GridViewColumnHeaderForeground"), header.Foreground);
+            Assert.AreEqual(new Thickness(0, 2, 0, 2), header.BorderThickness);
+            Assert.AreEqual(new Thickness(12, 0, 12, 0), header.Padding);
+            Assert.IsTrue(header.OverridesDefaultStyle);
+
+            var headerBorder = FindTemplateChild<Border>(header, "HeaderBorder");
+            Assert.AreSame(header.Background, headerBorder.Background);
+            Assert.AreSame(header.BorderBrush, headerBorder.BorderBrush);
+            Assert.AreEqual(header.BorderThickness, headerBorder.BorderThickness);
+            Assert.AreEqual(new CornerRadius(4, 4, 0, 0), headerBorder.CornerRadius);
+            Assert.AreEqual(header.Padding, presenter.Margin);
+            Assert.AreEqual(header.HorizontalContentAlignment, presenter.HorizontalAlignment);
+            Assert.AreEqual(header.VerticalContentAlignment, presenter.VerticalAlignment);
+            Assert.IsTrue(presenter.RecognizesAccessKey);
+            Assert.AreEqual(header.SnapsToDevicePixels, presenter.SnapsToDevicePixels);
+
+            var gripper = FindTemplateChild<Thumb>(header, "PART_HeaderGripper");
+            Assert.AreSame(gripperStyle, gripper.Style);
+            Assert.AreEqual(-4.0, Canvas.GetRight(gripper));
+            Assert.AreEqual(8.0, gripper.Width);
+            gripper.ApplyTemplate();
+            var gripperThumb = FindTemplateChild<WpfRectangle>(gripper, "PART_Thumb");
+            Assert.AreEqual(2.0, gripperThumb.Width);
+            Assert.AreEqual(16.0, gripperThumb.Height);
+            Assert.AreSame(gripper.TryFindResource("GridViewColumnHeaderGripperThumbFill"), gripperThumb.Fill);
         });
     }
 
@@ -169,7 +384,7 @@ public class ListBoxListViewVisualStateTests
         var text = string.Join(
             "\n",
             new[] { "ListBox.xaml", "ListBoxItem.xaml", "GridView.xaml", "ListView.xaml", "ListViewItem.xaml" }
-                .Select(file => File.ReadAllText(Path.Combine(repoRoot, "ModernWpf", "Styles", file))));
+                .Select(file => File.ReadAllText(System.IO.Path.Combine(repoRoot, "ModernWpf", "Styles", file))));
 
         Assert.IsFalse(text.Contains("VisualStateEx", System.StringComparison.Ordinal));
         Assert.IsFalse(text.Contains("ContentPresenterEx", System.StringComparison.Ordinal));
@@ -199,6 +414,123 @@ public class ListBoxListViewVisualStateTests
     private static void AssertNoSetter(Setter[] setters, DependencyProperty property)
     {
         Assert.IsFalse(setters.Any(item => item.Property == property), $"Unexpected setter for {property.Name}.");
+    }
+
+    private static void AssertSetterValue(Style style, DependencyProperty property, object expectedValue)
+    {
+        var setter = FindSetter(style, property);
+        Assert.IsNotNull(setter, $"Expected setter for {property.Name}.");
+        Assert.AreEqual(expectedValue, setter!.Value);
+    }
+
+    private static void AssertDynamicResourceSetter(Style style, DependencyProperty property, string resourceKey)
+    {
+        var setter = FindSetter(style, property);
+        Assert.IsNotNull(setter, $"Expected setter for {property.Name}.");
+        Assert.IsInstanceOfType(setter!.Value, typeof(DynamicResourceExtension));
+        Assert.AreEqual(resourceKey, ((DynamicResourceExtension)setter.Value).ResourceKey);
+    }
+
+    private static void AssertBrushSetter(Style style, DependencyProperty property, Brush expectedBrush)
+    {
+        var setter = FindSetter(style, property);
+        Assert.IsNotNull(setter, $"Expected setter for {property.Name}.");
+        Assert.IsInstanceOfType(setter!.Value, typeof(Brush));
+        AssertBrushEquals(expectedBrush, (Brush)setter.Value);
+    }
+
+    private static Setter? FindSetter(Style style, DependencyProperty property)
+    {
+        for (var current = style; current != null; current = current.BasedOn)
+        {
+            var setter = current.Setters
+                .OfType<Setter>()
+                .SingleOrDefault(item => item.Property == property);
+
+            if (setter != null)
+            {
+                return setter;
+            }
+        }
+
+        return null;
+    }
+
+    private static T FindTemplateChild<T>(Control control, string name)
+        where T : FrameworkElement
+    {
+        control.ApplyTemplate();
+        return control.Template?.FindName(name, control) as T
+            ?? throw new AssertFailedException($"Expected template child '{name}' on {control.GetType().Name}.");
+    }
+
+    private static void AssertGridViewDataTrigger(Style style)
+    {
+        var trigger = style.Triggers
+            .OfType<DataTrigger>()
+            .Single();
+        Assert.AreEqual("True", trigger.Value?.ToString());
+        Assert.IsInstanceOfType(trigger.Binding, typeof(Binding));
+
+        var binding = (Binding)trigger.Binding;
+        Assert.AreEqual("View", binding.Path.Path);
+        Assert.AreSame(Application.Current.FindResource("ViewIsGridViewConverter"), binding.Converter);
+
+        AssertTriggerSetter(trigger, Control.TemplateProperty, Application.Current.FindResource("GridViewTemplate"));
+        AssertTriggerSetter(trigger, ItemsControl.ItemContainerStyleProperty, Application.Current.FindResource(WpfGridView.GridViewItemContainerStyleKey));
+        AssertTriggerSetter(trigger, WpfGridView.ColumnHeaderContainerStyleProperty, Application.Current.FindResource("DefaultGridViewColumnHeaderStyle"));
+    }
+
+    private static void AssertGridViewColumnHeaderRoleTriggers(Style style)
+    {
+        var paddingTrigger = style.Triggers
+            .OfType<Trigger>()
+            .Single(item => item.Property == GridViewColumnHeader.RoleProperty && Equals(item.Value, GridViewColumnHeaderRole.Padding));
+        AssertTriggerSetter(paddingTrigger, Control.BorderThicknessProperty, new Thickness(0, 2, 0, 2));
+        Assert.IsInstanceOfType(FindTriggerSetter(paddingTrigger, Control.TemplateProperty)?.Value, typeof(ControlTemplate));
+
+        var floatingTrigger = style.Triggers
+            .OfType<Trigger>()
+            .Single(item => item.Property == GridViewColumnHeader.RoleProperty && Equals(item.Value, GridViewColumnHeaderRole.Floating));
+        AssertTriggerSetter(floatingTrigger, UIElement.OpacityProperty, 0.6);
+        Assert.IsInstanceOfType(FindTriggerSetter(floatingTrigger, Control.TemplateProperty)?.Value, typeof(ControlTemplate));
+    }
+
+    private static void AssertTriggerSetter(TriggerBase trigger, DependencyProperty property, object expectedValue)
+    {
+        var setter = FindTriggerSetter(trigger, property);
+        Assert.IsNotNull(setter, $"Expected trigger setter for {property.Name}.");
+        Assert.AreEqual(expectedValue, setter!.Value);
+    }
+
+    private static Setter? FindTriggerSetter(TriggerBase trigger, DependencyProperty property)
+    {
+        var setters = trigger switch
+        {
+            Trigger typedTrigger => typedTrigger.Setters,
+            DataTrigger typedTrigger => typedTrigger.Setters,
+            MultiTrigger typedTrigger => typedTrigger.Setters,
+            _ => throw new AssertFailedException($"Unsupported trigger type {trigger.GetType().Name}.")
+        };
+
+        return setters
+            .OfType<Setter>()
+            .SingleOrDefault(item => item.Property == property);
+    }
+
+    private static void AssertBrushEquals(Brush expected, Brush actual)
+    {
+        Assert.IsNotNull(expected);
+        Assert.IsNotNull(actual);
+
+        if (expected is SolidColorBrush expectedSolid && actual is SolidColorBrush actualSolid)
+        {
+            Assert.AreEqual(expectedSolid.Color, actualSolid.Color);
+            Assert.AreEqual(expectedSolid.Opacity, actualSolid.Opacity);
+            return;
+        }
+
+        Assert.AreEqual(expected.ToString(), actual.ToString());
     }
 
     private static void AssertDefaultThemeListBoxListViewResources(
@@ -464,7 +796,7 @@ public class ListBoxListViewVisualStateTests
 
         while (directory != null)
         {
-            if (File.Exists(Path.Combine(directory.FullName, "ModernWpf.sln")))
+            if (File.Exists(System.IO.Path.Combine(directory.FullName, "ModernWpf.sln")))
             {
                 return directory.FullName;
             }
