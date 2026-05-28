@@ -1030,6 +1030,95 @@ public class ToggleSwitchApiTests
     }
 
     [TestMethod]
+    public void ToggleSwitchStyleUsesWinUIResourceAliases()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var style = (Style)Application.Current.FindResource(typeof(ModernWpf.Controls.ToggleSwitch));
+            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch
+            {
+                Header = "Header text",
+                OffContent = "Off text",
+                OnContent = "On text"
+            };
+
+            using var host = new TestWindowHost(toggleSwitch, width: 260, height: 120);
+            host.UpdateLayout();
+
+            Assert.AreEqual(typeof(ModernWpf.Controls.ToggleSwitch), style.TargetType);
+            AssertDynamicResourceSetter(style, Control.ForegroundProperty, "ToggleSwitchContentForeground");
+            AssertSetterValue(style, FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Left);
+            AssertSetterValue(style, FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+            AssertSetterValue(style, Control.HorizontalContentAlignmentProperty, HorizontalAlignment.Left);
+            AssertDynamicResourceSetter(style, Control.FontFamilyProperty, "ContentControlThemeFontFamily");
+            AssertDynamicResourceSetter(style, Control.FontSizeProperty, "ControlContentThemeFontSize");
+            AssertSetterValue(style, UIElement.IsManipulationEnabledProperty, true);
+            AssertDynamicResourceSetter(style, FrameworkElement.MinWidthProperty, "ToggleSwitchThemeMinWidth");
+            AssertDynamicResourceSetter(style, ModernWpf.Controls.ToggleSwitch.UseSystemFocusVisualsProperty, "UseSystemFocusVisuals");
+            AssertDynamicResourceSetter(style, Control.FocusVisualStyleProperty, SystemParameters.FocusVisualStyleKey);
+            AssertSetterValue(style, ModernWpf.Controls.ToggleSwitch.FocusVisualMarginProperty, new Thickness(-7, -3, -7, -3));
+            AssertDynamicResourceSetter(style, ModernWpf.Controls.ToggleSwitch.CornerRadiusProperty, "ControlCornerRadius");
+
+            AssertBrushEquals((Brush)toggleSwitch.TryFindResource("ToggleSwitchContentForeground"), toggleSwitch.Foreground);
+            Assert.AreEqual(HorizontalAlignment.Left, toggleSwitch.HorizontalAlignment);
+            Assert.AreEqual(VerticalAlignment.Center, toggleSwitch.VerticalAlignment);
+            Assert.AreEqual(HorizontalAlignment.Left, toggleSwitch.HorizontalContentAlignment);
+            Assert.AreSame(toggleSwitch.TryFindResource("ContentControlThemeFontFamily"), toggleSwitch.FontFamily);
+            Assert.AreEqual(toggleSwitch.TryFindResource("ControlContentThemeFontSize"), toggleSwitch.FontSize);
+            Assert.IsTrue(toggleSwitch.IsManipulationEnabled);
+            Assert.AreEqual(toggleSwitch.TryFindResource("ToggleSwitchThemeMinWidth"), toggleSwitch.MinWidth);
+            Assert.AreEqual(toggleSwitch.TryFindResource("UseSystemFocusVisuals"), toggleSwitch.UseSystemFocusVisuals);
+            Assert.AreEqual(new Thickness(-7, -3, -7, -3), toggleSwitch.FocusVisualMargin);
+            Assert.AreEqual(toggleSwitch.TryFindResource("ControlCornerRadius"), toggleSwitch.CornerRadius);
+
+            var stateGroupsRoot = FindStateGroupsRoot(toggleSwitch);
+            var normalState = FindVisualStateEx(stateGroupsRoot, "CommonStates", "Normal");
+            var pointerOverState = FindVisualStateEx(stateGroupsRoot, "CommonStates", "PointerOver");
+            var disabledState = FindVisualStateEx(stateGroupsRoot, "CommonStates", "Disabled");
+            AssertStateSetterDynamicResource(normalState, "SwitchKnobOff.Fill", "ToggleSwitchKnobFillOff");
+            AssertStateSetterDynamicResource(normalState, "SwitchKnobBounds.Stroke", "ToggleSwitchStrokeOn");
+            AssertStateSetterDynamicResource(pointerOverState, "SwitchKnobBounds.Fill", "ToggleSwitchFillOnPointerOver");
+            AssertStateSetterDynamicResource(disabledState, "HeaderContentPresenter.Foreground", "ToggleSwitchHeaderForegroundDisabled");
+            AssertStateSetterDynamicResource(disabledState, "SwitchKnobOn.Background", "ToggleSwitchKnobFillOnDisabled");
+
+            var headerPresenter = FindNamedDescendant<ContentPresenterEx>(toggleSwitch, "HeaderContentPresenter");
+            var offPresenter = FindNamedDescendant<ContentPresenterEx>(toggleSwitch, "OffContentPresenter");
+            var onPresenter = FindNamedDescendant<ContentPresenterEx>(toggleSwitch, "OnContentPresenter");
+            var switchAreaGrid = FindNamedDescendant<Border>(toggleSwitch, "SwitchAreaGrid");
+            var outerBorder = FindNamedDescendant<Rectangle>(toggleSwitch, "OuterBorder");
+            var switchKnobBounds = FindNamedDescendant<Rectangle>(toggleSwitch, "SwitchKnobBounds");
+            var switchKnobOn = FindNamedDescendant<Border>(toggleSwitch, "SwitchKnobOn");
+            var switchKnobOff = FindNamedDescendant<Rectangle>(toggleSwitch, "SwitchKnobOff");
+
+            AssertBrushEquals((Brush)headerPresenter.TryFindResource("ToggleSwitchHeaderForeground"), headerPresenter.Foreground);
+            Assert.AreEqual(headerPresenter.TryFindResource("ToggleSwitchTopHeaderMargin"), headerPresenter.Margin);
+            AssertBrushEquals(toggleSwitch.Foreground, offPresenter.Foreground);
+            AssertBrushEquals(toggleSwitch.Foreground, onPresenter.Foreground);
+            Assert.AreEqual(toggleSwitch.HorizontalContentAlignment, offPresenter.HorizontalAlignment);
+            Assert.AreEqual(toggleSwitch.HorizontalContentAlignment, onPresenter.HorizontalAlignment);
+            Assert.AreEqual(toggleSwitch.VerticalContentAlignment, offPresenter.VerticalAlignment);
+            Assert.AreEqual(toggleSwitch.VerticalContentAlignment, onPresenter.VerticalAlignment);
+            Assert.AreEqual(toggleSwitch.CornerRadius, switchAreaGrid.CornerRadius);
+            AssertBrushEquals((Brush)switchAreaGrid.TryFindResource("ToggleSwitchContainerBackground"), switchAreaGrid.Background);
+            AssertBrushEquals((Brush)outerBorder.TryFindResource("ToggleSwitchFillOff"), outerBorder.Fill);
+            AssertBrushEquals((Brush)outerBorder.TryFindResource("ToggleSwitchStrokeOff"), outerBorder.Stroke);
+            Assert.AreEqual(outerBorder.TryFindResource("ToggleSwitchOuterBorderStrokeThickness"), outerBorder.StrokeThickness);
+            AssertBrushEquals((Brush)switchKnobBounds.TryFindResource("ToggleSwitchFillOn"), switchKnobBounds.Fill);
+            AssertBrushEquals((Brush)switchKnobBounds.TryFindResource("ToggleSwitchStrokeOn"), switchKnobBounds.Stroke);
+            Assert.AreEqual(switchKnobBounds.TryFindResource("ToggleSwitchOnStrokeThickness"), switchKnobBounds.StrokeThickness);
+            AssertBrushEquals((Brush)switchKnobOn.TryFindResource("ToggleSwitchKnobFillOn"), switchKnobOn.Background);
+            AssertBrushEquals((Brush)switchKnobOn.TryFindResource("ToggleSwitchKnobStrokeOn"), switchKnobOn.BorderBrush);
+            AssertBrushEquals((Brush)switchKnobOff.TryFindResource("ToggleSwitchKnobFillOff"), switchKnobOff.Fill);
+
+            var switchAreaLayout = (Grid)switchAreaGrid.Parent;
+            Assert.AreEqual(toggleSwitch.TryFindResource("ToggleSwitchPreContentMargin"), RowDefinitionHelper.GetPixelHeight(switchAreaLayout.RowDefinitions[0]));
+            Assert.AreEqual(toggleSwitch.TryFindResource("ToggleSwitchPostContentMargin"), RowDefinitionHelper.GetPixelHeight(switchAreaLayout.RowDefinitions[2]));
+        });
+    }
+
+    [TestMethod]
     public void FocusStatesDistinguishKeyboardAndPointerFocus()
     {
         WpfTestHost.Run(() =>
@@ -2274,6 +2363,42 @@ public class ToggleSwitchApiTests
         Assert.IsTrue(
             state.Setters.Any(setter => setter.Target == target),
             $"Expected VisualStateEx setter target '{target}'.");
+    }
+
+    private static void AssertSetterValue(Style style, DependencyProperty property, object expectedValue)
+    {
+        var setter = style.Setters.OfType<Setter>().SingleOrDefault(item => item.Property == property);
+        Assert.IsNotNull(setter, $"Expected setter for {property.Name}.");
+        Assert.AreEqual(expectedValue, setter!.Value);
+    }
+
+    private static void AssertDynamicResourceSetter(Style style, DependencyProperty property, object expectedResourceKey)
+    {
+        var setter = style.Setters.OfType<Setter>().SingleOrDefault(item => item.Property == property);
+        Assert.IsNotNull(setter, $"Expected setter for {property.Name}.");
+        Assert.IsInstanceOfType(setter!.Value, typeof(DynamicResourceExtension));
+
+        var dynamicResource = (DynamicResourceExtension)setter.Value;
+        Assert.AreEqual(expectedResourceKey, dynamicResource.ResourceKey);
+    }
+
+    private static void AssertStateSetterDynamicResource(global::ModernWpf.VisualStateEx state, string target, object expectedResourceKey)
+    {
+        var setter = state.Setters.Single(item => item.Target == target);
+        AssertResourceReferenceExpression(
+            setter.ReadLocalValue(global::ModernWpf.VisualStateSetter.ValueProperty),
+            expectedResourceKey);
+    }
+
+    private static void AssertResourceReferenceExpression(object value, object expectedResourceKey)
+    {
+        Assert.IsNotNull(value, "Expected dynamic resource local value.");
+        Assert.AreEqual("System.Windows.ResourceReferenceExpression", value.GetType().FullName);
+        var resourceKeyProperty = value.GetType().GetProperty(
+            "ResourceKey",
+            BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+        Assert.IsNotNull(resourceKeyProperty, "Expected ResourceReferenceExpression.ResourceKey.");
+        Assert.AreEqual(expectedResourceKey, resourceKeyProperty!.GetValue(value));
     }
 
     private static void AssertSwitchAreaGridBackgroundColorAnimation(VisualState state)
