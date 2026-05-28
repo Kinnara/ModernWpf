@@ -114,10 +114,21 @@ public class InfoBadgeApiTests
             using var host = new TestWindowHost(infoBadge, width: 100, height: 100);
 
             var rootGrid = FindNamedDescendant<GridEx>(infoBadge, "RootGrid");
+            var iconPresenter = FindNamedDescendant<Viewbox>(infoBadge, "IconPresenter");
+            var valueTextBlock = FindNamedDescendant<TextBlock>(infoBadge, "ValueTextBlock");
             var presenter = FindContentPresenter(infoBadge, infoBadge.TemplateSettings.IconElement);
 
+            Assert.AreSame(infoBadge.TryFindResource("InfoBadgeBackground"), infoBadge.Background);
+            Assert.AreSame(infoBadge.TryFindResource("InfoBadgeForeground"), infoBadge.Foreground);
+            Assert.AreEqual(infoBadge.TryFindResource("InfoBadgePadding"), infoBadge.Padding);
+            Assert.AreEqual(infoBadge.TryFindResource("InfoBadgeMinHeight"), infoBadge.MinHeight);
+            Assert.AreEqual(infoBadge.TryFindResource("InfoBadgeMinWidth"), infoBadge.MinWidth);
+            Assert.AreEqual(infoBadge.TryFindResource("InfoBadgeMaxHeight"), infoBadge.MaxHeight);
+            Assert.IsFalse(infoBadge.IsTabStop);
             Assert.AreEqual(infoBadge.Background, rootGrid.Background);
             Assert.AreEqual(infoBadge.Padding, rootGrid.Padding);
+            Assert.AreEqual(infoBadge.TryFindResource("IconInfoBadgeIconMargin"), iconPresenter.Margin);
+            Assert.AreEqual(infoBadge.TryFindResource("InfoBadgeValueFontSize"), valueTextBlock.FontSize);
             Assert.IsInstanceOfType(presenter.Content, typeof(SymbolIcon));
             Assert.IsFalse(ContainsPlainContentPresenter(infoBadge));
         });
