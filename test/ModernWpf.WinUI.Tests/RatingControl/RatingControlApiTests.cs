@@ -40,6 +40,7 @@ public class RatingControlApiTests
             Assert.AreEqual(32.0, ratingControl.Height);
             AssertBrushEquals((Brush)ratingControl.TryFindResource("RatingControlCaptionForeground"), ratingControl.Foreground);
             Assert.AreEqual(ratingControl.TryFindResource("UseSystemFocusVisuals"), ratingControl.UseSystemFocusVisuals);
+            Assert.AreSame(ratingControl.TryFindResource(SystemParameters.FocusVisualStyleKey), ratingControl.FocusVisualStyle);
             Assert.AreEqual(
                 ((FontFamily)ratingControl.TryFindResource("SymbolThemeFontFamily")).Source,
                 ratingControl.FontFamily.Source);
@@ -71,6 +72,9 @@ public class RatingControlApiTests
             Assert.AreEqual(0.0, caption.Margin.Top);
             Assert.AreEqual(20.0, caption.Margin.Right);
             Assert.AreEqual(12.0, caption.FontSize);
+            Assert.AreEqual(
+                ((FontFamily)ratingControl.TryFindResource("ContentControlThemeFontFamily")).Source,
+                caption.FontFamily.Source);
             AssertBrushEquals(ratingControl.Foreground, caption.Foreground);
             Assert.AreEqual(VerticalAlignment.Center, caption.VerticalAlignment);
             Assert.IsFalse(caption.IsHitTestVisible);
