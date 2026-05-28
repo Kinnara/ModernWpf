@@ -912,16 +912,41 @@ public class TeachingTipApiTests
             AssertThemeResourceReference("Light", "TeachingTipBorderBrush", "SurfaceStrokeColorDefaultBrush");
             AssertThemeResourceReference("Light", "TeachingTipTransientBackground", "AcrylicInAppFillColorDefaultBrush");
             AssertThemeResourceReference("Light", "TeachingTipForegroundBrush", "TextFillColorPrimaryBrush");
+            AssertThemeResourceReference("Light", "TeachingTipBackgroundBrush", "SolidBackgroundFillColorTertiaryBrush");
+            AssertThemeResourceReference("Light", "TeachingTipTitleForegroundBrush", "TextFillColorPrimaryBrush");
+            AssertThemeResourceReference("Light", "TeachingTipSubtitleForegroundBrush", "TextFillColorPrimaryBrush");
+            AssertThemeResourceReference("Light", "TeachingTipAlternateCloseButtonBackground", "SubtleFillColorTransparentBrush");
+            AssertThemeResourceReference("Light", "TeachingTipAlternateCloseButtonBackgroundPointerOver", "SubtleFillColorSecondaryBrush");
+            AssertThemeResourceReference("Light", "TeachingTipAlternateCloseButtonForeground", "TextFillColorPrimaryBrush");
+            AssertThemeResourceReference("Light", "TeachingTipAlternateCloseButtonForegroundPressed", "TextFillColorSecondaryBrush");
+            AssertThemeResourceReference("Light", "TeachingTipAlternateCloseButtonBorderBrush", "SubtleFillColorTransparentBrush");
             AssertThemeBrushColor("Light", "TeachingTipTopHighlightBrush", Color.FromArgb(0x99, 0xFF, 0xFF, 0xFF));
 
             AssertThemeResourceReference("Dark", "TeachingTipBorderBrush", "SurfaceStrokeColorDefaultBrush");
             AssertThemeResourceReference("Dark", "TeachingTipTransientBackground", "AcrylicInAppFillColorDefaultBrush");
             AssertThemeResourceReference("Dark", "TeachingTipForegroundBrush", "TextFillColorPrimaryBrush");
+            AssertThemeResourceReference("Dark", "TeachingTipBackgroundBrush", "SolidBackgroundFillColorTertiaryBrush");
+            AssertThemeResourceReference("Dark", "TeachingTipTitleForegroundBrush", "TextFillColorPrimaryBrush");
+            AssertThemeResourceReference("Dark", "TeachingTipSubtitleForegroundBrush", "TextFillColorPrimaryBrush");
+            AssertThemeResourceReference("Dark", "TeachingTipAlternateCloseButtonBackground", "SubtleFillColorTransparentBrush");
+            AssertThemeResourceReference("Dark", "TeachingTipAlternateCloseButtonBackgroundPointerOver", "SubtleFillColorSecondaryBrush");
+            AssertThemeResourceReference("Dark", "TeachingTipAlternateCloseButtonForeground", "TextFillColorPrimaryBrush");
+            AssertThemeResourceReference("Dark", "TeachingTipAlternateCloseButtonForegroundPressed", "TextFillColorSecondaryBrush");
+            AssertThemeResourceReference("Dark", "TeachingTipAlternateCloseButtonBorderBrush", "SubtleFillColorTransparentBrush");
             AssertThemeBrushColor("Dark", "TeachingTipTopHighlightBrush", Color.FromArgb(0x0D, 0xFF, 0xFF, 0xFF));
 
             AssertThemeResourceReference("HighContrast", "TeachingTipBorderBrush", "SystemColorWindowTextColorBrush");
             AssertThemeResourceReference("HighContrast", "TeachingTipTransientBackground", "AcrylicInAppFillColorDefaultBrush");
             AssertThemeResourceReference("HighContrast", "TeachingTipForegroundBrush", "SystemColorWindowTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "TeachingTipBackgroundBrush", "SystemColorWindowColorBrush");
+            AssertThemeResourceReference("HighContrast", "TeachingTipTitleForegroundBrush", "SystemColorWindowTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "TeachingTipSubtitleForegroundBrush", "SystemColorWindowTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "TeachingTipAlternateCloseButtonBackground", "SystemColorButtonFaceColorBrush");
+            AssertThemeResourceReference("HighContrast", "TeachingTipAlternateCloseButtonBackgroundPointerOver", "SystemColorHighlightTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "TeachingTipAlternateCloseButtonForeground", "SystemColorButtonTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "TeachingTipAlternateCloseButtonForegroundPressed", "SystemColorHighlightColorBrush");
+            AssertThemeResourceReference("HighContrast", "TeachingTipAlternateCloseButtonBorderBrush", "SystemColorButtonFaceColorBrush");
+            AssertThemeResourceReference("HighContrast", "TeachingTipAlternateCloseButtonBorderBrushPressed", "SystemColorHighlightTextColorBrush");
             AssertThemeBrushColor("HighContrast", "TeachingTipTopHighlightBrush", Colors.Transparent);
         });
     }
