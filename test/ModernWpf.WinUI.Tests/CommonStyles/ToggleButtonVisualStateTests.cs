@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
+using System.Windows.Input;
 using System.Windows.Markup;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls.Primitives;
@@ -36,6 +37,78 @@ public class ToggleButtonVisualStateTests
             Assert.IsFalse(ToggleButtonHelper.GetVisualStateSettersEnabled(toggleButton));
             AssertOfficialTriggerShape(toggleButton.Template);
             AssertUncheckedDisabledTriggerAppliesResources(toggleButton);
+        });
+    }
+
+    [TestMethod]
+    public void ToggleButtonStyleUsesWinUIResourceAliases()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var defaultStyle = (Style)Application.Current.FindResource("DefaultToggleButtonStyle");
+            var implicitToggleButtonStyle = (Style)Application.Current.FindResource(typeof(ToggleButton));
+            var toggleButton = CreateToggleButton();
+
+            using var host = new TestWindowHost(toggleButton, width: 140, height: 80);
+            host.UpdateLayout();
+
+            Assert.AreSame(defaultStyle, implicitToggleButtonStyle.BasedOn);
+            AssertDynamicResourceSetter(defaultStyle, Control.FocusVisualStyleProperty, SystemParameters.FocusVisualStyleKey);
+            AssertDynamicResourceSetter(defaultStyle, Control.BackgroundProperty, "ToggleButtonBackground");
+            AssertDynamicResourceSetter(defaultStyle, Control.ForegroundProperty, "ToggleButtonForeground");
+            AssertDynamicResourceSetter(defaultStyle, Control.BorderBrushProperty, "ToggleButtonBorderBrush");
+            AssertSetterValue(defaultStyle, Control.BorderThicknessProperty, new Thickness(1));
+            AssertSetterValue(defaultStyle, Control.PaddingProperty, new Thickness(11, 5, 11, 6));
+            AssertSetterValue(defaultStyle, FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Left);
+            AssertSetterValue(defaultStyle, FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+            AssertSetterValue(defaultStyle, Control.HorizontalContentAlignmentProperty, HorizontalAlignment.Center);
+            AssertSetterValue(defaultStyle, Control.VerticalContentAlignmentProperty, VerticalAlignment.Center);
+            AssertSetterValue(defaultStyle, Control.FontWeightProperty, FontWeights.Normal);
+            AssertDynamicResourceSetter(defaultStyle, FocusVisualHelper.UseSystemFocusVisualsProperty, "UseSystemFocusVisuals");
+            AssertSetterValue(defaultStyle, FocusVisualHelper.FocusVisualMarginProperty, new Thickness(-3));
+            AssertDynamicResourceSetter(defaultStyle, System.Windows.Controls.Border.CornerRadiusProperty, "ControlCornerRadius");
+            AssertSetterValue(defaultStyle, UIElement.SnapsToDevicePixelsProperty, true);
+            AssertSetterValue(defaultStyle, FrameworkElement.OverridesDefaultStyleProperty, true);
+            AssertSetterValue(defaultStyle, Stylus.IsPressAndHoldEnabledProperty, false);
+
+            Assert.AreSame(toggleButton.TryFindResource("ToggleButtonBackground"), toggleButton.Background);
+            Assert.AreSame(toggleButton.TryFindResource("ToggleButtonForeground"), toggleButton.Foreground);
+            Assert.AreSame(toggleButton.TryFindResource("ToggleButtonBorderBrush"), toggleButton.BorderBrush);
+            Assert.AreEqual(toggleButton.TryFindResource("ToggleButtonBorderThemeThickness"), toggleButton.BorderThickness);
+            Assert.AreEqual(toggleButton.TryFindResource("ToggleButtonPadding"), toggleButton.Padding);
+            Assert.AreEqual(HorizontalAlignment.Left, toggleButton.HorizontalAlignment);
+            Assert.AreEqual(VerticalAlignment.Center, toggleButton.VerticalAlignment);
+            Assert.AreEqual(HorizontalAlignment.Center, toggleButton.HorizontalContentAlignment);
+            Assert.AreEqual(VerticalAlignment.Center, toggleButton.VerticalContentAlignment);
+            Assert.AreEqual(FontWeights.Normal, toggleButton.FontWeight);
+            Assert.AreEqual(toggleButton.TryFindResource("UseSystemFocusVisuals"), FocusVisualHelper.GetUseSystemFocusVisuals(toggleButton));
+            Assert.AreEqual(new Thickness(-3), FocusVisualHelper.GetFocusVisualMargin(toggleButton));
+            Assert.AreEqual(toggleButton.TryFindResource("ControlCornerRadius"), toggleButton.GetValue(System.Windows.Controls.Border.CornerRadiusProperty));
+            Assert.IsTrue(toggleButton.SnapsToDevicePixels);
+            Assert.IsTrue(toggleButton.OverridesDefaultStyle);
+            Assert.IsFalse(Stylus.GetIsPressAndHoldEnabled(toggleButton));
+            Assert.IsFalse(ToggleButtonHelper.GetVisualStateSettersEnabled(toggleButton));
+
+            var contentBorder = GetTemplateChild<Border>(toggleButton, "ContentBorder");
+            var contentPresenter = GetTemplateChild<ContentPresenter>(toggleButton, "ContentPresenter");
+
+            Assert.AreEqual(toggleButton.Width, contentBorder.Width);
+            Assert.AreEqual(toggleButton.Height, contentBorder.Height);
+            Assert.AreEqual(toggleButton.Padding, contentBorder.Padding);
+            Assert.AreEqual(toggleButton.HorizontalAlignment, contentBorder.HorizontalAlignment);
+            Assert.AreEqual(toggleButton.VerticalAlignment, contentBorder.VerticalAlignment);
+            Assert.AreSame(toggleButton.Background, contentBorder.Background);
+            Assert.AreSame(toggleButton.BorderBrush, contentBorder.BorderBrush);
+            Assert.AreEqual(toggleButton.BorderThickness, contentBorder.BorderThickness);
+            Assert.AreEqual(toggleButton.GetValue(System.Windows.Controls.Border.CornerRadiusProperty), contentBorder.CornerRadius);
+            Assert.AreEqual(toggleButton.Content, contentPresenter.Content);
+            Assert.IsTrue(contentPresenter.RecognizesAccessKey);
+            Assert.AreEqual(toggleButton.HorizontalContentAlignment, contentPresenter.HorizontalAlignment);
+            Assert.AreEqual(toggleButton.VerticalContentAlignment, contentPresenter.VerticalAlignment);
+            Assert.AreSame(toggleButton.Foreground, TextElement.GetForeground(contentPresenter));
+            Assert.AreEqual(toggleButton.FontSize, TextElement.GetFontSize(contentPresenter));
         });
     }
 
@@ -256,6 +329,23 @@ public class ToggleButtonVisualStateTests
         Assert.IsInstanceOfType(setter.Value, typeof(DynamicResourceExtension));
         var resource = (DynamicResourceExtension)setter.Value;
         Assert.AreEqual(resourceKey, resource.ResourceKey);
+    }
+
+    private static void AssertSetterValue(Style style, DependencyProperty property, object expectedValue)
+    {
+        var setter = style.Setters.OfType<Setter>().SingleOrDefault(item => item.Property == property);
+        Assert.IsNotNull(setter, $"Expected setter for {property.Name}.");
+        Assert.AreEqual(expectedValue, setter!.Value);
+    }
+
+    private static void AssertDynamicResourceSetter(Style style, DependencyProperty property, object expectedResourceKey)
+    {
+        var setter = style.Setters.OfType<Setter>().SingleOrDefault(item => item.Property == property);
+        Assert.IsNotNull(setter, $"Expected setter for {property.Name}.");
+        Assert.IsInstanceOfType(setter!.Value, typeof(DynamicResourceExtension));
+
+        var dynamicResource = (DynamicResourceExtension)setter.Value;
+        Assert.AreEqual(expectedResourceKey, dynamicResource.ResourceKey);
     }
 
     private static void AssertUncheckedDisabledTriggerAppliesResources(ToggleButton toggleButton)

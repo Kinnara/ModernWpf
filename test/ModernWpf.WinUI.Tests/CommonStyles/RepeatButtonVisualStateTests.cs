@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
+using System.Windows.Input;
 using System.Windows.Markup;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls.Primitives;
@@ -36,6 +37,78 @@ public class RepeatButtonVisualStateTests
             Assert.IsFalse(ButtonHelper.GetVisualStateSettersEnabled(repeatButton));
             AssertOfficialTriggerShape(repeatButton.Template);
             AssertDisabledTriggerAppliesResources(repeatButton);
+        });
+    }
+
+    [TestMethod]
+    public void RepeatButtonStyleUsesWinUIResourceAliases()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var defaultStyle = (Style)Application.Current.FindResource("DefaultRepeatButtonStyle");
+            var implicitRepeatButtonStyle = (Style)Application.Current.FindResource(typeof(RepeatButton));
+            var repeatButton = CreateRepeatButton();
+
+            using var host = new TestWindowHost(repeatButton, width: 140, height: 80);
+            host.UpdateLayout();
+
+            Assert.AreSame(defaultStyle, implicitRepeatButtonStyle.BasedOn);
+            AssertDynamicResourceSetter(defaultStyle, Control.FocusVisualStyleProperty, SystemParameters.FocusVisualStyleKey);
+            AssertDynamicResourceSetter(defaultStyle, Control.BackgroundProperty, "RepeatButtonBackground");
+            AssertDynamicResourceSetter(defaultStyle, Control.ForegroundProperty, "RepeatButtonForeground");
+            AssertDynamicResourceSetter(defaultStyle, Control.BorderBrushProperty, "RepeatButtonBorderBrush");
+            AssertSetterValue(defaultStyle, Control.BorderThicknessProperty, new Thickness(1));
+            AssertSetterValue(defaultStyle, Control.PaddingProperty, new Thickness(11, 5, 11, 6));
+            AssertSetterValue(defaultStyle, FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Left);
+            AssertSetterValue(defaultStyle, FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+            AssertSetterValue(defaultStyle, Control.HorizontalContentAlignmentProperty, HorizontalAlignment.Center);
+            AssertSetterValue(defaultStyle, Control.VerticalContentAlignmentProperty, VerticalAlignment.Center);
+            AssertSetterValue(defaultStyle, Control.FontWeightProperty, FontWeights.Normal);
+            AssertDynamicResourceSetter(defaultStyle, FocusVisualHelper.UseSystemFocusVisualsProperty, "UseSystemFocusVisuals");
+            AssertSetterValue(defaultStyle, FocusVisualHelper.FocusVisualMarginProperty, new Thickness(-3));
+            AssertDynamicResourceSetter(defaultStyle, System.Windows.Controls.Border.CornerRadiusProperty, "ControlCornerRadius");
+            AssertSetterValue(defaultStyle, UIElement.SnapsToDevicePixelsProperty, true);
+            AssertSetterValue(defaultStyle, FrameworkElement.OverridesDefaultStyleProperty, true);
+            AssertSetterValue(defaultStyle, Stylus.IsPressAndHoldEnabledProperty, false);
+
+            Assert.AreSame(repeatButton.TryFindResource("RepeatButtonBackground"), repeatButton.Background);
+            Assert.AreSame(repeatButton.TryFindResource("RepeatButtonForeground"), repeatButton.Foreground);
+            Assert.AreSame(repeatButton.TryFindResource("RepeatButtonBorderBrush"), repeatButton.BorderBrush);
+            Assert.AreEqual(repeatButton.TryFindResource("RepeatButtonBorderThemeThickness"), repeatButton.BorderThickness);
+            Assert.AreEqual(repeatButton.TryFindResource("RepeatButtonPadding"), repeatButton.Padding);
+            Assert.AreEqual(HorizontalAlignment.Left, repeatButton.HorizontalAlignment);
+            Assert.AreEqual(VerticalAlignment.Center, repeatButton.VerticalAlignment);
+            Assert.AreEqual(HorizontalAlignment.Center, repeatButton.HorizontalContentAlignment);
+            Assert.AreEqual(VerticalAlignment.Center, repeatButton.VerticalContentAlignment);
+            Assert.AreEqual(FontWeights.Normal, repeatButton.FontWeight);
+            Assert.AreEqual(repeatButton.TryFindResource("UseSystemFocusVisuals"), FocusVisualHelper.GetUseSystemFocusVisuals(repeatButton));
+            Assert.AreEqual(new Thickness(-3), FocusVisualHelper.GetFocusVisualMargin(repeatButton));
+            Assert.AreEqual(repeatButton.TryFindResource("ControlCornerRadius"), repeatButton.GetValue(System.Windows.Controls.Border.CornerRadiusProperty));
+            Assert.IsTrue(repeatButton.SnapsToDevicePixels);
+            Assert.IsTrue(repeatButton.OverridesDefaultStyle);
+            Assert.IsFalse(Stylus.GetIsPressAndHoldEnabled(repeatButton));
+            Assert.IsFalse(ButtonHelper.GetVisualStateSettersEnabled(repeatButton));
+
+            var contentBorder = GetTemplateChild<Border>(repeatButton, "ContentBorder");
+            var contentPresenter = GetTemplateChild<ContentPresenter>(repeatButton, "ContentPresenter");
+
+            Assert.AreEqual(repeatButton.Width, contentBorder.Width);
+            Assert.AreEqual(repeatButton.Height, contentBorder.Height);
+            Assert.AreEqual(repeatButton.Padding, contentBorder.Padding);
+            Assert.AreEqual(repeatButton.HorizontalAlignment, contentBorder.HorizontalAlignment);
+            Assert.AreEqual(repeatButton.VerticalAlignment, contentBorder.VerticalAlignment);
+            Assert.AreSame(repeatButton.Background, contentBorder.Background);
+            Assert.AreSame(repeatButton.BorderBrush, contentBorder.BorderBrush);
+            Assert.AreEqual(repeatButton.BorderThickness, contentBorder.BorderThickness);
+            Assert.AreEqual(repeatButton.GetValue(System.Windows.Controls.Border.CornerRadiusProperty), contentBorder.CornerRadius);
+            Assert.AreEqual(repeatButton.Content, contentPresenter.Content);
+            Assert.IsTrue(contentPresenter.RecognizesAccessKey);
+            Assert.AreEqual(repeatButton.HorizontalContentAlignment, contentPresenter.HorizontalAlignment);
+            Assert.AreEqual(repeatButton.VerticalContentAlignment, contentPresenter.VerticalAlignment);
+            Assert.AreSame(repeatButton.Foreground, TextElement.GetForeground(contentPresenter));
+            Assert.AreEqual(repeatButton.FontSize, TextElement.GetFontSize(contentPresenter));
         });
     }
 
@@ -147,6 +220,23 @@ public class RepeatButtonVisualStateTests
         Assert.IsInstanceOfType(setter.Value, typeof(DynamicResourceExtension));
         var resource = (DynamicResourceExtension)setter.Value;
         Assert.AreEqual(resourceKey, resource.ResourceKey);
+    }
+
+    private static void AssertSetterValue(Style style, DependencyProperty property, object expectedValue)
+    {
+        var setter = style.Setters.OfType<Setter>().SingleOrDefault(item => item.Property == property);
+        Assert.IsNotNull(setter, $"Expected setter for {property.Name}.");
+        Assert.AreEqual(expectedValue, setter!.Value);
+    }
+
+    private static void AssertDynamicResourceSetter(Style style, DependencyProperty property, object expectedResourceKey)
+    {
+        var setter = style.Setters.OfType<Setter>().SingleOrDefault(item => item.Property == property);
+        Assert.IsNotNull(setter, $"Expected setter for {property.Name}.");
+        Assert.IsInstanceOfType(setter!.Value, typeof(DynamicResourceExtension));
+
+        var dynamicResource = (DynamicResourceExtension)setter.Value;
+        Assert.AreEqual(expectedResourceKey, dynamicResource.ResourceKey);
     }
 
     private static void AssertDisabledTriggerAppliesResources(RepeatButton repeatButton)
