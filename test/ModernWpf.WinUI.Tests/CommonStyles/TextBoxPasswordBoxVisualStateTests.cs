@@ -29,6 +29,7 @@ public class TextBoxPasswordBoxVisualStateTests
             Assert.AreEqual(typeof(TextBox), defaultStyle.TargetType);
             Assert.AreEqual(typeof(TextBox), implicitStyle.TargetType);
             Assert.AreSame(defaultStyle, implicitStyle.BasedOn);
+            AssertTextBoxStyleSetters(defaultStyle);
 
             var textBox = new TextBox
             {
@@ -43,6 +44,7 @@ public class TextBoxPasswordBoxVisualStateTests
             AssertTextBoxTemplateShape(textBox);
             AssertTextBoxTriggerShape(textBox.Template);
             AssertTextBoxClearButtonSubstitutionClearsText(textBox);
+            AssertDisabledTextControlTemplateResources(textBox);
         });
     }
 
@@ -57,15 +59,29 @@ public class TextBoxPasswordBoxVisualStateTests
             Assert.AreEqual(typeof(TextBoxBase), baseStyle.TargetType);
 
             var setters = baseStyle.Setters.OfType<Setter>().ToArray();
+            AssertSetter(setters, Control.FocusVisualStyleProperty, null);
             AssertDynamicResourceSetter(setters, Control.ContextMenuProperty, "TextControlContextMenu");
             AssertDynamicResourceSetter(setters, Control.ForegroundProperty, "TextControlForeground");
             AssertDynamicResourceSetter(setters, TextBoxBase.CaretBrushProperty, "TextControlForeground");
             AssertDynamicResourceSetter(setters, Control.BackgroundProperty, "TextControlBackground");
             AssertDynamicResourceSetter(setters, Control.BorderBrushProperty, "TextControlElevationBorderBrush");
             AssertDynamicResourceSetter(setters, Control.BorderThicknessProperty, "TextControlBorderThemeThickness");
+            AssertSetter(setters, ScrollViewer.HorizontalScrollBarVisibilityProperty, ScrollBarVisibility.Hidden);
+            AssertSetter(setters, ScrollViewer.VerticalScrollBarVisibilityProperty, ScrollBarVisibility.Hidden);
+            AssertSetter(setters, Control.HorizontalContentAlignmentProperty, HorizontalAlignment.Left);
+            AssertSetter(setters, Control.VerticalContentAlignmentProperty, VerticalAlignment.Top);
+            AssertSetter(setters, FrameworkElement.CursorProperty, Cursors.IBeam);
+            AssertDynamicResourceSetter(setters, FrameworkElement.MinHeightProperty, "TextControlThemeMinHeight");
+            AssertDynamicResourceSetter(setters, FrameworkElement.MinWidthProperty, "TextControlThemeMinWidth");
+            AssertDynamicResourceSetter(setters, Control.PaddingProperty, "TextControlThemePadding");
             AssertDynamicResourceSetter(setters, System.Windows.Controls.Border.CornerRadiusProperty, "ControlCornerRadius");
+            AssertSetter(setters, UIElement.AllowDropProperty, true);
+            AssertSetter(setters, ScrollViewer.PanningModeProperty, PanningMode.VerticalFirst);
+            AssertSetter(setters, Stylus.IsFlicksEnabledProperty, false);
             AssertSetter(setters, TextContextMenu.UsingTextContextMenuProperty, true);
             AssertSetter(setters, Control.OverridesDefaultStyleProperty, true);
+            AssertDynamicResourceSetter(setters, TextBoxBase.SelectionBrushProperty, "TextControlSelectionHighlightColor");
+            Assert.IsInstanceOfType(setters.Single(item => item.Property == Control.TemplateProperty).Value, typeof(ControlTemplate));
         });
     }
 
@@ -81,6 +97,7 @@ public class TextBoxPasswordBoxVisualStateTests
             Assert.AreEqual(typeof(PasswordBox), defaultStyle.TargetType);
             Assert.AreEqual(typeof(PasswordBox), implicitStyle.TargetType);
             Assert.AreSame(defaultStyle, implicitStyle.BasedOn);
+            AssertPasswordBoxStyleSetters(defaultStyle);
 
             var passwordBox = new PasswordBox
             {
@@ -94,6 +111,7 @@ public class TextBoxPasswordBoxVisualStateTests
             AssertPasswordBoxStyleSetters(passwordBox);
             AssertPasswordBoxTemplateShape(passwordBox);
             AssertTextControlTriggerShape(passwordBox.Template);
+            AssertDisabledTextControlTemplateResources(passwordBox);
         });
     }
 
@@ -247,6 +265,35 @@ public class TextBoxPasswordBoxVisualStateTests
         Assert.AreEqual(new Thickness(0, 0, 0, 8), (Thickness)textBox.TryFindResource("TextBoxTopHeaderMargin"));
     }
 
+    private static void AssertTextBoxStyleSetters(Style style)
+    {
+        var setters = style.Setters.OfType<Setter>().ToArray();
+        AssertSetter(setters, Control.FocusVisualStyleProperty, null);
+        AssertDynamicResourceSetter(setters, Validation.ErrorTemplateProperty, "TextControlValidationErrorTemplate");
+        AssertDynamicResourceSetter(setters, Control.ContextMenuProperty, "TextControlContextMenu");
+        AssertDynamicResourceSetter(setters, Control.ForegroundProperty, "TextControlForeground");
+        AssertDynamicResourceSetter(setters, TextBoxBase.CaretBrushProperty, "TextControlForeground");
+        AssertDynamicResourceSetter(setters, Control.BackgroundProperty, "TextControlBackground");
+        AssertDynamicResourceSetter(setters, Control.BorderBrushProperty, "TextControlElevationBorderBrush");
+        AssertDynamicResourceSetter(setters, Control.BorderThicknessProperty, "TextControlBorderThemeThickness");
+        AssertSetter(setters, ScrollViewer.HorizontalScrollBarVisibilityProperty, ScrollBarVisibility.Hidden);
+        AssertSetter(setters, ScrollViewer.VerticalScrollBarVisibilityProperty, ScrollBarVisibility.Hidden);
+        AssertSetter(setters, Control.HorizontalContentAlignmentProperty, HorizontalAlignment.Left);
+        AssertSetter(setters, Control.VerticalContentAlignmentProperty, VerticalAlignment.Top);
+        AssertDynamicResourceSetter(setters, FrameworkElement.MinHeightProperty, "TextControlThemeMinHeight");
+        AssertDynamicResourceSetter(setters, FrameworkElement.MinWidthProperty, "TextControlThemeMinWidth");
+        AssertDynamicResourceSetter(setters, Control.PaddingProperty, "TextControlThemePadding");
+        AssertDynamicResourceSetter(setters, System.Windows.Controls.Border.CornerRadiusProperty, "ControlCornerRadius");
+        AssertSetter(setters, Control.OverridesDefaultStyleProperty, true);
+        AssertSetter(setters, FrameworkElement.CursorProperty, Cursors.IBeam);
+        AssertSetter(setters, UIElement.AllowDropProperty, true);
+        AssertSetter(setters, ScrollViewer.PanningModeProperty, PanningMode.VerticalFirst);
+        AssertSetter(setters, Stylus.IsFlicksEnabledProperty, false);
+        AssertDynamicResourceSetter(setters, TextBoxBase.SelectionBrushProperty, "TextControlSelectionHighlightColor");
+        AssertSetter(setters, TextContextMenu.UsingTextContextMenuProperty, true);
+        Assert.AreSame(Application.Current.FindResource("DefaultTextBoxControlTemplate"), setters.Single(item => item.Property == Control.TemplateProperty).Value);
+    }
+
     private static void AssertPasswordBoxStyleSetters(PasswordBox passwordBox)
     {
         Assert.IsNull(passwordBox.FocusVisualStyle);
@@ -272,6 +319,35 @@ public class TextBoxPasswordBoxVisualStateTests
         Assert.AreSame(passwordBox.TryFindResource("TextControlSelectionHighlightColor"), passwordBox.SelectionBrush);
         Assert.IsTrue(TextContextMenu.GetUsingTextContextMenu(passwordBox));
         Assert.AreEqual(new Thickness(0, 0, 0, 8), (Thickness)passwordBox.TryFindResource("PasswordBoxTopHeaderMargin"));
+    }
+
+    private static void AssertPasswordBoxStyleSetters(Style style)
+    {
+        var setters = style.Setters.OfType<Setter>().ToArray();
+        AssertSetter(setters, Control.FocusVisualStyleProperty, null);
+        AssertDynamicResourceSetter(setters, Control.ContextMenuProperty, "TextControlContextMenu");
+        AssertDynamicResourceSetter(setters, Control.ForegroundProperty, "TextControlForeground");
+        AssertDynamicResourceSetter(setters, PasswordBox.CaretBrushProperty, "TextControlForeground");
+        AssertDynamicResourceSetter(setters, Control.BackgroundProperty, "TextControlBackground");
+        AssertDynamicResourceSetter(setters, Control.BorderBrushProperty, "TextControlBorderBrush");
+        AssertSetter(setters, Control.BorderThicknessProperty, Application.Current.FindResource("PasswordBoxBorderThemeThickness"));
+        AssertSetter(setters, ScrollViewer.HorizontalScrollBarVisibilityProperty, ScrollBarVisibility.Hidden);
+        AssertSetter(setters, ScrollViewer.VerticalScrollBarVisibilityProperty, ScrollBarVisibility.Hidden);
+        AssertSetter(setters, Control.HorizontalContentAlignmentProperty, HorizontalAlignment.Left);
+        AssertSetter(setters, Control.VerticalContentAlignmentProperty, VerticalAlignment.Top);
+        AssertSetter(setters, FrameworkElement.CursorProperty, Cursors.IBeam);
+        AssertDynamicResourceSetter(setters, FrameworkElement.MinHeightProperty, "TextControlThemeMinHeight");
+        AssertDynamicResourceSetter(setters, FrameworkElement.MinWidthProperty, "TextControlThemeMinWidth");
+        AssertDynamicResourceSetter(setters, Control.PaddingProperty, "TextControlThemePadding");
+        AssertDynamicResourceSetter(setters, System.Windows.Controls.Border.CornerRadiusProperty, "ControlCornerRadius");
+        AssertSetter(setters, UIElement.AllowDropProperty, true);
+        AssertSetter(setters, ScrollViewer.PanningModeProperty, PanningMode.VerticalFirst);
+        AssertSetter(setters, PasswordBox.PasswordCharProperty, '\u25CF');
+        AssertSetter(setters, Stylus.IsFlicksEnabledProperty, false);
+        AssertSetter(setters, Control.OverridesDefaultStyleProperty, true);
+        AssertDynamicResourceSetter(setters, PasswordBox.SelectionBrushProperty, "TextControlSelectionHighlightColor");
+        AssertSetter(setters, TextContextMenu.UsingTextContextMenuProperty, true);
+        Assert.IsInstanceOfType(setters.Single(item => item.Property == Control.TemplateProperty).Value, typeof(ControlTemplate));
     }
 
     private static void AssertTextBoxTemplateShape(TextBox textBox)
@@ -323,6 +399,19 @@ public class TextBoxPasswordBoxVisualStateTests
         Assert.IsNull(passwordBox.Template.FindName("PlaceholderTextContentPresenter", passwordBox));
         Assert.IsNull(passwordBox.Template.FindName("RevealButton", passwordBox));
         Assert.IsNull(VisualTreeTestHelper.FindDescendant<ContentPresenterEx>(passwordBox));
+    }
+
+    private static void AssertDisabledTextControlTemplateResources(Control control)
+    {
+        var contentBorder = GetTemplateChild<Border>(control, "ContentBorder");
+        var contentHost = GetTemplateChild<ScrollViewer>(control, "PART_ContentHost");
+
+        control.IsEnabled = false;
+        control.UpdateLayout();
+
+        Assert.AreSame(contentBorder.TryFindResource("TextControlBackgroundDisabled"), contentBorder.Background);
+        Assert.AreSame(contentBorder.TryFindResource("TextControlBorderBrushDisabled"), contentBorder.BorderBrush);
+        Assert.AreSame(contentHost.TryFindResource("TextControlForegroundDisabled"), TextElement.GetForeground(contentHost));
     }
 
     private static void AssertTextBoxTriggerShape(ControlTemplate template)
@@ -410,7 +499,7 @@ public class TextBoxPasswordBoxVisualStateTests
         Assert.AreEqual(resourceKey, resource.ResourceKey);
     }
 
-    private static void AssertSetter(Setter[] setters, DependencyProperty property, object value)
+    private static void AssertSetter(Setter[] setters, DependencyProperty property, object? value)
     {
         var setter = setters.Single(item => item.Property == property);
         Assert.AreEqual(value, setter.Value);

@@ -48,6 +48,21 @@ public class HyperlinkVisualStateTests
                 (TextElement.ForegroundProperty, "HyperlinkForegroundDisabled"));
 
             Assert.IsNull(Application.Current.TryFindResource("HyperlinkUnderlineVisible"));
+
+            var hyperlink = new Hyperlink(new Run("Docs"));
+            var textBlock = new System.Windows.Controls.TextBlock();
+            textBlock.Inlines.Add(hyperlink);
+
+            using var host = new TestWindowHost(textBlock, width: 160, height: 80);
+            host.UpdateLayout();
+
+            Assert.AreSame(defaultStyle, hyperlink.Style.BasedOn);
+            Assert.AreSame(textBlock.TryFindResource("HyperlinkForeground"), hyperlink.Foreground);
+            AssertTextDecorations(TextDecorations.Underline, hyperlink.TextDecorations);
+
+            hyperlink.IsEnabled = false;
+            host.UpdateLayout();
+            Assert.AreSame(textBlock.TryFindResource("HyperlinkForegroundDisabled"), hyperlink.Foreground);
         });
     }
 
