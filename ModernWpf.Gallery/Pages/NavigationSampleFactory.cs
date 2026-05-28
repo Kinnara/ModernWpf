@@ -114,35 +114,33 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             previousSelectedIndex = currentSelectedIndex;
         }";
 
-        private const string SelectorBarItemsControlXaml =
+        private const string SelectorBarItemsViewXaml =
 @"<SelectorBar x:Name=""SelectorBar3"" SelectionChanged=""SelectorBar3_SelectionChanged"" >
     <SelectorBarItem x:Name=""SelectorBarItemPink"" Text=""Pink"" IsSelected=""True"" />
     <SelectorBarItem x:Name=""SelectorBarItemPlum"" Text=""Plum"" />
     <SelectorBarItem x:Name=""SelectorBarItemPowderBlue"" Text=""PowderBlue"" />
 </SelectorBar>
 
-<ItemsControl x:Name=""ItemsControl3"" ItemTemplate=""{StaticResource ColorsTemplate}"">
-    <ItemsControl.ItemsPanel>
-        <ItemsPanelTemplate>
-            <StackPanel Orientation=""Horizontal"" />
-        </ItemsPanelTemplate>
-    </ItemsControl.ItemsPanel>
-</ItemsControl>";
+<ItemsView x:Name=""ItemsView3"" ItemTemplate=""{StaticResource ColorsTemplate}"" />
+    <ItemsView.Layout>
+        <UniformGridLayout />
+    </ItemsView.Layout>
+</ItemsView/>";
 
-        private const string SelectorBarItemsControlCSharp =
+        private const string SelectorBarItemsViewCSharp =
 @"private void SelectorBar3_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
 {
     if (sender.SelectedItem == SelectorBarItemPink)
     {
-        ItemsControl3.ItemsSource = PinkColorCollection;
+        ItemsView3.ItemsSource = PinkColorCollection;
     }
     else if (sender.SelectedItem == SelectorBarItemPlum)
     {
-        ItemsControl3.ItemsSource = PlumColorCollection;
+        ItemsView3.ItemsSource = PlumColorCollection;
     }
     else
     {
-        ItemsControl3.ItemsSource = PowderBlueColorCollection;
+        ItemsView3.ItemsSource = PowderBlueColorCollection;
     }
 }";
 
@@ -771,10 +769,10 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
                     SelectorBarFrameXaml,
                     SelectorBarFrameCSharp),
                 new GalleryExample(
-                    "SelectorBar displaying different collections using ItemsControl",
+                    "SelectorBar Displaying Different Collections Using ItemsView",
                     CreateSelectorBarItemsControlExampleContent(),
-                    SelectorBarItemsControlXaml,
-                    SelectorBarItemsControlCSharp)
+                    SelectorBarItemsViewXaml,
+                    SelectorBarItemsViewCSharp)
             };
         }
 
@@ -859,7 +857,7 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
 
             var itemsControl = new ItemsControl
             {
-                Name = "ItemsControl3",
+                Name = "ItemsView3",
                 Margin = new Thickness(0, 12, 0, 0),
                 ItemTemplate = CreateSelectorBarColorTemplate(),
                 ItemsSource = pinkColorCollection

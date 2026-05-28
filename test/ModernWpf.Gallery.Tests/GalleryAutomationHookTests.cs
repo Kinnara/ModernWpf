@@ -706,26 +706,28 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(3, page.Examples.Count);
                     Assert.AreEqual("A Basic SelectorBar", page.Examples[0].HeaderText);
                     Assert.AreEqual("SelectorBar with Frame Slide Transitions", page.Examples[1].HeaderText);
-                    Assert.AreEqual("SelectorBar displaying different collections using ItemsControl", page.Examples[2].HeaderText);
+                    Assert.AreEqual("SelectorBar Displaying Different Collections Using ItemsView", page.Examples[2].HeaderText);
                     Assert.IsFalse(page.HasAdditionalSampleSnippets);
                     StringAssert.Contains(page.Examples[0].XamlCode, "SelectorBarItemRecent");
                     StringAssert.Contains(page.Examples[0].XamlCode, "Icon=\"Clock\"");
                     StringAssert.Contains(page.Examples[1].XamlCode, "ContentFrame");
                     StringAssert.Contains(page.Examples[1].CSharpCode, "SelectorBar2_SelectionChanged");
                     StringAssert.Contains(page.Examples[1].CSharpCode, "SlideNavigationTransitionInfo");
-                    StringAssert.Contains(page.Examples[2].XamlCode, "ItemsControl3");
+                    StringAssert.Contains(page.Examples[2].XamlCode, "ItemsView3");
+                    StringAssert.Contains(page.Examples[2].XamlCode, "UniformGridLayout");
                     StringAssert.Contains(page.Examples[2].CSharpCode, "PinkColorCollection");
+                    StringAssert.Contains(page.Examples[2].CSharpCode, "ItemsView3.ItemsSource");
 
                     var selectorBar1 = (Mux.SelectorBar)FindByAutomationId(page, "GallerySample_SelectorBar_SelectorBar");
                     var selectorBar2 = FindNamedDescendant<Mux.SelectorBar>(page, "SelectorBar2");
                     var contentFrame = FindNamedDescendant<Frame>(page, "ContentFrame");
                     var selectorBar3 = FindNamedDescendant<Mux.SelectorBar>(page, "SelectorBar3");
-                    var itemsControl3 = FindNamedDescendant<ItemsControl>(page, "ItemsControl3");
+                    var itemsView3 = FindNamedDescendant<ItemsControl>(page, "ItemsView3");
                     Assert.IsNotNull(selectorBar1);
                     Assert.IsNotNull(selectorBar2);
                     Assert.IsNotNull(contentFrame);
                     Assert.IsNotNull(selectorBar3);
-                    Assert.IsNotNull(itemsControl3);
+                    Assert.IsNotNull(itemsView3);
 
                     Assert.AreEqual("SelectorBar1", selectorBar1.Name);
                     AssertSelectorBarItem(selectorBar1.Items[0], "SelectorBarItemRecent", "Recent", Mux.Symbol.Clock, false);
@@ -745,15 +747,15 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual("SelectorBar3", selectorBar3.Name);
                     Assert.AreEqual(3, selectorBar3.Items.Count);
                     Assert.AreSame(selectorBar3.Items[0], selectorBar3.SelectedItem);
-                    Assert.AreEqual(5, CountItems(itemsControl3.ItemsSource));
+                    Assert.AreEqual(5, CountItems(itemsView3.ItemsSource));
 
                     selectorBar3.SelectedItem = selectorBar3.Items[1];
                     WpfTestHost.DoEvents();
-                    Assert.AreEqual(7, CountItems(itemsControl3.ItemsSource));
+                    Assert.AreEqual(7, CountItems(itemsView3.ItemsSource));
 
                     selectorBar3.SelectedItem = selectorBar3.Items[2];
                     WpfTestHost.DoEvents();
-                    Assert.AreEqual(4, CountItems(itemsControl3.ItemsSource));
+                    Assert.AreEqual(4, CountItems(itemsView3.ItemsSource));
                 }
                 finally
                 {

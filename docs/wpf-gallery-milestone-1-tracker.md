@@ -624,6 +624,10 @@ Latest local verification for the current branch tip:
   - Passed for `net8.0-windows7.0`: the retained `NavigationView` core resource test now pins the full Light/Dark and HighContrast state-resource family for pane backgrounds, content background, item backgrounds/foregrounds/borders, separators, top-navigation states, button states, and the back button. Existing warning/output remains `NETSDK1137` and the recurring `Failed to resolve WinRT.Runtime.dll` message.
 - `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~ProgressBarApiTests.VerifyDefaultStyleAndWinUI2Resources|FullyQualifiedName~ToolTipVisualStateTests.ThemeDictionariesExposeOfficialToolTipAliases" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0`: `ProgressBar` now pins its Light/Dark/HighContrast pause-opacity, min-height, and border-thickness resources alongside the existing foreground/background/status-color aliases; `ToolTip` now pins its Light/Dark/HighContrast foreground/background/border brush aliases plus content-font-size and border-thickness resources. Existing warning/output remains `NETSDK1137`, generated WinRT warnings, existing ModernWpf/ModernWpf.Controls warnings, and the recurring `Failed to resolve WinRT.Runtime.dll` message.
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~GalleryAutomationHookTests.SelectorBarSampleMatchesWinUIGalleryExamples" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: the retained ModernWpf SelectorBar extension page now restores the local official WinUI Gallery third example title/source-facing `ItemsView3` name and `ItemsView` / `UniformGridLayout` displayed source while keeping the live WPF adaptation as an `ItemsControl` named `ItemsView3`. Existing warning/output remains `NU1903`, generated WinRT warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the SelectorBar `ItemsView3` source-facing alignment. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages and existing ModernWpf/ModernWpf.Controls warnings.
 - `dotnet build .\ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
   - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the retained shell title-row and Settings footer source-shape alignment. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages and existing ModernWpf/ModernWpf.Controls warnings.
 - `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~GalleryPageRuntimeTests.RetainedWpfAliasReplacementPagesUseWpfGalleryMode|FullyQualifiedName~GalleryCatalogTests.WinUIExtensionCatalogMatchesImplementedModernWpfSurfaces|FullyQualifiedName~GalleryCatalogTests.GeneratedWinUIMetadataOnlyContainsRetainedModernWpfSurfaces|FullyQualifiedName~GalleryCatalogTests.SourceWinUIControlInfoDataOnlyContainsRetainedModernWpfSurfaces|FullyQualifiedName~GalleryCatalogTests.TrackerCurrentModernWpfSurfaceMatchesRetainedCatalogGuard|FullyQualifiedName~GalleryCatalogTests.ActiveGallerySourceDoesNotKeepDeletedWinUIPageImplementationArtifacts" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
@@ -3462,15 +3466,16 @@ The generated ModernWpf SelectorBar extension page now uses the local official
 WinUI Gallery three-example structure from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\SelectorBarPage.xaml`
 / `.xaml.cs`: `A Basic SelectorBar`, the frame slide-transition sample, and
-the ItemsView collection-switching sample. `NavigationSampleFactory.CreateExamples`
+`SelectorBar Displaying Different Collections Using ItemsView`. `NavigationSampleFactory.CreateExamples`
 now covers SelectorBar as a source-backed Navigation WinUI example, keeps
 WinUI's `SelectorBar1`, `SelectorBarItemRecent`, `SelectorBar2`,
-`ContentFrame`, `SelectorBar3`, `ItemsView3`, and color collection source-facing
+`ContentFrame`, `SelectorBar3`, `ItemsView3`, the official third-sample
+`ItemsView` / `UniformGridLayout` displayed snippet, and color collection source-facing
 names, and exposes `GallerySample_SelectorBar_Root` /
 `GallerySample_SelectorBar_SelectorBar` for runtime and visual checks. The WPF
 adaptation uses real `ModernWpf.Controls.SelectorBar` / `SelectorBarItem`
-controls, WPF `Frame` content for the page sample, and WPF `ItemsControl`
-tiles for the ItemsView sample. The sample assigns a local WPF item template
+controls, WPF `Frame` content for the page sample, and a WPF `ItemsControl`
+named `ItemsView3` for the ItemsView sample. The sample assigns a local WPF item template
 because the default library item template rendered blank in the visual capture
 even though the live tree had the source text and icons; that local template
 now applies the same `0.8` icon scale used by ModernWpf's SelectorBar
