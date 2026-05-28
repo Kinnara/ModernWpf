@@ -2,6 +2,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ModernWpf;
 using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
 using ModernWpf.Media.Animation;
@@ -103,5 +104,48 @@ public class FlyoutPresenterApiTests
 
             Assert.IsTrue(shadowChrome.IsShadowEnabled);
         });
+    }
+
+    [TestMethod]
+    public void ThemeResourcesUseWinUI2FlyoutPresenterHighContrastTokens()
+    {
+        WpfTestHost.Run(() =>
+        {
+            foreach (var themeName in new[] { "Light", "Dark", "HighContrast" })
+            {
+                AssertThemeResourceValue(themeName, "FlyoutThemeMaxHeight", 758.0);
+                AssertThemeResourceValue(themeName, "FlyoutThemeMaxWidth", 456.0);
+                AssertThemeResourceValue(themeName, "FlyoutThemeMinHeight", 40.0);
+                AssertThemeResourceValue(themeName, "FlyoutThemeMinWidth", 96.0);
+                AssertThemeResourceValue(themeName, "FlyoutThemeTouchMinWidth", 240.0);
+                AssertThemeResourceValue(themeName, "FlyoutBorderThemeThickness", new Thickness(1));
+                AssertThemeResourceValue(themeName, "FlyoutBorderThemePadding", new Thickness(0));
+                AssertThemeResourceValue(themeName, "FlyoutContentThemePadding", new Thickness(12, 11, 12, 12));
+            }
+
+            foreach (var themeName in new[] { "Light", "Dark" })
+            {
+                AssertThemeResourceReference(themeName, "FlyoutPresenterBackground", "AcrylicBackgroundFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "FlyoutBorderThemeBrush", "SurfaceStrokeColorFlyoutBrush");
+            }
+
+            AssertThemeResourceReference("HighContrast", "FlyoutPresenterBackground", "SystemColorWindowColorBrush");
+            AssertThemeResourceReference("HighContrast", "FlyoutBorderThemeBrush", "SystemColorWindowTextColorBrush");
+        });
+    }
+
+    private static void AssertThemeResourceReference(string themeName, object resourceKey, object expectedResourceKey)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.IsTrue(themeDictionary.Contains(expectedResourceKey), $"{themeName} is missing {expectedResourceKey}.");
+        Assert.AreSame(themeDictionary[expectedResourceKey], themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
+    }
+
+    private static void AssertThemeResourceValue<T>(string themeName, object resourceKey, T expectedValue)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.AreEqual(expectedValue, themeDictionary[resourceKey]);
     }
 }
