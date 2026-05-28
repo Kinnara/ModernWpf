@@ -133,13 +133,55 @@ public class NumberBoxApiTests
         {
             TestApplication.EnsureInitialized();
 
+            var resources = new ResourceDictionary
+            {
+                Source = new System.Uri("/ModernWpf.Controls;component/NumberBox/NumberBox.xaml", System.UriKind.Relative)
+            };
+
+            AssertResource(resources, "NumberBoxPopupIndicatorMargin", new Thickness(0, 0, 8, 0));
+
+            var numberBoxTextBoxStyle = (Style)resources["NumberBoxTextBoxStyle"];
+            Assert.AreEqual(typeof(TextBox), numberBoxTextBoxStyle.TargetType);
+            Assert.IsNotNull(numberBoxTextBoxStyle.BasedOn);
+            Assert.AreEqual(typeof(TextBox), numberBoxTextBoxStyle.BasedOn!.TargetType);
+            Assert.IsInstanceOfType(GetStyleSetter(numberBoxTextBoxStyle, Control.TemplateProperty).Value, typeof(ControlTemplate));
+
+            var style = (Style)resources[typeof(ModernWpf.Controls.NumberBox)];
+            AssertStyleSetter(style, Control.IsTabStopProperty, false);
+            AssertDynamicResourceSetter(style, ModernWpf.Controls.NumberBox.SelectionBrushProperty, "TextControlSelectionHighlightColor");
+            AssertDynamicResourceSetter(style, Control.FontFamilyProperty, "ContentControlThemeFontFamily");
+            AssertDynamicResourceSetter(style, Control.FontSizeProperty, "ControlContentThemeFontSize");
+            AssertDynamicResourceSetter(style, ModernWpf.Controls.NumberBox.CornerRadiusProperty, "ControlCornerRadius");
+            AssertDynamicResourceSetter(style, Control.BackgroundProperty, "TextControlBackground");
+            AssertDynamicResourceSetter(style, Control.BorderThicknessProperty, "TextControlBorderThemeThickness");
+            AssertDynamicResourceSetter(style, Control.BorderBrushProperty, "TextControlBorderBrush");
+            AssertDynamicResourceSetter(style, Control.ForegroundProperty, "TextControlForeground");
+            AssertDynamicResourceSetter(style, Control.PaddingProperty, "TextControlThemePadding");
+            Assert.IsNull(GetStyleSetter(style, Control.FocusVisualStyleProperty).Value, Control.FocusVisualStyleProperty.Name);
+            Assert.IsInstanceOfType(GetStyleSetter(style, Control.TemplateProperty).Value, typeof(ControlTemplate));
+
             var numberBox = new ModernWpf.Controls.NumberBox
             {
-                SpinButtonPlacementMode = ModernWpf.Controls.NumberBoxSpinButtonPlacementMode.Inline
+                SpinButtonPlacementMode = ModernWpf.Controls.NumberBoxSpinButtonPlacementMode.Inline,
+                Style = style
             };
+            numberBox.Resources.MergedDictionaries.Add(resources);
 
             using var host = new TestWindowHost(numberBox, width: 320, height: 180);
             host.UpdateLayout();
+
+            Assert.AreSame(style, numberBox.Style);
+            Assert.IsFalse(numberBox.IsTabStop);
+            AssertBrushEquals((Brush)numberBox.TryFindResource("TextControlSelectionHighlightColor"), numberBox.SelectionBrush);
+            Assert.AreEqual(((FontFamily)numberBox.TryFindResource("ContentControlThemeFontFamily")).Source, numberBox.FontFamily.Source);
+            Assert.AreEqual(numberBox.TryFindResource("ControlContentThemeFontSize"), numberBox.FontSize);
+            Assert.AreEqual(numberBox.TryFindResource("ControlCornerRadius"), numberBox.CornerRadius);
+            AssertBrushEquals((Brush)numberBox.TryFindResource("TextControlBackground"), numberBox.Background);
+            Assert.AreEqual(numberBox.TryFindResource("TextControlBorderThemeThickness"), numberBox.BorderThickness);
+            AssertBrushEquals((Brush)numberBox.TryFindResource("TextControlBorderBrush"), numberBox.BorderBrush);
+            AssertBrushEquals((Brush)numberBox.TryFindResource("TextControlForeground"), numberBox.Foreground);
+            Assert.AreEqual(numberBox.TryFindResource("TextControlThemePadding"), numberBox.Padding);
+            Assert.IsNull(numberBox.FocusVisualStyle);
 
             var layoutRoot = (FrameworkElement)VisualTreeHelper.GetChild(numberBox, 0);
             AssertStateSetter(layoutRoot, "SpinButtonStates", "SpinButtonsVisible",
@@ -152,11 +194,37 @@ public class NumberBoxApiTests
             var inputBox = FindTemplatePart<TextBox>(numberBox, "InputBox");
             Assert.AreEqual(3, Grid.GetColumnSpan(inputBox));
             Assert.AreEqual(120.0, inputBox.MinWidth);
-            Assert.IsNotNull(inputBox.Style);
+            Assert.AreSame(numberBoxTextBoxStyle, inputBox.Style);
+            AssertBrushEquals(numberBox.SelectionBrush, inputBox.SelectionBrush);
+            Assert.AreEqual(numberBox.FontSize, inputBox.FontSize);
+            Assert.AreEqual(numberBox.FontFamily.Source, inputBox.FontFamily.Source);
+            AssertBrushEquals(numberBox.Background, inputBox.Background);
+            Assert.AreEqual(numberBox.BorderThickness, inputBox.BorderThickness);
+            AssertBrushEquals(numberBox.BorderBrush, inputBox.BorderBrush);
+            Assert.AreEqual(numberBox.Padding, inputBox.Padding);
+            AssertBrushEquals(numberBox.Foreground, inputBox.Foreground);
+            Assert.AreEqual(numberBox.TextAlignment, inputBox.TextAlignment);
             var inlineInputBoxStyle = inputBox.Style;
             var inputBoxRoot = (FrameworkElement)VisualTreeHelper.GetChild(inputBox, 0);
             var inputBoxGrid = (Grid)inputBoxRoot;
             Assert.AreEqual(new GridLength(72), inputBoxGrid.ColumnDefinitions[2].Width);
+
+            var headerPresenter = FindControlTemplatePart<ContentPresenterEx>(numberBox, "HeaderContentPresenter");
+            if (numberBox.TryFindResource("TextControlHeaderForeground") is Brush headerForeground)
+            {
+                AssertBrushEquals(headerForeground, headerPresenter.Foreground);
+            }
+            else
+            {
+                Assert.IsNotNull(headerPresenter.Foreground);
+            }
+            Assert.AreEqual(numberBox.TryFindResource("TextBoxTopHeaderMargin"), headerPresenter.Margin);
+            Assert.AreEqual(numberBox.FontSize, headerPresenter.FontSize);
+            Assert.AreEqual(numberBox.FontFamily.Source, headerPresenter.FontFamily.Source);
+            Assert.AreEqual(Visibility.Collapsed, headerPresenter.Visibility);
+
+            var descriptionPresenter = FindControlTemplatePart<ContentPresenterEx>(numberBox, "DescriptionPresenter");
+            AssertBrushEquals((Brush)numberBox.TryFindResource("SystemControlDescriptionTextForegroundBrush"), descriptionPresenter.Foreground);
 
             var inputEater = FindTemplatePart<Button>(numberBox, "InputEater");
             Assert.AreEqual(Visibility.Visible, inputEater.Visibility);
@@ -186,6 +254,8 @@ public class NumberBoxApiTests
             Assert.AreEqual("\uEC8F", popupIndicator.Text);
 
             var popup = FindTemplatePart<Popup>(numberBox, "UpDownPopup");
+            Assert.IsTrue(popup.AllowsTransparency);
+            Assert.AreEqual(PlacementMode.Right, popup.Placement);
             Assert.AreEqual(-21.0, popup.HorizontalOffset);
             Assert.AreEqual(-27.0, popup.VerticalOffset);
 
@@ -193,12 +263,16 @@ public class NumberBoxApiTests
             Assert.IsNotNull(chrome);
             Assert.AreEqual(16.0, chrome!.Depth);
             Assert.AreEqual(new Thickness(8, 4, 8, 12), chrome.ShadowPadding);
+            Assert.AreEqual(numberBox.TryFindResource("OverlayCornerRadius"), chrome.CornerRadius);
             Assert.IsFalse(VisualTreeTestHelper.EnumerateDescendants(chrome).OfType<Border>().Any(border => border.Effect is System.Windows.Media.Effects.BlurEffect));
 
             var popupRoot = chrome.Child as Border;
             Assert.IsNotNull(popupRoot);
             Assert.AreEqual(new Thickness(6), popupRoot!.Padding);
+            AssertBrushEquals((Brush)numberBox.TryFindResource("NumberBoxPopupBackground"), popupRoot.Background);
+            AssertBrushEquals((Brush)numberBox.TryFindResource("NumberBoxPopupBorderBrush"), popupRoot.BorderBrush);
             Assert.AreEqual(new Thickness(1), popupRoot.BorderThickness);
+            Assert.AreEqual(numberBox.TryFindResource("OverlayCornerRadius"), popupRoot.CornerRadius);
 
             var popupUpButton = FindTemplatePart<RepeatButton>(popupRoot, "PopupUpSpinButton");
             var popupDownButton = FindTemplatePart<RepeatButton>(popupRoot, "PopupDownSpinButton");
@@ -236,10 +310,13 @@ public class NumberBoxApiTests
             AssertStyleSetter(popupSpinButtonStyle, FrameworkElement.WidthProperty, 36.0);
             AssertStyleSetter(popupSpinButtonStyle, FrameworkElement.HeightProperty, 36.0);
             AssertStyleSetter(popupSpinButtonStyle, Control.PaddingProperty, new Thickness(0));
+            AssertDynamicResourceSetter(popupSpinButtonStyle, Control.BackgroundProperty, "NumberBoxPopupSpinButtonBackground");
             AssertDynamicResourceSetter(popupSpinButtonStyle, Control.BorderThicknessProperty, "NumberBoxPopupSpinButtonBorderThickness");
             AssertStyleSetter(popupSpinButtonStyle, Control.FontSizeProperty, 16.0);
             AssertDynamicResourceSetter(popupSpinButtonStyle, Control.FontFamilyProperty, "SymbolThemeFontFamily");
             AssertDynamicResourceSetter(popupSpinButtonStyle, System.Windows.Controls.Border.CornerRadiusProperty, "ControlCornerRadius");
+            AssertBrushEquals((Brush)popupUpButton.TryFindResource("NumberBoxPopupSpinButtonBackground"), popupUpButton.Background);
+            AssertBrushEquals((Brush)popupDownButton.TryFindResource("NumberBoxPopupSpinButtonBackground"), popupDownButton.Background);
 
             foreach (var themeName in new[] { "Light", "Dark" })
             {
@@ -337,6 +414,12 @@ public class NumberBoxApiTests
         Assert.AreEqual(16.0, button.FontSize);
     }
 
+    private static void AssertResource(ResourceDictionary resources, string key, object expectedValue)
+    {
+        Assert.IsTrue(resources.Contains(key), $"Expected resource '{key}' to exist.");
+        Assert.AreEqual(expectedValue, resources[key], $"Unexpected value for '{key}'.");
+    }
+
     private static void AssertGlobalResourceValue<T>(FrameworkElement element, object resourceKey, T expectedValue)
     {
         Assert.AreEqual(expectedValue, element.TryFindResource(resourceKey), resourceKey.ToString());
@@ -360,6 +443,21 @@ public class NumberBoxApiTests
         var dynamicResource = setter.Value as DynamicResourceExtension;
         Assert.IsNotNull(dynamicResource, $"Expected {property.Name} to use DynamicResource.");
         Assert.AreEqual(expectedResourceKey, dynamicResource!.ResourceKey, property.Name);
+    }
+
+    private static void AssertBrushEquals(Brush expected, Brush actual)
+    {
+        Assert.IsNotNull(expected);
+        Assert.IsNotNull(actual);
+
+        if (expected is SolidColorBrush expectedSolid && actual is SolidColorBrush actualSolid)
+        {
+            Assert.AreEqual(expectedSolid.Color, actualSolid.Color);
+            Assert.AreEqual(expectedSolid.Opacity, actualSolid.Opacity);
+            return;
+        }
+
+        Assert.AreEqual(expected.ToString(), actual.ToString());
     }
 
     private static Setter GetStyleSetter(Style style, DependencyProperty property)
