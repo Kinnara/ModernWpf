@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf;
 using ModernWpf.Controls;
@@ -134,6 +135,84 @@ public class SplitViewApiTests
                     "SplitViewLightDismissOverlayBackground",
                     "SystemControlPageBackgroundMediumAltMediumBrush");
             }
+        });
+    }
+
+    [TestMethod]
+    public void SplitViewStyleUsesWinUIResourceAliases()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var resources = new ResourceDictionary
+            {
+                Source = new Uri("/ModernWpf.Controls;component/SplitView/SplitView.xaml", UriKind.Relative)
+            };
+            var style = (Style)resources[typeof(ModernWpf.Controls.SplitView)];
+
+            AssertDynamicResourceSetter(style, Control.BorderBrushProperty, "SystemControlForegroundTransparentBrush");
+            AssertDynamicResourceSetter(style, Control.BorderThicknessProperty, "SplitViewLeftBorderThemeThickness");
+            AssertSetterValue(style, Control.HorizontalContentAlignmentProperty, HorizontalAlignment.Stretch);
+            AssertSetterValue(style, Control.VerticalContentAlignmentProperty, VerticalAlignment.Stretch);
+            AssertDynamicResourceSetter(style, ModernWpf.Controls.SplitView.OpenPaneLengthProperty, "SplitViewOpenPaneThemeLength");
+            AssertDynamicResourceSetter(style, ModernWpf.Controls.SplitView.CompactPaneLengthProperty, "SplitViewCompactPaneThemeLength");
+            AssertDynamicResourceSetter(style, ModernWpf.Controls.SplitView.PaneBackgroundProperty, "SystemControlPageBackgroundChromeLowBrush");
+            AssertDynamicResourceSetter(style, ControlEx.CornerRadiusProperty, "SplitViewPaneRootCornerRadius");
+
+            var pane = new Border { Width = 120, Height = 360 };
+            var content = new Border { Width = 240, Height = 360 };
+            var splitView = new ModernWpf.Controls.SplitView
+            {
+                DisplayMode = SplitViewDisplayMode.Overlay,
+                LightDismissOverlayMode = LightDismissOverlayMode.On,
+                IsPaneOpen = true,
+                Pane = pane,
+                Content = content
+            };
+
+            using var host = new TestWindowHost(splitView, width: 640, height: 360);
+            WpfTestHost.DoEvents();
+            host.UpdateLayout();
+
+            Assert.AreSame(splitView.TryFindResource("SystemControlForegroundTransparentBrush"), splitView.BorderBrush);
+            Assert.AreEqual(splitView.TryFindResource("SplitViewLeftBorderThemeThickness"), splitView.BorderThickness);
+            Assert.AreEqual(HorizontalAlignment.Stretch, splitView.HorizontalContentAlignment);
+            Assert.AreEqual(VerticalAlignment.Stretch, splitView.VerticalContentAlignment);
+            Assert.AreEqual(splitView.TryFindResource("SplitViewOpenPaneThemeLength"), splitView.OpenPaneLength);
+            Assert.AreEqual(splitView.TryFindResource("SplitViewCompactPaneThemeLength"), splitView.CompactPaneLength);
+            Assert.AreSame(splitView.TryFindResource("SystemControlPageBackgroundChromeLowBrush"), splitView.PaneBackground);
+            Assert.AreEqual(splitView.TryFindResource("SplitViewPaneRootCornerRadius"), splitView.CornerRadius);
+
+            var templateRoot = (Grid)VisualTreeHelper.GetChild(splitView, 0);
+            var columnDefinition1 = FindTemplatePart<ColumnDefinition>(splitView, "ColumnDefinition1");
+            var columnDefinition2 = FindTemplatePart<ColumnDefinition>(splitView, "ColumnDefinition2");
+            var paneRoot = FindTemplatePart<Border>(splitView, "PaneRoot");
+            var paneClipRectangle = FindTemplatePart<RectangleGeometry>(splitView, "PaneClipRectangle");
+            var paneClipTransform = FindTemplatePart<TranslateTransform>(splitView, "PaneClipRectangleTransform");
+            var paneTransform = FindTemplatePart<TranslateTransform>(splitView, "PaneTransform");
+            var contentRoot = FindTemplatePart<Grid>(splitView, "ContentRoot");
+            var contentTransform = FindTemplatePart<TranslateTransform>(splitView, "ContentTransform");
+            var hcPaneBorder = FindTemplatePart<Rectangle>(splitView, "HCPaneBorder");
+            var lightDismissLayer = FindTemplatePart<Rectangle>(splitView, "LightDismissLayer");
+
+            Assert.AreSame(splitView.Background, templateRoot.Background);
+            Assert.AreEqual(splitView.TemplateSettings.OpenPaneGridLength, columnDefinition1.Width);
+            Assert.AreEqual(new GridLength(1, GridUnitType.Star), columnDefinition2.Width);
+
+            Assert.AreSame(splitView.BorderBrush, paneRoot.BorderBrush);
+            Assert.AreEqual(splitView.BorderThickness, paneRoot.BorderThickness);
+            Assert.AreSame(splitView.PaneBackground, paneRoot.Background);
+            Assert.AreEqual(splitView.TemplateSettings.OpenPaneLength, paneRoot.Width);
+            Assert.AreEqual(splitView.CornerRadius, paneRoot.CornerRadius);
+            Assert.IsTrue(paneRoot.Focusable);
+            Assert.AreEqual(KeyboardNavigationMode.Local, KeyboardNavigation.GetTabNavigation(paneRoot));
+            Assert.AreSame(paneClipTransform, paneClipRectangle.Transform);
+            Assert.AreSame(paneTransform, paneRoot.RenderTransform);
+
+            AssertBrushMatchesResource(splitView, "SystemControlForegroundTransparentBrush", hcPaneBorder.Fill);
+            Assert.AreSame(contentTransform, contentRoot.RenderTransform);
+            AssertBrushMatchesResource(splitView, "SplitViewLightDismissOverlayBackground", lightDismissLayer.Fill);
         });
     }
 
@@ -442,6 +521,32 @@ public class SplitViewApiTests
         var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
         Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
         Assert.AreEqual(expectedValue, themeDictionary[resourceKey]);
+    }
+
+    private static void AssertDynamicResourceSetter(Style style, DependencyProperty property, object expectedResourceKey)
+    {
+        var setter = style.Setters.OfType<Setter>().Single(item => item.Property == property);
+        Assert.IsInstanceOfType(setter.Value, typeof(DynamicResourceExtension));
+        var dynamicResource = (DynamicResourceExtension)setter.Value;
+        Assert.AreEqual(expectedResourceKey, dynamicResource.ResourceKey);
+    }
+
+    private static void AssertSetterValue(Style style, DependencyProperty property, object expectedValue)
+    {
+        var setter = style.Setters.OfType<Setter>().Single(item => item.Property == property);
+        Assert.AreEqual(expectedValue, setter.Value);
+    }
+
+    private static void AssertBrushMatchesResource(FrameworkElement element, object resourceKey, Brush actualBrush)
+    {
+        var expectedBrush = element.TryFindResource(resourceKey);
+        Assert.IsInstanceOfType(expectedBrush, typeof(SolidColorBrush), $"{resourceKey} should resolve to a SolidColorBrush.");
+        Assert.IsInstanceOfType(actualBrush, typeof(SolidColorBrush), $"{resourceKey} target should be a SolidColorBrush.");
+
+        var expectedSolidBrush = (SolidColorBrush)expectedBrush;
+        var actualSolidBrush = (SolidColorBrush)actualBrush;
+        Assert.AreEqual(expectedSolidBrush.Color, actualSolidBrush.Color, resourceKey.ToString());
+        Assert.AreEqual(expectedSolidBrush.Opacity, actualSolidBrush.Opacity, resourceKey.ToString());
     }
 
     private static void RaiseMouseLeftButtonUp(UIElement target)
