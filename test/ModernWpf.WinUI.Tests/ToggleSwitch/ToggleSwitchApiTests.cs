@@ -697,12 +697,36 @@ public class ToggleSwitchApiTests
         foreach (var themeName in new[] { "Light", "Dark" })
         {
             AssertThemeResourceValue(themeName, "SystemControlTransparentColor", Color.FromArgb(0x00, 0x00, 0x00, 0x00));
-            AssertThemeResourceReference(themeName, "ToggleSwitchContainerBackgroundPointerOver", "SubtleFillColorTransparent");
-            AssertThemeResourceReference(themeName, "ToggleSwitchContainerBackgroundPressed", "SubtleFillColorTransparent");
-            AssertThemeResourceReference(themeName, "ToggleSwitchContainerBackgroundDisabled", "SubtleFillColorTransparent");
-            AssertThemeResourceReference(themeName, "ToggleSwitchStrokeOffPointerOver", "ControlStrongStrokeColorDefault");
-            AssertThemeResourceReference(themeName, "ToggleSwitchStrokeOffPressed", "ControlStrongStrokeColorDefault");
-            AssertThemeResourceReference(themeName, "ToggleSwitchStrokeOffDisabled", "ControlStrongStrokeColorDisabled");
+            AssertThemeResourceReferences(themeName,
+                ("ToggleSwitchContainerBackground", "SubtleFillColorTransparentBrush"),
+                ("ToggleSwitchContainerBackgroundPointerOver", "SubtleFillColorTransparent"),
+                ("ToggleSwitchContainerBackgroundPressed", "SubtleFillColorTransparent"),
+                ("ToggleSwitchContainerBackgroundDisabled", "SubtleFillColorTransparent"),
+                ("ToggleSwitchFillOff", "ControlAltFillColorSecondaryBrush"),
+                ("ToggleSwitchFillOffPointerOver", "ControlAltFillColorTertiary"),
+                ("ToggleSwitchFillOffPressed", "ControlAltFillColorQuarternary"),
+                ("ToggleSwitchFillOffDisabled", "ControlAltFillColorDisabled"),
+                ("ToggleSwitchStrokeOff", "ControlStrongStrokeColorDefaultBrush"),
+                ("ToggleSwitchStrokeOffPointerOver", "ControlStrongStrokeColorDefault"),
+                ("ToggleSwitchStrokeOffPressed", "ControlStrongStrokeColorDefault"),
+                ("ToggleSwitchStrokeOffDisabled", "ControlStrongStrokeColorDisabled"),
+                ("ToggleSwitchFillOn", "AccentFillColorDefaultBrush"),
+                ("ToggleSwitchFillOnPointerOver", "AccentFillColorSecondaryBrush"),
+                ("ToggleSwitchFillOnPressed", "AccentFillColorTertiaryBrush"),
+                ("ToggleSwitchFillOnDisabled", "AccentFillColorDisabledBrush"),
+                ("ToggleSwitchStrokeOn", "AccentFillColorDefaultBrush"),
+                ("ToggleSwitchStrokeOnPointerOver", "AccentFillColorSecondaryBrush"),
+                ("ToggleSwitchStrokeOnPressed", "AccentFillColorTertiaryBrush"),
+                ("ToggleSwitchStrokeOnDisabled", "AccentFillColorDisabledBrush"),
+                ("ToggleSwitchKnobFillOff", "TextFillColorSecondaryBrush"),
+                ("ToggleSwitchKnobFillOffPointerOver", "TextFillColorSecondaryBrush"),
+                ("ToggleSwitchKnobFillOffPressed", "TextFillColorSecondaryBrush"),
+                ("ToggleSwitchKnobFillOffDisabled", "TextFillColorDisabledBrush"),
+                ("ToggleSwitchKnobFillOn", "TextOnAccentFillColorPrimaryBrush"),
+                ("ToggleSwitchKnobFillOnPointerOver", "TextOnAccentFillColorPrimaryBrush"),
+                ("ToggleSwitchKnobFillOnPressed", "TextOnAccentFillColorPrimaryBrush"),
+                ("ToggleSwitchKnobFillOnDisabled", "TextOnAccentFillColorDisabledBrush"),
+                ("ToggleSwitchKnobStrokeOn", "CircleElevationBorderBrush"));
         }
     }
 
@@ -2310,6 +2334,16 @@ public class ToggleSwitchApiTests
 
         Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
         Assert.AreEqual(expectedValue, themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
+    }
+
+    private static void AssertThemeResourceReferences(
+        string themeName,
+        params (string ResourceKey, object ExpectedResourceKey)[] expectedResources)
+    {
+        foreach (var expectedResource in expectedResources)
+        {
+            AssertThemeResourceReference(themeName, expectedResource.ResourceKey, expectedResource.ExpectedResourceKey);
+        }
     }
 
     private static void AssertThemeSolidColorBrushValue(string themeName, string resourceKey, Color expectedColor)
