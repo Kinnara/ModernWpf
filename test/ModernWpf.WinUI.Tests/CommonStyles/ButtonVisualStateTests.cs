@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
+using System.Windows.Input;
 using System.Windows.Markup;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls.Primitives;
@@ -108,6 +109,43 @@ public class ButtonVisualStateTests
                 "SubtleButtonBorderBrushDisabled",
                 "SubtleButtonForegroundDisabled");
             AssertDisabledTriggerAppliesResources(button, "SubtleButtonBackgroundDisabled", "SubtleButtonBorderBrushDisabled", "SubtleButtonForegroundDisabled");
+        });
+    }
+
+    [TestMethod]
+    public void ButtonStylesUseWinUIResourceAliases()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var defaultStyle = (Style)Application.Current.FindResource("DefaultButtonStyle");
+            var implicitButtonStyle = (Style)Application.Current.FindResource(typeof(Button));
+            var accentStyle = (Style)Application.Current.FindResource("AccentButtonStyle");
+            var subtleStyle = (Style)Application.Current.FindResource("SubtleButtonStyle");
+
+            AssertButtonStyleSetters(defaultStyle, "Button");
+            AssertButtonStyleSetters(accentStyle, "AccentButton");
+            AssertButtonStyleSetters(subtleStyle, "SubtleButton");
+
+            var defaultButton = CreateButton("Default");
+            var accentButton = CreateButton("Accent");
+            var subtleButton = CreateButton("Subtle");
+            accentButton.Style = accentStyle;
+            subtleButton.Style = subtleStyle;
+
+            var panel = new StackPanel();
+            panel.Children.Add(defaultButton);
+            panel.Children.Add(accentButton);
+            panel.Children.Add(subtleButton);
+
+            using var host = new TestWindowHost(panel, width: 360, height: 180);
+            host.UpdateLayout();
+
+            Assert.AreSame(defaultStyle, implicitButtonStyle.BasedOn);
+            AssertButtonLiveResources(defaultButton, "Button", recognizesAccessKey: true);
+            AssertButtonLiveResources(accentButton, "AccentButton", recognizesAccessKey: false);
+            AssertButtonLiveResources(subtleButton, "SubtleButton", recognizesAccessKey: true);
         });
     }
 
@@ -239,6 +277,66 @@ public class ButtonVisualStateTests
         Assert.AreEqual(0, VisualStateManager.GetVisualStateGroups(contentBorder).Count);
     }
 
+    private static void AssertButtonStyleSetters(Style style, string prefix)
+    {
+        AssertDynamicResourceSetter(style, Control.FocusVisualStyleProperty, SystemParameters.FocusVisualStyleKey);
+        AssertDynamicResourceSetter(style, Control.BackgroundProperty, $"{prefix}Background");
+        AssertDynamicResourceSetter(style, Control.ForegroundProperty, $"{prefix}Foreground");
+        AssertDynamicResourceSetter(style, Control.BorderBrushProperty, $"{prefix}BorderBrush");
+        AssertSetterValue(style, Control.BorderThicknessProperty, new Thickness(1));
+        AssertSetterValue(style, Control.PaddingProperty, new Thickness(11, 5, 11, 6));
+        AssertSetterValue(style, FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Left);
+        AssertSetterValue(style, FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+        AssertSetterValue(style, Control.HorizontalContentAlignmentProperty, HorizontalAlignment.Center);
+        AssertSetterValue(style, Control.VerticalContentAlignmentProperty, VerticalAlignment.Center);
+        AssertSetterValue(style, Control.FontWeightProperty, FontWeights.Normal);
+        AssertDynamicResourceSetter(style, FocusVisualHelper.UseSystemFocusVisualsProperty, "UseSystemFocusVisuals");
+        AssertSetterValue(style, FocusVisualHelper.FocusVisualMarginProperty, new Thickness(-3));
+        AssertDynamicResourceSetter(style, System.Windows.Controls.Border.CornerRadiusProperty, "ControlCornerRadius");
+        AssertSetterValue(style, UIElement.SnapsToDevicePixelsProperty, true);
+        AssertSetterValue(style, FrameworkElement.OverridesDefaultStyleProperty, true);
+        AssertSetterValue(style, Stylus.IsPressAndHoldEnabledProperty, false);
+    }
+
+    private static void AssertButtonLiveResources(Button button, string prefix, bool recognizesAccessKey)
+    {
+        Assert.AreSame(button.TryFindResource($"{prefix}Background"), button.Background);
+        Assert.AreSame(button.TryFindResource($"{prefix}Foreground"), button.Foreground);
+        Assert.AreSame(button.TryFindResource($"{prefix}BorderBrush"), button.BorderBrush);
+        Assert.AreEqual(button.TryFindResource("ButtonBorderThemeThickness"), button.BorderThickness);
+        Assert.AreEqual(button.TryFindResource("ButtonPadding"), button.Padding);
+        Assert.AreEqual(HorizontalAlignment.Left, button.HorizontalAlignment);
+        Assert.AreEqual(VerticalAlignment.Center, button.VerticalAlignment);
+        Assert.AreEqual(HorizontalAlignment.Center, button.HorizontalContentAlignment);
+        Assert.AreEqual(VerticalAlignment.Center, button.VerticalContentAlignment);
+        Assert.AreEqual(FontWeights.Normal, button.FontWeight);
+        Assert.AreEqual(button.TryFindResource("UseSystemFocusVisuals"), FocusVisualHelper.GetUseSystemFocusVisuals(button));
+        Assert.AreEqual(new Thickness(-3), FocusVisualHelper.GetFocusVisualMargin(button));
+        Assert.AreEqual(button.TryFindResource("ControlCornerRadius"), button.GetValue(System.Windows.Controls.Border.CornerRadiusProperty));
+        Assert.IsTrue(button.SnapsToDevicePixels);
+        Assert.IsTrue(button.OverridesDefaultStyle);
+        Assert.IsFalse(Stylus.GetIsPressAndHoldEnabled(button));
+
+        button.ApplyTemplate();
+        var contentBorder = GetTemplateChild<Border>(button, "ContentBorder");
+        var contentPresenter = GetTemplateChild<ContentPresenter>(button, "ContentPresenter");
+
+        Assert.AreEqual(button.Width, contentBorder.Width);
+        Assert.AreEqual(button.Height, contentBorder.Height);
+        Assert.AreEqual(button.Padding, contentBorder.Padding);
+        Assert.AreEqual(button.HorizontalAlignment, contentBorder.HorizontalAlignment);
+        Assert.AreEqual(button.VerticalAlignment, contentBorder.VerticalAlignment);
+        Assert.AreSame(button.Background, contentBorder.Background);
+        Assert.AreSame(button.BorderBrush, contentBorder.BorderBrush);
+        Assert.AreEqual(button.BorderThickness, contentBorder.BorderThickness);
+        Assert.AreEqual(button.GetValue(System.Windows.Controls.Border.CornerRadiusProperty), contentBorder.CornerRadius);
+        Assert.AreEqual(button.Content, contentPresenter.Content);
+        Assert.AreEqual(recognizesAccessKey, contentPresenter.RecognizesAccessKey);
+        Assert.AreEqual(button.HorizontalContentAlignment, contentPresenter.HorizontalAlignment);
+        Assert.AreEqual(button.VerticalContentAlignment, contentPresenter.VerticalAlignment);
+        Assert.AreSame(button.Foreground, TextElement.GetForeground(contentPresenter));
+    }
+
     private static void AssertOfficialTriggerShape(
         ControlTemplate template,
         string pointerOverBackground,
@@ -285,6 +383,23 @@ public class ButtonVisualStateTests
         Assert.IsInstanceOfType(setter.Value, typeof(DynamicResourceExtension));
         var resource = (DynamicResourceExtension)setter.Value;
         Assert.AreEqual(resourceKey, resource.ResourceKey);
+    }
+
+    private static void AssertSetterValue(Style style, DependencyProperty property, object expectedValue)
+    {
+        var setter = style.Setters.OfType<Setter>().SingleOrDefault(item => item.Property == property);
+        Assert.IsNotNull(setter, $"Expected setter for {property.Name}.");
+        Assert.AreEqual(expectedValue, setter!.Value);
+    }
+
+    private static void AssertDynamicResourceSetter(Style style, DependencyProperty property, object expectedResourceKey)
+    {
+        var setter = style.Setters.OfType<Setter>().SingleOrDefault(item => item.Property == property);
+        Assert.IsNotNull(setter, $"Expected setter for {property.Name}.");
+        Assert.IsInstanceOfType(setter!.Value, typeof(DynamicResourceExtension));
+
+        var dynamicResource = (DynamicResourceExtension)setter.Value;
+        Assert.AreEqual(expectedResourceKey, dynamicResource.ResourceKey);
     }
 
     private static void AssertDisabledTriggerAppliesResources(Button button, string backgroundKey, string borderBrushKey, string foregroundKey)
