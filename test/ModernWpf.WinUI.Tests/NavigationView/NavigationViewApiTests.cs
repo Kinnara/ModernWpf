@@ -2049,32 +2049,147 @@ public class NavigationViewApiTests
     {
         WpfTestHost.Run(() =>
         {
+            var lightDarkResourceReferences = new[]
+            {
+                ("NavigationViewDefaultPaneBackground", "SolidBackgroundFillColorBaseBrush"),
+                ("NavigationViewExpandedPaneBackground", "ControlFillColorTransparentBrush"),
+                ("NavigationViewTopPaneBackground", "ControlFillColorTransparentBrush"),
+                ("NavigationViewContentBackground", "SolidBackgroundFillColorBaseBrush"),
+                ("NavigationViewItemBackground", "SubtleFillColorTransparentBrush"),
+                ("NavigationViewItemBackgroundPointerOver", "SubtleFillColorSecondaryBrush"),
+                ("NavigationViewItemBackgroundPressed", "SubtleFillColorTertiaryBrush"),
+                ("NavigationViewItemBackgroundDisabled", "SubtleFillColorTransparentBrush"),
+                ("NavigationViewItemBackgroundChecked", "SubtleFillColorTransparentBrush"),
+                ("NavigationViewItemBackgroundCheckedPointerOver", "SubtleFillColorSecondaryBrush"),
+                ("NavigationViewItemBackgroundCheckedPressed", "SubtleFillColorTertiaryBrush"),
+                ("NavigationViewItemBackgroundCheckedDisabled", "SubtleFillColorTransparentBrush"),
+                ("NavigationViewItemBackgroundSelected", "SubtleFillColorSecondaryBrush"),
+                ("NavigationViewItemBackgroundSelectedPointerOver", "SubtleFillColorTertiaryBrush"),
+                ("NavigationViewItemBackgroundSelectedPressed", "SubtleFillColorSecondaryBrush"),
+                ("NavigationViewItemBackgroundSelectedDisabled", "SubtleFillColorSecondaryBrush"),
+                ("NavigationViewItemForeground", "TextFillColorSecondaryBrush"),
+                ("NavigationViewItemForegroundPointerOver", "TextFillColorSecondaryBrush"),
+                ("NavigationViewItemForegroundPressed", "TextFillColorPrimaryBrush"),
+                ("NavigationViewItemForegroundDisabled", "TextFillColorDisabledBrush"),
+                ("NavigationViewItemForegroundChecked", "TextFillColorPrimaryBrush"),
+                ("NavigationViewItemForegroundCheckedPointerOver", "TextFillColorPrimaryBrush"),
+                ("NavigationViewItemForegroundCheckedPressed", "TextFillColorSecondaryBrush"),
+                ("NavigationViewItemForegroundCheckedDisabled", "TextFillColorDisabledBrush"),
+                ("NavigationViewItemForegroundSelected", "TextFillColorPrimaryBrush"),
+                ("NavigationViewItemForegroundSelectedPointerOver", "TextFillColorPrimaryBrush"),
+                ("NavigationViewItemForegroundSelectedPressed", "TextFillColorSecondaryBrush"),
+                ("NavigationViewItemForegroundSelectedDisabled", "TextFillColorDisabledBrush"),
+                ("NavigationViewItemBorderBrush", "SubtleFillColorTransparentBrush"),
+                ("NavigationViewItemBorderBrushPointerOver", "SubtleFillColorTransparentBrush"),
+                ("NavigationViewItemBorderBrushPressed", "SubtleFillColorTransparentBrush"),
+                ("NavigationViewItemBorderBrushDisabled", "SubtleFillColorTransparentBrush"),
+                ("NavigationViewItemBorderBrushChecked", "SubtleFillColorTransparentBrush"),
+                ("NavigationViewItemBorderBrushCheckedPointerOver", "SubtleFillColorTransparentBrush"),
+                ("NavigationViewItemBorderBrushCheckedPressed", "SubtleFillColorTransparentBrush"),
+                ("NavigationViewItemBorderBrushCheckedDisabled", "SubtleFillColorTransparentBrush"),
+                ("NavigationViewItemBorderBrushSelected", "SubtleFillColorTransparentBrush"),
+                ("NavigationViewItemBorderBrushSelectedPointerOver", "SubtleFillColorTransparentBrush"),
+                ("NavigationViewItemBorderBrushSelectedPressed", "SubtleFillColorTransparentBrush"),
+                ("NavigationViewItemBorderBrushSelectedDisabled", "SubtleFillColorTransparentBrush"),
+                ("NavigationViewItemSeparatorForeground", "DividerStrokeColorDefaultBrush"),
+                ("NavigationViewSelectionIndicatorForeground", "AccentFillColorDefaultBrush"),
+                ("TopNavigationViewItemForeground", "TextFillColorSecondaryBrush"),
+                ("TopNavigationViewItemForegroundPointerOver", "TextFillColorPrimaryBrush"),
+                ("TopNavigationViewItemForegroundPressed", "TextFillColorPrimaryBrush"),
+                ("TopNavigationViewItemForegroundDisabled", "TextFillColorDisabledBrush"),
+                ("TopNavigationViewItemForegroundSelected", "TextFillColorPrimaryBrush"),
+                ("TopNavigationViewItemForegroundSelectedPointerOver", "TextFillColorSecondaryBrush"),
+                ("TopNavigationViewItemForegroundSelectedPressed", "TextFillColorTertiaryBrush"),
+                ("TopNavigationViewItemBackgroundPointerOver", "SubtleFillColorTransparentBrush"),
+                ("TopNavigationViewItemBackgroundPressed", "SubtleFillColorTransparentBrush"),
+                ("TopNavigationViewItemBackgroundSelected", "SubtleFillColorTransparentBrush"),
+                ("TopNavigationViewItemSeparatorForeground", "DividerStrokeColorDefaultBrush"),
+                ("NavigationViewButtonBackgroundPointerOver", "SubtleFillColorSecondaryBrush"),
+                ("NavigationViewButtonBackgroundPressed", "SubtleFillColorTertiaryBrush"),
+                ("NavigationViewButtonBackgroundDisabled", "ControlFillColorDisabledBrush"),
+                ("NavigationViewButtonForegroundPointerOver", "TextFillColorPrimaryBrush"),
+                ("NavigationViewButtonForegroundPressed", "TextFillColorSecondaryBrush"),
+                ("NavigationViewButtonForegroundDisabled", "TextFillColorDisabledBrush"),
+                ("NavigationViewBackButtonBackground", "SubtleFillColorTransparentBrush")
+            };
+
             foreach (var themeName in new[] { "Light", "Dark" })
             {
-                AssertThemeResourceReference(themeName, "NavigationViewDefaultPaneBackground", "SolidBackgroundFillColorBaseBrush");
-                AssertThemeResourceReference(themeName, "NavigationViewTopPaneBackground", "ControlFillColorTransparentBrush");
-                AssertThemeResourceReference(themeName, "NavigationViewItemBackground", "SubtleFillColorTransparentBrush");
-                AssertThemeResourceReference(themeName, "NavigationViewItemBackgroundPointerOver", "SubtleFillColorSecondaryBrush");
-                AssertThemeResourceReference(themeName, "NavigationViewItemBackgroundPressed", "SubtleFillColorTertiaryBrush");
-                AssertThemeResourceReference(themeName, "NavigationViewItemBackgroundSelected", "SubtleFillColorSecondaryBrush");
-                AssertThemeResourceReference(themeName, "NavigationViewItemBackgroundSelectedPointerOver", "SubtleFillColorTertiaryBrush");
-                AssertThemeResourceReference(themeName, "NavigationViewItemForeground", "TextFillColorSecondaryBrush");
-                AssertThemeResourceReference(themeName, "NavigationViewItemForegroundSelected", "TextFillColorPrimaryBrush");
-                AssertThemeResourceReference(themeName, "NavigationViewSelectionIndicatorForeground", "AccentFillColorDefaultBrush");
-                AssertThemeResourceReference(themeName, "TopNavigationViewItemForegroundSelectedPressed", "TextFillColorTertiaryBrush");
-                AssertThemeResourceReference(themeName, "NavigationViewBackButtonBackground", "SubtleFillColorTransparentBrush");
+                foreach (var (resourceKey, expectedResourceKey) in lightDarkResourceReferences)
+                {
+                    AssertThemeResourceReference(themeName, resourceKey, expectedResourceKey);
+                }
             }
 
-            AssertThemeResourceReference("HighContrast", "NavigationViewDefaultPaneBackground", "AcrylicInAppFillColorDefaultBrush");
-            AssertThemeResourceReference("HighContrast", "NavigationViewTopPaneBackground", "AcrylicInAppFillColorDefaultBrush");
-            AssertThemeResourceReference("HighContrast", "NavigationViewItemBackground", "SystemControlBackgroundBaseLowBrush");
-            AssertThemeResourceReference("HighContrast", "NavigationViewItemBackgroundPointerOver", "SystemControlHighlightListLowRevealBackgroundBrush");
-            AssertThemeResourceReference("HighContrast", "NavigationViewItemBackgroundPressed", "SystemControlHighlightListMediumRevealBackgroundBrush");
-            AssertThemeResourceReference("HighContrast", "NavigationViewItemForeground", "SystemControlForegroundBaseHighBrush");
-            AssertThemeResourceReference("HighContrast", "NavigationViewItemForegroundSelected", "SystemControlHighlightAltBaseHighBrush");
-            AssertThemeResourceReference("HighContrast", "NavigationViewSelectionIndicatorForeground", "SystemColorHighlightTextColorBrush");
-            AssertThemeResourceReference("HighContrast", "TopNavigationViewItemForeground", "NavigationViewItemForeground");
-            AssertThemeResourceReference("HighContrast", "NavigationViewBackButtonBackground", "SystemControlBackgroundBaseLowBrush");
+            var highContrastResourceReferences = new[]
+            {
+                ("NavigationViewDefaultPaneBackground", "AcrylicInAppFillColorDefaultBrush"),
+                ("NavigationViewExpandedPaneBackground", "SystemColorWindowColorBrush"),
+                ("NavigationViewTopPaneBackground", "AcrylicInAppFillColorDefaultBrush"),
+                ("NavigationViewItemBackground", "SystemControlBackgroundBaseLowBrush"),
+                ("NavigationViewItemBackgroundPointerOver", "SystemControlHighlightListLowRevealBackgroundBrush"),
+                ("NavigationViewItemBackgroundPressed", "SystemControlHighlightListMediumRevealBackgroundBrush"),
+                ("NavigationViewItemBackgroundDisabled", "SystemControlBackgroundBaseLowBrush"),
+                ("NavigationViewItemBackgroundChecked", "SystemControlTransparentRevealBackgroundBrush"),
+                ("NavigationViewItemBackgroundCheckedPointerOver", "SystemControlHighlightListLowRevealBackgroundBrush"),
+                ("NavigationViewItemBackgroundCheckedPressed", "SystemControlHighlightListMediumRevealBackgroundBrush"),
+                ("NavigationViewItemBackgroundCheckedDisabled", "SystemControlTransparentRevealBackgroundBrush"),
+                ("NavigationViewItemBackgroundSelected", "SystemControlHighlightListLowRevealBackgroundBrush"),
+                ("NavigationViewItemBackgroundSelectedPointerOver", "SystemControlHighlightListLowRevealBackgroundBrush"),
+                ("NavigationViewItemBackgroundSelectedPressed", "SystemControlHighlightListMediumRevealBackgroundBrush"),
+                ("NavigationViewItemBackgroundSelectedDisabled", "SystemControlTransparentRevealBackgroundBrush"),
+                ("NavigationViewItemForeground", "SystemControlForegroundBaseHighBrush"),
+                ("NavigationViewItemForegroundPointerOver", "SystemControlHighlightAltBaseHighBrush"),
+                ("NavigationViewItemForegroundPressed", "SystemControlHighlightAltBaseHighBrush"),
+                ("NavigationViewItemForegroundDisabled", "SystemControlDisabledBaseMediumLowBrush"),
+                ("NavigationViewItemForegroundChecked", "SystemControlHighlightAltBaseHighBrush"),
+                ("NavigationViewItemForegroundCheckedPointerOver", "SystemControlHighlightAltBaseHighBrush"),
+                ("NavigationViewItemForegroundCheckedPressed", "SystemControlHighlightAltBaseHighBrush"),
+                ("NavigationViewItemForegroundCheckedDisabled", "SystemControlDisabledBaseMediumLowBrush"),
+                ("NavigationViewItemForegroundSelected", "SystemControlHighlightAltBaseHighBrush"),
+                ("NavigationViewItemForegroundSelectedPointerOver", "SystemControlHighlightAltBaseHighBrush"),
+                ("NavigationViewItemForegroundSelectedPressed", "SystemControlHighlightAltBaseHighBrush"),
+                ("NavigationViewItemForegroundSelectedDisabled", "SystemControlDisabledBaseMediumLowBrush"),
+                ("NavigationViewItemBorderBrush", "SystemControlTransparentBrush"),
+                ("NavigationViewItemBorderBrushPointerOver", "SystemControlHighlightAltTransparentRevealBorderBrush"),
+                ("NavigationViewItemBorderBrushPressed", "SystemControlHighlightAltTransparentRevealBorderBrush"),
+                ("NavigationViewItemBorderBrushDisabled", "SystemControlTransparentBrush"),
+                ("NavigationViewItemBorderBrushChecked", "SystemControlBackgroundTransparentRevealBorderBrush"),
+                ("NavigationViewItemBorderBrushCheckedPointerOver", "SystemControlHighlightAltTransparentRevealBorderBrush"),
+                ("NavigationViewItemBorderBrushCheckedPressed", "SystemControlHighlightAltTransparentRevealBorderBrush"),
+                ("NavigationViewItemBorderBrushCheckedDisabled", "SystemControlTransparentBrush"),
+                ("NavigationViewItemBorderBrushSelected", "SystemControlBackgroundTransparentRevealBorderBrush"),
+                ("NavigationViewItemBorderBrushSelectedPointerOver", "SystemControlHighlightAltTransparentRevealBorderBrush"),
+                ("NavigationViewItemBorderBrushSelectedPressed", "SystemControlHighlightAltTransparentRevealBorderBrush"),
+                ("NavigationViewItemBorderBrushSelectedDisabled", "SystemControlTransparentBrush"),
+                ("NavigationViewItemSeparatorForeground", "SystemControlForegroundBaseLowBrush"),
+                ("NavigationViewSelectionIndicatorForeground", "SystemColorHighlightTextColorBrush"),
+                ("TopNavigationViewItemForeground", "NavigationViewItemForeground"),
+                ("TopNavigationViewItemForegroundPointerOver", "SystemControlHighlightAltBaseHighBrush"),
+                ("TopNavigationViewItemForegroundPressed", "SystemControlHighlightAltBaseHighBrush"),
+                ("TopNavigationViewItemForegroundDisabled", "SystemControlDisabledBaseMediumLowBrush"),
+                ("TopNavigationViewItemForegroundSelected", "SystemControlHighlightAltBaseHighBrush"),
+                ("TopNavigationViewItemForegroundSelectedPointerOver", "NavigationViewItemForeground"),
+                ("TopNavigationViewItemForegroundSelectedPressed", "NavigationViewItemForeground"),
+                ("TopNavigationViewItemBackgroundPointerOver", "SystemControlHighlightListLowRevealBackgroundBrush"),
+                ("TopNavigationViewItemBackgroundPressed", "SystemControlHighlightListMediumRevealBackgroundBrush"),
+                ("TopNavigationViewItemBackgroundSelected", "SystemControlHighlightListLowRevealBackgroundBrush"),
+                ("TopNavigationViewItemSeparatorForeground", "SystemControlForegroundBaseLowBrush"),
+                ("NavigationViewButtonBackgroundPointerOver", "SystemControlHighlightListLowBrush"),
+                ("NavigationViewButtonBackgroundPressed", "SystemControlHighlightListMediumBrush"),
+                ("NavigationViewButtonBackgroundDisabled", "SystemControlBackgroundBaseLowBrush"),
+                ("NavigationViewButtonForegroundPointerOver", "SystemControlHighlightAltBaseHighBrush"),
+                ("NavigationViewButtonForegroundPressed", "SystemControlHighlightAltBaseHighBrush"),
+                ("NavigationViewButtonForegroundDisabled", "SystemControlDisabledBaseMediumLowBrush"),
+                ("NavigationViewBackButtonBackground", "SystemControlBackgroundBaseLowBrush")
+            };
+
+            foreach (var (resourceKey, expectedResourceKey) in highContrastResourceReferences)
+            {
+                AssertThemeResourceReference("HighContrast", resourceKey, expectedResourceKey);
+            }
+
+            AssertThemeSolidColorBrushColorReference("HighContrast", "NavigationViewContentBackground", "SystemChromeMediumColor");
         });
     }
 
@@ -2132,6 +2247,18 @@ public class NavigationViewApiTests
         Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
         Assert.IsTrue(themeDictionary.Contains(expectedResourceKey), $"{themeName} is missing {expectedResourceKey}.");
         Assert.AreSame(themeDictionary[expectedResourceKey], themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
+    }
+
+    private static void AssertThemeSolidColorBrushColorReference(string themeName, string resourceKey, object expectedColorResourceKey)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.IsTrue(themeDictionary.Contains(expectedColorResourceKey), $"{themeName} is missing {expectedColorResourceKey}.");
+        Assert.IsInstanceOfType(themeDictionary[resourceKey], typeof(SolidColorBrush), $"{themeName}:{resourceKey}");
+        Assert.AreEqual(
+            themeDictionary[expectedColorResourceKey],
+            ((SolidColorBrush)themeDictionary[resourceKey]).Color,
+            $"{themeName}:{resourceKey}");
     }
 
     private static void AssertOverflowButtonStyleUsesWinUIVisualStateSetters(Style style)
