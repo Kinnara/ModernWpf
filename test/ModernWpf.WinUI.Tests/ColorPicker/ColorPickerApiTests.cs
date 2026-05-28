@@ -865,13 +865,90 @@ public class ColorPickerApiTests
             AssertResource(resources, "ColorPickerVerticalOrientationMaxHeight", 392.0);
             AssertResource(resources, "ColorPickerTextInputHorizontalOrientationMargin", 122.0);
 
+            var colorPickerStyle = (Style)resources[typeof(ColorPickerControl)];
+            AssertSetterValue(colorPickerStyle, UIElement.FocusableProperty, false);
+            AssertDynamicResourceSetter(colorPickerStyle, ColorPickerControl.CornerRadiusProperty, "ControlCornerRadius");
+            Assert.IsInstanceOfType(FindSetter(colorPickerStyle, Control.TemplateProperty)?.Value, typeof(ControlTemplate));
+
+            var colorSpectrumStyle = (Style)resources[typeof(ColorSpectrum)];
+            AssertSetterValue(colorSpectrumStyle, FrameworkElement.MinWidthProperty, 312.0);
+            AssertSetterValue(colorSpectrumStyle, FrameworkElement.MinHeightProperty, 312.0);
+            Assert.IsInstanceOfType(FindSetter(colorSpectrumStyle, Control.TemplateProperty)?.Value, typeof(ControlTemplate));
+
             var borderStyle = (Style)resources["ColorPickerBorderStyle"];
             AssertDynamicResourceSetter(borderStyle, Shape.StrokeProperty, "ColorPickerBorderBrush");
-            var strokeThicknessSetter = borderStyle.Setters.OfType<Setter>().Single(setter => setter.Property == Shape.StrokeThicknessProperty);
-            Assert.AreEqual(2.0, strokeThicknessSetter.Value);
+            AssertSetterValue(borderStyle, Shape.StrokeThicknessProperty, 2.0);
+
+            var sliderRepeatButtonStyle = (Style)resources["ColorPickerSliderRepeatButtonStyle"];
+            AssertSetterValue(sliderRepeatButtonStyle, UIElement.FocusableProperty, false);
+            AssertSetterValue(sliderRepeatButtonStyle, Control.IsTabStopProperty, false);
+            Assert.IsInstanceOfType(FindSetter(sliderRepeatButtonStyle, Control.TemplateProperty)?.Value, typeof(ControlTemplate));
 
             var sliderThumbStyle = (Style)resources["ColorPickerSliderThumbStyle"];
+            AssertSetterValue(sliderThumbStyle, Control.BorderThicknessProperty, new Thickness(1));
             AssertDynamicResourceSetter(sliderThumbStyle, Control.BackgroundProperty, "ColorPickerSliderThumbBackground");
+            Assert.IsInstanceOfType(FindSetter(sliderThumbStyle, Control.TemplateProperty)?.Value, typeof(ControlTemplate));
+
+            var sliderStyle = (Style)resources["ColorPickerSliderStyle"];
+            AssertSetterValue(sliderStyle, RangeBase.MinimumProperty, 0.0);
+            AssertSetterValue(sliderStyle, RangeBase.MaximumProperty, 100.0);
+            AssertSetterValue(sliderStyle, FrameworkElement.MarginProperty, new Thickness(0));
+            AssertSetterValue(sliderStyle, FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+            AssertDynamicResourceSetter(sliderStyle, Border.CornerRadiusProperty, "ControlCornerRadius");
+            Assert.IsInstanceOfType(FindSetter(sliderStyle, Control.TemplateProperty)?.Value, typeof(ControlTemplate));
+
+            var colorPicker = new ColorPickerControl
+            {
+                Style = colorPickerStyle
+            };
+
+            using var host = new TestWindowHost(colorPicker, width: 420, height: 560);
+            host.UpdateLayout();
+
+            Assert.IsFalse(colorPicker.Focusable);
+            Assert.AreEqual(colorPicker.TryFindResource("ControlCornerRadius"), colorPicker.CornerRadius);
+            Assert.AreSame(colorPickerStyle, colorPicker.Style);
+
+            var rootGrid = FindNamedDescendant<Grid>(colorPicker, "RootGrid");
+            AssertBrushEquals(Brushes.Transparent, rootGrid.Background);
+            Assert.AreEqual(new Thickness(0, 4, 0, 4), rootGrid.Margin);
+            Assert.AreEqual(resources["ColorPickerVerticalOrientationMaxWidth"], rootGrid.MaxWidth);
+            Assert.AreEqual(resources["ColorPickerVerticalOrientationMinWidth"], rootGrid.MinWidth);
+
+            var borderRectangle = FindNamedDescendant<Rectangle>(colorPicker, "BorderRectangle");
+            AssertBrushEquals((Brush)colorPicker.TryFindResource("ColorPickerBorderBrush"), borderRectangle.Stroke);
+            Assert.AreEqual(2.0, borderRectangle.StrokeThickness);
+
+            var slider = FindNamedDescendant<ColorPickerSlider>(colorPicker, "ThirdDimensionSlider");
+            Assert.AreEqual(0.0, slider.Minimum);
+            Assert.AreEqual(100.0, slider.Maximum);
+            Assert.AreEqual(new Thickness(0), slider.Margin);
+            Assert.AreEqual(VerticalAlignment.Center, slider.VerticalAlignment);
+            Assert.AreEqual(colorPicker.TryFindResource("ControlCornerRadius"), slider.GetValue(Border.CornerRadiusProperty));
+
+            var stateRoot = VisualTreeTestHelper
+                .EnumerateDescendants(slider)
+                .OfType<FrameworkElement>()
+                .FirstOrDefault(element => VisualStateManager.GetVisualStateGroups(element)
+                    .OfType<VisualStateGroup>()
+                    .Any(group => group.Name == "CommonStates"))
+                ?? throw new AssertFailedException("Expected ColorPickerSlider template to contain source visual-state groups.");
+            AssertStateSetterDynamicResource(stateRoot, "CommonStates", "PointerOver", "HorizontalThumb.Background", "ColorPickerSliderThumbBackgroundPointerOver");
+            AssertStateSetterDynamicResource(stateRoot, "CommonStates", "Pressed", "HorizontalThumb.Background", "ColorPickerSliderThumbBackgroundPressed");
+            AssertStateSetterDynamicResource(stateRoot, "CommonStates", "Disabled", "HeaderContentPresenter.Foreground", "ColorPickerHeaderContentDisabled");
+            AssertStateSetterDynamicResource(stateRoot, "CommonStates", "Disabled", "HorizontalThumb.Background", "ColorPickerSliderThumbBackgroundDisabled");
+            AssertStateSetterDynamicResource(stateRoot, "CommonStates", "Disabled", "HorizontalTrackRect.Fill", "ColorPickerSliderTrackFillDisabled");
+            AssertStateSetterDynamicResource(stateRoot, "CommonStates", "Disabled", "HorizontalDecreaseRect.Fill", "ColorPickerSliderTrackFillDisabled");
+
+            var thumb = FindNamedDescendant<Thumb>(slider, "HorizontalThumb");
+            AssertBrushEquals((Brush)thumb.TryFindResource("ColorPickerSliderThumbBackground"), thumb.Background);
+            Assert.AreEqual(thumb.TryFindResource("SliderHorizontalThumbWidth"), thumb.Width);
+            Assert.AreEqual(thumb.TryFindResource("SliderHorizontalThumbHeight"), thumb.Height);
+
+            var sliderInnerThumb = FindNamedDescendant<Ellipse>(thumb, "SliderInnerThumb");
+            Assert.AreEqual(10.0, sliderInnerThumb.Width);
+            Assert.AreEqual(10.0, sliderInnerThumb.Height);
+            AssertBrushEquals(thumb.Background, sliderInnerThumb.Fill);
 
             foreach (var themeName in new[] { "Light", "Dark" })
             {
@@ -905,14 +982,38 @@ public class ColorPickerApiTests
         Assert.AreEqual(expected, resources[key], $"Unexpected value for '{key}'.");
     }
 
+    private static void AssertSetterValue(Style style, DependencyProperty property, object expectedValue)
+    {
+        var setter = FindSetter(style, property);
+        Assert.IsNotNull(setter, $"Expected local setter for {property.Name}.");
+        Assert.AreEqual(expectedValue, setter!.Value);
+    }
+
     private static void AssertDynamicResourceSetter(Style style, DependencyProperty property, object expectedResourceKey)
     {
-        var setter = style.Setters.OfType<Setter>().SingleOrDefault(setter => setter.Property == property);
+        var setter = FindSetter(style, property);
         Assert.IsNotNull(setter, $"Expected local setter for {property.Name}.");
 
         var dynamicResource = setter!.Value as DynamicResourceExtension;
         Assert.IsNotNull(dynamicResource, $"Expected {property.Name} to use a dynamic resource.");
         Assert.AreEqual(expectedResourceKey, dynamicResource!.ResourceKey);
+    }
+
+    private static Setter? FindSetter(Style style, DependencyProperty property)
+    {
+        for (var current = style; current != null; current = current.BasedOn)
+        {
+            var setter = current.Setters
+                .OfType<Setter>()
+                .SingleOrDefault(setter => setter.Property == property);
+
+            if (setter != null)
+            {
+                return setter;
+            }
+        }
+
+        return null;
     }
 
     private static void AssertThemeResourceReference(string themeName, string resourceKey, object expectedResourceKey)
@@ -943,6 +1044,44 @@ public class ColorPickerApiTests
         return stateEx;
     }
 
+    private static void AssertStateSetterDynamicResource(
+        FrameworkElement stateGroupsRoot,
+        string groupName,
+        string stateName,
+        string target,
+        object expectedResourceKey)
+    {
+        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
+            .OfType<VisualStateGroup>()
+            .Single(candidate => candidate.Name == groupName);
+        var state = group.States
+            .OfType<VisualState>()
+            .Single(candidate => candidate.Name == stateName);
+
+        Assert.IsInstanceOfType(state, typeof(VisualStateEx));
+
+        var stateEx = (VisualStateEx)state;
+        CollectionAssert.Contains(stateEx.Setters.Select(setter => setter.Target).ToArray(), target);
+        var setter = stateEx.Setters.Single(setter => setter.Target == target);
+
+        if (setter.Value is DynamicResourceExtension dynamicResource)
+        {
+            Assert.AreEqual(expectedResourceKey, dynamicResource.ResourceKey, $"{stateName}:{target}");
+            return;
+        }
+
+        var expectedValue = stateGroupsRoot.TryFindResource(expectedResourceKey);
+        Assert.IsNotNull(expectedValue, $"Expected live resource {expectedResourceKey} for {stateName}:{target}.");
+
+        if (expectedValue is Brush expectedBrush && setter.Value is Brush actualBrush)
+        {
+            AssertBrushEquals(expectedBrush, actualBrush);
+            return;
+        }
+
+        Assert.AreEqual(expectedValue, setter.Value, $"{stateName}:{target}");
+    }
+
     private static string GetCurrentStateName(FrameworkElement stateGroupsRoot, string groupName)
     {
         var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
@@ -950,6 +1089,21 @@ public class ColorPickerApiTests
             .Single(candidate => candidate.Name == groupName);
         Assert.IsNotNull(group.CurrentState);
         return group.CurrentState.Name;
+    }
+
+    private static void AssertBrushEquals(Brush expected, Brush actual)
+    {
+        Assert.IsNotNull(expected);
+        Assert.IsNotNull(actual);
+
+        if (expected is SolidColorBrush expectedSolid && actual is SolidColorBrush actualSolid)
+        {
+            Assert.AreEqual(expectedSolid.Color, actualSolid.Color);
+            Assert.AreEqual(expectedSolid.Opacity, actualSolid.Opacity);
+            return;
+        }
+
+        Assert.AreEqual(expected.ToString(), actual.ToString());
     }
 
     private static T FindNamedDescendant<T>(DependencyObject root, string name)
