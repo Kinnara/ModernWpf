@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -407,6 +408,93 @@ public class MenuFlyoutApiTests
     }
 
     [TestMethod]
+    public void PresenterStyleUsesWinUIResourceAliases()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var resources = new ResourceDictionary
+            {
+                Source = new System.Uri("/ModernWpf.Controls;component/MenuFlyout/MenuFlyout.xaml", System.UriKind.Relative)
+            };
+            var style = (Style)resources[typeof(MenuFlyoutPresenter)];
+
+            Assert.AreSame(resources["ContextMenuStyleBase"], style.BasedOn);
+            AssertDynamicResourceSetter(style, Control.BackgroundProperty, "MenuFlyoutPresenterBackground");
+            AssertDynamicResourceSetter(style, Control.BorderBrushProperty, "MenuFlyoutPresenterBorderBrush");
+            AssertDynamicResourceSetter(style, Control.BorderThicknessProperty, "MenuFlyoutPresenterBorderThemeThickness");
+            AssertDynamicResourceSetter(style, Control.PaddingProperty, "MenuFlyoutPresenterThemePadding");
+            AssertDynamicResourceSetter(style, FrameworkElement.MinWidthProperty, "FlyoutThemeMinWidth");
+            AssertDynamicResourceSetter(style, FrameworkElement.MinHeightProperty, "MenuFlyoutThemeMinHeight");
+            AssertDynamicResourceSetter(style, MenuFlyoutPresenter.CornerRadiusProperty, "OverlayCornerRadius");
+            AssertDynamicResourceSetter(style, MenuFlyoutPresenter.IsDefaultShadowEnabledProperty, SystemParameters.DropShadowKey);
+            AssertSetterValue(style, ContextMenu.HasDropShadowProperty, false);
+
+            var target = new Button
+            {
+                Content = "Target",
+                Width = 120,
+                Height = 36
+            };
+            var menuFlyout = new MenuFlyout();
+            menuFlyout.Items.Add(new MenuItem { Header = "Copy" });
+
+            using var host = new TestWindowHost(target, width: 320, height: 220);
+            host.UpdateLayout();
+
+            menuFlyout.ShowAt(target);
+            WpfTestHost.DoEvents();
+
+            try
+            {
+                var presenter = menuFlyout.Presenter;
+                presenter.ApplyTemplate();
+                host.UpdateLayout();
+                WpfTestHost.DoEvents();
+
+                Assert.AreSame(presenter.TryFindResource("MenuFlyoutPresenterBackground"), presenter.Background);
+                Assert.AreSame(presenter.TryFindResource("MenuFlyoutPresenterBorderBrush"), presenter.BorderBrush);
+                Assert.AreEqual(presenter.TryFindResource("MenuFlyoutPresenterBorderThemeThickness"), presenter.BorderThickness);
+                Assert.AreEqual(presenter.TryFindResource("MenuFlyoutPresenterThemePadding"), presenter.Padding);
+                Assert.AreEqual(presenter.TryFindResource("FlyoutThemeMinWidth"), presenter.MinWidth);
+                Assert.AreEqual(presenter.TryFindResource("MenuFlyoutThemeMinHeight"), presenter.MinHeight);
+                Assert.AreEqual(presenter.TryFindResource("OverlayCornerRadius"), presenter.CornerRadius);
+                Assert.AreEqual(presenter.TryFindResource(SystemParameters.DropShadowKey), presenter.IsDefaultShadowEnabled);
+                Assert.IsFalse(presenter.HasDropShadow);
+
+                var chrome = VisualTreeTestHelper.FindDescendant<ThemeShadowChrome>(presenter)
+                    ?? throw new AssertFailedException("Expected MenuFlyoutPresenter to use ThemeShadowChrome.");
+                var border = VisualTreeTestHelper.FindDescendant<BorderEx>(presenter)
+                    ?? throw new AssertFailedException("Expected MenuFlyoutPresenter template to use BorderEx.");
+                var scrollViewer = VisualTreeTestHelper.EnumerateDescendants(presenter)
+                    .OfType<ScrollViewer>()
+                    .Single(item => item.Name == "MenuFlyoutPresenterScrollViewer");
+
+                Assert.AreEqual(presenter.IsDefaultShadowEnabled, chrome.IsShadowEnabled);
+                Assert.AreEqual(ThemeShadowChromeWindowedPopupInsetMode.Medium, chrome.WindowedPopupInsetMode);
+                Assert.AreEqual(presenter.CornerRadius, chrome.CornerRadius);
+
+                Assert.AreSame(presenter.Background, border.Background);
+                Assert.AreEqual(BackgroundSizing.InnerBorderEdge, border.BackgroundSizing);
+                Assert.AreSame(presenter.BorderBrush, border.BorderBrush);
+                Assert.AreEqual(presenter.BorderThickness, border.BorderThickness);
+                Assert.AreEqual(presenter.CornerRadius, border.CornerRadius);
+
+                Assert.IsTrue(scrollViewer.CanContentScroll);
+                Assert.AreEqual(ScrollBarVisibility.Disabled, scrollViewer.HorizontalScrollBarVisibility);
+                Assert.AreEqual(ScrollBarVisibility.Auto, scrollViewer.VerticalScrollBarVisibility);
+                Assert.AreEqual(presenter.Padding, scrollViewer.Margin);
+            }
+            finally
+            {
+                menuFlyout.Hide();
+                WpfTestHost.DoEvents();
+            }
+        });
+    }
+
+    [TestMethod]
     public void ThemeResourcesUseWinUI2MenuFlyoutHighContrastTokens()
     {
         WpfTestHost.Run(() =>
@@ -615,5 +703,19 @@ public class MenuFlyoutApiTests
         var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
         Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
         Assert.AreEqual(expectedValue, themeDictionary[resourceKey]);
+    }
+
+    private static void AssertDynamicResourceSetter(Style style, DependencyProperty property, object expectedResourceKey)
+    {
+        var setter = style.Setters.OfType<Setter>().Single(item => item.Property == property);
+        Assert.IsInstanceOfType(setter.Value, typeof(DynamicResourceExtension));
+        var dynamicResource = (DynamicResourceExtension)setter.Value;
+        Assert.AreEqual(expectedResourceKey, dynamicResource.ResourceKey);
+    }
+
+    private static void AssertSetterValue(Style style, DependencyProperty property, object expectedValue)
+    {
+        var setter = style.Setters.OfType<Setter>().Single(item => item.Property == property);
+        Assert.AreEqual(expectedValue, setter.Value);
     }
 }
