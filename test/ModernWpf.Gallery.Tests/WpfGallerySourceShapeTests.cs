@@ -3355,14 +3355,22 @@ namespace ModernWpf.Gallery.Tests
                 "<Page x:Class=\"ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance.IconographyPage\"",
                 "xmlns:d=\"http://schemas.microsoft.com/expression/blend/2008\"",
                 "xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\"",
+                "xmlns:i=\"http://schemas.microsoft.com/xaml/behaviors\"",
                 "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"",
                 "xmlns:controls=\"clr-namespace:ModernWpf.Gallery.Controls\"",
                 "mc:Ignorable=\"d\"",
                 "Foreground=\"{DynamicResource TextFillColorPrimaryBrush}\"",
                 "d:DesignHeight=\"450\" d:DesignWidth=\"800\"",
                 "d:Background=\"White\"",
-                "Loaded=\"OnLoaded\"",
                 "Title=\"IconsPage\">");
+            AssertContainsInOrder(
+                iconographyXaml,
+                "<i:Interaction.Triggers>",
+                "<i:EventTrigger EventName=\"Loaded\">",
+                "<i:InvokeCommandAction Command=\"{Binding ViewModel.LoadDataCommand}\" />",
+                "</i:EventTrigger>",
+                "</i:Interaction.Triggers>",
+                "<Page.Resources>");
             Assert.IsFalse(
                 iconographyXaml.Contains("xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance\"", StringComparison.Ordinal),
                 "IconographyPage.xaml should keep the current official root namespace shape, which has no local namespace declaration.");

@@ -38,8 +38,18 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void IconographyLoadedHandlerUsesWpfGalleryLoadDataCommandPath()
+        public void IconographyLoadedBehaviorUsesWpfGalleryLoadDataCommandPath()
         {
+            var pageXaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "DesignGuidance",
+                "IconographyPage.xaml");
+
+            StringAssert.Contains(pageXaml, "xmlns:i=\"http://schemas.microsoft.com/xaml/behaviors\"");
+            StringAssert.Contains(pageXaml, "<i:InvokeCommandAction Command=\"{Binding ViewModel.LoadDataCommand}\" />");
+
             var pageSource = ReadRepoFile(
                 "ModernWpf.Gallery",
                 "Pages",
@@ -47,10 +57,9 @@ namespace ModernWpf.Gallery.Tests
                 "DesignGuidance",
                 "IconographyPage.xaml.cs");
 
-            StringAssert.Contains(pageSource, "ViewModel.LoadDataCommand.Execute(null);");
             Assert.IsFalse(
-                pageSource.Contains("ViewModel.LoadData();"),
-                "The copied Iconography page should preserve the official WPF Gallery load-command path; the retained Loaded handler only adapts the XAML behavior trigger.");
+                pageSource.Contains("OnLoaded"),
+                "The copied Iconography page should use the official WPF Gallery behavior trigger instead of a local Loaded handler.");
 
             var viewModelSource = ReadRepoFile(
                 "ModernWpf.Gallery",

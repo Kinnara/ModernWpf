@@ -2501,8 +2501,7 @@ namespace ModernWpf.Gallery.Tests
                 AssertNoContentPagePaneHook(page);
 
                 var directPage = (IconographyPage)page.DirectPageContent;
-                directPage.RaiseEvent(new RoutedEventArgs(FrameworkElement.LoadedEvent, directPage));
-                WpfTestHost.DoEvents();
+                RenderPage(directPage);
 
                 var body = (Grid)directPage.Content;
                 Assert.AreEqual(new Thickness(0, 0, 0, 10), body.Margin);
