@@ -170,17 +170,80 @@ public class ScrollBarVisualStateTests
         {
             foreach (var themeName in new[] { "Light", "Dark" })
             {
+                AssertThemeResourceValue(themeName, "ScrollBarTrackBorderThemeThickness", 0.0);
+                AssertThemeResourceReference(themeName, "ScrollBarBackground", "SubtleFillColorTransparentBrush");
+                AssertThemeResourceReference(themeName, "ScrollBarBackgroundPointerOver", "SubtleFillColorTransparentBrush");
+                AssertThemeResourceReference(themeName, "ScrollBarBackgroundDisabled", "SubtleFillColorTransparentBrush");
+                AssertThemeResourceReference(themeName, "ScrollBarForeground", "SubtleFillColorTransparentBrush");
+                AssertThemeResourceReference(themeName, "ScrollBarBorderBrush", "SubtleFillColorTransparentBrush");
+                AssertThemeResourceReference(themeName, "ScrollBarBorderBrushPointerOver", "SubtleFillColorTransparentBrush");
+                AssertThemeResourceReference(themeName, "ScrollBarBorderBrushDisabled", "SubtleFillColorTransparentBrush");
                 AssertThemeResourceReference(themeName, "ScrollBarButtonBackground", "SubtleFillColorTransparentBrush");
                 AssertThemeResourceReference(themeName, "ScrollBarButtonBackgroundPointerOver", "SubtleFillColorSecondaryBrush");
+                AssertThemeResourceReference(themeName, "ScrollBarButtonBackgroundPressed", "ControlStrongFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "ScrollBarButtonBackgroundDisabled", "SubtleFillColorTransparentBrush");
+                AssertThemeResourceReference(themeName, "ScrollBarButtonBorderBrush", "SubtleFillColorTransparentBrush");
+                AssertThemeResourceReference(themeName, "ScrollBarButtonBorderBrushPointerOver", "SubtleFillColorTransparentBrush");
+                AssertThemeResourceReference(themeName, "ScrollBarButtonBorderBrushPressed", "SubtleFillColorTransparentBrush");
+                AssertThemeResourceReference(themeName, "ScrollBarButtonBorderBrushDisabled", "SubtleFillColorTransparentBrush");
+                AssertThemeResourceReference(themeName, "ScrollBarButtonArrowForeground", "ControlStrongFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "ScrollBarButtonArrowForegroundPointerOver", "TextFillColorSecondaryBrush");
+                AssertThemeResourceReference(themeName, "ScrollBarButtonArrowForegroundPressed", "TextFillColorSecondaryBrush");
+                AssertThemeResourceReference(themeName, "ScrollBarButtonArrowForegroundDisabled", "ControlStrongFillColorDisabledBrush");
                 AssertThemeResourceReference(themeName, "ScrollBarThumbFill", "ControlStrongFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "ScrollBarThumbFillPointerOver", "ControlStrongFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "ScrollBarThumbFillPressed", "ControlStrongFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "ScrollBarThumbFillDisabled", "ControlStrongFillColorDisabledBrush");
+                AssertThemeResourceReference(themeName, "ScrollBarThumbBorderBrush", "ControlFillColorTransparentBrush");
                 AssertThemeResourceReference(themeName, "ScrollBarTrackFill", "AcrylicInAppFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "ScrollBarTrackFillPointerOver", "AcrylicInAppFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "ScrollBarTrackFillDisabled", "AcrylicInAppFillColorDefaultBrush");
                 AssertThemeResourceReference(themeName, "ScrollBarTrackStroke", "AcrylicInAppFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "ScrollBarTrackStrokePointerOver", "AcrylicInAppFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "ScrollBarTrackStrokeDisabled", "AcrylicInAppFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "ScrollBarThumbBackground", "ControlStrongFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "ScrollBarPanningThumbBackground", "ControlStrongFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "ScrollBarPanningThumbBackgroundDisabled", "ControlStrongFillColorDisabledBrush");
+                AssertThemeResourceReference(themeName, "ScrollBarThumbBackgroundColor", "ControlAAFillColorDefault");
+                AssertThemeResourceReference(themeName, "ScrollBarPanningThumbBackgroundColor", "ControlAAFillColorDefault");
+                AssertThemeResourceReference(themeName, "ScrollViewerScrollBarSeparatorBackground", "ControlFillColorTransparentBrush");
             }
 
+            AssertThemeResourceValue("HighContrast", "ScrollBarTrackBorderThemeThickness", 1.0);
+            AssertThemeResourceReference("HighContrast", "ScrollBarBackground", "SystemControlTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "ScrollBarBackgroundPointerOver", "SystemControlTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "ScrollBarBackgroundDisabled", "SystemControlTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "ScrollBarForeground", "SystemControlTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "ScrollBarBorderBrush", "SystemControlTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "ScrollBarBorderBrushPointerOver", "SystemControlTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "ScrollBarBorderBrushDisabled", "SystemControlTransparentBrush");
             AssertThemeResourceReference("HighContrast", "ScrollBarButtonBackground", "SystemControlTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "ScrollBarButtonBackgroundPointerOver", "SystemControlBackgroundListLowBrush");
+            AssertThemeResourceReference("HighContrast", "ScrollBarButtonBackgroundPressed", "SystemControlBackgroundBaseMediumBrush");
+            AssertThemeResourceReference("HighContrast", "ScrollBarButtonBackgroundDisabled", "SystemControlTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "ScrollBarButtonBorderBrush", "SystemControlTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "ScrollBarButtonBorderBrushPointerOver", "SystemControlTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "ScrollBarButtonBorderBrushPressed", "SystemControlTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "ScrollBarButtonBorderBrushDisabled", "SystemControlTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "ScrollBarButtonArrowForeground", "SystemControlForegroundBaseHighBrush");
+            AssertThemeResourceReference("HighContrast", "ScrollBarButtonArrowForegroundPointerOver", "SystemControlHighlightAltBaseHighBrush");
+            AssertThemeResourceReference("HighContrast", "ScrollBarButtonArrowForegroundPressed", "SystemControlHighlightAltAltHighBrush");
+            AssertThemeResourceReference("HighContrast", "ScrollBarButtonArrowForegroundDisabled", "SystemControlDisabledBaseHighBrush");
             AssertThemeResourceReference("HighContrast", "ScrollBarThumbFill", "SystemControlForegroundChromeDisabledLowBrush");
+            AssertThemeResourceReference("HighContrast", "ScrollBarThumbFillPointerOver", "SystemControlHighlightBaseMediumLowBrush");
+            AssertThemeResourceReference("HighContrast", "ScrollBarThumbFillPressed", "SystemControlHighlightBaseMediumBrush");
+            AssertThemeResourceReference("HighContrast", "ScrollBarThumbFillDisabled", "SystemControlDisabledBaseHighBrush");
+            AssertThemeResourceReference("HighContrast", "ScrollBarThumbBorderBrush", "SystemControlTransparentBrush");
             AssertThemeResourceReference("HighContrast", "ScrollBarTrackFill", "SystemControlPageBackgroundChromeLowBrush");
+            AssertThemeResourceReference("HighContrast", "ScrollBarTrackFillPointerOver", "SystemControlPageBackgroundChromeLowBrush");
+            AssertThemeResourceReference("HighContrast", "ScrollBarTrackFillDisabled", "SystemControlDisabledTransparentBrush");
             AssertThemeResourceReference("HighContrast", "ScrollBarTrackStroke", "SystemControlForegroundTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "ScrollBarTrackStrokePointerOver", "SystemControlForegroundTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "ScrollBarTrackStrokeDisabled", "SystemControlDisabledTransparentBrush");
+            AssertThemeResourceValue("HighContrast", "ScrollBarThumbBackgroundColor", SystemColors.ControlTextColor);
+            AssertThemeResourceValue("HighContrast", "ScrollBarPanningThumbBackgroundColor", SystemColors.ControlTextColor);
+            AssertThemeResourceReference("HighContrast", "ScrollBarPanningThumbBackgroundDisabled", "SystemControlDisabledChromeHighBrush");
+            AssertThemeResourceReference("HighContrast", "ScrollViewerScrollBarSeparatorBackground", "SystemControlTransparentBrush");
         });
     }
 
@@ -236,6 +299,12 @@ public class ScrollBarVisualStateTests
         var theme = ThemeResources.Current.GetThemeDictionary(themeName);
         Assert.IsTrue(theme.Contains(expectedResourceKey), $"Theme is missing {expectedResourceKey}.");
         Assert.AreSame(theme[expectedResourceKey], theme[key], key);
+    }
+
+    private static void AssertThemeResourceValue<T>(string themeName, string key, T expectedValue)
+    {
+        var theme = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.AreEqual(expectedValue, theme[key], key);
     }
 
     private static string FindRepoRoot()
