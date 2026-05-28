@@ -1226,6 +1226,45 @@ public class CommandBarApiTests
     }
 
     [TestMethod]
+    public void ThemeResourcesUseWinUI2CommandBarHighContrastTokens()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            foreach (var themeName in new[] { "Light", "Dark" })
+            {
+                AssertThemeResourceValue(themeName, "CommandBarOverflowMinWidth", 160d);
+                AssertThemeResourceValue(themeName, "CommandBarOverflowTouchMinWidth", 240d);
+                AssertThemeResourceValue(themeName, "CommandBarOverflowMaxWidth", 480d);
+                AssertThemeResourceValue(themeName, "CommandBarOverflowMaxHeight", 198d);
+                AssertThemeResourceReference(themeName, "CommandBarBackground", "ControlFillColorTransparentBrush");
+                AssertThemeResourceReference(themeName, "CommandBarBackgroundOpen", "AcrylicInAppFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "CommandBarBorderBrushOpen", "CardStrokeColorDefaultSolidBrush");
+                AssertThemeResourceReference(themeName, "CommandBarForeground", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "CommandBarHighContrastBorder", "ControlFillColorTransparentBrush");
+                AssertThemeResourceReference(themeName, "CommandBarEllipsisIconForegroundDisabled", "TextFillColorDisabledBrush");
+                AssertThemeResourceReference(themeName, "CommandBarOverflowPresenterBackground", "AcrylicBackgroundFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "CommandBarOverflowPresenterBorderBrush", "SystemControlTransientBorderBrush");
+                AssertThemeResourceReference(themeName, "CommandBarLightDismissOverlayBackground", "SystemControlPageBackgroundMediumAltMediumBrush");
+                AssertThemeResourceValue(themeName, "CommandBarBorderThicknessOpen", new Thickness(1));
+            }
+
+            AssertThemeResourceReference("HighContrast", "CommandBarBackground", "SystemControlBackgroundChromeMediumBrush");
+            AssertThemeResourceReference("HighContrast", "CommandBarBackgroundOpen", "SystemControlBackgroundChromeMediumBrush");
+            AssertThemeResourceReference("HighContrast", "CommandBarBorderBrushOpen", "SystemControlForegroundBaseHighBrush");
+            AssertThemeResourceReference("HighContrast", "CommandBarForeground", "SystemControlForegroundBaseHighBrush");
+            AssertThemeResourceReference("HighContrast", "CommandBarHighContrastBorder", "SystemControlForegroundTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "CommandBarEllipsisIconForegroundDisabled", "SystemControlDisabledBaseMediumLowBrush");
+            AssertThemeResourceReference("HighContrast", "CommandBarOverflowPresenterBackground", "SystemControlBackgroundChromeMediumLowBrush");
+            AssertThemeResourceReference("HighContrast", "CommandBarOverflowPresenterBorderBrush", "SystemControlTransientBorderBrush");
+            AssertThemeResourceReference("HighContrast", "CommandBarLightDismissOverlayBackground", "SystemControlPageBackgroundMediumAltMediumBrush");
+            AssertThemeResourceValue("HighContrast", "CommandBarBorderThicknessOpen", new Thickness(0));
+            AssertThemeResourceValue("HighContrast", "CommandBarOverflowPresenterBorderThickness", new Thickness(1));
+        });
+    }
+
+    [TestMethod]
     public void AppBarToggleButtonTemplateUsesWinUIInnerChrome()
     {
         WpfTestHost.Run(() =>
@@ -1590,6 +1629,21 @@ public class CommandBarApiTests
             double.IsNaN(actualDouble) &&
             double.IsNaN(expectedDouble)) ||
             Equals(actual, expected);
+    }
+
+    private static void AssertThemeResourceReference(string themeName, object resourceKey, object expectedResourceKey)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.IsTrue(themeDictionary.Contains(expectedResourceKey), $"{themeName} is missing {expectedResourceKey}.");
+        Assert.AreSame(themeDictionary[expectedResourceKey], themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
+    }
+
+    private static void AssertThemeResourceValue<T>(string themeName, object resourceKey, T expectedValue)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.AreEqual(expectedValue, themeDictionary[resourceKey]);
     }
 
     private static void AssertStateSetter(
