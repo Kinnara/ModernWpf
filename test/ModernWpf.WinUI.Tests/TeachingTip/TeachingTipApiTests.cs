@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Windows;
@@ -8,6 +9,7 @@ using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -619,6 +621,71 @@ public class TeachingTipApiTests
     }
 
     [TestMethod]
+    public void TeachingTipAlternateCloseButtonUsesTeachingTipStateResources()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var teachingTip = new TeachingTipControl
+            {
+                IsOpen = true,
+                Title = "Title",
+                Subtitle = "Subtitle",
+                Content = "Details"
+            };
+            using var host = new TestWindowHost(teachingTip, width: 420, height: 220);
+            var alternateCloseButton = FindNamedDescendant<Button>(teachingTip, "AlternateCloseButton");
+
+            var style = alternateCloseButton.Style;
+            Assert.IsNotNull(style);
+            Assert.AreEqual(typeof(Button), style.TargetType);
+            AssertDynamicResourceSetter(style, Control.FocusVisualStyleProperty, SystemParameters.FocusVisualStyleKey);
+            AssertDynamicResourceSetter(style, Control.BackgroundProperty, "TeachingTipAlternateCloseButtonBackground");
+            AssertDynamicResourceSetter(style, Control.ForegroundProperty, "TeachingTipAlternateCloseButtonForeground");
+            AssertDynamicResourceSetter(style, Control.BorderBrushProperty, "TeachingTipAlternateCloseButtonBorderBrush");
+            AssertDynamicResourceSetter(style, Control.BorderThicknessProperty, "TeachingTipAlternateCloseButtonBorderThickness");
+            AssertDynamicResourceSetter(style, Control.FontFamilyProperty, "SymbolThemeFontFamily");
+            AssertDynamicResourceSetter(style, FocusVisualHelper.UseSystemFocusVisualsProperty, "UseSystemFocusVisuals");
+            AssertDynamicResourceSetter(style, System.Windows.Controls.Border.CornerRadiusProperty, "ControlCornerRadius");
+            AssertTemplateSetter(style, typeof(Button));
+            AssertAlternateCloseTriggerShape(alternateCloseButton.Template);
+            Assert.AreSame(alternateCloseButton.TryFindResource("TeachingTipAlternateCloseButtonBackground"), alternateCloseButton.Background);
+            Assert.AreSame(alternateCloseButton.TryFindResource("TeachingTipAlternateCloseButtonForeground"), alternateCloseButton.Foreground);
+            Assert.AreSame(alternateCloseButton.TryFindResource("TeachingTipAlternateCloseButtonBorderBrush"), alternateCloseButton.BorderBrush);
+            Assert.AreEqual(alternateCloseButton.TryFindResource("TeachingTipAlternateCloseButtonBorderThickness"), alternateCloseButton.BorderThickness);
+            Assert.AreEqual(40, alternateCloseButton.Width);
+            Assert.AreEqual(40, alternateCloseButton.Height);
+            Assert.AreEqual(16, alternateCloseButton.FontSize);
+            Assert.AreEqual(new Thickness(4), alternateCloseButton.Padding);
+            Assert.AreEqual("\uE711", alternateCloseButton.Content);
+            Assert.AreEqual(alternateCloseButton.TryFindResource("UseSystemFocusVisuals"), FocusVisualHelper.GetUseSystemFocusVisuals(alternateCloseButton));
+            Assert.AreEqual(new Thickness(-3), FocusVisualHelper.GetFocusVisualMargin(alternateCloseButton));
+            Assert.AreEqual(alternateCloseButton.TryFindResource("ControlCornerRadius"), alternateCloseButton.GetValue(System.Windows.Controls.Border.CornerRadiusProperty));
+            Assert.IsTrue(alternateCloseButton.SnapsToDevicePixels);
+            Assert.IsTrue(alternateCloseButton.OverridesDefaultStyle);
+            Assert.IsFalse(Stylus.GetIsPressAndHoldEnabled(alternateCloseButton));
+
+            var contentBorder = GetTemplateChild<Border>(alternateCloseButton, "ContentBorder");
+            var contentPresenter = GetTemplateChild<ContentPresenter>(alternateCloseButton, "ContentPresenter");
+
+            Assert.AreSame(alternateCloseButton.Background, contentBorder.Background);
+            Assert.AreSame(alternateCloseButton.BorderBrush, contentBorder.BorderBrush);
+            Assert.AreEqual(alternateCloseButton.BorderThickness, contentBorder.BorderThickness);
+            Assert.AreEqual(alternateCloseButton.GetValue(System.Windows.Controls.Border.CornerRadiusProperty), contentBorder.CornerRadius);
+            Assert.AreEqual(alternateCloseButton.Content, contentPresenter.Content);
+            Assert.AreSame(alternateCloseButton.Foreground, TextElement.GetForeground(contentPresenter));
+
+            alternateCloseButton.IsEnabled = false;
+            host.UpdateLayout();
+
+            Assert.AreSame(contentBorder.TryFindResource("TeachingTipAlternateCloseButtonBackgroundDisabled"), contentBorder.Background);
+            Assert.AreSame(contentBorder.TryFindResource("TeachingTipAlternateCloseButtonBorderBrushDisabled"), contentBorder.BorderBrush);
+            Assert.AreSame(contentPresenter.TryFindResource("TeachingTipAlternateCloseButtonForegroundDisabled"), TextElement.GetForeground(contentPresenter));
+        });
+    }
+
+    [TestMethod]
     public void TeachingTipExpandAnimationStartsAtWinUIMinimumScale()
     {
         WpfTestHost.Run(() =>
@@ -917,9 +984,16 @@ public class TeachingTipApiTests
             AssertThemeResourceReference("Light", "TeachingTipSubtitleForegroundBrush", "TextFillColorPrimaryBrush");
             AssertThemeResourceReference("Light", "TeachingTipAlternateCloseButtonBackground", "SubtleFillColorTransparentBrush");
             AssertThemeResourceReference("Light", "TeachingTipAlternateCloseButtonBackgroundPointerOver", "SubtleFillColorSecondaryBrush");
+            AssertThemeResourceReference("Light", "TeachingTipAlternateCloseButtonBackgroundPressed", "SubtleFillColorTertiaryBrush");
+            AssertThemeResourceReference("Light", "TeachingTipAlternateCloseButtonBackgroundDisabled", "SubtleFillColorTransparentBrush");
             AssertThemeResourceReference("Light", "TeachingTipAlternateCloseButtonForeground", "TextFillColorPrimaryBrush");
+            AssertThemeResourceReference("Light", "TeachingTipAlternateCloseButtonForegroundPointerOver", "TextFillColorPrimaryBrush");
             AssertThemeResourceReference("Light", "TeachingTipAlternateCloseButtonForegroundPressed", "TextFillColorSecondaryBrush");
+            AssertThemeResourceReference("Light", "TeachingTipAlternateCloseButtonForegroundDisabled", "TextFillColorDisabledBrush");
             AssertThemeResourceReference("Light", "TeachingTipAlternateCloseButtonBorderBrush", "SubtleFillColorTransparentBrush");
+            AssertThemeResourceReference("Light", "TeachingTipAlternateCloseButtonBorderBrushPointerOver", "SubtleFillColorSecondaryBrush");
+            AssertThemeResourceReference("Light", "TeachingTipAlternateCloseButtonBorderBrushPressed", "SubtleFillColorTertiaryBrush");
+            AssertThemeResourceReference("Light", "TeachingTipAlternateCloseButtonBorderBrushDisabled", "SubtleFillColorTransparentBrush");
             AssertThemeBrushColor("Light", "TeachingTipTopHighlightBrush", Color.FromArgb(0x99, 0xFF, 0xFF, 0xFF));
 
             AssertThemeResourceReference("Dark", "TeachingTipBorderBrush", "SurfaceStrokeColorDefaultBrush");
@@ -930,9 +1004,16 @@ public class TeachingTipApiTests
             AssertThemeResourceReference("Dark", "TeachingTipSubtitleForegroundBrush", "TextFillColorPrimaryBrush");
             AssertThemeResourceReference("Dark", "TeachingTipAlternateCloseButtonBackground", "SubtleFillColorTransparentBrush");
             AssertThemeResourceReference("Dark", "TeachingTipAlternateCloseButtonBackgroundPointerOver", "SubtleFillColorSecondaryBrush");
+            AssertThemeResourceReference("Dark", "TeachingTipAlternateCloseButtonBackgroundPressed", "SubtleFillColorTertiaryBrush");
+            AssertThemeResourceReference("Dark", "TeachingTipAlternateCloseButtonBackgroundDisabled", "SubtleFillColorTransparentBrush");
             AssertThemeResourceReference("Dark", "TeachingTipAlternateCloseButtonForeground", "TextFillColorPrimaryBrush");
+            AssertThemeResourceReference("Dark", "TeachingTipAlternateCloseButtonForegroundPointerOver", "TextFillColorPrimaryBrush");
             AssertThemeResourceReference("Dark", "TeachingTipAlternateCloseButtonForegroundPressed", "TextFillColorSecondaryBrush");
+            AssertThemeResourceReference("Dark", "TeachingTipAlternateCloseButtonForegroundDisabled", "TextFillColorDisabledBrush");
             AssertThemeResourceReference("Dark", "TeachingTipAlternateCloseButtonBorderBrush", "SubtleFillColorTransparentBrush");
+            AssertThemeResourceReference("Dark", "TeachingTipAlternateCloseButtonBorderBrushPointerOver", "SubtleFillColorSecondaryBrush");
+            AssertThemeResourceReference("Dark", "TeachingTipAlternateCloseButtonBorderBrushPressed", "SubtleFillColorTertiaryBrush");
+            AssertThemeResourceReference("Dark", "TeachingTipAlternateCloseButtonBorderBrushDisabled", "SubtleFillColorTransparentBrush");
             AssertThemeBrushColor("Dark", "TeachingTipTopHighlightBrush", Color.FromArgb(0x0D, 0xFF, 0xFF, 0xFF));
 
             AssertThemeResourceReference("HighContrast", "TeachingTipBorderBrush", "SystemColorWindowTextColorBrush");
@@ -943,10 +1024,16 @@ public class TeachingTipApiTests
             AssertThemeResourceReference("HighContrast", "TeachingTipSubtitleForegroundBrush", "SystemColorWindowTextColorBrush");
             AssertThemeResourceReference("HighContrast", "TeachingTipAlternateCloseButtonBackground", "SystemColorButtonFaceColorBrush");
             AssertThemeResourceReference("HighContrast", "TeachingTipAlternateCloseButtonBackgroundPointerOver", "SystemColorHighlightTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "TeachingTipAlternateCloseButtonBackgroundPressed", "SystemColorHighlightTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "TeachingTipAlternateCloseButtonBackgroundDisabled", "SystemColorButtonFaceColorBrush");
             AssertThemeResourceReference("HighContrast", "TeachingTipAlternateCloseButtonForeground", "SystemColorButtonTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "TeachingTipAlternateCloseButtonForegroundPointerOver", "SystemColorHighlightColorBrush");
             AssertThemeResourceReference("HighContrast", "TeachingTipAlternateCloseButtonForegroundPressed", "SystemColorHighlightColorBrush");
+            AssertThemeResourceReference("HighContrast", "TeachingTipAlternateCloseButtonForegroundDisabled", "SystemColorGrayTextColorBrush");
             AssertThemeResourceReference("HighContrast", "TeachingTipAlternateCloseButtonBorderBrush", "SystemColorButtonFaceColorBrush");
+            AssertThemeResourceReference("HighContrast", "TeachingTipAlternateCloseButtonBorderBrushPointerOver", "SystemColorHighlightColorBrush");
             AssertThemeResourceReference("HighContrast", "TeachingTipAlternateCloseButtonBorderBrushPressed", "SystemColorHighlightTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "TeachingTipAlternateCloseButtonBorderBrushDisabled", "SystemColorButtonFaceColorBrush");
             AssertThemeBrushColor("HighContrast", "TeachingTipTopHighlightBrush", Colors.Transparent);
         });
     }
@@ -973,6 +1060,89 @@ public class TeachingTipApiTests
         Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
         Assert.IsTrue(themeDictionary.Contains(expectedResourceKey), $"{themeName} is missing {expectedResourceKey}.");
         Assert.AreSame(themeDictionary[expectedResourceKey], themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
+    }
+
+    private static void AssertDynamicResourceSetter(Style style, DependencyProperty property, object expectedResourceKey)
+    {
+        var setter = style.Setters.OfType<Setter>().SingleOrDefault(item => item.Property == property);
+        Assert.IsNotNull(setter, $"Expected setter for {property.Name}.");
+        Assert.IsInstanceOfType(setter!.Value, typeof(DynamicResourceExtension));
+
+        var dynamicResource = (DynamicResourceExtension)setter.Value;
+        Assert.AreEqual(expectedResourceKey, dynamicResource.ResourceKey);
+    }
+
+    private static void AssertTemplateSetter(Style style, Type expectedTargetType)
+    {
+        var setter = style.Setters.OfType<Setter>().SingleOrDefault(item => item.Property == Control.TemplateProperty);
+        Assert.IsNotNull(setter, "Expected a direct Template setter.");
+        Assert.IsInstanceOfType(setter!.Value, typeof(ControlTemplate));
+
+        var template = (ControlTemplate)setter.Value;
+        Assert.AreEqual(expectedTargetType, template.TargetType);
+    }
+
+    private static void AssertAlternateCloseTriggerShape(ControlTemplate template)
+    {
+        var triggers = template.Triggers.OfType<Trigger>().ToArray();
+        Assert.AreEqual(3, triggers.Length);
+
+        AssertTrigger(
+            triggers,
+            "IsMouseOver",
+            true,
+            "TeachingTipAlternateCloseButtonBackgroundPointerOver",
+            "TeachingTipAlternateCloseButtonBorderBrushPointerOver",
+            "TeachingTipAlternateCloseButtonForegroundPointerOver");
+        AssertTrigger(
+            triggers,
+            "IsEnabled",
+            false,
+            "TeachingTipAlternateCloseButtonBackgroundDisabled",
+            "TeachingTipAlternateCloseButtonBorderBrushDisabled",
+            "TeachingTipAlternateCloseButtonForegroundDisabled");
+        AssertTrigger(
+            triggers,
+            "IsPressed",
+            true,
+            "TeachingTipAlternateCloseButtonBackgroundPressed",
+            "TeachingTipAlternateCloseButtonBorderBrushPressed",
+            "TeachingTipAlternateCloseButtonForegroundPressed");
+    }
+
+    private static void AssertTrigger(
+        Trigger[] triggers,
+        string propertyName,
+        object value,
+        string backgroundKey,
+        string borderBrushKey,
+        string foregroundKey)
+    {
+        var trigger = triggers.Single(item => item.Property.Name == propertyName && Equals(item.Value, value));
+        var setters = trigger.Setters.OfType<Setter>().ToArray();
+
+        Assert.AreEqual(3, setters.Length);
+        AssertTriggerSetter(setters, "ContentBorder", "Background", backgroundKey);
+        AssertTriggerSetter(setters, "ContentBorder", "BorderBrush", borderBrushKey);
+        AssertTriggerSetter(setters, "ContentPresenter", "Foreground", foregroundKey);
+    }
+
+    private static void AssertTriggerSetter(Setter[] setters, string targetName, string propertyName, string resourceKey)
+    {
+        var setter = setters.Single(item =>
+            item.TargetName == targetName &&
+            item.Property.Name == propertyName);
+
+        Assert.IsInstanceOfType(setter.Value, typeof(DynamicResourceExtension));
+        var resource = (DynamicResourceExtension)setter.Value;
+        Assert.AreEqual(resourceKey, resource.ResourceKey);
+    }
+
+    private static T GetTemplateChild<T>(Control control, string name)
+        where T : DependencyObject
+    {
+        return control.Template.FindName(name, control) as T
+            ?? throw new AssertFailedException($"Expected {control.GetType().Name} template child '{name}' to be a {typeof(T).Name}.");
     }
 
     private static VisualStateEx AssertStateSetter(FrameworkElement stateGroupsRoot, string groupName, string stateName, params string[] expectedTargets)
