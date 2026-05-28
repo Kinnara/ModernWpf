@@ -1248,6 +1248,33 @@ public class CommandBarApiTests
                 AssertThemeResourceReference(themeName, "CommandBarOverflowPresenterBorderBrush", "SystemControlTransientBorderBrush");
                 AssertThemeResourceReference(themeName, "CommandBarLightDismissOverlayBackground", "SystemControlPageBackgroundMediumAltMediumBrush");
                 AssertThemeResourceValue(themeName, "CommandBarBorderThicknessOpen", new Thickness(1));
+
+                AssertCommonAppBarMetrics(themeName);
+                AssertThemeResourceReferences(themeName,
+                    ("AppBarButtonBackground", "SubtleFillColorTransparentBrush"),
+                    ("AppBarButtonBackgroundPointerOver", "SubtleFillColorSecondaryBrush"),
+                    ("AppBarButtonBackgroundPressed", "SubtleFillColorTertiaryBrush"),
+                    ("AppBarButtonBackgroundDisabled", "SubtleFillColorDisabledBrush"),
+                    ("AppBarButtonForeground", "TextFillColorPrimaryBrush"),
+                    ("AppBarButtonForegroundPressed", "TextFillColorSecondaryBrush"),
+                    ("AppBarButtonBorderBrush", "ControlFillColorTransparentBrush"),
+                    ("AppBarButtonKeyboardAcceleratorTextForeground", "TextFillColorSecondaryBrush"),
+                    ("AppBarButtonKeyboardAcceleratorTextForegroundPressed", "TextFillColorTertiaryBrush"),
+                    ("AppBarButtonBackgroundSubMenuOpened", "SubtleFillColorSecondaryBrush"),
+                    ("AppBarButtonSubItemChevronForegroundDisabled", "TextFillColorDisabledBrush"),
+                    ("AppBarToggleButtonBackground", "SubtleFillColorTransparentBrush"),
+                    ("AppBarToggleButtonBackgroundChecked", "AccentFillColorDefaultBrush"),
+                    ("AppBarToggleButtonBackgroundCheckedPointerOver", "AccentFillColorSecondaryBrush"),
+                    ("AppBarToggleButtonBackgroundHighLightOverlayPointerOver", "SubtleFillColorSecondaryBrush"),
+                    ("AppBarToggleButtonForeground", "TextFillColorPrimaryBrush"),
+                    ("AppBarToggleButtonForegroundChecked", "TextOnAccentFillColorPrimaryBrush"),
+                    ("AppBarToggleButtonForegroundCheckedPressed", "TextOnAccentFillColorSecondaryBrush"),
+                    ("AppBarToggleButtonForegroundCheckedDisabled", "TextOnAccentAAFillColorDisabled"),
+                    ("AppBarToggleButtonBorderBrushChecked", "AccentControlElevationBorderBrush"),
+                    ("AppBarToggleButtonCheckGlyphForegroundChecked", "TextOnAccentFillColorPrimaryBrush"),
+                    ("AppBarToggleButtonOverflowLabelForegroundCheckedPointerOver", "TextFillColorPrimaryBrush"),
+                    ("AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedPressed", "TextFillColorTertiaryBrush"),
+                    ("AppBarSeparatorForeground", "DividerStrokeColorDefaultBrush"));
             }
 
             AssertThemeResourceReference("HighContrast", "CommandBarBackground", "SystemControlBackgroundChromeMediumBrush");
@@ -1261,6 +1288,85 @@ public class CommandBarApiTests
             AssertThemeResourceReference("HighContrast", "CommandBarLightDismissOverlayBackground", "SystemControlPageBackgroundMediumAltMediumBrush");
             AssertThemeResourceValue("HighContrast", "CommandBarBorderThicknessOpen", new Thickness(0));
             AssertThemeResourceValue("HighContrast", "CommandBarOverflowPresenterBorderThickness", new Thickness(1));
+            AssertCommonAppBarMetrics("HighContrast");
+            AssertThemeResourceReferences("HighContrast",
+                ("AppBarButtonBackground", "SystemControlTransparentBrush"),
+                ("AppBarButtonBackgroundPointerOver", "SystemControlHighlightListLowBrush"),
+                ("AppBarButtonBackgroundPressed", "SystemControlHighlightListMediumBrush"),
+                ("AppBarButtonBackgroundDisabled", "SystemControlTransparentBrush"),
+                ("AppBarButtonForeground", "SystemControlForegroundBaseHighBrush"),
+                ("AppBarButtonForegroundPointerOver", "SystemControlHighlightAltBaseHighBrush"),
+                ("AppBarButtonForegroundPressed", "SystemControlHighlightAltBaseHighBrush"),
+                ("AppBarButtonForegroundDisabled", "SystemControlDisabledBaseMediumLowBrush"),
+                ("AppBarButtonBorderBrush", "SystemControlForegroundTransparentBrush"),
+                ("AppBarButtonBorderBrushPointerOver", "SystemControlHighlightTransparentBrush"),
+                ("AppBarButtonBorderBrushPressed", "SystemControlHighlightTransparentBrush"),
+                ("AppBarButtonBorderBrushDisabled", "SystemControlDisabledTransparentBrush"),
+                ("AppBarButtonKeyboardAcceleratorTextForeground", "SystemControlForegroundBaseMediumBrush"),
+                ("AppBarButtonKeyboardAcceleratorTextForegroundPointerOver", "SystemControlHighlightAltBaseMediumBrush"),
+                ("AppBarButtonKeyboardAcceleratorTextForegroundPressed", "SystemControlHighlightAltBaseMediumBrush"),
+                ("AppBarButtonKeyboardAcceleratorTextForegroundDisabled", "SystemControlDisabledBaseMediumLowBrush"),
+                ("AppBarButtonBackgroundSubMenuOpened", "SystemControlHighlightListAccentLowBrush"),
+                ("AppBarButtonForegroundSubMenuOpened", "SystemControlHighlightAltBaseHighBrush"),
+                ("AppBarButtonKeyboardAcceleratorTextForegroundSubMenuOpened", "SystemControlHighlightAltBaseMediumBrush"),
+                ("AppBarButtonBorderBrushSubMenuOpened", "SystemControlTransparentBrush"),
+                ("AppBarButtonSubItemChevronForeground", "SystemControlForegroundBaseMediumHighBrush"),
+                ("AppBarButtonSubItemChevronForegroundPointerOver", "SystemControlHighlightAltBaseHighBrush"),
+                ("AppBarButtonSubItemChevronForegroundPressed", "SystemControlHighlightAltBaseHighBrush"),
+                ("AppBarButtonSubItemChevronForegroundSubMenuOpened", "SystemControlHighlightAltBaseHighBrush"),
+                ("AppBarButtonSubItemChevronForegroundDisabled", "SystemControlDisabledBaseMediumLowBrush"),
+                ("AppBarToggleButtonBackground", "SystemControlTransparentBrush"),
+                ("AppBarToggleButtonBackgroundPointerOver", "SubtleFillColorSecondaryBrush"),
+                ("AppBarToggleButtonBackgroundPressed", "SubtleFillColorTertiaryBrush"),
+                ("AppBarToggleButtonBackgroundDisabled", "SystemControlTransparentBrush"),
+                ("AppBarToggleButtonBackgroundChecked", "SystemControlHighlightListAccentLowBrush"),
+                ("AppBarToggleButtonBackgroundCheckedPointerOver", "SystemControlHighlightListAccentMediumBrush"),
+                ("AppBarToggleButtonBackgroundCheckedPressed", "SystemControlHighlightListAccentHighBrush"),
+                ("AppBarToggleButtonBackgroundCheckedDisabled", "SystemControlDisabledAccentBrush"),
+                ("AppBarToggleButtonBackgroundHighLightOverlay", "SystemControlTransparentBrush"),
+                ("AppBarToggleButtonBackgroundHighLightOverlayPointerOver", "SystemControlHighlightListLowBrush"),
+                ("AppBarToggleButtonBackgroundHighLightOverlayPressed", "SystemControlHighlightListMediumBrush"),
+                ("AppBarToggleButtonBackgroundHighLightOverlayCheckedPointerOver", "SystemControlHighlightListLowBrush"),
+                ("AppBarToggleButtonBackgroundHighLightOverlayCheckedPressed", "SystemControlHighlightListMediumBrush"),
+                ("AppBarToggleButtonForeground", "SystemControlForegroundBaseHighBrush"),
+                ("AppBarToggleButtonForegroundPointerOver", "SystemControlHighlightAltBaseHighBrush"),
+                ("AppBarToggleButtonForegroundPressed", "SystemControlHighlightAltBaseHighBrush"),
+                ("AppBarToggleButtonForegroundDisabled", "SystemControlDisabledBaseMediumLowBrush"),
+                ("AppBarToggleButtonForegroundChecked", "SystemControlHighlightAltBaseHighBrush"),
+                ("AppBarToggleButtonForegroundCheckedPointerOver", "SystemControlHighlightAltBaseHighBrush"),
+                ("AppBarToggleButtonForegroundCheckedPressed", "SystemControlHighlightAltBaseHighBrush"),
+                ("AppBarToggleButtonForegroundCheckedDisabled", "SystemControlBackgroundBaseMediumLowBrush"),
+                ("AppBarToggleButtonBorderBrush", "SystemControlForegroundTransparentBrush"),
+                ("AppBarToggleButtonBorderBrushPointerOver", "SystemControlHighlightTransparentBrush"),
+                ("AppBarToggleButtonBorderBrushPressed", "SystemControlHighlightTransparentBrush"),
+                ("AppBarToggleButtonBorderBrushDisabled", "SystemControlDisabledTransparentBrush"),
+                ("AppBarToggleButtonBorderBrushChecked", "SystemControlHighlightTransparentBrush"),
+                ("AppBarToggleButtonBorderBrushCheckedPointerOver", "SystemControlHighlightTransparentBrush"),
+                ("AppBarToggleButtonBorderBrushCheckedPressed", "SystemControlHighlightTransparentBrush"),
+                ("AppBarToggleButtonBorderBrushCheckedDisabled", "SystemControlHighlightTransparentBrush"),
+                ("AppBarToggleButtonCheckGlyphForeground", "SystemControlForegroundBaseHighBrush"),
+                ("AppBarToggleButtonCheckGlyphForegroundPointerOver", "SystemControlHighlightAltBaseHighBrush"),
+                ("AppBarToggleButtonCheckGlyphForegroundPressed", "SystemControlHighlightAltBaseHighBrush"),
+                ("AppBarToggleButtonCheckGlyphForegroundDisabled", "SystemControlDisabledBaseMediumLowBrush"),
+                ("AppBarToggleButtonCheckGlyphForegroundChecked", "SystemControlForegroundBaseHighBrush"),
+                ("AppBarToggleButtonCheckGlyphForegroundCheckedPointerOver", "SystemControlHighlightAltBaseHighBrush"),
+                ("AppBarToggleButtonCheckGlyphForegroundCheckedPressed", "SystemControlHighlightAltBaseHighBrush"),
+                ("AppBarToggleButtonCheckGlyphForegroundCheckedDisabled", "SystemControlDisabledBaseMediumLowBrush"),
+                ("AppBarToggleButtonOverflowLabelForegroundPointerOver", "SystemControlHighlightAltBaseHighBrush"),
+                ("AppBarToggleButtonOverflowLabelForegroundPressed", "SystemControlHighlightAltBaseHighBrush"),
+                ("AppBarToggleButtonOverflowLabelForegroundDisabled", "SystemControlDisabledBaseMediumLowBrush"),
+                ("AppBarToggleButtonOverflowLabelForegroundCheckedPointerOver", "SystemControlHighlightAltBaseHighBrush"),
+                ("AppBarToggleButtonOverflowLabelForegroundCheckedPressed", "SystemControlHighlightAltBaseHighBrush"),
+                ("AppBarToggleButtonOverflowLabelForegroundCheckedDisabled", "SystemControlDisabledBaseMediumLowBrush"),
+                ("AppBarToggleButtonKeyboardAcceleratorTextForeground", "SystemControlForegroundBaseMediumBrush"),
+                ("AppBarToggleButtonKeyboardAcceleratorTextForegroundPointerOver", "SystemControlHighlightAltBaseMediumBrush"),
+                ("AppBarToggleButtonKeyboardAcceleratorTextForegroundPressed", "SystemControlHighlightAltBaseMediumBrush"),
+                ("AppBarToggleButtonKeyboardAcceleratorTextForegroundDisabled", "SystemControlDisabledBaseMediumLowBrush"),
+                ("AppBarToggleButtonKeyboardAcceleratorTextForegroundChecked", "SystemControlForegroundBaseMediumBrush"),
+                ("AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedPointerOver", "SystemControlHighlightAltBaseMediumBrush"),
+                ("AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedPressed", "SystemControlHighlightAltBaseMediumBrush"),
+                ("AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedDisabled", "SystemControlDisabledBaseMediumLowBrush"),
+                ("AppBarSeparatorForeground", "SystemControlForegroundBaseMediumLowBrush"));
         });
     }
 
@@ -1639,11 +1745,28 @@ public class CommandBarApiTests
         Assert.AreSame(themeDictionary[expectedResourceKey], themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
     }
 
+    private static void AssertThemeResourceReferences(
+        string themeName,
+        params (object ResourceKey, object ExpectedResourceKey)[] expectedResources)
+    {
+        foreach (var expectedResource in expectedResources)
+        {
+            AssertThemeResourceReference(themeName, expectedResource.ResourceKey, expectedResource.ExpectedResourceKey);
+        }
+    }
+
     private static void AssertThemeResourceValue<T>(string themeName, object resourceKey, T expectedValue)
     {
         var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
         Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
         Assert.AreEqual(expectedValue, themeDictionary[resourceKey]);
+    }
+
+    private static void AssertCommonAppBarMetrics(string themeName)
+    {
+        AssertThemeResourceValue(themeName, "AppBarExpandButtonThemeHeight", 24d);
+        AssertThemeResourceValue(themeName, "AppBarExpandButtonThemeWidth", 48d);
+        AssertThemeResourceValue(themeName, "AppBarExpandButtonCircleDiameter", 3d);
     }
 
     private static void AssertStateSetter(
