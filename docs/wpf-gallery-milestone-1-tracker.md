@@ -682,6 +682,8 @@ Latest local verification for the current branch tip:
   - Passed for `net8.0-windows7.0`: 14 tests. `PipsPager` now also pins the direct dictionary style shape for navigation buttons, pip buttons, selected/normal pip styles, implicit pager style wiring, live style consumption, and representative pointer-over/pressed/disabled visual-state dynamic resource references while retaining Light/Dark/HighContrast coverage for every selection-indicator and navigation-button background, border, foreground, selected, pointer-over, pressed, and disabled theme-resource alias; existing PipsPager default, property, automation, range update, orientation, button, wrap, and visual-state coverage still passes. Existing warning/output remains `NETSDK1137` and the recurring `Failed to resolve WinRT.Runtime.dll` message.
 - `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~DropDownButtonApiTests" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0`: 7 tests. `DropDownButton` now also pins the direct dictionary style shape for button background/foreground/border/padding/font/focus/corner resources, live root/content/chevron resource consumption, and representative pointer-over/pressed/disabled visual-state dynamic resource references while retaining Light/Dark/HighContrast secondary chevron alias, content-presenter, animated-chevron, flyout, and automation coverage. Existing warning/output remains `NETSDK1137` and the recurring `Failed to resolve WinRT.Runtime.dll` message.
+- `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~PivotVisualStateTests" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0`: 6 tests. Retained Pivot styles now also pin the direct `TabControlPivotStyle` / `TabItemPivotStyle` resource setters, live title/header/selected-pipe/navigation-button resource consumption, and representative header/navigation pointer-over/pressed/disabled dynamic-resource visual-state setters while retaining title visibility, source visual-state shape, navigation-button state application, and Light/Dark/HighContrast theme-resource alias coverage. Existing warning/output remains `NETSDK1137` and the recurring `Failed to resolve WinRT.Runtime.dll` message.
 - `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~DropDownButtonApiTests|FullyQualifiedName~PivotVisualStateTests" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0`: 11 tests. `DropDownButton` now has focused Light/Dark/HighContrast coverage for its secondary chevron foreground aliases, and retained Pivot styles now have focused coverage for the WinUI2 Pivot size/spacing/font constants, HighContrast navigation-button border thickness, navigation-button state aliases, header/item background aliases, foreground aliases, and focus/selected pipe aliases; existing DropDownButton template/flyout/automation and Pivot visual-state coverage still passes. Existing warning/output remains `NETSDK1137`, generated WinRT warnings, existing ModernWpf/ModernWpf.Controls warnings, and the recurring `Failed to resolve WinRT.Runtime.dll` message.
 - `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~FlyoutPresenterApiTests" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
@@ -3296,7 +3298,7 @@ severity token overrides, TeachingTip body/alternate-close theme-resource
 aliases, CommandBar overflow/theme-resource aliases, MenuBar shell/item
 theme-resource aliases, AppBarButton/AppBarToggleButton/AppBarSeparator
 core theme-resource aliases, PipsPager selection/navigation theme-resource aliases and direct style/live resource consumption,
-DropDownButton chevron aliases and direct style/live resource consumption, Pivot style theme-resource aliases,
+DropDownButton chevron aliases and direct style/live resource consumption, Pivot style theme-resource aliases and direct style/live resource consumption,
 FlyoutPresenter chrome/theme-resource aliases,
 Date/time flyout and FlipView common style theme-resource aliases,
 calendar picker common theme-resource aliases,
@@ -3505,9 +3507,12 @@ required ModernWpf element `GallerySample_Pivot_Pivot` found, matching
 `721x400` primary crops, and primary deltas `7.11` / `9.08`. The visual harness
 uses the installed WinUI Gallery `Tab` named `EMAIL` as Pivot's reference
 primary target because the source page does not expose a stable AutomationId on
-the Pivot itself. Avoid reopening Pivot's source shape unless a new WinUI
-source, runtime, or crop regression appears; a later round can separately
-investigate remaining font/glyph antialiasing drift.
+the Pivot itself. Runtime coverage now also pins the direct Pivot style resource
+shape, live title/header/selected-pipe/navigation-button resource consumption,
+and representative header/navigation dynamic-resource visual-state setters.
+Avoid reopening Pivot's source shape unless a new WinUI source, runtime, or crop
+regression appears; a later round can separately investigate remaining
+font/glyph antialiasing drift.
 The generated ModernWpf SelectorBar extension page now uses the local official
 WinUI Gallery three-example structure from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\SelectorBarPage.xaml`

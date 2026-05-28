@@ -1,8 +1,10 @@
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf;
 using ModernWpf.Controls;
@@ -27,7 +29,7 @@ public class PivotVisualStateTests
             host.UpdateLayout();
 
             var selectedItem = (TabItem)pivot.Items[0];
-            var pivotRoot = FindTemplatePart<FrameworkElement>(pivot, "templateRoot");
+            var pivotRoot = FindTemplatePart<Grid>(pivot, "templateRoot");
             var headerRoot = FindTemplatePart<FrameworkElement>(selectedItem, "Border");
             var previousButton = FindTemplatePart<RepeatButton>(pivot, "PreviousButton");
             var nextButton = FindTemplatePart<RepeatButton>(pivot, "NextButton");
@@ -98,6 +100,116 @@ public class PivotVisualStateTests
                 "Root.Background",
                 "Root.BorderBrush",
                 "Arrow.Foreground");
+        });
+    }
+
+    [TestMethod]
+    public void PivotStylesUseWinUIResourceAliases()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var tabItemStyle = FindStyleResource("TabItemPivotStyle");
+            var tabControlStyle = FindStyleResource("TabControlPivotStyle");
+            var pivot = CreatePivot(8);
+            PivotHelper.SetTitle(pivot, "Inbox");
+
+            using var host = new TestWindowHost(pivot, width: 260, height: 180);
+            host.UpdateLayout();
+
+            AssertSetterValue(tabItemStyle, Control.OverridesDefaultStyleProperty, true);
+            AssertDynamicResourceSetter(tabItemStyle, Control.BackgroundProperty, "PivotHeaderItemBackgroundUnselected");
+            AssertDynamicResourceSetter(tabItemStyle, Control.PaddingProperty, "PivotHeaderItemMargin");
+            AssertSetterValue(tabItemStyle, FrameworkElement.HeightProperty, 48.0);
+            AssertSetterValue(tabItemStyle, Control.HorizontalContentAlignmentProperty, HorizontalAlignment.Stretch);
+            AssertSetterValue(tabItemStyle, Control.VerticalContentAlignmentProperty, VerticalAlignment.Stretch);
+            AssertDynamicResourceSetter(tabItemStyle, Control.FocusVisualStyleProperty, SystemParameters.FocusVisualStyleKey);
+            AssertDynamicResourceSetter(tabItemStyle, FocusVisualHelper.UseSystemFocusVisualsProperty, "UseSystemFocusVisuals");
+            AssertDynamicResourceSetter(tabItemStyle, Border.CornerRadiusProperty, "ControlCornerRadius");
+            AssertSetterValue(tabItemStyle, PivotHelper.HeaderItemVisualStateSettersEnabledProperty, true);
+
+            AssertSetterValue(tabControlStyle, Control.OverridesDefaultStyleProperty, true);
+            AssertDynamicResourceSetter(tabControlStyle, Control.BackgroundProperty, "PivotBackground");
+            AssertDynamicResourceSetter(tabControlStyle, Control.FontFamilyProperty, "ContentControlThemeFontFamily");
+            AssertDynamicResourceSetter(tabControlStyle, Control.FontSizeProperty, "ControlContentThemeFontSize");
+            AssertSetterValue(tabControlStyle, ItemsControl.ItemContainerStyleProperty, tabItemStyle);
+            AssertSetterValue(tabControlStyle, PivotHelper.NavigationButtonsVisualStateSettersEnabledProperty, true);
+
+            Assert.AreSame(pivot.TryFindResource("PivotBackground"), pivot.Background);
+            Assert.AreSame(pivot.TryFindResource("ContentControlThemeFontFamily"), pivot.FontFamily);
+            Assert.AreEqual(pivot.TryFindResource("ControlContentThemeFontSize"), pivot.FontSize);
+            Assert.AreSame(tabItemStyle, pivot.ItemContainerStyle);
+            Assert.IsTrue(PivotHelper.GetNavigationButtonsVisualStateSettersEnabled(pivot));
+
+            var selectedItem = (TabItem)pivot.Items[0];
+            var unselectedItem = (TabItem)pivot.Items[1];
+            var pivotRoot = FindTemplatePart<Grid>(pivot, "templateRoot");
+            var titleControl = FindTemplatePart<ContentControl>(pivot, "TitleContentControl");
+            var selectedHeaderRoot = FindTemplatePart<Border>(selectedItem, "Border");
+            var unselectedHeaderRoot = FindTemplatePart<Border>(unselectedItem, "Border");
+            var unselectedPresenter = FindTemplatePart<ContentPresenterEx>(unselectedItem, "ContentPresenter");
+            var selectedPipe = FindTemplatePart<Rectangle>(selectedItem, "SelectedPipe");
+            var previousButton = FindTemplatePart<RepeatButton>(pivot, "PreviousButton");
+            var nextButton = FindTemplatePart<RepeatButton>(pivot, "NextButton");
+            var previousRoot = FindTemplatePart<Border>(previousButton, "Root");
+            var nextRoot = FindTemplatePart<Border>(nextButton, "Root");
+            var previousArrow = FindTemplatePart<FontIconFallback>(previousButton, "Arrow");
+            var nextArrow = FindTemplatePart<FontIconFallback>(nextButton, "Arrow");
+
+            Assert.AreSame(pivot.Background, pivotRoot.Background);
+            Assert.AreEqual(pivot.TryFindResource("PivotPortraitThemePadding"), titleControl.Margin);
+            Assert.AreSame(pivot.TryFindResource("PivotTitleFontFamily"), titleControl.FontFamily);
+            Assert.AreEqual(pivot.TryFindResource("PivotTitleThemeFontWeight"), titleControl.FontWeight);
+            Assert.AreEqual(pivot.TryFindResource("PivotTitleFontSize"), titleControl.FontSize);
+
+            Assert.AreSame(selectedItem.TryFindResource("PivotHeaderItemBackgroundSelected"), selectedHeaderRoot.Background);
+            Assert.AreSame(unselectedItem.TryFindResource("PivotHeaderItemBackgroundUnselected"), unselectedHeaderRoot.Background);
+            Assert.AreEqual(unselectedItem.TryFindResource("PivotHeaderItemMargin"), unselectedItem.Padding);
+            Assert.AreEqual(48.0, unselectedItem.Height);
+            Assert.IsTrue(PivotHelper.GetHeaderItemVisualStateSettersEnabled(unselectedItem));
+            Assert.AreSame(unselectedItem.TryFindResource("PivotHeaderItemForegroundUnselected"), unselectedPresenter.Foreground);
+            Assert.AreEqual(unselectedItem.TryFindResource("PivotHeaderItemFontSize"), unselectedPresenter.FontSize);
+            Assert.AreSame(unselectedItem.TryFindResource("PivotHeaderItemFontFamily"), unselectedPresenter.FontFamily);
+            Assert.AreEqual(unselectedItem.TryFindResource("PivotHeaderItemThemeFontWeight"), unselectedPresenter.FontWeight);
+            Assert.AreSame(selectedItem.TryFindResource("PivotHeaderItemSelectedPipeFill"), selectedPipe.Fill);
+
+            Assert.AreSame(nextButton.TryFindResource("PivotNextButtonBackground"), nextRoot.Background);
+            Assert.AreEqual(nextButton.TryFindResource("PivotNavButtonBorderThemeThickness"), nextRoot.BorderThickness);
+            Assert.AreSame(nextButton.TryFindResource("PivotNextButtonBorderBrush"), nextRoot.BorderBrush);
+            Assert.AreSame(nextButton.TryFindResource("PivotNextButtonForeground"), nextArrow.Foreground);
+            Assert.AreSame(nextButton.TryFindResource("SymbolThemeFontFamily"), nextArrow.FontFamily);
+            Assert.AreSame(previousButton.TryFindResource("PivotPreviousButtonBackground"), previousRoot.Background);
+            Assert.AreEqual(previousButton.TryFindResource("PivotNavButtonBorderThemeThickness"), previousRoot.BorderThickness);
+            Assert.AreSame(previousButton.TryFindResource("PivotPreviousButtonBorderBrush"), previousRoot.BorderBrush);
+            Assert.AreSame(previousButton.TryFindResource("PivotPreviousButtonForeground"), previousArrow.Foreground);
+            Assert.AreEqual(pivot.TryFindResource("PivotNavButtonMargin"), nextButton.Margin);
+            Assert.AreEqual(20.0, nextButton.Width);
+            Assert.AreEqual(36.0, nextButton.Height);
+            Assert.IsFalse(nextButton.IsTabStop);
+            Assert.IsTrue(ButtonHelper.GetVisualStateSettersEnabled(nextButton));
+
+            AssertStateSetterDynamicResource(unselectedHeaderRoot, "SelectionStates", "Disabled", "ContentPresenter.Foreground", "PivotHeaderItemForegroundDisabled");
+            AssertStateSetterDynamicResource(unselectedHeaderRoot, "SelectionStates", "Disabled", "Border.Background", "PivotHeaderItemBackgroundDisabled");
+            AssertStateSetterDynamicResource(unselectedHeaderRoot, "SelectionStates", "UnselectedPointerOver", "ContentPresenter.Foreground", "PivotHeaderItemForegroundUnselectedPointerOver");
+            AssertStateSetterDynamicResource(unselectedHeaderRoot, "SelectionStates", "UnselectedPointerOver", "Border.Background", "PivotHeaderItemBackgroundUnselectedPointerOver");
+            AssertStateSetterDynamicResource(unselectedHeaderRoot, "SelectionStates", "Selected", "ContentPresenter.Foreground", "PivotHeaderItemForegroundSelected");
+            AssertStateSetterDynamicResource(unselectedHeaderRoot, "SelectionStates", "Selected", "Border.Background", "PivotHeaderItemBackgroundSelected");
+            AssertStateSetterDynamicResource(unselectedHeaderRoot, "SelectionStates", "SelectedPressed", "ContentPresenter.Foreground", "PivotHeaderItemForegroundSelectedPressed");
+            AssertStateSetterDynamicResource(unselectedHeaderRoot, "SelectionStates", "SelectedPressed", "Border.Background", "PivotHeaderItemBackgroundSelectedPressed");
+
+            AssertStateSetterDynamicResource(nextRoot, "CommonStates", "PointerOver", "Root.Background", "PivotNextButtonBackgroundPointerOver");
+            AssertStateSetterDynamicResource(nextRoot, "CommonStates", "PointerOver", "Root.BorderBrush", "PivotNextButtonBorderBrushPointerOver");
+            AssertStateSetterDynamicResource(nextRoot, "CommonStates", "PointerOver", "Arrow.Foreground", "PivotNextButtonForegroundPointerOver");
+            AssertStateSetterDynamicResource(nextRoot, "CommonStates", "Pressed", "Root.Background", "PivotNextButtonBackgroundPressed");
+            AssertStateSetterDynamicResource(nextRoot, "CommonStates", "Pressed", "Root.BorderBrush", "PivotNextButtonBorderBrushPressed");
+            AssertStateSetterDynamicResource(nextRoot, "CommonStates", "Pressed", "Arrow.Foreground", "PivotNextButtonForegroundPressed");
+            AssertStateSetterDynamicResource(previousRoot, "CommonStates", "PointerOver", "Root.Background", "PivotPreviousButtonBackgroundPointerOver");
+            AssertStateSetterDynamicResource(previousRoot, "CommonStates", "PointerOver", "Root.BorderBrush", "PivotPreviousButtonBorderBrushPointerOver");
+            AssertStateSetterDynamicResource(previousRoot, "CommonStates", "PointerOver", "Arrow.Foreground", "PivotPreviousButtonForegroundPointerOver");
+            AssertStateSetterDynamicResource(previousRoot, "CommonStates", "Pressed", "Root.Background", "PivotPreviousButtonBackgroundPressed");
+            AssertStateSetterDynamicResource(previousRoot, "CommonStates", "Pressed", "Root.BorderBrush", "PivotPreviousButtonBorderBrushPressed");
+            AssertStateSetterDynamicResource(previousRoot, "CommonStates", "Pressed", "Arrow.Foreground", "PivotPreviousButtonForegroundPressed");
         });
     }
 
@@ -294,6 +406,54 @@ public class PivotVisualStateTests
                 stateEx.Setters.Any(setter => setter.Target == setterTarget || setter.Property == setterTarget),
                 $"{groupName}.{stateName} should set {setterTarget}.");
         }
+    }
+
+    private static void AssertSetterValue(Style style, DependencyProperty property, object expectedValue)
+    {
+        var setter = style.Setters.OfType<Setter>().SingleOrDefault(item => item.Property == property);
+        Assert.IsNotNull(setter, $"Expected setter for {property.Name}.");
+        Assert.AreEqual(expectedValue, setter!.Value);
+    }
+
+    private static void AssertDynamicResourceSetter(Style style, DependencyProperty property, object expectedResourceKey)
+    {
+        var setter = style.Setters.OfType<Setter>().SingleOrDefault(item => item.Property == property);
+        Assert.IsNotNull(setter, $"Expected setter for {property.Name}.");
+        Assert.IsInstanceOfType(setter!.Value, typeof(DynamicResourceExtension));
+
+        var dynamicResource = (DynamicResourceExtension)setter.Value;
+        Assert.AreEqual(expectedResourceKey, dynamicResource.ResourceKey);
+    }
+
+    private static void AssertStateSetterDynamicResource(
+        FrameworkElement stateGroupsRoot,
+        string groupName,
+        string stateName,
+        string target,
+        object expectedResourceKey)
+    {
+        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
+            .OfType<VisualStateGroup>()
+            .Single(item => item.Name == groupName);
+        var state = group.States
+            .OfType<VisualStateEx>()
+            .Single(item => item.Name == stateName);
+        var setter = state.Setters.Single(item => item.Target == target);
+
+        AssertResourceReferenceExpression(
+            setter.ReadLocalValue(VisualStateSetter.ValueProperty),
+            expectedResourceKey);
+    }
+
+    private static void AssertResourceReferenceExpression(object value, object expectedResourceKey)
+    {
+        Assert.IsNotNull(value, "Expected dynamic resource local value.");
+        Assert.AreEqual("System.Windows.ResourceReferenceExpression", value.GetType().FullName);
+        var resourceKeyProperty = value.GetType().GetProperty(
+            "ResourceKey",
+            BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+        Assert.IsNotNull(resourceKeyProperty, "Expected ResourceReferenceExpression.ResourceKey.");
+        Assert.AreEqual(expectedResourceKey, resourceKeyProperty!.GetValue(value));
     }
 
     private static string GetCurrentStateName(FrameworkElement stateGroupsRoot, string groupName)
