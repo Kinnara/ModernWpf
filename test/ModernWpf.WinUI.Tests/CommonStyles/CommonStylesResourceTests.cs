@@ -150,6 +150,144 @@ public class CommonStylesResourceTests
     }
 
     [TestMethod]
+    public void ThemeResourcesUseWinUI2CalendarPickerHighContrastTokens()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            foreach (var themeName in new[] { "Light", "Dark" })
+            {
+                AssertThemeResourceValue(themeName, "CalendarDatePickerBorderThemeThickness", new Thickness(1));
+                AssertThemeResourceReference(themeName, "CalendarDatePickerForeground", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "CalendarDatePickerForegroundDisabled", "TextFillColorDisabledBrush");
+                AssertThemeResourceReference(themeName, "CalendarDatePickerCalendarGlyphForeground", "TextFillColorSecondaryBrush");
+                AssertThemeResourceReference(themeName, "CalendarDatePickerCalendarGlyphForegroundPointerOver", "TextFillColorSecondaryBrush");
+                AssertThemeResourceReference(themeName, "CalendarDatePickerCalendarGlyphForegroundPressed", "TextFillColorSecondaryBrush");
+                AssertThemeResourceReference(themeName, "CalendarDatePickerCalendarGlyphForegroundDisabled", "TextFillColorDisabledBrush");
+                AssertThemeResourceReference(themeName, "CalendarDatePickerTextForeground", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "CalendarDatePickerTextForegroundPointerOver", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "CalendarDatePickerTextForegroundPressed", "TextFillColorSecondaryBrush");
+                AssertThemeResourceReference(themeName, "CalendarDatePickerTextForegroundDisabled", "TextFillColorDisabledBrush");
+                AssertThemeResourceReference(themeName, "CalendarDatePickerTextForegroundSelected", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "CalendarDatePickerHeaderForeground", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "CalendarDatePickerHeaderForegroundDisabled", "TextFillColorDisabledBrush");
+                AssertThemeResourceReference(themeName, "CalendarDatePickerBackground", "ControlFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "CalendarDatePickerBackgroundPointerOver", "ControlFillColorSecondaryBrush");
+                AssertThemeResourceReference(themeName, "CalendarDatePickerBackgroundPressed", "ControlFillColorTertiaryBrush");
+                AssertThemeResourceReference(themeName, "CalendarDatePickerBackgroundDisabled", "ControlFillColorDisabledBrush");
+                AssertThemeResourceReference(themeName, "CalendarDatePickerBackgroundFocused", "ControlFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "CalendarDatePickerBorderBrush", "ControlElevationBorderBrush");
+                AssertThemeResourceReference(themeName, "CalendarDatePickerBorderBrushPointerOver", "ControlElevationBorderBrush");
+                AssertThemeResourceReference(themeName, "CalendarDatePickerBorderBrushPressed", "ControlStrokeColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "CalendarDatePickerBorderBrushDisabled", "ControlStrokeColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "CalendarDatePickerLightDismissOverlayBackground", "SystemControlPageBackgroundMediumAltMediumBrush");
+
+                AssertThemeResourceReference(themeName, "DatePickerForeground", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "DatePickerBackground", "ControlFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "DatePickerBackgroundFocused", "ControlFillColorInputActiveBrush");
+                AssertThemeResourceReference(themeName, "DatePickerBackgroundPointerOver", "ControlFillColorSecondaryBrush");
+                AssertThemeResourceReference(themeName, "DatePickerPopupBackground", "AcrylicBackgroundFillColorDefaultBrush");
+
+                AssertThemeResourceReference(themeName, "CalendarViewSelectedHoverBorderBrush", "AccentFillColorSecondaryBrush");
+                AssertThemeResourceReference(themeName, "CalendarViewSelectedPressedBorderBrush", "SubtleFillColorTertiaryBrush");
+                AssertThemeResourceReference(themeName, "CalendarViewSelectedBorderBrush", "AccentFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "CalendarViewHoverBorderBrush", "ControlStrokeColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "CalendarViewPressedBorderBrush", "ControlStrokeColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "CalendarViewTodayForeground", "TextOnAccentFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "CalendarViewBlackoutForeground", "TextFillColorDisabledBrush");
+                AssertThemeResourceReference(themeName, "CalendarViewSelectedForeground", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "CalendarViewPressedForeground", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "CalendarViewOutOfScopeForeground", "SystemControlHyperlinkBaseHighBrush");
+                AssertThemeResourceReference(themeName, "CalendarViewCalendarItemForeground", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "CalendarViewOutOfScopeBackground", "SystemControlDisabledChromeMediumLowBrush");
+                AssertThemeResourceReference(themeName, "CalendarViewCalendarItemBackground", "ControlFillColorInputActiveBrush");
+                AssertThemeResourceReference(themeName, "CalendarViewForeground", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "CalendarViewBackground", "ControlFillColorInputActiveBrush");
+                AssertThemeResourceReference(themeName, "CalendarViewBorderBrush", "ControlStrokeColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "CalendarViewWeekDayForegroundDisabled", "TextFillColorDisabledBrush");
+                AssertThemeResourceReference(themeName, "CalendarViewItemBackgroundPointerOver", "SubtleFillColorSecondaryBrush");
+                AssertThemeResourceReference(themeName, "CalendarViewNavigationButtonBackground", "SubtleFillColorTransparentBrush");
+                AssertThemeResourceReference(themeName, "CalendarViewNavigationButtonForegroundPointerOver", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "CalendarViewNavigationButtonForegroundPressed", "ControlAltFillColorTertiaryBrush");
+                AssertThemeResourceReference(themeName, "CalendarViewNavigationButtonForegroundDisabled", "TextFillColorDisabledBrush");
+                AssertThemeResourceReference(themeName, "CalendarViewCalendarItemRevealBackground", "SystemControlTransparentRevealBackgroundBrush");
+                AssertThemeResourceReference(themeName, "CalendarViewCalendarItemRevealBorderBrush", "SystemControlTransparentRevealBorderBrush");
+                AssertThemeResourceReference(themeName, "CalendarViewNavigationButtonBorderBrushPointerOver", "ControlStrokeColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "CalendarViewNavigationButtonBorderBrush", "SubtleFillColorTransparentBrush");
+            }
+
+            AssertThemeResourceReference("Light", "CalendarViewFocusBorderBrush", "TextFillColorPrimaryBrush");
+            AssertThemeResourceReference("Light", "CalendarViewSelectedBackground", "SystemAccentColorDark1Brush");
+            AssertThemeResourceReference("Light", "CalendarViewTodayBackground", "SystemAccentColorDark1Brush");
+            AssertThemeResourceReference("Dark", "CalendarViewFocusBorderBrush", "AccentFillColorSecondaryBrush");
+            AssertThemeResourceReference("Dark", "CalendarViewSelectedBackground", "SystemAccentColorLight2Brush");
+            AssertThemeResourceReference("Dark", "CalendarViewTodayBackground", "SystemAccentColorLight2Brush");
+
+            AssertThemeResourceValue("HighContrast", "CalendarDatePickerBorderThemeThickness", new Thickness(1));
+            AssertThemeResourceReference("HighContrast", "CalendarDatePickerForeground", "SystemColorButtonTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarDatePickerForegroundDisabled", "SystemColorGrayTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarDatePickerCalendarGlyphForeground", "SystemColorButtonTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarDatePickerCalendarGlyphForegroundPointerOver", "SystemColorHighlightColorBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarDatePickerCalendarGlyphForegroundPressed", "SystemColorHighlightColorBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarDatePickerCalendarGlyphForegroundDisabled", "SystemColorGrayTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarDatePickerTextForeground", "SystemColorButtonTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarDatePickerTextForegroundPointerOver", "SystemColorHighlightColorBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarDatePickerTextForegroundPressed", "SystemColorHighlightColorBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarDatePickerTextForegroundDisabled", "SystemColorGrayTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarDatePickerTextForegroundSelected", "SystemColorHighlightColorBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarDatePickerHeaderForeground", "SystemColorButtonTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarDatePickerHeaderForegroundDisabled", "SystemColorGrayTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarDatePickerBackground", "SystemColorButtonFaceColorBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarDatePickerBackgroundPointerOver", "SystemColorHighlightTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarDatePickerBackgroundPressed", "SystemColorWindowColorBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarDatePickerBackgroundDisabled", "SystemColorWindowColorBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarDatePickerBackgroundFocused", "SystemColorHighlightColorBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarDatePickerBorderBrush", "SystemColorButtonTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarDatePickerBorderBrushPointerOver", "SystemColorHighlightColorBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarDatePickerBorderBrushPressed", "SystemColorHighlightColorBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarDatePickerBorderBrushDisabled", "SystemColorGrayTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarDatePickerLightDismissOverlayBackground", "SystemControlPageBackgroundMediumAltMediumBrush");
+
+            AssertThemeResourceReference("HighContrast", "DatePickerForeground", "SystemColorWindowTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "DatePickerBackground", "SystemColorWindowColorBrush");
+            AssertThemeResourceReference("HighContrast", "DatePickerBackgroundFocused", "SystemColorHighlightTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "DatePickerBackgroundPointerOver", "SystemColorHighlightTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "DatePickerPopupBackground", "SystemColorWindowColorBrush");
+
+            AssertThemeResourceReference("HighContrast", "CalendarViewFocusBorderBrush", "SystemControlForegroundBaseHighBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarViewSelectedHoverBorderBrush", "SystemControlHighlightListAccentMediumBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarViewSelectedPressedBorderBrush", "SystemControlHighlightListAccentHighBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarViewSelectedBorderBrush", "SystemControlHighlightAccentBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarViewHoverBorderBrush", "SystemControlHighlightBaseMediumLowBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarViewPressedBorderBrush", "SystemControlHighlightBaseMediumBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarViewTodayForeground", "SystemControlHighlightAltChromeWhiteBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarViewBlackoutForeground", "SystemControlDisabledBaseMediumLowBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarViewSelectedForeground", "SystemControlHighlightBaseHighBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarViewPressedForeground", "SystemControlHighlightBaseHighBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarViewOutOfScopeForeground", "SystemControlHyperlinkBaseHighBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarViewCalendarItemForeground", "SystemControlForegroundBaseHighBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarViewOutOfScopeBackground", "SystemControlDisabledChromeMediumLowBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarViewCalendarItemBackground", "SystemControlBackgroundAltHighBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarViewForeground", "SystemControlHyperlinkBaseMediumHighBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarViewBackground", "SystemControlBackgroundAltHighBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarViewBorderBrush", "SystemControlForegroundChromeMediumBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarViewWeekDayForegroundDisabled", "SystemControlDisabledBaseMediumLowBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarViewItemBackgroundPointerOver", "SystemColorHighlightTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarViewSelectedBackground", "SystemColorHighlightColorBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarViewTodayBackground", "SystemColorHighlightColorBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarViewNavigationButtonBackground", "SystemControlTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarViewNavigationButtonForegroundPointerOver", "SystemControlForegroundBaseHighBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarViewNavigationButtonForegroundPressed", "SystemControlForegroundBaseMediumBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarViewNavigationButtonForegroundDisabled", "SystemControlDisabledBaseMediumLowBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarViewCalendarItemRevealBackground", "SystemControlBackgroundAltHighBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarViewCalendarItemRevealBorderBrush", "SystemControlTransparentRevealBorderBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarViewNavigationButtonBorderBrushPointerOver", "SystemControlHighlightTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarViewNavigationButtonBorderBrush", "SystemControlTransparentBrush");
+        });
+    }
+
+    [TestMethod]
     public void CornerRadiusFilterConverterTest()
     {
         WpfTestHost.Run(() =>
