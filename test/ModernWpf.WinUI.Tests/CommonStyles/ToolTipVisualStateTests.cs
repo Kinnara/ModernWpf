@@ -45,14 +45,24 @@ public class ToolTipVisualStateTests
     {
         WpfTestHost.Run(() =>
         {
-            AssertThemeResourceReference("Light", "ToolTipForeground", "TextFillColorPrimaryBrush");
-            AssertThemeResourceReference("Light", "ToolTipBackground", "AcrylicBackgroundFillColorDefaultBrush");
+            foreach (var themeName in new[] { "Light", "Dark" })
+            {
+                AssertThemeResourceReference(themeName, "ToolTipForegroundBrush", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "ToolTipBackgroundBrush", "AcrylicBackgroundFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "ToolTipBorderBrush", "SurfaceStrokeColorFlyoutBrush");
+                AssertThemeResourceReference(themeName, "ToolTipForeground", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "ToolTipBackground", "AcrylicBackgroundFillColorDefaultBrush");
+                AssertThemeResourceValue(themeName, "ToolTipContentThemeFontSize", 12.0);
+                AssertThemeResourceValue(themeName, "ToolTipBorderThemeThickness", new Thickness(1));
+            }
 
-            AssertThemeResourceReference("Dark", "ToolTipForeground", "TextFillColorPrimaryBrush");
-            AssertThemeResourceReference("Dark", "ToolTipBackground", "AcrylicBackgroundFillColorDefaultBrush");
-
+            AssertThemeResourceReference("HighContrast", "ToolTipForegroundBrush", "SystemColorWindowTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "ToolTipBackgroundBrush", "SystemColorWindowColorBrush");
+            AssertThemeResourceReference("HighContrast", "ToolTipBorderBrush", "SystemColorWindowTextColorBrush");
             AssertThemeResourceReference("HighContrast", "ToolTipForeground", "SystemColorWindowTextColorBrush");
             AssertThemeResourceReference("HighContrast", "ToolTipBackground", "SystemColorWindowColorBrush");
+            AssertThemeResourceValue("HighContrast", "ToolTipContentThemeFontSize", 12.0);
+            AssertThemeResourceValue("HighContrast", "ToolTipBorderThemeThickness", new Thickness(1));
         });
     }
 
@@ -119,5 +129,12 @@ public class ToolTipVisualStateTests
         var theme = ThemeResources.Current.GetThemeDictionary(themeName);
         Assert.IsTrue(theme.Contains(expectedResourceKey), $"Theme is missing {expectedResourceKey}.");
         Assert.AreSame(theme[expectedResourceKey], theme[key], key);
+    }
+
+    private static void AssertThemeResourceValue<T>(string themeName, string key, T expectedValue)
+    {
+        var theme = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(theme.Contains(key), $"Theme is missing {key}.");
+        Assert.AreEqual(expectedValue, theme[key], key);
     }
 }

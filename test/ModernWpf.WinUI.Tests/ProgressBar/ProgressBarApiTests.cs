@@ -64,6 +64,8 @@ public class ProgressBarApiTests
                 AssertThemeResourceReference(themeName, "ProgressBarBorderBrush", "ControlStrokeColorDefaultBrush");
                 AssertThemeResourceReference(themeName, "ProgressBarPausedForegroundColor", "SystemFillColorCaution");
                 AssertThemeResourceReference(themeName, "ProgressBarErrorForegroundColor", "SystemFillColorCritical");
+                AssertThemeResourceValue(themeName, "ProgressBarIndicatorPauseOpacity", 0.6);
+                AssertThemeResourceValue(themeName, "ProgressBarThemeMinHeight", 4.0);
                 AssertThemeResourceValue(themeName, "ProgressBarBorderThemeThickness", new Thickness(0));
             }
 
@@ -72,6 +74,8 @@ public class ProgressBarApiTests
             AssertThemeResourceReference("HighContrast", "ProgressBarBorderBrush", "SystemColorWindowTextColorBrush");
             AssertThemeResourceValue("HighContrast", "ProgressBarPausedForegroundColor", SystemColors.WindowTextColor);
             AssertThemeResourceValue("HighContrast", "ProgressBarErrorForegroundColor", SystemColors.HotTrackColor);
+            AssertThemeResourceValue("HighContrast", "ProgressBarIndicatorPauseOpacity", 1.0);
+            AssertThemeResourceValue("HighContrast", "ProgressBarThemeMinHeight", 4.0);
             AssertThemeResourceValue("HighContrast", "ProgressBarBorderThemeThickness", new Thickness(1));
         });
     }
