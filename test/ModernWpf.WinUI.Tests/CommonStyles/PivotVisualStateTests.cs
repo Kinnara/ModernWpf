@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ModernWpf;
 using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
 using ModernWpf.WinUI.TestApp;
@@ -184,6 +185,71 @@ public class PivotVisualStateTests
         });
     }
 
+    [TestMethod]
+    public void ThemeResourcesUseWinUI2PivotHighContrastTokens()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            foreach (var themeName in new[] { "Light", "Dark", "HighContrast" })
+            {
+                AssertThemeResourceValue(themeName, "PivotHeaderItemFontSize", 24.0);
+                AssertThemeResourceValue(themeName, "PivotHeaderItemLockedTranslation", 40.0);
+                AssertThemeResourceValue(themeName, "PivotTitleFontSize", 14.0);
+                AssertThemeResourceValue(themeName, "PivotHeaderItemCharacterSpacing", -25);
+                AssertThemeResourceValue(themeName, "PivotHeaderItemMargin", new Thickness(12, 0, 12, 0));
+                AssertThemeResourceValue(themeName, "PivotItemMargin", new Thickness(12, 0, 12, 0));
+                AssertThemeResourceValue(themeName, "PivotNavButtonMargin", new Thickness(0, 6, 0, 0));
+                AssertThemeResourceValue(themeName, "PivotPortraitThemePadding", new Thickness(12, 14, 0, 13));
+                AssertThemeResourceValue(themeName, "PivotHeaderItemThemeFontWeight", FontWeight.FromOpenTypeWeight(350));
+                AssertThemeResourceValue(themeName, "PivotTitleThemeFontWeight", FontWeights.Bold);
+
+                AssertThemeResourceReference(themeName, "PivotBackground", "SystemControlTransparentBrush");
+                AssertThemeResourceReference(themeName, "PivotHeaderBackground", "SystemControlTransparentBrush");
+                AssertThemeResourceReference(themeName, "PivotNextButtonBackground", "SystemControlBackgroundBaseMediumLowBrush");
+                AssertThemeResourceReference(themeName, "PivotNextButtonBackgroundPointerOver", "SystemControlHighlightBaseMediumBrush");
+                AssertThemeResourceReference(themeName, "PivotNextButtonBackgroundPressed", "SystemControlHighlightBaseMediumHighBrush");
+                AssertThemeResourceReference(themeName, "PivotNextButtonBorderBrush", "SystemControlForegroundTransparentBrush");
+                AssertThemeResourceReference(themeName, "PivotNextButtonBorderBrushPointerOver", "SystemControlForegroundTransparentBrush");
+                AssertThemeResourceReference(themeName, "PivotNextButtonBorderBrushPressed", "SystemControlForegroundTransparentBrush");
+                AssertThemeResourceReference(themeName, "PivotNextButtonForeground", "SystemControlForegroundAltMediumHighBrush");
+                AssertThemeResourceReference(themeName, "PivotNextButtonForegroundPointerOver", "SystemControlHighlightAltAltMediumHighBrush");
+                AssertThemeResourceReference(themeName, "PivotNextButtonForegroundPressed", "SystemControlHighlightAltAltMediumHighBrush");
+                AssertThemeResourceReference(themeName, "PivotPreviousButtonBackground", "SystemControlBackgroundBaseMediumLowBrush");
+                AssertThemeResourceReference(themeName, "PivotPreviousButtonBackgroundPointerOver", "SystemControlHighlightBaseMediumBrush");
+                AssertThemeResourceReference(themeName, "PivotPreviousButtonBackgroundPressed", "SystemControlHighlightBaseMediumHighBrush");
+                AssertThemeResourceReference(themeName, "PivotPreviousButtonBorderBrush", "SystemControlForegroundTransparentBrush");
+                AssertThemeResourceReference(themeName, "PivotPreviousButtonBorderBrushPointerOver", "SystemControlForegroundTransparentBrush");
+                AssertThemeResourceReference(themeName, "PivotPreviousButtonBorderBrushPressed", "SystemControlForegroundTransparentBrush");
+                AssertThemeResourceReference(themeName, "PivotPreviousButtonForeground", "SystemControlForegroundAltMediumHighBrush");
+                AssertThemeResourceReference(themeName, "PivotPreviousButtonForegroundPointerOver", "SystemControlHighlightAltAltMediumHighBrush");
+                AssertThemeResourceReference(themeName, "PivotPreviousButtonForegroundPressed", "SystemControlHighlightAltAltMediumHighBrush");
+                AssertThemeResourceReference(themeName, "PivotItemBackground", "SystemControlTransparentBrush");
+                AssertThemeResourceReference(themeName, "PivotHeaderItemBackgroundUnselected", "SystemControlTransparentBrush");
+                AssertThemeResourceReference(themeName, "PivotHeaderItemBackgroundUnselectedPointerOver", "SystemControlHighlightTransparentBrush");
+                AssertThemeResourceReference(themeName, "PivotHeaderItemBackgroundUnselectedPressed", "SystemControlHighlightTransparentBrush");
+                AssertThemeResourceReference(themeName, "PivotHeaderItemBackgroundSelected", "SystemControlHighlightTransparentBrush");
+                AssertThemeResourceReference(themeName, "PivotHeaderItemBackgroundSelectedPointerOver", "SystemControlHighlightTransparentBrush");
+                AssertThemeResourceReference(themeName, "PivotHeaderItemBackgroundSelectedPressed", "SystemControlHighlightTransparentBrush");
+                AssertThemeResourceReference(themeName, "PivotHeaderItemBackgroundDisabled", "SystemControlTransparentBrush");
+                AssertThemeResourceReference(themeName, "PivotHeaderItemForegroundUnselected", "SystemControlForegroundBaseMediumBrush");
+                AssertThemeResourceReference(themeName, "PivotHeaderItemForegroundUnselectedPointerOver", "SystemControlHighlightAltBaseMediumHighBrush");
+                AssertThemeResourceReference(themeName, "PivotHeaderItemForegroundUnselectedPressed", "SystemControlHighlightAltBaseMediumHighBrush");
+                AssertThemeResourceReference(themeName, "PivotHeaderItemForegroundSelected", "SystemControlHighlightAltBaseHighBrush");
+                AssertThemeResourceReference(themeName, "PivotHeaderItemForegroundSelectedPointerOver", "SystemControlHighlightAltBaseMediumHighBrush");
+                AssertThemeResourceReference(themeName, "PivotHeaderItemForegroundSelectedPressed", "SystemControlHighlightAltBaseMediumHighBrush");
+                AssertThemeResourceReference(themeName, "PivotHeaderItemForegroundDisabled", "SystemControlDisabledBaseMediumLowBrush");
+                AssertThemeResourceReference(themeName, "PivotHeaderItemFocusPipeFill", "SystemControlHighlightAltAccentBrush");
+                AssertThemeResourceReference(themeName, "PivotHeaderItemSelectedPipeFill", "SystemControlHighlightAltAccentBrush");
+            }
+
+            AssertThemeResourceValue("Light", "PivotNavButtonBorderThemeThickness", new Thickness(0));
+            AssertThemeResourceValue("Dark", "PivotNavButtonBorderThemeThickness", new Thickness(0));
+            AssertThemeResourceValue("HighContrast", "PivotNavButtonBorderThemeThickness", new Thickness(1));
+        });
+    }
+
     private static TabControl CreatePivot(int itemCount = 2)
     {
         var pivot = new TabControl
@@ -237,6 +303,21 @@ public class PivotVisualStateTests
             .Single(item => item.Name == groupName);
         Assert.IsNotNull(group.CurrentState);
         return group.CurrentState.Name;
+    }
+
+    private static void AssertThemeResourceReference(string themeName, object resourceKey, object expectedResourceKey)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.IsTrue(themeDictionary.Contains(expectedResourceKey), $"{themeName} is missing {expectedResourceKey}.");
+        Assert.AreSame(themeDictionary[expectedResourceKey], themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
+    }
+
+    private static void AssertThemeResourceValue<T>(string themeName, object resourceKey, T expectedValue)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.AreEqual(expectedValue, themeDictionary[resourceKey]);
     }
 
     private static T FindTemplatePart<T>(Control control, string name)

@@ -93,6 +93,26 @@ public class DropDownButtonApiTests
     }
 
     [TestMethod]
+    public void ThemeResourcesUseWinUI2DropDownButtonHighContrastTokens()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            foreach (var themeName in new[] { "Light", "Dark" })
+            {
+                AssertThemeResourceReference(themeName, "DropDownButtonForegroundSecondary", "TextFillColorSecondaryBrush");
+                AssertThemeResourceReference(themeName, "DropDownButtonForegroundSecondaryPointerOver", "TextFillColorTertiaryBrush");
+                AssertThemeResourceReference(themeName, "DropDownButtonForegroundSecondaryPressed", "TextFillColorTertiaryBrush");
+            }
+
+            AssertThemeResourceReference("HighContrast", "DropDownButtonForegroundSecondary", "SystemColorButtonTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "DropDownButtonForegroundSecondaryPointerOver", "SystemColorHighlightColorBrush");
+            AssertThemeResourceReference("HighContrast", "DropDownButtonForegroundSecondaryPressed", "SystemColorHighlightColorBrush");
+        });
+    }
+
+    [TestMethod]
     public void VerifyDropDownButtonTemplateUsesWinUIContentPresenterShape()
     {
         WpfTestHost.Run(() =>
@@ -237,6 +257,14 @@ public class DropDownButtonApiTests
         var setter = state.Setters.Single(item => item.Target == target);
 
         Assert.AreEqual(expectedValue, setter.Value);
+    }
+
+    private static void AssertThemeResourceReference(string themeName, object resourceKey, object expectedResourceKey)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.IsTrue(themeDictionary.Contains(expectedResourceKey), $"{themeName} is missing {expectedResourceKey}.");
+        Assert.AreSame(themeDictionary[expectedResourceKey], themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
     }
 
     private static IExpandCollapseProvider GetExpandCollapseProvider(ModernWpf.Controls.DropDownButton button)
