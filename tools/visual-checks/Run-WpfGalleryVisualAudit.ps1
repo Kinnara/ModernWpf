@@ -1260,25 +1260,32 @@ function Save-OfficialContentCrop($window, [string]$screenshot, [string]$path, $
 }
 
 function Save-ModernContentCrop($window, [string]$screenshot, [string]$path, $case) {
-    if ($null -eq $case -or $case.Id -eq "Home") {
-        $content = Find-DescendantByAutomationId $window "GalleryContentHost"
-        if ($null -ne $content) {
-            if ($null -ne $case -and $case.Id -eq "Home") {
-                $paneCondition = New-Object System.Windows.Automation.PropertyCondition(
-                    [System.Windows.Automation.AutomationElement]::ControlTypeProperty,
-                    [System.Windows.Automation.ControlType]::Pane)
-                $panes = $content.FindAll([System.Windows.Automation.TreeScope]::Children, $paneCondition)
-                foreach ($pane in $panes) {
-                    $paneRect = $pane.Current.BoundingRectangle
-                    if ($paneRect.Width -gt 0 -and $paneRect.Height -gt 0) {
-                        $paneCrop = Save-ElementCrop $window $screenshot $path $pane "ModernWpfHomeContentRootPane" 0
-                        if ($paneCrop.NonBlank) {
-                            return $paneCrop
-                        }
+    $content = Find-DescendantByAutomationId $window "GalleryContentHost"
+    if ($null -ne $content) {
+        if ($null -ne $case -and $case.Id -eq "Home") {
+            $paneCondition = New-Object System.Windows.Automation.PropertyCondition(
+                [System.Windows.Automation.AutomationElement]::ControlTypeProperty,
+                [System.Windows.Automation.ControlType]::Pane)
+            $panes = $content.FindAll([System.Windows.Automation.TreeScope]::Children, $paneCondition)
+            foreach ($pane in $panes) {
+                $paneRect = $pane.Current.BoundingRectangle
+                if ($paneRect.Width -gt 0 -and $paneRect.Height -gt 0) {
+                    $paneCrop = Save-ElementCrop $window $screenshot $path $pane "ModernWpfHomeContentRootPane" 0
+                    if ($paneCrop.NonBlank) {
+                        return $paneCrop
                     }
                 }
             }
+        }
 
+        if ($null -ne $case -and $case.Id -ne "Home") {
+            $contentCrop = Save-ElementCrop $window $screenshot $path $content "ModernWpfGalleryContentHost" 0
+            if ($contentCrop.NonBlank) {
+                return $contentCrop
+            }
+        }
+
+        if ($null -eq $case) {
             return Save-ElementCrop $window $screenshot $path $content "GalleryContentHost" 0
         }
     }
