@@ -409,6 +409,51 @@ public class PipsPagerApiTests
         });
     }
 
+    [TestMethod]
+    public void ThemeResourcesUseWinUI3PipsPagerHighContrastTokens()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var resourceReferences = new[]
+            {
+                ("PipsPagerSelectionIndicatorBackground", "ControlFillColorTransparentBrush", "SystemColorButtonFaceColorBrush"),
+                ("PipsPagerSelectionIndicatorBackgroundPointerOver", "ControlFillColorTransparentBrush", "SystemColorHighlightColorBrush"),
+                ("PipsPagerSelectionIndicatorBackgroundPressed", "ControlFillColorTransparentBrush", "SystemColorHighlightColorBrush"),
+                ("PipsPagerSelectionIndicatorBackgroundSelected", "ControlFillColorTransparentBrush", "SystemColorHighlightColorBrush"),
+                ("PipsPagerSelectionIndicatorBackgroundDisabled", "ControlFillColorTransparentBrush", "SystemColorButtonFaceColorBrush"),
+                ("PipsPagerSelectionIndicatorBorderBrush", "ControlFillColorTransparentBrush", "SystemColorButtonFaceColorBrush"),
+                ("PipsPagerSelectionIndicatorBorderBrushPointerOver", "ControlFillColorTransparentBrush", "SystemColorHighlightColorBrush"),
+                ("PipsPagerSelectionIndicatorBorderBrushPressed", "ControlFillColorTransparentBrush", "SystemColorHighlightColorBrush"),
+                ("PipsPagerSelectionIndicatorBorderBrushSelected", "ControlFillColorTransparentBrush", "SystemColorHighlightColorBrush"),
+                ("PipsPagerSelectionIndicatorBorderBrushDisabled", "ControlFillColorTransparentBrush", "SystemColorButtonFaceColorBrush"),
+                ("PipsPagerSelectionIndicatorForeground", "ControlStrongFillColorDefaultBrush", "SystemColorButtonTextColorBrush"),
+                ("PipsPagerSelectionIndicatorForegroundPointerOver", "TextFillColorSecondaryBrush", "SystemColorHighlightTextColorBrush"),
+                ("PipsPagerSelectionIndicatorForegroundPressed", "TextFillColorSecondaryBrush", "SystemColorHighlightTextColorBrush"),
+                ("PipsPagerSelectionIndicatorForegroundSelected", "ControlStrongFillColorDefaultBrush", "SystemColorHighlightTextColorBrush"),
+                ("PipsPagerSelectionIndicatorForegroundDisabled", "ControlStrongFillColorDisabledBrush", "SystemColorGrayTextColorBrush"),
+                ("PipsPagerNavigationButtonBackground", "ControlFillColorTransparentBrush", "SystemColorButtonFaceColorBrush"),
+                ("PipsPagerNavigationButtonBackgroundPointerOver", "ControlFillColorTransparentBrush", "SystemColorButtonFaceColorBrush"),
+                ("PipsPagerNavigationButtonBackgroundPressed", "ControlFillColorTransparentBrush", "SystemColorButtonFaceColorBrush"),
+                ("PipsPagerNavigationButtonBackgroundDisabled", "ControlFillColorTransparentBrush", "SystemColorButtonFaceColorBrush"),
+                ("PipsPagerNavigationButtonBorderBrush", "ControlFillColorTransparentBrush", "SystemColorButtonFaceColorBrush"),
+                ("PipsPagerNavigationButtonBorderBrushPointerOver", "ControlFillColorTransparentBrush", "SystemColorHighlightColorBrush"),
+                ("PipsPagerNavigationButtonBorderBrushPressed", "ControlFillColorTransparentBrush", "SystemColorHighlightColorBrush"),
+                ("PipsPagerNavigationButtonBorderBrushDisabled", "ControlFillColorTransparentBrush", "SystemColorButtonFaceColorBrush"),
+                ("PipsPagerNavigationButtonForeground", "ControlStrongFillColorDefaultBrush", "SystemColorButtonTextColorBrush"),
+                ("PipsPagerNavigationButtonForegroundPointerOver", "TextFillColorSecondaryBrush", "SystemColorHighlightColorBrush"),
+                ("PipsPagerNavigationButtonForegroundPressed", "TextFillColorSecondaryBrush", "SystemColorHighlightColorBrush"),
+                ("PipsPagerNavigationButtonForegroundDisabled", "ControlStrongFillColorDisabledBrush", "SystemColorGrayTextColorBrush")
+            };
+
+            foreach (var (resourceKey, lightDarkResourceKey, highContrastResourceKey) in resourceReferences)
+            {
+                AssertThemeResourceReference("Light", resourceKey, lightDarkResourceKey);
+                AssertThemeResourceReference("Dark", resourceKey, lightDarkResourceKey);
+                AssertThemeResourceReference("HighContrast", resourceKey, highContrastResourceKey);
+            }
+        });
+    }
+
     private static List<Button> GetPipButtons(DependencyObject root)
     {
         return VisualTreeTestHelper
@@ -464,6 +509,14 @@ public class PipsPagerApiTests
             .Single(item => item.Name == groupName);
         Assert.IsNotNull(group.CurrentState);
         return group.CurrentState.Name;
+    }
+
+    private static void AssertThemeResourceReference(string themeName, object resourceKey, object expectedResourceKey)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.IsTrue(themeDictionary.Contains(expectedResourceKey), $"{themeName} is missing {expectedResourceKey}.");
+        Assert.AreSame(themeDictionary[expectedResourceKey], themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
     }
 
     private static void AssertRotateTransform(Transform transform)
