@@ -527,6 +527,8 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~DatePickerVisualStateTests|FullyQualifiedName~CommonStylesResourceTests.ThemeResourcesUseWinUI2CalendarPickerHighContrastTokens" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0`: 3 tests. WPF Fluent DatePicker resources now define `DatePickerTextBoxCaretBrush` in Light, Dark, and HighContrast; calendar/date common resource coverage pins the new aliases, and `DefaultDatePickerTextBoxStyle` runtime coverage proves the copied `DatePickerTextBox` caret tracks the dynamic resource live. Existing warning/output remains `NETSDK1137`, generated WinRT warnings, existing ModernWpf/ModernWpf.Controls warnings, and the recurring `Failed to resolve WinRT.Runtime.dll` message.
 - `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~GalleryApplicationResourceTests.ControlExampleTemplateMatchesWpfGalleryReferenceDivider|FullyQualifiedName~WpfGallerySourceShapeTests.SharedControlExampleKeepsOfficialSourceCodeTemplateShape" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 2 tests per target. The shared `ControlExample` source expander now propagates the official `View Source Code for {HeaderText}` automation name onto the custom header toggle used by the local full-width source row, while retaining the official source-code panel shape, 43px source-row metric, copy-button automation, and source-shape guard. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~TeachingTipApiTests" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
@@ -3315,7 +3317,7 @@ core theme-resource aliases, PipsPager selection/navigation theme-resource alias
 DropDownButton chevron aliases and direct style/live resource consumption, Pivot style theme-resource aliases and direct style/live resource consumption,
 FlyoutPresenter chrome/theme-resource aliases and direct style/live resource consumption,
 Date/time flyout and FlipView common style theme-resource aliases,
-calendar picker common theme-resource aliases,
+calendar picker common theme-resource aliases plus DatePicker text box caret direct style/live resource consumption,
 TimePicker and LoopingSelector common theme-resource aliases,
 Expander header/chevron/content theme-resource aliases and direct style/live/trigger resource consumption,
 default/accent/subtle button theme-resource aliases and direct style/live resource consumption,

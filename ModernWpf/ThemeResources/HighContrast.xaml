@@ -640,6 +640,7 @@
     <m:StaticResource x:Key="DatePickerBackgroundFocused" ResourceKey="SystemColorHighlightTextColorBrush" />
     <m:StaticResource x:Key="DatePickerBackgroundPointerOver" ResourceKey="SystemColorHighlightTextColorBrush" />
     <m:StaticResource x:Key="DatePickerPopupBackground" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="DatePickerTextBoxCaretBrush" ResourceKey="SystemColorButtonTextColorBrush" />
 
     <!-- Resources for CalendarView -->
     <m:StaticResource x:Key="CalendarViewFocusBorderBrush" ResourceKey="SystemControlForegroundBaseHighBrush" />

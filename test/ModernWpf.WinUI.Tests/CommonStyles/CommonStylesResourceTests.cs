@@ -188,6 +188,7 @@ public class CommonStylesResourceTests
                 AssertThemeResourceReference(themeName, "DatePickerBackgroundFocused", "ControlFillColorInputActiveBrush");
                 AssertThemeResourceReference(themeName, "DatePickerBackgroundPointerOver", "ControlFillColorSecondaryBrush");
                 AssertThemeResourceReference(themeName, "DatePickerPopupBackground", "AcrylicBackgroundFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "DatePickerTextBoxCaretBrush", "TextFillColorPrimaryBrush");
 
                 AssertThemeResourceReference(themeName, "CalendarViewSelectedHoverBorderBrush", "AccentFillColorSecondaryBrush");
                 AssertThemeResourceReference(themeName, "CalendarViewSelectedPressedBorderBrush", "SubtleFillColorTertiaryBrush");
@@ -254,6 +255,7 @@ public class CommonStylesResourceTests
             AssertThemeResourceReference("HighContrast", "DatePickerBackgroundFocused", "SystemColorHighlightTextColorBrush");
             AssertThemeResourceReference("HighContrast", "DatePickerBackgroundPointerOver", "SystemColorHighlightTextColorBrush");
             AssertThemeResourceReference("HighContrast", "DatePickerPopupBackground", "SystemColorWindowColorBrush");
+            AssertThemeResourceReference("HighContrast", "DatePickerTextBoxCaretBrush", "SystemColorButtonTextColorBrush");
 
             AssertThemeResourceReference("HighContrast", "CalendarViewFocusBorderBrush", "SystemControlForegroundBaseHighBrush");
             AssertThemeResourceReference("HighContrast", "CalendarViewSelectedHoverBorderBrush", "SystemControlHighlightListAccentMediumBrush");

@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Media;
 using System.Windows.Media.Effects;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls;
@@ -21,11 +22,14 @@ public class DatePickerVisualStateTests
             TestApplication.EnsureInitialized();
 
             var defaultStyle = (Style)Application.Current.FindResource("DefaultDatePickerStyle");
+            var textBoxStyle = (Style)Application.Current.FindResource("DefaultDatePickerTextBoxStyle");
             var implicitDatePickerStyle = (Style)Application.Current.FindResource(typeof(DatePicker));
             Assert.AreEqual(typeof(DatePicker), defaultStyle.TargetType);
+            Assert.AreEqual(typeof(DatePickerTextBox), textBoxStyle.TargetType);
             Assert.AreEqual(typeof(DatePicker), implicitDatePickerStyle.TargetType);
             Assert.AreSame(defaultStyle, implicitDatePickerStyle.BasedOn);
             Assert.IsInstanceOfType(FindSetter(defaultStyle, DatePicker.CalendarStyleProperty).Value, typeof(Style));
+            AssertDynamicResourceSetter(textBoxStyle, TextBoxBase.CaretBrushProperty, "DatePickerTextBoxCaretBrush");
 
             var datePicker = new DatePicker
             {
@@ -46,6 +50,7 @@ public class DatePickerVisualStateTests
             Assert.AreSame(datePicker.TryFindResource("DatePickerForeground"), datePicker.Foreground);
             Assert.AreSame(datePicker.TryFindResource("DatePickerBackground"), datePicker.Background);
             Assert.AreSame(datePicker.TryFindResource("TextControlElevationBorderBrush"), datePicker.BorderBrush);
+            Assert.AreSame(datePicker.TryFindResource("DatePickerTextBoxCaretBrush"), textBox.CaretBrush);
             Assert.IsNotNull(datePicker.ContextMenu);
             Assert.IsNotNull(datePicker.CalendarStyle);
             Assert.AreEqual(new Thickness(1), datePicker.BorderThickness);
@@ -56,6 +61,11 @@ public class DatePickerVisualStateTests
             Assert.AreEqual(((CornerRadius)button.GetValue(System.Windows.Controls.Border.CornerRadiusProperty)), buttonBorder.CornerRadius);
             Assert.AreEqual(0, VisualStateManager.GetVisualStateGroups(root).Count);
             Assert.IsNull(FindVisualChild<ContentPresenterEx>(datePicker));
+
+            var replacementCaretBrush = Brushes.Magenta;
+            datePicker.Resources["DatePickerTextBoxCaretBrush"] = replacementCaretBrush;
+            host.UpdateLayout();
+            Assert.AreSame(replacementCaretBrush, textBox.CaretBrush);
         });
     }
 
