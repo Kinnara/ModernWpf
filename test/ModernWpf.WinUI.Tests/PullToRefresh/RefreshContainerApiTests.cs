@@ -78,14 +78,20 @@ public class RefreshContainerApiTests
             using var host = new TestWindowHost(container, width: 240, height: 180);
             host.UpdateLayout();
 
+            Assert.AreEqual(typeof(RefreshContainer), containerStyle.TargetType);
+            Assert.AreEqual(typeof(RefreshContainer), implicitContainerStyle.TargetType);
             Assert.AreSame(containerStyle, implicitContainerStyle.BasedOn);
             AssertDynamicResourceSetter(containerStyle, Control.ForegroundProperty, "RefreshContainerForegroundBrush");
             AssertDynamicResourceSetter(containerStyle, Control.BackgroundProperty, "RefreshContainerBackgroundBrush");
             Assert.AreEqual(false, GetSetterValue(containerStyle, Control.IsTabStopProperty));
+            Assert.IsInstanceOfType(GetSetterValue(containerStyle, Control.TemplateProperty), typeof(ControlTemplate));
+
+            Assert.AreEqual(typeof(RefreshVisualizer), visualizerStyle.TargetType);
             AssertDynamicResourceSetter(visualizerStyle, Control.BackgroundProperty, "RefreshVisualizerBackground");
             AssertDynamicResourceSetter(visualizerStyle, Control.ForegroundProperty, "RefreshVisualizerForeground");
             Assert.AreEqual(false, GetSetterValue(visualizerStyle, Control.IsTabStopProperty));
             Assert.AreEqual(100.0, GetSetterValue(visualizerStyle, FrameworkElement.HeightProperty));
+            Assert.IsInstanceOfType(GetSetterValue(visualizerStyle, Control.TemplateProperty), typeof(ControlTemplate));
 
             Assert.AreSame(container.TryFindResource("RefreshContainerForegroundBrush"), container.Foreground);
             Assert.AreSame(container.TryFindResource("RefreshContainerBackgroundBrush"), container.Background);
