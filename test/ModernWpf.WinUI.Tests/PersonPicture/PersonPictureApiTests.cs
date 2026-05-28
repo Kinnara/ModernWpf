@@ -348,6 +348,8 @@ public class PersonPictureApiTests
 
             var personPictureEllipse = FindNamedDescendant<Ellipse>(personPicture, "PersonPictureEllipse");
             Assert.AreEqual(FlowDirection.LeftToRight, personPictureEllipse.FlowDirection);
+            Assert.AreEqual(personPicture.Width, personPictureEllipse.Width);
+            Assert.AreEqual(personPicture.Height, personPictureEllipse.Height);
 
             var badgeGrid = FindNamedDescendant<Grid>(personPicture, "BadgeGrid");
             Assert.AreEqual(Visibility.Collapsed, badgeGrid.Visibility);
@@ -364,6 +366,20 @@ public class PersonPictureApiTests
             var badgingEllipse = FindNamedDescendant<Ellipse>(personPicture, "BadgingEllipse");
             Assert.AreEqual(0.0, badgingEllipse.Opacity);
             Assert.AreEqual(FlowDirection.LeftToRight, badgingEllipse.FlowDirection);
+
+            var badgeNumberTextBlock = FindNamedDescendant<TextBlock>(personPicture, "BadgeNumberTextBlock");
+            AssertBrushEquals((Brush)personPicture.TryFindResource("PersonPictureEllipseBadgeForegroundThemeBrush"), badgeNumberTextBlock.Foreground);
+            Assert.AreEqual(personPicture.FontFamily.Source, badgeNumberTextBlock.FontFamily.Source);
+            Assert.AreEqual(personPicture.FontWeight, badgeNumberTextBlock.FontWeight);
+            Assert.AreEqual(VerticalAlignment.Center, badgeNumberTextBlock.VerticalAlignment);
+            Assert.AreEqual(HorizontalAlignment.Center, badgeNumberTextBlock.HorizontalAlignment);
+
+            var badgeGlyphIcon = FindNamedDescendant<ModernWpf.Controls.FontIcon>(personPicture, "BadgeGlyphIcon");
+            AssertBrushEquals((Brush)personPicture.TryFindResource("PersonPictureEllipseBadgeForegroundThemeBrush"), badgeGlyphIcon.Foreground);
+            Assert.AreEqual(((FontFamily)personPicture.TryFindResource("SymbolThemeFontFamily")).Source, badgeGlyphIcon.FontFamily.Source);
+            Assert.AreEqual(personPicture.FontWeight, badgeGlyphIcon.FontWeight);
+            Assert.AreEqual(VerticalAlignment.Center, badgeGlyphIcon.VerticalAlignment);
+            Assert.AreEqual(HorizontalAlignment.Center, badgeGlyphIcon.HorizontalAlignment);
 
             foreach (var themeName in new[] { "Light", "Dark" })
             {
