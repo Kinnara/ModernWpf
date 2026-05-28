@@ -214,13 +214,23 @@ public class BreadcrumbBarApiTests
             using var host = new TestWindowHost(item, width: 240, height: 80);
             host.UpdateLayout();
 
+            Assert.AreEqual(typeof(ModernWpf.Controls.BreadcrumbBarItem), itemStyle.TargetType);
             AssertDynamicResourceSetter(itemStyle, Control.BackgroundProperty, "BreadcrumbBarBackgroundBrush");
             AssertDynamicResourceSetter(itemStyle, Control.BorderBrushProperty, "BreadcrumbBarBorderBrush");
+            AssertSetterValue(itemStyle, ModernWpf.Controls.BreadcrumbBarItem.FocusVisualMarginProperty, new Thickness(1));
             AssertDynamicResourceSetter(itemStyle, Control.FontFamilyProperty, "ContentControlThemeFontFamily");
             AssertDynamicResourceSetter(itemStyle, Control.FontSizeProperty, "BreadcrumbBarItemThemeFontSize");
+            AssertSetterValue(itemStyle, Control.FontWeightProperty, item.TryFindResource("BreadcrumbBarItemFontWeight"));
+            AssertSetterValue(itemStyle, UIElement.FocusableProperty, true);
             AssertDynamicResourceSetter(itemStyle, Control.ForegroundProperty, "BreadcrumbBarForegroundBrush");
+            AssertSetterValue(itemStyle, FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Stretch);
+            AssertSetterValue(itemStyle, Control.HorizontalContentAlignmentProperty, HorizontalAlignment.Stretch);
+            AssertSetterValue(itemStyle, Control.IsTabStopProperty, true);
             AssertDynamicResourceSetter(itemStyle, BreadcrumbBarItem.UseSystemFocusVisualsProperty, "UseSystemFocusVisuals");
+            AssertSetterValue(itemStyle, FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+            AssertSetterValue(itemStyle, Control.VerticalContentAlignmentProperty, VerticalAlignment.Center);
             AssertDynamicResourceSetter(itemStyle, BreadcrumbBarItem.CornerRadiusProperty, "ControlCornerRadius");
+            Assert.IsInstanceOfType(GetSetterValue(itemStyle, Control.TemplateProperty), typeof(ControlTemplate));
 
             Assert.AreSame(item.TryFindResource("BreadcrumbBarBackgroundBrush"), item.Background);
             Assert.AreSame(item.TryFindResource("BreadcrumbBarBorderBrush"), item.BorderBrush);
@@ -275,6 +285,20 @@ public class BreadcrumbBarApiTests
             Assert.AreEqual(item.TryFindResource("BreadcrumbBarChevronFontSize"), chevronTextBlock.FontSize);
             Assert.AreSame(item.TryFindResource("BreadcrumbBarNormalForegroundBrush"), chevronTextBlock.Foreground);
             Assert.AreEqual(item.TryFindResource("BreadcrumbBarChevronPadding"), chevronTextBlock.Padding);
+
+            var layoutRoot = FindTemplatePart<FrameworkElement>(item, "PART_LayoutRoot");
+            var flyout = layoutRoot.Resources["PART_EllipsisFlyout"] as Flyout
+                ?? throw new AssertFailedException("Expected BreadcrumbBarItem template to expose the ellipsis flyout.");
+            var flyoutPresenterStyle = flyout.FlyoutPresenterStyle;
+            Assert.AreEqual(typeof(FlyoutPresenter), flyoutPresenterStyle.TargetType);
+            AssertDynamicResourceSetter(flyoutPresenterStyle, Control.BackgroundProperty, "BreadcrumbBarEllipsisFlyoutPresenterBackground");
+            AssertDynamicResourceSetter(flyoutPresenterStyle, Control.BorderBrushProperty, "BreadcrumbBarEllipsisFlyoutPresenterBorderBrush");
+            AssertSetterValue(flyoutPresenterStyle, Control.BorderThicknessProperty, item.TryFindResource("BreadcrumbBarEllipsisFlyoutPresenterBorderThemeThickness"));
+            AssertSetterValue(flyoutPresenterStyle, Control.PaddingProperty, new Thickness(0, 2, 0, 2));
+            AssertDynamicResourceSetter(flyoutPresenterStyle, FrameworkElement.MaxWidthProperty, "FlyoutThemeMaxWidth");
+            AssertSetterValue(flyoutPresenterStyle, FrameworkElement.MinHeightProperty, 40.0);
+            AssertDynamicResourceSetter(flyoutPresenterStyle, System.Windows.Controls.Border.CornerRadiusProperty, "OverlayCornerRadius");
+            Assert.IsInstanceOfType(GetSetterValue(flyoutPresenterStyle, Control.TemplateProperty), typeof(ControlTemplate));
         });
     }
 
@@ -283,12 +307,23 @@ public class BreadcrumbBarApiTests
     {
         WpfTestHost.Run(() =>
         {
+            var resources = new ResourceDictionary
+            {
+                Source = new Uri("/ModernWpf.Controls;component/BreadcrumbBar/BreadcrumbBar.xaml", UriKind.Relative)
+            };
+            var breadcrumbStyle = (Style)resources[typeof(ModernWpf.Controls.BreadcrumbBar)];
             var breadcrumb = new ModernWpf.Controls.BreadcrumbBar
             {
-                ItemsSource = new[] { "Root", "Node A", "Node B" }
+                ItemsSource = new[] { "Root", "Node A", "Node B" },
+                Style = breadcrumbStyle
             };
+            breadcrumb.Resources.MergedDictionaries.Add(resources);
 
             using var host = new TestWindowHost(breadcrumb, width: 300, height: 80);
+
+            Assert.AreEqual(typeof(ModernWpf.Controls.BreadcrumbBar), breadcrumbStyle.TargetType);
+            AssertSetterValue(breadcrumbStyle, Control.IsTabStopProperty, false);
+            Assert.IsInstanceOfType(GetSetterValue(breadcrumbStyle, Control.TemplateProperty), typeof(ControlTemplate));
 
             var repeater = FindTemplatePart<ItemsRepeater>(breadcrumb, "PART_ItemsRepeater");
 
@@ -509,12 +544,23 @@ public class BreadcrumbBarApiTests
     private static void AssertDynamicResourceSetter(Style style, DependencyProperty property, object expectedResourceKey)
     {
         Assert.IsNotNull(style, $"Expected style for {property.Name}.");
-        var setter = style.Setters.OfType<Setter>().SingleOrDefault(setter => setter.Property == property);
-        Assert.IsNotNull(setter, $"Expected local setter for {property.Name}.");
+        var setterValue = GetSetterValue(style, property);
 
-        var dynamicResource = setter!.Value as DynamicResourceExtension;
+        var dynamicResource = setterValue as DynamicResourceExtension;
         Assert.IsNotNull(dynamicResource, $"Expected {property.Name} to use a dynamic resource.");
         Assert.AreEqual(expectedResourceKey, dynamicResource!.ResourceKey);
+    }
+
+    private static void AssertSetterValue(Style style, DependencyProperty property, object? expectedValue)
+    {
+        Assert.AreEqual(expectedValue, GetSetterValue(style, property));
+    }
+
+    private static object? GetSetterValue(Style style, DependencyProperty property)
+    {
+        var setter = style.Setters.OfType<Setter>().SingleOrDefault(setter => setter.Property == property);
+        Assert.IsNotNull(setter, $"Expected local setter for {property.Name}.");
+        return setter!.Value;
     }
 
     private static void AssertResourceAlias(FrameworkElement element, object resourceKey, object expectedResourceKey)
