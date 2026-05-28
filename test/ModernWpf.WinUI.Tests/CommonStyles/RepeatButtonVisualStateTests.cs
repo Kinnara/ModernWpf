@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -72,6 +73,7 @@ public class RepeatButtonVisualStateTests
             AssertSetterValue(defaultStyle, UIElement.SnapsToDevicePixelsProperty, true);
             AssertSetterValue(defaultStyle, FrameworkElement.OverridesDefaultStyleProperty, true);
             AssertSetterValue(defaultStyle, Stylus.IsPressAndHoldEnabledProperty, false);
+            AssertTemplateSetter(defaultStyle, typeof(RepeatButton));
 
             Assert.AreSame(repeatButton.TryFindResource("RepeatButtonBackground"), repeatButton.Background);
             Assert.AreSame(repeatButton.TryFindResource("RepeatButtonForeground"), repeatButton.Foreground);
@@ -227,6 +229,16 @@ public class RepeatButtonVisualStateTests
         var setter = style.Setters.OfType<Setter>().SingleOrDefault(item => item.Property == property);
         Assert.IsNotNull(setter, $"Expected setter for {property.Name}.");
         Assert.AreEqual(expectedValue, setter!.Value);
+    }
+
+    private static void AssertTemplateSetter(Style style, Type expectedTargetType)
+    {
+        var setter = style.Setters.OfType<Setter>().SingleOrDefault(item => item.Property == Control.TemplateProperty);
+        Assert.IsNotNull(setter, "Expected a direct Template setter.");
+        Assert.IsInstanceOfType(setter!.Value, typeof(ControlTemplate));
+
+        var template = (ControlTemplate)setter.Value;
+        Assert.AreEqual(expectedTargetType, template.TargetType);
     }
 
     private static void AssertDynamicResourceSetter(Style style, DependencyProperty property, object expectedResourceKey)

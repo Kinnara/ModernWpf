@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -124,9 +125,9 @@ public class ButtonVisualStateTests
             var accentStyle = (Style)Application.Current.FindResource("AccentButtonStyle");
             var subtleStyle = (Style)Application.Current.FindResource("SubtleButtonStyle");
 
-            AssertButtonStyleSetters(defaultStyle, "Button");
-            AssertButtonStyleSetters(accentStyle, "AccentButton");
-            AssertButtonStyleSetters(subtleStyle, "SubtleButton");
+            AssertButtonStyleSetters(defaultStyle, "Button", typeof(ButtonBase));
+            AssertButtonStyleSetters(accentStyle, "AccentButton", typeof(Button));
+            AssertButtonStyleSetters(subtleStyle, "SubtleButton", typeof(Button));
 
             var defaultButton = CreateButton("Default");
             var accentButton = CreateButton("Accent");
@@ -277,7 +278,7 @@ public class ButtonVisualStateTests
         Assert.AreEqual(0, VisualStateManager.GetVisualStateGroups(contentBorder).Count);
     }
 
-    private static void AssertButtonStyleSetters(Style style, string prefix)
+    private static void AssertButtonStyleSetters(Style style, string prefix, Type expectedTemplateTargetType)
     {
         AssertDynamicResourceSetter(style, Control.FocusVisualStyleProperty, SystemParameters.FocusVisualStyleKey);
         AssertDynamicResourceSetter(style, Control.BackgroundProperty, $"{prefix}Background");
@@ -296,6 +297,7 @@ public class ButtonVisualStateTests
         AssertSetterValue(style, UIElement.SnapsToDevicePixelsProperty, true);
         AssertSetterValue(style, FrameworkElement.OverridesDefaultStyleProperty, true);
         AssertSetterValue(style, Stylus.IsPressAndHoldEnabledProperty, false);
+        AssertTemplateSetter(style, expectedTemplateTargetType);
     }
 
     private static void AssertButtonLiveResources(Button button, string prefix, bool recognizesAccessKey)
@@ -390,6 +392,16 @@ public class ButtonVisualStateTests
         var setter = style.Setters.OfType<Setter>().SingleOrDefault(item => item.Property == property);
         Assert.IsNotNull(setter, $"Expected setter for {property.Name}.");
         Assert.AreEqual(expectedValue, setter!.Value);
+    }
+
+    private static void AssertTemplateSetter(Style style, Type expectedTargetType)
+    {
+        var setter = style.Setters.OfType<Setter>().SingleOrDefault(item => item.Property == Control.TemplateProperty);
+        Assert.IsNotNull(setter, "Expected a direct Template setter.");
+        Assert.IsInstanceOfType(setter!.Value, typeof(ControlTemplate));
+
+        var template = (ControlTemplate)setter.Value;
+        Assert.AreEqual(expectedTargetType, template.TargetType);
     }
 
     private static void AssertDynamicResourceSetter(Style style, DependencyProperty property, object expectedResourceKey)
