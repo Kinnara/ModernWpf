@@ -1,4 +1,6 @@
+using System;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
@@ -91,6 +93,114 @@ public class SelectorBarApiTests
             Assert.AreEqual(8.0, contentStack.Spacing);
             Assert.AreEqual(0.0, selectionVisual.Opacity);
             Assert.AreEqual(1.0, commonVisual.StrokeThickness);
+        });
+    }
+
+    [TestMethod]
+    public void SelectorBarStylesUseWinUIResourceAliases()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var resources = new ResourceDictionary
+            {
+                Source = new Uri("/ModernWpf.Controls;component/SelectorBar/SelectorBar.xaml", UriKind.Relative)
+            };
+            var selectorBarStyle = (Style)resources[typeof(ModernWpf.Controls.SelectorBar)];
+            var itemStyle = (Style)resources[typeof(SelectorBarItem)];
+            var pillStyle = (Style)resources["SelectorBarItemPill"];
+            var item = new SelectorBarItem
+            {
+                Text = "Recent",
+                Icon = new SymbolIcon(Symbol.Clock),
+                Style = itemStyle
+            };
+            item.Resources.MergedDictionaries.Add(resources);
+
+            using var host = new TestWindowHost(item, width: 240, height: 80);
+            host.UpdateLayout();
+
+            AssertDynamicResourceSetter(selectorBarStyle, Control.BackgroundProperty, "SelectorBarBackground");
+            AssertDynamicResourceSetter(selectorBarStyle, ModernWpf.Controls.SelectorBar.CornerRadiusProperty, "ControlCornerRadius");
+            AssertDynamicResourceSetter(itemStyle, Control.ForegroundProperty, "SelectorBarItemForeground");
+            AssertDynamicResourceSetter(itemStyle, Control.BorderBrushProperty, "SelectorBarItemBorderBrush");
+            AssertDynamicResourceSetter(itemStyle, SelectorBarItem.CornerRadiusProperty, "ControlCornerRadius");
+            AssertDynamicResourceSetter(itemStyle, Control.FontFamilyProperty, "ContentControlThemeFontFamily");
+            AssertDynamicResourceSetter(itemStyle, Control.FontSizeProperty, "ControlContentThemeFontSize");
+            AssertDynamicResourceSetter(itemStyle, SelectorBarItem.UseSystemFocusVisualsProperty, "UseSystemFocusVisuals");
+            AssertDynamicResourceSetter(itemStyle, Control.BackgroundProperty, "SelectorBarItemBackground");
+            AssertDynamicResourceSetter(pillStyle, Shape.FillProperty, "SelectorBarItemPillFill");
+
+            AssertResourceAlias(item, "SelectorBarBackground", "SystemControlTransparentBrush");
+            AssertResourceAlias(item, "SelectorBarItemPillFill", "AccentFillColorDefaultBrush");
+            AssertResourceAlias(item, "SelectorBarItemDisabledPillFill", "AccentFillColorDisabledBrush");
+            AssertResourceAlias(item, "SelectorBarItemBorderBrush", "SystemControlTransparentBrush");
+            AssertResourceAlias(item, "SelectorBarItemBorderBrushPointerOver", "SystemControlTransparentBrush");
+            AssertResourceAlias(item, "SelectorBarItemBorderBrushSelected", "SystemControlTransparentBrush");
+            AssertResourceAlias(item, "SelectorBarItemBorderBrushPressed", "SystemControlTransparentBrush");
+            AssertResourceAlias(item, "SelectorBarItemBorderBrushDisabled", "SystemControlTransparentBrush");
+            AssertResourceAlias(item, "SelectorBarItemForeground", "TextFillColorPrimaryBrush");
+            AssertResourceAlias(item, "SelectorBarItemForegroundPointerOver", "TextFillColorSecondaryBrush");
+            AssertResourceAlias(item, "SelectorBarItemForegroundSelected", "TextFillColorPrimaryBrush");
+            AssertResourceAlias(item, "SelectorBarItemForegroundPressed", "TextFillColorTertiaryBrush");
+            AssertResourceAlias(item, "SelectorBarItemForegroundDisabled", "TextFillColorDisabledBrush");
+            AssertResourceAlias(item, "SelectorBarItemBackground", "SystemControlTransparentBrush");
+            AssertResourceAlias(item, "SelectorBarItemBackgroundPointerOver", "SystemControlTransparentBrush");
+            AssertResourceAlias(item, "SelectorBarItemBackgroundSelected", "SystemControlTransparentBrush");
+            AssertResourceAlias(item, "SelectorBarItemBackgroundPressed", "SystemControlTransparentBrush");
+            AssertResourceAlias(item, "SelectorBarItemBackgroundDisabled", "SystemControlTransparentBrush");
+
+            Assert.AreEqual(new Thickness(0, 4, 0, 4), item.TryFindResource("SelectorBarPadding"));
+            Assert.AreEqual(new Thickness(1), item.TryFindResource("SelectorBarBorderThickness"));
+            Assert.AreEqual(new Thickness(1), item.TryFindResource("SelectorBarItemBorderThickness"));
+            Assert.AreEqual(new Thickness(1), item.TryFindResource("SelectorBarSelectedInnerThickness"));
+            Assert.AreEqual(new Thickness(-2, 0, -2, 0), item.TryFindResource("SelectorBarItemIconVisualMargin"));
+            Assert.AreEqual(new Thickness(0), item.TryFindResource("SelectorBarItemTextVisualMargin"));
+            Assert.AreEqual(new Thickness(12, 10, 12, 7), item.TryFindResource("SelectorBarItemPadding"));
+            Assert.AreEqual(new Thickness(0), item.TryFindResource("SelectorBarItemSelectionVisualMargin"));
+            Assert.AreEqual(new Thickness(-2), item.TryFindResource("SelectorBarItemFocusVisualMargin"));
+            Assert.AreEqual(3.0, item.TryFindResource("SelectorBarItemPillHeight"));
+            Assert.AreEqual(4.0, item.TryFindResource("SelectorBarItemPillWidth"));
+            Assert.AreEqual(0.8, item.TryFindResource("SelectorBarItemIconScale"));
+            Assert.AreEqual(8.0, item.TryFindResource("SelectorBarItemSpacing"));
+
+            Assert.AreSame(item.TryFindResource("SelectorBarItemForeground"), item.Foreground);
+            Assert.AreSame(item.TryFindResource("SelectorBarItemBorderBrush"), item.BorderBrush);
+            Assert.AreEqual(new Thickness(1), item.BorderThickness);
+            Assert.AreEqual(new Thickness(12, 10, 12, 7), item.Padding);
+            Assert.AreEqual(item.TryFindResource("ControlCornerRadius"), item.CornerRadius);
+            Assert.AreEqual(new Thickness(-2), item.FocusVisualMargin);
+            Assert.AreSame(item.TryFindResource("ContentControlThemeFontFamily"), item.FontFamily);
+            Assert.AreEqual(item.TryFindResource("ControlContentThemeFontSize"), item.FontSize);
+            Assert.AreEqual(item.TryFindResource("UseSystemFocusVisuals"), item.UseSystemFocusVisuals);
+            Assert.AreSame(item.TryFindResource("SelectorBarItemBackground"), item.Background);
+
+            var root = GetNamedDescendant<GridEx>(item, "PART_ContainerRoot");
+            var iconPresenter = GetNamedDescendant<ContentPresenterEx>(item, "PART_IconVisual");
+            var textVisual = GetNamedDescendant<TextBlock>(item, "PART_TextVisual");
+            var selectionVisual = GetNamedDescendant<Rectangle>(item, "PART_SelectionVisual");
+            var commonVisual = GetNamedDescendant<Rectangle>(item, "PART_CommonVisual");
+            var iconScale = (ScaleTransform)iconPresenter.RenderTransform;
+
+            Assert.AreSame(item.TryFindResource("SelectorBarItemForeground"), iconPresenter.Foreground);
+            Assert.AreSame(item.TryFindResource("SelectorBarItemForeground"), textVisual.Foreground);
+            Assert.AreEqual(new Thickness(-2, 0, -2, 0), iconPresenter.Margin);
+            Assert.AreEqual(0.8, iconScale.ScaleX);
+            Assert.AreEqual(0.8, iconScale.ScaleY);
+            Assert.AreSame(item.TryFindResource("SelectorBarItemPillFill"), selectionVisual.Fill);
+            Assert.AreEqual(3.0, selectionVisual.Height);
+            Assert.AreEqual(4.0, selectionVisual.Width);
+            Assert.AreSame(item.TryFindResource("SelectorBarItemBackground"), commonVisual.Fill);
+            Assert.AreSame(item.TryFindResource("SelectorBarItemBorderBrush"), commonVisual.Stroke);
+            Assert.AreEqual(1.0, commonVisual.StrokeThickness);
+
+            AssertStateSetterDynamicResource(root, "CombinedStates", "UnselectedPointerOver", "PART_ContainerRoot.Background", "SelectorBarItemBackgroundPointerOver");
+            AssertStateSetterDynamicResource(root, "CombinedStates", "UnselectedPointerOver", "PART_TextVisual.Foreground", "SelectorBarItemForegroundPointerOver");
+            AssertStateSetterDynamicResource(root, "CombinedStates", "UnselectedPressed", "PART_ContainerRoot.Background", "SelectorBarItemBackgroundPressed");
+            AssertStateSetterDynamicResource(root, "CombinedStates", "SelectedNormal", "PART_ContainerRoot.Background", "SelectorBarItemBackgroundSelected");
+            AssertStateSetterDynamicResource(root, "CombinedStates", "SelectedNormal", "PART_TextVisual.Foreground", "SelectorBarItemForegroundSelected");
+            AssertStateSetterDynamicResource(root, "DisabledStates", "Disabled", "PART_ContainerRoot.Background", "SelectorBarItemBackgroundDisabled");
+            AssertStateSetterDynamicResource(root, "DisabledStates", "Disabled", "PART_TextVisual.Foreground", "SelectorBarItemForegroundDisabled");
+            AssertStateSetterDynamicResource(root, "DisabledStates", "Disabled", "PART_SelectionVisual.Fill", "SelectorBarItemDisabledPillFill");
         });
     }
 
@@ -232,5 +342,54 @@ public class SelectorBarApiTests
             .OfType<T>()
             .FirstOrDefault(candidate => candidate.Name == name)
             ?? throw new AssertFailedException($"Expected to find template part {name}.");
+    }
+
+    private static void AssertDynamicResourceSetter(Style style, DependencyProperty property, object expectedResourceKey)
+    {
+        var setter = style.Setters.OfType<Setter>().SingleOrDefault(setter => setter.Property == property);
+        Assert.IsNotNull(setter, $"Expected local setter for {property.Name}.");
+
+        var dynamicResource = setter!.Value as DynamicResourceExtension;
+        Assert.IsNotNull(dynamicResource, $"Expected {property.Name} to use a dynamic resource.");
+        Assert.AreEqual(expectedResourceKey, dynamicResource!.ResourceKey);
+    }
+
+    private static void AssertResourceAlias(FrameworkElement element, object resourceKey, object expectedResourceKey)
+    {
+        Assert.AreSame(
+            element.TryFindResource(expectedResourceKey),
+            element.TryFindResource(resourceKey),
+            $"Unexpected resource alias for {resourceKey}.");
+    }
+
+    private static void AssertStateSetterDynamicResource(
+        FrameworkElement stateGroupsRoot,
+        string groupName,
+        string stateName,
+        string target,
+        object expectedResourceKey)
+    {
+        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
+            .OfType<VisualStateGroup>()
+            .Single(candidate => candidate.Name == groupName);
+        var state = group.States
+            .OfType<VisualStateEx>()
+            .Single(candidate => candidate.Name == stateName);
+        var setter = state.Setters.Single(candidate => candidate.Target == target);
+
+        AssertResourceReferenceExpression(
+            setter.ReadLocalValue(VisualStateSetter.ValueProperty),
+            expectedResourceKey);
+    }
+
+    private static void AssertResourceReferenceExpression(object value, object expectedResourceKey)
+    {
+        Assert.IsNotNull(value, "Expected dynamic resource local value.");
+        Assert.AreEqual("System.Windows.ResourceReferenceExpression", value.GetType().FullName);
+        var resourceKeyProperty = value.GetType().GetProperty(
+            "ResourceKey",
+            BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+        Assert.IsNotNull(resourceKeyProperty, "Expected ResourceReferenceExpression.ResourceKey.");
+        Assert.AreEqual(expectedResourceKey, resourceKeyProperty!.GetValue(value));
     }
 }
