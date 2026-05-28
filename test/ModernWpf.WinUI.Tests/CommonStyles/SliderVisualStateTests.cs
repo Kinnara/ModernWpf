@@ -93,6 +93,76 @@ public class SliderVisualStateTests
         });
     }
 
+    [TestMethod]
+    public void ThemeResourcesUseWinUI2SliderHighContrastTokens()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            foreach (var themeName in new[] { "Light", "Dark" })
+            {
+                AssertThemeResourceValue(themeName, "SliderOutsideTickBarThemeHeight", 4.0);
+                AssertThemeResourceValue(themeName, "SliderTrackThemeHeight", 4.0);
+                AssertThemeResourceValue(themeName, "SliderBorderThemeThickness", new Thickness(0));
+                AssertThemeResourceValue(themeName, "SliderHeaderThemeMargin", new Thickness(0, 0, 0, 4));
+                AssertThemeResourceValue(themeName, "SliderHeaderThemeFontWeight", FontWeights.Normal);
+                AssertThemeResourceReference(themeName, "SliderContainerBackground", "ControlFillColorTransparentBrush");
+                AssertThemeResourceReference(themeName, "SliderContainerBackgroundPointerOver", "ControlFillColorTransparentBrush");
+                AssertThemeResourceReference(themeName, "SliderContainerBackgroundPressed", "ControlFillColorTransparentBrush");
+                AssertThemeResourceReference(themeName, "SliderContainerBackgroundDisabled", "ControlFillColorTransparentBrush");
+                AssertThemeResourceReference(themeName, "SliderThumbBackground", "AccentFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "SliderThumbBackgroundPointerOver", "AccentFillColorSecondaryBrush");
+                AssertThemeResourceReference(themeName, "SliderThumbBackgroundPressed", "AccentFillColorTertiaryBrush");
+                AssertThemeResourceReference(themeName, "SliderThumbBackgroundDisabled", "AccentFillColorDisabledBrush");
+                AssertThemeResourceReference(themeName, "SliderThumbBorderBrush", "ControlElevationBorderBrush");
+                AssertThemeResourceReference(themeName, "SliderOuterThumbBackground", "ControlSolidFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "SliderTrackFill", "ControlStrongFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "SliderTrackFillPointerOver", "ControlStrongFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "SliderTrackFillPressed", "ControlStrongFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "SliderTrackFillDisabled", "ControlStrongFillColorDisabledBrush");
+                AssertThemeResourceReference(themeName, "SliderTrackValueFill", "AccentFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "SliderTrackValueFillPointerOver", "AccentFillColorSecondaryBrush");
+                AssertThemeResourceReference(themeName, "SliderTrackValueFillPressed", "AccentFillColorTertiaryBrush");
+                AssertThemeResourceReference(themeName, "SliderTrackValueFillDisabled", "AccentFillColorDisabledBrush");
+                AssertThemeResourceReference(themeName, "SliderHeaderForeground", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "SliderHeaderForegroundDisabled", "TextFillColorDisabledBrush");
+                AssertThemeResourceReference(themeName, "SliderTickBarFill", "ControlStrongFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "SliderTickBarFillDisabled", "ControlStrongFillColorDisabledBrush");
+                AssertThemeResourceReference(themeName, "SliderInlineTickBarFill", "ControlFillColorInputActiveBrush");
+            }
+
+            AssertThemeResourceValue("HighContrast", "SliderOutsideTickBarThemeHeight", 4.0);
+            AssertThemeResourceValue("HighContrast", "SliderTrackThemeHeight", 2.0);
+            AssertThemeResourceValue("HighContrast", "SliderBorderThemeThickness", new Thickness(1));
+            AssertThemeResourceValue("HighContrast", "SliderHeaderThemeMargin", new Thickness(0, 0, 0, 4));
+            AssertThemeResourceValue("HighContrast", "SliderHeaderThemeFontWeight", FontWeights.Normal);
+            AssertThemeResourceReference("HighContrast", "SliderContainerBackground", "SystemControlTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "SliderContainerBackgroundPointerOver", "SystemControlTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "SliderContainerBackgroundPressed", "SystemControlTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "SliderContainerBackgroundDisabled", "SystemControlTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "SliderThumbBackground", "SystemControlForegroundAccentBrush");
+            AssertThemeResourceReference("HighContrast", "SliderThumbBackgroundPointerOver", "SystemAccentColorLight1Brush");
+            AssertThemeResourceReference("HighContrast", "SliderThumbBackgroundPressed", "SystemAccentColorDark1Brush");
+            AssertThemeResourceReference("HighContrast", "SliderThumbBackgroundDisabled", "SystemControlDisabledChromeDisabledHighBrush");
+            AssertThemeResourceReference("HighContrast", "SliderThumbBorderBrush", "SystemControlForegroundAccentBrush");
+            AssertThemeResourceReference("HighContrast", "SliderOuterThumbBackground", "SystemControlForegroundAccentBrush");
+            AssertThemeResourceReference("HighContrast", "SliderTrackFill", "SystemControlForegroundBaseMediumLowBrush");
+            AssertThemeResourceReference("HighContrast", "SliderTrackFillPointerOver", "SystemControlForegroundBaseMediumBrush");
+            AssertThemeResourceReference("HighContrast", "SliderTrackFillPressed", "SystemControlForegroundBaseMediumLowBrush");
+            AssertThemeResourceReference("HighContrast", "SliderTrackFillDisabled", "SystemControlDisabledChromeDisabledHighBrush");
+            AssertThemeResourceReference("HighContrast", "SliderTrackValueFill", "SystemControlHighlightAccentBrush");
+            AssertThemeResourceReference("HighContrast", "SliderTrackValueFillPointerOver", "SystemControlHighlightAccentBrush");
+            AssertThemeResourceReference("HighContrast", "SliderTrackValueFillPressed", "SystemControlHighlightAccentBrush");
+            AssertThemeResourceReference("HighContrast", "SliderTrackValueFillDisabled", "SystemControlDisabledChromeDisabledHighBrush");
+            AssertThemeResourceReference("HighContrast", "SliderHeaderForeground", "SystemControlForegroundBaseHighBrush");
+            AssertThemeResourceReference("HighContrast", "SliderHeaderForegroundDisabled", "SystemControlDisabledBaseMediumLowBrush");
+            AssertThemeResourceReference("HighContrast", "SliderTickBarFill", "SystemControlForegroundBaseMediumLowBrush");
+            AssertThemeResourceReference("HighContrast", "SliderTickBarFillDisabled", "SystemControlDisabledBaseMediumLowBrush");
+            AssertThemeResourceReference("HighContrast", "SliderInlineTickBarFill", "SystemControlBackgroundAltHighBrush");
+        });
+    }
+
     private static Slider CreateSlider(Orientation orientation)
     {
         return new Slider
@@ -168,5 +238,20 @@ public class SliderVisualStateTests
         }
 
         return part;
+    }
+
+    private static void AssertThemeResourceReference(string themeName, object resourceKey, object expectedResourceKey)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.IsTrue(themeDictionary.Contains(expectedResourceKey), $"{themeName} is missing {expectedResourceKey}.");
+        Assert.AreSame(themeDictionary[expectedResourceKey], themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
+    }
+
+    private static void AssertThemeResourceValue<T>(string themeName, object resourceKey, T expectedValue)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.AreEqual(expectedValue, themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
     }
 }
