@@ -388,6 +388,31 @@ public class RefreshContainerApiTests
         {
             TestApplication.EnsureInitialized();
 
+            var visualizer = new RefreshVisualizer();
+            var container = new RefreshContainer
+            {
+                Content = new TextBlock { Text = "Refreshable content" },
+                Visualizer = visualizer
+            };
+
+            using var host = new TestWindowHost(container, width: 240, height: 180);
+
+            Assert.AreSame(container.TryFindResource("RefreshContainerForegroundBrush"), container.Foreground);
+            Assert.AreSame(container.TryFindResource("RefreshContainerBackgroundBrush"), container.Background);
+            Assert.IsFalse(container.IsTabStop);
+
+            var containerRoot = FindNamedDescendant<Grid>(container, "Root");
+            Assert.AreSame(container.Background, containerRoot.Background);
+
+            Assert.AreSame(visualizer.TryFindResource("RefreshVisualizerForeground"), visualizer.Foreground);
+            Assert.AreSame(visualizer.TryFindResource("RefreshVisualizerBackground"), visualizer.Background);
+            Assert.IsFalse(visualizer.IsTabStop);
+            Assert.AreEqual(100.0, visualizer.Height);
+
+            var visualizerRoot = FindNamedDescendant<Panel>(visualizer, "Root");
+            Assert.AreEqual(80.0, visualizerRoot.MinHeight);
+            Assert.AreSame(visualizer.Background, visualizerRoot.Background);
+
             AssertBrushColor("Light", "RefreshContainerForegroundBrush", Colors.Black);
             AssertBrushColor("Light", "RefreshContainerBackgroundBrush", Colors.Transparent);
             AssertBrushColor("Light", "RefreshVisualizerForeground", Colors.Black);
