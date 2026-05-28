@@ -765,19 +765,11 @@
                         <Trigger Property="IsChecked" Value="{x:Null}">
                             <Setter TargetName="ControlIcon" Property="Text" Value="{StaticResource DataGridCheckBoxIndeterminateGlyph}" />
                             <Setter TargetName="ControlIcon" Property="Visibility" Value="Visible" />
-                            <Setter TargetName="ControlBorderIconPresenter" Property="Background">
-                                <Setter.Value>
-                                    <SolidColorBrush Opacity="1.0" Color="{DynamicResource SystemAccentColorSecondary}" />
-                                </Setter.Value>
-                            </Setter>
+                            <Setter TargetName="ControlBorderIconPresenter" Property="Background" Value="{DynamicResource DataGridCheckBoxBackgroundChecked}" />
                         </Trigger>
                         <Trigger Property="IsChecked" Value="True">
                             <Setter TargetName="ControlIcon" Property="Visibility" Value="Visible" />
-                            <Setter TargetName="ControlBorderIconPresenter" Property="Background">
-                                <Setter.Value>
-                                    <SolidColorBrush Opacity="1.0" Color="{DynamicResource SystemAccentColorSecondary}" />
-                                </Setter.Value>
-                            </Setter>
+                            <Setter TargetName="ControlBorderIconPresenter" Property="Background" Value="{DynamicResource DataGridCheckBoxBackgroundChecked}" />
                         </Trigger>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
@@ -791,22 +783,14 @@
                                 <Condition Property="IsMouseOver" Value="True" />
                                 <Condition Property="IsChecked" Value="{x:Null}" />
                             </MultiTrigger.Conditions>
-                            <Setter TargetName="ControlBorderIconPresenter" Property="Background">
-                                <Setter.Value>
-                                    <SolidColorBrush Opacity="0.8" Color="{DynamicResource SystemAccentColorSecondary}" />
-                                </Setter.Value>
-                            </Setter>
+                            <Setter TargetName="ControlBorderIconPresenter" Property="Background" Value="{DynamicResource DataGridCheckBoxBackgroundCheckedPointerOver}" />
                         </MultiTrigger>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsMouseOver" Value="True" />
                                 <Condition Property="IsChecked" Value="True" />
                             </MultiTrigger.Conditions>
-                            <Setter TargetName="ControlBorderIconPresenter" Property="Background">
-                                <Setter.Value>
-                                    <SolidColorBrush Opacity="0.8" Color="{DynamicResource SystemAccentColorSecondary}" />
-                                </Setter.Value>
-                            </Setter>
+                            <Setter TargetName="ControlBorderIconPresenter" Property="Background" Value="{DynamicResource DataGridCheckBoxBackgroundCheckedPointerOver}" />
                         </MultiTrigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="ControlBorderIconPresenter" Property="Background" Value="{DynamicResource ControlFillColorDisabledBrush}" />

@@ -527,6 +527,8 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~CommonStylesResourceTests|FullyQualifiedName~DatePickerVisualStateTests.DatePickerCalendarStyleUsesOfficialPopupCalendarChrome|FullyQualifiedName~TextBoxPasswordBoxVisualStateTests.DataGridTextBoxStyleRetainsModernWpfEditingSubstitution|FullyQualifiedName~DataGridVisualStateTests.DataGridTemplatesUseOfficialWpfPresenterSlots|FullyQualifiedName~DataGridVisualStateTests.DataGridThemeResourcesExposeOfficialWpfFluentAliases|FullyQualifiedName~NavigationViewApiTests.VerifyFinalWinUI2NavigationViewThemeResources" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0`: 13 tests. Product XAML resource-reference coverage now verifies that simple `StaticResource`/`DynamicResource` keys referenced by `ModernWpf` and `ModernWpf.Controls` XAML have declared resource keys, and focused runtime/theme coverage pins `PopupCornerRadius`, `DataGridTextControlValidationErrorTemplate`, DataGrid checkbox checked brushes, `CalendarViewNavigationButtonForeground`, and top `NavigationView` selected background aliases across Light, Dark, and HighContrast. Existing warning/output remains `NETSDK1137`, generated WinRT warnings, existing ModernWpf/ModernWpf.Controls warnings, and the recurring `Failed to resolve WinRT.Runtime.dll` message.
 - `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~DatePickerVisualStateTests|FullyQualifiedName~CommonStylesResourceTests.ThemeResourcesUseWinUI2CalendarPickerHighContrastTokens" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0`: 3 tests. WPF Fluent DatePicker resources now define `DatePickerTextBoxCaretBrush` in Light, Dark, and HighContrast; calendar/date common resource coverage pins the new aliases, and `DefaultDatePickerTextBoxStyle` runtime coverage proves the copied `DatePickerTextBox` caret tracks the dynamic resource live. Existing warning/output remains `NETSDK1137`, generated WinRT warnings, existing ModernWpf/ModernWpf.Controls warnings, and the recurring `Failed to resolve WinRT.Runtime.dll` message.
 - `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~GalleryApplicationResourceTests.ControlExampleTemplateMatchesWpfGalleryReferenceDivider|FullyQualifiedName~WpfGallerySourceShapeTests.SharedControlExampleKeepsOfficialSourceCodeTemplateShape" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
@@ -3306,8 +3308,9 @@ source properties; remaining High Contrast
 work means broader OS high-contrast shell and control paths that are not
 already covered by title chrome, NavigationView TreeView token aliases and
 their HighContrast system-brush references, NavigationView core state
-theme-resource aliases, HeaderTile fills, DataGrid visual resource switching
-and official event-handler shape, InfoBadge sizing/icon/value
+theme-resource aliases including top-navigation selected backgrounds, HeaderTile fills,
+DataGrid visual resource switching, checkbox checked brush aliases, validation-template
+resource resolution, and official event-handler shape, InfoBadge sizing/icon/value
 theme-resource aliases and direct style/live resource consumption, InfoBar template-root
 severity token overrides and direct style/live resource consumption, TeachingTip body/alternate-close
 theme-resource aliases plus alternate-close direct style/live/trigger resource consumption,
@@ -3317,7 +3320,8 @@ core theme-resource aliases, PipsPager selection/navigation theme-resource alias
 DropDownButton chevron aliases and direct style/live resource consumption, Pivot style theme-resource aliases and direct style/live resource consumption,
 FlyoutPresenter chrome/theme-resource aliases and direct style/live resource consumption,
 Date/time flyout and FlipView common style theme-resource aliases,
-calendar picker common theme-resource aliases plus DatePicker text box caret direct style/live resource consumption,
+calendar picker common theme-resource aliases plus CalendarView navigation foreground and
+DatePicker text box caret direct style/live resource consumption,
 TimePicker and LoopingSelector common theme-resource aliases,
 Expander header/chevron/content theme-resource aliases and direct style/live/trigger resource consumption,
 default/accent/subtle button theme-resource aliases and direct style/live resource consumption,

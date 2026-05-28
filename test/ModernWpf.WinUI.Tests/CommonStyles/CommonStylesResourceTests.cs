@@ -1,9 +1,13 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Markup;
+using System.Xml.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf;
 using ModernWpf.Controls;
@@ -76,6 +80,7 @@ public class CommonStylesResourceTests
             AssertResource(resources, "ContentControlFontSize", 14.0);
             AssertResource(resources, "TextControlThemeMinHeight", 24.0);
             AssertResource(resources, "TextControlThemePadding", new Thickness(2, 2, 6, 1));
+            AssertResource(resources, "PopupCornerRadius", new CornerRadius(8));
             AssertResource(resources, "ListViewItemMinHeight", 32.0);
             AssertResource(resources, "TreeViewItemMinHeight", 24.0);
             AssertResource(resources, "TreeViewItemMultiSelectCheckBoxMinHeight", 24.0);
@@ -209,6 +214,7 @@ public class CommonStylesResourceTests
                 AssertThemeResourceReference(themeName, "CalendarViewWeekDayForegroundDisabled", "TextFillColorDisabledBrush");
                 AssertThemeResourceReference(themeName, "CalendarViewItemBackgroundPointerOver", "SubtleFillColorSecondaryBrush");
                 AssertThemeResourceReference(themeName, "CalendarViewNavigationButtonBackground", "SubtleFillColorTransparentBrush");
+                AssertThemeResourceReference(themeName, "CalendarViewNavigationButtonForeground", "TextFillColorSecondaryBrush");
                 AssertThemeResourceReference(themeName, "CalendarViewNavigationButtonForegroundPointerOver", "TextFillColorPrimaryBrush");
                 AssertThemeResourceReference(themeName, "CalendarViewNavigationButtonForegroundPressed", "ControlAltFillColorTertiaryBrush");
                 AssertThemeResourceReference(themeName, "CalendarViewNavigationButtonForegroundDisabled", "TextFillColorDisabledBrush");
@@ -279,6 +285,7 @@ public class CommonStylesResourceTests
             AssertThemeResourceReference("HighContrast", "CalendarViewSelectedBackground", "SystemColorHighlightColorBrush");
             AssertThemeResourceReference("HighContrast", "CalendarViewTodayBackground", "SystemColorHighlightColorBrush");
             AssertThemeResourceReference("HighContrast", "CalendarViewNavigationButtonBackground", "SystemControlTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "CalendarViewNavigationButtonForeground", "SystemColorButtonTextColorBrush");
             AssertThemeResourceReference("HighContrast", "CalendarViewNavigationButtonForegroundPointerOver", "SystemControlForegroundBaseHighBrush");
             AssertThemeResourceReference("HighContrast", "CalendarViewNavigationButtonForegroundPressed", "SystemControlForegroundBaseMediumBrush");
             AssertThemeResourceReference("HighContrast", "CalendarViewNavigationButtonForegroundDisabled", "SystemControlDisabledBaseMediumLowBrush");
@@ -287,6 +294,46 @@ public class CommonStylesResourceTests
             AssertThemeResourceReference("HighContrast", "CalendarViewNavigationButtonBorderBrushPointerOver", "SystemControlHighlightTransparentBrush");
             AssertThemeResourceReference("HighContrast", "CalendarViewNavigationButtonBorderBrush", "SystemControlTransparentBrush");
         });
+    }
+
+    [TestMethod]
+    public void ProductXamlStyleResourceReferencesResolveToDeclaredKeys()
+    {
+        var repoRoot = FindRepoRoot();
+        var xamlFiles = GetProductXamlFiles(repoRoot).ToArray();
+        var declaredKeys = new HashSet<string>();
+        var resourceReferenceRegex = new Regex(@"\{(?:DynamicResource|StaticResource)\s+([^},]+)", RegexOptions.CultureInvariant);
+
+        foreach (var path in xamlFiles)
+        {
+            var document = XDocument.Load(path);
+            foreach (var keyAttribute in document.Descendants().Attributes().Where(IsXamlKeyAttribute))
+            {
+                declaredKeys.Add(keyAttribute.Value);
+            }
+        }
+
+        var missingKeys = new SortedSet<string>();
+        foreach (var path in xamlFiles)
+        {
+            var relativePath = Path.GetRelativePath(repoRoot, path);
+            var document = XDocument.Load(path);
+            foreach (var attribute in document.Descendants().Attributes())
+            {
+                foreach (Match match in resourceReferenceRegex.Matches(attribute.Value))
+                {
+                    var resourceKey = match.Groups[1].Value.Trim();
+                    if (!IsSimpleStringResourceKey(resourceKey) || declaredKeys.Contains(resourceKey))
+                    {
+                        continue;
+                    }
+
+                    missingKeys.Add($"{resourceKey} referenced by {relativePath}");
+                }
+            }
+        }
+
+        AssertMissingKeys(missingKeys);
     }
 
     [TestMethod]
@@ -451,5 +498,60 @@ public class CommonStylesResourceTests
         {
             Assert.Fail("Resource key mismatch:" + System.Environment.NewLine + string.Join(System.Environment.NewLine, missingKeys.OrderBy(static key => key)));
         }
+    }
+
+    private static IEnumerable<string> GetProductXamlFiles(string repoRoot)
+    {
+        foreach (var productDirectory in new[] { "ModernWpf", "ModernWpf.Controls" })
+        {
+            var root = Path.Combine(repoRoot, productDirectory);
+            foreach (var path in Directory.EnumerateFiles(root, "*.xaml", SearchOption.AllDirectories))
+            {
+                if (IsGeneratedOutputPath(path))
+                {
+                    continue;
+                }
+
+                yield return path;
+            }
+        }
+    }
+
+    private static bool IsGeneratedOutputPath(string path)
+    {
+        return path.IndexOf($"{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            path.IndexOf($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}", StringComparison.OrdinalIgnoreCase) >= 0;
+    }
+
+    private static bool IsXamlKeyAttribute(XAttribute attribute)
+    {
+        return attribute.Name.LocalName == "Key" &&
+            attribute.Name.NamespaceName == "http://schemas.microsoft.com/winfx/2006/xaml";
+    }
+
+    private static bool IsSimpleStringResourceKey(string resourceKey)
+    {
+        return resourceKey.Length > 0 &&
+            !resourceKey.StartsWith("{", StringComparison.Ordinal) &&
+            !resourceKey.StartsWith("x:Static", StringComparison.Ordinal) &&
+            resourceKey.IndexOf(':') < 0;
+    }
+
+    private static string FindRepoRoot()
+    {
+        var directory = new DirectoryInfo(AppContext.BaseDirectory);
+
+        while (directory != null)
+        {
+            if (File.Exists(Path.Combine(directory.FullName, "ModernWpf.sln")))
+            {
+                return directory.FullName;
+            }
+
+            directory = directory.Parent;
+        }
+
+        Assert.Fail("Could not locate ModernWpf.sln from the test output directory.");
+        return string.Empty;
     }
 }

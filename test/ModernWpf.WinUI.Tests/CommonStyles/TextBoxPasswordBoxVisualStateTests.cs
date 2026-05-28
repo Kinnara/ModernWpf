@@ -134,6 +134,19 @@ public class TextBoxPasswordBoxVisualStateTests
             AssertSetter(setters, Control.VerticalContentAlignmentProperty, VerticalAlignment.Center);
             AssertSetter(setters, System.Windows.Controls.Border.CornerRadiusProperty, new CornerRadius(0));
             AssertDynamicResourceSetter(setters, Validation.ErrorTemplateProperty, "DataGridTextControlValidationErrorTemplate");
+
+            var errorTemplate = Application.Current.FindResource("DataGridTextControlValidationErrorTemplate");
+            Assert.IsInstanceOfType(errorTemplate, typeof(ControlTemplate));
+
+            var textBox = new TextBox
+            {
+                Style = dataGridTextBoxStyle
+            };
+
+            using var host = new TestWindowHost(textBox, width: 180, height: 80);
+            host.UpdateLayout();
+
+            Assert.AreSame(errorTemplate, Validation.GetErrorTemplate(textBox));
         });
     }
 

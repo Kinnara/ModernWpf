@@ -18,6 +18,7 @@
     <m:StaticResource x:Key="PivotHeaderItemFontFamily" ResourceKey="{x:Static SystemFonts.MessageFontFamilyKey}" />
     <m:StaticResource x:Key="PivotTitleFontFamily" ResourceKey="{x:Static SystemFonts.MessageFontFamilyKey}" />
     <FontFamily x:Key="SymbolThemeFontFamily">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
+    <CornerRadius x:Key="PopupCornerRadius">8,8,8,8</CornerRadius>
     <sys:Double x:Key="ControlContentThemeFontSize">14</sys:Double>
     <sys:Double x:Key="ContentControlFontSize">14</sys:Double>
     <sys:Double x:Key="GridViewItemMinWidth">44</sys:Double>
@@ -71,6 +72,16 @@
                 BorderBrush="{DynamicResource SystemControlErrorTextForegroundBrush}"
                 BorderThickness="{DynamicResource TextControlBorderThemeThicknessFocused}"
                 CornerRadius="{DynamicResource ControlCornerRadius}" />
+        </Grid>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="DataGridTextControlValidationErrorTemplate">
+        <Grid SnapsToDevicePixels="True">
+            <AdornedElementPlaceholder />
+            <Border
+                BorderBrush="{DynamicResource SystemControlErrorTextForegroundBrush}"
+                BorderThickness="{DynamicResource TextControlBorderThemeThicknessFocused}"
+                CornerRadius="0" />
         </Grid>
     </ControlTemplate>
 

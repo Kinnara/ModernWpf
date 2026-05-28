@@ -83,6 +83,13 @@ public class DataGridVisualStateTests
             AssertWpfPresenter(columnHeader, columnHeader.Content);
             AssertWpfPresenter(rowHeader, rowHeader.Content);
             AssertWpfPresenter(checkBox, checkBox.Content);
+
+            var iconPresenter = checkBox.Template.FindName("ControlBorderIconPresenter", checkBox) as Border
+                ?? throw new AssertFailedException("Expected DataGrid CheckBox icon presenter.");
+            checkBox.IsChecked = true;
+            host.UpdateLayout();
+
+            Assert.AreSame(checkBox.TryFindResource("DataGridCheckBoxBackgroundChecked"), iconPresenter.Background);
         });
     }
 
@@ -98,6 +105,8 @@ public class DataGridVisualStateTests
             AssertThemeResourceReference(themeName, "DataGridColumnHeaderBackground", "SubtleFillColorTransparentBrush");
             AssertThemeResourceReference(themeName, "DataGridHeaderBackground", "SubtleFillColorTertiaryBrush");
             AssertThemeResourceReference(themeName, "DataGridHeaderForegroundDisabled", "TextFillColorDisabledBrush");
+            AssertThemeResourceReference(themeName, "DataGridCheckBoxBackgroundChecked", "AccentFillColorDefaultBrush");
+            AssertThemeResourceReference(themeName, "DataGridCheckBoxBackgroundCheckedPointerOver", "AccentFillColorTertiaryBrush");
             AssertThemeResourceReference(themeName, "DataGridRowSelectedForegroundThemeBrush", "TextOnAccentFillColorPrimaryBrush");
         }
 
@@ -108,6 +117,8 @@ public class DataGridVisualStateTests
         AssertThemeResourceReference("HighContrast", "DataGridColumnHeaderBackground", "SystemControlTransparentBrush");
         AssertThemeResourceReference("HighContrast", "DataGridHeaderBackground", "SystemColorButtonFaceColorBrush");
         AssertThemeResourceReference("HighContrast", "DataGridHeaderForegroundDisabled", "SystemColorGrayTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "DataGridCheckBoxBackgroundChecked", "CheckBoxCheckBackgroundFillChecked");
+        AssertThemeResourceReference("HighContrast", "DataGridCheckBoxBackgroundCheckedPointerOver", "CheckBoxCheckBackgroundFillCheckedPointerOver");
         AssertThemeResourceReference("HighContrast", "DataGridRowSelectedBackgroundThemeBrush", "SystemColorButtonTextColorBrush");
         AssertThemeResourceReference("HighContrast", "DataGridRowSelectedForegroundThemeBrush", "SystemColorButtonFaceColorBrush");
     }

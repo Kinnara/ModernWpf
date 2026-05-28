@@ -683,6 +683,7 @@
     <m:StaticResource x:Key="CalendarViewSelectedBackground" ResourceKey="SystemAccentColorLight2Brush" />
     <m:StaticResource x:Key="CalendarViewTodayBackground" ResourceKey="SystemAccentColorLight2Brush" />
     <m:StaticResource x:Key="CalendarViewNavigationButtonBackground" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="CalendarViewNavigationButtonForeground" ResourceKey="TextFillColorSecondaryBrush" />
     <m:StaticResource x:Key="CalendarViewNavigationButtonForegroundPointerOver" ResourceKey="TextFillColorPrimaryBrush" />
     <m:StaticResource x:Key="CalendarViewNavigationButtonForegroundPressed" ResourceKey="ControlAltFillColorTertiaryBrush" />
     <m:StaticResource x:Key="CalendarViewNavigationButtonForegroundDisabled" ResourceKey="TextFillColorDisabledBrush" />
@@ -1040,6 +1041,8 @@
     <m:StaticResource x:Key="DataGridHeaderBorderBrushDisabled" ResourceKey="ControlStrokeColorSecondaryBrush" />
     <m:StaticResource x:Key="DataGridHeaderBorderBrushSelected" ResourceKey="ControlStrokeColorSecondaryBrush" />
     <m:StaticResource x:Key="DataGridHeaderForegroundDisabled" ResourceKey="TextFillColorDisabledBrush" />
+    <m:StaticResource x:Key="DataGridCheckBoxBackgroundChecked" ResourceKey="AccentFillColorDefaultBrush" />
+    <m:StaticResource x:Key="DataGridCheckBoxBackgroundCheckedPointerOver" ResourceKey="AccentFillColorTertiaryBrush" />
     <m:StaticResource x:Key="DataGridRowSelectedBackgroundThemeBrush" ResourceKey="SystemAccentColorLight3Brush" />
     <m:StaticResource x:Key="DataGridRowSelectedForegroundThemeBrush" ResourceKey="TextOnAccentFillColorPrimaryBrush" />
 
@@ -1388,6 +1391,8 @@
     <m:StaticResource x:Key="TopNavigationViewItemBackgroundPointerOver" ResourceKey="SubtleFillColorTransparentBrush" />
     <m:StaticResource x:Key="TopNavigationViewItemBackgroundPressed" ResourceKey="SubtleFillColorTransparentBrush" />
     <m:StaticResource x:Key="TopNavigationViewItemBackgroundSelected" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="TopNavigationViewItemBackgroundSelectedPointerOver" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="TopNavigationViewItemBackgroundSelectedPressed" ResourceKey="SubtleFillColorTransparentBrush" />
     <m:StaticResource x:Key="TopNavigationViewItemForegroundSelected" ResourceKey="TextFillColorPrimaryBrush" />
     <m:StaticResource x:Key="TopNavigationViewItemForegroundSelectedPointerOver" ResourceKey="TextFillColorSecondaryBrush" />
     <m:StaticResource x:Key="TopNavigationViewItemForegroundSelectedPressed" ResourceKey="TextFillColorTertiaryBrush" />

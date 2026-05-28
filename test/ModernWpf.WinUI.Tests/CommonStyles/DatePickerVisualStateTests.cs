@@ -102,12 +102,27 @@ public class DatePickerVisualStateTests
             Assert.AreEqual(((CornerRadius)calendar.GetValue(System.Windows.Controls.Border.CornerRadiusProperty)), root.CornerRadius);
             Assert.IsInstanceOfType(calendar.Effect, typeof(DropShadowEffect));
             Assert.IsNull(FindVisualChild<ContentPresenterEx>(calendar));
+
+            var calendarItem = FindTemplatePart<CalendarItem>(calendar, "PART_CalendarItem");
+            var previousButton = FindTemplatePart<Button>(calendarItem, "PART_PreviousButton");
+            var nextButton = FindTemplatePart<Button>(calendarItem, "PART_NextButton");
+            Assert.AreSame(calendar.TryFindResource("CalendarViewNavigationButtonForeground"), previousButton.Foreground);
+            Assert.AreSame(calendar.TryFindResource("CalendarViewNavigationButtonForeground"), nextButton.Foreground);
+
+            var replacementForeground = Brushes.Magenta;
+            calendar.Resources["CalendarViewNavigationButtonForeground"] = replacementForeground;
+            host.UpdateLayout();
+
+            Assert.AreSame(replacementForeground, previousButton.Foreground);
+            Assert.AreSame(replacementForeground, nextButton.Foreground);
         });
     }
 
     private static T FindTemplatePart<T>(Control control, string name)
         where T : DependencyObject
     {
+        control.ApplyTemplate();
+
         var part = control.Template.FindName(name, control) as T;
         if (part == null)
         {
