@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -313,6 +314,9 @@ public class SwipeControlApiTests
 
             Assert.IsNotNull(button);
             Assert.IsNotNull(button!.Style);
+            AssertDynamicResourceSetter(button.Style!, Control.FontFamilyProperty, "ContentControlThemeFontFamily");
+            AssertDynamicResourceSetter(button.Style!, Control.BackgroundProperty, "SwipeItemBackground");
+            AssertDynamicResourceSetter(button.Style!, Control.ForegroundProperty, "SwipeItemForeground");
 
             button.ApplyTemplate();
             host.UpdateLayout();
@@ -322,8 +326,9 @@ public class SwipeControlApiTests
                 .OfType<Grid>()
                 .FirstOrDefault(candidate => candidate.Name == "Root");
             Assert.IsNotNull(root);
+            var rootGrid = root!;
 
-            var commonStates = VisualStateManager.GetVisualStateGroups(root)
+            var commonStates = VisualStateManager.GetVisualStateGroups(rootGrid)
                 .OfType<VisualStateGroup>()
                 .Single(group => group.Name == "CommonStates");
             var pressedState = commonStates.States
@@ -334,8 +339,23 @@ public class SwipeControlApiTests
             var stateEx = (VisualStateEx)pressedState;
             Assert.AreEqual(1, stateEx.Setters.Count);
             Assert.AreEqual("Root.Background", stateEx.Setters[0].Target);
+            AssertResourceReferenceExpression(
+                stateEx.Setters[0].ReadLocalValue(VisualStateSetter.ValueProperty),
+                "SwipeItemBackgroundPressed");
 
-            Assert.IsNotNull(root!.TryFindResource("SwipeItemBackgroundPressed"));
+            Assert.AreEqual(68.0, button.MinWidth);
+            Assert.AreEqual(40.0, button.MinHeight);
+            Assert.AreEqual(FontWeights.Normal, button.FontWeight);
+            Assert.AreSame(button.TryFindResource("SwipeItemBackground"), button.Background);
+            Assert.AreSame(button.TryFindResource("SwipeItemForeground"), button.Foreground);
+
+            AssertResourceAlias(rootGrid, "SwipeItemBackground", "ControlFillColorTertiaryBrush");
+            AssertResourceAlias(rootGrid, "SwipeItemForeground", "TextFillColorPrimaryBrush");
+            AssertResourceAlias(rootGrid, "SwipeItemBackgroundPressed", "ControlAltFillColorQuarternaryBrush");
+            AssertResourceAlias(rootGrid, "SwipeItemPreThresholdExecuteForeground", "ControlStrongFillColorDefaultBrush");
+            AssertResourceAlias(rootGrid, "SwipeItemPreThresholdExecuteBackground", "ControlFillColorTertiaryBrush");
+            AssertResourceAlias(rootGrid, "SwipeItemPostThresholdExecuteForeground", "TextOnAccentFillColorPrimaryBrush");
+            AssertResourceAlias(rootGrid, "SwipeItemPostThresholdExecuteBackground", "AccentFillColorDefaultBrush");
         });
     }
 
@@ -541,4 +561,46 @@ public class SwipeControlApiTests
             .FirstOrDefault(candidate => candidate.Name == name);
     }
 
+    private static void AssertDynamicResourceSetter(Style style, DependencyProperty property, object expectedResourceKey)
+    {
+        var setter = FindSetter(style, property);
+        Assert.IsNotNull(setter, $"Expected local setter for {property.Name}.");
+
+        var dynamicResource = setter!.Value as DynamicResourceExtension;
+        Assert.IsNotNull(dynamicResource, $"Expected {property.Name} to use a dynamic resource.");
+        Assert.AreEqual(expectedResourceKey, dynamicResource!.ResourceKey);
+    }
+
+    private static Setter? FindSetter(Style style, DependencyProperty property)
+    {
+        for (var candidate = style; candidate != null; candidate = candidate.BasedOn)
+        {
+            var setter = candidate.Setters.OfType<Setter>().SingleOrDefault(setter => setter.Property == property);
+            if (setter != null)
+            {
+                return setter;
+            }
+        }
+
+        return null;
+    }
+
+    private static void AssertResourceAlias(FrameworkElement element, object resourceKey, object expectedResourceKey)
+    {
+        Assert.AreSame(
+            element.TryFindResource(expectedResourceKey),
+            element.TryFindResource(resourceKey),
+            $"Unexpected resource alias for {resourceKey}.");
+    }
+
+    private static void AssertResourceReferenceExpression(object value, object expectedResourceKey)
+    {
+        Assert.IsNotNull(value, "Expected dynamic resource local value.");
+        Assert.AreEqual("System.Windows.ResourceReferenceExpression", value.GetType().FullName);
+        var resourceKeyProperty = value.GetType().GetProperty(
+            "ResourceKey",
+            BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+        Assert.IsNotNull(resourceKeyProperty, "Expected ResourceReferenceExpression.ResourceKey.");
+        Assert.AreEqual(expectedResourceKey, resourceKeyProperty!.GetValue(value));
+    }
 }
