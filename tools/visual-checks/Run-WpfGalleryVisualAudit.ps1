@@ -1008,7 +1008,7 @@ function Get-ImageArtifactInfo([string]$path, [string]$source) {
 }
 
 function Test-ModernRenderedContentArtifact([string]$artifactDir) {
-    foreach ($fileName in @("ContentRootGrid.png", "ContentPagePane.png", "GalleryItemPageRoot.png", "GalleryContentHost.png")) {
+    foreach ($fileName in @("HomeContentRootPane.png", "AllControlsContentRootPane.png", "SettingsContentRootPane.png", "ContentRootGrid.png", "ContentPagePane.png", "GalleryItemPageRoot.png", "GalleryContentHost.png")) {
         $path = Join-Path $artifactDir $fileName
         try {
             if (Test-ImageNotBlank $path) {
@@ -1465,8 +1465,20 @@ function Capture-ModernWpf($case, [string]$caseDir) {
         }
 
         $contentCrop = $null
-        $renderedContentArtifact = Join-Path $artifactDir "ContentRootGrid.png"
-        $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "ContentRootGridRenderedArtifact"
+        $renderedContentArtifact = Join-Path $artifactDir "HomeContentRootPane.png"
+        $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "HomeContentRootPaneRenderedArtifact"
+        if (!$contentCrop.NonBlank) {
+            $renderedContentArtifact = Join-Path $artifactDir "AllControlsContentRootPane.png"
+            $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "AllControlsContentRootPaneRenderedArtifact"
+        }
+        if (!$contentCrop.NonBlank) {
+            $renderedContentArtifact = Join-Path $artifactDir "SettingsContentRootPane.png"
+            $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "SettingsContentRootPaneRenderedArtifact"
+        }
+        if (!$contentCrop.NonBlank) {
+            $renderedContentArtifact = Join-Path $artifactDir "ContentRootGrid.png"
+            $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "ContentRootGridRenderedArtifact"
+        }
         if (!$contentCrop.NonBlank) {
             $renderedContentArtifact = Join-Path $artifactDir "ContentPagePane.png"
             $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "ContentPagePaneRenderedArtifact"
@@ -1487,8 +1499,20 @@ function Capture-ModernWpf($case, [string]$caseDir) {
         }
 
         if ($null -eq $contentCrop -or !$contentCrop.NonBlank) {
-            $renderedContentArtifact = Join-Path $artifactDir "ContentRootGrid.png"
-            $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "ContentRootGridRenderedArtifact"
+            $renderedContentArtifact = Join-Path $artifactDir "HomeContentRootPane.png"
+            $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "HomeContentRootPaneRenderedArtifact"
+            if (!$contentCrop.NonBlank) {
+                $renderedContentArtifact = Join-Path $artifactDir "AllControlsContentRootPane.png"
+                $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "AllControlsContentRootPaneRenderedArtifact"
+            }
+            if (!$contentCrop.NonBlank) {
+                $renderedContentArtifact = Join-Path $artifactDir "SettingsContentRootPane.png"
+                $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "SettingsContentRootPaneRenderedArtifact"
+            }
+            if (!$contentCrop.NonBlank) {
+                $renderedContentArtifact = Join-Path $artifactDir "ContentRootGrid.png"
+                $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "ContentRootGridRenderedArtifact"
+            }
             if (!$contentCrop.NonBlank) {
                 $renderedContentArtifact = Join-Path $artifactDir "ContentPagePane.png"
                 $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "ContentPagePaneRenderedArtifact"

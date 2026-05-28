@@ -435,8 +435,11 @@ namespace ModernWpf.Gallery.Testing
         {
             return !string.IsNullOrEmpty(automationId) &&
                 (automationId.StartsWith("GallerySample_", StringComparison.Ordinal) ||
+                    string.Equals(automationId, "AllControlsContentRootPane", StringComparison.Ordinal) ||
                     string.Equals(automationId, "GalleryContentHost", StringComparison.Ordinal) ||
+                    string.Equals(automationId, "HomeContentRootPane", StringComparison.Ordinal) ||
                     string.Equals(automationId, "GalleryItemPageRoot", StringComparison.Ordinal) ||
+                    string.Equals(automationId, "SettingsContentRootPane", StringComparison.Ordinal) ||
                     string.Equals(automationId, "ModernWpfGalleryMainWindow", StringComparison.Ordinal) ||
                     string.Equals(automationId, "GalleryNavigationRoot", StringComparison.Ordinal) ||
                     string.Equals(automationId, "GalleryNavigationView", StringComparison.Ordinal) ||
@@ -455,6 +458,24 @@ namespace ModernWpf.Gallery.Testing
             if (itemPage != null && ReferenceEquals(element, itemPage.Content))
             {
                 return itemPage.ContentRootArtifactId;
+            }
+
+            var homePage = element.DataContext as HomePage;
+            if (homePage != null && ReferenceEquals(element, homePage.Content))
+            {
+                return "HomeContentRootPane";
+            }
+
+            var allControlsPage = element.DataContext as AllControlsPage;
+            if (allControlsPage != null && ReferenceEquals(element, allControlsPage.Content))
+            {
+                return "AllControlsContentRootPane";
+            }
+
+            var settingsPage = element.DataContext as SettingsPage;
+            if (settingsPage != null && ReferenceEquals(element, settingsPage.Content))
+            {
+                return "SettingsContentRootPane";
             }
 
             var sectionPage = element.DataContext as SectionPage;

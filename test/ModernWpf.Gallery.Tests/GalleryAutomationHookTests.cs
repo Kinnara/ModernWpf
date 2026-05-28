@@ -3825,6 +3825,64 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void TopLevelPagesWriteContentRootPaneVisualArtifacts()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var cases = new[]
+                {
+                    Tuple.Create<Page, string>(new HomePage(), "HomeContentRootPane.png"),
+                    Tuple.Create<Page, string>(new AllControlsPage(), "AllControlsContentRootPane.png"),
+                    Tuple.Create<Page, string>(new SettingsPage(), "SettingsContentRootPane.png")
+                };
+
+                foreach (var testCase in cases)
+                {
+                    var artifactDirectory = Path.Combine(Path.GetTempPath(), "ModernWpfGalleryTests", Path.GetRandomFileName());
+                    GalleryDiagnostics.Configure(GalleryLaunchOptions.Parse(new[] { "--visual-test", "--visual-artifact-dir", artifactDirectory }));
+
+                    var page = testCase.Item1;
+                    var window = new Window
+                    {
+                        Width = 1180,
+                        Height = 820,
+                        Left = -32000,
+                        Top = -32000,
+                        ShowInTaskbar = false,
+                        WindowStartupLocation = WindowStartupLocation.Manual,
+                        Content = page
+                    };
+
+                    try
+                    {
+                        window.Show();
+                        WpfTestHost.DoEvents();
+                        window.UpdateLayout();
+                        WpfTestHost.DoEvents();
+
+                        GalleryDiagnostics.WriteVisualArtifacts(page);
+
+                        var contentRootArtifact = Path.Combine(artifactDirectory, testCase.Item2);
+                        Assert.IsTrue(File.Exists(contentRootArtifact), contentRootArtifact + " was not written.");
+                        Assert.IsTrue(new FileInfo(contentRootArtifact).Length > 0);
+                        Assert.IsTrue(HasVisibleRgbPixels(contentRootArtifact), contentRootArtifact + " has no visible RGB content.");
+                    }
+                    finally
+                    {
+                        window.Content = null;
+                        window.Close();
+                        GalleryDiagnostics.ResetForTests();
+                        if (Directory.Exists(artifactDirectory))
+                        {
+                            Directory.Delete(artifactDirectory, recursive: true);
+                        }
+                        WpfTestHost.DoEvents();
+                    }
+                }
+            });
+        }
+
+        [TestMethod]
         public void ShellNavigationRootWritesRenderedVisualArtifacts()
         {
             WpfTestHost.Run(() =>
