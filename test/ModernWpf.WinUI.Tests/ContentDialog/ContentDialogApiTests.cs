@@ -160,6 +160,34 @@ public class ContentDialogApiTests
     }
 
     [TestMethod]
+    public void ThemeResourcesUseWinUI2DialogHighContrastTokens()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            foreach (var themeName in new[] { "Light", "Dark" })
+            {
+                AssertThemeResourceReference(themeName, "ContentDialogForeground", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "ContentDialogBackground", "SolidBackgroundFillColorBaseBrush");
+                AssertThemeResourceReference(themeName, "ContentDialogSmokeFill", "SmokeFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "ContentDialogTopOverlay", "LayerFillColorAltBrush");
+                AssertThemeResourceReference(themeName, "ContentDialogBorderBrush", "SurfaceStrokeColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "ContentDialogSeparatorBorderBrush", "CardStrokeColorDefaultBrush");
+                AssertThemeResourceValue(themeName, "ContentDialogBorderWidth", new Thickness(1));
+            }
+
+            AssertThemeResourceReference("HighContrast", "ContentDialogForeground", "SystemColorWindowTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "ContentDialogBackground", "SystemColorWindowColorBrush");
+            AssertThemeResourceReference("HighContrast", "ContentDialogSmokeFill", "SystemColorWindowColorBrush");
+            AssertThemeResourceReference("HighContrast", "ContentDialogTopOverlay", "SystemControlTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "ContentDialogBorderBrush", "SystemColorWindowTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "ContentDialogSeparatorBorderBrush", "SystemColorWindowTextColorBrush");
+            AssertThemeResourceValue("HighContrast", "ContentDialogBorderWidth", new Thickness(2));
+        });
+    }
+
+    [TestMethod]
     public void TemplateUsesVisualStateSettersForWinUIStateParity()
     {
         WpfTestHost.Run(() =>
@@ -691,6 +719,21 @@ public class ContentDialogApiTests
     private static void AssertResource<T>(ResourceDictionary resources, object key, T expected)
     {
         Assert.AreEqual(expected, resources[key]);
+    }
+
+    private static void AssertThemeResourceReference(string themeName, object resourceKey, object expectedResourceKey)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.IsTrue(themeDictionary.Contains(expectedResourceKey), $"{themeName} is missing {expectedResourceKey}.");
+        Assert.AreSame(themeDictionary[expectedResourceKey], themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
+    }
+
+    private static void AssertThemeResourceValue<T>(string themeName, object resourceKey, T expectedValue)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.AreEqual(expectedValue, themeDictionary[resourceKey]);
     }
 
     private static void AssertStateSetter(
