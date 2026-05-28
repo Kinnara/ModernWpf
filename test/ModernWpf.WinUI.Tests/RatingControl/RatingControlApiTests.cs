@@ -27,10 +27,25 @@ public class RatingControlApiTests
         {
             TestApplication.EnsureInitialized();
 
+            var resources = new ResourceDictionary
+            {
+                Source = new Uri("/ModernWpf.Controls;component/RatingControl/RatingControl.xaml", UriKind.Relative)
+            };
+            var style = (Style)resources[typeof(ModernWpf.Controls.RatingControl)];
+
+            AssertSetterValue(style, FrameworkElement.MinHeightProperty, 32.0);
+            AssertDynamicResourceSetter(style, Control.ForegroundProperty, "RatingControlCaptionForeground");
+            AssertDynamicResourceSetter(style, ModernWpf.Controls.RatingControl.UseSystemFocusVisualsProperty, "UseSystemFocusVisuals");
+            AssertDynamicResourceSetter(style, Control.FocusVisualStyleProperty, SystemParameters.FocusVisualStyleKey);
+            AssertDynamicResourceSetter(style, Control.FontFamilyProperty, "SymbolThemeFontFamily");
+            AssertDynamicResourceSetter(style, ModernWpf.Controls.RatingControl.ItemInfoProperty, "MUX_RatingControlDefaultFontInfo");
+            Assert.IsInstanceOfType(FindSetter(style, Control.TemplateProperty)?.Value, typeof(ControlTemplate));
+
             var ratingControl = new ModernWpf.Controls.RatingControl
             {
                 Background = Brushes.Yellow,
-                Caption = "Rating API Test Caption"
+                Caption = "Rating API Test Caption",
+                Style = style
             };
 
             using var host = new TestWindowHost(ratingControl, width: 420, height: 180);
@@ -38,6 +53,7 @@ public class RatingControlApiTests
 
             Assert.AreEqual(32.0, ratingControl.MinHeight);
             Assert.AreEqual(32.0, ratingControl.Height);
+            Assert.AreSame(style, ratingControl.Style);
             AssertBrushEquals((Brush)ratingControl.TryFindResource("RatingControlCaptionForeground"), ratingControl.Foreground);
             Assert.AreEqual(ratingControl.TryFindResource("UseSystemFocusVisuals"), ratingControl.UseSystemFocusVisuals);
             Assert.AreSame(ratingControl.TryFindResource(SystemParameters.FocusVisualStyleKey), ratingControl.FocusVisualStyle);
@@ -412,6 +428,40 @@ public class RatingControlApiTests
         {
             AssertBrushEquals((Brush)resourceOwner.TryFindResource("RatingControlUnselectedForeground"), textBlock.Foreground);
         }
+    }
+
+    private static void AssertDynamicResourceSetter(Style style, DependencyProperty property, object expectedResourceKey)
+    {
+        var setter = FindSetter(style, property);
+        Assert.IsNotNull(setter, $"Expected setter for {property.Name}.");
+        Assert.IsInstanceOfType(setter!.Value, typeof(DynamicResourceExtension));
+
+        var dynamicResource = (DynamicResourceExtension)setter.Value;
+        Assert.AreEqual(expectedResourceKey, dynamicResource.ResourceKey);
+    }
+
+    private static void AssertSetterValue(Style style, DependencyProperty property, object expectedValue)
+    {
+        var setter = FindSetter(style, property);
+        Assert.IsNotNull(setter, $"Expected setter for {property.Name}.");
+        Assert.AreEqual(expectedValue, setter!.Value);
+    }
+
+    private static Setter? FindSetter(Style style, DependencyProperty property)
+    {
+        for (var current = style; current != null; current = current.BasedOn)
+        {
+            var setter = current.Setters
+                .OfType<Setter>()
+                .FirstOrDefault(item => item.Property == property);
+
+            if (setter != null)
+            {
+                return setter;
+            }
+        }
+
+        return null;
     }
 
     private static void AssertBrushEquals(Brush expected, Brush actual)
