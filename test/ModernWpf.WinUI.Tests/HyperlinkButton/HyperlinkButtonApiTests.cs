@@ -82,6 +82,44 @@ public class HyperlinkButtonApiTests
     }
 
     [TestMethod]
+    public void ThemeResourcesUseWinUI3HyperlinkButtonHighContrastTokens()
+    {
+        WpfTestHost.Run(() =>
+        {
+            foreach (var themeName in new[] { "Light", "Dark" })
+            {
+                AssertThemeResourceReference(themeName, "HyperlinkButtonForeground", "AccentTextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "HyperlinkButtonForegroundPointerOver", "AccentTextFillColorSecondaryBrush");
+                AssertThemeResourceReference(themeName, "HyperlinkButtonForegroundPressed", "AccentTextFillColorTertiaryBrush");
+                AssertThemeResourceReference(themeName, "HyperlinkButtonForegroundDisabled", "AccentTextFillColorDisabledBrush");
+                AssertThemeResourceReference(themeName, "HyperlinkButtonBackground", "SubtleFillColorTransparentBrush");
+                AssertThemeResourceReference(themeName, "HyperlinkButtonBackgroundPointerOver", "SubtleFillColorSecondaryBrush");
+                AssertThemeResourceReference(themeName, "HyperlinkButtonBackgroundPressed", "SubtleFillColorTertiaryBrush");
+                AssertThemeResourceReference(themeName, "HyperlinkButtonBackgroundDisabled", "SubtleFillColorDisabledBrush");
+                AssertThemeResourceReference(themeName, "HyperlinkButtonBorderBrush", "SubtleFillColorTransparentBrush");
+                AssertThemeResourceReference(themeName, "HyperlinkButtonBorderBrushPointerOver", "SubtleFillColorTransparentBrush");
+                AssertThemeResourceReference(themeName, "HyperlinkButtonBorderBrushPressed", "SubtleFillColorTransparentBrush");
+                AssertThemeResourceReference(themeName, "HyperlinkButtonBorderBrushDisabled", "SubtleFillColorTransparentBrush");
+                AssertThemeResourceValue(themeName, "HyperlinkButtonBorderThemeThickness", new Thickness(1));
+            }
+
+            AssertThemeResourceReference("HighContrast", "HyperlinkButtonForeground", "SystemControlHyperlinkTextBrush");
+            AssertThemeResourceReference("HighContrast", "HyperlinkButtonForegroundPointerOver", "SystemControlPageTextBaseMediumBrush");
+            AssertThemeResourceReference("HighContrast", "HyperlinkButtonForegroundPressed", "SystemControlHighlightBaseMediumLowBrush");
+            AssertThemeResourceReference("HighContrast", "HyperlinkButtonForegroundDisabled", "SystemControlDisabledBaseMediumLowBrush");
+            AssertThemeResourceReference("HighContrast", "HyperlinkButtonBackground", "SystemControlPageBackgroundTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "HyperlinkButtonBackgroundPointerOver", "SystemControlPageBackgroundTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "HyperlinkButtonBackgroundPressed", "SystemControlPageBackgroundTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "HyperlinkButtonBackgroundDisabled", "SystemControlPageBackgroundTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "HyperlinkButtonBorderBrush", "SystemControlTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "HyperlinkButtonBorderBrushPointerOver", "SystemControlTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "HyperlinkButtonBorderBrushPressed", "SystemControlTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "HyperlinkButtonBorderBrushDisabled", "SystemControlTransparentBrush");
+            AssertThemeResourceValue("HighContrast", "HyperlinkButtonBorderThemeThickness", new Thickness(1));
+        });
+    }
+
+    [TestMethod]
     public void VerifyWinUI3AutomationPeerInvoke()
     {
         WpfTestHost.Run(() =>
@@ -144,5 +182,19 @@ public class HyperlinkButtonApiTests
                 stateEx.Setters.OfType<VisualStateSetter>().Any(setter => setter.Target == expectedTarget),
                 $"Expected visual state '{groupName}.{stateName}' to contain setter '{expectedTarget}'.");
         }
+    }
+
+    private static void AssertThemeResourceReference(string themeName, string resourceKey, string expectedResourceKey)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+
+        Assert.IsTrue(themeDictionary.Contains(expectedResourceKey), $"{themeName} is missing {expectedResourceKey}.");
+        Assert.AreSame(themeDictionary[expectedResourceKey], themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
+    }
+
+    private static void AssertThemeResourceValue<T>(string themeName, string resourceKey, T expectedValue)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.AreEqual(expectedValue, themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
     }
 }
