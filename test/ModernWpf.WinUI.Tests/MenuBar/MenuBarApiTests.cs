@@ -5,6 +5,7 @@ using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using System.Windows.Markup;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ModernWpf;
 using ModernWpf.Automation.Peers;
 using ModernWpf.Controls;
 using ModernWpf.WinUI.TestApp;
@@ -263,11 +264,78 @@ public class MenuBarApiTests
         });
     }
 
+    [TestMethod]
+    public void ThemeResourcesUseWinUI2MenuBarHighContrastTokens()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            foreach (var themeName in new[] { "Light", "Dark" })
+            {
+                AssertThemeResourceReference(themeName, "MenuBarBackground", "SubtleFillColorTransparentBrush");
+                AssertThemeResourceReference(themeName, "MenuBarForeground", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "ContextMenuBackground", "AcrylicBackgroundFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "ContextMenuBorderBrush", "SurfaceStrokeColorFlyoutBrush");
+                AssertThemeResourceReference(themeName, "ContextMenuForeground", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "FlyoutBackground", "AcrylicBackgroundFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "FlyoutBorderBrush", "SurfaceStrokeColorFlyoutBrush");
+                AssertThemeResourceReference(themeName, "MenuBorderColorDefaultBrush", "SurfaceStrokeColorFlyoutBrush");
+                AssertThemeResourceReference(themeName, "CheckBoxBackground", "SubtleFillColorTransparentBrush");
+                AssertThemeResourceReference(themeName, "CheckBoxBorderBrush", "SubtleFillColorTransparentBrush");
+                AssertThemeResourceReference(themeName, "MenuBarItemBackground", "SubtleFillColorTransparentBrush");
+                AssertThemeResourceReference(themeName, "MenuBarItemBackgroundPointerOver", "SubtleFillColorSecondaryBrush");
+                AssertThemeResourceReference(themeName, "MenuBarItemBackgroundPressed", "SubtleFillColorTertiaryBrush");
+                AssertThemeResourceReference(themeName, "MenuBarItemBackgroundSelected", "SubtleFillColorTertiaryBrush");
+                AssertThemeResourceReference(themeName, "MenuBarItemBorderBrush", "ControlAltFillColorTertiaryBrush");
+                AssertThemeResourceReference(themeName, "MenuBarItemBorderBrushPointerOver", "ControlStrokeColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "MenuBarItemBorderBrushPressed", "ControlStrokeColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "MenuBarItemBorderBrushSelected", "ControlStrokeColorDefaultBrush");
+                AssertThemeResourceValue(themeName, "MenuBarItemBorderThickness", new Thickness(0));
+            }
+
+            AssertThemeResourceReference("HighContrast", "MenuBarBackground", "SystemControlTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "MenuBarForeground", "SystemColorWindowTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "ContextMenuBackground", "SystemColorWindowColorBrush");
+            AssertThemeResourceReference("HighContrast", "ContextMenuBorderBrush", "SystemColorWindowTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "ContextMenuForeground", "SystemColorWindowTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "FlyoutBackground", "SystemColorWindowColorBrush");
+            AssertThemeResourceReference("HighContrast", "FlyoutBorderBrush", "SystemColorWindowTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "MenuBorderColorDefaultBrush", "SystemColorWindowTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "CheckBoxBackground", "SystemColorWindowColorBrush");
+            AssertThemeResourceReference("HighContrast", "CheckBoxBorderBrush", "SystemColorWindowColorBrush");
+            AssertThemeResourceReference("HighContrast", "MenuBarItemBackground", "SystemControlTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "MenuBarItemBackgroundPointerOver", "SystemControlBackgroundListLowBrush");
+            AssertThemeResourceReference("HighContrast", "MenuBarItemBackgroundPressed", "SystemControlBackgroundListMediumBrush");
+            AssertThemeResourceReference("HighContrast", "MenuBarItemBackgroundSelected", "SystemControlBackgroundListMediumBrush");
+            AssertThemeResourceReference("HighContrast", "MenuBarItemBorderBrush", "SystemControlForegroundBaseMediumLowBrush");
+            AssertThemeResourceReference("HighContrast", "MenuBarItemBorderBrushPointerOver", "SystemControlHighlightBaseMediumBrush");
+            AssertThemeResourceReference("HighContrast", "MenuBarItemBorderBrushPressed", "SystemControlHighlightBaseMediumLowBrush");
+            AssertThemeResourceReference("HighContrast", "MenuBarItemBorderBrushSelected", "SystemControlHighlightBaseMediumLowBrush");
+            AssertThemeResourceValue("HighContrast", "MenuBarItemBorderThickness", new Thickness(2));
+        });
+    }
+
     private static T GetTemplateChild<T>(Control control, string name)
         where T : DependencyObject
     {
         control.ApplyTemplate();
         control.UpdateLayout();
         return (T)control.Template.FindName(name, control);
+    }
+
+    private static void AssertThemeResourceReference(string themeName, object resourceKey, object expectedResourceKey)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.IsTrue(themeDictionary.Contains(expectedResourceKey), $"{themeName} is missing {expectedResourceKey}.");
+        Assert.AreSame(themeDictionary[expectedResourceKey], themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
+    }
+
+    private static void AssertThemeResourceValue<T>(string themeName, object resourceKey, T expectedValue)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.AreEqual(expectedValue, themeDictionary[resourceKey]);
     }
 }
