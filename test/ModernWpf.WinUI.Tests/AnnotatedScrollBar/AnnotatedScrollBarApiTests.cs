@@ -95,6 +95,99 @@ public class AnnotatedScrollBarApiTests
     }
 
     [TestMethod]
+    public void AnnotatedScrollBarStyleUsesWinUIResourceAliases()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var resources = new ResourceDictionary
+            {
+                Source = new Uri("/ModernWpf.Controls;component/AnnotatedScrollBar/AnnotatedScrollBar.xaml", UriKind.Relative)
+            };
+            var scrollBarStyle = (Style)resources[typeof(ModernWpf.Controls.AnnotatedScrollBar)];
+            var scrollButtonStyle = (Style)resources["ScrollButtonStyle"];
+            var annotatedScrollBar = new ModernWpf.Controls.AnnotatedScrollBar
+            {
+                Style = scrollBarStyle,
+                Labels =
+                {
+                    new AnnotatedScrollBarLabel("A", 0)
+                }
+            };
+            annotatedScrollBar.Resources.MergedDictionaries.Add(resources);
+
+            using var host = new TestWindowHost(annotatedScrollBar, width: 160, height: 220);
+            host.UpdateLayout();
+
+            Assert.AreEqual(false, GetSetterValue(scrollBarStyle, UIElement.FocusableProperty));
+            Assert.AreEqual(resources["LabelsGridMinWidth"], GetSetterValue(scrollBarStyle, FrameworkElement.MinWidthProperty));
+            AssertDynamicResourceSetter(scrollButtonStyle, Control.BackgroundProperty, "ScrollButtonBackground");
+            AssertDynamicResourceSetter(scrollButtonStyle, Control.ForegroundProperty, "ScrollButtonForeground");
+            AssertDynamicResourceSetter(scrollButtonStyle, Control.BorderBrushProperty, "ScrollButtonBorderBrush");
+            AssertDynamicResourceSetter(scrollButtonStyle, System.Windows.Controls.Border.CornerRadiusProperty, "ControlCornerRadius");
+            AssertDynamicResourceSetter(scrollButtonStyle, Control.FontFamilyProperty, "SymbolThemeFontFamily");
+            Assert.AreEqual(resources["ScrollButtonStyleBorderThickness"], GetSetterValue(scrollButtonStyle, Control.BorderThicknessProperty));
+            Assert.AreEqual(resources["ScrollButtonFontSize"], GetSetterValue(scrollButtonStyle, Control.FontSizeProperty));
+
+            AssertResourceAlias(annotatedScrollBar, "ScrollButtonBackground", "SubtleFillColorTransparentBrush");
+            AssertResourceAlias(annotatedScrollBar, "ScrollButtonForeground", "TextFillColorPrimaryBrush");
+            AssertResourceAlias(annotatedScrollBar, "ScrollButtonForegroundPointerOver", "TextFillColorSecondaryBrush");
+            AssertResourceAlias(annotatedScrollBar, "ScrollButtonForegroundPressed", "TextFillColorTertiaryBrush");
+            AssertResourceAlias(annotatedScrollBar, "ScrollButtonForegroundDisabled", "TextFillColorDisabledBrush");
+            AssertResourceAlias(annotatedScrollBar, "ScrollButtonBorderBrush", "SubtleFillColorTransparentBrush");
+            AssertResourceAlias(annotatedScrollBar, "VerticalThumbBrush", "AccentFillColorDefaultBrush");
+            AssertResourceAlias(annotatedScrollBar, "VerticalThumbGhostBrush", "AccentFillColorDisabledBrush");
+
+            Assert.AreEqual(new Thickness(0), annotatedScrollBar.TryFindResource("ScrollButtonStyleBorderThickness"));
+            Assert.AreEqual(3.0, annotatedScrollBar.TryFindResource("ThumbHeight"));
+            Assert.AreEqual(30.0, annotatedScrollBar.TryFindResource("ThumbWidth"));
+            Assert.AreEqual(44.0, annotatedScrollBar.TryFindResource("LabelsGridMinWidth"));
+            Assert.AreEqual(360.0, annotatedScrollBar.TryFindResource("AnnotatedScrollBarTooltipMaxWidth"));
+            Assert.AreEqual(40.0, annotatedScrollBar.TryFindResource("AnnotatedScrollBarTooltipMinHeight"));
+            Assert.AreEqual(8.0, annotatedScrollBar.TryFindResource("ScrollButtonFontSize"));
+            Assert.AreEqual(new CornerRadius(1.5), annotatedScrollBar.TryFindResource("ThumbCornerRadius"));
+
+            var incrementButton = FindTemplatePart<RepeatButton>(annotatedScrollBar, "PART_VerticalIncrementRepeatButton");
+            var decrementButton = FindTemplatePart<RepeatButton>(annotatedScrollBar, "PART_VerticalDecrementRepeatButton");
+            Assert.AreSame(scrollButtonStyle, incrementButton!.Style);
+            Assert.AreSame(scrollButtonStyle, decrementButton!.Style);
+            Assert.AreSame(annotatedScrollBar.TryFindResource("ScrollButtonBackground"), incrementButton.Background);
+            Assert.AreSame(annotatedScrollBar.TryFindResource("ScrollButtonForeground"), incrementButton.Foreground);
+            Assert.AreSame(annotatedScrollBar.TryFindResource("ScrollButtonBorderBrush"), incrementButton.BorderBrush);
+            Assert.AreEqual(new Thickness(0), incrementButton.BorderThickness);
+            Assert.AreEqual(16.0, incrementButton.MinWidth);
+            Assert.AreEqual(16.0, incrementButton.MinHeight);
+            Assert.AreEqual(8.0, incrementButton.FontSize);
+            Assert.AreEqual(
+                annotatedScrollBar.TryFindResource("ControlCornerRadius"),
+                incrementButton.GetValue(System.Windows.Controls.Border.CornerRadiusProperty));
+
+            var labelsGrid = FindTemplatePart<Grid>(annotatedScrollBar, "PART_LabelsGrid");
+            var tooltip = FindTemplatePart<ToolTip>(annotatedScrollBar, "PART_DetailLabelToolTip");
+            var thumb = FindTemplatePart<Border>(annotatedScrollBar, "PART_VerticalThumb");
+            var ghostThumb = FindTemplatePart<Border>(annotatedScrollBar, "PART_VerticalThumbGhost");
+            Assert.AreEqual(44.0, labelsGrid!.MinWidth);
+            Assert.AreEqual(360.0, tooltip!.MaxWidth);
+            Assert.AreEqual(40.0, tooltip.MinHeight);
+            Assert.AreEqual(30.0, thumb!.Width);
+            Assert.AreEqual(3.0, thumb.Height);
+            Assert.AreEqual(new CornerRadius(1.5), thumb.CornerRadius);
+            Assert.AreEqual(30.0, ghostThumb!.Width);
+            Assert.AreEqual(3.0, ghostThumb.Height);
+            Assert.AreEqual(new CornerRadius(1.5), ghostThumb.CornerRadius);
+            Assert.AreSame(annotatedScrollBar.TryFindResource("VerticalThumbBrush"), thumb.Background);
+            Assert.AreSame(annotatedScrollBar.TryFindResource("VerticalThumbGhostBrush"), ghostThumb.Background);
+
+            var labelTextBlock = VisualTreeTestHelper
+                .EnumerateDescendants(annotatedScrollBar)
+                .OfType<TextBlock>()
+                .FirstOrDefault(textBlock => textBlock.Text == "A")
+                ?? throw new AssertFailedException("Expected the default label template to render label content.");
+            Assert.AreEqual(new Thickness(0, -5, 0, -2), labelTextBlock.Margin);
+            Assert.AreSame(annotatedScrollBar.TryFindResource("TextFillColorPrimaryBrush"), labelTextBlock.Foreground);
+        });
+    }
+
+    [TestMethod]
     public void VerifyTemplateUsesWinUISourceParts()
     {
         WpfTestHost.Run(() =>
@@ -304,5 +397,27 @@ public class AnnotatedScrollBarApiTests
                 .EnumerateDescendants(control)
                 .OfType<T>()
                 .FirstOrDefault(element => element.Name == name);
+    }
+
+    private static object? GetSetterValue(Style style, DependencyProperty property)
+    {
+        var setter = style.Setters.OfType<Setter>().SingleOrDefault(setter => setter.Property == property);
+        Assert.IsNotNull(setter, $"Expected local setter for {property.Name}.");
+        return setter!.Value;
+    }
+
+    private static void AssertDynamicResourceSetter(Style style, DependencyProperty property, object expectedResourceKey)
+    {
+        var dynamicResource = GetSetterValue(style, property) as DynamicResourceExtension;
+        Assert.IsNotNull(dynamicResource, $"Expected {property.Name} to use a dynamic resource.");
+        Assert.AreEqual(expectedResourceKey, dynamicResource!.ResourceKey);
+    }
+
+    private static void AssertResourceAlias(FrameworkElement element, object resourceKey, object expectedResourceKey)
+    {
+        Assert.AreSame(
+            element.TryFindResource(expectedResourceKey),
+            element.TryFindResource(resourceKey),
+            $"Unexpected resource alias for {resourceKey}.");
     }
 }
