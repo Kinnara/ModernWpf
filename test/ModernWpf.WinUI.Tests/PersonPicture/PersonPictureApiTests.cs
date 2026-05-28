@@ -320,9 +320,29 @@ public class PersonPictureApiTests
         {
             TestApplication.EnsureInitialized();
 
+            var resources = new ResourceDictionary
+            {
+                Source = new Uri("/ModernWpf.Controls;component/PersonPicture/PersonPicture.xaml", UriKind.Relative)
+            };
+            var defaultStyle = (Style)resources["DefaultPersonPictureStyle"];
+            var implicitStyle = (Style)resources[typeof(ModernWpf.Controls.PersonPicture)];
+
+            Assert.AreSame(defaultStyle, implicitStyle.BasedOn);
+            AssertDynamicResourceSetter(implicitStyle, Control.ForegroundProperty, "PersonPictureForegroundThemeBrush");
+            AssertDynamicResourceSetter(implicitStyle, Control.BackgroundProperty, "PersonPictureEllipseFillThemeBrush");
+            AssertDynamicResourceSetter(implicitStyle, Control.BorderBrushProperty, "PersonPictureEllipseFillStrokeBrush");
+            AssertSetterValue(implicitStyle, Control.BorderThicknessProperty, new Thickness(1));
+            AssertSetterValue(implicitStyle, FrameworkElement.WidthProperty, 96.0);
+            AssertSetterValue(implicitStyle, FrameworkElement.HeightProperty, 96.0);
+            AssertDynamicResourceSetter(implicitStyle, Control.FontFamilyProperty, "ContentControlThemeFontFamily");
+            AssertSetterValue(implicitStyle, Control.FontWeightProperty, FontWeights.SemiBold);
+            AssertSetterValue(implicitStyle, Control.IsTabStopProperty, false);
+            Assert.IsInstanceOfType(FindSetter(implicitStyle, Control.TemplateProperty)?.Value, typeof(ControlTemplate));
+
             var personPicture = new ModernWpf.Controls.PersonPicture
             {
-                Initials = "MW"
+                Initials = "MW",
+                Style = implicitStyle
             };
 
             using var host = new TestWindowHost(personPicture);
@@ -339,6 +359,15 @@ public class PersonPictureApiTests
                 personPicture.FontFamily.Source);
             Assert.AreEqual(FontWeights.SemiBold, personPicture.FontWeight);
             Assert.IsFalse(personPicture.IsTabStop);
+
+            var baseEllipse = VisualTreeTestHelper.EnumerateDescendants(personPicture)
+                .OfType<Ellipse>()
+                .First(element => string.IsNullOrEmpty(element.Name));
+            AssertBrushEquals(personPicture.Background, baseEllipse.Fill);
+            AssertBrushEquals(personPicture.BorderBrush, baseEllipse.Stroke);
+            Assert.AreEqual(personPicture.BorderThickness.Left, baseEllipse.StrokeThickness);
+            Assert.AreEqual(personPicture.Width, baseEllipse.Width);
+            Assert.AreEqual(personPicture.Height, baseEllipse.Height);
 
             var initialsTextBlock = FindNamedDescendant<TextBlock>(personPicture, "InitialsTextBlock");
             Assert.AreEqual(40.0, initialsTextBlock.FontSize, 0.5);
@@ -452,6 +481,40 @@ public class PersonPictureApiTests
         AssertThemeResourceValue(themeName, "PersonPictureEllipseStrokeThickness", 1.0);
         AssertThemeResourceValue(themeName, "PersonPictureEllipseBadgeStrokeThickness", 2.0);
         AssertThemeResourceValue(themeName, "PersonPictureBadgeGridMargin", new Thickness(0, -4, -4, 0));
+    }
+
+    private static void AssertDynamicResourceSetter(Style style, DependencyProperty property, object expectedResourceKey)
+    {
+        var setter = FindSetter(style, property);
+        Assert.IsNotNull(setter, $"Expected setter for {property.Name}.");
+        Assert.IsInstanceOfType(setter!.Value, typeof(DynamicResourceExtension));
+
+        var dynamicResource = (DynamicResourceExtension)setter.Value;
+        Assert.AreEqual(expectedResourceKey, dynamicResource.ResourceKey);
+    }
+
+    private static void AssertSetterValue(Style style, DependencyProperty property, object expectedValue)
+    {
+        var setter = FindSetter(style, property);
+        Assert.IsNotNull(setter, $"Expected setter for {property.Name}.");
+        Assert.AreEqual(expectedValue, setter!.Value);
+    }
+
+    private static Setter? FindSetter(Style style, DependencyProperty property)
+    {
+        for (var current = style; current != null; current = current.BasedOn)
+        {
+            var setter = current.Setters
+                .OfType<Setter>()
+                .FirstOrDefault(item => item.Property == property);
+
+            if (setter != null)
+            {
+                return setter;
+            }
+        }
+
+        return null;
     }
 
     private static void AssertBrushEquals(Brush expected, Brush actual)
