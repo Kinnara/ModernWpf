@@ -9,6 +9,32 @@ all WPF Gallery-equivalent pages and controls, while keeping ModernWpf and
 WinUI-style controls such as `NavigationView` where they fit the WinUI Gallery
 interaction model.
 
+## Execution Priority
+
+Follow this order for all remaining Milestone 1 work unless a row already has
+current branch-tip visual evidence and is marked `Done`.
+
+1. **P0 - Visual and High Contrast evidence first.** Refresh screenshot audits,
+   inspect the highest visible deltas, and fix user-visible drift before taking
+   new source-shape or resource-key cleanup. Current P0 queue:
+   broader High Contrast shell/control coverage; high-drift direct item pages
+   `TextBlock`, `Border`, `TextBox`, `MessageBox`, `Clipboard`, and
+   `FileAndFolderDialogs`; remaining top-level `Home`, `WhatsNew`, and
+   `Settings` deltas; residual `NavigationView` shell details such as left
+   disclosure chevrons and row insets.
+2. **P0 - Acceptance gates stay open until visual proof exists.** Do not treat
+   an implementation/source row as complete for planning purposes when its
+   visual column is still `Partial` or the screenshot pass is still `Open`.
+   Record the visual blocker or latest delta instead.
+3. **P1 - Source, resource, and runtime alignment only when it serves P0.**
+   Use source-shape tests, resource aliases, snippet guards, and runtime tests
+   to explain, fix, or lock a visual/High Contrast issue, or to stabilize the
+   visual harness. Do not choose small source-alignment work while P0 rows lack
+   a fresh visual run, hypothesis, or fix.
+4. **P2 - Documentation and cleanup after P0/P1 evidence.** Tracker updates
+   should record the visual evidence and remaining blocker first, then any
+   supporting source or test cleanup.
+
 ## Source References
 
 | Source | Local path | Use |
