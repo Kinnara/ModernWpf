@@ -7,6 +7,7 @@ using System.Windows.Automation;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Documents;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
@@ -163,6 +164,112 @@ public class ExpanderApiTests
                 new Thickness(0, 1, 1, 1),
                 new CornerRadius(0, 4, 4, 0),
                 new CornerRadius(4, 0, 0, 4));
+        });
+    }
+
+    [TestMethod]
+    public void ExpanderStyleUsesOfficialWpfFluentResourceAliases()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var defaultStyle = AssertStyleResource("DefaultExpanderStyle");
+            var implicitStyle = AssertStyleResource(typeof(WpfExpander));
+            var expander = new WpfExpander
+            {
+                Style = implicitStyle,
+                Header = "Header",
+                Content = "Content",
+                IsExpanded = true
+            };
+
+            using var host = new TestWindowHost(expander, width: 400, height: 240);
+            host.UpdateLayout();
+
+            Assert.AreSame(defaultStyle, implicitStyle.BasedOn);
+            AssertDynamicResourceSetter(defaultStyle, Control.FocusVisualStyleProperty, "DefaultControlFocusVisualStyle");
+            AssertDynamicResourceSetter(defaultStyle, Control.BackgroundProperty, "ExpanderHeaderBackground");
+            AssertDynamicResourceSetter(defaultStyle, Control.ForegroundProperty, "ExpanderHeaderForeground");
+            AssertDynamicResourceSetter(defaultStyle, Control.BorderBrushProperty, "ExpanderHeaderBorderBrush");
+            AssertSetterValue(defaultStyle, Control.BorderThicknessProperty, new Thickness(1));
+            AssertSetterValue(defaultStyle, Control.PaddingProperty, new Thickness(11));
+            AssertSetterValue(defaultStyle, FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Stretch);
+            AssertSetterValue(defaultStyle, FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+            AssertSetterValue(defaultStyle, Control.HorizontalContentAlignmentProperty, HorizontalAlignment.Stretch);
+            AssertSetterValue(defaultStyle, Control.VerticalContentAlignmentProperty, VerticalAlignment.Center);
+            AssertSetterValue(defaultStyle, Control.FontWeightProperty, FontWeights.Normal);
+            AssertDynamicResourceSetter(defaultStyle, System.Windows.Controls.Border.CornerRadiusProperty, "ControlCornerRadius");
+            AssertSetterValue(defaultStyle, WpfExpander.IsExpandedProperty, false);
+            AssertSetterValue(defaultStyle, UIElement.SnapsToDevicePixelsProperty, true);
+            AssertSetterValue(defaultStyle, FrameworkElement.OverridesDefaultStyleProperty, true);
+
+            Assert.AreSame(expander.TryFindResource("DefaultControlFocusVisualStyle"), expander.FocusVisualStyle);
+            Assert.AreSame(expander.TryFindResource("ExpanderHeaderBackground"), expander.Background);
+            Assert.AreSame(expander.TryFindResource("ExpanderHeaderForeground"), expander.Foreground);
+            Assert.AreSame(expander.TryFindResource("ExpanderHeaderBorderBrush"), expander.BorderBrush);
+            Assert.AreEqual(expander.TryFindResource("ExpanderBorderThemeThickness"), expander.BorderThickness);
+            Assert.AreEqual(expander.TryFindResource("ExpanderPadding"), expander.Padding);
+            Assert.AreEqual(expander.TryFindResource("ControlCornerRadius"), expander.GetValue(System.Windows.Controls.Border.CornerRadiusProperty));
+
+            var toggleButtonBorder = FindTemplateChild<Border>(expander, "ToggleButtonBorder");
+            var headerSite = FindTemplateChild<ToggleButton>(expander, "HeaderSite");
+            var contentBorder = FindTemplateChild<Border>(expander, "ContentPresenterBorder");
+            var contentPresenter = FindTemplateChild<ContentPresenter>(expander, "ContentPresenter");
+
+            Assert.AreSame(expander.Background, toggleButtonBorder.Background);
+            Assert.AreSame(expander.BorderBrush, toggleButtonBorder.BorderBrush);
+            Assert.AreEqual(expander.BorderThickness, toggleButtonBorder.BorderThickness);
+            Assert.AreEqual(expander.GetValue(System.Windows.Controls.Border.CornerRadiusProperty), toggleButtonBorder.CornerRadius);
+            Assert.AreSame(expander.TryFindResource("DefaultControlFocusVisualStyle"), headerSite.FocusVisualStyle);
+            Assert.AreSame(expander.Foreground, headerSite.Foreground);
+            Assert.AreEqual(expander.BorderThickness, headerSite.BorderThickness);
+            Assert.AreEqual(expander.Padding, headerSite.Padding);
+            Assert.AreSame(expander.TryFindResource("DefaultExpanderToggleButtonDownStyle"), headerSite.Template);
+            Assert.AreSame(expander.TryFindResource("ExpanderContentBackground"), contentBorder.Background);
+            Assert.AreSame(expander.BorderBrush, contentBorder.BorderBrush);
+            Assert.AreEqual(new Thickness(1, 0, 1, 1), contentBorder.BorderThickness);
+            Assert.AreEqual(expander.Padding, contentPresenter.Margin);
+
+            headerSite.ApplyTemplate();
+            var chevron = FindTemplateChild<TextBlock>(headerSite, "ControlChevronIcon");
+            Assert.AreEqual(expander.TryFindResource("ExpanderChevronSize"), chevron.FontSize);
+            Assert.AreSame(expander.TryFindResource("SymbolThemeFontFamily"), chevron.FontFamily);
+            Assert.AreEqual(expander.TryFindResource("ExpanderChevronDownGlyph"), chevron.Text);
+            Assert.AreSame(headerSite.Foreground, chevron.Foreground);
+
+            AssertTemplateTriggerDynamicResource(
+                expander.Template,
+                UIElement.IsEnabledProperty,
+                false,
+                null,
+                "ContentPresenter",
+                TextElement.ForegroundProperty,
+                "ExpanderHeaderDisabledForeground");
+            AssertTemplateTriggerDynamicResource(
+                expander.Template,
+                UIElement.IsEnabledProperty,
+                false,
+                null,
+                "HeaderSite",
+                Control.ForegroundProperty,
+                "ExpanderHeaderDisabledForeground");
+            AssertTemplateTriggerDynamicResource(
+                expander.Template,
+                UIElement.IsEnabledProperty,
+                false,
+                null,
+                "HeaderSite",
+                Control.BorderBrushProperty,
+                "ExpanderHeaderDisabledBorderBrush");
+            AssertTemplateTriggerDynamicResource(
+                expander.Template,
+                UIElement.IsMouseOverProperty,
+                true,
+                "HeaderSite",
+                "HeaderSite",
+                Control.BorderBrushProperty,
+                "ExpanderHeaderBorderPointerOverBrush");
         });
     }
 
@@ -381,6 +488,48 @@ public class ExpanderApiTests
         Assert.IsTrue(
             style.Setters.OfType<Setter>().Any(setter => setter.Property == property),
             $"{style.TargetType.Name} should set {property.Name}.");
+    }
+
+    private static void AssertSetterValue(Style style, DependencyProperty property, object expectedValue)
+    {
+        var setter = style.Setters.OfType<Setter>().SingleOrDefault(item => item.Property == property);
+        Assert.IsNotNull(setter, $"Expected setter for {property.Name}.");
+        Assert.AreEqual(expectedValue, setter!.Value);
+    }
+
+    private static void AssertDynamicResourceSetter(Style style, DependencyProperty property, object expectedResourceKey)
+    {
+        var setter = style.Setters.OfType<Setter>().SingleOrDefault(item => item.Property == property);
+        Assert.IsNotNull(setter, $"Expected setter for {property.Name}.");
+        AssertDynamicResourceSetter(setter!, expectedResourceKey);
+    }
+
+    private static void AssertDynamicResourceSetter(Setter setter, object expectedResourceKey)
+    {
+        Assert.IsInstanceOfType(setter.Value, typeof(DynamicResourceExtension));
+
+        var dynamicResource = (DynamicResourceExtension)setter.Value;
+        Assert.AreEqual(expectedResourceKey, dynamicResource.ResourceKey);
+    }
+
+    private static void AssertTemplateTriggerDynamicResource(
+        ControlTemplate template,
+        DependencyProperty triggerProperty,
+        object triggerValue,
+        string? sourceName,
+        string targetName,
+        DependencyProperty setterProperty,
+        object expectedResourceKey)
+    {
+        var trigger = template.Triggers.OfType<Trigger>().Single(item =>
+            item.Property == triggerProperty &&
+            Equals(item.Value, triggerValue) &&
+            item.SourceName == sourceName);
+        var setter = trigger.Setters.OfType<Setter>().Single(item =>
+            item.TargetName == targetName &&
+            item.Property == setterProperty);
+
+        AssertDynamicResourceSetter(setter, expectedResourceKey);
     }
 
     private static T FindTemplateChild<T>(Control control, string name)
