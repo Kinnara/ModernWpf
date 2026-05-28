@@ -112,39 +112,94 @@ public class ButtonVisualStateTests
     }
 
     [TestMethod]
-    public void SubtleButtonThemeResourcesRemainWinUISourceAliases()
+    public void ButtonThemeResourcesRemainWinUISourceAliases()
     {
         WpfTestHost.Run(() =>
         {
-            AssertSubtleTheme("Light",
-                "SubtleFillColorTransparentBrush",
-                "SubtleFillColorSecondaryBrush",
-                "SubtleFillColorTertiaryBrush",
-                "SubtleFillColorTransparentBrush",
-                "TextFillColorPrimaryBrush",
-                "TextFillColorPrimaryBrush",
-                "TextFillColorSecondaryBrush",
-                "TextFillColorDisabledBrush",
-                "SubtleFillColorTransparentBrush",
-                "SubtleFillColorSecondaryBrush",
-                "SubtleFillColorTertiaryBrush",
-                "SubtleFillColorTransparentBrush");
+            foreach (var themeName in new[] { "Light", "Dark" })
+            {
+                AssertResourceValue(themeName, "ButtonBorderThemeThickness", new Thickness(1));
 
-            AssertSubtleTheme("Dark",
-                "SubtleFillColorTransparentBrush",
-                "SubtleFillColorSecondaryBrush",
-                "SubtleFillColorTertiaryBrush",
-                "SubtleFillColorTransparentBrush",
-                "TextFillColorPrimaryBrush",
-                "TextFillColorPrimaryBrush",
-                "TextFillColorSecondaryBrush",
-                "TextFillColorDisabledBrush",
-                "SubtleFillColorTransparentBrush",
-                "SubtleFillColorSecondaryBrush",
-                "SubtleFillColorTertiaryBrush",
-                "SubtleFillColorTransparentBrush");
+                AssertButtonTheme(themeName,
+                    "Button",
+                    "ControlFillColorDefaultBrush",
+                    "ControlFillColorSecondaryBrush",
+                    "ControlFillColorTertiaryBrush",
+                    "ControlFillColorDisabledBrush",
+                    "TextFillColorPrimaryBrush",
+                    "TextFillColorPrimaryBrush",
+                    "TextFillColorSecondaryBrush",
+                    "TextFillColorDisabledBrush",
+                    "ControlElevationBorderBrush",
+                    "ControlElevationBorderBrush",
+                    "ControlStrokeColorDefaultBrush",
+                    "ControlStrokeColorDefaultBrush");
 
-            AssertSubtleTheme("HighContrast",
+                AssertButtonTheme(themeName,
+                    "AccentButton",
+                    "AccentFillColorDefaultBrush",
+                    "AccentFillColorSecondaryBrush",
+                    "AccentFillColorTertiaryBrush",
+                    "AccentFillColorDisabledBrush",
+                    "TextOnAccentFillColorPrimaryBrush",
+                    "TextOnAccentFillColorPrimaryBrush",
+                    "TextOnAccentFillColorSecondaryBrush",
+                    "TextOnAccentFillColorDisabledBrush",
+                    "AccentControlElevationBorderBrush",
+                    "AccentControlElevationBorderBrush",
+                    "ControlFillColorTransparentBrush",
+                    "ControlFillColorTransparentBrush");
+
+                AssertButtonTheme(themeName,
+                    "SubtleButton",
+                    "SubtleFillColorTransparentBrush",
+                    "SubtleFillColorSecondaryBrush",
+                    "SubtleFillColorTertiaryBrush",
+                    "SubtleFillColorTransparentBrush",
+                    "TextFillColorPrimaryBrush",
+                    "TextFillColorPrimaryBrush",
+                    "TextFillColorSecondaryBrush",
+                    "TextFillColorDisabledBrush",
+                    "SubtleFillColorTransparentBrush",
+                    "SubtleFillColorSecondaryBrush",
+                    "SubtleFillColorTertiaryBrush",
+                    "SubtleFillColorTransparentBrush");
+            }
+
+            AssertResourceValue("HighContrast", "ButtonBorderThemeThickness", new Thickness(1));
+
+            AssertButtonTheme("HighContrast",
+                "Button",
+                "SystemControlBackgroundBaseLowBrush",
+                "SystemColorHighlightTextColorBrush",
+                "SystemColorHighlightTextColorBrush",
+                "SystemControlBackgroundBaseLowBrush",
+                "SystemColorButtonTextColorBrush",
+                "SystemControlHighlightBaseHighBrush",
+                "SystemControlHighlightBaseHighBrush",
+                "SystemControlDisabledBaseMediumLowBrush",
+                "SystemControlForegroundTransparentBrush",
+                "SystemColorHighlightColorBrush",
+                "SystemColorHighlightTextColorBrush",
+                "SystemControlDisabledTransparentBrush");
+
+            AssertButtonTheme("HighContrast",
+                "AccentButton",
+                "SystemControlBackgroundAccentBrush",
+                "SystemAccentColorLight1Brush",
+                "SystemAccentColorDark1Brush",
+                "SystemControlBackgroundBaseLowBrush",
+                "SystemControlForegroundChromeWhiteBrush",
+                "SystemControlForegroundChromeWhiteBrush",
+                "SystemControlForegroundChromeWhiteBrush",
+                "SystemControlDisabledBaseMediumLowBrush",
+                "SystemControlForegroundTransparentBrush",
+                "SystemControlForegroundTransparentBrush",
+                "SystemControlHighlightTransparentBrush",
+                "SystemControlDisabledTransparentBrush");
+
+            AssertButtonTheme("HighContrast",
+                "SubtleButton",
                 "SystemControlBackgroundBaseLowBrush",
                 "SystemColorHighlightTextColorBrush",
                 "SystemColorHighlightTextColorBrush",
@@ -252,8 +307,9 @@ public class ButtonVisualStateTests
             ?? throw new AssertFailedException($"Expected {control.GetType().Name} template child '{name}' to be a {typeof(T).Name}.");
     }
 
-    private static void AssertSubtleTheme(
+    private static void AssertButtonTheme(
         string themeName,
+        string prefix,
         string background,
         string backgroundPointerOver,
         string backgroundPressed,
@@ -268,18 +324,25 @@ public class ButtonVisualStateTests
         string borderBrushDisabled)
     {
         var theme = ThemeResources.Current.GetThemeDictionary(themeName);
-        AssertResourceReference(theme, "SubtleButtonBackground", background);
-        AssertResourceReference(theme, "SubtleButtonBackgroundPointerOver", backgroundPointerOver);
-        AssertResourceReference(theme, "SubtleButtonBackgroundPressed", backgroundPressed);
-        AssertResourceReference(theme, "SubtleButtonBackgroundDisabled", backgroundDisabled);
-        AssertResourceReference(theme, "SubtleButtonForeground", foreground);
-        AssertResourceReference(theme, "SubtleButtonForegroundPointerOver", foregroundPointerOver);
-        AssertResourceReference(theme, "SubtleButtonForegroundPressed", foregroundPressed);
-        AssertResourceReference(theme, "SubtleButtonForegroundDisabled", foregroundDisabled);
-        AssertResourceReference(theme, "SubtleButtonBorderBrush", borderBrush);
-        AssertResourceReference(theme, "SubtleButtonBorderBrushPointerOver", borderBrushPointerOver);
-        AssertResourceReference(theme, "SubtleButtonBorderBrushPressed", borderBrushPressed);
-        AssertResourceReference(theme, "SubtleButtonBorderBrushDisabled", borderBrushDisabled);
+        AssertResourceReference(theme, $"{prefix}Background", background);
+        AssertResourceReference(theme, $"{prefix}BackgroundPointerOver", backgroundPointerOver);
+        AssertResourceReference(theme, $"{prefix}BackgroundPressed", backgroundPressed);
+        AssertResourceReference(theme, $"{prefix}BackgroundDisabled", backgroundDisabled);
+        AssertResourceReference(theme, $"{prefix}Foreground", foreground);
+        AssertResourceReference(theme, $"{prefix}ForegroundPointerOver", foregroundPointerOver);
+        AssertResourceReference(theme, $"{prefix}ForegroundPressed", foregroundPressed);
+        AssertResourceReference(theme, $"{prefix}ForegroundDisabled", foregroundDisabled);
+        AssertResourceReference(theme, $"{prefix}BorderBrush", borderBrush);
+        AssertResourceReference(theme, $"{prefix}BorderBrushPointerOver", borderBrushPointerOver);
+        AssertResourceReference(theme, $"{prefix}BorderBrushPressed", borderBrushPressed);
+        AssertResourceReference(theme, $"{prefix}BorderBrushDisabled", borderBrushDisabled);
+    }
+
+    private static void AssertResourceValue(string themeName, string key, object expectedValue)
+    {
+        var theme = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(theme.Contains(key), $"Theme is missing {key}.");
+        Assert.AreEqual(expectedValue, theme[key], key);
     }
 
     private static void AssertResourceReference(ResourceDictionary theme, string key, object expectedResourceKey)
