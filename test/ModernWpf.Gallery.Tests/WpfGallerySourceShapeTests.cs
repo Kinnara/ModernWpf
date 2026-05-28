@@ -1396,6 +1396,7 @@ namespace ModernWpf.Gallery.Tests
                 "Height=\"{TemplateBinding MinHeight}\"",
                 "HorizontalAlignment=\"Stretch\"",
                 "Content=\"{TemplateBinding Header}\"",
+                "AutomationProperties.Name=\"{Binding Path=(AutomationProperties.Name), RelativeSource={RelativeSource TemplatedParent}}\"",
                 "IsChecked=\"{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}\">",
                 "<Border",
                 "x:Name=\"HeaderBorder\"",

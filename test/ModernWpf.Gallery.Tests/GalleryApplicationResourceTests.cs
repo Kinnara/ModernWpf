@@ -401,6 +401,7 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsNull(controlExample.Template.FindName("SourceCodeExpander", controlExample));
                     var sourceCodeExpander = FindVisualChildren<Expander>(controlExample).Single();
                     Assert.AreEqual("Source code", sourceCodeExpander.Header);
+                    Assert.AreEqual("View Source Code for Reference sample", AutomationProperties.GetName(sourceCodeExpander));
                     Assert.AreEqual(43.0, sourceCodeExpander.MinHeight);
                     Assert.AreEqual(Visibility.Visible, sourceCodeExpander.Visibility);
                     Assert.IsTrue(
@@ -409,6 +410,11 @@ namespace ModernWpf.Gallery.Tests
 
                     var sourceHeaderToggle = FindVisualChildren<System.Windows.Controls.Primitives.ToggleButton>(sourceCodeExpander).Single();
                     Assert.IsFalse(sourceHeaderToggle.Focusable);
+                    Assert.AreEqual(
+                        "View Source Code for Reference sample",
+                        AutomationProperties.GetName(sourceHeaderToggle));
+                    var sourceHeaderPeer = UIElementAutomationPeer.CreatePeerForElement(sourceHeaderToggle);
+                    Assert.AreEqual("View Source Code for Reference sample", sourceHeaderPeer.GetName());
                     Assert.IsTrue(
                         sourceHeaderToggle.ActualWidth >= displayBorder.ActualWidth - 1.0,
                         "Expected source header to span the official full-width row; actual " + sourceHeaderToggle.ActualWidth + " display " + displayBorder.ActualWidth);
