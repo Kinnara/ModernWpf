@@ -213,6 +213,34 @@ public class NumberBoxApiTests
             AssertGlobalResourceValue(numberBox, "NumberBoxMinWidth", 120.0);
             AssertGlobalResourceValue(numberBox, "NumberBoxPopupIndicatorMargin", new Thickness(0, 0, 8, 0));
 
+            var spinButtonStyle = AssertControlStyle(upButton);
+            Assert.AreSame(spinButtonStyle, downButton.Style);
+            Assert.AreEqual(typeof(RepeatButton), spinButtonStyle.TargetType);
+            Assert.IsNotNull(spinButtonStyle.BasedOn);
+            Assert.AreEqual(typeof(RepeatButton), spinButtonStyle.BasedOn!.TargetType);
+            AssertStyleSetter(spinButtonStyle, Control.IsTabStopProperty, false);
+            AssertStyleSetter(spinButtonStyle, FrameworkElement.MinWidthProperty, 32.0);
+            AssertStyleSetter(spinButtonStyle, Control.PaddingProperty, new Thickness(0));
+            AssertStyleSetter(spinButtonStyle, FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Stretch);
+            AssertDynamicResourceSetter(spinButtonStyle, Control.BorderThicknessProperty, "NumberBoxSpinButtonBorderThickness");
+            AssertStyleSetter(spinButtonStyle, Control.FontSizeProperty, 12.0);
+            AssertDynamicResourceSetter(spinButtonStyle, Control.FontFamilyProperty, "SymbolThemeFontFamily");
+
+            var popupSpinButtonStyle = AssertControlStyle(popupUpButton);
+            Assert.AreSame(popupSpinButtonStyle, popupDownButton.Style);
+            Assert.AreEqual(typeof(RepeatButton), popupSpinButtonStyle.TargetType);
+            Assert.IsNotNull(popupSpinButtonStyle.BasedOn);
+            Assert.AreEqual(typeof(RepeatButton), popupSpinButtonStyle.BasedOn!.TargetType);
+            AssertStyleSetter(popupSpinButtonStyle, UIElement.FocusableProperty, false);
+            AssertStyleSetter(popupSpinButtonStyle, Control.IsTabStopProperty, false);
+            AssertStyleSetter(popupSpinButtonStyle, FrameworkElement.WidthProperty, 36.0);
+            AssertStyleSetter(popupSpinButtonStyle, FrameworkElement.HeightProperty, 36.0);
+            AssertStyleSetter(popupSpinButtonStyle, Control.PaddingProperty, new Thickness(0));
+            AssertDynamicResourceSetter(popupSpinButtonStyle, Control.BorderThicknessProperty, "NumberBoxPopupSpinButtonBorderThickness");
+            AssertStyleSetter(popupSpinButtonStyle, Control.FontSizeProperty, 16.0);
+            AssertDynamicResourceSetter(popupSpinButtonStyle, Control.FontFamilyProperty, "SymbolThemeFontFamily");
+            AssertDynamicResourceSetter(popupSpinButtonStyle, System.Windows.Controls.Border.CornerRadiusProperty, "ControlCornerRadius");
+
             foreach (var themeName in new[] { "Light", "Dark" })
             {
                 AssertThemeResourceReference(themeName, "NumberBoxPopupIndicatorForeground", "TextFillColorSecondaryBrush");
@@ -312,6 +340,32 @@ public class NumberBoxApiTests
     private static void AssertGlobalResourceValue<T>(FrameworkElement element, object resourceKey, T expectedValue)
     {
         Assert.AreEqual(expectedValue, element.TryFindResource(resourceKey), resourceKey.ToString());
+    }
+
+    private static Style AssertControlStyle(Control control)
+    {
+        Assert.IsNotNull(control.Style, $"{control.Name} should have an explicit style.");
+        return control.Style!;
+    }
+
+    private static void AssertStyleSetter(Style style, DependencyProperty property, object expectedValue)
+    {
+        var setter = GetStyleSetter(style, property);
+        Assert.AreEqual(expectedValue, setter.Value, property.Name);
+    }
+
+    private static void AssertDynamicResourceSetter(Style style, DependencyProperty property, object expectedResourceKey)
+    {
+        var setter = GetStyleSetter(style, property);
+        var dynamicResource = setter.Value as DynamicResourceExtension;
+        Assert.IsNotNull(dynamicResource, $"Expected {property.Name} to use DynamicResource.");
+        Assert.AreEqual(expectedResourceKey, dynamicResource!.ResourceKey, property.Name);
+    }
+
+    private static Setter GetStyleSetter(Style style, DependencyProperty property)
+    {
+        return style.Setters.OfType<Setter>().SingleOrDefault(setter => setter.Property == property)
+            ?? throw new AssertFailedException($"Expected {style.TargetType.Name} style to set {property.Name}.");
     }
 
     private static void AssertThemeResourceReference(string themeName, string resourceKey, object expectedResourceKey)
