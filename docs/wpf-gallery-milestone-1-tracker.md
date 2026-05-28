@@ -628,6 +628,8 @@ Latest local verification for the current branch tip:
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: the retained ModernWpf SelectorBar extension page now restores the local official WinUI Gallery third example title/source-facing `ItemsView3` name and `ItemsView` / `UniformGridLayout` displayed source while keeping the live WPF adaptation as an `ItemsControl` named `ItemsView3`. Existing warning/output remains `NU1903`, generated WinRT warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
   - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the SelectorBar `ItemsView3` source-facing alignment. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages and existing ModernWpf/ModernWpf.Controls warnings.
+- `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~AutoSuggestBoxApiTests.VerifyAutoSuggestBoxDefaultStyleAndWinUI2Resources" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0`: `AutoSuggestBox` now pins its WinUI-backed suggestions-list max-height, border opacity/thickness, margin, padding, per-theme item margin, suggestions-list background/border, light-dismiss overlay, icon size, and local textbox/header/button metric resources across Light/Dark/HighContrast. Existing warning/output remains `NETSDK1137`, existing ModernWpf/ModernWpf.Controls warnings, and the recurring `Failed to resolve WinRT.Runtime.dll` message.
 - `dotnet build .\ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
   - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the retained shell title-row and Settings footer source-shape alignment. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages and existing ModernWpf/ModernWpf.Controls warnings.
 - `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~GalleryPageRuntimeTests.RetainedWpfAliasReplacementPagesUseWpfGalleryMode|FullyQualifiedName~GalleryCatalogTests.WinUIExtensionCatalogMatchesImplementedModernWpfSurfaces|FullyQualifiedName~GalleryCatalogTests.GeneratedWinUIMetadataOnlyContainsRetainedModernWpfSurfaces|FullyQualifiedName~GalleryCatalogTests.SourceWinUIControlInfoDataOnlyContainsRetainedModernWpfSurfaces|FullyQualifiedName~GalleryCatalogTests.TrackerCurrentModernWpfSurfaceMatchesRetainedCatalogGuard|FullyQualifiedName~GalleryCatalogTests.ActiveGallerySourceDoesNotKeepDeletedWinUIPageImplementationArtifacts" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
@@ -3276,6 +3278,7 @@ MenuFlyout presenter/item/toggle/subitem theme-resource aliases,
 SplitView pane/light-dismiss theme-resource aliases,
 ProgressBar metric/state theme-resource aliases,
 ToolTip chrome/metric theme-resource aliases,
+AutoSuggestBox suggestions-list/button metric theme-resource aliases,
 TabView theme-resource aliases,
 Slider theme-resource aliases,
 HyperlinkButton theme-resource aliases,

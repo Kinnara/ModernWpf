@@ -42,22 +42,40 @@ public class AutoSuggestBoxApiTests
             Assert.IsTrue(autoSuggestBox.AutoMaximizeSuggestionArea);
             Assert.AreEqual(LightDismissOverlayMode.Auto, autoSuggestBox.LightDismissOverlayMode);
             Assert.AreEqual(ControlHeaderPlacement.Top, autoSuggestBox.HeaderPlacement);
+            Assert.AreSame(autoSuggestBox.TryFindResource("AutoSuggestBoxTextBoxStyle"), autoSuggestBox.TextBoxStyle);
+            AssertGlobalResourceValue(autoSuggestBox, "AutoSuggestBoxTopHeaderMargin", new Thickness(0, 0, 0, 8));
+            AssertGlobalResourceValue(autoSuggestBox, "AutoSuggestBoxInnerButtonMargin", new Thickness(1, 3, 1, 3));
+            AssertGlobalResourceValue(autoSuggestBox, "AutoSuggestBoxDeleteButtonMargin", new Thickness(0, 4, 0, 4));
+            AssertGlobalResourceValue(autoSuggestBox, "AutoSuggestBoxQueryButtonPadding", new Thickness(3, 2, 3, 2));
+            AssertGlobalResourceValue(autoSuggestBox, "AutoSuggestBoxLeftButtonMargin", 3d);
+            AssertGlobalResourceValue(autoSuggestBox, "AutoSuggestBoxRightButtonMargin", 4d);
 
             var textBox = FindTemplateChild<TextBox>(autoSuggestBox, "TextBox");
             Assert.AreSame(autoSuggestBox.TextBoxStyle, textBox.Style);
 
-            AssertThemeResourceReference("Light", "AutoSuggestBoxSuggestionsListBackground", "AcrylicBackgroundFillColorDefaultBrush");
-            AssertThemeResourceReference("Dark", "AutoSuggestBoxSuggestionsListBackground", "AcrylicBackgroundFillColorDefaultBrush");
-            AssertThemeResourceReference("Light", "AutoSuggestBoxSuggestionsListBorderBrush", "SurfaceStrokeColorFlyoutBrush");
-            AssertThemeResourceReference("Dark", "AutoSuggestBoxSuggestionsListBorderBrush", "SurfaceStrokeColorFlyoutBrush");
+            foreach (var themeName in new[] { "Light", "Dark", "HighContrast" })
+            {
+                AssertThemeResourceValue(themeName, "AutoSuggestListMaxHeight", 374d);
+                AssertThemeResourceValue(themeName, "AutoSuggestListBorderOpacity", 0d);
+                AssertThemeResourceValue(themeName, "AutoSuggestListBorderThemeThickness", new Thickness(1));
+                AssertThemeResourceValue(themeName, "AutoSuggestListMargin", new Thickness(0, 2, 0, 2));
+                AssertThemeResourceValue(themeName, "AutoSuggestListPadding", new Thickness(-1, 0, -1, 0));
+                AssertThemeResourceValue(themeName, "AutoSuggestBoxIconFontSize", 12d);
+            }
+
+            AssertThemeResourceValue("Light", "AutoSuggestListViewItemMargin", new Thickness(10, 11, 0, 13));
+            AssertThemeResourceValue("Dark", "AutoSuggestListViewItemMargin", new Thickness(12, 11, 0, 13));
+            AssertThemeResourceValue("HighContrast", "AutoSuggestListViewItemMargin", new Thickness(10, 11, 0, 13));
+            foreach (var themeName in new[] { "Light", "Dark" })
+            {
+                AssertThemeResourceReference(themeName, "AutoSuggestBoxSuggestionsListBackground", "AcrylicBackgroundFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "AutoSuggestBoxSuggestionsListBorderBrush", "SurfaceStrokeColorFlyoutBrush");
+                AssertThemeResourceReference(themeName, "AutoSuggestBoxLightDismissOverlayBackground", "SystemControlPageBackgroundMediumAltMediumBrush");
+            }
+
             AssertThemeResourceReference("HighContrast", "AutoSuggestBoxSuggestionsListBackground", "SystemControlBackgroundChromeMediumLowBrush");
             AssertThemeResourceReference("HighContrast", "AutoSuggestBoxSuggestionsListBorderBrush", "SystemControlTransientBorderBrush");
-            AssertThemeResourceReference("Light", "AutoSuggestBoxLightDismissOverlayBackground", "SystemControlPageBackgroundMediumAltMediumBrush");
-            AssertThemeResourceReference("Dark", "AutoSuggestBoxLightDismissOverlayBackground", "SystemControlPageBackgroundMediumAltMediumBrush");
             AssertThemeResourceReference("HighContrast", "AutoSuggestBoxLightDismissOverlayBackground", "SystemControlPageBackgroundMediumAltMediumBrush");
-            AssertThemeResourceValue("Light", "AutoSuggestBoxIconFontSize", 12d);
-            AssertThemeResourceValue("Dark", "AutoSuggestBoxIconFontSize", 12d);
-            AssertThemeResourceValue("HighContrast", "AutoSuggestBoxIconFontSize", 12d);
         });
     }
 
@@ -423,6 +441,13 @@ public class AutoSuggestBoxApiTests
         Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
         Assert.IsTrue(themeDictionary.Contains(expectedResourceKey), $"{themeName} is missing {expectedResourceKey}.");
         Assert.AreSame(themeDictionary[expectedResourceKey], themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
+    }
+
+    private static void AssertGlobalResourceValue<T>(FrameworkElement element, string resourceKey, T expectedValue)
+    {
+        var resource = element.TryFindResource(resourceKey);
+        Assert.IsNotNull(resource, $"Missing global resource {resourceKey}.");
+        Assert.AreEqual(expectedValue, resource);
     }
 
     private static void AssertThemeResourceValue<T>(string themeName, string resourceKey, T expectedValue)
