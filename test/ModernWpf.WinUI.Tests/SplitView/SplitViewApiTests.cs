@@ -7,8 +7,10 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ModernWpf;
 using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
+using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
 
 namespace ModernWpf.WinUI.Tests.SplitView;
@@ -111,6 +113,27 @@ public class SplitViewApiTests
             Assert.AreEqual(89d, settings.OpenPaneLengthMinusCompactLength, 0.01);
             Assert.AreEqual(-89d, settings.NegativeOpenPaneLengthMinusCompactLength, 0.01);
             Assert.AreEqual(new GridLength(137), settings.OpenPaneGridLength);
+        });
+    }
+
+    [TestMethod]
+    public void ThemeResourcesUseWinUI2SplitViewHighContrastTokens()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            foreach (var themeName in new[] { "Light", "Dark", "HighContrast" })
+            {
+                AssertThemeResourceValue(themeName, "SplitViewOpenPaneThemeLength", 320d);
+                AssertThemeResourceValue(themeName, "SplitViewCompactPaneThemeLength", 48d);
+                AssertThemeResourceValue(themeName, "SplitViewLeftBorderThemeThickness", new Thickness(0, 0, 1, 0));
+                AssertThemeResourceValue(themeName, "SplitViewRightBorderThemeThickness", new Thickness(1, 0, 0, 0));
+                AssertThemeResourceReference(
+                    themeName,
+                    "SplitViewLightDismissOverlayBackground",
+                    "SystemControlPageBackgroundMediumAltMediumBrush");
+            }
         });
     }
 
@@ -404,6 +427,21 @@ public class SplitViewApiTests
             .Single(item => item.Name == groupName);
         Assert.IsNotNull(group.CurrentState);
         return group.CurrentState.Name;
+    }
+
+    private static void AssertThemeResourceReference(string themeName, object resourceKey, object expectedResourceKey)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.IsTrue(themeDictionary.Contains(expectedResourceKey), $"{themeName} is missing {expectedResourceKey}.");
+        Assert.AreSame(themeDictionary[expectedResourceKey], themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
+    }
+
+    private static void AssertThemeResourceValue<T>(string themeName, object resourceKey, T expectedValue)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.AreEqual(expectedValue, themeDictionary[resourceKey]);
     }
 
     private static void RaiseMouseLeftButtonUp(UIElement target)
