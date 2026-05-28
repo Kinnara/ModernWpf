@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Effects;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls;
@@ -25,6 +26,31 @@ public class ToolTipVisualStateTests
             Assert.AreEqual(typeof(ToolTip), defaultStyle.TargetType);
             Assert.AreEqual(typeof(ToolTip), implicitToolTipStyle.TargetType);
             Assert.AreSame(defaultStyle, implicitToolTipStyle.BasedOn);
+
+            var resources = new ResourceDictionary
+            {
+                Source = new System.Uri("/ModernWpf;component/Styles/ToolTip.xaml", System.UriKind.Relative)
+            };
+            AssertResource(resources, "ToolTipBorderPadding", new Thickness(9, 6, 9, 8));
+            AssertResource(resources, "ToolTipMaxWidth", 320.0);
+            AssertResource(resources, "ToolTipBorderThemeThickness", new Thickness(1));
+
+            AssertDynamicResourceSetter(defaultStyle, Control.ForegroundProperty, "ToolTipForegroundBrush");
+            AssertDynamicResourceSetter(defaultStyle, Control.FontFamilyProperty, SystemFonts.StatusFontFamilyKey);
+            AssertDynamicResourceSetter(defaultStyle, Control.FontSizeProperty, SystemFonts.StatusFontSizeKey);
+            AssertDynamicResourceSetter(defaultStyle, Control.FontStyleProperty, SystemFonts.StatusFontStyleKey);
+            AssertDynamicResourceSetter(defaultStyle, Control.FontWeightProperty, SystemFonts.StatusFontWeightKey);
+            AssertDynamicResourceSetter(defaultStyle, Control.BackgroundProperty, "ToolTipBackgroundBrush");
+            AssertDynamicResourceSetter(defaultStyle, Control.BorderBrushProperty, "ToolTipBorderBrush");
+            AssertDynamicResourceSetter(defaultStyle, Control.BorderThicknessProperty, "ToolTipBorderThemeThickness");
+            AssertSetterValue(defaultStyle, Control.PaddingProperty, new Thickness(9, 6, 9, 8));
+            AssertSetterValue(defaultStyle, FrameworkElement.MaxWidthProperty, 320.0);
+            AssertSetterValue(defaultStyle, Control.HorizontalContentAlignmentProperty, HorizontalAlignment.Left);
+            AssertSetterValue(defaultStyle, Control.VerticalContentAlignmentProperty, VerticalAlignment.Center);
+            AssertSetterValue(defaultStyle, RenderOptions.ClearTypeHintProperty, ClearTypeHint.Enabled);
+            AssertSetterValue(defaultStyle, UIElement.SnapsToDevicePixelsProperty, true);
+            AssertSetterValue(defaultStyle, Control.OverridesDefaultStyleProperty, true);
+            Assert.IsInstanceOfType(FindSetter(defaultStyle, Control.TemplateProperty)?.Value, typeof(ControlTemplate));
 
             var toolTip = new ToolTip
             {
@@ -115,6 +141,46 @@ public class ToolTipVisualStateTests
         var wrappingSetter = textBlockStyle.Setters.OfType<Setter>()
             .Single(item => item.Property == TextBlock.TextWrappingProperty);
         Assert.AreEqual(TextWrapping.WrapWithOverflow, wrappingSetter.Value);
+    }
+
+    private static void AssertResource(ResourceDictionary resources, string key, object expected)
+    {
+        Assert.IsTrue(resources.Contains(key), $"Expected resource '{key}' to exist.");
+        Assert.AreEqual(expected, resources[key], $"Unexpected value for '{key}'.");
+    }
+
+    private static void AssertDynamicResourceSetter(Style style, DependencyProperty property, object expectedResourceKey)
+    {
+        var setter = FindSetter(style, property);
+        Assert.IsNotNull(setter, $"Expected setter for {property.Name}.");
+        Assert.IsInstanceOfType(setter!.Value, typeof(DynamicResourceExtension));
+
+        var dynamicResource = (DynamicResourceExtension)setter.Value;
+        Assert.AreEqual(expectedResourceKey, dynamicResource.ResourceKey);
+    }
+
+    private static void AssertSetterValue(Style style, DependencyProperty property, object expectedValue)
+    {
+        var setter = FindSetter(style, property);
+        Assert.IsNotNull(setter, $"Expected setter for {property.Name}.");
+        Assert.AreEqual(expectedValue, setter!.Value);
+    }
+
+    private static Setter? FindSetter(Style style, DependencyProperty property)
+    {
+        for (var current = style; current != null; current = current.BasedOn)
+        {
+            var setter = current.Setters
+                .OfType<Setter>()
+                .FirstOrDefault(item => item.Property == property);
+
+            if (setter != null)
+            {
+                return setter;
+            }
+        }
+
+        return null;
     }
 
     private static T GetTemplateChild<T>(Control control, string name)
