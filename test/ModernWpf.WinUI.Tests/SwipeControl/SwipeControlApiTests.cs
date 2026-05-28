@@ -171,6 +171,102 @@ public class SwipeControlApiTests
     }
 
     [TestMethod]
+    public void SwipeControlStyleUsesWinUIResourceAliases()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var resources = new ResourceDictionary
+            {
+                Source = new Uri("/ModernWpf.Controls;component/SwipeControl/SwipeControl.xaml", UriKind.Relative)
+            };
+            var style = (Style)resources[typeof(ModernWpf.Controls.SwipeControl)];
+            var defaultSwipeItemStyle = (Style)resources["DefaultSwipeItemStyle"];
+
+            AssertSetterValue(style, Control.IsTabStopProperty, false);
+            AssertDynamicResourceSetter(style, FrameworkElement.MinHeightProperty, "ListViewItemMinHeight");
+            AssertDynamicResourceSetter(style, FrameworkElement.MinWidthProperty, "ListViewItemMinWidth");
+
+            AssertSetterValue(defaultSwipeItemStyle, FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Center);
+            AssertSetterValue(defaultSwipeItemStyle, FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+            AssertDynamicResourceSetter(defaultSwipeItemStyle, Control.FontFamilyProperty, "ContentControlThemeFontFamily");
+            AssertSetterValue(defaultSwipeItemStyle, Control.FontWeightProperty, FontWeights.Normal);
+            AssertSetterValue(defaultSwipeItemStyle, FrameworkElement.MinWidthProperty, 68.0);
+            AssertSetterValue(defaultSwipeItemStyle, FrameworkElement.WidthProperty, double.NaN);
+            AssertSetterValue(defaultSwipeItemStyle, FrameworkElement.MinHeightProperty, 40.0);
+            AssertDynamicResourceSetter(defaultSwipeItemStyle, Control.BackgroundProperty, "SwipeItemBackground");
+            AssertDynamicResourceSetter(defaultSwipeItemStyle, Control.ForegroundProperty, "SwipeItemForeground");
+
+            var content = new Border { Width = 80, Height = 24 };
+            var transitions = new TransitionCollection();
+            var swipeControl = new ModernWpf.Controls.SwipeControl
+            {
+                Content = content,
+                BorderThickness = new Thickness(1, 2, 3, 4),
+                CornerRadius = new CornerRadius(5),
+                Padding = new Thickness(6),
+                ContentTransitions = transitions
+            };
+
+            using var host = new TestWindowHost(swipeControl, width: 240, height: 120);
+            host.UpdateLayout();
+
+            Assert.IsFalse(swipeControl.IsTabStop);
+            Assert.AreEqual(swipeControl.TryFindResource("ListViewItemMinHeight"), swipeControl.MinHeight);
+            Assert.AreEqual(swipeControl.TryFindResource("ListViewItemMinWidth"), swipeControl.MinWidth);
+
+            var rootGrid = FindDescendantByName<Grid>(swipeControl, "RootGrid")
+                ?? throw new AssertFailedException("Expected SwipeControl RootGrid.");
+            var swipeContentRoot = FindDescendantByName<Grid>(swipeControl, "SwipeContentRoot")
+                ?? throw new AssertFailedException("Expected SwipeControl SwipeContentRoot.");
+            var swipeContentStackPanel = FindDescendantByName<StackPanel>(swipeControl, "SwipeContentStackPanel")
+                ?? throw new AssertFailedException("Expected SwipeControl SwipeContentStackPanel.");
+            var swipeContentStackPanelTransform = swipeContentStackPanel.RenderTransform as TranslateTransform;
+            var contentRoot = FindDescendantByName<Grid>(swipeControl, "ContentRoot")
+                ?? throw new AssertFailedException("Expected SwipeControl ContentRoot.");
+            var contentRootTransform = contentRoot.RenderTransform as TranslateTransform;
+            var presenter = FindDescendantByName<ContentPresenterEx>(swipeControl, "ContentPresenter")
+                ?? throw new AssertFailedException("Expected SwipeControl ContentPresenter.");
+            var inputEater = FindDescendantByName<Grid>(swipeControl, "InputEater")
+                ?? throw new AssertFailedException("Expected SwipeControl InputEater.");
+
+            Assert.AreEqual(Brushes.Transparent.ToString(), rootGrid.Background.ToString());
+            Assert.IsTrue(rootGrid.ClipToBounds);
+            Assert.IsNotNull(swipeContentRoot);
+            Assert.IsNotNull(swipeContentStackPanelTransform);
+            Assert.IsNotNull(contentRootTransform);
+
+            var swipeItemStyle = rootGrid.TryFindResource("SwipeItemStyle") as Style;
+            Assert.IsNotNull(swipeItemStyle);
+            Assert.IsNotNull(swipeItemStyle!.BasedOn);
+            Assert.AreEqual(defaultSwipeItemStyle.TargetType, swipeItemStyle.BasedOn!.TargetType);
+            AssertDynamicResourceSetter(swipeItemStyle, Control.BackgroundProperty, "SwipeItemBackground");
+            AssertDynamicResourceSetter(swipeItemStyle, Control.ForegroundProperty, "SwipeItemForeground");
+
+            AssertResourceAlias(rootGrid, "SwipeItemBackground", "ControlFillColorTertiaryBrush");
+            AssertResourceAlias(rootGrid, "SwipeItemForeground", "TextFillColorPrimaryBrush");
+            AssertResourceAlias(rootGrid, "SwipeItemBackgroundPressed", "ControlAltFillColorQuarternaryBrush");
+            AssertResourceAlias(rootGrid, "SwipeItemPreThresholdExecuteForeground", "ControlStrongFillColorDefaultBrush");
+            AssertResourceAlias(rootGrid, "SwipeItemPreThresholdExecuteBackground", "ControlFillColorTertiaryBrush");
+            AssertResourceAlias(rootGrid, "SwipeItemPostThresholdExecuteForeground", "TextOnAccentFillColorPrimaryBrush");
+            AssertResourceAlias(rootGrid, "SwipeItemPostThresholdExecuteBackground", "AccentFillColorDefaultBrush");
+
+            Assert.AreSame(content, presenter.Content);
+            Assert.AreSame(swipeControl.Background, presenter.Background);
+            Assert.AreSame(swipeControl.BorderBrush, presenter.BorderBrush);
+            Assert.AreEqual(swipeControl.BorderThickness, presenter.BorderThickness);
+            Assert.AreEqual(swipeControl.CornerRadius, presenter.CornerRadius);
+            Assert.AreEqual(swipeControl.Padding, presenter.Padding);
+            Assert.AreSame(transitions, presenter.ContentTransitions);
+            Assert.AreEqual(HorizontalAlignment.Stretch, presenter.HorizontalContentAlignment);
+            Assert.AreEqual(VerticalAlignment.Stretch, presenter.VerticalContentAlignment);
+
+            Assert.AreEqual(Brushes.Transparent.ToString(), inputEater.Background.ToString());
+            Assert.IsFalse(inputEater.IsHitTestVisible);
+            Assert.AreEqual(Visibility.Collapsed, inputEater.Visibility);
+        });
+    }
+
+    [TestMethod]
     public void SwipeControlCanOnlyBeHorizontalOrVertical()
     {
         WpfTestHost.Run(() =>
@@ -583,6 +679,13 @@ public class SwipeControlApiTests
         }
 
         return null;
+    }
+
+    private static void AssertSetterValue(Style style, DependencyProperty property, object expectedValue)
+    {
+        var setter = FindSetter(style, property);
+        Assert.IsNotNull(setter, $"Expected local setter for {property.Name}.");
+        Assert.AreEqual(expectedValue, setter!.Value);
     }
 
     private static void AssertResourceAlias(FrameworkElement element, object resourceKey, object expectedResourceKey)
