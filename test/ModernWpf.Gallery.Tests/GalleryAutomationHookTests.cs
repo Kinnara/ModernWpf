@@ -730,6 +730,12 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsNotNull(itemsView3);
 
                     Assert.AreEqual("SelectorBar1", selectorBar1.Name);
+                    Assert.AreEqual(new Thickness(0), selectorBar1.BorderThickness);
+                    var selectorBarWidth = Math.Round(selectorBar1.ActualWidth);
+                    Assert.IsTrue(
+                        selectorBarWidth >= 283.0 && selectorBarWidth <= 284.0,
+                        "Unexpected SelectorBar visual width: " + selectorBarWidth);
+                    Assert.AreEqual(48.0, Math.Round(selectorBar1.ActualHeight));
                     AssertSelectorBarItem(selectorBar1.Items[0], "SelectorBarItemRecent", "Recent", Mux.Symbol.Clock, false);
                     AssertSelectorBarItem(selectorBar1.Items[1], "SelectorBarItemShared", "Shared", Mux.Symbol.Share, false);
                     AssertSelectorBarItem(selectorBar1.Items[2], "SelectorBarItemFavorites", "Favorites", Mux.Symbol.OutlineStar, false);

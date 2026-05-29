@@ -786,7 +786,8 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
 
             var selectorBar = new Mux.SelectorBar
             {
-                Name = "SelectorBar1"
+                Name = "SelectorBar1",
+                BorderThickness = new Thickness(0)
             };
             GalleryAutomation.WithAutomationId(selectorBar, GalleryAutomation.SampleElementId("SelectorBar", "SelectorBar"));
             selectorBar.Items.Add(CreateSelectorBarItem("SelectorBarItemRecent", "Recent", Mux.Symbol.Clock, false));
@@ -941,11 +942,11 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
 
             var content = new FrameworkElementFactory(typeof(StackPanel));
             content.SetValue(StackPanel.OrientationProperty, Orientation.Horizontal);
-            content.SetValue(FrameworkElement.MarginProperty, new Thickness(12, 10, 12, 7));
+            content.SetValue(FrameworkElement.MarginProperty, new Thickness(12, 10, 12, 10));
 
             var icon = new FrameworkElementFactory(typeof(ContentPresenter));
             icon.SetValue(ContentPresenter.ContentProperty, new TemplateBindingExtension(Mux.SelectorBarItem.IconProperty));
-            icon.SetValue(FrameworkElement.MarginProperty, new Thickness(-2, 0, 8, 0));
+            icon.SetValue(FrameworkElement.MarginProperty, new Thickness(-2, 0, 6, 0));
             icon.SetValue(FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
             icon.SetValue(FrameworkElement.RenderTransformOriginProperty, new Point(0.5, 0.5));
             icon.SetValue(UIElement.RenderTransformProperty, new ScaleTransform(0.8, 0.8));
