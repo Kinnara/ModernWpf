@@ -40,31 +40,29 @@ Remaining hard order, read this before selecting work:
 
 Priority contract, do not reorder:
 
-1. P0 visual evidence and real OS High Contrast screenshot coverage.
+1. P0 real OS High Contrast screenshot coverage when the OS is actually in
+   High Contrast.
 2. P1 visible-drift triage and visual-harness stability.
-3. P1 source, resource, and runtime alignment only when tied to a recorded
-   visual, High Contrast, or harness finding.
-4. P1 retained ModernWpf/WinUI extension high-drift visual triage.
+3. P1 retained ModernWpf/WinUI extension high-drift visual triage.
+4. P1 source, resource, and runtime alignment only when directly required by
+   the active visual, High Contrast, or harness finding.
 5. P2 tracker consistency, stale-status cleanup, and other low-risk
    documentation cleanup.
 
-Current-turn priority lock:
+Active pointer, update this only when the active item is finished or blocked:
 
 1. Re-check `SystemParameters.HighContrast` before starting a new work batch.
    If it is `True`, run P0.1 real `-Theme HighContrast` visual slices before
    all other work.
-2. If High Contrast remains `False` and row 7 has no newly recorded visual or
-   harness trigger, the only executable implementation work is row 8 retained
-   ModernWpf/WinUI extension high-drift visual triage.
-3. Row 8 must be processed in this order until each item is fixed or explicitly
-   recorded as diagnostic/native-control/harness-limited: `BreadcrumbBar`,
-   `AnnotatedScrollBar`, `RatingControl`, `IconElement`, `TitleBar`,
-   `DropDownButton`, `SelectorBar`, `InfoBar`, `ProgressRing`.
-4. For each row 8 item, inspect current Light and Dark screenshots first,
-   record the visible drift or diagnostic limitation, then edit only the
-   control, sample, or visual harness code needed to reduce that visual drift.
-   Source-shape, resource-key, naming, selector, test cleanup, and
-   documentation-only work cannot preempt the active visual item.
+2. If High Contrast remains `False`, the only executable implementation item is
+   **8.10 `InfoBar`**.
+3. Do not start **8.11 `ProgressRing`** until `InfoBar` is fixed or explicitly
+   recorded as diagnostic/native-control/harness-limited.
+4. For `InfoBar`, inspect current Light and Dark screenshots first, record the
+   visible drift or diagnostic limitation, then edit only the control, sample,
+   or visual harness code needed to reduce that visual drift.
+5. Source-shape, resource-key, naming, selector, test cleanup, tracker-only
+   cleanup, and P2 work cannot preempt `InfoBar`.
 
 Small source-shape, resource-key, naming, selector, or test-cleanup work is not
 executable while any higher visual, High Contrast, or harness row is open and
@@ -75,17 +73,16 @@ first executable lower row until real OS High Contrast becomes available.
 If a later `Needs Work` or section-status row appears to conflict with this
 queue, the queue wins. Fix the stale row before starting lower-priority work.
 
-Current executable row: **P1.3 retained ModernWpf/WinUI extension high-drift
-visual triage**, because P0.1 is blocked by the local Windows session reporting
-`SystemParameters.HighContrast = False`, P0.2-P0.4 are done at branch tip,
-P1.1 has current Light/Dark evidence and recorded residual causes, P1.2 stale
-`Partial` visual rows now have current evidence or recorded Color rendering
-residuals, and row 7.1 is complete at branch tip. The retained WinUI extension
-visual backlog still records high primary-delta evidence and must be ranked and
-classified before P2 cleanup. If Windows OS High Contrast is enabled, P0.1
-immediately preempts all lower rows. If a new WPF Gallery visible drift or
-visual-harness blocker appears, row 7 preempts P1.3/P2 and must be handled
-before any lower cleanup.
+Current executable item: **8.10 `InfoBar`** in **P1.3 retained ModernWpf/WinUI
+extension high-drift visual triage**, because P0.1 is blocked by the local
+Windows session reporting `SystemParameters.HighContrast = False`, P0.2-P0.4
+are done at branch tip, P1.1 has current Light/Dark evidence and recorded
+residual causes, P1.2 stale `Partial` visual rows now have current evidence or
+recorded Color rendering residuals, and row 7.1 is complete at branch tip.
+`ProgressRing` is next only after `InfoBar`; P2 cleanup is last. If Windows OS
+High Contrast is enabled, P0.1 immediately preempts all lower rows. If a new
+WPF Gallery visible drift or visual-harness blocker appears, row 7 preempts
+P1.3/P2 and must be handled before any lower cleanup.
 
 Do not start general source-shape or resource-key cleanup while a visible drift,
 High Contrast blocker that can be changed locally, or visual-harness blocker is
