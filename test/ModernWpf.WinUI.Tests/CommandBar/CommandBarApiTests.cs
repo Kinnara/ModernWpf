@@ -1021,6 +1021,156 @@ public class CommandBarApiTests
     }
 
     [TestMethod]
+    public void AppBarElementsConsumeLiveCoreThemeResources()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var button = new AppBarButton
+            {
+                Icon = new SymbolIcon(Symbol.Accept),
+                Label = "Accept",
+                InputGestureText = "Ctrl+A",
+                Flyout = new MenuFlyout()
+            };
+            var toggleButton = new AppBarToggleButton
+            {
+                Icon = new SymbolIcon(Symbol.Pin),
+                Label = "Pin",
+                InputGestureText = "Ctrl+P"
+            };
+            var separator = new AppBarSeparator();
+            var root = new StackPanel
+            {
+                Children = { button, toggleButton, separator }
+            };
+
+            using var host = new TestWindowHost(root, width: 360, height: 180);
+            host.UpdateLayout();
+
+            var buttonStyle = FindImplicitStyle<AppBarButton>(button);
+            AssertDynamicResourceSetter(buttonStyle, Control.BackgroundProperty, "AppBarButtonBackground");
+            AssertDynamicResourceSetter(buttonStyle, Control.ForegroundProperty, "AppBarButtonForeground");
+            AssertDynamicResourceSetter(buttonStyle, Control.BorderBrushProperty, "AppBarButtonBorderBrush");
+            AssertDynamicResourceSetter(buttonStyle, AppBarButton.CornerRadiusProperty, "ControlCornerRadius");
+
+            var buttonInnerBorder = FindTemplateChild<BorderEx>(button, "AppBarButtonInnerBorder");
+            var buttonContent = FindTemplateChild<ContentPresenterEx>(button, "Content");
+            var buttonTextLabel = FindTemplateChild<TextBlock>(button, "TextLabel");
+            var buttonRoot = FindTemplateChild<Border>(button, "Root");
+
+            AssertStateSetterDynamicResource(
+                buttonRoot,
+                "CommonStates",
+                "PointerOver",
+                "AppBarButtonInnerBorder.Background",
+                "AppBarButtonBackgroundPointerOver");
+            AssertStateSetterDynamicResource(
+                buttonRoot,
+                "CommonStates",
+                "PointerOver",
+                "Content.Foreground",
+                "AppBarButtonForegroundPointerOver");
+            AssertStateSetterDynamicResource(
+                buttonRoot,
+                "CommonStates",
+                "PointerOver",
+                "KeyboardAcceleratorTextLabel.Foreground",
+                "AppBarButtonKeyboardAcceleratorTextForegroundPointerOver");
+            AssertStateSetterDynamicResource(
+                buttonRoot,
+                "CommonStates",
+                "PointerOver",
+                "SubItemChevron.Foreground",
+                "AppBarButtonSubItemChevronForegroundPointerOver");
+
+            var buttonBackground = new SolidColorBrush(Colors.Magenta);
+            var buttonForeground = new SolidColorBrush(Colors.Lime);
+            var buttonBorderBrush = new SolidColorBrush(Colors.Cyan);
+            var buttonCornerRadius = new CornerRadius(7);
+
+            button.Resources["AppBarButtonBackground"] = buttonBackground;
+            button.Resources["AppBarButtonForeground"] = buttonForeground;
+            button.Resources["AppBarButtonBorderBrush"] = buttonBorderBrush;
+            button.Resources["ControlCornerRadius"] = buttonCornerRadius;
+            host.UpdateLayout();
+
+            Assert.AreSame(buttonBackground, button.Background);
+            Assert.AreSame(buttonBackground, buttonInnerBorder.Background);
+            Assert.AreSame(buttonForeground, button.Foreground);
+            Assert.AreSame(buttonForeground, buttonContent.Foreground);
+            Assert.AreSame(buttonForeground, buttonTextLabel.Foreground);
+            Assert.AreSame(buttonBorderBrush, button.BorderBrush);
+            Assert.AreSame(buttonBorderBrush, buttonInnerBorder.BorderBrush);
+            Assert.AreEqual(buttonCornerRadius, button.CornerRadius);
+            Assert.AreEqual(buttonCornerRadius, buttonInnerBorder.CornerRadius);
+
+            var toggleStyle = FindImplicitStyle<AppBarToggleButton>(toggleButton);
+            AssertDynamicResourceSetter(toggleStyle, Control.BackgroundProperty, "AppBarToggleButtonBackground");
+            AssertDynamicResourceSetter(toggleStyle, Control.ForegroundProperty, "AppBarToggleButtonForeground");
+            AssertDynamicResourceSetter(toggleStyle, Control.BorderBrushProperty, "AppBarToggleButtonBorderBrush");
+            AssertDynamicResourceSetter(toggleStyle, AppBarToggleButton.CornerRadiusProperty, "ControlCornerRadius");
+
+            var toggleInnerBorder = FindTemplateChild<BorderEx>(toggleButton, "AppBarToggleButtonInnerBorder");
+            var toggleContent = FindTemplateChild<ContentPresenterEx>(toggleButton, "Content");
+            var toggleTextLabel = FindTemplateChild<TextBlock>(toggleButton, "TextLabel");
+            var toggleRoot = FindTemplateChild<Border>(toggleButton, "Root");
+
+            AssertStateSetterDynamicResource(
+                toggleRoot,
+                "CommonStates",
+                "Checked",
+                "AppBarToggleButtonInnerBorder.Background",
+                "AppBarToggleButtonBackgroundChecked");
+            AssertStateSetterDynamicResource(
+                toggleRoot,
+                "CommonStates",
+                "Checked",
+                "Content.Foreground",
+                "AppBarToggleButtonForegroundChecked");
+            AssertStateSetterDynamicResource(
+                toggleRoot,
+                "CommonStates",
+                "Checked",
+                "KeyboardAcceleratorTextLabel.Foreground",
+                "AppBarToggleButtonKeyboardAcceleratorTextForegroundChecked");
+
+            var toggleBackground = new SolidColorBrush(Colors.DarkCyan);
+            var toggleForeground = new SolidColorBrush(Colors.DarkOrange);
+            var toggleBorderBrush = new SolidColorBrush(Colors.DarkViolet);
+            var toggleCornerRadius = new CornerRadius(5);
+
+            toggleButton.Resources["AppBarToggleButtonBackground"] = toggleBackground;
+            toggleButton.Resources["AppBarToggleButtonForeground"] = toggleForeground;
+            toggleButton.Resources["AppBarToggleButtonBorderBrush"] = toggleBorderBrush;
+            toggleButton.Resources["ControlCornerRadius"] = toggleCornerRadius;
+            host.UpdateLayout();
+
+            Assert.AreSame(toggleBackground, toggleButton.Background);
+            Assert.AreSame(toggleBackground, toggleInnerBorder.Background);
+            Assert.AreSame(toggleForeground, toggleButton.Foreground);
+            Assert.AreSame(toggleForeground, toggleContent.Foreground);
+            Assert.AreSame(toggleForeground, toggleTextLabel.Foreground);
+            Assert.AreSame(toggleBorderBrush, toggleButton.BorderBrush);
+            Assert.AreSame(toggleBorderBrush, toggleInnerBorder.BorderBrush);
+            Assert.AreEqual(toggleCornerRadius, toggleButton.CornerRadius);
+            Assert.AreEqual(toggleCornerRadius, toggleInnerBorder.CornerRadius);
+
+            var separatorStyle = FindImplicitStyle<AppBarSeparator>(separator);
+            AssertDynamicResourceSetter(separatorStyle, Control.ForegroundProperty, "AppBarSeparatorForeground");
+
+            var separatorRectangle = FindTemplateChild<Rectangle>(separator, "SeparatorRectangle");
+            var separatorForeground = new SolidColorBrush(Colors.Brown);
+            separator.Resources["AppBarSeparatorForeground"] = separatorForeground;
+            host.UpdateLayout();
+
+            Assert.AreSame(separatorForeground, separator.Foreground);
+            Assert.AreSame(separatorForeground, separatorRectangle.Fill);
+        });
+    }
+
+    [TestMethod]
     public void AppBarButtonTemplateUsesVisualStateSettersForWinUIStateParity()
     {
         WpfTestHost.Run(() =>

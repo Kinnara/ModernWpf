@@ -59,8 +59,8 @@ unresolved, unverified, or not recorded as stale-covered.
 
 | Row 7 order | Scope | State | Allowed next work |
 | --- | --- | --- | --- |
-| 7.1 | High Contrast / visual-resource runtime backlog | Active | Work the backlog in the exact order below. For each item, inspect existing evidence first, then either add focused coverage/fix or record that the stale backlog item is already covered in the same commit. |
-| 7.2 | Visual harness stability for accepted P0/P1 evidence | Gated by 7.1 unless it blocks screenshot collection. | Fix only when a failing or fragile visual audit blocks current evidence collection. |
+| 7.1 | High Contrast / visual-resource runtime backlog | Recorded at branch tip. | Do not reopen unless new visual/High Contrast drift appears. Each backlog item below is either covered by a focused runtime/resource test or recorded as stale-covered by current visual evidence. |
+| 7.2 | Visual harness stability for accepted P0/P1 evidence | No current blocker. | Fix only when a failing or fragile visual audit blocks current evidence collection. |
 | 7.3 | Source-shape parity tied to a recorded visual mismatch | Gated by 7.1 and 7.2. | Touch only files required for a visible delta or harness finding already recorded above. |
 | 7.4 | General source/resource cleanup and tracker-only cleanup | Not executable. | Leave until all higher visual/High Contrast rows are done, recorded, or blocked. |
 
@@ -86,71 +86,100 @@ Row 7.1 backlog order:
 7. MenuBar shell/item theme-resource aliases. Covered at branch tip by
    `MenuBarApiTests.ThemeResourcesUseWinUI2MenuBarHighContrastTokens`.
 8. AppBarButton, AppBarToggleButton, and AppBarSeparator core theme-resource
-   aliases. Next unresolved item.
+   aliases. Covered at branch tip by `CommandBarApiTests`, including
+   `AppBarElementsConsumeLiveCoreThemeResources` for direct style setters, live
+   template consumption, and representative dynamic-resource state setters.
 9. PipsPager selection/navigation theme-resource aliases and direct style/live
-   resource consumption.
+   resource consumption. Covered at branch tip by `PipsPagerApiTests`.
 10. DropDownButton chevron aliases and direct style/live resource consumption.
+    Covered at branch tip by `DropDownButtonApiTests`.
 11. Pivot style theme-resource aliases and direct style/live resource
-    consumption.
+    consumption. Covered at branch tip by `PivotVisualStateTests`.
 12. FlyoutPresenter chrome/theme-resource aliases and direct style/live resource
-    consumption.
+    consumption. Covered at branch tip by `FlyoutPresenterApiTests`.
 13. Date/time flyout and FlipView common style theme-resource aliases.
+    Covered at branch tip by `CommonStylesResourceTests`.
 14. Calendar picker common theme-resource aliases, CalendarView navigation
     foreground, and DatePicker text box caret direct style/live resource
-    consumption.
+    consumption. Covered at branch tip by `CommonStylesResourceTests` and
+    `DatePickerVisualStateTests`.
 15. TimePicker and LoopingSelector common theme-resource aliases.
+    Covered at branch tip by `CommonStylesResourceTests`.
 16. Expander header/chevron/content theme-resource aliases and direct
-    style/live/trigger resource consumption.
+    style/live/trigger resource consumption. Covered at branch tip by
+    `ExpanderApiTests`.
 17. Default, accent, and subtle Button theme-resource aliases and direct
-    style/live resource consumption.
+    style/live resource consumption. Covered at branch tip by
+    `ButtonVisualStateTests`.
 18. RepeatButton and ToggleButton theme-resource aliases and direct style/live
-    resource consumption.
+    resource consumption. Covered at branch tip by
+    `RepeatButtonVisualStateTests` and `ToggleButtonVisualStateTests`.
 19. ToggleSwitch track/knob state theme-resource aliases and direct style/live
-    resource consumption.
+    resource consumption. Covered at branch tip by `ToggleSwitchApiTests`.
 20. ScrollBar theme-resource aliases and direct style/live resource consumption.
+    Covered at branch tip by `ScrollBarVisualStateTests`.
 21. ContentDialog theme-resource aliases and direct style/live resource
-    consumption.
+    consumption. Covered at branch tip by `ContentDialogApiTests`.
 22. MenuFlyout presenter/item/toggle/subitem theme-resource aliases plus
-    presenter direct style/live resource consumption.
+    presenter direct style/live resource consumption. Covered at branch tip by
+    `MenuFlyoutApiTests`.
 23. SplitView pane/light-dismiss theme-resource aliases and direct style/live
-    resource consumption.
+    resource consumption. Covered at branch tip by `SplitViewApiTests`.
 24. SwipeControl reveal/execute item theme-resource aliases and direct
-    style/live resource consumption.
+    style/live resource consumption. Covered at branch tip by
+    `SwipeControlApiTests`.
 25. BreadcrumbBar item/flyout theme-resource aliases and direct style/live
-    resource consumption.
+    resource consumption. Covered at branch tip by `BreadcrumbBarApiTests`.
 26. SelectorBar item/pill theme-resource aliases and direct style/live resource
-    consumption.
+    consumption. Covered at branch tip by `SelectorBarApiTests`.
 27. AnnotatedScrollBar scroll-button/thumb/label theme-resource aliases and
-    direct style/live resource consumption.
+    direct style/live resource consumption. Covered at branch tip by
+    `AnnotatedScrollBarApiTests`.
 28. ProgressRing template/metric theme-resource aliases and direct style/live
-    resource consumption.
+    resource consumption. Covered at branch tip by `ProgressRingApiTests`.
 29. PersonPicture ellipse/badge theme-resource aliases and direct style/live
-    resource consumption.
+    resource consumption. Covered at branch tip by `PersonPictureApiTests`.
 30. RatingControl state/caption/glyph theme-resource aliases and direct
-    style/live resource consumption.
+    style/live resource consumption. Covered at branch tip by
+    `RatingControlApiTests`.
 31. ColorPicker slider thumb/border theme-resource aliases and direct style/live
-    resource consumption.
+    resource consumption. Covered at branch tip by `ColorPickerApiTests`.
 32. ProgressBar metric/state theme-resource aliases and direct style/live
-    resource consumption.
+    resource consumption. Covered at branch tip by `ProgressBarApiTests`.
 33. ToolTip chrome/metric theme-resource aliases and direct style/live resource
-    consumption.
+    consumption. Covered at branch tip by `ToolTipVisualStateTests`.
 34. AutoSuggestBox suggestions-list/button metric theme-resource aliases and
-    direct style/live resource consumption.
+    direct style/live resource consumption. Covered at branch tip by
+    `AutoSuggestBoxApiTests`.
 35. NumberBox popup/spin-button style and theme-resource aliases and direct
-    style/live resource consumption.
+    style/live resource consumption. Covered at branch tip by
+    `NumberBoxApiTests`.
 36. PullToRefresh/RefreshVisualizer direct style and theme-resource aliases plus
-    live resource consumption.
+    live resource consumption. Covered at branch tip by
+    `RefreshContainerApiTests`.
 37. TabView theme-resource aliases and direct style/live resource consumption.
+    Covered at branch tip by `TabViewResourceTests`.
 38. Slider theme-resource aliases and direct style/live resource consumption.
+    Covered at branch tip by `SliderVisualStateTests`.
 39. HyperlinkButton theme-resource aliases and direct style/live resource
-    consumption.
+    consumption. Covered at branch tip by `HyperlinkButtonApiTests`.
 40. ListBox/ListView/GridView collection theme-resource aliases and direct
-    style/live resource consumption.
+    style/live resource consumption. Covered at branch tip by
+    `ListBoxListViewVisualStateTests`.
 41. CheckBox and RadioButton common theme-resource aliases and direct style/live
-    resource consumption.
+    resource consumption. Covered at branch tip by `CheckBoxVisualStateTests`
+    and `RadioButtonVisualStateTests`.
 42. ComboBox, TextControl, and Hyperlink foreground theme-resource aliases and
-    direct style/live resource consumption.
-43. Color subsection direct-reference evidence.
+    direct style/live resource consumption. Covered at branch tip by
+    `ComboBoxApiTests`, `TextBoxPasswordBoxVisualStateTests`, and
+    `HyperlinkVisualStateTests`.
+43. Color subsection direct-reference evidence. Recorded at branch tip by the
+    current Light/Dark Color subsection direct-reference evidence in P1.2.
+
+Row 7.1 is complete at branch tip. With `SystemParameters.HighContrast`
+currently off, the next executable visual/High Contrast work is either P0.1
+real High Contrast screenshot collection when the OS environment permits it, or
+row 7.2 only if accepted P0/P1 evidence collection exposes a harness blocker.
 
 Resume checklist:
 
@@ -907,7 +936,7 @@ Latest local verification for the current branch tip:
 - `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~SplitViewApiTests" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0`: 14 tests. `SplitView` now also pins direct style resource setters and live template consumption for pane border/background, pane lengths, corner, high-contrast pane border, content transform, and light-dismiss overlay resources while retaining focused Light/Dark/HighContrast coverage for the WinUI2 320px open-pane length, 48px compact-pane length, left/right pane border thickness resources, and `SplitViewLightDismissOverlayBackground` resolving through `SystemControlPageBackgroundMediumAltMediumBrush`; existing SplitView default property, template-settings, pane event, light-dismiss, keyboard, state, and transition coverage still passes. Existing warning/output remains `NETSDK1137`, generated WinRT warnings, existing ModernWpf/ModernWpf.Controls warnings, and the recurring `Failed to resolve WinRT.Runtime.dll` message.
 - `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~CommandBarApiTests" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
-  - Passed for `net8.0-windows7.0`: 35 tests. `CommandBar` now has focused Light/Dark/HighContrast coverage for the WinUI2 overflow size constants, command bar background/open/foreground/border aliases, disabled ellipsis icon alias, overflow presenter background/border aliases, light-dismiss overlay alias, and HighContrast open-border thickness, plus live runtime coverage proving the default `CommandBar` chrome consumes `CommandBarBackground`, `CommandBarForeground`, overflow min/max width, `CommandBarHighContrastBorder`, and open-border resources, and proving `CommandBarOverflowPresenter` style/template/full-width states consume their dynamic resources live. Existing CommandBar dynamic overflow, shadow, presenter state, AppBarButton/AppBarToggleButton, overflow sizing, automation, and split-button style coverage still passes. Existing warning/output remains `NETSDK1137`, generated WinRT warnings, existing ModernWpf/ModernWpf.Controls warnings, and the recurring `Failed to resolve WinRT.Runtime.dll` message.
+  - Passed for `net8.0-windows7.0`: 36 tests. `CommandBar` now has focused Light/Dark/HighContrast coverage for the WinUI2 overflow size constants, command bar background/open/foreground/border aliases, disabled ellipsis icon alias, overflow presenter background/border aliases, light-dismiss overlay alias, and HighContrast open-border thickness, plus live runtime coverage proving the default `CommandBar` chrome consumes `CommandBarBackground`, `CommandBarForeground`, overflow min/max width, `CommandBarHighContrastBorder`, and open-border resources, proving `CommandBarOverflowPresenter` style/template/full-width states consume their dynamic resources live, and proving `AppBarButton`, `AppBarToggleButton`, and `AppBarSeparator` core style/template aliases consume dynamic resources live with representative dynamic-resource state setters. Existing CommandBar dynamic overflow, shadow, presenter state, AppBarButton/AppBarToggleButton, overflow sizing, automation, and split-button style coverage still passes. Existing warning/output remains `NETSDK1137`, generated WinRT warnings, existing ModernWpf/ModernWpf.Controls warnings, and the recurring `Failed to resolve WinRT.Runtime.dll` message.
 - `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~MenuBarApiTests" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0`: 10 tests. `MenuBar` now has focused Light/Dark/HighContrast coverage for MenuBar background/foreground aliases, context-menu and flyout chrome aliases, menu border and checkbox aliases, menu-bar item background state aliases, menu-bar item border state aliases, and the 2px HighContrast item border thickness; existing MenuBar defaults, item ownership, flyout sync, automation peer, sizing, and XAML content-property coverage still passes. Existing warning/output remains `NETSDK1137`, generated WinRT warnings, existing ModernWpf/ModernWpf.Controls warnings, and the recurring `Failed to resolve WinRT.Runtime.dll` message.
 - `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~PipsPagerApiTests" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
@@ -3543,52 +3572,16 @@ official `GetPrefferedNonClientFrameEdges` helper spelling, the official
 `SystemColor*` bindings when High Contrast toggles in either direction and
 during active High Contrast system-parameter changes, and theme tests now guard
 that all `SystemColor*Color` keys referenced by `HighContrast.xaml` have backing
-source properties; remaining High Contrast
-work means broader OS high-contrast shell and control paths that are not
-already covered by title chrome, NavigationView TreeView token aliases and
-their HighContrast system-brush references, NavigationView core state
-theme-resource aliases including top-navigation selected backgrounds,
-HeaderTile fills, DataGrid visual resource switching, checkbox checked brush
-aliases, validation-template resource resolution, official event-handler shape,
-and CommandBar overflow/live theme-resource coverage. MenuBar shell/item
-theme-resource aliases are also covered by focused runtime tests. The next
-remaining item starts at AppBarButton/AppBarToggleButton/AppBarSeparator core
-theme-resource aliases, followed by PipsPager selection/navigation theme-resource aliases and direct style/live resource consumption,
-DropDownButton chevron aliases and direct style/live resource consumption, Pivot style theme-resource aliases and direct style/live resource consumption,
-FlyoutPresenter chrome/theme-resource aliases and direct style/live resource consumption,
-Date/time flyout and FlipView common style theme-resource aliases,
-calendar picker common theme-resource aliases plus CalendarView navigation foreground and
-DatePicker text box caret direct style/live resource consumption,
-TimePicker and LoopingSelector common theme-resource aliases,
-Expander header/chevron/content theme-resource aliases and direct style/live/trigger resource consumption,
-default/accent/subtle button theme-resource aliases and direct style/live resource consumption,
-RepeatButton and ToggleButton theme-resource aliases and direct style/live resource consumption,
-ToggleSwitch track/knob state theme-resource aliases and direct style/live resource consumption,
-ScrollBar theme-resource aliases and direct style/live resource consumption,
-ContentDialog theme-resource aliases and direct style/live resource consumption,
-MenuFlyout presenter/item/toggle/subitem theme-resource aliases plus presenter direct style/live resource consumption,
-SplitView pane/light-dismiss theme-resource aliases and direct style/live resource consumption,
-SwipeControl reveal/execute item theme-resource aliases and direct style/live resource consumption,
-BreadcrumbBar item/flyout theme-resource aliases and direct style/live resource consumption,
-SelectorBar item/pill theme-resource aliases and direct style/live resource consumption,
-AnnotatedScrollBar scroll-button/thumb/label theme-resource aliases and direct style/live resource consumption,
-ProgressRing template/metric theme-resource aliases and direct style/live resource consumption,
-PersonPicture ellipse/badge theme-resource aliases and direct style/live resource consumption,
-RatingControl state/caption/glyph theme-resource aliases and direct style/live resource consumption,
-ColorPicker slider thumb/border theme-resource aliases and direct style/live resource consumption,
-ProgressBar metric/state theme-resource aliases and direct style/live resource consumption,
-ToolTip chrome/metric theme-resource aliases and direct style/live resource consumption,
-AutoSuggestBox suggestions-list/button metric theme-resource aliases and direct style/live resource consumption,
-NumberBox popup/spin-button style and theme-resource aliases and direct style/live resource consumption,
-PullToRefresh/RefreshVisualizer direct style and theme-resource aliases plus live resource consumption,
-TabView theme-resource aliases and direct style/live resource consumption,
-Slider theme-resource aliases and direct style/live resource consumption,
-HyperlinkButton theme-resource aliases and direct style/live resource consumption,
-ListBox/ListView/GridView collection theme-resource aliases and direct style/live resource consumption,
-CheckBox and RadioButton common theme-resource aliases and direct style/live resource consumption,
-ComboBox, TextControl, and Hyperlink foreground theme-resource aliases and direct style/live resource consumption,
-or Color subsection
-direct-reference evidence. Home
+source properties. The row 7.1 High Contrast / visual-resource runtime backlog
+is complete at branch tip: title chrome, NavigationView aliases, HeaderTile
+fills, DataGrid switching, checkbox aliases, validation-template resources,
+CommandBar/MenuBar/AppBar resources, retained WinUI extension resources, common
+WPF control resources, and Color subsection direct-reference evidence are all
+covered by focused tests or recorded stale-covered evidence. The remaining
+High Contrast blocker is P0.1 real OS High Contrast screenshot collection while
+the current environment reports `SystemParameters.HighContrast = False`; row
+7.2 is only executable if a visual-audit harness issue blocks accepted evidence
+collection. Home
 first-viewport Light/Dark previously had accepted `0` / `0.05` deltas with
 matching dashboard-pane crops; the intermediate
 `artifacts/wpf-gallery-visual-audit/20260528-123828-042-52304/report.md` and
