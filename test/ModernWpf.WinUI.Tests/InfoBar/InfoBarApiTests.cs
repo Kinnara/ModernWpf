@@ -273,9 +273,13 @@ public class InfoBarApiTests
             };
             var infoBarStyle = (Style)resources[typeof(ModernWpf.Controls.InfoBar)];
             var closeButtonStyle = (Style)resources["InfoBarCloseButtonStyle"];
+            var actionButton = new HyperlinkButton { Content = "Learn more" };
             var infoBar = new ModernWpf.Controls.InfoBar
             {
                 IsOpen = true,
+                Title = "Title",
+                Message = "Message",
+                ActionButton = actionButton,
                 Style = infoBarStyle
             };
             infoBar.Resources.MergedDictionaries.Add(resources);
@@ -339,6 +343,8 @@ public class InfoBarApiTests
             var layoutRoot = FindDescendant<GridEx>(infoBar);
             var iconBackground = FindNamedDescendant<TextBlock>(infoBar, "IconBackground");
             var standardIcon = FindNamedDescendant<TextBlock>(infoBar, "StandardIcon");
+            var title = FindNamedDescendant<TextBlock>(infoBar, "Title");
+            var message = FindNamedDescendant<TextBlock>(infoBar, "Message");
             var closeButton = FindNamedDescendant<Button>(infoBar, "CloseButton");
 
             Assert.AreSame(infoBar.TryFindResource("InfoBarInformationalSeverityBackgroundBrush"), contentRoot.Background);
@@ -351,6 +357,10 @@ public class InfoBarApiTests
             Assert.AreSame(infoBar.TryFindResource("InfoBarInformationalSeverityIconBackground"), iconBackground.Foreground);
             Assert.AreSame(infoBar.TryFindResource("InfoBarInformationalSeverityIconForeground"), standardIcon.Foreground);
             Assert.AreEqual(resources["InfoBarInformationalIconGlyph"], standardIcon.Text);
+            Assert.AreSame(infoBar.TryFindResource("InfoBarTitleForeground"), title.Foreground);
+            Assert.AreSame(infoBar.TryFindResource("InfoBarMessageForeground"), message.Foreground);
+            Assert.AreSame(infoBar.TryFindResource("InfoBarHyperlinkButtonForeground"), actionButton.Foreground);
+            Assert.AreEqual(resources["InfoBarHyperlinkButtonMargin"], actionButton.Margin);
 
             Assert.AreSame(closeButtonStyle, closeButton.Style);
             AssertResourceReference(closeButton, "ButtonBackground", "AppBarButtonBackground");
@@ -381,6 +391,31 @@ public class InfoBarApiTests
             AssertStateSetterDynamicResource(contentRoot, "SeverityLevels", "Success", "IconBackground.Foreground", "InfoBarSuccessSeverityIconBackground");
             AssertStateSetterValue(contentRoot, "SeverityLevels", "Success", "StandardIcon.Text", resources["InfoBarSuccessIconGlyph"]);
             AssertStateSetterDynamicResource(contentRoot, "SeverityLevels", "Success", "StandardIcon.Foreground", "InfoBarSuccessSeverityIconForeground");
+
+            AssertSeverityResourceConsumption(infoBar, host, contentRoot, iconBackground, standardIcon,
+                InfoBarSeverity.Informational,
+                "InfoBarInformationalSeverityBackgroundBrush",
+                "InfoBarInformationalSeverityIconBackground",
+                "InfoBarInformationalSeverityIconForeground",
+                resources["InfoBarInformationalIconGlyph"]);
+            AssertSeverityResourceConsumption(infoBar, host, contentRoot, iconBackground, standardIcon,
+                InfoBarSeverity.Error,
+                "InfoBarErrorSeverityBackgroundBrush",
+                "InfoBarErrorSeverityIconBackground",
+                "InfoBarErrorSeverityIconForeground",
+                resources["InfoBarErrorIconGlyph"]);
+            AssertSeverityResourceConsumption(infoBar, host, contentRoot, iconBackground, standardIcon,
+                InfoBarSeverity.Warning,
+                "InfoBarWarningSeverityBackgroundBrush",
+                "InfoBarWarningSeverityIconBackground",
+                "InfoBarWarningSeverityIconForeground",
+                resources["InfoBarWarningIconGlyph"]);
+            AssertSeverityResourceConsumption(infoBar, host, contentRoot, iconBackground, standardIcon,
+                InfoBarSeverity.Success,
+                "InfoBarSuccessSeverityBackgroundBrush",
+                "InfoBarSuccessSeverityIconBackground",
+                "InfoBarSuccessSeverityIconForeground",
+                resources["InfoBarSuccessIconGlyph"]);
         });
     }
 
@@ -396,13 +431,17 @@ public class InfoBarApiTests
                 IsOpen = true,
                 Severity = InfoBarSeverity.Error,
                 Title = "Title",
-                Message = "Message"
+                Message = "Message",
+                ActionButton = new HyperlinkButton { Content = "Learn more" }
             };
 
             using var host = new TestWindowHost(infoBar, width: 400, height: 120);
             var contentRoot = FindNamedDescendant<Border>(infoBar, "ContentRoot");
             var iconBackground = FindNamedDescendant<TextBlock>(infoBar, "IconBackground");
             var standardIcon = FindNamedDescendant<TextBlock>(infoBar, "StandardIcon");
+            var title = FindNamedDescendant<TextBlock>(infoBar, "Title");
+            var message = FindNamedDescendant<TextBlock>(infoBar, "Message");
+            var actionButton = (HyperlinkButton)infoBar.ActionButton;
 
             Assert.IsTrue(ThemeManager.GetHasThemeResources(contentRoot));
             var resources = contentRoot.Resources as ResourceDictionaryEx;
@@ -430,6 +469,35 @@ public class InfoBarApiTests
             Assert.AreSame(contentRoot.TryFindResource("SystemColorWindowColorBrush"), contentRoot.Background);
             Assert.AreSame(contentRoot.TryFindResource("SystemColorHighlightColorBrush"), iconBackground.Foreground);
             Assert.AreSame(contentRoot.TryFindResource("SystemColorHighlightTextColorBrush"), standardIcon.Foreground);
+            Assert.AreSame(contentRoot.TryFindResource("SystemColorButtonTextColorBrush"), title.Foreground);
+            Assert.AreSame(contentRoot.TryFindResource("SystemColorButtonTextColorBrush"), message.Foreground);
+            AssertSolidColorBrushColor(actionButton, "InfoBarHyperlinkButtonForeground", SystemColors.HotTrackColor);
+            Assert.AreSame(actionButton.TryFindResource("InfoBarHyperlinkButtonForeground"), actionButton.Foreground);
+
+            AssertSeverityResourceConsumption(infoBar, host, contentRoot, iconBackground, standardIcon,
+                InfoBarSeverity.Informational,
+                "InfoBarInformationalSeverityBackgroundBrush",
+                "InfoBarInformationalSeverityIconBackground",
+                "InfoBarInformationalSeverityIconForeground",
+                "\uF13F");
+            AssertSeverityResourceConsumption(infoBar, host, contentRoot, iconBackground, standardIcon,
+                InfoBarSeverity.Error,
+                "InfoBarErrorSeverityBackgroundBrush",
+                "InfoBarErrorSeverityIconBackground",
+                "InfoBarErrorSeverityIconForeground",
+                "\uF13D");
+            AssertSeverityResourceConsumption(infoBar, host, contentRoot, iconBackground, standardIcon,
+                InfoBarSeverity.Warning,
+                "InfoBarWarningSeverityBackgroundBrush",
+                "InfoBarWarningSeverityIconBackground",
+                "InfoBarWarningSeverityIconForeground",
+                "\uF13C");
+            AssertSeverityResourceConsumption(infoBar, host, contentRoot, iconBackground, standardIcon,
+                InfoBarSeverity.Success,
+                "InfoBarSuccessSeverityBackgroundBrush",
+                "InfoBarSuccessSeverityIconBackground",
+                "InfoBarSuccessSeverityIconForeground",
+                "\uF13E");
         });
     }
 
@@ -504,6 +572,27 @@ public class InfoBarApiTests
             Height = height,
             Background = Brushes.Transparent
         };
+    }
+
+    private static void AssertSeverityResourceConsumption(
+        ModernWpf.Controls.InfoBar infoBar,
+        TestWindowHost host,
+        Border contentRoot,
+        TextBlock iconBackground,
+        TextBlock standardIcon,
+        InfoBarSeverity severity,
+        object backgroundResourceKey,
+        object iconBackgroundResourceKey,
+        object iconForegroundResourceKey,
+        object expectedGlyph)
+    {
+        infoBar.Severity = severity;
+        host.UpdateLayout();
+
+        Assert.AreSame(contentRoot.TryFindResource(backgroundResourceKey), contentRoot.Background);
+        Assert.AreSame(contentRoot.TryFindResource(iconBackgroundResourceKey), iconBackground.Foreground);
+        Assert.AreSame(contentRoot.TryFindResource(iconForegroundResourceKey), standardIcon.Foreground);
+        Assert.AreEqual(expectedGlyph, standardIcon.Text);
     }
 
     private static T FindNamedDescendant<T>(DependencyObject root, string name)
