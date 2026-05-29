@@ -155,6 +155,16 @@ public class InfoBadgeApiTests
             Assert.AreEqual(infoBadge.TryFindResource("InfoBadgeValueFontSize"), valueTextBlock.FontSize);
             Assert.IsInstanceOfType(presenter.Content, typeof(SymbolIcon));
             Assert.IsFalse(ContainsPlainContentPresenter(infoBadge));
+
+            infoBadge.IconSource = new FontIconSource { Glyph = "\uE700" };
+            host.UpdateLayout();
+
+            Assert.AreEqual(infoBadge.TryFindResource("IconInfoBadgeFontIconMargin"), iconPresenter.Margin);
+
+            infoBadge.Value = 7;
+            host.UpdateLayout();
+
+            Assert.AreEqual(infoBadge.TryFindResource("ValueInfoBadgeTextMargin"), valueTextBlock.Margin);
         });
     }
 
@@ -218,10 +228,8 @@ public class InfoBadgeApiTests
     [TestMethod]
     public void InfoBadgeUsesWinUI3ThemeResources()
     {
-        foreach (var themeName in new[] { "Light", "Dark" })
+        foreach (var themeName in new[] { "Light", "Dark", "HighContrast" })
         {
-            AssertThemeResourceReference(themeName, "InfoBadgeForeground", "TextOnAccentFillColorPrimaryBrush");
-            AssertThemeResourceReference(themeName, "InfoBadgeBackground", "AccentFillColorDefaultBrush");
             AssertThemeResourceValue(themeName, "InfoBadgeMinHeight", 4.0);
             AssertThemeResourceValue(themeName, "InfoBadgeMinWidth", 4.0);
             AssertThemeResourceValue(themeName, "InfoBadgeMaxHeight", 16.0);
@@ -233,8 +241,15 @@ public class InfoBadgeApiTests
             AssertThemeResourceValue(themeName, "IconInfoBadgeIconMargin", new Thickness(4));
         }
 
+        foreach (var themeName in new[] { "Light", "Dark" })
+        {
+            AssertThemeResourceReference(themeName, "InfoBadgeForeground", "TextOnAccentFillColorPrimaryBrush");
+            AssertThemeResourceReference(themeName, "InfoBadgeBackground", "AccentFillColorDefaultBrush");
+        }
+
         AssertThemeResourceValue("Light", "InfoBadgeIconHeight", 9.0);
         AssertThemeResourceValue("Dark", "InfoBadgeIconHeight", 8.0);
+        AssertThemeResourceValue("HighContrast", "InfoBadgeIconHeight", 9.0);
         AssertThemeResourceValue("Light", "SystemFillColorSolidNeutral", Color.FromRgb(0x8A, 0x8A, 0x8A));
         AssertThemeResourceValue("Dark", "SystemFillColorSolidNeutral", Color.FromRgb(0x9D, 0x9D, 0x9D));
         AssertThemeBrushColor("Light", "SystemFillColorSolidNeutralBrush", Color.FromRgb(0x8A, 0x8A, 0x8A));
@@ -242,7 +257,6 @@ public class InfoBadgeApiTests
 
         AssertThemeResourceReference("HighContrast", "InfoBadgeForeground", "SystemControlHighlightAltChromeWhiteBrush");
         AssertThemeResourceReference("HighContrast", "InfoBadgeBackground", "SystemControlHighlightAccentBrush");
-        AssertThemeResourceValue("HighContrast", "InfoBadgeIconHeight", 9.0);
         AssertThemeResourceExists("HighContrast", "SystemFillColorSolidNeutralBrush");
     }
 
