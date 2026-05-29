@@ -355,6 +355,8 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsTrue(navigationItem.IsSelected, "Navigation category should own the shell selection.");
                     Assert.IsFalse(navigationItem.IsChildSelected, "Category selection should not mark a child selected.");
                     Assert.IsFalse(menuItem.IsSelected, "Menu should not be selected until item navigation.");
+                    AssertNavigationItemLayoutRootMargin(navigationItem, new Thickness(4, 2, 4, 2), "Navigation selected row background");
+                    AssertNavigationItemLayoutRootMargin(menuItem, new Thickness(4, 2, 4, 2), "Menu unselected child row background");
                     Assert.IsInstanceOfType(contentHost.Content, typeof(NavigationPage));
 
                     page.NavigateTo("item/Menu");
@@ -367,7 +369,17 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsTrue(navigationItem.IsChildSelected, "Parent row should track selected child navigation.");
                     Assert.IsTrue(menuItem.IsSelected, "Menu child row should own item navigation selection.");
                     AssertSelectionIndicatorBounds(menuItem, 12, 19, "Menu child selection indicator");
+                    AssertNavigationItemLayoutRootMargin(navigationItem, new Thickness(4, 2, 4, 2), "Navigation child-selected row background");
+                    AssertNavigationItemLayoutRootMargin(menuItem, new Thickness(12, 7, -5, -5), "Menu selected child row background");
                     Assert.IsInstanceOfType(contentHost.Content, typeof(ItemPage));
+
+                    page.NavigateTo("category/Navigation");
+                    Dispatcher.CurrentDispatcher.Invoke(DispatcherPriority.ContextIdle, new Action(() => { }));
+                    page.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.IsFalse(menuItem.IsSelected, "Menu should not keep item selection after category navigation.");
+                    AssertNavigationItemLayoutRootMargin(menuItem, new Thickness(4, 2, 4, 2), "Menu deselected child row background");
                 });
             });
         }
@@ -947,6 +959,15 @@ namespace ModernWpf.Gallery.Tests
             Assert.AreEqual(expectedTop, bounds.Top, 1.0, context + " top");
             Assert.AreEqual(3d, bounds.Width, 1.0, context + " width");
             Assert.AreEqual(16d, bounds.Height, 1.0, context + " height");
+        }
+
+        private static void AssertNavigationItemLayoutRootMargin(NavigationViewItem item, Thickness expectedMargin, string context)
+        {
+            var layoutRoot = FindVisualChildren<Border>(item)
+                .FirstOrDefault(border => string.Equals(border.Name, "LayoutRoot", StringComparison.Ordinal));
+            Assert.IsNotNull(layoutRoot, context);
+
+            Assert.AreEqual(expectedMargin, layoutRoot.Margin, context);
         }
 
         private static void AssertWpfGalleryNavigationPaneBackground(NavigationView navigation, string resourceKey, Color expectedColor)

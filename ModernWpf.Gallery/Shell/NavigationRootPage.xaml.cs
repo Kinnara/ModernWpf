@@ -115,7 +115,9 @@ namespace ModernWpf.Gallery.Shell
         private const double TopLevelNavigationContentVerticalOffset = -1;
         private const double ChildNavigationContentVerticalOffset = -2;
         private static readonly Thickness DefaultNavigationSelectionIndicatorMargin = new Thickness(0);
-        private static readonly Thickness ChildNavigationSelectionIndicatorMargin = new Thickness(-27, 6, 0, -6);
+        private static readonly Thickness ChildNavigationSelectionIndicatorMargin = new Thickness(-35, 0, 0, -6);
+        private static readonly Thickness DefaultNavigationItemButtonMargin = new Thickness(4, 2, 4, 2);
+        private static readonly Thickness ChildNavigationSelectedBackgroundMargin = new Thickness(12, 7, -5, -5);
         private static readonly Color WpfGalleryLightNavigationPaneBackgroundColor = Color.FromRgb(250, 250, 250);
 
         public NavigationRootPage()
@@ -835,6 +837,37 @@ namespace ModernWpf.Gallery.Shell
             indicator.Margin = selectedItem.Tag is NavigationTarget { Kind: NavigationTargetKind.Item }
                 ? ChildNavigationSelectionIndicatorMargin
                 : DefaultNavigationSelectionIndicatorMargin;
+
+            AlignSelectedNavigationItemBackgroundWithWpfGalleryTreeView(selectedItem);
+        }
+
+        private static void AlignSelectedNavigationItemBackgroundWithWpfGalleryTreeView(NavigationViewItem selectedItem)
+        {
+            var layoutRoot = GetNavigationItemLayoutRoot(selectedItem);
+            if (layoutRoot == null)
+            {
+                return;
+            }
+
+            layoutRoot.Margin = selectedItem.Tag is NavigationTarget { Kind: NavigationTargetKind.Item }
+                ? ChildNavigationSelectedBackgroundMargin
+                : DefaultNavigationItemButtonMargin;
+        }
+
+        private static void ResetNavigationItemBackgroundAlignment(NavigationViewItem item)
+        {
+            var layoutRoot = GetNavigationItemLayoutRoot(item);
+            if (layoutRoot != null)
+            {
+                layoutRoot.Margin = DefaultNavigationItemButtonMargin;
+            }
+        }
+
+        private static Border GetNavigationItemLayoutRoot(NavigationViewItem item)
+        {
+            return FindVisualChild<Border>(
+                item,
+                border => string.Equals(border.Name, "LayoutRoot", StringComparison.Ordinal));
         }
 
         private static T FindVisualChild<T>(DependencyObject element, Func<T, bool> predicate)
@@ -871,6 +904,7 @@ namespace ModernWpf.Gallery.Shell
                 {
                     navigationItem.IsSelected = false;
                     navigationItem.IsChildSelected = false;
+                    ResetNavigationItemBackgroundAlignment(navigationItem);
                     ClearNavigationSelection(navigationItem.MenuItems);
                 }
             }
