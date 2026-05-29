@@ -85,7 +85,7 @@ public class RatingControlApiTests
             var caption = FindNamedDescendant<TextBlock>(ratingControl, "Caption");
             Assert.IsTrue(double.IsNaN(caption.Height));
             Assert.AreEqual(4.0, caption.Margin.Left);
-            Assert.AreEqual(0.0, caption.Margin.Top);
+            Assert.AreEqual(-12.5, caption.Margin.Top);
             Assert.AreEqual(20.0, caption.Margin.Right);
             Assert.AreEqual(12.0, caption.FontSize);
             Assert.AreEqual(
@@ -108,6 +108,7 @@ public class RatingControlApiTests
             Assert.AreEqual(5, backgroundStackPanel.Children.Count);
             var backgroundTranslateTransform = FindNamedDescendant<StackPanelEx>(ratingControl, "RatingBackgroundStackPanel").RenderTransform;
             Assert.IsInstanceOfType(backgroundTranslateTransform, typeof(TranslateTransform));
+            Assert.AreEqual(0.0, ((TranslateTransform)backgroundTranslateTransform).Y);
 
             var foregroundContentPresenter = FindNamedDescendant<ContentPresenterEx>(ratingControl, "ForegroundContentPresenter");
             Assert.IsFalse(foregroundContentPresenter.IsHitTestVisible);
@@ -119,6 +120,7 @@ public class RatingControlApiTests
             Assert.AreEqual(new Thickness(40), foregroundStackPanel.Margin);
             Assert.AreEqual(5, foregroundStackPanel.Children.Count);
             Assert.IsInstanceOfType(foregroundStackPanel.RenderTransform, typeof(TranslateTransform));
+            Assert.AreEqual(0.0, ((TranslateTransform)foregroundStackPanel.RenderTransform).Y);
 
             AssertDefaultTextRatingItem(backgroundStackPanel.Children[0], "\uE734", ratingControl.FontFamily, ratingControl);
             AssertDefaultTextRatingItem(foregroundStackPanel.Children[0], "\uE735", ratingControl.FontFamily, ratingControl);

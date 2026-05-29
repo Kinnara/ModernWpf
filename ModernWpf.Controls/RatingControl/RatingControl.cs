@@ -216,7 +216,7 @@ namespace ModernWpf.Controls
                 controlHeight = m_fontSizeForRendering;
             }
 
-            double yTranslation = (controlHeight - ActualRatingFontSize) / 2;
+            double yTranslation = Math.Max(0, (controlHeight - m_fontSizeForRendering) / 2);
             if (m_backgroundStackPanelTranslateTransform != null)
             {
                 m_backgroundStackPanelTranslateTransform.Y = yTranslation;
@@ -238,6 +238,7 @@ namespace ModernWpf.Controls
                 {
                     Thickness margin = m_captionTextBlock.Margin;
                     margin.Left = c_captionSpacing - defaultItemSpacing;
+                    margin.Top = m_captionTopMargin;
                     m_captionTextBlock.Margin = margin;
                 }
 
