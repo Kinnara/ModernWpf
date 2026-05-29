@@ -206,7 +206,7 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(designGuidanceChevron));
                 Assert.AreEqual("\uE76C", designGuidanceChevron.Text);
                 Assert.AreEqual(10d, designGuidanceChevron.FontSize);
-                Assert.AreEqual(new Thickness(0), designGuidanceChevron.Margin);
+                Assert.AreEqual(new Thickness(0, -1, 0, 0), designGuidanceChevron.Margin);
                 Assert.AreEqual(0d, ((RotateTransform)designGuidanceChevron.RenderTransform).Angle);
 
                 var basicInputItems = topLevelItems[5].MenuItems.OfType<NavigationViewItem>().ToList();
@@ -328,7 +328,22 @@ namespace ModernWpf.Gallery.Tests
                     AssertTextLeft(page, navigationItem, "\uE700", 44, "Navigation glyph");
                     AssertTextLeft(page, navigationItem, "Navigation", 76, "Navigation text");
                     AssertTextLeft(page, menuItem, "Menu", 79, "Menu child text");
+                    Assert.IsFalse(homeItem.IsSelected, "Home should not retain the shell selection after category navigation.");
+                    Assert.IsTrue(navigationItem.IsSelected, "Navigation category should own the shell selection.");
+                    Assert.IsFalse(navigationItem.IsChildSelected, "Category selection should not mark a child selected.");
+                    Assert.IsFalse(menuItem.IsSelected, "Menu should not be selected until item navigation.");
                     Assert.IsInstanceOfType(contentHost.Content, typeof(NavigationPage));
+
+                    page.NavigateTo("item/Menu");
+                    Dispatcher.CurrentDispatcher.Invoke(DispatcherPriority.ContextIdle, new Action(() => { }));
+                    page.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.IsFalse(homeItem.IsSelected, "Home should not retain the shell selection after child navigation.");
+                    Assert.IsFalse(navigationItem.IsSelected, "Parent row should not stay directly selected after child navigation.");
+                    Assert.IsTrue(navigationItem.IsChildSelected, "Parent row should track selected child navigation.");
+                    Assert.IsTrue(menuItem.IsSelected, "Menu child row should own item navigation selection.");
+                    Assert.IsInstanceOfType(contentHost.Content, typeof(ItemPage));
                 });
             });
         }
@@ -350,10 +365,18 @@ namespace ModernWpf.Gallery.Tests
                         ThemeManager.Current.ApplicationTheme = ApplicationTheme.Light;
                         WpfTestHost.DoEvents();
                         AssertWpfGalleryNavigationResourceAliases(navigation);
+                        AssertWpfGalleryNavigationPaneBackground(navigation, "NavigationViewDefaultPaneBackground", Color.FromRgb(250, 250, 250));
+                        AssertWpfGalleryNavigationPaneBackground(navigation, "NavigationViewExpandedPaneBackground", Color.FromRgb(250, 250, 250));
 
                         ThemeManager.Current.ApplicationTheme = ApplicationTheme.Dark;
                         WpfTestHost.DoEvents();
                         AssertWpfGalleryNavigationResourceAliases(navigation);
+                        Assert.AreSame(
+                            navigation.TryFindResource("SolidBackgroundFillColorBaseBrush"),
+                            navigation.Resources["NavigationViewDefaultPaneBackground"]);
+                        Assert.AreSame(
+                            navigation.TryFindResource("SolidBackgroundFillColorBaseBrush"),
+                            navigation.Resources["NavigationViewExpandedPaneBackground"]);
                     });
                 }
                 finally
@@ -886,6 +909,13 @@ namespace ModernWpf.Gallery.Tests
             var titleText = contentGrid.Children.OfType<TextBlock>()
                 .Single(text => string.Equals(text.Text, expectedTitle, StringComparison.Ordinal));
             Assert.AreEqual(HorizontalAlignment.Left, titleText.HorizontalAlignment);
+        }
+
+        private static void AssertWpfGalleryNavigationPaneBackground(NavigationView navigation, string resourceKey, Color expectedColor)
+        {
+            var background = navigation.Resources[resourceKey] as SolidColorBrush;
+            Assert.IsNotNull(background);
+            Assert.AreEqual(expectedColor, background.Color);
         }
 
         private static TextBlock GetNavigationDisclosureChevron(NavigationViewItem item)

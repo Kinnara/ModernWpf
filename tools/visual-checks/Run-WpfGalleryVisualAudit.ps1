@@ -88,6 +88,7 @@ $CaseCatalog = @(
     New-Case "Media" "category/Media" @("Media")
     New-Case "Canvas" "item/Canvas" @("Media", "Canvas")
     New-Case "Image" "item/Image" @("Media", "Image")
+    New-Case "ShellNavigation" "item/Menu" @("Navigation", "Menu")
     New-Case "Navigation" "category/Navigation" @("Navigation")
     New-Case "Menu" "item/Menu" @("Navigation", "Menu")
     New-Case "TabControl" "item/TabControl" @("Navigation", "TabControl")
@@ -145,6 +146,7 @@ $OfficialDirectReferenceCaseIds = @(
     "TreeView",
     "Layout",
     "Media",
+    "ShellNavigation",
     "Navigation",
     "Menu",
     "TabControl",
@@ -1084,6 +1086,15 @@ function Capture-Window([IntPtr]$hwnd, [string]$path) {
         $bitmap.Dispose()
     }
 
+    try {
+        Capture-ScreenRect $hwnd $path
+        if (Test-ImageNotBlank $path) {
+            return
+        }
+    }
+    catch {
+    }
+
     throw "Could not capture a nonblank window surface for handle $hwnd."
 }
 
@@ -1224,6 +1235,16 @@ function Find-ModernHomeContentRootPane($window) {
 }
 
 function Save-OfficialContentCrop($window, [string]$screenshot, [string]$path, $case) {
+    if ($case.Id -eq "ShellNavigation") {
+        $navigationPane = Find-DescendantByNameAndType $window "Navigation Pane" ([System.Windows.Automation.ControlType]::Tree)
+        if ($null -ne $navigationPane) {
+            $paneCrop = Save-ElementCrop $window $screenshot $path $navigationPane "OfficialNavigationPane" 0
+            if ($paneCrop.NonBlank) {
+                return $paneCrop
+            }
+        }
+    }
+
     if ($case.Id -eq "Home") {
         $frame = Find-DescendantByAutomationId $window "RootContentFrame"
         if ($null -ne $frame) {
@@ -1271,6 +1292,41 @@ function Save-OfficialContentCrop($window, [string]$screenshot, [string]$path, $
 }
 
 function Save-ModernContentCrop($window, [string]$screenshot, [string]$path, $case) {
+    if ($null -ne $case -and $case.Id -eq "ShellNavigation") {
+        $menu = Find-DescendantByAutomationId $window "MenuItemsHost"
+        if ($null -ne $menu) {
+            $windowRect = [WpfGalleryVisualNative]::GetRect($window.Current.NativeWindowHandle)
+            $menuRect = $menu.Current.BoundingRectangle
+            $left = [int][Math]::Round($menuRect.X - $windowRect.Left + 8)
+            $top = [int][Math]::Round($menuRect.Y - $windowRect.Top)
+            $width = 250
+            $height = 707
+            $scrollBar = Find-DescendantByAutomationId $menu "PART_VerticalScrollBar"
+            if ($null -ne $scrollBar) {
+                $scrollBarRect = $scrollBar.Current.BoundingRectangle
+                if ($scrollBarRect.Height -gt 0) {
+                    $height = [int][Math]::Round($scrollBarRect.Height + 8)
+                }
+            }
+
+            $menuCrop = Save-Crop $screenshot $path $left $top $width $height "ModernWpfNavigationPaneComparable"
+            if ($menuCrop.NonBlank) {
+                return $menuCrop
+            }
+        }
+
+        $navigation = Find-DescendantByAutomationId $window "GalleryNavigationView"
+        if ($null -ne $navigation) {
+            $windowRect = [WpfGalleryVisualNative]::GetRect($window.Current.NativeWindowHandle)
+            $navigationRect = $navigation.Current.BoundingRectangle
+            $left = [int][Math]::Round($navigationRect.X - $windowRect.Left)
+            $top = [int][Math]::Round($navigationRect.Y - $windowRect.Top)
+            $width = [int][Math]::Min(258, [Math]::Round($navigationRect.Width))
+            $height = [int][Math]::Round($navigationRect.Height)
+            return Save-Crop $screenshot $path $left $top $width $height "ModernWpfNavigationPaneFallback"
+        }
+    }
+
     $content = Find-DescendantByAutomationId $window "GalleryContentHost"
     if ($null -ne $content) {
         if ($null -ne $case -and $case.Id -eq "Home") {
@@ -1476,31 +1532,36 @@ function Capture-ModernWpf($case, [string]$caseDir) {
         }
 
         $contentCrop = $null
-        $renderedContentArtifact = Join-Path $artifactDir "HomeContentRootPane.png"
-        $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "HomeContentRootPaneRenderedArtifact"
-        if (!$contentCrop.NonBlank) {
-            $renderedContentArtifact = Join-Path $artifactDir "AllControlsContentRootPane.png"
-            $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "AllControlsContentRootPaneRenderedArtifact"
+        if ($case.Id -eq "ShellNavigation" -and $windowNonBlank) {
+            $contentCrop = Save-ModernContentCrop $window $screenshot $contentCropPath $case
         }
-        if (!$contentCrop.NonBlank) {
-            $renderedContentArtifact = Join-Path $artifactDir "SettingsContentRootPane.png"
-            $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "SettingsContentRootPaneRenderedArtifact"
-        }
-        if (!$contentCrop.NonBlank) {
-            $renderedContentArtifact = Join-Path $artifactDir "ContentRootGrid.png"
-            $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "ContentRootGridRenderedArtifact"
-        }
-        if (!$contentCrop.NonBlank) {
-            $renderedContentArtifact = Join-Path $artifactDir "ContentPagePane.png"
-            $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "ContentPagePaneRenderedArtifact"
-        }
-        if (!$contentCrop.NonBlank) {
-            $renderedContentArtifact = Join-Path $artifactDir "GalleryItemPageRoot.png"
-            $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "GalleryItemPageRootRenderedArtifact"
-        }
-        if (!$contentCrop.NonBlank) {
-            $renderedContentArtifact = Join-Path $artifactDir "GalleryContentHost.png"
-            $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "GalleryContentHostRenderedArtifact"
+        else {
+            $renderedContentArtifact = Join-Path $artifactDir "HomeContentRootPane.png"
+            $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "HomeContentRootPaneRenderedArtifact"
+            if (!$contentCrop.NonBlank) {
+                $renderedContentArtifact = Join-Path $artifactDir "AllControlsContentRootPane.png"
+                $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "AllControlsContentRootPaneRenderedArtifact"
+            }
+            if (!$contentCrop.NonBlank) {
+                $renderedContentArtifact = Join-Path $artifactDir "SettingsContentRootPane.png"
+                $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "SettingsContentRootPaneRenderedArtifact"
+            }
+            if (!$contentCrop.NonBlank) {
+                $renderedContentArtifact = Join-Path $artifactDir "ContentRootGrid.png"
+                $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "ContentRootGridRenderedArtifact"
+            }
+            if (!$contentCrop.NonBlank) {
+                $renderedContentArtifact = Join-Path $artifactDir "ContentPagePane.png"
+                $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "ContentPagePaneRenderedArtifact"
+            }
+            if (!$contentCrop.NonBlank) {
+                $renderedContentArtifact = Join-Path $artifactDir "GalleryItemPageRoot.png"
+                $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "GalleryItemPageRootRenderedArtifact"
+            }
+            if (!$contentCrop.NonBlank) {
+                $renderedContentArtifact = Join-Path $artifactDir "GalleryContentHost.png"
+                $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "GalleryContentHostRenderedArtifact"
+            }
         }
 
         if (($null -eq $contentCrop -or !$contentCrop.NonBlank) -and
@@ -1595,10 +1656,22 @@ function Capture-OfficialWpfGalleryDirectHost($case, [string]$caseDir) {
         $screenshot = $capture.Screenshot
         Write-UiaTree $window $treePath 7
         $frame = Find-DescendantByAutomationId $window "RootContentFrame"
-        $renderedContentArtifact = Join-Path $artifactDir "RootContentFrame.png"
-        $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "OfficialDirectRootContentFrameRenderedArtifact"
+        if ($case.Id -eq "ShellNavigation") {
+            $renderedContentArtifact = Join-Path $artifactDir "NavigationPane.png"
+            $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "OfficialDirectNavigationPaneRenderedArtifact"
+        }
+        else {
+            $renderedContentArtifact = Join-Path $artifactDir "RootContentFrame.png"
+            $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "OfficialDirectRootContentFrameRenderedArtifact"
+        }
+
         if (!$contentCrop.NonBlank -and $capture.Succeeded) {
-            $contentCrop = Save-ElementCrop $window $screenshot $contentCropPath $frame "OfficialDirectRootContentFrame" 0
+            if ($case.Id -eq "ShellNavigation") {
+                $contentCrop = Save-OfficialContentCrop $window $screenshot $contentCropPath $case
+            }
+            else {
+                $contentCrop = Save-ElementCrop $window $screenshot $contentCropPath $frame "OfficialDirectRootContentFrame" 0
+            }
         }
         $windowNonBlank = $false
         if ($capture.Succeeded) {

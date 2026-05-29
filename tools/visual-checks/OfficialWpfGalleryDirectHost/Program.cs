@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using WPFGallery;
 using WPFGallery.Models;
 using WPFGallery.Navigation;
 using WPFGallery.ViewModels;
@@ -47,6 +48,15 @@ internal static class Program
         var app = CreateOfficialApplication(officialAssembly);
         app.ShutdownMode = ShutdownMode.OnMainWindowClose;
         ApplyTheme(app, options.Theme);
+
+        if (options.Page == "ShellNavigation")
+        {
+            var shellWindow = CreateShellNavigationWindow(app, options);
+            app.MainWindow = shellWindow;
+            ApplyTheme(app, options.Theme);
+            app.Run(shellWindow);
+            return;
+        }
 
         var page = CreatePage(options.Page);
 
@@ -93,6 +103,34 @@ internal static class Program
         app.MainWindow = window;
         ApplyTheme(app, options.Theme);
         app.Run(window);
+    }
+
+    private static Window CreateShellNavigationWindow(Application app, HostOptions options)
+    {
+        var serviceProvider = new DirectHostServiceProvider();
+        var navigationService = new NavigationService(serviceProvider);
+        var viewModel = new MainWindowViewModel(navigationService);
+        var window = new MainWindow(viewModel, serviceProvider, navigationService)
+        {
+            Title = "Official WPF Gallery Direct Reference - ShellNavigation",
+            Width = options.Width,
+            Height = options.Height
+        };
+
+        window.Loaded += (_, _) =>
+        {
+            ApplyTheme(app, options.Theme);
+            window.Dispatcher.BeginInvoke(
+                DispatcherPriority.ApplicationIdle,
+                new Action(() =>
+                {
+                    navigationService.NavigateTo(typeof(MenuPage));
+                    window.UpdateLayout();
+                    WriteShellNavigationArtifact(window, options.ArtifactDirectory);
+                }));
+        };
+
+        return window;
     }
 
     private static Assembly LoadOfficialAssembly(string officialOutput)
@@ -757,8 +795,49 @@ internal static class Program
     {
         return element.TryFindResource("SolidBackgroundFillColorTertiaryBrush") as Brush
             ?? element.TryFindResource("LayerFillColorDefaultBrush") as Brush
+            ?? element.TryFindResource("WindowBackground") as Brush
             ?? element.TryFindResource("ApplicationPageBackgroundThemeBrush") as Brush
             ?? Brushes.White;
+    }
+
+    private static void WriteShellNavigationArtifact(Window window, string artifactDirectory)
+    {
+        if (string.IsNullOrWhiteSpace(artifactDirectory))
+        {
+            return;
+        }
+
+        try
+        {
+            Directory.CreateDirectory(artifactDirectory);
+            if (window.FindName("ControlsList") is FrameworkElement navigationPane)
+            {
+                navigationPane.UpdateLayout();
+                WriteElementPng(
+                    navigationPane,
+                    Path.Combine(artifactDirectory, "NavigationPane.png"),
+                    GetShellNavigationBackground(window, navigationPane));
+            }
+        }
+        catch (Exception ex)
+        {
+            File.WriteAllText(Path.Combine(AppContext.BaseDirectory, "last-shell-artifact-error.txt"), ex.ToString());
+        }
+    }
+
+    private static Brush GetShellNavigationBackground(Window window, FrameworkElement navigationPane)
+    {
+        return GetVisibleBrush(window.Background)
+            ?? GetVisibleBrush(navigationPane.TryFindResource("WindowBackground") as Brush)
+            ?? GetVisibleBrush(navigationPane.TryFindResource("SolidBackgroundFillColorBaseBrush") as Brush)
+            ?? GetElementBackground(navigationPane);
+    }
+
+    private static Brush? GetVisibleBrush(Brush? brush)
+    {
+        return brush is SolidColorBrush { Color.A: 0 }
+            ? null
+            : brush;
     }
 
     private sealed class NullNavigationService : INavigationService
@@ -790,6 +869,20 @@ internal static class Program
         public bool IsBackHistoryNonEmpty()
         {
             return false;
+        }
+    }
+
+    private sealed class DirectHostServiceProvider : IServiceProvider
+    {
+        public object? GetService(Type serviceType)
+        {
+            return serviceType.Name switch
+            {
+                nameof(DashboardPage) => CreatePage("Home"),
+                nameof(MenuPage) => CreatePage("Menu"),
+                nameof(SettingsPage) => CreatePage("Settings"),
+                _ => null
+            };
         }
     }
 

@@ -112,6 +112,9 @@ namespace ModernWpf.Gallery.Shell
         private const double TopLevelNavigationContentLeftMargin = 20;
         private const double ChildGlyphNavigationContentLeftMargin = -12;
         private const double ChildTextNavigationContentLeftMargin = 4;
+        private const double TopLevelNavigationContentVerticalOffset = -1;
+        private const double ChildNavigationContentVerticalOffset = -2;
+        private static readonly Color WpfGalleryLightNavigationPaneBackgroundColor = Color.FromRgb(250, 250, 250);
 
         public NavigationRootPage()
         {
@@ -123,7 +126,7 @@ namespace ModernWpf.Gallery.Shell
                 AutomationProperties.SetAutomationId(ContentHost, "GalleryContentHost");
             }
 
-            AlignNavigationViewItemResourcesWithWpfGalleryTreeView();
+            AlignNavigationViewShellResourcesWithWpfGallery();
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
             VisualTestStatusPanel.Visibility = GalleryDiagnostics.IsEnabled
@@ -297,12 +300,16 @@ namespace ModernWpf.Gallery.Shell
         {
             var glyph = GetFontIconGlyph(icon);
             var showDisclosureChevron = target.Kind == NavigationTargetKind.Group;
+            var verticalOffset = target.Kind == NavigationTargetKind.Item
+                ? ChildNavigationContentVerticalOffset
+                : TopLevelNavigationContentVerticalOffset;
             // These offsets preserve NavigationView behavior while matching the official WPF Gallery TreeView columns.
             if (glyph == null)
             {
                 return CreateNavigationTextContent(
                     title,
                     target.Kind == NavigationTargetKind.Item ? ChildTextNavigationContentLeftMargin : TopLevelNavigationContentLeftMargin,
+                    verticalOffset,
                     showDisclosureChevron);
             }
 
@@ -311,6 +318,7 @@ namespace ModernWpf.Gallery.Shell
                 glyph,
                 target.Kind == NavigationTargetKind.Item ? ChildGlyphNavigationContentLeftMargin : TopLevelNavigationContentLeftMargin,
                 16,
+                verticalOffset,
                 showDisclosureChevron);
         }
 
@@ -324,6 +332,7 @@ namespace ModernWpf.Gallery.Shell
             string glyph,
             double leftMargin,
             double textGap,
+            double verticalOffset,
             bool showDisclosureChevron,
             double glyphColumnWidth = 16,
             double glyphFontSize = 16)
@@ -344,6 +353,7 @@ namespace ModernWpf.Gallery.Shell
                 MaxWidth = glyphColumnWidth,
                 VerticalAlignment = VerticalAlignment.Center,
                 FontSize = glyphFontSize,
+                Margin = new Thickness(0, verticalOffset, 0, 0),
                 Text = glyph,
                 Focusable = false
             };
@@ -354,18 +364,18 @@ namespace ModernWpf.Gallery.Shell
                 glyphText.FontFamily = fontFamily;
             }
 
-            var titleText = CreateNavigationTitleText(title);
+            var titleText = CreateNavigationTitleText(title, verticalOffset);
             var glyphColumn = showDisclosureChevron ? 1 : 0;
             Grid.SetColumn(glyphText, glyphColumn);
             Grid.SetColumn(titleText, glyphColumn + 2);
 
             grid.Children.Add(glyphText);
             grid.Children.Add(titleText);
-            AddDisclosureChevron(grid, showDisclosureChevron);
+            AddDisclosureChevron(grid, showDisclosureChevron, verticalOffset);
             return grid;
         }
 
-        private static Grid CreateNavigationTextContent(string title, double leftMargin, bool showDisclosureChevron)
+        private static Grid CreateNavigationTextContent(string title, double leftMargin, double verticalOffset, bool showDisclosureChevron)
         {
             var grid = CreateNavigationContentGrid(showDisclosureChevron ? 0 : leftMargin);
             if (showDisclosureChevron)
@@ -374,14 +384,14 @@ namespace ModernWpf.Gallery.Shell
             }
 
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-            var titleText = CreateNavigationTitleText(title);
+            var titleText = CreateNavigationTitleText(title, verticalOffset);
             if (showDisclosureChevron)
             {
                 Grid.SetColumn(titleText, 1);
             }
 
             grid.Children.Add(titleText);
-            AddDisclosureChevron(grid, showDisclosureChevron);
+            AddDisclosureChevron(grid, showDisclosureChevron, verticalOffset);
             return grid;
         }
 
@@ -394,17 +404,18 @@ namespace ModernWpf.Gallery.Shell
             };
         }
 
-        private static TextBlock CreateNavigationTitleText(string title)
+        private static TextBlock CreateNavigationTitleText(string title, double verticalOffset)
         {
             return new TextBlock
             {
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(0, verticalOffset, 0, 0),
                 Text = title
             };
         }
 
-        private static void AddDisclosureChevron(Grid grid, bool showDisclosureChevron)
+        private static void AddDisclosureChevron(Grid grid, bool showDisclosureChevron, double verticalOffset)
         {
             if (!showDisclosureChevron)
             {
@@ -417,6 +428,7 @@ namespace ModernWpf.Gallery.Shell
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Center,
                 FontSize = 10,
+                Margin = new Thickness(0, verticalOffset, 0, 0),
                 Focusable = false,
                 Text = "\uE76C",
                 RenderTransformOrigin = new Point(0.5, 0.5),
@@ -451,7 +463,7 @@ namespace ModernWpf.Gallery.Shell
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             AttachThemeHandlers();
-            AlignNavigationViewItemResourcesWithWpfGalleryTreeView();
+            AlignNavigationViewShellResourcesWithWpfGallery();
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -485,23 +497,43 @@ namespace ModernWpf.Gallery.Shell
 
         private void OnActualApplicationThemeChanged(ThemeManager sender, object args)
         {
-            AlignNavigationViewItemResourcesWithWpfGalleryTreeView();
+            AlignNavigationViewShellResourcesWithWpfGallery();
         }
 
         private void OnSystemParametersChanged(object sender, PropertyChangedEventArgs e)
         {
             if (string.Equals(e.PropertyName, nameof(SystemParameters.HighContrast), StringComparison.Ordinal))
             {
-                AlignNavigationViewItemResourcesWithWpfGalleryTreeView();
+                AlignNavigationViewShellResourcesWithWpfGallery();
             }
         }
 
-        private void AlignNavigationViewItemResourcesWithWpfGalleryTreeView()
+        private void AlignNavigationViewShellResourcesWithWpfGallery()
         {
             foreach (var alias in WpfGalleryNavigationResourceAliases)
             {
                 Navigation.Resources[alias.Key] = TryFindResource(alias.Value);
             }
+
+            var paneBackground = GetWpfGalleryNavigationPaneBackground();
+            Navigation.Resources["NavigationViewDefaultPaneBackground"] = paneBackground;
+            Navigation.Resources["NavigationViewExpandedPaneBackground"] = paneBackground;
+        }
+
+        private Brush GetWpfGalleryNavigationPaneBackground()
+        {
+            if (SystemParameters.HighContrast)
+            {
+                return SystemColors.WindowBrush;
+            }
+
+            if (ThemeManager.Current.ActualApplicationTheme == ApplicationTheme.Dark)
+            {
+                return TryFindResource("SolidBackgroundFillColorBaseBrush") as Brush
+                    ?? new SolidColorBrush(Color.FromRgb(32, 32, 32));
+            }
+
+            return new SolidColorBrush(WpfGalleryLightNavigationPaneBackgroundColor);
         }
 
         private void OnSettingsButtonClick(object sender, RoutedEventArgs e)
@@ -714,8 +746,44 @@ namespace ModernWpf.Gallery.Shell
 
             _isProgrammaticNavigation = true;
             ExpandNavigationPath(target);
-            Navigation.SelectedItem = selectedItem;
+            if (target.Kind == NavigationTargetKind.Item)
+            {
+                Navigation.UpdateLayout();
+            }
+
+            ApplyNavigationSelection(selectedItem);
             _isProgrammaticNavigation = false;
+        }
+
+        private void ApplyNavigationSelection(NavigationViewItem selectedItem)
+        {
+            Navigation.SelectedItem = null;
+            ClearNavigationSelection(Navigation.MenuItems);
+            if (selectedItem == null)
+            {
+                return;
+            }
+
+            Navigation.SelectedItem = selectedItem;
+            selectedItem.IsSelected = true;
+            if (selectedItem.Tag is NavigationTarget { Kind: NavigationTargetKind.Item } target &&
+                _parentContainers.TryGetValue(target.UniqueId, out var parentItem))
+            {
+                parentItem.IsChildSelected = true;
+            }
+        }
+
+        private static void ClearNavigationSelection(System.Collections.IEnumerable items)
+        {
+            foreach (var item in items)
+            {
+                if (item is NavigationViewItem navigationItem)
+                {
+                    navigationItem.IsSelected = false;
+                    navigationItem.IsChildSelected = false;
+                    ClearNavigationSelection(navigationItem.MenuItems);
+                }
+            }
         }
 
         private void ExpandNavigationPath(NavigationTarget target)

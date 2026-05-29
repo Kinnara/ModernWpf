@@ -11,18 +11,23 @@ interaction model.
 
 ## Execution Priority
 
-Follow this order for all remaining Milestone 1 work unless a row already has
-current branch-tip visual evidence and is marked `Done`.
+This section is the active queue for all remaining Milestone 1 work. Do not
+start source-only alignment, resource-key cleanup, or documentation-only work
+unless the first executable row below has current visual evidence or an explicit
+environment blocker recorded here.
+
+| Execution order | Gate | State | Allowed next work |
+| --- | --- | --- | --- |
+| 1 | P0.1 real OS High Contrast shell/control visual coverage | Environment-blocked while `SystemParameters.HighContrast = False`. | If Windows OS High Contrast is enabled, run real `-Theme HighContrast` visual slices before any other work. |
+| 2 | P0.4 residual `NavigationView` shell visual details | Active while P0.1 remains OS-blocked. | Refresh, inspect, and fix shell-pane visuals such as disclosure chevrons, row insets, and retained NavigationView chrome. |
+| 3 | P0.2 top-level residual visual drift gate | Done at branch tip. | No action unless a new top-level visual regression appears. |
+| 4 | P0.3 direct-item drift gate for `TextBox`, `Clipboard`, and `FileAndFolderDialogs` | Done at branch tip. | No action unless a new direct-item visual regression appears. |
+| 5 | P1/P2 source cleanup, resource cleanup, and documentation-only work | Not allowed while P0.1 is unproven and P0.4 lacks current visual evidence. | Resume only after the P0 queue above is evidenced or explicitly blocked. |
 
 1. **P0 - Visual and High Contrast evidence first.** Refresh screenshot audits,
    inspect the highest visible deltas, and fix user-visible drift before taking
-   new source-shape or resource-key cleanup. Current P0 queue, in order:
-   P0.1 real OS High Contrast shell/control coverage, blocked unless Windows
-   High Contrast is enabled; P0.2 completed top-level `Home` and `Settings`
-   branch-tip proof; P0.3 completed direct-item proof for `TextBox`,
-   `Clipboard`, and `FileAndFolderDialogs`; P0.4 residual `NavigationView` shell
-   details such as left disclosure chevrons and row insets. With the current
-   environment reporting High Contrast off, P0.4 is the next executable P0.
+   new source-shape or resource-key cleanup. With the current environment
+   reporting High Contrast off, P0.4 is the only executable P0 gate.
 2. **P0 - Acceptance gates stay open until visual proof exists.** Do not treat
    an implementation/source row as complete for planning purposes when its
    visual column is still `Partial` or the screenshot pass is still `Open`.
@@ -45,7 +50,7 @@ Use this table as the active execution queue before choosing any cleanup work.
 | P0.1 | Broader High Contrast shell/control coverage | Existing runtime/source tests cover key High Contrast resources. `Run-WpfGalleryVisualAudit.ps1` now accepts `-Theme HighContrast`, but refuses to run unless Windows OS High Contrast is actually enabled, so ordinary Dark/Light captures cannot be mistaken for High Contrast evidence. Current environment reports `SystemParameters.HighContrast = False`, and the attempted `-Theme HighContrast` run correctly fails before launching apps. | Enable a Windows High Contrast theme, then rerun the top-level and focused shell/control visual slices with `-Theme HighContrast`; until then, use refreshed runtime/source tests only as non-screenshot coverage. |
 | P0.2 | Completed top-level residual visual drift gate | Done at branch tip. Latest Light top-level audit is `artifacts/wpf-gallery-visual-audit/20260529-022506-025-65744/report.md`: Home `0`, WhatsNew `0`, AllControls `0`, Settings `0`. Latest Dark top-level audit is `artifacts/wpf-gallery-visual-audit/20260529-022607-305-45960/report.md`: Home `0.04`, WhatsNew `0`, AllControls `0`, Settings `0`. Home and Settings now use the official direct reference host, including the Dashboard content root target, Settings theme selector state, and the official full-shell Dark `#272727` background for transparent top-level roots. | Done; keep these reports as the current top-level gate. |
 | P0.3 | Completed direct item drift gate | Done at branch tip. Latest Light focused audit is `artifacts/wpf-gallery-visual-audit/20260529-023052-142-69976/report.md`: TextBox `0`, Clipboard `0`, FileAndFolderDialogs `0`. Latest Dark focused audit is `artifacts/wpf-gallery-visual-audit/20260529-023138-825-52464/report.md`: TextBox `0`, Clipboard `0`, FileAndFolderDialogs `0`. All use matching `868x758` Modern `ContentPagePaneRenderedArtifact` and official `OfficialDirectRootContentFrameRenderedArtifact` crops. | Done; keep these reports as the current direct-item gate. |
-| P0.4 | Residual NavigationView shell details | Navigation content/item evidence is near zero, but retained shell details remain called out in the page rows. | Next executable P0 after the High Contrast OS-theme blocker and completed P0.2/P0.3 gates: refresh or inspect the residual NavigationView shell details. |
+| P0.4 | Residual NavigationView shell details | Current shell-pane evidence is `artifacts/wpf-gallery-visual-audit/20260529-031911-356-66796/report.md` for Light and `artifacts/wpf-gallery-visual-audit/20260529-031931-632-1912/report.md` for Dark. Both runs pass with matching `250x707` Modern/official navigation-pane crops. The retained `NavigationView` now navigates to the selected child before capture and no longer leaves the Home selection indicator active on `item/Menu`; the remaining visible drift is the retained `NavigationView` selected row/indicator geometry versus the official WPF Gallery `TreeView` template, with Light delta `10.12` and Dark delta `10.02`. | Continue P0.4 before P1/P2: decide whether to adapt/hide the retained `NavigationView` selected-row chrome to match the official TreeView selected background/indicator geometry, or record it as an intentional retained-control residual. |
 
 ## Source References
 
@@ -575,6 +580,12 @@ Latest local verification for the current branch tip:
   - Passed at `artifacts/wpf-gallery-visual-audit/20260529-023138-825-52464/report.md`: Modern and official both `Passed`. Deltas are TextBox `0`, Clipboard `0`, and FileAndFolderDialogs `0`; all crops match at `868x758` with Modern `ContentPagePaneRenderedArtifact` and official `OfficialDirectRootContentFrameRenderedArtifact`.
 - `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases Home -Reference OfficialWpfGallery -Theme HighContrast -TimeoutSeconds 5`
   - Expected failure in the current environment because `SystemParameters.HighContrast` is `False`: the visual audit now refuses to simulate OS High Contrast through Light/Dark theme switching and instructs enabling a Windows High Contrast theme before collecting High Contrast screenshot evidence.
+- `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases ShellNavigation -Theme Light`
+  - Passed at `artifacts/wpf-gallery-visual-audit/20260529-031911-356-66796/report.md`: Modern and official both `Passed` with matching `250x707` navigation-pane crops and Light delta `10.12`. This focused P0.4 slice uses the new direct-host `ShellNavigation` artifact for the official WPF Gallery navigation pane and a comparable retained-`NavigationView` pane crop for ModernWpf. The previous Home-retained selection indicator was fixed; remaining drift is the retained `NavigationView` selected child row/indicator geometry versus the official `TreeView` template.
+- `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases ShellNavigation -Theme Dark`
+  - Passed at `artifacts/wpf-gallery-visual-audit/20260529-031931-632-1912/report.md`: Modern and official both `Passed` with matching `250x707` navigation-pane crops and Dark delta `10.02`. Remaining drift is the same retained `NavigationView` selected-row/indicator geometry, not wrong route or stale Home selection.
+- `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~GalleryNavigationRuntimeTests.ShellNavigationMenuMatchesWpfGalleryReferenceChrome|FullyQualifiedName~GalleryNavigationRuntimeTests.ShellNavigationPaneRowsUseWpfGalleryTreeViewInsets|FullyQualifiedName~GalleryNavigationRuntimeTests.ShellNavigationViewTreeViewResourceAliasesTrackThemeChanges|FullyQualifiedName~GalleryNavigationRuntimeTests.ShellNavigationViewAliasesHaveWpfGalleryTreeViewHighContrastTokens" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 4 tests per target. Runtime coverage now pins the selected child-navigation state after `item/Menu`, shell pane background aliases in Light/Dark, retained TreeView token aliases, and HighContrast token references. Existing warning/output remains `NU1903` and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~GalleryApplicationResourceTests.ColorTileHighContrastTemplateMatchesWpfGalleryReference|FullyQualifiedName~GalleryApplicationResourceTests.HomeHeaderTilesUseWpfGalleryHighContrastFillResources|FullyQualifiedName~WpfGallerySourceShapeTests.ShellChromeKeepsWpfGalleryHighContrastSourceShape|FullyQualifiedName~GalleryNavigationRuntimeTests.MainWindowChromePolicyMatchesWpfGalleryHighContrastPath|FullyQualifiedName~GalleryNavigationRuntimeTests.ShellHighContrastHoverStylesMatchWpfGalleryReferenceChrome|FullyQualifiedName~GalleryNavigationRuntimeTests.ShellNavigationViewAliasesHaveWpfGalleryTreeViewHighContrastTokens" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 6 tests per target. Refreshed High Contrast runtime/source coverage pins ColorTile template resources, Home header tile High Contrast fill resources, shell chrome source shape, High Contrast chrome policy, shell hover resources, and retained NavigationView TreeView HighContrast token aliases. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~CommonStylesResourceTests|FullyQualifiedName~DatePickerVisualStateTests.DatePickerCalendarStyleUsesOfficialPopupCalendarChrome|FullyQualifiedName~TextBoxPasswordBoxVisualStateTests.DataGridTextBoxStyleRetainsModernWpfEditingSubstitution|FullyQualifiedName~DataGridVisualStateTests.DataGridTemplatesUseOfficialWpfPresenterSlots|FullyQualifiedName~DataGridVisualStateTests.DataGridThemeResourcesExposeOfficialWpfFluentAliases|FullyQualifiedName~NavigationViewApiTests.VerifyFinalWinUI2NavigationViewThemeResources" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
@@ -3103,11 +3114,13 @@ Immediate execution order for the next round:
 
 1. If Windows OS High Contrast is enabled, run the P0.1 High Contrast visual
    slices first and record real `-Theme HighContrast` screenshot evidence.
-2. If OS High Contrast is not enabled, execute P0.4 only: refresh or inspect the
-   residual `NavigationView` shell visual details called out in the page rows.
+2. If OS High Contrast is not enabled, execute P0.4 only: continue from the
+   current `ShellNavigation` Light/Dark evidence and resolve or explicitly
+   accept the retained `NavigationView` selected row/indicator geometry drift
+   versus the official WPF Gallery `TreeView` template.
 3. Do not take source-only alignment, resource-key cleanup, or documentation-only
    work until P0.1 has real OS evidence or remains environment-blocked and P0.4
-   has current visual evidence.
+   has a decision on the current shell-pane residual.
 
 The direct-reference section baseline is now refreshed for Light and Dark, and
 Basic Input, Collections, Date & Calendar, Design Guidance, Layout, Media,
