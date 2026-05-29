@@ -1225,6 +1225,40 @@ function New-AnnotatedScrollBarReferencePrimaryCrop([string]$caseDir, $window, [
     return $null
 }
 
+function New-IconElementReferencePrimaryCrop([string]$caseDir, $window, [string]$screenshot) {
+    $modernArtifactDir = Join-Path $caseDir "modernwpf-artifacts"
+    $modernSampleArtifact = Join-Path $modernArtifactDir "GallerySample_IconElement_Root.png"
+    if (!(Test-Path $modernSampleArtifact)) {
+        return $null
+    }
+
+    $modernSize = Get-ImageSize $modernSampleArtifact
+    $bodyText = Find-DescendantByName $window "The ShowAsMonochrome property (true by default) will result in a solid block of the foreground color if the property is set to true and the icon is more than one color. This behavior can be ignored by setting the ShowAsMonochrome property to false."
+    $bodyBounds = Get-ElementWindowBounds $window $bodyText
+    if ($null -eq $bodyBounds) {
+        return $null
+    }
+
+    $bounds = [ordered]@{
+        Found = $true
+        Reason = "Cropped the WinUI IconElement first example content to match the ModernWpf rendered sample root."
+        X = $bodyBounds.X
+        Y = $bodyBounds.Y
+        Width = $modernSize.Width
+        Height = $modernSize.Height
+        ChangedSamples = 0
+    }
+
+    $path = Join-Path $caseDir "winui3-IconElement-primary-content-crop.png"
+    $savedBounds = Save-Crop $screenshot $bounds $path 0
+    $crop = New-RenderedArtifactCrop $path "Example1 content" $savedBounds
+    if ($null -ne $crop -and $crop.NonBlank) {
+        return $crop
+    }
+
+    return $null
+}
+
 function Capture-StaticCrops([string]$app, [string]$control, [string]$caseDir, $window, [string]$screenshot) {
     $primaryElement = $null
     $primarySource = ""
@@ -1373,6 +1407,12 @@ function Capture-StaticCrops([string]$app, [string]$control, [string]$caseDir, $
         $annotatedScrollBarPrimary = New-AnnotatedScrollBarReferencePrimaryCrop $caseDir $window $screenshot $sampleElement
         if ($null -ne $annotatedScrollBarPrimary) {
             $primaryResult = $annotatedScrollBarPrimary
+        }
+    }
+    elseif ($control -eq "IconElement") {
+        $iconElementPrimary = New-IconElementReferencePrimaryCrop $caseDir $window $screenshot
+        if ($null -ne $iconElementPrimary) {
+            $primaryResult = $iconElementPrimary
         }
     }
 
