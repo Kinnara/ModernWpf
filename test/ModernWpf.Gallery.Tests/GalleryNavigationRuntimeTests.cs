@@ -187,7 +187,7 @@ namespace ModernWpf.Gallery.Tests
                 AssertFontIconGlyph(topLevelItems[5], "\uE73A");
                 AssertNavigationItemsDoNotExposeLocalAutomationIds(topLevelItems);
                 Assert.AreEqual(new Thickness(8, 1, 0, 1), topLevelItems[0].Margin);
-                AssertNavigationItemContentMargin(topLevelItems[0], 20);
+                AssertNavigationItemContentMargin(topLevelItems[0], 32);
                 AssertNavigationTitleTextLayout(topLevelItems[0], "Home");
                 AssertNavigationTitleTextLayout(topLevelItems[4], "All Controls");
                 Assert.IsNull(GetNavigationDisclosureChevron(topLevelItems[0]));
@@ -201,19 +201,19 @@ namespace ModernWpf.Gallery.Tests
                     designGuidanceItems.Select(GetNavigationItemText).ToArray());
                 Assert.AreEqual(new Thickness(20, 1, 0, 1), designGuidanceItems[0].Margin);
                 AssertFontIconGlyph(designGuidanceItems[0], "\uE790");
-                AssertNavigationItemContentMargin(designGuidanceItems[0], -12);
+                AssertNavigationItemContentMargin(designGuidanceItems[0], 0);
                 var designGuidanceChevron = GetNavigationDisclosureChevron(topLevelItems[2]);
                 Assert.IsNotNull(designGuidanceChevron);
                 Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(designGuidanceChevron));
                 Assert.AreEqual("\uE76C", designGuidanceChevron.Text);
                 Assert.AreEqual(10d, designGuidanceChevron.FontSize);
-                Assert.AreEqual(new Thickness(0, -1, 0, 0), designGuidanceChevron.Margin);
+                Assert.AreEqual(new Thickness(0, 14, 0, 0), designGuidanceChevron.Margin);
                 Assert.AreEqual(0d, ((RotateTransform)designGuidanceChevron.RenderTransform).Angle);
 
                 var basicInputItems = topLevelItems[5].MenuItems.OfType<NavigationViewItem>().ToList();
                 Assert.AreEqual(new Thickness(20, 1, 0, 1), basicInputItems[0].Margin);
                 Assert.IsNull(basicInputItems[0].Icon);
-                AssertNavigationItemContentMargin(basicInputItems[0], 4);
+                AssertNavigationItemContentMargin(basicInputItems[0], 16);
 
                 var mediaItem = topLevelItems[13];
                 Assert.AreEqual("Media Controls", GetNavigationItemText(mediaItem));

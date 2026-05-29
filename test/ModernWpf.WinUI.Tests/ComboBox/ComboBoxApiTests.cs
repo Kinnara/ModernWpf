@@ -72,7 +72,7 @@ public class ComboBoxApiTests
             var dropDownBorder = FindTemplateChild<Border>(comboBox, "DropDownBorder");
             Assert.AreSame(dropDownBorder.TryFindResource("ComboBoxDropDownBackground"), dropDownBorder.Background);
             Assert.AreSame(dropDownBorder.TryFindResource("ComboBoxDropDownBorderBrush"), dropDownBorder.BorderBrush);
-            Assert.AreEqual(new CornerRadius(), dropDownBorder.CornerRadius);
+            Assert.AreEqual(dropDownBorder.TryFindResource("PopupCornerRadius"), dropDownBorder.CornerRadius);
             Assert.IsTrue(comboBox.Template.Triggers.Count > 0);
 
             comboBox.IsEnabled = false;
