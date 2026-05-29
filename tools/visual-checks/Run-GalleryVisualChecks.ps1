@@ -1186,6 +1186,45 @@ function New-RenderedArtifactSliceCrop([string]$sourcePath, [string]$path, [stri
     return New-RenderedArtifactCrop $path $source $bounds
 }
 
+function New-AnnotatedScrollBarReferencePrimaryCrop([string]$caseDir, $window, [string]$screenshot, $sampleElement) {
+    $modernArtifactDir = Join-Path $caseDir "modernwpf-artifacts"
+    $modernSampleArtifact = Join-Path $modernArtifactDir "GallerySample_AnnotatedScrollBar_Root.png"
+    if (!(Test-Path $modernSampleArtifact)) {
+        return $null
+    }
+
+    $modernSize = Get-ImageSize $modernSampleArtifact
+    $scrollPresenter = Find-DescendantByAutomationId $window "PART_ScrollPresenter"
+    $scrollBounds = Get-ElementWindowBounds $window $scrollPresenter
+    $sampleBounds = Get-ElementWindowBounds $window $sampleElement
+    if ($null -eq $scrollBounds -or $null -eq $sampleBounds) {
+        return $null
+    }
+
+    $x = [Math]::Max(0, $scrollBounds.X - 13)
+    $y = [Math]::Max(0, $scrollBounds.Y - 12)
+    $right = $sampleBounds.X + $sampleBounds.Width
+    $bottom = $sampleBounds.Y + $sampleBounds.Height
+    $bounds = [ordered]@{
+        Found = $true
+        Reason = "Cropped the WinUI AnnotatedScrollBar example content to match the ModernWpf rendered sample root."
+        X = $x
+        Y = $y
+        Width = [Math]::Max(1, [Math]::Min($modernSize.Width, $right - $x))
+        Height = [Math]::Max(1, [Math]::Min($modernSize.Height, $bottom - $y))
+        ChangedSamples = 0
+    }
+
+    $path = Join-Path $caseDir "winui3-AnnotatedScrollBar-primary-content-crop.png"
+    $savedBounds = Save-Crop $screenshot $bounds $path 0
+    $crop = New-RenderedArtifactCrop $path "svPanel content" $savedBounds
+    if ($null -ne $crop -and $crop.NonBlank) {
+        return $crop
+    }
+
+    return $null
+}
+
 function Capture-StaticCrops([string]$app, [string]$control, [string]$caseDir, $window, [string]$screenshot) {
     $primaryElement = $null
     $primarySource = ""
@@ -1329,8 +1368,16 @@ function Capture-StaticCrops([string]$app, [string]$control, [string]$caseDir, $
         }
     }
 
+    $primaryResult = Save-ElementCrop $window $screenshot $primaryPath $primaryElement $primarySource 0
+    if ($control -eq "AnnotatedScrollBar") {
+        $annotatedScrollBarPrimary = New-AnnotatedScrollBarReferencePrimaryCrop $caseDir $window $screenshot $sampleElement
+        if ($null -ne $annotatedScrollBarPrimary) {
+            $primaryResult = $annotatedScrollBarPrimary
+        }
+    }
+
     return [ordered]@{
-        Primary = Save-ElementCrop $window $screenshot $primaryPath $primaryElement $primarySource 0
+        Primary = $primaryResult
         Sample = Save-ElementCrop $window $screenshot $samplePath $sampleElement $sampleSource 10
     }
 }

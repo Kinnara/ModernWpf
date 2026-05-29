@@ -1303,6 +1303,7 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(ScrollBarVisibility.Hidden, scrollViewer.VerticalScrollBarVisibility);
                     Assert.AreEqual(ScrollBarVisibility.Disabled, scrollViewer.HorizontalScrollBarVisibility);
                     Assert.AreSame(itemsRepeater, scrollViewer.Content);
+                    Assert.AreEqual(Brushes.LightGray, itemsRepeater.Background);
 
                     Assert.AreEqual("annotatedScrollBar", annotatedScrollBar.Name);
                     Assert.AreEqual(500.0, annotatedScrollBar.MaxHeight);
@@ -1366,12 +1367,21 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsTrue(thumb.ActualHeight > 0);
 
                     Assert.AreEqual("AnnotatedScrollBar maximum height:", ModernWpf.Controls.Primitives.ControlHelper.GetHeader(heightSlider));
+                    Assert.IsTrue(
+                        FindDescendants<TextBlock>(page).Any(textBlock =>
+                            textBlock.IsVisible &&
+                            textBlock.Text == "AnnotatedScrollBar maximum height:"),
+                        "Expected the AnnotatedScrollBar maximum height header to be visible.");
                     Assert.AreEqual(100.0, heightSlider.Minimum);
                     Assert.AreEqual(500.0, heightSlider.Maximum);
                     Assert.AreEqual(500.0, heightSlider.Value);
+                    Assert.IsTrue(heightSlider.IsSelectionRangeEnabled);
+                    Assert.AreEqual(100.0, heightSlider.SelectionStart);
+                    Assert.AreEqual(500.0, heightSlider.SelectionEnd);
 
                     heightSlider.Value = 250;
                     WpfTestHost.DoEvents();
+                    Assert.AreEqual(250.0, heightSlider.SelectionEnd);
                     Assert.AreEqual(250.0, annotatedScrollBar.MaxHeight);
                     Assert.AreEqual(5, annotatedScrollBar.Labels.Count);
                 }

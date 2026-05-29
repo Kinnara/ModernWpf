@@ -88,8 +88,30 @@ limited with no local visual fix selected for this milestone round.
 | 5 | P1.1 residual visual drift triage/evidence | Recorded. Current Light evidence is `artifacts/wpf-gallery-visual-audit/20260529-055921-904-3944/report.md`; current Dark evidence is `artifacts/wpf-gallery-visual-audit/20260529-060033-783-44788/report.md`. ProgressBar is `0` / `0`. Iconography is `0.23` / `0.24` with maxRgbSum `3` channel-quantization residual; GridSplitter Light `0.24` and DataGrid Light `0.13` are minor text/line antialiasing residuals with no visible geometry/layout drift. | Do not reopen unless a new visible drift appears. |
 | 6 | P1.2 stale `Partial` visual rows at or below noise threshold | Recorded. StackPanel, TreeView, ToolTip, RichTextEdit, PasswordBox, and Hyperlink are `0` / `0` in `20260529-061205-172-26700` and `20260529-061344-116-67908`. Calendar, DatePicker, Canvas, Image, Menu, TabControl, Frame, and NavigationWindow are `0` / `0` in `20260529-061607-923-61020` and `20260529-061844-861-43780`; UserDashboard is `0` / `0.01`. Color residuals remain current at `20260529-062201-094-27604` and `20260529-062407-485-65068`, with ColorSignal `0.10` / `0.10` and ColorHighContrast `0.12` / `0.14` visually inspected as rendering residuals. | Do not reopen unless a new visible drift appears. |
 | 7 | P1 source/resource/runtime alignment tied to a visual issue | No current open row 7 item. Row 7.1 is recorded complete, row 7.2 has no current blocker, and row 7.3 has no current visible mismatch. | Preempt P1.3/P2 only if new visual/High Contrast drift appears or evidence collection exposes a visual-harness blocker. |
-| 8 | P1.3 retained ModernWpf/WinUI extension high-drift visual triage | Open. GridView is fixed at branch tip (`69.52` / `63.82` down to `3.32` / `3.90`), CommandBarFlyout is fixed at branch tip (`48.10` / `39.46` down to `5.15` / `5.20`), and BreadcrumbBar's live blank UI/harness masking issue is fixed in this round. Current BreadcrumbBar evidence is Light `artifacts/visual-checks/20260529-172210-677-74312/report.md` at `11.37` / primary `11.27` and Dark `artifacts/visual-checks/20260529-172232-003-20284/report.md` at `13.03` / primary `12.93`, with visible ModernWpf page screenshots and real rendered sample artifacts. Remaining BreadcrumbBar delta is a `529x26` vs `530x26` crop plus WPF/WinUI text rasterization residual, no longer a blank-control failure. | Continue row 8 with AnnotatedScrollBar next; follow the explicit order above and separate actionable crop/control drift from native-control or harness limitations before P2. |
+| 8 | P1.3 retained ModernWpf/WinUI extension high-drift visual triage | Open. GridView is fixed at branch tip (`69.52` / `63.82` down to `3.32` / `3.90`), CommandBarFlyout is fixed at branch tip (`48.10` / `39.46` down to `5.15` / `5.20`), BreadcrumbBar's live blank UI/harness masking issue is fixed at branch tip, and AnnotatedScrollBar's current-turn crop/control round is fixed with Light `18.10` and Dark `15.36`, down from refreshed `76.39` / `54.33`, after matching the WinUI content crop, visible option header, option divider/spacing, item gap background, and Slider selected range. | Continue row 8 with RatingControl next; follow the strict row 8 subqueue below and separate actionable crop/control drift from native-control or harness limitations before P2. |
 | 9 | P2 cleanup and documentation-only work | Executable only after P0.1 is environment-blocked, rows 2-7 have no open item, and row 8 has been fixed or explicitly recorded as non-actionable for this milestone round. | Keep cleanup low-risk and stop immediately if High Contrast is enabled or new visual/harness drift appears. |
+
+### Row 8 Strict Subqueue
+
+When row 8 is the first executable row, use this table as the hard work order.
+The active item is the first `Current` or `Pending` row below. Do not start a
+lower row, source-shape cleanup, resource-key cleanup, naming cleanup, or
+tracker-only cleanup while the active row still has actionable Light/Dark visual
+drift, a visual-harness crop issue, or unclassified native-control limitation.
+
+| Row 8 order | Retained surface | State | Allowed next work |
+| --- | --- | --- | --- |
+| 8.1 | GridView | Done at branch tip. | Reopen only on new visual regression evidence. |
+| 8.2 | CommandBarFlyout | Done at branch tip. | Reopen only on new visual regression evidence. |
+| 8.3 | BreadcrumbBar | Done at branch tip. | Reopen only on new visual regression evidence. |
+| 8.4 | AnnotatedScrollBar | Done in this round. Final current evidence is Light `artifacts/visual-checks/20260529-174429-138-32516/report.md` at `18.10` and Dark `artifacts/visual-checks/20260529-174450-620-81004/report.md` at `15.36`, both with matching `790x500` primary crops, down from refreshed Light `76.39` / primary `56.49` and Dark `54.33` / primary `34.43`. | Reopen only on new visual regression evidence. |
+| 8.5 | RatingControl | Current. Current backlog score `29.21`. | Inspect current Light/Dark screenshots next, classify the visible drift or limitation, and fix the first actionable RatingControl visual or harness issue before moving to IconElement. |
+| 8.6 | IconElement | Pending. Current backlog score `22.45`. | Start only after RatingControl is fixed or explicitly recorded as diagnostic/native-control/harness-limited. |
+| 8.7 | TitleBar | Pending. Current backlog score `21.63`. | Start only after IconElement is fixed or explicitly recorded as diagnostic/native-control/harness-limited. |
+| 8.8 | DropDownButton | Pending. Current backlog score `20.84`. | Start only after TitleBar is fixed or explicitly recorded as diagnostic/native-control/harness-limited. |
+| 8.9 | SelectorBar | Pending. Current backlog score `20.10`. | Start only after DropDownButton is fixed or explicitly recorded as diagnostic/native-control/harness-limited. |
+| 8.10 | InfoBar | Pending. Current backlog score `19.44`. | Start only after SelectorBar is fixed or explicitly recorded as diagnostic/native-control/harness-limited. |
+| 8.11 | ProgressRing | Pending. Current backlog score `19.32`. | Start only after InfoBar is fixed or explicitly recorded as diagnostic/native-control/harness-limited. |
 
 ### Row 7 Strict Subqueue
 
@@ -269,7 +291,7 @@ the next task.
 | P0.4 | Completed residual NavigationView shell details | Done at branch tip. Current shell-pane evidence is `artifacts/wpf-gallery-visual-audit/20260529-081823-368-31712/report.md` for Light and `artifacts/wpf-gallery-visual-audit/20260529-081846-263-45260/report.md` for Dark. Both runs pass with matching `250x707` Modern/official navigation-pane crops and deltas of Light `0.80` and Dark `0.82`, down from the previous `9.40/9.36`, with exact comparison metrics `142/11151` changed samples (`1.273%`) and max RGB diff `669`. The retained `NavigationView` now navigates to the selected child before capture, no longer leaves the Home selection indicator active on `item/Menu`, keeps the selected child indicator aligned after shifting the selected child background toward the official WPF Gallery `TreeView` active rectangle, keeps the screenshot-aligned retained-control offsets for selected-child, top-level, child, and disclosure-category row content, preserves that group-row offset after selection resets, hides retained menu-scrollbar chrome, maps retained pane separator/SplitView edge brushes to the official pane background, and disables the retained pane shadow. The retained `NavigationView` and official `TreeView` expose different UIA absolute content origins under the comparable pane crop; do not replace the screenshot-proven retained offsets with UIA-only absolute coordinates unless a new visual crop regression also appears. Remaining pixel drift is below one mean delta point and is retained-control rendering/crop residue rather than a current P0 blocker. | Done; keep these reports as the current shell gate unless a new shell regression appears. |
 | P1.1 | Residual item visual drift queue | Recorded at branch tip. Latest Light residual audit is `artifacts/wpf-gallery-visual-audit/20260529-055921-904-3944/report.md`: Iconography `0.23`, GridSplitter `0.24`, DataGrid `0.13`, ProgressBar `0`. Latest Dark residual audit is `artifacts/wpf-gallery-visual-audit/20260529-060033-783-44788/report.md`: Iconography `0.24`, GridSplitter `0`, DataGrid `0`, ProgressBar `0`. ProgressBar's real animated-phase drift is fixed. Iconography is maxRgbSum `3` channel quantization with no visible layout drift; GridSplitter Light and DataGrid Light are minor text/line antialiasing with no visible geometry drift. | Recorded; move to P1.2 unless a new visible P1.1 drift appears. |
 | P1.2 | Stale `Partial` visual rows at or below noise threshold | Recorded at branch tip. Light `artifacts/wpf-gallery-visual-audit/20260529-061205-172-26700/report.md` and Dark `artifacts/wpf-gallery-visual-audit/20260529-061344-116-67908/report.md` put StackPanel, TreeView, ToolTip, RichTextEdit, PasswordBox, and Hyperlink at `0` / `0`. Light `artifacts/wpf-gallery-visual-audit/20260529-061607-923-61020/report.md` and Dark `artifacts/wpf-gallery-visual-audit/20260529-061844-861-43780/report.md` put Calendar, DatePicker, Canvas, Image, Menu, TabControl, Frame, and NavigationWindow at `0` / `0`; UserDashboard is `0` / `0.01`. Light `artifacts/wpf-gallery-visual-audit/20260529-062201-094-27604/report.md` and Dark `artifacts/wpf-gallery-visual-audit/20260529-062407-485-65068/report.md` refresh Color residuals: Color `0.05` / `0.06`, Text `0.05` / `0.06`, Fill `0.06` / `0.06`, Stroke `0.04` / `0`, Background `0.03` / `0.03`, Signal `0.10` / `0.10`, and HighContrast `0.12` / `0.14`; ColorSignal/ColorHighContrast screenshots were visually identical with small pixel counts, so these remain recorded rendering residuals. | Recorded; with row 7.1 also complete and no row 7.2/7.3 trigger, move to row 8 unless High Contrast is enabled or new visible/harness drift appears. |
-| P1.3 | Retained ModernWpf/WinUI extension high-drift visual backlog | Open. GridView's retained WinUI-reference primary drift is fixed at branch tip: Light `artifacts/visual-checks/20260529-090341-128-24380/report.md` is `3.32` and Dark `artifacts/visual-checks/20260529-090428-356-50932/report.md` is `3.90`, down from `69.52` / `63.82`, after adding WinUI `GridViewItemCornerRadius` parity, clipping GridView item content to that radius, matching GridView image scaling, and correcting the rendered-artifact viewbox for the GridView VisualBrush offset. CommandBarFlyout's retained WinUI-reference primary drift is also fixed at branch tip: Light `artifacts/visual-checks/20260529-093026-598-65196/report.md` is `5.15` and Dark `artifacts/visual-checks/20260529-093057-468-27504/report.md` is `5.20`, down from refreshed pre-fix `48.10` / `39.46`, after correcting the rendered-artifact viewbox for the image-button VisualBrush offset, matching high-quality image scaling, and making the interaction harness select the strongest transient-open frame. BreadcrumbBar's live blank rendered UI and diagnostic masking path are fixed in this round: Light `artifacts/visual-checks/20260529-172210-677-74312/report.md` is `11.37` with primary `11.27`, and Dark `artifacts/visual-checks/20260529-172232-003-20284/report.md` is `13.03` with primary `12.93`, down from refreshed `20.87` / `24.45`; remaining BreadcrumbBar drift is a visible `529x26` vs `530x26` crop plus text antialiasing residual. Active retained-surface order now starts with AnnotatedScrollBar `30.89`, then RatingControl `29.21`, IconElement `22.45`, TitleBar `21.63`, DropDownButton `20.84`, SelectorBar `20.10`, InfoBar `19.44`, and ProgressRing `19.32`. Deleted WinUI alias pages such as ItemsView, ScrollView, TabView, CalendarDatePicker, and WebView2 are not current backlog items even if historical artifacts record high deltas. Some retained rows may still prove diagnostic because of missing native WinUI controls, sample-region crop limits, or reference-app exposure gaps, but that classification must be made before P2 cleanup. | Continue with AnnotatedScrollBar as the next row 8 item. Continue the explicit row 8 order above, choose the first actionable visible drift or harness-crop fix, and record any diagnostic/native-control limitation explicitly before moving to P2. |
+| P1.3 | Retained ModernWpf/WinUI extension high-drift visual backlog | Open. GridView's retained WinUI-reference primary drift is fixed at branch tip: Light `artifacts/visual-checks/20260529-090341-128-24380/report.md` is `3.32` and Dark `artifacts/visual-checks/20260529-090428-356-50932/report.md` is `3.90`, down from `69.52` / `63.82`, after adding WinUI `GridViewItemCornerRadius` parity, clipping GridView item content to that radius, matching GridView image scaling, and correcting the rendered-artifact viewbox for the GridView VisualBrush offset. CommandBarFlyout's retained WinUI-reference primary drift is also fixed at branch tip: Light `artifacts/visual-checks/20260529-093026-598-65196/report.md` is `5.15` and Dark `artifacts/visual-checks/20260529-093057-468-27504/report.md` is `5.20`, down from refreshed pre-fix `48.10` / `39.46`, after correcting the rendered-artifact viewbox for the image-button VisualBrush offset, matching high-quality image scaling, and making the interaction harness select the strongest transient-open frame. BreadcrumbBar's live blank rendered UI and diagnostic masking path are fixed at branch tip: Light `artifacts/visual-checks/20260529-172210-677-74312/report.md` is `11.37` with primary `11.27`, and Dark `artifacts/visual-checks/20260529-172232-003-20284/report.md` is `13.03` with primary `12.93`, down from refreshed `20.87` / `24.45`; remaining BreadcrumbBar drift is a visible `529x26` vs `530x26` crop plus text antialiasing residual. AnnotatedScrollBar's crop/control round is fixed in this round: final Light `artifacts/visual-checks/20260529-174429-138-32516/report.md` is `18.10`, and final Dark `artifacts/visual-checks/20260529-174450-620-81004/report.md` is `15.36`, both with matching `790x500` primary crops and visible sample rendering, down from refreshed Light `76.39` / primary `56.49` and Dark `54.33` / primary `34.43`. Active retained-surface order now starts with RatingControl `29.21`, then IconElement `22.45`, TitleBar `21.63`, DropDownButton `20.84`, SelectorBar `20.10`, InfoBar `19.44`, and ProgressRing `19.32`. Deleted WinUI alias pages such as ItemsView, ScrollView, TabView, CalendarDatePicker, and WebView2 are not current backlog items even if historical artifacts record high deltas. Some retained rows may still prove diagnostic because of missing native WinUI controls, sample-region crop limits, or reference-app exposure gaps, but that classification must be made before P2 cleanup. | Continue with RatingControl as the next row 8 item. Continue the strict row 8 subqueue above, choose the first actionable visible drift or harness-crop fix, and record any diagnostic/native-control limitation explicitly before moving to P2. |
 | P1 | Scoped source/resource/runtime alignment | No current open item after row 7.1 was recorded complete. | Reopen only for a newly recorded visual/High Contrast finding or a visual-harness stability blocker; otherwise continue P1.3 high-drift visual triage while P0.1 remains environment-blocked. |
 
 ## Source References
@@ -3418,11 +3440,14 @@ Immediate execution order for the next round:
    slices first and record real `-Theme HighContrast` screenshot evidence.
 2. If OS High Contrast is not enabled and no new visual/harness blocker has
    appeared, use execution row 8 for retained ModernWpf/WinUI extension
-   high-drift visual triage. GridView and CommandBarFlyout are now fixed;
-   inspect BreadcrumbBar's current `artifacts/visual-checks` report/artifacts
-   next, classify any
-   diagnostic/native-control/harness limitation, and fix the first actionable
-   visible drift before any P2 cleanup.
+   high-drift visual triage. GridView, CommandBarFlyout, BreadcrumbBar, and
+   AnnotatedScrollBar are now fixed at branch tip; the row 8 strict subqueue
+   makes RatingControl the current active item. Start by inspecting
+   RatingControl's Light/Dark visual artifacts, classify any
+   diagnostic/native-control/harness limitation, and only then advance the
+   pointer to IconElement. Do not take
+   source-shape cleanup, resource-key cleanup, naming cleanup, or P2 tracker
+   cleanup ahead of the current row 8 item.
 3. P2 tracker consistency, stale-status cleanup, and other low-risk
    documentation cleanup is allowed only after row 8 has been fixed or
    explicitly recorded as non-actionable for this milestone round.
@@ -5159,17 +5184,24 @@ the installed reference's narrow one-column scroll layout beside the options
 pane, and uses the real `ModernWpf.Controls.AnnotatedScrollBar` control. The
 control template path also now keeps label presenters top-aligned and uses the
 theme primary text brush for label text so labels render correctly in both
-Light and Dark. Current AnnotatedScrollBar WinUI-reference evidence is
-`artifacts/visual-checks/20260525-085248-042-118864/report.md` for Light and
-`artifacts/visual-checks/20260525-085314-745-86412/report.md` for Dark, both
-with ModernWpf and installed WinUI 3 Gallery `Passed`; the visual harness keeps
-the actual `GallerySample_AnnotatedScrollBar_AnnotatedScrollBar` element as the
-required sample element while comparing the ModernWpf sample root against the
-installed WinUI `svPanel` sample region because the standalone rendered
-ModernWpf control artifact is blank for this templated control. Treat the Light
-sample-region delta as diagnostic unless a better stable crop becomes
-available. Avoid reopening AnnotatedScrollBar's source shape unless a new local
-WinUI source, label-layout regression, or crop regression appears.
+Light and Dark. Current AnnotatedScrollBar WinUI-reference evidence is Light
+`artifacts/visual-checks/20260529-174429-138-32516/report.md` at `18.10` and
+Dark `artifacts/visual-checks/20260529-174450-620-81004/report.md` at `15.36`,
+both with matching `790x500` primary crops and visible ModernWpf/WinUI sample
+rendering. Refreshed pre-fix evidence was Light
+`artifacts/visual-checks/20260529-172634-185-82544/report.md` at `76.39` /
+primary `56.49` and Dark
+`artifacts/visual-checks/20260529-172654-314-71592/report.md` at `54.33` /
+primary `34.43`, with the old harness comparing a `790x500` Modern sample root
+to an `843x646` WinUI `svPanel` region. The harness now crops the installed
+WinUI `svPanel` content to the Modern sample-root extent, the sample renders
+the visible height-slider header, ControlExample-like option separator and
+spacing, LightGray item-gap background, and a Slider selected range matching
+the WinUI accent track at the initial max value. Remaining drift is
+WPF/WinUI-rendering and sample-region crop-edge residual, not the previous
+blank-control or wrong-region failure. Avoid reopening AnnotatedScrollBar's
+source shape unless a new local WinUI source, label-layout regression, or crop
+regression appears.
 The generated ModernWpf SemanticZoom extension page now uses the local official
 WinUI Gallery source from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\SemanticZoomPage.xaml`

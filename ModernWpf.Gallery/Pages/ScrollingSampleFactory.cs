@@ -195,11 +195,15 @@ namespace ModernWpf.Gallery.Pages
                 Minimum = 100,
                 Maximum = 500,
                 Value = 500,
-                Margin = new Thickness(0, 10, 0, 0)
+                IsSelectionRangeEnabled = true,
+                SelectionStart = 100,
+                SelectionEnd = 500,
+                Margin = new Thickness(0)
             };
             ControlHelper.SetHeader(slider, "AnnotatedScrollBar maximum height:");
             slider.ValueChanged += delegate
             {
+                slider.SelectionEnd = slider.Value;
                 annotatedScrollBar.MaxHeight = slider.Value;
                 UpdateScrollController();
             };
@@ -210,26 +214,45 @@ namespace ModernWpf.Gallery.Pages
             };
             options.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
             options.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            options.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
             options.Children.Add(new TextBlock
             {
                 Text = "Changing the AnnotatedScrollBar height refreshes its Labels layout.",
                 TextWrapping = TextWrapping.Wrap,
                 VerticalAlignment = VerticalAlignment.Center
             });
-            Grid.SetRow(slider, 1);
+            var sliderHeader = new TextBlock
+            {
+                Text = "AnnotatedScrollBar maximum height:",
+                Margin = new Thickness(0, 10, 0, 4),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            Grid.SetRow(sliderHeader, 1);
+            options.Children.Add(sliderHeader);
+            Grid.SetRow(slider, 2);
             options.Children.Add(slider);
 
             var layout = new Grid();
-            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(320) });
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1) });
             layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
             Grid.SetColumn(sampleGrid, 0);
             layout.Children.Add(sampleGrid);
+            var optionsSeparator = new Border
+            {
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Stretch,
+                Width = 1
+            };
+            optionsSeparator.SetResourceReference(Border.BackgroundProperty, "DividerStrokeColorDefaultBrush");
+            Grid.SetColumn(optionsSeparator, 1);
+            layout.Children.Add(optionsSeparator);
             var optionsHost = new Border
             {
-                Margin = new Thickness(24, 0, 0, 0),
+                Margin = new Thickness(52, 0, 0, 0),
                 Child = options
             };
-            Grid.SetColumn(optionsHost, 1);
+            Grid.SetColumn(optionsHost, 2);
             layout.Children.Add(optionsHost);
 
             root.Children.Add(layout);
@@ -367,6 +390,7 @@ namespace ModernWpf.Gallery.Pages
             var itemsRepeater = new WrapPanel
             {
                 Name = "itemsRepeater",
+                Background = Brushes.LightGray,
                 Margin = new Thickness(2)
             };
 
