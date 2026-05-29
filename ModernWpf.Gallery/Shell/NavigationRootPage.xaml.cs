@@ -112,7 +112,7 @@ namespace ModernWpf.Gallery.Shell
         private const double TopLevelNavigationContentLeftMargin = 20;
         private const double ChildGlyphNavigationContentLeftMargin = -12;
         private const double ChildTextNavigationContentLeftMargin = 4;
-        private const double TopLevelNavigationContentVerticalOffset = -1;
+        private const double TopLevelNavigationContentVerticalOffset = -2;
         private const double ChildNavigationContentVerticalOffset = -2;
         private static readonly Thickness DefaultNavigationSelectionIndicatorMargin = new Thickness(0);
         private static readonly Thickness ChildNavigationSelectionIndicatorMargin = new Thickness(-35, 0, 0, -6);

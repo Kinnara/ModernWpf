@@ -325,9 +325,14 @@ namespace ModernWpf.Gallery.Tests
 
                     AssertTextLeft(page, homeItem, "\uE80F", 44, "Home glyph");
                     AssertTextLeft(page, homeItem, "Home", 76, "Home text");
+                    AssertTextTop(page, homeItem, "\uE80F", 20, "Home glyph");
+                    AssertTextTop(page, homeItem, "Home", 19, "Home text");
                     AssertTextLeft(page, navigationItem, "\uE76C", 26.5, "Navigation disclosure chevron");
                     AssertTextLeft(page, navigationItem, "\uE700", 44, "Navigation glyph");
                     AssertTextLeft(page, navigationItem, "Navigation", 76, "Navigation text");
+                    AssertTextTop(page, navigationItem, "\uE76C", 399, "Navigation disclosure chevron");
+                    AssertTextTop(page, navigationItem, "\uE700", 398, "Navigation glyph");
+                    AssertTextTop(page, navigationItem, "Navigation", 397, "Navigation text");
                     AssertTextLeft(page, menuItem, "Menu", 79, "Menu child text");
                     var menuScrollViewer = FindVisualChildren<ScrollViewer>(navigation)
                         .Single(scrollViewer => string.Equals(scrollViewer.Name, "MenuItemsScrollViewer", StringComparison.Ordinal));
@@ -908,6 +913,15 @@ namespace ModernWpf.Gallery.Tests
 
             Assert.IsNotNull(textBlock, context);
             Assert.AreEqual(expectedLeft, GetElementBounds(root, textBlock).Left, 1.0, context + " left");
+        }
+
+        private static void AssertTextTop(FrameworkElement root, DependencyObject scope, string text, double expectedTop, string context)
+        {
+            var textBlock = FindVisualChildren<TextBlock>(scope)
+                .FirstOrDefault(block => string.Equals(block.Text, text, StringComparison.Ordinal));
+
+            Assert.IsNotNull(textBlock, context);
+            Assert.AreEqual(expectedTop, GetElementBounds(root, textBlock).Top, 1.0, context + " top");
         }
 
         private static Rect GetElementBounds(FrameworkElement root, FrameworkElement element)
