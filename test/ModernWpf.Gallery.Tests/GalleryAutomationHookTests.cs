@@ -3827,6 +3827,75 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void VisualArtifactsStabilizeIndeterminateProgressBarAnimation()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var artifactDirectory = Path.Combine(Path.GetTempPath(), "ModernWpfGalleryTests", Path.GetRandomFileName());
+                GalleryDiagnostics.Configure(GalleryLaunchOptions.Parse(new[] { "--visual-test", "--visual-artifact-dir", artifactDirectory }));
+
+                var progressBar = new ProgressBar
+                {
+                    Width = 240,
+                    IsIndeterminate = true
+                };
+
+                var contentHost = new Grid
+                {
+                    Width = 320,
+                    Height = 80,
+                    Background = Brushes.White
+                };
+                AutomationProperties.SetAutomationId(contentHost, "GalleryContentHost");
+                contentHost.Children.Add(progressBar);
+
+                var window = new Window
+                {
+                    Width = 360,
+                    Height = 120,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = contentHost
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    GalleryDiagnostics.WriteVisualArtifacts(contentHost);
+
+                    var animation = progressBar.Template.FindName("Animation", progressBar) as FrameworkElement;
+                    Assert.IsNotNull(animation);
+                    Assert.AreEqual(new Point(0, 0.5), animation.RenderTransformOrigin);
+
+                    var scale = FindScaleTransform(animation.RenderTransform);
+                    Assert.IsNotNull(scale);
+                    Assert.AreEqual(0.25, scale.ScaleX, 0.001);
+
+                    var contentHostArtifact = Path.Combine(artifactDirectory, "GalleryContentHost.png");
+                    Assert.IsTrue(File.Exists(contentHostArtifact), contentHostArtifact + " was not written.");
+                    Assert.IsTrue(HasVisibleRgbPixels(contentHostArtifact), contentHostArtifact + " has no visible RGB content.");
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    GalleryDiagnostics.ResetForTests();
+                    if (Directory.Exists(artifactDirectory))
+                    {
+                        Directory.Delete(artifactDirectory, recursive: true);
+                    }
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
         public void TopLevelPagesWriteContentRootPaneVisualArtifacts()
         {
             WpfTestHost.Run(() =>
@@ -4690,6 +4759,18 @@ namespace ModernWpf.Gallery.Tests
             Assert.IsNotNull(button);
             Assert.AreEqual(label, button.Label);
             Assert.AreEqual(symbol, ((Mux.SymbolIcon)button.Icon).Symbol);
+        }
+
+        private static ScaleTransform FindScaleTransform(Transform transform)
+        {
+            var scale = transform as ScaleTransform;
+            if (scale != null)
+            {
+                return scale;
+            }
+
+            var group = transform as TransformGroup;
+            return group?.Children.OfType<ScaleTransform>().FirstOrDefault();
         }
     }
 }

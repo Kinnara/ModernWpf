@@ -673,6 +673,8 @@ internal static class Program
         {
             Directory.CreateDirectory(artifactDirectory);
             element.UpdateLayout();
+            StabilizeAnimatedVisualState(element);
+            element.UpdateLayout();
             var target = GetArtifactTarget(element);
             var background = GetArtifactBackground(element, target, theme);
             WriteElementPng(target, Path.Combine(artifactDirectory, "RootContentFrame.png"), background);
@@ -681,6 +683,50 @@ internal static class Program
         {
             File.WriteAllText(Path.Combine(AppContext.BaseDirectory, "last-artifact-error.txt"), ex.ToString());
         }
+    }
+
+    private static void StabilizeAnimatedVisualState(DependencyObject root)
+    {
+        if (root is ProgressBar { IsIndeterminate: true } progressBar)
+        {
+            StabilizeIndeterminateProgressBar(progressBar);
+        }
+
+        var childCount = VisualTreeHelper.GetChildrenCount(root);
+        for (var i = 0; i < childCount; i++)
+        {
+            StabilizeAnimatedVisualState(VisualTreeHelper.GetChild(root, i));
+        }
+    }
+
+    private static void StabilizeIndeterminateProgressBar(ProgressBar progressBar)
+    {
+        progressBar.ApplyTemplate();
+        progressBar.UpdateLayout();
+
+        if (progressBar.Template.FindName("Animation", progressBar) is not FrameworkElement animation)
+        {
+            return;
+        }
+
+        animation.BeginAnimation(UIElement.RenderTransformOriginProperty, null);
+        animation.RenderTransformOrigin = new Point(0, 0.5);
+
+        if (FindScaleTransform(animation.RenderTransform) is { } scale)
+        {
+            scale.BeginAnimation(ScaleTransform.ScaleXProperty, null);
+            scale.ScaleX = 0.25;
+        }
+    }
+
+    private static ScaleTransform? FindScaleTransform(Transform transform)
+    {
+        return transform switch
+        {
+            ScaleTransform scale => scale,
+            TransformGroup group => group.Children.OfType<ScaleTransform>().FirstOrDefault(),
+            _ => null
+        };
     }
 
     private static Brush GetArtifactBackground(FrameworkElement root, FrameworkElement target, string theme)

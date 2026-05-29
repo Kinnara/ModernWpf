@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Automation;
@@ -151,6 +152,7 @@ namespace ModernWpf.Gallery.Testing
             try
             {
                 Directory.CreateDirectory(ArtifactDirectory);
+                StabilizeAnimatedVisualState(root);
                 WriteVisualArtifactsCore(root);
             }
             catch (Exception ex)
@@ -238,6 +240,60 @@ namespace ModernWpf.Gallery.Testing
             {
                 WriteVisualArtifactsCore(VisualTreeHelper.GetChild(root, i));
             }
+        }
+
+        private static void StabilizeAnimatedVisualState(DependencyObject root)
+        {
+            var progressBar = root as ProgressBar;
+            if (progressBar != null && progressBar.IsIndeterminate)
+            {
+                StabilizeIndeterminateProgressBar(progressBar);
+            }
+
+            var childCount = VisualTreeHelper.GetChildrenCount(root);
+            for (var i = 0; i < childCount; i++)
+            {
+                StabilizeAnimatedVisualState(VisualTreeHelper.GetChild(root, i));
+            }
+        }
+
+        private static void StabilizeIndeterminateProgressBar(ProgressBar progressBar)
+        {
+            progressBar.ApplyTemplate();
+            progressBar.UpdateLayout();
+
+            var animation = progressBar.Template.FindName("Animation", progressBar) as FrameworkElement;
+            if (animation == null)
+            {
+                return;
+            }
+
+            animation.BeginAnimation(UIElement.RenderTransformOriginProperty, null);
+            animation.RenderTransformOrigin = new Point(0, 0.5);
+
+            var scale = FindScaleTransform(animation.RenderTransform);
+            if (scale != null)
+            {
+                scale.BeginAnimation(ScaleTransform.ScaleXProperty, null);
+                scale.ScaleX = 0.25;
+            }
+        }
+
+        private static ScaleTransform FindScaleTransform(Transform transform)
+        {
+            var scale = transform as ScaleTransform;
+            if (scale != null)
+            {
+                return scale;
+            }
+
+            var group = transform as TransformGroup;
+            if (group != null)
+            {
+                return group.Children.OfType<ScaleTransform>().FirstOrDefault();
+            }
+
+            return null;
         }
 
         private static void WriteElementPng(FrameworkElement element, string path)
