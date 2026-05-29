@@ -1385,50 +1385,17 @@ namespace ModernWpf.Gallery.Tests
                 "BorderThickness=\"1,1,1,0\"",
                 "CornerRadius=\"8,8,0,0\"",
                 "TextElement.FontSize=\"{StaticResource BodyTextBlockFontSize}\">");
-            AssertContainsInOrder(
-                xaml,
-                "<Style x:Key=\"ControlExampleSourceExpanderStyle\" TargetType=\"{x:Type Expander}\">",
-                "<ControlTemplate TargetType=\"{x:Type Expander}\">",
-                "<Grid.RowDefinitions>",
-                "<ToggleButton",
-                "x:Name=\"HeaderSite\"",
-                "Grid.Row=\"0\"",
-                "Height=\"{TemplateBinding MinHeight}\"",
-                "HorizontalAlignment=\"Stretch\"",
-                "Content=\"{TemplateBinding Header}\"",
-                "AutomationProperties.Name=\"{Binding Path=(AutomationProperties.Name), RelativeSource={RelativeSource TemplatedParent}}\"",
-                "IsChecked=\"{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}\">",
-                "<Border",
-                "x:Name=\"HeaderBorder\"",
-                "Background=\"{DynamicResource ExpanderHeaderBackground}\"",
-                "BorderBrush=\"{DynamicResource ExpanderHeaderBorderBrush}\"",
-                "BorderThickness=\"{StaticResource ExpanderBorderThemeThickness}\"",
-                "CornerRadius=\"{DynamicResource ControlCornerRadius}\">",
-                "<Path",
-                "x:Name=\"Chevron\"",
-                "Data=\"M 0 0 L 4 4 L 8 0\"",
-                "Stroke=\"{DynamicResource TextFillColorPrimaryBrush}\"",
-                "<Border",
-                "x:Name=\"ExpandSite\"",
-                "Padding=\"16\"",
-                "Background=\"{DynamicResource SolidBackgroundFillColorBaseBrush}\"",
-                "BorderBrush=\"{DynamicResource CardStrokeColorDefaultBrush}\"",
-                "BorderThickness=\"1,0,1,1\"",
-                "CornerRadius=\"0,0,8,8\"",
-                "Visibility=\"Collapsed\">",
-                "<ContentPresenter ContentSource=\"Content\" />");
+            Assert.IsFalse(
+                xaml.Contains("ControlExampleSourceExpanderStyle", StringComparison.Ordinal),
+                "The source-code expander should use the official WPF Gallery default Expander template.");
             AssertContainsInOrder(
                 xaml,
                 "<Expander",
                 "Grid.Row=\"2\"",
                 "AutomationProperties.Name=\"{Binding HeaderText, RelativeSource={RelativeSource TemplatedParent}, StringFormat=View Source Code for {0}}\"",
                 "Header=\"Source code\"",
-                "MinHeight=\"43\">",
-                "<Style BasedOn=\"{StaticResource ControlExampleSourceExpanderStyle}\" TargetType=\"{x:Type Expander}\">",
-                "<MultiDataTrigger>",
-                "<Condition Binding=\"{Binding XamlCode, RelativeSource={RelativeSource TemplatedParent}}\" Value=\"{x:Null}\" />",
-                "<Condition Binding=\"{Binding CSharpCode, RelativeSource={RelativeSource TemplatedParent}}\" Value=\"{x:Null}\" />",
-                "<Setter Property=\"Visibility\" Value=\"Collapsed\" />");
+                "<StackPanel>",
+                "<StackPanel x:Name=\"XamlCodeBlock\">");
             StringAssert.Contains(
                 xaml,
                 "<Button Grid.Column=\"1\" Padding=\"8\" Command=\"ApplicationCommands.Copy\" CommandParameter=\"Copy_XamlCode\" ToolTipService.ToolTip=\"Copy to clipboard\" AutomationProperties.Name=\"Copy XAML Code\" >");

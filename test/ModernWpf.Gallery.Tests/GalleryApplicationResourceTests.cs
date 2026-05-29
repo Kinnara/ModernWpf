@@ -402,21 +402,21 @@ namespace ModernWpf.Gallery.Tests
                     var sourceCodeExpander = FindVisualChildren<Expander>(controlExample).Single();
                     Assert.AreEqual("Source code", sourceCodeExpander.Header);
                     Assert.AreEqual("View Source Code for Reference sample", AutomationProperties.GetName(sourceCodeExpander));
-                    Assert.AreEqual(43.0, sourceCodeExpander.MinHeight);
+                    Assert.AreEqual(0.0, sourceCodeExpander.MinHeight);
                     Assert.AreEqual(Visibility.Visible, sourceCodeExpander.Visibility);
                     Assert.IsTrue(
-                        sourceCodeExpander.ActualHeight >= 43.0 && sourceCodeExpander.ActualHeight <= 44.5,
-                        "Expected collapsed source expander height near the official WPF Gallery 43px row; actual " + sourceCodeExpander.ActualHeight);
+                        sourceCodeExpander.ActualHeight >= 42.0 && sourceCodeExpander.ActualHeight <= 44.5,
+                        "Expected collapsed source expander height near the official WPF Gallery default row; actual " + sourceCodeExpander.ActualHeight);
 
                     var sourceHeaderToggle = FindVisualChildren<System.Windows.Controls.Primitives.ToggleButton>(sourceCodeExpander).Single();
-                    Assert.IsFalse(sourceHeaderToggle.Focusable);
+                    Assert.IsTrue(sourceHeaderToggle.Focusable);
                     Assert.AreEqual(
                         "View Source Code for Reference sample",
                         AutomationProperties.GetName(sourceHeaderToggle));
                     var sourceHeaderPeer = UIElementAutomationPeer.CreatePeerForElement(sourceHeaderToggle);
                     Assert.AreEqual("View Source Code for Reference sample", sourceHeaderPeer.GetName());
                     Assert.IsTrue(
-                        sourceHeaderToggle.ActualWidth >= displayBorder.ActualWidth - 1.0,
+                        sourceHeaderToggle.ActualWidth >= displayBorder.ActualWidth - 2.0,
                         "Expected source header to span the official full-width row; actual " + sourceHeaderToggle.ActualWidth + " display " + displayBorder.ActualWidth);
 
                     var divider = (Border)controlExample.Template.FindName("Border", controlExample);
@@ -454,7 +454,7 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void ControlExampleTemplateHidesSourceExpanderWithoutLocalSourceName()
+        public void ControlExampleTemplateKeepsOfficialSourceExpanderWhenCodeIsEmpty()
         {
             WpfTestHost.Run(() =>
             {
@@ -485,7 +485,15 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsNull(controlExample.Template.FindName("SourceCodeExpander", controlExample));
                     var sourceCodeExpander = FindVisualChildren<Expander>(controlExample).Single();
                     Assert.AreEqual("Source code", sourceCodeExpander.Header);
-                    Assert.AreEqual(Visibility.Collapsed, sourceCodeExpander.Visibility);
+                    Assert.AreEqual(Visibility.Visible, sourceCodeExpander.Visibility);
+
+                    var xamlCodeBlock = (StackPanel)controlExample.Template.FindName("XamlCodeBlock", controlExample);
+                    var csharpCodeBlock = (StackPanel)controlExample.Template.FindName("CSharpCodeBlock", controlExample);
+                    var divider = (Border)controlExample.Template.FindName("Border", controlExample);
+
+                    Assert.AreEqual(Visibility.Collapsed, xamlCodeBlock.Visibility);
+                    Assert.AreEqual(Visibility.Collapsed, csharpCodeBlock.Visibility);
+                    Assert.AreEqual(Visibility.Collapsed, divider.Visibility);
                 }
                 finally
                 {
