@@ -242,6 +242,40 @@ public class DropDownButtonApiTests
     }
 
     [TestMethod]
+    public void DropDownButtonChevronParticipatesInLayout()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var button = new ModernWpf.Controls.DropDownButton
+            {
+                Content = "Email"
+            };
+
+            using var host = new TestWindowHost(button, width: 220, height: 120);
+            host.UpdateLayout();
+
+            var presenter = VisualTreeTestHelper.FindDescendant<ContentPresenterEx>(button)
+                ?? throw new AssertFailedException("Expected DropDownButton template to use ContentPresenterEx.");
+            var chevron = VisualTreeTestHelper.FindDescendant<FontIconFallback>(button)
+                ?? throw new AssertFailedException("Expected DropDownButton chevron icon.");
+
+            var presenterBounds = presenter.TransformToAncestor(button).TransformBounds(new Rect(presenter.RenderSize));
+            var chevronBounds = chevron.TransformToAncestor(button).TransformBounds(new Rect(chevron.RenderSize));
+
+            Assert.IsTrue(chevronBounds.Width > 0, "Chevron should have positive layout width.");
+            Assert.IsTrue(chevronBounds.Height > 0, "Chevron should have positive layout height.");
+            Assert.IsTrue(
+                chevronBounds.Left > presenterBounds.Left,
+                $"Chevron should be laid out to the right of content. Content={presenterBounds}; Chevron={chevronBounds}");
+            Assert.IsTrue(
+                chevronBounds.Right <= button.ActualWidth,
+                $"Chevron should fit inside the DropDownButton bounds. ButtonWidth={button.ActualWidth}; Chevron={chevronBounds}");
+        });
+    }
+
+    [TestMethod]
     public void AnimatedChevronStateUsesWinUIVisualStateSetters()
     {
         WpfTestHost.Run(() =>

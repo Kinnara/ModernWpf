@@ -79,39 +79,39 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
 
-                        <ui:GridEx.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </ui:GridEx.ColumnDefinitions>
+                        <StackPanel
+                            x:Name="ContentPanel"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                            <ui:ContentPresenterEx
+                                x:Name="ContentPresenter"
+                                CharacterSpacing="{TemplateBinding CharacterSpacing}"
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                ContentTransitions="{TemplateBinding ContentTransitions}"
+                                ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                Foreground="{TemplateBinding Foreground}"
+                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                IsTextScaleFactorEnabled="{TemplateBinding IsTextScaleFactorEnabled}"
+                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Focusable="False"
+                                RecognizesAccessKey="True"
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
 
-                        <ui:ContentPresenterEx
-                            x:Name="ContentPresenter"
-                            CharacterSpacing="{TemplateBinding CharacterSpacing}"
-                            Content="{TemplateBinding Content}"
-                            ContentTemplate="{TemplateBinding ContentTemplate}"
-                            ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
-                            ContentTransitions="{TemplateBinding ContentTransitions}"
-                            ContentStringFormat="{TemplateBinding ContentStringFormat}"
-                            Foreground="{TemplateBinding Foreground}"
-                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            IsTextScaleFactorEnabled="{TemplateBinding IsTextScaleFactorEnabled}"
-                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                            Focusable="False"
-                            RecognizesAccessKey="True"
-                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-
-                        <ui:FontIconFallback
-                            x:Name="ChevronIcon"
-                            Grid.Column="1"
-                            Width="12"
-                            Height="12"
-                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                            FontSize="8"
-                            Foreground="{DynamicResource DropDownButtonForegroundSecondary}"
-                            Data="{StaticResource ChevronDownSmall}"
-                            VerticalAlignment="Center"
-                            Margin="8,0,0,0"
-                            ui:AnimatedIcon.State="Normal" />
+                            <ui:FontIconFallback
+                                x:Name="ChevronIcon"
+                                Width="12"
+                                Height="12"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                FontSize="8"
+                                Foreground="{DynamicResource DropDownButtonForegroundSecondary}"
+                                Data="{StaticResource ChevronDownSmall}"
+                                VerticalAlignment="Center"
+                                Margin="8,0,0,0"
+                                ui:AnimatedIcon.State="Normal" />
+                        </StackPanel>
 
                     </ui:GridEx>
                 </ControlTemplate>

@@ -2318,6 +2318,8 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual("Email", simpleButton.Content);
                     Assert.AreEqual("Email", AutomationProperties.GetName(iconButton));
                     Assert.AreEqual("\uE715", ((Mux.FontIcon)iconButton.Content).Glyph);
+                    AssertDropDownButtonShowsChevron(simpleButton);
+                    AssertDropDownButtonShowsChevron(iconButton);
 
                     AssertEmailDropDownFlyout(simpleButton.Flyout, includeIcons: false);
                     AssertEmailDropDownFlyout(iconButton.Flyout, includeIcons: true);
@@ -2329,6 +2331,24 @@ namespace ModernWpf.Gallery.Tests
                     WpfTestHost.DoEvents();
                 }
             });
+        }
+
+        private static void AssertDropDownButtonShowsChevron(Mux.DropDownButton button)
+        {
+            var contentPresenter = FindDescendants<Mux.ContentPresenterEx>(button)
+                .SingleOrDefault(item => item.Name == "ContentPresenter");
+            var chevron = FindDescendants<Mux.FontIconFallback>(button)
+                .SingleOrDefault(item => item.Name == "ChevronIcon");
+            Assert.IsNotNull(contentPresenter);
+            Assert.IsNotNull(chevron);
+
+            var contentBounds = contentPresenter.TransformToAncestor(button).TransformBounds(new Rect(contentPresenter.RenderSize));
+            var chevronBounds = chevron.TransformToAncestor(button).TransformBounds(new Rect(chevron.RenderSize));
+            Assert.IsTrue(chevronBounds.Width > 0, "DropDownButton chevron should have positive layout width.");
+            Assert.IsTrue(chevronBounds.Left > contentBounds.Left, "DropDownButton chevron should be laid out to the right of its content.");
+            Assert.IsTrue(
+                chevronBounds.Right <= button.ActualWidth,
+                $"DropDownButton chevron should fit inside the button bounds. ButtonWidth={button.ActualWidth}; Chevron={chevronBounds}");
         }
 
         [TestMethod]
