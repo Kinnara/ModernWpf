@@ -471,16 +471,24 @@ namespace ModernWpf.Gallery.Testing
         private static Rect GetArtifactViewbox(FrameworkElement element, int width, int height)
         {
             var automationId = AutomationProperties.GetAutomationId(element);
-            if (string.Equals(automationId, "GallerySample_NavigationView_NavigationView", StringComparison.Ordinal))
+            if (string.Equals(automationId, "GallerySample_NavigationView_NavigationView", StringComparison.Ordinal) ||
+                string.Equals(automationId, "GallerySample_GridView_BasicGridView", StringComparison.Ordinal))
             {
-                var parent = VisualTreeHelper.GetParent(element) as Visual;
-                if (parent != null)
+                return GetParentOffsetViewbox(element, width, height);
+            }
+
+            return new Rect(0, 0, width, height);
+        }
+
+        private static Rect GetParentOffsetViewbox(FrameworkElement element, int width, int height)
+        {
+            var parent = VisualTreeHelper.GetParent(element) as Visual;
+            if (parent != null)
+            {
+                var offset = element.TransformToAncestor(parent).Transform(new Point());
+                if (offset.Y > 0)
                 {
-                    var offset = element.TransformToAncestor(parent).Transform(new Point());
-                    if (offset.Y > 0)
-                    {
-                        return new Rect(0, offset.Y, width, height);
-                    }
+                    return new Rect(0, offset.Y, width, height);
                 }
             }
 

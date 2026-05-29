@@ -1196,6 +1196,7 @@
     <m:StaticResource x:Key="GridViewItemDragBackground" ResourceKey="SystemControlTransparentBrush" />
     <m:StaticResource x:Key="GridViewItemDragForeground" ResourceKey="SystemControlHighlightAltChromeWhiteBrush" />
     <m:StaticResource x:Key="GridViewItemPlaceholderBackground" ResourceKey="SystemControlDisabledChromeDisabledHighBrush" />
+    <CornerRadius x:Key="GridViewItemCornerRadius">4</CornerRadius>
 
     <!-- Resources for LoopingSelector -->
     <m:StaticResource x:Key="LoopingSelectorButtonBackground" ResourceKey="SystemControlBackgroundChromeMediumBrush" />

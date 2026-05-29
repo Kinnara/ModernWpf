@@ -52,6 +52,10 @@ public class ListViewApiTests
             using var host = new TestWindowHost(item, width: 120, height: 120);
 
             var root = FindTemplateChild<FrameworkElement>(item, "ContentBorder");
+            var presenter = FindTemplateChild<ModernWpf.Controls.ContentPresenterEx>(item, "ContentPresenter");
+            Assert.AreEqual(item.TryFindResource("GridViewItemCornerRadius"), item.CornerRadius);
+            Assert.IsTrue(presenter.ClipToBounds);
+            Assert.AreEqual(item.CornerRadius, presenter.CornerRadius);
             Assert.AreEqual(0, item.Template.Triggers.Count);
             AssertStateSetter(root, "CommonStates", "PointerOver", "ContentBorder.Background", "ContentPresenter.Foreground");
             AssertStateSetter(root, "CommonStates", "Selected", "ContentBorder.Background", "SelectedBorder.Opacity", "MultiSelectCheck.Opacity");

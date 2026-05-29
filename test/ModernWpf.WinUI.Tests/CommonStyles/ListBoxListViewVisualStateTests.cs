@@ -578,6 +578,7 @@ public class ListBoxListViewVisualStateTests
         AssertThemeResourceValue(themeName, "ListViewItemReorderHintThemeOffset", 10.0);
         AssertThemeResourceValue(themeName, "ListViewItemSelectedBorderThemeThickness", 4.0);
         AssertThemeResourceValue(themeName, "ListViewItemSelectionCheckMarkVisualEnabled", true);
+        AssertThemeResourceValue(themeName, "GridViewItemCornerRadius", new CornerRadius(4));
         AssertThemeResourceReferences(
             themeName,
             ("ListViewItemPillFillBrush", "AccentFillColorDefaultBrush"),
@@ -684,6 +685,7 @@ public class ListBoxListViewVisualStateTests
         AssertThemeResourceValue("HighContrast", "ListViewItemReorderHintThemeOffset", 10.0);
         AssertThemeResourceValue("HighContrast", "ListViewItemSelectedBorderThemeThickness", 4.0);
         AssertThemeResourceValue("HighContrast", "ListViewItemSelectionCheckMarkVisualEnabled", true);
+        AssertThemeResourceValue("HighContrast", "GridViewItemCornerRadius", new CornerRadius(4));
         AssertThemeSolidColorBrushReference("HighContrast", "ListViewItemBorderBackground", "SystemColorButtonFaceColorBrush");
         AssertThemeSolidColorBrushReference("HighContrast", "ListViewBackground", "SystemControlTransparentBrush");
         AssertThemeSolidColorBrushReference("HighContrast", "ListViewBorderBrush", "SystemControlTransparentBrush");

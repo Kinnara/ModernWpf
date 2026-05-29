@@ -696,6 +696,7 @@ private void InitializeData()
             image.SetValue(FrameworkElement.WidthProperty, 190.0);
             image.SetValue(FrameworkElement.HeightProperty, 130.0);
             image.SetValue(Image.StretchProperty, Stretch.UniformToFill);
+            image.SetValue(RenderOptions.BitmapScalingModeProperty, BitmapScalingMode.HighQuality);
             image.SetBinding(Image.SourceProperty, new Binding("ImageSource"));
             image.SetBinding(AutomationProperties.NameProperty, new Binding("Title"));
             return new DataTemplate { VisualTree = image };

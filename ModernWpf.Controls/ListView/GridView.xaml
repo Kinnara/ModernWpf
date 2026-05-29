@@ -11,6 +11,7 @@
         <Setter Property="Foreground" Value="{DynamicResource GridViewItemForeground}" />
         <Setter Property="BorderBrush" Value="{x:Null}" />
         <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="CornerRadius" Value="{DynamicResource GridViewItemCornerRadius}" />
         <Setter Property="KeyboardNavigation.TabNavigation" Value="Local" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
@@ -116,9 +117,11 @@
                         <Grid>
                             <ui:ContentPresenterEx
                                 x:Name="ContentPresenter"
+                                ClipToBounds="True"
                                 Content="{TemplateBinding Content}"
                                 ContentStringFormat="{TemplateBinding ContentStringFormat}"
                                 ContentTemplate="{TemplateBinding ContentTemplate}"
+                                CornerRadius="{TemplateBinding CornerRadius}"
                                 Foreground="{TemplateBinding Foreground}"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 Margin="{TemplateBinding Padding}"
@@ -128,6 +131,7 @@
                                 x:Name="SelectedBorder"
                                 BorderBrush="{DynamicResource GridViewItemCheckBoxBrush}"
                                 BorderThickness="2"
+                                CornerRadius="{TemplateBinding CornerRadius}"
                                 IsHitTestVisible="False"
                                 Opacity="0" />
                             <Border

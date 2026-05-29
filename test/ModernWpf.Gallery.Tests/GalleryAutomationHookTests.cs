@@ -1610,6 +1610,10 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsNotNull(basicGridView.ItemTemplate);
 
                     WaitFor(() => basicGridView.ItemContainerGenerator.ContainerFromIndex(0) != null);
+                    var basicImage = FindDescendants<Image>(basicGridView).FirstOrDefault();
+                    Assert.IsNotNull(basicImage);
+                    Assert.AreEqual(BitmapScalingMode.HighQuality, RenderOptions.GetBitmapScalingMode(basicImage));
+
                     InvokeListViewBaseItemClick(
                         basicGridView,
                         (Mux.ListViewBaseItem)basicGridView.ItemContainerGenerator.ContainerFromIndex(0));
