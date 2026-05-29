@@ -1627,8 +1627,15 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
     $crop = $null
     $usableFrames = @($frames.ToArray() | Where-Object { $_.NonBlank -and ![string]::IsNullOrEmpty($_.Screenshot) })
     if ($usableFrames.Count -gt 0) {
-        $lastFrame = $usableFrames[$usableFrames.Count - 1]
-        $openDelta = Compare-Images $baselinePath $lastFrame.Screenshot
+        $selectedFrame = $usableFrames[$usableFrames.Count - 1]
+        foreach ($frame in $usableFrames) {
+            $frameDelta = Compare-Images $baselinePath $frame.Screenshot
+            if ($frameDelta.Comparable -and ($null -eq $openDelta -or $frameDelta.MeanDelta -gt $openDelta.MeanDelta)) {
+                $openDelta = $frameDelta
+                $selectedFrame = $frame
+            }
+        }
+
         $elementBounds = Get-ElementWindowBounds $window $cropElement
         $windowRect = [GalleryVisualNative]::GetRect($window.Current.NativeWindowHandle)
         $windowWidth = [Math]::Max(1, $windowRect.Right - $windowRect.Left)
@@ -1639,7 +1646,7 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
             $elementBounds.Height -lt ($windowHeight * 0.75)
         if ($elementBoundsUsable) {
             $cropPath = Join-Path $caseDir ("{0}-{1}-open-crop.png" -f $app.ToLowerInvariant(), $control)
-            $expandedBounds = Save-Crop $lastFrame.Screenshot $elementBounds $cropPath
+            $expandedBounds = Save-Crop $selectedFrame.Screenshot $elementBounds $cropPath
             $crop = [ordered]@{
                 Found = $true
                 Screenshot = $cropPath
@@ -1651,12 +1658,12 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
             }
         }
         else {
-            $differenceBounds = Find-DifferenceBounds $baselinePath $lastFrame.Screenshot
+            $differenceBounds = Find-DifferenceBounds $baselinePath $selectedFrame.Screenshot
             if ($differenceBounds.Found) {
                 $targetBounds = Get-ElementWindowBounds $window $showButton
                 $differenceBounds = Trim-DifferenceBoundsToContentRoot $differenceBounds $targetBounds
                 $cropPath = Join-Path $caseDir ("{0}-{1}-open-crop.png" -f $app.ToLowerInvariant(), $control)
-                $expandedBounds = Save-Crop $lastFrame.Screenshot $differenceBounds $cropPath
+                $expandedBounds = Save-Crop $selectedFrame.Screenshot $differenceBounds $cropPath
                 $crop = [ordered]@{
                     Found = $true
                     Screenshot = $cropPath
@@ -1680,7 +1687,9 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
             }
         }
 
-        $visualOpened = $openDelta.Comparable -and $openDelta.MeanDelta -gt 1.0
+        $deltaOpened = $null -ne $openDelta -and $openDelta.Comparable -and $openDelta.MeanDelta -gt 1.0
+        $visualOpened = $deltaOpened -or
+            ($null -ne $crop -and $crop.Found -and $crop.Source -eq "Difference" -and $crop.ChangedSamples -gt 0)
     }
 
     if ($app -eq "ModernWpf" -and $null -eq $crop) {
@@ -1713,6 +1722,8 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
         Frames = $frames.ToArray()
         OpenDelta = $openDelta
         Crop = $crop
+        SelectedFrameDelayMs = $(if ($null -ne $selectedFrame) { $selectedFrame.DelayMs } else { $null })
+        SelectedFrameScreenshot = $(if ($null -ne $selectedFrame) { $selectedFrame.Screenshot } else { "" })
         Notes = $notes
     }
 }
@@ -2167,12 +2178,21 @@ foreach ($control in $Controls) {
         $modern.Interaction.Frames.Count -gt 0 -and $referenceCapture.Interaction.Frames.Count -gt 0) {
         $modernFrame = $modern.Interaction.Frames[$modern.Interaction.Frames.Count - 1]
         $referenceFrame = $referenceCapture.Interaction.Frames[$referenceCapture.Interaction.Frames.Count - 1]
-        if ($modernFrame.Screenshot -and $referenceFrame.Screenshot) {
-            $modern["InteractionReferenceComparison"] = Compare-Images $modernFrame.Screenshot $referenceFrame.Screenshot
+        $modernFrameScreenshot = $modernFrame.Screenshot
+        $referenceFrameScreenshot = $referenceFrame.Screenshot
+        if ($modern.Interaction.Contains("SelectedFrameScreenshot") -and $modern.Interaction.SelectedFrameScreenshot) {
+            $modernFrameScreenshot = $modern.Interaction.SelectedFrameScreenshot
+        }
+        if ($referenceCapture.Interaction.Contains("SelectedFrameScreenshot") -and $referenceCapture.Interaction.SelectedFrameScreenshot) {
+            $referenceFrameScreenshot = $referenceCapture.Interaction.SelectedFrameScreenshot
+        }
+        if ($modernFrameScreenshot -and $referenceFrameScreenshot) {
+            $modern["InteractionReferenceComparison"] = Compare-Images $modernFrameScreenshot $referenceFrameScreenshot
         }
 
         if ($null -ne $modern.Interaction.Crop -and $null -ne $referenceCapture.Interaction.Crop -and
-            $modern.Interaction.Crop.Found -and $referenceCapture.Interaction.Crop.Found) {
+            $modern.Interaction.Crop.Found -and $referenceCapture.Interaction.Crop.Found -and
+            $modern.Interaction.Crop.Source -eq $referenceCapture.Interaction.Crop.Source) {
             $modern["InteractionCropReferenceComparison"] = Compare-ImagesNormalized $modern.Interaction.Crop.Screenshot $referenceCapture.Interaction.Crop.Screenshot
             $modern["InteractionCropSize"] = [ordered]@{
                 ModernWpfWidth = $modern.Interaction.Crop.Width

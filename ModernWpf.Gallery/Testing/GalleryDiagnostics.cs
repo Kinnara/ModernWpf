@@ -472,7 +472,8 @@ namespace ModernWpf.Gallery.Testing
         {
             var automationId = AutomationProperties.GetAutomationId(element);
             if (string.Equals(automationId, "GallerySample_NavigationView_NavigationView", StringComparison.Ordinal) ||
-                string.Equals(automationId, "GallerySample_GridView_BasicGridView", StringComparison.Ordinal))
+                string.Equals(automationId, "GallerySample_GridView_BasicGridView", StringComparison.Ordinal) ||
+                string.Equals(automationId, "GallerySample_CommandBarFlyout_ShowButton", StringComparison.Ordinal))
             {
                 return GetParentOffsetViewbox(element, width, height);
             }

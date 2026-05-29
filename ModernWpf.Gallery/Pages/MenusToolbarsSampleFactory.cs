@@ -888,6 +888,7 @@ namespace ModernWpf.Gallery.Pages
                     "pack://application:,,,/ModernWpf.Gallery;component/Assets/SampleMedia/rainier.jpg",
                     UriKind.Absolute))
             };
+            image.SetValue(RenderOptions.BitmapScalingModeProperty, BitmapScalingMode.HighQuality);
 
             var button = new Button
             {

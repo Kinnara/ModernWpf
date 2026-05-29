@@ -3675,6 +3675,7 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(new Thickness(0), button.Padding);
                     Assert.AreEqual(new Thickness(0, 12, 0, 12), button.Margin);
                     Assert.AreEqual(300.0, image.Height);
+                    Assert.AreEqual(BitmapScalingMode.HighQuality, RenderOptions.GetBitmapScalingMode(image));
                     StringAssert.Contains(((BitmapImage)image.Source).UriSource.ToString(), "Assets/SampleMedia/rainier.jpg");
 
                     var flyout = (Mux.CommandBarFlyout)root.Resources["CommandBarFlyout1"];
