@@ -376,6 +376,7 @@ namespace ModernWpf.Gallery.Tests
                     AssertSelectionIndicatorBounds(menuItem, 12, 19, "Menu child selection indicator");
                     AssertNavigationItemLayoutRootMargin(navigationItem, new Thickness(4, 2, 4, 2), "Navigation child-selected row background");
                     AssertNavigationItemLayoutRootMargin(menuItem, new Thickness(12, 7, -5, -5), "Menu selected child row background");
+                    AssertNavigationItemContentMargin(menuItem, 8, 2, "Menu selected child content");
                     Assert.IsInstanceOfType(contentHost.Content, typeof(ItemPage));
 
                     page.NavigateTo("category/Navigation");
@@ -385,6 +386,7 @@ namespace ModernWpf.Gallery.Tests
 
                     Assert.IsFalse(menuItem.IsSelected, "Menu should not keep item selection after category navigation.");
                     AssertNavigationItemLayoutRootMargin(menuItem, new Thickness(4, 2, 4, 2), "Menu deselected child row background");
+                    AssertNavigationItemContentMargin(menuItem, 4, 0, "Menu deselected child content");
                 });
             });
         }
@@ -946,9 +948,15 @@ namespace ModernWpf.Gallery.Tests
 
         private static void AssertNavigationItemContentMargin(NavigationViewItem item, double expectedLeft)
         {
+            AssertNavigationItemContentMargin(item, expectedLeft, 0, GetNavigationItemText(item) + " content margin");
+        }
+
+        private static void AssertNavigationItemContentMargin(NavigationViewItem item, double expectedLeft, double expectedTop, string context)
+        {
             var contentGrid = item.Content as Grid;
             Assert.IsNotNull(contentGrid);
-            Assert.AreEqual(expectedLeft, contentGrid.Margin.Left);
+            Assert.AreEqual(expectedLeft, contentGrid.Margin.Left, context + " left");
+            Assert.AreEqual(expectedTop, contentGrid.Margin.Top, context + " top");
         }
 
         private static void AssertNavigationTitleTextLayout(NavigationViewItem item, string expectedTitle)

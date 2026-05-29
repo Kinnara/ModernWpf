@@ -118,6 +118,7 @@ namespace ModernWpf.Gallery.Shell
         private static readonly Thickness ChildNavigationSelectionIndicatorMargin = new Thickness(-35, 0, 0, -6);
         private static readonly Thickness DefaultNavigationItemButtonMargin = new Thickness(4, 2, 4, 2);
         private static readonly Thickness ChildNavigationSelectedBackgroundMargin = new Thickness(12, 7, -5, -5);
+        private static readonly Thickness ChildNavigationSelectedContentOffset = new Thickness(4, 2, 0, 0);
         private static readonly Color WpfGalleryLightNavigationPaneBackgroundColor = Color.FromRgb(250, 250, 250);
 
         public NavigationRootPage()
@@ -839,6 +840,7 @@ namespace ModernWpf.Gallery.Shell
                 : DefaultNavigationSelectionIndicatorMargin;
 
             AlignSelectedNavigationItemBackgroundWithWpfGalleryTreeView(selectedItem);
+            AlignSelectedNavigationItemContentWithWpfGalleryTreeView(selectedItem);
         }
 
         private static void AlignSelectedNavigationItemBackgroundWithWpfGalleryTreeView(NavigationViewItem selectedItem)
@@ -861,6 +863,48 @@ namespace ModernWpf.Gallery.Shell
             {
                 layoutRoot.Margin = DefaultNavigationItemButtonMargin;
             }
+        }
+
+        private static void AlignSelectedNavigationItemContentWithWpfGalleryTreeView(NavigationViewItem selectedItem)
+        {
+            if (selectedItem.Tag is not NavigationTarget { Kind: NavigationTargetKind.Item })
+            {
+                ResetNavigationItemContentAlignment(selectedItem);
+                return;
+            }
+
+            if (selectedItem.Content is Grid contentGrid)
+            {
+                var defaultMargin = GetDefaultNavigationItemContentMargin(selectedItem);
+                contentGrid.Margin = new Thickness(
+                    defaultMargin.Left + ChildNavigationSelectedContentOffset.Left,
+                    defaultMargin.Top + ChildNavigationSelectedContentOffset.Top,
+                    defaultMargin.Right + ChildNavigationSelectedContentOffset.Right,
+                    defaultMargin.Bottom + ChildNavigationSelectedContentOffset.Bottom);
+            }
+        }
+
+        private static void ResetNavigationItemContentAlignment(NavigationViewItem item)
+        {
+            if (item.Content is Grid contentGrid)
+            {
+                contentGrid.Margin = GetDefaultNavigationItemContentMargin(item);
+            }
+        }
+
+        private static Thickness GetDefaultNavigationItemContentMargin(NavigationViewItem item)
+        {
+            if (item.Tag is NavigationTarget { Kind: NavigationTargetKind.Item })
+            {
+                return new Thickness(item.Content is Grid { Tag: string } ? ChildGlyphNavigationContentLeftMargin : ChildTextNavigationContentLeftMargin, 0, 0, 0);
+            }
+
+            if (item.Tag is NavigationTarget { Kind: NavigationTargetKind.Group })
+            {
+                return new Thickness(0);
+            }
+
+            return new Thickness(TopLevelNavigationContentLeftMargin, 0, 0, 0);
         }
 
         private static Border GetNavigationItemLayoutRoot(NavigationViewItem item)
@@ -905,6 +949,7 @@ namespace ModernWpf.Gallery.Shell
                     navigationItem.IsSelected = false;
                     navigationItem.IsChildSelected = false;
                     ResetNavigationItemBackgroundAlignment(navigationItem);
+                    ResetNavigationItemContentAlignment(navigationItem);
                     ClearNavigationSelection(navigationItem.MenuItems);
                 }
             }
