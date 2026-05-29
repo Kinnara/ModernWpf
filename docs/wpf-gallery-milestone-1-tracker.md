@@ -25,20 +25,21 @@ row in this queue.
 If a later `Needs Work` or section-status row appears to conflict with this
 queue, the queue wins. Fix the stale row before starting lower-priority work.
 
-Current executable row: **P1 source/resource/runtime alignment tied to a visual
-or harness issue**, because P0.1 is blocked by the local Windows session
-reporting `SystemParameters.HighContrast = False`, P0.2-P0.4 are done at branch
-tip, P1.1 has current Light/Dark evidence and recorded residual causes, and
-P1.2 stale `Partial` visual rows now have current evidence or recorded Color
-rendering residuals. If Windows OS High Contrast is enabled, P0.1 immediately
-preempts all lower rows. While P0.1 stays blocked, row 7 has its own strict
-subqueue below; take the first unresolved row 7.1 item before any lower row 7
-or P2 work.
+Current executable row: **P2 cleanup and tracker consistency only**, because
+P0.1 is blocked by the local Windows session reporting
+`SystemParameters.HighContrast = False`, P0.2-P0.4 are done at branch tip,
+P1.1 has current Light/Dark evidence and recorded residual causes, P1.2 stale
+`Partial` visual rows now have current evidence or recorded Color rendering
+residuals, and row 7.1 is complete at branch tip. If Windows OS High Contrast
+is enabled, P0.1 immediately preempts all lower rows. If a new visible drift or
+visual-harness blocker appears, row 7 preempts P2 and must be handled before
+any lower cleanup.
 
-Do not start general P1/P2 cleanup, source-shape alignment, resource-key
-cleanup, or documentation-only work. Row 7 is executable only when the edit
-directly reduces, explains, or locks a recorded visual/High Contrast finding or
-stabilizes the visual harness.
+Do not start general source-shape or resource-key cleanup while a visible drift,
+High Contrast blocker that can be changed locally, or visual-harness blocker is
+open. While the current environment keeps P0.1 blocked and row 7 has no open
+subqueue item, P2 work is limited to tracker consistency, stale-status cleanup,
+and low-risk documentation that preserves the recorded visual evidence.
 
 | Execution order | Gate | State | Allowed next work |
 | --- | --- | --- | --- |
@@ -48,8 +49,8 @@ stabilizes the visual harness.
 | 4 | P0.3 direct-item drift gate for `TextBox`, `Clipboard`, and `FileAndFolderDialogs` | Done at branch tip. | No action unless a new direct-item visual regression appears. |
 | 5 | P1.1 residual visual drift triage/evidence | Recorded. Current Light evidence is `artifacts/wpf-gallery-visual-audit/20260529-055921-904-3944/report.md`; current Dark evidence is `artifacts/wpf-gallery-visual-audit/20260529-060033-783-44788/report.md`. ProgressBar is `0` / `0`. Iconography is `0.23` / `0.24` with maxRgbSum `3` channel-quantization residual; GridSplitter Light `0.24` and DataGrid Light `0.13` are minor text/line antialiasing residuals with no visible geometry/layout drift. | Do not reopen unless a new visible drift appears. |
 | 6 | P1.2 stale `Partial` visual rows at or below noise threshold | Recorded. StackPanel, TreeView, ToolTip, RichTextEdit, PasswordBox, and Hyperlink are `0` / `0` in `20260529-061205-172-26700` and `20260529-061344-116-67908`. Calendar, DatePicker, Canvas, Image, Menu, TabControl, Frame, and NavigationWindow are `0` / `0` in `20260529-061607-923-61020` and `20260529-061844-861-43780`; UserDashboard is `0` / `0.01`. Color residuals remain current at `20260529-062201-094-27604` and `20260529-062407-485-65068`, with ColorSignal `0.10` / `0.10` and ColorHighContrast `0.12` / `0.14` visually inspected as rendering residuals. | Do not reopen unless a new visible drift appears. |
-| 7 | P1 source/resource/runtime alignment tied to a visual issue | Executable only for work that directly serves a recorded visual/High Contrast finding or stabilizes the visual harness. | Do not pick general source-shape, resource-key, or documentation-only cleanup. |
-| 8 | P2 cleanup and documentation-only work | Gated by all higher rows. | Use only after visual/high-drift work is current, resolved, or explicitly blocked. |
+| 7 | P1 source/resource/runtime alignment tied to a visual issue | No current open row 7 item. Row 7.1 is recorded complete, row 7.2 has no current blocker, and row 7.3 has no current visible mismatch. | Preempt P2 only if new visual/High Contrast drift appears or evidence collection exposes a visual-harness blocker. |
+| 8 | P2 cleanup and documentation-only work | Executable while P0.1 remains environment-blocked and row 7 has no open item. | Keep cleanup low-risk and stop immediately if High Contrast is enabled or new visual/harness drift appears. |
 
 ### Row 7 Strict Subqueue
 
@@ -61,8 +62,8 @@ unresolved, unverified, or not recorded as stale-covered.
 | --- | --- | --- | --- |
 | 7.1 | High Contrast / visual-resource runtime backlog | Recorded at branch tip. | Do not reopen unless new visual/High Contrast drift appears. Each backlog item below is either covered by a focused runtime/resource test or recorded as stale-covered by current visual evidence. |
 | 7.2 | Visual harness stability for accepted P0/P1 evidence | No current blocker. | Fix only when a failing or fragile visual audit blocks current evidence collection. |
-| 7.3 | Source-shape parity tied to a recorded visual mismatch | Gated by 7.1 and 7.2. | Touch only files required for a visible delta or harness finding already recorded above. |
-| 7.4 | General source/resource cleanup and tracker-only cleanup | Not executable. | Leave until all higher visual/High Contrast rows are done, recorded, or blocked. |
+| 7.3 | Source-shape parity tied to a recorded visual mismatch | No current visible mismatch. | Touch only files required for a visible delta or harness finding already recorded above. |
+| 7.4 | General source/resource cleanup and tracker-only cleanup | Superseded by execution row 8 while row 7 has no open item. | Use row 8 rules; do not reopen row 7 without a new visual/High Contrast or harness trigger. |
 
 Row 7.1 backlog order:
 
@@ -187,8 +188,8 @@ Resume checklist:
 2. If High Contrast is on, run the P0.1 real `-Theme HighContrast` visual
    slices before anything else.
 3. If High Contrast is off, pick the first executable row in the queue above;
-   today that means row 7 only for recorded visual/High Contrast or visual
-   harness work, not general source/documentation cleanup.
+   today that means row 8 P2 tracker consistency/cleanup unless a new row 7
+   visual/High Contrast or visual-harness trigger appears.
 4. Before touching source-shape-only, resource-key-only, or documentation-only
    work, re-read this queue and confirm every higher visual row is `Done`,
    current with an explicit blocker, or environment-blocked in the table.
@@ -745,6 +746,11 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases Home -Reference OfficialWpfGallery -Theme HighContrast -TimeoutSeconds 20`
+  - Failed as expected before launching apps because the local Windows session
+    reports OS High Contrast disabled. The script refused to simulate High
+    Contrast via Light/Dark switching and repeated the required blocker:
+    enable a Windows High Contrast theme before running P0.1 screenshot slices.
 - `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -ListCases`
   - Passed after adding visual-comparison residual metrics to the WPF Gallery visual harness.
 - `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases ColorHighContrast -Reference OfficialWpfGallery -Theme Light -ComparisonSampleStep 1 -TimeoutSeconds 30`
@@ -759,8 +765,6 @@ Latest local verification for the current branch tip:
   - Passed at `artifacts/wpf-gallery-visual-audit/20260529-023052-142-69976/report.md`: Modern and official both `Passed`. Deltas are TextBox `0`, Clipboard `0`, and FileAndFolderDialogs `0`; all crops match at `868x758` with Modern `ContentPagePaneRenderedArtifact` and official `OfficialDirectRootContentFrameRenderedArtifact`.
 - `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases TextBox,Clipboard,FileAndFolderDialogs -Reference OfficialWpfGallery -Theme Dark -TimeoutSeconds 30`
   - Passed at `artifacts/wpf-gallery-visual-audit/20260529-023138-825-52464/report.md`: Modern and official both `Passed`. Deltas are TextBox `0`, Clipboard `0`, and FileAndFolderDialogs `0`; all crops match at `868x758` with Modern `ContentPagePaneRenderedArtifact` and official `OfficialDirectRootContentFrameRenderedArtifact`.
-- `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases Home -Reference OfficialWpfGallery -Theme HighContrast -TimeoutSeconds 5`
-  - Expected failure in the current environment because `SystemParameters.HighContrast` is `False`: the visual audit now refuses to simulate OS High Contrast through Light/Dark theme switching and instructs enabling a Windows High Contrast theme before collecting High Contrast screenshot evidence.
 - `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases ShellNavigation -Theme Light`
   - Passed at `artifacts/wpf-gallery-visual-audit/20260529-044215-641-50192/report.md`: Modern and official both `Passed` with matching `250x707` navigation-pane crops and Light delta `9.40`, down from `9.50`. Selected child-row content origins now match the official `TreeView` after the retained `NavigationView` background alignment; remaining drift is retained `NavigationView` child-row background extent/text rendering versus the official `TreeView` template.
 - `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases ShellNavigation -Theme Dark`
@@ -3301,13 +3305,15 @@ Immediate execution order for the next round:
 
 1. If Windows OS High Contrast is enabled, run the P0.1 High Contrast visual
    slices first and record real `-Theme HighContrast` screenshot evidence.
-2. If OS High Contrast is not enabled, use Hard Execution Queue row 7 only:
-   source/resource/runtime work is allowed only when it directly serves a
-   recorded visual/High Contrast finding or stabilizes the visual harness.
-3. Do not resume general source-shape cleanup, resource-key cleanup, or
-   documentation-only work. Return to P1.2 only if a new visible stale-row drift
-   appears; return to P1.1 only if a new visible residual appears; return to
-   P0.4 only if a new shell-pane visual regression appears.
+2. If OS High Contrast is not enabled and no new visual/harness blocker has
+   appeared, use execution row 8 only for tracker consistency, stale-status
+   cleanup, and other low-risk documentation cleanup that preserves the
+   recorded evidence.
+3. Row 7 source/resource/runtime work is allowed only when it directly serves a
+   newly recorded visual/High Contrast finding or stabilizes a failing visual
+   harness. Return to P1.2 only if a new visible stale-row drift appears; return
+   to P1.1 only if a new visible residual appears; return to P0.4 only if a new
+   shell-pane visual regression appears.
 
 The direct-reference section baseline is now refreshed for Light and Dark, and
 Basic Input, Collections, Date & Calendar, Design Guidance, Layout, Media,
@@ -5087,10 +5093,10 @@ remaining Light delta is mostly image/text rendering treatment, so avoid
 reopening ParallaxView unless a new local WinUI source, native WPF header
 strategy, or crop regression appears.
 Continue by following the `Hard Execution Queue` and `Row 7 Strict Subqueue`
-above. If P0.1 remains environment-blocked, take the first unresolved row 7.1
-backlog item; do not choose lower source-shape cleanup, resource cleanup, or a
-documentation-only edit while an earlier visual/High Contrast item is still
-unresolved. For each visual-drift round:
+above. If P0.1 remains environment-blocked and row 7 has no newly recorded
+visual/High Contrast or harness trigger, use row 8 only for tracker
+consistency/stale-status cleanup until new evidence changes the queue. For each
+visual-drift round:
 
 1. Build ModernWpf Gallery and restore/build the official WPF Gallery checkout
    if needed.
