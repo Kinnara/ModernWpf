@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf;
 using ModernWpf.Controls;
@@ -355,6 +356,28 @@ public class BreadcrumbBarApiTests
     }
 
     [TestMethod]
+    public void BreadcrumbBarRendersVisiblePixels()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var breadcrumb = new ModernWpf.Controls.BreadcrumbBar
+            {
+                ItemsSource = new[] { "Root", "Node A", "Node B" }
+            };
+
+            using var host = new TestWindowHost(breadcrumb, width: 300, height: 80);
+            host.UpdateLayout();
+
+            Assert.IsTrue(breadcrumb.ActualWidth > 0, "Expected BreadcrumbBar to have a rendered width.");
+            Assert.IsTrue(breadcrumb.ActualHeight > 0, "Expected BreadcrumbBar to have a rendered height.");
+            var renderedPixels = CountRenderedPixels(breadcrumb);
+            Assert.IsTrue(
+                renderedPixels > 100,
+                $"Expected BreadcrumbBar text and chevrons to render visible pixels, but only found {renderedPixels} rendered pixels.");
+        });
+    }
+
+    [TestMethod]
     public void VerifyConstrainedWidthUsesWinUIEllipsisElement()
     {
         WpfTestHost.Run(() =>
@@ -575,6 +598,29 @@ public class BreadcrumbBarApiTests
     {
         Assert.IsInstanceOfType(value, typeof(SolidColorBrush));
         Assert.AreEqual(expectedColor, ((SolidColorBrush)value).Color);
+    }
+
+    private static int CountRenderedPixels(FrameworkElement element)
+    {
+        var width = Math.Max(1, (int)Math.Ceiling(element.ActualWidth));
+        var height = Math.Max(1, (int)Math.Ceiling(element.ActualHeight));
+        var bitmap = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
+        bitmap.Render(element);
+
+        var stride = width * 4;
+        var pixels = new byte[stride * height];
+        bitmap.CopyPixels(pixels, stride, 0);
+
+        var count = 0;
+        for (var i = 0; i < pixels.Length; i += 4)
+        {
+            if (pixels[i] != 0 || pixels[i + 1] != 0 || pixels[i + 2] != 0 || pixels[i + 3] != 0)
+            {
+                count++;
+            }
+        }
+
+        return count;
     }
 
     private static VisualStateGroup? FindVisualStateGroup(FrameworkElement stateGroupsRoot, string groupName)

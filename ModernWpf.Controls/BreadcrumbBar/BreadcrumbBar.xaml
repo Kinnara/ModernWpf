@@ -55,7 +55,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:BreadcrumbBarItem">
-                    <ui:GridEx
+                    <Border
                         x:Name="PART_LayoutRoot"
                         CornerRadius="{TemplateBinding CornerRadius}">
                         <VisualStateManager.CustomVisualStateManager>
@@ -136,7 +136,7 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
 
-                        <ui:GridEx.Resources>
+                        <Border.Resources>
                             <local:Flyout
                                 x:Key="PART_EllipsisFlyout"
                                 Placement="Bottom"
@@ -170,26 +170,27 @@
                                     </Style>
                                 </local:Flyout.FlyoutPresenterStyle>
                             </local:Flyout>
-                        </ui:GridEx.Resources>
+                        </Border.Resources>
 
-                        <ui:GridEx.ColumnDefinitions>
-                            <ColumnDefinition x:Name="PART_ContentColumn" Width="Auto" />
-                            <ColumnDefinition x:Name="PART_ChevronColumn" Width="Auto" />
-                        </ui:GridEx.ColumnDefinitions>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition x:Name="PART_ContentColumn" Width="Auto" />
+                                <ColumnDefinition x:Name="PART_ChevronColumn" Width="Auto" />
+                            </Grid.ColumnDefinitions>
 
-                        <Button
-                            x:Name="PART_ItemButton"
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            Focusable="False"
-                            Foreground="{TemplateBinding Foreground}"
-                            HorizontalAlignment="Left"
-                            IsTabStop="False"
-                            Padding="1,3"
-                            ui:ControlHelper.ContentTransitions="{TemplateBinding ContentTransitions}"
-                            ui:FocusVisualHelper.FocusVisualMargin="-3"
-                            ui:FocusVisualHelper.IsTemplateFocusTarget="True">
+                            <Button
+                                x:Name="PART_ItemButton"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Focusable="False"
+                                Foreground="{TemplateBinding Foreground}"
+                                HorizontalAlignment="Left"
+                                IsTabStop="False"
+                                Padding="1,3"
+                                ui:ControlHelper.ContentTransitions="{TemplateBinding ContentTransitions}"
+                                ui:FocusVisualHelper.FocusVisualMargin="-3"
+                                ui:FocusVisualHelper.IsTemplateFocusTarget="True">
                             <Button.Style>
                                 <Style TargetType="Button">
                                     <Setter Property="Foreground" Value="{DynamicResource BreadcrumbBarNormalForegroundBrush}" />
@@ -286,7 +287,6 @@
                                     </Setter>
                                 </Style>
                             </Button.Style>
-
                             <Grid>
                                 <ui:ContentPresenterEx
                                     x:Name="PART_ItemContentPresenter"
@@ -298,62 +298,67 @@
                                     FontFamily="{TemplateBinding FontFamily}"
                                     FontSize="{TemplateBinding FontSize}"
                                     FontWeight="{TemplateBinding FontWeight}"
+                                    Foreground="{TemplateBinding Foreground}"
                                     HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    LineHeight="20"
                                     VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
                                 <TextBlock
                                     x:Name="PART_EllipsisTextBlock"
                                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                     FontSize="{TemplateBinding FontSize}"
+                                    Foreground="{TemplateBinding Foreground}"
                                     Padding="3"
                                     Text="&#xE712;"
                                     Visibility="Collapsed"
                                     VerticalAlignment="Stretch" />
                             </Grid>
-                        </Button>
+                            </Button>
 
-                        <ui:ContentPresenterEx
-                            x:Name="PART_LastItemContentPresenter"
-                            Visibility="Collapsed"
-                            Background="{TemplateBinding Background}"
-                            Content="{TemplateBinding Content}"
-                            ContentTemplate="{TemplateBinding ContentTemplate}"
-                            ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
-                            ContentStringFormat="{TemplateBinding ContentStringFormat}"
-                            ContentTransitions="{TemplateBinding ContentTransitions}"
-                            FontFamily="{TemplateBinding FontFamily}"
-                            FontSize="{TemplateBinding FontSize}"
-                            FontWeight="{TemplateBinding FontWeight}"
-                            Foreground="{DynamicResource BreadcrumbBarCurrentNormalForegroundBrush}"
-                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            Padding="1,3"
-                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                            CornerRadius="{TemplateBinding CornerRadius}"
-                            ui:FocusVisualHelper.FocusVisualMargin="-3" />
+                            <ui:ContentPresenterEx
+                                x:Name="PART_LastItemContentPresenter"
+                                Visibility="Collapsed"
+                                Background="{TemplateBinding Background}"
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                ContentTransitions="{TemplateBinding ContentTransitions}"
+                                FontFamily="{TemplateBinding FontFamily}"
+                                FontSize="{TemplateBinding FontSize}"
+                                FontWeight="{TemplateBinding FontWeight}"
+                                Foreground="{DynamicResource BreadcrumbBarCurrentNormalForegroundBrush}"
+                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                LineHeight="20"
+                                Padding="1,3"
+                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                CornerRadius="{TemplateBinding CornerRadius}"
+                                ui:FocusVisualHelper.FocusVisualMargin="-3" />
 
-                        <ui:ContentPresenterEx
-                            x:Name="PART_EllipsisDropDownItemContentPresenter"
-                            Visibility="Collapsed"
-                            Content="{TemplateBinding Content}"
-                            ContentTemplate="{TemplateBinding ContentTemplate}"
-                            ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
-                            ContentStringFormat="{TemplateBinding ContentStringFormat}"
-                            ContentTransitions="{TemplateBinding ContentTransitions}"
-                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            HorizontalContentAlignment="Stretch"
-                            FontWeight="Normal"
-                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                            <ui:ContentPresenterEx
+                                x:Name="PART_EllipsisDropDownItemContentPresenter"
+                                Visibility="Collapsed"
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                ContentTransitions="{TemplateBinding ContentTransitions}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                HorizontalContentAlignment="Stretch"
+                                FontWeight="Normal"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
 
-                        <TextBlock
-                            x:Name="PART_ChevronTextBlock"
-                            Grid.Column="1"
-                            HorizontalAlignment="Center"
-                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                            FontSize="{StaticResource BreadcrumbBarChevronFontSize}"
-                            Foreground="{DynamicResource BreadcrumbBarNormalForegroundBrush}"
-                            Padding="{StaticResource BreadcrumbBarChevronPadding}"
-                            Text="&#xE76C;"
-                            VerticalAlignment="Center" />
-                    </ui:GridEx>
+                            <TextBlock
+                                x:Name="PART_ChevronTextBlock"
+                                Grid.Column="1"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                FontSize="{StaticResource BreadcrumbBarChevronFontSize}"
+                                Foreground="{DynamicResource BreadcrumbBarNormalForegroundBrush}"
+                                Padding="{StaticResource BreadcrumbBarChevronPadding}"
+                                Text="&#xE76C;"
+                                VerticalAlignment="Center" />
+                        </Grid>
+                    </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
