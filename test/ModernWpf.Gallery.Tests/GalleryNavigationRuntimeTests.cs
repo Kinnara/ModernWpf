@@ -323,17 +323,17 @@ namespace ModernWpf.Gallery.Tests
                     AssertBounds(page, menuItem, 28, 228, "Navigation child row");
                     AssertBounds(page, settingsButton, 8, 250, "Settings row");
 
-                    AssertTextLeft(page, homeItem, "\uE80F", 44, "Home glyph");
-                    AssertTextLeft(page, homeItem, "Home", 76, "Home text");
-                    AssertTextTop(page, homeItem, "\uE80F", 20, "Home glyph");
-                    AssertTextTop(page, homeItem, "Home", 19, "Home text");
-                    AssertTextLeft(page, navigationItem, "\uE76C", 26.5, "Navigation disclosure chevron");
-                    AssertTextLeft(page, navigationItem, "\uE700", 44, "Navigation glyph");
-                    AssertTextLeft(page, navigationItem, "Navigation", 76, "Navigation text");
-                    AssertTextTop(page, navigationItem, "\uE76C", 399, "Navigation disclosure chevron");
-                    AssertTextTop(page, navigationItem, "\uE700", 398, "Navigation glyph");
-                    AssertTextTop(page, navigationItem, "Navigation", 397, "Navigation text");
-                    AssertTextLeft(page, menuItem, "Menu", 79, "Menu child text");
+                    AssertTextLeft(page, homeItem, "\uE80F", 56, "Home glyph");
+                    AssertTextLeft(page, homeItem, "Home", 89, "Home text");
+                    AssertTextTop(page, homeItem, "\uE80F", 28, "Home glyph");
+                    AssertTextTop(page, homeItem, "Home", 27, "Home text");
+                    AssertTextLeft(page, navigationItem, "\uE76C", 34.5, "Navigation disclosure chevron");
+                    AssertTextLeft(page, navigationItem, "\uE700", 56, "Navigation glyph");
+                    AssertTextLeft(page, navigationItem, "Navigation", 89, "Navigation text");
+                    AssertTextTop(page, navigationItem, "\uE76C", 407, "Navigation disclosure chevron");
+                    AssertTextTop(page, navigationItem, "\uE700", 406, "Navigation glyph");
+                    AssertTextTop(page, navigationItem, "Navigation", 405, "Navigation text");
+                    AssertTextLeft(page, menuItem, "Menu", 92, "Menu child text");
                     var menuScrollViewer = FindVisualChildren<ScrollViewer>(navigation)
                         .Single(scrollViewer => string.Equals(scrollViewer.Name, "MenuItemsScrollViewer", StringComparison.Ordinal));
                     Assert.AreEqual(ScrollBarVisibility.Hidden, menuScrollViewer.VerticalScrollBarVisibility);
@@ -362,6 +362,7 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsFalse(menuItem.IsSelected, "Menu should not be selected until item navigation.");
                     AssertNavigationItemLayoutRootMargin(navigationItem, new Thickness(4, 2, 4, 2), "Navigation selected row background");
                     AssertNavigationItemLayoutRootMargin(menuItem, new Thickness(4, 2, 4, 2), "Menu unselected child row background");
+                    AssertNavigationItemContentMargin(navigationItem, 8, 0, "Navigation category content");
                     Assert.IsInstanceOfType(contentHost.Content, typeof(NavigationPage));
 
                     page.NavigateTo("item/Menu");
@@ -376,7 +377,7 @@ namespace ModernWpf.Gallery.Tests
                     AssertSelectionIndicatorBounds(menuItem, 12, 19, "Menu child selection indicator");
                     AssertNavigationItemLayoutRootMargin(navigationItem, new Thickness(4, 2, 4, 2), "Navigation child-selected row background");
                     AssertNavigationItemLayoutRootMargin(menuItem, new Thickness(12, 7, -5, -5), "Menu selected child row background");
-                    AssertNavigationItemContentMargin(menuItem, 8, 2, "Menu selected child content");
+                    AssertNavigationItemContentMargin(menuItem, 8, -13, "Menu selected child content");
                     Assert.IsInstanceOfType(contentHost.Content, typeof(ItemPage));
 
                     page.NavigateTo("category/Navigation");
@@ -386,7 +387,7 @@ namespace ModernWpf.Gallery.Tests
 
                     Assert.IsFalse(menuItem.IsSelected, "Menu should not keep item selection after category navigation.");
                     AssertNavigationItemLayoutRootMargin(menuItem, new Thickness(4, 2, 4, 2), "Menu deselected child row background");
-                    AssertNavigationItemContentMargin(menuItem, 4, 0, "Menu deselected child content");
+                    AssertNavigationItemContentMargin(menuItem, 16, 0, "Menu deselected child content");
                 });
             });
         }

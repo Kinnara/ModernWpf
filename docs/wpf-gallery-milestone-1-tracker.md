@@ -22,30 +22,32 @@ evidence and detail only; they cannot be used to reprioritize lower cleanup,
 source-shape, resource-key, or documentation work ahead of the first executable
 row in this queue.
 
-Current executable row: **P0.4 residual `NavigationView` shell visual details**,
-because P0.1 is blocked by the local Windows session reporting
-`SystemParameters.HighContrast = False`.
+Current executable row: **P1/P2 source cleanup, resource cleanup, and
+documentation-only work**, because P0.1 is blocked by the local Windows session
+reporting `SystemParameters.HighContrast = False` and P0.2-P0.4 are done at
+branch tip. If Windows OS High Contrast is enabled, P0.1 immediately preempts
+all lower rows.
 
 Do not start P1/P2 cleanup, source-shape alignment, resource-key cleanup, or
-documentation-only work while P0.4 has unresolved current visual drift. Small
-source/test edits are allowed only when they directly reduce or lock a P0 visual
-or High Contrast issue.
+documentation-only work unless P0.1 is recorded as environment-blocked and
+P0.2-P0.4 remain `Done` with current visual evidence. Small source/test edits
+are allowed only when they directly reduce or lock a P0 visual or High Contrast
+issue.
 
 | Execution order | Gate | State | Allowed next work |
 | --- | --- | --- | --- |
 | 1 | P0.1 real OS High Contrast shell/control visual coverage | Environment-blocked while `SystemParameters.HighContrast = False`. | If Windows OS High Contrast is enabled, run real `-Theme HighContrast` visual slices before any other work. |
-| 2 | P0.4 residual `NavigationView` shell visual details | Active while P0.1 remains OS-blocked. | Refresh, inspect, and fix shell-pane visuals such as disclosure chevrons, row insets, and retained NavigationView chrome. |
+| 2 | P0.4 residual `NavigationView` shell visual details | Done at branch tip. | No action unless a new shell visual regression appears. |
 | 3 | P0.2 top-level residual visual drift gate | Done at branch tip. | No action unless a new top-level visual regression appears. |
 | 4 | P0.3 direct-item drift gate for `TextBox`, `Clipboard`, and `FileAndFolderDialogs` | Done at branch tip. | No action unless a new direct-item visual regression appears. |
-| 5 | P1/P2 source cleanup, resource cleanup, and documentation-only work | Not allowed while P0.1 is unproven and P0.4 lacks current visual evidence. | Resume only after the P0 queue above is evidenced or explicitly blocked. |
+| 5 | P1/P2 source cleanup, resource cleanup, and documentation-only work | Allowed while P0.1 remains environment-blocked and P0.2-P0.4 stay done with current evidence. | Resume tracker-driven cleanup; stop and return to P0.1 if OS High Contrast is enabled, or to P0.4 if a new shell visual regression appears. |
 
 Resume checklist:
 
 1. Check `SystemParameters.HighContrast`.
 2. If High Contrast is on, run the P0.1 real `-Theme HighContrast` visual
    slices before anything else.
-3. If High Contrast is off, continue P0.4 shell-pane visual work from the
-   latest recorded Light/Dark reports.
+3. If High Contrast is off, pick the first executable row in the queue above.
 4. Before touching P1/P2 or source-shape-only work, re-read this queue and
    confirm every higher row is `Done` or explicitly blocked in the table.
 5. Update this queue before committing whenever the first executable row
@@ -54,7 +56,8 @@ Resume checklist:
 1. **P0 - Visual and High Contrast evidence first.** Refresh screenshot audits,
    inspect the highest visible deltas, and fix user-visible drift before taking
    new source-shape or resource-key cleanup. With the current environment
-   reporting High Contrast off, P0.4 is the only executable P0 gate.
+   reporting High Contrast off, P0.1 remains environment-blocked and P0.4 is
+   done at branch tip.
 2. **P0 - Acceptance gates stay open until visual proof exists.** Do not treat
    an implementation/source row as complete for planning purposes when its
    visual column is still `Partial` or the screenshot pass is still `Open`.
@@ -79,7 +82,7 @@ the next task.
 | P0.1 | Broader High Contrast shell/control coverage | Existing runtime/source tests cover key High Contrast resources. `Run-WpfGalleryVisualAudit.ps1` now accepts `-Theme HighContrast`, but refuses to run unless Windows OS High Contrast is actually enabled, so ordinary Dark/Light captures cannot be mistaken for High Contrast evidence. Current environment reports `SystemParameters.HighContrast = False`, and the attempted `-Theme HighContrast` run correctly fails before launching apps. | Enable a Windows High Contrast theme, then rerun the top-level and focused shell/control visual slices with `-Theme HighContrast`; until then, use refreshed runtime/source tests only as non-screenshot coverage. |
 | P0.2 | Completed top-level residual visual drift gate | Done at branch tip. Latest Light top-level audit is `artifacts/wpf-gallery-visual-audit/20260529-022506-025-65744/report.md`: Home `0`, WhatsNew `0`, AllControls `0`, Settings `0`. Latest Dark top-level audit is `artifacts/wpf-gallery-visual-audit/20260529-022607-305-45960/report.md`: Home `0.04`, WhatsNew `0`, AllControls `0`, Settings `0`. Home and Settings now use the official direct reference host, including the Dashboard content root target, Settings theme selector state, and the official full-shell Dark `#272727` background for transparent top-level roots. | Done; keep these reports as the current top-level gate. |
 | P0.3 | Completed direct item drift gate | Done at branch tip. Latest Light focused audit is `artifacts/wpf-gallery-visual-audit/20260529-023052-142-69976/report.md`: TextBox `0`, Clipboard `0`, FileAndFolderDialogs `0`. Latest Dark focused audit is `artifacts/wpf-gallery-visual-audit/20260529-023138-825-52464/report.md`: TextBox `0`, Clipboard `0`, FileAndFolderDialogs `0`. All use matching `868x758` Modern `ContentPagePaneRenderedArtifact` and official `OfficialDirectRootContentFrameRenderedArtifact` crops. | Done; keep these reports as the current direct-item gate. |
-| P0.4 | Residual NavigationView shell details | Current shell-pane evidence is `artifacts/wpf-gallery-visual-audit/20260529-044215-641-50192/report.md` for Light and `artifacts/wpf-gallery-visual-audit/20260529-044247-552-35904/report.md` for Dark. Both runs pass with matching `250x707` Modern/official navigation-pane crops and deltas of Light `9.40` and Dark `9.36`, down from the previous `9.50/9.46`. The retained `NavigationView` now navigates to the selected child before capture, no longer leaves the Home selection indicator active on `item/Menu`, keeps the selected child indicator aligned after shifting the selected child background toward the official WPF Gallery `TreeView` active rectangle, aligns top-level and selected-child row glyph/text origins with the official `TreeView`, hides retained menu-scrollbar chrome, maps retained pane separator/SplitView edge brushes to the official pane background, and disables the retained pane shadow. Remaining visible drift is retained `NavigationView` child-row background extent/text rendering versus the official `TreeView` template. | Continue P0.4 before P1/P2: inspect the remaining retained `NavigationView` child-row background extent/text rendering drift and either reduce it further or explicitly record the retained-control residual. |
+| P0.4 | Completed residual NavigationView shell details | Done at branch tip. Current shell-pane evidence is `artifacts/wpf-gallery-visual-audit/20260529-050925-258-18236/report.md` for Light and `artifacts/wpf-gallery-visual-audit/20260529-050952-061-61432/report.md` for Dark. Both runs pass with matching `250x707` Modern/official navigation-pane crops and deltas of Light `0.80` and Dark `0.82`, down from the previous `9.40/9.36`. The retained `NavigationView` now navigates to the selected child before capture, no longer leaves the Home selection indicator active on `item/Menu`, keeps the selected child indicator aligned after shifting the selected child background toward the official WPF Gallery `TreeView` active rectangle, aligns selected-child, top-level, child, and disclosure-category row glyph/text origins with the official `TreeView`, preserves that group-row offset after selection resets, hides retained menu-scrollbar chrome, maps retained pane separator/SplitView edge brushes to the official pane background, and disables the retained pane shadow. Remaining pixel drift is below one mean delta point and is retained-control rendering/crop residue rather than a current P0 blocker. | Done; keep these reports as the current shell gate unless a new shell regression appears. |
 
 ## Source References
 
@@ -3143,13 +3146,11 @@ Immediate execution order for the next round:
 
 1. If Windows OS High Contrast is enabled, run the P0.1 High Contrast visual
    slices first and record real `-Theme HighContrast` screenshot evidence.
-2. If OS High Contrast is not enabled, execute P0.4 only: continue from the
-   current `ShellNavigation` Light/Dark evidence and resolve or explicitly
-   accept the remaining retained `NavigationView` selected row/background/text
-   rendering drift versus the official WPF Gallery `TreeView` template.
-3. Do not take source-only alignment, resource-key cleanup, or documentation-only
-   work until P0.1 has real OS evidence or remains environment-blocked and P0.4
-   has a decision on the current shell-pane residual.
+2. If OS High Contrast is not enabled, resume tracker-driven P1/P2 cleanup,
+   source/resource alignment, or documentation work because P0.1 is explicitly
+   environment-blocked and P0.2-P0.4 are done with current visual evidence.
+3. Return to P0.4 only if a new shell-pane visual regression appears; otherwise
+   keep the current `ShellNavigation` Light/Dark reports as the shell gate.
 
 The direct-reference section baseline is now refreshed for Light and Dark, and
 Basic Input, Collections, Date & Calendar, Design Guidance, Layout, Media,

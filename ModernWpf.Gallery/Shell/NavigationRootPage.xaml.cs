@@ -109,16 +109,19 @@ namespace ModernWpf.Gallery.Shell
         private NavigationTarget _currentTarget;
         private bool _isProgrammaticNavigation;
         private bool _themeHandlersAttached;
-        private const double TopLevelNavigationContentLeftMargin = 20;
-        private const double ChildGlyphNavigationContentLeftMargin = -12;
-        private const double ChildTextNavigationContentLeftMargin = 4;
-        private const double TopLevelNavigationContentVerticalOffset = -2;
-        private const double ChildNavigationContentVerticalOffset = -2;
+        private const double TopLevelNavigationContentLeftMargin = 32;
+        private const double ChildGlyphNavigationContentLeftMargin = 0;
+        private const double ChildTextNavigationContentLeftMargin = 16;
+        private const double GroupNavigationContentLeftMargin = 8;
+        private const double GroupNavigationDisclosureColumnWidth = 24;
+        private const double GroupNavigationChevronLeftOffset = 0;
+        private const double TopLevelNavigationContentVerticalOffset = 14;
+        private const double ChildNavigationContentVerticalOffset = 16;
         private static readonly Thickness DefaultNavigationSelectionIndicatorMargin = new Thickness(0);
         private static readonly Thickness ChildNavigationSelectionIndicatorMargin = new Thickness(-35, 0, 0, -6);
         private static readonly Thickness DefaultNavigationItemButtonMargin = new Thickness(4, 2, 4, 2);
         private static readonly Thickness ChildNavigationSelectedBackgroundMargin = new Thickness(12, 7, -5, -5);
-        private static readonly Thickness ChildNavigationSelectedContentOffset = new Thickness(4, 2, 0, 0);
+        private static readonly Thickness ChildNavigationSelectedContentOffset = new Thickness(-8, -13, 0, 0);
         private static readonly Color WpfGalleryLightNavigationPaneBackgroundColor = Color.FromRgb(250, 250, 250);
 
         public NavigationRootPage()
@@ -342,11 +345,11 @@ namespace ModernWpf.Gallery.Shell
             double glyphColumnWidth = 16,
             double glyphFontSize = 16)
         {
-            var grid = CreateNavigationContentGrid(showDisclosureChevron ? 0 : leftMargin);
+            var grid = CreateNavigationContentGrid(showDisclosureChevron ? GroupNavigationContentLeftMargin : leftMargin);
             grid.Tag = glyph;
             if (showDisclosureChevron)
             {
-                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(20) });
+                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(GroupNavigationDisclosureColumnWidth) });
             }
 
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(glyphColumnWidth) });
@@ -382,10 +385,10 @@ namespace ModernWpf.Gallery.Shell
 
         private static Grid CreateNavigationTextContent(string title, double leftMargin, double verticalOffset, bool showDisclosureChevron)
         {
-            var grid = CreateNavigationContentGrid(showDisclosureChevron ? 0 : leftMargin);
+            var grid = CreateNavigationContentGrid(showDisclosureChevron ? GroupNavigationContentLeftMargin : leftMargin);
             if (showDisclosureChevron)
             {
-                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(20) });
+                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(GroupNavigationDisclosureColumnWidth) });
             }
 
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
@@ -433,7 +436,7 @@ namespace ModernWpf.Gallery.Shell
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Center,
                 FontSize = 10,
-                Margin = new Thickness(0, verticalOffset, 0, 0),
+                Margin = new Thickness(GroupNavigationChevronLeftOffset, verticalOffset, 0, 0),
                 Focusable = false,
                 Text = "\uE76C",
                 RenderTransformOrigin = new Point(0.5, 0.5),
@@ -901,7 +904,7 @@ namespace ModernWpf.Gallery.Shell
 
             if (item.Tag is NavigationTarget { Kind: NavigationTargetKind.Group })
             {
-                return new Thickness(0);
+                return new Thickness(GroupNavigationContentLeftMargin, 0, 0, 0);
             }
 
             return new Thickness(TopLevelNavigationContentLeftMargin, 0, 0, 0);
