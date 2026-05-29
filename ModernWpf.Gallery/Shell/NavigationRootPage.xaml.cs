@@ -114,6 +114,8 @@ namespace ModernWpf.Gallery.Shell
         private const double ChildTextNavigationContentLeftMargin = 4;
         private const double TopLevelNavigationContentVerticalOffset = -1;
         private const double ChildNavigationContentVerticalOffset = -2;
+        private static readonly Thickness DefaultNavigationSelectionIndicatorMargin = new Thickness(0);
+        private static readonly Thickness ChildNavigationSelectionIndicatorMargin = new Thickness(-27, 6, 0, -6);
         private static readonly Color WpfGalleryLightNavigationPaneBackgroundColor = Color.FromRgb(250, 250, 250);
 
         public NavigationRootPage()
@@ -771,6 +773,51 @@ namespace ModernWpf.Gallery.Shell
             {
                 parentItem.IsChildSelected = true;
             }
+
+            AlignSelectionIndicatorWithWpfGalleryTreeView(selectedItem);
+        }
+
+        private static void AlignSelectionIndicatorWithWpfGalleryTreeView(NavigationViewItem selectedItem)
+        {
+            var indicator = FindVisualChild<FrameworkElement>(
+                selectedItem,
+                element => string.Equals(element.Name, "SelectionIndicator", StringComparison.Ordinal));
+            if (indicator == null)
+            {
+                return;
+            }
+
+            indicator.HorizontalAlignment = HorizontalAlignment.Left;
+            indicator.VerticalAlignment = VerticalAlignment.Center;
+            indicator.Margin = selectedItem.Tag is NavigationTarget { Kind: NavigationTargetKind.Item }
+                ? ChildNavigationSelectionIndicatorMargin
+                : DefaultNavigationSelectionIndicatorMargin;
+        }
+
+        private static T FindVisualChild<T>(DependencyObject element, Func<T, bool> predicate)
+            where T : DependencyObject
+        {
+            if (element == null)
+            {
+                return null;
+            }
+
+            for (var i = 0; i < VisualTreeHelper.GetChildrenCount(element); i++)
+            {
+                var child = VisualTreeHelper.GetChild(element, i);
+                if (child is T match && predicate(match))
+                {
+                    return match;
+                }
+
+                var descendant = FindVisualChild(child, predicate);
+                if (descendant != null)
+                {
+                    return descendant;
+                }
+            }
+
+            return null;
         }
 
         private static void ClearNavigationSelection(System.Collections.IEnumerable items)

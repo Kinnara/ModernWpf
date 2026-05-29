@@ -1504,7 +1504,12 @@ function Capture-ModernWpf($case, [string]$caseDir) {
             return $null
         } | Out-Null
 
-        Start-Sleep -Milliseconds 500
+        $settleDelayMilliseconds = 500
+        if ($case.Id -eq "ShellNavigation") {
+            $settleDelayMilliseconds = 1000
+        }
+
+        Start-Sleep -Milliseconds $settleDelayMilliseconds
         $screenshot = Join-Path $caseDir "modernwpf-$($case.Id).png"
         $treePath = Join-Path $caseDir "modernwpf-$($case.Id).uia.txt"
         $contentCropPath = Join-Path $caseDir "modernwpf-$($case.Id)-content.png"

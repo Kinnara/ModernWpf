@@ -343,6 +343,7 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsFalse(navigationItem.IsSelected, "Parent row should not stay directly selected after child navigation.");
                     Assert.IsTrue(navigationItem.IsChildSelected, "Parent row should track selected child navigation.");
                     Assert.IsTrue(menuItem.IsSelected, "Menu child row should own item navigation selection.");
+                    AssertSelectionIndicatorBounds(menuItem, 12, 19, "Menu child selection indicator");
                     Assert.IsInstanceOfType(contentHost.Content, typeof(ItemPage));
                 });
             });
@@ -909,6 +910,20 @@ namespace ModernWpf.Gallery.Tests
             var titleText = contentGrid.Children.OfType<TextBlock>()
                 .Single(text => string.Equals(text.Text, expectedTitle, StringComparison.Ordinal));
             Assert.AreEqual(HorizontalAlignment.Left, titleText.HorizontalAlignment);
+        }
+
+        private static void AssertSelectionIndicatorBounds(NavigationViewItem item, double expectedLeft, double expectedTop, string context)
+        {
+            var indicator = FindVisualChildren<FrameworkElement>(item)
+                .SingleOrDefault(element => string.Equals(element.Name, "SelectionIndicator", StringComparison.Ordinal));
+            Assert.IsNotNull(indicator, context);
+
+            var bounds = indicator.TransformToAncestor(item)
+                .TransformBounds(new Rect(0, 0, indicator.ActualWidth, indicator.ActualHeight));
+            Assert.AreEqual(expectedLeft, bounds.Left, 1.0, context + " left");
+            Assert.AreEqual(expectedTop, bounds.Top, 1.0, context + " top");
+            Assert.AreEqual(3d, bounds.Width, 1.0, context + " width");
+            Assert.AreEqual(16d, bounds.Height, 1.0, context + " height");
         }
 
         private static void AssertWpfGalleryNavigationPaneBackground(NavigationView navigation, string resourceKey, Color expectedColor)
