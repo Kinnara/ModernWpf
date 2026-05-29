@@ -2,7 +2,7 @@ param(
     [string[]]$Cases = @(),
     [ValidateSet("None", "OfficialWpfGallery")]
     [string]$Reference = "OfficialWpfGallery",
-    [ValidateSet("Light", "Dark", "Default")]
+    [ValidateSet("Light", "Dark", "Default", "HighContrast")]
     [string]$Theme = "Light",
     [string]$ModernGalleryExe,
     [string]$WpfGalleryExe,
@@ -200,6 +200,11 @@ function Test-OfficialDirectReferenceCase($case) {
     return $OfficialDirectReferenceCaseIds -contains $case.Id
 }
 
+function Test-OsHighContrastEnabled {
+    Add-Type -AssemblyName PresentationFramework
+    return [System.Windows.SystemParameters]::HighContrast
+}
+
 function Ensure-OfficialDirectHostBuilt {
     $projectPath = Join-Path $RepoRoot "tools\visual-checks\OfficialWpfGalleryDirectHost\OfficialWpfGalleryDirectHost.csproj"
     & dotnet build $projectPath -c Debug -p:OfficialWpfGalleryOutput="$OfficialWpfGalleryOutput"
@@ -233,6 +238,10 @@ if ($BuildOfficial) {
     if ($LASTEXITCODE -ne 0) {
         throw "Official WPF Gallery build failed."
     }
+}
+
+if ($Theme -eq "HighContrast" -and !(Test-OsHighContrastEnabled)) {
+    throw "HighContrast visual audit requested, but OS High Contrast is not enabled. Enable a Windows High Contrast theme and rerun with -Theme HighContrast; this script does not simulate High Contrast via Light/Dark theme switching."
 }
 
 if (!(Test-Path $ModernGalleryExe)) {
@@ -803,11 +812,11 @@ function Return-OfficialWpfGalleryToHome($window) {
 }
 
 function Ensure-OfficialWpfGalleryTheme([int]$processId, $window) {
-    if ($Theme -eq "Default") {
+    if ($Theme -eq "Default" -or $Theme -eq "HighContrast") {
         return [ordered]@{
             RequestedTheme = $Theme
             Status = "Skipped"
-            LastException = "Default theme requested."
+            LastException = $(if ($Theme -eq "HighContrast") { "OS High Contrast theme requested; app theme selector is not changed." } else { "Default theme requested." })
         }
     }
 
