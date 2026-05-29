@@ -31,7 +31,9 @@ reporting `SystemParameters.HighContrast = False`, P0.2-P0.4 are done at branch
 tip, P1.1 has current Light/Dark evidence and recorded residual causes, and
 P1.2 stale `Partial` visual rows now have current evidence or recorded Color
 rendering residuals. If Windows OS High Contrast is enabled, P0.1 immediately
-preempts all lower rows.
+preempts all lower rows. While P0.1 stays blocked, row 7 has its own strict
+subqueue below; take the first unresolved row 7.1 item before any lower row 7
+or P2 work.
 
 Do not start general P1/P2 cleanup, source-shape alignment, resource-key
 cleanup, or documentation-only work. Row 7 is executable only when the edit
@@ -48,6 +50,96 @@ stabilizes the visual harness.
 | 6 | P1.2 stale `Partial` visual rows at or below noise threshold | Recorded. StackPanel, TreeView, ToolTip, RichTextEdit, PasswordBox, and Hyperlink are `0` / `0` in `20260529-061205-172-26700` and `20260529-061344-116-67908`. Calendar, DatePicker, Canvas, Image, Menu, TabControl, Frame, and NavigationWindow are `0` / `0` in `20260529-061607-923-61020` and `20260529-061844-861-43780`; UserDashboard is `0` / `0.01`. Color residuals remain current at `20260529-062201-094-27604` and `20260529-062407-485-65068`, with ColorSignal `0.10` / `0.10` and ColorHighContrast `0.12` / `0.14` visually inspected as rendering residuals. | Do not reopen unless a new visible drift appears. |
 | 7 | P1 source/resource/runtime alignment tied to a visual issue | Executable only for work that directly serves a recorded visual/High Contrast finding or stabilizes the visual harness. | Do not pick general source-shape, resource-key, or documentation-only cleanup. |
 | 8 | P2 cleanup and documentation-only work | Gated by all higher rows. | Use only after visual/high-drift work is current, resolved, or explicitly blocked. |
+
+### Row 7 Strict Subqueue
+
+When P0.1 is environment-blocked and rows 2-6 remain done or recorded, row 7 is
+still ordered. Do not take a lower-numbered row 7 item while a higher item is
+unresolved, unverified, or not recorded as stale-covered.
+
+| Row 7 order | Scope | State | Allowed next work |
+| --- | --- | --- | --- |
+| 7.1 | High Contrast / visual-resource runtime backlog | Active | Work the backlog in the exact order below. For each item, inspect existing evidence first, then either add focused coverage/fix or record that the stale backlog item is already covered in the same commit. |
+| 7.2 | Visual harness stability for accepted P0/P1 evidence | Gated by 7.1 unless it blocks screenshot collection. | Fix only when a failing or fragile visual audit blocks current evidence collection. |
+| 7.3 | Source-shape parity tied to a recorded visual mismatch | Gated by 7.1 and 7.2. | Touch only files required for a visible delta or harness finding already recorded above. |
+| 7.4 | General source/resource cleanup and tracker-only cleanup | Not executable. | Leave until all higher visual/High Contrast rows are done, recorded, or blocked. |
+
+Row 7.1 backlog order:
+
+1. NavigationView core state theme-resource aliases, including top-navigation
+   selected backgrounds.
+2. HeaderTile fills.
+3. DataGrid visual resource switching.
+4. CheckBox checked brush aliases.
+5. Validation-template resource resolution and official event-handler shape.
+6. CommandBar overflow/theme-resource aliases.
+7. MenuBar shell/item theme-resource aliases.
+8. AppBarButton, AppBarToggleButton, and AppBarSeparator core theme-resource
+   aliases.
+9. PipsPager selection/navigation theme-resource aliases and direct style/live
+   resource consumption.
+10. DropDownButton chevron aliases and direct style/live resource consumption.
+11. Pivot style theme-resource aliases and direct style/live resource
+    consumption.
+12. FlyoutPresenter chrome/theme-resource aliases and direct style/live resource
+    consumption.
+13. Date/time flyout and FlipView common style theme-resource aliases.
+14. Calendar picker common theme-resource aliases, CalendarView navigation
+    foreground, and DatePicker text box caret direct style/live resource
+    consumption.
+15. TimePicker and LoopingSelector common theme-resource aliases.
+16. Expander header/chevron/content theme-resource aliases and direct
+    style/live/trigger resource consumption.
+17. Default, accent, and subtle Button theme-resource aliases and direct
+    style/live resource consumption.
+18. RepeatButton and ToggleButton theme-resource aliases and direct style/live
+    resource consumption.
+19. ToggleSwitch track/knob state theme-resource aliases and direct style/live
+    resource consumption.
+20. ScrollBar theme-resource aliases and direct style/live resource consumption.
+21. ContentDialog theme-resource aliases and direct style/live resource
+    consumption.
+22. MenuFlyout presenter/item/toggle/subitem theme-resource aliases plus
+    presenter direct style/live resource consumption.
+23. SplitView pane/light-dismiss theme-resource aliases and direct style/live
+    resource consumption.
+24. SwipeControl reveal/execute item theme-resource aliases and direct
+    style/live resource consumption.
+25. BreadcrumbBar item/flyout theme-resource aliases and direct style/live
+    resource consumption.
+26. SelectorBar item/pill theme-resource aliases and direct style/live resource
+    consumption.
+27. AnnotatedScrollBar scroll-button/thumb/label theme-resource aliases and
+    direct style/live resource consumption.
+28. ProgressRing template/metric theme-resource aliases and direct style/live
+    resource consumption.
+29. PersonPicture ellipse/badge theme-resource aliases and direct style/live
+    resource consumption.
+30. RatingControl state/caption/glyph theme-resource aliases and direct
+    style/live resource consumption.
+31. ColorPicker slider thumb/border theme-resource aliases and direct style/live
+    resource consumption.
+32. ProgressBar metric/state theme-resource aliases and direct style/live
+    resource consumption.
+33. ToolTip chrome/metric theme-resource aliases and direct style/live resource
+    consumption.
+34. AutoSuggestBox suggestions-list/button metric theme-resource aliases and
+    direct style/live resource consumption.
+35. NumberBox popup/spin-button style and theme-resource aliases and direct
+    style/live resource consumption.
+36. PullToRefresh/RefreshVisualizer direct style and theme-resource aliases plus
+    live resource consumption.
+37. TabView theme-resource aliases and direct style/live resource consumption.
+38. Slider theme-resource aliases and direct style/live resource consumption.
+39. HyperlinkButton theme-resource aliases and direct style/live resource
+    consumption.
+40. ListBox/ListView/GridView collection theme-resource aliases and direct
+    style/live resource consumption.
+41. CheckBox and RadioButton common theme-resource aliases and direct style/live
+    resource consumption.
+42. ComboBox, TextControl, and Hyperlink foreground theme-resource aliases and
+    direct style/live resource consumption.
+43. Color subsection direct-reference evidence.
 
 Resume checklist:
 
@@ -4989,10 +5081,11 @@ with matching `745x551` primary crops and deltas `17.21` / `11.28`. The
 remaining Light delta is mostly image/text rendering treatment, so avoid
 reopening ParallaxView unless a new local WinUI source, native WPF header
 strategy, or crop regression appears.
-Continue with the next highest-impact visible drift from the checklist, likely
-remaining High Contrast gaps, other NavigationView styling not covered
-by the TreeView token aliases or first-sample refresh, or other item pages that still lack current
-matching-crop Light/Dark evidence. For each round:
+Continue by following the `Hard Execution Queue` and `Row 7 Strict Subqueue`
+above. If P0.1 remains environment-blocked, take the first unresolved row 7.1
+backlog item; do not choose lower source-shape cleanup, resource cleanup, or a
+documentation-only edit while an earlier visual/High Contrast item is still
+unresolved. For each visual-drift round:
 
 1. Build ModernWpf Gallery and restore/build the official WPF Gallery checkout
    if needed.
