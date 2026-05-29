@@ -17,8 +17,8 @@ current branch-tip visual evidence and is marked `Done`.
 1. **P0 - Visual and High Contrast evidence first.** Refresh screenshot audits,
    inspect the highest visible deltas, and fix user-visible drift before taking
    new source-shape or resource-key cleanup. Current P0 queue, in order:
-   broader High Contrast shell/control coverage; remaining top-level `Home`
-   and `Settings` deltas; remaining direct item pages with visible nonzero
+   broader High Contrast shell/control coverage; completed top-level `Home`
+   and `Settings` branch-tip proof; remaining direct item pages with visible nonzero
    drift (`TextBox`, `Clipboard`, and `FileAndFolderDialogs`); residual
    `NavigationView` shell details such as left disclosure chevrons and row
    insets.
@@ -42,8 +42,8 @@ Use this table as the active execution queue before choosing any cleanup work.
 | Priority | Area | Current evidence | Next action |
 | --- | --- | --- | --- |
 | P0.1 | Broader High Contrast shell/control coverage | Existing runtime/source tests cover key High Contrast resources. `Run-WpfGalleryVisualAudit.ps1` now accepts `-Theme HighContrast`, but refuses to run unless Windows OS High Contrast is actually enabled, so ordinary Dark/Light captures cannot be mistaken for High Contrast evidence. Current environment reports `SystemParameters.HighContrast = False`, and the attempted `-Theme HighContrast` run correctly fails before launching apps. | Enable a Windows High Contrast theme, then rerun the top-level and focused shell/control visual slices with `-Theme HighContrast`; until then, use refreshed runtime/source tests only as non-screenshot coverage. |
-| P0.2 | Top-level residual visual drift | Latest Light top-level audit is `artifacts/wpf-gallery-visual-audit/20260529-020055-346-35868/report.md`: Home `0.69`, WhatsNew `0`, AllControls `0`, Settings `0.23`. Latest Dark top-level audit is `artifacts/wpf-gallery-visual-audit/20260529-015932-697-68692/report.md`: Home `0.54`, WhatsNew `0`, AllControls `0`, Settings `0.17`. Home Dark improved from `0.93` and Settings Dark improved from `1.15` after page-scoped, non-High-Contrast official `#272727` root backgrounds. | Continue with remaining Home and Settings deltas only; WhatsNew and AllControls are zero-delta in both current top-level runs. |
-| P0.3 | Remaining direct item drift | Latest focused item evidence still leaves TextBox `1.02` / `0.98`, Clipboard `0.51` / `0.39`, and FileAndFolderDialogs `0.48` / `0.42`. | Inspect and fix these after High Contrast and top-level follow-up. |
+| P0.2 | Top-level residual visual drift | Done at branch tip. Latest Light top-level audit is `artifacts/wpf-gallery-visual-audit/20260529-022506-025-65744/report.md`: Home `0`, WhatsNew `0`, AllControls `0`, Settings `0`. Latest Dark top-level audit is `artifacts/wpf-gallery-visual-audit/20260529-022607-305-45960/report.md`: Home `0.04`, WhatsNew `0`, AllControls `0`, Settings `0`. Home and Settings now use the official direct reference host, including the Dashboard content root target, Settings theme selector state, and the official full-shell Dark `#272727` background for transparent top-level roots. | Done; keep these reports as the current top-level gate and move to P0.3 while P0.1 awaits an OS High Contrast run. |
+| P0.3 | Remaining direct item drift | Latest focused item evidence still leaves TextBox `1.02` / `0.98`, Clipboard `0.51` / `0.39`, and FileAndFolderDialogs `0.48` / `0.42`. | Next executable P0 after the High Contrast OS-theme blocker and completed top-level gate: inspect and fix these direct item deltas. |
 | P0.4 | Residual NavigationView shell details | Navigation content/item evidence is near zero, but retained shell details remain called out in the page rows. | Address only after P0.1-P0.3 evidence is refreshed or blocked. |
 
 ## Source References
@@ -562,6 +562,12 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet build .\tools\visual-checks\OfficialWpfGalleryDirectHost\OfficialWpfGalleryDirectHost.csproj -c Debug -p:OfficialWpfGalleryOutput="D:\repos\WPF-Samples\Sample Applications\WPFGallery\bin\Debug\net10.0-windows" -p:UseSharedCompilation=false`
+  - Passed with 0 warnings and 0 errors after extending the official direct host to cover Home and Settings.
+- `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases Home,WhatsNew,AllControls,Settings -Reference OfficialWpfGallery -Theme Light -TimeoutSeconds 30`
+  - Passed at `artifacts/wpf-gallery-visual-audit/20260529-022506-025-65744/report.md`: Modern and official both `Passed`. Deltas are Home `0` with matching `916x762` crops, WhatsNew `0` with matching `868x758` crops, AllControls `0` with matching `868x758` crops, and Settings `0` with matching `868x758` crops. Home, WhatsNew, AllControls, and Settings now all use official direct-reference rendered artifacts instead of mixing Modern rendered roots with official full-window crops.
+- `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases Home,WhatsNew,AllControls,Settings -Reference OfficialWpfGallery -Theme Dark -TimeoutSeconds 30`
+  - Passed at `artifacts/wpf-gallery-visual-audit/20260529-022607-305-45960/report.md`: Modern and official both `Passed`. Deltas are Home `0.04` with matching `916x762` crops, WhatsNew `0` with matching `868x758` crops, AllControls `0` with matching `868x758` crops, and Settings `0` with matching `868x758` crops. The remaining Home value is a sub-pixel sampling residual after the direct host applies the official full-shell Dark `#272727` background to the transparent Dashboard root.
 - `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases Home -Reference OfficialWpfGallery -Theme HighContrast -TimeoutSeconds 5`
   - Expected failure in the current environment because `SystemParameters.HighContrast` is `False`: the visual audit now refuses to simulate OS High Contrast through Light/Dark theme switching and instructs enabling a Windows High Contrast theme before collecting High Contrast screenshot evidence.
 - `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~GalleryApplicationResourceTests.ColorTileHighContrastTemplateMatchesWpfGalleryReference|FullyQualifiedName~GalleryApplicationResourceTests.HomeHeaderTilesUseWpfGalleryHighContrastFillResources|FullyQualifiedName~WpfGallerySourceShapeTests.ShellChromeKeepsWpfGalleryHighContrastSourceShape|FullyQualifiedName~GalleryNavigationRuntimeTests.MainWindowChromePolicyMatchesWpfGalleryHighContrastPath|FullyQualifiedName~GalleryNavigationRuntimeTests.ShellHighContrastHoverStylesMatchWpfGalleryReferenceChrome|FullyQualifiedName~GalleryNavigationRuntimeTests.ShellNavigationViewAliasesHaveWpfGalleryTreeViewHighContrastTokens" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
@@ -584,10 +590,6 @@ Latest local verification for the current branch tip:
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 6 tests per target. Iconography now uses the official WPF Gallery `Microsoft.Xaml.Behaviors.Wpf` loaded behavior trigger and no longer carries a local `OnLoaded` shim, while Design Guidance source-shape, page-specific view-model, copied-root, injected-binding, and icon-library runtime coverage still passes. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
   - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after adding the official WPF Gallery behaviors package reference for the Iconography loaded command trigger. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages and existing ModernWpf/ModernWpf.Controls warnings.
-- `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases Home,WhatsNew,AllControls,Settings -Reference OfficialWpfGallery -Theme Light -TimeoutSeconds 30`
-  - Passed at `artifacts/wpf-gallery-visual-audit/20260529-020055-346-35868/report.md`: Modern and official both `Passed`. Deltas are Home `0.69` with matching `916x762` crops, WhatsNew `0` with matching `868x758` crops, AllControls `0` with matching `868x758` crops, and Settings `0.23` with matching `868x758` crops after the visual harness began using derived rendered root artifacts for top-level Modern pages whose official roots are unnamed.
-- `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases Home,WhatsNew,AllControls,Settings -Reference OfficialWpfGallery -Theme Dark -TimeoutSeconds 30`
-  - Passed at `artifacts/wpf-gallery-visual-audit/20260529-015932-697-68692/report.md`: Modern and official both `Passed`. Deltas are Home `0.54` with matching `916x762` crops, WhatsNew `0` with matching `868x758` crops, AllControls `0` with matching `868x758` crops, and Settings `0.17` with matching `868x758` crops after Home and Settings used page-scoped non-High-Contrast official Dark root backgrounds instead of changing shared theme resources.
 - `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~GalleryApplicationResourceTests.HomeDarkPageBackgroundMatchesWpfGalleryFluentReference|FullyQualifiedName~GalleryApplicationResourceTests.SettingsDarkPageBackgroundMatchesWpfGalleryFluentReference|FullyQualifiedName~WpfGallerySourceShapeTests.HomePageKeepsOfficialDashboardCardListDeclarationSourceShape|FullyQualifiedName~WpfGallerySourceShapeTests.SettingsPageKeepsOfficialSettingsDeclarationSourceShape|FullyQualifiedName~GalleryNavigationRuntimeTests.HomePageOverviewUsesWpfReferenceGroupFilter|FullyQualifiedName~GalleryPageRuntimeTests.SettingsPageMatchesWpfGalleryReferenceLayout" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 6 tests per target. Home and Settings now pin page-scoped Dark root backgrounds to the official WPF Gallery Fluent `#272727` surface while explicitly excluding OS High Contrast and avoiding a global theme-resource override; existing Home source-shape, Home overview, Settings source-shape, and Settings layout coverage still pass. Existing warning/output remains `NU1903`, generated warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~GalleryAutomationHookTests.TopLevelPagesWriteContentRootPaneVisualArtifacts|FullyQualifiedName~GalleryAutomationHookTests.ShellNavigationRootWritesRenderedVisualArtifacts" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
@@ -3407,21 +3409,28 @@ first-viewport Light/Dark previously had accepted `0` / `0.05` deltas with
 matching dashboard-pane crops; the intermediate
 `artifacts/wpf-gallery-visual-audit/20260528-123828-042-52304/report.md` and
 `artifacts/wpf-gallery-visual-audit/20260528-123945-025-23008/report.md`
-top-level runs exposed shell-window crop-offset drift, and the current
-rendered-root refresh records Home `0.69` / `0.93` at
+top-level runs exposed shell-window crop-offset drift, and the later
+rendered-root refresh recorded Home `0.69` / `0.93` at
 `artifacts/wpf-gallery-visual-audit/20260528-130133-386-54916/report.md` and
 `artifacts/wpf-gallery-visual-audit/20260528-130248-631-39032/report.md`.
-The Home root cleanup still removes only the local-only `ContentRootGrid`
-wrapper while relying on the derived `HomeContentRootPane` rendered artifact
-path.
+The current branch-tip top-level refresh moves Home into the official direct
+reference host and records `0` / `0.04` at
+`artifacts/wpf-gallery-visual-audit/20260529-022506-025-65744/report.md` and
+`artifacts/wpf-gallery-visual-audit/20260529-022607-305-45960/report.md`.
+The direct host renders the Dashboard content root instead of the negative-margin
+Page wrapper, so its crop matches Modern's derived `HomeContentRootPane`.
 Settings Light/Dark previously had accepted `0.23` / `1.15` evidence; the
 intermediate top-level refresh recorded `1.15` / `2.16` from Modern's actual
-`GalleryContentHost` element, and the current rendered-root refresh records
+`GalleryContentHost` element, and a rendered-root refresh recorded
 `0.23` / `1.15` with visual-test ComboBox state matching the requested theme
 and matching `868x758` crops from Modern's derived `SettingsContentRootPane`
-artifact and the official content frame. The Settings root-name cleanup removes
-only the local-only `ContentRootGrid` hook while retaining the accepted root
-style.
+artifact and the official content frame. The current branch-tip top-level
+refresh moves Settings into the official direct reference host and records
+`0` / `0` at the same `20260529-022506-025-65744` and
+`20260529-022607-305-45960` reports after synchronizing the direct host's theme
+ComboBox state and applying the official full-shell Dark `#272727` background
+to transparent Home/Settings roots. The Settings root-name cleanup removes only
+the local-only `ContentRootGrid` hook while retaining the accepted root style.
 A later Settings experiment that removed the `GalleryPageRootStyle` root style
 was rejected and reverted because
 `artifacts/wpf-gallery-visual-audit/20260524-090657-380-82584/report.md`
@@ -3450,9 +3459,9 @@ non-Home routes, check that Modern's accepted source is a rendered content
 artifact such as `ContentRootGridRenderedArtifact`, `ContentPagePaneRenderedArtifact`,
 `GalleryItemPageRootRenderedArtifact`, or `GalleryContentHostRenderedArtifact`
 before treating the delta as current
-branch-tip evidence; for Home, accepted evidence should use the derived
-`HomeContentRootPaneRenderedArtifact` / `OfficialHomeContentRootPane` crop
-pair. A
+branch-tip evidence; for Home and Settings, accepted top-level evidence should
+now use the official direct host's `OfficialDirectRootContentFrameRenderedArtifact`
+path instead of full official window crops. A
 focused Design Guidance refreshes at
 `artifacts/wpf-gallery-visual-audit/20260524-041933/report.md` and
 `artifacts/wpf-gallery-visual-audit/20260524-042046/report.md` accepted Color,

@@ -83,7 +83,11 @@ internal static class Program
             ApplyTheme(app, options.Theme);
             window.Dispatcher.BeginInvoke(
                 DispatcherPriority.ApplicationIdle,
-                new Action(() => WriteVisualArtifact(frame, options.ArtifactDirectory)));
+                new Action(() =>
+                {
+                    ApplyPageVisualState(page, options.Theme);
+                    WriteVisualArtifact(frame, options.ArtifactDirectory, options.Theme);
+                }));
         };
 
         app.MainWindow = window;
@@ -182,8 +186,10 @@ internal static class Program
     {
         return page switch
         {
+            "Home" => new DashboardPage(new DashboardPageViewModel(new NullNavigationService())),
             "WhatsNew" => new WhatsNewPage(new WhatsNewPageViewModel(new NullNavigationService())),
             "AllControls" => new AllSamplesPage(new AllSamplesPageViewModel(new NullNavigationService())),
+            "Settings" => new SettingsPage(new SettingsPageViewModel()),
             "DesignGuidance" => new DesignGuidancePage(new DesignGuidancePageViewModel(new NullNavigationService())),
             "Color" => new ColorsPage(new ColorsPageViewModel()),
             "ColorText" => CreateColorPage("Text"),
@@ -244,6 +250,52 @@ internal static class Program
             "Image" => new ImagePage(new ImagePageViewModel()),
             _ => throw new ArgumentOutOfRangeException(nameof(page), page, "Unsupported direct reference page.")
         };
+    }
+
+    private static void ApplyPageVisualState(Page page, string theme)
+    {
+        if (page is SettingsPage)
+        {
+            SelectSettingsTheme(page, theme);
+        }
+    }
+
+    private static void SelectSettingsTheme(DependencyObject root, string theme)
+    {
+        var selectedIndex = theme switch
+        {
+            "Light" => 0,
+            "Dark" => 1,
+            _ => -1
+        };
+        if (selectedIndex < 0)
+        {
+            return;
+        }
+
+        if (FindNamedComboBox(root, "Change_ThemeMode") is { } comboBox)
+        {
+            comboBox.SelectedIndex = selectedIndex;
+        }
+    }
+
+    private static ComboBox? FindNamedComboBox(DependencyObject root, string name)
+    {
+        if (root is ComboBox comboBox && comboBox.Name == name)
+        {
+            return comboBox;
+        }
+
+        var childCount = VisualTreeHelper.GetChildrenCount(root);
+        for (var i = 0; i < childCount; i++)
+        {
+            if (FindNamedComboBox(VisualTreeHelper.GetChild(root, i), name) is { } result)
+            {
+                return result;
+            }
+        }
+
+        return null;
     }
 
     private static ColorsPage CreateColorPage(string subpage)
@@ -572,7 +624,7 @@ internal static class Program
         }
     }
 
-    private static void WriteVisualArtifact(FrameworkElement element, string artifactDirectory)
+    private static void WriteVisualArtifact(FrameworkElement element, string artifactDirectory, string theme)
     {
         if (string.IsNullOrWhiteSpace(artifactDirectory))
         {
@@ -582,7 +634,10 @@ internal static class Program
         try
         {
             Directory.CreateDirectory(artifactDirectory);
-            WriteElementPng(element, Path.Combine(artifactDirectory, "RootContentFrame.png"));
+            element.UpdateLayout();
+            var target = GetArtifactTarget(element);
+            var background = GetArtifactBackground(element, target, theme);
+            WriteElementPng(target, Path.Combine(artifactDirectory, "RootContentFrame.png"), background);
         }
         catch (Exception ex)
         {
@@ -590,7 +645,72 @@ internal static class Program
         }
     }
 
-    private static void WriteElementPng(FrameworkElement element, string path)
+    private static Brush GetArtifactBackground(FrameworkElement root, FrameworkElement target, string theme)
+    {
+        if (theme == "Dark" &&
+            root is Frame { Content: DashboardPage or SettingsPage } &&
+            !SystemParameters.HighContrast)
+        {
+            // The full official shell paints these transparent roots on #272727 in Dark.
+            return new SolidColorBrush(Color.FromRgb(0x27, 0x27, 0x27));
+        }
+
+        return GetElementBackground(target);
+    }
+
+    private static FrameworkElement GetArtifactTarget(FrameworkElement element)
+    {
+        if (element is Frame { Content: DashboardPage dashboardPage } &&
+            FindDashboardContentRoot(dashboardPage) is { } dashboardContentRoot)
+        {
+            return dashboardContentRoot;
+        }
+
+        return element;
+    }
+
+    private static FrameworkElement? FindDashboardContentRoot(DependencyObject root)
+    {
+        if (root is Grid grid &&
+            grid.ActualWidth >= 880 &&
+            grid.ActualHeight >= 700 &&
+            ContainsText(grid, ".NET 10"))
+        {
+            return grid;
+        }
+
+        var childCount = VisualTreeHelper.GetChildrenCount(root);
+        for (var i = 0; i < childCount; i++)
+        {
+            if (FindDashboardContentRoot(VisualTreeHelper.GetChild(root, i)) is { } result)
+            {
+                return result;
+            }
+        }
+
+        return null;
+    }
+
+    private static bool ContainsText(DependencyObject root, string text)
+    {
+        if (root is TextBlock textBlock && string.Equals(textBlock.Text, text, StringComparison.Ordinal))
+        {
+            return true;
+        }
+
+        var childCount = VisualTreeHelper.GetChildrenCount(root);
+        for (var i = 0; i < childCount; i++)
+        {
+            if (ContainsText(VisualTreeHelper.GetChild(root, i), text))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static void WriteElementPng(FrameworkElement element, string path, Brush background)
     {
         element.UpdateLayout();
         var width = (int)Math.Ceiling(element.ActualWidth);
@@ -615,7 +735,7 @@ internal static class Program
         using (var drawingContext = drawingVisual.RenderOpen())
         {
             drawingContext.DrawRectangle(
-                GetElementBackground(element),
+                background,
                 null,
                 new Rect(0, 0, width, height));
             drawingContext.DrawRectangle(

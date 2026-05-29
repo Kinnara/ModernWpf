@@ -111,8 +111,10 @@ $CaseCatalog = @(
 )
 
 $OfficialDirectReferenceCaseIds = @(
+    "Home",
     "WhatsNew",
     "AllControls",
+    "Settings",
     "DesignGuidance",
     "Color",
     "ColorText",
