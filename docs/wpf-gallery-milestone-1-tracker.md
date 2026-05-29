@@ -17,6 +17,11 @@ pick the first row below that is executable, and do not work on any lower row
 unless every higher row is either `Done` or has a recorded blocker that cannot
 be changed from this environment.
 
+This table is the only Milestone 1 execution order. Later tracker sections are
+evidence and detail only; they cannot be used to reprioritize lower cleanup,
+source-shape, resource-key, or documentation work ahead of the first executable
+row in this queue.
+
 Current executable row: **P0.4 residual `NavigationView` shell visual details**,
 because P0.1 is blocked by the local Windows session reporting
 `SystemParameters.HighContrast = False`.
@@ -41,7 +46,9 @@ Resume checklist:
    slices before anything else.
 3. If High Contrast is off, continue P0.4 shell-pane visual work from the
    latest recorded Light/Dark reports.
-4. Update this queue before committing whenever the first executable row
+4. Before touching P1/P2 or source-shape-only work, re-read this queue and
+   confirm every higher row is `Done` or explicitly blocked in the table.
+5. Update this queue before committing whenever the first executable row
    changes, is blocked, or is completed.
 
 1. **P0 - Visual and High Contrast evidence first.** Refresh screenshot audits,
@@ -63,7 +70,9 @@ Resume checklist:
 
 ## Current Branch-Tip Visual Priority Snapshot
 
-Use this table as the active execution queue before choosing any cleanup work.
+This table records the current evidence behind the queue above. It is not a
+second scheduler; when there is any conflict, `Hard Execution Queue` controls
+the next task.
 
 | Priority | Area | Current evidence | Next action |
 | --- | --- | --- | --- |
