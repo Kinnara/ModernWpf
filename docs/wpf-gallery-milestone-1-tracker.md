@@ -22,6 +22,22 @@ evidence and detail only; they cannot be used to reprioritize lower cleanup,
 source-shape, resource-key, or documentation work ahead of the first executable
 row in this queue.
 
+Remaining hard order, read this before selecting work:
+
+1. If `SystemParameters.HighContrast = True`, run P0.1 real OS High Contrast
+   Light/Dark-equivalent visual slices first and do not take any lower work.
+2. If High Contrast remains unavailable, finish the current row 8 retained
+   visual queue in this exact order: `SelectorBar`, `InfoBar`, `ProgressRing`.
+3. For the active retained visual item, current Light and Dark screenshot
+   evidence must be inspected before any code edit. The next edit must reduce
+   visible drift or record a diagnostic/native-control/harness limitation.
+4. Source-shape, resource-key, naming, selector, test-cleanup, and tracker-only
+   cleanup are not executable unless directly required by the active visual
+   item above.
+5. P2 cleanup is last. It starts only after `SelectorBar`, `InfoBar`, and
+   `ProgressRing` are each fixed or explicitly recorded as non-actionable for
+   this milestone round.
+
 Priority contract, do not reorder:
 
 1. P0 visual evidence and real OS High Contrast screenshot coverage.
@@ -109,7 +125,7 @@ drift, a visual-harness crop issue, or unclassified native-control limitation.
 | 8.6 | IconElement | Done in this round. Final current evidence is Light `artifacts/visual-checks/20260529-191847-947-19848/report.md` at `18.12` and Dark `artifacts/visual-checks/20260529-191912-934-73096/report.md` at `12.24`, both with matching `790x118` primary crops, down from refreshed Light primary `101.45` / Dark primary `22.42` where the reference crop compared the whole `svPanel` (`843x646`). | Reopen only on new visual regression evidence. |
 | 8.7 | TitleBar | Done in this round. Final current evidence is Light `artifacts/visual-checks/20260529-193012-218-60440/report.md` at `6.44` and Dark `artifacts/visual-checks/20260529-193039-071-52468/report.md` at `4.70`, both with matching `470x48` title-bar surface primary crops, down from refreshed `15.27` / `15.85` after the harness stopped comparing `TitleBox` and the WPF preview matched WinUI's content-first title-bar layout. | Reopen only on new visual regression evidence. |
 | 8.8 | DropDownButton | Done in this round. Final current evidence is Light `artifacts/visual-checks/20260529-195252-834-26016/report.md` at `3.66` and Dark `artifacts/visual-checks/20260529-195317-192-5640/report.md` at `2.86`, both with matching `78x32` primary crops, down from refreshed `15.43` / `14.78` after the DropDownButton template kept the chevron inside the button bounds instead of clipping it out of the crop. | Reopen only on new visual regression evidence. |
-| 8.9 | SelectorBar | Current. Current backlog score `20.10`. | Inspect current Light/Dark screenshots next, classify the visible drift or limitation, and fix the first actionable SelectorBar visual or harness issue before moving to InfoBar. |
+| 8.9 | SelectorBar | Current. Refreshed current evidence is Light `artifacts/visual-checks/20260529-195858-587-73272/report.md` at `11.89` and Dark `artifacts/visual-checks/20260529-195926-613-79992/report.md` at `12.86`; primary crops are `292x47` ModernWpf vs `284x48` WinUI in both themes and still need classification. | Inspect the current Light/Dark screenshots, classify the visible drift or limitation, and fix the first actionable SelectorBar visual or harness issue before moving to InfoBar. |
 | 8.10 | InfoBar | Pending. Current backlog score `19.44`. | Start only after SelectorBar is fixed or explicitly recorded as diagnostic/native-control/harness-limited. |
 | 8.11 | ProgressRing | Pending. Current backlog score `19.32`. | Start only after InfoBar is fixed or explicitly recorded as diagnostic/native-control/harness-limited. |
 
