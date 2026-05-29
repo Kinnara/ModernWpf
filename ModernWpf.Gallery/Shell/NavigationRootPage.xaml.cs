@@ -520,6 +520,49 @@ namespace ModernWpf.Gallery.Shell
             var paneBackground = GetWpfGalleryNavigationPaneBackground();
             Navigation.Resources["NavigationViewDefaultPaneBackground"] = paneBackground;
             Navigation.Resources["NavigationViewExpandedPaneBackground"] = paneBackground;
+            Navigation.Resources["NavigationViewItemSeparatorForeground"] = paneBackground;
+            AlignNavigationViewShellChromeWithWpfGallery(paneBackground);
+        }
+
+        private void AlignNavigationViewShellChromeWithWpfGallery(Brush paneBackground)
+        {
+            var menuScrollViewer = FindVisualChild<ScrollViewer>(
+                Navigation,
+                scrollViewer => string.Equals(scrollViewer.Name, "MenuItemsScrollViewer", StringComparison.Ordinal));
+            if (menuScrollViewer != null)
+            {
+                menuScrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;
+            }
+
+            var rootSplitView = FindVisualChild<SplitView>(
+                Navigation,
+                splitView => string.Equals(splitView.Name, "RootSplitView", StringComparison.Ordinal));
+            if (rootSplitView != null)
+            {
+                rootSplitView.Background = paneBackground;
+                rootSplitView.PaneBackground = paneBackground;
+                rootSplitView.BorderBrush = paneBackground;
+                rootSplitView.CornerRadius = new CornerRadius(0);
+            }
+
+            var paneContentGrid = FindVisualChild<Border>(
+                Navigation,
+                border => string.Equals(border.Name, "PaneContentGrid", StringComparison.Ordinal));
+            if (paneContentGrid != null)
+            {
+                paneContentGrid.BorderBrush = paneBackground;
+            }
+
+            var paneShadow = FindVisualChild<ThemeShadowChrome>(
+                Navigation,
+                shadow => string.Equals(shadow.Name, "ShadowCaster", StringComparison.Ordinal));
+            if (paneShadow != null)
+            {
+                paneShadow.Visibility = Visibility.Collapsed;
+                paneShadow.Opacity = 0;
+                paneShadow.Depth = 0;
+                paneShadow.IsShadowEnabled = false;
+            }
         }
 
         private Brush GetWpfGalleryNavigationPaneBackground()

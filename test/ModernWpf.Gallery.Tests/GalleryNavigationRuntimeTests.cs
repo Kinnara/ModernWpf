@@ -11,6 +11,7 @@ using System.Windows.Shell;
 using System.Windows.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls;
+using ModernWpf.Controls.Primitives;
 using ModernWpf.Gallery.Controls;
 using ModernWpf.Gallery.Models;
 using ModernWpf.Gallery.Pages;
@@ -328,6 +329,28 @@ namespace ModernWpf.Gallery.Tests
                     AssertTextLeft(page, navigationItem, "\uE700", 44, "Navigation glyph");
                     AssertTextLeft(page, navigationItem, "Navigation", 76, "Navigation text");
                     AssertTextLeft(page, menuItem, "Menu", 79, "Menu child text");
+                    var menuScrollViewer = FindVisualChildren<ScrollViewer>(navigation)
+                        .Single(scrollViewer => string.Equals(scrollViewer.Name, "MenuItemsScrollViewer", StringComparison.Ordinal));
+                    Assert.AreEqual(ScrollBarVisibility.Hidden, menuScrollViewer.VerticalScrollBarVisibility);
+
+                    var paneBackground = (Brush)navigation.Resources["NavigationViewExpandedPaneBackground"];
+                    Assert.AreSame(paneBackground, navigation.Resources["NavigationViewItemSeparatorForeground"]);
+                    var rootSplitView = FindVisualChildren<SplitView>(navigation)
+                        .Single(splitView => string.Equals(splitView.Name, "RootSplitView", StringComparison.Ordinal));
+                    Assert.AreSame(paneBackground, rootSplitView.Background);
+                    Assert.AreSame(paneBackground, rootSplitView.PaneBackground);
+                    Assert.AreSame(paneBackground, rootSplitView.BorderBrush);
+                    Assert.AreEqual(new Thickness(0), rootSplitView.BorderThickness);
+                    var paneContentGrid = FindVisualChildren<Border>(navigation)
+                        .Single(border => string.Equals(border.Name, "PaneContentGrid", StringComparison.Ordinal));
+                    Assert.AreSame(paneBackground, paneContentGrid.BorderBrush);
+                    Assert.AreEqual(new Thickness(0, 0, 1, 0), paneContentGrid.BorderThickness);
+                    var paneShadow = FindVisualChildren<ThemeShadowChrome>(navigation)
+                        .Single(shadow => string.Equals(shadow.Name, "ShadowCaster", StringComparison.Ordinal));
+                    Assert.AreEqual(Visibility.Collapsed, paneShadow.Visibility);
+                    Assert.AreEqual(0d, paneShadow.Opacity);
+                    Assert.AreEqual(0d, paneShadow.Depth);
+                    Assert.IsFalse(paneShadow.IsShadowEnabled);
                     Assert.IsFalse(homeItem.IsSelected, "Home should not retain the shell selection after category navigation.");
                     Assert.IsTrue(navigationItem.IsSelected, "Navigation category should own the shell selection.");
                     Assert.IsFalse(navigationItem.IsChildSelected, "Category selection should not mark a child selected.");
