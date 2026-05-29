@@ -486,6 +486,10 @@ public class TeachingTipApiTests
                 "ContentRootGrid.Background",
                 "MainContentPresenter.Background",
                 "HeroContentBorder.Background");
+            AssertStateSetterDynamicResource(layoutRoot, "LightDismissStates", "LightDismiss", "TailPolygon.Fill", "TeachingTipTransientBackground");
+            AssertStateSetterDynamicResource(layoutRoot, "LightDismissStates", "LightDismiss", "ContentRootGrid.Background", "TeachingTipTransientBackground");
+            AssertStateSetterDynamicResource(layoutRoot, "LightDismissStates", "LightDismiss", "MainContentPresenter.Background", "TeachingTipTransientBackground");
+            AssertStateSetterDynamicResource(layoutRoot, "LightDismissStates", "LightDismiss", "HeroContentBorder.Background", "TeachingTipTransientBackground");
             AssertStateSetter(layoutRoot, "ButtonsStates", "NoButtonsVisible",
                 "CloseButton.Visibility",
                 "ActionButton.Visibility");
@@ -617,6 +621,82 @@ public class TeachingTipApiTests
             Assert.AreEqual(Visibility.Collapsed, iconPresenter.Visibility);
             Assert.AreEqual(HorizontalAlignment.Right, tail.HorizontalAlignment);
             Assert.AreEqual(VerticalAlignment.Top, tail.VerticalAlignment);
+        });
+    }
+
+    [TestMethod]
+    public void TeachingTipStyleUsesWinUIBodyResourceAliases()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var resources = new ResourceDictionary
+            {
+                Source = new Uri("/ModernWpf.Controls;component/TeachingTip/TeachingTip.xaml", UriKind.Relative)
+            };
+            var style = (Style)resources[typeof(TeachingTipControl)];
+
+            Assert.AreEqual(typeof(TeachingTipControl), style.TargetType);
+            AssertDynamicResourceSetter(style, Control.BackgroundProperty, "TeachingTipBackgroundBrush");
+            AssertDynamicResourceSetter(style, Control.ForegroundProperty, "TeachingTipForegroundBrush");
+            AssertDynamicResourceSetter(style, Control.BorderBrushProperty, "TeachingTipBorderBrush");
+            AssertSetterValue(style, Control.BorderThicknessProperty, resources["TeachingTipContentBorderThicknessUntargeted"]);
+            AssertDynamicResourceSetter(style, TeachingTipControl.CornerRadiusProperty, "OverlayCornerRadius");
+            AssertDynamicResourceSetter(style, TeachingTipControl.ActionButtonStyleProperty, "DefaultButtonStyle");
+            AssertDynamicResourceSetter(style, TeachingTipControl.CloseButtonStyleProperty, "DefaultButtonStyle");
+            AssertSetterValue(style, Control.IsTabStopProperty, false);
+            AssertTemplateSetter(style, typeof(TeachingTipControl));
+
+            var teachingTip = new TeachingTipControl
+            {
+                IsOpen = true,
+                IsLightDismissEnabled = false,
+                Title = "Title",
+                Subtitle = "Subtitle",
+                Content = "Details",
+                HeroContent = new Border { Height = 20 },
+                Style = style
+            };
+            teachingTip.Resources.MergedDictionaries.Add(resources);
+
+            using var host = new TestWindowHost(teachingTip, width: 420, height: 240);
+            var contentRoot = FindNamedDescendant<Border>(teachingTip, "ContentRootGrid");
+            var heroContentBorder = FindNamedDescendant<Border>(teachingTip, "HeroContentBorder");
+            var mainContentPresenter = FindNamedDescendant<ContentPresenterEx>(teachingTip, "MainContentPresenter");
+            var titleTextBlock = FindNamedDescendant<TextBlock>(teachingTip, "TitleTextBlock");
+            var subtitleTextBlock = FindNamedDescendant<TextBlock>(teachingTip, "SubtitleTextBlock");
+            var tail = FindNamedDescendant<Polygon>(teachingTip, "TailPolygon");
+
+            Assert.AreSame(teachingTip.TryFindResource("TeachingTipBackgroundBrush"), teachingTip.Background);
+            Assert.AreSame(teachingTip.TryFindResource("TeachingTipForegroundBrush"), teachingTip.Foreground);
+            Assert.AreSame(teachingTip.TryFindResource("TeachingTipBorderBrush"), teachingTip.BorderBrush);
+            Assert.AreEqual(teachingTip.TryFindResource("TeachingTipContentBorderThicknessUntargeted"), teachingTip.BorderThickness);
+            Assert.AreEqual(teachingTip.TryFindResource("OverlayCornerRadius"), teachingTip.CornerRadius);
+            Assert.AreSame(teachingTip.TryFindResource("DefaultButtonStyle"), teachingTip.ActionButtonStyle);
+            Assert.AreSame(teachingTip.TryFindResource("DefaultButtonStyle"), teachingTip.CloseButtonStyle);
+            Assert.IsFalse(teachingTip.IsTabStop);
+
+            Assert.AreSame(teachingTip.Background, contentRoot.Background);
+            Assert.AreSame(teachingTip.BorderBrush, contentRoot.BorderBrush);
+            Assert.AreEqual(teachingTip.BorderThickness, contentRoot.BorderThickness);
+            Assert.AreEqual(teachingTip.CornerRadius, contentRoot.CornerRadius);
+            Assert.AreSame(teachingTip.Background, heroContentBorder.Background);
+            Assert.AreSame(teachingTip.Background, mainContentPresenter.Background);
+            Assert.AreSame(teachingTip.Foreground, mainContentPresenter.Foreground);
+            Assert.AreSame(teachingTip.TryFindResource("TeachingTipTitleForegroundBrush"), titleTextBlock.Foreground);
+            Assert.AreSame(teachingTip.TryFindResource("TeachingTipSubtitleForegroundBrush"), subtitleTextBlock.Foreground);
+            Assert.AreSame(teachingTip.Background, tail.Fill);
+            Assert.AreSame(teachingTip.BorderBrush, tail.Stroke);
+            Assert.AreEqual(teachingTip.TryFindResource("TeachingTipBorderThickness"), tail.StrokeThickness);
+
+            teachingTip.IsLightDismissEnabled = true;
+            host.UpdateLayout();
+
+            Assert.AreSame(teachingTip.TryFindResource("TeachingTipTransientBackground"), contentRoot.Background);
+            Assert.AreSame(teachingTip.TryFindResource("TeachingTipTransientBackground"), heroContentBorder.Background);
+            Assert.AreSame(teachingTip.TryFindResource("TeachingTipTransientBackground"), mainContentPresenter.Background);
+            Assert.AreSame(teachingTip.TryFindResource("TeachingTipTransientBackground"), tail.Fill);
         });
     }
 
@@ -1072,6 +1152,13 @@ public class TeachingTipApiTests
         Assert.AreEqual(expectedResourceKey, dynamicResource.ResourceKey);
     }
 
+    private static void AssertSetterValue(Style style, DependencyProperty property, object expectedValue)
+    {
+        var setter = style.Setters.OfType<Setter>().SingleOrDefault(item => item.Property == property);
+        Assert.IsNotNull(setter, $"Expected setter for {property.Name}.");
+        Assert.AreEqual(expectedValue, setter!.Value);
+    }
+
     private static void AssertTemplateSetter(Style style, Type expectedTargetType)
     {
         var setter = style.Setters.OfType<Setter>().SingleOrDefault(item => item.Property == Control.TemplateProperty);
@@ -1169,6 +1256,39 @@ public class TeachingTipApiTests
         }
 
         return stateEx;
+    }
+
+    private static void AssertStateSetterDynamicResource(
+        FrameworkElement stateGroupsRoot,
+        string groupName,
+        string stateName,
+        string target,
+        object expectedResourceKey)
+    {
+        var state = AssertStateSetter(stateGroupsRoot, groupName, stateName, target);
+        var setter = state.Setters.Single(item => item.Target == target);
+
+        AssertResourceReferenceExpression(
+            setter.ReadLocalValue(VisualStateSetter.ValueProperty),
+            expectedResourceKey);
+    }
+
+    private static void AssertResourceReferenceExpression(object value, object expectedResourceKey)
+    {
+        Assert.IsNotNull(value, "Expected dynamic resource local value.");
+
+        if (value is DynamicResourceExtension dynamicResource)
+        {
+            Assert.AreEqual(expectedResourceKey, dynamicResource.ResourceKey);
+            return;
+        }
+
+        Assert.AreEqual("System.Windows.ResourceReferenceExpression", value.GetType().FullName);
+        var resourceKeyProperty = value.GetType().GetProperty(
+            "ResourceKey",
+            BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+        Assert.IsNotNull(resourceKeyProperty, "Expected ResourceReferenceExpression.ResourceKey.");
+        Assert.AreEqual(expectedResourceKey, resourceKeyProperty!.GetValue(value));
     }
 
     private static void AssertCurrentState(FrameworkElement stateGroupsRoot, string groupName, string expectedStateName)
