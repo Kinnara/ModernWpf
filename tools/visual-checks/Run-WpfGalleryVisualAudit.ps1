@@ -11,6 +11,8 @@ param(
     [int]$Width = 1180,
     [int]$Height = 820,
     [int]$TimeoutSeconds = 30,
+    [ValidateRange(1, 100)]
+    [int]$ComparisonSampleStep = 4,
     [switch]$BuildModern,
     [switch]$BuildOfficial,
     [switch]$ListCases,
@@ -1419,6 +1421,12 @@ function Compare-ImagesNormalized([string]$leftPath, [string]$rightPath, [int]$s
             MeanDelta = $null
             LeftSize = ""
             RightSize = ""
+            SampleStep = $sampleStep
+            ComparedSamples = 0
+            ChangedSamples = 0
+            ChangedSamplePercent = $null
+            MaxRgbSumDelta = $null
+            MaxChannelDelta = $null
         }
     }
 
@@ -1433,11 +1441,20 @@ function Compare-ImagesNormalized([string]$leftPath, [string]$rightPath, [int]$s
                 MeanDelta = $null
                 LeftSize = "$($left.Width)x$($left.Height)"
                 RightSize = "$($right.Width)x$($right.Height)"
+                SampleStep = $sampleStep
+                ComparedSamples = 0
+                ChangedSamples = 0
+                ChangedSamplePercent = $null
+                MaxRgbSumDelta = $null
+                MaxChannelDelta = $null
             }
         }
 
         $delta = 0.0
         $samples = 0
+        $changedSamples = 0
+        $maxRgbSumDelta = 0
+        $maxChannelDelta = 0
         for ($y = 0; $y -lt $height; $y += $sampleStep) {
             for ($x = 0; $x -lt $width; $x += $sampleStep) {
                 $leftX = [Math]::Min($left.Width - 1, [int][Math]::Floor($x * $left.Width / [double]$width))
@@ -1446,9 +1463,19 @@ function Compare-ImagesNormalized([string]$leftPath, [string]$rightPath, [int]$s
                 $rightY = [Math]::Min($right.Height - 1, [int][Math]::Floor($y * $right.Height / [double]$height))
                 $leftPixel = $left.GetPixel($leftX, $leftY)
                 $rightPixel = $right.GetPixel($rightX, $rightY)
-                $delta += ([Math]::Abs($leftPixel.R - $rightPixel.R) +
-                    [Math]::Abs($leftPixel.G - $rightPixel.G) +
-                    [Math]::Abs($leftPixel.B - $rightPixel.B)) / 3.0
+                $redDelta = [Math]::Abs($leftPixel.R - $rightPixel.R)
+                $greenDelta = [Math]::Abs($leftPixel.G - $rightPixel.G)
+                $blueDelta = [Math]::Abs($leftPixel.B - $rightPixel.B)
+                $rgbSumDelta = $redDelta + $greenDelta + $blueDelta
+                $delta += $rgbSumDelta / 3.0
+                if ($rgbSumDelta -gt 0) {
+                    $changedSamples++
+                    $maxRgbSumDelta = [Math]::Max($maxRgbSumDelta, $rgbSumDelta)
+                    $maxChannelDelta = [Math]::Max(
+                        $maxChannelDelta,
+                        [Math]::Max($redDelta, [Math]::Max($greenDelta, $blueDelta)))
+                }
+
                 $samples++
             }
         }
@@ -1458,6 +1485,12 @@ function Compare-ImagesNormalized([string]$leftPath, [string]$rightPath, [int]$s
             MeanDelta = $(if ($samples -gt 0) { [Math]::Round($delta / $samples, 2) } else { $null })
             LeftSize = "$($left.Width)x$($left.Height)"
             RightSize = "$($right.Width)x$($right.Height)"
+            SampleStep = $sampleStep
+            ComparedSamples = $samples
+            ChangedSamples = $changedSamples
+            ChangedSamplePercent = $(if ($samples -gt 0) { [Math]::Round(($changedSamples * 100.0) / $samples, 3) } else { $null })
+            MaxRgbSumDelta = $(if ($samples -gt 0) { $maxRgbSumDelta } else { $null })
+            MaxChannelDelta = $(if ($samples -gt 0) { $maxChannelDelta } else { $null })
         }
     }
     finally {
@@ -1848,7 +1881,7 @@ foreach ($case in $selectedCases) {
 
     if ($null -ne $modernResult.ContentCrop -and $null -ne $officialResult.ContentCrop -and
         $modernResult.ContentCrop.Found -and $officialResult.ContentCrop.Found) {
-        $comparison = Compare-ImagesNormalized $modernResult.ContentCrop.Screenshot $officialResult.ContentCrop.Screenshot
+        $comparison = Compare-ImagesNormalized $modernResult.ContentCrop.Screenshot $officialResult.ContentCrop.Screenshot $ComparisonSampleStep
         $modernResult["OfficialContentComparison"] = $comparison
         if ($FailOnDifference -and $comparison.Comparable -and $comparison.MeanDelta -gt 24) {
             $modernResult["Status"] = "Failed"
@@ -1867,6 +1900,7 @@ $markdown.Add("")
 $markdown.Add("- Theme: $Theme")
 $markdown.Add("- Size: ${Width}x${Height}")
 $markdown.Add("- Reference: $Reference")
+$markdown.Add("- Comparison sample step: $ComparisonSampleStep")
 $markdown.Add("- ModernWpf executable: $ModernGalleryExe")
 if ($Reference -eq "OfficialWpfGallery") {
     $markdown.Add("- Official WPF Gallery executable: $WpfGalleryExe")
@@ -1875,18 +1909,20 @@ if ($Reference -eq "OfficialWpfGallery") {
     }
 }
 $markdown.Add("")
-$markdown.Add("| Case | Modern status | Official status | Content delta | Modern crop | Official crop | Notes |")
-$markdown.Add("| --- | --- | --- | ---: | --- | --- | --- |")
+$markdown.Add("| Case | Modern status | Official status | Content delta | Changed samples | Max RGB diff | Modern crop | Official crop | Notes |")
+$markdown.Add("| --- | --- | --- | ---: | ---: | ---: | --- | --- | --- |")
 
 foreach ($case in $selectedCases) {
     $modern = $results | Where-Object { $_.App -eq "ModernWpf" -and $_.Case -eq $case.Id } | Select-Object -First 1
     $official = $results | Where-Object { $_.App -eq "OfficialWpfGallery" -and $_.Case -eq $case.Id } | Select-Object -First 1
     $comparison = if ($modern.Contains("OfficialContentComparison")) { $modern.OfficialContentComparison } else { $null }
     $delta = if ($null -ne $comparison -and $comparison.Comparable) { $comparison.MeanDelta } else { "" }
+    $changedSamples = if ($null -ne $comparison -and $comparison.Comparable) { "$($comparison.ChangedSamples)/$($comparison.ComparedSamples) ($($comparison.ChangedSamplePercent)%)" } else { "" }
+    $maxRgbDiff = if ($null -ne $comparison -and $comparison.Comparable) { $comparison.MaxRgbSumDelta } else { "" }
     $modernCrop = if ($null -ne $modern.ContentCrop -and $modern.ContentCrop.Found) { "$($modern.ContentCrop.Width)x$($modern.ContentCrop.Height)" } else { "" }
     $officialCrop = if ($null -ne $official.ContentCrop -and $official.ContentCrop.Found) { "$($official.ContentCrop.Width)x$($official.ContentCrop.Height)" } else { "" }
     $notes = @($modern.LastException, $official.LastException) | Where-Object { ![string]::IsNullOrWhiteSpace($_) }
-    $markdown.Add("| $($case.Id) | $($modern.Status) | $($official.Status) | $delta | $modernCrop | $officialCrop | $($notes -join '; ') |")
+    $markdown.Add("| $($case.Id) | $($modern.Status) | $($official.Status) | $delta | $changedSamples | $maxRgbDiff | $modernCrop | $officialCrop | $($notes -join '; ') |")
 }
 
 $markdown.Add("")
