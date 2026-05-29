@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Automation.Peers;
@@ -6,6 +8,7 @@ using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Shapes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf;
@@ -196,6 +199,150 @@ public class CommandBarApiTests
 
             Assert.AreEqual((Thickness)presenter.TryFindResource("CommandBarOverflowPresenterBorderUpPadding"), layoutRoot.Padding);
             Assert.AreEqual((Thickness)presenter.TryFindResource("CommandBarOverflowPresenterBorderUpThickness"), layoutRoot.BorderThickness);
+        });
+    }
+
+    [TestMethod]
+    public void CommandBarOverflowChromeConsumesLiveThemeResources()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var commandBar = new ModernWpf.Controls.CommandBar
+            {
+                Content = "Title",
+                IsDynamicOverflowEnabled = false,
+                OverflowButtonVisibility = CommandBarOverflowButtonVisibility.Visible
+            };
+            commandBar.SecondaryCommands.Add(new AppBarButton { Label = "Share" });
+
+            using var host = new TestWindowHost(commandBar, width: 360, height: 160);
+            host.UpdateLayout();
+
+            var commandBarStyle = FindImplicitStyle<ModernWpf.Controls.CommandBar>(commandBar);
+            AssertDynamicResourceSetter(commandBarStyle, Control.BackgroundProperty, "CommandBarBackground");
+            AssertDynamicResourceSetter(commandBarStyle, Control.ForegroundProperty, "CommandBarForeground");
+            AssertDynamicResourceSetter(
+                commandBarStyle,
+                ModernWpf.Controls.CommandBar.CornerRadiusProperty,
+                "ControlCornerRadius");
+
+            var contentRoot = FindTemplateChild<Grid>(commandBar, "ContentRoot");
+            var contentControl = FindTemplateChild<ContentControl>(commandBar, "ContentControl");
+            var moreButton = FindTemplateChild<ToggleButton>(commandBar, "MoreButton");
+            var overflowContentRoot = FindTemplateChild<Grid>(commandBar, "OverflowContentRoot");
+            var highContrastBorder = FindTemplateChild<Rectangle>(commandBar, "HighContrastBorder");
+            var openBorder = FindTemplateChild<Border>(commandBar, "OpenBorder");
+
+            var replacementBackground = new SolidColorBrush(Colors.Magenta);
+            var replacementForeground = new SolidColorBrush(Colors.Lime);
+            var replacementHighContrastBorder = new SolidColorBrush(Colors.Cyan);
+            var replacementOpenBorder = new SolidColorBrush(Colors.Yellow);
+            var replacementOpenThickness = new Thickness(2, 3, 4, 5);
+
+            commandBar.Resources["CommandBarBackground"] = replacementBackground;
+            commandBar.Resources["CommandBarForeground"] = replacementForeground;
+            commandBar.Resources["CommandBarOverflowMinWidth"] = 214d;
+            commandBar.Resources["CommandBarOverflowMaxWidth"] = 333d;
+            commandBar.Resources["CommandBarHighContrastBorder"] = replacementHighContrastBorder;
+            commandBar.Resources["CommandBarBorderBrushOpen"] = replacementOpenBorder;
+            commandBar.Resources["CommandBarBorderThicknessOpen"] = replacementOpenThickness;
+            host.UpdateLayout();
+
+            Assert.AreSame(replacementBackground, commandBar.Background);
+            Assert.AreSame(replacementBackground, contentRoot.Background);
+            Assert.AreSame(replacementForeground, commandBar.Foreground);
+            Assert.AreSame(replacementForeground, contentControl.Foreground);
+            Assert.AreSame(replacementForeground, moreButton.Foreground);
+            Assert.AreEqual(214d, overflowContentRoot.MinWidth);
+            Assert.AreEqual(333d, overflowContentRoot.MaxWidth);
+            Assert.AreSame(replacementHighContrastBorder, highContrastBorder.Stroke);
+            Assert.AreSame(replacementOpenBorder, openBorder.BorderBrush);
+            Assert.AreEqual(replacementOpenThickness, openBorder.BorderThickness);
+        });
+    }
+
+    [TestMethod]
+    public void CommandBarOverflowPresenterConsumesLiveThemeResources()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var presenter = new CommandBarOverflowPresenter
+            {
+                Content = new StackPanel()
+            };
+
+            using var host = new TestWindowHost(presenter, width: 320, height: 160);
+            host.UpdateLayout();
+
+            var presenterStyle = FindImplicitStyle<CommandBarOverflowPresenter>(presenter);
+            AssertDynamicResourceSetter(presenterStyle, Control.BackgroundProperty, "CommandBarOverflowPresenterBackground");
+            AssertDynamicResourceSetter(presenterStyle, Control.BorderBrushProperty, "CommandBarOverflowPresenterBorderBrush");
+            AssertDynamicResourceSetter(presenterStyle, Control.PaddingProperty, "CommandBarOverflowPresenterBorderPadding");
+            AssertDynamicResourceSetter(presenterStyle, FrameworkElement.MaxWidthProperty, "CommandBarOverflowMaxWidth");
+            AssertDynamicResourceSetter(
+                presenterStyle,
+                CommandBarOverflowPresenter.CornerRadiusProperty,
+                "OverlayCornerRadius");
+
+            var layoutRoot = FindTemplateChild<Border>(presenter, "LayoutRoot");
+            AssertStateSetterDynamicResource(
+                layoutRoot,
+                "DisplayModeStates",
+                "FullWidthOpenDown",
+                "LayoutRoot.Padding",
+                "CommandBarOverflowPresenterBorderDownPadding");
+            AssertStateSetterDynamicResource(
+                layoutRoot,
+                "DisplayModeStates",
+                "FullWidthOpenDown",
+                "LayoutRoot.BorderThickness",
+                "CommandBarOverflowPresenterBorderDownThickness");
+            AssertStateSetterDynamicResource(
+                layoutRoot,
+                "DisplayModeStates",
+                "FullWidthOpenUp",
+                "LayoutRoot.Padding",
+                "CommandBarOverflowPresenterBorderUpPadding");
+            AssertStateSetterDynamicResource(
+                layoutRoot,
+                "DisplayModeStates",
+                "FullWidthOpenUp",
+                "LayoutRoot.BorderThickness",
+                "CommandBarOverflowPresenterBorderUpThickness");
+
+            var replacementBackground = new SolidColorBrush(Colors.Magenta);
+            var replacementBorderBrush = new SolidColorBrush(Colors.Cyan);
+            var replacementPadding = new Thickness(4, 5, 6, 7);
+            var replacementBorderThickness = new Thickness(2, 0, 2, 1);
+            var replacementDownPadding = new Thickness(8, 9, 10, 11);
+            var replacementDownThickness = new Thickness(0, 0, 0, 3);
+            var replacementCornerRadius = new CornerRadius(9);
+
+            presenter.Resources["CommandBarOverflowPresenterBackground"] = replacementBackground;
+            presenter.Resources["CommandBarOverflowPresenterBorderBrush"] = replacementBorderBrush;
+            presenter.Resources["CommandBarOverflowPresenterBorderPadding"] = replacementPadding;
+            presenter.Resources["CommandBarOverflowPresenterBorderThickness"] = replacementBorderThickness;
+            presenter.Resources["CommandBarOverflowPresenterBorderDownPadding"] = replacementDownPadding;
+            presenter.Resources["CommandBarOverflowPresenterBorderDownThickness"] = replacementDownThickness;
+            presenter.Resources["CommandBarOverflowMaxWidth"] = 312d;
+            presenter.Resources["OverlayCornerRadius"] = replacementCornerRadius;
+            host.UpdateLayout();
+
+            Assert.AreSame(replacementBackground, presenter.Background);
+            Assert.AreSame(replacementBackground, layoutRoot.Background);
+            Assert.AreSame(replacementBorderBrush, presenter.BorderBrush);
+            Assert.AreSame(replacementBorderBrush, layoutRoot.BorderBrush);
+            Assert.AreEqual(replacementPadding, presenter.Padding);
+            Assert.IsTrue(VisualStateManager.GoToState(presenter, "FullWidthOpenDown", false));
+            Assert.AreEqual(replacementDownPadding, layoutRoot.Padding);
+            Assert.AreEqual(replacementDownThickness, layoutRoot.BorderThickness);
+            Assert.AreEqual(312d, presenter.MaxWidth);
+            Assert.AreEqual(replacementCornerRadius, presenter.CornerRadius);
+            Assert.AreEqual(replacementCornerRadius, layoutRoot.CornerRadius);
         });
     }
 
@@ -1728,6 +1875,25 @@ public class CommandBarApiTests
         Assert.Fail($"Expected style for {style.TargetType.Name} to set {property.Name} to {expectedValue}.");
     }
 
+    private static void AssertDynamicResourceSetter(Style style, DependencyProperty property, object expectedResourceKey)
+    {
+        for (Style? current = style; current is not null; current = current.BasedOn)
+        {
+            foreach (SetterBase setterBase in current.Setters)
+            {
+                if (setterBase is Setter setter &&
+                    setter.Property == property &&
+                    setter.Value is DynamicResourceExtension dynamicResource &&
+                    Equals(dynamicResource.ResourceKey, expectedResourceKey))
+                {
+                    return;
+                }
+            }
+        }
+
+        Assert.Fail($"Expected style for {style.TargetType.Name} to set {property.Name} from dynamic resource {expectedResourceKey}.");
+    }
+
     private static bool ValuesAreEqual(object actual, object expected)
     {
         return (actual is double actualDouble &&
@@ -1801,6 +1967,50 @@ public class CommandBarApiTests
 
         Assert.Fail(
             $"Expected visual state '{groupName}.{stateName}' to contain setter '{expectedTarget ?? expectedProperty}'.");
+    }
+
+    private static void AssertStateSetterDynamicResource(
+        FrameworkElement stateGroupsRoot,
+        string groupName,
+        string stateName,
+        string target,
+        object expectedResourceKey)
+    {
+        var setter = FindStateSetter(stateGroupsRoot, groupName, stateName, target);
+
+        AssertResourceReferenceExpression(
+            setter.ReadLocalValue(VisualStateSetter.ValueProperty),
+            expectedResourceKey);
+    }
+
+    private static VisualStateSetter FindStateSetter(
+        FrameworkElement stateGroupsRoot,
+        string groupName,
+        string stateName,
+        string target)
+    {
+        var group = FindVisualStateGroup(stateGroupsRoot, groupName);
+        Assert.IsNotNull(group, $"Expected visual state group '{groupName}'.");
+
+        var state = FindVisualState(group!, stateName);
+        Assert.IsNotNull(state, $"Expected visual state '{groupName}.{stateName}'.");
+        Assert.IsInstanceOfType(state, typeof(VisualStateEx));
+
+        var stateEx = (VisualStateEx)state!;
+        return stateEx.Setters.SingleOrDefault(setter => setter.Target == target)
+            ?? throw new AssertFailedException(
+                $"Expected visual state '{groupName}.{stateName}' to contain setter '{target}'.");
+    }
+
+    private static void AssertResourceReferenceExpression(object value, object expectedResourceKey)
+    {
+        Assert.IsNotNull(value, "Expected dynamic resource local value.");
+        Assert.AreEqual("System.Windows.ResourceReferenceExpression", value.GetType().FullName);
+        var resourceKeyProperty = value.GetType().GetProperty(
+            "ResourceKey",
+            BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+        Assert.IsNotNull(resourceKeyProperty, "Expected ResourceReferenceExpression.ResourceKey.");
+        Assert.AreEqual(expectedResourceKey, resourceKeyProperty!.GetValue(value));
     }
 
     private static void AssertStateSetterAbsent(

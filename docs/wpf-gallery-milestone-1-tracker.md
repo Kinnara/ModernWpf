@@ -67,15 +67,26 @@ unresolved, unverified, or not recorded as stale-covered.
 Row 7.1 backlog order:
 
 1. NavigationView core state theme-resource aliases, including top-navigation
-   selected backgrounds.
-2. HeaderTile fills.
-3. DataGrid visual resource switching.
-4. CheckBox checked brush aliases.
+   selected backgrounds. Covered at branch tip by
+   `NavigationViewApiTests.VerifyFinalWinUI2NavigationViewThemeResources` and
+   the retained shell `GalleryNavigationRuntimeTests` alias coverage.
+2. HeaderTile fills. Covered at branch tip by
+   `GalleryApplicationResourceTests.HomeHeaderTilesUseWpfGalleryHighContrastFillResources`.
+3. DataGrid visual resource switching. Covered at branch tip by
+   `DataGridVisualStateTests` theme/resource coverage and the DataGrid
+   loaded-refresh source-shape test.
+4. CheckBox checked brush aliases. Covered at branch tip by
+   `CheckBoxVisualStateTests`.
 5. Validation-template resource resolution and official event-handler shape.
-6. CommandBar overflow/theme-resource aliases.
-7. MenuBar shell/item theme-resource aliases.
+   Covered at branch tip by `TextBoxPasswordBoxVisualStateTests`,
+   `ComboBoxApiTests`, and the copied DataGrid loaded-refresh shape test.
+6. CommandBar overflow/theme-resource aliases. Covered at branch tip by
+   `CommandBarApiTests`, including live CommandBar overflow chrome and
+   `CommandBarOverflowPresenter` resource consumption.
+7. MenuBar shell/item theme-resource aliases. Covered at branch tip by
+   `MenuBarApiTests.ThemeResourcesUseWinUI2MenuBarHighContrastTokens`.
 8. AppBarButton, AppBarToggleButton, and AppBarSeparator core theme-resource
-   aliases.
+   aliases. Next unresolved item.
 9. PipsPager selection/navigation theme-resource aliases and direct style/live
    resource consumption.
 10. DropDownButton chevron aliases and direct style/live resource consumption.
@@ -896,7 +907,7 @@ Latest local verification for the current branch tip:
 - `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~SplitViewApiTests" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0`: 14 tests. `SplitView` now also pins direct style resource setters and live template consumption for pane border/background, pane lengths, corner, high-contrast pane border, content transform, and light-dismiss overlay resources while retaining focused Light/Dark/HighContrast coverage for the WinUI2 320px open-pane length, 48px compact-pane length, left/right pane border thickness resources, and `SplitViewLightDismissOverlayBackground` resolving through `SystemControlPageBackgroundMediumAltMediumBrush`; existing SplitView default property, template-settings, pane event, light-dismiss, keyboard, state, and transition coverage still passes. Existing warning/output remains `NETSDK1137`, generated WinRT warnings, existing ModernWpf/ModernWpf.Controls warnings, and the recurring `Failed to resolve WinRT.Runtime.dll` message.
 - `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~CommandBarApiTests" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
-  - Passed for `net8.0-windows7.0`: 33 tests. `CommandBar` now has focused Light/Dark/HighContrast coverage for the WinUI2 overflow size constants, command bar background/open/foreground/border aliases, disabled ellipsis icon alias, overflow presenter background/border aliases, light-dismiss overlay alias, and HighContrast open-border thickness; existing CommandBar dynamic overflow, shadow, presenter state, AppBarButton/AppBarToggleButton, overflow sizing, automation, and split-button style coverage still passes. Existing warning/output remains `NETSDK1137`, generated WinRT warnings, existing ModernWpf/ModernWpf.Controls warnings, and the recurring `Failed to resolve WinRT.Runtime.dll` message.
+  - Passed for `net8.0-windows7.0`: 35 tests. `CommandBar` now has focused Light/Dark/HighContrast coverage for the WinUI2 overflow size constants, command bar background/open/foreground/border aliases, disabled ellipsis icon alias, overflow presenter background/border aliases, light-dismiss overlay alias, and HighContrast open-border thickness, plus live runtime coverage proving the default `CommandBar` chrome consumes `CommandBarBackground`, `CommandBarForeground`, overflow min/max width, `CommandBarHighContrastBorder`, and open-border resources, and proving `CommandBarOverflowPresenter` style/template/full-width states consume their dynamic resources live. Existing CommandBar dynamic overflow, shadow, presenter state, AppBarButton/AppBarToggleButton, overflow sizing, automation, and split-button style coverage still passes. Existing warning/output remains `NETSDK1137`, generated WinRT warnings, existing ModernWpf/ModernWpf.Controls warnings, and the recurring `Failed to resolve WinRT.Runtime.dll` message.
 - `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~MenuBarApiTests" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0`: 10 tests. `MenuBar` now has focused Light/Dark/HighContrast coverage for MenuBar background/foreground aliases, context-menu and flyout chrome aliases, menu border and checkbox aliases, menu-bar item background state aliases, menu-bar item border state aliases, and the 2px HighContrast item border thickness; existing MenuBar defaults, item ownership, flyout sync, automation peer, sizing, and XAML content-property coverage still passes. Existing warning/output remains `NETSDK1137`, generated WinRT warnings, existing ModernWpf/ModernWpf.Controls warnings, and the recurring `Failed to resolve WinRT.Runtime.dll` message.
 - `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~PipsPagerApiTests" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
@@ -3536,12 +3547,13 @@ source properties; remaining High Contrast
 work means broader OS high-contrast shell and control paths that are not
 already covered by title chrome, NavigationView TreeView token aliases and
 their HighContrast system-brush references, NavigationView core state
-theme-resource aliases including top-navigation selected backgrounds, HeaderTile fills,
-DataGrid visual resource switching, checkbox checked brush aliases, validation-template
-resource resolution, and official event-handler shape,
-CommandBar overflow/theme-resource aliases, MenuBar shell/item
-theme-resource aliases, AppBarButton/AppBarToggleButton/AppBarSeparator
-core theme-resource aliases, PipsPager selection/navigation theme-resource aliases and direct style/live resource consumption,
+theme-resource aliases including top-navigation selected backgrounds,
+HeaderTile fills, DataGrid visual resource switching, checkbox checked brush
+aliases, validation-template resource resolution, official event-handler shape,
+and CommandBar overflow/live theme-resource coverage. MenuBar shell/item
+theme-resource aliases are also covered by focused runtime tests. The next
+remaining item starts at AppBarButton/AppBarToggleButton/AppBarSeparator core
+theme-resource aliases, followed by PipsPager selection/navigation theme-resource aliases and direct style/live resource consumption,
 DropDownButton chevron aliases and direct style/live resource consumption, Pivot style theme-resource aliases and direct style/live resource consumption,
 FlyoutPresenter chrome/theme-resource aliases and direct style/live resource consumption,
 Date/time flyout and FlipView common style theme-resource aliases,
