@@ -9,12 +9,22 @@ all WPF Gallery-equivalent pages and controls, while keeping ModernWpf and
 WinUI-style controls such as `NavigationView` where they fit the WinUI Gallery
 interaction model.
 
-## Execution Priority
+## Hard Execution Queue
 
-This section is the active queue for all remaining Milestone 1 work. Do not
-start source-only alignment, resource-key cleanup, or documentation-only work
-unless the first executable row below has current visual evidence or an explicit
-environment blocker recorded here.
+This section is the active queue for all remaining Milestone 1 work and must be
+read before resuming implementation. Treat it as a scheduler, not a summary:
+pick the first row below that is executable, and do not work on any lower row
+unless every higher row is either `Done` or has a recorded blocker that cannot
+be changed from this environment.
+
+Current executable row: **P0.4 residual `NavigationView` shell visual details**,
+because P0.1 is blocked by the local Windows session reporting
+`SystemParameters.HighContrast = False`.
+
+Do not start P1/P2 cleanup, source-shape alignment, resource-key cleanup, or
+documentation-only work while P0.4 has unresolved current visual drift. Small
+source/test edits are allowed only when they directly reduce or lock a P0 visual
+or High Contrast issue.
 
 | Execution order | Gate | State | Allowed next work |
 | --- | --- | --- | --- |
@@ -23,6 +33,16 @@ environment blocker recorded here.
 | 3 | P0.2 top-level residual visual drift gate | Done at branch tip. | No action unless a new top-level visual regression appears. |
 | 4 | P0.3 direct-item drift gate for `TextBox`, `Clipboard`, and `FileAndFolderDialogs` | Done at branch tip. | No action unless a new direct-item visual regression appears. |
 | 5 | P1/P2 source cleanup, resource cleanup, and documentation-only work | Not allowed while P0.1 is unproven and P0.4 lacks current visual evidence. | Resume only after the P0 queue above is evidenced or explicitly blocked. |
+
+Resume checklist:
+
+1. Check `SystemParameters.HighContrast`.
+2. If High Contrast is on, run the P0.1 real `-Theme HighContrast` visual
+   slices before anything else.
+3. If High Contrast is off, continue P0.4 shell-pane visual work from the
+   latest recorded Light/Dark reports.
+4. Update this queue before committing whenever the first executable row
+   changes, is blocked, or is completed.
 
 1. **P0 - Visual and High Contrast evidence first.** Refresh screenshot audits,
    inspect the highest visible deltas, and fix user-visible drift before taking
