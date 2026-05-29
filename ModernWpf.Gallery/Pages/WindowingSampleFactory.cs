@@ -186,9 +186,9 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
             titleBarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
             titleBarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
             titleBarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            titleBarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            titleBarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
             titleBarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-            titleBarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            titleBarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 
             Grid.SetColumn(backButton, 0);
             Grid.SetColumn(paneButton, 1);
@@ -209,11 +209,12 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
 
             var titleStack = new StackPanel
             {
-                VerticalAlignment = VerticalAlignment.Center
+                VerticalAlignment = VerticalAlignment.Center,
+                Visibility = Visibility.Collapsed
             };
             titleStack.Children.Add(titleText);
             titleStack.Children.Add(subtitleText);
-            Grid.SetColumn(titleStack, 3);
+            Grid.SetColumn(titleStack, 5);
             titleBarGrid.Children.Add(titleStack);
 
             var searchBox = new Mux.AutoSuggestBox
@@ -223,9 +224,9 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
                 VerticalAlignment = VerticalAlignment.Center,
                 PlaceholderText = "Search..",
                 QueryIcon = new Mux.SymbolIcon(Mux.Symbol.Find),
-                Margin = new Thickness(16, 0, 16, 0)
+                Margin = new Thickness(0, 0, 16, 0)
             };
-            Grid.SetColumn(searchBox, 4);
+            Grid.SetColumn(searchBox, 3);
             titleBarGrid.Children.Add(searchBox);
 
             var personPicture = new Mux.PersonPicture
@@ -237,7 +238,7 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
                 Margin = new Thickness(0, 0, 16, 0),
                 VerticalAlignment = VerticalAlignment.Center
             };
-            Grid.SetColumn(personPicture, 5);
+            Grid.SetColumn(personPicture, 4);
             titleBarGrid.Children.Add(personPicture);
             titleBarRoot.Children.Add(titleBarGrid);
             titleBarControl.Content = titleBarRoot;

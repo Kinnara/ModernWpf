@@ -510,7 +510,7 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
         "ParallaxView" { return "GallerySample_ParallaxView_Root" }
         "IconElement" { return "GallerySample_IconElement_Root" }
         "ThemeShadow" { return "GallerySample_ThemeShadow_Root" }
-        "TitleBar" { return "TitleBox" }
+        "TitleBar" { return "GallerySample_TitleBar_TitleBarControl" }
         "InfoBadge" { return "GallerySample_InfoBadge_InfoBadge" }
         "ProgressRing" { return "GallerySample_ProgressRing_ProgressRing" }
         "PipsPager" { return "GallerySample_PipsPager_PipsPager" }
@@ -562,7 +562,7 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
         "ParallaxView" { return "listView" }
         "IconElement" { return "svPanel" }
         "ThemeShadow" { return "svPanel" }
-        "TitleBar" { return "TitleBox" }
+        "TitleBar" { return "TitleBarControl" }
         "ProgressRing" { return "ProgressRing1" }
         "PipsPager" { return "FlipViewPipsPager" }
         "AnnotatedScrollBar" { return "svPanel" }
@@ -1186,6 +1186,34 @@ function New-RenderedArtifactSliceCrop([string]$sourcePath, [string]$path, [stri
     return New-RenderedArtifactCrop $path $source $bounds
 }
 
+function New-TitleBarModernPrimaryCrop([string]$caseDir) {
+    $artifactDir = Join-Path $caseDir "modernwpf-artifacts"
+    $sampleArtifact = Join-Path $artifactDir "GallerySample_TitleBar_Root.png"
+    if (!(Test-Path $sampleArtifact)) {
+        return $null
+    }
+
+    $sampleSize = Get-ImageSize $sampleArtifact
+    $bounds = [ordered]@{
+        Found = $true
+        Reason = "Cropped the ModernWpf TitleBarControl from the rendered sample root because the control-only VisualBrush crop is blank."
+        X = 0
+        Y = [Math]::Max(0, [int][Math]::Round(($sampleSize.Height - 48) / 2.0))
+        Width = [Math]::Min(470, $sampleSize.Width)
+        Height = [Math]::Min(48, $sampleSize.Height)
+        ChangedSamples = 0
+    }
+
+    $path = Join-Path $artifactDir "GallerySample_TitleBar_TitleBarControl_fromRoot.png"
+    $savedBounds = Save-Crop $sampleArtifact $bounds $path 0
+    $crop = New-RenderedArtifactCrop $path "GallerySample_TitleBar_TitleBarControl" $savedBounds
+    if ($null -ne $crop -and $crop.NonBlank) {
+        return $crop
+    }
+
+    return $null
+}
+
 function New-AnnotatedScrollBarReferencePrimaryCrop([string]$caseDir, $window, [string]$screenshot, $sampleElement) {
     $modernArtifactDir = Join-Path $caseDir "modernwpf-artifacts"
     $modernSampleArtifact = Join-Path $modernArtifactDir "GallerySample_AnnotatedScrollBar_Root.png"
@@ -1325,6 +1353,16 @@ function Capture-StaticCrops([string]$app, [string]$control, [string]$caseDir, $
 
             if ($null -ne $sampleCrop -and !$sampleCrop.NonBlank) {
                 $sampleCrop = $null
+            }
+        }
+
+        if ($control -eq "TitleBar" -and $null -ne $primaryCrop -and !$primaryCrop.NonBlank) {
+            $titleBarPrimary = New-TitleBarModernPrimaryCrop $caseDir
+            if ($null -ne $titleBarPrimary) {
+                $primaryCrop = $titleBarPrimary
+            }
+            else {
+                $primaryCrop = $null
             }
         }
 
