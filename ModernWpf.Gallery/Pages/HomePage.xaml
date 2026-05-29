@@ -7,15 +7,30 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="clr-namespace:ModernWpf.Gallery.Controls"
     xmlns:pages="clr-namespace:ModernWpf.Gallery.Pages"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
     Title="DashboardPage"
     d:DesignHeight="450"
     d:DesignWidth="800"
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     mc:Ignorable="d"
     Margin="-24,-16,-24,12">
+    <Page.Resources>
+        <Style x:Key="HomePageRootStyle" TargetType="Grid">
+            <Style.Triggers>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding ActualApplicationTheme, Source={x:Static ui:ThemeManager.Current}}" Value="{x:Static ui:ApplicationTheme.Dark}" />
+                        <Condition Binding="{Binding Path=(SystemParameters.HighContrast)}" Value="False" />
+                    </MultiDataTrigger.Conditions>
+                    <Setter Property="Background" Value="#272727" />
+                </MultiDataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Page.Resources>
+
     <ScrollViewer >
 
-        <Grid>
+        <Grid Style="{StaticResource HomePageRootStyle}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />

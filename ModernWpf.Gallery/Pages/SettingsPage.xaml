@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:ModernWpf.Gallery.Pages"
     xmlns:controls="clr-namespace:ModernWpf.Gallery.Controls"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="SettingsPage"
     d:DesignHeight="450"
@@ -25,9 +26,21 @@
         <Style x:Key="BottomSettingsCardStyle" TargetType="Border">
             <Setter Property="Padding" Value="0,16,0,16" />
         </Style>
+
+        <Style x:Key="SettingsPageRootStyle" BasedOn="{StaticResource GalleryPageRootStyle}" TargetType="Grid">
+            <Style.Triggers>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding ActualApplicationTheme, Source={x:Static ui:ThemeManager.Current}}" Value="{x:Static ui:ApplicationTheme.Dark}" />
+                        <Condition Binding="{Binding Path=(SystemParameters.HighContrast)}" Value="False" />
+                    </MultiDataTrigger.Conditions>
+                    <Setter Property="Background" Value="#272727" />
+                </MultiDataTrigger>
+            </Style.Triggers>
+        </Style>
     </Page.Resources>
 
-    <Grid Style="{StaticResource GalleryPageRootStyle}">
+    <Grid Style="{StaticResource SettingsPageRootStyle}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />

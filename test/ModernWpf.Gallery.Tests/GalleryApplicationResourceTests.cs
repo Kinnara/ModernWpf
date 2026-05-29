@@ -106,6 +106,22 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void HomeDarkPageBackgroundMatchesWpfGalleryFluentReference()
+        {
+            AssertDarkPageRootBackground(
+                () => new HomePage(),
+                page => (Grid)((ScrollViewer)page.Content).Content);
+        }
+
+        [TestMethod]
+        public void SettingsDarkPageBackgroundMatchesWpfGalleryFluentReference()
+        {
+            AssertDarkPageRootBackground(
+                () => new SettingsPage(),
+                page => (Grid)page.Content);
+        }
+
+        [TestMethod]
         public void UserDashboardImageConverterResolvesWpfGalleryPageStyleBrushes()
         {
             WpfTestHost.Run(() =>
@@ -677,6 +693,55 @@ namespace ModernWpf.Gallery.Tests
                 window.Content = null;
                 window.Close();
             }
+        }
+
+        private static void AssertDarkPageRootBackground(
+            Func<System.Windows.Controls.Page> createPage,
+            Func<System.Windows.Controls.Page, Panel> rootAccessor)
+        {
+            WpfTestHost.Run(() =>
+            {
+                var originalTheme = ThemeManager.Current.ApplicationTheme;
+                Window window = null;
+
+                try
+                {
+                    ThemeManager.Current.ApplicationTheme = ApplicationTheme.Dark;
+                    WpfTestHost.DoEvents();
+
+                    var page = createPage();
+                    window = new Window
+                    {
+                        Width = 480,
+                        Height = 360,
+                        Left = -32000,
+                        Top = -32000,
+                        ShowInTaskbar = false,
+                        WindowStartupLocation = WindowStartupLocation.Manual,
+                        Content = page
+                    };
+
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    var background = rootAccessor(page).Background as SolidColorBrush;
+                    Assert.IsNotNull(background);
+                    Assert.AreEqual(Color.FromRgb(0x27, 0x27, 0x27), background.Color);
+                }
+                finally
+                {
+                    if (window != null)
+                    {
+                        window.Content = null;
+                        window.Close();
+                    }
+
+                    ThemeManager.Current.ApplicationTheme = originalTheme;
+                    WpfTestHost.DoEvents();
+                }
+            });
         }
 
         private static IEnumerable<T> FindVisualChildren<T>(DependencyObject root)

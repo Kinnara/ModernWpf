@@ -1982,6 +1982,7 @@ namespace ModernWpf.Gallery.Tests
                 "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"",
                 "xmlns:controls=\"clr-namespace:ModernWpf.Gallery.Controls\"",
                 "xmlns:pages=\"clr-namespace:ModernWpf.Gallery.Pages\"",
+                "xmlns:ui=\"http://schemas.modernwpf.com/2019\"",
                 "Title=\"DashboardPage\"",
                 "d:DesignHeight=\"450\"",
                 "d:DesignWidth=\"800\"",
@@ -1993,15 +1994,20 @@ namespace ModernWpf.Gallery.Tests
                 "The copied Home page should use the official Dashboard ScrollViewer root shape instead of a local-only root name.");
             AssertContainsInOrder(
                 xaml,
+                "<Style x:Key=\"HomePageRootStyle\" TargetType=\"Grid\">",
+                "<MultiDataTrigger>",
+                "<Condition Binding=\"{Binding ActualApplicationTheme, Source={x:Static ui:ThemeManager.Current}}\" Value=\"{x:Static ui:ApplicationTheme.Dark}\" />",
+                "<Condition Binding=\"{Binding Path=(SystemParameters.HighContrast)}\" Value=\"False\" />",
+                "<Setter Property=\"Background\" Value=\"#272727\" />",
                 "<ScrollViewer >",
-                "<Grid>",
+                "<Grid Style=\"{StaticResource HomePageRootStyle}\">",
                 "<Grid.RowDefinitions>",
                 "<RowDefinition Height=\"Auto\" />",
                 "<RowDefinition Height=\"Auto\" />",
                 "<RowDefinition Height=\"*\" />");
             StringAssert.Contains(
                 normalizedXaml,
-                "<ScrollViewer >\n\n        <Grid>");
+                "<ScrollViewer >\n\n        <Grid Style=\"{StaticResource HomePageRootStyle}\">");
             StringAssert.Contains(
                 normalizedXaml,
                 "<Border CornerRadius=\"8,0,0,0\"\n                    Grid.RowSpan=\"2\">\n                <Border.Background>\n                    <ImageBrush ImageSource=\"pack://application:,,,/ModernWpf.Gallery;component/Assets/win11-dashboard.light.png\" Stretch=\"UniformToFill\" />");
@@ -2141,6 +2147,7 @@ namespace ModernWpf.Gallery.Tests
                 "xmlns:d=\"http://schemas.microsoft.com/expression/blend/2008\"",
                 "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages\"",
                 "xmlns:controls=\"clr-namespace:ModernWpf.Gallery.Controls\"",
+                "xmlns:ui=\"http://schemas.modernwpf.com/2019\"",
                 "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"",
                 "Title=\"SettingsPage\"",
                 "d:DesignHeight=\"450\"",
@@ -2158,7 +2165,16 @@ namespace ModernWpf.Gallery.Tests
                 "The copied Settings root should be located structurally instead of by a local-only name.");
             StringAssert.Contains(
                 xaml,
-                "<Grid Style=\"{StaticResource GalleryPageRootStyle}\">");
+                "<Style x:Key=\"SettingsPageRootStyle\" BasedOn=\"{StaticResource GalleryPageRootStyle}\" TargetType=\"Grid\">");
+            AssertContainsInOrder(
+                xaml,
+                "<MultiDataTrigger>",
+                "<Condition Binding=\"{Binding ActualApplicationTheme, Source={x:Static ui:ThemeManager.Current}}\" Value=\"{x:Static ui:ApplicationTheme.Dark}\" />",
+                "<Condition Binding=\"{Binding Path=(SystemParameters.HighContrast)}\" Value=\"False\" />",
+                "<Setter Property=\"Background\" Value=\"#272727\" />");
+            StringAssert.Contains(
+                xaml,
+                "<Grid Style=\"{StaticResource SettingsPageRootStyle}\">");
             AssertContainsInOrder(
                 xaml,
                 "<controls:PageHeader",
