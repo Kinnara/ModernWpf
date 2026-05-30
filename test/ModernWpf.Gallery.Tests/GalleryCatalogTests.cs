@@ -640,30 +640,74 @@ namespace ModernWpf.Gallery.Tests
                 "assets/myimage.jpg"
             };
             var missingResources = new SortedSet<string>(StringComparer.OrdinalIgnoreCase);
-            var imageReferencePattern = new Regex(
-                @"Assets[\\/][A-Za-z0-9._ -]+(?:[\\/][A-Za-z0-9._ -]+)*\.(?:png|jpg|jpeg|ico|svg)",
-                RegexOptions.IgnoreCase);
 
-            foreach (var sourceFile in sourceFiles)
+            foreach (var reference in EnumerateImageResourceReferences(sourceFiles))
             {
-                var source = File.ReadAllText(sourceFile);
-                foreach (Match match in imageReferencePattern.Matches(source))
+                var resourcePath = reference.Item2;
+                if (resourcePath.StartsWith("assets/controlimages/", StringComparison.OrdinalIgnoreCase) ||
+                    allowedPlaceholders.Contains(resourcePath))
                 {
-                    var resourcePath = match.Value.Replace('\\', '/').ToLowerInvariant();
-                    if (resourcePath.StartsWith("assets/controlimages/", StringComparison.OrdinalIgnoreCase) ||
-                        allowedPlaceholders.Contains(resourcePath))
-                    {
-                        continue;
-                    }
+                    continue;
+                }
 
-                    if (!resourceNames.Contains(resourcePath))
-                    {
-                        missingResources.Add(Path.GetRelativePath(galleryRoot, sourceFile) + ": " + resourcePath);
-                    }
+                if (!resourceNames.Contains(resourcePath))
+                {
+                    missingResources.Add(Path.GetRelativePath(galleryRoot, reference.Item1) + ": " + resourcePath);
                 }
             }
 
             CollectionAssert.AreEqual(Array.Empty<string>(), missingResources.ToArray());
+        }
+
+        [TestMethod]
+        public void WpfGalleryEquivalentNonControlImageReferencesAreHashLocked()
+        {
+            var sourceRoots = new[]
+            {
+                FindRepoDirectory("ModernWpf.Gallery", "Controls"),
+                FindRepoDirectory("ModernWpf.Gallery", "Pages", "WpfGallery"),
+                FindRepoDirectory("ModernWpf.Gallery", "Resources")
+            };
+            var sourceFiles = sourceRoots
+                .SelectMany(root => Directory.EnumerateFiles(root, "*.*", SearchOption.AllDirectories))
+                .Concat(new[]
+                {
+                    FindRepoFile("ModernWpf.Gallery", "MainWindow.xaml"),
+                    FindRepoFile("ModernWpf.Gallery", "Pages", "SettingsPage.xaml")
+                })
+                .Where(path =>
+                    string.Equals(Path.GetExtension(path), ".cs", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(Path.GetExtension(path), ".xaml", StringComparison.OrdinalIgnoreCase))
+                .ToArray();
+            var testSource = File.ReadAllText(FindRepoFile("test", "ModernWpf.Gallery.Tests", "GalleryCatalogTests.cs"));
+            var hashLockedResources = new HashSet<string>(
+                Regex.Matches(testSource, @"Tuple\.Create\(""(?<path>assets/[^""]+)""")
+                    .Cast<Match>()
+                    .Select(match => match.Groups["path"].Value.ToLowerInvariant()),
+                StringComparer.OrdinalIgnoreCase);
+            var allowedPlaceholders = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                "assets/myimage.jpg"
+            };
+            var galleryRoot = FindRepoDirectory("ModernWpf.Gallery");
+            var unguardedReferences = new SortedSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var reference in EnumerateImageResourceReferences(sourceFiles))
+            {
+                var resourcePath = reference.Item2;
+                if (resourcePath.StartsWith("assets/controlimages/", StringComparison.OrdinalIgnoreCase) ||
+                    allowedPlaceholders.Contains(resourcePath))
+                {
+                    continue;
+                }
+
+                if (!hashLockedResources.Contains(resourcePath))
+                {
+                    unguardedReferences.Add(Path.GetRelativePath(galleryRoot, reference.Item1) + ": " + resourcePath);
+                }
+            }
+
+            CollectionAssert.AreEqual(Array.Empty<string>(), unguardedReferences.ToArray());
         }
 
         [TestMethod]
@@ -890,6 +934,24 @@ namespace ModernWpf.Gallery.Tests
                 .Replace('\\', '/')
                 .TrimStart('/')
                 .ToLowerInvariant();
+        }
+
+        private static IEnumerable<Tuple<string, string>> EnumerateImageResourceReferences(IEnumerable<string> sourceFiles)
+        {
+            var imageReferencePattern = new Regex(
+                @"Assets[\\/][A-Za-z0-9._ -]+(?:[\\/][A-Za-z0-9._ -]+)*\.(?:png|jpg|jpeg|ico|svg)",
+                RegexOptions.IgnoreCase);
+
+            foreach (var sourceFile in sourceFiles)
+            {
+                var source = File.ReadAllText(sourceFile);
+                foreach (Match match in imageReferencePattern.Matches(source))
+                {
+                    yield return Tuple.Create(
+                        sourceFile,
+                        match.Value.Replace('\\', '/').ToLowerInvariant());
+                }
+            }
         }
     }
 }
