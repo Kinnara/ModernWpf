@@ -244,7 +244,7 @@ public class InfoBarApiTests
             Assert.AreEqual(1, Grid.GetRow(contentArea));
             Assert.AreEqual(VerticalAlignment.Center, contentArea.VerticalAlignment);
 
-            var layoutRoot = FindDescendant<GridEx>(infoBar);
+            var layoutRoot = FindNamedDescendant<Border>(infoBar, "LayoutRoot");
             Assert.AreEqual(new Thickness(16, 0, 0, 0), layoutRoot.Padding);
             Assert.AreEqual(infoBar.CornerRadius, layoutRoot.CornerRadius);
 
@@ -292,7 +292,7 @@ public class InfoBarApiTests
             AssertSetterValue(infoBarStyle, ModernWpf.Controls.InfoBar.CloseButtonStyleProperty, closeButtonStyle);
             AssertSolidColorBrushSetterColor(infoBarStyle, Control.BackgroundProperty, Colors.Transparent);
             AssertDynamicResourceSetter(infoBarStyle, Control.BorderBrushProperty, "InfoBarBorderBrush");
-            AssertDynamicResourceSetter(infoBarStyle, Control.BorderThicknessProperty, "InfoBarBorderThickness");
+            AssertSetterValue(infoBarStyle, Control.BorderThicknessProperty, resources["InfoBarBorderThickness"]);
             AssertDynamicResourceSetter(infoBarStyle, ModernWpf.Controls.InfoBar.CornerRadiusProperty, "ControlCornerRadius");
             var infoBarTemplate = GetSetterValue(infoBarStyle, Control.TemplateProperty) as ControlTemplate;
             Assert.IsNotNull(infoBarTemplate);
@@ -340,26 +340,26 @@ public class InfoBarApiTests
             Assert.AreEqual(infoBar.TryFindResource("ControlCornerRadius"), infoBar.CornerRadius);
 
             var contentRoot = FindNamedDescendant<Border>(infoBar, "ContentRoot");
-            var layoutRoot = FindDescendant<GridEx>(infoBar);
+            var layoutRoot = FindNamedDescendant<Border>(infoBar, "LayoutRoot");
             var iconBackground = FindNamedDescendant<TextBlock>(infoBar, "IconBackground");
             var standardIcon = FindNamedDescendant<TextBlock>(infoBar, "StandardIcon");
             var title = FindNamedDescendant<TextBlock>(infoBar, "Title");
             var message = FindNamedDescendant<TextBlock>(infoBar, "Message");
             var closeButton = FindNamedDescendant<Button>(infoBar, "CloseButton");
 
-            Assert.AreSame(infoBar.TryFindResource("InfoBarInformationalSeverityBackgroundBrush"), contentRoot.Background);
+            Assert.AreSame(contentRoot.TryFindResource("InfoBarInformationalSeverityBackgroundBrush"), contentRoot.Background);
             Assert.AreSame(infoBar.BorderBrush, contentRoot.BorderBrush);
             Assert.AreEqual(infoBar.BorderThickness, contentRoot.BorderThickness);
             Assert.AreEqual(infoBar.CornerRadius, contentRoot.CornerRadius);
             Assert.AreEqual(resources["InfoBarMinHeight"], layoutRoot.MinHeight);
             Assert.AreEqual(resources["InfoBarContentRootPadding"], layoutRoot.Padding);
             Assert.AreEqual(infoBar.CornerRadius, layoutRoot.CornerRadius);
-            Assert.AreSame(infoBar.TryFindResource("InfoBarInformationalSeverityIconBackground"), iconBackground.Foreground);
-            Assert.AreSame(infoBar.TryFindResource("InfoBarInformationalSeverityIconForeground"), standardIcon.Foreground);
+            Assert.AreSame(contentRoot.TryFindResource("InfoBarInformationalSeverityIconBackground"), iconBackground.Foreground);
+            Assert.AreSame(contentRoot.TryFindResource("InfoBarInformationalSeverityIconForeground"), standardIcon.Foreground);
             Assert.AreEqual(resources["InfoBarInformationalIconGlyph"], standardIcon.Text);
-            Assert.AreSame(infoBar.TryFindResource("InfoBarTitleForeground"), title.Foreground);
-            Assert.AreSame(infoBar.TryFindResource("InfoBarMessageForeground"), message.Foreground);
-            Assert.AreSame(infoBar.TryFindResource("InfoBarHyperlinkButtonForeground"), actionButton.Foreground);
+            Assert.AreSame(contentRoot.TryFindResource("InfoBarTitleForeground"), title.Foreground);
+            Assert.AreSame(contentRoot.TryFindResource("InfoBarMessageForeground"), message.Foreground);
+            Assert.AreSame(actionButton.TryFindResource("InfoBarHyperlinkButtonForeground"), actionButton.Foreground);
             Assert.AreEqual(resources["InfoBarHyperlinkButtonMargin"], actionButton.Margin);
 
             Assert.AreSame(closeButtonStyle, closeButton.Style);
@@ -391,6 +391,8 @@ public class InfoBarApiTests
             AssertStateSetterDynamicResource(contentRoot, "SeverityLevels", "Success", "IconBackground.Foreground", "InfoBarSuccessSeverityIconBackground");
             AssertStateSetterValue(contentRoot, "SeverityLevels", "Success", "StandardIcon.Text", resources["InfoBarSuccessIconGlyph"]);
             AssertStateSetterDynamicResource(contentRoot, "SeverityLevels", "Success", "StandardIcon.Foreground", "InfoBarSuccessSeverityIconForeground");
+            AssertStateSetterValue(contentRoot, "InfoBarVisibility", "InfoBarVisible", "ContentRoot.Visibility", "Visible");
+            AssertStateSetterValue(contentRoot, "InfoBarVisibility", "InfoBarCollapsed", "ContentRoot.Visibility", "Collapsed");
 
             AssertSeverityResourceConsumption(infoBar, host, contentRoot, iconBackground, standardIcon,
                 InfoBarSeverity.Informational,

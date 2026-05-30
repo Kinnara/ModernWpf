@@ -123,7 +123,7 @@
         <Setter Property="CloseButtonStyle" Value="{StaticResource InfoBarCloseButtonStyle}" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderBrush" Value="{DynamicResource InfoBarBorderBrush}" />
-        <Setter Property="BorderThickness" Value="{DynamicResource InfoBarBorderThickness}" />
+        <Setter Property="BorderThickness" Value="{StaticResource InfoBarBorderThickness}" />
         <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="Template">
             <Setter.Value>
@@ -223,7 +223,11 @@
                             </VisualStateGroup>
 
                             <VisualStateGroup x:Name="InfoBarVisibility">
-                                <ui:VisualStateEx x:Name="InfoBarVisible" />
+                                <ui:VisualStateEx x:Name="InfoBarVisible">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ContentRoot.Visibility" Value="Visible" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                                 <ui:VisualStateEx x:Name="InfoBarCollapsed">
                                     <ui:VisualStateEx.Setters>
                                         <ui:VisualStateSetter Target="ContentRoot.Visibility" Value="Collapsed" />
@@ -251,125 +255,128 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <!-- Background is used here so that it overrides the severity status color if set. -->
-                        <ui:GridEx
+                        <Border
+                            x:Name="LayoutRoot"
                             HorizontalAlignment="Stretch"
                             MinHeight="{StaticResource InfoBarMinHeight}"
                             Background="{TemplateBinding Background}"
                             CornerRadius="{TemplateBinding CornerRadius}"
                             Padding="{StaticResource InfoBarContentRootPadding}">
-                            <ui:GridEx.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </ui:GridEx.ColumnDefinitions>
-                            <ui:GridEx.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </ui:GridEx.RowDefinitions>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
 
-                            <Grid x:Name="StandardIconArea" Visibility="Collapsed">
-                                <TextBlock
-                                    x:Name="IconBackground"
-                                    VerticalAlignment="Top"
-                                    Margin="{StaticResource InfoBarIconMargin}"
-                                    FontSize="{StaticResource InfoBarIconFontSize}"
-                                    Text="{StaticResource InfoBarIconBackgroundGlyph}"
-                                    Foreground="{DynamicResource InfoBarInformationalSeverityIconBackground}"
-                                    FontFamily="{DynamicResource SymbolThemeFontFamily}" />
-                                <TextBlock
-                                    x:Name="StandardIcon"
-                                    VerticalAlignment="Top"
-                                    Margin="{StaticResource InfoBarIconMargin}"
-                                    FontSize="{StaticResource InfoBarIconFontSize}"
-                                    Text="{StaticResource InfoBarInformationalIconGlyph}"
-                                    Foreground="{DynamicResource InfoBarInformationalSeverityIconForeground}"
-                                    FontFamily="{DynamicResource SymbolThemeFontFamily}" />
-                            </Grid>
-                            <Viewbox
-                                x:Name="UserIconBox"
-                                Grid.Column="0"
-                                Visibility="Collapsed"
-                                VerticalAlignment="Top"
-                                MaxWidth="{StaticResource InfoBarIconFontSize}"
-                                MaxHeight="{StaticResource InfoBarIconFontSize}"
-                                Margin="{StaticResource InfoBarIconMargin}">
-                                <ui:ContentPresenterEx Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.IconElement}" />
-                            </Viewbox>
-
-                            <primitives:InfoBarPanel
-                                Grid.Column="1"
-                                Margin="{StaticResource InfoBarPanelMargin}"
-                                HorizontalOrientationPadding="{StaticResource InfoBarPanelHorizontalOrientationPadding}"
-                                VerticalOrientationPadding="{StaticResource InfoBarPanelVerticalOrientationPadding}">
-                                <TextBlock
-                                    x:Name="Title"
-                                    Text="{TemplateBinding Title}"
-                                    Foreground="{DynamicResource InfoBarTitleForeground}"
-                                    primitives:InfoBarPanel.HorizontalOrientationMargin="{StaticResource InfoBarTitleHorizontalOrientationMargin}"
-                                    primitives:InfoBarPanel.VerticalOrientationMargin="{StaticResource InfoBarTitleVerticalOrientationMargin}"
-                                    TextWrapping="Wrap"
-                                    FontWeight="{StaticResource InfoBarTitleFontWeight}"
-                                    FontSize="{StaticResource InfoBarTitleFontSize}" />
-                                <TextBlock
-                                    x:Name="Message"
-                                    Text="{TemplateBinding Message}"
-                                    Foreground="{DynamicResource InfoBarMessageForeground}"
-                                    primitives:InfoBarPanel.HorizontalOrientationMargin="{StaticResource InfoBarMessageHorizontalOrientationMargin}"
-                                    primitives:InfoBarPanel.VerticalOrientationMargin="{StaticResource InfoBarMessageVerticalOrientationMargin}"
-                                    TextWrapping="Wrap"
-                                    FontWeight="{StaticResource InfoBarMessageFontWeight}"
-                                    FontSize="{StaticResource InfoBarMessageFontSize}" />
-                                <ui:ContentPresenterEx
-                                    primitives:InfoBarPanel.HorizontalOrientationMargin="{StaticResource InfoBarActionHorizontalOrientationMargin}"
-                                    primitives:InfoBarPanel.VerticalOrientationMargin="{StaticResource InfoBarActionVerticalOrientationMargin}"
-                                    VerticalAlignment="Top"
-                                    Content="{TemplateBinding ActionButton}">
-                                    <ui:ContentPresenterEx.Resources>
-                                        <Style TargetType="local:HyperlinkButton">
-                                            <Setter Property="Margin" Value="{StaticResource InfoBarHyperlinkButtonMargin}" />
-                                            <Setter Property="Foreground" Value="{DynamicResource InfoBarHyperlinkButtonForeground}" />
-                                        </Style>
-                                    </ui:ContentPresenterEx.Resources>
-                                </ui:ContentPresenterEx>
-                            </primitives:InfoBarPanel>
-
-                            <ui:ContentPresenterEx
-                                x:Name="ContentArea"
-                                Grid.Column="1"
-                                Grid.Row="1"
-                                Content="{TemplateBinding Content}"
-                                ContentTemplate="{TemplateBinding ContentTemplate}"
-                                VerticalAlignment="Center" />
-
-                            <Button
-                                x:Name="CloseButton"
-                                Grid.Column="2"
-                                Command="{TemplateBinding CloseButtonCommand}"
-                                CommandParameter="{TemplateBinding CloseButtonCommandParameter}"
-                                Style="{TemplateBinding CloseButtonStyle}">
-                                <Button.Resources>
-                                    <m:StaticResource x:Key="ButtonBackground" ResourceKey="AppBarButtonBackground" />
-                                    <m:StaticResource x:Key="ButtonBackgroundPointerOver" ResourceKey="AppBarButtonBackgroundPointerOver" />
-                                    <m:StaticResource x:Key="ButtonBackgroundPressed" ResourceKey="AppBarButtonBackgroundPressed" />
-                                    <m:StaticResource x:Key="ButtonBackgroundDisabled" ResourceKey="AppBarButtonBackgroundDisabled" />
-                                    <m:StaticResource x:Key="ButtonForeground" ResourceKey="AppBarButtonForeground" />
-                                    <m:StaticResource x:Key="ButtonForegroundPointerOver" ResourceKey="AppBarButtonForegroundPointerOver" />
-                                    <m:StaticResource x:Key="ButtonForegroundPressed" ResourceKey="AppBarButtonForegroundPressed" />
-                                    <m:StaticResource x:Key="ButtonForegroundDisabled" ResourceKey="AppBarButtonForegroundDisabled" />
-                                    <m:StaticResource x:Key="ButtonBorderBrush" ResourceKey="AppBarButtonBorderBrush" />
-                                    <m:StaticResource x:Key="ButtonBorderBrushPointerOver" ResourceKey="AppBarButtonBorderBrushPointerOver" />
-                                    <m:StaticResource x:Key="ButtonBorderBrushPressed" ResourceKey="AppBarButtonBorderBrushPressed" />
-                                    <m:StaticResource x:Key="ButtonBorderBrushDisabled" ResourceKey="AppBarButtonBorderBrushDisabled" />
-                                </Button.Resources>
+                                <Grid x:Name="StandardIconArea" Visibility="Collapsed">
+                                    <TextBlock
+                                        x:Name="IconBackground"
+                                        VerticalAlignment="Top"
+                                        Margin="{StaticResource InfoBarIconMargin}"
+                                        FontSize="{StaticResource InfoBarIconFontSize}"
+                                        Text="{StaticResource InfoBarIconBackgroundGlyph}"
+                                        Foreground="{DynamicResource InfoBarInformationalSeverityIconBackground}"
+                                        FontFamily="{DynamicResource SymbolThemeFontFamily}" />
+                                    <TextBlock
+                                        x:Name="StandardIcon"
+                                        VerticalAlignment="Top"
+                                        Margin="{StaticResource InfoBarIconMargin}"
+                                        FontSize="{StaticResource InfoBarIconFontSize}"
+                                        Text="{StaticResource InfoBarInformationalIconGlyph}"
+                                        Foreground="{DynamicResource InfoBarInformationalSeverityIconForeground}"
+                                        FontFamily="{DynamicResource SymbolThemeFontFamily}" />
+                                </Grid>
                                 <Viewbox
-                                    Width="{StaticResource InfoBarCloseButtonGlyphSize}"
-                                    Height="{StaticResource InfoBarCloseButtonGlyphSize}"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center">
-                                    <ui:SymbolIcon Symbol="Cancel" />
+                                    x:Name="UserIconBox"
+                                    Grid.Column="0"
+                                    Visibility="Collapsed"
+                                    VerticalAlignment="Top"
+                                    MaxWidth="{StaticResource InfoBarIconFontSize}"
+                                    MaxHeight="{StaticResource InfoBarIconFontSize}"
+                                    Margin="{StaticResource InfoBarIconMargin}">
+                                    <ui:ContentPresenterEx Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.IconElement}" />
                                 </Viewbox>
-                            </Button>
-                        </ui:GridEx>
+
+                                <primitives:InfoBarPanel
+                                    Grid.Column="1"
+                                    Margin="{StaticResource InfoBarPanelMargin}"
+                                    HorizontalOrientationPadding="{StaticResource InfoBarPanelHorizontalOrientationPadding}"
+                                    VerticalOrientationPadding="{StaticResource InfoBarPanelVerticalOrientationPadding}">
+                                    <TextBlock
+                                        x:Name="Title"
+                                        Text="{TemplateBinding Title}"
+                                        Foreground="{DynamicResource InfoBarTitleForeground}"
+                                        primitives:InfoBarPanel.HorizontalOrientationMargin="{StaticResource InfoBarTitleHorizontalOrientationMargin}"
+                                        primitives:InfoBarPanel.VerticalOrientationMargin="{StaticResource InfoBarTitleVerticalOrientationMargin}"
+                                        TextWrapping="Wrap"
+                                        FontWeight="{StaticResource InfoBarTitleFontWeight}"
+                                        FontSize="{StaticResource InfoBarTitleFontSize}" />
+                                    <TextBlock
+                                        x:Name="Message"
+                                        Text="{TemplateBinding Message}"
+                                        Foreground="{DynamicResource InfoBarMessageForeground}"
+                                        primitives:InfoBarPanel.HorizontalOrientationMargin="{StaticResource InfoBarMessageHorizontalOrientationMargin}"
+                                        primitives:InfoBarPanel.VerticalOrientationMargin="{StaticResource InfoBarMessageVerticalOrientationMargin}"
+                                        TextWrapping="Wrap"
+                                        FontWeight="{StaticResource InfoBarMessageFontWeight}"
+                                        FontSize="{StaticResource InfoBarMessageFontSize}" />
+                                    <ui:ContentPresenterEx
+                                        primitives:InfoBarPanel.HorizontalOrientationMargin="{StaticResource InfoBarActionHorizontalOrientationMargin}"
+                                        primitives:InfoBarPanel.VerticalOrientationMargin="{StaticResource InfoBarActionVerticalOrientationMargin}"
+                                        VerticalAlignment="Top"
+                                        Content="{TemplateBinding ActionButton}">
+                                        <ui:ContentPresenterEx.Resources>
+                                            <Style TargetType="local:HyperlinkButton">
+                                                <Setter Property="Margin" Value="{StaticResource InfoBarHyperlinkButtonMargin}" />
+                                                <Setter Property="Foreground" Value="{DynamicResource InfoBarHyperlinkButtonForeground}" />
+                                            </Style>
+                                        </ui:ContentPresenterEx.Resources>
+                                    </ui:ContentPresenterEx>
+                                </primitives:InfoBarPanel>
+
+                                <ui:ContentPresenterEx
+                                    x:Name="ContentArea"
+                                    Grid.Column="1"
+                                    Grid.Row="1"
+                                    Content="{TemplateBinding Content}"
+                                    ContentTemplate="{TemplateBinding ContentTemplate}"
+                                    VerticalAlignment="Center" />
+
+                                <Button
+                                    x:Name="CloseButton"
+                                    Grid.Column="2"
+                                    Command="{TemplateBinding CloseButtonCommand}"
+                                    CommandParameter="{TemplateBinding CloseButtonCommandParameter}"
+                                    Style="{TemplateBinding CloseButtonStyle}">
+                                    <Button.Resources>
+                                        <m:StaticResource x:Key="ButtonBackground" ResourceKey="AppBarButtonBackground" />
+                                        <m:StaticResource x:Key="ButtonBackgroundPointerOver" ResourceKey="AppBarButtonBackgroundPointerOver" />
+                                        <m:StaticResource x:Key="ButtonBackgroundPressed" ResourceKey="AppBarButtonBackgroundPressed" />
+                                        <m:StaticResource x:Key="ButtonBackgroundDisabled" ResourceKey="AppBarButtonBackgroundDisabled" />
+                                        <m:StaticResource x:Key="ButtonForeground" ResourceKey="AppBarButtonForeground" />
+                                        <m:StaticResource x:Key="ButtonForegroundPointerOver" ResourceKey="AppBarButtonForegroundPointerOver" />
+                                        <m:StaticResource x:Key="ButtonForegroundPressed" ResourceKey="AppBarButtonForegroundPressed" />
+                                        <m:StaticResource x:Key="ButtonForegroundDisabled" ResourceKey="AppBarButtonForegroundDisabled" />
+                                        <m:StaticResource x:Key="ButtonBorderBrush" ResourceKey="AppBarButtonBorderBrush" />
+                                        <m:StaticResource x:Key="ButtonBorderBrushPointerOver" ResourceKey="AppBarButtonBorderBrushPointerOver" />
+                                        <m:StaticResource x:Key="ButtonBorderBrushPressed" ResourceKey="AppBarButtonBorderBrushPressed" />
+                                        <m:StaticResource x:Key="ButtonBorderBrushDisabled" ResourceKey="AppBarButtonBorderBrushDisabled" />
+                                    </Button.Resources>
+                                    <Viewbox
+                                        Width="{StaticResource InfoBarCloseButtonGlyphSize}"
+                                        Height="{StaticResource InfoBarCloseButtonGlyphSize}"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center">
+                                        <ui:SymbolIcon Symbol="Cancel" />
+                                    </Viewbox>
+                                </Button>
+                            </Grid>
+                        </Border>
                     </Border>
                 </ControlTemplate>
             </Setter.Value>

@@ -4096,6 +4096,7 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsTrue(File.Exists(infoBarArtifact), infoBarArtifact + " was not written.");
                     Assert.IsTrue(new FileInfo(infoBarArtifact).Length > 0);
                     Assert.IsTrue(HasVisibleRgbPixels(infoBarArtifact), infoBarArtifact + " has no visible RGB content.");
+                    Assert.IsTrue(HasVisibleRgbVariation(infoBarArtifact), infoBarArtifact + " has no visible RGB variation.");
                 }
                 finally
                 {
@@ -4395,6 +4396,45 @@ namespace ModernWpf.Gallery.Tests
                     var red = pixels[i + 2];
                     var alpha = pixels[i + 3];
                     if (alpha > 16 && red + green + blue > 36)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private static bool HasVisibleRgbVariation(string path)
+        {
+            using (var stream = File.OpenRead(path))
+            {
+                var decoder = new PngBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
+                var frame = decoder.Frames[0];
+                BitmapSource bitmap = frame.Format == PixelFormats.Bgra32
+                    ? frame
+                    : new FormatConvertedBitmap(frame, PixelFormats.Bgra32, null, 0);
+                var stride = bitmap.PixelWidth * 4;
+                var pixels = new byte[stride * bitmap.PixelHeight];
+                bitmap.CopyPixels(pixels, stride, 0);
+                var minLuma = 255;
+                var maxLuma = 0;
+
+                for (var i = 0; i < pixels.Length; i += 4)
+                {
+                    var blue = pixels[i];
+                    var green = pixels[i + 1];
+                    var red = pixels[i + 2];
+                    var alpha = pixels[i + 3];
+                    if (alpha <= 16)
+                    {
+                        continue;
+                    }
+
+                    var luma = (red * 299 + green * 587 + blue * 114) / 1000;
+                    minLuma = Math.Min(minLuma, luma);
+                    maxLuma = Math.Max(maxLuma, luma);
+                    if (maxLuma - minLuma > 32)
                     {
                         return true;
                     }
