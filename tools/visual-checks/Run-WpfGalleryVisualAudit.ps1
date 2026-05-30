@@ -246,8 +246,13 @@ if ($BuildOfficial) {
     }
 }
 
-if ($Theme -eq "HighContrast" -and !(Test-OsHighContrastEnabled)) {
+$osHighContrastEnabled = Test-OsHighContrastEnabled
+if ($Theme -eq "HighContrast" -and !$osHighContrastEnabled) {
     throw "HighContrast visual audit requested, but OS High Contrast is not enabled. Enable a Windows High Contrast theme and rerun with -Theme HighContrast; this script does not simulate High Contrast via Light/Dark theme switching."
+}
+
+if (($Theme -eq "Light" -or $Theme -eq "Dark") -and $osHighContrastEnabled) {
+    throw "$Theme visual audit requested, but OS High Contrast is enabled. Disable Windows High Contrast before running Light/Dark audits, or rerun with -Theme HighContrast. Light/Dark audits under OS High Contrast produce mismatched ModernWpf and official direct-host content-crop sizes and invalid comparison evidence."
 }
 
 if (!(Test-Path $ModernGalleryExe)) {

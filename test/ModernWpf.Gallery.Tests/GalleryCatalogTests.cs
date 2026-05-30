@@ -541,6 +541,18 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void WpfGalleryVisualAuditRejectsLightDarkWhileOsHighContrastIsEnabled()
+        {
+            var script = File.ReadAllText(FindRepoFile("tools", "visual-checks", "Run-WpfGalleryVisualAudit.ps1"));
+
+            StringAssert.Contains(script, "$osHighContrastEnabled = Test-OsHighContrastEnabled");
+            StringAssert.Contains(script, "($Theme -eq \"Light\" -or $Theme -eq \"Dark\") -and $osHighContrastEnabled");
+            StringAssert.Contains(
+                script,
+                "Light/Dark audits under OS High Contrast produce mismatched ModernWpf and official direct-host content-crop sizes and invalid comparison evidence.");
+        }
+
+        [TestMethod]
         public void CatalogImageResourcesAreShipped()
         {
             var resourceNames = GetGalleryResourceNames();

@@ -38,6 +38,12 @@ Run a focused WPF Gallery visual audit:
 .\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -BuildModern -Cases Home,Button -Reference OfficialWpfGallery
 ```
 
+When Windows OS High Contrast is enabled, run WPF Gallery visual audits with
+`-Theme HighContrast`. The audit script rejects `-Theme Light` and
+`-Theme Dark` in that environment because WPF still applies High Contrast
+non-client/content sizing to ModernWpf while the official direct host would be
+captured as a normal Light/Dark reference, producing invalid crop-size evidence.
+
 Run a ModernWpf-only smoke capture when the official WPF Gallery executable is not built:
 
 ```powershell
