@@ -219,6 +219,33 @@ function Ensure-OfficialDirectHostBuilt {
     }
 }
 
+function Enter-WpfGalleryVisualAuditRunLock {
+    $mutexName = "ModernWpfGalleryWpfVisualAudit"
+    $mutex = [System.Threading.Mutex]::new($false, $mutexName)
+    try {
+        $acquired = $mutex.WaitOne([TimeSpan]::FromSeconds(1))
+    }
+    catch [System.Threading.AbandonedMutexException] {
+        $acquired = $true
+    }
+
+    if (!$acquired) {
+        $mutex.Dispose()
+        throw "Another WPF Gallery visual audit is already running. Run these GUI audits sequentially; concurrent runs can shift focus/window capture and produce invalid visual comparison evidence."
+    }
+
+    return $mutex
+}
+
+function Exit-WpfGalleryVisualAuditRunLock($mutex) {
+    if ($null -ne $mutex) {
+        $mutex.ReleaseMutex()
+        $mutex.Dispose()
+    }
+}
+
+$visualAuditRunMutex = $null
+
 if ($ListCases) {
     Select-Cases |
         ForEach-Object {
@@ -231,6 +258,8 @@ if ($ListCases) {
         Format-Table Id, ModernRoute, OfficialPath -AutoSize
     return
 }
+
+$visualAuditRunMutex = Enter-WpfGalleryVisualAuditRunLock
 
 if ($BuildModern) {
     & dotnet build (Join-Path $RepoRoot "ModernWpf.Gallery\ModernWpf.Gallery.csproj") -f net8.0-windows7.0 -c Debug --no-restore
@@ -1971,6 +2000,7 @@ $failed = @($results | Where-Object { $_.Status -eq "Failed" })
 Write-Host "WPF Gallery visual audit artifacts: $runDir"
 Write-Host "Report: $reportMarkdown"
 if ($failed.Count -gt 0) {
+    Exit-WpfGalleryVisualAuditRunLock $visualAuditRunMutex
     $failed |
         ForEach-Object {
             [pscustomobject]@{
@@ -1983,3 +2013,5 @@ if ($failed.Count -gt 0) {
         Format-Table App, Case, Status, LastException -AutoSize
     exit 1
 }
+
+Exit-WpfGalleryVisualAuditRunLock $visualAuditRunMutex

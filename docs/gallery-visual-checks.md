@@ -44,6 +44,11 @@ When Windows OS High Contrast is enabled, run WPF Gallery visual audits with
 non-client/content sizing to ModernWpf while the official direct host would be
 captured as a normal Light/Dark reference, producing invalid crop-size evidence.
 
+Run WPF Gallery visual audits sequentially. The audit script takes a process
+mutex and rejects concurrent GUI runs because overlapping ModernWpf/official
+capture sessions can shift focus or crop targets and create invalid comparison
+evidence.
+
 Run a ModernWpf-only smoke capture when the official WPF Gallery executable is not built:
 
 ```powershell

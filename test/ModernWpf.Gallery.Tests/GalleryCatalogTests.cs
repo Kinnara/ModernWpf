@@ -553,6 +553,18 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void WpfGalleryVisualAuditRejectsConcurrentGuiRuns()
+        {
+            var script = File.ReadAllText(FindRepoFile("tools", "visual-checks", "Run-WpfGalleryVisualAudit.ps1"));
+
+            StringAssert.Contains(script, "function Enter-WpfGalleryVisualAuditRunLock");
+            StringAssert.Contains(script, "ModernWpfGalleryWpfVisualAudit");
+            StringAssert.Contains(
+                script,
+                "Run these GUI audits sequentially; concurrent runs can shift focus/window capture and produce invalid visual comparison evidence.");
+        }
+
+        [TestMethod]
         public void CatalogImageResourcesAreShipped()
         {
             var resourceNames = GetGalleryResourceNames();
