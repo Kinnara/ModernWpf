@@ -47,6 +47,16 @@ namespace ModernWpf.Gallery.Tests
                     GalleryAutomation.WithAutomationId(new Border(), "ExampleButton"));
                 Assert.ThrowsException<ArgumentException>(() =>
                     GalleryAutomation.WithAutomationId(new Border(), string.Empty));
+                Assert.ThrowsException<ArgumentException>(() =>
+                    GalleryAutomation.WithAutomationId(new Border(), "GallerySample_Example"));
+                Assert.ThrowsException<ArgumentException>(() =>
+                    GalleryAutomation.WithAutomationId(new Border(), "GallerySample_Example_Button_Extra"));
+                Assert.ThrowsException<ArgumentException>(() =>
+                    GalleryAutomation.WithAutomationId(new Border(), "GallerySample_Example Button"));
+                Assert.ThrowsException<ArgumentException>(() =>
+                    GalleryAutomation.SampleRootId("Bad_Name"));
+                Assert.ThrowsException<ArgumentException>(() =>
+                    GalleryAutomation.SampleElementId("Example", string.Empty));
             });
         }
 

@@ -22,6 +22,7 @@ namespace ModernWpf.Gallery.Pages
     public static class GalleryAutomation
     {
         private const string SampleAutomationIdPrefix = "GallerySample_";
+        private const char SampleAutomationIdSeparator = '_';
 
         public static readonly DependencyProperty HeadingLevelProperty =
             DependencyProperty.RegisterAttached(
@@ -47,14 +48,16 @@ namespace ModernWpf.Gallery.Pages
 
         public static string SampleElementId(string uniqueId, string elementName)
         {
-            return SampleAutomationIdPrefix + uniqueId + "_" + elementName;
+            ValidateSampleAutomationIdSegment(uniqueId, nameof(uniqueId));
+            ValidateSampleAutomationIdSegment(elementName, nameof(elementName));
+
+            return SampleAutomationIdPrefix + uniqueId + SampleAutomationIdSeparator + elementName;
         }
 
         public static T WithAutomationId<T>(T element, string automationId)
             where T : DependencyObject
         {
-            if (string.IsNullOrEmpty(automationId) ||
-                !automationId.StartsWith(SampleAutomationIdPrefix, System.StringComparison.Ordinal))
+            if (!IsSampleAutomationId(automationId))
             {
                 throw new System.ArgumentException(
                     "Gallery sample automation IDs must be created by GalleryAutomation.SampleRootId or GalleryAutomation.SampleElementId.",
@@ -63,6 +66,55 @@ namespace ModernWpf.Gallery.Pages
 
             AutomationProperties.SetAutomationId(element, automationId);
             return element;
+        }
+
+        private static void ValidateSampleAutomationIdSegment(string value, string parameterName)
+        {
+            if (!IsSampleAutomationIdSegment(value))
+            {
+                throw new System.ArgumentException(
+                    "Gallery sample automation ID segments must be non-empty alphanumeric values.",
+                    parameterName);
+            }
+        }
+
+        private static bool IsSampleAutomationId(string automationId)
+        {
+            if (string.IsNullOrEmpty(automationId) ||
+                !automationId.StartsWith(SampleAutomationIdPrefix, System.StringComparison.Ordinal))
+            {
+                return false;
+            }
+
+            var suffix = automationId.Substring(SampleAutomationIdPrefix.Length);
+            var separatorIndex = suffix.IndexOf(SampleAutomationIdSeparator);
+            if (separatorIndex <= 0 ||
+                separatorIndex == suffix.Length - 1 ||
+                suffix.IndexOf(SampleAutomationIdSeparator, separatorIndex + 1) >= 0)
+            {
+                return false;
+            }
+
+            return IsSampleAutomationIdSegment(suffix.Substring(0, separatorIndex)) &&
+                IsSampleAutomationIdSegment(suffix.Substring(separatorIndex + 1));
+        }
+
+        private static bool IsSampleAutomationIdSegment(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return false;
+            }
+
+            for (var i = 0; i < value.Length; i++)
+            {
+                if (!char.IsLetterOrDigit(value[i]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
 #if NET8_0_OR_GREATER
