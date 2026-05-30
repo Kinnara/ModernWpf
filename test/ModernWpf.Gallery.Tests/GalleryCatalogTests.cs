@@ -616,6 +616,66 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void WpfGalleryCatalogControlImagesMatchOfficialHashes()
+        {
+            var expectedAssets = new[]
+            {
+                Tuple.Create("assets/controlimages/colorpaletteresources.png", "36ED0EC3997CF2D54FA0E7DEA70B245CAB116F2099F10FAA4AE3D0B0818188BA"),
+                Tuple.Create("assets/controlimages/textblock.png", "2B835B5C2A347EB6C8EAA68E6A2238EBD7A06BA46304660B453CD6445276E5AB"),
+                Tuple.Create("assets/controlimages/spacing.png", "6BE5BA0960CD4E98E3D0BA53BC0D9AC092A46D44A566FF0E9EE24DCEB64FF1C0"),
+                Tuple.Create("assets/controlimages/border.png", "D414225BA0BD1A81BD6649B9026097EABB9C9A67BCFB325939CED61BE604ECB9"),
+                Tuple.Create("assets/controlimages/iconelement.png", "CAA59A8C78C9E2A89CF8EC90DE1B7BBAA333EE2D0FE061D3DEA7B273DBC124C7"),
+                Tuple.Create("assets/controlimages/personpicture.png", "5767ADFA0573D77737AD54A60D1E0F53237F18F1D5FD1A5CEEF95255F03F9BB9"),
+                Tuple.Create("assets/controlimages/button.png", "B63B420D9FF18CB31EAA6E82EF7D9CF3175FE97EBB71B0549FA7956EF7800FC4"),
+                Tuple.Create("assets/controlimages/checkbox.png", "ED3669A4DB8BF52CF4AC9A16B103FEEC88A43886B31ED436C8A6CAF3A1FCD462"),
+                Tuple.Create("assets/controlimages/radiobutton.png", "66123E2C86E3E30581DCFD39B1A2427B009BAE5EDA790680CD53282BEF25AF25"),
+                Tuple.Create("assets/controlimages/slider.png", "CECF236181DF2FD3B729180C9ABEB6ACB5D71DFEB5E503BC56D39A3BEBC0283E"),
+                Tuple.Create("assets/controlimages/datagrid.png", "8036B91A84E9CCC87615E8F7CD82675FAAADF904E2FC25A88935A18115A15DE1"),
+                Tuple.Create("assets/controlimages/listbox.png", "5F201E082BBABE6502673A0403495FE26F48B859CC82DFD87987208B6C621A33"),
+                Tuple.Create("assets/controlimages/listview.png", "015F4F86B6C5F56BE4B04D6F26B2F3A06F7E33F6F1757FE2519732751B8745CC"),
+                Tuple.Create("assets/controlimages/treeview.png", "CFCB565430674D39D8EDA9F0DEFF7D93E292D10D1DB683C3FE4A003745E909C8"),
+                Tuple.Create("assets/controlimages/calendarview.png", "0D0C1A8F80CB46869BF740428D751829C6A48F5EE455BE1556B639C347710C9C"),
+                Tuple.Create("assets/controlimages/datepicker.png", "4FA0FE462D1059B390438309F28E64D7818D3796E5B0686994E7AC730BB773D3"),
+                Tuple.Create("assets/controlimages/expander.png", "1BB445F349529B91E7C9987B9A9545874B4F0F517FC58D65F79BCEA460271AB8"),
+                Tuple.Create("assets/controlimages/grid.png", "3B25F39E7493AF1D2A69328649B57BCA0DEC15532F853F162CF35CDBEFEA7FBC"),
+                Tuple.Create("assets/controlimages/resizegrip.png", "B3436CB0EA6620404DF70B95D7D822A922CABFE12C91C4E39E7C493912460E22"),
+                Tuple.Create("assets/controlimages/gridsplitter.png", "8545361C2056B737166067587286617F15931EFE590549FEBF3CC7629188BE16"),
+                Tuple.Create("assets/controlimages/groupbox.png", "33F6A38E14957FE41A2223B6B783CAE69B41E3623625339CD2DC57EC40A5DF72"),
+                Tuple.Create("assets/controlimages/stackpanel.png", "9CD682354BC22ECFEE16C6270CB1DDCA6269B12378357D3F03B581F801ECFBE6"),
+                Tuple.Create("assets/controlimages/canvas.png", "68C1C467062436415E86FEDD97702DE9FE37A85FF75483F23CFD91B48FA6DE58"),
+                Tuple.Create("assets/controlimages/image.png", "0A511A7E329AA9E9363787E807452B84CDF6ADC360216F1857ACB602DA1F2EB2"),
+                Tuple.Create("assets/controlimages/pivot.png", "D1D76DE9BA77C854BAC73B05931268219127C7F2AFD8958F9E4A407A88E8F90C"),
+                Tuple.Create("assets/controlimages/tabview.png", "56C00588E1821BDE2DCEF0587C7EB2866AB315896C697E2843AC17B82D340C8F"),
+                Tuple.Create("assets/controlimages/menubar.png", "C8B7C4866E6CD35AF1AB3ACE8AA63FCE4DE734E8661DA2D12D2D114A08F75C75"),
+                Tuple.Create("assets/controlimages/navigationwindow.png", "60AC153191E22954667188ABB96FF8AF3F777440F606BC6B10FF9DC3A0B1DD28"),
+                Tuple.Create("assets/controlimages/progressbar.png", "109E2733D62E816FFD288942A194ACA5FF020626513B75B46411BBBAA0C54C93"),
+                Tuple.Create("assets/controlimages/tooltip.png", "B547953D5B073E01FCD50EFDCE1B55CB00571935F5D5A387DD91CB3EDAD80F6D"),
+                Tuple.Create("assets/controlimages/textbox.png", "835F0BECBA9D6D1EDDF41258246719E28FCB5AADB12BFEF45DE2BB7DDB3E1BE4"),
+                Tuple.Create("assets/controlimages/richeditbox.png", "C79E4E7654C6B6985DAE469304D4627F902FA50C46DB0D8622321E55679660D9"),
+                Tuple.Create("assets/controlimages/passwordbox.png", "F734A547B966801D34A2E282EC2F0DEF2D189794124F1373035CE4E542A8944E"),
+                Tuple.Create("assets/controlimages/hyperlinkbutton.png", "D8E20146F132D8F8F8358E539F47E33A28B0A1E2821E77F30894AC9C9F6D948B"),
+                Tuple.Create("assets/controlimages/filepicker.png", "9FD31C45C7B4423C23E723A76DAB68DF8F3481C68A62DBEEA9170D340F66C3CF"),
+                Tuple.Create("assets/controlimages/contentdialog.png", "2D153B012C510DE534BF102177105F293904081668E9BCED325286227E66FAD5"),
+                Tuple.Create("assets/controlimages/clipboard.png", "F1C9A6E709E0F7FCAF048F06074DBD7D2ADDCDC7576E82EFE618632F433EE799")
+            };
+            var resourceNames = new HashSet<string>(GetGalleryResourceNames(), StringComparer.OrdinalIgnoreCase);
+
+            foreach (var expectedAsset in expectedAssets)
+            {
+                Assert.IsTrue(
+                    resourceNames.Contains(expectedAsset.Item1),
+                    "Missing embedded WPF Gallery catalog ControlImage asset '{0}'.",
+                    expectedAsset.Item1);
+
+                var filePath = FindRepoFile(new[] { "ModernWpf.Gallery" }.Concat(expectedAsset.Item1.Split('/')).ToArray());
+                Assert.AreEqual(
+                    expectedAsset.Item2,
+                    ComputeSha256(filePath),
+                    "WPF Gallery catalog ControlImage should remain byte-identical: " + expectedAsset.Item1);
+            }
+        }
+
+        [TestMethod]
         public void ActiveGalleryNonControlImageReferencesResolveToShippedResources()
         {
             var sourceRoots = new[]
