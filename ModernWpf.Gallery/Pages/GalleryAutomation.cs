@@ -21,6 +21,8 @@ namespace ModernWpf.Gallery.Pages
 
     public static class GalleryAutomation
     {
+        private const string SampleAutomationIdPrefix = "GallerySample_";
+
         public static readonly DependencyProperty HeadingLevelProperty =
             DependencyProperty.RegisterAttached(
                 "HeadingLevel",
@@ -45,12 +47,20 @@ namespace ModernWpf.Gallery.Pages
 
         public static string SampleElementId(string uniqueId, string elementName)
         {
-            return "GallerySample_" + uniqueId + "_" + elementName;
+            return SampleAutomationIdPrefix + uniqueId + "_" + elementName;
         }
 
         public static T WithAutomationId<T>(T element, string automationId)
             where T : DependencyObject
         {
+            if (string.IsNullOrEmpty(automationId) ||
+                !automationId.StartsWith(SampleAutomationIdPrefix, System.StringComparison.Ordinal))
+            {
+                throw new System.ArgumentException(
+                    "Gallery sample automation IDs must be created by GalleryAutomation.SampleRootId or GalleryAutomation.SampleElementId.",
+                    nameof(automationId));
+            }
+
             AutomationProperties.SetAutomationId(element, automationId);
             return element;
         }

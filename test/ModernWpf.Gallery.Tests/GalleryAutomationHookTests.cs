@@ -30,6 +30,26 @@ namespace ModernWpf.Gallery.Tests
     [TestClass]
     public class GalleryAutomationHookTests
     {
+        [TestMethod]
+        public void GalleryAutomationIdsAreReservedForCuratedSampleDiagnostics()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var sampleRoot = new Border();
+                GalleryAutomation.WithAutomationId(sampleRoot, GalleryAutomation.SampleRootId("Example"));
+                Assert.AreEqual("GallerySample_Example_Root", AutomationProperties.GetAutomationId(sampleRoot));
+
+                var sampleElement = new Button();
+                GalleryAutomation.WithAutomationId(sampleElement, GalleryAutomation.SampleElementId("Example", "Button"));
+                Assert.AreEqual("GallerySample_Example_Button", AutomationProperties.GetAutomationId(sampleElement));
+
+                Assert.ThrowsException<ArgumentException>(() =>
+                    GalleryAutomation.WithAutomationId(new Border(), "ExampleButton"));
+                Assert.ThrowsException<ArgumentException>(() =>
+                    GalleryAutomation.WithAutomationId(new Border(), string.Empty));
+            });
+        }
+
         public static IEnumerable<object[]> CuratedSampleAutomationIds()
         {
             yield return new object[] { "TeachingTip", "GallerySample_TeachingTip_Root", "GallerySample_TeachingTip_ShowButton" };
