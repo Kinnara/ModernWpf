@@ -113,7 +113,6 @@
                         Click="OnSettingsButtonClick">
                         <StackPanel Orientation="Horizontal" Margin="11,0,0,0">
                             <TextBlock
-                                x:Name="SettingsIcon"
                                 VerticalAlignment="Center"
                                 FontSize="14"
                                 FontFamily="{StaticResource SymbolThemeFontFamily}"

@@ -244,7 +244,9 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(Orientation.Horizontal, settingsContent.Orientation);
                 Assert.AreEqual(new Thickness(11, 0, 0, 0), settingsContent.Margin);
 
-                var settingsIcon = (TextBlock)page.FindName("SettingsIcon");
+                Assert.IsNull(page.FindName("SettingsIcon"));
+                var settingsIcon = settingsContent.Children.OfType<TextBlock>()
+                    .Single(text => string.Equals(text.Text, "\uE713", StringComparison.Ordinal));
                 Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(settingsIcon));
                 Assert.AreEqual("\uE713", settingsIcon.Text);
                 Assert.AreEqual(14d, settingsIcon.FontSize);

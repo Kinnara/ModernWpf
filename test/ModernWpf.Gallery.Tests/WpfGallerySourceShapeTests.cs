@@ -1279,15 +1279,19 @@ namespace ModernWpf.Gallery.Tests
         public void ActiveGalleryXamlAvoidsLocalOnlyAutomationHooks()
         {
             var repoRoot = GetRepoRoot();
-            var xamlRoots = new[]
+            var activeXamlRoots = new[]
             {
                 Path.Combine(repoRoot, "ModernWpf.Gallery", "Controls"),
                 Path.Combine(repoRoot, "ModernWpf.Gallery", "Pages"),
                 Path.Combine(repoRoot, "ModernWpf.Gallery", "Resources")
             };
-            var xamlFiles = xamlRoots
+            var activeXamlFiles = activeXamlRoots
                 .SelectMany(root => Directory.EnumerateFiles(root, "*.xaml", SearchOption.AllDirectories))
                 .Concat(new[] { Path.Combine(repoRoot, "ModernWpf.Gallery", "MainWindow.xaml") });
+            var shellXamlFiles = Directory.EnumerateFiles(
+                Path.Combine(repoRoot, "ModernWpf.Gallery", "Shell"),
+                "*.xaml",
+                SearchOption.AllDirectories);
             var forbiddenSnippets = new[]
             {
                 "AutomationProperties.AutomationId=",
@@ -1303,7 +1307,10 @@ namespace ModernWpf.Gallery.Tests
                 "GalleryContentHost",
                 "SettingsIcon"
             };
-            var violations = xamlFiles
+            var shellForbiddenSnippets = forbiddenSnippets
+                .Where(snippet => !string.Equals(snippet, "AutomationProperties.AutomationId=", StringComparison.Ordinal))
+                .ToArray();
+            var violations = activeXamlFiles
                 .SelectMany(path =>
                 {
                     var source = File.ReadAllText(path);
@@ -1311,6 +1318,13 @@ namespace ModernWpf.Gallery.Tests
                         .Where(snippet => source.Contains(snippet, StringComparison.Ordinal))
                         .Select(snippet => Path.GetRelativePath(repoRoot, path) + ": " + snippet);
                 })
+                .Concat(shellXamlFiles.SelectMany(path =>
+                {
+                    var source = File.ReadAllText(path);
+                    return shellForbiddenSnippets
+                        .Where(snippet => source.Contains(snippet, StringComparison.Ordinal))
+                        .Select(snippet => Path.GetRelativePath(repoRoot, path) + ": " + snippet);
+                }))
                 .OrderBy(violation => violation, StringComparer.Ordinal)
                 .ToArray();
 
