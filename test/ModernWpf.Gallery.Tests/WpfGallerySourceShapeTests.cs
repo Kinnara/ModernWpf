@@ -1276,6 +1276,48 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void ActiveGalleryXamlAvoidsLocalOnlyAutomationHooks()
+        {
+            var repoRoot = GetRepoRoot();
+            var xamlRoots = new[]
+            {
+                Path.Combine(repoRoot, "ModernWpf.Gallery", "Controls"),
+                Path.Combine(repoRoot, "ModernWpf.Gallery", "Pages"),
+                Path.Combine(repoRoot, "ModernWpf.Gallery", "Resources")
+            };
+            var xamlFiles = xamlRoots
+                .SelectMany(root => Directory.EnumerateFiles(root, "*.xaml", SearchOption.AllDirectories))
+                .Concat(new[] { Path.Combine(repoRoot, "ModernWpf.Gallery", "MainWindow.xaml") });
+            var forbiddenSnippets = new[]
+            {
+                "AutomationProperties.AutomationId=",
+                "x:Name=\"ContentRootGrid\"",
+                "x:Name=\"GallerySampleHost\"",
+                "x:Name=\"AllControlsItemsControl\"",
+                "x:Name=\"GroupItemsControl\"",
+                "AutomationProperties.Name=\"GalleryItemPageTitle\"",
+                "GalleryNav_",
+                "ModernWpfGalleryMainWindow",
+                "GalleryNavigationRoot",
+                "GalleryNavigationView",
+                "GalleryContentHost",
+                "SettingsIcon"
+            };
+            var violations = xamlFiles
+                .SelectMany(path =>
+                {
+                    var source = File.ReadAllText(path);
+                    return forbiddenSnippets
+                        .Where(snippet => source.Contains(snippet, StringComparison.Ordinal))
+                        .Select(snippet => Path.GetRelativePath(repoRoot, path) + ": " + snippet);
+                })
+                .OrderBy(violation => violation, StringComparer.Ordinal)
+                .ToArray();
+
+            CollectionAssert.AreEqual(Array.Empty<string>(), violations);
+        }
+
+        [TestMethod]
         public void WpfGalleryPageStylesKeepOfficialResourceSetterSourceShape()
         {
             var xaml = ReadRepoFile(

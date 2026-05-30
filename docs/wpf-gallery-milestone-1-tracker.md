@@ -138,19 +138,29 @@ this milestone round.
 ### P2 Subqueue
 
 Use this table only when execution order row 9 is the first executable row.
-P2 is ordered work, not a general cleanup pool. The active item is the first
-row below that is `Current` or has newly discovered evidence. When row 1 is
-used to clarify priority text, return immediately to the first substantive row;
-do not treat row 1 as permission for tracker-only churn or source cleanup.
+This table is the exclusive P2 execution order, not a menu. The active item is
+the first row below that is `Current` or has newly discovered evidence. Do not
+skip to row 5 or row 6 while rows 2-4 have a current, newly discovered, or
+unreviewed visual-supporting item.
+
+Current P2 state:
+
+1. Row 1 is active only for user/order clarification, then returns immediately
+   to the first substantive P2 row.
+2. Rows 2 and 3 are recorded for the current branch tip unless new visual,
+   high-drift, asset, thumbnail, or reference evidence appears.
+3. Row 4 is the current substantive P2 row. Continue here only for named
+   measurement, interaction, automation, or harness-impacting parity.
+4. Rows 5 and 6 are blocked until rows 2-4 are recorded or not applicable.
 
 | P2 order | Bucket | State | Allowed next work |
 | --- | --- | --- | --- |
 | 1 | Priority/order hygiene | Use only when order/status text conflicts or the user requests priority clarification. | Edit this tracker only to remove priority ambiguity or stale execution state, then return to the first substantive P2 row. Do not perform unrelated source cleanup under this bucket. |
 | 2 | Visual and high-drift freshness | Currently recorded by the P0/P1 evidence above. | Reopen P0/P1/row 8 immediately if refreshed evidence shows new visual, High Contrast, high-drift, or harness drift. |
 | 3 | Asset, thumbnail, and visual-reference parity locks | Recorded for the current active references: non-`ControlImages` references are shipped and hash-locked, WPF-equivalent catalog `ControlImages` are official-hash locked, and retained catalog `ControlImages` still match the packaged resource set. | Reopen only for new visual asset evidence, a new active image reference, or a new catalog thumbnail/resource gap. |
-| 4 | Measurement, typography, spacing, keyboard, automation, and harness-impacting parity | Current P2 bucket. Typography/Spacing/Geometry normal Light/Dark measurement evidence is recorded; continue here only for named measurement, interaction, automation, or harness-impacting rows. | Work only on rows that can affect visible layout, interaction parity, or reliable visual evidence. |
-| 5 | Source-shape, resource-key, naming, selector, and test cleanup not tied to active visual drift | Lower priority than rows 1-4. | Select only a named P2 source-alignment row after rows 1-4 are recorded or not applicable. |
-| 6 | Pure tracker/status cleanup and documentation-only work | Last. | Use only after the substantive P2 rows above are clear, except for row 1 priority/order fixes. |
+| 4 | Measurement, typography, spacing, keyboard, automation, and harness-impacting parity | Current substantive P2 bucket. Typography/Spacing/Geometry normal Light/Dark measurement evidence is recorded; continue here only for named measurement, interaction, automation, or harness-impacting rows. | Work only on rows that can affect visible layout, interaction parity, or reliable visual evidence. |
+| 5 | Source-shape, resource-key, naming, selector, and test cleanup not tied to active visual drift | Blocked by current row 4 until rows 2-4 are recorded or not applicable. | Select only a named P2 source-alignment row after rows 1-4 are clear. |
+| 6 | Pure tracker/status cleanup and documentation-only work | Last; blocked by rows 2-5 except row 1 priority/order fixes. | Use only after the substantive P2 rows above are clear, except for row 1 priority/order fixes. |
 
 ### Row 8 Strict Subqueue
 
@@ -896,6 +906,8 @@ Latest local verification for the current branch tip:
   - Passed at `artifacts/wpf-gallery-visual-audit/20260530-233422-114-44876/report.md`: Typography `0`, Spacing `0`, and Geometry `0`, all with matching `868x758` crops and max RGB diff `3`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~GalleryCatalogTests.WpfGalleryCatalogControlImagesMatchOfficialHashes|FullyQualifiedName~GalleryCatalogTests.ControlImageResourcesMatchRetainedCatalogImages|FullyQualifiedName~GalleryCatalogTests.CatalogImageResourcesAreShipped|FullyQualifiedName~GalleryCatalogTests.WpfGalleryEquivalentNonControlImageReferencesAreHashLocked|FullyQualifiedName~GalleryCatalogTests.ActiveGalleryNonControlImageReferencesResolveToShippedResources|FullyQualifiedName~GalleryCatalogTests.WpfGalleryReferenceNonControlAssetsMatchOfficialHashes" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: active catalog images resolve to shipped resources, active Gallery XAML/C# non-`ControlImages` image references resolve to shipped resources, every active WPF Gallery-equivalent non-`ControlImages` image reference is covered by the official hash-lock list, WPF Gallery non-`ControlImages` official-reference hashes remain byte-identical, WPF-equivalent catalog `ControlImages` remain byte-identical to official WPF Gallery artwork, and retained catalog `ControlImages` still match the packaged resource set.
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.ActiveGalleryXamlAvoidsLocalOnlyAutomationHooks|FullyQualifiedName~WpfGallerySourceShapeTests.ItemPageWrapperAvoidsLocalOnlyAutomationHooks" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`, two tests per target. `ActiveGalleryXamlAvoidsLocalOnlyAutomationHooks` locks active Gallery XAML against local-only automation/artifact hooks, while `ItemPageWrapperAvoidsLocalOnlyAutomationHooks` remains green.
 - Retained ModernWpf/WinUI extension visual ranking from existing
   `artifacts/visual-checks/**/report.json`, filtered to the current retained
   surface guarded by `GalleryCatalogTests.RetainedModernWpfExtensionItemIds`.
@@ -3452,6 +3464,7 @@ order while keeping the local visual-test theme adapter.
 | Top-level page theme evidence | Recorded | Current top-level Light evidence is `artifacts/wpf-gallery-visual-audit/20260529-022506-025-65744/report.md` with Home `0`, WhatsNew `0`, AllControls `0`, and Settings `0`; current Dark evidence is `artifacts/wpf-gallery-visual-audit/20260529-022607-305-45960/report.md` with Home `0.04`, WhatsNew `0`, AllControls `0`, and Settings `0`. All top-level crops match their official counterparts through official direct-reference rendered artifacts; Home/Settings Dark use the official full-shell `#272727` background for transparent roots, while real OS High Contrast evidence is tracked separately in the current P0.1 batch. |
 | Shell high-contrast chrome | Mostly done | MainWindow now follows the official WPF Gallery code-created `WindowChrome` source shape with `CaptionHeight = 50` while preserving the official 44px visible title row, official `WindowBackground`, visible caption buttons, WPF Gallery corner/glass/resize settings, maximized high-contrast content margin, high-contrast border thickness, and Windows 11/high-contrast `NonClientFrameEdges` policy. The normal MainWindow root no longer exposes the non-official `ModernWpfGalleryMainWindow` automation ID; diagnostics assign that ID only for visual-test artifact capture. The close button handler now also follows the official `Application.Current.Shutdown()` source shape. Focused runtime coverage is `GalleryNavigationRuntimeTests.MainWindowUsesWpfGalleryTitleChrome`, `GalleryNavigationRuntimeTests.MainWindowDiagnosticAutomationIdIsVisualTestOnly`, and `GalleryNavigationRuntimeTests.MainWindowChromePolicyMatchesWpfGalleryHighContrastPath`. |
 | Keyboard and automation details | Open, gated | Shared `PageHeader` label naming, focus order, tab stops, and heading behavior now match the official template shape through the local compatibility adapter, and the nested title `TextBlock` no longer exposes the non-official `GalleryItemPageTitle` automation ID; generic ModernWpf/WinUI `ItemPage` headers, What's New, and Settings now use that shared `PageHeader` template instead of page-local labels, while registry-backed direct item pages keep the wrapper header collapsed. The generic `ItemPage` wrapper header and direct-page `Frame` no longer keep local-only `x:Name` hooks, wrapper sample hosts no longer expose the local-only `GallerySampleHost` automation ID, and tests locate those wrapper elements structurally while keeping curated `GallerySample_*` sample-level automation IDs for diagnostics. The WPF Gallery-style title text, Home hero, and Home section headings now declare their WPF Gallery heading levels in XAML, `HeaderTile.RootButton` now uses the official title-bound automation name in XAML and is exposed through the `HeaderTile` automation peer, the top Back button exposes the official `Back` automation name, the retained NavigationView now exposes the official `Navigation Pane` name, navigation text elements now report tight UIA bounds instead of stretched column bounds, retained NavigationView top-level and expanded child row bounds stay screenshot-aligned with the accepted shell crop while UIA absolute origins can differ from the official TreeView, retained NavigationView rows no longer expose local-only `GalleryNav_*` automation IDs, section group rows render source-shaped left disclosure chevrons that rotate on expansion without a non-official chevron automation ID, the Settings route now uses an official-style `SettingsButton` automation role/name in `PaneFooter` instead of a NavigationView footer item, resolves navigation through `ViewModel.SettingsCommand`, and keeps the click handler focused on the official settings-opened notification, ModernWpf-only visual-test route/ready status TextBlocks are collapsed outside diagnostics launches, retained-shell artifact IDs (`GalleryNavigationRoot`, `GalleryNavigationView`, and `GalleryContentHost`) are assigned only for diagnostics launches, the adapted Settings footer no longer publishes local-only `SettingsButton` / `SettingsIcon` automation IDs, ListView's selection-mode ComboBox again exposes the official `Selection Mode` name, Iconography copy/tag command bindings now use official WPF `Page` ancestor resolution, copied Basic Input Button/ComboBox pages no longer carry local-only sample automation IDs, Home no longer carries the local-only `ContentRootGrid` wrapper or child `x:Name` test hooks for official-equivalent hero/header/tile/list/card controls, All Controls and section pages no longer carry local-only root/card `x:Name` test hooks for official-equivalent roots/lists, What's New no longer carries local-only sample-level `x:Name` test hooks beyond the official `ContentPagePane` root, the copied `ControlExample` template no longer generates a non-official automation ID from `HeaderText` and now uses the official default source-code `Expander` behavior without a custom header toggle, and Home, section, All Controls, Settings, and generic `ItemPage` wrapper roots no longer expose diagnostic artifact names as automation IDs while keeping shell-owned artifact routes where applicable. Section, All Controls, and Settings roots also drop the local-only `ContentRootGrid` name; User Dashboard drops the copied-root `ContentRootGrid` name and uses the wrapper-owned `GalleryItemPageRoot` artifact instead. What's New now uses the official `ContentPagePane` root name instead of the shell-oriented `ContentRootGrid`. Remaining automation cleanup is milestone-open but not part of the current tracker-status cleanup; select it only in a later substantive P2 automation round or when the hard queue reopens row 7. |
+| Active XAML automation hook guard | Recorded for current P2 row 4 | `WpfGallerySourceShapeTests.ActiveGalleryXamlAvoidsLocalOnlyAutomationHooks` now scans active Gallery XAML under `ModernWpf.Gallery/Controls`, `Pages`, `Resources`, and `MainWindow.xaml` for forbidden local-only automation/artifact hooks: `AutomationProperties.AutomationId=`, `x:Name="ContentRootGrid"`, `x:Name="GallerySampleHost"`, `x:Name="AllControlsItemsControl"`, `x:Name="GroupItemsControl"`, `AutomationProperties.Name="GalleryItemPageTitle"`, `GalleryNav_`, `ModernWpfGalleryMainWindow`, `GalleryNavigationRoot`, `GalleryNavigationView`, `GalleryContentHost`, and `SettingsIcon`. This is row 4 automation/harness-impacting parity only; it does not open lower-priority source-shape cleanup. |
 | Manual visual acceptance checklist | Recorded | Light/Dark visual evidence is recorded in the rows above and in the Working Checklist. Real OS High Contrast visual acceptance is current in P0.1 with the top-level batch `artifacts/wpf-gallery-visual-audit/20260530-033727-672-77400/report.md`, shell batch `artifacts/wpf-gallery-visual-audit/20260530-033814-808-58888/report.md`, and focused controls batch `artifacts/wpf-gallery-visual-audit/20260530-033835-119-60992/report.md`; reopen this row only for new HC or visual-harness drift. Do not use this row to start lower-priority source cleanup. |
 
 ## Working Checklist
@@ -3547,16 +3560,18 @@ Immediate execution order for the next round:
    inspect Light/Dark artifacts and fix the first actionable visual or harness
    issue before any cleanup.
 3. Ordered P2 work is the next executable bucket while P0.1, row 7, and row 8
-   have no new open visual/harness item. Follow the `P2 Subqueue` exactly:
-   priority/order hygiene only when text conflicts, then visual/high-drift
-   freshness, asset/thumbnail/visual-reference parity, and
-   measurement/harness-impacting parity. Current active asset references and
-   Typography/Spacing/Geometry normal measurement evidence are recorded; remain
-   in P2 row 4 only for named measurement, interaction, automation, or
-   harness-impacting rows unless a new asset or higher-priority visual finding
-   appears. Source-shape, resource-key, naming, selector, test-cleanup,
-   stale-status, and documentation cleanup remain lower P2 rows and cannot be
-   selected ahead of those visual-supporting rows.
+   have no new open visual/harness item. Follow the `P2 Subqueue` exactly as
+   the exclusive P2 order: row 1 priority/order hygiene only when text
+   conflicts, row 2 visual/high-drift freshness, row 3
+   asset/thumbnail/visual-reference parity, row 4 measurement/interaction/
+   automation/harness-impacting parity, then lower-priority rows 5-6 only after
+   rows 2-4 are recorded or not applicable. Current active asset references and
+   Typography/Spacing/Geometry normal measurement evidence are recorded; the
+   current substantive P2 item remains row 4 only for named measurement,
+   interaction, automation, or harness-impacting rows unless a new asset or
+   higher-priority visual finding appears. Source-shape, resource-key, naming,
+   selector, test-cleanup, stale-status, and documentation cleanup remain lower
+   P2 rows and cannot be selected ahead of those visual-supporting rows.
 4. Row 7 source/resource/runtime work is allowed only when it directly serves a
    newly recorded visual/High Contrast finding or stabilizes a failing visual
    harness. Return to P1.2 only if a new visible stale-row drift appears; return
