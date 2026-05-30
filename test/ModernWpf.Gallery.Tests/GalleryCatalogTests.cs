@@ -5,6 +5,7 @@ using System.Linq;
 using System.Resources;
 using System.Security.Cryptography;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Gallery.Models;
 
@@ -612,6 +613,57 @@ namespace ModernWpf.Gallery.Tests
                 .ToArray();
 
             CollectionAssert.AreEqual(expectedImageResources, actualImageResources);
+        }
+
+        [TestMethod]
+        public void ActiveGalleryNonControlImageReferencesResolveToShippedResources()
+        {
+            var sourceRoots = new[]
+            {
+                FindRepoDirectory("ModernWpf.Gallery", "Controls"),
+                FindRepoDirectory("ModernWpf.Gallery", "Models"),
+                FindRepoDirectory("ModernWpf.Gallery", "Pages"),
+                FindRepoDirectory("ModernWpf.Gallery", "Resources"),
+                FindRepoDirectory("ModernWpf.Gallery", "Shell")
+            };
+            var sourceFiles = sourceRoots
+                .SelectMany(root => Directory.EnumerateFiles(root, "*.*", SearchOption.AllDirectories))
+                .Concat(new[] { FindRepoFile("ModernWpf.Gallery", "MainWindow.xaml") })
+                .Where(path =>
+                    string.Equals(Path.GetExtension(path), ".cs", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(Path.GetExtension(path), ".xaml", StringComparison.OrdinalIgnoreCase))
+                .ToArray();
+            var resourceNames = new HashSet<string>(GetGalleryResourceNames(), StringComparer.OrdinalIgnoreCase);
+            var galleryRoot = FindRepoDirectory("ModernWpf.Gallery");
+            var allowedPlaceholders = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                "assets/myimage.jpg"
+            };
+            var missingResources = new SortedSet<string>(StringComparer.OrdinalIgnoreCase);
+            var imageReferencePattern = new Regex(
+                @"Assets[\\/][A-Za-z0-9._ -]+(?:[\\/][A-Za-z0-9._ -]+)*\.(?:png|jpg|jpeg|ico|svg)",
+                RegexOptions.IgnoreCase);
+
+            foreach (var sourceFile in sourceFiles)
+            {
+                var source = File.ReadAllText(sourceFile);
+                foreach (Match match in imageReferencePattern.Matches(source))
+                {
+                    var resourcePath = match.Value.Replace('\\', '/').ToLowerInvariant();
+                    if (resourcePath.StartsWith("assets/controlimages/", StringComparison.OrdinalIgnoreCase) ||
+                        allowedPlaceholders.Contains(resourcePath))
+                    {
+                        continue;
+                    }
+
+                    if (!resourceNames.Contains(resourcePath))
+                    {
+                        missingResources.Add(Path.GetRelativePath(galleryRoot, sourceFile) + ": " + resourcePath);
+                    }
+                }
+            }
+
+            CollectionAssert.AreEqual(Array.Empty<string>(), missingResources.ToArray());
         }
 
         [TestMethod]
