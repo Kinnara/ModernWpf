@@ -15,8 +15,12 @@ looks convenient or recently edited.
    new visual regression evidence.
 4. If a new retained-control visual or harness drift appears, it preempts all
    source-shape/resource-key/test cleanup and P2 work.
-5. If no new P0, row 7, or row 8 visual/harness item exists, P2 cleanup is the
-   next executable bucket and remains lower priority than any new visual drift.
+5. If no new P0, row 7, or row 8 visual/harness item exists, P2 is the next
+   executable bucket, but it must use the `P2 Subqueue` below. P2 is not a
+   free-form cleanup bucket: visual/high-drift freshness, asset/measurement
+   parity, and harness-impacting work stay ahead of source-shape or tracker
+   cleanup. Tracker-only edits are allowed only to fix priority ambiguity or
+   stale status before returning to the ordered queue.
 
 ## Goal
 
@@ -51,8 +55,12 @@ Remaining hard order, read this before selecting work:
 4. Source-shape, resource-key, naming, selector, test-cleanup, and tracker-only
    cleanup are not executable unless directly required by the active visual
    item above.
-5. P2 cleanup is last. It starts only while `InfoBar` and `ProgressRing` remain
-   recorded and no new P0, row 7, or row 8 visual/harness issue is open.
+5. P2 ordered work is last. It starts only while `InfoBar` and `ProgressRing`
+   remain recorded and no new P0, row 7, or row 8 visual/harness issue is open.
+   When P2 is active, use the `P2 Subqueue`; do not choose source-shape,
+   resource-key, naming, selector, test-cleanup, or tracker-only work ahead of
+   a current visual/high-drift freshness, asset, measurement, or harness-impact
+   parity item.
 
 Priority contract, do not reorder:
 
@@ -62,8 +70,10 @@ Priority contract, do not reorder:
 3. P1 retained ModernWpf/WinUI extension high-drift visual triage.
 4. P1 source, resource, and runtime alignment only when directly required by
    the active visual, High Contrast, or harness finding.
-5. P2 tracker consistency, stale-status cleanup, and other low-risk
-   documentation cleanup.
+5. P2 visual/high-drift freshness checks, asset/thumbnail parity locks,
+   measurement parity, and harness-impacting verification.
+6. P2 source-shape, resource-key, naming, selector, test-cleanup, tracker
+   consistency, stale-status cleanup, and other low-risk cleanup.
 
 Active pointer, update this only when the active item is finished or blocked:
 
@@ -79,7 +89,8 @@ Active pointer, update this only when the active item is finished or blocked:
    cleanup, and P2 work cannot preempt a new visual, High Contrast, or harness
    finding.
 5. With no new P0, row 7, or row 8 finding, continue only with the first
-   executable bucket in the hard queue, which is P2 cleanup for this state.
+   executable bucket in the hard queue. In the current state that bucket is P2,
+   and P2 must be selected through the `P2 Subqueue` rather than by convenience.
 
 Small source-shape, resource-key, naming, selector, or test-cleanup work is not
 executable while any higher visual, High Contrast, or harness row is open and
@@ -117,7 +128,22 @@ this milestone round.
 | 6 | P1.2 stale `Partial` visual rows at or below noise threshold | Recorded. StackPanel, TreeView, ToolTip, RichTextEdit, PasswordBox, and Hyperlink are `0` / `0` in `20260529-061205-172-26700` and `20260529-061344-116-67908`. Calendar, DatePicker, Canvas, Image, Menu, TabControl, Frame, and NavigationWindow are `0` / `0` in `20260529-061607-923-61020` and `20260529-061844-861-43780`; UserDashboard is `0` / `0.01`. Color residuals remain current at `20260529-062201-094-27604` and `20260529-062407-485-65068`, with ColorSignal `0.10` / `0.10` and ColorHighContrast `0.12` / `0.14` visually inspected as rendering residuals. | Do not reopen unless a new visible drift appears. |
 | 7 | P1 source/resource/runtime alignment tied to a visual issue | No current open row 7 item. Row 7.1 is recorded complete, row 7.2 has no current blocker, and row 7.3 has no current visible mismatch. | Preempt P1.3/P2 only if new visual/High Contrast drift appears or evidence collection exposes a visual-harness blocker. |
 | 8 | P1.3 retained ModernWpf/WinUI extension high-drift visual triage | Recorded through the current strict subqueue. GridView is fixed at branch tip (`69.52` / `63.82` down to `3.32` / `3.90`), CommandBarFlyout is fixed at branch tip (`48.10` / `39.46` down to `5.15` / `5.20`), BreadcrumbBar's live blank UI/harness masking issue is fixed at branch tip, AnnotatedScrollBar's crop/control round is fixed, RatingControl's glyph/caption alignment round is fixed, IconElement's reference crop round is fixed, TitleBar's current-turn surface/crop round is fixed with Light `6.44` and Dark `4.70`, DropDownButton's chevron clipping round is fixed with Light `3.66` and Dark `2.86`, SelectorBar's sample-template crop round is fixed with Light `7.07` and Dark `7.86`, InfoBar's current HC blank-artifact issue is recorded with visible-content evidence, and ProgressRing now renders a WinUI-style arc with current Light/Dark evidence recorded below. | No lower row 8 item is currently active. Reopen only if new retained-control visual evidence appears; otherwise P2 remains behind the P0/row 7 gates. |
-| 9 | P2 cleanup and documentation-only work | Executable only after P0.1 is recorded or environment-blocked, rows 2-7 have no open item, and row 8 has been fixed or explicitly recorded as non-actionable for this milestone round. | Keep cleanup low-risk and stop immediately if a new High Contrast, visual, or harness drift appears. |
+| 9 | P2 ordered cleanup and parity locks | Executable only after P0.1 is recorded or environment-blocked, rows 2-7 have no open item, and row 8 has been fixed or explicitly recorded as non-actionable for this milestone round. | Follow the `P2 Subqueue`; stop immediately if a new High Contrast, visual, high-drift, or harness finding appears. |
+
+### P2 Subqueue
+
+Use this table only when execution order row 9 is the first executable row.
+P2 is ordered work, not a general cleanup pool. The active item is the first
+row below that is `Current` or has newly discovered evidence.
+
+| P2 order | Bucket | State | Allowed next work |
+| --- | --- | --- | --- |
+| 1 | Priority/order hygiene | Use only when order/status text conflicts or the user requests priority clarification; the 2026-05-30 priority-lock update satisfies the current request. | Edit this tracker only to remove priority ambiguity or stale execution state, then return to the first substantive P2 row. Do not perform unrelated source cleanup under this bucket. |
+| 2 | Visual and high-drift freshness | Currently recorded by the P0/P1 evidence above. | Reopen P0/P1/row 8 immediately if refreshed evidence shows new visual, High Contrast, high-drift, or harness drift. |
+| 3 | Asset, thumbnail, and visual-reference parity locks | Current substantive P2 batch: `Assets and thumbnails` non-`ControlImages` official-reference verification. | Add or update focused regression coverage for assets that affect screenshots or official WPF Gallery parity. |
+| 4 | Measurement, typography, spacing, keyboard, automation, and harness-impacting parity | Open only when selected by a named tracker row or new evidence. | Work only on rows that can affect visible layout, interaction parity, or reliable visual evidence. |
+| 5 | Source-shape, resource-key, naming, selector, and test cleanup not tied to active visual drift | Lower priority than rows 1-4. | Select only a named P2 source-alignment row after rows 1-4 are recorded or not applicable. |
+| 6 | Pure tracker/status cleanup and documentation-only work | Last. | Use only after the substantive P2 rows above are clear, except for row 1 priority/order fixes. |
 
 ### Row 8 Strict Subqueue
 
@@ -278,8 +304,11 @@ Resume checklist:
 2. If High Contrast is on, run the P0.1 real `-Theme HighContrast` visual
    slices before anything else unless the current P0.1 batch is already
    recorded and no new High Contrast visual/harness drift has appeared.
-3. Pick the first executable row in the queue above; today that means P2
-   cleanup unless a new P0, row 7, or row 8 visual/harness trigger appears.
+3. Pick the first executable row in the queue above; today that means ordered
+   P2 work unless a new P0, row 7, or row 8 visual/harness trigger appears.
+   Inside P2, use the `P2 Subqueue` and do not choose source-shape cleanup
+   ahead of visual/high-drift freshness, asset/thumbnail, measurement, or
+   harness-impacting parity work.
 4. Before touching source-shape-only, resource-key-only, or documentation-only
    work, re-read this queue and confirm every higher visual row is `Done`,
    current with an explicit blocker, or environment-blocked in the table.
@@ -3387,7 +3416,7 @@ order while keeping the local visual-test theme adapter.
 | All Controls page | Partial | Header, navigation cards, `AllSamplesPageViewModel.PageTitle` / `AllSamplesPageViewModel.NavigationCards` bindings, `ViewModel.NavigateCommand` card command binding, the official All Controls catalog filter, and the official Navigation item sequence (`Menu`, `TabControl`, `Frame`, `NavigationWindow`) now use adapted official structure. The copied page now preserves representative official `AllSamplesPage` root namespace/title declarations without local design-time dimensions, root row, PageHeader, ScrollViewer, and navigation-card `ItemsControl` declaration order while retaining the ModernWpf root-style adapter; its code-behind also preserves the official `ViewModel` member-before-copied-constructor order while retaining the default ModernWpf constructor and navigation callbacks. The card list no longer carries the local-only `AllControlsItemsControl` name; runtime coverage resolves it by official automation name and binding. Samples, the current official catalog's orphaned Media group, and ModernWpf/WinUI extension pages are excluded from All Controls so the WPF Gallery surface keeps the official content extent and scrollbar metrics; Media and extension pages remain available through their own combined-gallery sections. Latest Light direct-reference visual audit recorded at `artifacts/wpf-gallery-visual-audit/20260529-022506-025-65744/report.md` with Modern/official both `Passed`, matching `868x758` crops, and delta `0`; latest Dark direct-reference visual audit recorded at `artifacts/wpf-gallery-visual-audit/20260529-022607-305-45960/report.md` with matching crops and delta `0`. The previous zero-delta `20260523-083720` / `20260523-083836` artifacts remain historical pre-refresh evidence, the pre-harness-fix `20260528-122158` / `20260528-122319` artifacts remain diagnostic evidence of the old one-pixel-short Modern fallback crop, and the intermediate `20260528-123828` / `20260528-123945` artifacts remain diagnostic evidence of the shell-window crop offset before the rendered-root artifact. The direct host loads official `AllSamplesPage` because the normal official shell route is unreliable from a fresh run, with diagnostic artifact `artifacts/wpf-gallery-visual-audit/20260523-073927/report.md`; a ModernWpf-only refreshed Light artifact recorded at `artifacts/wpf-gallery-visual-audit/20260523-023958/report.md` verifies the official list extent `335,225,880,1996`, Clipboard as the final card, and matching `205px` scrollbar thumb. |
 | Section pages | Partial | Headers, navigation cards, official-named section view models, official-named section page subclasses, official WPF `Page.Title` values, `ViewModel.PageTitle` / `ViewModel.NavigationCards` bindings, app-level `Resources/Templates.xaml`, `ViewModel.NavigateCommand` card command binding, and the source-shaped `ViewModel.Navigate(object pageType)` path now use adapted official structure; runtime coverage verifies each WPF-equivalent section's page type, VM type, WPF page title, visible title, description, item order, command routing, direct navigate method routing, and fallback behavior for ModernWpf-only sections. The shared section page now keeps representative official WPF Gallery section declaration source shape for root namespace/title/design declarations, root rows, PageHeader, and direct navigation-card `ItemsControl` order while retaining ModernWpf root-style and extension-section scroll-host adapters. The shared section page's official root `Grid` and direct card-list `ItemsControl` no longer carry local-only `ContentRootGrid` / `GroupItemsControl` names and are located structurally in production/tests. The retained `ModernWpfControls` extension section keeps generic `SectionPage` but swaps to a visible scroll host so its 41 retained cards are reachable, while WPF-equivalent sections keep the official unnamed direct root/list shape. Latest direct-reference Light and Dark section audits are recorded at `artifacts/wpf-gallery-visual-audit/20260523-122629/report.md` and `artifacts/wpf-gallery-visual-audit/20260523-122752/report.md`; WPF catalog sections in that broad run are delta `0` in both themes except Media's superseded orphan-catalog baseline. Latest normal-shell section evidence is also delta `0` with matching `868x758` crops for Basic Input (`20260524-034331` / `20260524-034356`), Navigation (`20260524-033112` / `20260524-033135`), Layout (`20260524-034931` / `20260524-035031`), and Collections, Date & Calendar, Status & Info, System, and Text (`20260524-035102` / `20260524-035209`). Latest Media direct-reference audits are recorded at `artifacts/wpf-gallery-visual-audit/20260523-123758/report.md` and `artifacts/wpf-gallery-visual-audit/20260523-123823/report.md` with delta `0` in both themes. Further section visual/source review is not part of the current tracker-status cleanup; select it only in a later substantive P2 source-alignment round or when new visual evidence reopens a higher row. Real High Contrast evidence is current in P0.1. |
 | Sample code panes | Partial | Basic Input, Collections, Date & Calendar, Design Guidance, Layout, Media, Navigation, Status & Info, Text, System, and What's New `ControlExample` snippets are now covered by runtime parity tests against the official WPF Gallery reference values, including ResizeGrip, NavigationWindow, System C# panes, and MessageBox dynamic snippet variants. Remaining snippet coverage is milestone-open but not the current executable row unless new visual/harness evidence reopens row 7. |
-| Assets and thumbnails | Partial | WPF Gallery-equivalent catalog thumbnail choices, User Dashboard image brush assets, Iconography `Samples/Data/IconsData.json`, byte-identical official Geometry light/dark design images, and `Assets/ControlImages` pack-resource resolution now have focused regression coverage, and official-only reference assets are present locally. Further non-`ControlImages` asset verification is gated by new visual evidence or a later substantive P2 asset-verification round after the tracker-status cleanup stays consistent. |
+| Assets and thumbnails | Partial | WPF Gallery-equivalent catalog thumbnail choices, User Dashboard image brush assets, Iconography `Samples/Data/IconsData.json`, byte-identical official Geometry light/dark design images, and `Assets/ControlImages` pack-resource resolution now have focused regression coverage, and official-only reference assets are present locally. `GalleryCatalogTests.WpfGalleryReferenceNonControlAssetsMatchOfficialHashes` now also locks the dashboard, AppIcons, Design, HomeHeaderTiles, and UserDashboard non-`ControlImages` reference assets as embedded resources with byte-identical official SHA-256 hashes. Further asset work remains gated by new visual evidence or a later substantive P2 asset-verification round after the higher visual/high-drift gates stay recorded. |
 | Typography and spacing metrics | Partial | Shared WPF Gallery typography size keys and base text style metrics are now centralized in `Resources/PageStyles.xaml` and runtime-covered, `GalleryPageRootStyle` now inherits `BodyTextBlockFontSize` for top-level copied/support page body text and uses `SolidBackgroundFillColorTertiaryBrush` so section page roots render on the official solid WPF Gallery page background instead of double-applying translucent `LayerFillColorDefaultBrush`, `BaseTextBlockStyle` now inherits foreground like official WPF Gallery instead of forcing a ModernWpf-only global foreground setter, `ControlExample` display content now inherits `BodyTextBlockFontSize`, direct WPF pages now use a full-frame host so copied page scroll roots own their own margins, `ColorTile` now uses official natural tile height instead of a ModernWpf-only minimum, `ColorTilesPanelStyle` now goes through the official `ControlExampleDisplayBrush` key while preserving the official app's unresolved-key transparent panel behavior, User Dashboard image brushes now follow the official page-style resource lookup model, the Design Guidance Typography/Spacing/Geometry table bodies now match the official zero-inner-margin placement, Spacing preview grids now use the official image row sizing, and Geometry now uses byte-identical official design image assets with official inherited image sizing from its fixed host. Additional margin/spacing/line-height audits are not part of the current tracker-status cleanup; select them only in a later substantive P2 measurement round or when new visible drift appears. |
 | Theme behavior | Partial | Branch-tip focused normal-shell Dark evidence remains delta `0` for Basic Input (`artifacts/wpf-gallery-visual-audit/20260524-034356/report.md`), Navigation (`artifacts/wpf-gallery-visual-audit/20260524-033135/report.md`), Layout (`artifacts/wpf-gallery-visual-audit/20260524-035031/report.md`), and Collections, Date & Calendar, Status & Info, System, and Text (`artifacts/wpf-gallery-visual-audit/20260524-035209/report.md`). Current top-level Dark evidence is `artifacts/wpf-gallery-visual-audit/20260529-022607-305-45960/report.md`: Home `0.04`, WhatsNew `0`, AllControls `0`, and Settings `0`; Home matches `916x762` crops, and WhatsNew, AllControls, and Settings match `868x758` crops through official direct-reference rendered artifacts. Current P0.3 Dark item evidence is `artifacts/wpf-gallery-visual-audit/20260529-023138-825-52464/report.md` with TextBox `0`, Clipboard `0`, and FileAndFolderDialogs `0`. Latest direct-reference Dark section slice is `artifacts/wpf-gallery-visual-audit/20260523-122752/report.md`; Samples, Basic Input, Collections, Date & Calendar, Layout, Navigation, Status & Info, Text, and System are delta `0`. DataGrid high-contrast `SampleDataGrid` background/foreground switching now mirrors official WPF Gallery and is runtime-covered; the copied Color HighContrast subsection has refreshed direct-reference Light/Dark evidence at `0.12` / `0.14` from `artifacts/wpf-gallery-visual-audit/20260529-062201-094-27604/report.md` and `artifacts/wpf-gallery-visual-audit/20260529-062407-485-65068/report.md`, visually inspected as rendering residuals; `ListViewItemPillFillBrush` resolves in HighContrast as well as Light/Dark; Spacing and Geometry refresh copied design images through the official user-preference signal; shell title chrome follows the official high-contrast/Windows 11 `NonClientFrameEdges` decision, and the main window background is pinned to the official `WindowBackground` resource. Real OS High Contrast views are current in P0.1; row 7 visual/harness work reopens only on new evidence. |
 | Collections item theme evidence | Recorded | Current DataGrid direct-reference evidence is Light `artifacts/wpf-gallery-visual-audit/20260529-055921-904-3944/report.md` with delta `0.13` and Dark `artifacts/wpf-gallery-visual-audit/20260529-060033-783-44788/report.md` with delta `0`, recorded as minor antialiasing with matching geometry. ListBox and ListView remain on the broader `20260529-053551-018-30184` / `20260529-053802-768-50656` slice at `0` / `0`; TreeView is refreshed at `artifacts/wpf-gallery-visual-audit/20260529-061205-172-26700/report.md` and `artifacts/wpf-gallery-visual-audit/20260529-061344-116-67908/report.md` with delta `0` in both themes. |
@@ -5318,10 +5347,12 @@ with matching `745x551` primary crops and deltas `17.21` / `11.28`. The
 remaining Light delta is mostly image/text rendering treatment, so avoid
 reopening ParallaxView unless a new local WinUI source, native WPF header
 strategy, or crop regression appears.
-Continue by following the `Hard Execution Queue` and `Row 7 Strict Subqueue`
-above. With P0.1 and row 8 currently recorded, P2 tracker cleanup is selected
-unless a new visual/High Contrast or harness trigger reopens a higher row. For
-each visual-drift round:
+Continue by following the `Hard Execution Queue`, `P2 Subqueue`, and
+`Row 7 Strict Subqueue` above. With P0.1 and row 8 currently recorded, ordered
+P2 work is selected unless a new visual/High Contrast, high-drift, or harness
+trigger reopens a higher row; within P2, do not choose source-shape or
+tracker-only cleanup ahead of visual/high-drift freshness, asset/thumbnail,
+measurement, or harness-impacting parity work. For each visual-drift round:
 
 1. Build ModernWpf Gallery and restore/build the official WPF Gallery checkout
    if needed.
