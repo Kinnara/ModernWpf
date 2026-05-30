@@ -139,5 +139,14 @@
                     NavigationUIVisibility="Hidden" />
             </Border>
         </ui:NavigationView>
+        <Border
+            x:Name="HighContrastNavigationPaneEdgeCover"
+            Width="1"
+            Height="698"
+            Margin="257,8,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            IsHitTestVisible="False"
+            Visibility="Collapsed" />
     </Grid>
 </UserControl>

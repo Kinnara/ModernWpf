@@ -1293,16 +1293,17 @@ function Save-OfficialContentCrop($window, [string]$screenshot, [string]$path, $
     return Save-Crop $screenshot $path $left $top ($windowWidth - $left) ($windowHeight - $top) "OfficialContentRegion"
 }
 
-function Save-ModernContentCrop($window, [string]$screenshot, [string]$path, $case) {
+function Save-ModernContentCrop($window, [string]$screenshot, [string]$path, $case, [bool]$isRenderedWindowArtifact = $false) {
     if ($null -ne $case -and $case.Id -eq "ShellNavigation") {
         $menu = Find-DescendantByAutomationId $window "MenuItemsHost"
         if ($null -ne $menu) {
             $windowRect = [WpfGalleryVisualNative]::GetRect($window.Current.NativeWindowHandle)
             $menuRect = $menu.Current.BoundingRectangle
-            $left = [int][Math]::Round($menuRect.X - $windowRect.Left + 8)
-            $top = [int][Math]::Round($menuRect.Y - $windowRect.Top)
+            $renderedArtifactHighContrastInset = if ($isRenderedWindowArtifact -and $Theme -eq "HighContrast") { 8 } else { 0 }
+            $left = [int][Math]::Round($menuRect.X - $windowRect.Left + 8 - $renderedArtifactHighContrastInset)
+            $top = [int][Math]::Round($menuRect.Y - $windowRect.Top - $renderedArtifactHighContrastInset)
             $width = 250
-            $height = 707
+            $height = if ($Theme -eq "HighContrast") { 698 } else { 707 }
             $scrollBar = Find-DescendantByAutomationId $menu "PART_VerticalScrollBar"
             if ($null -ne $scrollBar) {
                 $scrollBarRect = $scrollBar.Current.BoundingRectangle
@@ -1411,6 +1412,16 @@ function Save-ModernContentCrop($window, [string]$screenshot, [string]$path, $ca
     }
 
     return Save-Crop $screenshot $path 320 40 ($windowWidth - 320) 760 "ModernWpfContentFallback"
+}
+
+function Save-ModernShellNavigationArtifactCrop([string]$artifactDir, [string]$path) {
+    $navigationArtifact = Join-Path $artifactDir "GalleryNavigationView.png"
+    if (!(Test-Path -LiteralPath $navigationArtifact)) {
+        return Get-ImageArtifactInfo $navigationArtifact "MissingModernWpfNavigationViewRenderedArtifact"
+    }
+
+    $height = if ($Theme -eq "HighContrast") { 698 } else { 707 }
+    return Save-Crop $navigationArtifact $path 8 8 250 $height "ModernWpfNavigationPaneRenderedArtifact"
 }
 
 function Compare-ImagesNormalized([string]$leftPath, [string]$rightPath, [int]$sampleStep = 4) {
@@ -1571,7 +1582,12 @@ function Capture-ModernWpf($case, [string]$caseDir) {
 
         $contentCrop = $null
         if ($case.Id -eq "ShellNavigation" -and $windowNonBlank) {
-            $contentCrop = Save-ModernContentCrop $window $screenshot $contentCropPath $case
+            $isRenderedWindowArtifact = $windowScreenshotSource -eq "ModernWpfGalleryMainWindowRenderedArtifact"
+            $contentCrop = Save-ModernContentCrop $window $screenshot $contentCropPath $case $isRenderedWindowArtifact
+            if ($null -eq $contentCrop -or !$contentCrop.NonBlank -or
+                !$contentCrop.Source.StartsWith("ModernWpfNavigationPane", [StringComparison]::Ordinal)) {
+                $contentCrop = Save-ModernShellNavigationArtifactCrop $artifactDir $contentCropPath
+            }
         }
         else {
             $renderedContentArtifact = Join-Path $artifactDir "HomeContentRootPane.png"
@@ -1684,7 +1700,24 @@ function Capture-OfficialWpfGalleryDirectHost($case, [string]$caseDir) {
         }
         [void][WpfGalleryVisualNative]::Move($window.Current.NativeWindowHandle, 60, 60, $Width, $Height)
         [WpfGalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
-        Wait-OfficialWpfGalleryContentReady $window $case
+        if ($case.Id -eq "ShellNavigation") {
+            $navigationPaneArtifact = Join-Path $artifactDir "NavigationPane.png"
+            Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "official WPF Gallery direct navigation pane artifact" -Probe {
+                if (!(Test-Path -LiteralPath $navigationPaneArtifact)) {
+                    return $null
+                }
+
+                $navigationPaneInfo = Get-ImageArtifactInfo $navigationPaneArtifact "OfficialDirectNavigationPaneRenderedArtifact"
+                if ($navigationPaneInfo.NonBlank) {
+                    return $navigationPaneInfo
+                }
+
+                return $null
+            } | Out-Null
+        }
+        else {
+            Wait-OfficialWpfGalleryContentReady $window $case
+        }
         Start-Sleep -Milliseconds 500
 
         $screenshot = Join-Path $caseDir "official-wpf-$($case.Id).png"

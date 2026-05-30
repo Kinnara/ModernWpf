@@ -60,12 +60,20 @@ internal static class Program
 
         var page = CreatePage(options.Page);
 
+        var contentWidth = options.Width - 312;
+        var contentHeight = options.Height - 62;
+        if (string.Equals(options.Theme, "HighContrast", StringComparison.OrdinalIgnoreCase))
+        {
+            contentWidth -= 16;
+            contentHeight -= 9;
+        }
+
         var frame = new Frame
         {
             Name = "RootContentFrame",
             Content = page,
-            Width = Math.Max(1, options.Width - 312),
-            Height = Math.Max(1, options.Height - 62),
+            Width = Math.Max(1, contentWidth),
+            Height = Math.Max(1, contentHeight),
             HorizontalAlignment = HorizontalAlignment.Left,
             VerticalAlignment = VerticalAlignment.Top,
             NavigationUIVisibility = System.Windows.Navigation.NavigationUIVisibility.Hidden
@@ -191,6 +199,11 @@ internal static class Program
 
     private static void ForceFluentThemeDictionary(Application app, string theme)
     {
+        if (theme is not ("Light" or "Dark"))
+        {
+            return;
+        }
+
         var forcedDictionaries = app.Resources.MergedDictionaries
             .Where(dictionary => dictionary.Source?.OriginalString.Contains(
                 "PresentationFramework.Fluent;component/Themes/Fluent.",
@@ -206,18 +219,15 @@ internal static class Program
         {
             "Light" => "Fluent.Light.xaml",
             "Dark" => "Fluent.Dark.xaml",
-            _ => ""
+            _ => throw new ArgumentOutOfRangeException(nameof(theme), theme, null)
         };
 
-        if (!string.IsNullOrEmpty(themeFileName))
+        app.Resources.MergedDictionaries.Add(new ResourceDictionary
         {
-            app.Resources.MergedDictionaries.Add(new ResourceDictionary
-            {
-                Source = new Uri(
-                    $"pack://application:,,,/PresentationFramework.Fluent;component/Themes/{themeFileName}",
-                    UriKind.Absolute)
-            });
-        }
+            Source = new Uri(
+                $"pack://application:,,,/PresentationFramework.Fluent;component/Themes/{themeFileName}",
+                UriKind.Absolute)
+        });
     }
 
     private static Page CreatePage(string page)

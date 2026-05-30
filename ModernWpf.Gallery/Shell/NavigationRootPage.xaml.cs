@@ -109,20 +109,27 @@ namespace ModernWpf.Gallery.Shell
         private NavigationTarget _currentTarget;
         private bool _isProgrammaticNavigation;
         private bool _themeHandlersAttached;
-        private const double TopLevelNavigationContentLeftMargin = 32;
-        private const double ChildGlyphNavigationContentLeftMargin = 0;
-        private const double ChildTextNavigationContentLeftMargin = 16;
-        private const double GroupNavigationContentLeftMargin = 8;
+        private const double DefaultTopLevelNavigationContentLeftMargin = 32;
+        private const double DefaultChildGlyphNavigationContentLeftMargin = 0;
+        private const double DefaultChildTextNavigationContentLeftMargin = 16;
+        private const double DefaultGroupNavigationContentLeftMargin = 8;
         private const double GroupNavigationDisclosureColumnWidth = 24;
         private const double GroupNavigationChevronLeftOffset = 0;
-        private const double TopLevelNavigationContentVerticalOffset = 14;
-        private const double ChildNavigationContentVerticalOffset = 16;
+        private const double DefaultTopLevelNavigationContentVerticalOffset = 14;
+        private const double DefaultChildNavigationContentVerticalOffset = 16;
         private static readonly Thickness DefaultNavigationSelectionIndicatorMargin = new Thickness(0);
         private static readonly Thickness ChildNavigationSelectionIndicatorMargin = new Thickness(-35, 0, 0, -6);
         private static readonly Thickness DefaultNavigationItemButtonMargin = new Thickness(4, 2, 4, 2);
         private static readonly Thickness ChildNavigationSelectedBackgroundMargin = new Thickness(12, 7, -5, -5);
         private static readonly Thickness ChildNavigationSelectedContentOffset = new Thickness(-8, -13, 0, 0);
         private static readonly Color WpfGalleryLightNavigationPaneBackgroundColor = Color.FromRgb(250, 250, 250);
+
+        private static double TopLevelNavigationContentLeftMargin => SystemParameters.HighContrast ? 20 : DefaultTopLevelNavigationContentLeftMargin;
+        private static double ChildGlyphNavigationContentLeftMargin => SystemParameters.HighContrast ? -12 : DefaultChildGlyphNavigationContentLeftMargin;
+        private static double ChildTextNavigationContentLeftMargin => SystemParameters.HighContrast ? 4 : DefaultChildTextNavigationContentLeftMargin;
+        private static double GroupNavigationContentLeftMargin => SystemParameters.HighContrast ? -4 : DefaultGroupNavigationContentLeftMargin;
+        private static double TopLevelNavigationContentVerticalOffset => SystemParameters.HighContrast ? -2 : DefaultTopLevelNavigationContentVerticalOffset;
+        private static double ChildNavigationContentVerticalOffset => SystemParameters.HighContrast ? 0 : DefaultChildNavigationContentVerticalOffset;
 
         public NavigationRootPage()
         {
@@ -295,13 +302,24 @@ namespace ModernWpf.Gallery.Shell
             var item = new NavigationViewItem
             {
                 Content = CreateNavigationItemContent(title, target, icon),
-                Margin = target.Kind == NavigationTargetKind.Item
-                    ? new Thickness(20, 1, 0, 1)
-                    : new Thickness(8, 1, 0, 1),
+                Margin = GetNavigationItemMargin(target),
                 Tag = target
             };
             AutomationProperties.SetName(item, title);
             return item;
+        }
+
+        private static Thickness GetNavigationItemMargin(NavigationTarget target)
+        {
+            var right = SystemParameters.HighContrast && target.Kind != NavigationTargetKind.Item ? 2 : 0;
+            if (SystemParameters.HighContrast && target.Kind == NavigationTargetKind.Item)
+            {
+                return new Thickness(20, 0, -1, 0);
+            }
+
+            return target.Kind == NavigationTargetKind.Item
+                ? new Thickness(20, 1, right, 1)
+                : new Thickness(8, 1, right, 1);
         }
 
         private static object CreateNavigationItemContent(string title, NavigationTarget target, IconElement icon)
@@ -527,7 +545,59 @@ namespace ModernWpf.Gallery.Shell
             Navigation.Resources["NavigationViewDefaultPaneBackground"] = paneBackground;
             Navigation.Resources["NavigationViewExpandedPaneBackground"] = paneBackground;
             Navigation.Resources["NavigationViewItemSeparatorForeground"] = paneBackground;
+            AlignNavigationItemMarginsWithWpfGalleryTreeView();
+            AlignNavigationItemContentLayoutWithWpfGalleryTreeView();
             AlignNavigationViewShellChromeWithWpfGallery(paneBackground);
+            if (_currentTarget != null)
+            {
+                SelectNavigationItem(_currentTarget);
+            }
+        }
+
+        private void AlignNavigationItemMarginsWithWpfGalleryTreeView()
+        {
+            foreach (var item in GetNavigationItems(Navigation.MenuItems))
+            {
+                if (item.Tag is NavigationTarget target)
+                {
+                    item.Margin = GetNavigationItemMargin(target);
+                }
+            }
+        }
+
+        private void AlignNavigationItemContentLayoutWithWpfGalleryTreeView()
+        {
+            foreach (var item in GetNavigationItems(Navigation.MenuItems))
+            {
+                if (item.Content is Grid contentGrid)
+                {
+                    contentGrid.Margin = GetDefaultNavigationItemContentMargin(item);
+                    var verticalOffset = item.Tag is NavigationTarget { Kind: NavigationTargetKind.Item }
+                        ? ChildNavigationContentVerticalOffset
+                        : TopLevelNavigationContentVerticalOffset;
+                    foreach (var textBlock in contentGrid.Children.OfType<TextBlock>())
+                    {
+                        textBlock.Margin = new Thickness(
+                            textBlock.Margin.Left,
+                            verticalOffset,
+                            textBlock.Margin.Right,
+                            textBlock.Margin.Bottom);
+                    }
+                }
+            }
+        }
+
+        private static IEnumerable<NavigationViewItem> GetNavigationItems(System.Collections.IEnumerable items)
+        {
+            foreach (var item in items.OfType<NavigationViewItem>())
+            {
+                yield return item;
+
+                foreach (var child in GetNavigationItems(item.MenuItems))
+                {
+                    yield return child;
+                }
+            }
         }
 
         private void AlignNavigationViewShellChromeWithWpfGallery(Brush paneBackground)
@@ -537,7 +607,16 @@ namespace ModernWpf.Gallery.Shell
                 scrollViewer => string.Equals(scrollViewer.Name, "MenuItemsScrollViewer", StringComparison.Ordinal));
             if (menuScrollViewer != null)
             {
+                menuScrollViewer.Background = paneBackground;
                 menuScrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;
+            }
+
+            var itemsContainerGrid = FindVisualChild<Grid>(
+                Navigation,
+                grid => string.Equals(grid.Name, "ItemsContainerGrid", StringComparison.Ordinal));
+            if (itemsContainerGrid != null)
+            {
+                itemsContainerGrid.Background = paneBackground;
             }
 
             var rootSplitView = FindVisualChild<SplitView>(
@@ -556,8 +635,17 @@ namespace ModernWpf.Gallery.Shell
                 border => string.Equals(border.Name, "PaneContentGrid", StringComparison.Ordinal));
             if (paneContentGrid != null)
             {
+                paneContentGrid.Background = paneBackground;
                 paneContentGrid.BorderBrush = paneBackground;
+                paneContentGrid.BorderThickness = SystemParameters.HighContrast
+                    ? new Thickness(0)
+                    : new Thickness(0, 0, 1, 0);
             }
+
+            HighContrastNavigationPaneEdgeCover.Background = paneBackground;
+            HighContrastNavigationPaneEdgeCover.Visibility = SystemParameters.HighContrast
+                ? Visibility.Visible
+                : Visibility.Collapsed;
 
             var paneShadow = FindVisualChild<ThemeShadowChrome>(
                 Navigation,
