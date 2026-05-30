@@ -249,6 +249,12 @@ namespace ModernWpf.Gallery.Testing
                 StabilizeIndeterminateProgressBar(progressBar);
             }
 
+            var progressRing = root as ModernWpf.Controls.ProgressRing;
+            if (progressRing != null && progressRing.IsIndeterminate)
+            {
+                StabilizeIndeterminateProgressRing(progressRing);
+            }
+
             var childCount = VisualTreeHelper.GetChildrenCount(root);
             for (var i = 0; i < childCount; i++)
             {
@@ -276,6 +282,21 @@ namespace ModernWpf.Gallery.Testing
                 scale.BeginAnimation(ScaleTransform.ScaleXProperty, null);
                 scale.ScaleX = 0.25;
             }
+        }
+
+        private static void StabilizeIndeterminateProgressRing(ModernWpf.Controls.ProgressRing progressRing)
+        {
+            progressRing.ApplyTemplate();
+            progressRing.UpdateLayout();
+
+            var ring = progressRing.Template.FindName("Ring", progressRing) as ModernWpf.Controls.Primitives.ProgressRingIndicator;
+            if (ring == null)
+            {
+                return;
+            }
+
+            ring.BeginAnimation(ModernWpf.Controls.Primitives.ProgressRingIndicator.IndeterminateStartAngleProperty, null);
+            ring.IndeterminateStartAngle = 305.0;
         }
 
         private static ScaleTransform FindScaleTransform(Transform transform)

@@ -80,8 +80,8 @@ public class ProgressRingApiTests
             Assert.IsTrue(lottiePlayer.SnapsToDevicePixels);
             Assert.AreEqual(Visibility.Visible, layoutRoot.Visibility);
             Assert.AreEqual(1.0, layoutRoot.Opacity);
-            Assert.IsNull(TryFindNamedDescendant<FrameworkElement>(progressRing, "Ring"));
-            AssertTemplateEllipses(progressRing);
+            AssertProgressRingIndicator(progressRing);
+            Assert.IsNull(TryFindNamedDescendant<Ellipse>(progressRing, "E1"));
 
             foreach (var themeName in new[] { "Light", "Dark" })
             {
@@ -270,29 +270,17 @@ public class ProgressRingApiTests
         Assert.AreEqual(expectedStateName, FindVisualStateGroup(stateGroupsRoot, groupName).CurrentState?.Name);
     }
 
-    private static void AssertTemplateEllipses(ModernWpf.Controls.ProgressRing progressRing)
+    private static void AssertProgressRingIndicator(ModernWpf.Controls.ProgressRing progressRing)
     {
-        var ellipses = Enumerable.Range(1, 6)
-            .Select(index => FindNamedDescendant<Ellipse>(progressRing, $"E{index}"))
-            .ToArray();
-
-        Assert.AreEqual(6, ellipses.Length);
-        foreach (var ellipse in ellipses)
-        {
-            Assert.IsNotNull(ellipse.Style, ellipse.Name);
-            AssertSetterValue(ellipse.Style!, UIElement.OpacityProperty, 0.0);
-            AssertSetterValue(ellipse.Style!, FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Left);
-            AssertSetterValue(ellipse.Style!, FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Top);
-            Assert.AreEqual(progressRing.TemplateSettings.EllipseDiameter, ellipse.Width);
-            Assert.AreEqual(progressRing.TemplateSettings.EllipseDiameter, ellipse.Height);
-            Assert.AreEqual(progressRing.TemplateSettings.EllipseOffset, ellipse.Margin);
-            AssertBrushEquals(progressRing.Foreground, ellipse.Fill);
-
-            var canvas = VisualTreeHelper.GetParent(ellipse) as Canvas;
-            Assert.IsNotNull(canvas, ellipse.Name);
-            Assert.AreEqual(new Point(0.5, 0.5), canvas!.RenderTransformOrigin);
-            Assert.IsInstanceOfType(canvas.RenderTransform, typeof(RotateTransform), ellipse.Name);
-        }
+        var ring = FindNamedDescendant<ModernWpf.Controls.Primitives.ProgressRingIndicator>(progressRing, "Ring");
+        AssertBrushEquals(progressRing.Foreground, ring.Foreground);
+        AssertBrushEquals(progressRing.Background, ring.Background);
+        Assert.AreEqual(4.0, ring.StrokeThickness);
+        Assert.IsTrue(ring.IsIndeterminate);
+        Assert.AreEqual(progressRing.Minimum, ring.Minimum);
+        Assert.AreEqual(progressRing.Maximum, ring.Maximum);
+        Assert.AreEqual(progressRing.Value, ring.Value);
+        Assert.AreEqual(160.0, ring.IndeterminateSweepAngle);
     }
 
     private static VisualStateGroup FindVisualStateGroup(FrameworkElement stateGroupsRoot, string groupName)

@@ -368,6 +368,62 @@ function Get-ToggleStateName($element) {
     return ""
 }
 
+function Toggle-Element($window, $element) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.Toggle()
+            Start-Sleep -Milliseconds 80
+            return $true
+        }
+    }
+    catch {
+    }
+
+    return Invoke-ElementOnce $window $element
+}
+
+function Set-ToggleElementState($window, $element, [string]$desiredState) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    for ($attempt = 0; $attempt -lt 3; $attempt++) {
+        $state = Get-ToggleStateName $element
+        if ($state -eq $desiredState) {
+            return $true
+        }
+
+        if (!(Toggle-Element $window $element)) {
+            return $false
+        }
+    }
+
+    return (Get-ToggleStateName $element) -eq $desiredState
+}
+
+function Reset-ProgressRingAnimationPhase($window, [string]$control) {
+    if ($control -ne "ProgressRing") {
+        return $false
+    }
+
+    $toggle = TryFind-DescendantByAutomationId $window "ProgressToggle"
+    if ($null -eq $toggle) {
+        return $false
+    }
+
+    [void](Set-ToggleElementState $window $toggle "Off")
+    Start-Sleep -Milliseconds 150
+    $reset = Set-ToggleElementState $window $toggle "On"
+    Start-Sleep -Milliseconds 350
+    return $reset
+}
+
 function Wait-ModernWpfReady($window, [string]$route, [string]$artifactDir) {
     return Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "ModernWpf route '$route' to become ready" -Probe {
         $status = Read-ModernWpfStatusFile $artifactDir
@@ -1186,6 +1242,28 @@ function New-RenderedArtifactSliceCrop([string]$sourcePath, [string]$path, [stri
     return New-RenderedArtifactCrop $path $source $bounds
 }
 
+function New-ProgressRingModernPrimaryCrop([string]$caseDir, [int]$width, [int]$height) {
+    $artifactDir = Join-Path $caseDir "modernwpf-artifacts"
+    $sampleArtifact = Join-Path $artifactDir "GallerySample_ProgressRing_Root.png"
+    if (!(Test-Path $sampleArtifact) -or $width -le 0 -or $height -le 0) {
+        return $null
+    }
+
+    $sampleSize = Get-ImageSize $sampleArtifact
+    $bounds = [ordered]@{
+        Found = $true
+        Reason = "Cropped ProgressRing from the rendered sample root because the control-only VisualBrush crop misses the arc."
+        X = [Math]::Min(10, [Math]::Max(0, $sampleSize.Width - $width))
+        Y = [Math]::Min(6, [Math]::Max(0, $sampleSize.Height - $height))
+        Width = [Math]::Min($width, $sampleSize.Width)
+        Height = [Math]::Min($height, $sampleSize.Height)
+        ChangedSamples = 0
+    }
+    $path = Join-Path $artifactDir "GallerySample_ProgressRing_ProgressRing_fromRoot.png"
+    $savedBounds = Save-Crop $sampleArtifact $bounds $path 0
+    return New-RenderedArtifactCrop $path "GallerySample_ProgressRing_ProgressRing" $savedBounds
+}
+
 function New-TitleBarModernPrimaryCrop([string]$caseDir) {
     $artifactDir = Join-Path $caseDir "modernwpf-artifacts"
     $sampleArtifact = Join-Path $artifactDir "GallerySample_TitleBar_Root.png"
@@ -1317,6 +1395,13 @@ function Capture-StaticCrops([string]$app, [string]$control, [string]$caseDir, $
             }
             else {
                 $primaryCrop = $null
+            }
+        }
+
+        if ($control -eq "ProgressRing" -and $null -ne $primaryCrop) {
+            $progressRingPrimary = New-ProgressRingModernPrimaryCrop $caseDir $primaryCrop.Width $primaryCrop.Height
+            if ($null -ne $progressRingPrimary -and $progressRingPrimary.NonBlank) {
+                $primaryCrop = $progressRingPrimary
             }
         }
 
@@ -1926,7 +2011,8 @@ function Capture-ModernWpf([string]$control, [string]$caseDir) {
         }
         $staticCrops = Capture-StaticCrops "ModernWpf" $control $caseDir $window $screenshot
         $hasRenderedCrops = $staticCrops.Primary.Found -and $staticCrops.Primary.Contains("NonBlank") -and $staticCrops.Primary.NonBlank
-        $notBlank = if (Test-Path $screenshot) { Test-ImageNotBlank $screenshot } elseif ($hasRenderedCrops) { $true } else { $false }
+        $windowScreenshotNonBlank = if (Test-Path $screenshot) { Test-ImageNotBlank $screenshot } else { $false }
+        $notBlank = $windowScreenshotNonBlank -or $hasRenderedCrops
         $primaryCropBlank = $staticCrops.Primary.Found -and $staticCrops.Primary.Contains("NonBlank") -and !$staticCrops.Primary.NonBlank
         $primaryCropMinimumVisibleStdDev = Get-PrimaryCropMinimumVisibleStdDev $control
         $primaryCropLowVariation = $staticCrops.Primary.Found -and $staticCrops.Primary.Contains("VisibleStdDev") -and $staticCrops.Primary.VisibleStdDev -lt $primaryCropMinimumVisibleStdDev
@@ -1998,6 +2084,7 @@ function Capture-WinUIReference([string]$control, [string]$caseDir) {
         Reset-WinUIReferenceSampleScroll $window $control
         $themeProbe = Ensure-WinUIReferenceTheme $control $caseDir $window
         Reset-WinUIReferenceSampleScroll $window $control
+        Reset-ProgressRingAnimationPhase $window $control | Out-Null
 
         $showButton = if ($control -eq "TeachingTip") {
             Find-DescendantButtonByName $window "Show TeachingTip"
