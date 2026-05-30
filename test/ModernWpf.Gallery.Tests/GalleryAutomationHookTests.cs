@@ -3166,7 +3166,7 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(256d, splitView.OpenPaneLength);
                     Assert.AreEqual(48d, splitView.CompactPaneLength);
                     Assert.AreEqual("PANE CONTENT", paneHeader.Text);
-                    Assert.AreEqual("NavLinksList", AutomationProperties.GetAutomationId(navLinksList));
+                    Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(navLinksList));
                     Assert.AreEqual(4, navLinksList.Items.Count);
                     Assert.AreEqual("IsPaneOpen", togglePaneButton.Content);
                     Assert.IsTrue(togglePaneButton.IsChecked.GetValueOrDefault());
@@ -3255,7 +3255,9 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual("Profile Image", profileImageRadio.Content);
                     Assert.AreEqual("Display Name", displayNameRadio.Content);
                     Assert.AreEqual("Initials", initialsRadio.Content);
-                    Assert.AreEqual("ProfileImageRadio", AutomationProperties.GetAutomationId(profileImageRadio));
+                    Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(profileImageRadio));
+                    Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(displayNameRadio));
+                    Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(initialsRadio));
                     Assert.IsNotNull(personPicture.ProfilePicture);
                     Assert.AreEqual(string.Empty, personPicture.DisplayName);
                     Assert.AreEqual(string.Empty, personPicture.Initials);

@@ -1332,6 +1332,30 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void ActiveGalleryCSharpAvoidsLocalOnlyAutomationIdAssignments()
+        {
+            var repoRoot = GetRepoRoot();
+            var galleryRoot = Path.Combine(repoRoot, "ModernWpf.Gallery");
+            var allowedAssignments = new[]
+            {
+                @"ModernWpf.Gallery\MainWindow.xaml.cs: AutomationProperties.SetAutomationId(this, ""ModernWpfGalleryMainWindow"");",
+                @"ModernWpf.Gallery\Pages\GalleryAutomation.cs: AutomationProperties.SetAutomationId(element, automationId);",
+                @"ModernWpf.Gallery\Shell\NavigationRootPage.xaml.cs: AutomationProperties.SetAutomationId(this, ""GalleryNavigationRoot"");",
+                @"ModernWpf.Gallery\Shell\NavigationRootPage.xaml.cs: AutomationProperties.SetAutomationId(Navigation, ""GalleryNavigationView"");",
+                @"ModernWpf.Gallery\Shell\NavigationRootPage.xaml.cs: AutomationProperties.SetAutomationId(ContentHost, ""GalleryContentHost"");"
+            };
+            var violations = Directory.EnumerateFiles(galleryRoot, "*.cs", SearchOption.AllDirectories)
+                .SelectMany(path => File.ReadLines(path)
+                    .Where(line => line.Contains("AutomationProperties.SetAutomationId(", StringComparison.Ordinal))
+                    .Select(line => Path.GetRelativePath(repoRoot, path) + ": " + line.Trim()))
+                .Where(assignment => !allowedAssignments.Contains(assignment, StringComparer.Ordinal))
+                .OrderBy(assignment => assignment, StringComparer.Ordinal)
+                .ToArray();
+
+            CollectionAssert.AreEqual(Array.Empty<string>(), violations);
+        }
+
+        [TestMethod]
         public void WpfGalleryPageStylesKeepOfficialResourceSetterSourceShape()
         {
             var xaml = ReadRepoFile(

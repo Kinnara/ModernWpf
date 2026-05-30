@@ -263,7 +263,6 @@ namespace ModernWpf.Gallery.Pages
                 SelectionMode = SelectionMode.Single,
                 VerticalAlignment = VerticalAlignment.Stretch
             };
-            AutomationProperties.SetAutomationId(navLinksList, "NavLinksList");
             navLinksList.Items.Add(CreateSplitViewNavItem("People", Mux.Symbol.People, Mux.SplitViewPanePlacement.Left));
             navLinksList.Items.Add(CreateSplitViewNavItem("Globe", Mux.Symbol.Globe, Mux.SplitViewPanePlacement.Left));
             navLinksList.Items.Add(CreateSplitViewNavItem("Message", Mux.Symbol.Message, Mux.SplitViewPanePlacement.Left));

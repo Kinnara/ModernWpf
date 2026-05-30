@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using ModernWpf.Gallery.Models;
@@ -105,19 +104,16 @@ namespace ModernWpf.Gallery.Pages
                 Content = "Profile Image",
                 IsChecked = true
             };
-            AutomationProperties.SetAutomationId(profileImageRadio, "ProfileImageRadio");
             var displayNameRadio = new RadioButton
             {
                 Name = "DisplayNameRadio",
                 Content = "Display Name"
             };
-            AutomationProperties.SetAutomationId(displayNameRadio, "DisplayNameRadio");
             var initialsRadio = new RadioButton
             {
                 Name = "InitialsRadio",
                 Content = "Initials"
             };
-            AutomationProperties.SetAutomationId(initialsRadio, "InitialsRadio");
 
             var profileType = new Mux.RadioButtons
             {
