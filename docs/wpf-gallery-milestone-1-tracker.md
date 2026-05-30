@@ -2,6 +2,21 @@
 
 Last updated: 2026-05-30
 
+## Current Order Lock
+
+Use this block before every new work batch. It overrides any lower section that
+looks convenient or recently edited.
+
+1. Re-check `SystemParameters.HighContrast`.
+2. If High Contrast has new unrecorded visual or harness drift, run P0.1 first.
+3. If the current P0.1 High Contrast batch remains recorded with no new drift,
+   work on **8.10 `InfoBar`**.
+4. Do not start **8.11 `ProgressRing`** until `InfoBar` is fixed or explicitly
+   recorded as diagnostic/native-control/harness-limited.
+5. Do not start source-shape/resource-key/test cleanup or P2 work until
+   `InfoBar` and `ProgressRing` are both closed or explicitly recorded as
+   non-actionable for this milestone round.
+
 ## Goal
 
 Make ModernWpf Gallery visually near-identical to the official WPF Gallery for
