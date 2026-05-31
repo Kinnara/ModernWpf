@@ -424,9 +424,11 @@ namespace ModernWpf.Gallery.Tests
                 "private bool CanGoToPreviousPage() => CurrentPage > 1;",
                 "private void NextPage()",
                 "private bool CanGoToNextPage() => CurrentPage < TotalPages;",
+                "if (TotalPages == 0) TotalPages = 1;",
                 "private void UpdateDisplayedIcons(bool resetSelectedIcon = true)",
                 "var skip = (CurrentPage - 1) * pageSize;",
-                "var iconsToDisplay = pageSize == int.MaxValue");
+                "var iconsToDisplay = pageSize == int.MaxValue ? SearchFilteredIcons : SearchFilteredIcons.Skip(skip).Take(pageSize);",
+                "if(resetSelectedIcon)");
 
             var loadDataStart = iconographySource.IndexOf("private void LoadData()", StringComparison.Ordinal);
             var pageSizeStart = iconographySource.IndexOf("private int PageSize", loadDataStart, StringComparison.Ordinal);

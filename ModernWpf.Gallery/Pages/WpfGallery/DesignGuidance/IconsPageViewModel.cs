@@ -225,10 +225,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
         {
             var pageSize = PageSize;
             TotalPages = pageSize == int.MaxValue ? 1 : (int)Math.Ceiling((double)SearchFilteredIcons.Count / pageSize);
-            if (TotalPages == 0)
-            {
-                TotalPages = 1;
-            }
+            if (TotalPages == 0) TotalPages = 1;
 
             if (CurrentPage > TotalPages)
             {
@@ -244,16 +241,14 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 
             var pageSize = PageSize;
             var skip = (CurrentPage - 1) * pageSize;
-            var iconsToDisplay = pageSize == int.MaxValue
-                ? SearchFilteredIcons
-                : SearchFilteredIcons.Skip(skip).Take(pageSize);
+            var iconsToDisplay = pageSize == int.MaxValue ? SearchFilteredIcons : SearchFilteredIcons.Skip(skip).Take(pageSize);
 
             foreach (var icon in iconsToDisplay)
             {
                 DisplayedIcons.Add(icon);
             }
 
-            if (resetSelectedIcon)
+            if(resetSelectedIcon)
             {
                 SelectedIcon = DisplayedIcons.FirstOrDefault();
             }
