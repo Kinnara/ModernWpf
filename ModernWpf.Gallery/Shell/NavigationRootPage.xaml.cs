@@ -852,7 +852,7 @@ namespace ModernWpf.Gallery.Shell
         {
             if (target.Kind == NavigationTargetKind.Home)
             {
-                var page = new HomePage();
+                var page = new DashboardPage();
                 page.ItemRequested = item => Navigate(NavigationTarget.Item(item.UniqueId), true);
                 page.GroupRequested = group => Navigate(NavigationTarget.Group(group.UniqueId), true);
                 page.AllControlsRequested = () => Navigate(NavigationTarget.AllControls(), true);
@@ -861,7 +861,7 @@ namespace ModernWpf.Gallery.Shell
 
             if (target.Kind == NavigationTargetKind.AllControls)
             {
-                var page = new AllControlsPage();
+                var page = new AllSamplesPage();
                 page.ItemRequested = item => Navigate(NavigationTarget.Item(item.UniqueId), true);
                 return page;
             }

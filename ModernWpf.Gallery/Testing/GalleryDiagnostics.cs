@@ -418,13 +418,13 @@ namespace ModernWpf.Gallery.Testing
                 return itemPage.ContentRootArtifactId;
             }
 
-            var homePage = element.DataContext as HomePage;
+            var homePage = element.DataContext as DashboardPage;
             if (homePage != null && ReferenceEquals(element, homePage.Content))
             {
                 return "HomeContentRootPane";
             }
 
-            var allControlsPage = element.DataContext as AllControlsPage;
+            var allControlsPage = element.DataContext as AllSamplesPage;
             if (allControlsPage != null && ReferenceEquals(element, allControlsPage.Content))
             {
                 return "AllControlsContentRootPane";

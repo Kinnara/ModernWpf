@@ -19,8 +19,8 @@ namespace ModernWpf.Gallery.Tests
                 SearchOption.AllDirectories);
             var copiedTopLevelCodeBehind = new[]
             {
-                Path.Combine(repoRoot, "ModernWpf.Gallery", "Pages", "HomePage.xaml.cs"),
-                Path.Combine(repoRoot, "ModernWpf.Gallery", "Pages", "AllControlsPage.xaml.cs"),
+                Path.Combine(repoRoot, "ModernWpf.Gallery", "Pages", "DashboardPage.xaml.cs"),
+                Path.Combine(repoRoot, "ModernWpf.Gallery", "Pages", "AllSamplesPage.xaml.cs"),
                 Path.Combine(repoRoot, "ModernWpf.Gallery", "Pages", "WhatsNewPage.xaml.cs"),
                 Path.Combine(repoRoot, "ModernWpf.Gallery", "Pages", "SettingsPage.xaml.cs"),
                 Path.Combine(repoRoot, "ModernWpf.Gallery", "Controls", "HeaderTile.xaml.cs"),
@@ -84,8 +84,8 @@ namespace ModernWpf.Gallery.Tests
         {
             foreach (var page in new[]
             {
-                "HomePage",
-                "AllControlsPage",
+                "DashboardPage",
+                "AllSamplesPage",
                 "WhatsNewPage",
                 "SettingsPage"
             })
@@ -1090,7 +1090,7 @@ namespace ModernWpf.Gallery.Tests
         {
             foreach (var page in new[]
             {
-                Tuple.Create("AllControlsPage", "AllSamplesPageViewModel"),
+                Tuple.Create("AllSamplesPage", "AllSamplesPageViewModel"),
                 Tuple.Create("WhatsNewPage", "WhatsNewPageViewModel"),
                 Tuple.Create("SettingsPage", "SettingsPageViewModel")
             })
@@ -1116,10 +1116,10 @@ namespace ModernWpf.Gallery.Tests
             var homeSource = ReadRepoFile(
                 "ModernWpf.Gallery",
                 "Pages",
-                "HomePage.xaml.cs");
+                "DashboardPage.xaml.cs");
             AssertContainsInOrder(
                 homeSource,
-                "public HomePage(DashboardPageViewModel viewModel)",
+                "public DashboardPage(DashboardPageViewModel viewModel)",
                 "public DashboardPageViewModel ViewModel { get; }");
         }
 
@@ -2321,18 +2321,18 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void HomePageKeepsOfficialDashboardCardListDeclarationSourceShape()
+        public void DashboardPageKeepsOfficialDashboardCardListDeclarationSourceShape()
         {
             var xaml = ReadRepoFile(
                 "ModernWpf.Gallery",
                 "Pages",
-                "HomePage.xaml");
+                "DashboardPage.xaml");
             var normalizedXaml = xaml.Replace("\r\n", "\n").Replace('\r', '\n');
 
             AssertContainsInOrder(
                 xaml,
                 "<Page",
-                "x:Class=\"ModernWpf.Gallery.Pages.HomePage\"",
+                "x:Class=\"ModernWpf.Gallery.Pages.DashboardPage\"",
                 "xmlns:d=\"http://schemas.microsoft.com/expression/blend/2008\"",
                 "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages\"",
                 "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"",
@@ -2350,20 +2350,20 @@ namespace ModernWpf.Gallery.Tests
                 "The copied Home page should use the official Dashboard ScrollViewer root shape instead of a local-only root name.");
             AssertContainsInOrder(
                 xaml,
-                "<Style x:Key=\"HomePageRootStyle\" TargetType=\"Grid\">",
+                "<Style x:Key=\"DashboardPageRootStyle\" TargetType=\"Grid\">",
                 "<MultiDataTrigger>",
                 "<Condition Binding=\"{Binding ActualApplicationTheme, Source={x:Static ui:ThemeManager.Current}}\" Value=\"{x:Static ui:ApplicationTheme.Dark}\" />",
                 "<Condition Binding=\"{Binding Path=(SystemParameters.HighContrast)}\" Value=\"False\" />",
                 "<Setter Property=\"Background\" Value=\"#272727\" />",
                 "<ScrollViewer >",
-                "<Grid Style=\"{StaticResource HomePageRootStyle}\">",
+                "<Grid Style=\"{StaticResource DashboardPageRootStyle}\">",
                 "<Grid.RowDefinitions>",
                 "<RowDefinition Height=\"Auto\" />",
                 "<RowDefinition Height=\"Auto\" />",
                 "<RowDefinition Height=\"*\" />");
             StringAssert.Contains(
                 normalizedXaml,
-                "<ScrollViewer >\n\n        <Grid Style=\"{StaticResource HomePageRootStyle}\">");
+                "<ScrollViewer >\n\n        <Grid Style=\"{StaticResource DashboardPageRootStyle}\">");
             StringAssert.Contains(
                 normalizedXaml,
                 "<Border CornerRadius=\"8,0,0,0\"\n                    Grid.RowSpan=\"2\">\n                <Border.Background>\n                    <ImageBrush ImageSource=\"pack://application:,,,/ModernWpf.Gallery;component/Assets/win11-dashboard.light.png\" Stretch=\"UniformToFill\" />");
@@ -2592,17 +2592,17 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void AllControlsPageKeepsOfficialAllSamplesDeclarationSourceShape()
+        public void AllSamplesPageKeepsOfficialAllSamplesDeclarationSourceShape()
         {
             var xaml = ReadRepoFile(
                 "ModernWpf.Gallery",
                 "Pages",
-                "AllControlsPage.xaml");
+                "AllSamplesPage.xaml");
 
             AssertContainsInOrder(
                 xaml,
                 "<Page",
-                "x:Class=\"ModernWpf.Gallery.Pages.AllControlsPage\"",
+                "x:Class=\"ModernWpf.Gallery.Pages.AllSamplesPage\"",
                 "xmlns:d=\"http://schemas.microsoft.com/expression/blend/2008\"",
                 "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages\"",
                 "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"",

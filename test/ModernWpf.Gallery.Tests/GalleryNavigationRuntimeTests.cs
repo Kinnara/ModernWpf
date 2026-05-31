@@ -738,11 +738,11 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void HomePageOverviewUsesWpfReferenceGroupFilter()
+        public void DashboardPageOverviewUsesWpfReferenceGroupFilter()
         {
             WpfTestHost.Run(() =>
             {
-                var page = new HomePage();
+                var page = new DashboardPage();
                 var expected = GalleryCatalog.OverviewGroups.Select(group => group.UniqueId).ToArray();
                 var actual = ((IEnumerable<GalleryGroup>)page.NavigationCards).Select(group => group.UniqueId).ToArray();
 
@@ -762,7 +762,7 @@ namespace ModernWpf.Gallery.Tests
         {
             WpfTestHost.Run(() =>
             {
-                var homePage = new HomePage();
+                var homePage = new DashboardPage();
                 Assert.IsInstanceOfType(homePage, typeof(System.Windows.Controls.Page));
                 Assert.IsInstanceOfType(homePage.ViewModel, typeof(DashboardPageViewModel));
                 AssertNavigationCardIds(GalleryCatalog.OverviewGroups, homePage.ViewModel.NavigationCards, "Home");
@@ -797,7 +797,7 @@ namespace ModernWpf.Gallery.Tests
                 whatsNewPage.ViewModel.Navigate("MessageBox");
                 Assert.AreEqual("MessageBox", requestedItemId);
 
-                var allControlsPage = new AllControlsPage();
+                var allControlsPage = new AllSamplesPage();
                 Assert.IsInstanceOfType(allControlsPage, typeof(System.Windows.Controls.Page));
                 Assert.IsInstanceOfType(allControlsPage.ViewModel, typeof(AllSamplesPageViewModel));
                 Assert.AreEqual("All Controls", allControlsPage.ViewModel.PageTitle);
@@ -868,7 +868,7 @@ namespace ModernWpf.Gallery.Tests
         {
             WpfTestHost.Run(() =>
             {
-                var homePage = new HomePage();
+                var homePage = new DashboardPage();
                 RenderPage(homePage, () =>
                 {
                     Assert.IsNull(homePage.FindName("ContentRootGrid"));
@@ -927,7 +927,7 @@ namespace ModernWpf.Gallery.Tests
                     AssertRenderedNavigationCard(mediaItemsControl, "Canvas", GalleryCatalog.FindItem("Canvas").Description, mediaPage.ViewModel.NavigateCommand);
                 });
 
-                var allControlsPage = new AllControlsPage();
+                var allControlsPage = new AllSamplesPage();
                 RenderPage(allControlsPage, () =>
                 {
                     var allControlsRoot = (Grid)allControlsPage.Content;

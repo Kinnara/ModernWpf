@@ -3975,8 +3975,8 @@ namespace ModernWpf.Gallery.Tests
             {
                 var cases = new[]
                 {
-                    Tuple.Create<Page, string>(new HomePage(), "HomeContentRootPane.png"),
-                    Tuple.Create<Page, string>(new AllControlsPage(), "AllControlsContentRootPane.png"),
+                    Tuple.Create<Page, string>(new DashboardPage(), "HomeContentRootPane.png"),
+                    Tuple.Create<Page, string>(new AllSamplesPage(), "AllControlsContentRootPane.png"),
                     Tuple.Create<Page, string>(new SettingsPage(), "SettingsContentRootPane.png")
                 };
 

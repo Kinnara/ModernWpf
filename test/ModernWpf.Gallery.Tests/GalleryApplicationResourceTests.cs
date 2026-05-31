@@ -109,7 +109,7 @@ namespace ModernWpf.Gallery.Tests
         public void HomeDarkPageBackgroundMatchesWpfGalleryFluentReference()
         {
             AssertDarkPageRootBackground(
-                () => new HomePage(),
+                () => new DashboardPage(),
                 page => (Grid)((ScrollViewer)page.Content).Content);
         }
 
@@ -284,7 +284,7 @@ namespace ModernWpf.Gallery.Tests
         {
             WpfTestHost.Run(() =>
             {
-                var page = new HomePage();
+                var page = new DashboardPage();
                 RenderElement(page, () =>
                 {
                     var tileGallery = FindVisualChildren<TileGallery>(page).Single();

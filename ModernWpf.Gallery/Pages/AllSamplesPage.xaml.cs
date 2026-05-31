@@ -8,18 +8,18 @@ using ModernWpf.Gallery.Pages.WpfGallery;
 namespace ModernWpf.Gallery.Pages
 {
     /// <summary>
-    /// Interaction logic for AllControlsPage.xaml
+    /// Interaction logic for AllSamplesPage.xaml
     /// </summary>
-    public partial class AllControlsPage : Page
+    public partial class AllSamplesPage : Page
     {
         public AllSamplesPageViewModel ViewModel { get; }
 
-        public AllControlsPage()
+        public AllSamplesPage()
             : this(null)
         {
         }
 
-        public AllControlsPage(AllSamplesPageViewModel viewModel)
+        public AllSamplesPage(AllSamplesPageViewModel viewModel)
         {
             InitializeComponent();
             ViewModel = viewModel ?? new AllSamplesPageViewModel(OnNavigateCard);

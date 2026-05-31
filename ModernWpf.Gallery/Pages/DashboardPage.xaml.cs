@@ -9,16 +9,16 @@ using ModernWpf.Gallery.Pages.WpfGallery;
 namespace ModernWpf.Gallery.Pages
 {
     /// <summary>
-    /// Interaction logic for HomePage.xaml
+    /// Interaction logic for DashboardPage.xaml
     /// </summary>
-    public partial class HomePage : Page
+    public partial class DashboardPage : Page
     {
-        public HomePage()
+        public DashboardPage()
             : this(null)
         {
         }
 
-        public HomePage(DashboardPageViewModel viewModel)
+        public DashboardPage(DashboardPageViewModel viewModel)
         {
             InitializeComponent();
             ViewModel = viewModel ?? new DashboardPageViewModel(OnNavigateCard);

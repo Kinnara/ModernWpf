@@ -159,7 +159,7 @@ namespace ModernWpf.Gallery.Tests
             WpfTestHost.Run(() =>
             {
                 var dashboardViewModel = new DashboardPageViewModel(_ => { });
-                var homePage = new HomePage(dashboardViewModel);
+                var homePage = new DashboardPage(dashboardViewModel);
                 RenderPage(homePage);
                 Assert.AreSame(dashboardViewModel, homePage.ViewModel);
                 Assert.AreSame(homePage, homePage.DataContext);
@@ -170,7 +170,7 @@ namespace ModernWpf.Gallery.Tests
                     overviewItemsControl.ItemsSource.Cast<GalleryGroup>().Select(group => group.UniqueId).ToArray());
 
                 var allSamplesViewModel = new AllSamplesPageViewModel(_ => { });
-                var allControlsPage = new AllControlsPage(allSamplesViewModel);
+                var allControlsPage = new AllSamplesPage(allSamplesViewModel);
                 RenderPage(allControlsPage);
                 Assert.AreSame(allSamplesViewModel, allControlsPage.ViewModel);
                 Assert.AreSame(allControlsPage, allControlsPage.DataContext);
