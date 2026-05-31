@@ -140,15 +140,9 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
             UpdatePagination();
         }
 
-        private int PageSize
-        {
-            get
-            {
-                return SelectedPageSizeIndex == PageSizeOptions.Count - 1
-                    ? int.MaxValue
-                    : int.Parse(PageSizeOptions[SelectedPageSizeIndex]);
-            }
-        }
+        private int PageSize => SelectedPageSizeIndex == 4
+            ? int.MaxValue
+            : int.Parse(PageSizeOptions[SelectedPageSizeIndex]);
 
         private void UpdateSearchFilter()
         {
