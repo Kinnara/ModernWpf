@@ -17,7 +17,7 @@ namespace ModernWpf.Gallery.Pages
                 { "Calendar", () => new WpfGallery.DateAndTime.CalendarPage(new WpfGallery.DateAndTime.CalendarPageViewModel()) },
                 { "CheckBox", () => new WpfGallery.BasicInput.CheckBoxPage(new WpfGallery.BasicInput.CheckBoxPageViewModel()) },
                 { "Clipboard", () => new WpfGallery.SystemPages.ClipboardPage(new WpfGallery.SystemPages.ClipboardPageViewModel()) },
-                { "Color", () => new WpfGallery.DesignGuidance.ColorPage(new WpfGallery.DesignGuidance.ColorsPageViewModel()) },
+                { "Color", () => new WpfGallery.DesignGuidance.ColorsPage(new WpfGallery.DesignGuidance.ColorsPageViewModel()) },
                 { "ComboBox", () => new WpfGallery.BasicInput.ComboBoxPage(new WpfGallery.BasicInput.ComboBoxPageViewModel()) },
                 { "DataGrid", () => new WpfGallery.Collections.DataGridPage(new WpfGallery.Collections.DataGridPageViewModel()) },
                 { "DatePicker", () => new WpfGallery.DateAndTime.DatePickerPage(new WpfGallery.DateAndTime.DatePickerPageViewModel()) },

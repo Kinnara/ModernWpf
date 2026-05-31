@@ -304,6 +304,18 @@ touched.
 | 5.4 | Non-visible copied/adapted source-shape guards | Lower priority. Recent summary/base-declaration rounds are recorded; comments, declaration shape, member order, and pure source-text guards stay blocked while 5.1-5.3 have current work. | Take only a named guard gap with focused tests and a full Gallery build. |
 | 5.5 | Stale-status cleanup and tracker-only row 5 bookkeeping | Last inside row 5, except for explicit user-requested priority/order hygiene. | Use only after substantive row 5 items are recorded or not applicable. |
 
+Latest accepted row 5.3 execution note:
+
+- The thirteenth named 5.3 batch aligned the Design Guidance Color page
+  class/file naming from the local `ColorPage.xaml` / `ColorPage` shape to the
+  official WPF Gallery `ColorsPage.xaml` / `ColorsPage` shape. The retained
+  route remains `Color`, the injected `ColorsPageViewModel` stays in place,
+  and Color selector/subsection runtime behavior plus Light/Dark visual evidence
+  remain current. This was selected only after `SystemParameters.HighContrast`
+  returned `False` and ranks 2-7 plus P2 rows 2-4 were recorded with no new
+  High Contrast, visible-drift, high-drift, asset, measurement, automation, or
+  harness trigger.
+
 ### Row 8 Strict Subqueue
 
 When row 8 is the first executable row, use this table as the hard work order.
@@ -1352,6 +1364,18 @@ Latest local verification for the current branch tip:
   - Passed at `artifacts/wpf-gallery-visual-audit/20260531-071954-407-88008/report.md`: ShellNavigation remains `0.82` with matching `250x707` crops, `142/11151` changed samples (`1.273%`), max RGB diff `669`, and the accepted rendered-artifact pane crop unchanged.
 - `git diff --check`
   - Passed after the row 5.3 MainWindow title-bar WindowChrome source-shape batch; only the existing LF/CRLF warnings were reported.
+- `Add-Type -AssemblyName PresentationFramework; [System.Windows.SystemParameters]::HighContrast`
+  - Returned `False` before the row 5.3 Design Guidance Color page naming batch. Winning substantive rank was `Current Order Lock` rank 8 / P2 row 5 because ranks 2-7 and P2 rows 2-4 remained recorded and no new High Contrast, visible-drift, high-drift, asset, measurement, automation, or harness trigger appeared before the batch.
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGalleryPageRegistryTests|FullyQualifiedName~GalleryPageRuntimeTests.DesignGuidancePagesUseOfficialPageSpecificViewModels|FullyQualifiedName~GalleryPageRuntimeTests.DesignGuidanceItemPagesUseOfficialPageRoots|FullyQualifiedName~GalleryPageRuntimeTests.ColorPageUsesWpfGallerySelectorAndTextSectionLayout|FullyQualifiedName~GalleryPageRuntimeTests.ColorPageVisualTestCanOpenWpfGallerySubsection|FullyQualifiedName~WpfGallerySourceShapeTests.DesignGuidanceColorCodeBehindKeepsOfficialConstructorAndHandlerOrderShape|FullyQualifiedName~WpfGallerySourceShapeTests.DesignGuidancePagesKeepOfficialHeaderAndSampleSourceShape|FullyQualifiedName~WpfGallerySourceShapeTests.CopiedItemCodeBehindKeepsOfficialViewModelPropertyBeforeConstructorShape" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 16 tests per target. The retained Design Guidance Color route now constructs the official `ColorsPage` class from `ColorsPage.xaml` / `ColorsPage.xaml.cs` while preserving route id `Color`, injected `ColorsPageViewModel`, page-root/source-shape guards, selector layout, and visual-test subsection routing.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the row 5.3 Design Guidance Color page naming batch. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages and existing ModernWpf/ModernWpf.Controls warnings.
+- `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases Color,ColorText,ColorFill,ColorStroke,ColorBackground,ColorSignal,ColorHighContrast -Reference OfficialWpfGallery -Theme Light -TimeoutSeconds 60`
+  - Passed at `artifacts/wpf-gallery-visual-audit/20260531-073055-327-73236/report.md`: Color `0.05`, Text `0.05`, Fill `0.06`, Stroke `0.04`, Background `0.03`, Signal `0.10`, and HighContrast `0.12`, all with matching `868x758` crops.
+- `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases Color,ColorText,ColorFill,ColorStroke,ColorBackground,ColorSignal,ColorHighContrast -Reference OfficialWpfGallery -Theme Dark -TimeoutSeconds 60`
+  - Passed at `artifacts/wpf-gallery-visual-audit/20260531-073237-048-75116/report.md`: Color `0.06`, Text `0.06`, Fill `0.06`, Stroke `0`, Background `0.03`, Signal `0.10`, and HighContrast `0.14`, all with matching `868x758` crops.
+- `git diff --check`
+  - Passed after the row 5.3 Design Guidance Color page naming batch; only the existing LF/CRLF warnings were reported.
 - PowerShell parser checks for `tools/visual-checks/Run-GalleryVisualChecks.ps1` and `tools/visual-checks/Run-WpfGalleryVisualAudit.ps1`
   - Passed with zero parser errors after the row 4 automation/harness verifier.
 - Retained ModernWpf/WinUI extension visual ranking from existing
@@ -3995,6 +4019,17 @@ ahead of the `Hard Execution Queue`.
 | File and Folder Dialogs | Done | Done | Done | Adapted from official WPF Gallery XAML with WPF `Page` root, `Title="File and Folder Dialogs"`, `PageHeader`, `ControlExample`, injected `FileAndFolderDialogsPageViewModel`, and support file/folder handlers; the copied page now keeps the official root/content declaration, `ContentPagePane` row/PageHeader paragraph, one-line PageHeader/ScrollViewer source shape, official copied `ControlExample` attribute order, representative official pick-single-file, pick-multiple-files, save-file, and pick-folder declaration order, official save-file TextBox HelpText self-close shape, and official final `ControlExample` closing paragraph. Output TextBlocks and save-file input now use official direct `ViewModel.*` bindings with runtime coverage, save text keeps official `UpdateSourceTrigger=PropertyChanged`, and code-behind status strings use official interpolation. The folder picker uses official `OpenFolderDialog` directly on `net8.0` and later while retaining a local reflection fallback for `net462`. Sample headers/snippets are runtime-covered; latest direct-reference Light visual audit recorded at `artifacts/wpf-gallery-visual-audit/20260529-023052-142-69976/report.md` with delta `0`; latest direct-reference Dark visual audit recorded at `artifacts/wpf-gallery-visual-audit/20260529-023138-825-52464/report.md` with delta `0`; both use matching `868x758` Modern `ContentPagePaneRenderedArtifact` and official `OfficialDirectRootContentFrameRenderedArtifact` crops. |
 | MessageBox | Done | Done | Done | Adapted from official WPF Gallery XAML with WPF `Page` root, `Title="MessageBox"`, `PageHeader`, `ControlExample`, injected `MessageBoxPageViewModel`, support message-box handlers, and official dynamic snippet variants; the copied page now keeps the official root/content declaration, `ContentPagePane` row/PageHeader paragraph, one-line PageHeader/ScrollViewer source shape, official copied `ControlExample` attribute order, representative official button/selector/common-message declaration order, and official final `ControlExample` closing paragraph. Result TextBlocks, dynamic code panes, and selector indexes now use official direct `ViewModel.*` bindings with runtime coverage, and code-behind result strings, no-owner one-line live `MessageBox.Show(...)` overloads, button/image message text, and common/default section comments now use the official source shape while retaining local button compatibility helpers for cross-target enum support. Sample headers/snippets are runtime-covered; latest direct-reference Light visual audit recorded at `artifacts/wpf-gallery-visual-audit/20260529-011511-310-35948/report.md` with delta `0`; latest direct-reference Dark visual audit recorded at `artifacts/wpf-gallery-visual-audit/20260529-011557-878-67964/report.md` with delta `0`; both use matching `868x758` Modern `ContentPagePaneRenderedArtifact` and official `OfficialDirectRootContentFrameRenderedArtifact` crops after restoring the shared `ControlExample` source expander to the official default `Expander`. |
 | Clipboard | Done | Done | Done | Adapted from official WPF Gallery XAML with WPF `Page` root, `Title="ClipboardPage"`, `PageHeader`, `ControlExample`, injected `ClipboardPageViewModel`, Clipboard note, direct official-style `ViewModel.*` output bindings, and support clipboard handlers with official status-string formatting; the copied page now keeps the official root/content declaration, `ContentPagePane` row/PageHeader paragraph, one-line PageHeader/ScrollViewer source shape, official copied `ControlExample` attribute order, representative official note/text/image declaration order, and official note-panel `Border` / note-icon `TextBlock` / note-text `TextBlock` / documentation `Hyperlink` declaration shape. Sample headers/snippets and output binding shapes are runtime-covered. The image source keeps the local assembly-qualified pack URI because this repo hosts the asset in `ModernWpf.Gallery`. Latest direct-reference Light visual audit recorded at `artifacts/wpf-gallery-visual-audit/20260529-023052-142-69976/report.md` with delta `0`; latest direct-reference Dark visual audit recorded at `artifacts/wpf-gallery-visual-audit/20260529-023138-825-52464/report.md` with delta `0`; both use matching `868x758` Modern `ContentPagePaneRenderedArtifact` and official `OfficialDirectRootContentFrameRenderedArtifact` crops. |
+
+Latest Working Checklist note:
+
+- Design Guidance Color now also uses the official WPF Gallery `ColorsPage`
+  class/file name (`ColorsPage.xaml` / `ColorsPage.xaml.cs`) while preserving
+  the retained catalog route `Color`. The current focused Color visual evidence
+  is Light `artifacts/wpf-gallery-visual-audit/20260531-073055-327-73236/report.md`
+  and Dark `artifacts/wpf-gallery-visual-audit/20260531-073237-048-75116/report.md`;
+  deltas remain Color `0.05` / `0.06`, Text `0.05` / `0.06`, Fill `0.06` /
+  `0.06`, Stroke `0.04` / `0`, Background `0.03` / `0.03`, Signal `0.10` /
+  `0.10`, and HighContrast `0.12` / `0.14`, all with matching `868x758` crops.
 
 ## Next Recommended Round
 

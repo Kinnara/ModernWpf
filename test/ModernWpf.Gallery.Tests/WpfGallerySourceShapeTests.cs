@@ -2709,7 +2709,7 @@ namespace ModernWpf.Gallery.Tests
                 Tuple.Create("Collections", "TreeViewPage", "TreeViewPageViewModel"),
                 Tuple.Create("DateAndTime", "CalendarPage", "CalendarPageViewModel"),
                 Tuple.Create("DateAndTime", "DatePickerPage", "DatePickerPageViewModel"),
-                Tuple.Create("DesignGuidance", "ColorPage", "ColorsPageViewModel"),
+                Tuple.Create("DesignGuidance", "ColorsPage", "ColorsPageViewModel"),
                 Tuple.Create("DesignGuidance", "GeometryPage", "GeometryPageViewModel"),
                 Tuple.Create("DesignGuidance", "SpacingPage", "SpacingPageViewModel"),
                 Tuple.Create("Media", "CanvasPage", "CanvasPageViewModel"),
@@ -3562,14 +3562,14 @@ namespace ModernWpf.Gallery.Tests
                 "Pages",
                 "WpfGallery",
                 "DesignGuidance",
-                "ColorPage.xaml");
+                "ColorsPage.xaml");
             var normalizedColorXaml = colorXaml.Replace("\r\n", "\n").Replace('\r', '\n');
             StringAssert.Contains(
                 colorXaml,
                 "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance\"");
             AssertContainsInOrder(
                 colorXaml,
-                "<Page x:Class=\"ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance.ColorPage\"",
+                "<Page x:Class=\"ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance.ColorsPage\"",
                 "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"",
                 "xmlns:d=\"http://schemas.microsoft.com/expression/blend/2008\"",
                 "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance\"",
@@ -3939,14 +3939,14 @@ namespace ModernWpf.Gallery.Tests
                 "Pages",
                 "WpfGallery",
                 "DesignGuidance",
-                "ColorPage.xaml.cs").Replace("\r\n", "\n").Replace('\r', '\n');
+                "ColorsPage.xaml.cs").Replace("\r\n", "\n").Replace('\r', '\n');
 
             StringAssert.Contains(
                 source,
-                "        public ColorsPageViewModel ViewModel { get; }\n        public ColorPage(ColorsPageViewModel viewModel)");
+                "        public ColorsPageViewModel ViewModel { get; }\n        public ColorsPage(ColorsPageViewModel viewModel)");
             AssertContainsInOrder(
                 source,
-                "public ColorPage(ColorsPageViewModel viewModel)",
+                "public ColorsPage(ColorsPageViewModel viewModel)",
                 "InitializeComponent();",
                 "ViewModel = viewModel;",
                 "DataContext = this;",

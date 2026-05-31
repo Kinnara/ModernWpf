@@ -6,12 +6,12 @@ using ModernWpf.Gallery.Testing;
 namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 {
     /// <summary>
-    /// Interaction logic for ColorPage.xaml
+    /// Interaction logic for ColorsPage.xaml
     /// </summary>
-    public partial class ColorPage : Page
+    public partial class ColorsPage : Page
     {
         public ColorsPageViewModel ViewModel { get; }
-        public ColorPage(ColorsPageViewModel viewModel)
+        public ColorsPage(ColorsPageViewModel viewModel)
         {
             InitializeComponent();
             ViewModel = viewModel;

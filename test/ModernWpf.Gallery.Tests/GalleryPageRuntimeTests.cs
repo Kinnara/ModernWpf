@@ -826,7 +826,7 @@ namespace ModernWpf.Gallery.Tests
         {
             WpfTestHost.Run(() =>
             {
-                AssertWpfGalleryPageViewModel<ColorPage, ColorsPageViewModel>(
+                AssertWpfGalleryPageViewModel<ColorsPage, ColorsPageViewModel>(
                     "Color",
                     "Colors",
                     "Guide showing how to use colors in your app",
@@ -861,7 +861,7 @@ namespace ModernWpf.Gallery.Tests
         {
             WpfTestHost.Run(() =>
             {
-                AssertWpfGalleryPageRoot<ColorPage>("Color", "ColorsPage");
+                AssertWpfGalleryPageRoot<ColorsPage>("Color", "ColorsPage");
                 AssertWpfGalleryPageRoot<IconographyPage>("Iconography", "IconsPage");
                 AssertWpfGalleryPageRoot<TypographyPage>("Typography");
                 AssertWpfGalleryPageRoot<SpacingPage>("Spacing");
@@ -876,7 +876,7 @@ namespace ModernWpf.Gallery.Tests
             {
                 var colorsViewModel = new ColorsPageViewModel();
                 AssertRenderedPageHeader(
-                    new ColorPage(colorsViewModel),
+                    new ColorsPage(colorsViewModel),
                     colorsViewModel,
                     colorsViewModel.PageTitle,
                     colorsViewModel.PageDescription);
@@ -2537,7 +2537,7 @@ namespace ModernWpf.Gallery.Tests
                         colorSubpage
                     }));
 
-                    var page = new ColorPage(new ColorsPageViewModel());
+                    var page = new ColorsPage(new ColorsPageViewModel());
                     var selector = (ComboBox)page.FindName("PageSelector");
                     var sectionHost = (ContentControl)page.FindName("ColorSubpageNavigationFrame");
 
