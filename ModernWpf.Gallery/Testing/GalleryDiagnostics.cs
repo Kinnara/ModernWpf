@@ -402,7 +402,6 @@ namespace ModernWpf.Gallery.Testing
                     string.Equals(automationId, "ModernWpfGalleryMainWindow", StringComparison.Ordinal) ||
                     string.Equals(automationId, "GalleryNavigationRoot", StringComparison.Ordinal) ||
                     string.Equals(automationId, "GalleryNavigationView", StringComparison.Ordinal) ||
-                    string.Equals(automationId, "ContentRootGrid", StringComparison.Ordinal) ||
                     string.Equals(automationId, "ContentPagePane", StringComparison.Ordinal));
         }
 

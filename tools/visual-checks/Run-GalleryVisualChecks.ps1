@@ -1822,19 +1822,26 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
     if ($null -ne $openElement) {
         $treePath = Join-Path $caseDir ("{0}-{1}-open.uia.txt" -f $app.ToLowerInvariant(), $control)
         Write-UiaTree $openElement $treePath 3
-        $cropElement = Find-DescendantByAutomationId $openElement "ContentRootGrid"
+        $cropElement = Find-DescendantByAutomationId $openElement "GalleryItemPageRoot"
+        if ($null -eq $cropElement) {
+            $cropElement = Find-DescendantByAutomationId $openElement "ContentRootGrid"
+        }
         if ($null -eq $cropElement) {
             $cropElement = $openElement
         }
     }
     else {
         $treePath = ""
-        $cropElement = Find-ElementByAutomationIdInProcess $window.Current.ProcessId "ContentRootGrid"
+        $cropElement = Find-ElementByAutomationIdInProcess $window.Current.ProcessId "GalleryItemPageRoot"
+        if ($null -eq $cropElement) {
+            $cropElement = Find-ElementByAutomationIdInProcess $window.Current.ProcessId "ContentRootGrid"
+        }
     }
 
     $openDelta = $null
     $visualOpened = $false
     $crop = $null
+    $selectedFrame = $null
     $usableFrames = @($frames.ToArray() | Where-Object { $_.NonBlank -and ![string]::IsNullOrEmpty($_.Screenshot) })
     if ($usableFrames.Count -gt 0) {
         $selectedFrame = $usableFrames[$usableFrames.Count - 1]
@@ -1903,8 +1910,13 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
     }
 
     if ($app -eq "ModernWpf" -and $null -eq $crop) {
-        $artifactCropPath = Join-Path $caseDir "modernwpf-artifacts\ContentRootGrid.png"
-        $artifactCrop = New-RenderedArtifactCrop $artifactCropPath "ContentRootGrid" ([ordered]@{
+        $artifactCropSource = "GalleryItemPageRoot"
+        $artifactCropPath = Join-Path $caseDir "modernwpf-artifacts\GalleryItemPageRoot.png"
+        if (!(Test-Path $artifactCropPath)) {
+            $artifactCropSource = "ContentRootGrid"
+            $artifactCropPath = Join-Path $caseDir "modernwpf-artifacts\ContentRootGrid.png"
+        }
+        $artifactCrop = New-RenderedArtifactCrop $artifactCropPath $artifactCropSource ([ordered]@{
             Found = $true
             Reason = ""
             X = 0
@@ -1920,7 +1932,7 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
     }
 
     $status = if (!$invoked) { "Failed" } elseif ($null -ne $openElement -or $visualOpened) { "Passed" } else { "Failed" }
-    $notes = if (!$invoked) { "Could not invoke the $control sample button." } elseif ($null -eq $openElement -and !$visualOpened) { "$control did not produce UIA or visual evidence of opening." } elseif ($null -eq $openElement -and $null -ne $crop -and $crop.Source -eq "ContentRootGrid") { "$control open content was verified from the in-app rendered artifact." } elseif ($null -eq $openElement) { "$control open content was not found in UIA; visual delta verified." } else { "" }
+    $notes = if (!$invoked) { "Could not invoke the $control sample button." } elseif ($null -eq $openElement -and !$visualOpened) { "$control did not produce UIA or visual evidence of opening." } elseif ($null -eq $openElement -and $null -ne $crop -and ($crop.Source -eq "GalleryItemPageRoot" -or $crop.Source -eq "ContentRootGrid")) { "$control open content was verified from the in-app rendered artifact." } elseif ($null -eq $openElement) { "$control open content was not found in UIA; visual delta verified." } else { "" }
 
     return [ordered]@{
         Status = $status

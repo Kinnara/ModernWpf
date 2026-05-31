@@ -4245,6 +4245,60 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void VisualArtifactsIgnoreLegacyContentRootGridAutomationId()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var artifactDirectory = Path.Combine(Path.GetTempPath(), "ModernWpfGalleryTests", Path.GetRandomFileName());
+                GalleryDiagnostics.Configure(GalleryLaunchOptions.Parse(new[] { "--visual-test", "--visual-artifact-dir", artifactDirectory }));
+
+                var legacyRoot = new Border
+                {
+                    Width = 24,
+                    Height = 24,
+                    Background = Brushes.Blue
+                };
+                AutomationProperties.SetAutomationId(legacyRoot, "ContentRootGrid");
+
+                var window = new Window
+                {
+                    Width = 128,
+                    Height = 128,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = legacyRoot
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    GalleryDiagnostics.WriteVisualArtifacts(legacyRoot);
+
+                    var legacyArtifact = Path.Combine(artifactDirectory, "ContentRootGrid.png");
+                    Assert.IsFalse(File.Exists(legacyArtifact), legacyArtifact + " should not be written.");
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    GalleryDiagnostics.ResetForTests();
+                    if (Directory.Exists(artifactDirectory))
+                    {
+                        Directory.Delete(artifactDirectory, recursive: true);
+                    }
+
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
         public void DirectWpfPageWritesContentPagePaneVisualArtifact()
         {
             WpfTestHost.Run(() =>
@@ -4377,7 +4431,7 @@ namespace ModernWpf.Gallery.Tests
                     GalleryDiagnostics.WriteVisualArtifacts(page);
 
                     Assert.IsTrue(teachingTip.IsOpen);
-                    var openContentArtifact = Path.Combine(artifactDirectory, "ContentRootGrid.png");
+                    var openContentArtifact = Path.Combine(artifactDirectory, "GalleryItemPageRoot.png");
                     Assert.IsTrue(File.Exists(openContentArtifact), openContentArtifact + " was not written.");
                     Assert.IsTrue(new FileInfo(openContentArtifact).Length > 0);
                     Assert.IsTrue(HasVisibleRgbPixels(openContentArtifact), openContentArtifact + " has no visible RGB content.");

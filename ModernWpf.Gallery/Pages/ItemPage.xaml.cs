@@ -192,7 +192,7 @@ namespace ModernWpf.Gallery.Pages
 
         internal string ContentRootArtifactId
         {
-            get { return HasDirectPageContent ? "GalleryItemPageRoot" : "ContentRootGrid"; }
+            get { return "GalleryItemPageRoot"; }
         }
 
         public bool HasAdditionalSampleSnippets
