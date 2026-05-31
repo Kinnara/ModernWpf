@@ -44,7 +44,17 @@ Current pointer:
    5 source cleanup. `TrackerPriorityTests` guard this ordering; once
    committed, row 1 is inactive again unless another priority/order conflict
    appears.
-2. Latest substantive batch, 2026-05-31: **global order 11 / P2 row 5.4**
+2. Latest high-priority verification batch, 2026-05-31: **global orders 3-5 /
+   P1.3 and P2 row 2 visual-high-drift freshness** preempted further row 5.4
+   source-shape work after the user called out visual/high-drift priority risk.
+   `SystemParameters.HighContrast` returned `False`. Retained high-drift
+   Light/Dark checks for `GridView`, `CommandBarFlyout`, and `ProgressRing`
+   passed at `artifacts/visual-checks/20260531-151548-761-78380/report.md`
+   and `artifacts/visual-checks/20260531-151737-949-59816/report.md`, with
+   nonblank ModernWpf/WinUI captures and required sample elements. No new
+   visible drift, high-drift retained-control regression, High Contrast,
+   asset, measurement, automation, or harness trigger appeared.
+3. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
    for the `IconsPageViewModel` pagination/displayed-icons source-shape guard.
    The local official WPF Gallery source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\DesignGuidance\IconsPageViewModel.cs`
@@ -55,14 +65,14 @@ Current pointer:
    This row was selected only after `SystemParameters.HighContrast` returned
    `False`, global orders 2-9 stayed recorded or inactive, rows 5.1-5.2
    stayed recorded, and no current row 5.3 executable gap appeared.
-3. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
+4. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
    for the `IconsPageViewModel` selected-icon name source-shape guard. The
    local official WPF Gallery source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\DesignGuidance\IconsPageViewModel.cs`
    caches `previousSelectedIcon?.Name` before rebuilding search results; the
    local copied view model now keeps that non-visible source shape while
    retaining the local WPF command and serializer adapters.
-4. Previous row 4 batch, 2026-05-31: **global order 7 / P2 row 4**
+5. Previous row 4 batch, 2026-05-31: **global order 7 / P2 row 4**
    for Iconography reload/current-page interaction parity. The local official
    WPF Gallery source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\DesignGuidance\IconsPageViewModel.cs`
@@ -72,7 +82,7 @@ Current pointer:
    serializer adapters. This measurement/interaction row preempted row 5.4
    source-shape cleanup after `SystemParameters.HighContrast` returned `False`
    and no visual, high-drift, or asset trigger appeared.
-5. Previous row 4 batch, 2026-05-31: **global order 7 / P2 row 4**
+6. Previous row 4 batch, 2026-05-31: **global order 7 / P2 row 4**
    for Iconography search interaction parity. The local official WPF Gallery
    source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\DesignGuidance\IconsPageViewModel.cs`
@@ -83,7 +93,7 @@ Current pointer:
    measurement/interaction row preempted row 5.4 source-shape cleanup after
    `SystemParameters.HighContrast` returned `False` and no visual,
    high-drift, or asset trigger appeared.
-6. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
+7. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
    for the `IconsPageViewModel` pagination helper source-shape guard. The local
    official WPF Gallery source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\DesignGuidance\IconsPageViewModel.cs`
@@ -94,7 +104,7 @@ Current pointer:
    `SystemParameters.HighContrast` returned `False`, global orders 2-9 stayed
    recorded or inactive, rows 5.1-5.2 stayed recorded, and no current row 5.3
    executable gap appeared.
-7. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
+8. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
    for the `IconsPageViewModel.PageSize` source-shape guard. The local official
    WPF Gallery source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\DesignGuidance\IconsPageViewModel.cs`
@@ -106,14 +116,14 @@ Current pointer:
    and direct mapped XAML hook/name/automation, direct code-behind member,
    official XAML resource-key, and matched ViewModel scans found no current row
    5.3 executable gap.
-8. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
+9. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
    for the `MainWindowViewModel.ApplicationTitle` source-shape guard. The local
    official WPF Gallery source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\MainWindowViewModel.cs`
    carries `_applicationTitle = "WPF Gallery"` as backing state; the local
    retained shell view model now uses the same backing field while keeping the
    local get-only property adapter.
-9. Previous higher-priority substantive batch, 2026-05-31: **global order 6 /
+10. Previous higher-priority substantive batch, 2026-05-31: **global order 6 /
    P2 row 3** for executable application-icon asset parity. The local official
    WPF Gallery source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\WPFGallery.csproj`
@@ -124,7 +134,7 @@ Current pointer:
    This asset/runtime-visible shell surface preempted row 5.3 source cleanup.
    The previous **global order 9 / P2 row 5.2** app-manifest runtime
    compatibility batch remains recorded.
-10. Latest high-priority visual batch, 2026-05-31: **global orders 3-5 / P1.3 and P2
+11. Previous high-priority visual batch, 2026-05-31: **global orders 3-5 / P1.3 and P2
    row 2 visual-high-drift freshness** preempted row 5.3 after the branch
    refreshed current visual/high-drift evidence. `SystemParameters.HighContrast`
    returned `False`. A local official-source scan under
@@ -140,7 +150,7 @@ Current pointer:
    `artifacts/visual-checks/20260531-134103-490-70788/report.md` and
    `artifacts/visual-checks/20260531-134200-949-83644/report.md`, so row 5.3
    stays selectable only after this higher visual freshness check.
-11. Previous interaction/automation correction, 2026-05-31: **global order 7 /
+12. Previous interaction/automation correction, 2026-05-31: **global order 7 /
    P2 row 4** preempted row 5.3 because the local official source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Controls\ControlExample.xaml.cs`
    gates `ControlExample.Copy_SourceCode` through a non-empty `XamlCode` check,
@@ -148,7 +158,7 @@ Current pointer:
    unknown parameter. `ModernWpf.Gallery\Controls\ControlExample.cs` now keeps
    that interaction shape while retaining the local notification compatibility
    adapter. This row 7 batch is recorded in Latest local verification.
-12. The latest recorded row 5.3 source batch was **global order 10 / P2 row 5.3** because
+13. The latest recorded row 5.3 source batch was **global order 10 / P2 row 5.3** because
    the local official WPF Gallery sources
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\MainWindow.xaml.cs`
    and
@@ -157,10 +167,10 @@ Current pointer:
    `_navigationService.IsBackHistoryNonEmpty()`, while the local retained shell
    still used the direct `MainWindow.SetBackButtonVisible(bool)` adapter. That
    batch is now recorded in Latest local verification.
-13. The next substantive row returns to **global order 11 / P2 row 5.4** only
+14. The next substantive row returns to **global order 11 / P2 row 5.4** only
     while every higher row, including row 5.3, remains recorded, inactive, or
     has no current named executable gap.
-14. Any new High Contrast, visible drift, high-drift retained-control, asset,
+15. Any new High Contrast, visible drift, high-drift retained-control, asset,
    measurement, interaction, automation, or harness evidence immediately
    preempts row 5 source cleanup.
 
@@ -217,36 +227,45 @@ Current active selection snapshot:
 1. The user-requested priority/order hygiene edit is recorded by this ordering
    update. It is inactive again unless a new priority/order conflict appears;
    rows 2-7 explicitly outrank all row 5 source cleanup.
-2. The latest substantive row 5 path was **global order 11 -> P2 Subqueue row
+2. The latest substantive path was **global orders 3-5 / P1.3 and P2 row 2**
+   for visual/high-drift freshness. `SystemParameters.HighContrast` returned
+   `False`, and retained high-drift Light/Dark checks for `GridView`,
+   `CommandBarFlyout`, and `ProgressRing` passed at
+   `artifacts/visual-checks/20260531-151548-761-78380/report.md` and
+   `artifacts/visual-checks/20260531-151737-949-59816/report.md`. No new
+   visual, High Contrast, high-drift, asset, measurement, automation, or
+   harness trigger appeared, so lower row 5 work is allowed only after this
+   proof remains current.
+3. The previous substantive row 5 path was **global order 11 -> P2 Subqueue row
    5 -> P2 Row 5 Internal Queue row 5.4** for the `IconsPageViewModel`
    pagination/displayed-icons source-shape guard. `SystemParameters.HighContrast`
    returned `False`, global orders 2-9 are recorded or inactive for the
    current branch tip, rows 5.1-5.2 are recorded, and row 5.3 has no current
    named executable gap.
-3. The previous row 5 substantive path was **global order 11 -> P2 Subqueue
+4. The previous row 5 substantive path was **global order 11 -> P2 Subqueue
    row 5 -> P2 Row 5 Internal Queue row 5.4** for the `IconsPageViewModel`
    selected-icon name source-shape guard.
-4. The latest preemptive substantive path was **global order 7 / P2 row 4**
+5. The latest preemptive substantive path was **global order 7 / P2 row 4**
    for Iconography reload/current-page behavior, and it is now recorded for the
    current branch tip. This row 4 interaction gap preempted row 5.4 after the
    local official WPF Gallery source showed `LoadData()` updates pagination
    without forcing `CurrentPage = 1`.
-5. The previous preemptive substantive path was **global order 7 / P2 row 4**
+6. The previous preemptive substantive path was **global order 7 / P2 row 4**
    for Iconography whitespace search filtering, and it is recorded for the
    current branch tip.
-6. The previous row 5 substantive path was **global order 11 -> P2 Subqueue row
+7. The previous row 5 substantive path was **global order 11 -> P2 Subqueue row
    5 -> P2 Row 5 Internal Queue row 5.4** for the `IconsPageViewModel`
    pagination-helper source-shape guard; earlier 5.3 batches are also recorded
    for the current branch tip.
-6. Global orders 2-9 are recorded or inactive for the current branch tip and
+8. Global orders 2-9 are recorded or inactive for the current branch tip and
    must be rechecked before every new substantive batch.
-7. P2 rows 2-4 are recorded for the current branch tip. P2 row 6 and general
+9. P2 rows 2-4 are recorded for the current branch tip. P2 row 6 and general
    tracker cleanup remain blocked while row 5 has executable work.
-8. Inside row 5, rows 5.1 and 5.2 are recorded for the current branch tip after
+10. Inside row 5, rows 5.1 and 5.2 are recorded for the current branch tip after
    the `ColorTile` visibility-template batch. Row 5.3 currently has no named
    executable gap, so row 5.4 is the current row-5 sub-bucket; row 5.5 stays
    blocked while any row 5.1-5.4 item is current.
-9. Recorded forward-command selection proof, 2026-05-31:
+11. Recorded forward-command selection proof, 2026-05-31:
    `SystemParameters.HighContrast` returned `False`. The selected substantive
    row was **global order 10 / P2 row
    5.3** because global orders 2-9 are recorded or inactive for the current
@@ -255,7 +274,7 @@ Current active selection snapshot:
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\MainWindowViewModel.cs`,
    which exposes `Forward()` through `_navigationService.NavigateForward()`.
    That row 5.3 source-hook batch is now recorded for the current branch tip.
-10. Recorded back-state source-hook selection proof, 2026-05-31:
+12. Recorded back-state source-hook selection proof, 2026-05-31:
    `SystemParameters.HighContrast` returned `False`. The selected substantive
    row was **global order 10 / P2 row
    5.3** because global orders 2-9 are recorded or inactive for the current
@@ -271,7 +290,7 @@ Current active selection snapshot:
    `UpdateCanNavigateBack()` source hook and a local `CanGoBack` provider. No
    new visible, High Contrast, high-drift, asset, measurement, automation, or
    harness trigger was found before taking this row 5.3 source-hook batch.
-11. Priority correction checkpoint, 2026-05-31:
+13. Priority correction checkpoint, 2026-05-31:
    the scheduler must be read as a hard priority queue, not as a convenience
    backlog. Visual, real OS High Contrast, high-drift retained-control, asset,
    measurement, interaction, automation, and harness evidence always preempts
@@ -279,7 +298,7 @@ Current active selection snapshot:
    comparison is confirmed as
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery`; every future source
    comparison must name the exact local official file or folder used.
-12. Visual/high-drift correction checkpoint, 2026-05-31:
+14. Visual/high-drift correction checkpoint, 2026-05-31:
     row 5.3 source cleanup was paused after the local official-source scan
     found no current mapped-page event-hook/name/automation-name gap. The
     selected work became **global orders 3-5 / P1.3 and P2 row 2** because a
@@ -290,7 +309,7 @@ Current active selection snapshot:
     branch-tip Light/Dark high-drift reruns are recorded at
     `artifacts/visual-checks/20260531-125756-652-39076/report.md` and
     `artifacts/visual-checks/20260531-125906-951-89176/report.md`.
-13. Recorded app-manifest runtime-compatibility selection proof, 2026-05-31:
+15. Recorded app-manifest runtime-compatibility selection proof, 2026-05-31:
     `SystemParameters.HighContrast` returned `False`. The selected substantive
     row was **global order 9 / P2 row 5.2** because the local official WPF
     Gallery source
@@ -301,7 +320,7 @@ Current active selection snapshot:
     or inactive, and this row 5.2 app-level runtime structure preempted row
     5.3. The local manifest now keeps those official hooks while retaining the
     existing ModernWpf `PerMonitorV2` adapter.
-14. Post-manifest visual/high-drift freshness checkpoint, 2026-05-31:
+16. Post-manifest visual/high-drift freshness checkpoint, 2026-05-31:
     row 5.3 stayed paused until retained high-drift evidence was refreshed
     after the manifest runtime-compatibility batch. `SystemParameters.HighContrast`
     returned `False`; `GridView`, `CommandBarFlyout`, and `ProgressRing`
@@ -605,7 +624,7 @@ this milestone round.
 | 5 | P1.1 residual visual drift triage/evidence | Recorded. Current Iconography Light evidence is `artifacts/wpf-gallery-visual-audit/20260531-124818-683-31684/report.md`; current Iconography Dark evidence is `artifacts/wpf-gallery-visual-audit/20260531-124941-695-67844/report.md`. Iconography remains `0.23` / `0.24` with maxRgbSum `3` channel-quantization residual, and UserDashboard remains `0` / `0.01` in the same reports. Current Spacing/Geometry evidence is Light `artifacts/wpf-gallery-visual-audit/20260531-044837-997-83052/report.md` and Dark `artifacts/wpf-gallery-visual-audit/20260531-044919-462-27884/report.md`; both pages remain `0` with matching `868x758` crops after the row 5.2 default image `Source` fallback batch. ProgressBar is `0` / `0`; GridSplitter Light `0.24` and DataGrid Light `0.13` are minor text/line antialiasing residuals with no visible geometry/layout drift. | Do not reopen unless a new visible drift appears. |
 | 6 | P1.2 stale `Partial` visual rows at or below noise threshold | Recorded. StackPanel, TreeView, ToolTip, RichTextEdit, PasswordBox, and Hyperlink are `0` / `0` in `20260529-061205-172-26700` and `20260529-061344-116-67908`. Calendar, DatePicker, Canvas, Image, Menu, TabControl, Frame, and NavigationWindow are `0` / `0` in `20260529-061607-923-61020` and `20260529-061844-861-43780`; UserDashboard is current at `0` / `0.01` in `20260531-085737-499-82256` and `20260531-085823-767-83140`. Color is current at `0.05` / `0.06` in the same focused reports, and Color subsection residuals remain recorded at `artifacts/wpf-gallery-visual-audit/20260531-025154-427-36712/report.md` and `artifacts/wpf-gallery-visual-audit/20260531-025247-727-86588/report.md`, with ColorSignal `0.10` / `0.10` and ColorHighContrast `0.12` / `0.14` recorded as low-mean rendering residuals. | Do not reopen unless a new visible drift appears. |
 | 7 | P1 source/resource/runtime alignment tied to a visual issue | No current open row 7 item. Row 7.1 is recorded complete, row 7.2 has no current blocker, and row 7.3 has no current visible mismatch. | Preempt P1.3/P2 only if new visual/High Contrast drift appears or evidence collection exposes a visual-harness blocker. |
-| 8 | P1.3 retained ModernWpf/WinUI extension high-drift visual triage | Recorded through the current strict subqueue. GridView is fixed at branch tip (`69.52` / `63.82` down to current `1.61` / `1.6`), CommandBarFlyout is fixed at branch tip (`48.10` / `39.46` down to current score `5.09` / `5.09`), BreadcrumbBar's live blank UI/harness masking issue is fixed at branch tip, AnnotatedScrollBar's crop/control round is fixed, RatingControl's glyph/caption alignment round is fixed, IconElement's reference crop round is fixed, TitleBar's current-turn surface/crop round is fixed with Light `6.44` and Dark `4.70`, DropDownButton's chevron clipping round is fixed with Light `3.66` and Dark `2.86`, SelectorBar's sample-template crop round is fixed with Light `7.07` and Dark `7.86`, InfoBar's current HC blank-artifact issue is recorded with visible-content evidence, and ProgressRing now renders a WinUI-style arc with current Light/Dark score `15.01` / `18.25` evidence recorded below. The invalid `20260531-125102-776-89452` ProgressRing Light artifact is superseded by the theme-probe guard and valid reruns. | No lower row 8 item is currently active. Reopen only if new retained-control visual or reference-theme harness evidence appears; otherwise P2 remains behind the P0/row 7 gates. |
+| 8 | P1.3 retained ModernWpf/WinUI extension high-drift visual triage | Recorded through the current strict subqueue. GridView is fixed at branch tip (`69.52` / `63.82` down to current `1.61` / `1.6`), CommandBarFlyout is fixed at branch tip (`48.10` / `39.46` down to current score `5.09` / `5.09`), BreadcrumbBar's live blank UI/harness masking issue is fixed at branch tip, AnnotatedScrollBar's crop/control round is fixed, RatingControl's glyph/caption alignment round is fixed, IconElement's reference crop round is fixed, TitleBar's current-turn surface/crop round is fixed with Light `6.44` and Dark `4.70`, DropDownButton's chevron clipping round is fixed with Light `3.66` and Dark `2.86`, SelectorBar's sample-template crop round is fixed with Light `7.07` and Dark `7.86`, InfoBar's current HC blank-artifact issue is recorded with visible-content evidence, and ProgressRing now renders a WinUI-style arc with current Light/Dark score `14.95` / `14.83` evidence recorded below. The invalid `20260531-125102-776-89452` ProgressRing Light artifact is superseded by the theme-probe guard and valid reruns. | No lower row 8 item is currently active. Reopen only if new retained-control visual or reference-theme harness evidence appears; otherwise P2 remains behind the P0/row 7 gates. |
 | 9 | P2 ordered cleanup and parity locks | Executable only after P0.1 is recorded or environment-blocked, rows 2-7 have no open item, and row 8 has been fixed or explicitly recorded as non-actionable for this milestone round. | Follow the `P2 Subqueue`; stop immediately if a new High Contrast, visual, high-drift, or harness finding appears. |
 
 ### P2 Subqueue
@@ -652,7 +671,7 @@ Current P2 state:
 | P2 order | Bucket | State | Allowed next work |
 | --- | --- | --- | --- |
 | 1 | Priority/order hygiene | Recorded by this user-requested tracker-order clarification; inactive unless order/status text conflicts or the user requests priority clarification again. | Edit this tracker only to remove priority ambiguity or stale execution state, then return to the first substantive P2 row. Do not perform unrelated source cleanup under this bucket. |
-| 2 | Visual and high-drift freshness | Recorded for the current branch tip by the P0/P1 evidence above plus the latest focused WPF Gallery Light/Dark reports `artifacts/wpf-gallery-visual-audit/20260531-124818-683-31684/report.md` / `artifacts/wpf-gallery-visual-audit/20260531-124941-695-67844/report.md` and post-manifest retained-control Light/Dark reports `artifacts/visual-checks/20260531-134103-490-70788/report.md` / `artifacts/visual-checks/20260531-134200-949-83644/report.md` in Row 8 and Latest local verification. | Reopen P0/P1/row 8 immediately if refreshed evidence shows new visual, High Contrast, high-drift, or harness drift. Do not continue row 4 or lower work until current visual/high-drift evidence is written here. |
+| 2 | Visual and high-drift freshness | Recorded for the current branch tip by the P0/P1 evidence above plus the latest focused WPF Gallery Light/Dark reports `artifacts/wpf-gallery-visual-audit/20260531-124818-683-31684/report.md` / `artifacts/wpf-gallery-visual-audit/20260531-124941-695-67844/report.md` and refreshed retained-control Light/Dark reports `artifacts/visual-checks/20260531-151548-761-78380/report.md` / `artifacts/visual-checks/20260531-151737-949-59816/report.md` in Row 8 and Latest local verification. | Reopen P0/P1/row 8 immediately if refreshed evidence shows new visual, High Contrast, high-drift, or harness drift. Do not continue row 4 or lower work until current visual/high-drift evidence is written here. |
 | 3 | Asset, thumbnail, and visual-reference parity locks | Recorded for the current active references: the executable `ApplicationIcon` now points to the official WPF Gallery `Assets\AppIcons\WPFGallery.ico` asset, non-`ControlImages` references are shipped and hash-locked, WPF-equivalent catalog `ControlImages` are official-hash locked, and retained catalog `ControlImages` still match the packaged resource set. | Reopen only for new visual asset evidence, a new active image reference, or a new catalog thumbnail/resource gap. |
 | 4 | Measurement, typography, spacing, keyboard, automation, and harness-impacting parity | Recorded at branch tip. The latest row 4 batch aligns Iconography reload/current-page behavior with the local official WPF Gallery source by avoiding a forced `CurrentPage = 1` reset during `LoadData()`, while retaining the local WPF command and serializer adapters. Earlier row 4 interaction batches for Iconography whitespace search filtering, shared `ControlExample.Copy_SourceCode`, Iconography copy behavior, MessageBox net10 button values, and TileGallery scroll-back visibility remain recorded. | Reopen only for new named measurement, interaction, automation, or harness-impacting evidence. |
 | 5 | Source-shape, resource-key, naming, selector, and test cleanup not tied to active visual drift | Current executable P2 bucket while P0, row 7, row 8, and row 4 remain recorded with no new trigger. The latest named row 5 rounds align the shared `NullToVisibilityConverter`, User Dashboard visibility converters, `AlphabeticValidationRule`, shared `ControlExample`/`PageHeader` wrappers, shared `HeaderTile`/Color support-control code-behind source shape, shell/shared `App`/`MainWindow`/`TileGallery` summaries plus the current `NavigationRootPage` shell resource-hook guard, copied/adapted WPF Gallery page code-behind interaction-logic summaries plus explicit `Page`/`Window`/`UserControl` base declarations, Design Guidance Color subsection visible example-content guards, Iconography instructions Expander inline/source structure, Design Guidance Spacing/Geometry default design-image `Source` resource fallback, Navigation `FrameWindow` same-folder `Frame.Source` behavior, Navigation `NavigationWindow` runtime URI/template-resource behavior, MainWindow/title-bar plus NavigationRoot footer style resource keys, SectionPage retained-extension scroll-host structural lookup/no-local-name hooks, NavigationRootPage content-frame Border structural lookup/no-local-name hook, NavigationRootPage Settings footer event-handler naming/sender-notification parity, NavigationRootPage High Contrast pane-edge cover structural lookup/no-local-name hook, NavigationRootPage visual-test status panel structural lookup/no-local-name hooks, ShellNavigation rendered-artifact crop hardening, MainWindow retained NavigationRootPage host structural lookup/no-local-name hook, NavigationRootPage retained content Frame structural lookup/no-local-name hook, NavigationRootPage retained NavigationView structural lookup/no-local-name hook, NavigationRootPage Settings footer official command-binding path through the retained PaneFooter BindingProxy bridge, MainWindow title-bar `WindowChrome.IsHitTestVisibleInChrome` attached-property source shape, Design Guidance Color `ColorsPage` class/file naming, Design Guidance Icons `IconsPage` / `IconsPageViewModel` class/file naming plus the official `Copy_Content` command selector and official direct search-placeholder visibility handlers, top-level and section WPF Gallery navigation view-model `Navigate(object pageType)` Type gates with retained local route fallbacks, top-level `DashboardPage` / `AllSamplesPage` class/file naming while preserving the retained `Home` / `AllControls` routes and visual artifact IDs, official WPF Gallery display-route aliases such as `Date & Calendar`, `Status & Info`, `Design Guidance`, `Basic Input`, `Colors`, `Icons`, `File and Folder Dialogs`, `User Dashboard`, `All Controls`, and `Home` resolving to retained local route IDs, WPF visual-audit launch routes using those official display IDs with canonical ready-route waits, and direct page registry display-ID normalization for official item IDs, with focused source-shape/runtime tests, full Gallery builds, and refreshed Color, Iconography, Home/AllControls, DateAndCalendar/StatusAndInfo, FileAndFolderDialogs, UserDashboard, Spacing/Geometry, Frame, NavigationWindow, ShellNavigation, and BasicInput Light/Dark visual audits recorded in Latest local verification. | Continue only with the first executable item from the `P2 Row 5 Internal Queue`; stop immediately if a higher visual, High Contrast, high-drift, asset, measurement, automation, or harness item appears. |
@@ -723,6 +742,18 @@ Current row 5 decision:
 
 Latest accepted visual/high-drift priority-correction note:
 
+- The current visual/high-drift freshness batch preempted further row 5.4
+  source-shape work under global orders 3-5 / P2 row 2 after the user called
+  out visual/high-drift priority risk. `SystemParameters.HighContrast`
+  returned `False`. Retained high-drift Light/Dark reports
+  `artifacts/visual-checks/20260531-151548-761-78380/report.md` and
+  `artifacts/visual-checks/20260531-151737-949-59816/report.md` passed for
+  `GridView`, `CommandBarFlyout`, and `ProgressRing`, with nonblank
+  ModernWpf/WinUI captures and required sample elements. The refreshed scores
+  remain stable: GridView `1.61` / `1.6`, CommandBarFlyout `5.09` / `5.09`
+  with primary `4.99` / `4.99`, and ProgressRing `14.95` / `14.83`. No new
+  visible-drift, high-drift retained-control regression, High Contrast, asset,
+  measurement, automation, or harness trigger appeared.
 - The current visual/high-drift correction batch preempted row 5.3 under
   global orders 3-5. A local official-source scan under
   `D:\repos\WPF-Samples\Sample Applications\WPFGallery` found no current
@@ -982,8 +1013,8 @@ drift, a visual-harness crop issue, or unclassified native-control limitation.
 
 | Row 8 order | Retained surface | State | Allowed next work |
 | --- | --- | --- | --- |
-| 8.1 | GridView | Refreshed at branch tip. Current post-manifest evidence is Light `artifacts/visual-checks/20260531-134103-490-70788/report.md` at primary `1.61` and Dark `artifacts/visual-checks/20260531-134200-949-83644/report.md` at primary `1.6`, both with matching `657x412` crops, nonblank ModernWpf/WinUI captures, proven WinUI reference theme state, and required sample elements. | Reopen only on new visual regression evidence. |
-| 8.2 | CommandBarFlyout | Refreshed at branch tip. Current post-manifest evidence is Light `artifacts/visual-checks/20260531-134103-490-70788/report.md` at score `5.09` / primary `4.99` and Dark `artifacts/visual-checks/20260531-134200-949-83644/report.md` at score `5.09` / primary `4.99`, both `454x302` vs `453x302`, nonblank, proven WinUI reference theme state, and with required sample elements. | Reopen only on new visual regression evidence. |
+| 8.1 | GridView | Refreshed at branch tip. Current evidence is Light `artifacts/visual-checks/20260531-151548-761-78380/report.md` at primary `1.61` and Dark `artifacts/visual-checks/20260531-151737-949-59816/report.md` at primary `1.6`, both with matching `657x412` crops, nonblank ModernWpf/WinUI captures, and required sample elements. | Reopen only on new visual regression evidence. |
+| 8.2 | CommandBarFlyout | Refreshed at branch tip. Current evidence is Light `artifacts/visual-checks/20260531-151548-761-78380/report.md` at score `5.09` / primary `4.99` and Dark `artifacts/visual-checks/20260531-151737-949-59816/report.md` at score `5.09` / primary `4.99`, both `454x302` vs `453x302`, nonblank, and with required sample elements. | Reopen only on new visual regression evidence. |
 | 8.3 | BreadcrumbBar | Refreshed in this round. Current evidence is Light `artifacts/visual-checks/20260531-020444-625-41128/report.md` at primary `11.27` and Dark `artifacts/visual-checks/20260531-020545-936-66416/report.md` at primary `12.93`, both `529x26` vs `530x26`, matching the previously recorded retained one-pixel crop/text-rasterization residual. No ModernWpf exception logs were written. | Reopen only on new visual regression evidence. |
 | 8.4 | AnnotatedScrollBar | Refreshed in this round. Current evidence is Light `artifacts/visual-checks/20260531-020444-625-41128/report.md` at `18.1` and Dark `artifacts/visual-checks/20260531-020545-936-66416/report.md` at `15.36`, both with matching `790x500` primary crops and no ModernWpf exception logs, down from refreshed Light `76.39` / primary `56.49` and Dark `54.33` / primary `34.43`. | Reopen only on new visual regression evidence. |
 | 8.5 | RatingControl | Refreshed in this round. Current evidence is Light `artifacts/visual-checks/20260531-020444-625-41128/report.md` at `7.09` and Dark `artifacts/visual-checks/20260531-020545-936-66416/report.md` at `7.94`, both with matching `183x32` primary crops and no ModernWpf exception logs, down from refreshed Light `19.37` and Dark `23.53`. | Reopen only on new visual regression evidence. |
@@ -992,7 +1023,7 @@ drift, a visual-harness crop issue, or unclassified native-control limitation.
 | 8.8 | DropDownButton | Refreshed in this round. Current evidence is Light `artifacts/visual-checks/20260531-020922-808-3596/report.md` at `3.66` and Dark `artifacts/visual-checks/20260531-021032-594-76136/report.md` at `2.86`, both with matching `78x32` primary crops and no ModernWpf exception logs, down from refreshed `15.43` / `14.78` after the DropDownButton template kept the chevron inside the button bounds instead of clipping it out of the crop. | Reopen only on new visual regression evidence. |
 | 8.9 | SelectorBar | Refreshed in this round. Current evidence is Light `artifacts/visual-checks/20260531-020922-808-3596/report.md` at `7.07` and Dark `artifacts/visual-checks/20260531-021032-594-76136/report.md` at `7.86`, both with matching `284x48` primary crops and no ModernWpf exception logs, down from refreshed `11.89` / `12.86` with `292x47` vs `284x48` crop drift after the sample-specific item template matched the WinUI reference crop size and spacing. | Reopen only on new visual regression evidence. |
 | 8.10 | InfoBar | Refreshed in this round. Current normal-theme evidence is Light `artifacts/visual-checks/20260531-020922-808-3596/report.md` at score `11.77`, primary `10.97`, `560x103` vs `560x95`, and Dark `artifacts/visual-checks/20260531-021032-594-76136/report.md` at score `12.77`, primary `11.97`, `560x103` vs `560x95`; both passed with visible InfoBar content and no ModernWpf exception logs. Under real OS High Contrast, the rendered primary artifact was blank before the fix (`artifacts/visual-checks/20260530-022340-065-80740/report.md` and `artifacts/visual-checks/20260530-022703-657-13032/report.md`). The template now uses a standard `Border`/`Grid` layout root instead of the offscreen-fragile `GridEx`, the visible state restores `ContentRoot.Visibility`, the default border thickness resolves to `1`, and the artifact smoke test rejects solid-background InfoBar captures. Current HC Light-equivalent evidence is `artifacts/visual-checks/20260530-025058-847-82168/report.md`: passed, score `25.21`, primary `23.11`, `560x103` vs `545x97`, with visible InfoBar content and border. Current HC Dark-equivalent evidence is `artifacts/visual-checks/20260530-025135-368-28776/report.md`: passed, score `25.21`, primary `23.11`, same crop sizes. Residual score is recorded as retained WinUI/native-control and reference-crop geometry drift for this milestone round, not a blank/harness failure. | Reopen only on new InfoBar visual regression evidence. ProgressRing is also recorded below. |
-| 8.11 | ProgressRing | Refreshed at branch tip. Refreshed pre-fix evidence showed the ModernWpf primary crop as a dot/point while WinUI rendered an indeterminate arc: Light `artifacts/visual-checks/20260530-025657-292-66928/report.md` was `8.63` with a ModernWpf PrintWindow failure, and Dark `artifacts/visual-checks/20260530-025754-227-49236/report.md` was `15.84`. The template now uses a WPF-rendered `ProgressRingIndicator` arc instead of the old six-dot storyboard substitute, visual-test artifacts pin the indeterminate arc phase, the harness resets the WinUI `ProgressToggle` before reference capture, ProgressRing primary crops use the rendered sample-root slice instead of the offset-fragile control-only VisualBrush, and rendered primary crops can satisfy the nonblank gate when the window screenshot is blank. The invalid Light refresh at `artifacts/visual-checks/20260531-125102-776-89452/report.md` is superseded because the WinUI reference `ThemeProbe` did not prove Light theme and produced a dark reference crop with a fake `187.72` delta. `Run-GalleryVisualChecks.ps1` now fails/retries unproven WinUI reference theme probes. Current post-manifest Light evidence is `artifacts/visual-checks/20260531-134103-490-70788/report.md`: passed, score/primary `14.88`, `60x60` vs `60x60`, nonblank, with required sample elements and proven theme state. Current post-manifest Dark evidence is `artifacts/visual-checks/20260531-134200-949-83644/report.md`: passed, score/primary `14.78`, same crop sizes and proven theme state. Remaining score is recorded as WinUI AnimatedVisual phase/endpoint and WPF geometry rasterization residual, not a dot/blank/control-crop/theme-probe mismatch. | Reopen only on new ProgressRing visual regression evidence. |
+| 8.11 | ProgressRing | Refreshed at branch tip. Refreshed pre-fix evidence showed the ModernWpf primary crop as a dot/point while WinUI rendered an indeterminate arc: Light `artifacts/visual-checks/20260530-025657-292-66928/report.md` was `8.63` with a ModernWpf PrintWindow failure, and Dark `artifacts/visual-checks/20260530-025754-227-49236/report.md` was `15.84`. The template now uses a WPF-rendered `ProgressRingIndicator` arc instead of the old six-dot storyboard substitute, visual-test artifacts pin the indeterminate arc phase, the harness resets the WinUI `ProgressToggle` before reference capture, ProgressRing primary crops use the rendered sample-root slice instead of the offset-fragile control-only VisualBrush, and rendered primary crops can satisfy the nonblank gate when the window screenshot is blank. The invalid Light refresh at `artifacts/visual-checks/20260531-125102-776-89452/report.md` is superseded because the WinUI reference `ThemeProbe` did not prove Light theme and produced a dark reference crop with a fake `187.72` delta. `Run-GalleryVisualChecks.ps1` now fails/retries unproven WinUI reference theme probes. Current Light evidence is `artifacts/visual-checks/20260531-151548-761-78380/report.md`: passed, score/primary `14.95`, `60x60` vs `60x60`, nonblank, with required sample elements. Current Dark evidence is `artifacts/visual-checks/20260531-151737-949-59816/report.md`: passed, score/primary `14.83`, same crop sizes, nonblank, with required sample elements. Remaining score is recorded as WinUI AnimatedVisual phase/endpoint and WPF geometry rasterization residual, not a dot/blank/control-crop/theme-probe mismatch. | Reopen only on new ProgressRing visual regression evidence. |
 
 ### Row 7 Strict Subqueue
 
@@ -1179,7 +1210,7 @@ next task.
 | P0.4 | Completed residual NavigationView shell details | Done at branch tip. Current shell-pane evidence is `artifacts/wpf-gallery-visual-audit/20260531-124818-683-31684/report.md` for Light and `artifacts/wpf-gallery-visual-audit/20260531-124941-695-67844/report.md` for Dark. Both runs pass with matching `250x707` Modern/official navigation-pane crops and deltas of Light `0.80` and Dark `0.82`, down from the previous `9.40/9.36`, with exact comparison metrics `142/11151` changed samples (`1.273%`) and max RGB diff `669`. The retained `NavigationView` now navigates to the selected child before capture, no longer leaves the Home selection indicator active on `item/Menu`, keeps the selected child indicator aligned after shifting the selected child background toward the official WPF Gallery `TreeView` active rectangle, keeps the screenshot-aligned retained-control offsets for selected-child, top-level, child, and disclosure-category row content, preserves that group-row offset after selection resets, hides retained menu-scrollbar chrome, maps retained pane separator/SplitView edge brushes to the official pane background, and disables the retained pane shadow. The retained `NavigationView` and official `TreeView` expose different UIA absolute content origins under the comparable pane crop; do not replace the screenshot-proven retained offsets with UIA-only absolute coordinates unless a new visual crop regression also appears. Remaining pixel drift is below one mean delta point and is retained-control rendering/crop residue rather than a current P0 blocker. | Done; keep these reports as the current shell gate unless a new shell regression appears. |
 | P1.1 | Residual item visual drift queue | Recorded at branch tip. Current Iconography evidence is Light `artifacts/wpf-gallery-visual-audit/20260531-124818-683-31684/report.md` at `0.23` and Dark `artifacts/wpf-gallery-visual-audit/20260531-124941-695-67844/report.md` at `0.24`, still maxRgbSum `3` channel quantization with no visible layout drift. Current UserDashboard evidence in the same reports is Light `0` / Dark `0.01`. Latest GridSplitter/DataGrid Light residual evidence remains `artifacts/wpf-gallery-visual-audit/20260529-055921-904-3944/report.md`: GridSplitter `0.24`, DataGrid `0.13`, ProgressBar `0`; latest Dark residual evidence remains `artifacts/wpf-gallery-visual-audit/20260529-060033-783-44788/report.md`: GridSplitter `0`, DataGrid `0`, ProgressBar `0`. ProgressBar's real animated-phase drift is fixed. GridSplitter Light and DataGrid Light are minor text/line antialiasing with no visible geometry drift. | Recorded; move to P1.2 unless a new visible P1.1 drift appears. |
 | P1.2 | Stale `Partial` visual rows at or below noise threshold | Recorded at branch tip. Light `artifacts/wpf-gallery-visual-audit/20260529-061205-172-26700/report.md` and Dark `artifacts/wpf-gallery-visual-audit/20260529-061344-116-67908/report.md` put StackPanel, TreeView, ToolTip, RichTextEdit, PasswordBox, and Hyperlink at `0` / `0`. Light `artifacts/wpf-gallery-visual-audit/20260529-061607-923-61020/report.md` and Dark `artifacts/wpf-gallery-visual-audit/20260529-061844-861-43780/report.md` put Calendar, DatePicker, Canvas, Image, Menu, TabControl, Frame, and NavigationWindow at `0` / `0`. Current focused evidence at `artifacts/wpf-gallery-visual-audit/20260531-085737-499-82256/report.md` / `artifacts/wpf-gallery-visual-audit/20260531-085823-767-83140/report.md` keeps UserDashboard at `0` / `0.01` and Color at `0.05` / `0.06`. Light `artifacts/wpf-gallery-visual-audit/20260531-025154-427-36712/report.md` and Dark `artifacts/wpf-gallery-visual-audit/20260531-025247-727-86588/report.md` refresh Color subsection residuals: ColorSignal `0.10` / `0.10` and ColorHighContrast `0.12` / `0.14`; these remain low-mean rendering residuals rather than visible layout drift. | Recorded; with P0.1, row 7.1, and row 8 also recorded, follow the hard queue unless new High Contrast, visible, or harness drift appears. |
-| P1.3 | Retained ModernWpf/WinUI extension high-drift visual backlog | Recorded through the current strict subqueue. Current post-manifest retained high-drift evidence is Light `artifacts/visual-checks/20260531-134103-490-70788/report.md` and Dark `artifacts/visual-checks/20260531-134200-949-83644/report.md`: GridView remains primary `1.61` / `1.6`, CommandBarFlyout remains score `5.09` / `5.09` with primary `4.99` / `4.99`, and ProgressRing is valid at score/primary `14.88` / `14.78` after the harness rejected the invalid Light `20260531-125102-776-89452` reference-theme probe failure. Earlier strict row 8 rounds keep BreadcrumbBar, AnnotatedScrollBar, RatingControl, IconElement, TitleBar, DropDownButton, SelectorBar, and InfoBar fixed or recorded. Deleted WinUI alias pages such as ItemsView, ScrollView, TabView, CalendarDatePicker, and WebView2 are not current backlog items even if historical artifacts record high deltas. | No current row 8 item remains active. Reopen row 8 only for new retained-control visual or reference-theme harness evidence; otherwise follow the hard execution queue. |
+| P1.3 | Retained ModernWpf/WinUI extension high-drift visual backlog | Recorded through the current strict subqueue. Current retained high-drift evidence is Light `artifacts/visual-checks/20260531-151548-761-78380/report.md` and Dark `artifacts/visual-checks/20260531-151737-949-59816/report.md`: GridView remains primary `1.61` / `1.6`, CommandBarFlyout remains score `5.09` / `5.09` with primary `4.99` / `4.99`, and ProgressRing is valid at score/primary `14.95` / `14.83` after the harness rejected the invalid Light `20260531-125102-776-89452` reference-theme probe failure. Earlier strict row 8 rounds keep BreadcrumbBar, AnnotatedScrollBar, RatingControl, IconElement, TitleBar, DropDownButton, SelectorBar, and InfoBar fixed or recorded. Deleted WinUI alias pages such as ItemsView, ScrollView, TabView, CalendarDatePicker, and WebView2 are not current backlog items even if historical artifacts record high deltas. | No current row 8 item remains active. Reopen row 8 only for new retained-control visual or reference-theme harness evidence; otherwise follow the hard execution queue. |
 | P1 | Scoped source/resource/runtime alignment | No current open item after row 7.1 was recorded complete. | Reopen only for a newly recorded visual/High Contrast finding or a visual-harness stability blocker; otherwise follow the hard queue with row 8 recorded. |
 
 ## Source References
@@ -1702,6 +1733,34 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `Add-Type -AssemblyName PresentationFramework; [System.Windows.SystemParameters]::HighContrast`
+  - Returned `False` before the current visual/high-drift freshness batch.
+    Winning rank was **global orders 3-5 / P1.3 and P2 row 2** because visual
+    and retained high-drift evidence outranks row 5 source-shape cleanup, and
+    the user had called out visual/high-drift priority risk.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls GridView,CommandBarFlyout,ProgressRing -Theme Light -Reference InstalledWinUI3Gallery -IncludeInteractions`
+  - Passed at `artifacts/visual-checks/20260531-151548-761-78380/report.md`.
+    `GridView` primary `1.61` with `657x412` matching crops,
+    `CommandBarFlyout` score `5.09` / primary `4.99` with `454x302` vs
+    `453x302` crops, and `ProgressRing` score/primary `14.95` with `60x60`
+    matching crops. ModernWpf and WinUI3Gallery rows passed, were nonblank,
+    and had required sample elements.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls GridView,CommandBarFlyout,ProgressRing -Theme Dark -Reference InstalledWinUI3Gallery -IncludeInteractions`
+  - Passed at `artifacts/visual-checks/20260531-151737-949-59816/report.md`.
+    `GridView` primary `1.6` with `657x412` matching crops,
+    `CommandBarFlyout` score `5.09` / primary `4.99` with `454x302` vs
+    `453x302` crops, and `ProgressRing` score/primary `14.83` with `60x60`
+    matching crops. ModernWpf and WinUI3Gallery rows passed, were nonblank,
+    and had required sample elements.
+- `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~TrackerPriorityTests" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 3 tests per
+    target after updating the tracker current pointer and high-drift evidence.
+    Existing warning/output remains `NU1903`, generated WinRT warnings,
+    recurring `Failed to resolve WinRT.Runtime.dll`, and existing
+    ModernWpf/ModernWpf.Controls warnings.
+- `git diff --check`
+  - Passed after the visual/high-drift freshness tracker update, with only the
+    existing LF/CRLF working-copy warning for the touched tracker file.
 - `Add-Type -AssemblyName PresentationFramework; [System.Windows.SystemParameters]::HighContrast`
   - Returned `False` before the Iconography pagination/displayed-icons
     source-shape guard. Winning rank was **global order 11 / P2 row 5.4**
@@ -5394,7 +5453,7 @@ order while keeping the local visual-test theme adapter.
 | --- | --- | --- |
 | P1.1 residual visual drift queue | Recorded | Current Iconography evidence is Light `artifacts/wpf-gallery-visual-audit/20260531-124818-683-31684/report.md` and Dark `artifacts/wpf-gallery-visual-audit/20260531-124941-695-67844/report.md`; Iconography remains `0.23` / `0.24` only because of maxRgbSum `3` per-channel quantization noise, and UserDashboard remains `0` / `0.01` in the same reports. The broader Design Guidance Typography, Spacing, and Geometry evidence remains recorded at `artifacts/wpf-gallery-visual-audit/20260531-024617-472-84620/report.md` and `artifacts/wpf-gallery-visual-audit/20260531-024744-061-70932/report.md`, all `0`. ProgressBar is fixed to `0` / `0`; GridSplitter Light `0.24` and DataGrid Light `0.13` remain minor text/line antialiasing residuals with no visible geometry/layout drift. This row no longer blocks P1.2 unless a new visible residual appears. |
 | P1.2 stale `Partial` visual rows | Recorded | This queue is no longer executable unless new visible drift appears. Current refreshed evidence records StackPanel, TreeView, ToolTip, RichTextEdit, PasswordBox, and Hyperlink at `0` / `0` in `artifacts/wpf-gallery-visual-audit/20260529-061205-172-26700/report.md` and `artifacts/wpf-gallery-visual-audit/20260529-061344-116-67908/report.md`; Calendar, DatePicker, Canvas, Image, Menu, TabControl, Frame, and NavigationWindow at `0` / `0` in `artifacts/wpf-gallery-visual-audit/20260529-061607-923-61020/report.md` and `artifacts/wpf-gallery-visual-audit/20260529-061844-861-43780/report.md`; UserDashboard at current `0` / `0.01` in `artifacts/wpf-gallery-visual-audit/20260531-085737-499-82256/report.md` / `artifacts/wpf-gallery-visual-audit/20260531-085823-767-83140/report.md`; and Color at current `0.05` / `0.06` in the same reports, recorded as low-mean sparse-pixel residuals. With P0.1 now recorded and row 7/row 8 clear, follow the hard queue instead of reopening this stale row. |
-| Retained WinUI extension high-drift visual backlog | Recorded | This row remains ahead of cleanup whenever new retained-control visual or reference-theme harness evidence appears. Current post-manifest retained high-drift evidence is Light `artifacts/visual-checks/20260531-134103-490-70788/report.md` and Dark `artifacts/visual-checks/20260531-134200-949-83644/report.md`: GridView remains `1.61` / `1.6`, CommandBarFlyout remains score `5.09` / `5.09` with primary `4.99` / `4.99`, and ProgressRing is valid at score/primary `14.88` / `14.78` after the harness rejected the invalid Light `20260531-125102-776-89452` ProgressRing reference-theme probe failure. BreadcrumbBar, AnnotatedScrollBar, RatingControl, IconElement, TitleBar, DropDownButton, SelectorBar, and InfoBar remain fixed or recorded by the strict row 8 rounds. Historical high-delta artifacts for deleted alias pages such as ItemsView, ScrollView, TabView, CalendarDatePicker, and WebView2 must stay out of the current backlog. Reopen this row only when new current retained-control visual evidence exists; otherwise do not use historical high deltas to preempt the hard queue. |
+| Retained WinUI extension high-drift visual backlog | Recorded | This row remains ahead of cleanup whenever new retained-control visual or reference-theme harness evidence appears. Current retained high-drift evidence is Light `artifacts/visual-checks/20260531-151548-761-78380/report.md` and Dark `artifacts/visual-checks/20260531-151737-949-59816/report.md`: GridView remains `1.61` / `1.6`, CommandBarFlyout remains score `5.09` / `5.09` with primary `4.99` / `4.99`, and ProgressRing is valid at score/primary `14.95` / `14.83` after the harness rejected the invalid Light `20260531-125102-776-89452` ProgressRing reference-theme probe failure. BreadcrumbBar, AnnotatedScrollBar, RatingControl, IconElement, TitleBar, DropDownButton, SelectorBar, and InfoBar remain fixed or recorded by the strict row 8 rounds. Historical high-delta artifacts for deleted alias pages such as ItemsView, ScrollView, TabView, CalendarDatePicker, and WebView2 must stay out of the current backlog. Reopen this row only when new current retained-control visual evidence exists; otherwise do not use historical high deltas to preempt the hard queue. |
 | Normal-shell section visual refresh | Recorded | Current branch-tip focused normal-shell section coverage is now zero-delta for the official-catalog section routes in both themes. Light evidence: Basic Input `0` (`artifacts/wpf-gallery-visual-audit/20260524-034331/report.md`), Navigation `0` (`artifacts/wpf-gallery-visual-audit/20260524-033112/report.md`), Layout `0` (`artifacts/wpf-gallery-visual-audit/20260524-034931/report.md`), and Collections, Date & Calendar, Status & Info, System, and Text all `0` in `artifacts/wpf-gallery-visual-audit/20260524-035102/report.md`. Dark evidence: Basic Input `0` (`artifacts/wpf-gallery-visual-audit/20260524-034356/report.md`), Navigation `0` (`artifacts/wpf-gallery-visual-audit/20260524-033135/report.md`), Layout `0` (`artifacts/wpf-gallery-visual-audit/20260524-035031/report.md`), and Collections, Date & Calendar, Status & Info, System, and Text all `0` in `artifacts/wpf-gallery-visual-audit/20260524-035209/report.md`. All pass with matching `868x758` crops. The previous broad runs `20260523-090520` and `20260523-090126`, plus focused `20260523-100643`, `20260523-094448`, `20260523-100938`, `20260523-101051`, `20260523-101927`, and `20260523-102529`, remain historical pre-content-frame/section-route evidence; Media normal-shell coverage remains unavailable because the current official WPF Gallery catalog omits Media entries. No normal-shell section work is executable unless new visible drift appears; real High Contrast follow-up is currently recorded in P0.1 and reopens only for new HC drift. |
 | Direct-reference item/section visual refresh | Recorded | Latest broad direct-reference section/item Light slice is recorded at `artifacts/wpf-gallery-visual-audit/20260531-025937-297-35000/report.md`; latest Dark slice is recorded at `artifacts/wpf-gallery-visual-audit/20260531-030130-294-47632/report.md`. Samples, BasicInput, Collections, DateAndCalendar, Layout, Media, Navigation, StatusAndInfo, Text, and System are `0` / `0`; all have matching `868x758` crops, max RGB diff `3`, no ModernWpf exception logs, and rendered-content artifacts. Current focused direct-page freshness evidence keeps Color, FileAndFolderDialogs, and UserDashboard at Light `artifacts/wpf-gallery-visual-audit/20260531-085737-499-82256/report.md` and Dark `artifacts/wpf-gallery-visual-audit/20260531-085823-767-83140/report.md`, while Iconography is refreshed at Light `artifacts/wpf-gallery-visual-audit/20260531-111610-696-83168/report.md` and Dark `artifacts/wpf-gallery-visual-audit/20260531-111649-044-58276/report.md`; Iconography remains `0.23` / `0.24`, Color remains `0.05` / `0.06`, FileAndFolderDialogs remains `0` / `0`, and UserDashboard remains `0` / `0.01`, all with matching `868x758` crops. Current P1.1 residual item evidence also includes Light `artifacts/wpf-gallery-visual-audit/20260529-055921-904-3944/report.md` with GridSplitter `0.24` and DataGrid `0.13`; all residuals are recorded as rendering-noise, sparse-pixel, or antialiasing residuals rather than visible drift. Older Collections, Layout, Status & Info, Media, and broader Design Guidance artifacts remain historical where called out per row. Continue using rendered-content artifacts for direct-host comparisons and inspect per-row Light/Dark artifact paths before treating a delta as current branch-tip evidence. |
 | Top-level page visual refresh | Recorded | Current focused top-level evidence is `artifacts/wpf-gallery-visual-audit/20260529-022506-025-65744/report.md` for Light with Home `0`, WhatsNew `0`, AllControls `0`, and Settings `0`, and `artifacts/wpf-gallery-visual-audit/20260529-022607-305-45960/report.md` for Dark with Home `0.04`, WhatsNew `0`, AllControls `0`, and Settings `0`. All four top-level cases use official direct-reference rendered artifacts with matching crops; the remaining Dark Home value is a sub-pixel sampling residual. Top-level Home/Settings drift is closed for P0 execution. |
