@@ -121,16 +121,18 @@ namespace ModernWpf.Gallery.Tests
                 .ToList();
 
             Assert.AreEqual(
-                16,
+                14,
                 nonDoneRows.Count,
                 string.Join(", ", nonDoneRows.Select(row => row.Name + " " + row.Status)));
 
-            foreach (var closedRow in new[] { "What's New", "User Dashboard", "DataGrid", "Expander", "ResizeGrip", "GridSplitter", "GroupBox" })
+            foreach (var closedRow in new[] { "What's New", "User Dashboard", "DataGrid", "Expander", "ResizeGrip", "GridSplitter", "GroupBox", "Color", "Iconography" })
             {
                 Assert.AreEqual("Done/Done/Done", workingChecklistRows.Single(row => row.Name == closedRow).Status, closedRow);
                 Assert.IsFalse(nonDoneRows.Any(row => row.Name == closedRow), closedRow + " should not remain a completion-audit blocker.");
             }
 
+            Assert.AreEqual("Partial/Partial/Done", workingChecklistRows.Single(row => row.Name == "Design Guidance section").Status);
+            CollectionAssert.Contains(nonDoneRows.Select(row => row.Name).ToList(), "Design Guidance section");
             CollectionAssert.Contains(nonDoneRows.Select(row => row.Name).ToList(), "All Controls");
             CollectionAssert.Contains(nonDoneRows.Select(row => row.Name).ToList(), "Status & Info section");
             CollectionAssert.Contains(nonDoneRows.Select(row => row.Name).ToList(), "System section");
@@ -138,7 +140,7 @@ namespace ModernWpf.Gallery.Tests
             AssertContainsInOrder(
                 tracker,
                 "Working Checklist page/status completion audit:",
-                "table still has 16 rows with at least one non-`Done` status",
+                "table still has 14 rows with at least one non-`Done` status",
                 "`Home`",
                 "`System section`",
                 "These are",
