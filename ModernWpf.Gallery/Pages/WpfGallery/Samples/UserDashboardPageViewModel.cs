@@ -247,7 +247,12 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
 
         private void EditUserCancel()
         {
-            EditableUser = SelectedUser == null ? null : new UserDashboardUser(SelectedUser);
+            EditableUser = null;
+            if (SelectedUser != null)
+            {
+                EditableUser = new UserDashboardUser(SelectedUser);
+            }
+
             IsReadOnly = true;
             IsEditing = false;
         }
