@@ -38,8 +38,9 @@ Hard order:
 
 Current pointer:
 
-1. This user-requested priority/order clarification is row 1. Once committed,
-   row 1 is inactive again unless another priority/order conflict appears.
+1. This user-requested priority/order clarification is row 1. The tracker hard
+   order is now guarded by `TrackerPriorityTests`; once committed, row 1 is
+   inactive again unless another priority/order conflict appears.
 2. Latest substantive batch, 2026-05-31: **global orders 3-5 / P1.3 and P2
    row 2 visual-high-drift freshness** preempted row 5.3 after the branch
    refreshed current visual/high-drift evidence. `SystemParameters.HighContrast`
@@ -1448,6 +1449,23 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~TrackerPriorityTests" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 3 tests per
+    target. This row 1 guard pins the hard order with visual, real OS High
+    Contrast, visible-drift, high-drift, asset, measurement, automation, and
+    harness rows ahead of source-shape cleanup; it also pins
+    `Current Order Lock` as the single scheduler and requires local official
+    WPF Gallery source
+    `D:\repos\WPF-Samples\Sample Applications\WPFGallery` to outrank remote
+    source or memory for future comparisons.
+- `dotnet build .\ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0`.
+    Existing warning/output remains recurring `Failed to resolve
+    WinRT.Runtime.dll` messages and existing ModernWpf/ModernWpf.Controls
+    warnings.
+- `git diff --check`
+  - Passed after the tracker priority guard batch, with only the existing
+    LF/CRLF working-copy warning for this tracker file.
 - `Add-Type -AssemblyName PresentationFramework; [System.Windows.SystemParameters]::HighContrast`
   - Returned `False` before the current visual/high-drift correction batch.
     Winning rank was **global orders 3-5 / P1.3 and P2 row 2** because
