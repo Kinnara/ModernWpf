@@ -94,6 +94,30 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void DirectPageRegistryAcceptsOfficialWpfGalleryDisplayItemIds()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var expected = new[]
+                {
+                    new { LookupId = "Colors", PageType = typeof(ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance.ColorsPage) },
+                    new { LookupId = "Icons", PageType = typeof(ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance.IconsPage) },
+                    new { LookupId = "File and Folder Dialogs", PageType = typeof(ModernWpf.Gallery.Pages.WpfGallery.SystemPages.FileAndFolderDialogsPage) },
+                    new { LookupId = "User Dashboard", PageType = typeof(ModernWpf.Gallery.Pages.WpfGallery.Samples.UserDashboardPage) }
+                };
+
+                foreach (var item in expected)
+                {
+                    var page = WpfGalleryPageRegistry.CreatePageContent(item.LookupId);
+
+                    Assert.IsTrue(WpfGalleryPageRegistry.HasDirectPageContent(item.LookupId), item.LookupId);
+                    Assert.IsNotNull(page, item.LookupId);
+                    Assert.IsInstanceOfType(page, item.PageType, item.LookupId);
+                }
+            });
+        }
+
+        [TestMethod]
         public void DirectPageRegistryItemsUseDirectPageHosting()
         {
             WpfTestHost.Run(() =>

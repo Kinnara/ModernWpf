@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Documents;
+using ModernWpf.Gallery.Models;
 
 namespace ModernWpf.Gallery.Pages
 {
@@ -61,11 +62,13 @@ namespace ModernWpf.Gallery.Pages
 
         public static bool HasDirectPageContent(string uniqueId)
         {
+            uniqueId = GalleryCatalog.NormalizeLookupId(uniqueId);
             return uniqueId != null && DirectPageFactories.ContainsKey(uniqueId);
         }
 
         public static UIElement CreatePageContent(string uniqueId)
         {
+            uniqueId = GalleryCatalog.NormalizeLookupId(uniqueId);
             if (uniqueId == null)
             {
                 return null;
