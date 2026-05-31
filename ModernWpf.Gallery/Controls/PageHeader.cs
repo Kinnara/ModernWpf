@@ -33,20 +33,20 @@ namespace ModernWpf.Gallery.Controls
 
         public string Title
         {
-            get { return (string)GetValue(TitleProperty); }
-            set { SetValue(TitleProperty, value); }
+            get => (string)GetValue(TitleProperty);
+            set => SetValue(TitleProperty, value);
         }
 
         public string Description
         {
-            get { return (string)GetValue(DescriptionProperty); }
-            set { SetValue(DescriptionProperty, value); }
+            get => (string)GetValue(DescriptionProperty);
+            set => SetValue(DescriptionProperty, value);
         }
 
         public bool ShowDescription
         {
-            get { return (bool)GetValue(ShowDescriptionProperty); }
-            set { SetValue(ShowDescriptionProperty, value); }
+            get => (bool)GetValue(ShowDescriptionProperty);
+            set => SetValue(ShowDescriptionProperty, value);
         }
     }
 }

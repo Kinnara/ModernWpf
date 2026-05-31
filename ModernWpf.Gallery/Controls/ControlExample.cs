@@ -12,6 +12,9 @@ using System.Windows.Resources;
 
 namespace ModernWpf.Gallery.Controls
 {
+    /// <summary>
+    /// A control that displays an example of a control
+    /// </summary>
     [ContentProperty(nameof(ExampleContent))]
     public class ControlExample : Control
     {
@@ -71,38 +74,38 @@ namespace ModernWpf.Gallery.Controls
 
         public string HeaderText
         {
-            get { return (string)GetValue(HeaderTextProperty); }
-            set { SetValue(HeaderTextProperty, value); }
+            get => (string)GetValue(HeaderTextProperty);
+            set => SetValue(HeaderTextProperty, value);
         }
 
         public object ExampleContent
         {
-            get { return GetValue(ExampleContentProperty); }
-            set { SetValue(ExampleContentProperty, value); }
+            get => GetValue(ExampleContentProperty);
+            set => SetValue(ExampleContentProperty, value);
         }
 
         public string XamlCode
         {
-            get { return (string)GetValue(XamlCodeProperty); }
-            set { SetValue(XamlCodeProperty, value); }
+            get => (string)GetValue(XamlCodeProperty);
+            set => SetValue(XamlCodeProperty, value);
         }
 
         public Uri XamlCodeSource
         {
-            get { return (Uri)GetValue(XamlCodeSourceProperty); }
-            set { SetValue(XamlCodeSourceProperty, value); }
+            get => (Uri)GetValue(XamlCodeSourceProperty);
+            set => SetValue(XamlCodeSourceProperty, value);
         }
 
         public string CSharpCode
         {
-            get { return (string)GetValue(CSharpCodeProperty); }
-            set { SetValue(CSharpCodeProperty, value); }
+            get => (string)GetValue(CSharpCodeProperty);
+            set => SetValue(CSharpCodeProperty, value);
         }
 
         public Uri CSharpCodeSource
         {
-            get { return (Uri)GetValue(CSharpCodeSourceProperty); }
-            set { SetValue(CSharpCodeSourceProperty, value); }
+            get => (Uri)GetValue(CSharpCodeSourceProperty);
+            set => SetValue(CSharpCodeSourceProperty, value);
         }
 
         private void OnXamlCodeSourceChanged(Uri uri)

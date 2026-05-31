@@ -1652,6 +1652,8 @@ namespace ModernWpf.Gallery.Tests
                 "        );");
             AssertContainsInOrder(
                 controlExampleSource,
+                "/// A control that displays an example of a control",
+                "[ContentProperty(nameof(ExampleContent))]",
                 "CommandManager.RegisterClassCommandBinding(typeof(ControlExample), new CommandBinding(ApplicationCommands.Copy, Copy_SourceCode));",
                 "public static readonly DependencyProperty HeaderTextProperty = DependencyProperty.Register(",
                 "public static readonly DependencyProperty ExampleContentProperty = DependencyProperty.Register(",
@@ -1662,11 +1664,23 @@ namespace ModernWpf.Gallery.Tests
                 "public static readonly DependencyProperty CSharpCodeSourceProperty = DependencyProperty.Register(",
                 "static (o, args) => ((ControlExample)o).OnCSharpCodeSourceChanged((Uri)args.NewValue)",
                 "public string HeaderText",
+                "get => (string)GetValue(HeaderTextProperty);",
+                "set => SetValue(HeaderTextProperty, value);",
                 "public object ExampleContent",
+                "get => GetValue(ExampleContentProperty);",
+                "set => SetValue(ExampleContentProperty, value);",
                 "public string XamlCode",
+                "get => (string)GetValue(XamlCodeProperty);",
+                "set => SetValue(XamlCodeProperty, value);",
                 "public Uri XamlCodeSource",
+                "get => (Uri)GetValue(XamlCodeSourceProperty);",
+                "set => SetValue(XamlCodeSourceProperty, value);",
                 "public string CSharpCode",
+                "get => (string)GetValue(CSharpCodeProperty);",
+                "set => SetValue(CSharpCodeProperty, value);",
                 "public Uri CSharpCodeSource",
+                "get => (Uri)GetValue(CSharpCodeSourceProperty);",
+                "set => SetValue(CSharpCodeSourceProperty, value);",
                 "private void OnXamlCodeSourceChanged(Uri uri)",
                 "XamlCode = LoadResource(uri);",
                 "private void OnCSharpCodeSourceChanged(Uri uri)",
@@ -1700,8 +1714,14 @@ namespace ModernWpf.Gallery.Tests
                 "public static readonly DependencyProperty DescriptionProperty = DependencyProperty.Register(",
                 "public static readonly DependencyProperty ShowDescriptionProperty = DependencyProperty.Register(",
                 "public string Title",
+                "get => (string)GetValue(TitleProperty);",
+                "set => SetValue(TitleProperty, value);",
                 "public string Description",
-                "public bool ShowDescription");
+                "get => (string)GetValue(DescriptionProperty);",
+                "set => SetValue(DescriptionProperty, value);",
+                "public bool ShowDescription",
+                "get => (bool)GetValue(ShowDescriptionProperty);",
+                "set => SetValue(ShowDescriptionProperty, value);");
         }
 
         [TestMethod]
