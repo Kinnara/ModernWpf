@@ -49,10 +49,17 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
             get { return _deletedName; }
             set
             {
-                if (SetProperty(ref _deletedName, value, "DeletedName") && !string.IsNullOrEmpty(value))
+                if (!SetProperty(ref _deletedName, value, "DeletedName"))
                 {
-                    RestartTimer(_deletedMessageTimer);
+                    return;
                 }
+
+                if (string.IsNullOrEmpty(value))
+                {
+                    return;
+                }
+
+                RestartTimer(_deletedMessageTimer);
             }
         }
 
