@@ -46,6 +46,9 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
         }
     }
 
+    /// <summary>
+    /// Interaction logic for Button.xaml
+    /// </summary>
     public partial class ButtonPageViewModel : BasicInputPageViewModelBase
     {
         private string _message = "Hello World!";

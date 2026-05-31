@@ -10,6 +10,9 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
         }
     }
 
+    /// <summary>
+    /// Interaction logic for FileAndFolderDialogsPage.xaml
+    /// </summary>
     public partial class FileAndFolderDialogsPageViewModel : SystemPageViewModelBase
     {
         private string _singleFilePath = "No file selected";
@@ -56,6 +59,9 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
         }
     }
 
+    /// <summary>
+    /// Interaction logic for MessageBoxPage.xaml
+    /// </summary>
     public partial class MessageBoxPageViewModel : SystemPageViewModelBase
     {
         private string _defaultMessageResult = "No message shown yet";
