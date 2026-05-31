@@ -877,6 +877,27 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void IconographyWhitespaceSearchUsesWpfGalleryFilterValue()
+        {
+            var viewModel = new IconsPageViewModel();
+            viewModel.AllIcons = new List<IconData>
+            {
+                new IconData { Name = "NoSpaceTag", Code = "E700", Tags = new List<string> { "plain" } },
+                new IconData { Name = "SpaceTag", Code = "E701", Tags = new List<string> { "has space" } }
+            };
+            viewModel.SearchFilteredIcons = new System.Collections.ObjectModel.ObservableCollection<IconData>(viewModel.AllIcons);
+            viewModel.DisplayedIcons = new System.Collections.ObjectModel.ObservableCollection<IconData>(viewModel.AllIcons);
+            viewModel.SelectedIcon = viewModel.AllIcons.First();
+
+            viewModel.SearchText = " ";
+
+            Assert.AreEqual(1, viewModel.SearchFilteredIcons.Count);
+            Assert.AreEqual("SpaceTag", viewModel.SearchFilteredIcons[0].Name);
+            Assert.AreEqual("SpaceTag", viewModel.DisplayedIcons[0].Name);
+            Assert.AreEqual("SpaceTag", viewModel.SelectedIcon.Name);
+        }
+
+        [TestMethod]
         public void DesignGuidanceItemPagesUseOfficialPageRoots()
         {
             WpfTestHost.Run(() =>

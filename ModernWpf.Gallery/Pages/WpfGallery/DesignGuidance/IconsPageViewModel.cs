@@ -150,25 +150,14 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
             var selectedIconName = previousSelectedIcon == null ? null : previousSelectedIcon.Name;
             var comparison = StringComparison.OrdinalIgnoreCase;
             var filterText = SearchText ?? string.Empty;
+            SearchFilteredIcons.Clear();
 
-            if (string.IsNullOrWhiteSpace(filterText))
+            var searchFilteredIconData = AllIcons.Where(icon =>
+                    icon.Name.IndexOf(filterText, comparison) >= 0 ||
+                    (icon.Tags?.Any(tag => tag.IndexOf(filterText, comparison) >= 0) ?? false));
+            foreach (var item in searchFilteredIconData)
             {
-                SearchFilteredIcons.Clear();
-                foreach (var icon in AllIcons)
-                {
-                    SearchFilteredIcons.Add(icon);
-                }
-            }
-            else
-            {
-                SearchFilteredIcons.Clear();
-                var searchFilteredIconData = AllIcons.Where(icon =>
-                        icon.Name.IndexOf(filterText, comparison) >= 0 ||
-                        (icon.Tags != null && icon.Tags.Any(tag => tag.IndexOf(filterText, comparison) >= 0)));
-                foreach (var icon in searchFilteredIconData)
-                {
-                    SearchFilteredIcons.Add(icon);
-                }
+                SearchFilteredIcons.Add(item);
             }
 
             CurrentPage = 1;
@@ -186,10 +175,13 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
                 return;
             }
 
-            var retainedIcon = !string.IsNullOrWhiteSpace(selectedIconName)
-                ? DisplayedIcons.FirstOrDefault(icon => string.Equals(icon.Name, selectedIconName, StringComparison.Ordinal))
-                : null;
-            SelectedIcon = retainedIcon ?? DisplayedIcons.FirstOrDefault();
+            Func<IconData, bool> predicate =
+                !string.IsNullOrWhiteSpace(selectedIconName) &&
+                DisplayedIcons.Any(icon => icon.Name.Equals(selectedIconName)) ?
+                icon => icon.Name.Equals(selectedIconName) :
+                icon => true;
+
+            SelectedIcon = DisplayedIcons.FirstOrDefault(predicate);
         }
 
         private void ApplyTagFilter(string tag)
