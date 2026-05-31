@@ -157,6 +157,17 @@ rows 5.1-5.2 are recorded. Any new High Contrast, visible-drift, high-drift
 retained-control, asset, measurement, interaction, automation, or harness
 evidence immediately preempts row 5 and reopens the higher global order.
 
+Priority fail-safe:
+
+1. Treat any lower tracker text that names a different "next" row without
+   repeating this global-order proof as stale.
+2. Do not use historical `Partial`, `Current`, `Next`, or nearby source-audit
+   notes to select work unless the selected row is also the first executable
+   row in the `Global order` table.
+3. When in doubt, re-run the top-level selector from global order 1. The first
+   current or unrecorded row wins, even if a lower row is easier or already in
+   progress.
+
 ## Goal
 
 Make ModernWpf Gallery visually near-identical to the official WPF Gallery for
@@ -4519,38 +4530,21 @@ Latest Working Checklist note:
 
 ## Next Recommended Round
 
-Immediate execution order for the next round:
+This section is a supporting note, not an execution scheduler. Choose the next
+round only from the `Current Order Lock` global-order table above. If this
+section or any historical note appears to conflict with that table, the table
+wins and this section is stale until updated.
 
-1. If Windows OS High Contrast is enabled and the current P0.1 batch is not
-   recorded, run the P0.1 High Contrast visual slices first and record real
-   `-Theme HighContrast` screenshot evidence.
-2. If a new retained-control visual/harness blocker appears, use execution row
-   8 for retained ModernWpf/WinUI extension high-drift visual triage. GridView,
-   CommandBarFlyout, BreadcrumbBar, AnnotatedScrollBar, RatingControl,
-   IconElement, TitleBar, DropDownButton, SelectorBar, InfoBar, and ProgressRing
-   are now fixed or recorded at branch tip. No row 8 item is currently active;
-   reopen row 8 only for new current retained-control visual evidence, then
-   inspect Light/Dark artifacts and fix the first actionable visual or harness
-   issue before any cleanup.
-3. Ordered P2 work is the next executable bucket while P0.1, row 7, and row 8
-   have no new open visual/harness item. Follow the `P2 Subqueue` exactly as
-   the exclusive P2 order: row 1 priority/order hygiene only when text
-   conflicts, row 2 visual/high-drift freshness, row 3
-   asset/thumbnail/visual-reference parity, row 4 measurement/interaction/
-   automation/harness-impacting parity, then lower-priority rows 5-6 only after
-   rows 2-4 are recorded or not applicable. Current active asset references,
-   Typography/Spacing/Geometry/Iconography, Color, the remaining WPF-equivalent
-   section/item Light/Dark measurement evidence, and the row 4
-   automation/harness verifier are recorded. With no new higher trigger, the
-   next selectable P2 bucket is row 5, limited to named source-shape,
-   resource-key, naming, selector, or test cleanup. Stop immediately if a new
-   asset, measurement, interaction, automation, harness, visual, High Contrast,
-   or high-drift item appears.
-4. Row 7 source/resource/runtime work is allowed only when it directly serves a
-   newly recorded visual/High Contrast finding or stabilizes a failing visual
-   harness. Return to P1.2 only if a new visible stale-row drift appears; return
-   to P1.1 only if a new visible residual appears; return to P0.4 only if a new
-   shell-pane visual regression appears.
+Immediate execution rule for the next round:
+
+1. Start at global order 1 and take the first current, newly triggered, or
+   unrecorded row.
+2. Visual, real OS High Contrast, high-drift retained-control, asset,
+   measurement, interaction, automation, and harness evidence always preempts
+   row 5 source-shape/resource-key/name/selector cleanup.
+3. P2 row 5.3 is selectable only after the proof in `Current Order Lock` is
+   current for the branch tip; rows 5.4, 5.5, and P2 row 6 remain blocked while
+   any 5.1-5.3 item or higher-priority evidence is current.
 
 The direct-reference section baseline is now refreshed for Light and Dark, and
 Basic Input, Collections, Date & Calendar, Design Guidance, Layout, Media,
