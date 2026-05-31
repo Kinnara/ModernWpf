@@ -2319,7 +2319,7 @@ namespace ModernWpf.Gallery.Tests
                 "Text=\"{TemplateBinding ColorExplanation}\"",
                 "Name=\"ColorBrushNameTextBlock\"",
                 "Text=\"{TemplateBinding ColorBrushName}\"",
-                "Visibility=\"{Binding ShowWarning, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource TemplatedParent}}\"",
+                "Visibility=\"{TemplateBinding ShowWarning, Converter={StaticResource BooleanToVisibilityConverter}}\"",
                 "Visibility=\"{Binding ShowSeparator, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource TemplatedParent}}\"",
                 "<Setter Property=\"Foreground\" Value=\"{DynamicResource SystemColorWindowTextColorBrush}\" TargetName=\"ColorExplanationTextBlock\" />",
                 "<Setter Property=\"Background\" Value=\"{DynamicResource SystemColorWindowColorBrush}\" TargetName=\"ColorExplanationTextBlock\" />",

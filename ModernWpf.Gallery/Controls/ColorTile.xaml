@@ -100,7 +100,7 @@
                                     Margin="0,0,12,0"
                                     Background="Transparent"
                                     ToolTipService.ToolTip="This brush might not (yet) be available in WPF."
-                                    Visibility="{Binding ShowWarning, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource TemplatedParent}}">
+                                    Visibility="{TemplateBinding ShowWarning, Converter={StaticResource BooleanToVisibilityConverter}}">
                                     <TextBlock
                                         FontFamily="{StaticResource SymbolThemeFontFamily}"
                                         FontSize="16"

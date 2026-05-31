@@ -227,6 +227,53 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void ColorTileTemplateKeepsWarningAndSeparatorVisibilityBindings()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var app = Application.Current;
+                Assert.IsNotNull(app);
+
+                var colorTileStyle = (Style)app.FindResource(typeof(ColorTile));
+                Assert.IsNotNull(colorTileStyle);
+
+                var tile = new ColorTile
+                {
+                    Style = colorTileStyle,
+                    Width = 320,
+                    Height = 120,
+                    ColorName = "Test",
+                    ColorBrushName = "TestBrush",
+                    ColorExplanation = "Test explanation",
+                    ShowWarning = true,
+                    ShowSeparator = false
+                };
+
+                tile.ApplyTemplate();
+                tile.Measure(new Size(320, 120));
+                tile.Arrange(new Rect(0, 0, 320, 120));
+                tile.UpdateLayout();
+
+                var warningGrid = FindVisualChildren<Grid>(tile)
+                    .Single(grid => Equals(
+                        ToolTipService.GetToolTip(grid),
+                        "This brush might not (yet) be available in WPF."));
+                Assert.AreEqual(Visibility.Visible, warningGrid.Visibility);
+
+                var separator = FindVisualChildren<Border>(tile)
+                    .Single(border => Equals(border.Width, 1d) && Grid.GetColumn(border) == 1);
+                Assert.AreEqual(Visibility.Collapsed, separator.Visibility);
+
+                tile.ShowWarning = false;
+                tile.ShowSeparator = true;
+                tile.UpdateLayout();
+
+                Assert.AreEqual(Visibility.Collapsed, warningGrid.Visibility);
+                Assert.AreEqual(Visibility.Visible, separator.Visibility);
+            });
+        }
+
+        [TestMethod]
         public void GalleryMergesWpfGalleryTemplatesResourceDictionary()
         {
             WpfTestHost.Run(() =>
