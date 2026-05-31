@@ -333,6 +333,10 @@ normalizes official WPF Gallery display group IDs inside section page and
 section view-model selectors, so `Design Guidance`, `Basic Input`,
 `Date & Calendar`, `Status & Info`, and `Media Controls` route through the
 retained canonical groups without falling back to generic section behavior.
+The follow-up Media Controls selector batch also makes the Media section
+view-model's card source use the official `Media Controls` display lookup
+rather than the retained `Media` ID, with source-shape, route, and visual audit
+coverage preserving the retained canonical route.
 
 ### P2 Row 5 Internal Queue
 
@@ -453,6 +457,18 @@ Latest accepted row 5.3 execution note:
   zero-drift. This was selected only after `SystemParameters.HighContrast`
   returned `False`, global orders 2-9 were recorded or inactive, and no new
   High Contrast, visible-drift, high-drift, asset, measurement, automation, or
+  harness trigger appeared.
+- The twentieth named 5.3 batch aligned the Media section navigation-card
+  source selector to the official WPF Gallery display group string by changing
+  `MediaPageViewModel` from `GetControlsInfo("Media")` to
+  `GetControlsInfo("Media Controls")`. The shared catalog alias still resolves
+  this to the retained canonical `Media` group, while the source-shape guard,
+  shell route guard, visual-audit launch-route guard, and Media Light/Dark
+  visual audits prove the official display string flows through runtime and
+  harness paths without changing the retained route or zero-drift section
+  crop. This was selected only after `SystemParameters.HighContrast` returned
+  `False`, global orders 2-9 were recorded or inactive, and no new High
+  Contrast, visible-drift, high-drift, asset, measurement, automation, or
   harness trigger appeared.
 
 ### Row 8 Strict Subqueue
@@ -1184,6 +1200,17 @@ updated with each coherent round.
 Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
+
+- `Add-Type -AssemblyName PresentationFramework; [System.Windows.SystemParameters]::HighContrast`
+  - Returned `False` before the current row 5.3 Media Controls selector round. Winning rank was **global order 10 / P2 row 5.3** because global orders 2-9 were recorded or inactive for the branch tip and no new visual, High Contrast, high-drift, asset, measurement, automation, or harness trigger appeared.
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.WpfGalleryNavigationViewModelsKeepOfficialStateAndNavigateSourceShape|FullyQualifiedName~WpfGallerySourceShapeTests.WpfGalleryVisualAuditLaunchesOfficialDisplayRoutesWithCanonicalReadyRoutes|FullyQualifiedName~NavigationRootPageTests.ResolveNavigationTargetAcceptsOfficialWpfGalleryCategoryIds|FullyQualifiedName~GalleryNavigationRuntimeTests.SectionPagesAcceptOfficialWpfGalleryDisplayGroupIds|FullyQualifiedName~GalleryNavigationRuntimeTests.SectionPagesUseOfficialWpfGalleryViewModels|FullyQualifiedName~GalleryCatalogTests.FindGroupAcceptsOfficialWpfGalleryCategoryIds" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 11 tests per target. The focused filter covers the Media Controls `GetControlsInfo` display selector, visual-audit display launch route / canonical ready route guard, shell category alias, section factory/display group alias, section view-model construction, and catalog group alias.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the row 5.3 Media Controls selector round. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages and existing ModernWpf/ModernWpf.Controls warnings.
+- `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases Media -Reference OfficialWpfGallery -Theme Light -TimeoutSeconds 60`
+  - Passed at `artifacts/wpf-gallery-visual-audit/20260531-092407-496-74504/report.md`: Media `0`, `76/41230` changed samples (`0.184%`), max RGB diff `3`, and matching `868x758` ModernWpf/official crops through the official `category/Media Controls` launch route and retained `category/Media` ready route.
+- `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases Media -Reference OfficialWpfGallery -Theme Dark -TimeoutSeconds 60`
+  - Passed at `artifacts/wpf-gallery-visual-audit/20260531-092428-052-6804/report.md`: Media `0`, `56/41230` changed samples (`0.136%`), max RGB diff `3`, and matching `868x758` crops with no new section visual drift or visual-harness regression.
 
 - `Add-Type -AssemblyName PresentationFramework; [System.Windows.SystemParameters]::HighContrast`
   - Returned `False` before the current row 5.3 official display group selector round. Winning rank was **global order 10 / P2 row 5.3** because global orders 2-9 were recorded or inactive for the branch tip and no new visual, High Contrast, high-drift, asset, measurement, automation, or harness trigger appeared.

@@ -537,10 +537,12 @@ namespace ModernWpf.Gallery.Tests
             StringAssert.Contains(source, "GetControlsInfo(\"Design Guidance\")");
             StringAssert.Contains(source, "GetControlsInfo(\"Basic Input\")");
             StringAssert.Contains(source, "GetControlsInfo(\"Date & Calendar\")");
+            StringAssert.Contains(source, "GetControlsInfo(\"Media Controls\")");
             StringAssert.Contains(source, "GetControlsInfo(\"Status & Info\")");
             Assert.IsFalse(source.Contains("GetControlsInfo(\"DesignGuidance\")", StringComparison.Ordinal));
             Assert.IsFalse(source.Contains("GetControlsInfo(\"BasicInput\")", StringComparison.Ordinal));
             Assert.IsFalse(source.Contains("GetControlsInfo(\"DateAndCalendar\")", StringComparison.Ordinal));
+            Assert.IsFalse(source.Contains("GetControlsInfo(\"Media\")", StringComparison.Ordinal));
             Assert.IsFalse(source.Contains("GetControlsInfo(\"StatusAndInfo\")", StringComparison.Ordinal));
         }
 
@@ -1602,9 +1604,11 @@ namespace ModernWpf.Gallery.Tests
             StringAssert.Contains(source, "New-Case \"Color\" \"item/Colors\" @(\"Design Guidance\", \"Colors\") \"\" \"item/Color\"");
             StringAssert.Contains(source, "New-Case \"Iconography\" \"item/Icons\" @(\"Design Guidance\", \"Icons\") \"\" \"item/Iconography\"");
             StringAssert.Contains(source, "New-Case \"DateAndCalendar\" \"category/Date & Calendar\" @(\"Date & Calendar\") \"\" \"category/DateAndCalendar\"");
+            StringAssert.Contains(source, "New-Case \"Media\" \"category/Media Controls\" @(\"Media\") \"\" \"category/Media\"");
             StringAssert.Contains(source, "New-Case \"StatusAndInfo\" \"category/Status & Info\" @(\"Status & Info\") \"\" \"category/StatusAndInfo\"");
             StringAssert.Contains(source, "New-Case \"FileAndFolderDialogs\" \"item/File and Folder Dialogs\" @(\"System\", \"File and Folder Dialogs\") \"\" \"item/FileAndFolderDialogs\"");
             Assert.IsFalse(source.Contains("New-Case \"DateAndCalendar\" \"category/DateAndCalendar\"", StringComparison.Ordinal));
+            Assert.IsFalse(source.Contains("New-Case \"Media\" \"category/Media\"", StringComparison.Ordinal));
             Assert.IsFalse(source.Contains("New-Case \"StatusAndInfo\" \"category/StatusAndInfo\"", StringComparison.Ordinal));
             Assert.IsFalse(source.Contains("New-Case \"Iconography\" \"item/Iconography\"", StringComparison.Ordinal));
         }

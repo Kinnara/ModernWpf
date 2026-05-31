@@ -40,7 +40,9 @@ namespace ModernWpf.Gallery.Tests
         [DataRow("category/Design%20Guidance", "DesignGuidance")]
         [DataRow("category/Basic%20Input", "BasicInput")]
         [DataRow("category/Date%20%26%20Calendar", "DateAndCalendar")]
+        [DataRow("category/Media%20Controls", "Media")]
         [DataRow("category/Status%20%26%20Info", "StatusAndInfo")]
+        [DataRow("winui3gallery://category/Media%20Controls", "Media")]
         [DataRow("winui3gallery://category/Date%20%26%20Calendar", "DateAndCalendar")]
         public void ResolveNavigationTargetAcceptsOfficialWpfGalleryCategoryIds(string value, string expectedUniqueId)
         {
