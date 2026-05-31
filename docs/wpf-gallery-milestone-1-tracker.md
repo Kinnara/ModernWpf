@@ -46,7 +46,34 @@ Current pointer:
    measurement, interaction, automation, and harness evidence always beats row
    5 source cleanup. `TrackerPriorityTests` guard this ordering; row 1 is
    inactive again unless another priority/order conflict appears.
-2. Latest substantive batch, 2026-05-31: **global order 11 / P2 row 5.4**
+2. Latest substantive batch, 2026-05-31: **global orders 4, 5, and 7 /
+   retained ModernWpf/WinUI high-drift visual triage, P2 row 2 freshness, and
+   P2 row 4 interaction/harness parity** for `CommandBarFlyout` open-state
+   primary command labels. A retained high-drift refresh found a current
+   visual/interaction regression: ModernWpf exposed the open Share command as
+   a 40x40 icon-only UIA `Button` with a `64x64` open crop, while installed
+   WinUI 3 Gallery exposed Share as a 56x48 command with the visible `Share`
+   label and an `80x72` open crop. The local official WPF Gallery checkout at
+   `D:\repos\WPF-Samples\Sample Applications\WPFGallery` has no
+   `CommandBarFlyout` page/source hit, so this retained ModernWpf control uses
+   the installed WinUI 3 Gallery reference for this row. The product
+   `CommandBarFlyout` primary `AppBarButton` / `AppBarToggleButton` templates
+   now show bottom labels with 56x48 primary items, and
+   `CommandBarFlyoutCommandBar` defaults/styles primary commands to
+   `CommandBarDefaultLabelPosition.Bottom`. The visual harness now single
+   invokes `CommandBarFlyout` show buttons so transient flyouts remain open for
+   UIA/crop capture instead of being closed by the follow-up Space/Invoke path.
+   `SystemParameters.HighContrast` returned `False`. Retained high-drift
+   Light/Dark evidence passed at
+   `artifacts/visual-checks/20260531-193740-842-65400/report.md` and
+   `artifacts/visual-checks/20260531-193831-688-41656/report.md`: GridView,
+   CommandBarFlyout, and ProgressRing all stayed Passed, and CommandBarFlyout
+   now records `80x72 vs 80x72` open crops with ModernWpf Share UIA
+   `56x48`. Focused and full `CommandBarFlyoutApiTests` passed. This batch
+   preempted row 5.4; row 5 source-shape cleanup is selectable again only
+   after this higher-priority evidence is recorded and no new global-order
+   2-7 trigger appears.
+3. Previous substantive batch, 2026-05-31: **global order 11 / P2 row 5.4**
    for the top-level Dashboard code-behind ViewModel member-placement guard.
    The local official WPF Gallery source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Views\DashboardPage.xaml.cs`
@@ -1062,10 +1089,15 @@ recently touched.
 | 12 | P2 row 5.5 row-5 bookkeeping and stale-status cleanup | Blocked until substantive row 5 items are recorded or not applicable. |
 | 13 | P2 row 6 and final closeout cleanup | Last; only after row 5 is recorded or explicitly not applicable and the final verification sweep is current. |
 
-After the top-level Dashboard ViewModel member-placement row 5.4 guard is
-recorded, the next substantive row may remain **global order 11 / P2 row 5.4**
-only if another named 5.4 guard survives the full proof again. The latest direct
-same-path XAML scans found no missing official
+After the latest `CommandBarFlyout` retained-control visual/interaction/harness
+batch is recorded, the next substantive row may return to **global order 11 /
+P2 row 5.4** only if another named 5.4 guard survives the full proof again.
+The latest retained high-drift evidence is
+`artifacts/visual-checks/20260531-193740-842-65400/report.md` and
+`artifacts/visual-checks/20260531-193831-688-41656/report.md`; both record
+GridView, CommandBarFlyout, and ProgressRing as Passed, and CommandBarFlyout
+now has matching `80x72 vs 80x72` open crops with ModernWpf Share UIA at
+`56x48`. The latest direct same-path XAML scans found no missing official
 `AutomationProperties.Name`, `x:Name`, or event-hook item, and the earlier
 direct code-behind member, official XAML resource-key, and matched ViewModel
 source scans found no current row 5.3 gap after the recorded navigation
@@ -1098,11 +1130,11 @@ Required selection proof before any substantive edit:
    comments, declaration order, member order, summaries, and stale tracker
    cleanup stay blocked while any 5.1-5.4 item is current.
 
-Current allowed substantive row may remain **global order 11 / P2 row 5.4**
-after the latest top-level Dashboard ViewModel member-placement guard is
-recorded only if
-`SystemParameters.HighContrast` is `False`, global orders 2-9 are recorded or
-inactive for the current branch tip, P2 rows 2-4 are recorded, rows 5.1-5.2
+Current allowed substantive row may return to **global order 11 / P2 row 5.4**
+after the latest `CommandBarFlyout` retained-control high-drift and harness
+batch is recorded only if `SystemParameters.HighContrast` is `False`, global
+orders 2-9 are recorded or inactive for the current branch tip, P2 rows 2-4
+are recorded with the latest retained high-drift reports above, rows 5.1-5.2
 are recorded, row 5.3 has no current named executable gap, and a new named
 5.4 guard is identified against local official source.
 Any new High Contrast, visible-drift, high-drift
@@ -1274,9 +1306,9 @@ Current P2 state:
 | P2 order | Bucket | State | Allowed next work |
 | --- | --- | --- | --- |
 | 1 | Priority/order hygiene | Recorded by this user-requested tracker-order clarification; inactive unless order/status text conflicts or the user requests priority clarification again. | Edit this tracker only to remove priority ambiguity or stale execution state, then return to the first substantive P2 row. Do not perform unrelated source cleanup under this bucket. |
-| 2 | Visual and high-drift freshness | Recorded for the current branch tip by the P0/P1 evidence above plus the latest focused WPF Gallery Light/Dark reports `artifacts/wpf-gallery-visual-audit/20260531-183709-517-35000/report.md` / `artifacts/wpf-gallery-visual-audit/20260531-183606-886-14072/report.md` and refreshed retained-control Light/Dark reports `artifacts/visual-checks/20260531-183214-606-1380/report.md` / `artifacts/visual-checks/20260531-183322-668-84320/report.md` in Row 8 and Latest local verification. | Reopen P0/P1/row 8 immediately if refreshed evidence shows new visual, High Contrast, high-drift, or harness drift. Do not continue row 4 or lower work until current visual/high-drift evidence is written here. |
+| 2 | Visual and high-drift freshness | Recorded for the current branch tip by the P0/P1 evidence above plus the latest focused WPF Gallery Light/Dark reports `artifacts/wpf-gallery-visual-audit/20260531-183709-517-35000/report.md` / `artifacts/wpf-gallery-visual-audit/20260531-183606-886-14072/report.md` and refreshed retained-control Light/Dark reports `artifacts/visual-checks/20260531-193740-842-65400/report.md` / `artifacts/visual-checks/20260531-193831-688-41656/report.md` in Row 8 and Latest local verification. CommandBarFlyout now records matching `80x72 vs 80x72` open crops and ModernWpf Share UIA `56x48`. | Reopen P0/P1/row 8 immediately if refreshed evidence shows new visual, High Contrast, high-drift, or harness drift. Do not continue row 4 or lower work until current visual/high-drift evidence is written here. |
 | 3 | Asset, thumbnail, and visual-reference parity locks | Recorded for the current active references: the executable `ApplicationIcon` now points to the official WPF Gallery `Assets\AppIcons\WPFGallery.ico` asset, non-`ControlImages` references are shipped and hash-locked, WPF-equivalent catalog `ControlImages` are official-hash locked, and retained catalog `ControlImages` still match the packaged resource set. | Reopen only for new visual asset evidence, a new active image reference, or a new catalog thumbnail/resource gap. |
-| 4 | Measurement, typography, spacing, keyboard, automation, and harness-impacting parity | Recorded at branch tip. The latest row 4 batch aligns Iconography reload/current-page behavior with the local official WPF Gallery source by avoiding a forced `CurrentPage = 1` reset during `LoadData()`, while retaining the local WPF command and serializer adapters. Earlier row 4 interaction batches for Iconography whitespace search filtering, shared `ControlExample.Copy_SourceCode`, Iconography copy behavior, MessageBox net10 button values, and TileGallery scroll-back visibility remain recorded. | Reopen only for new named measurement, interaction, automation, or harness-impacting evidence. |
+| 4 | Measurement, typography, spacing, keyboard, automation, and harness-impacting parity | Recorded at branch tip. The latest row 4 batch fixes the `CommandBarFlyout` interaction/harness evidence path by single-invoking the show button so transient flyouts remain open for UIA/crop capture; it also records the CommandBarFlyout primary-label interaction correction under the retained high-drift reports above. Earlier row 4 interaction batches for Iconography reload/current-page behavior, Iconography whitespace search filtering, shared `ControlExample.Copy_SourceCode`, Iconography copy behavior, MessageBox net10 button values, and TileGallery scroll-back visibility remain recorded. | Reopen only for new named measurement, interaction, automation, or harness-impacting evidence. |
 | 5 | Source-shape, resource-key, naming, selector, and test cleanup not tied to active visual drift | Current executable P2 bucket while P0, row 7, row 8, and row 4 remain recorded with no new trigger. The latest named row 5 rounds align the shared `NullToVisibilityConverter`, User Dashboard visibility converters, `AlphabeticValidationRule`, shared `ControlExample`/`PageHeader` wrappers, shared `HeaderTile`/Color support-control code-behind source shape, shell/shared `App`/`MainWindow`/`TileGallery` summaries plus the current `NavigationRootPage` shell resource-hook guard, copied/adapted WPF Gallery page code-behind interaction-logic summaries plus explicit `Page`/`Window`/`UserControl` base declarations, Design Guidance Color subsection visible example-content guards, Iconography instructions Expander inline/source structure, Design Guidance Spacing/Geometry default design-image `Source` resource fallback, Navigation `FrameWindow` same-folder `Frame.Source` behavior, Navigation `NavigationWindow` runtime URI/template-resource behavior, MainWindow/title-bar plus NavigationRoot footer style resource keys, SectionPage retained-extension scroll-host structural lookup/no-local-name hooks, NavigationRootPage content-frame Border structural lookup/no-local-name hook, NavigationRootPage Settings footer event-handler naming/sender-notification parity, NavigationRootPage High Contrast pane-edge cover structural lookup/no-local-name hook, NavigationRootPage visual-test status panel structural lookup/no-local-name hooks, ShellNavigation rendered-artifact crop hardening, MainWindow retained NavigationRootPage host structural lookup/no-local-name hook, NavigationRootPage retained content Frame structural lookup/no-local-name hook, NavigationRootPage retained NavigationView structural lookup/no-local-name hook, NavigationRootPage Settings footer official command-binding path through the retained PaneFooter BindingProxy bridge, MainWindow title-bar `WindowChrome.IsHitTestVisibleInChrome` attached-property source shape, Design Guidance Color `ColorsPage` class/file naming, Design Guidance Icons `IconsPage` / `IconsPageViewModel` class/file naming plus the official `Copy_Content` command selector and official direct search-placeholder visibility handlers, top-level and section WPF Gallery navigation view-model `Navigate(object pageType)` Type gates with retained local route fallbacks, top-level `DashboardPage` / `AllSamplesPage` class/file naming while preserving the retained `Home` / `AllControls` routes and visual artifact IDs, official WPF Gallery display-route aliases such as `Date & Calendar`, `Status & Info`, `Design Guidance`, `Basic Input`, `Colors`, `Icons`, `File and Folder Dialogs`, `User Dashboard`, `All Controls`, and `Home` resolving to retained local route IDs, WPF visual-audit launch routes using those official display IDs with canonical ready-route waits, and direct page registry display-ID normalization for official item IDs, with focused source-shape/runtime tests, full Gallery builds, and refreshed Color, Iconography, Home/AllControls, DateAndCalendar/StatusAndInfo, FileAndFolderDialogs, UserDashboard, Spacing/Geometry, Frame, NavigationWindow, ShellNavigation, and BasicInput Light/Dark visual audits recorded in Latest local verification. | Continue only with the first executable item from the `P2 Row 5 Internal Queue`; stop immediately if a higher visual, High Contrast, high-drift, asset, measurement, automation, or harness item appears. |
 | 6 | Pure tracker/status cleanup and documentation-only work | Last; blocked by row 5 except row 1 priority/order fixes. | Use only after the substantive P2 rows above are clear, except for row 1 priority/order fixes. |
 
@@ -2367,6 +2399,69 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `git status --short`
+  - Returned clean before selecting the `CommandBarFlyout` high-drift
+    visual/interaction batch from branch tip `da18ac73`.
+- `Add-Type -AssemblyName PresentationFramework; [System.Windows.SystemParameters]::HighContrast`
+  - Returned `False` before the `CommandBarFlyout` high-drift
+    visual/interaction batch. Winning rank was **global orders 4, 5, and 7 /
+    retained ModernWpf/WinUI high-drift visual triage, P2 row 2 freshness, and
+    P2 row 4 interaction/harness parity** because a fresh retained visual run
+    found current `CommandBarFlyout` open-state drift: ModernWpf exposed Share
+    as an icon-only 40x40 button with a `64x64` crop while installed WinUI 3
+    Gallery exposed a visible label and 56x48 Share command with an `80x72`
+    crop. This preempted row 5.4 source-shape work.
+- Local official-source availability check against
+  `D:\repos\WPF-Samples\Sample Applications\WPFGallery`
+  - `rg -n "CommandBarFlyout|DefaultLabelPosition|AppBarButton|ShowMenu|FlyoutShowMode"` found no WPF Gallery page/source hit for this retained
+    ModernWpf control; the checkout only contains the CommandBarFlyout catalog
+    image asset. The installed WinUI 3 Gallery reference remains the active
+    comparison source for this retained-control visual row.
+- `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~CommandBarFlyoutApiTests.PrimaryCommandsUseBottomLabelsLikeWinUIReference|FullyQualifiedName~CommandBarFlyoutApiTests.FlyoutButtonApplicationViewStatesUseVisualStateSetters|FullyQualifiedName~CommandBarFlyoutApiTests.FlyoutAppBarButtonCommonStatesUseVisualStateSetters|FullyQualifiedName~CommandBarFlyoutApiTests.FlyoutAppBarToggleButtonCommonStatesUseVisualStateSetters" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed: 4 tests after adding the `CommandBarFlyout` bottom-label template
+    and state coverage. Existing warning/output remains the WindowsDesktop SDK
+    warning, generated WinRT warnings, ModernWpf/ModernWpf.Controls warnings,
+    and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls CommandBarFlyout -Reference InstalledWinUI3Gallery -Theme Light -IncludeInteractions -TimeoutSeconds 60`
+  - Built `ModernWpf.Gallery` successfully and produced
+    `artifacts/visual-checks/20260531-193445-880-88392/report.md`. The 0ms
+    open frame showed Share/Save/Delete labels, confirming the product fix;
+    the 450ms frame exposed a harness issue where the follow-up Space/Invoke
+    path closed the transient flyout before final UIA/crop capture.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls CommandBarFlyout -Reference InstalledWinUI3Gallery -Theme Light -IncludeInteractions -TimeoutSeconds 60`
+  - Passed after the harness switched CommandBarFlyout to single invoke:
+    `artifacts/visual-checks/20260531-193617-874-77548/report.md` recorded
+    CommandBarFlyout `80x72 vs 80x72` open crops and ModernWpf Share UIA
+    `Button` bounds `56x48`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls CommandBarFlyout -Reference InstalledWinUI3Gallery -Theme Dark -IncludeInteractions -TimeoutSeconds 60`
+  - Passed at `artifacts/visual-checks/20260531-193655-122-52484/report.md`
+    with CommandBarFlyout `80x72 vs 80x72` open crops, interaction crop delta
+    `16.28`, and ModernWpf Share UIA bounds `56x48`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls GridView,CommandBarFlyout,ProgressRing -Reference InstalledWinUI3Gallery -Theme Light -IncludeInteractions -TimeoutSeconds 60`
+  - Passed at `artifacts/visual-checks/20260531-193740-842-65400/report.md`.
+    GridView, CommandBarFlyout, and ProgressRing all stayed `Passed`;
+    CommandBarFlyout now records `80x72 vs 80x72` open crops and ModernWpf
+    Share UIA bounds `56x48`.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls GridView,CommandBarFlyout,ProgressRing -Reference InstalledWinUI3Gallery -Theme Dark -IncludeInteractions -TimeoutSeconds 60`
+  - Passed at `artifacts/visual-checks/20260531-193831-688-41656/report.md`.
+    GridView, CommandBarFlyout, and ProgressRing all stayed `Passed`;
+    CommandBarFlyout interaction crop delta is `16.28` with matching `80x72`
+    open crops and ModernWpf Share UIA bounds `56x48`.
+- `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~CommandBarFlyoutApiTests" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed: 24 tests after updating the product template, default label
+    position, harness interaction path, and CommandBarFlyout style/resource
+    expectations. Existing warning/output remains the WindowsDesktop SDK
+    warning and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~TrackerPriorityTests" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 3 tests per
+    target after updating the tracker current pointer and Current Order Lock
+    for the `CommandBarFlyout` high-drift/harness batch. Existing
+    warning/output remains `NU1903`, generated WinRT, ModernWpf/Controls
+    warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `git diff --check`
+  - Passed after the `CommandBarFlyout` high-drift/harness batch and tracker
+    update, with only the existing LF/CRLF working-copy warnings for touched
+    files.
 - `git status --short`
   - Returned clean before selecting the top-level Dashboard ViewModel
     member-placement guard from branch tip `ca5b4bbf`.

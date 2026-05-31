@@ -17,7 +17,7 @@
       "kind": "AddOwner",
       "sourceProperty": "AppBarElementProperties.DefaultLabelPositionProperty",
       "metadataType": "FrameworkPropertyMetadata",
-      "default": "CommandBarDefaultLabelPosition.Right",
+      "default": "CommandBarDefaultLabelPosition.Bottom",
       "changed": "OnDefaultLabelPositionChanged"
     },
     { "name": "IsDynamicOverflowEnabled", "type": "bool", "default": "false" },

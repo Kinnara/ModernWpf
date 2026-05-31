@@ -46,7 +46,7 @@ namespace ModernWpf.Controls.Primitives
         public static readonly DependencyProperty DefaultLabelPositionProperty =
             AppBarElementProperties.DefaultLabelPositionProperty.AddOwner(
                 typeof(CommandBarFlyoutCommandBar),
-                new FrameworkPropertyMetadata(CommandBarDefaultLabelPosition.Right, OnDefaultLabelPositionChanged));
+                new FrameworkPropertyMetadata(CommandBarDefaultLabelPosition.Bottom, OnDefaultLabelPositionChanged));
 
         public CommandBarDefaultLabelPosition DefaultLabelPosition
         {

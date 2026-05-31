@@ -139,6 +139,47 @@ public class CommandBarFlyoutApiTests
     }
 
     [TestMethod]
+    public void PrimaryCommandsUseBottomLabelsLikeWinUIReference()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var commandBarFlyout = new CommandBarFlyout
+            {
+                Placement = FlyoutPlacementMode.Right
+            };
+
+            var shareButton = new AppBarButton { Icon = new SymbolIcon(Symbol.Share), Label = "Share" };
+            var saveButton = new AppBarButton { Icon = new SymbolIcon(Symbol.Save), Label = "Save" };
+            var deleteButton = new AppBarButton { Icon = new SymbolIcon(Symbol.Delete), Label = "Delete" };
+
+            commandBarFlyout.PrimaryCommands.Add(shareButton);
+            commandBarFlyout.PrimaryCommands.Add(saveButton);
+            commandBarFlyout.PrimaryCommands.Add(deleteButton);
+            commandBarFlyout.SecondaryCommands.Add(new AppBarButton { Label = "Resize" });
+
+            var target = new System.Windows.Controls.Button
+            {
+                Content = "Show CommandBarFlyout",
+                Width = 180,
+                Height = 36
+            };
+
+            using var host = new TestWindowHost(target, width: 520, height: 260);
+
+            commandBarFlyout.ShowAt(target);
+            WpfTestHost.DoEvents();
+
+            var commandBar = GetCommandBar(commandBarFlyout);
+            Assert.AreEqual(CommandBarDefaultLabelPosition.Bottom, commandBar.DefaultLabelPosition);
+            VerifyPrimaryCommandBottomLabel(shareButton, "Share");
+            VerifyPrimaryCommandBottomLabel(saveButton, "Save");
+            VerifyPrimaryCommandBottomLabel(deleteButton, "Delete");
+
+            HideAndWait(commandBarFlyout);
+        });
+    }
+
+    [TestMethod]
     public void VerifyCommandBarSizingPrimaryItemsLarger()
     {
         VerifyCommandBarSizing(CommandBarSizingOptions.PrimaryItemsLarger);
@@ -494,7 +535,7 @@ public class CommandBarFlyoutApiTests
                 Assert.AreSame(commandBar.TryFindResource("CommandBarFlyoutBorderBrush"), commandBar.BorderBrush);
                 Assert.AreEqual(commandBar.TryFindResource("CommandBarFlyoutBorderThemeThickness"), commandBar.BorderThickness);
                 Assert.AreEqual(440d, commandBar.MaxWidth);
-                Assert.AreEqual(48d, commandBar.Height);
+                Assert.AreEqual(50d, commandBar.Height);
                 Assert.AreEqual(commandBar.TryFindResource("OverlayCornerRadius"), commandBar.CornerRadius);
             }
             finally
@@ -1063,6 +1104,23 @@ public class CommandBarFlyoutApiTests
         }
     }
 
+    private static void VerifyPrimaryCommandBottomLabel(AppBarButton button, string expectedLabel)
+    {
+        var root = FindTemplateChild<System.Windows.Controls.Grid>(button, "Root");
+        var contentRoot = FindTemplateChild<System.Windows.Controls.Grid>(button, "ContentRoot");
+        var textLabel = FindTemplateChild<System.Windows.Controls.TextBlock>(button, "TextLabel");
+        var overflowTextLabel = FindTemplateChild<System.Windows.Controls.TextBlock>(button, "OverflowTextLabel");
+
+        AssertCurrentState(root, "ApplicationViewStates", "FullSize");
+        Assert.AreEqual(56.0, button.ActualWidth);
+        Assert.AreEqual(48.0, button.ActualHeight);
+        Assert.AreEqual(56.0, contentRoot.Width);
+        Assert.AreEqual(48.0, contentRoot.MinHeight);
+        Assert.AreEqual(expectedLabel, textLabel.Text);
+        Assert.AreEqual(Visibility.Visible, textLabel.Visibility);
+        Assert.AreEqual(Visibility.Collapsed, overflowTextLabel.Visibility);
+    }
+
     private static ResourceDictionary CreateCommandBarFlyoutResources()
     {
         return new ResourceDictionary
@@ -1102,8 +1160,32 @@ public class CommandBarFlyoutApiTests
         var root = FindTemplateChild<System.Windows.Controls.Grid>(button, "Root");
         var contentRoot = FindTemplateChild<System.Windows.Controls.Grid>(button, "ContentRoot");
         var contentViewbox = FindTemplateChild<System.Windows.Controls.Viewbox>(button, "ContentViewbox");
+        var textLabel = FindTemplateChild<System.Windows.Controls.TextBlock>(button, "TextLabel");
         var overflowTextLabel = FindTemplateChild<System.Windows.Controls.TextBlock>(button, "OverflowTextLabel");
 
+        AssertStateSetter(
+            root,
+            "ApplicationViewStates",
+            "Compact",
+            "ContentRoot.Width",
+            "TextLabel.Visibility");
+        AssertStateSetter(
+            root,
+            "ApplicationViewStates",
+            "LabelOnRight",
+            "ContentRoot.Width",
+            "ContentViewbox.Margin",
+            "TextLabel.(Grid.Row)",
+            "TextLabel.(Grid.Column)",
+            "TextLabel.TextAlignment",
+            "TextLabel.Margin",
+            "TextLabel.VerticalAlignment");
+        AssertStateSetter(
+            root,
+            "ApplicationViewStates",
+            "LabelCollapsed",
+            "ContentRoot.Width",
+            "TextLabel.Visibility");
         AssertStateSetter(
             root,
             "ApplicationViewStates",
@@ -1112,6 +1194,7 @@ public class CommandBarFlyoutApiTests
             "ContentRoot.Width",
             "ContentViewbox.Visibility",
             "ContentViewbox.Margin",
+            "TextLabel.Visibility",
             "OverflowTextLabel.Visibility");
         AssertStateSetter(
             root,
@@ -1120,6 +1203,7 @@ public class CommandBarFlyoutApiTests
             "ContentRoot.MinHeight",
             "ContentRoot.Width",
             "ContentViewbox.Visibility",
+            "TextLabel.Visibility",
             "OverflowTextLabel.Visibility",
             "OverflowTextLabel.Margin");
         AssertStateSetter(
@@ -1133,6 +1217,7 @@ public class CommandBarFlyoutApiTests
             "ContentViewbox.Width",
             "ContentViewbox.Height",
             "ContentViewbox.Margin",
+            "TextLabel.Visibility",
             "OverflowTextLabel.Visibility",
             "OverflowTextLabel.Margin");
         AssertStateSetter(
@@ -1146,6 +1231,7 @@ public class CommandBarFlyoutApiTests
             "ContentViewbox.Width",
             "ContentViewbox.Height",
             "ContentViewbox.Margin",
+            "TextLabel.Visibility",
             "OverflowTextLabel.Visibility",
             "OverflowTextLabel.Margin");
         AssertStateSetter(
@@ -1159,7 +1245,12 @@ public class CommandBarFlyoutApiTests
             "GameControllerInputMode",
             "OverflowTextLabel.Padding");
 
-        Assert.AreEqual(40.0, contentRoot.Width);
+        Assert.AreEqual(56.0, button.Width);
+        Assert.AreEqual(48.0, button.Height);
+        Assert.AreEqual(56.0, contentRoot.Width);
+        Assert.AreEqual(48.0, contentRoot.MinHeight);
+        Assert.AreEqual(Visibility.Visible, textLabel.Visibility);
+        Assert.AreEqual("Accept", textLabel.Text);
         Assert.AreEqual(Visibility.Collapsed, overflowTextLabel.Visibility);
         Assert.AreEqual(new Thickness(0, 5, 0, 7), overflowTextLabel.Padding);
 
@@ -1172,12 +1263,14 @@ public class CommandBarFlyoutApiTests
         Assert.AreEqual(16.0, contentViewbox.Width);
         Assert.AreEqual(16.0, contentViewbox.Height);
         Assert.AreEqual(new Thickness(39, 0, 12, 0), contentViewbox.Margin);
+        Assert.AreEqual(Visibility.Collapsed, textLabel.Visibility);
         Assert.AreEqual(Visibility.Visible, overflowTextLabel.Visibility);
         Assert.AreEqual(new Thickness(67, 0, 12, 0), overflowTextLabel.Margin);
 
         Assert.IsTrue(VisualStateManager.GoToState(button, "FullSize", false));
 
-        Assert.AreEqual(40.0, contentRoot.Width);
+        Assert.AreEqual(56.0, contentRoot.Width);
+        Assert.AreEqual(Visibility.Visible, textLabel.Visibility);
         Assert.IsTrue(double.IsNaN(contentViewbox.Width));
         Assert.AreEqual(Visibility.Collapsed, overflowTextLabel.Visibility);
 
@@ -1194,8 +1287,32 @@ public class CommandBarFlyoutApiTests
         var contentRoot = FindTemplateChild<System.Windows.Controls.Grid>(button, "ContentRoot");
         var contentViewbox = FindTemplateChild<System.Windows.Controls.Viewbox>(button, "ContentViewbox");
         var overflowCheckGlyph = FindTemplateChild<FrameworkElement>(button, "OverflowCheckGlyph");
+        var textLabel = FindTemplateChild<System.Windows.Controls.TextBlock>(button, "TextLabel");
         var overflowTextLabel = FindTemplateChild<System.Windows.Controls.TextBlock>(button, "OverflowTextLabel");
 
+        AssertStateSetter(
+            root,
+            "ApplicationViewStates",
+            "Compact",
+            "ContentRoot.Width",
+            "TextLabel.Visibility");
+        AssertStateSetter(
+            root,
+            "ApplicationViewStates",
+            "LabelOnRight",
+            "ContentRoot.Width",
+            "ContentViewbox.Margin",
+            "TextLabel.(Grid.Row)",
+            "TextLabel.(Grid.Column)",
+            "TextLabel.TextAlignment",
+            "TextLabel.Margin",
+            "TextLabel.VerticalAlignment");
+        AssertStateSetter(
+            root,
+            "ApplicationViewStates",
+            "LabelCollapsed",
+            "ContentRoot.Width",
+            "TextLabel.Visibility");
         AssertStateSetter(
             root,
             "ApplicationViewStates",
@@ -1204,6 +1321,7 @@ public class CommandBarFlyoutApiTests
             "ContentRoot.Width",
             "ContentViewbox.Visibility",
             "OverflowCheckGlyph.Visibility",
+            "TextLabel.Visibility",
             "OverflowTextLabel.Visibility");
         AssertStateSetter(
             root,
@@ -1218,6 +1336,7 @@ public class CommandBarFlyoutApiTests
             "ContentViewbox.MaxHeight",
             "ContentViewbox.Margin",
             "OverflowCheckGlyph.Visibility",
+            "TextLabel.Visibility",
             "OverflowTextLabel.Visibility",
             "OverflowTextLabel.Margin");
         AssertStateSetter(
@@ -1233,8 +1352,13 @@ public class CommandBarFlyoutApiTests
             "OverflowTextLabel.Padding",
             "OverflowCheckGlyph.Margin");
 
-        Assert.AreEqual(40.0, contentRoot.Width);
+        Assert.AreEqual(56.0, button.Width);
+        Assert.AreEqual(48.0, button.Height);
+        Assert.AreEqual(56.0, contentRoot.Width);
+        Assert.AreEqual(48.0, contentRoot.MinHeight);
         Assert.AreEqual(Visibility.Collapsed, overflowCheckGlyph.Visibility);
+        Assert.AreEqual(Visibility.Visible, textLabel.Visibility);
+        Assert.AreEqual("Accept", textLabel.Text);
         Assert.AreEqual(Visibility.Collapsed, overflowTextLabel.Visibility);
         Assert.AreEqual(new Thickness(15, 4, 14, 4), overflowCheckGlyph.Margin);
         Assert.AreEqual(new Thickness(0, 5, 0, 7), overflowTextLabel.Padding);
@@ -1250,14 +1374,16 @@ public class CommandBarFlyoutApiTests
         Assert.AreEqual(16.0, contentViewbox.MaxHeight);
         Assert.AreEqual(new Thickness(39, 0, 12, 0), contentViewbox.Margin);
         Assert.AreEqual(Visibility.Visible, overflowCheckGlyph.Visibility);
+        Assert.AreEqual(Visibility.Collapsed, textLabel.Visibility);
         Assert.AreEqual(Visibility.Visible, overflowTextLabel.Visibility);
         Assert.AreEqual(new Thickness(67, 0, 12, 0), overflowTextLabel.Margin);
 
         Assert.IsTrue(VisualStateManager.GoToState(button, "FullSize", false));
 
-        Assert.AreEqual(40.0, contentRoot.Width);
+        Assert.AreEqual(56.0, contentRoot.Width);
         Assert.IsTrue(double.IsPositiveInfinity(contentViewbox.MaxWidth));
         Assert.AreEqual(Visibility.Collapsed, overflowCheckGlyph.Visibility);
+        Assert.AreEqual(Visibility.Visible, textLabel.Visibility);
         Assert.AreEqual(Visibility.Collapsed, overflowTextLabel.Visibility);
 
         Assert.IsTrue(VisualStateManager.GoToState(button, "GameControllerInputMode", false));
@@ -1274,6 +1400,7 @@ public class CommandBarFlyoutApiTests
         var root = FindTemplateChild<System.Windows.Controls.Grid>(button, "Root");
         var innerBorder = FindTemplateChild<BorderEx>(button, "AppBarButtonInnerBorder");
         var content = FindTemplateChild<ContentPresenterEx>(button, "Content");
+        var textLabel = FindTemplateChild<System.Windows.Controls.TextBlock>(button, "TextLabel");
         var overflowTextLabel = FindTemplateChild<System.Windows.Controls.TextBlock>(button, "OverflowTextLabel");
         var keyboardAcceleratorTextLabel = FindTemplateChild<System.Windows.Controls.TextBlock>(button, "KeyboardAcceleratorTextLabel");
 
@@ -1282,19 +1409,22 @@ public class CommandBarFlyoutApiTests
             "CommonStates",
             "PointerOver",
             "AppBarButtonInnerBorder.Background",
-            "Content.Foreground");
+            "Content.Foreground",
+            "TextLabel.Foreground");
         AssertStateSetter(
             root,
             "CommonStates",
             "Pressed",
             "AppBarButtonInnerBorder.Background",
-            "Content.Foreground");
+            "Content.Foreground",
+            "TextLabel.Foreground");
         AssertStateSetter(
             root,
             "CommonStates",
             "Disabled",
             "AppBarButtonInnerBorder.Background",
             "Content.Foreground",
+            "TextLabel.Foreground",
             "OverflowTextLabel.Foreground",
             "KeyboardAcceleratorTextLabel.Foreground");
         AssertStateSetter(
@@ -1321,6 +1451,7 @@ public class CommandBarFlyoutApiTests
 
         Assert.AreSame(button.TryFindResource("CommandBarFlyoutAppBarButtonBackgroundDisabled"), innerBorder.Background);
         Assert.AreSame(button.TryFindResource("CommandBarFlyoutAppBarButtonForegroundDisabled"), content.Foreground);
+        Assert.AreSame(button.TryFindResource("CommandBarFlyoutAppBarButtonForegroundDisabled"), textLabel.Foreground);
         Assert.AreSame(button.TryFindResource("CommandBarFlyoutAppBarButtonForegroundDisabled"), overflowTextLabel.Foreground);
         Assert.AreSame(button.TryFindResource("CommandBarFlyoutAppBarButtonForegroundDisabled"), keyboardAcceleratorTextLabel.Foreground);
 
@@ -1336,6 +1467,7 @@ public class CommandBarFlyoutApiTests
         var innerBorder = FindTemplateChild<BorderEx>(button, "AppBarButtonInnerBorder");
         var content = FindTemplateChild<ContentPresenterEx>(button, "Content");
         var overflowCheckGlyph = FindTemplateChild<FontIconFallback>(button, "OverflowCheckGlyph");
+        var textLabel = FindTemplateChild<System.Windows.Controls.TextBlock>(button, "TextLabel");
         var overflowTextLabel = FindTemplateChild<System.Windows.Controls.TextBlock>(button, "OverflowTextLabel");
         var keyboardAcceleratorTextLabel = FindTemplateChild<System.Windows.Controls.TextBlock>(button, "KeyboardAcceleratorTextLabel");
 
@@ -1344,19 +1476,22 @@ public class CommandBarFlyoutApiTests
             "CommonStates",
             "PointerOver",
             "AppBarButtonInnerBorder.Background",
-            "Content.Foreground");
+            "Content.Foreground",
+            "TextLabel.Foreground");
         AssertStateSetter(
             root,
             "CommonStates",
             "Pressed",
             "AppBarButtonInnerBorder.Background",
-            "Content.Foreground");
+            "Content.Foreground",
+            "TextLabel.Foreground");
         AssertStateSetter(
             root,
             "CommonStates",
             "Disabled",
             "AppBarButtonInnerBorder.Background",
             "Content.Foreground",
+            "TextLabel.Foreground",
             "OverflowTextLabel.Foreground",
             "KeyboardAcceleratorTextLabel.Foreground");
         AssertStateSetter(
@@ -1364,24 +1499,28 @@ public class CommandBarFlyoutApiTests
             "CommonStates",
             "Checked",
             "AppBarButtonInnerBorder.Background",
-            "Content.Foreground");
+            "Content.Foreground",
+            "TextLabel.Foreground");
         AssertStateSetter(
             root,
             "CommonStates",
             "CheckedPointerOver",
             "AppBarButtonInnerBorder.Background",
-            "Content.Foreground");
+            "Content.Foreground",
+            "TextLabel.Foreground");
         AssertStateSetter(
             root,
             "CommonStates",
             "CheckedPressed",
             "AppBarButtonInnerBorder.Background",
-            "Content.Foreground");
+            "Content.Foreground",
+            "TextLabel.Foreground");
         AssertStateSetter(
             root,
             "CommonStates",
             "CheckedDisabled",
             "Content.Foreground",
+            "TextLabel.Foreground",
             "OverflowCheckGlyph.Foreground",
             "OverflowTextLabel.Foreground",
             "KeyboardAcceleratorTextLabel.Foreground",
@@ -1436,6 +1575,7 @@ public class CommandBarFlyoutApiTests
 
         Assert.AreSame(button.TryFindResource("CommandBarFlyoutAppBarButtonBackgroundDisabled"), innerBorder.Background);
         Assert.AreSame(button.TryFindResource("CommandBarFlyoutAppBarButtonForegroundDisabled"), content.Foreground);
+        Assert.AreSame(button.TryFindResource("CommandBarFlyoutAppBarButtonForegroundDisabled"), textLabel.Foreground);
         Assert.AreSame(button.TryFindResource("CommandBarFlyoutAppBarButtonForegroundDisabled"), overflowTextLabel.Foreground);
         Assert.AreSame(button.TryFindResource("CommandBarFlyoutAppBarButtonForegroundDisabled"), keyboardAcceleratorTextLabel.Foreground);
 
@@ -1444,11 +1584,13 @@ public class CommandBarFlyoutApiTests
 
         Assert.AreSame(button.TryFindResource("CommandBarFlyoutAppBarButtonBackgroundChecked"), innerBorder.Background);
         Assert.AreSame(button.TryFindResource("CommandBarFlyoutAppBarButtonForegroundChecked"), content.Foreground);
+        Assert.AreSame(button.TryFindResource("CommandBarFlyoutAppBarButtonForegroundChecked"), textLabel.Foreground);
 
         button.IsEnabled = false;
 
         Assert.AreSame(button.Background, innerBorder.Background);
         Assert.AreSame(button.TryFindResource("CommandBarFlyoutAppBarButtonBackgroundDisabled"), content.Foreground);
+        Assert.AreSame(button.TryFindResource("CommandBarFlyoutAppBarButtonForegroundDisabled"), textLabel.Foreground);
         Assert.AreSame(button.TryFindResource("CommandBarFlyoutAppBarButtonForegroundDisabled"), overflowCheckGlyph.Foreground);
         Assert.AreSame(button.TryFindResource("CommandBarFlyoutAppBarButtonForegroundDisabled"), overflowTextLabel.Foreground);
         Assert.AreSame(button.TryFindResource("CommandBarFlyoutAppBarButtonForegroundDisabled"), keyboardAcceleratorTextLabel.Foreground);
@@ -1458,6 +1600,7 @@ public class CommandBarFlyoutApiTests
 
         Assert.AreSame(button.TryFindResource("CommandBarFlyoutAppBarButtonBackgroundChecked"), innerBorder.Background);
         Assert.AreSame(button.TryFindResource("CommandBarFlyoutAppBarButtonForegroundChecked"), content.Foreground);
+        Assert.AreSame(button.TryFindResource("CommandBarFlyoutAppBarButtonForegroundChecked"), textLabel.Foreground);
         Assert.AreEqual(0.0, overflowCheckGlyph.Opacity);
     }
 

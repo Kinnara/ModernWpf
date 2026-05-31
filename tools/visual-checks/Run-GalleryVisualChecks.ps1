@@ -1791,7 +1791,12 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
     catch {
         Capture-Window $window.Current.NativeWindowHandle $baselinePath
     }
-    $invoked = Invoke-Element $window $showButton
+    $invoked = if ($control -eq "CommandBarFlyout") {
+        Invoke-ElementOnce $window $showButton
+    }
+    else {
+        Invoke-Element $window $showButton
+    }
     $frames = New-Object System.Collections.Generic.List[object]
     $frameDelays = @(0, 150, 300, 450)
     $previousDelay = 0
