@@ -181,7 +181,8 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
             SelectedIcon = DisplayedIcons.FirstOrDefault(predicate);
         }
 
-        private void ApplyTagFilter(string tag)
+#nullable enable annotations
+        private void ApplyTagFilter(string? tag)
         {
             if (string.IsNullOrWhiteSpace(tag))
             {
@@ -196,6 +197,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 
             SearchText = trimmedTag;
         }
+#nullable restore annotations
 
         private void PreviousPage()
         {

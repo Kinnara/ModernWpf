@@ -415,7 +415,7 @@ namespace ModernWpf.Gallery.Tests
                 "icon => icon.Name.Equals(selectedIconName) :",
                 "icon => true;",
                 "SelectedIcon = DisplayedIcons.FirstOrDefault(predicate);",
-                "private void ApplyTagFilter(string tag)",
+                "private void ApplyTagFilter(string? tag)",
                 "var trimmedTag = tag.Trim();",
                 "if (string.Equals(trimmedTag, SearchText, StringComparison.Ordinal))",
                 "SearchText = trimmedTag;",
