@@ -720,21 +720,27 @@ Current distance to completion:
 2. The user-reported priority/order conflict was recorded by the front-door
    selector update; row 1 is inactive again unless a new scheduler ambiguity
    appears.
-3. The next substantive row is not open-ended row 5.4. It can remain global
-   order 11 only if another broad 5.4 guard survives the local-official-source
-   proof. Thin member-shape cleanup, root shell adapter trivia, or stale
-   historical notes are not enough.
+3. The next lower bucket is **global order 13 / P2 row 6** completion audit and
+   status consistency. Row 5.4 is not open-ended and reopens only if another
+   broad local-official-source guard survives proof. Thin member-shape cleanup,
+   root shell adapter trivia, or stale historical notes are not enough.
 4. The row 5.5 bookkeeping pass found no remaining current broad 5.4 candidate
-   after the inventory recorded below. Row 6/final verification is therefore
-   the current lower bucket. Any reopened item from rows 2-10 stops closeout
-   and becomes the next task.
+   after the inventory recorded below, and the row 6 verification sweep has
+   run. Any reopened item from rows 2-10 stops closeout and becomes the next
+   task.
 
 Current active selection snapshot:
 
 1. The user-requested priority/order hygiene edit is recorded by this ordering
    update. It is inactive again unless a new priority/order conflict appears;
    rows 2-7 explicitly outrank all row 5 source cleanup.
-2. Current bookkeeping/verification batch, 2026-05-31: **global order 12 /
+2. Current completion-audit/status pass, 2026-06-01: **global order 13 / P2
+   row 6** remains active because completion is not proven. The previous audit
+   found stale current-state text in this section after row 5.5 and row 6 had
+   already been recorded. This pass updates the `Current Order Lock` row 6
+   state so the tracker source of truth no longer points back to row 5.4 as
+   current lower work.
+3. Previous bookkeeping/verification batch, 2026-05-31: **global order 12 /
    P2 row 5.5**, then **global order 13 / P2 row 6** for final verification.
    Selection proof: worktree was clean at `5975efc9`; `SystemParameters.HighContrast`
    returned `False`; the priority, active row 5.1 mapped-XAML, active row 5.3
@@ -751,7 +757,7 @@ Current active selection snapshot:
    work if new named evidence appears. No product code, XAML, visual asset, or
    visual-check harness surface changed in this bookkeeping/verification batch,
    so the latest visual/high-drift reports below remain the scheduler gate.
-3. The latest visual/high-drift path is **global orders 3, 4, 5, and 7 /
+4. The latest visual/high-drift path is **global orders 3, 4, 5, and 7 /
    visible drift, retained ModernWpf/WinUI high-drift visual triage, P2 row 2
    freshness, and P2 row 4 interaction/harness parity** for the
    `CommandBarFlyout` retained-control interaction evidence path.
@@ -1518,8 +1524,8 @@ maps 54 active local/official XAML files under local official
 `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Views`, decodes XAML
 entities, and fails on missing official `HeaderText`, `XamlCode`, or
 `CSharpCode` sample-pane tokens; the row 5.3 automation/name/hook token guard
-also remains automated and clean. The latest substantive row is now **global
-order 11 / P2 row 5.4** for
+also remains automated and clean. The latest broad 5.4 guard before row 5.5 was
+**global order 11 / P2 row 5.4** for
 `WpfGallerySourceShapeTests.MappedWpfGalleryModelsKeepOfficialPublicMemberNamesFromLocalSource`,
 which maps 4 copied/adapted official model files under local official
 `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Models` and checks 30
@@ -2899,6 +2905,22 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- Current Order Lock completion-audit consistency pass:
+  - `git status --short` returned clean before the batch at branch tip
+    `43ab65df`. `SystemParameters.HighContrast` returned `False`.
+  - The completion audit remained active under **global order 13 / P2 row 6**
+    after the previous status pass: `Current Order Lock` still described the
+    next lower bucket as possibly returning to row 5.4 and still listed the
+    2026-05-31 row 5.5 / row 6 sweep as the current active selection. This
+    batch updates that current-state text so row 6 completion-audit/status
+    consistency is the active lower row and row 5.4 is only a reopen path for a
+    new broad local-official-source guard.
+  - `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --no-build --filter TrackerPriorityTests -p:UseSharedCompilation=false`
+    - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 5 tests per
+      target after updating `Current Order Lock` row 6 assertions.
+  - `git diff --check`
+    - Passed after the Current Order Lock consistency update, with only the
+      existing LF/CRLF working-copy warnings for touched files.
 - Completion audit/status consistency pass:
   - `git status --short` returned clean before the batch at branch tip
     `e3e568e5`.

@@ -57,8 +57,9 @@ namespace ModernWpf.Gallery.Tests
                 "12. P2 row 5.5 row-5 bookkeeping and stale-status cleanup, only after 5.1-5.4",
                 "13. P2 row 6/final closeout cleanup, last, with a fresh verification sweep.",
                 "Current distance to completion:",
-                "The next substantive row is not open-ended row 5.4.",
-                "Current active selection snapshot:");
+                "The next lower bucket is **global order 13 / P2 row 6**",
+                "Current active selection snapshot:",
+                "Current completion-audit/status pass, 2026-06-01:");
         }
 
         [TestMethod]
