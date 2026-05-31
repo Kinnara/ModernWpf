@@ -33,7 +33,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var imageKey = value as string;
+            string imageKey = value as string;
             if (string.IsNullOrEmpty(imageKey))
             {
                 imageKey = "p91";

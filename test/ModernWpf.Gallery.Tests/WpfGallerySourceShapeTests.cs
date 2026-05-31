@@ -1144,6 +1144,43 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void UserDashboardConvertersKeepOfficialVisibilityAndImageBrushSourceShape()
+        {
+            var source = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Samples",
+                "UserDashboardConverters.cs");
+
+            AssertContainsInOrder(
+                source,
+                "/// Converts an empty string to Visibility.Collapsed",
+                "public sealed class EmptyToVisibilityConverter : IValueConverter",
+                "public object Convert(object value, Type targetType, object parameter, CultureInfo culture)",
+                "if (value is string str)",
+                "return string.IsNullOrWhiteSpace(str) ? Visibility.Collapsed : Visibility.Visible;",
+                "return value is null ? Visibility.Collapsed : Visibility.Visible;",
+                "public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)",
+                "throw new NotImplementedException();",
+                "/// Converts an image id to a brush",
+                "public sealed class ImageIdToBrushConverter : IValueConverter",
+                "public object Convert(object value, Type targetType, object parameter, CultureInfo culture)",
+                "string imageKey = value as string;",
+                "if (string.IsNullOrEmpty(imageKey))",
+                "imageKey = \"p91\";",
+                "else if (imageKey[0] != 'p' && imageKey[0] != 'P')",
+                "imageKey = \"p\" + imageKey;",
+                "return Application.Current.Resources[imageKey];",
+                "public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)",
+                "throw new NotImplementedException();");
+
+            Assert.IsFalse(
+                source.Contains("var imageKey = value as string;", StringComparison.Ordinal),
+                "ImageIdToBrushConverter should keep the official local-variable type shape while retaining the local ImageKey fallback adapter.");
+        }
+
+        [TestMethod]
         public void UserDashboardViewModelKeepsOfficialObservableStateSourceShape()
         {
             var source = ReadRepoFile(

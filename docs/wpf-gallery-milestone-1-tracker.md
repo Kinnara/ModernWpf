@@ -46,7 +46,27 @@ Current pointer:
    measurement, interaction, automation, and harness evidence always beats row
    5 source cleanup. `TrackerPriorityTests` guard this ordering; row 1 is
    inactive again unless another priority/order conflict appears.
-2. Latest substantive batch, 2026-05-31: **global orders 3, 4, 5, and
+2. Latest substantive batch, 2026-05-31: **global order 11 / P2 row 5.4**
+   for the copied User Dashboard converter source-shape guard. Selection
+   proof: `SystemParameters.HighContrast` returned `False`; the latest
+   retained ModernWpf/WinUI high-drift and interaction/harness evidence is
+   recorded at
+   `artifacts/visual-checks/20260531-203633-033-63888/report.md` and
+   `artifacts/visual-checks/20260531-203756-601-64316/report.md`; P2 rows 2-4
+   are recorded; rows 5.1-5.2 are recorded; and a direct same-path XAML 5.3
+   scan against
+   `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Views` found no
+   missing official `AutomationProperties.Name`, `x:Name`, event, or
+   `Command` token after entity normalization across 50 mapped files. The
+   local official source
+   `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Helpers\ImageIdToBrushConverter.cs`
+   keeps `string imageKey` before returning
+   `Application.Current.Resources[imageKey]`. The local copied/adapted User
+   Dashboard converter now keeps that local-variable type shape while retaining
+   the WPF compatibility adapter for `null` and numeric image IDs. Focused
+   source-shape/runtime converter tests, full `WpfGallerySourceShapeTests`, and
+   the full `ModernWpf.Gallery` build passed.
+3. Previous substantive batch, 2026-05-31: **global orders 3, 4, 5, and
    7 / visible drift, retained ModernWpf/WinUI high-drift triage, P2 row 2
    freshness, and P2 row 4 interaction/harness parity** for the
    `CommandBarFlyout` retained-control interaction evidence path. This
@@ -65,7 +85,7 @@ Current pointer:
    CommandBarFlyout, and ProgressRing all stayed `Passed`; CommandBarFlyout
    records UIA-sourced `80x72 vs 80x72` open crops with interaction crop
    deltas Light `3.53` and Dark `1.69`.
-3. Previous substantive batch, 2026-05-31: **global order 11 / P2 row 5.4**
+4. Previous substantive batch, 2026-05-31: **global order 11 / P2 row 5.4**
    for copied WPF Gallery model XML summary source-shape guards. Selection
    proof: `SystemParameters.HighContrast` returned `False`; the retained
    visual/high-drift evidence then current was recorded; rows 5.1-5.3 had no
@@ -76,7 +96,7 @@ Current pointer:
    found two non-visible copied model summary gaps. The local copied models now
    keep those official summary strings while retaining local namespace,
    serialization, and WPF compatibility adapters.
-4. Previous substantive batch, 2026-05-31: **global order 11 / P2 row 5.4**
+5. Previous substantive batch, 2026-05-31: **global order 11 / P2 row 5.4**
    for copied code-behind XML summary source-shape guards. Selection proof:
    `SystemParameters.HighContrast` returned `False`; the latest retained
    ModernWpf/WinUI high-drift and interaction/harness evidence is recorded at
@@ -498,6 +518,20 @@ Current active selection snapshot:
    newer visual, High Contrast, high-drift, asset, measurement, automation, or
    harness trigger appears.
 3. The latest row 5 path was **global order 11 -> P2 Subqueue row 5 -> P2 Row
+   5 Internal Queue row 5.4** for the copied User Dashboard
+   `ImageIdToBrushConverter` local-variable source-shape guard.
+   `SystemParameters.HighContrast` returned `False`, global orders 2-9 are
+   recorded or inactive for the current branch tip, rows 5.1-5.2 are recorded,
+   row 5.3 has no current named executable gap after a direct same-path XAML
+   scan of `AutomationProperties.Name`, `x:Name`, event, and `Command` tokens,
+   and the latest high-drift/interaction proof above remains current. The
+   local official source
+   `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Helpers\ImageIdToBrushConverter.cs`
+   declares `string imageKey` before returning
+   `Application.Current.Resources[imageKey]`; the local copied/adapted
+   converter now keeps that local-variable type shape while retaining the WPF
+   compatibility adapter for `null` and numeric image IDs.
+4. The previous row 5 path was **global order 11 -> P2 Subqueue row 5 -> P2 Row
    5 Internal Queue row 5.4** for copied WPF Gallery model XML summary
    source-shape guards. `SystemParameters.HighContrast` returned
    `False`, global orders 2-9 are recorded or inactive for the current branch
@@ -510,7 +544,7 @@ Current active selection snapshot:
    keep XML summary text for the copied Person and IconData models. The local
    copied models now keep those non-visible official summary strings while
    retaining their local namespaces and serialization/WPF adapters.
-4. The previous row 5 path was **global order 11 -> P2 Subqueue row 5 -> P2 Row
+5. The previous row 5 path was **global order 11 -> P2 Subqueue row 5 -> P2 Row
    5 Internal Queue row 5.4** for the User Dashboard `DeletedName`
    early-return source-shape guard. `SystemParameters.HighContrast` returned
    `False`, global orders 2-9 are recorded or inactive for the current branch
@@ -520,7 +554,7 @@ Current active selection snapshot:
    current. The local copied view model keeps the official non-visible
    empty-name early return before starting delayed message-clear behavior,
    while retaining the local adapters.
-5. The previous row 5 path was **global order 11 -> P2 Subqueue row 5 -> P2 Row
+6. The previous row 5 path was **global order 11 -> P2 Subqueue row 5 -> P2 Row
    5 Internal Queue row 5.4** for the System
    `MessageBoxPageViewModel.UpdateButtonCodeSnippets(int index)` and
    `UpdateImageCodeSnippets(int index)` switch-expression source-shape guard.
@@ -1159,14 +1193,15 @@ After the latest `CommandBarFlyout` retained-control visual/interaction/harness
 batch is recorded, the next substantive row may return to **global order 11 /
 P2 row 5.4** only if another named 5.4 guard survives the full proof again.
 The latest retained high-drift evidence is
-`artifacts/visual-checks/20260531-193740-842-65400/report.md` and
-`artifacts/visual-checks/20260531-193831-688-41656/report.md`; both record
+`artifacts/visual-checks/20260531-203633-033-63888/report.md` and
+`artifacts/visual-checks/20260531-203756-601-64316/report.md`; both record
 GridView, CommandBarFlyout, and ProgressRing as Passed, and CommandBarFlyout
-now has matching `80x72 vs 80x72` open crops with ModernWpf Share UIA at
-`56x48`. The latest direct same-path XAML scans found no missing official
-`AutomationProperties.Name`, `x:Name`, or event-hook item, and the earlier
-direct code-behind member, official XAML resource-key, and matched ViewModel
-source scans found no current row 5.3 gap after the recorded navigation
+now has UIA-sourced matching `80x72 vs 80x72` open crops with interaction crop
+deltas Light `3.53` / Dark `1.69`. The latest direct same-path XAML scan found
+no missing official `AutomationProperties.Name`, `x:Name`, event, or `Command`
+token after entity normalization, and the earlier direct code-behind member,
+official XAML resource-key, and matched ViewModel source scans found no current
+row 5.3 gap after the recorded navigation
 view-model Type-gate, `WhatsNewPage` MessageBox type-selector, Iconography
 search-placeholder, MainWindow forward-command, and `UpdateCanNavigateBack`
 source-hook batches. If any visual, High Contrast, high-drift, asset,
@@ -1438,7 +1473,7 @@ Current row 5 decision:
 | 5.1 | Source-backed sample panes and runtime-visible example content | Recorded for the current branch tip. Basic Input, Collections, Date & Calendar, Design Guidance, Layout, Media, Navigation, Status & Info, Text, System, and What's New `ControlExample` snippets are covered; Design Guidance Color subsection `ColorPageExample` titles, descriptions, and visible example content types are now guarded against the official WPF Gallery source shape. | Reopen before row 5.2 only if a new sample-pane or runtime-visible example-content gap is named. |
 | 5.2 | Source-backed structural alignment that can affect visible layout, resources, keyboard, interaction, automation, or visual-harness behavior | Recorded for the current branch tip. The latest named 5.2 batch aligns app-manifest runtime compatibility with local official WPF Gallery source by keeping the `true/PM` DPI fallback, `longPathAware`, and active `Microsoft.Windows.Common-Controls` v6 dependency while retaining the local `PerMonitorV2` DPI-awareness adapter. Earlier named 5.2 batches align the shared `ColorTile` warning visibility to the official WPF Gallery `TemplateBinding ShowWarning` plus `BooleanToVisibilityConverter` shape and record the official `TemplateBinding ShowSeparator` shape as not locally viable because WPF leaves the separator visible when `ShowSeparator=false`; the retained `RelativeSource TemplatedParent` converter binding is therefore an explicit WPF compatibility adapter. Earlier recorded 5.2 items remain the Design Guidance Iconography instructions Expander inline/source structure, the Design Guidance Spacing/Geometry default dark design-image `Source` fallback, the Navigation `FrameWindow` same-folder `Frame.Source` behavior, and the Navigation `NavigationWindow` explicit Gallery component URI plus `Frame.xaml` template-resource dependency. | Reopen before row 5.3 only if a new source-backed structural diff is named and can affect visible layout, resources, keyboard, interaction, automation, or visual-harness behavior. |
 | 5.3 | Resource-key, naming, selector, and source-hook parity tied to visible or harness behavior | Recorded for the current branch tip with no current named gap after the latest scan. Earlier named 5.3 batches remain recorded, including title-bar/footer resource keys, retained shell structural lookups, route/display aliases, direct page registry normalization, command-handler names, the copied `WhatsNewPage` handler selector, and the copied Iconography direct search-placeholder visibility handlers. | Reopen before 5.4 if a new named resource/key/name/selector/hook gap appears that can affect visuals, behavior, or harness evidence. |
-| 5.4 | Non-visible copied/adapted source-shape guards | Current only while 5.1-5.3 remain recorded or no current named gap exists. The latest named 5.4 guard aligns copied model XML summary text with local official WPF Gallery `Models\Person.cs` and `Models\IconsData.cs` while retaining local namespaces, `DataContract`/`DataMember`, and WPF compatibility adapters. Previous 5.4 guards include copied code-behind interaction-summary text for `ButtonPage`, `CheckBoxPage`, `ComboBoxPage`, `Navigation\Page1`, `Navigation\Page2`, and `Text\RichTextEditPage`; top-level Dashboard code-behind `ViewModel` member placement; the official WPF Gallery copied code-behind constructor initialization-order shapes from the local `Views` folder; the official WPF Gallery ViewModel XML summary source shape for Button, File and Folder Dialogs, and MessageBox; User Dashboard `IsSaved` delayed-clear statement placement; User Dashboard `DeletedName` empty-value early-return shape; User Dashboard `EditUserCancel()` statement shape; User Dashboard `EditUserCommit`/`EditUserStart`/`RemoveUser` command-handler statement shape; User Dashboard final address `""` literal and `AddUser()` statement shape; copied Basic Input, Collections, Date & Calendar, Layout, Media, Navigation, Status & Info, Text, Design Guidance Geometry, and All Samples empty page descriptions with the official `""` literal source shape; System MessageBox/Clipboard empty descriptions and Clipboard status backing fields; System MessageBox verbatim/switch-expression snippet helpers; Basic Input CheckBox command branch bodies and handler signatures; Collections ListView/DataGrid helper shapes; Iconography helper shapes; and `MainWindowViewModel.ApplicationTitle`. Recent summary/base-declaration rounds are recorded; comments, declaration shape, member order, and pure source-text guards stay blocked if any 5.1-5.3 item reopens. | Take only a named guard gap with focused tests and a full Gallery build. |
+| 5.4 | Non-visible copied/adapted source-shape guards | Current only while 5.1-5.3 remain recorded or no current named gap exists. The latest named 5.4 guard aligns the copied User Dashboard `ImageIdToBrushConverter` local-variable type shape with local official WPF Gallery `Helpers\ImageIdToBrushConverter.cs` while retaining the WPF compatibility adapter for `null` and numeric image IDs. Previous 5.4 guards include copied model XML summary text with local official WPF Gallery `Models\Person.cs` and `Models\IconsData.cs`; copied code-behind interaction-summary text for `ButtonPage`, `CheckBoxPage`, `ComboBoxPage`, `Navigation\Page1`, `Navigation\Page2`, and `Text\RichTextEditPage`; top-level Dashboard code-behind `ViewModel` member placement; the official WPF Gallery copied code-behind constructor initialization-order shapes from the local `Views` folder; the official WPF Gallery ViewModel XML summary source shape for Button, File and Folder Dialogs, and MessageBox; User Dashboard `IsSaved` delayed-clear statement placement; User Dashboard `DeletedName` empty-value early-return shape; User Dashboard `EditUserCancel()` statement shape; User Dashboard `EditUserCommit`/`EditUserStart`/`RemoveUser` command-handler statement shape; User Dashboard final address `""` literal and `AddUser()` statement shape; copied Basic Input, Collections, Date & Calendar, Layout, Media, Navigation, Status & Info, Text, Design Guidance Geometry, and All Samples empty page descriptions with the official `""` literal source shape; System MessageBox/Clipboard empty descriptions and Clipboard status backing fields; System MessageBox verbatim/switch-expression snippet helpers; Basic Input CheckBox command branch bodies and handler signatures; Collections ListView/DataGrid helper shapes; Iconography helper shapes; and `MainWindowViewModel.ApplicationTitle`. Recent summary/base-declaration rounds are recorded; comments, declaration shape, member order, and pure source-text guards stay blocked if any 5.1-5.3 item reopens. | Take only a named guard gap with focused tests and a full Gallery build. |
 | 5.5 | Stale-status cleanup and tracker-only row 5 bookkeeping | Last inside row 5, except for explicit user-requested priority/order hygiene. | Use only after substantive row 5 items are recorded or not applicable. |
 
 Latest accepted visual/high-drift priority-correction note:
@@ -2465,6 +2500,51 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- Selection proof and verification for the copied User Dashboard
+  `ImageIdToBrushConverter` 5.4 source-shape guard:
+  - `git status --short` returned clean at branch tip `3e25f28e`.
+    `SystemParameters.HighContrast` returned `False`. A direct same-path XAML
+    5.3 scan against
+    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Views` found no
+    missing official `AutomationProperties.Name`, `x:Name`, event, or
+    `Command` tokens after entity normalization across 50 mapped files. The
+    selected rank is therefore **global order 11 / P2 row 5.4**, because
+    global orders 2-9 are recorded or inactive for the current branch tip, P2
+    rows 2-4 are recorded by the latest retained Light/Dark reports, rows
+    5.1-5.2 are recorded, and row 5.3 has no current named executable gap.
+    The named 5.4 candidate is the copied User Dashboard
+    `ImageIdToBrushConverter` source-shape adapter compared with local
+    official source
+    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Helpers\ImageIdToBrushConverter.cs`.
+    The local converter now keeps the official `string imageKey` local-variable
+    type shape before `Application.Current.Resources[imageKey]` while retaining
+    the WPF compatibility fallback for `null` and numeric image IDs.
+- `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.UserDashboardConvertersKeepOfficialVisibilityAndImageBrushSourceShape|FullyQualifiedName~GalleryApplicationResourceTests.UserDashboardImageConverterResolvesWpfGalleryPageStyleBrushes" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 2 tests per
+    target after aligning the source-shape declaration and preserving the
+    converter behavior for `p91`, `91`, and `null`. Existing warning/output
+    remains `NU1903`, generated WinRT/ModernWpf warnings, and recurring
+    `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 80 tests per
+    target after adding the User Dashboard converter source-shape guard.
+    Existing warning/output remains `NU1903` and recurring
+    `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet build .\ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after
+    the User Dashboard converter source-shape guard, with 19 existing warnings
+    and 0 errors. Recurring output still includes
+    `Failed to resolve WinRT.Runtime.dll`.
+- `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~TrackerPriorityTests" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 3 tests per
+    target after updating the tracker current pointer and Current Order Lock
+    for the User Dashboard converter source-shape guard. Existing
+    warning/output remains `NU1903` and recurring
+    `Failed to resolve WinRT.Runtime.dll` messages.
+- `git diff --check`
+  - Passed after the User Dashboard converter source-shape guard and tracker
+    update, with only the existing LF/CRLF working-copy warnings for touched
+    files.
 - `git status --short`
   - Before updating this tracker for the current round, only the
     visual-harness script and its source-shape guard tests were modified.
