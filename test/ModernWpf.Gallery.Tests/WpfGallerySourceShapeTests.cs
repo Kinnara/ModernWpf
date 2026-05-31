@@ -1141,7 +1141,7 @@ namespace ModernWpf.Gallery.Tests
             AssertContainsInOrder(
                 mainWindowXaml,
                 "<Style x:Key=\"TitleBarDefaultButtonStyle\" BasedOn=\"{StaticResource BorderlessButtonStyle}\" TargetType=\"Button\">",
-                "<Setter Property=\"winShell:WindowChrome.IsHitTestVisibleInChrome\" Value=\"True\" />",
+                "<Setter Property=\"WindowChrome.IsHitTestVisibleInChrome\" Value=\"True\" />",
                 "<Setter Property=\"Border.CornerRadius\" Value=\"0\" />",
                 "<Style x:Key=\"TitleBarDefaultCloseButtonStyle\" BasedOn=\"{StaticResource TitleBarDefaultButtonStyle}\" TargetType=\"Button\">");
             AssertContainsInOrder(
@@ -1174,8 +1174,11 @@ namespace ModernWpf.Gallery.Tests
                 "Style=\"{StaticResource BorderlessButtonStyle}\"",
                 "Command=\"{Binding ViewModel.BackCommand}\"",
                 "IsEnabled=\"{Binding ViewModel.CanNavigateback}\"",
-                "winShell:WindowChrome.IsHitTestVisibleInChrome=\"True\"",
+                "WindowChrome.IsHitTestVisibleInChrome=\"True\"",
                 "ToolTipService.ToolTip=\"Back\"");
+            Assert.IsFalse(
+                mainWindowXaml.Contains("winShell:WindowChrome.IsHitTestVisibleInChrome", StringComparison.Ordinal),
+                "The title-bar hit-test attached property should keep the official WPF Gallery WindowChrome source shape without a local XML namespace prefix.");
             AssertContainsInOrder(
                 mainWindowXaml,
                 "Text=\"&#xE72B;\"",
