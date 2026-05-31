@@ -193,6 +193,73 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void MappedWpfGalleryModelsKeepOfficialPublicPropertyNamesFromLocalSource()
+        {
+            var repoRoot = GetRepoRoot();
+            var officialModelsRoot = @"D:\repos\WPF-Samples\Sample Applications\WPFGallery\Models";
+            if (!Directory.Exists(officialModelsRoot))
+            {
+                Assert.Inconclusive("Local official WPF Gallery source was not found at " + officialModelsRoot + ".");
+            }
+
+            var modelMappings = new[]
+            {
+                new
+                {
+                    OfficialFileName = "Product.cs",
+                    OfficialClassName = "Product",
+                    LocalRelativePath = Path.Combine("ModernWpf.Gallery", "Models", "Product.cs")
+                },
+                new
+                {
+                    OfficialFileName = "Person.cs",
+                    OfficialClassName = "Person",
+                    LocalRelativePath = Path.Combine("ModernWpf.Gallery", "Models", "Person.cs")
+                },
+                new
+                {
+                    OfficialFileName = "IconsData.cs",
+                    OfficialClassName = "IconData",
+                    LocalRelativePath = Path.Combine("ModernWpf.Gallery", "Pages", "WpfGallery", "DesignGuidance", "IconData.cs")
+                },
+                new
+                {
+                    OfficialFileName = "User.cs",
+                    OfficialClassName = "User",
+                    LocalRelativePath = Path.Combine("ModernWpf.Gallery", "Pages", "WpfGallery", "Samples", "UserDashboardUser.cs")
+                }
+            };
+            var missingProperties = new List<string>();
+            var officialPropertyCount = 0;
+
+            foreach (var mapping in modelMappings)
+            {
+                var officialPath = Path.Combine(officialModelsRoot, mapping.OfficialFileName);
+                var localPath = Path.Combine(repoRoot, mapping.LocalRelativePath);
+                var officialProperties = GetPublicPropertyNames(File.ReadAllText(officialPath)).ToArray();
+                var localProperties = new HashSet<string>(
+                    GetPublicPropertyNames(File.ReadAllText(localPath)),
+                    StringComparer.Ordinal);
+
+                officialPropertyCount += officialProperties.Length;
+                foreach (var propertyName in officialProperties)
+                {
+                    if (!localProperties.Contains(propertyName))
+                    {
+                        missingProperties.Add(mapping.OfficialClassName + "." + propertyName + " -> " + mapping.LocalRelativePath);
+                    }
+                }
+            }
+
+            Assert.AreEqual(4, modelMappings.Length, "The copied/adapted WPF Gallery model mapping count changed; update the 5.4 model property scan deliberately.");
+            Assert.AreEqual(27, officialPropertyCount, "The official copied/adapted WPF Gallery model public property count changed; update the 5.4 model property scan deliberately.");
+            Assert.AreEqual(
+                0,
+                missingProperties.Count,
+                "Missing official 5.4 model property names from local official source:\n" + string.Join("\n", missingProperties));
+        }
+
+        [TestMethod]
         public void CopiedWpfGalleryCodeBehindClassesStayUnsealedLikeOfficialSource()
         {
             var repoRoot = GetRepoRoot();
@@ -283,6 +350,16 @@ namespace ModernWpf.Gallery.Tests
 
             return className == "MainWindowViewModel"
                 && (fieldName == "_controls" || fieldName == "_selectedControl");
+        }
+
+        private static IEnumerable<string> GetPublicPropertyNames(string source)
+        {
+            return Regex
+                .Matches(
+                    source,
+                    "(?m)^\\s*public\\s+(?!class\\b)(?!record\\b)(?!event\\b)[^\\r\\n(]+?\\s+(\\w+)\\s*(?:\\{|=>)")
+                .Cast<Match>()
+                .Select(match => match.Groups[1].Value);
         }
 
         private static string GetOfficialCodeBehindSummaryName(string className, string xamlFileName)
