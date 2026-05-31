@@ -409,7 +409,14 @@ namespace ModernWpf.Gallery.Tests
                 "private void ApplyTagFilter(string tag)",
                 "var trimmedTag = tag.Trim();",
                 "if (string.Equals(trimmedTag, SearchText, StringComparison.Ordinal))",
-                "SearchText = trimmedTag;");
+                "SearchText = trimmedTag;",
+                "private void PreviousPage()",
+                "private bool CanGoToPreviousPage() => CurrentPage > 1;",
+                "private void NextPage()",
+                "private bool CanGoToNextPage() => CurrentPage < TotalPages;",
+                "private void UpdateDisplayedIcons(bool resetSelectedIcon = true)",
+                "var skip = (CurrentPage - 1) * pageSize;",
+                "var iconsToDisplay = pageSize == int.MaxValue");
             Assert.IsFalse(
                 iconographySource.Contains("public event PropertyChangedEventHandler", StringComparison.Ordinal),
                 "Iconography should use the shared observable page-view-model adapter instead of local event plumbing.");

@@ -217,10 +217,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
             }
         }
 
-        private bool CanGoToPreviousPage()
-        {
-            return CurrentPage > 1;
-        }
+        private bool CanGoToPreviousPage() => CurrentPage > 1;
 
         private void NextPage()
         {
@@ -231,10 +228,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
             }
         }
 
-        private bool CanGoToNextPage()
-        {
-            return CurrentPage < TotalPages;
-        }
+        private bool CanGoToNextPage() => CurrentPage < TotalPages;
 
         private void UpdatePagination(bool resetSelectedIcon = true)
         {
@@ -258,9 +252,10 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
             DisplayedIcons.Clear();
 
             var pageSize = PageSize;
+            var skip = (CurrentPage - 1) * pageSize;
             var iconsToDisplay = pageSize == int.MaxValue
                 ? SearchFilteredIcons
-                : SearchFilteredIcons.Skip((CurrentPage - 1) * pageSize).Take(pageSize);
+                : SearchFilteredIcons.Skip(skip).Take(pageSize);
 
             foreach (var icon in iconsToDisplay)
             {
