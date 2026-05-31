@@ -4,6 +4,9 @@ using System.Windows.Markup;
 
 namespace ModernWpf.Gallery.Controls
 {
+    /// <summary>
+    /// Interaction logic for ColorPageExample.xaml
+    /// </summary>
     [ContentProperty(nameof(ExampleContent))]
     public partial class ColorPageExample : UserControl
     {

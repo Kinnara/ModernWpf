@@ -1877,6 +1877,7 @@ namespace ModernWpf.Gallery.Tests
                 "HeaderTile should keep the official SystemEvents_UserPreferenceChanged handler name.");
             AssertContainsInOrder(
                 source,
+                "/// Interaction logic for HeaderTile.xaml",
                 "InitializeComponent();",
                 "UpdateButtonResources();",
                 "SystemEvents.UserPreferenceChanged += SystemEvents_UserPreferenceChanged;",
@@ -2047,6 +2048,7 @@ namespace ModernWpf.Gallery.Tests
                 "ColorPageExample.cs");
             AssertContainsInOrder(
                 code,
+                "/// Interaction logic for ColorPageExample.xaml",
                 "[ContentProperty(nameof(ExampleContent))]",
                 "public partial class ColorPageExample : UserControl",
                 "public string Description",
@@ -2131,6 +2133,7 @@ namespace ModernWpf.Gallery.Tests
 
             AssertContainsInOrder(
                 source,
+                "/// Interaction logic for ColorTile.xaml",
                 "public partial class ColorTile : UserControl",
                 "static ColorTile()",
                 "CommandManager.RegisterClassCommandBinding(typeof(ColorTile), new CommandBinding(ApplicationCommands.Copy, Copy_ColorBrushName));",
@@ -2150,9 +2153,11 @@ namespace ModernWpf.Gallery.Tests
                 "public static readonly DependencyProperty ColorValueProperty",
                 "DependencyProperty.Register(\"ColorValue\", typeof(string), typeof(ColorTile), new PropertyMetadata(\"\"));",
                 "public bool ShowSeparator",
+                "// Using a DependencyProperty as the backing store for ShowSeparator.  This enables animation, styling, binding, etc...",
                 "public static readonly DependencyProperty ShowSeparatorProperty",
                 "DependencyProperty.Register(\"ShowSeparator\", typeof(bool), typeof(ColorTile), new PropertyMetadata(true));",
                 "public bool ShowWarning",
+                "// Using a DependencyProperty as the backing store for ShowSeparator.  This enables animation, styling, binding, etc...",
                 "public static readonly DependencyProperty ShowWarningProperty",
                 "DependencyProperty.Register(\"ShowWarning\", typeof(bool), typeof(ColorTile), new PropertyMetadata(false));",
                 "private static void Copy_ColorBrushName(object sender, RoutedEventArgs e)",

@@ -7,6 +7,9 @@ using System.Windows.Input;
 
 namespace ModernWpf.Gallery.Controls
 {
+    /// <summary>
+    /// Interaction logic for ColorTile.xaml
+    /// </summary>
     public partial class ColorTile : UserControl
     {
         static ColorTile()
@@ -65,6 +68,7 @@ namespace ModernWpf.Gallery.Controls
             set { SetValue(ShowSeparatorProperty, value); }
         }
 
+        // Using a DependencyProperty as the backing store for ShowSeparator.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty ShowSeparatorProperty =
             DependencyProperty.Register("ShowSeparator", typeof(bool), typeof(ColorTile), new PropertyMetadata(true));
 
@@ -74,6 +78,7 @@ namespace ModernWpf.Gallery.Controls
             set { SetValue(ShowWarningProperty, value); }
         }
 
+        // Using a DependencyProperty as the backing store for ShowSeparator.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty ShowWarningProperty =
             DependencyProperty.Register("ShowWarning", typeof(bool), typeof(ColorTile), new PropertyMetadata(false));
 

@@ -10,6 +10,9 @@ using ModernWpf;
 
 namespace ModernWpf.Gallery.Controls
 {
+    /// <summary>
+    /// Interaction logic for HeaderTile.xaml
+    /// </summary>
     public partial class HeaderTile : UserControl
     {
         public HeaderTile()
