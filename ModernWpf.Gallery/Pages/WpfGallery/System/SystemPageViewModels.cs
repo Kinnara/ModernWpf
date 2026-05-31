@@ -94,7 +94,7 @@ private void ShowWarningButton_Click(object sender, RoutedEventArgs e)
         private string _customDefaultResult = "No selection made";
 
         public MessageBoxPageViewModel()
-            : base("MessageBox", string.Empty)
+            : base("MessageBox", "")
         {
         }
 
@@ -247,15 +247,15 @@ private void ShowWarningButton_Click(object sender, RoutedEventArgs e)
 
     public partial class ClipboardPageViewModel : SystemPageViewModelBase
     {
-        private string _copyStatus = string.Empty;
-        private string _pastedText = string.Empty;
-        private string _clearStatus = string.Empty;
-        private string _formatsInfo = string.Empty;
-        private string _copyImageStatus = string.Empty;
-        private string _pasteImageStatus = string.Empty;
+        private string _copyStatus = "";
+        private string _pastedText = "";
+        private string _clearStatus = "";
+        private string _formatsInfo = "";
+        private string _copyImageStatus = "";
+        private string _pasteImageStatus = "";
 
         public ClipboardPageViewModel()
-            : base("Clipboard", string.Empty)
+            : base("Clipboard", "")
         {
         }
 

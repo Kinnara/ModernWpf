@@ -496,6 +496,8 @@ namespace ModernWpf.Gallery.Tests
                 "private string _commonMessagesCSharpCode = @\"// Information",
                 "    MessageBox.Show(\"\"Operation completed successfully.\"\", \"\"Information\"\", MessageBoxButton.OK, MessageBoxImage.Information);",
                 "private string _customDefaultResult = \"No selection made\";",
+                "public MessageBoxPageViewModel()",
+                ": base(\"MessageBox\", \"\")",
                 "public string DifferentButtonsXamlCode",
                 "private set { SetProperty(ref _differentButtonsXamlCode, value); }",
                 "public string DifferentImagesXamlCode",
@@ -523,14 +525,14 @@ namespace ModernWpf.Gallery.Tests
             AssertContainsInOrder(
                 source,
                 "public partial class ClipboardPageViewModel : SystemPageViewModelBase",
-                "private string _copyStatus = string.Empty;",
-                "private string _pastedText = string.Empty;",
-                "private string _clearStatus = string.Empty;",
-                "private string _formatsInfo = string.Empty;",
-                "private string _copyImageStatus = string.Empty;",
-                "private string _pasteImageStatus = string.Empty;",
+                "private string _copyStatus = \"\";",
+                "private string _pastedText = \"\";",
+                "private string _clearStatus = \"\";",
+                "private string _formatsInfo = \"\";",
+                "private string _copyImageStatus = \"\";",
+                "private string _pasteImageStatus = \"\";",
                 "public ClipboardPageViewModel()",
-                ": base(\"Clipboard\", string.Empty)");
+                ": base(\"Clipboard\", \"\")");
             Assert.IsFalse(
                 source.Contains("public event PropertyChangedEventHandler", StringComparison.Ordinal),
                 "System view models should use the shared observable page-view-model adapter instead of local event plumbing.");
