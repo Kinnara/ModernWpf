@@ -179,8 +179,13 @@ namespace ModernWpf.Gallery.Shell
                 return NavigationTarget.Home();
             }
 
-            var normalized = NormalizeNavigationValue(navigationValue.Trim(), out var linkKind);
+            var normalized = GalleryCatalog.NormalizeLookupId(NormalizeNavigationValue(navigationValue.Trim(), out var linkKind));
             if (string.IsNullOrWhiteSpace(normalized))
+            {
+                return NavigationTarget.Home();
+            }
+
+            if (string.Equals(normalized, "Home", StringComparison.OrdinalIgnoreCase))
             {
                 return NavigationTarget.Home();
             }

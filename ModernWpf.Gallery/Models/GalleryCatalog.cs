@@ -107,6 +107,26 @@ namespace ModernWpf.Gallery.Models
             "TitleBar"
         };
 
+        private static readonly IReadOnlyDictionary<string, string> WpfGalleryLookupAliases = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            { "All Controls", "AllControls" },
+            { "What's New", "WhatsNew" },
+            { "Whats New", "WhatsNew" },
+            { "NewControls", "Home" },
+            { "Design Guidance", "DesignGuidance" },
+            { "Basic Input", "BasicInput" },
+            { "Date & Calendar", "DateAndCalendar" },
+            { "Date and Calendar", "DateAndCalendar" },
+            { "Status & Info", "StatusAndInfo" },
+            { "Status and Info", "StatusAndInfo" },
+            { "Media Controls", "Media" },
+            { "ModernWpf controls", "ModernWpfControls" },
+            { "File and Folder Dialogs", "FileAndFolderDialogs" },
+            { "Colors", "Color" },
+            { "Icons", "Iconography" },
+            { "User Dashboard", "UserDashboard" }
+        };
+
         private static readonly IReadOnlyList<GalleryItem> CatalogItems = CreateItems();
         private static readonly IReadOnlyList<GalleryGroup> DisplayGroups = CreateDisplayGroups();
 
@@ -142,19 +162,34 @@ namespace ModernWpf.Gallery.Models
 
         public static GalleryGroup FindGroup(string uniqueId)
         {
+            uniqueId = NormalizeLookupId(uniqueId);
             return Groups.FirstOrDefault(group => string.Equals(group.UniqueId, uniqueId, StringComparison.OrdinalIgnoreCase))
                 ?? SourceGroups.FirstOrDefault(group => string.Equals(group.UniqueId, uniqueId, StringComparison.OrdinalIgnoreCase));
         }
 
         public static GalleryGroup FindDisplayGroupForItem(string uniqueId)
         {
+            uniqueId = NormalizeLookupId(uniqueId);
             return Groups.FirstOrDefault(group => group.Items.Any(item => string.Equals(item.UniqueId, uniqueId, StringComparison.OrdinalIgnoreCase)));
         }
 
         public static GalleryItem FindItem(string uniqueId)
         {
-            uniqueId = NormalizeItemLookupId(uniqueId);
+            uniqueId = NormalizeLookupId(uniqueId);
             return Items.FirstOrDefault(item => string.Equals(item.UniqueId, uniqueId, StringComparison.OrdinalIgnoreCase));
+        }
+
+        public static string NormalizeLookupId(string uniqueId)
+        {
+            if (string.IsNullOrWhiteSpace(uniqueId))
+            {
+                return uniqueId;
+            }
+
+            uniqueId = uniqueId.Trim();
+            return WpfGalleryLookupAliases.TryGetValue(uniqueId, out var normalizedId)
+                ? normalizedId
+                : uniqueId;
         }
 
         public static IReadOnlyList<GalleryItem> Search(string query)
@@ -182,31 +217,6 @@ namespace ModernWpf.Gallery.Models
                     wpfItems.All(wpfItem => !string.Equals(sourceItem.UniqueId, wpfItem.UniqueId, StringComparison.OrdinalIgnoreCase))))
                 .ToArray();
             return NormalizeRelatedControlIds(items);
-        }
-
-        private static string NormalizeItemLookupId(string uniqueId)
-        {
-            if (string.Equals(uniqueId, "File and Folder Dialogs", StringComparison.OrdinalIgnoreCase))
-            {
-                return "FileAndFolderDialogs";
-            }
-
-            if (string.Equals(uniqueId, "Colors", StringComparison.OrdinalIgnoreCase))
-            {
-                return "Color";
-            }
-
-            if (string.Equals(uniqueId, "Icons", StringComparison.OrdinalIgnoreCase))
-            {
-                return "Iconography";
-            }
-
-            if (string.Equals(uniqueId, "User Dashboard", StringComparison.OrdinalIgnoreCase))
-            {
-                return "UserDashboard";
-            }
-
-            return uniqueId;
         }
 
         private static bool IsOverviewGroup(GalleryGroup group)

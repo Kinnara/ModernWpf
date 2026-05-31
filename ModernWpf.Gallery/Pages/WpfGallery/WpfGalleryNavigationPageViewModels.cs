@@ -208,7 +208,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery
     public partial class DesignGuidancePageViewModel : WpfGalleryNavigationPageViewModel
     {
         public DesignGuidancePageViewModel(Action<object> navigate)
-            : base("Design Guidance", "Design guidelines on how to use colors, typography, and icons in your app.", GetControlsInfo("DesignGuidance"), navigate)
+            : base("Design Guidance", "Design guidelines on how to use colors, typography, and icons in your app.", GetControlsInfo("Design Guidance"), navigate)
         {
         }
     }
@@ -224,7 +224,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery
     public partial class BasicInputPageViewModel : WpfGalleryNavigationPageViewModel
     {
         public BasicInputPageViewModel(Action<object> navigate)
-            : base("Basic Input", "Controls for getting user input", GetControlsInfo("BasicInput"), navigate)
+            : base("Basic Input", "Controls for getting user input", GetControlsInfo("Basic Input"), navigate)
         {
         }
     }
@@ -240,7 +240,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery
     public partial class DateAndTimePageViewModel : WpfGalleryNavigationPageViewModel
     {
         public DateAndTimePageViewModel(Action<object> navigate)
-            : base("Date & Calendar", "Controls for date and calendar", GetControlsInfo("DateAndCalendar"), navigate)
+            : base("Date & Calendar", "Controls for date and calendar", GetControlsInfo("Date & Calendar"), navigate)
         {
         }
     }
@@ -272,7 +272,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery
     public partial class StatusAndInfoPageViewModel : WpfGalleryNavigationPageViewModel
     {
         public StatusAndInfoPageViewModel(Action<object> navigate)
-            : base("Status & Info", "Controls to show progress and extra information", GetControlsInfo("StatusAndInfo"), navigate)
+            : base("Status & Info", "Controls to show progress and extra information", GetControlsInfo("Status & Info"), navigate)
         {
         }
     }

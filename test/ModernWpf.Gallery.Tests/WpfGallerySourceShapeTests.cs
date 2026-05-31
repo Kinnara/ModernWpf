@@ -533,6 +533,15 @@ namespace ModernWpf.Gallery.Tests
                     source,
                     "public partial class " + className + " : WpfGalleryNavigationPageViewModel");
             }
+
+            StringAssert.Contains(source, "GetControlsInfo(\"Design Guidance\")");
+            StringAssert.Contains(source, "GetControlsInfo(\"Basic Input\")");
+            StringAssert.Contains(source, "GetControlsInfo(\"Date & Calendar\")");
+            StringAssert.Contains(source, "GetControlsInfo(\"Status & Info\")");
+            Assert.IsFalse(source.Contains("GetControlsInfo(\"DesignGuidance\")", StringComparison.Ordinal));
+            Assert.IsFalse(source.Contains("GetControlsInfo(\"BasicInput\")", StringComparison.Ordinal));
+            Assert.IsFalse(source.Contains("GetControlsInfo(\"DateAndCalendar\")", StringComparison.Ordinal));
+            Assert.IsFalse(source.Contains("GetControlsInfo(\"StatusAndInfo\")", StringComparison.Ordinal));
         }
 
         [TestMethod]

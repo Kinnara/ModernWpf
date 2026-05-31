@@ -37,6 +37,36 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [DataTestMethod]
+        [DataRow("category/Design%20Guidance", "DesignGuidance")]
+        [DataRow("category/Basic%20Input", "BasicInput")]
+        [DataRow("category/Date%20%26%20Calendar", "DateAndCalendar")]
+        [DataRow("category/Status%20%26%20Info", "StatusAndInfo")]
+        [DataRow("winui3gallery://category/Date%20%26%20Calendar", "DateAndCalendar")]
+        public void ResolveNavigationTargetAcceptsOfficialWpfGalleryCategoryIds(string value, string expectedUniqueId)
+        {
+            var target = NavigationRootPage.ResolveNavigationTarget(value);
+
+            Assert.IsNotNull(target);
+            Assert.AreEqual(NavigationTargetKind.Group, target.Kind);
+            Assert.AreEqual(expectedUniqueId, target.UniqueId);
+        }
+
+        [DataTestMethod]
+        [DataRow("item/Colors", "Color")]
+        [DataRow("item/Icons", "Iconography")]
+        [DataRow("item/File%20and%20Folder%20Dialogs", "FileAndFolderDialogs")]
+        [DataRow("item/User%20Dashboard", "UserDashboard")]
+        [DataRow("winui3gallery://item/File%20and%20Folder%20Dialogs", "FileAndFolderDialogs")]
+        public void ResolveNavigationTargetAcceptsOfficialWpfGalleryItemIds(string value, string expectedUniqueId)
+        {
+            var target = NavigationRootPage.ResolveNavigationTarget(value);
+
+            Assert.IsNotNull(target);
+            Assert.AreEqual(NavigationTargetKind.Item, target.Kind);
+            Assert.AreEqual(expectedUniqueId, target.UniqueId);
+        }
+
+        [DataTestMethod]
         [DataRow("")]
         [DataRow(" ")]
         [DataRow("NewControls")]
@@ -55,6 +85,18 @@ namespace ModernWpf.Gallery.Tests
 
             Assert.IsNotNull(target);
             Assert.AreEqual(NavigationTargetKind.AllControls, target.Kind);
+        }
+
+        [DataTestMethod]
+        [DataRow("Home", "Home")]
+        [DataRow("All Controls", "AllControls")]
+        [DataRow("item/All%20Controls", "AllControls")]
+        public void ResolveNavigationTargetAcceptsOfficialWpfGalleryTopLevelIds(string value, string expectedKind)
+        {
+            var target = NavigationRootPage.ResolveNavigationTarget(value);
+
+            Assert.IsNotNull(target);
+            Assert.AreEqual(expectedKind, target.Kind.ToString());
         }
 
         [DataTestMethod]

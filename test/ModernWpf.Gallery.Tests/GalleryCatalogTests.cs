@@ -120,6 +120,37 @@ namespace ModernWpf.Gallery.Tests
             CollectionAssert.AreEqual(expected, actual);
         }
 
+        [DataTestMethod]
+        [DataRow("Design Guidance", "DesignGuidance")]
+        [DataRow("Basic Input", "BasicInput")]
+        [DataRow("Date & Calendar", "DateAndCalendar")]
+        [DataRow("Status & Info", "StatusAndInfo")]
+        [DataRow("Media Controls", "Media")]
+        [DataRow("ModernWpf controls", "ModernWpfControls")]
+        public void FindGroupAcceptsOfficialAndDisplayedUniqueIds(string lookupId, string expectedUniqueId)
+        {
+            var group = GalleryCatalog.FindGroup(lookupId);
+
+            Assert.IsNotNull(group);
+            Assert.AreEqual(expectedUniqueId, group.UniqueId);
+        }
+
+        [DataTestMethod]
+        [DataRow("Colors", "Color", "DesignGuidance")]
+        [DataRow("Icons", "Iconography", "DesignGuidance")]
+        [DataRow("File and Folder Dialogs", "FileAndFolderDialogs", "System")]
+        [DataRow("User Dashboard", "UserDashboard", "Samples")]
+        public void FindItemAcceptsOfficialAndDisplayedUniqueIds(string lookupId, string expectedUniqueId, string expectedGroupId)
+        {
+            var item = GalleryCatalog.FindItem(lookupId);
+            var group = GalleryCatalog.FindDisplayGroupForItem(lookupId);
+
+            Assert.IsNotNull(item);
+            Assert.AreEqual(expectedUniqueId, item.UniqueId);
+            Assert.IsNotNull(group);
+            Assert.AreEqual(expectedGroupId, group.UniqueId);
+        }
+
         [TestMethod]
         public void HomeOverviewGroupsMatchWpfGalleryReference()
         {
