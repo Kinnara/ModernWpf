@@ -39,6 +39,20 @@ After selecting a rank here, use a subordinate queue only when this block names
 it explicitly: `P2 Subqueue`, then `P2 Row 5 Internal Queue` when rank 8 is the
 first executable substantive row.
 
+Current active selection snapshot:
+
+1. The user-requested priority/order hygiene edit is recorded by this ordering
+   update. It is inactive again unless a new priority/order conflict appears.
+2. After that tracker-only edit, the next substantive executable path is
+   **rank 8 -> P2 Subqueue row 5 -> P2 Row 5 Internal Queue row 5.3**.
+3. Ranks 2-7 are not skipped. They are recorded or inactive for the current
+   branch tip and must be rechecked before every new substantive batch.
+4. P2 rows 2-4 are recorded for the current branch tip. P2 row 6 and general
+   tracker cleanup remain blocked while row 5 has executable work.
+5. Inside row 5, rows 5.1 and 5.2 are recorded for the current branch tip.
+   Row 5.3 is the active substantive row; rows 5.4 and 5.5 stay blocked while
+   any row 5.3 visual/runtime/harness-facing gap is current.
+
 Use this block before every new work batch. It overrides any lower section that
 looks convenient or recently edited. This is a scheduling contract, not a
 progress summary. Before editing code, identify the winning rank below in the
@@ -68,7 +82,7 @@ Current decisive order, top row wins:
 
 | Rank | Bucket | Current branch-tip state | Next action |
 | --- | --- | --- | --- |
-| 1 | User-requested priority/order hygiene | Recorded for the current tracker-order clarification; inactive unless a new priority/order conflict appears. | Fix only the ordering text when reactivated, then return to the first substantive executable row. |
+| 1 | User-requested priority/order hygiene | Recorded by this user-requested tracker-order clarification; inactive unless a new priority/order conflict appears. | Fix only the ordering text when reactivated, then return to the first substantive executable row. |
 | 2 | P0.1 real OS High Contrast visual/harness evidence | Recorded for the latest accepted batch, but must be re-checked before every new batch. | If `SystemParameters.HighContrast = True` and new HC drift exists, run P0.1 first. |
 | 3 | P1 visible-drift and visual-harness stability | Recorded unless new visible or harness drift appears. | Reopen immediately for any new screenshot, crop, UIA, or harness failure. |
 | 4 | P1 retained ModernWpf/WinUI high-drift visuals, row 8 | Recorded through the strict row 8 subqueue, including `InfoBar` and `ProgressRing`. | Reopen only on new retained-control visual or harness evidence. |
@@ -123,9 +137,10 @@ Current allowed substantive row after this priority/order hygiene edit:
 7. P2 row 3 asset/thumbnail/visual-reference parity stays ahead of row 4.
 8. P2 row 4 measurement, interaction, automation, and harness-impacting parity
    runs only after rows 2 and 3 are recorded for the current branch tip.
-9. P2 rows 5 and 6, including source-shape/resource-key/naming/test cleanup and
-   pure tracker cleanup, remain blocked until rows 2-4 are recorded or not
-   applicable.
+9. P2 row 5 remains blocked until rows 2-4 are recorded or not applicable.
+   Because rows 2-4 are recorded for the current branch tip, row 5 is the next
+   substantive P2 row. P2 row 6, including pure tracker/status cleanup, remains
+   blocked until row 5 is recorded or explicitly not applicable.
 
 ## Goal
 
@@ -134,17 +149,12 @@ all WPF Gallery-equivalent pages and controls, while keeping ModernWpf and
 WinUI-style controls such as `NavigationView` where they fit the WinUI Gallery
 interaction model.
 
-## Hard Execution Queue
+## Supporting Execution Queue Snapshot
 
-This section is the active queue for all remaining Milestone 1 work and must be
-read before resuming implementation. Treat it as a scheduler, not a summary:
-pick the first row below that is executable, and do not work on any lower row
-unless every higher row is either `Done` or has a recorded blocker that cannot
-be changed from this environment.
-
-This table is subordinate to `Current Order Lock`. Keep it aligned with the
-decisive rank table above, but do not use this older queue name to override the
-top-level order. Later tracker sections are evidence and detail only; they
+This section is a supporting snapshot, not the scheduler. The active scheduler
+for all remaining Milestone 1 work is `Current Order Lock` above. Keep this
+snapshot aligned with the decisive rank table, but do not use it to override
+the top-level order. Later tracker sections are evidence and detail only; they
 cannot be used to reprioritize lower cleanup, source-shape, resource-key, or
 documentation work ahead of the first executable row in the current order lock.
 
@@ -243,11 +253,11 @@ this milestone round.
 
 ### P2 Subqueue
 
-Use this table only when execution order row 9 is the first executable row.
-This table is the exclusive P2 execution order, not a menu. The active item is
-the first row below that is `Current` or has newly discovered evidence. Do not
-skip to row 5 or row 6 while rows 2-4 have a current, newly discovered, or
-unreviewed visual-supporting item.
+Use this table only when the `Current Order Lock` selects P2 as the first
+executable substantive bucket. This table is the exclusive P2 execution order,
+not a menu. The active item is the first row below that is `Current` or has
+newly discovered evidence. Do not skip to row 5 or row 6 while rows 2-4 have a
+current, newly discovered, or unreviewed visual-supporting item.
 
 Current P2 state:
 
@@ -282,7 +292,7 @@ Current P2 state:
 
 | P2 order | Bucket | State | Allowed next work |
 | --- | --- | --- | --- |
-| 1 | Priority/order hygiene | Use only when order/status text conflicts or the user requests priority clarification. | Edit this tracker only to remove priority ambiguity or stale execution state, then return to the first substantive P2 row. Do not perform unrelated source cleanup under this bucket. |
+| 1 | Priority/order hygiene | Recorded by this user-requested tracker-order clarification; inactive unless order/status text conflicts or the user requests priority clarification again. | Edit this tracker only to remove priority ambiguity or stale execution state, then return to the first substantive P2 row. Do not perform unrelated source cleanup under this bucket. |
 | 2 | Visual and high-drift freshness | Recorded for the current branch tip by the P0/P1 evidence above plus the latest retained-control Light/Dark refreshes in Row 8 and Latest local verification. | Reopen P0/P1/row 8 immediately if refreshed evidence shows new visual, High Contrast, high-drift, or harness drift. Do not continue row 4 or lower work until current visual/high-drift evidence is written here. |
 | 3 | Asset, thumbnail, and visual-reference parity locks | Recorded for the current active references: non-`ControlImages` references are shipped and hash-locked, WPF-equivalent catalog `ControlImages` are official-hash locked, and retained catalog `ControlImages` still match the packaged resource set. | Reopen only for new visual asset evidence, a new active image reference, or a new catalog thumbnail/resource gap. |
 | 4 | Measurement, typography, spacing, keyboard, automation, and harness-impacting parity | Recorded at branch tip. Typography/Spacing/Geometry/Iconography, Color, remaining WPF-equivalent section/item Light/Dark measurement evidence, and the focused automation/harness verifier are current. | Reopen only for new named measurement, interaction, automation, or harness-impacting evidence. |
@@ -295,6 +305,18 @@ Use this table only when `P2 Subqueue` row 5 is the first executable row. This
 is a hard order, not a menu. Pick the first current or newly discovered item
 below; do not choose a lower row because it is smaller, easier, or recently
 touched.
+
+Current row 5 decision:
+
+1. Reopen 5.1 only for a new named sample-pane or runtime-visible example-content
+   gap.
+2. Reopen 5.2 only for a new named structural gap that can affect visible
+   layout, resources, keyboard, interaction, automation, or visual-harness
+   behavior.
+3. Otherwise 5.3 is the active row. Choose only resource-key, naming, selector,
+   or source-hook parity that can affect visible behavior, runtime behavior, or
+   harness evidence.
+4. Rows 5.4 and 5.5 are blocked while any 5.3 item is current.
 
 | Row 5 order | Bucket | State | Allowed next work |
 | --- | --- | --- | --- |
@@ -4001,7 +4023,7 @@ acceptance is not closed, usually because a row records a non-actionable
 rendering residual or a future refreshed visual slice is still milestone-open.
 Current real OS High Contrast evidence is recorded in P0.1. This field is not a
 scheduler and does not reopen source-shape, resource-key, or selector cleanup
-ahead of the `Hard Execution Queue`.
+ahead of the `Current Order Lock`.
 
 | Page or group | Structural tests | Exact source audit | Visual checked | Notes |
 | --- | --- | --- | --- | --- |
@@ -4009,7 +4031,7 @@ ahead of the `Hard Execution Queue`.
 | What's New | Done | Done | Partial | Adapted from official WPF Gallery XAML/code strings with shared `PageHeader`, `WhatsNewPageViewModel`, local navigation, official `ContentPagePane` / `Height="Auto"` root shape, inherited root body font sizing, official-style unstyled paragraph TextBlocks, the official `comma&#x2011;separated` Grid shorthand copy, accent-resource integration, and no local-only sample-level `x:Name` hooks beyond the official root; representative official declaration source shape is now covered for compact root namespace/title/design declarations, page resources, `ContentPagePane`, PageHeader, ScrollViewer, body title/subtitle TextBlocks, wrapped paragraphs, `ControlExample` margins, external-link text blocks, Accent/ligature sections, ligature sample TextBlocks, compact live Grid sample child `TextBlock` declarations, and compact accent swatches while retaining the ModernWpf root-style, expanded WPF-target Grid-definition, and accent-resource adapters. Sample headers/snippets, root body font inheritance, root source shape, accent swatch resources, copied code-behind `ViewModel` member order, direct external-link `Process.Start(new ProcessStartInfo(...) { UseShellExecute = true })` handlers, and header template/bindings are runtime-covered. Latest direct-reference Light visual audit recorded at `artifacts/wpf-gallery-visual-audit/20260529-022506-025-65744/report.md` with Modern/official both `Passed`, matching `868x758` crops, and delta `0`; latest direct-reference Dark visual audit recorded at `artifacts/wpf-gallery-visual-audit/20260529-022607-305-45960/report.md` with delta `0`. The previous lower-delta `20260523-083720` / `20260523-083836` artifacts remain historical pre-refresh evidence. Latest ModernWpf-only Light visual audit recorded at `artifacts/wpf-gallery-visual-audit/20260523-061306/report.md` with Modern `Passed`, crop `868x758`, first-viewport UIA matching accepted official geometry, and scrollbar `1203,217,12,638`. Older official-shell Light comparison remains `artifacts/wpf-gallery-visual-audit/20260522-112027/report.md` with delta `14.83`. |
 | All Controls | Partial | Partial | Partial | Runtime shell checks plus adapted `PageHeader`, navigation-card resources, official-style `AllSamplesPageViewModel`, `ViewModel.*` bindings, `ViewModel.NavigateCommand` card commands, All Controls catalog filtering, and the full official WPF Gallery card order from Colors through Clipboard now exist; representative official `AllSamplesPage` root namespace/title declarations without local design-time dimensions, root row, PageHeader, ScrollViewer, navigation-card `ItemsControl` declaration order, and copied code-behind `ViewModel` member-before-constructor order are now source-shape covered while retaining the ModernWpf root-style adapter and default constructor/navigation callbacks. The root no longer carries the local-only `ContentRootGrid` name, and the card list no longer keeps a local-only test name while restoring the official `Grid.Row="1"` attached value. Runtime coverage resolves both structurally through official automation/binding checks. Samples, Media, and ModernWpf/WinUI extension pages are excluded from All Controls to match the current official catalog content extent, while Media and extension pages remain available through their own combined-gallery sections. Latest Light direct-reference visual audit recorded at `artifacts/wpf-gallery-visual-audit/20260529-022506-025-65744/report.md` with delta `0` and matching `868x758` crops; latest Dark direct-reference visual audit recorded at `artifacts/wpf-gallery-visual-audit/20260529-022607-305-45960/report.md` with delta `0` and matching crops. The previous zero-delta `20260523-083720` / `20260523-083836` artifacts remain historical pre-refresh evidence, the pre-harness-fix `20260528-122158` / `20260528-122319` artifacts remain diagnostic evidence of the old one-pixel-short Modern fallback crop, and the intermediate `20260528-123828` / `20260528-123945` artifacts remain diagnostic evidence of shell-window crop offset before the rendered-root artifact. Normal official-shell route diagnostic recorded at `artifacts/wpf-gallery-visual-audit/20260523-073927/report.md`; refreshed ModernWpf-only Light artifact recorded at `artifacts/wpf-gallery-visual-audit/20260523-023958/report.md` verifies list extent `335,225,880,1996` and scrollbar thumb `1207,239,4,205`. |
 | Settings | Done | Partial | Done | The Settings page now uses the adapted official WPF Gallery `PageHeader`, WPF `Page` root, `SettingsPageViewModel` `ViewModel.PageTitle` / `ViewModel.PageDescription` binding shape, representative official copied declaration source shape for root namespace/title/design declarations, resource setters, header/scroll host, appearance card, theme selector, About card, dependency links, and warranty group, official initial theme ComboBox state (`Use system setting` / `SelectedIndex=2`), visual-test Light/Dark ComboBox state that mirrors the official app after audit theme switching, official expanded About content for the clone command, CommunityToolkit/DependencyInjection/Hosting dependency links, dependency-link automation names, quoted warranty text, copied code-behind `ViewModel` member-before-constructor order, direct official `Process.Start(new ProcessStartInfo(...){ UseShellExecute = true })` source shape plus official Services/Privacy/issues/toolkit/DI/hosting handler order for external links, and official selected-`ComboBoxItem` / selected-value theme handler flow while preserving ModernWpf's accepted root style, local asset URI, entity-escaped text, forced visual-test theme guard, and `ThemeManager` adapter. The root no longer carries the local-only `ContentRootGrid` name and is located structurally in source/runtime tests while retaining the accepted ModernWpf root style. Runtime coverage verifies the shared header template automation, bindings, About header text, official theme selection state, visual-test theme selection without applying the selection, expanded About copy/link parity, Settings link-handler and theme-handler source shape, no theme override during forced Dark launches, and user-driven Light/Dark/System theme selection through ModernWpf; latest Light visual audit recorded at `artifacts/wpf-gallery-visual-audit/20260529-022506-025-65744/report.md` with delta `0`, and latest Dark visual audit recorded at `artifacts/wpf-gallery-visual-audit/20260529-022607-305-45960/report.md` with delta `0`; both use matching `868x758` official direct-reference rendered artifacts. These supersede the earlier accepted `20260524-052524` / `20260524-052550` captures for current branch-tip evidence, while the pre-fix captures `artifacts/wpf-gallery-visual-audit/20260524-035938/report.md` and `artifacts/wpf-gallery-visual-audit/20260524-040007/report.md` remain historical cases where Modern still displayed `Use system setting` under forced Light/Dark visual-test launches, plus the diagnostic shared-folder attempt at `artifacts/wpf-gallery-visual-audit/20260524-052450/report.md`, pre-harness-fix `20260528-122158` / `20260528-122319` captures, and intermediate `20260528-123828` / `20260528-123945` shell-crop captures. |
-| Design Guidance section | Partial | Partial | Partial | Section page plus Color, Iconography, Typography, Spacing, and Geometry now use adapted official WPF Gallery page shells/XAML, WPF `Page` roots, official `Title` values, and page-specific view-model constructor injection. The copied pages keep official root/content shape, PageHeader/scroll-host shape, Color subsection support controls, Typography/Spacing/Geometry table and image layout details, Iconography resource/style/layout declarations, official icon dataset ordering, and direct-page runtime coverage. Current Typography, Spacing, and Geometry item evidence uses rendered `GalleryItemPageRoot` crops: Light `artifacts/wpf-gallery-visual-audit/20260531-024617-472-84620/report.md` has Typography `0`, Spacing `0`, and Geometry `0`; Dark `artifacts/wpf-gallery-visual-audit/20260531-024744-061-70932/report.md` has Typography `0`, Spacing `0`, and Geometry `0`. Current Iconography residual evidence is Light `artifacts/wpf-gallery-visual-audit/20260531-074324-386-11016/report.md` with delta `0.23` and Dark `artifacts/wpf-gallery-visual-audit/20260531-074356-513-60464/report.md` with delta `0.24`; pixel stats show maxRgbSum `3` channel quantization across visually identical screenshots. Current Color evidence is Light `artifacts/wpf-gallery-visual-audit/20260531-073055-327-73236/report.md` and Dark `artifacts/wpf-gallery-visual-audit/20260531-073237-048-75116/report.md`: page `0.05` / `0.06`, Text `0.05` / `0.06`, Fill `0.06` / `0.06`, Stroke `0.04` / `0`, Background `0.03` / `0.03`, Signal `0.10` / `0.10`, and HighContrast `0.12` / `0.14`. Color residuals remain low-mean rendering residuals rather than layout drift. The section visual status remains Partial for Color subsection residuals and Iconography's recorded rendering residual; Hard Execution Queue row 7 controls the next non-HC work. |
+| Design Guidance section | Partial | Partial | Partial | Section page plus Color, Iconography, Typography, Spacing, and Geometry now use adapted official WPF Gallery page shells/XAML, WPF `Page` roots, official `Title` values, and page-specific view-model constructor injection. The copied pages keep official root/content shape, PageHeader/scroll-host shape, Color subsection support controls, Typography/Spacing/Geometry table and image layout details, Iconography resource/style/layout declarations, official icon dataset ordering, and direct-page runtime coverage. Current Typography, Spacing, and Geometry item evidence uses rendered `GalleryItemPageRoot` crops: Light `artifacts/wpf-gallery-visual-audit/20260531-024617-472-84620/report.md` has Typography `0`, Spacing `0`, and Geometry `0`; Dark `artifacts/wpf-gallery-visual-audit/20260531-024744-061-70932/report.md` has Typography `0`, Spacing `0`, and Geometry `0`. Current Iconography residual evidence is Light `artifacts/wpf-gallery-visual-audit/20260531-074324-386-11016/report.md` with delta `0.23` and Dark `artifacts/wpf-gallery-visual-audit/20260531-074356-513-60464/report.md` with delta `0.24`; pixel stats show maxRgbSum `3` channel quantization across visually identical screenshots. Current Color evidence is Light `artifacts/wpf-gallery-visual-audit/20260531-073055-327-73236/report.md` and Dark `artifacts/wpf-gallery-visual-audit/20260531-073237-048-75116/report.md`: page `0.05` / `0.06`, Text `0.05` / `0.06`, Fill `0.06` / `0.06`, Stroke `0.04` / `0`, Background `0.03` / `0.03`, Signal `0.10` / `0.10`, and HighContrast `0.12` / `0.14`. Color residuals remain low-mean rendering residuals rather than layout drift. The section visual status remains Partial for Color subsection residuals and Iconography's recorded rendering residual; `Current Order Lock` controls the next non-HC work. |
 | Color | Done | Done | Partial | Direct page shell and all six subsections now use adapted official WPF Gallery XAML with WPF `Page` root, `Title="ColorsPage"`, injected `ColorsPageViewModel`, `PageHeader`, selector, `ColorPageExample`, WPF Gallery-style `Frame.Navigate` to `Page` subsections, natural-height `ColorTile` styling without the previous ModernWpf-only tile automation name callback, and the official unresolved `ControlExampleDisplayBrush` transparency behavior. Runtime coverage opens all six subsections through the visual-test launch option, asserts the source-clean `Frame` plus inherited section content font, and pins the official `Grid.Column="2"` Text-on-Accent tile placement; source-shape coverage pins all six subsection compact roots and representative Background/Signal/Text declaration order. Gallery page styles override the WPF Fluent `SystemFillColorAttentionBrush`, `SurfaceStrokeColorDefaultBrush`, and Light-mode `ControlElevationBorderBrush` rendering used by copied Color tiles. Latest focused direct-reference Light visual audit is `artifacts/wpf-gallery-visual-audit/20260531-025154-427-36712/report.md`; latest focused Dark visual audit is `artifacts/wpf-gallery-visual-audit/20260531-025247-727-86588/report.md`. Current deltas are Color `0.05` / `0.06`, Text `0.05` / `0.06`, Fill `0.06` / `0.06`, Stroke `0.04` / `0`, Background `0.03` / `0.03`, Signal `0.10` / `0.10`, and HighContrast `0.12` / `0.14`, all with matching `868x758` crops and Modern `ContentPagePaneRenderedArtifact` source. These remain low-mean rendering residuals rather than layout drift, and the previous `20260529-062201-094-27604` / `20260529-062407-485-65068` artifacts are superseded by the current P2 row 4 Color measurement refresh. |
 | Typography | Done | Done | Done | Adapted from official WPF Gallery XAML with WPF `Page` root, `Title="TypographyPage"`, injected `TypographyPageViewModel`, `PageHeader`, and `ControlExample`; the copied page now keeps the official root `xmlns:local` declaration, compact page-root declaration order, unnamed root `Grid`, and PageHeader/ScrollViewer source shape; sample header/snippet, type-ramp table offsets, official intro copy, absence of non-official intro padding compensation, and absence of the local-only `ContentPagePane` root hook are runtime-covered. Current direct-reference Light visual audit is `artifacts/wpf-gallery-visual-audit/20260531-024617-472-84620/report.md` with delta `0`; current Dark audit is `artifacts/wpf-gallery-visual-audit/20260531-024744-061-70932/report.md` with delta `0`; both use matching `868x758` Modern `GalleryItemPageRootRenderedArtifact` and official `OfficialDirectRootContentFrameRenderedArtifact` crops. The previous `20260529-052654-603-61956` / `20260529-052804-548-58016` artifacts are superseded by the current P2 row 4 measurement refresh. |
 | Spacing | Done | Done | Done | Adapted from official WPF Gallery XAML with WPF `Page` root, `Title="SpacingPage"`, injected `SpacingPageViewModel`, `PageHeader`, spacing imagery, and spacing table; the copied page now keeps the official root `xmlns:local` declaration, compact page-root declaration order, unnamed root `Grid`, and PageHeader/ScrollViewer source shape; design images switch to official light/dark assets using the ModernWpf actual theme and the official user-preference refresh event, including the official `SystemEvents_UserPreferenceChanged` handler name and dispatcher-lambda refresh body while retaining local actual-theme/unload cleanup; image preview grids now use the official `Auto/*` row structure; the table keeps the official outer frame margin/padding while dropping the ModernWpf-only inner grid margin; official intro copy, absence of non-official intro padding compensation, and absence of the local-only `ContentPagePane` root hook are runtime-covered. Current direct-reference Light visual audit is `artifacts/wpf-gallery-visual-audit/20260531-024617-472-84620/report.md` with delta `0`; current Dark audit is `artifacts/wpf-gallery-visual-audit/20260531-024744-061-70932/report.md` with delta `0`; both use matching `868x758` Modern `GalleryItemPageRootRenderedArtifact` and official `OfficialDirectRootContentFrameRenderedArtifact` crops. The previous `20260529-052654-603-61956` / `20260529-052804-548-58016` artifacts are superseded by the current P2 row 4 measurement refresh. |
@@ -5931,10 +5953,10 @@ with matching `745x551` primary crops and deltas `17.21` / `11.28`. The
 remaining Light delta is mostly image/text rendering treatment, so avoid
 reopening ParallaxView unless a new local WinUI source, native WPF header
 strategy, or crop regression appears.
-Continue by following the `Hard Execution Queue`, `P2 Subqueue`, and
-`Row 7 Strict Subqueue` above. With P0.1 and row 8 currently recorded, ordered
-P2 work is selected unless a new visual/High Contrast, high-drift, or harness
-trigger reopens a higher row; within P2, do not choose source-shape or
+Continue by following the `Current Order Lock`, `P2 Subqueue`, and
+`P2 Row 5 Internal Queue` above. With P0.1 and row 8 currently recorded,
+ordered P2 work is selected unless a new visual/High Contrast, high-drift, or
+harness trigger reopens a higher row; within P2, do not choose source-shape or
 tracker-only cleanup ahead of visual/high-drift freshness, asset/thumbnail,
 measurement, or harness-impacting parity work. For each visual-drift round:
 
