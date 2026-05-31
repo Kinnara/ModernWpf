@@ -1607,6 +1607,28 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void GalleryVisualChecksRejectUnprovenWinUIReferenceThemeProbe()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Run-GalleryVisualChecks.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "function Test-WinUIReferenceThemeProbeSucceeded($themeProbe)",
+                "if ($Theme -eq \"Default\")",
+                "if ($themeProbe.Toggled -eq $true)",
+                "return $reason.Contains(\"already matched\")");
+            AssertContainsInOrder(
+                source,
+                "$themeProbeFailed = -not (Test-WinUIReferenceThemeProbeSucceeded $themeProbe)",
+                "elseif ($themeProbeFailed) { \"Failed\" }",
+                "Reference theme probe did not prove $Theme theme: $($themeProbe.Reason)");
+        }
+
+        [TestMethod]
         public void WpfGalleryVisualAuditUsesSingleRenderedContentArtifactPriority()
         {
             var source = File.ReadAllText(Path.Combine(

@@ -2140,15 +2140,17 @@ function Capture-WinUIReference([string]$control, [string]$caseDir) {
             }
         }
 
+        $themeProbeFailed = -not (Test-WinUIReferenceThemeProbeSucceeded $themeProbe)
+
         return [ordered]@{
             App = "WinUI3Gallery"
             Control = $control
             Route = $route
-            Status = $(if (!$notBlank) { "Failed" } elseif ($primaryCropBlank) { "Failed" } elseif ($primaryCropLowVariation) { "Failed" } elseif ($null -ne $interaction -and $interaction.Status -ne "Passed") { "Failed" } else { "Passed" })
+            Status = $(if (!$notBlank) { "Failed" } elseif ($primaryCropBlank) { "Failed" } elseif ($primaryCropLowVariation) { "Failed" } elseif ($themeProbeFailed) { "Failed" } elseif ($null -ne $interaction -and $interaction.Status -ne "Passed") { "Failed" } else { "Passed" })
             Title = $pageTitle
             Screenshot = $screenshot
             UiaTree = $treePath
-            LastException = $(if ($primaryCropBlank) { "Primary crop '$($staticCrops.Primary.Source)' was blank." } elseif ($primaryCropLowVariation) { "Primary crop '$($staticCrops.Primary.Source)' had low visible variation ($($staticCrops.Primary.VisibleStdDev), expected at least $primaryCropMinimumVisibleStdDev)." } elseif ($null -ne $interaction -and $interaction.Status -ne "Passed") { $interaction.Notes } else { "" })
+            LastException = $(if ($primaryCropBlank) { "Primary crop '$($staticCrops.Primary.Source)' was blank." } elseif ($primaryCropLowVariation) { "Primary crop '$($staticCrops.Primary.Source)' had low visible variation ($($staticCrops.Primary.VisibleStdDev), expected at least $primaryCropMinimumVisibleStdDev)." } elseif ($themeProbeFailed) { "Reference theme probe did not prove $Theme theme: $($themeProbe.Reason)" } elseif ($null -ne $interaction -and $interaction.Status -ne "Passed") { $interaction.Notes } else { "" })
             NonBlank = $notBlank
             RequiredSampleAutomationId = ""
             RequiredSampleElementFound = $true
@@ -2292,6 +2294,23 @@ function Ensure-WinUIReferenceTheme([string]$control, [string]$caseDir, $window)
         Toggled = $toggled
         Reason = $(if ($toggled) { "Reference sample theme toggled to match requested theme." } else { "ThemeButton did not invoke." })
     }
+}
+
+function Test-WinUIReferenceThemeProbeSucceeded($themeProbe) {
+    if ($Theme -eq "Default") {
+        return $true
+    }
+
+    if ($null -eq $themeProbe) {
+        return $false
+    }
+
+    if ($themeProbe.Toggled -eq $true) {
+        return $true
+    }
+
+    $reason = [string]$themeProbe.Reason
+    return $reason.Contains("already matched")
 }
 
 $runDir = New-RunDirectory
