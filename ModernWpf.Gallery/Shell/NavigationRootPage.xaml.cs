@@ -144,7 +144,7 @@ namespace ModernWpf.Gallery.Shell
             AlignNavigationViewShellResourcesWithWpfGallery();
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
-            VisualTestStatusPanel.Visibility = GalleryDiagnostics.IsEnabled
+            GetVisualTestStatusPanel().Visibility = GalleryDiagnostics.IsEnabled
                 ? Visibility.Visible
                 : Visibility.Collapsed;
             SuppressNavigationViewDefaultExpandGlyph();
@@ -682,6 +682,23 @@ namespace ModernWpf.Gallery.Shell
             return root.Children.OfType<Border>().Single();
         }
 
+        private StackPanel GetVisualTestStatusPanel()
+        {
+            var root = (Grid)Content;
+            return root.Children.OfType<StackPanel>().Single();
+        }
+
+        private TextBlock GetVisualTestStatusText(string automationId)
+        {
+            return GetVisualTestStatusPanel()
+                .Children
+                .OfType<TextBlock>()
+                .Single(text => string.Equals(
+                    AutomationProperties.GetAutomationId(text),
+                    automationId,
+                    StringComparison.Ordinal));
+        }
+
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
         {
             RaiseSettingsOpenedNotification((UIElement)sender);
@@ -1087,9 +1104,9 @@ namespace ModernWpf.Gallery.Shell
             GalleryDiagnostics.RecordRoute(route);
             GalleryDiagnostics.SetReadyState(readyState);
 
-            VisualTestCurrentRouteText.Text = GalleryDiagnostics.CurrentRoute;
-            VisualTestReadyStateText.Text = GalleryDiagnostics.ReadyState;
-            VisualTestLastExceptionText.Text = GalleryDiagnostics.LastException;
+            GetVisualTestStatusText("GalleryVisualTestCurrentRoute").Text = GalleryDiagnostics.CurrentRoute;
+            GetVisualTestStatusText("GalleryVisualTestReadyState").Text = GalleryDiagnostics.ReadyState;
+            GetVisualTestStatusText("GalleryVisualTestLastException").Text = GalleryDiagnostics.LastException;
             GalleryDiagnostics.WriteStatusFile();
         }
 

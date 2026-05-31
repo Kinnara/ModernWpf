@@ -283,7 +283,8 @@ namespace ModernWpf.Gallery.Tests
                 try
                 {
                     var normalPage = new NavigationRootPage();
-                    var normalPanel = (FrameworkElement)normalPage.FindName("VisualTestStatusPanel");
+                    AssertVisualTestStatusNamesRemoved(normalPage);
+                    var normalPanel = GetVisualTestStatusPanel(normalPage);
                     AssertVisualTestStatusPanelHidden(normalPanel);
                     AssertVisualTestStatusTextAutomationIds(normalPage);
                     Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(normalPage));
@@ -293,21 +294,48 @@ namespace ModernWpf.Gallery.Tests
                     GalleryDiagnostics.Configure(GalleryLaunchOptions.Parse(new[] { "--visual-test" }));
                     var visualTestPage = new NavigationRootPage();
                     Dispatcher.CurrentDispatcher.Invoke(DispatcherPriority.ContextIdle, new Action(() => { }));
-                    var visualTestPanel = (FrameworkElement)visualTestPage.FindName("VisualTestStatusPanel");
+                    AssertVisualTestStatusNamesRemoved(visualTestPage);
+                    var visualTestPanel = GetVisualTestStatusPanel(visualTestPage);
                     Assert.AreEqual(Visibility.Visible, visualTestPanel.Visibility);
                     AssertVisualTestStatusPanelNonInteractive(visualTestPanel);
                     AssertVisualTestStatusTextAutomationIds(visualTestPage);
                     Assert.AreEqual("GalleryNavigationRoot", AutomationProperties.GetAutomationId(visualTestPage));
                     Assert.AreEqual("GalleryNavigationView", AutomationProperties.GetAutomationId((DependencyObject)visualTestPage.FindName("Navigation")));
                     Assert.AreEqual("GalleryContentHost", AutomationProperties.GetAutomationId((DependencyObject)visualTestPage.FindName("ContentHost")));
-                    Assert.AreEqual("home", ((TextBlock)visualTestPage.FindName("VisualTestCurrentRouteText")).Text);
-                    Assert.AreEqual("Ready:home", ((TextBlock)visualTestPage.FindName("VisualTestReadyStateText")).Text);
+                    Assert.AreEqual("home", GetVisualTestStatusText(visualTestPage, "GalleryVisualTestCurrentRoute").Text);
+                    Assert.AreEqual("Ready:home", GetVisualTestStatusText(visualTestPage, "GalleryVisualTestReadyState").Text);
                 }
                 finally
                 {
                     GalleryDiagnostics.ResetForTests();
                 }
             });
+        }
+
+        private static void AssertVisualTestStatusNamesRemoved(NavigationRootPage root)
+        {
+            Assert.IsNull(root.FindName("VisualTestStatusPanel"));
+            Assert.IsNull(root.FindName("VisualTestCurrentRouteText"));
+            Assert.IsNull(root.FindName("VisualTestReadyStateText"));
+            Assert.IsNull(root.FindName("VisualTestLastExceptionText"));
+        }
+
+        private static StackPanel GetVisualTestStatusPanel(NavigationRootPage root)
+        {
+            var panel = ((Grid)root.Content).Children.OfType<StackPanel>().Single();
+            Assert.AreEqual(string.Empty, panel.Name);
+            return panel;
+        }
+
+        private static TextBlock GetVisualTestStatusText(NavigationRootPage root, string automationId)
+        {
+            return GetVisualTestStatusPanel(root)
+                .Children
+                .OfType<TextBlock>()
+                .Single(text => string.Equals(
+                    AutomationProperties.GetAutomationId(text),
+                    automationId,
+                    StringComparison.Ordinal));
         }
 
         private static void AssertVisualTestStatusPanelHidden(FrameworkElement panel)
@@ -325,17 +353,17 @@ namespace ModernWpf.Gallery.Tests
             Assert.IsFalse(panel.IsHitTestVisible);
         }
 
-        private static void AssertVisualTestStatusTextAutomationIds(FrameworkElement root)
+        private static void AssertVisualTestStatusTextAutomationIds(NavigationRootPage root)
         {
             Assert.AreEqual(
                 "GalleryVisualTestCurrentRoute",
-                AutomationProperties.GetAutomationId((DependencyObject)root.FindName("VisualTestCurrentRouteText")));
+                AutomationProperties.GetAutomationId(GetVisualTestStatusText(root, "GalleryVisualTestCurrentRoute")));
             Assert.AreEqual(
                 "GalleryVisualTestReadyState",
-                AutomationProperties.GetAutomationId((DependencyObject)root.FindName("VisualTestReadyStateText")));
+                AutomationProperties.GetAutomationId(GetVisualTestStatusText(root, "GalleryVisualTestReadyState")));
             Assert.AreEqual(
                 "GalleryVisualTestLastException",
-                AutomationProperties.GetAutomationId((DependencyObject)root.FindName("VisualTestLastExceptionText")));
+                AutomationProperties.GetAutomationId(GetVisualTestStatusText(root, "GalleryVisualTestLastException")));
         }
 
         [TestMethod]

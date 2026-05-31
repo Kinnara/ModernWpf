@@ -1190,6 +1190,19 @@ namespace ModernWpf.Gallery.Tests
 
             AssertContainsInOrder(
                 navigationRootXaml,
+                "<StackPanel",
+                "Width=\"1\"",
+                "Height=\"1\"",
+                "HorizontalAlignment=\"Left\"",
+                "VerticalAlignment=\"Top\"",
+                "Focusable=\"False\"",
+                "IsHitTestVisible=\"False\"",
+                "Opacity=\"0\"",
+                "AutomationProperties.AutomationId=\"GalleryVisualTestCurrentRoute\"",
+                "AutomationProperties.AutomationId=\"GalleryVisualTestReadyState\"",
+                "AutomationProperties.AutomationId=\"GalleryVisualTestLastException\"");
+            AssertContainsInOrder(
+                navigationRootXaml,
                 "x:Name=\"Navigation\"",
                 "AutomationProperties.Name=\"Navigation Pane\"",
                 "IsBackButtonVisible=\"Collapsed\"",
@@ -1304,6 +1317,18 @@ namespace ModernWpf.Gallery.Tests
                 "private Border GetHighContrastNavigationPaneEdgeCover()",
                 "var root = (Grid)Content;",
                 "return root.Children.OfType<Border>().Single();");
+            AssertContainsInOrder(
+                navigationRootCode,
+                "GetVisualTestStatusPanel().Visibility = GalleryDiagnostics.IsEnabled",
+                "private StackPanel GetVisualTestStatusPanel()",
+                "var root = (Grid)Content;",
+                "return root.Children.OfType<StackPanel>().Single();",
+                "private TextBlock GetVisualTestStatusText(string automationId)",
+                "AutomationProperties.GetAutomationId(text)",
+                "SetVisualTestState(string route, string readyState)",
+                "GetVisualTestStatusText(\"GalleryVisualTestCurrentRoute\").Text = GalleryDiagnostics.CurrentRoute;",
+                "GetVisualTestStatusText(\"GalleryVisualTestReadyState\").Text = GalleryDiagnostics.ReadyState;",
+                "GetVisualTestStatusText(\"GalleryVisualTestLastException\").Text = GalleryDiagnostics.LastException;");
 
             var appCode = ReadRepoFile(
                 "ModernWpf.Gallery",
@@ -1376,6 +1401,10 @@ namespace ModernWpf.Gallery.Tests
                 "ModernWpfGroupItemsControl",
                 "ContentFrameBorder",
                 "HighContrastNavigationPaneEdgeCover",
+                "VisualTestStatusPanel",
+                "VisualTestCurrentRouteText",
+                "VisualTestReadyStateText",
+                "VisualTestLastExceptionText",
                 "ModernWpfGalleryMainWindow",
                 "GalleryNavigationRoot",
                 "GalleryNavigationView",
@@ -1478,6 +1507,19 @@ namespace ModernWpf.Gallery.Tests
                 "function Test-ModernRenderedContentArtifact",
                 "return $null -ne (Get-ModernRenderedContentArtifactCrop $artifactDir)",
                 "function Capture-Window");
+            AssertContainsInOrder(
+                source,
+                "function Save-ModernShellNavigationArtifactCrop",
+                "$navigationArtifact = Join-Path $artifactDir \"GalleryNavigationView.png\"",
+                "return Save-Crop $navigationArtifact $path 12 8 250 $height \"ModernWpfNavigationPaneRenderedArtifact\"",
+                "$contentCrop = $null",
+                "if ($case.Id -eq \"ShellNavigation\") {",
+                "$contentCrop = Save-ModernShellNavigationArtifactCrop $artifactDir $contentCropPath",
+                "if (($null -eq $contentCrop -or !$contentCrop.NonBlank) -and $windowNonBlank) {",
+                "$contentCrop = Save-ModernContentCrop $window $screenshot $contentCropPath $case $isRenderedWindowArtifact",
+                "$contentCrop = Save-ModernShellNavigationArtifactCrop $artifactDir $contentCropPath",
+                "else {",
+                "$contentCrop = Get-ModernRenderedContentArtifactCrop $artifactDir");
         }
 
         [TestMethod]

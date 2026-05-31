@@ -1506,7 +1506,7 @@ function Save-ModernShellNavigationArtifactCrop([string]$artifactDir, [string]$p
     }
 
     $height = if ($Theme -eq "HighContrast") { 698 } else { 707 }
-    return Save-Crop $navigationArtifact $path 8 8 250 $height "ModernWpfNavigationPaneRenderedArtifact"
+    return Save-Crop $navigationArtifact $path 12 8 250 $height "ModernWpfNavigationPaneRenderedArtifact"
 }
 
 function Compare-ImagesNormalized([string]$leftPath, [string]$rightPath, [int]$sampleStep = 4) {
@@ -1666,12 +1666,15 @@ function Capture-ModernWpf($case, [string]$caseDir) {
         }
 
         $contentCrop = $null
-        if ($case.Id -eq "ShellNavigation" -and $windowNonBlank) {
-            $isRenderedWindowArtifact = $windowScreenshotSource -eq "ModernWpfGalleryMainWindowRenderedArtifact"
-            $contentCrop = Save-ModernContentCrop $window $screenshot $contentCropPath $case $isRenderedWindowArtifact
-            if ($null -eq $contentCrop -or !$contentCrop.NonBlank -or
-                !$contentCrop.Source.StartsWith("ModernWpfNavigationPane", [StringComparison]::Ordinal)) {
-                $contentCrop = Save-ModernShellNavigationArtifactCrop $artifactDir $contentCropPath
+        if ($case.Id -eq "ShellNavigation") {
+            $contentCrop = Save-ModernShellNavigationArtifactCrop $artifactDir $contentCropPath
+            if (($null -eq $contentCrop -or !$contentCrop.NonBlank) -and $windowNonBlank) {
+                $isRenderedWindowArtifact = $windowScreenshotSource -eq "ModernWpfGalleryMainWindowRenderedArtifact"
+                $contentCrop = Save-ModernContentCrop $window $screenshot $contentCropPath $case $isRenderedWindowArtifact
+                if ($null -eq $contentCrop -or !$contentCrop.NonBlank -or
+                    !$contentCrop.Source.StartsWith("ModernWpfNavigationPane", [StringComparison]::Ordinal)) {
+                    $contentCrop = Save-ModernShellNavigationArtifactCrop $artifactDir $contentCropPath
+                }
             }
         }
         else {
