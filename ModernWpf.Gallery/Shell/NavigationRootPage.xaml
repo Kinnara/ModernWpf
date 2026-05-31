@@ -91,6 +91,7 @@
             </ui:NavigationView.Resources>
             <ui:NavigationView.PaneFooter>
                 <StackPanel
+                    DataContext="{Binding Value, Source={StaticResource NavigationRootDataContextProxy}}"
                     Margin="8,10,0,10"
                     Orientation="Vertical">
                     <Separator />
@@ -103,7 +104,7 @@
                         HorizontalContentAlignment="Left"
                         VerticalContentAlignment="Center"
                         AutomationProperties.Name="Settings"
-                        Command="{Binding Value.ViewModel.SettingsCommand, Source={StaticResource NavigationRootDataContextProxy}}"
+                        Command="{Binding ViewModel.SettingsCommand}"
                         Style="{StaticResource BorderlessButtonStyle}"
                         Click="SettingsButton_Click">
                         <StackPanel Orientation="Horizontal" Margin="11,0,0,0">

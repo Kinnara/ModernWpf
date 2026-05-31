@@ -1229,6 +1229,11 @@ namespace ModernWpf.Gallery.Tests
                 "<Setter Property=\"Foreground\" Value=\"{DynamicResource SystemColorHighlightTextColorBrush}\" />");
             AssertContainsInOrder(
                 navigationRootXaml,
+                "<ui:NavigationView.PaneFooter>",
+                "<StackPanel",
+                "DataContext=\"{Binding Value, Source={StaticResource NavigationRootDataContextProxy}}\"",
+                "Margin=\"8,10,0,10\"",
+                "Orientation=\"Vertical\"",
                 "x:Name=\"SettingsButton\"",
                 "Width=\"250\"",
                 "Height=\"36\"",
@@ -1237,10 +1242,13 @@ namespace ModernWpf.Gallery.Tests
                 "HorizontalContentAlignment=\"Left\"",
                 "VerticalContentAlignment=\"Center\"",
                 "AutomationProperties.Name=\"Settings\"",
-                "Command=\"{Binding Value.ViewModel.SettingsCommand, Source={StaticResource NavigationRootDataContextProxy}}\"",
+                "Command=\"{Binding ViewModel.SettingsCommand}\"",
                 "Style=\"{StaticResource BorderlessButtonStyle}\"",
                 "Click=\"SettingsButton_Click\"",
                 "<StackPanel Orientation=\"Horizontal\" Margin=\"11,0,0,0\">");
+            Assert.IsFalse(
+                navigationRootXaml.Contains("Command=\"{Binding Value.ViewModel.SettingsCommand", StringComparison.Ordinal),
+                "The retained Settings footer should put the proxy bridge on the footer panel and keep the button command path in the official ViewModel.SettingsCommand shape.");
             AssertContainsInOrder(
                 navigationRootXaml,
                 "PaneDisplayMode=\"Left\"",

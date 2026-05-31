@@ -240,6 +240,8 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(new Thickness(0, 4, 0, 0), settingsButton.Margin);
                 Assert.AreEqual(HorizontalAlignment.Left, settingsButton.HorizontalContentAlignment);
                 Assert.AreEqual(VerticalAlignment.Center, settingsButton.VerticalContentAlignment);
+                Assert.AreEqual("ViewModel.SettingsCommand",
+                    BindingOperations.GetBindingExpression(settingsButton, System.Windows.Controls.Primitives.ButtonBase.CommandProperty)?.ParentBinding.Path.Path);
 
                 var settingsContent = (StackPanel)settingsButton.Content;
                 Assert.AreEqual(Orientation.Horizontal, settingsContent.Orientation);
@@ -630,7 +632,7 @@ namespace ModernWpf.Gallery.Tests
                     var rootPage = GetNavigationRootPage(window);
                     var settingsButton = (Button)rootPage.FindName("SettingsButton");
                     Assert.AreSame(window.ViewModel.SettingsCommand, settingsButton.Command);
-                    Assert.AreEqual("Value.ViewModel.SettingsCommand",
+                    Assert.AreEqual("ViewModel.SettingsCommand",
                         BindingOperations.GetBindingExpression(settingsButton, System.Windows.Controls.Primitives.ButtonBase.CommandProperty)?.ParentBinding.Path.Path);
                     var contentHost = GetContentHost(rootPage);
                     window.ViewModel.SettingsCommand.Execute(null);
