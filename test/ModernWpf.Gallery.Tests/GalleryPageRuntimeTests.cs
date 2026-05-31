@@ -998,6 +998,15 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(page.ViewModel.SelectedUser.Name, page.ViewModel.EditableUser.Name);
                 CollectionAssert.Contains(changedProperties, nameof(UserDashboardPageViewModel.SelectedUser));
                 CollectionAssert.Contains(changedProperties, nameof(UserDashboardPageViewModel.EditableUser));
+
+                changedProperties.Clear();
+                page.ViewModel.EditUserStartCommand.Execute(null);
+                page.ViewModel.EditableUser.FirstName = "Edited";
+                page.ViewModel.EditUserCommitCommand.Execute(null);
+                Assert.AreEqual("Edited", page.ViewModel.SelectedUser.FirstName);
+                Assert.IsTrue(page.ViewModel.IsSaved);
+                Assert.IsFalse(page.ViewModel.IsEditing);
+                CollectionAssert.Contains(changedProperties, nameof(UserDashboardPageViewModel.IsSaved));
             });
         }
 

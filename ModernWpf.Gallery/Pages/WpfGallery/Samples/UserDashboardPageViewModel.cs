@@ -99,13 +99,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
         public bool IsSaved
         {
             get { return _isSaved; }
-            set
-            {
-                if (SetProperty(ref _isSaved, value, "IsSaved") && value)
-                {
-                    RestartTimer(_savedMessageTimer);
-                }
-            }
+            set { SetProperty(ref _isSaved, value, "IsSaved"); }
         }
 
         public ICommand RemoveUserCommand
@@ -280,6 +274,8 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
                 IsReadOnly = true;
                 IsEditing = false;
                 IsSaved = true;
+
+                RestartTimer(_savedMessageTimer);
             }
         }
 

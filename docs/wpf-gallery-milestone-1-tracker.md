@@ -47,54 +47,54 @@ Current pointer:
    5 source cleanup. `TrackerPriorityTests` guard this ordering; once
    committed, row 1 is inactive again unless another priority/order conflict
    appears.
-2. Latest high-priority verification batch, 2026-05-31: **global orders 3-5 /
-   P1.3 and P2 row 2 visual-high-drift freshness** refreshed before any new
-   row 5.4 source-shape work. `SystemParameters.HighContrast` returned
-   `False`. Retained high-drift Light/Dark checks for `GridView`,
-   `CommandBarFlyout`, and `ProgressRing` passed at
-   `artifacts/visual-checks/20260531-181452-172-75996/report.md` and
-   `artifacts/visual-checks/20260531-181545-766-89732/report.md`, with
-   nonblank ModernWpf/WinUI captures and required sample elements. Focused WPF
-   Gallery Light/Dark audits for `Color`, `Iconography`,
-   `FileAndFolderDialogs`, and `UserDashboard` also passed at
-   `artifacts/wpf-gallery-visual-audit/20260531-181647-064-62908/report.md`
-   and
-   `artifacts/wpf-gallery-visual-audit/20260531-181725-768-89888/report.md`.
-   No new visible drift, high-drift retained-control regression, real OS High
-   Contrast, asset, measurement, automation, or harness trigger appeared. The
-   previous substantive row 5.4 batch remains the User Dashboard `DeletedName`
-   early-return source-shape guard.
+2. Latest substantive batch, 2026-05-31: **global order 11 / P2 row 5.4**
+   for the User Dashboard `IsSaved` delayed-clear source-shape guard. The local
+   official WPF Gallery source at
+   `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\Samples\UserDashboardPageViewModel.cs`
+   starts the delayed saved-message clear inside `EditUserCommit()` immediately
+   after `IsSaved = true;`. The local copied view model now keeps that
+   non-visible statement placement while retaining the local `UserDashboardUser`
+   model type, deterministic visual-test random adapter, WPF `ICommand`
+   adapter, and `DispatcherTimer` notification adapter. This row was selected
+   only after `SystemParameters.HighContrast` returned `False`, the latest
+   visual/high-drift freshness batch at
+   `artifacts/visual-checks/20260531-181452-172-75996/report.md` /
+   `artifacts/visual-checks/20260531-181545-766-89732/report.md` and
+   `artifacts/wpf-gallery-visual-audit/20260531-181647-064-62908/report.md` /
+   `artifacts/wpf-gallery-visual-audit/20260531-181725-768-89888/report.md`
+   stayed Passed, direct same-path XAML scans found no missing official
+   `AutomationProperties.Name`, `x:Name`, or event-hook item that would reopen
+   row 5.3, global orders 2-9 stayed recorded or inactive, and rows 5.1-5.2
+   stayed recorded.
 3. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
-   for the User Dashboard `EditUserCancel()` statement source-shape guard. The
+   for the User Dashboard `DeletedName` early-return source-shape guard. The
    local official WPF Gallery source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\Samples\UserDashboardPageViewModel.cs`
-   clears `EditableUser = null;`, then rebuilds it from `SelectedUser`, before
-   resetting `IsReadOnly` and `IsEditing`. The local copied view model keeps
-   that non-visible cancel-handler statement shape while retaining the local
-   `UserDashboardUser` model type, deterministic visual-test random adapter,
-   WPF `ICommand` adapter, `DispatcherTimer` notification adapter, and a
-   null-safety guard for the local command bridge.
+   returns immediately when the deleted-name value is empty before starting
+   delayed message-clear behavior. The local copied view model keeps that
+   non-visible early-return shape while retaining the local `UserDashboardUser`
+   model type, deterministic visual-test random adapter, WPF `ICommand`
+   adapter, and `DispatcherTimer` notification adapter.
    This row was selected only after `SystemParameters.HighContrast` returned
    `False`, retained high-drift Light/Dark evidence stayed Passed, direct
    same-path XAML scans found no missing official `AutomationProperties.Name`,
    `x:Name`, or event-hook item that would reopen row 5.3, global orders 2-9
    stayed recorded or inactive, and rows 5.1-5.2 stayed recorded.
 4. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
-   for the User Dashboard empty literal and AddUser statement source-shape
+   for the User Dashboard `EditUserCancel()` statement source-shape
    guard. The local official WPF Gallery source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\Samples\UserDashboardPageViewModel.cs`
-   keeps the final address sample as `""` and uses
-   `Users.Add(new User("New User", ""));` followed by
-   `SelectedUser = Users.Last();`. The local copied view model now keeps that
-   non-visible empty literal and AddUser statement shape while retaining the
-   local `UserDashboardUser` model type, deterministic visual-test random
-   adapter, WPF `ICommand` adapter, and `DispatcherTimer` notification
-   adapters. This row was selected only after `SystemParameters.HighContrast`
-   returned `False`, retained high-drift Light/Dark evidence stayed Passed,
-   direct same-path XAML scans found no missing official
-   `AutomationProperties.Name`, `x:Name`, or event-hook item that would reopen
-   row 5.3, global orders 2-9 stayed recorded or inactive, and rows 5.1-5.2
-   stayed recorded.
+   clears `EditableUser = null;`, then rebuilds it from `SelectedUser`, before
+   resetting `IsReadOnly` and `IsEditing`. The local copied view model keeps
+   that non-visible cancel-handler statement shape while retaining the local
+   `UserDashboardUser` model type, deterministic visual-test random adapter,
+   WPF `ICommand` adapter, `DispatcherTimer` notification adapter, and a
+   null-safety guard for the local command bridge. This row was selected only
+   after `SystemParameters.HighContrast` returned `False`, retained
+   high-drift Light/Dark evidence stayed Passed, direct same-path XAML scans
+   found no missing official `AutomationProperties.Name`, `x:Name`, or
+   event-hook item that would reopen row 5.3, global orders 2-9 stayed
+   recorded or inactive, and rows 5.1-5.2 stayed recorded.
 5. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
    for the `MessageBoxPageViewModel.UpdateButtonCodeSnippets(int index)` and
    `UpdateImageCodeSnippets(int index)` switch-expression source-shape guard.
@@ -360,7 +360,7 @@ Current distance, in executable buckets rather than a percentage:
    MainWindow `UpdateCanNavigateBack` source-hook alignments. The current
    executable row is 5.4 only for named non-visible source-shape guards proven
    against local official source; the latest such guard is the User Dashboard
-   `DeletedName` early-return source shape, and it is valid only while rows
+   `IsSaved` delayed-clear source shape, and it is valid only while rows
    above remain recorded and `SystemParameters.HighContrast = False`.
 4. Remaining work before the goal can close: finish any named 5.4 guards that
    survive the local official-source comparison, record or explicitly mark row
@@ -406,6 +406,18 @@ Current active selection snapshot:
    or harness trigger appeared, so lower row 5 work is allowed only after this
    proof remains current.
 3. The latest row 5 path was **global order 11 -> P2 Subqueue row 5 -> P2 Row
+   5 Internal Queue row 5.4** for the User Dashboard `IsSaved`
+   delayed-clear source-shape guard. `SystemParameters.HighContrast` returned
+   `False`, global orders 2-9 are recorded or inactive for the current branch
+   tip, rows 5.1-5.2 are recorded, row 5.3 has no current named executable gap
+   after direct same-path XAML `AutomationProperties.Name`, `x:Name`, and
+   event-hook scans, and the latest high-drift freshness proof above remains
+   current. The local copied view model keeps the official non-visible
+   placement where delayed saved-message clearing is started inside
+   `EditUserCommit()` immediately after `IsSaved = true;`, while retaining the
+   local `UserDashboardUser`, deterministic visual-test random, WPF command,
+   and `DispatcherTimer` adapters.
+4. The previous row 5 path was **global order 11 -> P2 Subqueue row 5 -> P2 Row
    5 Internal Queue row 5.4** for the User Dashboard `DeletedName`
    early-return source-shape guard. `SystemParameters.HighContrast` returned
    `False`, global orders 2-9 are recorded or inactive for the current branch
@@ -414,18 +426,7 @@ Current active selection snapshot:
    event-hook scans, and the latest high-drift freshness proof above remains
    current. The local copied view model keeps the official non-visible
    empty-name early return before starting delayed message-clear behavior,
-   while retaining the local `UserDashboardUser`, deterministic visual-test
-   random, WPF command, and `DispatcherTimer` adapters.
-4. The previous row 5 path was **global order 11 -> P2 Subqueue row 5 -> P2 Row
-   5 Internal Queue row 5.4** for the User Dashboard `EditUserCancel()`
-   statement source-shape guard. `SystemParameters.HighContrast` returned
-   `False`, global orders 2-9 are recorded or inactive for the current branch
-   tip, rows 5.1-5.2 are recorded, row 5.3 has no current named executable gap
-   after direct same-path XAML `AutomationProperties.Name`, `x:Name`, and
-   event-hook scans, and the latest high-drift freshness proof above remains
-   current. The local copied view model keeps the official non-visible cancel
-   flow of clearing `EditableUser`, rebuilding it from `SelectedUser`, then
-   resetting `IsReadOnly` and `IsEditing`, while retaining the local adapters.
+   while retaining the local adapters.
 5. The previous row 5 path was **global order 11 -> P2 Subqueue row 5 -> P2 Row
    5 Internal Queue row 5.4** for the System
    `MessageBoxPageViewModel.UpdateButtonCodeSnippets(int index)` and
@@ -930,6 +931,25 @@ Current active selection snapshot:
     official non-visible early-return guard shape while retaining the local
     `UserDashboardUser` model type, deterministic visual-test random adapter,
     WPF `ICommand` adapter, and `DispatcherTimer` notification adapter.
+48. Recorded User Dashboard `IsSaved` delayed-clear source-shape guard
+    selection proof, 2026-05-31:
+    `SystemParameters.HighContrast` returned `False`. The selected substantive
+    row was **global order 11 / P2 row 5.4** because global orders 2-9 remained
+    recorded or inactive, rows 5.1-5.2 were recorded, direct same-path XAML
+    scans found no missing official `AutomationProperties.Name`, `x:Name`, or
+    event-hook item to reopen row 5.3, and the refreshed visual/high-drift
+    evidence `artifacts/visual-checks/20260531-181452-172-75996/report.md` /
+    `artifacts/visual-checks/20260531-181545-766-89732/report.md` plus
+    `artifacts/wpf-gallery-visual-audit/20260531-181647-064-62908/report.md`
+    /
+    `artifacts/wpf-gallery-visual-audit/20260531-181725-768-89888/report.md`
+    stayed current. The local official source
+    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\Samples\UserDashboardPageViewModel.cs`
+    starts the delayed saved-message clear inside `EditUserCommit()`
+    immediately after `IsSaved = true;`. The local copied view model now keeps
+    that official non-visible statement placement while retaining the local
+    `UserDashboardUser` model type, deterministic visual-test random adapter,
+    WPF `ICommand` adapter, and `DispatcherTimer` notification adapter.
 
 Mandatory next-work selector:
 
@@ -954,10 +974,10 @@ recently touched.
 | 12 | P2 row 5.5 row-5 bookkeeping and stale-status cleanup | Blocked until substantive row 5 items are recorded or not applicable. |
 | 13 | P2 row 6 and final closeout cleanup | Last; only after row 5 is recorded or explicitly not applicable and the final verification sweep is current. |
 
-After the latest visual/high-drift freshness refresh is recorded, the next
-substantive row may return to **global order 11 / P2 row 5.4** only if another
-named 5.4 guard survives the same proof. The latest direct same-path XAML scans
-found no missing official
+After the latest User Dashboard row 5.4 `IsSaved` delayed-clear guard is
+recorded, the next substantive row may remain **global order 11 / P2 row 5.4**
+only if another named 5.4 guard survives the same proof. The latest direct
+same-path XAML scans found no missing official
 `AutomationProperties.Name`, `x:Name`, or event-hook item, and the earlier
 direct code-behind member, official XAML resource-key, and matched ViewModel
 source scans found no current row 5.3 gap after the recorded navigation
@@ -990,8 +1010,9 @@ Required selection proof before any substantive edit:
    comments, declaration order, member order, summaries, and stale tracker
    cleanup stay blocked while any 5.1-5.4 item is current.
 
-Current allowed substantive row may return to **global order 11 / P2 row 5.4**
-after the latest visual/high-drift freshness refresh is recorded only if
+Current allowed substantive row may remain **global order 11 / P2 row 5.4**
+after the latest User Dashboard row 5.4 `IsSaved` delayed-clear guard is
+recorded only if
 `SystemParameters.HighContrast` is `False`, global orders 2-9 are recorded or
 inactive for the current branch tip, P2 rows 2-4 are recorded, rows 5.1-5.2
 are recorded, row 5.3 has no current named executable gap, and a new named
@@ -1231,7 +1252,7 @@ Current row 5 decision:
 | 5.1 | Source-backed sample panes and runtime-visible example content | Recorded for the current branch tip. Basic Input, Collections, Date & Calendar, Design Guidance, Layout, Media, Navigation, Status & Info, Text, System, and What's New `ControlExample` snippets are covered; Design Guidance Color subsection `ColorPageExample` titles, descriptions, and visible example content types are now guarded against the official WPF Gallery source shape. | Reopen before row 5.2 only if a new sample-pane or runtime-visible example-content gap is named. |
 | 5.2 | Source-backed structural alignment that can affect visible layout, resources, keyboard, interaction, automation, or visual-harness behavior | Recorded for the current branch tip. The latest named 5.2 batch aligns app-manifest runtime compatibility with local official WPF Gallery source by keeping the `true/PM` DPI fallback, `longPathAware`, and active `Microsoft.Windows.Common-Controls` v6 dependency while retaining the local `PerMonitorV2` DPI-awareness adapter. Earlier named 5.2 batches align the shared `ColorTile` warning visibility to the official WPF Gallery `TemplateBinding ShowWarning` plus `BooleanToVisibilityConverter` shape and record the official `TemplateBinding ShowSeparator` shape as not locally viable because WPF leaves the separator visible when `ShowSeparator=false`; the retained `RelativeSource TemplatedParent` converter binding is therefore an explicit WPF compatibility adapter. Earlier recorded 5.2 items remain the Design Guidance Iconography instructions Expander inline/source structure, the Design Guidance Spacing/Geometry default dark design-image `Source` fallback, the Navigation `FrameWindow` same-folder `Frame.Source` behavior, and the Navigation `NavigationWindow` explicit Gallery component URI plus `Frame.xaml` template-resource dependency. | Reopen before row 5.3 only if a new source-backed structural diff is named and can affect visible layout, resources, keyboard, interaction, automation, or visual-harness behavior. |
 | 5.3 | Resource-key, naming, selector, and source-hook parity tied to visible or harness behavior | Recorded for the current branch tip with no current named gap after the latest scan. Earlier named 5.3 batches remain recorded, including title-bar/footer resource keys, retained shell structural lookups, route/display aliases, direct page registry normalization, command-handler names, the copied `WhatsNewPage` handler selector, and the copied Iconography direct search-placeholder visibility handlers. | Reopen before 5.4 if a new named resource/key/name/selector/hook gap appears that can affect visuals, behavior, or harness evidence. |
-| 5.4 | Non-visible copied/adapted source-shape guards | Current only while 5.1-5.3 remain recorded or no current named gap exists. The latest named 5.4 guard aligns User Dashboard's `DeletedName` empty-value early-return shape with official WPF Gallery while retaining the local `UserDashboardUser`, deterministic visual-test random, WPF command, and `DispatcherTimer` adapters. Previous 5.4 guards include User Dashboard `EditUserCancel()` statement shape, User Dashboard `EditUserCommit`/`EditUserStart`/`RemoveUser` command-handler statement shape, User Dashboard final address `""` literal and `AddUser()` statement shape, copied Basic Input, Collections, Date & Calendar, Layout, Media, Navigation, Status & Info, Text, Design Guidance Geometry, and All Samples empty page descriptions with the official `""` literal source shape, System MessageBox/Clipboard empty descriptions and Clipboard status backing fields, System MessageBox verbatim/switch-expression snippet helpers, Basic Input CheckBox command branch bodies and handler signatures, Collections ListView/DataGrid helper shapes, Iconography helper shapes, and `MainWindowViewModel.ApplicationTitle`. Recent summary/base-declaration rounds are recorded; comments, declaration shape, member order, and pure source-text guards stay blocked if any 5.1-5.3 item reopens. | Take only a named guard gap with focused tests and a full Gallery build. |
+| 5.4 | Non-visible copied/adapted source-shape guards | Current only while 5.1-5.3 remain recorded or no current named gap exists. The latest named 5.4 guard aligns User Dashboard's `IsSaved` delayed-clear statement placement with official WPF Gallery while retaining the local `UserDashboardUser`, deterministic visual-test random, WPF command, and `DispatcherTimer` adapters. Previous 5.4 guards include User Dashboard `DeletedName` empty-value early-return shape, User Dashboard `EditUserCancel()` statement shape, User Dashboard `EditUserCommit`/`EditUserStart`/`RemoveUser` command-handler statement shape, User Dashboard final address `""` literal and `AddUser()` statement shape, copied Basic Input, Collections, Date & Calendar, Layout, Media, Navigation, Status & Info, Text, Design Guidance Geometry, and All Samples empty page descriptions with the official `""` literal source shape, System MessageBox/Clipboard empty descriptions and Clipboard status backing fields, System MessageBox verbatim/switch-expression snippet helpers, Basic Input CheckBox command branch bodies and handler signatures, Collections ListView/DataGrid helper shapes, Iconography helper shapes, and `MainWindowViewModel.ApplicationTitle`. Recent summary/base-declaration rounds are recorded; comments, declaration shape, member order, and pure source-text guards stay blocked if any 5.1-5.3 item reopens. | Take only a named guard gap with focused tests and a full Gallery build. |
 | 5.5 | Stale-status cleanup and tracker-only row 5 bookkeeping | Last inside row 5, except for explicit user-requested priority/order hygiene. | Use only after substantive row 5 items are recorded or not applicable. |
 
 Latest accepted visual/high-drift priority-correction note:
@@ -2235,6 +2256,58 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `git status --short`
+  - Returned clean before selecting the User Dashboard `IsSaved` delayed-clear
+    source-shape guard from branch tip `4d95241c`.
+- `Add-Type -AssemblyName PresentationFramework; [System.Windows.SystemParameters]::HighContrast`
+  - Returned `False` before the User Dashboard `IsSaved` delayed-clear
+    source-shape guard. Winning rank was **global order 11 / P2 row 5.4**
+    because global orders 2-9 were recorded or inactive, rows 5.1-5.2 were
+    recorded, direct same-path XAML scans found no missing official
+    `AutomationProperties.Name`, `x:Name`, or event-hook item to reopen row
+    5.3, and the visual/high-drift freshness evidence
+    `artifacts/visual-checks/20260531-181452-172-75996/report.md` /
+    `artifacts/visual-checks/20260531-181545-766-89732/report.md` plus
+    `artifacts/wpf-gallery-visual-audit/20260531-181647-064-62908/report.md`
+    /
+    `artifacts/wpf-gallery-visual-audit/20260531-181725-768-89888/report.md`
+    remained current.
+- Local official-source comparison used
+  `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\Samples\UserDashboardPageViewModel.cs`
+  - Official source starts the delayed saved-message clear inside
+    `EditUserCommit()` immediately after `IsSaved = true;`. Local
+    `ModernWpf.Gallery\Pages\WpfGallery\Samples\UserDashboardPageViewModel.cs`
+    now keeps that non-visible statement placement while retaining the local
+    `UserDashboardUser`, deterministic visual-test random, WPF command, and
+    `DispatcherTimer` notification adapters.
+- Direct same-path XAML scans against
+  `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Views` and
+  `ModernWpf.Gallery\Pages\WpfGallery`
+  - Found no missing official `AutomationProperties.Name`, `x:Name`, or event
+    hook items in matched local XAML files before selecting row 5.4.
+- `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.UserDashboardViewModelKeepsOfficialObservableStateSourceShape|FullyQualifiedName~GalleryPageRuntimeTests.SamplesPagesUseOfficialPageSpecificViewModels|FullyQualifiedName~GalleryPageRuntimeTests.UserDashboardPageMatchesWpfGalleryReferenceLayoutAndBehavior|FullyQualifiedName~GalleryPageRuntimeTests.WpfGalleryPagesUseInjectedViewModels" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 3 tests per
+    target after aligning the User Dashboard `IsSaved` delayed-clear statement
+    placement. The focused coverage includes source shape, page-specific
+    view-model runtime behavior, direct commit command behavior, and the
+    UserDashboard page layout/behavior smoke. Existing warning/output remains
+    `NU1903`, generated WinRT, ModernWpf/ModernWpf.Controls warnings, and
+    recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet build .\ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after
+    the User Dashboard `IsSaved` delayed-clear source-shape guard. Existing
+    warning/output remains recurring `Failed to resolve WinRT.Runtime.dll`
+    messages and 19 existing ModernWpf/ModernWpf.Controls warnings.
+- `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~TrackerPriorityTests" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 3 tests per
+    target after updating the tracker hard-order/current-selection notes for
+    the User Dashboard `IsSaved` delayed-clear guard. Existing warning/output
+    remains `NU1903` and recurring `Failed to resolve WinRT.Runtime.dll`
+    messages.
+- `git diff --check`
+  - Passed after the User Dashboard `IsSaved` delayed-clear source-shape guard
+    and tracker update, with only the existing LF/CRLF working-copy warnings
+    for touched files.
 - `git status --short`
   - Returned clean before refreshing visual/high-drift evidence from branch tip
     `bee51fb5`.
