@@ -194,71 +194,47 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
 
         private void UpdateButtonCodeSnippets(int index)
         {
-            string content;
-            switch (index)
+            string content = index switch
             {
-                case 1:
-                    content = "\tvar result = MessageBox.Show(\"Message\", \"Title\", MessageBoxButton.OKCancel);\n" +
-                        "\tif (result == MessageBoxResult.OK)\n\t{\n\t    // User clicked OK\n\t}";
-                    break;
-                case 2:
-                    content = "\tvar result = MessageBox.Show(\"Message\", \"Title\", MessageBoxButton.AbortRetryIgnore);\n" +
-                        "\tif (result == MessageBoxResult.Abort)\n\t{\n\t    // User clicked Abort\n\t}\n" +
-                        "\telse if (result == MessageBoxResult.Retry)\n\t{\n\t    // User clicked Retry\n\t}\n" +
-                        "\telse if (result == MessageBoxResult.Ignore)\n\t{\n\t    // User clicked Ignore\n\t}";
-                    break;
-                case 3:
-                    content = "\tvar result = MessageBox.Show(\"Message\", \"Title\", MessageBoxButton.YesNoCancel);\n" +
-                        "\tif (result == MessageBoxResult.Yes)\n\t{\n\t    // User clicked Yes\n\t}\n" +
-                        "\telse if (result == MessageBoxResult.No)\n\t{\n\t    // User clicked No\n\t}";
-                    break;
-                case 4:
-                    content = "\tvar result = MessageBox.Show(\"Message\", \"Title\", MessageBoxButton.YesNo);\n" +
-                        "\tif (result == MessageBoxResult.Yes)\n\t{\n\t    // User clicked Yes\n\t}\n" +
-                        "\telse if (result == MessageBoxResult.No)\n\t{\n\t    // User clicked No\n\t}";
-                    break;
-                case 5:
-                    content = "\tvar result = MessageBox.Show(\"Message\", \"Title\", MessageBoxButton.RetryCancel);\n" +
-                        "\tif (result == MessageBoxResult.Retry)\n\t{\n\t    // User clicked Retry\n\t}";
-                    break;
-                case 6:
-                    content = "\tvar result = MessageBox.Show(\"Message\", \"Title\", MessageBoxButton.CancelTryContinue);\n" +
-                        "\tif (result == MessageBoxResult.TryAgain)\n\t{\n\t    // User clicked Try Again\n\t}\n" +
-                        "\telse if (result == MessageBoxResult.Continue)\n\t{\n\t    // User clicked Continue\n\t}";
-                    break;
-                default:
-                    content = "\tMessageBox.Show(\"Message\", \"Title\", MessageBoxButton.OK);";
-                    break;
-            }
+                0 => "\tMessageBox.Show(\"Message\", \"Title\", MessageBoxButton.OK);",
+                1 => "\tvar result = MessageBox.Show(\"Message\", \"Title\", MessageBoxButton.OKCancel);\n" +
+                    "\tif (result == MessageBoxResult.OK)\n\t{\n\t    // User clicked OK\n\t}",
+                2 => "\tvar result = MessageBox.Show(\"Message\", \"Title\", MessageBoxButton.AbortRetryIgnore);\n" +
+                    "\tif (result == MessageBoxResult.Abort)\n\t{\n\t    // User clicked Abort\n\t}\n" +
+                    "\telse if (result == MessageBoxResult.Retry)\n\t{\n\t    // User clicked Retry\n\t}\n" +
+                    "\telse if (result == MessageBoxResult.Ignore)\n\t{\n\t    // User clicked Ignore\n\t}",
+                3 => "\tvar result = MessageBox.Show(\"Message\", \"Title\", MessageBoxButton.YesNoCancel);\n" +
+                    "\tif (result == MessageBoxResult.Yes)\n\t{\n\t    // User clicked Yes\n\t}\n" +
+                    "\telse if (result == MessageBoxResult.No)\n\t{\n\t    // User clicked No\n\t}",
+                4 => "\tvar result = MessageBox.Show(\"Message\", \"Title\", MessageBoxButton.YesNo);\n" +
+                    "\tif (result == MessageBoxResult.Yes)\n\t{\n\t    // User clicked Yes\n\t}\n" +
+                    "\telse if (result == MessageBoxResult.No)\n\t{\n\t    // User clicked No\n\t}",
+                5 => "\tvar result = MessageBox.Show(\"Message\", \"Title\", MessageBoxButton.RetryCancel);\n" +
+                    "\tif (result == MessageBoxResult.Retry)\n\t{\n\t    // User clicked Retry\n\t}",
+                6 => "\tvar result = MessageBox.Show(\"Message\", \"Title\", MessageBoxButton.CancelTryContinue);\n" +
+                    "\tif (result == MessageBoxResult.TryAgain)\n\t{\n\t    // User clicked Try Again\n\t}\n" +
+                    "\telse if (result == MessageBoxResult.Continue)\n\t{\n\t    // User clicked Continue\n\t}",
+                _ => "\tMessageBox.Show(\"Message\", \"Title\", MessageBoxButton.OK);"
+            };
 
             DifferentButtonsCSharpCode = string.Format(_differentButtonsMessageBoxSampleCSharpCodeString, content);
         }
 
         private void UpdateImageCodeSnippets(int index)
         {
-            string content;
-            switch (index)
+            string content = index switch
             {
-                case 1:
-                    content = "\t// MessageBoxImage.Error (also Hand, Stop)\n" +
-                        "\tMessageBox.Show(\"An error occurred!\", \"Error\", MessageBoxButton.OK, MessageBoxImage.Error);";
-                    break;
-                case 2:
-                    content = "\t// MessageBoxImage.Question\n" +
-                        "\tvar result = MessageBox.Show(\"Do you want to continue?\", \"Question\", MessageBoxButton.YesNo, MessageBoxImage.Question);";
-                    break;
-                case 3:
-                    content = "\t// MessageBoxImage.Warning (also Exclamation)\n" +
-                        "\tMessageBox.Show(\"Warning: This action may have consequences.\", \"Warning\", MessageBoxButton.OKCancel, MessageBoxImage.Warning);";
-                    break;
-                case 4:
-                    content = "\t// MessageBoxImage.Information (also Asterisk)\n" +
-                        "\tMessageBox.Show(\"Operation completed successfully.\", \"Information\", MessageBoxButton.OK, MessageBoxImage.Information);";
-                    break;
-                default:
-                    content = "\tMessageBox.Show(\"Message\", \"Title\", MessageBoxButton.OK, MessageBoxImage.None);";
-                    break;
-            }
+                0 => "\tMessageBox.Show(\"Message\", \"Title\", MessageBoxButton.OK, MessageBoxImage.None);",
+                1 => "\t// MessageBoxImage.Error (also Hand, Stop)\n" +
+                    "\tMessageBox.Show(\"An error occurred!\", \"Error\", MessageBoxButton.OK, MessageBoxImage.Error);",
+                2 => "\t// MessageBoxImage.Question\n" +
+                    "\tvar result = MessageBox.Show(\"Do you want to continue?\", \"Question\", MessageBoxButton.YesNo, MessageBoxImage.Question);",
+                3 => "\t// MessageBoxImage.Warning (also Exclamation)\n" +
+                    "\tMessageBox.Show(\"Warning: This action may have consequences.\", \"Warning\", MessageBoxButton.OKCancel, MessageBoxImage.Warning);",
+                4 => "\t// MessageBoxImage.Information (also Asterisk)\n" +
+                    "\tMessageBox.Show(\"Operation completed successfully.\", \"Information\", MessageBoxButton.OK, MessageBoxImage.Information);",
+                _ => "\tMessageBox.Show(\"Message\", \"Title\", MessageBoxButton.OK, MessageBoxImage.None);"
+            };
 
             DifferentImagesCSharpCode = string.Format(_differentImagesMessageBoxSampleCSharpCodeString, content);
         }
