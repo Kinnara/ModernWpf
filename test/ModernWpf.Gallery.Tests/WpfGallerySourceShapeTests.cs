@@ -854,7 +854,7 @@ namespace ModernWpf.Gallery.Tests
                 "public partial class ListViewPageViewModel : CollectionsPageViewModelBase",
                 "private int _listViewSelectionModeComboBoxSelectedIndex = 0;",
                 "public int ListViewSelectionModeComboBoxSelectedIndex",
-                "SetProperty(ref _listViewSelectionModeComboBoxSelectedIndex, value);",
+                "SetProperty<int>(ref _listViewSelectionModeComboBoxSelectedIndex, value);",
                 "UpdateListViewSelectionMode(value);",
                 "private SelectionMode _listViewSelectionMode = SelectionMode.Single;",
                 "private ObservableCollection<Person> _basicListViewItems;",

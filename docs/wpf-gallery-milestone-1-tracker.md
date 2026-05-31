@@ -9,6 +9,9 @@ A lower row is selectable only when every row above it is recorded for the
 current branch tip, inactive by environment, or explicitly blocked in the latest
 verification notes. Source-shape, resource-key, naming, selector, test cleanup,
 and tracker cleanup are never selectable merely because they are small.
+The numeric order below is strict: visual, real OS High Contrast, high-drift,
+asset, measurement, interaction, automation, and harness evidence must be
+handled before any row 5 source-shape cleanup.
 
 Official WPF Gallery source authority:
 
@@ -45,6 +48,20 @@ Current pointer:
    committed, row 1 is inactive again unless another priority/order conflict
    appears.
 2. Latest substantive batch, 2026-05-31: **global order 11 / P2 row 5.4**
+   for the `ListViewPageViewModel.ListViewSelectionModeComboBoxSelectedIndex`
+   explicit-generic `SetProperty<int>` source-shape guard. The local official
+   WPF Gallery source at
+   `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\Collections\ListViewPageViewModel.cs`
+   keeps
+   `SetProperty<int>(ref _listViewSelectionModeComboBoxSelectedIndex, value);`
+   before `UpdateListViewSelectionMode(value)`. The local copied view model now
+   keeps that non-visible setter shape while retaining the shared WPF
+   observable adapter and deterministic sample-generation adapters. This row
+   was selected only after `SystemParameters.HighContrast` returned `False`,
+   global orders 2-9 stayed recorded or inactive, rows 5.1-5.2 stayed
+   recorded, row 5.3 still had no current named executable gap, and the latest
+   high-drift evidence remained current.
+3. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
    for the `CheckBoxPageViewModel.OnSingleChecked(string option)` source-shape
    guard. The local official WPF Gallery source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\BasicInput\CheckBoxPageViewModel.cs`
@@ -56,7 +73,7 @@ Current pointer:
    global orders 2-9 stayed recorded or inactive, rows 5.1-5.2 stayed
    recorded, row 5.3 still had no current named executable gap, and the latest
    high-drift evidence remained current.
-3. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
+4. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
    for the `IconsPageViewModel.ApplyTagFilter(string? tag)` source-shape
    guard. The local official WPF Gallery source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\DesignGuidance\IconsPageViewModel.cs`
@@ -69,7 +86,7 @@ Current pointer:
    recorded or inactive, rows 5.1-5.2 stayed recorded, row 5.3 still had no
    current named executable gap, and the latest high-drift evidence remained
    current.
-4. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
+5. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
    for the `IconsPageViewModel` PageSize helper source-shape guard. The local
    official WPF Gallery source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\DesignGuidance\IconsPageViewModel.cs`
@@ -82,7 +99,7 @@ Current pointer:
    `SystemParameters.HighContrast` returned `False`, global orders 2-9 stayed
    recorded or inactive, rows 5.1-5.2 stayed recorded, and no current row 5.3
    executable gap appeared.
-5. Previous high-priority verification batch, 2026-05-31: **global orders 3-5 /
+6. Previous high-priority verification batch, 2026-05-31: **global orders 3-5 /
    P1.3 and P2 row 2 visual-high-drift freshness** preempted further row 5.4
    source-shape work after the user called out visual/high-drift priority risk.
    `SystemParameters.HighContrast` returned `False`. Retained high-drift
@@ -92,7 +109,7 @@ Current pointer:
    nonblank ModernWpf/WinUI captures and required sample elements. No new
    visible drift, high-drift retained-control regression, High Contrast,
    asset, measurement, automation, or harness trigger appeared.
-6. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
+7. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
    for the `IconsPageViewModel` pagination/displayed-icons source-shape guard.
    The local official WPF Gallery source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\DesignGuidance\IconsPageViewModel.cs`
@@ -103,14 +120,14 @@ Current pointer:
    This row was selected only after `SystemParameters.HighContrast` returned
    `False`, global orders 2-9 stayed recorded or inactive, rows 5.1-5.2
    stayed recorded, and no current row 5.3 executable gap appeared.
-7. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
+8. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
    for the `IconsPageViewModel` selected-icon name source-shape guard. The
    local official WPF Gallery source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\DesignGuidance\IconsPageViewModel.cs`
    caches `previousSelectedIcon?.Name` before rebuilding search results; the
    local copied view model now keeps that non-visible source shape while
    retaining the local WPF command and serializer adapters.
-8. Previous row 4 batch, 2026-05-31: **global order 7 / P2 row 4**
+9. Previous row 4 batch, 2026-05-31: **global order 7 / P2 row 4**
    for Iconography reload/current-page interaction parity. The local official
    WPF Gallery source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\DesignGuidance\IconsPageViewModel.cs`
@@ -120,7 +137,7 @@ Current pointer:
    serializer adapters. This measurement/interaction row preempted row 5.4
    source-shape cleanup after `SystemParameters.HighContrast` returned `False`
    and no visual, high-drift, or asset trigger appeared.
-9. Previous row 4 batch, 2026-05-31: **global order 7 / P2 row 4**
+10. Previous row 4 batch, 2026-05-31: **global order 7 / P2 row 4**
    for Iconography search interaction parity. The local official WPF Gallery
    source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\DesignGuidance\IconsPageViewModel.cs`
@@ -131,7 +148,7 @@ Current pointer:
    measurement/interaction row preempted row 5.4 source-shape cleanup after
    `SystemParameters.HighContrast` returned `False` and no visual,
    high-drift, or asset trigger appeared.
-10. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
+11. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
    for the `IconsPageViewModel` pagination helper source-shape guard. The local
    official WPF Gallery source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\DesignGuidance\IconsPageViewModel.cs`
@@ -142,7 +159,7 @@ Current pointer:
    `SystemParameters.HighContrast` returned `False`, global orders 2-9 stayed
    recorded or inactive, rows 5.1-5.2 stayed recorded, and no current row 5.3
    executable gap appeared.
-11. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
+12. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
    for the `IconsPageViewModel.PageSize` source-shape guard. The local official
    WPF Gallery source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\DesignGuidance\IconsPageViewModel.cs`
@@ -154,14 +171,14 @@ Current pointer:
    and direct mapped XAML hook/name/automation, direct code-behind member,
    official XAML resource-key, and matched ViewModel scans found no current row
    5.3 executable gap.
-12. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
+13. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
    for the `MainWindowViewModel.ApplicationTitle` source-shape guard. The local
    official WPF Gallery source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\MainWindowViewModel.cs`
    carries `_applicationTitle = "WPF Gallery"` as backing state; the local
    retained shell view model now uses the same backing field while keeping the
    local get-only property adapter.
-13. Previous higher-priority substantive batch, 2026-05-31: **global order 6 /
+14. Previous higher-priority substantive batch, 2026-05-31: **global order 6 /
    P2 row 3** for executable application-icon asset parity. The local official
    WPF Gallery source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\WPFGallery.csproj`
@@ -172,7 +189,7 @@ Current pointer:
    This asset/runtime-visible shell surface preempted row 5.3 source cleanup.
    The previous **global order 9 / P2 row 5.2** app-manifest runtime
    compatibility batch remains recorded.
-14. Previous high-priority visual batch, 2026-05-31: **global orders 3-5 / P1.3 and P2
+15. Previous high-priority visual batch, 2026-05-31: **global orders 3-5 / P1.3 and P2
    row 2 visual-high-drift freshness** preempted row 5.3 after the branch
    refreshed current visual/high-drift evidence. `SystemParameters.HighContrast`
    returned `False`. A local official-source scan under
@@ -188,7 +205,7 @@ Current pointer:
    `artifacts/visual-checks/20260531-134103-490-70788/report.md` and
    `artifacts/visual-checks/20260531-134200-949-83644/report.md`, so row 5.3
    stays selectable only after this higher visual freshness check.
-15. Previous interaction/automation correction, 2026-05-31: **global order 7 /
+16. Previous interaction/automation correction, 2026-05-31: **global order 7 /
    P2 row 4** preempted row 5.3 because the local official source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Controls\ControlExample.xaml.cs`
    gates `ControlExample.Copy_SourceCode` through a non-empty `XamlCode` check,
@@ -196,7 +213,7 @@ Current pointer:
    unknown parameter. `ModernWpf.Gallery\Controls\ControlExample.cs` now keeps
    that interaction shape while retaining the local notification compatibility
    adapter. This row 7 batch is recorded in Latest local verification.
-16. The latest recorded row 5.3 source batch was **global order 10 / P2 row 5.3** because
+17. The latest recorded row 5.3 source batch was **global order 10 / P2 row 5.3** because
    the local official WPF Gallery sources
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\MainWindow.xaml.cs`
    and
@@ -205,10 +222,10 @@ Current pointer:
    `_navigationService.IsBackHistoryNonEmpty()`, while the local retained shell
    still used the direct `MainWindow.SetBackButtonVisible(bool)` adapter. That
    batch is now recorded in Latest local verification.
-17. The next substantive row returns to **global order 11 / P2 row 5.4** only
+18. The next substantive row returns to **global order 11 / P2 row 5.4** only
     while every higher row, including row 5.3, remains recorded, inactive, or
     has no current named executable gap.
-18. Any new High Contrast, visible drift, high-drift retained-control, asset,
+19. Any new High Contrast, visible drift, high-drift retained-control, asset,
    measurement, interaction, automation, or harness evidence immediately
    preempts row 5 source cleanup.
 
@@ -235,8 +252,10 @@ Current distance, in executable buckets rather than a percentage:
    Gallery navigation view-model Type-gate, MainWindow forward-command, and
    MainWindow `UpdateCanNavigateBack` source-hook alignments. The current
    executable row is 5.4 only for named non-visible source-shape guards proven
-   against local official source, and only while rows above remain recorded and
-   `SystemParameters.HighContrast = False`.
+   against local official source; the latest such guard is the Collections
+   ListView explicit-generic `SetProperty<int>` setter shape, and it is valid
+   only while rows above remain recorded and `SystemParameters.HighContrast =
+   False`.
 4. Remaining work before the goal can close: finish any named 5.4 guards that
    survive the local official-source comparison, record or explicitly mark row
    5.5 as not applicable, then do P2 row 6/final closeout with a fresh
@@ -257,8 +276,9 @@ below is the only place to choose the next batch; older queues, historical
 priority snapshots, and detailed evidence sections are supporting context only.
 If any lower section conflicts with this block, this block wins.
 After selecting a rank here, use a subordinate queue only when this block names
-it explicitly: `P2 Subqueue`, then `P2 Row 5 Internal Queue` when global order
-10 is the first executable substantive row.
+it explicitly: `P2 Subqueue`, then `P2 Row 5 Internal Queue` for the first
+executable row-5 global order. The top-level global order still wins over the
+row-5 internal queue.
 
 Current active selection snapshot:
 
@@ -276,23 +296,24 @@ Current active selection snapshot:
    proof remains current.
 3. The latest row 5 path was **global order 11 -> P2 Subqueue row 5 -> P2 Row
    5 Internal Queue row 5.4** for the
-   `CheckBoxPageViewModel.OnSingleChecked(string option)` source-shape guard.
+   `ListViewPageViewModel.ListViewSelectionModeComboBoxSelectedIndex`
+   explicit-generic `SetProperty<int>` source-shape guard.
    `SystemParameters.HighContrast` returned `False`,
    global orders 2-9 are recorded or inactive for the current branch tip, rows
    5.1-5.2 are recorded, row 5.3 has no current named executable gap, and the
    latest high-drift freshness proof above remains current.
 4. The previous substantive row 5 path was **global order 11 -> P2 Subqueue row
    5 -> P2 Row 5 Internal Queue row 5.4** for the
-   `IconsPageViewModel.ApplyTagFilter(string? tag)` source-shape guard.
+   `CheckBoxPageViewModel.OnSingleChecked(string option)` source-shape guard.
    `SystemParameters.HighContrast` returned `False`, global orders 2-9 are
    recorded or inactive for the current branch tip, rows 5.1-5.2 are recorded,
    and row 5.3 has no current named executable gap.
 5. The previous substantive row 5 path was **global order 11 -> P2 Subqueue row
-   5 -> P2 Row 5 Internal Queue row 5.4** for the `IconsPageViewModel`
-   PageSize helper-block source-shape guard. `SystemParameters.HighContrast`
-   returned `False`, global orders 2-9 are recorded or inactive for the
-   current branch tip, rows 5.1-5.2 are recorded, and row 5.3 has no current
-   named executable gap.
+   5 -> P2 Row 5 Internal Queue row 5.4** for the
+   `IconsPageViewModel.ApplyTagFilter(string? tag)` source-shape guard.
+   `SystemParameters.HighContrast` returned `False`, global orders 2-9 are
+   recorded or inactive for the current branch tip, rows 5.1-5.2 are recorded,
+   and row 5.3 has no current named executable gap.
 6. The previous row 5 substantive path was **global order 11 -> P2 Subqueue
    row 5 -> P2 Row 5 Internal Queue row 5.4** for the `IconsPageViewModel`
    selected-icon name source-shape guard.
@@ -536,6 +557,22 @@ Current active selection snapshot:
     view model now keeps that official non-visible handler signature while
     preserving the local WPF `ICommand` adapter through an object-to-string
     command bridge.
+30. Recorded Collections ListView selection-mode setter source-shape guard
+    selection proof, 2026-05-31:
+    `SystemParameters.HighContrast` returned `False`. The selected substantive
+    row was **global order 11 / P2 row 5.4** because global orders 2-9 remained
+    recorded or inactive, rows 5.1-5.2 were recorded, row 5.3 still had no
+    current named executable gap after the latest official/local scan, and the
+    refreshed high-drift Light/Dark evidence
+    `artifacts/visual-checks/20260531-151548-761-78380/report.md` /
+    `artifacts/visual-checks/20260531-151737-949-59816/report.md` stayed
+    current. The local official source
+    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\Collections\ListViewPageViewModel.cs`
+    keeps
+    `SetProperty<int>(ref _listViewSelectionModeComboBoxSelectedIndex, value);`
+    before `UpdateListViewSelectionMode(value)`. The local copied view model
+    now keeps that official non-visible setter shape while preserving the
+    shared WPF observable adapter and deterministic sample-generation adapters.
 
 Mandatory next-work selector:
 
@@ -560,9 +597,10 @@ recently touched.
 | 12 | P2 row 5.5 row-5 bookkeeping and stale-status cleanup | Blocked until substantive row 5 items are recorded or not applicable. |
 | 13 | P2 row 6 and final closeout cleanup | Last; only after row 5 is recorded or explicitly not applicable and the final verification sweep is current. |
 
-After the latest Basic Input CheckBox row 5.4 single-option signature guard is
-recorded, the next substantive row may remain **global order 11 / P2 row
-5.4** only if another named 5.4 guard survives the same proof. The latest
+After the latest Collections ListView row 5.4 selection-mode
+`SetProperty<int>` guard is recorded, the next substantive row may remain
+**global order 11 / P2 row 5.4** only if another named 5.4 guard survives the
+same proof. The latest
 direct mapped XAML hook/name/automation, direct code-behind member, official
 XAML resource-key, and matched ViewModel source scans found no current row 5.3
 gap after the recorded navigation view-model Type-gate, `WhatsNewPage`
@@ -596,13 +634,14 @@ Required selection proof before any substantive edit:
    cleanup stay blocked while any 5.1-5.4 item is current.
 
 Current allowed substantive row may remain **global order 11 / P2 row 5.4**
-after the latest Basic Input CheckBox row 5.4 single-option signature guard is
-recorded only if `SystemParameters.HighContrast` is `False`, global orders 2-9
-are recorded or inactive for the current branch tip, P2 rows 2-4 are recorded,
-rows 5.1-5.2 are recorded, row 5.3 has no current named executable gap, and a
-new named 5.4 guard is identified against local official source. Any new High
-Contrast, visible-drift, high-drift retained-control, asset, measurement,
-interaction, automation, harness, 5.1, 5.2, or 5.3 evidence immediately
+after the latest Collections ListView row 5.4 selection-mode
+`SetProperty<int>` guard is recorded only if `SystemParameters.HighContrast` is
+`False`, global orders 2-9 are recorded or inactive for the current branch tip,
+P2 rows 2-4 are recorded, rows 5.1-5.2 are recorded, row 5.3 has no current
+named executable gap, and a new named 5.4 guard is identified against local
+official source. Any new High Contrast, visible-drift, high-drift
+retained-control, asset, measurement, interaction, automation, harness, 5.1,
+5.2, or 5.3 evidence immediately
 preempts row 5.4 and reopens the higher global order.
 
 Priority fail-safe:
@@ -835,7 +874,7 @@ Current row 5 decision:
 | 5.1 | Source-backed sample panes and runtime-visible example content | Recorded for the current branch tip. Basic Input, Collections, Date & Calendar, Design Guidance, Layout, Media, Navigation, Status & Info, Text, System, and What's New `ControlExample` snippets are covered; Design Guidance Color subsection `ColorPageExample` titles, descriptions, and visible example content types are now guarded against the official WPF Gallery source shape. | Reopen before row 5.2 only if a new sample-pane or runtime-visible example-content gap is named. |
 | 5.2 | Source-backed structural alignment that can affect visible layout, resources, keyboard, interaction, automation, or visual-harness behavior | Recorded for the current branch tip. The latest named 5.2 batch aligns app-manifest runtime compatibility with local official WPF Gallery source by keeping the `true/PM` DPI fallback, `longPathAware`, and active `Microsoft.Windows.Common-Controls` v6 dependency while retaining the local `PerMonitorV2` DPI-awareness adapter. Earlier named 5.2 batches align the shared `ColorTile` warning visibility to the official WPF Gallery `TemplateBinding ShowWarning` plus `BooleanToVisibilityConverter` shape and record the official `TemplateBinding ShowSeparator` shape as not locally viable because WPF leaves the separator visible when `ShowSeparator=false`; the retained `RelativeSource TemplatedParent` converter binding is therefore an explicit WPF compatibility adapter. Earlier recorded 5.2 items remain the Design Guidance Iconography instructions Expander inline/source structure, the Design Guidance Spacing/Geometry default dark design-image `Source` fallback, the Navigation `FrameWindow` same-folder `Frame.Source` behavior, and the Navigation `NavigationWindow` explicit Gallery component URI plus `Frame.xaml` template-resource dependency. | Reopen before row 5.3 only if a new source-backed structural diff is named and can affect visible layout, resources, keyboard, interaction, automation, or visual-harness behavior. |
 | 5.3 | Resource-key, naming, selector, and source-hook parity tied to visible or harness behavior | Recorded for the current branch tip with no current named gap after the latest scan. Earlier named 5.3 batches remain recorded, including title-bar/footer resource keys, retained shell structural lookups, route/display aliases, direct page registry normalization, command-handler names, the copied `WhatsNewPage` handler selector, and the copied Iconography direct search-placeholder visibility handlers. | Reopen before 5.4 if a new named resource/key/name/selector/hook gap appears that can affect visuals, behavior, or harness evidence. |
-| 5.4 | Non-visible copied/adapted source-shape guards | Current only while 5.1-5.3 remain recorded or no current named gap exists. The latest named 5.4 guard aligns `CheckBoxPageViewModel.OnSingleChecked(string option)` with the official single-option command handler signature while keeping the local WPF `ICommand` adapter through an object-to-string bridge. Previous 5.4 guards aligned `IconsPageViewModel.ApplyTagFilter(string? tag)` with the official nullable tag-parameter handler signature, the `IconsPageViewModel` PageSize helper block with the official default-250 comment, `PageSizeOptions` adjacency, and one-line `PageSize` helper before `LoadData`, pagination/displayed-icons helper shape with the official zero-total clamp, one-line displayed-icons projection, and `if(resetSelectedIcon)` reset guard, selected-icon name caching with the official `previousSelectedIcon?.Name` source shape, pagination helpers with the official expression-bodied `CanGoToPreviousPage()` / `CanGoToNextPage()` helpers and `UpdateDisplayedIcons` local `skip` variable shape, `IconsPageViewModel.PageSize` with the official expression-bodied `SelectedPageSizeIndex == 4` "All" branch, and `MainWindowViewModel.ApplicationTitle` with the official `_applicationTitle = "WPF Gallery"` backing-field source shape. Recent summary/base-declaration rounds are recorded; comments, declaration shape, member order, and pure source-text guards stay blocked if any 5.1-5.3 item reopens. | Take only a named guard gap with focused tests and a full Gallery build. |
+| 5.4 | Non-visible copied/adapted source-shape guards | Current only while 5.1-5.3 remain recorded or no current named gap exists. The latest named 5.4 guard aligns `ListViewPageViewModel.ListViewSelectionModeComboBoxSelectedIndex` with the official explicit-generic `SetProperty<int>(ref _listViewSelectionModeComboBoxSelectedIndex, value);` setter shape while keeping the shared WPF observable adapter. Previous 5.4 guards aligned `CheckBoxPageViewModel.OnSingleChecked(string option)` with the official single-option command handler signature while keeping the local WPF `ICommand` adapter through an object-to-string bridge, `IconsPageViewModel.ApplyTagFilter(string? tag)` with the official nullable tag-parameter handler signature, the `IconsPageViewModel` PageSize helper block with the official default-250 comment, `PageSizeOptions` adjacency, and one-line `PageSize` helper before `LoadData`, pagination/displayed-icons helper shape with the official zero-total clamp, one-line displayed-icons projection, and `if(resetSelectedIcon)` reset guard, selected-icon name caching with the official `previousSelectedIcon?.Name` source shape, pagination helpers with the official expression-bodied `CanGoToPreviousPage()` / `CanGoToNextPage()` helpers and `UpdateDisplayedIcons` local `skip` variable shape, `IconsPageViewModel.PageSize` with the official expression-bodied `SelectedPageSizeIndex == 4` "All" branch, and `MainWindowViewModel.ApplicationTitle` with the official `_applicationTitle = "WPF Gallery"` backing-field source shape. Recent summary/base-declaration rounds are recorded; comments, declaration shape, member order, and pure source-text guards stay blocked if any 5.1-5.3 item reopens. | Take only a named guard gap with focused tests and a full Gallery build. |
 | 5.5 | Stale-status cleanup and tracker-only row 5 bookkeeping | Last inside row 5, except for explicit user-requested priority/order hygiene. | Use only after substantive row 5 items are recorded or not applicable. |
 
 Latest accepted visual/high-drift priority-correction note:
@@ -1831,6 +1870,45 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `Add-Type -AssemblyName PresentationFramework; [System.Windows.SystemParameters]::HighContrast`
+  - Returned `False` before the Collections ListView selection-mode
+    explicit-generic `SetProperty<int>` source-shape guard. Winning rank was
+    **global order 11 / P2 row 5.4** because global orders 2-9 were recorded
+    or inactive, rows 5.1-5.2 were recorded, row 5.3 had no current named
+    executable gap after the latest scan, and the visual/high-drift freshness
+    evidence `artifacts/visual-checks/20260531-151548-761-78380/report.md` /
+    `artifacts/visual-checks/20260531-151737-949-59816/report.md` remained
+    current.
+- Local official-source comparison used
+  `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\Collections\ListViewPageViewModel.cs`
+  - Official source keeps
+    `SetProperty<int>(ref _listViewSelectionModeComboBoxSelectedIndex, value);`
+    before `UpdateListViewSelectionMode(value)`. Local
+    `ModernWpf.Gallery\Pages\WpfGallery\Collections\CollectionsPageViewModels.cs`
+    now keeps that non-visible setter shape while retaining the shared WPF
+    observable adapter and deterministic sample-generation adapters.
+- `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~GalleryPageRuntimeTests.CollectionsPagesUseOfficialPageSpecificViewModels|FullyQualifiedName~WpfGallerySourceShapeTests.CollectionsViewModelsKeepOfficialConstructorAndSelectionModeSourceShape|FullyQualifiedName~TrackerPriorityTests" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 5 tests per
+    target. This covers the Collections direct-page runtime view-model guard,
+    Collections source-shape guard, and tracker hard-order guards. Latest
+    output showed the existing `NU1903` warning, generated WinRT warnings,
+    existing ModernWpf/ModernWpf.Controls warnings, and recurring
+    `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet build .\ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after
+    the Collections ListView selection-mode setter source-shape guard. Build
+    summary reported 19 warnings and 0 errors; output still includes existing
+    ModernWpf/ModernWpf.Controls warnings and recurring
+    `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~TrackerPriorityTests" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 3 tests per
+    target after updating the tracker hard-order/current-selection notes.
+    Existing warning/output remains `NU1903` and recurring
+    `Failed to resolve WinRT.Runtime.dll` messages.
+- `git diff --check`
+  - Passed after the Collections ListView selection-mode setter source-shape
+    guard and tracker update, with only the existing LF/CRLF working-copy
+    warnings for touched files.
 - `Add-Type -AssemblyName PresentationFramework; [System.Windows.SystemParameters]::HighContrast`
   - Returned `False` before the Basic Input CheckBox single-option signature
     source-shape guard. Winning rank was **global order 11 / P2 row 5.4**

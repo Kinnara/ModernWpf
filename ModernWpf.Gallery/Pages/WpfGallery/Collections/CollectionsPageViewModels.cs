@@ -176,7 +176,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
             get { return _listViewSelectionModeComboBoxSelectedIndex; }
             set
             {
-                SetProperty(ref _listViewSelectionModeComboBoxSelectedIndex, value);
+                SetProperty<int>(ref _listViewSelectionModeComboBoxSelectedIndex, value);
                 UpdateListViewSelectionMode(value);
             }
         }
