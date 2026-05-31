@@ -38,34 +38,39 @@ if ([string]::IsNullOrWhiteSpace($OfficialDirectHostExe)) {
     $OfficialDirectHostExe = Join-Path $RepoRoot "tools\visual-checks\OfficialWpfGalleryDirectHost\bin\Debug\net10.0-windows\OfficialWpfGalleryDirectHost.exe"
 }
 
-function New-Case([string]$id, [string]$modernRoute, [string[]]$officialPath, [string]$colorSubpage = "") {
+function New-Case([string]$id, [string]$modernRoute, [string[]]$officialPath, [string]$colorSubpage = "", [string]$readyRoute = "") {
+    if ([string]::IsNullOrWhiteSpace($readyRoute)) {
+        $readyRoute = $modernRoute
+    }
+
     return [ordered]@{
         Id = $id
         ModernRoute = $modernRoute
+        ReadyRoute = $readyRoute
         OfficialPath = $officialPath
         ColorSubpage = $colorSubpage
     }
 }
 
 $CaseCatalog = @(
-    New-Case "Home" "home" @("Home")
-    New-Case "WhatsNew" "WhatsNew" @("What's New")
-    New-Case "AllControls" "AllControls" @("All Controls")
-    New-Case "DesignGuidance" "category/DesignGuidance" @("Design Guidance")
-    New-Case "Color" "item/Color" @("Design Guidance", "Colors")
-    New-Case "ColorText" "item/Color" @("Design Guidance", "Colors") "Text"
-    New-Case "ColorFill" "item/Color" @("Design Guidance", "Colors") "Fill"
-    New-Case "ColorStroke" "item/Color" @("Design Guidance", "Colors") "Stroke"
-    New-Case "ColorBackground" "item/Color" @("Design Guidance", "Colors") "Background"
-    New-Case "ColorSignal" "item/Color" @("Design Guidance", "Colors") "Signal"
-    New-Case "ColorHighContrast" "item/Color" @("Design Guidance", "Colors") "HighContrast"
+    New-Case "Home" "Home" @("Home") "" "home"
+    New-Case "WhatsNew" "What's New" @("What's New") "" "WhatsNew"
+    New-Case "AllControls" "All Controls" @("All Controls") "" "AllControls"
+    New-Case "DesignGuidance" "category/Design Guidance" @("Design Guidance") "" "category/DesignGuidance"
+    New-Case "Color" "item/Colors" @("Design Guidance", "Colors") "" "item/Color"
+    New-Case "ColorText" "item/Colors" @("Design Guidance", "Colors") "Text" "item/Color"
+    New-Case "ColorFill" "item/Colors" @("Design Guidance", "Colors") "Fill" "item/Color"
+    New-Case "ColorStroke" "item/Colors" @("Design Guidance", "Colors") "Stroke" "item/Color"
+    New-Case "ColorBackground" "item/Colors" @("Design Guidance", "Colors") "Background" "item/Color"
+    New-Case "ColorSignal" "item/Colors" @("Design Guidance", "Colors") "Signal" "item/Color"
+    New-Case "ColorHighContrast" "item/Colors" @("Design Guidance", "Colors") "HighContrast" "item/Color"
     New-Case "Typography" "item/Typography" @("Design Guidance", "Typography")
     New-Case "Spacing" "item/Spacing" @("Design Guidance", "Spacing")
     New-Case "Geometry" "item/Geometry" @("Design Guidance", "Geometry")
-    New-Case "Iconography" "item/Iconography" @("Design Guidance", "Icons")
+    New-Case "Iconography" "item/Icons" @("Design Guidance", "Icons") "" "item/Iconography"
     New-Case "Samples" "category/Samples" @("Samples")
-    New-Case "UserDashboard" "item/UserDashboard" @("Samples", "User Dashboard")
-    New-Case "BasicInput" "category/BasicInput" @("Basic Input")
+    New-Case "UserDashboard" "item/User Dashboard" @("Samples", "User Dashboard") "" "item/UserDashboard"
+    New-Case "BasicInput" "category/Basic Input" @("Basic Input") "" "category/BasicInput"
     New-Case "Button" "item/Button" @("Basic Input", "Button")
     New-Case "CheckBox" "item/CheckBox" @("Basic Input", "CheckBox")
     New-Case "ComboBox" "item/ComboBox" @("Basic Input", "ComboBox")
@@ -76,7 +81,7 @@ $CaseCatalog = @(
     New-Case "ListBox" "item/ListBox" @("Collections", "ListBox")
     New-Case "ListView" "item/ListView" @("Collections", "ListView")
     New-Case "TreeView" "item/TreeView" @("Collections", "TreeView")
-    New-Case "DateAndCalendar" "category/DateAndCalendar" @("Date & Calendar")
+    New-Case "DateAndCalendar" "category/Date & Calendar" @("Date & Calendar") "" "category/DateAndCalendar"
     New-Case "Calendar" "item/Calendar" @("Date & Calendar", "Calendar")
     New-Case "DatePicker" "item/DatePicker" @("Date & Calendar", "DatePicker")
     New-Case "Layout" "category/Layout" @("Layout")
@@ -87,7 +92,7 @@ $CaseCatalog = @(
     New-Case "GroupBox" "item/GroupBox" @("Layout", "GroupBox")
     New-Case "StackPanel" "item/StackPanel" @("Layout", "StackPanel")
     New-Case "Border" "item/Border" @("Layout", "Border")
-    New-Case "Media" "category/Media" @("Media")
+    New-Case "Media" "category/Media Controls" @("Media") "" "category/Media"
     New-Case "Canvas" "item/Canvas" @("Media", "Canvas")
     New-Case "Image" "item/Image" @("Media", "Image")
     New-Case "ShellNavigation" "item/Menu" @("Navigation", "Menu")
@@ -96,7 +101,7 @@ $CaseCatalog = @(
     New-Case "TabControl" "item/TabControl" @("Navigation", "TabControl")
     New-Case "Frame" "item/Frame" @("Navigation", "Frame")
     New-Case "NavigationWindow" "item/NavigationWindow" @("Navigation", "NavigationWindow")
-    New-Case "StatusAndInfo" "category/StatusAndInfo" @("Status & Info")
+    New-Case "StatusAndInfo" "category/Status & Info" @("Status & Info") "" "category/StatusAndInfo"
     New-Case "ProgressBar" "item/ProgressBar" @("Status & Info", "ProgressBar")
     New-Case "ToolTip" "item/ToolTip" @("Status & Info", "ToolTip")
     New-Case "Text" "category/Text" @("Text")
@@ -107,10 +112,10 @@ $CaseCatalog = @(
     New-Case "PasswordBox" "item/PasswordBox" @("Text", "PasswordBox")
     New-Case "Hyperlink" "item/Hyperlink" @("Text", "Hyperlink")
     New-Case "System" "category/System" @("System")
-    New-Case "FileAndFolderDialogs" "item/FileAndFolderDialogs" @("System", "File and Folder Dialogs")
+    New-Case "FileAndFolderDialogs" "item/File and Folder Dialogs" @("System", "File and Folder Dialogs") "" "item/FileAndFolderDialogs"
     New-Case "MessageBox" "item/MessageBox" @("System", "MessageBox")
     New-Case "Clipboard" "item/Clipboard" @("System", "Clipboard")
-    New-Case "Settings" "settings" @("Settings")
+    New-Case "Settings" "Settings" @("Settings") "" "settings"
 )
 
 $OfficialDirectReferenceCaseIds = @(
@@ -189,6 +194,7 @@ function Select-Cases {
         $match = $CaseCatalog | Where-Object {
             $_.Id -eq $caseId -or
             $_.ModernRoute -eq $caseId -or
+            $_.ReadyRoute -eq $caseId -or
             ($_.OfficialPath -join "/") -eq $caseId
         } | Select-Object -First 1
 
@@ -252,10 +258,11 @@ if ($ListCases) {
             [pscustomobject]@{
                 Id = $_.Id
                 ModernRoute = $_.ModernRoute
+                ReadyRoute = $_.ReadyRoute
                 OfficialPath = $_.OfficialPath -join " > "
             }
         } |
-        Format-Table Id, ModernRoute, OfficialPath -AutoSize
+        Format-Table Id, ModernRoute, ReadyRoute, OfficialPath -AutoSize
     return
 }
 
@@ -1614,9 +1621,9 @@ function Capture-ModernWpf($case, [string]$caseDir) {
             Find-WindowByProcessId $process.Id
         }
         [void][WpfGalleryVisualNative]::Move($window.Current.NativeWindowHandle, 60, 60, $Width, $Height)
-        Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "ModernWpf route '$($case.ModernRoute)' to become ready" -Probe {
+        Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "ModernWpf route '$($case.ModernRoute)' to become ready as '$($case.ReadyRoute)'" -Probe {
             $readyElement = Find-DescendantByAutomationId $window "GalleryVisualTestReadyState"
-            if ($null -ne $readyElement -and $readyElement.Current.Name -eq "Ready:$($case.ModernRoute)") {
+            if ($null -ne $readyElement -and $readyElement.Current.Name -eq "Ready:$($case.ReadyRoute)") {
                 return $readyElement
             }
 
@@ -1710,6 +1717,7 @@ function Capture-ModernWpf($case, [string]$caseDir) {
             App = "ModernWpf"
             Case = $case.Id
             Route = $case.ModernRoute
+            ReadyRoute = $case.ReadyRoute
             Status = $(if (($windowNonBlank -or $contentCrop.NonBlank) -and $contentCrop.NonBlank -and [string]::IsNullOrWhiteSpace($lastException)) { "Passed" } else { "Failed" })
             Screenshot = $screenshot
             ContentCrop = $contentCrop
@@ -1927,6 +1935,7 @@ foreach ($case in $selectedCases) {
             App = "ModernWpf"
             Case = $case.Id
             Route = $case.ModernRoute
+            ReadyRoute = $case.ReadyRoute
             Status = "Failed"
             Screenshot = ""
             ContentCrop = $null

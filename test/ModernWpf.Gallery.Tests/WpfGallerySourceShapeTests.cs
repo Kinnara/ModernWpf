@@ -1586,6 +1586,30 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void WpfGalleryVisualAuditLaunchesOfficialDisplayRoutesWithCanonicalReadyRoutes()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Run-WpfGalleryVisualAudit.ps1"));
+
+            StringAssert.Contains(source, "ReadyRoute = $readyRoute");
+            StringAssert.Contains(source, "$_.ReadyRoute -eq $caseId");
+            StringAssert.Contains(source, "Ready:$($case.ReadyRoute)");
+            StringAssert.Contains(source, "New-Case \"AllControls\" \"All Controls\" @(\"All Controls\") \"\" \"AllControls\"");
+            StringAssert.Contains(source, "New-Case \"DesignGuidance\" \"category/Design Guidance\" @(\"Design Guidance\") \"\" \"category/DesignGuidance\"");
+            StringAssert.Contains(source, "New-Case \"Color\" \"item/Colors\" @(\"Design Guidance\", \"Colors\") \"\" \"item/Color\"");
+            StringAssert.Contains(source, "New-Case \"Iconography\" \"item/Icons\" @(\"Design Guidance\", \"Icons\") \"\" \"item/Iconography\"");
+            StringAssert.Contains(source, "New-Case \"DateAndCalendar\" \"category/Date & Calendar\" @(\"Date & Calendar\") \"\" \"category/DateAndCalendar\"");
+            StringAssert.Contains(source, "New-Case \"StatusAndInfo\" \"category/Status & Info\" @(\"Status & Info\") \"\" \"category/StatusAndInfo\"");
+            StringAssert.Contains(source, "New-Case \"FileAndFolderDialogs\" \"item/File and Folder Dialogs\" @(\"System\", \"File and Folder Dialogs\") \"\" \"item/FileAndFolderDialogs\"");
+            Assert.IsFalse(source.Contains("New-Case \"DateAndCalendar\" \"category/DateAndCalendar\"", StringComparison.Ordinal));
+            Assert.IsFalse(source.Contains("New-Case \"StatusAndInfo\" \"category/StatusAndInfo\"", StringComparison.Ordinal));
+            Assert.IsFalse(source.Contains("New-Case \"Iconography\" \"item/Iconography\"", StringComparison.Ordinal));
+        }
+
+        [TestMethod]
         public void WpfGalleryPageStylesKeepOfficialResourceSetterSourceShape()
         {
             var xaml = ReadRepoFile(
