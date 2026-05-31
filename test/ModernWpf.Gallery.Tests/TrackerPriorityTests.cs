@@ -132,6 +132,10 @@ namespace ModernWpf.Gallery.Tests
             }
 
             Assert.AreEqual("Partial/Partial/Done", workingChecklistRows.Single(row => row.Name == "Design Guidance section").Status);
+            Assert.IsFalse(
+                workingChecklistRows.Any(row => row.VisualChecked != "Done"),
+                string.Join(", ", workingChecklistRows.Where(row => row.VisualChecked != "Done").Select(row => row.Name + " " + row.Status)));
+            Assert.AreEqual("Done/Mostly done/Done", workingChecklistRows.Single(row => row.Name == "Home").Status);
             CollectionAssert.Contains(nonDoneRows.Select(row => row.Name).ToList(), "Design Guidance section");
             CollectionAssert.Contains(nonDoneRows.Select(row => row.Name).ToList(), "All Controls");
             CollectionAssert.Contains(nonDoneRows.Select(row => row.Name).ToList(), "Status & Info section");
@@ -143,9 +147,9 @@ namespace ModernWpf.Gallery.Tests
                 "table still has 14 rows with at least one non-`Done` status",
                 "`Home`",
                 "`System section`",
-                "These are",
-                "row 6 completion-audit blockers, not permission to run lower-priority source",
-                "cleanup ahead of reopened visual, High Contrast, high-drift, asset,",
+                "Their visual statuses are now closed",
+                "structural/source row 6 completion-audit blockers, not permission to run",
+                "lower-priority source cleanup ahead of reopened visual, High Contrast,",
                 "measurement, automation, harness, or row 5 evidence.");
         }
 
