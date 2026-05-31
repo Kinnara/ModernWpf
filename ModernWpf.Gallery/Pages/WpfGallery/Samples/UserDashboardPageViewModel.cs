@@ -254,35 +254,31 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
 
         private void EditUserCommit()
         {
-            if (EditableUser == null || SelectedUser == null)
+            if (EditableUser != null && SelectedUser != null)
             {
-                return;
-            }
+                int index = Users.IndexOf(SelectedUser);
+                if (index < 0)
+                {
+                    return;
+                }
 
-            var index = Users.IndexOf(SelectedUser);
-            if (index < 0)
-            {
-                return;
+                Users.RemoveAt(index);
+                Users.Insert(index, EditableUser);
+                SelectedUser = Users[index];
+                IsReadOnly = true;
+                IsEditing = false;
+                IsSaved = true;
             }
-
-            Users.RemoveAt(index);
-            Users.Insert(index, EditableUser);
-            SelectedUser = Users[index];
-            IsReadOnly = true;
-            IsEditing = false;
-            IsSaved = true;
         }
 
         private void EditUserStart()
         {
-            if (SelectedUser == null)
+            if (SelectedUser != null)
             {
-                return;
+                EditableUser = new UserDashboardUser(SelectedUser);
+                IsReadOnly = false;
+                IsEditing = true;
             }
-
-            EditableUser = new UserDashboardUser(SelectedUser);
-            IsReadOnly = false;
-            IsEditing = true;
         }
 
         private void RemoveUser(UserDashboardUser selectedUser)
@@ -293,8 +289,14 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
             }
 
             DeletedName = selectedUser.Name;
-            var index = Users.Last().Equals(selectedUser) ? Users.IndexOf(selectedUser) - 1 : Users.IndexOf(selectedUser) + 1;
-            SelectedUser = index >= 0 && index < Users.Count ? Users[index] : null;
+            int index = Users.Last().Equals(selectedUser) ?
+                Users.IndexOf(selectedUser) - 1 :
+                Users.IndexOf(selectedUser) + 1;
+
+            SelectedUser = index >= 0 && index < Users.Count ?
+                           Users[index] :
+                           null;
+
             Users.Remove(selectedUser);
             IsReadOnly = true;
             IsEditing = false;

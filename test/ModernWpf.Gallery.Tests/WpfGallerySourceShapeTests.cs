@@ -1150,7 +1150,16 @@ namespace ModernWpf.Gallery.Tests
                 "set { SetProperty(ref _users, value, \"Users\"); }",
                 "\"Suite 92, 9 Hermina Point, Bakersfield, United States\",\n                \"\"",
                 "Users.Add(new UserDashboardUser(\"New User\", \"\"));",
-                "SelectedUser = Users.Last();");
+                "SelectedUser = Users.Last();",
+                "private void EditUserCommit()",
+                "if (EditableUser != null && SelectedUser != null)",
+                "int index = Users.IndexOf(SelectedUser);",
+                "private void EditUserStart()",
+                "if (SelectedUser != null)",
+                "EditableUser = new UserDashboardUser(SelectedUser);",
+                "private void RemoveUser(UserDashboardUser selectedUser)",
+                "int index = Users.Last().Equals(selectedUser) ?\n                Users.IndexOf(selectedUser) - 1 :\n                Users.IndexOf(selectedUser) + 1;",
+                "SelectedUser = index >= 0 && index < Users.Count ?\n                           Users[index] :\n                           null;");
             Assert.IsFalse(
                 source.Contains("public event PropertyChangedEventHandler", StringComparison.Ordinal),
                 "UserDashboardPageViewModel should use the shared observable adapter instead of local notification plumbing.");
