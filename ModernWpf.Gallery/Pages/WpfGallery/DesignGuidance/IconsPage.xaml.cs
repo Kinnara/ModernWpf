@@ -43,24 +43,38 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 
         private void IconsSearchBox_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
-            UpdateSearchPlaceholder();
+            if (IconsSearchBox.Text.Length > 0)
+            {
+                IconsSearchBoxPlaceholder.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                IconsSearchBoxPlaceholder.Visibility = Visibility.Visible;
+            }
         }
 
         private void IconsSearchBox_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
-            UpdateSearchPlaceholder();
+            if (IconsSearchBox.Text.Length > 0)
+            {
+                IconsSearchBoxPlaceholder.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                IconsSearchBoxPlaceholder.Visibility = Visibility.Visible;
+            }
         }
 
         private void IconsSearchBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            UpdateSearchPlaceholder();
-        }
-
-        private void UpdateSearchPlaceholder()
-        {
-            IconsSearchBoxPlaceholder.Visibility = IconsSearchBox.Text.Length > 0
-                ? Visibility.Hidden
-                : Visibility.Visible;
+            if(IconsSearchBox.Text.Length > 0)
+            {
+                IconsSearchBoxPlaceholder.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                IconsSearchBoxPlaceholder.Visibility = Visibility.Visible;
+            }
         }
 
         private void Open_SegoeFontDownloadPage(object sender, RoutedEventArgs e)

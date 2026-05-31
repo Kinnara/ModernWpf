@@ -77,6 +77,23 @@ namespace ModernWpf.Gallery.Tests
             Assert.IsFalse(
                 pageSource.Contains("var text = ((ExecutedRoutedEventArgs)e).Parameter as string", StringComparison.Ordinal),
                 "The copied Iconography copy command should keep the official Parameter.ToString() behavior instead of narrowing the command parameter to string.");
+            AssertContainsInOrder(
+                pageSource,
+                "private void IconsSearchBox_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)",
+                "if (IconsSearchBox.Text.Length > 0)",
+                "IconsSearchBoxPlaceholder.Visibility = Visibility.Hidden;",
+                "IconsSearchBoxPlaceholder.Visibility = Visibility.Visible;",
+                "private void IconsSearchBox_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)",
+                "if (IconsSearchBox.Text.Length > 0)",
+                "IconsSearchBoxPlaceholder.Visibility = Visibility.Hidden;",
+                "IconsSearchBoxPlaceholder.Visibility = Visibility.Visible;",
+                "private void IconsSearchBox_TextChanged(object sender, TextChangedEventArgs e)",
+                "if(IconsSearchBox.Text.Length > 0)",
+                "IconsSearchBoxPlaceholder.Visibility = Visibility.Hidden;",
+                "IconsSearchBoxPlaceholder.Visibility = Visibility.Visible;");
+            Assert.IsFalse(
+                pageSource.Contains("UpdateSearchPlaceholder", StringComparison.Ordinal),
+                "The copied Iconography search handlers should keep the official direct placeholder visibility source shape instead of a local helper.");
             Assert.IsFalse(
                 pageSource.Contains("OnLoaded"),
                 "The copied Iconography page should use the official WPF Gallery behavior trigger instead of a local Loaded handler.");
