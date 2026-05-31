@@ -1372,6 +1372,40 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void WpfGalleryVisualAuditUsesSingleRenderedContentArtifactPriority()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Run-WpfGalleryVisualAudit.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "function Get-ModernRenderedContentArtifactCandidates()",
+                @"FileName = ""HomeContentRootPane.png""; Source = ""HomeContentRootPaneRenderedArtifact""",
+                @"FileName = ""AllControlsContentRootPane.png""; Source = ""AllControlsContentRootPaneRenderedArtifact""",
+                @"FileName = ""SettingsContentRootPane.png""; Source = ""SettingsContentRootPaneRenderedArtifact""",
+                @"FileName = ""ContentPagePane.png""; Source = ""ContentPagePaneRenderedArtifact""",
+                @"FileName = ""GalleryItemPageRoot.png""; Source = ""GalleryItemPageRootRenderedArtifact""",
+                @"FileName = ""ContentRootGrid.png""; Source = ""ContentRootGridRenderedArtifact""",
+                @"FileName = ""GalleryContentHost.png""; Source = ""GalleryContentHostRenderedArtifact""",
+                "function Get-ModernRenderedContentArtifactCrop");
+            AssertContainsInOrder(
+                source,
+                "function Get-ModernRenderedContentArtifactCrop",
+                "foreach ($candidate in (Get-ModernRenderedContentArtifactCandidates))",
+                "$contentCrop = Get-ImageArtifactInfo $path $candidate.Source",
+                "return $contentCrop",
+                "function Test-ModernRenderedContentArtifact");
+            AssertContainsInOrder(
+                source,
+                "function Test-ModernRenderedContentArtifact",
+                "return $null -ne (Get-ModernRenderedContentArtifactCrop $artifactDir)",
+                "function Capture-Window");
+        }
+
+        [TestMethod]
         public void WpfGalleryPageStylesKeepOfficialResourceSetterSourceShape()
         {
             var xaml = ReadRepoFile(

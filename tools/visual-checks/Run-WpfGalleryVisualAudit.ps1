@@ -1090,19 +1090,36 @@ function Get-ImageArtifactInfo([string]$path, [string]$source) {
     }
 }
 
-function Test-ModernRenderedContentArtifact([string]$artifactDir) {
-    foreach ($fileName in @("HomeContentRootPane.png", "AllControlsContentRootPane.png", "SettingsContentRootPane.png", "ContentPagePane.png", "GalleryItemPageRoot.png", "ContentRootGrid.png", "GalleryContentHost.png")) {
-        $path = Join-Path $artifactDir $fileName
+function Get-ModernRenderedContentArtifactCandidates() {
+    return @(
+        [ordered]@{ FileName = "HomeContentRootPane.png"; Source = "HomeContentRootPaneRenderedArtifact" },
+        [ordered]@{ FileName = "AllControlsContentRootPane.png"; Source = "AllControlsContentRootPaneRenderedArtifact" },
+        [ordered]@{ FileName = "SettingsContentRootPane.png"; Source = "SettingsContentRootPaneRenderedArtifact" },
+        [ordered]@{ FileName = "ContentPagePane.png"; Source = "ContentPagePaneRenderedArtifact" },
+        [ordered]@{ FileName = "GalleryItemPageRoot.png"; Source = "GalleryItemPageRootRenderedArtifact" },
+        [ordered]@{ FileName = "ContentRootGrid.png"; Source = "ContentRootGridRenderedArtifact" },
+        [ordered]@{ FileName = "GalleryContentHost.png"; Source = "GalleryContentHostRenderedArtifact" }
+    )
+}
+
+function Get-ModernRenderedContentArtifactCrop([string]$artifactDir) {
+    foreach ($candidate in (Get-ModernRenderedContentArtifactCandidates)) {
+        $path = Join-Path $artifactDir $candidate.FileName
         try {
-            if (Test-ImageNotBlank $path) {
-                return $true
+            $contentCrop = Get-ImageArtifactInfo $path $candidate.Source
+            if ($contentCrop.NonBlank) {
+                return $contentCrop
             }
         }
         catch {
         }
     }
 
-    return $false
+    return $null
+}
+
+function Test-ModernRenderedContentArtifact([string]$artifactDir) {
+    return $null -ne (Get-ModernRenderedContentArtifactCrop $artifactDir)
 }
 
 function Capture-Window([IntPtr]$hwnd, [string]$path) {
@@ -1658,32 +1675,7 @@ function Capture-ModernWpf($case, [string]$caseDir) {
             }
         }
         else {
-            $renderedContentArtifact = Join-Path $artifactDir "HomeContentRootPane.png"
-            $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "HomeContentRootPaneRenderedArtifact"
-            if (!$contentCrop.NonBlank) {
-                $renderedContentArtifact = Join-Path $artifactDir "AllControlsContentRootPane.png"
-                $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "AllControlsContentRootPaneRenderedArtifact"
-            }
-            if (!$contentCrop.NonBlank) {
-                $renderedContentArtifact = Join-Path $artifactDir "SettingsContentRootPane.png"
-                $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "SettingsContentRootPaneRenderedArtifact"
-            }
-            if (!$contentCrop.NonBlank) {
-                $renderedContentArtifact = Join-Path $artifactDir "ContentPagePane.png"
-                $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "ContentPagePaneRenderedArtifact"
-            }
-            if (!$contentCrop.NonBlank) {
-                $renderedContentArtifact = Join-Path $artifactDir "GalleryItemPageRoot.png"
-                $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "GalleryItemPageRootRenderedArtifact"
-            }
-            if (!$contentCrop.NonBlank) {
-                $renderedContentArtifact = Join-Path $artifactDir "ContentRootGrid.png"
-                $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "ContentRootGridRenderedArtifact"
-            }
-            if (!$contentCrop.NonBlank) {
-                $renderedContentArtifact = Join-Path $artifactDir "GalleryContentHost.png"
-                $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "GalleryContentHostRenderedArtifact"
-            }
+            $contentCrop = Get-ModernRenderedContentArtifactCrop $artifactDir
         }
 
         if (($null -eq $contentCrop -or !$contentCrop.NonBlank) -and
@@ -1693,32 +1685,7 @@ function Capture-ModernWpf($case, [string]$caseDir) {
         }
 
         if ($null -eq $contentCrop -or !$contentCrop.NonBlank) {
-            $renderedContentArtifact = Join-Path $artifactDir "HomeContentRootPane.png"
-            $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "HomeContentRootPaneRenderedArtifact"
-            if (!$contentCrop.NonBlank) {
-                $renderedContentArtifact = Join-Path $artifactDir "AllControlsContentRootPane.png"
-                $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "AllControlsContentRootPaneRenderedArtifact"
-            }
-            if (!$contentCrop.NonBlank) {
-                $renderedContentArtifact = Join-Path $artifactDir "SettingsContentRootPane.png"
-                $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "SettingsContentRootPaneRenderedArtifact"
-            }
-            if (!$contentCrop.NonBlank) {
-                $renderedContentArtifact = Join-Path $artifactDir "ContentPagePane.png"
-                $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "ContentPagePaneRenderedArtifact"
-            }
-            if (!$contentCrop.NonBlank) {
-                $renderedContentArtifact = Join-Path $artifactDir "GalleryItemPageRoot.png"
-                $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "GalleryItemPageRootRenderedArtifact"
-            }
-            if (!$contentCrop.NonBlank) {
-                $renderedContentArtifact = Join-Path $artifactDir "ContentRootGrid.png"
-                $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "ContentRootGridRenderedArtifact"
-            }
-            if (!$contentCrop.NonBlank) {
-                $renderedContentArtifact = Join-Path $artifactDir "GalleryContentHost.png"
-                $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "GalleryContentHostRenderedArtifact"
-            }
+            $contentCrop = Get-ModernRenderedContentArtifactCrop $artifactDir
         }
 
         if (($null -eq $contentCrop -or !$contentCrop.NonBlank) -and $windowNonBlank) {
