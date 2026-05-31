@@ -146,11 +146,9 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
                 return;
 
             if (checkBox.IsChecked == null)
-            {
                 checkBox.IsChecked = !(
                     OptionOneCheckBoxChecked && OptionTwoCheckBoxChecked && OptionThreeCheckBoxChecked
                 );
-            }
 
             if (checkBox.IsChecked == true)
             {
@@ -169,17 +167,11 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
         private void OnSingleChecked(string option)
         {
             if (OptionOneCheckBoxChecked && OptionTwoCheckBoxChecked && OptionThreeCheckBoxChecked)
-            {
                 SelectAllCheckBoxChecked = true;
-            }
             else if (!OptionOneCheckBoxChecked && !OptionTwoCheckBoxChecked && !OptionThreeCheckBoxChecked)
-            {
                 SelectAllCheckBoxChecked = false;
-            }
             else
-            {
                 SelectAllCheckBoxChecked = null;
-            }
         }
     }
 

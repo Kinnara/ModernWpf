@@ -778,12 +778,11 @@ namespace ModernWpf.Gallery.Tests
                 "SingleCheckedCommand = CreateCommand(option => OnSingleChecked(option as string));",
                 "private void OnSelectAllChecked(object sender)",
                 "if (sender is not CheckBox checkBox)",
-                "checkBox.IsChecked = !(\n                    OptionOneCheckBoxChecked && OptionTwoCheckBoxChecked && OptionThreeCheckBoxChecked\n                );",
+                "if (checkBox.IsChecked == null)\n                checkBox.IsChecked = !(\n                    OptionOneCheckBoxChecked && OptionTwoCheckBoxChecked && OptionThreeCheckBoxChecked\n                );",
                 "private void OnSingleChecked(string option)",
-                "if (OptionOneCheckBoxChecked && OptionTwoCheckBoxChecked && OptionThreeCheckBoxChecked)",
-                "SelectAllCheckBoxChecked = true;",
-                "else if (!OptionOneCheckBoxChecked && !OptionTwoCheckBoxChecked && !OptionThreeCheckBoxChecked)",
-                "SelectAllCheckBoxChecked = false;");
+                "if (OptionOneCheckBoxChecked && OptionTwoCheckBoxChecked && OptionThreeCheckBoxChecked)\n                SelectAllCheckBoxChecked = true;",
+                "else if (!OptionOneCheckBoxChecked && !OptionTwoCheckBoxChecked && !OptionThreeCheckBoxChecked)\n                SelectAllCheckBoxChecked = false;",
+                "else\n                SelectAllCheckBoxChecked = null;");
             AssertContainsInOrder(
                 source,
                 "public partial class ComboBoxPageViewModel : BasicInputPageViewModelBase",
