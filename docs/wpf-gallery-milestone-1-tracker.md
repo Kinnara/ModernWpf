@@ -163,28 +163,27 @@ Current P2 state:
    drift appears.
 3. Row 3 is recorded for the current branch tip unless new asset, thumbnail, or
    visual-reference evidence appears.
-4. Row 4 is the current substantive P2 row only after rows 2 and 3 are current.
-   Continue here only for named
+4. Row 4 is recorded for the current branch tip. Reopen it only for named
    measurement, interaction, automation, or harness-impacting parity. The
    current row 4 section-measurement evidence is Light
    `artifacts/wpf-gallery-visual-audit/20260531-025937-297-35000/report.md`
    and Dark
    `artifacts/wpf-gallery-visual-audit/20260531-030130-294-47632/report.md`;
-   these supersede older per-row section evidence paths for scheduling.
-5. When resuming from the current branch tip with no new P0, row 7, or row 8
-   trigger, the next selectable work must stay in row 4. If row 4 has no named
-   remaining item, update this table to record row 4 clear before selecting row
-   5.
-6. Rows 5 and 6 are blocked until rows 2-4 are recorded or not applicable.
+   the current row 4 automation/harness verifier is recorded in Latest local
+   verification. These supersede older per-row section evidence paths for
+   scheduling.
+5. When resuming from the current branch tip with no new P0, row 7, row 8, or
+   row 4 trigger, the next selectable P2 work is row 5.
+6. Row 6 remains blocked until row 5 is recorded or not applicable.
 
 | P2 order | Bucket | State | Allowed next work |
 | --- | --- | --- | --- |
 | 1 | Priority/order hygiene | Use only when order/status text conflicts or the user requests priority clarification. | Edit this tracker only to remove priority ambiguity or stale execution state, then return to the first substantive P2 row. Do not perform unrelated source cleanup under this bucket. |
 | 2 | Visual and high-drift freshness | Recorded for the current branch tip by the P0/P1 evidence above plus the latest retained-control Light/Dark refreshes in Row 8 and Latest local verification. | Reopen P0/P1/row 8 immediately if refreshed evidence shows new visual, High Contrast, high-drift, or harness drift. Do not continue row 4 or lower work until current visual/high-drift evidence is written here. |
 | 3 | Asset, thumbnail, and visual-reference parity locks | Recorded for the current active references: non-`ControlImages` references are shipped and hash-locked, WPF-equivalent catalog `ControlImages` are official-hash locked, and retained catalog `ControlImages` still match the packaged resource set. | Reopen only for new visual asset evidence, a new active image reference, or a new catalog thumbnail/resource gap. |
-| 4 | Measurement, typography, spacing, keyboard, automation, and harness-impacting parity | Current substantive P2 bucket. Typography/Spacing/Geometry/Iconography, Color, and remaining WPF-equivalent section/item Light/Dark measurement evidence are recorded at branch tip; continue here only for named measurement, interaction, automation, or harness-impacting rows. | Work only on rows that can affect visible layout, interaction parity, or reliable visual evidence. |
-| 5 | Source-shape, resource-key, naming, selector, and test cleanup not tied to active visual drift | Blocked by current row 4 until rows 2-4 are recorded or not applicable. | Select only a named P2 source-alignment row after rows 1-4 are clear. |
-| 6 | Pure tracker/status cleanup and documentation-only work | Last; blocked by rows 2-5 except row 1 priority/order fixes. | Use only after the substantive P2 rows above are clear, except for row 1 priority/order fixes. |
+| 4 | Measurement, typography, spacing, keyboard, automation, and harness-impacting parity | Recorded at branch tip. Typography/Spacing/Geometry/Iconography, Color, remaining WPF-equivalent section/item Light/Dark measurement evidence, and the focused automation/harness verifier are current. | Reopen only for new named measurement, interaction, automation, or harness-impacting evidence. |
+| 5 | Source-shape, resource-key, naming, selector, and test cleanup not tied to active visual drift | Next executable P2 bucket only while P0, row 7, row 8, and row 4 remain recorded with no new trigger. | Select only a named P2 source-alignment row; stop immediately if a higher visual, High Contrast, high-drift, asset, measurement, automation, or harness item appears. |
+| 6 | Pure tracker/status cleanup and documentation-only work | Last; blocked by row 5 except row 1 priority/order fixes. | Use only after the substantive P2 rows above are clear, except for row 1 priority/order fixes. |
 
 ### Row 8 Strict Subqueue
 
@@ -980,8 +979,10 @@ Latest local verification for the current branch tip:
   - Passed at `artifacts/wpf-gallery-visual-audit/20260531-025937-297-35000/report.md`: all eleven cases are `0`, all with matching `868x758` crops, max RGB diff `3`, no ModernWpf exception logs, and ModernWpf rendered-content sources `ContentPagePaneRenderedArtifact` except `UserDashboard` through `GalleryItemPageRootRenderedArtifact`.
 - `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases Samples,UserDashboard,BasicInput,Collections,DateAndCalendar,Layout,Media,Navigation,StatusAndInfo,Text,System -Reference OfficialWpfGallery -Theme Dark -TimeoutSeconds 60`
   - Passed at `artifacts/wpf-gallery-visual-audit/20260531-030130-294-47632/report.md`: Samples, BasicInput, Collections, DateAndCalendar, Layout, Media, Navigation, StatusAndInfo, Text, and System are `0`; UserDashboard is `0.01`; all crops match at `868x758`, max RGB diff is `3`, no ModernWpf exception logs were written, and ModernWpf rendered-content sources are `ContentPagePaneRenderedArtifact` except `UserDashboard` through `GalleryItemPageRootRenderedArtifact`.
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~GalleryAutomationHookTests.VisualArtifactsIgnoreMalformedGallerySampleAutomationIds|FullyQualifiedName~GalleryAutomationHookTests.GalleryAutomationIdsAreReservedForCuratedSampleDiagnostics|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds|FullyQualifiedName~GalleryAutomationHookTests.VisualArtifactsIgnoreLegacyContentRootGridAutomationId|FullyQualifiedName~GalleryAutomationHookTests.TeachingTipInteractionModeWritesOpenContentArtifact|FullyQualifiedName~GalleryAutomationHookTests.DirectWpfPageWritesContentPagePaneVisualArtifact|FullyQualifiedName~GalleryAutomationHookTests.UserDashboardWritesItemPageRootVisualArtifact|FullyQualifiedName~GalleryNavigationRuntimeTests.ShellVisualTestStatusHooksStayOutOfNormalAutomationTree|FullyQualifiedName~WpfGallerySourceShapeTests.WpfGalleryVisualAuditUsesSingleRenderedContentArtifactPriority|FullyQualifiedName~WpfGallerySourceShapeTests.VisualCheckScriptsAvoidRetiredItemPageTitleAutomationHook|FullyQualifiedName~WpfGallerySourceShapeTests.ActiveGalleryXamlAvoidsLocalOnlyAutomationHooks|FullyQualifiedName~WpfGallerySourceShapeTests.ActiveGalleryCSharpAvoidsLocalOnlyAutomationIdAssignments" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 52 tests per target. The filter covered curated sample automation IDs, malformed/legacy artifact ID rejection, TeachingTip interaction artifact emission, direct WPF page `ContentPagePane` artifacts, UserDashboard `GalleryItemPageRoot` artifacts, shell visual-test diagnostics staying out of the normal automation tree, the WPF audit rendered-content artifact priority, the retained visual-check sample-root fallback, and active XAML/C# local-only automation hook guards. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - PowerShell parser checks for `tools/visual-checks/Run-GalleryVisualChecks.ps1` and `tools/visual-checks/Run-WpfGalleryVisualAudit.ps1`
-  - Passed with zero parser errors after the retained-control sample-root fallback update.
+  - Passed with zero parser errors after the row 4 automation/harness verifier.
 - Retained ModernWpf/WinUI extension visual ranking from existing
   `artifacts/visual-checks/**/report.json`, filtered to the current retained
   surface guarded by `GalleryCatalogTests.RetainedModernWpfExtensionItemIds`.
@@ -3646,13 +3647,13 @@ Immediate execution order for the next round:
    asset/thumbnail/visual-reference parity, row 4 measurement/interaction/
    automation/harness-impacting parity, then lower-priority rows 5-6 only after
    rows 2-4 are recorded or not applicable. Current active asset references,
-   Typography/Spacing/Geometry/Iconography, Color, and the remaining
-   WPF-equivalent section/item Light/Dark measurement evidence are recorded;
-   the current substantive P2 item remains row 4 only for named measurement,
-   interaction, automation, or harness-impacting rows unless a new asset or
-   higher-priority visual finding appears. Source-shape, resource-key, naming,
-   selector, test-cleanup, stale-status, and documentation cleanup remain lower
-   P2 rows and cannot be selected ahead of those visual-supporting rows.
+   Typography/Spacing/Geometry/Iconography, Color, the remaining WPF-equivalent
+   section/item Light/Dark measurement evidence, and the row 4
+   automation/harness verifier are recorded. With no new higher trigger, the
+   next selectable P2 bucket is row 5, limited to named source-shape,
+   resource-key, naming, selector, or test cleanup. Stop immediately if a new
+   asset, measurement, interaction, automation, harness, visual, High Contrast,
+   or high-drift item appears.
 4. Row 7 source/resource/runtime work is allowed only when it directly serves a
    newly recorded visual/High Contrast finding or stabilizes a failing visual
    harness. Return to P1.2 only if a new visible stale-row drift appears; return
