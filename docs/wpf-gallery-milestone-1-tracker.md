@@ -1,26 +1,35 @@
 # WPF Gallery Milestone 1 Tracker
 
-Last updated: 2026-05-30
+Last updated: 2026-05-31
 
 ## Current Order Lock
 
 Use this block before every new work batch. It overrides any lower section that
 looks convenient or recently edited.
 
-1. Re-check `SystemParameters.HighContrast`.
-2. If High Contrast has new unrecorded visual or harness drift, run P0.1 first.
-3. If the current P0.1 High Contrast batch remains recorded with no new drift,
+1. User-requested priority/order hygiene is the only tracker-only exception.
+   Fix the ordering text, then immediately return to the first substantive row
+   below.
+2. Re-check `SystemParameters.HighContrast`.
+3. If High Contrast has new unrecorded visual or harness drift, run P0.1 first.
+4. If the current P0.1 High Contrast batch remains recorded with no new drift,
    the row 8 strict visual subqueue is currently recorded through
    **8.10 `InfoBar`** and **8.11 `ProgressRing`**. Reopen either item only on
    new visual regression evidence.
-4. If a new retained-control visual or harness drift appears, it preempts all
+5. If a new retained-control visual or harness drift appears, it preempts all
    source-shape/resource-key/test cleanup and P2 work.
-5. If no new P0, row 7, or row 8 visual/harness item exists, P2 is the next
-   executable bucket, but it must use the `P2 Subqueue` below. P2 is not a
-   free-form cleanup bucket: visual/high-drift freshness, asset/measurement
-   parity, and harness-impacting work stay ahead of source-shape or tracker
-   cleanup. Tracker-only edits are allowed only to fix priority ambiguity or
-   stale status before returning to the ordered queue.
+6. If no new P0, row 7, or row 8 visual/harness item exists, P2 is the next
+   executable bucket, but it must use the `P2 Subqueue` below. Within P2, row 2
+   visual/high-drift freshness is the first substantive row and must be current
+   before any row 4 measurement/automation/harness work continues. Do not infer
+   row 2 from stale report paths: write the current Light/Dark evidence into
+   this tracker first.
+7. P2 row 3 asset/thumbnail/visual-reference parity stays ahead of row 4.
+8. P2 row 4 measurement, interaction, automation, and harness-impacting parity
+   runs only after rows 2 and 3 are recorded for the current branch tip.
+9. P2 rows 5 and 6, including source-shape/resource-key/naming/test cleanup and
+   pure tracker cleanup, remain blocked until rows 2-4 are recorded or not
+   applicable.
 
 ## Goal
 
@@ -147,16 +156,22 @@ Current P2 state:
 
 1. Row 1 is active only for user/order clarification, then returns immediately
    to the first substantive P2 row.
-2. Rows 2 and 3 are recorded for the current branch tip unless new visual,
-   high-drift, asset, thumbnail, or reference evidence appears.
-3. Row 4 is the current substantive P2 row. Continue here only for named
+2. Row 2 visual/high-drift freshness is the first substantive P2 row. It is
+   recorded for the current branch tip only after the latest Light/Dark evidence
+   is written into Row 8 and Latest local verification; it reopens immediately
+   when new retained-control reports, High Contrast evidence, or visual-harness
+   drift appears.
+3. Row 3 is recorded for the current branch tip unless new asset, thumbnail, or
+   visual-reference evidence appears.
+4. Row 4 is the current substantive P2 row only after rows 2 and 3 are current.
+   Continue here only for named
    measurement, interaction, automation, or harness-impacting parity.
-4. Rows 5 and 6 are blocked until rows 2-4 are recorded or not applicable.
+5. Rows 5 and 6 are blocked until rows 2-4 are recorded or not applicable.
 
 | P2 order | Bucket | State | Allowed next work |
 | --- | --- | --- | --- |
 | 1 | Priority/order hygiene | Use only when order/status text conflicts or the user requests priority clarification. | Edit this tracker only to remove priority ambiguity or stale execution state, then return to the first substantive P2 row. Do not perform unrelated source cleanup under this bucket. |
-| 2 | Visual and high-drift freshness | Currently recorded by the P0/P1 evidence above. | Reopen P0/P1/row 8 immediately if refreshed evidence shows new visual, High Contrast, high-drift, or harness drift. |
+| 2 | Visual and high-drift freshness | Recorded for the current branch tip by the P0/P1 evidence above plus the latest retained-control Light/Dark refreshes in Row 8 and Latest local verification. | Reopen P0/P1/row 8 immediately if refreshed evidence shows new visual, High Contrast, high-drift, or harness drift. Do not continue row 4 or lower work until current visual/high-drift evidence is written here. |
 | 3 | Asset, thumbnail, and visual-reference parity locks | Recorded for the current active references: non-`ControlImages` references are shipped and hash-locked, WPF-equivalent catalog `ControlImages` are official-hash locked, and retained catalog `ControlImages` still match the packaged resource set. | Reopen only for new visual asset evidence, a new active image reference, or a new catalog thumbnail/resource gap. |
 | 4 | Measurement, typography, spacing, keyboard, automation, and harness-impacting parity | Current substantive P2 bucket. Typography/Spacing/Geometry normal Light/Dark measurement evidence is recorded; continue here only for named measurement, interaction, automation, or harness-impacting rows. | Work only on rows that can affect visible layout, interaction parity, or reliable visual evidence. |
 | 5 | Source-shape, resource-key, naming, selector, and test cleanup not tied to active visual drift | Blocked by current row 4 until rows 2-4 are recorded or not applicable. | Select only a named P2 source-alignment row after rows 1-4 are clear. |
@@ -178,10 +193,10 @@ drift, a visual-harness crop issue, or unclassified native-control limitation.
 | 8.4 | AnnotatedScrollBar | Refreshed in this round. Current evidence is Light `artifacts/visual-checks/20260531-020444-625-41128/report.md` at `18.1` and Dark `artifacts/visual-checks/20260531-020545-936-66416/report.md` at `15.36`, both with matching `790x500` primary crops and no ModernWpf exception logs, down from refreshed Light `76.39` / primary `56.49` and Dark `54.33` / primary `34.43`. | Reopen only on new visual regression evidence. |
 | 8.5 | RatingControl | Refreshed in this round. Current evidence is Light `artifacts/visual-checks/20260531-020444-625-41128/report.md` at `7.09` and Dark `artifacts/visual-checks/20260531-020545-936-66416/report.md` at `7.94`, both with matching `183x32` primary crops and no ModernWpf exception logs, down from refreshed Light `19.37` and Dark `23.53`. | Reopen only on new visual regression evidence. |
 | 8.6 | IconElement | Refreshed in this round. Current evidence is Light `artifacts/visual-checks/20260531-020444-625-41128/report.md` at `18.11` and Dark `artifacts/visual-checks/20260531-020545-936-66416/report.md` at `12.24`, both with matching `790x118` primary crops and no ModernWpf exception logs, down from refreshed Light primary `101.45` / Dark primary `22.42` where the reference crop compared the whole `svPanel` (`843x646`). | Reopen only on new visual regression evidence. |
-| 8.7 | TitleBar | Done in this round. Final current evidence is Light `artifacts/visual-checks/20260529-193012-218-60440/report.md` at `6.44` and Dark `artifacts/visual-checks/20260529-193039-071-52468/report.md` at `4.70`, both with matching `470x48` title-bar surface primary crops, down from refreshed `15.27` / `15.85` after the harness stopped comparing `TitleBox` and the WPF preview matched WinUI's content-first title-bar layout. | Reopen only on new visual regression evidence. |
-| 8.8 | DropDownButton | Done in this round. Final current evidence is Light `artifacts/visual-checks/20260529-195252-834-26016/report.md` at `3.66` and Dark `artifacts/visual-checks/20260529-195317-192-5640/report.md` at `2.86`, both with matching `78x32` primary crops, down from refreshed `15.43` / `14.78` after the DropDownButton template kept the chevron inside the button bounds instead of clipping it out of the crop. | Reopen only on new visual regression evidence. |
-| 8.9 | SelectorBar | Done in this round. Final current evidence is Light `artifacts/visual-checks/20260529-201109-733-55040/report.md` at `7.07` and Dark `artifacts/visual-checks/20260529-201140-617-31732/report.md` at `7.86`, both with matching `284x48` primary crops, down from refreshed `11.89` / `12.86` with `292x47` vs `284x48` crop drift after the sample-specific item template matched the WinUI reference crop size and spacing. | Reopen only on new visual regression evidence. |
-| 8.10 | InfoBar | Recorded in this round. Under real OS High Contrast, the rendered primary artifact was blank before the fix (`artifacts/visual-checks/20260530-022340-065-80740/report.md` and `artifacts/visual-checks/20260530-022703-657-13032/report.md`). The template now uses a standard `Border`/`Grid` layout root instead of the offscreen-fragile `GridEx`, the visible state restores `ContentRoot.Visibility`, the default border thickness resolves to `1`, and the artifact smoke test rejects solid-background InfoBar captures. Current HC Light-equivalent evidence is `artifacts/visual-checks/20260530-025058-847-82168/report.md`: passed, score `25.21`, primary `23.11`, `560x103` vs `545x97`, with visible InfoBar content and border. Current HC Dark-equivalent evidence is `artifacts/visual-checks/20260530-025135-368-28776/report.md`: passed, score `25.21`, primary `23.11`, same crop sizes. Residual score is recorded as retained WinUI/native-control and reference-crop geometry drift for this milestone round, not a blank/harness failure. | Reopen only on new InfoBar visual regression evidence. ProgressRing is also recorded below. |
+| 8.7 | TitleBar | Refreshed in this round. Current evidence is Light `artifacts/visual-checks/20260531-020922-808-3596/report.md` at `6.44` and Dark `artifacts/visual-checks/20260531-021032-594-76136/report.md` at `4.7`, both with matching `470x48` title-bar surface primary crops and no ModernWpf exception logs, down from refreshed `15.27` / `15.85` after the harness stopped comparing `TitleBox` and the WPF preview matched WinUI's content-first title-bar layout. | Reopen only on new visual regression evidence. |
+| 8.8 | DropDownButton | Refreshed in this round. Current evidence is Light `artifacts/visual-checks/20260531-020922-808-3596/report.md` at `3.66` and Dark `artifacts/visual-checks/20260531-021032-594-76136/report.md` at `2.86`, both with matching `78x32` primary crops and no ModernWpf exception logs, down from refreshed `15.43` / `14.78` after the DropDownButton template kept the chevron inside the button bounds instead of clipping it out of the crop. | Reopen only on new visual regression evidence. |
+| 8.9 | SelectorBar | Refreshed in this round. Current evidence is Light `artifacts/visual-checks/20260531-020922-808-3596/report.md` at `7.07` and Dark `artifacts/visual-checks/20260531-021032-594-76136/report.md` at `7.86`, both with matching `284x48` primary crops and no ModernWpf exception logs, down from refreshed `11.89` / `12.86` with `292x47` vs `284x48` crop drift after the sample-specific item template matched the WinUI reference crop size and spacing. | Reopen only on new visual regression evidence. |
+| 8.10 | InfoBar | Refreshed in this round. Current normal-theme evidence is Light `artifacts/visual-checks/20260531-020922-808-3596/report.md` at score `11.77`, primary `10.97`, `560x103` vs `560x95`, and Dark `artifacts/visual-checks/20260531-021032-594-76136/report.md` at score `12.77`, primary `11.97`, `560x103` vs `560x95`; both passed with visible InfoBar content and no ModernWpf exception logs. Under real OS High Contrast, the rendered primary artifact was blank before the fix (`artifacts/visual-checks/20260530-022340-065-80740/report.md` and `artifacts/visual-checks/20260530-022703-657-13032/report.md`). The template now uses a standard `Border`/`Grid` layout root instead of the offscreen-fragile `GridEx`, the visible state restores `ContentRoot.Visibility`, the default border thickness resolves to `1`, and the artifact smoke test rejects solid-background InfoBar captures. Current HC Light-equivalent evidence is `artifacts/visual-checks/20260530-025058-847-82168/report.md`: passed, score `25.21`, primary `23.11`, `560x103` vs `545x97`, with visible InfoBar content and border. Current HC Dark-equivalent evidence is `artifacts/visual-checks/20260530-025135-368-28776/report.md`: passed, score `25.21`, primary `23.11`, same crop sizes. Residual score is recorded as retained WinUI/native-control and reference-crop geometry drift for this milestone round, not a blank/harness failure. | Reopen only on new InfoBar visual regression evidence. ProgressRing is also recorded below. |
 | 8.11 | ProgressRing | Recorded in this round. Refreshed pre-fix evidence showed the ModernWpf primary crop as a dot/point while WinUI rendered an indeterminate arc: Light `artifacts/visual-checks/20260530-025657-292-66928/report.md` was `8.63` with a ModernWpf PrintWindow failure, and Dark `artifacts/visual-checks/20260530-025754-227-49236/report.md` was `15.84`. The template now uses a WPF-rendered `ProgressRingIndicator` arc instead of the old six-dot storyboard substitute, visual-test artifacts pin the indeterminate arc phase, the harness resets the WinUI `ProgressToggle` before reference capture, ProgressRing primary crops use the rendered sample-root slice instead of the offset-fragile control-only VisualBrush, and rendered primary crops can satisfy the nonblank gate when the window screenshot is blank. Current Light evidence is `artifacts/visual-checks/20260530-032633-486-73780/report.md`: passed, score/primary `17.58`, `60x60` vs `60x60`, with short-arc-to-short-arc visual parity. Current Dark evidence is `artifacts/visual-checks/20260530-032832-134-29152/report.md`: passed, score/primary `17.68`, same crop sizes. Remaining score is recorded as WinUI AnimatedVisual phase/endpoint and WPF geometry rasterization residual, not a dot/blank/control-crop mismatch. | Reopen only on new ProgressRing visual regression evidence. |
 
 ### Row 7 Strict Subqueue
@@ -924,6 +939,10 @@ Latest local verification for the current branch tip:
   - Passed at `artifacts/visual-checks/20260531-020444-625-41128/report.md`: BreadcrumbBar primary `11.27` with `529x26` vs `530x26` crops, AnnotatedScrollBar primary `18.1` with matching `790x500` crops, RatingControl primary `7.09` with matching `183x32` crops, and IconElement primary `18.11` with matching `790x118` crops. No ModernWpf exception logs were written.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls BreadcrumbBar,AnnotatedScrollBar,RatingControl,IconElement -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 60`
   - Passed at `artifacts/visual-checks/20260531-020545-936-66416/report.md`: BreadcrumbBar primary `12.93` with `529x26` vs `530x26` crops, AnnotatedScrollBar primary `15.36` with matching `790x500` crops, RatingControl primary `7.94` with matching `183x32` crops, and IconElement primary `12.24` with matching `790x118` crops. No ModernWpf exception logs were written.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls TitleBar,DropDownButton,SelectorBar,InfoBar -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 60`
+  - Passed at `artifacts/visual-checks/20260531-020922-808-3596/report.md`: TitleBar primary `6.44` with matching `470x48` crops, DropDownButton primary `3.66` with matching `78x32` crops, SelectorBar primary `7.07` with matching `284x48` crops, and InfoBar score `11.77` / primary `10.97` with `560x103` vs `560x95` crops. No ModernWpf exception logs were written.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls TitleBar,DropDownButton,SelectorBar,InfoBar -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 60`
+  - Passed at `artifacts/visual-checks/20260531-021032-594-76136/report.md`: TitleBar primary `4.7` with matching `470x48` crops, DropDownButton primary `2.86` with matching `78x32` crops, SelectorBar primary `7.86` with matching `284x48` crops, and InfoBar score `12.77` / primary `11.97` with `560x103` vs `560x95` crops. No ModernWpf exception logs were written.
 - Retained ModernWpf/WinUI extension visual ranking from existing
   `artifacts/visual-checks/**/report.json`, filtered to the current retained
   surface guarded by `GalleryCatalogTests.RetainedModernWpfExtensionItemIds`.
