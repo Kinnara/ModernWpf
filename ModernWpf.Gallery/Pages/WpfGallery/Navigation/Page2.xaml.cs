@@ -3,7 +3,7 @@ using System.Windows.Controls;
 namespace ModernWpf.Gallery.Pages.WpfGallery.Navigation
 {
     /// <summary>
-    /// Interaction logic for Page2.xaml
+    /// Interaction logic for FramePage2.xaml
     /// </summary>
     public partial class Page2 : Page
     {

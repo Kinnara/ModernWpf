@@ -32,6 +32,7 @@ namespace ModernWpf.Gallery.Tests
                 var source = File.ReadAllText(path);
                 var xamlFileName = Path.GetFileNameWithoutExtension(path);
                 var className = Path.GetFileNameWithoutExtension(xamlFileName);
+                var expectedSummaryName = GetOfficialCodeBehindSummaryName(className, xamlFileName);
                 var expectedBaseType = className == "FrameWindow"
                     ? "Window"
                     : className == "HeaderTile" || className == "TileGallery"
@@ -46,7 +47,7 @@ namespace ModernWpf.Gallery.Tests
                     Path.GetRelativePath(repoRoot, path) + " should keep the official WPF Gallery explicit code-behind base type shape.");
                 AssertContainsInOrder(
                     source,
-                    "/// Interaction logic for " + xamlFileName,
+                    "/// Interaction logic for " + expectedSummaryName,
                     declaration);
             }
 
@@ -77,6 +78,24 @@ namespace ModernWpf.Gallery.Tests
                     sectionSource.Contains("public partial class " + className + " : SectionPage", StringComparison.Ordinal),
                     className + " should keep the official WPF Gallery partial section page declaration shape.");
             }
+        }
+
+        private static string GetOfficialCodeBehindSummaryName(string className, string xamlFileName)
+        {
+            if (className == "ButtonPage")
+                return "Button.xaml";
+            if (className == "CheckBoxPage")
+                return "CheckBox.xaml";
+            if (className == "ComboBoxPage")
+                return "ComboBox.xaml";
+            if (className == "Page1")
+                return "FramePage1.xaml";
+            if (className == "Page2")
+                return "FramePage2.xaml";
+            if (className == "RichTextEditPage")
+                return "RichTextBoxPage.xaml";
+
+            return xamlFileName;
         }
 
         [TestMethod]

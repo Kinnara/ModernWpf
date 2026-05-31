@@ -3,7 +3,7 @@ using System.Windows.Controls;
 namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
 {
     /// <summary>
-    /// Interaction logic for ComboBoxPage.xaml
+    /// Interaction logic for ComboBox.xaml
     /// </summary>
     public partial class ComboBoxPage : Page
     {

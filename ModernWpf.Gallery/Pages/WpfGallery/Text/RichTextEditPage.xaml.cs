@@ -2,7 +2,7 @@ using System.Windows.Controls;
 namespace ModernWpf.Gallery.Pages.WpfGallery.Text
 {
     /// <summary>
-    /// Interaction logic for RichTextEditPage.xaml
+    /// Interaction logic for RichTextBoxPage.xaml
     /// </summary>
     public partial class RichTextEditPage : Page
     {
