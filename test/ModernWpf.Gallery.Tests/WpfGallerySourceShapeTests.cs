@@ -1356,6 +1356,22 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void VisualCheckScriptsAvoidRetiredItemPageTitleAutomationHook()
+        {
+            foreach (var relativePath in new[]
+            {
+                Path.Combine("tools", "visual-checks", "Run-GalleryVisualChecks.ps1"),
+                Path.Combine("tools", "visual-checks", "Run-WpfGalleryVisualAudit.ps1")
+            })
+            {
+                var source = File.ReadAllText(Path.Combine(GetRepoRoot(), relativePath));
+                Assert.IsFalse(
+                    source.Contains("GalleryItemPageTitle", StringComparison.Ordinal),
+                    relativePath + " should not rely on the retired local-only GalleryItemPageTitle automation hook.");
+            }
+        }
+
+        [TestMethod]
         public void WpfGalleryPageStylesKeepOfficialResourceSetterSourceShape()
         {
             var xaml = ReadRepoFile(

@@ -531,7 +531,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "AppBarToggleButton" { return "GallerySample_AppBarToggleButton_AppBarToggleButton" }
         "CommandBar" { return "GallerySample_CommandBar_CommandBar" }
         "CommandBarFlyout" { return "GallerySample_CommandBarFlyout_ShowButton" }
-        default { return "GalleryItemPageTitle" }
+        default { return "GallerySample_${control}_Root" }
     }
 }
 
