@@ -78,7 +78,7 @@ namespace ModernWpf.Gallery.Pages
             }
         }
 
-        private static bool IsSampleAutomationId(string automationId)
+        internal static bool IsSampleAutomationId(string automationId)
         {
             if (string.IsNullOrEmpty(automationId) ||
                 !automationId.StartsWith(SampleAutomationIdPrefix, System.StringComparison.Ordinal))

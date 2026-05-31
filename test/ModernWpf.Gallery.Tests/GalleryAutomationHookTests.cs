@@ -4175,6 +4175,76 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void VisualArtifactsIgnoreMalformedGallerySampleAutomationIds()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var artifactDirectory = Path.Combine(Path.GetTempPath(), "ModernWpfGalleryTests", Path.GetRandomFileName());
+                GalleryDiagnostics.Configure(GalleryLaunchOptions.Parse(new[] { "--visual-test", "--visual-artifact-dir", artifactDirectory }));
+
+                var validSample = new Border
+                {
+                    Width = 24,
+                    Height = 24,
+                    Background = Brushes.Red
+                };
+                GalleryAutomation.WithAutomationId(validSample, GalleryAutomation.SampleElementId("Example", "Button"));
+
+                var malformedSample = new Border
+                {
+                    Name = "GallerySample_Example",
+                    Width = 24,
+                    Height = 24,
+                    Background = Brushes.Blue
+                };
+                AutomationProperties.SetAutomationId(malformedSample, "GallerySample_Example");
+
+                var root = new StackPanel();
+                root.Children.Add(validSample);
+                root.Children.Add(malformedSample);
+
+                var window = new Window
+                {
+                    Width = 128,
+                    Height = 128,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = root
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    GalleryDiagnostics.WriteVisualArtifacts(root);
+
+                    var validArtifact = Path.Combine(artifactDirectory, "GallerySample_Example_Button.png");
+                    var malformedArtifact = Path.Combine(artifactDirectory, "GallerySample_Example.png");
+                    Assert.IsTrue(File.Exists(validArtifact), validArtifact + " was not written.");
+                    Assert.IsTrue(HasVisibleRgbPixels(validArtifact), validArtifact + " has no visible RGB content.");
+                    Assert.IsFalse(File.Exists(malformedArtifact), malformedArtifact + " should not be written.");
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    GalleryDiagnostics.ResetForTests();
+                    if (Directory.Exists(artifactDirectory))
+                    {
+                        Directory.Delete(artifactDirectory, recursive: true);
+                    }
+
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
         public void DirectWpfPageWritesContentPagePaneVisualArtifact()
         {
             WpfTestHost.Run(() =>

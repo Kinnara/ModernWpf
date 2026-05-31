@@ -393,7 +393,7 @@ namespace ModernWpf.Gallery.Testing
         private static bool ShouldWriteVisualArtifact(string automationId)
         {
             return !string.IsNullOrEmpty(automationId) &&
-                (automationId.StartsWith("GallerySample_", StringComparison.Ordinal) ||
+                (GalleryAutomation.IsSampleAutomationId(automationId) ||
                     string.Equals(automationId, "AllControlsContentRootPane", StringComparison.Ordinal) ||
                     string.Equals(automationId, "GalleryContentHost", StringComparison.Ordinal) ||
                     string.Equals(automationId, "HomeContentRootPane", StringComparison.Ordinal) ||
@@ -477,7 +477,7 @@ namespace ModernWpf.Gallery.Testing
         {
             var automationId = AutomationProperties.GetAutomationId(element);
             if (!string.IsNullOrEmpty(automationId) &&
-                automationId.StartsWith("GallerySample_", StringComparison.Ordinal))
+                GalleryAutomation.IsSampleAutomationId(automationId))
             {
                 return element.TryFindResource("SolidBackgroundFillColorBaseBrush") as Brush
                     ?? new SolidColorBrush(
