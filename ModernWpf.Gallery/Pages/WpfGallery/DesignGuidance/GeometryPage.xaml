@@ -39,6 +39,7 @@
                 <Border Height="300" Width="500" HorizontalAlignment="Left">
                     <Image
                         x:Name="GeometryImage"
+                        Source="/Assets/Design/Geometry.dark.png"
                         AutomationProperties.Name="Example of corner radius." />
                 </Border>
 

@@ -44,6 +44,7 @@
                         <Border Grid.Row="1" Height="500">
                             <Image
                                 x:Name="CardImage"
+                                Source="/Assets/Design/Cards.dark.png"
                                 AutomationProperties.Name="Example of spacing in a page with cards layout" />
                         </Border>
                     </Grid>
@@ -60,6 +61,7 @@
                         <Border Grid.Row="1" Height="500">
                             <Image
                                 x:Name="DialogImage"
+                                Source="/Assets/Design/Dialog.dark.png"
                                 AutomationProperties.Name="Example of spacing in a form layout" />
                         </Border>
                     </Grid>

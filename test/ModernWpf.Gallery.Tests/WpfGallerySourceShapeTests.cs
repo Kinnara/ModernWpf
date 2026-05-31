@@ -3521,6 +3521,19 @@ namespace ModernWpf.Gallery.Tests
                 StringAssert.Contains(
                     xaml,
                     "<ScrollViewer Margin=\"0,0,0,24\" Padding=\"0,0,24,0\" HorizontalScrollBarVisibility=\"Auto\" Grid.Row=\"1\">");
+                if (page == "SpacingPage.xaml")
+                {
+                    AssertContainsInOrder(
+                        xaml,
+                        "x:Name=\"CardImage\"",
+                        "Source=\"/Assets/Design/Cards.dark.png\"",
+                        "AutomationProperties.Name=\"Example of spacing in a page with cards layout\"");
+                    AssertContainsInOrder(
+                        xaml,
+                        "x:Name=\"DialogImage\"",
+                        "Source=\"/Assets/Design/Dialog.dark.png\"",
+                        "AutomationProperties.Name=\"Example of spacing in a form layout\"");
+                }
             }
 
             var geometryXaml = ReadRepoFile(
@@ -3561,6 +3574,11 @@ namespace ModernWpf.Gallery.Tests
             StringAssert.Contains(
                 geometryXaml,
                 "<Border Height=\"300\" Width=\"500\" HorizontalAlignment=\"Left\">");
+            AssertContainsInOrder(
+                geometryXaml,
+                "x:Name=\"GeometryImage\"",
+                "Source=\"/Assets/Design/Geometry.dark.png\"",
+                "AutomationProperties.Name=\"Example of corner radius.\"");
 
             var iconographyXaml = ReadRepoFile(
                 "ModernWpf.Gallery",
