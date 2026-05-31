@@ -122,34 +122,29 @@ namespace ModernWpf.Gallery.Controls
         {
             if (sender is ControlExample controlExample)
             {
-                var executedArgs = (ExecutedRoutedEventArgs)e;
-                if (executedArgs.Parameter == null)
+                if (!string.IsNullOrEmpty(controlExample.XamlCode))
                 {
-                    return;
-                }
+                    var executedArgs = (ExecutedRoutedEventArgs)e;
 
-                try
-                {
-                    switch (executedArgs.Parameter.ToString())
+                    try
                     {
-                        case "Copy_XamlCode":
-                            if (!string.IsNullOrEmpty(controlExample.XamlCode))
-                            {
+                        switch (executedArgs.Parameter.ToString())
+                        {
+                            case "Copy_XamlCode":
                                 Clipboard.SetText(controlExample.XamlCode);
                                 RaiseCopyNotification(executedArgs);
-                            }
-                            break;
-                        case "Copy_CSharpCode":
-                            if (!string.IsNullOrEmpty(controlExample.CSharpCode))
-                            {
+                                break;
+                            case "Copy_CSharpCode":
                                 Clipboard.SetText(controlExample.CSharpCode);
-                            }
-                            break;
+                                break;
+                            default:
+                                throw new InvalidOperationException();
+                        }
                     }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error copying to clipboard: " + ex.Message);
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error copying to clipboard: " + ex.Message);
+                    }
                 }
             }
         }

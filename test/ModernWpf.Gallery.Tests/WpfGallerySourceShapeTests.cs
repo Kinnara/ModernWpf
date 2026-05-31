@@ -1913,13 +1913,19 @@ namespace ModernWpf.Gallery.Tests
                 "CSharpCode = LoadResource(uri);",
                 "private static void Copy_SourceCode(object sender, RoutedEventArgs e)",
                 "if (sender is ControlExample controlExample)",
+                "if (!string.IsNullOrEmpty(controlExample.XamlCode))",
                 "var executedArgs = (ExecutedRoutedEventArgs)e;",
                 "switch (executedArgs.Parameter.ToString())",
                 "case \"Copy_XamlCode\":",
                 "Clipboard.SetText(controlExample.XamlCode);",
                 "RaiseCopyNotification(executedArgs);",
                 "case \"Copy_CSharpCode\":",
-                "Clipboard.SetText(controlExample.CSharpCode);");
+                "Clipboard.SetText(controlExample.CSharpCode);",
+                "default:",
+                "throw new InvalidOperationException();");
+            Assert.IsFalse(
+                controlExampleSource.Contains("if (executedArgs.Parameter == null)", StringComparison.Ordinal),
+                "ControlExample copy command should follow the official parameter switch path instead of a local null-parameter no-op.");
 
             var pageHeaderSource = ReadRepoFile(
                 "ModernWpf.Gallery",
