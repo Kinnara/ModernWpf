@@ -46,7 +46,17 @@ Current pointer:
    measurement, interaction, automation, and harness evidence always beats row
    5 source cleanup. `TrackerPriorityTests` guard this ordering; row 1 is
    inactive again unless another priority/order conflict appears.
-2. Latest guard-automation batch, 2026-05-31: **global order 10 / P2 row
+2. Latest guard-automation batch, 2026-05-31: **global order 8 / P2 row
+   5.1** for active mapped-XAML sample-pane code token coverage. A fresh scan
+   against local official source
+   `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Views` found the
+   higher-ranked row 5.1 guard before any row 5.4 source-shape work:
+   `WpfGallerySourceShapeTests.ActiveMappedXamlKeepsOfficialSamplePaneCodeTokensFromLocalSource`.
+   It maps the same 54 copied/adapted XAML files, decodes XAML entities, and
+   fails on any missing official `HeaderText`, `XamlCode`, or `CSharpCode`
+   token so visible sample panes cannot drift silently while lower source
+   cleanup is in progress.
+3. Previous guard-automation batch, 2026-05-31: **global order 10 / P2 row
    5.3** for the active mapped-XAML automation/name/hook token scan. The
    previously ad-hoc direct comparison against local official source
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Views` is now a
@@ -56,7 +66,7 @@ Current pointer:
    before comparison, and fails on any missing official
    `AutomationProperties.Name`, `x:Name`, `Name`, event-hook, or `Command`
    token that would reopen row 5.3 before row 5.4 source cleanup.
-3. Previous guard-correction batch, 2026-05-31: **global order 10 / P2 row
+4. Previous guard-correction batch, 2026-05-31: **global order 10 / P2 row
    5.3** for the copied `WhatsNewPage` MessageBox source-hook guard after the
    broader snippet suite exposed a stale expectation. Selection proof:
    `SystemParameters.HighContrast` returned `False`; `TrackerPriorityTests`
@@ -1270,8 +1280,15 @@ recently touched.
 | 13 | P2 row 6 and final closeout cleanup | Last; only after row 5 is recorded or explicitly not applicable and the final verification sweep is current. |
 
 After the latest `CommandBarFlyout` retained-control visual/interaction/harness
-batch is recorded, the next substantive row may return to **global order 11 /
-P2 row 5.4** only if another named 5.4 guard survives the full proof again.
+batch is recorded, a fresh local-official scan found a higher-ranked row 5.1
+sample-pane guard before any return to row 5.4. The current row 5.1 guard is
+`WpfGallerySourceShapeTests.ActiveMappedXamlKeepsOfficialSamplePaneCodeTokensFromLocalSource`;
+it maps 54 active local/official XAML files under local official
+`D:\repos\WPF-Samples\Sample Applications\WPFGallery\Views`, decodes XAML
+entities, and fails on missing official `HeaderText`, `XamlCode`, or
+`CSharpCode` sample-pane tokens. The next substantive row may return to
+**global order 11 / P2 row 5.4** only if the row 5.1, 5.2, and 5.3 guards stay
+recorded/clean and another named 5.4 guard survives the full proof again.
 The latest retained high-drift evidence is
 `artifacts/visual-checks/20260531-203633-033-63888/report.md` and
 `artifacts/visual-checks/20260531-203756-601-64316/report.md`; both record
@@ -1312,12 +1329,13 @@ Required selection proof before any substantive edit:
    cleanup stay blocked while any 5.1-5.4 item is current.
 
 Current allowed substantive row may return to **global order 11 / P2 row 5.4**
-after the latest `CommandBarFlyout` retained-control high-drift and harness
-batch is recorded only if `SystemParameters.HighContrast` is `False`, global
-orders 2-9 are recorded or inactive for the current branch tip, P2 rows 2-4
-are recorded with the latest retained high-drift reports above, rows 5.1-5.2
-are recorded, row 5.3 has no current named executable gap, and a new named
-5.4 guard is identified against local official source.
+after the latest row 5.1 sample-pane guard only if
+`SystemParameters.HighContrast` is `False`, global orders 2-9 are recorded or
+inactive for the current branch tip, P2 rows 2-4 are recorded with the latest
+retained high-drift reports above, rows 5.1-5.2 are recorded, row 5.3 has no
+current named executable gap, the automated row 5.1 and 5.3 mapped-XAML scans
+remain clean, and a new named 5.4 guard is identified against local official
+source.
 Any new High Contrast, visible-drift, high-drift
 retained-control, asset, measurement, interaction, automation, harness, 5.1,
 5.2, or 5.3 evidence immediately
@@ -1536,7 +1554,10 @@ touched.
 Current row 5 decision:
 
 1. Reopen 5.1 only for a new named sample-pane or runtime-visible example-content
-   gap.
+   gap. The current active mapped-XAML sample-pane guard is automated by
+   `WpfGallerySourceShapeTests.ActiveMappedXamlKeepsOfficialSamplePaneCodeTokensFromLocalSource`;
+   it compares 54 local/official XAML files and fails on missing official
+   `HeaderText`, `XamlCode`, or `CSharpCode` tokens before any 5.4 work.
 2. Reopen 5.2 only for a new named structural gap that can affect visible
    layout, resources, keyboard, interaction, automation, or visual-harness
    behavior. The current `ColorTile` warning/separator visibility-template
@@ -1558,7 +1579,7 @@ Current row 5 decision:
 
 | Row 5 order | Bucket | State | Allowed next work |
 | --- | --- | --- | --- |
-| 5.1 | Source-backed sample panes and runtime-visible example content | Recorded for the current branch tip. Basic Input, Collections, Date & Calendar, Design Guidance, Layout, Media, Navigation, Status & Info, Text, System, and What's New `ControlExample` snippets are covered; Design Guidance Color subsection `ColorPageExample` titles, descriptions, and visible example content types are now guarded against the official WPF Gallery source shape. | Reopen before row 5.2 only if a new sample-pane or runtime-visible example-content gap is named. |
+| 5.1 | Source-backed sample panes and runtime-visible example content | Recorded for the current branch tip with the active mapped-XAML sample-pane guard. `ActiveMappedXamlKeepsOfficialSamplePaneCodeTokensFromLocalSource` compares 54 mapped files under local official `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Views` and local active `Pages`, with entity decoding, for official `HeaderText`, `XamlCode`, and `CSharpCode` tokens. Basic Input, Collections, Date & Calendar, Design Guidance, Layout, Media, Navigation, Status & Info, Text, System, and What's New `ControlExample` snippets are covered; Design Guidance Color subsection `ColorPageExample` titles, descriptions, and visible example content types are now guarded against the official WPF Gallery source shape. | Reopen before row 5.2 only if a new sample-pane or runtime-visible example-content gap is named or this automated guard fails. |
 | 5.2 | Source-backed structural alignment that can affect visible layout, resources, keyboard, interaction, automation, or visual-harness behavior | Recorded for the current branch tip. The latest named 5.2 batch aligns app-manifest runtime compatibility with local official WPF Gallery source by keeping the `true/PM` DPI fallback, `longPathAware`, and active `Microsoft.Windows.Common-Controls` v6 dependency while retaining the local `PerMonitorV2` DPI-awareness adapter. Earlier named 5.2 batches align the shared `ColorTile` warning visibility to the official WPF Gallery `TemplateBinding ShowWarning` plus `BooleanToVisibilityConverter` shape and record the official `TemplateBinding ShowSeparator` shape as not locally viable because WPF leaves the separator visible when `ShowSeparator=false`; the retained `RelativeSource TemplatedParent` converter binding is therefore an explicit WPF compatibility adapter. Earlier recorded 5.2 items remain the Design Guidance Iconography instructions Expander inline/source structure, the Design Guidance Spacing/Geometry default dark design-image `Source` fallback, the Navigation `FrameWindow` same-folder `Frame.Source` behavior, and the Navigation `NavigationWindow` explicit Gallery component URI plus `Frame.xaml` template-resource dependency. | Reopen before row 5.3 only if a new source-backed structural diff is named and can affect visible layout, resources, keyboard, interaction, automation, or visual-harness behavior. |
 | 5.3 | Resource-key, naming, selector, and source-hook parity tied to visible or harness behavior | Recorded for the current branch tip with no current named gap after the latest automated mapped-XAML token scan and the current stale-guard correction. `ActiveMappedXamlKeepsOfficialAutomationNameAndHookTokensFromLocalSource` now compares 54 mapped files under local official `Views` and local active `Pages`, with entity decoding, for official `AutomationProperties.Name`, `x:Name`, `Name`, event-hook, and `Command` tokens. The copied `WhatsNewPage` handler guard follows local official WPF Gallery `Views\WhatsNewPage.xaml.cs` by expecting `ViewModel.Navigate(typeof(MessageBoxPage));` and the retained Type-to-`"MessageBox"` route adapter, not the superseded string selector. Earlier named 5.3 batches remain recorded, including title-bar/footer resource keys, retained shell structural lookups, route/display aliases, direct page registry normalization, command-handler names, and the copied Iconography direct search-placeholder visibility handlers. | Reopen before 5.4 if a new named resource/key/name/selector/hook gap appears that can affect visuals, behavior, or harness evidence. |
 | 5.4 | Non-visible copied/adapted source-shape guards | Current only while 5.1-5.3 remain recorded or no current named gap exists. The latest named 5.4 guard aligns the copied Collections `ListViewPageViewModel.ListViewSelectionModeComboBoxSelectedIndex` expression-bodied getter source shape with local official WPF Gallery `ViewModels\Collections\ListViewPageViewModel.cs`, including `get => _listViewSelectionModeComboBoxSelectedIndex;` before the explicit generic setter, while retaining the local shared base class, deterministic visual-test random adapter, and WPF `SelectionMode` adapter. Previous 5.4 guards include the copied User Dashboard `UserDashboardUser` expression-bodied property getter source shape with local official WPF Gallery `Models\User.cs`; the copied User Dashboard `UserDashboardUser` optional constructor placeholder and full-constructor parameter source shape with local official WPF Gallery `Models\User.cs`; the copied User Dashboard `UserDashboardUser` direct copy-constructor assignment block and full-constructor `IsNewGraduate` assignment order with local official WPF Gallery `Models\User.cs`; the copied User Dashboard `UserDashboardUser.Deletedname` field/property member order with local official WPF Gallery `Models\User.cs`; the copied User Dashboard `ImageIdToBrushConverter` local-variable type shape with local official WPF Gallery `Helpers\ImageIdToBrushConverter.cs`; copied model XML summary text with local official WPF Gallery `Models\Person.cs` and `Models\IconsData.cs`; copied code-behind interaction-summary text for `ButtonPage`, `CheckBoxPage`, `ComboBoxPage`, `Navigation\Page1`, `Navigation\Page2`, and `Text\RichTextEditPage`; top-level Dashboard code-behind `ViewModel` member placement; the official WPF Gallery copied code-behind constructor initialization-order shapes from the local `Views` folder; the official WPF Gallery ViewModel XML summary source shape for Button, File and Folder Dialogs, and MessageBox; User Dashboard `IsSaved` delayed-clear statement placement; User Dashboard `DeletedName` empty-value early-return shape; User Dashboard `EditUserCancel()` statement shape; User Dashboard `EditUserCommit`/`EditUserStart`/`RemoveUser` command-handler statement shape; User Dashboard final address `""` literal and `AddUser()` statement shape; copied Basic Input, Collections, Date & Calendar, Layout, Media, Navigation, Status & Info, Text, Design Guidance Geometry, and All Samples empty page descriptions with the official `""` literal source shape; System MessageBox/Clipboard empty descriptions and Clipboard status backing fields; System MessageBox verbatim/switch-expression snippet helpers; Basic Input CheckBox command branch bodies and handler signatures; Collections ListView/DataGrid helper shapes; Iconography helper shapes; and `MainWindowViewModel.ApplicationTitle`. Recent summary/base-declaration rounds are recorded; comments, declaration shape, member order, and pure source-text guards stay blocked if any 5.1-5.3 item reopens. | Take only a named guard gap with focused tests and a full Gallery build. |
@@ -2588,6 +2609,49 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- Selection proof and verification for the active mapped-XAML 5.1 sample-pane
+  code token guard:
+  - `git status --short` returned clean before the batch at branch tip
+    `0b0b554f`. `SystemParameters.HighContrast` returned `False`.
+    `TrackerPriorityTests` and the active mapped-XAML 5.3 guard passed before
+    selecting row 5 work. A direct sample-pane scan against local official
+    source `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Views` found
+    no missing official `HeaderText`, `XamlCode`, or `CSharpCode` tokens after
+    entity normalization across 54 mapped files. The selected rank is
+    **global order 8 / P2 row 5.1**, because a sample-pane/runtime-visible
+    example-content guard outranks row 5.4 source-shape cleanup; global orders
+    2-7 are recorded or inactive for the current branch tip, P2 rows 2-4 are
+    recorded by the latest retained Light/Dark reports, and the row 5.3 mapped
+    XAML guard is clean. This batch converts that manual row 5.1 scan into
+    `WpfGallerySourceShapeTests.ActiveMappedXamlKeepsOfficialSamplePaneCodeTokensFromLocalSource`
+    so row 5.4 cannot proceed silently when official sample-pane code tokens
+    drift from the local official source.
+- `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --filter "TrackerPriorityTests|ActiveMappedXamlKeepsOfficialAutomationNameAndHookTokensFromLocalSource|ActiveMappedXamlKeepsOfficialSamplePaneCodeTokensFromLocalSource" --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 5 tests per
+    target after adding the automated local-official mapped-XAML 5.1
+    sample-pane guard. Existing warning/output remains `NU1903` and recurring
+    `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --filter WpfGallerySourceShapeTests --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 82 tests per
+    target after adding the automated row 5.1 sample-pane guard. Existing
+    warning/output remains `NU1903` and recurring
+    `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --filter TrackerPriorityTests --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 3 tests per
+    target after updating the tracker current pointer, Current Order Lock, and
+    row 5.1 queue for the automated sample-pane guard. Existing
+    warning/output remains `NU1903` and recurring
+    `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet build .\ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after
+    the sample-pane guard, with 19 existing warnings and 0 errors. Recurring
+    output still includes `Failed to resolve WinRT.Runtime.dll`.
+- `git diff --check`
+  - Passed after the automated row 5.1 sample-pane guard and tracker update,
+    with only the existing LF/CRLF working-copy warnings for touched files.
+  - No visual audit was rerun for this batch because no product code or visual
+    asset changed; the latest visual/high-drift evidence above remains the
+    scheduler gate.
 - Selection proof and verification for the active mapped-XAML 5.3
   automation/name/hook token guard:
   - `git status --short` returned clean before the batch at branch tip

@@ -67,6 +67,60 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void ActiveMappedXamlKeepsOfficialSamplePaneCodeTokensFromLocalSource()
+        {
+            var repoRoot = GetRepoRoot();
+            var officialViewsRoot = @"D:\repos\WPF-Samples\Sample Applications\WPFGallery\Views";
+            if (!Directory.Exists(officialViewsRoot))
+            {
+                Assert.Inconclusive("Local official WPF Gallery source was not found at " + officialViewsRoot + ".");
+            }
+
+            var localPagesRoot = Path.Combine(repoRoot, "ModernWpf.Gallery", "Pages");
+            var localXamlByFileName = Directory
+                .EnumerateFiles(localPagesRoot, "*.xaml", SearchOption.AllDirectories)
+                .ToDictionary(Path.GetFileName, path => path, StringComparer.OrdinalIgnoreCase);
+            var missingTokens = new List<string>();
+            var mappedFileCount = 0;
+
+            foreach (var officialPath in Directory.EnumerateFiles(officialViewsRoot, "*.xaml", SearchOption.AllDirectories))
+            {
+                var officialFileName = Path.GetFileName(officialPath);
+                if (!localXamlByFileName.TryGetValue(officialFileName, out var localPath))
+                {
+                    continue;
+                }
+
+                mappedFileCount++;
+                var localSource = NormalizeXamlTokenSource(File.ReadAllText(localPath));
+                var officialSource = File.ReadAllText(officialPath);
+                var officialRelativePath = Path.GetRelativePath(officialViewsRoot, officialPath);
+                var officialTokens = Regex
+                    .Matches(
+                        officialSource,
+                        "\\b(?:HeaderText|XamlCode|CSharpCode)\\s*=\\s*\"[^\"]+\"")
+                    .Cast<Match>()
+                    .Select(match => NormalizeXamlTokenSource(match.Value))
+                    .Distinct(StringComparer.Ordinal)
+                    .OrderBy(token => token, StringComparer.Ordinal);
+
+                foreach (var token in officialTokens)
+                {
+                    if (!localSource.Contains(token, StringComparison.Ordinal))
+                    {
+                        missingTokens.Add(officialRelativePath + " :: " + token);
+                    }
+                }
+            }
+
+            Assert.AreEqual(54, mappedFileCount, "The active WPF Gallery XAML mapping count changed; update the 5.1 sample-pane scan deliberately.");
+            Assert.AreEqual(
+                0,
+                missingTokens.Count,
+                "Missing official 5.1 sample-pane tokens from local official source:\n" + string.Join("\n", missingTokens));
+        }
+
+        [TestMethod]
         public void CopiedWpfGalleryCodeBehindClassesStayUnsealedLikeOfficialSource()
         {
             var repoRoot = GetRepoRoot();
