@@ -384,7 +384,7 @@ namespace ModernWpf.Gallery.Tests
                 "private ObservableCollection<IconData> _displayedIcons = new ObservableCollection<IconData>();",
                 "private int _currentPage = 1;",
                 "private int _totalPages = 1;",
-                "private int _selectedPageSizeIndex = 1;",
+                "private int _selectedPageSizeIndex = 1; // Default to 250",
                 "public IconsPageViewModel()",
                 ": base(\"Icons\", \"Guide showing how to use icons in your application.\")",
                 "public ICollection<IconData> AllIcons",
@@ -398,13 +398,12 @@ namespace ModernWpf.Gallery.Tests
                 "public string SearchText",
                 "if (SetProperty(ref _searchText, value))",
                 "public List<string> PageSizeOptions { get; } = new List<string> { \"100\", \"250\", \"500\", \"1000\", \"All\" };",
+                "private int PageSize => SelectedPageSizeIndex == 4 ? int.MaxValue : int.Parse(PageSizeOptions[SelectedPageSizeIndex]);",
+                "public ICommand LoadDataCommand { get; }",
                 "AllIcons = ReadIconData().ToList();",
                 "SelectedIcon = AllIcons.FirstOrDefault();",
                 "SearchFilteredIcons = new ObservableCollection<IconData>(AllIcons);",
                 "UpdatePagination();",
-                "private int PageSize => SelectedPageSizeIndex == 4",
-                "? int.MaxValue",
-                ": int.Parse(PageSizeOptions[SelectedPageSizeIndex]);",
                 "var selectedIconName = previousSelectedIcon?.Name;",
                 "SearchFilteredIcons.Clear();",
                 "var searchFilteredIconData = AllIcons.Where(icon =>",
@@ -431,8 +430,8 @@ namespace ModernWpf.Gallery.Tests
                 "if(resetSelectedIcon)");
 
             var loadDataStart = iconographySource.IndexOf("private void LoadData()", StringComparison.Ordinal);
-            var pageSizeStart = iconographySource.IndexOf("private int PageSize", loadDataStart, StringComparison.Ordinal);
-            var loadDataSource = iconographySource.Substring(loadDataStart, pageSizeStart - loadDataStart);
+            var updateSearchFilterStart = iconographySource.IndexOf("private void UpdateSearchFilter()", loadDataStart, StringComparison.Ordinal);
+            var loadDataSource = iconographySource.Substring(loadDataStart, updateSearchFilterStart - loadDataStart);
             Assert.IsFalse(
                 loadDataSource.Contains("CurrentPage = 1;", StringComparison.Ordinal),
                 "Iconography LoadData should keep the official WPF Gallery reload behavior instead of forcing the current page back to 1.");

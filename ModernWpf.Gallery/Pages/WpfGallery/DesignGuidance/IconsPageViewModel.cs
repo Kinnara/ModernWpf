@@ -20,7 +20,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
         private ObservableCollection<IconData> _displayedIcons = new ObservableCollection<IconData>();
         private int _currentPage = 1;
         private int _totalPages = 1;
-        private int _selectedPageSizeIndex = 1;
+        private int _selectedPageSizeIndex = 1; // Default to 250
 
         public IconsPageViewModel()
             : base("Icons", "Guide showing how to use icons in your application.")
@@ -117,6 +117,8 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 
         public List<string> PageSizeOptions { get; } = new List<string> { "100", "250", "500", "1000", "All" };
 
+        private int PageSize => SelectedPageSizeIndex == 4 ? int.MaxValue : int.Parse(PageSizeOptions[SelectedPageSizeIndex]);
+
         public ICommand LoadDataCommand { get; }
 
         public ICommand ApplyTagFilterCommand { get; }
@@ -138,10 +140,6 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
             SearchFilteredIcons = new ObservableCollection<IconData>(AllIcons);
             UpdatePagination();
         }
-
-        private int PageSize => SelectedPageSizeIndex == 4
-            ? int.MaxValue
-            : int.Parse(PageSizeOptions[SelectedPageSizeIndex]);
 
         private void UpdateSearchFilter()
         {
