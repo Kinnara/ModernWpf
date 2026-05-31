@@ -29,7 +29,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
     public partial class GeometryPageViewModel : WpfGalleryPageViewModel
     {
         public GeometryPageViewModel()
-            : base("Geometry", string.Empty)
+            : base("Geometry", "")
         {
         }
     }

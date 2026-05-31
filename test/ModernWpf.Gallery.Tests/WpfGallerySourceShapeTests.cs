@@ -365,7 +365,7 @@ namespace ModernWpf.Gallery.Tests
                 "public partial class SpacingPageViewModel : WpfGalleryPageViewModel",
                 ": base(\"Spacing\", \"Guide showing how to use spacing in your app\")",
                 "public partial class GeometryPageViewModel : WpfGalleryPageViewModel",
-                ": base(\"Geometry\", string.Empty)");
+                ": base(\"Geometry\", \"\")");
 
             var iconographySource = ReadRepoFile(
                 "ModernWpf.Gallery",
@@ -589,6 +589,11 @@ namespace ModernWpf.Gallery.Tests
                     "public partial class " + className + " : WpfGalleryNavigationPageViewModel");
             }
 
+            AssertContainsInOrder(
+                source,
+                "public partial class AllSamplesPageViewModel : WpfGalleryNavigationPageViewModel",
+                "public AllSamplesPageViewModel(Action<object> navigate)",
+                ": base(\"All Controls\", \"\", GalleryCatalog.AllControlsItems, navigate)");
             StringAssert.Contains(source, "GetControlsInfo(\"Design Guidance\")");
             StringAssert.Contains(source, "GetControlsInfo(\"Basic Input\")");
             StringAssert.Contains(source, "GetControlsInfo(\"Date & Calendar\")");
@@ -616,7 +621,7 @@ namespace ModernWpf.Gallery.Tests
                 "public partial class TextBoxPageViewModel : WpfGalleryPageViewModel",
                 "private string _validatedText = string.Empty;",
                 "public TextBoxPageViewModel()",
-                ": base(\"TextBox\", string.Empty)",
+                ": base(\"TextBox\", \"\")",
                 "public string ValidatedText",
                 "get { return _validatedText; }",
                 "set { SetProperty(ref _validatedText, value); }");
@@ -684,61 +689,61 @@ namespace ModernWpf.Gallery.Tests
             AssertContainsInOrder(
                 dateSource,
                 "public partial class CalendarPageViewModel : WpfGalleryPageViewModel",
-                ": base(\"Calendar\", string.Empty)",
+                ": base(\"Calendar\", \"\")",
                 "public partial class DatePickerPageViewModel : WpfGalleryPageViewModel",
-                ": base(\"DatePicker\", string.Empty)");
+                ": base(\"DatePicker\", \"\")");
             AssertContainsInOrder(
                 mediaSource,
                 "public partial class CanvasPageViewModel : WpfGalleryPageViewModel",
-                ": base(\"Canvas\", string.Empty)",
+                ": base(\"Canvas\", \"\")",
                 "public partial class ImagePageViewModel : WpfGalleryPageViewModel",
-                ": base(\"Image\", string.Empty)");
+                ": base(\"Image\", \"\")");
             AssertContainsInOrder(
                 statusSource,
                 "public partial class ProgressBarPageViewModel : WpfGalleryPageViewModel",
-                ": base(\"ProgressBar\", string.Empty)",
+                ": base(\"ProgressBar\", \"\")",
                 "public partial class ToolTipPageViewModel : WpfGalleryPageViewModel",
-                ": base(\"ToolTip\", string.Empty)");
+                ": base(\"ToolTip\", \"\")");
             AssertContainsInOrder(
                 layoutSource,
                 "public partial class BorderPageViewModel : WpfGalleryPageViewModel",
-                ": base(\"Border\", string.Empty)",
+                ": base(\"Border\", \"\")",
                 "public partial class ExpanderPageViewModel : WpfGalleryPageViewModel",
-                ": base(\"Expander\", string.Empty)",
+                ": base(\"Expander\", \"\")",
                 "public partial class GridPageViewModel : WpfGalleryPageViewModel",
-                ": base(\"Grid\", string.Empty)",
+                ": base(\"Grid\", \"\")",
                 "public partial class GridSplitterPageViewModel : WpfGalleryPageViewModel",
-                ": base(\"GridSplitter\", string.Empty)",
+                ": base(\"GridSplitter\", \"\")",
                 "public partial class GroupBoxPageViewModel : WpfGalleryPageViewModel",
-                ": base(\"GroupBox\", string.Empty)",
+                ": base(\"GroupBox\", \"\")",
                 "public partial class ResizeGripPageViewModel : WpfGalleryPageViewModel",
-                ": base(\"ResizeGrip\", string.Empty)",
+                ": base(\"ResizeGrip\", \"\")",
                 "public partial class StackPanelPageViewModel : WpfGalleryPageViewModel",
-                ": base(\"StackPanel\", string.Empty)");
+                ": base(\"StackPanel\", \"\")");
             AssertContainsInOrder(
                 navigationSource,
                 "public partial class MenuPageViewModel : WpfGalleryPageViewModel",
-                ": base(\"Menu\", string.Empty)",
+                ": base(\"Menu\", \"\")",
                 "public partial class TabControlPageViewModel : WpfGalleryPageViewModel",
-                ": base(\"TabControl\", string.Empty)",
+                ": base(\"TabControl\", \"\")",
                 "public partial class FramePageViewModel : WpfGalleryPageViewModel",
-                ": base(\"Frame\", string.Empty)",
+                ": base(\"Frame\", \"\")",
                 "public partial class NavigationWindowPageViewModel : WpfGalleryPageViewModel",
-                ": base(\"Navigation Window\", string.Empty)");
+                ": base(\"Navigation Window\", \"\")");
             AssertContainsInOrder(
                 textSource,
                 "public partial class LabelPageViewModel : WpfGalleryPageViewModel",
-                ": base(\"Label\", string.Empty)",
+                ": base(\"Label\", \"\")",
                 "public partial class TextBoxPageViewModel : WpfGalleryPageViewModel",
-                ": base(\"TextBox\", string.Empty)",
+                ": base(\"TextBox\", \"\")",
                 "public partial class TextBlockPageViewModel : WpfGalleryPageViewModel",
-                ": base(\"TextBlock\", string.Empty)",
+                ": base(\"TextBlock\", \"\")",
                 "public partial class HyperlinkPageViewModel : WpfGalleryPageViewModel",
-                ": base(\"Hyperlink\", string.Empty)",
+                ": base(\"Hyperlink\", \"\")",
                 "public partial class RichTextEditPageViewModel : WpfGalleryPageViewModel",
-                ": base(\"RichTextEdit\", string.Empty)",
+                ": base(\"RichTextEdit\", \"\")",
                 "public partial class PasswordBoxPageViewModel : WpfGalleryPageViewModel",
-                ": base(\"PasswordBox\", string.Empty)");
+                ": base(\"PasswordBox\", \"\")");
 
             foreach (var source in new[] { dateSource, mediaSource, statusSource, layoutSource, navigationSource, textSource })
             {
@@ -768,7 +773,7 @@ namespace ModernWpf.Gallery.Tests
                 source,
                 "public abstract class BasicInputPageViewModelBase : WpfGalleryPageViewModel",
                 "protected BasicInputPageViewModelBase(string pageTitle)",
-                ": base(pageTitle, string.Empty)",
+                ": base(pageTitle, \"\")",
                 "protected static ICommand CreateCommand(Action<object> execute)",
                 "public partial class ButtonPageViewModel : BasicInputPageViewModelBase",
                 "private string _message = \"Hello World!\";",
@@ -852,7 +857,7 @@ namespace ModernWpf.Gallery.Tests
                 source,
                 "public abstract class CollectionsPageViewModelBase : WpfGalleryPageViewModel",
                 "protected CollectionsPageViewModelBase(string pageTitle)",
-                ": base(pageTitle, string.Empty)",
+                ": base(pageTitle, \"\")",
                 "public partial class DataGridPageViewModel : CollectionsPageViewModelBase",
                 "private ObservableCollection<Product> _productsCollection;",
                 "public DataGridPageViewModel()",

@@ -5,7 +5,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Text
     public partial class LabelPageViewModel : WpfGalleryPageViewModel
     {
         public LabelPageViewModel()
-            : base("Label", string.Empty)
+            : base("Label", "")
         {
         }
     }
@@ -15,7 +15,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Text
         private string _validatedText = string.Empty;
 
         public TextBoxPageViewModel()
-            : base("TextBox", string.Empty)
+            : base("TextBox", "")
         {
         }
 
@@ -29,7 +29,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Text
     public partial class TextBlockPageViewModel : WpfGalleryPageViewModel
     {
         public TextBlockPageViewModel()
-            : base("TextBlock", string.Empty)
+            : base("TextBlock", "")
         {
         }
     }
@@ -37,7 +37,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Text
     public partial class HyperlinkPageViewModel : WpfGalleryPageViewModel
     {
         public HyperlinkPageViewModel()
-            : base("Hyperlink", string.Empty)
+            : base("Hyperlink", "")
         {
         }
     }
@@ -45,7 +45,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Text
     public partial class RichTextEditPageViewModel : WpfGalleryPageViewModel
     {
         public RichTextEditPageViewModel()
-            : base("RichTextEdit", string.Empty)
+            : base("RichTextEdit", "")
         {
         }
     }
@@ -53,7 +53,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Text
     public partial class PasswordBoxPageViewModel : WpfGalleryPageViewModel
     {
         public PasswordBoxPageViewModel()
-            : base("PasswordBox", string.Empty)
+            : base("PasswordBox", "")
         {
         }
     }

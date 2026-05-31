@@ -5,7 +5,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DateAndTime
     public partial class CalendarPageViewModel : WpfGalleryPageViewModel
     {
         public CalendarPageViewModel()
-            : base("Calendar", string.Empty)
+            : base("Calendar", "")
         {
         }
     }
@@ -13,7 +13,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DateAndTime
     public partial class DatePickerPageViewModel : WpfGalleryPageViewModel
     {
         public DatePickerPageViewModel()
-            : base("DatePicker", string.Empty)
+            : base("DatePicker", "")
         {
         }
     }

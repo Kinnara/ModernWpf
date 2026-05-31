@@ -10,7 +10,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
     public abstract class BasicInputPageViewModelBase : WpfGalleryPageViewModel
     {
         protected BasicInputPageViewModelBase(string pageTitle)
-            : base(pageTitle, string.Empty)
+            : base(pageTitle, "")
         {
         }
 

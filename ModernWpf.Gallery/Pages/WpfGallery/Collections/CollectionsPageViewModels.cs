@@ -10,7 +10,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
     public abstract class CollectionsPageViewModelBase : WpfGalleryPageViewModel
     {
         protected CollectionsPageViewModelBase(string pageTitle)
-            : base(pageTitle, string.Empty)
+            : base(pageTitle, "")
         {
         }
 

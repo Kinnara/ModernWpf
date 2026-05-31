@@ -221,7 +221,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery
     public partial class AllSamplesPageViewModel : WpfGalleryNavigationPageViewModel
     {
         public AllSamplesPageViewModel(Action<object> navigate)
-            : base("All Controls", string.Empty, GalleryCatalog.AllControlsItems, navigate)
+            : base("All Controls", "", GalleryCatalog.AllControlsItems, navigate)
         {
         }
     }

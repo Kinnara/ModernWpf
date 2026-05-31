@@ -5,7 +5,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.StatusAndInfo
     public partial class ProgressBarPageViewModel : WpfGalleryPageViewModel
     {
         public ProgressBarPageViewModel()
-            : base("ProgressBar", string.Empty)
+            : base("ProgressBar", "")
         {
         }
     }
@@ -13,7 +13,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.StatusAndInfo
     public partial class ToolTipPageViewModel : WpfGalleryPageViewModel
     {
         public ToolTipPageViewModel()
-            : base("ToolTip", string.Empty)
+            : base("ToolTip", "")
         {
         }
     }
