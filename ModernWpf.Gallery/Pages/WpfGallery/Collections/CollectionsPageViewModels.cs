@@ -10,42 +10,12 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
     public abstract class CollectionsPageViewModelBase : WpfGalleryPageViewModel
     {
         // Visual audits compare two processes; fixed seeds remove false drift from source-matching random samples.
-        private const int ProductsVisualTestSeed = 12043;
         private const int BasicListViewVisualTestSeed = 22043;
         private const int GridViewVisualTestSeed = 22044;
 
         protected CollectionsPageViewModelBase(string pageTitle)
             : base(pageTitle, string.Empty)
         {
-        }
-
-        protected static ObservableCollection<Product> GenerateProducts()
-        {
-            var random = CreateSampleRandom(ProductsVisualTestSeed);
-            var products = new ObservableCollection<Product> { };
-
-            var adjectives = new[] { "Red", "Blueberry" };
-            var names = new[] { "Marmalade", "Dumplings", "Soup" };
-            //var units = new[] { "grams", "kilograms", "milliliters" };
-
-            for (int i = 0; i < 50; i++)
-            {
-                products.Add(
-                    new Product
-                    {
-                        ProductId = i,
-                        ProductCode = i,
-                        ProductName =
-                            adjectives[random.Next(0, adjectives.Length)]
-                            + " "
-                            + names[random.Next(0, names.Length)],
-                        UnitPrice = Math.Round(random.NextDouble() * 20.0, 3),
-                        UnitsInStock = random.Next(0, 100)
-                    }
-                );
-            }
-
-            return products;
         }
 
         protected static ObservableCollection<Person> GenerateBasicListViewPersons()
@@ -118,7 +88,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
             return persons;
         }
 
-        private static GallerySampleRandom CreateSampleRandom(int visualTestSeed)
+        private protected static GallerySampleRandom CreateSampleRandom(int visualTestSeed)
         {
             return GalleryDiagnostics.IsEnabled
                 ? new GallerySampleRandom(visualTestSeed)
@@ -128,12 +98,42 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
 
     public partial class DataGridPageViewModel : CollectionsPageViewModelBase
     {
+        private const int ProductsVisualTestSeed = 12043;
         private ObservableCollection<Product> _productsCollection;
 
         public DataGridPageViewModel()
             : base("DataGrid")
         {
             _productsCollection = GenerateProducts();
+        }
+
+        private ObservableCollection<Product> GenerateProducts()
+        {
+            var random = CreateSampleRandom(ProductsVisualTestSeed);
+            var products = new ObservableCollection<Product> { };
+
+            var adjectives = new[] { "Red", "Blueberry" };
+            var names = new[] { "Marmalade", "Dumplings", "Soup" };
+            //var units = new[] { "grams", "kilograms", "milliliters" };
+
+            for (int i = 0; i < 50; i++)
+            {
+                products.Add(
+                    new Product
+                    {
+                        ProductId = i,
+                        ProductCode = i,
+                        ProductName =
+                            adjectives[random.Next(0, adjectives.Length)]
+                            + " "
+                            + names[random.Next(0, names.Length)],
+                        UnitPrice = Math.Round(random.NextDouble() * 20.0, 3),
+                        UnitsInStock = random.Next(0, 100)
+                    }
+                );
+            }
+
+            return products;
         }
 
         public ObservableCollection<Product> ProductsCollection

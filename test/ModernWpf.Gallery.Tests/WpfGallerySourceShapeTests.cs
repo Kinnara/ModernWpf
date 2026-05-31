@@ -840,6 +840,7 @@ namespace ModernWpf.Gallery.Tests
                 "private ObservableCollection<Product> _productsCollection;",
                 "public DataGridPageViewModel()",
                 "_productsCollection = GenerateProducts();",
+                "private ObservableCollection<Product> GenerateProducts()",
                 "public ObservableCollection<Product> ProductsCollection");
             AssertContainsInOrder(
                 source,
@@ -887,7 +888,9 @@ namespace ModernWpf.Gallery.Tests
 
             AssertContainsInOrder(
                 source,
-                "protected static ObservableCollection<Product> GenerateProducts()",
+                "public partial class DataGridPageViewModel : CollectionsPageViewModelBase",
+                "private const int ProductsVisualTestSeed = 12043;",
+                "private ObservableCollection<Product> GenerateProducts()",
                 "var random = CreateSampleRandom(ProductsVisualTestSeed);",
                 "var products = new ObservableCollection<Product> { };",
                 "var adjectives = new[] { \"Red\", \"Blueberry\" };",
